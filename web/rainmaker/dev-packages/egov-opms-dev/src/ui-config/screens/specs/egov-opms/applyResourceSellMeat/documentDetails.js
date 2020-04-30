@@ -32,7 +32,7 @@ export const documentDetails = getCommonCard({
         {
           name: "Identity Proof ",
           required: true,
-          jsonPath: "FireNOCs[0].fireNOCDetails.Reaasign.file",
+          jsonPath: "OpmsNOCs[0].opmsNOCDetails.Reaasign.file",
           selector: {
             inputLabel: "Select Document",
             menuItems: [

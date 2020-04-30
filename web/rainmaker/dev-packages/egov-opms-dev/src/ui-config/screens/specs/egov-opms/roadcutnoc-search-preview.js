@@ -17,8 +17,8 @@ import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
 import { searchBill, createDemandForRoadCutNOC } from "../utils/index";
-import generatePdf from "../utils/receiptPdf";
-import { loadPdfGenerationData } from "../utils/receiptTransformer";
+//import  generatePdf from "../utils/receiptPdf";
+
 import { footer } from "./applyResource/employeeRoadCutFooter";
 //import { footer ,footerReview} from "./applyResource/footer";
 import {
@@ -64,7 +64,7 @@ const ReassignButton = getCommonContainer({
     children: {
       submitButtonLabel: getLabel({
         labelName: "Resend",
-        labelKey: "TL_COMMON_BUTTON_RESEND"
+        labelKey: "PM_COMMON_BUTTON_RESEND"
       }),
       submitButtonIcon: {
         uiFramework: "custom-atoms",
@@ -88,11 +88,7 @@ const ReassignButton = getCommonContainer({
 
 
 const getMdmsData = async (action, state, dispatch) => {
-  // let tenantId =
-  //  get(
-  //    state.screenConfiguration.preparedFinalObject,
-  //    "PETNOC.[0].fireNOCDetails.propertyDetails.address.city"
-  //  ) || getOPMSTenantId();
+  
   let tenantId = getOPMSTenantId();
   let mdmsBody = {
     MdmsCriteria: {
@@ -204,18 +200,7 @@ const prepareDocumentsView = async (state, dispatch) => {
 
   let allDocuments = [];
   allDocuments.push(uploadDocuments)
-  //allDocuments.push(uploadPetPicture)
-
-  // let otherDocuments = jp.query(
-  // petnoc,
-  // "$.fireNOCDetails.additionalDetail.documents.*"
-  // );
-  // let allDocuments = [
-  // ...buildingDocuments,
-  // ...applicantDocuments,
-  // ...otherDocuments
-  // ];
-
+  
   if (uploadDocuments !== '') {
     documentsPreview.push(
       {
@@ -248,59 +233,8 @@ const prepareDocumentsView = async (state, dispatch) => {
   }
 };
 
-
-const prepareUoms = (state, dispatch) => {
-  let buildings = get(
-    state,
-    "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
-    []
-  );
-  buildings.forEach((building, index) => {
-    let uoms = get(building, "uoms", []);
-    let uomsMap = {};
-    uoms.forEach(uom => {
-      uomsMap[uom.code] = uom.value;
-    });
-    dispatch(
-      prepareFinalObject(
-        `FireNOCs[0].fireNOCDetails.buildings[${index}].uomsMap`,
-        uomsMap
-      )
-    );
-
-    // Display UOMS on search preview page
-    uoms.forEach(item => {
-      let labelElement = getLabelWithValue(
-        {
-          labelName: item.code,
-          labelKey: `NOC_PROPERTY_DETAILS_${item.code}_LABEL`
-        },
-        {
-          jsonPath: `FireNOCs[0].fireNOCDetails.buildings[0].uomsMap.${
-            item.code
-            }`
-        }
-      );
-
-      dispatch(
-        handleField(
-          "roadcutnoc-search-preview",
-          "components.div.children.body.children.cardContent.children.propertySummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.propertyContainer.children",
-          item.code,
-          labelElement
-        )
-      );
-    });
-  });
-};
-
-// const prepareDocumentsUploadRedux = (state, dispatch) => {
-//   dispatch(prepareFinalObject("documentsUploadRedux", documentsUploadRedux));
-// };
-
 const setDownloadMenu = (state, dispatch) => {
   /** MenuButton data based on status */
-  //let status = get(state,"screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.status");
   let downloadMenu = [];
 
   //Object creation for NOC's
@@ -308,7 +242,7 @@ const setDownloadMenu = (state, dispatch) => {
     label: { labelName: "NOC Certificate PET", labelKey: "NOC_CERTIFICATE_PET" },
     link: () => {
       window.location.href = httpLinkPET;
-      //generatePdf(state, dispatch, "certificate_download");
+      //// generatePdf(state, dispatch, "certificate_download");
     },
     leftIcon: "book"
   };
@@ -339,7 +273,7 @@ const setDownloadMenu = (state, dispatch) => {
   //   label: { labelName: "NOC Certificate PET", labelKey: "NOC_RECEIPT_PET" },
   //   link: () => {
   //    window.location.href = httpLinkPET_RECEIPT;
-  //    //generatePdf(state, dispatch, "certificate_download");
+  //    //// generatePdf(state, dispatch, "certificate_download");
   //   },
   //   leftIcon: "book"
   // };
@@ -487,10 +421,7 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
 
   }
   prepareDocumentsView(state, dispatch);
-  //prepareUoms(state, dispatch);
-  //await loadPdfGenerationData(applicationNumber, tenantId);
-  //setDownloadMenu(state, dispatch);
-
+ 
   if (role_name == 'CITIZEN')
     setSearchResponseForNocCretificate(state, dispatch, applicationNumber, tenantId);
 
@@ -560,7 +491,7 @@ const setSearchResponseForNocCretificate = async (state, dispatch, applicationNu
       link: () => {
         if (httpLinkROADCUT != "")
           window.location.href = httpLinkROADCUT;
-        //generatePdf(state, dispatch, "certificate_download");
+        //// generatePdf(state, dispatch, "certificate_download");
       },
       leftIcon: "book"
     };
@@ -599,7 +530,7 @@ const setSearchResponseForNocCretificate = async (state, dispatch, applicationNu
       link: () => {
         if (httpLinkROADCUT_RECEIPT != "")
           window.location.href = httpLinkROADCUT_RECEIPT;
-        //generatePdf(state, dispatch, "certificate_download");
+        //// generatePdf(state, dispatch, "certificate_download");
       },
       leftIcon: "book"
     };
@@ -696,8 +627,8 @@ const screenConfig = {
           props: {
             dataPath: "Licenses",
             moduleName: "ROADCUTNOC",
-            updateUrl: "/tl-services/v1/_update"
           }
+
         },
         body: role_name !== 'CITIZEN' ? getCommonCard({
           // estimateSummary: estimateSummary,
@@ -718,7 +649,7 @@ const screenConfig = {
     },
     adhocDialog: {
       uiFramework: "custom-containers-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "DialogContainer",
       props: {
         open: false,

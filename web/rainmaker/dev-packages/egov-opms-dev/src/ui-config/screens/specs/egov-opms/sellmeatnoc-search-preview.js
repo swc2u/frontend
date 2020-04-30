@@ -8,7 +8,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
   handleScreenConfigurationFieldChange as handleField,
-  prepareFinalObject
+  prepareFinalObject,toggleSnackbar
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { localStorageGet, localStorageSet, setapplicationNumber,getapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import { gotoApplyWithStep } from "../utils/index";
@@ -23,8 +23,8 @@ import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
 import { searchBill } from "../utils/index";
-import generatePdf from "../utils/receiptPdf";
-import { loadPdfGenerationData } from "../utils/receiptTransformer";
+//import  generatePdf from "../utils/receiptPdf";
+
 import { footer } from "./applyResource/employeeSellMeatFooter";
 //import { footer ,footerReview} from "./applyResource/footer";
 import { adhocPopup1, adhocPopup2 } from "./payResource/adhocPopup";
@@ -69,7 +69,7 @@ const undertakingButton1 = getCommonContainer({
     children: {
       submitButtonLabel: getLabel({
         labelName: "Resend",
-        labelKey: "TL_COMMON_BUTTON_RESEND"
+        labelKey: "PM_COMMON_BUTTON_RESEND"
       }),
       submitButtonIcon: {
         uiFramework: "custom-atoms",
@@ -228,58 +228,9 @@ const prepareDocumentsView = async (state, dispatch) => {
   }
 };
 
-const prepareUoms = (state, dispatch) => {
-  let buildings = get(
-    state,
-    "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
-    []
-  );
-  buildings.forEach((building, index) => {
-    let uoms = get(building, "uoms", []);
-    let uomsMap = {};
-    uoms.forEach(uom => {
-      uomsMap[uom.code] = uom.value;
-    });
-    dispatch(
-      prepareFinalObject(
-        `FireNOCs[0].fireNOCDetails.buildings[${index}].uomsMap`,
-        uomsMap
-      )
-    );
-
-    // Display UOMS on search preview page
-    uoms.forEach(item => {
-      let labelElement = getLabelWithValue(
-        {
-          labelName: item.code,
-          labelKey: `NOC_PROPERTY_DETAILS_${item.code}_LABEL`
-        },
-        {
-          jsonPath: `FireNOCs[0].fireNOCDetails.buildings[0].uomsMap.${
-            item.code
-            }`
-        }
-      );
-
-      dispatch(
-        handleField(
-          "sellmeatnoc-search-preview",
-          "components.div.children.body.children.cardContent.children.propertySummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.propertyContainer.children",
-          item.code,
-          labelElement
-        )
-      );
-    });
-  });
-};
-
-// const prepareDocumentsUploadRedux = (state, dispatch) => {
-//   dispatch(prepareFinalObject("documentsUploadRedux", documentsUploadRedux));
-// };
 
 const setDownloadMenu = (state, dispatch) => {
   /** MenuButton data based on status */
-  //let status = get(state,"screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.status");
   let downloadMenu = [];
 
   //Object creation for NOC's
@@ -287,7 +238,7 @@ const setDownloadMenu = (state, dispatch) => {
     label: { labelName: "NOC Certificate PET", labelKey: "NOC_CERTIFICATE_PET" },
     link: () => {
       window.location.href = httpLinkPET;
-      //generatePdf(state, dispatch, "certificate_download");
+      //// generatePdf(state, dispatch, "certificate_download");
     },
     leftIcon: "book"
   };
@@ -352,7 +303,6 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
 
   prepareDocumentsView(state, dispatch);
 
-  //await loadPdfGenerationData(applicationNumber, tenantId);
   if (role_name == 'CITIZEN')
     setSearchResponseForNocCretificate(state,  dispatch, applicationNumber, tenantId);
   //setDownloadMenu(state, dispatch);
@@ -500,9 +450,9 @@ const screenConfig = {
           props: {
             dataPath: "Licenses",
             moduleName: "SELLMEATNOC",
-            updateUrl: "/tl-services/v1/_update"
           }
         },
+
         body: role_name !== 'CITIZEN' ? getCommonCard({
           sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary
@@ -526,7 +476,7 @@ const screenConfig = {
 
     adhocDialog: {
       uiFramework: "custom-containers-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "DialogContainer",
 
       props: {

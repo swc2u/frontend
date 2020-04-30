@@ -415,172 +415,6 @@ export const convertDateTimeToEpoch = dateTimeString => {
   }
 };
 
-export const getDetailsForOwner = async (state, dispatch, fieldInfo) => {
-  try {
-    const cardIndex = fieldInfo && fieldInfo.index ? fieldInfo.index : "0";
-    const ownerNo = get(
-      state.screenConfiguration.preparedFinalObject,
-      `FireNOCs[0].fireNOCDetails.applicantDetails.owners[${cardIndex}].mobileNumber`,
-      ""
-    );
-    if (!ownerNo.match(getPattern("MobileNo"))) {
-      dispatch(
-        toggleSnackbar(
-          true,
-          {
-            labelName: "Incorrect Number!",
-            labelKey: "ERR_MOBILE_NUMBER_INCORRECT"
-          },
-          "error"
-        )
-      );
-      return;
-    }
-    const owners = get(
-      state.screenConfiguration.preparedFinalObject,
-      `FireNOCs[0].fireNOCDetails.applicantDetails.owners`,
-      []
-    );
-    //owners from search call before modification.
-    const oldOwnersArr = get(
-      state.screenConfiguration.preparedFinalObject,
-      "FireNOCs[0].fireNOCDetails.applicantDetails.owners",
-      []
-    );
-    //Same no search on Same index
-    if (ownerNo === owners[cardIndex].userName) {
-      dispatch(
-        toggleSnackbar(
-          true,
-          {
-            labelName: "Owner has been added already!",
-            labelKey: "ERR_OWNER_ALREADY_ADDED_TOGGLE_MSG"
-          },
-          "error"
-        )
-      );
-      return;
-    }
-
-    //Same no search in whole array
-    const matchingOwnerIndex = owners.findIndex(
-      item => item.userName === ownerNo
-    );
-    if (matchingOwnerIndex > -1) {
-      if (
-        !isUndefined(owners[matchingOwnerIndex].userActive) &&
-        owners[matchingOwnerIndex].userActive === false
-      ) {
-        //rearrange
-        dispatch(
-          prepareFinalObject(
-            `FireNOCs[0].fireNOCDetails.applicantDetails.owners[${matchingOwnerIndex}].userActive`,
-            true
-          )
-        );
-        dispatch(
-          prepareFinalObject(
-            `FireNOCs[0].fireNOCDetails.applicantDetails.owners[${cardIndex}].userActive`,
-            false
-          )
-        );
-        //Delete if current card was not part of oldOwners array - no need to save.
-        if (
-          oldOwnersArr.findIndex(
-            item => owners[cardIndex].userName === item.userName
-          ) == -1
-        ) {
-          owners.splice(cardIndex, 1);
-          dispatch(
-            prepareFinalObject(
-              `FireNOCs[0].fireNOCDetails.applicantDetails.owners`,
-              owners
-            )
-          );
-        }
-      } else {
-        dispatch(
-          toggleSnackbar(
-            true,
-            {
-              labelName: "Owner already added!",
-              labelKey: "ERR_OWNER_ALREADY_ADDED_1"
-            },
-            "error"
-          )
-        );
-      }
-      return;
-    } else {
-      //New number search only
-      let payload = await httpRequest(
-        "post",
-        "/user/_search?tenantId=ch",
-        "_search",
-        [],
-        {
-          tenantId: "ch",
-          userName: `${ownerNo}`
-        }
-      );
-      if (payload && payload.user && payload.user.hasOwnProperty("length")) {
-        if (payload.user.length === 0) {
-          dispatch(
-            toggleSnackbar(
-              true,
-              {
-                labelName: "This mobile number is not registered!",
-                labelKey: "ERR_MOBILE_NUMBER_NOT_REGISTERED"
-              },
-              "info"
-            )
-          );
-        } else {
-          const userInfo =
-            payload.user &&
-            payload.user[0] &&
-            JSON.parse(JSON.stringify(payload.user[0]));
-          if (userInfo && userInfo.createdDate) {
-            userInfo.createdDate = convertDateTimeToEpoch(userInfo.createdDate);
-            userInfo.lastModifiedDate = convertDateTimeToEpoch(
-              userInfo.lastModifiedDate
-            );
-            userInfo.pwdExpiryDate = convertDateTimeToEpoch(
-              userInfo.pwdExpiryDate
-            );
-          }
-          let currOwnersArr = get(
-            state.screenConfiguration.preparedFinalObject,
-            "FireNOCs[0].fireNOCDetails.applicantDetails.owners",
-            []
-          );
-
-          currOwnersArr[cardIndex] = userInfo;
-          // if (oldOwnersArr.length > 0) {
-          //   currOwnersArr.push({
-          //     ...oldOwnersArr[cardIndex],
-          //     userActive: false
-          //   });
-          // }
-          dispatch(
-            prepareFinalObject(
-              `FireNOCs[0].fireNOCDetails.applicantDetails.owners`,
-              currOwnersArr
-            )
-          );
-        }
-      }
-    }
-  } catch (e) {
-    dispatch(
-      toggleSnackbar(
-        true,
-        { labelName: e.message, labelKey: e.message },
-        "info"
-      )
-    );
-  }
-};
 
 export const getReceiptData = async queryObject => {
   try {
@@ -884,35 +718,6 @@ export const resetFields = (state, dispatch) => {
   );
 };
 
-export const getRequiredDocData = async (action, state, dispatch) => {
-  let tenantId =
-    process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getOPMSTenantId();
-  let mdmsBody = {
-    MdmsCriteria: {
-      tenantId: tenantId,
-      moduleDetails: [
-        {
-          moduleName: "FireNoc",
-          masterDetails: [{ name: "Documents" }]
-        }
-      ]
-    }
-  };
-  try {
-    let payload = null;
-    payload = await httpRequest(
-      "post",
-      "/egov-mdms-service/v1/_search",
-      "_search",
-      [],
-      mdmsBody
-    );
-    dispatch(prepareFinalObject("searchScreenMdmsData", payload.MdmsRes));
-  } catch (e) {
-    console.log(e);
-  }
-};
-
 export const getTextToLocalMapping = label => {
 
   const localisationLabels = getTransformedLocalStorgaeLabels();
@@ -1152,7 +957,7 @@ export const getTextToLocalMapping = label => {
     case "APPLIED":
       getLocaleLabels("Applied", "NOC_APPLIED", localisationLabels);
     case "PAID":
-      getLocaleLabels("Paid", "WF_NEWTL_PENDINGAPPROVAL", localisationLabels);
+      getLocaleLabels("Paid", "WF_NEWPM_PENDINGAPPROVAL", localisationLabels);
 
     case "APPROVED":
       return getLocaleLabels("Approved", "NOC_APPROVED", localisationLabels);
@@ -1160,74 +965,9 @@ export const getTextToLocalMapping = label => {
       return getLocaleLabels("Rejected", "NOC_REJECTED", localisationLabels);
     case "CANCELLED":
       return getLocaleLabels("Cancelled", "NOC_CANCELLED", localisationLabels);
-    case "PENDINGAPPROVAL ":
-      return getLocaleLabels(
-        "Pending for Approval",
-        "WF_FIRENOC_PENDINGAPPROVAL",
-        localisationLabels
-      );
-    case "PENDINGPAYMENT":
-      return getLocaleLabels(
-        "Pending payment",
-        "WF_FIRENOC_PENDINGPAYMENT",
-        localisationLabels
-      );
-    case "DOCUMENTVERIFY":
-      return getLocaleLabels(
-        "Pending for Document Verification",
-        "WF_FIRENOC_DOCUMENTVERIFY",
-        localisationLabels
-      );
-    case "FIELDINSPECTION":
-      return getLocaleLabels(
-        "Pending for Field Inspection",
-        "WF_FIRENOC_FIELDINSPECTION",
-        localisationLabels
-      );
-
-    case "Search Results for Fire-NOC Applications":
-      return getLocaleLabels(
-        "Search Results for Fire-NOC Applications",
-        "NOC_HOME_SEARCH_RESULTS_TABLE_HEADING",
-        localisationLabels
-      );
-
-    case "MY_APPLICATIONS":
-      return getLocaleLabels(
-        "My Applications",
-        "TL_MY_APPLICATIONS",
-        localisationLabels
-      );
+    
   }
 };
-
-/*
-export const showHideAdhocPopupopms = (state, dispatch, screenKey,type) => {
-  
-  localStorage.setItem('updateNocType',type)
- // //alert(  localStorage.getItem('updateNocType')+type)
-   // set(
-        //   state,
-        //   "screenConfig.components.adhocDialog.children.popup",
-        //   adhocPopup2
-        // );
-   ////alert(JSON.stringify( state.screenConfiguration.screenConfig[screenKey]))
-   
-   setTimeout(function(){ 
-    let toggle = get(
-      state.screenConfiguration.screenConfig[screenKey],
-      "components.adhocDialog.props.open",
-      false
-    );
-    dispatch(
-      handleField(screenKey, "components.adhocDialog", "props.open", !toggle)
-    ); 
-
-    }, 500);
-  
- };
-
-*/
 
 export const showHideAdhocPopupopmsReject = (state, dispatch, screenKey, type) => {
 
@@ -1379,7 +1119,7 @@ export const clearlocalstorageAppDetails = (state) => {
   lSRemoveItemlocal('this_sub_adv_id');
   lSRemoveItemlocal('this_sub_adv_code');
   lSRemoveItemlocal('undertaking');
-  
+
   lSRemoveItem('ApplicationNumber');
   lSRemoveItem('applicationType');
   lSRemoveItem('applicationNumber');

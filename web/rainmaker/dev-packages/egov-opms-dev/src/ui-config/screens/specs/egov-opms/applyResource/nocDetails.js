@@ -4,60 +4,6 @@ import get from "lodash/get";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { furnishNocResponse, getSearchResults } from "../../../../../ui-utils/commons";
 
-const loadProvisionalNocData = async (state, dispatch) => {
-  let petNOCNumber = get(state, "screenConfiguration.preparedFinalObject.PETNOC.applicationId", "");
-  if (!petNOCNumber.match(getPattern("FireNOCNo"))) {
-    dispatch(
-      toggleSnackbar(
-        true,
-        {
-          labelName: "Incorrect FireNOC Number!",
-          labelKey: "ERR_FIRENOC_NUMBER_INCORRECT"
-        },
-        "error"
-      )
-    );
-    return;
-  }
-
-  let response = await getSearchResults([{ key: "petNOCNumber", value: petNOCNumber }]);
-  response = furnishNocResponse(response);
-
-  dispatch(prepareFinalObject("PetNOCs", get(response, "PetNOCs", [])));
-
-  // Set no of buildings radiobutton and eventually the cards
-  let noOfBuildings =
-    get(response, "PETNOC.fireNOCDetails.noOfBuildings", "SINGLE") ===
-      "MULTIPLE"
-      ? "MULTIPLE"
-      : "SINGLE";
-  dispatch(
-    handleField(
-      "apply",
-      "components.div.children.formwizardSecondStep.children.propertyDetails.children.cardContent.children.propertyDetailsConatiner.children.buildingRadioGroup",
-      "props.value",
-      noOfBuildings
-    )
-  );
-
-  // Set noc type radiobutton to NEW
-  dispatch(
-    handleField(
-      "apply",
-      "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.nocDetailsContainer.children.nocRadioGroup",
-      "props.value",
-      "NEW"
-    )
-  );
-
-  // Set provisional fire noc number
-  dispatch(
-    prepareFinalObject("PETNOC.applicationId", get(response, "PETNOC.NOCNumber", ""))
-  );
-
-  // Set fire noc id to null
-  dispatch(prepareFinalObject("PETNOC.id", undefined));
-};
 
 export const nocDetails = getCommonCard({
   header: getCommonTitle(
@@ -73,23 +19,6 @@ export const nocDetails = getCommonCard({
   ),
   break: getBreak(),
   nocDetailsContainer: getCommonContainer({
-    // provisionalNocNumberPet: {
-    //     ...getTextField({
-    //       label: {
-    //         labelName: "PET NoC number",
-    //         labelKey: "NOC_PET_NOC_NO_LABEL"
-    //       },
-    //       placeholder: {
-    //         labelName: "Enter PET NoC number",
-    //         labelKey: "NOC_PET_NOC_NO_PLACEHOLDER"
-    //       },
-    //       pattern: getPattern("FireNOCNo"),
-    //       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-    //       // required: true,
-    //       // pattern: getPattern("MobileNo"),
-    //       jsonPath: "PETNOC.applicationId",
-    //     })
-    //   },
     applicantNamePet: {
       ...getTextField({
         label: {

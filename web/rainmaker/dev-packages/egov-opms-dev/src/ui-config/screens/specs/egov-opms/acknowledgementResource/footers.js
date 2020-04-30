@@ -1,6 +1,5 @@
 import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { ifUserRoleExists } from "../../utils";
-import generatePdf from "../../utils/receiptPdf";
 import "./index.css";
 
 export const getRedirectionURL = () => {
@@ -102,7 +101,7 @@ export const applicationSuccessFooter = (
       onClickDefination: {
         action: "condition",
         callBack: () => {
-          generatePdf(state, dispatch, "application_download");
+          // generatePdf(state, dispatch, "application_download");
         }
       },
       visible: false
@@ -127,7 +126,7 @@ export const applicationSuccessFooter = (
       onClickDefination: {
         action: "condition",
         callBack: () => {
-          generatePdf(state, dispatch, "application_print");
+          // generatePdf(state, dispatch, "application_print");
         }
       },
       visible: false
@@ -149,18 +148,9 @@ export const applicationSuccessFooter = (
           labelKey: "NOC_PROCEED_PAYMENT"
         })
       },
-      //Add onClickDefination and RoleDefination later
-      onClickDefination: {
-        action: "page_change",
-        path:`/egov-common/pay?consumerCode=${applicationNumber}&tenantId=${tenant}&businessService=FIRENOC`
-          // process.env.REACT_APP_SELF_RUNNING === "true"
-          //   ? `/egov-ui-framework/fire-noc/pay?applicationNumber=${applicationNumber}&tenantId=${tenant}&businessService=FIRENOC`
-          //   : `/fire-noc/pay?applicationNumber=${applicationNumber}&tenantId=${tenant}&businessService=FIRENOC`
-      },
       roleDefination: {
         rolePath: "user-info.roles",
         action: "PAY"
-        // roles: ["NOC_CEMP", "SUPERUSER"]
       },
       visible: process.env.REACT_APP_NAME === "Citizen" ? false : true
     },
@@ -185,9 +175,6 @@ export const applicationSuccessFooter = (
       onClickDefination: {
         action: "page_change",
         path:`/egov-common/pay?consumerCode=${applicationNumber}&tenantId=${tenant}&businessService=NOC`,
-          // process.env.REACT_APP_SELF_RUNNING === "true"
-          //   ? `fire-noc/citizen-pay?applicationNumber=${applicationNumber}&tenantId=${tenant}`
-          //   : `/fire-noc/citizen-pay?applicationNumber=${applicationNumber}&tenantId=${tenant}`
       },
       roleDefination: {
         rolePath: "user-info.roles",
@@ -246,7 +233,7 @@ export const approvalSuccessFooter = getCommonApplyFooter({
     onClickDefination: {
       action: "condition",
       callBack: (state, dispatch) => {
-        generatePdf(state, dispatch, "certificate_download");
+        // generatePdf(state, dispatch, "certificate_download");
       }
     }
   },
@@ -270,7 +257,7 @@ export const approvalSuccessFooter = getCommonApplyFooter({
     onClickDefination: {
       action: "condition",
       callBack: (state, dispatch) => {
-        generatePdf(state, dispatch, "certificate_print");
+        // generatePdf(state, dispatch, "certificate_print");
       }
     }
   }
@@ -329,7 +316,7 @@ export const paymentSuccessFooter = () => {
       onClickDefination: {
         action: "condition",
         callBack: (state, dispatch) => {
-          generatePdf(state, dispatch, "receipt_download");
+          // generatePdf(state, dispatch, "receipt_download");
         }
       }
     },
@@ -353,7 +340,7 @@ export const paymentSuccessFooter = () => {
       onClickDefination: {
         action: "condition",
         callBack: (state, dispatch) => {
-          generatePdf(state, dispatch, "receipt_print");
+          // generatePdf(state, dispatch, "receipt_print");
         }
       }
     },

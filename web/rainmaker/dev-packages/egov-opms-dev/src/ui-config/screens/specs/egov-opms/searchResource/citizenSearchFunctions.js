@@ -1,6 +1,6 @@
 import { getSearchResults } from "../../../../../ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getGridData1, getCategory1, getYear1, getMonth1, getrepotforproccessingTime1, getSectordata1, getSubCategory1, getUpdatePriceBook1, getMasterGridData1, getGridDataSellMeat1, getGridDataRoadcut1, getGridDataAdvertisement1 } from "../../../../../ui-utils/commons";
+import { getCitizenGridData, getCategory1, getYear1, getMonth1, getrepotforproccessingTime1, getSectordata1, getSubCategory1, getUpdatePriceBook1, getMasterGridData1, getGridDataSellMeat1, getGridDataRoadcut1, getGridDataAdvertisement1 } from "../../../../../ui-utils/commons";
 import { convertEpochToDate, convertDateToEpoch } from "../../utils/index";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { textToLocalMapping } from "./searchResults";
@@ -36,7 +36,7 @@ export const fetchData = async (action, state, dispatch) => {
 };
 
 export const getGridData = async (action, state, dispatch) => {
-  const response = await getGridData1();
+  const response = await getCitizenGridData();
   try {
     if (response && response.nocApplicationDetail && response.nocApplicationDetail.length > 0) {
       // dispatch(prepareFinalObject("gridData",response.nocApplicationDetail));
@@ -673,11 +673,11 @@ export const getMonth = async (action, state, dispatch, pricebookid) => {
 export const getTextForPetNoc = label => {
   switch (label) {
     case "FORWARD":
-      return 'Pending Approval'
+      return 'Pending for Approval'
     case "PAID":
       return 'Paid'
     case "REASSIGNTOSI":
-      return 'Reassign To SI'
+      return 'Application Reassignd To SI'
     case "RESENT":
       return 'Resent'
     case "APPROVED":
@@ -714,6 +714,8 @@ export const getTextAdvertisement = label => {
 
   switch (label) {
     case "INITIATED":
+      return 'Initiated'
+   case "INITIATEDEXC":
       return 'Initiated'
     case "PAID":
       return 'Paid'

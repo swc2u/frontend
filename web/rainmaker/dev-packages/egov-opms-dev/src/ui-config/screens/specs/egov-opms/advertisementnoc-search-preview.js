@@ -17,8 +17,8 @@ import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
 import { searchBill, createDemandForAdvNOC } from "../utils/index";
-import generatePdf from "../utils/receiptPdf";
-import { loadPdfGenerationData } from "../utils/receiptTransformer";
+//import  generatePdf from "../utils/receiptPdf";
+
 import { footer } from "./applyResource/employeeAdvertisementFooter";
 //import { footer ,footerReview} from "./applyResource/footer";
 import { adhocPopupAdvertisementWithdraw, adhocPopupAdvertisementwithdrawApproval, adhocPopupAdvertisementForward, adhocPopupAdvertisementReassign, adhocPopupAdvertisementReject, adhocPopupAdvertisementApprove } from "./payResource/adhocPopup";
@@ -155,25 +155,13 @@ const prepareDocumentsView = async (state, dispatch) => {
   let documentsPreview = [];
 
   // Get all documents from response
-  let firenoc = get(
+  let advtnocdetail = get(
     state,
     "screenConfiguration.preparedFinalObject.nocApplicationDetail[0]",
     {}
   );
-  let uploadVaccinationCertificate = JSON.parse(firenoc.applicationdetail).hasOwnProperty('uploadDocuments') ?
-    JSON.parse(firenoc.applicationdetail).uploadDocuments[0]['fileStoreId'] : '';
-
-  // let uploadPetPicture=JSON.parse(firenoc.applicationdetail).hasOwnProperty('uploadPetPicture')?
-  // JSON.parse(firenoc.applicationdetail).uploadPetPicture[0]['fileStoreId']:'';
-  // let otherDocuments = jp.query(
-  // firenoc,
-  // "$.fireNOCDetails.additionalDetail.documents.*"
-  // );
-  // let allDocuments = [
-  // ...buildingDocuments,
-  // ...applicantDocuments,
-  // ...otherDocuments
-  // ];
+  let uploadVaccinationCertificate = JSON.parse(advtnocdetail.applicationdetail).hasOwnProperty('uploadDocuments') ?
+    JSON.parse(advtnocdetail.applicationdetail).uploadDocuments[0]['fileStoreId'] : '';
 
   if (uploadVaccinationCertificate !== '') {
     documentsPreview.push({
@@ -205,58 +193,8 @@ const prepareDocumentsView = async (state, dispatch) => {
   }
 };
 
-const prepareUoms = (state, dispatch) => {
-  let buildings = get(
-    state,
-    "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
-    []
-  );
-  buildings.forEach((building, index) => {
-    let uoms = get(building, "uoms", []);
-    let uomsMap = {};
-    uoms.forEach(uom => {
-      uomsMap[uom.code] = uom.value;
-    });
-    dispatch(
-      prepareFinalObject(
-        `FireNOCs[0].fireNOCDetails.buildings[${index}].uomsMap`,
-        uomsMap
-      )
-    );
-
-    // Display UOMS on search preview page
-    uoms.forEach(item => {
-      let labelElement = getLabelWithValue(
-        {
-          labelName: item.code,
-          labelKey: `NOC_PROPERTY_DETAILS_${item.code}_LABEL`
-        },
-        {
-          jsonPath: `FireNOCs[0].fireNOCDetails.buildings[0].uomsMap.${
-            item.code
-            }`
-        }
-      );
-
-      dispatch(
-        handleField(
-          "advertisementnoc-search-preview",
-          "components.div.children.body.children.cardContent.children.propertySummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.propertyContainer.children",
-          item.code,
-          labelElement
-        )
-      );
-    });
-  });
-};
-
-// const prepareDocumentsUploadRedux = (state, dispatch) => {
-//   dispatch(prepareFinalObject("documentsUploadRedux", documentsUploadRedux));
-// };
-
 const setDownloadMenu = (state, dispatch) => {
   /** MenuButton data based on status */
-  //let status = get(state,"screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.status");
   let downloadMenu = [];
 
   //Object creation for NOC's
@@ -264,7 +202,7 @@ const setDownloadMenu = (state, dispatch) => {
     label: { labelName: "NOC Certificate PET", labelKey: "NOC_CERTIFICATE_PET" },
     link: () => {
       window.location.href = httpLinkPET;
-      //generatePdf(state, dispatch, "certificate_download");
+      //// generatePdf(state, dispatch, "certificate_download");
     },
     leftIcon: "book"
   };
@@ -295,7 +233,7 @@ const setDownloadMenu = (state, dispatch) => {
   //   label: { labelName: "NOC Certificate PET", labelKey: "NOC_RECEIPT_PET" },
   //   link: () => {
   //    window.location.href = httpLinkPET_RECEIPT;
-  //    //generatePdf(state, dispatch, "certificate_download");
+  //    //// generatePdf(state, dispatch, "certificate_download");
   //   },
   //   leftIcon: "book"
   // };
@@ -465,9 +403,6 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
 
 
   prepareDocumentsView(state, dispatch);
-  //prepareUoms(state, dispatch);
-  //await loadPdfGenerationData(applicationNumber, tenantId);
-  //setDownloadMenu(state, dispatch);
   if (role_name === 'CITIZEN')
     setSearchResponseForNocCretificate(state, dispatch, applicationNumber, tenantId);
 
@@ -592,7 +527,7 @@ const setSearchResponseForNocCretificate = async (
       link: () => {
         if (httpLinkADVERTISEMENT != "")
           window.location.href = httpLinkADVERTISEMENT;
-        //generatePdf(state, dispatch, "certificate_download");
+        //// generatePdf(state, dispatch, "certificate_download");
       },
       leftIcon: "book"
     };
@@ -633,7 +568,7 @@ const setSearchResponseForNocCretificate = async (
       link: () => {
         if (httpLinkADVERTISEMENT_RECEIPT != "")
           window.location.href = httpLinkADVERTISEMENT_RECEIPT;
-        //generatePdf(state, dispatch, "certificate_download");
+        //// generatePdf(state, dispatch, "certificate_download");
       },
       leftIcon: "book"
     };
@@ -729,12 +664,12 @@ const screenConfig = {
           uiFramework: "custom-containers-local",
           componentPath: "WorkFlowContainer",
           moduleName: "egov-workflow",
-          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,  
           props: {
             dataPath: "Licenses",
             moduleName: "ADVERTISEMENTNOC",
-            updateUrl: "/tl-services/v1/_update"
           }
+      
         },
         body: role_name !== 'CITIZEN' ? getCommonCard({
           //taskStatusSummary: taskStatusSummary,
@@ -760,7 +695,7 @@ const screenConfig = {
     },
     adhocDialog: {
       uiFramework: "custom-containers-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "DialogContainer",
       props: {
         open: false,

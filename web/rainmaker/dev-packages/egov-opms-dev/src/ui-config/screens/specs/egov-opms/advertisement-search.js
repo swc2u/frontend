@@ -3,10 +3,7 @@ import {
   getLabel,
   getBreak
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { NOCApplication } from "./searchResource/fireNocApplication";
-import { showHideAdhocPopup, resetFields, getRequiredDocData } from "../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-//import { pendingApprovals } from "./searchResource/pendingApprovals";
 import { searchResultsAdvertisement } from "./searchResource/searchResults";
 import { setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
 import {
@@ -28,16 +25,10 @@ let enableButton = true;
 enableButton = hasButton && hasButton === "false" ? false : true;
 
 const header = getCommonHeader({
-  labelName: "Fire NOC",
-  labelKey: "NOC_COMMON_NOC"
+  labelName: "Advertisement NOC",
+  labelKey: "ADVT_COMMON_NOC"
 });
 
-const pageResetAndChange = (state, dispatch) => {
-  dispatch(
-    prepareFinalObject("FireNOCs", [{ "fireNOCDetails.fireNOCType": "NEW" }])
-  );
-  // dispatch(setRoute("/tradelicence/apply"));
-};
 
 const NOCSearchAndResult = {
   uiFramework: "material-ui",
@@ -70,18 +61,6 @@ const NOCSearchAndResult = {
         )
       );
     }
-    getRequiredDocData(action, state, dispatch).then(() => {
-      let documents = get(
-        state,
-        "screenConfiguration.preparedFinalObject.searchScreenMdmsData.FireNoc.Documents",
-        []
-      );
-      set(
-        action,
-        "screenConfig.components.adhocDialog.children.popup",
-        getRequiredDocuments(documents)
-      );
-    });
     return action;
   },
   components: {
@@ -98,14 +77,14 @@ const NOCSearchAndResult = {
           componentPath: "Container",
 
         },
-     
+
         breakAfterSearch: getBreak(),
         searchResultsAdvertisement
       }
     },
     adhocDialog: {
       uiFramework: "custom-containers-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "DialogContainer",
       props: {
         open: false,

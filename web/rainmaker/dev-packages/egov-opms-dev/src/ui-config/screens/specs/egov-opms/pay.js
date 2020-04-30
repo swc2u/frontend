@@ -26,7 +26,7 @@ const header = getCommonContainer({
   }),
   applicationNumber: {
     uiFramework: "custom-atoms-local",
-    moduleName: "egov-noc",
+    moduleName: "egov-opms",
     componentPath: "ApplicationNoContainer",
     props: {
       number: getQueryArg(window.location.href, "applicationNumber")
@@ -68,7 +68,7 @@ const loadNocData = async (dispatch, applicationNumber, tenantId) => {
     { key: "applicationNumber", value: applicationNumber }
   ]);
   // const response = sampleSingleSearch();
-  dispatch(prepareFinalObject("FireNOCs", get(response, "FireNOCs", [])));
+  dispatch(prepareFinalObject("OpmsNOCs", get(response, "OpmsNOCs", [])));
 };
 
 const getPaymentGatwayList = async (action, state, dispatch) => {
@@ -166,7 +166,7 @@ const screenConfig = {
               },
               // viewBreakupButton: getDialogButton(
               //   "VIEW BREAKUP",
-              //   "TL_PAYMENT_VIEW_BREAKUP",
+              //   "PM_PAYMENT_VIEW_BREAKUP",
               //   "pay"
               // ),
              // capturePaymentDetails,
@@ -192,7 +192,7 @@ const screenConfig = {
     }
     // breakUpDialog: {
     //   uiFramework: "custom-containers-local",
-    //   moduleName: "egov-tradelicence",
+    //   moduleName: "egov-OPMS",
     //   componentPath: "ViewBreakupContainer",
     //   props: {
     //     open: false,

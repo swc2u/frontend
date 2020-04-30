@@ -4,49 +4,6 @@ import get from "lodash/get";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getSearchResults, furnishRoadcutNocResponse } from "../../../../../ui-utils/commons";
 
-const loadProvisionalNocData = async (state, dispatch) => {
-  let applicationNumber = get(
-    state,
-    "screenConfiguration.preparedFinalObject.ROADCUTNOC.applicationId",
-    ""
-  );
-
-
-  if (!applicationNumber.match(getPattern("FireNOCNo"))) {
-    dispatch(
-      toggleSnackbar(
-        true,
-        {
-          labelName: "Incorrect Road cut Noc Number!",
-          labelKey: "ERR_ROADCUT_NUMBER_INCORRECT"
-        },
-        "error"
-      )
-    );
-    return;
-  }
-
-  let response = await getSearchResults([{ key: "applicationNumber", value: applicationNumber }]);
-
-  response = furnishRoadcutNocResponse(response);
-
-  // Set noc type radiobutton to NEW
-  dispatch(
-    handleField(
-      "applyroadcuts",
-      "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.nocDetailsContainer.children.nocRadioGroup",
-      "props.value",
-      "NEW"
-    )
-  );
-
-  // Set provisional fire noc number
-  dispatch(prepareFinalObject("ROADCUTNOC.applicationId", get(response, "ROADCUTNOC.applicationNumber", "")));
-
-  // Set fire noc id to null
-  dispatch(prepareFinalObject("ROADCUTNOC.id", undefined));
-};
-
 export const nocDetails = getCommonCard({
   header: getCommonTitle(
     {

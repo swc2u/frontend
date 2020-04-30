@@ -16,8 +16,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { getSearchResultsView, UpdateStatus } from "../../../../ui-utils/commons";
 import { searchBill, createDemandForAdvNOC } from "../utils/index";
-import generatePdf from "../utils/receiptPdf";
-import { loadPdfGenerationData } from "../utils/receiptTransformer";
+//import  generatePdf from "../utils/receiptPdf";
 import { citizenFooter } from "./searchResource/citizenFooter";
 import { httpRequest } from "../../../../ui-utils";
 import {
@@ -98,7 +97,7 @@ const titlebar = getCommonContainer({
   }),
   applicationNumber: {
     uiFramework: "custom-atoms-local",
-    moduleName: "egov-noc",
+    moduleName: "egov-opms",
     componentPath: "ApplicationNoContainer",
     props: {
       number: getQueryArg(window.location.href, "applicationNumber")
@@ -251,25 +250,14 @@ const prepareDocumentsView = async (state, dispatch) => {
   let documentsPreview = [];
 
   // Get all documents from response
-  let firenoc = get(
+  let advtnocdetail = get(
     state,
     "screenConfiguration.preparedFinalObject.nocApplicationDetail[0]",
     {}
   );
-  let uploadVaccinationCertificate = JSON.parse(firenoc.applicationdetail).hasOwnProperty('uploadDocuments') ?
-    JSON.parse(firenoc.applicationdetail).uploadDocuments[0]['fileStoreId'] : '';
+  let uploadVaccinationCertificate = JSON.parse(advtnocdetail.applicationdetail).hasOwnProperty('uploadDocuments') ?
+    JSON.parse(advtnocdetail.applicationdetail).uploadDocuments[0]['fileStoreId'] : '';
 
-  // let uploadPetPicture=JSON.parse(firenoc.applicationdetail).hasOwnProperty('uploadPetPicture')?
-  // JSON.parse(firenoc.applicationdetail).uploadPetPicture[0]['fileStoreId']:'';
-  // let otherDocuments = jp.query(
-  // firenoc,
-  // "$.fireNOCDetails.additionalDetail.documents.*"
-  // );
-  // let allDocuments = [
-  // ...buildingDocuments,
-  // ...applicantDocuments,
-  // ...otherDocuments
-  // ];
 
   if (uploadVaccinationCertificate !== '') {
     documentsPreview.push({
@@ -299,152 +287,6 @@ const prepareDocumentsView = async (state, dispatch) => {
     });
     dispatch(prepareFinalObject("documentsPreview", documentsPreview));
   }
-};
-
-const prepareUoms = (state, dispatch) => {
-  let buildings = get(
-    state,
-    "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
-    []
-  );
-  buildings.forEach((building, index) => {
-    let uoms = get(building, "uoms", []);
-    let uomsMap = {};
-    uoms.forEach(uom => {
-      uomsMap[uom.code] = uom.value;
-    });
-    dispatch(
-      prepareFinalObject(
-        `FireNOCs[0].fireNOCDetails.buildings[${index}].uomsMap`,
-        uomsMap
-      )
-    );
-
-    // Display UOMS on search preview page
-    uoms.forEach(item => {
-      let labelElement = getLabelWithValue(
-        {
-          labelName: item.code,
-          labelKey: `NOC_PROPERTY_DETAILS_${item.code}_LABEL`
-        },
-        {
-          jsonPath: `FireNOCs[0].fireNOCDetails.buildings[0].uomsMap.${
-            item.code
-            }`
-        }
-      );
-
-      dispatch(
-        handleField(
-          "advertisementnocsearch-preview",
-          "components.div.children.body.children.cardContent.children.propertySummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.propertyContainer.children",
-          item.code,
-          labelElement
-        )
-      );
-    });
-  });
-};
-
-// const prepareDocumentsUploadRedux = (state, dispatch) => {
-//   dispatch(prepareFinalObject("documentsUploadRedux", documentsUploadRedux));
-// };
-
-const setDownloadMenu = (state, dispatch) => {
-  /** MenuButton data based on status */
-  let status = get(
-    state,
-    "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.status"
-  );
-  let downloadMenu = [];
-  let printMenu = [];
-  let certificateDownloadObject = {
-    label: { labelName: "NOC Certificate", labelKey: "NOC_CERTIFICATE" },
-    link: () => {
-      generatePdf(state, dispatch, "certificate_download");
-    },
-    leftIcon: "book"
-  };
-  let certificatePrintObject = {
-    label: { labelName: "NOC Certificate", labelKey: "NOC_CERTIFICATE" },
-    link: () => {
-      generatePdf(state, dispatch, "certificate_print");
-    },
-    leftIcon: "book"
-  };
-  let receiptDownloadObject = {
-    label: { labelName: "Receipt", labelKey: "NOC_RECEIPT" },
-    link: () => {
-      generatePdf(state, dispatch, "receipt_download");
-    },
-    leftIcon: "receipt"
-  };
-  let receiptPrintObject = {
-    label: { labelName: "Receipt", labelKey: "NOC_RECEIPT" },
-    link: () => {
-      generatePdf(state, dispatch, "receipt_print");
-    },
-    leftIcon: "receipt"
-  };
-  let applicationDownloadObject = {
-    label: { labelName: "Application", labelKey: "NOC_APPLICATION" },
-    link: () => {
-      generatePdf(state, dispatch, "application_download");
-    },
-    leftIcon: "assignment"
-  };
-  let applicationPrintObject = {
-    label: { labelName: "Application", labelKey: "NOC_APPLICATION" },
-    link: () => {
-      generatePdf(state, dispatch, "application_print");
-    },
-    leftIcon: "assignment"
-  };
-  switch (status) {
-    case "APPROVED":
-      downloadMenu = [
-        certificateDownloadObject,
-        receiptDownloadObject,
-        applicationDownloadObject
-      ];
-      printMenu = [
-        certificatePrintObject,
-        receiptPrintObject,
-        applicationPrintObject
-      ];
-      break;
-    case "DOCUMENTVERIFY":
-    case "FIELDINSPECTION":
-    case "PENDINGAPPROVAL":
-    case "REJECTED":
-      downloadMenu = [receiptDownloadObject, applicationDownloadObject];
-      printMenu = [receiptPrintObject, applicationPrintObject];
-      break;
-    case "CANCELLED":
-    case "PENDINGPAYMENT":
-      downloadMenu = [applicationDownloadObject];
-      printMenu = [applicationPrintObject];
-      break;
-    default:
-      break;
-  }
-  dispatch(
-    handleField(
-      "advertisement_summary",
-      "components.div.children.headerDiv.children.header.children.downloadMenu",
-      "props.data.menu",
-      downloadMenu
-    )
-  );
-  dispatch(
-    handleField(
-      "advertisement_summary",
-      "components.div.children.headerDiv.children.header.children.printMenu",
-      "props.data.menu",
-      printMenu
-    )
-  );
-  /** END */
 };
 
 const setSearchResponse = async (
@@ -482,43 +324,13 @@ const setSearchResponse = async (
 
 
   prepareDocumentsView(state, dispatch);
-  //prepareUoms(state, dispatch);
-  await loadPdfGenerationData(applicationNumber, tenantId);
-  setDownloadMenu(state, dispatch);
-
+  
+  
   getMdmsData(action, state, dispatch).then(response => {
     let advertisementtypeselected = '';
     let advertisementsubtypeselected = '';
     let advt = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationdetail", {});
 
-    if (advt !== null && advt !== '' && advt !== 'undefined') {
-      // advertisementtypeselected = JSON.parse(advt).typeOfAdvertisement;
-      // advertisementsubtypeselected = JSON.parse(advt).subTypeOfAdvertisement;
-      // let advertisementtypeid = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.typeOfAdvertisement",
-      //   []
-      // );
-
-      // advertisementtypeid.filter(item => {
-
-      //   if (item.name == advertisementtypeselected) {
-      //     localStorageSet("this_adv_code", item.code);
-      //     localStorageSet("this_adv_id", item.id);
-      //     item.subTypeOfAdvertisement.filter(subitem => {
-      //       if (subitem.name === advertisementsubtypeselected) {
-      //         localStorageSet("this_sub_adv_code", subitem.code);
-      //         localStorageSet("this_sub_adv_id", subitem.id);
-      //       }
-      //     });
-
-      //     createDemandForAdvNOC(state, dispatch, applicationNumber, tenantId);
-      //   }
-      // });
-
-
-    }
-    else {
-      alert("Error Fetching advertisement code. Reload!")
-    }
 
 
   });

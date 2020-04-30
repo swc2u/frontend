@@ -45,18 +45,6 @@ import { getapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 //import { getCurrentFinancialYear, generateBill, showHideAdhocPopup } from "../utils";
-const moveToSuccess = (LicenseData, dispatch) => {
-  const applicationNo = get(LicenseData, "applicationNumber");
-  const tenantId = get(LicenseData, "tenantId");
-  const financialYear = get(LicenseData, "financialYear");
-  const purpose = "apply";
-  const status = "success";
-  dispatch(
-    setRoute(
-      `/tradelicence/acknowledgement?purpose=${purpose}&status=${status}&applicationNumber=${applicationNo}&FY=${financialYear}&tenantId=${tenantId}`
-    )
-  );
-};
 
 export const generatePdfFromDiv = (action, applicationNumber) => {
   let target = document.querySelector("#custom-atoms-div");
@@ -92,291 +80,6 @@ export const generatePdfFromDiv = (action, applicationNumber) => {
       window.open(doc.output("bloburl"), "_blank");
     }
   });
-};
-
-export const callBackForNext = async (state, dispatch) => {
-  let activeStep = get(
-    state.screenConfiguration.screenConfig["apply"],
-    "components.div.children.stepper.props.activeStep",
-    0
-  );
-  // console.log(activeStep);
-  let isFormValid = true;
-  let hasFieldToaster = true;
-  if (activeStep === 0) {
-    const data = get(state.screenConfiguration, "preparedFinalObject");
-    setOwnerShipDropDownFieldChange(state, dispatch, data);
-
-    const isTradeDetailsValid = validateFields(
-      "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.tradeDetailsConatiner.children",
-      state,
-      dispatch
-    );
-    const isTradeLocationValid = validateFields(
-      "components.div.children.formwizardFirstStep.children.tradeLocationDetails.children.cardContent.children.tradeDetailsConatiner.children",
-      state,
-      dispatch
-    );
-    let accessoriesJsonPath =
-      "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.accessoriesCard.props.items";
-    let accessories = get(
-      state.screenConfiguration.screenConfig.apply,
-      accessoriesJsonPath,
-      []
-    );
-    let isAccessoriesValid = true;
-    for (var i = 0; i < accessories.length; i++) {
-      if (
-        (accessories[i].isDeleted === undefined ||
-          accessories[i].isDeleted !== false) &&
-        !validateFields(
-          `${accessoriesJsonPath}[${i}].item${i}.children.cardContent.children.accessoriesCardContainer.children`,
-          state,
-          dispatch
-        )
-      )
-        isAccessoriesValid = false;
-    }
-
-    let tradeUnitJsonPath =
-      "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.tradeUnitCard.props.items";
-    let tradeUnits = get(
-      state.screenConfiguration.screenConfig.apply,
-      tradeUnitJsonPath,
-      []
-    );
-    let isTradeUnitValid = true;
-
-    for (var j = 0; j < tradeUnits.length; j++) {
-      if (
-        (tradeUnits[j].isDeleted === undefined ||
-          tradeUnits[j].isDeleted !== false) &&
-        !validateFields(
-          `${tradeUnitJsonPath}[${j}].item${j}.children.cardContent.children.tradeUnitCardContainer.children`,
-          state,
-          dispatch
-        )
-      )
-        isTradeUnitValid = false;
-    }
-    if (
-      !isTradeDetailsValid ||
-      !isTradeLocationValid ||
-      !isAccessoriesValid ||
-      !isTradeUnitValid
-    ) {
-      isFormValid = false;
-    }
-  }
-
-  if (activeStep === 1) {
-    await getDocList(state, dispatch);
-
-    let isOwnerShipValid = validateFields(
-      "components.div.children.formwizardSecondStep.children.tradeOwnerDetails.children.cardContent.children.ownershipType.children",
-      state,
-      dispatch
-    );
-    let ownership = get(
-      state.screenConfiguration.preparedFinalObject,
-      "LicensesTemp[0].tradeLicenseDetail.ownerShipCategory",
-      "INDIVIDUAL"
-    );
-    if (ownership === "INDIVIDUAL") {
-      let ownersJsonPath =
-        "components.div.children.formwizardSecondStep.children.tradeOwnerDetails.children.cardContent.children.OwnerInfoCard.props.items";
-      let owners = get(
-        state.screenConfiguration.screenConfig.apply,
-        ownersJsonPath,
-        []
-      );
-      for (var k = 0; k < owners.length; k++) {
-        if (
-          (owners[k].isDeleted === undefined ||
-            owners[k].isDeleted !== false) &&
-          !validateFields(
-            `${ownersJsonPath}[${k}].item${k}.children.cardContent.children.tradeUnitCardContainer.children`,
-            state,
-            dispatch
-          )
-        )
-          isFormValid = false;
-      }
-    } else {
-      let ownersJsonPath =
-        "components.div.children.formwizardSecondStep.children.tradeOwnerDetails.children.cardContent.children.ownerInfoInstitutional.children.cardContent.children.tradeUnitCardContainer.children";
-      // let owners = get(
-      //   state.screenConfiguration.screenConfig.apply,
-      //   ownersJsonPath,
-      //   []
-      // );
-      // for (var x = 0; x < owners.length; x++) {
-      //   if (
-      //     (owners[x].isDeleted === undefined ||
-      //       owners[x].isDeleted !== false) &&
-      //     !validateFields(
-      //       `${ownersJsonPath}[${x}].item${x}.children.cardContent.children.tradeUnitCardContainer.children`,
-      //       state,
-      //       dispatch
-      //     )
-      //   )
-      if (!validateFields(ownersJsonPath, state, dispatch)) isFormValid = false;
-    }
-
-    // check for multiple owners
-    if (
-      get(
-        state.screenConfiguration.preparedFinalObject,
-        "Licenses[0].tradeLicenseDetail.subOwnerShipCategory"
-      ) === "INDIVIDUAL.MULTIPLEOWNERS" &&
-      get(
-        state.screenConfiguration.preparedFinalObject,
-        "Licenses[0].tradeLicenseDetail.owners"
-      ).length <= 1
-    ) {
-      dispatch(
-        toggleSnackbar(
-          true,
-          {
-            labelName: "Please add multiple owners !",
-            labelKey: "ERR_ADD_MULTIPLE_OWNERS"
-          },
-          "error"
-        )
-      );
-      return false; // to show the above message
-    }
-    if (isFormValid && isOwnerShipValid) {
-      isFormValid = await applyTradeLicense(state, dispatch, activeStep);
-      if (!isFormValid) {
-        hasFieldToaster = false;
-      }
-    } else {
-      isFormValid = false;
-    }
-  }
-  if (activeStep === 2) {
-    const LicenseData = get(
-      state.screenConfiguration.preparedFinalObject,
-      "Licenses[0]",
-      {}
-    );
-
-    get(LicenseData, "tradeLicenseDetail.subOwnerShipCategory") &&
-      get(LicenseData, "tradeLicenseDetail.subOwnerShipCategory").split(
-        "."
-      )[0] === "INDIVIDUAL"
-      ? setMultiOwnerForApply(state, true)
-      : setMultiOwnerForApply(state, false);
-
-    if (get(LicenseData, "licenseType")) {
-      setValidToFromVisibilityForApply(state, get(LicenseData, "licenseType"));
-    }
-
-    const uploadedDocData = get(
-      state.screenConfiguration.preparedFinalObject,
-      "Licenses[0].tradeLicenseDetail.applicationDocuments",
-      []
-    );
-
-    const uploadedTempDocData = get(
-      state.screenConfiguration.preparedFinalObject,
-      "LicensesTemp[0].applicationDocuments",
-      []
-    );
-
-    for (var y = 0; y < uploadedTempDocData.length; y++) {
-      if (
-        uploadedTempDocData[y].required &&
-        !some(uploadedDocData, { documentType: uploadedTempDocData[y].name })
-      ) {
-        isFormValid = false;
-      }
-    }
-
-    if (isFormValid) {
-      if (getQueryArg(window.location.href, "action") === "edit") {
-        //EDIT FLOW
-        const businessId = getQueryArg(
-          window.location.href,
-          "applicationNumber"
-        );
-        const tenantId = getQueryArg(window.location.href, "tenantId");
-        dispatch(
-          setRoute(
-            `/tradelicence/advertisementnoc-search-preview?applicationNumber=${businessId}&tenantId=${tenantId}&edited=true`
-          )
-        );
-        const updateMessage = {
-          labelName: "Rates will be updated on submission",
-          labelKey: "TL_COMMON_EDIT_UPDATE_MESSAGE"
-        };
-        dispatch(toggleSnackbar(true, updateMessage, "info"));
-      }
-      const reviewDocData =
-        uploadedDocData &&
-        uploadedDocData.map(item => {
-          return {
-            title: `TL_${item.documentType}`,
-            link: item.fileUrl && item.fileUrl.split(",")[0],
-            linkText: "View",
-            name: item.fileName
-          };
-        });
-      createEstimateData(
-        LicenseData,
-        "LicensesTemp[0].estimateCardData",
-        dispatch
-      ); //get bill and populate estimate card
-      dispatch(
-        prepareFinalObject("LicensesTemp[0].reviewDocData", reviewDocData)
-      );
-    }
-  }
-  if (activeStep === 3) {
-    const LicenseData = get(
-      state.screenConfiguration.preparedFinalObject,
-      "Licenses[0]"
-    );
-    isFormValid = await applyTradeLicense(state, dispatch);
-    if (isFormValid) {
-      moveToSuccess(LicenseData, dispatch);
-    }
-  }
-  if (activeStep !== 3) {
-    if (isFormValid) {
-      changeStep(state, dispatch);
-    } else if (hasFieldToaster) {
-      let errorMessage = {
-        labelName:
-          "Please fill all mandatory fields and upload the documents !",
-        labelKey: "ERR_FILL_MANDATORY_FIELDS_UPLOAD_DOCS"
-      };
-      switch (activeStep) {
-        case 0:
-          errorMessage = {
-            labelName:
-              "Please fill all mandatory fields for Trade Details, then do next !",
-            labelKey: "ERR_FILL_TRADE_MANDATORY_FIELDS"
-          };
-          break;
-        case 1:
-          errorMessage = {
-            labelName:
-              "Please fill all mandatory fields for Owner Details, then do next !",
-            labelKey: "ERR_FILL_OWNERS_MANDATORY_FIELDS"
-          };
-          break;
-        case 2:
-          errorMessage = {
-            labelName: "Please upload all the required documents !",
-            labelKey: "ERR_UPLOAD_REQUIRED_DOCUMENTS"
-          };
-          break;
-      }
-      dispatch(toggleSnackbar(true, errorMessage, "warning"));
-    }
-  }
 };
 
 export const changeStep = (
@@ -563,7 +266,7 @@ export const footer = getCommonApplyFooter({
       },
       previousButtonLabel: getLabel({
         labelName: "Previous Step",
-        labelKey: "TL_COMMON_BUTTON_PREV_STEP"
+        labelKey: "PM_COMMON_BUTTON_PREV_STEP"
       })
     },
     onClickDefination: {
@@ -602,7 +305,7 @@ export const footer = getCommonApplyFooter({
       action: "condition",
       callBack: (state, dispatch) => showHideAdhocPopupopmsForward(state, dispatch, "advertisementnoc-search-preview", "nextButton")
     },
-    visible:  false
+    visible: false
 
   },
   reject: {
@@ -675,7 +378,7 @@ export const footer = getCommonApplyFooter({
         showHideAdhocPopupopmsReassign(state, dispatch, "advertisementnoc-search-preview", "reject")
       }
     },
-    visible:  false
+    visible: false
   },
   approve: {
     componentPath: "Button",
@@ -746,7 +449,7 @@ export const footer = getCommonApplyFooter({
       }
     },
     visible: false
-    
+
   },
   withdraw: {
     componentPath: "Button",
@@ -782,37 +485,6 @@ export const footer = getCommonApplyFooter({
     },
     visible: false
   },
-  payButton: {
-    componentPath: "Button",
-    props: {
-      variant: "contained",
-      color: "primary",
-      style: {
-        minWidth: "180px",
-        height: "48px",
-        marginRight: "45px",
-        borderRadius: "inherit"
-      }
-    },
-    children: {
-      submitButtonLabel: getLabel({
-        labelName: "Submit",
-        labelKey: "TL_COMMON_BUTTON_SUBMIT"
-      }),
-      submitButtonIcon: {
-        uiFramework: "custom-atoms",
-        componentPath: "Icon",
-        props: {
-          iconName: "keyboard_arrow_right"
-        }
-      }
-    },
-    onClickDefination: {
-      action: "condition",
-      callBack: callBackForNext
-    },
-    visible: false
-  },
   resendbutton: {
     componentPath: "Button",
     props: {
@@ -845,7 +517,7 @@ export const footer = getCommonApplyFooter({
         gotoApplyWithStep(state, dispatch, 0);
       }
     },
-    visible: role_name == "CITIZEN" && localStorageGet("app_noc_status") == "REASSIGN"  ? true : false
+    visible: role_name == "CITIZEN" && localStorageGet("app_noc_status") == "REASSIGN" ? true : false
   },
 });
 
@@ -860,43 +532,43 @@ export const footerReview = (
   /** MenuButton data based on status */
   let downloadMenu = [];
   let printMenu = [];
-  let tlCertificateDownloadObject = {
-    label: { labelName: "TL Certificate", labelKey: "TL_CERTIFICATE" },
+  let pmCertificateDownloadObject = {
+    label: { labelName: "PM Certificate", labelKey: "PM_CERTIFICATE" },
     link: () => {
       generateReceipt(state, dispatch, "certificate_download");
     },
     leftIcon: "book"
   };
-  let tlCertificatePrintObject = {
-    label: { labelName: "TL Certificate", labelKey: "TL_CERTIFICATE" },
+  let pmCertificatePrintObject = {
+    label: { labelName: "PM Certificate", labelKey: "PM_CERTIFICATE" },
     link: () => {
       generateReceipt(state, dispatch, "certificate_print");
     },
     leftIcon: "book"
   };
   let receiptDownloadObject = {
-    label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
+    label: { labelName: "Receipt", labelKey: "PM_RECEIPT" },
     link: () => {
       generateReceipt(state, dispatch, "receipt_download");
     },
     leftIcon: "receipt"
   };
   let receiptPrintObject = {
-    label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
+    label: { labelName: "Receipt", labelKey: "PM_RECEIPT" },
     link: () => {
       generateReceipt(state, dispatch, "receipt_print");
     },
     leftIcon: "receipt"
   };
   let applicationDownloadObject = {
-    label: { labelName: "Application", labelKey: "TL_APPLICATION" },
+    label: { labelName: "Application", labelKey: "PM_APPLICATION" },
     link: () => {
       generatePdfFromDiv("download", applicationNumber);
     },
     leftIcon: "assignment"
   };
   let applicationPrintObject = {
-    label: { labelName: "Application", labelKey: "TL_APPLICATION" },
+    label: { labelName: "Application", labelKey: "PM_APPLICATION" },
     link: () => {
       generatePdfFromDiv("print", applicationNumber);
     },
@@ -905,12 +577,12 @@ export const footerReview = (
   switch (status) {
     case "APPROVED":
       downloadMenu = [
-        tlCertificateDownloadObject,
+        pmCertificateDownloadObject,
         receiptDownloadObject,
         applicationDownloadObject
       ];
       printMenu = [
-        tlCertificatePrintObject,
+        pmCertificatePrintObject,
         receiptPrintObject,
         applicationPrintObject
       ];
@@ -953,7 +625,7 @@ export const footerReview = (
           children: {
             downloadMenu: {
               uiFramework: "custom-atoms-local",
-              moduleName: "egov-tradelicence",
+              moduleName: "egov-OPMS",
               componentPath: "MenuButton",
               props: {
                 data: {
@@ -967,7 +639,7 @@ export const footerReview = (
             },
             printMenu: {
               uiFramework: "custom-atoms-local",
-              moduleName: "egov-tradelicence",
+              moduleName: "egov-OPMS",
               componentPath: "MenuButton",
               props: {
                 data: {
@@ -1004,17 +676,13 @@ export const footerReview = (
               children: {
                 nextButtonLabel: getLabel({
                   labelName: "Reject",
-                  labelKey: "TL_APPROVER_TRADE_APP_BUTTON_REJECT"
+                  labelKey: "PM_APPROVER_TRADE_APP_BUTTON_REJECT"
                 })
-              },
-              onClickDefination: {
-                action: "page_change",
-                path: `/tradelicence/approve?purpose=reject&applicationNumber=${applicationNumber}&tenantId=${tenantId}`
               },
               visible: getButtonVisibility(status, "REJECT"),
               roleDefination: {
                 rolePath: "user-info.roles",
-                roles: ["TL_APPROVER"]
+                roles: ["PM_APPROVER"]
               }
             },
             approveButton: {
@@ -1031,17 +699,13 @@ export const footerReview = (
               children: {
                 nextButtonLabel: getLabel({
                   labelName: "APPROVE",
-                  labelKey: "TL_APPROVER_TRADE_APP_BUTTON_APPROVE"
+                  labelKey: "PM_APPROVER_TRADE_APP_BUTTON_APPROVE"
                 })
-              },
-              onClickDefination: {
-                action: "page_change",
-                path: `/tradelicence/approve?applicationNumber=${applicationNumber}&tenantId=${tenantId}`
               },
               visible: getButtonVisibility(status, "APPROVE"),
               roleDefination: {
                 rolePath: "user-info.roles",
-                roles: ["TL_APPROVER"]
+                roles: ["PM_APPROVER"]
               }
             },
             proceedPayButton: {
@@ -1058,13 +722,12 @@ export const footerReview = (
               children: {
                 nextButtonLabel: getLabel({
                   labelName: "PROCEED TO PAYMENT",
-                  labelKey: "TL_COMMON_BUTTON_PROC_PMT"
+                  labelKey: "PM_COMMON_BUTTON_PROC_PMT"
                 })
               },
               onClickDefination: {
                 action: "page_change",
                 path: `/egov-common/pay?consumerCode=${applicationNumber}&tenantId=${tenantId}&businessService=NewTL`
-                //path: `${redirectionURL}/pay?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=TL`
               },
               roleDefination: {
                 rolePath: "user-info.roles",
@@ -1085,17 +748,13 @@ export const footerReview = (
               children: {
                 nextButtonLabel: getLabel({
                   labelName: "CANCEL TRADE LICENSE",
-                  labelKey: "TL_COMMON_BUTTON_CANCEL_LICENSE"
+                  labelKey: "PM_COMMON_BUTTON_CANCEL_LICENSE"
                 })
-              },
-              onClickDefination: {
-                action: "page_change",
-                path: `/tradelicence/approve?purpose=cancel&applicationNumber=${applicationNumber}&tenantId=${tenantId}`
               },
               visible: getButtonVisibility(status, "CANCEL TRADE LICENSE"),
               roleDefination: {
                 rolePath: "user-info.roles",
-                roles: ["TL_APPROVER"]
+                roles: ["PM_APPROVER"]
               }
             }
           },
@@ -1121,43 +780,43 @@ export const downloadPrintContainer = (
   /** MenuButton data based on status */
   let downloadMenu = [];
   let printMenu = [];
-  let tlCertificateDownloadObject = {
-    label: { labelName: "TL Certificate", labelKey: "TL_CERTIFICATE" },
+  let pmCertificateDownloadObject = {
+    label: { labelName: "PM Certificate", labelKey: "PM_CERTIFICATE" },
     link: () => {
       generateReceipt(state, dispatch, "certificate_download");
     },
     leftIcon: "book"
   };
-  let tlCertificatePrintObject = {
-    label: { labelName: "TL Certificate", labelKey: "TL_CERTIFICATE" },
+  let pmCertificatePrintObject = {
+    label: { labelName: "PM Certificate", labelKey: "PM_CERTIFICATE" },
     link: () => {
       generateReceipt(state, dispatch, "certificate_print");
     },
     leftIcon: "book"
   };
   let receiptDownloadObject = {
-    label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
+    label: { labelName: "Receipt", labelKey: "PM_RECEIPT" },
     link: () => {
       generateReceipt(state, dispatch, "receipt_download");
     },
     leftIcon: "receipt"
   };
   let receiptPrintObject = {
-    label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
+    label: { labelName: "Receipt", labelKey: "PM_RECEIPT" },
     link: () => {
       generateReceipt(state, dispatch, "receipt_print");
     },
     leftIcon: "receipt"
   };
   let applicationDownloadObject = {
-    label: { labelName: "Application", labelKey: "TL_APPLICATION" },
+    label: { labelName: "Application", labelKey: "PM_APPLICATION" },
     link: () => {
       generatePdfFromDiv("download", applicationNumber);
     },
     leftIcon: "assignment"
   };
   let applicationPrintObject = {
-    label: { labelName: "Application", labelKey: "TL_APPLICATION" },
+    label: { labelName: "Application", labelKey: "PM_APPLICATION" },
     link: () => {
       generatePdfFromDiv("print", applicationNumber);
     },
@@ -1166,12 +825,12 @@ export const downloadPrintContainer = (
   switch (status) {
     case "APPROVED":
       downloadMenu = [
-        tlCertificateDownloadObject,
+        pmCertificateDownloadObject,
         receiptDownloadObject,
         applicationDownloadObject
       ];
       printMenu = [
-        tlCertificatePrintObject,
+        pmCertificatePrintObject,
         receiptPrintObject,
         applicationPrintObject
       ];
@@ -1210,7 +869,7 @@ export const downloadPrintContainer = (
       children: {
         downloadMenu: {
           uiFramework: "custom-atoms-local",
-          moduleName: "egov-tradelicence",
+          moduleName: "egov-OPMS",
           componentPath: "MenuButton",
           props: {
             data: {
@@ -1224,7 +883,7 @@ export const downloadPrintContainer = (
         },
         printMenu: {
           uiFramework: "custom-atoms-local",
-          moduleName: "egov-tradelicence",
+          moduleName: "egov-OPMS",
           componentPath: "MenuButton",
           props: {
             data: {

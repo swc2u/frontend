@@ -300,23 +300,7 @@ export const renderSteps = (activeStep, dispatch) => {
         dispatch
       );
       break;
-    // case 2:
-    //   dispatchMultipleFieldChangeAction(
-    //     "applysellmeat",
-    //     getActionDefinationForStepper(
-    //       "components.div.children.formwizardThirdStep"
-    //     ),
-    //     dispatch
-    //   );
-    //   break;
-    // default:
-    //   dispatchMultipleFieldChangeAction(
-    //     "applysellmeat",
-    //     getActionDefinationForStepper(
-    //       "components.div.children.formwizardThirdStep"
-    //     ),
-    //     dispatch
-    //   );
+
   }
 };
 
@@ -332,12 +316,7 @@ export const getActionDefinationForStepper = path => {
       property: "visible",
       value: false
     }
-    // ,
-    // {
-    //   path: "components.div.children.formwizardThirdStep",
-    //   property: "visible",
-    //   value: false
-    // }
+
   ];
   for (var i = 0; i < actionDefination.length; i++) {
     actionDefination[i] = {

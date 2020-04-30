@@ -15,7 +15,7 @@ export const selectPG = async (state, dispatch) => {
   showHideAdhocPopup(state, dispatch, "pay")
 };
 export const callPGService = async (state, dispatch) => {
-const gateway = get(state, "screenConfiguration.preparedFinalObject.OPMS.paymentGateway");
+  const gateway = get(state, "screenConfiguration.preparedFinalObject.OPMS.paymentGateway");
   const tenantId = getQueryArg(window.location.href, "tenantId");
   const applicationNumber = getQueryArg(
     window.location.href,
@@ -36,7 +36,7 @@ const gateway = get(state, "screenConfiguration.preparedFinalObject.OPMS.payment
       { key: "businessService", value: "OPMS" }
       //value: applicationNumber
     ];
-    
+
 
     // const billPayload = await getBill(queryObj);
     // const taxAmount = get(billPayload, "Bill[0].totalAmount")
@@ -53,11 +53,11 @@ const gateway = get(state, "screenConfiguration.preparedFinalObject.OPMS.payment
     for (let index = 0; index < Accountdetails.length; index++) {
       const element = Accountdetails[index];
       if (element.taxHeadCode === `PETNOC_FEE` ||
-      element.taxHeadCode === `ROADCUTNOC_FEE` ||
-      element.taxHeadCode === `ADVERTISEMENTNOC_FEE`) {
+        element.taxHeadCode === `ROADCUTNOC_FEE` ||
+        element.taxHeadCode === `ADVERTISEMENTNOC_FEE`) {
         localStorageSet("amount", element.amount);
       } else if (element.taxHeadCode === `PETNOC_TAX` ||
-        element.taxHeadCode === `ROADCUTNOC_TAX` || 
+        element.taxHeadCode === `ROADCUTNOC_TAX` ||
         element.taxHeadCode === `ADVERTISEMENTNOC_TAX`) {
         localStorageSet("gstAmount", element.amount);
       } else if (element.taxHeadCode === `ROADCUTNOC_FEE_BANK`) {
@@ -72,7 +72,7 @@ const gateway = get(state, "screenConfiguration.preparedFinalObject.OPMS.payment
     }]
 
     try {
-      
+
       const userMobileNumber = get(state, "auth.userInfo.mobileNumber")
       const userName = get(state, "auth.userInfo.name")
       const requestBody = {
@@ -120,7 +120,7 @@ const moveToSuccess = (dispatch, receiptNumber) => {
     process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
   dispatch(
     setRoute(
-      `${appendUrl}/fire-noc/acknowledgement?purpose=${purpose}&status=${status}&applicationNumber=${applicationNo}&tenantId=${tenantId}&secondNumber=${receiptNumber}`
+      `${appendUrl}/egov-opms/acknowledgement?purpose=${purpose}&status=${status}&applicationNumber=${applicationNo}&tenantId=${tenantId}&secondNumber=${receiptNumber}`
     )
   );
 };
@@ -191,17 +191,17 @@ const updatePayAction = async (
       },
       { key: "applicationNumber", value: applicationNo }
     ]);
-    set(response, "FireNOCs[0].fireNOCDetails.action", "PAY");
+    set(response, "OpmsNOCs[0].opmsNOCDetails.action", "PAY");
     response = await httpRequest(
       "post",
       "pm-services/noc/_updateappstatus",
       "",
       [],
       {
-        FireNOCs: get(response, "FireNOCs", [])
+        OpmsNOCs: get(response, "OpmsNOCs", [])
       }
     );
-    if (get(response, "FireNOCs", []).length > 0) {
+    if (get(response, "OpmsNOCs", []).length > 0) {
       moveToSuccess(dispatch, receiptNumber);
     }
   } catch (e) {
@@ -337,11 +337,8 @@ const callBackForPay = async (state, dispatch) => {
         "post",
         "collection-services/receipts/_create",
         "_create",
-        [],
-        ReceiptBody,
-        [],
-        {}
-      );
+        [], ReceiptBody, [], {});
+        
       let receiptNumber = get(
         response,
         "Receipt[0].Bill[0].billDetails[0].receiptNumber",

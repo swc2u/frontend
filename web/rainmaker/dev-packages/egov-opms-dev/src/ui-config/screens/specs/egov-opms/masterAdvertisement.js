@@ -11,17 +11,6 @@ const hasButton = getQueryArg(window.location.href, "hasButton");
 let enableButton = true;
 enableButton = hasButton && hasButton === "false" ? false : true;
 
-// const header = getCommonHeader({
-//   labelName: "Fire NOC",
-//   labelKey: "NOC_COMMON_NOC"
-// });
-
-// const pageResetAndChange = (state, dispatch) => {
-//   dispatch(
-//     prepareFinalObject("FireNOCs", [{ "fireNOCDetails.fireNOCType": "NEW" }])
-//   );
-//   // dispatch(setRoute("/tradelicence/apply"));
-// };
 
 export const datagridsummary = {
   uiFramework: "custom-atoms",
@@ -41,14 +30,6 @@ const NOCSearchAndResult = {
     getCategory(action, state, dispatch);
     getSubCategory(action, state, dispatch);
     getMasterGridData(action, state, dispatch);
-
-
-    // const tenantId = getOPMSTenantId();
-    // const BSqueryObject = [
-    //   { key: "tenantId", value: tenantId },
-    //   { key: "businessServices", value: "FIRENOC" }
-    // ];
-
 
     return action;
   },
@@ -75,7 +56,7 @@ const NOCSearchAndResult = {
     },
     adhocDialog: {
       uiFramework: "custom-containers-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "DialogContainer",
       props: {
         open: false,

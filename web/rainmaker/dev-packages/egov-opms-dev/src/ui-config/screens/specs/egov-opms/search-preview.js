@@ -27,8 +27,8 @@ import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
 import { searchBill } from "../utils/index";
-import generatePdf from "../utils/receiptPdf";
-import { loadPdfGenerationData } from "../utils/receiptTransformer";
+//import  generatePdf from "../utils/receiptPdf";
+
 import { footer } from "./applyResource/employeeFooter";
 //import { footer ,footerReview} from "./applyResource/footer";
 import { showHideAdhocPopup, showHideAdhocPopups } from "../utils";
@@ -110,7 +110,7 @@ const undertakingButton1 = getCommonContainer({
     children: {
       submitButtonLabel: getLabel({
         labelName: "Resend",
-        labelKey: "TL_COMMON_BUTTON_RESEND"
+        labelKey: "PM_COMMON_BUTTON_RESEND"
       }),
       submitButtonIcon: {
         uiFramework: "custom-atoms",
@@ -227,16 +227,16 @@ const prepareDocumentsView = async (state, dispatch) => {
   let documentsPreview = [];
 
   // Get all documents from response
-  let firenoc = get(
+  let petnocdetail = get(
     state,
     "screenConfiguration.preparedFinalObject.nocApplicationDetail[0]",
     {}
   );
-  let uploadVaccinationCertificate = JSON.parse(firenoc.applicationdetail).hasOwnProperty('uploadVaccinationCertificate') ?
-    JSON.parse(firenoc.applicationdetail).uploadVaccinationCertificate[0]['fileStoreId'] : '';
+  let uploadVaccinationCertificate = JSON.parse(petnocdetail.applicationdetail).hasOwnProperty('uploadVaccinationCertificate') ?
+    JSON.parse(petnocdetail.applicationdetail).uploadVaccinationCertificate[0]['fileStoreId'] : '';
 
-  let uploadPetPicture = JSON.parse(firenoc.applicationdetail).hasOwnProperty('uploadPetPicture') ?
-    JSON.parse(firenoc.applicationdetail).uploadPetPicture[0]['fileStoreId'] : '';
+  let uploadPetPicture = JSON.parse(petnocdetail.applicationdetail).hasOwnProperty('uploadPetPicture') ?
+    JSON.parse(petnocdetail.applicationdetail).uploadPetPicture[0]['fileStoreId'] : '';
 
   if (uploadVaccinationCertificate !== '' && uploadPetPicture !== '') {
     documentsPreview.push({
@@ -274,59 +274,6 @@ const prepareDocumentsView = async (state, dispatch) => {
 };
 
 
-// const prepareDocumentsUploadRedux = (state, dispatch) => {
-//   dispatch(prepareFinalObject("documentsUploadRedux", documentsUploadRedux));
-// };
-
-const setDownloadMenu = (state, dispatch) => {
-  /** MenuButton data based on status */
-  //let status = get(state,"screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.status");
-  let downloadMenu = [];
-
-  //Object creation for NOC's
-  let certificateDownloadObjectPET = {
-    label: { labelName: "NOC Certificate PET", labelKey: "NOC_CERTIFICATE_PET" },
-    link: () => {
-      window.location.href = httpLinkPET;
-      //generatePdf(state, dispatch, "certificate_download");
-    },
-    leftIcon: "book"
-  };
-
-
-  //Object creation for Receipt's
-  let certificateDownloadObjectPET_RECEIPT = {
-    label: { labelName: "NOC Certificate PET", labelKey: "NOC_RECEIPT_PET" },
-    link: () => {
-      window.location.href = httpLinkPET_RECEIPT;
-      //generatePdf(state, dispatch, "certificate_download");
-    },
-    leftIcon: "book"
-  };
-  downloadMenu = [
-    certificateDownloadObjectPET,
-    certificateDownloadObjectPET_RECEIPT
-  ];
-  switch (status) {
-    case "APPROVED":
-      downloadMenu = [
-        certificateDownloadObjectPET,
-        certificateDownloadObjectPET_RECEIPT
-      ];
-      break;
-    default:
-      break;
-  }
-  dispatch(
-    handleField(
-      "search-preview",
-      "components.div.children.headerDiv.children.header.children.downloadMenu",
-      "props.data.menu",
-      downloadMenu
-    )
-  );
-};
-
 const setSearchResponse = async (state, dispatch, action, applicationNumber, tenantId) => {
   const response = await getSearchResultsView([
     { key: "tenantId", value: tenantId },
@@ -345,8 +292,7 @@ const setSearchResponse = async (state, dispatch, action, applicationNumber, ten
 
 
   prepareDocumentsView(state, dispatch);
-  //await loadPdfGenerationData(applicationNumber, tenantId);
-
+  
   if (role_name == 'CITIZEN') {
     
     setSearchResponseForNocCretificate(state, dispatch, action, applicationNumber, tenantId);
@@ -451,7 +397,7 @@ const setSearchResponseForNocCretificate = async (state, dispatch, action, appli
       link: () => {
         if (httpLinkPET != "")
           window.location.href = httpLinkPET;
-        //generatePdf(state, dispatch, "certificate_download");
+        //// generatePdf(state, dispatch, "certificate_download");
       },
       leftIcon: "book"
     };
@@ -492,7 +438,7 @@ const setSearchResponseForNocCretificate = async (state, dispatch, action, appli
       link: () => {
         if (httpLinkPET_RECEIPT != "")
           window.location.href = httpLinkPET_RECEIPT;
-        //generatePdf(state, dispatch, "certificate_download");
+        //// generatePdf(state, dispatch, "certificate_download");
       },
       leftIcon: "book"
     };
@@ -522,7 +468,6 @@ const setSearchResponseForNocCretificate = async (state, dispatch, action, appli
     )
   );
 
-  //setDownloadMenu(state, dispatch);
 };
 
 const screenConfig = {
@@ -589,8 +534,8 @@ const screenConfig = {
           props: {
             dataPath: "Licenses",
             moduleName: "PETNOC",
-            updateUrl: "/tl-services/v1/_update"
           }
+
         },
         body: role_name !== 'CITIZEN' ? getCommonCard({
           estimateSummary: estimateSummary,

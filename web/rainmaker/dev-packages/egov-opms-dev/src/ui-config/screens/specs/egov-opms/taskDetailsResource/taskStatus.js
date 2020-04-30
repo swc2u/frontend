@@ -112,7 +112,7 @@ export const taskStatus = getCommonCard({
     ),
     children: {
       uiFramework: "custom-containers-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "DownloadFileContainer",
       backgroundColor: "##F2F2F2",
       props: {

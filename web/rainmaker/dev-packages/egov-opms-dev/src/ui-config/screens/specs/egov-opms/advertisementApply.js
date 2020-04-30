@@ -43,7 +43,7 @@ const applicationNumberContainer = () => {
   if (applicationNumber)
     return {
       uiFramework: "custom-atoms-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "ApplicationNoContainer",
       props: {
         number: `${applicationNumber}`,
@@ -62,7 +62,7 @@ export const header = getCommonContainer({
   //applicationNumber: applicationNumberContainer()
   applicationNumber: {
     uiFramework: "custom-atoms-local",
-    moduleName: "egov-noc",
+    moduleName: "egov-opms",
     componentPath: "ApplicationNoContainer",
     props: {
       number: "NA"
@@ -210,9 +210,9 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
     let documentsPreview = [];
 
     // Get all documents from response
-    let firenoc = get(state, "screenConfiguration.preparedFinalObject.ADVERTISEMENTNOC", {});
-    let uploadVaccinationCertificate = firenoc.hasOwnProperty('uploadDocuments') ?
-      firenoc.uploadDocuments[0]['fileStoreId'] : '';
+    let advtnocdetail = get(state, "screenConfiguration.preparedFinalObject.ADVERTISEMENTNOC", {});
+    let uploadVaccinationCertificate = advtnocdetail.hasOwnProperty('uploadDocuments') ?
+      advtnocdetail.uploadDocuments[0]['fileStoreId'] : '';
     
     if (uploadVaccinationCertificate !== '') {
       documentsPreview.push({
@@ -251,9 +251,11 @@ const screenConfig = {
   name: "advertisementApply",
   beforeInitScreen: (action, state, dispatch) => {
     const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
-    !applicationNumber ? clearlocalstorageAppDetails(state) : '';
+    !applicationNumber ? clearlocalstorageAppDetails(state) : ''
+    
     setapplicationType("ADVERTISEMENTNOC");
     
+
     const tenantId = getQueryArg(window.location.href, "tenantId");
     const step = getQueryArg(window.location.href, "step");
     const userInfo = JSON.parse(getUserInfo());
@@ -305,7 +307,16 @@ const screenConfig = {
         );
       }
     }
-    return action;
+    if(applicationNumber){ 
+      dispatch(
+        handleField(
+          "advertisementApply",
+          "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.exemptedCategory.children.exemptionradio.props.buttons",
+          "disabled", true)
+          );
+        }
+
+        return action;
   },
   components: {
     div: {

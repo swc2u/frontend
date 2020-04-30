@@ -25,8 +25,8 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { getSearchResultsView } from "../../../../ui-utils/commons";
 import { searchBill } from "../utils/index";
-import generatePdf from "../utils/receiptPdf";
-import { loadPdfGenerationData } from "../utils/receiptTransformer";
+//import  generatePdf from "../utils/receiptPdf";
+
 import { citizenFooter } from "./searchResource/citizenFooter";
 import {
   applicantSummary,
@@ -72,7 +72,7 @@ const titlebar = getCommonContainer({
   }),
   applicationNumber: {
     uiFramework: "custom-atoms-local",
-    moduleName: "egov-noc",
+    moduleName: "egov-opms",
     componentPath: "ApplicationNoContainer",
     props: {
       number: getQueryArg(window.location.href, "applicationNumber")
@@ -294,16 +294,6 @@ const prepareDocumentsView = async (state, dispatch) => {
   allDocuments.push(uploadDocuments)
   //allDocuments.push(uploadPetPicture)
 
-  // let otherDocuments = jp.query(
-  // petnoc,
-  // "$.fireNOCDetails.additionalDetail.documents.*"
-  // );
-  // let allDocuments = [
-  // ...buildingDocuments,
-  // ...applicantDocuments,
-  // ...otherDocuments
-  // ];
-
   if (uploadDocuments !== '') {
     documentsPreview.push(
       {
@@ -341,49 +331,49 @@ const setDownloadMenu = (state, dispatch) => {
   /** MenuButton data based on status */
   let status = get(
     state,
-    "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.status"
+    "screenConfiguration.preparedFinalObject.OpmsNOCs[0].opmsNOCDetails.status"
   );
   let downloadMenu = [];
   let printMenu = [];
   let certificateDownloadObject = {
     label: { labelName: "NOC Certificate", labelKey: "NOC_CERTIFICATE" },
     link: () => {
-      generatePdf(state, dispatch, "certificate_download");
+      // generatePdf(state, dispatch, "certificate_download");
     },
     leftIcon: "book"
   };
   let certificatePrintObject = {
     label: { labelName: "NOC Certificate", labelKey: "NOC_CERTIFICATE" },
     link: () => {
-      generatePdf(state, dispatch, "certificate_print");
+      // generatePdf(state, dispatch, "certificate_print");
     },
     leftIcon: "book"
   };
   let receiptDownloadObject = {
     label: { labelName: "Receipt", labelKey: "NOC_RECEIPT" },
     link: () => {
-      generatePdf(state, dispatch, "receipt_download");
+      // generatePdf(state, dispatch, "receipt_download");
     },
     leftIcon: "receipt"
   };
   let receiptPrintObject = {
     label: { labelName: "Receipt", labelKey: "NOC_RECEIPT" },
     link: () => {
-      generatePdf(state, dispatch, "receipt_print");
+      // generatePdf(state, dispatch, "receipt_print");
     },
     leftIcon: "receipt"
   };
   let applicationDownloadObject = {
     label: { labelName: "Application", labelKey: "NOC_APPLICATION" },
     link: () => {
-      generatePdf(state, dispatch, "application_download");
+      // generatePdf(state, dispatch, "application_download");
     },
     leftIcon: "assignment"
   };
   let applicationPrintObject = {
     label: { labelName: "Application", labelKey: "NOC_APPLICATION" },
     link: () => {
-      generatePdf(state, dispatch, "application_print");
+      // generatePdf(state, dispatch, "application_print");
     },
     leftIcon: "assignment"
   };
@@ -448,8 +438,6 @@ const setSearchResponse = async (
 
 
   prepareDocumentsView(state, dispatch);
-  //prepareUoms(state, dispatch);
-  await loadPdfGenerationData(applicationNumber, tenantId);
   setDownloadMenu(state, dispatch);
 };
 
@@ -527,8 +515,8 @@ const screenConfig = {
           visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
           props: {
             dataPath: "nocApplicationDetail",
-            moduleName: "FIRENOC",
-            updateUrl: "/firenoc-services/v1/_update"
+            moduleName: "ROADCUTNOC",
+            //updateUrl: "/opms-services/v1/_update"
           }
         },
         body: role_name !== 'CITIZEN' ? getCommonCard({

@@ -3,10 +3,7 @@ import {
   getLabel,
   getBreak
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { NOCApplication } from "./searchResource/fireNocApplication";
-import { showHideAdhocPopup, resetFields, getRequiredDocData } from "../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import { pendingApprovals } from "./searchResource/pendingApprovals";
 import { searchResultsRoadcut } from "./searchResource/searchResults";
 import { setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
 import {
@@ -28,16 +25,10 @@ let enableButton = true;
 enableButton = hasButton && hasButton === "false" ? false : true;
 
 const header = getCommonHeader({
-  labelName: "Fire NOC",
-  labelKey: "NOC_COMMON_NOC"
+  labelName: "ROAD CUT NOC",
+  labelKey: "ROADCUT_COMMON_NOC"
 });
 
-const pageResetAndChange = (state, dispatch) => {
-  dispatch(
-    prepareFinalObject("FireNOCs", [{ "fireNOCDetails.fireNOCType": "NEW" }])
-  );
-  // dispatch(setRoute("/tradelicence/apply"));
-};
 
 const NOCSearchAndResult = {
   uiFramework: "material-ui",
@@ -70,18 +61,6 @@ const NOCSearchAndResult = {
         )
       );
     }
-    getRequiredDocData(action, state, dispatch).then(() => {
-      let documents = get(
-        state,
-        "screenConfiguration.preparedFinalObject.searchScreenMdmsData.FireNoc.Documents",
-        []
-      );
-      set(
-        action,
-        "screenConfig.components.adhocDialog.children.popup",
-        getRequiredDocuments(documents)
-      );
-    });
     return action;
   },
   components: {
@@ -96,75 +75,14 @@ const NOCSearchAndResult = {
         headerDiv: {
           uiFramework: "custom-atoms",
           componentPath: "Container",
-
-          // children: {
-          //   header: {
-          //     gridDefination: {
-          //       xs: 12,
-          //       sm: 6
-          //     },
-          //     ...header
-          //   },
-          //   newApplicationButton: {
-          //     componentPath: "Button",
-          //     gridDefination: {
-          //       xs: 12,
-          //       sm: 6,
-          //       align: "right"
-          //     },
-          //     visible: enableButton,
-          //     props: {
-          //       variant: "contained",
-          //       color: "primary",
-          //       style: {
-          //         color: "white",
-          //         borderRadius: "2px",
-          //         width: "250px",
-          //         height: "48px"
-          //       }
-          //     },
-
-          //     children: {
-          //       plusIconInsideButton: {
-          //         uiFramework: "custom-atoms",
-          //         componentPath: "Icon",
-          //         props: {
-          //           iconName: "add",
-          //           style: {
-          //             fontSize: "24px"
-          //           }
-          //         }
-          //       },
-
-          //       buttonLabel: getLabel({
-          //         labelName: "NEW APPLICATION",
-          //         labelKey: "NOC_HOME_SEARCH_RESULTS_NEW_APP_BUTTON"
-          //       })
-          //     },
-          //     onClickDefination: {
-          //       action: "condition",
-          //       callBack: (state, dispatch) => {
-          //         pageResetAndChange(state, dispatch);
-          //         showHideAdhocPopup(state, dispatch, "search");
-          //       }
-          //     },
-          //     roleDefination: {
-          //       rolePath: "user-info.roles",
-          //       roles: ["NOC_CEMP", "SUPERUSER"]
-          //     }
-          //   }
-          // }
         },
-        // pendingApprovals,
-        // NOCApplication,
         breakAfterSearch: getBreak(),
-        // progressStatus,
         searchResultsRoadcut
       }
     },
     adhocDialog: {
       uiFramework: "custom-containers-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "DialogContainer",
       props: {
         open: false,

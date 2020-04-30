@@ -9,14 +9,6 @@ import {
   getSelectField,
   getTextField
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { searchApiCall } from "./functions";
-import {
-  getCommonHeader,
-
-  getCommonSubHeader,
-
-} from "egov-ui-framework/ui-config/screens/specs/utils";
 import {  toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 import { UpdateMasterPrice } from "../../../../../ui-utils/commons";
@@ -28,12 +20,6 @@ import {
 } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 import { convertEpochToDate, convertDateToEpoch } from "../../utils/index";
-
-import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-
-
-
-
 
 export const UpdateMaster = async (state, dispatch) => {
   let perDay = 0
@@ -336,21 +322,6 @@ export const NOCApplication2 = getCommonCard({
       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
       jsonPath: "Matserdata[0].perMonthPrice",
       sourceJsonPath: "Matserdata[0].perMonthPrice",
-      // beforeFieldChange: (action, state, dispatch) => {
-      //   let duration = get(state.screenConfiguration.preparedFinalObject, `Matserdata[0].duration`, []);
-      //   duration.filter(item => { 
-      //     if(item === 'month'){
-      //       alert('in')
-      //       dispatch(
-      //         handleField(
-      //           "masterUpdateRate",
-      //           "screenConfig.components.div.children.NOCApplication2.children.cardContent.children.masterContainer.children.perMonth.required",
-      //           true));
-      //           required:true
-      //     }
-      //   });
-        
-      // }
     }),
     anual: getTextField({
       label: {

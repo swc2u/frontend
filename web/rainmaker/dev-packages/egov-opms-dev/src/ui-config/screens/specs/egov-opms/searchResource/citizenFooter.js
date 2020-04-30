@@ -39,10 +39,7 @@ export const citizenFooter = getCommonApplyFooter({
     },
     onClickDefination: {
       action: "page_change",
-      path: `/egov-common/pay?consumerCode=${applicationNumber}&tenantId=${tenant}&businessService=FIRENOC`
-        // process.env.REACT_APP_SELF_RUNNING === "true"
-        //   ? `/egov-ui-framework/fire-noc/citizen-pay?applicationNumber=${applicationNumber}&tenantId=${tenant}`
-        //   : `/fire-noc/citizen-pay?applicationNumber=${applicationNumber}&tenantId=${tenant}`
+      path: `/egov-common/pay?consumerCode=${applicationNumber}&tenantId=${tenant}&businessService=OPMSNOC`
     },
     
     roleDefination: {

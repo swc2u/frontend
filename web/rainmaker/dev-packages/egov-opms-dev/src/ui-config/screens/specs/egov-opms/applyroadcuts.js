@@ -33,7 +33,7 @@ const applicationNumberContainer = () => {
   if (applicationNumber)
     return {
       uiFramework: "custom-atoms-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "ApplicationNoContainer",
       props: {
         number: `${applicationNumber}`,
@@ -52,7 +52,7 @@ export const header = getCommonContainer({
   //applicationNumber: applicationNumberContainer()
   applicationNumber: {
     uiFramework: "custom-atoms-local",
-    moduleName: "egov-noc",
+    moduleName: "egov-opms",
     componentPath: "ApplicationNoContainer",
     props: {
       number: "NA"
@@ -188,9 +188,9 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
     }
     let documentsPreview = [];
     // Get all documents from response
-    let firenoc = get(state, "screenConfiguration.preparedFinalObject.ROADCUTNOC", {});
-    let uploadRoadCutCertificate = firenoc.hasOwnProperty('uploadDocuments') ?
-      firenoc.uploadDocuments[0]['fileStoreId'] : '';
+    let roadcutnocdetail = get(state, "screenConfiguration.preparedFinalObject.ROADCUTNOC", {});
+    let uploadRoadCutCertificate = roadcutnocdetail.hasOwnProperty('uploadDocuments') ?
+      roadcutnocdetail.uploadDocuments[0]['fileStoreId'] : '';
 
     if (uploadRoadCutCertificate !== '') {
       documentsPreview.push({

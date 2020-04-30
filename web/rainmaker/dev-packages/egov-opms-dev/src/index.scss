@@ -169,11 +169,11 @@ input[type="date"]:valid::before {
   .citizen-payment-confirmation {
     padding-bottom: 166px;
   }
-  .tl-total-amount-text,
-  .tl-total-amount-value {
+  .pm-total-amount-text,
+  .pm-total-amount-value {
     display: none !important;
   }
-  .tl-application-table-total-value aside {
+  .pm-application-table-total-value aside {
     font-weight: 600;
     font-size: 18px;
   }

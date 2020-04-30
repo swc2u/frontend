@@ -8,7 +8,7 @@ import {
  
   import { showHideAdhocPopup, resetFields, getRequiredDocData } from "../utils";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-  import { pendingApprovals } from "./searchResource/pendingApprovals";
+  
   //import { searchResults } from "./searchResource/searchResults";
   import { setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
   import {
@@ -34,12 +34,6 @@ import {
     labelKey: "NOC_UPDATE_ADV_DETAIL"
   });
   
-  // const pageResetAndChange = (state, dispatch) => {
-  //   dispatch(
-  //     prepareFinalObject("FireNOCs", [{ "fireNOCDetails.fireNOCType": "NEW" }])
-  //   );
-    
-  // };
   const NOCSearchAndResult = {
     uiFramework: "material-ui",
     name: "masterUpdateRate",
@@ -113,7 +107,7 @@ import {
       },
       adhocDialog: {
         uiFramework: "custom-containers-local",
-        moduleName: "egov-noc",
+        moduleName: "egov-opms",
         componentPath: "DialogContainer",
         props: {
           open: false,

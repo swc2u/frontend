@@ -4,7 +4,7 @@ import { getFeesEstimateCard } from "../../utils";
 const estimate = getCommonGrayCard({
   estimateCard: {
     uiFramework: "custom-containers-local",
-    moduleName: "egov-noc",
+    moduleName: "egov-opms",
     componentPath: "EstimateCardContainer",
     props: {
       estimate: {

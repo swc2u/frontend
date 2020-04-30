@@ -33,7 +33,7 @@ const getMultiItem = (billingslabData, classes, style) => {
       <Grid sm={12} className={classes.container} container={true}>
         <Grid sm={10}>
           <LabelContainer
-            labelKey={`TL_${item.category}`}
+            labelKey={`PM_${item.category}`}
             style={{
               color: "rgba(0, 0, 0, 0.6000000238418579)",
               fontSize: "14px",
@@ -161,7 +161,7 @@ class ViewBreakupContainer extends React.Component {
                 <div style={{ paddingBottom: "12px" }}>
                   <LabelContainer
                     labelName={"Trade Unit"}
-                    labelKey={"TL_NEW_TRADE_DETAILS_TRADE_UNIT_HEADER"}
+                    labelKey={"PM_NEW_TRADE_DETAILS_TRADE_UNIT_HEADER"}
                     style={{
                       color: "rgba(0, 0, 0, 0.8700000047683716)",
                       fontSize: "16px",

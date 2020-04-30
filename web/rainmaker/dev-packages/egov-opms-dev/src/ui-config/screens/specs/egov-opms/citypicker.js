@@ -8,12 +8,12 @@ import { showCityPicker, OPMSTenantId } from "../utils";
 export const cityPicker = getCommonContainer({
   header: getCommonHeader({
     labelName: "Pick your city.",
-    labelKey: "TL_PICK_YOUR_CITY_CITIZEN"
+    labelKey: "PM_PICK_YOUR_CITY_CITIZEN"
   }),
   cityPicker: getCommonContainer({
     cityDropdown: {
       uiFramework: "custom-containers-local",
-      moduleName: "egov-tradelicence",
+      moduleName: "egov-OPMS",
       componentPath: "AutosuggestContainer",
       jsonPath: "citiesByModule.citizenTenantId",
       required: true,
@@ -33,9 +33,9 @@ export const cityPicker = getCommonContainer({
         className: "citizen-city-picker",
         label: {
           labelName: "City",
-          labelKey: "TL_NEW_TRADE_DETAILS_CITY_LABEL"
+          labelKey: "PM_NEW_TRADE_DETAILS_CITY_LABEL"
         },
-        placeholder: { labelName: "Select City", labelKey: "TL_SELECT_CITY" },
+        placeholder: { labelName: "Select City", labelKey: "PM_SELECT_CITY" },
         jsonPath: "citiesByModule.citizenTenantId",
         sourceJsonPath:
           "applyScreenMdmsData.common-masters.citiesByModule.OPMS.tenants",
@@ -66,7 +66,7 @@ export const cityPicker = getCommonContainer({
           children: {
             previousButtonLabel: getLabel({
               labelName: "SELECT",
-              labelKey: "TL_CITIZEN_SELECT"
+              labelKey: "PM_CITIZEN_SELECT"
             })
           },
           onClickDefination: {
@@ -89,7 +89,7 @@ export const cityPicker = getCommonContainer({
           children: {
             previousButtonLabel: getLabel({
               labelName: "CANCEL",
-              labelKey: "TL_ADD_HOC_CHARGES_POPUP_BUTTON_CANCEL"
+              labelKey: "PM_ADD_HOC_CHARGES_POPUP_BUTTON_CANCEL"
             })
           },
           onClickDefination: {

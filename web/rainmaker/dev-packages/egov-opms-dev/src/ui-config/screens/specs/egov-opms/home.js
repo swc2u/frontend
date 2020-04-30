@@ -5,7 +5,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 import {
-  getUserInfo
+  getUserInfo,setOPMSTenantId
 } from "egov-ui-kit/utils/localStorageUtils";
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 const header = getCommonHeader(
@@ -218,22 +218,12 @@ else if (role_name === 'SUPERINTENDENT') {
   cardItems = cardlist;
 }
 
-const tradeLicenseSearchAndResult = {
+const PermissionManagementSearchAndResult = {
   uiFramework: "material-ui",
   name: "home",
   beforeInitScreen: (action, state, dispatch) => {
-    getRequiredDocData(action, state, dispatch).then(() => {
-      let documents = get(
-        state,
-        "screenConfiguration.preparedFinalObject.searchScreenMdmsData.FireNoc.Documents",
-        []
-      );
-      set(
-        action,
-        "screenConfig.components.adhocDialog.children.popup",
-        getRequiredDocuments(documents)
-      );
-    });
+    let UsertenantInfo = JSON.parse(getUserInfo()).permanentCity;
+    setOPMSTenantId(UsertenantInfo);
     return action;
   },
   components: {
@@ -252,14 +242,14 @@ const tradeLicenseSearchAndResult = {
         },
         listCard: {
           uiFramework: "custom-molecules-local",
-          moduleName: "egov-noc",
+          moduleName: "egov-opms",
           componentPath: "HowItWorks"
         }
       }
     },
     adhocDialog: {
       uiFramework: "custom-containers-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "DialogContainer",
       props: {
         open: false,
@@ -273,4 +263,4 @@ const tradeLicenseSearchAndResult = {
   }
 };
 
-export default tradeLicenseSearchAndResult;
+export default PermissionManagementSearchAndResult;

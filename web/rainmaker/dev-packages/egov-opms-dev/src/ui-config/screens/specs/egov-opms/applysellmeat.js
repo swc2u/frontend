@@ -46,7 +46,7 @@ const applicationNumberContainer = () => {
   if (applicationNumber)
     return {
       uiFramework: "custom-atoms-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "ApplicationNoContainer",
       props: {
         number: `${applicationNumber}`,
@@ -97,104 +97,8 @@ export const formwizardSecondStep = {
   visible: false
 };
 
-// export const formwizardThirdStep = {
-//   uiFramework: "custom-atoms",
-//   componentPath: "Form",
-//   props: {
-//     id: "apply_form3"
-//   },
-//   children: {
-//     documentDetails
-// 	},
-//   visible: false
-// };
-
-// export const formwizardThirdStep = {
-//   uiFramework: "custom-atoms",
-//   componentPath: "Form",
-//   props: {
-//     id: "apply_form3"
-//   },
-//   children: {
-//     //documentuploadDetails
-//   },
-//   visible: false
-// };
-
-
-// const getMdmsData = async (action, state, dispatch) => {
-// // let tenantId =
-// //  get(
-// //    state.screenConfiguration.preparedFinalObject,
-// //    "PETNOC.[0].fireNOCDetails.propertyDetails.address.city"
-// //  ) || getOPMSTenantId();
-// let tenantId = getOPMSTenantId();
-// // alert("call mdmsdata")
-// let mdmsBody = {
-// MdmsCriteria: {
-// tenantId: tenantId,
-// moduleDetails: [
-// // {
-// // moduleName: "common-masters",
-// // masterDetails: [{ name: "OwnerType" }, { name: "OwnerShipCategory" }]
-// // },
-// // {
-// // moduleName: "firenoc",
-// // masterDetails: [{ name: "BuildingType" }, { name: "FireStations" }]
-// // },
-// // {
-// // moduleName: "egov-location",
-// // masterDetails: [
-// // {
-// // name: "TenantBoundary"
-// // }
-// // ]
-// // },
-// {
-// moduleName: "tenant",
-// masterDetails: [
-// {
-// name: "tenants"
-// }
-// ]
-// },
-// {
-// moduleName: "egpm",
-// masterDetails: [
-// {
-// name: "nocSought"
-// },
-// {
-// name: "sector"
-// }
-// ]
-// }, 
-// { moduleName: "SellMeatNOC", masterDetails: [{ name: "SellMeatDocuments" }] }
-// ]
-// }
-// };
-// try {
-// let payload = null;
-// payload = await httpRequest(
-// "post",
-// "/egov-mdms-service/v1/_search",
-// "_search",
-// [],
-// mdmsBody
-// );
-// dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
-// } catch (e) {
-// console.log(e);
-// }
-// };
-
 
 const getMdmsData = async (action, state, dispatch) => {
-  // let tenantId =
-  //  get(
-  //    state.screenConfiguration.preparedFinalObject,
-  //    "PETNOC.[0].fireNOCDetails.propertyDetails.address.city"
-  //  ) || getOPMSTenantId();
   let tenantId = getOPMSTenantId();
   let mdmsBody = {
     MdmsCriteria: {
@@ -239,46 +143,6 @@ const getMdmsData = async (action, state, dispatch) => {
   }
 };
 
-
-const getFirstListFromDotSeparated = list => {
-  list = list.map(item => {
-    if (item.active) {
-      return item.code.split(".")[0];
-    }
-  });
-  list = [...new Set(list)].map(item => {
-    return { code: item };
-  });
-  return list;
-};
-
-const setCardsIfMultipleBuildings = (state, dispatch) => {
-  if (
-    get(
-      state,
-      "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.noOfBuildings"
-    ) === "MULTIPLE"
-  ) {
-    dispatch(
-      handleField(
-        "applysellmeat",
-        "components.div.children.formwizardSecondStep.children.propertyDetails.children.cardContent.children.propertyDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer",
-        "props.style",
-        { display: "none" }
-      )
-    );
-    dispatch(
-      handleField(
-        "applysellmeat",
-        "components.div.children.formwizardSecondStep.children.propertyDetails.children.cardContent.children.propertyDetailsConatiner.children.buildingDataCard.children.multipleBuildingContainer",
-        "props.style",
-        {}
-      )
-    );
-  }
-};
-
-
 export const prepareEditFlow = async (state, dispatch, applicationNumber, tenantId) => {
   if (applicationNumber) {
     let response = await getSearchResultsView([
@@ -296,9 +160,9 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
     let documentsPreview = [];
 
     // Get all documents from response
-    let firenoc = get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC", {});
-    let uploadVaccinationCertificate = firenoc.hasOwnProperty('uploadDocuments') ?
-      firenoc.uploadDocuments[0]['fileStoreId'] : '';
+    let slelmeatnocdetail = get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC", {});
+    let uploadVaccinationCertificate = slelmeatnocdetail.hasOwnProperty('uploadDocuments') ?
+      slelmeatnocdetail.uploadDocuments[0]['fileStoreId'] : '';
     
     if (uploadVaccinationCertificate !== '') {
       documentsPreview.push({
@@ -385,60 +249,6 @@ const screenConfig = {
         );
       }
     }
-
-    // Set defaultValues of radiobuttons and selectors
-    let noOfBuildings = get(
-      state,
-      "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.noOfBuildings",
-      "SINGLE"
-    );
-    set(
-      state,
-      "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.noOfBuildings",
-      noOfBuildings
-    );
-    let nocType = get(
-      state,
-      "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.fireNOCType",
-      "PROVISIONAL"
-    );
-    set(
-      state,
-      "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.fireNOCType",
-      nocType
-    );
-
-    // Preset multi-cards (CASE WHEN DATA PRE-LOADED)
-    if (
-      get(
-        state,
-        "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.noOfBuildings"
-      ) === "MULTIPLE"
-    ) {
-      set(
-        action.screenConfig,
-        "components.div.children.formwizardSecondStep.children.propertyDetails.children.cardContent.children.propertyDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.props.style",
-        { display: "none" }
-      );
-      set(
-        action.screenConfig,
-        "components.div.children.formwizardSecondStep.children.propertyDetails.children.cardContent.children.propertyDetailsConatiner.children.buildingDataCard.children.multipleBuildingContainer.props.style",
-        {}
-      );
-    }
-    if (
-      get(
-        state,
-        "screenConfiguration.preparedFinalObject.EGOVOPMS[0].fireNOCDetails.fireNOCType"
-      ) === "PROVISIONAL"
-    ) {
-      set(
-        action.screenConfig,
-        "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.nocDetailsContainer.children.provisionalNocNumber.props.style",
-        { visibility: "hidden" }
-      );
-    }
-
 
     return action;
   },

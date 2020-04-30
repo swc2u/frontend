@@ -10,10 +10,10 @@ import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
 import { localStorageGet, localStorageSet } from "egov-ui-kit/utils/localStorageUtils";
-
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 let previousUoms = [];
 
-
+var applicationNumberId = getQueryArg(window.location.href, "applicationNumber");
 const undertakingButton1 = getCommonContainer({
  
   exemptionradio : {
@@ -30,12 +30,14 @@ const undertakingButton1 = getCommonContainer({
           {
             labelName: "Yes",
             labelKey: "Exempted_Yes",
-            value: "1"
+            value: "1",
+            disabled:applicationNumberId!=null?true:false
           },
           {
             labelName: "No",
             labelKey: "Exempted_No",
-            value: "0"
+            value: "0",
+            disabled:applicationNumberId!=null?true:false
           }
         ],
         jsonPath: "ADVERTISEMENTNOC.exemptedCategory",

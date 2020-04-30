@@ -18,7 +18,7 @@ import "./index.css";
 let previousUoms = [];
 
 
-const commonBuildingData = buildingType => {
+const immunizationData = buildingType => {
   
   return {
     VerterinaryDocName: {
@@ -185,47 +185,10 @@ export const immunizationDetails = getCommonCard({
         },
         children: {
           singleBuilding: getCommonGrayCard({
-            singleBuildingCard: getCommonContainer(commonBuildingData("SINGLE"))
+            singleBuildingCard: getCommonContainer(immunizationData("SINGLE"))
           })
         }
-      },
-      multipleBuildingContainer: {
-        uiFramework: "custom-atoms",
-        componentPath: "Div",
-        props: {
-          className:"applicant-details-error",
-          style: {
-            display: "none"
-          }
-        },
-        gridDefination: {
-          xs: 12
-        },
-        children: {
-          multipleBuilding: {
-            uiFramework: "custom-containers",
-            componentPath: "MultiItem",
-            props: {
-              scheama: getCommonGrayCard({
-                multipleBuildingCard: getCommonContainer(
-                  commonBuildingData("MULTIPLE")
-                )
-              }),
-              items: [],
-              addItemLabel: {
-                labelKey: "NOC_PROPERTY_DETAILS_ADD_BUILDING_LABEL",
-                labelName: "ADD BUILDING"
-              },
-              sourceJsonPath: "PetNOCs[0].PetNOCsDetails.buildings",
-              // prefixSourceJsonPath:
-              //   "children.cardContent.children.buildingDataCard.children.multipleBuildingContainer.children",
-              prefixSourceJsonPath:
-                "children.cardContent.children.multipleBuildingCard.children"
-            },
-            type: "array"
-          }
-        }
-      }
+      }      
     })
   })
 });

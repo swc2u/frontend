@@ -14,7 +14,7 @@ import { footer } from "./payResource/footer";
 
 const header = getCommonContainer({
   header: getCommonHeader({
-    labelName: `Application for Fire NOC (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
+    labelName: `Application for NOC (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
     labelKey: "NOC_COMMON_APPLY_NOC"
   }),
   applicationNumber: {

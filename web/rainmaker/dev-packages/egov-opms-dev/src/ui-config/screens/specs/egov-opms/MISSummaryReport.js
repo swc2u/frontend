@@ -8,7 +8,7 @@ import {
  
   import { showHideAdhocPopup, resetFields, getRequiredDocData } from "../utils";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-  import { pendingApprovals } from "./searchResource/pendingApprovals";
+  
   import { searchResultsReports } from "./searchResource/searchResults";
   import { setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
   import {
@@ -34,12 +34,6 @@ import {
     labelKey: "NOC_SUMMERY_REPORT"
   });
   
-  const pageResetAndChange = (state, dispatch) => {
-    dispatch(
-      prepareFinalObject("FireNOCs", [{ "fireNOCDetails.fireNOCType": "NEW" }])
-    );
-    // dispatch(setRoute("/tradelicence/apply"));al
-  };
   //alert('in update rate')
   const NOCSearchAndResult = {
     uiFramework: "material-ui",
@@ -65,42 +59,7 @@ import {
           "screenConfiguration.preparedFinalObject.MISSummaryReport[0].FromDate",
           new Date()
         );
-      // const tenantId = getOPMSTenantId();
-      // const BSqueryObject = [
-      //   { key: "tenantId", value: tenantId },
-      //   { key: "businessServices", value: "FIRENOC" }
-      // ];
-      // setBusinessServiceDataToLocalStorage(BSqueryObject, dispatch);
-      // const businessServiceData = JSON.parse(
-      //   localStorageGet("businessServiceData")
-      // );
-      // const data = find(businessServiceData, { businessService: "FIRENOC" });
-      // const { states } = data || [];
-      // if (states && states.length > 0) {
-      //   const status = states.map((item, index) => {
-      //     return {
-      //       code: item.state
-      //     };
-      //   });
-      //   dispatch(
-      //     prepareFinalObject(
-      //       "applyScreenMdmsData.searchScreen.status",
-      //       status.filter(item => item.code != null)
-      //     )
-      //   );
-      // }
-      // getRequiredDocData(action, state, dispatch).then(() => {
-      //   let documents = get(
-      //     state,
-      //     "screenConfiguration.preparedFinalObject.searchScreenMdmsData.FireNoc.Documents",
-      //     []
-      //   );
-      //   set(
-      //     action,
-      //     "screenConfig.components.adhocDialog.children.popup",
-      //     getRequiredDocuments(documents)
-      //   );
-      // });
+    
       return action;
     },
     components: {
@@ -163,7 +122,6 @@ import {
                 onClickDefination: {
                   action: "condition",
                   callBack: (state, dispatch) => {
-                    pageResetAndChange(state, dispatch);
                     showHideAdhocPopup(state, dispatch, "MISSummaryReport");
                   }
                 },
@@ -185,7 +143,7 @@ import {
       },
       adhocDialog: {
         uiFramework: "custom-containers-local",
-        moduleName: "egov-noc",
+        moduleName: "egov-opms",
         componentPath: "DialogContainer",
         props: {
           open: false,

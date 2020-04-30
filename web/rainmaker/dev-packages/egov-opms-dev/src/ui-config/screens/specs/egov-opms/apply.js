@@ -1,16 +1,11 @@
 import {
-  getCommonContainer,
-  getCommonHeader,
-  getStepperObject
-} from "egov-ui-framework/ui-config/screens/specs/utils";
+  getCommonContainer,  getCommonHeader,  getStepperObject} from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getCurrentFinancialYear, clearlocalstorageAppDetails } from "../utils";
 import { footer } from "./applyResource/footer";
 import { nocDetails, PetParticularDetails } from "./applyResource/nocDetails";
 import { immunizationDetails } from "./applyResource/immunization";
 import jp from "jsonpath";
 
-//import { propertyLocationDetails } from "./applyResource/propertyLocationDetails";
-//import { applicantDetails } from "./applyResource/applicantDetails";
 import { documentDetails } from "./applyResource/documentDetails";
 import { getFileUrlFromAPI, getQueryArg, getTransformedLocale, setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
 import {
@@ -54,7 +49,7 @@ const applicationNumberContainer = () => {
   if (applicationNumber)
     return {
       uiFramework: "custom-atoms-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "ApplicationNoContainer",
       props: {
         number: `${applicationNumber}`,
@@ -73,7 +68,7 @@ export const header = getCommonContainer({
   //applicationNumber: applicationNumberContainer()
   applicationNumber: {
     uiFramework: "custom-atoms-local",
-    moduleName: "egov-noc",
+    moduleName: "egov-opms",
     componentPath: "applicationNumberContainer",
     props: {
       number: "NA"
@@ -184,44 +179,6 @@ const getMdmsData = async (action, state, dispatch) => {
   }
 };
 
-const getFirstListFromDotSeparated = list => {
-  list = list.map(item => {
-    if (item.active) {
-      return item.code.split(".")[0];
-    }
-  });
-  list = [...new Set(list)].map(item => {
-    return { code: item };
-  });
-  return list;
-};
-
-const setCardsIfMultipleBuildings = (state, dispatch) => {
-  if (
-    get(
-      state,
-      "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.noOfBuildings"
-    ) === "MULTIPLE"
-  ) {
-    dispatch(
-      handleField(
-        "apply",
-        "components.div.children.formwizardSecondStep.children.propertyDetails.children.cardContent.children.propertyDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer",
-        "props.style",
-        { display: "none" }
-      )
-    );
-    dispatch(
-      handleField(
-        "apply",
-        "components.div.children.formwizardSecondStep.children.propertyDetails.children.cardContent.children.propertyDetailsConatiner.children.buildingDataCard.children.multipleBuildingContainer",
-        "props.style",
-        {}
-      )
-    );
-  }
-};
-
 
 export const prepareEditFlow = async (state, dispatch, applicationNumber, tenantId) => {
   if (applicationNumber) {
@@ -242,12 +199,12 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
     let documentsPreview = [];
 
     // Get all documents from response
-    let firenoc = get(state, "screenConfiguration.preparedFinalObject.PETNOC", {});
-    let uploadVaccinationCertificate = firenoc.hasOwnProperty('uploadVaccinationCertificate') ?
-      firenoc.uploadVaccinationCertificate[0]['fileStoreId'] : '';
+    let petnocdetails = get(state, "screenConfiguration.preparedFinalObject.PETNOC", {});
+    let uploadVaccinationCertificate = petnocdetails.hasOwnProperty('uploadVaccinationCertificate') ?
+      petnocdetails.uploadVaccinationCertificate[0]['fileStoreId'] : '';
 
-    let uploadPetPicture = firenoc.hasOwnProperty('uploadPetPicture') ?
-      firenoc.uploadPetPicture[0]['fileStoreId'] : '';
+    let uploadPetPicture = petnocdetails.hasOwnProperty('uploadPetPicture') ?
+      petnocdetails.uploadPetPicture[0]['fileStoreId'] : '';
 
     if (uploadVaccinationCertificate !== '' && uploadPetPicture !== '') {
       documentsPreview.push({
@@ -338,60 +295,6 @@ const screenConfig = {
         );
       }
     }
-
-    // Set defaultValues of radiobuttons and selectors
-    let noOfBuildings = get(
-      state,
-      "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.noOfBuildings",
-      "SINGLE"
-    );
-    set(
-      state,
-      "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.noOfBuildings",
-      noOfBuildings
-    );
-    let nocType = get(
-      state,
-      "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.fireNOCType",
-      "PROVISIONAL"
-    );
-    set(
-      state,
-      "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.fireNOCType",
-      nocType
-    );
-
-    // Preset multi-cards (CASE WHEN DATA PRE-LOADED)
-    if (
-      get(
-        state,
-        "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.noOfBuildings"
-      ) === "MULTIPLE"
-    ) {
-      set(
-        action.screenConfig,
-        "components.div.children.formwizardSecondStep.children.propertyDetails.children.cardContent.children.propertyDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.props.style",
-        { display: "none" }
-      );
-      set(
-        action.screenConfig,
-        "components.div.children.formwizardSecondStep.children.propertyDetails.children.cardContent.children.propertyDetailsConatiner.children.buildingDataCard.children.multipleBuildingContainer.props.style",
-        {}
-      );
-    }
-    if (
-      get(
-        state,
-        "screenConfiguration.preparedFinalObject.EGOVOPMS[0].fireNOCDetails.fireNOCType"
-      ) === "PROVISIONAL"
-    ) {
-      set(
-        action.screenConfig,
-        "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.nocDetailsContainer.children.provisionalNocNumber.props.style",
-        { visibility: "hidden" }
-      );
-    }
-
 
     return action;
   },

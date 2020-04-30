@@ -725,7 +725,7 @@ export const sampleDocUpload = () => {
       documentCode: "OWNER.IDENTITYPROOF",
       documents: [
         {
-          fileName: "preview-PB-TL-2018-12-02-001113 (1).pdf",
+          fileName: "preview-PB-OPMS-2018-12-02-001113 (1).pdf",
           fileStoreId: "89fe5959-79e1-4201-b8ca-bcbc4c23c828"
         }
       ],
@@ -768,7 +768,7 @@ export const sampleDocUpload = () => {
       documentSubCode: "BUILDING.BUILDING_PLAN.SITE_PLAN",
       documents: [
         {
-          fileName: "preview-PB-TL-2018-12-02-001113 (2).pdf",
+          fileName: "preview-PB-OPMS-2018-12-02-001113 (2).pdf",
           fileStoreId: "bcc598cf-04bf-45c8-bbf5-b1d3619b2d78"
         }
       ]

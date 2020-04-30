@@ -18,9 +18,9 @@ const printDiv = () => {
 };
 
 const startApplyFlow = (state, dispatch) => {
-  dispatch(prepareFinalObject("FireNOCs", []));
+  dispatch(prepareFinalObject("OpmsNOCs", []));
   const applyUrl =
-    process.env.REACT_APP_SELF_RUNNING === "true" ? `/egov-ui-framework/fire-noc/apply` : `/fire-noc/apply`;
+    process.env.REACT_APP_SELF_RUNNING === "true" ? `/egov-ui-framework/egov-opms/apply` : `/egov-opms/apply`;
   dispatch(setRoute(applyUrl));
 };
 

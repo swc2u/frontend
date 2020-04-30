@@ -1,14 +1,9 @@
 import React from "react";
 import { getCommonHeader } from "egov-ui-framework/ui-config/screens/specs/utils";
-import FireNocIcon from "../../../../ui-atoms-local/Icons/FireNocIcon";
 import MyApplicationIcon from "../../../../ui-atoms-local/Icons/MyApplicationIcon";
 import { getRequiredDocData, clearlocalstorageAppDetails } from "../utils";
 import get from "lodash/get";
 import set from "lodash/set";
-import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
-
-import { pbkdf2 } from "crypto";
-
 import {
   getAccessToken,
   getOPMSTenantId,
@@ -67,18 +62,7 @@ const tradeLicenseSearchAndResult = {
   beforeInitScreen: (action, state, dispatch) => {
     clearlocalstorageAppDetails(state);
     setapplicationType('PETNOC');
-    getRequiredDocData(action, state, dispatch).then(() => {
-      let documents = get(
-        state,
-        "screenConfiguration.preparedFinalObject.searchScreenMdmsData.FireNoc.Documents",
-        []
-      );
-      set(
-        action,
-        "screenConfig.components.adhocDialog.children.popup",
-        getRequiredDocuments(documents)
-      );
-    });
+    
     return action;
   },
   components: {
@@ -97,14 +81,14 @@ const tradeLicenseSearchAndResult = {
         },
         listCard: {
           uiFramework: "custom-molecules-local",
-          moduleName: "egov-noc",
+          moduleName: "egov-opms",
           componentPath: "HowItWorks"
         }
       }
     },
     adhocDialog: {
       uiFramework: "custom-containers-local",
-      moduleName: "egov-noc",
+      moduleName: "egov-opms",
       componentPath: "DialogContainer",
       props: {
         open: false,

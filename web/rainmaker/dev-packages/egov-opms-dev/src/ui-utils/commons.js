@@ -15,33 +15,33 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 const role_name = JSON.parse(getUserInfo()).roles[0].code
 
 
-export const updateTradeDetails = async requestBody => {
-  try {
-    const payload = await httpRequest(
-      "post",
-      "/tl-services/v1/_update",
-      "",
-      [],
-      requestBody
-    );
-    return payload;
-  } catch (error) {
-    store.dispatch(toggleSnackbar(true, error.message, "error"));
-  }
-};
+// export const updateTradeDetails = async requestBody => {
+//   try {
+//     const payload = await httpRequest(
+//       "post",
+//       "/tl-services/v1/_update",
+//       "",
+//       [],
+//       requestBody
+//     );
+//     return payload;
+//   } catch (error) {
+//     store.dispatch(toggleSnackbar(true, error.message, "error"));
+//   }
+// };
 
-export const getLocaleLabelsforTL = (label, labelKey, localizationLabels) => {
-  if (labelKey) {
-    let translatedLabel = getTranslatedLabel(labelKey, localizationLabels);
-    if (!translatedLabel || labelKey === translatedLabel) {
-      return label;
-    } else {
-      return translatedLabel;
-    }
-  } else {
-    return label;
-  }
-};
+// export const getLocaleLabelsforTL = (label, labelKey, localizationLabels) => {
+//   if (labelKey) {
+//     let translatedLabel = getTranslatedLabel(labelKey, localizationLabels);
+//     if (!translatedLabel || labelKey === translatedLabel) {
+//       return label;
+//     } else {
+//       return translatedLabel;
+//     }
+//   } else {
+//     return label;
+//   }
+// };
 
 export const getSearchResults = async queryObject => {
 
@@ -104,7 +104,6 @@ export const getSearchResultsView = async queryObject => {
   }
   //alert(JSON.stringify(response));
 };
-
 
 export const preparepopupDocumentsUploadData = (state, dispatch, applicationtype = 'PETNOC') => {
 
@@ -251,6 +250,7 @@ export const preparepopupDocumentsADVUploadData = (state, dispatch, applicationt
 
   dispatch(prepareFinalObject("documentsContract", documentsContract));
 };
+
 export const preparepopupDocumentsSellMeatUploadData = (state, dispatch, applicationtype = 'SELLMEATNOC') => {
 
   // if(applicationtype == 'PETNOC')
@@ -797,64 +797,64 @@ export const setDocsForEditFlow = async (state, dispatch) => {
   );
 };
 
-export const updatePFOforSearchResults = async (
-  action,
-  state,
-  dispatch,
-  queryValue,
-  queryValuePurpose,
-  tenantId
-) => {
-  let queryObject = [
-    {
-      key: "tenantId",
-      value: tenantId ? tenantId : getOPMSTenantId()
-    },
-    { key: "applicationNumber", value: queryValue }
-  ];
-  const isPreviouslyEdited = getQueryArg(window.location.href, "edited");
-  const payload = !isPreviouslyEdited
-    ? await getSearchResults(queryObject)
-    : {
-      Licenses: get(state.screenConfiguration.preparedFinalObject, "Licenses")
-    };
-  // const payload = await getSearchResults(queryObject)
-  // getQueryArg(window.location.href, "action") === "edit" &&
-  // (await setDocsForEditFlow(state, dispatch));
+// export const updatePFOforSearchResults = async (
+//   action,
+//   state,
+//   dispatch,
+//   queryValue,
+//   queryValuePurpose,
+//   tenantId
+// ) => {
+//   let queryObject = [
+//     {
+//       key: "tenantId",
+//       value: tenantId ? tenantId : getOPMSTenantId()
+//     },
+//     { key: "applicationNumber", value: queryValue }
+//   ];
+//   const isPreviouslyEdited = getQueryArg(window.location.href, "edited");
+//   const payload = !isPreviouslyEdited
+//     ? await getSearchResults(queryObject)
+//     : {
+//       Licenses: get(state.screenConfiguration.preparedFinalObject, "Licenses")
+//     };
+//   // const payload = await getSearchResults(queryObject)
+//   // getQueryArg(window.location.href, "action") === "edit" &&
+//   // (await setDocsForEditFlow(state, dispatch));
 
-  if (payload && payload.Licenses) {
-    dispatch(prepareFinalObject("Licenses[0]", payload.Licenses[0]));
-  }
-  const licenseType = payload && get(payload, "Licenses[0].licenseType");
-  const structureSubtype =
-    payload && get(payload, "Licenses[0].tradeLicenseDetail.structureType");
-  const tradeTypes = setFilteredTradeTypes(
-    state,
-    dispatch,
-    licenseType,
-    structureSubtype
-  );
-  const tradeTypeDdData = getTradeTypeDropdownData(tradeTypes);
-  tradeTypeDdData &&
-    dispatch(
-      prepareFinalObject(
-        "applyScreenMdmsData.TradeLicense.TradeTypeTransformed",
-        tradeTypeDdData
-      )
-    );
-  setDocsForEditFlow(state, dispatch);
-  updateDropDowns(payload, action, state, dispatch, queryValue);
-  if (queryValuePurpose !== "cancel") {
-    set(payload, getSafetyNormsJson(queryValuePurpose), "yes");
-    set(payload, getHygeneLevelJson(queryValuePurpose), "yes");
-    set(payload, getLocalityHarmedJson(queryValuePurpose), "No");
-  }
-  set(payload, getCheckBoxJsonpath(queryValuePurpose), true);
+//   if (payload && payload.Licenses) {
+//     dispatch(prepareFinalObject("Licenses[0]", payload.Licenses[0]));
+//   }
+//   const licenseType = payload && get(payload, "Licenses[0].licenseType");
+//   const structureSubtype =
+//     payload && get(payload, "Licenses[0].tradeLicenseDetail.structureType");
+//   const tradeTypes = setFilteredTradeTypes(
+//     state,
+//     dispatch,
+//     licenseType,
+//     structureSubtype
+//   );
+//   const tradeTypeDdData = getTradeTypeDropdownData(tradeTypes);
+//   tradeTypeDdData &&
+//     dispatch(
+//       prepareFinalObject(
+//         "applyScreenMdmsData.TradeLicense.TradeTypeTransformed",
+//         tradeTypeDdData
+//       )
+//     );
+//   setDocsForEditFlow(state, dispatch);
+//   updateDropDowns(payload, action, state, dispatch, queryValue);
+//   if (queryValuePurpose !== "cancel") {
+//     set(payload, getSafetyNormsJson(queryValuePurpose), "yes");
+//     set(payload, getHygeneLevelJson(queryValuePurpose), "yes");
+//     set(payload, getLocalityHarmedJson(queryValuePurpose), "No");
+//   }
+//   set(payload, getCheckBoxJsonpath(queryValuePurpose), true);
 
-  setApplicationNumberBox(state, dispatch);
+//   setApplicationNumberBox(state, dispatch);
 
-  createOwnersBackup(dispatch, payload);
-};
+//   createOwnersBackup(dispatch, payload);
+// };
 
 export const getBoundaryData = async (
   action,
@@ -932,17 +932,17 @@ export const getBoundaryData = async (
   }
 };
 
-const createOwnersBackup = (dispatch, payload) => {
-  const owners = get(payload, "Licenses[0].tradeLicenseDetail.owners");
-  owners &&
-    owners.length > 0 &&
-    dispatch(
-      prepareFinalObject(
-        "LicensesTemp[0].tradeLicenseDetail.owners",
-        JSON.parse(JSON.stringify(owners))
-      )
-    );
-};
+// const createOwnersBackup = (dispatch, payload) => {
+//   const owners = get(payload, "Licenses[0].tradeLicenseDetail.owners");
+//   owners &&
+//     owners.length > 0 &&
+//     dispatch(
+//       prepareFinalObject(
+//         "LicensesTemp[0].tradeLicenseDetail.owners",
+//         JSON.parse(JSON.stringify(owners))
+//       )
+//     );
+// };
 
 // const getMultipleAccessories = licenses => {
 // let accessories = get(licenses, "tradeLicenseDetail.accessories");
@@ -971,221 +971,221 @@ const createOwnersBackup = (dispatch, payload) => {
 // return mergedAccessories;
 // };
 
-const getMultipleOwners = owners => {
-  let mergedOwners =
-    owners &&
-    owners.reduce((result, item) => {
-      if (item && item !== null && item.hasOwnProperty("mobileNumber")) {
-        if (item.hasOwnProperty("active") && item.active) {
-          if (item.hasOwnProperty("isDeleted") && !item.isDeleted) {
-            set(item, "active", false);
-            result.push(item);
-          } else {
-            result.push(item);
-          }
-        } else {
-          if (!item.hasOwnProperty("isDeleted")) {
-            result.push(item);
-          }
-        }
-      }
-      return result;
-    }, []);
+// const getMultipleOwners = owners => {
+//   let mergedOwners =
+//     owners &&
+//     owners.reduce((result, item) => {
+//       if (item && item !== null && item.hasOwnProperty("mobileNumber")) {
+//         if (item.hasOwnProperty("active") && item.active) {
+//           if (item.hasOwnProperty("isDeleted") && !item.isDeleted) {
+//             set(item, "active", false);
+//             result.push(item);
+//           } else {
+//             result.push(item);
+//           }
+//         } else {
+//           if (!item.hasOwnProperty("isDeleted")) {
+//             result.push(item);
+//           }
+//         }
+//       }
+//       return result;
+//     }, []);
 
-  return mergedOwners;
-};
+//   return mergedOwners;
+// };
 
-export const applyTradeLicense = async (state, dispatch, activeIndex) => {
-  try {
-    let queryObject = JSON.parse(
-      JSON.stringify(
-        get(state.screenConfiguration.preparedFinalObject, "Licenses", [])
-      )
-    );
-    let documents = get(
-      queryObject[0],
-      "tradeLicenseDetail.applicationDocuments"
-    );
-    set(
-      queryObject[0],
-      "validFrom",
-      convertDateToEpoch(queryObject[0].validFrom, "dayend")
-    );
-    set(queryObject[0], "wfDocuments", documents);
-    set(
-      queryObject[0],
-      "validTo",
-      convertDateToEpoch(queryObject[0].validTo, "dayend")
-    );
-    if (queryObject[0] && queryObject[0].commencementDate) {
-      queryObject[0].commencementDate = convertDateToEpoch(
-        queryObject[0].commencementDate,
-        "dayend"
-      );
-    }
-    let owners = get(queryObject[0], "tradeLicenseDetail.owners");
-    owners = (owners && convertOwnerDobToEpoch(owners)) || [];
+// export const applyTradeLicense = async (state, dispatch, activeIndex) => {
+//   try {
+//     let queryObject = JSON.parse(
+//       JSON.stringify(
+//         get(state.screenConfiguration.preparedFinalObject, "Licenses", [])
+//       )
+//     );
+//     let documents = get(
+//       queryObject[0],
+//       "tradeLicenseDetail.applicationDocuments"
+//     );
+//     set(
+//       queryObject[0],
+//       "validFrom",
+//       convertDateToEpoch(queryObject[0].validFrom, "dayend")
+//     );
+//     set(queryObject[0], "wfDocuments", documents);
+//     set(
+//       queryObject[0],
+//       "validTo",
+//       convertDateToEpoch(queryObject[0].validTo, "dayend")
+//     );
+//     if (queryObject[0] && queryObject[0].commencementDate) {
+//       queryObject[0].commencementDate = convertDateToEpoch(
+//         queryObject[0].commencementDate,
+//         "dayend"
+//       );
+//     }
+//     let owners = get(queryObject[0], "tradeLicenseDetail.owners");
+//     owners = (owners && convertOwnerDobToEpoch(owners)) || [];
 
-    //set(queryObject[0], "tradeLicenseDetail.owners", getMultipleOwners(owners));
-    const cityId = get(
-      queryObject[0],
-      "tradeLicenseDetail.address.tenantId",
-      ""
-    );
-    const tenantId = ifUserRoleExists("CITIZEN") ? cityId : getOPMSTenantId();
-    const BSqueryObject = [
-      { key: "tenantId", value: tenantId },
-      { key: "businessService", value: "newTL" }
-    ];
-    if (process.env.REACT_APP_NAME === "Citizen") {
-      let currentFinancialYr = getCurrentFinancialYear();
-      //Changing the format of FY
-      let fY1 = currentFinancialYr.split("-")[1];
-      fY1 = fY1.substring(2, 4);
-      currentFinancialYr = currentFinancialYr.split("-")[0] + "-" + fY1;
-      set(queryObject[0], "financialYear", currentFinancialYr);
-      setBusinessServiceDataToLocalStorage(BSqueryObject, dispatch);
-    }
+//     //set(queryObject[0], "tradeLicenseDetail.owners", getMultipleOwners(owners));
+//     const cityId = get(
+//       queryObject[0],
+//       "tradeLicenseDetail.address.tenantId",
+//       ""
+//     );
+//     const tenantId = ifUserRoleExists("CITIZEN") ? cityId : getOPMSTenantId();
+//     const BSqueryObject = [
+//       { key: "tenantId", value: tenantId },
+//       { key: "businessService", value: "newTL" }
+//     ];
+//     if (process.env.REACT_APP_NAME === "Citizen") {
+//       let currentFinancialYr = getCurrentFinancialYear();
+//       //Changing the format of FY
+//       let fY1 = currentFinancialYr.split("-")[1];
+//       fY1 = fY1.substring(2, 4);
+//       currentFinancialYr = currentFinancialYr.split("-")[0] + "-" + fY1;
+//       set(queryObject[0], "financialYear", currentFinancialYr);
+//       setBusinessServiceDataToLocalStorage(BSqueryObject, dispatch);
+//     }
 
-    set(queryObject[0], "tenantId", tenantId);
+//     set(queryObject[0], "tenantId", tenantId);
 
-    if (queryObject[0].applicationNumber) {
-      //call update
+//     if (queryObject[0].applicationNumber) {
+//       //call update
 
-      let accessories = get(queryObject[0], "tradeLicenseDetail.accessories");
-      let tradeUnits = get(queryObject[0], "tradeLicenseDetail.tradeUnits");
-      set(
-        queryObject[0],
-        "tradeLicenseDetail.tradeUnits",
-        getMultiUnits(tradeUnits)
-      );
-      set(
-        queryObject[0],
-        "tradeLicenseDetail.accessories",
-        getMultiUnits(accessories)
-      );
-      set(
-        queryObject[0],
-        "tradeLicenseDetail.owners",
-        getMultipleOwners(owners)
-      );
+//       let accessories = get(queryObject[0], "tradeLicenseDetail.accessories");
+//       let tradeUnits = get(queryObject[0], "tradeLicenseDetail.tradeUnits");
+//       set(
+//         queryObject[0],
+//         "tradeLicenseDetail.tradeUnits",
+//         getMultiUnits(tradeUnits)
+//       );
+//       set(
+//         queryObject[0],
+//         "tradeLicenseDetail.accessories",
+//         getMultiUnits(accessories)
+//       );
+//       set(
+//         queryObject[0],
+//         "tradeLicenseDetail.owners",
+//         getMultipleOwners(owners)
+//       );
 
-      let action = "INITIATED";
-      if (
-        queryObject[0].tradeLicenseDetail &&
-        queryObject[0].tradeLicenseDetail.applicationDocuments
-      ) {
-        if (getQueryArg(window.location.href, "action") === "edit") {
-          // const removedDocs = get(
-          // state.screenConfiguration.preparedFinalObject,
-          // "LicensesTemp[0].removedDocs",
-          // []
-          // );
-          // set(queryObject[0], "tradeLicenseDetail.applicationDocuments", [
-          // ...get(
-          // state.screenConfiguration.prepareFinalObject,
-          // "Licenses[0].tradeLicenseDetail.applicationDocuments",
-          // []
-          // ),
-          // ...removedDocs
-          // ]);
-        } else if (activeIndex === 1) {
-          set(queryObject[0], "tradeLicenseDetail.applicationDocuments", null);
-        } else action = "APPLY";
-      }
-      // else if (
-      // queryObject[0].tradeLicenseDetail &&
-      // queryObject[0].tradeLicenseDetail.applicationDocuments &&
-      // activeIndex === 1
-      // ) {
-      // } else if (
-      // queryObject[0].tradeLicenseDetail &&
-      // queryObject[0].tradeLicenseDetail.applicationDocuments
-      // ) {
-      // action = "APPLY";
-      // }
-      set(queryObject[0], "action", action);
-      const isEditFlow = getQueryArg(window.location.href, "action") === "edit";
-      !isEditFlow &&
-        (await httpRequest("post", "/tl-services/v1/_update", "", [], {
-          Licenses: queryObject
-        }));
-      let searchQueryObject = [
-        { key: "tenantId", value: queryObject[0].tenantId },
-        { key: "applicationNumber", value: queryObject[0].applicationNumber }
-      ];
-      let searchResponse = await getSearchResults(searchQueryObject);
-      if (isEditFlow) {
-        searchResponse = { Licenses: queryObject };
-      } else {
-        dispatch(prepareFinalObject("Licenses", searchResponse.Licenses));
-      }
-      const updatedtradeUnits = get(
-        searchResponse,
-        "Licenses[0].tradeLicenseDetail.tradeUnits"
-      );
-      const tradeTemp = updatedtradeUnits.map((item, index) => {
-        return {
-          tradeSubType: item.tradeType.split(".")[1],
-          tradeType: item.tradeType.split(".")[0]
-        };
-      });
-      dispatch(prepareFinalObject("LicensesTemp.tradeUnits", tradeTemp));
-      createOwnersBackup(dispatch, searchResponse);
-    } else {
-      let accessories = get(queryObject[0], "tradeLicenseDetail.accessories");
-      let tradeUnits = get(queryObject[0], "tradeLicenseDetail.tradeUnits");
-      // let owners = get(queryObject[0], "tradeLicenseDetail.owners");
-      let mergedTradeUnits =
-        tradeUnits &&
-        tradeUnits.filter(item => !item.hasOwnProperty("isDeleted"));
-      let mergedAccessories =
-        accessories &&
-        accessories.filter(item => !item.hasOwnProperty("isDeleted"));
-      let mergedOwners =
-        owners && owners.filter(item => !item.hasOwnProperty("isDeleted"));
+//       let action = "INITIATED";
+//       if (
+//         queryObject[0].tradeLicenseDetail &&
+//         queryObject[0].tradeLicenseDetail.applicationDocuments
+//       ) {
+//         if (getQueryArg(window.location.href, "action") === "edit") {
+//           // const removedDocs = get(
+//           // state.screenConfiguration.preparedFinalObject,
+//           // "LicensesTemp[0].removedDocs",
+//           // []
+//           // );
+//           // set(queryObject[0], "tradeLicenseDetail.applicationDocuments", [
+//           // ...get(
+//           // state.screenConfiguration.prepareFinalObject,
+//           // "Licenses[0].tradeLicenseDetail.applicationDocuments",
+//           // []
+//           // ),
+//           // ...removedDocs
+//           // ]);
+//         } else if (activeIndex === 1) {
+//           set(queryObject[0], "tradeLicenseDetail.applicationDocuments", null);
+//         } else action = "APPLY";
+//       }
+//       // else if (
+//       // queryObject[0].tradeLicenseDetail &&
+//       // queryObject[0].tradeLicenseDetail.applicationDocuments &&
+//       // activeIndex === 1
+//       // ) {
+//       // } else if (
+//       // queryObject[0].tradeLicenseDetail &&
+//       // queryObject[0].tradeLicenseDetail.applicationDocuments
+//       // ) {
+//       // action = "APPLY";
+//       // }
+//       set(queryObject[0], "action", action);
+//       const isEditFlow = getQueryArg(window.location.href, "action") === "edit";
+//       !isEditFlow &&
+//         (await httpRequest("post", "/tl-services/v1/_update", "", [], {
+//           Licenses: queryObject
+//         }));
+//       let searchQueryObject = [
+//         { key: "tenantId", value: queryObject[0].tenantId },
+//         { key: "applicationNumber", value: queryObject[0].applicationNumber }
+//       ];
+//       let searchResponse = await getSearchResults(searchQueryObject);
+//       if (isEditFlow) {
+//         searchResponse = { Licenses: queryObject };
+//       } else {
+//         dispatch(prepareFinalObject("Licenses", searchResponse.Licenses));
+//       }
+//       const updatedtradeUnits = get(
+//         searchResponse,
+//         "Licenses[0].tradeLicenseDetail.tradeUnits"
+//       );
+//       const tradeTemp = updatedtradeUnits.map((item, index) => {
+//         return {
+//           tradeSubType: item.tradeType.split(".")[1],
+//           tradeType: item.tradeType.split(".")[0]
+//         };
+//       });
+//       dispatch(prepareFinalObject("LicensesTemp.tradeUnits", tradeTemp));
+//       createOwnersBackup(dispatch, searchResponse);
+//     } else {
+//       let accessories = get(queryObject[0], "tradeLicenseDetail.accessories");
+//       let tradeUnits = get(queryObject[0], "tradeLicenseDetail.tradeUnits");
+//       // let owners = get(queryObject[0], "tradeLicenseDetail.owners");
+//       let mergedTradeUnits =
+//         tradeUnits &&
+//         tradeUnits.filter(item => !item.hasOwnProperty("isDeleted"));
+//       let mergedAccessories =
+//         accessories &&
+//         accessories.filter(item => !item.hasOwnProperty("isDeleted"));
+//       let mergedOwners =
+//         owners && owners.filter(item => !item.hasOwnProperty("isDeleted"));
 
-      set(queryObject[0], "tradeLicenseDetail.tradeUnits", mergedTradeUnits);
-      set(queryObject[0], "tradeLicenseDetail.accessories", mergedAccessories);
-      set(queryObject[0], "tradeLicenseDetail.owners", mergedOwners);
-      set(queryObject[0], "action", "INITIATED");
-      //Emptying application docs to "INITIATE" form in case of search and fill from old TL Id.
-      if (!queryObject[0].applicationNumber)
-        set(queryObject[0], "tradeLicenseDetail.applicationDocuments", null);
-      const response = await httpRequest(
-        "post",
-        "/tl-services/v1/_create",
-        "",
-        [],
-        { Licenses: queryObject }
-      );
-      dispatch(prepareFinalObject("Licenses", response.Licenses));
-      createOwnersBackup(dispatch, response);
-    }
-    /* Application no. box setting */
-    setApplicationNumberBox(state, dispatch);
-    return true;
-  } catch (error) {
-    dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
-    console.log(error);
-    return false;
-  }
-};
+//       set(queryObject[0], "tradeLicenseDetail.tradeUnits", mergedTradeUnits);
+//       set(queryObject[0], "tradeLicenseDetail.accessories", mergedAccessories);
+//       set(queryObject[0], "tradeLicenseDetail.owners", mergedOwners);
+//       set(queryObject[0], "action", "INITIATED");
+//       //Emptying application docs to "INITIATE" form in case of search and fill from old TL Id.
+//       if (!queryObject[0].applicationNumber)
+//         set(queryObject[0], "tradeLicenseDetail.applicationDocuments", null);
+//       const response = await httpRequest(
+//         "post",
+//         "/tl-services/v1/_create",
+//         "",
+//         [],
+//         { Licenses: queryObject }
+//       );
+//       dispatch(prepareFinalObject("Licenses", response.Licenses));
+//       createOwnersBackup(dispatch, response);
+//     }
+//     /* Application no. box setting */
+//     setApplicationNumberBox(state, dispatch);
+//     return true;
+//   } catch (error) {
+//     dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+//     console.log(error);
+//     return false;
+//   }
+// };
 
-const convertOwnerDobToEpoch = owners => {
-  let updatedOwners =
-    owners &&
-    owners
-      .map(owner => {
-        return {
-          ...owner,
-          dob:
-            owner && owner !== null && convertDateToEpoch(owner.dob, "dayend")
-        };
-      })
-      .filter(item => item && item !== null);
-  return updatedOwners;
-};
+// const convertOwnerDobToEpoch = owners => {
+//   let updatedOwners =
+//     owners &&
+//     owners
+//       .map(owner => {
+//         return {
+//           ...owner,
+//           dob:
+//             owner && owner !== null && convertDateToEpoch(owner.dob, "dayend")
+//         };
+//       })
+//       .filter(item => item && item !== null);
+//   return updatedOwners;
+// };
 
 export const getImageUrlByFile = file => {
   return new Promise(resolve => {
@@ -1397,7 +1397,7 @@ export const getOPMSCards = async () => {
 };
 
 
-export const getGridData1 = async () => {
+export const getCitizenGridData = async () => {
 
   let queryObject = [];
   var requestBody = {
@@ -1558,45 +1558,45 @@ export const getGridDataSellMeat1 = async () => {
     //store.dispatch(toggleSnackbar(true, error.message, "error"));
   }
 };
-export const UpdateMasterPrice
-  = async (
-    state, dispatch,
-    queryObject,
-    code
-  ) => {
 
-    try {
-      const response = await httpRequest("post", "/pm-services/noc/_updatepricebook", "", [], code);
+export const UpdateMasterPrice = async (
+  state, dispatch,
+  queryObject,
+  code
+) => {
 
-      if (response.ResposneInfo.status === 'SUCCESS') {
-        //alert("Price Updated Successfully")
-        //  window.location.reload(false);
-        store.dispatch(
-          toggleSnackbar(
-            true,
-            { labelName: 'Price Updated Successfully', labelCode: 'Price Updated Successfully' },
-            "success"
-          ),
-          dispatch(setRoute(`/egov-opms/masterAdvertisement?purpose=updated`))
-        );
-        return response
-      }
-      else {
-        store.dispatch(
-          toggleSnackbar(
-            true, { labelName: response.ResponseInfo.msgId, labelCode: response.ResponseInfo.msgId }, "error")
-        );
-      }
-    } catch (error) {
-      // store.dispatch(
-      //   toggleSnackbar(
-      //     true,
-      //     { labelName: error.message, labelCode: error.message },
-      //     "error"
-      //   )
-      // );
+  try {
+    const response = await httpRequest("post", "/pm-services/noc/_updatepricebook", "", [], code);
+
+    if (response.ResposneInfo.status === 'SUCCESS') {
+      //alert("Price Updated Successfully")
+      //  window.location.reload(false);
+      store.dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: 'Price Updated Successfully', labelCode: 'Price Updated Successfully' },
+          "success"
+        ),
+        dispatch(setRoute(`/egov-opms/masterAdvertisement?purpose=updated`))
+      );
+      return response
     }
-  };
+    else {
+      store.dispatch(
+        toggleSnackbar(
+          true, { labelName: response.ResponseInfo.msgId, labelCode: response.ResponseInfo.msgId }, "error")
+      );
+    }
+  } catch (error) {
+    // store.dispatch(
+    //   toggleSnackbar(
+    //     true,
+    //     { labelName: error.message, labelCode: error.message },
+    //     "error"
+    //   )
+    // );
+  }
+};
 
 export const createUpdateSellMeatNocApplication = async (state, dispatch, status) => {
   let response = '';
@@ -1662,13 +1662,12 @@ export const createUpdateSellMeatNocApplication = async (state, dispatch, status
     dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
 
     // Revert the changed pfo in case of request failure
-    let fireNocData = get(
+    let sellMeatNocData = get(
       state,
       "screenConfiguration.preparedFinalObject.SELLMEATNOC",
       []
     );
-    // fireNocData = furnishNocResponse({ FireNOCs: fireNocData });
-    dispatch(prepareFinalObject("SELLMEATNOC", fireNocData));
+    dispatch(prepareFinalObject("SELLMEATNOC", sellMeatNocData));
 
     return { status: "failure", message: error };
   }
@@ -1779,7 +1778,11 @@ export const createUpdateADVNocApplication = async (state, dispatch, status) => 
     set(payload, "remarks", Remarks);
     //set(payload, "exemptedCategory", 0)
 
-    // payload.hasOwnProperty("exemptedCategory") ?
+    status = payload['exemptedCategory'] === "1" ? 
+                      status==="INITIATED"
+                      ? "INITIATEDEXC" 
+                      : status  
+                  : status;
     // localStorageGet(`exemptedCategory`) === null ?
     // set(payload, "exemptedCategory", 0)
     // : set(payload, "exemptedCategory", localStorageGet(`exemptedCategory`)) :
@@ -1927,13 +1930,7 @@ export const getMasterGridData1 = async () => {
 
 };
 
-
-
-
-
 export const getMISSummaryReport = async data => {
-
-
   try {
     const response = await httpRequest(
       "post",
@@ -1957,11 +1954,7 @@ export const getMISSummaryReport = async data => {
 
 };
 
-
-
 export const getMISApplicationTypeReport = async data => {
-
-
   try {
     const response = await httpRequest(
       "post",
@@ -1986,8 +1979,6 @@ export const getMISApplicationTypeReport = async data => {
 };
 
 export const getMISSectorReport = async data => {
-
-
   try {
     const response = await httpRequest(
       "post",
@@ -2010,8 +2001,6 @@ export const getMISSectorReport = async data => {
   }
 
 };
-
-
 
 export const getSectordata1 = async () => {
   let queryObject = [];
@@ -2053,12 +2042,7 @@ export const getSectordata1 = async () => {
   }
 };
 
-
-
-
-
 export const getrepotforproccessingTime1 = async () => {
-
   let data = {
     "tenantId": getOPMSTenantId(),
     "reportName": "ApplicationProcessingTimeReport"
@@ -2086,8 +2070,6 @@ export const getrepotforproccessingTime1 = async () => {
 
 };
 export const getMonthwiseReport = async data => {
-
-
   try {
     const response = await httpRequest(
       "post",
@@ -2110,8 +2092,6 @@ export const getMonthwiseReport = async data => {
   }
 
 };
-
-
 
 export const getMonth1 = async () => {
   let queryObject = [];
@@ -2144,6 +2124,7 @@ export const getMonth1 = async () => {
     store.dispatch(toggleSnackbar(true, error.message, "error"));
   }
 };
+
 export const getYear1 = async () => {
   let queryObject = [];
   var requestBody = {
@@ -2181,17 +2162,17 @@ export const callBackForRefund = async data => {
     { key: "tenantId", value: data.tenantId },
     { key: "applicationNumber", value: data.applicationId }
   ]);
-  let nocApplicationDetail=get(response, "nocApplicationDetail", []);
+  let nocApplicationDetail = get(response, "nocApplicationDetail", []);
   try {
-    let withdrawType=data.applicationStatus==="APPROVEFORWITHDRAW"?"partialRefund":"fullRefund";
+    let withdrawType = data.applicationStatus === "APPROVEFORWITHDRAW" ? "partialRefund" : "fullRefund";
     const response1 = await httpRequest(
       "post",
       "/pm-refund-services/v1/_refund",
       "",
       [{ key: "withdrawType", value: withdrawType }],
-      { "RequestBody":nocApplicationDetail[0] }
+      { "RequestBody": nocApplicationDetail[0] }
     );
-    
+
     return response1;
 
   } catch (error) {
@@ -2203,9 +2184,8 @@ export const callBackForRefund = async data => {
       )
     );
   }
-  
-};
 
+};
 
 export const UpdateStatus = async (dispatch, url, queryObject, code) => {
   try {
@@ -2221,11 +2201,11 @@ export const UpdateStatus = async (dispatch, url, queryObject, code) => {
           "success"
         ));
       dispatch(setRoute(url))
-	if(code.applicationStatus=="APPROVEFORWITHDRAW" || code.applicationStatus=="WITHDRAW"){
-            callBackForRefund(code);
-          }
+      if (code.applicationStatus == "APPROVEFORWITHDRAW" || code.applicationStatus == "WITHDRAW") {
+        callBackForRefund(code);
+      }
 
-	}
+    }
     else {
       dispatch(toggleSnackbar(true, response.ResponseInfo.msgId, "warning"));
       //dispatch(setRoute(url))

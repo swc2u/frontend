@@ -21,24 +21,7 @@ import {
 //     "screenConfiguration.preparedFinalObject.gridData",
 //     []
 //     );
-const data=localStorage.getItem('data')
-const prepareDocumentsView = async (state, dispatch) => {
-  let documentsPreview = [];
-  
-  // Get all documents from response
-  let firenoc = get(
-  state,
-  "screenConfiguration.preparedFinalObject.gridData",
-  {}
-  );
-  
-  };
-const getLocalTextFromCode = localCode => {
-  
-  return JSON.parse(getLocalization("localization_en_IN")).find(
-    item => item.code === localCode
-  );
-};
+const data = localStorage.getItem('data')
 
 
 export const textToLocalMapping = {
@@ -84,7 +67,7 @@ export const textToLocalMapping = {
   ),
   DOCUMENTVERIFY: getLocaleLabels(
     "Pending for Document Verification",
-    "WF_FIRENOC_DOCUMENTVERIFY",
+    "WF_OPMSNOC_DOCUMENTVERIFY",
     getTransformedLocalStorgaeLabels()
   ),
   APPROVED: getLocaleLabels(
@@ -102,58 +85,35 @@ export const textToLocalMapping = {
     "NOC_CANCELLED",
     getTransformedLocalStorgaeLabels()
   ),
-  PENDINGAPPROVAL: getLocaleLabels(
-    "Pending for Approval",
-    "WF_FIRENOC_PENDINGAPPROVAL",
-    getTransformedLocalStorgaeLabels()
-  ),
-  PENDINGPAYMENT: getLocaleLabels(
-    "Pending payment",
-    "WF_FIRENOC_PENDINGPAYMENT",
-    getTransformedLocalStorgaeLabels()
-  ),
-  FIELDINSPECTION: getLocaleLabels(
-    "Pending for Field Inspection",
-    "WF_FIRENOC_FIELDINSPECTION",
-    getTransformedLocalStorgaeLabels()
-  ),
-  "Search Results for Fire-NOC Applications": getLocaleLabels(
-    "Search Results for Fire-NOC Applications",
-    "NOC_HOME_SEARCH_RESULTS_TABLE_HEADING",
-    getTransformedLocalStorgaeLabels()
-  )
+
 };
 
-export const searchResults ={
+export const searchResults = {
   uiFramework: "custom-molecules",
-  // moduleName: "egov-tradelicence",
+  // moduleName: "egov-OPMS",
   componentPath: "Table",
   visible: true,
   props: {
-    data:[],
-     //data: [{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"}],
-
+    data: [],
     columns: [
       getTextToLocalMapping("Application No"),
       getTextToLocalMapping("Application Status"),
       getTextToLocalMapping("Applicant Name"),
-      
+
       {
         name: getTextToLocalMapping(),
         options: {
           filter: false,
           customBodyRender: value => (
-            
-            <span>
-                  <i class="material-icons">history</i>
 
+            <span>
+              <i class="material-icons">history</i>
             </span>
           )
         }
       },
-     
+
     ],
-    //title: getTextToLocalMapping("Search Results for Fire-NOC Applications"),
     options: {
       filter: false,
       download: false,
@@ -191,66 +151,41 @@ const onRowClick = rowData => {
     default:
       window.location.href = `search-preview?applicationNumber=${
         rowData[0]
-      }&tenantId=`+getOPMSTenantId();
+        }&tenantId=` + getOPMSTenantId();
       break;
   }
 };
 
-// const onRowClick = rowData => {
-//   let appendUrl =
-//     process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-//   switch (rowData[get(textToLocalMapping, "Status")]) {
-//     case get(textToLocalMapping, "APPLIED"):
-//     case get(textToLocalMapping, "PENDINGPAYMENT"):
-//     case get(textToLocalMapping, "APPROVED"):
-//     case get(textToLocalMapping, "PENDINGAPPROVAL"):
-//     case get(textToLocalMapping, "FIELDINSPECTION"):
-//     case get(textToLocalMapping, "REJECTED"):
-//     case get(textToLocalMapping, "CANCELLED"):
-//     case get(textToLocalMapping, "DOCUMENTVERIFY"):
-//       return `${appendUrl}/fire-noc/search-preview?applicationNumber=${
-//         rowData[get(textToLocalMapping, "Application No")]
-//       }&tenantId=${rowData["tenantId"]}`;
-
-//     case get(textToLocalMapping, "INITIATED"):
-//       return `${appendUrl}/fire-noc/apply?applicationNumber=${
-//         rowData[get(textToLocalMapping, "Application No")]
-//       }&tenantId=${rowData.tenantId}`;
-
-//     default:
-//       return `${appendUrl}/fire-noc/search`;
-//   }
-// };
-export const searchResultsSellmeat ={
+export const searchResultsSellmeat = {
   uiFramework: "custom-molecules",
-  // moduleName: "egov-tradelicence",
+  // moduleName: "egov-OPMS",
   componentPath: "Table",
   visible: true,
   props: {
-    data:[],
-     //data: [{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"}],
+    data: [],
+    //data: [{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"}],
 
     columns: [
       getTextToLocalMapping("Application No"),
       getTextToLocalMapping("Application Status"),
       getTextToLocalMapping("Applicant Name"),
-      
+
       {
         name: getTextToLocalMapping(),
         options: {
           filter: false,
           customBodyRender: value => (
-            
+
             <span>
-                  <i class="material-icons">history</i>
+              <i class="material-icons">history</i>
 
             </span>
           )
         }
       },
-     
+
     ],
-    //title: getTextToLocalMapping("Search Results for Fire-NOC Applications"),
+    //title: getTextToLocalMapping("Search Results for Egov-OPMS-NOC Applications"),
     options: {
       filter: false,
       download: false,
@@ -281,7 +216,7 @@ export const searchResultsSellmeat ={
 };
 
 const onSellmeatRowClick = rowData => {
-  
+
   switch (rowData[5]) {
     case "INITIATED":
       window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=${getOPMSTenantId()}`;
@@ -289,42 +224,42 @@ const onSellmeatRowClick = rowData => {
     default:
       window.location.href = `sellmeatnoc-search-preview?applicationNumber=${
         rowData[0]
-      }&tenantId=`+getOPMSTenantId();
+        }&tenantId=` + getOPMSTenantId();
       break;
   }
 };
 
 
-export const searchResultsRoadcut ={
+export const searchResultsRoadcut = {
   uiFramework: "custom-molecules",
-  // moduleName: "egov-tradelicence",
+  // moduleName: "egov-OPMS",
   componentPath: "Table",
   visible: true,
   props: {
-    data:[],
-     //data: [{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"}],
+    data: [],
+    //data: [{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"}],
 
     columns: [
       getTextToLocalMapping("Application No"),
       getTextToLocalMapping("Application Status"),
       getTextToLocalMapping("Applicant Name"),
-      
+
       {
         name: getTextToLocalMapping(),
         options: {
           filter: false,
           customBodyRender: value => (
-            
+
             <span>
-                  <i class="material-icons">history</i>
+              <i class="material-icons">history</i>
 
             </span>
           )
         }
       },
-     
+
     ],
-    //title: getTextToLocalMapping("Search Results for Fire-NOC Applications"),
+    //title: getTextToLocalMapping("Search Results for Egov-OPMS-NOC Applications"),
     options: {
       filter: false,
       download: false,
@@ -355,50 +290,50 @@ export const searchResultsRoadcut ={
 };
 
 const onRoadcutRowClick = rowData => {
-  
+
   switch (rowData[5]) {
     case "INITIATED":
-      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=`+getOPMSTenantId();
+      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=` + getOPMSTenantId();
       break;
     default:
       window.location.href = `roadcutnoc-search-preview?applicationNumber=${
         rowData[0]
-      }&tenantId=`+getOPMSTenantId();
+        }&tenantId=` + getOPMSTenantId();
       break;
   }
 };
 
 
-export const searchResultsAdvertisement ={
+export const searchResultsAdvertisement = {
   uiFramework: "custom-molecules",
-  // moduleName: "egov-tradelicence",
+  // moduleName: "egov-OPMS",
   componentPath: "Table",
   visible: true,
   props: {
-    data:[],
-   // data: [{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"}],
+    data: [],
+    // data: [{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"}],
 
     columns: [
       getTextToLocalMapping("Application No"),
       getTextToLocalMapping("Application Status"),
       getTextToLocalMapping("Applicant Name"),
-      
+
       {
         name: getTextToLocalMapping(),
         options: {
           filter: false,
           customBodyRender: value => (
-            
+
             <span>
-                  <i class="material-icons">history</i>
+              <i class="material-icons">history</i>
 
             </span>
           )
         }
       },
-      
+
     ],
-    //title: getTextToLocalMapping("Search Results for Fire-NOC Applications"),
+    //title: getTextToLocalMapping("Search Results for Egov-OPMS-NOC Applications"),
     options: {
       filter: false,
       download: false,
@@ -429,30 +364,30 @@ export const searchResultsAdvertisement ={
 };
 
 const onAdvertisementRowClick = rowData => {
-  
+
   switch (rowData[5]) {
     case "INITIATED":
-      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=`+getOPMSTenantId();
+      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=` + getOPMSTenantId();
       break;
     default:
       window.location.href = `advertisementnoc-search-preview?applicationNumber=${
         rowData[0]
-      }&tenantId=`+getOPMSTenantId();
+        }&tenantId=` + getOPMSTenantId();
       break;
   }
 };
 
 
 
-export const searchResultsMaser ={
+export const searchResultsMaser = {
   uiFramework: "custom-molecules",
-  // moduleName: "egov-tradelicence",
+  // moduleName: "egov-OPMS",
   componentPath: "Table",
   visible: true,
   props: {
     id: "datagridsummary",
     data: [],
-   // data: [{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"}],
+    // data: [{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"}],
 
     columns: [
       getTextToLocalMapping("Price Book Id"),
@@ -464,24 +399,24 @@ export const searchResultsMaser ={
       getTextToLocalMapping("annualPrice"),
       getTextToLocalMapping("effectiveFromDate"),
       getTextToLocalMapping("effectiveToDate"),
-      
+
       {
         name: getTextToLocalMapping(),
         options: {
           filter: false,
           customBodyRender: value => (
-            
+
             <span>
-                 {/* <a href="masterUpdateRate?applicationNumber="> <i class="material-icons"  >history</i></a> */}
-                 {/* <a onClick={onMasterRowClick}> <i class="material-icons"  >history</i></a> */}
+              {/* <a href="masterUpdateRate?applicationNumber="> <i class="material-icons"  >history</i></a> */}
+              {/* <a onClick={onMasterRowClick}> <i class="material-icons"  >history</i></a> */}
 
             </span>
           )
         },
       },
-     
+
     ],
-    //title: getTextToLocalMapping("Search Results for Fire-NOC Applications"),
+    //title: getTextToLocalMapping("Search Results for Egov-OPMS-NOC Applications"),
     options: {
       filter: false,
       download: false,
@@ -508,21 +443,20 @@ export const searchResultsMaser ={
         return { data: finalData, currentOrder: !order ? "asc" : "desc" };
       }
     }
-  
+
   }
 };
 const onMasterRowClick = rowData => {
   // alert('aa')
   // 
-if(JSON.parse(getUserInfo()).roles[0].code=="OSD")
-{
-  window.location.href = `masterUpdateRate?pricebookid=${rowData[0]}`;
-  
-}
-  else{
+  if (JSON.parse(getUserInfo()).roles[0].code == "OSD") {
+    window.location.href = `masterUpdateRate?pricebookid=${rowData[0]}`;
 
-  }     
-  
+  }
+  else {
+
+  }
+
 };
 
 
@@ -533,14 +467,14 @@ if(JSON.parse(getUserInfo()).roles[0].code=="OSD")
 
 
 
-export const searchResultsReports ={
+export const searchResultsReports = {
   uiFramework: "custom-molecules",
-  // moduleName: "egov-tradelicence",
+  // moduleName: "egov-OPMS",
   componentPath: "Table",
   visible: true,
   props: {
-    data:[],
-     //data: [{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"}],
+    data: [],
+    //data: [{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"}],
 
     columns: [
       getTextToLocalMapping("applcationType"),
@@ -548,9 +482,9 @@ export const searchResultsReports ={
       getTextToLocalMapping("noOfApplicationProcessed"),
       getTextToLocalMapping("noOfApplicationPending"),
       getTextToLocalMapping("noOfApplicationRejected")
-    
+
     ],
-    //title: getTextToLocalMapping("Search Results for Fire-NOC Applications"),
+    //title: getTextToLocalMapping("Search Results for Egov-OPMS-NOC Applications"),
     options: {
       filter: false,
       download: false,
@@ -558,7 +492,7 @@ export const searchResultsReports ={
       selectableRows: false,
       hover: true,
       rowsPerPageOptions: [10, 15, 20],
-    
+
     },
     customSortColumn: {
       column: "Application Date",
@@ -578,23 +512,23 @@ export const searchResultsReports ={
   }
 };
 
-export const searchResultsReports2 ={
+export const searchResultsReports2 = {
   uiFramework: "custom-molecules",
-  // moduleName: "egov-tradelicence",
+  // moduleName: "egov-OPMS",
   componentPath: "Table",
   visible: true,
   props: {
-    data:[],
-     //data: [{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"}],
+    data: [],
+    //data: [{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"}],
 
     columns: [
       getTextToLocalMapping("applcationType"),
       getTextToLocalMapping("totalNoOfApplicationReceived"),
-            getTextToLocalMapping("revenueCollected"),
-            getTextToLocalMapping("totalNoApplicationApprovedWithNilCharges")
-    
+      getTextToLocalMapping("revenueCollected"),
+      getTextToLocalMapping("totalNoApplicationApprovedWithNilCharges")
+
     ],
-    //title: getTextToLocalMapping("Search Results for Fire-NOC Applications"),
+    //title: getTextToLocalMapping("Search Results for Egov-OPMS-NOC Applications"),
     options: {
       filter: false,
       download: false,
@@ -602,7 +536,7 @@ export const searchResultsReports2 ={
       selectableRows: false,
       hover: true,
       rowsPerPageOptions: [10, 15, 20],
-    
+
     },
     customSortColumn: {
       column: "Application Date",
@@ -623,25 +557,25 @@ export const searchResultsReports2 ={
 };
 
 
-export const searchResultsReports3 ={
+export const searchResultsReports3 = {
   uiFramework: "custom-molecules",
-  // moduleName: "egov-tradelicence",
+  // moduleName: "egov-OPMS",
   componentPath: "Table",
   visible: true,
   props: {
-    data:[],
-     //data: [{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"}],
+    data: [],
+    //data: [{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"}],
 
     columns: [
       getTextToLocalMapping("applcationType"),
-	  getTextToLocalMapping("sector"),
+      getTextToLocalMapping("sector"),
       getTextToLocalMapping("totalNoOfApplicationApproved"),
-            getTextToLocalMapping("revenueCollected"),
-            getTextToLocalMapping("totalNoApplicationApprovedWithNilCharges"),
-            
-            
+      getTextToLocalMapping("revenueCollected"),
+      getTextToLocalMapping("totalNoApplicationApprovedWithNilCharges"),
+
+
     ],
-    //title: getTextToLocalMapping("Search Results for Fire-NOC Applications"),
+    //title: getTextToLocalMapping("Search Results for Egov-OPMS-NOC Applications"),
     options: {
       filter: false,
       download: false,
@@ -649,7 +583,7 @@ export const searchResultsReports3 ={
       selectableRows: false,
       hover: true,
       rowsPerPageOptions: [10, 15, 20],
-    
+
     },
     customSortColumn: {
       column: "Application Date",
@@ -670,23 +604,23 @@ export const searchResultsReports3 ={
 };
 
 
-export const searchResultsReports4 ={
+export const searchResultsReports4 = {
   uiFramework: "custom-molecules",
-  // moduleName: "egov-tradelicence",
+  // moduleName: "egov-OPMS",
   componentPath: "Table",
   visible: true,
   props: {
-    data:[],
-     //data: [{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"}],
+    data: [],
+    //data: [{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"}],
 
     columns: [
       getTextToLocalMapping("applcationType"),
       getTextToLocalMapping("avgTimeTakenToProcessRequest"),
-            getTextToLocalMapping("pendingMoreThan10AndLessThan30Days"),
-            getTextToLocalMapping("pendingMoreThan30Days"),
-            
+      getTextToLocalMapping("pendingMoreThan10AndLessThan30Days"),
+      getTextToLocalMapping("pendingMoreThan30Days"),
+
     ],
-    //title: getTextToLocalMapping("Search Results for Fire-NOC Applications"),
+    //title: getTextToLocalMapping("Search Results for Egov-OPMS-NOC Applications"),
     options: {
       filter: false,
       download: false,
@@ -694,7 +628,7 @@ export const searchResultsReports4 ={
       selectableRows: false,
       hover: true,
       rowsPerPageOptions: [10, 15, 20],
-    
+
     },
     customSortColumn: {
       column: "Application Date",
@@ -715,24 +649,24 @@ export const searchResultsReports4 ={
 };
 
 
-export const searchResultsReports5={
+export const searchResultsReports5 = {
   uiFramework: "custom-molecules",
-  // moduleName: "egov-tradelicence",
+  // moduleName: "egov-OPMS",
   componentPath: "Table",
   visible: true,
   props: {
-    data:[],
-     //data: [{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"},{"TL_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","TL_COMMON_TABLE_COL_APP_Status":"abc"}],
+    data: [],
+    //data: [{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"},{"PM_COMMON_TABLE_COL_APP_NO":"Frozen yoghurt","PM_COMMON_TABLE_COL_APP_Status":"abc"}],
 
     columns: [
       getTextToLocalMapping("applcationType"),
       getTextToLocalMapping("YearMonth"),
-            getTextToLocalMapping("approve"),
-            getTextToLocalMapping("rev"),
-            getTextToLocalMapping("exempted"),
-            
+      getTextToLocalMapping("approve"),
+      getTextToLocalMapping("rev"),
+      getTextToLocalMapping("exempted"),
+
     ],
-    //title: getTextToLocalMapping("Search Results for Fire-NOC Applications"),
+    //title: getTextToLocalMapping("Search Results for Egov-OPMS-NOC Applications"),
     options: {
       filter: false,
       download: false,
@@ -740,7 +674,7 @@ export const searchResultsReports5={
       selectableRows: false,
       hover: true,
       rowsPerPageOptions: [10, 15, 20],
-    
+
     },
     customSortColumn: {
       column: "Application Date",
