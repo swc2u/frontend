@@ -94,7 +94,7 @@ class ProfileSection extends React.Component {
         <div className="profileContainer" style={{ textAlign: "center" }}>
           <Image id="profile-photo" className="img-Profile" circular={true} style={imgStyle} source={imgSrc} />
           {addIconName && (
-            <div style={addIconStyle}>
+            <div style={{...addIconStyle , top : window.screen.availWidth <767 ? 100 : 150}}>
               <Icon id="profile-upload-icon" action="image" name={addIconName} onClick={onClickAddPic} color={"#ffffff"} />
             </div>
           )}

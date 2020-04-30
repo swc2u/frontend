@@ -1,7 +1,7 @@
 import * as authType from "./actionTypes";
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import { httpRequest, loginRequest } from "egov-ui-kit/utils/api";
-import { AUTH, USER, OTP } from "egov-ui-kit/utils/endPoints";
+import { AUTH, USER, OTP , FINANCE} from "egov-ui-kit/utils/endPoints";
 import { prepareFormData } from "egov-ui-kit/utils/commons";
 import get from "lodash/get";
 import {
@@ -135,7 +135,13 @@ export const logout = () => {
       const authToken = getAccessToken();
       if (authToken) {
         const response = await httpRequest(AUTH.LOGOUT.URL, AUTH.LOGOUT.ACTION, [{ key: "access_token", value: authToken }]);
-      } else {
+
+        // for finance
+        if(process.env.REACT_APP_NAME !== "Citizen"){
+          const response_finance = await httpRequest(FINANCE.LOGOUT.URL, FINANCE.LOGOUT.ACTION, [{ key: "access_token", value: authToken }]);
+          }
+         } 
+         else {
         clearUserDetails();
         process.env.REACT_APP_NAME === "Citizen"
           ? window.location.replace(`${window.basename}/user/register`)

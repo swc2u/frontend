@@ -11,7 +11,7 @@ import commonConfig from "config/common";
 import redirectionLink from "egov-ui-kit/config/smsRedirectionLinks";
 import routes from "./Routes";
 import { LoadingIndicator } from "components";
-import { getLocale } from "egov-ui-kit/utils/localStorageUtils";
+import { getLocale , setDefaultLocale, getDefaultLocale } from "egov-ui-kit/utils/localStorageUtils";
 import { handleFieldChange } from "egov-ui-kit/redux/form/actions";
 import { getQueryArg } from "egov-ui-kit/utils/commons";
 import isEmpty from "lodash/isEmpty";
@@ -69,6 +69,8 @@ class App extends Component {
       },
     };
     // can be combined into one mdms call
+      setDefaultLocale(getDefaultLocale())
+
     fetchLocalizationLabel(getLocale() || "en_IN");
     // current location
     fetchCurrentLocation();
@@ -113,7 +115,10 @@ class App extends Component {
     const isPrivacyPolicy = location && location.pathname && location.pathname.includes("privacy-policy");
 
     if (nextProps.hasLocalisation !== this.props.hasLocalisation && !authenticated && !getQueryArg("", "smsLink") && !isWithoutAuthSelfRedirect && !isPrivacyPolicy) {
-      nextProps.hasLocalisation && this.props.history.replace("/language-selection");
+      if(nextProps.hasLocalisation){
+        if(getDefaultLocale()== "null")
+          this.props.history.replace("/language-selection");
+      }
     }
   }
 

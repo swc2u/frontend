@@ -403,11 +403,11 @@ export const getDetailsForOwner = async (state, dispatch, fieldInfo) => {
       //New number search only
       let payload = await httpRequest(
         "post",
-        "/user/_search?tenantId=pb",
+        "/user/_search?tenantId=ch",
         "_search",
         [],
         {
-          tenantId: "pb",
+          tenantId: "ch",
           userName: `${ownerNo}`
         }
       );
@@ -685,7 +685,7 @@ export const resetFields = (state, dispatch) => {
 
 export const getRequiredDocData = async (action, state, dispatch) => {
   let tenantId =
-    process.env.REACT_APP_NAME === "Citizen" ? "pb.amritsar" : getTenantId();
+    process.env.REACT_APP_NAME === "Citizen" ? "ch.chandigarh" : getTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,

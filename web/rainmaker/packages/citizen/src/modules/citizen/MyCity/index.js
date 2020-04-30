@@ -26,13 +26,16 @@ class MyCity extends React.Component {
   getTransformedData = (dataObj) => {
     const data = dataObj.map((item, index) => ({
       code: `TENANT_TENANTS_${getTransformedLocale(item.code)}`,
-      districtCode: `${getTransformedLocale(item.code).toUpperCase()}_${item.districtCode.toUpperCase()}_LABEL`,
-      statecode: `MYCITY_${item.code.split(".")[0].toUpperCase()}_LABEL`,
+    //  districtCode: `${getTransformedLocale(item.code).toUpperCase()}_${item.districtCode.toUpperCase()}_LABEL`,
+    //  statecode: `MYCITY_${item.code.split(".")[0].toUpperCase()}_LABEL`,
+      areaSqKm: item.areaSqKm,
       population: item.population,
       malePopulation: item.malePopulation,
       femalePopulation: item.femalePopultion,
       workingPopulation: item.workingPopulation,
       literacyRate: item.literacyRate,
+      maleLiteracyRate:item.maleLiteracyRate,
+      femaleLiteracyRate:item.femaleLiteracyRate,
       languagesSpoken: item.languagesSpoken,
     }));
     return data[0];

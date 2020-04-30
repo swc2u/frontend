@@ -81,6 +81,36 @@ const complaintCategoriesFetchError = (error) => {
   };
 };
 
+
+// complaint department success
+const complaintDepartmentFetchSucess = (payload) => {
+  return {
+    type: actionTypes.COMPLAINTS_DEPARTMENT_FETCH_SUCCESS,
+    payload,
+  };
+};
+
+const complaintDepartmentFetchError = (error) => {
+  return {
+    type: actionTypes.COMPLAINTS_DEPARTMENT_FETCH_ERROR,
+    error,
+  };
+};
+
+// complaint Sector success
+const complaintSectorFetchSucess = (payload) => {
+  return {
+    type: actionTypes.COMPLAINTS_SECTOR_FETCH_SUCCESS,
+    payload,
+  };
+};
+
+const complaintSectorFetchError = (error) => {
+  return {
+    type: actionTypes.COMPLAINTS_SECTOR_FETCH_ERROR,
+    error,
+  };
+};
 // complaints actions
 const complaintFetchPending = () => {
   return {
@@ -196,3 +226,58 @@ export const fetchComplaintCategories = () => {
     }
   };
 };
+
+export const fetchComplaintDepartment = () => {
+  //Fetching Complaint Categories from MDMS
+  let requestBody = {
+    MdmsCriteria: {
+      tenantId: commonConfig.tenantId,
+      moduleDetails: [
+        {
+          moduleName: "RAINMAKER-PGR",
+          masterDetails: [
+            {
+              name: "PgrDepartment",
+            },
+          ],
+        },
+      ],
+    },
+  };
+
+  return async (dispatch) => {
+    try {
+      const payload = await httpRequest(CATEGORY.GET.URL, CATEGORY.GET.ACTION, [], requestBody);
+      dispatch(complaintDepartmentFetchSucess(payload));
+    } catch (error) {
+      dispatch(complaintDepartmentFetchError(error.message));
+    }
+  };
+};
+
+  export const fetchComplaintSector = () => {
+    //Fetching Complaint Categories from MDMS
+    let requestBody = {
+      MdmsCriteria: {
+        tenantId: commonConfig.tenantId,
+        moduleDetails: [
+          {
+            moduleName: "RAINMAKER-PGR",
+            masterDetails: [
+              {
+                name: "Sector",
+              },
+            ],
+          },
+        ],
+      },
+    };
+    return async (dispatch) => {
+      try {
+        const payload = await httpRequest(CATEGORY.GET.URL, CATEGORY.GET.ACTION, [], requestBody);
+        dispatch(complaintSectorFetchSucess(payload));
+      } catch (error) {
+        dispatch(complaintSectorFetchError(error.message));
+      }
+    };
+  };

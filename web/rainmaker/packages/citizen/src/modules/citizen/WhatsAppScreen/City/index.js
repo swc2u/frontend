@@ -57,7 +57,7 @@ class WhatsAppCity extends React.Component {
     let mdmsBody = {
 
       MdmsCriteria: {
-        tenantId:stateId || "pb.amritsar",
+        tenantId:stateId || "ch.chandigarh",
         moduleDetails: [
           {
             moduleName: "tenant",

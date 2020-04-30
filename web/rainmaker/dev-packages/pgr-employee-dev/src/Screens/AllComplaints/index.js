@@ -57,6 +57,8 @@ class AllComplaints extends Component {
           value:
             role === "csr"
               ? "assigned,open,reassignrequested"
+              :role ==="eo"
+              ? "escalatedlevel1pending,escalatedlevel2pending"
               : "assigned,reassignrequested"
         }
       ];
@@ -124,7 +126,19 @@ class AllComplaints extends Component {
           true,
           false
         );
-      } else {
+      } else if(role === "eo"){
+        fetchComplaints(
+          [
+            {
+              key: "status",
+              value:"escalatedlevel1pending,escalatedlevel2pending"
+            }
+          ],
+          true,
+          true
+        );
+      }
+      else {
         fetchComplaints(
           [
             {
@@ -777,6 +791,9 @@ const mapStateToProps = state => {
     roleFromUserInfo(userInfo.roles, "GRO") ||
     roleFromUserInfo(userInfo.roles, "DGRO")
       ? "ao"
+      :roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
+      roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
+      ? "eo"
       : roleFromUserInfo(userInfo.roles, "CSR")
       ? "csr"
       : "employee";
@@ -792,18 +809,42 @@ const mapStateToProps = state => {
     unassignedComplaints = [],
     employeeComplaints = [],
     csrComplaints = [];
-  let filteredEmployeeComplaints = transformedComplaints.filter(
-    complaint =>
-      complaint.complaintStatus === "ASSIGNED" ||
-      complaint.rawStatus === "reassignrequested"
-  );
 
-  let searchFilterEmployeeComplaints = transformedComplaints.filter(
-    complaint =>
-      complaint.complaintStatus === "ASSIGNED" ||
-      complaint.rawStatus === "reassignrequested" ||
-      complaint.complaintStatus === "CLOSED"
-  );
+    let filteredEmployeeComplaints;
+    if(role === "eo"){
+      filteredEmployeeComplaints = transformedComplaints.filter(
+        complaint =>
+          complaint.rawStatus === "escalatedlevel1pending" ||
+          complaint.rawStatus === "escalatedlevel2pending" 
+      );  
+    }else{
+      filteredEmployeeComplaints = transformedComplaints.filter(
+       complaint =>
+       
+         complaint.complaintStatus === "ASSIGNED" ||
+         complaint.rawStatus === "reassignrequested"
+     );
+   }
+
+
+  let searchFilterEmployeeComplaints;
+  if(role === "eo"){
+     searchFilterEmployeeComplaints = transformedComplaints.filter(
+      complaint =>
+        complaint.rawStatus === "escalatedlevel1pending" ||
+        complaint.rawStatus === "escalatedlevel2pending" 
+    );  
+  }
+  else{
+     searchFilterEmployeeComplaints = transformedComplaints.filter(
+      complaint =>
+        complaint.complaintStatus === "ASSIGNED" ||
+        complaint.rawStatus === "reassignrequested" ||
+
+        complaint.complaintStatus === "CLOSED"
+    );
+  }
+  
 
   let filteredAssignedComplaints = transformedComplaints.filter(
     complaint => complaint.complaintStatus === "ASSIGNED"

@@ -116,7 +116,7 @@ const NavigationDrawer = ({
             <Label bold={true} color="black" bold={true} fontSize="13px" label="STATE_LABEL" />
           </div >
           <div style={{ marginTop: "42px" ,marginLeft:"65px" }}>
-          <img src={digitLogo} height="14px !important" />
+         {/* <img src={digitLogo} height="14px !important" />   */}
           </div>
         </div>
       </div>

@@ -15,12 +15,13 @@ const ForgotPasswd = ({ form, handleFieldChange }) => {
       textChildren={
         <div>
           <div className="rainmaker-displayInline" style={{ justifyContent: "center" }}>
-            <div style={{ marginBottom: "24px" }}>
+          {/*}  <div style={{ marginBottom: "24px" }}>
               <Image className="mseva-logo" source={`${logo}`} />
             </div >
           <div style={{marginLeft:"7px", marginBottom: "24px" }}>
           <Label bold={true}  fontSize= "23px" label="|" />
           </div>
+      */}
            <div style={{marginLeft:"7px" }}>
               <Label bold={true} color="black" fontSize= "24px" label="STATE_LABEL" />
            </div>
@@ -39,7 +40,7 @@ const ForgotPasswd = ({ form, handleFieldChange }) => {
             prefixStyle={{ top: 21 }}
             {...fields.username}
           />
-          <CityPicker onChange={handleFieldChange} fieldKey="tenantId" field={fields.tenantId} />
+        {/*  <CityPicker onChange={handleFieldChange} fieldKey="tenantId" field={fields.tenantId} /> */}
 
           <Button id="login-submit-action" primary={true} label="CONTINUE" fullWidth={true} {...submit} />
         </div>

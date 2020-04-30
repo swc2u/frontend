@@ -4,7 +4,7 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
 import { getPropertyResults } from "../../../../../ui-utils/commons";
 
 export const propertySearchApiCall = async (state, dispatch) => {
-  let queryObject = [{ key: "tenantId", value: "pb.amritsar" }];
+  let queryObject = [{ key: "tenantId", value: "ch.chandigarh" }];
   let searchScreenObject = get(state.screenConfiguration.preparedFinalObject, "searchScreen", {});
 
   if (

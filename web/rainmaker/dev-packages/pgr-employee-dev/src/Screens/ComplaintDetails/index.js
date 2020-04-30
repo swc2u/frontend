@@ -279,7 +279,14 @@ class ComplaintDetails extends Component {
         } else if (complaint.complaintStatus.toLowerCase() === "assigned") {
           btnTwoLabel = "ES_COMMON_REASSIGN";
         }
-      } else if (role === "employee") {
+      } else if(role == "eo"){
+        if (complaint.status.toLowerCase() === "escalatedlevel1pending"||
+        complaint.status.toLowerCase() === "escalatedlevel2pending") {
+        btnOneLabel = "ES_REJECT_BUTTON";
+        btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
+        }
+      }     
+      else if (role === "employee") {
         if (complaint.complaintStatus.toLowerCase() === "assigned") {
           btnOneLabel = "ES_REQUEST_REQUEST_RE_ASSIGN";
           btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
@@ -336,6 +343,9 @@ class ComplaintDetails extends Component {
               <div>
                 {(role === "ao" &&
                   complaint.complaintStatus.toLowerCase() !== "closed") ||
+                  (role === "eo" &&
+                  (complaint.status.toLowerCase() === "escalatedlevel1pending"||
+                  complaint.status.toLowerCase() === "escalatedlevel2pending")) ||
                 (role === "employee" &&
                   isAssignedToEmployee &&
                   complaint.complaintStatus.toLowerCase() === "assigned" &&
@@ -415,6 +425,12 @@ const getLatestStatus = status => {
     case "reassignrequested":
       transformedStatus = "REASSIGN";
       break;
+      case "escalatedlevel1pending":
+      transformedStatus = "ESCALATED";
+      break;
+    case "escalatedlevel2pending":
+      transformedStatus = "ESCALATED";
+      break;
     default:
       transformedStatus = "CLOSED";
       break;
@@ -466,6 +482,9 @@ const mapStateToProps = (state, ownProps) => {
     roleFromUserInfo(userInfo.roles, "GRO") ||
     roleFromUserInfo(userInfo.roles, "DGRO")
       ? "ao"
+      :roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
+      roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
+      ? "eo"
       : roleFromUserInfo(userInfo.roles, "CSR")
       ? "csr"
       : "employee";

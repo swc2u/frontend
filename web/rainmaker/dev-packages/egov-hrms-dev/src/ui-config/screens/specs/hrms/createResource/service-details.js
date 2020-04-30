@@ -127,7 +127,7 @@ const serviceDetailsCard = {
                 jsonPath: "Employee[0].serviceHistory[0].location"
                 //   data: [
                 //     {
-                //       value: "pb.amritsar",
+                //       value: "ch.chandigarh",
                 //       label: "Amritsar"
                 //     }
                 //   ],

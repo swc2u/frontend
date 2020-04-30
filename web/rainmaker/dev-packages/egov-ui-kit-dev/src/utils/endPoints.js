@@ -39,6 +39,13 @@ export const AUTH = {
   },
 };
 
+export const FINANCE = {
+  LOGOUT: {
+    URL: "/services/EGF/rest/ClearToken",
+    ACTION: "_finance_logout",
+  },
+};
+
 export const USER = {
   SEARCH: {
     URL: "/user/_search",

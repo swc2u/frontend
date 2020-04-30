@@ -23,6 +23,7 @@ export const getDefaultLocale = () => {
   return localStorage.getItem("defaultLocale");
 };
 
+
 export const getapplicationType = () => {
   return localStorage.getItem("applicationType");
 };

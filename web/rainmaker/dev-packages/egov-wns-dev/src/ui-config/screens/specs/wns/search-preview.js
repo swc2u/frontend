@@ -93,7 +93,7 @@ const serviceUrl = serviceModuleName === "NewWS1" ? "/ws-services/wc/_update" : 
 //   //   payload,
 //   //   "WaterConnection[0].property.address.locality.code"
 //   // );
-//   // const queryObj = [{ key: "tenantId", value: "pb.amritsar" }];
+//   // const queryObj = [{ key: "tenantId", value: "ch.chandigarh" }];
 //   // getBoundaryData(action, state, dispatch, queryObj, code);
 // };
 
@@ -522,9 +522,9 @@ const processBills = async (data, viewBillTooltip, dispatch) => {
     let cessKey = element.taxHeadCode
     let body;
     if (service === "WATER") {
-      body = { "MdmsCriteria": { "tenantId": "pb.amritsar", "moduleDetails": [{ "moduleName": "ws-services-calculation", "masterDetails": [{ "name": cessKey }] }] } }
+      body = { "MdmsCriteria": { "tenantId": "ch.chandigarh", "moduleDetails": [{ "moduleName": "ws-services-calculation", "masterDetails": [{ "name": cessKey }] }] } }
     } else {
-      body = { "MdmsCriteria": { "tenantId": "pb.amritsar", "moduleDetails": [{ "moduleName": "sw-services-calculation", "masterDetails": [{ "name": cessKey }] }] } }
+      body = { "MdmsCriteria": { "tenantId": "ch.chandigarh", "moduleDetails": [{ "moduleName": "sw-services-calculation", "masterDetails": [{ "name": cessKey }] }] } }
     }
     let res = await getDescriptionFromMDMS(body, dispatch)
     if (res !== null && res !== undefined && res.MdmsRes !== undefined && res.MdmsRes !== null) {

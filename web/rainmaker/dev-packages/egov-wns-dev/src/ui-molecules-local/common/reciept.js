@@ -61,7 +61,7 @@ const ReceiptFromAPI = {
               billAccountDetails: [
                 {
                   id: "8615",
-                  tenantId: "pb.amritsar", //DUMMY DATA
+                  tenantId: "ch.chandigarh", //DUMMY DATA
                   billDetail: "1895",
                   glcode: "1405015",
                   order: 1,
@@ -75,7 +75,7 @@ const ReceiptFromAPI = {
                 },
                 {
                   id: "8616",
-                  tenantId: "pb.amritsar",
+                  tenantId: "ch.chandigarh",
                   billDetail: "1895",
                   glcode: "1405013",
                   order: 1,
@@ -88,7 +88,7 @@ const ReceiptFromAPI = {
                 },
                 {
                   id: "8617",
-                  tenantId: "pb.amritsar",
+                  tenantId: "ch.chandigarh",
                   billDetail: "1895",
                   glcode: "1405019",
                   order: 1,
@@ -102,7 +102,7 @@ const ReceiptFromAPI = {
                 },
                 {
                   id: "8618",
-                  tenantId: "pb.amritsar",
+                  tenantId: "ch.chandigarh",
                   billDetail: "1895",
                   glcode: "1405013",
                   order: 1,
@@ -116,7 +116,7 @@ const ReceiptFromAPI = {
                 },
                 {
                   id: "8619",
-                  tenantId: "pb.amritsar",
+                  tenantId: "ch.chandigarh",
                   billDetail: "1895",
                   glcode: "1405016",
                   order: 1,
@@ -130,7 +130,7 @@ const ReceiptFromAPI = {
                 },
                 {
                   id: "8620",
-                  tenantId: "pb.amritsar",
+                  tenantId: "ch.chandigarh",
                   billDetail: "1895",
                   glcode: "1405019",
                   order: 1,

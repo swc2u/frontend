@@ -312,6 +312,30 @@ class ShowField extends Component {
       ) {
         return this.addCommas(Number(val) % 1 === 0 ? Number(val) : Number(val).toFixed(2));
       } else {
+        if(
+          reportResult &&
+          reportResult.reportHeader &&
+          reportResult.reportHeader.length &&
+          reportResult.reportHeader[i] && reportResult.reportHeader[i].name== "department")
+          {
+          return( <Label
+            className=""
+            labelStyle={{ wordWrap: "unset", wordBreak: "unset"}}
+            label={`PGRDEPT.${val.toUpperCase().replace(/ /g, "")}`}
+          />)
+        }
+        else if(
+          reportResult &&
+          reportResult.reportHeader &&
+          reportResult.reportHeader.length &&
+          reportResult.reportHeader[i] && (reportResult.reportHeader[i].name== "servicecode" || reportResult.reportHeader[i].name== "complainttype"))
+        {
+          return( <Label
+            className=""
+            labelStyle={{ wordWrap: "unset", wordBreak: "unset" }}
+            label={`SERVICEDEFS.${val.toUpperCase().replace(/ /g, "")}`}
+          />)
+        }
         return val;
       }
     }
@@ -704,10 +728,17 @@ class ShowField extends Component {
   }
 }
 const mapStateToProps = (state) => {
+let reportData ;
+  if( state.report.reportResult &&  state.report.reportResult.reportResponses && state.report.reportResult.reportResponses[0]) {
+    reportData = state.report.reportResult.reportResponses[0];
+  } 
+  else{
+    reportData = state.report.reportResult;
+  }
   return {
     isTableShow: state.formtemp.showTable,
     metaData: state.report.metaData,
-    reportResult: state.report.reportResult,
+    reportResult:reportData ,
     flag: state.report.flag,
     searchForm: state.formtemp.form,
     searchParams: state.report.searchParams,

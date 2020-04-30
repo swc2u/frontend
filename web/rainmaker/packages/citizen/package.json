@@ -3,8 +3,8 @@
   "version": "0.0.2",
   "license": "egov",
   "private": true,
-  "homepage": "https://egov-micro-qa.egovernments.org/citizen/",
-  "proxy": "https://egov-micro-qa.egovernments.org/",
+  "homepage": "https://egov-dev.chandigarhsmartcity.in/citizen/",
+  "proxy": "https://egov-dev.chandigarhsmartcity.in/",
   "dependencies": {
     "@babel/runtime": "^7.3.1",
     "@material-ui/core": "^1.5.1",
@@ -88,7 +88,7 @@
     "egov-ui-kit-components": "babel src/components --out-dir src/egov-ui-kit/components --copy-files",
     "egov-ui-kit-redux": "babel src/redux --out-dir src/egov-ui-kit/redux --copy-files",
     "egov-ui-kit-utils": "babel src/utils --out-dir src/egov-ui-kit/utils --copy-files"
-  },
+   },
   "devDependencies": {
     "@storybook/addon-knobs": "^3.4.11",
     "@storybook/react": "^3.4.11",

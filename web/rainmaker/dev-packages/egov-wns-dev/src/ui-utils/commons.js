@@ -572,7 +572,7 @@ export const applyForWaterOrSewerage = async (state, dispatch) => {
 
 const applyForWater = async (state, dispatch, method, queryObject) => {
     try {
-        const tenantId = ifUserRoleExists("CITIZEN") ? "pb.amritsar" : getTenantId();
+        const tenantId = ifUserRoleExists("CITIZEN") ? "ch.chandigarh" : getTenantId();
         let response;
         if (method === "UPDATE") {
             let queryObjectForUpdate = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0]");
@@ -601,7 +601,7 @@ const applyForWater = async (state, dispatch, method, queryObject) => {
 
 const applyForSewerage = async (state, dispatch, method, queryObject) => {
     try {
-        const tenantId = ifUserRoleExists("CITIZEN") ? "pb.amritsar" : getTenantId();
+        const tenantId = ifUserRoleExists("CITIZEN") ? "ch.chandigarh" : getTenantId();
         let response;
         set(queryObject, "tenantId", tenantId);
         if (method === "UPDATE") {
@@ -631,7 +631,7 @@ const applyForSewerage = async (state, dispatch, method, queryObject) => {
 
 const applyForBothWaterAndSewerage = async (state, dispatch, method, queryObject) => {
     try {
-        const tenantId = ifUserRoleExists("CITIZEN") ? "pb.amritsar" : getTenantId();
+        const tenantId = ifUserRoleExists("CITIZEN") ? "ch.chandigarh" : getTenantId();
         let response;
         set(queryObject, "tenantId", tenantId);
         if (method === "UPDATE") {
@@ -851,7 +851,7 @@ export const getMeterReadingData = async (dispatch) => {
     let queryObject = [
         {
             key: "tenantId",
-            value: "pb.amritsar"
+            value: "ch.chandigarh"
         },
         {
             key: "connectionNos",
@@ -879,7 +879,7 @@ export const getPastPaymentsForWater = async (dispatch) => {
     let queryObject = [
         {
             key: "tenantId",
-            value: "pb.amritsar"
+            value: "ch.chandigarh"
         },
         {
             key: "businessServices",
@@ -918,7 +918,7 @@ export const getPastPaymentsForSewerage = async (dispatch) => {
     let queryObject = [
         {
             key: "tenantId",
-            value: "pb.amritsar"
+            value: "ch.chandigarh"
         },
         {
             key: "businessServices",
@@ -1098,14 +1098,14 @@ export const wsDownloadConnectionDetails = (receiptQueryString, mode, dispatch) 
 
                     if (payloadReceiptDetails.WaterConnection[0].property.propertyType !== null && payloadReceiptDetails.WaterConnection[0].property.propertyType !== undefined) {
                         const propertyTpe = "[?(@.code  == " + JSON.stringify(payloadReceiptDetails.WaterConnection[0].property.propertyType) + ")]"
-                        let propertyTypeParams = { MdmsCriteria: { tenantId: "pb", moduleDetails: [{ moduleName: "PropertyTax", masterDetails: [{ name: "PropertyType", filter: `${propertyTpe}` }] }] } }
+                        let propertyTypeParams = { MdmsCriteria: { tenantId: "ch", moduleDetails: [{ moduleName: "PropertyTax", masterDetails: [{ name: "PropertyType", filter: `${propertyTpe}` }] }] } }
                         const mdmsPropertyType = await getDescriptionFromMDMS(propertyTypeParams, dispatch)
                         payloadReceiptDetails.WaterConnection[0].property.propertyTypeValue = mdmsPropertyType.MdmsRes.PropertyTax.PropertyType[0].name;//propertyType from Mdms
                     }
 
                     if (payloadReceiptDetails.WaterConnection[0].property.usageCategory !== null && payloadReceiptDetails.WaterConnection[0].property.usageCategory !== undefined) {
                         const propertyUsageType = "[?(@.code  == " + JSON.stringify(payloadReceiptDetails.WaterConnection[0].property.usageCategory) + ")]"
-                        let propertyUsageTypeParams = { MdmsCriteria: { tenantId: "pb", moduleDetails: [{ moduleName: "PropertyTax", masterDetails: [{ name: "UsageCategoryMajor", filter: `${propertyUsageType}` }] }] } }
+                        let propertyUsageTypeParams = { MdmsCriteria: { tenantId: "ch", moduleDetails: [{ moduleName: "PropertyTax", masterDetails: [{ name: "UsageCategoryMajor", filter: `${propertyUsageType}` }] }] } }
                         const mdmsPropertyUsageType = await getDescriptionFromMDMS(propertyUsageTypeParams, dispatch)
                         payloadReceiptDetails.WaterConnection[0].property.propertyUsageType = mdmsPropertyUsageType.MdmsRes.PropertyTax.UsageCategoryMajor[0].name;//propertyUsageType from Mdms
                     }
@@ -1140,14 +1140,14 @@ export const wsDownloadConnectionDetails = (receiptQueryString, mode, dispatch) 
 
                     if (payloadReceiptDetails.SewerageConnections[0].property.propertyType !== null && payloadReceiptDetails.SewerageConnections[0].property.propertyType !== undefined) {
                         const propertyTpe = "[?(@.code  == " + JSON.stringify(payloadReceiptDetails.SewerageConnections[0].property.propertyType) + ")]"
-                        let propertyTypeParams = { MdmsCriteria: { tenantId: "pb", moduleDetails: [{ moduleName: "PropertyTax", masterDetails: [{ name: "PropertyType", filter: `${propertyTpe}` }] }] } }
+                        let propertyTypeParams = { MdmsCriteria: { tenantId: "ch", moduleDetails: [{ moduleName: "PropertyTax", masterDetails: [{ name: "PropertyType", filter: `${propertyTpe}` }] }] } }
                         const mdmsPropertyType = await getDescriptionFromMDMS(propertyTypeParams, dispatch)
                         payloadReceiptDetails.SewerageConnections[0].property.propertyTypeValue = mdmsPropertyType.MdmsRes.PropertyTax.PropertyType[0].name;//propertyType from Mdms
                     }
 
                     if (payloadReceiptDetails.SewerageConnections[0].property.usageCategory !== null && payloadReceiptDetails.SewerageConnections[0].property.usageCategory !== undefined) {
                         const propertyUsageType = "[?(@.code  == " + JSON.stringify(payloadReceiptDetails.SewerageConnections[0].property.usageCategory) + ")]"
-                        let propertyUsageTypeParams = { MdmsCriteria: { tenantId: "pb", moduleDetails: [{ moduleName: "PropertyTax", masterDetails: [{ name: "UsageCategoryMajor", filter: `${propertyUsageType}` }] }] } }
+                        let propertyUsageTypeParams = { MdmsCriteria: { tenantId: "ch", moduleDetails: [{ moduleName: "PropertyTax", masterDetails: [{ name: "UsageCategoryMajor", filter: `${propertyUsageType}` }] }] } }
                         const mdmsPropertyUsageType = await getDescriptionFromMDMS(propertyUsageTypeParams, dispatch)
                         payloadReceiptDetails.SewerageConnections[0].property.propertyUsageType = mdmsPropertyUsageType.MdmsRes.PropertyTax.UsageCategoryMajor[0].name;//propertyUsageType from Mdms
                     }

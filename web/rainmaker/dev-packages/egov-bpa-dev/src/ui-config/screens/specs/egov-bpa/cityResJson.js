@@ -236,7 +236,7 @@ export const cityModuleMockJson = {
         "StateInfo": [
           {
             "name": "Panjab",
-            "code": "pb",
+            "code": "ch",
             "bannerUrl": "https://s3.ap-south-1.amazonaws.com/pb-egov-assets/pb.testing/Punjab-bg-QA.jpg",
             "logoUrl": "https://raw.githubusercontent.com/egovernments/egov-web-app/rainmaker-v1-dynamic-state/web/rainmaker/packages/assets/images/pb/mseva-punjab.png",
             "hasLocalisation": true,
@@ -264,7 +264,7 @@ export const cityModuleMockJson = {
       "tenant": {
         "tenants": [
           {
-            "code": "pb",
+            "code": "ch",
             "name": "Punjab",
             "description": "Punjab",
             "logoId": "https://s3.ap-south-1.amazonaws.com/pb-egov-assets/pb.jalandhar/logo.png",
@@ -357,11 +357,11 @@ export const cityModuleMockJson = {
             "contactNumber": "01824-260426"
           },
           {
-            "code": "pb.amritsar",
+            "code": "ch.chandigarh",
             "name": "Amritsar",
             "description": null,
             "logoId": null,
-            "imageId": "/pb-egov-assets/pb.amritsar/logo.png",
+            "imageId": "/pb-egov-assets/ch.chandigarh/logo.png",
             "domainUrl": "www.amritsarcorp.com",
             "type": "CITY",
             "twitterUrl": "https://twitter.com/search?q=%23AMRITSAR",
@@ -533,7 +533,7 @@ export const cityModuleMockJson = {
             ]
           },
           {
-            "code": "pb.amritsar",
+            "code": "ch.chandigarh",
             "districtCode": "Bahadaur",
             "population": "116449",
             "malePopulation": "62554",
@@ -587,7 +587,7 @@ export const cityModuleMockJson = {
                 "code": "pb.phagwara"
               },
               {
-                "code": "pb.amritsar"
+                "code": "ch.chandigarh"
               }
             ]
           },
@@ -602,7 +602,7 @@ export const cityModuleMockJson = {
                 "code": "pb.nawanshahr"
               },
               {
-                "code": "pb.amritsar"
+                "code": "ch.chandigarh"
               }
             ]
           },
@@ -617,7 +617,7 @@ export const cityModuleMockJson = {
                 "code": "pb.nawanshahr"
               },
               {
-                "code": "pb.amritsar"
+                "code": "ch.chandigarh"
               },
               {
                 "code": "pb.mohali"
@@ -638,7 +638,7 @@ export const cityModuleMockJson = {
                 "code": "pb.nawanshahr"
               },
               {
-                "code": "pb.amritsar"
+                "code": "ch.chandigarh"
               },
               {
                 "code": "pb.derabassi"
@@ -656,7 +656,7 @@ export const cityModuleMockJson = {
                 "code": "pb.nawanshahr"
               },
               {
-                "code": "pb.amritsar"
+                "code": "ch.chandigarh"
               }
             ]
           }

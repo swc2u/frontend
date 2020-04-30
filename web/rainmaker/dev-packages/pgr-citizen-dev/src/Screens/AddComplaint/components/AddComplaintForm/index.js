@@ -13,6 +13,7 @@ const AddComplaintForm = ({ formKey, localizationLabels, handleFieldChange, form
       <ComplaintTypeCard
         localizationLabels={localizationLabels}
         categories={categories}
+        department = {fields.department}
         complaintType={fields.complaintType}
         handleFieldChange={handleFieldChange}
         additionalDetails={fields.additionalDetails}
