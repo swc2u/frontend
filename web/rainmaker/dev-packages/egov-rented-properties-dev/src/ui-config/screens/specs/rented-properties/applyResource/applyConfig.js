@@ -2,7 +2,7 @@ import {
     getStepperObject, getCommonCard, getCommonTitle, getCommonParagraph
   } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {propertyDetails, transitSiteDetails} from './propertyDetails';
-import {rentHolderDetails, applicantDetails} from './rentHolderDetails';
+import {rentHolderDetails, applicantDetails,rentHolderDetailsForDuplicateProperties} from './rentHolderDetails';
 import {addressDetails, ownershipAddressDetails} from './addressDetails';
 import {rentDetails} from './rentDetails';
 import {paymentDetails} from './paymentDetails'
@@ -165,7 +165,15 @@ export const formwizardDuplicateCopyFirstStep = {
   },
   children: {
     transitSiteDetails,
-    applicantDetails,
-    ownershipAddressDetails
+    rentHolderDetailsForDuplicateProperties,
+    //ownershipAddressDetails
   }
+};
+
+export const formwizardDuplicateCopySecondStep = {
+  
+};
+
+export const formwizardDuplicateCopyThirdStep = {
+ 
 };

@@ -305,6 +305,25 @@ const applicantNameField = {
     jsonPath: "Owners[0].ownerDetails.name"
 }
 
+const applicantNameFieldname = {
+    label: {
+        labelName: "Applicant Name",
+        labelKey: "RP_APPLICANT_NAME_LABEL"
+    },
+    placeholder: {
+        labelName: "Enter Applicant Name",
+        labelKey: "RP_APPLICANT_NAME_PLACEHOLDER"
+    },
+    gridDefination: {
+        xs: 12,
+        sm: 6
+    },
+    minLength: 1,
+    maxLength: 100,
+    required: true,
+    jsonPath: "Duplicate[0].applicant[0].name"
+}
+
 
 const applicantphoneNumberField = {
     ...phoneNumberConfig,
@@ -315,6 +334,14 @@ const applicantphoneNumberField = {
     jsonPath: "Properties[0].owners[0].ownerDetails.phone"
 }
 
+const applicantphoneNumberFieldduplicate = {
+    ...phoneNumberConfig,
+    props: {
+        value: userInfo.userName,
+        disabled: true
+      },
+    jsonPath: "Duplicate[0].applicant[0].phone"
+}
 
 export const  applicantGenderLabel = {
     uiFramework: "custom-containers",
@@ -349,15 +376,68 @@ export const  applicantGenderLabel = {
     type: "array"
 };
 
+
+const fatherOrHusbandsName = {
+    label: {
+        labelName: "Father/ Husband's Name",
+        labelKey: "TL_FATHER_OR_HUSBANDS_NAME_LABEL"
+    },
+    placeholder: {
+        labelName: "Enter Father/ Husband's Name",
+        labelKey: "TL_FATHER_OR_HUSBANDS_NAME_NAME_PLACEHOLDER"
+    },
+    gridDefination: {
+        xs: 12,
+        sm: 6
+    },
+    minLength: 4,
+    maxLength: 40,
+    required: true,
+    jsonPath: "Duplicate[0].applicant[0].guardian"
+}
+
+const ownerShipRelationShipduplicate = {
+      ...getRelationshipRadioButton,
+      jsonPath: "Duplicate[0].applicant[0].relationship",
+      props: {
+          ...getRelationshipRadioButton.props,
+          buttons: [
+            {
+              labelName: "Legal Heir",
+              labelKey: "COMMON_RELATION_LEGAL_HEIR",
+              value: "LEGAL_HEIR"
+            },
+            {
+              label: "Spouse",
+              labelKey: "COMMON_RELATION_SPOUSE",
+              value: "SPOUSE"
+            }
+          ],
+          jsonPath: "Duplicate[0].applicant[0].relationship"
+      }
+  }
+
 const applicantEmailField = {
     ...emailConfig,
     jsonPath: "Owners[0].ownerDetails.email",
     required: false
 }
 
+const applicantEmailFieldduplicate = {
+    ...emailConfig,
+    jsonPath: "Duplicate[0].applicant[0].email",
+    required: false
+}
+
+
 const applicantAadharField = {
     ...aadharFieldConfig,
      jsonPath: "Owners[0].ownerDetails.aadhaarNumber"
+}
+
+const applicantAadharFieldduplicate = {
+    ...aadharFieldConfig,
+     jsonPath: "Duplicate[0].applicant[0].adhaarNumber"
 }
 
 const applicantAddressField = {
@@ -393,8 +473,23 @@ const getApplicantDetails = () => {
     }
 }
 
+const getApplicantDetailsForDuplicateCopy = () => {
+    return {
+        header: rentHolderHeader,
+        detailsContainer: getCommonContainer({
+            ownerName: getTextField(applicantNameFieldname),
+            fatherOrHusband:getTextField(fatherOrHusbandsName),
+            relationShip: ownerShipRelationShipduplicate,
+            phone: getTextField(applicantphoneNumberFieldduplicate),
+            email: getTextField(applicantEmailFieldduplicate),
+            aadhar: getTextField(applicantAadharFieldduplicate),
+        })
+    }
+}
 
 export const applicantDetails = getCommonCard(getApplicantDetails())
 
 
 export const rentHolderDetails = getCommonCard(getRentHolderDetails())
+
+export const rentHolderDetailsForDuplicateProperties = getCommonCard(getApplicantDetailsForDuplicateCopy())

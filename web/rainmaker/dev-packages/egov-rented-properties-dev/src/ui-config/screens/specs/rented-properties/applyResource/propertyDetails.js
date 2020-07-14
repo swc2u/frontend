@@ -2,6 +2,8 @@ import { getCommonCard, getSelectField, getTextField, getDateField, getCommonTit
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getTodaysDateInYMD } from "../../utils";
 import get from "lodash/get";
+import { getDetailsFromProperty ,getDuplicateDetailsFromProperty} from "../../../../../ui-utils/apply";
+
 
 export const propertyHeader = getCommonTitle(
         {
@@ -15,7 +17,23 @@ export const propertyHeader = getCommonTitle(
             }
         }
       )
-
+export const pincodeField = {
+    label: {
+        labelName: "Pincode",
+        labelKey: "RP_PINCODE_LABEL"
+    },
+    placeholder: {
+        labelName: "Enter Pincode",
+        labelKey: "RP_PINCODE_PLACEHOLDER"
+    },
+    gridDefination: {
+        xs: 12,
+        sm: 6
+    },
+    minLength: 6,
+    maxLength: 6,
+    required: true,
+  }
 const colonyFieldConfig = {
     label: {
         labelName: "Colony",
@@ -67,6 +85,48 @@ export const transitNumberConfig = {
     minLength: 4,
     maxLength: 25,
     required: true,
+}
+
+const ownershipTransitNumberField = {
+    ...transitNumberConfig,
+    jsonPath: "Duplicate[0].property.transitNumber",
+    iconObj: {
+        iconName: "search",
+        position: "end",
+        color: "#FE7A51",
+        onClickDefination: {
+          action: "condition",
+          callBack: (state, dispatch) => {
+            getDuplicateDetailsFromProperty(state, dispatch);
+          }
+        }
+      },
+      title: {
+        value:
+          "If you have already assessed your property, then please search your property by your transit Number",
+        key: "If you have already assessed your property, then please search your property by your transit Number"
+      },
+      infoIcon: "info_circle",
+      beforeFieldChange: (action, state, dispatch) => {
+        dispatch(
+            prepareFinalObject(
+              "Duplicate[0].property.id",
+              ""
+            )
+          )
+        dispatch(
+            prepareFinalObject(
+              "Properties[0].colony",
+              ""
+            )
+          )
+          dispatch(
+            prepareFinalObject(
+              "Properties[0].pincode",
+              ""
+            )
+          )
+      }
 }
 
 const transitNumberField = {
@@ -182,8 +242,9 @@ const getTransitSiteDetails = () => {
     return {
         header: transitSiteHeader,
         detailsContainer: getCommonContainer({
-            transitNumber: getTextField(transitNumberField),
-            colony: getSelectField(colonyFieldConfig),
+            transitNumber: getTextField(ownershipTransitNumberField),
+            colony: getTextField({...colonyFieldConfig,jsonPath: "Properties[0].colony", required: false, props: {...colonyFieldConfig.props, disabled: true}}),
+            pincode: getTextField({...pincodeField, jsonPath: "Properties[0].pincode", required: false, props: {...pincodeField.props, disabled: true}}),
         })
     }
 }

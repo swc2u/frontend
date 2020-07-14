@@ -116,6 +116,7 @@ let userInfo = JSON.parse(getUserInfo());
               get(state.screenConfiguration.preparedFinalObject, "Owners", [])
             )
           );
+        
         const userInfo = JSON.parse(getUserInfo())
         const tenantId = userInfo.permanentCity;
         // const tenantId = getQueryArg(window.location.href, "tenantId");
@@ -176,9 +177,66 @@ let userInfo = JSON.parse(getUserInfo());
         return false;
     }
   }
+  
+
+export const applyDuplicateOwnershipTransfer = async (state, dispatch, activeIndex) => {
+ 
+    try {
+        let queryObject = JSON.parse(
+            JSON.stringify(
+              get(state.screenConfiguration.preparedFinalObject, "Duplicate", [])
+            )
+          );
+          
+        const userInfo = JSON.parse(getUserInfo())
+        const tenantId = userInfo.permanentCity;
+        // const tenantId = getQueryArg(window.location.href, "tenantId");
+        const id = get(queryObject[0], "id");
+        let response;
+        set(queryObject[0], "tenantId", tenantId);
+        set(queryObject[0], "state", "");
+        set(queryObject[0], "propertyDetails", "null");
+        set(queryObject[0], "applicant[0].phone", userInfo.userName);
+        
+        if(!id) {
+          set(queryObject[0], "action", "INITIATE");
+          response = await httpRequest(
+            "post",
+            "/csp/duplicatecopy/_create",
+            "",
+            [],
+            { DuplicateCopyApplications: queryObject }
+          );
+        } else {
+          if(activeIndex === 0) {
+            set(queryObject[0], "action", "REINITIATE")
+          } else {
+            set(queryObject[0], "action", "SUBMIT")
+          }
+          response = await httpRequest(
+            "post",
+            "/csp/duplicatecopy/_update",
+            "",
+            [],
+            { DuplicateCopyApplications: queryObject }
+          );
+        }
+        let {DuplicateCopyApplications} = response
+        dispatch(prepareFinalObject("DuplicateCopyApplications", DuplicateCopyApplications));
+        return true;
+    } catch (error) {
+        dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+        console.log(error);
+        return false;
+    }
+  }
+  
+
+
 
 export const getDetailsFromProperty = async (state, dispatch) => {
   try {
+    
     const transitNumber = get(
       state.screenConfiguration.preparedFinalObject,
       "Owners[0].property.transitNumber",
@@ -264,6 +322,83 @@ export const getDetailsFromProperty = async (state, dispatch) => {
               findOwner.ownerDetails.revisionPercentage
             )
           )
+          return true
+        }
+    }
+  }
+ } catch (error) {
+  console.log(e);
+  }
+}
+
+
+
+export const getDuplicateDetailsFromProperty = async (state, dispatch) => {
+  try {
+    
+    const transitNumber = get(
+      state.screenConfiguration.preparedFinalObject,
+      "Duplicate[0].property.transitNumber",
+      ""
+    );
+    if(!!transitNumber) {
+      let queryObject = [
+        { key: "transitNumber", value: transitNumber }
+      ];
+      const payload = await getSearchResults(queryObject)
+      if (
+        payload &&
+        payload.Properties
+      ) {
+        if (!payload.Properties.length) {
+          dispatch(
+            toggleSnackbar(
+              true,
+              {
+                labelName: "Property is not found with this Transit Number",
+                labelKey: "ERR_PROPERTY_NOT_FOUND_WITH_PROPERTY_ID"
+              },
+              "info"
+            )
+          );
+          dispatch(
+            prepareFinalObject(
+              "Duplicate[0].property.transitNumber",
+              ""
+            )
+          )
+          dispatch(
+            handleField(
+              "apply",
+              "components.div.children.formwizardFirstStep.children.ownershipAddressDetails.children.cardContent.children.detailsContainer.children.ownershipTransitNumber",
+              "props.value",
+              ""
+            )
+          );
+        } else {
+          const {Properties} = payload;
+          const {owners = []} = Properties[0]
+          const findOwner = owners.find(item => !!item.activeState) || {}
+         
+          dispatch(
+            prepareFinalObject(
+              "Properties[0].pincode",
+              Properties[0].propertyDetails.address.pincode
+            )
+          )
+          dispatch(
+            prepareFinalObject(
+              "Duplicate[0].property.id",
+              Properties[0].propertyDetails.propertyId
+            )
+          )
+           dispatch(
+            prepareFinalObject(
+              "Properties[0].colony",
+              Properties[0].propertyDetails.address.colony
+            )
+          )
+          
           return true
         }
     }
