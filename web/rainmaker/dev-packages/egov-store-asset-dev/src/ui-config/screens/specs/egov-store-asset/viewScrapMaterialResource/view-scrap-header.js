@@ -69,29 +69,29 @@ export const getScrapHeaderView = (isReview = true) => {
           labelName: "Store Name",
           labelKey: "STORE_DETAILS_STORE_NAME"
         },
-        { jsonPath: "purchaseOrders[0].purchaseType" }
+        { jsonPath: "scraps[0].store.name" }
       ),
       scrapDate: getLabelWithValue(
         {
           labelName: "Scrap Date",
           labelKey: "STORE_SCRAP_DATE"
         },
-        { jsonPath: "purchaseOrders[0].store.name" }
+        { jsonPath: "scraps[0].scrapDate" }
       ),
       remarks: getLabelWithValue(
         { labelName: "Scrap Remarks", labelKey: "STORE_SCRAP_REMARK" },
-        { jsonPath: "purchaseOrders[0].purchaseOrderDate" }
+        { jsonPath: "scraps[0].description" }
       ),
       createdBy: getLabelWithValue(
         { labelName: "Scrap Created by", labelKey: "STORE_SCRAP_CREATEBY" },
         {
-          jsonPath: "purchaseOrders[0].advancePercentage"
+          jsonPath: "scraps[0].createdBy"
         }
       ),
       designation: getLabelWithValue(
         { labelName: "Designation", labelKey: "STORE_PURCHASE_ORDER_DSGNTN" },
         {
-          jsonPath: "purchaseOrders[0].designation",
+          jsonPath: "scraps[0].designation",
         }
       ),
     }),

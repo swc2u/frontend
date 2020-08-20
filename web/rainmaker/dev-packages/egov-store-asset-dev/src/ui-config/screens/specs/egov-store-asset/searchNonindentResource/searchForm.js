@@ -141,15 +141,15 @@ export const searchForm = getCommonCard({
           xs: 12,
           sm: 4,
         },
-        //sourceJsonPath: "searchScreenMdmsData.store-asset.IndentPurpose",
+        sourceJsonPath: "searchScreenMdmsData.store-asset.IndentPurpose",
       props: {
-        data: [
-          {
-            code: "Consumption",
-            name: "Capital/Repair/Consumption"
-          },
+        // data: [
+        //   {
+        //     code: "Consumption",
+        //     name: "Capital/Repair/Consumption"
+        //   },
          
-        ],
+        // ],
         optionValue: "code",
         optionLabel: "name",
       },

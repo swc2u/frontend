@@ -1,4 +1,5 @@
 import get from "lodash/get";
+import set from "lodash/set";
 import {
   dispatchMultipleFieldChangeAction,
   getLabel
@@ -10,17 +11,22 @@ import {
   getCommonApplyFooter,
   ifUserRoleExists,
   epochToYmd,
-  validateFields
+  validateFields,
+  getLocalizationCodeValue,
+  epochToYmdDate
+
 } from "../../utils";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import {ValidateCardMultiItem , ValidateCardQty} from '../../../../../ui-utils/storecommonsapi'
 // import "./index.css";
 import { getSearchResults } from "../../../../../ui-utils/commons";
 
 const moveToReview = dispatch => {
   const IndentId = getQueryArg(window.location.href, "IndentId");
   const reviewUrl =
+  
     process.env.REACT_APP_SELF_RUNNING === "true"
       ? `/egov-ui-framework/egov-store-asset/reviewmaterialreceipt?step=0`
       : `/egov-store-asset/reviewmaterialreceipt?step=0`;
@@ -50,6 +56,19 @@ const getpurchaseOrder = async ( state,dispatch)=>{
   try {
     let response = await getSearchResults(queryObject, dispatch,"purchaseOrder");
     dispatch(prepareFinalObject("purchaseOrder", response));
+    if(response)
+    {
+      if(response.purchaseOrder.purchaseOrders.length ===0)
+      {
+        let LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_PO_LIST_VALIDATION")
+        const errorMessage = {
+              
+          labelName: "Purchase Orders does not exit for",
+          labelKey:   LocalizationCodeValue+' store  '+storecode +' and supplier'+suppliercode
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      }
+    }
   } catch (e) {
     console.log(e);
   }
@@ -113,6 +132,23 @@ export const callBackForNext = async (state, dispatch) => {
     }
     if(isFormValid)
     {
+      let materialReceipt = get(
+        state.screenConfiguration.preparedFinalObject,
+        "materialReceipt",
+        []
+      );
+      if(materialReceipt && materialReceipt[0])
+      {
+      for (let index = 0; index < materialReceipt[0].receiptDetails.length; index++) {
+        const element = materialReceipt[0].receiptDetails[index];       
+           set(materialReceipt[0], `receiptDetails[${index}].lotNo`, element.lotNo);
+           set(materialReceipt[0], `receiptDetails[${index}].serialNo`, element.serialNo);
+           set(materialReceipt[0], `receiptDetails[${index}].batchNo`, element.batchNo);
+           set(materialReceipt[0], `receiptDetails[${index}].manufactureDate`, epochToYmdDate(element.manufactureDate));
+           set(materialReceipt[0], `receiptDetails[${index}].expiryDate`, epochToYmdDate(element.expiryDate));
+           
+      }
+    }
       moveToReview(dispatch);
     
   }
@@ -204,7 +240,81 @@ export const callBackForNext = async (state, dispatch) => {
         dispatch(
         prepareFinalObject("documentsPreview", documentsPreview)
         );
-        changeStep(state, dispatch);
+        //card validation
+        let cardJsonPath =
+        "components.div.children.formwizardSecondStep.children.MTONDetails.children.cardContent.children.MTONDetailsCard.props.items";
+        let pagename = "createMaterialReceiptNote";
+        let jasonpath =  "materialReceipt[0].receiptDetails";
+        let value = "purchaseOrderDetail.purchaseOrderNumber";
+        let value2 ="material.code";
+        let DuplicatItem = ValidateCardMultiItem(state,dispatch,cardJsonPath,pagename,jasonpath,value,value2)
+        let InputQtyValue = "receivedQty";
+        let InputQtyValue2= "acceptedQty";
+        let CompareQtyValue = "orderQuantity";
+        let balanceQuantity = "balanceQuantity";
+      let doubleqtyCheck = false
+        let InvaldQtyCard = ValidateCardQty(state,dispatch,cardJsonPath,pagename,jasonpath,value,InputQtyValue,CompareQtyValue,balanceQuantity,doubleqtyCheck,value2,InputQtyValue2)
+     
+        if((DuplicatItem && DuplicatItem[0])||(InvaldQtyCard &&InvaldQtyCard[0]))
+        {
+          let LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_DUPLICATE_VALIDATION")
+          let LocalizationCodeValueQty = getLocalizationCodeValue("STORE_MATERIAL_INVALID_RECEIPT_QTY_VALIDATION")
+          if(!DuplicatItem[0].IsDuplicatItem && !InvaldQtyCard[0].IsInvalidQty )
+    {
+
+            // refresh card item
+            var storeMappingTemp = [];
+        let  storeMapping =  get(
+          state.screenConfiguration.preparedFinalObject,
+          `materialReceipt[0].receiptDetails`,
+          []
+        );
+        for(var i = 0; i < storeMapping.length; i++){
+            if(storeMappingTemp.indexOf(storeMapping[i]) == -1){
+              storeMappingTemp.push(storeMapping[i]);
+            }
+        }
+        storeMappingTemp = storeMappingTemp.filter((item) => item.isDeleted === undefined || item.isDeleted !== false);
+        if(storeMappingTemp.length>0)
+        {
+          dispatch(prepareFinalObject("materialReceipt[0].receiptDetails",storeMappingTemp)
+        );
+          }
+            changeStep(state, dispatch);
+          }
+          else{
+            if(DuplicatItem[0].IsDuplicatItem)
+            {
+              const errorMessage = {              
+                labelName: "Duplicate Material Added",
+                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+                // labelKey:   `${LocalizationCodeValue}` `${DuplicatItem[0].duplicates}`
+                labelKey:   LocalizationCodeValue+' '+DuplicatItem[0].duplicates
+              };
+              dispatch(toggleSnackbar(true, errorMessage, "warning"));
+            }
+            else if (InvaldQtyCard[0].IsInvalidQty)
+            {
+              // let indentNumber="";
+              // indentNumber = getQueryArg(window.location.href, "indentNumber");
+              // if(indentNumber){
+              const errorMessage = {
+              
+                labelName: "Ordered Qty less then Indent Qty for",
+                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+                // labelKey:   `${LocalizationCodeValue}` `${DuplicatItem[0].duplicates}`
+                labelKey:   LocalizationCodeValueQty+' '+InvaldQtyCard[0].duplicates
+              };
+              dispatch(toggleSnackbar(true, errorMessage, "warning"));
+           // }
+            // else{
+            //   changeStep(state, dispatch);
+            // }
+      
+            }
+
+          }
+        }
         }
 
         else{

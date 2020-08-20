@@ -7,7 +7,8 @@ import {
 import { getPriceListSearchResults } from "../../../../../ui-utils/storecommonsapi";
 import { getTextToLocalMapping } from "./searchResults";
 import { validateFields } from "../../utils";
-import { getTenantId,getOPMSTenantId } from "egov-ui-kit/utils/localStorageUtils";
+import { convertEpochToDate,  } from "../../utils/index";
+import { getTenantId, } from "egov-ui-kit/utils/localStorageUtils";
 
 export const getDeptName = (state, codes) => {
   let deptMdmsData = get(
@@ -116,7 +117,10 @@ export const searchApiCall = async (state, dispatch) => {
         return {
           [getTextToLocalMapping("Suplier Name")]: get(item, "supplier.name", "-") || "-",
           [getTextToLocalMapping("Rate Type")]: get(item, "rateType", "-") || "-", 
-        //  [getTextToLocalMapping("Store Name")]: get(item, "StoreName", "-") || "-", 
+        // [getTextToLocalMapping("Store Name")]: get(item, "StoreName", "-") || "-", 
+         [getTextToLocalMapping("Agrement No")]: get(item, "agreementNumber", "-") || "-", 
+         [getTextToLocalMapping("Agrement Start Date")]: convertEpochToDate(item.agreementStartDate, "agreementStartDate", "-") || "-",  
+         [getTextToLocalMapping("Agrement End Date")]: convertEpochToDate(item.agreementEndDate, "agreementEndDate", "-") || "-",  
           [getTextToLocalMapping("Active")]: get(item, "active",false) ? "Yes": "No", 
           id: item.id,       
          

@@ -99,6 +99,8 @@ import {
     name: "search-material-receipt",
     beforeInitScreen: (action, state, dispatch) => {
       getData(action, state, dispatch);
+      //set search param blank
+dispatch(prepareFinalObject("searchScreen",{}));
       return action;
     },
     components: {

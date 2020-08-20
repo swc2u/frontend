@@ -25,58 +25,58 @@ const assignmentCard = {
             labelName: "Material Name",
             labelKey: "STORE_MATERIAL_NAME"
           },
-          { jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].material.name" }
+          { jsonPath: "materialIssues[0].materialIssueDetails[0].material.name" }
         ),
-        quantityRequired: getLabelWithValue(
-          {
-            labelName: "Quantity Required",
-            labelKey: "STORE_MATERIAL_INDENT_QUANTITY_REQUIRED"
-          },
-          { jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].indentNumber" }
-        ),
-        balanceQuantity: getLabelWithValue(
-          {
-            labelName: "Balance Quantity",
-            labelKey: "STORE_PURCHASE_ORDER_BLNC_QLTY"
-          },
-          { jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].indentNumber" }
-        ),
+        // quantityRequired: getLabelWithValue(
+        //   {
+        //     labelName: "Quantity Required",
+        //     labelKey: "STORE_MATERIAL_INDENT_QUANTITY_REQUIRED"
+        //   },
+        //   { jsonPath: "materialIssues[0].materialIssueDetails[0].indentNumber" }
+        // ),
+        // balanceQuantity: getLabelWithValue(
+        //   {
+        //     labelName: "Balance Quantity",
+        //     labelKey: "STORE_PURCHASE_ORDER_BLNC_QLTY"
+        //   },
+        //   { jsonPath: "materialIssues[0].materialIssueDetails[0].indentNumber" }
+        // ),
         issedQuantity: getLabelWithValue(
           { labelName: "Qty Issued", labelKey: "STORE_MATERIAL_INDENT_NOTE_QTY_ISSUED" },
           {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].uom.name",    
+            jsonPath: "materialIssues[0].materialIssueDetails[0].userQuantityIssued",    
           }
         ),
         uomName: getLabelWithValue(
           { labelName: "UOM Name", labelKey: "STORE_PURCHASE_ORDER_UOM" },
           {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].uom.name",    
+            jsonPath: "materialIssues[0].materialIssueDetails[0].uom.name",    
           }
         ),
-        unitRate: getLabelWithValue(
-          {
-            labelName: "Unit Rate",
-            labelKey: "STORE_MATERIAL_RECEIPT_UNIT_RATE"
-          },
-          { jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].material.description" }
-        ),
-        totalValue: getLabelWithValue(
-          { labelName: "Total Value", labelKey: "STORE_MATERIAL_INDENT_NOTE_TOTAL_VALUE" },
-          {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].indentQuantity",
-          }
-        ),
-        balAfterIssue: getLabelWithValue(
-          {
-            labelName: "Balance Qty After Issue",
-            labelKey: "STORE_MATERIAL_INDENT_NOTE_QTY_BALANCE_QTY_AFTER_ISSUE"
-          },
-          { jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].indentNumber" }
-        ),
+        // unitRate: getLabelWithValue(
+        //   {
+        //     labelName: "Unit Rate",
+        //     labelKey: "STORE_MATERIAL_RECEIPT_UNIT_RATE"
+        //   },
+        //   { jsonPath: "materialIssues[0].materialIssueDetails[0].material.description" }
+        // ),
+        // totalValue: getLabelWithValue(
+        //   { labelName: "Total Value", labelKey: "STORE_MATERIAL_INDENT_NOTE_TOTAL_VALUE" },
+        //   {
+        //     jsonPath: "materialIssues[0].materialIssueDetails[0].indentQuantity",
+        //   }
+        // ),
+        // balAfterIssue: getLabelWithValue(
+        //   {
+        //     labelName: "Balance Qty After Issue",
+        //     labelKey: "STORE_MATERIAL_INDENT_NOTE_QTY_BALANCE_QTY_AFTER_ISSUE"
+        //   },
+        //   { jsonPath: "materialIssues[0].materialIssueDetails[0].indentNumber" }
+        // ),
         Remark: getLabelWithValue(
           { labelName: "Remark", labelKey: "STORE_MATERIAL_INDENT_NOTE_REMARK" },
           {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].userQuantity",
+            jsonPath: "materialIssues[0].materialIssueDetails[0].description",
           }
         ),
       })
@@ -85,7 +85,7 @@ const assignmentCard = {
     items: [],
     hasAddItem: false,
     isReviewPage: true,
-    sourceJsonPath: "purchaseOrders[0].purchaseOrderDetails",
+    sourceJsonPath: "materialIssues[0].materialIssueDetails",
     prefixSourceJsonPath:
       "children.cardContent.children.mtonDetailsCardContainer.children",
     afterPrefixJsonPath: "children.value.children.key"

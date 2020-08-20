@@ -31,7 +31,7 @@ import {
   
   const supplierName = getQueryArg(window.location.href, "name");
   const tenantId = getQueryArg(window.location.href, "tenantId");
-  const isEditMode = getQueryArg(window.location.href, "edited");
+  let isEditMode = getQueryArg(window.location.href, "edited");
 
  const isAllFieldsValid = (state, dispatch) =>{
   let isFormValid = true;
@@ -304,7 +304,7 @@ import {
               labelKey: "STORE_SUPPLIER_MASTER_SUPPLIER_NAME_PLACEHOLDER",
             },
             required: true,
-            pattern: getPattern("alpha-only"),
+            pattern: getPattern("Name"),
             errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
   
             jsonPath: "suppliers[0].name",
@@ -763,6 +763,12 @@ import {
     uiFramework: "material-ui",
     name: "create-supplier-master",
     beforeInitScreen: (action, state, dispatch) => {
+      const name = getQueryArg(window.location.href, "name");
+    const edited = getQueryArg(window.location.href, "edited");
+    if(!name && !edited){
+      dispatch(prepareFinalObject("supplier[0]",null));
+      isEditMode = false
+    }
       //mdms call
       getData(action, state, dispatch);
       //Condition for update mode

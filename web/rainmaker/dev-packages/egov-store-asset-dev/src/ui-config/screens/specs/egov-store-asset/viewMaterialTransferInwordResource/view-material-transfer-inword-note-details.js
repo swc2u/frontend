@@ -11,8 +11,8 @@ import {
     const IndentId = getQueryArg(window.location.href, "IndentId");
     const createUrl =
     process.env.REACT_APP_SELF_RUNNING === "true"
-    ? `/egov-ui-framework/egov-store-asset/createMaterialTransferInword?step=0`
-    : `/egov-store-asset/createMaterialTransferInword?step=0`;
+    ? `/egov-ui-framework/egov-store-asset/createMaterialTransferInword?step=1`
+    : `/egov-store-asset/createMaterialTransferInword?step=1`;
     dispatch(setRoute(createUrl));
   };
   
@@ -29,25 +29,25 @@ import {
               labelName: "Material Nmae",
               labelKey: "STORE_MATERIAL_NAME"
             },
-            { jsonPath: "materialReceipt[0].receiptDetails[0].material.name"
+            { jsonPath: "transferInwards[0].receiptDetails[0].material.name"
             
            }
           ),
 
          
-          QtyIssued: getLabelWithValue(
-            { labelName: "Available Qty",
-            labelKey: "STORE_MATERIAL_RECEIPT_AVAILABLE_QTY"},
-            {
-              jsonPath: "materialReceipt[0].receiptDetails[0].QtyIssued"
+          // QtyIssued: getLabelWithValue(
+          //   { labelName: "Available Qty",
+          //   labelKey: "STORE_MATERIAL_RECEIPT_AVAILABLE_QTY"},
+          //   {
+          //     jsonPath: "transferInwards[0].receiptDetails[0].quantityIssued"
              
-            }
-          ),
+          //   }
+          // ),
           QtyReceiced: getLabelWithValue(
             { labelName: "Ordered Qty",
             labelKey: "STORE_MATERIAL_RECEIPT_ORDERED_QTY"},
             {
-              jsonPath: "materialReceipt[0].receiptDetails[0].QtyReceiced"
+              jsonPath: "transferInwards[0].receiptDetails[0].userReceivedQty"
              
             }
           ),
@@ -56,33 +56,33 @@ import {
               labelName: "UOM",
                   labelKey: "STORE_MATERIAL_INDENT_NOTE_UOM_NAME"
             },
-            { jsonPath: "materialReceipt[0].receiptDetails[0].uom.code"
+            { jsonPath: "transferInwards[0].receiptDetails[0].uom.name"
             
            }
           ),
-          UnitRate: getLabelWithValue(
-            {
-              labelName: "Unit Rate",
-                  labelKey: "STORE_MATERIAL_RECEIPT_UNIT_RATE"
-            },
-            { jsonPath: "materialReceipt[0].receiptDetails[0].unitRate"
+          // UnitRate: getLabelWithValue(
+          //   {
+          //     labelName: "Unit Rate",
+          //         labelKey: "STORE_MATERIAL_RECEIPT_UNIT_RATE"
+          //   },
+          //   { jsonPath: "transferInwards[0].receiptDetails[0].unitRate"
             
-           }
-          ),
-          TotalValue: getLabelWithValue(
-            {    labelName: "Total Price",
-            labelKey: "STORE_MATERIAL_RECEIPT_TOTAL_PRICE" },
-            {
-              jsonPath: "materialReceipt[0].receiptDetails[0].TotalValue",
+          //  }
+          // ),
+          // TotalValue: getLabelWithValue(
+          //   {    labelName: "Total Price",
+          //   labelKey: "STORE_MATERIAL_RECEIPT_TOTAL_PRICE" },
+          //   {
+          //     jsonPath: "transferInwards[0].receiptDetails[0].TotalValue",
              
-            }
-          ),
+          //   }
+          // ),
           
           Remark: getLabelWithValue(
             {   labelName: "Remark",
-            labelKey: "STORE_MATERIAL_INDENT_NOTE_REMARK "},
+            labelKey: "STORE_MATERIAL_INDENT_NOTE_REMARK"},
             {
-              jsonPath: "materialReceipt[0].receiptDetails[0].Remark",
+              jsonPath: "transferInwards[0].receiptDetails[0].rejectionRemark",
              
             }
           ),

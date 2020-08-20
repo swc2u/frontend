@@ -10,7 +10,7 @@ import {
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import{GetMdmsNameBycode} from '../../../../../ui-utils/storecommonsapi'
  
-  
+  import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   export const otherDetails = getCommonCard({
     header: getCommonTitle(
       {

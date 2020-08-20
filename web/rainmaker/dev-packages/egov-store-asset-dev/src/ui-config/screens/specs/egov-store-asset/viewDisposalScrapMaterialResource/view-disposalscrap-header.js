@@ -69,38 +69,38 @@ export const getDisposalScrapHeaderView = (isReview = true) => {
           labelName: "Store Name",
           labelKey: "STORE_DETAILS_STORE_NAME"
         },
-        { jsonPath: "purchaseOrders[0].purchaseType" }
+        { jsonPath: "disposals[0].store.name" }
       ),
       disposalDate: getLabelWithValue(
         {
           labelName: "Disposal Date",
           labelKey: "STORE_DISPOSAL_SCRAP_DATE"
         },
-        { jsonPath: "purchaseOrders[0].store.name" }
+        { jsonPath: "disposals[0].disposalDate" }
       ),
       companyName: getLabelWithValue(
         { labelName: "Handover to Person/Company Name",
          labelKey: "STORE_DISPOSAL_SCRAP_PERSON_COMPANY" },
-        { jsonPath: "purchaseOrders[0].purchaseOrderDate" }
+        { jsonPath: "disposals[0].handOverTo" }
       ),
       auctionOrder: getLabelWithValue(
         { labelName: "Auction Order No.", labelKey: "STORE_DISPOSAL_SCRAP_ACTION_ORDER" },
-        { jsonPath: "purchaseOrders[0].purchaseOrderDate" }
+        { jsonPath: "disposals[0].auctionNumber" }
       ),
       disposalRemark: getLabelWithValue(
         { labelName: "Disposal Remarks", labelKey: "STORE_DISPOSAL_SCRAP_DISPOSAL_RMK" },
-        { jsonPath: "purchaseOrders[0].purchaseOrderDate" }
+        { jsonPath: "disposals[0].description" }
       ),
       disposalBy: getLabelWithValue(
         { labelName: "Disposal by", labelKey: "STORE_DISPOSAL_SCRAP_DISPOSALBY" },
         {
-          jsonPath: "purchaseOrders[0].advancePercentage"
+          jsonPath: "disposals[0].createdBy"
         }
       ),
       designation: getLabelWithValue(
         { labelName: "Designation", labelKey: "STORE_PURCHASE_ORDER_DSGNTN" },
         {
-          jsonPath: "purchaseOrders[0].designation",
+          jsonPath: "disposals[0].designation",
         }
       ),
     }),

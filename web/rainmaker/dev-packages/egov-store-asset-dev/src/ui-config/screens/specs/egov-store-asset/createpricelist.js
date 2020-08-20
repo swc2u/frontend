@@ -223,21 +223,16 @@ export const header = getCommonContainer({
     name: `createpricelist`,
     // hasBeforeInitAsync:true,
     beforeInitScreen: (action, state, dispatch) => {
-      // const pickedTenant = getQueryArg(window.location.href, "tenantId");
-      // pickedTenant &&
-      //   dispatch(prepareFinalObject("Employee[0].tenantId", pickedTenant));
-      // const empTenantId = get(
-      //   state.screenConfiguration.preparedFinalObject,
-      //   "Employee[0].tenantId"
-      // );
+     
       const tenantId = getstoreTenantId();
       const mdmsDataStatus = getMdmsData(state, dispatch, tenantId);
       const storedata = getstoreData(action,state, dispatch);
-       // Set MDMS Data
-    // getMdmsData(action, state, dispatch).then(response => {
-    //   prepareDocumentsUploadData(state, dispatch, 'pricelist');
-    // });
-      let employeeCode = getQueryArg(window.location.href, "employeeCode");
+      const step = getQueryArg(window.location.href, "step");
+      const id = getQueryArg(window.location.href, "id");
+      if(!step && !id){
+        dispatch(prepareFinalObject("priceLists[0]",null));
+      }
+      //let employeeCode = getQueryArg(window.location.href, "employeeCode");
      // employeeCode && getEmployeeData(state, dispatch, employeeCode, tenantId);
       // getYearsList(1950, state, dispatch);
       // freezeEmployedStatus(state, dispatch);

@@ -16,7 +16,7 @@ import {
 import { searchApiCall } from "./functions";
 
 const resetFields = (state, dispatch) => {
-  const textFields = ["mrnNumber","issuePurpose","receivingStore",  "receiptDateFrom","receiptDateTo"];
+  const textFields = ["mrnNumber","issuePurpose","issueStorefrom",  "receiptDateFrom","receiptDateTo"];
   for (let i = 0; i < textFields.length; i++) {
     if (
       `state.screenConfiguration.screenConfig.search-material-receipt-misc.searchForm.children.cardContent.children.searchFormContainer.children.${textFields[i]}.props.value`
@@ -85,7 +85,7 @@ export const searchForm = getCommonCard({
       },
       })
     },
-    receivingStore: {
+    issueStorefrom: {
       ...getSelectField({
         label: {
           labelName: " Store Name",

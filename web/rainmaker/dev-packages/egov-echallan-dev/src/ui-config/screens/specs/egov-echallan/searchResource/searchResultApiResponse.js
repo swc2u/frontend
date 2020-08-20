@@ -101,9 +101,6 @@ export const searchResultApiResponse = async (state, dispatch) => {
     }
     try {
       let response;
-      await getMdmsEncroachmentSectorData("", state, dispatch).then(response => {
-        getSiNameDetails("", state, dispatch);
-      })
       response = await fetchSearchMasterChallanData(requestBody);
 
       if (response) {

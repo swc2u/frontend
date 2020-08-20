@@ -4,7 +4,7 @@ import {
   handleScreenConfigurationFieldChange as handleField,
   toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getMaterialIndentSearchResults } from "../../../../../ui-utils/storecommonsapi";
+import { getIndentInwordSearchResults } from "../../../../../ui-utils/storecommonsapi";
 import { getTextToLocalMapping } from "./searchResults";
 import { convertEpochToDate, convertDateToEpoch } from "../../utils/index";
 import { validateFields } from "../../utils";
@@ -97,21 +97,21 @@ export const searchApiCall = async (state, dispatch) => {
         searchScreenObject[key].trim() !== ""
       ) {
 
-        if (key === "indentDate") {
-          Dateselect = true;
+        if (key === "receiptDate") {
+          let Dateselect = true;
           queryObject.push({
             key: key,
-            value: convertDateToEpoch(searchScreenObject[key], "dob")
+            value: convertDateToEpoch(searchScreenObject[key])
           });
         } 
         else
                 queryObject.push({ key: key, value: searchScreenObject[key].trim() });
       }
     }
-    let response = await getMaterialIndentSearchResults(queryObject, dispatch);
+    let response = await getIndentInwordSearchResults(queryObject, dispatch);
     try {
 
-      if(response.MaterialReceipt.length===0)
+      if(response.transferInwards.length===0)
       {
         dispatch(
               toggleSnackbar(
@@ -123,15 +123,15 @@ export const searchApiCall = async (state, dispatch) => {
            
       }
       else{
-      let data = response.MaterialReceipt.map((item) => {
+      let data = response.transferInwards.map((item) => {
        
 
         return {
-          [getTextToLocalMapping("Indent No.")]: get(item, "indentNumber", "-") || "-",
-          [getTextToLocalMapping("Indent Date")]:  convertEpochToDate(Number(item.indentDate,"indentDate" ,"-")) || "-", 
-         [getTextToLocalMapping("Indenting Store Name")]: get(item, "issueStore.name", "-") || "-", 
-          [getTextToLocalMapping("Indent Purpose")]: get(item, "indentPurpose", "-") || "-",  
-          [getTextToLocalMapping("Indent Status")]: get(item, "indentStatus", "-") || "-",  
+          [getTextToLocalMapping("Material Receipt Number")]: get(item, "mrnNumber", "-") || "-",
+          [getTextToLocalMapping("Receipt Date")]:  convertEpochToDate(Number(item.receiptDate,"receiptDate" ,"-")) || "-", 
+         [getTextToLocalMapping("Issuing Store Name")]: get(item, "issueingStore.name", "-") || "-", 
+          [getTextToLocalMapping("Indenting Store")]: get(item, "receivingStore.name", "-") || "-",  
+          [getTextToLocalMapping("Status")]: get(item, "mrnStatus", "-") || "-",  
           id: item.id,       
          
         };
@@ -150,8 +150,8 @@ export const searchApiCall = async (state, dispatch) => {
           "search-material-transfer-inword",
           "components.div.children.searchResults",
           "props.title",
-          `${getTextToLocalMapping("Search Results for Material Indent")} (${
-            response.MaterialReceipt.length
+          `${getTextToLocalMapping("Search Results for Material Indent Inword")} (${
+            response.transferInwards.length
           })`
         )
       );

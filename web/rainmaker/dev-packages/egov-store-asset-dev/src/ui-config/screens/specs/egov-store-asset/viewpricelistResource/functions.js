@@ -228,8 +228,8 @@ export const createUpdatePriceList = async (state, dispatch, action) => {
   let UOMList = get(state, "screenConfiguration.preparedFinalObject.createScreenMdmsData.common-masters.UOM",[]) 
   let UOM =  get(state, "screenConfiguration.preparedFinalObject.priceLists[0].priceListDetails[0].uom.code",'') 
 
-  let conversionFactor = UOMList.filter(x=> x.code === UOM)
-  set(priceLists[0],"priceListDetails[0].uom.conversionFactor", conversionFactor[0].conversionFactor);
+  // let conversionFactor = UOMList.filter(x=> x.code === UOM)
+  // set(priceLists[0],"priceListDetails[0].uom.conversionFactor", conversionFactor[0].conversionFactor);
   let fileStoreId =
   get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux[0].documents[0].fileStoreId",0)  
   set(priceLists[0],"fileStoreId", fileStoreId);
@@ -237,24 +237,16 @@ export const createUpdatePriceList = async (state, dispatch, action) => {
   let priceListDetails = returnEmptyArrayIfNull(
     get(priceLists[0], "priceListDetails", [])
   );
-  // for (let i = 0; i < priceListDetails.length; i++) {
-  //   set(
-  //     priceLists[0],
-  //     `priceListDetails[${i}].fromDate`,
-  //     convertDateToEpoch(
-  //       get(priceLists[0], `priceListDetails[${i}].fromDate`),
-  //       "dayStart"
-  //     )
-  //   );
-  //   set(
-  //     priceLists[0],
-  //     `priceListDetails[${i}].toDate`,
-  //     convertDateToEpoch(
-  //       get(priceLists[0], `priceListDetails[${i}].toDate`),
-  //       "dayStart"
-  //     )
-  //   );
-  // }
+  for (let i = 0; i < priceListDetails.length; i++) {
+    const element = priceListDetails[i];
+    let conversionFactor = UOMList.filter(x=> x.code === element.uom.code)
+    set(
+      priceLists[0],
+      `priceListDetails[${i}].uom.conversionFactor`,
+      conversionFactor[0].conversionFactor
+    );
+    
+  }
   //handleDeletedCards(priceLists[0], "storeMapping", "id");
  
 
@@ -358,7 +350,7 @@ const getFileUrl = async (dispatch,tenantId,fileStoreId)=>{
     FileURL = getCommonFileUrl(FileURL)
     let  documentsPreview= [
       {
-        title: "STORE_DOCUMENT_TYPE_RATE_CONTRACT_QUATION",
+        title: "STORE_DOCUMENT_TYPE_MATERIAL_RECEIPT_NOTE",
         linkText: "VIEW", 
         link:FileURL,//"https://chstage.blob.core.windows.net/fileshare/ch/undefined/July/15/1594826295177document.pdf?sig=R3nzPxT9MRMfROREe6LHEwuGfeVxB%2FKneAeWrDJZvOs%3D&st=2020-07-15T15%3A21%3A01Z&se=2020-07-16T15%3A21%3A01Z&sv=2016-05-31&sp=r&sr=b",
           

@@ -697,7 +697,8 @@ export const ValidateCard = (state,dispatch,cardJsonPath,pagename,jasonpath,valu
     if(CardItem[index].isDeleted === undefined ||
     CardItem[index].isDeleted !== false)
     {
-    let code = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value}`,'')        
+    let code = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value}`,'')  
+    code = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",code)       
     matcode.push(code)
     }
   } 
@@ -738,6 +739,229 @@ export const ValidateCard = (state,dispatch,cardJsonPath,pagename,jasonpath,valu
 
   return DuplicatItem;
 };
+export const ValidateCardMultiItem = (state,dispatch,cardJsonPath,pagename,jasonpath,value, value1) => {
+  let  DuplicatItem =[];
+  let CardItem = get(
+    state.screenConfiguration.screenConfig[`${pagename}`],
+    cardJsonPath,
+    []
+  );
+ let matcode =[];
+  for (let index = 0; index < CardItem.length; index++) {
+    if(CardItem[index].isDeleted === undefined ||
+    CardItem[index].isDeleted !== false)
+    {
+    let code = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value}`,'')  
+    code = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",code)  
+    let value1_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value1}`,'') 
+    value1_ = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",value1_)      
+    matcode.push(code+'_'+value1_)
+    }
+  } 
+  var uniq = matcode
+  .map((name) => {
+    return {
+      count: 1,
+      name: name
+    }
+  })
+  .reduce((a, b) => {
+    a[b.name] = (a[b.name] || 0) + b.count
+    return a
+  }, {})  
+  var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
+  if(duplicates.length>0)
+  {
+  duplicates= duplicates.map(itm => {
+      return `${itm}`;
+    })
+    .join() || "-"
+   // IsDuplicatItem = true;  
+   // replace char
+   if(duplicates.indexOf('_') !== -1)
+   duplicates = duplicates.replace("_", ",");
+    DuplicatItem.push(
+      {
+        duplicates: duplicates,
+        IsDuplicatItem:true
+      }      
+    )  
+  } 
+  else{
+    DuplicatItem.push(
+      {
+        duplicates: duplicates,
+        IsDuplicatItem:false
+      });
+
+  }
+
+  return DuplicatItem;
+};
+export const ValidateCardUserQty = (state,dispatch,cardJsonPath,pagename,jasonpath,value,InputQtyValue,CompareQtyValue,balanceQuantity,doubleqtyCheck) => {
+  let  DuplicatItem =[];
+  let CardItem = get(
+    state.screenConfiguration.screenConfig[`${pagename}`],
+    cardJsonPath,
+    []
+  );
+ let matcode =[];
+  for (let index = 0; index < CardItem.length; index++) {
+    if(CardItem[index].isDeleted === undefined ||
+    CardItem[index].isDeleted !== false)
+    {
+    let code = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value}`,'') 
+    code = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",code)  
+    let InputQtyValue_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${InputQtyValue}`,0) 
+    let CompareQtyValue_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${CompareQtyValue}`,0) 
+    let balanceQuantity_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${balanceQuantity}`,0) 
+    if(doubleqtyCheck)
+    {
+     if(balanceQuantity_>CompareQtyValue_)
+     {
+      if(InputQtyValue_>CompareQtyValue_)       
+      matcode.push(code)
+     }
+     else if (balanceQuantity_<=CompareQtyValue_)
+     {
+      if(InputQtyValue_>balanceQuantity_)       
+      matcode.push(code)
+     }
+
+    }
+    else{
+      if(pagename ==='create-purchase-order')
+      {
+        let IssueQty = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].issuedQuantity`,0)
+        CompareQtyValue_ = CompareQtyValue_ - IssueQty;
+        if(InputQtyValue_>CompareQtyValue_)       
+        matcode.push(code)
+
+      }
+      else{
+        if(InputQtyValue_>CompareQtyValue_)       
+    matcode.push(code)
+
+      }
+      
+    }
+    }
+    
+  } 
+  var uniq = matcode
+  .map((name) => {
+    return {
+      count: 1,
+      name: name
+    }
+  })
+  .reduce((a, b) => {
+    a[b.name] = (a[b.name] || 0) + b.count
+    return a
+  }, {})  
+  var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 0)
+  if(duplicates.length>0)
+  {
+  duplicates= duplicates.map(itm => {
+      return `${itm}`;
+    })
+    .join() || "-"
+   // IsDuplicatItem = true;  
+    DuplicatItem.push(
+      {
+        duplicates: duplicates,
+        IsInvalidQty:true
+      }      
+    )  
+  } 
+  else{
+    DuplicatItem.push(
+      {
+        duplicates: duplicates,
+        IsInvalidQty:false
+      });
+
+  }
+
+  return DuplicatItem;
+};
+export const ValidateCardQty = (state,dispatch,cardJsonPath,pagename,jasonpath,value,InputQtyValue,CompareQtyValue,balanceQuantity,doubleqtyCheck,value2,InputQtyValue2) => {
+  let  DuplicatItem =[];
+  let CardItem = get(
+    state.screenConfiguration.screenConfig[`${pagename}`],
+    cardJsonPath,
+    []
+  );
+ let matcode =[];
+ let PONumber =[];
+  for (let index = 0; index < CardItem.length; index++) {
+    if(CardItem[index].isDeleted === undefined ||
+    CardItem[index].isDeleted !== false)
+    {
+    let code = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value}`,'') 
+    code = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",code)  
+    let InputQtyValue_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${InputQtyValue}`,0) 
+    let InputQtyValue2_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${InputQtyValue2}`,0) 
+    let CompareQtyValue_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${CompareQtyValue}`,0) 
+    let balanceQuantity_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${balanceQuantity}`,0) 
+    if(doubleqtyCheck)
+    {
+     if(balanceQuantity_>CompareQtyValue_)
+     {
+      if(InputQtyValue_>CompareQtyValue_)       
+      matcode.push(code)
+     }
+     else if (balanceQuantity_<=CompareQtyValue_)
+     {
+      if(InputQtyValue_>balanceQuantity_)       
+      matcode.push(code)
+     }
+
+    }
+    else{
+      if(InputQtyValue_>CompareQtyValue_ || InputQtyValue2_ > CompareQtyValue_)       
+    matcode.push(code)
+    }
+    }
+    
+  } 
+  var uniq = matcode
+  .map((name) => {
+    return {
+      count: 1,
+      name: name
+    }
+  })
+  .reduce((a, b) => {
+    a[b.name] = (a[b.name] || 0) + b.count
+    return a
+  }, {})  
+  var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 0)
+  if(duplicates.length>0)
+  {
+  duplicates= duplicates.map(itm => {
+      return `${itm}`;
+    })
+    .join() || "-"
+   // IsDuplicatItem = true;  
+    DuplicatItem.push(
+      {
+        duplicates: duplicates,
+        IsInvalidQty:true
+      }      
+    )  
+  } 
+  else{
+    DuplicatItem.push(
+      {
+        duplicates: duplicates,
+        IsInvalidQty:false
+      });
+
+  }
+
+  return DuplicatItem;
+};
 
 
 export const getCommonFileUrl = (linkText="") => {
@@ -750,3 +974,99 @@ export const getCommonFileUrl = (linkText="") => {
   })
   return fileURL;
 }
+
+
+// indent outword api call
+export const getmaterialOutwordSearchResults = async queryObject => {
+
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/store-asset-services/materialissues-to/_search",     
+      "",
+      queryObject
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+   // throw error;
+  }
+
+};
+
+
+//Material Indent Inword Apis
+export const getIndentInwordSearchResults = async queryObject => {
+
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/store-asset-services/transferinwards/_search",     
+      "",
+      queryObject
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+   // throw error;
+  }
+
+};
+export const creatIndentInword = async (queryObject, payload, dispatch) => {
+  try {
+    const response = await httpRequest(
+      "post",
+      "/store-asset-services/transferinwards/_create",
+      "",
+      queryObject,
+      { transferInwards: payload }
+    );
+    return response;
+  } catch (error) {
+    dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+    throw error;
+  }
+};
+export const updateIndentInword = async (queryObject, payload, dispatch) => {
+  try {
+    const response = await httpRequest(
+      "post",
+      "/store-asset-services/transferinwards/_update",
+      "",
+      queryObject,
+      { transferInwards: payload }
+    );
+    return response;
+  } catch (error) {
+    dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+    throw error;
+  }
+};

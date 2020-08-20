@@ -28,33 +28,33 @@ import {
               labelName: "Material Nmae",
                   labelKey: "STORE_MATERIAL_NAME"
             },
-            { jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.material.name",          
+            { jsonPath: "materialIssues[0].materialIssueDetails[0].material.name",          
           }
           ),
-          TotalIndentQty: getLabelWithValue(
-            {
-              labelName: "Total Indent Qty Required",
-                  labelKey: "STORE_MATERIAL_INDENT_NOTE_TOTAL_INDENT_QTY_REQUIRED"
-            },
-            { jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.indentQuantity"
+          // TotalIndentQty: getLabelWithValue(
+          //   {
+          //     labelName: "Total Indent Qty Required",
+          //         labelKey: "STORE_MATERIAL_INDENT_NOTE_TOTAL_INDENT_QTY_REQUIRED"
+          //   },
+          //   { jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.indentQuantity"
             
-           }
-          ),
-          BalanceQty: getLabelWithValue(
-            {
-              labelName: "Balance Qty",
-                  labelKey: "STORE_MATERIAL_INDENT_NOTE_BALANCE_QTY"
-            },
-            { jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.BalanceQtyAfterIssue"
+          //  }
+          // ),
+          // BalanceQty: getLabelWithValue(
+          //   {
+          //     labelName: "Balance Qty",
+          //         labelKey: "STORE_MATERIAL_INDENT_NOTE_BALANCE_QTY"
+          //   },
+          //   { jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.BalanceQtyAfterIssue"
             
-           }
-          ),
+          //  }
+          // ),
           QtyIssued: getLabelWithValue(
             {
               labelName: "Qty Issued",
                   labelKey: "STORE_MATERIAL_INDENT_NOTE_QTY_ISSUED"
             },
-            { jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.userQuantity"
+            { jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.userQuantityIssued"
             
            }
           ),
@@ -62,50 +62,50 @@ import {
             { labelName: "UOM",
             labelKey: "STORE_MATERIAL_INDENT_NOTE_UOM_NAME"},
             {
-              jsonPath: "materialIssues[0].indent.indentDetails[0].materialIssueDetails[0].indentDetail.uom.code"
+              jsonPath: "materialIssues[0].materialIssueDetails[0].uom.name"
              
             }
           ),
-          UnitPrice: getLabelWithValue(
-            { labelName: "Unit Price",
-            labelKey: "STORE_MATERIAL_INDENT_NOTE_UNIT_PRICE"},
-            {
-              jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.unitRate"
+          // UnitPrice: getLabelWithValue(
+          //   { labelName: "Unit Price",
+          //   labelKey: "STORE_MATERIAL_INDENT_NOTE_UNIT_PRICE"},
+          //   {
+          //     jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.unitRate"
              
-            }
-          ),
-          BalanceQtyAfterIssue: getLabelWithValue(
-            { labelName: "Balance Qty After Issue",
-            labelKey: "STORE_MATERIAL_INDENT_NOTE_QTY_BALANCE_QTY_AFTER_ISSUE"},
-            {
-              jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.BalanceQtyAfterIssue"
+          //   }
+          // ),
+          // BalanceQtyAfterIssue: getLabelWithValue(
+          //   { labelName: "Balance Qty After Issue",
+          //   labelKey: "STORE_MATERIAL_INDENT_NOTE_QTY_BALANCE_QTY_AFTER_ISSUE"},
+          //   {
+          //     jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.BalanceQtyAfterIssue"
              
-            }
-          ),
-          TotalValue: getLabelWithValue(
-            { labelName: "Total Value",
-            labelKey: "STORE_MATERIAL_INDENT_NOTE_TOTAL_VALUE"},
-            {
-              jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.TotalValue"
+          //   }
+          // ),
+          // TotalValue: getLabelWithValue(
+          //   { labelName: "Total Value",
+          //   labelKey: "STORE_MATERIAL_INDENT_NOTE_TOTAL_VALUE"},
+          //   {
+          //     jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.TotalValue"
              
-            }
-          ),
-          AssestCode: getLabelWithValue(
-            {   labelName: "Assest Code",
-            labelKey: "STORE_MATERIAL_INDENT_NOTE_ASSEST_CODE" },
-            {
-              jsonPath: "materialIssues[0].indent.materialIssueDetails[0].AssestCode",
+          //   }
+          // ),
+          // AssestCode: getLabelWithValue(
+          //   {   labelName: "Assest Code",
+          //   labelKey: "STORE_MATERIAL_INDENT_NOTE_ASSEST_CODE" },
+          //   {
+          //     jsonPath: "materialIssues[0].materialIssueDetails[0].AssestCode",
              
-            }
-          ),
-          ProjectCode: getLabelWithValue(
-            {   labelName: "Project Code",
-            labelKey: "STORE_MATERIAL_INDENT_NOTE_PROJECT_CODE"},
-            {
-              jsonPath: "materialIssues[0].indent.materialIssueDetails[0].ProjectCode",
+          //   }
+          // ),
+          // ProjectCode: getLabelWithValue(
+          //   {   labelName: "Project Code",
+          //   labelKey: "STORE_MATERIAL_INDENT_NOTE_PROJECT_CODE"},
+          //   {
+          //     jsonPath: "materialIssues[0].materialIssueDetails[0].ProjectCode",
              
-            }
-          ),
+          //   }
+          // ),
          
           Remark: getLabelWithValue(
             {   labelName: "Remark",
@@ -122,7 +122,7 @@ import {
       items: [],
       hasAddItem: false,
       isReviewPage: true,
-      sourceJsonPath: "priceLists[0].priceListDetails",
+      sourceJsonPath: "materialIssues[0].materialIssueDetails",
       prefixSourceJsonPath:
         "children.cardContent.children.MaterialIssueCardContainer.children",
       afterPrefixJsonPath: "children.value.children.key"

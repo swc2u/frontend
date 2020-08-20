@@ -97,15 +97,15 @@ export const searchApiCall = async (state, dispatch) => {
         searchScreenObject[key].trim() !== ""
       ) {
 
-        if (key === "indentDate") {
-          Dateselect = true;
-          queryObject.push({
-            key: key,
-            value: convertDateToEpoch(searchScreenObject[key], "dob")
-          });
-        } 
-        else
-                queryObject.push({ key: key, value: searchScreenObject[key].trim() });
+        if (key === "receiptDateFrom" || key === "receiptDateTo") {
+          let  Dateselect = true;
+           queryObject.push({
+             key: key,
+             value: convertDateToEpoch(searchScreenObject[key])
+           });
+         } 
+         else
+                 queryObject.push({ key: key, value: searchScreenObject[key].trim() });
       }
     }
     let response = await getmiscellaneousreceiptnotesSearchResults(queryObject, dispatch);

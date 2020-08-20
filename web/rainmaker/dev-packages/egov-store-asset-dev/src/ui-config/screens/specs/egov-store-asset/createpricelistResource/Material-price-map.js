@@ -110,7 +110,7 @@ import {
                   labelName: "Enter Rate Per Unit",
                   labelKey: "STORE_PRICE_RATE_PER_UNIT_PLACEHOLDER"
                 },
-                required: false,
+                required: true,
                 pattern: getPattern("Amount") || null,
                 jsonPath: "priceLists[0].priceListDetails[0].ratePerUnit"
               })
@@ -125,7 +125,7 @@ import {
                   labelName: "Enter quantity",
                   labelKey: "STORE_PRICE_QUANTITY_PLACEHOLDER"
                 },
-                required: false,
+                required: true,
                 pattern: getPattern("Amount") || null,
                 jsonPath: "priceLists[0].priceListDetails[0].quantity"
               })

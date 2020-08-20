@@ -6,10 +6,11 @@ import {
 import get from "lodash/get";
 import set from "lodash/set";
 import {
-  creatmiscellaneousreceiptnotes,
-  getmiscellaneousreceiptnotesSearchResults,
-  updatemiscellaneousreceiptnotes,
-  
+  getIndentInwordSearchResults,
+  getmaterialOutwordSearchResults,
+  updateIndentInword,
+  creatIndentInword,
+  GetMdmsNameBycode
 } from "../../../../../ui-utils/storecommonsapi";
 import {
   convertDateToEpoch,
@@ -64,40 +65,40 @@ export const setRolesList = (state, dispatch) => {
 
 
 export const furnishindentData = (state, dispatch) => {
-  let materialReceipt = get(
+  let transferInwards = get(
     state.screenConfiguration.preparedFinalObject,
-    "materialReceipt",
+    "transferInwards",
     []
   );
-   setDateInYmdFormat(materialReceipt[0], ["receiptDate", ]);
+   setDateInYmdFormat(transferInwards[0], ["receiptDate", ]);
 
-  // setAllYears(materialReceipt[0], [
+  // setAllYears(transferInwards[0], [
   //   { object: "education", values: ["yearOfPassing"] },
   //   { object: "tests", values: ["yearOfPassing"] }
   // ]);
-  // setRolesData(materialReceipt[0]);
+  // setRolesData(transferInwards[0]);
   // setRolesList(state, dispatch);
-  dispatch(prepareFinalObject("materialReceipt", materialReceipt));
+  dispatch(prepareFinalObject("transferInwards", transferInwards));
 };
 
-export const handleCreateUpdateMaterialReceiptMisc = (state, dispatch) => {
+export const handleCreateUpdateMaterialInword = (state, dispatch) => {
   let id = get(
     state.screenConfiguration.preparedFinalObject,
-    "materialReceipt[0].id",
+    "transferInwards[0].id",
     null
   );
   if (id) {
     
-    createUpdateMR(state, dispatch, "UPDATE");
+    createUpdateIndentInword(state, dispatch, "UPDATE");
   } else {
-    createUpdateMR(state, dispatch, "CREATE");
+    createUpdateIndentInword(state, dispatch, "CREATE");
   }
 };
 
-export const createUpdateMR = async (state, dispatch, action) => {
+export const createUpdateIndentInword = async (state, dispatch, action) => {
   const pickedTenant = get(
     state.screenConfiguration.preparedFinalObject,
-    "materialReceipt[0].tenantId"
+    "transferInwards[0].tenantId"
   );
   const tenantId =  getTenantId();
   let queryObject = [
@@ -107,18 +108,18 @@ export const createUpdateMR = async (state, dispatch, action) => {
     }
   ];
  
-  let materialReceipt = get(
+  let transferInwards = get(
     state.screenConfiguration.preparedFinalObject,
-    "materialReceipt",
+    "transferInwards",
     []
   );
-  set(materialReceipt[0], "tenantId", tenantId);
+  set(transferInwards[0], "tenantId", tenantId);
   // get set date field into epoch
 
   let receiptDate =
-  get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].receiptDate",0) 
+  get(state, "screenConfiguration.preparedFinalObject.transferInwards[0].receiptDate",0) 
   receiptDate = convertDateToEpoch(receiptDate);
-  set(materialReceipt[0],"receiptDate", receiptDate);
+  set(transferInwards[0],"receiptDate", receiptDate);
  
 
 
@@ -128,7 +129,7 @@ export const createUpdateMR = async (state, dispatch, action) => {
   //set defailt value
   let id = get(
     state.screenConfiguration.preparedFinalObject,
-    "materialReceipt[0].id",
+    "transferInwards[0].id",
     null
   );
 
@@ -141,28 +142,28 @@ export const createUpdateMR = async (state, dispatch, action) => {
     try {
       console.log(queryObject)
       console.log("queryObject")
-      let response = await creatmiscellaneousreceiptnotes(
+      let response = await creatIndentInword(
         queryObject,        
-        materialReceipt,
+        transferInwards,
         dispatch
       );
       if(response){
-        let mrnNumber = response.materialReceipt[0].mrnNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPT&mode=create&code=${mrnNumber}`));
+        let mrnNumber = response.transferInwards[0].mrnNumber
+        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=INDENTINWORD&mode=create&code=${mrnNumber}`));
        }
     } catch (error) {
       furnishindentData(state, dispatch);
     }
   } else if (action === "UPDATE") {
     try {
-      let response = await updatemiscellaneousreceiptnotes(
+      let response = await updateIndentInword(
         queryObject,
-        materialReceipt,
+        transferInwards,
         dispatch
       );
       if(response){
-        let mrnNumber = response.materialReceipt[0].mrnNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPT&mode=update&code=${mrnNumber}`));
+        let mrnNumber = response.transferInwards[0].mrnNumber
+        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=INDENTINWORD&mode=update&code=${mrnNumber}`));
        }
     } catch (error) {
       furnishindentData(state, dispatch);
@@ -171,16 +172,16 @@ export const createUpdateMR = async (state, dispatch, action) => {
 
 };
 
-export const getmiscellaneousreceiptnotes = async (
+export const getIndentInwordData = async (
   state,
   dispatch,
-  code,
+  id,
   tenantId
 ) => {
   let queryObject = [
     {
-      key: "code",
-      value: code
+      key: "ids",
+      value: id
     },
     {
       key: "tenantId",
@@ -188,19 +189,39 @@ export const getmiscellaneousreceiptnotes = async (
     }
   ];
 
- let response = await getmiscellaneousreceiptnotesSearchResults(queryObject, dispatch);
+ let response = await getIndentInwordSearchResults(queryObject, dispatch);
 // let response = samplematerialsSearch();
-  dispatch(prepareFinalObject("materialReceipt", get(response, "materialReceipt")));
-  dispatch(
-    handleField(
-      "create",
-      "components.div.children.headerDiv.children.header.children.header.children.key",
-      "props",
-      {
-        labelName: "Edit Material Indent",
-        labelKey: "STORE_EDITMATERIAL_MASTER_INDENT_HEADER"
-      }
-    )
-  );
+response = get(response, "transferInwards")
+if(response)
+{
+for (let index = 0; index < response[0].receiptDetails.length; index++) {
+  const element = response[0].receiptDetails[index];
+ let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code) 
+    set(response[0], `receiptDetails[${index}].uom.name`, Uomname);  
+}
+dispatch(prepareFinalObject("transferInwards",response ));
+const tenantId = getTenantId();
+let queryObject = [
+  {
+    key: "tenantId",
+    value: tenantId
+  },
+  {
+    key: "materialIssueStatus",
+    value: "APPROVED"
+  }
+
+];
+try {
+  let responseOut = await getmaterialOutwordSearchResults(queryObject, dispatch);
+  dispatch(prepareFinalObject("materialOutword", responseOut));
+  if(responseOut)
+  {
+    var x = responseOut.materialIssues.filter(x=x.id ===5)
+  }
+} catch (e) {
+  console.log(e);
+}
+}
   furnishindentData(state, dispatch);
 };

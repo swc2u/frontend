@@ -85,6 +85,8 @@ import {
     beforeInitScreen: (action, state, dispatch) => {
       getData(action, state, dispatch);
       const storedata = getstoreData(action,state, dispatch);
+      //set search param blank
+dispatch(prepareFinalObject("searchScreen",{}));
       return action;
     },
     components: {

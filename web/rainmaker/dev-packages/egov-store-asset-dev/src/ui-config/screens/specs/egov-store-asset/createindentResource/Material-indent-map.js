@@ -52,12 +52,12 @@ import {
               beforeFieldChange: (action, state, dispatch) => {
                 let Material = get(state, "screenConfiguration.preparedFinalObject.createScreenMdmsData.store-asset.Material",[]) 
                 let MaterialType = Material.filter(x=>x.code == action.value)//.materialType.code
-               
+                let cardIndex = action.componentJsonpath.split("items[")[1].split("]")[0];
                 if(MaterialType[0])
                 {
-                  dispatch(prepareFinalObject("indents[0].indentDetails[0].material.name",MaterialType[0].name));
-                dispatch(prepareFinalObject("indents[0].indentDetails[0].uom.code",MaterialType[0].baseUom.code));
-                dispatch(prepareFinalObject("indents[0].indentDetails[0].uom.name",MaterialType[0].baseUom.name));
+                  dispatch(prepareFinalObject(`indents[0].indentDetails[${cardIndex}].material.name`,MaterialType[0].name));
+                dispatch(prepareFinalObject(`indents[0].indentDetails[${cardIndex}].uom.code`,MaterialType[0].baseUom.code));
+                dispatch(prepareFinalObject(`ndents[0].indentDetails[${cardIndex}].uom.name`,MaterialType[0].baseUom.name));
               }
               }
             },
@@ -197,6 +197,7 @@ import {
                   disabled:false
                 },
                 required: true,
+                visible:false,
                 pattern: getPattern("Amount") || null,
                 jsonPath: "indents[0].indentDetails[0].indentQuantity"
               })
@@ -217,7 +218,11 @@ import {
                 required: true,
                 pattern: getPattern("Amount") || null,
                 jsonPath: "indents[0].indentDetails[0].userQuantity"
-              })
+              }),
+              beforeFieldChange: (action, state, dispatch) => {
+                let cardIndex = action.componentJsonpath.split("items[")[1].split("]")[0];
+                dispatch(prepareFinalObject(`indents[0].indentDetails[${cardIndex}].userQuantity`,Number(action.value)));
+              }
             },
           },
           {

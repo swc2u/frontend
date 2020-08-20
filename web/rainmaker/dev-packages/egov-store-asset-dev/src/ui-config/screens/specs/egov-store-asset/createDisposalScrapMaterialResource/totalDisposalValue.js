@@ -18,7 +18,7 @@ import {
           props: {
             disabled: true
           },
-          jsonPath: "purchaseOrders[0].totalValue"
+          jsonPath: "disposals[0].totalDisposalValue"
         })
       },
     })

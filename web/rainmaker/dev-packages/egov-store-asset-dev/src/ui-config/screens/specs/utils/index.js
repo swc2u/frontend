@@ -117,6 +117,21 @@ export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
     return dateString;
   }
 };
+export const convertDateToEpochIST = (dateString, dayStartOrEnd = "dayend") => {
+  //example input format : "2018-10-02"
+  try {
+    const parts = dateString.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    const DateObj = new Date(Date.UTC(parts[1], parts[2] - 1, parts[3]));
+  //  DateObj.setMinutes(DateObj.getMinutes() + DateObj.getTimezoneOffset());
+    if (dayStartOrEnd === "dayend") {
+      DateObj.setHours(DateObj.getHours() + 24);
+      DateObj.setSeconds(DateObj.getSeconds() - 1);
+    }
+    return DateObj.getTime();
+  } catch (e) {
+    return dateString;
+  }
+};
 
 export const getEpochForDate = date => {
   const dateSplit = date.split("/");
@@ -1171,3 +1186,14 @@ export const getTodaysDateInYMD = () => {
   date = `${date.getFullYear()}-${month}-${day}`;
   return date;
 };
+
+export const getLocalizationCodeValue =lable =>{
+  const localisationLabels = getTransformedLocalStorgaeLabels();
+  return getLocaleLabels(
+    lable,
+    lable,
+    //"PENSION_COMMON_TABLE_COL_EMMPLOYEE_NAME",
+    localisationLabels
+  );
+
+}

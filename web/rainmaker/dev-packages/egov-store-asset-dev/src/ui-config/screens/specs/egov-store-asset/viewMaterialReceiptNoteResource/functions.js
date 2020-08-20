@@ -9,8 +9,11 @@ import {
   creatreceiptnotes,
   getreceiptnotesSearchResults,
   getPriceListSearchResults,
+  GetMdmsNameBycode,
+  getCommonFileUrl,
   updatereceiptnotes
 } from "../../../../../ui-utils/storecommonsapi";
+import { getFileUrlFromAPI } from "egov-ui-framework/ui-utils/commons";  
 import {
   convertDateToEpoch,
   epochToYmdDate,
@@ -85,7 +88,36 @@ const returnEmptyArrayIfNull = value => {
     return value;
   }
 };
+const getFileUrl = async (dispatch,tenantId,fileStoreId)=>{
 
+  //fileStoreId = "242e3bc6-7f42-444e-b562-6f23468f6e72"
+  if(tenantId.includes("."))
+  {
+ 
+    var vStr = tenantId.split('.');
+
+    tenantId = vStr[0];
+  }
+  //tenantId = 
+  let FileURL = "";
+  getFileUrlFromAPI(fileStoreId,tenantId).then(async(fileRes) => {
+    console.log(fileRes)
+    console.log("fileRes")
+    FileURL = fileRes.fileStoreIds[0].url
+    FileURL = getCommonFileUrl(FileURL)
+    let  documentsPreview= [
+      {
+        title: "STORE_DOCUMENT_TYPE_RATE_CONTRACT_QUATION",
+        linkText: "VIEW", 
+        link:FileURL,//"https://chstage.blob.core.windows.net/fileshare/ch/undefined/July/15/1594826295177document.pdf?sig=R3nzPxT9MRMfROREe6LHEwuGfeVxB%2FKneAeWrDJZvOs%3D&st=2020-07-15T15%3A21%3A01Z&se=2020-07-16T15%3A21%3A01Z&sv=2016-05-31&sp=r&sr=b",
+          
+      },]     
+    dispatch(
+      prepareFinalObject("documentsPreview", documentsPreview)
+    );
+  });  
+ 
+}
 export const setRolesList = (state, dispatch) => {
   let rolesList = get(
     state.screenConfiguration.preparedFinalObject,
@@ -223,10 +255,26 @@ export const createUpdateMR = async (state, dispatch, action) => {
   get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux[0].documents[0].fileStoreId",0)  
   set(materialReceipt[0],"fileStoreId", fileStoreId);
 
+  let receiptDetails_ = returnEmptyArrayIfNull(
+    get(materialReceipt[0], "receiptDetails", [])
+  );
+  for (let index = 0; index < receiptDetails_.length; index++) {
+    const element = receiptDetails_[index];   
+       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].lotNo`, element.lotNo);
+       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].serialNo`, element.serialNo);
+       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].batchNo`, element.batchNo);
+       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].manufactureDate`, convertDateToEpoch(element.manufactureDate));
+       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].expiryDate`, convertDateToEpoch(element.expiryDate));
+       
+  }
+
   // set date to epoch in  price list material name
   let receiptDetails = returnEmptyArrayIfNull(
     get(materialReceipt[0], "receiptDetails[0].receiptDetailsAddnInfo", [])
   );
+
+
+
   for (let i = 0; i < receiptDetails.length; i++) {
     set(
       materialReceipt[0],
@@ -276,7 +324,7 @@ export const createUpdateMR = async (state, dispatch, action) => {
         dispatch
       );
       if(response){
-        let mrnNumber = response.materialReceipt[0].mrnNumber
+        let mrnNumber = response.MaterialReceipt[0].mrnNumber
         dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPT&mode=create&code=${mrnNumber}`));
        }
     } catch (error) {
@@ -290,7 +338,7 @@ export const createUpdateMR = async (state, dispatch, action) => {
         dispatch
       );
       if(response){
-        let mrnNumber = response.materialReceipt[0].mrnNumber
+        let mrnNumber = response.MaterialReceipt[0].mrnNumber
         dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPT&mode=update&code=${mrnNumber}`));
        }
     } catch (error) {
@@ -320,7 +368,29 @@ export const getMaterialIndentData = async (
  let response = await getreceiptnotesSearchResults(queryObject, dispatch);
 // let response = samplematerialsSearch();
 response = response.MaterialReceipt.filter(x=>x.id===id)
-  dispatch(prepareFinalObject("materialReceipt", response));
- 
-  furnishindentData(state, dispatch);
+  
+
+  if(response && response[0])
+  {
+
+    set(response[0], `challanDate`, epochToYmdDate(response[0].challanDate));
+    set(response[0], `receiptDate`, epochToYmdDate(response[0].receiptDate));
+    set(response[0], `supplierBillDate`, epochToYmdDate(response[0].supplierBillDate));
+    set(response[0], `inspectionDate`, epochToYmdDate(response[0].inspectionDate));
+  for (let index = 0; index < response[0].receiptDetails.length; index++) {
+    const element = response[0].receiptDetails[index];
+    let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code)    
+       
+       set(response[0], `receiptDetails[${index}].uom.name`, Uomname);
+       set(response[0], `receiptDetails[${index}].lotNo`, element.receiptDetailsAddnInfo[0].lotNo);
+       set(response[0], `receiptDetails[${index}].serialNo`, element.receiptDetailsAddnInfo[0].serialNo);
+       set(response[0], `receiptDetails[${index}].batchNo`, element.receiptDetailsAddnInfo[0].batchNo);
+       set(response[0], `receiptDetails[${index}].manufactureDate`, epochToYmdDate(element.receiptDetailsAddnInfo[0].manufactureDate));
+       set(response[0], `receiptDetails[${index}].expiryDate`, epochToYmdDate(element.receiptDetailsAddnInfo[0].expiryDate));
+       
+  }
+}
+getFileUrl(dispatch,tenantId,response[0].fileStoreId);
+dispatch(prepareFinalObject("materialReceipt", response));
+ // furnishindentData(state, dispatch);
 };

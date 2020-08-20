@@ -9,7 +9,7 @@ import {
   import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
   import { httpRequest } from "../../../../ui-utils";
   import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-  
+  import { getstoreTenantId } from "../../../../ui-utils/storecommonsapi";
   export const header = getCommonContainer({
     header: getCommonHeader({
       labelName: `View Material Transfer Outward Note`,
@@ -20,7 +20,7 @@ import {
   const tradeView = MTONReviewDetails(false);
   
   const getMdmsData = async (action, state, dispatch, tenantId) => {
-    const tenant = tenantId || getTenantId();
+    const tenant = getstoreTenantId();
     let mdmsBody = {
       MdmsCriteria: {
         tenantId: tenant,

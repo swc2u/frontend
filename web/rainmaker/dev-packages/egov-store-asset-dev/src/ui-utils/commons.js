@@ -60,6 +60,12 @@ export const getSearchResults = async (queryObject,dispatch,screenName) => {
     break;
     case "indents" : url = "store-asset-services/indents/_search";
     break;
+    case "materialBalanceAndName" : url ="store-asset-services/receiptnotes/_balance";
+    break;
+    case "scrap" : url = "store-asset-services/scraps/_search";
+    break;
+    case "disposals":  url = "store-asset-services/disposals/_search";
+    break;
   }
   try {
     const response = await httpRequest("post", url, "", queryObject, {} );

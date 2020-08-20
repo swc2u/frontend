@@ -59,9 +59,16 @@ export const getEncroachmentType = () => {
 export const getModule = () => {
   return localStorage.getItem("module");
 };
+export const getHCRoles = () => {
+  return localStorage.getItem("HCRoles");
+};
 
 
 //SET methods 
+export const setHCRoles = (HCRoles) => {
+  localStorageSet("HCRoles", HCRoles, null);
+};
+
 export const setCurrentAssignee = (CurrentAssignee) => {
   localStorageSet("CurrentAssignee", CurrentAssignee, null);
 };

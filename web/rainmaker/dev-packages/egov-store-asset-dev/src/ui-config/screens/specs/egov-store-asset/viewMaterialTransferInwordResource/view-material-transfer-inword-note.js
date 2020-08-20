@@ -86,50 +86,55 @@ export const getMaterialTransferInwordNoteListDetailsView = (isReview = true) =>
    
     break1: getBreak(),
     viewOne: getCommonContainer({
-      receiptType: getLabelWithValue(
+
+      mrnNUmber: getLabelWithValue(
         {
-          label: { labelName: "Receipt Type", labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_TYPE" },
+          labelName: "Material Receipt Number",
+          labelKey: "STORE_MATERIAL_COMMON_MRN_NUMBER"
         },
-        {  jsonPath: "materialReceipt[0].receiptType", }
-      ),
-      receiptDate: getLabelWithValue(
-        {labelName: "Receipt Date",
-        labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE " },
-        { jsonPath: "materialReceipt[0].receiptDate", }
+        { jsonPath: "transferInwards[0].mrnNumber" }
       ),
       TransferOutwordNo: getLabelWithValue(
         {
           labelName: "Transfer Outword No.",
           labelKey: "STORE_MATERIAL_OUTWORD_NO"
         },
-        { jsonPath: "materialReceipt[0].TransferOutwordNo.code" }
+        { jsonPath: "transferInwards[0].issueNumber" }
       ),
-      outwordDate: getLabelWithValue(
+      receiptDate: getLabelWithValue(
         {labelName: "Receipt Date",
         labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE " },
-        { jsonPath: "materialReceipt[0].outwordDate", }
+        { jsonPath: "transferInwards[0].receiptDate", }
       ),
+    
+      receiptType: getLabelWithValue(
+        
+          { labelName: "Receipt Type", labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_TYPE" },
+        
+        {  jsonPath: "transferInwards[0].receiptType", }
+      ),
+      // outwordDate: getLabelWithValue(
+      //    { labelName: "Outword Date", labelKey: "STORE_MATERIAL_OUTWORD_DATE" },
+      //   { jsonPath: "transferInwards[0].issueDate", }
+      // ),
       intendingstore: getLabelWithValue(
-        {labelName: "Receipt Date",
-        labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE " },
-        { jsonPath: "materialReceipt[0].intendingstore", }
+        {labelName: "Indenting Store", labelKey: "STORE_MATERIAL_TRANSFER_INDENTING_STORE" },
+        { jsonPath: "transferInwards[0].receivingStore.name", }
       ),
       issuingtore: getLabelWithValue(
-        {labelName: "Receipt Date",
-        labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE " },
-        { jsonPath: "materialReceipt[0].issuingtore", }
+        {labelName: "Issuing Store Name", labelKey: "STORE_MATERIAL_INDENT_NOTE_ISSUING_STORE_NAME" },
+        { jsonPath: "transferInwards[0].issueingStore.name", }
       ),
-      purposeofIndent: getLabelWithValue(
-        {labelName: "Receipt Date",
-        labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE " },
-        { jsonPath: "materialReceipt[0].purposeofIndent", }
-      ),
+      // purposeofIndent: getLabelWithValue(
+      //   {labelName: "Purpose of Indent", labelKey: "STORE_MATERIAL_TRANSFER_PURPOSE_OF_INDENT" },
+      //   { jsonPath: "transferInwards[0].indent.indentPurpose", }
+      // ),
 
       Remark: getLabelWithValue(
         {  labelName: "Remark",
         labelKey: "STORE_MATERIAL_INDENT_NOTE_REMARK" },
         {
-          jsonPath: "materialReceipt[0].description",
+          jsonPath: "transferInwards[0].inspectionRemarks",
         }
       ),
       // receiveBy: getLabelWithValue(

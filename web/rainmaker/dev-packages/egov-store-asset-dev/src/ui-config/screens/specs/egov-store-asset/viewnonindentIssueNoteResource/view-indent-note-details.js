@@ -48,8 +48,8 @@ export const getIndentNoteListDetailsView = (isReview = true) => {
             sm: 10
           },
           ...getCommonSubHeader({
-            labelName: "Indent Material Issue",
-            labelKey: "STORE_MATERIAL_INDENT_NOTE_INDENT_MATERIAL_ISSUE"
+            labelName: "Non-Indent Material Issue",
+            labelKey: "STORE_MATERIAL_INDENT_NOTE_NON_INDENT_MATERIAL_ISSUE_NOTE"
           })
         },
         editSection: {

@@ -4,13 +4,15 @@ import {
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { toggleSnackbar ,prepareFinalObject} from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import {ValidateCard, ValidateCardQty} from '../../../../../ui-utils/storecommonsapi'
 import {
   getButtonVisibility,
   getCommonApplyFooter,
   ifUserRoleExists,
   epochToYmd,
-  validateFields
+  validateFields,
+  getLocalizationCodeValue
 } from "../../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 // import "./index.css";
@@ -110,7 +112,7 @@ export const callBackForNext = async (state, dispatch) => {
 
       let receiptDate = get(
         state.screenConfiguration.preparedFinalObject,
-        "materialReceipt[0].receiptDate",
+        "transferInwards[0].receiptDate",
         null
       );
 
@@ -128,7 +130,70 @@ export const callBackForNext = async (state, dispatch) => {
     }
     if(IsValidDate)
     {
-        changeStep(state, dispatch);
+      let cardJsonPath =
+      "components.div.children.formwizardSecondStep.children.MaterialTransferInwordDetail.children.cardContent.children.MaterialTransferInwordCard.props.items";
+      let pagename = "createMaterialTransferInword";
+      let jasonpath =  "transferInwards[0].receiptDetails";
+      let value = "material.code";
+      let value2 ="";
+      let DuplicatItem = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)
+      let InputQtyValue = "userReceivedQty";
+      let CompareQtyValue = "quantityIssued";
+      let balanceQuantity = "balanceQuantity";
+    let doubleqtyCheck = false
+      let InvaldQtyCard = ValidateCardQty(state,dispatch,cardJsonPath,pagename,jasonpath,value,InputQtyValue,CompareQtyValue,balanceQuantity,doubleqtyCheck)
+   
+      if((DuplicatItem && DuplicatItem[0])||(InvaldQtyCard &&InvaldQtyCard[0]))
+      {
+        let LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_DUPLICATE_VALIDATION")
+        let LocalizationCodeValueQty = getLocalizationCodeValue("STORE_MATERIAL_INVALID_MISC_RECEIPT_QTY_VALIDATION")
+        if(!DuplicatItem[0].IsDuplicatItem && !InvaldQtyCard[0].IsInvalidQty )
+  {
+
+          // refresh card item
+          var storeMappingTemp = [];
+      let  storeMapping =  get(
+        state.screenConfiguration.preparedFinalObject,
+        `transferInwards[0].receiptDetails`,
+        []
+      );
+      for(var i = 0; i < storeMapping.length; i++){
+          if(storeMappingTemp.indexOf(storeMapping[i]) == -1){
+            storeMappingTemp.push(storeMapping[i]);
+          }
+      }
+      storeMappingTemp = storeMappingTemp.filter((item) => item.isDeleted === undefined || item.isDeleted !== false);
+      if(storeMappingTemp.length>0)
+      {
+        dispatch(prepareFinalObject("transferInwards[0].receiptDetails",storeMappingTemp)
+      );
+        }
+          changeStep(state, dispatch);
+        }
+        else{
+          if(DuplicatItem[0].IsDuplicatItem)
+          {
+            const errorMessage = {              
+              labelName: "Duplicate Material Added",
+              labelKey:   LocalizationCodeValue+' '+DuplicatItem[0].duplicates
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "warning"));
+          }
+          else if (InvaldQtyCard[0].IsInvalidQty)
+          {
+            
+            const errorMessage = {
+            
+              labelName: "Ordered Qty less then Indent Qty for",              
+              labelKey:   LocalizationCodeValueQty+' '+InvaldQtyCard[0].duplicates
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        
+    
+          }
+
+        }
+      }
 
       }
       else{

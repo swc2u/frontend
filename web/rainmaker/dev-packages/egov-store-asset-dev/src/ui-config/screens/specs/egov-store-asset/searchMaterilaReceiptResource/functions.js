@@ -49,7 +49,7 @@ export const searchApiCall = async (state, dispatch) => {
      // add default receiptType(remove from UI if exist) hard code in search query string
      {
       key: "receiptType",
-      value: ReceiptType().StoreReceiptType.MISCELLANEOUS_RECEIPT_TYPE
+      value: ReceiptType().StoreReceiptType.PURCHASE_RECEIPT_TYPE
     }
   ];
   let searchScreenObject = get(
@@ -97,11 +97,11 @@ export const searchApiCall = async (state, dispatch) => {
         searchScreenObject[key].trim() !== ""
       ) {
 
-        if (key === "indentDate") {
-          Dateselect = true;
+        if (key === "receiptDateFrom" || key === "receiptDateTo") {
+         let  Dateselect = true;
           queryObject.push({
             key: key,
-            value: convertDateToEpoch(searchScreenObject[key], "dob")
+            value: convertDateToEpoch(searchScreenObject[key])
           });
         } 
         else

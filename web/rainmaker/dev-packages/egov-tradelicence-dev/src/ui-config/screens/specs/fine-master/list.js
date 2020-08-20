@@ -5,7 +5,7 @@ import {
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
-import { getTextField, getCommonContainer, getCommonHeader, getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getTextField, getCommonContainer, getCommonHeader, getLabel, getPattern } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getLocaleLabels } from "egov-ui-framework/ui-utils/commons";
 
 
@@ -30,7 +30,9 @@ const showOrHidePopup = (state, dispatch) => {
 
 const updateRate = async (state, dispatch) => {
   const {fineMasterEditData} = state.screenConfiguration.preparedFinalObject
-try {
+  const {rate} = fineMasterEditData;
+  if(!!Number(rate)) {
+  try {
   await httpRequest(
     "post",
     "/tl-calculator/ctlbillingslab/_update",
@@ -56,6 +58,7 @@ try {
   );
 }
 }
+}
 
 const rateField = {
   label: {
@@ -71,7 +74,8 @@ const rateField = {
     sm: 12
   },
   required: true,
-  jsonPath: "fineMasterEditData.rate"
+  jsonPath: "fineMasterEditData.rate",
+  pattern: getPattern("Amount")
 }
 
 export const fineMasterPopup = getCommonContainer({

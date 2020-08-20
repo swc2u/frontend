@@ -10,6 +10,7 @@ import {
   getSearchResults,
   updateEmployee
 } from "../../../../../ui-utils/commons";
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import {
   convertDateToEpoch,
   epochToYmdDate,
@@ -161,6 +162,40 @@ export const createUpdatePO = async (state, dispatch, action) => {
   for (let i = 0; i < poDetailArray.length; i++) {
     set(purchaseOrders[0], `purchaseOrderDetails[${i}].tenantId`, tenantId);
     set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList`, priceList[0]);
+    let indentNumber="";
+    indentNumber = getQueryArg(window.location.href, "indentNumber");
+   if(indentNumber){
+    //set purchaseIndentDetails
+    // get Indent details from Indent
+   let indentDetails = get(state.screenConfiguration.preparedFinalObject, "indents[0].indentDetails", [])
+   indentDetails = indentDetails.filter(x=>x.material.code === poDetailArray[i].material.code)
+   if(indentDetails &&indentDetails[0])
+   {
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].id`, null));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].tenantId`, tenantId));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.id`, indentDetails[0].id));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].quantity`, null));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.tenantId`, tenantId));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.material.code`, indentDetails[0].material.code));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.uom.code`, indentDetails[0].uom.code));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.parentIndentLine`, null));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.projectCode`, null));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.orderNumber`, null));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.projectCode.code`, null));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.asset`, null));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.indentQuantity`, indentDetails[0].indentQuantity));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.totalProcessedQuantity`, 0));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.indentIssuedQuantity`, 0));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.poOrderedQuantity`, 0));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.interstoreRequestQuantity`, 0));
+    //get deliveryTerms fron firstep UI Data
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.deliveryTerms`, get(state.screenConfiguration.preparedFinalObject, "purchaseOrders[0].deliveryTerms", '')));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.remarks`, get(state.screenConfiguration.preparedFinalObject, "purchaseOrders[0].remarks", '')));
+    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].quantity`, indentDetails[0].indentQuantity));
+
+   }
+   }
+   else
     set(purchaseOrders[0], `purchaseOrderDetails[${i}].purchaseIndentDetails`, []);
   }
 

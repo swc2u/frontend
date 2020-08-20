@@ -73,7 +73,7 @@ export const searchForm = getCommonCard({
         labelName: "Enter Supplier Name",
         labelKey: "STORE_SUPPLIER_MASTER_SUPPLIER_NAME_PLACEHOLDER",
       },
-      pattern: getPattern("alpha-only"),
+      pattern: getPattern("Name"),
       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
 
       jsonPath: "searchScreen.name",

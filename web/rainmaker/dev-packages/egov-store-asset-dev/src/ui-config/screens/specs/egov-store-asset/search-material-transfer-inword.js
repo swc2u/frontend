@@ -85,6 +85,8 @@ import {
     name: "search-material-transfer-inword",
     beforeInitScreen: (action, state, dispatch) => {
       getData(action, state, dispatch);
+      //set search param blank
+dispatch(prepareFinalObject("searchScreen",{}));
       return action;
     },
     components: {
@@ -140,7 +142,7 @@ import {
                   },
   
                   buttonLabel: getLabel({
-                    labelName: "Add Material Transfer Inward ",
+                    labelName: "Add Material Transfer Inward",
                     labelKey: "STORE_ADD_NEW_MATERIAL_TFR_INWARD_BUTTON",
                   }),
                 },

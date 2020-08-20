@@ -1,12 +1,12 @@
 import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import { handleCreateUpdatePO } from "./functions";
+import { handleCreateUpdateIT } from "./functions";
 
 const gotoCreateFlow = (state, dispatch) => {
-  const poNumber = getQueryArg(window.location.href, "poNumber");
+  const id = getQueryArg(window.location.href, "id");
   const tenantId = getQueryArg(window.location.href, "tenantId");
-  const createUrl = `/egov-store-asset/create-purchase-order?poNumber=${poNumber}&tenantId=${tenantId}`;
+  const createUrl = `/egov-store-asset/create-material-transfer-indent?id=${id}&tenantId=${tenantId}`;
   dispatch(setRoute(createUrl));
 };
 
@@ -42,7 +42,7 @@ export const poCommonFooter = () => {
       },
       onClickDefination: {
         action: "condition",
-        callBack: handleCreateUpdatePO
+        callBack: handleCreateUpdateIT
       }
     }
   });

@@ -9,7 +9,8 @@ import {
   getButtonVisibility,
   getCommonApplyFooter,
   ifUserRoleExists,
-  validateFields
+  validateFields,
+  getLocalizationCodeValue
 } from "../../utils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { set } from "lodash";
@@ -162,9 +163,11 @@ export const callBackForNext = async (state, dispatch) => {
       }   
       else
       {
+        const LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_DUPLICATE_STORE_VALIDATION")
         const errorMessage = {
-          labelName: "Duplicate Material Added",
-          labelKey: "STORE_MATERIAL_DUPLICATE_VALIDATION"
+          labelName: "Duplicate Store Added",
+          //labelKey:   `STORE_MATERIAL_DUPLICATE_STORE_VALIDATION ${DuplicatItem[0].duplicates}`
+          labelKey:   LocalizationCodeValue+' '+DuplicatItem[0].duplicates
         };
         dispatch(toggleSnackbar(true, errorMessage, "warning"));
 
@@ -298,9 +301,12 @@ export const callBackForNext = async (state, dispatch) => {
       changeStep(state, dispatch);
       }
       else{
+
+       const LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_DUPLICATE_STORE_VALIDATION")
         const errorMessage = {
           labelName: "Duplicate Material Added",
-          labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${duplicates}`
+          //labelKey:   `STORE_MATERIAL_DUPLICATE_STORE_VALIDATION ${DuplicatItem[0].duplicates}`
+          labelKey:   LocalizationCodeValue+' '+duplicates
         };
         dispatch(toggleSnackbar(true, errorMessage, "warning"));
 

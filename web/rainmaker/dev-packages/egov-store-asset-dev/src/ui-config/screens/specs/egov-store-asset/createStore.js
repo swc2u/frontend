@@ -28,7 +28,7 @@ import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import { getLocale } from "egov-ui-kit/utils/localStorageUtils";
 import commonConfig from '../../../../config/common';
 import store from "egov-ui-framework/ui-redux/store";
-const isEditMode = getQueryArg(window.location.href, "edited");
+let isEditMode = getQueryArg(window.location.href, "edited");
 const storeName = getQueryArg(window.location.href, "name");
 const tenantId = getQueryArg(window.location.href, "tenantId");
 const callBackForUpdate = async (state, dispatch) => {
@@ -75,7 +75,7 @@ const callBackForUpdate = async (state, dispatch) => {
         requestBody
       );
       if (response) {
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=storeMaster&mode=update&code=${stores[0].name}`));
+        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=storeMaster&mode=update&code=${response.stores[0].name}`));
       }
 
     } catch (error) {
@@ -134,7 +134,7 @@ const callBackForSubmit = async (state, dispatch) => {
         requestBody
       );
       if (response) {
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=storeMaster&mode=create&code=${stores[0].name}`));
+        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=storeMaster&mode=create&code=${response.stores[0].name}`));
       }
 
     } catch (error) {
@@ -322,7 +322,7 @@ export const formwizardFirstStep = {
             labelKey: "STORE_DETAILS_STORE_NAME_PLACEHOLDER",
           },
           required: true,
-          pattern: getPattern("alpha-only"),
+          pattern: getPattern("Name"),
           errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
 
           jsonPath: "stores[0].name",
@@ -672,6 +672,12 @@ const screenConfig = {
   uiFramework: "material-ui",
   name: "createStore",
   beforeInitScreen: (action, state, dispatch) => {
+    const name = getQueryArg(window.location.href, "name");
+    const edited = getQueryArg(window.location.href, "edited");
+    if(!name && !edited){
+      dispatch(prepareFinalObject("stores[0]",null));
+      isEditMode = false
+    }
     if (isEditMode) {
       const queryObject = [{ key: "name", value: storeName }, { key: "tenantId", value: tenantId }];
 

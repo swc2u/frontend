@@ -4,17 +4,18 @@ import {
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { toggleSnackbar , prepareFinalObject} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
   getButtonVisibility,
   getCommonApplyFooter,
   ifUserRoleExists,
   epochToYmd,
-  validateFields
+  validateFields,
+  getLocalizationCodeValue
 } from "../../utils";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 // import "./index.css";
-
+import {ValidateCardMultiItem , ValidateCardQty} from '../../../../../ui-utils/storecommonsapi'
 const moveToReview = dispatch => {
   const IndentId = getQueryArg(window.location.href, "IndentId");
   const reviewUrl =
@@ -138,7 +139,72 @@ export const callBackForNext = async (state, dispatch) => {
         dispatch(toggleSnackbar(true, errorMessage, "warning"));
       }
       else{
-        changeStep(state, dispatch);
+                //card validation
+                let cardJsonPath =
+                "components.div.children.formwizardSecondStep.children.materialIssue.children.cardContent.children.materialIssueCard.props.items";
+                let pagename = "createMaterialNonIndentNote";
+                let jasonpath =  "materialIssues[0].materialIssueDetails";
+                let value = "mrnNumber";
+                let value2 ="material.code";
+                let DuplicatItem = ValidateCardMultiItem(state,dispatch,cardJsonPath,pagename,jasonpath,value,value2)
+                let InputQtyValue = "userQuantityIssued";
+                let InputQtyValue2= "acceptedQty";
+                let CompareQtyValue = "balanceQty";
+                let balanceQuantity = "balanceQuantity";
+                let doubleqtyCheck = false
+                let InvaldQtyCard = ValidateCardQty(state,dispatch,cardJsonPath,pagename,jasonpath,value,InputQtyValue,CompareQtyValue,balanceQuantity,doubleqtyCheck,value2,InputQtyValue2)
+             
+                if((DuplicatItem && DuplicatItem[0])||(InvaldQtyCard &&InvaldQtyCard[0]))
+                {
+                  let LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_DUPLICATE_VALIDATION")
+                  let LocalizationCodeValueQty = getLocalizationCodeValue("STORE_MATERIAL_NON_INDENT_QTY_VALIDATION")
+                  if(!DuplicatItem[0].IsDuplicatItem && !InvaldQtyCard[0].IsInvalidQty )
+            {
+        
+                    // refresh card item
+                    var storeMappingTemp = [];
+                let  storeMapping =  get(
+                  state.screenConfiguration.preparedFinalObject,
+                  `materialIssues[0].materialIssueDetails`,
+                  []
+                );
+                for(var i = 0; i < storeMapping.length; i++){
+                    if(storeMappingTemp.indexOf(storeMapping[i]) == -1){
+                      storeMappingTemp.push(storeMapping[i]);
+                    }
+                }
+                storeMappingTemp = storeMappingTemp.filter((item) => item.isDeleted === undefined || item.isDeleted !== false);
+                if(storeMappingTemp.length>0)
+                {
+                  dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails",storeMappingTemp)
+                );
+                  }
+                    changeStep(state, dispatch);
+                  }
+                  else{
+                    if(DuplicatItem[0].IsDuplicatItem)
+                    {
+                      const errorMessage = {              
+                        labelName: "Duplicate Material Added",
+                        labelKey:   LocalizationCodeValue+' '+DuplicatItem[0].duplicates
+                      };
+                      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+                    }
+                    else if (InvaldQtyCard[0].IsInvalidQty)
+                    {
+                      //InvaldQtyCard[0].duplicates = InvaldQtyCard[0].duplicates.replace("_", ",");
+                      const errorMessage = {                      
+                        labelName: "Ordered Qty less then Indent Qty for",                        
+                        labelKey:   LocalizationCodeValueQty+' '+InvaldQtyCard[0].duplicates
+                      };
+                      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+                  
+              
+                    }
+        
+                  }
+                }
+
 
       }
      

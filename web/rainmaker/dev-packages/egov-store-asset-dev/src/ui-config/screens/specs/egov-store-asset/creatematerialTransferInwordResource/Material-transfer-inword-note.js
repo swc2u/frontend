@@ -11,61 +11,21 @@ import {
  import set from "lodash/set";
  import get from "lodash/get";
  import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-import{getMaterialMasterSearchResults} from '../../../../../ui-utils/storecommonsapi'
+ import {
+  convertDateToEpoch,
+} from "../../utils";
+import{GetMdmsNameBycode} from '../../../../../ui-utils/storecommonsapi'
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
  import {  handleScreenConfigurationFieldChange as handleField, prepareFinalObject  } from "egov-ui-framework/ui-redux/screen-configuration/actions";
  import { httpRequest } from "../../../../../ui-utils/api";
+ import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 
- const getMaterialData = async (action, state, dispatch) => {
-  const tenantId = getTenantId();
-  let queryObject = [
-    {
-      key: "tenantId",
-      value: getTenantId(),
-    },
-  ];
-  let storecode = get(state,"screenConfiguration.preparedFinalObject.materialReceipt[0].fromStore.code",'')
-  queryObject.push({
-    key: "store",
-    value: storecode
-  });
-
-    
-  try {
-    let response = await getMaterialMasterSearchResults(queryObject, dispatch);
-    dispatch(prepareFinalObject("materials", response.materials));
-   //set materialReceipt[0].issuedToEmployee
-   const queryParams = [{ key: "roles", value: "EMPLOYEE" },{ key: "tenantId", value:  getTenantId() }];
-   const payload = await httpRequest(
-     "post",
-     "/egov-hrms/employees/_search",
-     "_search",
-     queryParams,
-   );
-  
-   let stores = get(state,"screenConfiguration.preparedFinalObject.store.stores",[])
-   stores = stores.filter(x=>x.code === storecode)
-   //alert(stores[0].storeInCharge.code)
-   if(payload){
-     if (payload.Employees) {
-       const {screenConfiguration} = state;
-        // const {stores} = screenConfiguration.preparedFinalObject;
-       const empDetails =
-       payload.Employees.filter((item, index) =>  stores[0].storeInCharge.code === item.code);
-     
-       if(empDetails && empDetails[0] ){
-         //alert(empDetails[0].user.name)        
-         dispatch(prepareFinalObject("materialReceipt[0].issuedToEmployee",empDetails[0].user.name));  
-       }
-       else{
-        dispatch(prepareFinalObject("materialReceipt[0].issuedToEmployee",""));  
-       }
-     }
-   }
-  } catch (e) {
-    console.log(e);
-  }
-};
+ const id = getQueryArg(window.location.href, "id");
+ let isEditMode = false
+ if(id)
+ {
+  isEditMode = true;
+ }
   export const MaterialTransferInwordNote = getCommonCard({
     header: getCommonTitle(
       {
@@ -79,47 +39,7 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
       }
     ),
     MaterialReceiptNoteContainer: getCommonContainer({
-      receiptType: {
-        ...getTextField({
-          label: { labelName: "Receipt Type", labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_TYPE" },
-          placeholder: {
-            labelName: "Receipt Type",
-            labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_TYPE"
-          },
-          props: {
-            disabled: true,       
-          },
-          required: false,
-          jsonPath: "materialReceipt[0].receiptType",
-          //sourceJsonPath: "store.stores",
-            // props: {
-            //   data:[
-            //     {
-            //       code: "SCRAP",
-            //       name: "Scrap"
-            //     }
-            //   ],
-            //   optionValue: "code",
-            //   optionLabel: "name",
-            // },
-          
-        })
-      },
-      receiptDate : {
-        ...getDateField({
-          label: {
-            labelName: "Receipt Date",
-            labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE "
-          },
-          placeholder: {
-            labelName: "Enter Receipt Date",
-            labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE_PLACEHOLDER"
-          },
-          required: true,
-          pattern: getPattern("Date") || null,
-          jsonPath: "materialReceipt[0].receiptDate"
-        })
-      },
+
       TransferOutwordNo: {
         ...getSelectField({
           label: {
@@ -133,25 +53,96 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
           required: false,
          
           jsonPath: "materialReceipt[0].TransferOutwordNo.code",
-          sourceJsonPath: "store.stores",
+          sourceJsonPath: "materialOutword.materialIssues",
             props: {
-              optionValue: "code",
-              optionLabel: "name",
+              disabled:isEditMode,
+              optionValue: "issueNumber",
+              optionLabel: "issueNumber",
             },
         }),
         beforeFieldChange: (action, state, dispatch) => {
-          // let store = get(
-          //   state.screenConfiguration.preparedFinalObject,
-          //   `store.stores`,
-          //   []
-          // ); 
-          // store =  store.filter(x=> x.code === action.value)   
-          // dispatch(prepareFinalObject("materialReceipt[0].receivingStore.name",store[0].name));
+          let materialIssues = get(
+            state.screenConfiguration.preparedFinalObject,
+            `materialOutword.materialIssues`,
+            []
+          ); 
+          materialIssues =  materialIssues.filter(x=> x.issueNumber === action.value)  
+          if(materialIssues && materialIssues[0]) 
+          {
+            dispatch(prepareFinalObject("transferInwards[0].issueNumber",materialIssues[0].issueNumber));
+            dispatch(prepareFinalObject("transferInwards[0].receivingStore.code",materialIssues[0].toStore.code));
+            dispatch(prepareFinalObject("transferInwards[0].issueingStore.code",materialIssues[0].fromStore.code));
+            dispatch(prepareFinalObject("transferInwards[0].issueDate", convertDateToEpoch(materialIssues[0].issueDate)));
+            dispatch(prepareFinalObject("transferInwards[0].indent.issueStore.code",materialIssues[0].indent.issueStore.code));
+            dispatch(prepareFinalObject("transferInwards[0].indent.indentStore.code",materialIssues[0].indent.indentStore.code));
+            dispatch(prepareFinalObject("transferInwards[0].indent.indentPurpose",materialIssues[0].indent.indentPurpose));
+
+            let materialIssueDetails = get(
+              materialIssues[0],
+              'materialIssueDetails',
+              []
+            )
+            let material =[]
+            for (let index = 0; index < materialIssueDetails.length; index++) {
+              const element = materialIssueDetails[index];
+              let matname = GetMdmsNameBycode(state, dispatch,`createScreenMdmsData.store-asset.Material`,element.material.code)
+              material.push(
+                {
+                  code:element.material.code,
+                  name:matname,
+                  uom:element.uom,
+                  unitRate:1,
+                  quantityIssued:element.quantityIssued,
+                }
+              )
+              
+            }
+
+            dispatch(prepareFinalObject("indentsOutmaterial", material));
+          }
+          
           
         }
       },
-      outwordDate: {
+ 
+      receiptDate : {
+        ...getDateField({
+          label: {
+            labelName: "Receipt Date",
+            labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE "
+          },
+          placeholder: {
+            labelName: "Enter Receipt Date",
+            labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE_PLACEHOLDER"
+          },
+          required: true,
+          pattern: getPattern("Date") || null,
+          jsonPath: "transferInwards[0].receiptDate",
+          props: {            
+            inputProps: {
+              max: new Date().toISOString().slice(0, 10),
+            }
+          }
+        })
+      },
+      receiptType: {
         ...getTextField({
+          label: { labelName: "Receipt Type", labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_TYPE" },
+          placeholder: {
+            labelName: "Receipt Type",
+            labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_TYPE"
+          },
+          props: {
+            disabled: true,       
+          },
+          required: false,
+          jsonPath: "transferInwards[0].receiptType",
+          
+          
+        })
+      },
+      outwordDate: {
+        ...getDateField({
           label: { labelName: "Outword Date", labelKey: "STORE_MATERIAL_OUTWORD_DATE" },
           placeholder: {
             labelName: "Outword Date",
@@ -161,7 +152,7 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
             disabled: true,       
           },
           required: false,
-          jsonPath: "materialReceipt[0].outwordDate",
+          jsonPath: "transferInwards[0].issueDate",
          
           
         })
@@ -177,7 +168,7 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
             disabled: true,       
           },
           required: false,
-          jsonPath: "materialReceipt[0].intendingstore",
+          jsonPath: "transferInwards[0].indent.indentStore.code",
          
           
         })
@@ -193,7 +184,7 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
             disabled: true,       
           },
           required: false,
-          jsonPath: "materialReceipt[0].issuingtore",
+          jsonPath: "transferInwards[0].indent.issueStore.code",
          
           
         })
@@ -209,7 +200,7 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
             disabled: true,       
           },
           required: false,
-          jsonPath: "materialReceipt[0].receiptType",
+          jsonPath: "transferInwards[0].indent.indentPurpose",
          
           
         })
@@ -231,7 +222,7 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
           },
           required: false,
           pattern: getPattern("eventDescription") || null,
-          jsonPath: "materialReceipt[0].description"
+          jsonPath: "transferInwards[0].inspectionRemarks"
         })
       }, 
       receiveBy: {
@@ -246,7 +237,7 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
           },
           required: false,
           visible:false,
-          jsonPath: "materialReceipt[0].receiptType",
+          jsonPath: "transferInwards[0].receivedBy",
          
           
         })
@@ -263,7 +254,7 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
           },
           required: false,
           visible:false,
-          jsonPath: "materialReceipt[0].degignation",
+          jsonPath: "transferInwards[0].designation",
          
           
         })
@@ -280,7 +271,7 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
           },
           required: false,
           visible:false,
-          jsonPath: "materialReceipt[0].status",
+          jsonPath: "transferInwards[0].status",
          
           
         })

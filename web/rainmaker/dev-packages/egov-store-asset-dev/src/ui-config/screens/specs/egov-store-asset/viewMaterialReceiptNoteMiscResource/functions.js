@@ -148,7 +148,7 @@ export const createUpdateMR = async (state, dispatch, action) => {
       );
       if(response){
         let mrnNumber = response.MaterialReceipt[0].mrnNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPT&mode=create&code=${mrnNumber}`));
+        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPTMISC&mode=create&code=${mrnNumber}`));
        }
     } catch (error) {
       furnishindentData(state, dispatch);
@@ -162,7 +162,7 @@ export const createUpdateMR = async (state, dispatch, action) => {
       );
       if(response){
         let mrnNumber = response.MaterialReceipt[0].mrnNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPT&mode=update&code=${mrnNumber}`));
+        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPTMISC&mode=update&code=${mrnNumber}`));
        }
     } catch (error) {
       furnishindentData(state, dispatch);

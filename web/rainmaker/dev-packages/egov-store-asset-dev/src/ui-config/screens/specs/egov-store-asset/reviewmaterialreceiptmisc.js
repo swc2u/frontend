@@ -8,8 +8,8 @@ import {
   
   export const header = getCommonContainer({
     header: getCommonHeader({
-      labelName: "Material Receipt Note",
-      labelKey: "STORE_MATERIAL_RECEIPT_MATERIAL_MISC_HEADER"
+      labelName: "Miscellaneous Material Receipt Note - Summary",
+      labelKey: "STORE_MATERIAL_RECEIPT_NOTE_MISC_SUMMARY_HEADER"
     })
   });
   
@@ -50,13 +50,13 @@ import {
                 },
                 ...header
               },
-              // subHeader: {
-              //   gridDefination: {
-              //     xs: 12,
-              //     sm: 10
-              //   },
-              //   ...subHeader
-              // }
+              subHeader: {
+                gridDefination: {
+                  xs: 12,
+                  sm: 10
+                },
+                ...subHeader
+              }
             }
           },
           MaterialReceiptReview

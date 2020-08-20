@@ -11,8 +11,8 @@ import {
     const IndentId = getQueryArg(window.location.href, "IndentId");
     const createUrl =
     process.env.REACT_APP_SELF_RUNNING === "true"
-    ? `/egov-ui-framework/egov-store-asset/createMaterialReceiptNoteMisc?step=0`
-    : `/egov-store-asset/createMaterialReceiptNoteMisc?step=0`;
+    ? `/egov-ui-framework/egov-store-asset/createMaterialReceiptNoteMisc?step=1`
+    : `/egov-store-asset/createMaterialReceiptNoteMisc?step=1`;
     dispatch(setRoute(createUrl));
   };
   
@@ -71,7 +71,7 @@ import {
           
           Remark: getLabelWithValue(
             {   labelName: "Remark",
-            labelKey: "STORE_MATERIAL_INDENT_NOTE_REMARK "},
+            labelKey: "STORE_MATERIAL_INDENT_NOTE_REMARK"},
             {
               jsonPath: "materialReceipt[0].receiptDetails[0].rejectionRemark",
              

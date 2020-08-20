@@ -13,6 +13,7 @@ import { httpRequest } from "../../../../ui-utils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import { getstoreTenantId } from "../../../../ui-utils/storecommonsapi";
 import{WorkFllowStatus} from '../../../../ui-utils/sampleResponses'
 let IsEdit = false;
 let Status = getQueryArg(window.location.href, "Status");
@@ -22,8 +23,8 @@ if(ConfigStatus.length >0)
 IsEdit = true;
 export const header = getCommonContainer({
   header: getCommonHeader({
-    labelName: `Miscellaneous Material Receipt Note`,
-    labelKey: "STORE_MATERIAL_RECEIPT_MATERIAL_MISC_HEADER"
+    labelName: `View Miscellaneous Material Receipt Note`,
+    labelKey: "STORE_VIEW_MATERIAL_RECEIPT_MISC_HEADER"
   })
 });
 
@@ -43,7 +44,7 @@ const creatPOHandle = async (state, dispatch) => {
 };
 const masterView = MaterialReceiptReviewDetails(false);
 const getMdmsData = async (action, state, dispatch, tenantId) => {
-  const tenant = tenantId || getTenantId();
+  const tenant = getstoreTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenant,
@@ -55,6 +56,13 @@ const getMdmsData = async (action, state, dispatch, tenantId) => {
               name: "DeactivationReason",
               filter: "[?(@.active == true)]"
             }
+          ]
+        },
+        {
+          moduleName: "common-masters",
+          masterDetails: [
+            { name: "UOM", filter: "[?(@.active == true)]" },
+           
           ]
         }
       ]
@@ -80,9 +88,10 @@ const screenConfig = {
   beforeInitScreen: (action, state, dispatch) => {
     let id = getQueryArg(window.location.href, "id");
     let tenantId = getQueryArg(window.location.href, "tenantId");
+    getMdmsData(action, state, dispatch, tenantId);
     getmiscellaneousreceiptnotes(state, dispatch, id, tenantId);
    // showHideAdhocPopup(state, dispatch);
-    getMdmsData(action, state, dispatch, tenantId);
+   
     return action;
   },
   components: {

@@ -195,7 +195,39 @@ export const header = getCommonContainer({
       console.log(e);
     }
   }
+  const getEmployeeData = async (action, state, dispatch) => {
+    //fecthing employee details 
+    const queryParams = [{ key: "roles", value: "EMPLOYEE" },{ key: "tenantId", value:  getTenantId() }];
+    const payload = await httpRequest(
+      "post",
+      "/egov-hrms/employees/_search",
+      "_search",
+      queryParams,
+    );
+    if(payload){
+      if (payload.Employees) {
+        const empDetails =
+        payload.Employees.map((item, index) => {
+            const deptCode = item.assignments[0] && item.assignments[0].department;
+            const designation =   item.assignments[0] && item.assignments[0].designation;
+            const empCode = item.code;
+            const empName = `${item.user.name}`;
+          return {
+                  code : empCode,
+                  name : empName,
+                  dept : deptCode,
+                  designation:designation,
+          };
+        });
+      
+        if(empDetails){
+          dispatch(prepareFinalObject("createScreenMdmsData.employee",empDetails));  
+        }
+        
+      }
+    }
 
+  }
   const getYearsList = (startYear, state, dispatch) => {
     var currentYear = new Date().getFullYear(),
       years = [];
@@ -246,18 +278,25 @@ export const header = getCommonContainer({
       dispatch(prepareFinalObject("Employee[0].employeeStatus", "EMPLOYED"));
     }
   };
-  
+  const getData = async (action, state, dispatch) => {
+    
+    await getEmployeeData(action, state, dispatch);
+  }
   const screenConfig = {
     uiFramework: "material-ui",
     name: "createMaterialReceiptNote",
     // hasBeforeInitAsync:true,
     beforeInitScreen: (action, state, dispatch) => {
-     
+      getData(action, state, dispatch);
       const tenantId = getstoreTenantId();
       const mdmsDataStatus = getMdmsData(state, dispatch, tenantId);
       const storedata = getstoreData(action,state, dispatch);
       const SupllierData = getSupllierData(action,state, dispatch);
-     // const purchaseOrder = getpurchaseOrder(action,state, dispatch);
+      const step = getQueryArg(window.location.href, "step");
+      const mrnNumber = getQueryArg(window.location.href, "mrnNumber");
+      if(!step && !mrnNumber){
+       dispatch(prepareFinalObject("materialReceipt[0]",null));
+     }
      // SEt Default data
 
      dispatch(

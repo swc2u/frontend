@@ -25,25 +25,25 @@ const assignmentCard = {
             labelName: "Material Name",
             labelKey: "STORE_MATERIAL_NAME"
           },
-          { jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].material.name" }
+          { jsonPath: "scraps[0].scrapDetails[0].material.name" }
         ),
-        lotNo: getLabelWithValue(
-          { labelName: "LOT No.", labelKey: "STORE_SCRAP_LOT_NO" },
-          {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].uom.name",    
-          }
-        ),
+        // lotNo: getLabelWithValue(
+        //   { labelName: "LOT No.", labelKey: "STORE_SCRAP_LOT_NO" },
+        //   {
+        //     jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].uom.name",    
+        //   }
+        // ),
         balanceQuantity: getLabelWithValue(
           {
             labelName: "Balance Quantity",
             labelKey: "STORE_PURCHASE_ORDER_BLNC_QLTY"
           },
-          { jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].indentNumber" }
+          { jsonPath: "scraps[0].scrapDetails[0].balanceQuantity" }
         ),
         balanceValue: getLabelWithValue(
           { labelName: "Balance Value", labelKey: "STORE_SCRAP_BAL_VALUE" },
           {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].indentQuantity",
+            jsonPath: "scraps[0].scrapDetails[0].balanceValue",
           }
         ),
         unitRate: getLabelWithValue(
@@ -51,24 +51,24 @@ const assignmentCard = {
             labelName: "Unit Rate",
             labelKey: "STORE_MATERIAL_RECEIPT_UNIT_RATE"
           },
-          { jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].material.description" }
+          { jsonPath: "scraps[0].scrapDetails[0].unitRate" }
         ),
         scrapReason: getLabelWithValue(
           { labelName: "Scrap Reason", labelKey: "STORE_SCRAP_REASON" },
           {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].indentQuantity",
+            jsonPath: "scraps[0].scrapDetails[0].scrapReason",
           }
         ),
         scrapQty: getLabelWithValue(
           { labelName: "Scrap Qty", labelKey: "STORE_SCRAP_QUANTITY" },
           {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].userQuantity",
+            jsonPath: "scraps[0].scrapDetails[0].scrapQuantity",
           }
         ),
         scrapValue: getLabelWithValue(
           { labelName: "Scrap Value", labelKey: "STORE_SCRAP_VALUE" },
           {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].userQuantity",
+            jsonPath: "scraps[0].scrapDetails[0].scrapValue",
           }
         ),
       })
@@ -77,7 +77,7 @@ const assignmentCard = {
     items: [],
     hasAddItem: false,
     isReviewPage: true,
-    sourceJsonPath: "purchaseOrders[0].purchaseOrderDetails",
+    sourceJsonPath: "scraps[0].scrapDetails",
     prefixSourceJsonPath:
       "children.cardContent.children.scrapDetailsCardContainer.children",
     afterPrefixJsonPath: "children.value.children.key"

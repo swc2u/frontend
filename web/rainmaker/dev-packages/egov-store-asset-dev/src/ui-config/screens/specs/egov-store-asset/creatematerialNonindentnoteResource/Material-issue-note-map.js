@@ -138,6 +138,7 @@ let mrnNumber = get(state,"screenConfiguration.preparedFinalObject.materialIssue
                 },
               }),
               beforeFieldChange: (action, state, dispatch) => {
+                let cardIndex = action.componentJsonpath.split("items[")[1].split("]")[0];
                 let Material = get(
                   state.screenConfiguration.preparedFinalObject,
                   `NonIndentsmaterial`,
@@ -146,13 +147,17 @@ let mrnNumber = get(state,"screenConfiguration.preparedFinalObject.materialIssue
                 Material = Material.filter(x=>x.receiptId === action.value)
                 if(Material && Material[0])
                 {
-                dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails[0].balanceQty",Material[0].balance));         
-                dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails[0].tenantId",Material[0].tenantId));                
-               dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails[0].uom.code",Material[0].uomCode)); 
-              dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails[0].unitRate",Material[0].unitRate));
-              dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails[0].indentDetail",null)); 
+                dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].balanceQty`,Material[0].balance));         
+                dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].tenantId`,Material[0].tenantId));                
+               dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].uom.code`,Material[0].uomCode));
+               let uomname = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.common-masters.UOM",Material[0].uomCode) 
+               dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].uom.name`,uomname)); 
+              dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].unitRate`,Material[0].unitRate));
+              dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail`,null)); 
               //materialCode
-              dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails[0].material.code",Material[0].materialCode));
+              dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].material.code`,Material[0].materialCode));
+              let matname = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",Material[0].materialCode) 
+              dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].material.name`,matname));
               //dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails[0].material.name",GetMdmsNameBycode(action,state, dispatch,"createScreenMdmsData.store-asset.Material",Material[0].materialCode)));
               //GetMdmsNameBycodelet matname = ''
                
@@ -198,12 +203,13 @@ let mrnNumber = get(state,"screenConfiguration.preparedFinalObject.materialIssue
                 jsonPath: "materialIssues[0].materialIssueDetails[0].userQuantityIssued"
               }),
               beforeFieldChange: (action, state, dispatch) => { 
-                let BalanceQty = get(state.screenConfiguration.preparedFinalObject,`materialIssues[0].materialIssueDetails[0].balanceQty`,0)
-                let unitRate = get(state.screenConfiguration.preparedFinalObject,`materialIssues[0].materialIssueDetails[0].unitRate`,0)
+                let cardIndex = action.componentJsonpath.split("items[")[1].split("]")[0];
+                let BalanceQty = get(state.screenConfiguration.preparedFinalObject,`materialIssues[0].materialIssueDetails[${cardIndex}].balanceQty`,0)
+                let unitRate = get(state.screenConfiguration.preparedFinalObject,`materialIssues[0].materialIssueDetails[${cardIndex}].unitRate`,0)
                 let balanceQtyAfterIssue =BalanceQty - Number(action.value) 
                 let totalValue = unitRate *  Number(action.value)           
-                dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails[0].balanceQtyAfterIssue",balanceQtyAfterIssue));
-                dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails[0].totalValue",totalValue));
+                dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].balanceQtyAfterIssue`,balanceQtyAfterIssue));
+                dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].totalValue`,totalValue));
                 //totalValue
               }
             },

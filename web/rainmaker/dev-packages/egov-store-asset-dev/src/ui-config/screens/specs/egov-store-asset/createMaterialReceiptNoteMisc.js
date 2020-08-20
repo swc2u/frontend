@@ -190,10 +190,14 @@ export const header = getCommonContainer({
     // hasBeforeInitAsync:true,
     beforeInitScreen: (action, state, dispatch) => {
      
-      const tenantId = getstoreTenantId();
+      let tenantId = getstoreTenantId();
       const mdmsDataStatus = getMdmsData(state, dispatch, tenantId);
       const storedata = getstoreData(action,state, dispatch);
-     
+      const step = getQueryArg(window.location.href, "step");
+      tenantId = getQueryArg(window.location.href, "tenantId");
+      if(!step && !tenantId){
+        dispatch(prepareFinalObject("materialReceipt[0]",null));
+      }
      // SEt Default data Start
 
      dispatch(prepareFinalObject("materialReceipt[0].receiptType", "MISCELLANEOUS RECEIPT",));
@@ -208,7 +212,7 @@ export const header = getCommonContainer({
 
    
      // SEt Default data End
-
+     
       return action;
     },
   

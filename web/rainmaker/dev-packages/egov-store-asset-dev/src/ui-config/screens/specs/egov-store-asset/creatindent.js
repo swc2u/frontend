@@ -208,9 +208,14 @@ export const header = getCommonContainer({
       //   state.screenConfiguration.preparedFinalObject,
       //   "Employee[0].tenantId"
       // );
-      const tenantId = getstoreTenantId();
+      let tenantId = getstoreTenantId();
       const mdmsDataStatus = getMdmsData(state, dispatch, tenantId);
       const storedata = getstoreData(action,state, dispatch);
+      const step = getQueryArg(window.location.href, "step");
+       tenantId = getQueryArg(window.location.href, "tenantId");
+      if(!step && !tenantId){
+        dispatch(prepareFinalObject("indents[0]",null));
+      }
        // Set MDMS Data
     // getMdmsData(action, state, dispatch).then(response => {
     //   prepareDocumentsUploadData(state, dispatch, 'pricelist');
@@ -253,6 +258,7 @@ export const header = getCommonContainer({
       //       "PERMANENT"
       //     );
       //   });
+
   
       return action;
     },

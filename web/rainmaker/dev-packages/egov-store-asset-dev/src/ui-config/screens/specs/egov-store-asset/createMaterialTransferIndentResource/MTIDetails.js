@@ -189,7 +189,7 @@ export const MTIDetails = getCommonCard({
   header: getCommonTitle(
     {
       labelName: "Material Transfer Indent Details",
-      labelKey: "STORE_MTI_DETAILS_HEADER "
+      labelKey: "STORE_MTI_DETAILS_HEADER"
     },
     {
       style: {  

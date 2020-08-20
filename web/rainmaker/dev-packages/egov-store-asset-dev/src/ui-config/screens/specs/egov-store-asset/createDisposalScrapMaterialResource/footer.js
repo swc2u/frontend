@@ -11,7 +11,7 @@ import {
   validateFields
 } from "../../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-
+import {ValidateCard} from '../../../../../ui-utils/storecommonsapi';
 const moveToReview = dispatch => { 
   const reviewUrl = "/egov-store-asset/review-dispose-scrap-material";
   dispatch(setRoute(reviewUrl));
@@ -26,23 +26,20 @@ export const callBackForNext = async (state, dispatch) => {
   );
   let isFormValid = true;
   if (activeStep === 0) {
-    const isMTHeaderValid = validateFields(
-      "components.div.children.formwizardFirstStep.children.MTIHeader.children.cardContent.children.MTIHeaderContainer",
+    const isDisposalHeaderValid = validateFields(
+      "components.div.children.formwizardFirstStep.children.DisposalScrapHeader.children.cardContent.children.DisposalScrapHeaderContainer.children",
       state,
       dispatch,
       "create-dispose-scrap-material"
     );
   
-    if (!isMTHeaderValid) {
+    if (!isDisposalHeaderValid) {
       isFormValid = false;
     }
   }
   if (activeStep === 1) {
-
-  }
-  if (activeStep === 2) {
     let poDetailsPath =
-      "components.div.children.formwizardThirdStep.children.purchaseOrderDetails.children.cardContent.children.purchaseOrderDetailsCard.props.items";
+      "components.div.children.formwizardSecondStep.children.DisposalScrapMaterialDetails.children.cardContent.children.DisposeScrapMaterialDetailsCard.props.items";
 
     let poDetailsItems = get(
       state.screenConfiguration.screenConfig['create-dispose-scrap-material'],
@@ -55,7 +52,7 @@ export const callBackForNext = async (state, dispatch) => {
         (poDetailsItems[j].isDeleted === undefined ||
           poDetailsItems[j].isDeleted !== false) &&
         !validateFields(
-          `${poDetailsPath}[${j}].item${j}.children.cardContent.children.poDetailsCardContainer.children`,
+          `${poDetailsPath}[${j}].item${j}.children.cardContent.children.DisposeScrapMaterialDetailsCardContainer.children`,
           state,
           dispatch,
           "create-dispose-scrap-material"
@@ -63,7 +60,21 @@ export const callBackForNext = async (state, dispatch) => {
       )
       isPoDetailsValid = false;
     }
-  
+    let cardJsonPath =
+    "components.div.children.formwizardSecondStep.children.DisposalScrapMaterialDetails.children.cardContent.children.DisposeScrapMaterialDetailsCard.props.items";
+    let pagename = "create-dispose-scrap-material";
+    let jasonpath =  "disposals[0].disposalDetails";
+    let value = "material.code";
+    let DuplicatItem = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value);
+
+    if(DuplicatItem && DuplicatItem[0].IsDuplicatItem){
+      const errorMessage = {
+        labelName: "Duplicate Material Added",
+        labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION  ${DuplicatItem[0].duplicates} `
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      return;
+    }
 
     if (!isPoDetailsValid) {
       isFormValid = false;

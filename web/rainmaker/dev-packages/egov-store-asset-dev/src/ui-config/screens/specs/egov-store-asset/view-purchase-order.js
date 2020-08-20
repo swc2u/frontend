@@ -2,11 +2,19 @@ import {
     getCommonHeader,
     getCommonContainer
   } from "egov-ui-framework/ui-config/screens/specs/utils";
-  
+  import get from "lodash/get";
+  import set from "lodash/set";
   import { POReviewDetails } from "./viewPurchaseOrder/po-review";
   import { poViewFooter } from "./viewPurchaseOrder/footer";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
   import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
+  import { getstoreTenantId } from "../../../../ui-utils/storecommonsapi";
+  import {
+    convertDateToEpoch,
+    epochToYmdDate,
+    showHideAdhocPopup,
+    validateFields
+  } from "../utils";
   import { httpRequest } from "../../../../ui-utils";
   import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   import { getSearchResults } from "../../../../ui-utils/commons";
@@ -20,7 +28,7 @@ import {
   const tradeView = POReviewDetails(false);
   
   const getMdmsData = async (action, state, dispatch, tenantId) => {
-    const tenant = tenantId || getTenantId();
+    const tenant = getstoreTenantId();
     let mdmsBody = {
       MdmsCriteria: {
         tenantId: tenant,
@@ -50,7 +58,28 @@ import {
       console.log(e);
     }
   };
-  
+  const setDateInYmdFormat = (obj, values) => {
+    values.forEach(element => {
+      set(obj, element, epochToYmdDate(get(obj, element)));
+    });
+  };
+  const furnishindentData = (state, dispatch) => {
+    let purchaseOrders = get(
+      state.screenConfiguration.preparedFinalObject,
+      "purchaseOrders",
+      []
+    );
+     setDateInYmdFormat(purchaseOrders[0], ["expectedDeliveryDate", "purchaseOrderDate"]); 
+     //get set total value
+     for (let index = 0; index < purchaseOrders[0].purchaseOrderDetails.length; index++) {
+       const element = purchaseOrders[0].purchaseOrderDetails[index];
+       let userQuantity = get(purchaseOrders[0], `purchaseOrderDetails[${index}].userQuantity`,0)
+       let unitPrice = get(purchaseOrders[0], `purchaseOrderDetails[${index}].unitPrice`,0)
+       set(purchaseOrders[0], `purchaseOrderDetails[${index}].totalValue`,unitPrice*userQuantity);
+       
+     } 
+    dispatch(prepareFinalObject("purchaseOrders", purchaseOrders));
+  };
   const screenConfig = {
     uiFramework: "material-ui",
     name: "view-purchase-order",
@@ -62,7 +91,7 @@ import {
       .then(response =>{
         if(response){
           dispatch(prepareFinalObject("purchaseOrders", [...response.purchaseOrders]));       
-      
+          furnishindentData(state, dispatch);
       if(response.purchaseOrders && response.purchaseOrders[0].supplier.code){
         const queryObject = [{ key: "tenantId", value: getTenantId()},{ key: "suppliers", value: response.purchaseOrders[0].supplier.code}];
        

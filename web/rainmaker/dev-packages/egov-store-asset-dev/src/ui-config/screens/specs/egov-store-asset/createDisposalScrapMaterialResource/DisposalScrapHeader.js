@@ -34,12 +34,13 @@ export const DisposalScrapHeader = getCommonCard({
         },
        
         required: true,
-        jsonPath: "purchaseOrders[0].purchaseType",
-       // sourceJsonPath: "searchMaster.storeNames",
+        jsonPath: "disposals[0].store.code",
+        sourceJsonPath: "searchMaster.storeNames",
         props: {
+          disabled:true,
           className: "hr-generic-selectfield",
-          optionValue: "value",
-          optionLabel: "label",
+          optionValue: "code",
+          optionLabel: "value",
         }
       }),
     },
@@ -55,7 +56,7 @@ export const DisposalScrapHeader = getCommonCard({
         },
         required: true,
         pattern: getPattern("Date"),
-        jsonPath: "purchaseOrders[0].purchaseOrderDate",
+        jsonPath: "disposals[0].disposalDate",
         props: {
           inputProps: {
             min: new Date().toISOString().slice(0, 10),
@@ -75,7 +76,7 @@ export const DisposalScrapHeader = getCommonCard({
         },
         required:true,
         pattern: getPattern("alpha-numeric"),
-        jsonPath: "purchaseOrders[0].MTIDetails[0].indentQuantity"
+        jsonPath: "disposals[0].handOverTo"
       })
     },
     auctionOrder: {
@@ -90,7 +91,7 @@ export const DisposalScrapHeader = getCommonCard({
         },
         required:true,
         pattern: getPattern("alpha-numeric"),
-        jsonPath: "purchaseOrders[0].MTIDetails[0].indentQuantity"
+        jsonPath: "disposals[0].auctionNumber"
       })
     },
    
@@ -111,7 +112,7 @@ export const DisposalScrapHeader = getCommonCard({
       required:true,
       pattern: getPattern("alpha-numeric-with-space-and-newline"),
       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-      jsonPath: "purchaseOrders[0].remarks",
+      jsonPath: "disposals[0].description",
     }),
     disposalBy: {
       ...getTextField({
@@ -127,7 +128,7 @@ export const DisposalScrapHeader = getCommonCard({
           disabled: true
         },
        // pattern: getPattern("Email"),
-        jsonPath: "purchaseOrders[0].createdBy"
+        jsonPath: "disposals[0].createdBy"
       })
     },
     designation: {
@@ -144,7 +145,7 @@ export const DisposalScrapHeader = getCommonCard({
           disabled: true
         },
        // pattern: getPattern("Email"),
-        jsonPath: "purchaseOrders[0].designation"
+        jsonPath: "disposals[0].designation"
       })
     },
   })

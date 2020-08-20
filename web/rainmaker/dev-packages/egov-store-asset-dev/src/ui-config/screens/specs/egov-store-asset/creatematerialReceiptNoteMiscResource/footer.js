@@ -10,12 +10,14 @@ import {
   getCommonApplyFooter,
   ifUserRoleExists,
   epochToYmd,
-  validateFields
+  validateFields,
+  getLocalizationCodeValue
 } from "../../utils";
 import{getmaterialissuesSearchResults,GetMdmsNameBycode} from '../../../../../ui-utils/storecommonsapi'
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import {ValidateCard , ValidateCardUserQty} from '../../../../../ui-utils/storecommonsapi'
 // import "./index.css";
 
 const moveToReview = dispatch => {
@@ -129,17 +131,92 @@ export const callBackForNext = async (state, dispatch) => {
     {
       IsValidDate = false
     }
-    if(IsValidDate)
-    {
-        changeStep(state, dispatch);
+      if(IsValidDate)
+      {
+        // validate duplicate card
+        let cardJsonPath =
+        "components.div.children.formwizardSecondStep.children.materialReceiptMiscDetail.children.cardContent.children.materialReceiptCard.props.items";
+        let pagename = `createMaterialReceiptNoteMisc`;
+        let jasonpath =  "materialReceipt[0].receiptDetails";
+        let value = "material.code";
+        let InputQtyValue = "receivedQty";
+        let CompareQtyValue = "qtyIssued";
+        let DuplicatItem = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)
+        let balanceQuantity = "balanceQuantity";
+        let doubleqtyCheck = false
+        let InvaldQtyCard = ValidateCardUserQty(state,dispatch,cardJsonPath,pagename,jasonpath,value,InputQtyValue,CompareQtyValue,balanceQuantity,doubleqtyCheck)
+        if((DuplicatItem && DuplicatItem[0])||(InvaldQtyCard &&InvaldQtyCard[0]))
+        {
+          let LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_DUPLICATE_VALIDATION")
+          let LocalizationCodeValueQty = getLocalizationCodeValue("STORE_MATERIAL_INVALID_MISC_RECEIPT_QTY_VALIDATION")
+          if(!DuplicatItem[0].IsDuplicatItem && !InvaldQtyCard[0].IsInvalidQty )
+            {
+      
+              // refresh card item
+              var storeMappingTemp = [];
+          let  storeMapping =  get(
+            state.screenConfiguration.preparedFinalObject,
+            `materialReceipt[0].receiptDetails`,
+            []
+          );
+          for(var i = 0; i < storeMapping.length; i++){
+              if(storeMappingTemp.indexOf(storeMapping[i]) == -1){
+                storeMappingTemp.push(storeMapping[i]);
+              }
+          }
+          storeMappingTemp = storeMappingTemp.filter((item) => item.isDeleted === undefined || item.isDeleted !== false);
+          if(storeMappingTemp.length>0)
+          {
+            dispatch(prepareFinalObject("materialReceipt[0].receiptDetails",storeMappingTemp)
+          );
+            }
+            changeStep(state, dispatch);
+          }
+          else{
+            if(DuplicatItem[0].IsDuplicatItem)
+            {
+              const errorMessage = {              
+                labelName: "Duplicate Material Added",
+                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+                // labelKey:   `${LocalizationCodeValue}` `${DuplicatItem[0].duplicates}`
+                labelKey:   LocalizationCodeValue+' '+DuplicatItem[0].duplicates
+              };
+              dispatch(toggleSnackbar(true, errorMessage, "warning"));
+            }
+            else if (InvaldQtyCard[0].IsInvalidQty)
+            {
+              let indentNumber="";
+              indentNumber = getQueryArg(window.location.href, "indentNumber");
+              if(indentNumber){
+              const errorMessage = {
+              
+                labelName: "Ordered Qty less then Indent Qty for",
+                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+                // labelKey:   `${LocalizationCodeValue}` `${DuplicatItem[0].duplicates}`
+                labelKey:   LocalizationCodeValueQty+' '+InvaldQtyCard[0].duplicates
+              };
+              dispatch(toggleSnackbar(true, errorMessage, "warning"));
+            }
+            else{
+              changeStep(state, dispatch);
+            }
+      
+            }
+          }
+        }
+        else{
+          changeStep(state, dispatch);
+        }
+
+      
 
       }
       else{
-        const errorMessage = {
-          labelName: "Input Date Must be less then or equal to current date",
-          labelKey: "STORE_MATERIAL_MASTER_CURRENT_DATE_VALIDATION"
-        };
-        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      const errorMessage = {
+        labelName: "Input Date Must be less then or equal to current date",
+        labelKey: "STORE_MATERIAL_MASTER_CURRENT_DATE_VALIDATION"
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
 
       }
      

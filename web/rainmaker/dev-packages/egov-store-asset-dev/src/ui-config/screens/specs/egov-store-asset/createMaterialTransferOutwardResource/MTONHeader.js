@@ -11,7 +11,7 @@ import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { getSearchResults } from "../../../../../ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import{GetMdmsNameBycode} from '../../../../../ui-utils/storecommonsapi'
+import{GetMdmsNameBycode,getMaterialBalanceRateResults} from '../../../../../ui-utils/storecommonsapi'
 import get from "lodash/get";
 export const MTONHeader = getCommonCard({
   header: getCommonTitle(
@@ -26,21 +26,92 @@ export const MTONHeader = getCommonCard({
     }
   ),
   MTONHeaderContainer: getCommonContainer({
-    issuingStoreName: {
+
+    transferIndentNo: {
       ...getSelectField({
-        label: { labelName: "Issuing Store Name", labelKey: "STORE_MATERIAL_INDENT_NOTE_ISSUING_STORE_NAME" },
+        label: { labelName: "Transfer Indent No.", labelKey: "STORE_MTON_INDENT_NUMBER" },
         placeholder: {
-          labelName: "Select Issuing Store Name",
-          labelKey: "STORE_MATERIAL_INDENT_NOTE_ISSUING_STORE_NAME_SELECT"
+          labelName: "Select Transfer Indent No.",
+          labelKey: "STORE_MTON_INDENT_NUMBER_SELECT"
         },
-        jsonPath: "materialIssues[0].toStore.code",
-        sourceJsonPath: "store.stores",
+        jsonPath: "materialIssues[0].indent.id",
+        required: true,
+       sourceJsonPath: "TransferIndent.indents",
         props: {
           className: "hr-generic-selectfield",
-          optionValue: "code",
-          optionLabel: "name",
+          optionValue: "id",
+          optionLabel: "indentNumber",
         }
       }),
+      beforeFieldChange: (action, state, dispatch) => {
+        let indents = get(state, "screenConfiguration.preparedFinalObject.TransferIndent.indents",[]) 
+        indents = indents.filter(x=>x.id === action.value);
+        let storecode = '';
+        if(indents && indents[0])
+        {
+          
+          dispatch(prepareFinalObject("materialIssues[0].indent.indentNumber", indents[0].indentNumber));
+          dispatch(prepareFinalObject("materialIssues[0].indent.tenantId", getTenantId()));
+          dispatch(prepareFinalObject("materialIssues[0].indent.indentDate", indents[0].indentDate));
+          dispatch(prepareFinalObject("materialIssues[0].indent.issueStore.code", indents[0].issueStore.code));
+          dispatch(prepareFinalObject("materialIssues[0].indent.issueStore.name", indents[0].issueStore.name));
+          dispatch(prepareFinalObject("materialIssues[0].toStore.name", indents[0].indentStore.name));
+          dispatch(prepareFinalObject("materialIssues[0].toStore.code", indents[0].indentStore.code)); 
+          dispatch(prepareFinalObject("materialIssues[0].indent.indentStore.code", indents[0].indentStore.code));
+          dispatch(prepareFinalObject("materialIssues[0].indent.indentStore.name", indents[0].indentStore.name));
+          dispatch(prepareFinalObject("materialIssues[0].fromStore.name", indents[0].issueStore.name));
+          dispatch(prepareFinalObject("materialIssues[0].fromStore.code", indents[0].issueStore.code));
+          dispatch(prepareFinalObject("materialIssues[0].indent.indentType", indents[0].indentType));
+          dispatch(prepareFinalObject("materialIssues[0].indent.indentPurpose", indents[0].indentPurpose));
+          dispatch(prepareFinalObject("materialIssues[0].indent.indentCreatedBy", indents[0].indentCreatedBy));
+          dispatch(prepareFinalObject("materialIssues[0].indent.designation", indents[0].inddesignationentNumberme));
+          storecode =indents[0].issueStore.code;
+          let indentDetails = get(
+            indents[0],
+            "indentDetails",
+            []
+          );
+          let material=[];
+          let matcode =[];
+          for (let index = 0; index < indentDetails.length; index++) {
+            const element = indentDetails[index];
+
+            dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].id`, element.id));
+            dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].uom.code`, element.uom.code));
+            dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].userQuantity`, element.userQuantity));
+            dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].material.code`, element.material.code));
+            //create material list for card item
+           
+            material.push(
+              {
+                materialcode:element.material.code,
+                materialName:GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",element.material.code),
+                uomcode:element.uom.code,
+                uomname:GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.common-masters.UOM",element.uom.code),
+                id:element.id,
+                indentQuantity:element.indentQuantity,
+                totalProcessedQuantity:element.totalProcessedQuantity,
+                indentIssuedQuantity:element.indentIssuedQuantity,
+                interstoreRequestQuantity:element.interstoreRequestQuantity,
+                //unitRate://to be deside
+              });
+              matcode.push( element.material.code)
+          }  
+          
+          let matcodes_= matcode.map(itm => {
+            return `${itm}`;
+          })
+          .join() || "-"
+          const queryObject = [{ key: "tenantId", value: getTenantId()},{ key: "issueingStore", value: storecode},{ key: "material", value: matcodes_}];
+          getMaterialBalanceRateResults(queryObject)
+          .then(async response =>{
+            if(response){
+              dispatch(prepareFinalObject("indentsOutmaterial", response.MaterialBalanceRate));
+              
+            }
+          }); 
+        }
+      }
     },
     issueDate: {
       ...getDateField({
@@ -62,67 +133,22 @@ export const MTONHeader = getCommonCard({
         }
       }),
     },  
-    transferIndentNo: {
+    issuingStoreName: {
       ...getSelectField({
-        label: { labelName: "Transfer Indent No.", labelKey: "STORE_MTON_INDENT_NUMBER" },
+        label: { labelName: "Issuing Store Name", labelKey: "STORE_MATERIAL_INDENT_NOTE_ISSUING_STORE_NAME" },
         placeholder: {
-          labelName: "Select Transfer Indent No.",
-          labelKey: "STORE_MTON_INDENT_NUMBER_SELECT"
+          labelName: "Select Issuing Store Name",
+          labelKey: "STORE_MATERIAL_INDENT_NOTE_ISSUING_STORE_NAME_SELECT"
         },
-        jsonPath: "materialIssues[0].indent.id",
-       sourceJsonPath: "TransferIndent.indents",
+        jsonPath: "materialIssues[0].toStore.code",
+        sourceJsonPath: "store.stores",
         props: {
+          disabled:true,
           className: "hr-generic-selectfield",
-          optionValue: "id",
-          optionLabel: "indentNumber",
+          optionValue: "code",
+          optionLabel: "name",
         }
       }),
-      beforeFieldChange: (action, state, dispatch) => {
-        let indents = get(state, "screenConfiguration.preparedFinalObject.TransferIndent.indents",[]) 
-        if(indents &indents[0])
-        {
-          dispatch(prepareFinalObject("materialIssues[0].indent.indentNumber", indents[0].indentNumber));
-          dispatch(prepareFinalObject("materialIssues[0].indent.tenantId", indents[0].indentNumber));
-          dispatch(prepareFinalObject("materialIssues[0].indent.indentDate", indents[0].indentDate));
-          dispatch(prepareFinalObject("materialIssues[0].indent.issueStore.code", indents[0].issueStore.code));
-          dispatch(prepareFinalObject("materialIssues[0].indent.issueStore.name", indents[0].issueStore.name));
-          dispatch(prepareFinalObject("materialIssues[0].indent.indentStore.code", indents[0].indentStore.code));
-          dispatch(prepareFinalObject("materialIssues[0].indent.indentStore.name", indents[0].indentStore.name));
-          dispatch(prepareFinalObject("materialIssues[0].indent.indentType", indents[0].indentType));
-          dispatch(prepareFinalObject("materialIssues[0].indent.indentPurpose", indents[0].indentPurpose));
-          dispatch(prepareFinalObject("materialIssues[0].indent.indentCreatedBy", indents[0].indentCreatedBy));
-          dispatch(prepareFinalObject("materialIssues[0].indent.designation", naindents[0].inddesignationentNumberme));
-          
-          let indentDetails = get(
-            indents[0],
-            "indentDetails",
-            []
-          );
-          for (let index = 0; index < indentDetails.length; index++) {
-            const element = indentDetails[index];
-
-            dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].id`, element.id));
-            dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].uom.code`, element.uom.code));
-            dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].userQuantity`, element.userQuantity));
-            dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].material.code`, element.material.code));
-            //create material list for card item
-            let material=[];
-            material.push(
-              {
-                materialcode:element.material.code,
-                materialName:GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",element.material.code),
-                uomcode:element.uom.code,
-                uomname:GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.common-masters.UOM",element.uom.code),
-                id:element.id,
-                indentQuantity:element.indentQuantity,
-                totalProcessedQuantity:element.totalProcessedQuantity,
-                indentIssuedQuantity:element.indentIssuedQuantity,
-                interstoreRequestQuantity:interstoreRequestQuantity,
-                //unitRate://to be deside
-              });
-          }
-        }
-      }
     },
     indentDate: {
       ...getDateField({
@@ -137,6 +163,7 @@ export const MTONHeader = getCommonCard({
         pattern: getPattern("Date"),
         jsonPath: "materialIssues[0].indent.indentDate",
         props: {
+          disabled:true,
           inputProps: {
             max: new Date().toISOString().slice(0, 10),
           }
@@ -150,13 +177,13 @@ export const MTONHeader = getCommonCard({
           labelName: "Select Store Name",
           labelKey: "STORE_DETAILS_STORE_NAME_SELECT"
         },
-        jsonPath: "materialIssues[0].indent.indentStore.name",
-       // sourceJsonPath: "searchMaster.storeNames",
+        jsonPath: "materialIssues[0].fromStore.code",
+        sourceJsonPath: "store.stores",
         props: {
           disabled:true,
           className: "hr-generic-selectfield",
-          optionValue: "value",
-          optionLabel: "label",
+          optionValue: "code",
+          optionLabel: "name",
         }
       }),
     },
@@ -223,43 +250,17 @@ export const MTONHeader = getCommonCard({
         props: {
           className: "applicant-details-error",
           optionLabel: "name",
-          optionValue: "designation",
+          optionValue: "code",
         },
       }),
       beforeFieldChange: (action, state, dispatch) => {
         let emp = get(state, "screenConfiguration.preparedFinalObject.createScreenMdmsData.employee",[]) 
         let designation=action.value ;
-        //alert(designation)
-        let issuedToDesignation =GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.common-masters.Designation",designation)   
-       // alert(issuedToDesignation);
-        dispatch(prepareFinalObject("materialIssues[0].issuedToDesignation", issuedToDesignation));
-      //   let designation='' ;
-      //   const empDetails =
-      //   emp.map((item, index) => {
-      //     const deptCode = item.dept;
-      //     const designation =   item.designation;
-      //     const empCode = item.code;
-      //     const empName = item.name;
-      //     if(empCode ===action.value)
-      //     {
-      //       designation = item.designation;
-      //   return {
-      //           code : empCode,
-      //           name : empName,
-      //           dept : deptCode,
-      //           designation:designation,
-      //   };
-      // }
-      // });
-      //   if(designation)
-      //   {
-      //     console.log(designation)
-      //     console.log("emp[0]")
-      //     let issuedToDesignation =GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.common-masters.Designation",designation)   
-      //     alert(issuedToDesignation);
-      //     dispatch(prepareFinalObject("materialIssues[0].issuedToDesignation", issuedToDesignation));
-
-      //   }
+        emp = emp.filter(x=>x.code ===action.value)
+        let issuedToDesignation =GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.common-masters.Designation",designation) 
+        const {designationsById} = state.common;
+       // dispatch(prepareFinalObject("materialIssues[0].issuedToDesignation", issuedToDesignation));
+     
 
       }
     },

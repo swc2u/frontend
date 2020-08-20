@@ -11,7 +11,7 @@ import {
   validateFields
 } from "../../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-
+import {ValidateCard} from '../../../../../ui-utils/storecommonsapi';
 const moveToReview = dispatch => { 
   const reviewUrl = "/egov-store-asset/review-scrap-material";
   dispatch(setRoute(reviewUrl));
@@ -26,23 +26,21 @@ export const callBackForNext = async (state, dispatch) => {
   );
   let isFormValid = true;
   if (activeStep === 0) {
-    const isMTHeaderValid = validateFields(
-      "components.div.children.formwizardFirstStep.children.MTIHeader.children.cardContent.children.MTIHeaderContainer",
+    const isScrapHeaderValid = validateFields(
+      "components.div.children.formwizardFirstStep.children.ScrapHeader.children.cardContent.children.ScrapHeaderContainer.children",
       state,
       dispatch,
       "create-scrap-material"
     );
   
-    if (!isMTHeaderValid) {
+    if (!isScrapHeaderValid) {
       isFormValid = false;
     }
   }
-  if (activeStep === 1) {
 
-  }
-  if (activeStep === 2) {
+  if (activeStep === 1) {
     let poDetailsPath =
-      "components.div.children.formwizardThirdStep.children.purchaseOrderDetails.children.cardContent.children.purchaseOrderDetailsCard.props.items";
+      "components.div.children.formwizardSecondStep.children.ScrapMaterialDetails.children.cardContent.children.ScrapMaterialDetailsCard.props.items";
 
     let poDetailsItems = get(
       state.screenConfiguration.screenConfig['create-scrap-material'],
@@ -55,7 +53,7 @@ export const callBackForNext = async (state, dispatch) => {
         (poDetailsItems[j].isDeleted === undefined ||
           poDetailsItems[j].isDeleted !== false) &&
         !validateFields(
-          `${poDetailsPath}[${j}].item${j}.children.cardContent.children.poDetailsCardContainer.children`,
+          `${poDetailsPath}[${j}].item${j}.children.cardContent.children.ScrapMaterialDetailsCardContainer.children`,
           state,
           dispatch,
           "create-scrap-material"
@@ -64,6 +62,21 @@ export const callBackForNext = async (state, dispatch) => {
       isPoDetailsValid = false;
     }
   
+    let cardJsonPath =
+    "components.div.children.formwizardSecondStep.children.ScrapMaterialDetails.children.cardContent.children.ScrapMaterialDetailsCard.props.items";
+    let pagename = "create-scrap-material";
+    let jasonpath =  "scraps[0].scrapDetails";
+    let value = "material.code";
+    let DuplicatItem = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value);
+
+    if(DuplicatItem && DuplicatItem[0].IsDuplicatItem){
+      const errorMessage = {
+        labelName: "Duplicate Material Added",
+        labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION  ${DuplicatItem[0].duplicates} `
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      return;
+    }
 
     if (!isPoDetailsValid) {
       isFormValid = false;

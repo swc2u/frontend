@@ -6,7 +6,7 @@ import { handleCreateUpdatePO } from "./functions";
 const gotoCreateFlow = (state, dispatch) => {
   const poNumber = getQueryArg(window.location.href, "poNumber");
   const tenantId = getQueryArg(window.location.href, "tenantId");
-  const createUrl = `/egov-store-asset/create-purchase-order?poNumber=${poNumber}&tenantId=${tenantId}`;
+  const createUrl = `/egov-store-asset/create-dispose-scrap-material`;
   dispatch(setRoute(createUrl));
 };
 

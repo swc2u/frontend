@@ -124,7 +124,7 @@ const handleDeletedCards = (jsonObject, jsonPath, key) => {
 export const handleCreateUpdatePO = (state, dispatch) => {
   let uuid = get(
     state.screenConfiguration.preparedFinalObject,
-    "purchaseOrders[0].id",
+    "disposals[0].id",
     null
   );
   if (uuid) {
@@ -136,80 +136,50 @@ export const handleCreateUpdatePO = (state, dispatch) => {
 
 export const createUpdatePO = async (state, dispatch, action) => {
 
-  let purchaseOrders = get(
+  let disposals = get(
     state.screenConfiguration.preparedFinalObject,
-    "purchaseOrders",
+    "disposals",
     []
   );
-  let priceList = get(
-    state.screenConfiguration.preparedFinalObject,
-    "searchMaster.priceList",
-    []
-  );
+  
   const tenantId =  getTenantId();
-  purchaseOrders[0].tenantId = tenantId;
+  disposals[0].tenantId = tenantId;
+  disposals[0].disposalStatus = "APPROVED"
   let queryObject = [{ key: "tenantId", value: tenantId }];
  
 
-  purchaseOrders = handleCardDelete(purchaseOrders, "purchaseOrderDetails", false);
+  disposals = handleCardDelete(disposals, "disposalDetails", false);
 
 
   //SET TENANT IDS IN ALL NEWLY ADDED JURISDICTIONS, DOESNT CHANGE ALREADY PRESENT
   let poDetailArray = returnEmptyArrayIfNull(
-    get(purchaseOrders[0], "purchaseOrderDetails", [])
+    get(disposals[0], "disposalDetails", [])
   );
   for (let i = 0; i < poDetailArray.length; i++) {
-    set(purchaseOrders[0], `purchaseOrderDetails[${i}].tenantId`, tenantId);
-    set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList`, priceList[0]);
-    set(purchaseOrders[0], `purchaseOrderDetails[${i}].purchaseIndentDetails`, []);
+    set(disposals[0], `disposalDetails[${i}].tenantId`, tenantId);
   }
 
   set(
-    purchaseOrders[0],
-    "purchaseOrderDate",
-    convertDateToEpoch(get(purchaseOrders[0], "purchaseOrderDate"), "dayStart")
-  );
-  set(
-    purchaseOrders[0],
-    "expectedDeliveryDate",
-    convertDateToEpoch(get(purchaseOrders[0], "expectedDeliveryDate"), "dayStart")
+    disposals[0],
+    "disposalDate",
+    convertDateToEpoch(get(disposals[0], "disposalDate"), "dayStart")
   );
 
-  set(
-    purchaseOrders[0],
-    "rateContractDate",
-    convertDateToEpoch(get(purchaseOrders[0], "rateContractDate"), "dayStart")
-  );
-  set(
-    purchaseOrders[0],
-    "agreementDate",
-    convertDateToEpoch(get(purchaseOrders[0], "agreementDate"), "dayStart")
-  );
-  set(
-    purchaseOrders[0],
-    "agreementStartDate",
-    convertDateToEpoch(get(purchaseOrders[0], "agreementStartDate"), "dayStart")
-  );
-  set(
-    purchaseOrders[0],
-    "agreementEndDate",
-    convertDateToEpoch(get(purchaseOrders[0], "agreementEndDate"), "dayStart")
-  );
 
-  const requestBody = {purchaseOrders};
+  const requestBody = {disposals};
   console.log("requestbody", requestBody);
 
   if (action === "CREATE") {
     try {
       const response = await httpRequest(
         "post",
-        "/store-asset-services/purchaseorders/_create",
+        "/store-asset-services/disposals/_create",
         "",
         queryObject,
         requestBody
       );
        if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=purchaseOrder&mode=create&code=${response.purchaseOrders[0].purchaseOrderNumber}`));
+        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=disposal&mode=create&code=${response.disposals[0].disposalNumber}`));
        }
   
     } catch (error) {
@@ -219,13 +189,13 @@ export const createUpdatePO = async (state, dispatch, action) => {
     try {
       const response = await httpRequest(
         "post",
-        "/store-asset-services/purchaseorders/_update",
+        "/store-asset-services/disposals/_update",
         "",
         queryObject,
         requestBody
       );
        if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=purchaseOrder&mode=update&code=${response.purchaseOrders[0].purchaseOrderNumber}`));
+        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=disposal&mode=update&code=${response.disposals[0].disposalNumber}`));
        }
   
     } catch (error) {

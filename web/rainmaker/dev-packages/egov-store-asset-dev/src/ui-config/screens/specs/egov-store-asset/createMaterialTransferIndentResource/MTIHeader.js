@@ -77,18 +77,12 @@ export const MTIHeader = getCommonCard({
         },
         required: true,
         jsonPath: "indents[0].indentPurpose",
-       // sourceJsonPath: "createScreenMdmsData.store-asset.RateType",
-       props: {
-        data: [
-          {
-            code: "Consumption",
-            name: "Capital/Repair/Consumption"
-          },
-         
-        ],
-        optionValue: "code",
-        optionLabel: "name",
-      },
+        sourceJsonPath: "createScreenMdmsData.store-asset.IndentPurpose",
+        props: {
+          
+          optionValue: "code",
+          optionLabel: "name",
+        },
       }),
     },
     issuingStoreName: {

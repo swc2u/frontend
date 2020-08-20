@@ -8,7 +8,8 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
 import {
   getCommonApplyFooter,
   ifUserRoleExists,
-  validateFields
+  validateFields,
+  getLocalizationCodeValue
 } from "../../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -118,9 +119,11 @@ export const callBackForNext = async (state, dispatch) => {
               changeStep(state, dispatch);
             }
             else{
+              const LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_DUPLICATE_VALIDATION")
               const errorMessage = {
                 labelName: "Duplicate Material Added",
-                labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+                labelKey:   LocalizationCodeValue+' '+DuplicatItem[0].duplicates
               };
               dispatch(toggleSnackbar(true, errorMessage, "warning"));
 

@@ -11,7 +11,7 @@ import { showHideAdhocPopup } from "../utils";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-
+import { getstoreTenantId } from "../../../../ui-utils/storecommonsapi";
 export const header = getCommonContainer({
   header: getCommonHeader({
     labelName: `View Price List`,
@@ -20,7 +20,7 @@ export const header = getCommonContainer({
 });
 const masterView = PriceListReviewDetails(false);
 const getMdmsData = async (action, state, dispatch, tenantId) => {
-  const tenant = tenantId || getTenantId();
+  const tenant =   getstoreTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenant,
@@ -28,7 +28,8 @@ const getMdmsData = async (action, state, dispatch, tenantId) => {
         {
           moduleName: "store-asset",
           masterDetails: [
-            { name: "Material" },           
+            { name: "Material" }, //filter: "[?(@.active == true)]" },           
+                      
           ],
         },
         {

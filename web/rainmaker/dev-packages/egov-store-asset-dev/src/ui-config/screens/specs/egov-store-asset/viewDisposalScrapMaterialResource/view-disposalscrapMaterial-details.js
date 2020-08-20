@@ -19,18 +19,18 @@ const assignmentCard = {
   props: {
     className: "review-hr",
     scheama: getCommonGrayCard({
-      scrapDetailsCardContainer: getCommonContainer({
+      DisposeScrapMaterialDetailsCardContainer: getCommonContainer({
         materialName: getLabelWithValue(
           {
             labelName: "Material Name",
             labelKey: "STORE_MATERIAL_NAME"
           },
-          { jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].material.name" }
+          { jsonPath: "disposals[0].disposalDetails[0].material.name" }
         ),
         lotNo: getLabelWithValue(
           { labelName: "LOT No.", labelKey: "STORE_SCRAP_LOT_NO" },
           {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].uom.name",    
+            jsonPath: "disposals[0].disposalDetails[0].lotNumber",    
           }
         ),
         balanceQuantity: getLabelWithValue(
@@ -38,12 +38,12 @@ const assignmentCard = {
             labelName: "Balance Quantity",
             labelKey: "STORE_PURCHASE_ORDER_BLNC_QLTY"
           },
-          { jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].indentNumber" }
+          { jsonPath: "disposals[0].disposalDetails[0].balanceQuantity" }
         ),
         balanceValue: getLabelWithValue(
           { labelName: "Balance Value", labelKey: "STORE_SCRAP_BAL_VALUE" },
           {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].indentQuantity",
+            jsonPath: "disposals[0].disposalDetails[0].balanceValue",
           }
         ),
         unitRate: getLabelWithValue(
@@ -51,18 +51,18 @@ const assignmentCard = {
             labelName: "Unit Rate",
             labelKey: "STORE_MATERIAL_RECEIPT_UNIT_RATE"
           },
-          { jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].material.description" }
+          { jsonPath: "disposals[0].disposalDetails[0].unitRate" }
         ),
         disposalQty: getLabelWithValue(
           { labelName: "Dispsal Qty", labelKey: "STORE_DISPOSAL_SCRAP_QUANTITY" },
           {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].userQuantity",
+            jsonPath: "disposals[0].disposalDetails[0].disposalQuantity",
           }
         ),
         disposalValue: getLabelWithValue(
           { labelName: "Disposal Value", labelKey: "STORE_DISPOSAL_SCRAP_VALUE" },
           {
-            jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].userQuantity",
+            jsonPath: "disposals[0].disposalDetails[0].disposalValue",
           }
         ),
       })
@@ -71,9 +71,9 @@ const assignmentCard = {
     items: [],
     hasAddItem: false,
     isReviewPage: true,
-    sourceJsonPath: "purchaseOrders[0].purchaseOrderDetails",
+    sourceJsonPath: "disposals[0].disposalDetails",
     prefixSourceJsonPath:
-      "children.cardContent.children.scrapDetailsCardContainer.children",
+      "children.cardContent.children.DisposeScrapMaterialDetailsCardContainer.children",
     afterPrefixJsonPath: "children.value.children.key"
   },
   type: "array"

@@ -34,12 +34,13 @@ export const ScrapHeader = getCommonCard({
         },
        
         required: true,
-        jsonPath: "purchaseOrders[0].purchaseType",
-       // sourceJsonPath: "searchMaster.storeNames",
+        jsonPath: "scraps[0].store.code",
+        sourceJsonPath: "searchMaster.storeNames",
         props: {
+          disabled : true ,
           className: "hr-generic-selectfield",
-          optionValue: "value",
-          optionLabel: "label",
+          optionValue: "code",
+          optionLabel: "name"
         }
       }),
     },
@@ -55,7 +56,7 @@ export const ScrapHeader = getCommonCard({
         },
         required: true,
         pattern: getPattern("Date"),
-        jsonPath: "purchaseOrders[0].purchaseOrderDate",
+        jsonPath: "scraps[0].scrapDate",
         props: {
           inputProps: {
             min: new Date().toISOString().slice(0, 10),
@@ -82,7 +83,7 @@ export const ScrapHeader = getCommonCard({
       required:true,
       pattern: getPattern("alpha-numeric-with-space-and-newline"),
       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-      jsonPath: "purchaseOrders[0].remarks",
+      jsonPath: "scraps[0].description",
     }),
     createdBy: {
       ...getTextField({
@@ -98,7 +99,7 @@ export const ScrapHeader = getCommonCard({
           disabled: true
         },
        // pattern: getPattern("Email"),
-        jsonPath: "purchaseOrders[0].createdBy"
+        jsonPath: "scraps[0].createdBy"
       })
     },
     designation: {
@@ -115,7 +116,7 @@ export const ScrapHeader = getCommonCard({
           disabled: true
         },
        // pattern: getPattern("Email"),
-        jsonPath: "purchaseOrders[0].designation"
+        jsonPath: "scraps[0].designation"
       })
     },
   })

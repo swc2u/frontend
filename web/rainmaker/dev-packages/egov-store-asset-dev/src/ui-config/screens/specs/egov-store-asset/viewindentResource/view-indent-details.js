@@ -90,7 +90,7 @@ export const getIndentListDetailsView = (isReview = true) => {
           labelName: "Store Name",
             labelKey: "STORE_DETAILS_STORE_NAME"
         },
-        {  jsonPath: "indents[0].issueStore.name", }
+        {  jsonPath: "indents[0].indentStore.name", }
       ),
       divisionName: getLabelWithValue(
         { labelName: "Division Name", labelKey: "STORE_DETAILS_DIVISION_NAME" },

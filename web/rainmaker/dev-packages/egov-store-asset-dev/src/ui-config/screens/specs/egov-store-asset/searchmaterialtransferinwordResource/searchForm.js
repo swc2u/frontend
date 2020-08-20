@@ -16,7 +16,7 @@ import {
 import { searchApiCall } from "./functions";
 
 const resetFields = (state, dispatch) => {
-  const textFields = ["indentNumber", "receiptType","issueStorefrom","issueStoreto"];
+  const textFields = ["mrnNumber", "issueingStore","receiptDate",];
   for (let i = 0; i < textFields.length; i++) {
     if (
       `state.screenConfiguration.screenConfig.search-material-transfer-inword.searchForm.children.cardContent.children.searchFormContainer.children.${textFields[i]}.props.value`
@@ -57,78 +57,75 @@ export const searchForm = getCommonCard({
       },
      
     }),
-    receiptType: {
-      ...getSelectField({
-        label: { labelName: "Receipt Type", labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_TYPE" },
-        placeholder: {
-          labelName: "Select Receipt Type",
-          labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_TYPE_SELECT"
-        },
-        required: false,
-        jsonPath: "searchScreen.receiptType",
-        gridDefination: {
-          xs: 12,
-          sm: 4,
-        },
-        //sourceJsonPath: "createScreenMdmsData.store-asset.RateType",
-      props: {
-        data: [
-          {
-            code: "PurchaseReceipt",
-            name: "Purchase Receipt"
-          },
-         
-        ],
-        optionValue: "code",
-        optionLabel: "name",
-      },
-      })
-    },
-    issueStorefrom: {
+    issueingStore: {
       ...getSelectField({
         label: {
-          labelName: " Store Name",
-          labelKey: "STORE_DETAILS_STORE_NAME"
+          labelName: "From Store",
+          labelKey: "STORE_DETAILS_STORE_NAME_FROM"
         },
         placeholder: {
-          labelName: "Select  Store Name",
-          labelKey: "STORE_DETAILS_STORE_NAME_SELECT"
+          labelName: "Select From Store",
+          labelKey: "STORE_DETAILS_STORE_NAME_FROM_SELECT"
         },
         required: false,
-        jsonPath: "searchScreen.issueStorefrom",
+        jsonPath: "searchScreen.fromStore", 
         gridDefination: {
           xs: 12,
           sm: 4,
-        },
+        },        
         sourceJsonPath: "store.stores",
-      props: {        
-        optionValue: "code",
-        optionLabel: "name",
-      },
+        props: {
+          optionValue: "code",
+          optionLabel: "name",
+        },
       })
     },
     issueStoreto: {
       ...getSelectField({
         label: {
-          labelName: "Supplier Name",
-          labelKey: "STORE_COMMON_TABLE_COL_SUPPLIER_MASTER_NAME"
+          labelName: "To Store",
+          labelKey: "STORE_DETAILS_STORE_NAME_TO"
         },
         placeholder: {
-          labelName: "Select  Supplier Name",
-          labelKey: "STORE_COMMON_TABLE_COL_SUPPLIER_MASTER_NAME"
+          labelName: "Select To Store",
+          labelKey: "STORE_DETAILS_STORE_NAME_TO_SELECT"
         },
         required: false,
-        jsonPath: "searchScreen.supplierCode",
+        visible:false,
+        jsonPath: "searchScreen.issueStoreto", 
+        gridDefination: {
+          xs: 12,
+          sm: 4,
+        },        
+        sourceJsonPath: "store.stores",
+        props: {
+          optionValue: "code",
+          optionLabel: "name",
+        },
+      })
+    },
+    receiptDate: {
+      ...getDateField({
+        label: {
+          labelName: "Receipt Date",
+          labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE "
+        },
+        placeholder: {
+          labelName: "Enter Receipt Date",
+          labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE_PLACEHOLDER"
+        },
+        required: false,
+        pattern: getPattern("Date") || null,
+        jsonPath: "searchScreen.receiptDate",
         gridDefination: {
           xs: 12,
           sm: 4,
         },
-        sourceJsonPath: "store.stores",
-      props: {
-        
-        optionValue: "code",
-        optionLabel: "name",
-      },
+        props: {
+          // inputProps: {
+          //   max: getTodaysDateInYMD()
+          // }
+        }
       })
     },
   }),

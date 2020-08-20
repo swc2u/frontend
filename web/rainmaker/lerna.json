@@ -18,6 +18,7 @@
     "dev-packages/egov-pms-dev",
     "dev-packages/egov-store-asset-dev",
     "dev-packages/egov-echallan-dev",
+    "dev-packages/egov-nulm-dev",
     "dev-packages/egov-bpa-dev", 
     "dev-packages/egov-pr-dev",
     "dev-packages/egov-boilerplate-dev",

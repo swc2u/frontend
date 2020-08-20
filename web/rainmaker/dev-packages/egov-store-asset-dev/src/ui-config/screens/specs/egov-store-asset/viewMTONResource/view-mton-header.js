@@ -69,74 +69,74 @@ export const getMTONHeaderView = (isReview = true) => {
           labelName: "Issuing Store Name",
           labelKey: "STORE_MATERIAL_INDENT_NOTE_ISSUING_STORE_NAME"
         },
-        { jsonPath: "purchaseOrders[0].rateType" }
+        { jsonPath: "materialIssues[0].toStore.code" }
       ),
       issueDate: getLabelWithValue(
         {
           labelName: "Issue Date",
           labelKey: "STORE_MATERIAL_INDENT_NOTE_ISSUE_DATE"
         },
-        { jsonPath: "purchaseOrders[0].rateType" }
+        { jsonPath: "materialIssues[0].issueDate" }
       ),
       transferIndentNo: getLabelWithValue(
         {
           labelName: "Transfer Indent No.",
           labelKey: "STORE_MTON_INDENT_NUMBER"
         },
-        { jsonPath: "purchaseOrders[0].purchaseType" }
+        { jsonPath: "materialIssues[0].indent.indentNumber" }
       ),
       indentDate: getLabelWithValue(
         {
           labelName: "Indent Date",
           labelKey: "STORE_MATERIAL_INDENT_INDENT_DATE"
         },
-        { jsonPath: "purchaseOrders[0].store.name" }
+        { jsonPath: "materialIssues[0].indent.indentDate" }
       ),
       indentingStore: getLabelWithValue(
         { labelName: "Indenting Store", labelKey: "STORE_MATERIAL_INDENT_NOTE_INDENTING_STORE" },
-        { jsonPath: "purchaseOrders[0].purchaseOrderDate" }
+        { jsonPath: "materialIssues[0].indent.indentStore.name" }
       ),
       indentDeptName: getLabelWithValue(
         { labelName: "Indenting Dept. Name", labelKey: "STORE_MTON_INDENT_DEPT_NAME" },
-        { jsonPath: "purchaseOrders[0].purchaseOrderDate" }
+        { jsonPath: "materialIssues[0].indent.designation" }
       ),
       indentPurpose: getLabelWithValue(
         { labelName: "Indent Purpose", labelKey: "STORE_MATERIAL_INDENT_INDENT_PURPOSE" },
-        { jsonPath: "purchaseOrders[0].purchaseOrderDate" }
+        { jsonPath: "materialIssues[0].indent.indentPurpose" }
       ),
       indentRaisedBy: getLabelWithValue(
         { labelName: "Indent Raised By", labelKey: "STORE_PURCHASE_ORDER_INDENT_RAISED" },
-        { jsonPath: "purchaseOrders[0].purchaseOrderDate" }
+        { jsonPath: "materialIssues[0].indent.indentCreatedBy" }
       ),
       issuedToEmployee: getLabelWithValue(
         {
           labelName: "Issued to Employee",
           labelKey: "STORE_MTON_ISSUED_TO_EMP"
         },
-        { jsonPath: "purchaseOrders[0].rateType" }
+        { jsonPath: "materialIssues[0].issuedToEmployee" }
       ),
       designation: getLabelWithValue(
         { labelName: "Designation", labelKey: "STORE_PURCHASE_ORDER_DSGNTN" },
         {
-          jsonPath: "purchaseOrders[0].designation",
+          jsonPath: "materialIssues[0].designation",
         }
       ),
       remarks: getLabelWithValue(
         { labelName: "Remarks", labelKey: "STORE_PURCHASE_ORDER_REMARK" },
         {
-          jsonPath: "purchaseOrders[0].supplier.name",
+          jsonPath: "materialIssues[0].description",
         }
       ),
       issuedBy: getLabelWithValue(
         { labelName: "Issued by", labelKey: "STORE_PURCHASE_ORDER_ISSUEDBY" },
         {
-          jsonPath: "purchaseOrders[0].advancePercentage"
+          jsonPath: "materialIssues[0].issuedToEmployee"
         }
       ),
       designationIssuedEmp: getLabelWithValue(
         { labelName: "Designation", labelKey: "STORE_PURCHASE_ORDER_DSGNTN" },
         {
-          jsonPath: "purchaseOrders[0].designation",
+          jsonPath: "materialIssues[0].issuedToDesignation",
         }
       ),
     }),

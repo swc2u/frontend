@@ -150,7 +150,12 @@ const getmrnNumber = async (  action, state,dispatch,storecode)=>{
           },
           required: true,
           pattern: getPattern("Date") || null,
-          jsonPath: "materialReceipt[0].receiptDate"
+          jsonPath: "materialReceipt[0].receiptDate",
+          props: {
+            inputProps: {
+              max: new Date().toISOString().slice(0, 10),
+            }
+          }
         })
       },
       receiptType: {
@@ -248,12 +253,12 @@ const getmrnNumber = async (  action, state,dispatch,storecode)=>{
       issueNumber: {
         ...getTextField({
           label: {
-            labelName: "Remark",
-            labelKey: "STORE_MATERIAL_INDENT_NOTE_REMARK"
+            labelName: "Material Issue Number",
+            labelKey: "STORE_COMMON_MRN_ISSUE_NUMBER"
           },
           placeholder: {
-            labelName: "Enter Remark",
-            labelKey: "STORE_MATERIAL_INDENT_NOTE_REMARK_PLACEHOLDER"
+            labelName: "Enter Material Issue Number",
+            labelKey: "STORE_COMMON_MRN_ISSUE_NUMBER_PLACEHOLDER"
           },
           props: {
             className: "applicant-details-error",

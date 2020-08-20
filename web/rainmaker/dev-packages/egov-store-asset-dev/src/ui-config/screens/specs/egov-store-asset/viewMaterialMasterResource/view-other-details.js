@@ -11,8 +11,8 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 const gotoCreatePage = (state, dispatch) => {
   const createUrl =
   process.env.REACT_APP_SELF_RUNNING === "true"
-    ? `/egov-ui-framework/egov-store-asset/creatematerialmaster?step=0`
-    : `/egov-store-asset/creatematerialmaster?step=0`;
+    ? `/egov-ui-framework/egov-store-asset/creatematerialmaster?step=2`
+    : `/egov-store-asset/creatematerialmaster?step=2`;
   dispatch(setRoute(createUrl));
 };
 

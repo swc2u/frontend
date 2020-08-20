@@ -14,7 +14,8 @@ import {
   getCommonApplyFooter,
   ifUserRoleExists,
   validateFields,
-  epochToYmd
+  epochToYmd,
+  getLocalizationCodeValue
 } from "../../utils";
 import {ValidateCard} from '../../../../../ui-utils/storecommonsapi'
 // import "./index.css";
@@ -129,9 +130,11 @@ export const callBackForNext = async (state, dispatch) => {
       moveToReview(dispatch);
           }
           else{
+            const LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_DUPLICATE_VALIDATION")
             const errorMessage = {
               labelName: "Duplicate Material Added",
-              labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+              //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+              labelKey:   LocalizationCodeValue+' '+DuplicatItem[0].duplicates
             };
             dispatch(toggleSnackbar(true, errorMessage, "warning"));
           }

@@ -8,8 +8,8 @@ import {
   
   export const header = getCommonContainer({
     header: getCommonHeader({
-      labelName: "Indent Material Issue Note",
-      labelKey: "STORE_COMMON_CREATE_INDENT_MATERIAL_ISSUE_NOTE"
+      labelName: "Non-Indent Material Issue Note - Summary",
+      labelKey: "STORE_MATERIAL_NON_INDENT_SUMMARY_HEADER"
     })
   });
   
@@ -25,7 +25,7 @@ import {
   
   const screenConfig = {
     uiFramework: "material-ui",
-    name: "reviewindentnote",
+    name: "reviewnonindentnote",
     beforeInitScreen: (action, state, dispatch) => {
       // COMMA SEPARATED ROLES IN REVIEW SCREEN
       setRolesList(state, dispatch);
@@ -50,13 +50,13 @@ import {
                 },
                 ...header
               },
-              // subHeader: {
-              //   gridDefination: {
-              //     xs: 12,
-              //     sm: 10
-              //   },
-              //   ...subHeader
-              // }
+              subHeader: {
+                gridDefination: {
+                  xs: 12,
+                  sm: 10
+                },
+                ...subHeader
+              }
             }
           },
           IndentNoteReview

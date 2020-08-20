@@ -14,6 +14,7 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import{WorkFllowStatus} from '../../../../ui-utils/sampleResponses'
+import { getstoreTenantId } from "../../../../ui-utils/storecommonsapi";
 let IsEdit = false;
 let Status = getQueryArg(window.location.href, "Status");
 let ConfigStatus = WorkFllowStatus().WorkFllowStatus;
@@ -32,18 +33,13 @@ const createMatrialIndentNoteHandle = async (state, dispatch) => {
   let issueNoteNumber = getQueryArg(window.location.href, "issueNoteNumber");
   dispatch(setRoute(`/egov-store-asset/createMaterialNonIndentNote?issueNoteNumber=${issueNoteNumber}`));
 };
-const creatPOHandle = async (state, dispatch) => {
-  let indents = get(
-    state.screenConfiguration.preparedFinalObject,
-    `indents`,
-    []
-  );
-  let indentNumber = indents[0].indentNumber;
-  dispatch(setRoute(`/egov-store-asset/create-purchase-order?indentNumber=${indentNumber}`));
+const creatScrapHandle = async (state, dispatch) => {
+  let issueNoteNumber = getQueryArg(window.location.href, "issueNoteNumber");
+  dispatch(setRoute(`/egov-store-asset/create-scrap-material?issueNoteNumber=${issueNoteNumber}`));
 };
 const masterView = IndentNoteReviewDetails(false);
 const getMdmsData = async (action, state, dispatch, tenantId) => {
-  const tenant = tenantId || getTenantId();
+  const tenant = getstoreTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenant,
@@ -56,7 +52,21 @@ const getMdmsData = async (action, state, dispatch, tenantId) => {
               filter: "[?(@.active == true)]"
             }
           ]
-        }
+        },
+        {
+          moduleName: "common-masters",
+          masterDetails: [
+            { name: "UOM", filter: "[?(@.active == true)]" },
+           
+          ]
+        },
+        {
+          moduleName: "store-asset",
+          masterDetails: [
+            { name: "Material" }, //filter: "[?(@.active == true)]" },           
+                      
+          ],
+        },
       ]
     }
   };
@@ -80,9 +90,10 @@ const screenConfig = {
   beforeInitScreen: (action, state, dispatch) => {
     let issueNoteNumber = getQueryArg(window.location.href, "issueNoteNumber");
     let tenantId = getQueryArg(window.location.href, "tenantId");
+    getMdmsData(action, state, dispatch, tenantId);
     getMaterialNonIndentData(state, dispatch, issueNoteNumber, tenantId);
    // showHideAdhocPopup(state, dispatch);
-    getMdmsData(action, state, dispatch, tenantId);
+   
     return action;
   },
   components: {
@@ -100,16 +111,19 @@ const screenConfig = {
             header: {
               gridDefination: {
                 xs: 12,
-                sm: 6,
+                sm: 12,
               },
               ...header
             },
+           
             newApplicationButton: {
               componentPath: "Button",
               gridDefination: {
                 xs: 12,
-                sm: 6,
-                align: "right",
+                sm: 4,
+                md:3,
+                lg:3,
+                // align: "right",
               },
               visible: true,// enableButton,
               props: {
@@ -146,8 +160,15 @@ const screenConfig = {
               },
             },
             newPOButton: {
-              componentPath: "Button",            
-              visible: false,// enableButton,
+              componentPath: "Button",         
+              gridDefination: {
+                xs: 12,
+                sm: 4,
+                md:3,
+                lg:3,
+                // align: "right",
+              },   
+              visible: true,// enableButton,
               props: {
                 variant: "contained",
                 color: "primary",
@@ -172,13 +193,13 @@ const screenConfig = {
                 },
 
                 buttonLabel: getLabel({
-                  labelName: "Add Purchase Order",
-                  labelKey: "STORE_ADD_NEW_PURCHASE_ORDR_BUTTON",
+                  labelName: "Add Scrap",
+                  labelKey: "STORE_ADD_NEW_SCRAP_BUTTON",
                 }),
               },
               onClickDefination: {
                 action: "condition",
-                callBack: creatPOHandle,
+                callBack: creatScrapHandle,
               },
             },
           }

@@ -232,6 +232,11 @@ export const header = getCommonContainer({
       const mdmsDataStatus = getMdmsData(state, dispatch, tenantId);
       const storedata = getstoreData(action,state, dispatch);
       const SupllierData = getSupllierData(action,state, dispatch);
+      const step = getQueryArg(window.location.href, "step");
+      const issueNoteNumber = getQueryArg(window.location.href, "issueNoteNumber");
+      if(!step && !issueNoteNumber){
+        dispatch(prepareFinalObject("materialIssues[0]",null));
+      }
      // SEt Default data
 
      dispatch(
@@ -275,7 +280,7 @@ export const header = getCommonContainer({
     )
   );
  }
-   
+
       return action;
     },
   

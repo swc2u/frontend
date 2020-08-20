@@ -124,7 +124,7 @@ const handleDeletedCards = (jsonObject, jsonPath, key) => {
 export const handleCreateUpdatePO = (state, dispatch) => {
   let uuid = get(
     state.screenConfiguration.preparedFinalObject,
-    "purchaseOrders[0].id",
+    "scraps[0].id",
     null
   );
   if (uuid) {
@@ -136,80 +136,43 @@ export const handleCreateUpdatePO = (state, dispatch) => {
 
 export const createUpdatePO = async (state, dispatch, action) => {
 
-  let purchaseOrders = get(
+  let scraps = get(
     state.screenConfiguration.preparedFinalObject,
-    "purchaseOrders",
+    "scraps",
     []
   );
-  let priceList = get(
-    state.screenConfiguration.preparedFinalObject,
-    "searchMaster.priceList",
-    []
-  );
+  
   const tenantId =  getTenantId();
-  purchaseOrders[0].tenantId = tenantId;
+  scraps[0].tenantId = tenantId;
   let queryObject = [{ key: "tenantId", value: tenantId }];
  
 
-  purchaseOrders = handleCardDelete(purchaseOrders, "purchaseOrderDetails", false);
+  scraps = handleCardDelete(scraps, "scrapDetails", false);
 
 
-  //SET TENANT IDS IN ALL NEWLY ADDED JURISDICTIONS, DOESNT CHANGE ALREADY PRESENT
-  let poDetailArray = returnEmptyArrayIfNull(
-    get(purchaseOrders[0], "purchaseOrderDetails", [])
+  set(
+    scraps[0],
+    "scrapDate",
+    convertDateToEpoch(get(scraps[0], "scrapDate"), "dayStart")
   );
-  for (let i = 0; i < poDetailArray.length; i++) {
-    set(purchaseOrders[0], `purchaseOrderDetails[${i}].tenantId`, tenantId);
-    set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList`, priceList[0]);
-    set(purchaseOrders[0], `purchaseOrderDetails[${i}].purchaseIndentDetails`, []);
-  }
+ 
 
-  set(
-    purchaseOrders[0],
-    "purchaseOrderDate",
-    convertDateToEpoch(get(purchaseOrders[0], "purchaseOrderDate"), "dayStart")
-  );
-  set(
-    purchaseOrders[0],
-    "expectedDeliveryDate",
-    convertDateToEpoch(get(purchaseOrders[0], "expectedDeliveryDate"), "dayStart")
-  );
+ 
 
-  set(
-    purchaseOrders[0],
-    "rateContractDate",
-    convertDateToEpoch(get(purchaseOrders[0], "rateContractDate"), "dayStart")
-  );
-  set(
-    purchaseOrders[0],
-    "agreementDate",
-    convertDateToEpoch(get(purchaseOrders[0], "agreementDate"), "dayStart")
-  );
-  set(
-    purchaseOrders[0],
-    "agreementStartDate",
-    convertDateToEpoch(get(purchaseOrders[0], "agreementStartDate"), "dayStart")
-  );
-  set(
-    purchaseOrders[0],
-    "agreementEndDate",
-    convertDateToEpoch(get(purchaseOrders[0], "agreementEndDate"), "dayStart")
-  );
-
-  const requestBody = {purchaseOrders};
+  const requestBody = {scraps};
   console.log("requestbody", requestBody);
 
   if (action === "CREATE") {
     try {
       const response = await httpRequest(
         "post",
-        "/store-asset-services/purchaseorders/_create",
+        "store-asset-services/scraps/_create",
         "",
         queryObject,
         requestBody
       );
        if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=purchaseOrder&mode=create&code=${response.purchaseOrders[0].purchaseOrderNumber}`));
+        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=scrap&mode=create&code=${response.scraps[0].scrapNumber}`));
        }
   
     } catch (error) {
@@ -219,13 +182,13 @@ export const createUpdatePO = async (state, dispatch, action) => {
     try {
       const response = await httpRequest(
         "post",
-        "/store-asset-services/purchaseorders/_update",
+        "store-asset-services/scraps/_update",
         "",
         queryObject,
         requestBody
       );
        if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=purchaseOrder&mode=update&code=${response.purchaseOrders[0].purchaseOrderNumber}`));
+        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=scrap&mode=update&code=${response.scraps[0].scrapNumber}`));
        }
   
     } catch (error) {

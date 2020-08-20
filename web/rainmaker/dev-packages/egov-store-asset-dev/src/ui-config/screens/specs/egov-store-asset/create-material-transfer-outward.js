@@ -10,7 +10,7 @@ import {
   import { poApprovalInfo } from "./createMaterialTransferOutwardResource/poApprovalInfo";
   import {totalIssueValue} from "./createMaterialTransferOutwardResource/totalIssueValue";
   import commonConfig from '../../../../config/common';
-
+  import { IndentConfigType } from "../../../../ui-utils/sampleResponses";
   import get from "lodash/get";
   import map from "lodash/map";
   import { httpRequest } from "../../../../ui-utils";
@@ -110,11 +110,22 @@ const getTransferIndentData = async (action, state, dispatch) => {
       {
         key: "tenantId",
         value: tenantId
-      }];
+      },
+      {
+        key: "indentType",
+        value: IndentConfigType().IndntType.INDENT_TFR
+      },
+    ];
     try {
       let response = await getSearchResults(queryObject, dispatch,"indents");
-      response = response.indents.filter(x=>x.indentNumber ==="IND/248430/QWERTY/2020-21/00003")
-      dispatch(prepareFinalObject("TransferIndent", response));
+    //   const indentNumber = getQueryArg(window.location.href, "indentNumber");
+    //   if(indentNumber)
+    //   {
+    //   response = response.indents.filter(x=>x.indentNumber ===indentNumber)
+    //   dispatch(prepareFinalObject("TransferIndent", response));
+     
+    // }
+    dispatch(prepareFinalObject("TransferIndent", response));
       
     } catch (e) {
       console.log(e);
@@ -129,6 +140,7 @@ const getTransferIndentData = async (action, state, dispatch) => {
           {
             moduleName: "store-asset",
             masterDetails: [
+              { name: "Material", },
               { name: "RateType", filter: "[?(@.active == true)]" },
             ]
           },
@@ -181,13 +193,20 @@ const getTransferIndentData = async (action, state, dispatch) => {
     uiFramework: "material-ui",
     name: "create-material-transfer-outward",
     beforeInitScreen: (action, state, dispatch) => {
+      const step = getQueryArg(window.location.href, "step");
+      const id = getQueryArg(window.location.href, "id");
+      if(!step && !id){
+        dispatch(prepareFinalObject("materialIssues[0]",null));
+      }
       getData(action, state, dispatch);
       // SEt Default data Start
+     
      dispatch(prepareFinalObject("materialIssues[0].materialIssueStatus", "CREATED"));
      dispatch(prepareFinalObject("materialIssues[0].issueType", "MATERIALOUTWARD",));
      dispatch(prepareFinalObject("materialIssues[0].materialHandOverTo", "",));
      dispatch(prepareFinalObject("materialIssues[0].inventoryType", "",));
      dispatch(prepareFinalObject("materialIssues[0].expectedDeliveryDate", 1609353000000,));//31 DEC 2020
+
       return action;
     },
   

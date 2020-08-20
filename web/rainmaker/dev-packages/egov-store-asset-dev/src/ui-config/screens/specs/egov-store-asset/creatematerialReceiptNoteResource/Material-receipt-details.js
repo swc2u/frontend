@@ -8,8 +8,14 @@ import {
     getPattern,
     getCommonContainer
   } from "egov-ui-framework/ui-config/screens/specs/utils";
+  import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   import get from "lodash/get";
   import filter from "lodash/filter";
+  import {   
+    getLocalizationCodeValue,
+  
+  } from "../../utils";
+  import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
   import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
   import{getOpeningBalanceSearchResults} from '../../../../../ui-utils/storecommonsapi'
@@ -96,6 +102,7 @@ import {
                 },
               }),
               beforeFieldChange: (action, state, dispatch) => {
+                let cardIndex = action.componentJsonpath.split("items[")[1].split("]")[0];
                 let purchaseOrder = get(
                   state.screenConfiguration.preparedFinalObject,
                   `purchaseOrder.purchaseOrders`,
@@ -113,26 +120,53 @@ import {
                 );
                 for (let index = 0; index < purchaseOrderDetails.length; index++) {
                   const element = purchaseOrderDetails[index];
-                  if((element.orderQuantity-element.receivedQuantity)>0)
+                  const mrnNumber = getQueryArg(window.location.href, "mrnNumber");
+                  if(mrnNumber)
                   {
                     material.push( element.material)
+
                   }
+                  else{
+                    if((element.orderQuantity-element.receivedQuantity)>0)
+                    {
+                      material.push( element.material)
+                    }
+
+                  }
+                 
                 
                   //material.push( purchaseOrderDetails:element.id)
                   
                 }
                 // set
                // alert(purchaseOrderDetails[0].id);
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].purchaseOrderDetail.id",purchaseOrderDetails[0].id));
+               if(purchaseOrderDetails && purchaseOrderDetails[0])
+               {
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].purchaseOrderDetail.id`,purchaseOrderDetails[0].id));
+                if(material.length>0)
                 dispatch(prepareFinalObject("ReceiptMaterial",material));
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].uom.code",purchaseOrderDetails[0].uom.code));
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].uom.name",purchaseOrderDetails[0].uom.name));
+                else
+                {
+                  let LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_NOT_EXIST_PO")
+                  const errorMessage = {
+                    labelName: "Material Receipt completed for selected PO Number",
+                    labelKey:   LocalizationCodeValue+' '+action.value
+                  };
+                  dispatch(toggleSnackbar(true, errorMessage, "warning"));
+                }
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].uom.code`,purchaseOrderDetails[0].uom.code));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].uom.name`,purchaseOrderDetails[0].uom.name));
                 //set AvailableQty from  po purchaseOrderDetails 0 index receivedQuantity,orderQuantity,unitPrice(unitRate)
                 //
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].AvailableQty",purchaseOrderDetails[0].receivedQuantity));
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].orderQuantity",purchaseOrderDetails[0].orderQuantity));
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].unitRate",purchaseOrderDetails[0].unitPrice));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].AvailableQty`,purchaseOrderDetails[0].receivedQuantity));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].orderQuantity`,purchaseOrderDetails[0].orderQuantity));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].unitRate`,purchaseOrderDetails[0].unitPrice));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].receivedQty`,purchaseOrderDetails[0].orderQuantity));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].acceptedQty`,purchaseOrderDetails[0].orderQuantity));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].totalAcceptedvalue`,purchaseOrderDetails[0].orderQuantity * purchaseOrderDetails[0].unitPrice));
+
               }
+            }
 
             },
             MaterialName: {
@@ -157,7 +191,7 @@ import {
                 },
               }),
               beforeFieldChange: (action, state, dispatch) => {
-                
+                let cardIndex = action.componentJsonpath.split("items[")[1].split("]")[0];
                 let materials = get(
                   state.screenConfiguration.preparedFinalObject,
                   `ReceiptMaterial`,
@@ -166,8 +200,8 @@ import {
                 materials =  materials.filter(x=> x.code === action.value)   
                 if(materials && materials[0])
                 {
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].material.name",materials[0].name));
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].MaterialNameDesc",materials[0].description));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].material.name`,materials[0].name));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].MaterialNameDesc`,materials[0].description));
                 //dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].uom.code",materials[0].baseUom.code));
                // dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].uom.name",materials[0].name));
                 }
@@ -328,15 +362,16 @@ import {
                 jsonPath: "materialReceipt[0].receiptDetails[0].acceptedQty"
               }),
               beforeFieldChange: (action, state, dispatch) => {
-                let receivedQty =   get(state.screenConfiguration.preparedFinalObject,`materialReceipt[0].receiptDetails[0].receivedQty`,0)
-                let unitRate =   get(state.screenConfiguration.preparedFinalObject,`materialReceipt[0].receiptDetails[0].unitRate`,0)
+                let cardIndex = action.componentJsonpath.split("items[")[1].split("]")[0];
+                let receivedQty =   get(state.screenConfiguration.preparedFinalObject,`materialReceipt[0].receiptDetails[${cardIndex}].receivedQty`,0)
+                let unitRate =   get(state.screenConfiguration.preparedFinalObject,`materialReceipt[0].receiptDetails[${cardIndex}].unitRate`,0)
                 let QtyRejected = Number(receivedQty) - Number(action.value)
                 let totalAcceptedvalue = unitRate * Number(action.value)
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].qtyRejected",QtyRejected));
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].receiptDetailsAddnInfo[0].quantity",Number(action.value)));
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].userReceivedQty",receivedQty));
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].isScrapItem",false));
-                dispatch(prepareFinalObject("materialReceipt[0].receiptDetails[0].totalAcceptedvalue",totalAcceptedvalue));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].qtyRejected`,QtyRejected));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].receiptDetailsAddnInfo[0].quantity`,Number(action.value)));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].userReceivedQty`,receivedQty));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].isScrapItem`,false));
+                dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].totalAcceptedvalue`,totalAcceptedvalue));
                      }
             },
             unitRate: {
@@ -435,10 +470,11 @@ import {
                 jsonPath: "materialReceipt[0].receiptDetails[0].ValueofQtyaccepted"
               }),
               beforeFieldChange: (action, state, dispatch) => {
-                let acceptedQty =   get(state.screenConfiguration.preparedFinalObject,`materialReceipt[0].receiptDetails[0].acceptedQty`,0)
-                let unitRate = get(state.screenConfiguration.preparedFinalObject,`materialReceipt[0].receiptDetails[0].unitRate`,0)
+                let cardIndex = action.componentJsonpath.split("items[")[1].split("]")[0];
+                let acceptedQty =   get(state.screenConfiguration.preparedFinalObject,`materialReceipt[0].receiptDetails[${cardIndex}].acceptedQty`,0)
+                let unitRate = get(state.screenConfiguration.preparedFinalObject,`materialReceipt[0].receiptDetails[${cardIndex}].unitRate`,0)
                 let ValueofQtyaccepted = Number(acceptedQty) * Number(unitRate)
-                dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails[0].ValueofQtyaccepted",Number(ValueofQtyaccepted)));
+                dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].ValueofQtyaccepted`,Number(ValueofQtyaccepted)));
 
                      }
             },
@@ -457,7 +493,8 @@ import {
                 },
                 required: true,
                 pattern: getPattern("Name") || null,
-                jsonPath: "materialReceipt[0].receiptDetails[0].receiptDetailsAddnInfo[0].lotNo"
+                //jsonPath: "materialReceipt[0].receiptDetails[0].receiptDetailsAddnInfo[0].lotNo"
+                jsonPath: "materialReceipt[0].receiptDetails[0].lotNo"
               }),
               beforeFieldChange: (action, state, dispatch) => {
                      }
@@ -477,7 +514,8 @@ import {
                 },
                 required: true,
                 pattern: getPattern("Name") || null,
-                jsonPath: "materialReceipt[0].receiptDetails[0].receiptDetailsAddnInfo[0].serialNo"
+                //jsonPath: "materialReceipt[0].receiptDetails[0].receiptDetailsAddnInfo[0].serialNo"
+                jsonPath: "materialReceipt[0].receiptDetails[0].serialNo"
               }),
               beforeFieldChange: (action, state, dispatch) => {
                      }
@@ -497,7 +535,8 @@ import {
                 },
                 required: true,
                 pattern: getPattern("Name") || null,
-                jsonPath: "materialReceipt[0].receiptDetails[0].receiptDetailsAddnInfo[0].batchNo"
+                //jsonPath: "materialReceipt[0].receiptDetails[0].receiptDetailsAddnInfo[0].batchNo"
+                jsonPath: "materialReceipt[0].receiptDetails[0].batchNo"
               }),
               beforeFieldChange: (action, state, dispatch) => {
                      }
@@ -513,8 +552,14 @@ import {
                   labelKey: "STORE_MATERIAL_RECEIPT_MANUFACTURER_DATE_PLACEHOLDER"
                 },
                 required: true,
+                props: {
+                  inputProps: {
+                    max: new Date().toISOString().slice(0, 10),
+                  }
+                },
                 pattern: getPattern("Date") || null,
-                jsonPath: "materialReceipt[0].receiptDetails[0].receiptDetailsAddnInfo[0].manufactureDate"
+               // jsonPath: "materialReceipt[0].receiptDetails[0].receiptDetailsAddnInfo[0].manufactureDate"
+                jsonPath: "materialReceipt[0].receiptDetails[0].manufactureDate"
               })
             },
             expiryDate : {
@@ -528,8 +573,14 @@ import {
                   labelKey: "STORE_MATERIAL_RECEIPT_EXPIRY_DATE_PLACEHOLDER"
                 },
                 required: true,
+                props: {
+                  inputProps: {
+                    min: new Date().toISOString().slice(0, 10),
+                  }
+                },
                 pattern: getPattern("Date") || null,
-                jsonPath: "materialReceipt[0].receiptDetails[0].receiptDetailsAddnInfo[0].expiryDate"
+               // jsonPath: "materialReceipt[0].receiptDetails[0].receiptDetailsAddnInfo[0].expiryDate"
+                jsonPath: "materialReceipt[0].receiptDetails[0].expiryDate"
               })
             },
            
@@ -552,7 +603,7 @@ import {
         "children.cardContent.children.header.children.head.children.Accessories.props.label",
       sourceJsonPath: "materialReceipt[0].receiptDetails",
       prefixSourceJsonPath:
-        "children.cardContent.children.materialIssueCardContainer.children"
+        "children.cardContent.children.materialReceiptCardContainer.children"
     },
     type: "array"
   };

@@ -9,6 +9,7 @@ import {
   createMaterialIndent,
   getMaterialIndentSearchResults,
   getPriceListSearchResults,
+  GetMdmsNameBycode,
   updateMaterialIndent
 } from "../../../../../ui-utils/storecommonsapi";
 import {
@@ -285,13 +286,13 @@ export const createUpdateIndent = async (state, dispatch, action) => {
 export const getMaterialIndentData = async (
   state,
   dispatch,
-  code,
+  id,
   tenantId
 ) => {
   let queryObject = [
     {
-      key: "code",
-      value: code
+      key: "ids",
+      value: id
     },
     {
       key: "tenantId",
@@ -301,7 +302,18 @@ export const getMaterialIndentData = async (
 
  let response = await getMaterialIndentSearchResults(queryObject, dispatch);
 // let response = samplematerialsSearch();
-  dispatch(prepareFinalObject("indents", get(response, "indents")));
+response = response.indents.filter(x=>x.id === id)
+//dispatch(prepareFinalObject("priceLists", get(response, "priceLists")));
+if(response && response[0])
+{
+  for (let index = 0; index < response[0].indentDetails.length; index++) {
+    const element = response[0].indentDetails[index];
+   let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code)   
+   set(response[0], `indentDetails[${index}].uom.name`, Uomname);
+  }
+}
+dispatch(prepareFinalObject("indents", response));
+  //dispatch(prepareFinalObject("indents", get(response, "indents")));
  
   furnishindentData(state, dispatch);
 };

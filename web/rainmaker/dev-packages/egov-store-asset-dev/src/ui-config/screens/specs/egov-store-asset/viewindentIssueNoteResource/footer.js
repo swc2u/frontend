@@ -7,10 +7,11 @@ import { handleCreateUpdateIndent } from "./functions";
 const gotoCreateFlow = (state, dispatch) => {
   const issueNumber = getQueryArg(window.location.href, "issueNumber");
   const tenantId = getQueryArg(window.location.href, "tenantId");
+  const IndentId = getQueryArg(window.location.href, "IndentId");
   const createUrl =
     process.env.REACT_APP_SELF_RUNNING === "true"
-      ? `/egov-ui-framework/egov-store-asset/createMaterialIndentNote?tenantId=${tenantId}&issueNumber=${issueNumber}`
-      : `/egov-store-asset/createMaterialIndentNote?tenantId=${tenantId}&issueNumber=${issueNumber}`;
+      ? `/egov-ui-framework/egov-store-asset/createMaterialIndentNote?tenantId=${tenantId}&issueNumber=${issueNumber}&IndentId=${IndentId}`
+      : `/egov-store-asset/createMaterialIndentNote?tenantId=${tenantId}&issueNumber=${issueNumber}&IndentId=${IndentId}`;
   dispatch(setRoute(createUrl));
 };
 

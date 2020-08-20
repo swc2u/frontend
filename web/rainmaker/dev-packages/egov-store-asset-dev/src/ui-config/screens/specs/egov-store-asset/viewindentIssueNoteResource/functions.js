@@ -8,9 +8,12 @@ import set from "lodash/set";
 import {
   creatematerialissues,
   getmaterialissuesSearchResults,
+  getMaterialIndentSearchResults,
   getPriceListSearchResults,
+  GetMdmsNameBycode,
   updatematerialissues
 } from "../../../../../ui-utils/storecommonsapi";
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import {
   convertDateToEpoch,
   epochToYmdDate,
@@ -326,7 +329,32 @@ export const getMaterialIndentData = async (
 
  let response = await getmaterialissuesSearchResults(queryObject, dispatch);
 // let response = samplematerialsSearch();
-  dispatch(prepareFinalObject("materialIssues", get(response, "materialIssues")));
+response = response.materialIssues.filter(x=>x.issueNumber === issueNumber)
+if(response && response[0])
+{
+  for (let index = 0; index < response[0].materialIssueDetails.length; index++) {
+    const element = response[0].materialIssueDetails[index];
+   let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code)  
+   let matname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.store-asset.Material",element.material.code)  
+   set(response[0], `materialIssueDetails[${index}].material.name`, matname);
+   set(response[0], `materialIssueDetails[${index}].uom.name`, Uomname);
+  }
+  let IndentId = getQueryArg(window.location.href, "IndentId");
+  let queryObject_ = [
+    
+    {
+      key: "ids",
+      value: IndentId
+    },
+    {
+      key: "tenantId",
+      value: tenantId
+    }
+  ];
+  let indentres = await getMaterialIndentSearchResults(queryObject, dispatch);
+  dispatch(prepareFinalObject("indents", get(indentres, "indents")));
+}
+  dispatch(prepareFinalObject("materialIssues", response));
  
   furnishindentData(state, dispatch);
 };

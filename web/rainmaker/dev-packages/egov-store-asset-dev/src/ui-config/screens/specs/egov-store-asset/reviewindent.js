@@ -8,8 +8,8 @@ import {
   
   export const header = getCommonContainer({
     header: getCommonHeader({
-      labelName: "Material  Indent Note",
-      labelKey: "STORE_MATERIAL_INDENT_MATERIAL_INDENT_NOTE"
+      labelName: "Material Indent - Summary",
+      labelKey: "STORE_MATERIAL_INDENT_SUMMARY_HEADER"
     })
   });
   
@@ -50,13 +50,13 @@ import {
                 },
                 ...header
               },
-              // subHeader: {
-              //   gridDefination: {
-              //     xs: 12,
-              //     sm: 10
-              //   },
-              //   ...subHeader
-              // }
+              subHeader: {
+                gridDefination: {
+                  xs: 12,
+                  sm: 10
+                },
+                ...subHeader
+              }
             }
           },
           PriceListReview

@@ -4,13 +4,15 @@ import {
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { toggleSnackbar,prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import {ValidateCard, ValidateCardUserQty} from '../../../../../ui-utils/storecommonsapi'
 import {
   getButtonVisibility,
   getCommonApplyFooter,
   ifUserRoleExists,
   epochToYmd,
-  validateFields
+  validateFields,
+  getLocalizationCodeValue
 } from "../../utils";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 // import "./index.css";
@@ -138,7 +140,70 @@ export const callBackForNext = async (state, dispatch) => {
         dispatch(toggleSnackbar(true, errorMessage, "warning"));
       }
       else{
-        changeStep(state, dispatch);
+          let cardJsonPath =
+          "components.div.children.formwizardSecondStep.children.materialIssue.children.cardContent.children.materialIssueCard.props.items";
+          let pagename = "createMaterialIndentNote";
+          let jasonpath =  "materialIssues[0].materialIssueDetails";
+          let value = "mrnNumber";
+          let value2 ="";
+          let DuplicatItem = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)
+          let InputQtyValue = "indentDetail.userQuantity";
+          let CompareQtyValue = "indentDetail.indentQuantity";
+          let balanceQuantity = "indentDetail.balanceQty";
+          let doubleqtyCheck = true
+          let InvaldQtyCard = ValidateCardUserQty(state,dispatch,cardJsonPath,pagename,jasonpath,value,InputQtyValue,CompareQtyValue,balanceQuantity,doubleqtyCheck)
+       
+          if((DuplicatItem && DuplicatItem[0])||(InvaldQtyCard &&InvaldQtyCard[0]))
+          {
+            let LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_DUPLICATE_VALIDATION")
+            let LocalizationCodeValueQty = getLocalizationCodeValue("STORE_MATERIAL_INVALID_INDENT_NOTE_QTY_VALIDATION")
+            if(!DuplicatItem[0].IsDuplicatItem && !InvaldQtyCard[0].IsInvalidQty )
+      {
+
+              // refresh card item
+              var storeMappingTemp = [];
+          let  storeMapping =  get(
+            state.screenConfiguration.preparedFinalObject,
+            `materialIssues[0].materialIssueDetails`,
+            []
+          );
+          for(var i = 0; i < storeMapping.length; i++){
+              if(storeMappingTemp.indexOf(storeMapping[i]) == -1){
+                storeMappingTemp.push(storeMapping[i]);
+              }
+          }
+          storeMappingTemp = storeMappingTemp.filter((item) => item.isDeleted === undefined || item.isDeleted !== false);
+          if(storeMappingTemp.length>0)
+          {
+            dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails",storeMappingTemp)
+          );
+            }
+              changeStep(state, dispatch);
+            }
+            else{
+              if(DuplicatItem[0].IsDuplicatItem)
+              {
+                const errorMessage = {              
+                  labelName: "Duplicate Material Added",                 
+                  labelKey:   LocalizationCodeValue+' '+DuplicatItem[0].duplicates
+                };
+                dispatch(toggleSnackbar(true, errorMessage, "warning"));
+              }
+              else if (InvaldQtyCard[0].IsInvalidQty)
+              {
+                
+                const errorMessage = {
+                
+                  labelName: "Ordered Qty less then Indent Qty for",
+                  labelKey:   LocalizationCodeValueQty+' '+InvaldQtyCard[0].duplicates
+                };
+                dispatch(toggleSnackbar(true, errorMessage, "warning"));
+             
+        
+              }
+
+            }
+          }
 
       }
      

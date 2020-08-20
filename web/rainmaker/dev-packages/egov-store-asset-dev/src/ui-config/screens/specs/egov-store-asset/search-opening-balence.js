@@ -89,6 +89,8 @@ import {
     name: "search-opening-balence",
     beforeInitScreen: (action, state, dispatch) => {
       getData(action, state, dispatch);
+      //set search param blank
+dispatch(prepareFinalObject("searchScreen",{}));
       return action;
     },
     components: {

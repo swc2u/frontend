@@ -530,8 +530,17 @@ export const ReceiptType = () => {
         INWARDRECEIPT_RECEIPT_TYPE:"INWARD RECEIPT",
         OPENINGBALANCE_RECEIPT_TYPE:"OPENING BALANCE",
       },
-      
+  }
+}
 
+export const IndentConfigType = () => {
+  return {
     
+    IndntType: 
+      {
+        INEDENT:"Indent",
+        INDENT_TFR:"Transfer Indent",
+        
+      },
   }
 }

@@ -8,8 +8,8 @@ import {
   
   export const header = getCommonContainer({
     header: getCommonHeader({
-      labelName: "Indent Material Issue Note",
-      labelKey: "STORE_COMMON_CREATE_INDENT_MATERIAL_ISSUE_NOTE"
+      labelName: "Indent Material Issue Note - Summary",
+      labelKey: "STORE_MATERIAL_INDENT_ISSUE_NOTE_SUMMARY_HEADER"
     })
   });
   
@@ -50,13 +50,13 @@ import {
                 },
                 ...header
               },
-              // subHeader: {
-              //   gridDefination: {
-              //     xs: 12,
-              //     sm: 10
-              //   },
-              //   ...subHeader
-              // }
+              subHeader: {
+                gridDefination: {
+                  xs: 12,
+                  sm: 10
+                },
+                ...subHeader
+              }
             }
           },
           IndentNoteReview

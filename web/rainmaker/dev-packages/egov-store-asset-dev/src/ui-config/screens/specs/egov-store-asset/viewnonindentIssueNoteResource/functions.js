@@ -3,6 +3,7 @@ import {
   prepareFinalObject,
   toggleSnackbar
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import{GetMdmsNameBycode} from '../../../../../ui-utils/storecommonsapi'
 import get from "lodash/get";
 import set from "lodash/set";
 import {
@@ -274,17 +275,19 @@ export const getMaterialNonIndentData = async (
 
  let response = await getNonIndentMaterialIssueSearchResults(queryObject, dispatch);
 // let response = samplematerialsSearch();
-  dispatch(prepareFinalObject("materialIssues", get(response, "materialIssues")));
-  dispatch(
-    handleField(
-      "create",
-      "components.div.children.headerDiv.children.header.children.header.children.key",
-      "props",
-      {
-        labelName: "Edit Material Indent",
-        labelKey: "STORE_EDITMATERIAL_MASTER_INDENT_HEADER"
-      }
-    )
-  );
+response = get(response, "materialIssues")
+if(response && response[0])
+{
+for (let index = 0; index < response[0].materialIssueDetails.length; index++) {
+  const element = response[0].materialIssueDetails[index];
+ let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code) 
+ let matname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.store-asset.Material",element.material.code) 
+    set(response[0], `materialIssueDetails[${index}].uom.name`, Uomname);
+    set(response[0], `materialIssueDetails[${index}].material.name`, matname);    
+  
+}
+}
+  dispatch(prepareFinalObject("materialIssues", response));
+
   furnishindentData(state, dispatch);
 };
