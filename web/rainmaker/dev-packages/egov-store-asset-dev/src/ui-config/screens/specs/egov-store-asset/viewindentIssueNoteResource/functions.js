@@ -11,7 +11,8 @@ import {
   getMaterialIndentSearchResults,
   getPriceListSearchResults,
   GetMdmsNameBycode,
-  updatematerialissues
+  updatematerialissues,
+  getWFPayload
 } from "../../../../../ui-utils/storecommonsapi";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import {
@@ -22,10 +23,10 @@ import {
 } from "../../utils";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import {  
+import {
   samplematerialsSearch,
-  
-  } from "../../../../../ui-utils/sampleResponses";
+
+} from "../../../../../ui-utils/sampleResponses";
 // SET ALL SIMPLE DATES IN YMD FORMAT
 const setDateInYmdFormat = (obj, values) => {
   values.forEach(element => {
@@ -156,7 +157,7 @@ export const furnishindentData = (state, dispatch) => {
     "materialIssues",
     []
   );
-   setDateInYmdFormat(materialIssues[0], ["issueDate", ]);
+  setDateInYmdFormat(materialIssues[0], ["issueDate",]);
   // setAllDatesInYmdFormat(materialIssues[0], [
   //   { object: "assignments", values: ["fromDate", "toDate"] },
   //   { object: "priceListDetails", values: ["serviceFrom", "serviceTo"] }
@@ -177,7 +178,7 @@ export const handleCreateUpdateIndent = (state, dispatch) => {
     null
   );
   if (id) {
-    
+
     createUpdateIndent(state, dispatch, "UPDATE");
   } else {
     createUpdateIndent(state, dispatch, "CREATE");
@@ -189,14 +190,14 @@ export const createUpdateIndent = async (state, dispatch, action) => {
     state.screenConfiguration.preparedFinalObject,
     "materialIssues[0].tenantId"
   );
-  const tenantId =  getTenantId();
+  const tenantId = getTenantId();
   let queryObject = [
     {
       key: "tenantId",
       value: tenantId
     }
   ];
- 
+
   let materialIssues = get(
     state.screenConfiguration.preparedFinalObject,
     "materialIssues",
@@ -206,22 +207,22 @@ export const createUpdateIndent = async (state, dispatch, action) => {
   // get set date field into epoch
 
   let issueDate =
-  get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].issueDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].issueDate", 0)
   issueDate = convertDateToEpoch(issueDate);
-  set(materialIssues[0],"issueDate", issueDate);
+  set(materialIssues[0], "issueDate", issueDate);
 
 
   let indentDate =
-  get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].indent.indentDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].indent.indentDate", 0)
   indentDate = convertDateToEpoch(indentDate);
-  set(materialIssues[0],"indent.indentDate", indentDate);
+  set(materialIssues[0], "indent.indentDate", indentDate);
 
   let expectedDeliveryDate =
-  get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].expectedDeliveryDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].expectedDeliveryDate", 0)
   expectedDeliveryDate = convertDateToEpoch(expectedDeliveryDate);
-  set(materialIssues[0],"indent.expectedDeliveryDate", expectedDeliveryDate);
+  set(materialIssues[0], "indent.expectedDeliveryDate", expectedDeliveryDate);
 
-  
+
 
   //set defailt value
   let id = get(
@@ -229,37 +230,36 @@ export const createUpdateIndent = async (state, dispatch, action) => {
     "materialIssues[0].id",
     null
   );
-  if(id === null)
-  {
+  if (id === null) {
     // set(materialIssues[0],"indentNumber", "");
     // set(materialIssues[0],"indentType", "Indent");
     // set(materialIssues[0],"materialHandOverTo", "Test");
     // set(materialIssues[0],"designation", "");
 
-      //get and set indentDetail id from indent --> indentDetail objet
+    //get and set indentDetail id from indent --> indentDetail objet
 
-      let indentDetails = get(
-        state.screenConfiguration.preparedFinalObject,
-        "materialIssues[0].indent.indentDetails",
-        []
+    let indentDetails = get(
+      state.screenConfiguration.preparedFinalObject,
+      "materialIssues[0].indent.indentDetails",
+      []
+    );
+    let materialIssueDetails = get(
+      state.screenConfiguration.preparedFinalObject,
+      "materialIssues[0].materialIssueDetails",
+      []
+    );
+    for (let index = 0; index < materialIssueDetails.length; index++) {
+      const element = materialIssueDetails[index];
+      dispatch(
+        prepareFinalObject(
+          `materialIssues[0].materialIssueDetails[${index}].indentDetail.id`,
+          indentDetails[index].id,
+        )
       );
-      let materialIssueDetails = get(
-        state.screenConfiguration.preparedFinalObject,
-        "materialIssues[0].materialIssueDetails",
-        []
-      );
-      for (let index = 0; index < materialIssueDetails.length; index++) {
-        const element = materialIssueDetails[index];
-        dispatch(
-          prepareFinalObject(
-            `materialIssues[0].materialIssueDetails[${index}].indentDetail.id`,
-            indentDetails[index].id,
-          )
-        );
-        
-      }
+
+    }
   }
-  
+
 
 
 
@@ -267,27 +267,33 @@ export const createUpdateIndent = async (state, dispatch, action) => {
   let priceListDetails = returnEmptyArrayIfNull(
     get(materialIssues[0], "indent.materialIssueDetails[0]", [])
   );
- 
-  //handleDeletedCards(materialIssues[0], "storeMapping", "id");
- 
 
-  
+  //handleDeletedCards(materialIssues[0], "storeMapping", "id");
+
+
+
 
 
 
   if (action === "CREATE") {
     try {
+      let wfobject = getWFPayload(state, dispatch)
+      alert(JSON.stringify(wfobject))
+
       console.log(queryObject)
       console.log("queryObject")
       let response = await creatematerialissues(
-        queryObject,        
+        queryObject,
         materialIssues,
-        dispatch
+        dispatch,
+        wfobject
       );
-      if(response){
+      if (response) {
         let indentNumber = response.materialIssues[0].issueNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALINDENT&mode=create&code=${indentNumber}`));
-       }
+        // dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALINDENT&mode=create&code=${indentNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-indent-note?applicationNumber=${indentNumber}&tenantId=${response.materialIssues[0].tenantId}`));
+
+      }
     } catch (error) {
       //alert('123')
       furnishindentData(state, dispatch);
@@ -299,10 +305,10 @@ export const createUpdateIndent = async (state, dispatch, action) => {
         materialIssues,
         dispatch
       );
-      if(response){
+      if (response) {
         let indentNumber = response.materialIssues[0].indentNumber
         dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALINDENT&mode=update&code=${indentNumber}`));
-       }
+      }
     } catch (error) {
       furnishindentData(state, dispatch);
     }
@@ -327,34 +333,33 @@ export const getMaterialIndentData = async (
     }
   ];
 
- let response = await getmaterialissuesSearchResults(queryObject, dispatch);
-// let response = samplematerialsSearch();
-response = response.materialIssues.filter(x=>x.issueNumber === issueNumber)
-if(response && response[0])
-{
-  for (let index = 0; index < response[0].materialIssueDetails.length; index++) {
-    const element = response[0].materialIssueDetails[index];
-   let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code)  
-   let matname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.store-asset.Material",element.material.code)  
-   set(response[0], `materialIssueDetails[${index}].material.name`, matname);
-   set(response[0], `materialIssueDetails[${index}].uom.name`, Uomname);
-  }
-  let IndentId = getQueryArg(window.location.href, "IndentId");
-  let queryObject_ = [
-    
-    {
-      key: "ids",
-      value: IndentId
-    },
-    {
-      key: "tenantId",
-      value: tenantId
+  let response = await getmaterialissuesSearchResults(queryObject, dispatch);
+  // let response = samplematerialsSearch();
+  response = response.materialIssues.filter(x => x.issueNumber === issueNumber)
+  if (response && response[0]) {
+    for (let index = 0; index < response[0].materialIssueDetails.length; index++) {
+      const element = response[0].materialIssueDetails[index];
+      let Uomname = GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.common-masters.UOM", element.uom.code)
+      let matname = GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.store-asset.Material", element.material.code)
+      set(response[0], `materialIssueDetails[${index}].material.name`, matname);
+      set(response[0], `materialIssueDetails[${index}].uom.name`, Uomname);
     }
-  ];
-  let indentres = await getMaterialIndentSearchResults(queryObject, dispatch);
-  dispatch(prepareFinalObject("indents", get(indentres, "indents")));
-}
+    let IndentId = getQueryArg(window.location.href, "IndentId");
+    let queryObject_ = [
+
+      {
+        key: "ids",
+        value: IndentId
+      },
+      {
+        key: "tenantId",
+        value: tenantId
+      }
+    ];
+    let indentres = await getMaterialIndentSearchResults(queryObject, dispatch);
+    dispatch(prepareFinalObject("indents", get(indentres, "indents")));
+  }
   dispatch(prepareFinalObject("materialIssues", response));
- 
+
   furnishindentData(state, dispatch);
 };

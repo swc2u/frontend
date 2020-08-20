@@ -11,9 +11,10 @@ import {
   getPriceListSearchResults,
   GetMdmsNameBycode,
   getCommonFileUrl,
-  updatereceiptnotes
+  updatereceiptnotes,
+  getWFPayload
 } from "../../../../../ui-utils/storecommonsapi";
-import { getFileUrlFromAPI } from "egov-ui-framework/ui-utils/commons";  
+import { getFileUrlFromAPI } from "egov-ui-framework/ui-utils/commons";
 import {
   convertDateToEpoch,
   epochToYmdDate,
@@ -22,10 +23,10 @@ import {
 } from "../../utils";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import {  
+import {
   samplematerialsSearch,
-  
-  } from "../../../../../ui-utils/sampleResponses";
+
+} from "../../../../../ui-utils/sampleResponses";
 // SET ALL SIMPLE DATES IN YMD FORMAT
 const setDateInYmdFormat = (obj, values) => {
   values.forEach(element => {
@@ -88,35 +89,34 @@ const returnEmptyArrayIfNull = value => {
     return value;
   }
 };
-const getFileUrl = async (dispatch,tenantId,fileStoreId)=>{
+const getFileUrl = async (dispatch, tenantId, fileStoreId) => {
 
   //fileStoreId = "242e3bc6-7f42-444e-b562-6f23468f6e72"
-  if(tenantId.includes("."))
-  {
- 
+  if (tenantId.includes(".")) {
+
     var vStr = tenantId.split('.');
 
     tenantId = vStr[0];
   }
   //tenantId = 
   let FileURL = "";
-  getFileUrlFromAPI(fileStoreId,tenantId).then(async(fileRes) => {
+  getFileUrlFromAPI(fileStoreId, tenantId).then(async (fileRes) => {
     console.log(fileRes)
     console.log("fileRes")
     FileURL = fileRes.fileStoreIds[0].url
     FileURL = getCommonFileUrl(FileURL)
-    let  documentsPreview= [
+    let documentsPreview = [
       {
         title: "STORE_DOCUMENT_TYPE_RATE_CONTRACT_QUATION",
-        linkText: "VIEW", 
-        link:FileURL,//"https://chstage.blob.core.windows.net/fileshare/ch/undefined/July/15/1594826295177document.pdf?sig=R3nzPxT9MRMfROREe6LHEwuGfeVxB%2FKneAeWrDJZvOs%3D&st=2020-07-15T15%3A21%3A01Z&se=2020-07-16T15%3A21%3A01Z&sv=2016-05-31&sp=r&sr=b",
-          
-      },]     
+        linkText: "VIEW",
+        link: FileURL,//"https://chstage.blob.core.windows.net/fileshare/ch/undefined/July/15/1594826295177document.pdf?sig=R3nzPxT9MRMfROREe6LHEwuGfeVxB%2FKneAeWrDJZvOs%3D&st=2020-07-15T15%3A21%3A01Z&se=2020-07-16T15%3A21%3A01Z&sv=2016-05-31&sp=r&sr=b",
+
+      },]
     dispatch(
       prepareFinalObject("documentsPreview", documentsPreview)
     );
-  });  
- 
+  });
+
 }
 export const setRolesList = (state, dispatch) => {
   let rolesList = get(
@@ -185,11 +185,11 @@ export const furnishindentData = (state, dispatch) => {
     "materialReceipt",
     []
   );
-   setDateInYmdFormat(materialReceipt[0], ["inspectionDate","receiptDate","challanDate", "supplierBillDate" ]);
+  setDateInYmdFormat(materialReceipt[0], ["inspectionDate", "receiptDate", "challanDate", "supplierBillDate"]);
   setAllDatesInYmdFormat(materialReceipt[0], [
-   // { object: "indent.materialIssueDetails[0]", values: ["ManufacturerDate",] },
-    { object: "receiptDetails", values: ["receiptDetailsAddnInfo[0].manufactureDate","receiptDetailsAddnInfo[0].expiryDate"] },
-    
+    // { object: "indent.materialIssueDetails[0]", values: ["ManufacturerDate",] },
+    { object: "receiptDetails", values: ["receiptDetailsAddnInfo[0].manufactureDate", "receiptDetailsAddnInfo[0].expiryDate"] },
+
   ]);
   // setAllYears(materialReceipt[0], [
   //   { object: "education", values: ["yearOfPassing"] },
@@ -207,7 +207,7 @@ export const handleCreateUpdateMaterialReceipt = (state, dispatch) => {
     null
   );
   if (id) {
-    
+
     createUpdateMR(state, dispatch, "UPDATE");
   } else {
     createUpdateMR(state, dispatch, "CREATE");
@@ -219,14 +219,14 @@ export const createUpdateMR = async (state, dispatch, action) => {
     state.screenConfiguration.preparedFinalObject,
     "materialReceipt[0].tenantId"
   );
-  const tenantId =  getTenantId();
+  const tenantId = getTenantId();
   let queryObject = [
     {
       key: "tenantId",
       value: tenantId
     }
   ];
- 
+
   let materialReceipt = get(
     state.screenConfiguration.preparedFinalObject,
     "materialReceipt",
@@ -236,36 +236,36 @@ export const createUpdateMR = async (state, dispatch, action) => {
   // get set date field into epoch
 
   let receiptDate =
-  get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].receiptDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].receiptDate", 0)
   receiptDate = convertDateToEpoch(receiptDate);
-  set(materialReceipt[0],"receiptDate", receiptDate);
+  set(materialReceipt[0], "receiptDate", receiptDate);
   let supplierBillDate =
-  get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].supplierBillDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].supplierBillDate", 0)
   supplierBillDate = convertDateToEpoch(supplierBillDate);
-  set(materialReceipt[0],"supplierBillDate", supplierBillDate);
+  set(materialReceipt[0], "supplierBillDate", supplierBillDate);
   let challanDate =
-  get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].challanDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].challanDate", 0)
   challanDate = convertDateToEpoch(challanDate);
-  set(materialReceipt[0],"challanDate", challanDate);
+  set(materialReceipt[0], "challanDate", challanDate);
   let inspectionDate =
-  get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].inspectionDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].inspectionDate", 0)
   inspectionDate = convertDateToEpoch(inspectionDate);
-  set(materialReceipt[0],"inspectionDate", inspectionDate);
+  set(materialReceipt[0], "inspectionDate", inspectionDate);
   let fileStoreId =
-  get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux[0].documents[0].fileStoreId",0)  
-  set(materialReceipt[0],"fileStoreId", fileStoreId);
+    get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux[0].documents[0].fileStoreId", 0)
+  set(materialReceipt[0], "fileStoreId", fileStoreId);
 
   let receiptDetails_ = returnEmptyArrayIfNull(
     get(materialReceipt[0], "receiptDetails", [])
   );
   for (let index = 0; index < receiptDetails_.length; index++) {
-    const element = receiptDetails_[index];   
-       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].lotNo`, element.lotNo);
-       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].serialNo`, element.serialNo);
-       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].batchNo`, element.batchNo);
-       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].manufactureDate`, convertDateToEpoch(element.manufactureDate));
-       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].expiryDate`, convertDateToEpoch(element.expiryDate));
-       
+    const element = receiptDetails_[index];
+    set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].lotNo`, element.lotNo);
+    set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].serialNo`, element.serialNo);
+    set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].batchNo`, element.batchNo);
+    set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].manufactureDate`, convertDateToEpoch(element.manufactureDate));
+    set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].expiryDate`, convertDateToEpoch(element.expiryDate));
+
   }
 
   // set date to epoch in  price list material name
@@ -294,7 +294,7 @@ export const createUpdateMR = async (state, dispatch, action) => {
     );
   }
 
-  
+
 
   //set defailt value
   let id = get(
@@ -302,31 +302,37 @@ export const createUpdateMR = async (state, dispatch, action) => {
     "materialReceipt[0].id",
     null
   );
-  if(id === null)
-  {
+  if (id === null) {
     // set(materialReceipt[0],"indentNumber", "");
     // set(materialReceipt[0],"indentType", "Indent");
     // set(materialReceipt[0],"materialHandOverTo", "Test");
     // set(materialReceipt[0],"designation", "");
   }
- 
-  
+
+
 
 
 
   if (action === "CREATE") {
     try {
+      let wfobject = getWFPayload(state, dispatch)
+      alert(JSON.stringify(wfobject))
+
       console.log(queryObject)
+
       console.log("queryObject")
       let response = await creatreceiptnotes(
-        queryObject,        
+        queryObject,
         materialReceipt,
-        dispatch
+        dispatch,
+        wfobject
       );
-      if(response){
+      if (response) {
         let mrnNumber = response.MaterialReceipt[0].mrnNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPT&mode=create&code=${mrnNumber}`));
-       }
+        //        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPT&mode=create&code=${mrnNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-material-receipt-note?applicationNumber=${mrnNumber}&tenantId=${response.MaterialReceipt[0].tenantId}`));
+
+      }
     } catch (error) {
       furnishindentData(state, dispatch);
     }
@@ -337,10 +343,10 @@ export const createUpdateMR = async (state, dispatch, action) => {
         materialReceipt,
         dispatch
       );
-      if(response){
+      if (response) {
         let mrnNumber = response.MaterialReceipt[0].mrnNumber
         dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPT&mode=update&code=${mrnNumber}`));
-       }
+      }
     } catch (error) {
       furnishindentData(state, dispatch);
     }
@@ -355,8 +361,12 @@ export const getMaterialIndentData = async (
   tenantId
 ) => {
   let queryObject = [
+    // {
+    //   key: "ids",
+    //   value: id
+    // },
     {
-      key: "ids",
+      key: "mrnNumber",
       value: id
     },
     {
@@ -365,32 +375,32 @@ export const getMaterialIndentData = async (
     }
   ];
 
- let response = await getreceiptnotesSearchResults(queryObject, dispatch);
-// let response = samplematerialsSearch();
-response = response.MaterialReceipt.filter(x=>x.id===id)
-  
+  let response = await getreceiptnotesSearchResults(queryObject, dispatch);
+  // let response = samplematerialsSearch();
+  //  response = response.MaterialReceipt.filter(x => x.id === id)
+  response = response.MaterialReceipt.filter(x => x.mrnNumber === id)
 
-  if(response && response[0])
-  {
+
+  if (response && response[0]) {
 
     set(response[0], `challanDate`, epochToYmdDate(response[0].challanDate));
     set(response[0], `receiptDate`, epochToYmdDate(response[0].receiptDate));
     set(response[0], `supplierBillDate`, epochToYmdDate(response[0].supplierBillDate));
     set(response[0], `inspectionDate`, epochToYmdDate(response[0].inspectionDate));
-  for (let index = 0; index < response[0].receiptDetails.length; index++) {
-    const element = response[0].receiptDetails[index];
-    let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code)    
-       
-       set(response[0], `receiptDetails[${index}].uom.name`, Uomname);
-       set(response[0], `receiptDetails[${index}].lotNo`, element.receiptDetailsAddnInfo[0].lotNo);
-       set(response[0], `receiptDetails[${index}].serialNo`, element.receiptDetailsAddnInfo[0].serialNo);
-       set(response[0], `receiptDetails[${index}].batchNo`, element.receiptDetailsAddnInfo[0].batchNo);
-       set(response[0], `receiptDetails[${index}].manufactureDate`, epochToYmdDate(element.receiptDetailsAddnInfo[0].manufactureDate));
-       set(response[0], `receiptDetails[${index}].expiryDate`, epochToYmdDate(element.receiptDetailsAddnInfo[0].expiryDate));
-       
+    for (let index = 0; index < response[0].receiptDetails.length; index++) {
+      const element = response[0].receiptDetails[index];
+      let Uomname = GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.common-masters.UOM", element.uom.code)
+
+      set(response[0], `receiptDetails[${index}].uom.name`, Uomname);
+      set(response[0], `receiptDetails[${index}].lotNo`, element.receiptDetailsAddnInfo[0].lotNo);
+      set(response[0], `receiptDetails[${index}].serialNo`, element.receiptDetailsAddnInfo[0].serialNo);
+      set(response[0], `receiptDetails[${index}].batchNo`, element.receiptDetailsAddnInfo[0].batchNo);
+      set(response[0], `receiptDetails[${index}].manufactureDate`, epochToYmdDate(element.receiptDetailsAddnInfo[0].manufactureDate));
+      set(response[0], `receiptDetails[${index}].expiryDate`, epochToYmdDate(element.receiptDetailsAddnInfo[0].expiryDate));
+
+    }
   }
-}
-getFileUrl(dispatch,tenantId,response[0].fileStoreId);
-dispatch(prepareFinalObject("materialReceipt", response));
- // furnishindentData(state, dispatch);
+  getFileUrl(dispatch, tenantId, response[0].fileStoreId);
+  dispatch(prepareFinalObject("materialReceipt", response));
+  // furnishindentData(state, dispatch);
 };

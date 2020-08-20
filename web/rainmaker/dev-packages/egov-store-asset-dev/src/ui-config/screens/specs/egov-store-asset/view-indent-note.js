@@ -13,14 +13,14 @@ import { httpRequest } from "../../../../ui-utils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import{WorkFllowStatus} from '../../../../ui-utils/sampleResponses'
+import { WorkFllowStatus } from '../../../../ui-utils/sampleResponses'
 import { getstoreTenantId } from "../../../../ui-utils/storecommonsapi";
 let IsEdit = false;
 let Status = getQueryArg(window.location.href, "Status");
 let ConfigStatus = WorkFllowStatus().WorkFllowStatus;
-ConfigStatus = ConfigStatus.filter(x=>x.code === Status)
-if(ConfigStatus.length >0)
-IsEdit = true;
+ConfigStatus = ConfigStatus.filter(x => x.code === Status)
+if (ConfigStatus.length > 0)
+  IsEdit = true;
 
 export const header = getCommonContainer({
   header: getCommonHeader({
@@ -31,7 +31,9 @@ export const header = getCommonContainer({
 
 const createMatrialIndentNoteHandle = async (state, dispatch) => {
   const IndentId = getQueryArg(window.location.href, "IndentId");
-  let issueNumber = getQueryArg(window.location.href, "issueNumber");
+  //let issueNumber = getQueryArg(window.location.href, "issueNumber");
+  let issueNumber = getQueryArg(window.location.href, "applicationNumber");
+
   dispatch(setRoute(`/egov-store-asset/createMaterialIndentNote?issueNumber=${issueNumber}&&IndentId=${IndentId}`));
 };
 const creatPOHandle = async (state, dispatch) => {
@@ -41,8 +43,8 @@ const creatPOHandle = async (state, dispatch) => {
     []
   );
   let indentNumber = indents[0].indent.indentNumber;
-  if(indentNumber)
-  dispatch(setRoute(`/egov-store-asset/create-purchase-order?indentNumber=${indentNumber}`));
+  if (indentNumber)
+    dispatch(setRoute(`/egov-store-asset/create-purchase-order?indentNumber=${indentNumber}`));
 };
 const masterView = IndentNoteReviewDetails(false);
 const getMdmsData = async (action, state, dispatch, tenantId) => {
@@ -55,8 +57,8 @@ const getMdmsData = async (action, state, dispatch, tenantId) => {
           moduleName: "store-asset",
           masterDetails: [
             { name: "Material" }, //filter: "[?(@.active == true)]" },           
-            { name: "IndentPurpose"},// filter: "[?(@.active == true)]" },
-            
+            { name: "IndentPurpose" },// filter: "[?(@.active == true)]" },
+
           ],
         },
         {
@@ -75,10 +77,10 @@ const getMdmsData = async (action, state, dispatch, tenantId) => {
               name: "UOM",
               filter: "[?(@.active == true)]"
             },
-            
+
           ]
         },
-        
+
       ]
     }
   };
@@ -100,12 +102,13 @@ const screenConfig = {
   uiFramework: "material-ui",
   name: "view-indent-note",
   beforeInitScreen: (action, state, dispatch) => {
-    let issueNumber = getQueryArg(window.location.href, "issueNumber");
+    //    let issueNumber = getQueryArg(window.location.href, "issueNumber");
+    let issueNumber = getQueryArg(window.location.href, "applicationNumber");
     let tenantId = getQueryArg(window.location.href, "tenantId");
     getMdmsData(action, state, dispatch, tenantId);
     getMaterialIndentData(state, dispatch, issueNumber, tenantId);
-   // showHideAdhocPopup(state, dispatch);
-   
+    // showHideAdhocPopup(state, dispatch);
+
     IsEdit = false;
     return action;
   },
@@ -125,10 +128,10 @@ const screenConfig = {
               gridDefination: {
                 xs: 12,
                 sm: 4,
-                md:3,
-                lg:3,
+                md: 3,
+                lg: 3,
                 // align: "right",
-              },  
+              },
               ...header
             },
             newApplicationButton: {
@@ -173,14 +176,14 @@ const screenConfig = {
               },
             },
             newPOButton: {
-              componentPath: "Button",  
+              componentPath: "Button",
               gridDefination: {
                 xs: 12,
                 sm: 4,
-                md:3,
-                lg:3,
+                md: 3,
+                lg: 3,
                 // align: "right",
-              },            
+              },
               visible: true,// enableButton,
               props: {
                 variant: "contained",
@@ -217,12 +220,24 @@ const screenConfig = {
             },
           }
         },
+        taskStatus: {
+          uiFramework: "custom-containers-local",
+          componentPath: "WorkFlowContainer",
+          moduleName: "egov-store-asset",
+          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          props: {
+            moduleName: "StoreManagement",
+            dataPath: "materialIssues",
+            updateUrl: "/store-asset-services/materialissues/_updateStatus"
+
+          }
+        },
         masterView,
-        footer: IsEdit? masterViewFooter():{},
+        //        footer: IsEdit ? masterViewFooter() : {},
       }
     },
-   
-    
+
+
   }
 };
 

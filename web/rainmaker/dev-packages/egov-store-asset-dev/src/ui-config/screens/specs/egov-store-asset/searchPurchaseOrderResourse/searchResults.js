@@ -2,7 +2,7 @@ import {
   getLocaleLabels,
   getTransformedLocalStorgaeLabels,
 } from "egov-ui-framework/ui-utils/commons";
-import { getTenantId } from "egov-ui-kit/utils/localStorageUtils"; 
+import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 export const getTextToLocalMapping = (label) => {
   const localisationLabels = getTransformedLocalStorgaeLabels();
   switch (label) {
@@ -24,13 +24,13 @@ export const getTextToLocalMapping = (label) => {
         "STORE_DETAILS_STORE_NAME",
         localisationLabels
       );
-      case "PO Rate Type":
-        return getLocaleLabels(
-          "PO Rate Type",
-          "STORE_PURCHASE_ORDER_RATETYPE",
-          localisationLabels
-        );
-        case "Supplier":
+    case "PO Rate Type":
+      return getLocaleLabels(
+        "PO Rate Type",
+        "STORE_PURCHASE_ORDER_RATETYPE",
+        localisationLabels
+      );
+    case "Supplier":
       return getLocaleLabels(
         "Supplier",
         "STORE_SUPPLIER_MASTER_SUPPLIER_NAME",
@@ -73,7 +73,8 @@ export const searchResults = {
 };
 
 const onRowClick = (rowData) => {
-  window.location.href = `view-purchase-order?tenantId=${getTenantId()}&poNumber=${rowData[0]}`;
+  //  window.location.href = `view-purchase-order?tenantId=${getTenantId()}&poNumber=${rowData[0]}`;
+  window.location.href = `view-purchase-order?tenantId=${getTenantId()}&applicationNumber=${rowData[0]}`;
 };
 
 

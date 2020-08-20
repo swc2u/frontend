@@ -14,13 +14,13 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getstoreTenantId } from "../../../../ui-utils/storecommonsapi";
-import{WorkFllowStatus} from '../../../../ui-utils/sampleResponses'
+import { WorkFllowStatus } from '../../../../ui-utils/sampleResponses'
 let IsEdit = false;
 let Status = getQueryArg(window.location.href, "Status");
 let ConfigStatus = WorkFllowStatus().WorkFllowStatus;
-ConfigStatus = ConfigStatus.filter(x=>x.code === Status)
-if(ConfigStatus.length >0)
-IsEdit = true;
+ConfigStatus = ConfigStatus.filter(x => x.code === Status)
+if (ConfigStatus.length > 0)
+  IsEdit = true;
 export const header = getCommonContainer({
   header: getCommonHeader({
     labelName: `View Material  Receipt Note`,
@@ -30,7 +30,14 @@ export const header = getCommonContainer({
 
 const createMatrialIndentNoteHandle = async (state, dispatch) => {
 
-  let id = getQueryArg(window.location.href, "id");
+  //  let id = getQueryArg(window.location.href, "id");
+  let materialReceipt = get(
+    state.screenConfiguration.preparedFinalObject,
+    `materialReceipt`,
+    []
+  );
+  let id = materialReceipt[0].mrnNumber;
+
   dispatch(setRoute(`/egov-store-asset/createMaterialReceiptNote?id=${id}`));
 };
 const creatPOHandle = async (state, dispatch) => {
@@ -62,7 +69,7 @@ const getMdmsData = async (action, state, dispatch, tenantId) => {
           moduleName: "common-masters",
           masterDetails: [
             { name: "UOM", filter: "[?(@.active == true)]" },
-           
+
           ]
         }
       ]
@@ -86,10 +93,13 @@ const screenConfig = {
   uiFramework: "material-ui",
   name: "view-material-receipt-note",
   beforeInitScreen: (action, state, dispatch) => {
-    let id = getQueryArg(window.location.href, "id");
+    //    let id = getQueryArg(window.location.href, "id");
+
+    let id = getQueryArg(window.location.href, "applicationNumber");
     let tenantId = getQueryArg(window.location.href, "tenantId");
-   
-   // showHideAdhocPopup(state, dispatch);
+
+
+    // showHideAdhocPopup(state, dispatch);
     getMdmsData(action, state, dispatch, tenantId);
     getMaterialIndentData(state, dispatch, id, tenantId);
     return action;
@@ -154,16 +164,27 @@ const screenConfig = {
                 callBack: createMatrialIndentNoteHandle,
               },
             },
-            
+
+          }
+        },
+        taskStatus: {
+          uiFramework: "custom-containers-local",
+          componentPath: "WorkFlowContainer",
+          moduleName: "egov-store-asset",
+          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          props: {
+            moduleName: "StoreManagement",
+            dataPath: "materialReceipt",
+            updateUrl: "/store-asset-services/receiptnotes/_updateStatus"
           }
         },
         masterView,
         //footer: IsEdit? masterViewFooter():{},
-        footer:  masterViewFooter(),
+        //footer: masterViewFooter(),
       }
     },
-   
-    
+
+
   }
 };
 

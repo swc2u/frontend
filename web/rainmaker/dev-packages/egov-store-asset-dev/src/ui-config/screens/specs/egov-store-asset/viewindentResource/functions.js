@@ -10,7 +10,8 @@ import {
   getMaterialIndentSearchResults,
   getPriceListSearchResults,
   GetMdmsNameBycode,
-  updateMaterialIndent
+  updateMaterialIndent,
+  getWFPayload
 } from "../../../../../ui-utils/storecommonsapi";
 import {
   convertDateToEpoch,
@@ -20,10 +21,10 @@ import {
 } from "../../utils";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import {  
+import {
   samplematerialsSearch,
-  
-  } from "../../../../../ui-utils/sampleResponses";
+
+} from "../../../../../ui-utils/sampleResponses";
 // SET ALL SIMPLE DATES IN YMD FORMAT
 const setDateInYmdFormat = (obj, values) => {
   values.forEach(element => {
@@ -154,7 +155,7 @@ export const furnishindentData = (state, dispatch) => {
     "indents",
     []
   );
-   setDateInYmdFormat(indents[0], ["indentDate", "expectedDeliveryDate"]);
+  setDateInYmdFormat(indents[0], ["indentDate", "expectedDeliveryDate"]);
   // setAllDatesInYmdFormat(indents[0], [
   //   { object: "assignments", values: ["fromDate", "toDate"] },
   //   { object: "priceListDetails", values: ["serviceFrom", "serviceTo"] }
@@ -175,7 +176,7 @@ export const handleCreateUpdateIndent = (state, dispatch) => {
     null
   );
   if (id) {
-    
+
     createUpdateIndent(state, dispatch, "UPDATE");
   } else {
     createUpdateIndent(state, dispatch, "CREATE");
@@ -187,14 +188,14 @@ export const createUpdateIndent = async (state, dispatch, action) => {
     state.screenConfiguration.preparedFinalObject,
     "indents[0].tenantId"
   );
-  const tenantId =  getTenantId();
+  const tenantId = getTenantId();
   let queryObject = [
     {
       key: "tenantId",
       value: tenantId
     }
   ];
- 
+
   let indents = get(
     state.screenConfiguration.preparedFinalObject,
     "indents",
@@ -204,14 +205,14 @@ export const createUpdateIndent = async (state, dispatch, action) => {
   // get set date field into epoch
 
   let indentDate =
-  get(state, "screenConfiguration.preparedFinalObject.indents[0].indentDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.indents[0].indentDate", 0)
   indentDate = convertDateToEpoch(indentDate);
-  set(indents[0],"indentDate", indentDate);
+  set(indents[0], "indentDate", indentDate);
 
   let expectedDeliveryDate =
-  get(state, "screenConfiguration.preparedFinalObject.indents[0].expectedDeliveryDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.indents[0].expectedDeliveryDate", 0)
   expectedDeliveryDate = convertDateToEpoch(expectedDeliveryDate);
-  set(indents[0],"expectedDeliveryDate", expectedDeliveryDate);
+  set(indents[0], "expectedDeliveryDate", expectedDeliveryDate);
 
   //set defailt value
   let id = get(
@@ -219,20 +220,18 @@ export const createUpdateIndent = async (state, dispatch, action) => {
     "indents[0].id",
     null
   );
-  if(id === null)
-  {
-    set(indents[0],"indentNumber", "");
-    set(indents[0],"indentType", "Indent");
-    set(indents[0],"materialHandOverTo", "Test");
-    set(indents[0],"designation", "");
+  if (id === null) {
+    set(indents[0], "indentNumber", "");
+    set(indents[0], "indentType", "Indent");
+    set(indents[0], "materialHandOverTo", "Test");
+    set(indents[0], "designation", "");
   }
-  else
-  {
+  else {
     //
     //set mrn_number
     //IND/248430/STORECODE1/2020-21/00001 indentNumber
-    if(Number(id)===3)
-    set(indents[0],"indentNumber", "IND/248430/STORECODE1/2020-21/00001");
+    if (Number(id) === 3)
+      set(indents[0], "indentNumber", "IND/248430/STORECODE1/2020-21/00001");
   }
 
 
@@ -241,27 +240,32 @@ export const createUpdateIndent = async (state, dispatch, action) => {
   let priceListDetails = returnEmptyArrayIfNull(
     get(indents[0], "priceListDetails", [])
   );
- 
-  //handleDeletedCards(indents[0], "storeMapping", "id");
- 
 
-  
+  //handleDeletedCards(indents[0], "storeMapping", "id");
+
+
+
 
 
 
   if (action === "CREATE") {
     try {
+      let wfobject = getWFPayload(state, dispatch)
+      alert(JSON.stringify(wfobject))
+
       console.log(queryObject)
       console.log("queryObject")
       let response = await createMaterialIndent(
-        queryObject,        
+        queryObject,
         indents,
-        dispatch
+        dispatch,
+        wfobject
       );
-      if(response){
+      if (response) {
         let indentNumber = response.indents[0].indentNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALINDENT&mode=create&code=${indentNumber}`));
-       }
+        //        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALINDENT&mode=create&code=${indentNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-indent?applicationNumber=${indentNumber}&tenantId=${response.indents[0].tenantId}`));
+      }
     } catch (error) {
       furnishindentData(state, dispatch);
     }
@@ -272,10 +276,10 @@ export const createUpdateIndent = async (state, dispatch, action) => {
         indents,
         dispatch
       );
-      if(response){
+      if (response) {
         let indentNumber = response.indents[0].indentNumber
         dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALINDENT&mode=update&code=${indentNumber}`));
-       }
+      }
     } catch (error) {
       furnishindentData(state, dispatch);
     }
@@ -287,12 +291,17 @@ export const getMaterialIndentData = async (
   state,
   dispatch,
   id,
-  tenantId
+  tenantId,
+  applicationNumber
 ) => {
   let queryObject = [
+    // {
+    //   key: "ids",
+    //   value: id
+    // },
     {
-      key: "ids",
-      value: id
+      key: "applicationNumber",
+      value: applicationNumber
     },
     {
       key: "tenantId",
@@ -300,20 +309,20 @@ export const getMaterialIndentData = async (
     }
   ];
 
- let response = await getMaterialIndentSearchResults(queryObject, dispatch);
-// let response = samplematerialsSearch();
-response = response.indents.filter(x=>x.id === id)
-//dispatch(prepareFinalObject("priceLists", get(response, "priceLists")));
-if(response && response[0])
-{
-  for (let index = 0; index < response[0].indentDetails.length; index++) {
-    const element = response[0].indentDetails[index];
-   let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code)   
-   set(response[0], `indentDetails[${index}].uom.name`, Uomname);
+  let response = await getMaterialIndentSearchResults(queryObject, dispatch);
+  // let response = samplematerialsSearch();
+  //response = response.indents.filter(x => x.id === id)
+  response = response.indents.filter(x => x.indentNumber === applicationNumber)
+  //dispatch(prepareFinalObject("priceLists", get(response, "priceLists")));
+  if (response && response[0]) {
+    for (let index = 0; index < response[0].indentDetails.length; index++) {
+      const element = response[0].indentDetails[index];
+      let Uomname = GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.common-masters.UOM", element.uom.code)
+      set(response[0], `indentDetails[${index}].uom.name`, Uomname);
+    }
   }
-}
-dispatch(prepareFinalObject("indents", response));
+  dispatch(prepareFinalObject("indents", response));
   //dispatch(prepareFinalObject("indents", get(response, "indents")));
- 
+
   furnishindentData(state, dispatch);
 };

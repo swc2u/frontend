@@ -2,7 +2,7 @@ import {
   getLocaleLabels,
   getTransformedLocalStorgaeLabels,
 } from "egov-ui-framework/ui-utils/commons";
-import { getTenantId} from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 export const getTextToLocalMapping = (label) => {
   const localisationLabels = getTransformedLocalStorgaeLabels();
   switch (label) {
@@ -13,31 +13,31 @@ export const getTextToLocalMapping = (label) => {
         localisationLabels
       );
 
-      case "Indent Date":
-        return getLocaleLabels(
-          "Indent Date",
-          "STORE_MATERIAL_INDENT_INDENT_DATE",
-          localisationLabels
-        );
+    case "Indent Date":
+      return getLocaleLabels(
+        "Indent Date",
+        "STORE_MATERIAL_INDENT_INDENT_DATE",
+        localisationLabels
+      );
     case "Indenting Store Name":
       return getLocaleLabels(
         "Indenting Store Name",
         "STORE_MATERIAL_INDENT_STORE_NAME",
         localisationLabels
       );
-      case "Indent Purpose":
-        return getLocaleLabels(
-          "Indent Purpose",
-          "STORE_MATERIAL_INDENT_INDENT_PURPOSE",
-          localisationLabels
-        );
-        case "Indent Status":
-          return getLocaleLabels(
-            "Indent Status",
-            "STORE_MATERIAL_INDENT_INDENT_STATUS",
-            localisationLabels
-          );
-   
+    case "Indent Purpose":
+      return getLocaleLabels(
+        "Indent Purpose",
+        "STORE_MATERIAL_INDENT_INDENT_PURPOSE",
+        localisationLabels
+      );
+    case "Indent Status":
+      return getLocaleLabels(
+        "Indent Status",
+        "STORE_MATERIAL_INDENT_INDENT_STATUS",
+        localisationLabels
+      );
+
     case "Search Results for Material Indent":
       return getLocaleLabels(
         "Search Results for Material Indent",
@@ -55,7 +55,7 @@ export const searchResults = {
     columns: [
       getTextToLocalMapping("Indent No."),
       getTextToLocalMapping("Indent Date"),
-      getTextToLocalMapping("Indenting Store Name"),     
+      getTextToLocalMapping("Indenting Store Name"),
       getTextToLocalMapping("Indent Purpose"),
       getTextToLocalMapping("Indent Status"),
       {
@@ -82,7 +82,9 @@ export const searchResults = {
 
 const onRowClick = (rowData) => {
   let tenantId = getTenantId();
-  window.location.href = `view-indent?id=${rowData[5]}&tenantId=${tenantId}`;
+  //window.location.href = `view-indent?id=${rowData[5]}&tenantId=${tenantId}`;
+  window.location.href = `view-indent?tenantId=${tenantId}&applicationNumber=${rowData[0]}`;
+
 };
 
 
