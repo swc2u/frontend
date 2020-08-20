@@ -25,6 +25,31 @@ export const getWFConfig = (module,businessService) => {
       };
     }
 
+  }else if (businessService == "Engineering" || businessService == "IT" || businessService == "Caretaker" || businessService == "MOH") {
+    if (taskId.includes('MRIN')) {
+      return {
+        INITIATED: "/egov-store-asset/view-indent-note",
+        DEFAULT: "/egov-store-asset/view-indent-note",
+      };
+    } else if (taskId.includes('IND')) {
+      return {
+        INITIATED: "/egov-store-asset/view-indent",
+        DEFAULT: "/egov-store-asset/view-indent",
+      };
+
+    } else if (taskId.includes('PO')) {
+      return {
+        INITIATED: "/egov-store-asset/view-purchase-order",
+        DEFAULT: "/egov-store-asset/view-purchase-order",
+      };
+
+    } else if (taskId.includes('MRN')) {
+      return {
+        INITIATED: "/egov-store-asset/view-material-receipt-note",
+        DEFAULT: "/egov-store-asset/view-material-receipt-note",
+      };
+
+    }
   } else {
     switch (module.toUpperCase()) {
       case "TL-SERVICES":
