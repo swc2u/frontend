@@ -3,6 +3,7 @@ import {
   prepareFinalObject,
   toggleSnackbar
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import{GetMdmsNameBycode} from '../../../../../ui-utils/storecommonsapi'
 import get from "lodash/get";
 import set from "lodash/set";
 import {
@@ -190,8 +191,23 @@ export const getmiscellaneousreceiptnotes = async (
 
  let response = await getmiscellaneousreceiptnotesSearchResults(queryObject, dispatch);
 // let response = samplematerialsSearch();
-let MaterialReceipt = response.MaterialReceipt.filter(x=>x.id === id)
-  dispatch(prepareFinalObject("materialReceipt", MaterialReceipt));
+ response = response.MaterialReceipt.filter(x=>x.id === id)
+if(response && response[0])
+{
+  for (let index = 0; index < response[0].receiptDetails.length; index++) {
+    const element = response[0].receiptDetails[index];
+   let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code)   
+   set(response[0], `receiptDetails[${index}].uom.name`, Uomname);
+  }
+}
+// for (let index = 0; index < MaterialReceipt[0].receiptDetails.length; index++) {
+//   const element = MaterialReceipt[0].receiptDetails[index];
+//  let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code) 
+ 
+//     set(MaterialReceipt[0], `materialReceipt[${index}].uom.name`, Uomname);
+     
+// }
+  dispatch(prepareFinalObject("materialReceipt", response));
   //dispatch(prepareFinalObject("materialReceipt", get(response, "MaterialReceipt")));
  
   furnishindentData(state, dispatch);

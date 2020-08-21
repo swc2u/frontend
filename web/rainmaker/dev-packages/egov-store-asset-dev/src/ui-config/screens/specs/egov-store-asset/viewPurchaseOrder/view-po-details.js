@@ -7,6 +7,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import {  checkValueForNA } from "../../utils";
 const indentNumber = getQueryArg(window.location.href, "indentNumber");
 const gotoCreatePage = (state, dispatch) => {
   let createUrl="";
@@ -36,7 +37,10 @@ const assignmentCard = {
             labelName: "Indent No.",
             labelKey: "STORE_PURCHASE_ORDER_INDENT_NO"
           },
-          { jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].indentNumber" }
+          { 
+          jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].indentNumber",
+          callBack: checkValueForNA
+        }
         ),
         materialDscptn: getLabelWithValue(
           {
@@ -49,6 +53,7 @@ const assignmentCard = {
           { labelName: "Total Indent Quantity", labelKey: "STORE_PURCHASE_ORDER_INDENT_QUNTITY" },
           {
             jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].indentQuantity",
+            callBack: checkValueForNA
           }
         ),
         // userQuantity: getLabelWithValue(

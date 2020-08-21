@@ -13,19 +13,59 @@ import { httpRequest } from "../../../../ui-utils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import{WorkFllowStatus} from '../../../../ui-utils/sampleResponses'
+
 import { getstoreTenantId } from "../../../../ui-utils/storecommonsapi";
-let IsEdit = false;
-let Status = getQueryArg(window.location.href, "Status");
+import{WorkFllowStatus} from '../../../../ui-utils/sampleResponses'
+//print function UI start SE0001
+import { downloadAcknowledgementForm} from '../utils'
+//print function UI end SE0001
+let applicationNumber = getQueryArg(window.location.href, "issueNoteNumber");
+let status = getQueryArg(window.location.href, "Status");
+let IsEdit = true;
 let ConfigStatus = WorkFllowStatus().WorkFllowStatus;
-ConfigStatus = ConfigStatus.filter(x=>x.code === Status)
+console.log(ConfigStatus);
+ConfigStatus = ConfigStatus.filter(x=>x.code === status)
 if(ConfigStatus.length >0)
-IsEdit = true;
+IsEdit = false;
+const applicationNumberContainer = () => {
+
+  if (applicationNumber)
+    return {
+      uiFramework: "custom-atoms-local",
+      moduleName: "egov-store-asset",
+      componentPath: "ApplicationNoContainer",
+      props: {
+        number: `${applicationNumber}`,
+        visibility: "hidden",
+        pagename:"Non Indent"
+      },
+      visible: true
+    };
+  else return {};
+};
+
+const statusContainer = () => {
+
+if(status)
+    return {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-store-asset",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+     status: `${status}`,
+      visibility: "hidden",      
+    },
+    visible: true
+  };
+ else return {};
+};
 export const header = getCommonContainer({
   header: getCommonHeader({
     labelName: `Non-Indent Material Issue Note`,
     labelKey: "STORE_MATERIAL_INDENT_NOTE_NON_INDENT_MATERIAL_ISSUE_NOTE_HEADER"
-  })
+  }),
+  applicationNumber: applicationNumberContainer(),
+  status: statusContainer()
 });
 
 const createMatrialIndentNoteHandle = async (state, dispatch) => {
@@ -37,6 +77,26 @@ const creatScrapHandle = async (state, dispatch) => {
   let issueNoteNumber = getQueryArg(window.location.href, "issueNoteNumber");
   dispatch(setRoute(`/egov-store-asset/create-scrap-material?issueNoteNumber=${issueNoteNumber}`));
 };
+//print function UI start SE0001
+/** MenuButton data based on status */
+let printMenu = [];
+let receiptPrintObject = {
+  label: { labelName: "Receipt", labelKey: "STORE_PRINT_INDENT_NOTE" },
+  link: () => {
+    downloadAcknowledgementForm("Non Indent");
+  },
+  leftIcon: "receipt"
+};
+switch (status) {
+  case "APPROVED":
+   
+    printMenu = [receiptPrintObject];
+    break;
+  
+  default:
+    break;
+}
+//pint function UI End SE0001
 const masterView = IndentNoteReviewDetails(false);
 const getMdmsData = async (action, state, dispatch, tenantId) => {
   const tenant = getstoreTenantId();
@@ -109,10 +169,10 @@ const screenConfig = {
           componentPath: "Container",
           children: {
             header: {
-              gridDefination: {
-                xs: 12,
-                sm: 12,
-              },
+              // gridDefination: {
+              //   xs: 12,
+              //   sm: 12,
+              // },
               ...header
             },
            
@@ -125,7 +185,7 @@ const screenConfig = {
                 lg:3,
                 // align: "right",
               },
-              visible: true,// enableButton,
+              visible: false,// enableButton,
               props: {
                 variant: "contained",
                 color: "primary",
@@ -168,7 +228,7 @@ const screenConfig = {
                 lg:3,
                 // align: "right",
               },   
-              visible: true,// enableButton,
+              visible: false,// enableButton,
               props: {
                 variant: "contained",
                 color: "primary",
@@ -202,6 +262,33 @@ const screenConfig = {
                 callBack: creatScrapHandle,
               },
             },
+             //print function UI start SE0001
+             printMenu: {
+              uiFramework: "custom-atoms-local",
+              moduleName: "egov-tradelicence",
+              componentPath: "MenuButton",
+              gridDefination: {
+                xs: 12,
+                sm: 4,
+                md:3,
+                lg:3,
+                align: "right",
+              },  
+              visible: true,// enableButton,
+              props: {
+                data: {
+                  label: {
+                    labelName:"PRINT",
+                    labelKey:"STORE_PRINT"
+                  },
+                  leftIcon: "print",
+                  rightIcon: "arrow_drop_down",
+                  props: { variant: "outlined", style: { marginLeft: 10 } },
+                  menu: printMenu
+                }
+              }
+            }
+            //print function UI End SE0001
           }
         },
         masterView,

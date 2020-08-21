@@ -33,7 +33,7 @@ import {
           //     visible:false
           //   },
           // },
-            { jsonPath: "materialReceipt[0].receiptDetails[0].purchaseOrderDetail.name",          
+            { jsonPath: "materialReceipt[0].receiptDetails[0].purchaseOrderDetail.purchaseOrderNumber",          
           }
           ),
           MaterialName: getLabelWithValue(

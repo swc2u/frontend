@@ -148,12 +148,12 @@ export const getPurchaseOrderHeaderView = (isReview = true) => {
           jsonPath: "purchaseOrders[0].remarks",
         }
       ),
-      createdBy: getLabelWithValue(
-        { labelName: "Created by", labelKey: "STORE_PURCHASE_ORDER_CREATEBY" },
-        {
-          jsonPath: "purchaseOrders[0].createdBy",
-        }
-      ),
+      // createdBy: getLabelWithValue(
+      //   { labelName: "Created by", labelKey: "STORE_PURCHASE_ORDER_CREATEBY" },
+      //   {
+      //     jsonPath: "purchaseOrders[0].createdBy",
+      //   }
+      // ),
       designation: getLabelWithValue(
         { labelName: "Designation", labelKey: "STORE_PURCHASE_ORDER_DSGNTN" },
         {

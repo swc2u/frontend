@@ -32,9 +32,9 @@ export const contractDetails = getCommonCard({
           labelName: "Enter Rate Contract/Tender/Quotation No.",
           labelKey: "STORE_PURCHASE_ORDER_RC_NO_PLACEHOLDER"
         },
-        props: {
-          disabled: true
-        },
+        // props: {
+        //   disabled: true
+        // },
         pattern: getPattern("alpha-numeric"),
         jsonPath: "purchaseOrders[0].priceList[0].rateContractNumber"
       })

@@ -54,7 +54,7 @@ import {
               labelName: "Qty Issued",
                   labelKey: "STORE_MATERIAL_INDENT_NOTE_QTY_ISSUED"
             },
-            { jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.userQuantityIssued"
+            { jsonPath: "materialIssues[0].materialIssueDetails[0].quantityIssued"
             
            }
           ),

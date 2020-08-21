@@ -457,9 +457,7 @@ export const footer = getCommonApplyFooter({
 });
  export const handleSearchMaterial = async(state, dispatch)=>{
 
-  let matcode = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material","MAT02") 
-  //const issueNumber = get(state.preparedFinalObject)
-
+  
   let issueNumber = get(
     state.screenConfiguration.preparedFinalObject,
     `materialReceiptSearch[0].issueNumber`,
@@ -512,6 +510,8 @@ export const footer = getCommonApplyFooter({
             
           )
         }
+        dispatch(prepareFinalObject("materialReceipt[0].receivingStore.code", response.materialIssues[0].toStore.code));
+        dispatch(prepareFinalObject("materialReceipt[0].receivingStore.name", response.materialIssues[0].toStore.name));
         dispatch(prepareFinalObject("MiscMaterilList", material));
 
 

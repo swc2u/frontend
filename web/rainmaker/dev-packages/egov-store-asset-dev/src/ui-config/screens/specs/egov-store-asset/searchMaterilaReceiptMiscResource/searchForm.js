@@ -16,7 +16,7 @@ import {
 import { searchApiCall } from "./functions";
 
 const resetFields = (state, dispatch) => {
-  const textFields = ["mrnNumber","issuePurpose","issueStorefrom",  "receiptDateFrom","receiptDateTo"];
+  const textFields = ["mrnNumber","receivingStore",  "receiptDate",];
   for (let i = 0; i < textFields.length; i++) {
     if (
       `state.screenConfiguration.screenConfig.search-material-receipt-misc.searchForm.children.cardContent.children.searchFormContainer.children.${textFields[i]}.props.value`
@@ -58,34 +58,34 @@ export const searchForm = getCommonCard({
       },
      
     }),
-    issuePurpose: {
-      ...getSelectField({
-        label: { labelName: "Receipt Purpose", labelKey: "STORE_MISC_RECEIPT_PURPOSE" },
-        placeholder: {
-          labelName: "Select Receipt Purpose",
-          labelKey: "STORE_MISC_RECEIPT_PURPOSE_SELECT"
-        },
-        required: false,
-        jsonPath: "searchScreen.issuePurpose",
-        gridDefination: {
-          xs: 12,
-          sm: 4,
-        },
-        //sourceJsonPath: "createScreenMdmsData.store-asset.RateType",
-      props: {
-        data: [
-          {
-            code: "PurchaseReceipt",
-            name: "Purchase Receipt"
-          },
+    // issuePurpose: {
+    //   ...getSelectField({
+    //     label: { labelName: "Receipt Purpose", labelKey: "STORE_MISC_RECEIPT_PURPOSE" },
+    //     placeholder: {
+    //       labelName: "Select Receipt Purpose",
+    //       labelKey: "STORE_MISC_RECEIPT_PURPOSE_SELECT"
+    //     },
+    //     required: false,
+    //     jsonPath: "searchScreen.issuePurpose",
+    //     gridDefination: {
+    //       xs: 12,
+    //       sm: 4,
+    //     },
+    //     //sourceJsonPath: "createScreenMdmsData.store-asset.RateType",
+    //   props: {
+    //     data: [
+    //       {
+    //         code: "PurchaseReceipt",
+    //         name: "Purchase Receipt"
+    //       },
          
-        ],
-        optionValue: "code",
-        optionLabel: "name",
-      },
-      })
-    },
-    issueStorefrom: {
+    //     ],
+    //     optionValue: "code",
+    //     optionLabel: "name",
+    //   },
+    //   })
+    // },
+    receivingStore: {
       ...getSelectField({
         label: {
           labelName: " Store Name",
@@ -96,7 +96,7 @@ export const searchForm = getCommonCard({
           labelKey: "STORE_DETAILS_STORE_NAME_SELECT"
         },
         required: false,
-        jsonPath: "searchScreen.issueStorefrom",
+        jsonPath: "searchScreen.receivingStore",
         gridDefination: {
           xs: 12,
           sm: 4,
@@ -108,15 +108,15 @@ export const searchForm = getCommonCard({
       },
       })
     },
-    receiptDateFrom: {
+    receiptDate: {
       ...getDateField({
-        label: { labelName: "From Receipt Date", labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE_FROM" },
+        label: { labelName: " Receipt Date", labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE " },
         placeholder: {
-          labelName: "From Receipt Date",
-          labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE_FROM"
+          labelName: "Enter Receipt Date",
+          labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE"
         },
         required: false,
-        jsonPath: "searchScreen.receiptDateFrom",
+        jsonPath: "searchScreen.receiptDate",
         pattern: getPattern("Date"),
         gridDefination: {
           xs: 12,
@@ -125,23 +125,23 @@ export const searchForm = getCommonCard({
          
       })
     },  
-    receiptDateTo: {
-      ...getDateField({
-        label: { labelName: "To  Receipt Date", labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE_TO" },
-        placeholder: {
-          labelName: "To  Receipt Date",
-          labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE_TO"
-        },
-        required: false,
-        jsonPath: "searchScreen.receiptDateTo",
-        pattern: getPattern("Date"),
-        gridDefination: {
-          xs: 12,
-          sm: 4,
-        },
+    // receiptDateTo: {
+    //   ...getDateField({
+    //     label: { labelName: "To  Receipt Date", labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE_TO" },
+    //     placeholder: {
+    //       labelName: "To  Receipt Date",
+    //       labelKey: "STORE_MATERIAL_RECEIPT_RECEIPT_DATE_TO"
+    //     },
+    //     required: false,
+    //     jsonPath: "searchScreen.receiptDateTo",
+    //     pattern: getPattern("Date"),
+    //     gridDefination: {
+    //       xs: 12,
+    //       sm: 4,
+    //     },
          
-      })
-    }, 
+    //   })
+    // }, 
   }),
 
   button: getCommonContainer({

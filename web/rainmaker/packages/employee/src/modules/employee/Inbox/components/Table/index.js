@@ -102,6 +102,8 @@ class InboxData extends React.Component {
     const status = row[2].text && row[2].text.props.defaultLabel;
     const taskId = index === 0 && item.text;
     const tenantId = getTenantId();
+	    const wfStatus = row[2].text.props.label.substring(row[2].text.props.label.lastIndexOf('_') + 1);
+
     // const processInstances = await this.getProcessIntanceData(row[0].text);
     // if (processInstances && processInstances.length > 0) {
     //   await addWflowFileUrl(processInstances, prepareFinalObject);
@@ -125,6 +127,10 @@ class InboxData extends React.Component {
     else if (row[0].subtext === "NewSW1") {
       queryParams += '&history=true&service=SEWERAGE';
     }
+	else if (row[0].subtext == "Engineering" || row[0].subtext == "IT" || row[0].subtext == "Caretaker" || row[0].subtext == "MOH") {
+      queryParams += `&Status=${wfStatus}`;
+    }
+
     this.props.setRoute(`${contextPath}?${queryParams}`);
   };
 

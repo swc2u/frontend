@@ -1,4 +1,4 @@
-export const getWFConfig = (module,businessService) => {
+export const getWFConfig = (module,businessService,taskId) => {
   console.log("module", module);
   
    if (businessService == "ADVERTISEMENTNOC" || businessService == "PETNOC" || businessService == "ROADCUTNOC" || businessService == "SELLMEATNOC") {
@@ -25,7 +25,40 @@ export const getWFConfig = (module,businessService) => {
       };
     }
 
-  } else {
+  }
+ else if (businessService == "Engineering" || businessService == "IT" || businessService == "Caretaker" || businessService == "MOH") {
+    if (taskId.includes('MRIN')) {
+      return {
+        INITIATED: "/egov-store-asset/view-indent-note",
+        DEFAULT: "/egov-store-asset/view-indent-note",
+      };
+    } else if (taskId.includes('IND')) {
+      return {
+        INITIATED: "/egov-store-asset/view-indent",
+        DEFAULT: "/egov-store-asset/view-indent",
+      };
+
+    } else if (taskId.includes('PO')) {
+      return {
+        INITIATED: "/egov-store-asset/view-purchase-order",
+        DEFAULT: "/egov-store-asset/view-purchase-order",
+      };
+
+    } else if (taskId.includes('MRN')) {
+      return {
+        INITIATED: "/egov-store-asset/view-material-receipt-note",
+        DEFAULT: "/egov-store-asset/view-material-receipt-note",
+      };
+
+    } else if (taskId.includes('TRIN')) {
+      return {
+        INITIATED: "/egov-store-asset/view-indent-transfer",
+        DEFAULT: "/egov-store-asset/view-indent-transfer",
+      };
+
+    }
+  }
+  else {
     switch (module.toUpperCase()) {
       case "TL-SERVICES":
         return {

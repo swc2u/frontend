@@ -131,26 +131,26 @@ export const getIndentNoteListDetailsView = (isReview = true) => {
           jsonPath: "materialIssues[0].description",
         }
       ),
-      IssueBy: getLabelWithValue(
-        { labelName: "Issue By",
-        labelKey: "STORE_MATERIAL_INDENT_NOTE_ISSUE_BY" },
-        {
-          jsonPath: "materialIssues[0].IssueBy",
-        }
-      ),
-      DesignationIssueBy: getLabelWithValue(
-        { labelName: "Designation", labelKey: "STORE_MATERIAL_INDENT_NOTE_DESIGNATION" },
-        {
-          jsonPath: "materialIssues[0].DesignationIssueBy",
-        }
-      ),
-      Status: getLabelWithValue(
-        { labelName: "Status",
-        labelKey: "STORE_MATERIAL_INDENT_NOTE_STATUS" },
-        {
-          jsonPath: "materialIssues[0].materialIssueStatus",
-        }
-      ),
+      // IssueBy: getLabelWithValue(
+      //   { labelName: "Issue By",
+      //   labelKey: "STORE_MATERIAL_INDENT_NOTE_ISSUE_BY" },
+      //   {
+      //     jsonPath: "materialIssues[0].IssueBy",
+      //   }
+      // ),
+      // DesignationIssueBy: getLabelWithValue(
+      //   { labelName: "Designation", labelKey: "STORE_MATERIAL_INDENT_NOTE_DESIGNATION" },
+      //   {
+      //     jsonPath: "materialIssues[0].DesignationIssueBy",
+      //   }
+      // ),
+      // Status: getLabelWithValue(
+      //   { labelName: "Status",
+      //   labelKey: "STORE_MATERIAL_INDENT_NOTE_STATUS" },
+      //   {
+      //     jsonPath: "materialIssues[0].materialIssueStatus",
+      //   }
+      // ),
       
     }),
 

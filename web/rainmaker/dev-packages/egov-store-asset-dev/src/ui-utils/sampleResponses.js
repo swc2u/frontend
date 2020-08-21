@@ -511,10 +511,10 @@ export const WorkFllowStatus = () => {
       //   code:"REJECTED",
       //   value:"REJECTED",
       // },
-      // {
-      //   code:"APPROVED",
-      //   value:"APPROVED",
-      // }
+      {
+        code:"APPROVED",
+        value:"APPROVED",
+      }
 
     ]
   }

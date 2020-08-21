@@ -150,7 +150,7 @@ import {
                 },
                 required: false,
                 pattern: getPattern("Name") || null,
-                jsonPath: "materialReceipt[0].receiptDetails[0].uom.code"
+                jsonPath: "materialReceipt[0].receiptDetails[0].uom.name"
               })
             },
             qtyIssued: {

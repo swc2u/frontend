@@ -6,7 +6,7 @@ import {
     getLabelWithValue
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-  
+  import {  checkValueForNA } from "../../utils";
   const gotoCreatePage = (state, dispatch) => {
     const createUrl =
     process.env.REACT_APP_SELF_RUNNING === "true"
@@ -52,6 +52,7 @@ import {
             labelKey: "STORE_MATERIAL_INDENT_NOTE_ASSEST_CODE" },
             {
               jsonPath: "indents[0].indentDetails[0].asset.code",
+              callBack: checkValueForNA
              
             }
           ),
@@ -60,6 +61,7 @@ import {
             labelKey: "STORE_MATERIAL_INDENT_NOTE_PROJECT_CODE" },
             {
               jsonPath: "indents[0].indentDetails[0].project.code",
+              callBack: checkValueForNA
              
             }
           ),

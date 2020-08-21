@@ -39,35 +39,35 @@ import {
               labelName: "UOM",
                   labelKey: "STORE_MATERIAL_INDENT_NOTE_UOM_NAME"
             },
-            { jsonPath: "materialReceipt[0].receiptDetails[0].uom.code"
+            { jsonPath: "materialReceipt[0].receiptDetails[0].uom.name"
             
            }
           ),
           QtyIssued: getLabelWithValue(
             { labelName: "Available Qty",
-            labelKey: "STORE_MATERIAL_RECEIPT_AVAILABLE_QTY"},
-            {
-              jsonPath: "materialReceipt[0].receiptDetails[0].qtyIssued"
-             
-            }
-          ),
-          QtyReceiced: getLabelWithValue(
-            { labelName: "Ordered Qty",
-            labelKey: "STORE_MATERIAL_RECEIPT_ORDERED_QTY"},
+            labelKey: "STORE_MATERIAL_RECEIPT_QTY_ISSUED"},
             {
               jsonPath: "materialReceipt[0].receiptDetails[0].receivedQty"
              
             }
           ),
-
-          TotalValue: getLabelWithValue(
-            {    labelName: "Total Price",
-            labelKey: "STORE_MATERIAL_RECEIPT_TOTAL_PRICE" },
-            {
-              jsonPath: "materialReceipt[0].receiptDetails[0].totalValue",
+          // QtyReceiced: getLabelWithValue(
+          //   { labelName: "Ordered Qty",
+          //   labelKey: "STORE_MATERIAL_RECEIPT_ORDERED_QTY"},
+          //   {
+          //     jsonPath: "materialReceipt[0].receiptDetails[0].receivedQty"
              
-            }
-          ),
+          //   }
+          // ),
+
+          // TotalValue: getLabelWithValue(
+          //   {    labelName: "Total Price",
+          //   labelKey: "STORE_MATERIAL_RECEIPT_TOTAL_PRICE" },
+          //   {
+          //     jsonPath: "materialReceipt[0].receiptDetails[0].totalValue",
+             
+          //   }
+          // ),
           
           Remark: getLabelWithValue(
             {   labelName: "Remark",

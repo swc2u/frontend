@@ -97,7 +97,7 @@ export const searchApiCall = async (state, dispatch) => {
         searchScreenObject[key].trim() !== ""
       ) {
 
-        if (key === "receiptDateFrom" || key === "receiptDateTo") {
+        if (key === "receiptDate" ) {
          let  Dateselect = true;
           queryObject.push({
             key: key,

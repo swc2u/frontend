@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { ActionDialog, HCActionDialog } from "../";
+import { ActionDialog, HCActionDialog,StoreAssetActionDialog } from "../";
 import { httpRequest } from "egov-ui-framework/ui-utils/api";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
@@ -124,7 +124,29 @@ class Footer extends React.Component {
         
       }
      
-    } 
+    }
+    if (dataPath === "indents" || dataPath === "materialIssues" || dataPath === "purchaseOrders" || dataPath === "materialReceipt") {
+      var { state } = this.props;
+      const applicationNumberStoreAsset = get(
+        state.screenConfiguration.preparedFinalObject.workflow,
+        `ProcessInstances[0].businessId`);
+
+      // indents[0].workflowDetails.assigneewfupdate
+      if (item.buttonLabel === "SENDTOCREATOR") {
+        let jeuuid = get(
+          state.screenConfiguration.preparedFinalObject.workflow,
+          `ProcessInstances[0].assigner.uuid`);
+
+        handleFieldChange(`${dataPath}[0].workFlowDetails.assignee[0]`, jeuuid);
+      }
+      handleFieldChange(`${dataPath}[0].workFlowDetails.action`, item.buttonLabel);
+      handleFieldChange(`${dataPath}[0].workFlowDetails.businessService`, item.moduleName);
+      handleFieldChange(`${dataPath}[0].workFlowDetails.comments`, "");
+      handleFieldChange(`${dataPath}[0].workFlowDetails.businessId`, applicationNumberStoreAsset);
+      handleFieldChange(`${dataPath}[0].workFlowDetails.wfDocuments`, []);
+
+
+    }
     else {
       handleFieldChange(`${dataPath}[0].comment`, "");
       handleFieldChange(`${dataPath}[0].assignee`, []);
@@ -333,7 +355,34 @@ class Footer extends React.Component {
           
         </div>
       );}
-  
+      else if ((dataPath === "indents" || dataPath === "materialIssues" || dataPath === "purchaseOrders" || dataPath === "materialReceipt") && data.length != 0) {
+      return (
+        <div className="apply-wizard-footer" id="custom-atoms-footer">
+          {!isEmpty(downloadMenu) && (
+            <Container>
+              <Item xs={12} sm={12} className="wf-footer-container">
+                <MenuButton data={buttonItems} />
+              </Item>
+            </Container>
+          )}
+
+          <StoreAssetActionDialog
+            open={open}
+            onClose={this.onClose}
+            dialogData={data}
+            dropDownData={employeeList}
+            handleFieldChange={handleFieldChange}
+            onButtonClick={onDialogButtonClick}
+            dataPath={dataPath}
+            state={state}
+          />
+
+
+
+        </div>
+      );
+    }
+
     else {return (
       <div className="apply-wizard-footer" id="custom-atoms-footer">
         {!isEmpty(downloadMenu) && (

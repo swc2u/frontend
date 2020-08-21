@@ -121,6 +121,7 @@ const getmrnNumber = async (  action, state,dispatch,storecode)=>{
           jsonPath: "materialReceipt[0].receivingStore.code",
           sourceJsonPath: "store.stores",
             props: {
+              disabled: true, 
               optionValue: "code",
               optionLabel: "name",
             },
@@ -239,7 +240,7 @@ const getmrnNumber = async (  action, state,dispatch,storecode)=>{
             multiline: "multiline",
             rowsMax: 2,
           },
-          required: false,
+          required: true,
           pattern: getPattern("eventDescription") || null,
           jsonPath: "materialReceipt[0].description"
         })

@@ -10,6 +10,7 @@ import {
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { getTodaysDateInYMD } from "../../utils";
   import get from "lodash/get";
+  import{GetMdmsNameBycode} from '../../../../../ui-utils/storecommonsapi'
   import set from "lodash/set";
   import { handleScreenConfigurationFieldChange as handleField , prepareFinalObject} from "egov-ui-framework/ui-redux/screen-configuration/actions";
   
@@ -57,7 +58,8 @@ import {
                 {
                   dispatch(prepareFinalObject(`indents[0].indentDetails[${cardIndex}].material.name`,MaterialType[0].name));
                 dispatch(prepareFinalObject(`indents[0].indentDetails[${cardIndex}].uom.code`,MaterialType[0].baseUom.code));
-                dispatch(prepareFinalObject(`ndents[0].indentDetails[${cardIndex}].uom.name`,MaterialType[0].baseUom.name));
+                let uomname = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.common-masters.UOM",MaterialType[0].baseUom.code) 
+                dispatch(prepareFinalObject(`indents[0].indentDetails[${cardIndex}].uom.name`,uomname));
               }
               }
             },
@@ -256,11 +258,13 @@ import {
               if ( key === "AssestCode") {
                 //set(muliItemContent[key], "props.visible", true);
                 muliItemContent[key].props.style = {display:"inline-block"};
+                muliItemContent["AssestCode"].props.disabled = false;
                 //set(muliItemContent[key], "props.value", indentNumber);
               }
               if ( key === "ProjectCode") {
                 //set(muliItemContent[key], "props.visible", false);
-                muliItemContent[key].props.style = {display:"none"};
+                muliItemContent[key].props.style = {display:"inline-block"};
+                muliItemContent["ProjectCode"].props.disabled = true;
                 
               }
             }
@@ -269,12 +273,14 @@ import {
             {
               if ( key === "AssestCode") {
                 //set(muliItemContent[key], "props.visible", false);
-                muliItemContent[key].props.style = {display:"none"};
+                muliItemContent[key].props.style = {display:"inline-block"};
+                muliItemContent["AssestCode"].props.disabled = true;
                 //set(muliItemContent[key], "props.value", indentNumber);
               }
               if ( key === "ProjectCode") {
                 //set(muliItemContent[key], "props.visible", true);
                 muliItemContent[key].props.style = {display:"inline-block"};
+                muliItemContent["ProjectCode"].props.disabled = false;
                 
               }
 

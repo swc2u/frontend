@@ -1,7 +1,7 @@
 
-import { handleScreenConfigurationFieldChange as handleField, prepareFinalObject, toggleSnackbar,toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getFileUrlFromAPI, getMultiUnits, getQueryArg,   } from "egov-ui-framework/ui-utils/commons";
-import {  getTenantId, getUserInfo,  } from "egov-ui-kit/utils/localStorageUtils";
+import { handleScreenConfigurationFieldChange as handleField, prepareFinalObject, toggleSnackbar, toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { getFileUrlFromAPI, getMultiUnits, getQueryArg, } from "egov-ui-framework/ui-utils/commons";
+import { getTenantId, getUserInfo, } from "egov-ui-kit/utils/localStorageUtils";
 import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
@@ -15,7 +15,7 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 const role_name = JSON.parse(getUserInfo()).roles[0].code
 export const getstoreTenantId = () => {
   let gettenantId = getTenantId()
-  gettenantId = gettenantId.split('.')  
+  gettenantId = gettenantId.split('.')
   return gettenantId[0];
 };
 export const getMaterialMasterSearchResults = async queryObject => {
@@ -24,7 +24,7 @@ export const getMaterialMasterSearchResults = async queryObject => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "/store-asset-services/materials/_search",     
+      "/store-asset-services/materials/_search",
       "",
       queryObject
     );
@@ -38,7 +38,7 @@ export const getMaterialMasterSearchResults = async queryObject => {
         "error"
       )
     );
-   // throw error;
+    // throw error;
   }
 
 };
@@ -90,7 +90,7 @@ export const getStoresSearchResults = async queryObject => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "store-asset-services/stores/_search",     
+      "store-asset-services/stores/_search",
       "",
       queryObject
     );
@@ -116,7 +116,7 @@ export const getPriceListSearchResults = async queryObject => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "/store-asset-services/pricelists/_search",     
+      "/store-asset-services/pricelists/_search",
       "",
       queryObject
     );
@@ -130,7 +130,7 @@ export const getPriceListSearchResults = async queryObject => {
         "error"
       )
     );
-   // throw error;
+    // throw error;
   }
 
 };
@@ -184,7 +184,7 @@ export const getOpeningBalanceSearchResults = async queryObject => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "/store-asset-services/openingbalance/_search",     
+      "/store-asset-services/openingbalance/_search",
       "",
       queryObject
     );
@@ -198,7 +198,7 @@ export const getOpeningBalanceSearchResults = async queryObject => {
         "error"
       )
     );
-   // throw error;
+    // throw error;
   }
 
 };
@@ -253,7 +253,7 @@ export const prepareDocumentsUploadData = async (state, dispatch, type) => {
       []
     );
   }
-  else  if (type == "materialReceipt") {
+  else if (type == "materialReceipt") {
     documents = get(
       state,
       "screenConfiguration.preparedFinalObject.DocumentType_MaterialReceipt",
@@ -285,26 +285,26 @@ export const prepareDocumentsUploadData = async (state, dispatch, type) => {
 
   documents.forEach(doc => {
     // Handle the case for multiple muildings
- 
-      let card = {};
-      card["name"] = doc.code;
-      card["code"] = doc.code;
-      card["url"] = doc.url;
-      card["required"] = doc.required ? true : false;
-      if (doc.hasDropdown && doc.dropdownData) {
-        let dropdown = {};
-        dropdown.label = "NOC_SELECT_DOC_DD_LABEL";
-        dropdown.required = true;
-        dropdown.menu = doc.dropdownData.filter(item => {
-          return item.active;
-        });
-        dropdown.menu = dropdown.menu.map(item => {
-          return { code: item.code, label: getTransformedLocale(item.code) };
-        });
-        card["dropdown"] = dropdown;
-      }
-      tempDoc[doc.documentType].cards.push(card);
-    
+
+    let card = {};
+    card["name"] = doc.code;
+    card["code"] = doc.code;
+    card["url"] = doc.url;
+    card["required"] = doc.required ? true : false;
+    if (doc.hasDropdown && doc.dropdownData) {
+      let dropdown = {};
+      dropdown.label = "NOC_SELECT_DOC_DD_LABEL";
+      dropdown.required = true;
+      dropdown.menu = doc.dropdownData.filter(item => {
+        return item.active;
+      });
+      dropdown.menu = dropdown.menu.map(item => {
+        return { code: item.code, label: getTransformedLocale(item.code) };
+      });
+      card["dropdown"] = dropdown;
+    }
+    tempDoc[doc.documentType].cards.push(card);
+
   });
 
   Object.keys(tempDoc).forEach(key => {
@@ -321,7 +321,7 @@ export const getMaterialIndentSearchResults = async queryObject => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "/store-asset-services/indents/_search",     
+      "/store-asset-services/indents/_search",
       "",
       queryObject
     );
@@ -335,18 +335,20 @@ export const getMaterialIndentSearchResults = async queryObject => {
         "error"
       )
     );
-   // throw error;
+    // throw error;
   }
 
 };
-export const createMaterialIndent = async (queryObject, payload, dispatch) => {
+export const createMaterialIndent = async (queryObject, payload, dispatch, wfobject) => {
   try {
     const response = await httpRequest(
       "post",
       "/store-asset-services/indents/_create",
       "",
       queryObject,
-      { indents: payload }
+      // { indents: payload ,work}
+      { indents: payload, workFlowDetails: wfobject }
+
     );
     return response;
   } catch (error) {
@@ -389,7 +391,7 @@ export const getmaterialissuesSearchResults = async queryObject => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "/store-asset-services/materialissues/_search",     
+      "/store-asset-services/materialissues/_search",
       "",
       queryObject
     );
@@ -403,7 +405,32 @@ export const getmaterialissuesSearchResults = async queryObject => {
         "error"
       )
     );
-   // throw error;
+    // throw error;
+  }
+
+};
+
+export const getprintpdf = async (queryObject, api) => {
+
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      api,
+      "",
+      queryObject
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+    // throw error;
   }
 
 };
@@ -413,7 +440,7 @@ export const getMaterialBalanceRateResults = async queryObject => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "/store-asset-services/receiptnotes/_balance",     
+      "/store-asset-services/receiptnotes/_balance",
       "",
       queryObject
     );
@@ -427,18 +454,18 @@ export const getMaterialBalanceRateResults = async queryObject => {
         "error"
       )
     );
-   // throw error;
+    // throw error;
   }
 
 };
-export const creatematerialissues = async (queryObject, payload, dispatch) => {
+export const creatematerialissues = async (queryObject, payload, dispatch, wfobject) => {
   try {
     const response = await httpRequest(
       "post",
       "/store-asset-services/materialissues/_create",
       "",
       queryObject,
-      { materialIssues: payload }
+      { materialIssues: payload, workFlowDetails: wfobject }
     );
     return response;
   } catch (error) {
@@ -479,7 +506,7 @@ export const getreceiptnotesSearchResults = async queryObject => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "/store-asset-services/receiptnotes/_search",     
+      "/store-asset-services/receiptnotes/_search",
       "",
       queryObject
     );
@@ -493,18 +520,18 @@ export const getreceiptnotesSearchResults = async queryObject => {
         "error"
       )
     );
-   // throw error;
+    // throw error;
   }
 
 };
-export const creatreceiptnotes = async (queryObject, payload, dispatch) => {
+export const creatreceiptnotes = async (queryObject, payload, dispatch, wfobject) => {
   try {
     const response = await httpRequest(
       "post",
       "/store-asset-services/receiptnotes/_create",
       "",
       queryObject,
-      { materialReceipt: payload }
+      { materialReceipt: payload, workFlowDetails: wfobject }
     );
     return response;
   } catch (error) {
@@ -545,7 +572,7 @@ export const getmiscellaneousreceiptnotesSearchResults = async queryObject => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "/store-asset-services/miscellaneousreceiptnotes/_search",     
+      "/store-asset-services/miscellaneousreceiptnotes/_search",
       "",
       queryObject
     );
@@ -559,7 +586,7 @@ export const getmiscellaneousreceiptnotesSearchResults = async queryObject => {
         "error"
       )
     );
-   // throw error;
+    // throw error;
   }
 
 };
@@ -613,7 +640,7 @@ export const getNonIndentMaterialIssueSearchResults = async queryObject => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "/store-asset-services/materialissues-ni/_search",     
+      "/store-asset-services/materialissues-ni/_search",
       "",
       queryObject
     );
@@ -627,7 +654,7 @@ export const getNonIndentMaterialIssueSearchResults = async queryObject => {
         "error"
       )
     );
-   // throw error;
+    // throw error;
   }
 
 };
@@ -675,287 +702,272 @@ export const updateNonIndentMaterialIssue = async (queryObject, payload, dispatc
 };
 
 
-export const GetMdmsNameBycode = (state, dispatch,jsonpath, code) => {
+export const GetMdmsNameBycode = (state, dispatch, jsonpath, code) => {
   //Material
-  let Obj  = get(state, `screenConfiguration.preparedFinalObject.${jsonpath}`,[]) 
+  let Obj = get(state, `screenConfiguration.preparedFinalObject.${jsonpath}`, [])
   let Name = code
-  Obj = Obj.filter(x=>x.code === code)
-  if(Obj &&Obj[0])
-  Name = Obj[0].name
+  Obj = Obj.filter(x => x.code === code)
+  if (Obj && Obj[0])
+    Name = Obj[0].name
   return Name;
 };
 
-export const ValidateCard = (state,dispatch,cardJsonPath,pagename,jasonpath,value) => {
-  let  DuplicatItem =[];
+export const ValidateCard = (state, dispatch, cardJsonPath, pagename, jasonpath, value) => {
+  let DuplicatItem = [];
   let CardItem = get(
     state.screenConfiguration.screenConfig[`${pagename}`],
     cardJsonPath,
     []
   );
- let matcode =[];
+  let matcode = [];
   for (let index = 0; index < CardItem.length; index++) {
-    if(CardItem[index].isDeleted === undefined ||
-    CardItem[index].isDeleted !== false)
-    {
-    let code = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value}`,'')  
-    code = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",code)       
-    matcode.push(code)
+    if (CardItem[index].isDeleted === undefined ||
+      CardItem[index].isDeleted !== false) {
+      let code = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].${value}`, '')
+      code = GetMdmsNameBycode(state, dispatch, "createScreenMdmsData.store-asset.Material", code)
+      matcode.push(code)
     }
-  } 
+  }
   var uniq = matcode
-  .map((name) => {
-    return {
-      count: 1,
-      name: name
-    }
-  })
-  .reduce((a, b) => {
-    a[b.name] = (a[b.name] || 0) + b.count
-    return a
-  }, {})  
+    .map((name) => {
+      return {
+        count: 1,
+        name: name
+      }
+    })
+    .reduce((a, b) => {
+      a[b.name] = (a[b.name] || 0) + b.count
+      return a
+    }, {})
   var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
-  if(duplicates.length>0)
-  {
-  duplicates= duplicates.map(itm => {
+  if (duplicates.length > 0) {
+    duplicates = duplicates.map(itm => {
       return `${itm}`;
     })
-    .join() || "-"
-   // IsDuplicatItem = true;  
+      .join() || "-"
+    // IsDuplicatItem = true;  
     DuplicatItem.push(
       {
         duplicates: duplicates,
-        IsDuplicatItem:true
-      }      
-    )  
-  } 
-  else{
+        IsDuplicatItem: true
+      }
+    )
+  }
+  else {
     DuplicatItem.push(
       {
         duplicates: duplicates,
-        IsDuplicatItem:false
+        IsDuplicatItem: false
       });
 
   }
 
   return DuplicatItem;
 };
-export const ValidateCardMultiItem = (state,dispatch,cardJsonPath,pagename,jasonpath,value, value1) => {
-  let  DuplicatItem =[];
+export const ValidateCardMultiItem = (state, dispatch, cardJsonPath, pagename, jasonpath, value, value1) => {
+  let DuplicatItem = [];
   let CardItem = get(
     state.screenConfiguration.screenConfig[`${pagename}`],
     cardJsonPath,
     []
   );
- let matcode =[];
+  let matcode = [];
   for (let index = 0; index < CardItem.length; index++) {
-    if(CardItem[index].isDeleted === undefined ||
-    CardItem[index].isDeleted !== false)
-    {
-    let code = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value}`,'')  
-    code = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",code)  
-    let value1_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value1}`,'') 
-    value1_ = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",value1_)      
-    matcode.push(code+'_'+value1_)
+    if (CardItem[index].isDeleted === undefined ||
+      CardItem[index].isDeleted !== false) {
+      let code = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].${value}`, '')
+      code = GetMdmsNameBycode(state, dispatch, "createScreenMdmsData.store-asset.Material", code)
+      let value1_ = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].${value1}`, '')
+      value1_ = GetMdmsNameBycode(state, dispatch, "createScreenMdmsData.store-asset.Material", value1_)
+      matcode.push(code + '_' + value1_)
     }
-  } 
+  }
   var uniq = matcode
-  .map((name) => {
-    return {
-      count: 1,
-      name: name
-    }
-  })
-  .reduce((a, b) => {
-    a[b.name] = (a[b.name] || 0) + b.count
-    return a
-  }, {})  
+    .map((name) => {
+      return {
+        count: 1,
+        name: name
+      }
+    })
+    .reduce((a, b) => {
+      a[b.name] = (a[b.name] || 0) + b.count
+      return a
+    }, {})
   var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
-  if(duplicates.length>0)
-  {
-  duplicates= duplicates.map(itm => {
+  if (duplicates.length > 0) {
+    duplicates = duplicates.map(itm => {
       return `${itm}`;
     })
-    .join() || "-"
-   // IsDuplicatItem = true;  
-   // replace char
-   if(duplicates.indexOf('_') !== -1)
-   duplicates = duplicates.replace("_", ",");
+      .join() || "-"
+    // IsDuplicatItem = true;  
+    // replace char
+    if (duplicates.indexOf('_') !== -1)
+      duplicates = duplicates.replace("_", ",");
     DuplicatItem.push(
       {
         duplicates: duplicates,
-        IsDuplicatItem:true
-      }      
-    )  
-  } 
-  else{
+        IsDuplicatItem: true
+      }
+    )
+  }
+  else {
     DuplicatItem.push(
       {
         duplicates: duplicates,
-        IsDuplicatItem:false
+        IsDuplicatItem: false
       });
 
   }
 
   return DuplicatItem;
 };
-export const ValidateCardUserQty = (state,dispatch,cardJsonPath,pagename,jasonpath,value,InputQtyValue,CompareQtyValue,balanceQuantity,doubleqtyCheck) => {
-  let  DuplicatItem =[];
+export const ValidateCardUserQty = (state, dispatch, cardJsonPath, pagename, jasonpath, value, InputQtyValue, CompareQtyValue, balanceQuantity, doubleqtyCheck) => {
+  let DuplicatItem = [];
   let CardItem = get(
     state.screenConfiguration.screenConfig[`${pagename}`],
     cardJsonPath,
     []
   );
- let matcode =[];
+  let matcode = [];
   for (let index = 0; index < CardItem.length; index++) {
-    if(CardItem[index].isDeleted === undefined ||
-    CardItem[index].isDeleted !== false)
-    {
-    let code = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value}`,'') 
-    code = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",code)  
-    let InputQtyValue_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${InputQtyValue}`,0) 
-    let CompareQtyValue_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${CompareQtyValue}`,0) 
-    let balanceQuantity_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${balanceQuantity}`,0) 
-    if(doubleqtyCheck)
-    {
-     if(balanceQuantity_>CompareQtyValue_)
-     {
-      if(InputQtyValue_>CompareQtyValue_)       
-      matcode.push(code)
-     }
-     else if (balanceQuantity_<=CompareQtyValue_)
-     {
-      if(InputQtyValue_>balanceQuantity_)       
-      matcode.push(code)
-     }
-
-    }
-    else{
-      if(pagename ==='create-purchase-order')
-      {
-        let IssueQty = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].issuedQuantity`,0)
-        CompareQtyValue_ = CompareQtyValue_ - IssueQty;
-        if(InputQtyValue_>CompareQtyValue_)       
-        matcode.push(code)
+    if (CardItem[index].isDeleted === undefined ||
+      CardItem[index].isDeleted !== false) {
+      let code = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].${value}`, '')
+      code = GetMdmsNameBycode(state, dispatch, "createScreenMdmsData.store-asset.Material", code)
+      let InputQtyValue_ = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].${InputQtyValue}`, 0)
+      let CompareQtyValue_ = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].${CompareQtyValue}`, 0)
+      let balanceQuantity_ = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].${balanceQuantity}`, 0)
+      if (doubleqtyCheck) {
+        if (balanceQuantity_ > CompareQtyValue_) {
+          if (InputQtyValue_ > CompareQtyValue_)
+            matcode.push(code)
+        }
+        else if (balanceQuantity_ <= CompareQtyValue_) {
+          if (InputQtyValue_ > balanceQuantity_)
+            matcode.push(code)
+        }
 
       }
-      else{
-        if(InputQtyValue_>CompareQtyValue_)       
-    matcode.push(code)
+      else {
+        if (pagename === 'create-purchase-order') {
+          let IssueQty = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].issuedQuantity`, 0)
+          CompareQtyValue_ = CompareQtyValue_ - IssueQty;
+          if (InputQtyValue_ > CompareQtyValue_)
+            matcode.push(code)
+
+        }
+        else {
+          if (InputQtyValue_ > CompareQtyValue_)
+            matcode.push(code)
+
+        }
 
       }
-      
     }
-    }
-    
-  } 
+
+  }
   var uniq = matcode
-  .map((name) => {
-    return {
-      count: 1,
-      name: name
-    }
-  })
-  .reduce((a, b) => {
-    a[b.name] = (a[b.name] || 0) + b.count
-    return a
-  }, {})  
+    .map((name) => {
+      return {
+        count: 1,
+        name: name
+      }
+    })
+    .reduce((a, b) => {
+      a[b.name] = (a[b.name] || 0) + b.count
+      return a
+    }, {})
   var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 0)
-  if(duplicates.length>0)
-  {
-  duplicates= duplicates.map(itm => {
+  if (duplicates.length > 0) {
+    duplicates = duplicates.map(itm => {
       return `${itm}`;
     })
-    .join() || "-"
-   // IsDuplicatItem = true;  
+      .join() || "-"
+    // IsDuplicatItem = true;  
     DuplicatItem.push(
       {
         duplicates: duplicates,
-        IsInvalidQty:true
-      }      
-    )  
-  } 
-  else{
+        IsInvalidQty: true
+      }
+    )
+  }
+  else {
     DuplicatItem.push(
       {
         duplicates: duplicates,
-        IsInvalidQty:false
+        IsInvalidQty: false
       });
 
   }
 
   return DuplicatItem;
 };
-export const ValidateCardQty = (state,dispatch,cardJsonPath,pagename,jasonpath,value,InputQtyValue,CompareQtyValue,balanceQuantity,doubleqtyCheck,value2,InputQtyValue2) => {
-  let  DuplicatItem =[];
+export const ValidateCardQty = (state, dispatch, cardJsonPath, pagename, jasonpath, value, InputQtyValue, CompareQtyValue, balanceQuantity, doubleqtyCheck, value2, InputQtyValue2) => {
+  let DuplicatItem = [];
   let CardItem = get(
     state.screenConfiguration.screenConfig[`${pagename}`],
     cardJsonPath,
     []
   );
- let matcode =[];
- let PONumber =[];
+  let matcode = [];
+  let PONumber = [];
   for (let index = 0; index < CardItem.length; index++) {
-    if(CardItem[index].isDeleted === undefined ||
-    CardItem[index].isDeleted !== false)
-    {
-    let code = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value}`,'') 
-    code = GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.store-asset.Material",code)  
-    let InputQtyValue_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${InputQtyValue}`,0) 
-    let InputQtyValue2_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${InputQtyValue2}`,0) 
-    let CompareQtyValue_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${CompareQtyValue}`,0) 
-    let balanceQuantity_ = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${balanceQuantity}`,0) 
-    if(doubleqtyCheck)
-    {
-     if(balanceQuantity_>CompareQtyValue_)
-     {
-      if(InputQtyValue_>CompareQtyValue_)       
-      matcode.push(code)
-     }
-     else if (balanceQuantity_<=CompareQtyValue_)
-     {
-      if(InputQtyValue_>balanceQuantity_)       
-      matcode.push(code)
-     }
+    if (CardItem[index].isDeleted === undefined ||
+      CardItem[index].isDeleted !== false) {
+      let code = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].${value}`, '')
+      code = GetMdmsNameBycode(state, dispatch, "createScreenMdmsData.store-asset.Material", code)
+      let InputQtyValue_ = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].${InputQtyValue}`, 0)
+      let InputQtyValue2_ = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].${InputQtyValue2}`, 0)
+      let CompareQtyValue_ = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].${CompareQtyValue}`, 0)
+      let balanceQuantity_ = get(state.screenConfiguration.preparedFinalObject, `${jasonpath}[${index}].${balanceQuantity}`, 0)
+      if (doubleqtyCheck) {
+        if (balanceQuantity_ > CompareQtyValue_) {
+          if (InputQtyValue_ > CompareQtyValue_)
+            matcode.push(code)
+        }
+        else if (balanceQuantity_ <= CompareQtyValue_) {
+          if (InputQtyValue_ > balanceQuantity_)
+            matcode.push(code)
+        }
 
+      }
+      else {
+        if (InputQtyValue_ > CompareQtyValue_ || InputQtyValue2_ > CompareQtyValue_)
+          matcode.push(code)
+      }
     }
-    else{
-      if(InputQtyValue_>CompareQtyValue_ || InputQtyValue2_ > CompareQtyValue_)       
-    matcode.push(code)
-    }
-    }
-    
-  } 
+
+  }
   var uniq = matcode
-  .map((name) => {
-    return {
-      count: 1,
-      name: name
-    }
-  })
-  .reduce((a, b) => {
-    a[b.name] = (a[b.name] || 0) + b.count
-    return a
-  }, {})  
+    .map((name) => {
+      return {
+        count: 1,
+        name: name
+      }
+    })
+    .reduce((a, b) => {
+      a[b.name] = (a[b.name] || 0) + b.count
+      return a
+    }, {})
   var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 0)
-  if(duplicates.length>0)
-  {
-  duplicates= duplicates.map(itm => {
+  if (duplicates.length > 0) {
+    duplicates = duplicates.map(itm => {
       return `${itm}`;
     })
-    .join() || "-"
-   // IsDuplicatItem = true;  
+      .join() || "-"
+    // IsDuplicatItem = true;  
     DuplicatItem.push(
       {
         duplicates: duplicates,
-        IsInvalidQty:true
-      }      
-    )  
-  } 
-  else{
+        IsInvalidQty: true
+      }
+    )
+  }
+  else {
     DuplicatItem.push(
       {
         duplicates: duplicates,
-        IsInvalidQty:false
+        IsInvalidQty: false
       });
 
   }
@@ -964,10 +976,10 @@ export const ValidateCardQty = (state,dispatch,cardJsonPath,pagename,jasonpath,v
 };
 
 
-export const getCommonFileUrl = (linkText="") => {
+export const getCommonFileUrl = (linkText = "") => {
   const linkList = linkText.split(",");
   let fileURL = '';
-  linkList&&linkList.map(link => {
+  linkList && linkList.map(link => {
     if (!link.includes('large') && !link.includes('medium') && !link.includes('small')) {
       fileURL = link;
     }
@@ -983,7 +995,7 @@ export const getmaterialOutwordSearchResults = async queryObject => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "/store-asset-services/materialissues-to/_search",     
+      "/store-asset-services/materialissues-to/_search",
       "",
       queryObject
     );
@@ -997,7 +1009,7 @@ export const getmaterialOutwordSearchResults = async queryObject => {
         "error"
       )
     );
-   // throw error;
+    // throw error;
   }
 
 };
@@ -1010,7 +1022,7 @@ export const getIndentInwordSearchResults = async queryObject => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "/store-asset-services/transferinwards/_search",     
+      "/store-asset-services/transferinwards/_search",
       "",
       queryObject
     );
@@ -1024,7 +1036,7 @@ export const getIndentInwordSearchResults = async queryObject => {
         "error"
       )
     );
-   // throw error;
+    // throw error;
   }
 
 };
@@ -1059,6 +1071,39 @@ export const updateIndentInword = async (queryObject, payload, dispatch) => {
       { transferInwards: payload }
     );
     return response;
+  } catch (error) {
+    dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+    throw error;
+  }
+};
+
+export const getWFPayload = (state, dispatch) => {
+  try {
+    let businessSeviceTypeData =
+      get(state, "screenConfiguration.preparedFinalObject.businessServiceTypeData.store-asset.businessService", [])
+
+    let roles = JSON.parse(getUserInfo()).roles
+    let businessServiceName = "";
+    businessSeviceTypeData.map(item => {
+      roles.some(r => {
+        if (item.role.includes(r.code)) {
+          businessServiceName = item.name
+        }
+      })
+    });
+    alert(businessServiceName)
+    let wfobject = {
+      "businessService": businessServiceName,
+      "action": "CREATED",
+      "comments": ""
+    }
+    return wfobject;
   } catch (error) {
     dispatch(
       toggleSnackbar(

@@ -80,6 +80,7 @@ export const searchApiCall = async (state, dispatch) => {
             [getTextToLocalMapping("Store Name")]: get(item, "store.name", "-") || "-",
             [getTextToLocalMapping("PO Rate Type")]: get(item, "rateType", "-") || "-",
             [getTextToLocalMapping("Supplier")]: get(item, "supplier.name", "-") || "-",
+            [getTextToLocalMapping("Status")]: get(item, "status", "-") || "-",
         };
       });
 

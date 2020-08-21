@@ -16,7 +16,7 @@ import {
 import { searchApiCall } from "./functions";
 
 const resetFields = (state, dispatch) => {
-  const textFields = ["store", "rateType", "supplierCode","purchaseOrderNumber"];
+  const textFields = ["store", "rateType", "supplierCode","purchaseOrderNumber","purchaseType"];
   for (let i = 0; i < textFields.length; i++) {
     if (
       `state.screenConfiguration.screenConfig.search-purchase-order.searchForm.children.cardContent.children.searchFormContainer.children.${textFields[i]}.props.value`
@@ -121,6 +121,34 @@ export const searchForm = getCommonCard({
           className: "hr-generic-selectfield",
           optionValue: "code",
           optionLabel: "name"
+        }
+      }),
+    },
+    purchaseType: {
+      ...getSelectField({
+        label: { labelName: "Purchase Type", labelKey: "STORE_PURCHASE_ORDER_TYPE" },
+        placeholder: {
+          labelName: "Select Purchase Type",
+          labelKey: "STORE_PURCHASE_ORDER_TYPE_SELECT"
+        },
+       visible:false,
+        required: false,
+        jsonPath: "searchScreen.purchaseType",
+       // sourceJsonPath: "searchMaster.storeNames",
+        props: {         
+          className: "hr-generic-selectfield",
+          optionValue: "value",
+          optionLabel: "label",
+          data: [
+            {
+              value: "Indent",
+              label: "Indent"
+            },
+            {
+              value: "Non Indent",
+              label: "Non Indent"
+            }
+          ],
         }
       }),
     },

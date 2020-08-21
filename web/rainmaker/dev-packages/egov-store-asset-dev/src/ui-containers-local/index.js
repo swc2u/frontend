@@ -72,6 +72,11 @@ const DynamicTableContainer = Loadable({
   loading: () => <Loading />
 })
 
+const WorkFlowContainer = Loadable({
+  loader: () => import("./WorkFlowContainer"),
+  loading: () => <Loading />
+})
+
 export {
   CustomTabContainer,
   LabelContainer,
@@ -88,5 +93,6 @@ export {
   ReassignContainer,
   ForwardContainer,
   UnderTakingContainer,
-  DynamicTableContainer
+  DynamicTableContainer,
+  WorkFlowContainer
 };
