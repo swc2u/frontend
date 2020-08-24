@@ -3,14 +3,14 @@ import {
   prepareFinalObject,
   toggleSnackbar
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import{GetMdmsNameBycode} from '../../../../../ui-utils/storecommonsapi'
+import { GetMdmsNameBycode, getWFPayload } from '../../../../../ui-utils/storecommonsapi'
 import get from "lodash/get";
 import set from "lodash/set";
 import {
   creatmiscellaneousreceiptnotes,
   getmiscellaneousreceiptnotesSearchResults,
   updatemiscellaneousreceiptnotes,
-  
+
 } from "../../../../../ui-utils/storecommonsapi";
 import {
   convertDateToEpoch,
@@ -20,10 +20,10 @@ import {
 } from "../../utils";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import {  
+import {
   samplematerialsSearch,
-  
-  } from "../../../../../ui-utils/sampleResponses";
+
+} from "../../../../../ui-utils/sampleResponses";
 // SET ALL SIMPLE DATES IN YMD FORMAT
 const setDateInYmdFormat = (obj, values) => {
   values.forEach(element => {
@@ -70,7 +70,7 @@ export const furnishindentData = (state, dispatch) => {
     "materialReceipt",
     []
   );
-   setDateInYmdFormat(materialReceipt[0], ["receiptDate", ]);
+  setDateInYmdFormat(materialReceipt[0], ["receiptDate",]);
 
   // setAllYears(materialReceipt[0], [
   //   { object: "education", values: ["yearOfPassing"] },
@@ -88,7 +88,7 @@ export const handleCreateUpdateMaterialReceiptMisc = (state, dispatch) => {
     null
   );
   if (id) {
-    
+
     createUpdateMR(state, dispatch, "UPDATE");
   } else {
     createUpdateMR(state, dispatch, "CREATE");
@@ -100,14 +100,14 @@ export const createUpdateMR = async (state, dispatch, action) => {
     state.screenConfiguration.preparedFinalObject,
     "materialReceipt[0].tenantId"
   );
-  const tenantId =  getTenantId();
+  const tenantId = getTenantId();
   let queryObject = [
     {
       key: "tenantId",
       value: tenantId
     }
   ];
- 
+
   let materialReceipt = get(
     state.screenConfiguration.preparedFinalObject,
     "materialReceipt",
@@ -117,14 +117,14 @@ export const createUpdateMR = async (state, dispatch, action) => {
   // get set date field into epoch
 
   let receiptDate =
-  get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].receiptDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].receiptDate", 0)
   receiptDate = convertDateToEpoch(receiptDate);
-  set(materialReceipt[0],"receiptDate", receiptDate);
- 
+  set(materialReceipt[0], "receiptDate", receiptDate);
 
 
 
-  
+
+
 
   //set defailt value
   let id = get(
@@ -133,24 +133,27 @@ export const createUpdateMR = async (state, dispatch, action) => {
     null
   );
 
- 
-  
+
+
 
 
 
   if (action === "CREATE") {
     try {
+      let wfobject = getWFPayload(state, dispatch)
       console.log(queryObject)
       console.log("queryObject")
       let response = await creatmiscellaneousreceiptnotes(
-        queryObject,        
+        queryObject,
         materialReceipt,
-        dispatch
+        dispatch,
+        wfobject
       );
-      if(response){
+      if (response) {
         let mrnNumber = response.MaterialReceipt[0].mrnNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPTMISC&mode=create&code=${mrnNumber}`));
-       }
+        //        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPTMISC&mode=create&code=${mrnNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-material-receipt-note-misc?tenantId=${response.MaterialReceipt[0].tenantId}&Status=${response.MaterialReceipt[0].mrnStatus}&applicationNumber=${mrnNumber}`));
+      }
     } catch (error) {
       furnishindentData(state, dispatch);
     }
@@ -161,10 +164,11 @@ export const createUpdateMR = async (state, dispatch, action) => {
         materialReceipt,
         dispatch
       );
-      if(response){
+      if (response) {
         let mrnNumber = response.MaterialReceipt[0].mrnNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPTMISC&mode=update&code=${mrnNumber}`));
-       }
+        //        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPTMISC&mode=update&code=${mrnNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-material-receipt-note-misc?tenantId=${response.MaterialReceipt[0].tenantId}&Status=${response.MaterialReceipt[0].mrnStatus}&applicationNumber=${mrnNumber}`));
+      }
     } catch (error) {
       furnishindentData(state, dispatch);
     }
@@ -176,12 +180,17 @@ export const getmiscellaneousreceiptnotes = async (
   state,
   dispatch,
   id,
-  tenantId
+  tenantId,
+  mrnNumber
 ) => {
   let queryObject = [
+    // {
+    //   key: "ids",
+    //   value: id
+    // },
     {
-      key: "ids",
-      value: id
+      key: "mrnNumber",
+      value: mrnNumber
     },
     {
       key: "tenantId",
@@ -189,26 +198,27 @@ export const getmiscellaneousreceiptnotes = async (
     }
   ];
 
- let response = await getmiscellaneousreceiptnotesSearchResults(queryObject, dispatch);
-// let response = samplematerialsSearch();
- response = response.MaterialReceipt.filter(x=>x.id === id)
-if(response && response[0])
-{
-  for (let index = 0; index < response[0].receiptDetails.length; index++) {
-    const element = response[0].receiptDetails[index];
-   let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code)   
-   set(response[0], `receiptDetails[${index}].uom.name`, Uomname);
+  let response = await getmiscellaneousreceiptnotesSearchResults(queryObject, dispatch);
+  // let response = samplematerialsSearch();
+  //response = response.MaterialReceipt.filter(x => x.id === id)
+  response = response.MaterialReceipt.filter(x => x.mrnNumber === mrnNumber)
+
+  if (response && response[0]) {
+    for (let index = 0; index < response[0].receiptDetails.length; index++) {
+      const element = response[0].receiptDetails[index];
+      let Uomname = GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.common-masters.UOM", element.uom.code)
+      set(response[0], `receiptDetails[${index}].uom.name`, Uomname);
+    }
   }
-}
-// for (let index = 0; index < MaterialReceipt[0].receiptDetails.length; index++) {
-//   const element = MaterialReceipt[0].receiptDetails[index];
-//  let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code) 
- 
-//     set(MaterialReceipt[0], `materialReceipt[${index}].uom.name`, Uomname);
-     
-// }
+  // for (let index = 0; index < MaterialReceipt[0].receiptDetails.length; index++) {
+  //   const element = MaterialReceipt[0].receiptDetails[index];
+  //  let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code) 
+
+  //     set(MaterialReceipt[0], `materialReceipt[${index}].uom.name`, Uomname);
+
+  // }
   dispatch(prepareFinalObject("materialReceipt", response));
   //dispatch(prepareFinalObject("materialReceipt", get(response, "MaterialReceipt")));
- 
+
   furnishindentData(state, dispatch);
 };

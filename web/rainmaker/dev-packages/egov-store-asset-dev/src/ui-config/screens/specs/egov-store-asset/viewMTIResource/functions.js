@@ -6,10 +6,11 @@ import {
 import get from "lodash/get";
 import set from "lodash/set";
 import {
-  
-  getMaterialIndentSearchResults,  
+
+  getMaterialIndentSearchResults,
   GetMdmsNameBycode,
-  
+  getWFPayload,
+
 } from "../../../../../ui-utils/storecommonsapi";
 import {
   convertDateToEpoch,
@@ -19,8 +20,8 @@ import {
 } from "../../utils";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import {  handleCardDelete } from "../../../../../ui-utils/commons";
-import{httpRequest} from '../../../../../ui-utils/api'
+import { handleCardDelete } from "../../../../../ui-utils/commons";
+import { httpRequest } from '../../../../../ui-utils/api'
 // SET ALL SIMPLE DATES IN YMD FORMAT
 const setDateInYmdFormat = (obj, values) => {
   values.forEach(element => {
@@ -89,8 +90,8 @@ export const furnishindentData = (state, dispatch) => {
     "indents",
     []
   );
-   setDateInYmdFormat(indents[0], ["indentDate",]);
-  
+  setDateInYmdFormat(indents[0], ["indentDate",]);
+
   dispatch(prepareFinalObject("indents", indents));
 };
 export const setRolesList = (state, dispatch) => {
@@ -143,9 +144,9 @@ export const handleCreateUpdateIT = (state, dispatch) => {
     []
   );
   let indentDate =
-  get(state, "screenConfiguration.preparedFinalObject.indents[0].indentDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.indents[0].indentDate", 0)
   indentDate = convertDateToEpoch(indentDate);
-  set(indents[0],"indentDate", indentDate);
+  set(indents[0], "indentDate", indentDate);
   //furnishindentData(state, dispatch);
   if (uuid) {
     createUpdateIT(state, dispatch, "UPDATE");
@@ -166,36 +167,39 @@ export const createUpdateIT = async (state, dispatch, action) => {
     "searchMaster.priceList",
     []
   );
-  const tenantId =  getTenantId();
+  const tenantId = getTenantId();
   indents[0].tenantId = tenantId;
   let queryObject = [{ key: "tenantId", value: tenantId }];
- 
+
 
   indents = handleCardDelete(indents, "indentDetails", false);
 
 
- 
 
-  
 
-  const requestBody = {indents};
+
+
+  const requestBody = { indents };
   console.log("requestbody", requestBody);
 
   if (action === "CREATE") {
     try {
+      let wfobject = getWFPayload(state, dispatch)
       const response = await httpRequest(
         "post",
         "/store-asset-services/indents/_create",
         "",
         queryObject,
-        requestBody
+        //requestBody
+        { indents: requestBody.indents, workFlowDetails: wfobject }
       );
-       if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=INDENTTFR&mode=create&code=${response.indents[0].indentNumber}`));
-       }
-  
+      if (response) {
+        //        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=INDENTTFR&mode=create&code=${response.indents[0].indentNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-indent-transfer?applicationNumber=${response.indents[0].indentNumber}&tenantId=${response.indents[0].tenantId}&Status=${response.indents[0].indentStatus}`));
+      }
+
     } catch (error) {
-      dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error" ) );
+      dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error"));
     }
   } else if (action === "UPDATE") {
     try {
@@ -206,26 +210,32 @@ export const createUpdateIT = async (state, dispatch, action) => {
         queryObject,
         requestBody
       );
-       if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=INDENTTFR&mode=update&code=${response.indents[0].indentNumber}`));
-       }
-  
+      if (response) {
+        //        dispatch(setRoute(`/ egov - store - asset / acknowledgement ? screen = INDENTTFR & mode=update & code=${response.indents[0].indentNumber} `));
+        dispatch(setRoute(`/egov-store-asset/view-indent-transfer?applicationNumber=${response.indents[0].indentNumber}&tenantId=${response.indents[0].tenantId}&Status=${response.indents[0].indentStatus}`));
+      }
+
     } catch (error) {
-      dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error" ) );
+      dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error"));
     }
-  } 
+  }
 };
 
 export const getMaterialIndentTransferData = async (
   state,
   dispatch,
   id,
-  tenantId
+  tenantId,
+  applicationNumber
 ) => {
   let queryObject = [
+    // {
+    //   key: "ids",
+    //   value: id
+    // },
     {
-      key: "ids",
-      value: id
+      key: "indentNumber",
+      value: applicationNumber
     },
     {
       key: "tenantId",
@@ -233,18 +243,18 @@ export const getMaterialIndentTransferData = async (
     }
   ];
 
- let response = await getMaterialIndentSearchResults(queryObject, dispatch);
-response = response.indents.filter(x=>x.id === id)
-if(response && response[0])
-{
-  for (let index = 0; index < response[0].indentDetails.length; index++) {
-    const element = response[0].indentDetails[index];
-   let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code)   
-   set(response[0], `indentDetails[${index}].uom.name`, Uomname);
+  let response = await getMaterialIndentSearchResults(queryObject, dispatch);
+  response = response.indents.filter(x => x.indentNumber === applicationNumber)
+  // response = response.indents.filter(x => x.id === id)
+  if (response && response[0]) {
+    for (let index = 0; index < response[0].indentDetails.length; index++) {
+      const element = response[0].indentDetails[index];
+      let Uomname = GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.common-masters.UOM", element.uom.code)
+      set(response[0], `indentDetails[${index}].uom.name`, Uomname);
+    }
   }
-}
-dispatch(prepareFinalObject("indents", response));
- 
+  dispatch(prepareFinalObject("indents", response));
+
   furnishindentData(state, dispatch);
 };
 

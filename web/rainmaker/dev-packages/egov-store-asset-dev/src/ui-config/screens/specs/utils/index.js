@@ -123,7 +123,7 @@ export const convertDateToEpochIST = (dateString, dayStartOrEnd = "dayend") => {
   try {
     const parts = dateString.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
     const DateObj = new Date(Date.UTC(parts[1], parts[2] - 1, parts[3]));
-  //  DateObj.setMinutes(DateObj.getMinutes() + DateObj.getTimezoneOffset());
+    //  DateObj.setMinutes(DateObj.getMinutes() + DateObj.getTimezoneOffset());
     if (dayStartOrEnd === "dayend") {
       DateObj.setHours(DateObj.getHours() + 24);
       DateObj.setSeconds(DateObj.getSeconds() - 1);
@@ -1006,7 +1006,7 @@ export const getTextToLocalMapping = label => {
       return getLocaleLabels("Rejected", "NOC_REJECTED", localisationLabels);
     case "CANCELLED":
       return getLocaleLabels("Cancelled", "NOC_CANCELLED", localisationLabels);
-    
+
   }
 };
 
@@ -1188,7 +1188,7 @@ export const getTodaysDateInYMD = () => {
   return date;
 };
 
-export const getLocalizationCodeValue =lable =>{
+export const getLocalizationCodeValue = lable => {
   const localisationLabels = getTransformedLocalStorgaeLabels();
   return getLocaleLabels(
     lable,
@@ -1202,10 +1202,10 @@ export const checkValueForNA = value => {
   return value ? value : "NA";
 };
 // for file store id
-export const getFileUrlFromAPI = async (fileStoreId,tenantId) => {
+export const getFileUrlFromAPI = async (fileStoreId, tenantId) => {
   const queryObject = [
-  	{ key: "tenantId", value: tenantId },
-   // { key: "tenantId", value: tenantId || commonConfig.tenantId.length > 2 ? commonConfig.tenantId.split('.')[0] : commonConfig.tenantId },
+    { key: "tenantId", value: tenantId },
+    // { key: "tenantId", value: tenantId || commonConfig.tenantId.length > 2 ? commonConfig.tenantId.split('.')[0] : commonConfig.tenantId },
     { key: "fileStoreIds", value: fileStoreId }
   ];
   try {
@@ -1220,17 +1220,17 @@ export const getFileUrlFromAPI = async (fileStoreId,tenantId) => {
     console.log(e);
   }
 };
-export const downloadReceiptFromFilestoreID=(fileStoreId,mode,tenantId)=>{
-  getFileUrlFromAPI(fileStoreId,tenantId).then(async(fileRes) => {
+export const downloadReceiptFromFilestoreID = (fileStoreId, mode, tenantId) => {
+  getFileUrlFromAPI(fileStoreId, tenantId).then(async (fileRes) => {
     if (mode === 'download') {
       var win = window.open(fileRes[fileStoreId], '_blank');
-      if(win){
+      if (win) {
         win.focus();
       }
     }
     else {
-     // printJS(fileRes[fileStoreId])
-      var response =await axios.get(fileRes[fileStoreId], {
+      // printJS(fileRes[fileStoreId])
+      var response = await axios.get(fileRes[fileStoreId], {
         //responseType: "blob",
         responseType: "arraybuffer",
         headers: {
@@ -1238,7 +1238,7 @@ export const downloadReceiptFromFilestoreID=(fileStoreId,mode,tenantId)=>{
           Accept: "application/pdf"
         }
       });
-      console.log("responseData---",response);
+      console.log("responseData---", response);
       const file = new Blob([response.data], { type: "application/pdf" });
       const fileURL = URL.createObjectURL(file);
       var myWindow = window.open(fileURL);
@@ -1248,135 +1248,140 @@ export const downloadReceiptFromFilestoreID=(fileStoreId,mode,tenantId)=>{
           myWindow.print();
         });
       }
-    
+
     }
   });
-  
+
 }
-export const downloadAcknowledgementForm = async ( pagename,mode="download") => {
+export const downloadAcknowledgementForm = (pagename, mode = "download") => {
   let tenantId = getQueryArg(window.location.href, "tenantId");
-  let APIUrl =`store-asset-services/indents/_print`
-  let ApplicationNo ='';
+  let APIUrl = `store-asset-services/indents/_print`
+  let ApplicationNo = '';
   let queryObject = [
     {
       key: "tenantId",
       value: tenantId
     }
   ]
-switch(pagename)
-{
-  case "Indent":
-    ApplicationNo = getQueryArg(window.location.href, "indentNumber");
-    queryObject.push({
-      key: "indentNumber",
-      value:ApplicationNo
-    });
-    queryObject.push({
-      key: "indentType",
-      value:"Indent"
-    });
-    APIUrl = `store-asset-services/indents/_print`
-    break;
+  switch (pagename) {
+    case "Indent":
+      ApplicationNo = getQueryArg(window.location.href, "indentNumber");
+      queryObject.push({
+        key: "indentNumber",
+        value: ApplicationNo
+      });
+      queryObject.push({
+        key: "indentType",
+        value: "Indent"
+      });
+      APIUrl = `store-asset-services/indents/_print`
+      break;
     case "Non Indent":
       ApplicationNo = getQueryArg(window.location.href, "issueNoteNumber");
       queryObject.push({
         key: "issueNumber",
-        value:ApplicationNo
+        value: ApplicationNo
       });
-     
+
       APIUrl = `store-asset-services/materialissues-ni/_print`
+
       break;
 
     case "Material Receipt":
       ApplicationNo = getQueryArg(window.location.href, "mrnNumber");
-    queryObject.push({
-      key: "mrnNumber",
-      value:ApplicationNo
-    });
-   
-    APIUrl = `store-asset-services/receiptnotes/_print`
-    break;
+      queryObject.push({
+        key: "mrnNumber",
+        value: ApplicationNo
+      });
+
+      APIUrl = `store-asset-services/receiptnotes/_print`
+      break;
     case "Material Receipt Misc":
       ApplicationNo = getQueryArg(window.location.href, "mrnNumber");
-    queryObject.push({
-      key: "mrnNumber",
-      value:ApplicationNo
-    });
-   
-    APIUrl = `store-asset-services/miscellaneousreceiptnotes/_print`
-    break;
+      queryObject.push({
+        key: "mrnNumber",
+        value: ApplicationNo
+      });
+
+      APIUrl = `store-asset-services/miscellaneousreceiptnotes/_print`
+      break;
     case "Indent Transfer":
-      ApplicationNo= getQueryArg(window.location.href, "indentNumber");
-    queryObject.push({
-      key: "indentNumber",
-      value:ApplicationNo
-    });
-    queryObject.push({
-      key: "indentType",
-      value:"Transfer Indent"
-    });
-    APIUrl = `store-asset-services/indents/_print`
-    break;
+      ApplicationNo = getQueryArg(window.location.href, "indentNumber");
+      queryObject.push({
+        key: "indentNumber",
+        value: ApplicationNo
+      });
+      queryObject.push({
+        key: "indentType",
+        value: "Transfer Indent"
+      });
+      APIUrl = `store-asset-services/indents/_print`
+      break;
     case "Purchase Order":
       ApplicationNo = getQueryArg(window.location.href, "poNumber");
-    queryObject.push({
-      key: "purchaseOrderNumber",
-      value:ApplicationNo
-    });
-   
-    APIUrl = `store-asset-services/purchaseorders/_print`
-    break;
+      queryObject.push({
+        key: "purchaseOrderNumber",
+        value: ApplicationNo
+      });
+
+      APIUrl = `store-asset-services/purchaseorders/_print`
+      break;
     case "Indent Outward":
       ApplicationNo = getQueryArg(window.location.href, "issueNumber");
       queryObject.push({
         key: "issueNumber",
-        value:ApplicationNo
+        value: ApplicationNo
       });
-     
+
       APIUrl = `store-asset-services/materialissues-to/_print`
       break;
     case "Indent Inward":
-        ApplicationNo = getQueryArg(window.location.href, "mrnNumber");
-        queryObject.push({
-          key: "mrnNumber",
-          value:ApplicationNo
-        });
-       
-        APIUrl = `store-asset-services/transferinwards/_print`
-        break;
-     case "Indent Issue":
-          ApplicationNo = getQueryArg(window.location.href, "issueNumber");
-          queryObject.push({
-            key: "issueNoteNumber",
-            value:ApplicationNo
-          });
-          queryObject.push({
-            key: "indentType",
-            value:"Indent"
-          });
-          APIUrl = `store-asset-services/materialissues/_print`
-          break;
-    
-  
+      ApplicationNo = getQueryArg(window.location.href, "mrnNumber");
+      queryObject.push({
+        key: "mrnNumber",
+        value: ApplicationNo
+      });
+
+      APIUrl = `store-asset-services/transferinwards/_print`
+
+      break;
+    case "Indent Issue":
+      ApplicationNo = getQueryArg(window.location.href, "issueNumber");
+      queryObject.push({
+        key: "issueNoteNumber",
+        value: ApplicationNo
+      });
+      queryObject.push({
+        key: "indentType",
+        value: "Indent"
+      });
+      APIUrl = `store-asset-services/materialissues/_print`
+      break;
+
+
+  }
+
+
+  //   if(tenantId.includes("."))
+  // {
+
+  //   var vStr = tenantId.split('.');
+
+  //   tenantId = vStr[0];
+  // }
+
+  // }
+
+
+  try {
+
+    const response = getprintpdf(queryObject, APIUrl);
+    if (response) {
+      downloadReceiptFromFilestoreID(response.filestoreIds, mode, tenantId)
+    }
+
+  } catch (exception) {
+    alert('Some Error Occured while downloading Acknowledgement form!');
+  }
 
 }
-    // if(tenantId.includes("."))
-    // {
-
-    // var vStr = tenantId.split('.');
-
-    // tenantId = vStr[0];
-    // }  
-    try {    
-      const response = await getprintpdf(queryObject,APIUrl);
-      if(response)
-      {
-        let filestoreId = response.filestoreIds[0]
-        downloadReceiptFromFilestoreID(filestoreId,mode,tenantId)
-      }
-     
-    } catch (exception) {
-      alert('Some Error Occured while downloading Acknowledgement form!');
-    }
-  
-  }

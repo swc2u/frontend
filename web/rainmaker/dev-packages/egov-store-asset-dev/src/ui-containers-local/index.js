@@ -71,6 +71,12 @@ const DynamicTableContainer = Loadable({
   loader: () => import("./DynamicTableContainer"),
   loading: () => <Loading />
 })
+
+const WorkFlowContainer = Loadable({
+  loader: () => import("./WorkFlowContainer"),
+  loading: () => <Loading />
+})
+
 const MultiItem = Loadable({
   loader: () => import("./MultiItem"),
   loading: () => <Loading />
@@ -94,5 +100,6 @@ export {
   ForwardContainer,
   UnderTakingContainer,
   DynamicTableContainer,
+  WorkFlowContainer,
   MultiItem
 };

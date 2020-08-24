@@ -14,18 +14,18 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getstoreTenantId } from "../../../../ui-utils/storecommonsapi";
-import{WorkFllowStatus} from '../../../../ui-utils/sampleResponses'
+import { WorkFllowStatus } from '../../../../ui-utils/sampleResponses'
 //print function UI start SE0001
-import { downloadAcknowledgementForm} from '../utils'
+import { downloadAcknowledgementForm } from '../utils'
 //print function UI end SE0001
-let applicationNumber = getQueryArg(window.location.href, "indentNumber");
+let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
 let status = getQueryArg(window.location.href, "Status");
 let IsEdit = true;
 let ConfigStatus = WorkFllowStatus().WorkFllowStatus;
 console.log(ConfigStatus);
-ConfigStatus = ConfigStatus.filter(x=>x.code === status)
-if(ConfigStatus.length >0)
-IsEdit = false;
+ConfigStatus = ConfigStatus.filter(x => x.code === status)
+if (ConfigStatus.length > 0)
+  IsEdit = false;
 const applicationNumberContainer = () => {
 
   if (applicationNumber)
@@ -36,7 +36,7 @@ const applicationNumberContainer = () => {
       props: {
         number: `${applicationNumber}`,
         visibility: "hidden",
-        pagename:"Indent Transfer"
+        pagename: "Indent Transfer"
       },
       visible: true
     };
@@ -44,18 +44,18 @@ const applicationNumberContainer = () => {
 };
 const statusContainer = () => {
 
-if(status)
+  if (status)
     return {
-    uiFramework: "custom-atoms-local",
-    moduleName: "egov-store-asset",
-    componentPath: "ApplicationStatusContainer",
-    props: {
-     status: `${status}`,
-      visibility: "hidden",      
-    },
-    visible: true
-  };
- else return {};
+      uiFramework: "custom-atoms-local",
+      moduleName: "egov-store-asset",
+      componentPath: "ApplicationStatusContainer",
+      props: {
+        status: `${status}`,
+        visibility: "hidden",
+      },
+      visible: true
+    };
+  else return {};
 };
 export const header = getCommonContainer({
   header: getCommonHeader({
@@ -68,18 +68,25 @@ export const header = getCommonContainer({
 
 const createMatrialIndentNoteHandle = async (state, dispatch) => {
 
-  let id = getQueryArg(window.location.href, "id");
+  //let id = getQueryArg(window.location.href, "id");
+  let indents = get(
+    state.screenConfiguration.preparedFinalObject,
+    `indents`,
+    []
+  );
+  let id = indents[0].id;
+
   dispatch(setRoute(`/egov-store-asset/create-material-transfer-indent?id=${id}`));
 };
-const createMatrialIndentOutwordHandle=async (state, dispatch) => {
+const createMatrialIndentOutwordHandle = async (state, dispatch) => {
   let indents = get(
     state.screenConfiguration.preparedFinalObject,
     `indents`,
     []
   );
   let indentNumber = indents[0].indentNumber;
-  if(indentNumber)  
-  dispatch(setRoute(`/egov-store-asset/create-material-transfer-outward?indentNumber=${indentNumber}`));
+  if (indentNumber)
+    dispatch(setRoute(`/egov-store-asset/create-material-transfer-outward?indentNumber=${indentNumber}`));
 };
 //print function UI start SE0001
 /** MenuButton data based on status */
@@ -92,6 +99,7 @@ let receiptPrintObject = {
   leftIcon: "receipt"
 };
 printMenu = [receiptPrintObject];
+
 //pint function UI End SE0001
 const masterView = MTIReviewDetails(false);
 const getMdmsData = async (action, state, dispatch, tenantId) => {
@@ -116,7 +124,7 @@ const getMdmsData = async (action, state, dispatch, tenantId) => {
               name: "UOM",
               filter: "[?(@.active == true)]"
             },
-            
+
           ]
         },
       ]
@@ -142,10 +150,10 @@ const screenConfig = {
   beforeInitScreen: (action, state, dispatch) => {
     let id = getQueryArg(window.location.href, "id");
     let tenantId = getQueryArg(window.location.href, "tenantId");
-   
-   // showHideAdhocPopup(state, dispatch);
+    let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+    // showHideAdhocPopup(state, dispatch);
     getMdmsData(action, state, dispatch, tenantId);
-    getMaterialIndentTransferData(state, dispatch, id, tenantId);
+    getMaterialIndentTransferData(state, dispatch, id, tenantId, applicationNumber);
     return action;
   },
   components: {
@@ -172,11 +180,11 @@ const screenConfig = {
               gridDefination: {
                 xs: 12,
                 sm: 4,
-                md:3,
-                lg:3,
+                md: 3,
+                lg: 3,
                 // align: "right",
-              },  
-              visible: false,// enableButton,
+              },
+              visible: true,// enableButton,
               props: {
                 variant: "contained",
                 color: "primary",
@@ -215,10 +223,10 @@ const screenConfig = {
               gridDefination: {
                 xs: 12,
                 sm: 4,
-                md:3,
-                lg:3,
+                md: 3,
+                lg: 3,
                 // align: "right",
-              },  
+              },
               visible: true,// enableButton,
               props: {
                 variant: "contained",
@@ -253,41 +261,52 @@ const screenConfig = {
                 callBack: createMatrialIndentOutwordHandle,
               },
             },
-                         //print function UI start SE0001
-                         printMenu: {
-                          uiFramework: "custom-atoms-local",
-                          moduleName: "egov-tradelicence",
-                          componentPath: "MenuButton",
-                          gridDefination: {
-                            xs: 12,
-                            sm: 4,
-                            md:3,
-                            lg:3,
-                            align: "right",
-                          },  
-                          visible: true,// enableButton,
-                          props: {
-                            data: {
-                              label: {
-                                labelName:"PRINT",
-                                labelKey:"STORE_PRINT"
-                              },
-                              leftIcon: "print",
-                              rightIcon: "arrow_drop_down",
-                              props: { variant: "outlined", style: { marginLeft: 10 } },
-                              menu: printMenu
-                            }
-                          }
-                        }
-                        //print function UI End SE0001
+            //print function UI start SE0001
+            printMenu: {
+              uiFramework: "custom-atoms-local",
+              moduleName: "egov-tradelicence",
+              componentPath: "MenuButton",
+              gridDefination: {
+                xs: 12,
+                sm: 4,
+                md: 3,
+                lg: 3,
+                align: "right",
+              },
+              visible: true,// enableButton,
+              props: {
+                data: {
+                  label: {
+                    labelName: "PRINT",
+                    labelKey: "STORE_PRINT"
+                  },
+                  leftIcon: "print",
+                  rightIcon: "arrow_drop_down",
+                  props: { variant: "outlined", style: { marginLeft: 10 } },
+                  menu: printMenu
+                }
+              }
+            }
+            //print function UI End SE0001
+          }
+        },
+        taskStatus: {
+          uiFramework: "custom-containers-local",
+          componentPath: "WorkFlowContainer",
+          moduleName: "egov-store-asset",
+          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          props: {
+            moduleName: "StoreManagement",
+            dataPath: "indents",
+            updateUrl: "/store-asset-services/indents/_updateStatus"
           }
         },
         masterView,
-        footer: IsEdit? poViewFooter():{},
+        //footer: IsEdit? poViewFooter():{},
       }
     },
-   
-    
+
+
   }
 };
 

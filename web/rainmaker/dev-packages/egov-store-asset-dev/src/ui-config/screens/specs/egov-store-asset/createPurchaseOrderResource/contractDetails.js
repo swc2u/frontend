@@ -7,7 +7,7 @@ import {
   getCommonContainer,
   getPattern
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import {handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 export const contractDetails = getCommonCard({
   header: getCommonTitle(
@@ -124,7 +124,7 @@ export const contractDetails = getCommonCard({
             "create-purchase-order",
             "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementEndDate",
             "props.inputProps",
-            { min: new Date(date).toISOString().slice(0, 10)}
+            { min: new Date(date).toISOString().slice(0, 10) }
           )
         );
       }

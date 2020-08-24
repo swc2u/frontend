@@ -8,7 +8,8 @@ import set from "lodash/set";
 import {
   getmaterialOutwordSearchResults,
   GetMdmsNameBycode,
-  getMaterialBalanceRateResults
+  getMaterialBalanceRateResults,
+  getWFPayload
 } from "../../../../../ui-utils/storecommonsapi";
 import {
   convertDateToEpoch,
@@ -18,8 +19,8 @@ import {
 } from "../../utils";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import {  handleCardDelete } from "../../../../../ui-utils/commons";
-import{httpRequest} from '../../../../../ui-utils/api'
+import { handleCardDelete } from "../../../../../ui-utils/commons";
+import { httpRequest } from '../../../../../ui-utils/api'
 // SET ALL SIMPLE DATES IN YMD FORMAT
 const setDateInYmdFormat = (obj, values) => {
   values.forEach(element => {
@@ -129,11 +130,11 @@ export const handleCreateUpdatePO = (state, dispatch) => {
   );
 
   if (uuid) {
-      // get set date field into epoch
-  let indentDate =
-  get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].indent.indentDate",0) 
-  indentDate = convertDateToEpoch(indentDate);
-  set(state,"screenConfiguration.preparedFinalObject.materialIssues[0].indent.indentDate", indentDate);
+    // get set date field into epoch
+    let indentDate =
+      get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].indent.indentDate", 0)
+    indentDate = convertDateToEpoch(indentDate);
+    set(state, "screenConfiguration.preparedFinalObject.materialIssues[0].indent.indentDate", indentDate);
     createUpdatePO(state, dispatch, "UPDATE");
   } else {
     createUpdatePO(state, dispatch, "CREATE");
@@ -152,31 +153,35 @@ export const createUpdatePO = async (state, dispatch, action) => {
     "issueDate",
     convertDateToEpoch(get(materialIssues[0], "issueDate"), "dayStart")
   );
-  const tenantId =  getTenantId();
+  const tenantId = getTenantId();
   materialIssues[0].tenantId = tenantId;
   let queryObject = [{ key: "tenantId", value: tenantId }];
- 
 
 
 
-  const requestBody = {materialIssues};
+
+  const requestBody = { materialIssues };
   console.log("requestbody", requestBody);
 
   if (action === "CREATE") {
     try {
+      let wfobject = getWFPayload(state, dispatch)
+
       const response = await httpRequest(
         "post",
         "/store-asset-services/materialissues-to/_create",
         "",
         queryObject,
-        requestBody
+        //requestBody
+        { materialIssues: requestBody.materialIssues, workFlowDetails: wfobject }
       );
-       if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=indentOutword&mode=create&code=${response.materialIssues[0].issueNumber}`));
-       }
-  
+      if (response) {
+        // dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=indentOutword&mode=create&code=${response.materialIssues[0].issueNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-indent-outword?applicationNumber=${response.materialIssues[0].issueNumber}&tenantId=${response.materialIssues[0].tenantId}&Status=${response.materialIssues[0].materialIssueStatus}`));
+      }
+
     } catch (error) {
-      dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error" ) );
+      dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error"));
     }
   } else if (action === "UPDATE") {
     try {
@@ -187,26 +192,32 @@ export const createUpdatePO = async (state, dispatch, action) => {
         queryObject,
         requestBody
       );
-       if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=indentOutword&mode=update&code=${response.materialIssues[0].issueNumber}`));
-       }
-  
+      if (response) {
+        //        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=indentOutword&mode=update&code=${response.materialIssues[0].issueNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-indent-outword?applicationNumber=${response.materialIssues[0].issueNumber}&tenantId=${response.materialIssues[0].tenantId}&Status=${response.materialIssues[0].materialIssueStatus}`));
+      }
+
     } catch (error) {
-      dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error" ) );
+      dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error"));
     }
-  } 
+  }
 };
 
 export const getIndentOutwordData = async (
   state,
   dispatch,
   id,
-  tenantId
+  tenantId,
+  issueNumber
 ) => {
   let queryObject = [
+    // {
+    //   key: "ids",
+    //   value: id
+    // },
     {
-      key: "ids",
-      value: id
+      key: "issueNumber",
+      value: issueNumber
     },
     {
       key: "tenantId",
@@ -214,24 +225,24 @@ export const getIndentOutwordData = async (
     }
   ];
 
- let response = await getmaterialOutwordSearchResults(queryObject, dispatch);
-// let response = samplematerialsSearch();
-response = response.materialIssues.filter(x=>x.id === id)
-if(response && response[0])
-{
-for (let index = 0; index < response[0].materialIssueDetails.length; index++) {
-  const element = response[0].materialIssueDetails[index];
- let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code) 
- let matname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.store-asset.Material",element.material.code) 
-    
-    set(response[0], `materialIssueDetails[${index}].uom.name`, Uomname);
-    set(response[0], `materialIssueDetails[${index}].material.name`, matname);    
-  
-}
-}
+  let response = await getmaterialOutwordSearchResults(queryObject, dispatch);
+  // let response = samplematerialsSearch();
+  //  response = response.materialIssues.filter(x => x.id === id)
+  response = response.materialIssues.filter(x => x.issueNumber === issueNumber)
+  if (response && response[0]) {
+    for (let index = 0; index < response[0].materialIssueDetails.length; index++) {
+      const element = response[0].materialIssueDetails[index];
+      let Uomname = GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.common-masters.UOM", element.uom.code)
+      let matname = GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.store-asset.Material", element.material.code)
+
+      set(response[0], `materialIssueDetails[${index}].uom.name`, Uomname);
+      set(response[0], `materialIssueDetails[${index}].material.name`, matname);
+
+    }
+  }
   dispatch(prepareFinalObject("materialIssues", response));
 
- furnishPriceListData(state, dispatch);
+  furnishPriceListData(state, dispatch);
 };
 
 export const furnishPriceListData = (state, dispatch) => {
@@ -241,7 +252,7 @@ export const furnishPriceListData = (state, dispatch) => {
     []
   );
   setDateInYmdFormat(materialIssues[0], ["issueDate", "indent.indentDate",]);
-  
+
   dispatch(prepareFinalObject("materialIssues", materialIssues));
   //set indentsOutmaterial based on indent number
 
@@ -250,43 +261,43 @@ export const furnishPriceListData = (state, dispatch) => {
     "indent.indentDetails",
     []
   );
-          let material=[];
-          let matcode =[];
-          let storecode = materialIssues[0].indent.issueStore.code;
-          for (let index = 0; index < indentDetails.length; index++) {
-            const element = indentDetails[index];
-            dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].id`, element.id));
-            dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].uom.code`, element.uom.code));
-            dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].userQuantity`, element.userQuantity));
-            dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].material.code`, element.material.code));
-            //create material list for card item
-           
-            material.push(
-              {
-                materialcode:element.material.code,
-                materialName:GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.store-asset.Material",element.material.code),
-                uomcode:element.uom.code,
-                uomname:GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code),
-                id:element.id,
-                indentQuantity:element.indentQuantity,
-                totalProcessedQuantity:element.totalProcessedQuantity,
-                indentIssuedQuantity:element.indentIssuedQuantity,
-                interstoreRequestQuantity:element.interstoreRequestQuantity,
-                //unitRate://to be deside
-              });
-              matcode.push( element.material.code)
-          }  
-          
-          let matcodes_= matcode.map(itm => {
-            return `${itm}`;
-          })
-          .join() || "-"
-          const queryObject = [{ key: "tenantId", value: getTenantId()},{ key: "issueingStore", value: storecode},{ key: "material", value: matcodes_}];
-          getMaterialBalanceRateResults(queryObject)
-          .then(async response =>{
-            if(response){
-              dispatch(prepareFinalObject("indentsOutmaterial", response.MaterialBalanceRate));
-              
-            }
-          }); 
+  let material = [];
+  let matcode = [];
+  let storecode = materialIssues[0].indent.issueStore.code;
+  for (let index = 0; index < indentDetails.length; index++) {
+    const element = indentDetails[index];
+    dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].id`, element.id));
+    dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].uom.code`, element.uom.code));
+    dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].userQuantity`, element.userQuantity));
+    dispatch(prepareFinalObject(`materialIssues[0].indent.indentDetails[${index}].material.code`, element.material.code));
+    //create material list for card item
+
+    material.push(
+      {
+        materialcode: element.material.code,
+        materialName: GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.store-asset.Material", element.material.code),
+        uomcode: element.uom.code,
+        uomname: GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.common-masters.UOM", element.uom.code),
+        id: element.id,
+        indentQuantity: element.indentQuantity,
+        totalProcessedQuantity: element.totalProcessedQuantity,
+        indentIssuedQuantity: element.indentIssuedQuantity,
+        interstoreRequestQuantity: element.interstoreRequestQuantity,
+        //unitRate://to be deside
+      });
+    matcode.push(element.material.code)
+  }
+
+  let matcodes_ = matcode.map(itm => {
+    return `${itm}`;
+  })
+    .join() || "-"
+  const queryObject = [{ key: "tenantId", value: getTenantId() }, { key: "issueingStore", value: storecode }, { key: "material", value: matcodes_ }];
+  getMaterialBalanceRateResults(queryObject)
+    .then(async response => {
+      if (response) {
+        dispatch(prepareFinalObject("indentsOutmaterial", response.MaterialBalanceRate));
+
+      }
+    });
 };

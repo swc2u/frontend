@@ -2,7 +2,7 @@ import {
   getLocaleLabels,
   getTransformedLocalStorgaeLabels,
 } from "egov-ui-framework/ui-utils/commons";
-import { getTenantId} from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 export const getTextToLocalMapping = (label) => {
   const localisationLabels = getTransformedLocalStorgaeLabels();
   switch (label) {
@@ -13,31 +13,31 @@ export const getTextToLocalMapping = (label) => {
         localisationLabels
       );
 
-      case "Issue Date":
-        return getLocaleLabels(
-          "Issue Date",
-          "STORE_MATERIAL_INDENT_NOTE_ISSUE_DATE",
-          localisationLabels
-        );
+    case "Issue Date":
+      return getLocaleLabels(
+        "Issue Date",
+        "STORE_MATERIAL_INDENT_NOTE_ISSUE_DATE",
+        localisationLabels
+      );
     case "Indenting Store Name":
       return getLocaleLabels(
         "Indenting Store Name",
         "STORE_MATERIAL_INDENT_STORE_NAME",
         localisationLabels
       );
-      case "Issue Purpose":
-        return getLocaleLabels(
-          "Issue Purpose",
-          "STORE_MATERIAL_INDENT_NOTE_ISSUE_PURPOSE",
-          localisationLabels
-        );
-        case "Issue Status":
-          return getLocaleLabels(
-            "Issue Status",
-            "STORE_MATERIAL_INDENT_NOTE_STATUS",
-            localisationLabels
-          );
-   
+    case "Issue Purpose":
+      return getLocaleLabels(
+        "Issue Purpose",
+        "STORE_MATERIAL_INDENT_NOTE_ISSUE_PURPOSE",
+        localisationLabels
+      );
+    case "Issue Status":
+      return getLocaleLabels(
+        "Issue Status",
+        "STORE_MATERIAL_INDENT_NOTE_STATUS",
+        localisationLabels
+      );
+
     case "Search Results for Material Non Indent":
       return getLocaleLabels(
         "Search Results for Material Non Indent",
@@ -82,7 +82,8 @@ export const searchResults = {
 
 const onRowClick = (rowData) => {
   let tenantId = getTenantId();
-  window.location.href = `view-non-indent-issue-note?issueNoteNumber=${rowData[0]}&tenantId=${tenantId}&Status=${rowData[3]}`;
+  //  window.location.href = `view-non-indent-issue-note?issueNoteNumber=${rowData[0]}&tenantId=${tenantId}&Status=${rowData[3]}`;
+  window.location.href = `view-non-indent-issue-note?applicationNumber=${rowData[0]}&tenantId=${tenantId}&Status=${rowData[3]}`;
 };
 
 

@@ -1,5 +1,65 @@
-export const getWFConfig = (module,businessService) => {
+export const getWFConfig = (module,businessService,taskId) => {
   console.log("module", module);
+  
+  if (businessService == "Engineering" || businessService == "IT" || businessService == "Caretaker" || businessService == "MOH") {
+    if (taskId.includes('MRNIN')) {
+      return {
+        INITIATED: "/egov-store-asset/view-non-indent-issue-note",
+        DEFAULT: "/egov-store-asset/view-non-indent-issue-note",
+      };
+    } else if (taskId.includes('MRNIW')) {
+      return {
+        INITIATED: "/egov-store-asset/view-indent-inword",
+        DEFAULT: "/egov-store-asset/view-indent-inword",
+      };
+    }
+    else if (taskId.includes('MRIN')) {
+      return {
+        INITIATED: "/egov-store-asset/view-indent-note",
+        DEFAULT: "/egov-store-asset/view-indent-note",
+      };
+    } else if (taskId.includes('IND')) {
+      return {
+        INITIATED: "/egov-store-asset/view-indent",
+        DEFAULT: "/egov-store-asset/view-indent",
+      };
+
+    } else if (taskId.includes('PO')) {
+      return {
+        INITIATED: "/egov-store-asset/view-purchase-order",
+        DEFAULT: "/egov-store-asset/view-purchase-order",
+      };
+
+    } else if (taskId.includes('MMRN')) {
+      return {
+        INITIATED: "/egov-store-asset/view-material-receipt-note-misc",
+        DEFAULT: "/egov-store-asset/view-material-receipt-note-misc",
+      };
+
+    } else if (taskId.includes('TRIN')) {
+      return {
+        INITIATED: "/egov-store-asset/view-indent-transfer",
+        DEFAULT: "/egov-store-asset/view-indent-transfer",
+      };
+
+    }
+    else if (taskId.includes('MRN')) {
+      return {
+        INITIATED: "/egov-store-asset/view-material-receipt-note",
+        DEFAULT: "/egov-store-asset/view-material-receipt-note",
+      };
+
+    }
+    else if (taskId.includes('MROW')) {
+      return {
+        INITIATED: "/egov-store-asset/view-indent-outword",
+        DEFAULT: "/egov-store-asset/view-indent-outword",
+      };
+
+    }
+
+  }
+  else
   switch (module.toUpperCase()) {
     case "TL-SERVICES":
       return {
@@ -55,4 +115,5 @@ export const getWFConfig = (module,businessService) => {
           };
       
     }
+}
 };

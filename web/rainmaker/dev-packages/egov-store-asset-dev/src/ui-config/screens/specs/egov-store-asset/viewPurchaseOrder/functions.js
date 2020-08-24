@@ -19,8 +19,9 @@ import {
 } from "../../utils";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import {  handleCardDelete } from "../../../../../ui-utils/commons";
-import{httpRequest} from '../../../../../ui-utils/api'
+import { handleCardDelete } from "../../../../../ui-utils/commons";
+import { httpRequest } from '../../../../../ui-utils/api'
+import { getWFPayload } from "../../../../../ui-utils/storecommonsapi";
 // SET ALL SIMPLE DATES IN YMD FORMAT
 const setDateInYmdFormat = (obj, values) => {
   values.forEach(element => {
@@ -147,10 +148,10 @@ export const createUpdatePO = async (state, dispatch, action) => {
     "searchMaster.priceList",
     []
   );
-  const tenantId =  getTenantId();
+  const tenantId = getTenantId();
   purchaseOrders[0].tenantId = tenantId;
   let queryObject = [{ key: "tenantId", value: tenantId }];
- 
+
 
   purchaseOrders = handleCardDelete(purchaseOrders, "purchaseOrderDetails", false);
 
@@ -162,74 +163,72 @@ export const createUpdatePO = async (state, dispatch, action) => {
   for (let i = 0; i < poDetailArray.length; i++) {
     set(purchaseOrders[0], `purchaseOrderDetails[${i}].tenantId`, tenantId);
     // if ratebtype is GEM
-    const {rateType} = purchaseOrders[0];  
-    const {supplier} = purchaseOrders[0];  
+    const { rateType } = purchaseOrders[0];
+    const { supplier } = purchaseOrders[0];
     let priceListgem = get(
       state.screenConfiguration.preparedFinalObject,
       "purchaseOrders[0].priceList",
       []
     );
-    const {rateContractNumber} = priceListgem[0];
-    const {rateContractDate} = priceListgem[0];
-    const {agreementNumber} = priceListgem[0];
-    const {agreementDate} = priceListgem[0];
-    const {agreementStartDate} = priceListgem[0];
-    const {agreementEndDate} = priceListgem[0];
-    if(rateType.toLocaleUpperCase() === 'GEM')
-    {
+    const { rateContractNumber } = priceListgem[0];
+    const { rateContractDate } = priceListgem[0];
+    const { agreementNumber } = priceListgem[0];
+    const { agreementDate } = priceListgem[0];
+    const { agreementStartDate } = priceListgem[0];
+    const { agreementEndDate } = priceListgem[0];
+    if (rateType.toLocaleUpperCase() === 'GEM') {
       set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.tenantId`, null);
       set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.supplier.code`, supplier.code);
       set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.supplier.name`, supplier.name);
       set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.rateType`, "Gem");
       set(purchaseOrders[0], `rateType`, "Gem");
-      dispatch(prepareFinalObject("purchaseOrders[0].rateType", "Gem"));  
+      dispatch(prepareFinalObject("purchaseOrders[0].rateType", "Gem"));
       set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.rateContractNumber`, rateContractNumber);
       set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.rateContractDate`, convertDateToEpoch(rateContractDate));
       set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.agreementNumber`, (agreementNumber));
-      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.agreementDate`,convertDateToEpoch( agreementDate));
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.agreementDate`, convertDateToEpoch(agreementDate));
       set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.agreementStartDate`, convertDateToEpoch(agreementStartDate));
       set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.agreementEndDate`, convertDateToEpoch(agreementEndDate));
       set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.active`, true);
     }
-    else{
+    else {
       set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList`, priceList[0]);
 
     }
-    let indentNumber="";
+    let indentNumber = "";
     indentNumber = getQueryArg(window.location.href, "indentNumber");
-   if(indentNumber){
-    //set purchaseIndentDetails
-    // get Indent details from Indent
-   let indentDetails = get(state.screenConfiguration.preparedFinalObject, "indents[0].indentDetails", [])
-   indentDetails = indentDetails.filter(x=>x.material.code === poDetailArray[i].material.code)
-   if(indentDetails &&indentDetails[0])
-   {
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].id`, null));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].tenantId`, tenantId));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.id`, indentDetails[0].id));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].quantity`, null));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.tenantId`, tenantId));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.material.code`, indentDetails[0].material.code));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.uom.code`, indentDetails[0].uom.code));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.parentIndentLine`, null));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.projectCode`, null));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.orderNumber`, null));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.projectCode.code`, null));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.asset`, null));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.indentQuantity`, indentDetails[0].indentQuantity));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.totalProcessedQuantity`, 0));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.indentIssuedQuantity`, 0));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.poOrderedQuantity`, 0));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.interstoreRequestQuantity`, 0));
-    //get deliveryTerms fron firstep UI Data
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.deliveryTerms`, get(state.screenConfiguration.preparedFinalObject, "purchaseOrders[0].deliveryTerms", '')));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.remarks`, get(state.screenConfiguration.preparedFinalObject, "purchaseOrders[0].remarks", '')));
-    dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].quantity`, indentDetails[0].indentQuantity));
+    if (indentNumber) {
+      //set purchaseIndentDetails
+      // get Indent details from Indent
+      let indentDetails = get(state.screenConfiguration.preparedFinalObject, "indents[0].indentDetails", [])
+      indentDetails = indentDetails.filter(x => x.material.code === poDetailArray[i].material.code)
+      if (indentDetails && indentDetails[0]) {
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].id`, null));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].tenantId`, tenantId));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.id`, indentDetails[0].id));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].quantity`, null));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.tenantId`, tenantId));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.material.code`, indentDetails[0].material.code));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.uom.code`, indentDetails[0].uom.code));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.parentIndentLine`, null));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.projectCode`, null));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.orderNumber`, null));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.projectCode.code`, null));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.asset`, null));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.indentQuantity`, indentDetails[0].indentQuantity));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.totalProcessedQuantity`, 0));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.indentIssuedQuantity`, 0));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.poOrderedQuantity`, 0));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.interstoreRequestQuantity`, 0));
+        //get deliveryTerms fron firstep UI Data
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.deliveryTerms`, get(state.screenConfiguration.preparedFinalObject, "purchaseOrders[0].deliveryTerms", '')));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].indentDetail.remarks`, get(state.screenConfiguration.preparedFinalObject, "purchaseOrders[0].remarks", '')));
+        dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${i}].purchaseIndentDetails[${i}].quantity`, indentDetails[0].indentQuantity));
 
-   }
-   }
-   else
-    set(purchaseOrders[0], `purchaseOrderDetails[${i}].purchaseIndentDetails`, []);
+      }
+    }
+    else
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].purchaseIndentDetails`, []);
   }
 
   set(
@@ -264,24 +263,28 @@ export const createUpdatePO = async (state, dispatch, action) => {
     convertDateToEpoch(get(purchaseOrders[0], "agreementEndDate"), "dayStart")
   );
 
-  const requestBody = {purchaseOrders};
+  const requestBody = { purchaseOrders };
   console.log("requestbody", requestBody);
 
   if (action === "CREATE") {
     try {
+      let wfobject = getWFPayload(state, dispatch)
       const response = await httpRequest(
         "post",
         "/store-asset-services/purchaseorders/_create",
         "",
         queryObject,
-        requestBody
+        // requestBody
+        { purchaseOrders: requestBody.purchaseOrders, workFlowDetails: wfobject }
+
       );
-       if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=purchaseOrder&mode=create&code=${response.purchaseOrders[0].purchaseOrderNumber}`));
-       }
-  
+      if (response) {
+        //  dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=purchaseOrder&mode=create&code=${response.purchaseOrders[0].purchaseOrderNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-purchase-order?tenantId=${getTenantId()}&applicationNumber=${response.purchaseOrders[0].purchaseOrderNumber}&Status=${response.purchaseOrders[0].status}`));
+      }
+
     } catch (error) {
-      dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error" ) );
+      dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error"));
     }
   } else if (action === "UPDATE") {
     try {
@@ -292,14 +295,15 @@ export const createUpdatePO = async (state, dispatch, action) => {
         queryObject,
         requestBody
       );
-       if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=purchaseOrder&mode=update&code=${response.purchaseOrders[0].purchaseOrderNumber}`));
-       }
-  
+      if (response) {
+        //        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=purchaseOrder&mode=update&code=${response.purchaseOrders[0].purchaseOrderNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-purchase-order?tenantId=${getTenantId()}&applicationNumber=${response.purchaseOrders[0].purchaseOrderNumber}&Status=${response.purchaseOrders[0].status}`));
+      }
+
     } catch (error) {
-      dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error" ) );
+      dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error"));
     }
-  } 
+  }
 };
 
 

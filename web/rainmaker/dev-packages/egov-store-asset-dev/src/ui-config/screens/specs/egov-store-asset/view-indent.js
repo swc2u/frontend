@@ -14,18 +14,18 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getstoreTenantId } from "../../../../ui-utils/storecommonsapi";
-import{WorkFllowStatus} from '../../../../ui-utils/sampleResponses'
+import { WorkFllowStatus } from '../../../../ui-utils/sampleResponses'
 //print function UI start SE0001
-import { downloadAcknowledgementForm} from '../utils'
+import { downloadAcknowledgementForm } from '../utils'
 //print function UI end SE0001
 let applicationNumber = getQueryArg(window.location.href, "indentNumber");
 let status = getQueryArg(window.location.href, "Status");
 let IsEdit = true;
 let ConfigStatus = WorkFllowStatus().WorkFllowStatus;
 console.log(ConfigStatus);
-ConfigStatus = ConfigStatus.filter(x=>x.code === status)
-if(ConfigStatus.length >0)
-IsEdit = false;
+ConfigStatus = ConfigStatus.filter(x => x.code === status)
+if (ConfigStatus.length > 0)
+  IsEdit = false;
 const applicationNumberContainer = () => {
 
   if (applicationNumber)
@@ -36,7 +36,7 @@ const applicationNumberContainer = () => {
       props: {
         number: `${applicationNumber}`,
         visibility: "hidden",
-        pagename:"Indent"
+        pagename: "Indent"
       },
       visible: true
     };
@@ -45,18 +45,18 @@ const applicationNumberContainer = () => {
 
 const statusContainer = () => {
 
-if(status)
+  if (status)
     return {
-    uiFramework: "custom-atoms-local",
-    moduleName: "egov-store-asset",
-    componentPath: "ApplicationStatusContainer",
-    props: {
-     status: `${status}`,
-      visibility: "hidden",      
-    },
-    visible: true
-  };
- else return {};
+      uiFramework: "custom-atoms-local",
+      moduleName: "egov-store-asset",
+      componentPath: "ApplicationStatusContainer",
+      props: {
+        status: `${status}`,
+        visibility: "hidden",
+      },
+      visible: true
+    };
+  else return {};
 };
 export const header = getCommonContainer({
   header: getCommonHeader({
@@ -68,8 +68,14 @@ export const header = getCommonContainer({
 });
 
 const createMatrialIndentNoteHandle = async (state, dispatch) => {
+  // let IndentId = getQueryArg(window.location.href, "id");
+  let indents = get(
+    state.screenConfiguration.preparedFinalObject,
+    `indents`,
+    []
+  );
+  let IndentId = indents[0].id;
 
-  let IndentId = getQueryArg(window.location.href, "id");
   dispatch(setRoute(`/egov-store-asset/createMaterialIndentNote?IndentId=${IndentId}`));
 };
 const creatPOHandle = async (state, dispatch) => {
@@ -92,10 +98,12 @@ let receiptPrintObject = {
   leftIcon: "receipt"
 };
 printMenu = [receiptPrintObject];
+
+
 //pint function UI End SE0001
 const masterView = IndentListReviewDetails(false);
 const getMdmsData = async (action, state, dispatch, tenantId) => {
-  const tenant =  getstoreTenantId();
+  const tenant = getstoreTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenant,
@@ -116,7 +124,7 @@ const getMdmsData = async (action, state, dispatch, tenantId) => {
               name: "UOM",
               filter: "[?(@.active == true)]"
             },
-            
+
           ]
         },
       ]
@@ -142,10 +150,10 @@ const screenConfig = {
   beforeInitScreen: (action, state, dispatch) => {
     let id = getQueryArg(window.location.href, "id");
     let tenantId = getQueryArg(window.location.href, "tenantId");
-   
-   // showHideAdhocPopup(state, dispatch);
+    let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+    // showHideAdhocPopup(state, dispatch);
     getMdmsData(action, state, dispatch, tenantId);
-    getMaterialIndentData(state, dispatch, id, tenantId);
+    getMaterialIndentData(state, dispatch, id, tenantId, applicationNumber);
     return action;
   },
   components: {
@@ -172,8 +180,8 @@ const screenConfig = {
               gridDefination: {
                 xs: 12,
                 sm: 4,
-                md:3,
-                lg:3,
+                md: 3,
+                lg: 3,
                 // align: "right",
               },
               visible: true,// enableButton,
@@ -211,14 +219,14 @@ const screenConfig = {
               },
             },
             newPOButton: {
-              componentPath: "Button", 
+              componentPath: "Button",
               gridDefination: {
                 xs: 12,
                 sm: 4,
-                md:3,
-                lg:3,
+                md: 3,
+                lg: 3,
                 // align: "right",
-              },             
+              },
               visible: true,// enableButton,
               props: {
                 variant: "contained",
@@ -253,24 +261,24 @@ const screenConfig = {
                 callBack: creatPOHandle,
               },
             },
-             //print function UI start SE0001
-             printMenu: {
+            //print function UI start SE0001
+            printMenu: {
               uiFramework: "custom-atoms-local",
               moduleName: "egov-tradelicence",
               componentPath: "MenuButton",
               gridDefination: {
                 xs: 12,
                 sm: 4,
-                md:3,
-                lg:3,
+                md: 3,
+                lg: 3,
                 align: "right",
-              },  
+              },
               visible: true,// enableButton,
               props: {
                 data: {
                   label: {
-                    labelName:"PRINT",
-                    labelKey:"STORE_PRINT"
+                    labelName: "PRINT",
+                    labelKey: "STORE_PRINT"
                   },
                   leftIcon: "print",
                   rightIcon: "arrow_drop_down",
@@ -282,13 +290,24 @@ const screenConfig = {
             //print function UI End SE0001
           }
         },
+        taskStatus: {
+          uiFramework: "custom-containers-local",
+          componentPath: "WorkFlowContainer",
+          moduleName: "egov-store-asset",
+          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          props: {
+            moduleName: "StoreManagement",
+            dataPath: "indents",
+            updateUrl: "/store-asset-services/indents/_updateStatus"
+          }
+        },
         masterView,
         // footer: masterViewFooter()
-        footer: IsEdit? masterViewFooter():{},
+        // footer: IsEdit? masterViewFooter():{},
       }
     },
-   
-    
+
+
   }
 };
 
