@@ -27,7 +27,18 @@ export const getWFConfig = (module,businessService,taskId) => {
 
   }
  else if (businessService == "Engineering" || businessService == "IT" || businessService == "Caretaker" || businessService == "MOH") {
-    if (taskId.includes('MRIN')) {
+     if (taskId.includes('MRNIN')) {
+      return {
+        INITIATED: "/egov-store-asset/view-non-indent-issue-note",
+        DEFAULT: "/egov-store-asset/view-non-indent-issue-note",
+      };
+    } else if (taskId.includes('MRNIW')) {
+      return {
+        INITIATED: "/egov-store-asset/view-indent-inword",
+        DEFAULT: "/egov-store-asset/view-indent-inword",
+      };
+    }
+    else if (taskId.includes('MRIN')) {
       return {
         INITIATED: "/egov-store-asset/view-indent-note",
         DEFAULT: "/egov-store-asset/view-indent-note",
@@ -44,10 +55,10 @@ export const getWFConfig = (module,businessService,taskId) => {
         DEFAULT: "/egov-store-asset/view-purchase-order",
       };
 
-    } else if (taskId.includes('MRN')) {
+    } else if (taskId.includes('MMRN')) {
       return {
-        INITIATED: "/egov-store-asset/view-material-receipt-note",
-        DEFAULT: "/egov-store-asset/view-material-receipt-note",
+        INITIATED: "/egov-store-asset/view-material-receipt-note-misc",
+        DEFAULT: "/egov-store-asset/view-material-receipt-note-misc",
       };
 
     } else if (taskId.includes('TRIN')) {
@@ -57,6 +68,21 @@ export const getWFConfig = (module,businessService,taskId) => {
       };
 
     }
+    else if (taskId.includes('MRN')) {
+      return {
+        INITIATED: "/egov-store-asset/view-material-receipt-note",
+        DEFAULT: "/egov-store-asset/view-material-receipt-note",
+      };
+
+    }
+    else if (taskId.includes('MROW')) {
+      return {
+        INITIATED: "/egov-store-asset/view-indent-outword",
+        DEFAULT: "/egov-store-asset/view-indent-outword",
+      };
+
+    }
+
   }
   else {
     switch (module.toUpperCase()) {
