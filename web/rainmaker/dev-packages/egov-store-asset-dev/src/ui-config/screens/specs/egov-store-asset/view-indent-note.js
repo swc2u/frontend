@@ -85,21 +85,14 @@ const creatPOHandle = async (state, dispatch) => {
 /** MenuButton data based on status */
 let printMenu = [];
 let receiptPrintObject = {
-  label: { labelName: "Receipt", labelKey: "STORE_PRINT_INDENT_NOTE" },
+  label: { labelName: "Receipt", labelKey: "STORE_PRINT_INDENT_ISSUE_NOTE" },
   link: () => {
     downloadAcknowledgementForm("Indent Note");
   },
   leftIcon: "receipt"
 };
-switch (status) {
-  case "APPROVED":
+printMenu = [receiptPrintObject];
 
-    printMenu = [receiptPrintObject];
-    break;
-
-  default:
-    break;
-}
 //pint function UI End SE0001
 const masterView = IndentNoteReviewDetails(false);
 const getMdmsData = async (action, state, dispatch, tenantId) => {
@@ -286,7 +279,7 @@ const screenConfig = {
                 lg: 3,
                 align: "right",
               },
-              visible: false,// enableButton,
+              visible: true,// enableButton,
               props: {
                 data: {
                   label: {

@@ -22,6 +22,7 @@ import {
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
 import orderBy from "lodash/orderBy";
+import { data } from "jquery";
 
 const tenant = getQueryArg(window.location.href, "tenantId");
 
@@ -192,7 +193,7 @@ class WorkFlowContainer extends React.Component {
     //setting the action to send in RequestInfo
     let appendToPath = ""
 
-    if (dataPath === "indents" || dataPath === "materialIssues" || dataPath === "purchaseOrders" || dataPath === "materialReceipt") {
+    if (dataPath === "indents" || dataPath === "materialIssues" || dataPath === "purchaseOrders" || dataPath === "materialReceipt" || dataPath === "transferInwards") {
 
       var validated = true;
 
@@ -264,19 +265,36 @@ class WorkFlowContainer extends React.Component {
         editUrl = `/egov-store-asset/creatindent?tenantId=${tenant}`;
       }
     } else if (dataPath === "materialIssues") {
-      let indentissuedata = get(preparedFinalObject, dataPath, [])
-      indentissuedata = indentissuedata[0];
-      let issueIndentNumber = indentissuedata.indent.id
-      //      let response = preparedFinalObject.indents && preparedFinalObject.indents.filter(x => x.indentNumber === issueIndentNumber)
-      //    if (response && response[0])
-      editUrl = `/egov-store-asset/createMaterialIndentNote?step=0&IndentId=${issueIndentNumber}`;
+      if (businessId.includes("MRNIN")) {
+        editUrl = `/egov-store-asset/createMaterialNonIndentNote?tenantId=${tenant}&issueNoteNumber=${businessId}`;
+      } else if (businessId.includes("MROW")) {
+        let indentissuedata = get(preparedFinalObject, dataPath, [])
+        indentissuedata = indentissuedata[0];
+        let id = indentissuedata.id;
+        editUrl = `/egov-store-asset/create-material-transfer-outward?id=${id}&tenantId=${tenant}`;
+      } else {
+        let indentissuedata = get(preparedFinalObject, dataPath, [])
+        indentissuedata = indentissuedata[0];
+        let issueIndentNumber = indentissuedata.indent.id
+        editUrl = `/egov-store-asset/createMaterialIndentNote?step=0&IndentId=${issueIndentNumber}`;
+      }
     }
     else if (dataPath === "purchaseOrders") {
       // localhost:3006/egov-store-asset/create-purchase-order?poNumber=PO/00039/2020&tenantId=ch.chandigarh
       editUrl = `/egov-store-asset/create-purchase-order?poNumber=${businessId}&tenantId=${tenant}`;
 
     } else if (dataPath === "materialReceipt") {
-      editUrl = `/egov-store-asset/createMaterialReceiptNote?mrnNumber=${businessId}&tenantId=${tenant}`;
+      if (businessId.includes("MMRN")) {
+        editUrl = `/egov-store-asset/createMaterialReceiptNoteMisc?tenantId=${tenant}`;
+      } else {
+        editUrl = `/egov-store-asset/createMaterialReceiptNote?mrnNumber=${businessId}&tenantId=${tenant}`;
+      }
+    } else if (dataPath === "transferInwards") {
+      let transferInwardsdata = get(preparedFinalObject, dataPath, [])
+      transferInwardsdata = transferInwardsdata[0];
+      let id = transferInwardsdata.id;
+
+      editUrl = `/egov-store-asset/createMaterialTransferInword?id=${id}&tenantId=${tenant}`;
     }
     return editUrl;
   };

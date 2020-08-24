@@ -125,7 +125,7 @@ class Footer extends React.Component {
       }
      
     }
-    if (dataPath === "indents" || dataPath === "materialIssues" || dataPath === "purchaseOrders" || dataPath === "materialReceipt") {
+    if (dataPath === "indents" || dataPath === "materialIssues" || dataPath === "purchaseOrders" || dataPath === "materialReceipt" || || dataPath === "transferInwards") {
       var { state } = this.props;
       const applicationNumberStoreAsset = get(
         state.screenConfiguration.preparedFinalObject.workflow,
@@ -355,7 +355,7 @@ class Footer extends React.Component {
           
         </div>
       );}
-      else if ((dataPath === "indents" || dataPath === "materialIssues" || dataPath === "purchaseOrders" || dataPath === "materialReceipt") && data.length != 0) {
+      else if ((dataPath === "indents" || dataPath === "materialIssues" || dataPath === "purchaseOrders" || dataPath === "materialReceipt" || || dataPath === "transferInwards") && data.length != 0) {
       return (
         <div className="apply-wizard-footer" id="custom-atoms-footer">
           {!isEmpty(downloadMenu) && (

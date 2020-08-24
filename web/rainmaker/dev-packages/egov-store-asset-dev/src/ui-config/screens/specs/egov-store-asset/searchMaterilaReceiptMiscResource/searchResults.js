@@ -2,7 +2,7 @@ import {
   getLocaleLabels,
   getTransformedLocalStorgaeLabels,
 } from "egov-ui-framework/ui-utils/commons";
-import { getTenantId} from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 export const getTextToLocalMapping = (label) => {
   const localisationLabels = getTransformedLocalStorgaeLabels();
   switch (label) {
@@ -13,26 +13,26 @@ export const getTextToLocalMapping = (label) => {
         localisationLabels
       );
 
-      case "Store Name":
-        return getLocaleLabels(
-          "Store Name",
-          "STORE_DETAILS_STORE_NAME",
-          localisationLabels
-        );
+    case "Store Name":
+      return getLocaleLabels(
+        "Store Name",
+        "STORE_DETAILS_STORE_NAME",
+        localisationLabels
+      );
     case "Receipt Type":
       return getLocaleLabels(
         "Receipt Type",
         "STORE_MATERIAL_RECEIPT_RECEIPT_TYPE",
         localisationLabels
       );
-      case "Status":
-        return getLocaleLabels(
-          "Status",
-          "STORE_MATERIAL_INDENT_NOTE_STATUS",
-          localisationLabels
-        );
-       
-   
+    case "Status":
+      return getLocaleLabels(
+        "Status",
+        "STORE_MATERIAL_INDENT_NOTE_STATUS",
+        localisationLabels
+      );
+
+
     case "Search Results for Non-Indent Material Issue Note":
       return getLocaleLabels(
         "Search Results for Non-Indent Material Issue Note",
@@ -50,8 +50,8 @@ export const searchResults = {
     columns: [
       getTextToLocalMapping("Material Receipt Number"),
       getTextToLocalMapping("Store Name"),
-      getTextToLocalMapping("Receipt Type"),     
-     // getTextToLocalMapping("Indent Purpose"),
+      getTextToLocalMapping("Receipt Type"),
+      // getTextToLocalMapping("Indent Purpose"),
       getTextToLocalMapping("Status"),
       {
         name: "id",
@@ -77,7 +77,8 @@ export const searchResults = {
 
 const onRowClick = (rowData) => {
   let tenantId = getTenantId();
-  window.location.href = `view-material-receipt-note-misc?id=${rowData[4]}&tenantId=${tenantId}&Status=${rowData[3]}&mrnNumber=${rowData[0]}`;
+  // window.location.href = `view-material-receipt-note-misc?id=${rowData[4]}&tenantId=${tenantId}&Status=${rowData[3]}&mrnNumber=${rowData[0]}`;
+  window.location.href = `view-material-receipt-note-misc?tenantId=${tenantId}&Status=${rowData[3]}&applicationNumber=${rowData[0]}`;
 };
 
 

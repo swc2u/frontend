@@ -4,7 +4,7 @@ import {
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { toggleSnackbar,prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { toggleSnackbar, prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
   getCommonApplyFooter,
   ifUserRoleExists,
@@ -12,20 +12,20 @@ import {
   getLocalizationCodeValue
 } from "../../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import {ValidateCard, ValidateCardUserQty} from '../../../../../ui-utils/storecommonsapi'
+import { ValidateCard, ValidateCardUserQty } from '../../../../../ui-utils/storecommonsapi'
 const moveToReview = dispatch => {
-  let indentNumber="",reviewUrl="";
+  let indentNumber = "", reviewUrl = "";
   indentNumber = getQueryArg(window.location.href, "indentNumber");
-  if(indentNumber)
+  if (indentNumber)
     reviewUrl = `/egov-store-asset/review-purchase-order?indentNumber=${indentNumber}`;
   else
-  reviewUrl = "/egov-store-asset/review-purchase-order";
+    reviewUrl = "/egov-store-asset/review-purchase-order";
   dispatch(setRoute(reviewUrl));
 };
 
 export const callBackForNext = async (state, dispatch) => {
 
-  const {purchaseOrders}  = state.screenConfiguration.preparedFinalObject;
+  const { purchaseOrders } = state.screenConfiguration.preparedFinalObject;
   let activeStep = get(
     state.screenConfiguration.screenConfig["create-purchase-order"],
     "components.div.children.stepper.props.activeStep",
@@ -39,16 +39,16 @@ export const callBackForNext = async (state, dispatch) => {
       dispatch,
       "create-purchase-order"
     );
-      const {advancePercentage} = purchaseOrders[0];
+    const { advancePercentage } = purchaseOrders[0];
 
-      if(advancePercentage && ( 0 > parseInt(advancePercentage,10) || parseInt(advancePercentage,10) > 100 )){
-        const errorMessage = {
-          labelName: "Percentage should be between 0 and 100",
-          labelKey: "STORE_ERR_PERCENTAGE_IS_VALID"
-        };
-        dispatch(toggleSnackbar(true, errorMessage, "warning"));
-        return;
-      }
+    if (advancePercentage && (0 > parseInt(advancePercentage, 10) || parseInt(advancePercentage, 10) > 100)) {
+      const errorMessage = {
+        labelName: "Percentage should be between 0 and 100",
+        labelKey: "STORE_ERR_PERCENTAGE_IS_VALID"
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      return;
+    }
 
 
     if (!ispurchaseOrderHeaderValid) {
@@ -63,7 +63,7 @@ export const callBackForNext = async (state, dispatch) => {
       dispatch,
       "create-purchase-order"
     );
-   
+
     if (!isRCValid) {
       isFormValid = false;
     }
@@ -89,105 +89,162 @@ export const callBackForNext = async (state, dispatch) => {
           "create-purchase-order"
         )
       )
-      isPoDetailsValid = false;
+        isPoDetailsValid = false;
     }
-  
+
 
     if (!isPoDetailsValid) {
       isFormValid = false;
     }
   }
 
-    if (isFormValid) {
-      if(activeStep === 2){
-                  //validate duplicate card
-  let cardJsonPath =
-  "components.div.children.formwizardThirdStep.children.purchaseOrderDetails.children.cardContent.children.purchaseOrderDetailsCard.props.items";
-  let pagename = `create-purchase-order`;
-  let jasonpath =  "purchaseOrders[0].purchaseOrderDetails";
-  let value = "material.code";
-  let InputQtyValue = "orderQuantity";
-  let CompareQtyValue = "indentQuantity";
-  let DuplicatItem = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)
-  let balanceQuantity = "balanceQuantity";
-  let doubleqtyCheck = false
-  let InvaldQtyCard = ValidateCardUserQty(state,dispatch,cardJsonPath,pagename,jasonpath,value,InputQtyValue,CompareQtyValue,balanceQuantity,doubleqtyCheck)
-  if((DuplicatItem && DuplicatItem[0])||(InvaldQtyCard &&InvaldQtyCard[0]))
-  {
-    let LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_DUPLICATE_VALIDATION")
-    let LocalizationCodeValueQty = getLocalizationCodeValue("STORE_MATERIAL_INVALID_PO_QTY_VALIDATION")
-    if(!DuplicatItem[0].IsDuplicatItem && !InvaldQtyCard[0].IsInvalidQty )
-      {
+  if (isFormValid) {
+    if (activeStep === 2) {
+      //validate duplicate card
+      let cardJsonPath =
+        "components.div.children.formwizardThirdStep.children.purchaseOrderDetails.children.cardContent.children.purchaseOrderDetailsCard.props.items";
+      let pagename = `create-purchase-order`;
+      let jasonpath = "purchaseOrders[0].purchaseOrderDetails";
+      let value = "material.code";
+      let InputQtyValue = "orderQuantity";
+      let CompareQtyValue = "indentQuantity";
+      let DuplicatItem = ValidateCard(state, dispatch, cardJsonPath, pagename, jasonpath, value)
+      let balanceQuantity = "balanceQuantity";
+      let doubleqtyCheck = false
+      let InvaldQtyCard = ValidateCardUserQty(state, dispatch, cardJsonPath, pagename, jasonpath, value, InputQtyValue, CompareQtyValue, balanceQuantity, doubleqtyCheck)
+      if ((DuplicatItem && DuplicatItem[0]) || (InvaldQtyCard && InvaldQtyCard[0])) {
+        let LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_DUPLICATE_VALIDATION")
+        let LocalizationCodeValueQty = getLocalizationCodeValue("STORE_MATERIAL_INVALID_PO_QTY_VALIDATION")
+        if (!DuplicatItem[0].IsDuplicatItem && !InvaldQtyCard[0].IsInvalidQty) {
 
-        // refresh card item
-        var storeMappingTemp = [];
-    let  storeMapping =  get(
-      state.screenConfiguration.preparedFinalObject,
-      `purchaseOrders[0].purchaseOrderDetails`,
-      []
-    );
-    for(var i = 0; i < storeMapping.length; i++){
-        if(storeMappingTemp.indexOf(storeMapping[i]) == -1){
-          storeMappingTemp.push(storeMapping[i]);
+          // refresh card item
+          var storeMappingTemp = [];
+          let storeMapping = get(
+            state.screenConfiguration.preparedFinalObject,
+            `purchaseOrders[0].purchaseOrderDetails`,
+            []
+          );
+          for (var i = 0; i < storeMapping.length; i++) {
+            if (storeMappingTemp.indexOf(storeMapping[i]) == -1) {
+              storeMappingTemp.push(storeMapping[i]);
+            }
+          }
+          storeMappingTemp = storeMappingTemp.filter((item) => item.isDeleted === undefined || item.isDeleted !== false);
+          if (storeMappingTemp.length > 0) {
+            dispatch(prepareFinalObject("purchaseOrders[0].purchaseOrderDetails", storeMappingTemp)
+            );
+          }
+          moveToReview(dispatch);
         }
-    }
-    storeMappingTemp = storeMappingTemp.filter((item) => item.isDeleted === undefined || item.isDeleted !== false);
-    if(storeMappingTemp.length>0)
-    {
-      dispatch(prepareFinalObject("purchaseOrders[0].purchaseOrderDetails",storeMappingTemp)
-    );
+        else {
+          if (DuplicatItem[0].IsDuplicatItem) {
+            const errorMessage = {
+              labelName: "Duplicate Material Added",
+              //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+              // labelKey:   `${LocalizationCodeValue}` `${DuplicatItem[0].duplicates}`
+              labelKey: LocalizationCodeValue + ' ' + DuplicatItem[0].duplicates
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "warning"));
+          }
+          else if (InvaldQtyCard[0].IsInvalidQty) {
+            let indentNumber = "";
+            indentNumber = getQueryArg(window.location.href, "indentNumber");
+            if (indentNumber) {
+              const errorMessage = {
+
+                labelName: "Ordered Qty less then Indent Qty for",
+                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+                // labelKey:   `${LocalizationCodeValue}` `${DuplicatItem[0].duplicates}`
+                labelKey: LocalizationCodeValueQty + ' ' + InvaldQtyCard[0].duplicates
+              };
+              dispatch(toggleSnackbar(true, errorMessage, "warning"));
+            }
+            else {
+              moveToReview(dispatch);
+            }
+
+          }
+
+
+        }
       }
-      moveToReview(dispatch);
-    }
-    else{
-      if(DuplicatItem[0].IsDuplicatItem)
-      {
-        const errorMessage = {              
-          labelName: "Duplicate Material Added",
-          //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
-          // labelKey:   `${LocalizationCodeValue}` `${DuplicatItem[0].duplicates}`
-          labelKey:   LocalizationCodeValue+' '+DuplicatItem[0].duplicates
-        };
-        dispatch(toggleSnackbar(true, errorMessage, "warning"));
-      }
-      else if (InvaldQtyCard[0].IsInvalidQty)
-      {
-        let indentNumber="";
-        indentNumber = getQueryArg(window.location.href, "indentNumber");
-        if(indentNumber){
-        const errorMessage = {
-        
-          labelName: "Ordered Qty less then Indent Qty for",
-          //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
-          // labelKey:   `${LocalizationCodeValue}` `${DuplicatItem[0].duplicates}`
-          labelKey:   LocalizationCodeValueQty+' '+InvaldQtyCard[0].duplicates
-        };
-        dispatch(toggleSnackbar(true, errorMessage, "warning"));
-      }
-      else{
+      else {
         moveToReview(dispatch);
       }
+    }
+    else {
+      //get po rate type if GEM them Price list info fill by user
+      // for REM
+      const { purchaseOrders } = state.screenConfiguration.preparedFinalObject;
+      const { rateType } = purchaseOrders[0];
+      if (rateType.toLocaleUpperCase() === 'GEM') {
+
+        dispatch(
+          handleField(`create-purchase-order`,
+            "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.rateContractNumber",
+            "props.disabled", false));
+
+        dispatch(
+          handleField(`create-purchase-order`,
+            "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.rateContractDate",
+            "props.disabled", false));
+        dispatch(
+          handleField(`create-purchase-order`,
+            "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementNumber",
+            "props.disabled", false));
+
+        dispatch(
+          handleField(`create-purchase-order`,
+            "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementDate",
+            "props.disabled", false));
+        dispatch(
+          handleField(`create-purchase-order`,
+            "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementStartDate",
+            "props.disabled", false));
+        dispatch(
+          handleField(`create-purchase-order`,
+            "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementEndDate",
+            "props.disabled", false));
+      }
+      else {
+        dispatch(
+          handleField(`create-purchase-order`,
+            "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.rateContractNumber",
+            "props.disabled", true));
+        dispatch(
+          handleField(`create-purchase-order`,
+            "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.rateContractDate",
+            "props.disabled", true));
+        dispatch(
+          handleField(`create-purchase-order`,
+            "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementNumber",
+            "props.disabled", true));
+
+        dispatch(
+          handleField(`create-purchase-order`,
+            "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementDate",
+            "props.disabled", true));
+        dispatch(
+          handleField(`create-purchase-order`,
+            "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementStartDate",
+            "props.disabled", true));
+        dispatch(
+          handleField(`create-purchase-order`,
+            "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementEndDate",
+            "props.disabled", true));
 
       }
-      
-      
+
+      changeStep(state, dispatch);
     }
-  }
-  else{
-      moveToReview(dispatch);
-  }
-      }
-      else{
-        changeStep(state, dispatch);
-      }
-     
-    } else {
-      const errorMessage = {
-        labelName: "Please fill all fields",
-        labelKey: "ERR_FILL_ALL_FIELDS"
-      };
-      dispatch(toggleSnackbar(true, errorMessage, "warning"));
-    
+
+  } else {
+    const errorMessage = {
+      labelName: "Please fill all fields",
+      labelKey: "ERR_FILL_ALL_FIELDS"
+    };
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+
   }
 };
 

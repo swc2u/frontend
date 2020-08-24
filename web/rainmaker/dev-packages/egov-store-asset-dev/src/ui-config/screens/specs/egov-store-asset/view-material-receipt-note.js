@@ -69,7 +69,14 @@ export const header = getCommonContainer({
 
 const createMatrialIndentNoteHandle = async (state, dispatch) => {
 
-  let id = getQueryArg(window.location.href, "id");
+  //let id = getQueryArg(window.location.href, "id");
+  let materialReceipt = get(
+    state.screenConfiguration.preparedFinalObject,
+    `materialReceipt`,
+    []
+  );
+  let id = materialReceipt[0].id;
+
   dispatch(setRoute(`/egov-store-asset/createMaterialReceiptNote?id=${id}`));
 };
 const creatPOHandle = async (state, dispatch) => {
@@ -85,21 +92,14 @@ const creatPOHandle = async (state, dispatch) => {
 /** MenuButton data based on status */
 let printMenu = [];
 let receiptPrintObject = {
-  label: { labelName: "Receipt", labelKey: "STORE_PRINT_INDENT_NOTE" },
+  label: { labelName: "Receipt", labelKey: "STORE_PRINT_MR" },
   link: () => {
     downloadAcknowledgementForm("Material Receipt");
   },
   leftIcon: "receipt"
 };
-switch (status) {
-  case "APPROVED":
+printMenu = [receiptPrintObject];
 
-    printMenu = [receiptPrintObject];
-    break;
-
-  default:
-    break;
-}
 //pint function UI End SE0001
 const masterView = MaterialReceiptReviewDetails(false);
 const getMdmsData = async (action, state, dispatch, tenantId) => {

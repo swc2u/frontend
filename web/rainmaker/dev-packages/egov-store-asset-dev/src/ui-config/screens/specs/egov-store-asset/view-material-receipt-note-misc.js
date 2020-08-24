@@ -14,18 +14,18 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getstoreTenantId } from "../../../../ui-utils/storecommonsapi";
-import{WorkFllowStatus} from '../../../../ui-utils/sampleResponses'
+import { WorkFllowStatus } from '../../../../ui-utils/sampleResponses'
 //print function UI start SE0001
-import { downloadAcknowledgementForm} from '../utils'
+import { downloadAcknowledgementForm } from '../utils'
 //print function UI end SE0001
 let applicationNumber = getQueryArg(window.location.href, "mrnNumber");
 let status = getQueryArg(window.location.href, "Status");
 let IsEdit = true;
 let ConfigStatus = WorkFllowStatus().WorkFllowStatus;
 console.log(ConfigStatus);
-ConfigStatus = ConfigStatus.filter(x=>x.code === status)
-if(ConfigStatus.length >0)
-IsEdit = false;
+ConfigStatus = ConfigStatus.filter(x => x.code === status)
+if (ConfigStatus.length > 0)
+  IsEdit = false;
 const applicationNumberContainer = () => {
 
   if (applicationNumber)
@@ -36,7 +36,7 @@ const applicationNumberContainer = () => {
       props: {
         number: `${applicationNumber}`,
         visibility: "hidden",
-        pagename:"Material Recept MISC"
+        pagename: "Material Recept MISC"
       },
       visible: true
     };
@@ -44,18 +44,18 @@ const applicationNumberContainer = () => {
 };
 const statusContainer = () => {
 
-if(status)
+  if (status)
     return {
-    uiFramework: "custom-atoms-local",
-    moduleName: "egov-store-asset",
-    componentPath: "ApplicationStatusContainer",
-    props: {
-     status: `${status}`,
-      visibility: "hidden",      
-    },
-    visible: true
-  };
- else return {};
+      uiFramework: "custom-atoms-local",
+      moduleName: "egov-store-asset",
+      componentPath: "ApplicationStatusContainer",
+      props: {
+        status: `${status}`,
+        visibility: "hidden",
+      },
+      visible: true
+    };
+  else return {};
 };
 export const header = getCommonContainer({
   header: getCommonHeader({
@@ -68,7 +68,14 @@ export const header = getCommonContainer({
 
 const createMatrialMiscReceiptHandle = async (state, dispatch) => {
 
-  let id = getQueryArg(window.location.href, "id");
+  //  let id = getQueryArg(window.location.href, "id");
+  let materialReceipt = get(
+    state.screenConfiguration.preparedFinalObject,
+    `materialReceipt`,
+    []
+  );
+  let id = materialReceipt[0].id;
+
   dispatch(setRoute(`/egov-store-asset/createMaterialReceiptNoteMisc?id=${id}`));
 };
 const creatPOHandle = async (state, dispatch) => {
@@ -84,21 +91,14 @@ const creatPOHandle = async (state, dispatch) => {
 /** MenuButton data based on status */
 let printMenu = [];
 let receiptPrintObject = {
-  label: { labelName: "Receipt", labelKey: "STORE_PRINT_INDENT_NOTE" },
+  label: { labelName: "Receipt", labelKey: "STORE_PRINT_MR_MISC" },
   link: () => {
     downloadAcknowledgementForm("Material Receipt Misc");
   },
   leftIcon: "receipt"
 };
-switch (status) {
-  case "APPROVED":
-   
-    printMenu = [receiptPrintObject];
-    break;
-  
-  default:
-    break;
-}
+printMenu = [receiptPrintObject];
+
 //pint function UI End SE0001
 const masterView = MaterialReceiptReviewDetails(false);
 const getMdmsData = async (action, state, dispatch, tenantId) => {
@@ -120,7 +120,7 @@ const getMdmsData = async (action, state, dispatch, tenantId) => {
           moduleName: "common-masters",
           masterDetails: [
             { name: "UOM", filter: "[?(@.active == true)]" },
-           
+
           ]
         }
       ]
@@ -146,10 +146,12 @@ const screenConfig = {
   beforeInitScreen: (action, state, dispatch) => {
     let id = getQueryArg(window.location.href, "id");
     let tenantId = getQueryArg(window.location.href, "tenantId");
+    let mrnNumber = getQueryArg(window.location.href, "applicationNumber");
+
     getMdmsData(action, state, dispatch, tenantId);
-    getmiscellaneousreceiptnotes(state, dispatch, id, tenantId);
-   // showHideAdhocPopup(state, dispatch);
-   
+    getmiscellaneousreceiptnotes(state, dispatch, id, tenantId, mrnNumber);
+    // showHideAdhocPopup(state, dispatch);
+
     return action;
   },
   components: {
@@ -213,7 +215,7 @@ const screenConfig = {
               },
             },
             newPOButton: {
-              componentPath: "Button",            
+              componentPath: "Button",
               visible: true,// enableButton,
               props: {
                 variant: "contained",
@@ -248,24 +250,24 @@ const screenConfig = {
                 callBack: creatPOHandle,
               },
             },
-             //print function UI start SE0001
-             printMenu: {
+            //print function UI start SE0001
+            printMenu: {
               uiFramework: "custom-atoms-local",
               moduleName: "egov-tradelicence",
               componentPath: "MenuButton",
               gridDefination: {
                 xs: 12,
                 sm: 4,
-                md:3,
-                lg:3,
+                md: 3,
+                lg: 3,
                 align: "right",
-              },  
+              },
               visible: true,// enableButton,
               props: {
                 data: {
                   label: {
-                    labelName:"PRINT",
-                    labelKey:"STORE_PRINT"
+                    labelName: "PRINT",
+                    labelKey: "STORE_PRINT"
                   },
                   leftIcon: "print",
                   rightIcon: "arrow_drop_down",
@@ -277,12 +279,24 @@ const screenConfig = {
             //print function UI End SE0001
           }
         },
+        taskStatus: {
+          uiFramework: "custom-containers-local",
+          componentPath: "WorkFlowContainer",
+          moduleName: "egov-store-asset",
+          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          props: {
+            moduleName: "StoreManagement",
+            dataPath: "materialReceipt",
+            updateUrl: "/store-asset-services/miscellaneousreceiptnotes/_updateStatus"
+          }
+        },
+
         masterView,
-        footer: IsEdit? masterViewFooter():{},
+        //footer: IsEdit? masterViewFooter():{},
       }
     },
-   
-    
+
+
   }
 };
 

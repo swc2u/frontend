@@ -185,8 +185,6 @@ export const createUpdateIT = async (state, dispatch, action) => {
   if (action === "CREATE") {
     try {
       let wfobject = getWFPayload(state, dispatch)
-      alert(JSON.stringify(wfobject))
-
       const response = await httpRequest(
         "post",
         "/store-asset-services/indents/_create",
@@ -197,7 +195,7 @@ export const createUpdateIT = async (state, dispatch, action) => {
       );
       if (response) {
         //        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=INDENTTFR&mode=create&code=${response.indents[0].indentNumber}`));
-        dispatch(setRoute(`/egov-store-asset/view-indent-transfer?applicationNumber=${response.indents[0].indentNumber}&tenantId=${response.indents[0].tenantId}&Status=${response.indents[0].indentStatus} `));
+        dispatch(setRoute(`/egov-store-asset/view-indent-transfer?applicationNumber=${response.indents[0].indentNumber}&tenantId=${response.indents[0].tenantId}&Status=${response.indents[0].indentStatus}`));
       }
 
     } catch (error) {
@@ -213,7 +211,8 @@ export const createUpdateIT = async (state, dispatch, action) => {
         requestBody
       );
       if (response) {
-        dispatch(setRoute(`/ egov - store - asset / acknowledgement ? screen = INDENTTFR & mode=update & code=${response.indents[0].indentNumber} `));
+        //        dispatch(setRoute(`/ egov - store - asset / acknowledgement ? screen = INDENTTFR & mode=update & code=${response.indents[0].indentNumber} `));
+        dispatch(setRoute(`/egov-store-asset/view-indent-transfer?applicationNumber=${response.indents[0].indentNumber}&tenantId=${response.indents[0].tenantId}&Status=${response.indents[0].indentStatus}`));
       }
 
     } catch (error) {

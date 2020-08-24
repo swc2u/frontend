@@ -10,7 +10,8 @@ import {
   getmaterialOutwordSearchResults,
   updateIndentInword,
   creatIndentInword,
-  GetMdmsNameBycode
+  GetMdmsNameBycode,
+  getWFPayload
 } from "../../../../../ui-utils/storecommonsapi";
 import {
   convertDateToEpoch,
@@ -20,10 +21,10 @@ import {
 } from "../../utils";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import {  
+import {
   samplematerialsSearch,
-  
-  } from "../../../../../ui-utils/sampleResponses";
+
+} from "../../../../../ui-utils/sampleResponses";
 // SET ALL SIMPLE DATES IN YMD FORMAT
 const setDateInYmdFormat = (obj, values) => {
   values.forEach(element => {
@@ -70,7 +71,7 @@ export const furnishindentData = (state, dispatch) => {
     "transferInwards",
     []
   );
-   setDateInYmdFormat(transferInwards[0], ["receiptDate", ]);
+  setDateInYmdFormat(transferInwards[0], ["receiptDate",]);
 
   // setAllYears(transferInwards[0], [
   //   { object: "education", values: ["yearOfPassing"] },
@@ -88,7 +89,7 @@ export const handleCreateUpdateMaterialInword = (state, dispatch) => {
     null
   );
   if (id) {
-    
+
     createUpdateIndentInword(state, dispatch, "UPDATE");
   } else {
     createUpdateIndentInword(state, dispatch, "CREATE");
@@ -100,14 +101,14 @@ export const createUpdateIndentInword = async (state, dispatch, action) => {
     state.screenConfiguration.preparedFinalObject,
     "transferInwards[0].tenantId"
   );
-  const tenantId =  getTenantId();
+  const tenantId = getTenantId();
   let queryObject = [
     {
       key: "tenantId",
       value: tenantId
     }
   ];
- 
+
   let transferInwards = get(
     state.screenConfiguration.preparedFinalObject,
     "transferInwards",
@@ -117,14 +118,14 @@ export const createUpdateIndentInword = async (state, dispatch, action) => {
   // get set date field into epoch
 
   let receiptDate =
-  get(state, "screenConfiguration.preparedFinalObject.transferInwards[0].receiptDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.transferInwards[0].receiptDate", 0)
   receiptDate = convertDateToEpoch(receiptDate);
-  set(transferInwards[0],"receiptDate", receiptDate);
- 
+  set(transferInwards[0], "receiptDate", receiptDate);
 
 
 
-  
+
+
 
   //set defailt value
   let id = get(
@@ -133,24 +134,29 @@ export const createUpdateIndentInword = async (state, dispatch, action) => {
     null
   );
 
- 
-  
+
+
 
 
 
   if (action === "CREATE") {
     try {
+      let wfobject = getWFPayload(state, dispatch)
+      alert(JSON.stringify(wfobject))
+
       console.log(queryObject)
       console.log("queryObject")
       let response = await creatIndentInword(
-        queryObject,        
+        queryObject,
         transferInwards,
-        dispatch
+        dispatch,
+        wfobject
       );
-      if(response){
+      if (response) {
         let mrnNumber = response.transferInwards[0].mrnNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=INDENTINWORD&mode=create&code=${mrnNumber}`));
-       }
+        // dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=INDENTINWORD&mode=create&code=${mrnNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-indent-inword?tenantId=${response.transferInwards[0].tenantId}&applicationNumber=${mrnNumber}&Status=${response.transferInwards[0].mrnStatus}`));
+      }
     } catch (error) {
       furnishindentData(state, dispatch);
     }
@@ -161,10 +167,11 @@ export const createUpdateIndentInword = async (state, dispatch, action) => {
         transferInwards,
         dispatch
       );
-      if(response){
+      if (response) {
         let mrnNumber = response.transferInwards[0].mrnNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=INDENTINWORD&mode=update&code=${mrnNumber}`));
-       }
+        //        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=INDENTINWORD&mode=update&code=${mrnNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-indent-inword?tenantId=${response.transferInwards[0].tenantId}&applicationNumber=${mrnNumber}&Status=${response.transferInwards[0].mrnStatus}`));
+      }
     } catch (error) {
       furnishindentData(state, dispatch);
     }
@@ -176,12 +183,17 @@ export const getIndentInwordData = async (
   state,
   dispatch,
   id,
-  tenantId
+  tenantId,
+  mrnNumber
 ) => {
   let queryObject = [
+    // {
+    //   key: "ids",
+    //   value: id
+    // },
     {
-      key: "ids",
-      value: id
+      key: "mrnNumber",
+      value: mrnNumber
     },
     {
       key: "tenantId",
@@ -189,39 +201,37 @@ export const getIndentInwordData = async (
     }
   ];
 
- let response = await getIndentInwordSearchResults(queryObject, dispatch);
-// let response = samplematerialsSearch();
-response = get(response, "transferInwards")
-if(response)
-{
-for (let index = 0; index < response[0].receiptDetails.length; index++) {
-  const element = response[0].receiptDetails[index];
- let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code) 
-    set(response[0], `receiptDetails[${index}].uom.name`, Uomname);  
-}
-dispatch(prepareFinalObject("transferInwards",response ));
-const tenantId = getTenantId();
-let queryObject = [
-  {
-    key: "tenantId",
-    value: tenantId
-  },
-  {
-    key: "materialIssueStatus",
-    value: "APPROVED"
-  }
+  let response = await getIndentInwordSearchResults(queryObject, dispatch);
+  // let response = samplematerialsSearch();
+  response = get(response, "transferInwards")
+  if (response) {
+    for (let index = 0; index < response[0].receiptDetails.length; index++) {
+      const element = response[0].receiptDetails[index];
+      let Uomname = GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.common-masters.UOM", element.uom.code)
+      set(response[0], `receiptDetails[${index}].uom.name`, Uomname);
+    }
+    dispatch(prepareFinalObject("transferInwards", response));
+    const tenantId = getTenantId();
+    let queryObject = [
+      {
+        key: "tenantId",
+        value: tenantId
+      },
+      {
+        key: "materialIssueStatus",
+        value: "APPROVED"
+      }
 
-];
-try {
-  let responseOut = await getmaterialOutwordSearchResults(queryObject, dispatch);
-  dispatch(prepareFinalObject("materialOutword", responseOut));
-  if(responseOut)
-  {
-    var x = responseOut.materialIssues.filter(x=x.id ===5)
+    ];
+    try {
+      let responseOut = await getmaterialOutwordSearchResults(queryObject, dispatch);
+      dispatch(prepareFinalObject("materialOutword", responseOut));
+      if (responseOut) {
+        var x = responseOut.materialIssues.filter(x = x.id === 5)
+      }
+    } catch (e) {
+      console.log(e);
+    }
   }
-} catch (e) {
-  console.log(e);
-}
-}
   furnishindentData(state, dispatch);
 };

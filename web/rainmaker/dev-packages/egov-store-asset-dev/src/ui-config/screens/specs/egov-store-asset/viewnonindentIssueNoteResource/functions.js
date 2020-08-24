@@ -3,7 +3,7 @@ import {
   prepareFinalObject,
   toggleSnackbar
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import{GetMdmsNameBycode} from '../../../../../ui-utils/storecommonsapi'
+import { GetMdmsNameBycode, getWFPayload } from '../../../../../ui-utils/storecommonsapi'
 import get from "lodash/get";
 import set from "lodash/set";
 import {
@@ -20,10 +20,10 @@ import {
 } from "../../utils";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import {  
+import {
   samplematerialsSearch,
-  
-  } from "../../../../../ui-utils/sampleResponses";
+
+} from "../../../../../ui-utils/sampleResponses";
 // SET ALL SIMPLE DATES IN YMD FORMAT
 const setDateInYmdFormat = (obj, values) => {
   values.forEach(element => {
@@ -154,8 +154,8 @@ export const furnishindentData = (state, dispatch) => {
     "materialIssues",
     []
   );
-   setDateInYmdFormat(materialIssues[0], ["issueDate", ]);
- 
+  setDateInYmdFormat(materialIssues[0], ["issueDate",]);
+
   dispatch(prepareFinalObject("materialIssues", materialIssues));
 };
 
@@ -166,13 +166,13 @@ export const handleCreateUpdateIndent = (state, dispatch) => {
     null
   );
   if (id) {
-    
+
     createUpdateIndent(state, dispatch, "UPDATE");
   } else {
 
-  
 
-    
+
+
 
     createUpdateIndent(state, dispatch, "CREATE");
   }
@@ -183,14 +183,14 @@ export const createUpdateIndent = async (state, dispatch, action) => {
     state.screenConfiguration.preparedFinalObject,
     "materialIssues[0].tenantId"
   );
-  const tenantId =  getTenantId();
+  const tenantId = getTenantId();
   let queryObject = [
     {
       key: "tenantId",
       value: tenantId
     }
   ];
- 
+
   let materialIssues = get(
     state.screenConfiguration.preparedFinalObject,
     "materialIssues",
@@ -200,12 +200,12 @@ export const createUpdateIndent = async (state, dispatch, action) => {
   // get set date field into epoch
 
   let issueDate =
-  get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].issueDate",0) 
+    get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].issueDate", 0)
   issueDate = convertDateToEpoch(issueDate);
-  set(materialIssues[0],"issueDate", issueDate);
+  set(materialIssues[0], "issueDate", issueDate);
 
 
-  
+
 
   //set defailt value
   let id = get(
@@ -213,8 +213,7 @@ export const createUpdateIndent = async (state, dispatch, action) => {
     "materialIssues[0].id",
     null
   );
-  if(id === null)
-  {
+  if (id === null) {
     // set(materialIssues[0],"indentNumber", "");
     // set(materialIssues[0],"indentType", "Indent");
     // set(materialIssues[0],"materialHandOverTo", "Test");
@@ -223,17 +222,20 @@ export const createUpdateIndent = async (state, dispatch, action) => {
 
   if (action === "CREATE") {
     try {
+      let wfobject = getWFPayload(state, dispatch)
       console.log(queryObject)
       console.log("queryObject")
       let response = await creatNonIndentMaterialIssue(
-        queryObject,        
+        queryObject,
         materialIssues,
-        dispatch
+        dispatch,
+        wfobject
       );
-      if(response){
+      if (response) {
         let issueNumber = response.materialIssues[0].issueNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALINDENTNOTE&mode=create&code=${issueNumber}`));
-       }
+        // dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALINDENTNOTE&mode=create&code=${issueNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-non-indent-issue-note?applicationNumber=${issueNumber}&tenantId=${response.materialIssues[0].tenantId}&Status=${response.materialIssues[0].materialIssueStatus}`));
+      }
     } catch (error) {
       //alert('123')
       furnishindentData(state, dispatch);
@@ -245,10 +247,11 @@ export const createUpdateIndent = async (state, dispatch, action) => {
         materialIssues,
         dispatch
       );
-      if(response){
+      if (response) {
         let issueNumber = response.materialIssues[0].issueNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALINDENTNOTE&mode=update&code=${issueNumber}`));
-       }
+        //        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALINDENTNOTE&mode=update&code=${issueNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-non-indent-issue-note?applicationNumber=${issueNumber}&tenantId=${response.materialIssues[0].tenantId}&Status=${response.materialIssues[0].materialIssueStatus}`));
+      }
     } catch (error) {
       furnishindentData(state, dispatch);
     }
@@ -273,22 +276,21 @@ export const getMaterialNonIndentData = async (
     }
   ];
 
- let response = await getNonIndentMaterialIssueSearchResults(queryObject, dispatch);
-// let response = samplematerialsSearch();
-response = get(response, "materialIssues")
-if(response && response[0])
-{
-for (let index = 0; index < response[0].materialIssueDetails.length; index++) {
-  const element = response[0].materialIssueDetails[index];
- let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code) 
- let matname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.store-asset.Material",element.material.code) 
-    set(response[0], `materialIssueDetails[${index}].uom.name`, Uomname);
-    set(response[0], `materialIssueDetails[${index}].material.name`, matname);
-    set(response[0], `materialIssueDetails[${index}].mrnNumber`, element.materialIssuedFromReceipts[index].materialReceiptDetail.mrnNumber);    
-    //set materialReceiptId
-    set(response[0], `materialIssueDetails[${index}].receiptId`, element.materialIssuedFromReceipts[index].materialReceiptId);    
-}
-}
+  let response = await getNonIndentMaterialIssueSearchResults(queryObject, dispatch);
+  // let response = samplematerialsSearch();
+  response = get(response, "materialIssues")
+  if (response && response[0]) {
+    for (let index = 0; index < response[0].materialIssueDetails.length; index++) {
+      const element = response[0].materialIssueDetails[index];
+      let Uomname = GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.common-masters.UOM", element.uom.code)
+      let matname = GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.store-asset.Material", element.material.code)
+      set(response[0], `materialIssueDetails[${index}].uom.name`, Uomname);
+      set(response[0], `materialIssueDetails[${index}].material.name`, matname);
+      set(response[0], `materialIssueDetails[${index}].mrnNumber`, element.materialIssuedFromReceipts[index].materialReceiptDetail.mrnNumber);
+      //set materialReceiptId
+      set(response[0], `materialIssueDetails[${index}].receiptId`, element.materialIssuedFromReceipts[index].materialReceiptId);
+    }
+  }
   dispatch(prepareFinalObject("materialIssues", response));
 
   furnishindentData(state, dispatch);

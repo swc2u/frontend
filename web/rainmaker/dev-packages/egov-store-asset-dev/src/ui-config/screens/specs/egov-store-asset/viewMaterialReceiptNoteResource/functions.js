@@ -316,8 +316,6 @@ export const createUpdateMR = async (state, dispatch, action) => {
   if (action === "CREATE") {
     try {
       let wfobject = getWFPayload(state, dispatch)
-      alert(JSON.stringify(wfobject))
-
       console.log(queryObject)
       console.log("queryObject")
       let response = await creatreceiptnotes(
@@ -329,7 +327,7 @@ export const createUpdateMR = async (state, dispatch, action) => {
       if (response) {
         let mrnNumber = response.MaterialReceipt[0].mrnNumber
         // dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPT&mode=create&code=${mrnNumber}`));
-        dispatch(setRoute(`/egov-store-asset/view-material-receipt-note?applicatioNumber=${mrnNumber}&tenantId=${response.MaterialReceipt[0].tenantId}&Status=${response.MaterialReceipt[0].mrnStatus}`));
+        dispatch(setRoute(`/egov-store-asset/view-material-receipt-note?applicationNumber=${mrnNumber}&tenantId=${response.MaterialReceipt[0].tenantId}&Status=${response.MaterialReceipt[0].mrnStatus}`));
       }
     } catch (error) {
       furnishindentData(state, dispatch);
@@ -343,7 +341,8 @@ export const createUpdateMR = async (state, dispatch, action) => {
       );
       if (response) {
         let mrnNumber = response.MaterialReceipt[0].mrnNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPT&mode=update&code=${mrnNumber}`));
+        //        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALRECEIPT&mode=update&code=${mrnNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-material-receipt-note?applicationNumber=${mrnNumber}&tenantId=${response.MaterialReceipt[0].tenantId}&Status=${response.MaterialReceipt[0].mrnStatus}`));
       }
     } catch (error) {
       furnishindentData(state, dispatch);

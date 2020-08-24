@@ -251,7 +251,6 @@ export const createUpdateIndent = async (state, dispatch, action) => {
   if (action === "CREATE") {
     try {
       let wfobject = getWFPayload(state, dispatch)
-      alert(JSON.stringify(wfobject))
       console.log(queryObject)
       console.log("queryObject")
       let response = await createMaterialIndent(
@@ -278,7 +277,8 @@ export const createUpdateIndent = async (state, dispatch, action) => {
       );
       if (response) {
         let indentNumber = response.indents[0].indentNumber
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALINDENT&mode=update&code=${indentNumber}`));
+        //        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=MATERIALINDENT&mode=update&code=${indentNumber}`));
+        dispatch(setRoute(`/egov-store-asset/view-indent?applicationNumber=${indentNumber}&tenantId=${response.indents[0].tenantId}&Status=${response.indents[0].indentStatus}`));
       }
     } catch (error) {
       furnishindentData(state, dispatch);
@@ -314,13 +314,18 @@ export const getMaterialIndentData = async (
   // response = response.indents.filter(x => x.id === id)
   response = response.indents.filter(x => x.indentNumber === applicationNumber)
   //dispatch(prepareFinalObject("priceLists", get(response, "priceLists")));
+
+  let TotalQty = 0;
   if (response && response[0]) {
     for (let index = 0; index < response[0].indentDetails.length; index++) {
       const element = response[0].indentDetails[index];
       let Uomname = GetMdmsNameBycode(state, dispatch, "viewScreenMdmsData.common-masters.UOM", element.uom.code)
       set(response[0], `indentDetails[${index}].uom.name`, Uomname);
+      TotalQty = TotalQty + Number(element.indentQuantity)
     }
   }
+  set(response[0], `totalQty`, TotalQty);
+  //dispatch(prepareFinalObject(`indents[0].totalQty`, TotalQty));
   dispatch(prepareFinalObject("indents", response));
   //dispatch(prepareFinalObject("indents", get(response, "indents")));
 
