@@ -75,21 +75,13 @@ const createMatrialIndentInwordHandle = async (state, dispatch) => {
 /** MenuButton data based on status */
 let printMenu = [];
 let receiptPrintObject = {
-  label: { labelName: "Receipt", labelKey: "STORE_PRINT_INDENT_NOTE" },
+  label: { labelName: "Receipt", labelKey: "STORE_PRINT_INDENT_INWORD" },
   link: () => {
     downloadAcknowledgementForm("Indent Inward");
   },
   leftIcon: "receipt"
 };
-switch (status) {
-  case "APPROVED":
-   
-    printMenu = [receiptPrintObject];
-    break;
-  
-  default:
-    break;
-}
+printMenu = [receiptPrintObject];
 //pint function UI End SE0001
 
 const masterView = MaterialTransferInwordReviewDetails(false);

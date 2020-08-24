@@ -52,6 +52,10 @@ const ApplicationStatusContainer = Loadable({
   loader: () => import("./ApplicationStatus"),
   loading: () => <Loading />
 });
+const ViewMemberLinkContainer = Loadable({
+  loader: () => import("./viewMemberLink"),
+  loading: () => <Loading />
+})
 
 export {
   TestAtoms,
@@ -63,5 +67,6 @@ export {
   MenuButton,
   FireNocIcon,
   MyApplicationIcon,
-  ApplicationStatusContainer
+  ApplicationStatusContainer,
+  ViewMemberLinkContainer
 };

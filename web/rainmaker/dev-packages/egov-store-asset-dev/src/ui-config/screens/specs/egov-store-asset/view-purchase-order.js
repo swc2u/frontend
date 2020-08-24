@@ -65,21 +65,13 @@ if(status)
 /** MenuButton data based on status */
 let printMenu = [];
 let receiptPrintObject = {
-  label: { labelName: "Receipt", labelKey: "STORE_PRINT_INDENT_NOTE" },
+  label: { labelName: "Receipt", labelKey: "STORE_PRINT_PO" },
   link: () => {
     downloadAcknowledgementForm("Purchase Order");
   },
   leftIcon: "receipt"
 };
-switch (status) {
-  case "APPROVED":
-   
-    printMenu = [receiptPrintObject];
-    break;
-  
-  default:
-    break;
-}
+printMenu = [receiptPrintObject];
 //pint function UI End SE0001
   export const header = getCommonContainer({
     header: getCommonHeader({
@@ -136,13 +128,24 @@ switch (status) {
     );
      setDateInYmdFormat(purchaseOrders[0], ["expectedDeliveryDate", "purchaseOrderDate"]); 
      //get set total value
+     let totalIndentQty = 0;
+     let totalvalue = 0
+     let TotalQty = 0;
      for (let index = 0; index < purchaseOrders[0].purchaseOrderDetails.length; index++) {
        const element = purchaseOrders[0].purchaseOrderDetails[index];
        let userQuantity = get(purchaseOrders[0], `purchaseOrderDetails[${index}].userQuantity`,0)
        let unitPrice = get(purchaseOrders[0], `purchaseOrderDetails[${index}].unitPrice`,0)
+       let indentQuantity = get(purchaseOrders[0], `purchaseOrderDetails[${index}].indentQuantity`,0)
+       let orderQuantity = get(purchaseOrders[0], `purchaseOrderDetails[${index}].orderQuantity`,0)
        set(purchaseOrders[0], `purchaseOrderDetails[${index}].totalValue`,unitPrice*userQuantity);
-       
+       totalvalue = totalvalue+(unitPrice*userQuantity)
+       totalIndentQty = totalIndentQty+ indentQuantity
+       TotalQty = TotalQty+ orderQuantity
      } 
+     dispatch(prepareFinalObject(`purchaseOrders[0].totalIndentQty`, totalIndentQty));
+     dispatch(prepareFinalObject(`purchaseOrders[0].totalvalue`, totalvalue));
+     dispatch(prepareFinalObject(`purchaseOrders[0].totalQty`, TotalQty));
+
     dispatch(prepareFinalObject("purchaseOrders", purchaseOrders));
   };
   const screenConfig = {

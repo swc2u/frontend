@@ -8,7 +8,7 @@ import {
   import { getSearchResults} from "../../../../ui-utils/commons";
   import { MaterialIndentDetails } from "./createindentResource/Material-Indent"; 
   import { MaterialIndentMapDetails } from "./createindentResource/Material-indent-map"; 
-  
+  import {totalValue} from './createindentResource/totalValue';
   import set from "lodash/set";
   import get from "lodash/get";
   import map from "lodash/map";
@@ -60,7 +60,8 @@ export const header = getCommonContainer({
       id: "apply_form2"
     },
     children: {     
-      MaterialIndentMapDetails
+      MaterialIndentMapDetails,
+     totalValue
     },
     visible: false
   };

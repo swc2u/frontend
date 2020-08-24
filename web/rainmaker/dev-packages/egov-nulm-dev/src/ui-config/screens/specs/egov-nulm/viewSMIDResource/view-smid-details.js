@@ -29,7 +29,7 @@ export const getSMIDDetailsView = (isReview = true) => {
           },
           ...getCommonSubHeader({
             labelName: "View SMID",
-            labelKey: "NULM_APPLICATION_FOR_VIEW_SMID_PROGRAM"
+            labelKey: "NULM_APPLICATION_FOR_SMID_DETAILS"
           })
         },
         editSection: {
@@ -168,14 +168,14 @@ export const getSMIDDetailsView = (isReview = true) => {
       isMinority: getLabelWithValue(
         {
           labelName: "Minority",
-          labelKey: "NULM_SMID_MINORITY"
+          labelKey: "NULM_SEP_MINORITY"
         },
         { jsonPath: "NULMSMIDRequest.isMinority" }
       ),
       minority: getLabelWithValue(
         {
           labelName: "Minority",
-          labelKey: "NULM_SEP_MINORITY"
+          labelKey: "NULM_SEP_MINORITY_RELIGION"
         },
         { jsonPath: "NULMSMIDRequest.minority" }
       ),

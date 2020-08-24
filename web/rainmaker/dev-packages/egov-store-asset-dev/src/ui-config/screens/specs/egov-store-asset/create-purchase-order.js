@@ -157,7 +157,7 @@ import { getMaterialIndentSearchResults } from "../../../../ui-utils/storecommon
     // fetching employee designation
     const userInfo = JSON.parse(getUserInfo());
     if(userInfo){
-      dispatch(prepareFinalObject("purchaseOrders[0].createdBy", userInfo.name));
+      dispatch(prepareFinalObject("purchaseOrders[0].poCreatedBy", userInfo.name));
       const queryParams = [{ key: "codes", value: userInfo.userName },{ key: "tenantId", value:  getTenantId() }];
       try { 
         const payload = await httpRequest(
@@ -172,6 +172,7 @@ import { getMaterialIndentSearchResults } from "../../../../ui-utils/storecommon
           if(designationsById){
           const desgnName = Object.values(designationsById).filter(item =>  item.code === empdesignation )
           dispatch(prepareFinalObject("purchaseOrders[0].issuedToDesignation", desgnName[0].name));
+          dispatch(prepareFinalObject("purchaseOrders[0].designation", desgnName[0].name));
           }
         }
         

@@ -15,9 +15,12 @@ import set from "lodash/set";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-import{GetMdmsNameBycode} from '../../../../../ui-utils/storecommonsapi'
+import{GetMdmsNameBycode, GetTotalQtyValue} from '../../../../../ui-utils/storecommonsapi'
 const purchaseOrderDetailsCard = {
-  uiFramework: "custom-containers",
+  // uiFramework: "custom-containers",
+  // componentPath: "MultiItem",
+  uiFramework: "custom-containers-local",
+  moduleName: "egov-store-asset",
   componentPath: "MultiItem",
   props: {
     scheama: getCommonGrayCard({
@@ -182,6 +185,22 @@ const purchaseOrderDetailsCard = {
                   let unitPrice =   get(state.screenConfiguration.preparedFinalObject,`purchaseOrders[0].purchaseOrderDetails[${itemIndex}].unitPrice`,0)
                   let totalAcceptedvalue = unitPrice * Number(action.value)
                  dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${itemIndex}].totalValue`, totalAcceptedvalue));
+                 //set total value on Qty Change
+                 let cardJsonPath =
+                  "components.div.children.formwizardThirdStep.children.purchaseOrderDetails.children.cardContent.children.purchaseOrderDetailsCard.props.items";
+                 let pagename = `create-purchase-order`;
+                 let jasonpath =  "purchaseOrders[0].purchaseOrderDetails";
+                 let InputQtyValue = "indentQuantity";
+                 let TotalValue = "totalValue";
+                 let TotalQty ="userQuantity"
+                 let Qty = GetTotalQtyValue(state,cardJsonPath,pagename,jasonpath,InputQtyValue,TotalValue,TotalQty)
+                 if(Qty && Qty[0])
+                 {
+                  dispatch(prepareFinalObject(`purchaseOrders[0].totalIndentQty`, Qty[0].InputQtyValue));
+                  dispatch(prepareFinalObject(`purchaseOrders[0].totalvalue`, Qty[0].TotalValue));
+                  dispatch(prepareFinalObject(`purchaseOrders[0].totalQty`, Qty[0].TotalQty));
+
+                 }
                  }
 
             }
@@ -208,7 +227,23 @@ const purchaseOrderDetailsCard = {
                   let orderQuantity =   get(state.screenConfiguration.preparedFinalObject,`purchaseOrders[0].purchaseOrderDetails[${itemIndex}].orderQuantity`,0)
                   let totalAcceptedvalue = orderQuantity * Number(action.value)
                  dispatch(prepareFinalObject(`purchaseOrders[0].purchaseOrderDetails[${itemIndex}].totalValue`, totalAcceptedvalue));
-                 }
+                  //set total value on Qty Change
+                  let cardJsonPath =
+                  "components.div.children.formwizardThirdStep.children.purchaseOrderDetails.children.cardContent.children.purchaseOrderDetailsCard.props.items";
+                  let pagename = `create-purchase-order`;
+                  let jasonpath =  "purchaseOrders[0].purchaseOrderDetails";
+                  let InputQtyValue = "indentQuantity";
+                  let TotalValue = "totalValue";
+                  let TotalQty ="orderQuantity"
+                  let Qty = GetTotalQtyValue(state,cardJsonPath,pagename,jasonpath,InputQtyValue,TotalValue,TotalQty)
+                  if(Qty && Qty[0])
+                  {
+                   dispatch(prepareFinalObject(`purchaseOrders[0].totalIndentQty`, Qty[0].InputQtyValue));
+                   dispatch(prepareFinalObject(`purchaseOrders[0].totalvalue`, Qty[0].TotalValue));
+                   dispatch(prepareFinalObject(`purchaseOrders[0].totalQty`, Qty[0].TotalQty));
+ 
+                  }
+                }
 
             }
 
@@ -268,6 +303,9 @@ const purchaseOrderDetailsCard = {
         }
       )
     }),
+     onMultiItemDelete:(state, dispatch)=>{       
+
+      },
     onMultiItemAdd: (state, muliItemContent) => {
       let indentNumber="";
        indentNumber = getQueryArg(window.location.href, "indentNumber");
@@ -312,6 +350,22 @@ const purchaseOrderDetailsCard = {
     sourceJsonPath: "purchaseOrders[0].purchaseOrderDetails",
     prefixSourceJsonPath:
       "children.cardContent.children.poDetailsCardContainer.children",
+      //Update Total value when delete any card configuration settings
+      //  cardJsonPath =
+      // "components.div.children.formwizardThirdStep.children.purchaseOrderDetails.children.cardContent.children.purchaseOrderDetailsCard.props.items";
+      //  pagename = `create-purchase-order`;
+      // jasonpath =  "purchaseOrders[0].purchaseOrderDetails";
+      // InputQtyValue = "indentQuantity";
+      // TotalValue = "totalValue";
+      cardtotalpropes:{
+        totalIndentQty:true,
+        pagename:`create-purchase-order`,
+        cardJsonPath:"components.div.children.formwizardThirdStep.children.purchaseOrderDetails.children.cardContent.children.purchaseOrderDetailsCard.props.items",
+        jasonpath:"purchaseOrders[0].purchaseOrderDetails",
+        InputQtyValue:"indentQuantity",
+        TotalValue:"totalValue",
+        TotalQty:"totalValue"
+      }
    // disableDeleteIfKeyExists: "id"
   },
   type: "array"

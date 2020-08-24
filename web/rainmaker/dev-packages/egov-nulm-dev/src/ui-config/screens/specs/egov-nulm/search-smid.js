@@ -95,7 +95,7 @@ import {
                   sm: 6,
                   align: "right",
                 },
-                visible: enableButton,
+                visible: process.env.REACT_APP_NAME === "Employee"? false : true,
                 props: {
                   variant: "contained",
                   color: "primary",

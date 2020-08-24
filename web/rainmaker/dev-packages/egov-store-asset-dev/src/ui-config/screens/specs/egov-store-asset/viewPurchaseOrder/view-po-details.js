@@ -112,6 +112,11 @@ const assignmentCard = {
   type: "array"
 };
 
+// const Total = {
+//   uiFramework: "custom-containers",
+//   componentPath: "MultiItem",
+// },
+
 export const getPODetailsView = (isReview = true) => {
   return getCommonGrayCard({
     headerDiv: {
@@ -162,6 +167,7 @@ export const getPODetailsView = (isReview = true) => {
         }
       }
     },
-    viewOne: assignmentCard
+    viewOne: assignmentCard,
+   
   });
 };

@@ -12,7 +12,7 @@ import {
   import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
   import{getOpeningBalanceSearchResults} from '../../../../../ui-utils/storecommonsapi'
-  import{getmaterialissuesSearchResults,GetMdmsNameBycode} from '../../../../../ui-utils/storecommonsapi'
+  import{getmaterialissuesSearchResults,GetMdmsNameBycode,GetTotalQtyValue} from '../../../../../ui-utils/storecommonsapi'
   const getBalanceQty = async (action, state, dispatch) => {
     const tenantId = getTenantId();
     const storecode = get(state.screenConfiguration.preparedFinalObject,"materialIssues[0].fromStore.code", '' )
@@ -69,7 +69,8 @@ import {
   };
   
   const materialIssueCard = {
-    uiFramework: "custom-containers",
+    uiFramework: "custom-containers-local",
+    moduleName: "egov-store-asset",
     componentPath: "MultiItem",
     props: {
       scheama: getCommonGrayCard({
@@ -245,6 +246,23 @@ import {
                 dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].pendingIndentQuantity`,pendingIndentQuantity));
                 dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.indentIssuedQuantity`,Number(action.value)));
                 //indentIssuedQuantity
+
+                //set total value on Qty Change
+                let cardJsonPath =
+                "components.div.children.formwizardSecondStep.children.materialIssue.children.cardContent.children.materialIssueCard.props.items";
+               let pagename = `createMaterialIndentNote`;
+               let jasonpath =  "materialIssues[0].materialIssueDetails";
+               let InputQtyValue = "indentDetail.indentQuantity";
+               let TotalValue_ = "indentDetail.totalValue";
+               let TotalQty ="indentDetail.userQuantity"
+               let Qty = GetTotalQtyValue(state,cardJsonPath,pagename,jasonpath,InputQtyValue,TotalValue_,TotalQty)
+               if(Qty && Qty[0])
+               {
+                dispatch(prepareFinalObject(`materialIssues[0].totalIndentQty`, Qty[0].InputQtyValue));
+                dispatch(prepareFinalObject(`materialIssues[0].totalvalue`, Qty[0].TotalValue));
+                dispatch(prepareFinalObject(`materialIssues[0].totalQty`, Qty[0].TotalQty));
+
+               }
               }
             },
             uomCode: {
@@ -381,6 +399,9 @@ import {
         )
       }),
       items: [],
+      onMultiItemDelete:(state, dispatch)=>{       
+
+      },
       addItemLabel: {
         labelName: "Add ",
         labelKey: "STORE_MATERIAL_COMMON_CARD_ADD"
@@ -390,6 +411,16 @@ import {
       headerJsonPath:
         "children.cardContent.children.header.children.head.children.Accessories.props.label",
       sourceJsonPath: "materialIssues[0].materialIssueDetails",
+       //Update Total value when delete any card configuration settings     
+       cardtotalpropes:{
+        totalIndentQty:false,
+        pagename:`createMaterialIndentNote`,
+        cardJsonPath:"components.div.children.formwizardSecondStep.children.materialIssue.children.cardContent.children.materialIssueCard.props.items",
+        jasonpath:"materialIssues[0].materialIssueDetails",
+        InputQtyValue:"indentDetail.indentQuantity",
+        TotalValue:"indentDetail.TotalValue",
+        TotalQty:"indentDetail.userQuantity"
+      },
       prefixSourceJsonPath:
         "children.cardContent.children.materialIssueCardContainer.children"
     },

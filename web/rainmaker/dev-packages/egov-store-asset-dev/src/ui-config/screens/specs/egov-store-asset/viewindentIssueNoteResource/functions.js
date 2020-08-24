@@ -330,6 +330,9 @@ export const getMaterialIndentData = async (
  let response = await getmaterialissuesSearchResults(queryObject, dispatch);
 // let response = samplematerialsSearch();
 response = response.materialIssues.filter(x=>x.issueNumber === issueNumber)
+let totalIndentQty = 0;
+let totalvalue = 0
+let TotalQty = 0;
 if(response && response[0])
 {
   for (let index = 0; index < response[0].materialIssueDetails.length; index++) {
@@ -338,7 +341,13 @@ if(response && response[0])
    let matname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.store-asset.Material",element.material.code)  
    set(response[0], `materialIssueDetails[${index}].material.name`, matname);
    set(response[0], `materialIssueDetails[${index}].uom.name`, Uomname);
+   totalvalue = totalvalue+ Number(element.value)
+   totalIndentQty = totalIndentQty+  Number(element.indentDetail.indentQuantity)
+   TotalQty = TotalQty + Number(element.quantityIssued)
   }
+  dispatch(prepareFinalObject(`indents[0].indentQuantity`, totalIndentQty));
+  dispatch(prepareFinalObject(`indents[0].totalQty`, TotalQty));
+  dispatch(prepareFinalObject(`indents[0].totalvalue`, totalvalue));
   let IndentId = getQueryArg(window.location.href, "IndentId");
   let queryObject_ = [
     

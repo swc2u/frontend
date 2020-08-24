@@ -311,11 +311,11 @@ export const SepDetails = getCommonCard({
       ...getTextField({
         label: {
           labelName: "BPL NULM_SEP_BPL_NUMBER",
-          labelKey: "NULM_SEP_BPL_NUMBER"
+          labelKey: "NULM_SMID_BPL_NUMBER"
         },
         placeholder: {
           labelName: "Enter NULM_SEP_BPL_NUMBER",
-          labelKey: "NULM_SEP_BPL_NUMBER_PLACEHOLDER"
+          labelKey: "NULM_SMID_BPL_NUMBER_PLACEHOLDER"
         },
         required: false,
         pattern: getPattern("alpha-numeric") || null,

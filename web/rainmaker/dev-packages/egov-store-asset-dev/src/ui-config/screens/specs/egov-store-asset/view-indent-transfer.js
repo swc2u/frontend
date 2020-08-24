@@ -85,21 +85,13 @@ const createMatrialIndentOutwordHandle=async (state, dispatch) => {
 /** MenuButton data based on status */
 let printMenu = [];
 let receiptPrintObject = {
-  label: { labelName: "Receipt", labelKey: "STORE_PRINT_INDENT_NOTE" },
+  label: { labelName: "Receipt", labelKey: "STORE_PRINT_INDENT_TFR" },
   link: () => {
     downloadAcknowledgementForm("Indent Transfer");
   },
   leftIcon: "receipt"
 };
-switch (status) {
-  case "APPROVED":
-   
-    printMenu = [receiptPrintObject];
-    break;
-  
-  default:
-    break;
-}
+printMenu = [receiptPrintObject];
 //pint function UI End SE0001
 const masterView = MTIReviewDetails(false);
 const getMdmsData = async (action, state, dispatch, tenantId) => {
@@ -227,7 +219,7 @@ const screenConfig = {
                 lg:3,
                 // align: "right",
               },  
-              visible: false,// enableButton,
+              visible: true,// enableButton,
               props: {
                 variant: "contained",
                 color: "primary",

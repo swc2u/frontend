@@ -988,6 +988,38 @@ export const ValidateCardQty = (state,dispatch,cardJsonPath,pagename,jasonpath,v
   return DuplicatItem;
 };
 
+export const GetTotalQtyValue = (state,cardJsonPath,pagename,jasonpath,InputQtyValue,TotalValue,TotalQty) => {
+  let  CardTotalQty =[];
+  let InputQtyValue_ =0;
+  let TotalValue_ = 0;
+  let TotalQty_ = 0;
+  let CardItem = get(
+    state.screenConfiguration.screenConfig[`${pagename}`],
+    cardJsonPath,
+    []
+  );
+
+  for (let index = 0; index < CardItem.length; index++) {
+    if(CardItem[index].isDeleted === undefined ||
+    CardItem[index].isDeleted !== false)
+    {   
+     InputQtyValue_ = InputQtyValue_+ get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${InputQtyValue}`,0) 
+    TotalValue_  = TotalValue_+ get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${TotalValue}`,0)  
+    TotalQty_ = TotalQty_ + Number( get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${TotalQty}`,0))
+    }
+  }
+  CardTotalQty.push(
+    {
+      InputQtyValue: InputQtyValue_,
+      TotalValue : TotalValue_,
+      TotalQty:TotalQty_
+    }
+  )
+
+  return CardTotalQty;
+};
+
+
 
 export const getCommonFileUrl = (linkText="") => {
   const linkList = linkText.split(",");

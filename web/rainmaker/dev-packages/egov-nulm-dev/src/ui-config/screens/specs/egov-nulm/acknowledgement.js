@@ -31,6 +31,12 @@ case "REGORGANIZATION" :
     labelKey: `NULM_APPLICATION_SUCCESS_${screenName}_${mode}`,
   }
   break;
+  case "SMIDORG":
+    labelValue = {
+      labelName: "SMID for Organization Submitted Successfully",
+      labelKey: `NULM_APPLICATION_SUCCESS_${screenName}_${mode}`,
+    }
+    break;
     default :  labelValue = {
       labelName: "Submitted Successfully",
       labelKey: "",
@@ -45,6 +51,7 @@ const getApplicationDisplayCode =() => {
   switch(screenName){
     case "SEP":
     case "SMID" :
+    case "SMIDORG":
          labelValue = {
       labelName: "Application Id",
       labelKey: `NULM_SEP_APPLICATION_ID`,

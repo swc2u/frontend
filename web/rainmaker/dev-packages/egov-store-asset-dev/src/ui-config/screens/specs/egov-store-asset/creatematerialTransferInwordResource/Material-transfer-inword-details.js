@@ -255,7 +255,7 @@ import {
       {
         labelName: "Material Transfer Inward Details",
         labelKey: "STORE_MATERIAL_TRANSFER_INWARD_DETAILS"
-      },k,
+      },
       {
         style: {
           marginBottom: 18

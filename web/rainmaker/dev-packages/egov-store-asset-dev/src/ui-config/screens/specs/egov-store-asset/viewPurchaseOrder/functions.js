@@ -161,7 +161,40 @@ export const createUpdatePO = async (state, dispatch, action) => {
   );
   for (let i = 0; i < poDetailArray.length; i++) {
     set(purchaseOrders[0], `purchaseOrderDetails[${i}].tenantId`, tenantId);
-    set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList`, priceList[0]);
+    // if ratebtype is GEM
+    const {rateType} = purchaseOrders[0];  
+    const {supplier} = purchaseOrders[0];  
+    let priceListgem = get(
+      state.screenConfiguration.preparedFinalObject,
+      "purchaseOrders[0].priceList",
+      []
+    );
+    const {rateContractNumber} = priceListgem[0];
+    const {rateContractDate} = priceListgem[0];
+    const {agreementNumber} = priceListgem[0];
+    const {agreementDate} = priceListgem[0];
+    const {agreementStartDate} = priceListgem[0];
+    const {agreementEndDate} = priceListgem[0];
+    if(rateType.toLocaleUpperCase() === 'GEM')
+    {
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.tenantId`, null);
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.supplier.code`, supplier.code);
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.supplier.name`, supplier.name);
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.rateType`, "Gem");
+      set(purchaseOrders[0], `rateType`, "Gem");
+      dispatch(prepareFinalObject("purchaseOrders[0].rateType", "Gem"));  
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.rateContractNumber`, rateContractNumber);
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.rateContractDate`, convertDateToEpoch(rateContractDate));
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.agreementNumber`, (agreementNumber));
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.agreementDate`,convertDateToEpoch( agreementDate));
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.agreementStartDate`, convertDateToEpoch(agreementStartDate));
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.agreementEndDate`, convertDateToEpoch(agreementEndDate));
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList.active`, true);
+    }
+    else{
+      set(purchaseOrders[0], `purchaseOrderDetails[${i}].priceList`, priceList[0]);
+
+    }
     let indentNumber="";
     indentNumber = getQueryArg(window.location.href, "indentNumber");
    if(indentNumber){

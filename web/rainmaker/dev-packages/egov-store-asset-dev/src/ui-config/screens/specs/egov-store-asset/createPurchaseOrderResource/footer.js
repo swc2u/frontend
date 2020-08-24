@@ -4,7 +4,7 @@ import {
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { toggleSnackbar,prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { toggleSnackbar,prepareFinalObject,handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
   getCommonApplyFooter,
   ifUserRoleExists,
@@ -178,6 +178,69 @@ export const callBackForNext = async (state, dispatch) => {
   }
       }
       else{
+        //get po rate type if GEM them Price list info fill by user
+        // for REM
+        const {purchaseOrders}  = state.screenConfiguration.preparedFinalObject;
+        const {rateType} = purchaseOrders[0];
+        if(rateType.toLocaleUpperCase() === 'GEM')
+        {
+              
+              dispatch(
+              handleField(`create-purchase-order`,
+              "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.rateContractNumber",
+              "props.disabled",false));
+              
+              dispatch(
+              handleField(`create-purchase-order`,
+              "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.rateContractDate",
+              "props.disabled",false));
+              dispatch(
+                handleField(`create-purchase-order`,
+                "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementNumber",
+                "props.disabled",false));
+                
+                dispatch(
+                handleField(`create-purchase-order`,
+                "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementDate",
+                "props.disabled",false));
+              dispatch(
+                handleField(`create-purchase-order`,
+                "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementStartDate",
+                "props.disabled",false));
+              dispatch(
+                handleField(`create-purchase-order`,
+                "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementEndDate",
+                "props.disabled",false));
+        }
+        else{
+              dispatch(
+              handleField(`create-purchase-order`,
+              "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.rateContractNumber",
+              "props.disabled",true));
+              dispatch(
+              handleField(`create-purchase-order`,
+              "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.rateContractDate",
+              "props.disabled",true));
+              dispatch(
+                handleField(`create-purchase-order`,
+                "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementNumber",
+                "props.disabled",true));
+                
+                dispatch(
+                handleField(`create-purchase-order`,
+                "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementDate",
+                "props.disabled",true));
+              dispatch(
+                handleField(`create-purchase-order`,
+                "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementStartDate",
+                "props.disabled",true));
+              dispatch(
+                handleField(`create-purchase-order`,
+                "components.div.children.formwizardSecondStep.children.contractDetails.children.cardContent.children.contractDetailsContainer.children.agreementEndDate",
+                "props.disabled",true));
+
+        }
+        
         changeStep(state, dispatch);
       }
      

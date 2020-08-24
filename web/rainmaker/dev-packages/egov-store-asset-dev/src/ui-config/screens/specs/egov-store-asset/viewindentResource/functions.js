@@ -304,14 +304,19 @@ export const getMaterialIndentData = async (
 // let response = samplematerialsSearch();
 response = response.indents.filter(x=>x.id === id)
 //dispatch(prepareFinalObject("priceLists", get(response, "priceLists")));
+
+let TotalQty = 0;
 if(response && response[0])
 {
   for (let index = 0; index < response[0].indentDetails.length; index++) {
     const element = response[0].indentDetails[index];
    let Uomname = GetMdmsNameBycode(state, dispatch,"viewScreenMdmsData.common-masters.UOM",element.uom.code)   
    set(response[0], `indentDetails[${index}].uom.name`, Uomname);
+   TotalQty = TotalQty + Number(element.indentQuantity)
   }
 }
+set(response[0], `totalQty`, TotalQty);
+//dispatch(prepareFinalObject(`indents[0].totalQty`, TotalQty));
 dispatch(prepareFinalObject("indents", response));
   //dispatch(prepareFinalObject("indents", get(response, "indents")));
  

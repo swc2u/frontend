@@ -12,8 +12,8 @@ import { getTodaysDateInYMD } from "../../utils";
 export const SMIDOrgDetails = getCommonCard({
   header: getCommonTitle(
     {
-      labelName: "Application for SMID program",
-      labelKey: "NULM_APPLICATION_FOR_SMID_PROGRAM"
+      labelName: "SMID Details",
+      labelKey: "NULM_APPLICATION_FOR_SMID_DETAILS"
     },
     {
       style: {
@@ -140,7 +140,7 @@ export const SMIDOrgDetails = getCommonCard({
     accountNo: {
       ...getTextField({
         label: {
-          labelName: "SHG Account numberr",
+          labelName: "SHG Account number",
           labelKey: "NULM_SHG_ACCOUNT_NUMBER"
         },
         placeholder: {

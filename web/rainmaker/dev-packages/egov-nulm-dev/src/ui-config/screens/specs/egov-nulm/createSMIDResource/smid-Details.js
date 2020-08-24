@@ -296,12 +296,12 @@ export const SMIDDetails = getCommonCard({
         buttons: [
           {
             labelName: "FEMALE",
-            labelKey: "NULM_SMID_GENDER_FEMALE",
+            labelKey: "COMMON_GENDER_MALE",
             value:"FEMALE",           
           },
           {
             label: "MALE",
-            labelKey: "NULM_SMID_GENDER_MALE",
+            labelKey: "COMMON_GENDER_FEMALE",
             value:"MALE",           
           },
           {
@@ -326,7 +326,7 @@ export const SMIDDetails = getCommonCard({
       props: {
         required: true,
         jsonPath: "NULMSMIDRequest.isMinority",
-        label: { name: "Minority", key: "NULM_SMID_MINORITY" },
+        label: { name: "Minority", key: "NULM_SEP_MINORITY" },
         buttons: [
           {
             labelName: "YES",
