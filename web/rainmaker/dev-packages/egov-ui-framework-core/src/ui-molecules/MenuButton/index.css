@@ -1,7 +1,7 @@
 
 @media only screen and (min-width: 768px) {
   .menu-list-style{
-    width :200px
+    min-width :200px
   }
 }
 

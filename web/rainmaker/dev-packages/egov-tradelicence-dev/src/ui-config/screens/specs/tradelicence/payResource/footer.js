@@ -15,11 +15,13 @@ import {
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getBill } from "../../utils";
 
-export const callPGService = async (state, dispatch) => {
+export const callPGService = async (state, dispatch, item) => {
   const tenantId = getQueryArg(window.location.href, "tenantId");
-  let callbackUrl = `${document.location.origin}/${
-    process.env.NODE_ENV === "production" ? "citizen" : ""
+  const consumerCode = getQueryArg(window.location.href, "consumerCode");
+  let callbackUrl = `${document.location.origin}${
+    process.env.NODE_ENV === "production" ? "/citizen" : ""
   }/tradelicense-citizen/PaymentRedirectPage`;
+  const _businessService = get(state.screenConfiguration.preparedFinalObject, "Licenses[0].businessService", "");
   try {
     const queryObj = [
       {
@@ -28,62 +30,116 @@ export const callPGService = async (state, dispatch) => {
       },
       {
         key: "consumerCode",
-        value: getQueryArg(window.location.href, "applicationNumber")
+        value: consumerCode
       },
       {
         key: "businessService",
-        value: "TL"
+        value: _businessService
       }
     ];
-    const billPayload = await getBill(queryObj);
-    const taxAndPayments = get(
-      billPayload,
-      "billResponse.Bill[0].taxAndPayments",
-      []
-    ).map(item => {
-      if (item.businessService === "TL") {
-        item.amountPaid = get(
-          billPayload,
-          "billResponse.Bill[0].billDetails[0].totalAmount"
-        );
+
+  const billPayload = await getBill(queryObj);
+
+  const taxAmount = Number(get(billPayload, "Bill[0].totalAmount"));
+  // let amtToPay =
+  //   state.screenConfiguration.preparedFinalObject.AmountType ===
+  //   "partial_amount"
+  //     ? state.screenConfiguration.preparedFinalObject.AmountPaid
+  //     : taxAmount;
+  // amtToPay = amtToPay ? Number(amtToPay) : taxAmount;
+  const amtToPay = Number(taxAmount)
+
+  // if(amtToPay>taxAmount&&!isAdvancePaymentAllowed){
+  //   alert("Advance Payment is not allowed");
+  //   return;
+  // }
+
+  const user = {
+    name: get(billPayload, "Bill[0].payerName"),
+    mobileNumber: get(billPayload, "Bill[0].mobileNumber"),
+    tenantId
+  };
+  const businessService = get(billPayload, "Bill[0].businessService")
+  let taxAndPayments = [];
+  taxAndPayments.push({
+    // taxAmount:taxAmount,
+    // businessService: businessService,
+    billId: get(billPayload, "Bill[0].id"),
+    amountPaid: amtToPay
+  });
+
+  try {
+    const requestBody = {
+      Transaction: {
+        tenantId,
+        txnAmount: amtToPay,
+        module: businessService,
+        billId: get(billPayload, "Bill[0].id"),
+        consumerCode: consumerCode,
+        productInfo: "Common Payment",
+        gateway: item,
+        taxAndPayments,
+        user,
+        callbackUrl
       }
-      return item;
-    });
-    try {
-      const requestBody = {
-        Transaction: {
-          tenantId,
-          txnAmount: get(
-            billPayload,
-            "billResponse.Bill[0].billDetails[0].totalAmount"
-          ),
-          module: "TL",
-          taxAndPayments,
-          billId: get(billPayload, "billResponse.Bill[0].id"),
-          consumerCode: get(
-            billPayload,
-            "billResponse.Bill[0].billDetails[0].consumerCode"
-          ),
-          productInfo: "Trade License Payment",
-          gateway: "AXIS",
-          callbackUrl
-        }
-      };
-      const goToPaymentGateway = await httpRequest(
+    };
+
+    const goToPaymentGateway = await httpRequest(
+      "post",
+      "pg-service/transaction/v1/_create",
+      "_create",
+      [],
+      requestBody
+    );
+
+
+    if (get(goToPaymentGateway, "Transaction.txnAmount") == 0) {
+      const srcQuery = `?tenantId=${get(
+        goToPaymentGateway,
+        "Transaction.tenantId"
+      )}&billIds=${get(goToPaymentGateway, "Transaction.billId")}`;
+
+      let searchResponse = await httpRequest(
         "post",
-        "pg-service/transaction/v1/_create",
-        "_create",
+        "collection-services/payments/_search" + srcQuery,
+        "_search",
         [],
-        requestBody
+        {}
       );
-      const redirectionUrl = get(goToPaymentGateway, "Transaction.redirectUrl");
+
+      let transactionId = get(
+        searchResponse,
+        "Payments[0].paymentDetails[0].receiptNumber"
+      );
+
+      dispatch(
+        setRoute(
+          `/tradelicence/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}`
+        )
+      );
+    } else {
+      const redirectionUrl =
+        get(goToPaymentGateway, "Transaction.redirectUrl") ||
+        get(goToPaymentGateway, "Transaction.callbackUrl");
       window.location = redirectionUrl;
-    } catch (e) {
-      console.log(e);
     }
   } catch (e) {
     console.log(e);
+    if (e.code === "A transaction for this bill has been abruptly discarded, please retry after 30 mins"){
+      dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: e.message, labelKey: e.message },
+          "error"
+        )
+      );
+    }else{
+      moveToFailure(dispatch);
+    }
   }
+} catch (error) {
+  console.log(error);
+}
 };
 
 const moveToSuccess = (href, dispatch, receiptNumber) => {
@@ -94,6 +150,20 @@ const moveToSuccess = (href, dispatch, receiptNumber) => {
   dispatch(
     setRoute(
       `/tradelicence/acknowledgement?purpose=${purpose}&status=${status}&applicationNumber=${applicationNo}&tenantId=${tenantId}&secondNumber=${receiptNumber}`
+    )
+  );
+};
+
+const moveToFailure = dispatch => {
+  const consumerCode = getQueryArg(window.location, "consumerCode");
+  const tenantId = getQueryArg(window.location, "tenantId");
+  const status = "failure";
+  const purpose = "pay";
+  // const appendUrl =
+  //   process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+  dispatch(
+    setRoute(
+      `/tradelicence/acknowledgement?purpose=${purpose}&status=${status}&applicationNumber=${consumerCode}&tenantId=${tenantId}`
     )
   );
 };
@@ -113,6 +183,19 @@ const allDateToEpoch = (finalObj, jsonPaths) => {
     }
   });
 };
+
+const showError = async (state, dispatch) => {
+  dispatch(
+    toggleSnackbar(
+      true,
+      {
+        labelName: "",
+        labelKey: "TL_ERR_AMOUNT_NULL"
+      },
+      "error"
+    )
+  );
+}
 
 const callBackForPay = async (state, dispatch) => {
   const { href } = window.location;
@@ -258,7 +341,8 @@ export const getCommonApplyFooter = children => {
     uiFramework: "custom-atoms",
     componentPath: "Div",
     props: {
-      className: "apply-wizard-footer"
+      className: "apply-wizard-footer",
+      style: { display: "flex", justifyContent: "flex-end" }
     },
     children
   };
@@ -352,27 +436,39 @@ export const footer = getCommonApplyFooter({
   //     roles: ["CITIZEN"]
   //   }
   // },
+
   makePayment: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-tradelicence",
+    componentPath: "MenuButton",
+    props: {
+      data: {
+        label: {labelName : "MAKE PAYMENT" , labelKey :"COMMON_MAKE_PAYMENT"},
+        rightIcon: "arrow_drop_down",
+        props: { variant: "outlined", 
+        style: { marginLeft: 5, marginRight: 15, backgroundColor: "#FE7A51", color: "#fff", border: "none", height: "60px", width: "250px" } },
+        menu: []
+      }
+    },
+  },
+  errorButton: {
     componentPath: "Button",
     props: {
       variant: "contained",
       color: "primary",
-      className: "framework-responsive-button"
+      style: {
+        minWidth: "200px",
+        height: "48px",
+        marginRight: "45px"
+      }
     },
     children: {
-      submitButtonLabel: getLabel({
-        labelName: "MAKE PAYMENT",
-        labelKey: "TL_COMMON_BUTTON_CITIZEN_MAKE_PAYMENT"
-      })
+      submitButtonLabel: getLabel({labelName : "MAKE PAYMENT" , labelKey :"COMMON_MAKE_PAYMENT"}),
     },
     onClickDefination: {
       action: "condition",
-      callBack: callPGService
+      callBack: showError
     },
-    roleDefination: {
-      rolePath: "user-info.roles",
-      action: "PAY"
-    },
-    visible: process.env.REACT_APP_NAME === "Citizen" ? true : false
+    visible: false
   }
 });

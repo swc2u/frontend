@@ -3,7 +3,7 @@ import { getQueryArg } from "../utils/commons";
 /**
  * Example SMS URLs :
  * Generic way : "/otpLogin?mobileNo=8050579149&redirectTo={any_redirection_url}"
- * specific way : "/otpLogin?mobileNo=8050579149&redirectTo=uc-citizen/smsViewReceipt&params=pb.amritsar,05/2019-20/002226"  for UC.
+ * specific way : "/otpLogin?mobileNo=8050579149&redirectTo=uc-citizen/smsViewReceipt&params=ch.chandigarh,05/2019-20/002226"  for UC.
  */
 
 const getSmsRedirectionLink = (url) => {

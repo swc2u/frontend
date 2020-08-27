@@ -285,7 +285,7 @@ const Complaints = ({ complaints, complaintLocation, role, onComplaintClick, noC
                         />
                       )}
                       <Label
-                        label={locality}
+                        label={mohalla}
                         className="status-result-color"
                         id="complaint-details-complaint-location"
                         labelStyle={{ color: "inherit" }}

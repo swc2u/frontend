@@ -34,10 +34,12 @@ const assignmentDetailsCard = {
               pattern: getPattern("Date"),
               jsonPath: "Employee[0].assignments[0].fromDate",
               props: {
-                // inputProps: {
-                //   min: getTodaysDateInYMD(),
-                //   max: getFinancialYearDates("yyyy-mm-dd").endDate
-                // }
+                inputProps: {
+                  min: new Date().toISOString().slice(0, 10),
+                }
+              },
+              beforeFieldChange: (action, state, dispatch) => {
+              
               }
             })
           },
@@ -51,15 +53,14 @@ const assignmentDetailsCard = {
                 labelName: "Assigned To Date",
                 labelKey: "HR_ASMT_TO_DATE_PLACEHOLDER"
               },
-              // required: true,
+              //required: true,
               pattern: getPattern("Date"),
               jsonPath: "Employee[0].assignments[0].toDate",
               props: {
-                // inputProps: {
-                //   min: getTodaysDateInYMD(),
-                //   max: getFinancialYearDates("yyyy-mm-dd").endDate
-                // }
-              }
+                inputProps: {
+                  min: new Date().toISOString().slice(0, 10),
+                }
+              },
             })
           },
           dummyDiv: {
@@ -89,11 +90,13 @@ const assignmentDetailsCard = {
               SwitchProps: {
                 color: "primary"
               },
+              value:false,
               jsonPath: "Employee[0].assignments[0].isCurrentAssignment",
               compJPath:
                 "components.div.children.formwizardThirdStep.children.assignmentDetails.children.cardContent.children.assignmentDetailsCard.props.items",
               screenKey: "create"
             },
+           
             beforeFieldChange: (action, state, dispatch) => {
               let assignToComponentPath = action.componentJsonpath.replace(
                 ".currentAssignment",
@@ -191,6 +194,7 @@ const assignmentDetailsCard = {
                 labelName: "Reporting To",
                 labelKey: "HR_REP_TO_LABEL"
               },
+              required: true,
               pattern: getPattern("TradeName") || null,
               jsonPath: "Employee[0].assignments[0].reportingTo"
             })
@@ -199,6 +203,7 @@ const assignmentDetailsCard = {
             uiFramework: "custom-molecules-local",
             moduleName: "egov-hrms",
             componentPath: "SwitchWithLabel",
+            
             props: {
               items: [
                 {
@@ -211,7 +216,28 @@ const assignmentDetailsCard = {
               SwitchProps: {
                 color: "primary"
               },
+              value:false,
               jsonPath: "Employee[0].assignments[0].isHOD"
+            }
+          },
+          isPrimaryAssignment: {
+            uiFramework: "custom-molecules-local",
+            moduleName: "egov-hrms",
+            componentPath: "SwitchWithLabel",
+            props: {
+              items: [
+                {
+                  label: {
+                    labelName: "Is Primary Assignment",
+                    labelKey: "HR_IS_PRIMARY_ASSIGNMENT_SWITCH_LABEL"
+                  }
+                }
+              ],
+              SwitchProps: {
+                color: "primary"
+              },
+              value:false,
+              jsonPath: "Employee[0].assignments[0].isPrimaryAssignment"
             }
           }
         },

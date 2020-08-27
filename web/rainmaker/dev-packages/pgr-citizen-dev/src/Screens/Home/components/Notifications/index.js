@@ -9,7 +9,7 @@ import "./index.css";
 
 const Updates = ({ updates, history }) => {
   const renderUpdate = (update, index) => {
-    const { title, date, status, action } = update;
+    const { title, date, status, action,number } = update;
     let transformedstatus = "";
     const titleKey = title && "SERVICEDEFS." + title.toUpperCase();
     if (status) {
@@ -28,7 +28,7 @@ const Updates = ({ updates, history }) => {
         key={index}
         id={`home-notification${index}`}
         textChildren={
-          <div
+          <div 
             className="update"
             onClick={() => {
               history.push(
@@ -67,6 +67,11 @@ const Updates = ({ updates, history }) => {
                 labelStyle={{ paddingLeft: "5px" }}
                 containerStyle={{ display: "inline-block" }}
               />
+            </div>
+            <div >
+                    <Label fontSize="12px" label={"CS_COMMON_COMPLAINT_NO"}containerStyle={{ display: "inline-block" }} />
+                    <Label fontSize="12px" label={" : "} containerStyle={{ display: "inline-block" }}/>
+                    <Label fontSize="12px" label={number} containerStyle={{ display: "inline-block" }} />
             </div>
             <div className="complaint-status" style={{ marginTop: "16px" }}>
               <Label

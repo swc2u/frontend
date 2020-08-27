@@ -30,6 +30,9 @@ import {
   getLocaleLabels,
   getTransformedLocalStorgaeLabels
 } from "egov-ui-framework/ui-utils/commons";
+
+
+
 export const getCommonApplyFooter = children => {
   return {
     uiFramework: "custom-atoms",
@@ -432,17 +435,30 @@ const style = {
   }
 };
 
+export const getFeesEstimateOverviewCard = props => {
+  const { sourceJsonPath, ...rest } = props;
+  return {
+    uiFramework: "custom-containers-local",
+    moduleName: "egov-wns",
+    componentPath: "EstimateOverviewCardContainer",
+    props: {
+      sourceJsonPath,
+      ...rest
+    }
+  };
+};
+
 export const getIconStyle = key => {
   return style[key];
 };
 
-export const showHideAdhocPopup = (state, dispatch) => {
+export const showHideAdhocPopup = (state, dispatch, screenKey) => {
   let toggle = get(
-    state.screenConfiguration.screenConfig["pay"],
+    state.screenConfiguration.screenConfig[screenKey],
     "components.adhocDialog.props.open",
     false
   );
-  dispatch(handleField("pay", "components.adhocDialog", "props.open", !toggle));
+  dispatch(handleField(screenKey, "components.adhocDialog", "props.open", !toggle));
 };
 
 export const getButtonVisibility = (status, button) => {
@@ -538,6 +554,34 @@ export const getReceipt = async queryObject => {
   }
 };
 
+export const convertEpochToDateAndHandleNA = dateEpoch => {
+  if (
+    dateEpoch !== undefined &&
+    dateEpoch !== null &&
+    dateEpoch !== "" &&
+    dateEpoch !== "NA" &&
+    dateEpoch !== 0
+  ) {
+    let convertedToDate = convertEpochToDate(dateEpoch);
+    return convertedToDate;
+  } else { return "NA"; }
+}
+
+export const handlePropertySubUsageType = params => {
+  params = handleNA(params);
+  if (params !== "NA" && params.split(".").length > 1) {
+    return params;  
+  } else {
+    return "NA";
+  }
+}
+
+export const handleNA = params => {
+  if (params !== undefined && params !== null && params !== "" && params!==0) {
+    return params;
+  } else { return "NA"; }
+}
+
 export const convertEpochToDate = dateEpoch => {
   const dateFromApi = new Date(dateEpoch);
   let month = dateFromApi.getMonth() + 1;
@@ -583,7 +627,7 @@ export const getReceiptData = async queryObject => {
   try {
     const response = await httpRequest(
       "post",
-      "collection-services/receipts/_search",
+      "collection-services/payments/_search",
       "",
       queryObject
     );
@@ -2124,11 +2168,11 @@ export const fillOldLicenseData = async (state, dispatch) => {
   );
 };
 
-export const resetFields = (state, dispatch) => {
+export const resetFieldsForApplication = (state, dispatch) => {
   dispatch(
     handleField(
       "search",
-      "components.div.children.NOCApplication.children.cardContent.children.appNOCAndMobNumContainer.children.NOCNo",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.consumerNo",
       "props.value",
       ""
     )
@@ -2136,7 +2180,7 @@ export const resetFields = (state, dispatch) => {
   dispatch(
     handleField(
       "search",
-      "components.div.children.NOCApplication.children.cardContent.children.appNOCAndMobNumContainer.children.applicationNo",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.applicationNo",
       "props.value",
       ""
     )
@@ -2144,7 +2188,7 @@ export const resetFields = (state, dispatch) => {
   dispatch(
     handleField(
       "search",
-      "components.div.children.NOCApplication.children.cardContent.children.appNOCAndMobNumContainer.children.ownerMobNo",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.ownerMobNo",
       "props.value",
       ""
     )
@@ -2152,7 +2196,7 @@ export const resetFields = (state, dispatch) => {
   dispatch(
     handleField(
       "search",
-      "components.div.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.applicationNo",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.applicationstatus",
       "props.value",
       ""
     )
@@ -2160,7 +2204,7 @@ export const resetFields = (state, dispatch) => {
   dispatch(
     handleField(
       "search",
-      "components.div.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.fromDate",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.fromDate",
       "props.value",
       ""
     )
@@ -2168,12 +2212,39 @@ export const resetFields = (state, dispatch) => {
   dispatch(
     handleField(
       "search",
-      "components.div.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.toDate",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.toDate",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.applicationType",
       "props.value",
       ""
     )
   );
 };
+
+export const resetFieldsForConnection = (state, dispatch) => {
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[0].tabContent.wnsApplication.children.cardContent.children.wnsApplicationContainer.children.consumerNo",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[0].tabContent.wnsApplication.children.cardContent.children.wnsApplicationContainer.children.ownerMobNo",
+      "props.value",
+      ""
+    )
+  );
+}
 
 export const getCommonGrayCard = children => {
   return {
@@ -2225,8 +2296,7 @@ export const getLabelOnlyValue = (value, props = {}) => {
 };
 
 export const getRequiredDocData = async (action, state, dispatch) => {
-  let tenantId =
-    process.env.REACT_APP_NAME === "Citizen" ? "pb.amritsar" : getTenantId();
+  let tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,

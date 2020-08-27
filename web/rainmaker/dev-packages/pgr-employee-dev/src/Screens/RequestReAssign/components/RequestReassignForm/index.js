@@ -13,7 +13,7 @@ const RequestReassignForm = ({ form, onSubmit, options, ontextAreaChange, handle
           <Question options={options} label={"ES_REASSIGN_REQUEST_QUESTION"} handleChange={handleOptionChange} valueSelected={optionSelected} />
         </div>
         <div className="request-reaasign-textArea">
-          <TextArea onChange={ontextAreaChange} value={commentValue} {...fields.textarea} />
+          <TextArea onChange={ontextAreaChange} {...fields.textarea} value={commentValue}/>
         </div>
       </div>
       <div className="responsive-action-button-cont">

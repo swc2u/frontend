@@ -1,11 +1,12 @@
 import { setFieldProperty, handleFieldChange } from "egov-ui-kit/redux/form/actions";
 import get from "lodash/get";
+import set from "lodash/set";
 import { getUserInfo, getLocale } from "egov-ui-kit/utils/localStorageUtils";
 import { getTranslatedLabel } from "egov-ui-kit/utils/commons";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 
-const tenantId = JSON.parse(getUserInfo()).permanentCity;
-
+//const tenantId = JSON.parse(getUserInfo()).permanentCity;
+const tenantId = "ch.chandigarh"
 const formConfig = {
   name: "complaint",
   idJsonPath: "services[0].serviceRequestId",
@@ -15,6 +16,27 @@ const formConfig = {
       jsonPath: "actionInfo[0].media",
       file: true,
       errorMessage: "CS_FILE_UPLOAD_FAILED",
+    },
+    department: {
+      id: "department",
+      required: true,
+      jsonPath: "services[0].department",
+      floatingLabelText: "CS_ADDCOMPLAINT_DEPARTMENT",
+      hintText: "HR_DEPARTMENT_PLACEHOLDER",
+      errorMessage: "HR_DEPARTMENT_PLACEHOLDER",
+      boundary: true,
+      dropDownData: [],
+      updateDependentFields: ({ formKey, field, dispatch, state }) => {
+        if(field && field.value){
+          dispatch(setFieldProperty("complaint", "complaintType", "disabled", false));
+        }
+        else{
+          dispatch(setFieldProperty("complaint", "complaintType", "disabled", true));
+        }
+        dispatch(setFieldProperty("complaint", "complaintType", "value", ""));
+        },
+      errorStyle: { position: "absolute", bottom: -8, zIndex: 5 },
+      errorText: "",
     },
     complaintType: {
       id: "complaint-type",
@@ -30,6 +52,7 @@ const formConfig = {
       floatingLabelText: "CS_ADDCOMPLAINT_COMPLAINT_DETAILS",
       hintText: "CS_ADDCOMPLAINT_COMPLAINT_DETAILS_PLACEHOLDER",
       errorMessage: "Landmark should be less than 300 characters",
+      maxlength: "500"
     },
     latitude: {
       id: "latitude",
@@ -56,7 +79,7 @@ const formConfig = {
       errorText: "",
       dropDownData: [],
       updateDependentFields: ({ formKey, field, dispatch, state }) => {
-        dispatch(setFieldProperty("complaint", "mohalla", "value", ""));
+     //   dispatch(setFieldProperty("complaint", "mohalla", "value", ""));
       },
       beforeFieldChange: ({ action, dispatch, state }) => {
         if (get(state, "common.prepareFormData.services[0].addressDetail.city") !== action.value) {
@@ -66,13 +89,13 @@ const formConfig = {
         return action;
       },
       labelsFromLocalisation: true,
-      dataFetchConfig: {
+     /* dataFetchConfig: {
         dependants: [
           {
             fieldKey: "mohalla",
           },
         ],
-      },
+      }, */
     },
     mohalla: {
       id: "mohalla",
@@ -83,7 +106,7 @@ const formConfig = {
       errorMessage: "CS_ADDCOMPLAINT_COMPLAINT_TYPE_PLACEHOLDER",
       boundary: true,
       dropDownData: [],
-      dataFetchConfig: {
+    /*  dataFetchConfig: {
         url: "egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality",
         action: "",
         queryParams: [],
@@ -91,7 +114,7 @@ const formConfig = {
         isDependent: true,
         hierarchyType: "ADMIN",
       },
-
+          */
       errorStyle: { position: "absolute", bottom: -8, zIndex: 5 },
       errorText: "",
     },
@@ -124,8 +147,67 @@ const formConfig = {
       let state = store.getState();
       const { localizationLabels } = state.app;
       const { cities, citiesByModule } = state.common;
+      const {categoriesById ,complaintDepartment , complaintSector} = state.complaints
       const { PGR } = citiesByModule || {};
       if (PGR) {
+        // for department
+        let arrayOfDepartment =[];
+        let i=0;
+        const getNestedObjFormat = (categories) => {
+          let categoryList = {};
+          Object.values(categories).map((item) => {
+            set(categoryList, item.code , item);
+          });
+          return transform(categoryList);
+        };
+        
+        const transform = (input) => {
+          return Object.keys(input).reduce((result, itemKey) => {
+            const item = Object.assign({}, input[itemKey]);
+            if(item && item.code){
+              if(item.code != "undefined"){
+             const duplicate_flag =   arrayOfDepartment.find(ele => ele.value === item.code);
+             let DepLable="";
+             if(! duplicate_flag){
+               let codevalue = ""+item.code;
+               if(codevalue.includes("DEP")){
+                  DepLable = `PGRDEPT.${item.code.toUpperCase()}`;
+               }else{
+                   DepLable = item.name;
+               }
+              
+              arrayOfDepartment.push({ label: getTranslatedLabel(DepLable, localizationLabels) , value: item.code });
+             }
+                 
+              }
+              i++;
+            }
+            return result;
+          }, []);
+        };
+        
+
+const categoryList = getNestedObjFormat(complaintDepartment);
+dispatch(setFieldProperty("complaint", "department", "dropDownData", arrayOfDepartment));
+arrayOfDepartment =[];
+const sectorList = getNestedObjFormat(complaintSector);
+dispatch(setFieldProperty("complaint", "mohalla", "dropDownData", arrayOfDepartment));
+
+    let department = get(state, "form.complaint.fields.department");
+      if(department && department.value)
+        dispatch(setFieldProperty("complaint", "complaintType", "disabled", false));
+      else
+        dispatch(setFieldProperty("complaint", "complaintType", "disabled", true));
+
+   /*    categoryList.forEach(category => {
+        
+        if(category && category.nestedItems && category.nestedItems[0].department){
+          arrayOfDepartment[i] = category.nestedItems[0].department;
+          i++;
+        }
+       
+   })*/
+        // code change end here for department
         const tenants = PGR.tenants;
         const dd = tenants.reduce((dd, tenant) => {
           let selected = cities.find((city) => {
@@ -139,9 +221,10 @@ const formConfig = {
           return dd;
         }, []);
         dispatch(setFieldProperty("complaint", "city", "dropDownData", dd));
+        
       }
       let city = get(state, "form.complaint.fields.city.value");
-      let mohalla = get(state, "form.complaint.fields.mohalla.value");
+     // let mohalla = get(state, "form.complaint.fields.mohalla.value");
       if (!city) {
         dispatch(handleFieldChange("complaint", "city", tenantId));
       } else {
@@ -149,7 +232,7 @@ const formConfig = {
           dispatch(handleFieldChange("complaint", "city", city));
         }
         if (mohalla) {
-          dispatch(handleFieldChange("complaint", "mohalla", mohalla));
+         // dispatch(handleFieldChange("complaint", "mohalla", mohalla));
         }
       }
       return action;

@@ -6,6 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import { Tooltip } from "egov-ui-framework/ui-molecules";
 import { LabelContainer } from "egov-ui-framework/ui-containers";
+import "./index.css";
 
 const styles = {
   card: {
@@ -53,19 +54,21 @@ const styles = {
 
 function totalAmount(arr) {
   return arr
-    .map(item => (item.value ? item.value : 0))
+    .map(item => (item.value ? Number(item.value) : 0))
     .reduce((prev, next) => prev + next, 0);
 }
 
 function FeesEstimateCard(props) {
   const { classes, estimate } = props;
-  const total = totalAmount(estimate.fees);
+  const total = totalAmount(estimate.fees).toFixed(2);
   const isPaid=estimate.fees.payStatus
   const totalHeadClassName = "tl-total-amount-value " + classes.bigheader;
   return (
     <Grid container>
       <Grid xs={12} sm={7}>
-        {/* <Typography variant="subheading">{estimate.header}</Typography> */}
+        <Typography variant="subheading">
+          <LabelContainer labelName={estimate.header.labelName} labelKey={estimate.header.labelKey}/>
+          </Typography>
         <div style={{ marginTop: 48, maxWidth: 600 }}>
           <Grid container>
             {estimate.fees.map((fee, key) => {
@@ -147,7 +150,7 @@ function FeesEstimateCard(props) {
         <Typography className={totalHeadClassName} align="right">
           Rs {total}
         </Typography>
-        {isPaid? (
+        {/* {isPaid? (
         <Typography variant="body2" align="right"  style={{ color: 'green' }}>
           <LabelContainer
             labelName="Paid Successfully"
@@ -161,7 +164,7 @@ function FeesEstimateCard(props) {
             labelKey="TL_COMMON_NOT_PAID"
           />
           </Typography> )
-        }
+        } */}
         {estimate.extra && estimate.extra.length !== 0 ? (
           <Card className={classes.whiteCard}>
             {estimate.extra.map((item, key) => {

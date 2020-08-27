@@ -27,12 +27,12 @@ class DialogContainer extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   const { screenConfiguration } = state;
-  const { screenKey } = ownProps;
+  const { screenKey, open } = ownProps;
   const { screenConfig } = screenConfiguration;
-  const open = get(
-    screenConfig,
-    `${screenKey}.components.adhocDialog.props.open`
-  );
+  // const open = get(
+  //   screenConfig,
+  //   `${screenKey}.components.adhocDialog.props.open`
+  // );
 
   return {
     open,

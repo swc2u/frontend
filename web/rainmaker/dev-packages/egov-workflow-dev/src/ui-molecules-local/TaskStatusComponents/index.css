@@ -1,3 +1,6 @@
 body2-word-wrap {
   word-wrap: "break-word" !important;
 }
+.bodydata-word-wrap {
+  overflow-wrap: break-word !important;
+}

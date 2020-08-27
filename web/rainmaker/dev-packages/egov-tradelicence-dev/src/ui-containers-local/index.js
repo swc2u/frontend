@@ -52,6 +52,15 @@ const ResubmitActionContainer = Loadable({
   loading: () => <Loading />
 });
 
+const WorkFlowContainer = Loadable({
+  loader: () => import("./WorkFlowContainer"),
+  loading: () => <Loading />
+})
+
+const TaskStatusContainer = Loadable({
+  loader: () => import("./TaskStatusContainer"),
+  loading: () => <Loading />
+})
 
 export {
   CustomTabContainer,
@@ -64,5 +73,7 @@ export {
   PaymentRedirectPage,
   ViewBreakupContainer,
   DialogContainer,
-  ResubmitActionContainer
+  ResubmitActionContainer,
+  WorkFlowContainer,
+  TaskStatusContainer
 };

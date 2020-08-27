@@ -24,7 +24,7 @@
 }
 
 .citizen-header-logo > img {
-  width: 40px;
+  width: 49px;
   height: 49px;
 }
 
@@ -32,11 +32,27 @@
   text-transform: uppercase !important;
 }
 
+.rainmaker-displayInline .appbar-municipal-label div{
+	margin-bottom: 15px;
+}
+.rainmaker-displayInline-ut{
+	position: absolute;
+	padding-top: 11px;
+	margin-left: 50px;
+	height: auto;
+}
+.rainmaker-displayInline-ut .appbar-subheader-label div{ 
+	font-size: 12px !important;
+	text-transform: uppercase;
+	color: #484848!important;
+}
+
 @media only screen and (max-width: 768px) {
   .app-toolbar,
   .citizen-header-logo,
   .appbar-right-logo,
-  .appbar-municipal-label {
+  .appbar-municipal-label,
+  .rainmaker-displayInline-ut {
     display: none !important;
   }
 

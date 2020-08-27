@@ -32,18 +32,22 @@ const defaultLabelStyle = {
 };
 
 const LanguageSelectionForm = ({ items, onLanguageSelect, value, onClick }) => {
-  return (
+     if(value == "null")
+           value = null;
+    
+           return (
     <Card
       className="col-sm-offset-4 col-sm-4 user-screens-card language-selection-card"
       textChildren={
         <div>
            <div className="rainmaker-displayInline" style={{ justifyContent: "center" }}>
-            <div style={{ marginBottom: "24px" }}>
+          {/*  <div style={{ marginBottom: "24px" }}>
               <Image className="mseva-logo" source={`${logo}`} />
             </div >
           <div style={{marginLeft:"7px", marginBottom: "24px" }}>
           <Label bold={true}  fontSize= "23px" label="|" />
           </div>
+      */}
            <div style={{marginLeft:"7px" }}>
               <Label bold={true} color="black" fontSize= "24px" label="STATE_LABEL" />
            </div>
@@ -77,6 +81,9 @@ const LanguageSelectionForm = ({ items, onLanguageSelect, value, onClick }) => {
                 id="continue-action"
                 onClick={onLanguageSelect}
                 primary={true}
+                disabledBackgroundColor='#F4AA93'
+               style = {{backgroundColor : value ? '#FE7A51' : '#F4AA93'}}
+                disabled = {value ? false : true}
                 label={<Label buttonLabel={true}   labelStyle={{fontWeight:500 }}  label="CORE_COMMON_CONTINUE" />}
                 fullWidth={true}
               />

@@ -22,5 +22,14 @@ table tbody  tr  td {
     font-size: 14px !important;
     height: auto !important;
     white-space: pre-wrap !important;
+    word-break: break-all !important;
+    border: unset !important;
+    vertical-align: top !important;
+
   }
 }
+@media only screen and (max-width: 900px) {
+    span[class*="MUIDataTableBody-emptyTitle"] {
+    margin-left: -100% !important;
+    margin-top: 8% !important;
+  }}

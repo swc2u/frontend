@@ -588,6 +588,56 @@ class ShowForm extends Component {
         "/" +
         toDate.getFullYear()}`;
     }
+    // Tab Lable for Year and Month Selection in pension module for Monthly Pension Drawn start
+    let Year;
+    let Month;
+    if (searchForm && searchForm.Year && searchForm.Month) {
+      Year = searchForm.Year;
+      Month = searchForm.Month;
+      switch(Month)
+      {
+        case "1":
+          Month= "January"
+        break;
+        case "2":
+          Month= "February"
+        break;
+        case "3":
+          Month= "March"
+        break;
+        case "4":
+          Month= "April"
+        break;
+        case "5":
+          Month= "May"
+        break;
+        case "6":
+          Month= "June"
+        break;
+        case "7":
+          Month= "July"
+        break;
+        case "8":
+          Month= "August"
+        break;
+        case "9":
+          Month= "September"
+        break;
+        case "10":
+          Month= "October"
+        break;
+        case "11":
+          Month= "November"
+        break;
+        case "12":
+          Month= "December"
+        break;
+      }
+      tabLabel =`Showing data for : Selected Year : ${Year}  Selected Month : ${Month}`
+
+    }
+
+    // End
 
     /** Zone wise selection show in header */
     if (searchForm && searchForm.hasOwnProperty("ZonalSelection")) {
@@ -611,7 +661,13 @@ class ShowForm extends Component {
     let reportName = rptName || this.state.reportName;
     let reportTitleArr = reportName && reportName.split(/(?=[A-Z])/);
     let reportTitle = "";
-    if (reportTitleArr) {
+    if(rptName == 'ULBDepartmentReport'){
+      reportTitle = "Department Report"
+    }
+    else if (rptName == "ULBEmployeeWiseReport"){
+      reportTitle = "Employee Wise Report"
+    }
+    else if (reportTitleArr) {
       reportTitle = reportTitleArr.map((char) => {
         if (char.length == 1) {
           reportTitle = char + "";

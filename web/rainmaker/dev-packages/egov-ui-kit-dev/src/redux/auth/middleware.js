@@ -4,13 +4,27 @@ import { getAccessToken, getTenantId } from "egov-ui-kit/utils/localStorageUtils
 import { getNotificationCount, getNotifications } from "../app/actions";
 import get from "lodash/get"
 
+const roleFromUserInfo = (roles = [], role) => {
+  const roleCodes = roles.map((role, index) => {
+    return role.code;
+  });
+  return roleCodes && roleCodes.length && roleCodes.indexOf(role) > -1
+    ? true
+    : false;
+};
+
 const auth = (store) => (next) => (action) => {
   const { type } = action;
   const state = store.getState();
   const notifications = get(state.app, "notificationObj.notificationsById");
-
-  if (type === USER_SEARCH_SUCCESS) {
-    if (process.env.REACT_APP_NAME === "Citizen") {
+  let isSuperUser = false;
+  if(state && state.auth && state.auth.userInfo){
+    const {roles} = state.auth.userInfo; 
+    isSuperUser = roleFromUserInfo(roles , "SUPERUSER");
+  }
+  
+  if (type === USER_SEARCH_SUCCESS && !isSuperUser) {
+    if (process.env.REACT_APP_NAME === "Citizen" || process.env.REACT_APP_NAME === "Employee") {
       const permanentCity = action.user && action.user.permanentCity;
       const queryObject = [
         {
@@ -31,7 +45,7 @@ const auth = (store) => (next) => (action) => {
           authToken: getAccessToken(),
         },
       };
-      if ((window.location.pathname === "/" || window.location.pathname === "/citizen/" || window.location.pathname === "/employee/inbox")) {
+      if ((window.location.pathname === "/" || window.location.pathname === "/inbox" || window.location.pathname === "/citizen/" || window.location.pathname === "/employee/inbox")) {
         store.dispatch(getNotifications(queryObject, requestBody));
         store.dispatch(getNotificationCount(queryObject, requestBody));
       }

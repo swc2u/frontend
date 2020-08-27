@@ -27,7 +27,8 @@ export const callBackForNext = async (state, dispatch) => {
     "components.div.children.stepper.props.activeStep",
     0
   );
-  let isFormValid = true;
+  let isFormValid = true,finalErrString="";
+   
   if (activeStep === 0) {
     const isEmployeeDetailsValid = validateFields(
       "components.div.children.formwizardFirstStep.children.employeeDetails.children.cardContent.children.employeeDetailsContainer.children",
@@ -111,7 +112,76 @@ export const callBackForNext = async (state, dispatch) => {
       dispatch(toggleSnackbar(true, errorMessage, "warning"));
       return;
     }
+
+    let atLeastOnePrimaryAssignmentSelected = assignmentsData.some(
+      assignment => {
+        return assignment.isPrimaryAssignment;
+      }
+    );
+    if (!atLeastOnePrimaryAssignmentSelected) {
+      const errorMessage = {
+        labelName: "Please select at least one primary assignment",
+        labelKey: "ERR_SELECT_PRIMARY_ASSIGNMENT"
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      return;
+    }
+
+
     if (!isAssignmentDetailsValid) {
+      isFormValid = false;
+    }
+  }
+  if (activeStep === 3) {
+    let serviceDetailsPath =
+      "components.div.children.formwizardFourthStep.children.serviceDetails.children.cardContent.children.serviceDetailsCard.props.items";
+  
+      let serviceDetailsItems = get(
+      state.screenConfiguration.screenConfig.create,
+      serviceDetailsPath,
+      []
+    );
+    let isserviceDetailsValid = true;
+    const appntDate = new Date(state.screenConfiguration.preparedFinalObject.Employee[0].dateOfAppointment).getTime();
+    const annuationdate = new Date(state.screenConfiguration.preparedFinalObject.Employee[0].dateOfSuperannuation).getTime();
+    let invalidFromDate ="Invalid Service from date for row: ", invalidToDate="Invalid Service To date for row: ",isInvalidFromDt=false, isInvalidToDt=false;
+
+    for (var j = 0; j < serviceDetailsItems.length; j++) {
+      if (
+        (serviceDetailsItems[j].isDeleted === undefined ||
+          serviceDetailsItems[j].isDeleted !== false) &&
+        !validateFields(
+          `${serviceDetailsPath}[${j}].item${j}.children.cardContent.children.serviceDetailsCardContainer.children`,
+          state,
+          dispatch,
+          "create"
+        )
+      )
+      isserviceDetailsValid = false;
+      
+     
+      // validation to check weather To data and From date lie between appointment and annuation date
+   //    const serviceFromdDt =  new Date(`${serviceDetailsPath}[${j}].item${j}.children.cardContent.children.serviceDetailsCardContainer.children.serviceFromDate.props.value`).getTime();
+   //    const serviceToDt =  new Date(`${serviceDetailsPath}[${j}].item${j}.children.cardContent.children.serviceDetailsCardContainer.children.serviceToDate.props.value`).getTime();
+
+          const serviceFromdDt = new Date(state.screenConfiguration.preparedFinalObject.Employee[0].serviceHistory[j].serviceFrom).getTime();
+          const serviceToDt = new Date(state.screenConfiguration.preparedFinalObject.Employee[0].serviceHistory[j].serviceTo).getTime();
+       
+          if( !(annuationdate >= serviceFromdDt && serviceFromdDt >= appntDate)){
+            isInvalidFromDt = true;
+            invalidFromDate += `${j}`;
+            if(j < serviceDetailsItems.length-1 ) invalidFromDate += ",";
+          }
+          if( !(annuationdate >= serviceToDt && serviceToDt >= appntDate)){
+            isInvalidToDt = true;
+            invalidToDate += `${j}`;
+            if(j < serviceDetailsItems.length-1 ) invalidToDate += ",";
+          }
+          
+    }
+    if(isInvalidFromDt)  finalErrString +=   invalidFromDate;
+    if(isInvalidToDt)    finalErrString +=   "  "+invalidToDate;
+    if (!isserviceDetailsValid) {
       isFormValid = false;
     }
   }
@@ -119,15 +189,25 @@ export const callBackForNext = async (state, dispatch) => {
     moveToReview(dispatch);
   }
   if (activeStep !== 4) {
-    if (isFormValid) {
+
+    if(activeStep === 3 && finalErrString !==""){
+      const errorMessage = {
+        labelName: "Please fill all fields",
+        labelKey: finalErrString
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    }
+    else if (isFormValid) {
       changeStep(state, dispatch);
-    } else {
+    } 
+    else{
       const errorMessage = {
         labelName: "Please fill all fields",
         labelKey: "ERR_FILL_ALL_FIELDS"
       };
       dispatch(toggleSnackbar(true, errorMessage, "warning"));
     }
+    
   }
 };
 

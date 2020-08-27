@@ -17,6 +17,7 @@ import PrivacyPolicy from "egov-ui-kit/common/common/PrivacyPolicy";
 import Dashboard from "egov-ui-kit/common/common/Dashboard";
 
 //pgr common components
+import Notifications from "egov-ui-kit/common/common/Notifications";
 import ActionButton from "egov-ui-kit/common/pgr/complaintDetails/components/ActionButton";
 import Comments from "egov-ui-kit/common/pgr/complaintDetails/components/Comments";
 import ComplaintTimeLine from "egov-ui-kit/common/pgr/complaintDetails/components/ComplaintTimeLine";
@@ -85,4 +86,6 @@ export {
   Dashboard,
   YearDialogue,
   SortDialog,
+ Notifications ,
+  
 };

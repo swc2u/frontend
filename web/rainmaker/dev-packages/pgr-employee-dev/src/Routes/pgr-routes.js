@@ -63,6 +63,10 @@ const ResolveSuccess = Loadable({
   loader: () => import("../Screens/ResolveSuccess"),
   loading: Loading
 });
+const AutoRoutingSuccess = Loadable({
+  loader: () => import("../Screens/AutoRoutingSuccess"),
+  loading: Loading
+});
 const ReassignSuccess = Loadable({
   loader: () => import("../Screens/ReassignSuccess"),
   loading: Loading
@@ -75,6 +79,12 @@ const SearchScreen = Loadable({
   loader: () => import("../Screens/SearchScreen"),
   loading: Loading
 });
+
+const AutoRoutingMapping = Loadable({
+  loader: () => import("../Screens/AutoRoutingMapping"),
+  loading: Loading
+});
+
 
 // import CreateEmployee from "modules/employee/pgr/CreateEmployee";
 const redirectionUrl = "/user/login";
@@ -161,6 +171,18 @@ const routes = [
       hideBackButton: true,
       hideFooter: true,
       title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      hideTitle: true,
+      redirectionUrl
+    }
+  },   
+  {
+    path: "master/autoRouting-success",
+    component: AutoRoutingSuccess,
+    needsAuthentication: true,
+    options: {
+      hideBackButton: true,
+      hideFooter: true,
+      title: "ES_AUTO_ROUTING_MAPPING_HEADER",
       hideTitle: true,
       redirectionUrl
     }
@@ -295,7 +317,17 @@ const routes = [
       title: "CS_COMMON_COMPLAINT_REOPENED",
       hideTitle: true
     }
-  }
+  },
+  {
+    path: "master/auto-routing",
+    component: AutoRoutingMapping,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      title: "ES_AUTO_ROUTING_MAPPING_HEADER",
+      redirectionUrl
+    }
+  },
   // {
   //   path: "create-employee",
   //   component: CreateEmployee,

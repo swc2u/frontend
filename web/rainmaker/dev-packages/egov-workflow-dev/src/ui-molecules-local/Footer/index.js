@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { ActionDialog } from "../";
+import { ActionDialog, HCActionDialog,StoreAssetActionDialog } from "../";
 import { httpRequest } from "egov-ui-framework/ui-utils/api";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
@@ -63,7 +63,92 @@ class Footer extends React.Component {
     if (dataPath === "BPA") {
       handleFieldChange(`${dataPath}.comment`, "");
       handleFieldChange(`${dataPath}.assignees`, "");
-    } else {
+    }
+    if(dataPath==="services"){
+      var { state  } = this.props;
+      
+      const applicationNumberHC = get(
+        state.screenConfiguration.preparedFinalObject.workflow,
+        `ProcessInstances[0].businessId`);
+      let tenantId = getTenantId().split(".")[0];
+      handleFieldChange(`${dataPath}[0].comment`, "");
+      handleFieldChange(`${dataPath}[0].assignee`, []);
+      handleFieldChange(`${dataPath}[0].roleList`, []); // this line I chnages from array to "" just remember so evr time got it?
+      handleFieldChange(`${dataPath}[0].isRoleSpecific`, true);
+      handleFieldChange(`${dataPath}[0].serviceType`, item.moduleName);
+      handleFieldChange(`${dataPath}[0].service_request_id`, applicationNumberHC);
+      handleFieldChange(`${dataPath}[0].wfDocuments`, []);
+	  handleFieldChange(`${dataPath}[0].locality`, tenantId);
+      if (item.showEmployeeList) {
+      
+      let mdmsBody = {
+        MdmsCriteria: {
+          tenantId: tenantId,
+          moduleDetails: [
+            
+            {
+              moduleName: "eg-horticulture",
+              masterDetails: [
+                {
+                  name: "roles"
+                }
+              ]
+            },
+          ]
+        }
+      };
+      try {
+        let payload = null;
+        payload = await httpRequest(
+          "post",
+          "/egov-mdms-service/v1/_search",
+          "_search",
+          [],
+          mdmsBody
+        );
+        // debugger
+        // dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
+        employeeList =
+          payload &&
+          payload.MdmsRes["eg-horticulture"].roles.map((item, index) => {
+            const name = get(item, "name");
+            console.log(item);
+            return {
+              value: item.code,
+              label: name
+            };
+          });
+      } catch (e) {
+        console.log(e);
+      }
+        
+      }
+     
+    }
+    if (dataPath === "indents" || dataPath === "materialIssues" || dataPath === "purchaseOrders" || dataPath === "materialReceipt" || dataPath === "transferInwards") {
+      var { state } = this.props;
+      const applicationNumberStoreAsset = get(
+        state.screenConfiguration.preparedFinalObject.workflow,
+        `ProcessInstances[0].businessId`);
+
+      // indents[0].workflowDetails.assigneewfupdate
+      if (item.buttonLabel === "SENDTOCREATOR") {
+        let jeuuid = get(
+          state.screenConfiguration.preparedFinalObject.workflow,
+          `ProcessInstances[0].assigner.uuid`);
+
+        handleFieldChange(`${dataPath}[0].workFlowDetails.assignee[0]`, jeuuid);
+      }
+      handleFieldChange(`${dataPath}[0].workFlowDetails.action`, item.buttonLabel);
+      handleFieldChange(`${dataPath}[0].workFlowDetails.businessService`, item.moduleName);
+      handleFieldChange(`${dataPath}[0].workFlowDetails.comments`, "");
+      handleFieldChange(`${dataPath}[0].workFlowDetails.businessId`, applicationNumberStoreAsset);
+      handleFieldChange(`${dataPath}[0].workFlowDetails.wfDocuments`, []);
+
+
+    }
+	
+    else {
       handleFieldChange(`${dataPath}[0].comment`, "");
       handleFieldChange(`${dataPath}[0].assignee`, []);
     }
@@ -76,7 +161,8 @@ class Footer extends React.Component {
       setRoute(url);
       return;
     }
-    if (item.showEmployeeList) {
+    if(dataPath!="services")
+    {if (item.showEmployeeList) {
       const tenantId = getTenantId();
       const queryObj = [
         {
@@ -103,15 +189,17 @@ class Footer extends React.Component {
             label: name
           };
         });
-    }
+    }}
 
     this.setState({ open: true, data: item, employeeList });
   };
 
   onClose = () => {
+    var {state} = this.props;
     this.setState({
       open: false
     });
+    set(state, "form.workflow.files.wfDocuments", "")
   };
 
   renewTradelicence = async (financialYear, tenantId) => {
@@ -242,7 +330,60 @@ class Footer extends React.Component {
       },
       menu: downloadMenu
     };
-    return (
+    if (dataPath ==="services" && data.length != 0){
+      return (
+        <div className="apply-wizard-footer" id="custom-atoms-footer">
+          {!isEmpty(downloadMenu) && (
+            <Container>
+              <Item xs={12} sm={12} className="wf-footer-container">
+                <MenuButton data={buttonItems} />
+              </Item>
+            </Container>
+          )} 
+                 
+          <HCActionDialog
+            open={open}
+            onClose={this.onClose}
+            dialogData={data}
+            dropDownData={employeeList}
+            handleFieldChange={handleFieldChange}
+            onButtonClick={onDialogButtonClick}
+            dataPath={dataPath}
+            state = {state}
+          />
+  
+  
+          
+        </div>
+      );}
+      else if ((dataPath === "indents" || dataPath === "materialIssues" || dataPath === "purchaseOrders" || dataPath === "materialReceipt" || dataPath === "transferInwards") && data.length != 0) {
+      return (
+        <div className="apply-wizard-footer" id="custom-atoms-footer">
+          {!isEmpty(downloadMenu) && (
+            <Container>
+              <Item xs={12} sm={12} className="wf-footer-container">
+                <MenuButton data={buttonItems} />
+              </Item>
+            </Container>
+          )}
+
+          <StoreAssetActionDialog
+            open={open}
+            onClose={this.onClose}
+            dialogData={data}
+            dropDownData={employeeList}
+            handleFieldChange={handleFieldChange}
+            onButtonClick={onDialogButtonClick}
+            dataPath={dataPath}
+            state={state}
+          />
+
+
+
+        </div>
+      );
+    }
+    else {return (
       <div className="apply-wizard-footer" id="custom-atoms-footer">
         {!isEmpty(downloadMenu) && (
           <Container>
@@ -261,7 +402,7 @@ class Footer extends React.Component {
           dataPath={dataPath}
         />
       </div>
-    );
+    );}
   }
 }
 

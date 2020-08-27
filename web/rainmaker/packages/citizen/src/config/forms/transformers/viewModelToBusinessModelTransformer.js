@@ -114,7 +114,7 @@ const transformer = (formKey, form = {}, state = {}) => {
             value: fields.phone.value,
           },
         };
-      } else if (previousRoute.indexOf("smsLink=true") > 0) {
+      } else if (previousRoute.indexOf("smsLink=true") > 0 || previousRoute==="") {
         fields = {
           password: {
             jsonPath: "login.password",
@@ -152,7 +152,7 @@ const transformer = (formKey, form = {}, state = {}) => {
       try {
         userPhone = JSON.parse(userInfo).mobileNumber;
         userRole = JSON.parse(userInfo).roles[0].code;
-        formData.services[0].source = userRole === "CITIZEN" ? (isNative ? "mobileapp" : "web") : "";
+        formData.services[0].source = userRole === "CITIZEN" ? (isNative==="true" ? "mobileapp" : "web") : "";
         formData.services[0].phone = userPhone;
       } catch (error) {}
 

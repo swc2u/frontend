@@ -191,7 +191,7 @@ export const getCurrentAddress = async () => {
 };
 
 export const mapCompIDToName = (IDObj, compID) => {
-  return IDObj[compID] ? IDObj[compID].serviceCode : "Default";
+  return IDObj[compID] ? IDObj[compID].serviceCode : compID;
 };
 
 export const getDateFromEpoch = (epoch) => {
@@ -322,6 +322,12 @@ export const getTransformedStatus = (status) => {
     case "assigned":
       transformedStatus = "ASSIGNED";
       break;
+      case "escalatedlevel1pending":
+      transformedStatus = "ESCALATED";
+      break;
+    case "escalatedlevel2pending":
+      transformedStatus = "ESCALATED";
+      break;
     default:
       transformedStatus = "UNASSIGNED";
       break;
@@ -336,7 +342,9 @@ export const getFileSize = (file) => {
 
 export const isFileImage = (file) => {
   const mimeType = file["type"];
-  return (mimeType && mimeType.split("/")[0] == "image") || false;
+  const acceptedImageTypes = ["jpg", "jpeg", "png"];
+  const imgExtension = acceptedImageTypes.indexOf(mimeType.split("/")[1]) !== -1
+  return (mimeType && mimeType.split("/")[0] == "image" && imgExtension) || false;
 };
 
 export const getNameFromId = (obj, id, defaultValue) => {
@@ -348,10 +356,18 @@ export const getPropertyFromObj = (obj, id, property, defaultValue) => {
 };
 
 export const returnSLAStatus = (slaHours, submittedTime) => {
+  let slaStatement = "";
+  let daysCount ="";
+  if(slaHours === 0)
+    return {
+      slaStatement,
+      daysCount,
+    }
+
   const millsToAdd = slaHours * 60 * 60 * 1000;
   const toBeFinishedBy = millsToAdd + submittedTime;
-  let slaStatement = "";
-  const daysCount = dateDiffInDays(new Date(Date.now()), new Date(toBeFinishedBy));
+  
+   daysCount = dateDiffInDays(new Date(Date.now()), new Date(toBeFinishedBy));
   if (daysCount < 0) {
     slaStatement = Math.abs(daysCount) === 1 ? "CS_OVERDUE_BY_DAY" : "CS_OVERDUE_BY_DAYS";
     //slaStatement = Math.abs(daysCount) === 1 ? `Overdue by ${Math.abs(daysCount)} day` : `Overdue by ${Math.abs(daysCount)} days`;
@@ -387,11 +403,11 @@ export const getCommaSeperatedAddress = (address, cities) => {
 };
 
 export const getLatestCreationTime = (complaint) => {
-  for (let i = 0; i < complaint.actions.length; i++) {
-    if (complaint.actions[i].action === "reopen") {
-      return complaint.actions[i].when;
-    }
-  }
+  // for (let i = 0; i < complaint.actions.length; i++) {
+  //   if (complaint.actions[i].action === "reopen") {
+  //     return complaint.actions[i].when;
+  //   }
+  // }
   return complaint.auditDetails.createdTime;
 };
 
@@ -460,7 +476,7 @@ export const transformComplaintForComponent = (complaints, role, employeeById, c
       complaintDetail.actions[complaintDetail.actions.length - 1].by.split(":")[1] &&
       complaintDetail.actions[complaintDetail.actions.length - 1].by.split(":")[1] === "Citizen Service Representative";
     return {
-      header: getPropertyFromObj(complaints.categoriesById, complaintDetail.serviceCode, "serviceCode", "NA"),
+      header: getPropertyFromObj(complaints.categoriesById, complaintDetail.serviceCode, "serviceCode", `${complaintDetail.serviceCode}`),
       date: complaintDetail.auditDetails.createdTime,
       latestCreationTime: getLatestCreationTime(complaintDetail),
       complaintNo: complaintDetail.serviceRequestId,
@@ -491,11 +507,11 @@ export const transformComplaintForComponent = (complaints, role, employeeById, c
             : displayStatus(complaintDetail.actions[0].status)
           : displayStatus(
               returnSLAStatus(
-                getPropertyFromObj(categoriesById, complaintDetail.serviceCode, "slaHours", "NA"),
+                getPropertyFromObj(categoriesById, complaintDetail.serviceCode, "slaHours", 0),
                 getLatestCreationTime(complaintDetail)
               ).slaStatement
             ),
-      SLA: returnSLAStatus(getPropertyFromObj(categoriesById, complaintDetail.serviceCode, "slaHours", "NA"), getLatestCreationTime(complaintDetail))
+      SLA: returnSLAStatus(getPropertyFromObj(categoriesById, complaintDetail.serviceCode, "slaHours", 0), getLatestCreationTime(complaintDetail))
         .daysCount,
     };
   });
@@ -806,5 +822,36 @@ export const getApplicationType = async (applicationNumber, tenantId) => {
     }
   } catch (e) {
     console.log(e);
+  }
+}
+
+export const getModuleName = () => {
+  const pathName = window.location.pathname;
+  if (pathName.indexOf("inbox") > -1) { return "rainmaker-common"; }
+  else if (pathName.indexOf("property-tax") > -1 || pathName.indexOf("pt-mutation") > -1) { return "rainmaker-pt,rainmaker-pgr"; }
+  else if (pathName.indexOf("pt-common-screens") > -1 || pathName.indexOf("public-search") > -1) { return "rainmaker-pt"; }
+  else if (pathName.indexOf("complaint") > -1 || pathName.indexOf("request-reassign") > -1 || pathName.indexOf("reassign-success") > -1) { return "rainmaker-pgr"; }
+  else if (pathName.indexOf("wns") > -1) { return "rainmaker-ws"; }
+  else if (pathName.indexOf("tradelicense") > -1 || pathName.indexOf("tradelicence") > -1 || pathName.indexOf("tradelicense-citizen") > -1) { return "rainmaker-tl"; }
+  else if (pathName.indexOf("hrms") > -1) { return "rainmaker-hr"; }
+  else if (pathName.indexOf("fire-noc") > -1) { return "rainmaker-noc,rainmaker-pgr"; }
+  else if (pathName.indexOf("dss/home") > -1) { return "rainmaker-dss"; }
+  else if (pathName.indexOf("language-selection") > -1) { return "rainmaker-common"; }
+  else if (pathName.indexOf("login") > -1) { return "rainmaker-common"; }
+  else if (pathName.indexOf("pay") > -1) { return "rainmaker-noc"; }
+  else if (pathName.indexOf("abg") > -1) { return "rainmaker-abg"; }
+  else if (pathName.indexOf("pgr-home") > -1 || pathName.indexOf("rainmaker-pgr") > -1) { return "rainmaker-pgr"; }
+  else if (pathName.indexOf("bpastakeholder") > -1 || pathName.indexOf("edcrscrutiny") > -1 ||
+    pathName.indexOf("egov-bpa") > -1 || pathName.indexOf("oc-bpa") > -1) { return "rainmaker-bpa,rainmaker-bpareg"; }
+    else if (pathName.indexOf("egov-opms") > -1) { return "rainmaker-pm"; }
+    else if (pathName.indexOf("egov-hc") > -1) { return "rainmaker-hc"; }
+    else if (pathName.indexOf("egov-echallan") > -1) { return "rainmaker-ec"; }
+    else if (pathName.indexOf("pms") > -1) { return "rainmaker-pension"; }
+    else if (pathName.indexOf("egov-store-asset") > -1) { return "rainmaker-store-asset"; }
+    else if (pathName.indexOf("egov-nulm") > -1) { return "rainmaker-nulm"; }
+    else if (pathName.indexOf("egov-pr") > -1) { return "rainmaker-pr"; }
+    else if (pathName.indexOf("uc") > -1) { return "rainmaker-uc"; }
+  else {
+    return "rainmaker-common";
   }
 }

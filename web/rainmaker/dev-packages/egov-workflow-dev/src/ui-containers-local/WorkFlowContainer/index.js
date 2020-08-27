@@ -108,6 +108,21 @@ class WorkFlowContainer extends React.Component {
         return "purpose=sendbacktocitizen&status=success";
       case "SUBMIT_APPLICATION":
         return "purpose=apply&status=success";
+      case "RESUBMIT_APPLICATION":
+        return "purpose=forward&status=success";
+      case "SEND_BACK_TO_CITIZEN":
+        return "purpose=sendback&status=success";
+      case "VERIFY_AND_FORWARD":
+        return "purpose=forward&status=success";
+      case "SEND_BACK_FOR_DOCUMENT_VERIFICATION":
+      case "SEND_BACK_FOR_FIELD_INSPECTION":
+        return "purpose=sendback&status=success";
+      case "APPROVE_FOR_CONNECTION":
+        return "purpose=approve&status=success";
+      case "ACTIVATE_CONNECTION":
+        return "purpose=activate&status=success";
+      case "REVOCATE":
+        return "purpose=application&status=revocated"
     }
   };
 
@@ -180,6 +195,21 @@ class WorkFlowContainer extends React.Component {
 
     if (moduleName === "NewWS1" || moduleName === "NewSW1") {
       data = data[0];
+      data.assignees = [];
+      if (data.assignee) {
+        data.assignee.forEach(assigne => {
+          data.assignees.push({
+            uuid: assigne
+          })
+        })
+      }
+      data.processInstance = {
+        documents: data.wfDocuments,
+        assignes: data.assignees,
+        comment: data.comment,
+        action: data.action
+      }
+      data.waterSource = data.waterSource + "." + data.waterSubSource;
     }
 
     if (moduleName === "NewSW1") {
@@ -299,6 +329,15 @@ class WorkFlowContainer extends React.Component {
       bservice = ((applicationStatus == "PENDING_APPL_FEE") ? "BPA.NC_APP_FEE" : "BPA.NC_SAN_FEE");
     } else if (moduleName === "NewWS1" || moduleName === "NewSW1") {
       baseUrl = "wns"
+      if (moduleName === "NewWS1") {
+        bservice = "WS.ONE_TIME_FEE"
+      } else {
+        bservice = "SW.ONE_TIME_FEE"
+      }
+    } else if (moduleName === "PT") {
+      bservice = "PT"
+    } else if (moduleName === "PT.MUTATION") {
+      bservice = "PT.MUTATION"
     } else {
       baseUrl = "tradelicence";
     }
@@ -424,7 +463,7 @@ class WorkFlowContainer extends React.Component {
         isLast: item.action === "PAY" ? true : false,
         buttonUrl: getRedirectUrl(item.action, businessId, businessService),
         dialogHeader: getHeaderName(item.action),
-        showEmployeeList: !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
+        showEmployeeList: (businessService === "NewWS1" || businessService === "NewSW1") ? !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SEND_BACK_TO_CITIZEN" && item.action !== "RESUBMIT_APPLICATION" : !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
         roles: getEmployeeRoles(item.nextState, item.currentState, businessService),
         isDocRequired: checkIfDocumentRequired(item.nextState, businessService)
       };
@@ -468,13 +507,15 @@ class WorkFlowContainer extends React.Component {
      let showFooter;
       if(moduleName==='NewWS1'||moduleName==='NewSW1'){
          showFooter=true;
-      }else{
+      } else if(moduleName==='ROADCUTNOC'||moduleName==='PETNOC'||moduleName==='ADVERTISEMENTNOC'||moduleName==='SELLMEATNOC'){
+        showFooter=false;
+     }      else{
          showFooter=process.env.REACT_APP_NAME === "Citizen" ? false : true;
       }
     return (
       <div>
         {ProcessInstances && ProcessInstances.length > 0 && (
-          <TaskStatusContainer ProcessInstances={ProcessInstances} />
+          <TaskStatusContainer ProcessInstances={ProcessInstances} moduleName={moduleName}/>
         )}
         {showFooter &&
           <Footer

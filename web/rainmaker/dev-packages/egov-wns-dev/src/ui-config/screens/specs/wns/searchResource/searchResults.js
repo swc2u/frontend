@@ -1,8 +1,13 @@
 import React from "react";
-import { sortByEpoch, getEpochForDate, getTextToLocalMapping } from "../../utils";
+import { sortByEpoch, getEpochForDate } from "../../utils";
 import './index.css'
+import {getTextToLocalMapping} from "./searchApplicationResults"
 import LabelContainer from "egov-ui-framework/ui-containers/LabelContainer";
-
+import {
+  getLocaleLabels,
+  getTransformedLocalStorgaeLabels,
+} from "egov-ui-framework/ui-utils/commons";
+const localisationLabels = getTransformedLocalStorgaeLabels();
 
 export const searchResults = {
   uiFramework: "custom-molecules",
@@ -12,7 +17,7 @@ export const searchResults = {
   props: {
     columns: [
       {
-        name: getTextToLocalMapping("Service"),
+        name: getTextToLocalMapping("service"),
         options: {
           filter: false,
           customBodyRender: value => (
@@ -23,7 +28,8 @@ export const searchResults = {
         }
       },
       {
-        name: getTextToLocalMapping("Consumer No"),
+        name:getTextToLocalMapping("Consumer No"),
+        labelKey: "WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL",
         options: {
           filter: false,
           customBodyRender: (value, index) => (
@@ -38,6 +44,7 @@ export const searchResults = {
       getTextToLocalMapping("Due"),
       getTextToLocalMapping("Address"),
       getTextToLocalMapping("Due Date"),
+
       {
         name: getTextToLocalMapping("Action"),
         options: {
@@ -47,7 +54,7 @@ export const searchResults = {
               return (
                 <div className="linkStyle" onClick={() => getViewBillDetails(data)} style={{ color: '#fe7a51', textTransform: 'uppercase' }}>
                   <LabelContainer
-                    labelKey="CS_COMMON_PAY"
+                    labelKey="WS_COMMON_COLLECT_LABEL"
                     style={{
                       color: "#fe7a51",
                       fontSize: 14,
@@ -69,21 +76,19 @@ export const searchResults = {
         }
       },
       {
-        name: "tenantId",
+        name:  getTextToLocalMapping("tenantId"),
         options: {
           display: false
         }
       },
       {
-        name: "connectionType",
+        name: getTextToLocalMapping("connectionType"),
         options: {
           display: false
         }
       }
     ],
-    title: getTextToLocalMapping(
-      "Search Results for Water & Sewerage Connections"
-    ),
+    title: getLocaleLabels("Search Results for Water & Sewerage Connections", "WS_HOME_SEARCH_RESULTS_TABLE_HEADING", localisationLabels),
     options: {
       filter: false,
       download: false,

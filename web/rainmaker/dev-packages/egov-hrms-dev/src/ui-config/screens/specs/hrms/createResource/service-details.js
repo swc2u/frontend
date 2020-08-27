@@ -10,6 +10,7 @@ import {
   getCommonSubHeader
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 const serviceDetailsCard = {
   uiFramework: "custom-containers",
@@ -28,6 +29,7 @@ const serviceDetailsCard = {
                 labelName: "Select Status",
                 labelKey: "HR_STATUS_PLACEHOLDER"
               },
+              required: true,
               jsonPath: "Employee[0].serviceHistory[0].serviceStatus",
               sourceJsonPath: "createScreenMdmsData.egov-hrms.EmployeeStatus",
               gridDefination: {
@@ -67,6 +69,7 @@ const serviceDetailsCard = {
                 labelName: "Service From Date",
                 labelKey: "HR_SER_FROM_DATE_LABEL"
               },
+              required: true,
               pattern: getPattern("Date"),
               jsonPath: "Employee[0].serviceHistory[0].serviceFrom",
               gridDefination: {
@@ -80,7 +83,29 @@ const serviceDetailsCard = {
                 //   max: getFinancialYearDates("yyyy-mm-dd").endDate
                 // }
               }
-            })
+            }),
+            afterFieldChange: (action, state, dispatch) => {  
+              if(action.value){
+                let serviceToDtComponentPath = action.componentJsonpath;
+                const appntDate = new Date(state.screenConfiguration.preparedFinalObject.Employee[0].dateOfAppointment).getTime();
+                const annuationdate = new Date(state.screenConfiguration.preparedFinalObject.Employee[0].superannuationDate).getTime();
+                const serviceFromdDt = new Date(action.value).getTime();
+                if( !(annuationdate >= serviceFromdDt && serviceFromdDt >= appntDate)){
+                  dispatch(toggleSnackbar(true, {
+                    labelName: "Date Must lie between Appointment date and Annuation date",
+                    labelKey: "SERVICE_DATE_TO_LIE_BETWEEN_ANNUATION_DATE_APPOINTMNET_DATE"
+                  }, "error"));
+                  // dispatch(
+                  //   handleField(
+                  //     "create",
+                  //     serviceToDtComponentPath,
+                  //     "props.value",
+                  //     null
+                  //   )
+                  // );
+                }
+            }
+            }
           },
           serviceToDate: {
             ...getDateField({
@@ -92,6 +117,7 @@ const serviceDetailsCard = {
                 labelName: "Service To Date",
                 labelKey: "HR_SER_TO_DATE_LABEL"
               },
+              required: true,
               pattern: getPattern("Date"),
               jsonPath: "Employee[0].serviceHistory[0].serviceTo",
               gridDefination: {
@@ -105,7 +131,29 @@ const serviceDetailsCard = {
                 //   max: getFinancialYearDates("yyyy-mm-dd").endDate
                 // }
               }
-            })
+            }),
+            afterFieldChange: (action, state, dispatch) => {
+              if(action.value){
+                let serviceToDtComponentPath = action.componentJsonpath;
+                const appntDate = new Date(state.screenConfiguration.preparedFinalObject.Employee[0].dateOfAppointment).getTime();
+                const annuationdate = new Date(state.screenConfiguration.preparedFinalObject.Employee[0].superannuationDate).getTime();
+                const serviceTodDt = new Date(action.value).getTime();
+                if( !(annuationdate >= serviceTodDt && serviceTodDt >= appntDate)){
+                  dispatch(toggleSnackbar(true, {
+                    labelName: "Date Must lie between Appointment date and Annuation date",
+                    labelKey: "SERVICE_DATE_TO_LIE_BETWEEN_ANNUATION_DATE_APPOINTMNET_DATE"
+                  }, "error"));
+                  // dispatch(
+                  //   handleField(
+                  //     "create",
+                  //     serviceToDtComponentPath,
+                  //     "props.value",
+                  //     null
+                  //   )
+                  // );
+                }
+            }
+            }
           },
           location: {
             ...getTextField({
@@ -127,7 +175,7 @@ const serviceDetailsCard = {
                 jsonPath: "Employee[0].serviceHistory[0].location"
                 //   data: [
                 //     {
-                //       value: "pb.amritsar",
+                //       value: "ch.chandigarh",
                 //       label: "Amritsar"
                 //     }
                 //   ],

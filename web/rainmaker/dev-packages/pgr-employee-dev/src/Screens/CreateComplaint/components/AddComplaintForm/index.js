@@ -9,6 +9,7 @@ import {
 import AdditionalDetailsCard from "../AdditionalDetails";
 import ComplaintTypeCard from "../ComplaintType";
 import MohallaDropdown from "../MohallaDropdown";
+import { ImageUpload } from "modules/common";
 
 const AddComplaintForm = ({
   formKey,
@@ -19,12 +20,13 @@ const AddComplaintForm = ({
   history
 }) => {
   const fields = form.fields || {};
-  const { name, phone, mohalla, city, address, landmark, houseNo } = fields;
+  const { name, phone, mohalla, city, address, landmark, houseNo,department } = fields;
   const submit = form.submit;
   return (
     <div className="create-complaint-main-cont">
       {/* <Label label="Complaint Submission" fontSize={20} dark={true} bold={true} containerStyle={{ padding: "24px 0 8px 17px" }} /> */}
       <div className="create-comp-csr-form-cont form-without-button-cont-generic">
+      <ImageUpload module="rainmaker-pgr" formKey={formKey} fieldKey="media" />
         <Card
           id="create-complaint-card"
           className="create-complaint-main-card"
@@ -51,6 +53,8 @@ const AddComplaintForm = ({
                   className="fix-for-layout-break"
                   localizationLabels={localizationLabels}
                   categories={categories}
+                  department ={department}
+                  handleFieldChange={handleFieldChange}
                   complaintType={fields.complaintType}
                 />
               </div>
@@ -61,7 +65,7 @@ const AddComplaintForm = ({
                   additionalDetails={fields.additionalDetails}
                 />
               </div>
-              <div className="col-sm-6 col-xs-12">
+         {/*   <div className="col-sm-6 col-xs-12">
                 <AutoSuggestDropdown
                   className="fix-for-layout-break"
                   fullWidth={true}
@@ -71,7 +75,7 @@ const AddComplaintForm = ({
                   }}
                   {...city}
                 />
-              </div>
+                </div> */}
               <div className="col-sm-6 col-xs-12">
                 <MohallaDropdown
                   handleFieldChange={handleFieldChange}

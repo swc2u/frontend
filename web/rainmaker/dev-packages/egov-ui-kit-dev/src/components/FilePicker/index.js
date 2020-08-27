@@ -27,11 +27,11 @@ class FilePicker extends Component {
   };
 
   render() {
-    const { inputProps, children, id } = this.props;
+    const { inputProps, children, id ,className} = this.props;
     const { multiple, accept } = inputProps;
     const { handleFileChange, openFileDialog } = this;
     return (
-      <div onClick={openFileDialog}>
+      <div onClick={openFileDialog} className = {className}>
         <input
           id={id}
           type="file"

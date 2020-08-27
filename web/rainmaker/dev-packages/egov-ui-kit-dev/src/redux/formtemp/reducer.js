@@ -555,6 +555,14 @@ export default (state = defaultState, action) => {
         isFormValid: validationData.isFormValid,
       };
 
+      case "HANDLE_CHANGES":
+        return {
+          ...state,
+          form: {
+            ...state.form,
+            [action.property]: action.value,
+          }
+        };
     case "FILE_UPLOAD":
       var filearray = [];
       filearray = [...state.files];

@@ -8,6 +8,8 @@ import {
   getPattern
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getTodaysDateInYMD } from "../../utils";
+import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 export const employeeDetails = getCommonCard({
   header: getCommonTitle(
@@ -22,6 +24,21 @@ export const employeeDetails = getCommonCard({
     }
   ),
   employeeDetailsContainer: getCommonContainer({
+    appellation: {
+      ...getTextField({
+        label: {
+          labelName: "Appellation",
+          labelKey: "HR_APPELLATION_LABEL"
+        },
+        placeholder: {
+          labelName: "Enter Appellation",
+          labelKey: "HR_APPELLATION_PLACEHOLDER"
+        },
+        required: true,
+        pattern: /^[a-zA-Z]{0,5}$/i,
+        jsonPath: "Employee[0].user.appellation"
+      }),  
+    },
     employeeName: {
       ...getTextField({
         label: {
@@ -91,6 +108,10 @@ export const employeeDetails = getCommonCard({
             {
               value: "FEMALE",
               label: "COMMON_GENDER_FEMALE"
+            },
+            {
+              value: "OTHERS",
+              label: "COMMON_GENDER_OTHERS"
             }
           ],
           optionValue: "value",
@@ -108,12 +129,12 @@ export const employeeDetails = getCommonCard({
           labelName: "Enter Date of Birth",
           labelKey: "HR_BIRTH_DATE_PLACEHOLDER"
         },
-        required: true,
+        required: true,  
         pattern: getPattern("Date"),
         jsonPath: "Employee[0].user.dob",
         props: {
           inputProps: {
-            max: getTodaysDateInYMD()
+            max: new Date().toISOString().slice(0, 10),
           }
         }
       })
@@ -128,9 +149,11 @@ export const employeeDetails = getCommonCard({
           labelName: "Enter Email",
           labelKey: "HR_EMAIL_PLACEHOLDER"
         },
+        required: true,
         pattern: getPattern("Email"),
         jsonPath: "Employee[0].user.emailId"
-      })
+      }),
+      
     },
     correspondenceAddress: {
       ...getTextField({
@@ -142,7 +165,7 @@ export const employeeDetails = getCommonCard({
           labelName: "Enter Corrospondence Address",
           labelKey: "HR_CORRESPONDENCE_ADDRESS_PLACEHOLDER"
         },
-        required: true,
+        required: false,
         pattern: getPattern("Address"),
         jsonPath: "Employee[0].user.correspondenceAddress"
       })
@@ -174,6 +197,7 @@ export const professionalDetails = getCommonCard(
             labelName: "Enter Employee ID",
             labelKey: "HR_EMPLOYEE_ID_PLACEHOLDER"
           },
+          required: true,
           pattern: /^[a-zA-Z0-9-_]*$/i,
           jsonPath: "Employee[0].code"
         })
@@ -188,9 +212,35 @@ export const professionalDetails = getCommonCard(
             labelName: "Enter Date of Appointment",
             labelKey: "HR_APPOINTMENT_DATE_PLACEHOLDER"
           },
+          required: true,
           pattern: getPattern("Date"),
-          jsonPath: "Employee[0].dateOfAppointment"
+          jsonPath: "Employee[0].dateOfAppointment",
+          props: {
+            inputProps: {
+              max: new Date().toISOString().slice(0, 10),
+            }
+          }
         })
+      },
+      dateOfSuperannuation: {
+        ...getDateField({
+          label: {
+            labelName: "Date of Superannuation",
+            labelKey: "HR_SUPERANNUATION_DATE_LABEL"
+          },
+          placeholder: {
+            labelName: "Enter Date of Super Annuation",
+            labelKey: "HR_SUPERANNUATION_DATE_PLACEHOLDER"
+          },
+          required: true,
+          pattern: getPattern("Date"),
+          jsonPath: "Employee[0].dateOfSuperannuation",
+          props: {
+            inputProps: {
+              min: new Date().toISOString().slice(0, 10),
+            }
+          },
+        }),
       },
       employmentType: {
         ...getSelectField({
@@ -272,7 +322,7 @@ export const professionalDetails = getCommonCard(
           xs: 12,
           sm: 6
         }
-      }
+      },
     })
   },
   {

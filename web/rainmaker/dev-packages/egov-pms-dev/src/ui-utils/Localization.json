@@ -1,0 +1,18 @@
+{"messages":[
+    {"code":"PENSION_SEARCH_APPLICATION","message":"Pension Search Application","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_DEATH_OF_AN_EMPLOYEE","message":"Death of an Employee","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_DEATH_OF_A_PENSIONER","message":"Death of a Pensioner","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_NORMAL_RETIREMENT_PENSION","message":"Normal Retirement Pension","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_PENSION_REGISTER","message":"Pension Register","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_REGISTER_EARLY_RETIREMENT","message":"Register Early Retirement","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_HOME_SEARCH_RESET_BUTTON","message":"Reset","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_HOME_SEARCH_RESULTS_BUTTON_SEARCH","message":"Search","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_HOME_SEARCH_RESULTS_APP_NO_LABEL","message":"Application No.","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_HOME_SEARCH_RESULTS_APP_NO_PLACEHOLDER","message":"Enter Application No.","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_DATA_OF_BIRTH_LABEL","message":"Date Of Bith","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_DATA_OF_BIRTH_PLACEHOLDER","message":"Date Of Bith","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_PENSION_REGISTER_HOME_SEARCH_RESULTS_DESC","message":"Search Regular Retirement Pension Application","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_PENSION_REGISTER_HOME_SEARCH_RESULTS_HEADING","message":"Search Regular Retirement Pension Application","module":"rainmaker-pms","locale":"en_IN"},
+    {"code":"PENSION_REGULAR_RETIREMENT_PENSION_DETAIL_HEADER","message":"Regular Retirement Pension","module":"rainmaker-pms","locale":"en_IN"}
+    
+]}

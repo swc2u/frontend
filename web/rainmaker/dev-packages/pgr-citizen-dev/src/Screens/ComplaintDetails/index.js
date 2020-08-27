@@ -32,7 +32,7 @@ class ComplaintDetails extends Component {
       <Screen className="citizen-screen-bottom-padding-clear">
         {complaint && (
           <div className="form-without-button-cont-generic">
-            <Details {...complaint} action={action} history={history} />
+            <Details {...complaint} action={action} history={history} timeLine={timeLine} />
             <ComplaintTimeLine
               status={complaint.status}
               timeLine={timeLine}
@@ -82,6 +82,14 @@ const mapStateToProps = (state, ownProps) => {
           selectedEmployee && getPropertyFromObj(designationsById, selectedEmployee.assignments[0].designation, "name", "");
         action.employeeDepartment = selectedEmployee && getPropertyFromObj(departmentById, selectedEmployee.assignments[0].department, "name", "");
         action.employeeMobileNumber = assignee && getPropertyFromObj(employeeById, assignee, "mobileNumber", "");
+      }
+      else if (action && action.status && action.status === "resolved") {
+        let assignee = action.assignee;
+        const empId = action.by.split(":")[0];
+        const selectedEmployee = employeeById && empId && employeeById[empId];
+        action.employeeDesignation =
+        selectedEmployee && getPropertyFromObj(designationsById, selectedEmployee.assignments[0].designation, "name", "");
+        action.employeeName = empId && getPropertyFromObj(employeeById, empId, "name", "");
       }
       if (action && action.status && (action.status === "reassignrequested" || action.action === "reopen")) {
         action.groName = gro && getPropertyFromObj(employeeById, gro, "name", "");

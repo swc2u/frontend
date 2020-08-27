@@ -57,6 +57,35 @@ const transformer = (formKey, form = {}, state = {}) => {
     complaintResolved: () => {
       return updateComplaintStatus(state, form);
     },
+    rejectBooking: () => {
+      console.log('in reject booking in ui kit')
+      return updateComplaintStatus(state, form);
+    },
+    approveBooking: () => {
+      return updateComplaintStatus(state, form);
+    },
+    approveLocation:() => {
+      return updateComplaintStatus(state, form);
+    },
+    rejectNewLocation:() => {
+      return updateComplaintStatus(state, form);
+    },
+    publishNewLocation:() => {
+      return updateComplaintStatus(state, form);
+    },
+    approveWBTBooking: () => {
+      return updateComplaintStatus(state, form);
+    },
+    rejectBWTBooking: () => {
+      return updateComplaintStatus(state, form);
+    },
+    deliveredWBTBooking: () => {
+      return updateComplaintStatus(state, form);
+    },
+    NotdeliveredWBTBooking: () => {
+      return updateComplaintStatus(state, form);
+    },
+
     profile: () => {
       const { fields } = form;
       let { userInfo: user } = state.auth;

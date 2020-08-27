@@ -8,6 +8,7 @@ import forEach from "lodash/forEach";
 import isEmpty from "lodash/isEmpty";
 import CommonShare from "egov-ui-kit/components/CommonShare";
 import { localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
+import {getTranslatedLabel} from 'egov-ui-kit/utils/commons.js';
 
 class CommonShareContainer extends React.Component {
   visible = false;
@@ -15,7 +16,7 @@ class CommonShareContainer extends React.Component {
   currentRole = null; //current Role matched from localstorage and urlRoles
   indexMenu;
   shareCallBack = () => {
-    const { actionComponentMapping, componentId, complaints } = this.props;
+    const { actionComponentMapping, componentId, complaints,localizationLabels } = this.props;
 
     const { visible, matchedURL, currentRole, indexMenu } = this;
     if (currentRole != null && indexMenu != -1 && matchedURL) {
@@ -24,10 +25,16 @@ class CommonShareContainer extends React.Component {
       let { template } = metaData;
       let { title } = metaData;
       jsonPaths.forEach((path, index) => {
-        template = template.replace(`{${index}}`, get(complaints, path, ""));
-      });
+        let value = get(complaints, path, "");
+        if(path === "complaint.complaint")   value = "SERVICEDEFS."+get(complaints, path, "").toUpperCase();
 
-      navigator
+        template = template.replace(`{${index}}`,getTranslatedLabel(value,localizationLabels));
+      });
+      template =  template.replace(`{0}`,Math.abs(get(complaints , "complaint.timelineSLAStatus.daysCount")));
+
+      if (navigator.share) {
+        // we can use web share!
+        navigator
         .share({
           title: title,
           text: template,
@@ -35,6 +42,10 @@ class CommonShareContainer extends React.Component {
         })
         .then(() => console.log("Successful share"))
         .catch((error) => console.log("Error sharing", error));
+      } else {
+        // provide a fallback here
+      }
+      
     }
   };
 
@@ -97,12 +108,13 @@ CommonShareContainer.propTypes = {
 
 const mapStateToProps = (state) => {
   const menu = state.app.menu || [];
+  const {localizationLabels} = state.app;
   const uiCommonConfig = state.app.uiCommonConfig || {};
   const actionComponentMapping = uiCommonConfig["action-component-mapping"];
   const prepareFormData = state.common.prepareFormData || {};
   const { complaints } = prepareFormData;
 
-  return { menu, actionComponentMapping, complaints };
+  return { menu, actionComponentMapping, complaints,localizationLabels };
 };
 
 export default withRouter(connect(mapStateToProps)(CommonShareContainer));

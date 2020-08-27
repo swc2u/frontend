@@ -387,11 +387,11 @@ export const getDetailsForOwner = async (state, dispatch, fieldInfo) => {
       //New number search only
       let payload = await httpRequest(
         "post",
-        "/user/_search?tenantId=pb",
+        "/user/_search?tenantId=ch",
         "_search",
         [],
         {
-          tenantId: "pb",
+          tenantId: "ch",
           userName: `${ownerNo}`
         }
       );

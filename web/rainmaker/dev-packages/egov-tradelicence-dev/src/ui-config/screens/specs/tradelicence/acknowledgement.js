@@ -15,9 +15,10 @@ import set from "lodash/set";
 import generatePdf from "../utils/receiptPdf";
 import { Icon } from "egov-ui-framework/ui-atoms";
 import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
-import {generatePdfAndDownload} from "./acknowledgementResource/applicationSuccessFooter";
 import {downloadAcknowledgementForm} from "../utils"
-
+import {
+  handleScreenConfigurationFieldChange as handleField
+} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 const abc=(  state,
   dispatch,
  applicationNumber,
@@ -48,7 +49,7 @@ const abc=(  state,
                 const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
                 const documents = LicensesTemp[0].reviewDocData;
                 set(Licenses[0],"additionalDetails.documents", documents)
-                downloadAcknowledgementForm(Licenses);
+                downloadAcknowledgementForm(Licenses, LicensesTemp[0].estimateCardData);
               }
             },
           },
@@ -64,7 +65,7 @@ const abc=(  state,
             const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
             const documents = LicensesTemp[0].reviewDocData;
             set(Licenses[0],"additionalDetails.documents", documents)
-            downloadAcknowledgementForm(Licenses);
+            downloadAcknowledgementForm(Licenses, LicensesTemp[0].estimateCardData);
           }
         },
       },
@@ -90,7 +91,7 @@ const abc=(  state,
               const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
               const documents = LicensesTemp[0].reviewDocData;
               set(Licenses[0],"additionalDetails.documents", documents)
-              downloadAcknowledgementForm(Licenses,'print');
+              downloadAcknowledgementForm(Licenses, LicensesTemp[0].estimateCardData, 'print');
             }
           },
 
@@ -107,7 +108,7 @@ const abc=(  state,
             const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
             const documents = LicensesTemp[0].reviewDocData;
             set(Licenses[0],"additionalDetails.documents", documents)
-            downloadAcknowledgementForm(Licenses,'print');
+            downloadAcknowledgementForm(Licenses, LicensesTemp[0].estimateCardData,'print');
           }
         },
       }
@@ -130,7 +131,9 @@ const getAcknowledgementCard = (
   applicationNumber,
   secondNumber,
   financialYear,
-  tenant
+  tenant,
+  receiptNumber,
+  licenseNumber
 ) => {
   const financialYearText = financialYear ? financialYear : "";
   if (purpose === "apply" && status === "success") {
@@ -168,13 +171,23 @@ const getAcknowledgementCard = (
             },
             number: applicationNumber
           })
-        }
+        },
+        iframeForPdf: {
+          uiFramework: "custom-atoms",
+          componentPath: "Div"
+        },
+        applicationSuccessFooter: applicationSuccessFooter(
+          state,
+          dispatch,
+          applicationNumber,
+          tenant
+        )
       },
       abc: {
         uiFramework: "custom-atoms",
         componentPath: "Div",
         children: {
-          downloadFormButton: {
+          /* downloadFormButton: {
             uiFramework: "custom-atoms",
             componentPath: "Div",
             children: {
@@ -259,7 +272,7 @@ const getAcknowledgementCard = (
               }
             },
           }
-
+ */
         },
         props: {
           style: {
@@ -327,7 +340,6 @@ const getAcknowledgementCard = (
       )
     };
   } else if (purpose === "pay" && status === "success") {
-    loadReceiptGenerationData(applicationNumber, tenant);
     return {
       header: getCommonContainer({
         header: getCommonHeader({
@@ -353,8 +365,13 @@ const getAcknowledgementCard = (
             backgroundColor: "#39CB74",
             header: {
               labelName:
-                "Payment is collected successfully, Now you can dowload and issue Trade License Certificate to citizen",
+                "Payment is collected successfully.",
               labelKey: "TL_CONFIRMATION_MESSAGE_MAIN"
+            },
+            subheader: {
+              labelName:
+                "Now you can dowload and issue Trade License Certificate to citizen.",
+              labelKey: "TL_CONFIRMATION_MESSAGE_SUB_HEADER"
             },
             body: {
               labelName:
@@ -365,7 +382,7 @@ const getAcknowledgementCard = (
               labelName: "Payment Receipt No.",
               labelKey: "TL_PMT_RCPT_NO"
             },
-            number: secondNumber
+            number: receiptNumber
           })
         }
       },
@@ -377,8 +394,39 @@ const getAcknowledgementCard = (
       )
     };
   } else if (purpose === "approve" && status === "success") {
-    loadReceiptGenerationData(applicationNumber, tenant);
     return {
+      header: getCommonHeader({
+        labelName: `Application for Trade License ${financialYearText}`,
+        labelKey: "TL_APPLICATION_TRADE_LICENSE",
+        dynamicArray: [financialYearText]
+      }),
+      applicationSuccessCard: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        children: {
+          card: acknowledgementCard({
+            icon: "done",
+            backgroundColor: "#39CB74",
+            header: {
+              labelName: "Application is Approved Successfully",
+              labelKey: "TL_APPROVAL_CHECKLIST_MESSAGE_HEAD"
+            },
+            body: {
+              labelName:
+                "A notification regarding Trade License Approval has been sent to trade owner at registered Mobile No.",
+              labelKey: "TL_APPROVAL_CHECKLIST_MESSAGE_SUB"
+            },
+            tailText: {
+              labelName: "Application No.",
+              labelKey: "TL_HOME_SEARCH_RESULTS_APP_NO_LABEL"
+            },
+            number: applicationNumber
+          })
+        }
+      },
+      approvalSuccessFooter
+    };
+    /* return {
       header: getCommonContainer({
         header: getCommonHeader({
           labelName: `Trade License Application ${financialYearText}`,
@@ -414,15 +462,46 @@ const getAcknowledgementCard = (
               labelName: "Trade License No.",
               labelKey: "TL_HOME_SEARCH_RESULTS_TL_NO_LABEL"
             },
-            number: secondNumber
+            number: licenseNumber || secondNumber
+          })
+        }
+      },
+      approvalSuccessFooter
+    }; */
+  } else if (purpose === "sendback" && status === "success") {
+    return {
+      header: getCommonHeader({
+        labelName: `Application for Trade License ${financialYearText}`,
+        labelKey: "TL_APPLICATION_TRADE_LICENSE",
+        dynamicArray: [financialYearText]
+      }),
+      applicationSuccessCard: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        children: {
+          card: acknowledgementCard({
+            icon: "done",
+            backgroundColor: "#39CB74",
+            header: {
+              labelName: "Application is sent back Successfully",
+              labelKey: "TL_SENDBACK_CHECKLIST_MESSAGE_HEAD"
+            },
+            body: {
+              labelName:
+                "A notification regarding above application status has been sent to trade owner at registered Mobile No.",
+              labelKey: "TL_SENDBACK_CHECKLIST_MESSAGE_SUB"
+            },
+            tailText: {
+              labelName: "Application No.",
+              labelKey: "TL_HOME_SEARCH_RESULTS_APP_NO_LABEL"
+            },
+            number: applicationNumber
           })
         }
       },
       approvalSuccessFooter
     };
-  } else if (purpose === "sendback" && status === "success") {
-    loadReceiptGenerationData(applicationNumber, tenant);
-    return {
+    /* return {
       header: getCommonContainer({
         header: getCommonHeader({
           labelName: `Trade License Application ${financialYearText}`,
@@ -458,14 +537,13 @@ const getAcknowledgementCard = (
               labelName: "Trade License No.",
               labelKey: "TL_HOME_SEARCH_RESULTS_TL_NO_LABEL"
             },
-            number: secondNumber
+            number: licenseNumber || secondNumber
           })
         }
       },
       approvalSuccessFooter
-    };
+    }; */
   }else if (purpose === "sendbacktocitizen" && status === "success") {
-    loadReceiptGenerationData(applicationNumber, tenant);
     return {
       header: getCommonContainer({
         header: getCommonHeader({
@@ -493,16 +571,16 @@ const getAcknowledgementCard = (
               labelName: "Application is sent back to Citizen Successfully",
               labelKey: "TL_SENDBACK_TOCITIZEN_CHECKLIST_MESSAGE_HEAD"
             },
-            // body: {
-            //   labelName:
-            //     "A notification regarding above application status has been sent to trade owner at registered Mobile No.",
-            //   labelKey: "TL_SENDBACK_CHECKLIST_MESSAGE_SUB"
-            // },
+            body: {
+              labelName:
+                "A notification regarding above application status has been sent to trade owner at registered Mobile No.",
+              labelKey: "TL_SENDBACK_CHECKLIST_MESSAGE_SUB"
+            },
             tailText: {
               labelName: "Trade License No.",
               labelKey: "TL_HOME_SEARCH_RESULTS_TL_NO_LABEL"
             },
-            number: secondNumber
+            number: licenseNumber || secondNumber
           })
         }
       },
@@ -583,7 +661,7 @@ const getAcknowledgementCard = (
               labelName: "Trade License No.",
               labelKey: "TL_HOME_SEARCH_RESULTS_TL_NO_LABEL"
             },
-            number: secondNumber
+            number: licenseNumber || secondNumber
           })
         }
       },
@@ -740,6 +818,37 @@ const getAcknowledgementCard = (
   }
 };
 
+
+const getData = async (action, state, dispatch, purpose, status, financialYear, applicationNumber, secondNumber, tenant) => {
+  await loadReceiptGenerationData(applicationNumber, tenant, state, dispatch);
+  const receiptDataForReceipt = get(state, "screenConfiguration.preparedFinalObject.receiptDataForReceipt") || {};
+  const applicationDataForReceipt = get(state, "screenConfiguration.preparedFinalObject.applicationDataForReceipt") || {}
+  const {receiptNumber} = receiptDataForReceipt
+  const {licenseNumber} = applicationDataForReceipt
+  const data = getAcknowledgementCard(
+    state,
+    dispatch,
+    purpose,
+    status,
+    applicationNumber,
+    secondNumber,
+    financialYear,
+    tenant,
+    receiptNumber,
+    licenseNumber
+  );
+  dispatch(
+    handleField(
+      "acknowledgement",
+      "components.div",
+      "children",
+      data
+    )
+  );
+}
+
+
+
 const screenConfig = {
   uiFramework: "material-ui",
   name: "acknowledgement",
@@ -762,17 +871,7 @@ const screenConfig = {
     );
     const secondNumber = getQueryArg(window.location.href, "secondNumber");
     const tenant = getQueryArg(window.location.href, "tenantId");
-    const data = getAcknowledgementCard(
-      state,
-      dispatch,
-      purpose,
-      status,
-      applicationNumber,
-      secondNumber,
-      financialYear,
-      tenant
-    );
-    set(action, "screenConfig.components.div.children", data);
+    getData(action, state, dispatch, purpose, status, financialYear, applicationNumber, secondNumber, tenant)
     return action;
   }
 };

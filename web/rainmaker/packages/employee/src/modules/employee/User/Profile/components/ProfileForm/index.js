@@ -17,7 +17,7 @@ const ProfileForm = ({ form, handleFieldChange, onClickAddPic, img, profilePic }
           </div>
           <div style={{ padding: "0 8px" }} className="col-xs-12 col-sm-8 col-md-8 col-lg-8 profileFormContainer">
             <TextField {...fields.name} onChange={(e, value) => handleFieldChange("name", value)} />
-            <TextField {...fields.phonenumber} />
+            <TextField {...fields.phonenumber} onChange={(e, value) => handleFieldChange("phonenumber", value)} />
             <TextField {...fields.email} onChange={(e, value) => handleFieldChange("email", value)} />
             <Link to="/user/change-password">
               <div style={{ marginTop: "24px", marginBottom: "24px" }}>

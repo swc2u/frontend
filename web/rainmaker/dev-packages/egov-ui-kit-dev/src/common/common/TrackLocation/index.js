@@ -29,6 +29,7 @@ class TrackLocation extends Component {
       showMyAddress: false,
       currLoc: {},
       pickedLoc: {},
+      zoomValue : 18
     };
   }
 
@@ -70,6 +71,17 @@ class TrackLocation extends Component {
     add.lng = long;
   };
 
+  handleZoomChange = (zoomtype) =>{
+    let {zoomValue} = this.state
+    if(zoomtype === "zoomIn"){
+        this.setState({zoomValue : zoomValue + 1})
+    }
+    else if(zoomtype === "zoomOut" && zoomValue > 15) 
+    {
+      this.setState({zoomValue : zoomValue - 1})
+    }
+  }
+
   onClickPick = () => {
     this.convertToAddress(add);
     this.setPrevPageFlag();
@@ -106,9 +118,9 @@ class TrackLocation extends Component {
   };
 
   render() {
-    let { currLoc } = this.state;
+    let { currLoc , zoomValue} = this.state;
     const { location } = this.props;
-    var _currloc = !isEmpty(currLoc) ? currLoc : isEmpty(location) ? { lat: 12.972442, lng: 77.580643 } : location;
+    var _currloc = !isEmpty(currLoc) ? currLoc : isEmpty(location) ? { lat: 30.743141, lng: 76.786279} : location;
     return (
       <div style={{ position: "relative", height: "100vh", width: "100vw" }}>
         <div className="back-btn">
@@ -128,6 +140,8 @@ class TrackLocation extends Component {
           currLoc={_currloc}
           setLocation={this.setPickedLocation}
           getMyLoc={this.getMyLocation}
+          onZoomChange= {this.handleZoomChange}
+          zoomValue = {zoomValue}
           icon={pinIcon}
           hideTerrainBtn={true}
           dragInfoBox={false}

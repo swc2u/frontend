@@ -11,7 +11,7 @@ import commonConfig from "config/common";
 import redirectionLink from "egov-ui-kit/config/smsRedirectionLinks";
 import routes from "./Routes";
 import { LoadingIndicator } from "components";
-import { getLocale } from "egov-ui-kit/utils/localStorageUtils";
+import { getLocale , setDefaultLocale, getDefaultLocale } from "egov-ui-kit/utils/localStorageUtils";
 import { handleFieldChange } from "egov-ui-kit/redux/form/actions";
 import { getQueryArg } from "egov-ui-kit/utils/commons";
 import isEmpty from "lodash/isEmpty";
@@ -69,7 +69,10 @@ class App extends Component {
       },
     };
     // can be combined into one mdms call
-    fetchLocalizationLabel(getLocale() || "en_IN");
+      setDefaultLocale(getDefaultLocale());
+      const urlPath = window.location.pathname;
+    if(pathname.includes("/user/otp") || pathname.includes("/user/login") || pathname.includes("/user/register")|| pathname.includes("/language-selection") )
+   fetchLocalizationLabel(getLocale() || "en_IN");
     // current location
     fetchCurrentLocation();
     fetchMDMSData(requestBody);
@@ -113,7 +116,10 @@ class App extends Component {
     const isPrivacyPolicy = location && location.pathname && location.pathname.includes("privacy-policy");
 
     if (nextProps.hasLocalisation !== this.props.hasLocalisation && !authenticated && !getQueryArg("", "smsLink") && !isWithoutAuthSelfRedirect && !isPrivacyPolicy) {
-      nextProps.hasLocalisation && this.props.history.replace("/language-selection");
+      if(nextProps.hasLocalisation){
+        if(getDefaultLocale()== "null")
+          this.props.history.replace("/language-selection");
+      }
     }
   }
 
@@ -128,6 +134,19 @@ class App extends Component {
     );
   }
 }
+function QueryStringToJSON() {            
+  var pairs = window.location.search.slice(1).split('&');
+  
+  var result = {};
+  pairs.forEach(function(pair) {
+      pair = pair.split('=');
+      result[pair[0]] = decodeURIComponent(pair[1] || '');
+  });
+
+  return JSON.parse(JSON.stringify(result));
+}
+
+
 
 const mapStateToProps = (state, ownProps) => {
   const { app, auth, common } = state;
@@ -141,6 +160,24 @@ const mapStateToProps = (state, ownProps) => {
     hasLocalisation = stateInfoById[0].hasLocalisation;
     defaultUrl = stateInfoById[0].defaultUrl;
   }
+ if(window.location.pathname === "/" || window.location.pathname === "/user/login" ||  window.location.pathname === "/user/register"){
+  
+   if(window.location.search){
+    var queryString = QueryStringToJSON();
+    if(queryString.mobileno){
+      defaultUrl = "/user/otp"
+      window.location.href=`/user/otp${window.location.search}`
+    }
+    else{
+      defaultUrl = "/user/login";
+    }
+   }
+   else{
+    defaultUrl = "/user/login";
+   }
+ 
+ }
+   
   const props = {};
   const loading = ownProps.loading || spinner;
   if (route && route.length) {

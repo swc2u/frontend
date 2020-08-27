@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { TextFieldIcon, Dialog } from "components";
+import { TextFieldIcon, Dialog,AutoSuggestDropdown } from "components";
 import DownArrow from "material-ui/svg-icons/navigation/arrow-drop-down";
 import ComplaintType from "egov-ui-kit/common/pgr/ComplaintType";
 import "./index.css";
@@ -18,14 +18,25 @@ class ComplaintTypeField extends Component {
   };
 
   render() {
-    let { localizationLabels, complaintType } = this.props;
+    let { localizationLabels, complaintType,department,  handleFieldChange} = this.props;
     let { onClose, onFieldClicked } = this;
     let { open } = this.state;
     const complainTypeMessage =
       (complaintType && complaintType.value && (localizationLabels["SERVICEDEFS." + (complaintType.value || "").toUpperCase()] || {}).message) || "";
     return (
       <div className="complaint-type-main-cont">
+         <AutoSuggestDropdown
+              className="fix-for-layout-break"
+              fullWidth={true}
+              dataSource={department && department.dropDownData}
+              onChange={(chosenCity, index) => {
+                handleFieldChange("department", chosenCity.value);
+              }}
+              //onChange={(e, value, selectedValue) => handleFieldChange("city", selectedValue)}
+              {...department}
+            />
         <div onClick={onFieldClicked}>
+          
           <TextFieldIcon
             {...{ ...complaintType, value: complainTypeMessage }}
             iconPosition="after"

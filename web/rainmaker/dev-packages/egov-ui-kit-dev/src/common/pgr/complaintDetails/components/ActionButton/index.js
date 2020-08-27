@@ -5,7 +5,7 @@ import "./index.css";
 
 class ActionButton extends Component {
   render() {
-    let { btnOneLabel, btnOneOnClick, btnTwoLabel, btnTwoOnClick } = this.props;
+    let { btnOneLabel, btnOneOnClick, btnTwoLabel, btnTwoOnClick,btnThreeLabel,btnThreeOnClick } = this.props;
     const defaultButtonStyle = {
       height: "48px",
       width: "100%",
@@ -41,6 +41,19 @@ class ActionButton extends Component {
           backgroundColor="#fe7a51"
           buttonStyle={{ ...defaultButtonStyle, ...button2Style }}
         />
+
+        {btnThreeLabel && (
+          <Button
+            label={<Label buttonLabel={true} label={btnThreeLabel} color="#fe7a51" />}
+            onClick={btnThreeOnClick}
+            className="action-button-three"
+            id="actionThree"
+            backgroundColor="#ffffff"
+            labelStyle={{ padding: 0 }}
+            overlayStyle={{ display: "flex", alignItems: "center", justifyContent: "center", height: "inherit" }}
+            buttonStyle={{ ...defaultButtonStyle, ...button1Style }}
+          />
+        )}
       </div>
     );
   }

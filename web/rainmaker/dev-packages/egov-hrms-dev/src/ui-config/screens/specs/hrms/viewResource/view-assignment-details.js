@@ -75,6 +75,13 @@ const assignmentCard = {
             jsonPath: "Employee[0].assignments[0].isHOD"
             // callBack: convertEpochToDate
           }
+        ),
+        isPrimaryAssignment: getLabelWithValue(
+          { labelName: "Is Primary Assignment", labelKey: "HR_IS_PRIMARY_ASSIGNMENT_SWITCH_LABEL" },
+          {
+            jsonPath: "Employee[0].assignments[0].isPrimaryAssignment"
+            // callBack: convertEpochToDate
+          }
         )
       })
     }),

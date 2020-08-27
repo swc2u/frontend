@@ -11,7 +11,7 @@ export const sampleSearch = () => {
     FireNOCs: [
       {
         fid: "101",
-        tenantId: "pb.amritsar",
+        tenantId: "ch.chandigarh",
         firenocnumber: "",
         dateofapplied: "1556649000000",
         firenocdetailsid: "201",
@@ -81,7 +81,7 @@ export const sampleSearch = () => {
                 dob: "1992-11-11",
                 aadhaarNumber: null,
                 permanentAddress: "new Street",
-                permanentCity: "pb.amritsar",
+                permanentCity: "ch.chandigarh",
                 permanentPincode: null,
                 correspondenceCity: null,
                 correspondenceAddress: null
@@ -103,7 +103,7 @@ export const sampleSearch = () => {
                 dob: "1992-11-11",
                 aadhaarNumber: null,
                 permanentAddress: "new Street",
-                permanentCity: "pb.amritsar",
+                permanentCity: "ch.chandigarh",
                 permanentPincode: null,
                 correspondenceCity: null,
                 correspondenceAddress: null
@@ -117,7 +117,7 @@ export const sampleSearch = () => {
       },
       {
         fid: "102",
-        tenantId: "pb.amritsar",
+        tenantId: "ch.chandigarh",
         firenocnumber: "",
         dateofapplied: "1556649000000",
         firenocdetailsid: "202",
@@ -180,7 +180,7 @@ export const sampleSearch = () => {
                 dob: "1992-11-11",
                 aadhaarNumber: null,
                 permanentAddress: "new Street",
-                permanentCity: "pb.amritsar",
+                permanentCity: "ch.chandigarh",
                 permanentPincode: null,
                 correspondenceCity: null,
                 correspondenceAddress: null
@@ -202,7 +202,7 @@ export const sampleSearch = () => {
                 dob: "1992-11-11",
                 aadhaarNumber: null,
                 permanentAddress: "new Street",
-                permanentCity: "pb.amritsar",
+                permanentCity: "ch.chandigarh",
                 permanentPincode: null,
                 correspondenceCity: null,
                 correspondenceAddress: null
@@ -216,7 +216,7 @@ export const sampleSearch = () => {
       },
       {
         fid: "105",
-        tenantId: "pb.amritsar",
+        tenantId: "ch.chandigarh",
         firenocnumber: "",
         dateofapplied: "1556649000000",
         firenocdetailsid: "205",
@@ -279,7 +279,7 @@ export const sampleSearch = () => {
                 dob: "1992-11-11",
                 aadhaarNumber: null,
                 permanentAddress: "new Street",
-                permanentCity: "pb.amritsar",
+                permanentCity: "ch.chandigarh",
                 permanentPincode: null,
                 correspondenceCity: null,
                 correspondenceAddress: null
@@ -293,7 +293,7 @@ export const sampleSearch = () => {
       },
       {
         fid: "106",
-        tenantId: "pb.amritsar",
+        tenantId: "ch.chandigarh",
         firenocnumber: "",
         dateofapplied: "1556821800000",
         firenocdetailsid: "206",
@@ -356,7 +356,7 @@ export const sampleSearch = () => {
                 dob: "1992-11-11",
                 aadhaarNumber: null,
                 permanentAddress: "new Street",
-                permanentCity: "pb.amritsar",
+                permanentCity: "ch.chandigarh",
                 permanentPincode: null,
                 correspondenceCity: null,
                 correspondenceAddress: null
@@ -370,7 +370,7 @@ export const sampleSearch = () => {
       },
       {
         fid: "107",
-        tenantId: "pb.amritsar",
+        tenantId: "ch.chandigarh",
         firenocnumber: "",
         dateofapplied: "1556908200000",
         firenocdetailsid: "207",
@@ -433,7 +433,7 @@ export const sampleSearch = () => {
                 dob: "1992-11-11",
                 aadhaarNumber: null,
                 permanentAddress: "new Street",
-                permanentCity: "pb.amritsar",
+                permanentCity: "ch.chandigarh",
                 permanentPincode: null,
                 correspondenceCity: null,
                 correspondenceAddress: null
@@ -447,7 +447,7 @@ export const sampleSearch = () => {
       },
       {
         fid: "6a80fcb4-3767-4bd4-b01b-7177107a334a",
-        tenantId: "pb.amritsar",
+        tenantId: "ch.chandigarh",
         firenocnumber: null,
         dateofapplied: null,
         firenocdetailsid: "03d2cae0-b608-4a13-9974-56b7eb73c129",
@@ -514,7 +514,7 @@ export const sampleSingleSearch = () => {
     FireNOCs: [
       {
         id: "af82e49e-c966-40ab-993f-9ead126b3583",
-        tenantId: "pb.amritsar",
+        tenantId: "ch.chandigarh",
         fireNOCNumber: null,
         provisionFireNOCNumber: null,
         oldFireNOCNumber: null,
@@ -535,7 +535,7 @@ export const sampleSingleSearch = () => {
           buildings: [
             {
               id: "5427ad45-2bf7-428b-bcc8-3c52c7747925",
-              tenantId: "pb.amritsar",
+              tenantId: "ch.chandigarh",
               name: "dsrrh violet",
               usageType: "GROUP_A_RESIDENTIAL.SUBDIVISIONA-1",
               uoms: [
@@ -560,7 +560,7 @@ export const sampleSingleSearch = () => {
               ],
               applicationDocuments: [
                 {
-                  tenantId: "pb.amritsar",
+                  tenantId: "ch.chandigarh",
                   documentType: "BUILDING.BUILDING_PLAN.SITE_PLAN",
                   fileStoreId: "bcc598cf-04bf-45c8-bbf5-b1d3619b2d78"
                 }
@@ -569,7 +569,7 @@ export const sampleSingleSearch = () => {
             },
             {
               id: "c53ca061-4fe8-48c0-aec7-1eff3621d72a",
-              tenantId: "pb.amritsar",
+              tenantId: "ch.chandigarh",
               name: "Dsrrh Indigo",
               usageType: "GROUP_A_RESIDENTIAL.SUBDIVISIONA-2",
               uoms: [
@@ -600,12 +600,12 @@ export const sampleSingleSearch = () => {
             id: "968e8152-5d8f-4dd4-b5e6-1d750ee04313",
             propertyId: null,
             address: {
-              tenantId: "pb.amritsar",
+              tenantId: "ch.chandigarh",
               doorNo: null,
               latitude: null,
               longitude: null,
               buildingName: null,
-              city: "pb.amritsar",
+              city: "ch.chandigarh",
               locality: {
                 code: "SUN04"
               },
@@ -640,7 +640,7 @@ export const sampleSingleSearch = () => {
                     address: "Corresponding address",
                     type: "CORRESPONDENCE",
                     id: 52741,
-                    tenantId: "pb",
+                    tenantId: "ch",
                     userId: 23442,
                     addressType: "CORRESPONDENCE",
                     lastModifiedBy: null,
@@ -652,7 +652,7 @@ export const sampleSingleSearch = () => {
                     address: "Some correspondance address",
                     type: "PERMANENT",
                     id: 48685,
-                    tenantId: "pb",
+                    tenantId: "ch",
                     userId: 23442,
                     addressType: "PERMANENT",
                     lastModifiedBy: null,
@@ -671,12 +671,12 @@ export const sampleSingleSearch = () => {
                 identificationMark: null,
                 createdBy: 0,
                 lastModifiedBy: 1,
-                tenantId: "pb",
+                tenantId: "ch",
                 roles: [
                   {
                     code: "CITIZEN",
                     name: "Citizen",
-                    tenantId: "pb"
+                    tenantId: "ch"
                   }
                 ],
                 uuid: "d9fb76e8-3c65-4e11-9f5f-2998c0f8b8a6",
@@ -689,7 +689,7 @@ export const sampleSingleSearch = () => {
             additionalDetail: {
               documents: [
                 {
-                  tenantId: "pb.amritsar",
+                  tenantId: "ch.chandigarh",
                   documentType: "OWNER.IDENTITYPROOF",
                   fileStoreId: "89fe5959-79e1-4201-b8ca-bcbc4c23c828"
                 }
@@ -827,7 +827,7 @@ export const sampleGetBill = () => {
         billDetails: [
           {
             id: "31dd68b0-ded3-45de-b241-de96d73b487c",
-            tenantId: "pb.amritsar",
+            tenantId: "ch.chandigarh",
             demandId: "02f07856-978f-4a6b-acb9-8ad635699c4f",
             bill: "b8378732-c1d0-4910-8d65-f3b027c48d8c",
             businessService: "FIRENOC",
@@ -848,7 +848,7 @@ export const sampleGetBill = () => {
             billAccountDetails: [
               {
                 id: "48417f1e-f8ac-4469-8e31-b801731884db",
-                tenantId: "pb.amritsar",
+                tenantId: "ch.chandigarh",
                 billDetail: "31dd68b0-ded3-45de-b241-de96d73b487c",
                 demandDetailId: "b15dcc8b-3748-4835-97fa-a9e42e632ecc",
                 order: 3,
@@ -864,7 +864,7 @@ export const sampleGetBill = () => {
             status: null
           }
         ],
-        tenantId: "pb.amritsar",
+        tenantId: "ch.chandigarh",
         auditDetails: {
           createdBy: "ed8cebbc-750c-4e03-98b5-488d6e506395",
           lastModifiedBy: "ed8cebbc-750c-4e03-98b5-488d6e506395",

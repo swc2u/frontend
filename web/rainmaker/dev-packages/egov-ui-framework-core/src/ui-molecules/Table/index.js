@@ -16,6 +16,12 @@ class Table extends React.Component {
   getMuiTheme = () =>
     createMuiTheme({
       overrides: {
+        MuiPaper: {
+          root: {
+            backgroundColor: "#FFF",
+            overflowX: "scroll"
+          }
+        },
         MUIDataTableBodyCell: {
           root: {
             "&:nth-child(2)": {

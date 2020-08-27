@@ -52,6 +52,10 @@
       width: 100%;
     }
   }
+
+  textarea#custom-containers-fullAddress, textarea#custom-containers-permanentAddress, textarea#custom-containers-completeResidentialAddress, textarea#custom-containers-particularsOfArea {
+        line-height: 1.3 !important;
+      }
   
   @media only screen and (min-width: 768px) {
     .tl-download-button {
@@ -61,5 +65,8 @@
     .tl-print-button {
       margin-left: 10px;
       width: 150px;
+    }
+    .apply-wizard-footer {
+      width: 100%
     }
   }
