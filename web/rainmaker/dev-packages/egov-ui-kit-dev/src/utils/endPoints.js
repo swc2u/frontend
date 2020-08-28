@@ -199,3 +199,68 @@ export const FETCHASSESSMENTS = {
     ACTION: "_search",
   },
 };
+export const APPLICATION = {
+  POST: {
+    URL: "bookings/api/employee/_search",
+    ACTION: "_search",
+  },
+};
+export const PAYMENT = {
+  POST: {
+    URL: "billing-service/bill/v2/_fetchbill?",
+    ACTION: "_search",
+  },
+};
+
+export const AFTERPAYMENTAPI = {
+  POST: {
+    URL: "collection-services/payments/_search?",
+    ACTION: "_search",
+  },
+};
+export const DWONLOADPAYMENTRECEIPT = {
+  POST: {
+    URL: "pdf-service/v1/_create?key=bk-payment-receipt",
+    ACTION: "_search",
+  },
+};
+
+export const HISTORY = {
+  POST: {
+    URL: "bookings/api/egov-workflow/process/_search?",
+    ACTION: "_search",
+  },
+};
+
+export const DOWNLOADAPPLICATION = {
+  POST: {
+    URL:"pdf-service/v1/_create?key=bk-osbm-app-form&tenatId=ch",
+    ACTION: "_search",
+  },
+};
+
+export const DOWNLOADBWTAPPLICATION = {
+  POST: {
+    URL:"pdf-service/v1/_create?key=bk-wt-app-form",
+    ACTION: "_search",
+  },
+};
+
+export const MCCAPPLICATION = { 
+  POST: {
+    URL: "bookings/newLocation/employee/osujm/_search",
+    ACTION: "_search",
+  },
+  };
+export const DWONLOADPERMISSIONLETTER = {
+  POST: {
+    URL: "pdf-service/v1/_create?key=bk-osbm-pl",
+    ACTION: "_search",
+  },
+};
+export const CREATEBWTAPPLICATION = {
+  POST: {
+    URL: "bookings/api/_create?",
+    ACTION: "_search",
+  },
+};
