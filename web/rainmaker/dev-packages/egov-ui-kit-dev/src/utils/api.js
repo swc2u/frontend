@@ -190,6 +190,7 @@ export const uploadFile = async (endPoint, module, file, ulbLevel) => {
 
 export const loginRequest = async (username = null, password = null, refreshToken = "", grantType = "password", tenantId = "", userType) => {
   tenantId = tenantId ? tenantId : commonConfig.tenantId;
+  tenantId="ch"
   const loginInstance = axios.create({
     baseURL: window.location.origin, 
     headers: {

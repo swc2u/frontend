@@ -2,21 +2,21 @@ import * as actionTypes from "./actionTypes";
 import { transformById } from "egov-ui-kit/utils/commons";
 import isEmpty from "lodash/isEmpty";
 
-const mergeServiceWithActions = (payload) => {
-  return (
-    payload &&
-    payload.actionHistory &&
-    payload.actionHistory.reduce((result, item, index) => {
-      if (!isEmpty(item) && !isEmpty(item.actions) && payload.services[index]) {
-        result.push({
-          ...payload.services[index],
-          actions: item.actions,
-        });
-      }
-      return result;
-    }, [])
-  );
-};
+// const mergeServiceWithActions = (payload) => {
+//   return (
+//     payload &&
+//     payload.actionHistory &&
+//     payload.actionHistory.reduce((result, item, index) => {
+//       if (!isEmpty(item) && !isEmpty(item.actions) && payload.services[index]) {
+//         result.push({
+//           ...payload.services[index],
+//           actions: item.actions,
+//         });
+//       }
+//       return result;
+//     }, [])
+//   );
+// };
 
 const intialState = {
   loading: false,
@@ -34,6 +34,7 @@ const complaintsReducer = (state = intialState, action) => {
   switch (type) {
 
     case actionTypes.APPLICATION_FETCH_COMPLETE:
+      console.log('action.payload in reducer',action.payload)
       return {
         ...state,
         loading: false,
@@ -166,11 +167,6 @@ const complaintsReducer = (state = intialState, action) => {
         error: true,
         errorMessage: action.error,
       };
-
-
-
-
-
 
     case actionTypes.APPLICATION_FETCH_ERROR:
       return {

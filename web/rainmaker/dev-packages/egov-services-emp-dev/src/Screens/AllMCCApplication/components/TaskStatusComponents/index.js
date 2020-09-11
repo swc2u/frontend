@@ -7,7 +7,7 @@ import {
 } from "egov-ui-framework/ui-containers";
 import { convertEpochToDate } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
-import "./index.css";
+// import "./index.css";
 
 export const getCurrentStatus = status => {
   switch (status) {

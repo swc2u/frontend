@@ -2,7 +2,7 @@ import React from "react";
 import Loadable from "react-loadable";
 
 // pgr employee specific screens
-import { ReOpenComplaint, ReopenAcknowledgement } from "../modules/common";
+// import { ReOpenComplaint, ReopenAcknowledgement } from "../modules/common";
 
 const Loading = () => <div />;
 
@@ -49,10 +49,7 @@ const ParkAndCommunityCenterAppDetails=Loadable({
   loader: () => import("../Screens/ParkAndCommunityCenterAppDetails"),
   loading: Loading
 });
-const LocationSummary = Loadable({
-  loader: () => import("../Screens/LocationSummaryComponent"),
-  loading: Loading
-});
+
 
 const CGApplicationDetails = Loadable({
   loader: () => import("../Screens/CGApplicationDetails"),
@@ -158,10 +155,10 @@ const DeliveredApplicationSuccess= Loadable({
   loader: () => import("../Screens/DeliveredBWTApplicationSuccess"),
   loading: Loading
 });
-const ReassignSuccess = Loadable({
-  loader: () => import("../Screens/ReassignSuccess"),
-  loading: Loading
-});
+// const ReassignSuccess = Loadable({
+//   loader: () => import("../Screens/ReassignSuccess"),
+//   loading: Loading
+// });
 // const CreateComplaint = Loadable({
 //   loader: () => import("../Screens/CreateComplaint"),
 //   loading: Loading
@@ -290,16 +287,16 @@ const routes = [
       redirectionUrl
     }
   },
-  {
-    path: "egov-services/application-details/:applicationId",
-    component: ApplicationSummary,
-    needsAuthentication: true,
-    options: {
-      hideFooter: true,
-      // title: "BK_CS_HEADER_APPLICATION_SUMMARY",
-      redirectionUrl
-    }
-  },
+  // {
+  //   path: "egov-services/application-details/:applicationId",
+  //   component: ApplicationSummary,
+  //   needsAuthentication: true,
+  //   options: {
+  //     hideFooter: true,
+  //     // title: "BK_CS_HEADER_APPLICATION_SUMMARY",
+  //     redirectionUrl
+  //   }
+  // },
   {
     path: "egov-services/park-and-community-center-appDetails-details/:applicationId",
     component: ParkAndCommunityCenterAppDetails,
@@ -312,16 +309,7 @@ const routes = [
   },
 
   
-  {
-    path: "egov-services/new-location-details/:applicationId",
-    component: LocationSummary,
-    needsAuthentication: true,
-    options: {
-      hideFooter: true,
-      // title: "BK_CS_HEADER_APPLICATION_SUMMARY",
-      redirectionUrl
-    }
-  },
+  
  
   {
     path: "egov-services/cg-application-details/:applicationId",
@@ -374,16 +362,16 @@ const routes = [
       redirectionUrl
     }
   },
-  {
-    path: "egov-services/home123",
-    component: ApplicationSummary,
-    needsAuthentication: true,
-    options: {
-      hideFooter: true,
-      title: "BK_CS_HEADER_APPLICATION_SUMMARY",
-      redirectionUrl
-    }
-  },
+  // {
+  //   path: "egov-services/home123",
+  //   component: ApplicationSummary,
+  //   needsAuthentication: true,
+  //   options: {
+  //     hideFooter: true,
+  //     title: "BK_CS_HEADER_APPLICATION_SUMMARY",
+  //     redirectionUrl
+  //   }
+  // },
   // {
   //   path: "closed-complaints",
   //   component: ClosedComplaints,
@@ -497,30 +485,30 @@ const routes = [
       redirectionUrl
     }
   },
-  {
-    path: "reassign-success",
-    component: ReassignSuccess,
-    needsAuthentication: true,
-    options: {
-      hideBackButton: true,
-      hideFooter: true,
-      hideTitle: true,
-      title: "CS_COMMON_RE-ASSIGN REQUESTED",
-      redirectionUrl
-    }
-  },
-  {
-    path: "complaint-assigned/:serviceRequestId?",
-    component: ComplaintAssigned,
-    needsAuthentication: true,
-    options: {
-      hideBackButton: true,
-      hideFooter: true,
-      hideTitle: true,
-      title: "ES_COMPLAINT_ASSIGNED_HEADER",
-      redirectionUrl
-    }
-  },
+  // {
+  //   path: "reassign-success",
+  //   component: ReassignSuccess,
+  //   needsAuthentication: true,
+  //   options: {
+  //     hideBackButton: true,
+  //     hideFooter: true,
+  //     hideTitle: true,
+  //     title: "CS_COMMON_RE-ASSIGN REQUESTED",
+  //     redirectionUrl
+  //   }
+  // },
+  // {
+  //   path: "complaint-assigned/:serviceRequestId?",
+  //   component: ComplaintAssigned,
+  //   needsAuthentication: true,
+  //   options: {
+  //     hideBackButton: true,
+  //     hideFooter: true,
+  //     hideTitle: true,
+  //     title: "ES_COMPLAINT_ASSIGNED_HEADER",
+  //     redirectionUrl
+  //   }
+  // },
   {
     path: "egov-services/application-rejected",
     component: ApplicationRejected,
@@ -553,16 +541,16 @@ const routes = [
   //     redirectionUrl
   //   }
   // },
-  {
-    path: "employee-directory",
-    component: EmployeeDirectory,
-    needsAuthentication: true,
-    options: {
-      title: "ES_EMPLOYEE_DIRECTORY_HEADER",
-      hideFooter: true,
-      redirectionUrl
-    }
-  },
+  // {
+  //   path: "employee-directory",
+  //   component: EmployeeDirectory,
+  //   needsAuthentication: true,
+  //   options: {
+  //     title: "ES_EMPLOYEE_DIRECTORY_HEADER",
+  //     hideFooter: true,
+  //     redirectionUrl
+  //   }
+  // },
   {
     path: "egov-services/reject-booking/:applicationId?",
     component: RejectComplaint,

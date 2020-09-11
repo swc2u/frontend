@@ -17,7 +17,7 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
 import { downloadInventoryPdf} from '../../ui-config/screens/specs/utils'
 import store from "ui-redux/store";
 import { getprintpdf } from "../../ui-utils/storecommonsapi";
-import "./index.scss";
+// import "./index.scss";
 class InventoryContainer extends Component {
 
   state = {

@@ -5,7 +5,7 @@ import { SuccessMessage } from "modules/common";
 import CommonSuccessMessage from "../../modules/CommonSuccessMessage";
 import { connect } from "react-redux";
 
-import "./index.css";
+// import "./index.css";
 
 class AssignToDriverSuccess extends Component {
   continueComplaintSubmit = () => {

@@ -382,6 +382,7 @@ export const getComplaintDisplayOrder = (order) => {
 
 
 export const fetchApplications = (requestBody, hasUsers = true, overWrite) => {
+	console.log('requestbody==',requestBody)
 	requestBody.tenantId = "ch"
 	return async (dispatch, getState) => {
 		try {

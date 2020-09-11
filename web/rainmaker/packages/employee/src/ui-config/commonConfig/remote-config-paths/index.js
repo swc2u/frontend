@@ -29,9 +29,9 @@ const remoteConfigPath = (path, screenKey) => {
       config = require(`egov-abg/ui-config/screens/specs/${path}/${screenKey}`).default;
       break
     case "rented-properties":
-    case "rented-properties-citizen":
-      config = require(`egov-rented-properties/ui-config/screens/specs/${path}/${screenKey}`).default;
-      break;
+    // case "rented-properties-citizen":
+    //   config = require(`egov-rented-properties/ui-config/screens/specs/${path}/${screenKey}`).default;
+    //   break;
     case "egov-common":
       config = require(`egov-common/ui-config/screens/specs/${path}/${screenKey}`).default;
       break;
