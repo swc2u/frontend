@@ -5,8 +5,6 @@ import { SuccessMessage } from "modules/common";
 import CommonSuccessMessage from "../../modules/CommonSuccessMessage";
 import { connect } from "react-redux";
 
-// import "./index.css";
-
 class AssignToDriverSuccess extends Component {
   continueComplaintSubmit = () => {
     this.props.history.push("/egov-services/all-applications");

@@ -3,8 +3,6 @@ import { Button, Icon } from "components";
 import Label from "egov-ui-kit/utils/translationNode";
 import CommonSuccessMessage from "../../modules/CommonSuccessMessage";
 
-// import "./index.css";
-
 class RejectBWTApplicationSuccess extends Component {
   continueComplaintSubmit = () => {
    

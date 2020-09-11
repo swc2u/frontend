@@ -7,7 +7,6 @@ import { fetchApplications } from "../../redux/bookings/actions";
 import Label from "egov-ui-kit/utils/translationNode";
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import { handleFieldChange } from "egov-ui-kit/redux/form/actions";
-// import "./index.css";
 
 const DeliveredBWTBookingHOC = formHOC({
   formKey: "deliveredWBTBooking",
