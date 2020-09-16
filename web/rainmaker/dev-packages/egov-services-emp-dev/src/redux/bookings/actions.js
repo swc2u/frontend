@@ -35,6 +35,7 @@ const applicationTypeFetchError = (error) => {
 
 const applicationFetchComplete = (payload, overWrite) => {
 	console.log('payload', payload, overWrite)
+	 console.log('actionTypes.APPLICATION_FETCH_COMPLETE',actionTypes)
 	return {
 		type: actionTypes.APPLICATION_FETCH_COMPLETE,
 		payload,

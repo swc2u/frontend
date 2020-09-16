@@ -2,6 +2,8 @@ import * as actionTypes from "./actionTypes";
 import { transformById } from "egov-ui-kit/utils/commons";
 import isEmpty from "lodash/isEmpty";
 
+
+// console.log('hello reducer file',actionTypes);
 // const mergeServiceWithActions = (payload) => {
 //   return (
 //     payload &&
@@ -27,8 +29,11 @@ const intialState = {
   complaintDepartment: [],
   complaintSector: [],
   order: "",
+  name:'rama',
+  applicationData:[],
+  fetchSuccess:false
 };
-
+console.log('intialState in reducer==>>',intialState);
 const complaintsReducer = (state = intialState, action) => {
   const { type, overWrite } = action;
   switch (type) {
@@ -38,6 +43,7 @@ const complaintsReducer = (state = intialState, action) => {
       return {
         ...state,
         loading: false,
+        name:'skumar',
         fetchSuccess: true,
         applicationData: action.payload
       };
