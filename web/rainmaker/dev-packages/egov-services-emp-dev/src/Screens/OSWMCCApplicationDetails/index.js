@@ -144,7 +144,8 @@ class ApplicationDetails extends Component {
 			{
 				"applicationNumber": match.params.applicationId, 'uuid': userInfo.uuid,
 				"applicationStatus": "",
-				"mobileNumber": "", "bookingType": ""
+				"mobileNumber": "", "bookingType": "","roles":userInfo.roles,
+				"tenantId":userInfo.tenantId
 			}
 		);
 		fetchHistory([

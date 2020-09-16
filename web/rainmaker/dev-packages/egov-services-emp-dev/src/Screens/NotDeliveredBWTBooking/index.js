@@ -28,7 +28,8 @@ class NotDeliveredBWTBooking extends Component {
     fetchApplications(
       { 'uuid': userInfo.uuid, "applicationNumber": match.params.applicationId,
       "applicationStatus":"",
-      "mobileNumber":"","bookingType":"" }
+      "mobileNumber":"","bookingType":"","roles":userInfo.roles,
+      "tenantId":userInfo.tenantId}
       
     );
   }
