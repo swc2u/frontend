@@ -72,46 +72,12 @@ class AllRequests extends Component {
     fetchApplicationType();
     let rawRole =
       userInfo && userInfo.roles && userInfo.roles[0].code.toUpperCase();
-    //const numberOfComplaints = role === "employee" ? numEmpComplaint : role === "csr" ? numCSRComplaint : 0;
-    if (rawRole === "PGR-ADMIN") {
-      this.props.history.push("/report/rainmaker-pgr/DepartmentWiseReport");
-    } else {
+
+      console.log('userinfo in all applications1',userInfo);
+   
       let { fetchApplications } = this.props;
-      
-      if (role === "ao") {
-        fetchApplications(
-          [
-            {
-              key: "status",
-              value: "assigned,escalatedlevel1pending,escalatedlevel2pending"
-            }
-          ],
-          true,
-          false
-        );
-        fetchApplications(
-          [
-            {
-              key: "status",
-              value: "open,reassignrequested"
-            }
-          ],
-          true,
-          false
-        );
-      } else if (role === "eo") {
-        fetchApplications(
-          [
-            {
-              key: "status",
-              value: "escalatedlevel1pending,escalatedlevel2pending"
-            }
-          ],
-          true,
-          true
-        );
-      }
-      else {
+      console.log('userinfo in all applications2',userInfo);
+    
         fetchApplications(
           {
             "uuid": userInfo.uuid, "applicationNumber": "",
@@ -124,8 +90,8 @@ class AllRequests extends Component {
           true,
           true
         );
-      }
-    }
+    
+  
     let inputType = document.getElementsByTagName("input");
     for (let input in inputType) {
       if (inputType[input].type === "number") {
@@ -248,7 +214,7 @@ class AllRequests extends Component {
       queryObj.applicationNumber = complaintNo;
       queryObj.applicationStatus = "";
       queryObj.mobileNumber = "";
-      queryObj.bookingType = "";      
+      queryObj.bookingType = "";
       queryObj.roles=userInfo.roles;
       queryObj.tenantId=userInfo.tenantId;
 
@@ -258,7 +224,7 @@ class AllRequests extends Component {
       queryObj.applicationStatus = applicationStatus
       queryObj.applicationNumber = '';
       queryObj.mobileNumber = "";
-      queryObj.bookingType = "";      
+      queryObj.bookingType = "";
       queryObj.roles=userInfo.roles;
       queryObj.tenantId=userInfo.tenantId;
 
@@ -533,7 +499,7 @@ class AllRequests extends Component {
         "applicationStatus": "",
         "mobileNumber": "", "bookingType": "",
         "roles":userInfo.roles,
-        "tenantId":userInfo.tenantId
+      "tenantId":userInfo.tenantId
       },
     );
     this.setState({ mobileNo: "", complaintNo: "", bookingType: "", applicationStatus: "", fromDate: "", toDate: "", search: false });

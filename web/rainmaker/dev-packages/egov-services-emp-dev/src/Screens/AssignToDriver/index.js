@@ -31,7 +31,9 @@ class AssignToDiver extends Component {
       {
         'uuid': userInfo.uuid, "applicationNumber": applicationNumber,
         "applicationStatus": "",
-        "mobileNumber": "", "bookingType": ""
+        "mobileNumber": "", "bookingType": "",
+        "roles":userInfo.roles,
+      "tenantId":userInfo.tenantId
         
       }
     );

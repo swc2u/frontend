@@ -91,10 +91,6 @@ const ApplicationRejected = Loadable({
   loader: () => import("../Screens/ApplicationRejected"),
   loading: Loading
 });
-// const ComplaintAssigned = Loadable({
-//   loader: () => import("../Screens/ComplaintAssigned"),
-//   loading: Loading
-// });
 const ResolveSuccess = Loadable({
   loader: () => import("../Screens/ResolveSuccess"),
   loading: Loading
@@ -216,7 +212,6 @@ const routes = [
       customTitle: "BK_MYBK_APPLY_PACC_REQUEST_HEADER"
     }
   },
- 
   {
     path: "egov-services/booking-resolved/:applicationId?",
     component: ApplicationResolved,
@@ -294,7 +289,6 @@ const routes = [
       redirectionUrl
     }
   },
- 
   {
     path: "egov-services/resolve-success",
     component: ResolveSuccess,
@@ -387,8 +381,6 @@ const routes = [
       redirectionUrl
     }
   },
-
- 
   {
     path: "egov-services/application-rejected",
     component: ApplicationRejected,
@@ -401,8 +393,7 @@ const routes = [
       hideBackButton: true
     }
   },
- 
- {
+  {
     path: "egov-services/reject-booking/:applicationId?",
     component: RejectComplaint,
     needsAuthentication: true,

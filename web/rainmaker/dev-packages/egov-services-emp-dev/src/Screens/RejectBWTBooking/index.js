@@ -31,7 +31,8 @@ class RejectBWTBooking extends Component {
       {
         'uuid': userInfo.uuid, "applicationNumber": applicationNumber,
         "applicationStatus": "",
-        "mobileNumber": "", "bookingType": ""
+        "roles":userInfo.roles,
+				"tenantId":userInfo.tenantId
       }
     );
   }
