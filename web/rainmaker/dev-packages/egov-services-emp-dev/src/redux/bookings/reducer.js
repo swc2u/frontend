@@ -28,10 +28,7 @@ const intialState = {
   categoriesById: {},
   complaintDepartment: [],
   complaintSector: [],
-  order: "",
-  name:'rama',
-  applicationData:[],
-  fetchSuccess:false
+  order: ""
 };
 console.log('intialState in reducer==>>',intialState);
 const complaintsReducer = (state = intialState, action) => {
@@ -43,7 +40,6 @@ const complaintsReducer = (state = intialState, action) => {
       return {
         ...state,
         loading: false,
-        name:'skumar',
         fetchSuccess: true,
         applicationData: action.payload
       };
@@ -252,15 +248,13 @@ const complaintsReducer = (state = intialState, action) => {
         },
       };
     case actionTypes.APPLICATION_SECTOR_FETCH_SUCCESS:
-      let applicationSector = transformById(action.payload.MdmsRes["Booking"].Sector, "code");
-      console.log('applicationSector', applicationSector)
+        // let applicationSector = transformById(action.payload.MdmsRes["Booking"].Sector, "code");
+      console.log('action.payload i reducer0----', action.payload)
       return {
         ...state,
         loading: false,
-        applicationSector: {
-          ...state.applicationSector,
-          ...applicationSector,
-        },
+        fetchSuccess: true,
+        applicationSector: applicationSector
       };
 
     case actionTypes.APPLICATION_TYPE_FETCH_SUCCESS:

@@ -136,8 +136,8 @@ class NewLocationResolved extends Component {
 }
 
 const mapStateToProps = state => {
-  const { complaints = {} } = state || {};
-  const { MccApplicationData } = complaints;
+  const { bookings = {} } = state || {};
+  const { MccApplicationData } = bookings;
  
   let trasformData = MccApplicationData?MccApplicationData.osujmNewLocationModelList[0]:'';
   let businessServiceData = MccApplicationData.businessService;

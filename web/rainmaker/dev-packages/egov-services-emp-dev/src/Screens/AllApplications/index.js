@@ -1222,22 +1222,19 @@ const roleFromUserInfo = (roles = [], role) => {
 
 const mapStateToProps = state => {
   console.log('state in all app',state)
-  const { complaints, common, screenConfiguration = {} } = state || {};
-  const { categoriesById, byId, order } = complaints;
-  const { fetchSuccess, applicationData } = complaints;
-  const { preparedFinalObject = {} } = screenConfiguration;
-  const { pgrComplaintCount = {} } = preparedFinalObject;
-  const {
-    assignedTotalComplaints = 0,
-    unassignedTotalComplaints = 0,
-    employeeTotalComplaints = 0
-  } = pgrComplaintCount;
-  const loading = !isEmpty(categoriesById)
-    ? fetchSuccess
-      ? false
-      : true
-    : true;
-  const { citizenById, employeeById } = common || {};
+  const { bookings, common, screenConfiguration = {} } = state || {};
+  // const { categoriesById, byId, order } = complaints;
+  const { fetchSuccess, applicationData } = bookings;
+  // const { preparedFinalObject = {} } = screenConfiguration;
+  // const { pgrComplaintCount = {} } = preparedFinalObject;
+ 
+   const loading = false;
+   //!isEmpty(categoriesById)
+  //   ? fetchSuccess
+  //     ? false
+  //     : true
+  //   : true;
+  // const { citizenById, employeeById } = common || {};
   const { userInfo } = state.auth;
   const role =
     roleFromUserInfo(userInfo.roles, "GRO") ||

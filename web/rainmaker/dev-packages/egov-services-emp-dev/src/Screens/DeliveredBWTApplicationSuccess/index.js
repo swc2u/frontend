@@ -38,8 +38,8 @@ class DeliveredBWTApplicationSuccess extends Component {
 }
 
 const mapStateToProps = state => {
-  const { complaints, common, auth, form } = state;
-  const { applicationData } = complaints;
+  const { bookings, common, auth, form } = state;
+  const { applicationData } = bookings;
   let bookingDetails = applicationData ? applicationData.bookingsModelList[0] : '';
   console.log("bookingDetailsinResolveSuccess--",bookingDetails)
   //bkApplicationNumber

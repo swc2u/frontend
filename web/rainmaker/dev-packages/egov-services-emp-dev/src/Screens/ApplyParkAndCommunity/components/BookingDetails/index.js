@@ -664,8 +664,8 @@ class BookingsDetails extends Component {
 const mapStateToProps = state => {
 
 
-  const { complaints, common, auth, form } = state;
-  const { complaintSector } = complaints;
+  const { bookings, common, auth, form } = state;
+  const { complaintSector } = bookings;
 
 
 

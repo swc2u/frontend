@@ -899,28 +899,28 @@ const mapCitizenIdToMobileNumber = (citizenObjById, id) => {
 };
 let gro = "";
 const mapStateToProps = (state, ownProps) => {
-	const { complaints, common, auth, form } = state;
-	const { applicationData } = complaints;
-	const {DownloadPaymentReceiptDetailsforCG}=complaints;
-	const {DownloadPermissionLetterDetailsforCG}=complaints;
-	const {DownloadApplicationDetailsforCG,DownloadReceiptDetailsforCG}=complaints;
+	const { bookings, common, auth, form } = state;
+	const { applicationData } = bookings;
+	const {DownloadPaymentReceiptDetailsforCG}=bookings;
+	const {DownloadPermissionLetterDetailsforCG}=bookings;
+	const {DownloadApplicationDetailsforCG,DownloadReceiptDetailsforCG}=bookings;
 	const { id } = auth.userInfo;
 	const { citizenById } = common || {};
 	const { employeeById, departmentById, designationsById, cities } =
 		common || {};
-	const { categoriesById } = complaints;
+	// const { categoriesById } = complaints;
 	const { userInfo } = state.auth;
 	const serviceRequestId = ownProps.match.params.applicationId;
 	let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
 	let businessService = applicationData ? applicationData.businessService : "";
 	let bookingDocs;
 	const { documentMap } = applicationData;
-	const { HistoryData } = complaints;
+	const { HistoryData } = bookings;
 	let temp;
 	let historyObject = HistoryData ? HistoryData : ''
-	const { paymentData } = complaints;
-	const { fetchPaymentAfterPayment } = complaints;
-	const { perDayRate } = complaints;
+	const { paymentData } = bookings;
+	const { fetchPaymentAfterPayment } = bookings;
+	const { perDayRate } = bookings;
 	let paymentDetailsForReceipt = fetchPaymentAfterPayment;
 	let paymentDetails;
 	let perDayRupees;

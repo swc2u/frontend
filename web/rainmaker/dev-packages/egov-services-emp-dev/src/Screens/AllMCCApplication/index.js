@@ -1127,9 +1127,9 @@ const roleFromUserInfo = (roles = [], role) => {
 
 
 const mapStateToProps = state => {
-  const { complaints, common, screenConfiguration = {} } = state || {};
-  const { categoriesById, byId, order } = complaints;
-  const { fetchSuccess, MccApplicationData } = complaints;
+  const { bookings, common, screenConfiguration = {} } = state || {};
+  // const { categoriesById, byId, order } = bookings;
+  const { fetchSuccess, MccApplicationData } = bookings;
   const { preparedFinalObject = {} } = screenConfiguration;
   const { pgrComplaintCount = {} } = preparedFinalObject;
   const {
@@ -1137,11 +1137,12 @@ const mapStateToProps = state => {
     unassignedTotalComplaints = 0,
     employeeTotalComplaints = 0
   } = pgrComplaintCount;
-  const loading = !isEmpty(categoriesById)
-    ? fetchSuccess
-      ? false
-      : true
-    : true;
+  const loading = false;
+  // !isEmpty(categoriesById)
+  //   ? fetchSuccess
+  //     ? false
+  //     : true
+  //   : true;
   const { citizenById, employeeById } = common || {};
   const { userInfo } = state.auth;
   const role =

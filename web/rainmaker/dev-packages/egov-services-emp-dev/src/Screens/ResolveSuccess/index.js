@@ -47,12 +47,12 @@ class ResolveSuccess extends Component {
   }
 }
 const mapStateToProps = state => {
-  const { complaints, common, auth, form } = state;  //MccApplicationData
-  const { applicationData } = complaints;
-  const { MccApplicationData } = complaints;
+  const { bookings, common, auth, form } = state;  //MccApplicationData
+  const { applicationData } = bookings;
+  const { MccApplicationData } = bookings;
   // let MccANumber = MccApplicationData ? MccApplicationData.osujmNewLocationModelList[0] : '';
   let bookingDetails = applicationData ? applicationData.bookingsModelList[0] : '';
-  console.log("complaints in resolve success--",complaints)
+  console.log("bookings in resolve success--",bookings)
   //bkApplicationNumber
   let applicationNumber = applicationData ? applicationData.bookingsModelList[0].bkApplicationNumber : '';
   // let newLocationNumber = MccApplicationData ? MccApplicationData.osujmNewLocationModelList[0].applicationNumber : '';

@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import formHOC from "egov-ui-kit/hocs/form";
 import { Screen } from "modules/common";
 import RejectBWTBookingForm from "./components/RejectBWTBooking";
-import { fetchApplications } from "egov-ui-kit/redux/complaints/actions";
+import { fetchApplications } from "../../redux/bookings/actions";
 import Label from "egov-ui-kit/utils/translationNode";
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import { handleFieldChange } from "egov-ui-kit/redux/form/actions";
@@ -121,8 +121,8 @@ class RejectBWTBooking extends Component {
 }
 
 const mapStateToProps = state => {
-  const { complaints = {} } = state || {};
-  const { applicationData } = complaints;
+  const { bookings = {} } = state || {};
+  const { applicationData } = bookings;
   let trasformData = applicationData.bookingsModelList[0];
   let businessServiceData = applicationData.businessService;
   return { trasformData, businessServiceData };

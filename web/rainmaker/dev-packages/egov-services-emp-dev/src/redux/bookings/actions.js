@@ -383,11 +383,12 @@ export const getComplaintDisplayOrder = (order) => {
 
 
 export const fetchApplications = (requestBody, hasUsers = true, overWrite) => {
+	console.log('requestBody in own module',requestBody)
 	return async (dispatch, getState) => {
 		try {
 			let tenantId = "";
 			const payload = await httpRequest(APPLICATION.POST.URL, APPLICATION.POST.ACTION, [], requestBody);
-			console.log('payload1----2', payload)
+			console.log('payload in emp----2', payload)
 			dispatch(applicationFetchComplete(payload, overWrite));
 		} catch (error) {
 			dispatch(applicationFetchError(error.message));
@@ -556,7 +557,7 @@ export const fetchApplicaionSector = () => {
 	return async (dispatch) => {
 		try {
 			const payload = await httpRequest(CATEGORY.GET.URL, CATEGORY.GET.ACTION, [], requestBody);
-			
+			console.log('payload in fetch sector',payload)
 			dispatch(applicationSectorFetchSucess(payload));
 		} catch (error) {
 			dispatch(applicationSectorFetchError(error.message));

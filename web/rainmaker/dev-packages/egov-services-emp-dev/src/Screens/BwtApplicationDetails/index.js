@@ -929,16 +929,16 @@ const mapCitizenIdToMobileNumber = (citizenObjById, id) => {
 let gro = "";
 
 const mapStateToProps = (state, ownProps) => {
-	const { complaints, common, auth, form } = state;
-	const { applicationData } = complaints;
-	const { DownloadReceiptDetailsforCG,DownloadBWTApplicationDetails } = complaints;
+	const { bookings, common, auth, form } = state;
+	const { applicationData } = bookings;
+	const { DownloadReceiptDetailsforCG,DownloadBWTApplicationDetails } = bookings;
 	
 	const { id } = auth.userInfo;
 	const { citizenById } = common || {};
 
 	const { employeeById, departmentById, designationsById, cities } =
 		common || {};
-	const { categoriesById } = complaints;
+	// const { categoriesById } = bookings;
 	const { userInfo } = state.auth;
 
 
@@ -950,11 +950,11 @@ const mapStateToProps = (state, ownProps) => {
 
 
 	let documentMap = applicationData && applicationData.documentMap ? applicationData.documentMap : '';
-	const { HistoryData } = complaints;
+	const { HistoryData } = bookings;
 
 	let historyObject = HistoryData ? HistoryData : ''
-	const { paymentData } = complaints;
-	const { fetchPaymentAfterPayment } = complaints;
+	const { paymentData } = bookings;
+	const { fetchPaymentAfterPayment } = bookings;
 
 let paymentDetailsForReceipt = fetchPaymentAfterPayment;
 	let paymentDetails;

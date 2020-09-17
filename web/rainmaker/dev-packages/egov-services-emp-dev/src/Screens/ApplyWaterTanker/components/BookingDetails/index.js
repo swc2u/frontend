@@ -280,13 +280,11 @@ class BookingsDetails extends Component {
   }
 }
 const mapStateToProps = state => {
-
+  const { bookings, common, auth, form } = state;
+  console.log('state in bookdetails==',state)
   
-  const { complaints, common, auth, form } = state;
-  const { complaintSector } = complaints;
+  const { complaintSector } = bookings;
   
-  
-
   return {
     complaintSector
   }
@@ -295,7 +293,7 @@ const mapDispatchToProps = dispatch => {
   return {
       toggleSnackbarAndSetText: (open, message, error) =>
       dispatch(toggleSnackbarAndSetText(open, message, error)),
-      fetchApplicaionSector: criteria => dispatch(fetchApplicaionSector(criteria)),
+      fetchApplicaionSector: () => dispatch(fetchApplicaionSector()),
   }
 }
 

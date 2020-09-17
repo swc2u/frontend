@@ -113,8 +113,8 @@ class DeliveredBWTBooking extends Component {
 }
 
 const mapStateToProps = state => {
-  const { complaints = {} } = state || {};
-  const { applicationData } = complaints;
+  const { bookings = {} } = state || {};
+  const { applicationData } = bookings;
   let trasformData = applicationData.bookingsModelList[0];
   let businessServiceData = applicationData.businessService;
   return { trasformData, businessServiceData };

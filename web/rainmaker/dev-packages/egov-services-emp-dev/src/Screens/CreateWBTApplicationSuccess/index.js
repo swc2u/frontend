@@ -162,8 +162,8 @@ class CreateWBTApplicationSuccess extends Component {
 
 
 const mapStateToProps = state => {
-  const { complaints, common, auth, form } = state;
-  const { createWaterTankerApplicationData, DownloadBWTApplicationDetails,fetchSuccess } = complaints;
+  const { bookings, common, auth, form } = state;
+  const { createWaterTankerApplicationData, DownloadBWTApplicationDetails,fetchSuccess } = bookings;
   const loading = !isEmpty(createWaterTankerApplicationData)
   ? fetchSuccess
     ? false

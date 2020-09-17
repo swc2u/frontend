@@ -47,8 +47,8 @@ class NewLocationApproved extends Component {
   }
 }
 const mapStateToProps = state => {
-  const { complaints, common, auth, form } = state;
-  const { MccApplicationData } = complaints;
+  const { bookings, common, auth, form } = state;
+  const { MccApplicationData } = bookings;
   let bookingDetails = MccApplicationData ? MccApplicationData.osujmNewLocationModelList[0] : '';
   console.log("bookingDetailsinResolveSuccess--",bookingDetails)
  

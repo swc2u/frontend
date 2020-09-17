@@ -82,31 +82,7 @@ class BookingDetails extends Component {
     })
   };
 
-  navigateToComplaintType = () => {
-    this.props.history.push("/complaint-type");
-  };
-  getImageSource = (imageSource, size) => {
-    const images = imageSource.split(",");
-    if (!images.length) {
-      return null;
-    }
-    switch (size) {
-      case "small":
-        imageSource = images[2];
-        break;
-      case "medium":
-        imageSource = images[1];
-        break;
-      case "large":
-      default:
-        imageSource = images[0];
-    }
-    return imageSource || images[0];
-  };
-  onImageClick = (source) => {
-    window.open(this.getImageSource(source, "large"), 'Image');
-    // this.props.history.push(`/image?source=${source}`);
-  };
+ 
 
 
 

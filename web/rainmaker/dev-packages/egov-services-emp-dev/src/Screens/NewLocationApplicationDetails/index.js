@@ -1028,9 +1028,9 @@ const mapCitizenIdToMobileNumber = (citizenObjById, id) => {
 let gro = "";
 
 const mapStateToProps = (state, ownProps) => {
-	const { complaints, common, auth, form } = state;
-	const { MccApplicationData } = complaints;
-	const { DownloadPaymentReceiptDetails, DownloadApplicationDetails, DownloadPermissionLetterDetails } = complaints;
+	const { bookings, common, auth, form } = state;
+	const { MccApplicationData } = bookings;
+	const { DownloadPaymentReceiptDetails, DownloadApplicationDetails, DownloadPermissionLetterDetails } = bookings;
 	// complaint=applicationData?applicationData.bookingsModelList:'';
 
 	const { id } = auth.userInfo;
@@ -1068,10 +1068,10 @@ const mapStateToProps = (state, ownProps) => {
 	let part2 = newLocationImagesPreview && newLocationImagesPreview.filter(item => item.documentType != "IDPROOF");
 
 
-	const { HistoryData } = complaints;
+	const { HistoryData } = bookings;
 	let historyObject = HistoryData ? HistoryData : ''
-	const { paymentData } = complaints;
-	const { fetchPaymentAfterPayment } = complaints;
+	const { paymentData } = bookings;
+	const { fetchPaymentAfterPayment } = bookings;
 
 	let paymentDetailsForReceipt = fetchPaymentAfterPayment;
 	let paymentDetails;
