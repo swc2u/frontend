@@ -64,74 +64,25 @@ class AllRequests extends Component {
     let {
       role,
       userInfo,
-      numCSRComplaint,
-      numEmpComplaint,
-      renderCustomTitle,
-      prepareFinalObject
     } = this.props;
     fetchApplicationType();
     let rawRole =
       userInfo && userInfo.roles && userInfo.roles[0].code.toUpperCase();
-    //const numberOfComplaints = role === "employee" ? numEmpComplaint : role === "csr" ? numCSRComplaint : 0;
-    if (rawRole === "PGR-ADMIN") {
-      this.props.history.push("/report/rainmaker-pgr/DepartmentWiseReport");
-    } else {
+   
+    
       let { fetchApplications } = this.props;
-      
-      if (role === "ao") {
-        fetchApplications(
-          [
-            {
-              key: "status",
-              value: "assigned,escalatedlevel1pending,escalatedlevel2pending"
-            }
-          ],
-          true,
-          false
-        );
-        fetchApplications(
-          [
-            {
-              key: "status",
-              value: "open,reassignrequested"
-            }
-          ],
-          true,
-          false
-        );
-      } else if (role === "eo") {
-        fetchApplications(
-          [
-            {
-              key: "status",
-              value: "escalatedlevel1pending,escalatedlevel2pending"
-            }
-          ],
-          true,
-          true
-        );
-      }
-      else {
         fetchApplications(
           {
             "uuid": userInfo.uuid, "applicationNumber": "",
             "applicationStatus": "",
-            "mobileNumber": "", "bookingType": ""
+            "mobileNumber": "", "bookingType": "",
+            "roles":userInfo.roles,
+            "tenantId":userInfo.tenantId
           },
 
           true,
           true
         );
-      }
-    }
-    let inputType = document.getElementsByTagName("input");
-    for (let input in inputType) {
-      if (inputType[input].type === "number") {
-        inputType[input].addEventListener("mousewheel", function () {
-          this.blur();
-        });
-      }
-    }
   };
 
   componentWillReceiveProps = nextProps => {
@@ -246,7 +197,9 @@ class AllRequests extends Component {
       queryObj.applicationNumber = complaintNo;
       queryObj.applicationStatus = "";
       queryObj.mobileNumber = "";
-      queryObj.bookingType = "";
+      queryObj.bookingType = "";      
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
 
     }
 
@@ -254,7 +207,9 @@ class AllRequests extends Component {
       queryObj.applicationStatus = applicationStatus
       queryObj.applicationNumber = '';
       queryObj.mobileNumber = "";
-      queryObj.bookingType = "";
+      queryObj.bookingType = "";      
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
 
     }
 
@@ -263,6 +218,8 @@ class AllRequests extends Component {
       queryObj.applicationNumber = "";
       queryObj.applicationStatus = "";
       queryObj.bookingType = "";
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
 
     }
     if (bookingType) {
@@ -270,6 +227,8 @@ class AllRequests extends Component {
       queryObj.mobileNumber = "";
       queryObj.applicationNumber = "";
       queryObj.applicationStatus = "";
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
 
 
       
@@ -281,6 +240,8 @@ class AllRequests extends Component {
       queryObj.applicationNumber = "";
       queryObj.applicationStatus = "";
       queryObj.fromDate = fromDate;
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
 
       
     }
@@ -290,6 +251,8 @@ class AllRequests extends Component {
       queryObj.applicationNumber = "";
       queryObj.applicationStatus = "";
       queryObj.toDate = toDate;
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
 
       
     }
@@ -303,6 +266,8 @@ class AllRequests extends Component {
       queryObj.applicationNumber = "";
       queryObj.applicationStatus = "";
       queryObj.bookingType = "";
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
 
     }
 
@@ -312,6 +277,8 @@ class AllRequests extends Component {
       queryObj.applicationNumber = "";
       queryObj.applicationStatus = "";
       queryObj.bookingType = "";
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
 
     }
 
@@ -513,7 +480,9 @@ class AllRequests extends Component {
       {
         "uuid": userInfo.uuid, "applicationNumber": "",
         "applicationStatus": "",
-        "mobileNumber": "", "bookingType": ""
+        "mobileNumber": "", "bookingType": "",
+        "roles":userInfo.roles,
+        "tenantId":userInfo.tenantId
       },
     );
     this.setState({ mobileNo: "", complaintNo: "", bookingType: "", applicationStatus: "", fromDate: "", toDate: "", search: false });
@@ -1202,22 +1171,9 @@ const roleFromUserInfo = (roles = [], role) => {
 
 const mapStateToProps = state => {
   console.log('state in all app',state)
-  const { complaints, common, screenConfiguration = {} } = state || {};
-  const { categoriesById, byId, order } = complaints;
-  const { fetchSuccess, applicationData } = complaints;
-  const { preparedFinalObject = {} } = screenConfiguration;
-  const { pgrComplaintCount = {} } = preparedFinalObject;
-  const {
-    assignedTotalComplaints = 0,
-    unassignedTotalComplaints = 0,
-    employeeTotalComplaints = 0
-  } = pgrComplaintCount;
-  const loading = !isEmpty(categoriesById)
-    ? fetchSuccess
-      ? false
-      : true
-    : true;
-  const { citizenById, employeeById } = common || {};
+  const { bookings, common, screenConfiguration = {} } = state || {};
+  const { fetchSuccess, applicationData } = bookings;
+   const loading = false;
   const { userInfo } = state.auth;
   const role =
     roleFromUserInfo(userInfo.roles, "GRO") ||

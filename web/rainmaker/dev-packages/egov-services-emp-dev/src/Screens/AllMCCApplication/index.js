@@ -68,10 +68,6 @@ class AllRequests extends Component {
     let {
       role,
       userInfo,
-      numCSRComplaint,
-      numEmpComplaint,
-      renderCustomTitle,
-      prepareFinalObject
     } = this.props;
 
     let rawRole =
@@ -82,25 +78,14 @@ class AllRequests extends Component {
     } else {
       let { fetchApplications, fetchMccApplications } = this.props;
 
-      let complaintCountRequest = [
-        { key: 'uuId', value: userInfo.uuid },
-
-        { key: "tenantId", value: getTenantId() },
-        {
-          key: "status",
-          value:
-            role === "csr"
-              ? "assigned,open,reassignrequested"
-              : role === "eo"
-                ? "escalatedlevel1pending,escalatedlevel2pending"
-                : "assigned,reassignrequested"
-        }
-      ];
+     
       fetchMccApplications(
         {
           "uuid": userInfo.uuid, "applicationNumber": "",
           "applicationStatus": "",
-          "mobileNumber": "", "bookingType": ""
+          "mobileNumber": "", "bookingType": "",
+          "roles":userInfo.roles,
+          "tenantId":userInfo.tenantId
         },
         true,
         true
@@ -204,6 +189,8 @@ class AllRequests extends Component {
       queryObj.applicationStatus = "";
       queryObj.mobileNumber = "";
       queryObj.bookingType = "";
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
 
     }
 
@@ -212,6 +199,8 @@ class AllRequests extends Component {
       queryObj.applicationNumber = '';
       queryObj.mobileNumber = "";
       queryObj.bookingType = "";
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
 
     }
 
@@ -220,6 +209,8 @@ class AllRequests extends Component {
       queryObj.applicationNumber = "";
       queryObj.applicationStatus = "";
       queryObj.bookingType = "";
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
 
     }
     if (bookingType) {
@@ -227,6 +218,8 @@ class AllRequests extends Component {
       queryObj.mobileNumber = "";
       queryObj.applicationNumber = "";
       queryObj.applicationStatus = "";
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
     }
 
     if (fromDate) {
@@ -235,6 +228,8 @@ class AllRequests extends Component {
       queryObj.applicationNumber = "";
       queryObj.applicationStatus = "";
       queryObj.fromDate = fromDate;
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
     }
     if (toDate) {
       queryObj.bookingType = "";
@@ -242,6 +237,8 @@ class AllRequests extends Component {
       queryObj.applicationNumber = "";
       queryObj.applicationStatus = "";
       queryObj.toDate = toDate;
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
     }
 
     if (searchForm && searchForm.fromDate) {
@@ -250,6 +247,8 @@ class AllRequests extends Component {
       queryObj.applicationNumber = "";
       queryObj.applicationStatus = "";
       queryObj.bookingType = "";
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
 
     }
 
@@ -259,6 +258,8 @@ class AllRequests extends Component {
       queryObj.applicationNumber = "";
       queryObj.applicationStatus = "";
       queryObj.bookingType = "";
+      queryObj.roles=userInfo.roles;
+      queryObj.tenantId=userInfo.tenantId;
     }
 
     if (complaintNo) {
@@ -439,7 +440,9 @@ class AllRequests extends Component {
       {
         "uuid": userInfo.uuid, "applicationNumber": "",
         "applicationStatus": "",
-        "mobileNumber": "", "bookingType": ""
+        "mobileNumber": "", "bookingType": "",
+        "roles":userInfo.roles,
+        "tenantId":userInfo.tenantId
       },
     );
     this.setState({ mobileNo: "", complaintNo: "", bookingType: "", applicationStatus: "", fromDate: "", toDate: "", search: false });
@@ -1107,9 +1110,9 @@ const roleFromUserInfo = (roles = [], role) => {
 
 
 const mapStateToProps = state => {
-  const { complaints, common, screenConfiguration = {} } = state || {};
-  const { categoriesById, byId, order } = complaints;
-  const { fetchSuccess, MccApplicationData } = complaints;
+  const { bookings, common, screenConfiguration = {} } = state || {};
+  // const { categoriesById, byId, order } = bookings;
+  const { fetchSuccess, MccApplicationData } = bookings;
   const { preparedFinalObject = {} } = screenConfiguration;
   const { pgrComplaintCount = {} } = preparedFinalObject;
   const {
@@ -1117,11 +1120,12 @@ const mapStateToProps = state => {
     unassignedTotalComplaints = 0,
     employeeTotalComplaints = 0
   } = pgrComplaintCount;
-  const loading = !isEmpty(categoriesById)
-    ? fetchSuccess
-      ? false
-      : true
-    : true;
+  const loading = false;
+  // !isEmpty(categoriesById)
+  //   ? fetchSuccess
+  //     ? false
+  //     : true
+  //   : true;
   const { citizenById, employeeById } = common || {};
   const { userInfo } = state.auth;
   const role =

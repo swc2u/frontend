@@ -26,8 +26,7 @@ convertEpochToDate = (dateEpoch) => {
 
     render(){
         const {complaints, complaintLocation, role, onComplaintClick, noComplaintMessage, heightOffset} = this.props
-        
-        return complaints===null || complaints.length === 0 ? (
+        return !complaints ? (
           <div className="no-complaints-message-cont" style={heightOffset && { height: `calc(100vh - ${heightOffset})` }}>
             <Label label={noComplaintMessage} dark={true} fontSize={"16px"} labelStyle={{ letterSpacing: "0.7px" }} />
           </div>

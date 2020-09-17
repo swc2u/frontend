@@ -43,7 +43,7 @@ const TaskStatusComponents = ({ currentObj, index }) => {
         style={{ marginTop: 15, paddingRight: 20 }}
       >
         <Typography variant="caption">
-          <LabelContainer labelName="Date" labelKey="TL_DATE_LABEL" />
+          <LabelContainer labelName="Date" labelKey="BK_DATE_LABEL" />
         </Typography>
         <Typography variant="body2">
           <LabelContainer
@@ -64,7 +64,7 @@ const TaskStatusComponents = ({ currentObj, index }) => {
         <Typography variant="caption">
           <LabelContainer
             labelName="Updated By"
-            labelKey="TL_UPDATED_BY_LABEL"
+            labelKey="BK_UPDATED_BY_LABEL"
           />
         </Typography>
         <Typography variant="body2">
@@ -83,7 +83,7 @@ const TaskStatusComponents = ({ currentObj, index }) => {
         <Typography variant="caption">
           <LabelContainer
             labelName="Status"
-            labelKey="TL_COMMON_TABLE_COL_STATUS"
+            labelKey="BK_COMMON_TABLE_COL_STATUS"
           />
         </Typography>
         <Typography
@@ -116,7 +116,7 @@ const TaskStatusComponents = ({ currentObj, index }) => {
         <Typography variant="caption">
           <LabelContainer
             labelName="Current Owner"
-            labelKey="TL_CURRENT_OWNER_LABEL"
+            labelKey="BK_CURRENT_OWNER_LABEL"
           />
         </Typography>
         <Typography
@@ -138,7 +138,7 @@ const TaskStatusComponents = ({ currentObj, index }) => {
         <Typography variant="caption">
           <LabelContainer
             labelName="Comments"
-            labelKey="TL_APPROVAL_CHECKLIST_COMMENTS_LABEL"
+            labelKey="BK_APPROVAL_CHECKLIST_COMMENTS_LABEL"
           />
         </Typography>
         <Typography

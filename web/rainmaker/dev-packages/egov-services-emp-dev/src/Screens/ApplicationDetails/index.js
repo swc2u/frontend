@@ -135,7 +135,9 @@ class ApplicationDetails extends Component {
 			{
 				"applicationNumber": match.params.applicationId, 'uuid': userInfo.uuid,
 				"applicationStatus": "",
-				"mobileNumber": "", "bookingType": ""
+				"mobileNumber": "", "bookingType": "",
+				"roles":userInfo.roles,
+        		"tenantId":userInfo.tenantId
 			}
 		);
 		fetchHistory([
@@ -918,14 +920,15 @@ const roleFromUserInfo = (roles = [], role) => {
 
 
 const mapStateToProps = (state, ownProps) => {
-	const { complaints, common, auth, form } = state;
-	const { applicationData } = complaints;
-	const { DownloadPaymentReceiptDetails,DownloadApplicationDetails,DownloadPermissionLetterDetails } = complaints;
+	const { bookings, common, auth, form } = state;
+	
+	const { applicationData } = bookings;
+	const { DownloadPaymentReceiptDetails,DownloadApplicationDetails,DownloadPermissionLetterDetails } = bookings;
 	const { id } = auth.userInfo;
 	const { citizenById } = common || {};
 	const { employeeById, departmentById, designationsById, cities } =
 		common || {};
-	const { categoriesById } = complaints;
+	// const { categoriesById } = complaints;
 	const { userInfo } = state.auth;
 	const serviceRequestId = ownProps.match.params.applicationId;
 	let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
@@ -933,10 +936,10 @@ const mapStateToProps = (state, ownProps) => {
 	let bookingDocs;
 
 	let documentMap = applicationData && applicationData.documentMap ? applicationData.documentMap : '';
-	const { HistoryData } = complaints;	
+	const { HistoryData } = bookings;	
 	let historyObject = HistoryData ? HistoryData : ''
-	const { paymentData } = complaints;
-	const { fetchPaymentAfterPayment } = complaints;
+	const { paymentData } = bookings;
+	const { fetchPaymentAfterPayment } = bookings;
 
 	let paymentDetailsForReceipt = fetchPaymentAfterPayment;
 	let paymentDetails;

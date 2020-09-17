@@ -382,8 +382,6 @@ export const getComplaintDisplayOrder = (order) => {
 
 
 export const fetchApplications = (requestBody, hasUsers = true, overWrite) => {
-	console.log('requestbody==',requestBody)
-	requestBody.tenantId = "ch"
 	return async (dispatch, getState) => {
 		try {
 			let tenantId = "";
@@ -567,7 +565,6 @@ export const fetchApplicaionSector = () => {
 
 
 export const fetchMccApplications = (requestBody, hasUsers = true, overWrite) => {
-	requestBody.tenantId = "ch"
 	return async (dispatch, getState) => {
 		try {
 			let tenantId = "";

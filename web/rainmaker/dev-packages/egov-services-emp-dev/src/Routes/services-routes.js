@@ -2,7 +2,7 @@ import React from "react";
 import Loadable from "react-loadable";
 
 // pgr employee specific screens
-// import { ReOpenComplaint, ReopenAcknowledgement } from "../modules/common";
+import { ReOpenComplaint, ReopenAcknowledgement } from "../modules/common";
 
 const Loading = () => <div />;
 
@@ -30,6 +30,10 @@ const ApplicationResolved = Loadable({
 
 const ParkAndCommunityCenterAppDetails=Loadable({
   loader: () => import("../Screens/ParkAndCommunityCenterAppDetails"),
+  loading: Loading
+});
+const LocationSummary = Loadable({
+  loader: () => import("../Screens/LocationSummaryComponent"),
   loading: Loading
 });
 
@@ -91,10 +95,7 @@ const ApplicationRejected = Loadable({
   loader: () => import("../Screens/ApplicationRejected"),
   loading: Loading
 });
-// const ComplaintAssigned = Loadable({
-//   loader: () => import("../Screens/ComplaintAssigned"),
-//   loading: Loading
-// });
+
 const ResolveSuccess = Loadable({
   loader: () => import("../Screens/ResolveSuccess"),
   loading: Loading
@@ -239,7 +240,16 @@ const routes = [
       redirectionUrl
     }
   },
-
+  {
+    path: "egov-services/new-location-details/:applicationId",
+    component: LocationSummary,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      // title: "BK_CS_HEADER_APPLICATION_SUMMARY",
+      redirectionUrl
+    }
+  },
   
   
  

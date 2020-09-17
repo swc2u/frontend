@@ -25,7 +25,10 @@ class ApplicationResolved extends Component {
     fetchApplications(
       { 'uuid': userInfo.uuid, "applicationNumber": applicationNumber,
       "applicationStatus":"",
-      "mobileNumber":"","bookingType":"" }
+      "mobileNumber":"",
+      "bookingType":"",
+      "roles":userInfo.roles,
+      "tenantId":userInfo.tenantId }
       
     );
   }
@@ -79,8 +82,8 @@ class ApplicationResolved extends Component {
 }
 
 const mapStateToProps = state => {
-  const { complaints = {} } = state || {};
-  const { applicationData } = complaints;
+  const { bookings = {} } = state || {};
+  const { applicationData } = bookings;
   let trasformData = applicationData.bookingsModelList[0];
   let businessServiceData = applicationData.businessService;
   return { trasformData, businessServiceData };
