@@ -108,7 +108,7 @@ export const getIndentNoteListDetailsView = (isReview = true) => {
         { labelName: "supplier Name",
         labelKey: "STORE_COMMON_TABLE_COL_SUPPLIER_MASTER_NAME" },
         {
-          jsonPath: "materialReceipt[0].supplier.name",
+          jsonPath: "materialIssues[0].supplier.name",
         }
       ),
       Remark: getLabelWithValue(
@@ -121,7 +121,7 @@ export const getIndentNoteListDetailsView = (isReview = true) => {
       createdBy: getLabelWithValue(
         { labelName: "Created by", labelKey: "STORE_PURCHASE_ORDER_CREATEBY" },
         {
-          jsonPath: "materialIssues[0].indentCreatedBy",
+          jsonPath: "materialIssues[0].createdByName",
         }
       ),
       designation: getLabelWithValue(

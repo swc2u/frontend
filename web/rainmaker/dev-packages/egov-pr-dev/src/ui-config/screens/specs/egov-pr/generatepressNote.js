@@ -329,7 +329,9 @@ const screenConfig = {
   beforeInitScreen: (action, state, dispatch) => {
     dispatch(prepareFinalObject("pressnote", {}));
     dispatch(prepareFinalObject("PressNoteDocuments", []));
+    dispatch(prepareFinalObject("AllIndex", ""));
 
+    
     const applicationNumber = getQueryArg(
       window.location.href,
       "applicationNumber"

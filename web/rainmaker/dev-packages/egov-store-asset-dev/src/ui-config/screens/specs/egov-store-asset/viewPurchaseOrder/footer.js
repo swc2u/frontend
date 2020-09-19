@@ -2,7 +2,7 @@ import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { handleCreateUpdatePO } from "./functions";
-
+import { getCommonApplyFooter } from "../../utils";
 const gotoCreateFlow = (state, dispatch) => {
   const poNumber = getQueryArg(window.location.href, "poNumber");
   const tenantId = getQueryArg(window.location.href, "tenantId");
@@ -26,7 +26,7 @@ const getCommonCreateFooter = children => {
 };
 
 export const poCommonFooter = () => {
-  return getCommonCreateFooter({
+  return getCommonApplyFooter({
     submitButton: {
       componentPath: "Button",
       props: {

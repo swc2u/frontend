@@ -102,11 +102,11 @@ class RichTextEditor extends Component {
   rteChange = (content, delta, source, editor) => {
     //Save changes happing in editor to localstorage in form of rich text
 	
-	console.log("Delataaaaaaaaaaaaaaaaaaaaaaa")
-	console.log(content)
-	console.log(delta)
-	console.log(source)
-	console.log(editor)
+	// console.log("Delataaaaaaaaaaaaaaaaaaaaaaa")
+	// console.log(content)
+	// console.log(delta)
+	// console.log(source)
+	// console.log(editor)
 	if(source == "user")
 	{
 		

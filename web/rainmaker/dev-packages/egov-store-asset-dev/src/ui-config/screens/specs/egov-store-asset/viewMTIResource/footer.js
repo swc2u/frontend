@@ -2,7 +2,7 @@ import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { handleCreateUpdateIT } from "./functions";
-
+import { getCommonApplyFooter } from "../../utils";
 const gotoCreateFlow = (state, dispatch) => {
   const id = getQueryArg(window.location.href, "id");
   const tenantId = getQueryArg(window.location.href, "tenantId");
@@ -15,14 +15,18 @@ const getCommonCreateFooter = children => {
     uiFramework: "custom-atoms",
     componentPath: "Div",
     props: {
-      className: "apply-wizard-footer"
+      className: "apply-wizard-footer",
+      style:{
+        width:"100%",
+       
+     }
     },
     children
   };
 };
 
 export const poCommonFooter = () => {
-  return getCommonCreateFooter({
+  return getCommonApplyFooter({
     submitButton: {
       componentPath: "Button",
       props: {

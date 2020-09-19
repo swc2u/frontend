@@ -15,14 +15,6 @@ const OTP = Loadable({
   loading: Loading
 });
 
-// const RequestReAssign = Loadable({
-//   loader: () => import("../Screens/RequestReAssign"),
-//   loading: Loading
-// });
-// const AllComplaints = Loadable({
-//   loader: () => import("../Screens/AllComplaints"),
-//   loading: Loading
-// });
 const AllRequests = Loadable({
   loader: () => import("../Screens/AllApplications"),
   loading: Loading
@@ -35,15 +27,6 @@ const ApplicationResolved = Loadable({
   loader: () => import("../Screens/ApplicationResolved"),
   loading: Loading
 });
-// const ComplaintCreated = Loadable({
-//   loader: () => import("../Screens/ComplaintCreated"),
-//   loading: Loading
-// });
-// const ApplicationSummary = Loadable({
-//   loader: () => import("../Screens/ApplicationDetails"),
-//   loading: Loading
-// });
-
 
 const ParkAndCommunityCenterAppDetails=Loadable({
   loader: () => import("../Screens/ParkAndCommunityCenterAppDetails"),
@@ -85,18 +68,6 @@ const ServiceHome = Loadable({
 });
 
 
-// const AssignComplaint = Loadable({
-//   loader: () => import("../Screens/AssignComplaint"),
-//   loading: Loading
-// });
-// const EmployeeDirectory = Loadable({
-//   loader: () => import("../Screens/EmployeeDirectory"),
-//   loading: Loading
-// });
-// const ClosedComplaints = Loadable({
-//   loader: () => import("../Screens/ClosedComplaints"),
-//   loading: Loading
-// });
 const RejectComplaint = Loadable({
   loader: () => import("../Screens/RejectComplaint"),
   loading: Loading
@@ -158,18 +129,6 @@ const DeliveredApplicationSuccess= Loadable({
   loader: () => import("../Screens/DeliveredBWTApplicationSuccess"),
   loading: Loading
 });
-const ReassignSuccess = Loadable({
-  loader: () => import("../Screens/ReassignSuccess"),
-  loading: Loading
-});
-// const CreateComplaint = Loadable({
-//   loader: () => import("../Screens/CreateComplaint"),
-//   loading: Loading
-// });
-// const SearchScreen = Loadable({
-//   loader: () => import("../Screens/SearchScreen"),
-//   loading: Loading
-// });
 
 const ApplyWaterTanker = Loadable({
   loader: () => import("../Screens/ApplyWaterTanker"),
@@ -201,20 +160,7 @@ const routes = [
     needsAuthentication: false,
     redirectionUrl: "/"
   },
-  // {
-  //   path: "all-complaints",
-  //   component: AllComplaints,
-  //   needsAuthentication: true,
-  //   options: {
-  //     hideFooter: true,
-  //     title: "ES_OPEN_COMPLAINTS_HEADER",
-  //     hideTitle: false,
-  //     redirectionUrl,
-  //     hideFor: "ao",
-  //     customFor: "csr",
-  //     customTitle: "ES_ALL_COMPLAINTS_HEADER"
-  //   }
-  // },
+ 
   {
     path: "egov-services/all-applications",
     component: AllRequests,
@@ -384,27 +330,7 @@ const routes = [
       redirectionUrl
     }
   },
-  // {
-  //   path: "closed-complaints",
-  //   component: ClosedComplaints,
-  //   needsAuthentication: true,
-  //   options: {
-  //     hideFooter: true,
-  //     title: "ES_CLOSED_COMPLAINTS_HEADER",
-  //     redirectionUrl
-  //   }
-  // },
-  // {
-  //   path: "complaint-reassigned/:serviceRequestId?",
-  //   component: ComplaintAssigned,
-  //   needsAuthentication: true,
-  //   options: {
-  //     hideFooter: true,
-  //     title: "ES_COMPLAINT_REASSIGNED_HEADER",
-  //     hideTitle: true,
-  //     redirectionUrl
-  //   }
-  // },
+
   {
     path: "egov-services/resolve-success",
     component: ResolveSuccess,
@@ -497,18 +423,7 @@ const routes = [
       redirectionUrl
     }
   },
-  {
-    path: "reassign-success",
-    component: ReassignSuccess,
-    needsAuthentication: true,
-    options: {
-      hideBackButton: true,
-      hideFooter: true,
-      hideTitle: true,
-      title: "CS_COMMON_RE-ASSIGN REQUESTED",
-      redirectionUrl
-    }
-  },
+
   {
     path: "complaint-assigned/:serviceRequestId?",
     component: ComplaintAssigned,
@@ -533,26 +448,7 @@ const routes = [
       hideBackButton: true
     }
   },
-  // {
-  //   path: "assign-complaint/:serviceRequestId?",
-  //   component: AssignComplaint,
-  //   needsAuthentication: true,
-  //   options: {
-  //     title: "ES_ASSIGN_TO_EMPLOYEE_HEADER",
-  //     hideFooter: true,
-  //     redirectionUrl
-  //   }
-  // },
-  // {
-  //   path: "reassign-complaint/:serviceRequestId?",
-  //   component: AssignComplaint,
-  //   needsAuthentication: true,
-  //   options: {
-  //     title: "ES_REASSIGN_TO_EMPLOYEE_HEADER",
-  //     hideFooter: true,
-  //     redirectionUrl
-  //   }
-  // },
+ 
   {
     path: "employee-directory",
     component: EmployeeDirectory,
@@ -620,74 +516,7 @@ const routes = [
       hideFooter: true,
       redirectionUrl
     }
-  },
-
-
-  
-  // {
-  //   path: "request-reassign/:serviceRequestId?",
-  //   component: RequestReAssign,
-  //   needsAuthentication: true,
-  //   options: {
-  //     title: "CS_HEADER_REQUEST_REASSIGN",
-  //     titleBackground: true, // Use this if you need white background for title in web version
-  //     hideFooter: true,
-  //     redirectionUrl
-  //   }
-  // },
-  // {
-  //   path: "create-complaint",
-  //   component: CreateComplaint,
-  //   needsAuthentication: true,
-  //   options: {
-  //     title: "CS_ADD_COMPLAINT_COMPLAINT_SUBMISSION",
-  //     hideFooter: true,
-  //     redirectionUrl,
-  //     isHomeScreen: true
-  //   }
-  // },
-  // {
-  //   path: "complaint-submitted",
-  //   component: ComplaintCreated,
-  //   needsAuthentication: true,
-  //   options: {
-  //     hideFooter: true,
-  //     title: "CS_HEADER_COMPLAINT_SUBMITTED",
-  //     hideTitle: true,
-  //     hideBackButton: true
-  //   }
-  // },
-  // {
-  //   path: "reopen-complaint/:serviceRequestId?",
-  //   component: ReOpenComplaint,
-  //   needsAuthentication: true,
-  //   options: {
-  //     title: "CS_HEADER_REOPEN_COMPLAINT",
-  //     titleBackground: true // Use this if you need white background for title in web version
-  //   }
-  // },
-  // {
-  //   path: "reopen-acknowledgement",
-  //   component: ReopenAcknowledgement,
-  //   needsAuthentication: true,
-  //   options: {
-  //     hideFooter: true,
-  //     hideBackButton: true,
-  //     title: "CS_COMMON_COMPLAINT_REOPENED",
-  //     hideTitle: true
-  //   }
-  // }
-  // {
-  //   path: "create-employee",
-  //   component: CreateEmployee,
-  //   needsAuthentication: true,
-  //   options: {
-  //     hideFooter: true,
-  //     title: "Create Employee",
-  //     hideTitle: true,
-  //     hideBackButton: true
-  //   }
-  // }
+  }
 ];
 
 export default routes;

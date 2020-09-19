@@ -1,7 +1,7 @@
 import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import { showHideAdhocPopup } from "../../utils";
+import { showHideAdhocPopup,getCommonApplyFooter } from "../../utils";
 import { handleCreateUpdateIndent } from "./functions";
 
 const gotoCreateFlow = (state, dispatch) => {
@@ -27,7 +27,7 @@ const getCommonCreateFooter = children => {
 };
 
 export const masterCommonFooter = () => {
-  return getCommonCreateFooter({
+  return getCommonApplyFooter({
     submitButton: {
       componentPath: "Button",
       props: {

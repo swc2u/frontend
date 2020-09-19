@@ -210,7 +210,7 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
 
 export const createUpdateEvent = async (state, dispatch, status) => {
   dispatch(toggleSpinner());
- //debugger
+ //
   let response = '';
   let response_updatestatus = '';
   let uuId = getQueryArg(window.location.href, "eventuuId") === 'null' ? '' : getQueryArg(window.location.href, "eventuuId") // get(state, "screenConfiguration.preparedFinalObject.PRSCP.applicationId");
@@ -223,8 +223,7 @@ export const createUpdateEvent = async (state, dispatch, status) => {
 
     let reduxDocuments = get(state, "screenConfiguration.preparedFinalObject.EventDocuments", {});
 
-    console.log("reduxDocuments");
-    console.log(reduxDocuments);
+    
 
     // Set owners & other documents
     let event_documents = [];
@@ -305,12 +304,12 @@ export const createUpdateEvent = async (state, dispatch, status) => {
 
     set(payload, "eventImage", event_documents);
 
-    console.log('payload : ', payload)
+  
     setapplicationMode(status);
 
     if (uuId === '' || uuId === null) {
       response = await httpRequest("post", "/prscp-services/v1/event/_create", "", [], { requestBody: payload });
-      console.log('event response : ', response)
+    
 
 
       if (response.ResponseBody.eventDetailUuid !== 'null' || response.ResponseBody.eventDetailUuid !== '') {
@@ -450,13 +449,9 @@ export const getFileSize = file => {
 
 export const isFileValid = (file, acceptedFiles) => {
 
-  console.log("Id file valid");
-
-  console.log(acceptedFiles)
+ 
   const mimeType = file["type"];
-  console.log("mimeType");
-  console.log(mimeType)
-  console.log(file);
+ 
   return (
     (mimeType &&
       acceptedFiles &&
@@ -1151,9 +1146,7 @@ export const invitationtoguests = async (state, dispatch) => {
         data
       );
 
-      console.log("Sampleeeeeeeeeeeeeeeeee");
-      console.log(payload);
-
+     
       if (payload.ResponseInfo.status === "Success") {
         dispatch(prepareFinalObject("documentsUploadRedux", {}));
 

@@ -35,8 +35,7 @@ export const getCommonApplyFooter = children => {
     props: {
       className: "apply-wizard-footer",
       style:{
-        width:"100%",
-       
+        width:"100%",       
      }
     },
     children

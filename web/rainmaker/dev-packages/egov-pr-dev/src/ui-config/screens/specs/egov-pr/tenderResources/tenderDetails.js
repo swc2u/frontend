@@ -235,9 +235,7 @@ const onPressselect = async (type, rowData, allrowdata, index) => {
 		else
 		{	
 			
-			console.log(type);
-			console.log( rowData);
-			;
+		
 			let selectedrows = [];
 			let localinvdata = localStorageGet("ResendInvitelist");
 			if(localinvdata === null || localinvdata === "undefined" || localinvdata==="[]")
@@ -263,11 +261,7 @@ const onPressselect = async (type, rowData, allrowdata, index) => {
                    selIndex1.push(item[6])	
                 
                  })
-                 console.log('selectedRows1')
-                 
-                 console.log(selIndex1)
-             
-             console.log('selectedRows1')
+                
             
              store.dispatch(
               handleField(
@@ -295,12 +289,7 @@ const onPressselect = async (type, rowData, allrowdata, index) => {
            selIndex1.push(item[6])	
         
          })
-         console.log('selectedRows1')
-         
-         console.log(selIndex1)
-     
-     console.log('selectedRows1')
-     
+        
      
      store.dispatch(
       handleField(
@@ -318,8 +307,7 @@ const onPressselect = async (type, rowData, allrowdata, index) => {
         let temp = JSON.parse(localStorageGet("ResendInvitelist"));
         let temp2 = rowData
         temp2.push(index.dataIndex)
-        				console.log("temppppppppppppp")
-        console.log(temp)
+        			
         let checked=false;
         temp.map((item,index)=>{
           if(item[5] === rowData[5])
@@ -334,11 +322,7 @@ const onPressselect = async (type, rowData, allrowdata, index) => {
                selIndex1.push(item[6])	
             
              })
-             console.log('selectedRows1')
-             
-             console.log(selIndex1)
-         
-         console.log('selectedRows1')
+            
          
        
          store.dispatch(
@@ -374,12 +358,7 @@ selectedrows = (temp)
            selIndex1.push(item[6])	
         
          })
-         console.log('selectedRows1')
          
-         console.log(selIndex1)
-     
-     console.log('selectedRows1')
-     
    
      store.dispatch(
       handleField(
@@ -404,9 +383,7 @@ selectedrows = (temp)
 		}
 		else
 		{	
-			console.log(type);
-			console.log( rowData);
-			;
+		
 			let selectedrows = [];
 			let localinvdata = localStorageGet("ResendInvitelist");
 			if(localinvdata === null || localinvdata === "undefined")
@@ -428,11 +405,7 @@ selectedrows = (temp)
                selIndex1.push(item[6])	
             
              })
-             console.log('selectedRows1')
-             
-             console.log(selIndex1)
-         
-         console.log('selectedRows1')
+           
          
         
          store.dispatch(
@@ -459,11 +432,7 @@ let temp=rowData
            selIndex1.push(item[6])	
         
          })
-         console.log('selectedRows1')
-         
-         console.log(selIndex1)
-     
-     console.log('selectedRows1')
+      
      
     
      store.dispatch(
@@ -481,8 +450,7 @@ let temp=rowData
 			{
         let temp = JSON.parse(localStorageGet("ResendInvitelist"));
         temp.push(index.dataIndex)
-				console.log("temppppppppppppp")
-        console.log(temp)
+			
         let checked=false;
         temp.map((item,index)=>{
           if(item[5] === rowData[5])
@@ -497,11 +465,7 @@ let temp=rowData
                selIndex1.push(item[6])	
             
              })
-             console.log('selectedRows1')
-             
-             console.log(selIndex1)
-         
-         console.log('selectedRows1')
+           
          
          
          store.dispatch(
@@ -526,11 +490,7 @@ let temp=rowData
            selIndex1.push(item[6])	
         
          })
-         console.log('selectedRows1')
-         
-         console.log(selIndex1)
-     
-     console.log('selectedRows1')
+       
      
   
      store.dispatch(

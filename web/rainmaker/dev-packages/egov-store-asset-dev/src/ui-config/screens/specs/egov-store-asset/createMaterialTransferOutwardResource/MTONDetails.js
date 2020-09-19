@@ -64,6 +64,7 @@ const MTONDetailsCard = {
                 dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].tenantId`, getTenantId()));
                 
                 dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].receiptId`, indentsOutmaterial[0].receiptId));
+                dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].receiptDate`, Number(indentsOutmaterial[0].receiptDate)));
                 dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].balanceQuantity`, indentsOutmaterial[0].balance));
                 dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].unitRate`, indentsOutmaterial[0].unitRate));
                 dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].uom.code`, indentsOutmaterial[0].uomCode));
@@ -79,6 +80,23 @@ const MTONDetailsCard = {
               }
 
             }
+          }, 
+          receiptDate: {
+            ...getDateField({
+              label: {
+                labelName: "Receipt Date",
+                labelKey: "STORE_MATERIAL_OPENNING_BALANCE_RECEIPT_DATE",
+              },
+              placeholder: {
+                labelName: "Receipt Date",
+                labelKey: "STORE_MATERIAL_OPENNING_BALANCE_RECEIPT_DATE",
+              },
+              pattern: getPattern("Date"),
+              jsonPath: "materialIssues[0].materialIssueDetails[0].receiptDate",
+              props: {
+                disabled:true,                 
+              }
+            }),
           }, 
           indentQuantity: {
             ...getTextField({

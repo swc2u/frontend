@@ -558,7 +558,37 @@ export const getActionDefinationForStepper = path => {
 
 export const callBackForPrevious = (state, dispatch) => {
   toggleactionmenu(state, dispatch)
+  
+    let tempAll = JSON.parse(localStorageGet("PressTenderListAll"));
+      
+  
 
+if(tempAll)
+{
+   
+  let selIndex1=[]
+    let selIndex= JSON.parse(localStorageGet("PressTenderListAll"));
+   
+    selIndex.map((item,index)=>{
+    
+       selIndex1.push(item['index'])	
+    
+     })
+    
+
+ dispatch(
+  handleField(
+    "publishTender",
+    "components.div.children.formwizardFirstStep.children.PressMasterListForTender",
+    "props.options.rowsSelected",
+    selIndex1
+  )
+ 
+);
+      
+     
+
+    }
   changeStep(state, dispatch, "previous");
 };
 

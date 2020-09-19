@@ -12,20 +12,10 @@ import {
   localStorageGet,
   getUserInfo
 ,localStorageSet} from "egov-ui-kit/utils/localStorageUtils";
-import {
-  getLocaleLabels,
-  getTransformedLocalStorgaeLabels
-} from "egov-ui-framework/ui-utils/commons";
-import {
-  getCommonContainer,
-  getCommonHeader,
- 
-  getStepperObject
-} from "egov-ui-framework/ui-config/screens/specs/utils";
+
 import "./index.css";
 import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField  } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
-import { getTenderGridData } from "../../../../../ui-utils/commons";
 import store from "ui-redux/store";
 const state = store.getState();
 
@@ -149,23 +139,20 @@ export const searchResultsPressList = {
 
 const onAllEmployeeselect = async (rowData, allrowdata,state,dispatch,action) => {
 
-	console.log("SELCT ALL CLICKKKKKKKKKKKKKKKKK Employee");
-	console.log(rowData)
-  console.log(allrowdata)
-  console.log("allrowdata")
-	console.log(localStorageGet("gridobj"))
+
 		if(rowData.length == localStorageGet("gridobjlength") && allrowdata.length == localStorageGet("gridobjlength"))
 		{
 			let selectedrows = [];
 			let selectedrows1=[];
-					
+      let selIndex1=[];
+
 			 let tempdata = localStorageGet("gridobj");
 	//	 console.log(tempdata);
 			 let tempdata1 = tempdata.split('},{').join('}|{');
 			 let tempdata2 = tempdata1.split('|')
 					 
 				tempdata2.map( (item,index) => {
-					console.log((item));
+				//	console.log((item));
 					let temp = JSON.parse(item) 
 					 let obj={}
 					 
@@ -179,10 +166,14 @@ const onAllEmployeeselect = async (rowData, allrowdata,state,dispatch,action) =>
 					  obj['index']=index
             
 
-					selectedrows.push(obj)
+          selectedrows.push(obj)
+          selIndex1.push(index)
+
 					
 			})
-			localStorageSet("PressNoteListAll", JSON.stringify(selectedrows));	
+      localStorageSet("PressNoteListAll", JSON.stringify(selectedrows));	
+      localStorageSet("AllIndex", JSON.stringify(selIndex1));
+
 		}
 		else
 		{
@@ -200,19 +191,13 @@ const onEmployeeselect = async (type, rowData, allrowdata,index) => {
 	
 	if(type == "cell")
 	{
-		console.log(type);
-		console.log("Current" + rowData);
-		console.log("All "+allrowdata);
-		
+	
 		
 	}
 	else
 	{	
     
-    console.log(type);
-    console.log("Current" + rowData);
-		console.log( rowData);
-		;
+  
     let selectedrows = [];
     let selectedrows1=[];
 		let localinvdata = localStorageGet("PressNoteList");
@@ -227,6 +212,7 @@ const onEmployeeselect = async (type, rowData, allrowdata,index) => {
 
 if(tempAll!==null)
 {
+  
      
       tempAll.map((item,index)=>{
         if(item['Press master UUID'] === rowData[5])
@@ -243,11 +229,7 @@ if(tempAll!==null)
              selIndex1.push(item['index'])	
           
            })
-           console.log('selectedRows1')
-           
-           console.log(selIndex1)
-       
-       console.log('selectedRows1')
+        
        
        store.dispatch(
         handleField(
@@ -284,11 +266,7 @@ if(checked===false){
          selIndex1.push(item['index'])	
       
        })
-       console.log('selectedRows1')
-       
-       console.log(selIndex1)
-   
-   console.log('selectedRows1')
+      
    
    store.dispatch(
     handleField(
@@ -304,11 +282,11 @@ if(checked===false){
 		}
 		else
 		{
-      console.log(JSON.parse(localStorageGet("PressNoteList")))
+     // console.log(JSON.parse(localStorageGet("PressNoteList")))
       let temp = JSON.parse(localStorageGet("PressNoteList"));
       let selectedrows2=selectedrows1
-			console.log("temppppppppppppp")
-			console.log(temp)
+			// console.log("temppppppppppppp")
+			// console.log(temp)
 	
       selectedrows.push(rowData)
 
@@ -327,11 +305,7 @@ if(checked===false){
              selIndex1.push(item['index'])	
           
            })
-           console.log('selectedRows1')
            
-           console.log(selIndex1)
-       
-       console.log('selectedRows1')
        
        store.dispatch(
         handleField(
@@ -367,11 +341,7 @@ if(checked===false){
          selIndex1.push(item['index'])	
       
        })
-       console.log('selectedRows1')
-       
-       console.log(selIndex1)
-   
-   console.log('selectedRows1')
+    
    
    store.dispatch(
     handleField(
@@ -388,8 +358,7 @@ if(checked===false){
 
         }
     selectedrows1=selectedrows2
-    console.log('selectedrows2')
-    console.log(selectedrows2)
+    
     }	
     let data1=JSON.parse( localStorageGet("PressNoteList"))
     
@@ -468,15 +437,13 @@ export const searchResultsPressMasterList = {
 
 const onAllPressselect = async (rowData, allrowdata,state,dispatch,action) => {
 
-	console.log("SELCT ALL CLICKKKKKKKKKKKKKKKKK Employee");
-	console.log(rowData)
-	console.log(allrowdata)
+	
 	
 		if(rowData.length == localStorageGet("gridobjlength") && allrowdata.length == localStorageGet("gridobjlength"))
 		{
 			let selectedrows = [];
 			let selectedrows1=[];
-					
+      let selIndex1=[];
 			 let tempdata = localStorageGet("gridobj");
 		
 			 let tempdata1 = tempdata.split('},{').join('}|{');
@@ -484,7 +451,7 @@ const onAllPressselect = async (rowData, allrowdata,state,dispatch,action) => {
 					 
 				tempdata2.map( (item,index) => {
 					
-					console.log((item));
+					//console.log((item));
 					let temp = JSON.parse(item) 
 					 let obj={}
 					 	obj['Publication Name']=temp.publicationName
@@ -496,9 +463,11 @@ const onAllPressselect = async (rowData, allrowdata,state,dispatch,action) => {
             obj['index']=index
             
 					selectedrows.push(obj)
-					
+          selIndex1.push(index)
 			})
-			localStorageSet("PressTenderListAll", JSON.stringify(selectedrows));	
+      localStorageSet("PressTenderListAll", JSON.stringify(selectedrows));	
+      localStorageSet("AllIndex", JSON.stringify(selIndex1));
+
 		}
 		else
 		{
@@ -520,10 +489,7 @@ const onEmployeeselect1 = async (type, rowData, allrowdata,index) => {
 	}
 	else
 	{	
-    console.log(type);
-    console.log("Current" + rowData);
-		console.log( rowData);
-		;
+   
     let selectedrows = [];
     let selectedrows1=[];
 		let localinvdata = localStorageGet("PressTenderList");
@@ -554,12 +520,7 @@ if(tempAll!==null)
          selIndex1.push(item['index'])	
       
        })
-       console.log('selectedRows1')
-       
-       console.log(selIndex1)
-   
-   console.log('selectedRows1')
-   
+     
 
    store.dispatch(
     handleField(
@@ -595,12 +556,7 @@ if(checked===false){
          selIndex1.push(item['index'])	
       
        })
-       console.log('selectedRows1')
        
-       console.log(selIndex1)
-   
-   console.log('selectedRows1')
-   
 
    store.dispatch(
     handleField(
@@ -615,11 +571,11 @@ if(checked===false){
 		}
 		else
 		{
-      console.log(JSON.parse(localStorageGet("PressTenderList")))
+     // console.log(JSON.parse(localStorageGet("PressTenderList")))
       let temp = JSON.parse(localStorageGet("PressTenderList"));
       let selectedrows2=selectedrows1
-			console.log("temppppppppppppp")
-      console.log(temp)
+			// console.log("temppppppppppppp")
+      // console.log(temp)
       
       let checked =false;
       temp.map((item,index)=>{
@@ -636,11 +592,7 @@ if(checked===false){
          selIndex1.push(item['index'])	
       
        })
-       console.log('selectedRows1')
-       
-       console.log(selIndex1)
-   
-   console.log('selectedRows1')
+     
    
 
    store.dispatch(
@@ -678,11 +630,7 @@ if(checked===false){
          selIndex1.push(item['index'])	
       
        })
-       console.log('selectedRows1')
-       
-       console.log(selIndex1)
-   
-   console.log('selectedRows1')
+    
    
 
    store.dispatch(
@@ -1528,8 +1476,7 @@ const onPressselectAll = async (type, rowData, allrowdata, currentRowsSelected ,
     
    }
   else{
-   console.log('Presssssssstempdata');
-   console.log(tempdata);
+  
   //  let avlData=localStorageGet("ResendInvitelistAll")
   //  if(avlData)
   //  {
@@ -1543,7 +1490,7 @@ const onPressselectAll = async (type, rowData, allrowdata, currentRowsSelected ,
        
     tempdata2.map( (item,index) => {
       //console.log("------");
-      console.log((item));
+   //   console.log((item));
       let temp = JSON.parse(item) 
        let obj=[]
         obj[0]= temp.publicationName ? temp.publicationName : "-"
@@ -1602,11 +1549,7 @@ const onPressselect = async (type, rowData,index) => {
                selIndex1.push(item[6])	
             
              })
-             console.log('selectedRows1')
-             
-             console.log(selIndex1)
-         
-         console.log('selectedRows1')
+            
          
          store.dispatch(
           handleField(
@@ -1627,8 +1570,7 @@ const onPressselect = async (type, rowData,index) => {
         temp.push(index.dataIndex)
         
 				selectedrows.push(temp)
-				console.log("ROwdata 1");
-				console.log( selectedrows);
+			
         localStorageSet("ResendInvitelist", JSON.stringify(selectedrows));
         let selIndex1=[]
         let selIndex= JSON.parse(localStorageGet("ResendInvitelist"));
@@ -1637,11 +1579,7 @@ const onPressselect = async (type, rowData,index) => {
            selIndex1.push(item[6])	
         
          })
-         console.log('selectedRows1')
-         
-         console.log(selIndex1)
-     
-     console.log('selectedRows1')
+        
      
      store.dispatch(
       handleField(
@@ -1657,16 +1595,11 @@ const onPressselect = async (type, rowData,index) => {
 			else
 			{
 				let temp = JSON.parse(localStorageGet("ResendInvitelist"));
-				console.log(temp)
+			
         let temp2 = rowData
         temp2.push(index.dataIndex)
      //   temp2=temp2+index
-     console.log('index.dataIndex')
-     
-     console.log(index.dataIndex)
-      //  temp2.splice(6, 2,index.rowIndex);
-        console.log('temp2222222222222222')
-        console.log(temp2)
+    
        
         let checked=false;
         temp.map((item,index)=>{
@@ -1682,11 +1615,7 @@ const onPressselect = async (type, rowData,index) => {
                selIndex1.push(item[6])	
             
              })
-             console.log('selectedRows1')
-             
-             console.log(selIndex1)
-         
-         console.log('selectedRows1')
+            
          
          store.dispatch(
           handleField(
@@ -1713,11 +1642,7 @@ const onPressselect = async (type, rowData,index) => {
            selIndex1.push(item[6])	
         
          })
-         console.log('selectedRows1')
-         
-         console.log(selIndex1)
-     
-     console.log('selectedRows1')
+        
      
      store.dispatch(
       handleField(

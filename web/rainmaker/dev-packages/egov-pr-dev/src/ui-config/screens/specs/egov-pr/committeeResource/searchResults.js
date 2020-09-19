@@ -63,17 +63,16 @@ const onAllEmployeeselect = async (rowData, allrowdata,state,dispatch,action) =>
 	
 		if(rowData.length == localStorageGet("gridobjlength") && allrowdata.length == localStorageGet("gridobjlength"))
 		{
-			let selectedrows = [];
-	
-			 let tempdata = localStorageGet("gridobj");
-			 console.log(tempdata);
-		
+      let selectedrows = [];
+      let selIndex1=[];
+      let tempdata =localStorageGet("gridobj")
+  
 			 let tempdata1 = tempdata.split('},{').join('}|{');
 			 let tempdata2 = tempdata1.split('|')
 					 
-				tempdata2.map( (item,index)=> {
+       tempdata2.map( (item,index)=> {
 				
-					console.log((item));
+				
 					let temp = JSON.parse(item) 
 					 let obj={}
 					  obj['Department']= temp.assignments ? temp.assignments[0].EmpName : "-"
@@ -86,9 +85,12 @@ const onAllEmployeeselect = async (rowData, allrowdata,state,dispatch,action) =>
             obj['DepartmentName']=temp.assignments ? temp.assignments[0].department : "-"
             obj['index']=index
 					selectedrows.push(obj)
-					
+          selIndex1.push(index)
 			})
-			localStorageSet("committeelistAll", JSON.stringify(selectedrows));	
+      localStorageSet("committeelistAll", JSON.stringify(selectedrows));
+     
+      localStorageSet("committeelistIndex", JSON.stringify(selIndex1));
+	
 		}
 		else
 		{
@@ -104,21 +106,17 @@ const onEmployeeselect = async (type, rowData, state,dispatch,action,index,allRo
 
 	if(type == "cell")
 	{
-    console.log('cellindex')
-    console.log(allRowsSelected)
+   
 	}
 	else
 	{	
-    console.log('index')
-    console.log(index.dataIndex)
-    console.log(allRowsSelected)
+   
 		
 		let selectedrows = [];
     let localinvdata = localStorageGet("committeelist");
      
 var selectedRows1=[]
-		console.log("committeelist");
-		console.log( localinvdata);
+	
 		if(localinvdata === null || localinvdata === "undefined" || localinvdata === "[]")
 		{
       let tempAll = JSON.parse(localStorageGet("committeelistAll"));
@@ -137,6 +135,7 @@ if(tempAll!==null)
           let selIndex1=[]
           let selIndex= JSON.parse(localStorageGet("committeelist"));
           localStorageSet("committeelistAll", "");
+
           selIndex.map((item,index)=>{
           
              selIndex1.push(item['index'])	
@@ -144,6 +143,8 @@ if(tempAll!==null)
           
            })
            
+           localStorageSet("committeelistIndex",selIndex1);
+
        store.dispatch(
          handleField(
            "createCommitteeMaster",
@@ -220,7 +221,6 @@ store.dispatch(
 		{
    
       
-console.log('in else')
       let temp = JSON.parse(localStorageGet("committeelist"));
       
 
@@ -297,7 +297,6 @@ if(checked===false){
 }
 
 
-   console.log(localStorageGet("committeelist"))
     
 
       let data = selectedrows.map(item => ({

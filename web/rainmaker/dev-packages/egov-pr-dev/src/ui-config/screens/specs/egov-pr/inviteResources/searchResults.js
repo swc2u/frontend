@@ -79,8 +79,7 @@ const onAllEmployeeselect = async (rowData, allrowdata, state, dispatch, action)
     let tempdata2 = tempdata1.split('|')
 
     tempdata2.map((item, index) => {
-      //console.log("------");
-      console.log((item));
+     
       let temp = JSON.parse(item)
       let obj = []
       obj[0] = temp.assignments ? temp.assignments[0].DeptName : "-"
@@ -107,15 +106,12 @@ const onAllEmployeeselect = async (rowData, allrowdata, state, dispatch, action)
 }
 const onPressselectAll = async (type, rowData, allrowdata, currentRowsSelected, allRowsSelected) => {
   
-  //alert('in onrow')
-  console.log("allRowsSelected**********************")
-  console.log(allRowsSelected)
+ 
   let selectedrows = [];
   let selectedrows1 = [];
 
   let tempdata = localStorageGet("gridobj");
-  console.log('Presssssssstempdata');
-  console.log(tempdata);
+ 
   if (allRowsSelected.length == localStorageGet("gridobjlength")) {
     let avlData = localStorageGet("ResendInvitelistAll")
     if (avlData) {
@@ -141,8 +137,7 @@ const onPressselectAll = async (type, rowData, allrowdata, currentRowsSelected, 
 
 
         tempdata2.map((item, index) => {
-          //console.log("------");
-          console.log((item));
+          
           let temp = JSON.parse(item)
           let obj = []
           obj[0] = temp.eventGuestType ? temp.eventGuestType : "-"
@@ -202,11 +197,7 @@ const onEmployeeselect = async (type, rowData, allrowdata, index) => {
                 selIndex1.push(item[5])
 
               })
-              console.log('selectedRows1')
-
-              console.log(selIndex1)
-
-              console.log('selectedRows1')
+             
               store.dispatch(
                 handleField(
                   "event_summary",
@@ -233,11 +224,7 @@ const onEmployeeselect = async (type, rowData, allrowdata, index) => {
             selIndex1.push(item[5])
 
           })
-          console.log('selectedRows1')
-
-          console.log(selIndex1)
-
-          console.log('selectedRows1')
+         
           store.dispatch(
             handleField(
               "event_summary",
@@ -270,11 +257,7 @@ const onEmployeeselect = async (type, rowData, allrowdata, index) => {
               selIndex1.push(item[5])
 
             })
-            console.log('selectedRows1')
-
-            console.log(selIndex1)
-
-            console.log('selectedRows1')
+           
             store.dispatch(
               handleField(
                 "event_summary",
@@ -301,11 +284,7 @@ const onEmployeeselect = async (type, rowData, allrowdata, index) => {
             selIndex1.push(item[5])
 
           })
-          console.log('selectedRows1')
-
-          console.log(selIndex1)
-
-          console.log('selectedRows1')
+        
           store.dispatch(
             handleField(
               "event_summary",
@@ -324,10 +303,7 @@ const onEmployeeselect = async (type, rowData, allrowdata, index) => {
     }
     else {
 
-      // alert('aaaaaaa')
-      console.log(type);
-      console.log(rowData);
-      ;
+      
       let selectedrows = [];
       let localinvdata = localStorageGet("Invitelist");
       if (localinvdata === null || localinvdata === "undefined") {
@@ -350,11 +326,7 @@ const onEmployeeselect = async (type, rowData, allrowdata, index) => {
                 selIndex1.push(item[5])
 
               })
-              console.log('selectedRows1')
-
-              console.log(selIndex1)
-
-              console.log('selectedRows1')
+             
               store.dispatch(
                 handleField(
                   "createInvite",
@@ -381,11 +353,7 @@ const onEmployeeselect = async (type, rowData, allrowdata, index) => {
             selIndex1.push(item[5])
 
           })
-          console.log('selectedRows1')
-
-          console.log(selIndex1)
-
-          console.log('selectedRows1')
+         
           store.dispatch(
             handleField(
               "createInvite",
@@ -414,11 +382,7 @@ const onEmployeeselect = async (type, rowData, allrowdata, index) => {
               selIndex1.push(item[5])
 
             })
-            console.log('selectedRows1')
-
-            console.log(selIndex1)
-
-            console.log('selectedRows1')
+           
             store.dispatch(
               handleField(
                 "createInvite",

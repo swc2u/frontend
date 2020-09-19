@@ -214,8 +214,8 @@ let checkboxcheck=localStorageGet("committeelist")
 			"props.data",
 			data
 			)
-			);
-    	
+      );
+   
 	changeStep(state, dispatch);
   }
   
@@ -414,7 +414,49 @@ if(localStorageGet("committeelist")!==null || localStorageGet("committeelistAll"
   data
   )
   );
-  
+  // if(localStorageGet("committeelistIndex"))
+  // {
+  // dispatch(
+  //   handleField(
+  //     "createCommitteeMaster",
+  //     "components.div.children.formwizardFirstStep.children.searchDepartmentEmployeesResults_committee.children.cardContent.children.committieegrid",
+  //     "props.options.rowsSelected",
+  //    JSON.parse(localStorageGet("committeelistIndex"))
+
+  //   )
+  // );
+  //   }
+  let tempAll = JSON.parse(localStorageGet("committeelistAll"));
+      
+
+
+if(tempAll)
+{
+ 
+  	
+      let selIndex1=[]
+      let selIndex= JSON.parse(localStorageGet("committeelistAll"));
+
+      selIndex.map((item,index)=>{
+      
+         selIndex1.push(item['index'])	
+         
+      
+       })
+       
+       localStorageSet("committeelistIndex",selIndex1);
+
+   dispatch(
+     handleField(
+       "createCommitteeMaster",
+       "components.div.children.formwizardFirstStep.children.searchDepartmentEmployeesResults_committee.children.cardContent.children.committieegrid",
+       "props.options.rowsSelected",
+       selIndex1
+     )
+   );
+    
+
+  }
 //changeStep(state, dispatch);
 changeStep(state, dispatch, "previous");
 

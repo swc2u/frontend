@@ -75,13 +75,13 @@ export const handleEvent =( state, dispatch) => {
                  ]
    };
    
-    console.log(mdmsBody)
+    
    try {
    let payload = null;
    let delete_api = baserequestURL+"/prscp-services/v1/library/_delete";
    payload =  httpRequest("post", delete_api, "_delete", [], { RequestBody: mdmsBody }).then(response => {
   
-   console.log(response)
+  
    if(response.ResponseInfo.status === "Success")
    {
      window.location.reload();

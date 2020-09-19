@@ -88,7 +88,10 @@ export const ConfirmMsg = getCommonContainer({
 
 
         action: "condition",
-        callBack: (action, state, dispatch) => { window.location.reload(); }
+        callBack: (action, state, dispatch) => { 
+          
+          
+          window.location.reload(); }
       }
     },
     submit: {
@@ -518,10 +521,7 @@ const screenConfig = {
         popup: applicantDetails,
 		 break: getBreak(),
 		break: getBreak(),
-		//  searchheader: getCommonHeader({
-		// 		labelName: "Employee Search",
-		// 		labelKey: "PR_EMPLOYEE_SEARCH"
-    //   }),	
+
       subText: getCommonParagraph({
         labelName: "Employee Search",
 				labelKey: "PR_EMPLOYEE_SEARCH"

@@ -182,7 +182,47 @@ export const callBackForNext = async (state, dispatch) => {
                 );
                   }
                   if(activeStep ===1)
-                  moveToReview(dispatch)
+                  {
+                    let MaterialBalanceRate = get(state, "screenConfiguration.preparedFinalObject.mrnNumber",[]) 
+                    let materialIssueDetails = get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].materialIssueDetails",[]) 
+
+                  //  let  receiptDate = materialIssueDetails.max(x=>x.receiptDate)
+                  //  let  receiptDate_ = materialIssueDetails.min(x=>x.receiptDate)
+                  var maxValObject = _.maxBy(materialIssueDetails, 'receiptDate');
+                  var minValObject = _.minBy(materialIssueDetails, 'receiptDate');
+                 
+                   if(MaterialBalanceRate &&MaterialBalanceRate[0] &&maxValObject)
+                   {
+                     
+                     if(Number(maxValObject.receiptDate))
+                     maxValObject = epochToYmd(maxValObject.receiptDate)
+                     const  maxValObject_ = new Date(maxValObject)
+                   //  alert(receiptDate)
+                     let issueDate = get(
+                       state.screenConfiguration.preparedFinalObject,
+                       "materialIssues[0].issueDate",
+                       null
+                     );
+                     if(Number(issueDate))
+                     issueDate = epochToYmd(issueDate)
+                   const  issueDate_ = new Date(issueDate)
+                   if(issueDate_< maxValObject_)
+                   {
+                     let LocalizationCodeValueIssuedate = getLocalizationCodeValue("STORE_MATERIAL_ISSUE_DATE_VALIDATION")
+                     const errorMessage = {
+                       labelName: "Issue date should be greater than or equal to receipt date ",
+                       labelKey: LocalizationCodeValueIssuedate+' '+maxValObject
+                     }; 
+                     dispatch(toggleSnackbar(true, errorMessage, "warning"));
+                   }
+                   else{
+                   
+                    moveToReview(dispatch)
+                   }
+                   }
+                  }
+                  
+                
                   else
                   changeStep(state, dispatch);
                   }

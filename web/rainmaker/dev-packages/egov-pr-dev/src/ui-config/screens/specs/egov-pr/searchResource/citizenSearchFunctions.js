@@ -434,7 +434,7 @@ export const getPressGridDataforview = async (action, state, dispatch) => {
 
     let selectedrows = []
     let allrows = response.ResponseBody[0].publicationList;
-    console.log(allrows)
+ 
     if(allrows!==null)
     {
     localStorageSet("gridobjlength", allrows.length)
@@ -661,7 +661,7 @@ export const GetEmployees = async (state, dispatch) => {
  
   let tenantId = getTenantId();
   
-   	console.log(typeof empname)
+   
    let departments = [];
    let departments_query = [];
    
@@ -828,11 +828,25 @@ export const GetEmployees = async (state, dispatch) => {
   
   let selectedrows = []
   let selectedIndexRows=[]
-	let allrows = response;
+  let allrows = response;
+  let empAllData=[]
 	localStorageSet("gridobjlength", allrows.length)
-	allrows.map(item => {
+
+
+  allrows.map(item => {
     delete item.user.roles
-			selectedrows.push(JSON.stringify(item))
+    item.assignments.map(audit=>{
+      delete audit.auditDetails
+
+    })
+
+     let obj={}
+    
+    obj['assignments'] = []
+    obj['assignments'].push(item.assignments[0])
+    obj['user']=item.user
+     
+     selectedrows.push(JSON.stringify(obj))
   })
   
 	localStorageSet("gridobj",selectedrows);
@@ -841,18 +855,9 @@ export const GetEmployees = async (state, dispatch) => {
 
   if(preSelectedRows!==null)
   {
-  console.log('departments_query')
-
-  console.log(departments_query)
-	
-//   preSelectedRows = preSelectedRows.filter((el) => {
-//      return departments_query.includes(el.DepartmentName)
-
  
-// });	
-  
-console.log('preSelectedRows')
-console.log(preSelectedRows)
+	
+	
   }
 	
     let data = response.map(item => ({
@@ -866,7 +871,7 @@ console.log(preSelectedRows)
      }));
      if(preSelectedRows!==null){
     
-      console.log(typeof(preSelectedRows))
+     
       response.map(function (item, index) {
         if(item.user!=null && item.user.uuid){
       
@@ -888,7 +893,6 @@ console.log(preSelectedRows)
     }
     if(preSelectedRowsAll!==null){
     
-      console.log(typeof(preSelectedRowsAll))
       response.map(function (item, index) {
         if(item.user!=null && item.user.uuid){
       
@@ -1002,18 +1006,16 @@ let selectedrows = localStorageGet("Invitelist") === null ? localStorageGet("Inv
        invitedGuestlist[index] = {
 						"eventGuestType":"INTERNAL",
 						"departmentName":item[0],
-						"userUuid":"as45a4s5d5as", 
-						"pressMasterUuid":"asd5a5as",
+						"userUuid":item[4], 
+						"pressMasterUuid":"",
 						"guestName":item[1],
 						"guestEmail":item[3],
-						"guestMobile":item[2]
+						"guestMobile":item[2]?item[2]:0
 				}
 			
      }
 	 );
 	
-	console.log("invitedGuestlistTTTTTTTTTTTTTT");
-	 console.log(invitedGuestlist)
 	let mdmsBody = {
 				"tenantId":tenantId,
 				"eventDetailUuid": localStorageGet("eventifforinvitatoin"),
@@ -1021,7 +1023,6 @@ let selectedrows = localStorageGet("Invitelist") === null ? localStorageGet("Inv
 				"inviteGuest": invitedGuestlist
 	};
 	
-	 console.log(mdmsBody)
 	try {
     let payload = null;
 	
@@ -1219,8 +1220,6 @@ dispatch(prepareFinalObject("eventDetails", response.ResponseBody));
 
         documentsPreview = documentsPreview.map(function (doc, index) {
   
-              console.log("mappppppppppp");
-              console.log(doc)
       doc["link"] = fileUrls && fileUrls[doc.fileStoreId] && fileUrls[doc.fileStoreId].split(",")[0] || "";
       
           return doc;
@@ -1381,7 +1380,6 @@ dispatch(prepareFinalObject("ResponseBody", response.ResponseBody));
  // let doc=JSON.parse(PublicRelation.eventString)
   
   let doc=PublicRelation.documentAttachment
-console.log(doc.length)
 
 let doctitle = [];
 if(doc.length>0)
@@ -1485,14 +1483,12 @@ export const deleteguestbyid = async ( state, dispatch) => {
 								   ],
 		};
 		
-		 console.log(mdmsBody)
+	
 		try {
 		let payload = null;
 		
 		payload = await httpRequest("post", "/prscp-services/v1/invitation/guest/_delete", "_delete", [], { RequestBody: mdmsBody });
     
-		console.log("Payloadddddddddddddddd");
-		console.log(payload);
 		
 		if(payload.ResponseInfo.status === "Success")
 		{
@@ -1525,7 +1521,7 @@ export const deleteguestbyid = async ( state, dispatch) => {
 export const InvitePress = async (state, dispatch) => {
   
 let selectedrows = localStorageGet("selectedPressList");
-console.log(selectedrows)
+
 if(selectedrows!=="[]")
 {
 if(selectedrows!==null)
@@ -1541,7 +1537,7 @@ if(selectedrows!==null)
        invitedGuestlist[index] = {
 						"eventGuestType":"PRESS",
 						"departmentName":item[0],
-						"userUuid":"as45a4s5d5as", 
+						"userUuid":"", 
 						"pressMasterUuid":item.pressMasterUuid,
 						"guestName":item.personnelName,
 						"guestEmail":item.email,
@@ -1559,7 +1555,6 @@ if(selectedrows!==null)
 				"inviteGuest": invitedGuestlist
 	};
 	
-	 console.log(mdmsBody)
 	try {
     let payload = null;
 	
@@ -1692,7 +1687,7 @@ if(response.ResponseBody[j].organizerDepartmentName===payload.MdmsRes["common-ma
       }
 }
 	 
-	 	console.log(response);
+	 
 	const eventarray = response.ResponseBody.filter((el) => {
 			return (el.status !== "EXPIRED" && el.eventStatus !== "CANCELLED");
 	});	
@@ -1753,7 +1748,7 @@ export const getEventInviteeList = async (action, state, dispatch) => {
 		  [getTextToLocalMapping("Guest Type")]:item["eventGuestType"] !== null ? item["eventGuestType"] : "-",
 		   [getTextToLocalMapping("Guest Name")]: item["guestName"] !== null ? item["guestName"] : "-",
 		   [getTextToLocalMapping("Guest Email")]:item["guestEmail"] !== null ? item["guestEmail"] : "-",
-		   [getTextToLocalMapping("Guest Mobile Number")]:item["guestMobile"] !== null ? item["guestMobile"] : "-",
+		   [getTextToLocalMapping("Guest Mobile Number")]:item["guestMobile"] === null ?'-':item["guestMobile"] === "0" ?'-': item["guestMobile"],
 		   [getTextToLocalMapping("Status")]: "Upcoming",	   
 		   [getTextToLocalMapping("Guest ID")]:  item["eventGuestUuid"] !== null ? item["eventGuestUuid"] : "-"
 		   
@@ -1875,7 +1870,7 @@ export const getSearchResultsforTenderView= async (state, dispatch,data) => {
     
     let selectedrows = []
     let allrows = response.ResponseBody[0].publicationList;
-    console.log(allrows)
+   
     if(allrows!==null)
     {
     localStorageSet("gridobjlength", allrows.length)
@@ -2097,7 +2092,7 @@ export const GetCommiteeEmployees = async (state, dispatch,value,id) => {
  
   let tenantId = getTenantId();
   
-   	console.log(typeof empname)
+  
    let departments = [];
    let departments_query = [];
    
@@ -2231,21 +2226,34 @@ export const GetCommiteeEmployees = async (state, dispatch,value,id) => {
     let selectedrows = []
     let selectedIndexRows=[]
 	let allrows = response;
-	localStorageSet("gridobjlength", allrows.length)
+  localStorageSet("gridobjlength", allrows.length)
+  
+
+ 
 	allrows.map(item => {
     delete item.user.roles
+    item.assignments.map(audit=>{
+      delete audit.auditDetails
+
+    })
+
+     let obj={}
     
-		selectedrows.push(JSON.stringify(item))
-	})
+    obj['assignments'] = []
+    obj['assignments'].push(item.assignments[0])
+    obj['user']=item.user
+     
+     selectedrows.push(JSON.stringify(obj))
+  })
+  
+  
 	localStorageSet("gridobj",selectedrows);
   let preSelectedRows = 	JSON.parse(localStorageGet("committeelist"));
   let preSelectedRowsAll= 	JSON.parse(localStorageGet("committeelistAll"));
 
   if(preSelectedRows!==null)
   {
-  console.log('departments_query')
 
-  console.log(departments_query)
 	
   preSelectedRows = preSelectedRows.filter((el) => {
      return departments_query.includes(el.DepartmentName)
@@ -2253,8 +2261,7 @@ export const GetCommiteeEmployees = async (state, dispatch,value,id) => {
  
 });	
   
-console.log('preSelectedRows')
-console.log(preSelectedRows)
+
   }
 
 	  
@@ -2274,7 +2281,7 @@ console.log(preSelectedRows)
      }));
      if(preSelectedRows!==null){
     
-      console.log(typeof(preSelectedRows))
+    
       response.map(function (item, index) {
         if(item.user!=null && item.user.uuid){
       
@@ -2297,7 +2304,7 @@ console.log(preSelectedRows)
 
     if(preSelectedRowsAll!==null){
     
-      console.log(typeof(preSelectedRowsAll))
+    
       response.map(function (item, index) {
         if(item.user!=null && item.user.uuid){
       
@@ -2378,8 +2385,7 @@ export const GetCommiteeEmployeebyName = async (state, dispatch,empname) => {
       queryStr,
       {}
     );
-	console.log("payloaddddddddddddd");
-	console.log(payload)
+
    let response = payload.Employees;
 	
     if (response) {
@@ -2636,7 +2642,7 @@ export const InviteExternalEmployees = async (state, dispatch, excelid) => {
 				
 	};
 
-	 console.log(mdmsBody)
+
 	try {
     let payload = null;
 	payload = await httpRequest("post", "/prscp-services/v1/invitation/guest/_upload", "_add", [], { RequestBody: mdmsBody });
@@ -2757,8 +2763,7 @@ export const resendinvitation = async (state, dispatch, type="event") => {
  }
 	 selectedrows = JSON.parse(selectedrows);
 	 
-	 console.log("selectedrowwwwwwwwwwwwwwwwwwww");
-	 console.log(selectedrows)
+
 	let tenantId = getTenantId();
 	let invitedGuestlist = [];
 	var data_result="";
@@ -2793,8 +2798,7 @@ export const resendinvitation = async (state, dispatch, type="event") => {
 	 else
 	 {
 
-    console.log('selectedrows')
-    console.log(selectedrows)
+   
     
 		let invitedGuest = selectedrows.map((item , index)=>{
 		   invitedGuestlist[index] = {
@@ -2819,7 +2823,7 @@ export const resendinvitation = async (state, dispatch, type="event") => {
 				"contactDetails":invitedGuestlist
   
 	};
-		 console.log(mdmsBody)
+		
 	try {
     let payload = null;
 	payload = await httpRequest("post", "/prscp-services/v1/template/_resend", "_add", [], { RequestBody: mdmsBody });

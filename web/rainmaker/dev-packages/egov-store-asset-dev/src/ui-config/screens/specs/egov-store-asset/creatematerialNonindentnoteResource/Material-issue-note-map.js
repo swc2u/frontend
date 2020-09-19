@@ -5,14 +5,17 @@ import {
     getSelectField,
     getTextField,
     getPattern,
+    getDateField,
     getCommonContainer
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import get from "lodash/get";
   import filter from "lodash/filter";
-  import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+  import { prepareFinalObject,toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
   import{getMaterialBalanceRateResults,GetMdmsNameBycode,GetTotalQtyValue} from '../../../../../ui-utils/storecommonsapi'
-
+  import {
+    epochToYmd,
+  } from "../../utils";
 
   const getMaterialData = async (action, state, dispatch,mrnNumber_) => {   
     const tenantId = getTenantId();
@@ -112,10 +115,15 @@ let mrnNumber = get(state,"screenConfiguration.preparedFinalObject.materialIssue
                 },
               }),
               beforeFieldChange: (action, state, dispatch) => {
+                let cardIndex = action.componentJsonpath.split("items[")[1].split("]")[0];
+                let MaterialBalanceRate = get(state, "screenConfiguration.preparedFinalObject.mrnNumber",[]) 
+                 MaterialBalanceRate = MaterialBalanceRate.filter(x=>x.mrnNumber == action.value)//.materialType.code
+                if(MaterialBalanceRate &&MaterialBalanceRate[0])
+                {
+                   dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].receiptDate`,MaterialBalanceRate[0].receiptDate));
+                }
                 getMaterialData(action,state, dispatch,action.value)
               }
-
-
             },
             MaterialName: {
               ...getSelectField({
@@ -168,6 +176,23 @@ let mrnNumber = get(state,"screenConfiguration.preparedFinalObject.materialIssue
               }
 
             },
+            receiptDate: {
+              ...getDateField({
+                label: {
+                  labelName: "Receipt Date",
+                  labelKey: "STORE_MATERIAL_OPENNING_BALANCE_RECEIPT_DATE",
+                },
+                placeholder: {
+                  labelName: "Receipt Date",
+                  labelKey: "STORE_MATERIAL_OPENNING_BALANCE_RECEIPT_DATE",
+                },
+                pattern: getPattern("Date"),
+                jsonPath: "materialIssues[0].materialIssueDetails[0].receiptDate",
+                props: {
+                  disabled:true,                 
+                }
+              }),
+            }, 
             balanceQty: {
               ...getTextField({
                 label: {

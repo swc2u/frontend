@@ -6,7 +6,7 @@ import {
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { getTextToLocalMapping } from "../utils";
   import { footer,takeactionfooter } from "./committeeResource/footer";
-  import { searchDepartmentEmployeesResults_committee1,searchDepartmentEmployeesResults,searchDepartmentEmployeesResults_committee,searchDepartmentEmployeesResults1, searchInvitedEmployeesResults } from "./committeeResource/searchResults";
+  import { searchDepartmentEmployeesResults_committee1,searchDepartmentEmployeesResults_committee,searchDepartmentEmployeesResults1, searchInvitedEmployeesResults } from "./committeeResource/searchResults";
   import { GetCommiteeEmployees} from "./searchResource/citizenSearchFunctions";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
   import {
@@ -310,7 +310,7 @@ dispatch(
       const step = getQueryArg(window.location.href, "step");
       localStorageSet("committeelist",[]);
       localStorageSet("committeelistAll",[]);
-     
+      localStorageSet("committeelistIndex","")
   lSRemoveItem("selectedDepartmentsInvite");
   lSRemoveItemlocal("selectedDepartmentsInvite");
       //Set Module Name
