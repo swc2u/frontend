@@ -21,6 +21,7 @@ import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import "./index.css";
 import get from "lodash/get"
+import {  convertEpochToDate } from "egov-ui-framework/ui-config/screens/specs/utils";
 
 class InboxData extends React.Component {
   state = {
