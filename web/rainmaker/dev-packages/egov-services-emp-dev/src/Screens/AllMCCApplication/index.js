@@ -819,7 +819,7 @@ class AllRequests extends Component {
           <CustomComplaints
             noComplaintMessage={
               search
-                ? "No Search Results Found"
+                ? "No Records Found"
                 : "BK_MYBK_NO_APPLICATION_ASSIGNED"
             }
             onComplaintClick={onComplaintClick}
