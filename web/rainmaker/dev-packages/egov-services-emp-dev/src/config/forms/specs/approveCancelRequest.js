@@ -33,7 +33,7 @@ const formConfig = {
      
         // createdBy: {
         //   id: "createdby",
-        //   jsonPath: "Booking.Remarks[0].bkCreatedBy",
+        //   jsonPath: "Booking.Remarks[0].bkCreatedBy"
         //   value:''
         // },
         // createdOn: {

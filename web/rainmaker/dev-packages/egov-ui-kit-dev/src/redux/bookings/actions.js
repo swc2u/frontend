@@ -964,7 +964,7 @@ export const OSBMfetchperDayRate = (requestBody, hasUsers = true, overWrite) => 
 		return async (dispatch, getState) => {
 		  try {
 			let tenantId = "";
-			const payload = await httpRequest(ESAMPARK.POST.URL, ESAMPARK.POST.ACTION, [], requestBody);
+			const payload = await httpRequest(ESAMPARKPL.POST.URL, ESAMPARKPL.POST.ACTION, [], requestBody);
 			dispatch(downloadESAMPARKPLComplete(payload, overWrite));
 		  } catch (error) {
 			dispatch(downloadESAMPARKPLError(error.message));
