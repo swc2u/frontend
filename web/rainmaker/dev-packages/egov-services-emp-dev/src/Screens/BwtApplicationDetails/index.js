@@ -145,16 +145,23 @@ class BwtApplicationDetails extends Component {
 			"_search",
 			RequestGateWay
 			);
-		 console.log("payloadGateWay--",payloadGateWay)
+		 console.log("payloadGateWay--",payloadGateWay)   //Transaction[0].gateway
 		 
-		 let gateWay = payloadGateWay.Transaction[0].gateway;
-		 console.log("gateWay--",gateWay ? gateWay : "NotFound")
+		 if(payloadGateWay.Transaction.length > 0){
+console.log("consoleDataForGateWay--",payloadGateWay.Transaction.length > 0 ? payloadGateWay.Transaction : "abababa") 
+	
+let gateWay = payloadGateWay.Transaction[0].gateway; 
 
-		 prepareFinalObject('GateWayName', gateWay)
+console.log("gateWay--",gateWay ? gateWay : "NotFound")
 
-		 this.setState({
-			BankName: gateWay
-		 })
+prepareFinalObject('GateWayName', gateWay)
+
+this.setState({
+   BankName: gateWay
+})
+
+}
+		
 		
 		  let mdmsData =  await this.getMdmsTenantsData();
 		  this.setState({
@@ -852,6 +859,7 @@ console.log("requestBodyOfApplication--",BookingInfo)
 			bookingForTime,bookingForDate} = this.props;
 		console.log("bookingForTime--props--",bookingForTime)
 		console.log("bookingForDate--props--",bookingForDate)
+		console.log("StateForWaterTanker--",this.state)
 
 		let {
 			role,

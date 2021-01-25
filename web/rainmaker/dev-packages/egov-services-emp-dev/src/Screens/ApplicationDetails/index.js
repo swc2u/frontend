@@ -10,7 +10,7 @@ import { prepareFormData } from "egov-ui-kit/redux/common/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import OSMCCBookingDetails from "../AllApplications/components/OSMCCBookingDetails"
 import AppDetails from "../AllApplications/components/ApplicantDetails"
-import BookingDetails from "../AllApplications/components/BookingDetails"
+import OSBMBookingDetails from "../AllApplications/components/OSBMBookingDetails"
 import DocumentPreview from "../AllApplications/components/DocumentPreview"
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import PaymentDetails from "../AllApplications/components/PaymentDetails"
@@ -1064,7 +1064,7 @@ downloadPermissionLetterFunction = async (e) => {
 
 								/>
 
-								<BookingDetails
+								<OSBMBookingDetails
 									{...complaint}
 									historyApiData={historyApiData && historyApiData}
 								/>

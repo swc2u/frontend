@@ -29,7 +29,7 @@ class Inbox extends Component {
     const { menu } = nextProps;
     console.log("menuInWorklist--",menu)
     const workflowList = menu && menu.filter((item) => 
-    item.name === "booking-services");
+    item.name === "booking-services-card");
      if (workflowList && workflowList.length > 0) {
       this.setState({
         hasWorkflow: true,
