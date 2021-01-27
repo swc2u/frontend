@@ -7,6 +7,7 @@ import {
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+  import {  checkValueForNA } from "../../utils";
   const gotoCreatePage = (state, dispatch) => {
     const IndentId = getQueryArg(window.location.href, "IndentId");
     const createUrl =
@@ -35,6 +36,14 @@ import {
           // },
             { jsonPath: "materialReceipt[0].receiptDetails[0].purchaseOrderDetail.purchaseOrderNumber",          
           }
+          ),
+          supplierName: getLabelWithValue(
+            { labelName: "Supplier Name",
+            labelKey: "STORE_COMMON_TABLE_COL_SUPPLIER_MASTER_NAME" },
+            {
+              jsonPath: "materialReceipt[0].supplier.name",
+              callBack: checkValueForNA
+            }
           ),
           MaterialName: getLabelWithValue(
             {
@@ -100,18 +109,18 @@ import {
             {   labelName: "Qty. Received",
             labelKey: "STORE_MATERIAL_RECEIPT_QTY_RECEIVED"},
             {
+              jsonPath: "materialReceipt[0].receiptDetails[0].acceptedQty",
+             
+            }
+          ),
+          orderQuantity: getLabelWithValue(
+            {   labelName: "Qty. Accepted",
+            labelKey: "STORE_MATERIAL_RECEIPT_ORDERED_QTY"},
+            {
               jsonPath: "materialReceipt[0].receiptDetails[0].receivedQty",
              
             }
           ),
-          // acceptedQty: getLabelWithValue(
-          //   {   labelName: "Qty. Accepted",
-          //   labelKey: "STORE_MATERIAL_RECEIPT_QTY_ACCEPTED"},
-          //   {
-          //     jsonPath: "materialReceipt[0].receiptDetails[0].acceptedQty",
-             
-          //   }
-          // ),
          
           UnitRate: getLabelWithValue(
             {   labelName: "Unit Rate",
@@ -171,7 +180,7 @@ import {
           ),
           BatchNo: getLabelWithValue(
             {   labelName: "Batch No.",
-            labelKey: "STORE_MATERIAL_RECEIPT_QTY_RECEIVED"},
+            labelKey: "STORE_MATERIAL_RECEIPT_BATCH_NO"},
             {
               jsonPath: "materialReceipt[0].receiptDetails[0].batchNo",
              

@@ -1,6 +1,6 @@
 import { getCommonSubHeader, getCommonGrayCard, getLabelWithValue as _getLabelWithValue, getCommonContainer, getCommonCard, getCommonTitle, getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { changeStep } from "../footer";
-import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import { getLocaleLabels, getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { convertEpochToDate } from "../../utils";
 
 function getLabelWithValue(labelName, path, visible) {
@@ -21,7 +21,7 @@ const headerDiv = (isEditable = true, label, step) => {
     children: {
       header: {
           gridDefination: {
-              xs: 12,
+              xs: 8,
               sm: 10
           },
           ...getCommonSubHeader({
@@ -32,10 +32,14 @@ const headerDiv = (isEditable = true, label, step) => {
       editSection: {
         componentPath: "Button",
         props: {
-            color: "primary"
+            color: "primary",
+            style: {
+              padding: "0px 16px",
+              minHeight: "initial"
+            }
         },
         gridDefination: {
-            xs: 12,
+            xs: 4,
             sm: 2,
             align: "right"
         },
@@ -64,6 +68,23 @@ const headerDiv = (isEditable = true, label, step) => {
   }
 }
 
+export const setYesOrNo = (value) => {
+  return value == "true" ? "Yes" : "No";
+}
+
+const setArrayValues = (value) => { 
+  const array = value.map(item => getLocaleLabels(item, item))
+  return !!array.length ? array.join(", ") : "-"
+}
+
+const callBackForPreview = (type) => (value) => {
+  switch(type) {
+    case "date": return convertEpochToDate(value)
+    case "boolean": return setYesOrNo(value)
+    case "array": return setArrayValues(value)
+  }
+}
+
 export const viewFour = (section, application) => {
   const {fields = [], type} = section
   switch(type) {
@@ -74,7 +95,10 @@ export const viewFour = (section, application) => {
         componentPath: "DownloadFileContainer",
         props: {
           sourceJsonPath: section.sourceJsonPath,
-          className: "review-documents"
+          className: "review-documents",
+          style: {
+            wordBreak: "break-word"
+          }
         }
       }
     }
@@ -100,8 +124,8 @@ export const viewFour = (section, application) => {
           labelKey: field.label
         },
         { jsonPath: field.jsonPath,
-          callBack: field.type === "date" ? convertEpochToDate : null
-        }, visible)
+          callBack: !!field.type ? callBackForPreview(field.type) : null
+         }, visible)
         }
       }, {})
       return getCommonContainer(field_types)

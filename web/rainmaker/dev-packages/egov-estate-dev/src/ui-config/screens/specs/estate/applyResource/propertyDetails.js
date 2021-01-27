@@ -182,7 +182,8 @@ const rateField = {
         xs: 12,
         sm: 6
     },
-    pattern: _getPattern("share"),
+    errorMessage:"ES_ERR_RATE_SQR_FIELD",
+    pattern: _getPattern("rateSqFeet"),
     required: true,
     jsonPath: "Properties[0].propertyDetails.ratePerSqft"
 }
@@ -340,7 +341,7 @@ const sectorNumberField = {
     }
 }
 
-const fileNumberField = {
+export const fileNumberField = {
     label: {
         labelName: "File Number",
         labelKey: "ES_FILE_NUMBER_LABEL"
@@ -384,7 +385,7 @@ const lastNocDateField = {
     // }
 }
 
-const propertyTypeField = {
+export const propertyTypeField = {
     label: {
         labelName: "Property Type",
         labelKey: "ES_PROPERTY_TYPE_LABEL"
@@ -401,14 +402,14 @@ const propertyTypeField = {
         sm: 6
     },
     beforeFieldChange: (action, state, dispatch) => {
-        dispatch(
-            handleField(
-                screenName,
-                `components.div.children.${paymentStep}.children.demandSelect`,
-                "visible",
-                !!(action.value == "PROPERTY_TYPE.LEASEHOLD")
-            )
-        )
+        // dispatch(
+        //     handleField(
+        //         screenName,
+        //         `components.div.children.${paymentStep}.children.demandSelect`,
+        //         "visible",
+        //         !!(action.value == "PROPERTY_TYPE.LEASEHOLD")
+        //     )
+        // )
     }
 }
 

@@ -9,6 +9,8 @@ import { propertyInfo } from "./preview-resource/preview-properties";
 import { getQueryArg, getTodaysDateInYMD } from "egov-ui-framework/ui-utils/commons";
 import { convertDateToEpoch, validateFields, getRentSummaryCard } from "../utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
+import {penaltyStatmentResult,extensionStatmentResult,securityStatmentResult} from './searchResource/functions'
+import { penaltySummary } from "./generatePenaltyStatement";
 
   const header = getCommonHeader({
     labelName: "Rent Payment",
@@ -42,6 +44,7 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   }
   
   const beforeInitFn = async(action, state, dispatch)=>{
+    dispatch(prepareFinalObject("Properties", []))
     getMdmsData(dispatch);
     let propertyId = getQueryArg(window.location.href, "propertyId")
     const fileNumber = getQueryArg(window.location.href, "fileNumber")
@@ -53,6 +56,7 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
     if(!!response.Properties && !!response.Properties.length) {
        dispatch(prepareFinalObject("Properties", response.Properties))
     }
+    dispatch(prepareFinalObject("payment.paymentType","PAYMENTTYPE.RENT"))
   }
 
   const propertyDetailsHeader = getCommonTitle(
@@ -81,6 +85,20 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
     }
   )
 
+  const offlinePaymentTypeHeader = getCommonTitle(
+    {
+        labelName: "Payment Type",
+        labelKey: "ES_PAYMENT_TYPE_HEADER"
+    },
+    {
+        style: {
+                marginBottom: 18,
+                marginTop: 18
+        }
+    }
+  )
+  
+
   const fileNumberField = {
     label: {
         labelName: "File Number",
@@ -99,6 +117,23 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
     disabled: true
   }
 
+  const commentsField = {
+    label: {
+        labelName: "Comments",
+        labelKey: "ES_COMMENTS_LABEL"
+    },
+    placeholder: {
+        labelName: "Enter Comments",
+        labelKey: "ES_COMMENTS_PLACEHOLDER"
+    },
+    visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+    gridDefination: {
+        xs: 12,
+        sm: 6
+    },
+    jsonPath: "payment.comments"
+  }
+
   const paymentType = {
     label: {
         labelName: "Payment Type",
@@ -106,6 +141,132 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
       },
     required: false,
     jsonPath: "payment.paymentType",
+    beforeFieldChange: async (action, state, dispatch) => {
+      if (action.value) {
+        let Properties = get(state.screenConfiguration.preparedFinalObject, "Properties")
+        const {id} = Properties[0];   
+        let Criteria = {
+          fromdate: Properties[0].propertyDetails.auditDetails.createdTime || "",
+          todate:   ""
+        }
+        Criteria = {...Criteria, propertyid: id}
+
+        const penaltyCard = getCommonCard({
+          header: getCommonTitle({
+            labelName: "Penalty Summary",
+            labelKey: "ES_PENALTY_SUMMARY_HEADER"
+          }, {
+            style: {
+              marginBottom: 18,
+              marginTop: 18
+            }
+          }),
+          detailsContainer: getCommonGrayCard({
+            rentSection: getRentSummaryCard({
+              sourceJsonPath: "PenaltyStatementSummary",
+              dataArray: ["totalPenalty","totalPenaltyPaid","totalPenaltyDue"],
+              type:"Penalty"
+            })
+          })
+        })
+
+        const exntensionCard = getCommonCard({
+          header: getCommonTitle({
+            labelName: "Extension Summary",
+            labelKey: "ES_EXTENSION_SUMMARY_HEADER"
+          }, {
+            style: {
+              marginBottom: 18,
+              marginTop: 18
+            }
+          }),
+          detailsContainer: getCommonGrayCard({
+            rentSection: getRentSummaryCard({
+              sourceJsonPath: "ExtensionFeeStatementSummary",
+              dataArray: ["totalExtensionFee","totalExtensionFeePaid","totalExtensionFeeDue"],
+              type:"Extension-Fee"
+            })
+          })
+        })
+
+        const securityCard = getCommonCard({
+          header: getCommonTitle({
+            labelName: "Security Deposit Summary",
+            labelKey: "ES_SECURITY_DEPOSIT_SUMMARY_HEADER"
+          }, {
+            style: {
+              marginBottom: 18,
+              marginTop: 18
+            }
+          }),
+          detailsContainer: getCommonGrayCard({
+            rentSection: getRentSummaryCard({
+              sourceJsonPath: "SecurityStatementSummary",
+              dataArray: ["totalSecurityDeposit","totalSecurityDepositPaid","totalSecurityDepositDue"],
+              type:"Security-Fee"
+            })
+          })
+        })
+ 
+        switch(action.value){
+          case 'PAYMENTTYPE.PENALTY':
+              let penaltyResponse = await penaltyStatmentResult (state,dispatch, Criteria)
+              if(!!penaltyResponse){
+                dispatch(prepareFinalObject("PenaltyStatementSummary", penaltyResponse.PenaltyStatementSummary))
+                dispatch(handleField(
+                  "estate-payment",
+                  "components.div.children.detailsContainer.children.rentSummaryDetails.children",
+                  "rentCard",
+                  penaltyCard     
+              ));
+              }
+            
+            break;
+
+          case "PAYMENTTYPE.EXTENSIONFEE":
+              let extensionResponse = await extensionStatmentResult (state,dispatch, Criteria)
+              if(!!extensionResponse){
+                dispatch(prepareFinalObject("ExtensionFeeStatementSummary", extensionResponse.ExtensionFeeStatementSummary))
+                dispatch(handleField(
+                  "estate-payment",
+                  "components.div.children.detailsContainer.children.rentSummaryDetails.children",
+                  "rentCard",
+                  exntensionCard     
+              ));
+              }
+             
+            break; 
+
+          case "PAYMENTTYPE.SECURITYFEE":
+              let payload  = {propertyid: id}
+              let securityDeposit = await securityStatmentResult (state,dispatch, payload)
+              if(!!securityDeposit){
+                dispatch(handleField(
+                  "estate-payment",
+                  "components.div.children.detailsContainer.children.rentSummaryDetails.children",
+                  "rentCard",
+                  securityCard     
+              ));
+              }
+            
+            break; 
+
+          default : 
+              const rentCard = getCommonCard({
+                header: rentSummaryHeader,
+                detailsContainer: rentSummary
+              })
+
+              dispatch(handleField(
+                "estate-payment",
+                "components.div.children.detailsContainer.children.rentSummaryDetails.children",
+                "rentCard",
+                rentCard     
+              ));
+            break;  
+        }
+      }
+    },
     optionValue: "code",
     optionLabel: "name",
     sourceJsonPath: "searchScreenMdmsData.EstateServices.paymentType",
@@ -148,6 +309,15 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
     }
   }
 
+  const getPatternAmount = (type) => {
+    switch (type) {
+      case "Amount":
+        return (/^[1-9][0-9]{0,9}$/i
+        );
+    }
+  }
+
+
   const paymentAmount = {
     label: {
         labelName: "Amount",
@@ -157,12 +327,15 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
         xs: 12,
         sm: 6
     },
+    minLength: 1,
+    maxLength: 7,
     errorMessage: "ES_ERR_AMOUNT_FIELD",
     placeholder: {
       labelName: "Enter amount",
       labelKey: "ES_ENTER_AMOUNT_PLACEHOLDER"
   },
     required: true,
+    pattern: getPatternAmount("Amount"),
     jsonPath: "payment.paymentAmount"
   }
 
@@ -200,7 +373,7 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
       labelKey: "ES_ENTER_TRANSACTION_ID_PLACEHOLDER"
     },
     required: true,
-    jsonPath: "payment.transactionId",
+    jsonPath: "payment.transactionNumber",
     visible: process.env.REACT_APP_NAME !== "Citizen"
   }
 
@@ -216,13 +389,21 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   export const offlinePaymentDetails = getCommonCard({
       header: offlinePaymentDetailsHeader,
       detailsContainer: getCommonContainer({
-        paymentType: getSelectField(paymentType),
+        // paymentType: getSelectField(paymentType),
         Amount: getTextField(paymentAmount),
         dateOfPayment: getDateField(paymentDate),
         bankName: getTextField(bankName),
         transactionId: getTextField(transactionId),
+        comments : getTextField(commentsField)
       })
   })
+
+  export const offlinePaymentType = getCommonCard({
+    header: offlinePaymentTypeHeader,
+    detailsContainer: getCommonContainer({
+      paymentType: getSelectField(paymentType)
+    })
+})
   
   const propertyDetails = getCommonCard(propertyInfo(false))
 
@@ -262,43 +443,124 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
     },
     children: {
       propertyDetails,
+      offlinePaymentType,
       rentSummaryDetails,
       offlinePaymentDetails
     },
     visible: true
   }
 
+  const detailsContainerCitizen = {
+    uiFramework: "custom-atoms",
+    componentPath: "Form",
+    props: {
+      id: "apply_form1"
+    },
+    children: {
+      propertyDetails,
+      rentSummaryDetails,
+      offlinePaymentDetails
+    },
+    visible: true
+  }
+  
+
+
   const goToPayment = async (state, dispatch, type) => {
     let isValid = true;
+    let isValidAmount = false;
+    let {paymentAmount} = state.screenConfiguration.preparedFinalObject.payment
+    let amountValue = paymentAmount
+    // let amountValue = get(state.screenConfiguration.screenConfig["estate-payment"],"components.div.children.detailsContainer.children.offlinePaymentDetails.children.cardContent.children.detailsContainer.children.Amount.props.value")
     isValid = validateFields("components.div.children.detailsContainer.children.offlinePaymentDetails.children.cardContent.children.detailsContainer.children", state, dispatch, "estate-payment")
-    if(!!isValid) {
+    if (!(Number.isInteger(parseInt(amountValue)) && amountValue.length >= 3 && amountValue.length <= 7)) {
+  
+      let errorMessage = {
+        labelName:
+            "Please enter value between 3 and 7 digits",
+        labelKey: "ES_ERR_VALUE_BETWEEN_3_AND_7_DIGITS"
+    };
+    
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    }
+    
+    if(!!isValid && ((Number.isInteger(parseInt(amountValue)) && amountValue.length >= 3 && amountValue.length <= 7))) {
       const propertyId = getQueryArg(window.location.href, "propertyId")
       const offlinePaymentDetails = get(state.screenConfiguration.preparedFinalObject, "payment")
-      const {paymentAmount, ...rest} = offlinePaymentDetails
-      if(!!propertyId) {
+      const {paymentAmount, paymentType, ...rest} = offlinePaymentDetails
+      switch(paymentType){
+        case 'PAYMENTTYPE.PENALTY':
+          const PenaltyStatementSummary = get(state.screenConfiguration.preparedFinalObject, "PenaltyStatementSummary")
+          const {totalPenaltyDue} = PenaltyStatementSummary
+          if(Number(amountValue) > Number(totalPenaltyDue)){
+            let errorMessage = {
+              labelName:
+                  "Amount Cannot be greater than total penalty due",
+              labelKey: "ES_PENALTY_AMOUNT_ERR"
+          };
+          dispatch(toggleSnackbar(true, errorMessage, "warning"));
+          }else{
+            isValidAmount = true
+          }
+
+          break;
+        case 'PAYMENTTYPE.EXTENSIONFEE':
+            const ExtensionFeeStatementSummary = get(state.screenConfiguration.preparedFinalObject, "ExtensionFeeStatementSummary")
+            const {totalExtensionFeeDue} = ExtensionFeeStatementSummary
+            if(Number(amountValue) > Number(totalExtensionFeeDue)){
+              let errorMessage = {
+                labelName:
+                    "Amount Cannot be greater than total extension fee Due",
+                labelKey: "ES_EXTENSION_AMOUNT_ERR"
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "warning"));
+            }else{
+              isValidAmount = true
+            }
+          break;
+        case 'PAYMENTTYPE.SECURITYFEE':
+            const SecurityStatementSummary = get(state.screenConfiguration.preparedFinalObject, "SecurityStatementSummary")
+            const {totalSecurityDepositDue} = SecurityStatementSummary
+            if(Number(amountValue) > Number(totalSecurityDepositDue)){
+              let errorMessage = {
+                labelName:
+                    "Amount Cannot be greater than total security fee due",
+                labelKey: "ES_SECURITY_AMOUNT_ERR"
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "warning"));
+            }else{
+              isValidAmount = true
+            } 
+          break;
+        default :
+        isValidAmount = true
+      }
+      if(!!propertyId && isValidAmount) {
         const payload = [
           { id: propertyId, 
             propertyDetails: {
-              offlinePaymentDetails: [{...rest, amount: paymentAmount}]
+              offlinePaymentDetails: [{...rest, amount: paymentAmount, paymentType}]
             }
           }
         ]
         try {
+          const url = paymentType === "PAYMENTTYPE.PENALTY" ? "/est-services/violation/_penalty_payment" : paymentType === "PAYMENTTYPE.EXTENSIONFEE" ? "/est-services/extension-fee/_payment" : paymentType === "PAYMENTTYPE.SECURITYFEE" ? "/est-services/security_deposit/_payment" : "/est-services/property-master/_payrent"
           const response = await httpRequest("post",
-          "/est-services/property-master/_payrent",
+          url,
           "",
           [],
           { Properties : payload })
-          if(!!response && !!response.Properties.length) {
-            const {rentPaymentConsumerCode, tenantId} = response.Properties[0]
-            let billingBuisnessService=response.Properties[0].propertyDetails.billingBusinessService
+          if(!!response && ((!!response.Properties && !!response.Properties.length) || (!!response.OfflinePayments && !!response.OfflinePayments.length))) {
+            let {rentPaymentConsumerCode,fileNumber, tenantId, consumerCode} = !!response.Properties ? response.Properties[0] : response.OfflinePayments[0]
+            rentPaymentConsumerCode = rentPaymentConsumerCode || consumerCode;
+            let billingBuisnessService=!!response.Properties ? response.Properties[0].propertyDetails.billingBusinessService : response.OfflinePayments[0].billingBusinessService
             type === "ONLINE" ? dispatch(
               setRoute(
                `/estate-citizen/pay?consumerCode=${rentPaymentConsumerCode}&tenantId=${tenantId}&businessService=${billingBuisnessService}`
               )
             ) : dispatch(
               setRoute(
-              `acknowledgement?purpose=pay&applicationNumber=${rentPaymentConsumerCode}&status=success&tenantId=${tenantId}&type=${billingBuisnessService}`
+              `acknowledgement?purpose=pay&applicationNumber=${rentPaymentConsumerCode}&status=success&tenantId=${tenantId}&type=${billingBuisnessService}&fileNumber=${fileNumber}`
               )
             )
           dispatch(prepareFinalObject("Properties", response.Properties))
@@ -351,28 +613,6 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
     }
   })
 
-  export const onTabChange = async(tabIndex, dispatch, state) => {
-    const fileNumber = getQueryArg(window.location.href, "fileNumber");
-    const propertyId = getQueryArg(window.location.href, "propertyId")
-    let path = "";
-    if (tabIndex === 0) {
-      path = `/estate/estate-payment?propertyId=${propertyId}&fileNumber=${fileNumber}`;
-    }
-    else if (tabIndex === 1) {
-      path = `/estate/penaltyStatement?propertyId=${propertyId}&fileNumber=${fileNumber}`
-    }
-    dispatch(setRoute(path))
-  }
-
-  export const tabs = [
-    {
-      tabButton: { labelName: "Rent Payment", labelKey: "ES_RENT_PAYMENT" }
-    },
-    {
-      tabButton: { labelName: "Penalty Statement", labelKey: "ES_PENALTY_STATEMENT" }
-    },
-  ]
-
 const payment = {
     uiFramework: "material-ui",
     name: "estate-payment",
@@ -401,18 +641,7 @@ const payment = {
                 }
               }
             },
-            tabSection: {
-              uiFramework: "custom-containers-local",
-              moduleName: "egov-estate",
-              componentPath: "CustomTabContainer",
-              props: {
-                tabs,
-                activeIndex: 0,
-                onTabChange
-              },
-              type: "array",
-            },
-            detailsContainer,
+            detailsContainer :  process.env.REACT_APP_NAME !== "Citizen" ? detailsContainer : detailsContainerCitizen,
             footer: paymentFooter
           }
         }

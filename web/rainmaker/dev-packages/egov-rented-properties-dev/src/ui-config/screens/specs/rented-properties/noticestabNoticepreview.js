@@ -62,10 +62,10 @@ const getData = async(action, state, dispatch) => {
     let singleNoticeDetails = propertyArr.notices.filter(item => item.memoNumber === NoticeId)
       
     let notices = await getImages(singleNoticeDetails);
-    notices = notices.map(item => {
+    singleNoticeDetails = singleNoticeDetails.map(item => {
       let { applicationDocuments, urls } = item;
       applicationDocuments = applicationDocuments.map((image, index) => ({ ...image, url: urls[index],
-      name: urls[index].split("?")[0].split("/").pop().slice(13)
+      name: decodeURIComponent(urls[index].split("?")[0].split("/").pop().slice(13))
       }));
       return { ...item, applicationDocuments };
     });

@@ -16,6 +16,12 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
  import {  handleScreenConfigurationFieldChange as handleField, prepareFinalObject  } from "egov-ui-framework/ui-redux/screen-configuration/actions";
  import { httpRequest } from "../../../../../ui-utils/api";
  import { getSTOREPattern} from "../../../../../ui-utils/commons";
+ import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+ let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+ let disabled = false
+ if(applicationNumber)
+ disabled = true
+
  const getMaterialData = async (action, state, dispatch) => {
   const tenantId = getTenantId();
   let queryObject = [
@@ -65,7 +71,10 @@ console.log(matcodes)
     let response = await getMaterialBalanceRateResults(queryObject, dispatch);
 
     dispatch(prepareFinalObject("indentsmaterial", response.MaterialBalanceRate));
+    let stores = get(state,"screenConfiguration.preparedFinalObject.store.stores",[])
+   stores = stores.filter(x=>x.code === storecode)
    //set materialIssues[0].issuedToEmployee
+  // const queryParams = [{ key: "roles", value: "EMPLOYEE" },{ key: "code", value: stores[0].storeInCharge.code },{ key: "tenantId", value:  getTenantId() }];
    const queryParams = [{ key: "roles", value: "EMPLOYEE" },{ key: "tenantId", value:  getTenantId() }];
    const payload = await httpRequest(
      "post",
@@ -74,8 +83,7 @@ console.log(matcodes)
      queryParams,
    );
   
-   let stores = get(state,"screenConfiguration.preparedFinalObject.store.stores",[])
-   stores = stores.filter(x=>x.code === storecode)
+   
    //alert(stores[0].storeInCharge.code)
    if(payload){
      if (payload.Employees) {
@@ -83,7 +91,7 @@ console.log(matcodes)
         // const {stores} = screenConfiguration.preparedFinalObject;
         const {designationsById} = state.common;
         const empdesignation = payload.Employees[0].assignments[0].designation;
-       const empDetails =
+       const empDetails = 
        payload.Employees.filter((item, index) =>  stores[0].storeInCharge.code === item.code);
      
        if(empDetails && empDetails[0] ){
@@ -96,6 +104,7 @@ console.log(matcodes)
        }
        else{
         dispatch(prepareFinalObject("materialIssues[0].issuedToEmployee",""));  
+        dispatch(prepareFinalObject("materialIssues[0].issuedToDesignation", ''));
        }
      }
    }
@@ -170,10 +179,20 @@ console.log(matcodes)
             props: {
               optionValue: "code",
               optionLabel: "name",
+              disabled: disabled, 
             },
+           
         }),
         beforeFieldChange: (action, state, dispatch) => {
           //alert(action.value)
+          let id = get(
+            state.screenConfiguration.preparedFinalObject,
+            "materialIssues[0].id",
+            null
+          );
+          // if (!id) {
+          // dispatch(prepareFinalObject("materialIssues[0].materialIssueDetails",[]));
+          // }
           let store = get(state, "screenConfiguration.preparedFinalObject.store.stores",[]) 
           let fromstore = store.filter(x=> x.code === action.value)
           let toStore = get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].toStore.code",'') 
@@ -191,7 +210,9 @@ console.log(matcodes)
                 //dispatch(prepareFinalObject("materialIssues[0].fromStore.department.name",fromstore[0].department));
                 dispatch(prepareFinalObject("materialIssues[0].fromStore.deliveryAddress",fromstore[0].deliveryAddress));
                 dispatch(prepareFinalObject("materialIssues[0].fromStore.storeInCharge.code",fromstore[0].storeInCharge.code));
-                dispatch(prepareFinalObject("materialIssues[0].fromStore.tenantId",getTenantId()));         
+                dispatch(prepareFinalObject("materialIssues[0].fromStore.tenantId",getTenantId())); 
+                const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+                if(!applicationNumber)        
                 getMaterialData(action,state,dispatch)               
             }
           // }
@@ -300,6 +321,9 @@ console.log(matcodes)
             labelKey: "STORE_MATERIAL_INDENT_NOTE_ISSUE_DATE_PLACEHOLDER"
           },
           required: true,
+          props:{
+            disabled: disabled, 
+          },
           errorMessage: "STORE_VALIDATION_ISSUE_DATE_SELECT",
           pattern: getPattern("Date") ,
           jsonPath: "materialIssues[0].issueDate",

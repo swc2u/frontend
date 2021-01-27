@@ -56,16 +56,25 @@ const styles = {
   }
 };
 
-function totalAmount(rentSummary, dataArray) {
+function totalAmount(rentSummary, dataArray , type) {
     const {rent} = rentSummary
-    const totalAmount = dataArray.reduce((prev, curr) => prev + rent[curr], 0)
-    return totalAmount;
+    switch(type){
+      case 'Extension-Fee':
+        return rent.totalExtensionFeeDue
+      case 'Penalty':
+        return rent.totalPenaltyDue
+      case 'Security-Fee':
+        return rent.totalSecurityDepositDue  
+      default:
+        const totalAmount = dataArray.reduce((prev, curr) => prev + rent[curr], 0)
+        return totalAmount;
+    }
 }
 
 function RentSummaryCard(props) {
-  const { classes, rentSummary, dataArray } = props;
+  const { classes, rentSummary, dataArray , type } = props;
   const {rent} = rentSummary
-  const total = totalAmount(rentSummary, dataArray).toFixed(2);
+  const total = totalAmount(rentSummary, dataArray ,type).toFixed(2);
   const totalHeadClassName = "es-total-amount-value " + classes.bigheader;
   return (
     <Grid container>
@@ -82,8 +91,8 @@ function RentSummaryCard(props) {
                 </Grid>
                 <Grid xs={4} align="right">
                   <LabelContainer
-                    labelName={formatAmount(rent[item])}
-                    labelKey={formatAmount(rent[item]) ? formatAmount(rent[item].toFixed(2)) : 0}
+                    labelName={rent[item] ? formatAmount(rent[item]) : 0}
+                    labelKey={rent[item] && formatAmount(rent[item]) ? formatAmount(rent[item].toFixed(2)) : 0}
                     style={styles.taxStyles}
                   />
                 </Grid>

@@ -1,75 +1,101 @@
 import {
-    getCommonCard
+  getCommonCard
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import { prepareFinalObject,handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getSearchResults ,setXLSTableData } from "../../../../ui-utils/commons";
-import {getReviewPayment} from './preview-resource/payment-details'
-import {onTabChange, headerrow, tabs} from './search-preview'
-import {paymentDetailsTable} from './applyResource/applyConfig'
-import { getBreak } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField, toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { getSearchResults } from "../../../../ui-utils/commons";
+import { getCourtCaseDetails } from "./preview-resource/courtCase-details";
+import { onTabChange, headerrow, tabs, tabsAllotment } from './search-preview';
+import {
+  MANIMAJRA_BRANCH_TABS as tabsMM
+} from "../../../../ui-constants";
+import get from "lodash/get";
 
-const beforeInitFn = async (action, state, dispatch, fileNumber) => {
-  if(fileNumber){
-      let queryObject = [
-          { key: "fileNumber", value: fileNumber }
-        ];
-   const response =  await getSearchResults(queryObject);
-    if(!!response) {
-      let {estateDemands, estatePayments} = response.Properties[0].propertyDetails;
-      estateDemands = estateDemands || []
-      estatePayments = estatePayments || []
-      setXLSTableData({demands:estateDemands,payments:estatePayments, componentJsonPath: "components.div.children.paymentDetailsTable", screenKey: "payment-details"})
+const paymentsContainer = {
+  uiFramework: "custom-atoms",
+componentPath: "Div",
+props: {
+  id: "docs"
+},
+children: {
+}
+}
+
+const getData = async (action, state, dispatch, fileNumber) => {
+  dispatch(prepareFinalObject("workflow.ProcessInstances", []))
+  if (fileNumber) {
+    let queryObject = [
+      { key: "fileNumber", value: fileNumber },
+      { key: "relations", value: "court" }
+    ];
+    let payload = await getSearchResults(queryObject);
+    if (!!payload) {
+      let properties = payload.Properties;
+      dispatch(prepareFinalObject("Properties", properties));
+
+      return {
+        div: {
+          uiFramework: "custom-atoms",
+          componentPath: "Div",
+          props: {
+            className: "common-div-css search-preview"
+          },
+          children: {
+            headerDiv: {
+              uiFramework: "custom-atoms",
+              componentPath: "Container",
+              children: {
+                header1: {
+                  gridDefination: {
+                    xs: 12,
+                    sm: 8
+                  },
+                  ...headerrow
+                },
+              }
+            },
+            tabSection: {
+              uiFramework: "custom-containers-local",
+              moduleName: "egov-estate",
+              componentPath: "CustomTabContainer",
+              props: {
+                tabs: tabsMM,
+                activeIndex: 5,
+                onTabChange
+              },
+              type: "array",
+            },
+            paymentsContainer
+          }
+        }
+      }
     }
   }
 }
 
+const updateAllFields = (action, state, dispatch) => {
+}
 
-const EstatePaymentDetails = {
+const commonPaymentDetails = {
   uiFramework: "material-ui",
   name: "payment-details",
-  beforeInitScreen: (action, state, dispatch) => {
+  hasBeforeInitAsync: true,
+  beforeInitScreen: async (action, state, dispatch) => {
     const fileNumber = getQueryArg(window.location.href, "fileNumber");
-    beforeInitFn(action, state, dispatch, fileNumber);
-    return action;
-  },
-  components: {
-    div: {
-      uiFramework: "custom-atoms",
-      componentPath: "Div",
-      props: {
-        className: "common-div-css search-preview"
-      },
-      children: {
-        headerDiv: {
-          uiFramework: "custom-atoms",
-          componentPath: "Container",
-          children: {
-            header1: {
-              gridDefination: {
-                xs: 12,
-                sm: 8
-              },
-             ...headerrow
-            },
-            }
-          },
-          tabSection: {
-            uiFramework: "custom-containers-local",
-            moduleName: "egov-estate",
-            componentPath: "CustomTabContainer",
-            props: {
-              tabs,
-              activeIndex: 6,
-              onTabChange
-            },
-            type: "array",
-          },
-          breakAfterSearch: getBreak(),
-          paymentDetailsTable
+    dispatch(toggleSpinner())
+    const components = await getData(action, state, dispatch, fileNumber)
+    dispatch(toggleSpinner())
+    setTimeout(() => updateAllFields(action, state, dispatch), 100)
+    return {
+      "type": "INIT_SCREEN",
+      "screenKey": "payment-details",
+      "screenConfig": {
+        "uiFramework": "material-ui",
+        "name": "payment-details",
+        components
       }
     }
   }
-};
+}
 
-export default EstatePaymentDetails;
+export default commonPaymentDetails;

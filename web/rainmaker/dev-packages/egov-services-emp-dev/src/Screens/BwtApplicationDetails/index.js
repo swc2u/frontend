@@ -251,13 +251,13 @@ downloadReceiptButton = async (mode) => {
 
 	setTimeout(async()=>{
 	let documentsPreviewData;
-	const { DownloadReceiptDetailsforCG,userInfo } = this.props;
+	const {waterTankerPaymentReceipt,userInfo } = this.props;
 	
 	var documentsPreview = [];
-	if (DownloadReceiptDetailsforCG && DownloadReceiptDetailsforCG.filestoreIds.length > 0) {
+	if (waterTankerPaymentReceipt && waterTankerPaymentReceipt.filestoreIds.length > 0) {
 
 		
-		 documentsPreviewData=DownloadReceiptDetailsforCG.filestoreIds[0];
+		 documentsPreviewData=waterTankerPaymentReceipt.filestoreIds[0];
 		
 		
 		documentsPreview.push({

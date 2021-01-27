@@ -23,6 +23,7 @@ const moveToReview = dispatch => {
   else
   reviewUrl = "/egov-store-asset/review-purchase-order";
   dispatch(setRoute(reviewUrl));
+  //alert('1')
 };
 
 export const callBackForNext = async (state, dispatch) => {
@@ -356,6 +357,15 @@ export const callBackForNext = async (state, dispatch) => {
       {
         let indentNumber="";
         indentNumber = getQueryArg(window.location.href, "indentNumber");
+        const {purchaseOrders}  = state.screenConfiguration.preparedFinalObject;
+              const {purchaseOrderDetails} = purchaseOrders[0];
+              if(purchaseOrderDetails &&purchaseOrderDetails[0])
+              {
+                if(purchaseOrders[0].purchaseType ==="Indent")
+                {
+                  indentNumber = purchaseOrderDetails[0].indentNumber
+                }
+              } 
         if(indentNumber){
         const errorMessage = {
         
@@ -464,8 +474,38 @@ export const callBackForNext = async (state, dispatch) => {
                 "props.disabled",true));
 
         }
+        if(activeStep ===1)
+        {
+          const {priceList} = purchaseOrders[0];
+          if(priceList && priceList[0])
+          {
+            if(priceList[0].agreementDate ==='' 
+            && priceList[0].agreementEndDate ==='' 
+            && priceList[0].agreementNumber ===''
+            && priceList[0].agreementStartDate ===''
+            && priceList[0].rateContractDate ===''
+            && priceList[0].rateContractNumber ==='') 
+            {
+              const errorMessage = {
+                labelName: "Price is not available for selected supplier",
+                labelKey: "STORE_INVALID_PRICE_LIST_SUPPLIER"
+              };
+              dispatch(toggleSnackbar(true, errorMessage, "warning"));
+
+            }
+            else{
+              changeStep(state, dispatch);
+
+            }
+          }
+
+        }
+        else
+        {
+          changeStep(state, dispatch);
+
+        }
         
-        changeStep(state, dispatch);
       }
      
     } else {

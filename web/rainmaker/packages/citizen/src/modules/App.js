@@ -69,9 +69,10 @@ class App extends Component {
       },
     };
     // can be combined into one mdms call
+    // Test PR raise
       setDefaultLocale(getDefaultLocale());
       const urlPath = window.location.pathname;
-    if(pathname.includes("/user/otp") || pathname.includes("/user/login") || pathname.includes("/user/register")|| pathname.includes("/language-selection") )
+    if(pathname.includes("/user/otp") || pathname.includes("/user/login") || pathname.includes("/user/register")|| pathname.includes("/user/privacy")||pathname.includes("/language-selection") )
    fetchLocalizationLabel(getLocale() || "en_IN");
     // current location
     fetchCurrentLocation();

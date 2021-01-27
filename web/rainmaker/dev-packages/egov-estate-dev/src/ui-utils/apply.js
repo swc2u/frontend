@@ -10,6 +10,8 @@ import {
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
 import set from "lodash/set";
+import moment from 'moment';
+
 import {
   getFileUrl,
   getFileUrlFromAPI,
@@ -90,6 +92,16 @@ export const applyforApplication = async (state, dispatch, activeIndex) => {
     set(queryObject[0], "tenantId", tenantId);
 
     const id = get(queryObject[0], "id");
+    const keys = Object.keys(queryObject[0].applicationDetails);
+    const values = Object.values(queryObject[0].applicationDetails);
+
+    keys.forEach((key, index) => {
+     if(Array.isArray(values[index])) {
+       let arr = values[index]
+       arr = arr.filter(item => !item.isDeleted)
+       set(queryObject[0], `applicationDetails[${key}]`, arr)
+     }
+    })
     let response;
     if(!id) {
       set(queryObject[0], "state", "");
@@ -152,15 +164,52 @@ export const applyEstates = async (state, dispatch, activeIndex, screenName = "a
     );
     const tenantId = getQueryArg(window.location.href, "tenantId");
     const id = get(queryObject[0], "id");
+    var currOwners = [];
+    var prevOwners = [];
+    var owners = [];
 
     let response;
     set(queryObject[0], "tenantId", tenantId);
     set(queryObject[0], "propertyDetails.dateOfAuction", convertDateToEpoch(queryObject[0].propertyDetails.dateOfAuction))
     set(queryObject[0], "propertyDetails.lastNocDate", convertDateToEpoch(queryObject[0].propertyDetails.lastNocDate))
     set(queryObject[0], "propertyDetails.companyRegistrationDate", convertDateToEpoch(queryObject[0].propertyDetails.companyRegistrationDate))
-    set(queryObject[0], "propertyDetails.emdDate", convertDateToEpoch(queryObject[0].propertyDetails.emdDate))
+    set(queryObject[0], "propertyDetails.emdDate", convertDateToEpoch(queryObject[0].propertyDetails.emdDate));
 
-    var prevOwners = get(
+    if (queryObject[0].propertyDetails.paymentConfig) {
+      set(queryObject[0], "propertyDetails.paymentConfig.dueDateOfPayment", convertDateToEpoch(queryObject[0].propertyDetails.paymentConfig.dueDateOfPayment));
+      set(queryObject[0], "propertyDetails.paymentConfig.groundRentAdvanceRentDate", convertDateToEpoch(queryObject[0].propertyDetails.paymentConfig.groundRentAdvanceRentDate));
+      set(queryObject[0], "propertyDetails.paymentConfig.groundRentBillStartDate", convertDateToEpoch(queryObject[0].propertyDetails.paymentConfig.groundRentBillStartDate));
+
+      if (queryObject[0].propertyDetails.paymentConfig.premiumAmountConfigItems && queryObject[0].propertyDetails.paymentConfig.premiumAmountConfigItems.length) {
+        for (var i=0; i<queryObject[0].propertyDetails.paymentConfig.premiumAmountConfigItems.length; i++) {
+          set(queryObject[0], `propertyDetails.paymentConfig.premiumAmountConfigItems[${i}].premiumAmountDate`, convertDateToEpoch(queryObject[0].propertyDetails.paymentConfig.premiumAmountConfigItems[i].premiumAmountDate));
+        }
+      }
+    }
+
+    if (queryObject[0].propertyDetails.estateDemands && queryObject[0].propertyDetails.estateDemands.length) {
+      set(queryObject[0], "propertyDetails.estateDemands[0].generationDate", convertDateToEpoch(queryObject[0].propertyDetails.estateDemands[0].generationDate))
+    }
+
+    if (queryObject[0].propertyDetails.estateDemands && queryObject[0].propertyDetails.estateDemands.length) {
+      set(queryObject[0], "propertyDetails.estateDemands[0].isPrevious", true);
+    }
+
+    if (queryObject[0].propertyDetails.accountStatementDocument) {
+      let legacyAccStmtDoc = queryObject[0].propertyDetails.accountStatementDocument;
+      legacyAccStmtDoc = legacyAccStmtDoc.filter(item => !!item).map(item => ({...item, isActive: true}))
+
+      let removedDocs = get(state.screenConfiguration.preparedFinalObject, `PropertiesTemp[0].propertyDetails.accountStatementRemovedDoc`) || [];
+      legacyAccStmtDoc = [...legacyAccStmtDoc, ...removedDocs]
+
+      set(
+        queryObject[0],
+        "propertyDetails.accountStatementDocument",
+        legacyAccStmtDoc
+      )
+    }
+
+    prevOwners = get(
       queryObject[0],
       "propertyDetails.purchaser",
       []
@@ -175,7 +224,7 @@ export const applyEstates = async (state, dispatch, activeIndex, screenName = "a
       })
     }
 
-    var owners = get(
+    owners = get(
       queryObject[0],
       "propertyDetails.owners",
       []
@@ -246,6 +295,14 @@ export const applyEstates = async (state, dispatch, activeIndex, screenName = "a
             true
           )
         )
+        dispatch(
+          handleField(
+            screenName,
+            `components.div.children.formwizardFirstStepAllotment.children.propertyInfoDetails.children.cardContent.children.detailsContainer.children.fileNumber`,
+            `props.disabled`,
+            true
+          )
+        )
         /*****************************************************************************************/
       }
     } else {
@@ -262,6 +319,8 @@ export const applyEstates = async (state, dispatch, activeIndex, screenName = "a
       // )
       if (screenName == "allotment") {
         tabsArr.splice(-2, 2);
+      } else if(screenName == "apply-manimajra") {
+        tabsArr.splice(-3, 3);
       }
       else if (screenName == "apply-building-branch") {
         tabsArr = tabsArr.splice(0, tabsArr.length - 6);
@@ -311,6 +370,11 @@ export const applyEstates = async (state, dispatch, activeIndex, screenName = "a
 
       console.log(JSON.stringify(queryObject));
 
+      const paymentConfigItems = get(queryObject[0], "propertyDetails.paymentConfig.paymentConfigItems") || [];
+
+      if(paymentConfigItems.length === 1 && (!paymentConfigItems[0].groundRentEndMonth || !paymentConfigItems[0].groundRentAmount)) {
+        set(queryObject[0], "propertyDetails.paymentConfig", null);
+      }
       response = await httpRequest(
         "post",
         "/est-services/property-master/_update",
@@ -326,8 +390,20 @@ export const applyEstates = async (state, dispatch, activeIndex, screenName = "a
 
     let ratePerSqft = Properties[0].propertyDetails.ratePerSqft;
     let areaSqft = Properties[0].propertyDetails.areaSqft;
+    
     ratePerSqft = !!ratePerSqft ? ratePerSqft.toString() : ratePerSqft;
     areaSqft = !!areaSqft ? areaSqft.toString() : areaSqft;
+
+    if (Properties[0].propertyDetails.paymentConfig) {
+      var isGroundRent = Properties[0].propertyDetails.paymentConfig.isGroundRent;
+      var isIntrestApplicable = Properties[0].propertyDetails.paymentConfig.isIntrestApplicable;
+      var noOfMonths = Properties[0].propertyDetails.paymentConfig.noOfMonths;
+      var premiumAmountConfigItems = Properties[0].propertyDetails.paymentConfig.premiumAmountConfigItems ? Properties[0].propertyDetails.paymentConfig.premiumAmountConfigItems : []
+
+      isGroundRent = isGroundRent != null ? isGroundRent.toString() : isGroundRent;
+      isIntrestApplicable = isIntrestApplicable != null ? isIntrestApplicable.toString() : isIntrestApplicable;
+      noOfMonths = noOfMonths != null ? noOfMonths.toString() : noOfMonths;
+    }
 
     owners = get(
       Properties[0],
@@ -351,10 +427,10 @@ export const applyEstates = async (state, dispatch, activeIndex, screenName = "a
       })
       
       if (screenName != "apply-building-branch") {
-        var currOwners = owners.filter(item => item.ownerDetails.isCurrentOwner == true);
-        var prevOwners = owners.filter(item => item.ownerDetails.isCurrentOwner == false);
+        currOwners = owners.filter(item => item.ownerDetails.isCurrentOwner == true);
+        prevOwners = owners.filter(item => item.ownerDetails.isCurrentOwner == false);
 
-        Properties = [{...Properties[0], propertyDetails: {...Properties[0].propertyDetails, owners: currOwners, purchaser: prevOwners, ratePerSqft: ratePerSqft, areaSqft: areaSqft}}]
+        Properties = [{...Properties[0], propertyDetails: {...Properties[0].propertyDetails, owners: currOwners, purchaser: prevOwners, ratePerSqft: ratePerSqft, areaSqft: areaSqft, paymentConfig: Properties[0].propertyDetails.paymentConfig ? {...Properties[0].propertyDetails.paymentConfig, isGroundRent: isGroundRent, isIntrestApplicable: isIntrestApplicable, noOfMonths: noOfMonths, premiumAmountConfigItems: premiumAmountConfigItems} : null }}]
       }
     }
     // let ownerDocuments = Properties[0].propertyDetails.ownerDocuments || [];
@@ -368,7 +444,7 @@ export const applyEstates = async (state, dispatch, activeIndex, screenName = "a
     //   }
     // }]
 
-    let {estateRentSummary} = Properties[0]
+    let {estateRentSummary, propertyDetails} = Properties[0]
     if(!!estateRentSummary){
       estateRentSummary.outstanding =  (Number(estateRentSummary.balanceRent) + 
       Number(estateRentSummary.balanceGST) + Number(estateRentSummary.balanceGSTPenalty) +
@@ -379,24 +455,40 @@ export const applyEstates = async (state, dispatch, activeIndex, screenName = "a
       estateRentSummary.balanceGSTPenalty = Number(estateRentSummary.balanceGSTPenalty).toFixed(2)
       estateRentSummary.balanceRentPenalty = Number(estateRentSummary.balanceRentPenalty).toFixed(2)
   }
-    Properties = [{...Properties[0], estateRentSummary: estateRentSummary}]
+  let {paymentConfig = {}} = propertyDetails
+  let paymentConfigItems = []
+  if(!!paymentConfig && !!paymentConfig.paymentConfigItems && !!paymentConfig.paymentConfigItems.length) {
+    paymentConfigItems = paymentConfig.paymentConfigItems.sort((a, b) => {
+      return a.groundRentStartMonth - b.groundRentStartMonth
+    });
+    paymentConfigItems = paymentConfigItems.map(item => ({...item, tillDate: (item.groundRentEndMonth - item.groundRentStartMonth) + 1}))
+  } else {
+    paymentConfigItems = [{groundRentStartMonth: "1"}]
+  }
+    Properties = [{...Properties[0], estateRentSummary: estateRentSummary, propertyDetails: {...propertyDetails, paymentConfig : {...paymentConfig, paymentConfigItems}}}]
 
     dispatch(prepareFinalObject("Properties", Properties));
 
-    if (screenName == "apply") {
-      if (activeIndex == 2 || activeIndex == 3) {
-        currOwners.map((item, index) => {
-          setDocsForEditFlow(state, dispatch, `Properties[0].propertyDetails.owners[${index}].ownerDetails.ownerDocuments`, `PropertiesTemp[0].propertyDetails.owners[${index}].ownerDetails.uploadedDocsInRedux`);
-        })
-      }
-      if (activeIndex == 4 || activeIndex == 5) {
+    if (Properties[0].propertyDetails.accountStatementDocument) {
+      await setDocsForEditFlow(state, dispatch, `Properties[0].propertyDetails.accountStatementDocument`, `PropertiesTemp[0].propertyDetails.accountStatementUploadedDocInRedux`);
+    }
+
+    let activeIndexArr = screenName == "apply-manimajra" ? [3,4] : [4,5];
+
+    if (screenName == "apply" || screenName == "apply-manimajra") {
+      if (activeIndex == activeIndexArr[0] || activeIndex == activeIndexArr[1]) {
         prevOwners.map((item, index) => {
           setDocsForEditFlow(state, dispatch, `Properties[0].propertyDetails.purchaser[${index}].ownerDetails.ownerDocuments`, `PropertiesTemp[0].propertyDetails.purchaser[${index}].ownerDetails.uploadedDocsInRedux`);
         })
       }
+      else {
+        currOwners.map((item, index) => {
+          setDocsForEditFlow(state, dispatch, `Properties[0].propertyDetails.owners[${index}].ownerDetails.ownerDocuments`, `PropertiesTemp[0].propertyDetails.owners[${index}].ownerDetails.uploadedDocsInRedux`);
+        })
+      }
     }
     else {
-      currOwners.map((item, index) => {
+      owners.map((item, index) => {
         setDocsForEditFlow(state, dispatch, `Properties[0].propertyDetails.owners[${index}].ownerDetails.ownerDocuments`, `PropertiesTemp[0].propertyDetails.owners[${index}].ownerDetails.uploadedDocsInRedux`);
       })
     }
@@ -417,6 +509,58 @@ export const applyEstates = async (state, dispatch, activeIndex, screenName = "a
   }
 }
 
+export const addHocDemandUpdate = async (state, dispatch) => {
+  try {
+    let queryObject = JSON.parse(
+      JSON.stringify(
+        get(state.screenConfiguration.preparedFinalObject, "Properties", [])
+      )
+    );
+
+    let adhocDetails = JSON.parse(
+      JSON.stringify(
+        get(state.screenConfiguration.preparedFinalObject, "adhocDetails", {})
+      )
+    );
+    
+    set(adhocDetails , "isAdjustment","true")
+    set(adhocDetails, "adjustmentDate", convertDateToEpoch(adhocDetails.adjustmentDate))
+    set(adhocDetails, "generationDate", convertDateToEpoch(moment(new Date()).format('YYYY-MM-DD')));
+    set(adhocDetails , "remainingGST" ,adhocDetails.gst )
+    set(adhocDetails , "remainingRent" ,adhocDetails.rent )
+    set(adhocDetails , "remainingRentPenalty" ,adhocDetails.penaltyInterest )
+    set(adhocDetails , "remainingGSTPenalty" ,adhocDetails.gstInterest )
+    set(adhocDetails , "interestSince",adhocDetails.generationDate )
+    set(adhocDetails , "collectedRent",0 )
+    set(adhocDetails , "collectedGST",0)
+    set(adhocDetails , "collectedRentPenalty",0 )
+    set(adhocDetails , "collectedGSTPenalty",0 )
+    queryObject[0].propertyDetails.estateDemands.push(adhocDetails)
+    let response;
+    if(queryObject) {  
+      response = await httpRequest(
+        "post",
+        "/est-services/property-master/_update",
+        "",
+        [],
+        { Properties : queryObject }
+      );
+    } 
+    if(response){
+        dispatch(
+          setRoute(
+          `acknowledgement?purpose=adHocDemand&fileNumber=${response.Properties[0].fileNumber}&status=success&tenantId=${response.Properties[0].tenantId}`
+          )
+        )
+      }
+      return true;
+  } catch (error) {
+    dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+    console.log(error);
+    return false;
+  }
+}
+
 export const addPenalty = async (state, dispatch, activeIndex) => {
   try {
     let queryObject = JSON.parse(JSON.stringify(get(state.screenConfiguration.preparedFinalObject, "propertyPenalties", [])))
@@ -424,9 +568,9 @@ export const addPenalty = async (state, dispatch, activeIndex) => {
     let properties = JSON.parse(JSON.stringify(get(state.screenConfiguration.preparedFinalObject, "Properties", [])))
     const propertyId = properties[0].id;
     const fileNumber = properties[0].fileNumber
-    set(queryObject[0], "tenantId", tenantId);
-    set(queryObject[0], "propertyId", propertyId);
-    set(queryObject[0], "branchType", "estateBranch");
+    set(queryObject[0], "property", {
+      "id":propertyId
+    });
     let response;
     if(queryObject) {  
       response = await httpRequest(
@@ -446,6 +590,43 @@ export const addPenalty = async (state, dispatch, activeIndex) => {
         )
       }
       dispatch(prepareFinalObject("PropertyPenalties", PropertyPenalties));
+      return true;
+  } catch (error) {
+    dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+    console.log(error);
+    return false;
+  }
+}
+
+export const createExtensionFee = async (state, dispatch, activeIndex) => {
+  try {
+    let queryObject = JSON.parse(JSON.stringify(get(state.screenConfiguration.preparedFinalObject, "ExtensionFees", [])))
+    const tenantId = userInfo.permanentCity || getTenantId();
+    let properties = JSON.parse(JSON.stringify(get(state.screenConfiguration.preparedFinalObject, "Properties", [])))
+    const propertyId = properties[0].id;
+    const fileNumber = properties[0].fileNumber
+    set(queryObject[0], "property", {
+      "id":propertyId
+    });
+    let response;
+    if(queryObject) {  
+      response = await httpRequest(
+        "post",
+        "/est-services/extension-fee/_create",
+        "",
+        [],
+        { ExtensionFees : queryObject }
+      );
+    } 
+      let {ExtensionFees} = response
+      if(response){
+        dispatch(
+          setRoute(
+          `acknowledgement?purpose=extensionFee&fileNumber=${fileNumber}&status=success&tenantId=${tenantId}`
+          )
+        )
+      }
+      dispatch(prepareFinalObject("ExtensionFees", ExtensionFees));
       return true;
   } catch (error) {
     dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));

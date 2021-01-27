@@ -22,7 +22,7 @@ import {
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
 import orderBy from "lodash/orderBy";
-import { WF_ALLOTMENT_OF_SITE, WF_BB_PROPERTY_MASTER } from "../../ui-constants";
+import { WF_ALLOTMENT_OF_SITE, WF_BB_PROPERTY_MASTER, WF_MM_PROPERTY_MASTER, WF_EB_REFUND_OF_EMD } from "../../ui-constants";
 
 class WorkFlowContainer extends React.Component {
   state = {
@@ -31,7 +31,7 @@ class WorkFlowContainer extends React.Component {
   };
 
   componentDidMount = async () => {
-    const { prepareFinalObject, toggleSnackbar } = this.props;
+    const { prepareFinalObject, toggleSnackbar, preparedFinalObject } = this.props;
     const fileNumber = getQueryArg(
       window.location.href,
       "fileNumber"
@@ -53,6 +53,17 @@ class WorkFlowContainer extends React.Component {
       case WF_BB_PROPERTY_MASTER : 
         queryObject = [...queryObject,
           { key: "businessIds", value: fileNumber }
+      ]
+      break;
+      case WF_MM_PROPERTY_MASTER : 
+        queryObject = [...queryObject,
+          { key: "businessIds", value: fileNumber }
+      ]
+      break;
+      case WF_EB_REFUND_OF_EMD:
+        let auctionId = preparedFinalObject.Properties[0].propertyDetails.bidders[0].auctionId;
+        queryObject = [...queryObject,
+        { key: 'businessIds', value: auctionId }
       ]
       break;
       default: {
@@ -116,9 +127,9 @@ class WorkFlowContainer extends React.Component {
       case "VERIFY":
         return "purpose=verify&status=success";
       case "REJECT":
-        return "purpose=application&status=rejected";
+        return "purpose=reject&status=success";
       case "CANCEL":
-        return "purpose=application&status=cancelled";
+        return "purpose=cancel&status=success";
       case "APPROVE":
         return "purpose=approve&status=success";
       case "SENTBACK":
@@ -194,6 +205,8 @@ class WorkFlowContainer extends React.Component {
         switch(this.props.moduleName) {
           case WF_ALLOTMENT_OF_SITE: 
           case WF_BB_PROPERTY_MASTER: 
+          case WF_MM_PROPERTY_MASTER:
+          case WF_EB_REFUND_OF_EMD:
             path = `&fileNumber=${data[0].fileNumber}&tenantId=${tenant}&type=${this.props.moduleName}`
             break;
           default: {
@@ -239,11 +252,18 @@ class WorkFlowContainer extends React.Component {
       appendToPath = ""
     }
 
+    if (this.props.moduleName == WF_EB_REFUND_OF_EMD) {
+      let bidders = data.propertyDetails.bidders;
+      bidders = bidders.map(item => ({ ...item, action: label }))
+      set(data, "propertyDetails.bidders", bidders)
+    }
+    else {
+      set(data, `${appendToPath}action`, label);
+    }
 
-    set(data, `${appendToPath}action`, label);
-
-    if (isDocRequired) {
-      const documents = !!documentsJsonPath ? get(preparedFinalObject, documentsJsonPath) : get(data, "wfDocuments");
+    if (isDocRequired || !!this.props.documentProps) {
+      let documents = !!documentsJsonPath ? get(preparedFinalObject, documentsJsonPath) : get(data, "wfDocuments");
+      documents = documents.filter(item => !!item)
       if (documents && documents.length > 0) {
         this.wfUpdate(label);
       } else {
@@ -286,7 +306,7 @@ class WorkFlowContainer extends React.Component {
   getHeaderName = action => {
     return {
       labelName: `${action} Application`,
-      labelKey: `WF_${action}_APPLICATION`
+      labelKey: `ES_WF_${action}_APPLICATION`
     };
   };
 

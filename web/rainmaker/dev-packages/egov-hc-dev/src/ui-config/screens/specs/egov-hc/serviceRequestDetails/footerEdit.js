@@ -385,16 +385,18 @@ export const getRedirectionURL = () => {
     if(typeOfService && noOfTrees && description)
     {
       validationPause = true;
-      if(!address)
-      {
-        dispatch(
-          toggleSnackbar(
-            true,
-            { labelName: "ERROR", labelKey: "HC_ADDRESS_ERROR" },
-            "warning"
-          )
-        );
-      }else if(!locality)
+      // if(!address)
+      // {
+      //   dispatch(
+      //     toggleSnackbar(
+      //       true,
+      //       { labelName: "ERROR", labelKey: "HC_ADDRESS_ERROR" },
+      //       "warning"
+      //     )
+      //   );
+      // } else
+      
+        if (!locality)
       {         
         dispatch(
           toggleSnackbar(
@@ -403,7 +405,8 @@ export const getRedirectionURL = () => {
             "warning"
           )
         );
-      }else{validationPause = false;}
+        }
+        else { validationPause = false; }
   
     }
   

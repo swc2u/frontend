@@ -53,7 +53,7 @@ class PaymentRedirect extends Component {
           "tenantId": getOPMSTenantId(),
           "applicationStatus": "PAID",
           "applicationId": consumerCode,
-          "currentState": getapplicationType() == "ROADCUTNOC" ? "APPROVED" : "INITIATED",
+          "currentState": getapplicationType() == "ROADCUTNOC" || getapplicationType() == "ADVERTISEMENTNOC" ? "APPROVED" : "INITIATED",
           "dataPayload": {
             "amount": localStorageGet(`amount`),
             "gstAmount": localStorageGet(`gstAmount`)

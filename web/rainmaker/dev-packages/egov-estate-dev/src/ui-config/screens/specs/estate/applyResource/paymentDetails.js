@@ -15,13 +15,154 @@ import {
   getTodaysDateInYMD
 } from "../../utils";
 import get from "lodash/get";
+import { _getPattern } from "../../utils/";
+import { applyEstates } from "../../../../../ui-utils/apply"
 
-const paymentHeader = getCommonTitle({
-  labelName: "Payment Details",
-  labelKey: "ES_PAYMENT_DETAILS_HEADER"
+const documentList = {
+  uiFramework: "custom-containers-local",
+  moduleName: "egov-estate",
+  componentPath: "DocumentListContainer",
+  props: {
+    buttonLabel: {
+      labelName: "UPLOAD FILE",
+      labelKey: "ES_BUTTON_UPLOAD_FILE"
+    },
+    inputProps: [],
+    documentTypePrefix: "ES_",
+    documentsJsonPath: "PropertiesTemp[0].propertyDetails.accountStatementDocument",
+    uploadedDocumentsJsonPath: "PropertiesTemp[0].propertyDetails.accountStatementUploadedDocInRedux",
+    tenantIdJsonPath: "Properties[0].tenantId",
+    removedJsonPath: "PropertiesTemp[0].propertyDetails.accountStatementRemovedDoc",
+    // callBack: applyEstates,
+    // activeIndex: 8
+    // excelUrl: "/est-services/auctions/_parse?"
+  }
+};
+
+export const documentDetails = getCommonCard({
+  header: getCommonTitle(
+    {
+      labelName: "Upload Legacy Account Statement",
+      labelKey: "ES_UPLOAD_LEGACY_ACCOUNT_STMT_HEADER"
+    },
+    {
+      style: {
+        marginBottom: "18px"
+      }
+    }
+  ),
+  // paragraph: getCommonParagraph({
+  //   labelName:
+  //     "Only one file can be uploaded for one document. If multiple files need to be uploaded then please combine all files in a pdf and then upload",
+  //   labelKey: "ES_NEW-UPLOAD-DOCS_SUBHEADER"
+  // }),
+  documentList
 })
 
-export const groundRentHeader = getCommonTitle({
+const paymentHeader = getCommonTitle({
+  labelName: "Consolidated Payment Details",
+  labelKey: "ES_CONSOLIDATED_PAYMENT_DETAILS_HEADER"
+})
+
+const rentField = {
+  label: {
+    labelName: "Consolidated Rent",
+    labelKey: "ES_CONSOLIDATED_RENT_LABEL"
+  },
+  placeholder: {
+    labelName: "Enter Consolidated Rent",
+    labelKey: "ES_CONSOLIDATED_RENT_PLACEHOLDER"
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  pattern: _getPattern("areaOfProperty"),
+  required: true,
+  jsonPath: `Properties[0].propertyDetails.estateDemands[0].rent`
+}
+
+const gstField = {
+  label: {
+    labelName: "Consolidated GST",
+    labelKey: "ES_CONSOLIDATED_GST_LABEL"
+  },
+  placeholder: {
+    labelName: "Enter Consolidated GST",
+    labelKey: "ES_CONSOLIDATED_GST_PLACEHOLDER"
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  pattern: _getPattern("areaOfProperty"),
+  required: true,
+  jsonPath: `Properties[0].propertyDetails.estateDemands[0].gst`
+}
+
+const interestOnRentField = {
+  label: {
+    labelName: "Consolidated Interest on Rent",
+    labelKey: "ES_CONSOLIDATED_INTEREST_ON_RENT_LABEL"
+  },
+  placeholder: {
+    labelName: "Enter Consolidated Interest on Rent",
+    labelKey: "ES_CONSOLIDATED_INTEREST_ON_RENT_PLACEHOLDER"
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  pattern: _getPattern("areaOfProperty"),
+  required: true,
+  jsonPath: `Properties[0].propertyDetails.estateDemands[0].penaltyInterest`
+}
+
+const interestOnGstField = {
+  label: {
+    labelName: "Consolidated Interest on GST",
+    labelKey: "ES_CONSOLIDATED_INTEREST_ON_GST_LABEL"
+  },
+  placeholder: {
+    labelName: "Enter Consolidated Interest on GST",
+    labelKey: "ES_CONSOLIDATED_INTEREST_ON_GST_PLACEHOLDER"
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  pattern: _getPattern("areaOfProperty"),
+  required: true,
+  jsonPath: `Properties[0].propertyDetails.estateDemands[0].gstInterest`
+}
+
+const consolidatedTillField = {
+  label: {
+    labelName: "Consolidated Till",
+    labelKey: "ES_CONSOLIDATED_TILL_LABEL"
+  },
+  pattern: _getPattern("Date"),
+  required: true,
+  jsonPath: `Properties[0].propertyDetails.estateDemands[0].generationDate`,
+  props: {
+    inputProps: {
+      max: getTodaysDateInYMD()
+    }
+  }
+}
+
+export const paymentDetails = getCommonCard({
+  header: paymentHeader,
+  detailsContainer: getCommonContainer({
+    rent: getTextField(rentField),
+    gst: getTextField(gstField),
+    interestOnRent: getTextField(interestOnRentField),
+    interestOnGst: getTextField(interestOnGstField),
+    consolidatedTill: getDateField(consolidatedTillField)
+  })
+})
+
+/* export const groundRentHeader = getCommonTitle({
   labelName: "Ground Rent Details",
   labelKey: "ES_GROUND_RENT_DETAILS_HEADER"
 }, {
@@ -616,4 +757,4 @@ export const paymentMadeBy = getCommonCard({
   detailsContainer: getCommonContainer({
     paymentMadeBy: getTextField(paymentMadeByField)
   })
-})
+}) */

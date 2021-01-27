@@ -25,6 +25,8 @@
     "egov-opms": "0.0.1",
     "egov-echallan": "0.0.1",
     "egov-hc": "0.0.1",
+	"egov-report": "0.0.1",
+	"egov-dashboard": "0.0.1",
     "egov-pms": "0.0.1",
     "egov-pr": "0.0.1",    
     "egov-services-emp": "^0.0.2",

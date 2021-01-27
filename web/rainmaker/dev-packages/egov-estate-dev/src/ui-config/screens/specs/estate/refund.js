@@ -30,6 +30,16 @@ import {
   httpRequest
 } from '../../../../ui-utils/api';
 import get from "lodash/get";
+import { WF_EB_REFUND_OF_EMD } from "../../../../ui-constants";
+import {
+  getUserInfo
+  } from "egov-ui-kit/utils/localStorageUtils";
+
+const userInfo = JSON.parse(getUserInfo());
+const {
+    roles = []
+} = userInfo
+const findItem = roles.find(item => item.code === "ES_EB_SECTION_OFFICER");
 
 const searchResults = async (action, state, dispatch, fileNumber) => {
   let queryObject = [
@@ -51,6 +61,16 @@ const beforeInitFn = async (action, state, dispatch, fileNumber) => {
   dispatch(prepareFinalObject("workflow.ProcessInstances", []))
   if (fileNumber) {
     await searchResults(action, state, dispatch, fileNumber);
+
+    let bidders = get(
+      state.screenConfiguration.preparedFinalObject,
+      "Properties[0].propertyDetails.bidders",
+      []
+    )
+    let refundInitiated = bidders.filter(item => !!item.refundStatus);
+
+    let refundInitiatedColDisplay = !!findItem && (bidders.length != refundInitiated.length) ? true : false;
+
     dispatch(
       handleField(
         `refund`,
@@ -78,8 +98,8 @@ const beforeInitFn = async (action, state, dispatch, fileNumber) => {
       {
         name: getTextToLocalMapping("Initiate Refund"),
         options: { 
-          display: true,
-          viewColumns: true
+          display: refundInitiatedColDisplay,
+          viewColumns: refundInitiatedColDisplay
         }
       },
       {
@@ -257,6 +277,19 @@ const refund = {
               },
               ...headerRow
             },
+          }
+        },
+        taskStatus: {
+          uiFramework: "custom-containers-local",
+          moduleName: "egov-estate",
+          componentPath: "WorkFlowContainer",
+          props: {
+            dataPath: "Properties",
+            moduleName: WF_EB_REFUND_OF_EMD,
+            updateUrl: "/est-services/property-master/_update",
+            style: {
+              wordBreak: "break-word"
+            }
           }
         },
         auctionDetailsContainer,

@@ -36,7 +36,7 @@ const fieldConfig = {
   comments: {
     label: {
       labelName: "Comments",
-      labelKey: "WF_COMMON_COMMENTS"
+      labelKey: "ES_COMMON_COMMENTS"
     },
     placeholder: {
       labelName: "Enter Comments",
@@ -135,7 +135,6 @@ class ActionDialog extends React.Component {
     dataPath = `${dataPath}[0]`;
 
     const applicationState = (get(state.screenConfiguration.preparedFinalObject, dataPath) || {}).state
-
     return (
       <Dialog
         fullScreen={fullscreen}
@@ -217,15 +216,17 @@ class ActionDialog extends React.Component {
                       }
                       jsonPath={`${dataPath}.comments`}
                       placeholder={fieldConfig.comments.placeholder}
+                      inputProps={{ maxLength: 120 }}
                     />
                   </Grid>
-                  {buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DS_VERIFICATION" && (
+                  {buttonLabel === "FORWARD" && (applicationState === "ES_PENDING_DS_VERIFICATION" || applicationState == "ES_MM_PENDING_DS_VERIFICATION") && (
                     <Grid item sm="12">
                     <TextFieldContainer
                     type="date"
                     required={true}
-                    defaultValue={new Date()}
+                    defaultValue={new Date().toISOString().split('T')[0]}
                     InputLabelProps={{ shrink: true }}
+                    inputProps = {{max: new Date().toISOString().split('T')[0]}}
                     label= {fieldConfig.hardCopyReceivedDate.label}
                     onChange={e =>
                      handleFieldChange( `${dataPath}.hardCopyReceivedDate` , getEpoch(e.target.value))

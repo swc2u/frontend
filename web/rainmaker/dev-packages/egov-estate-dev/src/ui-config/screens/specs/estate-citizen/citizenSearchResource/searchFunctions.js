@@ -32,6 +32,10 @@ export const searchApiCall = async (state, dispatch, queryObject = [], offset, l
     {
       key: "limit",
       value: limit
+    },
+    {
+      key: "relations",
+      value: "owner"
     }
   ];
   queryObject = queryObject.filter(({
@@ -141,8 +145,10 @@ export const searchApiCall = async (state, dispatch, queryObject = [], offset, l
         [getTextToLocalMapping("Action")]: React.createElement('div', {style: applyButtonStyle}, "SELECT"),
         [getTextToLocalMapping("File No")]: item.fileNumber || "-",
         [getTextToLocalMapping("Site Number")]: item.siteNumber,
-        [getTextToLocalMapping("Owner Name")]: !!item.propertyDetails.owners ? item.propertyDetails.owners.filter(item => item.ownerDetails.isCurrentOwner === true).map(owner => owner.ownerDetails.ownerName) || "-" : "-",
-        ["propertyId"]: item.propertyDetails.propertyId
+        [getTextToLocalMapping("Owner Name")]: !!item.propertyDetails.owners ? item.propertyDetails.owners.filter(item => item.ownerDetails.isCurrentOwner === true).map(owner => owner.ownerDetails.ownerName).join(",") || "-" : "-",
+        ["propertyId"]: item.propertyDetails.propertyId,
+        ["dueAmount"]: !!item.estateRentSummary ? item.estateRentSummary.balanceRent + item.estateRentSummary.balanceRentPenalty + item.estateRentSummary.balanceGSTPenalty + item.estateRentSummary.balanceGST : 0,
+        ["dispatch"]: dispatch
       }));
 
       dispatch(

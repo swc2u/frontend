@@ -228,6 +228,7 @@ export const previousButton = {
 
 
   const callBackForPrevious = async (state, dispatch) => {
+    window.scrollTo(0,0)
     changeStep(state, dispatch, "_apply", "previous");
   };
 
@@ -239,14 +240,33 @@ export const previousButton = {
     );
     let isFormValid = true;
     let hasFieldToaster = true;
+    let isDeclarationboxvalid;
     if(activeStep === DETAILS_STEP) {
 
       let cardItems = get(state.screenConfiguration.screenConfig["_apply"], "components.div.children.formwizardFirstStep.children", {}) || {}
-      cardItems = Object.keys(cardItems);
-
-      cardItems.forEach((cardItem) => {
-        const isValid = validateFields(`components.div.children.formwizardFirstStep.children.${cardItem}.children.cardContent.children.details_container.children`, state,
-        dispatch, "_apply");
+      let cardKeys = Object.keys(cardItems);
+      let cardValues = Object.values(cardItems)
+      cardKeys.forEach((cardItem, index) => {
+        let isValid = true
+        if(!!cardValues[index].children.cardContent && !!cardValues[index].children.cardContent.children.details_container.children.multiContainer) {
+          const _componentJsonPath = `components.div.children.formwizardFirstStep.children.${cardItem}.children.cardContent.children.details_container.children.multiContainer.children.multiInfo.props.items`
+          const _components = get(
+            state.screenConfiguration.screenConfig["_apply"],
+            _componentJsonPath
+          );
+          for (var i = 0; i < _components.length; i++) {
+            if (!_components[i].isDeleted) {
+              isValid = validateFields(
+              `${_componentJsonPath}[${i}].item${i}.children.cardContent.children.multiCard.children`,
+              state,
+              dispatch, "_apply"
+            )
+            }
+          }
+        } else {
+          isValid = validateFields(`components.div.children.formwizardFirstStep.children.${cardItem}.children.cardContent.children.details_container.children`, state,
+          dispatch, "_apply");
+        }
         isFormValid = isFormValid && isValid
       })
     if(!!isFormValid) {
@@ -308,7 +328,10 @@ export const previousButton = {
     }
     }
     if(activeStep === SUMMARY_STEP) {
-      isFormValid = await applyforApplication(state, dispatch, activeStep);
+      isDeclarationboxvalid = get(state.screenConfiguration.preparedFinalObject,"temp[0].declaration");
+  
+      isFormValid = isDeclarationboxvalid ? await applyforApplication(state, dispatch, activeStep) : false;
+
         if (isFormValid) {
           const data = get(
             state.screenConfiguration.preparedFinalObject,
@@ -317,10 +340,24 @@ export const previousButton = {
             moveToSuccess(data, dispatch);
         }
       }
+
+      if(!isDeclarationboxvalid && !isFormValid && activeStep === SUMMARY_STEP){
+        let errorMessageBox = {
+          labelName:
+              "Please check the declaration!",
+          labelKey: "ES_ERR_DECLARATION_NOT_CHECKED"
+        };
+        dispatch(toggleSnackbar(true, errorMessageBox, "warning"));
+      }
+
     if(activeStep !== SUMMARY_STEP) {
-      if(!!isFormValid) {
-        changeStep(state, dispatch, "_apply");
-      } else if (hasFieldToaster) {
+      isDeclarationboxvalid = get(state.screenConfiguration.preparedFinalObject,"temp[0].declaration");
+    
+      if(isFormValid) {
+          changeStep(state, dispatch, "_apply");
+        }
+      
+    else if (hasFieldToaster) {
         let errorMessage = {
           labelName:
               "Please fill all mandatory fields and upload the documents !",
@@ -340,10 +377,12 @@ export const previousButton = {
                       labelKey: "ES_ERR_UPLOAD_REQUIRED_DOCUMENTS"
                   };
               break;
+          case SUMMARY_STEP:
         }
         dispatch(toggleSnackbar(true, errorMessage, "warning"));
       }
     }
+    window.scrollTo(0,0)
   }
 
   export const footer = getCommonApplyFooter({

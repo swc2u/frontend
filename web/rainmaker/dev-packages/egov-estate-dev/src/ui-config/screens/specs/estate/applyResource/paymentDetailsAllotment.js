@@ -27,10 +27,14 @@ function getLabelWithValue(labelName, path) {
 }
 
 let screenName = "apply";
-let paymentStep = "formwizardEighthStep"
+let paymentStep = "formwizardEighthStep";
+let summaryStep = "formwizardTenthStep";
+let reviewContainer = "reviewDetails";
 if ((window.location.href).includes("allotment")) {
     screenName = "allotment";
     paymentStep = "formwizardSixthStepAllotment";
+    summaryStep = "formwizardSeventhStepAllotment";
+    reviewContainer = "reviewAllotmentDetails"
 }
 
 var data = []
@@ -51,8 +55,8 @@ const advancedRentField = {
       xs: 12,
       sm: 6
   },
-  maxLength: 100,
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].advanceRent"
+  required: true,
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentAdvanceRent"
 }
 
 const dateOfPaymentOfAdvanceRentField = {
@@ -65,12 +69,8 @@ const dateOfPaymentOfAdvanceRentField = {
       labelKey: "ES_DATE_OF_PAYMENT_OF_ADVANCE_RENT_PLACEHOLDER"
   },
   pattern: getPattern("Date"),
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].dateOfPaymentOfAdvanceRent",
-  // props: {
-  //     inputProps: {
-  //         max: getTodaysDateInYMD()
-  //     }
-  // }
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentAdvanceRentDate",
+  required: true
 }
 
 /************************ Premium Amount Deatails *******************/
@@ -88,7 +88,9 @@ const premiumAmountField = {
       sm: 6
   },
   maxLength: 100,
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].premiumAmount"
+  minLength: 1,
+  required: true,
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.totalAmount"
 }
 
 const installmentField = {
@@ -105,7 +107,9 @@ const installmentField = {
       sm: 6
   },
   maxLength: 100,
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].installments[0].installmentAmount"
+  minLength: 1,
+  required: true,
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.premiumAmountConfigItems[0].premiumAmount"
 }
 
 const dueDateForInstallmentField = {
@@ -118,12 +122,8 @@ const dueDateForInstallmentField = {
       labelKey: "ES_DUE_DATE_INSTALLMENT_PLACEHOLDER"
   },
   pattern: getPattern("Date"),
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].installments[0].dueDate",
-  // props: {
-  //     inputProps: {
-  //         max: getTodaysDateInYMD()
-  //     }
-  // }
+  required: true,
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.premiumAmountConfigItems[0].premiumAmountDate",
 }
 
 const commonInstallmentInformation = () => {
@@ -155,7 +155,8 @@ export const installmentDetails = getCommonCard({
       },
       children: {
         multipleInstallmentInfo: {
-          uiFramework: "custom-containers",
+          uiFramework: "custom-containers-local",
+          moduleName: "egov-estate",
           componentPath: "MultiItem",
           props: {
             scheama: commonInstallmentInformation(),
@@ -167,7 +168,7 @@ export const installmentDetails = getCommonCard({
             headerName: "Installment",
             // headerJsonPath: "children.cardContent.children.header.children.key.props.labelKey",
             headerJsonPath: "children.cardContent.children.header.children.Installment.props.label",
-            sourceJsonPath: "Properties[0].propertyDetails.paymentDetails[0].installments",
+            sourceJsonPath: "Properties[0].propertyDetails.paymentConfig.premiumAmountConfigItems",
             prefixSourceJsonPath: "children.cardContent.children.installmentCard.children",
             onMultiItemAdd: (state, multiItemContent) => {
               // muliItemContent["dueDateForInstallment"]["visible"] = true;
@@ -201,13 +202,14 @@ export const premiumAmountDetails = getCommonCard({
 
 /******************** Select demand ******************/
 const getDemandRadioButton = {
-  uiFramework: "custom-containers",
+  uiFramework: "custom-containers-local",
+  moduleName: "egov-estate",
   componentPath: "RadioGroupContainer",
   gridDefination: {
     xs: 12,
     sm: 6,
   },
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].demand",
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.isGroundRent",
   props: {
     label: {
       name: "Demand",
@@ -216,15 +218,15 @@ const getDemandRadioButton = {
     buttons: [{
         labelName: "Ground Rent",
         labelKey: "ES_GROUND_RENT_LABEL",
-        value: "GROUNDRENT"
+        value: true
       },
       {
         label: "License Fee",
         labelKey: "ES_LICENSE_FEE_LABEL",
-        value: "LICENSEFEE"
+        value: false
       }
     ],
-    jsonPath: "Properties[0].propertyDetails.paymentDetails[0].demand",
+    jsonPath: "Properties[0].propertyDetails.paymentConfig.isGroundRent",
     required: true
   },
   required: true,
@@ -232,42 +234,42 @@ const getDemandRadioButton = {
   beforeFieldChange: (action, state, dispatch) => {
     dispatch(
       handleField(
-        screenName,
+        action.screenKey,
         `components.div.children.${paymentStep}.children.groundRentDetails`,
         "visible",
-        !!(action.value == "GROUNDRENT")
+        action.value === "true"
       )
     )
     dispatch(
       handleField(
-        screenName,
+        action.screenKey,
         `components.div.children.${paymentStep}.children.licenseFeeDetails`,
         "visible",
-        !!(action.value == "LICENSEFEE")
+        action.value === "false"
       )
     )
     dispatch(
       handleField(
-        "allotment",
-        "components.div.children.formwizardSeventhStepAllotment.children.reviewAllotmentDetails.children.cardContent.children.reviewGroundRent",
+        action.screenKey,
+        `components.div.children.${summaryStep}.children.${reviewContainer}.children.cardContent.children.reviewGroundRent`,
         "visible",
-        !!(action.value == "GROUNDRENT")
+        action.value === "true"
       )
     )
     dispatch(
       handleField(
-        "allotment",
-        "components.div.children.formwizardSeventhStepAllotment.children.reviewAllotmentDetails.children.cardContent.children.reviewLicenseFee",
+        action.screenKey,
+        `components.div.children.${summaryStep}.children.${reviewContainer}.children.cardContent.children.reviewLicenseFee`,
         "visible",
-        !!(action.value == "LICENSEFEE")
+        action.value === "false"
       )
     )
     dispatch(
       handleField(
-        "allotment",
-        "components.div.children.formwizardSeventhStepAllotment.children.reviewAllotmentDetails.children.cardContent.children.reviewAdvanceRent",
+        action.screenKey,
+        `components.div.children.${summaryStep}.children.${reviewContainer}.children.cardContent.children.reviewAdvanceRent`,
         "visible",
-        !!(action.value)
+        true
       )
     )
   }
@@ -293,8 +295,8 @@ const groundRentGenerationTypeField = {
       xs: 12,
       sm: 6
   },
-  maxLength: 100,
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].groundRentGenerationType",
+  required: true,
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentGenerationType",
   props: {
     data: [
       {code: "Monthly"},
@@ -302,26 +304,18 @@ const groundRentGenerationTypeField = {
     ]
   },
   beforeFieldChange: (action, state, dispatch) => {
-    if (action.value == "Monthly") {
-      dispatch(
-        handleField(
-          "allotment",
-          "components.div.children.formwizardSixthStepAllotment.children.groundRentDetails.children.cardContent.children.detailsContainer.children.dateToGenerateDemandRent",
-          "visible",
-          true
-        )
+    let jsonpath = action.componentJsonpath.split(".");
+    jsonpath.pop();
+    jsonpath = jsonpath.join(".")
+
+    dispatch(
+      handleField(
+        action.screenKey,
+        `${jsonpath}.dateToGenerateDemandRent`,
+        "visible",
+        !!(action.value == "Monthly")
       )
-    }
-    else {
-      dispatch(
-        handleField(
-          "allotment",
-          "components.div.children.formwizardSixthStepAllotment.children.groundRentDetails.children.cardContent.children.detailsContainer.children.dateToGenerateDemandRent",
-          "visible",
-          false
-        )
-      )
-    }
+    )
   }
 }
 
@@ -335,12 +329,8 @@ const billingStartDateField = {
       labelKey: "ES_BILLING_START_DATE_PLACEHOLDER"
   },
   pattern: getPattern("Date"),
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].billingStartDate",
-  // props: {
-  //     inputProps: {
-  //         max: getTodaysDateInYMD()
-  //     }
-  // }
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentBillStartDate",
+  required: true
 }
 
 const dateToGenerateDemandRentField = {
@@ -352,11 +342,12 @@ const dateToGenerateDemandRentField = {
     labelName: "Select Date to Generate the Demand/Rent",
     labelKey: "ES_DATE_TO_GENERATE_DEMAND_RENT_PLACEHOLDER"
   },
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].dateToGenerateDemandRent",
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentGenerateDemand",
   gridDefination: {
     xs: 12,
     sm: 6
   },
+  required: true,
   props: {
       data: data
   },
@@ -377,7 +368,9 @@ const rentAmountField = {
       sm: 3
   },
   maxLength: 100,
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].rent[0].rentAmount"
+  minLength: 1,
+  required: true,
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems[0].groundRentAmount"
 }
 
 const startYearField = {
@@ -394,11 +387,11 @@ const startYearField = {
       sm: 3
   },
   maxLength: 100,
+  minLength: 1,
   props: {
     disabled: true,
-    value: 0
   },
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].rent[0].startYear"
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems[0].groundRentStartMonth"
 }
 
 const endYearField = {
@@ -415,11 +408,29 @@ const endYearField = {
       sm: 3
   },
   maxLength: 100,
+  minLength: 1,
+  required: true,
   props: {
-    type: "number",
-    helperText: "HIII"
+    type: "number"
   },
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].rent[0].endYear"
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems[0].groundRentEndMonth",
+  afterFieldChange: (action, state, dispatch) => {
+    const {componentJsonpath, value} = action
+    const index = Number((componentJsonpath.split("]")[0]).split("[")[1])
+    const items = get(state, "screenConfiguration.preparedFinalObject.Properties[0].propertyDetails.paymentConfig.paymentConfigItems");
+    const findIndex = items.findIndex((item, ind) =>  ind > index && !item.isDeleted)
+    if(findIndex !== -1) {
+      const groundRentStartMonth = Number(value) + 1 + ""
+      dispatch(handleField(
+        screenName,
+        `components.div.children.${paymentStep}.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[${findIndex}].item${findIndex}.children.cardContent.children.rentCard.children.startYear`,
+        "props.value",
+        groundRentStartMonth
+      ))
+    }
+    const startValue = get(state.screenConfiguration.preparedFinalObject, `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${index}].groundRentStartMonth`)
+    dispatch(prepareFinalObject(`Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${index}].tillDate`, (value-startValue)+1))
+  }
 }
 
 const commonRentInformation = () => {
@@ -433,8 +444,21 @@ const commonRentInformation = () => {
         labelKey: "ES_TILL_LABEL_IN_YEARS"
       },
       {
-        jsonPath: "Properties[0].propertyDetails.paymentDetails[0].rent[0].endYear",
-        callBack: (value) => (Number(value)/12).toFixed(2)
+        jsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems[0].tillDate",
+        callBack: (value) =>  {
+          if (value) {
+            const years = (Number(value) / 12 | 0)
+            const months = Number(value) % 12
+            if(years > 0 && months > 0) {
+              return years + " Year(s) " + months +" Month(s)"
+            } else if(years < 1) {
+              return months + " Month(s)"
+            } else if(months < 1) {
+              return years + " Year(s)"
+            }
+          }
+          return "-"
+        }
       }
       )
     })
@@ -473,40 +497,37 @@ export const rentDetails = getCommonGrayCard({
             },
             headerName: "Rent",
             headerJsonPath: "children.cardContent.children.header.children.Rent.props.label",
-            sourceJsonPath: "Properties[0].propertyDetails.paymentDetails[0].rent",
+            sourceJsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems",
             prefixSourceJsonPath: "children.cardContent.children.rentCard.children",
             afterPrefixJsonPath: "children.value.children.key",
-            onMultiItemAdd: (state, multiItemContent) => {
+            onMultiItemAdd: (state, multiItemContent, updatePreparedFormObject) => {
               let rent = get(
                 state.screenConfiguration.preparedFinalObject,
-                "Properties[0].propertyDetails.paymentDetails[0].rent",
+                "Properties[0].propertyDetails.paymentConfig.paymentConfigItems",
                 []
               );
-              if (rent.length && rent[rent.length - 1].endYear) {
-                let lastAddedEndYear = rent[rent.length - 1].endYear;
+              const rentItems = rent.filter(item => !item.isDeleted)
+              if (rentItems.length) {
+                let lastAddedEndYear = rentItems[rentItems.length - 1].groundRentEndMonth;
                 multiItemContent.startYear.props.value = Number(lastAddedEndYear) + 1;
+                updatePreparedFormObject(`Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${rent.length}]`, {groundRentStartMonth: Number(lastAddedEndYear) + 1 + ""})
               } 
-              // else {
-              //   multiItemContent.startYear.props.disabled = false
-              // }
               return multiItemContent;
             },
             onMultiItemDelete: (state, deletedIndex, changeField) => {
               let rent = get(
                 state.screenConfiguration.preparedFinalObject,
-                "Properties[0].propertyDetails.paymentDetails[0].rent",
+                "Properties[0].propertyDetails.paymentConfig.paymentConfigItems",
                 []
               );
-              if(deletedIndex !== rent.length - 1) {
-                const previewYearObj = rent.filter((item, index) => index < deletedIndex && item.isDeleted !== false).pop()
-                const nextYearObj = rent.findIndex((item, index) => index > deletedIndex && item.isDeleted !== false)
+                const previewYearObj = rent.filter((item, index) => index < deletedIndex && !item.isDeleted).pop()
+                const nextYearObj = rent.findIndex((item, index) => index > deletedIndex && !item.isDeleted)
                 nextYearObj !== -1 && changeField(
-                  "allotment",
-                  `components.div.children.formwizardSixthStepAllotment.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[${nextYearObj}].item${nextYearObj}.children.cardContent.children.rentCard.children.startYear`,
+                  screenName,
+                  `components.div.children.${paymentStep}.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[${nextYearObj}].item${nextYearObj}.children.cardContent.children.rentCard.children.startYear`,
                   "props.value",
-                  !!previewYearObj && !!previewYearObj.endYear ? Number(previewYearObj.endYear)+1 : 0
+                  !!previewYearObj && !!previewYearObj.groundRentEndMonth ? Number(previewYearObj.groundRentEndMonth)+1 + "" : "0"
                 )
-              }
             }
           },
           type: "array"
@@ -553,7 +574,9 @@ const licenseFeeGenerationTypeField = {
       sm: 6
   },
   maxLength: 100,
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].licenseFeeGenerationType",
+  minLength: 1,
+  required: true,
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentGenerationType",
   props: {
     data: [
       {code: "Monthly"},
@@ -561,26 +584,18 @@ const licenseFeeGenerationTypeField = {
     ]
   },
   beforeFieldChange: (action, state, dispatch) => {
-    if (action.value == "Monthly") {
-      dispatch(
-        handleField(
-          "allotment",
-          "components.div.children.formwizardSixthStepAllotment.children.licenseFeeDetails.children.cardContent.children.detailsContainer.children.dateToGenerateDemandLf",
-          "visible",
-          true
-        )
+    let jsonpath = action.componentJsonpath.split(".");
+    jsonpath.pop();
+    jsonpath = jsonpath.join(".")
+
+    dispatch(
+      handleField(
+        action.screenKey,
+        `${jsonpath}.dateToGenerateDemandLf`,
+        "visible",
+        !!(action.value == "Monthly")
       )
-    }
-    else {
-      dispatch(
-        handleField(
-          "allotment",
-          "components.div.children.formwizardSixthStepAllotment.children.licenseFeeDetails.children.cardContent.children.detailsContainer.children.dateToGenerateDemandLf",
-          "visible",
-          false
-        )
-      )
-    }
+    )
   }
 }
 
@@ -593,11 +608,12 @@ const dateToGenerateDemandLicenseFeeField = {
     labelName: "Select Date to Generate the Demand/License Fee",
     labelKey: "ES_DATE_TO_GENERATE_DEMAND_LICENSE_FEE_PLACEHOLDER"
   },
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].dateToGenerateDemandLf",
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentGenerateDemand",
   gridDefination: {
     xs: 12,
     sm: 6
   },
+  required: true,
   props: {
       data: data
   },
@@ -614,16 +630,12 @@ const billingStartDateLicenseFeeField = {
       labelKey: "ES_BILLING_START_DATE_PLACEHOLDER"
   },
   pattern: getPattern("Date"),
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].billingStartDateLf",
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentBillStartDate",
   gridDefination: {
     xs: 12,
     sm: 6
   },
-  // props: {
-  //     inputProps: {
-  //         max: getTodaysDateInYMD()
-  //     }
-  // }
+  required: true
 }
 
 const licenseFeeField = {
@@ -640,7 +652,9 @@ const licenseFeeField = {
       sm: 3
   },
   maxLength: 100,
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].licenseFees[0].licenseFee"
+  minLength: 1,
+  required: true,
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems[0].groundRentAmount"
 }
 
 const startYearLfField = {
@@ -658,10 +672,10 @@ const startYearLfField = {
   },
   props: {
     disabled: true,
-    value: 0
   },
   maxLength: 100,
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].licenseFees[0].startYear"
+  minLength: 1,
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems[0].groundRentStartMonth"
 }
 
 const endYearLfField = {
@@ -678,9 +692,27 @@ const endYearLfField = {
       sm: 3
   },
   maxLength: 100,
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].licenseFees[0].endYear"
+  minLength: 1,
+  required: true,
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems[0].groundRentEndMonth",
+  afterFieldChange: (action, state, dispatch) => {
+    const {componentJsonpath, value} = action
+    const index = Number((componentJsonpath.split("]")[0]).split("[")[1])
+    const items = get(state, "screenConfiguration.preparedFinalObject.Properties[0].propertyDetails.paymentConfig.paymentConfigItems");
+    const findIndex = items.findIndex((item, ind) =>  ind > index && !item.isDeleted)
+    if(findIndex !== -1) {
+      const groundRentStartMonth = Number(value) + 1 + ""
+      dispatch(handleField(
+        screenName,
+        `components.div.children.${paymentStep}.children.licenseFeeDetails.children.cardContent.children.licenseFeeForYearContainer.children.cardContent.children.detailsContainer.children.multipleLicenseContainer.children.multipleLicenseInfo.props.items[${findIndex}].item${findIndex}.children.cardContent.children.licenseCard.children.startYear`,
+        "props.value",
+        groundRentStartMonth
+      ))
+    }
+    const startValue = get(state.screenConfiguration.preparedFinalObject, `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${index}].groundRentStartMonth`)
+    dispatch(prepareFinalObject(`Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${index}].tillDate`, (value-startValue)+1))
+  }
 }
-
 
 const commonLicenseInformation = () => {
   return getCommonGrayCard({
@@ -693,8 +725,21 @@ const commonLicenseInformation = () => {
         labelKey: "ES_TILL_LABEL_IN_YEARS"
       },
       {
-        jsonPath: "Properties[0].propertyDetails.paymentDetails[0].licenseFees[0].endYear",
-        callBack: (value) => (Number(value)/12).toFixed(2)
+        jsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems[0].tillDate",
+        callBack: (value) =>  {
+          if (value) {
+            const years = (Number(value) / 12 | 0)
+            const months = Number(value) % 12
+            if(years > 0 && months > 0) {
+              return years + " Year(s) " + months +" Month(s)"
+            } else if(years < 1) {
+              return months + " Month(s)"
+            } else if(months < 1) {
+              return years + " Year(s)"
+            }
+          }
+          return "-"
+        }
       }
       )
     })
@@ -734,41 +779,39 @@ export const licenseFeeForYearDetails = getCommonGrayCard({
             headerName: "License Fee for Year",
             // headerJsonPath: "children.cardContent.children.header.children.key.props.labelKey",
             headerJsonPath: "children.cardContent.children.header.children.License Fee.props.label",
-            sourceJsonPath: "Properties[0].propertyDetails.paymentDetails[0].licenseFees",
+            sourceJsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems",
             prefixSourceJsonPath: "children.cardContent.children.licenseCard.children",
 
             afterPrefixJsonPath: "children.value.children.key",
-            onMultiItemAdd: (state, multiItemContent) => {
+
+            onMultiItemAdd: (state, multiItemContent, updatePreparedFormObject) => {
               let rent = get(
                 state.screenConfiguration.preparedFinalObject,
-                "Properties[0].propertyDetails.paymentDetails[0].licenseFees",
+                "Properties[0].propertyDetails.paymentConfig.paymentConfigItems",
                 []
               );
-              if (rent.length && rent[rent.length - 1].endYear) {
-                let lastAddedEndYear = rent[rent.length - 1].endYear;
+              const rentItems = rent.filter(item => !item.isDeleted)
+              if (rentItems.length) {
+                let lastAddedEndYear = rentItems[rentItems.length - 1].groundRentEndMonth;
                 multiItemContent.startYear.props.value = Number(lastAddedEndYear) + 1;
+                updatePreparedFormObject(`Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${rent.length}]`, {groundRentStartMonth: Number(lastAddedEndYear) + 1 + ""})
               } 
-              // else {
-              //   multiItemContent.startYear.props.disabled = false
-              // }
               return multiItemContent;
             },
             onMultiItemDelete: (state, deletedIndex, changeField) => {
               let rent = get(
                 state.screenConfiguration.preparedFinalObject,
-                "Properties[0].propertyDetails.paymentDetails[0].licenseFees",
+                "Properties[0].propertyDetails.paymentConfig.paymentConfigItems",
                 []
               );
-              if(deletedIndex !== rent.length - 1) {
-                const previewYearObj = rent.filter((item, index) => index < deletedIndex && item.isDeleted !== false).pop()
-                const nextYearObj = rent.findIndex((item, index) => index > deletedIndex && item.isDeleted !== false)
+                const previewYearObj = rent.filter((item, index) => index < deletedIndex && !item.isDeleted).pop()
+                const nextYearObj = rent.findIndex((item, index) => index > deletedIndex && !item.isDeleted)
                 nextYearObj !== -1 && changeField(
-                  "allotment",
-                  `components.div.children.formwizardSixthStepAllotment.children.licenseFeeDetails.children.cardContent.children.licenseFeeForYearContainer.children.cardContent.children.detailsContainer.children.multipleLicenseContainer.children.multipleLicenseInfo.props.items[${nextYearObj}].item${nextYearObj}.children.cardContent.children.licenseCard.children.startYear`,
+                  screenName,
+                  `components.div.children.${paymentStep}.children.licenseFeeDetails.children.cardContent.children.licenseFeeForYearContainer.children.cardContent.children.detailsContainer.children.multipleLicenseContainer.children.multipleLicenseInfo.props.items[${nextYearObj}].item${nextYearObj}.children.cardContent.children.licenseCard.children.startYear`,
                   "props.value",
-                  !!previewYearObj && !!previewYearObj.endYear ? Number(previewYearObj.endYear)+1 : 0
+                  !!previewYearObj && !!previewYearObj.groundRentEndMonth ? Number(previewYearObj.groundRentEndMonth)+1 + "" : "0"
                 )
-              }
             }
           },
           type: "array"
@@ -792,8 +835,8 @@ export const licenseFeeDetails = getCommonCard({
   header: licenseFeeHeader,
   detailsContainer: getCommonContainer({
       demandGenerationType: getSelectField(licenseFeeGenerationTypeField),
-      dateToGenerateDemandLf: getSelectField(dateToGenerateDemandLicenseFeeField),
       billingStartDateLf: getDateField(billingStartDateLicenseFeeField),
+      dateToGenerateDemandLf: getSelectField(dateToGenerateDemandLicenseFeeField),
       advanceRent: getTextField(advancedRentField),
       dateOfPaymentOfAdvanceRent: getDateField(dateOfPaymentOfAdvanceRentField)
   }),
@@ -802,7 +845,7 @@ export const licenseFeeDetails = getCommonCard({
 
 
 /******************** Security Fee Details ********************/ 
-const securityFeeAmountField = {
+/* const securityFeeAmountField = {
   label: {
       labelName: "Security Fee Amount",
       labelKey: "ES_SECURITY_FEE_AMOUNT_LABEL"
@@ -816,8 +859,8 @@ const securityFeeAmountField = {
       sm: 6
   },
   maxLength: 100,
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].securityFeeAmount"
-}
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.securityAmount"
+} */
 
 const dateOfPaymentField = {
   label: {
@@ -829,38 +872,35 @@ const dateOfPaymentField = {
       labelKey: "ES_DATE_OF_PAYMENT_PLACEHOLDER"
   },
   pattern: getPattern("Date"),
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].securityFeeDateOfPayment",
-  // props: {
-  //     inputProps: {
-  //         max: getTodaysDateInYMD()
-  //     }
-  // }
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.dueDateOfPayment",
+  required: true
 }
 
 const getMonthsOfRentRadioButton = {
-  uiFramework: "custom-containers",
+  uiFramework: "custom-containers-local",
+  moduleName: "egov-estate",
   componentPath: "RadioGroupContainer",
   gridDefination: {
     xs: 12,
     sm: 6,
   },
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].monthsOfRent",
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.noOfMonths",
   props: {
     buttons: [{
         labelName: "2 months of rent",
         labelKey: "ES_TWO_MONTHS_RENT_LABEL",
-        value: "TWOMONTHSRENT"
+        value: 2
       },
       {
         label: "3 months rent",
         labelKey: "ES_THREE_MONTHS_RENT_LABEL",
-        value: "THREEMONTHSRENT"
+        value: 3
       }
     ],
-    jsonPath: "Properties[0].propertyDetails.paymentDetails[0].monthsOfRent",
-    // required: true
+    jsonPath: "Properties[0].propertyDetails.paymentConfig.noOfMonths",
+    required: true
   },
-  // required: true,
+  required: true,
   type: "array"
 }
 
@@ -877,7 +917,7 @@ const securityDetailsHeader = getCommonTitle({
 export const securityDetails = getCommonCard({
   header: securityDetailsHeader,
   detailsContainer: getCommonContainer({
-      securityFeeAmount: getTextField(securityFeeAmountField),
+      // securityFeeAmount: getTextField(securityFeeAmountField),
       monthsOfRent: getMonthsOfRentRadioButton,
       securityFeeDateOfPayment: getDateField(dateOfPaymentField),
       
@@ -886,13 +926,14 @@ export const securityDetails = getCommonCard({
 
 /******************** Interest Details ********************/
 const getInterestFixedRadioButton = {
-  uiFramework: "custom-containers",
+  uiFramework: "custom-containers-local",
+  moduleName: "egov-estate",
   componentPath: "RadioGroupContainer",
   gridDefination: {
     xs: 12,
     sm: 6,
   },
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].interestFixed",
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.isIntrestApplicable",
   props: {
     label: {
       name: "Interest fixed?",
@@ -901,36 +942,57 @@ const getInterestFixedRadioButton = {
     buttons: [{
         labelName: "Yes",
         labelKey: "ES_COMMON_YES",
-        value: "true"
+        value: true
       },
       {
         label: "No",
         labelKey: "ES_COMMON_NO",
-        value: "false"
+        value: false
       }
     ],
-    jsonPath: "Properties[0].propertyDetails.paymentDetails[0].interestFixed",
-    // required: true
+    jsonPath: "Properties[0].propertyDetails.paymentConfig.isIntrestApplicable",
+    required: true
   },
-  // required: true,
-  type: "array"
+  required: true,
+  type: "array",
+  afterFieldChange: (action, state, dispatch) => {
+    let isInterestFixedLabel = (action.value == "true") ? "ES_FIXED_INTEREST_LABEL" : "ES_YEARLY_INTEREST_LABEL";
+    let isInterestFixedPlaceholder = (action.value == "true") ? "ES_FIXED_INTEREST_PLACEHOLDER" : "ES_YEARLY_INTEREST_PLACEHOLDER";
+      dispatch(
+        handleField(
+          action.screenKey,
+          `components.div.children.${paymentStep}.children.interestDetails.children.cardContent.children.detailsContainer.children.percentageOfInterest`,
+          "props.label.labelKey",
+          isInterestFixedLabel
+        )
+      )
+      dispatch(
+        handleField(
+          action.screenKey,
+          `components.div.children.${paymentStep}.children.interestDetails.children.cardContent.children.detailsContainer.children.percentageOfInterest`,
+          "props.placeholder.labelKey",
+          isInterestFixedPlaceholder
+        )
+      )
+  }
 }
 
 const percentageOfInterestField = {
   label: {
-      labelName: "Percentage of interest",
-      labelKey: "ES_PERCENTAGE_OF_INTEREST_LABEL"
+      labelName: "Yearly interest",
+      labelKey: "ES_YEARLY_INTEREST_LABEL"
   },
   placeholder: {
-      labelName: "Enter percentage of interest",
-      labelKey: "ES_PERCENTAGE_OF_INTEREST_PLACEHOLDER"
+      labelName: "Enter yearly interest",
+      labelKey: "ES_YEARLY_INTEREST_PLACEHOLDER"
   },
   gridDefination: {
       xs: 12,
       sm: 6
   },
+  required: true,
   pattern: _getPattern("float"),
-  jsonPath: "Properties[0].propertyDetails.paymentDetails[0].percentageOfInterest"
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.rateOfInterest"
 }
 
 const interestDetailsHeader = getCommonTitle({

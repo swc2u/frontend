@@ -12,6 +12,9 @@ import {
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
 import set from "lodash/set";
+import {
+  convertDateToEpoch,  
+} from "../../utils";
 
 const assignmentDetailsCard = {
   uiFramework: "custom-containers",
@@ -33,11 +36,11 @@ const assignmentDetailsCard = {
               required: true,
               pattern: getPattern("Date"),
               jsonPath: "Employee[0].assignments[0].fromDate",
-              props: {
-                inputProps: {
-                  min: new Date().toISOString().slice(0, 10),
-                }
-              },
+              // props: {
+              //   inputProps: {
+              //     min: new Date().toISOString().slice(0, 10),
+              //   }
+              // },
               beforeFieldChange: (action, state, dispatch) => {
               
               }
@@ -58,26 +61,31 @@ const assignmentDetailsCard = {
               jsonPath: "Employee[0].assignments[0].toDate",
               props: {
                 inputProps: {
-                  min: new Date().toISOString().slice(0, 10),
+                  max: new Date().toISOString().slice(0, 10),
                 }
               },
             })
           },
-          dummyDiv: {
-            uiFramework: "custom-atoms",
-            componentPath: "Div",
-            gridDefination: {
-              xs: 12,
-              sm: 6
-            },
-            props: {
-              disabled: true
-            }
-          },
+          // dummyDiv: {
+          //   uiFramework: "custom-atoms",
+          //   componentPath: "Div",
+          //   gridDefination: {
+          //     xs: 12,
+          //     sm: 6
+          //   },
+          //   isFieldValid:true,
+          //   props: {
+          //     disabled: true
+          //   }
+          // },
           currentAssignment: {
             uiFramework: "custom-molecules-local",
             moduleName: "egov-hrms",
             componentPath: "SwitchWithLabel",
+              gridDefination: {
+              xs: 12,
+              sm: 6
+            },
             props: {
               items: [
                 {
@@ -107,33 +115,41 @@ const assignmentDetailsCard = {
                 `${action.componentJsonpath}.props.disabled`
               );
               if (!isDisabled) {
-                if (action.value) {
-                  dispatch(
-                    handleField(
-                      "create",
-                      assignToComponentPath,
-                      "props.value",
-                      null
-                    )
-                  );
-                  dispatch(
-                    handleField(
-                      "create",
-                      assignToComponentPath,
-                      "props.disabled",
-                      true
-                    )
-                  );
-                } else {
-                  dispatch(
-                    handleField(
-                      "create",
-                      assignToComponentPath,
-                      "props.disabled",
-                      false
-                    )
-                  );
-                }
+                // if (action.value) {
+                //   dispatch(
+                //     handleField(
+                //       "create",
+                //       assignToComponentPath,
+                //       "props.value",
+                //       null
+                //     )
+                //   );
+                //   dispatch(
+                //     handleField(
+                //       "create",
+                //       assignToComponentPath,
+                //       "props.disabled",
+                //       true
+                //     )
+                //   );
+                // } else {
+                //   dispatch(
+                //     handleField(
+                //       "create",
+                //       assignToComponentPath,
+                //       "props.disabled",
+                //       false
+                //     )
+                //   );
+                //   dispatch(
+                //     handleField(
+                //       "create",
+                //       assignToComponentPath,
+                //       "isFieldValid",
+                //       true
+                //     )
+                //   );
+                // }
               }
             }
           },
@@ -156,10 +172,10 @@ const assignmentDetailsCard = {
                 optionLabel: "name"
                 // hasLocalization: false
               },
-              localePrefix: {
-                moduleName: "common-masters",
-                masterName: "Department"
-              }
+              // localePrefix: {
+              //   moduleName: "common-masters",
+              //   masterName: "Department"
+              // }
             })
           },
           designation: {
@@ -178,10 +194,10 @@ const assignmentDetailsCard = {
                 optionLabel: "name"
                 // hasLocalization: false
               },
-              localePrefix: {
-                moduleName: "common-masters",
-                masterName: "Designation"
-              }
+              // localePrefix: {
+              //   moduleName: "common-masters",
+              //   masterName: "Designation"
+              // }
             })
           },
           reportingTo: {
@@ -267,7 +283,38 @@ const assignmentDetailsCard = {
         Object.keys(muliItemContent).forEach(key => {
           if (isCurrentAssignment && key === "currentAssignment") {
             set(muliItemContent[key], "props.disabled", false);
-          } else {
+          }
+          else if(key === "isPrimaryAssignment")
+          {
+            set(muliItemContent[key], "props.disabled", false);
+          }
+          else if(key === "currentAssignment")
+          {
+            set(muliItemContent[key], "props.disabled", false);
+          }
+          else if(key === "assignToDate")
+          {
+            set(muliItemContent[key], "props.disabled", false);
+          }
+          else if(key === "assignFromDate")
+          {
+            let employeeObject = get(
+              state.screenConfiguration.preparedFinalObject,
+              "Employee",
+              []
+            );
+          let assignFromDate = convertDateToEpoch(get(employeeObject[0], "dateOfAppointment"), "dayStart")// convertDateToEpoch(action.value, "dayStart")
+         
+          set(muliItemContent[key], "props.inputProps.min", new Date(assignFromDate).toISOString().slice(0, 10));
+          //  dispatch(
+          //   handleField(`create`,        
+          //     "components.div.children.formwizardThirdStep.children.assignmentDetails.children.cardContent.children.assignmentDetailsCard.props.items[0].item0.children.cardContent.children.asmtDetailsCardContainer.children.assignFromDate",
+          //     "props.inputProps",
+          //     { min: new Date(assignFromDate).toISOString().slice(0, 10)}
+          //   )
+          // ); 
+          }
+          else {
             set(muliItemContent[key], "props.disabled", true);
           }
         });
@@ -278,6 +325,33 @@ const assignmentDetailsCard = {
           } else {
             set(muliItemContent[key], "props.disabled", false);
           }
+
+          //
+          if (key === "assignFromDate") {
+          let employeeObject = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Employee",
+            []
+          );
+        let assignFromDate = convertDateToEpoch(get(employeeObject[0], "dateOfAppointment"))// convertDateToEpoch(action.value, "dayStart")
+       
+        set(muliItemContent[key], "props.inputProps.min", new Date(assignFromDate).toISOString().slice(0, 10));        
+        set(muliItemContent[key], "props.value", new Date(assignFromDate).toISOString().slice(0, 10));
+        //  dispatch(
+        //   handleField(`create`,        
+        //     "components.div.children.formwizardThirdStep.children.assignmentDetails.children.cardContent.children.assignmentDetailsCard.props.items[0].item0.children.cardContent.children.asmtDetailsCardContainer.children.assignFromDate",
+        //     "props.inputProps",
+        //     { min: new Date(assignFromDate).toISOString().slice(0, 10)}
+        //   )
+        // ); 
+        }
+        else {
+          set(muliItemContent[key], "props.disabled", false);
+        }
+        if(key === "dummyDiv")
+        {
+          set(muliItemContent[key], "isFieldValid", true);
+        }
         });
       }
       return muliItemContent;
