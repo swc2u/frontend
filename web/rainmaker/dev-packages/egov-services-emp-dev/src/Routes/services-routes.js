@@ -340,51 +340,6 @@ const routes = [
     redirectionUrl
   }
 },
-//ApplyRefundEmpApplication
-{
-  path: "egov-services/apply-refund-success",
-  component: ApplyRefundEmpApplication,
-  needsAuthentication: true,
-  options: {
-    hideBackButton: true,
-    customFor: "employee",
-    hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
-    hideTitle: true,
-    redirectionUrl
-  }
-},
-
-//ApplyCancelEmpApplication 
-{
-  path: "egov-services/application-cancelled-success",
-  component: ApplyCancelEmpApplication,
-  needsAuthentication: true,
-  options: {
-    hideBackButton: true,
-    customFor: "employee",
-    hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
-    hideTitle: true,
-    redirectionUrl
-  }
-},
-//ApplyCommercial
-{
-  path: "egov-services/applyResourceCommercialGround",
-  component: applyResourceCommercialGround,
-  needsAuthentication: true,
-  options: {
-    hideBackButton: true,
-    customFor: "employee",
-    hideFooter: true,
-    title: "BK_CGB_APPLY",
-    hideTitle: false,
-    redirectionUrl,
-    hideFor: "ao",
-    customTitle: "BK_CGB_APPLY"
-  }
-},
 //Apply PACC
 {
   path: "egov-services/applyPark-community-center",
