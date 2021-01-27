@@ -111,21 +111,6 @@ const PaymentSuccessForEmployee = Loadable({
   loader: () => import("../Screens/PaymentSuccessForEmployee"),
   loading: Loading
 });
-//Cancel an application from emp
-const ApplyCancelEmpApplication = Loadable({
-  loader: () => import("../Screens/ApplyCancelEmpApplication"),
-  loading: Loading
-});
-//ApplyRefundEmpApplication
-const ApplyRefundEmpApplication = Loadable({
-  loader: () => import("../Screens/ApplyRefundEmpApplication"),
-  loading: Loading
-});
-//applyResourceCommercialGround
-const applyResourceCommercialGround = Loadable({
-  loader: () => import("../Screens/ApplyCommercialGround"),
-  loading: Loading
-});
 const CheckAvailabilityPcc= Loadable({
   loader: () => import("../Screens/ApplyParkAndCommunity/components/CheckAvailability"),
   loading: Loading
