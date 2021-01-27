@@ -771,7 +771,7 @@ else{  /**loop for new Booking Create**/
             </div>
 
             {/*New Requirement Changes*/}
-            {this.state.vanueType === "Community Center" || this.state.vanueType === "Parks"? (
+            {/* {this.state.vanueType === "Community Center" || this.state.vanueType === "Parks"? (
             <div>
               <div className="col-sm-6 col-xs-6">
                 <FormControl component="fieldset">
@@ -802,7 +802,7 @@ else{  /**loop for new Booking Create**/
                   </RadioGroup>
                 </FormControl>
               </div>
-            </div>) : ""}
+            </div>) : ""} */}
 
             {/*condition rendering for Dropdown according to Booking Type*/}
             {this.props.DropDownValue != "notfound" &&

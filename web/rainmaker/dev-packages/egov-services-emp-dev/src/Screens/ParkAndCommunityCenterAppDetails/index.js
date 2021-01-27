@@ -12,6 +12,7 @@ import { prepareFormData } from "egov-ui-kit/redux/common/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import OSMCCBookingDetails from "../AllApplications/components/OSMCCBookingDetails"
 import AppDetails from "./components/ApplicantDetails"; 
+import UserBankDetails from "./components/UserBankDetails";
 import RefundCard from "./components/RefundCard"; 
 import BookingDetails from "./components/BookingDetails"
 import DocumentPreview from "../AllApplications/components/DocumentPreview"
@@ -1415,6 +1416,10 @@ else{
 								<BookingDetails
 									{...complaint}
 									historyApiData={historyApiData && historyApiData}
+								/>
+								
+								<UserBankDetails
+									{...complaint}
 								/>
 								{this.state.CheckStatus != "OFFLINE_MODIFIED" ? <PaymentDetails
 									paymentDetails={paymentDetails && paymentDetails}
