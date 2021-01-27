@@ -639,7 +639,7 @@ const mapStateToProps = (state) => {
         "screenConfiguration.preparedFinalObject.availabilityCheckData.bkFromDate"
     );
 
-    //******************************** */
+    //******************************** */screenConfiguration.preparedFinalObject.
 
 
     for (let i = 0; i < 180; i++) {
@@ -693,7 +693,9 @@ const mapStateToProps = (state) => {
         finalBookedTimeSlots.push(tempObj);
     }
 
-    return {
+    return {  /* rows: finalBookedTimeSlots,
+        currentDate: new Date(),
+        initiatedBookingFromDate: initiatedBookingFromDate, */
         rows: finalBookedTimeSlots,
         currentDate: new Date(),
         initiatedBookingFromDate: initiatedBookingFromDate,
