@@ -179,7 +179,6 @@ export const getWFConfig = (module, businessService, taskId) => {
       DEFAULT: "/pms/pmsmap",
     };
   }
-<<<<<<< HEAD
   else if (businessService == "OSBM")
   {
     return {
@@ -193,16 +192,6 @@ export const getWFConfig = (module, businessService, taskId) => {
       DEFAULT: "/egov-services/bwt-application-details",
     } 
   }
-=======
-   else if (businessService == "NewTL") { 
-    return {
-      INITIATED: "/tradelicence/apply",
-      DEFAULT: "/tradelicence/search-preview",
-    };
-
-  }
-
->>>>>>> 20cd8ee0acc49b4f576ceb366b34012fa48e16c9
   else {
     switch (module.toUpperCase()) {
       case "TL-SERVICES":
