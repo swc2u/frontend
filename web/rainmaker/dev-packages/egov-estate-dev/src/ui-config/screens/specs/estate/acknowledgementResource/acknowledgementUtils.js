@@ -4,25 +4,32 @@ import {
   getCommonParagraph,
   getCommonContainer
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import "./acknowledgementUtils.css"
 
 const style = {
   bodyBox: {
     marginLeft: 16,
-    flex: 2
+    flex: 2,
+    marginTop:"13px"
   },
   tailText: {
     color: "rgba(0, 0, 0, 0.6000000238418579)",
     fontSize: 16,
-    fontWeight: 400
+    fontWeight: 400,
+    textAlign: "right"
   },
   tailNumber: {
-    fontSize: 24,
-    fontWeight: 500
+    // fontSize: 24,
+    // fontWeight: 500
+    fontSize: 15,
+  fontWeight: 500,
+  display: "flex",
   },
   tailBox: {
     textAlign: "right",
     justifyContent: "center",
-    flex: 1
+    flex: 1,
+    marginTop:"13px"
   },
   bodySub: {
     marginTop: "8px",
@@ -33,8 +40,7 @@ const style = {
   container: {
     display: "flex",
     minHeight: "106px",
-    justifyContent: "center",
-    alignItems: "center"
+    justifyContent: "center"
   }
 };
 
@@ -62,12 +68,11 @@ const acknowledgementCard = ({
         })
       },
       props: {
-        style: style.tailBox,
+        style: {...style.tailBox, flexBasis: "auto", flexGrow: 0, flexShrink:1},
         className: "ack-tail"
       }
     } :
     {};
-
   return getCommonCard({
     applicationSuccessContainer: getCommonContainer({
       avatar: {

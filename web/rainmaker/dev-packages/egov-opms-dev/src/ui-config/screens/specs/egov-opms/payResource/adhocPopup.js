@@ -1143,14 +1143,13 @@ const updateAdhocRoadCutApprove = (state, dispatch) => {
   }
 };
 const updateAdhocRoadCutReject = (state, dispatch) => {
+  
   let isFormValid = validateFields(
-    "components.adhocDialog3.children.popup.children.adhocRebateCardCeRoadCutReject.children",
+    "components.adhocDialog3.children.popup.children.adhocRebateCardCeRoadCutReject.children.ContainerCeRoadCutReject.children",
     state,
     dispatch,
     "roadcutnoc-search-preview"
   );
-
-
 
   let file = get(
     state.screenConfiguration.preparedFinalObject,
@@ -5162,7 +5161,6 @@ export const adhocPopupForCeRoadCutApprove = getCommonContainer({
 
 
 
-
 export const adhocPopupForCeRoadCutReject = getCommonContainer({
   header: {
     uiFramework: "custom-atoms",
@@ -5251,12 +5249,10 @@ export const adhocPopupForCeRoadCutReject = getCommonContainer({
       }
     }
   },
-
   adhocRebateCardCeRoadCutReject: getCommonContainer(
     {
       documentDetails,
       ContainerCeRoadCutReject: getCommonContainer({
-
         FieldCeRoadCutRejectRemarks: getTextField({
           label: {
             labelName: "Enter Remarks",
@@ -5276,7 +5272,6 @@ export const adhocPopupForCeRoadCutReject = getCommonContainer({
             }
           },
           props: {
-
             className: "textfield-enterable-selection",
             multiline: true,
             rows: "4"
@@ -5360,6 +5355,7 @@ export const adhocPopupForCeRoadCutReject = getCommonContainer({
     }
   }
 });
+
 
 
 export const adhocPopupForSeRoadCutForward = getCommonContainer({

@@ -5,8 +5,8 @@ import get from "lodash/get";
 
 class RentSummaryCardContainer extends Component {
   render() {
-      const {dataArray} = this.props
-    return <RentSummaryCard rentSummary={this.props.rentSummary} dataArray={dataArray}/>;
+      const {dataArray , type} = this.props
+    return <RentSummaryCard rentSummary={this.props.rentSummary} dataArray={dataArray} type={type}/>;
   }
 }
 
@@ -15,7 +15,7 @@ const mapStateToProps = (state, ownProps) => {
   const rent = get(
     screenConfiguration.preparedFinalObject,
     ownProps.sourceJsonPath,
-    []
+    {}
   );
   const rentSummary = {
     header: { labelName: "Rent Summary", labelKey: "ES_RENT_SUMMARY_HEADER" },

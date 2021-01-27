@@ -122,23 +122,21 @@ const getMdmsData = async (action, state, dispatch, tenantId) => {
             
           ],
         },
-        {
-          moduleName: "egov-hrms",
-          masterDetails: [
-            {
-              name: "DeactivationReason",
-              filter: "[?(@.active == true)]"
-            }
-          ]
-        },
+        // {
+        //   moduleName: "egov-hrms",
+        //   masterDetails: [
+        //     {
+        //       name: "DeactivationReason",
+        //       filter: "[?(@.active == true)]"
+        //     }
+        //   ]
+        // },
         {
           moduleName: "common-masters",
           masterDetails: [
-            {
-              name: "UOM",
-              filter: "[?(@.active == true)]"
-            },
-            
+            { name: "UOM", filter: "[?(@.active == true)]" },
+              { name: "Department", filter: "[?(@.active == true)]" },
+              { name: "Designation", filter: "[?(@.active == true)]" }
           ]
         },
         

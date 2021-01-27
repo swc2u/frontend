@@ -232,6 +232,8 @@ class ApplicationDetails extends Component {
 		modifiedFirstAmount : BillingServiceData.Bill[0]
 	})
 
+const {Amount} = this.state
+
 		prepareFormData("complaints", transformedComplaint);
 		const { complaint } = transformedComplaint;
 		fetchApplications(
@@ -1678,6 +1680,68 @@ paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
 				)
 			)}
 {/*sixStep*/}
+
+{(role === "employee" &&
+
+									(complaint.status == "PENDING_FOR_APPROVAL_SUPERVISOR" && foundSevenLavel &&
+
+										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={<ActionButtonDropdown data={{
+											label: { labelName: "TAKE ACTION ", labelKey: "BK_COMMON_TAKE_ACTION" },
+											rightIcon: "arrow_drop_down",
+											props: {
+												variant: "outlined",
+												style: { marginLeft: 5, marginRight: 15, backgroundColor: "#FE7A51", color: "#fff", border: "none", height: "60px", width: "250px" }
+											},
+											menu: [{
+												label: {
+													labelName: "CanecelApprove",
+													labelKey: "BK_MYBK_APPROVE_ACTION_BUTTON"
+												},
+
+												link: () => this.actionButtonOnClick('state', "dispatch", 'APPROVED')
+											},
+											{
+												label: {
+													labelName: "Reject",
+													labelKey: "BK_MYBK_REJECT_ACTION_BUTTON"
+												},
+												link: () => this.actionButtonOnClick('state', "dispatch", 'REJECT')
+											}]
+										}} />}></Footer>
+
+									)
+								)}
+								{(role === "employee" &&
+
+(complaint.status == "PENDING_FOR_APPROVAL_OSD" && foundEightLavel &&
+
+	<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={<ActionButtonDropdown data={{
+		label: { labelName: "TAKE ACTION ", labelKey: "BK_COMMON_TAKE_ACTION" },
+		rightIcon: "arrow_drop_down",
+		props: {
+			variant: "outlined",
+			style: { marginLeft: 5, marginRight: 15, backgroundColor: "#FE7A51", color: "#fff", border: "none", height: "60px", width: "250px" }
+		},
+		menu: [{
+			label: {
+				labelName: "Approve",
+				labelKey: "BK_MYBK_APPROVE_ACTION_BUTTON"
+			},
+
+			link: () => this.actionButtonOnClick('state', "dispatch", 'APPROVED')
+		},
+		{
+			label: {
+				labelName: "Reject",
+				labelKey: "BK_MYBK_REJECT_ACTION_BUTTON"
+			},
+			link: () => this.actionButtonOnClick('state', "dispatch", 'REJECT')
+		}]
+	}} />}></Footer>
+
+)
+)}
+
 
 {(role === "employee" &&
 

@@ -1,6 +1,7 @@
-import { dispatchMultipleFieldChangeAction, getCommonCard, getCommonHeader, getStepperObject } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { dispatchMultipleFieldChangeAction, getCommonCard, getCommonHeader, getStepperObject,getCommonTitle } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import { getCommonContainer } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {footer, stepsData} from './footer'
 import { setThirdStep } from "./applyResource/review";
 import { getSearchApplicationsResults, getSearchResults } from "../../../../ui-utils/commons";
@@ -92,11 +93,14 @@ const getData = async (action, state, dispatch) => {
   // }
     await hideFooter(action, state, dispatch)
     const owners = property.propertyDetails.owners.filter(item => !!item.ownerDetails.isCurrentOwner)
-    property = {...property, propertyDetails: {...property.propertyDetails, owners}}
+    const estateRentSummary = property.estateRentSummary
+    const dueAmount = !!estateRentSummary ? estateRentSummary.balanceRent + estateRentSummary.balanceRentPenalty + estateRentSummary.balanceGSTPenalty + estateRentSummary.balanceGST : "0"
+    property = {...property, propertyDetails: {...property.propertyDetails, owners, dueAmount: dueAmount || "0"}}
     
     const headerLabel = `ES_APPLY_${applicationType.toUpperCase()}`
 
     const header = getCommonApplyHeader({label: headerLabel, number: applicationNumber})
+    const headerDeclaration = getCommonTitle({labelName: "Declaration", labelKey: "ES_DECLARATION_CHECKBOX_LABEL"})
     
     dispatch(prepareFinalObject("property", property));
 
@@ -108,6 +112,7 @@ const getData = async (action, state, dispatch) => {
     dispatch(prepareFinalObject("Applications[0].branchType", values[0] ))
     dispatch(prepareFinalObject("Applications[0].moduleType", values[1] ))
     dispatch(prepareFinalObject("Applications[0].applicationType", values[2] ))
+    dispatch(prepareFinalObject("temp[0].declaration", false));
     //Register all the datasources in the config.
     !!dataSources && dataSources.forEach(dataSource => dataSource.type === "path" ?
       registerDatasource({...dataSource, data: property})
@@ -172,7 +177,41 @@ const getData = async (action, state, dispatch) => {
               id: "apply_form3"
             },
             children: {
-              reviewDetails: third_step
+              reviewDetails: third_step,
+              headerDiv: {
+                uiFramework: "custom-atoms",
+                componentPath: "Container",
+                props: {	
+                  style: { marginBottom: "5px" }	
+                },
+                children: {
+                  header: {
+                    gridDefination: {
+                      xs: 12,
+                      sm: 10
+                    },
+                    ...headerDeclaration
+                  }
+                }
+              },
+              declarationSummary: {
+                uiFramework: "custom-containers-local",
+                moduleName: "egov-estate",
+                componentPath: "CheckboxContainer",
+                jsonPath: "temp[0].declaration",
+                required: true,
+                props: {
+                  label: {
+                    labelName: "I hereby declare and affirm that the above-furnished information is true and correct and nothing has been concealed therefrom. I am also aware of the fact that in case this information is found false/inconect, the authorities are at liberty to initiate recovery of amount/interest/penalty/fine as providod in Punjab Municipal Act 1911 or Punjab Municipal Corporation Act 1976.",
+                    labelKey: "ES_DECLARATION_SUMMARY_VALUE"
+                  },
+                  style: { margin: "10px",
+                           paddingTop: "5px",
+                          paddingLeft: "10px" },
+                  jsonPath: "temp[0].declaration"
+                },
+                type: "array"
+              }
             },
             visible: false
           } ,

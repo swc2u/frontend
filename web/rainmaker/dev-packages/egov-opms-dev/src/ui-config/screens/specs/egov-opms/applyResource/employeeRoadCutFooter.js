@@ -289,7 +289,7 @@ export const footerEmp = getCommonApplyFooter({
       action: "condition",
 
       callBack: (state, dispatch) => {
-
+        
         set(state, 'screenConfiguration.preparedFinalObject.ROADCUTNOCWF.REASSIGNDO', false);
         showHideAdhocPopupopmsReject(state, dispatch, "roadcutnoc-search-preview", "reject")
       }

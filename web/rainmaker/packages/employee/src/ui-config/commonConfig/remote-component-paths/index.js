@@ -127,6 +127,24 @@ const remoteComponentPath = (moduleName, path) => {
         component = import("egov-hc/ui-containers-local");
       }
       break;
+	case "egov-report":
+      if (path === "ui-atoms-local") {
+        component = import("egov-report/ui-atoms-local");
+      } else if (path === "ui-molecules-local") {
+        component = import("egov-report/ui-molecules-local");
+      } else if (path === "ui-containers-local") {
+        component = import("egov-report/ui-containers-local");
+      }
+      break;
+  	case "egov-dashboard":
+      if (path === "ui-atoms-local") {
+        component = import("egov-dashboard/ui-atoms-local");
+      } else if (path === "ui-molecules-local") {
+        component = import("egov-dashboard/ui-molecules-local");
+      } else if (path === "ui-containers-local") {
+        component = import("egov-dashboard/ui-containers-local");
+      }
+      break;
     case "egov-pms":  
       if (path === "ui-atoms-local") {
         component = import("egov-pms/ui-atoms-local");

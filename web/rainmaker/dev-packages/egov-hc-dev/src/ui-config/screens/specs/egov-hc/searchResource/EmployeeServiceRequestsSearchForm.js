@@ -171,10 +171,10 @@ export const ServiceRequestFilterFormForEmployee = getCommonCard({
         buttons: [
        
           {
-            labelName: "DEAD",
-            labelKey: "HC_COMMON_SUBTYPE_DEAD",
+            labelName: "Dead and Dry Trees",
+            labelKey: "HC_COMMON_SUBTYPE_DEAD_AND_DRY",
             disabled: true,
-            value: "DEAD"
+            value: "Dead and Dry Trees"
           },
           {
             labelName: "DANGEROUS",
@@ -183,10 +183,10 @@ export const ServiceRequestFilterFormForEmployee = getCommonCard({
             value: "DANGEROUS"
           },
           {
-            labelName: "DRY",
-            labelKey: "HC_COMMON_SUBTYPE_DRY",
+            labelName: "Pollarding of Trees",
+            labelKey: "HC_COMMON_SUBTYPE_POLLARDINGOFTREES",
             disabled: true,
-            value: "DRY"
+            value: "Pollarding of Trees"
           }
         ],
         jsonPath:"serviceRequests.serviceRequestSubtype",
@@ -372,7 +372,46 @@ export const ServiceRequestFilterFormForEmployee = getCommonCard({
     labelName: "name",
     valueName: "name"
     },
+  },
+   
+  assignedTo: {
+    uiFramework: "custom-containers-local",
+    moduleName: "egov-hc",
+    componentPath: "AutosuggestContainer",
+    jsonPath: "serviceRequests.assignedTo",
+    required: false,
+          gridDefination: {
+            xs: 12,
+            sm: 6,
+            md: 4
+          },
+  props: {
+  style: {
+  width: "100%",
+  cursor: "pointer"
+  },
+ 
+  className: "citizen-city-picker",
+  label: { labelName: "Assigned To", labelKey: "HC_SERVICE_REQUEST_ASSIGNEDTO" },
+  placeholder: {
+    labelName: "Select Assigned To",
+    labelKey: "HC_SERVICE_REQUEST_ASSIGNEDTO_PLACEHOLDER"
+  },
+  sourceJsonPath: "applyScreenMdmsData.eg-horticulture.assignedToList",
+  jsonPath: "serviceRequests.assignedTo",
+ 
+  labelsFromLocalisation: false,
+  suggestions: [],
+  fullwidth: true,
+  required: false,
+  inputLabelProps: {
+    shrink: true
+  },
+  isMulti: false,
+  labelName: "name",
+  valueName: "name"
   }
+}
   }),
   button: getCommonContainer({
     buttonContainer: getCommonContainer({

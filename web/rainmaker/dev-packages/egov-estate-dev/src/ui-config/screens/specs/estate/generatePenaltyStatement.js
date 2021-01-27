@@ -13,28 +13,18 @@ import {getReviewPayment} from './preview-resource/payment-details'
 import {onTabChange, headerrow, tabs} from './estate-penalty'
 import {paymentDetailsTable} from './applyResource/applyConfig'
 import { getBreak } from "egov-ui-framework/ui-config/screens/specs/utils";
-import {propertyInfo} from './preview-resource/preview-properties'
+import {propertyInfo,penaltyInfo} from './preview-resource/preview-properties'
 import { getTodaysDateInYMD } from "../utils";
 import {penaltyDetailsTable} from "./searchResource/searchResults"
-
+import {generatePenaltyStatementApiCall} from './searchResource/functions'
+import {penaltyStatmentResult} from './searchResource/functions'
 const header = getCommonHeader({
     labelName: "Penalty",
     labelKey: "ES_PENALTY_HEADER"
   });
 
 const beforeInitFn = async (action, state, dispatch, fileNumber) => {
-//   if(fileNumber){
-//       let queryObject = [
-//           { key: "fileNumber", value: fileNumber }
-//         ];
-//    const response =  await getSearchResults(queryObject);
-//     if(!!response) {
-//       let {estateDemands, estatePayments} = response.Properties[0].propertyDetails;
-//       estateDemands = estateDemands || []
-//       estatePayments = estatePayments || []
-//       setXLSTableData({demands:estateDemands,payments:estatePayments, componentJsonPath: "components.div.children.paymentDetailsTable", screenKey: "payment-details"})
-//     }
-//   }
+
     const queryObject = [{
     key: "fileNumber",
     value: fileNumber
@@ -43,10 +33,23 @@ const beforeInitFn = async (action, state, dispatch, fileNumber) => {
     if (!!response.Properties && !!response.Properties.length) {
     dispatch(prepareFinalObject("Properties", response.Properties))
     dispatch(prepareFinalObject("propertyPenalties", []))
+
+      if(!!response) {
+      let properties = response.Properties
+      const propertyId = properties[0].id;   
+      let Criteria = {
+        fromdate: properties[0].propertyDetails.auditDetails.createdTime || "",
+        todate:   ""
+      }
+      Criteria = {...Criteria, propertyid: propertyId}
+      await penaltyStatmentResult (state,dispatch, Criteria)
+    }
+
     }
 }
 
-const propertyDetails = getCommonCard(propertyInfo(false))
+export const propertyDetails = getCommonCard(propertyInfo(false))
+export const penaltySummary = getCommonCard(penaltyInfo(false))
 
 export const penaltyStatementFilter = getCommonCard({  
     dateContainer: getCommonContainer({
@@ -64,7 +67,7 @@ export const penaltyStatementFilter = getCommonCard({
             xs: 12,
             sm: 6
           },
-          required: true,
+          required: false,
           jsonPath: "searchScreen.fromDate",
           props: {
               inputProps: {
@@ -82,7 +85,7 @@ export const penaltyStatementFilter = getCommonCard({
             labelKey: "ES_TO_DATE_PLACEHOLDER"
         },
         pattern: getPattern("Date"),
-        required: true,
+        required: false,
         jsonPath: "searchScreen.toDate",
         props: {
             inputProps: {
@@ -126,7 +129,7 @@ export const penaltyStatementFilter = getCommonCard({
             },
             onClickDefination: {
               action: "condition",
-            //   callBack: searchApiCallAccountStatement
+              callBack: generatePenaltyStatementApiCall
             }
           }, lastCont: {
             uiFramework: "custom-atoms",
@@ -182,6 +185,7 @@ const generatePenaltyStatement = {
           },
           
           propertyDetails,
+          penaltySummary,
           penaltyStatementFilter,
           breakAfterSearch: getBreak(),
           penaltyDetailsTable

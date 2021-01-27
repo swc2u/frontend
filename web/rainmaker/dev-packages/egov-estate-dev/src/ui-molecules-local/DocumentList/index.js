@@ -63,7 +63,9 @@ const documentTitle = {
   fontSize: "16px",
   fontWeight: 400,
   letterSpacing: "0.67px",
-  lineHeight: "19px"
+  lineHeight: "19px", 
+  wordBreak : "break-word"
+
 };
 
 class DocumentList extends Component {
@@ -250,7 +252,7 @@ class DocumentList extends Component {
   }
 
   render() {
-    const { classes, documents, documentTypePrefix, description ,imageDescription ,inputProps } = this.props;
+    const { classes, documents, documentTypePrefix, description ,imageDescription ,inputProps, documentKey } = this.props;
     const { uploadedIndex,showLoader } = this.state;
     return (
       <div>        
@@ -260,8 +262,8 @@ class DocumentList extends Component {
             const currentDocumentProps =  inputProps.filter(item => item.type === document.name);
             return (
               <div
-                key={key}
-                id={`document-upload-${key}`}
+                key={!!documentKey ? `${documentKey}_${key}` : key}
+                id={`document-upload-${!!documentKey ? `${documentKey}_${key}` : key}`}
                 className={classes.documentContainer}
               >
                 <Grid container={true}>
@@ -279,7 +281,7 @@ class DocumentList extends Component {
                     )}
                   </Grid>
                   <Grid item={true} xs={6} sm={6} align="left">
-                    <LabelContainer
+                    <LabelContainer 
                       labelName={documentTypePrefix + document.name}
                       labelKey={documentTypePrefix + document.name}
                       style={documentTitle}
@@ -288,13 +290,15 @@ class DocumentList extends Component {
                       <sup style={{ color: "#E54D42" }}>*</sup>
                     )}
                     <Typography variant="caption">
-                      <LabelContainer
+                      <LabelContainer style={{ 
+                             wordBreak : "break-word"
+                        }}
                         labelName={"Allowed documents are Aadhar Card / Voter ID Card / Driving License"}
                         labelKey={!!document.statement ? documentTypePrefix + document.statement: ""}
                         />
                     </Typography>
                     <Typography variant="caption">
-                      <LabelContainer
+                      <LabelContainer 
                      labelName={currentDocumentProps[0].description.labelName}
                      labelKey={documentTypePrefix + currentDocumentProps[0].description.labelKey}
                       />
@@ -310,7 +314,7 @@ class DocumentList extends Component {
                     </label> : null}
                     <UploadSingleFile
                       classes={this.props.classes}
-                      id={`upload-button-${key}`}
+                      id={`upload-button-${!!documentKey ? `${documentKey}_${key}` : key}`}
                       handleFileUpload={this.changeFile(key)}
                       uploaded={uploadedIndex.indexOf(key) > -1}
                       removeDocument={() => this.removeDocument(key)}

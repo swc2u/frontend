@@ -757,10 +757,12 @@ export const createUpdateNocApplication = async (state, dispatch, status) => {
             ];
             set(payload, "uploadVaccinationCertificate", otherDocuments_Vaccine);
             set(payload, "uploadPetPicture", otherDocuments_pet);
+         
 
           }
         }
       });
+      set(payload, "idName", getIdName(state,"PETNOC",get(payload, null)));
       response = await httpRequest("post", "/pm-services/noc/_update", "", [], { dataPayload: payload });
       setapplicationNumber(response.applicationId);
       dispatch(prepareFinalObject("PETNOC", response));
@@ -1258,6 +1260,7 @@ export const createUpdateSellMeatNocApplication = async (state, dispatch, status
         return { status: "fail", message: response };
       }
     } else if (method === "UPDATE") {
+      set(payload, "idName", getIdName(state, "SELLMEATNOC", get(payload, null)));
       response = await httpRequest("post", "/pm-services/noc/_update", "", [], { dataPayload: payload });
       setapplicationNumber(response.applicationId);
       dispatch(prepareFinalObject("SELLMEATNOC", response));
@@ -1349,6 +1352,7 @@ export const createUpdateRoadCutNocApplication = async (state, dispatch, status)
         return { status: "fail", message: response };
       }
     } else if (method === "UPDATE") {
+      set(payload, "idName", getIdName(state,"ROADCUTNOC",get(payload, "division")));
       response = await httpRequest("post", "/pm-services/noc/_update", "", [], { dataPayload: payload });
       setapplicationNumber(response.applicationId);
       dispatch(prepareFinalObject("ROADCUTNOC", response));
@@ -1423,7 +1427,7 @@ export const createUpdateADVNocApplication = async (state, dispatch, status) => 
     } else if (method === "UPDATE") {
       dispatch(prepareFinalObject("ADVTCALCULATENOC", payload));
 
-
+      set(payload, "idName", getIdName(state,"ADVERTISEMENTNOC",get(payload, null)));
       response = await httpRequest("post", "/pm-services/noc/_update", "", [], { dataPayload: payload });
       if (status !== 'REASSIGN') {
         responsecreateDemand = await createDemandForAdvNOC(state, dispatch);

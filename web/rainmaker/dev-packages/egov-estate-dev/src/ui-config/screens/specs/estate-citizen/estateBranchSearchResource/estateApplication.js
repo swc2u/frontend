@@ -219,6 +219,7 @@ export const estateApplication = getCommonCard({
           labelName: "Site Number",
           labelKey: "ES_SITE_NUMBER_LABEL"
         },
+        errorMessage: "ES_ERR_MAXLENGTH_50",
         placeholder: {
             labelName: "Enter Site Number",
             labelKey: "ES_SITE_NUMBER_PLACEHOLDER"
@@ -245,7 +246,7 @@ export const estateApplication = getCommonCard({
         // required: true,
         visible: false,
         jsonPath: "searchScreenSiteNo.sectorNumber",
-        sourceJsonPath: "searchScreenMdmsData.EstateServices.SectorNumber",
+        sourceJsonPath: "searchScreenMdmsData.EstateServices.sector",
         gridDefination: {
             xs: 12,
             sm: 6

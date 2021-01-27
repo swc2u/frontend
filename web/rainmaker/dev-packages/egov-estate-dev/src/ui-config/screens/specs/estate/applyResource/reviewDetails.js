@@ -8,10 +8,17 @@ import {
   getReviewAdditional,
   getReviewCompanyDetails,
   getReviewFirmDetails,
-  getReviewProprietorshipDetails
+  getReviewProprietorshipDetails,
+  getReviewGroundRent,
+  getReviewLicenseFee,
+  getReviewAdvanceRent,
+  getReviewSecurity,
+  getReviewConsolidatedPaymentDetails,
+  getReviewInterest,
+  getReviewRentSummary
 } from "./reviewProperty";
-import {getReviewRentSummary} from '../preview-resource/preview-properties'
-const reviewRentSummary = getReviewRentSummary(true);
+// import {getReviewRentSummary} from '../preview-resource/preview-properties'
+// const reviewRentSummary = getReviewRentSummary(true);
 
 const header = getCommonTitle({
   labelName: "Please review your Application and Submit",
@@ -25,6 +32,13 @@ if (typeof getReviewPropertyInfo != "undefined" && typeof getReviewAuction != "u
   var companyDetails = getReviewCompanyDetails();
   var firmDetails = getReviewFirmDetails();
   var proprietorDetails = getReviewProprietorshipDetails();
+  var reviewGroundRent = getReviewGroundRent(true, 7, "apply");
+  var reviewLicenseFee = getReviewLicenseFee(true, 7, "apply");
+  var reviewAdvanceRent = getReviewAdvanceRent(true, 7, "apply");
+  var reviewSecurity = getReviewSecurity(true, 7, "apply");
+  var consolidatedPayment = getReviewConsolidatedPaymentDetails();
+  var reviewInterest = getReviewInterest(true, 7, "apply");
+  var reviewRentSummary = getReviewRentSummary(true, 7, "apply");
 }
 
 export const reviewDetails = getCommonCard({
@@ -35,5 +49,11 @@ export const reviewDetails = getCommonCard({
   companyDetails,
   firmDetails, 
   proprietorDetails,
-  reviewRentSummary
+  reviewGroundRent,
+  reviewLicenseFee,
+  reviewAdvanceRent,
+  reviewInterest,
+  reviewSecurity,
+  reviewRentSummary,
+  consolidatedPayment
 })

@@ -47,14 +47,16 @@ import store from "../../../../ui-redux/store";
 const beforeInitFn = async (action, state, dispatch) => {
   dispatch(prepareFinalObject("workflow.ProcessInstances", []))
   const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+  const branchType = getQueryArg(window.location.href, "branchType");
 
   if (!applicationNumber) {
     return;
   }
-  const queryObject = [{
-    key: "applicationNumber",
-    value: applicationNumber
-  }]
+  const queryObject = [
+    { key: "applicationNumber", value: applicationNumber },
+    { key: "branchType", value: branchType },
+    { key: "tenantId", value: getTenantId() },
+  ]
   const response = await getSearchApplicationsResults(queryObject);
   try {
     let {
@@ -548,9 +550,9 @@ const variationDetailField = {
     xs: 12,
     sm: 6
   },
-  minLength: 2,
+  minLength: 0,
   maxLength: 150,
-  // required: true,
+  required: false,
   jsonPath: "Applications[0].applicationDetails.varations"
 }
 
@@ -770,9 +772,9 @@ const cantileverDetailsField = {
     xs: 12,
     sm: 6
   },
-  // required: true,
+  required: false,
   visible: false,
-  minLength: 5,
+  minLength: 0,
   maxLength: 150,
   jsonPath: "Applications[0].applicationDetails.cantileverOrprojectionDetails"
 }

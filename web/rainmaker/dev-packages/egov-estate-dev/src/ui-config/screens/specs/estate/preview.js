@@ -52,18 +52,24 @@ const getData = async (action, state, dispatch) => {
     await dispatch(prepareFinalObject("templateDocuments", []))
     await dispatch(prepareFinalObject("temp", []))
     const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+    const branchType = getQueryArg(window.location.href, "branchType");
     if(!applicationNumber) {
         return {}
     }
     const tenantId = getQueryArg(window.location.href, "tenantId");
-    const queryObject = [
-        {key: "applicationNumber", value: applicationNumber}
+    let queryObject = [
+        {key: "applicationNumber", value: applicationNumber},
       ]
+      queryObject = !!branchType ? [...queryObject, {key: "branchType", value: branchType}] : queryObject
     let footer = {},printCont = {},taskStatusProps = {};
     const response = await getSearchApplicationsResults(queryObject)
     try {
        let {Applications = []} = response;
-       let {applicationDocuments, workFlowBusinessService, state: applicationState, billingBusinessService: businessService} = Applications[0];
+       let {applicationDocuments, workFlowBusinessService, state: applicationState, billingBusinessService: businessService, property} = Applications[0];
+       const estateRentSummary = property.estateRentSummary
+       const dueAmount = !!estateRentSummary ? estateRentSummary.balanceRent + estateRentSummary.balanceRentPenalty + estateRentSummary.balanceGSTPenalty + estateRentSummary.balanceGST : "0"
+       property = {...property, propertyDetails: {...property.propertyDetails, dueAmount: dueAmount || "0"}}
+    
        applicationDocuments = applicationDocuments || []
        const statusQueryObject = [{
           key: "tenantId",
@@ -77,7 +83,7 @@ const getData = async (action, state, dispatch) => {
        getStatusList( state, dispatch, statusQueryObject)
        const removedDocs = applicationDocuments.filter(item => !item.isActive)
        applicationDocuments = applicationDocuments.filter(item => !!item.isActive)
-       Applications = [{...Applications[0], applicationDocuments}]
+       Applications = [{...Applications[0], applicationDocuments, property}]
        dispatch(prepareFinalObject("Applications", Applications))
        dispatch(prepareFinalObject("temp[0].removedDocs", removedDocs))
        await setDocuments(
@@ -111,16 +117,17 @@ const getData = async (action, state, dispatch) => {
           }) : {}
           reviewDetails = {estimate, ...reviewDetails}
        }
-        if(applicationState === "ES_PENDING_PAYMENT" || applicationState === "ES_PENDING_CITIZEN_TEMPLATE_SUBMISSION" || applicationState === "ES_PENDING_CITIZEN_NOTICE_DOCUMENTS" || applicationState === "ES_PENDING_JE_VERIFICATION") {
-          footer = (process.env.REACT_APP_NAME === "Citizen" || applicationState === "ES_PENDING_JE_VERIFICATION") ? footerReview(
+        if(process.env.REACT_APP_NAME === "Citizen" ? applicationState === "ES_PENDING_PAYMENT" || applicationState === "ES_MM_PENDING_PAYMENT" || applicationState === "ES_PENDING_CITIZEN_TEMPLATE_SUBMISSION" || applicationState === "ES_PENDING_CITIZEN_NOTICE_DOCUMENTS" || applicationState === "ES_PENDING_JE_VERIFICATION" || applicationState === "ES_MM_PENDING_BI_VERIFICATION" || applicationState === "ES_MM_PENIDNG_CITIZEN_NOTICE" : applicationState === "ES_PENDING_JE_VERIFICATION" || applicationState === "ES_MM_PENDING_BI_VERIFICATION") {
+          footer = footerReview(
             action,
             state,
             dispatch,
             applicationState,
             applicationNumber,
             tenantId,
-            businessService
-          ) : footer
+            businessService,
+            branchType
+          )
         }
 
         if(!!wfDocumentList.length) {

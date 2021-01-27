@@ -587,6 +587,8 @@ export const createDemandForRoadCutNOC = async (state, ispatch, applicationNumbe
     userInfo.createdDate = 0;
     userInfo.lastModifiedDate = 0;
     userInfo.dob = 0;
+    userInfo.photo = null;
+
     let currentFinancialYr = getCurrentFinancialYear();
     //Changing the format of FY
     let fY1 = currentFinancialYr.split("-")[1];
@@ -652,6 +654,7 @@ export const searchdemand = async (dispatch, applicationNumber, tenantId) => {
     userInfo.createdDate = 0;
     userInfo.lastModifiedDate = 0;
     userInfo.dob = 0;
+    userInfo.photo = null;
 
     let queryObject = [
       { key: "tenantId", value: tenantId },
@@ -1162,6 +1165,7 @@ export const createDemandForAdvNOC = async (state, ispatch) => {
     userInfo.createdDate = 0;
     userInfo.lastModifiedDate = 0;
     userInfo.dob = 0;
+    userInfo.photo = null;
     let currentFinancialYr = getCurrentFinancialYear();
     //Changing the format of FY
     let fY1 = currentFinancialYr.split("-")[1];

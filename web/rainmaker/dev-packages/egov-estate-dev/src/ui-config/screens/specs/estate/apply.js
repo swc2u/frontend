@@ -32,9 +32,8 @@ import {
 } from "egov-ui-framework/ui-utils/commons";
 import {
   prepareDocumentTypeObjMaster,
-  prepareCompanyDocumentTypeObjMaster,
   preparePrevOwnerDocumentTypeObjMaster,
-  prepareBiddersDocumentTypeObjMaster
+  prepareBiddersDocumentTypeObjMaster,
 } from "../utils";
 import {
   handleScreenConfigurationFieldChange as handleField
@@ -46,10 +45,9 @@ import {
   getSearchResults,
   populateBiddersTable
 } from "../../../../ui-utils/commons";
-import * as companyDocsData from './applyResource/company-docs.json';
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import * as previousDocsData from './applyResource/previousOwnerDocs.json';
-import * as biddersListData from './applyResource/biddersListDoc.json';
+import * as legacyAccStmtData from "./applyResource/legacyAccountStmtDoc.json";
 import { toggleEntityOwnersDivsBasedOnEntityType, toggleEntityOwnersDivsBasedOnPropertyRegisteredTo, getActionDefinationForAuctionDetailsFields } from './applyResource/propertyDetails'
 import { ESTATE_SERVICES_MDMS_MODULE } from "../../../../ui-constants";
 
@@ -84,7 +82,7 @@ const setPaymentDocumentData = async (action, state, dispatch,owner = 0) => {
       labelKey: "ONLY_XLSX",
     },
       formatProps :{
-        accept : ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel",
+        accept : ".xlsx,.xls,vnd.ms-excel,.ms-excel,application/vnd.ms-excel,application/ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       }, 
       maxFileSize: 6000,
       moduleName: "Estate",
@@ -113,7 +111,7 @@ const setPaymentDocumentData = async (action, state, dispatch,owner = 0) => {
 dispatch(prepareFinalObject(`PropertiesTemp[0].propertyDetails.owners[${owner}].ownerDetails.applicationPaymentDocuments`, documentsType))
 }
 
-export const setDocumentData = async (action, state, dispatch, owner = 0) => {
+export const setDocumentData = async (action, state, dispatch, owner = 0, documentStep = "formwizardFourthStep") => {
   const documentTypePayload = [{
     moduleName: ESTATE_SERVICES_MDMS_MODULE,
     masterDetails: [{
@@ -175,19 +173,21 @@ export const setDocumentData = async (action, state, dispatch, owner = 0) => {
     );
   dispatch(
     handleField(
-      "apply",
-      `components.div.children.formwizardFourthStep.children.ownerDocumentDetails_${owner}.children.cardContent.children.documentList`,
+      action.screenKey,
+      `components.div.children.${documentStep}.children.ownerDocumentDetails_${owner}.children.cardContent.children.documentList`,
       "props.inputProps",
       estateMasterDocuments
     )
   );
   dispatch(prepareFinalObject(`PropertiesTemp[0].propertyDetails.owners[${owner}].ownerDetails.ownerDocuments`, documentTypes))
   dispatch(prepareFinalObject("applyScreenMdmsData.estateApplications", documents))
-  setPaymentDocumentData(action, state, dispatch,owner)
+  if (action.screenKey == "apply") {
+    setPaymentDocumentData(action, state, dispatch,owner);
+  }
 
 }
 
-export const setPrevOwnerDocs = (action, state, dispatch, prevOwnerIndex = 0) => {
+export const setPrevOwnerDocs = (action, state, dispatch, prevOwnerIndex = 0, documentStep = "formwizardSixthStep") => {
   const {
     EstateServices
   } = previousDocsData && previousDocsData.MdmsRes ? previousDocsData.MdmsRes : {}
@@ -242,8 +242,8 @@ export const setPrevOwnerDocs = (action, state, dispatch, prevOwnerIndex = 0) =>
     );
   dispatch(
     handleField(
-      "apply",
-      `components.div.children.formwizardSixthStep.children.previousOwnerDocuments_${prevOwnerIndex}.children.cardContent.children.documentList`,
+      action.screenKey,
+      `components.div.children.${documentStep}.children.previousOwnerDocuments_${prevOwnerIndex}.children.cardContent.children.documentList`,
       "props.inputProps",
       estateMasterDocuments
     )
@@ -252,10 +252,17 @@ export const setPrevOwnerDocs = (action, state, dispatch, prevOwnerIndex = 0) =>
   dispatch(prepareFinalObject("applyScreenMdmsData.estateApplicationsPrevOwnerDocs", previousOwnerDocs))
 }
 
-const setBiddersDoc = (action, state, dispatch) => {
+const setBiddersDoc = async (action, state, dispatch) => {
+  const documentTypePayload = [{
+    moduleName: ESTATE_SERVICES_MDMS_MODULE,
+    masterDetails: [{
+      name: "biddersListDoc"
+    }]
+  }]
+  const documentRes = await getMdmsData(dispatch, documentTypePayload);
   const {
     EstateServices
-  } = biddersListData && biddersListData.MdmsRes ? biddersListData.MdmsRes : {}
+  } = documentRes && documentRes.MdmsRes ? documentRes.MdmsRes : {}
   const {
     biddersListDoc = []
   } = EstateServices || {}
@@ -275,44 +282,53 @@ const setBiddersDoc = (action, state, dispatch) => {
     )
   );
   dispatch(prepareFinalObject(`temp[0].documents`, documentTypes))
+
+  dispatch(
+    handleField(
+      action.screenKey,
+      "components.div.children.formwizardSecondStep.children.AllotmentAuctionDetails.children.cardContent.children.biddersListContainer.children.cardContent.children.documentList",
+      "props.screenKey",
+      "apply"
+    )
+  )
+  dispatch(
+    handleField(
+      action.screenKey,
+      "components.div.children.formwizardSecondStep.children.AllotmentAuctionDetails.children.cardContent.children.biddersListContainer.children.cardContent.children.documentList",
+      "props.componentJsonPath",
+      "components.div.children.formwizardSecondStep.children.AllotmentAuctionDetails.children.cardContent.children.auctionTableContainer"
+    )
+  )
 }
 
-const getCompanyDocs = (action, state, dispatch, owner = 0) => {
+export const setLegacyAccStmtDoc = async (action, state, dispatch) => {
+  const documentTypePayload = [{
+    moduleName: ESTATE_SERVICES_MDMS_MODULE,
+    masterDetails: [{
+      name: "legacyAccountStmtDoc"
+    }]
+  }]
+  const documentRes = await getMdmsData(dispatch, documentTypePayload);
   const {
     EstateServices
-  } = companyDocsData && companyDocsData.MdmsRes ? companyDocsData.MdmsRes : {}
+  } = documentRes && documentRes.MdmsRes ? documentRes.MdmsRes : {}
   const {
-    documents = []
+    legacyAccountStmtDoc = []
   } = EstateServices || {}
-  const findMasterItem = documents.find(item => item.code === "MasterEst")
+  const findMasterItem = legacyAccountStmtDoc.find(item => item.code === "MasterEst")
   const masterDocuments = !!findMasterItem ? findMasterItem.documentList : [];
+  var documentTypes = [{
+    name: masterDocuments[0].code,
+    required: masterDocuments[0].required,
+    jsonPath: `Properties[0].propertyDetails.accountStatementDocument[0]`,
+    statement: "ACC_STMT_DESC"
+  }]
 
-  const estateMasterDocuments = masterDocuments.map(item => ({
-    type: item.code,
-    description: {
-      labelName: "Only .jpg and .pdf files. 6MB max file size.",
-      labelKey: item.fileType
-    },
-    formatProps: {
-      accept: item.accept || "image/*, .pdf, .png, .jpeg",
-    },
-    maxFileSize: 6000,
-    downloadUrl: item.downloadUrl,
-    moduleName: "Estate",
-    statement: {
-      labelName: "Allowed documents are Aadhar Card / Voter ID Card / Driving License",
-      labelKey: item.description
-    }
-  }))
-  var documentTypes;
-  var applicationDocs;
-  documentTypes = prepareDocumentTypeObjMaster(masterDocuments, owner);
-  applicationDocs = get(
+  let applicationDocs = get(
     state.screenConfiguration.preparedFinalObject,
-    `Properties[0].propertyDetails.owners[${owner}].ownerDetails.ownerDocuments`,
+    `Properties[0].propertyDetails.accountStatementDocument`,
     []
   ) || [];
-
 
   applicationDocs = applicationDocs.filter(item => !!item)
   let applicationDocsReArranged =
@@ -327,21 +343,20 @@ const getCompanyDocs = (action, state, dispatch, owner = 0) => {
   applicationDocsReArranged &&
     dispatch(
       prepareFinalObject(
-        `Properties[0].propertyDetails.owners[${owner}].ownerDetails.ownerDocuments`,
+        `Properties[0].propertyDetails.accountStatementDocument`,
         applicationDocsReArranged
       )
     );
+
   dispatch(
     handleField(
-      "apply",
-      `components.div.children.formwizardFourthStep.children.companyDocuments_${owner}.children.cardContent.children.documentList`,
+      action.screenKey,
+      `components.div.children.formwizardNinthStep.children.documentDetails.children.cardContent.children.documentList`,
       "props.inputProps",
-      estateMasterDocuments
+      masterDocuments
     )
   );
-  dispatch(prepareFinalObject(`PropertiesTemp[0].propertyDetails.owners[${owner}].ownerDetails.ownerDocuments`, documentTypes))
-  dispatch(prepareFinalObject("applyScreenMdmsData.estateApplicationsCompanyDocs", documents))
-
+  dispatch(prepareFinalObject(`PropertiesTemp[0].propertyDetails.accountStatementDocument`, documentTypes))
 }
 
 const header = getCommonContainer({
@@ -371,6 +386,8 @@ export const setData = (properties, screenName, dispatch, state) => {
   let stepFirst;
   let stepSummary;
   let reviewContainer;
+  let stepPayment;
+  let isGroundRent = properties[0].propertyDetails.paymentConfig ? properties[0].propertyDetails.paymentConfig.isGroundRent ? properties[0].propertyDetails.paymentConfig.isGroundRent : false : null;
 
   switch(screenName) {
     case "apply":
@@ -378,12 +395,14 @@ export const setData = (properties, screenName, dispatch, state) => {
       stepSecond = "formwizardSecondStep";
       stepSummary = "formwizardTenthStep";
       reviewContainer = "reviewDetails";
+      stepPayment = "formwizardEighthStep";
       break;
     case "allotment":
       stepFirst = "formwizardFirstStepAllotment";
       stepSecond = "formwizardSecondStepAllotment";
       stepSummary = "formwizardSeventhStepAllotment";
-      reviewContainer = "reviewAllotmentDetails"
+      reviewContainer = "reviewAllotmentDetails";
+      stepPayment = "formwizardSixthStepAllotment"
       break;
   }
 
@@ -448,15 +467,49 @@ export const setData = (properties, screenName, dispatch, state) => {
   /*************************************************************************************************/
 
   /* based on the propertyType toggle display of groundRent and licenseFee containers */
-  if (screenName == "allotment") {
+  /* dispatch(
+    handleField(
+      screenName,
+        `components.div.children.${stepPayment}.children.demandSelect`,
+        "visible",
+        !!(propertyType == "PROPERTY_TYPE.LEASEHOLD")
+    )
+  )  */
+
+  if (isGroundRent != null) {
     dispatch(
       handleField(
-          "allotment",
-          "components.div.children.formwizardSixthStepAllotment.children.demandSelect",
-          "visible",
-          !!(propertyType == "PROPERTY_TYPE.LEASEHOLD")
+        screenName,
+        `components.div.children.${stepPayment}.children.groundRentDetails`,
+        "visible",
+        !!isGroundRent && !!(propertyType == "PROPERTY_TYPE.LEASEHOLD")
       )
-    ) 
+    )
+    dispatch(
+      handleField(
+        screenName,
+        `components.div.children.${stepPayment}.children.licenseFeeDetails`,
+        "visible",
+        !isGroundRent && !!(propertyType == "PROPERTY_TYPE.LEASEHOLD")
+      )
+    )
+
+    dispatch(
+      handleField(
+        screenName,
+        `components.div.children.${stepSummary}.children.${reviewContainer}.children.cardContent.children.reviewGroundRent`,
+        "visible",
+        !!isGroundRent && !!(propertyType == "PROPERTY_TYPE.LEASEHOLD")
+      )
+    )
+    dispatch(
+      handleField(
+        screenName,
+        `components.div.children.${stepSummary}.children.${reviewContainer}.children.cardContent.children.reviewLicenseFee`,
+        "visible",
+        !isGroundRent && !!(propertyType == "PROPERTY_TYPE.LEASEHOLD")
+      )
+    )
   }
   /*************************************************************************************************/
 
@@ -602,20 +655,9 @@ const getData = async (action, state, dispatch) => {
     }
     ]
   }]
-
-  const response = await getMdmsData(dispatch, mdmsPayload);
-  dispatch(prepareFinalObject("applyScreenMdmsData", response.MdmsRes));
-
-  if (!!fileNumber) {
-    await getPMDetailsByFileNumber(action, state, dispatch, fileNumber, "apply")
-  }
-  setDocumentData(action, state, dispatch);
-  setPrevOwnerDocs(action, state, dispatch);
-  setBiddersDoc(action, state, dispatch);
-
-  dispatch(
+    dispatch(
     handleField(
-      "apply",
+      action.screenKey,
       "components.div.children.formwizardSecondStep.children.AllotmentAuctionDetails.children.cardContent.children.biddersListContainer.children.cardContent.children.documentList",
       "props.screenKey",
       "apply"
@@ -623,16 +665,19 @@ const getData = async (action, state, dispatch) => {
   )
   dispatch(
     handleField(
-      "apply",
+      action.screenKey,
       "components.div.children.formwizardSecondStep.children.AllotmentAuctionDetails.children.cardContent.children.biddersListContainer.children.cardContent.children.documentList",
       "props.componentJsonPath",
       "components.div.children.formwizardSecondStep.children.AllotmentAuctionDetails.children.cardContent.children.auctionTableContainer"
     )
   )
 
+  const response = await getMdmsData(dispatch, mdmsPayload);
+  dispatch(prepareFinalObject("applyScreenMdmsData", response.MdmsRes));
+
   dispatch(
     handleField(
-      "apply",
+      action.screenKey,
       "components.div.children.formwizardEighthStep.children.groundRentDetails",
       "visible",
       false
@@ -640,12 +685,40 @@ const getData = async (action, state, dispatch) => {
   )
   dispatch(
     handleField(
-      "apply",
+      action.screenKey,
       "components.div.children.formwizardEighthStep.children.licenseFeeDetails",
       "visible",
       false
     )
   )
+
+  dispatch(
+    handleField(
+      action.screenKey,
+      "components.div.children.formwizardTenthStep.children.reviewDetails.children.cardContent.children.reviewGroundRent",
+      "visible",
+      false
+    )
+  )
+  dispatch(
+    handleField(
+      action.screenKey,
+      "components.div.children.formwizardTenthStep.children.reviewDetails.children.cardContent.children.reviewLicenseFee",
+      "visible",
+      false
+    )
+  )
+
+  if (!!fileNumber) {
+    await getPMDetailsByFileNumber(action, state, dispatch, fileNumber, action.screenKey)
+  }
+  let owner;
+  setDocumentData(action, state, dispatch);
+  // setDocumentData(action, state, dispatch, owner = 1);
+  setPrevOwnerDocs(action, state, dispatch);
+  setBiddersDoc(action, state, dispatch);
+  setLegacyAccStmtDoc(action, state, dispatch);
+
   const stepNumber = getQueryArg(window.location.href, "stepNumber");
   if(!!stepNumber) {
     changeStep(state, dispatch, "apply", "", Number(stepNumber))

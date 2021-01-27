@@ -1013,6 +1013,7 @@ let amount = 0;
                 },
                 generatedBy: {
                     generatedBy: JSON.parse(getUserInfo()).name,
+                    generatedDateTime: generatedDateTime
                 },
             },
         ];
@@ -1367,8 +1368,8 @@ export const downloadApplication = async (
             applicationDate: applicationData.bkDateCreated,
             propertyType: applicationData.bkType,
             date: convertDateInDMY(applicationData.bkDate),
-            time: applicationData.bkTime,
-            applicationStatus: applicationData.bkApplicationStatus,
+            time: applicationData.bkTime,  
+            applicationStatus: applicationData.bkApplicationStatus==="PENDINGASSIGNMENTDRIVER"? "Request Verification Pending" :"PENDINGASSIGNMENTDRIVER",
             applicationType: applicationData.bkStatus,
         };
         let bookingDataGFCP = {

@@ -74,7 +74,7 @@ class Footer extends React.Component {
       setRoute(url);
       return;
     }
-    if (item.showEmployeeList && !item.roles.includes("ES_EB_FINANCIAL_OFFICER")) {
+    if (item.showEmployeeList && !item.roles.includes("ES_EB_FINANCIAL_OFFICER") && !item.roles.includes("ES_BB_FINANCIAL_OFFICER")) {
 
      // commented to test the application status change flow as below API is failing.
       const tenantId = getTenantId();
@@ -139,14 +139,31 @@ class Footer extends React.Component {
       contractData &&
       contractData.map(item => {
         const { buttonLabel, moduleName } = item;
+        let redirectLink;
+        if (buttonLabel === "MODIFY") {
+          switch(moduleName) {
+            case "ES-EB-AllotmentOfSite":
+              if (_data[0].propertyMasterOrAllotmentOfSite === "PROPERTY_MASTER") {
+                redirectLink = `apply?fileNumber=${fileNumber}&tenantId=${tenant}&stepNumber=9`;
+              }
+              else {
+                redirectLink = `allotment?fileNumber=${fileNumber}&tenantId=${tenant}&stepNumber=6`;
+              }
+              break;
+            case "ES-BB-PropertyMaster":
+              redirectLink = `apply-building-branch?fileNumber=${fileNumber}&tenantId=${tenant}&stepNumber=3`;
+              break;
+            case "ES-MM-PropertyMaster":
+              redirectLink = `apply-manimajra?fileNumber=${fileNumber}&tenantId=${tenant}&stepNumber=7`;
+              break;
+            default:
+              break;
+          }
+        }
         return {
           labelName: { buttonLabel },
           labelKey: `WF_${moduleName.toUpperCase()}_${buttonLabel}`,
-          link: moduleName === "ES-EB-AllotmentOfSite" && buttonLabel === "MODIFY" ? 
-          _data[0].propertyMasterOrAllotmentOfSite === "PROPERTY_MASTER" ? 
-          () => setRoute(`/estate/apply?fileNumber=${fileNumber}&tenantId=${tenant}&stepNumber=9`) :
-          () => setRoute(`/estate/allotment?fileNumber=${fileNumber}&tenantId=${tenant}&stepNumber=6`)
-          : () => {
+          link: redirectLink ? () => window.location.href = redirectLink : () => {
             if (screenName == "noc-verification") {
               let isNocFormValid = validateFn(this.props.state);
               if (isNocFormValid) {
@@ -159,7 +176,20 @@ class Footer extends React.Component {
                 };
                 toggleSnackbar(true, errorMessage, "warning");
               }
-            } 
+            }
+            else if (screenName == "site-report") {
+              let isSiteReportFormValid = validateFn(this.props.state);
+              if (isSiteReportFormValid) {
+                this.openActionDialog(item);
+              }
+              else {
+                let errorMessage = {
+                  labelName: "Please fill all mandatory fields !",
+                  labelKey: "ES_ERR_FILL_MANDATORY_FIELDS_NOC"
+                };
+                toggleSnackbar(true, errorMessage, "warning");
+              }
+            }
             else {
               this.openActionDialog(item);
             }

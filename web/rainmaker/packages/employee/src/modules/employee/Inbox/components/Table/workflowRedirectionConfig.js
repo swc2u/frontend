@@ -179,6 +179,14 @@ export const getWFConfig = (module, businessService, taskId) => {
       DEFAULT: "/pms/pmsmap",
     };
   }
+   else if (businessService == "NewTL") { 
+    return {
+      INITIATED: "/tradelicence/apply",
+      DEFAULT: "/tradelicence/search-preview",
+    };
+
+  }
+
   else {
     switch (module.toUpperCase()) {
       case "TL-SERVICES":
@@ -201,11 +209,6 @@ export const getWFConfig = (module, businessService, taskId) => {
         return {
           INITIATED: "/rented-properties/mortgage-search-preview",
           DEFAULT: "/rented-properties/mortgage-search-preview",
-        };
-      } else {
-        return {
-          INITIATED: "/tradelicence/apply",
-          DEFAULT: "/tradelicence/search-preview",
         };
       }
     case "RENTEDPROPERTIES": 
@@ -230,13 +233,29 @@ export const getWFConfig = (module, businessService, taskId) => {
         DEFAULT: "/rented-properties/mortgage-search-preview",
       };
     }
+    case "ESTATEBRANCH":
+    case "BUILDINGBRANCH":
+    case "MANIMAJRA":
     case "ESTATEPROPERTIES":
       if(businessService === "ES-EB-AllotmentOfSite" || businessService === "ES-EB-PropertyMaster") {
         return {
           INITIATED: 'estate/search-preview',
           DEFAULT: 'estate/search-preview'
         }
-      } else {
+      } 
+      else if (businessService === "ES-BB-PropertyMaster") {
+        return {
+          INITIATED: 'estate/search-preview-building-branch',
+          DEFAULT: 'estate/search-preview-building-branch'
+        }
+      }
+      else if (businessService === "ES-MM-PropertyMaster") {
+        return {
+          INITIATED: 'estate/search-preview-manimajra',
+          DEFAULT: 'estate/search-preview-manimajra'
+        }
+      }
+      else {
         return {
           INITIATED: "/estate/preview",
           DEFAULT: "/estate/preview"

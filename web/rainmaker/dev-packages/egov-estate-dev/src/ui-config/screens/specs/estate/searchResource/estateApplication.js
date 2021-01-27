@@ -27,7 +27,7 @@ const branchType = getQueryArg(window.location.href, "branchType");
         sm: 6
     },
     required: false,
-    jsonPath: "searchScreen.SECTORNumber"
+    jsonPath: "searchScreen.sectorNumber"
   }
 
   const applicationNumberField = {
@@ -50,11 +50,11 @@ const branchType = getQueryArg(window.location.href, "branchType");
   const FileNameField = {
     label: {
         labelName: "File Name",
-        labelKey: "ES_FILE_NAME_LABEL"
+        labelKey: "ES_FILE_NUMBER_LABEL"
     },
     placeholder: {
         labelName: "Enter File Name",
-        labelKey: "ES_FILE_NAME_PLACEHOLDER"
+        labelKey: "ES_FILE_NUMBER_PLACEHOLDER"
     },
     gridDefination: {
         xs: 12,
@@ -229,6 +229,7 @@ const branchType = getQueryArg(window.location.href, "branchType");
   const clearSearch = (state, dispatch) => {
     const preparedFinalObject = get(state, "screenConfiguration.preparedFinalObject");
     const {searchScreen = {}} = preparedFinalObject
+    const branchType = getQueryArg(window.location.href, "branchType")
     if(!!searchScreen.fileNumber || !!searchScreen.state || !!searchScreen.applicationNumber) {
     dispatch(
       handleField(
@@ -248,14 +249,15 @@ const branchType = getQueryArg(window.location.href, "branchType");
     )
     dispatch(
       handleField(
-        "search",
+        "search-application",
         "components.div.children.estateApplicationSearch.children.cardContent.children.applicationNumberContainer.children.applicationNumber",
         "props.value",
         ""
       )
     )
     dispatch(prepareFinalObject("searchScreen", {}))
-    searchApplicationApiCall(state, dispatch, true)
+    // searchApplicationApiCall(state, dispatch, true)
+    searchApplicationApiCall(state, dispatch, true, "", "", true, branchType)
     }
   }
 
@@ -288,7 +290,7 @@ const branchType = getQueryArg(window.location.href, "branchType");
       )
     )
     dispatch(prepareFinalObject("searchScreen", {}))
-    searchApplicationApiCall(state, dispatch, true)
+    // searchApplicationApiCall(state, dispatch, true)
     }
   }
 

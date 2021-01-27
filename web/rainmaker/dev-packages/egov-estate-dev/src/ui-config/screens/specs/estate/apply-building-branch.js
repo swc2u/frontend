@@ -24,7 +24,6 @@ import {
   getQueryArg
 } from "egov-ui-framework/ui-utils/commons";
 import commonConfig from "config/common.js";
-//import * as docsData from './applyResourceBuildingBranch/buildingBranchOwnerDocs.json';
 import {
   prepareDocumentTypeObjMaster
 } from "../utils";
@@ -33,6 +32,7 @@ import {
 } from "lodash";
 import { getSearchResults } from "../../../../ui-utils/commons"
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
+import { changeStep } from "./applyResourceBuildingBranch/footer"
 
 export const getMdmsData = async (dispatch, body) => {
   let mdmsBody = {
@@ -108,6 +108,7 @@ const getData = async(action, state, dispatch) => {
       prepareFinalObject(
         "Properties",
         [{
+          propertyMasterOrAllotmentOfSite: "PROPERTY_MASTER",
           propertyDetails: {
             branchType: "BUILDING_BRANCH"
           }
@@ -144,6 +145,11 @@ const getData = async(action, state, dispatch) => {
   }
 
   setDocumentData(action, state, dispatch);
+
+  const stepNumber = getQueryArg(window.location.href, "stepNumber");
+  if(!!stepNumber) {
+    changeStep(state, dispatch, "apply-building-branch", "", Number(stepNumber))
+  }
 }
 
 export const setDocumentData = async (action, state, dispatch, ownerIndex = 0) => {

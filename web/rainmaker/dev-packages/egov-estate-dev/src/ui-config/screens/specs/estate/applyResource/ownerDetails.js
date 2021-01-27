@@ -208,8 +208,9 @@ const shareField = {
     xs: 12,
     sm: 6
   },
+  errorMessage:"ES_ERR_SHARE_FIELD",
   required: true,
-  pattern: _getPattern("share"),
+  pattern: _getPattern("ownerShare"),
   jsonPath: "Properties[0].propertyDetails.owners[0].share"
 }
 
@@ -267,6 +268,7 @@ const dateOfAllotmentField = {
     labelKey: "ES_DATE_OF_ALLOTMENT_PLACEHOLDER"
   },
   pattern: getPattern("Date"),
+  required: true,
   jsonPath: "Properties[0].propertyDetails.owners[0].ownerDetails.dateOfAllotment",
   // props: {
   //   inputProps: {
@@ -301,7 +303,8 @@ const allotmentNumberField = {
 }
 
 const getIsDirectorRadioButton = {
-  uiFramework: "custom-containers",
+  uiFramework: "custom-containers-local",
+  moduleName: "egov-estate",
   componentPath: "RadioGroupContainer",
   gridDefination: {
     xs: 12,
@@ -316,12 +319,12 @@ const getIsDirectorRadioButton = {
     buttons: [{
         labelName: "Yes",
         labelKey: "ES_COMMON_YES",
-        value: "true"
+        value: true
       },
       {
         label: "No",
         labelKey: "ES_COMMON_NO",
-        value: "false"
+        value: false
       }
     ],
     jsonPath: "Properties[0].propertyDetails.owners[0].ownerDetails.isDirector",
@@ -371,7 +374,8 @@ export const ownerDetails = getCommonCard({
       },
       children: {
         multipleApplicantInfo: {
-          uiFramework: "custom-containers",
+          uiFramework: "custom-containers-local",
+          moduleName: "egov-estate",
           componentPath: "MultiItem",
           props: {
             scheama: commonOwnerInformation(),

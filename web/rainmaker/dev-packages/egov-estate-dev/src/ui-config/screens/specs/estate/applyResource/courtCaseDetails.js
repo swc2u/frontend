@@ -8,6 +8,8 @@ import {
   getCommonContainer,
   getCommonGrayCard
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import {_getPattern
+} from "../../utils";
 import {
   prepareFinalObject
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -15,6 +17,10 @@ import {
   getTodaysDateInYMD
 } from "../../utils";
 import get from "lodash/get";
+import {
+  displayCustomErr,
+  displayDefaultErr
+} from "../../utils";
 
 export const courtCaseHeader = getCommonTitle({
   labelName: "Court Case Details",
@@ -39,7 +45,8 @@ const estateOfficerCourtField = {
       xs: 12,
       sm: 6
   },
-  maxLength: 250,
+  errorMessage:"ERR_COURT_DETAILS_250_CHARACTERS",
+  pattern: _getPattern("courtCase"),
   jsonPath: "Properties[0].propertyDetails.courtCases[0].estateOfficerCourt"
 }
 
@@ -56,7 +63,8 @@ const commissionersCourtField = {
       xs: 12,
       sm: 6
   },
-  maxLength: 250,
+  errorMessage:"ERR_COURT_DETAILS_250_CHARACTERS",
+  pattern: _getPattern("courtCase"),
   jsonPath: "Properties[0].propertyDetails.courtCases[0].commissionersCourt"
 }
 
@@ -73,7 +81,8 @@ const chiefAdministratorsCourtField = {
       xs: 12,
       sm: 6
   },
-  maxLength: 250,
+  errorMessage:"ERR_COURT_DETAILS_250_CHARACTERS",
+  pattern: _getPattern("courtCase"),
   jsonPath: "Properties[0].propertyDetails.courtCases[0].chiefAdministartorsCourt"
 }
 
@@ -90,7 +99,8 @@ const advisorToAdminCourtField = {
       xs: 12,
       sm: 6
   },
-  maxLength: 250,
+  errorMessage:"ERR_COURT_DETAILS_250_CHARACTERS",
+  pattern: _getPattern("courtCase"),
   jsonPath: "Properties[0].propertyDetails.courtCases[0].advisorToAdminCourt"
 }
 
@@ -107,7 +117,8 @@ const honbleDistrictCourtField = {
       xs: 12,
       sm: 6
   },
-  maxLength: 250,
+  pattern: _getPattern("courtCase"),
+  errorMessage:"ERR_COURT_DETAILS_250_CHARACTERS",
   jsonPath: "Properties[0].propertyDetails.courtCases[0].honorableDistrictCourt"
 }
 
@@ -124,7 +135,8 @@ const honbleHighCourtField = {
       xs: 12,
       sm: 6
   },
-  maxLength: 250,
+  errorMessage:"ERR_COURT_DETAILS_250_CHARACTERS",
+  pattern: _getPattern("courtCase"),
   jsonPath: "Properties[0].propertyDetails.courtCases[0].honorableHighCourt"
 }
 
@@ -141,7 +153,8 @@ const honbleSupremeCourtField = {
       xs: 12,
       sm: 6
   },
-  maxLength: 250,
+  errorMessage:"ERR_COURT_DETAILS_250_CHARACTERS",
+  pattern: _getPattern("courtCase"),
   jsonPath: "Properties[0].propertyDetails.courtCases[0].honorableSupremeCourt"
 }
 
@@ -193,7 +206,8 @@ export const courtCaseDetails = getCommonCard({
       },
       children: {
         multipleApplicantInfo: {
-          uiFramework: "custom-containers",
+          uiFramework: "custom-containers-local",
+          moduleName: "egov-estate",
           componentPath: "MultiItem",
           props: {
             scheama: commonCourtCaseInformation(),
