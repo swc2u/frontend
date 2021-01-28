@@ -155,6 +155,8 @@ export const getMdmsData = async dispatch => {
             {name : "Ledger"},
             {name : "subDivision"},
             {name : "Division"},
+            {name:"MeterUnit"},
+            {name:"MFRCode"},
           ]
         }
       ]

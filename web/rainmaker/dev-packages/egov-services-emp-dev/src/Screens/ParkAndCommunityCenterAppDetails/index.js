@@ -12,7 +12,6 @@ import { prepareFormData } from "egov-ui-kit/redux/common/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import OSMCCBookingDetails from "../AllApplications/components/OSMCCBookingDetails"
 import AppDetails from "./components/ApplicantDetails"; 
-import UserBankDetails from "./components/UserBankDetails";
 import RefundCard from "./components/RefundCard"; 
 import BookingDetails from "./components/BookingDetails"
 import DocumentPreview from "../AllApplications/components/DocumentPreview"
@@ -1417,10 +1416,6 @@ else{
 									{...complaint}
 									historyApiData={historyApiData && historyApiData}
 								/>
-								
-								<UserBankDetails
-									{...complaint}
-								/>
 								{this.state.CheckStatus != "OFFLINE_MODIFIED" ? <PaymentDetails
 									paymentDetails={paymentDetails && paymentDetails}
 									PayMentTwo={PayMentTwo && PayMentTwo}
@@ -1678,68 +1673,6 @@ paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
 				)
 			)}
 {/*sixStep*/}
-
-{(role === "employee" &&
-
-									(complaint.status == "PENDING_FOR_APPROVAL_SUPERVISOR" && foundSevenLavel &&
-
-										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={<ActionButtonDropdown data={{
-											label: { labelName: "TAKE ACTION ", labelKey: "BK_COMMON_TAKE_ACTION" },
-											rightIcon: "arrow_drop_down",
-											props: {
-												variant: "outlined",
-												style: { marginLeft: 5, marginRight: 15, backgroundColor: "#FE7A51", color: "#fff", border: "none", height: "60px", width: "250px" }
-											},
-											menu: [{
-												label: {
-													labelName: "CanecelApprove",
-													labelKey: "BK_MYBK_APPROVE_ACTION_BUTTON"
-												},
-
-												link: () => this.actionButtonOnClick('state', "dispatch", 'APPROVED')
-											},
-											{
-												label: {
-													labelName: "Reject",
-													labelKey: "BK_MYBK_REJECT_ACTION_BUTTON"
-												},
-												link: () => this.actionButtonOnClick('state', "dispatch", 'REJECT')
-											}]
-										}} />}></Footer>
-
-									)
-								)}
-								{(role === "employee" &&
-
-(complaint.status == "PENDING_FOR_APPROVAL_OSD" && foundEightLavel &&
-
-	<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={<ActionButtonDropdown data={{
-		label: { labelName: "TAKE ACTION ", labelKey: "BK_COMMON_TAKE_ACTION" },
-		rightIcon: "arrow_drop_down",
-		props: {
-			variant: "outlined",
-			style: { marginLeft: 5, marginRight: 15, backgroundColor: "#FE7A51", color: "#fff", border: "none", height: "60px", width: "250px" }
-		},
-		menu: [{
-			label: {
-				labelName: "Approve",
-				labelKey: "BK_MYBK_APPROVE_ACTION_BUTTON"
-			},
-
-			link: () => this.actionButtonOnClick('state', "dispatch", 'APPROVED')
-		},
-		{
-			label: {
-				labelName: "Reject",
-				labelKey: "BK_MYBK_REJECT_ACTION_BUTTON"
-			},
-			link: () => this.actionButtonOnClick('state', "dispatch", 'REJECT')
-		}]
-	}} />}></Footer>
-
-)
-)}
-
 
 {(role === "employee" &&
 

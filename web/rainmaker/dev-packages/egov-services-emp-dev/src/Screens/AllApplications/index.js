@@ -1094,7 +1094,7 @@ console.log("twoRole--",twoRole)
           <CustomComplaints
             noComplaintMessage={
               search
-                ? "No Records Found"
+                ? "No Search Results Found"
                 : "BK_MYBK_NO_APPLICATION_ASSIGNED"
             }
             onComplaintClick={onComplaintClick}
@@ -1243,7 +1243,7 @@ console.log("twoRole--",twoRole)
                 //noComplaintMessage={"ES_MYCOMPLAINTS_NO_COMPLAINTS_ASSIGNED"}
                 noComplaintMessage={
                   search
-                    ? "No Records Found"
+                    ? "No Search Results Found"
                     : "BK_MYBK_NO_APPLICATION_ASSIGNED"
                 }
                 onComplaintClick={onComplaintClick}

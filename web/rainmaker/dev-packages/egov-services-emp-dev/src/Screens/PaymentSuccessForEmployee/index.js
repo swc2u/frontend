@@ -119,12 +119,7 @@ console.log("AllPropsOfSubmitPage--",this.props)
                 bkEmail: data.bkEmail,
                 bkHouseNo: data.bkHouseNo,
                 bkBookingPurpose: data.bkBookingPurpose,
-				bkApplicationNumber: data.bkApplicationNumber,
-				bkBankAccountNumber: data.bkBankAccountNumber,
-				bkBankName: data.bkBankName, 
-                bkIfscCode: data.bkIfscCode,
-                bkAccountType :data.bkAccountType,
-                bkBankAccountHolder: data.bkBankAccountHolder,
+                bkApplicationNumber: data.bkApplicationNumber,
                 bkCustomerGstNo: data.bkCustomerGstNo ? data.bkCustomerGstNo : 'NA',
                 "wfDocuments": [{
                     "fileStoreId": fid[0]

@@ -192,6 +192,18 @@ export const getWFConfig = (module, businessService, taskId) => {
       DEFAULT: "/egov-services/bwt-application-details",
     } 
   }
+   else if (businessService == "NewTL") { 
+    return {
+      DEFAULT: "/egov-services/application-details",
+    }
+  }
+  
+  else if (businessService == "BWT")
+  {
+    return {
+      DEFAULT: "/egov-services/bwt-application-details",
+    } 
+  }
   else {
     switch (module.toUpperCase()) {
       case "TL-SERVICES":

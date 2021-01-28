@@ -52,14 +52,54 @@ export const OwnerInfoCard = getCommonCard({
       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
     }),
 
-    pipeSize: getSelectField({
-      label: { labelKey: "WS_CONN_DETAIL_PIPE_SIZE" },
-      sourceJsonPath: "applyScreenMdmsData.ws-services-calculation.pipeSize",
-      placeholder: { labelKey: "WS_SERV_DETAIL_PIPE_SIZE_PLACEHOLDER" },
-      required: true,
-      gridDefination: { xs: 12, sm: 6 },
-      jsonPath: "applyScreen.proposedPipeSize"
-    }),
+    // pipeSize: getSelectField({
+    //   label: { labelKey: "WS_CONN_DETAIL_PIPE_SIZE" },
+    //   sourceJsonPath: "applyScreenMdmsData.ws-services-calculation.pipeSize",
+    //   placeholder: { labelKey: "WS_SERV_DETAIL_PIPE_SIZE_PLACEHOLDER" },
+    //   required: true,
+    //   gridDefination: { xs: 12, sm: 6 },
+    //   jsonPath: "applyScreen.proposedPipeSize"
+    // }),
+
+
+    pipeSize: {
+      ...getSelectField({
+        label: { labelKey: "WS_CONN_DETAIL_PIPE_SIZE" },
+        sourceJsonPath: "applyScreenMdmsData.ws-services-calculation.pipeSize",
+        placeholder: { labelKey: "WS_SERV_DETAIL_PIPE_SIZE_PLACEHOLDER" },
+        required: true,
+        gridDefination: { xs: 12, sm: 6 },
+        jsonPath: "applyScreen.proposedPipeSize"
+      }),
+      beforeFieldChange: async (action, state, dispatch) => {
+
+        // if(action.value)
+        // {
+        //   let pipeSize = get(
+        //     state.screenConfiguration.preparedFinalObject,
+        //     "applyScreenMdmsData.ws-services-calculation.pipeSize"
+        //   )
+        //   pipeSize = pipeSize.filter(x=>x.size === action.value)
+
+        //    if(pipeSize&&pipeSize[0])
+        //    {            
+        //     dispatch(
+        //       prepareFinalObject(
+        //         "applyScreen.sanctionedCapacity",
+        //         pipeSize[0].sanctionedCapacity
+        //       )
+        //     )
+        //     dispatch(
+        //       prepareFinalObject(
+        //         "applyScreen.meterRentCode",
+        //         pipeSize[0].MeterRentCode
+        //       )
+        //     )
+        //    }
+        // }
+       
+      }
+    },
     waterApplicationType : getSelectField({
       label: { labelKey: "WATER_APPLICATION_TYPE" },
       sourceJsonPath: "applyScreenMdmsData.ws-services-masters.WaterApplicationType",

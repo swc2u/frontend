@@ -577,7 +577,7 @@ class AllComplaints extends Component {
           <Complaints
             noComplaintMessage={
               search
-                ? "No Records Found"
+                ? "No Search Results Found"
                 : "ES_MYCOMPLAINTS_NO_COMPLAINTS_ASSIGNED"
             }
             onComplaintClick={onComplaintClick}
