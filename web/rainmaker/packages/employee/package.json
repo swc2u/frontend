@@ -2,8 +2,8 @@
   "name": "rainmaker-employee",
   "version": "0.0.2",
   "private": true,
-  "homepage": "https://egov-dev.chandigarhsmartcity.in/employee/",
-  "proxy": "https://egov-dev.chandigarhsmartcity.in/",
+  "homepage": "http://3.6.65.87:8080/employee/",
+  "proxy": "http://3.6.65.87:8080/",
   "dependencies": {
     "@babel/runtime": "^7.3.1",
     "@material-ui/core": "^1.5.1",
