@@ -988,6 +988,10 @@ let amount = 0;
             };
         }
         console.log(paymentInfoData, "nero Qry str");
+        var date2 = new Date();
+
+        var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+       
         let receiptData = [
             {
                 applicantDetail: {

@@ -34,10 +34,10 @@ const ServicesTest = Loadable({
   loading: Loading
 })
 
-const MasterData = Loadable({
-  loader: () => import("../Screens/MasterData"),
-  loading: Loading
-});
+// const MasterData = Loadable({
+//   loader: () => import("../Screens/MasterData"),
+//   loading: Loading
+// });
 const OsbmFeeMasterData = Loadable({
   loader: () => import("../Screens/MasterData/OsbmFeeMasterData"),
   loading: Loading
@@ -72,10 +72,10 @@ const ParkAndCommunityCenterAppDetails=Loadable({
   loader: () => import("../Screens/ParkAndCommunityCenterAppDetails"),
   loading: Loading
 });
-const LocationSummary = Loadable({
-  loader: () => import("../Screens/LocationSummaryComponent"),
-  loading: Loading
-});
+// const LocationSummary = Loadable({
+//   loader: () => import("../Screens/LocationSummaryComponent"),
+//   loading: Loading
+// });
 
 const CGApplicationDetails = Loadable({
   loader: () => import("../Screens/CGApplicationDetails"),
@@ -111,7 +111,6 @@ const PaymentSuccessForEmployee = Loadable({
   loader: () => import("../Screens/PaymentSuccessForEmployee"),
   loading: Loading
 });
-
 const CheckAvailabilityPcc= Loadable({
   loader: () => import("../Screens/ApplyParkAndCommunity/components/CheckAvailability"),
   loading: Loading
@@ -357,20 +356,20 @@ const routes = [
   }
 },
 //newMasterData
-{
-  path: "egov-services/MasterData",
-  component: MasterData,
-  needsAuthentication: true,
-  options: {
-    hideFooter: true,
-    title: "ES_OPEN_APPLICAION_HEADER",
-    hideTitle: false,
-    redirectionUrl,
-    hideFor: "ao",
-    customFor: "employee",
-    customTitle: "MYBK_ALL_APPLICAION_HEADER"
-  }
-},
+// {
+//   path: "egov-services/MasterData",
+//   component: MasterData,
+//   needsAuthentication: true,
+//   options: {
+//     hideFooter: true,
+//     title: "ES_OPEN_APPLICAION_HEADER",
+//     hideTitle: false,
+//     redirectionUrl,
+//     hideFor: "ao",
+//     customFor: "employee",
+//     customTitle: "MYBK_ALL_APPLICAION_HEADER"
+//   }
+// },
 {
   path: "egov-services/checkavailability_pcc",
   component: CheckAvailabilityPcc,
@@ -510,16 +509,16 @@ const routes = [
   },
 
   
-  {
-    path: "egov-services/new-location-details/:applicationId",
-    component: LocationSummary,
-    needsAuthentication: true,
-    options: {
-      hideFooter: true,
-      // title: "BK_CS_HEADER_APPLICATION_SUMMARY",
-      redirectionUrl
-    }
-  },
+  // {
+  //   path: "egov-services/new-location-details/:applicationId",
+  //   component: LocationSummary,
+  //   needsAuthentication: true,
+  //   options: {
+  //     hideFooter: true,
+  //     // title: "BK_CS_HEADER_APPLICATION_SUMMARY",
+  //     redirectionUrl
+  //   }
+  // },
  
   {
     path: "egov-services/cg-application-details/:applicationId",

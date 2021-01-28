@@ -179,14 +179,19 @@ export const getWFConfig = (module, businessService, taskId) => {
       DEFAULT: "/pms/pmsmap",
     };
   }
-   else if (businessService == "NewTL") { 
+  else if (businessService == "OSBM")
+  {
     return {
-      INITIATED: "/tradelicence/apply",
-      DEFAULT: "/tradelicence/search-preview",
-    };
-
+      DEFAULT: "/egov-services/application-details",
+    }
   }
-
+  
+  else if (businessService == "BWT")
+  {
+    return {
+      DEFAULT: "/egov-services/bwt-application-details",
+    } 
+  }
   else {
     switch (module.toUpperCase()) {
       case "TL-SERVICES":
@@ -289,21 +294,21 @@ export const getWFConfig = (module, businessService, taskId) => {
           DEFAULT: "/fire-noc/search-preview",
         };
 		
-		case "MCC-BOOKING-NEW-LOCATION":
-		return {	
-			DEFAULT: "/egov-services/newLocation-application-details", 
-			}
+		// case "MCC-BOOKING-NEW-LOCATION":
+		// return {	
+		// 	DEFAULT: "/egov-services/newLocation-application-details", 
+		// 	}
 		 
 		
-        case "BOOKING-SERVICES":
-          return {
-            DEFAULT: "/egov-services/application-details",
-          }
+    //     case "BOOKING-SERVICES":
+    //       return {
+    //         DEFAULT: "/egov-services/application-details",
+    //       }
 		 
-        case "WATER-TANKER-SERVICES":
-          return {
-            DEFAULT: "/egov-services/bwt-application-details",
-          }
+    //     case "WATER-TANKER-SERVICES":
+    //       return {
+    //         DEFAULT: "/egov-services/bwt-application-details",
+    //       }
         case "HORTICULTURE":
           return {
             INITIATED: "/egov-hc/search-preview",

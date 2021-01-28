@@ -232,8 +232,6 @@ class ApplicationDetails extends Component {
 		modifiedFirstAmount : BillingServiceData.Bill[0]
 	})
 
-const {Amount} = this.state
-
 		prepareFormData("complaints", transformedComplaint);
 		const { complaint } = transformedComplaint;
 		fetchApplications(

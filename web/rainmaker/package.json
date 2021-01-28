@@ -48,8 +48,8 @@
     "build-css-egov-opms": "node-sass-chokidar dev-packages/egov-opms-dev/src -o dev-packages/egov-opms-dev/src",
     "build-css-egov-echallan": "node-sass-chokidar dev-packages/egov-echallan-dev/src -o dev-packages/egov-echallan-dev/src",
     "build-css-egov-hc": "node-sass-chokidar dev-packages/egov-hc-dev/src -o dev-packages/egov-hc-dev/src",
-	"build-css-egov-report": "node-sass-chokidar dev-packages/egov-report-dev/src -o dev-packages/egov-report-dev/src",
-	"build-css-egov-dashboard": "node-sass-chokidar dev-packages/egov-dashboard-dev/src -o dev-packages/egov-dashboard-dev/src",
+    "build-css-egov-report": "node-sass-chokidar dev-packages/egov-report-dev/src -o dev-packages/egov-report-dev/src",
+    "build-css-egov-dashboard": "node-sass-chokidar dev-packages/egov-dashboard-dev/src -o dev-packages/egov-dashboard-dev/src",
     "build-css-egov-pr": "node-sass-chokidar dev-packages/egov-pr-dev/src -o dev-packages/egov-pr-dev/src",
     "build-css-egov-store-asset": "node-sass-chokidar dev-packages/egov-store-asset-dev/src -o dev-packages/egov-store-asset-dev/src",
     "build-css-egov-nulm": "node-sass-chokidar dev-packages/egov-nulm-dev/src -o dev-packages/egov-nulm-dev/src",
@@ -87,14 +87,14 @@
     "egov-echallan": "babel dev-packages/egov-echallan-dev/src --out-dir packages/lib/egov-echallan --copy-files",
     "egov-opms": "babel dev-packages/egov-opms-dev/src --out-dir packages/lib/egov-opms --copy-files",
     "egov-hc": "babel dev-packages/egov-hc-dev/src --out-dir packages/lib/egov-hc --copy-files",
-	"egov-report": "babel dev-packages/egov-report-dev/src --out-dir packages/lib/egov-report --copy-files",
-	"egov-dashboard": "babel dev-packages/egov-dashboard-dev/src --out-dir packages/lib/egov-dashboard --copy-files",
+    "egov-report": "babel dev-packages/egov-report-dev/src --out-dir packages/lib/egov-report --copy-files",
+    "egov-dashboard": "babel dev-packages/egov-dashboard-dev/src --out-dir packages/lib/egov-dashboard --copy-files",
     "egov-pms": "babel dev-packages/egov-pms-dev/src --out-dir packages/lib/egov-pms --copy-files",
     "egov-pr": "babel dev-packages/egov-pr-dev/src --out-dir packages/lib/egov-pr --copy-files",
     "egov-store-asset": "babel dev-packages/egov-store-asset-dev/src --out-dir packages/lib/egov-store-asset --copy-files",
-     "egov-nulm": "babel dev-packages/egov-nulm-dev/src --out-dir packages/lib/egov-nulm --copy-files",
-     "egov-rti": "babel dev-packages/egov-rti-dev/src --out-dir packages/lib/egov-rti --copy-files",
-     "egov-integration": "babel dev-packages/egov-integration-dev/src --out-dir packages/lib/egov-integration --copy-files",
+    "egov-nulm": "babel dev-packages/egov-nulm-dev/src --out-dir packages/lib/egov-nulm --copy-files",
+    "egov-rti": "babel dev-packages/egov-rti-dev/src --out-dir packages/lib/egov-rti --copy-files",
+    "egov-integration": "babel dev-packages/egov-integration-dev/src --out-dir packages/lib/egov-integration --copy-files",
     "egov-wns": "babel dev-packages/egov-wns-dev/src --out-dir packages/lib/egov-wns --copy-files",
     "go": "yarn && yarn run build-css-employee && yarn run build-css-citizen && yarn run build-css-common && yarn run transpile-common-modules && yarn run transpile-citizen-modules && yarn run transpile-employee-modules && lerna bootstrap",
     "go_employee": "yarn && yarn run build-css-employee  && yarn run build-css-common && yarn run transpile-common-modules  && yarn run transpile-employee-modules && lerna bootstrap  --ignore egov-ui-framework-core --ignore egov-ui-kit-dev --ignore RNativeApp --ignore rainmaker-citizen --ignore pgr-citizen --ignore pt-citizen  --ignore egov-hrms-dev  --ignore egov-tradelicence-dev --ignore egov-rented-properties-dev --ignore egov-uc-dev --ignore egov-pt-dev --ignore egov-workflow-dev --ignore pt-employee-dev --ignore pt-citizen-dev --ignore pgr-employee-dev --ignore pgr-citizen-dev --ignore egov-abg-dev --ignore egov-noc-dev --ignore egov-services-emp-dev  --ignore egov-opms-dev --ignore egov-services-dev --ignore egov-hc-dev --ignore egov-report-dev --ignore egov-dashboard-dev  --ignore egov-pms-dev --ignore egov-echallan-dev  --ignore egov-boilerplate-dev --ignore egov-common-dev --ignore egov-bpa-dev --ignore egov-wns-dev --ignore egov-store-asset-dev  --ignore egov-nulm-dev --ignore egov-rti-dev --ignore egov-integration-dev --ignore egov-estate-dev",
@@ -106,7 +106,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
-    "lerna": "^3.17.0",
+    "lerna": "^3.22.1",
     "run-p": "0.0.0",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1"
@@ -124,10 +124,9 @@
     "npm-run-all": "^4.1.5",
     "react-quill": "^1.3.5",
     "xlsx": "^0.16.0",
-    "recharts":"^1.8.5",
-    "react-chartjs-2":"^2.11.1",
+    "recharts": "^1.8.5",
+    "react-chartjs-2": "^2.11.1",
     "chart.js": "2.9.4",
-    "yarn":"1.22.10"
-    
+    "yarn": "1.22.10"
   }
 }
