@@ -662,8 +662,8 @@ downloadPermissionLetterFunction = async (e) => {
 
 
 			approvedBy:{
-				approvedBy: approverName,
-				role: userInfo.name,
+				approvedBy:userInfo.name,
+				role:approverName,
 			},
 			tenantInfo:{
 				municipalityName: "Municipal Corporation Chandigarh",
