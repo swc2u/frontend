@@ -18,6 +18,7 @@ import ApproveBooking from "../ApplicationResolved";
 import RejectBooking from "../RejectComplaint";
 import axios from "axios";
 import jp, { value } from "jsonpath";
+import { httpRequest } from "egov-ui-kit/utils/api";
 // import {
 // 	getFileUrlFromAPI,
 // } from "egov-ui-framework/ui-utils/commons";
@@ -94,7 +95,8 @@ class ApplicationDetails extends Component {
 			togglepopup: false,
 			actionOnApplication: '',
 			actionTittle: '',
-			actionOpen: false
+			actionOpen: false,
+			BankName: ''
 		};
 	};
 
@@ -148,6 +150,32 @@ class ApplicationDetails extends Component {
 		fetchDataAfterPayment(
 			[{ key: "consumerCodes", value: match.params.applicationId }, { key: "tenantId", value: userInfo.tenantId }
 			])
+
+			let  RequestGateWay = [
+				{ key: "consumerCode", value: match.params.applicationId },
+				{ key: "tenantId", value: userInfo.tenantId }
+				];
+			  let payloadGateWay = await httpRequest(
+				"pg-service/transaction/v1/_search",
+				"_search",
+				RequestGateWay
+				);
+			 console.log("payloadGateWay--",payloadGateWay)   //Transaction[0].gateway
+			 
+			 if(payloadGateWay.Transaction.length > 0){
+	console.log("consoleDataForGateWay--",payloadGateWay.Transaction.length > 0 ? payloadGateWay.Transaction : "abababa") 
+		
+	let gateWay = payloadGateWay.Transaction[0].gateway; 
+	
+	console.log("gateWay--",gateWay ? gateWay : "NotFound")
+	
+	prepareFinalObject('GateWayName', gateWay)
+	
+	this.setState({
+	   BankName: gateWay
+	})
+	
+	}
 
 	
 		//  downloadPaymentReceipt({ BookingInfo: BookingInfo })
@@ -274,8 +302,9 @@ class ApplicationDetails extends Component {
 	};
 
 	downloadPaymentReceiptFunction = async (e) => {
-		const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceipt, userInfo } = this.props;
+		const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceipt, userInfo,pdfBankName } = this.props;
 		const { complaint } = transformedComplaint;
+		console.log("stateBankName--",this.state.BankName ? this.state.BankName : "NA")
 		
 		var date2 = new Date();
 
@@ -315,6 +344,7 @@ class ApplicationDetails extends Component {
 				paymentItemExtraColumnLabel: "Booking Period",
 				paymentMode:
 					paymentDetailsForReceipt.Payments[0].paymentMode,
+					bankName: pdfBankName !== "NA" ? pdfBankName : this.state.BankName,
 				receiptNo:
 					paymentDetailsForReceipt.Payments[0].paymentDetails[0]
 						.receiptNumber,
@@ -1196,6 +1226,9 @@ const mapStateToProps = (state, ownProps) => {
 	let businessService = applicationData ? applicationData.businessService : "";
 	let bookingDocs;
 
+	let pdfBankName = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.GateWayName:"NA";  
+	console.log("pdfBankName--",pdfBankName)
+
 	let documentMap = applicationData && applicationData.documentMap ? applicationData.documentMap : '';
 	console.log("documentMap-in-osbm--",documentMap)
 	let abc = Object.entries(documentMap)
@@ -1294,11 +1327,13 @@ const mapStateToProps = (state, ownProps) => {
 			isAssignedToEmployee,
 			complaintTypeLocalised,
 			userInfo,
-			xyz,ab
+			xyz,ab,
+			pdfBankName
 		};
 	} else {
 		return {
 			paymentDetails,
+			pdfBankName,
 			historyApiData,
 			DownloadPaymentReceiptDetails,
 			paymentDetailsForReceipt,DownloadApplicationDetails,DownloadPermissionLetterDetails,
