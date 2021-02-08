@@ -262,8 +262,8 @@ class BookingDetails extends Component {
                       }}
                     >
                       <LabelContainer
-                        labelName={ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].assignee ?
-                          ProcessInstances[0].assignee.name
+                        labelName={ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].assigner ?
+                          ProcessInstances[0].assigner.name
                           : "NA"
                         }
                       />
