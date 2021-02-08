@@ -7,6 +7,9 @@ import {
 } from "egov-ui-framework/ui-containers";
 import { convertEpochToDate } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
+import {
+   getUserInfo,
+} from "egov-ui-kit/utils/localStorageUtils";
 //import "./index.css";
 
 export const getCurrentStatus = status => {
@@ -27,6 +30,9 @@ export const getCurrentStatus = status => {
 };
 
 const TaskStatusComponents = ({ currentObj, index }) => {
+  let userDataString = getUserInfo()
+  var userData = JSON.parse(userDataString);
+  
   return (
     <Grid
       container={true}
@@ -131,14 +137,14 @@ const TaskStatusComponents = ({ currentObj, index }) => {
           classes={{
             body2: "body2-word-wrap"
           }}
-        >
-          <LabelContainer
+        >{userData.name}
+          {/* <LabelContainer
             labelName={
               get(currentObj, "assignee.name")
                 ? get(currentObj, "assignee.name")
                 : "NA"
             }
-          />
+          /> */}
         </Typography>
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3} style={{ marginTop: 15 }}>
