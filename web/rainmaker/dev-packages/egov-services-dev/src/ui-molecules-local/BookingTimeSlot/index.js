@@ -45,81 +45,11 @@ class CustomTimeSlots extends Component {
             currentDate: currentDate,
             dateInputProps: dateInputProps,
         };
-        //     this.state = {
-        //         reservedTimeSlotsDate: '',
-        //     }
-        //     //console.log(this.props, "Hello Construct");
-        //     let timeSlotArray = [];
-        //     let bookedSlotArray = [];
-        //     var date = new Date();
-        //     var date1 = new Date();
-        //     for (let i = 0; i < 10; i++) {
-        //         let month = ('0' + (date1.getMonth() + 1)).slice(-2);
-        //         let day = ('0' + date1.getDate()).slice(-2);
-        //         let year = date1.getFullYear();
-        //         bookedSlotArray.push(
-        //             {
-        //                 date: `${day}-${month}-${year}`,
-        //                 timeSlots: ["2PM-6PM", "6PM-10PM"]
-        //             }
-        //         );
-        //         date1.setDate(date1.getDate() + 1);
-        //     }
-
-        //    // console.log(bookedSlotArray, "booked TimeSlots");
-        //     for (let i = 0; i < 180; i++) {
-        //         let month = ('0' + (date.getMonth() + 1)).slice(-2);
-        //         let day = ('0' + date.getDate()).slice(-2);
-        //         let year = date.getFullYear();
-        //         timeSlotArray.push(
-        //             {
-        //                 date: `${day}-${month}-${year}`,
-        //                 timeSlots: ["10AM-2PM", "2PM-6PM", "6PM-10PM"]
-        //             }
-        //         );
-        //         date.setDate(date.getDate() + 1);
-        //     }
-
-        //     let finalBookedTimeSlots = [];
-        //     for (let j = 0; j < timeSlotArray.length; j++) {
-        //         let tempObj = {}
-        //         tempObj.date = timeSlotArray[j].date;
-        //         tempObj.timeSlots = timeSlotArray[j].timeSlots;
-        //         for (let k = 0; k < bookedSlotArray.length; k++) {
-        //             if (timeSlotArray[j].date === bookedSlotArray[k].date) {
-
-        //                 for (let l = 0; l < timeSlotArray[j].timeSlots.length; l++) {
-        //                     if ((bookedSlotArray[k].timeSlots).includes(timeSlotArray[j].timeSlots[l])) {
-        //                         timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:booked`);
-        //                     }
-        //                 }
-
-        //             }
-        //         }
-
-        //         finalBookedTimeSlots.push(tempObj);
-        //     }
-
-        //     //console.log(finalBookedTimeSlots, "slot jkArray");
-
-        //     this.state = {
-        //         rows: finalBookedTimeSlots,
-        //         currentDate: new Date()
-        //     }
+        
     }
 
     componentDidMount() {
-        // const { currentSelectedTimeSlot, rows } = this.props;
-        // console.log(rows, "rows");
-        // console.log(currentSelectedTimeSlot, "currentSelectedTimeSlot");
-        // if (rows.length > 0) {
-        //     if (
-        //         currentSelectedTimeSlot !== "" ||
-        //         currentSelectedTimeSlot !== null
-        //     ) {
-        //         document.getElementById(currentSelectedTimeSlot).checked = true;
-        //     }
-        // }
+  
         if (this.props.initiatedBookingFromDate) {
             var [goYear, goMonth, goDay] = this.props.initiatedBookingFromDate.split("-");
             let goDate = `${goDay}-${goMonth}-${goYear}`;
@@ -149,8 +79,63 @@ class CustomTimeSlots extends Component {
         // }
     }
     selectTimeSlot = (e) => {
-        //alert(e.target.getAttribute('data-date')+'---'+e.target.getAttribute('data-timeslot'));
         var cbarray = document.getElementsByName("time-slot");
+        var [from, to] = e.target.getAttribute("data-timeslot").split("-");
+       
+        if(e.target.getAttribute("data-date")==this.props.isSameDate && from === this.props.firstToTime)
+        {
+         
+          
+
+              this.props.prepareFinalObject('perDayBookedSlotCount',this.props.perDayBookedSlotCount+1 ); 
+              let perDayBookedSlotCount= this.props.perDayBookedSlotCount
+              var [apiDay, apiMonth, apiYear] = e.target
+                  .getAttribute("data-date")
+                  .split("-");
+              let apiDate = `${apiYear}-${apiMonth}-${apiDay}`;
+              this.props.prepareFinalObject("Booking.bkToDate", apiDate);
+              this.props.prepareFinalObject("Booking.bkFromDate", apiDate);
+              this.props.prepareFinalObject("Booking.bkFromTimeTwo", from);
+              this.props.prepareFinalObject("Booking.bkToTimeTwo", to);
+          
+              this.props.prepareFinalObject(
+                  "availabilityCheckData.bkToDate",
+                  apiDate
+              );
+              this.props.prepareFinalObject(
+                  "availabilityCheckData.bkFromDate",
+                  apiDate
+              );
+              this.props.prepareFinalObject("availabilityCheckData.bkFromTimeTwo", from);
+              this.props.prepareFinalObject("availabilityCheckData.bkToTimeTwo", to);
+              var selectedTimeSlots = [];
+              selectedTimeSlots[0]=this.props.initiatedBookingTimeSlot[0]
+              selectedTimeSlots.push({  slot: `${from}-${to}` });
+              this.props.prepareFinalObject("Booking.timeslots", selectedTimeSlots);
+              this.props.prepareFinalObject(
+                  "availabilityCheckData.timeslots",
+                  selectedTimeSlots
+              );
+              // this.props.prepareFinalObject(
+              //     "DisplayPacc.bkDisplayFromDateTime",
+              //     e.target.getAttribute("data-date") + ", " + from
+              // );
+              this.props.prepareFinalObject(
+                  "DisplayPacc.bkDisplayToDateTime",
+                  e.target.getAttribute("data-date") + ", " + to
+              );
+      
+          
+          
+       
+  
+        }
+  
+          
+      else{
+         this.props.prepareFinalObject('perDayBookedSlotCount',1 );  
+         this.props.prepareFinalObject('isSameDate',e.target.getAttribute("data-date") );
+   
 
         for (var i = 0; i < cbarray.length; i++) {
             cbarray[i].checked = false;
@@ -187,7 +172,6 @@ class CustomTimeSlots extends Component {
         this.props.prepareFinalObject("availabilityCheckData.bkFromTime", from);
         this.props.prepareFinalObject("availabilityCheckData.bkToTime", to);
         var selectedTimeSlots = [];
-        //this.setState({ selectedTimeSlots: { slot: `${from}-${to}` } },
         selectedTimeSlots.push({ slot: `${from}-${to}` });
         this.props.prepareFinalObject("Booking.timeslots", selectedTimeSlots);
         this.props.prepareFinalObject(
@@ -202,7 +186,7 @@ class CustomTimeSlots extends Component {
             "DisplayPacc.bkDisplayToDateTime",
             e.target.getAttribute("data-date") + ", " + to
         );
-        //)
+        }
     };
 
     goHandler = () => {
@@ -592,14 +576,21 @@ const mapStateToProps = (state) => {
         "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
 
-    //const currentSelectedTimeSlot = `${availabilityCheckData.bkFromDate}:${availabilityCheckData.timeslots[0].slot}`;
-
     const reservedTimeSlotsData = get(
         state,
         "screenConfiguration.preparedFinalObject.availabilityCheckData.reservedTimeSlotsData"
     );
 
+    let isSameDate = get(
+        state,
+        "screenConfiguration.preparedFinalObject.isSameDate"
+    );
 
+    let perDayBookedSlotCount = get(
+        state,
+        "screenConfiguration.preparedFinalObject.perDayBookedSlotCount", 
+        1
+    );
 
 
     let timeSlotArray = [];
@@ -632,12 +623,23 @@ const mapStateToProps = (state) => {
     //Edit Case Coverd To show Checkbox Checked
     const initiatedBookingTimeSlot = get(
         state,
-        "screenConfiguration.preparedFinalObject.availabilityCheckData.timeslots"
+        "screenConfiguration.preparedFinalObject.availabilityCheckData.timeslots",
+        ""
     );
+
     const initiatedBookingFromDate = get(
         state,
-        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkFromDate"
+        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkFromDate",
+        ""
     );
+
+    const firstToTime = get(
+        state,
+        "screenConfiguration.preparedFinalObject.Booking.bkToTime"
+    )
+
+
+
 
     //******************************** */screenConfiguration.preparedFinalObject.
 
@@ -648,8 +650,8 @@ const mapStateToProps = (state) => {
         let year = date.getFullYear();
         timeSlotArray.push({
             date: `${day}-${month}-${year}`,
-            timeSlots: ["10AM-2PM", "2PM-6PM", "6PM-10PM"],
-        });
+            timeSlots: ["9AM-1PM", "1PM-5PM", "5PM-9PM"],
+            });
         date.setDate(date.getDate() + 1);
     }
 
@@ -686,6 +688,17 @@ const mapStateToProps = (state) => {
                     if (initiatedBookingTimeSlot[0].slot === timeSlotArray[j].timeSlots[l]) {
                         console.log("Hello Bulbul");
                         timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:initiated`);
+
+                    }
+
+                    if(perDayBookedSlotCount !== 1 || initiatedBookingTimeSlot.length > 1 ){
+
+                        if (initiatedBookingTimeSlot[1].slot === timeSlotArray[j].timeSlots[l]) {
+                            console.log("Hello Bulbul");
+                            timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:initiated`);
+                            console.log('timeSlotArray[j]', timeSlotArray[j])
+                            
+                        }
                     }
                 }
             }
@@ -693,12 +706,15 @@ const mapStateToProps = (state) => {
         finalBookedTimeSlots.push(tempObj);
     }
 
-    return {  /* rows: finalBookedTimeSlots,
-        currentDate: new Date(),
-        initiatedBookingFromDate: initiatedBookingFromDate, */
+    return { 
         rows: finalBookedTimeSlots,
         currentDate: new Date(),
         initiatedBookingFromDate: initiatedBookingFromDate,
+        isSameDate: isSameDate,
+        perDayBookedSlotCount : perDayBookedSlotCount,
+        firstToTime: firstToTime, 
+        initiatedBookingTimeSlot:initiatedBookingTimeSlot
+        
     };
 };
 

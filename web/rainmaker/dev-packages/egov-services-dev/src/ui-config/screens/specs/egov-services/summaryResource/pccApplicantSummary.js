@@ -143,7 +143,8 @@ export const pccBankSummary = getCommonGrayCard({
                 },
                 ...getCommonSubHeader({
                     labelName: "Bank Details",
-                    labelKey: "BK_PCC_BANK_DETAILS_HEADER",
+                    labelKey:  "Bank Details"
+                    //labelKey: "BK_PCC_BANK_DETAILS_HEADER",
                 }),
             },
             
@@ -159,7 +160,8 @@ export const pccBankSummary = getCommonGrayCard({
                     bkBankName: getLabelWithValue(
                         {
                             labelName: "Bank Name",
-                            labelKey: "BK_PCC_BANK_NAME_LABEL",
+                            labelKey:  "Bank Name",
+                            //labelKey: "BK_PCC_BANK_NAME_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkBankName",
@@ -168,7 +170,8 @@ export const pccBankSummary = getCommonGrayCard({
                     bkBankAccountNumber: getLabelWithValue(
                         {
                             labelName: "Account Number",
-                            labelKey: "BK_PCC_ACCOUNT_NUMBER_LABEL",
+                            labelKey: "Account Number",
+                            //labelKey: "BK_PCC_ACCOUNT_NUMBER_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkBankAccountNumber",
@@ -177,7 +180,8 @@ export const pccBankSummary = getCommonGrayCard({
                     bkIfscCode: getLabelWithValue(
                         {
                             labelName: "IFSC Code",
-                            labelKey: "BK_PCC_IFSC_CODE_LABEL",
+                            labelKey:  "IFSC Code",
+                            //labelKey: "BK_PCC_IFSC_CODE_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkIfscCode",
@@ -187,7 +191,8 @@ export const pccBankSummary = getCommonGrayCard({
                       
                         {
                             labelName: "Account Holder Name",
-                            labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
+                            labelKey: "Account Holder Name",
+                            //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkBankAccountHolder",
@@ -196,7 +201,8 @@ export const pccBankSummary = getCommonGrayCard({
                     bankAccountTypeRadioGroup: getLabelWithValue(
                         {
                             labelName: "Bank Account Type",
-                            labelKey: "BK_PCC_BANK_ACCOUNT_TYPE_LABEL",
+                            labelName: "Bank Account Type",
+                            //labelKey: "BK_PCC_BANK_ACCOUNT_TYPE_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkAccountType",
