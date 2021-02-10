@@ -2363,7 +2363,13 @@ export const _getPattern = (type) => {
       case "NocReason":
         return /^([\s\S]){3,150}$/i;
         case "variationdetail":
-            return /^([\s\S]){0,150}$/i
+            return /^([\s\S]){0,150}$/i;
+            case "street":
+              return /^[a-zA-Z0-9]{2,100}$/i;
+              case "height":
+      return /^[1-9][0-9]{0,6}$/i;
+      case "numeric":
+        return /^[1-9][0-9]{2,49}$/i;
   }
 }
 

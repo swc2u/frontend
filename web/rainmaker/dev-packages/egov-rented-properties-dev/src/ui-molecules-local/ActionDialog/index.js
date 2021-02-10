@@ -43,6 +43,16 @@ const getEpochForDateGrant = (dateString, dayStartOrEnd = "dayend") => {
 };
 
 const fieldConfig = {
+  to: {
+    label: {
+      labelName: "To",
+      labelKey: "WF_ROLE_TO_LABEL"
+    },
+    placeholder: {
+      labelName: "Select To",
+      labelKey: "WF_SELECT_ROLE_TO"
+    }
+  },
   approverName: {
     label: {
       labelName: "Assignee Name",
@@ -154,65 +164,92 @@ const fieldConfig = {
 };
 
 class ActionDialog extends React.Component {
-  state = {
-    employeeList: [],
-    roles: "",
-    fields: {
-      "comments": ""
-    },
-    errors: {
-      "comments": ""
-    },
-    dueamount:{
-      "dueamount":""
-    },
-    dueamounterror:{
-      "dueamount":""
-    },
-    publicationcharges:{
-      "publicationcharge":""
-    },
-    publicationchargeserror:{
-      "publicationcharge":""
-    },
-    mortagage:{
-      "mortagage":""
-    },
-    mortagageerror:{
-      "mortagage":""
-    },
-    bankname:{
-      "bankname":""
-    },
-    banknameerror:{
-      "bankname":""
-    },
-    mortgageAmount:{
-      "mortgageAmount":""
-    },
-    mortgageAmountError:{
-      "mortgageAmount":""
-    },
-    sanctionLetterNumber:{
-      "sanctionLetterNumber":""
-    },
-    sanctionLetterNumberError:{
-      "sanctionLetterNumber":""
-    },
-    sanctionDate:{
-      "sanctionDate":""
-    },
-    sanctionDateError:{
-      "sanctionDate":""
-    },
-    uploadfile:{
-      "uploadfile":""
-    },
-    uploadfileerror:{
-      "uploadfile":""
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      showEmployeeList: false,
+      isDocRequired: false,
+      roles: "",
+      fields: {
+        "comments": ""
+      },
+      errors: {
+        "comments": ""
+      },
+      dueamount:{
+        "dueamount":""
+      },
+      dueamounterror:{
+        "dueamount":""
+      },
+      publicationcharges:{
+        "publicationcharge":""
+      },
+      publicationchargeserror:{
+        "publicationcharge":""
+      },
+      mortagage:{
+        "mortagage":""
+      },
+      mortagageerror:{
+        "mortagage":""
+      },
+      bankname:{
+        "bankname":""
+      },
+      banknameerror:{
+        "bankname":""
+      },
+      mortgageAmount:{
+        "mortgageAmount":""
+      },
+      mortgageAmountError:{
+        "mortgageAmount":""
+      },
+      sanctionLetterNumber:{
+        "sanctionLetterNumber":""
+      },
+      sanctionLetterNumberError:{
+        "sanctionLetterNumber":""
+      },
+      sanctionDate:{
+        "sanctionDate":""
+      },
+      sanctionDateError:{
+        "sanctionDate":""
+      },
+      uploadfile:{
+        "uploadfile":""
+      },
+      uploadfileerror:{
+        "uploadfile":""
+      },
+      roles:{
+        "roles":""
+      },
+      roleserror:{
+        "roles":""
+      }
     }
-  };
+  }
   
+  componentDidUpdate(prevProps) {
+    if(prevProps.open === true && this.props.open === false) {
+      this.setState({
+        showEmployeeList: false,
+        isDocRequired: false,
+        selectedData: null
+      })
+    }
+    if(this.props.open === true && prevProps.open === false) {
+      const {dialogData} = this.props
+      this.setState({
+        selectedData: dialogData && dialogData.roleProps && dialogData.roleProps.length === 1 ? dialogData.roleProps[0] : null
+      })
+    }
+  }
+
   // onEmployeeClick = e => {
   //   const { handleFieldChange, toggleSnackbar } = this.props;
   //   const selectedValue = e.target.value;
@@ -229,11 +266,21 @@ class ActionDialog extends React.Component {
   // };
 
  onButtonClick = (buttonLabel, isDocRequired) => {
-    let {state, dataPath, toggleSnackbar} = this.props
+    let {state, dataPath, toggleSnackbar, dialogData} = this.props
     dataPath = `${dataPath}[0]`
     const data = get(state.screenConfiguration.preparedFinalObject, dataPath) || []
     const applicationState = data.applicationState
-    const duplicateCopyApplicationState = data.state    
+    const duplicateCopyApplicationState = data.state
+    if(!!dialogData.roleProps && !this.state.selectedData) {
+      let roleserror = {};
+      roleserror["roles"] = "Please select the role";
+      this.setState({
+        showRoleError: true,
+   errors: roleserror
+      })
+      return
+    }
+
   if(this.props.moduleName === WORKFLOW_BUSINESS_SERVICE_OT && (applicationState === "OT_PENDINGSAVERIFICATION" || applicationState === "OT_PENDINGAPRO") && (buttonLabel === "FORWARD" || buttonLabel === "SUBMIT") ) {
     let formIsValid = true;
     const value = applicationState === "OT_PENDINGSAVERIFICATION" ? data.ownerDetails.dueAmount : data.ownerDetails.aproCharge
@@ -445,7 +492,8 @@ if(!document || document.length===0){
       return formIsValid;
   }
   }
-    this.props.onButtonClick(buttonLabel, isDocRequired)
+    const _buttonLabel = !!this.state.selectedData ? `${buttonLabel}_TO_${this.state.selectedData.role}` : buttonLabel
+    this.props.onButtonClick(_buttonLabel, isDocRequired)
  }
  handleChange(field, e){         
   let fields = this.state.fields;
@@ -464,6 +512,8 @@ if(!document || document.length===0){
   let sanctionLetterNumberError = this.state.sanctionLetterNumberError;
   let sanctionDate = this.state.sanctionDate;
   let sanctionDateError = this.state.sanctionDateError;
+  let roles=this.state.roles;
+  let roleserror=this.state.roleserror;
   if (Object.keys(fields).length) {
     fields[field] = e.target.value;        
     this.setState({fields});
@@ -536,6 +586,15 @@ if(!document || document.length===0){
       this.setState({errors: sanctionDateError});
     }
   }
+  if (Object.keys(roleserror).length) {
+    roles[field] = e.target.value;        
+    this.setState({roles});
+
+    if (e.target.value) {
+      roleserror["roles"] = "";
+      this.setState({errors: roleserror});
+    }
+  }
 }
   getButtonLabelName = label => {
     switch (label) {
@@ -557,6 +616,24 @@ if(!document || document.length===0){
     }
   };
 
+  onRoleToClick = (e) => {
+    const {dialogData} = this.props
+    this.setState({
+      selectedData: e.target.value,
+      showEmployeeList: e.target.value.showEmployeeList,
+      isDocRequired: e.target.value.isDocRequired
+    })
+    const item = {
+      buttonLabel: dialogData.buttonLabel,
+      buttonUrl: dialogData.buttonUrl,
+      dialogHeader: dialogData.dialogHeader,
+      isLast: dialogData.isLast,
+      moduleName: dialogData.moduleName,
+      ...e.target.value
+    }
+    this.props.onRoleSelect(item)
+  }
+
   render() { 
     let {
       open,
@@ -568,12 +645,17 @@ if(!document || document.length===0){
       dataPath,
       state
     } = this.props;
+    const showEmployeeList = !!dialogData && !!dialogData.roleProps && dialogData.roleProps.length === 1 ? dialogData.roleProps[0].showEmployeeList : this.state.showEmployeeList
+    const isDocRequired = !!dialogData && !!dialogData.roleProps && dialogData.roleProps.length === 1 ? dialogData.roleProps[0].isDocRequired : this.state.isDocRequired
+    const rolesData =  !!dialogData && !!dialogData.roleProps && !!dialogData.roleProps.length ? dialogData.roleProps.map(roledata => ({
+      label: roledata.role,
+      value: roledata
+    })) : []
+    // const showEmployeeList = !!this.props.dialogData && !!this.props.dialogData.roleProps && this.props.dialogData.roleProps.length === 1 ? this.props.dialogData.roleProps[0].showEmployeeList : this.state.showEmployeeList,
     const {
       buttonLabel,
-      showEmployeeList,
       dialogHeader,
-      moduleName,
-      isDocRequired
+      moduleName
     } = dialogData;
     const { getButtonLabelName } = this;
     let fullscreen = false;
@@ -605,8 +687,9 @@ if(open==false){
   errors["mortagage"]="";
 errors["bankname"]="";
 errors["uploadfile"] = "";
+errors["roles"]="";
 }
-    const mastrerstate=(get(state.screenConfiguration.preparedFinalObject,dataPath)||[]).masterDataState
+    const masterState=(get(state.screenConfiguration.preparedFinalObject,dataPath)||[]).masterDataState
     const applicationState = (get(state.screenConfiguration.preparedFinalObject, dataPath) || []).applicationState
     const duplicateCopyApplicationState = (get(state.screenConfiguration.preparedFinalObject, dataPath) || []).state
     
@@ -654,7 +737,30 @@ errors["uploadfile"] = "";
                   >
                     <CloseIcon />
                   </Grid>
-                  {(moduleName==="MasterRP" && ((mastrerstate ==="PM_PENDINGJAVERIFICATION" && buttonLabel==="SENDBACK") || buttonLabel === "REJECT"))?"":
+                  {!!rolesData.length && (<Grid 
+                  item
+                  sm="12"
+                  style={{
+                    marginTop: 16
+                  }}>
+                    <TextFieldContainer
+                        select={true}
+                        style={{ marginRight: "15px", width: "90%" }}
+                        label={fieldConfig.to.label}
+                        placeholder={fieldConfig.to.placeholder}
+                        required={true}
+                        data={rolesData}
+                        value={this.state.selectedData}
+                        optionValue="value"
+                        optionLabel="label"
+                        hasLocalization={false}
+                        jsonPath={`${dataPath}.roles[0]`}
+                        onChange={e => {this.onRoleToClick(e)
+                          this.handleChange("roles", e);handleFieldChange(`${dataPath}.roles`, e.target.value) } }                        
+                      />
+                       <span style={{color: "red"}}>{this.state.errors["roles"]}</span>
+                  </Grid>)}
+                  {(moduleName==="MasterRP" && ((masterState ==="PM_PENDINGJAVERIFICATION" && buttonLabel==="SENDBACK") || buttonLabel === "REJECT"))?"":
                   showEmployeeList && !!dropDownData.length && (
                     <Grid
                       item
@@ -694,7 +800,7 @@ errors["uploadfile"] = "";
                       jsonPath={`${dataPath}.comment`}
                       placeholder={fieldConfig.comments.placeholder}
                     /> */}
-                     {(moduleName==="MasterRP" && ((mastrerstate ==="PM_PENDINGJAVERIFICATION" && buttonLabel==="SENDBACK") || buttonLabel === "REJECT"))? <div style={{height: "10px"}}></div>: (showEmployeeList && !!dropDownData.length) ? <label className="commentsLabel">{fieldConfig.comments.label.labelName}</label> :<div style={{height: "10px"}}></div>
+                     {(moduleName==="MasterRP" && ((masterState ==="PM_PENDINGJAVERIFICATION" && buttonLabel==="SENDBACK") || buttonLabel === "REJECT"))? <div style={{height: "10px"}}></div>: (showEmployeeList && !!dropDownData.length) ? <label className="commentsLabel">{fieldConfig.comments.label.labelName}</label> :<div style={{height: "10px"}}></div>
                     }
                     {/* <textarea className="form-control comments" rows="5" placeholder={fieldConfig.comments.placeholder.labelName} onChange={e => handleFieldChange(`${dataPath}.comment`, e.target.value)}/> */}
                     <textarea refs="comments" className="form-control comments" rows="5" placeholder={fieldConfig.comments.placeholder.labelName}  onChange={e => {
