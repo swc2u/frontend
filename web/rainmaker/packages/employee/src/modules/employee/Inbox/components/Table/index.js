@@ -181,7 +181,7 @@ class InboxData extends React.Component {
     else if (row[0].subtext === "NewSW1") {
       queryParams += '&history=true&service=SEWERAGE';
     }
-    else if (row[0].subtext == "Engineering" || row[0].subtext == "IT" || row[0].subtext == "Caretaker" || row[0].subtext == "MOH") {
+    else if (row[0].subtext == "Engineering" || row[0].subtext == "IT" || row[0].subtext == "Caretaker" || row[0].subtext == "MOH" || row[0].subtext == "Engineering Issue Note" || row[0].subtext == "IT Issue Note" || row[0].subtext == "Caretaker Issue Note" || row[0].subtext == "MOH Issue Note") {
       queryParams += `&Status=${wfStatus}`;
     }
 	  else if (row[0].subtext == "NULM") {

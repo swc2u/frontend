@@ -59,12 +59,30 @@ input#custom-containers-toDate {
 input#custom-containers-fromDate {
   height: 10%; }
 
-div#custom-containers-local-moduleDashboardDropdown {
+div#material-ui-FilterConstraintsContainer {
   width: 150%; }
 
 div#custom-containers-local-moduleDashboardDropdown {
   position: absolute;
-  width: 30%; }
+  width: 325px }
 
-div#material-ui-FilterConstraintsContainer {
-  width: 150%; }
+button#material-ui-searchButton {
+margin-left: 165px;
+}
+
+@media only screen and (max-width: 900px) {
+  div#material-ui-FilterConstraintsContainer {
+  display: block;
+  }
+
+  button#material-ui-searchButton {
+  margin-left: 0px;
+  margin-top: 94px;
+  width: 150px;
+  }
+
+  div#custom-containers-local-moduleDashboardDropdown {
+  position: absolute;
+  width: 250px;
+  }
+}

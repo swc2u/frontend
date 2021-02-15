@@ -89,7 +89,7 @@ export const footer = getCommonApplyFooter({
       variant: "outlined",
       color: "primary",
       style: {
-        minWidth: "200px",
+        // minWidth: "200px",
         height: "48px",
         marginRight: "45px"
       }
@@ -212,6 +212,7 @@ const screenConfig = {
             props: {
               style: {
               width: "100%",
+              marginLeft: "50px",
               cursor: "pointer"
               },
             className: "citizen-city-picker",
@@ -242,8 +243,9 @@ const screenConfig = {
               variant: "outlined",
               color: "primary",
               style: {
-                minWidth: "200px",
-                height: "48px",
+                // minWidth: "200px",
+                height: "50px",
+                // marginLeft: "45px",
                 marginRight: "45px"
               }
             },

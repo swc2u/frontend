@@ -545,7 +545,7 @@ export const getNextMonthDateInYMD = () => {
 
 
 export const getReceiptUrlFromFilestoreID = async (fileStoreId, mode, tenantId) => {
-    const fileRes = await getFileUrlFromAPI(fileStoreId, tenantId)
+    const fileRes = await getFileUrlFromAPIForPdf(fileStoreId, tenantId)
     return fileRes[fileStoreId]
 
 }
@@ -751,13 +751,13 @@ const getMdmsTenantsData = async () => {
 export const downloadReceipt = async (
     state,
     applicationNumber,
-    tenantId,
+    tenantId="ch.chandigarh",
     flag = 'false',
     mode = "download"
 ) => {
+    tenantId="ch.chandigarh"
 
-
-    tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
+   // tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
     // let applicationData = get(
     //     state.screenConfiguration.preparedFinalObject,
     //     "Booking"
@@ -1068,13 +1068,13 @@ let amount = 0;
 export const downloadCertificate = async (
     state,
     applicationNumber,
-    tenantId,
+    tenantId="ch.chandigarh",
     flag = 'false',
     mode = "download"
 ) => {
     let applicationData = {}
-
-    tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
+    tenantId="ch.chandigarh"
+    //tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
     let bookingWfHistory = await getBookingWorkflowHistory(applicationNumber, tenantId);
 
     let apporvedByDetail = {
@@ -1373,7 +1373,7 @@ export const downloadApplication = async (
             propertyType: applicationData.bkType,
             date: convertDateInDMY(applicationData.bkDate),
             time: applicationData.bkTime,  
-            applicationStatus: applicationData.bkApplicationStatus==="PENDINGASSIGNMENTDRIVER"? "Request Verification Pending" :applicationData.bkApplicationStatus,
+            applicationStatus: applicationData.bkApplicationStatus==="PENDINGASSIGNMENTDRIVER"? "Request Verification Pending" :applicationData.bkApplicationStatus==="PENDINGUPDATE" ? "Out for Delivery":applicationData.bkApplicationStatus==="DELIVERED"? "Processed":applicationData.bkApplicationStatus,
             applicationType: applicationData.bkStatus,
         };
         let bookingDataGFCP = {

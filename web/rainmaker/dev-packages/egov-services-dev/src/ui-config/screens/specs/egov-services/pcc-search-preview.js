@@ -235,8 +235,16 @@ const setSearchResponse = async (
     let recData = get(response, "bookingsModelList", []);
     if (recData.length > 0) {
         if (recData[0].timeslots && recData[0].timeslots.length > 0) {
-            var [fromTime, toTime] = recData[0].timeslots[0].slot.split("-");
+            if(recData[0].timeslots && recData[0].timeslots.length > 1){
+                var [fromTime, toTimeOne] = recData[0].timeslots[0].slot.split("-");
+                var [fromTimeTwo, toTime] = recData[0].timeslots[1].slot.split("-");
 
+            }else{
+                
+                var [fromTime, toTime] = recData[0].timeslots[0].slot.split("-");
+
+            }
+            
             let DisplayPaccObject = {
                 bkDisplayFromDateTime: recData[0].bkFromDate + "#" + fromTime,
                 bkDisplayToDateTime: recData[0].bkToDate + "#" + toTime,

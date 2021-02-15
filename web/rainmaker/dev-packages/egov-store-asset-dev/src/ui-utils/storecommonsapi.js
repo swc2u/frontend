@@ -1623,10 +1623,10 @@ export const updateIndentInword = async (queryObject, payload, dispatch) => {
   }
 };
 
-export const getWFPayload = (state, dispatch) => {
+export const getWFPayload = (state, dispatch,businessService="businessService") => {
   try {
     let businessSeviceTypeData =
-      get(state, "screenConfiguration.preparedFinalObject.businessServiceTypeData.store-asset.businessService", [])
+      get(state, `screenConfiguration.preparedFinalObject.businessServiceTypeData.store-asset.${businessService}`, [])
 
     let roles = JSON.parse(getUserInfo()).roles
     let businessServiceName = "";
