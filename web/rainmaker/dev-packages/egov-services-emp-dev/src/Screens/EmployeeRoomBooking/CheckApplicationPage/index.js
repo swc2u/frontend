@@ -43,12 +43,15 @@ findApplicationNumber = async (event) => {
 let dataforSectorAndCategory = await httpRequest( 	
   "bookings/api/community/center/_search",
     "_search",[],
-    complaintCountRequest
+    complaintCountRequest 
   );
 console.log("dataforSectorAndCategory --",dataforSectorAndCategory)
 if(dataforSectorAndCategory.bookingsModelList.length > 0){
 
   prepareFinalObject("RoomBookingData", dataforSectorAndCategory)
+  prepareFinalObject("SetPaymentURL", this.props.history.push)
+  console.log("historyPropsToConsole--",this.props.history.push)
+  console.log("historyPropsToConsole--",this.props.history)
   this.props.history.push(`/egov-services/ApplyRoomBooking`);
 
 }
@@ -145,7 +148,7 @@ Reset = async (event) => {
 			 			color: "#fe7a51",
 			 		  }}
 			 		  buttonStyle={{ border: "1px solid #fe7a51" }}
-			 		  style={{ width: "15%", marginLeft: "2%"}}
+			 		  style={{ width: "15%", marginLeft: "2%", marginTop: '40px'}}
 			 		  onClick={(e) => this.Reset(e)}
 			 		/>  
 
@@ -159,6 +162,10 @@ Reset = async (event) => {
 
 const mapStateToProps = state => {
   const { complaints, common, auth, form } = state;
+ console.log("complaints-complaints",complaints)
+ console.log("complaints-common",common)
+ console.log("complaints-auth",auth)
+ console.log("complaints-form",form)
   const { userInfo } = state.auth;
 
   return {

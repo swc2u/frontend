@@ -44,6 +44,16 @@ this.setState({
     appStatus : checkAppStatus
 })
 
+let sendCurrentStatus;
+if(checkAppStatus){
+    if(checkAppStatus == "NOTFOUND"){
+        sendCurrentStatus = "OFFLINE_INITIATE"
+    }
+   else if(checkAppStatus == "OFFLINE_APPLIED"){
+       sendCurrentStatus = "OFFLINE_RE_INITIATE"
+   }
+}
+
 prepareFinalObject("SummaryutGST",this.props.utGST);
 prepareFinalObject("SummarycGST",this.props.cGST);
 prepareFinalObject("Summarysurcharge",this.props.surcharge);
@@ -100,14 +110,16 @@ else if(discountType == "20%"){
             "bkEmail": email,
             "bkHouseNo": houseNo,
             "bkBookingPurpose": purpose,
+            // "bkPaymentStatus": checkAppStatus == "OFFLINE_APPLIED" ? "SUCCESS" : "",  
             "bkPaymentStatus": checkAppStatus == "OFFLINE_APPLIED" ? "SUCCESS" : "",
-            "bkApplicationNumber": checkAppNum ? checkAppNum : null,
+            "bkApplicationNumber": checkAppNum !== "NOTFOUND" ? checkAppNum : null,
             "bkCustomerGstNo": GSTnumber,
             "wfDocuments": [{
                 "fileStoreId": fid[0]
             }],
             "tenantId": userInfo.tenantId,
-            "bkAction": checkAppStatus == "OFFLINE_APPLIED" ? "OFFLINE_RE_INITIATE" : "OFFLINE_INITIATE",
+            // "bkAction": checkAppStatus == "OFFLINE_APPLIED" ? "OFFLINE_RE_INITIATE" : "OFFLINE_INITIATE", //sendCurrentStatus
+            "bkAction": sendCurrentStatus,
             "businessService": "PACC",
             "financeBusinessService": "PACC",
             "reInitiateStatus": checkAppStatus == "OFFLINE_APPLIED" ? true : false,
@@ -161,7 +173,7 @@ console.log("checkslotArray",checkslotArray)
              
                 "applicationType": "PACC",
                 "applicationStatus": "",
-                "applicationId": checkAppNum ? checkAppNum : null,
+                "applicationId": checkAppNum !== "NOTFOUND" ? checkAppNum : null,
                 "tenantId": userInfo.tenantId,
                 "Booking": Booking   
             }
@@ -261,7 +273,7 @@ let payloadfund = await httpRequest(
             prepareFinalObject('documentsPreview', documentsPreview)
         }
     }
-
+  
 submit = async (InitiateAppNumber) => {
 
 console.log("this.state.CashPaymentApplicationNumber--",this.state.CashPaymentApplicationNumber)    
@@ -470,13 +482,21 @@ console.log("seven--",seven ? seven : "sdfg")
 
     let documentMap = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.documentMap : "";
     let bkLocation = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation : "";
+   let checkAppStatus = 'NOTFOUND';
+   let checkAppNum = 'NOTFOUND';
+   let createInitateApp = bookings ? (bookings.applicationData ?(bookings.applicationData.bookingsModelList.length > 0 ? (bookings.applicationData.bookingsModelList): 'NA'): 'NA'): "NA"
+  console.log("createInitateApp--createInitateApp",createInitateApp)
+   if(createInitateApp !== "NA"){
+    console.log("comeInFoundCondition")
+    checkAppStatus = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationStatus : "NOTFOUND";
+    console.log("checkAppStatus-id",checkAppStatus)
+    checkAppNum = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationNumber : "NOTFOUND";
+    console.log("checkAppNum-id",checkAppNum)   
+}
    
-   let checkAppStatus = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationStatus : "NOTFOUND";
    console.log("checkAppStatus--",checkAppStatus)
-
-   let checkAppNum = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationNumber : "NOTFOUND";
-   console.log("checkAppStatus--bkApplicationNumber",checkAppNum)
-
+   console.log("checkAppNum--",checkAppNum)
+// checkAppStatus = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationStatus : "NOTFOUND";
    let DropDownValue = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData.name : "";
    console.log("DropDownValue--",DropDownValue)
    let SecTimeSlotFromTime = ""

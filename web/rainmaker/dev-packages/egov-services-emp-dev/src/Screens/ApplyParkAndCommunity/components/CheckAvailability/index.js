@@ -641,6 +641,16 @@ else{  /**loop for new Booking Create**/
      console.log("fgasdfghjkklllll")
     this.props.history.push(`/egov-services/applyResourceCommercialGround`);
    }
+   if(NewBookFromDate == "notFound" && NewBookToDate == "notFound"){
+    toggleSnackbarAndSetText(
+      true,
+      {
+        labelName: "Please Select From Date & To Date",
+        labelKey: `Please Select From Date & To Date`
+      },
+      "error"
+    );
+   }
    else{
     this.props.history.push(`/egov-services/applyPark-community-center`); 
    }

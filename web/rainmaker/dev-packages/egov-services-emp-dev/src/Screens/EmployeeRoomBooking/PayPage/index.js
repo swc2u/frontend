@@ -6,19 +6,19 @@ import { connect } from "react-redux";
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import EditIcon from '@material-ui/icons/Edit';
-import "./index.css";
-import Footer from "../../../../modules/footer"
+import "./index.css"; 
+import Footer from "../../../modules/footer"
 import PaymentReceiptDetail from "../PaymentReceiptDetail"
 import PaymentOptionDetails from "../PaymentOptionDetails"
 import PaymentDetails from "../PaymentDetails"  
-import DateVenueChangePayDetail from "../DateVenueChangePayDetail"
-import SubmitPaymentDetails from "../SubmitPaymentDetails"
-import { getFileUrlFromAPI } from '../../../../modules/commonFunction'
+// import DateVenueChangePayDetail from "../DateVenueChangePayDetail"
+// import SubmitPaymentDetails from "../SubmitPaymentDetails"
+import { getFileUrlFromAPI } from '../../../modules/commonFunction'
 import jp from "jsonpath";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { httpRequest } from "egov-ui-kit/utils/api" //PaymentDetailsTwo
-import PaymentDetailsTwo from "../PaymentDetailsTwo"  
-
+// import PaymentDetailsTwo from "../PaymentDetailsTwo"  
+  
 class SummaryDetails extends Component {
 
     state = {
@@ -57,17 +57,17 @@ class SummaryDetails extends Component {
             utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, locality, residenials, facilationChargesSuccess,discountType } = this.props;
 
 
-            await fetchApplications(
-                {
-                    "applicationNumber": fetchApplicationNumber, 'uuid': userInfo.uuid,
-                    "applicationStatus": "",
-                    "mobileNumber": "", "bookingType": "",
-                    "tenantId":userInfo.tenantId
-                }
-            );
+            // await fetchApplications(
+            //     {
+            //         "applicationNumber": fetchApplicationNumber, 'uuid': userInfo.uuid,
+            //         "applicationStatus": "",
+            //         "mobileNumber": "", "bookingType": "",
+            //         "tenantId":userInfo.tenantId
+            //     }
+            // );
 
  fetchPayment(
-    [{ key: "consumerCode", value: fetchApplicationNumber }, { key: "businessService", value: "PACC" }, { key: "tenantId", value: userInfo.tenantId }
+    [{ key: "consumerCode", value: fetchApplicationNumber }, { key: "businessService", value: "BKROOM" }, { key: "tenantId", value: userInfo.tenantId }
     ])
 
  fetchDataAfterPayment(
@@ -113,8 +113,12 @@ class SummaryDetails extends Component {
 
     submit = async (e) => {
     
+        let ApplicantName = this.props.RoomBookingData.bookingsModelList[0].bkApplicantName
+        let ApplicantMobNum = this.props.RoomBookingData.bookingsModelList[0].bkMobileNumber
+        console.log("propsInpayPage--",this.props)
+        
     // alert("hello generate receipt")
-    const { TotalAmount,billId, userInfo,ApplicantName,ApplicantMobNum,prepareFinalObject,paymentMode,ppaidBy,pChequeNo,
+    const { TotalAmount,billId, userInfo,prepareFinalObject,paymentMode,ppaidBy,pChequeNo,
     ChnChqDate,newDDno,NewTrxNo,NewddDate,pddIFSC,pIFSC} = this.props
     console.log("this.props---",this.props)
    
@@ -125,7 +129,7 @@ class SummaryDetails extends Component {
             "Payment" : {         
                 "paymentDetails": [
                     {
-                      "businessService": "PACC",
+                      "businessService": "BKROOM",
                       "billId": billId,
                       "totalDue": TotalAmount,
                       "totalAmountPaid": TotalAmount
@@ -303,7 +307,9 @@ this.props.history.push(`/egov-services/success-payment`);
             // console.log("propsInRendersummary--",this.props)
             // let fc = fCharges?fCharges.facilitationCharge:'100';
             // console.log("stateofBooking--",this.state.createPACCApp)
-  const {paymentDetails, ApplicantMobNum, ApplicantName, TotalAmount,billId, userInfo} = this.props;
+  const {paymentDetails, TotalAmount,billId, userInfo} = this.props;
+  let ApplicantName = this.props.RoomBookingData.bookingsModelList[0].bkApplicantName
+  let ApplicantMobNum = this.props.RoomBookingData.bookingsModelList[0].bkMobileNumber
   console.log("propsInpayPage--",this.props)
   let { PayerName, mobileNo, PaidBy, transactionDate, PaymentReceiptNumber,ChequeNo,ChequeDate,IFSC,BankName,last4Digits,TrxNo,repeatTrxNo,
 BankBranch,DDno,ddDate,ddIFSC,ddBank,ddBranch} = this.state;
@@ -320,19 +326,22 @@ console.log("this.state--PaidBy",PaidBy)
   />     
 : ""} */}
 
-{this.props.ApplicantAppStatus != "OFFLINE_RE_INITIATED" ? 
- <PaymentDetailsTwo
+ <PaymentDetails
+ one={this.props.one}
+ two={this.props.two}
+ three={this.props.three}
+ four={this.props.four}
  paymentDetails={paymentDetails && paymentDetails}
   />     
-: ""}
-                       
 
+                       
+{/* 
 {this.props.ApplicantAppStatus == "OFFLINE_RE_INITIATED" ? 
 <DateVenueChangePayDetail 
 paymentDetails={paymentDetails && paymentDetails}
 Status={this.props.ApplicantAppStatus && this.props.ApplicantAppStatus}
 />
-:""}
+:""} */}
                             
                <PaymentOptionDetails 
                PaymentReceiptNumber={PaymentReceiptNumber}
@@ -392,6 +401,7 @@ Status={this.props.ApplicantAppStatus && this.props.ApplicantAppStatus}
                         </div>
 
                     </div></div>
+                    
                 <Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
                     <div className="responsive-action-button-cont">
                         {/* <Button
@@ -427,139 +437,74 @@ const mapStateToProps = state => {
     const { userInfo } = state.auth;
     const { facilationChargesSuccess, arrayName } = bookings;
     const { applicationData } = bookings;
-    
-    
-    let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
-    
-    let ApplicantName = selectedComplaint ? selectedComplaint.bkApplicantName : 'notFound'
-    console.log("ApplicantName--",ApplicantName)
+    console.log("BookingInPayment--",bookings)
+let RoomBookingData = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.RoomBookingData : "NA"
+  console.log("-RoomBookingData-",RoomBookingData)  
+const { paymentData } = bookings;
+let paymentDataOne = paymentData ? paymentData : "wrong";
+let paidBy = state.screenConfiguration.preparedFinalObject.PaidBy ?  state.screenConfiguration.preparedFinalObject.PaidBy : " ";
+let ppaidBy = paidBy && paidBy ? paidBy : " "
+console.log("ppaidBy--",ppaidBy)
 
-    let ApplicantMobNum = selectedComplaint ? selectedComplaint.bkMobileNumber : 'notFound'
-    console.log("ApplicantMobNum--",ApplicantMobNum)
 
-    let ApplicantAppStatus = selectedComplaint ? selectedComplaint.bkApplicationStatus : 'notFound'
-    console.log("ApplicantAppStatus--",ApplicantAppStatus)
-
+console.log("paymentDataOne--",paymentDataOne)
+    let checkBillLength =  paymentDataOne != "wrong" ? paymentDataOne.Bill.length > 0 : "";
+    let totalAmountSuPage = checkBillLength ? paymentDataOne.Bill[0].totalAmount: "notfound";
+    console.log("totalAmountSuPage-",totalAmountSuPage)
     let paymentDetails;
-
-    // paymentDetails = paymentData ? paymentData.Bill[0] : '';
-
-    const { paymentData } = bookings;
-
-	console.log("paymentData--",paymentData ? paymentData : "NopaymentData")
-
-	const { fetchPaymentAfterPayment } = bookings;
-	console.log("fetchPaymentAfterPayment--",fetchPaymentAfterPayment ? fetchPaymentAfterPayment : "NofetchPaymentAfterPaymentData")
-
-    
-    
-    if(selectedComplaint && selectedComplaint.bkApplicationStatus == "OFFLINE_INITIATE" || selectedComplaint.bkApplicationStatus == "OFFLINE_INITIATED"){
-        console.log("offlineApplied--",selectedComplaint.bkApplicationStatus)
-           if(selectedComplaint.bkPaymentStatus == "SUCCESS"){
-            console.log("one")
-            paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
-        console.log("paymentDetails-One--",paymentDetails)
-           }
-        else{
-            console.log("two")
-            paymentDetails = paymentData ? paymentData.Bill[0] : '';
-            console.log("paymentDetails-two--",paymentDetails)
-            }
-        }
-        else if(selectedComplaint && selectedComplaint.bkApplicationStatus == "OFFLINE_RE_INITIATED" || selectedComplaint.bkApplicationStatus == "OFFLINE_RE_INITIATE"){
-                  console.log("OFFLINE_RE_INITIATE--",selectedComplaint.bkApplicationStatus)
-                  console.log("one+++++")
-                  paymentDetails = paymentData ? paymentData.Bill[0] : '';
-                  console.log("paymentDetails-two--reinitiate",paymentDetails)
-            }
-          else{
-            console.log("else-last-condition--")
-            paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
-        
-          }
-
-
+    paymentDetails = paymentData ? paymentData.Bill[0] : '';
     let TotalAmount  = paymentDetails ? paymentDetails.totalAmount : "NotFoundAnyAmount";
     console.log("TotalAmount--",TotalAmount)
     let billId = paymentDetails ? paymentData.Bill[0].billDetails[0].billId : "NotFoundAnyBillId";
-    console.log("billId--",billId)    
+    console.log("billId--",billId)
+    let billAccountDetailsArray =  checkBillLength ? paymentDataOne.Bill[0].billDetails[0].billAccountDetails : "NOt found Any Array"
+    console.log("billAccountDetailsArray--",billAccountDetailsArray)
+    let one = 0;
+    let two = 0; 
+    let three = 0;
+    let four = 0;
+    let five = 0;
+    let six = 0;
+for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
-    let myLocation = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData:"";  
-    let myLocationtwo = myLocation?myLocation.bkLocation:"";  
-
-
-    let fCharges;
-    if (arrayName && arrayName.length > 0) {
-      arrayName.forEach((item) => {
-        item.forEach((value) => {
-          if (value.code == "FACILITATION_CHARGE") { 
-            fCharges = value
-          }
-        })
-      })
+    if(billAccountDetailsArray[i].taxHeadCode == "BKROOM_TAX"){
+        one = billAccountDetailsArray[i].amount
     }
-    let documentMap = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.documentMap : "";
-    // let bkLocation = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation : "";
-    
-    let paymentMode = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.paymentMode:" ";  
+    else if(billAccountDetailsArray[i].taxHeadCode == "BKROOM"){
+        two = billAccountDetailsArray[i].amount
+    }
+    else if(billAccountDetailsArray[i].taxHeadCode == "BKROOM_ROUND_OFF"){
+        three = billAccountDetailsArray[i].amount
+    }
+    else if(billAccountDetailsArray[i].taxHeadCode == "ROOM_FACILITATION_CHARGE"){
+        four = billAccountDetailsArray[i].amount
+    }
+}
 
-    let paidBy = state.screenConfiguration.preparedFinalObject.PaidBy ?  state.screenConfiguration.preparedFinalObject.PaidBy : " ";
-    
-    let ppaidBy = paidBy && paidBy ? paidBy : " "
-    console.log("ppaidBy--",ppaidBy)
+console.log("one--",one)
+console.log("two--",two)
+console.log("three--",three)
+console.log("four--",four)
+console.log("five--",five)
+console.log("six--",six)
 
-//IFSC
+let paymentMode = 
+state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.paymentMode:"";  
 
-let IFSC = state.screenConfiguration.preparedFinalObject.IFSC ?  state.screenConfiguration.preparedFinalObject.IFSC : " ";
-    
-    let pIFSC = IFSC && IFSC ? IFSC : " "
-    console.log("pIFSC--",pIFSC)
+console.log("paymentMode--",paymentMode)
 
-    let ddIFSC = state.screenConfiguration.preparedFinalObject.ddIFSC ?  state.screenConfiguration.preparedFinalObject.ddIFSC : " ";
-    
-    let pddIFSC = ddIFSC && ddIFSC ? ddIFSC : " "
-    console.log("pddIFSC",pddIFSC)
-
-
-//ChequeNo
-    let ChequeNo = state.screenConfiguration.preparedFinalObject.ChequeNo ?  state.screenConfiguration.preparedFinalObject.ChequeNo : " ";
-
-    let pChequeNo = ChequeNo && ChequeNo ? ChequeNo : " "
-    console.log("pChequeNo--",pChequeNo)
-
-    let NewChequeDate = state.screenConfiguration.preparedFinalObject.ChequeDate ?  state.screenConfiguration.preparedFinalObject.ChequeDate : " ";
-
-    let ChnChqDate = NewChequeDate && NewChequeDate ? NewChequeDate : ""
-    console.log("ChnChqDate--",ChnChqDate)
-
-    let DDno = state.screenConfiguration.preparedFinalObject.DDno ?  state.screenConfiguration.preparedFinalObject.DDno : " ";
-
-    let newDDno = DDno && DDno ? DDno : " "
-    console.log("newDDno--",newDDno)
-
-    let DdDate = state.screenConfiguration.preparedFinalObject.ddDate ?  state.screenConfiguration.preparedFinalObject.ddDate : " ";
-
-    let NewddDate = DdDate && DdDate ? DdDate : " "
-    console.log("NewddDate--",NewddDate)
-//TrxNo
-    let TrxNo = state.screenConfiguration.preparedFinalObject.TrxNo ?  state.screenConfiguration.preparedFinalObject.TrxNo : " ";
-
-    let NewTrxNo = TrxNo && TrxNo ? TrxNo : " "
-    console.log("NewTrxNo--",NewTrxNo)
 
     return {
-        createPACCApplicationData,userInfo,ppaidBy,pChequeNo,ChnChqDate,newDDno,NewTrxNo,NewddDate,ApplicantAppStatus,
-        documentMap,facilationChargesSuccess,billId,ApplicantName,ApplicantMobNum,pddIFSC,pIFSC,
-        fCharges,myLocationtwo,paymentDetails,TotalAmount,paymentMode,applicationData,selectedComplaint
+        ppaidBy, RoomBookingData,userInfo,paymentMode,one,two,three,four,five,six,paymentDataOne,checkBillLength,totalAmountSuPage,paymentDetails,TotalAmount,billId,billAccountDetailsArray
     }
 
 }
 const mapDispatchToProps = dispatch => {
     return {
-        fetchApplications: criteria => dispatch(fetchApplications(criteria)),
+        // fetchApplications: criteria => dispatch(fetchApplications(criteria)),
         fetchDataAfterPayment: criteria => dispatch(fetchDataAfterPayment(criteria)),
-        createPACCApplication: (criteria, hasUsers, overWrite) => dispatch(createPACCApplication(criteria, hasUsers, overWrite)),
-        updatePACCApplication: (criteria, hasUsers, overWrite) => dispatch(updatePACCApplication(criteria, hasUsers, overWrite)),
+        // createPACCApplication: (criteria, hasUsers, overWrite) => dispatch(createPACCApplication(criteria, hasUsers, overWrite)),
+        // updatePACCApplication: (criteria, hasUsers, overWrite) => dispatch(updatePACCApplication(criteria, hasUsers, overWrite)),
         toggleSnackbarAndSetText: (open, message, error) =>
             dispatch(toggleSnackbarAndSetText(open, message, error)),
             fetchPayment: criteria => dispatch(fetchPayment(criteria)), 

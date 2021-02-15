@@ -1636,7 +1636,7 @@ paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
 		  onClick={() => this.BookRoom()}
 		/> 
 
-		  {( this.props.RoomBookingDate === "Valid" && complaint.bkBookingType == "Community Center") ? 
+		  {/* {( this.props.RoomBookingDate === "Valid" && complaint.bkBookingType == "Community Center") ? 
 		  <Button
 		  label={
 			<Label
@@ -1654,7 +1654,7 @@ paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
 		  style={{ width: "15%" }}
 		  onClick={() => this.BookRoom()}
 		/> 
-		  : ""}
+		  : ""} */}
 
 		  {(Difference_In_Days_check > 15 || Difference_In_Days_check == 15 )? 
 		  <Button
