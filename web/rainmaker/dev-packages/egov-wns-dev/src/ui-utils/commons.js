@@ -280,28 +280,42 @@ export const getMyConnectionResults = async (queryObject, dispatch) => {
 
         if (response.WaterConnection.length > 0) {
             response.WaterConnection = await getPropertyObj(response.WaterConnection); 
+            
             for (let i = 0; i < response.WaterConnection.length; i++) {
                 response.WaterConnection[i].service = "Water"
                 if (response.WaterConnection[i].connectionNo !== null && response.WaterConnection[i].connectionNo !== undefined) {
                     try {
+                        let queryObject = {billGeneration:
+                            {            
+                              consumerCode:response.WaterConnection[i].connectionNo,
+                            //   tenantId: response.WaterConnection[i].property.tenantId,//getTenantId(),
+                            //   paymentMode:'cash',
+                            //   isGenerateDemand:false,            
+                            }
+                          }
                         const data = await httpRequest(
                             "post",
-                            `billing-service/bill/v2/_fetchbill?consumerCode=${response.WaterConnection[i].connectionNo}&tenantId=${response.WaterConnection[i].property.tenantId}&businessService=WS`,
-                            "_fetchbill",
-                            // queryObject
+                            //`billing-service/bill/v2/_fetchbill?consumerCode=${response.WaterConnection[i].connectionNo}&tenantId=${response.WaterConnection[i].property.tenantId}&businessService=WS`,
+                            'ws-calculator/billing/_getBillData',
+                            "_search",
+                            [],
+                            queryObject
                         );
                         if (data && data !== undefined) {
-                            if (data.Bill !== undefined && data.Bill.length > 0) {
-                                response.WaterConnection[i].due = data.Bill[0].totalAmount
+                            if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
+                               response.WaterConnection[i].due = 0//data.billGeneration[0].totalAmount
+                                response.WaterConnection[i].status = data.billGeneration[0].status
                             }
 
                         } else {
-                            response.WaterConnection[i].due = 0
+                            response.WaterConnection[i].due = "NA"
+                            response.WaterConnection[i].status = "NA"
                         }
 
                     } catch (err) {
                         console.log(err)
                         response.WaterConnection[i].due = "NA"
+                        response.WaterConnection[i].status = "NA"
                     }
                 }
             }
@@ -1076,6 +1090,43 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
 
         var tempDoc = {},docType="";
         var dList = payload.applyScreenMdmsData['ws-services-masters'].Documents;
+        // impliment new document 
+                // fiter baed on occupancycode (Property Sub Usage Type),category(Uses Caregory) and applicationType(Application Type) 
+                let occupancycode = get(
+                    payload,
+                    "applyScreen.property.usageCategory",
+                    ''
+                );
+                let category = get(
+                    payload,
+                    "applyScreen.waterProperty.usageSubCategory",
+                    ''
+                );
+                let applicationType = get(
+                    payload,
+                    "applyScreen.waterApplicationType",
+                    ''
+                );
+                let documents = '';
+                let wsDocument ='';
+                wsDocument = payload.applyScreenMdmsData['ws-services-masters'].wsDocument; 
+                if(occupancycode && applicationType && category)
+                {
+                    if(applicationType ==='TEMPORARY')
+                    {
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                            && x.category === category
+                            &&x.occupancycode === occupancycode)
+                
+                    }
+                    else{
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                            && x.category === category)
+                
+                    } 
+                    if(wsDocument && wsDocument[0])
+                    dList = wsDocument[0].document;
+                }
         if(dList !== undefined && dList !==null){
             for(var i=0;i<dList.length;i++){
                 for(var key in docs){
@@ -1787,24 +1838,52 @@ export const getSWMyConnectionResults = async (queryObject, dispatch) => {
                 response.SewerageConnections[i].service = "Sewerage"
                 if (response.SewerageConnections[i].connectionNo !== undefined && response.SewerageConnections[i].connectionNo !== null) {
                     try {
+                        let queryObject = {billGeneration:
+                            {            
+                              consumerCode:response.SewerageConnections[i].connectionNo,
+                            //   tenantId:response.WaterConnection[i].property.tenantId,//getTenantId(),
+                            //   paymentMode:'cash',
+                            //   isGenerateDemand:false,            
+                            }
+                          }
                         const data = await httpRequest(
                             "post",
-                            `billing-service/bill/v2/_fetchbill?consumerCode=${response.SewerageConnections[i].connectionNo}&tenantId=${response.SewerageConnections[i].property.tenantId}&businessService=SW`,
-                            "_fetchbill",
-                            // queryObject
+                            //`billing-service/bill/v2/_fetchbill?consumerCode=${response.WaterConnection[i].connectionNo}&tenantId=${response.WaterConnection[i].property.tenantId}&businessService=WS`,
+                            'ws-calculator/billing/_getBillData',
+                            "_search",
+                            [],
+                            queryObject
                         );
+                        // const data = await httpRequest(
+                        //     "post",
+                        //     `billing-service/bill/v2/_fetchbill?consumerCode=${response.SewerageConnections[i].connectionNo}&tenantId=${response.SewerageConnections[i].property.tenantId}&businessService=SW`,
+                        //     "_fetchbill",
+                        //     // queryObject
+                        // );
+                        // if (data && data !== undefined) {
+                        //     if (data.Bill !== undefined && data.Bill.length > 0) {
+                        //         response.SewerageConnections[i].due = data.Bill[0].totalAmount
+                        //     }
+
+                        // } else {
+                        //     response.SewerageConnections[i].due = 0
+                        // }
+
                         if (data && data !== undefined) {
-                            if (data.Bill !== undefined && data.Bill.length > 0) {
-                                response.SewerageConnections[i].due = data.Bill[0].totalAmount
+                            if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
+                               response.SewerageConnections[i].due = 0//data.billGeneration[0].totalAmount
+                                response.SewerageConnections[i].status = data.billGeneration[0].status
                             }
 
                         } else {
-                            response.SewerageConnections[i].due = 0
+                            response.SewerageConnections[i].due = "NA"
+                            response.SewerageConnections[i].status = "NA"
                         }
 
                     } catch (err) {
                         console.log(err)
                         response.SewerageConnections[i].due = "NA"
+                        response.SewerageConnections[i].status = "NA"
                     }
                 }
             }

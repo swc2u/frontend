@@ -98,6 +98,26 @@ export const reviewPipeSize = getLabelWithValue(
     callBack: handleNA
   }
 );
+export const reviewBillGroup = getLabelWithValue(
+  {
+    labelName: "Bill Group",
+    labelKey: "WS_SERV_DETAIL_BILL_GROUP"
+  },
+  {
+    jsonPath: "WaterConnection[0].billGroup",
+    callBack: handleNA
+  }
+);
+export const reviewcontractValue = getLabelWithValue(
+  {
+    labelName: "Contratc Value",
+    labelKey: "WS_ADDN_DETAILS_CONTRACT_VALUE"
+  },
+  {
+    jsonPath: "WaterConnection[0].contractValue",
+    callBack: handleNA
+  }
+);
 export const reviewccCode = getLabelWithValue(
   {
     labelName: "CC Code",
@@ -422,7 +442,8 @@ const activationDetails = getCommonContainer({
 
 export const renderService = () => {
   if (service === "WATER") {
-    return getCommonContainer({ reviewConnectionType, reviewNumberOfTaps, reviewWaterSource, reviewWaterSubSource, reviewPipeSize ,reviewccCode, reviewdivision, reviewsubdiv,reviewledgerNo, reviewledgerGroup});
+    //return getCommonContainer({ reviewConnectionType, reviewNumberOfTaps, reviewWaterSource, reviewWaterSubSource, reviewPipeSize ,reviewccCode, reviewdivision, reviewsubdiv,reviewledgerNo, reviewledgerGroup});
+    return getCommonContainer({ reviewdivision, reviewsubdiv, reviewBillGroup, reviewledgerNo, reviewledgerGroup, reviewccCode ,reviewConnectionType, reviewNumberOfTaps, reviewWaterSource,reviewWaterSubSource, reviewPipeSize, reviewcontractValue});
   } else if (service === "SEWERAGE") {
     return getCommonContainer({ reviewConnectionType, reviewWaterClosets,reviewNoOfToilets })
   }

@@ -41,6 +41,7 @@ import {
         );
         if(payload){ 
           dispatch(prepareFinalObject("searchScreen.empCode", payload.Employees[0].code));
+          dispatch(prepareFinalObject("empCode", payload.Employees[0].code));
         }
         
       } catch (e) {

@@ -237,12 +237,67 @@ class WorkFlowContainer extends React.Component {
           })
         })
       }
-      data.processInstance = {
-        documents: data.wfDocuments,
-        assignes: data.assignees,
-        comment: data.comment,
-        action: data.action
+      // set additionalDetails for W&S module
+      if (moduleName === "NewWS1" || moduleName === "REGULARWSCONNECTION")
+      {
+        let businessServiceData = JSON.parse(
+          localStorageGet("businessServiceData")
+        );
+        let workflow =preparedFinalObject.workflow.ProcessInstances
+        workflow = workflow.filter(x=>x.action === data.processInstance.action)
+        let nextActions = workflow[0].nextActions
+        nextActions = nextActions.filter(x=>x.action === data.action)
+        let nextStateid = nextActions[0].nextState
+        businessServiceData = businessServiceData[0].states.filter(x=>x.uuid === nextStateid )
+        let searchPreviewScreenMdmsData  = preparedFinalObject.searchPreviewScreenMdmsData;
+        searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
+        //searchPreviewScreenMdmsData = searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === data.action)
+        let roles =[]
+        let rolecode ='';
+        if(searchPreviewScreenMdmsData && searchPreviewScreenMdmsData[0])
+        {
+          roles =  searchPreviewScreenMdmsData = searchPreviewScreenMdmsData[0].roles
+         roles = roles.filter(x=>x.subdivision === data.subdiv )
+         if(roles.length>0)
+         {
+          rolecode = roles[0].role 
+         }
+
+        }
+      if(rolecode)
+      {
+        data.processInstance = {
+          documents: data.wfDocuments,
+          assignes: data.assignees,
+          comment: data.comment,
+          action: data.action,
+          additionalDetails:{
+            role:rolecode
+          }
+        }
+
       }
+      else{
+              data.processInstance = {
+                documents: data.wfDocuments,
+                assignes: data.assignees,
+                comment: data.comment,
+                action: data.action,
+                additionalDetails:null
+              }
+            }
+
+      }
+      else{
+        data.processInstance = {
+          documents: data.wfDocuments,
+          assignes: data.assignees,
+          comment: data.comment,
+          action: data.action
+        }
+
+      }
+      
       data.waterSource = data.waterSource + "." + data.waterSubSource;
     
     }

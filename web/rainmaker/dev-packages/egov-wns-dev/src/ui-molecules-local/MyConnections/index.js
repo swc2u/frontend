@@ -178,9 +178,9 @@ tenantId = data.property.tenantId;
                         </Grid>
                       </Grid>
                       <div>
-                        {item.due === "NA" ?
+                        {item.status === "NA" ?
                           (<div></div>)
-                          : item.due === 0 ?
+                          : item.status !== "INITIATED" ?
                             (<div> <LabelContainer
                               labelKey="WS_COMMON_PAID_LABEL"
                               style={{ color: '#008000', textTransform: 'uppercase', fontWeight: 400 }}
