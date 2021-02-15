@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { ActionDialog, HCActionDialog,StoreAssetActionDialog,NulmActionDialog } from "../";
 import { httpRequest } from "egov-ui-framework/ui-utils/api";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
+import { getUserInfo,localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
 import { Container, Item } from "egov-ui-framework/ui-atoms";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import MenuButton from "egov-ui-framework/ui-molecules/MenuButton";
@@ -58,7 +58,7 @@ class Footer extends React.Component {
   };
 
   openActionDialog = async item => {
-    const { handleFieldChange, setRoute, dataPath } = this.props;
+    const { handleFieldChange, setRoute, dataPath,moduleName ,preparedFinalObject} = this.props;
     
     let employeeList = [];
 
@@ -120,6 +120,7 @@ class Footer extends React.Component {
               label: name
             };
           });
+
       } catch (e) {
         console.log(e);
       }
@@ -183,6 +184,43 @@ class Footer extends React.Component {
     if(dataPath!="services")
     {if (item.showEmployeeList) {
       const tenantId = getTenantId();
+      // set role based on condition for water WF start WaterConnection
+      if(dataPath ==='WaterConnection')
+      {
+        var { state } = this.props;
+        let businessServiceData = JSON.parse(
+          localStorageGet("businessServiceData")
+        );
+        let data = get(state.screenConfiguration.preparedFinalObject, dataPath, []);
+        let workflow =state.screenConfiguration.preparedFinalObject.workflow.ProcessInstances
+        workflow = workflow.filter(x=>x.action === data[0].processInstance.action)
+        let nextActions = workflow[0].nextActions
+        nextActions = nextActions.filter(x=>x.action === item.buttonLabel)
+        let nextStateid = nextActions[0].nextState
+        businessServiceData = businessServiceData[0].states.filter(x=>x.uuid === nextStateid )
+        let searchPreviewScreenMdmsData  = state.screenConfiguration.preparedFinalObject.searchPreviewScreenMdmsData;
+        searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
+        //searchPreviewScreenMdmsData = searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === data.action)
+        let roles =[]
+        let rolecode ='';
+        if(searchPreviewScreenMdmsData && searchPreviewScreenMdmsData[0])
+        {
+          roles =  searchPreviewScreenMdmsData = searchPreviewScreenMdmsData[0].roles
+         roles = roles.filter(x=>x.subdivision === data[0].subdiv )
+         if(roles.length>0)
+         {
+          rolecode = roles[0].role 
+         }
+
+        }
+        if(rolecode)
+        {
+          item.roles = rolecode
+        }
+        
+      }
+      //end
+
       const queryObj = [
         {
           key: "roles",
@@ -209,6 +247,7 @@ class Footer extends React.Component {
           };
         });
     }}
+    
 
     this.setState({ open: true, data: item, employeeList });
   };
