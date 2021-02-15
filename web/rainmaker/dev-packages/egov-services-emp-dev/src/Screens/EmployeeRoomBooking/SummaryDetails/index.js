@@ -9,7 +9,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import "./index.css";
 import Footer from "../../../modules/footer"
 // import PaccFeeEstimate from "../PaccFeeEstimate"
-import SummaryCCBookingDetail from "../SummaryCCBookingDetail"
+// import SummaryCCBookingDetail from "../SummaryCCBookingDetail"
 import SummaryVenueDetail from "../SummaryVenueDetail"
 import SummaryRoomBookingDetail from "../SummaryRoomBookingDetail"
 // import { getFileUrlFromAPI } from '../../../../modules/commonFunction' //
@@ -36,7 +36,7 @@ class SummaryDetails extends Component {
     componentDidMount = async () => {
 
       
-        let {DataForRoomBooking,userInfo,roomToDate,roomFromDate,fetchPayment} = this.props
+        let {DataForRoomBooking,userInfo,roomToDate,roomFromDate,fetchPayment,prepareFinalObject} = this.props
         console.log("propsINROOMPAGE--",this.props)
        
 //         let {createPACCApplication, userInfo, documentMap,fetchPayment,prepareFinalObject,fetchApplications,conJsonSecond,conJsonfirst } = this.props;
@@ -214,7 +214,7 @@ console.log("createAppData--",createAppData)
       }
  * **/
 
-
+ 
 let payloadfund = await httpRequest(
             "bookings/community/room/_create",
             "_search",[],
@@ -349,7 +349,7 @@ this.props.SetPaymentURL(`/egov-services/PaymentReceiptDteail/ForRoomBooking/${t
                             />
                            
 
-<SummaryCCBookingDetail
+{/* <SummaryCCBookingDetail
 Name={this.props.Name}    
 purpose={this.props.purpose}
 houseNo={this.props.houseNo}
@@ -357,7 +357,7 @@ mobileNo={this.props.mobileNo}
 Sector={this.props.Sector}
 gstNo={this.props.gstNo}
 ProofOfResidence={this.props.ProofOfResidence}
-                            />
+                            /> */}
 
                             <SummaryVenueDetail
                                  location={this.props.location}
