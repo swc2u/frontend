@@ -56,7 +56,26 @@ import { penaltySummary } from "./generatePenaltyStatement";
     if(!!response.Properties && !!response.Properties.length) {
        dispatch(prepareFinalObject("Properties", response.Properties))
     }
+    const data=[{
+      "active": "true",
+"code": "PAYMENTTYPE.PREMIUMAMOUNT",
+"name": "Premium Amount"
+    }]
+    if(response.Properties[0].propertyMasterOrAllotmentOfSite==="ALLOTMENT_OF_SITE" && response.Properties[0].state !=="ES_APPROVED"){
+      dispatch(
+        handleField(
+          action.screenKey,
+          "components.div.children.detailsContainer.children.offlinePaymentType.children.cardContent.children.detailsContainer.children.paymentType",
+          "props.data",
+          data
+        )
+      )
+      dispatch(prepareFinalObject("payment.paymentType","PAYMENTTYPE.PREMIUMAMOUNT"))
+    }
+    // debugger
+    else{
     dispatch(prepareFinalObject("payment.paymentType","PAYMENTTYPE.RENT"))
+    }
   }
 
   const propertyDetailsHeader = getCommonTitle(
@@ -252,6 +271,15 @@ import { penaltySummary } from "./generatePenaltyStatement";
             break; 
 
           default : 
+          if(Properties[0].state!=="ES_APPROVED" && Properties[0].propertyMasterOrAllotmentOfSite==="ALLOTMENT_OF_SITE"){
+
+            dispatch(handleField(
+              "estate-payment",
+              "components.div.children.detailsContainer.children.rentSummaryDetails.children",
+              "rentCard",
+              premiumAmountSummary     
+            ));
+          }else{
               const rentCard = getCommonCard({
                 header: rentSummaryHeader,
                 detailsContainer: rentSummary
@@ -263,6 +291,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
                 "rentCard",
                 rentCard     
               ));
+          }
             break;  
         }
       }
@@ -436,6 +465,14 @@ import { penaltySummary } from "./generatePenaltyStatement";
     })
     }
   }
+  const premiumAmountSummary = getCommonGrayCard({
+    rentSection: getRentSummaryCard({
+      sourceJsonPath: "Properties[0].propertyDetails.paymentConfig.premiumAmountConfigItems",
+      dataArray: ["premiumAmount"],
+      type:"premiumAmount"
+    })
+  });
+
 
   const detailsContainer = {
     uiFramework: "custom-atoms",

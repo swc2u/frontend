@@ -7,6 +7,7 @@ import Divider from "@material-ui/core/Divider";
 import { Tooltip } from "egov-ui-framework/ui-molecules";
 import { LabelContainer } from "egov-ui-framework/ui-containers";
 import "./index.css";
+import { isArray } from "util";
 
 const formatAmount = (x) => {
     return x.toString().split('.')[0].length > 3 ? x.toString().substring(0,x.toString().split('.')[0].length-3).replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + x.toString().substring(x.toString().split('.')[0].length-3): x.toString();
@@ -57,6 +58,7 @@ const styles = {
 };
 
 function totalAmount(rentSummary, dataArray , type) {
+  debugger
     const {rent} = rentSummary
     switch(type){
       case 'Extension-Fee':
@@ -67,6 +69,8 @@ function totalAmount(rentSummary, dataArray , type) {
         return rent.totalSecurityDepositDue 
       case 'rent':
         return rent.balanceRent + rent.balanceGST + rent.balanceGSTPenalty + rent.balanceRentPenalty
+        case 'premiumAmount':
+          return rent[0].premiumAmount
       default:
         const totalAmount = dataArray.reduce((prev, curr) => prev + rent[curr], 0)
         return totalAmount;
@@ -75,7 +79,10 @@ function totalAmount(rentSummary, dataArray , type) {
 
 function RentSummaryCard(props) {
   const { classes, rentSummary, dataArray , type } = props;
-  const {rent} = rentSummary
+  let {rent} = rentSummary
+if(isArray(rent)){
+  rent=rent[0]
+}
   const total = totalAmount(rentSummary, dataArray ,type).toFixed(2);
   const totalHeadClassName = "es-total-amount-value " + classes.bigheader;
   return (
