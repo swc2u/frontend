@@ -394,7 +394,16 @@ export const ownerDetails = getCommonCard({
             headerName: "Owner Information",
             headerJsonPath: "children.cardContent.children.header.children.Owner Information.props.label",
             sourceJsonPath: "Properties[0].propertyDetails.owners",
-            prefixSourceJsonPath: "children.cardContent.children.ownerCard.children"
+            prefixSourceJsonPath: "children.cardContent.children.ownerCard.children",
+            onMultiItemDelete: (state, deletedIndex, changeField, prepareObject) => {
+              prepareObject(`PropertiesTemp[0].propertyDetails.owners[${deletedIndex}].ownerDetails.uploadedDocsInRedux`, {})
+              prepareObject(`PropertiesTemp[0].propertyDetails.owners[${deletedIndex}].ownerDetails.ownerDocuments`, [])
+              changeField(screenName, 
+                "components.div.children.formwizardFourthStepAllotment.children",
+                `ownerDocumentDetails_${deletedIndex}`,
+                {}
+                )
+            }
           },
           type: "array"
         }
