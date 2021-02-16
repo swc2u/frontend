@@ -58,7 +58,6 @@ const styles = {
 };
 
 function totalAmount(rentSummary, dataArray , type) {
-  debugger
     const {rent} = rentSummary
     switch(type){
       case 'Extension-Fee':
