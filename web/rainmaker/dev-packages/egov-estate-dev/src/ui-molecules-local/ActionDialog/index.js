@@ -121,6 +121,10 @@ class ActionDialog extends React.Component {
             documentsErr: true
           })
           return
+        } else {
+          this.setState({
+            documentsErr: false
+          })
         }
       }
       if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DS_VERIFICATION"){
@@ -171,7 +175,8 @@ class ActionDialog extends React.Component {
       dialogHeader,
       moduleName,
       isDocRequired,
-      documentProps
+      documentProps,
+      documentsJsonPath
     } = dialogData;
     const { getButtonLabelName } = this;
     let fullscreen = false;
@@ -181,6 +186,8 @@ class ActionDialog extends React.Component {
     dataPath = `${dataPath}[0]`;
 
     const applicationState = (get(state.screenConfiguration.preparedFinalObject, dataPath) || {}).state
+      let documents = get(state.screenConfiguration.preparedFinalObject, documentsJsonPath) || []
+      documents = documents.filter(item => !!item)
     return (
       <Dialog
         fullScreen={fullscreen}
@@ -311,7 +318,7 @@ class ActionDialog extends React.Component {
                     </div>
                   </Typography>
                   <DocumentListContainer {...documentProps}/>
-                  {this.state.documentsErr && (<span style={{color: "red"}}>Please upload documents</span>)}
+                  {(this.state.documentsErr || !documents || !documents.length) && (<span style={{color: "red"}}>Please upload documents</span>)}
                   </Grid>
                   )}
                   {/* {(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_SO_TEMPLATE_CREATION") && (<Grid item sm="12">
