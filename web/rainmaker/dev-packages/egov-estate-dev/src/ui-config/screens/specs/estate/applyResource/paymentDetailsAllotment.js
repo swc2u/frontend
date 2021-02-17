@@ -15,7 +15,8 @@ import {
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
   getTodaysDateInYMD,
-  _getPattern
+  _getPattern,
+  displayCustomErr
 } from "../../utils";
 import get from "lodash/get";
 import { set } from "lodash";
@@ -95,10 +96,22 @@ const premiumAmountField = {
       xs: 12,
       sm: 6
   },
-  maxLength: 100,
-  minLength: 1,
+  maxLength: 50,
+  minLength: 2,
   required: true,
-  jsonPath: "Properties[0].propertyDetails.paymentConfig.totalAmount"
+  pattern:_getPattern("numeric"),
+  errorMessage:"ES_ERR_PREMIUM_AMOUNT",
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.totalAmount",
+  afterFieldChange: (action, state, dispatch) => {
+    if (action.value.length > 50) {
+      displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_50", action.screenKey);
+    } else if(action.value.length < 2) {
+      displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_MIN_PREMIUM_AMOUNT", action.screenKey);
+    }
+    else{
+      displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_PREMIUM_AMOUNT", action.screenKey);
+    }
+  }
 }
 
 const installmentField = {
@@ -761,12 +774,12 @@ export const rentDetails = getCommonGrayCard({
                 "Properties[0].propertyDetails.paymentConfig.paymentConfigItems",
                 []
               );
-              let changeFieldPath = `components.div.children.${paymentStep}.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[${nextYearObj}].item${nextYearObj}.children.cardContent.children.rentCard.children.startYear`;
-              if (screenName == "edit-rent-info") {
-                changeFieldPath = `components.div.children.reviewRentInfo.children.cardContent.children.rentTable.children.cardContent.children.detailsContainer.childre.multipleRentContainer.children.multipleRentInfo.props.items[${nextYearObj}].item${nextYearObj}.children.cardContent.children.rentCard.children.startYear`
-              }
                 const previewYearObj = rent.filter((item, index) => index < deletedIndex && !item.isDeleted).pop()
                 const nextYearObj = rent.findIndex((item, index) => index > deletedIndex && !item.isDeleted)
+                let changeFieldPath = `components.div.children.${paymentStep}.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[${nextYearObj}].item${nextYearObj}.children.cardContent.children.rentCard.children.startYear`;
+                if (screenName == "edit-rent-info") {
+                  changeFieldPath = `components.div.children.reviewRentInfo.children.cardContent.children.rentTable.children.cardContent.children.detailsContainer.childre.multipleRentContainer.children.multipleRentInfo.props.items[${nextYearObj}].item${nextYearObj}.children.cardContent.children.rentCard.children.startYear`
+                }
                 nextYearObj !== -1 && changeField(
                   screenName,
                   changeFieldPath,
