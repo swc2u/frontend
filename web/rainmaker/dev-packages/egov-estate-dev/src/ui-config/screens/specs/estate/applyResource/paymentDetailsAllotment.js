@@ -600,10 +600,16 @@ const commonRentInformation = () => {
           if(value.isGroundRent){
             if(value.groundRentGenerationType === "Annually"){
               let tillDateData = value.paymentConfigItems[0].tillDate;
+              if(tillDateData){
               return tillDateData + " Year(s)"
+              }
+              else{
+                return "-"
+              }
             }
             else if (value.groundRentGenerationType === "Monthly") {
               let tillDateData = value.paymentConfigItems[0].tillDate;
+              if(!!tillDateData){
               const years = (Number(tillDateData) / 12 | 0)
               const months = Number(tillDateData) % 12
               if(years > 0 && months > 0) {
@@ -613,6 +619,10 @@ const commonRentInformation = () => {
               } else if(months < 1) {
                 return years + " Year(s)"
               }
+            }
+            else{
+              return "-"
+            }
             }
             
           }
