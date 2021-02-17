@@ -50,6 +50,111 @@ export const additionDetails = getCommonCard({
     }),
 
     connectionDetails: getCommonContainer({
+      division: getSelectField({
+        label: { labelKey: "WS_SERV_DETAIL_DIVISION" },
+        placeholder: { labelKey: "WS_SERV_DETAIL_DIVISION_PLACEHOLDER" },
+        gridDefination: { xs: 12, sm: 6 },
+        required: true,
+        sourceJsonPath: "applyScreenMdmsData.ws-services-masters.Division",
+        jsonPath: "applyScreen.div",
+       // pattern: /^[0-9]*$/i,
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+      }),
+      subdiv: getSelectField({
+        label: { labelKey: "WS_SERV_DETAIL_SUB_DIVISION" },
+        placeholder: { labelKey: "WS_SERV_DETAIL_SUB_DIVISION_PLACEHOLDER" },
+        gridDefination: { xs: 12, sm: 6 },
+        sourceJsonPath: "applyScreenMdmsData.ws-services-masters.subDivision",
+        jsonPath: "applyScreen.subdiv",
+        props: {         
+          disabled: true
+        },
+       // pattern: /^[0-9]*$/i,
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+      }),
+      billGroup: {
+        //...getSelectField({
+          ...getTextField({
+          label: { labelKey: "WS_SERV_DETAIL_BILL_GROUP" },
+          placeholder: { labelKey: "WS_SERV_DETAIL_BILL_GROUP_PLACEHOLDER" },
+          required: true,
+         // sourceJsonPath: "applyScreenMdmsData.ws-services-masters.Ledger",
+          //sourceJsonPath: "ledgerlist",
+          gridDefination: { xs: 12, sm: 6 },
+          errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+          jsonPath: "applyScreen.billGroup"
+        }),
+        beforeFieldChange: async (action, state, dispatch) => {
+
+          if(action.value)
+          {
+            // let sectotecode = get(
+            //   state.screenConfiguration.preparedFinalObject,
+            //   "applyScreen.property.address.locality.code"
+            // )             
+            // let ledgerGroup = `${sectotecode}${action.value}`
+            // dispatch(
+            //   prepareFinalObject(
+            //     "applyScreen.ledgerGroup",
+            //     ledgerGroup
+            //   )
+            // )
+          }
+         
+        }
+      },
+      ledgerNo: {
+        ...getSelectField({
+          label: { labelKey: "WS_SERV_DETAIL_LEDGER_NO" },
+          placeholder: { labelKey: "WS_SERV_DETAIL_LEDGER_NO_PLACEHOLDER" },
+          required: true,
+          //sourceJsonPath: "applyScreenMdmsData.ws-services-masters.Ledger",
+          sourceJsonPath: "ledgerlist",
+          gridDefination: { xs: 12, sm: 6 },
+          errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+          jsonPath: "applyScreen.ledgerNo"
+        }),
+        beforeFieldChange: async (action, state, dispatch) => {
+
+          if(action.value)
+          {
+            let sectotecode = get(
+              state.screenConfiguration.preparedFinalObject,
+              "applyScreen.property.address.locality.code"
+            )
+             
+            let ledgerGroup = `${sectotecode}${action.value}`
+            dispatch(
+              prepareFinalObject(
+                "applyScreen.ledgerGroup",
+                ledgerGroup
+              )
+            )
+          }
+         
+        }
+      },
+      ledgerGroup:
+      getTextField({
+       label: { labelKey: "WS_SERV_DETAIL_LEDGER_GROUP" },
+       placeholder: { labelKey: "WS_SERV_DETAIL_LEDGER_GROUP_PLACEHOLDER" },
+       gridDefination: { xs: 12, sm: 6 },        
+       jsonPath: "applyScreen.ledgerGroup",
+       pattern: /^[0-9]*$/i,
+       props: {         
+         disabled: true
+       },
+       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+     }),
+     ccCode: getTextField({
+      label: { labelKey: "WS_SERV_DETAIL_CC_CODE" },
+      placeholder: { labelKey: "WS_SERV_DETAIL_CC_CODE_PLACEHOLDER" },
+      gridDefination: { xs: 12, sm: 6 },
+      
+      jsonPath: "applyScreen.ccCode",
+      pattern: /^[0-9]*$/i,
+      errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+    }),
       connectionType: {
         ...getSelectField({
           label: { labelKey: "WS_SERV_DETAIL_CONN_TYPE" },
@@ -72,16 +177,15 @@ export const additionDetails = getCommonCard({
           }
         }
       },
-
       numberOfTaps: getTextField({
         label: { labelKey: "WS_SERV_DETAIL_NO_OF_TAPS" },
         placeholder: { labelKey: "WS_SERV_DETAIL_NO_OF_TAPS_PLACEHOLDER" },
         gridDefination: { xs: 12, sm: 6 },
         jsonPath: "applyScreen.noOfTaps",
-        pattern: /^[0-9]*$/i,
+        //pattern: /^[0-9]*$/i,
+        pattern: getPattern("numeric-only"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
       }),
-
       waterSourceType: {
         ...getSelectField({
           label: { labelKey: "WS_SERV_DETAIL_WATER_SOURCE" },
@@ -126,7 +230,6 @@ export const additionDetails = getCommonCard({
           }
         }
       },
-
       waterSubSource: getSelectField({
         label: { labelKey: "WS_SERV_DETAIL_WATER_SUB_SOURCE" },
         placeholder: { labelKey: "WS_ADDN_DETAILS_WARER_SUB_SOURCE_PLACEHOLDER" },
@@ -136,16 +239,7 @@ export const additionDetails = getCommonCard({
         errorMessage: "ERR_INVALID_BILLING_PERIOD",
         jsonPath: "applyScreen.waterSubSource"
       }),
-
-      // pipeSize: getSelectField({
-      //   label: { labelKey: "WS_SERV_DETAIL_PIPE_SIZE" },
-      //   placeholder: { labelKey: "WS_SERV_DETAIL_PIPE_SIZE_PLACEHOLDER" },
-      //   gridDefination: { xs: 12, sm: 6 },
-      //   sourceJsonPath: "applyScreenMdmsData.ws-services-calculation.pipeSize",
-      //   jsonPath: "applyScreen.pipeSize",
-      //   pattern: /^[0-9]*$/i,
-      //   errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
-      // }),
+      
       pipeSize: {
         ...getSelectField({
           label: { labelKey: "WS_SERV_DETAIL_PIPE_SIZE" },
@@ -181,81 +275,20 @@ export const additionDetails = getCommonCard({
          
         }
       },
-      division: getSelectField({
-        label: { labelKey: "WS_SERV_DETAIL_DIVISION" },
-        placeholder: { labelKey: "WS_SERV_DETAIL_DIVISION_PLACEHOLDER" },
+      contractValue: getTextField({
+        label: { labelKey: "WS_ADDN_DETAILS_CONTRACT_VALUE" },
+        placeholder: { labelKey: "WS_ADDN_DETAILS_CONTRACT_VALUE_PLACEHOLDER" },
         gridDefination: { xs: 12, sm: 6 },
-        sourceJsonPath: "applyScreenMdmsData.ws-services-masters.Division",
-        jsonPath: "applyScreen.div",
-       // pattern: /^[0-9]*$/i,
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
-      }),
-      subdiv: getSelectField({
-        label: { labelKey: "WS_SERV_DETAIL_SUB_DIVISION" },
-        placeholder: { labelKey: "WS_SERV_DETAIL_SUB_DIVISION_PLACEHOLDER" },
-        gridDefination: { xs: 12, sm: 6 },
-        sourceJsonPath: "applyScreenMdmsData.ws-services-masters.subDivision",
-        jsonPath: "applyScreen.subdiv",
-        props: {         
-          disabled: true
-        },
-       // pattern: /^[0-9]*$/i,
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
-      }),
-
-      ledgerNo: {
-        ...getSelectField({
-          label: { labelKey: "WS_SERV_DETAIL_LEDGER_NO" },
-          placeholder: { labelKey: "WS_SERV_DETAIL_LEDGER_NO_PLACEHOLDER" },
-          required: false,
-          //sourceJsonPath: "applyScreenMdmsData.ws-services-masters.Ledger",
-          sourceJsonPath: "ledgerlist",
-          gridDefination: { xs: 12, sm: 6 },
-          errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-          jsonPath: "applyScreen.ledgerNo"
-        }),
-        beforeFieldChange: async (action, state, dispatch) => {
-
-          if(action.value)
-          {
-            let sectotecode = get(
-              state.screenConfiguration.preparedFinalObject,
-              "applyScreen.property.address.locality.code"
-            )
-             
-            let ledgerGroup = `${sectotecode}${action.value}`
-            dispatch(
-              prepareFinalObject(
-                "applyScreen.ledgerGroup",
-                ledgerGroup
-              )
-            )
-          }
-         
-        }
-      },
- 
-      ccCode: getTextField({
-        label: { labelKey: "WS_SERV_DETAIL_CC_CODE" },
-        placeholder: { labelKey: "WS_SERV_DETAIL_CC_CODE_PLACEHOLDER" },
-        gridDefination: { xs: 12, sm: 6 },
+        pattern: getPattern("Name"),
+        jsonPath: "applyScreen.contractValue",
+        pattern: /^[0-9]*$/i,
         
-        jsonPath: "applyScreen.ccCode",
-        pattern: /^[0-9]*$/i,
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+       // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
       }),
-      ledgerGroup:
-       getTextField({
-        label: { labelKey: "WS_SERV_DETAIL_LEDGER_GROUP" },
-        placeholder: { labelKey: "WS_SERV_DETAIL_LEDGER_GROUP_PLACEHOLDER" },
-        gridDefination: { xs: 12, sm: 6 },        
-        jsonPath: "applyScreen.ledgerGroup",
-        pattern: /^[0-9]*$/i,
-        props: {         
-          disabled: true
-        },
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
-      }),
+
+
+
+
 
       noOfWaterClosets: getTextField({
         label: { labelKey: "WS_ADDN_DETAILS_NO_OF_WATER_CLOSETS" },

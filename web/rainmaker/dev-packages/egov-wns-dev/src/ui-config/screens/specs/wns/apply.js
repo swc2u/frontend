@@ -62,6 +62,8 @@ const displaysubUsageType = (usageType, dispatch, state) => {
           "applyScreenMdmsData.PropertyTax.subUsageType"
         );
       let  subUsageType=[];
+      if(UsageCategory !== undefined)
+      {
       UsageCategory.forEach(item=>{
         if(item.code.split(`${usageType.split('.')[0]}.`).length==2){
           subUsageType.push({
@@ -72,6 +74,7 @@ const displaysubUsageType = (usageType, dispatch, state) => {
             })
           }
       });
+    }
           dispatch(prepareFinalObject("applyScreenMdmsData.subUsageType",subUsageType));
 }
 const displayUsagecategory = (usageType, dispatch, state) => {
@@ -435,7 +438,7 @@ export const getData = async (action, state, dispatch) => {
       const waterConnections = payloadWater ? payloadWater.WaterConnection : []
       const sewerageConnections = payloadSewerage ? payloadSewerage.SewerageConnections : [];
       let combinedArray = waterConnections.concat(sewerageConnections);
-      combinedArray[0].property.subusageCategory = combinedArray[0].property.usageCategory;
+      combinedArray[0].property.subusageCategory = combinedArray[0].property.subusageCategory;
       combinedArray[0].property.usageCategory = combinedArray[0].property.usageCategory.split('.')[0];
       combinedArray[0].property.noOfFloors = String(combinedArray[0].property.noOfFloors);
       dispatch(prepareFinalObject("applyScreen", findAndReplace(combinedArray[0], "null", "NA")));
@@ -466,6 +469,45 @@ export const getData = async (action, state, dispatch) => {
           "components.div.children.formwizardFirstStep.children.connectionHolderDetails.visible",
           true
         );       
+      }
+      else
+      {
+        // combinedArray[0].connectionHolders[0].sameAsPropertyAddress = true;        
+        // combinedArray[0].connectionHolders[0].name = combinedArray[0].property.owners[0].name ==='NA'?'':propertyObj.owners[0].name;
+        // combinedArray[0].connectionHolders[0].mobileNumber = combinedArray[0].property.owners[0].mobileNumber ==='NA'?'':propertyObj.owners[0].mobileNumber;
+        // combinedArray[0].connectionHolders[0].fatherOrHusbandName = combinedArray[0].property.owners[0].fatherOrHusbandName ==='NA'?'':propertyObj.owners[0].fatherOrHusbandName;;
+        // combinedArray[0].connectionHolders[0].correspondenceAddress = combinedArray[0].property.owners[0].correspondenceAddress ==='NA'?'':propertyObj.owners[0].correspondenceAddress;;
+        // combinedArray[0].connectionHolders[0].ownerType = combinedArray[0].property.owners[0].ownerType ==='NA'?'':propertyObj.owners[0].ownerType;;
+      dispatch(prepareFinalObject("connectionHolders[0].sameAsPropertyAddress", true));
+      dispatch(prepareFinalObject("connectionHolders[0].name", combinedArray[0].property.owners[0].name ==='NA'?'':combinedArray[0].property.owners[0].name));
+      dispatch(prepareFinalObject("connectionHolders[0].mobileNumber", combinedArray[0].property.owners[0].mobileNumber ==='NA'?'':combinedArray[0].property.owners[0].mobileNumber));
+      dispatch(prepareFinalObject("connectionHolders[0].fatherOrHusbandName", combinedArray[0].property.owners[0].fatherOrHusbandName ==='NA'?'':combinedArray[0].property.owners[0].fatherOrHusbandName));
+      dispatch(prepareFinalObject("connectionHolders[0].correspondenceAddress", combinedArray[0].property.owners[0].correspondenceAddress ==='NA'?'':combinedArray[0].property.owners[0].correspondenceAddress));
+      dispatch(prepareFinalObject("connectionHolders[0].ownerType", combinedArray[0].property.owners[0].ownerType ==='NA'?'':combinedArray[0].property.owners[0].ownerType));
+    
+       // dispatch(prepareFinalObject("connectionHolders", combinedArray[0].connectionHolders));
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.sameAsOwner.children.sameAsOwnerDetails",
+            "props.isChecked",
+            true
+          )
+        ); 
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails",
+            "visible",
+            true
+          )
+        );
+        set(
+          action.screenConfig,
+          "components.div.children.formwizardFirstStep.children.connectionHolderDetails.visible",
+          true
+        ); 
+
       }
       let data = get(state.screenConfiguration.preparedFinalObject, "applyScreen")
       if (data.connectionType !== "Metered") {
@@ -572,9 +614,9 @@ export const getData = async (action, state, dispatch) => {
     dispatch(prepareFinalObject("applyScreen.waterProperty.usageCategory",  propertyObj.usageCategory));
     dispatch(prepareFinalObject("connectionHolders[0].name", propertyObj.owners[0].name ==='NA'?'':propertyObj.owners[0].name));
     dispatch(prepareFinalObject("connectionHolders[0].mobileNumber", propertyObj.owners[0].mobileNumber==='NA'?'':propertyObj.owners[0].mobileNumber));
-    dispatch(prepareFinalObject("connectionHolders[0].fatherOrHusbandName", propertyObj.owners[0].fatherOrHusbandName==='NA'?'':propertyObj.owners[0].fatherOrHusbandName));
+    dispatch(prepareFinalObject("connectionHolders[0].emailId", propertyObj.owners[0].emailId==='NA'?'':propertyObj.owners[0].emailId));
     dispatch(prepareFinalObject("connectionHolders[0].correspondenceAddress", propertyObj.owners[0].correspondenceAddress==='NA'?'':propertyObj.owners[0].correspondenceAddress));
-    dispatch(prepareFinalObject("connectionHolders[0].ownerType", propertyObj.owners[0].ownerType==='NA'?'NONE':propertyObj.owners[0].ownerType));
+    //dispatch(prepareFinalObject("connectionHolders[0].ownerType", propertyObj.owners[0].ownerType==='NA'?'NONE':propertyObj.owners[0].ownerType));
     prepareDocumentsUploadData(state, dispatch);
      }
      

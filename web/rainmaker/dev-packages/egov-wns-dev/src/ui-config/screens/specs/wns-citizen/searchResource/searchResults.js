@@ -148,7 +148,7 @@ export const searchResults = {
                   />
                 </div>
               )
-            } else if (data.rowData[5] === 0) {
+            } else if (data.rowData[5] === 0) {//PAID
               return (
                 <div style={{ color: '#008000', textTransform: 'uppercase', fontWeight: 400 }}>
                   Paid
@@ -156,7 +156,7 @@ export const searchResults = {
               )
             }
             else {
-              return ("NA")
+              return ("BUILD data is not present")
             }
           }
         }

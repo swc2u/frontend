@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import CCBookingDetail from '../CCBookingDetail';  
 import CCVenueDetail from '../CCVenueDetail'; 
 import RoomBookingStep from '../RoomBookingStep';
-import SummaryPage from '../SummaryPage';
+import SummaryDetails from '../SummaryDetails';
 import { connect } from "react-redux";
 import get from "lodash/get";
 import moment from 'moment';
@@ -19,8 +19,13 @@ export class StepForm extends Component {
       AccRoomToBook:'',  
       NonAccRoomToBook:'',
       RoomBookingData:'',
+      TypeOfRoomToBook: '',
+      NumOfDaysToBookRoom: '',
+      roomFromDate:'',
+      roomToDate:'',
       step: 0,
       Name : this.props.DataForRoomBooking.bookingsModelList[0].bkApplicantName,
+      email : this.props.DataForRoomBooking.bookingsModelList[0].bkEmail,
       purpose : this.props.DataForRoomBooking.bookingsModelList[0].bkBookingPurpose,
       houseNo : this.props.DataForRoomBooking.bookingsModelList[0].bkHouseNo,//
       Sector : this.props.DataForRoomBooking.bookingsModelList[0].bkSector,
@@ -195,12 +200,13 @@ export class StepForm extends Component {
         return daysCount;
     };
     showStep = () => {
-
+ 
    const {utgst,cgst,RefundableSecurity,Rent,dimension,Name,purpose,houseNo,Sector,mobileNo,gstNo,ProofOfResidence, location,NoOfDays,locality, fromDate,toDate,
     facilitationCharges,step,cleaningCharges,surcharges,
-    AccRoomToBook,NonAccRoomToBook,RoomBookingData
+    AccRoomToBook,NonAccRoomToBook,RoomBookingData,TypeOfRoomToBook,NumOfDaysToBookRoom,
+    roomFromDate,roomToDate,email
   } = this.state
-      
+      console.log("stateofROOMinFORM--",this.state)
  
         if (step === 0)
             return (<CCBookingDetail
@@ -218,6 +224,7 @@ export class StepForm extends Component {
             />);
         if (step === 1)
             return (<CCVenueDetail
+                email={email}
                 location={location}
                 NoOfDays={NoOfDays}
                 locality={locality}
@@ -229,6 +236,7 @@ export class StepForm extends Component {
                 Rent={Rent}
                 utgst={utgst}
                 cgst={cgst}
+                Sector={Sector}
                 surcharge={surcharges}
                 facilitationCharges={facilitationCharges}
                 nextStep={this.nextStep}
@@ -243,21 +251,48 @@ export class StepForm extends Component {
                 prevStep={this.prevStep}
                 RoomBookingData={RoomBookingData}
                 AccRoomToBook={AccRoomToBook}
+                NumOfDaysToBookRoom={NumOfDaysToBookRoom}
                 NonAccRoomToBook={NonAccRoomToBook}
+                roomFromDate={roomFromDate}
+                roomToDate={roomToDate}
+                TypeOfRoomToBook={TypeOfRoomToBook}
+                fromDate={fromDate}
+                toDate={toDate}
+                Sector={Sector}
             />);
 
         if (step === 3)
-            return (<SummaryPage
+            return (<SummaryDetails
                 nextStep={this.nextStep}
+                prevStep={this.prevStep}
                 handleChange={this.handleChange}
                 Name={Name}    
                 purpose={purpose}
                 houseNo={houseNo}
                 mobileNo={mobileNo}
                 Sector={Sector}
-                handleChangeDiscount={this.handleChangeDiscount}
                 gstNo={gstNo}
                 ProofOfResidence={ProofOfResidence}
+                location={location}
+                NoOfDays={NoOfDays}
+                locality={locality}
+                fromDate={fromDate}
+                toDate={toDate}
+                dimension={dimension}
+                RefundableSecurity={RefundableSecurity}
+                cleaningCharges={cleaningCharges}
+                Rent={Rent}
+                utgst={utgst}
+                cgst={cgst}
+                surcharge={surcharges}
+                facilitationCharges={facilitationCharges}
+                RoomBookingData={RoomBookingData}
+                TypeOfRoomToBook={TypeOfRoomToBook}
+                NumOfDaysToBookRoom={NumOfDaysToBookRoom}
+                AccRoomToBook={AccRoomToBook}
+                NonAccRoomToBook={NonAccRoomToBook}
+                roomFromDate={roomFromDate}
+                roomToDate={roomToDate}
 
             />);
 

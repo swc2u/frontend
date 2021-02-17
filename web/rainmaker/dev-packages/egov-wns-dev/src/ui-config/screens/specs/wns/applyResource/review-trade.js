@@ -219,8 +219,8 @@ export const propertyDetails={
       labelName: "Property Sub usage type",
       labelKey: "WS_PROPERTY_SUB_USAGE_TYPE_LABEL"
     },
-    { jsonPath: "WaterConnection[0].property.usageCategory",
-      callBack: handlePropertySubUsageType,
+    { jsonPath: "WaterConnection[0].property.subusageCategory",
+      callBack: handleNA,
       localePrefix: {
         moduleName: "WS",
         masterName: "PROPSUBUSGTYPE"
@@ -233,6 +233,14 @@ export const propertyDetails={
       labelKey: "WS_PROP_DETAIL_PLOT_SIZE_LABEL"
     },
     { jsonPath: "WaterConnection[0].property.landArea",
+    callBack: handleNA }
+  ),
+  reviewsuperBuiltUpArea: getLabelWithValue(
+    {
+      labelName: "Covered Area",
+      labelKey: "WS_PROP_DETAIL_BUILD_UP_AREA_LABEL_INPUT"
+    },
+    { jsonPath: "WaterConnection[0].property.superBuiltUpArea",
     callBack: handleNA }
   ),
   reviewNumberOfFloors: getLabelWithValue(
@@ -301,29 +309,29 @@ export const propertyOwnerDetail={
      callBack: handleNA
    }
  ),
- gender: getLabelWithValue(
-   {
-     labelKey: "WS_OWN_DETAIL_GENDER_LABEL"
-   },
-   {
-     jsonPath: "WaterConnection[0].property.owners[0].gender",
-     callBack: handleNA,
-     localePrefix: {
-       moduleName: "COMMON",
-       masterName: "GENDER"
-     }
-   }
- ),
- dateOfBirth: getLabelWithValue(
-   {
-     labelName: "Date Of Birth",
-     labelKey: "WS_OWN_DETAIL_DOB_LABEL"
-   },
-   {
-     jsonPath: "WaterConnection[0].property.owners[0].dob",
-     callBack: convertEpochToDateAndHandleNA
-   }
- ),
+//  gender: getLabelWithValue(
+//    {
+//      labelKey: "WS_OWN_DETAIL_GENDER_LABEL"
+//    },
+//    {
+//      jsonPath: "WaterConnection[0].property.owners[0].gender",
+//      callBack: handleNA,
+//      localePrefix: {
+//        moduleName: "COMMON",
+//        masterName: "GENDER"
+//      }
+//    }
+//  ),
+//  dateOfBirth: getLabelWithValue(
+//    {
+//      labelName: "Date Of Birth",
+//      labelKey: "WS_OWN_DETAIL_DOB_LABEL"
+//    },
+//    {
+//      jsonPath: "WaterConnection[0].property.owners[0].dob",
+//      callBack: convertEpochToDateAndHandleNA
+//    }
+//  ),
  fatherName: getLabelWithValue(
    {
      labelKey: "WS_OWN_DETAIL_FATHER_OR_HUSBAND_NAME"
@@ -331,13 +339,13 @@ export const propertyOwnerDetail={
    { jsonPath: "WaterConnection[0].property.owners[0].fatherOrHusbandName",
    callBack: handleNA }
  ),
- relationship: getLabelWithValue(
-   {
-     labelKey: "WS_OWN_DETAIL_RELATION_LABEL"
-   },
-   { jsonPath: "WaterConnection[0].property.owners[0].relationship",
-   callBack: handleNA }
- ),
+//  relationship: getLabelWithValue(
+//    {
+//      labelKey: "WS_OWN_DETAIL_RELATION_LABEL"
+//    },
+//    { jsonPath: "WaterConnection[0].property.owners[0].relationship",
+//    callBack: handleNA }
+//  ),
  correspondenceAddress: getLabelWithValue(
    {
      labelKey: "WS_OWN_DETAIL_CROSADD"
@@ -345,14 +353,14 @@ export const propertyOwnerDetail={
    { jsonPath: "WaterConnection[0].property.owners[0].correspondenceAddress",
    callBack: handleNA }
  ), 
- specialApplicantCategory: getLabelWithValue(
-   {
-     labelKey: "WS_OWN_DETAIL_SPECIAL_APPLICANT_LABEL"
-   },
-   {
-     jsonPath: "WaterConnection[0].property.owners[0].ownerType",
-     callBack: handleNA
-   })
+//  specialApplicantCategory: getLabelWithValue(
+//    {
+//      labelKey: "WS_OWN_DETAIL_SPECIAL_APPLICANT_LABEL"
+//    },
+//    {
+//      jsonPath: "WaterConnection[0].property.owners[0].ownerType",
+//      callBack: handleNA
+//    })
 }
 
 const ownerDetails = {

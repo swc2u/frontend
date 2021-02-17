@@ -57,6 +57,15 @@ class SummaryDetails extends Component {
             utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, locality, residenials, facilationChargesSuccess,discountType } = this.props;
 
 
+            await fetchApplications(
+                {
+                    "applicationNumber": fetchApplicationNumber, 'uuid': userInfo.uuid,
+                    "applicationStatus": "",
+                    "mobileNumber": "", "bookingType": "",
+                    "tenantId":userInfo.tenantId
+                }
+            );
+
  fetchPayment(
     [{ key: "consumerCode", value: fetchApplicationNumber }, { key: "businessService", value: "PACC" }, { key: "tenantId", value: userInfo.tenantId }
     ])
@@ -65,14 +74,7 @@ class SummaryDetails extends Component {
         [{ key: "consumerCodes", value: fetchApplicationNumber }, { key: "tenantId", value: userInfo.tenantId }
         ])
 
-    await fetchApplications(
-        {
-            "applicationNumber": fetchApplicationNumber, 'uuid': userInfo.uuid,
-            "applicationStatus": "",
-            "mobileNumber": "", "bookingType": "",
-            "tenantId":userInfo.tenantId
-        }
-    );
+   
     }
 
     handleChange = input => e => {
@@ -425,6 +427,8 @@ const mapStateToProps = state => {
     const { userInfo } = state.auth;
     const { facilationChargesSuccess, arrayName } = bookings;
     const { applicationData } = bookings;
+    
+    
     let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
     
     let ApplicantName = selectedComplaint ? selectedComplaint.bkApplicantName : 'notFound'
@@ -546,7 +550,7 @@ let IFSC = state.screenConfiguration.preparedFinalObject.IFSC ?  state.screenCon
     return {
         createPACCApplicationData,userInfo,ppaidBy,pChequeNo,ChnChqDate,newDDno,NewTrxNo,NewddDate,ApplicantAppStatus,
         documentMap,facilationChargesSuccess,billId,ApplicantName,ApplicantMobNum,pddIFSC,pIFSC,
-        fCharges,myLocationtwo,paymentDetails,TotalAmount,paymentMode
+        fCharges,myLocationtwo,paymentDetails,TotalAmount,paymentMode,applicationData,selectedComplaint
     }
 
 }

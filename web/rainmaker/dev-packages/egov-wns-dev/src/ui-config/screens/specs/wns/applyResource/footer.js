@@ -786,7 +786,28 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMP
 
   if (activeStep === 2 && process.env.REACT_APP_NAME !== "Citizen") {
     if (getQueryArg(window.location.href, "action") === "edit") {
-      setReviewPageRoute(state, dispatch);
+
+      //new validation
+
+      const isConnectionDetailsValid= validateFields(
+        "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.connectiondetailscontainer.children.cardContent.children.connectionDetails.children",
+        state,
+        dispatch,
+        "apply"
+      );
+if(isConnectionDetailsValid)
+{
+  isFormValid = isConnectionDetailsValid
+  setReviewPageRoute(state, dispatch);
+}
+if(!isConnectionDetailsValid)
+      {
+        isFormValid = isConnectionDetailsValid
+        hasFieldToaster = true;
+
+      }
+      
+      
     }
 
     // if (!isApplicantTypeCardValid || !isSingleApplicantCardValid || !isInstitutionCardValid) {
@@ -794,7 +815,7 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMP
     //   hasFieldToaster = true;
     // }
 
-    isFormValid = true;
+    isFormValid = isFormValid;
   }
   if (activeStep === 3) {
     let waterId = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].id");

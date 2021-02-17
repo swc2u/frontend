@@ -7,6 +7,8 @@ import {
   getCommonSubHeader,
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import commonConfig from "config/common.js";
+import { httpRequest } from "../../../../ui-utils";
 import get from "lodash/get";
 import set from "lodash/set";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -379,6 +381,28 @@ export const reviewConnectionDetails = getReviewConnectionDetails(false);
 export const reviewOwnerDetails = getReviewOwner(false);
 
 export const reviewDocumentDetails = getReviewDocuments(false);
+export const getMdmsData = async (state,dispatch) => {
+  let tenantId = getQueryArg(window.location.href, "tenantId");
+  let mdmsBody = {
+    MdmsCriteria: {
+      tenantId: commonConfig.tenantId,
+      moduleDetails: [
+       // { moduleName: "common-masters", masterDetails: [{ name: "OwnerType" }, { name: "OwnerShipCategory" }] },
+       
+        { moduleName: "ws-services-masters", masterDetails: [{ name: "wsWorkflowRole" }, ] },
+        
+      ]
+    }
+  };
+  try {
+    let payload = null;
+    payload = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
+    
+   
+    dispatch(prepareFinalObject("searchPreviewScreenMdmsData", payload.MdmsRes));
+    //
+  } catch (e) { console.log(e); }
+};
 
 // let approvalDetails = getApprovalDetails(status);
 let title = getCommonTitle({ labelName: titleText });
@@ -425,7 +449,8 @@ const screenConfig = {
     const status = getQueryArg(window.location.href, "status");
     const tenantId = getQueryArg(window.location.href, "tenantId");
     const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
-
+    
+    getMdmsData( state, dispatch).then(() => { });
     //To set the application no. at the  top
     set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.application.children.applicationNumber.props.number", applicationNumber);
     // if (status !== "pending_payment") {
@@ -585,7 +610,7 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
         "WaterConnection[0].documents",
         "DocumentsData",
         dispatch,
-        "WS"
+        //"WS"
       );
     }
     estimate = await waterEstimateCalculation(queryObjectForEst, dispatch);
@@ -629,7 +654,7 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
         "WaterConnection[0].documents",
         "DocumentsData",
         dispatch,
-        "WS"
+        //"WS"
       );
     }
 

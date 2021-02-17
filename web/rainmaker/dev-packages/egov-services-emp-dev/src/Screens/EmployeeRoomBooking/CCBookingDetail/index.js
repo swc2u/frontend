@@ -95,6 +95,13 @@ class ApplicatInfo extends Component {
   };
 
   render() {
+let {DataForRoomBooking}= this.props
+let documentMap = DataForRoomBooking.documentMap
+let abc = Object.entries(documentMap)
+
+let xyz = abc[0]
+
+    let value1 = xyz[1];
     const { firstName, email, mobileNo, lastName,houseNo, handleChange,discountType,handleChangeDiscount,classes,prepareFinalObject} = this.props;
     const hintTextStyle = {
       letterSpacing: "0.7px",
@@ -264,7 +271,7 @@ class ApplicatInfo extends Component {
               id="doc"
               name="doc"
               type="text"
-              value={this.props.ProofOfResidence}
+              value={value1}
               required = {true}
               hintText={
                 <Label
@@ -277,7 +284,7 @@ class ApplicatInfo extends Component {
               floatingLabelText={
                 <Label
                   key={0}
-                  label="BK_MYBK_CREATE_HOUSE_NUMBER"
+                  label="BK_MYBK_CC_ROOM_RESIDENCE_PROOF"
                   color="rgba(0,0,0,0.60)"
                   fontSize="12px"
                 />
