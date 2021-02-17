@@ -83,15 +83,7 @@ class ActionDialog extends React.Component {
   state = {
     hardCopyReceivedDateError: false,
     commentsErr:false,
-    errors: {
-      "comments": ""
-    },
-    uploadfile:{
-      "uploadfile":""
-    },
-    uploadfileerror:{
-      "uploadfile":""
-    }
+    documentsErr: false
   };
 
   getButtonLabelName = label => {
@@ -119,13 +111,22 @@ class ActionDialog extends React.Component {
       dataPath = `${dataPath}[0]`;
       const data = get(state.screenConfiguration.preparedFinalObject, dataPath)
       const validationDate = data.hardCopyReceivedDate;
-      let formIsValid = true;
-     
+      const {dialogData} = this.props;
+      const {documentsJsonPath, documentProps} = dialogData
+      if(!!documentProps) {
+        let documents = get(state.screenConfiguration.preparedFinalObject, documentsJsonPath)
+        documents = documents.filter(item => !!item)
+        if (!documents || !documents.length) {
+          this.setState({
+            documentsErr: true
+          })
+          return
+        }
+      }
       if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DS_VERIFICATION"){
         if(!!validationDate) {
           this.props.onButtonClick(buttonLabel, isDocRequired)
         } else {
-          formIsValid = false
           this.setState({
             hardCopyReceivedDateError: true
           })
@@ -135,25 +136,12 @@ class ActionDialog extends React.Component {
         if(!!comments) {
           this.props.onButtonClick(buttonLabel, isDocRequired)
         } else {
-          formIsValid = false
           this.setState({
             commentsErr: true
           })
         }
       } else {
-        let templateDocs = get(state.screenConfiguration.preparedFinalObject,"templateDocuments");
-        if(!!templateDocs && templateDocs[0] === null){
-          let uploadfile = this.state.uploadfile;
-          let docstatus = isDocRequired;
-          let uploadfileerror = {};
-            formIsValid = false;
-            uploadfileerror["uploadfile"] = "Please upload documents";
-            this.setState({errors: uploadfileerror});
-          return formIsValid;
-        }
-        else{
-          this.props.onButtonClick(buttonLabel, isDocRequired)
-        }
+        this.props.onButtonClick(buttonLabel, isDocRequired)
       }
   }
 
@@ -161,12 +149,7 @@ class ActionDialog extends React.Component {
     this.setState({
       hardCopyReceivedDateError: false,
       commentsErr:false,
-      uploadfile:{
-        "uploadfile":""
-      },
-      uploadfileerror:{
-        "uploadfile":""
-      }
+      documentsErr: false
     })
     this.props.onClose()
   }
@@ -196,21 +179,6 @@ class ActionDialog extends React.Component {
       fullscreen = true;
     }
     dataPath = `${dataPath}[0]`;
-    // let document = get(state.screenConfiguration.preparedFinalObject.templateDocuments)
-    let document = get(state.screenConfiguration.preparedFinalObject,"templateDocuments")
-    // if(isDocRequired === true)  -> cant use this, not working as its setting as False
-    if((document && document.length>0 && document[0] != null)){
-      let errors = this.state.errors;
-      // let {templateDocuments} = state.screenConfigution.preparedFinalObject
-      
-        errors["uploadfile"] = "";
-      
-    }
-    if(open==false){
-      let errors = this.state.errors;
-        errors["uploadfile"] = "";
-    
-    }
 
     const applicationState = (get(state.screenConfiguration.preparedFinalObject, dataPath) || {}).state
     return (
@@ -343,10 +311,9 @@ class ActionDialog extends React.Component {
                     </div>
                   </Typography>
                   <DocumentListContainer {...documentProps}/>
-                  <span style={{color: "red"}}>{this.state.errors["uploadfile"]}</span>
+                  {this.state.documentsErr && (<span style={{color: "red"}}>Please upload documents</span>)}
                   </Grid>
                   )}
-
                   {/* {(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_SO_TEMPLATE_CREATION") && (<Grid item sm="12">
                   <Typography
                       component="h3"
