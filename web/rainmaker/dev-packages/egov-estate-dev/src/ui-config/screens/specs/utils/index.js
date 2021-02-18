@@ -2366,6 +2366,8 @@ export const _getPattern = (type) => {
         return /^[1-9][0-9]{1,49}$/i;
         case "width":
         return /^[1-9][0-9]{0,49}$/i;
+        case "HouseNumber":
+          return /^[1-9a-zA-Z][\s\S]{1,49}$/i;
   }
 }
 

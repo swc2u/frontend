@@ -176,7 +176,16 @@ const shareField = {
   required: true,
   errorMessage:"ER_ERR_SHARE_NUMBER",
   pattern: _getPattern("share"),
-  jsonPath: "Properties[0].propertyDetails.owners[0].share"
+  jsonPath: "Properties[0].propertyDetails.owners[0].share",
+  afterFieldChange: (action, state, dispatch) => {
+    if (action.value.length > 5) {
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_5", screenName);
+    }
+    else {
+      displayCustomErr(action.componentJsonpath, dispatch, "ER_ERR_SHARE_NUMBER",screenName);
+    }
+}
+
 }
 
 const getIsCurrentOwnerRadioButton = {
