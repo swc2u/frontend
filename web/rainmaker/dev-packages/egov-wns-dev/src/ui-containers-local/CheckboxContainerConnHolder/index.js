@@ -82,11 +82,12 @@ class CheckboxLabels extends React.Component {
       const name =  get(preparedFinalObject.applyScreen.property.owners[0], "name");
       const emailId =  get(preparedFinalObject.applyScreen.property.owners[0], "emailId");
       const correspondenceAddress =  get(preparedFinalObject.applyScreen.property.owners[0], "correspondenceAddress");
+      //const ownerType =  get(preparedFinalObject.applyScreen.property.owners[0], "correspondenceAddress");
       approveCheck('connectionHolders[0].mobileNumber', mobileNumber)
       approveCheck('connectionHolders[0].name', name)
       approveCheck('connectionHolders[0].emailId', emailId)
       approveCheck('connectionHolders[0].correspondenceAddress', correspondenceAddress)
-     // approveCheck('connectionHolders[0].mobileNumber', mobileNumber)
+     approveCheck('connectionHolders[0].ownerType', "INDIVIDUAL.SINGLEOWNER")
       }
 
 

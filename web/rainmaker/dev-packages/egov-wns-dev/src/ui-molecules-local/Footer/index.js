@@ -68,10 +68,17 @@ class Footer extends React.Component {
           : item.buttonUrl;
         if(item.moduleName === "REGULARWSCONNECTION"){
           //need status check 
-        const btnName = ["UPDATE_CONNECTION_HOLDER_INFO","APPLY_FOR_REGULAR_INFO","REACTIVATE_CONNECTION","CONNECTION_CONVERSION","TEMPORARY_DISCONNECTION","PERMANENT_DISCONNECTION"];
+
+          // application type regular
+        const btnName = ["UPDATE_CONNECTION_HOLDER_INFO",
+        "APPLY_FOR_REGULAR_INFO",
+        "REACTIVATE_CONNECTION",
+        "CONNECTION_CONVERSION",
+        "TEMPORARY_DISCONNECTION",
+        "PERMANENT_DISCONNECTION"];
    
-          if(btnName.includes(item.buttonLabel))
-              window.localStorage.setItem("WNS_STATUS",item.buttonLabel);
+          // if(btnName.includes(item.buttonLabel))
+          //     window.localStorage.setItem("WNS_STATUS",item.buttonLabel);
         }
       setRoute(url);
       return;

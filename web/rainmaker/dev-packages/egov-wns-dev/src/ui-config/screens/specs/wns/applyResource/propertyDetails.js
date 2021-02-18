@@ -13,6 +13,8 @@ import { prepareFinalObject,
    handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { propertySearchApiCall } from './functions';
 import { handlePropertySubUsageType, handleNA } from '../../utils';
+
+let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
 const displaysubUsageType = (usageType, dispatch, state) => {
 
   let UsageCategory = get(
@@ -143,6 +145,7 @@ const propertyDetails = getCommonContainer({
       props: {
         optionValue: "code",
         optionLabel: "name",
+        disabled: IsEdit
       },
       beforeFieldChange: async (action, state, dispatch) => {
         displaysubUsageType(action.value, dispatch, state);
@@ -169,6 +172,7 @@ const propertyDetails = getCommonContainer({
       props: {
         optionValue: "code",
         optionLabel: "name",
+        disabled: IsEdit
       }
     }),
     beforeFieldChange: async (action, state, dispatch) => {
@@ -187,6 +191,9 @@ const propertyDetails = getCommonContainer({
       sourceJsonPath: "applyScreenMdmsData.ws-services-masters.waterSource",
       gridDefination: { xs: 12, sm: 6 },
       pattern: getPattern("numeric-only"),
+      props:{
+        disabled: IsEdit
+      },
      // errorMessage: "ERR_INVALID_BILLING_PERIOD",
       jsonPath: "applyScreen.property.landArea"
     }),
@@ -199,6 +206,9 @@ const propertyDetails = getCommonContainer({
       label: { labelKey: "WS_PROP_DETAIL_BUILD_UP_AREA_LABEL_INPUT" },
       placeholder: { labelKey: "WS_PROP_DETAIL_BUILD_UP_AREA_LABEL_INPUT_PLACEHOLDER" },
       required: true,
+      props:{
+        disabled: IsEdit
+      },
      // sourceJsonPath: "applyScreenMdmsData.ws-services-masters.waterSource",
       gridDefination: { xs: 12, sm: 6 },
       pattern: getPattern("numeric-only"),
@@ -222,6 +232,7 @@ const propertyDetails = getCommonContainer({
       props: {
         optionValue: "code",
         optionLabel: "name",
+        disabled: IsEdit
       }
     }),
     beforeFieldChange: async (action, state, dispatch) => {

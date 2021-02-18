@@ -7,6 +7,7 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getCommonApplyFooter,validateFields } from "../../utils";
 import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import commonConfig from "config/common.js";
 import get from "lodash/get";
 import set from 'lodash/set';
 import { propertySearchApiCall } from './functions';
@@ -70,8 +71,10 @@ let validateDocumentselect = false;
                 "warning"
               )
             );
-            validateDocumentField = false;
-            validateDocumentselect = false;
+           // validateDocumentField = false;
+            //validateDocumentselect = false;
+            validateDocumentField = true;
+            validateDocumentselect = true;
             break;
           }
         } else {
@@ -104,7 +107,7 @@ const getMdmsData = async (state, dispatch) => {
   );
   let mdmsBody = {
     MdmsCriteria: {
-      tenantId: tenantId, moduleDetails: [
+      tenantId: commonConfig.tenantId, moduleDetails: [
         { moduleName: "ws-services-masters", masterDetails: [{ name: "Documents" }] },
         { moduleName: "sw-services-calculation", masterDetails: [{ name: "Documents" }] }
       ]
@@ -190,14 +193,20 @@ if(water || sewerage || tubewell)
         };
       });
       dispatch(prepareFinalObject("applyScreen.reviewDocData", reviewDocData));
-      let applyScreenObject = findAndReplace(get(state.screenConfiguration.preparedFinalObject, "applyScreen", {}), "NA", null);
-      let applyScreenObj = findAndReplace(applyScreenObject, 0, null);
+     let applyScreenObject = findAndReplace(get(state.screenConfiguration.preparedFinalObject, "applyScreen", {}), "NA", null);
+      //let applyScreenObject = get(state.screenConfiguration.preparedFinalObject, "applyScreen", {});
+      let applyScreenObj =  findAndReplace(applyScreenObject, 0, null);
        //connectionholdercode
        let connectionHolderObj = get(state.screenConfiguration.preparedFinalObject, "connectionHolders");
+       if(connectionHolderObj[0].ownerType === null)
+       {
+        connectionHolderObj[0].ownerType= "INDIVIDUAL.SINGLEOWNER";
+       }
+       
        let holderData = connectionHolderObj[0];
         if (holderData !== null && holderData !== undefined) {
           if (holderData.sameAsPropertyAddress === true) {
-            holderData = null
+            holderData = connectionHolderObj[0];
           }
         }
         if (holderData == null) {
@@ -205,7 +214,10 @@ if(water || sewerage || tubewell)
        } else {
           let arrayHolderData = [];
           arrayHolderData.push(holderData);
+          if (getQueryArg(window.location.href, "action") !== "edit" ) {
           applyScreenObj.connectionHolders = arrayHolderData;
+         applyScreenObject.connectionHolders = applyScreenObj;
+          }
         }
 
       if(!isActiveProperty(applyScreenObj.property)){
@@ -403,10 +415,16 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMP
       //connectionholdercode
 
      let connectionHolderObj = get(state.screenConfiguration.preparedFinalObject, "connectionHolders");
+
+     if(connectionHolderObj[0].ownerType === null)
+     {
+      connectionHolderObj[0].ownerType= "INDIVIDUAL.SINGLEOWNER";
+     }
+     //connectionHolderObj.ownerType = "INDIVIDUAL.SINGLEOWNER"
      let holderData = connectionHolderObj[0];
       if (holderData !== null && holderData !== undefined) {
         if (holderData.sameAsPropertyAddress === true) {
-          holderData = null
+          holderData = connectionHolderObj[0]
         }
       }
       if (holderData == null) {
@@ -417,14 +435,35 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMP
         applyScreenObject.connectionHolders = arrayHolderData;
       }
       // call if conection is not created
-      if(true)
+      //validate ownner ship
+      let propertyPayload = get(
+        state,
+        "screenConfiguration.preparedFinalObject.applyScreen.property"
+      );
+      let ValidOwnership = false
+      let ownershipCategory_= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", '' )
+      if(ownershipCategory_)
+      {      
+        ValidOwnership =  true;
+      }
+      if(ValidOwnership)
+      {
+        if(validateConnHolderDetails(applyScreenObject))
+        {
+          ValidOwnership = true
+
+        }
+        else{
+          ValidOwnership = false;
+        }
+        
+      }
+
+      if(ValidOwnership)
       {
       if(isFormValid)
       {
-        let propertyPayload = get(
-          state,
-          "screenConfiguration.preparedFinalObject.applyScreen.property"
-        );
+        
         let tenantId = get(
           state,
           "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
@@ -449,7 +488,13 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMP
         if(propertyPayload.address.locality !== undefined)
         {
           if(propertyPayload.address.locality.code.value)
+          {
           propertyPayload.address.locality.code = propertyPayload.address.locality.code.value;
+          }
+          else if(propertyPayload.address.locality.code)
+          {
+            propertyPayload.address.locality.code = propertyPayload.address.locality.code;
+          }
           else
           {
          // propertyPayload.address.locality.code = "DB_1";
@@ -674,7 +719,8 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMP
           isFormValid = false;
           hasFieldToaster = true;
         }
-      }else{
+      }
+      else{
            isFormValid = false;
                 dispatch(
                   toggleSnackbar(
@@ -702,6 +748,15 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMP
         );
         }
       }
+    }
+    else{
+      let errorMessage = {
+        labelName: "Please select all Fequired field ",
+        labelKey: "WS_FILL_REQUIRED_FIELDS"
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      return false
+
     }
     }
     prepareDocumentsUploadData(state, dispatch);

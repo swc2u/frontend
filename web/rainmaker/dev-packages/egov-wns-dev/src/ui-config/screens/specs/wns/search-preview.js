@@ -21,7 +21,8 @@ import {
   setValidToFromVisibilityForSV,
   getDialogButton,
   convertDateToEpoch,
-  showHideAdhocPopup
+  showHideAdhocPopup,
+  GetMdmsNameBycode
 } from "../utils";
 import { footerReview } from "./applyResource/footer";
 import { downloadPrintContainer } from "../wns/acknowledgement";
@@ -106,6 +107,9 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       let applyScreenObject = get(state.screenConfiguration.preparedFinalObject, "applyScreen");
       applyScreenObject.applicationNo.includes("WS")?applyScreenObject.service="WATER":applyScreenObject.service="SEWERAGE";
       let parsedObject = parserFunction(findAndReplace(applyScreenObject, "NA", null));
+      let code = '03';
+        code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",parsedObject.property.address.locality.code)   
+      set(parsedObject, 'property.address.locality.name', code);
       dispatch(prepareFinalObject("WaterConnection[0]", parsedObject));
        let estimate;
        if(processInstanceAppStatus==="CONNECTION_ACTIVATED"){
@@ -389,7 +393,12 @@ export const getMdmsData = async (state,dispatch) => {
       moduleDetails: [
        // { moduleName: "common-masters", masterDetails: [{ name: "OwnerType" }, { name: "OwnerShipCategory" }] },
        
-        { moduleName: "ws-services-masters", masterDetails: [{ name: "wsWorkflowRole" }, ] },
+        { moduleName: "ws-services-masters", 
+        masterDetails: [
+          { name: "wsWorkflowRole" },
+          { name: "sectorList" },
+        
+        ] },
         
       ]
     }
@@ -578,6 +587,13 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
     payload.WaterConnection[0].service = service;
     payload.WaterConnection[0].property.subusageCategory = payload.WaterConnection[0].property.usageCategory;
     payload.WaterConnection[0].property.usageCategory = payload.WaterConnection[0].property.usageCategory.split('.')[0];
+    //
+    
+      let code = '';
+        code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",payload.WaterConnection[0].property.address.locality.code)   
+        payload.WaterConnection[0].property.address.locality.name = code;
+     // set(payload, 'property.address.locality.name', code);
+    ///
     //payload.WaterConnection[0].service = service;
 
     const convPayload = findAndReplace(payload, "NA", null)
@@ -587,6 +603,8 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
       waterConnection: convPayload.WaterConnection[0]
     }]
     if (payload !== undefined && payload !== null) {
+      //set locality
+
       dispatch(prepareFinalObject("WaterConnection[0]", payload.WaterConnection[0]));
       if(!payload.WaterConnection[0].connectionHolders || payload.WaterConnection[0].connectionHolders === 'NA'){        
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewFive.visible",false);

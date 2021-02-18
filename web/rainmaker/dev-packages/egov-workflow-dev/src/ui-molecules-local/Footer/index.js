@@ -171,7 +171,20 @@ class Footer extends React.Component {
         process.env.NODE_ENV === "development"
           ? item.buttonUrl
           : item.buttonUrl;
-        if(item.moduleName === "NewWS1" || item.moduleName === "REGULARWSCONNECTION" ||  item.moduleName === "WS_CONVERSION" || item.moduleName === "WS_DISCONNECTION" ||  item.moduleName === "WS_RENAME" ||  item.moduleName === "WS_TUBEWELL"){
+        if(item.moduleName === "NewWS1" 
+        || item.moduleName === "REGULARWSCONNECTION"  
+        || item.moduleName === 'NewSW1' 
+        || item.moduleName === "TEMPORARY_WSCONNECTION"
+        || item.moduleName === "WS_TEMP_TEMP" 
+        ||item.moduleName === "WS_TEMP_REGULAR"
+        ||item.moduleName === "WS_DISCONNECTION" 
+        ||item.moduleName === "WS_TEMP_DISCONNECTION"
+        || item.moduleName === "WS_RENAME" 
+        || item.moduleName === "WS_CONVERSION" 
+        || item.moduleName === "WS_REACTIVATE"  
+        ||  item.moduleName === "WS_TUBEWELL")
+        
+        {
           //need status check 
         const btnName = ["UPDATE_CONNECTION_HOLDER_INFO","APPLY_FOR_REGULAR_INFO","REACTIVATE_CONNECTION","CONNECTION_CONVERSION","TEMPORARY_DISCONNECTION","PERMANENT_DISCONNECTION"];
    
@@ -196,13 +209,17 @@ class Footer extends React.Component {
         workflow = workflow.filter(x=>x.action === data[0].processInstance.action)
         let nextActions = workflow[0].nextActions
         nextActions = nextActions.filter(x=>x.action === item.buttonLabel)
-        let nextStateid = nextActions[0].nextState
-        businessServiceData = businessServiceData[0].states.filter(x=>x.uuid === nextStateid )
-        let searchPreviewScreenMdmsData  = state.screenConfiguration.preparedFinalObject.searchPreviewScreenMdmsData;
-        searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
-        //searchPreviewScreenMdmsData = searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === data.action)
+        let nextStateid=''
+        let searchPreviewScreenMdmsData =null
         let roles =[]
         let rolecode ='';
+        if(nextActions && nextActions[0])
+        {
+          nextStateid  = nextActions[0].nextState
+          businessServiceData = businessServiceData[0].states.filter(x=>x.uuid === nextStateid )
+         searchPreviewScreenMdmsData  = state.screenConfiguration.preparedFinalObject.searchPreviewScreenMdmsData;
+        searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
+        //searchPreviewScreenMdmsData = searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === data.action)
         if(searchPreviewScreenMdmsData && searchPreviewScreenMdmsData[0])
         {
           roles =  searchPreviewScreenMdmsData = searchPreviewScreenMdmsData[0].roles
@@ -213,6 +230,9 @@ class Footer extends React.Component {
          }
 
         }
+        }      
+        
+       
         if(rolecode)
         {
           item.roles = rolecode
