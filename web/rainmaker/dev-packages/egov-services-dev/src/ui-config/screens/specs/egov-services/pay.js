@@ -68,7 +68,10 @@ const setSearchResponse = async (
     );
 console.log(recData[0], "Search Result");
 let businesServiceTemp = '';
-if(recData[0].businessService == 'BWT'){
+if(recData[0].businessService == 'OSBM'){
+    businesServiceTemp = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
+  }
+else if(recData[0].businessService == 'BWT'){
   businesServiceTemp = "BOOKING_BRANCH_SERVICES.WATER_TANKAR_CHARGES";
 }else{
   businesServiceTemp = recData[0].businessService;

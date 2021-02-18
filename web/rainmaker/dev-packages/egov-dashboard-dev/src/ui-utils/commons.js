@@ -1349,6 +1349,126 @@ export const getSportAndCultureDashboardData = async ( dispatch, data ) => {
   }
 };
 
+// Get Dashboard Data for PublicRelation
+export const getPublicRelationData = async ( dispatch, data ) => {
+  
+  debugger;
+  // Same as per Sport and culture but module code is different
+  var payloadData = {
+  "tenantId": data.tenantId,
+  "RequestBody": {
+    "tenantId": data.tenantId,
+    "moduleCode": "PR",
+    "eventDetailUuid": "",
+    "eventTitle": "",
+    "eventStatus": "",
+    "status": "",
+    "startDate": data.fromDate,
+    "endDate": data.toDate,
+    "eventId": "",
+    "defaultGrid": false
+  },
+  "reportSortBy": data.reportSortBy
+  }
+
+  try {
+    store.dispatch(toggleSpinner());
+    const DescriptionReport = await httpRequest(
+      "post",
+      "/prscp-services/v1/event/_get",
+      "",
+      [],
+      payloadData
+    );
+
+    //debugger;
+    var response = [ DescriptionReport, payloadData.reportSortBy ];
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+    // OK
+    dispatch(
+      handleField(
+      "PublicRelationDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+// Get Dashboard Data for TradeLicense
+export const getTradeLicenseData = async ( dispatch, data ) => {
+  
+  debugger;
+  // Same as per Sport and culture but module code is different
+  var payloadData = {
+  "tenantId": data.tenantId,
+  "RequestBody": {
+    "tenantId": data.tenantId,
+    "moduleCode": "PR",
+    "eventDetailUuid": "",
+    "eventTitle": "",
+    "eventStatus": "",
+    "status": "",
+    "startDate": data.fromDate,
+    "endDate": data.toDate,
+    "eventId": "",
+    "defaultGrid": false
+  },
+  "reportSortBy": data.reportSortBy
+  }
+
+  try {
+    store.dispatch(toggleSpinner());
+    const DescriptionReport = await httpRequest(
+      "post",
+      "/tl-services/v1/_search?tenantId="+data.tenantId+"&limit=100&fromDate="+data.fromDate+"&toDate="+data.toDate+"",
+      "",
+      [],
+      payloadData
+    );
+
+    //debugger;
+    var response = [ DescriptionReport, payloadData.reportSortBy ];
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+    // OK
+    dispatch(
+      handleField(
+      "TradeLicenseDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
 // Get Legal Dashboard Data
 export const getLegalDashboardData = async ( dispatch, data ) => {
   try {
