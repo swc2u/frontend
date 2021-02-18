@@ -72,7 +72,6 @@ import { penaltySummary } from "./generatePenaltyStatement";
       )
       dispatch(prepareFinalObject("payment.paymentType","PAYMENTTYPE.PREMIUMAMOUNT"))
     }
-    // debugger
     else{
     dispatch(prepareFinalObject("payment.paymentType","PAYMENTTYPE.RENT"))
     }
@@ -465,12 +464,23 @@ import { penaltySummary } from "./generatePenaltyStatement";
     })
     }
   }
-  const premiumAmountSummary = getCommonGrayCard({
+  const premiumAmountSummary = getCommonCard({
+      header: getCommonTitle({
+        labelName: "Premium Amount",
+        labelKey: "ES_PREMIUM_AMOUNT"
+      }, {
+        style: {
+          marginBottom: 18,
+          marginTop: 18
+        }
+      }),
+      detailsContainer: getCommonGrayCard({
     rentSection: getRentSummaryCard({
       sourceJsonPath: "Properties[0].propertyDetails.paymentConfig.premiumAmountConfigItems",
       dataArray: ["premiumAmount"],
       type:"premiumAmount"
     })
+  })
   });
 
 
