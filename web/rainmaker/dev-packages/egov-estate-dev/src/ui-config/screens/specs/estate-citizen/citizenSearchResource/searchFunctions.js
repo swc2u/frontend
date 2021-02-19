@@ -112,7 +112,7 @@ export const searchApiCall = async (state, dispatch, queryObject = [], offset, l
     }
 
     const response = await getSearchResults(queryObject);
-    if(response.Properties[0].state !=="ES_APPROVED" && response.Properties[0].propertyMasterOrAllotmentOfSite==="PROPERTY_MASTER"){
+    if(!!response && response.Properties[0].state !=="ES_APPROVED" && response.Properties[0].propertyMasterOrAllotmentOfSite==="PROPERTY_MASTER"){
       response.Properties=[]
     }
     try {
