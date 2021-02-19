@@ -329,11 +329,6 @@ export const getExcelData = async (excelUrl, fileStoreId, screenKey, componentJs
 
 export const populateBiddersTable = (biddersList, screenKey, componentJsonPath) => {
   console.log(biddersList);
-  biddersList.map(item=>{
-    if(item.refundStatus==="ES_REFUNDED"){
-      item.refundStatus=getTextToLocalMapping("ES_REFUNDED")
-    }
-  })
   if (!!biddersList) {
     let data = biddersList.map(item => ({
       [getTextToLocalMapping("Auction Id")]: item.auctionId || "-",
@@ -369,7 +364,7 @@ export const populateBiddersTable = (biddersList, screenKey, componentJsonPath) 
             )
           }
         }),
-      [getTextToLocalMapping("Refund Status")]: item.refundStatus || "-",
+      [getTextToLocalMapping("Refund Status")]: getTextToLocalMapping(item.refundStatus) || "-",
     }));
 
     store.dispatch(
