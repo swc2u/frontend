@@ -53,9 +53,29 @@ class WorkFlowContainer extends React.Component {
     
     let baseUrl = "";
     let bservice = "";
-    if (moduleName === "NewWS1" || moduleName === "REGULARWSCONNECTION" ||moduleName === "WS_CONVERSION" || moduleName === "WS_DISCONNECTION" || moduleName === "WS_RENAME" || moduleName === "WS_TUBEWELL") {
+    if (moduleName === "NewWS1" 
+        || moduleName === "REGULARWSCONNECTION"
+        || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "WS_TEMP_TEMP" 
+        ||moduleName === "WS_TEMP_REGULAR"
+        ||moduleName === "WS_DISCONNECTION" 
+        ||moduleName === "WS_TEMP_DISCONNECTION"
+        || moduleName === "WS_RENAME" 
+        || moduleName === "WS_CONVERSION" 
+        || moduleName === "WS_REACTIVATE" 
+        || moduleName === "WS_TUBEWELL") {
       baseUrl = "wns"
-      if (moduleName === "NewWS1" || moduleName === "REGULARWSCONNECTION" || moduleName === "WS_CONVERSION" || moduleName === "WS_DISCONNECTION" || moduleName === "WS_RENAME" || moduleName === "WS_TUBEWELL") {
+      if (moduleName === "NewWS1" 
+      || moduleName === "REGULARWSCONNECTION" 
+      || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "WS_TEMP_TEMP" 
+        ||moduleName === "WS_TEMP_REGULAR"
+        ||moduleName === "WS_DISCONNECTION" 
+        ||moduleName === "WS_TEMP_DISCONNECTION"
+        || moduleName === "WS_RENAME" 
+        || moduleName === "WS_CONVERSION" 
+        || moduleName === "WS_REACTIVATE"
+      || moduleName === "WS_TUBEWELL") {
         bservice = "WS.ONE_TIME_FEE"
       } else {
         bservice = "SW.ONE_TIME_FEE"
@@ -142,7 +162,13 @@ class WorkFlowContainer extends React.Component {
   };
   getWNSButtonForCitizen = (preparedFinalObject, status, businessId, moduleName) =>{   
    // const btnName = ["Apply for Regular Connection","Reactivate Connection","Connection Conversion","Temporary Disconnection","Permanent Disconnection"]
-    const btnName = ["UPDATE_CONNECTION_HOLDER_INFO","APPLY_FOR_REGULAR_INFO","REACTIVATE_CONNECTION","CONNECTION_CONVERSION","TEMPORARY_DISCONNECTION","PERMANENT_DISCONNECTION"];
+    const btnName = [
+      "UPDATE_CONNECTION_HOLDER_INFO"
+      ,"APPLY_FOR_REGULAR_INFO"
+      ,"REACTIVATE_CONNECTION"
+      ,"CONNECTION_CONVERSION"
+      ,"TEMPORARY_DISCONNECTION"
+      ,"PERMANENT_DISCONNECTION"];
       let actions  = btnName.map(btn => {
               const buttonObj = {
                 buttonLabel: btn,
@@ -163,11 +189,12 @@ class WorkFlowContainer extends React.Component {
             if(inWorkflow){
               actions = [];
             }
-            else if(status === "PENDING_FOR_REGULAR_CONNECTION"){
+            else if(status === "PENDING_FOR_REGULAR_CONNECTION"){//remove
               actions = actions.filter(item => item.buttonLabel === 'APPLY_FOR_REGULAR_INFO'); 
             }
             else if(status === "TEMPORARY_DISCONNECTED"){
-              actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION'); 
+              //actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION'); 
+              actions = actions.filter(item => item.buttonLabel === "TEMPORARY_CONNECTION_CLOSED"); 
             }
             else if (moduleName === "WS_TUBEWELL"){
               actions = actions.filter(item => item.buttonLabel === 'UPDATE_CONNECTION_HOLDER_INFO');

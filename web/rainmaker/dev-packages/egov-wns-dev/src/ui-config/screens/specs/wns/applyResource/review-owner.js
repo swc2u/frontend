@@ -333,7 +333,7 @@ export const reviewsanctionedCapacity = getLabelWithValue(
     labelName: "Sanctioned Capacity",
     labelKey: "WS_SERV_DETAIL_SANCTION_CAPACITY"
   },
-  { jsonPath: "applyScreen.additionalDetails.sanctionedCapacity",
+  { jsonPath: "applyScreen.sanctionedCapacity",
     callBack: handleNA }
 );
 export const reviewmeterRentCode = getLabelWithValue(
@@ -341,7 +341,7 @@ export const reviewmeterRentCode = getLabelWithValue(
     labelName: "Meter Rent Code",
     labelKey: "WS_SERV_DETAIL_METER_RENT_CODE"
   },
-  { jsonPath: "applyScreen.additionalDetails.meterRentCode",
+  { jsonPath: "applyScreen.meterRentCode",
     callBack: handleNA }
 );
 export const getReviewOwner = (isEditable = true) => {
@@ -401,10 +401,10 @@ export const getReviewOwner = (isEditable = true) => {
     viewFive: connectionDetailsHeader,
     viewSix: renderService(),
     // viewSix: connectionDetails,
-    viewSeven: connectionChargeDetailsHeader,
-    viewEight: connectionChargeDetails,
-    viewNine: roadCuttingChargesHeader,
-    viewTen: roadCuttingCharges,  
+    // viewSeven: connectionChargeDetailsHeader,
+    // viewEight: connectionChargeDetails,
+    // viewNine: roadCuttingChargesHeader,
+    // viewTen: roadCuttingCharges,  
     viewEleven: otherChargesDetailsHeader ,
     viewTwelve: otherChargesDetails,
     viewThirteen :activationDetailsHeader ,
@@ -443,7 +443,17 @@ const activationDetails = getCommonContainer({
 export const renderService = () => {
   if (service === "WATER") {
     //return getCommonContainer({ reviewConnectionType, reviewNumberOfTaps, reviewWaterSource, reviewWaterSubSource, reviewPipeSize ,reviewccCode, reviewdivision, reviewsubdiv,reviewledgerNo, reviewledgerGroup});
-    return getCommonContainer({ reviewdivision, reviewsubdiv, reviewBillGroup, reviewledgerNo, reviewledgerGroup, reviewccCode ,reviewConnectionType, reviewNumberOfTaps, reviewWaterSource,reviewWaterSubSource, reviewPipeSize, reviewcontractValue});
+    return getCommonContainer({ reviewdivision, 
+              reviewsubdiv, 
+              reviewBillGroup,
+              reviewledgerNo, 
+              reviewledgerGroup,
+              reviewccCode ,
+              reviewConnectionType, 
+              //reviewNumberOfTaps, 
+              //reviewWaterSource,
+              //reviewWaterSubSource, 
+              reviewPipeSize});
   } else if (service === "SEWERAGE") {
     return getCommonContainer({ reviewConnectionType, reviewWaterClosets,reviewNoOfToilets })
   }

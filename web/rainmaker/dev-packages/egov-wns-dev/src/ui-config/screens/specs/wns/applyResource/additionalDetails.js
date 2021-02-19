@@ -39,6 +39,7 @@ const getPlumberRadioButton = {
   },
   type: "array"
 };
+let IsEdit = false;
 
 export const additionDetails = getCommonCard({
   header: getCommonHeader({
@@ -57,14 +58,17 @@ export const additionDetails = getCommonCard({
         required: true,
         sourceJsonPath: "applyScreenMdmsData.ws-services-masters.Division",
         jsonPath: "applyScreen.div",
+        props: {         
+          disabled: false
+        },
        // pattern: /^[0-9]*$/i,
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
       }),
-      subdiv: getSelectField({
+      subdiv: getTextField({
         label: { labelKey: "WS_SERV_DETAIL_SUB_DIVISION" },
         placeholder: { labelKey: "WS_SERV_DETAIL_SUB_DIVISION_PLACEHOLDER" },
         gridDefination: { xs: 12, sm: 6 },
-        sourceJsonPath: "applyScreenMdmsData.ws-services-masters.subDivision",
+        //sourceJsonPath: "applyScreenMdmsData.ws-services-masters.subDivision",
         jsonPath: "applyScreen.subdiv",
         props: {         
           disabled: true
@@ -73,12 +77,12 @@ export const additionDetails = getCommonCard({
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
       }),
       billGroup: {
-        //...getSelectField({
-          ...getTextField({
+        ...getSelectField({
+         // ...getTextField({
           label: { labelKey: "WS_SERV_DETAIL_BILL_GROUP" },
           placeholder: { labelKey: "WS_SERV_DETAIL_BILL_GROUP_PLACEHOLDER" },
           required: true,
-         // sourceJsonPath: "applyScreenMdmsData.ws-services-masters.Ledger",
+         sourceJsonPath: "applyScreenMdmsData.ws-services-masters.billGroup",
           //sourceJsonPath: "ledgerlist",
           gridDefination: { xs: 12, sm: 6 },
           errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
@@ -186,105 +190,107 @@ export const additionDetails = getCommonCard({
         pattern: getPattern("numeric-only"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
       }),
-      waterSourceType: {
-        ...getSelectField({
-          label: { labelKey: "WS_SERV_DETAIL_WATER_SOURCE" },
-          placeholder: { labelKey: "WS_ADDN_DETAILS_WARER_SOURCE_PLACEHOLDER" },
-          required: false,
-          sourceJsonPath: "applyScreenMdmsData.ws-services-masters.waterSource",
-          gridDefination: { xs: 12, sm: 6 },
-          errorMessage: "ERR_INVALID_BILLING_PERIOD",
-          jsonPath: "applyScreen.waterSource"
-        }),
-        beforeFieldChange: async (action, state, dispatch) => {
-          if (action.value === "GROUND") {
-            dispatch(
-              prepareFinalObject(
-                "waterSubSourceForSelectedWaterSource",
-                get(
-                  state.screenConfiguration.preparedFinalObject,
-                  "applyScreenMdmsData.ws-services-masters.GROUND"
-                )
-              )
-            )
-          } else if (action.value === "SURFACE") {
-            dispatch(
-              prepareFinalObject(
-                "waterSubSourceForSelectedWaterSource",
-                get(
-                  state.screenConfiguration.preparedFinalObject,
-                  "applyScreenMdmsData.ws-services-masters.SURFACE"
-                )
-              )
-            )
-          } else if (action.value === "BULKSUPPLY") {
-            dispatch(
-              prepareFinalObject(
-                "waterSubSourceForSelectedWaterSource",
-                get(
-                  state.screenConfiguration.preparedFinalObject,
-                  "applyScreenMdmsData.ws-services-masters.BULKSUPPLY"
-                )
-              )
-            )
-          }
-        }
-      },
-      waterSubSource: getSelectField({
-        label: { labelKey: "WS_SERV_DETAIL_WATER_SUB_SOURCE" },
-        placeholder: { labelKey: "WS_ADDN_DETAILS_WARER_SUB_SOURCE_PLACEHOLDER" },
-        required: false,
-        sourceJsonPath: "waterSubSourceForSelectedWaterSource",
-        gridDefination: { xs: 12, sm: 6 },
-        errorMessage: "ERR_INVALID_BILLING_PERIOD",
-        jsonPath: "applyScreen.waterSubSource"
-      }),
+      // waterSourceType: {
+      //   ...getSelectField({
+      //     label: { labelKey: "WS_SERV_DETAIL_WATER_SOURCE" },
+      //     placeholder: { labelKey: "WS_ADDN_DETAILS_WARER_SOURCE_PLACEHOLDER" },
+      //     required: false,
+      //     sourceJsonPath: "applyScreenMdmsData.ws-services-masters.waterSource",
+      //     gridDefination: { xs: 12, sm: 6 },
+      //     errorMessage: "ERR_INVALID_BILLING_PERIOD",
+      //     jsonPath: "applyScreen.waterSource"
+      //   }),
+      //   beforeFieldChange: async (action, state, dispatch) => {
+      //     if (action.value === "GROUND") {
+      //       dispatch(
+      //         prepareFinalObject(
+      //           "waterSubSourceForSelectedWaterSource",
+      //           get(
+      //             state.screenConfiguration.preparedFinalObject,
+      //             "applyScreenMdmsData.ws-services-masters.GROUND"
+      //           )
+      //         )
+      //       )
+      //     } else if (action.value === "SURFACE") {
+      //       dispatch(
+      //         prepareFinalObject(
+      //           "waterSubSourceForSelectedWaterSource",
+      //           get(
+      //             state.screenConfiguration.preparedFinalObject,
+      //             "applyScreenMdmsData.ws-services-masters.SURFACE"
+      //           )
+      //         )
+      //       )
+      //     } else if (action.value === "BULKSUPPLY") {
+      //       dispatch(
+      //         prepareFinalObject(
+      //           "waterSubSourceForSelectedWaterSource",
+      //           get(
+      //             state.screenConfiguration.preparedFinalObject,
+      //             "applyScreenMdmsData.ws-services-masters.BULKSUPPLY"
+      //           )
+      //         )
+      //       )
+      //     }
+      //   }
+      // },
+      // waterSubSource: getSelectField({
+      //   label: { labelKey: "WS_SERV_DETAIL_WATER_SUB_SOURCE" },
+      //   placeholder: { labelKey: "WS_ADDN_DETAILS_WARER_SUB_SOURCE_PLACEHOLDER" },
+      //   required: false,
+      //   sourceJsonPath: "waterSubSourceForSelectedWaterSource",
+      //   gridDefination: { xs: 12, sm: 6 },
+      //   errorMessage: "ERR_INVALID_BILLING_PERIOD",
+      //   jsonPath: "applyScreen.waterSubSource"
+      // }),
       
-      pipeSize: {
-        ...getSelectField({
-          label: { labelKey: "WS_SERV_DETAIL_PIPE_SIZE" },
-          sourceJsonPath: "applyScreenMdmsData.ws-services-calculation.pipeSize",
-          placeholder: { labelKey: "WS_SERV_DETAIL_PIPE_SIZE_PLACEHOLDER" },
-          required: true,
-          gridDefination: { xs: 12, sm: 6 },
-          jsonPath: "applyScreen.pipeSize"
-        }),
-        beforeFieldChange: async (action, state, dispatch) => {
+      // pipeSize: {
+      //   ...getSelectField({
+      //     label: { labelKey: "WS_SERV_DETAIL_PIPE_SIZE" },
+      //     sourceJsonPath: "applyScreenMdmsData.ws-services-calculation.pipeSize",
+      //     placeholder: { labelKey: "WS_SERV_DETAIL_PIPE_SIZE_PLACEHOLDER" },
+      //     required: true,
+      //     visible:false,
+      //     gridDefination: { xs: 12, sm: 6 },
+      //     jsonPath: "applyScreen.pipeSize"
+      //   }),
+      //   beforeFieldChange: async (action, state, dispatch) => {
   
-          if(action.value)
-          {
-            const {applyScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
-            const pipeSize = applyScreenMdmsData['ws-services-calculation'].PipeSize.filter(pipeSize => pipeSize.size == action.value);
+      //     if(action.value)
+      //     {
+      //       const {applyScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
+      //       const pipeSize = applyScreenMdmsData['ws-services-calculation'].PipeSize.filter(pipeSize => pipeSize.size == action.value);
   
-             if(pipeSize&&pipeSize[0])
-             {            
-              dispatch(
-                prepareFinalObject(
-                  "applyScreen.additionalDetails.sanctionedCapacity",
-                  pipeSize[0].SanctionCapacity
-                )
-              )
-              dispatch(
-                prepareFinalObject(
-                  "applyScreen.additionalDetails.meterRentCode",
-                  pipeSize[0].MeterRentCode
-                )
-              )
-             }
-          }
+      //        if(pipeSize&&pipeSize[0])
+      //        {            
+      //         dispatch(
+      //           prepareFinalObject(
+      //             "applyScreen.sanctionedCapacity",
+      //             pipeSize[0].SanctionCapacity
+      //           )
+      //         )
+      //         dispatch(
+      //           prepareFinalObject(
+      //             "applyScreen.meterRentCode",
+      //             pipeSize[0].MeterRentCode
+      //           )
+      //         )
+      //        }
+      //     }
          
-        }
-      },
-      contractValue: getTextField({
-        label: { labelKey: "WS_ADDN_DETAILS_CONTRACT_VALUE" },
-        placeholder: { labelKey: "WS_ADDN_DETAILS_CONTRACT_VALUE_PLACEHOLDER" },
-        gridDefination: { xs: 12, sm: 6 },
-        pattern: getPattern("Name"),
-        jsonPath: "applyScreen.contractValue",
-        pattern: /^[0-9]*$/i,
+      //   }
+      // },
+      // contractValue: getTextField({
+      //   label: { labelKey: "WS_ADDN_DETAILS_CONTRACT_VALUE" },
+      //   placeholder: { labelKey: "WS_ADDN_DETAILS_CONTRACT_VALUE_PLACEHOLDER" },
+      //   gridDefination: { xs: 12, sm: 6 },
+      //   pattern: getPattern("Name"),
+      //   visible:false,
+      //   jsonPath: "applyScreen.contractValue",
+      //   pattern: /^[0-9]*$/i,
         
-       // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
-      }),
+      //  // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+      // }),
 
 
 
@@ -308,100 +314,100 @@ export const additionDetails = getCommonCard({
       })
     }),
   }),
-  plumberDetailsContainer: getCommonGrayCard({
-    subHeader: getCommonTitle({
-      labelKey: "WS_COMMON_PLUMBER_DETAILS"
-    }),
-    plumberDetails: getCommonContainer({
-      getPlumberRadioButton,
-      plumberLicenceNo: getTextField({
-        label: {
-          labelKey: "WS_ADDN_DETAILS_PLUMBER_LICENCE_NO_LABEL"
-        },
-        placeholder: {
-          labelKey: "WS_ADDN_DETAILS_PLUMBER_LICENCE_NO_PLACEHOLDER"
-        },
-        gridDefination: {
-          xs: 12,
-          sm: 6
-        },
-        required: false,
-        pattern: /^[0-9]*$/i,
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "applyScreen.plumberInfo[0].licenseNo"
-      }),
-      plumberName: getTextField({
-        label: {
-          labelKey: "WS_ADDN_DETAILS_PLUMBER_NAME_LABEL"
-        },
-        placeholder: {
-          labelKey: "WS_ADDN_DETAILS_PLUMBER_NAME_PLACEHOLDER"
-        },
-        gridDefination: {
-          xs: 12,
-          sm: 6
-        },
-        required: false,
-        pattern: getPattern("Name"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "applyScreen.plumberInfo[0].name"
-      }),
-      plumberMobNo: getTextField({
-        label: {
-          labelKey: "WS_ADDN_DETAILS_PLUMBER_MOB_NO_LABEL"
-        },
-        placeholder: {
-          labelKey: "WS_ADDN_DETAILS_PLUMBER_MOB_NO_LABEL_PLACEHOLDER"
-        },
-        gridDefination: { xs: 12, sm: 6 },
-        iconObj: { label: "+91 |", position: "start" },
-        required: false,
-        pattern: getPattern("MobileNo"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "applyScreen.plumberInfo[0].mobileNumber"
-      }),
-    })
-  }),
-  roadCuttingChargeContainer: getCommonGrayCard({
-    subHeader: getCommonTitle({
-      labelKey: "WS_ROAD_CUTTING_CHARGE_DETAILS"
-    }),
-    roadDetails: getCommonContainer({
-      roadType: getSelectField({
-        label: {
-          labelKey: "WS_ADDN_DETAIL_ROAD_TYPE"
-        },
-        placeholder: {
-          labelKey: "WS_ADDN_DETAILS_ROAD_TYPE_PLACEHOLDER"
-        },
-        required: false,
-        sourceJsonPath: "applyScreenMdmsData.sw-services-calculation.RoadType",
-        gridDefination: {
-          xs: 12,
-          sm: 6
-        },
-        required: false,
-        errorMessage: "ERR_INVALID_BILLING_PERIOD",
-        jsonPath: "applyScreen.roadType"
-      }),
-      enterArea: getTextField({
-        label: {
-          labelKey: "WS_ADDN_DETAILS_AREA_LABEL"
-        },
-        placeholder: {
-          labelKey: "WS_ADDN_DETAILS_AREA_PLACEHOLDER"
-        },
-        gridDefination: {
-          xs: 12,
-          sm: 6
-        },
-        required: false,
-        pattern: getPattern("Amount"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "applyScreen.roadCuttingArea"
-      })
-    }),
-  }),
+  // plumberDetailsContainer: getCommonGrayCard({
+  //   subHeader: getCommonTitle({
+  //     labelKey: "WS_COMMON_PLUMBER_DETAILS"
+  //   }),
+  //   plumberDetails: getCommonContainer({
+  //     getPlumberRadioButton,
+  //     plumberLicenceNo: getTextField({
+  //       label: {
+  //         labelKey: "WS_ADDN_DETAILS_PLUMBER_LICENCE_NO_LABEL"
+  //       },
+  //       placeholder: {
+  //         labelKey: "WS_ADDN_DETAILS_PLUMBER_LICENCE_NO_PLACEHOLDER"
+  //       },
+  //       gridDefination: {
+  //         xs: 12,
+  //         sm: 6
+  //       },
+  //       required: false,
+  //       pattern: /^[0-9]*$/i,
+  //       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+  //       jsonPath: "applyScreen.plumberInfo[0].licenseNo"
+  //     }),
+  //     plumberName: getTextField({
+  //       label: {
+  //         labelKey: "WS_ADDN_DETAILS_PLUMBER_NAME_LABEL"
+  //       },
+  //       placeholder: {
+  //         labelKey: "WS_ADDN_DETAILS_PLUMBER_NAME_PLACEHOLDER"
+  //       },
+  //       gridDefination: {
+  //         xs: 12,
+  //         sm: 6
+  //       },
+  //       required: false,
+  //       pattern: getPattern("Name"),
+  //       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+  //       jsonPath: "applyScreen.plumberInfo[0].name"
+  //     }),
+  //     plumberMobNo: getTextField({
+  //       label: {
+  //         labelKey: "WS_ADDN_DETAILS_PLUMBER_MOB_NO_LABEL"
+  //       },
+  //       placeholder: {
+  //         labelKey: "WS_ADDN_DETAILS_PLUMBER_MOB_NO_LABEL_PLACEHOLDER"
+  //       },
+  //       gridDefination: { xs: 12, sm: 6 },
+  //       iconObj: { label: "+91 |", position: "start" },
+  //       required: false,
+  //       pattern: getPattern("MobileNo"),
+  //       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+  //       jsonPath: "applyScreen.plumberInfo[0].mobileNumber"
+  //     }),
+  //   })
+  // }),
+  // roadCuttingChargeContainer: getCommonGrayCard({
+  //   subHeader: getCommonTitle({
+  //     labelKey: "WS_ROAD_CUTTING_CHARGE_DETAILS"
+  //   }),
+  //   roadDetails: getCommonContainer({
+  //     roadType: getSelectField({
+  //       label: {
+  //         labelKey: "WS_ADDN_DETAIL_ROAD_TYPE"
+  //       },
+  //       placeholder: {
+  //         labelKey: "WS_ADDN_DETAILS_ROAD_TYPE_PLACEHOLDER"
+  //       },
+  //       required: false,
+  //       sourceJsonPath: "applyScreenMdmsData.sw-services-calculation.RoadType",
+  //       gridDefination: {
+  //         xs: 12,
+  //         sm: 6
+  //       },
+  //       required: false,
+  //       errorMessage: "ERR_INVALID_BILLING_PERIOD",
+  //       jsonPath: "applyScreen.roadType"
+  //     }),
+  //     enterArea: getTextField({
+  //       label: {
+  //         labelKey: "WS_ADDN_DETAILS_AREA_LABEL"
+  //       },
+  //       placeholder: {
+  //         labelKey: "WS_ADDN_DETAILS_AREA_PLACEHOLDER"
+  //       },
+  //       gridDefination: {
+  //         xs: 12,
+  //         sm: 6
+  //       },
+  //       required: false,
+  //       pattern: getPattern("Amount"),
+  //       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+  //       jsonPath: "applyScreen.roadCuttingArea"
+  //     })
+  //   }),
+  // }),
   OtherChargeContainer: getCommonGrayCard({
     subHeader: getCommonTitle({
       labelKey: "WS_OTHER_CHARGE_DETAILS"
@@ -421,7 +427,7 @@ export const additionDetails = getCommonCard({
         required: false,
         pattern: getPattern("Amount"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "applyScreen.securityCharge"
+        jsonPath: "applyScreen.waterApplication.securityCharge"
       })
     }),
   }),
@@ -589,7 +595,7 @@ export const additionDetails = getCommonCard({
      label: { labelKey: "WS_SERV_DETAIL_SANCTION_CAPACITY" },
      placeholder: { labelKey: "WS_SERV_DETAIL_SANCTION_CAPACITY_PLACEHOLDER" },
      gridDefination: { xs: 12, sm: 6 },        
-     jsonPath: "applyScreen.additionalDetails.sanctionedCapacity",
+     jsonPath: "applyScreen.sanctionedCapacity",
      pattern: /^[0-9]*$/i,
      props: {         
        disabled: true
@@ -601,7 +607,7 @@ export const additionDetails = getCommonCard({
     label: { labelKey: "WS_SERV_DETAIL_METER_RENT_CODE" },
     placeholder: { labelKey: "WS_SERV_DETAIL_METER_RENT_CODE_PLACEHOLDER" },
     gridDefination: { xs: 12, sm: 6 },        
-    jsonPath: "applyScreen.additionalDetails.meterRentCode",
+    jsonPath: "applyScreen.meterRentCode",
     pattern: /^[0-9]*$/i,
     props: {         
       disabled: true
