@@ -2368,6 +2368,8 @@ export const _getPattern = (type) => {
         return /^[1-9][0-9]{0,49}$/i;
         case "HouseNumber":
           return /^[1-9a-zA-Z][\s\S]{1,49}$/i;
+          case "transactionid":
+            return /^[1-9a-zA-Z][0-9a-zA-Z]{1,249}$/i;
   }
 }
 
