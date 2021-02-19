@@ -86,38 +86,69 @@ class PaymentRedirect extends Component {
                 }
                 
                
+               
+                if(bookingType !== "BWT"){
                 let paymentReceipt= await downloadReceipt(payload, consumerCode, tenantId, 'true')
-                
-                
-                //let permissionLetter= await downloadCertificate(payload, consumerCode, tenantId, 'true')
-                
+               
+                let permissionLetter= await downloadCertificate(payload, consumerCode, tenantId, 'true')
+                                
                 Promise.all(paymentReceipt).then(data=>{
                     let urlPayload={
                         "paymentReceipt" :  data[0]
                     }
 
-                    // Promise.all(permissionLetter).then(permissionLetterData=>{
+                    Promise.all(permissionLetter).then(permissionLetterData=>{
 
-                    //     urlPayload= {
-                    //         ...urlPayload, 
-                    //         "permissionLetter": permissionLetterData[0]
-                    //     }
-                    //     console.log(urlPayload, "payload")
-               
-                 httpRequest(
-                    "post",
-                    apiUrl,
-                    "",
-                    [],
-                    { UrlData: urlPayload, 
-                        Booking: payload,
-                    }
-                );
-                this.props.setRoute(
-                    `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
-                );
+                        urlPayload= {
+                            ...urlPayload, 
+                            "permissionLetter": permissionLetterData[0]
+                        }
+                        console.log(urlPayload, "payload")
+                        httpRequest(
+                            "post",
+                            apiUrl,
+                            "",
+                            [],
+                            { UrlData: urlPayload, 
+                                Booking: payload,
+                            }
+                        );
+                        this.props.setRoute(
+                            `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
+                        );
+                
+                
                     })
-           // })
+                })
+                } else if(bookingType === "BWT"){
+                    let paymentReceipt= await downloadReceipt(payload, consumerCode, tenantId, 'true')
+                                    
+                    Promise.all(paymentReceipt).then(data=>{
+                        let urlPayload={
+                            "paymentReceipt" :  data[0]
+                        }
+    
+                       
+                            console.log(urlPayload, "payload")
+                            httpRequest(
+                                "post",
+                                apiUrl,
+                                "",
+                                [],
+                                { UrlData: urlPayload, 
+                                    Booking: payload,
+                                }
+                            );
+                            this.props.setRoute(
+                                `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
+                            );
+                    
+                    
+                        })
+                
+
+                } 
+              
         }
         } catch (e) {
             console.log(e);
