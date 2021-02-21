@@ -236,6 +236,7 @@ const propertyDetails = getCommonContainer({
       }
     }),
     beforeFieldChange: async (action, state, dispatch) => {
+      dispatch(prepareFinalObject("applyScreen.property.address.floorNo", action.value));
     
     }
   },

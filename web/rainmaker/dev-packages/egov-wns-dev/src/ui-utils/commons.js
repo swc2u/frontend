@@ -26,7 +26,19 @@ export const pushTheDocsUploadedToRedux = async (state, dispatch) => {
                     if (reduxDocuments[key].dropdown !== undefined) {
                         element.documentType = reduxDocuments[key].dropdown.value;
                     } else {
+                        if(reduxDocuments[key].documentType === undefined)
+                        {
+                            let activityType=  get(
+                                state,
+                                "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType",
+                                ''
+                            );
+                            element.documentType =`${activityType}_ROADCUT_NOC`
+                        }
+                        else
+                        {
                         element.documentType = reduxDocuments[key].documentType;
+                        }
                     }
                     element.documentCode = reduxDocuments[key].documentCode;
                     element.status = "ACTIVE";
@@ -811,30 +823,72 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             "screenConfiguration.preparedFinalObject.applyScreen.waterProperty.usageSubCategory",
             ''
         );
+        let water = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
+        let sewerage = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
+        let tubewell = get(state.screenConfiguration.preparedFinalObject, "applyScreen.tubewell", false);
         let applicationType = get(
             state,
             "screenConfiguration.preparedFinalObject.applyScreen.waterApplicationType",
             ''
         );
-if(occupancycode && applicationType && category)
-{
-    if(applicationType ==='TEMPORARY')
-    {
-        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
-            && x.category === category)
-           // &&x.occupancycode === occupancycode)
 
-    }
-    else{
-        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
-            && x.occupancycode === occupancycode)
-
-    }
-    
-
-        if(wsDocument && wsDocument[0])
-            documents = wsDocument[0].document;
-}
+        // check activity
+        let activityType=  get(
+            state,
+            "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType",
+            ''
+        );
+        //
+            if(water)
+            {
+            if(occupancycode && applicationType && category)
+            {
+                if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                }
+                else if(activityType ==='TEMPORARY_DISCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                }
+                else if(activityType ==='CONNECTION_CONVERSION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                }
+                else if(activityType ==='PERMANENT_DISCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                }
+                else if(activityType ==='NEW_WS_CONNECTION' 
+                     || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
+                     || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
+                     || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
+                {
+                    if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
+                    {
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                            && x.category === category)
+                        // &&x.occupancycode === occupancycode)
+                    }
+                    else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION')
+                    {
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                            && x.occupancycode === occupancycode)
+                    } 
+                }  
+            }
+            }
+            else if (sewerage)
+            {
+                /// logic for sewarage document
+            }
+            else if (tubewell)
+            {
+                /// logic for sewarage document
+                wsDocument = wsDocument.filter(x=>x.WaterActivity === 'NEW_TUBEWELL_CONNECTION')
+            }
+            if(wsDocument && wsDocument[0])
+                        documents = wsDocument[0].document;
         
 
       }
@@ -843,6 +897,50 @@ if(occupancycode && applicationType && category)
     documents = documents.filter(item => {
         return item.active;
     });
+
+    // add document type upload if applicationStatus is  PENDING_ROADCUT_NOC_BY_CITIZEN-- start
+    let applicationStatus=  get(
+        state,
+        "screenConfiguration.preparedFinalObject.WaterConnection[0].applicationStatus",
+        ''
+    );
+    let activityType=  get(
+        state,
+        "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType",
+        ''
+    );
+    if(applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN')
+    {
+
+        let duplicatedoc = documents.filter(x=>x.code === `${activityType}_ROADCUT_NOC`)
+        if(duplicatedoc !== undefined)
+        {
+        if(duplicatedoc && duplicatedoc.length == 0)
+        {
+        documents.push(
+            {
+                name:'Road cut NOC document',
+                code:`${activityType}_ROADCUT_NOC`,
+                isMandatory:true,
+                active:true
+            }
+        )
+        }
+        }
+        else{
+            documents.push(
+                {
+                    name:'Road cut NOC document',
+                    code:`${activityType}_ROADCUT_NOC`,
+                    isMandatory:true,
+                    active:true
+                }
+            )
+
+        }
+    }
+
+    //end
     let documentsContract = [];
     let tempDoc = {};
     documents.forEach(doc => {
@@ -1136,7 +1234,9 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
         }
 
         var tempDoc = {},docType="";
-        var dList = payload.applyScreenMdmsData['ws-services-masters'].Documents;
+        var dList = null
+        if(payload.applyScreenMdmsData['ws-services-masters']!== undefined)
+         payload.applyScreenMdmsData['ws-services-masters'].Documents;
         // impliment new document 
                 // fiter baed on occupancycode (Property Sub Usage Type),category(Uses Caregory) and applicationType(Application Type) 
                 let occupancycode = get(
@@ -1170,22 +1270,106 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 let documents = '';
                 let wsDocument ='';
                 wsDocument = payload.applyScreenMdmsData['ws-services-masters'].wsDocument; 
-                if(occupancycode && applicationType && category)
+                // let subusageCategory = get(
+                //     payload,
+                //     "applyScreen.property.subusageCategory",
+                //     ''
+                // );
+                let water = get(payload, "applyScreen.water", false);
+                let sewerage = get(payload, "applyScreen.sewerage", false);
+                let tubewell = get(payload, "applyScreen.tubewell", false); 
+                // check activity
+                let activityType=  get(
+                    payload,
+                    "WaterConnection[0].activityType",
+                    ''
+                );
+                //
+            if(water)
+            {
+            if(occupancycode && applicationType && category)
+            {
+                if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO')
                 {
-                    if(applicationType ==='TEMPORARY')
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                }
+                else if(activityType ==='TEMPORARY_DISCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                }
+                else if(activityType ==='CONNECTION_CONVERSION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                }
+                else if(activityType ==='PERMANENT_DISCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                }
+                else if(activityType ==='NEW_WS_CONNECTION' 
+                     || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
+                     || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
+                     || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
+                {
+                    if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.category === category)
-                
+                        // &&x.occupancycode === occupancycode)
                     }
-                    else{
-                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType                             
+                    else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION')
+                    {
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.occupancycode === occupancycode)
-                
                     } 
-                    if(wsDocument && wsDocument[0])
+                }  
+            }
+            }
+            else if (sewerage)
+            {
+                /// logic for sewarage document
+            }
+            else if (tubewell)
+            {
+                /// logic for sewarage document
+                wsDocument = wsDocument.filter(x=>x.WaterActivity === 'NEW_TUBEWELL_CONNECTION')
+            }
+                
+                if(wsDocument && wsDocument[0])
                     dList = wsDocument[0].document;
-                }
+
+                        // add document type upload if applicationStatus is  PENDING_ROADCUT_NOC_BY_CITIZEN-- start
+    let applicationStatus=  get(payload, "WaterConnection[0].applicationStatus",'');
+    let activityType_=  get(payload, "WaterConnection[0].activityType",'');
+    
+    if(applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN')
+    {
+        let duplicatedoc = dList.filter(x=>x.code === `${activityType}_ROADCUT_NOC`)
+        if(duplicatedoc !== undefined)
+        {
+        if(duplicatedoc && duplicatedoc.length == 0)
+        {
+        dList.push(
+            {
+                name:'Road cut NOC document',
+                code:`${activityType_}_ROADCUT_NOC`,
+                isMandatory:true,
+                active:true
+            }
+        )
+        }
+    }
+    else{
+        dList.push(
+            {
+                name:'Road cut NOC document',
+                code:`${activityType_}_ROADCUT_NOC`,
+                isMandatory:true,
+                active:true
+            }
+        )
+
+    }
+    }
         if(dList !== undefined && dList !==null){
             for(var i=0;i<dList.length;i++){
                 for(var key in docs){
@@ -1255,6 +1439,8 @@ export const applyForWater = async (state, dispatch) => {
                 case "APPLY_FOR_REGULAR_INFO":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_REGULAR_INFO")); break;
                 case "PERMANENT_DISCONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "PERMANENT_DISCONNECTION")); break;
                 case "CONNECTION_CONVERSION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "CONNECTION_CONVERSION")); break;
+                case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION")); break;
+                case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION")); break;
               }
               set(queryObjectForUpdate, "processInstance.action", "INITIATE");  
 
@@ -1297,7 +1483,14 @@ export const applyForWater = async (state, dispatch) => {
           let responseWater =  await httpRequest("post", "/ws-services/wc/_update", "", [], { WaterConnection: queryObjectForUpdate });
             let searchQueryObject = [{ key: "tenantId", value: queryObjectForUpdate.tenantId }, { key: "applicationNumber", value: queryObjectForUpdate.applicationNo }];
             
-            const btnName = ["UPDATE_CONNECTION_HOLDER_INFO","APPLY_FOR_REGULAR_INFO","REACTIVATE_CONNECTION","CONNECTION_CONVERSION","TEMPORARY_DISCONNECTION","PERMANENT_DISCONNECTION"];
+            const btnName = ["UPDATE_CONNECTION_HOLDER_INFO",
+                            "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION",
+                            "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION",
+                            "APPLY_FOR_REGULAR_INFO",
+                            "REACTIVATE_CONNECTION",
+                            "CONNECTION_CONVERSION",
+                            "TEMPORARY_DISCONNECTION",
+                            "PERMANENT_DISCONNECTION"];
         if(btnName.includes(wnsStatus)){
             responseWater.WaterConnection[0].property = queryObjectForUpdate.property;
             dispatch(prepareFinalObject("WaterConnection", responseWater.WaterConnection));

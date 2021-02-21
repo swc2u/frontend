@@ -428,7 +428,25 @@ export const additionDetails = getCommonCard({
         pattern: getPattern("Amount"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "applyScreen.waterApplication.securityCharge"
-      })
+      }),
+      IsFerruleApplicable: {
+        uiFramework: "custom-containers-local",
+        moduleName: "egov-wns",
+        componentPath: "CheckboxContainerConnHolder",
+        gridDefination: { xs: 12, sm: 6 },
+        props: {
+          label: {
+            name: "Ferrule Applicable",
+            key: "WS_ADDN_DETAILS_IS_FERRULEAPPLICABLE",
+          },
+          jsonPath: "applyScreen.waterApplication.isFerruleApplicable",
+          required: false,
+          isChecked: false
+        },
+        type: "array",
+        section:"SECURITY",
+        jsonPath: "applyScreen.waterApplication.isFerruleApplicable"
+      },
     }),
   }),
   activationDetailsContainer: getCommonGrayCard({
@@ -445,6 +463,11 @@ export const additionDetails = getCommonCard({
         gridDefination: {
           xs: 12,
           sm: 6
+        },
+        props: {
+          inputProps: {
+            min: new Date().toISOString().slice(0, 10),
+          },
         },
         required: false,
         pattern: getPattern("Date"),
@@ -493,6 +516,11 @@ export const additionDetails = getCommonCard({
           xs: 12,
           sm: 6
         },
+        props: {
+          inputProps: {
+            min: new Date().toISOString().slice(0, 10),
+          },
+        },
         required: false,
         pattern: /^[0-9]\d{0,9}(\.\d{1,3})?%?$/,
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
@@ -512,7 +540,7 @@ export const additionDetails = getCommonCard({
         required: false,
         pattern: /^[0-9]\d{0,9}(\.\d{1,3})?%?$/,
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "applyScreen.additionalDetails.meterCount"
+        jsonPath: "applyScreen.meterCount"
       }),
 
       mfrCode: {
@@ -523,7 +551,7 @@ export const additionDetails = getCommonCard({
           sourceJsonPath: "applyScreenMdmsData.ws-services-masters.MFRCode",
           gridDefination: { xs: 12, sm: 6 },
           errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-          jsonPath: "applyScreen.additionalDetails.mfrCode",
+          jsonPath: "applyScreen.mfrCode",
           props: {
             optionValue: "Code",
             optionLabel: "MakeOfMeter",
@@ -543,7 +571,7 @@ export const additionDetails = getCommonCard({
             {
               dispatch(
                 prepareFinalObject(
-                  "applyScreen.additionalDetails.meterDigits",
+                  "applyScreen.meterDigits",
                   MFRCode[0].Digit
                 )
               )
@@ -558,7 +586,7 @@ export const additionDetails = getCommonCard({
        label: { labelKey: "WS_SERV_DETAIL_METER_DIGIT" },
        placeholder: { labelKey: "WS_SERV_DETAIL_METER_DIGIT_PLACEHOLDER" },
        gridDefination: { xs: 12, sm: 6 },        
-       jsonPath: "applyScreen.additionalDetails.meterDigits",
+       jsonPath: "applyScreen.meterDigits",
        pattern: /^[0-9]*$/i,
        props: {         
          disabled: true
@@ -573,7 +601,7 @@ export const additionDetails = getCommonCard({
         sourceJsonPath: "applyScreenMdmsData.ws-services-masters.MeterUnit",
         gridDefination: { xs: 12, sm: 6 },
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "applyScreen.additionalDetails.meterUnit",
+        jsonPath: "applyScreen.meterUnit",
         props: {
           optionValue: "Name",
           optionLabel: "Name",

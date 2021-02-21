@@ -17,7 +17,7 @@ import {
         placeholder: { labelKey: "WS_CONN_CONVERSION_USAGE_TYPE_PLACEHOLDER" },
         required: true,
         gridDefination: { xs: 12, sm: 6 },
-        jsonPath: "WaterConnection[0].connectionUsagesType",
+        jsonPath: "WaterConnection[0].connectionUsagesType",// tarrif type
         props: {
             optionValue: "code",
             optionLabel: "name",

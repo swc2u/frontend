@@ -390,7 +390,7 @@ export const getData = async (action, state, dispatch) => {
     const waterApplicationType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplicationType");
     displaysubUsageType(usageCategory_, dispatch, state);
     displayUsagecategory(waterApplicationType, dispatch, state);
-                // check for security deposite for PENDING_FOR_SECURITY_DEPOSIT
+                // check for security deposite for PENDING_FOR_SECURITY_DEPOSIT//PENDING_ROADCUT_NOC_BY_CITIZEN
                 if(applicationStatus === "PENDING_FOR_SECURITY_DEPOSIT" ){
                     if(proposedPipeSize == 15){
                       const {applyScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
@@ -430,6 +430,8 @@ export const getData = async (action, state, dispatch) => {
                         )
                       );
                     }
+                    
+
                 }
                 else {
                   dispatch(
@@ -450,6 +452,8 @@ export const getData = async (action, state, dispatch) => {
       combinedArray[0].property.usageCategory = combinedArray[0].property.usageCategory.split('.')[0];
       combinedArray[0].property.noOfFloors = String(combinedArray[0].property.noOfFloors);
       const {applyScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
+      if(applyScreenMdmsData['ws-services-calculation'] !== undefined)
+      {
       if(applyScreenMdmsData['ws-services-calculation'].PipeSize)
       {
       const pipeSize = applyScreenMdmsData['ws-services-calculation'].PipeSize.filter(pipeSize => pipeSize.size == combinedArray[0].proposedPipeSize);
@@ -472,6 +476,7 @@ export const getData = async (action, state, dispatch) => {
         )
        }
       }
+    }
       dispatch(prepareFinalObject("applyScreen", findAndReplace(combinedArray[0], "null", "NA")));
       // For oldvalue display
       let oldcombinedArray = cloneDeep(combinedArray[0]);
@@ -691,6 +696,8 @@ const getApplyScreenChildren = () => {
     case "CONNECTION_CONVERSION":
     return {connConversionDetails};
     case "APPLY_FOR_REGULAR_INFO":
+    case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION": 
+    case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION": 
       return { IDDetails, Details,OwnerInfoCard, propertyUsageDetails, ownerDetails,connectionHolderDetails,  };
     default :    return { IDDetails, Details, OwnerInfoCard,propertyUsageDetails,ownerDetails, connectionHolderDetails,  };
   }

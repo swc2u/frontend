@@ -205,21 +205,24 @@ class Footer extends React.Component {
           localStorageGet("businessServiceData")
         );
         let data = get(state.screenConfiguration.preparedFinalObject, dataPath, []);
-        let workflow =state.screenConfiguration.preparedFinalObject.workflow.ProcessInstances
-        workflow = workflow.filter(x=>x.action === data[0].processInstance.action)
-        let nextActions = workflow[0].nextActions
-        nextActions = nextActions.filter(x=>x.action === item.buttonLabel)
         let nextStateid=''
         let searchPreviewScreenMdmsData =null
         let roles =[]
         let rolecode ='';
-        if(nextActions && nextActions[0])
+        let nextActions
+        // let workflow =state.screenConfiguration.preparedFinalObject.workflow.ProcessInstances
+        // workflow = workflow.filter(x=>x.action === data[0].processInstance.action)
+        let curstateactions = businessServiceData[0].states.filter(x=>x.applicationStatus === data[0].applicationStatus )
+        let actions_ = item.buttonLabel
+        if(curstateactions && curstateactions[0])
         {
-          nextStateid  = nextActions[0].nextState
+          nextActions = curstateactions[0].actions.filter(x=>x.action === actions_)
+          nextStateid = nextActions[0].nextState
           businessServiceData = businessServiceData[0].states.filter(x=>x.uuid === nextStateid )
+        } 
          searchPreviewScreenMdmsData  = state.screenConfiguration.preparedFinalObject.searchPreviewScreenMdmsData;
         searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
-        //searchPreviewScreenMdmsData = searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === data.action)
+       
         if(searchPreviewScreenMdmsData && searchPreviewScreenMdmsData[0])
         {
           roles =  searchPreviewScreenMdmsData = searchPreviewScreenMdmsData[0].roles
@@ -228,9 +231,8 @@ class Footer extends React.Component {
          {
           rolecode = roles[0].role 
          }
-
         }
-        }      
+       // }      
         
        
         if(rolecode)

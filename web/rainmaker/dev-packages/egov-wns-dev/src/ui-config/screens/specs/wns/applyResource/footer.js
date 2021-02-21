@@ -47,11 +47,21 @@ const moveToReview = (state, dispatch) => {
   const documentsFormat = Object.values(
     get(state.screenConfiguration.preparedFinalObject, "documentsUploadRedux")
   );
-
+const documentsContract = Object.values(
+      get(state.screenConfiguration.preparedFinalObject, "documentsContract")
+    );
   let validateDocumentField = false;
 let validateDocumentselect = false;
+let index = documentsContract.length;
+  if(documentsFormat.length > index)
+  {
+    index = index;
+  }
+  else{
+    index = documentsFormat.length;
+  }
 
-  for (let i = 0; i < documentsFormat.length; i++) {
+  for (let i = 0; i < index; i++) {
     let isDocumentRequired = get(documentsFormat[i], "isDocumentRequired");
     let isDocumentTypeRequired = get(documentsFormat[i], "isDocumentTypeRequired");
 
@@ -95,6 +105,29 @@ let validateDocumentselect = false;
       validateDocumentField = true;
     }
   }
+if(validateDocumentField)
+{
+  let applicationStatus=  get(
+    state,
+    "screenConfiguration.preparedFinalObject.WaterConnection[0].applicationStatus",
+    ''
+);
+  if(applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN')
+  {
+    if(documentsFormat.length !== documentsContract.length)
+    {
+      dispatch(
+                  toggleSnackbar(
+                    true,
+                    { labelName: "Please uplaod mandatory documents!", labelKey: "" },
+                    "warning"
+                  )
+                );
+        validateDocumentField = false;
+
+    }
+  }
+}
 
   return validateDocumentField;
 };
@@ -314,8 +347,40 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMP
   }
  
 }
+else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" || wnsStatus === "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION" )
+{
+  const iswaterConnFomValid = validateFields(
+    "components.div.children.formwizardFirstStep.children.connConversionDetails.children.cardContent.children.connectionConversionDetails.children.ConnectionConversionDetails.children",
+    state,
+    dispatch,
+    "apply"
+  );
 
-    } else {
+  if(!iswaterConnFomValid){
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_REQUIRED_FIELDS",
+        labelName: "Please fill Required details"
+      },
+        "warning"
+      )
+    )
+    return;
+  }
+  removingDocumentsWorkFlow(state, dispatch) ;
+  try{
+    let abc = await applyForWater(state, dispatch);
+    window.localStorage.setItem("ActivityStatusFlag","true");
+  }catch (err){
+    console.log("errrr")
+  }
+
+}
+
+
+    } 
+    else {
 
      
 
