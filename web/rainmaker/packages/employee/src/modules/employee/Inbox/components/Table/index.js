@@ -21,6 +21,7 @@ import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import "./index.css";
 import get from "lodash/get"
+import {  convertEpochToDate } from "egov-ui-framework/ui-config/screens/specs/utils";
 
 class InboxData extends React.Component {
   state = {
@@ -73,7 +74,48 @@ class InboxData extends React.Component {
     ];
     const payload = await httpRequest("egov-workflow-v2/egov-wf/process/_search?", "", queryObject);
     const processInstances = payload && payload.ProcessInstances.length > 0 && orderWfProcessInstances(payload.ProcessInstances);
+    var horticultureBusinessServices =
+    ["PRUNING OF TREES GIRTH LESS THAN OR EQUAL TO 90 CMS",
+     "PRUNING OF TREES GIRTH GREATER THAN 90 CMS",
+     "REMOVAL OF GREEN TREES",
+     "REMOVAL OF DEAD/DANGEROUS/DRY TREES" ]
+     if(horticultureBusinessServices.includes(processInstances[0].businessService))
+    {
+      var finalProcessInstancesHorticulture = processInstances.map(function(element, index) {
+        if(index == 0)
+        {
+        var o = Object.assign({}, element);
+        o.numberOfDaysToTakeAction = Math.ceil((element.auditDetails.lastModifiedTime - element.auditDetails.createdTime)/(1000 * 3600 * 24) )
+        return o;
+      
+      }
+        else{
+        var o = Object.assign({}, element);
+        var currentDateArray = []
+        var prevDateArray = []
+        var prevDateArray = ((convertEpochToDate(processInstances[index-1].auditDetails.lastModifiedTime)).toString()).split("/")
+        var currentDateArray =((convertEpochToDate(element.auditDetails.lastModifiedTime)).toString()).split("/")
+        var prevDate = new Date(prevDateArray[2], prevDateArray[1]-1, prevDateArray[0])
+        var currentDate = new Date(currentDateArray[2], currentDateArray[1]-1, currentDateArray[0])
+        var prevDateString =  new Date(prevDate.toString())
+        var currentDateString = new Date(currentDate.toString())
+        
+        
+        var diff =(currentDateString.getTime() - prevDateString.getTime()) / 1000;
+        diff /= (60 * 60 * 24);
+        o.numberOfDaysToTakeAction = Math.abs(Math.round(diff));
+        return o;
+        }
+
+    })
+
+    return finalProcessInstancesHorticulture
+  }
+  else
+  {
     return processInstances;
+  
+  }
   };
 
   onHistoryClick = async (moduleNumber) => {
@@ -102,20 +144,72 @@ class InboxData extends React.Component {
     const status = row[2].text && row[2].text.props.defaultLabel;
     const taskId = index === 0 && item.text;
     const tenantId = getTenantId();
+	  const wfStatus = row[2].text.props.label.substring(row[2].text.props.label.lastIndexOf('_') + 1);
+
     // const processInstances = await this.getProcessIntanceData(row[0].text);
     // if (processInstances && processInstances.length > 0) {
     //   await addWflowFileUrl(processInstances, prepareFinalObject);
     // }
-    let contextPath = status === "Initiated" ? getWFConfig(row[0].hiddenText,row[0].subtext).INITIATED : getWFConfig(row[0].hiddenText,row[0].subtext).DEFAULT;
+	
+    let contextPath = status === "Initiated" ? getWFConfig(row[0].hiddenText,row[0].subtext,taskId).INITIATED : getWFConfig(row[0].hiddenText,row[0].subtext,taskId).DEFAULT;
+    
     let queryParams = `applicationNumber=${taskId}&tenantId=${tenantId}`;
+    if(contextPath === 'estate/refund'){
+      queryParams = `fileNumber=${taskId}&tenantId=${tenantId}`;
+    }
+    if(contextPath=='/egov-services/application-details'||contextPath=='/egov-services/bwt-application-details'|| contextPath=="/egov-services/newLocation-application-details"){
+      queryParams = `${taskId}`;
+    }
 
+    //for only pension module
+    if(row[0].subtext.toUpperCase()==='RRP_SERVICE' ||row[0].subtext.toUpperCase()=='DOE_SERVICE'||row[0].subtext.toUpperCase()=='DOP_SERVICE')
+    {
+      queryParams=`applicationNumber=${taskId}&tenantId=${tenantId}&step=${row[2].text.props.label}&module=${row[0].subtext.toUpperCase()}`;
+    }
     if(row[0].subtext=="PT.CREATE"){
       queryParams+='&type=property';
     }
     else  if(row[0].subtext=="ASMT"){
       queryParams+='&type=assessment';
+    } else if(row[0].subtext === "MasterRP") {
+      queryParams = `transitNumber=${taskId}&tenantId=${tenantId}`
     }
+    else if (row[0].subtext === "NewWS1" 
+    || row[0].subtext === "REGULARWSCONNECTION" 
+    || row[0].subtext === 'NewSW1' 
+        || row[0].subtext === "TEMPORARY_WSCONNECTION"
+        || row[0].subtext === "WS_TEMP_TEMP" 
+        ||row[0].subtext === "WS_TEMP_REGULAR"
+        ||row[0].subtext === "WS_DISCONNECTION" 
+        ||row[0].subtext === "WS_TEMP_DISCONNECTION"
+        || row[0].subtext === "WS_RENAME" 
+        || row[0].subtext === "WS_CONVERSION" 
+        || row[0].subtext === "WS_REACTIVATE"  
+        ||  row[0].subtext === "WS_TUBEWELL") {
+      queryParams += '&history=true&service=WATER';
+      window.localStorage.setItem("wns_workflow",row[0].subtext);
+    }
+    else if (row[0].subtext === "NewSW1") {
+      queryParams += '&history=true&service=SEWERAGE';
+    }
+    else if (row[0].subtext == "Engineering" || row[0].subtext == "IT" || row[0].subtext == "Caretaker" || row[0].subtext == "MOH" || row[0].subtext == "Engineering Issue Note" || row[0].subtext == "IT Issue Note" || row[0].subtext == "Caretaker Issue Note" || row[0].subtext == "MOH Issue Note") {
+      queryParams += `&Status=${wfStatus}`;
+    }
+	  else if (row[0].subtext == "NULM") {
+      queryParams += `&status=${wfStatus}`;
+    } 
+    else if(row[0].subtext === "ES-EB-AllotmentOfSite" || row[0].subtext === "ES-EB-PropertyMaster" || row[0].subtext === "ES-BB-PropertyMaster" || row[0].subtext === "ES-MM-PropertyMaster") {
+      queryParams = `fileNumber=${taskId}&tenantId=${tenantId}`
+    } 
+    else if(row[0].subtext === "ES-EB-IS-RefundOfEmd") {
+      queryParams = `auctionId=${taskId}&tenantId=${tenantId}&branchType=${row[0].hiddenText}`
+    } 
+    if(contextPath=='/egov-services/application-details'||contextPath=='/egov-services/bwt-application-details'||contextPath== "/egov-services/newLocation-application-details"){
+      this.props.setRoute(`${contextPath}/${queryParams}`);
+
+    }else{
     this.props.setRoute(`${contextPath}?${queryParams}`);
+    }
   };
 
   getSlaColor = (sla, businessService) => {
@@ -161,7 +255,7 @@ class InboxData extends React.Component {
                   return (
                     <TableCell className={classNames}>
                       {index === 4 ? (
-                        <div className = "rainmaker-displayInline">
+                        <div className = "rainmaker-displayInline sortstyle">
                           {sortOrder === "desc" && (
                             <div className="arrow-icon-style" onClick={() => this.sortingTable("asc")}>
                               <Label label={item} labelStyle={{ fontWeight: "500" }} color="#000000" />
@@ -194,6 +288,7 @@ class InboxData extends React.Component {
                   return (
                     <TableRow key={i} className="inbox-data-table-bodyrow">
                       {row.map((item, index) => {
+                        if(index !== 1 && index !== 4 ){
                         let classNames = `inbox-data-table-bodycell inbox-data-table-bodycell-${index}`;
                         if (item.subtext) {
                           return (
@@ -204,7 +299,7 @@ class InboxData extends React.Component {
                               <div className="inbox-cell-subtext">
                                 {<Label label={`CS_COMMON_INBOX_${item.subtext.toUpperCase()}`} color="#000000" />}
                               </div>
-                            </TableCell>
+                            </TableCell>  
                           );
                         } else if (item.badge) {
                           return (
@@ -227,7 +322,7 @@ class InboxData extends React.Component {
                             </TableCell>
                           );
                         }
-                      })}
+                      }})}
                     </TableRow>
                   );
                 })}
@@ -239,20 +334,20 @@ class InboxData extends React.Component {
         <Hidden only={["sm", "md", "lg", "xl"]} implementation="css">
           <div class="sort-icon-flex">
               {sortOrder === "asc" && (
-                <div className = "rainmaker-displayInline" onClick={() => this.sortingTable("desc")}>
+                <div className = "rainmaker-displayInline sortstyle" onClick={() => this.sortingTable("desc")}>
                   <ImportExportIcon />
                   <Label className="sort-icon" label={"INBOX_SORT_ICON"} />
                 </div>
               )}
               {sortOrder === "desc" && (
-                <div className = "rainmaker-displayInline" onClick={() => this.sortingTable("asc")}>
+                <div className = "rainmaker-displayInline sortstyle" onClick={() => this.sortingTable("asc")}>
                   <ImportExportIcon />
                   <Label className="sort-icon" label={"INBOX_SORT_ICON"} />
                 </div>
               )}            
           </div>
           {data.rows.length === 0 ? (
-            <Card textChildren={<Label labelClassName="" label="COMMON_INBOX_NO_DATA" />} />
+            <Card textChildren={<Label labelClassName="NodataFound" label="COMMON_INBOX_NO_DATA" />} />
           ) : (
             <div>
               {data.rows.map((row, index) => {
@@ -268,27 +363,28 @@ class InboxData extends React.Component {
                           <Label label={`CS_COMMON_INBOX_${row[0].subtext.toUpperCase()}`} color="#000000" />
                         </div>
 
-                        <div className="card-div-style">
+                         <div className="card-div-style">
                           <Label label={data.headers[1]} labelStyle={{ fontWeight: "500" }} />
                         </div>
-                        <div className="card-div-style">{row[1].text}</div>
+                        {/* <div className="card-div-style">{row[1].text}</div> */} 
+                        <div className="card-div-style">{row[2].text}</div>
 
                         <div className="card-div-style">
                           <Label label={data.headers[2]} labelStyle={{ fontWeight: "500" }} />
                         </div>
-                        <div className="card-div-style">{row[2].text}</div>
+                        <div className="card-div-style">{row[3].text}</div>
 
                         <div className="card-div-style">
                           <Label label={data.headers[3]} labelStyle={{ fontWeight: "500" }} />
                         </div>
-                        <div className="card-div-style">{row[3].text}</div>
+                      
 
-                        <div className="card-div-style">
+                        {/* <div className="card-div-style">
                           <Label label={data.headers[4]} labelStyle={{ fontWeight: "500" }} />
                         </div>
                         <div className="card-sladiv-style">
                           <span class={"inbox-cell-badge-primary"} style={{backgroundColor : this.getSlaColor(row[4].text, row[2].text.props.label.split("_")[1])}}>{row[4].text}</span>
-                        </div>
+                        </div> */}
 
                         <div className="card-viewHistory-icon" onClick={() => onHistoryClick(row[0])}>
                           <i class="material-icons">history</i>
@@ -345,7 +441,8 @@ export const Taskboard = ({ data }) => {
     </div>
   );
 };
-
+// this method not in use
 const onModuleCardClick = (route) => {
-  window.location.href = document.location.origin + route;
+
+ 
 };

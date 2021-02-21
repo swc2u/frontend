@@ -14,12 +14,13 @@ import {
   setBusinessServiceDataToLocalStorage,
   getFileUrlFromAPI,setDocuments
 } from "egov-ui-framework/ui-utils/commons";
-import { getSearchResults } from "../../../../ui-utils/commons";
+import { getSearchResults, organizeLicenseData } from "../../../../ui-utils/commons";
 import {
   createEstimateData,
   setMultiOwnerForSV,
   setValidToFromVisibilityForSV,
-  getDialogButton
+  getDialogButton,
+  getTextToLocalMapping
 } from "../utils";
 
 import { footerReview, downloadPrintContainer,footerReviewTop  } from "./applyResource/footer";
@@ -28,8 +29,7 @@ import {
   getHeaderSideText,
   getTransformedStatus
 } from "../utils";
-import { getReviewTrade } from "./applyResource/review-trade";
-import { getReviewOwner } from "./applyResource/review-owner";
+import { getReviewTrade, getReviewOwner, getReviewDetails, CONST_VALUES } from "./applyResource/review-trade";
 import { getReviewDocuments } from "./applyResource/review-documents";
 import { loadReceiptGenerationData } from "../utils/receiptTransformer";
 import get from "lodash/get";
@@ -45,18 +45,21 @@ const getTradeTypeSubtypeDetails = payload => {
     payload,
     "Licenses[0].tradeLicenseDetail.tradeUnits",
     []
-  );
+  ) || [];
   const tradeUnitDetails = [];
-  tradeUnitsFromApi.forEach(tradeUnit => {
-    const { tradeType } = tradeUnit;
-    const tradeDetails = tradeType.split(".");
-    tradeUnitDetails.push({
-      trade: get(tradeDetails, "[0]", ""),
-      tradeType: get(tradeDetails, "[1]", ""),
-      tradeSubType: get(tradeDetails, "[2]", "")
-    });
-  });
-  return tradeUnitDetails;
+
+  if (tradeUnitsFromApi) {
+      tradeUnitsFromApi.forEach(tradeUnit => {
+        const { tradeType } = tradeUnit;
+        const tradeDetails = tradeType.split(".");
+        tradeUnitDetails.push({
+          trade: get(tradeDetails, "[0]", ""),
+          tradeType: get(tradeDetails, "[1]", ""),
+          tradeSubType: get(tradeDetails, "[2]", "")
+        });
+      });
+      return tradeUnitDetails;
+  }  
 };
 
 const searchResults = async (action, state, dispatch, applicationNo) => {
@@ -94,8 +97,21 @@ const searchResults = async (action, state, dispatch, applicationNo) => {
   );
 
   let sts = getTransformedStatus(get(payload, "Licenses[0].status"));
-  payload && dispatch(prepareFinalObject("Licenses[0]", payload.Licenses[0]));
 
+  if(payload) {
+    let license = organizeLicenseData(payload.Licenses);
+    let applicationDocuments = license[0].tradeLicenseDetail.applicationDocuments || [];
+    const removedDocs = applicationDocuments.filter(item => !item.active)
+    applicationDocuments = applicationDocuments.filter(item => !!item.active)
+    license = [{...license[0], tradeLicenseDetail: {...license[0].tradeLicenseDetail, applicationDocuments}}]
+    dispatch(prepareFinalObject("Licenses[0]", license[0]));
+    dispatch(
+      prepareFinalObject(
+        "LicensesTemp[0].removedDocs",
+        removedDocs
+      )
+    );
+  }
   //set business service data
     
   const businessService = get(
@@ -136,6 +152,7 @@ const searchResults = async (action, state, dispatch, applicationNo) => {
 };
 
 const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
+  dispatch(prepareFinalObject("workflow.ProcessInstances", []))
   //Search details for given application Number
   if (applicationNumber) {
     !getQueryArg(window.location.href, "edited") &&
@@ -146,21 +163,28 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       state.screenConfiguration.preparedFinalObject,
       `Licenses[0].licenseNumber`
     );
+
+    
+    
     let queryObjectSearch = [
       {
         key: "tenantId",
         value: tenantId 
       },
       { key: "offset", value: "0" },
-      { key: "licenseNumbers", value: licenseNumber}
+      { key: "applicationNumber", value: applicationNumber}
+      // { key: "licenseNumbers", value: licenseNumber}
     ];
     const payload = await getSearchResults(queryObjectSearch);
     const length = payload && payload.Licenses.length > 0 ? get(payload,`Licenses`,[]).length : 0;
     dispatch(prepareFinalObject("licenseCount" ,length));
+     await getReviewDetails(state, dispatch, "search-preview", "components.div.children.tradeReviewDetails.children.cardContent.children.reviewTradeDetails.children.cardContent.children.viewOne", "components.div.children.tradeReviewDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewOne");
     const status = get(
       state,
       "screenConfiguration.preparedFinalObject.Licenses[0].status"
     );
+
+    const tlType = get(state.screenConfiguration.preparedFinalObject, "Licenses[0].businessService")
 
     const financialYear = get(
       state,
@@ -177,7 +201,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         "LicensesTemp[0].reviewDocData",
         dispatch,'TL'
       );
-    }
+    }    
 
     const statusCont = {
       word1: {
@@ -283,6 +307,37 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       state.screenConfiguration.preparedFinalObject,
       "Licenses[0].applicationType"
     );
+
+    dispatch(
+      handleField(
+        "search-preview",
+        "components.div.children.tradeReviewDetails.children.cardContent.children.reviewTradeDetails.children.cardContent.children.viewOne.children.oldLicenseNumber",
+        "visible",
+        applicationType !== "New"
+      )
+    );
+    dispatch(
+      handleField(
+        "search-preview",
+        "components.div.children.tradeReviewDetails.children.cardContent.children.reviewTradeDetails.children.cardContent.children.viewOne.children.oldLicenseValidTo",
+        "visible",
+        applicationType !== "New"
+      )
+    );
+
+    const tradeType = get(
+      state.screenConfiguration.preparedFinalObject,
+      `Licenses[0].businessService`
+    );
+
+    dispatch(
+      handleField(
+        "search-preview",
+        "components.div.children.tradeReviewDetails.children.cardContent.children.reviewTradeDetails.children.cardContent.children.viewOne.children.tradeType.props",
+        "value",
+        getTextToLocalMapping(tradeType)
+      )
+    );
    
     const headerrow = getCommonContainer({
       header: getCommonHeader({
@@ -295,7 +350,11 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         moduleName: "egov-tradelicence",
         componentPath: "ApplicationNoContainer",
         props: {
-          number: applicationNumber
+          number: applicationNumber,
+          style: {
+           "margin-left": "0px",
+           "margin-top": "5px"
+          } 
         }
       },
       licenceNumber: {
@@ -305,6 +364,9 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         visible: licenseNumber? true : false,
         props: {
           number: licenseNumber,
+          style: {
+            "margin-top": "5px"
+           }
         }
       }
     })
@@ -315,7 +377,6 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       headerrow
     );
 
- 
     const footer = footerReview(
       action,
       state,
@@ -323,7 +384,8 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       status,
       applicationNumber,
       tenantId,
-      financialYear
+      financialYear,
+      tlType
     );
 
     process.env.REACT_APP_NAME === "Citizen"
@@ -337,7 +399,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         true
       );       
     setActionItems(action, obj);
-    loadReceiptGenerationData(applicationNumber, tenantId);
+    loadReceiptGenerationData(applicationNumber, tenantId, state, dispatch);
   }
 };
 
@@ -410,7 +472,7 @@ const reviewTradeDetails = getReviewTrade(false);
 
 const reviewOwnerDetails = getReviewOwner(false);
 
-const reviewDocumentDetails = getReviewDocuments(false, false);
+const reviewDocumentDetails = getReviewDocuments(false);
 
 // let approvalDetails = getApprovalDetails(status);
 let title = getCommonTitle({ labelName: titleText });
@@ -439,11 +501,11 @@ const setActionItems = (action, object) => {
 export const tradeReviewDetails = getCommonCard({
   title,
   estimate,
-  viewBreakupButton: getDialogButton(
-    "VIEW BREAKUP",
-    "TL_PAYMENT_VIEW_BREAKUP",
-    "search-preview"
-  ),
+  // viewBreakupButton: getDialogButton(
+  //   "VIEW BREAKUP",
+  //   "TL_PAYMENT_VIEW_BREAKUP",
+  //   "search-preview"
+  // ),
   reviewTradeDetails,
   reviewOwnerDetails,
   reviewDocumentDetails
@@ -502,13 +564,17 @@ const screenConfig = {
         },
         taskStatus: {
           uiFramework: "custom-containers-local",
+          moduleName: "egov-tradelicence",
           componentPath: "WorkFlowContainer",
-          moduleName: "egov-workflow",
+          // moduleName: "egov-workflow",
           // visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
           props: {
             dataPath: "Licenses",
             moduleName: "NewTL",
-            updateUrl: "/tl-services/v1/_update"
+            updateUrl: "/tl-services/v1/_update",
+            style: {
+              wordBreak: "break-word"
+            }
           }
         },
         actionDialog: {

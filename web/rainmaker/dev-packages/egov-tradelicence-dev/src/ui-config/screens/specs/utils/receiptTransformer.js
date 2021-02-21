@@ -16,8 +16,10 @@ import {
   getTranslatedLabel,
   transformById,
   getTransformedLocale,
-  getUserDataFromUuid
+  getUserDataFromUuid,
+  setDocuments
 } from "egov-ui-framework/ui-utils/commons";
+import set from "lodash/set";
 
 const ifNotNull = value => {
   return !["", "NA", "null", null].includes(value);
@@ -54,22 +56,7 @@ export const getMessageFromLocalization = code => {
   return messageObject ? messageObject.code : code;
 };
 
-export const loadUlbLogo = tenantid => {
-  var img = new Image();
-  img.crossOrigin = "Anonymous";
-  img.onload = function() {
-    var canvas = document.createElement("CANVAS");
-    var ctx = canvas.getContext("2d");
-    canvas.height = this.height;
-    canvas.width = this.width;
-    ctx.drawImage(this, 0, 0);
-    store.dispatch(prepareFinalObject("base64UlbLogo", canvas.toDataURL()));
-    canvas = null;
-  };
-  img.src = `/pb-egov-assets/${tenantid}/logo.png`;
-};
-
-export const loadApplicationData = async (applicationNumber, tenant) => {
+export const loadApplicationData = async (applicationNumber, tenant, state, dispatch) => {
   let data = {};
   let queryObject = [
     { key: "tenantId", value: tenant },
@@ -78,6 +65,16 @@ export const loadApplicationData = async (applicationNumber, tenant) => {
   let response = await getSearchResults(queryObject);
 
   if (response && response.Licenses && response.Licenses.length > 0) {
+
+    set(state.screenConfiguration.preparedFinalObject,"Licenses", response.Licenses)
+
+    await setDocuments(
+      response,
+      "Licenses[0].tradeLicenseDetail.applicationDocuments",
+      "LicensesTemp[0].reviewDocData",
+      dispatch,'TL'
+    );
+
     data.applicationNumber = nullToNa(
       get(response, "Licenses[0].applicationNumber", "NA")
     );
@@ -88,7 +85,7 @@ export const loadApplicationData = async (applicationNumber, tenant) => {
       nullToNa(
         get(
           response,
-          "Licenses[0].tradeLicenseDetail.additionalDetail.applicationType",
+          "Licenses[0].applicationType",
           "NA"
         )
       )
@@ -100,6 +97,7 @@ export const loadApplicationData = async (applicationNumber, tenant) => {
       get(response, "Licenses[0].financialYear", "NA")
     );
     data.tradeName = nullToNa(get(response, "Licenses[0].tradeName", "NA"));
+    data.tradeType = nullToNa(get(response, "Licenses[0].businessService", "NA"));
     data.doorNo = nullToNa(
       get(response, "Licenses[0].tradeLicenseDetail.address.doorNo", "NA")
     );
@@ -125,7 +123,10 @@ export const loadApplicationData = async (applicationNumber, tenant) => {
     data.owners = ownersData.map(owner => {
       return {
         name: get(owner, "name", "NA"),
-        mobile: get(owner, "mobileNumber", "NA")
+        mobile: get(owner, "mobileNumber", "NA"),
+        fatherOrHusbandsName: get(owner, "fatherOrHusbandName", "NA"),
+        dob: epochToDate(get(owner, "dob")),
+        address: get(owner, "permanentAddress")
       };
     });
     data.ownersList = ownersData
@@ -139,101 +140,107 @@ export const loadApplicationData = async (applicationNumber, tenant) => {
     data.licenseExpiryDate = nullToNa(
       epochToDate(get(response, "Licenses[0].validTo", "NA"))
     );
-    let licenseValidTo = get(response, "Licenses[0].validTo", "NA");
-    data.licenseValidity = getFinancialYearDates("dd/mm/yyyy", licenseValidTo);
+    data.licenseValidity = {
+      startDate : data.licenseIssueDate,
+      endDate: data.licenseExpiryDate
+    };
     /** Trade settings */
     const tradeUnitsFromResponse = get(
       response,
       "Licenses[0].tradeLicenseDetail.tradeUnits",
-      null
-    );
-
-    const transformedTradeData = tradeUnitsFromResponse.reduce(
-      (res, curr) => {
-        let tradeCategory = "NA";
-        let tradeType = "NA";
-        let tradeSubType = "NA";
-        let tradeCode = curr.tradeType;
-        if (tradeCode) {
-          let tradeCodeArray = tradeCode.split(".");
-          if (tradeCodeArray.length == 1) {
-            tradeCategory = nullToNa(tradeCode);
-          } else if (tradeCodeArray.length == 2) {
-            tradeCategory = nullToNa(tradeCodeArray[0]);
-            tradeType = nullToNa(tradeCode);
-          } else if (tradeCodeArray.length > 2) {
-            tradeCategory = nullToNa(tradeCodeArray[0]);
-            tradeType = nullToNa(tradeCodeArray[1]);
-            tradeSubType = nullToNa(tradeCode);
-          }
-        }
-        /** End */
-
-        res.tradeCategory.push(getMessageFromLocalization("TRADELICENSE_TRADETYPE_"+tradeCategory));
-
-        res.tradeTypeReceipt.push(
-          getMessageFromLocalization("TRADELICENSE_TRADETYPE_"+tradeType) +
-            " / " +
-            getMessageFromLocalization("TRADELICENSE_TRADETYPE_"+getTransformedLocale(tradeSubType))
-        );
-        res.tradeTypeCertificate.push(
-          getMessageFromLocalization(
-            "TRADELICENSE_TRADETYPE_" + tradeCategory
-          ) +
-            " / " +
-            getMessageFromLocalization("TRADELICENSE_TRADETYPE_" + tradeType) +
-            " / " +
-            getMessageFromLocalization(
-              "TRADELICENSE_TRADETYPE_" + getTransformedLocale(tradeSubType)
-            )
-        );
-        return res;
-      },
-      {
-        tradeCategory: [],
-        tradeTypeReceipt: [],
-        tradeTypeCertificate: []
-      }
-    );
-
-    data.tradeCategory = transformedTradeData.tradeCategory.join(", ");
-    data.tradeTypeReceipt = transformedTradeData.tradeTypeReceipt.join(", ");
-    data.tradeTypeCertificate = transformedTradeData.tradeTypeCertificate.join(
-      ", "
-    );
-    data.address = nullToNa(
-      createAddress(
-        data.doorNo,
-        data.buildingName,
-        data.streetName,
-        data.locality,
-        data.city
-      )
-    );
-    const accessories = get(
-      response,
-      "Licenses[0].tradeLicenseDetail.accessories",
       []
-    );
-    if (accessories && accessories.length > 0) {
-      data.accessoriesList = response.Licenses[0].tradeLicenseDetail.accessories
-        .map(item => {
-          return `${getMessageFromLocalization(
-            `TRADELICENSE_ACCESSORIESCATEGORY_${getTransformedLocale(
-              item.accessoryCategory
-            )}`
-          )}(${item.count ? item.count : "0"})`;
-        })
-        .reduce((pre, cur) => {
-          return pre.concat(", " + cur);
-        });
-    } else {
-      data.accessoriesList = "";
-    }
-    loadUserNameData(response.Licenses[0].auditDetails.lastModifiedBy);
-  }
+    ) || [];
 
-  store.dispatch(prepareFinalObject("applicationDataForReceipt", data));
+    if (tradeUnitsFromResponse) {
+      const transformedTradeData = tradeUnitsFromResponse.reduce(
+        (res, curr) => {
+          let tradeCategory = "NA";
+          let tradeType = "NA";
+          let tradeSubType = "NA";
+          let tradeCode = curr.tradeType;
+          if (tradeCode) {
+            let tradeCodeArray = tradeCode.split(".");
+            if (tradeCodeArray.length == 1) {
+              tradeCategory = nullToNa(tradeCode);
+            } else if (tradeCodeArray.length == 2) {
+              tradeCategory = nullToNa(tradeCodeArray[0]);
+              tradeType = nullToNa(tradeCode);
+            } else if (tradeCodeArray.length > 2) {
+              tradeCategory = nullToNa(tradeCodeArray[0]);
+              tradeType = nullToNa(tradeCodeArray[1]);
+              tradeSubType = nullToNa(tradeCode);
+            }
+          }
+          /** End */
+  
+          res.tradeCategory.push(getMessageFromLocalization("TRADELICENSE_TRADETYPE_"+tradeCategory));
+  
+          res.tradeTypeReceipt.push(
+            getMessageFromLocalization("TRADELICENSE_TRADETYPE_"+tradeType) +
+              " / " +
+              getMessageFromLocalization("TRADELICENSE_TRADETYPE_"+getTransformedLocale(tradeSubType))
+          );
+          res.tradeTypeCertificate.push(
+            getMessageFromLocalization(
+              "TRADELICENSE_TRADETYPE_" + tradeCategory
+            ) +
+              " / " +
+              getMessageFromLocalization("TRADELICENSE_TRADETYPE_" + tradeType) +
+              " / " +
+              getMessageFromLocalization(
+                "TRADELICENSE_TRADETYPE_" + getTransformedLocale(tradeSubType)
+              )
+          );
+          return res;
+        },
+        {
+          tradeCategory: [],
+          tradeTypeReceipt: [],
+          tradeTypeCertificate: []
+        }
+      );
+  
+      data.tradeCategory = transformedTradeData.tradeCategory.join(", ");
+      data.tradeTypeReceipt = transformedTradeData.tradeTypeReceipt.join(", ");
+      data.tradeTypeCertificate = transformedTradeData.tradeTypeCertificate.join(
+        ", "
+      );
+      data.address = nullToNa(
+        createAddress(
+          data.doorNo,
+          data.buildingName,
+          data.streetName,
+          data.locality,
+          data.city
+        )
+      );
+      const accessories = get(
+        response,
+        "Licenses[0].tradeLicenseDetail.accessories",
+        []
+      );
+      if (accessories && accessories.length > 0) {
+        data.accessoriesList = response.Licenses[0].tradeLicenseDetail.accessories
+          .map(item => {
+            return `${getMessageFromLocalization(
+              `TRADELICENSE_ACCESSORIESCATEGORY_${getTransformedLocale(
+                item.accessoryCategory
+              )}`
+            )}(${item.count ? item.count : "0"})`;
+          })
+          .reduce((pre, cur) => {
+            return pre.concat(", " + cur);
+          });
+      } else {
+        data.accessoriesList = "";
+      }
+      loadUserNameData(response.Licenses[0].auditDetails.lastModifiedBy);
+    }
+  
+    store.dispatch(prepareFinalObject("applicationDataForReceipt", data));
+    }
+
+   
 };
 
 export const loadReceiptData = async (consumerCode, tenant) => {
@@ -397,10 +404,9 @@ export const loadUserNameData = async uuid => {
 };
 
 /** Data used for creation of receipt is generated and stored in local storage here */
-export const loadReceiptGenerationData = (applicationNumber, tenant) => {
+export const loadReceiptGenerationData = async (applicationNumber, tenant, state, dispatch) => {
   /** Logo loaded and stored in local storage in base64 */
-  loadUlbLogo(tenant);
-  loadApplicationData(applicationNumber, tenant); //PB-TL-2018-09-27-000004
-  loadReceiptData(applicationNumber, tenant); //PT-107-001330:AS-2018-08-29-001426     //PT consumerCode
-  loadMdmsData(tenant);
+  await loadApplicationData(applicationNumber, tenant, state, dispatch); //PB-TL-2018-09-27-000004
+  await loadReceiptData(applicationNumber, tenant); //PT-107-001330:AS-2018-08-29-001426     //PT consumerCode
+  await loadMdmsData(tenant);
 };

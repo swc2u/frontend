@@ -59,15 +59,15 @@ class TableData extends Component {
       typing: false
     },
     filter: {
-      localityFilter: {
-        selectedValue: ["ALL"],
-        dropdownData: [
-          {
-            value: "ALL",
-            label: "CS_INBOX_SELECT_ALL",
-          }
-        ]
-      },
+      // localityFilter: {
+      //   selectedValue: ["ALL"],
+      //   dropdownData: [
+      //     {
+      //       value: "ALL",
+      //       label: "CS_INBOX_SELECT_ALL",
+      //     }
+      //   ]
+      // },
       moduleFilter: {
         selectedValue: ["ALL"],
         dropdownData: [
@@ -92,8 +92,9 @@ class TableData extends Component {
     tabData: [{ label: "COMMON_INBOX_TAB_ASSIGNED_TO_ME", dynamicArray: [0] }
       , { label: "COMMON_INBOX_TAB_ALL", dynamicArray: [0] }],
     taskboardData: [{ head: 0, body: "WF_TOTAL_TASK", color: "rgb(171,211,237)", baseColor: "rgb(53,152,219)" },
-    { head: 0, body: "WF_TOTAL_NEARING_SLA", color: "rgb(238, 167, 58 ,0.38)", baseColor: "#EEA73A" },
-    { head: 0, body: "WF_ESCALATED_SLA", color: "rgb(244, 67, 54 ,0.38)", baseColor: "#F44336" }],
+   // { head: 0, body: "WF_TOTAL_NEARING_SLA", color: "rgb(238, 167, 58 ,0.38)", baseColor: "#EEA73A" },
+   // { head: 0, body: "WF_ESCALATED_SLA", color: "rgb(244, 67, 54 ,0.38)", baseColor: "#F44336" }
+  ],
     taskboardLabel: '',
     inboxData: [{ headers: [], rows: [] }],
     initialInboxData: [{ headers: [], rows: [] }],
@@ -161,8 +162,8 @@ class TableData extends Component {
     }
   }
   checkRow = (row, filter, searchFilter, taskboardLabel) => {
-    if ((filter.localityFilter.selectedValue.includes('ALL') || filter.localityFilter.selectedValue.includes(row[1].text.props.label)) &&
-      (filter.moduleFilter.selectedValue.includes('ALL') || filter.moduleFilter.selectedValue.includes(row[2].text.props.label.split('_')[1])) &&
+    //if ((filter.localityFilter.selectedValue.includes('ALL') || filter.localityFilter.selectedValue.includes(row[1].text.props.label)) &&
+     if( (filter.moduleFilter.selectedValue.includes('ALL') || filter.moduleFilter.selectedValue.includes(row[2].text.props.label.split('_')[1])) &&
       (filter.statusFilter.selectedValue.includes('ALL') || filter.statusFilter.selectedValue.includes(row[2].text.props.label.split('_')[2])) &&
       (searchFilter.value == '' || this.checkMatch(row, searchFilter.value)
       )
@@ -219,8 +220,8 @@ class TableData extends Component {
 
     let { taskboardData, tabData } = this.state;
     taskboardData[0].head = totalRows.length;
-    taskboardData[1].head = NEARING_SLA.length;
-    taskboardData[2].head = ESCALATED_SLA.length;
+   // taskboardData[1].head = NEARING_SLA.length;
+   // taskboardData[2].head = ESCALATED_SLA.length;
     tabData[0].dynamicArray = [initialInboxData[0].rows.length];
     tabData[1].dynamicArray = [initialInboxData[1].rows.length];
     this.hideLoading();
@@ -246,10 +247,10 @@ class TableData extends Component {
     const initialInboxData = cloneDeep(this.state.initialInboxData);
     const tempObject = cloneDeep(this.state.initialInboxData);
     const filter = {
-      localityFilter: {
-        selectedValue: ["ALL"],
-        dropdownData: [...this.state.filter.localityFilter.dropdownData]
-      },
+      // localityFilter: {
+      //   selectedValue: ["ALL"],
+      //   dropdownData: [...this.state.filter.localityFilter.dropdownData]
+      // },
       moduleFilter: {
         selectedValue: ["ALL"],
         dropdownData: [...this.state.filter.moduleFilter.dropdownData]
@@ -290,7 +291,7 @@ class TableData extends Component {
               "referenceNumber": businessIds
             }
           }
-          const moduleWiseLocality = await httpRequest(`egov-searcher/locality/${uniqueModules[i]}/_get`, "search", [], requestBody);
+          const moduleWiseLocality = //await httpRequest(`egov-searcher/locality/${uniqueModules[i]}/_get`, "search", [], requestBody);
           localitymap = [...localitymap, ...moduleWiseLocality.Localities];
         } catch (e) {
           console.log("error");
@@ -362,15 +363,15 @@ class TableData extends Component {
     if(all){
       this.setState({
         filter: {
-          localityFilter: {
-            selectedValue: ['ALL'],
-            dropdownData: this.getUniqueList([
-              {
-                value: "ALL",
-                label: getLocaleLabels("","CS_INBOX_SELECT_ALL",localizationLabels),
-              }, ...localityDropdownList
-            ])
-          },
+          // localityFilter: {
+          //   selectedValue: ['ALL'],
+          //   dropdownData: this.getUniqueList([
+          //     {
+          //       value: "ALL",
+          //       label: getLocaleLabels("","CS_INBOX_SELECT_ALL",localizationLabels),
+          //     }, ...localityDropdownList
+          //   ])
+          // },
           moduleFilter: {
             selectedValue: ['ALL'],
             dropdownData: this.getUniqueList([
@@ -431,7 +432,116 @@ class TableData extends Component {
       );
     }
   };
+  getHorticultureRoleBasedServiceRequestData =  (responseData) => {
+    
+    var userRolesForHC = []
+    var userRolesCodesForHC = []
+    var responseDataHorticulture = []
+    userRolesForHC = get(this.props, "userInfo.roles");
+    userRolesCodesForHC = userRolesForHC.map((item) => { return item.code})
+    
+    var horticultureBusinessServices =
+    ["PRUNING OF TREES GIRTH LESS THAN OR EQUAL TO 90 CMS",
+      "PRUNING OF TREES GIRTH GREATER THAN 90 CMS",
+      "REMOVAL OF GREEN TREES",
+      "REMOVAL OF DEAD/DANGEROUS/DRY TREES" ]
+    
+    responseDataHorticulture = orderBy(
+      filter(responseData.ProcessInstances, (item) =>{
+        if(horticultureBusinessServices.includes(get(item,'businessService'))){
+         
+          if (get(item,'additionalDetails') != null && (get(item,'state.state') != 'REJECTED' || get(item,'state.state') != 'COMPLETED')  )
+         {
+          
+          let currentAssignedRole = get(item,'additionalDetails.role')
+          currentAssignedRole = currentAssignedRole.split(",")
+          
+          if(userRolesCodesForHC.some(element => currentAssignedRole.includes(element)) )
+          {return item}
+        }
+          
+        }
+        
+    }),
+      ["businesssServiceSla"]
+    );
 
+    return responseDataHorticulture
+  };
+  getWaterRoleBasedServiceRequestData =  (responseData) => {
+    
+    var userRolesForWS = []
+    var userRolesCodesForWS = []
+    var responseDataWater = []
+    userRolesForWS = get(this.props, "userInfo.roles");
+    userRolesCodesForWS = userRolesForWS.map((item) => { return item.code})
+    
+    var WaterBusinessServices =
+    ["REGULARWSCONNECTION",
+    "TEMPORARY_WSCONNECTION",
+    "WS_TEMP_TEMP",
+    "WS_TEMP_REGULAR",
+    "WS_DISCONNECTION",
+    "WS_TEMP_DISCONNECTION",
+    "WS_RENAME",
+    "WS_CONVERSION",
+    "WS_REACTIVATE",
+    "WS_TUBEWELL" ,]
+    
+      responseDataWater = orderBy(
+      filter(responseData.ProcessInstances, (item) =>{
+        if(WaterBusinessServices.includes(get(item,'businessService'))){
+         
+          if (get(item,'additionalDetails') != null && (get(item,'state.state') != 'REJECTED' || get(item,'state.state') != 'COMPLETED')  )
+         {
+          
+          let currentAssignedRole = get(item,'additionalDetails.role')
+          currentAssignedRole = currentAssignedRole.split(",")
+          
+          if(userRolesCodesForWS.some(element => currentAssignedRole.includes(element)) )
+          {return item}
+        }
+          
+        }
+        
+    }),
+      ["businesssServiceSla"]
+    );
+
+    return responseDataWater
+  };
+  getWaterRoleBasedServiceRequestDataWithoutAdditionalDetails =  (responseData) => {  
+    
+    responseData = responseData.ProcessInstances.filter(x=>x.additionalDetails === null || x.additionalDetails === undefined)
+    // filter(
+    //   {
+
+    //   }
+    // )
+
+    return responseData
+  };
+  getOtherApplicationsData =  (responseData) => {
+ 
+    var horticultureBusinessServices =
+     ["PRUNING OF TREES GIRTH LESS THAN OR EQUAL TO 90 CMS",
+      "PRUNING OF TREES GIRTH GREATER THAN 90 CMS",
+      "REMOVAL OF GREEN TREES",
+      "REMOVAL OF DEAD/DANGEROUS/DRY TREES" ]
+      var responseDataNonHorticulture = []
+    responseDataNonHorticulture = orderBy(
+      filter(responseData.ProcessInstances, (item) =>{
+        if(!horticultureBusinessServices.includes(get(item,'businessService')))
+        {
+         return item
+        }
+        
+    }),
+      ["businesssServiceSla"]
+    );
+  
+  return responseDataNonHorticulture
+  };
   componentDidMount = async () => {
     const { toggleSnackbarAndSetText, prepareFinalObject } = this.props;
     const uuid = get(this.props, "userInfo.uuid");
@@ -441,17 +551,57 @@ class TableData extends Component {
     const inboxData = [{ headers: [], rows: [] }];
     try {
       this.showLoading();
-      this.setBusinessServiceDataToLocalStorage([{ key: "tenantId", value: getTenantId() }]);
+      await this.setBusinessServiceDataToLocalStorage([{ key: "tenantId", value: getTenantId() }]);
       const requestBody = [{ key: "tenantId", value: tenantId }];
       const responseData = await httpRequest("egov-workflow-v2/egov-wf/process/_search", "_search", requestBody);
+
+
+       //Horticulture code changes starts here
+       var AssignedToAlldataForHorticulture = []
+        //W&S code changes starts here
+        var AssignedToAlldataForWNS = []
+
+       var AssignedToAlldataForOtherModules = []
+        AssignedToAlldataForHorticulture = this.getHorticultureRoleBasedServiceRequestData(responseData)
+        AssignedToAlldataForWNS = this.getWaterRoleBasedServiceRequestData(responseData)
+        AssignedToAlldataForOtherModules = this.getOtherApplicationsData(responseData)
+        let WithoutAdditionalDetails = responseData
+         WithoutAdditionalDetails = this.getWaterRoleBasedServiceRequestDataWithoutAdditionalDetails(WithoutAdditionalDetails)
+ 
+       var finalDataAssignedToAll = []
+       if(window.localStorage.getItem("wns_workflow") ==='REGULARWSCONNECTION'
+        || window.localStorage.getItem("wns_workflow") ==='TEMPORARY_WSCONNECTION'
+        || window.localStorage.getItem("wns_workflow") === "WS_TEMP_TEMP" 
+        || window.localStorage.getItem("wns_workflow") === "WS_TEMP_REGULAR"
+        || window.localStorage.getItem("wns_workflow") === "WS_DISCONNECTION" 
+        || window.localStorage.getItem("wns_workflow") === "WS_TEMP_DISCONNECTION"
+        || window.localStorage.getItem("wns_workflow") === "WS_RENAME" 
+        || window.localStorage.getItem("wns_workflow") === "WS_CONVERSION" 
+        || window.localStorage.getItem("wns_workflow") === "WS_REACTIVATE"  
+        || window.localStorage.getItem("wns_workflow") === "WS_TUBEWELL"
+       )
+       {
+        finalDataAssignedToAll.ProcessInstances = [...WithoutAdditionalDetails, ...AssignedToAlldataForWNS]
+
+       }
+       else
+       {
+        finalDataAssignedToAll.ProcessInstances = [...AssignedToAlldataForHorticulture, ...AssignedToAlldataForOtherModules]
+
+       }
+      
+       //finalDataAssignedToAll.ProcessInstances = [...AssignedToAlldataForHorticulture, ...AssignedToAlldataForOtherModules, ...AssignedToAlldataForWNS]
+       
+       //horticulture code changes ends here
+
       const assignedData = orderBy(
         filter(responseData.ProcessInstances, (item) =>{
-          let assignes=get(item,'assignes');
-          return get(assignes?assignes[0]:{}, "uuid") === uuid
+          let assignes=get(item,'assignee');
+          return get(assignes||{}, "uuid") === uuid
       }),
         ["businesssServiceSla"]
       );
-      const allData = orderBy(get(responseData, "ProcessInstances", []), ["businesssServiceSla"]);
+      const allData = orderBy(get(finalDataAssignedToAll, "ProcessInstances", []), ["businesssServiceSla"]);
 
 
       // const assignedDataRows = []
@@ -463,10 +613,10 @@ class TableData extends Component {
       
       let headersList = [
         "WF_INBOX_HEADER_APPLICATION_NO",
-        "WF_INBOX_HEADER_LOCALITY",
+       // "WF_INBOX_HEADER_LOCALITY",
         "WF_INBOX_HEADER_STATUS",
         "WF_INBOX_HEADER_CURRENT_OWNER",
-        "WF_INBOX_HEADER_SLA_DAYS_REMAINING",
+      //  "WF_INBOX_HEADER_SLA_DAYS_REMAINING",
       ];
       inboxData[0].headers = headersList;
       inboxData[0].rows = assignedDataRows;
@@ -481,8 +631,8 @@ class TableData extends Component {
       let ESCALATED_SLA = [];
       const taskCount = allDataRows.length;
       taskboardData[0].head = taskCount;
-      taskboardData[1].head = NEARING_SLA.length;
-      taskboardData[2].head = ESCALATED_SLA.length;
+     // taskboardData[1].head = NEARING_SLA.length;
+    //  taskboardData[2].head = ESCALATED_SLA.length;
 
       this.setState({
         loaded: true,

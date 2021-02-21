@@ -2737,7 +2737,7 @@ export const getBpaDetailsForOwner = async (state, dispatch, fieldInfo) => {
         "_search",
         [],
         {
-          tenantId: "pb",
+          tenantId: "ch",
           userName: `${ownerNo}`
         }
       );
@@ -3216,7 +3216,7 @@ export const resetFields = (state, dispatch) => {
 
 // export const getRequiredDocData = async (action, state, dispatch) => {
 //   let tenantId =
-//     process.env.REACT_APP_NAME === "Citizen" ? "pb.amritsar" : getTenantId();
+//     process.env.REACT_APP_NAME === "Citizen" ? "ch.chandigarh" : getTenantId();
 //   let mdmsBody = {
 //     MdmsCriteria: {
 //       tenantId: tenantId,
@@ -3690,7 +3690,7 @@ export const getMdmsDataForBpa = async queryObject => {
 export const requiredDocumentsData = async (state, dispatch, action) => {
   let mdmsBody = {
     MdmsCriteria: {
-      tenantId: 'pb',
+      tenantId: 'ch',
       moduleDetails: [
         {
           moduleName: "common-masters",

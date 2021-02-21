@@ -114,8 +114,9 @@ class ShowField extends Component {
         footer: true,
         customize: function(doc) {
           doc.content[0].text = [];
-          doc.content[0].text.push({ text: "mSeva System Reports\n\n", bold: true, fontSize: 20 });
+          doc.content[0].text.push({ text: "mChandigarh Application\n\n", bold: true, fontSize: 20 });
           doc.content[0].text.push({ text: reportTitle, fontSize: 18 });
+          doc.content[1].margin = [ 80, 0, 80, 0 ]
         },
         className: "report-pdf-button",
       },
@@ -123,7 +124,7 @@ class ShowField extends Component {
         extend: "excel",
         text: "XLS",
         filename: _this.state.reportName,
-        title: reportTitle,
+        title: Array.isArray(reportTitle) ? reportTitle.join("") : reportTitle,
         messageTop: tabLabel,
         footer: true,
         className: "report-excel-button",
@@ -150,7 +151,7 @@ class ShowField extends Component {
     };
     rTable = $("#reportTable").DataTable({
       dom:
-        "<'&nbsp''row'<'col-sm-2 col-xs-12 text-center'l><'col-sm-4 col-xs-12 text-center'f><'col-sm-6 col-xs-12 text-center'B>><'row margin0'<'col-sm-12't>><'&nbsp''row'<'col-sm-5 col-xs-12'i><'col-sm-7 col-xs-12'p>>",
+        "<'row margin0'<'col-sm-2 col-xs-12 text-center'l><'col-sm-4 col-xs-12 text-center'f><'col-sm-6 col-xs-12 text-center'B>><'row margin0'<'col-sm-12't>><'&nbsp''row'<'col-sm-5 col-xs-12'i><'col-sm-7 col-xs-12'p>>",
       displayStart: displayStart,
       buttons: self.getExportOptions(),
       searching: true,
@@ -312,6 +313,30 @@ class ShowField extends Component {
       ) {
         return this.addCommas(Number(val) % 1 === 0 ? Number(val) : Number(val).toFixed(2));
       } else {
+        if(window.location.pathname.includes('EmployeeReport') &&
+          reportResult &&
+          reportResult.reportHeader &&
+          reportResult.reportHeader.length &&
+          reportResult.reportHeader[i] && reportResult.reportHeader[i].name== "department")
+          {
+          return( <Label
+            className=""
+            labelStyle={{ wordWrap: "unset", wordBreak: "unset"}}
+            label={`PGRDEPT.${val.toUpperCase().replace(/ /g, "")}`}
+          />)
+        }
+        else if(
+          reportResult &&
+          reportResult.reportHeader &&
+          reportResult.reportHeader.length &&
+          reportResult.reportHeader[i] && (reportResult.reportHeader[i].name== "servicecode" || reportResult.reportHeader[i].name== "complainttype"))
+        {
+          return( <Label
+            className=""
+            labelStyle={{ wordWrap: "unset", wordBreak: "unset" }}
+            label={`SERVICEDEFS.${val.toUpperCase().replace(/ /g, "")}`}
+          />)
+        }
         return val;
       }
     }
@@ -704,10 +729,17 @@ class ShowField extends Component {
   }
 }
 const mapStateToProps = (state) => {
+let reportData ;
+  if( state.report.reportResult &&  state.report.reportResult.reportResponses && state.report.reportResult.reportResponses[0]) {
+    reportData = state.report.reportResult.reportResponses[0];
+  } 
+  else{
+    reportData = state.report.reportResult;
+  }
   return {
     isTableShow: state.formtemp.showTable,
     metaData: state.report.metaData,
-    reportResult: state.report.reportResult,
+    reportResult:reportData ,
     flag: state.report.flag,
     searchForm: state.formtemp.form,
     searchParams: state.report.searchParams,

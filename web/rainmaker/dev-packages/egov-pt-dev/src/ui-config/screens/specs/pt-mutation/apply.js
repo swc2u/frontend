@@ -302,7 +302,7 @@ const getMdmsData = async (action, state, dispatch) => {
 };
 
 const getMdmsTransferReasonData = async (action, state, dispatch) => {
-  let tenantId ='pb'
+  let tenantId ='ch'
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,

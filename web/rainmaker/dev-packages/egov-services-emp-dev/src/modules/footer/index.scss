@@ -1,0 +1,28 @@
+@media only screen and (max-width: 768px) {
+  .apply-wizard-footer {
+    position: fixed;
+    bottom: 0;
+    z-index: 1;
+    /* left: 35px; */
+    width: 100%;
+    overflow: inherit !important; }
+  .apply-wizard-footer button {
+    /* min-width: 360px !important; */
+    margin-left: 0 !important;
+    margin-right: 0 !important; } 
+  }
+
+  @media only screen and (min-width: 768px) {
+      .apply-wizard-footer {
+        background-color: #ffffff;
+        -webkit-box-shadow: 0 -2px 4px 0 rgba(0, 0, 0, 0.24);
+                box-shadow: 0 -2px 4px 0 rgba(0, 0, 0, 0.24);
+        padding: 8px;
+        position: fixed !important;
+        bottom: 0;
+        right: 0;
+        z-index: 1;
+        width: 83.33vw;
+        text-align: right;
+        overflow: inherit !important; }
+      }

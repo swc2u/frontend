@@ -24,7 +24,7 @@ import {
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { footer } from "./applyResource/footer";
 import { tradeReviewDetails } from "./applyResource/tradeReviewDetails";
-import { tradeDetails } from "./applyResource/tradeDetails";
+import { tradeDetails, ownerDetails } from "./applyResource/tradeDetails";
 import { tradeLocationDetails } from "./applyResource/tradeLocationDetails";
 import { tradeOwnerDetails } from "./applyResource/tradeOwnerDetails";
 import { documentList } from "./applyResource/documentList";
@@ -36,10 +36,12 @@ import {
 import { getTenantId, getLocale } from "egov-ui-kit/utils/localStorageUtils";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import commonConfig from "config/common.js";
+import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { RC_PEDAL_RICKSHAW_LOADING_REHRI, DL_PEDAL_RICKSHAW_LOADING_REHRI, LICENSE_DHOBI_GHAT, RENEWAL_RENT_DEED_SHOP } from "../../../../ui-constants";
 
 export const stepsData = [
-  { labelName: "Trade Details", labelKey: "TL_COMMON_TR_DETAILS" },
-  { labelName: "Owner Details", labelKey: "TL_COMMON_OWN_DETAILS" },
+  { labelName: "Details", labelKey: "TL_DETAILS_PROV_DET_HEADER" },
+  // { labelName: "Owner Details", labelKey: "TL_COMMON_OWN_DETAILS" },
   { labelName: "Documents", labelKey: "TL_COMMON_DOCS" },
   { labelName: "Summary", labelKey: "TL_COMMON_SUMMARY" }
 ];
@@ -47,6 +49,27 @@ export const stepper = getStepperObject(
   { props: { activeStep: 0 } },
   stepsData
 );
+
+const tradeLicenseType = getQueryArg(window.location.href, "tlType");
+var tradeLicenseTypeString;
+
+switch (tradeLicenseType) {
+    case RC_PEDAL_RICKSHAW_LOADING_REHRI:
+      tradeLicenseTypeString = `TL_APPLY_RC_PEDAL_RICKSHAW_REHRI`;
+      break;
+    case DL_PEDAL_RICKSHAW_LOADING_REHRI:
+      tradeLicenseTypeString = `TL_APPLY_DL_PEDAL_RICKSHAW_REHRI`;
+      break;
+    case LICENSE_DHOBI_GHAT:
+      tradeLicenseTypeString = `TL_APPLY_LICENSE_DHOBI_GHAT`;
+      break;
+    case RENEWAL_RENT_DEED_SHOP:
+      tradeLicenseTypeString = `TL_APPLY_RENEWAL_RENT_DEED_SHOP`;
+      break;
+    default:
+        break;
+}
+
 export const pageResetAndChange = (state, dispatch,tenantId) => {
   dispatch(prepareFinalObject("Licenses", [{ licenseType: "PERMANENT" }]));
   dispatch(prepareFinalObject("LicensesTemp", []));
@@ -56,14 +79,10 @@ export const header = getCommonContainer({
   header:
     getQueryArg(window.location.href, "action") !== "edit"
       ? getCommonHeader({
-          labelName: `Apply for New Trade License ${
-            process.env.REACT_APP_NAME === "Citizen"
-              ? "(" + getCurrentFinancialYear() + ")"
-              : ""
-          }`,
+          labelName: `Apply for New Trade License`,
          // dynamicArray: getQueryArg(window.location.href, "action") === "EDITRENEWAL" ? [getnextFinancialYear(getCurrentFinancialYear())]:[getCurrentFinancialYear()],
-          labelKey: getQueryArg(window.location.href, "action") === "EDITRENEWAL" ? "TL_COMMON_APPL_RENEWAL_LICENSE_YEAR":"TL_COMMON_APPL_NEW_LICENSE_YEAR"
-         
+          // labelKey: getQueryArg(window.location.href, "action") === "EDITRENEWAL" ? "TL_COMMON_APPL_RENEWAL_LICENSE_YEAR":"TL_COMMON_APPL_NEW_LICENSE_YEAR"
+          labelKey: "TL_COMMON_APPL_NEW_LICENSE"
         })
       : {},
   applicationNumber: {
@@ -143,6 +162,7 @@ export const getMdmsData = async (action, state, dispatch) => {
       [],
       mdmsBody
     );
+
     set(
       payload,
       "MdmsRes.TradeLicense.MdmsTradeType",
@@ -181,7 +201,11 @@ export const getMdmsData = async (action, state, dispatch) => {
 };
 
 export const getData = async (action, state, dispatch) => {
-  const queryValue = getQueryArg(window.location.href, "applicationNumber");
+  const queryValue = getQueryArg(window.location.href, "applicationNumber") || get(
+    state.screenConfiguration.preparedFinalObject,
+    "Licenses[0].applicationNumber",
+    null
+  );
   const applicationNo = queryValue
     ? queryValue
     : get(
@@ -276,7 +300,8 @@ export const formwizardFirstStep = {
   },
   children: {
     tradeDetails,
-    tradeLocationDetails
+    ownerDetails
+    // tradeLocationDetails
   }
 };
 
@@ -368,7 +393,6 @@ const screenConfig = {
 
     return action;
   },
-
   components: {
     div: {
       uiFramework: "custom-atoms",
@@ -392,7 +416,7 @@ const screenConfig = {
         },
         stepper,
         formwizardFirstStep,
-        formwizardSecondStep,
+        // formwizardSecondStep,
         formwizardThirdStep,
         formwizardFourthStep,
         footer

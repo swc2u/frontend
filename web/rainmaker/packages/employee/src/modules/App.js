@@ -9,7 +9,7 @@ import Router from "./Router";
 import commonConfig from "config/common";
 // import logoMseva from "egov-ui-kit/assets/images/logo-white.png";
 import routes from "./Routes";
-import { getLocale } from "egov-ui-kit/utils/localStorageUtils";
+import { getLocale , setDefaultLocale, getDefaultLocale} from "egov-ui-kit/utils/localStorageUtils";
 import isEmpty from "lodash/isEmpty";
 import { LoadingIndicator, CommonShareContainer } from "components";
 
@@ -62,6 +62,9 @@ class App extends Component {
       },
     };
     // can be combined into one mdms call
+    setDefaultLocale(getDefaultLocale());
+    const { pathname } = window.location;
+    if(pathname.includes("/user/otp") || pathname.includes("/user/login") || pathname.includes("/user/register")|| pathname.includes("/language-selection")|| pathname.includes("/forgot-password")  )
     fetchLocalizationLabel(getLocale() || "en_IN");
 
     // current location
@@ -81,7 +84,10 @@ class App extends Component {
     const isPrivacyPolicy = location && location.pathname && location.pathname.includes("privacy-policy");
 
     if (nextProps.hasLocalisation !== this.props.hasLocalisation && !authenticated && !isPrivacyPolicy) {
-      nextProps.hasLocalisation && this.props.history.replace("/language-selection");
+      if(nextProps.hasLocalisation){
+        if(getDefaultLocale()== "null")
+          this.props.history.replace("/language-selection");
+      }
     }
   }
 

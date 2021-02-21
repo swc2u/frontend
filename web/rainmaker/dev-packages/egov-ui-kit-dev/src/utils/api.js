@@ -17,16 +17,14 @@ axios.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response && error.response.data && error.response.data.location) {
-      window.location = error.response.data.location;
-    } else {
+   
       return Promise.reject(error);
-    }
+    
   }
 );
 
 const instance = axios.create({
-  baseURL: window.location.origin,
+  baseURL: window.location.origin, 
   headers: {
     "Content-Type": "application/json",
   },
@@ -93,7 +91,48 @@ if(isGetMethod){
     return getResponse.data;
   }
 }else{
-  const response = await instance.post(endPoint, wrapRequestBody(requestBody, action, customRequestInfo));
+
+  
+  let response;
+
+  if(action === "_finance_logout"){
+   const hostname =  window.location.origin;
+    
+  //  const hostname = "https://egov-dev.chandigarhsmartcity.in";
+    const loc = window.location
+
+    let erp_url='check', subdomainurl;
+    if (hostname.search("dev") != -1) {
+      subdomainurl = hostname.substring(hostname.search("dev"), hostname.length);
+      erp_url = loc.protocol + "//" + getTenantId().split(".")[1] + "-" + subdomainurl ;
+    } else if (hostname.search("qa") != -1) {
+      subdomainurl = hostname.substring(hostname.search("qa"), hostname.length);
+      erp_url = loc.protocol + "//" + getTenantId().split(".")[1] + "-" + subdomainurl ;
+    } else if (hostname.search("uat") != -1) {
+      subdomainurl = hostname.substring(hostname.search('uat'),hostname.length);
+      erp_url = loc.protocol + "//" + getTenantId().split(".")[1] + "-" + subdomainurl ;
+    } else {
+      subdomainurl = hostname.substring(hostname.indexOf(".") + 1);
+     // erp_url = loc.protocol + "//" + getTenantId().split(".")[1] + "." + subdomainurl ;
+     erp_url = loc.protocol+ "//mcc.chandigarhsmartcity.in";
+    }
+
+    
+   // console.log("ERP URL : " + erp_url);
+	
+    const instance1 = axios.create({
+      baseURL: erp_url,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": erp_url,
+      },
+    });
+    response = await instance1.post(endPoint, wrapRequestBody(requestBody, action, customRequestInfo));
+  }
+   else{
+    response = await instance.post(endPoint, wrapRequestBody(requestBody, action, customRequestInfo));
+   }
+ 
   const responseStatus = parseInt(response.status, 10);
   if (responseStatus === 200 || responseStatus === 201) {    
     return response.data;
@@ -120,7 +159,7 @@ export const uploadFile = async (endPoint, module, file, ulbLevel) => {
   // Bad idea to fetch from local storage, change as feasible
   const tenantId = getTenantId() ? (ulbLevel ? getTenantId() : getTenantId().split(".")[0]) : "";
   const uploadInstance = axios.create({
-    baseURL: window.location.origin,
+    baseURL: window.location.origin, 
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -152,7 +191,7 @@ export const uploadFile = async (endPoint, module, file, ulbLevel) => {
 export const loginRequest = async (username = null, password = null, refreshToken = "", grantType = "password", tenantId = "", userType) => {
   tenantId = tenantId ? tenantId : commonConfig.tenantId;
   const loginInstance = axios.create({
-    baseURL: window.location.origin,
+    baseURL: window.location.origin, 
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization: "Basic ZWdvdi11c2VyLWNsaWVudDplZ292LXVzZXItc2VjcmV0",

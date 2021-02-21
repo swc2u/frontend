@@ -41,7 +41,7 @@ class PaymentRedirect extends Component {
 
         let transactionId = get(searchResponse, "Payments[0].paymentDetails[0].receiptNumber");
         this.props.setRoute(
-          // status=success&receiptNumber=PB-TL-2019-10-29-003220&consumerCode=PT-1909-208877&tenantId=pb.amritsar
+          // status=success&receiptNumber=PB-TL-2019-10-29-003220&consumerCode=PT-1909-208877&tenantId=ch.chandigarh
           `/egov-common/acknowledgement?status=${"success"}&consumerCode=${consumerCode}&tenantId=${tenantId}&receiptNumber=${transactionId}`
         );
       }

@@ -1,9 +1,11 @@
 // user routes
 import Register from "modules/citizen/User/Register";
+import Privacy from "modules/citizen/User/Privacy";
 import Login from "modules/citizen/User/Login";
 import OTP from "modules/citizen/User/OTP";
 import LanguageSelection from "modules/citizen/User/LanguageSelection";
 import Profile from "modules/citizen/User/Profile";
+import Instruction from "modules/citizen/User/Instruction";
 
 // common screens
 
@@ -33,8 +35,20 @@ import  WhatsAppLocality from "modules/citizen/WhatsAppScreen/Locality";
 
 const routes = [
   {
+    path: "instruction",
+    component: Instruction,
+    needsAuthentication: false,
+    redirectionUrl: "/user/register",
+  },
+  {
     path: "user/register",
     component: Register,
+    needsAuthentication: false,
+    redirectionUrl: "/",
+  },
+  {
+    path: "user/privacy",
+    component: Privacy,
     needsAuthentication: false,
     redirectionUrl: "/",
   },

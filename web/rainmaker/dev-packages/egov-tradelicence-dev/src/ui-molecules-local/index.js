@@ -56,6 +56,30 @@ const HowItWorks = Loadable({
   loading: () => <Loading />
 });
 
+const Footer = Loadable({
+  loader: () => import("./Footer"),
+  loading: () => <Loading />
+})
+
+const TaskDialog = Loadable({
+  loader: () => import("./TaskDialog"),
+  loading: () => <Loading />
+});
+
+const TlHowItWorks = Loadable({
+  loader: () => import("./TlHowItWorks"),
+  loading: () => <Loading />
+})
+
+const MultiDownloadCard = Loadable({
+  loader: () => import("./MultiDownloadCard"),
+  loading: () => <Loading />
+});
+const SimpleModal = Loadable({
+  loader: () => import("./SimpleModal"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -66,5 +90,10 @@ export {
   MapLocator,
   FeesEstimateCard,
   HowItWorks,
-  ActionDialog
+  ActionDialog,
+  Footer,
+  TaskDialog,
+  TlHowItWorks,
+  MultiDownloadCard, 
+  SimpleModal
 };

@@ -16,7 +16,9 @@ import {
 import {
   getTranslatedLabel,
   updateDropDowns,
-  ifUserRoleExists
+  ifUserRoleExists,
+  convertEpochToDate,
+  calculateAge
 } from "../ui-config/screens/specs/utils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import store from "redux/store";
@@ -25,7 +27,7 @@ import set from "lodash/set";
 import {
   getQueryArg,
   getFileUrl,
-  getFileUrlFromAPI
+  getFileUrlFromAPI, setDocuments
 } from "egov-ui-framework/ui-utils/commons";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import {
@@ -35,6 +37,9 @@ import {
 } from "egov-ui-framework/ui-utils/commons";
 import { uploadFile } from "egov-ui-framework/ui-utils/api";
 import commonConfig from "config/common.js";
+import { localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
+import { downloadReceiptFromFilestoreID } from "egov-common/ui-utils/commons"
+import { RENEWAL_RENT_DEED_SHOP } from "../ui-constants";
 
 export const updateTradeDetails = async requestBody => {
   try {
@@ -47,9 +52,25 @@ export const updateTradeDetails = async requestBody => {
     );
     return payload;
   } catch (error) {
-    store.dispatch(toggleSnackbar(true, error.message, "error"));
+    store.dispatch(toggleSnackbar(true, {labelName: error.message, labelKey: error.message}, "error"));
   }
 };
+
+
+export const getPaymentGateways = async () => {
+  try {
+    const payload = await httpRequest(
+      "post",
+      "/pg-service/gateway/v1/_search",
+      ""
+    );
+    return payload
+  } catch (error) {
+    store.dispatch(toggleSnackbar(true, {labelName: error.message, labelKey: error.message}, "error"))
+  }
+}
+
+
 
 export const getLocaleLabelsforTL = (label, labelKey, localizationLabels) => {
   if (labelKey) {
@@ -77,19 +98,40 @@ export const getSearchResults = async queryObject => {
     store.dispatch(
       toggleSnackbar(
         true,
-        { labelName: error.message, labelCode: error.message },
+        { labelName: error.message, labelKey: error.message },
         "error"
       )
     );
   }
 };
 
+export const getCount = async queryObject => {
+  try {
+    const response = await httpRequest(
+      "post",
+      "/tl-services/v1/_count",
+      "",
+      queryObject
+    );
+    return response;
+  } catch (error) {
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+  }
+}
+
 const setDocsForEditFlow = async (state, dispatch) => {
-  const applicationDocuments = get(
+  let applicationDocuments = get(
     state.screenConfiguration.preparedFinalObject,
     "Licenses[0].tradeLicenseDetail.applicationDocuments",
     []
-  );
+  ) || []
+  applicationDocuments = applicationDocuments.filter(item => !!item.active)
   let uploadedDocuments = {};
   let fileStoreIds =
     applicationDocuments &&
@@ -166,14 +208,57 @@ export const updatePFOforSearchResults = async (
   // const payload = await getSearchResults(queryObject)
   // getQueryArg(window.location.href, "action") === "edit" &&
   //   (await setDocsForEditFlow(state, dispatch));
+   await setDocuments(
+    payload,
+    "Licenses[0].tradeLicenseDetail.applicationDocuments",
+    "LicensesTemp[0].reviewDocData",
+    dispatch,'TL'
+  );
+  const dob = get(
+    payload,
+    "Licenses[0].tradeLicenseDetail.owners[0].dob", 
+    null
+    );
+  
+  if (dob) {
+    // const dobConverted = (convertEpochToDate(dob).replace(/\//g, "-")).split("-").reverse().join("-");
+
+    set(
+      payload,
+      "Licenses[0].tradeLicenseDetail.owners[0].age",
+      calculateAge(dob)
+    )
+
+    const age = get(
+      payload,
+      "Licenses[0].tradeLicenseDetail.owners[0].age",
+      ""
+    )
+
+    // disable license period dropdown if age exceeds 50
+    dispatch(
+      handleField(
+        "apply",
+        "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.detailsContainer.children.licensePeriod.props",
+        "disabled",
+        age > 50
+      )
+    );
+  }
 
   if (payload && payload.Licenses) {
-    dispatch(prepareFinalObject("Licenses[0]", payload.Licenses[0]));
+    const licenses = organizeLicenseData(payload.Licenses);
+    dispatch(prepareFinalObject("Licenses[0]", licenses[0]));
   }
 
   const isEditRenewal = getQueryArg(window.location.href, "action") === "EDITRENEWAL";
   if (isEditRenewal) {
-    const nextYear = generateNextFinancialYear(state);
+    const currentFY = get(
+      state.screenConfiguration.preparedFinalObject,
+      "Licenses[0].financialYear"
+    );
+    const nextYear = await getNextFinancialYearForRenewal(currentFY)
+    // const nextYear = generateNextFinancialYear(state);
     dispatch(
       prepareFinalObject("Licenses[0].financialYear", nextYear));
   }
@@ -322,22 +407,43 @@ const getMultipleOwners = owners => {
 };
 
 export const applyTradeLicense = async (state, dispatch, activeIndex) => {
+  let businessService;
   try {
     let queryObject = JSON.parse(
       JSON.stringify(
         get(state.screenConfiguration.preparedFinalObject, "Licenses", [])
       )
     );
+    
+    let applicationType = queryObject[0].applicationType || "New";
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.tradeReviewDetails.children.cardContent.children.reviewTradeDetails.children.cardContent.children.viewOne.children.oldLicenseNumber",
+          "visible",
+          applicationType !== "New"
+        )
+      );
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.tradeReviewDetails.children.cardContent.children.reviewTradeDetails.children.cardContent.children.viewOne.children.oldLicenseValidTo",
+          "visible",
+          applicationType !== "New"
+        )
+      );
+
     let documents = get(
       queryObject[0],
       "tradeLicenseDetail.applicationDocuments"
     );
+    set(queryObject[0], "applicationType", applicationType)
     set(
       queryObject[0],
       "validFrom",
       convertDateToEpoch(queryObject[0].validFrom, "dayend")
     );
-    set(queryObject[0], "wfDocuments", documents);
+    // set(queryObject[0], "wfDocuments", documents);
     set(
       queryObject[0],
       "validTo",
@@ -349,8 +455,17 @@ export const applyTradeLicense = async (state, dispatch, activeIndex) => {
         "dayend"
       );
     }
+    set(queryObject[0], "licenseType", "PERMANENT");
     let owners = get(queryObject[0], "tradeLicenseDetail.owners");
     owners = (owners && convertOwnerDobToEpoch(owners)) || [];
+
+    if (queryObject[0].tradeLicenseDetail.additionalDetail.oldLicenseValidTo) {
+      set(
+        queryObject[0],
+        "tradeLicenseDetail.additionalDetail.oldLicenseValidTo",
+        convertDateToEpoch(queryObject[0].tradeLicenseDetail.additionalDetail.oldLicenseValidTo, "dayend")
+      );
+    }
 
     const cityId = get(
       queryObject[0],
@@ -358,33 +473,23 @@ export const applyTradeLicense = async (state, dispatch, activeIndex) => {
       ""
     );
     const tenantId = ifUserRoleExists("CITIZEN") ? cityId : getTenantId();
-    const BSqueryObject = [
-      { key: "tenantId", value: tenantId },
-      { key: "businessServices", value: "NewTL" }
-    ];
     if (process.env.REACT_APP_NAME === "Citizen") {
-      // let currentFinancialYr = getCurrentFinancialYear();
-      // //Changing the format of FY
-      // let fY1 = currentFinancialYr.split("-")[1];
-      // fY1 = fY1.substring(2, 4);
-      // currentFinancialYr = currentFinancialYr.split("-")[0] + "-" + fY1;
-      // set(queryObject[0], "financialYear", currentFinancialYr);
-      setBusinessServiceDataToLocalStorage(BSqueryObject, dispatch);
+      let currentFinancialYr = getCurrentFinancialYear();
+      //Changing the format of FY
+      let fY1 = currentFinancialYr.split("-")[1];
+      fY1 = fY1.substring(2, 4);
+      currentFinancialYr = currentFinancialYr.split("-")[0] + "-" + fY1;
+      set(queryObject[0], "financialYear", currentFinancialYr);
     }
 
-    set(queryObject[0], "tenantId", tenantId);
-    set(queryObject[0], "workflowCode", "NewTL");
-    set(queryObject[0], "applicationType", "NEW");
 
+    set(queryObject[0], "tenantId", tenantId);
+    set(queryObject[0], "workflowCode", businessService ? businessService : "NewTL");
+    set(queryObject[0], "businessService", queryObject[0].businessService)
     if (queryObject[0].applicationNumber) {
       //call update
       const isEditRenewal = getQueryArg(window.location.href, "action") === "EDITRENEWAL";
       if(isEditRenewal ){
-        // if(process.env.REACT_APP_NAME === "Citizen"){
-        //   const nextFinancialyear = await getNextFinancialYearForRenewal(queryObject[0].financialYear);
-        //   set(queryObject[0], "financialYear", nextFinancialyear);
-        // }     
-        set(queryObject[0], "applicationType", "RENEWAL");
         set(queryObject[0], "workflowCode", getQueryArg(window.location.href, "action"));
       }
 
@@ -407,22 +512,9 @@ export const applyTradeLicense = async (state, dispatch, activeIndex) => {
       );
 
       let action = "INITIATE";
-      //Code for edit flow
-
-      if (
-        queryObject[0].tradeLicenseDetail &&
-        queryObject[0].tradeLicenseDetail.applicationDocuments
-      ) {
-
-
-        if (getQueryArg(window.location.href, "action") === "edit" || isEditRenewal) {
-        } else if (activeIndex === 1) {
-          set(queryObject[0], "tradeLicenseDetail.applicationDocuments", null);
-        } else action = "APPLY";
-      }
 
       if (activeIndex === 3 && isEditRenewal) {
-        action = "APPLY";
+        action = "SUBMIT";
         let renewalSearchQueryObject = [
           { key: "tenantId", value: queryObject[0].tenantId },
           { key: "applicationNumber", value: queryObject[0].applicationNumber }
@@ -440,8 +532,18 @@ export const applyTradeLicense = async (state, dispatch, activeIndex) => {
       }
       set(queryObject[0], "action", action);
       const isEditFlow = getQueryArg(window.location.href, "action") === "edit";
-      let updateResponse = [];
+      let updateResponse;
       if (!isEditFlow) {
+        if(activeIndex === 0 || activeIndex === 1) {
+          set(queryObject[0], "action", "REINITIATE")
+        } else {
+          set(queryObject[0], "action", "SUBMIT")
+        }
+        let applicationDocuments = get(queryObject[0], "tradeLicenseDetail.applicationDocuments") || [];
+        applicationDocuments = applicationDocuments.map(item => ({...item, active: true}))
+        const removedDocs = get(state.screenConfiguration.preparedFinalObject, "LicensesTemp[0].removedDocs") || [];
+        applicationDocuments = [...applicationDocuments, ...removedDocs]
+        set(queryObject[0], "tradeLicenseDetail.applicationDocuments", applicationDocuments)
         updateResponse = await httpRequest("post", "/tl-services/v1/_update", "", [], {
           Licenses: queryObject
         })
@@ -458,7 +560,7 @@ export const applyTradeLicense = async (state, dispatch, activeIndex) => {
           { key: "tenantId", value: tenantId },
           { key: "businessServices", value: workflowCode ? workflowCode : "NewTL" }
         ];
-        setBusinessServiceDataToLocalStorage(bsQueryObject, dispatch);
+        await setBusinessServiceDataToLocalStorage(bsQueryObject, dispatch);
       } else {
         updatedApplicationNo = queryObject[0].applicationNumber;
         updatedTenant = queryObject[0].tenantId;
@@ -467,28 +569,27 @@ export const applyTradeLicense = async (state, dispatch, activeIndex) => {
         { key: "tenantId", value: updatedTenant },
         { key: "applicationNumber", value: updatedApplicationNo }
       ];
-      let searchResponse = await getSearchResults(searchQueryObject);
-      if (isEditFlow) {
-        searchResponse = { Licenses: queryObject };
-      } else {
-        dispatch(prepareFinalObject("Licenses", searchResponse.Licenses));
-      }
-      const updatedtradeUnits = get(
-        searchResponse,
-        "Licenses[0].tradeLicenseDetail.tradeUnits"
-      );
-      const tradeTemp = updatedtradeUnits.map((item, index) => {
-        return {
-          tradeSubType: item.tradeType.split(".")[1],
-          tradeType: item.tradeType.split(".")[0]
-        };
-      });
-      dispatch(prepareFinalObject("LicensesTemp.tradeUnits", tradeTemp));
-      createOwnersBackup(dispatch, searchResponse);
+      if(!!updateResponse && 
+        !!updateResponse.Licenses && 
+        !!updateResponse.Licenses.length) {
+          let {Licenses: updatedLicenses = []} = updateResponse;
+          updatedLicenses = organizeLicenseData(updatedLicenses);
+          let applicationDocuments = updatedLicenses[0].tradeLicenseDetail.applicationDocuments;
+          const removedDocs = applicationDocuments.filter(item => !item.active)
+          applicationDocuments = applicationDocuments.filter(item => !!item.active)
+          updatedLicenses = [{...updatedLicenses[0], tradeLicenseDetail: {...updatedLicenses[0].tradeLicenseDetail, applicationDocuments}}]
+          dispatch(prepareFinalObject("Licenses", updatedLicenses));
+          dispatch(
+            prepareFinalObject(
+              "LicensesTemp[0].removedDocs",
+              removedDocs
+            )
+          );
+          await setDocsForEditFlow(state, dispatch)
+        }
     } else {
       let accessories = get(queryObject[0], "tradeLicenseDetail.accessories");
       let tradeUnits = get(queryObject[0], "tradeLicenseDetail.tradeUnits");
-      // let owners = get(queryObject[0], "tradeLicenseDetail.owners");
       let mergedTradeUnits =
         tradeUnits &&
         tradeUnits.filter(item => !item.hasOwnProperty("isDeleted"));
@@ -505,6 +606,20 @@ export const applyTradeLicense = async (state, dispatch, activeIndex) => {
       //Emptying application docs to "INITIATE" form in case of search and fill from old TL Id.
       if (!queryObject[0].applicationNumber)
         set(queryObject[0], "tradeLicenseDetail.applicationDocuments", null);
+
+
+      if (queryObject[0].tradeLicenseDetail.owners[0].businessStartDate) {
+        set(
+          queryObject[0].tradeLicenseDetail.owners[0],
+          "businessStartDate",
+          convertDateToEpoch(queryObject[0].tradeLicenseDetail.owners[0].businessStartDate, "dayend")
+        )
+      }
+      // queryObject[0].trade = tradeLicenseType;
+      queryObject[0].tradeLicenseDetail.tradeUnits = [];
+      queryObject[0].tradeLicenseDetail.subOwnershipCategory = "INDIVIDUAL.SINGLEOWNER";
+      queryObject[0].tradeLicenseDetail.structureType = "IMMOVABLE.PUCCA";
+
       const response = await httpRequest(
         "post",
         "/tl-services/v1/_create",
@@ -512,7 +627,9 @@ export const applyTradeLicense = async (state, dispatch, activeIndex) => {
         [],
         { Licenses: queryObject }
       );
-      dispatch(prepareFinalObject("Licenses", response.Licenses));
+      let {Licenses} = response
+      Licenses = organizeLicenseData(Licenses)
+      dispatch(prepareFinalObject("Licenses", Licenses));
       createOwnersBackup(dispatch, response);
     }
     /** Application no. box setting */
@@ -601,7 +718,30 @@ export const findItemInArrayOfObject = (arr, conditionCheckerFn) => {
 };
 
 
-export const handleFileUpload = (event, handleDocument, props) => {
+const isValid = (file, acceptedFiles) => {
+  const mimeType = file["type"];
+  const mimes = mimeType.split("/");
+  let acceptedTypes = acceptedFiles.split(",");
+  acceptedTypes = acceptedTypes.reduce((prev, curr) => {
+    const accepted = curr.split("/");
+    prev = [...prev, {first: accepted[0], second: accepted[1]}]
+    return prev
+  }, [])
+  if(acceptedFiles.includes(mimeType)) {
+    return {valid: true}
+  } else  {
+   const findItem = acceptedTypes.find(item => item.first === mimes[0])
+   if(!!findItem && findItem.second === "*") {
+    return {valid: true}
+   } else {
+    return {  valid: false, 
+              errorMessage: `Please upload the allowed type files only.`
+            }
+  }
+}
+}
+
+export const handleFileUpload = (event, handleDocument, props, stopLoading) => {
   const S3_BUCKET = {
     endPoint: "filestore/v1/files"
   };
@@ -612,33 +752,46 @@ export const handleFileUpload = (event, handleDocument, props) => {
     const files = input.files;
     Object.keys(files).forEach(async (key, index) => {
       const file = files[key];
-      const fileValid = isFileValid(file, acceptedFiles(formatProps.accept));
+      const {valid, errorMessage} = isValid(file, formatProps.accept)
       const isSizeValid = getFileSize(file) <= maxFileSize;
-      if (!fileValid) {
-        alert(`Only image or pdf files can be uploaded`);
+      if (!valid) {
+        stopLoading()
+        alert(errorMessage);
         uploadDocument = false;
       }
       if (!isSizeValid) {
-        alert(`Maximum file size can be ${Math.round(maxFileSize / 1000)} MB`);
+        stopLoading()
+        // alert(`Maximum file size can be ${Math.round(maxFileSize / 1000)} MB`);
         uploadDocument = false;
       }
       if (uploadDocument) {
-        if (file.type.match(/^image\//)) {
-          const fileStoreId = await uploadFile(
-            S3_BUCKET.endPoint,
-            moduleName,
-            file,
-            commonConfig.tenantId
+        try {
+          if (file.type.match(/^image\//)) {
+            const fileStoreId = await uploadFile(
+              S3_BUCKET.endPoint,
+              moduleName,
+              file,
+              commonConfig.tenantId
+            );
+            handleDocument(file, fileStoreId);
+          } else {
+            const fileStoreId = await uploadFile(
+              S3_BUCKET.endPoint,
+              moduleName,
+              file,
+              commonConfig.tenantId
+            );
+            handleDocument(file, fileStoreId);
+          }
+        } catch (error) {
+          store.dispatch(
+            toggleSnackbar(
+              true,
+              { labelName: error.message, labelKey: error.message },
+              "error"
+            )
           );
-          handleDocument(file, fileStoreId);
-        } else {
-          const fileStoreId = await uploadFile(
-            S3_BUCKET.endPoint,
-            moduleName,
-            file,
-            commonConfig.tenantId
-          );
-          handleDocument(file, fileStoreId);
+          stopLoading()
         }
       }
     });
@@ -675,5 +828,66 @@ export const getNextFinancialYearForRenewal = async (currentFinancialYear) => {
     return nectYearObject ? nectYearObject.code : getCurrentFinancialYear();
   } catch (e) {
     console.log(e.message)
+  }
+}
+
+export const organizeLicenseData = data => {
+  return data.filter(license => !!license).map(item => {
+    let {tradeLicenseDetail, applicationType, businessService} = item;
+    let {owners} = tradeLicenseDetail;
+    owners = owners.map(owner => ({
+      ...owner,
+      age: Number((new Date().getTime() - owner.dob)/31536000000).toFixed(0)
+    }))
+    tradeLicenseDetail = {...tradeLicenseDetail, additionalDetail: {...tradeLicenseDetail.additionalDetail, licensePeriod: tradeLicenseDetail.additionalDetail.licensePeriod + ""}, owners}
+    applicationType = !applicationType && businessService === RENEWAL_RENT_DEED_SHOP ? "Renew" : applicationType
+    return {...item, tradeLicenseDetail, applicationType}
+  })
+}
+
+export const download = (receiptQueryString, Licenses, data, generateBy, mode = "download") => {
+  const FETCHRECEIPT = {
+    GET: {
+      URL: "/collection-services/payments/_search",
+      ACTION: "_get",
+    },
+  };
+  const DOWNLOADRECEIPT = {
+    GET: {
+      URL: "/pdf-service/v1/_create",
+      ACTION: "_get",
+    },
+  };
+  try {
+    httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
+      const queryStr = [
+        { key: "key", value: "tl-receipt" },
+        { key: "tenantId", value: receiptQueryString[1].value.split('.')[0] }
+      ]
+      if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length==0){
+        console.log("Could not find any receipts");   
+        return;
+      }
+      let {Payments} = payloadReceiptDetails;
+      let {billAccountDetails} = Payments[0].paymentDetails[0].bill.billDetails[0];
+      billAccountDetails = billAccountDetails.map(({taxHeadCode, ...rest}) => ({
+        ...rest,
+        taxHeadCode: taxHeadCode.includes("_FEE") ? "TL_FEE" : taxHeadCode.includes("_PENALTY") ? "TL_TIME_PENALTY" : taxHeadCode.includes("_TAX") ? "TL_TAX" : taxHeadCode.includes("_ROUNDOFF") ? "TL_ROUNDOFF" : taxHeadCode.includes("REHRI_REGISTRATION_CHARGES") ? "TL_CHARGES"  : taxHeadCode
+      }))
+      Payments = [{...Payments[0], paymentDetails: [{...Payments[0].paymentDetails[0], bill: {...Payments[0].paymentDetails[0].bill, billDetails: [{...Payments[0].paymentDetails[0].bill.billDetails[0],billAccountDetails }] } }]}]
+      httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Payments, Licenses, data, generateBy }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+        .then(res => {
+          res.filestoreIds[0]
+          if(res&&res.filestoreIds&&res.filestoreIds.length>0){
+            res.filestoreIds.map(fileStoreId=>{
+              downloadReceiptFromFilestoreID(fileStoreId,mode)
+            })          
+          }else{
+            console.log("Error In Receipt Download");        
+          }         
+        });
+    })
+  } catch (exception) {
+    alert('Some Error Occured while downloading Receipt!');
   }
 }

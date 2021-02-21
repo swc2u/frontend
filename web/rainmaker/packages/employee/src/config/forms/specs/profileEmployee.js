@@ -14,6 +14,8 @@ const formConfig = {
     },
     phonenumber: {
       id: "profile-form-phonenumber",
+      required:true,
+      pattern:"^[6789][0-9]{9}$",
       floatingLabelText: "CORE_COMMON_PHONE_NUMBER",
       errorMessage: "CORE_COMMON_PHONENO_INVALIDMSG",
       hintText: "CORE_COMMON_PHONE_NUMBER_PLACEHOLDER",
@@ -36,6 +38,7 @@ const formConfig = {
     type: "submit",
   },
   toast: getLocaleLabels("PROFILE_UPDATED","PROFILE_UPDATED"),
+  redirectionRoute: "/inbox",
   saveUrl: "/user/profile/_update",
 };
 

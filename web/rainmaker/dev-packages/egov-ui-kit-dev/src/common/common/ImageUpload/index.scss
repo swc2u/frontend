@@ -26,9 +26,9 @@
 }
 .upload-placeholder,
 .upload-image-cont {
-  width: 100px;
+  width: 70px;
   height: 100px;
-  margin-right: 14px;
+  margin-right: 4px;
   position: relative;
 }
 
@@ -60,4 +60,8 @@
 
 .upload-photo-text {
   width: 80%;
+}
+
+.upload-image-cont img {
+  width: 100% !important;
 }

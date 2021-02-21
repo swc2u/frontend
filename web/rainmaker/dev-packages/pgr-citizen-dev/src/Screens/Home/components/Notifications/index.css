@@ -4,3 +4,6 @@
 .notification-top-content {
   display: flex;
   justify-content: space-between; }
+
+.update {
+  cursor: pointer; }

@@ -2,16 +2,40 @@ import get from "lodash/get";
 import { handleScreenConfigurationFieldChange as handleField, prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getPropertyResults } from "../../../../../ui-utils/commons";
+import { getUserInfo, getTenantIdCommon } from "egov-ui-kit/utils/localStorageUtils";
 
 export const propertySearchApiCall = async (state, dispatch) => {
-  let queryObject = [{ key: "tenantId", value: "pb.amritsar" }];
+  showHideFields(dispatch, false);
+  let tenantId = getTenantIdCommon();
+  let queryObject = [{ key: "tenantId", value: tenantId }];
   let searchScreenObject = get(state.screenConfiguration.preparedFinalObject, "searchScreen", {});
-
+  dispatch(
+    handleField(
+      "apply",
+      "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv",
+      "props.items",
+      []
+    )
+  );
+  dispatch(
+    handleField(
+      "apply",
+      "components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.headerDiv",
+      "props.items",
+      []
+    )
+  );
+  dispatch(
+    prepareFinalObject(
+      "applyScreen.property",
+      {}
+    )
+  );
   if (
     Object.keys(searchScreenObject).length == 0 ||
     Object.values(searchScreenObject).every(x => x === "")
   ) {
-    dispatch(toggleSnackbar(true, { labelKey: "ERR_WS_PROVIDE_VALID_PROP_ID" }, "warning"));
+    dispatch(toggleSnackbar(true, { labelKey: "WS_FILL_REQUIRED_FIELDS", labelName: "Please fill required details" }, "warning"));
   } else {
     for (var key in searchScreenObject) {
       if (searchScreenObject.hasOwnProperty(key) && searchScreenObject[key].trim() !== "") {
@@ -19,10 +43,84 @@ export const propertySearchApiCall = async (state, dispatch) => {
       }
     }
     try {
+      let allowCitizenToSearchOtherProperties = get(
+        state
+          .screenConfiguration
+          .preparedFinalObject
+          .applyScreenMdmsData["ws-services-masters"],
+        "PropertySearch", []
+      )
+        .map(a => a.code === "allowCitizenToUseAnyProperty")[0];
+      if (
+        process.env.REACT_APP_NAME === "Citizen" &&
+        !allowCitizenToSearchOtherProperties
+      ) {
+        queryObject.push({ key: "mobileNumber", value: JSON.parse(getUserInfo()).mobileNumber })
+      }
       let response = await getPropertyResults(queryObject, dispatch);
-      dispatch(prepareFinalObject("applyScreen.property", response.Properties[0]))
-      if (response.Properties.length > 0 && response.Properties[0]) {
-        showHideFields(dispatch, true);
+      if (response && response.Properties.length > 0) {
+        if(response.Properties[0].status === 'INACTIVE'){
+          dispatch(toggleSnackbar(true, { labelKey: "ERR_WS_PROP_STATUS_INACTIVE", labelName: "Property Status is INACTIVE" }, "warning"));
+        }else{
+          let propertyData = response.Properties[0];
+          let contractedCorAddress = "";
+
+          if(propertyData.address.doorNo !== null && propertyData.address.doorNo !== ""){
+            contractedCorAddress += propertyData.address.doorNo + ", ";
+          }
+          if(propertyData.address.buildingName !== null && propertyData.address.buildingName !== ""){
+            contractedCorAddress += propertyData.address.buildingName + ", ";
+          }        
+          contractedCorAddress += propertyData.address.locality.name + ", " + propertyData.address.city;
+
+          for(var i=0; i<propertyData.owners.length;i++){ 
+            if(propertyData.owners[i].correspondenceAddress == 'NA' || propertyData.owners[i].correspondenceAddress == null || propertyData.owners[i].correspondenceAddress == ""){
+              if(propertyData.owners[i].permanentAddress == 'NA' || propertyData.owners[i].permanentAddress == null || propertyData.owners[i].permanentAddress == ""){
+                propertyData.owners[i].correspondenceAddress = contractedCorAddress;
+              }else{
+                propertyData.owners[i].correspondenceAddress = propertyData.owners[i].permanentAddress;
+              }
+            }    
+          }
+         // dispatch(prepareFinalObject("applyScreen.property", propertyData));
+          const {preparedFinalObject} = state.screenConfiguration;
+          const {WaterConnection} = preparedFinalObject;
+
+          if(!(WaterConnection[0] && WaterConnection[0].waterProperty &&  WaterConnection[0].waterProperty.usageSubCategory)){
+          if(propertyData.usageCategory){
+            dispatch(
+              handleField(
+                "apply",
+                "components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertyUsageType", 
+                "props.value",
+                propertyData.usageCategory
+              )
+            )
+
+            let subTypeValues = get(
+                  state.screenConfiguration.preparedFinalObject,
+                  "applyScreenMdmsData.PropertyTax.subUsageType"
+                );
+      
+              let subUsage=[];
+              subUsage = subTypeValues.filter(cur => {
+                          return (cur.code.startsWith(propertyData.usageCategory))
+                        });
+                  dispatch(prepareFinalObject("propsubusagetypeForSelectedusageCategory",subUsage));
+          }
+        }
+          // if(propertyData && propertyData.units && propertyData.units[0].usageCategory){
+          //   dispatch(
+          //     handleField(
+          //       "apply",
+          //       "components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType",
+          //       "props.value",
+          //       propertyData.units[0].usageCategory
+          //     )
+          //   )
+          // }
+          showHideFields(dispatch, true);
+        }
       } else {
         showHideFields(dispatch, false);
         dispatch(toggleSnackbar(true, { labelKey: "ERR_WS_PROP_NOT_FOUND", labelName: "No Property records found" }, "warning"));
@@ -46,7 +144,7 @@ const showHideFields = (dispatch, value) => {
   dispatch(
     handleField(
       "apply",
-      "components.div.children.formwizardFirstStep.children.Details.visible",
+      "components.div.children.formwizardFirstStep.children.Details",
       "visible",
       value
     )
@@ -54,7 +152,15 @@ const showHideFields = (dispatch, value) => {
   dispatch(
     handleField(
       "apply",
-      "components.div.children.formwizardFirstStep.children.ownerDetails.visible",
+      "components.div.children.formwizardFirstStep.children.ownerDetails",
+      "visible",
+      value
+    )
+  );
+  dispatch(
+    handleField(
+      "apply",
+      "components.div.children.formwizardFirstStep.children.connectionHolderDetails",
       "visible",
       value
     )

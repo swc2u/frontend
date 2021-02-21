@@ -5,6 +5,8 @@ import { handleFileUpload } from "../../ui-utils/commons";
 import { connect } from "react-redux";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
+import store from "redux/store";
+import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 const styles = theme => ({
   button: {
@@ -34,13 +36,18 @@ class UploadMultipleFiles extends Component {
     const { maxFiles, prepareFinalObject, jsonPath } = this.props;
 
     if (documents && documents.length + 1 > maxFiles) {
-      alert(`Can only upload ${maxFiles} files`);
+  
+      var msg=`Can only upload ${maxFiles} files`
+      store.dispatch(toggleSnackbar(true, { labelName:msg}, "warning"));
     } else {
-      documents.push({
-        fileName: file.name,
-        fileStoreId,
-        documentType: `Document - ${documents && documents.length + 1}`
-      });
+      if (fileStoreId !== undefined) {
+        documents.push({
+          fileName: file.name,
+          fileStoreId,
+          fileSize: file.size,
+          documentType: `Document - ${documents && documents.length + 1}`
+        });
+      }
       documents.slice(0, maxFiles);
       prepareFinalObject(jsonPath, documents);
       this.setState({ documents });
@@ -77,7 +84,8 @@ class UploadMultipleFiles extends Component {
             style: { marginLeft: 0, marginTop: 10 }
           }}
           handleFileUpload={e =>
-            handleFileUpload(e, this.handleDocument, this.props)
+            {
+            handleFileUpload(e, this.handleDocument, this.props)}
           }
           inputProps={{ multiple: true, ...this.props.inputProps }}
           classes={this.props.classes}

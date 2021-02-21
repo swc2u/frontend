@@ -16,7 +16,7 @@ const styles = theme => ({
     display: "flex"
   },
   formControl: {
-    marginTop: 0,
+    //marginTop: 0,
     paddingBottom: 0
   },
   group: {
@@ -101,6 +101,7 @@ class RadioButtonsGroup extends React.Component {
                     key={index}
                     classes={{ label: "radio-button-label" }}
                     value={button.value}
+                    style={{marginLeft: "-5px", marginRight: "5px"}}
                     control={
                       // <Radio
                       //   classes={{
@@ -108,7 +109,7 @@ class RadioButtonsGroup extends React.Component {
                       //   }}
                       //   color="primary"
                       // />
-                     <Radio className={classes.radioRoot} color="primary" />
+                     <Radio className={classes.radioRoot} color="primary" style={{width: "28px", height: "28px"}} />
                     }
                     // label={button.label}
                     label={

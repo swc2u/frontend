@@ -7,7 +7,7 @@ import Label from "egov-ui-kit/utils/translationNode";
 import { fileUpload, removeFile } from "egov-ui-kit/redux/form/actions";
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import "./index.css";
-
+import { getapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 const iconStyle = {
   width: "19px",
   height: "19px",
@@ -19,6 +19,11 @@ const labelStyle = {
   lineHeight: 1,
   margin: "0 auto",
   width: "75px",
+};
+const inlineLabelStyle = {
+  letterSpacing: "0.6px",
+  lineHeight: 1,
+  margin: "0 auto",
 };
 
 const Placeholder = ({ className, onFilePicked, inputProps, hide }) => {
@@ -37,8 +42,16 @@ const Placeholder = ({ className, onFilePicked, inputProps, hide }) => {
 class ImageUpload extends Component {
   fillPlaceholder = (images, onFilePicked, inputProps) => {
     const placeholders = [];
-    for (let i = 0; i < 3 - images.length; i++) {
-      placeholders.push(<Placeholder key={i} inputProps={inputProps} onFilePicked={onFilePicked} hide={i === 1 ? true : false} />);
+    if(getapplicationType() === "HORTICULTURE" || getapplicationType() === "HORTICULTUREWF")
+    {
+      for (let i = 0; i < 5 - images.length; i++) {
+        placeholders.push(<Placeholder key={i} inputProps={inputProps} onFilePicked={onFilePicked} hide={i === 1 ? false : false} />);
+      }
+    }
+    else{
+      for (let i = 0; i < 3 - images.length; i++) {
+        placeholders.push(<Placeholder key={i} inputProps={inputProps} onFilePicked={onFilePicked} hide={i === 1 ? true : false} />);
+      }
     }
     return placeholders;
   };
@@ -58,8 +71,14 @@ class ImageUpload extends Component {
     } else if (fileSize > MAX_IMAGE_SIZE) {
       toggleSnackbarAndSetText(true, { labelName: "The file is more than 5mb", labelKey: "ERR_FILE_MORE_THAN_FIVEMB" },"error");
     } else {
-      if (images.length < 3) {
-        fileUpload(formKey, fieldKey, { module, file, imageUri });
+      if(getapplicationType() === "HORTICULTURE" || getapplicationType() === "HORTICULTUREWF"){
+        if (images.length < 5) {
+          fileUpload(formKey, fieldKey, { module, file, imageUri });
+        }
+      }else{
+        if (images.length < 3) {
+          fileUpload(formKey, fieldKey, { module, file, imageUri });
+        }
       }
     }
   };
@@ -67,35 +86,43 @@ class ImageUpload extends Component {
   render() {
     const { onFilePicked, removeImage } = this;
     const { images, loading } = this.props;
-    // file Size in kb
-    const inputProps = { accept: "image/*", maxFiles: 3, multiple: true };
+    let imageLength = 3 ;
+    if(getapplicationType() === "HORTICULTURE" || getapplicationType() === "HORTICULTUREWF"){
+      imageLength = 5 ;
+    }
+    const inputProps = { accept: "image/*", maxFiles: imageLength, multiple: true };
 
     return (
-      <div className="upload-photo-overlay">
+      <div >
         {loading && <LoadingIndicator />}
         {!images.length ? (
-          <FilePicker inputProps={inputProps} handleimage={onFilePicked}>
+          <FilePicker inputProps={inputProps} handleimage={onFilePicked}  className="upload-photo-overlay">
             <div className="upload-icon-cont">
               <Icon id="image-upload" action="image" name="add-a-photo" style={iconStyle} color={"#ffffff"} />
             </div>
             <Label label="CS_COMMON_UPLOAD_PHOTOS" labelStyle={labelStyle} fontSize="12px" />
           </FilePicker>
         ) : (
+          <div  className="upload-photo-overlay">
           <div className="upload-images-cont">
             {images.map((image, index) => {
               return (
-                <div key={index} className="upload-image-cont">
+                <div key={index} className="upload-image-cont" style={{border: "1px solid black",borderStyle: "dotted"}}>
                   <Image source={image.imageUri} style={{ height: "100px" }} />
                   <div className="image-remove" onClick={() => removeImage(index)}>
                     <Icon id="image-close-icon" action="navigation" name="close" color="#ffffff" style={{ width: "14px", height: "14px" }} />
                   </div>
                 </div>
+               
               );
             })}
             {this.fillPlaceholder(images, onFilePicked, inputProps)}
           </div>
+          </div>
         )}
+        <Label label="ERR_FILE_MORE_THAN_FIVEMB" labelStyle={inlineLabelStyle} fontSize="12px" />
       </div>
+      
     );
   }
 }

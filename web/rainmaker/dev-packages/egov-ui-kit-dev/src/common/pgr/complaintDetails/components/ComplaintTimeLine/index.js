@@ -79,6 +79,8 @@ const StatusIcon = ({ status }) => {
       return <Icon action="custom" name="reassign-request" style={statusCommonIconStyle} color={"#fe7a51"} />;
     case "assigned":
     case "re-assign":
+    case "escalatedlevel1pending":
+    case "escalatedlevel2pending":
       return <Icon action="custom" name="file-send" style={statusCommonIconStyle} color={"#fe7a51"} />;
     case "rejected":
       return <Icon action="content" name="clear" style={statusRejectedIconStyle} color={"#FFFFFF"} />;
@@ -95,8 +97,84 @@ var rejectStatusCount = 0;
 var resolveStatusCount = 0;
 var assigneeStatusCount = 0;
 var reassignRequestedCount = 0;
+let noReopen = true;
 
-const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating, role, filedBy, filedUserMobileNumber, reopenValidChecker }) => {
+const getImageSource = (imageSource, size) => {
+  const images = imageSource.split(",");
+  if (!images.length) {
+    return null;
+  }
+  switch (size) {
+    case "small":
+      imageSource = images[2];
+      break;
+    case "medium":
+      imageSource = images[1];
+      break;
+    case "large":
+    default:
+      imageSource = images[0];
+  }
+  return imageSource || images[0];
+};
+const handleLevel1 = (timeline1, timeline2) => {
+  if (timeline1.status === "escalatedlevel1pending") {
+    if (timeline2.status === "resolved") return "ES_COMPLAINT_ESCALATED_LEVEL1_HEADER";
+    else return "ES_COMPLAINT_ESCALATED_LEVEL1_SLA_BREACH";
+  }
+};
+
+// const getEscalatingStatus = (timeline, status) => {
+//   if (timeline && timeline.length > 2) {
+//     if (timeline[0].status === "escalatedlevel1pending") return handleLevel1(timeline[0], timeline[1]);
+
+//     if (timeline[0].status === "escalatedlevel2pending") {
+//       if (timeline[1].status === "resolved") return "ES_COMPLAINT_ESCALATED_LEVEL2_HEADER";
+//       else if (timeline[1].status === "escalatedlevel1pending" && status === "escalatedlevel1pending") return handleLevel1(timeline[1], timeline[2]);
+//       else return "ES_COMPLAINT_ESCALATED_LEVEL2_SLA_BREACH";
+//     }
+//   }
+// };
+
+const getEscalatingStatus = (timeline, status) => {
+
+  if(timeline && timeline.length > 0){
+	if(status === "escalatedlevel1pending"){
+			let statusIndex = timeline.findIndex( action => action.status === status);
+			const action = timeline.filter( (action,index) =>  index === (statusIndex+1));
+			
+			if(action[0].status ==="resolved")
+				return "ES_COMPLAINT_ESCALATED_LEVEL1_HEADER";
+			else 
+				return "ES_COMPLAINT_ESCALATED_LEVEL1_SLA_BREACH";
+	}
+	
+	if(status === "escalatedlevel2pending"){
+				let statusIndex = timeline.findIndex( action => action.status === status);
+			const action = timeline.filter( (action,index) =>  index === (statusIndex+1));
+			
+			if(action[0].status ==="resolved")
+				return "ES_COMPLAINT_ESCALATED_LEVEL2_HEADER";
+			else 
+				return "ES_COMPLAINT_ESCALATED_LEVEL2_SLA_BREACH";
+  }
+}
+return;
+};
+
+
+const StatusContent = ({
+  stepData,
+  currentStatus,
+  changeRoute,
+  feedback,
+  rating,
+  role,
+  filedBy,
+  filedUserMobileNumber,
+  reopenValidChecker,
+  timeLine,
+}) => {
   var {
     action,
     when: date,
@@ -114,7 +192,7 @@ const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating,
   } = stepData;
   const currDate = new Date().getTime();
   const resolvedDate = new Date(date).getTime();
-  const isReopenValid = currDate - resolvedDate <= reopenValidChecker;
+  const isReopenValid = currDate - resolvedDate <= 86400000; //reopenValidChecker;
   switch (status) {
     case "open":
       openStatusCount++;
@@ -185,7 +263,7 @@ const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating,
                             }}
                             size="medium"
                             source={image}
-                            onClick={() => changeRoute.push(`/image?source=${image}`)}
+                            onClick={() => window.open(getImageSource(image, "large"), "Image")}
                           />
                         </div>
                       )
@@ -203,6 +281,8 @@ const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating,
         </div>
       );
     case "assigned":
+    case "escalatedlevel1pending":
+    case "escalatedlevel2pending":
       assigneeStatusCount++;
       switch (role && role.toLowerCase()) {
         case "ao":
@@ -221,10 +301,14 @@ const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating,
                       : "ES_COMPLAINT_ASSIGNED_HEADER"
                     : employeeName
                     ? "CS_COMMON_REASSIGNED_TO"
+                    : status === "escalatedlevel1pending"
+                    ? getEscalatingStatus(timeLine, status)
+                    : status === "escalatedlevel2pending"
+                    ? getEscalatingStatus(timeLine, status)
                     : "ES_COMPLAINT_REASSIGNED_HEADER"
                 }`}
               />
-              <Label labelClassName="dark-color" containerStyle={nameContainerStyle} label={`${employeeName}`} />
+              {employeeName && <Label labelClassName="dark-color" containerStyle={nameContainerStyle} label={`${employeeName}`} />}
               {employeeMobileNumber && assigneeStatusCount === 1 && (
                 <a className="pgr-call-icon" href={`tel:+91${employeeMobileNumber}`} style={{ textDecoration: "none", position: "relative" }}>
                   <Icon action="communication" name="call" style={callIconStyle} color={"#22b25f"} />
@@ -241,14 +325,42 @@ const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating,
                 // containerStyle={{ width: "192px" }}
                 label={employeeDepartment}
               />
+              {media && (
+                <div style={{ display: "flex" }}>
+                  {media.map((image, index) => {
+                    return (
+                      isImage(image) && (
+                        <div
+                          style={{ marginRight: 8 }}
+                          className="complaint-detail-detail-section-padding-zero"
+                          id={`complaint-details-resolved-${resolveStatusCount}-image=${index}`}
+                          key={index}
+                        >
+                          <Image
+                            style={{
+                              width: "97px",
+                              height: "93px",
+                            }}
+                            size="medium"
+                            source={image}
+                            onClick={() => window.open(getImageSource(image, "large"), "Image")} // changeRoute.push(`/image?source=${image}`)
+                          />
+                        </div>
+                      )
+                    );
+                  })}
+                </div>
+              )}
+              <Label labelClassName="rainmaker-small-font complaint-timeline-comments" containerStyle={{ width: "192px" }} label={comments} />
             </div>
           );
           break;
+        case "eo":
         case "employee":
           return (
             <div className="complaint-timeline-content-section">
               <Label labelClassName="rainmaker-small-font complaint-timeline-date" label={getDateFromEpoch(date)} />
-              <Label
+              {groName && <Label
                 labelClassName="dark-color complaint-timeline-status"
                 containerStyle={statusContainerStyle}
                 label={`${
@@ -258,10 +370,60 @@ const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating,
                       : "ES_COMPLAINT_ASSIGNED_HEADER"
                     : groName
                     ? "ES_COMPLAINT_DETAILS_REASSIGNED_BY"
+                    : status === "escalatedlevel1pending"
+                    ? getEscalatingStatus(timeLine, status)
+                    : status === "escalatedlevel2pending"
+                    ? getEscalatingStatus(timeLine, status)
                     : "ES_COMPLAINT_REASSIGNED_HEADER"
                 }`}
-              />
+              />}
               {groName && <Label labelClassName="dark-color" containerStyle={nameContainerStyle} label={`${groName}`} />}
+              {" "}
+              {role.toLowerCase() !== "eo" ? employeeName && <Label
+                labelClassName="dark-color complaint-timeline-status"
+                containerStyle={statusContainerStyle}
+                label={`${
+                  action == "assign"
+                    ? employeeName
+                      ? groName 
+                           ? "CS_COMMON_ASSIGNED_ONLY_TO"
+                           : "CS_COMMON_ASSIGNED_TO"
+                      : "ES_COMPLAINT_ASSIGNED_HEADER"
+                    : employeeName
+                    ? groName 
+                       ? "CS_COMMON_REASSIGNED_ONLY_TO"
+                       : "CS_COMMON_REASSIGNED_TO"
+                    : status === "escalatedlevel1pending"
+                    ? getEscalatingStatus(timeLine, status)
+                    : status === "escalatedlevel2pending"
+                    ? getEscalatingStatus(timeLine, status)
+                    : "ES_COMPLAINT_REASSIGNED_HEADER"
+                }`}
+              /> :
+              <Label
+              labelClassName="dark-color complaint-timeline-status"
+              containerStyle={statusContainerStyle}
+              label={`${
+                action == "assign"
+                ? employeeName
+                ? groName 
+                     ? "CS_COMMON_ASSIGNED_ONLY_TO"
+                     : "CS_COMMON_ASSIGNED_TO"
+                : "ES_COMPLAINT_ASSIGNED_HEADER"
+              : employeeName
+              ? groName 
+                 ? "CS_COMMON_REASSIGNED_ONLY_TO"
+                 : "CS_COMMON_REASSIGNED_TO"
+                  : status === "escalatedlevel1pending"
+                  ? getEscalatingStatus(timeLine, status)
+                  : status === "escalatedlevel2pending"
+                  ? getEscalatingStatus(timeLine, status)
+                  : "ES_COMPLAINT_REASSIGNED_HEADER"
+              }`}
+            />
+              }
+              {employeeName && <Label labelClassName="dark-color" containerStyle={nameContainerStyle} label={`${employeeName}`} />}
+          
               {/* {assigneeStatusCount === 1 &&
                 groName &&
                 groMobileNumber && (
@@ -277,6 +439,33 @@ const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating,
                   label={`${groDesignation}`}
                 />
               )}
+              {media && (
+                <div style={{ display: "flex" }}>
+                  {media.map((image, index) => {
+                    return (
+                      isImage(image) && (
+                        <div
+                          style={{ marginRight: 8 }}
+                          className="complaint-detail-detail-section-padding-zero"
+                          id={`complaint-details-resolved-${resolveStatusCount}-image=${index}`}
+                          key={index}
+                        >
+                          <Image
+                            style={{
+                              width: "97px",
+                              height: "93px",
+                            }}
+                            size="medium"
+                            source={image}
+                            onClick={() => window.open(getImageSource(image, "large"), "Image")}
+                          />
+                        </div>
+                      )
+                    );
+                  })}
+                </div>
+              )}
+              <Label labelClassName="rainmaker-small-font complaint-timeline-comments" containerStyle={{ width: "192px" }} label={comments} />
             </div>
           );
           break;
@@ -314,9 +503,9 @@ const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating,
               <Label
                 labelClassName="dark-color complaint-timeline-status"
                 containerStyle={statusContainerStyle}
-                label={`${"CS_COMMON_RE-ASSIGN REQUESTED"}`}
+                label={`${employeeName ?"CS_COMMON_REASSIGN_REQUESTED_BY":"CS_COMMON_RE-ASSIGN REQUESTED"}`}
               />
-
+               {employeeName && <Label labelClassName="dark-color" containerStyle={nameContainerStyle} label={`${employeeName}`} />}
               <Label
                 labelClassName="rainmaker-small-font complaint-timeline-comments"
                 containerStyle={{ width: "192px" }}
@@ -344,7 +533,7 @@ const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating,
             containerStyle={{ width: "192px" }}
             label={comments && comments.split(";")[1] ? `" ${comments.split(";")[1]} "` : ""}
           />
-          {isReopenValid && currentStatus === "rejected" && (role === "citizen" || role === "csr") && rejectStatusCount === 1 && (
+          {isReopenValid && noReopen && currentStatus === "rejected" && (role === "citizen" || role === "csr") && rejectStatusCount === 1 && (
             <div
               className="complaint-details-timline-button"
               onClick={(e) => {
@@ -368,7 +557,16 @@ const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating,
       return (
         <div className="complaint-timeline-content-section">
           <Label labelClassName="rainmaker-small-font complaint-timeline-date" label={getDateFromEpoch(date)} />
-          <Label labelClassName="dark-color complaint-timeline-status" label="CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED" />
+          <div className="rainmaker-displayInline">
+            <Label labelClassName="dark-color complaint-timeline-status" label="CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED" />
+            <Label labelStyle={{ padding: "0px 6px 0px 6px" }} label=" by " />
+            {employeeName && <Label labelClassName="dark-color" containerStyle={nameContainerStyle} label={`${employeeName}`} />}
+          </div>
+          <Label
+            labelClassName="rainmaker-small-font complaint-timeline-department"
+            // containerStyle={{ width: "192px" }}
+            label={employeeDesignation}
+          />
           {media && (
             <div style={{ display: "flex" }}>
               {media.map((image, index) => {
@@ -387,7 +585,7 @@ const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating,
                         }}
                         size="medium"
                         source={image}
-                        onClick={() => changeRoute.push(`/image?source=${image}`)}
+                        onClick={() => window.open(getImageSource(image, "large"), "Image")}
                       />
                     </div>
                   )
@@ -414,7 +612,7 @@ const StatusContent = ({ stepData, currentStatus, changeRoute, feedback, rating,
                   />
                 </div>
               )}
-              {isReopenValid && (
+              {isReopenValid && noReopen && (
                 <div
                   className="complaint-details-timline-button"
                   onClick={(e) => {
@@ -500,6 +698,13 @@ class ComplaintTimeLine extends Component {
     if (timeLine && timeLine.length === 1 && timeLine[0].status === "open") {
       timeLine = [{ status: "pending" }, ...timeLine];
     }
+
+    noReopen = !(
+      (role === "citizen" || role === "csr") &&
+      timeLine.some((obj) => obj.status === "resolved" || obj.status === "rejected") &&
+      timeLine.some((obj) => obj.status === "escalatedlevel2pending")
+    );
+
     let steps = timeLine.map((step, key) => {
       return {
         props: {
@@ -525,6 +730,7 @@ class ComplaintTimeLine extends Component {
             filedBy={filedBy}
             filedUserMobileNumber={filedUserMobileNumber}
             reopenValidChecker={reopenValidChecker}
+            timeLine={timeLine}
           />
         ),
       };

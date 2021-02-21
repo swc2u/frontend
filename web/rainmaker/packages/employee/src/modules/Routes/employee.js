@@ -17,10 +17,10 @@ import Home from "modules/employee/Home";
 import Report from "modules/employee/reports/report";
 import EGFFinance from "modules/employee/Erp/EGF";
 import Notifications from "modules/employee/Notifications";
-
 import pgrRoutes from "pgr-employee/Routes/pgr-routes";
 import ptRoutes from "pt-employee/Routes/pt-routes";
 import frameworkScreens from "./frameworkScreens";
+import bookingRoutes from "egov-services-emp/Routes/services-routes";
 import externalRoutes from "./exterenalURL";
 
 // import PTHome from "modules/employee/PropertyTax/PTHome";
@@ -117,6 +117,7 @@ const routes = [
       title: "Inbox",
       hideTitle: true,
       isHomeScreen: true,
+      notificationButton:true,
     },
   },
   {
@@ -163,12 +164,13 @@ const routes = [
 
     options: {
       hideFooter: true,
-      title: "CS_PGR_REPORTS_HEADER",
+      title: "CS_HOME_HEADER_HOME",
       hideTitle: true,
       redirectionUrl,
     },
   },
   ...pgrRoutes,
+  ...bookingRoutes,
   ...ptRoutes,
   ...frameworkScreens,
   ...externalRoutes,

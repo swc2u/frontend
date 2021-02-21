@@ -1,7 +1,7 @@
 import axios from "axios";
 import { fetchFromLocalStorage, addQueryArg, getDateInEpoch } from "./commons";
-import { toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import store from "../ui-redux/store";
+import { toggleSpinner, toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import store from "ui-redux/store";
 import {
   getAccessToken,
   getTenantId,
@@ -165,6 +165,8 @@ export const uploadFile = async (endPoint, module, file, ulbLevel) => {
     }
   } catch (error) {
     store.dispatch(toggleSpinner());
-    throw new Error(error);
+      let FileExceedMessage = "File size exceeded the limit in service";
+      store.dispatch(toggleSnackbar(true, { labelName: FileExceedMessage }, "warning"));
+     // alert(FileExceedMessage); 
   }
 };

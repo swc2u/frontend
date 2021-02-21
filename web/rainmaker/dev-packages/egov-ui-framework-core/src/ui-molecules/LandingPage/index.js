@@ -60,8 +60,132 @@ class LandingPage extends React.Component {
   };
 
   render() {
-    const { classes, items, applicationCount } = this.props;
+    const { classes, items, applicationCount,module } = this.props;
+    if(module==="PRSCP")
+    {
     return (
+      
+      <Grid container className="landing-page-main-grid">
+        {items.map(obj => {
+          return !obj.hide ? (
+            <Grid
+              className={classes.item}
+              item
+              xs={6}
+              sm={4}
+              align="center"
+              style={{width:"100%"}}
+              
+            >
+              <Card
+                className={`${classes.paper} module-card-style`}
+                onClick={() => this.onCardCLick(obj.route)}
+              >
+                <CardContent classes={{ root: "card-content-style" }}>
+                  {obj.icon}
+                  <div>
+                    <LabelContainer
+                      labelKey={obj.label.labelKey}
+                      labelName={obj.label.labelName}
+                      style={{
+                        fontSize: 14,
+                        color: "rgba(0, 0, 0, 0.8700000047683716)"
+                      }}
+                      dynamicArray={applicationCount ? [applicationCount] : [0]}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </Grid>
+          ) : null;
+        })}
+      </Grid>
+    );
+  }
+  else if(module==="PR")
+  {
+  return (
+    
+    <Grid container className="landing-page-main-grid">
+      {items.map(obj => {
+        return !obj.hide ? (
+          <Grid
+            className={classes.item}
+            item
+            xs={6}
+            sm={6}
+            align="center"
+            style={{width:"100%"}}
+            
+          >
+            <Card
+              className={`${classes.paper} module-card-style`}
+              onClick={() => this.onCardCLick(obj.route)}
+            >
+              <CardContent classes={{ root: "card-content-style" }}>
+                {obj.icon}
+                <div>
+                  <LabelContainer
+                    labelKey={obj.label.labelKey}
+                    labelName={obj.label.labelName}
+                    style={{
+                      fontSize: 14,
+                      color: "rgba(0, 0, 0, 0.8700000047683716)"
+                    }}
+                    dynamicArray={applicationCount ? [applicationCount] : [0]}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </Grid>
+        ) : null;
+      })}
+    </Grid>
+  );
+}else if(module==="SERVICES")
+{
+return (
+  
+  <Grid container className="landing-page-main-grid">
+    {items.map(obj => {
+      return !obj.hide ? (
+        <Grid
+          className={classes.item}
+          item
+          xs={6}
+          sm={6}
+          align="center"
+          style={{width:"100%"}}
+          
+        >
+          <Card
+            className={`${classes.paper} module-card-style`}
+            onClick={() => this.onCardCLick(obj.route)}
+          >
+            <CardContent classes={{ root: "card-content-style" }}>
+              {obj.icon}
+              <div>
+                <LabelContainer
+                  labelKey={obj.label.labelKey}
+                  labelName={obj.label.labelName}
+                  style={{
+                    fontSize: 14,
+                    color: "rgba(0, 0, 0, 0.8700000047683716)"
+                  }}
+                  dynamicArray={applicationCount ? [applicationCount] : [0]}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </Grid>
+      ) : null;
+    })}
+  </Grid>
+);
+}
+  else{
+    return (
+      
       <Grid container className="landing-page-main-grid">
         {items.map(obj => {
           return !obj.hide ? (
@@ -97,6 +221,7 @@ class LandingPage extends React.Component {
       </Grid>
     );
   }
+}
 }
 
 const mapStateToProps = state => {

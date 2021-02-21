@@ -1,0 +1,115 @@
+{
+    "preview": {
+        "sections": [
+            {
+                "header": "ES_TYPE_OF_NOTICE_HEADER",
+                "isEditable": false,
+                "fields": [
+                    {
+                        "label": "ES_TYPE_OF_NOTICE_LABEL",
+                        "jsonPath": "Applications[0].applicationDetails.noticeType"
+                    }
+                ]
+            },
+            {
+                "header": "ES_PROPERTY_DETAILS_HEADER",
+                "isEditable": false,
+                "fields": [
+                    {
+                        "label": "ES_FILE_NUMBER_LABEL",
+                        "jsonPath": "Applications[0].property.fileNumber"
+                    },
+                    {
+                        "label": "ES_CATEGORY_LABEL",
+                        "jsonPath": "Applications[0].property.category"
+                    },
+                    {
+                        "label": "ES_SUB_CATEGORY_LABEL",
+                        "jsonPath": "Applications[0].property.subCategory"
+                    },
+                    {
+                        "label": "ES_SITE_NO_LABEL",
+                        "jsonPath": "Applications[0].property.siteNumber"
+                    },
+                    {
+                        "label": "ES_SECTOR_NO_LABEL",
+                        "jsonPath": "Applications[0].property.sectorNumber"
+                    },
+                    {
+                        "label": "ES_PROPERTY_TYPE_LABEL",
+                        "jsonPath": "Applications[0].property.propertyDetails.propertyType"
+                    },
+                    {
+                        "label": "ES_LAST_NOC_DATE_LABEL",
+                        "jsonPath": "Applications[0].property.propertyDetails.lastNocDate",
+                        "type": "date"
+                    },
+                    {
+                        "label": "ES_DUE_AMOUNT_LABEL",
+                        "jsonPath": "Applications[0].property.propertyDetails.dueAmount"
+                    }
+                ]
+            },
+            {
+                "header": "ES_NON_PAYMENT_DETAILS_HEADER",
+                "fields": [
+                    {
+                        "label": "ES_GROUND_RENT_LABEL",
+                        "jsonPath": "Applications[0].applicationDetails.ownerDetails.groundRent"
+                    },
+                    {
+                        "label": "ES_INTERES_LABEL",
+                        "jsonPath": "Applications[0].applicationDetails.ownerDetails.Interest"
+                    },
+                    {
+                        "label": "ES_SERVICE_TAX_OR_GST_LABEL",
+                        "jsonPath": "Applications[0].applicationDetails.serviceTaxOrGst"
+                    },
+                    {
+                        "label": "ES_OUTSTANDING_AMOUNT_LABEL",
+                        "jsonPath": "Applications[0].applicationDetails.ownerDetails.outstandingAmount"
+                    },
+                    {
+                        "label": "ES_DATE_OF_HEARING_LABEL",
+                        "jsonPath": "Applications[0].applicationDetails.dateOfHearing"
+                    },
+                    {
+                        "label": "ES_TIME_OF_HEARING_LABEL",
+                        "jsonPath": "Applications[0].applicationDetails.ownerDetails.timeOfHearing"
+                    }
+                ]
+            },
+            {
+                "header": "ES_VIOLATION_NOTICE_DETAILS_HEADER",
+                "fields": [
+                    {
+                        "label": "ES_DATE_OF_HEARING_LABEL",
+                        "jsonPath": "Applications[0].applicationDetails.dateOfHearing"
+                    },
+                    {
+                        "label": "ES_TIME_OF_HEARING_LABEL",
+                        "jsonPath": "Applications[0].applicationDetails.ownerDetails.timeOfHearing"
+                    }
+                ]
+            },
+            {
+                "header": "ES_OCCUPATION_NOTICE_DETAILS_HEADER",
+                "fields": [
+                    {
+                        "label": "ES_DATE_OF_HEARING_LABEL",
+                        "jsonPath": "Applications[0].applicationDetails.dateOfHearing"
+                    },
+                    {
+                        "label": "ES_TIME_OF_HEARING_LABEL",
+                        "jsonPath": "Applications[0].applicationDetails.ownerDetails.timeOfHearing"
+                    }
+                ]
+            },
+            {
+                "header": "ES_DOCUMENT_DETAILS_HEADER",
+                "type": "DOCUMENTS",
+                "sourceJsonPath": "temp[0].reviewDocData"
+            }
+        ]
+    }
+}

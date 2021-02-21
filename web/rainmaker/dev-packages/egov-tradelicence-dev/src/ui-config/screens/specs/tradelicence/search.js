@@ -14,6 +14,7 @@ import { localStorageGet,getTenantId } from "egov-ui-kit/utils/localStorageUtils
 import { httpRequest } from "../../../../ui-utils";
 import find from "lodash/find";
 import get from "lodash/get";
+import { searchApiCall, getStatusList, getTradeTypes } from "./searchResource/functions"
 
 const hasButton = getQueryArg(window.location.href, "hasButton");
 let enableButton = true;
@@ -25,6 +26,9 @@ const pageResetAndChange = (state, dispatch) => {
   dispatch(setRoute(`/tradelicence/apply?tenantId=${tenant}`));
 };
 
+const howItworks = (state, dispatch) => {
+  dispatch(setRoute('/tradelicence/how-it-works'));
+}
 
 const getMdmsData = async (dispatch) => {
   let mdmsBody = {
@@ -76,27 +80,11 @@ const tradeLicenseSearchAndResult = {
   uiFramework: "material-ui",
   name: "search",
   beforeInitScreen: (action, state, dispatch) => {
-
-    // const businessServiceData = JSON.parse(
-    //   localStorageGet("businessServiceData")
-    // );
-    // const data = find(businessServiceData, { businessService: "NewTL" });
-    // const { states } = data || [];
-
-    // if (states && states.length > 0) {
-    //   const status = states.map((item, index) => {
-    //     return {
-    //       code: item.state
-    //     };
-    //   });
-    //   dispatch(
-    //     prepareFinalObject(
-    //       "applyScreenMdmsData.searchScreen.status",
-    //       status.filter(item => item.code != null)
-    //     )
-    //   );
-    // }
+    dispatch(prepareFinalObject("searchScreen", {}))
     getMdmsData(dispatch);
+    getStatusList(state, dispatch, "search", "components.div.children.tradeLicenseApplication.children.cardContent.children.appStatusContainer.children.applicationNo")
+    searchApiCall(state, dispatch, true)
+    getTradeTypes(action, state, dispatch)
     return action;
   },
   components: {
@@ -119,6 +107,31 @@ const tradeLicenseSearchAndResult = {
                 sm: 6
               },
               ...header
+            },
+            howItWorksLink: {
+              componentPath: "Button",
+              gridDefination: {
+                xs: 12,
+                sm: 6,
+                align: "right"
+              },
+              props: {
+                style: {
+                  color: "red",
+                }
+              },
+              children: {
+                buttonLabel: getLabel({
+                  labelName: "How It Works",
+                  labelKey: "TL_HOW_IT_WORKS"
+                })
+              },
+              onClickDefination: {
+                action: "condition",
+                callBack: (state, dispatch) => {
+                  howItworks(state, dispatch);
+                }
+              },
             },
             newApplicationButton: {
               componentPath: "Button",
@@ -170,7 +183,6 @@ const tradeLicenseSearchAndResult = {
             }
           }
         },
-        pendingApprovals,
         tradeLicenseApplication,
         breakAfterSearch: getBreak(),
         searchResults

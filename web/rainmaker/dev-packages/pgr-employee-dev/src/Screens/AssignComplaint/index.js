@@ -16,7 +16,7 @@ const AssignComplaintFormHOC = formHoc({
 class AssignComplaint extends Component {
   componentDidMount = () => {
     let { fetchEmployeeToAssign } = this.props;
-    const queryParams = [{ key: "roles", value: "EMPLOYEE" }];
+    const queryParams = [{ key: "roles", value: "PGR_LME" }];
     fetchEmployeeToAssign(queryParams);
   };
   render() {

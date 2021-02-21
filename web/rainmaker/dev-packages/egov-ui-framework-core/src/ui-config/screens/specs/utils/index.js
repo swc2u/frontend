@@ -402,13 +402,15 @@ export const getLabelWithValue = (label, value, props = {}) => {
     uiFramework: "custom-atoms",
     componentPath: "Div",
     gridDefination: {
-      xs: 6,
-      sm: 3
+      xs: 12,
+      sm: 4,
+      md: 3
     },
     props: {
       style: {
         marginBottom: "16px",
-        wordBreak : "break-word"
+        wordBreak: "break-word",
+        marginRight: "8px",
       },
       ...props
     },
@@ -469,14 +471,52 @@ export const getTab = (label, props = {}) => {
   };
 };
 
+export const getTodaysDateInYMD = () => {
+  let date = new Date();
+  //date = date.valueOf();
+  let month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+  let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+  date = `${date.getFullYear()}-${month}-${day}`;
+  // date = epochToYmdDate(date);
+  return date;
+};
+
+export const getTodaysDateInDMY = () => {
+  let date = new Date();
+  //date = date.valueOf();
+  let month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+  let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+  date = `${day}-${month}-${date.getFullYear()}`;
+  // date = epochToYmdDate(date);
+  return date;
+};
+
+
+export const getNextMonthDateInYMD = () => {
+  //For getting date of same day but of next month
+  let date = getTodaysDateInYMD();
+  date =
+    date.substring(0, 5) +
+    (parseInt(date.substring(5, 7)) + 1) +
+    date.substring(7, 10);
+  return date;
+};
+
+
 export const getPattern = type => {
   switch (type) {
     case "Name":
       return /^[^\$\"'<>?\\\\~`!@#$%^()+={}\[\]*,.:;“”‘’]{1,50}$/i;
     case "MobileNo":
       return /^[6789][0-9]{9}$/i;
+      case "AdharCardNumber":
+        return /^[0-9]{12}$/i
     case "Amount":
       return /^[0-9]{0,9}$/i;
+    case "AmountFeild":
+      return /^[1-9][0-9]{0,6}$/i;
+     case "comments":
+      return /^([\s\S]){1,1000}$/i;
     case "Email":
       return /^(?=^.{1,64}$)((([^<>()\[\]\\.,;:\s$*@'"]+(\.[^<>()\[\]\\.,;:\s@'"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})))$/i;
     case "Address":
@@ -506,7 +546,7 @@ export const getPattern = type => {
     case "ElectricityConnNo":
       return /^[0-9]{15}$/i;
     case "DocumentNo":
-      return /^[0-9]{1,15}$/i; 
+      return /^[0-9]{1,15}$/i;
     case "eventName":
       return /^[^\$\"'<>?\\\\~`!@#$%^()+={}\[\]*,.:;“”‘’]{1,65}$/i;
     case "eventDescription":
@@ -515,9 +555,174 @@ export const getPattern = type => {
       return /^[a-zA-Z0-9-]*$/i;
     case "consumerNo":
       return /^[a-zA-Z0-9/-]*$/i;
+    case "VeterinaryRegistrationNo":
+      return /^[a-zA-Z0-9 \/-]*$/i;
+    case "VillageName":
+      return /^[a-zA-Z. ]*$/i;
+    case "BadageNumber":
+      return /^[a-zA-Z0-9]*$/i;
+    case "Amountopms":
+      return /^[0-9.]{0,20}$/i;
+    case "validUrl":
+      return /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]{1,255}$/i;
+    case "TextValidation":
+      return /^[a-zA-Z ]{1,180}$/;
+    case "AlphaNumValidation":
+      return /^[a-zA-Z0-9 ]{1,180}$/i;
+    case "TransitNumberValidation":
+        return /^([1-9]|[1-8][0-9]|9[0-9]|[1-8][0-9]{2}|9[0-8][0-9]|99[0-9]|[1-8][0-9]{3}|9[0-8][0-9]{2}|99[0-8][0-9]|999[0-9]|10000)$/i;
+    case "EventDescription":
+      return /^[a-zA-Z0-9-!%:;“”‘’*=@\n\r#?\\\\~`$&^<>?{}[\]|()\\-`.+,/\"' ]{1,500}$/i;
+    case "EventTitle":
+      return /^[a-zA-Z0-9 ]{1,180}$/i;
+    case "PReventDescription":
+      return /^[^\$\"'<>?\\\\~`!@\n\r$%^()+={}\[\]*.:;“”‘’]{1,500}$/i;
+    case "subjectvalidation":
+      return /^[a-zA-Z0-9-!%:;“”‘’*=@\n\r#?\\\\~`$&^<>?{}[\]|()\\-`.+,/\"' ]{1,180}$/i;
+    case "AlphaNumValidationLocation":
+      return /^[a-zA-Z0-9-/,& ]{1,180}$/i;
+    case "AlphaNumValidationsms":
+      return /^[a-zA-Z0-9!@\n\r#$&()\\-`.+,/\" ]{1,180}$/i;
+    case "sizeofpublication":
+      return /^[0-9]{1,50}$/i;
+
+    case "fileNumber":
+      return /^[a-zA-Z0-9-!%:;“”‘’*=@#?\\\\~`$&^<>?{}[\]|()\\-`.+,/\"' ]{1,50}$/i;
+    case "TextValidationWithoutSpace":
+      return /^[a-zA-Z]{1,180}$/i;
+    case "budget":
+      return /^[0-9]{0,9}(\.[0-9]{0,2})?$/;
+    case "AlphaNumSubjectSMS":
+      return /^[a-zA-Z0-9~!@\n\r#$%^&*(){}[]\/.,<>:;" ]{1,180}$/i;
+    case "age":
+      return /^[1-9][0-9]$/i;
+    case "familyMonthlyIncome":
+      return /^[1-9][0-9]\d*$/i;
+    case "alpha-numeric-with-space":
+      return /^[a-z0-9 ]*$/i;
+    case "alpha-numeric-with-space-and-newline":
+      return /^[a-z0-9 \n]*$/i;
+    case "alpha-numeric":
+      return /^[a-z0-9]*$/i;
+    case "non-empty-alpha-numeric":
+      return /^[a-z0-9]+$/i;
+    case "alpha-only":
+      return /^[a-z]+$/i;
+      case "alpha-only-with-space":
+      return /^[a-z ]+$/i;
+    case "numeric-only":
+      return /^[0-9]*$/i;
+      case "twodigit-number":
+      return /^[0-9]{1,2}$/i;
+      case "twodigit-number-without-zero":
+      return /^([1-9]{1}\d)$|^([1-9]{1})$/i;
+    case "VATNo":
+      return /^\d{2}[A-Za-z0-9-!@#$%&*.?=]{8}[V]{1}$/i;
+    case "CSTNo":
+      return /^\d{2}[A-Za-z0-9-!@#$%&*.?=]{8}[C]{1}$/i;
+    case "TINNo":
+      return /^\d{2}[A-Za-z0-9-!@#$%&*.?=]{9}$/i;
+      case "interestRate":
+      return /^(?=.*[1-9])\d{1,2}(?:\.\d{1,2})?$/i;
+    case "DecimalAmount":
+      return /^\d{0,6}$/i
+    case "ECViolatorAddress":
+      return /^[a-zA-Z.0-9 @#%&-:\n\r]{1,512}$/i;
+    case "SeizedQuantity":
+      return /^[0-9]{0,9}$/i;
+    case "ECViolatorName":
+      return /^[a-zA-Z ]{1,256}$/i;
+    case "ECItemName":
+      return /^[a-zA-Z.@()/0-9 ]{1,256}$/i;
+    case "ECItemDescription":
+      return /^[a-zA-Z.0-9 @#/%&]{1,256}$/i;
+    case "ECVehicleRegistrationNo":
+      return /^[a-zA-Z0-9 -]{1,10}$/i;
+    case "ECNatureOfViolation":
+      return /^[a-zA-Z.0-9 @#%&-:\n\r]{1,256}$/i;
+    case "ECItemRemark":
+      return /^[a-zA-Z.0-9 @#%&-:\n\r]{1,256}$/i;
+
+      //validation patterns for HC....don't use
+      case "NoOfTree":
+        return /^(0?[1-9]|[1-9][0-9])$/i;
+      case "location":
+        return /^[a-zA-Z0-9#$&?@~_|(),/,[\\\],-.,:\s,\n]{1,256}$(?!.*[<>*;={}`%+^!])/;
+      case "HCServiceRequestId":
+          return /^[a-zA-Z0-9#$&?@~_|,-.,:\s,\n]{1,256}$(?!.*[<>()'"/\*;={}`%+^!])/;
+      case "HCMobileNo":
+      return /^[0-9]{10}$/i
+      case "HCEmail":
+      return /(?=^.{1,256}$)(^\w+([\.]?\w+)*@\w+([\.]?\w+)*(\.\w{2,3})+$)/;
+      case "HCOwnerName":
+        return /^[a-zA-Z\s]{1,256}$(?!.*[<>()'"/\*;={}`%+^!–])/i;
+      case "HCMobileNoSearch":
+          return /^[0-9]{0,10}$/i;
+      case "serviceRequestDescription":
+          return  /^[a-zA-Z0-9#$&?@~_|.,:\s,]{1,256}$(?!.*[<>()'"/\*;={}`%+^!–])/;
+     case "aadhar":
+      return  /^[0-9]{4}$/i;
+     case "aadharAcknowledgementNo":
+      return  /^[0-9]{14}$/i;  
+      case "typeOfRequest":
+        return /^[^\$\"'<>?\\\\~`!@$%^+={}\[\]*.:;“”‘’]{1,500}$/i;
+        case "areaRequired":
+        return /^(0)*[1-9][0-9]{0,2}$/i;
   }
 };
 
 export const checkValueForNA = value => {
   return value && value !== "null" ? value : "NA";
+};
+export const getCommonLabelWithValue = (paragraph, value, props = {}) => {
+  return getCommonLabelValue(paragraph, value, { variant: "caption", ...props });
+}
+
+export const getCommonLabelValue = (header, value, props) => {
+  return {
+    componentPath: "Typography",
+    props: {
+      variant: "headline",
+      ...props
+    },
+    children: {
+      // [header]: getLabel(header)
+      key: getLabelForModify(header, value),
+    }
+  };
+};
+
+export const getLabelForModify = (label, jsonPath, props = {}) => {
+  return {
+    uiFramework: "custom-containers",
+    componentPath: "ModifyLabelConatiner",
+    props: {
+      ...label,
+      ...jsonPath,
+      ...props
+    }
+  };
+};
+
+export const getLabelWithValueForModifiedLabel = (label, value, label2, value2, props = {}) => {
+  return {
+    uiFramework: "custom-atoms",
+    componentPath: "Div",
+    gridDefination: {
+      xs: 6,
+      sm: 3
+    },
+    props: {
+      style: {
+        marginBottom: "16px",
+        wordBreak: "break-word"
+      },
+      ...props
+    },
+    children: {
+      label1: getCommonCaption(label),
+      value1: getCommonValue(value),
+      label2: getCommonLabelWithValue(label2, value2)
+    }
+  };
 };

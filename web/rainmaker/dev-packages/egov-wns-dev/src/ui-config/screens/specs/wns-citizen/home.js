@@ -4,6 +4,7 @@ import { fetchData } from "./citizenSearchResource/citizenFunctions";
 import "../utils/index.css";
 import PayWnsBillIcon from "../../../../ui-atoms-local/Icons/PayWnsBillIcon/index";
 import MyConnectionsIcon from "../../../../ui-atoms-local/Icons/MyConnectionsIcon/index";
+import { getRequiredDocData } from "egov-ui-framework/ui-utils/commons";
 
 const header = getCommonHeader({
     labelKey: "WS_COMMON_HEADER"
@@ -35,6 +36,15 @@ const waterAndSewerageSearchAndResult = {
     moduleName: "egov-wns",
     beforeInitScreen: (action, state, dispatch) => {
         fetchData(action, state, dispatch);
+        const moduleDetails = [
+            {
+                moduleName: "ws-services-masters",
+                masterDetails: [
+                    { name: "Documents" }
+                ]
+            }
+        ]
+        getRequiredDocData(action, dispatch, moduleDetails)
         return action;
     },
     components: {
@@ -61,13 +71,20 @@ const waterAndSewerageSearchAndResult = {
                     moduleName: "egov-wns",
                     componentPath: "NewConnection",
                     props: {
-                        route:"/citizen/wns/apply"
+                        items: {
+                            route: {
+                                screenKey: "home",
+                                jsonPath: "components.adhocDialog"
+                            }
+                        }
+
                     }
                 },
                 listCard1: {
                     uiFramework: "custom-molecules-local",
                     moduleName: "egov-wns",
                     componentPath: "MyApplications",
+                    props: {}
                 },
                 listCard2: {
                     uiFramework: "custom-molecules-local",
@@ -77,13 +94,33 @@ const waterAndSewerageSearchAndResult = {
                         route: "my-connections"
                     }
                 },
+                listCard4: {
+                    uiFramework: "custom-molecules-local",
+                    moduleName: "egov-wns",
+                    componentPath: "LinkConnection",
+                    props: {
+                        route: "link-connection"
+                    }
+                },
                 listCard3: {
                     uiFramework: "custom-molecules-local",
                     moduleName: "egov-wns",
                     componentPath: "HowItWorks",
                 }
             }
-        },  
+        },
+        adhocDialog: {
+            uiFramework: "custom-containers",
+            componentPath: "DialogContainer",
+            props: {
+                open: false,
+                maxWidth: false,
+                screenKey: "home"
+            },
+            children: {
+                popup: {}
+            }
+        }
     }
 };
 

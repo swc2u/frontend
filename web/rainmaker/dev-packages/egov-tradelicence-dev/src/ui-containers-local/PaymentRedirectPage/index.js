@@ -7,10 +7,11 @@ import { getSearchResults } from "../../ui-utils/commons";
 class PaymentRedirect extends Component {
   componentDidMount = async () => {
     let { search } = this.props.location;
+    const txnQuery=search.split('&')[0].replace('eg_pg_txnid','transactionId');
     try {
       let pgUpdateResponse = await httpRequest(
         "post",
-        "pg-service/transaction/v1/_update" + search,
+        "pg-service/transaction/v1/_update" + txnQuery,
         "_update",
         [],
         {}

@@ -53,7 +53,7 @@ const EgovAppBar = ({
         title={
           <div className="citizen-header-logo-label">
             <div className="citizen-header-logo">
-              <img src={ulbLogo ? ulbLogo : pbLogo} onError={(event) => event.target.setAttribute("src", pbLogo)} />
+              <img style = {{ height:55 , width:63}} src={ulbLogo ? ulbLogo : pbLogo} onError={(event) => event.target.setAttribute("src", pbLogo)} />
             </div>
             <Label containerStyle={{ marginLeft: "0px" }} className="screenHeaderLabelStyle appbar-title-label" label={title} />
             {titleAddon && (
@@ -63,13 +63,17 @@ const EgovAppBar = ({
                 label={titleAddon}
               />
             )}
+      
             <div className="rainmaker-displayInline">
+            <Label containerStyle={{ marginLeft: "10px" }} className="screenHeaderLabelStyle appbar-municipal-label" label={defaultTitle} />
               <Label
-                containerStyle={{ marginLeft: "10px" }}
+                containerStyle={{ marginLeft: "4px" }}
                 className="screenHeaderLabelStyle appbar-municipal-label"
                 label={ulbName && `TENANT_TENANTS_${ulbName.toUpperCase().replace(/[.]/g, "_")}`}
-              />
-              <Label containerStyle={{ marginLeft: "4px" }} className="screenHeaderLabelStyle appbar-municipal-label" label={defaultTitle} />
+              />          
+            </div>
+            <div className="rainmaker-displayInline-ut">
+              <Label  containerStyle={{ marginLeft: "22px" }} className="appbar-subheader-label" label={`TENANT_TENANTS_AREA`} />
             </div>
           </div>
         }
@@ -85,7 +89,7 @@ const EgovAppBar = ({
             handleItemClick={handleItemClick}
           />
         </Toolbar>
-        {notificationButton && role === "citizen" && (
+        {notificationButton  && (
           <div className="notification-icon-web notification-icon" onClick={(e) => onNotificationClick(history)}>
             {notificationsCount ? (
               <IconButton aria-label="4 pending messages">
@@ -99,9 +103,10 @@ const EgovAppBar = ({
           </div>
         )}
 
-        <div className="appbar-right-logo">
+      {/* <div className="appbar-right-logo">
           <img src={digitLogo} />
         </div>
+            */}
         <div className="icon-button">
           {refreshButton && (
             <IconButton style={iconButtonStyle} onClick={(e) => location.reload()}>
@@ -124,7 +129,7 @@ const EgovAppBar = ({
             </IconButton>
           )}
         </div>
-        {notificationButton && role === "citizen" && (
+        {notificationButton  && (
           <div className="notification-icon-mobile notification-icon" onClick={(e) => onNotificationClick(history)}>
             {notificationsCount ? (
               <IconButton aria-label="4 pending messages">

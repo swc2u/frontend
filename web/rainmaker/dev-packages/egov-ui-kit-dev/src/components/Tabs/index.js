@@ -21,7 +21,7 @@ const inkBarContainerStyle = {
   paddingTop: "48px",
 };
 
-const Tabs = ({ tabs = [], onChange, className }) => {
+const Tabs = ({ tabs = [], onChange, className,value }) => {
   const renderTabs = () => {
     return tabs.map((tab, index) => {
       const { route, label, children } = tab;
@@ -35,6 +35,7 @@ const Tabs = ({ tabs = [], onChange, className }) => {
 
   return (
     <MaterialUiTabs
+      value = {value}
       className={className}
       onChange={onChange}
       inkBarContainerStyle={inkBarContainerStyle}

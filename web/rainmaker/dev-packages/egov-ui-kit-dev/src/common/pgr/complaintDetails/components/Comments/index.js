@@ -92,7 +92,7 @@ class Comments extends Component {
                   disabled={true}
                 />
 
-                {(isAssignedToEmployee && role === "employee") || role === "citizen" || role === "ao" || role === "csr"
+                {(isAssignedToEmployee && role === "employee") || role === "citizen" || role === "ao" || role === "csr"|| role === "eo"
                   ? currentstatus &&
                     currentstatus.toLowerCase() !== "closed" && <WriteCommentHOC userImage={userImage} currentstatus={currentstatus} />
                   : ""}
@@ -128,9 +128,9 @@ const mapStateToProps = (state, ownProps) => {
       return {
         role,
         complainant,
-        avatar: role === "Citizen" ? getPropertyFromObj(citizenById, id, "photo", "") : getPropertyFromObj(employeeById, id, "photo", ""),
-        name: role === "Citizen" ? getPropertyFromObj(citizenById, id, "name", "") : getPropertyFromObj(employeeById, id, "name", ""),
-        designation: role !== "Citizen" ? getPropertyFromObj(designationsById, designationCode, "name", "") : null,
+        avatar: role === "citizen" ? getPropertyFromObj(citizenById, id, "photo", "") : getPropertyFromObj(employeeById, id, "photo", ""),
+        name: role === "CITIZEN" ? getPropertyFromObj(citizenById, id, "name", "") : getPropertyFromObj(employeeById, id, "name", ""),
+        designation: role !== "citizen" ? getPropertyFromObj(designationsById, designationCode, "name", "") : null,
         comment: comment.comments,
         when: comment.when,
       };

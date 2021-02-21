@@ -21,19 +21,93 @@ const mapIconStyle = {
   width: "14px",
   borderRadius: "50%",
 };
+const handleLevel1 = (timeline1, timeline2) => {
+  if (timeline1.status === "escalatedlevel1pending") {
+    if (timeline2.status === "resolved") return "ES_COMPLAINT_ESCALATED_LEVEL1_HEADER";
+    else return "ES_COMPLAINT_ESCALATED_LEVEL1_SLA_BREACH";
+  }
+};
+
+// const getEscalatingStatus = (timeline, status) => {
+//   if (timeline && timeline.length > 2) {
+//     if (timeline[0].status === "escalatedlevel1pending") return handleLevel1(timeline[0], timeline[1]);
+
+//     if (timeline[0].status === "escalatedlevel2pending") {
+//       if (timeline[1].status === "resolved") return "ES_COMPLAINT_ESCALATED_LEVEL2_HEADER";
+//       else if (timeline[1].status === "escalatedlevel1pending" && status === "escalatedlevel1pending") return handleLevel1(timeline[1], timeline[2]);
+//       else return "ES_COMPLAINT_ESCALATED_LEVEL2_SLA_BREACH";
+//     }
+//   }
+// };
+
+const getEscalatingStatus = (timeline, status) => {
+  if(timeline && timeline.length > 0){
+	if(status === "escalatedlevel1pending"){
+			let statusIndex = timeline.findIndex( action => action.status === status);
+			const action = timeline.filter( (action,index) =>  index === (statusIndex+1));
+			
+			if(action[0].status ==="resolved")
+				return "ES_COMPLAINT_ESCALATED_LEVEL1_HEADER";
+			else 
+				return "ES_COMPLAINT_ESCALATED_LEVEL1_SLA_BREACH";
+	}
+	
+	if(status === "escalatedlevel2pending"){
+				let statusIndex = timeline.findIndex( action => action.status === status);
+			const action = timeline.filter( (action,index) =>  index === (statusIndex+1));
+			
+        if(action[0].status ==="resolved")
+          return "ES_COMPLAINT_ESCALATED_LEVEL2_HEADER";
+        else 
+          return "ES_COMPLAINT_ESCALATED_LEVEL2_SLA_BREACH";
+  }
+}
+return;
+};
 
 class Details extends Component {
   navigateToComplaintType = () => {
     this.props.history.push("/complaint-type");
   };
-
+  getImageSource = (imageSource, size) => {
+    const images = imageSource.split(",");
+    if (!images.length) {
+      return null;
+    }
+    switch (size) {
+      case "small":
+        imageSource = images[2];
+        break;
+      case "medium":
+        imageSource = images[1];
+        break;
+      case "large":
+      default:
+        imageSource = images[0];
+    }
+    return imageSource || images[0];
+  };
   onImageClick = (source) => {
-    this.props.history.push(`/image?source=${source}`);
+    window.open(this.getImageSource(source, "large"), "Image");
+    // this.props.history.push(`/image?source=${source}`);
   };
 
   render() {
-    const { status, complaint, applicationNo, description, submittedDate, address, addressDetail, mapAction, images, action, role } = this.props;
-    const { houseNoAndStreetName, landmark, mohalla, city, locality } = addressDetail || "";
+    const {
+      status,
+      complaint,
+      applicationNo,
+      description,
+      submittedDate,
+      address,
+      addressDetail,
+      mapAction,
+      images,
+      action,
+      role,
+      timeLine,
+    } = this.props;
+    const { houseNoAndStreetName, landmark, mohalla, city, locality, latitude, longitude } = addressDetail || "";
     const icon = {};
     icon.name = "location";
     icon.style = {
@@ -54,6 +128,8 @@ class Details extends Component {
         } else {
           statusKey = `CS_COMMON_CITIZEN_REQUEST_REASSIGN`;
         }
+      } else if (status === "escalatedlevel1pending" || status === "escalatedlevel2pending") {
+        statusKey = getEscalatingStatus(timeLine, status);
       } else {
         statusKey = `CS_COMMON_${status.toUpperCase()}`;
       }
@@ -170,7 +246,7 @@ class Details extends Component {
                     />
                     <div className="col-xs-6  col-sm-8 col-md-10 no-padding complaint-address-display">
                       <Label
-                        label={locality}
+                        label={mohalla}
                         className="status-result-color"
                         id="complaint-details-complaint-location"
                         labelStyle={{ color: "inherit" }}
@@ -212,6 +288,16 @@ class Details extends Component {
                       labelStyle={{ color: "inherit" }}
                     />
                   </div>
+                )}
+                {latitude && longitude && (
+                  <a href={`http://maps.google.com?q=${latitude},${longitude}`} target="_blank">
+                    <Label
+                      label={"PGR_GMAP_LINK"}
+                      className="status-result-color"
+                      id="complaint-details-complaint-location-gmap"
+                      labelStyle={{ color: "blue", textDecoration: "underline" }}
+                    />
+                  </a>
                 )}
                 {/* <div style={{ marginTop: 10 }}>
                   {mapAction && complaintLoc.lat && (

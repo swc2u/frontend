@@ -13,7 +13,9 @@ const form = ({ formKey, path, copyName, rowData, isCoreConfiguration, edit = fa
           this.formConfig = require(`egov-ui-kit/config/forms/specs/${path}/${formKey}`).default;
         } else if (path) {
           this.formConfig = require(`config/forms/specs/${path}/${formKey}`).default;
-        } else {
+        } else if(isCoreConfiguration=='false'){
+          this.formConfig = require(`egov-services-emp/config/forms/specs/${formKey}`).default;
+        }else {
           this.formConfig = require(`config/forms/specs/${formKey}`).default;
         }
         if (extraFields) {

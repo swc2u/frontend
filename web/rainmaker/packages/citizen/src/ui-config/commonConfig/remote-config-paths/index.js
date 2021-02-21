@@ -6,6 +6,7 @@ const remoteConfigPath = (path, screenKey) => {
       config = require(`egov-tradelicence/ui-config/screens/specs/${path}/${screenKey}`).default;
       break;
     case "pt-mutation":
+      case "pt-common-screens":
       // case "pt-citizen":
       config = require(`egov-pt/ui-config/screens/specs/${path}/${screenKey}`).default;
       break;
@@ -24,6 +25,14 @@ const remoteConfigPath = (path, screenKey) => {
     case "abg":
       config = require(`egov-abg/ui-config/screens/specs/${path}/${screenKey}`).default;
       break;
+    case "rented-properties": 
+    case "rented-properties-citizen":
+      config = require(`egov-rented-properties/ui-config/screens/specs/${path}/${screenKey}`).default;
+      break;
+    case "estate":
+    case "estate-citizen":
+      config = require(`egov-estate/ui-config/screens/specs/${path}/${screenKey}`).default;
+      break;
     case "egov-common":
       config = require(`egov-common/ui-config/screens/specs/${path}/${screenKey}`).default;
       break;
@@ -39,6 +48,30 @@ const remoteConfigPath = (path, screenKey) => {
     case "wns":
     case "wns-citizen":
       config = require(`egov-wns/ui-config/screens/specs/${path}/${screenKey}`).default;
+      break;
+    case "egov-opms":
+        config = require(`egov-opms/ui-config/screens/specs/${path}/${screenKey}`).default;
+        break;
+    case "egov-hc":
+      config = require(`egov-hc/ui-config/screens/specs/${path}/${screenKey}`).default;
+      break;
+	case "egov-report":
+      config = require(`egov-report/ui-config/screens/specs/${path}/${screenKey}`).default;
+      break;
+    case "egov-echallan":
+      config = require(`egov-echallan/ui-config/screens/specs/${path}/${screenKey}`).default;
+      break;   
+    case "egov-nulm":
+      config = require(`egov-nulm/ui-config/screens/specs/${path}/${screenKey}`).default;
+      break;
+      case "egov-rti":
+        config = require(`egov-rti/ui-config/screens/specs/${path}/${screenKey}`).default;
+        break;
+        case "egov-integration":
+        config = require(`egov-integration/ui-config/screens/specs/${path}/${screenKey}`).default;
+        break;
+      case "egov-services":
+      config = require(`egov-services/ui-config/screens/specs/${path}/${screenKey}`).default;
       break;
     default:
       config = require(`ui-config/screens/specs/${path}/${screenKey}`).default;

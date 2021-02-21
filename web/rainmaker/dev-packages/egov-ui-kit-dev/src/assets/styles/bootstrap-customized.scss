@@ -9,6 +9,21 @@ html {
   -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
 }
+.MuiFormLabel-error-844 label{
+color : #f44336 !important;
+
+}
+.MuiFormLabel-error-844 input {
+border-bottom: 2px solid #f44336;
+}
+
+.MuiInput-error-853 label{
+color : #f44336 !important;
+}
+.MuiSelect-root-808.MuiInput-error-853 {
+border-bottom: 2px solid #f44336;
+}
+
 body {
   margin: 0;
 }

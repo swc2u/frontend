@@ -40,7 +40,12 @@ const formSubmit = (store) => (next) => (action) => {
       const previousRoute = get(state.app, "previousRoute", "");
       if (previousRoute.indexOf("smsLink=true") > 0) {
         redirectionRoute = previousRoute;
-      } else {
+      } else if(window.localStorage.getItem("ecno")){
+        const ecno = window.localStorage.getItem("ecno");
+        window.localStorage.removeItem("ecno");
+        redirectionRoute = `/egov-echallan/search-preview?applicationNumber=${ecno}&tenantId=ch.chandigarh`;
+      }
+        else {
         redirectionRoute = "/";
       }
       delete payload.ResponseInfo;
@@ -49,6 +54,11 @@ const formSubmit = (store) => (next) => (action) => {
     //employee login authenticated
     if (formKey === "employeeLogin") {
       delete payload.ResponseInfo;
+      const mobile = payload && payload.UserRequest && payload.UserRequest.mobileNumber;
+
+      if(!mobile)
+          redirectionRoute = "/user/profile";
+
       dispatch(authenticated(payload));
     }
 

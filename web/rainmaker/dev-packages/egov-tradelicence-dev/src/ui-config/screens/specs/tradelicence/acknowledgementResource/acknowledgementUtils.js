@@ -2,7 +2,8 @@ import {
   getCommonHeader,
   getCommonCard,
   getCommonParagraph,
-  getCommonContainer
+  getCommonContainer,
+  getCommonSubHeader
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 
 const style = {
@@ -16,7 +17,7 @@ const style = {
     fontWeight: 400
   },
   tailNumber: {
-    fontSize: 24,
+    fontSize: 15,
     fontWeight: 500
   },
   tailBox: {
@@ -34,7 +35,7 @@ const style = {
     display: "flex",
     minHeight: "106px",
     justifyContent: "center",
-    alignItems: "center"
+    // alignItems: "center"
   }
 };
 
@@ -42,6 +43,7 @@ const acknowledgementCard = ({
   icon = "done",
   backgroundColor = "#39CB74",
   header,
+  subheader,
   body,
   tailText,
   number
@@ -61,7 +63,7 @@ const acknowledgementCard = ({
             )
           },
           props: {
-            style: style.tailBox,
+            style: {...style.tailBox, flexBasis: "auto", flexGrow: 0, flexShrink:1},
             className: "ack-tail"
           }
         }
@@ -99,6 +101,7 @@ const acknowledgementCard = ({
           componentPath: "Div",
           children: {
             header: getCommonHeader(header),
+            subheader: getCommonSubHeader(subheader),
             paragraph: body
               ? getCommonParagraph(body, {
                   style: style.bodySub

@@ -17,7 +17,7 @@ import set from "lodash/set";
 import store from "ui-redux/store";
 import { getTranslatedLabel } from "../ui-config/screens/specs/utils";
 import DATA from "./documents";
-
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 const handleDeletedCards = (jsonObject, jsonPath, key) => {
   let originalArray = get(jsonObject, jsonPath, []);
   let modifiedArray = originalArray.filter(element => {
@@ -507,4 +507,101 @@ export const generatePdfFromDiv = (action, applicationNumber) => {
       window.open(doc.output("bloburl"), "_blank");
     }
   });
+};
+export const getBoundaryData = async (
+  action,
+  state,
+  dispatch,
+  queryObject,
+  code,
+  componentPath
+) => {
+  try {
+    let payload = await httpRequest(
+      "post",
+      "/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality",
+      "_search",
+      queryObject,
+      {}
+    );
+    const tenantId =
+      process.env.REACT_APP_NAME === "Employee"
+        ? get(
+          state.screenConfiguration.preparedFinalObject,
+          "Property.address.city"
+        )
+        : getQueryArg(window.location.href, "tenantId");
+
+    const mohallaData =
+      payload &&
+      payload.TenantBoundary[0] &&
+      payload.TenantBoundary[0].boundary &&
+      payload.TenantBoundary[0].boundary.reduce((result, item) => {
+        result.push({
+          ...item,
+          name: `${tenantId
+            .toUpperCase()
+            .replace(/[.]/g, "_")}_REVENUE_${item.code
+              .toUpperCase()
+              .replace(/[._:-\s\/]/g, "_")}`
+        });
+        return result;
+      }, []);
+
+    dispatch(
+      prepareFinalObject(
+        "applyScreenMdmsData.tenant.localities",
+        // payload.TenantBoundary && payload.TenantBoundary[0].boundary,
+        mohallaData
+      )
+    );
+
+    dispatch(
+      handleField(
+        "register-property",
+        "components.div.children.formwizardFirstStep.children.propertyLocationDetails.children.cardContent.children.propertyLocationDetailsContainer.children.localityOrMohalla",
+        "props.suggestions",
+        mohallaData
+      )
+    );
+    if (code) {
+
+      let data = payload.TenantBoundary[0].boundary;
+      let messageObject =
+        data &&
+        data.find(item => {
+          return item.code == code;
+        });
+      if (messageObject)
+        dispatch(
+          prepareFinalObject(
+            "Property.address.locality.name",
+            messageObject.name
+          )
+        );
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const getSearchBillResult = async (queryObject, dispatch) => {
+  try {
+    const response = await httpRequest(
+      "post",
+      "/billing-service/bill/v2/_search",
+      "",
+      queryObject
+    );
+    return response;
+  } catch (error) {
+    dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+    console.log(error, "fetxh");
+  }
 };

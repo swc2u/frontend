@@ -16,6 +16,7 @@ const getUlbGradeLabel = (ulbGrade) => {
     let ulbWiseHeaderName = ulbGrade.toUpperCase();
     if (ulbWiseHeaderName.indexOf(" ") > 0) {
       ulbWiseHeaderName = ulbWiseHeaderName.split(" ").join("_");
+      
     }
     return "ULBGRADE" + "_" + ulbWiseHeaderName;
   }
@@ -66,7 +67,12 @@ const withoutAuthorization = (redirectionUrl) => (Component) => {
 
     componentDidMount() {
       if (this.props.authenticated) {
-        this.props.history.push(redirectionUrl);
+        if(window.location.pathname.includes("/user/otp") && window.location.search.includes("mobileno") && window.location.search.includes("ecno")){
+        }
+        else{
+          this.props.history.push(redirectionUrl);
+        }
+       
       }
     }
 
@@ -153,6 +159,7 @@ const withoutAuthorization = (redirectionUrl) => (Component) => {
   }
   const mapStateToProps = (state) => {
     const { authenticated } = state.auth;
+    const {previousRoute} = state.app;
     let { stateInfoById } = state.common || [];
     let hasLocalisation = false;
     let defaultUrl = process.env.REACT_APP_NAME === "Citizen" ? "/user/register" : "/user/login";
@@ -163,14 +170,14 @@ const withoutAuthorization = (redirectionUrl) => (Component) => {
     const ulbGrade = userTenant && get(userTenant[0], "city.ulbGrade");
     const ulbName = userTenant && get(userTenant[0], "code");
     const defaultTitle = ulbGrade && getUlbGradeLabel(ulbGrade);
-    const ulbLogo = userTenant.length > 0 ? get(userTenant[0], "logoId") : "https://s3.ap-south-1.amazonaws.com/pb-egov-assets/pb.amritsar/logo.png";
+    const ulbLogo = "";//userTenant.length > 0 ? get(userTenant[0], "logoId") : "https://mcdigitdevdigitdevsouthe.blob.core.windows.net/digit-dev/mc-chandigardh-logo.png";
     if (stateInfoById && stateInfoById.length > 0) {
       hasLocalisation = stateInfoById[0].hasLocalisation;
       defaultUrl = stateInfoById[0].defaultUrl;
     }
     let languages = get(stateInfoById, "0.languages", []);
 
-    return { authenticated, hasLocalisation, defaultUrl, isOpenLink, ulbLogo, ulbName, defaultTitle, languages };
+    return { authenticated, hasLocalisation, defaultUrl, isOpenLink, ulbLogo, ulbName, defaultTitle, languages,previousRoute };
   };
   const mapDispatchToProps = (dispatch) => {
     return {

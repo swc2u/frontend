@@ -11,12 +11,14 @@
 }
 
 .action-button-one,
-.action-button-two {
+.action-button-two,
+.action-button-three {
   box-shadow: none !important;
   background-color: transparent !important;
   width: 45%;
 }
-.action-button-two {
+.action-button-two,
+.action-button-three {
   margin-left: 20px;
 }
 
@@ -33,7 +35,8 @@
   }
 
   .action-button-one,
-  .action-button-two {
+  .action-button-two,
+  .action-button-three {
     width: 230px;
   }
 }

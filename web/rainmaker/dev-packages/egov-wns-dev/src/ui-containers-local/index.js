@@ -57,6 +57,27 @@ const RadioGroupContainer = Loadable({
   loading: () => <Loading />
 });
 
+const EstimateOverviewCardContainer = Loadable({
+  loader: () => import("./EstimateOverviewCardContainer"),
+  loading: () => <Loading />
+});
+
+const ModificationDocumentListContainer = Loadable({
+  loader: () => import("./ModificationDocumentListContainer"),
+  loading: () => <Loading />
+});
+const CheckboxContainerConnHolder = Loadable({
+   loader: () => import("./CheckboxContainerConnHolder"),
+    loading: () => <Loading />
+  });
+  const WorkFlowContainer = Loadable({
+    loader: () => import("./WorkFlowContainer"),
+    loading: () => <Loading />
+  });
+  const MultiItem = Loadable({
+    loader: () => import("./MultiItem"),
+    loading: () => <Loading />
+  });
 export {
   CustomTabContainer,
   LabelContainer,
@@ -69,5 +90,10 @@ export {
   ResubmitActionContainer,
   ViewBreakupContainer,
   DialogContainer,
-  RadioGroupContainer
+  RadioGroupContainer,
+  EstimateOverviewCardContainer,
+  ModificationDocumentListContainer,
+  CheckboxContainerConnHolder,
+  WorkFlowContainer,
+  MultiItem
 };

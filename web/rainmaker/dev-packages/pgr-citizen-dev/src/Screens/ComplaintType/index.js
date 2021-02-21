@@ -6,8 +6,8 @@ import Label from "egov-ui-kit/utils/translationNode";
 import { getNestedObjFormat } from "./complaintTypeDataMaker";
 
 const customIconStyles = {
-  height: 25,
-  width: 25,
+  height: 35,
+  width: 35,
   margin: 0,
   top: 10,
   left: 12,

@@ -1,9 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
-import { ActionDialog } from "../";
+import { ActionDialog, HCActionDialog,StoreAssetActionDialog,NulmActionDialog } from "../";
 import { httpRequest } from "egov-ui-framework/ui-utils/api";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
+import { getUserInfo,localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
 import { Container, Item } from "egov-ui-framework/ui-atoms";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import MenuButton from "egov-ui-framework/ui-molecules/MenuButton";
@@ -19,6 +19,7 @@ class Footer extends React.Component {
     open: false,
     data: {},
     employeeList: [],
+    allEmployeeList:[]
     //responseLength: 0
   };
 
@@ -57,13 +58,110 @@ class Footer extends React.Component {
   };
 
   openActionDialog = async item => {
-    const { handleFieldChange, setRoute, dataPath } = this.props;
+    const { handleFieldChange, setRoute, dataPath,moduleName ,preparedFinalObject} = this.props;
+    
     let employeeList = [];
 
     if (dataPath === "BPA") {
       handleFieldChange(`${dataPath}.comment`, "");
       handleFieldChange(`${dataPath}.assignees`, "");
-    } else {
+    }
+    if(dataPath==="services"){
+      var { state  } = this.props;
+      this.setState({ allEmployeeList : 0 });
+      const applicationNumberHC = get(
+        state.screenConfiguration.preparedFinalObject.workflow,
+        `ProcessInstances[0].businessId`);
+      let tenantId = getTenantId().split(".")[0];
+      handleFieldChange(`${dataPath}[0].comment`, "");
+      handleFieldChange(`${dataPath}[0].assignee`, []);
+      handleFieldChange(`${dataPath}[0].roleList`, []); // this line I chnages from array to "" just remember so evr time got it?
+      handleFieldChange(`${dataPath}[0].isRoleSpecific`, true);
+      handleFieldChange(`${dataPath}[0].serviceType`, item.moduleName);
+      handleFieldChange(`${dataPath}[0].service_request_id`, applicationNumberHC);
+      handleFieldChange(`${dataPath}[0].wfDocuments`, []);
+	  handleFieldChange(`${dataPath}[0].locality`, tenantId);
+      if (item.showEmployeeList) {
+      
+      let mdmsBody = {
+        MdmsCriteria: {
+          tenantId: tenantId,
+          moduleDetails: [
+            
+            {
+              moduleName: "eg-horticulture",
+              masterDetails: [
+                {
+                  name: "roles"
+                }
+              ]
+            },
+          ]
+        }
+      };
+      try {
+        let payload = null;
+        payload = await httpRequest(
+          "post",
+          "/egov-mdms-service/v1/_search",
+          "_search",
+          [],
+          mdmsBody
+        );
+        // debugger
+        // dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
+        employeeList =
+          payload &&
+          payload.MdmsRes["eg-horticulture"].roles.map((item, index) => {
+            const name = get(item, "name");
+            console.log(item);
+            return {
+              value: item.code,
+              label: name
+            };
+          });
+
+      } catch (e) {
+        console.log(e);
+      }
+        
+      }
+     
+    }
+    if (dataPath === "indents" || dataPath === "materialIssues" || dataPath === "purchaseOrders" || dataPath === "materialReceipt" || dataPath === "transferInwards") {
+      var { state } = this.props;
+      const applicationNumberStoreAsset = get(
+        state.screenConfiguration.preparedFinalObject.workflow,
+        `ProcessInstances[0].businessId`);
+
+      // indents[0].workflowDetails.assigneewfupdate
+      if (item.buttonLabel === "SENDTOCREATOR") {
+        let jeuuid = get(
+          state.screenConfiguration.preparedFinalObject.workflow,
+          `ProcessInstances[0].assigner.uuid`);
+
+        handleFieldChange(`${dataPath}[0].workFlowDetails.assignee[0]`, jeuuid);
+      }
+      handleFieldChange(`${dataPath}[0].workFlowDetails.action`, item.buttonLabel);
+      handleFieldChange(`${dataPath}[0].workFlowDetails.businessService`, item.moduleName);
+      handleFieldChange(`${dataPath}[0].workFlowDetails.comments`, "");
+      handleFieldChange(`${dataPath}[0].workFlowDetails.businessId`, applicationNumberStoreAsset);
+      handleFieldChange(`${dataPath}[0].workFlowDetails.wfDocuments`, []);
+
+
+    }
+	if (dataPath === "NulmSusvRequest" || dataPath === "NulmSusvRenewRequest" ) {
+      var { state } = this.props;
+      const applicationNumberNULM = get(
+        state.screenConfiguration.preparedFinalObject.workflow,
+        `ProcessInstances[0].businessId`);
+
+      handleFieldChange(`${dataPath}.action`, item.buttonLabel);
+      handleFieldChange(`${dataPath}.remark`, "");
+      handleFieldChange(`${dataPath}.applicationId`, applicationNumberNULM);
+      handleFieldChange(`${dataPath}.wfDocuments`, []);
+    }
+    else {
       handleFieldChange(`${dataPath}[0].comment`, "");
       handleFieldChange(`${dataPath}[0].assignee`, []);
     }
@@ -73,11 +171,78 @@ class Footer extends React.Component {
         process.env.NODE_ENV === "development"
           ? item.buttonUrl
           : item.buttonUrl;
+        if(item.moduleName === "NewWS1" 
+        || item.moduleName === "REGULARWSCONNECTION"  
+        || item.moduleName === 'NewSW1' 
+        || item.moduleName === "TEMPORARY_WSCONNECTION"
+        || item.moduleName === "WS_TEMP_TEMP" 
+        ||item.moduleName === "WS_TEMP_REGULAR"
+        ||item.moduleName === "WS_DISCONNECTION" 
+        ||item.moduleName === "WS_TEMP_DISCONNECTION"
+        || item.moduleName === "WS_RENAME" 
+        || item.moduleName === "WS_CONVERSION" 
+        || item.moduleName === "WS_REACTIVATE"  
+        ||  item.moduleName === "WS_TUBEWELL")
+        
+        {
+          //need status check 
+        const btnName = ["UPDATE_CONNECTION_HOLDER_INFO","APPLY_FOR_REGULAR_INFO","REACTIVATE_CONNECTION","CONNECTION_CONVERSION","TEMPORARY_DISCONNECTION","PERMANENT_DISCONNECTION"];
+   
+          // if(btnName.includes(item.buttonLabel))
+          //     window.localStorage.setItem("WNS_STATUS",item.buttonLabel);
+        }
       setRoute(url);
       return;
     }
-    if (item.showEmployeeList) {
+    if(dataPath!="services")
+    {if (item.showEmployeeList) {
       const tenantId = getTenantId();
+      // set role based on condition for water WF start WaterConnection
+      if(dataPath ==='WaterConnection')
+      {
+        var { state } = this.props;
+        let businessServiceData = JSON.parse(
+          localStorageGet("businessServiceData")
+        );
+        let data = get(state.screenConfiguration.preparedFinalObject, dataPath, []);
+        let nextStateid=''
+        let searchPreviewScreenMdmsData =null
+        let roles =[]
+        let rolecode ='';
+        let nextActions
+        // let workflow =state.screenConfiguration.preparedFinalObject.workflow.ProcessInstances
+        // workflow = workflow.filter(x=>x.action === data[0].processInstance.action)
+        let curstateactions = businessServiceData[0].states.filter(x=>x.applicationStatus === data[0].applicationStatus )
+        let actions_ = item.buttonLabel
+        if(curstateactions && curstateactions[0])
+        {
+          nextActions = curstateactions[0].actions.filter(x=>x.action === actions_)
+          nextStateid = nextActions[0].nextState
+          businessServiceData = businessServiceData[0].states.filter(x=>x.uuid === nextStateid )
+        } 
+         searchPreviewScreenMdmsData  = state.screenConfiguration.preparedFinalObject.searchPreviewScreenMdmsData;
+        searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
+       
+        if(searchPreviewScreenMdmsData && searchPreviewScreenMdmsData[0])
+        {
+          roles =  searchPreviewScreenMdmsData = searchPreviewScreenMdmsData[0].roles
+         roles = roles.filter(x=>x.subdivision === data[0].subdiv )
+         if(roles.length>0)
+         {
+          rolecode = roles[0].role 
+         }
+        }
+       // }      
+        
+       
+        if(rolecode)
+        {
+          item.roles = rolecode
+        }
+        
+      }
+      //end
+
       const queryObj = [
         {
           key: "roles",
@@ -103,15 +268,19 @@ class Footer extends React.Component {
             label: name
           };
         });
-    }
+    }}
+    
 
     this.setState({ open: true, data: item, employeeList });
   };
 
   onClose = () => {
+    var {state} = this.props;
     this.setState({
       open: false
     });
+    this.setState({ allEmployeeList : 1 });
+    set(state, "form.workflow.files.wfDocuments", "")
   };
 
   renewTradelicence = async (financialYear, tenantId) => {
@@ -242,7 +411,84 @@ class Footer extends React.Component {
       },
       menu: downloadMenu
     };
-    return (
+    if (dataPath ==="services" && data.length != 0){
+      return (
+        <div className="apply-wizard-footer" id="custom-atoms-footer">
+          {!isEmpty(downloadMenu) && (
+            <Container>
+              <Item xs={12} sm={12} className="wf-footer-container">
+                <MenuButton data={buttonItems} />
+              </Item>
+            </Container>
+          )} 
+                 
+          <HCActionDialog
+            open={open}
+            onClose={this.onClose}
+            dialogData={data}
+            dropDownData={employeeList}
+            handleFieldChange={handleFieldChange}
+            onButtonClick={onDialogButtonClick}
+            dataPath={dataPath}
+            state = {state}
+            currentState = {this.state.allEmployeeList}
+          />
+  
+  
+          
+        </div>
+      );}
+      else if ((dataPath === "indents" || dataPath === "materialIssues" || dataPath === "purchaseOrders" || dataPath === "materialReceipt" || dataPath === "transferInwards") && data.length != 0) {
+      return (
+        <div className="apply-wizard-footer" id="custom-atoms-footer">
+          {!isEmpty(downloadMenu) && (
+            <Container>
+              <Item xs={12} sm={12} className="wf-footer-container">
+                <MenuButton data={buttonItems} />
+              </Item>
+            </Container>
+          )}
+
+          <StoreAssetActionDialog
+            open={open}
+            onClose={this.onClose}
+            dialogData={data}
+            dropDownData={employeeList}
+            handleFieldChange={handleFieldChange}
+            onButtonClick={onDialogButtonClick}
+            dataPath={dataPath}
+            state={state}
+          />
+
+
+
+        </div>
+      );
+    }
+	else if (dataPath === "NulmSusvRequest" || dataPath ==="NulmSusvRenewRequest"  && data.length != 0) {
+      return (
+        <div className="apply-wizard-footer" id="custom-atoms-footer">
+          {!isEmpty(downloadMenu) && (
+            <Container>
+              <Item xs={12} sm={12} className="wf-footer-container">
+                <MenuButton data={buttonItems} />
+              </Item>
+            </Container>
+          )}
+          <NulmActionDialog
+            open={open}
+            onClose={this.onClose}
+            dialogData={data}
+            dropDownData={employeeList}
+            handleFieldChange={handleFieldChange}
+            onButtonClick={onDialogButtonClick}
+            dataPath={dataPath}
+            state={state}
+          />
+        </div>
+      );
+    }
+    else {return (
       <div className="apply-wizard-footer" id="custom-atoms-footer">
         {!isEmpty(downloadMenu) && (
           <Container>
@@ -261,7 +507,7 @@ class Footer extends React.Component {
           dataPath={dataPath}
         />
       </div>
-    );
+    );}
   }
 }
 

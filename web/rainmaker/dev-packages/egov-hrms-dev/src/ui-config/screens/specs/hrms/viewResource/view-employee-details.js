@@ -87,6 +87,13 @@ export const getEmployeeDetailsView = (isReview = true) => {
     }),
     break1: getBreak(),
     viewOne: getCommonContainer({
+      appellation: getLabelWithValue(
+        {
+          labelName: "Appellation",
+          labelKey: "HR_APPELLATION_LABEL"
+        },
+        { jsonPath: "Employee[0].user.salutation" }
+      ),
       reviewName: getLabelWithValue(
         {
           labelName: "Name",
@@ -154,6 +161,12 @@ export const getEmployeeDetailsView = (isReview = true) => {
         { labelName: "Date of Appointment", labelKey: "HR_APPT_DATE_LABEL" },
         {
           jsonPath: "Employee[0].dateOfAppointment"
+        }
+      ),
+      dateOfSuperannuation: getLabelWithValue(
+        { labelName: "Date of Superannuation", labelKey: "HR_SUPERANNUATION_DATE_LABEL" },
+        {
+          jsonPath: "Employee[0].dateOfSuperannuation"
         }
       ),
       reviewEmpType: getLabelWithValue(

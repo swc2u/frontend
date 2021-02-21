@@ -3,12 +3,26 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { ifUserRoleExists } from "../../utils";
+import { downloadApp } from '../../../../../ui-utils/commons';
+import get from 'lodash/get';
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 const getCommonApplyFooter = children => {
   return {
     uiFramework: "custom-atoms",
     componentPath: "Div",
     props: {
       className: "apply-wizard-footer"
+    },
+    children
+  };
+};
+
+const getCommonDownloadPrint = children => {
+  return {
+    uiFramework: "custom-atoms",
+    componentPath: "Div",
+    props: {
+      style: { textAlign: "right", display: "flex" }
     },
     children
   };
@@ -32,13 +46,10 @@ const generatePdfAndDownload = (
     )
   );
   var iframe = document.createElement("iframe");
-  iframe.src =
-    document.location.origin +
-    window.basename +
-    `/tradelicence/search-preview?applicationNumber=${applicationNumber}&tenantId=${tenant}`;
+  
   var hasIframeLoaded = false,
     hasEstimateLoaded = false;
-  iframe.onload = function(e) {
+  iframe.onload = function (e) {
     hasIframeLoaded = true;
     if (hasEstimateLoaded) {
       downloadConfirmationForm();
@@ -57,7 +68,7 @@ const generatePdfAndDownload = (
     let target = iframe.contentDocument.querySelector(
       "#material-ui-tradeReviewDetails"
     );
-    html2canvas(target).then(function(canvas) {
+    html2canvas(target).then(function (canvas) {
       document.querySelector("#custom-atoms-iframeForPdf").removeChild(iframe);
       var data = canvas.toDataURL("image/jpeg", 1);
       var imgWidth = 200;
@@ -118,6 +129,89 @@ const generatePdfAndDownload = (
   // });
 };
 
+const handleAppDownloadAndPrint = (state, action) => {
+  const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+  const applicationNumberWater = getQueryArg(window.location.href, "applicationNumberWater");
+  const applicationNumberSewerage = getQueryArg(window.location.href, "applicationNumberSewerage");
+  const { WaterConnection, DocumentsData, SewerageConnection } = state.screenConfiguration.preparedFinalObject;
+  let filteredDocs = DocumentsData;
+  filteredDocs.map(val => {
+    if (val.title.includes("WS_OWNER.IDENTITYPROOF.")) { val.title = "WS_OWNER.IDENTITYPROOF"; }
+    else if (val.title.includes("WS_OWNER.ADDRESSPROOF.")) { val.title = "WS_OWNER.ADDRESSPROOF"; }
+  });
+  if (applicationNumberWater && applicationNumberSewerage) {
+    WaterConnection[0].pdfDocuments = filteredDocs;
+    SewerageConnection[0].pdfDocuments = filteredDocs;
+    downloadApp(WaterConnection, "application", action);
+    downloadApp(SewerageConnection, "application", action);
+  } else if (applicationNumber) {
+    if (applicationNumber.includes("WS")) {
+      WaterConnection[0].pdfDocuments = filteredDocs;
+      downloadApp(WaterConnection, "application", action);
+    } else if (applicationNumber.includes("SW")) {
+      SewerageConnection[0].pdfDocuments = filteredDocs;
+      downloadApp(SewerageConnection, "application", action);
+    }
+  }
+}
+
+
+
+export const DownloadAndPrint = (state,
+  dispatch,
+  applicationNumber,
+  tenant) => {
+  return getCommonDownloadPrint({
+    downloadFormButton: {
+      componentPath: "Button",
+      props: {
+        variant: "outlined",
+        color: "primary",
+        style: {
+          minWidth: "160px",
+          height: "48px",
+          marginRight: "16px"
+        }
+      },
+      children: {
+        downloadFormButtonLabel: getLabel({
+          labelName: "DOWNLOAD CONFIRMATION FORM",
+          labelKey: "WS_COMMON_BUTTON_DOWNLOAD"
+          // labelKey: "WS_APPLICATION_BUTTON_DOWN_CONF"
+        })
+      },
+      onClickDefination: {
+        action: "condition",
+        callBack: () => { handleAppDownloadAndPrint(state, "download") }
+      }
+    },
+    printFormButton: {
+      componentPath: "Button",
+      props: {
+        variant: "outlined",
+        color: "primary",
+        style: {
+          minWidth: "160px",
+          height: "48px",
+          marginRight: "16px"
+        }
+      },
+      children: {
+        printFormButtonLabel: getLabel({
+          labelName: "PRINT CONFIRMATION FORM",
+          labelKey: "WS_COMMON_BUTTON_PRINT"
+          // labelKey: "WS_APPLICATION_BUTTON_PRINT_CONF"
+        })
+      },
+      onClickDefination: {
+        action: "condition",
+        callBack: () => { handleAppDownloadAndPrint(state, "print") }
+      }
+    }
+  })
+
+}
+
 export const applicationSuccessFooter = (
   state,
   dispatch,
@@ -130,21 +224,20 @@ export const applicationSuccessFooter = (
   /* Mseva 2.0 changes */
   const redirectionURL = roleExists ? "/" : "/inbox";
   return getCommonApplyFooter({
-
     gotoHome: {
       componentPath: "Button",
       props: {
-        variant: "outlined",
+        variant: "contained",
         color: "primary",
         style: {
-          minWidth: "290px",
+          minWidth: "15%",
           height: "48px",
           marginRight: "16px"
         }
       },
       children: {
         downloadReceiptButtonLabel: getLabel({
-          labelName: "GO TO HOME",
+          labelName: "HOME",
           labelKey: "WS_COMMON_BUTTON_HOME"
         })
       },
@@ -153,122 +246,5 @@ export const applicationSuccessFooter = (
         path: redirectionURL
       }
     },
-    downloadFormButton: {
-      componentPath: "Button",
-      props: {
-        variant: "outlined",
-        color: "primary",
-        style: {
-          minWidth: "290px",
-          height: "48px",
-          marginRight: "16px"
-        }
-      },
-      children: {
-        downloadFormButtonLabel: getLabel({
-          labelName: "DOWNLOAD CONFIRMATION FORM",
-          labelKey:"WS_COMMON_BUTTON_DOWNLOAD"
-          // labelKey: "WS_APPLICATION_BUTTON_DOWN_CONF"
-        })
-      },
-      onClickDefination: {
-        action: "condition",
-        callBack: () => {
-          generatePdfAndDownload(
-            state,
-            dispatch,
-            "download",
-            applicationNumber,
-            tenant
-          );
-        }
-      }
-    },
-    printFormButton: {
-      componentPath: "Button",
-      props: {
-        variant: "outlined",
-        color: "primary",
-        style: {
-          minWidth: "290px",
-          height: "48px",
-          marginRight: "16px"
-        }
-      },
-      children: {
-        printFormButtonLabel: getLabel({
-          labelName: "PRINT CONFIRMATION FORM",
-          labelKey:"WS_COMMON_BUTTON_PRINT"
-          // labelKey: "WS_APPLICATION_BUTTON_PRINT_CONF"
-        })
-      },
-      onClickDefination: {
-        action: "condition",
-        callBack: () => {
-          generatePdfAndDownload(
-            state,
-            dispatch,
-            "print",
-            applicationNumber,
-            tenant
-          );
-        }
-      }
-    }
-
-    // collectPaymentButton: {
-    //   componentPath: "Button",
-    //   props: {
-    //     variant: "contained",
-    //     color: "primary",
-    //     style: {
-    //       minWidth: "200px",
-    //       height: "48px",
-    //       marginRight: "40px"
-    //     }
-    //   },
-    //   children: {
-    //     collectPaymentButtonLabel: getLabel({
-    //       labelName: "COLLECT PAYMENT",
-    //       labelKey: "TL_COLLECT_PAYMENT"
-    //     })
-    //   },
-    //   onClickDefination: {
-    //     action: "page_change",
-    //     path: `/egov-ui-framework/tradelicence/pay?applicationNumber=${applicationNumber}&tenantId=${tenant}&businessService=TL`
-    //   },
-    //   roleDefination: {
-    //     rolePath: "user-info.roles",
-    //     roles: ["TL_CEMP"]
-    //   }
-    // },
-    // proceedToPay: {
-    //   componentPath: "Button",
-    //   props: {
-    //     variant: "contained",
-    //     color: "primary",
-    //     style: {
-    //       minWidth: "200px",
-    //       height: "48px",
-    //       marginRight: "40px"
-    //     }
-    //   },
-    //   children: {
-    //     collectPaymentButtonLabel: getLabel({
-    //       labelName: "PROCEED TO PAYMENT",
-    //       labelKey: "TL_PROCEED_PAYMENT"
-    //     })
-    //   },
-    //   onClickDefination: {
-    //     action: "page_change",
-    //     path: `/tradelicense-citizen/pay?applicationNumber=${applicationNumber}&tenantId=${tenant}&businessService=TL`
-    //   },
-    //   roleDefination: {
-    //     rolePath: "user-info.roles",
-    //     action: "PAY",
-    //     roles: ["TL_CEMP"]
-    //   }
-    // }
-
   });
 };

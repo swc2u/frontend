@@ -2,8 +2,8 @@ import {
   getLabel,
   dispatchMultipleFieldChangeAction
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { download } from "egov-common/ui-utils/commons";
-import { applyTradeLicense,getNextFinancialYearForRenewal} from "../../../../../ui-utils/commons";
+import store from "redux/store";
+import { applyTradeLicense,getNextFinancialYearForRenewal, download, organizeLicenseData, getSearchResults } from "../../../../../ui-utils/commons";
 import {
   getButtonVisibility,
   getCommonApplyFooter,
@@ -13,35 +13,59 @@ import {
   setOwnerShipDropDownFieldChange,
   createEstimateData,
   validateFields,
+  ifUserRoleExists,
   downloadAcknowledgementForm,
-  downloadCertificateForm
+  downloadCertificateForm,
+  prepareDocumentTypeObj,
+  getCurrentFinancialYear
 } from "../../utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import { getQueryArg, getFileUrlFromAPI, getFileUrl } from "egov-ui-framework/ui-utils/commons";
 import { httpRequest } from "egov-ui-framework/ui-utils/api";
 import {
   toggleSnackbar,
   prepareFinalObject
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import "./index.css";
+import generateReceipt from "../../utils/receiptPdf";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import get from "lodash/get";
 import set from "lodash/set";
 import some from "lodash/some";
+import { documentList } from "./documentList";
+import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
+import { handleScreenConfigurationFieldChange as handleField,toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { LICENSE_DHOBI_GHAT, RENEWAL_RENT_DEED_SHOP, RC_PEDAL_RICKSHAW_LOADING_REHRI, DL_PEDAL_RICKSHAW_LOADING_REHRI } from "../../../../../ui-constants"
+import { getReviewDetails } from "./review-trade";
+
+const userInfo = JSON.parse(getUserInfo());
+
+const DEFAULT_STEP = -1;
+const TRADE_DETAILS_STEP = 0;
+const DOCUMENT_UPLOAD_STEP = 1;
+const SUMMARY_STEP = 2;
+
+const tradeLicenseType = getQueryArg(window.location.href, "tlType");
 
 const moveToSuccess = (LicenseData, dispatch) => {
   const applicationNo = get(LicenseData, "applicationNumber");
   const tenantId = get(LicenseData, "tenantId");
   const financialYear = get(LicenseData, "financialYear");
-  const purpose = "apply";
+  let purpose = "apply";
   const status = "success";
+  const oldLicenseNo = get(LicenseData, "oldLicenseNumber")
+
+  if (!!oldLicenseNo) {
+    purpose = "renewApply"
+  }
   dispatch(
     setRoute(
       `/tradelicence/acknowledgement?purpose=${purpose}&status=${status}&applicationNumber=${applicationNo}&FY=${financialYear}&tenantId=${tenantId}`
     )
   );
 };
+
 const editRenewalMoveToSuccess = (LicenseData, dispatch) => {
   const applicationNo = get(LicenseData, "applicationNumber");
   const tenantId = get(LicenseData, "tenantId");
@@ -56,311 +80,325 @@ const editRenewalMoveToSuccess = (LicenseData, dispatch) => {
   );
 };
 
+
 export const generatePdfFromDiv = (action, applicationNumber) => {
   let target = document.querySelector("#custom-atoms-div");
   html2canvas(target, {
-    onclone: function (clonedDoc) {
-      // clonedDoc.getElementById("custom-atoms-footer")[
-      //   "data-html2canvas-ignore"
-      // ] = "true";
-      clonedDoc.getElementById("custom-atoms-footer").style.display = "none";
-    }
+      onclone: function (clonedDoc) {
+          // clonedDoc.getElementById("custom-atoms-footer")[
+          //   "data-html2canvas-ignore"
+          // ] = "true";
+          clonedDoc.getElementById("custom-atoms-footer").style.display = "none";
+      }
   }).then(canvas => {
-    var data = canvas.toDataURL("image/jpeg", 1);
-    var imgWidth = 200;
-    var pageHeight = 295;
-    var imgHeight = (canvas.height * imgWidth) / canvas.width;
-    var heightLeft = imgHeight;
-    var doc = new jsPDF("p", "mm");
-    var position = 0;
+      var data = canvas.toDataURL("image/jpeg", 1);
+      var imgWidth = 200;
+      var pageHeight = 295;
+      var imgHeight = (canvas.height * imgWidth) / canvas.width;
+      var heightLeft = imgHeight;
+      var doc = new jsPDF("p", "mm");
+      var position = 0;
 
-    doc.addImage(data, "PNG", 5, 5 + position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      doc.addPage();
       doc.addImage(data, "PNG", 5, 5 + position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
-    }
-    if (action === "download") {
-      doc.save(`preview-${applicationNumber}.pdf`);
-    } else if (action === "print") {
-      doc.autoPrint();
-      window.open(doc.output("bloburl"), "_blank");
-    }
+
+      while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          doc.addPage();
+          doc.addImage(data, "PNG", 5, 5 + position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+      }
+      if (action === "download") {
+          doc.save(`preview-${applicationNumber}.pdf`);
+      } else if (action === "print") {
+          doc.autoPrint();
+          window.open(doc.output("bloburl"), "_blank");
+      }
   });
 };
 
+const setDocumentTypes = (state, code) => {
+  const tradeType = get(state.screenConfiguration.preparedFinalObject, "applyScreenMdmsData.TradeLicense.MdmsTradeType");
+  let applicationType = get(
+    state.screenConfiguration.screenConfig["apply"],
+    "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.detailsContainer.children.applicationType.props.value",
+    "New"
+  );
+  const documentTypes = tradeType.find(item => item.code === code)
+  .applicationDocument.find(item => item.applicationType === applicationType)
+  .documentList;
+  return documentTypes;
+}
+
 export const callBackForNext = async (state, dispatch) => {
   let activeStep = get(
-    state.screenConfiguration.screenConfig["apply"],
-    "components.div.children.stepper.props.activeStep",
-    0
+      state.screenConfiguration.screenConfig["apply"],
+      "components.div.children.stepper.props.activeStep",
+      0
   );
+  // console.log(activeStep);
   let isFormValid = true;
   let hasFieldToaster = true;
-  if (activeStep === 0) {
-    const data = get(state.screenConfiguration, "preparedFinalObject");
-    setOwnerShipDropDownFieldChange(state, dispatch, data);
+  let ageFieldError = false;
+  let businessStartDateFieldError = false;
+  store.dispatch(toggleSpinner());
+  if (activeStep === TRADE_DETAILS_STEP) {
+      const data = get(state.screenConfiguration, "preparedFinalObject");
+      // setOwnerShipDropDownFieldChange(state, dispatch, data);
 
-    const isTradeDetailsValid = validateFields(
-      "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.tradeDetailsConatiner.children",
-      state,
-      dispatch
-    );
-    const isTradeLocationValid = validateFields(
-      "components.div.children.formwizardFirstStep.children.tradeLocationDetails.children.cardContent.children.tradeDetailsConatiner.children",
-      state,
-      dispatch
-    );
-    let accessoriesJsonPath =
-      "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.accessoriesCard.props.items";
-    let accessories = get(
-      state.screenConfiguration.screenConfig.apply,
-      accessoriesJsonPath,
-      []
-    );
-    let isAccessoriesValid = true;
-    for (var i = 0; i < accessories.length; i++) {
-      if (
-        (accessories[i].isDeleted === undefined ||
-          accessories[i].isDeleted !== false) &&
-        !validateFields(
-          `${accessoriesJsonPath}[${i}].item${i}.children.cardContent.children.accessoriesCardContainer.children`,
-          state,
-          dispatch
-        )
-      )
-        isAccessoriesValid = false;
-    }
-
-    let tradeUnitJsonPath =
-      "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.tradeUnitCard.props.items";
-    let tradeUnits = get(
-      state.screenConfiguration.screenConfig.apply,
-      tradeUnitJsonPath,
-      []
-    );
-    let isTradeUnitValid = true;
-
-    for (var j = 0; j < tradeUnits.length; j++) {
-      if (
-        (tradeUnits[j].isDeleted === undefined ||
-          tradeUnits[j].isDeleted !== false) &&
-        !validateFields(
-          `${tradeUnitJsonPath}[${j}].item${j}.children.cardContent.children.tradeUnitCardContainer.children`,
-          state,
-          dispatch
-        )
-      )
-        isTradeUnitValid = false;
-    }
-    if (
-      !isTradeDetailsValid ||
-      !isTradeLocationValid ||
-      !isAccessoriesValid ||
-      !isTradeUnitValid
-    ) {
-      isFormValid = false;
-    }
-  }
-
-  if (activeStep === 1) {
-    await getDocList(state, dispatch);
-
-    let isOwnerShipValid = validateFields(
-      "components.div.children.formwizardSecondStep.children.tradeOwnerDetails.children.cardContent.children.ownershipType.children",
-      state,
-      dispatch
-    );
-    let ownership = get(
-      state.screenConfiguration.preparedFinalObject,
-      "LicensesTemp[0].tradeLicenseDetail.ownerShipCategory",
-      "INDIVIDUAL"
-    );
-    if (ownership === "INDIVIDUAL") {
-      let ownersJsonPath =
-        "components.div.children.formwizardSecondStep.children.tradeOwnerDetails.children.cardContent.children.OwnerInfoCard.props.items";
-      let owners = get(
-        state.screenConfiguration.screenConfig.apply,
-        ownersJsonPath,
-        []
+      // Set prepopulated mobile number field after screen init
+      let mobileNumber = get(
+        state.screenConfiguration.screenConfig["apply"],
+        "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.detailsContainer.children.mobileNumber.props.value",
+        userInfo.userName
       );
-      for (var k = 0; k < owners.length; k++) {
-        if (
-          (owners[k].isDeleted === undefined ||
-            owners[k].isDeleted !== false) &&
-          !validateFields(
-            `${ownersJsonPath}[${k}].item${k}.children.cardContent.children.tradeUnitCardContainer.children`,
-            state,
-            dispatch
-          )
-        )
-          isFormValid = false;
-      }
-    } else {
-      let ownersJsonPath =
-        "components.div.children.formwizardSecondStep.children.tradeOwnerDetails.children.cardContent.children.ownerInfoInstitutional.children.cardContent.children.tradeUnitCardContainer.children";
-      if (!validateFields(ownersJsonPath, state, dispatch)) isFormValid = false;
-    }
-
-    // check for multiple owners
-    if (
-      get(
+      const licenseType = get(
         state.screenConfiguration.preparedFinalObject,
-        "Licenses[0].tradeLicenseDetail.subOwnerShipCategory"
-      ) === "INDIVIDUAL.MULTIPLEOWNERS" &&
-      get(
-        state.screenConfiguration.preparedFinalObject,
-        "Licenses[0].tradeLicenseDetail.owners"
-      ).length <= 1
-    ) {
+        "Licenses[0].businessService",
+        ""
+      )
       dispatch(
-        toggleSnackbar(
-          true,
-          {
-            labelName: "Please add multiple owners !",
-            labelKey: "ERR_ADD_MULTIPLE_OWNERS"
-          },
-          "error"
+        handleField(
+            "apply",
+            "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.detailsContainer.children.mobileNumber",
+            "props.value",
+            mobileNumber
         )
       );
-      return false; // to show the above message
-    }
-    if (isFormValid && isOwnerShipValid) {
-      isFormValid = await applyTradeLicense(state, dispatch, activeStep);
-      if (!isFormValid) {
-        hasFieldToaster = false;
+
+      if (userInfo.emailId) {
+        // Set prepopulated email id field after screen init
+        let emailId = get(
+          state.screenConfiguration.screenConfig["apply"],
+          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.detailsContainer.children.emailAddress.props.value",
+          userInfo.emailId
+        );
+        dispatch(
+          handleField(
+              "apply",
+              "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.detailsContainer.children.emailAddress",
+              "props.value",
+              emailId
+          )
+        );
       }
-    } else {
-      isFormValid = false;
-    }
-  }
-  if (activeStep === 2) {
-    const LicenseData = get(
-      state.screenConfiguration.preparedFinalObject,
-      "Licenses[0]",
-      {}
-    );
 
-    get(LicenseData, "tradeLicenseDetail.subOwnerShipCategory") &&
-      get(LicenseData, "tradeLicenseDetail.subOwnerShipCategory").split(
-        "."
-      )[0] === "INDIVIDUAL"
-      ? setMultiOwnerForApply(state, true)
-      : setMultiOwnerForApply(state, false);
+      const isTradeDetailsValid = validateFields(
+          "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.detailsContainer.children",
+          state,
+          dispatch
+      );
+      const isOwnerDetailsValid = validateFields(
+        "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.detailsContainer.children",
+          state,
+          dispatch
+      )
+      if (!!isTradeDetailsValid && !!isOwnerDetailsValid) {
+          const age = get(state.screenConfiguration.preparedFinalObject, "Licenses[0].tradeLicenseDetail.owners[0].age");
+          let tradeType = get(state.screenConfiguration.preparedFinalObject, "Licenses[0].businessService");
+          let businessStartDate = get(state.screenConfiguration.preparedFinalObject, "Licenses[0].tradeLicenseDetail.additionalDetail.businessStartDate");
+          businessStartDate = new Date(businessStartDate);
+          let todaysDate = new Date();
 
-    if (get(LicenseData, "licenseType")) {
-      setValidToFromVisibilityForApply(state, get(LicenseData, "licenseType"));
-    }
+          if(age < 18 && tradeType != "CTL.OLD_BOOK_MARKET") {
+            isFormValid = false;
+            ageFieldError = true
+          } 
+          else if (businessStartDate > todaysDate) {
+            isFormValid = false;
+            businessStartDateFieldError = true;
+          }
+           else {
+            let isRenewable;
+            const applicationType = get(state.screenConfiguration.preparedFinalObject, "Licenses[0].applicationType");
+            if(applicationType === "Renew") {
+            const oldLicenseNumber = get(state.screenConfiguration.preparedFinalObject, "Licenses[0].oldLicenseNumber")
+            const appliationNumber = get(state.screenConfiguration.preparedFinalObject, "Licenses[0].applicationNumber")
+            const tenantId = getQueryArg(window.location.href, "tenantId");
+            const queryObj = [
+              {
+                key: "tenantId",
+                value: tenantId
+              },
+              {
+                key:"oldLicenseNumber",
+                value: oldLicenseNumber
+              }
+            ]
 
-    const uploadedDocData = get(
-      state.screenConfiguration.preparedFinalObject,
-      "Licenses[0].tradeLicenseDetail.applicationDocuments",
-      []
-    );
-
-    const uploadedTempDocData = get(
-      state.screenConfiguration.preparedFinalObject,
-      "LicensesTemp[0].applicationDocuments",
-      []
-    );
-    for (var y = 0; y < uploadedTempDocData.length; y++) {
-      if (
-        uploadedTempDocData[y].required &&
-        !some(uploadedDocData, { documentType: uploadedTempDocData[y].name })
-      ) {
+          const applicationsData = await getSearchResults(queryObj);
+          isRenewable = !!applicationsData && !!applicationsData.Licenses && applicationsData.Licenses.filter(item => (item.status !== "REJECTED" && item.status !== "APPROVED") && (!!appliationNumber ? appliationNumber !==item.applicationNumber : true));
+          isRenewable = !isRenewable.length
+          } else {
+            isRenewable = true
+          }
+          if(isRenewable) {
+            await getDocList(state, dispatch, licenseType);
+            getReviewDetails(state, dispatch, "apply", "components.div.children.formwizardFourthStep.children.tradeReviewDetails.children.cardContent.children.reviewTradeDetails.children.cardContent.children.viewOne", "components.div.children.formwizardFourthStep.children.tradeReviewDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewOne", true)
+            const response = await applyTradeLicense(state, dispatch, activeStep);
+            if(!!response) {
+              isFormValid = true;
+              dispatch(
+                handleField(
+                  "apply",
+                  "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.detailsContainer.children.licenseType.props",
+                  "disabled",
+                  true
+                )
+              );
+              dispatch(
+                handleField(
+                  "apply",
+                  "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.detailsContainer.children.serviceType.props",
+                  "disabled",
+                  true
+                )
+              );
+            } else {
+              return
+              // isFormValid = false;
+            }
+          } else {
+            dispatch(
+              toggleSnackbar(
+                true,
+                { labelName: "An Application with same old licence number is already in progress.", labelKey: "TL_APPLICATION_ALREADY_IN_PROGRESS" },
+                "error"
+              )
+            );
+            return;
+          }
+          }
+      }
+      else {
         isFormValid = false;
       }
-    }
-
-    if (isFormValid) {
-      if (getQueryArg(window.location.href, "action") === "edit") {
-        //EDIT FLOW
-        const businessId = getQueryArg(
-          window.location.href,
-          "applicationNumber"
-        );
-        const tenantId = getQueryArg(window.location.href, "tenantId");
-        dispatch(
-          setRoute(
-            `/tradelicence/search-preview?applicationNumber=${businessId}&tenantId=${tenantId}&edited=true`
-          )
-        );
-        const updateMessage = {
-          labelName: "Rates will be updated on submission",
-          labelKey: "TL_COMMON_EDIT_UPDATE_MESSAGE"
-        };
-        dispatch(toggleSnackbar(true, updateMessage, "info"));
-      }
-      const reviewDocData =
-        uploadedDocData &&
-        uploadedDocData.map(item => {
-          return {
-            title: `TL_${item.documentType}`,
-            link: item.fileUrl && item.fileUrl.split(",")[0],
-            linkText: "View",
-            name: item.fileName
-          };
-        });
-      createEstimateData(
-        LicenseData,
-        "LicensesTemp[0].estimateCardData",
-        dispatch
-      ); //get bill and populate estimate card
-      dispatch(
-        prepareFinalObject("LicensesTemp[0].reviewDocData", reviewDocData)
+  }
+  if (activeStep === DOCUMENT_UPLOAD_STEP) {
+      const LicenseData = get(
+          state.screenConfiguration.preparedFinalObject,
+          "Licenses[0]",
+          {}
       );
-    }
-  }
-  if (activeStep === 3) {
-    const LicenseData = get(
-      state.screenConfiguration.preparedFinalObject,
-      "Licenses[0]"
-    );
-    isFormValid = await applyTradeLicense(state, dispatch,activeStep);
-    if (isFormValid) {
-      if (getQueryArg(window.location.href, "action") === "EDITRENEWAL")
-      editRenewalMoveToSuccess(LicenseData, dispatch);
-      else
-      moveToSuccess(LicenseData, dispatch);
-    }
-  }
-  if (activeStep !== 3) {
-    if (isFormValid) {
-      changeStep(state, dispatch);
-    } else if (hasFieldToaster) {
-      let errorMessage = {
-        labelName:
-          "Please fill all mandatory fields and upload the documents !",
-        labelKey: "ERR_FILL_MANDATORY_FIELDS_UPLOAD_DOCS"
-      };
-      switch (activeStep) {
-        case 0:
-          errorMessage = {
-            labelName:
-              "Please fill all mandatory fields for Trade Details, then do next !",
-            labelKey: "ERR_FILL_TRADE_MANDATORY_FIELDS"
-          };
-          break;
-        case 1:
-          errorMessage = {
-            labelName:
-              "Please fill all mandatory fields for Owner Details, then do next !",
-            labelKey: "ERR_FILL_OWNERS_MANDATORY_FIELDS"
-          };
-          break;
-        case 2:
-          errorMessage = {
-            labelName: "Please upload all the required documents !",
-            labelKey: "ERR_UPLOAD_REQUIRED_DOCUMENTS"
-          };
-          break;
+      const uploadedDocData = get(
+          state.screenConfiguration.preparedFinalObject,
+          "Licenses[0].tradeLicenseDetail.applicationDocuments",
+          []
+      );
+
+      const uploadedTempDocData = get(
+          state.screenConfiguration.preparedFinalObject,
+          "LicensesTemp[0].applicationDocuments",
+          []
+      );
+
+      for (var y = 0; y < uploadedTempDocData.length; y++) {
+          if (
+              uploadedTempDocData[y].required &&
+              !some(uploadedDocData, { documentType: uploadedTempDocData[y].name })
+          ) {
+              isFormValid = false;
+          }
       }
-      dispatch(toggleSnackbar(true, errorMessage, "warning"));
-    }
+
+      if (isFormValid) {
+          if (getQueryArg(window.location.href, "action") === "edit") {
+              //EDIT FLOW
+              const businessId = getQueryArg(
+                  window.location.href,
+                  "applicationNumber"
+              );
+              const tenantId = getQueryArg(window.location.href, "tenantId");
+              dispatch(
+                  setRoute(
+                      `/tradelicence/search-preview?applicationNumber=${businessId}&tenantId=${tenantId}&edited=true`
+                  )
+              );
+              const updateMessage = {
+                  labelName: "Rates will be updated on submission",
+                  labelKey: "TL_COMMON_EDIT_UPDATE_MESSAGE"
+              };
+              dispatch(toggleSnackbar(true, updateMessage, "info"));
+          }
+          const reviewDocData =
+              uploadedDocData &&
+              uploadedDocData.map(item => {
+                  return {
+                      title: `TL_${item.documentType}`,
+                      link: item.fileUrl && item.fileUrl.split(",")[0],
+                      linkText: "Download",
+                      name: item.fileName
+                  };
+              });
+          const response = await applyTradeLicense(state, dispatch, activeStep);
+          if(!!response) {
+            createEstimateData(
+                LicenseData,
+                "LicensesTemp[0].estimateCardData",
+                dispatch
+            ); //get bill and populate estimate card
+            dispatch(
+                prepareFinalObject("LicensesTemp[0].reviewDocData", reviewDocData)
+            );
+          } else {
+            return
+          }
+      }
   }
+  if (activeStep === SUMMARY_STEP) {
+      const LicenseData = get(
+          state.screenConfiguration.preparedFinalObject,
+          "Licenses[0]"
+      );
+      isFormValid = await applyTradeLicense(state, dispatch, activeStep);
+      if (isFormValid) {
+          moveToSuccess(LicenseData, dispatch);
+      }
+  }
+  if (activeStep !== SUMMARY_STEP) {
+      if (isFormValid) {
+          changeStep(state, dispatch);
+      } else if (hasFieldToaster) {
+          let errorMessage = {
+              labelName:
+                  "Please fill all mandatory fields and upload the documents !",
+              labelKey: "ERR_FILL_MANDATORY_FIELDS_UPLOAD_DOCS"
+          };
+          if (!!businessStartDateFieldError) {
+            errorMessage = {
+              labelName:
+                  "Business start date should not be greater than today's date",
+              labelKey: "ERR_BUSINESS_START_DATE_FIELD"
+            }
+          }
+          else if(!!ageFieldError) {
+            errorMessage = {
+              labelName:
+                  "Age should not be less than 18",
+              labelKey: "ERR_AGE_FIELD"
+          }
+          } 
+          else {
+            switch (activeStep) {
+                case TRADE_DETAILS_STEP:
+                    errorMessage = {
+                        labelName:
+                            "Please fill all mandatory fields for Trade Details, then do next !",
+                        labelKey: "ERR_FILL_TRADE_MANDATORY_FIELDS"
+                    };
+                    break;
+                case DOCUMENT_UPLOAD_STEP:
+                    errorMessage = {
+                        labelName: "Please upload all the required documents !",
+                        labelKey: "ERR_UPLOAD_REQUIRED_DOCUMENTS"
+                    };
+                    break;
+            }
+          }
+          dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      }
+  }
+  store.dispatch(toggleSpinner());
 };
 
 export const changeStep = (
@@ -370,49 +408,49 @@ export const changeStep = (
   defaultActiveStep = -1
 ) => {
   let activeStep = get(
-    state.screenConfiguration.screenConfig["apply"],
-    "components.div.children.stepper.props.activeStep",
-    0
+      state.screenConfiguration.screenConfig["apply"],
+      "components.div.children.stepper.props.activeStep",
+      0
   );
-  if (defaultActiveStep === -1) {
-    if (activeStep === 2 && mode === "next") {
-      const isDocsUploaded = get(
-        state.screenConfiguration.preparedFinalObject,
-        "LicensesTemp[0].reviewDocData",
-        null
-      );
-      activeStep = isDocsUploaded ? 3 : 2;
-    } else {
-        activeStep = mode === "next" ? activeStep + 1 : activeStep - 1;
-    }
+  if (defaultActiveStep === DEFAULT_STEP) {
+      if (activeStep === SUMMARY_STEP && mode === "next") {
+          const isDocsUploaded = get(
+              state.screenConfiguration.preparedFinalObject,
+              "LicensesTemp[0].reviewDocData",
+              null
+          );
+          activeStep = isDocsUploaded ? SUMMARY_STEP : DOCUMENT_UPLOAD_STEP;
+      } else {
+          activeStep = mode === "next" ? activeStep + 1 : activeStep - 1;
+      }
   } else {
-    activeStep = defaultActiveStep;
+      activeStep = defaultActiveStep;
   }
 
-  const isPreviousButtonVisible = activeStep > 0 ? true : false;
-  const isNextButtonVisible = activeStep < 3 ? true : false;
-  const isPayButtonVisible = activeStep === 3 ? true : false;
+  const isPreviousButtonVisible = activeStep > TRADE_DETAILS_STEP ? true : false;
+  const isNextButtonVisible = activeStep < SUMMARY_STEP ? true : false;
+  const isPayButtonVisible = activeStep === SUMMARY_STEP ? true : false;
   const actionDefination = [
-    {
-      path: "components.div.children.stepper.props",
-      property: "activeStep",
-      value: activeStep
-    },
-    {
-      path: "components.div.children.footer.children.previousButton",
-      property: "visible",
-      value: isPreviousButtonVisible
-    },
-    {
-      path: "components.div.children.footer.children.nextButton",
-      property: "visible",
-      value: isNextButtonVisible
-    },
-    {
-      path: "components.div.children.footer.children.payButton",
-      property: "visible",
-      value: isPayButtonVisible
-    }
+      {
+          path: "components.div.children.stepper.props",
+          property: "activeStep",
+          value: activeStep
+      },
+      {
+          path: "components.div.children.footer.children.previousButton",
+          property: "visible",
+          value: isPreviousButtonVisible
+      },
+      {
+          path: "components.div.children.footer.children.nextButton",
+          property: "visible",
+          value: isNextButtonVisible
+      },
+      {
+          path: "components.div.children.footer.children.payButton",
+          property: "visible",
+          value: isPayButtonVisible
+      }
   ];
   dispatchMultipleFieldChangeAction("apply", actionDefination, dispatch);
   renderSteps(activeStep, dispatch);
@@ -420,78 +458,78 @@ export const changeStep = (
 
 export const renderSteps = (activeStep, dispatch) => {
   switch (activeStep) {
-    case 0:
-      dispatchMultipleFieldChangeAction(
-        "apply",
-        getActionDefinationForStepper(
-          "components.div.children.formwizardFirstStep"
-        ),
-        dispatch
-      );
-      break;
-    case 1:
-      dispatchMultipleFieldChangeAction(
-        "apply",
-        getActionDefinationForStepper(
-          "components.div.children.formwizardSecondStep"
-        ),
-        dispatch
-      );
-      break;
-    case 2:
-      dispatchMultipleFieldChangeAction(
-        "apply",
-        getActionDefinationForStepper(
-          "components.div.children.formwizardThirdStep"
-        ),
-        dispatch
-      );
-      break;
-    default:
-      dispatchMultipleFieldChangeAction(
-        "apply",
-        getActionDefinationForStepper(
-          "components.div.children.formwizardFourthStep"
-        ),
-        dispatch
-      );
+      case TRADE_DETAILS_STEP:
+          dispatchMultipleFieldChangeAction(
+              "apply",
+              getActionDefinationForStepper(
+                  "components.div.children.formwizardFirstStep"
+              ),
+              dispatch
+          );
+          break;
+      // case 1:
+      //   dispatchMultipleFieldChangeAction(
+      //     "apply",
+      //     getActionDefinationForStepper(
+      //       "components.div.children.formwizardSecondStep"
+      //     ),
+      //     dispatch
+      //   );
+      //   break;
+      case DOCUMENT_UPLOAD_STEP:
+          dispatchMultipleFieldChangeAction(
+              "apply",
+              getActionDefinationForStepper(
+                  "components.div.children.formwizardThirdStep"
+              ),
+              dispatch
+          );
+          break;
+      default:
+          dispatchMultipleFieldChangeAction(
+              "apply",
+              getActionDefinationForStepper(
+                  "components.div.children.formwizardFourthStep"
+              ),
+              dispatch
+          );
   }
 };
 
 export const getActionDefinationForStepper = path => {
   const actionDefination = [
-    {
-      path: "components.div.children.formwizardFirstStep",
-      property: "visible",
-      value: true
-    },
-    {
-      path: "components.div.children.formwizardSecondStep",
-      property: "visible",
-      value: false
-    },
-    {
-      path: "components.div.children.formwizardThirdStep",
-      property: "visible",
-      value: false
-    },
-    {
-      path: "components.div.children.formwizardFourthStep",
-      property: "visible",
-      value: false
-    }
+      {
+          path: "components.div.children.formwizardFirstStep",
+          property: "visible",
+          value: true
+      },
+      // {
+      //   path: "components.div.children.formwizardSecondStep",
+      //   property: "visible",
+      //   value: false
+      // },
+      {
+          path: "components.div.children.formwizardThirdStep",
+          property: "visible",
+          value: false
+      },
+      {
+          path: "components.div.children.formwizardFourthStep",
+          property: "visible",
+          value: false
+      }
   ];
   for (var i = 0; i < actionDefination.length; i++) {
-    actionDefination[i] = {
-      ...actionDefination[i],
-      value: false
-    };
-    if (path === actionDefination[i].path) {
       actionDefination[i] = {
-        ...actionDefination[i],
-        value: true
+          ...actionDefination[i],
+          value: false
       };
-    }
+      if (path === actionDefination[i].path) {
+          actionDefination[i] = {
+              ...actionDefination[i],
+              value: true
+          };
+      }
   }
   return actionDefination;
 };
@@ -595,39 +633,170 @@ export const footer = getCommonApplyFooter({
   }
 });
 
-
-
 export const renewTradelicence  = async (financialYear,state,dispatch) => {
   const licences = get(
     state.screenConfiguration.preparedFinalObject,
     `Licenses`
   );
-
   const tenantId= get(licences[0] , "tenantId");
 
+    const queryObj = [
+      {
+        key: "tenantId",
+        value: tenantId
+      },
+      {
+        key:"oldLicenseNumber",
+        value: licences[0].licenseNumber
+      }
+    ]
+
+  const applicationsData = await getSearchResults(queryObj);
+  const isRenewable = !!applicationsData && !!applicationsData.Licenses && applicationsData.Licenses.filter(item => item.status !== "REJECTED" && item.status !== "APPROVED");
+
+ if(!isRenewable.length) {
   const nextFinancialYear = await getNextFinancialYearForRenewal(financialYear);
+  let applicationDocuments = licences[0].tradeLicenseDetail.applicationDocuments
+  const payload = {
+    applicationType: "Renew",
+    financialYear: nextFinancialYear,
+    licenseType: licences[0].licenseType,
+    action:"INITIATE",
+    workflowCode: licences[0].workflowCode,
+    tradeLicenseDetail: {
+      structureType: licences[0].tradeLicenseDetail.structureType,
+      subOwnerShipCategory: licences[0].tradeLicenseDetail.subOwnerShipCategory,
+      tradeUnits: licences[0].tradeLicenseDetail.tradeUnits,
+      applicationDocuments: null,
+      address: licences[0].tradeLicenseDetail.address,
+      additionalDetail: {...licences[0].tradeLicenseDetail.additionalDetail, oldLicenseValidTo: licences[0].validTo},
+      owners: licences[0].tradeLicenseDetail.owners
+    },
+    tenantId,
+    businessService: licences[0].businessService,
+    oldLicenseNumber: licences[0].licenseNumber
+  }
 
-  const wfCode = "DIRECTRENEWAL";
-  set(licences[0], "action", "INITIATE");
-  set(licences[0], "workflowCode", wfCode);
-  set(licences[0], "applicationType", "RENEWAL");
-  set(licences[0],"financialYear" ,nextFinancialYear);
-
-const response=  await httpRequest("post", "/tl-services/v1/_update", "", [], {
-    Licenses: licences
+  const response = await httpRequest(
+    "post",
+    "/tl-services/v1/_create",
+    "",
+    [],
+    { Licenses: [payload] }
+  );
+  let {Licenses} = response
+  Licenses = organizeLicenseData(Licenses)
+   let fileStoreIds =
+    applicationDocuments &&
+    applicationDocuments.map(item => item.fileStoreId).join(",");
+  const fileUrlPayload =
+    fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+    const updatedDocuments = applicationDocuments.map((item, index) => {
+      return {
+        fileName:
+            (fileUrlPayload &&
+              fileUrlPayload[item.fileStoreId] &&
+              decodeURIComponent(
+                getFileUrl(fileUrlPayload[item.fileStoreId])
+                  .split("?")[0]
+                  .split("/")
+                  .pop()
+                  .slice(13)
+              )) ||
+            `Document - ${index + 1}`,
+          fileStoreId: item.fileStoreId,
+          fileUrl: Object.values(fileUrlPayload)[index],
+          documentType: item.documentType,
+          tenantId: item.tenantId,
+      }
+    })
+   const _licenses = [{...Licenses[0], action: "REINITIATE", tradeLicenseDetail: {...Licenses[0].tradeLicenseDetail, applicationDocuments: updatedDocuments}}]
+  const updateResponse = await httpRequest("post", "/tl-services/v1/_update", "", [], {
+    Licenses: _licenses
   })
-   const renewedapplicationNo = get(
-    response,
-    `Licenses[0].applicationNumber`
-  );
-  const licenseNumber = get(
-    response,
-    `Licenses[0].licenseNumber`
-  );
+  dispatch(prepareFinalObject("Licenses", updateResponse.Licenses));
+  createEstimateData(
+    updateResponse.Licenses[0],
+    "LicensesTemp[0].estimateCardData",
+    dispatch
+);
+const route = `/tradelicense-citizen/apply?applicationNumber=${updateResponse.Licenses[0].applicationNumber}&tenantId=${tenantId}`
+  dispatch(setRoute(route));
   dispatch(
-    setRoute(
-      `/tradelicence/acknowledgement?purpose=EDITRENEWAL&status=success&applicationNumber=${renewedapplicationNo}&licenseNumber=${licenseNumber}&FY=${nextFinancialYear}&tenantId=${tenantId}&action=${wfCode}`
-    ));
+    handleField(
+        "apply",
+        "components.div.children.stepper",
+        "props.activeStep",
+        2
+    )
+);
+dispatch(
+  handleField(
+      "apply",
+      "components.div.children.formwizardFirstStep",
+      "visible",
+      false
+  )
+);
+dispatch(
+  handleField(
+      "apply",
+      "components.div.children.formwizardThirdStep",
+      "visible",
+      false
+  )
+);
+dispatch(
+  handleField(
+      "apply",
+      "components.div.children.formwizardFourthStep",
+      "visible",
+      true
+  )
+);
+dispatch(
+  handleField(
+    "apply",
+    "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.detailsContainer.children.oldLicenseNumber.props",
+    "disabled",
+    true
+  )
+);
+dispatch(
+  handleField(
+    "apply",
+    "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.detailsContainer.children.oldLicenseValidTo.props",
+    "disabled",
+    true
+  )
+);
+
+dispatch(
+  handleField(
+    "apply",
+    "components.div.children.footer.children.nextButton",
+    "visible",
+    false
+  )
+);
+
+dispatch(
+  handleField(
+    "apply",
+    "components.div.children.footer.children.payButton",
+    "visible",
+    true
+  )
+);
+  } else {
+    dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: "An Application is already in progress.", labelKey: "TL_APPLICATION_ALREADY_IN_PROGRESS" },
+        "error"
+      )
+    );
+  }
 };
 
 export const footerReview = (
@@ -637,7 +806,8 @@ export const footerReview = (
   status,
   applicationNumber,
   tenantId,
-  financialYear
+  financialYear,
+  tlType
 ) => {
   /** MenuButton data based on status */
   let licenseNumber= get(state.screenConfiguration.preparedFinalObject.Licenses[0], "licenseNumber")
@@ -690,6 +860,37 @@ export const footerReview = (
                 rolePath: "user-info.roles",
                 roles: ["TL_CEMP", "CITIZEN"]
               }
+            },
+            completeSubmission: {
+              componentPath: "Button",
+              props: {
+                variant: "outlined",
+                color: "primary",
+                style: {
+                  minWidth: "180px",
+                  height: "48px",
+                  marginRight: "16px",
+                  borderRadius: "inherit"
+                }
+              },
+              children: {
+                nextButtonLabel: getLabel({
+                  labelName: "Complete Submission",
+                  labelKey: "TL_COMMON_BUTTON_CITIZEN_COMPLETE_SUBMISSION"
+                })
+              },
+              onClickDefination: {
+                action: "condition",
+                callBack: () => {
+                  // dispatch(
+                  //   setRoute(
+                  //    `/tradelicense-citizen/apply?applicationNumber=${applicationNumber}&tenantId=${tenantId}&tlType=${tlType}`
+                  //   )
+                  // );
+                  window.location.href = `${process.env.NODE_ENV === "production" ? "/citizen" : ""}/tradelicense-citizen/apply?applicationNumber=${applicationNumber}&tenantId=${tenantId}&tlType=${tlType}`
+                },
+              },
+              visible:getButtonVisibility(status, "SUBMISSION"),
             },  
             editButton: {
               componentPath: "Button",
@@ -704,31 +905,26 @@ export const footerReview = (
                 }
               },
               children: {
-                previousButtonIcon: {
-                  uiFramework: "custom-atoms",
-                  componentPath: "Icon",
-                  props: {
-                    iconName: "keyboard_arrow_left"
-                  }
-                },
                 previousButtonLabel: getLabel({
-                  labelName: "Edit for Renewal",
-                  labelKey: "TL_RENEWAL_BUTTON_EDIT"
+                  labelName: "Edit",
+                  labelKey: "TL_BUTTON_EDIT"
                 })
               },
               onClickDefination: {
                 action: "condition",
                 callBack: () => {
-                  dispatch(
-                    setRoute(
+                  /* dispatch(
+                     setRoute(
                      // `/tradelicence/acknowledgement?purpose=${purpose}&status=${status}&applicationNumber=${applicationNo}&FY=${financialYear}&tenantId=${tenantId}`
                      `/tradelicense-citizen/apply?applicationNumber=${applicationNumber}&licenseNumber=${licenseNumber}&tenantId=${tenantId}&action=EDITRENEWAL`
-                    )
-                  );
+                    ) 
+                  ); */
+                  window.location.href = `${process.env.NODE_ENV === "production" ? "/citizen" : ""}/tradelicense-citizen/apply?applicationNumber=${applicationNumber}&tenantId=${tenantId}&tlType=${tlType}`
                 },
 
               },
-              visible:(getButtonVisibility(status, "APPROVED")||getButtonVisibility(status, "EXPIRED"))&&(responseLength === 1 ),
+              visible: getButtonVisibility(status, "EDIT"),
+              // visible:(getButtonVisibility(status, "APPROVED")||getButtonVisibility(status, "EXPIRED"))&&(responseLength === 1 ),
             },
             submitButton: {
               componentPath: "Button",
@@ -745,7 +941,7 @@ export const footerReview = (
               children: {
                 nextButtonLabel: getLabel({
                   labelName: "Submit for Renewal",
-                  labelKey: "TL_RENEWAL_BUTTON_SUBMIT"
+                  labelKey: "TL_TYPE_RENEWAL"
                 }),
                 nextButtonIcon: {
                   uiFramework: "custom-atoms",
@@ -779,7 +975,7 @@ export const footerReview = (
               children: {
                 submitButtonLabel: getLabel({
                   labelName: "MAKE PAYMENT",
-                  labelKey: "TL_COMMON_BUTTON_CITIZEN_MAKE_PAYMENT"
+                  labelKey: "COMMON_MAKE_PAYMENT"
                 })
               },
               onClickDefination: {
@@ -787,7 +983,7 @@ export const footerReview = (
                 callBack: () => {
                   dispatch(
                     setRoute(
-                     `/egov-common/pay?consumerCode=${applicationNumber}&tenantId=${tenantId}`
+                     `/tradelicense-citizen/pay?consumerCode=${applicationNumber}&tenantId=${tenantId}`
                     )
                   );
                 },
@@ -805,6 +1001,7 @@ export const footerReview = (
     }
   });
 };
+
 export const footerReviewTop = (
   action,
   state,
@@ -823,20 +1020,47 @@ export const footerReviewTop = (
     `licenseCount`,
     1
   );
+  function data() {
+  let data1 = get(
+    state.screenConfiguration.preparedFinalObject,
+    "applicationDataForReceipt",
+    {}
+  );
+  let data2 = get(
+    state.screenConfiguration.preparedFinalObject,
+    "receiptDataForReceipt",
+    {}
+  );
+  let data3 = get(
+    state.screenConfiguration.preparedFinalObject,
+    "mdmsDataForReceipt",
+    {}
+  );
+  let data4 = get(
+    state.screenConfiguration.preparedFinalObject,
+    "userDataForReceipt",
+    {}
+  );
+  return {...data1, ...data2, ...data3, ...data4}
+  }
   // let renewalMenu=[];
   let tlCertificateDownloadObject = {
     label: { labelName: "TL Certificate", labelKey: "TL_CERTIFICATE" },
     link: () => {
-      const { Licenses } = state.screenConfiguration.preparedFinalObject;
-      downloadCertificateForm(Licenses);
+      const { Licenses, LicensesTemp } = state.screenConfiguration.preparedFinalObject;
+      const documents = LicensesTemp[0].reviewDocData;
+      set(Licenses[0],"additionalDetails.documents",documents)
+      downloadCertificateForm(Licenses, data());
     },
     leftIcon: "book"
   };
   let tlCertificatePrintObject = {
     label: { labelName: "TL Certificate", labelKey: "TL_CERTIFICATE" },
     link: () => {
-      const { Licenses } = state.screenConfiguration.preparedFinalObject;
-      downloadCertificateForm(Licenses,'print');
+      const { Licenses, LicensesTemp } = state.screenConfiguration.preparedFinalObject;
+      const documents = LicensesTemp[0].reviewDocData;
+      set(Licenses[0],"additionalDetails.documents",documents)
+      downloadCertificateForm(Licenses, data(), 'print');
     },
     leftIcon: "book"
   };
@@ -844,12 +1068,12 @@ export const footerReviewTop = (
     label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
     link: () => {
 
-
+      const Licenses = get(state.screenConfiguration.preparedFinalObject, "Licenses", []);
       const receiptQueryString = [
         { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
         { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
       ]
-      download(receiptQueryString);
+      download(receiptQueryString, Licenses, data(), userInfo.name);
       // generateReceipt(state, dispatch, "receipt_download");
     },
     leftIcon: "receipt"
@@ -861,7 +1085,8 @@ export const footerReviewTop = (
         { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
         { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
       ]
-      download(receiptQueryString,"print");
+      const { Licenses } = state.screenConfiguration.preparedFinalObject;
+      download(receiptQueryString,Licenses, data(), userInfo.name, "print");
      // generateReceipt(state, dispatch, "receipt_print");
     },
     leftIcon: "receipt"
@@ -872,7 +1097,7 @@ export const footerReviewTop = (
       const { Licenses ,LicensesTemp} = state.screenConfiguration.preparedFinalObject;
       const documents = LicensesTemp[0].reviewDocData;
       set(Licenses[0],"additionalDetails.documents",documents)
-      downloadAcknowledgementForm(Licenses);
+      downloadAcknowledgementForm(Licenses, LicensesTemp[0].estimateCardData);
     },
     leftIcon: "assignment"
   };
@@ -882,7 +1107,7 @@ export const footerReviewTop = (
       const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
       const documents = LicensesTemp[0].reviewDocData;
       set(Licenses[0],"additionalDetails.documents",documents)
-      downloadAcknowledgementForm(Licenses,'print');
+      downloadAcknowledgementForm(Licenses, LicensesTemp[0].estimateCardData,'print');
     },
     leftIcon: "assignment"
   };
@@ -900,23 +1125,22 @@ export const footerReviewTop = (
         applicationPrintObject
       ];
       break;
+    case "PENDINGCLARIFICATION":
+    case "MODIFIED":
     case "APPLIED":
     case "CITIZENACTIONREQUIRED":
-    case "FIELDINSPECTION":
-    case "PENDINGAPPROVAL":
     case "PENDINGPAYMENT":
-      downloadMenu = [applicationDownloadObject];
-      printMenu = [applicationPrintObject];
-      break;
-    case "pending_approval":
-      downloadMenu = [receiptDownloadObject, applicationDownloadObject];
-      printMenu = [receiptPrintObject, applicationPrintObject];
-      break;
+    case "PENDINGL1VERIFICATION":
+    case "PENDINGL2VERIFICATION":
+    case "PENDINGL3VERIFICATION":
     case "CANCELLED":
+    case "REJECTED":
       downloadMenu = [applicationDownloadObject];
       printMenu = [applicationPrintObject];
       break;
-    case "REJECTED":
+    case "PENDINGAPPROVAL":
+      // downloadMenu = [receiptDownloadObject, applicationDownloadObject];
+      // printMenu = [receiptPrintObject, applicationPrintObject];
       downloadMenu = [applicationDownloadObject];
       printMenu = [applicationPrintObject];
       break;
@@ -989,19 +1213,46 @@ export const downloadPrintContainer = (
   /** MenuButton data based on status */
   let downloadMenu = [];
   let printMenu = [];
+  const data = function() {
+    let data1 = get(
+      state.screenConfiguration.preparedFinalObject,
+      "applicationDataForReceipt",
+      {}
+    );
+    let data2 = get(
+      state.screenConfiguration.preparedFinalObject,
+      "receiptDataForReceipt",
+      {}
+    );
+    let data3 = get(
+      state.screenConfiguration.preparedFinalObject,
+      "mdmsDataForReceipt",
+      {}
+    );
+    let data4 = get(
+      state.screenConfiguration.preparedFinalObject,
+      "userDataForReceipt",
+      {}
+    );
+    return {...data1, ...data2, ...data3, ...data4}
+  }
   let tlCertificateDownloadObject = {
     label: { labelName: "TL Certificate", labelKey: "TL_CERTIFICATE" },
     link: () => {
-      const { Licenses } = state.screenConfiguration.preparedFinalObject;
-      downloadCertificateForm(Licenses);
+      const { Licenses, LicensesTemp } = state.screenConfiguration.preparedFinalObject;
+      const documents = LicensesTemp[0].reviewDocData;
+      set(Licenses[0],"additionalDetails.documents",documents)
+      downloadCertificateForm(Licenses, data());
     },
     leftIcon: "book"
   };
   let tlCertificatePrintObject = {
     label: { labelName: "TL Certificate", labelKey: "TL_CERTIFICATE" },
     link: () => {
-      const { Licenses } = state.screenConfiguration.preparedFinalObject;
-      downloadCertificateForm(Licenses,'print');
+      const { Licenses, LicensesTemp } = state.screenConfiguration.preparedFinalObject;
+      const documents = LicensesTemp[0].reviewDocData;
+      set(Licenses[0],"additionalDetails.documents",documents)
+      downloadCertificateForm(Licenses, data(), 'print');
     },
     leftIcon: "book"
   };
@@ -1012,7 +1263,8 @@ export const downloadPrintContainer = (
         { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
         { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
       ]
-      download(receiptQueryString);
+      const { Licenses } = state.screenConfiguration.preparedFinalObject;
+      download(receiptQueryString, Licenses, data(), userInfo.name);
     },
     leftIcon: "receipt"
   };
@@ -1023,7 +1275,8 @@ export const downloadPrintContainer = (
         { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
         { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
       ]
-      download(receiptQueryString,"print");
+      const { Licenses } = state.screenConfiguration.preparedFinalObject;
+      download(receiptQueryString, Licenses, data(), userInfo.name, "print");
     },
     leftIcon: "receipt"
   };
@@ -1033,7 +1286,7 @@ export const downloadPrintContainer = (
       const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
       const documents = LicensesTemp[0].reviewDocData;
       set(Licenses[0],"additionalDetails.documents",documents)
-      downloadAcknowledgementForm(Licenses);
+      downloadAcknowledgementForm(Licenses, LicensesTemp[0].estimateCardData);
     },
     leftIcon: "assignment"
   };
@@ -1043,7 +1296,7 @@ export const downloadPrintContainer = (
       const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
       const documents = LicensesTemp[0].reviewDocData;
       set(Licenses[0],"additionalDetails.documents",documents)
-      downloadAcknowledgementForm(Licenses,'print');
+      downloadAcknowledgementForm(Licenses, LicensesTemp[0].estimateCardData,'print');
     },
     leftIcon: "assignment"
   };
@@ -1061,18 +1314,19 @@ export const downloadPrintContainer = (
       ];
       break;
     case "APPLIED":
-    case "CITIZENACTIONREQUIRED":  
-    case "FIELDINSPECTION":
-    case "PENDINGAPPROVAL":
+    case "CITIZENACTIONREQUIRED":
     case "PENDINGPAYMENT":
-      downloadMenu = [applicationDownloadObject];
-      printMenu = [applicationPrintObject];
-      break;
+    case "PENDINGL1VERIFICATION":
+    case "PENDINGL2VERIFICATION":
+    case "PENDINGL3VERIFICATION":
     case "CANCELLED":
+    case "REJECTED":
       downloadMenu = [applicationDownloadObject];
       printMenu = [applicationPrintObject];
       break;
-    case "REJECTED":
+    case "PENDINGAPPROVAL":
+      // downloadMenu = [receiptDownloadObject, applicationDownloadObject];
+      // printMenu = [receiptPrintObject, applicationPrintObject];
       downloadMenu = [applicationDownloadObject];
       printMenu = [applicationPrintObject];
       break;

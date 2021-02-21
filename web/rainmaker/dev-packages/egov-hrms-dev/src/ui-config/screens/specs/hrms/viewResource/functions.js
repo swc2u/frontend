@@ -149,7 +149,7 @@ export const furnishEmployeeData = (state, dispatch) => {
     "Employee",
     []
   );
-  setDateInYmdFormat(employeeObject[0], ["dateOfAppointment", "user.dob"]);
+  setDateInYmdFormat(employeeObject[0], ["dateOfAppointment", "user.dob","dateOfSuperannuation"]);
   setAllDatesInYmdFormat(employeeObject[0], [
     { object: "assignments", values: ["fromDate", "toDate"] },
     { object: "serviceHistory", values: ["serviceFrom", "serviceTo"] }
@@ -244,6 +244,11 @@ export const createUpdateEmployee = async (state, dispatch, action) => {
   );
   set(
     employeeObject[0],
+    "dateOfSuperannuation",
+    convertDateToEpoch(get(employeeObject[0], "dateOfSuperannuation"), "dayStart")
+  );
+  set(
+    employeeObject[0],
     "user.dob",
     convertDateToEpoch(get(employeeObject[0], "user.dob"), "dayStart")
   );
@@ -274,6 +279,15 @@ export const createUpdateEmployee = async (state, dispatch, action) => {
     if (!assignmentObject.hasOwnProperty("isCurrentAssignment")) {
       set(employeeObject[0], `assignments[${i}]["isCurrentAssignment"]`, false);
     }
+
+     // Set isPrimaryAssignment to false if key not present
+     let isPrimarObject = get(employeeObject[0], `assignments[${i}]`);
+     if (isPrimarObject.hasOwnProperty("isPrimaryAssignment") && !isPrimarObject.isPrimaryAssignment) {
+       set(employeeObject[0], `assignments[${i}]["isPrimaryAssignment"]`, false);
+     }
+     else if(! isPrimarObject.hasOwnProperty("isPrimaryAssignment")){
+      set(employeeObject[0], `assignments[${i}]["isPrimaryAssignment"]`, false);
+     }
   }
 
   // Set employee id null in case of blank

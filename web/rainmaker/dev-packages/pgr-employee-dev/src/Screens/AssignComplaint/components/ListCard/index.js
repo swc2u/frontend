@@ -11,6 +11,7 @@ export default class ListCard extends Component {
   state = {
     results: [],
     searchTerm: "",
+    departmentSearch:"",
     selectedEmployeeId: "",
     dataSource: [],
   };
@@ -43,7 +44,28 @@ export default class ListCard extends Component {
 
   prepareRawDataToFormat = (rawData) => {
     let { designationsById, departmentById } = this.props;
-    const seperateByDepartment =
+    const {departmentSearch} = this.state;
+    let seperateByDepartment =[];
+    if(departmentSearch){
+     const  selectedDeparment = Object.values(departmentById).filter(dep => dep.name.toLowerCase().includes(departmentSearch.toLowerCase())).map(dep => dep.code)
+    
+      seperateByDepartment =
+      rawData &&
+      rawData.reduce((result, item) => {
+        for (let i = 0; i < item.assignments.length; i++) {
+          selectedDeparment.forEach(code => {
+            if(code === item.assignments[i].department ){
+              if (!result[item.assignments[i].department]) result[item.assignments[i].department] = [];
+              result[item.assignments[i].department].push(this.getItemForDepartment(item, item.assignments[i].department));
+            }
+          })
+        
+        }
+        return result;
+      }, {});
+    }
+    else{
+      seperateByDepartment =
       rawData &&
       rawData.reduce((result, item) => {
         for (let i = 0; i < item.assignments.length; i++) {
@@ -52,6 +74,8 @@ export default class ListCard extends Component {
         }
         return result;
       }, {});
+    }
+     
     return (
       seperateByDepartment &&
       Object.keys(seperateByDepartment).map((depDetails, index) => {
@@ -243,6 +267,17 @@ export default class ListCard extends Component {
     );
   };
 
+// Search Method when searching using department name
+ searchByDepartmentName = (results = [], departmentSearch) =>{
+  let { APIData } = this.props;
+  this.setState({ results, departmentSearch,searchTerm:"" }, () => {
+
+    const dataSource = this.prepareRawDataToFormat(APIData);
+    this.setState({ dataSource }); 
+  });
+ }
+
+
   autoSuggestCallback = (results = [], searchTerm) => {
     this.setState({ results, searchTerm }, () => this.changeDataSourceAndResultsOnClick());
   };
@@ -285,13 +320,14 @@ export default class ListCard extends Component {
                 ) : (
                   <Label label={`${assignstatus}`} labelStyle={this.mainLabelStyle} containerStyle={{ padding: "0 40px 0 0" }} />
                 )}
-
+                <div style={window.innerWidth > 768 ? {display:'flex', justifyContent:"space-around"} : {}} >
                 <AutoSuggest
                   id="employee-search"
                   containerStyle={{
                     margin: "16px 0",
                     padding: "0 8px",
                     background: "#f8f8f8",
+                    width : window.innerWidth > 768 ? '45%': '100%'
                   }}
                   textFieldStyle={{ border: 0 }}
                   searchInputText={<Label label="ES_COMMON_SEARCH_EMPLOYEE" />}
@@ -302,6 +338,24 @@ export default class ListCard extends Component {
                   callback={this.autoSuggestCallback}
                   dataSource={realDataSource}
                 />
+                <AutoSuggest
+                  id="employee-search-by-department"
+                  containerStyle={{
+                    margin: "16px 0",
+                    padding: "0 8px",
+                    background: "#f8f8f8",
+                    width : window.innerWidth > 768 ? '45%': '100%'
+                  }}
+                  textFieldStyle={{ border: 0 }}
+                  searchInputText={<Label label="ES_COMMON_SEARCH_EMPLOYEE_BY_DEPARTMENT" />}
+                  searchKey="primaryText.props.label"
+                  iconStyle={{ right: 15, left: "inherit" }}
+                  hintStyle={{ letterSpacing: 0, bottom: 10, fontSize: 14 }}
+                  iconPosition="after"
+                  callback={this.searchByDepartmentName}
+                  dataSource={realDataSource}
+                />
+                </div>
               </div>
               <div className="employee-list-cont">
                 {displayInitialList
