@@ -19,6 +19,7 @@ import {
   findAndReplace,
   applyForSewerage,
   applyForWater,
+  propertyUpdate,
   validateFeildsForBothWaterAndSewerage,
   validateFeildsForWater,
   validateFeildsForSewerage,
@@ -349,14 +350,26 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMP
 }
 else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" || wnsStatus === "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION" )
 {
-  const iswaterConnFomValid = validateFields(
-    "components.div.children.formwizardFirstStep.children.connConversionDetails.children.cardContent.children.connectionConversionDetails.children.ConnectionConversionDetails.children",
+  const isPropertyDetailsValid= validateFields(
+    "components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children",
+    state,
+    dispatch,
+    "apply"
+  );
+  const isPropertyLocationDetailValid= validateFields(
+    "components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children",
+    state,
+    dispatch,
+    "apply"
+  );  
+   const isPropertyUsageValid= validateFields(
+    "components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children",
     state,
     dispatch,
     "apply"
   );
 
-  if(!iswaterConnFomValid){
+  if(!isPropertyDetailsValid || !isPropertyLocationDetailValid ||!isPropertyUsageValid){
     dispatch(
       toggleSnackbar(
         true, {
@@ -368,12 +381,47 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" ||
     )
     return;
   }
+  
   removingDocumentsWorkFlow(state, dispatch) ;
   try{
+    // call api property search then property-services/property/_update  
+    let queryObject = [];//[{ key: "tenantId", value: tenantId }];
+    let searchScreenObject = get(state.screenConfiguration.preparedFinalObject, "searchScreen", {});
+    for (var key in searchScreenObject) {
+     if (searchScreenObject.hasOwnProperty(key) && searchScreenObject[key].trim() !== "") {
+       queryObject.push({ key: key, value: searchScreenObject[key].trim() });
+     }
+   }
+    let response = await getPropertyResults(queryObject, dispatch);
+    if (response && response.Properties.length > 0) {
+     if(response.Properties[0].status === 'INACTIVE'){
+      if(localStorage.getItem("WNS_STATUS")){
+        window.localStorage.removeItem("WNS_STATUS");
+    }
+       dispatch(toggleSnackbar(true, { labelKey: "ERR_WS_PROP_STATUS_INACTIVE", labelName: "Property Status is INACTIVE" }, "warning"));
+     }else{
+       let propertyData = response.Properties[0];
+       // let contractedCorAddress = "";
+    dispatch(prepareFinalObject("applyScreen.property", propertyData));
+    let response = await propertyUpdate(state, dispatch,propertyData)
+    if(response)
+    {
     let abc = await applyForWater(state, dispatch);
     window.localStorage.setItem("ActivityStatusFlag","true");
+    }
+    else{
+      if(localStorage.getItem("WNS_STATUS")){
+        window.localStorage.removeItem("WNS_STATUS");
+    }
+    }
+     }
+   }
+
   }catch (err){
     console.log("errrr")
+    if(localStorage.getItem("WNS_STATUS")){
+      window.localStorage.removeItem("WNS_STATUS");
+  }
   }
 
 }

@@ -55,14 +55,14 @@ class WorkFlowContainer extends React.Component {
         );
         addWflowFileUrl(processInstances, prepareFinalObject);
       } else {
-        toggleSnackbar(
-          true,
-          {
-            labelName: "Workflow returned empty object !",
-            labelKey: "WRR_WORKFLOW_ERROR"
-          },
-          "error"
-        );
+        // toggleSnackbar(
+        //   true,
+        //   {
+        //     labelName: "Workflow returned empty object !",
+        //     labelKey: "WRR_WORKFLOW_ERROR"
+        //   },
+        //   "error"
+        // );
       }
     } catch (e) {
       toggleSnackbar(
@@ -365,17 +365,19 @@ class WorkFlowContainer extends React.Component {
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
       {
-        validRequest =  true//this.ValidateRequest(data)
+        validRequest =  this.ValidateRequest(data)
 
       }
     
 
     try {
+      let payload = null
       if(validRequest)
       {
-      const payload = await httpRequest("post", updateUrl, "", [], {
+      const response = await httpRequest("post", updateUrl, "", [], {
         [dataPath]: data
       });
+      payload = response
     }
     else{
       toggleSnackbar(
@@ -648,6 +650,24 @@ ValidateRequest =(payload) =>{
     isvalidRequest = false;
     // logic for null value validation for Connection Details date and Activation Details
     /// start
+      // if(payload.plumberInfo === null)
+      // {
+        if(payload.div!= null && 
+          payload.div !== "" &&
+          payload.subdiv!= null &&
+          payload.subdiv !== "" 
+          )
+        {
+          isvalidRequest = true
+
+        }
+        else
+        {
+          isvalidRequest = false
+
+        }
+      //}
+
     /// end
     // logic for null value validation for security value if required
     /// start
@@ -866,10 +886,10 @@ ValidateRequest =(payload) =>{
        // || businessService === "TEMPORARY_WSCONNECTION"
         || businessService === "WS_TEMP_TEMP" 
         ||businessService === "WS_TEMP_REGULAR"
-        ||businessService === "WS_DISCONNECTION" 
-        ||businessService === "WS_TEMP_DISCONNECTION"
+       // ||businessService === "WS_DISCONNECTION" 
+       // ||businessService === "WS_TEMP_DISCONNECTION"
         || businessService === "WS_RENAME" 
-        || businessService === "WS_CONVERSION" 
+        //|| businessService === "WS_CONVERSION" 
         || businessService === "WS_REACTIVATE"     
         //|| businessService === "WS_TUBEWELL"
     ) && applicationStatus == 'PENDING_FOR_EE_APPROVAL'){
