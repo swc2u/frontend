@@ -9,6 +9,7 @@ import {
   getTextField,
   getDateField,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import get from "lodash/get";
 import {
   handleScreenConfigurationFieldChange as handleField,
   prepareFinalObject,
@@ -16,7 +17,7 @@ import {
 import { searchApiCall } from "./functions";
 
 const resetFields = (state, dispatch) => {
-  const textFields = ["month","year","empCode"];
+  const textFields = ["month","year"];
   for (let i = 0; i < textFields.length; i++) {
     if (
       `state.screenConfiguration.screenConfig.payslipsearch.searchForm.children.cardContent.children.searchFormContainer.children.${textFields[i]}.props.value`
@@ -32,6 +33,8 @@ const resetFields = (state, dispatch) => {
     }
   }
   dispatch(prepareFinalObject("searchScreen", {}));
+  let empCode = get(state, "screenConfiguration.preparedFinalObject.empCode");
+  dispatch(prepareFinalObject("searchScreen.empCode", empCode));
 };
 
 export const searchForm = getCommonCard({
@@ -39,10 +42,10 @@ export const searchForm = getCommonCard({
     labelName: "Search Criteria",
     labelKey: "STORE_SEARCH_RESULTS_HEADING",
   }),
-  subParagraph: getCommonParagraph({
-    labelName: "Provide at least one parameter to search for an application",
-    labelKey: "STORE_HOME_SEARCH_RESULTS_DESC",
-  }),
+  // subParagraph: getCommonParagraph({
+  //   labelName: "Provide at least one parameter to search for an application",
+  //   labelKey: "STORE_HOME_SEARCH_RESULTS_DESC",
+  // }),
   searchFormContainer: getCommonContainer({
     empCode: {
       ...getTextField({

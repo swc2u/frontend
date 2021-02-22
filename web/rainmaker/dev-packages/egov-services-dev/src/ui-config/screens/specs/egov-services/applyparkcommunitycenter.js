@@ -42,7 +42,7 @@ import {
 export const stepsData = [
     { labelName: "Applicant Details", labelKey: "BK_PCC_APPLICANT_DETAILS" },
     { labelName: "Booking Details", labelKey: "BK_PCC_BOOKING_DETAILS" },
-    { labelName: "Bank Account Details", labelKey: "BK_PCC_BANK_ACCOUNT_DETAILS" },
+    { labelName: "Bank Account Details", labelKey: "Bank Account Details" },
     { labelName: "Documents", labelKey: "BK_PCC_DOCUMENTS" },
     { labelName: "Summary", labelKey: "BK_PCC_SUMMARY" },
 ];

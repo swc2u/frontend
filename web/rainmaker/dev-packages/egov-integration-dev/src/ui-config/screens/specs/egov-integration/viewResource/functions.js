@@ -3,6 +3,7 @@ import {
   prepareFinalObject,
   toggleSnackbar
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { getTenantId,getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 import set from "lodash/set";
 import {  
@@ -17,7 +18,7 @@ import {
   showHideAdhocPopup,
   validateFields
 } from "../../utils";
-import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
+
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 // SET ALL SIMPLE DATES IN YMD FORMAT
@@ -181,33 +182,36 @@ export const getEmployeeData = async (
     
 
   }
-  let Empdata = await getSearchResults([],requestBody, dispatch, "Empdata");
-  let Empleavedata = await getSearchResults([],requestBody, dispatch, "Empleavedata");
-  let EmpJoiningdata = await getSearchResults([],requestBody, dispatch, "EmpJoiningdata");
-  dispatch(prepareFinalObject("Employeebasic", get(Empdata, "ResponseBody",{})));
-  dispatch(prepareFinalObject("Empleavedata", get(Empleavedata, "ResponseBody",{})));
-  dispatch(prepareFinalObject("EmpJoiningdata", get(EmpJoiningdata, "ResponseBody",{})));
-  let Message = get(
-    state.screenConfiguration.preparedFinalObject.Employeebasic, 'Message','');
-  if(Message)
-  {
-    const errorMessage = {
-      labelName: Message,
-      labelKey: Message
-    };
-    dispatch(toggleSnackbar(true, errorMessage, "warning"));
-  }
-  dispatch(
-    handleField(
-      "create",
-      "components.div.children.headerDiv.children.header.children.header.children.key",
-      "props",
-      {
-        labelName: "Edit Employee",
-        labelKey: "HR_COMMON_EDIT_EMPLOYEE_HEADER"
-      }
-    )
-  );
+  if(hrmsCodeAbailable)
+    {
+    let Empdata = await getSearchResults([],requestBody, dispatch, "Empdata");
+    let Empleavedata = await getSearchResults([],requestBody, dispatch, "Empleavedata");
+    let EmpJoiningdata = await getSearchResults([],requestBody, dispatch, "EmpJoiningdata");
+    dispatch(prepareFinalObject("Employeebasic", get(Empdata, "ResponseBody",{})));
+    dispatch(prepareFinalObject("Empleavedata", get(Empleavedata, "ResponseBody",{})));
+    dispatch(prepareFinalObject("EmpJoiningdata", get(EmpJoiningdata, "ResponseBody",{})));
+    let Message = get(
+      state.screenConfiguration.preparedFinalObject.Employeebasic, 'Message','');
+    if(Message)
+    {
+      const errorMessage = {
+        labelName: Message,
+        labelKey: Message
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    }
+    dispatch(
+      handleField(
+        "create",
+        "components.div.children.headerDiv.children.header.children.header.children.key",
+        "props",
+        {
+          labelName: "Edit Employee",
+          labelKey: "HR_COMMON_EDIT_EMPLOYEE_HEADER"
+        }
+      )
+    );
+    }
 if(hrmsCodeAbailable)
 {
   dispatch(
@@ -223,8 +227,8 @@ if(hrmsCodeAbailable)
       "empDetails",
       "components.div.children.footer.children.editDetails",
         "visible",
-        //false
-        true
+        false
+        //true
     )
   );
   dispatch(
@@ -232,8 +236,16 @@ if(hrmsCodeAbailable)
       "empDetails",
       "components.div.children.empCode",
       "visible",
-      //false
-      true
+      false
+      //true
+    )
+  );
+  dispatch(
+    handleField(
+      "empDetails",
+      "components.div.children.tradeView",
+      "props.style",
+      { display: "inline-block" }
     )
   );
 
@@ -263,20 +275,42 @@ else{
         true
     )
   );
+  dispatch(
+    handleField(
+      "empDetails",
+      "components.div.children.tradeView",
+      "props.style",
+      { display: "none" }
+    )
+  );
 
 }
 
   //furnishEmployeeData(state, dispatch);
 };
 // HRMS Update API
-export const updateEmployees = async (queryObject, payload, dispatch) => {
+export const updateEmployees = async (state,queryObject, payload, dispatch) => {
   try {
     const response = await httpRequest(
       "post",
-      "/egov-hrms/employees/_update",
+      "/egov-hrms/employees/_updateEmployeeTable",
       "",
       queryObject,
-      { Employees: [payload] }
+      payload
+    );
+    let tenantId = getTenantId();
+    const userInfo = JSON.parse(getUserInfo());
+    getEmployeeData( state,
+      dispatch,
+      userInfo,
+      tenantId)
+    dispatch(
+      handleField(
+        "empDetails",
+        "components.div.children.tradeView",
+        "props.style",
+        { display: "inline-block" }
+      )
     );
     return response;
   } catch (error) {

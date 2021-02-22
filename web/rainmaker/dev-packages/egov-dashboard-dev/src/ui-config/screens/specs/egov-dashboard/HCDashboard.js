@@ -6,13 +6,14 @@ import { getDashboardDropdownData } from "../../../../ui-utils/commons";
 import { HCDashboardFilterForm, HCDashboardResults } from "./HCDashboard/HCDashboard";
 import { PGRDashboardResults } from "./searchResource/dashboardTypeSearchResults";
 import { allDashboardSearchAPICall, SearchDashboardData } from "./searchResource/functions";
+import './index.css';
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 
 const header = getCommonHeader(
   {
     labelName: "HC Dashboard",
-    labelKey: "DASHBOARD_2"
+    labelKey: "Hc_dashboard_1"
   },
   {
     classes: {

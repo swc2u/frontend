@@ -141,11 +141,13 @@ export const bankAccountDetails = getCommonCard({
             ...getTextField({
                 label: {
                     labelName: "Bank Name",
-                    labelKey: "BK_PCC_BANK_NAME_LABEL",
+                    labelKey:  "Bank Name",
+                    //labelKey: "BK_PCC_BANK_NAME_LABEL",
                 },
                 placeholder: {
-                    labelName: "Enter Bank Name",
-                    labelKey: "BK_PCC_BANK_NAME_PLACEHOLDER",
+                    labelName: "Bank Name",
+                    labelKey:  "Bank Name",
+                    //labelKey: "BK_PCC_BANK_NAME_LABEL",
                 },
                 required: true,
                 pattern: getPattern("Name"),
@@ -158,12 +160,14 @@ export const bankAccountDetails = getCommonCard({
             ...getTextField({
                 label: {
                     labelName: "Account Number",
-                    labelKey: "BK_PCC_ACCOUNT_NUMBER_LABEL",
+                    labelKey: "Account Number",
+                    //labelKey: "BK_PCC_ACCOUNT_NUMBER_LABEL",
                 },
                 placeholder: {
-                    labelName: "Enter Account Number",
-                    labelKey: "BK_PCC_ACCOUNT_NUMBER__PLACEHOLDER",
-                },
+                    labelName: "Account Number",
+                    labelKey: "Account Number",
+                    //labelKey: "BK_PCC_ACCOUNT_NUMBER_LABEL",
+                 },
                 required: true,
                 pattern: getPattern("Name"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
@@ -178,11 +182,13 @@ export const bankAccountDetails = getCommonCard({
             ...getTextField({
                 label: {
                     labelName: "IFSC Code",
-                    labelKey: "BK_PCC_IFSC_CODE_LABEL",
+                    labelKey:  "IFSC Code",
+                    //labelKey: "BK_PCC_IFSC_CODE_LABEL",
                 },
                 placeholder: {
-                    labelName: "Enter IFSC Code",
-                    labelKey: "BK_PCC_IFSC_CODE_PLACEHOLDER",
+                    labelName: "IFSC Code",
+                    labelKey:  "IFSC Code",
+                    //labelKey: "BK_PCC_IFSC_CODE_LABEL",
                 },
                 required: true,
                 pattern: getPattern("Name"),
@@ -194,11 +200,13 @@ export const bankAccountDetails = getCommonCard({
             ...getTextField({
                 label: {
                     labelName: "Account Holder Name",
-                    labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
+                    labelKey: "Account Holder Name",
+                    //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
                 },
                 placeholder: {
-                    labelName: "Enter Account Holder Name",
-                    labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_PLACEHOLDER",
+                    labelName: "Account Holder Name",
+                    labelKey: "Account Holder Name",
+                    //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
                 },
                 required: true,
                 pattern: getPattern("Name"),
@@ -219,8 +227,9 @@ export const bankAccountDetails = getCommonCard({
             jsonPath: "Booking.bkAccountType",
             props: {
               label: {
-                name: "Bank Account Type",
-                key: "BK_PCC_BANK_ACCOUNT_TYPE_LABEL",
+                labelName: "Bank Account Type",
+                labelName: "Bank Account Type",
+                //labelKey: "BK_PCC_BANK_ACCOUNT_TYPE_LABEL",
               },
               buttons: [
                 {

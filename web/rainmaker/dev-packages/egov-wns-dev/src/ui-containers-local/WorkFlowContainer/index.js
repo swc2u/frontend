@@ -53,9 +53,29 @@ class WorkFlowContainer extends React.Component {
     
     let baseUrl = "";
     let bservice = "";
-    if (moduleName === "NewWS1" || moduleName === "NewSW1" ||moduleName === "WS_CONVERSION" || moduleName === "WS_DISCONNECTION" || moduleName === "WS_RENAME" || moduleName === "WS_TUBEWELL") {
+    if (moduleName === "NewWS1" 
+        || moduleName === "REGULARWSCONNECTION"
+        || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "WS_TEMP_TEMP" 
+        ||moduleName === "WS_TEMP_REGULAR"
+        ||moduleName === "WS_DISCONNECTION" 
+        ||moduleName === "WS_TEMP_DISCONNECTION"
+        || moduleName === "WS_RENAME" 
+        || moduleName === "WS_CONVERSION" 
+        || moduleName === "WS_REACTIVATE" 
+        || moduleName === "WS_TUBEWELL") {
       baseUrl = "wns"
-      if (moduleName === "NewWS1" || moduleName === "WS_CONVERSION" || moduleName === "WS_DISCONNECTION" || moduleName === "WS_RENAME" || moduleName === "WS_TUBEWELL") {
+      if (moduleName === "NewWS1" 
+      || moduleName === "REGULARWSCONNECTION" 
+      || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "WS_TEMP_TEMP" 
+        ||moduleName === "WS_TEMP_REGULAR"
+        ||moduleName === "WS_DISCONNECTION" 
+        ||moduleName === "WS_TEMP_DISCONNECTION"
+        || moduleName === "WS_RENAME" 
+        || moduleName === "WS_CONVERSION" 
+        || moduleName === "WS_REACTIVATE"
+      || moduleName === "WS_TUBEWELL") {
         bservice = "WS.ONE_TIME_FEE"
       } else {
         bservice = "SW.ONE_TIME_FEE"
@@ -142,8 +162,37 @@ class WorkFlowContainer extends React.Component {
   };
   getWNSButtonForCitizen = (preparedFinalObject, status, businessId, moduleName) =>{   
    // const btnName = ["Apply for Regular Connection","Reactivate Connection","Connection Conversion","Temporary Disconnection","Permanent Disconnection"]
-    const btnName = ["UPDATE_CONNECTION_HOLDER_INFO","APPLY_FOR_REGULAR_INFO","REACTIVATE_CONNECTION","CONNECTION_CONVERSION","TEMPORARY_DISCONNECTION","PERMANENT_DISCONNECTION"];
+    const btnName = [
+      "PERMANENT_DISCONNECTION" //R
+      ,"TEMPORARY_DISCONNECTION"
+      ,"UPDATE_CONNECTION_HOLDER_INFO"
+      ,"CONNECTION_CONVERSION"//R
+      ,"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"//T
+      ,"APPLY_FOR_TEMPORARY_REGULAR_CONNECTION"];
+        
+
       let actions  = btnName.map(btn => {
+
+        if(preparedFinalObject)
+        {
+          //set module based on subactivity if new subactivity added the required change
+          const WaterConnection = preparedFinalObject;
+            if(WaterConnection.length>0)
+            {
+            switch(WaterConnection[0].activityType)
+            {
+              case'APPLY_FOR_TEMPORARY_CONNECTION':
+              case 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION':
+              case 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION':
+              moduleName ='TEMPORARY_WSCONNECTION'
+              break;
+              case "NEW_WS_CONNECTION":
+              moduleName ="REGULARWSCONNECTION"
+              break;
+            }
+          }
+        }
+
               const buttonObj = {
                 buttonLabel: btn,
                 moduleName: moduleName,
@@ -156,6 +205,7 @@ class WorkFlowContainer extends React.Component {
             });
 
             //logic based on conditions  preparedFinalObject
+            // filer subactivity in tacke acion button in connection details page
             const WaterConnection = preparedFinalObject;
             let inWorkflow = false ;
             inWorkflow = WaterConnection.length>0 && WaterConnection[0].inWorkflow;
@@ -163,11 +213,24 @@ class WorkFlowContainer extends React.Component {
             if(inWorkflow){
               actions = [];
             }
-            else if(status === "PENDING_FOR_REGULAR_CONNECTION"){
-              actions = actions.filter(item => item.buttonLabel === 'APPLY_FOR_REGULAR_INFO'); 
+            else if(status === "CONNECTION_ACTIVATED" && WaterConnection[0].waterApplicationType==='REGULAR')
+            {
+              actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
             }
+            //else if(status === "CONNECTION_ACTIVATED" && WaterConnection[0].waterApplicationType ==='TEMPORARY')
+            else if( (status === "CONNECTION_ACTIVATED" || status ==='CONNECTION_EXTENDED') && (WaterConnection[0].waterApplicationType ==='TEMPORARY') )
+            {
+              actions = actions.filter(item => item.buttonLabel !== 'PERMANENT_DISCONNECTION' 
+                                                &&  item.buttonLabel !== 'TEMPORARY_DISCONNECTION'
+                                                &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
+                                                &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
+            }
+            // else if(status === "PENDING_FOR_REGULAR_CONNECTION"){//remove
+            //   actions = actions.filter(item => item.buttonLabel === 'APPLY_FOR_REGULAR_INFO'); 
+            // }
             else if(status === "TEMPORARY_DISCONNECTED"){
-              actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION'); 
+              //actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION'); 
+              actions = actions.filter(item => item.buttonLabel === "TEMPORARY_CONNECTION_CLOSED"); 
             }
             else if (moduleName === "WS_TUBEWELL"){
               actions = actions.filter(item => item.buttonLabel === 'UPDATE_CONNECTION_HOLDER_INFO');
@@ -196,7 +259,7 @@ class WorkFlowContainer extends React.Component {
       const roleIndex = userRoles.some(item => item.code ==="CITIZEN" || item.code=== "WS_CEMP" );
       const isButtonPresent =  window.localStorage.getItem("WNS_STATUS") || false;
       if(roleIndex && !isButtonPresent && serviceType !== "SEWERAGE"){
-        const buttonArray = getWNSButtonForCitizen(WaterConnection, applicationStatus, businessId,"NewWS1");
+        const buttonArray = getWNSButtonForCitizen(WaterConnection, applicationStatus, businessId,"REGULARWSCONNECTION");
        actions = actions.concat(buttonArray);
       }
         
@@ -213,7 +276,16 @@ class WorkFlowContainer extends React.Component {
     } = this.props;
     const workflowContract =  this.prepareWorkflowContract( moduleName);
      let showFooter;
-      if(moduleName==='NewWS1'||moduleName==='NewSW1'|| moduleName === "WS_CONVERSION" || moduleName === "WS_DISCONNECTION" || moduleName === "WS_RENAME" || moduleName === "WS_TUBEWELL"){
+      if(moduleName==='NewWS1'
+      || moduleName==='REGULARWSCONNECTION'
+      || moduleName==='NewSW1'
+      || moduleName === 'TEMPORARY_WSCONNECTION'
+      || moduleName ==='WS_TEMP_TEMP'
+      || moduleName ==='WS_TEMP_REGULAR'
+      || moduleName === "WS_CONVERSION" 
+      || moduleName === "WS_DISCONNECTION" 
+      || moduleName === "WS_RENAME" 
+      || moduleName === "WS_TUBEWELL"){
          showFooter=true;
       }    else{
          showFooter=process.env.REACT_APP_NAME === "Citizen" ? false : true;

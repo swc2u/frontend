@@ -27,7 +27,9 @@ if ((window.location.href).includes("allotment")) {
     screenName = "allotment";
     paymentStep = "formwizardSixthStepAllotment";
 }
-
+else if((window.location.href).includes("apply-manimajra")){
+    screenName = "apply-manimajra";
+}
 export const getActionDefinationForAuctionDetailsFields = (disabled = true, step) => {
     const actionDefination = [
     {
@@ -167,7 +169,18 @@ const areaOfPropertyField = {
     errorMessage:"ES_ERR_AREA_OF_PROPERTY_FIELD",
     pattern: _getPattern("numeric-with-no-firstdigit-zero"),
     required: true,
-    jsonPath: "Properties[0].propertyDetails.areaSqft"
+    jsonPath: "Properties[0].propertyDetails.areaSqft",
+    afterFieldChange: (action, state, dispatch) => {
+        if (action.value.length > 25) {
+            displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AREA_OF_PROPERTY_MAX_25", screenName);
+        }
+        else if(action.value.length < 3){
+            displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AREA_OF_PROPERTY_MIN_3", screenName);
+        }
+        else {
+            displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_AREA_OF_PROPERTY_FIELD",screenName);
+        }
+    }
 }
 
 const rateField = {
@@ -314,12 +327,16 @@ const siteNumberField = {
     required: true,
     pattern: _getPattern("file-number-only-with-no-firstdigit-zero"),
     jsonPath: "Properties[0].siteNumber",
+    errorMessage:"ES_ERR_SITE_BOOTH_NUMBER",
     afterFieldChange: (action, state, dispatch) => {
         if (action.value.length > 50) {
             displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_50", screenName);
         }
+        else if(action.value.length < 2){
+            displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MINLENGTH_2", screenName);
+        }
         else {
-            displayDefaultErr(action.componentJsonpath, dispatch, screenName);
+            displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_SITE_BOOTH_NUMBER",screenName);
         }
     }
 }
@@ -375,7 +392,7 @@ export const fileNumberField = {
             displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_50", screenName);
         }
         else {
-            displayDefaultErr(action.componentJsonpath, dispatch, screenName);
+            displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_FILE_NUMBER", screenName);
         }
     }
 }
@@ -446,7 +463,7 @@ const serviceCategoryField = {
             displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_100", screenName);
         }
         else {
-            displayDefaultErr(action.componentJsonpath, dispatch, screenName);
+            displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_SERVICE_CATEGORY",screenName);
         }
     }
 }
