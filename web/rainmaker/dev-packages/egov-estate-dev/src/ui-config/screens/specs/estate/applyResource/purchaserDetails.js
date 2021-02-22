@@ -24,7 +24,9 @@ let screenName = "apply";
 if ((window.location.href).includes("allotment")) {
     screenName = "allotment";
 }
-
+else if((window.location.href).includes("apply-manimajra")){
+  screenName = "apply-manimajra";
+}
 export const purchaserHeader = getCommonTitle({
   labelName: "Previous Owner Details",
   labelKey: "ES_PREVIOUS_OWNER_DETAILS_HEADER"
@@ -93,7 +95,7 @@ const newOwnerNameField = {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", screenName);
       }
       else {
-          displayDefaultErr(action.componentJsonpath, dispatch, screenName);
+        displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_PREVIOUS_OWNER_NAME", screenName);
       }
     }
   }
@@ -121,7 +123,7 @@ const newOwnerFatherHusbandNameField = {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", screenName);
       }
       else {
-          displayDefaultErr(action.componentJsonpath, dispatch, screenName);
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_PREVIOUS_FATHER_HUSBAND_NAME",screenName);
       }
     }
   }
@@ -204,7 +206,7 @@ const newOwnerAddressField = {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", screenName);
       }
       else {
-        displayDefaultErr(action.componentJsonpath, dispatch, screenName);
+        displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_ADDRESS_FEILD", screenName);
       }
     }
   }
@@ -224,6 +226,7 @@ const newOwnerMobileNumberField = {
   //   value: userInfo.userName,
   //   disabled: true
   // },
+  errorMessage:"ER_ERR_MOBILE_NUMBER",
   jsonPath: "Properties[0].propertyDetails.purchaser[0].ownerDetails.mobileNumber"
 }
 
@@ -248,7 +251,7 @@ const sellerNameField = {
       displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", screenName);
     }
     else {
-        displayDefaultErr(action.componentJsonpath, dispatch, screenName);
+      displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_SELLER_NAME_FEILD" ,screenName);
     }
   }
 }
@@ -275,7 +278,7 @@ const sellerFatherHusbandNameField = {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", screenName);
       }
       else {
-          displayDefaultErr(action.componentJsonpath, dispatch, screenName);
+        displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_SELLER_FATHER_HUSBAND_NAME", screenName);
       }
     }
   }
@@ -326,7 +329,8 @@ const shareField = {
   errorMessage:"ES_ERR_SHARE_FIELD",
   // required: true,
   pattern: _getPattern("ownerShare"),
-  jsonPath: "Properties[0].propertyDetails.purchaser[0].share"
+  jsonPath: "Properties[0].propertyDetails.purchaser[0].share",
+  visible:!!(window.location.href).includes("apply-manimajra")
 }
 
 const modeOfTransferField = {

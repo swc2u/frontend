@@ -10,24 +10,25 @@ import {
   import { handleScreenConfigurationFieldChange as handleField, prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { get } from "lodash";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-
+import{ _getPattern,displayCustomErr} from "../../utils";
 const branchType = getQueryArg(window.location.href, "branchType");
 
   const sectorNumberField = {
     label: {
-        labelName: "Sector Number",
-        labelKey: "ESTATE_SECTOR_NUMBER_LABEL"
-    },
-    placeholder: {
-        labelName: "Enter Sector Number",
-        labelKey: "ESTATE_SECTOR_NUMBER_PLACEHOLDER"
-    },
-    gridDefination: {
-        xs: 12,
-        sm: 6
-    },
-    required: false,
-    jsonPath: "searchScreen.sectorNumber"
+      labelName: "Sector Number",
+      labelKey: "ES_SECTOR_NUMBER_LABEL"
+  },
+  placeholder: {
+      labelName: "Select Sector Number",
+      labelKey: "ES_SECTOR_NUMBER_PLACEHOLDER"
+  },
+  required: false,
+  jsonPath: "searchScreen.sector",
+  sourceJsonPath: "applyScreenMdmsData.EstateServices.sector",
+  gridDefination: {
+      xs: 12,
+      sm: 6
+  }
   }
 
   const applicationNumberField = {
@@ -44,7 +45,9 @@ const branchType = getQueryArg(window.location.href, "branchType");
         sm: 6
     },
     required: false,
-    jsonPath: "searchScreen.applicationNumber"
+    jsonPath: "searchScreen.applicationNumber",
+    pattern: /^[a-zA-Z0-9-]*$/i,
+    errorMessage: "ES_ERR_INVALID_APPLICATION_NO",
   }
 
   const FileNameField = {
@@ -61,7 +64,16 @@ const branchType = getQueryArg(window.location.href, "branchType");
         sm: 6
     },
     required: false,
-    jsonPath: "searchScreen.fileNumber"
+    jsonPath: "searchScreen.fileNumber",
+    pattern: _getPattern("fileNumber"),
+    afterFieldChange: (action, state, dispatch) => {
+        if (action.value.length > 50) {
+            displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_50", action.screenKey);
+        }
+        else {
+          displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_FILE_NUMBER", action.screenKey);
+        }
+    }
   }
 
   const FileNumberField = {
@@ -78,7 +90,16 @@ const branchType = getQueryArg(window.location.href, "branchType");
         sm: 6
     },
     required: false,
-    jsonPath: "searchScreen.fileNumber"
+    jsonPath: "searchScreen.fileNumber",
+    pattern: _getPattern("fileNumber"),
+    afterFieldChange: (action, state, dispatch) => {
+      if (action.value.length > 50) {
+          displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_50", action.screenKey);
+      }
+      else {
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_FILE_NUMBER", action.screenKey);
+      }
+  }
   }
 
   const statusField = {
@@ -166,7 +187,7 @@ const branchType = getQueryArg(window.location.href, "branchType");
       status: getSelectField(statusField)
     }),
     transitNumberContainer: getCommonContainer({
-        sectorNumber: getTextField(sectorNumberField),
+      sectorNumber: getSelectField(sectorNumberField),
       // phone: getTextField(phoneNumberField)
     }),
     button: getCommonContainer({
@@ -272,7 +293,7 @@ const branchType = getQueryArg(window.location.href, "branchType");
   const clearPropertySearch = (state, dispatch) => {
     const preparedFinalObject = get(state, "screenConfiguration.preparedFinalObject");
     const {searchScreen = {}} = preparedFinalObject
-    if(!!searchScreen.fileNumber || !!searchScreen.state || !!searchScreen.SECTORNumber) {
+    if(!!searchScreen.fileNumber || !!searchScreen.state || !!searchScreen.sector) {
     dispatch(
       handleField(
         "search",

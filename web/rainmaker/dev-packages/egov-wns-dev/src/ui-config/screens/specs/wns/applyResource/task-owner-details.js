@@ -130,12 +130,12 @@ export const propertyOwnerDetails = () => {
                     mobileNumber,
                     name,
                     gender,
-                    dateOfBirth,
+                   dateOfBirth,
                     email,
                     fatherName,
                     relationship,
                     correspondenceAddress,
-                    specialApplicantCategory
+                   specialApplicantCategory
                 }),
                 items: [],
                 hasAddItem: false,

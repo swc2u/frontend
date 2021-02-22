@@ -1,4 +1,4 @@
-import { getCommonCard, getCommonHeader, getCommonContainer, getPattern, getTextField, getSelectField, getDateField, getCommonGrayCard } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getCommonCard, getCommonHeader, getCommonContainer, getPattern, getTextField, getSelectField, getDateField, getCommonGrayCard,getTimeField } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getLocaleLabels, getTodaysDateInYMD } from "egov-ui-framework/ui-utils/commons";
 import {viewFour} from './review'
 import {getOptions} from '../dataSources'
@@ -21,6 +21,12 @@ const _getPattern = (type) => {
         return /^([\s\S]){1,150}$/i;
         case "alphabet":  
       return /^[a-zA-Z ]{1,150}$/i;
+      case "alphaNumeric":
+          return /^[a-zA-Z0-9]{1,100}$/i;
+          case "violationdetails":
+              return /^([\s\S]){5,150}$/i;
+              case "area":
+                  return /^[1-9][0-9]{2,5}$/i;
   }
 }
 
@@ -201,6 +207,12 @@ const getField = async (item, fieldData = {}, state) => {
     switch(type) {
       case "TEXT_FIELD": {
         return getTextField({
+          ...fieldProps,
+          ...rest
+      })
+      }
+      case "TIME_FIELD": {
+        return getTimeField({
           ...fieldProps,
           ...rest
       })
@@ -408,8 +420,9 @@ const tableSection = (section, state) => {
     }
     }, 
     table: {
-    uiFramework: "custom-molecules",
+    uiFramework: "custom-containers-local",
     componentPath: "Table",
+    moduleName: "egov-estate",
     visible: true,
     props: {
       columns: fields.map(item => getLocaleLabels(item.label, item.label)),
@@ -429,6 +442,7 @@ const tableSection = (section, state) => {
         customSortColumn: {
         },
         title: getLocaleLabels(header, header),
+        hideHorizontalScroll: true,
         data
     }
   }

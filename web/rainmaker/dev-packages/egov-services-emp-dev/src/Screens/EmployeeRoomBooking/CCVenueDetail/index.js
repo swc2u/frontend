@@ -150,11 +150,11 @@ class ApplicatInfo extends Component {
             id="email"
             name="email"
             type="string"
-            value={this.props.NoOfDays}
+            value={email}
             required = {true}
             hintText={
               <Label
-                label="BK_MYBK_CC_ROOM_NUMBER_OF_DAYS"
+                label="BK_MYBK_CREATE_CITIZEN_EMAIL"
                 color="rgba(0, 0, 0, 0.3799999952316284)"
                 fontSize={16}
                 labelStyle={hintTextStyle}
@@ -181,7 +181,7 @@ class ApplicatInfo extends Component {
             id="mobile-no"
             name="mobile-no"
             type="text"
-            value={this.props.locality}
+            value={this.props.Sector}
             required = {true}
             hintText={
               <Label

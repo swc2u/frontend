@@ -847,20 +847,30 @@ export const getTextForRoadCuttNoc = label => {
       return 'Reassign To EE'
     case "PAYMENTPENDING":
       return 'Payment Pending'
-    case "VERIFYHDMEE":
-      return 'Verification Of HDMEE'
+    case "VERIFYHDMEE L1":
+      return 'Verification Of HDMEE L1'
+    case "VERIFYHDMEE L2":
+      return 'Verification Of HDMEE L2'
     case "VERIFYDMEE":
       return 'Verification Of DMEE'
-    case "VERIFYCHD":
-      return 'Verification Of CHD'
+    case "REASSIGNTOHDMEE":
+      return 'Reassign Of HDMEE'
+    case "VERIFYCHDSE L1":
+      return 'Verification Of CHDSE L1'
+    case "VERIFYCHDSE L2":
+      return 'Verification Of CHDSE L2'
     case "VERIFYDMSE":
       return 'Verification Of DMSE'
-    case "VERIFYHDMCE L1":
-      return 'Verification Of HDMCE L1'
+    case "REASSIGNTOCHDSE":
+      return 'Reassign Of CHDSE'
+    case "VERIFYCHDCE L1":
+      return 'Verification Of CHDCE L1'
     case "VERIFYDMCE":
       return 'Verification Of DMCE'
-    case "VERIFYHDMCE L2":
-      return 'Verification Of HDMCE L2'
+    case "VERIFYCHDCE L2":
+      return 'Verification Of CHDCE L2'
+    case "REASSIGNTOCHDCE":
+      return 'Reassign Of CHDCE'
     case "REVIEWOFEE L3":
       return 'Review Approval Of EE'
     case "REVIEWOFSE L2":
@@ -889,6 +899,10 @@ export const getTextForRoadCuttNoc = label => {
       return 'Reassign To DMSE'
     case "REASSIGNTODMCE":
       return 'Reassign To DMCE'
+    case "REVIEWOFSDEHQ":
+      return 'Review Of SDEHQ'
+    case "REASSIGNTOSDEHQ":
+      return 'Reassign To SDEHQ'
 
     case "COMPLETE":
       return 'Completed'

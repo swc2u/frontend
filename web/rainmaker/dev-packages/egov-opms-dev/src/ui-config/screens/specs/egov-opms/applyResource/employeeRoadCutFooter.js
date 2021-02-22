@@ -220,7 +220,7 @@ export const footerEmp = getCommonApplyFooter({
       action: "condition",
       callBack: (state, dispatch) => {
         try {
-          
+          set(state, 'screenConfiguration.preparedFinalObject.OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.assignee', undefined);
           set(state, 'screenConfiguration.preparedFinalObject.ROADCUTNOCWF.REASSIGNDO', false);
           if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
             const ROADCUTNOC = get(
@@ -349,6 +349,8 @@ export const footerEmp = getCommonApplyFooter({
 
       callBack: (state, dispatch) => {
         set(state, 'screenConfiguration.preparedFinalObject.ROADCUTNOCWF.REASSIGNDO', false);
+        set(state, 'screenConfiguration.preparedFinalObject.OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.assignee', undefined);
+
         getEmployeeList(state,dispatch, "reassign");
         showHideAdhocPopupopmsReassign(state, dispatch, "roadcutnoc-search-preview", "reject")
       }

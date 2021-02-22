@@ -145,6 +145,10 @@ const propertyDetails = getCommonContainer({
       }
     }),
     beforeFieldChange: async (action, state, dispatch) => {
+      if(action.value)
+      {
+        dispatch(prepareFinalObject("applyScreen.property.usageCategory", action.value));
+      }
     
     }
   },

@@ -146,10 +146,16 @@ export const getFeesEstimateCard = props => {
   };
 };
 
-export const getButtonVisibility = (status, button) => {
+export const getButtonVisibility = (status, button, userRole) => {
   if ((status === "ES_PENDING_PAYMENT" || status === "ES_MM_PENDING_PAYMENT") && button === "PENDINGPAYMENT") return true;
   if (status === "ES_PENDING_JE_VERIFICATION" && button === "NOCVERIFICATION") return true;
-  if (status === "ES_MM_PENDING_BI_VERIFICATION" && button === "SITEREPORT") return true;
+  
+  if(!!userRole){
+    if (status === "ES_MM_PENDING_BI_VERIFICATION" && button === "SITEREPORT" && userRole !== "ES_MM_BUILDING_INSPECTOR") return false;
+  }
+  else if(status === "ES_MM_PENDING_BI_VERIFICATION" && button === "SITEREPORT"){
+    return true;
+  }
   if ((status === "ES_PENDING_CITIZEN_TEMPLATE_SUBMISSION" || status === "ES_PENDING_CITIZEN_NOTICE_DOCUMENTS" || status === "ES_MM_PENIDNG_CITIZEN_NOTICE") && button === "UPLOAD_DOCUMENT") return true
   return false;
 };
@@ -882,7 +888,7 @@ export const downloadPaymentReceipt = (receiptQueryString, payload, data , gener
               default:
                  queryStr = [{
                    key: "key",
-                   value: payload[0].propertyDetails.branchType == "MANI_MAJRA" ? "mm-rent-payment-receip": "rent-payment-receipt"
+                   value: payload[0].propertyDetails.branchType == "MANI_MAJRA" ? "mm-rent-payment-receipt": "rent-payment-receipt"
                   //  value: "rent-payment-receipt"
                  },
                  {
@@ -2350,10 +2356,20 @@ export const _getPattern = (type) => {
       return /^([\s\S]){1,250}$/i;
       case "numeric-with-no-firstdigit-zero":
       return /^[1-9][0-9]{2,24}$/i;
+      case "numeric-firstdigit-nonzero":
+          return /^[1-9][0-9]{2,150}$/i;
       case "file-number-only-with-no-firstdigit-zero":
-      return /^[1-9a-zA-Z][0-9a-zA-Z]{2,49}$/i;
+      return /^[1-9a-zA-Z][0-9a-zA-Z]{1,49}$/i;
       case "NocReason":
         return /^([\s\S]){3,150}$/i;
+        case "variationdetail":
+            return /^([\s\S]){0,150}$/i;
+            case "street":
+              return /^[a-zA-Z0-9]{2,100}$/i;
+              case "height":
+      return /^[1-9][0-9]{0,6}$/i;
+      case "numeric":
+        return /^[1-9][0-9]{2,49}$/i;
   }
 }
 

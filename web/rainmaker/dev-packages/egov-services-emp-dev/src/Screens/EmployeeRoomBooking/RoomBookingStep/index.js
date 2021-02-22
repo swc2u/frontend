@@ -17,8 +17,11 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { withStyles } from "@material-ui/core/styles";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 const styles= theme=>({
+
 
   cool: {
    lebel :{
@@ -31,6 +34,7 @@ class ApplicatInfo extends Component {
 
   state = {
     NewbkBookingType: "Normal Booking",
+    open: false, setOpen: false,
     ReasonForDiscount : "",
       isCheckedOne: true,
       isCheckedTwo: false,
@@ -42,6 +46,18 @@ class ApplicatInfo extends Component {
 
 
   }
+
+  handleClose = () => {
+    this.setState({
+      setOpen: false
+    })
+  };
+
+  handleOpen = () => {
+    this.setState({
+      setOpen: true
+    })
+  };
 
   back = e => {
     e.preventDefault();
@@ -288,7 +304,7 @@ class ApplicatInfo extends Component {
               id="houseNo"
               name="houseNo"
               type="text"
-              value={this.props.RoomBookingData}
+              value={this.props.RoomBookingData.availableNonAcRooms}
               required = {true}
               hintText={
                 <Label
@@ -312,8 +328,37 @@ class ApplicatInfo extends Component {
               hintStyle={{ width: "100%" }}
             />
           </div>
-    
-          <label>
+
+
+          <div className="col-sm-6 col-xs-6">
+            <FormControl style={{ width: '100%' }}>
+              <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label"><Label
+                required={true}
+                label="BK_MYBK_TYPES_OF_ROOM_TO_BOOK"
+              /></InputLabel>
+              <Select
+                maxWidth={false}
+                required={true}
+                labelId="demo-controlled-open-select-label"
+                id="demo-controlled-open-select"
+                open={this.state.SetOpen}
+                displayEmpty
+                onClose={() => this.handleClose()}
+                onOpen={() => this.handleOpen()}
+                value={this.props.TypeOfRoomToBook}
+                onChange={handleChange('TypeOfRoomToBook')}
+              >
+                <MenuItem value="" disabled>Types Of Room</MenuItem>
+                <MenuItem value='AC'>AC</MenuItem>
+                <MenuItem value='NoN-AC'>Non-AC</MenuItem>
+                <MenuItem value='Both'>Both</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+        
+        
+
+          {/* <label>
         <input type="checkbox"
           defaultChecked={this.state.isCheckedOne}
           onChange={this.toggleChangeOne}
@@ -335,73 +380,188 @@ class ApplicatInfo extends Component {
           onChange={this.toggleChangeThree}
         />
        Both
-      </label>
-    
-          <div className="col-sm-6 col-xs-6">       
-          <TextField
-            id="name"
-            name="name"
-            type="text"
-            value={this.props.AccRoomToBook}
-            pattern="[A-Za-z]"
-            required = {true}
-            hintText={
-              <Label
-                label="BK_MYBK_NO_ACC_ROOM_TO_BOOK"
-                color="rgba(0, 0, 0, 0.3799999952316284)"
-                fontSize={16}
-                labelStyle={hintTextStyle}
-              />
-            }
-            floatingLabelText={
-              <Label
-                key={0}
-                label="BK_MYBK_NO_ACC_ROOM_TO_BOOK"
-                color="rgba(0,0,0,0.60)"
-                fontSize="12px"
-              />
-            }
-            onChange={handleChange('AccRoomToBook')}
-            underlineStyle={{ bottom: 7 }}
-            underlineFocusStyle={{ bottom: 7 }}
-            hintStyle={{ width: "100%" }}
+      </label> */}
+    {this.props.TypeOfRoomToBook === 'AC' ? 
+      <div className="col-sm-6 col-xs-6">       
+      <TextField
+        id="name"
+        name="name"
+        type="text"
+        value={this.props.AccRoomToBook}
+        pattern="[A-Za-z]"
+        required = {true}
+        hintText={
+          <Label
+            label="BK_MYBK_NO_ACC_ROOM_TO_BOOK"
+            color="rgba(0, 0, 0, 0.3799999952316284)"
+            fontSize={16}
+            labelStyle={hintTextStyle}
           />
-        </div>
-        <div className="col-sm-6 col-xs-6">       
-          <TextField
-            id="name"
-            name="name"
-            type="text"
-            value={this.props.NonAccRoomToBook}
-            pattern="[A-Za-z]"
-            required = {true}
-            hintText={
-              <Label
-                label="BK_MYBK_NO_NON_ACC_ROOM_TO_BOOK"
-                color="rgba(0, 0, 0, 0.3799999952316284)"
-                fontSize={16}
-                labelStyle={hintTextStyle}
-              />
-            }
-            floatingLabelText={
-              <Label
-                key={0}
-                label="BK_MYBK_NO_NON_ACC_ROOM_TO_BOOK"
-                color="rgba(0,0,0,0.60)"
-                fontSize="12px"
-              />
-            }
-            onChange={handleChange('NonAccRoomToBook')}
-            underlineStyle={{ bottom: 7 }}
-            underlineFocusStyle={{ bottom: 7 }}
-            hintStyle={{ width: "100%" }}
+        }
+        floatingLabelText={
+          <Label
+            key={0}
+            label="BK_MYBK_NO_ACC_ROOM_TO_BOOK"
+            color="rgba(0,0,0,0.60)"
+            fontSize="12px"
           />
-        </div>
- 
- 
- 
- 
- 
+        }
+        onChange={handleChange('AccRoomToBook')}
+        underlineStyle={{ bottom: 7 }}
+        underlineFocusStyle={{ bottom: 7 }}
+        hintStyle={{ width: "100%" }}
+      />
+    </div>
+    : ""}
+        
+    {this.props.TypeOfRoomToBook === 'Non-AC' ? 
+     <div className="col-sm-6 col-xs-6">       
+     <TextField
+       id="name"
+       name="name"
+       type="text"
+       value={this.props.NonAccRoomToBook}
+       pattern="[A-Za-z]"
+       required = {true}
+       hintText={
+         <Label
+           label="BK_MYBK_NO_NON_ACC_ROOM_TO_BOOK"
+           color="rgba(0, 0, 0, 0.3799999952316284)"
+           fontSize={16}
+           labelStyle={hintTextStyle}
+         />
+       }
+       floatingLabelText={
+         <Label
+           key={0}
+           label="BK_MYBK_NO_NON_ACC_ROOM_TO_BOOK"
+           color="rgba(0,0,0,0.60)"
+           fontSize="12px"
+         />
+       }
+       onChange={handleChange('NonAccRoomToBook')}
+       underlineStyle={{ bottom: 7 }}
+       underlineFocusStyle={{ bottom: 7 }}
+       hintStyle={{ width: "100%" }}
+     />
+   </div>
+    : ""}
+       
+       {this.props.TypeOfRoomToBook === 'Both' ? 
+       <div>
+         <div className="col-sm-6 col-xs-6">       
+         <TextField
+           id="name"
+           name="name"
+           type="text"
+           value={this.props.AccRoomToBook}
+           pattern="[A-Za-z]"
+           required = {true}
+           hintText={
+             <Label
+               label="BK_MYBK_NO_ACC_ROOM_TO_BOOK"
+               color="rgba(0, 0, 0, 0.3799999952316284)"
+               fontSize={16}
+               labelStyle={hintTextStyle}
+             />
+           }
+           floatingLabelText={
+             <Label
+               key={0}
+               label="BK_MYBK_NO_ACC_ROOM_TO_BOOK"
+               color="rgba(0,0,0,0.60)"
+               fontSize="12px"
+             />
+           }
+           onChange={handleChange('AccRoomToBook')}
+           underlineStyle={{ bottom: 7 }}
+           underlineFocusStyle={{ bottom: 7 }}
+           hintStyle={{ width: "100%" }}
+         />
+       </div>
+         <div className="col-sm-6 col-xs-6">       
+         <TextField
+           id="name"
+           name="name"
+           type="text"
+           value={this.props.NonAccRoomToBook}
+           pattern="[A-Za-z]"
+           required = {true}
+           hintText={
+             <Label
+               label="BK_MYBK_NO_NON_ACC_ROOM_TO_BOOK"
+               color="rgba(0, 0, 0, 0.3799999952316284)"
+               fontSize={16}
+               labelStyle={hintTextStyle}
+             />
+           }
+           floatingLabelText={
+             <Label
+               key={0}
+               label="BK_MYBK_NO_NON_ACC_ROOM_TO_BOOK"
+               color="rgba(0,0,0,0.60)"
+               fontSize="12px"
+             />
+           }
+           onChange={handleChange('NonAccRoomToBook')}
+           underlineStyle={{ bottom: 7 }}
+           underlineFocusStyle={{ bottom: 7 }}
+           hintStyle={{ width: "100%" }}
+         />
+       </div>
+</div>
+       : ""}
+
+<div className="col-sm-6 col-xs-6">
+            <FormControl style={{ width: '100%' }}>
+              <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label"><Label
+                required={true}
+                label="BK_MYBK_FROM_DATE"
+              /></InputLabel>
+              <Select
+                maxWidth={false}
+                required={true}
+                labelId="demo-controlled-open-select-label"
+                id="demo-controlled-open-select"
+                open={this.state.SetOpen}
+                displayEmpty
+                onClose={() => this.handleClose()}
+                onOpen={() => this.handleOpen()}
+                value={this.props.roomFromDate}
+                onChange={handleChange('roomFromDate')}
+              >
+                <MenuItem value="" disabled>From Date</MenuItem>
+                <MenuItem value={this.props.fromDate}>{this.props.fromDate}</MenuItem>
+                <MenuItem value={this.props.toDate}>{this.props.toDate}</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+
+          <div className="col-sm-6 col-xs-6">
+            <FormControl style={{ width: '100%' }}>
+              <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label"><Label
+                required={true}
+                label="BK_MYBK_TO_DATE"
+              /></InputLabel>
+              <Select
+                maxWidth={false}
+                required={true}
+                labelId="demo-controlled-open-select-label"
+                id="demo-controlled-open-select"
+                open={this.state.SetOpen}
+                displayEmpty
+                onClose={() => this.handleClose()}
+                onOpen={() => this.handleOpen()}
+                value={this.props.roomToDate}
+                onChange={handleChange('roomToDate')}
+              >
+                <MenuItem value="" disabled>To Date</MenuItem>
+                <MenuItem value={this.props.fromDate}>{this.props.fromDate}</MenuItem>
+                <MenuItem value={this.props.toDate}>{this.props.toDate}</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+
   <Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
             <div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
               <Button

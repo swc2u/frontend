@@ -282,7 +282,7 @@ export const createUpdateIndent = async (state, dispatch, action) => {
 
   if (action === "CREATE") {
     try {
-      let wfobject = getWFPayload(state, dispatch)
+      let wfobject = getWFPayload(state, dispatch,"businessServiceIssueNote")
 
       console.log(queryObject)
       console.log("queryObject")
