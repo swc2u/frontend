@@ -1697,7 +1697,7 @@ class ReportPreview extends React.Component {
                                 i === 0 ?
                                 <tr>
                                 {/* <dd>{ index }</dd>  */}
-                                <td rowspan={applicationState.actions.length }> {applicationState.actions.length} { applicationState.state } </td>
+                                <td rowspan={applicationState.actions.length }> { applicationState.state } </td>
                                 <td  rowspan={applicationState.actions.length }> { applicationState.applicationStatus } </td>
                                 <td> { action.action } </td>
                                 <td> { action.roles[0] } </td>
