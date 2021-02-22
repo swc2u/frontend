@@ -2335,7 +2335,7 @@ export const _getPattern = (type) => {
     case "areaOfProperty":
       return /^[+-]?\d{2,15}(\.\d{1,2})?$/i;
     case "alphaNumeric":
-      return /^[a-zA-Z0-9]{1,100}$/i;
+      return /^[a-zA-Z0-9 ]{1,100}$/i;
     case "fileNumber":
       return /^[A-Za-z0-9_@./#&+-]{1,50}$/i;
     case "alphabet":  
