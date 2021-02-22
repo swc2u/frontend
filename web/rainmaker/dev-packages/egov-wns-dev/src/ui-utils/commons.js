@@ -838,11 +838,16 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType",
             ''
         );
+        const wnsStatus =  window.localStorage.getItem("WNS_STATUS"); 
+                if(wnsStatus){
+                    activityType = wnsStatus
+                }
         //
             if(water)
             {
             if(occupancycode && applicationType && category)
             {
+
                 if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO')
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
@@ -1284,11 +1289,17 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                     "WaterConnection[0].activityType",
                     ''
                 );
+                const wnsStatus =  window.localStorage.getItem("WNS_STATUS"); 
+                if(wnsStatus){
+                    activityType = wnsStatus
+                }
                 //
             if(water)
             {
             if(occupancycode && applicationType && category)
             {
+                
+                console.log(activityType);
                 if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO')
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
@@ -1537,6 +1548,31 @@ export const applyForWater = async (state, dispatch) => {
         console.log(error);
         return false;
     }
+}
+export const propertyUpdate = async (state, dispatch,propertyPayload)=>{
+    try {
+
+        let payload = null;
+        payload = await httpRequest(
+          "post",
+          "/property-services/property/_update",
+          "_update",
+          [],
+          { Property: propertyPayload }
+  
+        );
+        if (payload) {
+         
+        }
+        return true;
+      } catch (e) {
+        console.log(e);
+        if(localStorage.getItem("WNS_STATUS")){
+            window.localStorage.removeItem("WNS_STATUS");
+        }
+        return false;
+       
+      }
 }
 
 export const applyForSewerage = async (state, dispatch) => {

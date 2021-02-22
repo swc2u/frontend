@@ -134,7 +134,8 @@ class CheckboxLabels extends React.Component {
           else
           {
             isdisabled = true
-            isChecked = preparedFinalObject.WaterConnection[0].waterApplication.isFerruleApplicable
+            isChecked = true//preparedFinalObject.WaterConnection[0].waterApplication.isFerruleApplicable
+           // approveCheck('WaterConnection[0].waterApplication.isFerruleApplicable', true)
             
           }
         }

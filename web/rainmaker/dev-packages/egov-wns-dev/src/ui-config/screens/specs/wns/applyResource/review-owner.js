@@ -319,7 +319,7 @@ export const reviewmfrCode = getLabelWithValue(
     labelName: "mfr Code",
     labelKey: "WS_SERV_DETAIL_MFRCODE"
   },
-  { jsonPath: "applyScreen.mfrCode",
+  { jsonPath: "WaterConnection[0].mfrCode",
     callBack: handleNA }
 );
 export const reviewmeterDigits = getLabelWithValue(
@@ -327,7 +327,7 @@ export const reviewmeterDigits = getLabelWithValue(
     labelName: "Meter Digits",
     labelKey: "WS_SERV_DETAIL_METER_DIGIT"
   },
-  { jsonPath: "applyScreen.meterDigits",
+  { jsonPath: "WaterConnection[0].meterDigits",
     callBack: handleNA }
 );
 export const reviewmeterUnit = getLabelWithValue(
@@ -335,7 +335,7 @@ export const reviewmeterUnit = getLabelWithValue(
     labelName: "Meter Unit",
     labelKey: "WS_SERV_DETAIL_METER_UNIT"
   },
-  { jsonPath: "applyScreen.meterUnit",
+  { jsonPath: "WaterConnection[0].meterUnit",
     callBack: handleNA }
 );
 export const reviewsanctionedCapacity = getLabelWithValue(
