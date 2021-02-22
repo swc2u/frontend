@@ -82,20 +82,27 @@ class SimpleTable extends React.Component {
       ""
     ]
 
-    const foundUser = this.props.userInfo && this.props.userInfo.roles.some(el => el.code === 'BK_MCC_HELPDESK_USER');
+    const foundUser = this.props.userInfo && this.props.userInfo.roles.some(el => el.code === 'BK_ADMIN');
+    if (foundUser) {
 
 
-    let feeResponse = await httpRequest(
-      "bookings/commercial/ground/lock/dates/_fetch",
-      "_search",
-      [], []
-    );
-    let tableData = {};
+      let feeResponse = await httpRequest(
+        "bookings/commercial/ground/lock/dates/_fetch",
+        "_search",
+        [], []
+      );
+      let tableData = {};
 
-    if (feeResponse && feeResponse.data.length > 0) {
+      if (feeResponse && feeResponse.data.length > 0) {
 
+        tableData.headers = headers;
+        tableData.rows = feeResponse.data;
+        this.setState({ data: tableData })
+      }
+    } else {
+      let tableData = {};
       tableData.headers = headers;
-      tableData.rows = feeResponse.data;
+      tableData.rows = {}
       this.setState({ data: tableData })
     }
     this.setState({ isLoading: false })
@@ -192,8 +199,8 @@ class SimpleTable extends React.Component {
         return item.filter(
           (x) =>
 
-          x.bookingVenue.toLowerCase().includes(target.value.toLowerCase()) ||
-          x.venueType.toLowerCase().includes(target.value.toLowerCase())
+            x.bookingVenue.toLowerCase().includes(target.value.toLowerCase()) ||
+            x.venueType.toLowerCase().includes(target.value.toLowerCase())
 
         );
       }
@@ -203,7 +210,7 @@ class SimpleTable extends React.Component {
 
   render() {
 
-    const {classes}= this.props
+    const { classes } = this.props
     return (
 
       this.state.isLoading === true ? <div > <CircularProgress style={{ position: "fixed", top: '50%', left: '50%' }} /> </div> :
