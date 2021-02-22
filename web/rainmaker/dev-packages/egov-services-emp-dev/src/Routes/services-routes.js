@@ -135,6 +135,11 @@ const PaymentReceiptDteail = Loadable({
   loader: () => import("../Screens/ParkAndCommunityCenterAppDetails/components/PayPage"),
   loading: Loading
 })
+// RoomPayment
+const RoomPayment = Loadable({
+  loader: () => import("../Screens/EmployeeRoomBooking/PayPage"),
+  loading: Loading
+})
 //RoomBooking
 const RoomBooking = Loadable({
   loader: () => import("../Screens/EmployeeRoomBooking/CheckApplicationPage"),
@@ -325,6 +330,19 @@ const routes = [
   {
     path: "egov-services/PaymentReceiptDteail/:applicationId",
     component: PaymentReceiptDteail,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      // title: "ES_OPEN_APPLICAION_HEADER",
+      hideTitle: false,
+      customFor: "employee",
+      customTitle: "Make Offline Payment"
+      // customTitle: "BK_MYBK_PAYMENT_RCPT_DETAILS"
+    }
+  },
+  {
+    path: "egov-services/PaymentReceiptDteail/ForRoomBooking/:applicationId",
+    component: RoomPayment,
     needsAuthentication: true,
     options: {
       hideFooter: true,
