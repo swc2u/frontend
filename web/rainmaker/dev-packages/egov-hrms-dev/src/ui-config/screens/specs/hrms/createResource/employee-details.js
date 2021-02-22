@@ -7,10 +7,7 @@ import {
   getCommonContainer,
   getPattern
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { getTodaysDateInYMD,convertDateToEpoch,convertDateToEpochDays, epochToYmdDate } from "../../utils";
-import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { handleScreenConfigurationFieldChange as handleField , prepareFinalObject} from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import { getTodaysDateInYMD } from "../../utils";
 
 export const employeeDetails = getCommonCard({
   header: getCommonTitle(
@@ -25,21 +22,6 @@ export const employeeDetails = getCommonCard({
     }
   ),
   employeeDetailsContainer: getCommonContainer({
-    appellation: {
-      ...getTextField({
-        label: {
-          labelName: "Appellation",
-          labelKey: "HR_APPELLATION_LABEL"
-        },
-        placeholder: {
-          labelName: "Enter Appellation",
-          labelKey: "HR_APPELLATION_PLACEHOLDER"
-        },
-        required: true,
-        pattern: /^[a-zA-Z]{0,5}$/i,
-        jsonPath: "Employee[0].user.salutation"
-      }),  
-    },
     employeeName: {
       ...getTextField({
         label: {
@@ -51,7 +33,7 @@ export const employeeDetails = getCommonCard({
           labelKey: "HR_NAME_PLACEHOLDER"
         },
         required: true,
-        pattern: getPattern("alpha-only-with-space") || null,
+        pattern: getPattern("Name") || null,
         jsonPath: "Employee[0].user.name"
       })
     },
@@ -86,7 +68,7 @@ export const employeeDetails = getCommonCard({
           labelKey: "HR_FATHER_HUSBAND_NAME_PLACEHOLDER"
         },
         required: true,
-        pattern: getPattern("alpha-only-with-space") || null,
+        pattern: getPattern("Name") || null,
         jsonPath: "Employee[0].user.fatherOrHusbandName"
       })
     },
@@ -109,11 +91,6 @@ export const employeeDetails = getCommonCard({
             {
               value: "FEMALE",
               label: "COMMON_GENDER_FEMALE"
-            },
-            {
-              value: "OTHERS",
-             // label: "COMMON_GENDER_OTHERS"
-              label: "OTHERS"
             }
           ],
           optionValue: "value",
@@ -131,61 +108,15 @@ export const employeeDetails = getCommonCard({
           labelName: "Enter Date of Birth",
           labelKey: "HR_BIRTH_DATE_PLACEHOLDER"
         },
-        required: true,  
+        required: true,
         pattern: getPattern("Date"),
         jsonPath: "Employee[0].user.dob",
         props: {
           inputProps: {
-            max: new Date().toISOString().slice(0, 10),
+            max: getTodaysDateInYMD()
           }
         }
-      }),
-      beforeFieldChange: (action, state, dispatch) => {
-        if(action.value)
-         {
-
-          let dateOfAppointment = convertDateToEpoch(action.value)//dateOfAppointment
-        dispatch(
-          handleField(`create`,        
-            "components.div.children.formwizardFirstStep.children.professionalDetails.children.cardContent.children.employeeDetailsContainer.children.dateOfAppointment",
-            "props.inputProps",
-            { min: new Date(dateOfAppointment).toISOString().slice(0, 10),
-              max: new Date().toISOString().slice(0, 10),
-            
-            }
-          )          
-        ); 
-
-       // let date = getTodaysDateInYMD();
-        //let dobdefault = con
-        let dateOfAppointment_ =  convertDateToEpochDays(action.value, "",(365*18))
-  
-        let employeeCode = getQueryArg(window.location.href, "employeeCode");
-      if(!employeeCode)
-      {
-        dispatch(
-          handleField(`create`,        
-            "components.div.children.formwizardFirstStep.children.professionalDetails.children.cardContent.children.employeeDetailsContainer.children.dateOfAppointment",
-            "props.value",
-            dateOfAppointment_
-          )          
-        );
-
-        dispatch(prepareFinalObject("Employee[0].serviceHistory[0].serviceFrom", epochToYmdDate(dateOfAppointment_)));
-        dispatch(prepareFinalObject("Employee[0].dateOfAppointment", epochToYmdDate(dateOfAppointment_)));
-        //set defaule date for assignment start data and service start date to ease date selection
-        // dispatch(
-        //   handleField(`create`,        
-        //     "components.div.children.formwizardThirdStep.children.assignmentDetails.children.cardContent.children.assignmentDetailsCard.props.items.0.item0.children.cardContent.children.asmtDetailsCardContainer.children.assignFromDate",
-        //     "props.value",
-        //     dateOfAppointment_
-        //   )          
-        // );
-      }
-        
-      }
-
-      }
+      })
     },
     email: {
       ...getTextField({
@@ -197,11 +128,9 @@ export const employeeDetails = getCommonCard({
           labelName: "Enter Email",
           labelKey: "HR_EMAIL_PLACEHOLDER"
         },
-        required: true,
         pattern: getPattern("Email"),
         jsonPath: "Employee[0].user.emailId"
-      }),
-      
+      })
     },
     correspondenceAddress: {
       ...getTextField({
@@ -213,7 +142,7 @@ export const employeeDetails = getCommonCard({
           labelName: "Enter Corrospondence Address",
           labelKey: "HR_CORRESPONDENCE_ADDRESS_PLACEHOLDER"
         },
-        required: false,
+        required: true,
         pattern: getPattern("Address"),
         jsonPath: "Employee[0].user.correspondenceAddress"
       })
@@ -245,7 +174,6 @@ export const professionalDetails = getCommonCard(
             labelName: "Enter Employee ID",
             labelKey: "HR_EMPLOYEE_ID_PLACEHOLDER"
           },
-          required: true,
           pattern: /^[a-zA-Z0-9-_]*$/i,
           jsonPath: "Employee[0].code"
         })
@@ -260,57 +188,9 @@ export const professionalDetails = getCommonCard(
             labelName: "Enter Date of Appointment",
             labelKey: "HR_APPOINTMENT_DATE_PLACEHOLDER"
           },
-          required: true,
           pattern: getPattern("Date"),
-          jsonPath: "Employee[0].dateOfAppointment",
-          // props: {
-          //   inputProps: {
-          //     max: new Date().toISOString().slice(0, 10),
-          //   }
-          // }
-        }),
-        beforeFieldChange: (action, state, dispatch) => {
-          if(action.value)
-           {
-          //   let assignFromDate = convertDateToEpoch(action.value, "dayStart")
-          // dispatch(
-          //   handleField(`create`,        
-          //     "components.div.children.formwizardThirdStep.children.assignmentDetails.children.cardContent.children.assignmentDetailsCard.props.items[0].item0.children.cardContent.children.asmtDetailsCardContainer.children.assignFromDate",
-          //     "props.inputProps",
-          //     { min: new Date(assignFromDate).toISOString().slice(0, 10)}
-          //   )
-          // ); 
-          // let dateOfAppointment_ =  convertDateToEpochDays(action.value, "",(1))
-          // dispatch(
-          //   handleField(`create`,        
-          //     "components.div.children.formwizardThirdStep.children.assignmentDetails.children.cardContent.children.assignmentDetailsCard.props.items.0.item0.children.cardContent.children.asmtDetailsCardContainer.children.assignFromDate",
-          //     "props.value",
-          //     dateOfAppointment_
-          //   )          
-          // );
-        }
-
-        }
-      },
-      dateOfSuperannuation: {
-        ...getDateField({
-          label: {
-            labelName: "Date of Superannuation",
-            labelKey: "HR_SUPERANNUATION_DATE_LABEL"
-          },
-          placeholder: {
-            labelName: "Enter Date of Super Annuation",
-            labelKey: "HR_SUPERANNUATION_DATE_PLACEHOLDER"
-          },
-          required: true,
-          pattern: getPattern("Date"),
-          jsonPath: "Employee[0].dateOfSuperannuation",
-          props: {
-            inputProps: {
-              min: new Date().toISOString().slice(0, 10),
-            }
-          },
-        }),
+          jsonPath: "Employee[0].dateOfAppointment"
+        })
       },
       employmentType: {
         ...getSelectField({
@@ -329,10 +209,10 @@ export const professionalDetails = getCommonCard(
             optionLabel: "status",
             optionValue: "code"
           },
-          // localePrefix: {
-          //   moduleName: "egov-hrms",
-          //   masterName: "EmployeeType"
-          // }
+          localePrefix: {
+            moduleName: "egov-hrms",
+            masterName: "EmployeeType"
+          }
         })
       },
       status: {
@@ -351,10 +231,10 @@ export const professionalDetails = getCommonCard(
             disabled: true,
             value: "EMPLOYED"
           },
-          // localePrefix: {
-          //   moduleName: "egov-hrms",
-          //   masterName: "EmployeeStatus"
-          // }
+          localePrefix: {
+            moduleName: "egov-hrms",
+            masterName: "EmployeeStatus"
+          }
         })
       },
       role: {
@@ -364,8 +244,6 @@ export const professionalDetails = getCommonCard(
         jsonPath: "Employee[0].user.roles",
         required: true,
         props: {
-          optionLabel: "name",
-          optionValue: "code",
           style: {
             width: "100%",
             cursor: "pointer"
@@ -384,17 +262,17 @@ export const professionalDetails = getCommonCard(
           inputLabelProps: {
             shrink: true
           },
-          // localePrefix: {
-          //   moduleName: "ACCESSCONTROL_ROLES",
-          //   masterName: "ROLES"
-          // },
+          localePrefix: {
+            moduleName: "ACCESSCONTROL_ROLES",
+            masterName: "ROLES"
+          },
           isMulti: true,
         },
         gridDefination: {
           xs: 12,
           sm: 6
         }
-      },
+      }
     })
   },
   {

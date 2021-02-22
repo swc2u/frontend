@@ -19,30 +19,11 @@ const styles = {
 
 class MyConnections extends React.Component {
   getConnectionDetails = data => {
-
-    if(data.activityType){
-      switch(data.activityType){
-        case "NEW_WS_CONNECTION":  window.localStorage.setItem("wns_workflow","REGULARWSCONNECTION"); break;
-        case "APPLY_FOR_TEMPORARY_CONNECTION" :  window.localStorage.setItem("wns_workflow","TEMPORARY_WSCONNECTION"); break;
-        case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_TEMP"); break;
-        case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_REGULAR"); break;
-        case "PERMANENT_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTION"); break;        
-        case "TEMPORARY_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_DISCONNECTION"); break;
-        case "UPDATE_CONNECTION_HOLDER_INFO":  window.localStorage.setItem("wns_workflow","WS_RENAME"); break;
-        case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_CONVERSION"); break;
-        case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_REACTIVATE"); break;
-        case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
-      }
-}
-
-let tenantId = data.tenantId;
-if(data.property)
-tenantId = data.property.tenantId;
-    window.location.href = `/citizen/wns/connection-details?connectionNumber=${data.connectionNo}&tenantId=${tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
+    window.location.href = `/citizen/wns/connection-details?connectionNumber=${data.connectionNo}&tenantId=${data.property.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
   }
 
   getViewBillDetails = data => {
-    window.location.href = `/citizen/wns/viewBill?connectionNumber=${data.connectionNo}&tenantId=${data.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
+    window.location.href = `/citizen/wns/viewBill?connectionNumber=${data.connectionNo}&tenantId=${data.property.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
   }
 
   render() {
@@ -132,15 +113,11 @@ tenantId = data.property.tenantId;
                           />
                         </Grid>
                         <Grid item md={8} xs={6}>
-                          { (item.property && item.property.owners && item.property.owners !== "NA") ?                            
-                            (<div><LabelContainer
-                              labelName={item.property.owners.map(owner =>owner.name).join(",")}
-                              fontSize={14}
-                              style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
-                            /></div>) :
-                            (<div></div>)
-                          }
-
+                          <LabelContainer
+                            labelName={item.property.owners.map(owner => owner.name)}
+                            fontSize={14}
+                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
+                          />
                         </Grid>
                       </Grid>
                       <Grid container style={{ marginBottom: 12 }}>
@@ -152,15 +129,11 @@ tenantId = data.property.tenantId;
                           />
                         </Grid>
                         <Grid item md={8} xs={6}>
-                        { (item.property && item.property.address && item.property.address.street) ?
-                            (<Label
+                          <Label
                             labelName={item.property.address.street}
                             fontSize={14}
                             style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
-                          />) :
-                          (<div></div>)
-                        }
-                          
+                          />
                         </Grid>
                       </Grid>
                       <Grid container style={{ marginBottom: 12 }}>
@@ -180,9 +153,9 @@ tenantId = data.property.tenantId;
                         </Grid>
                       </Grid>
                       <div>
-                        {item.status === "NA" ?
+                        {item.due === "NA" ?
                           (<div></div>)
-                          : item.status !== "INITIATED" ?
+                          : item.due === 0 ?
                             (<div> <LabelContainer
                               labelKey="WS_COMMON_PAID_LABEL"
                               style={{ color: '#008000', textTransform: 'uppercase', fontWeight: 400 }}

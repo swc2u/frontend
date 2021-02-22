@@ -1,21 +1,21 @@
-import React from 'react';
-import { getSearchResults, organizeLicenseData, getCount } from "../../../../../ui-utils/commons";
+import { getSearchResults } from "../../../../../ui-utils/commons";
 import { httpRequest } from "../../../../../ui-utils";
 import {
   handleScreenConfigurationFieldChange as handleField,
   prepareFinalObject
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import commonConfig from "config/common.js";
-import set from "lodash/set";
-import TradeLicenseIcon from "../../../../../ui-atoms-local/Icons/TradeLicenseIcon";
-import FormIcon from '../../../../../ui-atoms-local/Icons/FormIcon';
-import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 
-const getMdmsData = async (dispatch, body) => {
+const getMdmsData = async () => {
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: commonConfig.tenantId,
-      moduleDetails: body
+      moduleDetails: [
+        {
+          moduleName: "tenant",
+          masterDetails: [{ name: "citymodule" }]
+        }
+      ]
     }
   };
   try {
@@ -31,13 +31,9 @@ const getMdmsData = async (dispatch, body) => {
     console.log(e);
   }
 };
-
-export const getTradeTypes = async (action, state, dispatch) => {
-  const cityPayload = [{
-    moduleName: "tenant", 
-    masterDetails: [{name: "citymodule"}]
-  }]
-  const mdmsRes = await getMdmsData(dispatch, cityPayload);
+export const fetchData = async (action, state, dispatch) => {
+  const response = await getSearchResults();
+  const mdmsRes = await getMdmsData(dispatch);
   let tenants =
     mdmsRes &&
     mdmsRes.MdmsRes &&
@@ -50,51 +46,6 @@ export const getTradeTypes = async (action, state, dispatch) => {
       tenants
     )
   );
-
-  const {licensesCount = 0} = await getCount() || {};
-  dispatch(
-    prepareFinalObject("myApplicationsCount", licensesCount)
-  );
-
-  const permanentCity = JSON.parse(getUserInfo()).permanentCity
-
-  const cardItems = [
-    {
-      label: {
-          labelKey: "Apply",
-          labelName: "Apply"
-      },
-      icon: <TradeLicenseIcon />,
-      route: tenants.tenants.length > 1 ? {
-        screenKey: "home",
-        jsonPath: "components.cityPickerDialog"
-      } : !!tenants.tenants.length ? `apply?tenantId=${tenants.tenants[0].code}` : `apply?tenantId=${permanentCity}`
-    },
-    {
-      label: {
-          labelKey: "TL_MY_APPLICATIONS",
-          labelName: "My Applications"
-      },
-      icon: <FormIcon />,
-      route: "my-applications"
-    }
-  ]
-  dispatch(
-    handleField(
-      "home",
-      "components.div.children.applyCard.props",
-      "items",
-      cardItems
-    )
-  );
-}
-
-export const fetchData = async (action, state, dispatch) => {
-  const queryObject = [{
-    key: "limit",
-    value: 100
-  }]
-  const response = await getSearchResults(queryObject);
   try {
     /*Mseva 1.0 */
     // let data =
@@ -124,9 +75,7 @@ export const fetchData = async (action, state, dispatch) => {
     /*Mseva 2.0 */
 
     if (response && response.Licenses && response.Licenses.length > 0) {
-      const licenses = organizeLicenseData(response.Licenses)
-      dispatch(prepareFinalObject("actualResults", licenses));
-      dispatch(prepareFinalObject("searchResults", licenses));
+      dispatch(prepareFinalObject("searchResults", response.Licenses));
       dispatch(
         prepareFinalObject("myApplicationsCount", response.Licenses.length)
       );

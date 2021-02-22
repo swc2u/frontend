@@ -55,10 +55,6 @@ const NewConnection = Loadable({
   loader: () => import("./NewConnection"),
   loading: () => <Loading />
 });
-const LinkConnection = Loadable({
-  loader: () => import("./LinkConnection"),
-  loading: () => <Loading />
-});
 const MyApplications = Loadable({
   loader: () => import("./MyApplications"),
   loading: () => <Loading />
@@ -83,11 +79,6 @@ const PastPayments = Loadable({
   loading: () => <Loading />
 });
 
-const WnsHowItWorks = Loadable({
-  loader: () => import("./WnsHowItWorks"),
-  loading: () => <Loading />
-});
-
 const PastPaymentsDetails = Loadable({
   loader: () => import("./PastPaymentsDetails"),
   loading: () => <Loading />
@@ -107,20 +98,10 @@ const ActionDialog = Loadable({
   loading: () => <Loading />
 })
 
-const FeesEstimateOverviewCard = Loadable({
-  loader: () => import("./FeeEstimateOverviewCard"),
-  loading: () => <Loading />
-});
-
-const OwnerHeader = Loadable({
-  loader: () => import("./OwnerHeader"),
-  loading: () => <Loading />
-});
-const Footer = Loadable({
-  loader: () => import("./Footer"),
-  loading: () => <Loading />
-});
-
+// const PropertyTaxDetails = Loadable({
+//   loader: () => import("./PropertyTaxDetails"),
+//   loading: () => <Loading />
+// })
 
 export {
   TestMolecules,
@@ -141,12 +122,7 @@ export {
   MeterReadingEditable,
   NewConnection,
   MyApplications,
-  Applications,
-  WnsHowItWorks,
-  FeesEstimateOverviewCard,
-  OwnerHeader,
-  LinkConnection,
-  Footer
+  Applications
 
   // PropertyTaxDetails
 };

@@ -25,7 +25,7 @@ const getMdmsData = async (state, dispatch) => {
   );
   let mdmsBody = {
     MdmsCriteria: {
-      tenantId: 'ch',
+      tenantId: 'pb',
       moduleDetails: [
         {
           moduleName: "common-masters",

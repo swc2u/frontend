@@ -102,8 +102,7 @@ class CityPickerDialog extends Component {
           contentStyle={{ width: "90%" }}
           style={{
             paddingTop: "0",
-            // marginTop: "-30px",
-             marginTop: "0px",
+             marginTop: "-30px",
             bottom: "0",
             height: "auto",
           }}

@@ -158,11 +158,6 @@ span[class^="MuiFormLabel-asterisk"] {
   .common-div-css {
     margin: 30px 16px 88px 16px;
   }
-  
-  .common-header-cont {
-    display: inherit;
-    padding: 44px 0px 0px 8px;
-  }
 
   .button-wizard-footer,
   .single-button-wizard-footer {
@@ -178,7 +173,7 @@ span[class^="MuiFormLabel-asterisk"] {
     position: fixed !important;
     bottom: 0;
     right: 0;
-    width: 100%;
+    width: 83.33vw;
     text-align: right;
 }
 }
@@ -202,11 +197,9 @@ span[class^="MuiFormLabel-asterisk"] {
         /* left: 35px; */
         width: 100%;
         overflow: inherit !important;
-        display: flex;
     }
     .apply-wizard-footer { button {
        // min-width: 360px !important;
-       width: 100%;
         margin-left: 0 !important;
         margin-right: 0 !important;
      }}
@@ -232,7 +225,7 @@ span[class^="MuiFormLabel-asterisk"] {
         bottom: 0;
         right: 0;
         z-index: 1;
-        width: 100%;
+        width: 83.33vw;
         text-align: right;
         overflow: inherit !important;
     }

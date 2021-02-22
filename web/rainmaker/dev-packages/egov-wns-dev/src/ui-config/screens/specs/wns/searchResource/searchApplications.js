@@ -10,11 +10,70 @@ import {
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { searchApiCall } from "./functions";
-import { resetFieldsForApplication } from '../../utils';
+import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+
+const resetFields = (state, dispatch) => {
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.consumerNo",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.applicationNo",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.ownerMobNo",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.applicationstatus",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.fromDate",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.toDate",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.applicationType",
+      "props.value",
+      ""
+    )
+  );
+};
 
 export const searchApplications = getCommonCard({
   subHeader: getCommonTitle({
-    labelKey: "WS_SEARCH_APPLICATION_SUB_HEADER"
+    labelKey: "WS_SEARCH_CONNECTION_HEADER"
   }),
   subParagraph: getCommonParagraph({
     labelKey: "WS_HOME_SEARCH_RESULTS_DESC"
@@ -38,7 +97,7 @@ export const searchApplications = getCommonCard({
     }),
     applicationNo: getTextField({
       label: {
-        labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
+        labelKey: "WS_HOME_SEARCH_RESULTS_APP_NO_LABEL"
       },
       placeholder: {
         labelKey: "WS_HOME_SEARCH_RESULTS_APP_NO_PLACEHOLDER"
@@ -89,14 +148,14 @@ export const searchApplications = getCommonCard({
         labelKey: "WS_HOME_SEARCH_RESULTS_APP_STATUS_PLACEHOLDER"
       },
       required: false,
-      sourceJsonPath: "applyScreenMdmsData.searchScreen.applicationStatus",
+      sourceJsonPath: "applyScreenMdmsData.searchScreen.applicationstatus",
       gridDefination: {
         xs: 12,
         sm: 4
       },
       required: false,
       errorMessage: "ERR_INVALID_BILLING_PERIOD",
-      jsonPath: "searchScreen.applicationStatus"
+      jsonPath: "searchScreen.appStatus"
     }),
 
     fromDate: getDateField({
@@ -112,7 +171,8 @@ export const searchApplications = getCommonCard({
       },
       required: false,
       pattern: getPattern("Date"),
-      errorMessage: "ERR_INVALID_DATE"
+      errorMessage: "ERR_INVALID_DATE",
+      jsonPath: "searchScreen.billingPeriodValue"
     }),
 
     toDate: getDateField({
@@ -134,7 +194,7 @@ export const searchApplications = getCommonCard({
       label: { labelName: "To Date", labelKey: "WS_APPLICATION_TYPE_LABEL" },
       placeholder: { labelName: "Select to Date", labelKey: "WS_COMMON_APPLICATION_TYPE_PLACEHOLDER" },
       sourceJsonPath: "applyScreenMdmsData.searchScreen.applicationType",
-      jsonPath: "searchScreen.applicationType",
+      jsonPath: "searchScreen.appType",
       gridDefination: { xs: 12, sm: 4 },
       required: false
     })
@@ -144,13 +204,13 @@ export const searchApplications = getCommonCard({
     buttonContainer: getCommonContainer({
       resetButton: {
         componentPath: "Button",
-        gridDefination: { xs: 12, sm: 6 },
+        gridDefination: { xs: 6, sm: 6 },
         props: {
           variant: "outlined",
           style: {
             color: "rgba(0, 0, 0, 0.6000000238418579)",
             borderColor: "rgba(0, 0, 0, 0.6000000238418579)",
-            width: "220px",
+            width: "70%",
             height: "48px",
             margin: "8px",
             float: "right"
@@ -159,12 +219,12 @@ export const searchApplications = getCommonCard({
         children: { buttonLabel: getLabel({ labelKey: "WS_SEARCH_CONNECTION_RESET_BUTTON" }) },
         onClickDefination: {
           action: "condition",
-          callBack: resetFieldsForApplication
+          callBack: resetFields
         }
       },
       searchButton: {
         componentPath: "Button",
-        gridDefination: { xs: 12, sm: 6 },
+        gridDefination: { xs: 6, sm: 6 },
         props: {
           variant: "contained",
           style: {
@@ -172,7 +232,7 @@ export const searchApplications = getCommonCard({
             margin: "8px",
             backgroundColor: "rgba(0, 0, 0, 0.6000000238418579)",
             borderRadius: "2px",
-            width: "220px",
+            width: "70%",
             height: "48px"
           }
         },

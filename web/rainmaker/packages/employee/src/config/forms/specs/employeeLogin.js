@@ -29,7 +29,6 @@ const formConfig = {
       required: true,
       floatingLabelText: "CORE_COMMON_CITY",
       hintText: "CORE_COMMON_CITY_PLACEHOLDER",
-      value: "ch.chandigarh"
     },
   },
   submit: {

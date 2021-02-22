@@ -21,32 +21,8 @@ const styles = {
 class Applications extends React.Component {
   getTaskDetails = data => {
     data.service = data.service.toUpperCase();
-    if(data.activityType){
-      switch(data.activityType){
-        case "NEW_WS_CONNECTION":  window.localStorage.setItem("wns_workflow","REGULARWSCONNECTION"); break;
-        case "APPLY_FOR_TEMPORARY_CONNECTION":  window.localStorage.setItem("wns_workflow","TEMPORARY_WSCONNECTION"); break;
-        case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_TEMP"); break;
-        case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_REGULAR"); break;
-        case "PERMANENT_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTION"); break;        
-        case "TEMPORARY_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_DISCONNECTION"); break;
-        case "UPDATE_CONNECTION_HOLDER_INFO":  window.localStorage.setItem("wns_workflow","WS_RENAME"); break;
-        case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_CONVERSION"); break;
-        case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_REACTIVATE"); break;
-        case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
-        //case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
-      }
-}
     window.location.href = `/citizen/wns/search-preview?applicationNumber=${data.applicationNo}&history=${true}&tenantId=${data.property.tenantId}&service=${data.service}`
   }
-
-  titleCasingStatus = (status) => {
-    let splitStr = status.toLowerCase().split('_');
-    for (let i = 0; i < splitStr.length; i++) {
-      splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-    }
-    return splitStr.join(' ');
-  }
-
   render() {
     const { myApplicationResults, classes } = this.props;
     return (
@@ -99,15 +75,11 @@ class Applications extends React.Component {
                           />
                         </Grid>
                         <Grid item md={8} xs={6}>
-                          {item.property && item.property.owner&&
                           <LabelContainer
-                          labelName={item.property.owners.map(owner =>owner.name).join(",")}
-                          fontSize={14}
-                          style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
-                        />
-
-                          }
-                          
+                            labelName={item.property.owners.map(owner => owner.name)}
+                            fontSize={14}
+                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
+                          />
                         </Grid>
                       </Grid>
                       <Grid container style={{ marginBottom: 12 }}>
@@ -136,7 +108,7 @@ class Applications extends React.Component {
                         </Grid>
                         <Grid item md={8} xs={6}>
                           <Label
-                            labelName={this.titleCasingStatus(item.applicationStatus)}
+                            labelName={item.applicationStatus}
                             fontSize={14}
                             style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                           />

@@ -30,8 +30,7 @@ body {
   position: fixed !important;
   bottom: 0;
   right: 0;
-  // width: 83.33vw;
-  width: 100%;
+  width: 83.33vw;
   text-align: right;
 }
 .common-div-css {
@@ -105,26 +104,8 @@ span[class^="MuiFormLabel-asterisk"] {
     text-align: center;
   }
   .pay-success-footer {
-    height: 53px;
-    // overflow: auto;
+    height: 120px;
   }
-  .pay-success-footer .tl-download-button span span:nth-child(3), .pay-success-footer .tl-print-button span span:nth-child(3), .pay-success-footer .tl-home-button span:nth-child(3){
-    margin-left: 5px !important;
-  }
-
-  .pay-success-footer .tl-download-button {
-    width: 154px;
-    height: 30px !important;
-  }
-  .pay-success-footer .tl-print-button {
-    width: 114px;
-    height: 30px !important;
-  }
-  .pay-success-footer .tl-home-button {
-    width: 55px;
-    height: 30px !important;
-  }
-
 }
 @media only screen and (min-width: 953px) {
   .app-container-iframe {

@@ -6,8 +6,8 @@ import Label from "egov-ui-kit/utils/translationNode";
 import { getNestedObjFormat } from "./complaintTypeDataMaker";
 
 const customIconStyles = {
-  height: 35,
-  width: 35,
+  height: 25,
+  width: 25,
   margin: 0,
   top: 10,
   left: 12,
@@ -32,17 +32,8 @@ class ComplaintType extends Component {
   };
 
   generateDataSource = () => {
-    const { categories,department } = this.props;
-      const departmentWiseCategory =[];
-    Object.values(categories).map((item) => {
-      if(item.department == department && ! departmentWiseCategory.includes(item.path))
-         departmentWiseCategory.push(item.menuPath);
-    });
-
-
-
-    const categoryListToFilter = getNestedObjFormat(categories);
-    const categoryList = categoryListToFilter.filter(item => departmentWiseCategory.includes(item.text))
+    const { categories } = this.props;
+    const categoryList = getNestedObjFormat(categories);
     const transformedDataSource = [];
     this.generateResultsForAutoComplete(categoryList, transformedDataSource);
     this.setState({ dataSource: categoryList, transformedDataSource });
@@ -98,7 +89,7 @@ class ComplaintType extends Component {
   };
   baseContainerStyle = {
     overflowX: "hidden",
-    padding: "16px 16px 16px 16px",
+    padding: "0px 16px 16px 16px",
     background: "#00bcd1",
     boxShadow: "0 4px 4px 0 rgba(0, 0, 0, 0.24), 0 0 4px 0 rgba(0, 0, 0, 0.12)",
   };
@@ -109,10 +100,8 @@ class ComplaintType extends Component {
     const displayInitialList = searchTerm.length === 0 ? true : false;
     const { transformedDataSource, dataSource } = this.state;
     return (
-      <div>
-         <Icon onClick={() =>  this.props.history.goBack()} className="banner-back-button" style={{fill : "black"}} action="navigation" name="arrow-back" />
-      <div style={{ marginBottom: 60,marginTop:50 }}>
-         <AutoSuggest
+      <div style={{ marginBottom: 60 }}>
+        <AutoSuggest
           id="complainttype-search"
           containerStyle={this.props.containerStyle || baseContainerStyle}
           textFieldStyle={this.props.textFieldStyle || baseTextStyle}
@@ -124,7 +113,6 @@ class ComplaintType extends Component {
         />
         {displayInitialList ? this.renderList(prepareResultsForDisplay(dataSource)) : this.renderList(prepareResultsForDisplay(results), true)}
       </div>
-      </div>
     );
   }
 }
@@ -132,7 +120,6 @@ class ComplaintType extends Component {
 const mapStateToProps = (state) => {
   return {
     categories: state.complaints.categoriesById,
-    department : state.form.complaint && state.form.complaint.fields && state.form.complaint.fields.department && state.form.complaint.fields.department.value ,
   };
 };
 

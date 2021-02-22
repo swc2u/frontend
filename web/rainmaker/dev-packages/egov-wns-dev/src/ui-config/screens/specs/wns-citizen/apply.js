@@ -23,8 +23,7 @@ import {
   } from "../wns/apply";
   import { getAllDataFromBillingSlab } from "../utils";
   import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
-  import { getLocale,getTenantId,getUserInfo,setModule } from "egov-ui-kit/utils/localStorageUtils";
-  
+  import { getLocale } from "egov-ui-kit/utils/localStorageUtils";
   
   // const getData = async (action, state, dispatch, tenantId) => {
   //   await getMdmsData(action, state, dispatch);
@@ -104,10 +103,6 @@ import {
     //     getData(action, state, dispatch, tenantId);
     //   }
     //   dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
-    setModule("rainmaker-wns");
-    const userInfo = JSON.parse(getUserInfo());
-    const tenantId = process.env.REACT_APP_NAME === "Citizen" ? (userInfo.permanentCity || userInfo.tenantId): getTenantId();
-      dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
       return action;
     },
     components: {

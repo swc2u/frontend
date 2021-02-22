@@ -658,7 +658,7 @@ export const fetchAssessments = (fetchAssessmentsQueryObject) => {
 }
 export const getFileUrlFromAPI = async fileStoreId => {
   const queryObject = [
-    { key: "tenantId", value: "ch" },
+    { key: "tenantId", value: "pb" },
     { key: "fileStoreIds", value: fileStoreId }
   ];
   try {

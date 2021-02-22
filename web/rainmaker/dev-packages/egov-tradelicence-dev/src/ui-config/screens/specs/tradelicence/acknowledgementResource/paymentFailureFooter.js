@@ -36,7 +36,7 @@ export const paymentFailureFooter = (applicationNumber, tenant) => {
       },
       onClickDefination: {
         action: "page_change",
-        path: `${redirectionURL}/pay?consumerCode=${applicationNumber}&tenantId=${tenant}`
+        path: `${redirectionURL}/pay?applicationNumber=${applicationNumber}&tenantId=${tenant}&businessService=TL`
       }
     }
   });

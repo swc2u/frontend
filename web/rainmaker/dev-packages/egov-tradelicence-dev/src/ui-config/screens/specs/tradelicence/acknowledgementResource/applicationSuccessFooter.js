@@ -2,10 +2,7 @@ import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { ifUserRoleExists, downloadAcknowledgementForm } from "../../utils";
-import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import set from "lodash/set";
-
+import { ifUserRoleExists } from "../../utils";
 const getCommonApplyFooter = children => {
   return {
     uiFramework: "custom-atoms",
@@ -34,8 +31,11 @@ export const generatePdfAndDownload = (
       "info"
     )
   );
-  const tradeLicenseType = getQueryArg(window.location.href, "tlType");
- 
+  var iframe = document.createElement("iframe");
+  iframe.src =
+    document.location.origin +
+    window.basename +
+    `/tradelicence/search-preview?applicationNumber=${applicationNumber}&tenantId=${tenant}`;
   var hasIframeLoaded = false,
     hasEstimateLoaded = false;
   iframe.onload = function(e) {
@@ -172,13 +172,16 @@ export const applicationSuccessFooter = (
       onClickDefination: {
         action: "condition",
         callBack: () => {
-        const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
-        const documents = LicensesTemp[0].reviewDocData;
-        set(Licenses[0],"additionalDetails.documents",documents)
-        downloadAcknowledgementForm(Licenses, LicensesTemp[0].estimateCardData);
+          generatePdfAndDownload(
+            state,
+            dispatch,
+            "download",
+            applicationNumber,
+            tenant
+          );
         }
       },
-      visible:true
+      visible:false
     },
     printFormButton: {
       componentPath: "Button",
@@ -200,13 +203,16 @@ export const applicationSuccessFooter = (
       onClickDefination: {
         action: "condition",
         callBack: () => {
-        const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
-        const documents = LicensesTemp[0].reviewDocData;
-        set(Licenses[0],"additionalDetails.documents",documents)
-        downloadAcknowledgementForm(Licenses, LicensesTemp[0].estimateCardData,'print');
+          generatePdfAndDownload(
+            state,
+            dispatch,
+            "print",
+            applicationNumber,
+            tenant
+          );
         }
       },
-      visible:true
+      visible:false
     }
   });
 };

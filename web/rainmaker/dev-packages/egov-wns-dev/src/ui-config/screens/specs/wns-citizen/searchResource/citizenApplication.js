@@ -55,10 +55,10 @@ const resetFields = (state, dispatch) => {
 };
 export const citizenApplication = getCommonCard({
     subHeader: getCommonTitle({
-        labelKey: "WS_SEARCH_CONNECTION_SUB_HEADER"
+        labelKey: "WS_SEARCH_CONNECTION_HEADER"
     }),
     subParagraph: getCommonParagraph({
-        labelKey: "WS_HOME_SEARCH_CONN_RESULTS_DESC"
+        labelKey: "WS_HOME_SEARCH_RESULTS_DESC"
     }),
     cityPropertyAndMobNumContainer: getCommonContainer({
         city: getSelectField({
@@ -68,6 +68,10 @@ export const citizenApplication = getCommonCard({
             placeholder: {
                 labelKey: "WS_PROP_DETAIL_CITY_PLACEHOLDER"
             },
+            labelPrefix: {
+                moduleName: "TENANT",
+                masterName: "TENANTS"
+            },
             sourceJsonPath: "applyScreenMdmsData.tenant.tenants",
             jsonPath: "searchScreen.tenantId",//db sake
             required: true,
@@ -75,11 +79,6 @@ export const citizenApplication = getCommonCard({
                 xs: 12,
                 sm: 4
             },
-            props: {
-                className: "hr-generic-selectfield",
-                optionValue: "code",
-                optionLabel: "name"
-            }
         }),
         propertyid: getTextField({
             label: {
@@ -93,7 +92,6 @@ export const citizenApplication = getCommonCard({
                 sm: 4
             },
             required: false,
-            visible:false,
             pattern: /^[a-zA-Z0-9-]*$/i,
             errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
             jsonPath: "searchScreen.propertyId"
@@ -114,7 +112,6 @@ export const citizenApplication = getCommonCard({
                 position: "start"
             },
             required: false,
-            visible:false,
             pattern: getPattern("MobileNo"),
             jsonPath: "searchScreen.mobileNumber",
             errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
@@ -147,7 +144,6 @@ export const citizenApplication = getCommonCard({
                 sm: 4
             },
             required: false,
-            visible:false,
             pattern: /^[a-zA-Z0-9-]*$/i,
             errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
             jsonPath: "searchScreen.oldConnectionNumber"
@@ -174,7 +170,7 @@ export const citizenApplication = getCommonCard({
             resetButton: {
                 componentPath: "Button",
                 gridDefination: {
-                    xs: 12,
+                    xs: 6,
                     sm: 6
                     // align: "center"
                 },
@@ -183,7 +179,7 @@ export const citizenApplication = getCommonCard({
                     style: {
                         color: "rgba(0, 0, 0, 0.6000000238418579)",
                         borderColor: "rgba(0, 0, 0, 0.6000000238418579)",
-                        width: "220px",
+                        width: "70%",
                         height: "48px",
                         margin: "8px",
                         float: "right"
@@ -202,7 +198,7 @@ export const citizenApplication = getCommonCard({
             searchButton: {
                 componentPath: "Button",
                 gridDefination: {
-                    xs: 12,
+                    xs: 6,
                     sm: 6,
                     // align: "center"
                 },
@@ -213,7 +209,7 @@ export const citizenApplication = getCommonCard({
                         margin: "8px",
                         backgroundColor: "rgba(0, 0, 0, 0.6000000238418579)",
                         borderRadius: "2px",
-                        width: "220px",
+                        width: "70%",
                         height: "48px"
                     }
                 },

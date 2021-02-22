@@ -103,8 +103,6 @@ const fileUploadPending = (formKey, fieldKey, fileObject) => {
 
 // for profile if a file exists, dispatch
 const fileUploadCompleted = (formKey, fieldKey, fileStoreId, fileName) => {
-
- toggleSnackbarAndSetText(true, { labelName: "File upload success", labelKey: "CORE_COMMON_IMAGE_FILE_UPLOAD_SUCCESS" }, "success");
   return { type: actionTypes.FILE_UPLOAD_COMPLETED, formKey, fieldKey, fileStoreId, fileName };
 };
 
@@ -113,9 +111,6 @@ const fileUploadError = (formKey, fieldKey, error, fileName) => {
 };
 
 export const removeFile = (formKey, fieldKey, fileIndex) => {
-  //dispatch(toggleSnackbarAndSetText(true, { labelName: "File Upload Success", "CORE_COMMON_IMAGE_FILE_REMOVE_SUCCESS": message }, "success"));
- 
- 
   return { type: actionTypes.FILE_REMOVE, fieldKey, formKey, fileIndex };
 };
 
@@ -132,7 +127,6 @@ export const fileUpload = (formKey, fieldKey, fileObject, ulbLevel) => {
     try {
       const fileStoreId = await uploadFile(FILE_UPLOAD.POST.URL, fileObject.module, fileObject.file, ulbLevel);
       dispatch(fileUploadCompleted(formKey, fieldKey, fileStoreId, fileName));
-      dispatch(toggleSnackbarAndSetText(true, { labelName: "File upload success", labelKey: "CORE_COMMON_IMAGE_FILE_UPLOAD_SUCCESS" }, "success"));
     } catch (error) {
       dispatch(fileUploadError(formKey, fieldKey, error.message, fileName));
       dispatch(toggleSnackbarAndSetText(true, { labelName: error.message, labelKey: error.message }, "error"));

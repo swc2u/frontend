@@ -16,15 +16,14 @@ const styles = {
     paddingRight: 0,
     paddingTop: 11,
     paddingBottom: 0,
-    marginRight: 10,
+    marginRight: 16,
     marginTop: 16
   },
   subtext: {
     paddingTop: 7
   },
   body2: {
-    wordWrap: "break-word",
-	wordBreak: "break-all"
+    wordWrap: "break-word"
   }
 };
 
@@ -34,9 +33,7 @@ const documentTitle = {
   fontSize: "16px",
   fontWeight: 400,
   letterSpacing: "0.67px",
-  lineHeight: "19px",
-  wordWrap: "break-word"
-	// wordBreak: "break-all"
+  lineHeight: "19px"
 };
 
 function MultiCardDownloadGrid(props) {
@@ -48,7 +45,7 @@ function MultiCardDownloadGrid(props) {
           <Grid
             item
             container
-            xs={12}
+            xs={6}
             sm={4}
             className={
               props.backgroundGrey
@@ -69,9 +66,7 @@ function MultiCardDownloadGrid(props) {
               </Grid>
               <Grid xs={6} align="right">
                 <Button href={item.link} color="primary">
-                 
-				  {/* {item.linkText} */}
-                  Download
+                  {item.linkText}
                 </Button>
               </Grid>
             </Grid>

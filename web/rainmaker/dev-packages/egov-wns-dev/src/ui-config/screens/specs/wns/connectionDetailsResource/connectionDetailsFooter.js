@@ -17,7 +17,7 @@ const callDownload = (state, dispatch, mode) => {
 
 
 
-export const connectionDetailsFooter = {
+export const connectionDetailsFooter = getCommonApplyFooter({
   downloadButton: {
     componentPath: "Button",
     props: {
@@ -65,4 +65,4 @@ export const connectionDetailsFooter = {
     },
     // visible: false
   },
-};
+});

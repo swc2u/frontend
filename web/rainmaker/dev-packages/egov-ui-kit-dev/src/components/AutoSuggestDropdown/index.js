@@ -109,7 +109,7 @@ class AutoSuggestDropdown extends React.Component {
           searchText={searchText}
           underlineDisabledStyle={underlineDisabledStyle}
           dataSource={(items && [...items]) || []}
-          menuStyle={{ maxHeight: "150px", overflowY: "scroll" }}
+          menuStyle={{ maxHeight: "150px", overflowY: "hidden" }}
           dataSourceConfig={{ text: "label", value: "value" }}
           onNewRequest={onChange}
           onUpdateInput={onChangeText}
