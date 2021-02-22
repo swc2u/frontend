@@ -991,7 +991,7 @@ let amount = 0;
         var date2 = new Date();
 
         var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
-       
+
         let receiptData = [
             {
                 applicantDetail: {
@@ -1372,7 +1372,7 @@ export const downloadApplication = async (
             applicationDate: applicationData.bkDateCreated,
             propertyType: applicationData.bkType,
             date: convertDateInDMY(applicationData.bkDate),
-            time: applicationData.bkTime,  
+            time: applicationData.bkTime,
             applicationStatus: applicationData.bkApplicationStatus==="PENDINGASSIGNMENTDRIVER"? "Request Verification Pending" :applicationData.bkApplicationStatus==="PENDINGUPDATE" ? "Out for Delivery":applicationData.bkApplicationStatus==="DELIVERED"? "Processed":applicationData.bkApplicationStatus,
             applicationType: applicationData.bkStatus,
         };
@@ -2113,6 +2113,7 @@ export const downloadCancelledBookingReceipt = async (
                             applicationData.bkFromDate,
                             applicationData.bkToDate
                         ),
+                        bkCancellationReasoon: applicationData.bkRemarks
                     },
                     paymentInfo: paymentInfoData,
                     tenantInfo: {
@@ -2140,7 +2141,7 @@ export const downloadCancelledBookingReceipt = async (
                 res.filestoreIds[0];
                 if (res && res.filestoreIds && res.filestoreIds.length > 0) {
                     res.filestoreIds.map((fileStoreId) => {
-                        downloadReceiptFromFilestoreID(fileStoreId, mode, tenantId);
+                        downloadReceiptFromFilestoreIDForPdf(fileStoreId, mode, tenantId);
                     });
                 } else {
                     console.log("Error In Receipt Download");
