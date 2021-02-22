@@ -477,7 +477,16 @@ class TableData extends Component {
     userRolesCodesForWS = userRolesForWS.map((item) => { return item.code})
     
     var WaterBusinessServices =
-    ["REGULARWSCONNECTION" ]
+    ["REGULARWSCONNECTION",
+    "TEMPORARY_WSCONNECTION",
+    "WS_TEMP_TEMP",
+    "WS_TEMP_REGULAR",
+    "WS_DISCONNECTION",
+    "WS_TEMP_DISCONNECTION",
+    "WS_RENAME",
+    "WS_CONVERSION",
+    "WS_REACTIVATE",
+    "WS_TUBEWELL" ,]
     
       responseDataWater = orderBy(
       filter(responseData.ProcessInstances, (item) =>{
@@ -560,7 +569,17 @@ class TableData extends Component {
          WithoutAdditionalDetails = this.getWaterRoleBasedServiceRequestDataWithoutAdditionalDetails(WithoutAdditionalDetails)
  
        var finalDataAssignedToAll = []
-       if(window.localStorage.getItem("wns_workflow") ==='REGULARWSCONNECTION')
+       if(window.localStorage.getItem("wns_workflow") ==='REGULARWSCONNECTION'
+        || window.localStorage.getItem("wns_workflow") ==='TEMPORARY_WSCONNECTION'
+        || window.localStorage.getItem("wns_workflow") === "WS_TEMP_TEMP" 
+        || window.localStorage.getItem("wns_workflow") === "WS_TEMP_REGULAR"
+        || window.localStorage.getItem("wns_workflow") === "WS_DISCONNECTION" 
+        || window.localStorage.getItem("wns_workflow") === "WS_TEMP_DISCONNECTION"
+        || window.localStorage.getItem("wns_workflow") === "WS_RENAME" 
+        || window.localStorage.getItem("wns_workflow") === "WS_CONVERSION" 
+        || window.localStorage.getItem("wns_workflow") === "WS_REACTIVATE"  
+        || window.localStorage.getItem("wns_workflow") === "WS_TUBEWELL"
+       )
        {
         finalDataAssignedToAll.ProcessInstances = [...WithoutAdditionalDetails, ...AssignedToAlldataForWNS]
 
