@@ -500,6 +500,11 @@ export const additionDetails = getCommonCard({
           xs: 12,
           sm: 6
         },
+        props: {
+          inputProps: {
+            min: new Date().toISOString().slice(0, 10),
+          },
+        },
         required: false,
         pattern: getPattern("Date"),
         errorMessage: "ERR_INVALID_DATE",
@@ -515,11 +520,6 @@ export const additionDetails = getCommonCard({
         gridDefination: {
           xs: 12,
           sm: 6
-        },
-        props: {
-          inputProps: {
-            min: new Date().toISOString().slice(0, 10),
-          },
         },
         required: false,
         pattern: /^[0-9]\d{0,9}(\.\d{1,3})?%?$/,
