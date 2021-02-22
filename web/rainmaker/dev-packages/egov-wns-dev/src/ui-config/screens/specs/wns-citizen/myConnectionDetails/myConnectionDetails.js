@@ -11,12 +11,11 @@ export const fetchData = async (action, state, dispatch) => {
         {
             key: "mobileNumber",
             value: JSON.parse(getUserInfo()).mobileNumber
-        },
-        // add new property(login user UUID) in api call /ws-services/wc/_search
-        {
-            key: "connectionUserId",
-            value: JSON.parse(getUserInfo()).uuid
-        }        
+        }
+        // {
+        //     key: "tenantId",
+        //     value: JSON.parse(getUserInfo()).tenantId
+        // }
     ]
 
     const response = await getMyConnectionResults(queryObject, dispatch);
@@ -34,16 +33,15 @@ export const fetchData = async (action, state, dispatch) => {
     try {
         /*Mseva 2.0 */
         if (finalResponse && finalResponse.length > 0) {
-            const myConnectionResults=finalResponse.filter(item => item.connectionNo !== "NA" && item.connectionNo !== null);
-            dispatch(prepareFinalObject("myConnectionResults", myConnectionResults));
-            dispatch(prepareFinalObject("myConnectionsCount", myConnectionResults.length));
-            
+            dispatch(prepareFinalObject("myConnectionResults", finalResponse));
+            dispatch(prepareFinalObject("myApplicationsCount", finalResponse.length));
+            const myApplicationsCount = finalResponse.length;
             dispatch(
                 handleField(
                     "my-connections",
                     "components.div.children.header.children.key",
                     "props.dynamicArray",
-                    myConnectionResults.length ? [myConnectionResults.length] : [0]
+                    myApplicationsCount ? [myApplicationsCount] : [0]
                 )
             );
         }

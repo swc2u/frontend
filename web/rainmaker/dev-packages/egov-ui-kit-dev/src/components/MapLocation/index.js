@@ -379,8 +379,7 @@ const MapLocation = compose(
 )((props) => (
   <GoogleMap
     ref={props.onMapMounted}
-    defaultZoom={props.zoomValue}
-    zoom = {props.zoomValue}
+    defaultZoom={18}
     center={props.currLoc ? props.currLoc : props.center}
     onBoundsChanged={props.onBoundsChanged}
     draggable={true}
@@ -398,38 +397,6 @@ const MapLocation = compose(
         }}
         action="action"
         name={"search"}
-      />
-    </div>
-    <div className="myZoomOut">
-      <Icon
-        id="zoomOut"
-        style={{
-          background: "#969696",
-          borderRadius: "15%",
-          padding: "12px",
-          height: 55,
-          width: 55,
-          color: "rgb(255, 255, 255)",
-        }}
-        action="custom"
-        name={"zoom-out"}
-        onClick={() => props.onZoomChange("zoomOut")}
-      />
-    </div>
-    <div className="myZoomIn">
-      <Icon
-        id="zoomIn"
-        style={{
-          background: "#969696",
-          borderRadius: "15%",
-          padding: "12px",
-          height: 55,
-          width: 55,
-          color: "rgb(255, 255, 255)",
-        }}
-        action="custom"
-        name={"zoom-in"}
-        onClick={() => props.onZoomChange("zoomIn")}
       />
     </div>
     <div className="myLoc">

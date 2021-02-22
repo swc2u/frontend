@@ -12,7 +12,6 @@ import {
   getTransformedLocale
 } from "egov-ui-framework/ui-utils/commons";
 import get from "lodash/get";
-import _ from "lodash";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
@@ -132,56 +131,54 @@ class DocumentList extends Component {
       prepareFinalObject
     } = this.props;
     let index = 0;
-    if (_.isEmpty(documentsUploadRedux)) {
-      documentsList.forEach(docType => {
-        docType.cards &&
-          docType.cards.forEach(card => {
-            if (card.subCards) {
-              card.subCards.forEach(subCard => {
-                let oldDocType = get(documentsUploadRedux, `[${index}].documentType`);
-                let oldDocCode = get(documentsUploadRedux, `[${index}].documentCode`);
-                let oldDocSubCode = get(
-                  documentsUploadRedux,
-                  `[${index}].documentSubCode`
-                );
-                if (
-                  oldDocType != docType.code ||
-                  oldDocCode != card.name ||
-                  oldDocSubCode != subCard.name
-                ) {
-                  documentsUploadRedux[index] = {
-                    documentType: docType.code,
-                    documentCode: card.name,
-                    documentSubCode: subCard.name
-                  };
-                }
-                index++;
-              });
-            } else {
-              let oldDocType = get(
+    documentsList.forEach(docType => {
+      docType.cards &&
+        docType.cards.forEach(card => {
+          if (card.subCards) {
+            card.subCards.forEach(subCard => {
+              let oldDocType = get(documentsUploadRedux, `[${index}].documentType`);
+              let oldDocCode = get(documentsUploadRedux, `[${index}].documentCode`);
+              let oldDocSubCode = get(
                 documentsUploadRedux,
-                `[${index}].documentType`
+                `[${index}].documentSubCode`
               );
-              let oldDocCode = get(
-                documentsUploadRedux,
-                `[${index}].documentCode`
-              );
-              if (oldDocType != docType.code || oldDocCode != card.name) {
+              if (
+                oldDocType != docType.code ||
+                oldDocCode != card.name ||
+                oldDocSubCode != subCard.name
+              ) {
                 documentsUploadRedux[index] = {
                   documentType: docType.code,
                   documentCode: card.name,
-                  isDocumentRequired: card.required,
-                  isDocumentTypeRequired: card.dropdown
-                    ? card.dropdown.required
-                    : false
+                  documentSubCode: subCard.name
                 };
               }
               index++;
+            });
+          } else {
+            let oldDocType = get(
+              documentsUploadRedux,
+              `[${index}].documentType`
+            );
+            let oldDocCode = get(
+              documentsUploadRedux,
+              `[${index}].documentCode`
+            );
+            if (oldDocType != docType.code || oldDocCode != card.name) {
+              documentsUploadRedux[index] = {
+                documentType: docType.code,
+                documentCode: card.name,
+                isDocumentRequired: card.required,
+                isDocumentTypeRequired: card.dropdown
+                  ? card.dropdown.required
+                  : false
+              };
             }
-          });
-      });
-      prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
-    }
+            index++;
+          }
+        });
+    });
+    prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
   };
 
   onUploadClick = uploadedDocIndex => {
@@ -221,12 +218,8 @@ class DocumentList extends Component {
   };
 
   getUploadCard = (card, key) => {
-    let { classes, documentsUploadRedux } = this.props;
-    let jsonPath = "";
-    if (!_.isEmpty(documentsUploadRedux) && documentsUploadRedux[key] && documentsUploadRedux[key].dropdown && documentsUploadRedux[key].dropdown.value) {
-      jsonPath = `documentsUploadRedux[${key}].dropdown.value`;
-    }
-
+    const { classes, documentsUploadRedux } = this.props;
+    let jsonPath = `documentsUploadRedux[${key}].dropdown.value`;
     return (
       <Grid container={true}>
         <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
@@ -265,7 +258,7 @@ class DocumentList extends Component {
               data={card.dropdown.menu}
               optionValue="code"
               optionLabel="label"
-              required={(card.required)?true:false}
+              required={true}
               onChange={event => this.handleChange(key, event)}
               jsonPath={jsonPath}
             />

@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import { addComponentJsonpath } from "egov-ui-framework/ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import cloneDeep from "lodash/cloneDeep";
-import { resetFieldsForApplication, resetFieldsForConnection } from '../../ui-config/screens/specs/utils';
 
 class MultiItem extends React.Component {
   state = { tabIndex: 0 };
@@ -14,10 +13,8 @@ class MultiItem extends React.Component {
   setInstrumentType = (value, dispatch) => {
     dispatch(prepareFinalObject("currentTab", value));
     if (value === "SEARCH_CONNECTION") {
-      resetFieldsForApplication({}, dispatch);
       dispatch(handleField("search", "components.div.children.searchApplicationResults", "visible", false));
     } else {
-      resetFieldsForConnection({}, dispatch);
       dispatch(handleField("search", "components.div.children.searchResults", "visible", false));
     }
   };

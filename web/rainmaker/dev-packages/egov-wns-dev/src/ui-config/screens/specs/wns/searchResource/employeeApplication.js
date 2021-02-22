@@ -8,14 +8,33 @@ import {
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { searchApiCall } from "./functions";
-import { resetFieldsForConnection } from '../../utils';
+import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+
+const resetFields = (state, dispatch) => {
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[0].tabContent.wnsApplication.children.cardContent.children.wnsApplicationContainer.children.consumerNo",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[0].tabContent.wnsApplication.children.cardContent.children.wnsApplicationContainer.children.ownerMobNo",
+      "props.value",
+      ""
+    )
+  );
+};
 
 export const wnsApplication = getCommonCard({
   subHeader: getCommonTitle({
-    labelKey: "WS_SEARCH_CONNECTION_SUB_HEADER"
+    labelKey: "WS_SEARCH_CONNECTION_HEADER"
   }),
   subParagraph: getCommonParagraph({
-    labelKey: "WS_HOME_SEARCH_CONN_RESULTS_DESC"
+    labelKey: "WS_HOME_SEARCH_RESULTS_DESC"
   }),
   wnsApplicationContainer: getCommonContainer({
     consumerNo: getTextField({
@@ -32,7 +51,7 @@ export const wnsApplication = getCommonCard({
       required: false,
       pattern: getPattern("consumerNo"),
       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-      jsonPath: "searchConnection.connectionNumber"
+      jsonPath: "searchScreen.connectionNumber"
     }),
 
     ownerMobNo: getTextField({
@@ -53,7 +72,7 @@ export const wnsApplication = getCommonCard({
       required: false,
       pattern: getPattern("MobileNo"),
       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-      jsonPath: "searchConnection.mobileNumber"
+      jsonPath: "searchScreen.mobileNumber"
     })
   }),
 
@@ -62,7 +81,7 @@ export const wnsApplication = getCommonCard({
       resetButton: {
         componentPath: "Button",
         gridDefination: {
-          xs: 12,
+          xs: 6,
           sm: 6
           // align: "center"
         },
@@ -71,7 +90,7 @@ export const wnsApplication = getCommonCard({
           style: {
             color: "rgba(0, 0, 0, 0.6000000238418579)",
             borderColor: "rgba(0, 0, 0, 0.6000000238418579)",
-            width: "220px",
+            width: "70%",
             height: "48px",
             margin: "8px",
             float: "right"
@@ -84,13 +103,13 @@ export const wnsApplication = getCommonCard({
         },
         onClickDefination: {
           action: "condition",
-          callBack: resetFieldsForConnection
+          callBack: resetFields
         }
       },
       searchButton: {
         componentPath: "Button",
         gridDefination: {
-          xs: 12,
+          xs: 6,
           sm: 6,
           // align: "center"
         },
@@ -101,7 +120,7 @@ export const wnsApplication = getCommonCard({
             margin: "8px",
             backgroundColor: "rgba(0, 0, 0, 0.6000000238418579)",
             borderRadius: "2px",
-            width: "220px",
+            width: "70%",
             height: "48px"
           }
         },

@@ -46,13 +46,7 @@ const fieldConfig = {
 class ActionDialog extends React.Component {
   state = {
     employeeList: [],
-    roles: "",
-    fields: {
-      "comments": ""
-    },
-    errors: {
-      "comments": ""
-    }
+    roles: ""
   };
 
   // onEmployeeClick = e => {
@@ -69,36 +63,6 @@ class ActionDialog extends React.Component {
   //     handleFieldChange("Licenses[0].assignee", e.target.value);
   //   }
   // };
-
-  handleValidation(){
-    let fields = this.state.fields;
-    let errors = {};
-    let formIsValid = true;
-
-    //comments
-    if(!fields["comments"]){
-       formIsValid = false;
-       errors["comments"] = "Please enter comments";
-    }
-
-    this.setState({errors: errors});
-    return formIsValid;
-  }
-
-  handleChange(field, e){         
-    let fields = this.state.fields;
-    let errors = this.state.errors;
-
-    if (Object.keys(fields).length) {
-      fields[field] = e.target.value;        
-      this.setState({fields});
-
-      if (e.target.value) {
-        errors["comments"] = "";
-        this.setState({errors: errors});
-      }
-    }
-}
 
   getButtonLabelName = label => {
     switch (label) {
@@ -120,7 +84,9 @@ class ActionDialog extends React.Component {
     }
   };
 
-  render() {  
+  render() {
+    console.log('props',this.props);
+    
     let {
       open,
       onClose,
@@ -155,7 +121,7 @@ class ActionDialog extends React.Component {
         fullScreen={fullscreen}
         open={open}
         onClose={onClose}
-        maxWidth="sm"
+        maxWidth={false}
         style={{zIndex:2000}}
       >
         <DialogContent
@@ -194,7 +160,7 @@ class ActionDialog extends React.Component {
                   >
                     <CloseIcon />
                   </Grid>
-                  {showEmployeeList && !!dropDownData.length && (
+                  {showEmployeeList && (
                     <Grid
                       item
                       sm="12"
@@ -204,7 +170,7 @@ class ActionDialog extends React.Component {
                     >
                       <TextFieldContainer
                         select={true}
-                        style={{ marginRight: "15px", width: "90%" }}
+                        style={{ marginRight: "15px" }}
                         label={fieldConfig.approverName.label}
                         placeholder={fieldConfig.approverName.placeholder}
                         data={dropDownData}
@@ -223,7 +189,7 @@ class ActionDialog extends React.Component {
                     </Grid>
                   )}
                   <Grid item sm="12">
-                    {/* <TextFieldContainer
+                    <TextFieldContainer
                       InputLabelProps={{ shrink: true }}
                       label={fieldConfig.comments.label}
                       onChange={e =>
@@ -231,13 +197,7 @@ class ActionDialog extends React.Component {
                       }
                       jsonPath={`${dataPath}.comment`}
                       placeholder={fieldConfig.comments.placeholder}
-                    /> */}
-                    { (showEmployeeList && !!dropDownData.length) ? <div><label className="commentsLabel">{fieldConfig.comments.label.labelName}</label><span style={{marginLeft:"-18px",color:"red"}}>*</span></div> : <div style={{height: "10px"}}></div>
-                    }
-                    <textarea refs="comments" className="form-control comments" rows="5" placeholder={fieldConfig.comments.placeholder.labelName} value={this.state.fields["comments"]} onChange={e => {
-                    this.handleChange("comments", e);handleFieldChange(`${dataPath}.comment`, e.target.value)}
-                    }/>
-                    <span style={{color: "red"}}>{this.state.errors["comments"]}</span>
+                    />
                   </Grid>
                   <Grid item sm="12">
                     <Typography
@@ -252,7 +212,7 @@ class ActionDialog extends React.Component {
                         marginBottom: "8px"
                       }}
                     >
-                      {/* <div className="rainmaker-displayInline">
+                      <div className="rainmaker-displayInline">
                         <LabelContainer
                           labelName="Supporting Documents"
                           labelKey="WF_APPROVAL_UPLOAD_HEAD"
@@ -260,9 +220,9 @@ class ActionDialog extends React.Component {
                         {isDocRequired && (
                           <span style={{ marginLeft: 5, color: "red" }}>*</span>
                         )}
-                      </div> */}
+                      </div>
                     </Typography>
-                    {/* <div
+                    <div
                       style={{
                         color: "rgba(0, 0, 0, 0.60)",
                         fontFamily: "Roboto",
@@ -284,7 +244,7 @@ class ActionDialog extends React.Component {
                       buttonLabel={{ labelName: "UPLOAD FILES",labelKey : "TL_UPLOAD_FILES_BUTTON" }}
                       jsonPath={`${dataPath}.wfDocuments`}
                       maxFileSize={5000}
-                    /> */}
+                    />
                     <Grid sm={12} style={{ textAlign: "right" }} className="bottom-button-container">
                       <Button
                         variant={"contained"}
@@ -295,7 +255,7 @@ class ActionDialog extends React.Component {
                         }}
                         className="bottom-button"
                         onClick={() =>
-                          this.handleValidation() ? onButtonClick(buttonLabel, isDocRequired) : false
+                          onButtonClick('FORWARD', isDocRequired)
                         }
                       >
                         <LabelContainer
@@ -318,17 +278,4 @@ class ActionDialog extends React.Component {
     );
   }
 }
-
-const mapDispatchToProps = dispatch => {
-  return {
-    toggleSnackbar: (open, message, variant) =>
-      dispatch(toggleSnackbar(open, message, variant))
-  };
-};
-
-export default withStyles(styles)(
-  connect(
-    null,
-    mapDispatchToProps
-  )(ActionDialog)
-);
+export default withStyles(styles)(ActionDialog);

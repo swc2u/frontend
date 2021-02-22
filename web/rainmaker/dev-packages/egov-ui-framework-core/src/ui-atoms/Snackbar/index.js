@@ -91,8 +91,7 @@ const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent);
 
 const styles2 = theme => ({
   margin: {
-    margin: "5px", //theme.spacing.unit
-	'max-width': 'none !important'
+    margin: theme.spacing.unit
   }
 });
 

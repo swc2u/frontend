@@ -12,9 +12,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import Tooltip from "@material-ui/core/Tooltip";
 import Label from "egov-ui-kit/utils/translationNode";
-import { getModuleName } from "egov-ui-kit/utils/commons";
-import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
-import { localStorageSet, localStorageGet,setModule,getTenantId,getLocale } from "egov-ui-kit/utils/localStorageUtils";
+import { localStorageSet, localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
 import "./index.css";
 
 const styles = {
@@ -76,11 +74,6 @@ class ActionMenuComp extends Component {
   setWrapperRef(node) {
     this.wrapperRef = node;
   }
-  fetchLocales = ()=>{
-    setModule(getModuleName());
-    const tenantId = getTenantId();
-   // this.props.fetchLocalizationLabel(getLocale(), tenantId, tenantId);
-  }
 
   componentDidMount() {
     // for better reusability moving out
@@ -97,7 +90,6 @@ class ActionMenuComp extends Component {
       .split("/")
       .pop();
     if (url !== "inbox" && menuPath) {
-     
       const menupathArray = menuPath && menuPath.split(".");
       if (menupathArray && menupathArray.length > 1) {
         menupathArray.pop();
@@ -115,8 +107,6 @@ class ActionMenuComp extends Component {
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps && nextProps.activeRoutePath != this.props.activeRoutePath) {
-    //  setModule(getModuleName());
-      this.fetchLocales();
       this.initialMenuUpdate();
       this.setState({
         searchText: "",
@@ -257,7 +247,7 @@ class ActionMenuComp extends Component {
   render() {
     let { role, actionListArr, activeRoutePath, updateActiveRoute, toggleDrawer, menuDrawerOpen } = this.props;
     let { searchText, path, menuItems } = this.state;
-    let { changeLevel, menuChange,fetchLocales } = this;
+    let { changeLevel, menuChange } = this;
     let actionList = actionListArr;
     let menuTitle = path.split(".");
     let activeItmem = localStorageGet("menuName");
@@ -270,7 +260,6 @@ class ActionMenuComp extends Component {
             iconLeft = item.leftIcon.split(":");
           }
           if (!item.url) {
-           
             return (
               <div className="sideMenuItem">
                 {/* <Tooltip
@@ -487,7 +476,6 @@ class ActionMenuComp extends Component {
           {(path || searchText) && (
             <div
               className="pull-left whiteColor pointerCursor"
-              style={{marginTop:10}}
               onClick={() => {
                 toggleDrawer && toggleDrawer();
                 changeLevel(path);
@@ -504,7 +492,6 @@ class ActionMenuComp extends Component {
             // >
             <div
               className="pull-right pointerCursor"
-              style={{marginTop:10}}
               onClick={() => {
                 // changeLevel("");
                 updateActiveRoute("Home", "Home");
@@ -563,7 +550,6 @@ class ActionMenuComp extends Component {
 const mapDispatchToProps = (dispatch) => ({
   handleToggle: (showMenu) => dispatch({ type: "MENU_TOGGLE", showMenu }),
   setRoute: (route) => dispatch({ type: "SET_ROUTE", route }),
-  fetchLocalizationLabel: (locale, moduleName, tenantId)=> dispatch(fetchLocalizationLabel(locale, moduleName, tenantId)),
 });
 export default connect(
   null,

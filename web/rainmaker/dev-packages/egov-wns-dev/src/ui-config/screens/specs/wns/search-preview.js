@@ -4,30 +4,24 @@ import {
   getCommonTitle,
   getCommonGrayCard,
   getCommonContainer,
-  getCommonSubHeader,
-  getLabel
+  getCommonSubHeader
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import commonConfig from "config/common.js";
-import { httpRequest } from "../../../../ui-utils";
 import get from "lodash/get";
 import set from "lodash/set";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getQueryArg, setDocuments, setBusinessServiceDataToLocalStorage, getFileUrlFromAPI } from "egov-ui-framework/ui-utils/commons";
-import { prepareFinalObject, preparedFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getSearchResults, getSearchResultsForSewerage, waterEstimateCalculation, getDescriptionFromMDMS, findAndReplace, swEstimateCalculation, setWSDocuments } from "../../../../ui-utils/commons";
+import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { getSearchResults, getSearchResultsForSewerage, waterEstimateCalculation, getDescriptionFromMDMS, findAndReplace, swEstimateCalculation } from "../../../../ui-utils/commons";
 import {
   createEstimateData,
   setMultiOwnerForSV,
   setValidToFromVisibilityForSV,
-  getDialogButton,
-  convertDateToEpoch,
-  showHideAdhocPopup,
-  GetMdmsNameBycode
+  getDialogButton
 } from "../utils";
 import { footerReview } from "./applyResource/footer";
 import { downloadPrintContainer } from "../wns/acknowledgement";
 import {
-  getFeesEstimateOverviewCard,
+  getFeesEstimateCard,
   getHeaderSideText,
   getTransformedStatus
 } from "../utils";
@@ -35,132 +29,79 @@ import { getReviewConnectionDetails } from "./applyResource/review-trade";
 import { getReviewOwner } from "./applyResource/review-owner";
 import { getReviewDocuments } from "./applyResource/review-documents";
 import { loadReceiptGenerationData } from "../utils/receiptTransformer";
-import { adhocPopup } from "./applyResource/adhocPopup";
-import { getWorkFlowData } from "../../../../ui-utils/commons";
 
 const tenantId = getQueryArg(window.location.href, "tenantId");
 let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
 let service = getQueryArg(window.location.href, "service");
-const serviceModuleName = service === "WATER" ? window.localStorage.getItem("wns_workflow")==="NewSW1" ? "NewSW1":  window.localStorage.getItem("wns_workflow"):"NewSW1";
-const serviceUrl = serviceModuleName === "NewSW1" ?  "/sw-services/swc/_update" : "/ws-services/wc/_update" ;
+let headerSideText = { word1: "", word2: "" };
 
-const getLabelForWnsHeader = () => {
-  const wnsHeader =  window.localStorage.getItem("wns_workflow");
+const serviceModuleName = service === "WATER" ? "NewWS1" : "NewSW1";
+const serviceUrl = serviceModuleName === "NewWS1" ? "/ws-services/wc/_update" : "/sw-services/swc/_update";
 
-  if(wnsHeader)
-    return `${wnsHeader}_DETAIL_HEADER`;
-  
-  else
-    return "WS_TASK_DETAILS"
-}
 
-const headerrow = getCommonContainer({
-  header: getCommonHeader({
-    labelKey: getLabelForWnsHeader()
-  }),
-  application: getCommonContainer({
-    applicationNumber: {
-      uiFramework: "custom-atoms-local",
-      moduleName: "egov-wns",
-      componentPath: "ApplicationNoContainer",
-      props: {
-        number: applicationNumber
-      }
-    }
-  }),
-  connection: getCommonContainer({
-  connectionNumber: {
-    uiFramework: "custom-atoms-local",
-    moduleName: "egov-wns",
-    componentPath: "ConsumerNoContainer",
-    props: {
-      number: ""
-    }
-  }
+//---------------- existing Code -------------------- //
+// const searchResults = async (action, state, dispatch, applicationNo) => {
+//   let queryObject = [
+//     { key: "tenantId", value: tenantId },
+//     { key: "applicationNumber", value: applicationNumber }
+//   ];
+//   let payload = await getSearchResults(queryObject);
 
-})
-});
+
+//   console.log("payloaddata", payload)
+
+//   headerSideText = getHeaderSideText(
+//     get(payload, "WaterConnection[0].applicationStatus"),
+//     get(payload, "WaterConnection[0].applicationNo")
+//   );
+//   set(payload, "WaterConnection[0].headerSideText", headerSideText);
+
+//   // get(payload, "WaterConnection[0].tradeLicenseDetail.subOwnerShipCategory") &&
+//   //   get(payload, "WaterConnection[0].tradeLicenseDetail.subOwnerShipCategory").split(
+//   //     "."
+//   //   )[0] === "INDIVIDUAL"
+//   //   ? setMultiOwnerForSV(action, true)
+//   //   : setMultiOwnerForSV(action, false);
+
+//   // if (get(payload, "Licenses[0].licenseType")) {
+//   //   setValidToFromVisibilityForSV(
+//   //     action,
+//   //     get(payload, "Licenses[0].licenseType")
+//   //   );
+//   // }
+
+//   // await setDocuments(
+//   //   payload,
+//   //   "Licenses[0].tradeLicenseDetail.applicationDocuments",
+//   //   "LicensesTemp[0].reviewDocData",
+//   //   dispatch,'TL'
+//   // );
+//   let sts = getTransformedStatus(get(payload, "WaterConnection[0].applicationStatus"));
+//   payload && dispatch(prepareFinalObject("WaterConnection[0]", payload.WaterConnection[0]));
+//   // payload &&
+//   //   dispatch(
+//   //     prepareFinalObject(
+//   //       "LicensesTemp[0].tradeDetailsResponse",
+//   //       getTradeTypeSubtypeDetails(payload)
+//   //     )
+//   //   );
+//   const WaterData = payload.WaterConnection[0];
+//   // const fetchFromReceipt = sts !== "pending_payment";
+//   createEstimateData(WaterData, "LicensesTemp[0].estimateCardData", dispatch, {}, {});
+//   // Fetch Bill and populate estimate card
+//   // const code = get(
+//   //   payload,
+//   //   "WaterConnection[0].property.address.locality.code"
+//   // );
+//   // const queryObj = [{ key: "tenantId", value: "pb.amritsar" }];
+//   // getBoundaryData(action, state, dispatch, queryObj, code);
+// };
 
 const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
-  const queryObj = [
-    { key: "businessIds", value: applicationNumber },
-    { key: "history", value: true },
-    { key: "tenantId", value: tenantId }
-  ];
-
-  let Response =await getWorkFlowData(queryObj);
-  let processInstanceAppStatus=Response.ProcessInstances[0].state.applicationStatus;
   //Search details for given application Number
   if (applicationNumber) {
-    
-    // hiding the Additional details for citizen. ,,
-    if(process.env.REACT_APP_NAME === "Citizen" && processInstanceAppStatus && (processInstanceAppStatus === 'INITIATED' || processInstanceAppStatus ==="PENDING_FOR_CITIZEN_ACTION" || processInstanceAppStatus === 'PENDING_FOR_DOCUMENT_VERIFICATION')){
-      set(
-        action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.props.style",
-        { display: "none" }
-      ); 
-    }
-
-    if (!getQueryArg(window.location.href, "edited")) {
-      (await searchResults(action, state, dispatch, applicationNumber,processInstanceAppStatus));
-    } else {
-      let applyScreenObject = get(state.screenConfiguration.preparedFinalObject, "applyScreen");
-      applyScreenObject.applicationNo.includes("WS")?applyScreenObject.service="WATER":applyScreenObject.service="SEWERAGE";
-      let parsedObject = parserFunction(findAndReplace(applyScreenObject, "NA", null));
-      let code = '03';
-        code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",parsedObject.property.address.locality.code)   
-      set(parsedObject, 'property.address.locality.name', code);
-      dispatch(prepareFinalObject("WaterConnection[0]", parsedObject));
-       let estimate;
-       if(processInstanceAppStatus==="CONNECTION_ACTIVATED"){
-        let connectionNumber= parsedObject.connectionNo;
-        set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.props.number",connectionNumber );
-      }else{
-        set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
-      }
-      if(processInstanceAppStatus==="PENDING_FOR_FIELD_INSPECTION"|| processInstanceAppStatus==="PENDING_FOR_METER_INSTALLATION"|| processInstanceAppStatus==="PENDING_FOR_JE_BR_APPROVAL"){
-        let queryObjectForEst = [{
-          applicationNo: applicationNumber,
-          tenantId: tenantId,
-          waterConnection: parsedObject
-        }]
-        if (parsedObject.applicationNo.includes("WS")) {
-          estimate = await waterEstimateCalculation(queryObjectForEst, dispatch);
-          let viewBillTooltip = [];
-          if (estimate !== null && estimate !== undefined) {
-            if (estimate.Calculation.length > 0) {
-              await processBills(estimate, viewBillTooltip, dispatch);
-              // viewBreakUp 
-              estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
-              estimate.Calculation[0].appStatus = processInstanceAppStatus; 
-              dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
-            }
-          } 
-        }else {
-          let queryObjectForEst = [{
-            applicationNo: applicationNumber,
-            tenantId: tenantId,
-            sewerageConnection: parsedObject
-          }]
-          estimate = await swEstimateCalculation(queryObjectForEst, dispatch);
-          let viewBillTooltip = []
-          if (estimate !== null && estimate !== undefined) {
-            if (estimate.Calculation.length > 0) {
-              await processBills(estimate, viewBillTooltip, dispatch);
-              // viewBreakUp 
-              estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
-              estimate.Calculation[0].appStatus = processInstanceAppStatus; 
-              dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
-            }
-          }
-        }
-        if (estimate !== null && estimate !== undefined) {
-          createEstimateData(estimate.Calculation[0].taxHeadEstimates, "taxHeadEstimates", dispatch, {}, {});
-        }
-      }
-    }
-
-
+    !getQueryArg(window.location.href, "edited") &&
+      (await searchResults(action, state, dispatch, applicationNumber));
     let connectionType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].connectionType");
     if (connectionType === "Metered") {
       set(
@@ -198,37 +139,10 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
     const status = getTransformedStatus(
       get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].applicationStatus")
     );
-
-    // const appStatus = get(
+    // const status = get(
     //   state,
     //   "screenConfiguration.preparedFinalObject.WaterConnection[0].applicationStatus"
     // );
-    // for showing addPenaltyRebateButton
- //   if(process.env.REACT_APP_NAME !== "Citizen" && (processInstanceAppStatus !== 'PENDING_FOR_PAYMENT' && processInstanceAppStatus !=="PENDING_FOR_CONNECTION_ACTIVATION" && processInstanceAppStatus !== 'CONNECTION_ACTIVATED')){
-  if(process.env.REACT_APP_NAME !== "Citizen" && ((serviceModuleName==="WS_DISCONNECTION" && processInstanceAppStatus === 'PENDING_METER_READING_CAPTURE')|| (serviceModuleName==="REGULARWSCONNECTION" && processInstanceAppStatus === 'PENDING_FOR_TEMPORARY_TO_REGULAR_CONNECTION_APPROVAL'))){
-      
-      dispatch(
-          handleField(
-            "search-preview",
-            "components.div.children.taskDetails.children.cardContent.children.estimate.children.cardContent.children.addPenaltyRebateButton",
-            "visible",
-            true
-          )
-        );
-    }
-    const printCont = downloadPrintContainer(
-      action,
-      state,
-      dispatch,
-      processInstanceAppStatus,
-      applicationNumber,
-      tenantId
-    );
-    set(
-      action,
-      "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-      printCont
-    );
 
     let data = get(state, "screenConfiguration.preparedFinalObject");
 
@@ -252,7 +166,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
           data,
           "WaterConnection[0].documents",
           "LicensesTemp[0].verifyDocData",
-          dispatch, 'REGULARWSCONNECTION'
+          dispatch, 'NewWS1'
         );
       } else {
         dispatch(
@@ -272,7 +186,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       );
     }
 
-    if (status === "cancelled")
+  if (status === "cancelled")
       set(
         action,
         "screenConfig.components.div.children.headerDiv.children.helpSection.children.cancelledLabel.visible",
@@ -342,76 +256,43 @@ const setStatusBasedValue = status => {
   }
 };
 
-const estimateSection = () => {
+const headerrow = getCommonContainer({
+  header: getCommonHeader({
+    labelKey: "WS_TASK_DETAILS"
+  }),
+  applicationNumber: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-wns",
+    componentPath: "ApplicationNoContainer",
+    props: {
+      number: applicationNumber
+    }
+  }
+});
 
-  if(serviceModuleName === "WS_TUBEWELL")
-  return{};
-
-  return getCommonGrayCard({
+const estimate = getCommonGrayCard({
   header: getCommonSubHeader({ labelKey: "WS_TASK_DETAILS_FEE_ESTIMATE" }),
-  estimateSection: getFeesEstimateOverviewCard({
-    sourceJsonPath: "dataCalculation",
-    // isCardrequired: true
+  estimateSection: getFeesEstimateCard({
+    sourceJsonPath: "viewBillToolipData",
+    isCardrequired: true
   }),
   buttonView: getDialogButton(
     "VIEW BREAKUP",
     "WS_PAYMENT_VIEW_BREAKUP",
     "search-preview"
   ),
-  addPenaltyRebateButton: {
-    componentPath: "Button",
-    props: {
-      color: "primary",
-      style: {}
-    },
-    children: {
-      previousButtonLabel: getLabel({
-        labelKey: "WS_PAYMENT_ADD_REBATE_PENALTY"
-      })
-    },
-    onClickDefination: {
-      action: "condition",
-      callBack: (state, dispatch) => {
-        showHideAdhocPopup(state, dispatch, "search-preview");
-      }
-    },
-    visible: false
-  },
+  buttonAdd: getDialogButton(
+    "ADD REBATE/PENALTY",
+    "WS_PAYMENT_ADD_REBATE_PENALTY",
+    "search-preview"
+  ),
 });
-}
-const estimate = estimateSection();
+
 export const reviewConnectionDetails = getReviewConnectionDetails(false);
 
 export const reviewOwnerDetails = getReviewOwner(false);
 
 export const reviewDocumentDetails = getReviewDocuments(false);
-export const getMdmsData = async (state,dispatch) => {
-  let tenantId = getQueryArg(window.location.href, "tenantId");
-  let mdmsBody = {
-    MdmsCriteria: {
-      tenantId: commonConfig.tenantId,
-      moduleDetails: [
-       // { moduleName: "common-masters", masterDetails: [{ name: "OwnerType" }, { name: "OwnerShipCategory" }] },
-       
-        { moduleName: "ws-services-masters", 
-        masterDetails: [
-          { name: "wsWorkflowRole" },
-          { name: "sectorList" },
-        
-        ] },
-        
-      ]
-    }
-  };
-  try {
-    let payload = null;
-    payload = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
-    
-   
-    dispatch(prepareFinalObject("searchPreviewScreenMdmsData", payload.MdmsRes));
-    //
-  } catch (e) { console.log(e); }
-};
 
 // let approvalDetails = getApprovalDetails(status);
 let title = getCommonTitle({ labelName: titleText });
@@ -457,24 +338,32 @@ const screenConfig = {
   beforeInitScreen: (action, state, dispatch) => {
     const status = getQueryArg(window.location.href, "status");
     const tenantId = getQueryArg(window.location.href, "tenantId");
-    const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
-    
-    getMdmsData( state, dispatch).then(() => { });
+    let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
     //To set the application no. at the  top
-    set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.application.children.applicationNumber.props.number", applicationNumber);
+    set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.applicationNumber.props.number", applicationNumber);
     // if (status !== "pending_payment") {
     //   set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.viewBreakupButton.visible", false);
     // }
-   
     const queryObject = [
       { key: "tenantId", value: tenantId },
       { key: "businessServices", value: serviceModuleName }
     ];
-
-    setBusinessServiceDataToLocalStorage(queryObject, dispatch);
-    set(action,"screenConfig.components.adhocDialog.children.popup",adhocPopup);
+    const printCont = downloadPrintContainer(
+      action,
+      state,
+      dispatch,
+      status,
+      applicationNumber,
+      tenantId
+    );
+    set(
+      action,
+      "screenConfig.components.div.children.headerDiv.children.helpSection.children",
+      printCont
+    );
+    setBusinessServiceDataToLocalStorage(queryObject, dispatch)
+    // response.then(data=>console.log("applyresource",data));
     beforeInitFn(action, state, dispatch, applicationNumber);
-
     return action;
   },
 
@@ -534,13 +423,12 @@ const screenConfig = {
             moduleName: serviceModuleName,
             updateUrl: serviceUrl,
             data: {
-              buttonLabel: "RESUBMIT",
+              buttonLabel: "SUBMIT_APPLICATION",
               moduleName: serviceModuleName,
               isLast: false,
               dialogHeader: {
-                labelName: "RESUBMIT Application",
-                labelKey: "WF_RESUBMIT_APPLICATION"
-
+                // labelName: "RESUBMIT Application",
+                labelKey: "WF_SUBMIT_APPLICATION"
               },
               showEmployeeList: false,
               roles: "CITIZEN",
@@ -560,41 +448,31 @@ const screenConfig = {
         maxWidth: "md",
         screenKey: "search-preview",
       }
-    },
-    adhocDialog: {
-      uiFramework: "custom-containers-local",
-      moduleName: "egov-wns",
-      componentPath: "DialogContainer",
-      props: {
-        open: false,
-        maxWidth: "sm",
-        screenKey: "search-preview"
-      },
-      children: {
-        popup: {}
-      }
-    },
+    }
   }
 };
 
 //----------------- search code (feb17)---------------------- //
-const searchResults = async (action, state, dispatch, applicationNumber,processInstanceAppStatus) => {
+const searchResults = async (action, state, dispatch, applicationNumber) => {
   let queryObjForSearch = [{ key: "tenantId", value: tenantId }, { key: "applicationNumber", value: applicationNumber }]
-  let viewBillTooltip = [], estimate, payload = [];
+  let viewBillTooltip = [], estimate;
   if (service === "WATER") {
-    payload = [];
-    payload = await getSearchResults(queryObjForSearch);
+    let payload = await getSearchResults(queryObjForSearch);
     payload.WaterConnection[0].service = service;
-    payload.WaterConnection[0].property.subusageCategory = payload.WaterConnection[0].property.usageCategory;
-    payload.WaterConnection[0].property.usageCategory = payload.WaterConnection[0].property.usageCategory.split('.')[0];
-    //
-    
-      let code = '';
-        code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",payload.WaterConnection[0].property.address.locality.code)   
-        payload.WaterConnection[0].property.address.locality.name = code;
-     // set(payload, 'property.address.locality.name', code);
-    ///
-    //payload.WaterConnection[0].service = service;
+
+    // if (payload.WaterConnection[0].meterInstallationDate === 0) {
+    //   payload.WaterConnection[0].meterInstallationDate = 'NA';
+    // }
+
+    // to set documents 
+    if (payload.WaterConnection[0].documents !== null && payload.WaterConnection[0].documents !== "NA") {
+      await setDocuments(
+        payload,
+        "WaterConnection[0].documents",
+        "DocumentsData",
+        dispatch, "WS"
+      );
+    }
 
     const convPayload = findAndReplace(payload, "NA", null)
     let queryObjectForEst = [{
@@ -603,79 +481,21 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
       waterConnection: convPayload.WaterConnection[0]
     }]
     if (payload !== undefined && payload !== null) {
-      //set locality
-
       dispatch(prepareFinalObject("WaterConnection[0]", payload.WaterConnection[0]));
-      if(!payload.WaterConnection[0].connectionHolders || payload.WaterConnection[0].connectionHolders === 'NA'){        
-        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewFive.visible",false);
-        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewSix.visible",true);
-      }else{
-        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewSix.visible",false);
-        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewFive.visible",true);
-      }
-    }
-    if(processInstanceAppStatus==="CONNECTION_ACTIVATED"){
-      let connectionNumber= payload.WaterConnection[0].connectionNo;
-      set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.props.number",connectionNumber );
-    }else{
-      set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
-    }
-
-    // to set documents 
-    if (payload.WaterConnection[0].documents !== null && payload.WaterConnection[0].documents !== "NA") {
-      await setDocuments(
-        state.screenConfiguration.preparedFinalObject,
-        "WaterConnection[0].documents",
-        "DocumentsData",
-        dispatch,
-        //"WS"
-      );
     }
     estimate = await waterEstimateCalculation(queryObjectForEst, dispatch);
     if (estimate !== null && estimate !== undefined) {
       if (estimate.Calculation.length > 0) {
         await processBills(estimate, viewBillTooltip, dispatch);
-
-        // viewBreakUp 
-        estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
-        estimate.Calculation[0].appStatus = processInstanceAppStatus; 
         dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
       }
     }
   } else if (service === "SEWERAGE") {
-    payload = [];
-    payload = await getSearchResultsForSewerage(queryObjForSearch, dispatch);
+    let payload = await getSearchResultsForSewerage(queryObjForSearch, dispatch);
     payload.SewerageConnections[0].service = service;
     if (payload !== undefined && payload !== null) {
-      dispatch(prepareFinalObject("SewerageConnection[0]", payload.SewerageConnections[0]));
       dispatch(prepareFinalObject("WaterConnection[0]", payload.SewerageConnections[0]));
-      if(!payload.SewerageConnections[0].connectionHolders || payload.SewerageConnections[0].connectionHolders === 'NA'){        
-        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewFive.visible",false);
-        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewSix.visible",true);
-      }else{
-        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewSix.visible",false);
-        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewFive.visible",true);
-      }
     }
-    //connection number display
-    if(processInstanceAppStatus==="CONNECTION_ACTIVATED"){
-      let connectionNumber= payload.SewerageConnections[0].connectionNo;
-      set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.props.number",connectionNumber );
-    }else{
-      set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
-    }
-
-    // to set documents 
-    if (payload.SewerageConnections[0].documents !== null && payload.SewerageConnections[0].documents !== "NA") {
-      await setDocuments(
-        state.screenConfiguration.preparedFinalObject,
-        "WaterConnection[0].documents",
-        "DocumentsData",
-        dispatch,
-        //"WS"
-      );
-    }
-
     const convPayload = findAndReplace(payload, "NA", null)
     let queryObjectForEst = [{
       applicationNo: applicationNumber,
@@ -687,9 +507,6 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
     if (estimate !== null && estimate !== undefined) {
       if (estimate.Calculation !== undefined && estimate.Calculation.length > 0) {
         await processBills(estimate, viewBillTooltip, dispatch);
-        // viewBreakUp 
-        estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
-        estimate.Calculation[0].appStatus = processInstanceAppStatus; 
         dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
       }
     }
@@ -699,53 +516,19 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
   }
 };
 
-const parserFunction = (obj) => {
-  let parsedObject = {
-    roadCuttingArea: parseInt(obj.roadCuttingArea),
-    meterInstallationDate: convertDateToEpoch(obj.meterInstallationDate),
-    connectionExecutionDate: convertDateToEpoch(obj.connectionExecutionDate),
-    proposedWaterClosets: parseInt(obj.proposedWaterClosets),
-    proposedToilets: parseInt(obj.proposedToilets),
-    roadCuttingArea: parseInt(obj.roadCuttingArea),
-    securityCharge:(obj.securityCharge === null || obj.securityCharge === "NA") ? "" : parseFloat(obj.securityCharge),
-    additionalDetails: {
-      initialMeterReading: (
-        obj.additionalDetails !== undefined &&
-        obj.additionalDetails.initialMeterReading !== undefined
-      ) ? parseFloat(obj.additionalDetails.initialMeterReading) : null,
-      detailsProvidedBy: (
-        obj.additionalDetails !== undefined &&
-        obj.additionalDetails.detailsProvidedBy !== undefined &&
-        obj.additionalDetails.detailsProvidedBy !== null
-      ) ? obj.additionalDetails.detailsProvidedBy : "",
-    },
-    noOfTaps: parseInt(obj.noOfTaps),
-    proposedTaps: parseInt(obj.proposedTaps),
-    waterProperty :{
-    usageCategory: (obj.waterProperty.usageCategory === null || obj.waterProperty.usageCategory === "NA") ? "" : obj.waterProperty.usageCategory,
-    usageSubCategory: (obj.waterProperty.usageSubCategory === null || obj.waterProperty.usageSubCategory === "NA") ? "" : obj.waterProperty.usageSubCategory,
-    },
-    waterApplicationType: (obj.waterApplicationType === null || obj.waterApplicationType === "NA") ? "" : obj.waterApplicationType,
-    plumberInfo: (obj.plumberInfo === null || obj.plumberInfo === "NA") ? [] : obj.plumberInfo
-  }
-  obj = { ...obj, ...parsedObject }
-  return obj;
-}
-
 const processBills = async (data, viewBillTooltip, dispatch) => {
   let des, obj, groupBillDetails = [];
-  let appNumber=data.Calculation[0].applicationNo;
   data.Calculation[0].taxHeadEstimates.forEach(async element => {
     let cessKey = element.taxHeadCode
     let body;
-    if (service === "WATER" ||appNumber.includes("WS")) {
-      body = { "MdmsCriteria": { "tenantId": tenantId, "moduleDetails": [{ "moduleName": "ws-services-calculation", "masterDetails": [{ "name": cessKey }] }] } }
+    if (service === "WATER") {
+      body = { "MdmsCriteria": { "tenantId": "pb.amritsar", "moduleDetails": [{ "moduleName": "ws-services-calculation", "masterDetails": [{ "name": cessKey }] }] } }
     } else {
-      body = { "MdmsCriteria": { "tenantId": tenantId, "moduleDetails": [{ "moduleName": "sw-services-calculation", "masterDetails": [{ "name": cessKey }] }] } }
+      body = { "MdmsCriteria": { "tenantId": "pb.amritsar", "moduleDetails": [{ "moduleName": "sw-services-calculation", "masterDetails": [{ "name": cessKey }] }] } }
     }
     let res = await getDescriptionFromMDMS(body, dispatch)
     if (res !== null && res !== undefined && res.MdmsRes !== undefined && res.MdmsRes !== null) {
-      if (service === "WATER" || appNumber.includes("WS")) { des = res.MdmsRes["ws-services-calculation"]; }
+      if (service === "WATER") { des = res.MdmsRes["ws-services-calculation"]; }
       else { des = res.MdmsRes["sw-services-calculation"]; }
       if (des !== null && des !== undefined && des[cessKey] !== undefined && des[cessKey][0] !== undefined && des[cessKey][0] !== null) {
         groupBillDetails.push({ key: cessKey, value: des[cessKey][0].description, amount: element.estimateAmount, order: element.order })
@@ -760,6 +543,5 @@ const processBills = async (data, viewBillTooltip, dispatch) => {
   const finalArray = [{ description: viewBillTooltip, data: dataArray }]
   dispatch(prepareFinalObject("viewBillToolipData", finalArray));
 }
-
 
 export default screenConfig;

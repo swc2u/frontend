@@ -58,11 +58,6 @@ const BreadCrumbs = Loadable({
   loading: () => <Loading />
 });
 
-const AddLinkForProperty = Loadable({
-  loader: () => import("./PropertyLink"),
-  loading: () => <Loading />
-});
-
 export {
   TestAtoms,
   ApplicationNoContainer,
@@ -74,6 +69,5 @@ export {
   MyConnectionsIcon,
   PayWnsBillIcon,
   ConsumerNoContainer,
-  BreadCrumbs,
-  AddLinkForProperty
+  BreadCrumbs
 };

@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import { Card, TextField, Button,AutoSuggestDropdown } from "components";
+import { Card, TextField, Button } from "components";
 import { fetchComplaints } from "egov-ui-kit/redux/complaints/actions";
 import Label from "egov-ui-kit/utils/translationNode";
 import { Complaints, Screen } from "modules/common";
-import { getTranslatedLabel } from "egov-ui-kit/utils/commons";
 import {
   transformComplaintForComponent,
   fetchFromLocalStorage
@@ -43,9 +42,7 @@ class SearchScreen extends Component {
     search: false,
     value: 0,
     errorText: "",
-    noComplaintMessage: "ES_MYCOMPLAINTS_NO_COMPLAINTS_ASSIGNED",
-    categoriesArr : [],
-    deptname:""
+    noComplaintMessage: "ES_MYCOMPLAINTS_NO_COMPLAINTS_ASSIGNED"
   };
 
   componentDidMount = async () => {
@@ -63,21 +60,6 @@ class SearchScreen extends Component {
       }
     }
   };
-  getLocalizedLabel = (label) => {
-    const { localizationLabels } = this.props;
-    return getTranslatedLabel(label, localizationLabels);
-  };
-  department = {
-    id: "department",
-    jsonPath: "services[0].department",
-    floatingLabelText: this.getLocalizedLabel("Department"),
-    hintText: this.getLocalizedLabel("select department"),
-    errorMessage: this.getLocalizedLabel("HR_DEPARTMENT_PLACEHOLDER"),
-    boundary: true,
-    dropDownData: [],
-    errorStyle: { position: "absolute", bottom: -8, zIndex: 5 },
-    errorText: "",
-}
 
   onComplaintClick = complaintNo => {
     this.props.history.push(`/complaint-details/${complaintNo}`);
@@ -103,7 +85,7 @@ class SearchScreen extends Component {
   };
 
   onSearch = () => {
-    const { complaintNo, mobileNo,categoriesArr } = this.state;
+    const { complaintNo, mobileNo } = this.state;
     const { fetchComplaints, toggleSnackbarAndSetText } = this.props;
     let queryObj = [];
     if (complaintNo) {
@@ -112,10 +94,7 @@ class SearchScreen extends Component {
     if (mobileNo) {
       queryObj.push({ key: "phone", value: mobileNo });
     }
-    if(categoriesArr.length > 0){
-      const allCategory = categoriesArr.map(cat => cat.label)
-      queryObj.push({ key: "category", value: allCategory });
-    }
+
     if (complaintNo) {
       if (complaintNo.length >= 6) {
         fetchComplaints(queryObj, true, true);
@@ -130,9 +109,6 @@ class SearchScreen extends Component {
         );
       }
     } else if (mobileNo) {
-      fetchComplaints(queryObj, true, true);
-    }
-    else if (categoriesArr.length > 0) {
       fetchComplaints(queryObj, true, true);
     }
     // if (complaintNo || mobileNo) {
@@ -151,9 +127,7 @@ class SearchScreen extends Component {
       mobileNo: "",
       complaintNo: "",
       search: false,
-      noComplaintMessage: "",
-      deptname:"",
-      categoriesArr:[],
+      noComplaintMessage: ""
     });
   };
 
@@ -169,14 +143,13 @@ class SearchScreen extends Component {
       width: "90%",
       overflow: "hidden"
     };
-    const { loading, history, transformedComplaints, role,departmentName,categories } = this.props;
+    const { loading, history, transformedComplaints, role } = this.props;
     const {
       mobileNo,
       complaintNo,
       search,
       errorText,
-      noComplaintMessage,
-      deptname
+      noComplaintMessage
     } = this.state;
     const { onComplaintClick } = this;
     return (
@@ -196,7 +169,7 @@ class SearchScreen extends Component {
                   />
                 </div>
                 <div
-                  className="col-sm-4 col-xs-12"
+                  className="col-sm-3 col-xs-12"
                   style={{ paddingLeft: 8, paddingRight: 40 }}
                 >
                   <TextField
@@ -226,7 +199,7 @@ class SearchScreen extends Component {
                     hintStyle={{ width: "100%" }}
                   />
                 </div>
-                <div className="col-sm-4 col-xs-12" style={{ paddingLeft: 8 }}>
+                <div className="col-sm-3 col-xs-12" style={{ paddingLeft: 8 }}>
                   <TextField
                     id="complaint-no"
                     name="complaint-no"
@@ -260,25 +233,9 @@ class SearchScreen extends Component {
                     hintStyle={{ width: "100%" }}
                   />
                 </div>
-                <div className="col-sm-4 col-xs-12" style={{ paddingLeft: 8 }}>
-                <AutoSuggestDropdown
-                className="fix-for-layout-break"
-                fullWidth={true}
-                onChange={(chosendepartment, index) => {
-
-                  let filterCategory = categories.filter ( cat => cat.dept === chosendepartment.value);
-                  console.log("categoris\es",filterCategory)
-                    this.setState({categoriesArr : filterCategory , deptname:chosendepartment.label})
-               //   prepareFinalObject("AutoroutingEscalationMap.category", chosenCity.label);
-                }}
-                {...this.department}
-                dataSource={departmentName}
-                value = {deptname}
-                />
-                  </div>
                 <div
-                  className="col-sm-12 col-xs-12 csr-action-buttons"
-                  style={{ marginTop: 10, paddingRight: 8 , textAlign: "center"}}
+                  className="col-sm-6 col-xs-12 csr-action-buttons"
+                  style={{ marginTop: 10, paddingRight: 8 }}
                 >
                   <Button
                     label={
@@ -335,8 +292,7 @@ class SearchScreen extends Component {
 
 const mapStateToProps = state => {
   const { complaints, common } = state || {};
-  const { localizationLabels } = state.app;
-  const { categoriesById, byId, complaintDepartment } = complaints;
+  const { categoriesById, byId } = complaints;
   const { fetchSuccess, loading } = complaints;
   //const loading = !isEmpty(categoriesById) ? (fetchSuccess ? false : true) : true;
   const { citizenById, employeeById } = common || {};
@@ -356,31 +312,8 @@ const mapStateToProps = state => {
     categoriesById,
     displayStatus
   );
-  const departmentName = complaintDepartment && Object.values(complaintDepartment).map(dept => {
-    let label = dept.name;
-    let value = dept.code;
-    return {
-        label,
-        value
-    }
-})
-let categories =[];
-if(categoriesById){
-  Object.values(categoriesById).forEach(category => {
-    let  dept = category.department;
-    let value = category.menuPath;
-    let label = category.menuPath;
-    const cat = {
-        dept ,
-        value,
-        label
-    }
-      if(!categories.some(item => item.value === cat.value))
-           categories.push(cat)
-  })
-}
 
-  return { role, loading, transformedComplaints,departmentName,categories,localizationLabels };
+  return { role, loading, transformedComplaints };
 };
 
 const mapDispatchToProps = dispatch => {

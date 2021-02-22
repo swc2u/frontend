@@ -14,7 +14,7 @@ export const getReviewDocuments = (isEditable = true) => {
       children: {
         header: {
           gridDefination: {
-            xs: 8,
+            xs: 12,
             sm: 10
           },
           ...getCommonSubHeader({
@@ -25,14 +25,10 @@ export const getReviewDocuments = (isEditable = true) => {
         editSection: {
           componentPath: "Button",
           props: {
-            color: "primary",
-            style: {
-              padding: "0px 16px",
-              minHeight: "initial"
-            }
+            color: "primary"
           },
           gridDefination: {
-            xs: 4,
+            xs: 12,
             sm: 2,
             align: "right"
           },
@@ -53,7 +49,7 @@ export const getReviewDocuments = (isEditable = true) => {
           onClickDefination: {
             action: "condition",
             callBack: (state, dispatch) => {
-              changeStep(state, dispatch, "", 1);
+              changeStep(state, dispatch, "", 2);
             }
           }
         },
