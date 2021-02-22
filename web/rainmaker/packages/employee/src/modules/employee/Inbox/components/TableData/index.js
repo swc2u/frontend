@@ -496,10 +496,14 @@ class TableData extends Component {
          {
           
           let currentAssignedRole = get(item,'additionalDetails.role')
-          currentAssignedRole = currentAssignedRole.split(",")
-          
-          if(userRolesCodesForWS.some(element => currentAssignedRole.includes(element)) )
+          if(currentAssignedRole!== undefined)
+          {
+              currentAssignedRole = currentAssignedRole.split(",")          
+            if(userRolesCodesForWS.some(element => currentAssignedRole.includes(element)) )
           {return item}
+
+          }
+          
         }
           
         }
