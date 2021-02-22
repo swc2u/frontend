@@ -82,8 +82,8 @@ class SimpleTable extends React.Component {
       ""
     ]
 
-    const foundUser = this.props.userInfo && this.props.userInfo.roles.some(el => el.code === 'BK_ADMIN');
-    if (foundUser) {
+    // const foundUser = this.props.userInfo && this.props.userInfo.roles.some(el => el.code === 'BK_ADMIN');
+    // if (foundUser) {
 
 
       let feeResponse = await httpRequest(
@@ -99,12 +99,12 @@ class SimpleTable extends React.Component {
         tableData.rows = feeResponse.data;
         this.setState({ data: tableData })
       }
-    } else {
-      let tableData = {};
-      tableData.headers = headers;
-      tableData.rows = {}
-      this.setState({ data: tableData })
-    }
+    // } else {
+    //   let tableData = {};
+    //   tableData.headers = headers;
+    //   tableData.rows = {}
+    //   this.setState({ data: tableData })
+    // }
     this.setState({ isLoading: false })
   }
 
@@ -114,7 +114,7 @@ class SimpleTable extends React.Component {
     //this.props.history.push(`/egov-services/reservedates`);
   }
 
-  async handleEditClick(row) {
+  async handleEditClickBk(row) {
     const headers = [
       "Id",
       "Venue name",
@@ -188,6 +188,28 @@ class SimpleTable extends React.Component {
     }
     this.setState({ isLoading: false })
 
+  }
+
+  handleEditClick (row) {
+
+
+    let updateData={}
+    Object.assign(updateData, row)
+
+
+    this.setState({updateData})
+
+    this.handleClickOpen();
+  }
+
+  handleClickOpen() {
+    this.setState({ open: true });
+  }
+
+  handleClose() {
+    this.setState({ open: false });
+    this.setState({ updateData: {} });
+   this.fetchTableData()
   }
 
   handleSearch(e) {
@@ -271,7 +293,7 @@ class SimpleTable extends React.Component {
             </Paper>
 
           </div>
-
+          <DialogComponent  open={this.state.open}   handleClose={this.handleClose.bind(this)} updateMasterData={this.state.updateData} />
 
         </div>
     );
