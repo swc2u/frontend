@@ -116,6 +116,21 @@ const DashboardTradeLicense = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardEaawas = Loadable({
+  loader: () => import("./DashboardEaawas"),
+  loading: () => <Loading />
+});
+
+const DashboardOPMS = Loadable({
+  loader: () => import("./DashboardOPMS"),
+  loading: () => <Loading />
+});
+
+const DashboardOSBM = Loadable({
+  loader: () => import("./DashboardOSBM"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -139,5 +154,8 @@ export {
   DashboardEchallan,
   DashboardSportCulture,
   DashboardPublicRelation,
-  DashboardTradeLicense
+  DashboardTradeLicense,
+  DashboardEaawas,
+  DashboardOPMS,
+  DashboardOSBM
 };
