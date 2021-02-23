@@ -576,15 +576,15 @@ class CheckAvailability extends Component {
           >
             <div>
               <div style={{ paddingBottom: "5px", marginLeft: "15px" }}>
-                <Label
+                {/* <Label
                   label="BK_MYBK_CHECK_AVAILABILITY"
                   labelClassName="dark-heading"
-                />
+                /> */}
               </div>
               <div className="col-sm-6 col-xs-6">
                 <FormControl component="fieldset">
                   <FormLabel component="legend">
-                    <Label label="BK_MYBK_BOOKING_TYPE" />
+                    <Label label="BK_MYBK_EMP_HOLD_DATES_TYPE" />
                   </FormLabel>
                   <RadioGroup
                     row

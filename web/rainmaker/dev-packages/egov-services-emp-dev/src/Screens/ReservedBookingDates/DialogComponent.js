@@ -59,39 +59,38 @@ const styles = theme => ({
 class DialogComponent extends Component {
 
 
-  // async componentDidMount() {
+  async componentDidMount() {
+
+    console.log(this.props, "Nero Component didmount")
 
 
-  //   console.log(this.props, "Nero Props Datassss")
-  //   const { preparedFinalObject } = this.props;
-  //   // // this.setState({mdmsRes: this.props.mdmsResOsbm})
-  //   // // this.props.prepareFinalObject('mdmsRes', this.props.mdmsResOsbm)
-  //  // if (preparedFinalObject && preparedFinalObject.PopupDataForHoldDates){
-  //     this.setState({
-  //       bookingVenue: preparedFinalObject && preparedFinalObject.PopupDataForHoldDates.bookingVenue,
-  //       lockedDate: preparedFinalObject && preparedFinalObject.PopupDataForHoldDates.fromDate,
-  //       id: preparedFinalObject && preparedFinalObject.PopupDataForHoldDates.id
-  //     });
-  //  // }
-
-
-  // }
+  }
 
   // componentWillReceiveProps(nextProps) {
   //   console.log(this.props, "Nero NExtprops")
   // }
-  componentDidUpdate(prevProps){
+  componentDidUpdate(prevProps) {
 
-console.log(prevProps, "Nero Prevprops")
-      if(this.props.preparedFinalObject.PopupDataForHoldDates !== prevProps.preparedFinalObject.PopupDataForHoldDates){
+    // console.log(prevProps, "Nero Prevprops")
+    //       if(this.props.preparedFinalObject.PopupDataForHoldDates !== prevProps.preparedFinalObject.PopupDataForHoldDates){
 
 
-        this.setState({
-          bookingVenue: preparedFinalObject && preparedFinalObject.PopupDataForHoldDates.bookingVenue,
-          lockedDate: preparedFinalObject && preparedFinalObject.PopupDataForHoldDates.fromDate,
-          id: preparedFinalObject && preparedFinalObject.PopupDataForHoldDates.id
-        });
-      }
+    //         this.setState({
+    //           bookingVenue: preparedFinalObject && preparedFinalObject.PopupDataForHoldDates.bookingVenue,
+    //           lockedDate: preparedFinalObject && preparedFinalObject.PopupDataForHoldDates.fromDate,
+    //           id: preparedFinalObject && preparedFinalObject.PopupDataForHoldDates.id
+    //         });
+    //       }
+    if (this.props.updateMasterData !== prevProps.updateMasterData) {
+
+
+
+
+      this.setState({ updateData: this.props.updateMasterData, errors: {} })
+      this.props.prepareFinalObject('updateData', this.props.updateMasterData)
+
+
+    }
 
   }
 
@@ -111,6 +110,19 @@ console.log(prevProps, "Nero Prevprops")
   }
 
   async handleSubmit() {
+    console.log(this.props, "Nero Props");
+    //return false;
+    const headers = [
+      "Id",
+      "Venue name",
+      "Dates locked",
+      "",
+      "",
+      "Action",
+      "",
+      "",
+      ""
+    ]
     var reqBody = {
 
 
@@ -118,10 +130,10 @@ console.log(prevProps, "Nero Prevprops")
 
         {
 
-          id: this.state.id,
-          bookingVenue: this.state.updateData.residentialCommercial,
+          id: this.props.preparedFinalObject.updateData.id,
+          //bookingVenue: this.state.updateData.residentialCommercial,
           locked: false,
-          fromDate: this.state.lockedDate
+          //fromDate: this.state.lockedDate
 
 
         }
@@ -144,12 +156,29 @@ console.log(prevProps, "Nero Prevprops")
         },
         "success"
       );
+
+      this.setState({ isLoading: true })
+      let feeResponse = await httpRequest(
+        "bookings/commercial/ground/lock/dates/_fetch",
+        "_search",
+        [], []
+      );
+      this.setState({ isLoading: true })
+      let tableData = {};
+
+      if (feeResponse && feeResponse.data.length > 0) {
+
+        tableData.headers = headers;
+        tableData.rows = feeResponse.data;
+        this.setState({ data: tableData })
+        this.setState({ isLoading: false })
+      }
     } else {
       this.props.toggleSnackbarAndSetText(
         true,
         {
-          labelName: "Create Failed.Try Again",
-          labelKey: `Create Failed.Try Again`
+          labelName: "Something went wrong.Try Again",
+          labelKey: `Something went wrong.Try Again`
         },
         "error"
       );
@@ -174,11 +203,56 @@ console.log(prevProps, "Nero Prevprops")
           onClose={this.props.handleClose}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">Unlock Reserved Dates</DialogTitle>
+          <DialogTitle id="form-dialog-title">Are you sure to unlock the selected Date</DialogTitle>
 
           <DialogContent>
-            <div className="col-xs-12 col-sm-6">Booking Venue: {this.state && this.state.bookingVenue}</div>
-            <div className="col-xs-12 col-sm-6">Locked Date: {this.state && this.state.lockedDate}</div>
+
+            <div className="col-xs-12 col-sm-12">
+              <div className="col-xs-12 col-sm-6">
+                <TextFieldContainer
+
+
+                  label={{
+                    labelName: "Venue name",
+                    labelKey: "BK_EMP_ADMIN_VENUE_NAME",
+                  }}
+                  placeholder={{
+                    labelName: "Venue name",
+                    labelKey: "BK_EMP_ADMIN_VENUE_NAME",
+                  }}
+
+                  jsonPath="updateData.bookingVenue"
+
+                  gridDefination={{
+                    xs: 12,
+                    sm: 6
+                  }}
+                />
+
+              </div>
+              <div className="col-xs-12 col-sm-6">
+                <TextFieldContainer
+
+
+                  label={{
+                    labelName: "Locked date",
+                    labelKey: "BK_EMP_ADMIN_LOCKED_DATE",
+                  }}
+                  placeholder={{
+                    labelName: "Locked date",
+                    labelKey: "BK_EMP_ADMIN_LOCKED_DATE",
+                  }}
+
+                  jsonPath="updateData.fromDate"
+
+                  gridDefination={{
+                    xs: 12,
+                    sm: 6
+                  }}
+                />
+
+              </div>
+            </div>
           </DialogContent>
 
           <DialogActions>
