@@ -2,15 +2,18 @@ import {
     getCommonContainer,
     getCommonHeader,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
+
 import {
     getCurrentFinancialYear,
     clearlocalstorageAppDetails,
     convertDateInYMD,
+    getCommonApplyFooter
 } from "../utils";
 import {
     checkAvailabilitySearch,
     checkAvailabilityCalendar,
-} from "./checkAvailabilityForm";
+} from "./checkavailabilityForm_room";
 import {
     setapplicationNumber,
     lSRemoveItemlocal,
@@ -33,47 +36,7 @@ import {
 } from "../../../../ui-utils/commons";
 import { httpRequest } from "../../../../ui-utils";
 import { getAvailabilityData, getBetweenDays } from "../utils";
-
-// const getMdmsData = async (action, state, dispatch) => {
-//     try {
-//         let payload = {};
-
-//         payload.sector = [
-//             {
-//                 id: 1,
-//                 code: "Circus Ground, Sector 17",
-//                 tenantId: "ch.chandigarh",
-//                 name: "Circus Ground, Sector 17",
-//                 active: true,
-//             },
-//             {
-//                 id: 2,
-//                 code: "Exhibition Ground, Sector 34",
-//                 tenantId: "ch.chandigarh",
-//                 name: "Exhibition Ground, Sector 34",
-//                 active: true,
-//             },
-//             {
-//                 id: 2,
-//                 code: "Housing Board Ground, Manimajra",
-//                 tenantId: "ch.chandigarh",
-//                 name: "Housing Board Ground, Manimajra",
-//                 active: true,
-//             },
-//             {
-//                 id: 2,
-//                 code: "Circus Ground, Manimajra",
-//                 tenantId: "ch.chandigarh",
-//                 name: "Circus Ground, Manimajra",
-//                 active: true,
-//             },
-//         ];
-
-//         dispatch(prepareFinalObject("applyScreenMdmsData", payload));
-//     } catch (e) {
-//         console.log(e);
-//     }
-// };
+import { personalDetails } from "./applyResourceCommunityCenterRoom/nocDetails";
 
 const getMdmsData = async (action, state, dispatch) => {
     let tenantId = getTenantId().split(".")[0];
@@ -261,8 +224,8 @@ const prepareEditFlow = async (
 };
 const header = getCommonContainer({
     header: getCommonHeader({
-        labelName: `Apply for Commercial Ground`,
-        labelKey: "BK_CGB_APPLY",
+        labelName: `Apply for Room Booking`,
+        labelKey: "Apply for Room Booking",
     }),
     applicationNumber: {
         uiFramework: "custom-atoms-local",
@@ -277,26 +240,20 @@ const header = getCommonContainer({
 
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "checkavailability",
+    name: "checkavailability_room",
     beforeInitScreen: (action, state, dispatch) => {
-        // clearlocalstorageAppDetails(state);
-        const applicationNumber = getQueryArg(
-            window.location.href,
-            "applicationNumber"
+        clearlocalstorageAppDetails(state);
+        set(
+            action.screenConfig,
+            "components.div.children.personalDetails.visible",
+           false
         );
-        const tenantId = getQueryArg(window.location.href, "tenantId");
-        getMdmsData(action, state, dispatch).then((response) => {
-            if (applicationNumber !== null) {
-                set(
-                    action.screenConfig,
-                    "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
-                    true
-                );
-                prepareEditFlow(state, dispatch, applicationNumber, tenantId);
-            }
-        });
+
         return action;
     },
+
+
+    
     components: {
         div: {
             uiFramework: "custom-atoms",
@@ -320,7 +277,8 @@ const screenConfig = {
                     },
                 },
                 checkAvailabilitySearch,
-                checkAvailabilityCalendar,
+               personalDetails,
+              
             },
         },
     },
