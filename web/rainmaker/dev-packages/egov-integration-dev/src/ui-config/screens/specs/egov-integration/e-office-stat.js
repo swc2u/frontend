@@ -40,7 +40,7 @@ import {
     
   };
   const getMdmsData = async (state, dispatch) => {
-    const tenantId =  getstoreTenantId();
+    const tenantId =  getTenantId();
     // let mdmsBody = {
     //   eOfficeRequest: {
     //     orgid: 37,
@@ -48,12 +48,35 @@ import {
        
     //   }
     // };
+    const userInfo = JSON.parse(getUserInfo());
+    let employeeCode ='11819';
+    if(userInfo){
+      
+      const queryParams = [{ key: "uuids", value: userInfo.uuid },{ key: "tenantId", value:  tenantId }];
+      try { 
+        const payload = await httpRequest(
+          "post",
+          "/egov-hrms/employees/_search",
+          "_search",
+          queryParams
+        );
+        if(payload){ 
+          employeeCode = payload.Employees[0].code;
+          // dispatch(prepareFinalObject("searchScreen.empCode", payload.Employees[0].code));
+          // dispatch(prepareFinalObject("empCode", payload.Employees[0].code));
+        }
+        
+      } catch (e) {
+        console.log(e);
+      }
+    }
     let postdetailid =[]
     // call api integration-services/eoffice/v1/_getPostDetailsId
     dispatch(toggleSpinner());
     let Request ={
       employeePostDetailMap:{
-        employeeCode:"11819"// need to replace by login user id
+        //employeeCode:"11819",// need to replace by login user id
+        employeeCode:employeeCode,
       }
     }
     try {

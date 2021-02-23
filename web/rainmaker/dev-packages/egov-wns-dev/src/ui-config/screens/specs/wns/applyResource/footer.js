@@ -493,7 +493,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" ||
 
       }
 
-      const isPropertyUsageValid= validateFields(
+      let isPropertyUsageValid= validateFields(
         "components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children",
         state,
         dispatch,
@@ -505,9 +505,6 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" ||
         dispatch,
         "apply"
       );
-      if(!isPropertyUsageValid || !isConnectionHolderDetailsValid || !isOwnershipTypeInputValid ||!isPropertyLocationDetailValid || !isPropertyDetailsValid){
-        isFormValid = false;
-      }
       const water = get(
         state.screenConfiguration.preparedFinalObject,
         "applyScreen.water"
@@ -520,6 +517,29 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" ||
         state.screenConfiguration.preparedFinalObject,
         "applyScreen.tubewell"
       );
+      const fields = get(
+        state.screenConfiguration.screenConfig["apply"],
+        "components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children",
+        {}
+      );
+      if(sewerage || tubewell)
+      {
+        if(fields.propertySubUsageType!==undefined) 
+        {
+          if(fields.propertySubUsageType.isFieldValid ===false)
+          isPropertyUsageValid = true
+          
+        }
+        else
+        isPropertyUsageValid = true
+
+      }
+      
+
+      if(!isPropertyUsageValid || !isConnectionHolderDetailsValid || !isOwnershipTypeInputValid ||!isPropertyLocationDetailValid || !isPropertyDetailsValid){
+        isFormValid = false;
+      }
+      
       let searchPropertyId = get(
         state.screenConfiguration.preparedFinalObject,
         "searchScreen.propertyIds"
