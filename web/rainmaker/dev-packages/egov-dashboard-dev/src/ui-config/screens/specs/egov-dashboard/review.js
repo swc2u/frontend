@@ -197,7 +197,7 @@ const screenConfig = {
           },
           buisnessService2: {
             uiFramework: "custom-containers-local",
-            moduleName: "egov-report",
+            moduleName: "egov-dashboard",
             componentPath: "AutosuggestContainer",
             jsonPath: "selectedDropDownTwoData",
             required: true,
