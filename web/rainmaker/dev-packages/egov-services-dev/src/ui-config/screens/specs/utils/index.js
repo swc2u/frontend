@@ -15,7 +15,7 @@ import {
     getCommonCaption,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getFileUrlFromAPI } from "egov-ui-framework/ui-utils/commons";
-import { getBookingWorkflowHistory, getSearchResultsView } from "../../../../ui-utils/commons";
+import { getBookingWorkflowHistory, getSearchResultsView , } from "../../../../ui-utils/commons";
 import axios from "axios";
 
 export const getCommonApplyFooter = (children) => {
@@ -755,7 +755,7 @@ export const downloadReceipt = async (
     flag = 'false',
     mode = "download"
 ) => {
-    tenantId="ch.chandigarh"
+
 
    // tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
     // let applicationData = get(
@@ -766,34 +766,63 @@ export const downloadReceipt = async (
     let applicationData = {}
     let receiptUrl = ""
     let receiptVal
+    let roomDataForGivenApplicationNumber= {}
     if (flag === 'false') {
-        const response = await getSearchResultsView([
-            { key: "tenantId", value: tenantId },
-            { key: "applicationNumber", value: applicationNumber },
-        ]);
-        let recData = get(response, "bookingsModelList", []);
-        /*
-            dispatch(
-                prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
-            );
 
-
-               applicationData = get(
-                    state.screenConfiguration.preparedFinalObject,
-                    "Booking"
-                );*/
-
-        applicationData = recData[0];
-
+        applicationData = get(
+        state.screenConfiguration.preparedFinalObject,
+        "Booking"
+         );
+            if(applicationData.roomsModel!==undefined  && applicationData.roomsModel.length>0 ){
+                
+                let communityApplicationNumber= get(
+                state.screenConfiguration.preparedFinalObject,
+                "Booking.bkApplicationNumber"
+                 );
+                 const response = await getSearchResultsView([
+                    { key: "tenantId", value: tenantId },
+                    { key: "applicationNumber", value: communityApplicationNumber },
+                ]);
+                let recData = get(response, "bookingsModelList", []);
+                recData[0].roomsModel= prepareRoomCard(recData[0].roomsModel)
+                console.log('plRoomData', recData)
+                
+                
+                if(applicationData.bkApplicationNumber!==applicationNumber){
+                    
+                    recData[0].roomsModel.map( (e)=>{
+                        if(e.roomApplicationNumber===applicationNumber) {
+                            roomDataForGivenApplicationNumber =e
+                        }
+                     })
+                }
+                applicationData = recData[0];
+            }
+            else{
+                const response = await getSearchResultsView([
+                    { key: "tenantId", value: tenantId },
+                    { key: "applicationNumber", value: applicationNumber },
+                ]);
+                let recData = get(response, "bookingsModelList", []);
+             
+        
+                applicationData = recData[0];
+        
+            }
+        
     }
     else if (flag === 'true') {
-        applicationData = state
-
+        Object.assign(applicationData, state)
+        
+        if(applicationData.roomsModel!==undefined  && applicationData.roomsModel.length>0){
+            applicationData.roomsModel= prepareRoomCard(applicationData.roomsModel)
+    
+        }
     }
 
-const refundDetailsResp = await getRefundDetails(applicationNumber, tenantId);
+    const refundDetailsResp = await getRefundDetails(applicationNumber, tenantId);
 
-let bankName = refundDetailsResp.data[0].gateway;
+    let bankName = refundDetailsResp.data[0].gateway;
     const receiptQueryString = [
         { key: "consumerCodes", value: applicationNumber },
         {
@@ -826,9 +855,17 @@ let bankName = refundDetailsResp.data[0].gateway;
             receiptQueryString
         )
 
-
         let queryStr = "";
-        if (applicationData.businessService === "PACC") {
+        if (applicationData.roomsModel !== undefined && applicationData.roomsModel.length> 0 && applicationData.bkApplicationNumber!==applicationNumber) {
+            queryStr = [
+                { key: "key", value: "room-payment-receipt" },
+                {
+                    key: "tenantId",
+                    value: tenantId,
+
+                },
+            ];
+        } else if (applicationData.businessService === "PACC") {
             queryStr = [
                 { key: "key", value: "pacc-payment-receipt" },
                 {
@@ -911,8 +948,8 @@ let bankName = refundDetailsResp.data[0].gateway;
                         .receiptNumber,
             };
         } else {
-let tax = 0;
-let amount = 0;
+        let tax = 0;
+        let amount = 0;
           if(applicationData.businessService === "OSBM"){
           tax =  payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
                 (el) => el.taxHeadCode.includes("CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH")
@@ -1021,6 +1058,106 @@ let amount = 0;
                 },
             },
         ];
+        if(applicationData.roomsModel!==undefined  && applicationData.roomsModel.length>0 && applicationData.bkApplicationNumber!==applicationNumber){
+            
+            paymentInfoData = {
+                currentDate:  `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}`,
+                cleaningCharges: "0",
+                paymentDate: convertEpochToDate(
+                    payloadReceiptDetails.Payments[0].transactionDate,
+                    "dayend"
+                ),
+                transactionId:
+                    payloadReceiptDetails.Payments[0].transactionNumber,
+                bookingPeriod: getDurationDate(
+                    applicationData.roomsModel[0].fromDate,
+                    applicationData.roomsModel[0].toDate
+                ),
+                cgst: (payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                    (el) => el.taxHeadCode.includes("BKROOM_TAX")
+                )[0].amount)/2,
+                utgst: (payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                    (el) => el.taxHeadCode.includes("BKROOM_TAX")
+                )[0].amount)/2,
+                totalgst: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                    (el) => el.taxHeadCode.includes("BKROOM_TAX")
+                )[0].amount,
+                
+                paymentType: "ONLINE",
+                mcGSTN: "aasdadad",
+                discType: "",
+                custGSTN: "asd",
+                bookingItem: `Online Payment Against Booking of ${applicationData.bkLocation}`,
+                baseCharge: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                    (el) => el.taxHeadCode==="BKROOM"
+                )[0].amount,
+                cleaningCharges: "",
+                surcharges: "",
+                facilitationCharge: "0.00",
+                gst:  payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                    (el) => el.taxHeadCode.includes("BKROOM_TAX")
+                )[0].amount,
+                totalAmount:payloadReceiptDetails.Payments[0].totalAmountPaid ,
+
+                amountInWords: NumInWords(payloadReceiptDetails.Payments[0].totalAmountPaid),
+                paymentItemExtraColumnLabel: "Booking Period",
+
+                paymentMode: payloadReceiptDetails.Payments[0].paymentMode,
+                bankName: bankName,
+                receiptNo:
+                    payloadReceiptDetails.Payments[0].paymentDetails[0]
+                        .receiptNumber,
+            };
+             receiptData = [
+                {
+                     applicantDetails: {
+                        name: payloadReceiptDetails.Payments[0].payerName,
+                       
+                    },
+                    booking: {
+                       
+                        noOfAcRooms: applicationData.roomsModel[0].totalNoOfACRooms,
+                        noOfNonAcRooms:applicationData.roomsModel[0].totalNoOfNonACRooms ,
+                        placeOfService: "Chandigarh",  
+                        bkDept : applicationData.bkBookingType,
+                        bkStartDate:applicationData.bkFromDate,
+                        bkEndDate:applicationData.bkToDate,
+                        bkLocation: applicationData.bkLocation,
+                        bookingPupose: applicationData.bkBookingPurpose,
+                        bkApplicationNumber:
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.consumerCode,
+                    },
+                    paymentInfo: paymentInfoData,
+                    payerInfo: {
+                        payerName: payloadReceiptDetails.Payments[0].payerName,
+                        payerMobile:
+                            payloadReceiptDetails.Payments[0].mobileNumber,
+                    },
+                    generatedBy: {
+                        generatedBy: JSON.parse(getUserInfo()).name,
+                        generatedDateTime: generatedDateTime
+                    },
+                    bankInfo: {
+                         accountholderName :  applicationData.bkBankAccountHolder ,
+                         rBankName :  applicationData.bkBankName ,
+                         rBankACNo :  applicationData.bkBankAccountNumber ,
+                         rIFSCCode :  applicationData.bkIfscCode
+                    },
+                    tenantInfo: {
+                            municipalityName: "Municipal Corporation Chandigarh",
+                            address: "New Deluxe Building, Sector 17, Chandigarh",
+                            contactNumber: "+91-172-2541002, 0172-2541003",
+                            logoUrl: "https://chstage.blob.core.windows.net/fileshare/logo.png",
+                            webSite: "http://mcchandigarh.gov.in",
+                            mcGSTN: "aasdadad",
+                            statecode: "998",
+                            hsncode: "45"
+                },
+                },
+            ];
+        }
+
 
 
         let res = await httpRequest(
@@ -1073,7 +1210,7 @@ export const downloadCertificate = async (
     mode = "download"
 ) => {
     let applicationData = {}
-    tenantId="ch.chandigarh"
+
     //tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
     let bookingWfHistory = await getBookingWorkflowHistory(applicationNumber, tenantId);
 
@@ -1099,66 +1236,127 @@ export const downloadCertificate = async (
 
     let receiptUrl = ""
     let receiptVal
+    let roomDataForGivenApplicationNumber= {}
     if (flag === 'false') {
-        applicationData = get(
-            state.screenConfiguration.preparedFinalObject,
-            "Booking"
-        );
 
+        applicationData = get(
+        state.screenConfiguration.preparedFinalObject,
+        "Booking"
+         );
+            if(applicationData.roomsModel!==undefined  && applicationData.roomsModel.length>0 ){
+                
+                let communityApplicationNumber= get(
+                state.screenConfiguration.preparedFinalObject,
+                "Booking.bkApplicationNumber"
+                 );
+                 const response = await getSearchResultsView([
+                    { key: "tenantId", value: tenantId },
+                    { key: "applicationNumber", value: communityApplicationNumber },
+                ]);
+                let recData = get(response, "bookingsModelList", []);
+                recData[0].roomsModel= prepareRoomCard(recData[0].roomsModel)
+                console.log('plRoomData', recData)
+                
+                
+                if(applicationData.bkApplicationNumber!==applicationNumber){
+                    
+                    recData[0].roomsModel.map( (e)=>{
+                        if(e.roomApplicationNumber===applicationNumber) {
+                            roomDataForGivenApplicationNumber =e
+                        }
+                     })
+                }
+                applicationData = recData[0];
+            }
+            else{
+                const response = await getSearchResultsView([
+                    { key: "tenantId", value: tenantId },
+                    { key: "applicationNumber", value: applicationNumber },
+                ]);
+                let recData = get(response, "bookingsModelList", []);
+             
+        
+                applicationData = recData[0];
+        
+            }
+        
     }
     else if (flag === 'true') {
-        applicationData = state
+        Object.assign(applicationData, state)
+        
+        if(applicationData.roomsModel!==undefined  && applicationData.roomsModel.length>0){
+            applicationData.roomsModel= prepareRoomCard(applicationData.roomsModel)
+    
+        }
     }
+    const refundDetailsResp = await getRefundDetails(applicationNumber, tenantId);
 
+    let bankName = refundDetailsResp.data[0].gateway;
     let tenantData = await getMdmsTenantsData();
 
+    const receiptQueryString = [
+        { key: "consumerCodes", value: applicationNumber },
+        {
+            key: "tenantId",
 
-    const DOWNLOADCERTIFICATE = {
+            // value: tenantId.length > 2 ? tenantId.split('.')[0] : tenantId,
+            value: tenantId,
+
+        },
+    ];
+    const FETCHRECEIPT = {
+        GET: {
+            URL: "/collection-services/payments/_search",
+            ACTION: "_get",
+        },
+    };
+    const DOWNLOADRECEIPT = {
         GET: {
             URL: "/pdf-service/v1/_create",
             // ACTION: "_get",
         },
     };
-    try {
+
+    const DOWNLOADCERTIFICATE = {
+        GET: {
+            URL: "/pdf-service/v1/_create",
+             // ACTION: "_get",
+        },
+    };
+    let payloadReceiptDetails={}
+    if(applicationData.roomsModel!==undefined  && applicationData.roomsModel.length>0 && applicationData.bkApplicationNumber!==applicationNumber){
+       payloadReceiptDetails = await httpRequest(
+            "post",
+            FETCHRECEIPT.GET.URL,
+            FETCHRECEIPT.GET.ACTION,
+            receiptQueryString
+        )
+
+
+    }
+    
         let queryStr = [
             {
                 key: "key",
-                value:
-                    applicationData.businessService == "OSBM"
+                value:(applicationData.roomsModel!==undefined  && applicationData.roomsModel.length>0 && applicationData.bkApplicationNumber!==applicationNumber) 
+                        ?"bk-room-booking-pl"
+                        :applicationData.businessService == "OSBM"
                         ? "bk-osbm-pl"
                         : applicationData.businessService == "PACC"
                             ? "bk-pacc-booking-pl"
                             : applicationData.businessService == "OSUJM"
                                 ? "bk-oswmcc-booking-pl"
-                                : "bk-cg-pl",
+                                :"bk-cg-pl",
             },
 
             { key: "tenantId", value: tenantId },
 
         ];
 
-        // applicationData.businessService == "OSBM"
-        //     ? queryStr = [
-        //         { key: "key", value: "bk-osbm-pl" },
-        //         { key: "tenantId", value: "ch" },
-        //     ]
-        //     : queryStr = [
-        //         { key: "key", value: "bk-cg-pl" },
-        //         { key: "tenantId", value: "ch" },
-        //     ]
         let bookingDuration = '';
         if (applicationData.businessService == "PACC" && applicationData.bkBookingType == "Community Center") {
             if (applicationData.timeslots && applicationData.timeslots.length > 0) {
-                // if (applicationData.bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1475") {
-                //     applicationData.bookingItemType = "HOURLY"
-                // } else if (applicationData.bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1476") {
-                //     applicationData.bookingItemType = "HOURLY";
-                // } else if (applicationData.bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1474") {
-                //     applicationData.bookingItemType = "FULLDAY";
-                // } else {
-                //     applicationData.bookingItemType = "FULLDAY";
-                // }
-
+ 
                 var [fromTime, toTime] = applicationData.timeslots[0].slot.split('-')
 
                 bookingDuration = getDurationDateWithTime(
@@ -1176,7 +1374,10 @@ export const downloadCertificate = async (
                 applicationData.bkToDate
             )
         }
+        var date2 = new Date();
 
+        var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+     
         let certificateData = [
             {
                 applicantDetail: {
@@ -1229,9 +1430,107 @@ export const downloadCertificate = async (
                 },
                 generatedBy: {
                     generatedBy: JSON.parse(getUserInfo()).name,
+                    
                 },
             },
         ];
+        let paymentInfoData={}
+        if(applicationData.roomsModel!==undefined  && applicationData.roomsModel.length>0 && applicationData.bkApplicationNumber!==applicationNumber){
+            
+            paymentInfoData = {
+
+                cleaningCharges: "0",
+                baseCharge:  payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                    (el) => el.taxHeadCode==="BKROOM"
+                )[0].amount, 
+                cgst:  (payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                    (el) => el.taxHeadCode.includes("BKROOM_TAX")
+                )[0].amount)/2,
+                utgst:  (payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                    (el) => el.taxHeadCode.includes("BKROOM_TAX")
+                )[0].amount)/2,
+                totalgst:  (payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                    (el) => el.taxHeadCode.includes("BKROOM_TAX")
+                )[0].amount),
+                refundableCharges: "",
+                totalPayment: payloadReceiptDetails.Payments[0].totalAmountPaid,
+                paymentDate: convertEpochToDate(
+                    payloadReceiptDetails.Payments[0].transactionDate,
+                    "dayend"
+                ),
+                receiptNo: payloadReceiptDetails.Payments[0].paymentDetails[0]
+                .receiptNumber,
+                currentDate:  `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`,
+                paymentType: payloadReceiptDetails.Payments[0].paymentMode,
+                facilitationCharge: "Not Applicable",
+                custGSTN: applicationData.bkCustomerGstNo ,
+                mcGSTN: "",
+                bankName: bankName,
+                transactionId: payloadReceiptDetails.Payments[0].transactionNumber,
+                totalPaymentInWords:  NumInWords(payloadReceiptDetails.Payments[0].totalAmountPaid),
+                discType: "0"
+            
+            };
+            certificateData = [
+                {
+                applicantDetails: {
+                        name: payloadReceiptDetails.Payments[0].payerName,
+                        permanentAddress: applicationData.bkHouseNo,
+                        permanentCity: tenantData.tenants[0].city.name,
+                        placeOfService: "Chandigarh"
+                       
+                    },
+                    bookingDetails: {
+                        bkLocation: applicationData.bkLocation,
+                        bkDept : applicationData.bkBookingType,
+                        
+                        noOfACRooms: applicationData.roomsModel[0].totalNoOfACRooms,
+                        noOfNonACRooms:applicationData.roomsModel[0].totalNoOfNonACRooms,
+                        bookingPupose: applicationData.bkBookingPurpose,
+                        bkStartDate:applicationData.bkFromDate,
+                        bkEndDate:applicationData.bkToDate,
+                        placeOfService: "Chandigarh", 
+                        venueName: applicationData.bkLocation,
+                        sector: applicationData.bkSector, 
+                        bookingType:applicationData.bkBookingType,
+                        applicationDate: convertDateInDMY(
+                            applicationData.bkDateCreated
+                        ),
+                        bookingPeriod: bookingDuration, 
+                        bkApplicationNumber:
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.consumerCode,
+                    },
+                    
+                    payerInfo: {
+                        payerName: payloadReceiptDetails.Payments[0].payerName,
+                        payerMobile:
+                            payloadReceiptDetails.Payments[0].mobileNumber,
+                    },
+                    paymentInfo:  paymentInfoData, 
+                    generatedBy: {
+                        generatedBy: JSON.parse(getUserInfo()).name,
+                        generatedDateTime: generatedDateTime
+                    },
+                    bankInfo: {
+                         accountholderName :  applicationData.bkBankAccountHolder ,
+                         rBankName :  applicationData.bkBankName ,
+                         rBankACNo :  applicationData.bkBankAccountNumber ,
+                         rIFSCCode :  applicationData.bkIfscCode
+                    },
+                    tenantInfo: {
+                            municipalityName: "Municipal Corporation Chandigarh",
+                            address: "New Deluxe Building, Sector 17, Chandigarh",
+                            contactNumber: "+91-172-2541002, 0172-2541003",
+                            logoUrl: "https://chstage.blob.core.windows.net/fileshare/logo.png",
+                            webSite: "http://mcchandigarh.gov.in",
+                            mcGSTN: "aasdadad",
+                            statecode: "998",
+                            hsncode: "45"
+                },
+                },
+            ];
+        }
 
         let res = await httpRequest(
             "post",
@@ -1265,9 +1564,7 @@ export const downloadCertificate = async (
         }
 
         //   })
-    } catch (exception) {
-        alert("Some Error Occured while downloading Permission Letter!");
-    }
+     
     return receiptVal
 };
 
@@ -2394,3 +2691,68 @@ export const getAllbillsOfBooking = async (applicationNumber, tenantId) => {
         console.log(error, "errornew");
     }
 };
+
+
+
+
+  
+  
+
+export const prepareRoomCard= (nonOptimisedRoomData)=>{
+  
+    let tempArray = [];
+    let roomModels= nonOptimisedRoomData
+    var roomsData = roomModels
+      .map((roomData) => {
+        if (!tempArray.includes(roomData.roomApplicationNumber)) {
+          tempArray.push(roomData.roomApplicationNumber);
+          let slicearray = roomModels.slice(
+            roomModels.findIndex((element) => {
+              if (element === roomData) {
+                return true;
+              }
+            }) + 1,
+            roomModels.length
+          );
+          let duplicateObject = slicearray.filter(
+            (data) =>
+              data.roomApplicationNumber === roomData.roomApplicationNumber
+          );
+          if (duplicateObject.length > 0) {
+            let newObj = {
+              roomApplicationNumber: roomData.roomApplicationNumber,
+              toDate: roomData.toDate,
+              fromDate: roomData.fromDate,
+              typeOfRooms: "BOTH"
+            };
+            if (duplicateObject[0].typeOfRoom === "NON-AC") {
+              newObj.totalNoOfACRooms = roomData.totalNoOfRooms;
+              newObj.totalNoOfNonACRooms = duplicateObject[0].totalNoOfRooms;
+            } else {
+              newObj.totalNoOfACRooms = duplicateObject[0].totalNoOfRooms;
+              newObj.totalNoOfNonACRooms = roomData.totalNoOfRooms;
+            }
+            return newObj;
+          } else {
+            let newObj = {
+              roomApplicationNumber: roomData.roomApplicationNumber,
+              toDate: roomData.toDate,
+              fromDate: roomData.fromDate
+            };
+            if (roomData.typeOfRoom === "NON-AC") {
+              newObj.totalNoOfACRooms = 0;
+              newObj.typeOfRooms = "NON-AC";
+              newObj.totalNoOfNonACRooms = roomData.totalNoOfRooms;
+            } else {
+              newObj.totalNoOfACRooms = roomData.totalNoOfRooms;
+              newObj.typeOfRooms = "AC";
+              newObj.totalNoOfNonACRooms = 0;
+            }
+            return newObj;
+          }
+        }
+        return;
+      }).filter(Boolean);
+      console.log('roomsData1234', roomsData)
+      return roomsData
+  }
