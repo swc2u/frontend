@@ -362,6 +362,8 @@ export const getData = async (action, state, dispatch) => {
         }
         //set modify property
         payloadWater.WaterConnection[0].property.subusageCategory = payloadWater.WaterConnection[0].property.usageCategory;
+        if(payloadWater.WaterConnection[0].property.usageCategory !==undefined)
+        
         payloadWater.WaterConnection[0].property.usageCategory = payloadWater.WaterConnection[0].property.usageCategory.split('.')[0];        
         payloadWater.WaterConnection[0].property.noOfFloors = String(payloadWater.WaterConnection[0].property.noOfFloors);
 
@@ -449,6 +451,7 @@ export const getData = async (action, state, dispatch) => {
       const sewerageConnections = payloadSewerage ? payloadSewerage.SewerageConnections : [];
       let combinedArray = waterConnections.concat(sewerageConnections);
       combinedArray[0].property.subusageCategory = combinedArray[0].property.subusageCategory;
+      if(combinedArray[0].property.usageCategory !==undefined)
       combinedArray[0].property.usageCategory = combinedArray[0].property.usageCategory.split('.')[0];
       combinedArray[0].property.noOfFloors = String(combinedArray[0].property.noOfFloors);
       const {applyScreenMdmsData} = state.screenConfiguration.preparedFinalObject;

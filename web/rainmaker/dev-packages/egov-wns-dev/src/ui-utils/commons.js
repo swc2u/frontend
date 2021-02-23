@@ -810,7 +810,7 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             "screenConfiguration.preparedFinalObject.applyScreen.property.subusageCategory",
             ''
         );
-        if(occupancycode !== undefined)
+        if(occupancycode !== undefined && occupancycode!= null)
                 {
         if(occupancycode.split('.').length != 2)
         {
@@ -1264,7 +1264,7 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                     "applyScreen.property.subusageCategory",
                     ''
                 );
-                if(occupancycode !== undefined)
+                if(occupancycode !== undefined && occupancycode != null)
                 {
                 if(occupancycode.split('.').length != 2)
                 {
