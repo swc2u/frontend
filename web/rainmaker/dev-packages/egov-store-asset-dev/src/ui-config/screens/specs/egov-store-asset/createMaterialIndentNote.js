@@ -407,9 +407,12 @@ export const header = getCommonContainer({
            for (let index = 0; index < roles.length; index++) {
            const element = roles[index];
            businessService = businessService.filter(x=>x.role === element.code)
-           if(businessService.length==1)
-           response = response.stores.filter(x=>x.department.deptCategory===businessService[0].deptCategory)
-           break;        
+          //  if(businessService.length==1)
+          //  response = response.stores.filter(x=>x.department.deptCategory===businessService[0].deptCategory)
+          let deptCategory =
+          get(state, `screenConfiguration.preparedFinalObject.indents[0].indentStore.department.deptCategory`, [])
+               response = response.stores.filter(x=>x.department.deptCategory===deptCategory)
+             break;        
            }
            dispatch(prepareFinalObject("store.stores", response));
             }

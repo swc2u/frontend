@@ -101,12 +101,20 @@ const DashboardEchallan = Loadable({
   loading: () => <Loading />
 });
 
-
 const DashboardSportCulture = Loadable({
   loader: () => import("./DashboardSportCulture"),
   loading: () => <Loading />
 });
 
+const DashboardPublicRelation = Loadable({
+  loader: () => import("./DashboardPublicRelation"),
+  loading: () => <Loading />
+});
+
+const DashboardTradeLicense = Loadable({
+  loader: () => import("./DashboardTradeLicense"),
+  loading: () => <Loading />
+});
 
 export {
   TestMolecules,
@@ -129,5 +137,7 @@ export {
   HCDashboard,
   ReportPreview,
   DashboardEchallan,
-  DashboardSportCulture
+  DashboardSportCulture,
+  DashboardPublicRelation,
+  DashboardTradeLicense
 };
