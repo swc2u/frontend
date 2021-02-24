@@ -764,11 +764,6 @@ export const downloadReceipt = async (
     flag = 'false',
     mode = "download"
 ) => {
-<<<<<<< HEAD
-    tenantId = "ch.chandigarh"
-=======
-
->>>>>>> c2b9e965a5406343a445353daa5e3e6e5a9ba12a
 
     // tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
     // let applicationData = get(
@@ -1298,8 +1293,11 @@ export const downloadCertificate = async (
                 let filteredRole = bookingWfHistory[i].assignee.roles.filter((role) => {
                     return role.code == "BK_OSBM_APPROVER";
                 });
+                if(filteredRole !== undefined && filteredRole !== null)
+                {
 
-                apporvedByDetail.role = filteredRole[0].name;
+                    apporvedByDetail.role = filteredRole[0].name;
+                }
             }
         }
     }
