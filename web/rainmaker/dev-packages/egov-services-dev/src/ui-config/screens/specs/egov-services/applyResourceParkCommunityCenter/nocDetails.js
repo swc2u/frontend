@@ -135,7 +135,7 @@ export const bankAccountDetails = getCommonCard({
     //   }
     // ),
     // break: getBreak(),
-    
+
     personalDetailsContainer: getCommonContainer({
         bkAccountName: {
             ...getTextField({
@@ -155,7 +155,7 @@ export const bankAccountDetails = getCommonCard({
                 jsonPath: "Booking.bkBankName",
             }),
         },
-        
+
         bkAccountNumber: {
             ...getTextField({
                 label: {
@@ -169,7 +169,7 @@ export const bankAccountDetails = getCommonCard({
                     //labelKey: "BK_PCC_ACCOUNT_NUMBER_LABEL",
                  },
                 required: true,
-                pattern: getPattern("Name"),
+                pattern: getPattern("bankAccountNo"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 requiredMessage: "required Message",
                 jsonPath: "Booking.bkBankAccountNumber",
@@ -214,7 +214,7 @@ export const bankAccountDetails = getCommonCard({
                 jsonPath: "Booking.bkBankAccountHolder",
             }),
         },
-      
+
           bankAccountTypeRadioGroup: {
             uiFramework: "custom-containers",
             componentPath: "RadioGroupContainer",
@@ -249,7 +249,7 @@ export const bankAccountDetails = getCommonCard({
             },
             required: true,
             type: "array",
-        },      
+        },
         dummyDiv: {
             uiFramework: "custom-atoms",
             componentPath: "Div",
