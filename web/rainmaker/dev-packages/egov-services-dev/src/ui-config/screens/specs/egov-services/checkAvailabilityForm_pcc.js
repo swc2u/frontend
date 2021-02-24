@@ -10,7 +10,6 @@ import {
   getLabel,
   getPattern,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-
 import {
   
   getAvailabilityData,

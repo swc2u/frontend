@@ -195,6 +195,49 @@ if(Allowances.length>Deductions.length)
   // make sentence start 
   let Net_Pay_In_Word = (Allowances_total - Deductions_total) 
   Net_Pay_In_Word = getAmounttoWords(Net_Pay_In_Word);
+ let  Month = searchScreenObject.month;
+  switch(Month)
+      {
+        case "01":
+          Month= "January"
+        break;
+        case "02":
+          Month= "February"
+        break;
+        case "03":
+          Month= "March"
+        break;
+        case "04":
+          Month= "April"
+        break;
+        case "05":
+          Month= "May"
+        break;
+        case "06":
+          Month= "June"
+        break;
+        case "07":
+          Month= "July"
+        break;
+        case "08":
+          Month= "August"
+        break;
+        case "09":
+          Month= "September"
+        break;
+        case "10":
+          Month= "October"
+        break;
+        case "11":
+          Month= "November"
+        break;
+        case "12":
+          Month= "December"
+        break;
+      }
+      let Date_time = new Date()
+      Date_time = convertDateToEpoch(Date_time);
+      Date_time = epochToYmdDate(Date_time);
   //end
   
   let PaySlip ={
@@ -205,7 +248,7 @@ if(Allowances.length>Deductions.length)
         corporationAddress:'New Deluxe Building, Sector 17, Chandigarh',
         corporationContact:'+91-172-2541002, 0172-2541003',
         corporationWebsite:'http://mcchandigarh.gov.in',
-        month:searchScreenObject.month,
+        month:Month,
         year:searchScreenObject.year
         ,  
         EmployeeCode:APIData.PaySlip.EmployeeCode,
@@ -221,7 +264,7 @@ if(Allowances.length>Deductions.length)
         Voucher_Date:"",
         Voucher_No:"",
         Net_Pay_In_Word:Net_Pay_In_Word,
-        Date_time:epochToYmdDate(new Date) ,
+        Date_time:epochToYmdDate(Date_time) ,
         PayScale:APIData.PaySlip.PayScale,
         PayCommission:APIData.PaySlip.PayCommission,
   }
