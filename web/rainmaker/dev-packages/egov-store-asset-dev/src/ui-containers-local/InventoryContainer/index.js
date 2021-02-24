@@ -834,6 +834,13 @@ console.log("InventoryData")
                     label="Material Type Name"
                   />
                   </th>                                    
+                  <th   style={{ verticalAlign:"middle", textAlign: "center"}} rowspan="2">
+                  <Label
+                    className="report-header-row-label"
+                    labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
+                    label="Unit Rate"
+                  />
+                  </th>                                    
                   <th  style={{ verticalAlign:"middle", textAlign: "center"}} colSpan="2">
                   <Label
                     className="report-header-row-label"
@@ -958,6 +965,7 @@ console.log("InventoryData")
                                   <th>{item.materialCode}</th>
                                   <th>{item.materialName}</th>
                                   <th>{item.materialType}</th>
+                                  <th>{item.unitrate}</th>
                                   <th>{item['0-90daysQty']}</th>
                                   <th>{item['0-90daysStockvalue']}</th>
                                   <th>{item['90-180daysQty']}</th>
