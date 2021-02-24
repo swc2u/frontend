@@ -228,9 +228,8 @@ export const bankAccountDetails = getCommonCard({
             props: {
               label: {
                 labelName: "Bank Account Type",
-                labelName: "Bank Account Type",
-                //labelKey: "BK_PCC_BANK_ACCOUNT_TYPE_LABEL",
-              },
+                labelKey: "Bank Account Type",
+               },
               buttons: [
                 {
                   labelName: "Saving",
@@ -446,7 +445,7 @@ export const bookingDetails = getCommonCard({
             ...getTextField({
                 label: {
                     labelName: "From Date/Time",
-                    labelKey: "BK_PCC_FROM_DATE_TIME_LABEL",
+                    labelKey: "From Date/Time",
                 },
                 placeholder: {
                     labelName: "From Date/Time",
@@ -466,11 +465,11 @@ export const bookingDetails = getCommonCard({
             ...getTextField({
                 label: {
                     labelName: "To Date/Time",
-                    labelKey: "BK_PCC_TO_DATE_TIME_LABEL",
+                    labelKey: "To Date/Time",
                 },
                 placeholder: {
                     labelName: "To Date/Time",
-                    labelKey: "BK_PCC_TO_DATE_TIME_PLACEHOLDER",
+                    labelKey: "To Date/Time",
                 },
 
                 required: true,

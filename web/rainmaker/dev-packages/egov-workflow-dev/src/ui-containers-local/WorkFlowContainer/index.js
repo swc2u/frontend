@@ -655,7 +655,11 @@ ValidateRequest =(payload) =>{
         if(payload.div!= null && 
           payload.div !== "" &&
           payload.subdiv!= null &&
-          payload.subdiv !== "" 
+          payload.subdiv !== "" &&
+          payload.ledgerNo!= null &&
+          payload.ledgerNo !== "" &&
+          payload.billGroup!= null &&
+          payload.billGroup !== "" 
           )
         {
           isvalidRequest = true

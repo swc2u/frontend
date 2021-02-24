@@ -167,6 +167,7 @@ class WorkFlowContainer extends React.Component {
       ,"TEMPORARY_DISCONNECTION"
       ,"UPDATE_CONNECTION_HOLDER_INFO"
       ,"CONNECTION_CONVERSION"//R
+      ,"REACTIVATE_CONNECTION" //tep close
       ,"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"//T
       ,"APPLY_FOR_TEMPORARY_REGULAR_CONNECTION"];
         
@@ -215,13 +216,16 @@ class WorkFlowContainer extends React.Component {
             }
             else if(status === "CONNECTION_ACTIVATED" && WaterConnection[0].waterApplicationType==='REGULAR')
             {
-              actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
+              actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
+                                              && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                                              &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
             }
             //else if(status === "CONNECTION_ACTIVATED" && WaterConnection[0].waterApplicationType ==='TEMPORARY')
             else if( (status === "CONNECTION_ACTIVATED" || status ==='CONNECTION_EXTENDED') && (WaterConnection[0].waterApplicationType ==='TEMPORARY') )
             {
               actions = actions.filter(item => item.buttonLabel !== 'PERMANENT_DISCONNECTION' 
                                                 &&  item.buttonLabel !== 'TEMPORARY_DISCONNECTION'
+                                                && item.buttonLabel !=='REACTIVATE_CONNECTION'
                                                 &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
                                                 &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
             }
@@ -238,6 +242,22 @@ class WorkFlowContainer extends React.Component {
             else if(connectionUsagesType && connectionUsagesType==="COMMERCIAL"){
               actions = actions.filter(item => item.buttonLabel !== 'REACTIVATE_CONNECTION' && item.buttonLabel !== 'CONNECTION_CONVERSION'&& item.buttonLabel !== 'APPLY_FOR_REGULAR_INFO'); 
             } 
+            else if(status === "CONNECTION_CLOSED" && WaterConnection[0].waterApplicationType==='REGULAR' )
+            {
+              actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
+                                                 &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION'
+                                                 && item.buttonLabel !=='PERMANENT_DISCONNECTION'
+                                                 &&  item.buttonLabel !== 'TEMPORARY_DISCONNECTION'
+                                                &&  item.buttonLabel !== 'REACTIVATE_CONNECTION'
+                                                &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
+                                                &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
+
+            }
+            else if(status === "CONNECTION_CLOSED" && WaterConnection[0].waterApplicationType==='TEMPORARY' )
+            {
+              actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+
+            }
             else {
               actions = actions.filter(item => item.buttonLabel !== 'REACTIVATE_CONNECTION' && item.buttonLabel !== 'APPLY_FOR_REGULAR_INFO'); 
             }
