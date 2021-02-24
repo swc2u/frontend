@@ -19,8 +19,8 @@ import{WorkFllowStatus} from '../../../../ui-utils/sampleResponses'
 import { downloadAcknowledgementForm,epochToYmd} from '../utils'
 //print function UI end SE0001
 import{UserRoles,UserIssueNoteRoles} from '../../../../ui-utils/sampleResponses'
-// let roles = UserRoles().UserRoles;
-let roles = UserIssueNoteRoles().UserRoles;
+let roles = UserRoles().UserRoles;
+let rolesIssues = UserIssueNoteRoles().UserRoles;
 let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
 let status = getQueryArg(window.location.href, "Status");
 let IsEdit = true;
@@ -263,8 +263,7 @@ const screenConfig = {
               },
               roleDefination: {
                 rolePath: "user-info.roles",
-                roles: roles
-                // roles: ["SAEE"]
+                roles: rolesIssues
               }
             },
             newPOButton: {

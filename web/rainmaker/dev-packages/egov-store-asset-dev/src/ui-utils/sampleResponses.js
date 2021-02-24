@@ -531,7 +531,8 @@ export const UserRoles = () => {
      "MOH",
      "SASP",
      "SASO",
-     "SACSI"
+    "SACSI",
+     "SASIC"
     ]
   }
 }
@@ -539,12 +540,9 @@ export const UserIssueNoteRoles = () => {
   return {
     
     UserRoles: [
-     "SACP",
      "SACT",
      "MOH",
-     "SASP",
-     "SASO",
-     "SACSI",
+     "SASIC",
      "SAEE"
 
     ]

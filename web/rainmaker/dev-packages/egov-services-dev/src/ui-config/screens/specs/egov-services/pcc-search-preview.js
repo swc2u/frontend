@@ -2,7 +2,8 @@ import {
     getCommonCard,
     getCommonContainer,
     getCommonHeader,
-    getBreak
+    getBreak,
+    getCommonGrayCard
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     handleScreenConfigurationFieldChange as handleField,
@@ -27,7 +28,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { generageBillCollection, generateBill, clearlocalstorageAppDetails, calculateCancelledBookingRefundAmount, getAllbillsOfBooking } from "../utils";
 import { pccSummary, changedVenueDatepccSummary } from "./summaryResource/pccSummary";
-import { pccApplicantSummary,pccBankSummary } from "./summaryResource/pccApplicantSummary";
+import { pccApplicantSummary,pccBankSummary ,roomBookingSummary} from "./summaryResource/pccApplicantSummary";
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import { estimateSummary, modifiedBookingPaymentCard } from "./summaryResource/estimateSummary";
 import { remarksSummary } from "./searchResource/remarksSummary";
@@ -218,6 +219,7 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
         );
     }
 
+
 };
 
 const setSearchResponse = async (
@@ -254,6 +256,13 @@ const setSearchResponse = async (
                 prepareFinalObject("DisplayTimeSlotData", DisplayPaccObject)
             );
         }
+
+        set(
+            action.screenConfig,
+            "components.div.children.body3.visible",
+            recData[0].roomsModel && recData[0].roomsModel.length > 0 ?true: false
+        );
+      
         set(
             action.screenConfig,
             "components.div.children.body.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.FromDate.visible",
@@ -286,6 +295,20 @@ const setSearchResponse = async (
         dispatch(
             prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
         );
+        if(recData.length > 0)
+        {  
+            
+            dispatch(
+            handleField(
+                "pcc-search-preview",
+                "components.div.children.body3.children.cardContent.children.roomStatus",
+                 "props.value",
+                recData[0]
+            )
+        )
+
+        }
+
         dispatch(
             prepareFinalObject(
                 "BookingDocument",
@@ -639,14 +662,27 @@ const screenConfig = {
                     moduleName: "egov-services",
                     visible: true,
                 },
+
+                body3: getCommonCard({
+                roomStatus: {
+                    uiFramework: "custom-containers-local",
+                    componentPath: "RoomCardsContainer",
+                    moduleName: "egov-services",
+                    props: {
+                       
+                        name: "sankalp",
+                    },
+                    visible: true,
+                },
+                }),
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
                     modifiedBookingPaymentCard: modifiedBookingPaymentCard,
                     pccApplicantSummary: pccApplicantSummary,
                     pccSummary: pccSummary,
-                    
                     changedVenueDatepccSummary: changedVenueDatepccSummary,
                     pccBankSummary: pccBankSummary, 
+                    roomBookingSummary :roomBookingSummary,
                     documentsSummary: documentsSummary,
                     // remarksSummary: remarksSummary,
                 }),
