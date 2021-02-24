@@ -669,7 +669,7 @@ export const getPattern = type => {
         case "areaRequired":
         return /^(0)*[1-9][0-9]{0,2}$/i;
         case "bankAccountNo":
-          return /[0-9]{10,16}/;
+          return /^[0-9]{10,16}$/i;
   }
 };
 
