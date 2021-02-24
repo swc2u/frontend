@@ -264,7 +264,7 @@ class WorkFlowContainer extends React.Component {
         let businessServiceData = JSON.parse(
           localStorageGet("businessServiceData")
         );
-        let nextStateid=''
+        let nextStateid=null
         let searchPreviewScreenMdmsData =null
         let roles =[]
         let rolecode ='';
@@ -274,10 +274,16 @@ class WorkFlowContainer extends React.Component {
         if(curstateactions && curstateactions[0])
         {
           nextActions = curstateactions[0].actions.filter(x=>x.action === data.action)
+          if(nextStateid !== undefined && nextStateid !== null)
+          {
           nextStateid = nextActions[0].nextState
           businessServiceData = businessServiceData[0].states.filter(x=>x.uuid === nextStateid )
+          }
         } 
         searchPreviewScreenMdmsData  = preparedFinalObject.searchPreviewScreenMdmsData;
+        // for sw swSectorList
+          //swWorkflowRole
+          // for water wsWorkflowRole
         searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
        
         //let searchPreviewScreenMdmsData =[]
