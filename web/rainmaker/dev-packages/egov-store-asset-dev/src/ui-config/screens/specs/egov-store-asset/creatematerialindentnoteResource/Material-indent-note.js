@@ -94,7 +94,7 @@ console.log(matcodes)
        const empDetails = 
        payload.Employees.filter((item, index) =>  stores[0].storeInCharge.code === item.code);
       //  screenConfiguration.preparedFinalObject.indents[0].indentCreatedBy
-      let indentCreatedByDesg = get(
+       let indentCreatedByDesg = get(
         state.screenConfiguration.preparedFinalObject,
         "indents[0].designation",
         null
@@ -212,6 +212,7 @@ console.log(matcodes)
           // {
             if(fromstore&&fromstore[0])
             {
+              
                 dispatch(prepareFinalObject("materialIssues[0].fromStore.id",fromstore[0].id));
                 dispatch(prepareFinalObject("materialIssues[0].fromStore.code",fromstore[0].code));
                 dispatch(prepareFinalObject("materialIssues[0].fromStore.name",fromstore[0].name));
