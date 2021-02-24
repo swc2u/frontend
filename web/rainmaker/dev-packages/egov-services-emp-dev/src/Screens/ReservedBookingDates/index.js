@@ -109,9 +109,9 @@ class SimpleTable extends React.Component {
   }
 
   handleCreateNew = () => {
-    console.log("Nero g")
-    window.location.href = "/egov-services/reservedates";
-    //this.props.history.push(`/egov-services/reservedates`);
+
+    //window.location.href = "/egov-services/reservedates";
+    this.props.history.push(`/egov-services/reservedates`);
   }
 
   async handleEditClickBk(row) {
