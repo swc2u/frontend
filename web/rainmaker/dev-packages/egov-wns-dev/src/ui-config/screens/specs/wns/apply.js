@@ -1047,6 +1047,32 @@ const screenConfig = {
       } else {
         toggleWaterFeilds(action, true);
         toggleSewerageFeilds(action, true);
+        if (get(state.screenConfiguration.preparedFinalObject, "applyScreen.water"))
+        {
+        set(
+          action.screenConfig,
+          "components.div.children.formwizardFirstStep.children.propertyUsageDetails.visible",
+          true
+        );
+        set(
+          action.screenConfig,
+          "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.contractValue.visible",          
+          true
+        );
+        }
+        if (get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage"))
+        {
+          set(
+            action.screenConfig,
+            "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.contractValue.visible",          
+            false
+          );
+        set(
+          action.screenConfig,
+          "components.div.children.formwizardFirstStep.children.propertyUsageDetails.visible",
+          false
+        );
+        }
       }
       // action(
       //   "apply",

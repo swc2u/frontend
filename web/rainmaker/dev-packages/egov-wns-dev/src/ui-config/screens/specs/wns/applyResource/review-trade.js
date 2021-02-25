@@ -348,6 +348,14 @@ export const propertyConnectionDetails={
     { jsonPath: "WaterConnection[0].contractValue",
     callBack: handleNA }
   ),
+  reviewferruleSize: getLabelWithValue(
+    {
+      labelName: "Ferrule Size",
+      labelKey: "WS_ADDN_DETAILS_CONTRACT_VALUE"
+    },
+    { jsonPath: "WaterConnection[0].ferruleSize",
+    callBack: handleNA }
+  ),
 
 
 }
@@ -483,6 +491,13 @@ export const propertyOwnerDetail={
    { jsonPath: "WaterConnection[0].property.owners[0].correspondenceAddress",
    callBack: handleNA }
  ), 
+ aadharCardnumber: getLabelWithValue(
+  {
+    labelKey: "WS_OWN_DETAIL_CROSADD"
+  },
+  { jsonPath: "WaterConnection[0].property.owners[0].aadharCardnumber",
+  callBack: handleNA }
+),
 //  specialApplicantCategory: getLabelWithValue(
 //    {
 //      labelKey: "WS_OWN_DETAIL_SPECIAL_APPLICANT_LABEL"
