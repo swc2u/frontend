@@ -299,7 +299,7 @@ class WorkFlowContainer extends React.Component {
      let showFooter;
       if(moduleName==='NewWS1'
       || moduleName==='REGULARWSCONNECTION'
-      || moduleName==='NewSW1'
+      || moduleName==='SW_SEWERAGE'
       || moduleName === 'TEMPORARY_WSCONNECTION'
       || moduleName ==='WS_TEMP_TEMP'
       || moduleName ==='WS_TEMP_REGULAR'

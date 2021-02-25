@@ -107,7 +107,15 @@ const getLabelForWnsHeader = () => {
   else if( process.env.REACT_APP_NAME === "Citizen")
     return  "WS_APPLY_NEW_CONNECTION_HEADER"
   else
+  {
+    const wnsHeaderTepm =  window.localStorage.getItem("wns_workflow");
+
+  if(wnsHeaderTepm)
+    return `${wnsHeaderTepm}_DETAIL_HEADER`;  
+  else  
     return "WS_APPLICATION_NEW_CONNECTION_HEADER"
+  }
+   
 }
 
 export const header = getCommonContainer({
