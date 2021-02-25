@@ -44,6 +44,12 @@ export const toggleWater = (onFieldChange, value) => {
     "visible",
     value
   );
+  // onFieldChange(
+  //   "apply",
+  //   "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput",
+  //   "visible",
+  //   value
+  // );
   onFieldChange(
     "apply",
     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.connectiondetailscontainer.children.cardContent.children.connectionDetails.children.connectionType",
@@ -185,6 +191,17 @@ export const toggleSewerage = (onFieldChange, value) => {
     "visible",
     value
   );
+  if(value)
+  {
+    onFieldChange(
+      "apply",
+      "components.div.children.formwizardFirstStep.children.propertyUsageDetails",
+      "visible",
+      false
+    );
+
+  }
+
   onFieldChange(
     "apply",
     "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfWaterClosets",
@@ -327,6 +344,15 @@ export const toggleSewerageFeilds = (action, value) => {
     "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfWaterClosets.visible",
     value
   );
+  if(value)
+  {
+    set(
+      action.screenConfig,
+      "components.div.children.formwizardFirstStep.children.propertyUsageDetails.visible",
+      false
+    );
+
+  }
   set(
     action.screenConfig,
     "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewFour.children.view.children.taskNoOfClosets.visible",

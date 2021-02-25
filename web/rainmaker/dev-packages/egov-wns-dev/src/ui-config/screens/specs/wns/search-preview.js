@@ -41,8 +41,8 @@ import { getWorkFlowData } from "../../../../ui-utils/commons";
 const tenantId = getQueryArg(window.location.href, "tenantId");
 let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
 let service = getQueryArg(window.location.href, "service");
-const serviceModuleName = service === "WATER" ? window.localStorage.getItem("wns_workflow")==="NewSW1" ? "NewSW1":  window.localStorage.getItem("wns_workflow"):"NewSW1";
-const serviceUrl = serviceModuleName === "NewSW1" ?  "/sw-services/swc/_update" : "/ws-services/wc/_update" ;
+const serviceModuleName = service === "WATER" ? window.localStorage.getItem("wns_workflow")==="SW_SEWERAGE" ? "SW_SEWERAGE":  window.localStorage.getItem("wns_workflow"):"SW_SEWERAGE";
+const serviceUrl = serviceModuleName === "SW_SEWERAGE" ?  "/sw-services/swc/_update" : "/ws-services/wc/_update" ;
 
 const getLabelForWnsHeader = () => {
   const wnsHeader =  window.localStorage.getItem("wns_workflow");

@@ -886,11 +886,18 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             else if (sewerage)
             {
                 /// logic for sewarage document
+                wsDocument = wsDocument.filter(function (x) {
+                    return x.WaterActivity === "SEWERAGE";
+                });
             }
             else if (tubewell)
             {
                 /// logic for sewarage document
                 wsDocument = wsDocument.filter(x=>x.WaterActivity === 'NEW_TUBEWELL_CONNECTION')
+            }
+            if( sewerage === false && tubewell === false && water === false)
+            {
+                wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
             }
             if(wsDocument && wsDocument[0])
                         documents = wsDocument[0].document;
@@ -987,6 +994,14 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
 
 const parserFunction = (state) => {
     let queryObject = JSON.parse(JSON.stringify(get(state.screenConfiguration.preparedFinalObject, "applyScreen", {})));
+    let usageCategory ='SW_TEMP'
+    let usageSubCategory =null
+    if(queryObject.water)
+    {
+        usageCategory =(queryObject.waterProperty.usageCategory === null || queryObject.waterProperty.usageCategory === "NA") ? "" : queryObject.waterProperty.usageCategory
+        usageSubCategory = (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
+
+    }
     let parsedObject = {
         roadCuttingArea: parseInt(queryObject.roadCuttingArea),
         meterInstallationDate: convertDateToEpoch(queryObject.meterInstallationDate),
@@ -1001,14 +1016,16 @@ const parserFunction = (state) => {
         waterProperty :{
         //id : get(state.screenConfiguration.preparedFinalObject, "Properties.id", null),
         id : get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null),
-        usageCategory: (queryObject.waterProperty.usageCategory === null || queryObject.waterProperty.usageCategory === "NA") ? "" : queryObject.waterProperty.usageCategory,
-        usageSubCategory: (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
+
+        usageCategory: usageCategory,// (queryObject.waterProperty.usageCategory === null || queryObject.waterProperty.usageCategory === "NA") ? "" : queryObject.waterProperty.usageCategory,
+        usageSubCategory:usageSubCategory// (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
         },
         swProperty :{
            // id : get(state.screenConfiguration.preparedFinalObject, "Properties.id", null),
+           // SW_TEMP
             id : get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null),
-            usageCategory: (queryObject.waterProperty.usageCategory === null || queryObject.waterProperty.usageCategory === "NA") ? "" : queryObject.waterProperty.usageCategory,
-            usageSubCategory: (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
+            usageCategory: usageCategory,
+            usageSubCategory: usageSubCategory,           
             },
         securityCharge:(queryObject.securityCharge === null || queryObject.securityCharge === "NA") ? "" : parseFloat(queryObject.securityCharge),
         
@@ -1337,7 +1354,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
             }
             else if (sewerage)
             {
-                /// logic for sewarage document
+               /// logic for sewarage document
+               wsDocument = wsDocument.filter(function (x) {
+                return x.WaterActivity === "SEWERAGE";
+            });
             }
             else if (tubewell)
             {

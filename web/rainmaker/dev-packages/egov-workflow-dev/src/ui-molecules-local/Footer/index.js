@@ -173,7 +173,7 @@ class Footer extends React.Component {
           : item.buttonUrl;
         if(item.moduleName === "NewWS1" 
         || item.moduleName === "REGULARWSCONNECTION"  
-        || item.moduleName === 'NewSW1' 
+        || item.moduleName === 'SW_SEWERAGE' 
         || item.moduleName === "TEMPORARY_WSCONNECTION"
         || item.moduleName === "WS_TEMP_TEMP" 
         ||item.moduleName === "WS_TEMP_REGULAR"
