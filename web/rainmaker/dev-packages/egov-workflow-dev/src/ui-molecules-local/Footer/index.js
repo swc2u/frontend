@@ -173,7 +173,7 @@ class Footer extends React.Component {
           : item.buttonUrl;
         if(item.moduleName === "NewWS1" 
         || item.moduleName === "REGULARWSCONNECTION"  
-        || item.moduleName === 'NewSW1' 
+        || item.moduleName === 'SW_SEWERAGE' 
         || item.moduleName === "TEMPORARY_WSCONNECTION"
         || item.moduleName === "WS_TEMP_TEMP" 
         ||item.moduleName === "WS_TEMP_REGULAR"
@@ -205,7 +205,7 @@ class Footer extends React.Component {
           localStorageGet("businessServiceData")
         );
         let data = get(state.screenConfiguration.preparedFinalObject, dataPath, []);
-        let nextStateid=''
+        let nextStateid=null
         let searchPreviewScreenMdmsData =null
         let roles =[]
         let rolecode ='';
@@ -217,8 +217,11 @@ class Footer extends React.Component {
         if(curstateactions && curstateactions[0])
         {
           nextActions = curstateactions[0].actions.filter(x=>x.action === actions_)
+          if(nextStateid !== undefined && nextStateid !== null)
+          {
           nextStateid = nextActions[0].nextState
           businessServiceData = businessServiceData[0].states.filter(x=>x.uuid === nextStateid )
+          }
         } 
          searchPreviewScreenMdmsData  = state.screenConfiguration.preparedFinalObject.searchPreviewScreenMdmsData;
         searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)

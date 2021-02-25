@@ -229,7 +229,7 @@ class WorkFlowContainer extends React.Component {
 
     if (moduleName === "NewWS1" 
         || moduleName === "REGULARWSCONNECTION" 
-        || moduleName === "NewSW1"
+        || moduleName === "SW_SEWERAGE"
         || moduleName === "TEMPORARY_WSCONNECTION"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
@@ -264,7 +264,7 @@ class WorkFlowContainer extends React.Component {
         let businessServiceData = JSON.parse(
           localStorageGet("businessServiceData")
         );
-        let nextStateid=''
+        let nextStateid=null
         let searchPreviewScreenMdmsData =null
         let roles =[]
         let rolecode ='';
@@ -274,10 +274,16 @@ class WorkFlowContainer extends React.Component {
         if(curstateactions && curstateactions[0])
         {
           nextActions = curstateactions[0].actions.filter(x=>x.action === data.action)
+          if(nextStateid !== undefined && nextStateid !== null)
+          {
           nextStateid = nextActions[0].nextState
           businessServiceData = businessServiceData[0].states.filter(x=>x.uuid === nextStateid )
+          }
         } 
         searchPreviewScreenMdmsData  = preparedFinalObject.searchPreviewScreenMdmsData;
+        // for sw swSectorList
+          //swWorkflowRole
+          // for water wsWorkflowRole
         searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
        
         //let searchPreviewScreenMdmsData =[]
@@ -349,7 +355,7 @@ class WorkFlowContainer extends React.Component {
     
     }
 
-    if (moduleName === "NewSW1") {
+    if (moduleName === "SW_SEWERAGE") {
       dataPath = "SewerageConnection";
     }
 
@@ -576,6 +582,7 @@ class WorkFlowContainer extends React.Component {
       bservice = ((applicationStatus == "PENDING_APPL_FEE") ? "BPA.NC_APP_FEE" : "BPA.NC_SAN_FEE");
     } else 
     if (moduleName === "NewWS1" 
+      || moduleName === "SW_SEWERAGE"
         || moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
         || moduleName === "WS_TEMP_TEMP" 
@@ -589,6 +596,7 @@ class WorkFlowContainer extends React.Component {
     {
       baseUrl = "wns"
       if (moduleName === "NewWS1" 
+      || moduleName === "SW_SEWERAGE"
       || moduleName === "REGULARWSCONNECTION"
       || moduleName === "TEMPORARY_WSCONNECTION"
       || moduleName === "WS_TEMP_TEMP" 
@@ -681,7 +689,18 @@ ValidateRequest =(payload) =>{
   else{
     isvalidRequest = true
   }
+  // change tarrif type when state is PENDING_FOR_CONNECTION_TARIFF_CHANGE for action CHANGE_TARIFF
 
+ if(payload.applicationStatus ==='PENDING_FOR_CONNECTION_TARIFF_CHANGE' && payload.action==='CHANGE_TARIFF')
+  {
+    if(payload.proposedUsageCategory !==null)
+    payload.waterProperty.usageCategory = payload.proposedUsageCategory
+   
+  }
+  if(payload.applicationStatus ==='PENDING_FOR_CONNECTION_EXTENSION_REGULAR' && payload.action==='CONVERT_INTO_REGULAR_CONNECTION')
+  {
+    payload.waterApplicationType = "REGULAR";
+  }
 
   return isvalidRequest
 }
@@ -839,7 +858,12 @@ ValidateRequest =(payload) =>{
         isLast: item.action === "PAY"||  item.action ===  "PAY_FOR_TEMPORARY_CONNECTION"||item.action === "PAY_FOR_REGULAR_CONNECTION" ? true : false,
         buttonUrl: getRedirectUrl(item.action, businessId, businessService),
         dialogHeader: getHeaderName(item.action),
-        showEmployeeList: (businessService === "NewWS1" || businessService === "NewSW1" ||businessService === "WS_CONVERSION" || businessService === "WS_DISCONNECTION" || businessService === "WS_RENAME" || businessService === "WS_TUBEWELL") ? !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SEND_BACK_TO_CITIZEN" && item.action !== "RESUBMIT_APPLICATION" : !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
+        showEmployeeList: (businessService === "NewWS1" 
+                          || businessService === "SW_SEWERAGE" 
+                          ||businessService === "WS_CONVERSION" 
+                          || businessService === "WS_DISCONNECTION" 
+                          || businessService === "WS_RENAME" 
+                          || businessService === "WS_TUBEWELL") ? !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SEND_BACK_TO_CITIZEN" && item.action !== "RESUBMIT_APPLICATION" : !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
         roles: getEmployeeRoles(item.nextState, item.currentState, businessService),
         isDocRequired: checkIfDocumentRequired(item.nextState, businessService)
       };
@@ -848,7 +872,7 @@ ValidateRequest =(payload) =>{
     //workflow change for water connection 
     if((businessService=='NewWS1' 
       || businessService === "REGULARWSCONNECTION"  
-        || businessService === 'NewSW1' 
+        || businessService === 'SW_SEWERAGE' 
         || businessService === "TEMPORARY_WSCONNECTION"
         || businessService === "WS_TEMP_TEMP" 
         ||businessService === "WS_TEMP_REGULAR"
@@ -886,7 +910,7 @@ ValidateRequest =(payload) =>{
     }
     if((businessService=='NewWS1' 
       || businessService === "REGULARWSCONNECTION"  
-        || businessService === 'NewSW1' 
+        || businessService === 'SW_SEWERAGE' 
        // || businessService === "TEMPORARY_WSCONNECTION"
         || businessService === "WS_TEMP_TEMP" 
         ||businessService === "WS_TEMP_REGULAR"
@@ -934,7 +958,7 @@ ValidateRequest =(payload) =>{
     }
     if((businessService=='NewWS1' 
       || businessService === "REGULARWSCONNECTION"  
-        || businessService === 'NewSW1' 
+        || businessService === 'SW_SEWERAGE' 
         || businessService === "TEMPORARY_WSCONNECTION"
         || businessService === "WS_TEMP_TEMP" 
         ||businessService === "WS_TEMP_REGULAR"
@@ -957,7 +981,7 @@ ValidateRequest =(payload) =>{
     }
     if((businessService=='NewWS1' 
       || businessService === "REGULARWSCONNECTION"  
-        || businessService === 'NewSW1' 
+        || businessService === 'SW_SEWERAGE' 
         || businessService === "TEMPORARY_WSCONNECTION"
         || businessService === "WS_TEMP_TEMP" 
         ||businessService === "WS_TEMP_REGULAR"
@@ -987,7 +1011,7 @@ ValidateRequest =(payload) =>{
 
     if(businessService === "NewWS1" 
         || businessService === "REGULARWSCONNECTION"  
-        || businessService === 'NewSW1' 
+        || businessService === 'SW_SEWERAGE' 
         || businessService === "TEMPORARY_WSCONNECTION"
         || businessService === "WS_TEMP_TEMP" 
         ||businessService === "WS_TEMP_REGULAR"
@@ -1048,7 +1072,7 @@ ValidateRequest =(payload) =>{
      let showFooter;
      if (moduleName === "NewWS1" 
         || moduleName === "REGULARWSCONNECTION" 
-        || moduleName === "NewSW1"
+        || moduleName === "SW_SEWERAGE"
         || moduleName === "TEMPORARY_WSCONNECTION"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"

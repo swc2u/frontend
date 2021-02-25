@@ -140,6 +140,7 @@ class DialogComponent extends Component {
 
       ]
     }
+    let unlock = "0";
     const responseStatus = await httpRequest(
 
       "bookings/commercial/ground/updateAvailability/_lock",
@@ -148,14 +149,8 @@ class DialogComponent extends Component {
       reqBody
     );
     if (responseStatus.status == '200') {
-      this.props.toggleSnackbarAndSetText(
-        true,
-        {
-          labelName: "Date unlocked Successfully",
-          labelKey: `Date unlocked Successfully`
-        },
-        "success"
-      );
+      unlock = "1";
+
 
       this.setState({ isLoading: true })
       let feeResponse = await httpRequest(
@@ -185,6 +180,16 @@ class DialogComponent extends Component {
     }
 
     this.props.handleClose()
+    if(unlock === "1"){
+      this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Date unlocked Successfully",
+          labelKey: `Date unlocked Successfully`
+        },
+        "success"
+      );
+    }
   }
 
 

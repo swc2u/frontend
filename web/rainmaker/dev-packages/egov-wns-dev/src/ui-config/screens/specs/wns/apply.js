@@ -107,7 +107,15 @@ const getLabelForWnsHeader = () => {
   else if( process.env.REACT_APP_NAME === "Citizen")
     return  "WS_APPLY_NEW_CONNECTION_HEADER"
   else
+  {
+    const wnsHeaderTepm =  window.localStorage.getItem("wns_workflow");
+
+  if(wnsHeaderTepm)
+    return `${wnsHeaderTepm}_DETAIL_HEADER`;  
+  else  
     return "WS_APPLICATION_NEW_CONNECTION_HEADER"
+  }
+   
 }
 
 export const header = getCommonContainer({
@@ -390,48 +398,65 @@ export const getData = async (action, state, dispatch) => {
     // binddependent dropdown object Property Sub Usage Type , Uses Caregory
     const usageCategory_ = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].property.usageCategory");
     const waterApplicationType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplicationType");
+    const activityType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplicationType");
     displaysubUsageType(usageCategory_, dispatch, state);
     displayUsagecategory(waterApplicationType, dispatch, state);
                 // check for security deposite for PENDING_FOR_SECURITY_DEPOSIT//PENDING_ROADCUT_NOC_BY_CITIZEN
-                if(applicationStatus === "PENDING_FOR_SECURITY_DEPOSIT" ){
-                    if(proposedPipeSize == 15){
-                      const {applyScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
-
-                      const pipeSize = applyScreenMdmsData['ws-services-calculation'].PipeSize.filter(pipeSize => pipeSize.size == 15);
-                      const securityCharges = pipeSize[0].charges[0].security;
-              
-                      dispatch(
-                        handleField(
-                          "apply",
-                          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
-                          "props.value",
-                          securityCharges
-                        )
-                      );
-
-                      dispatch(
-                        handleField(
-                          "apply",
-                          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
-                          "props.disabled",
-                          true
-                        )
-                      );
-                      payloadWater.WaterConnection[0].securityCharge = securityCharges;
-                      dispatch(prepareFinalObject("applyScreen.securityCharge", securityCharges));
-                      payloadWater.WaterConnection[0].waterApplication.securityCharge = securityCharges;
-                      dispatch(prepareFinalObject("applyScreen.waterApplication.securityCharge", securityCharges));
-                      //
-                    }else{
+                if(applicationStatus === "PENDING_FOR_SECURITY_DEPOSIT" || applicationStatus === "PENDING_FOR_JE_APPROVAL_FOR_PAYMENT"){
+                    //regular
+                    if(waterApplicationType ==='REGULAR')
+                    {
+                      if(proposedPipeSize == 15 && activityType ==='NEW_WS_CONNECTION'){
+                        const {applyScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
+  
+                        const pipeSize = applyScreenMdmsData['ws-services-calculation'].PipeSize.filter(pipeSize => pipeSize.size == 15);
+                        const securityCharges = pipeSize[0].charges[0].security;
+                
+                        dispatch(
+                          handleField(
+                            "apply",
+                            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
+                            "props.value",
+                            securityCharges
+                          )
+                        );
+  
+                        dispatch(
+                          handleField(
+                            "apply",
+                            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
+                            "props.disabled",
+                            true
+                          )
+                        );
+                        payloadWater.WaterConnection[0].securityCharge = securityCharges;
+                        dispatch(prepareFinalObject("applyScreen.securityCharge", securityCharges));
+                        payloadWater.WaterConnection[0].waterApplication.securityCharge = securityCharges;
+                        dispatch(prepareFinalObject("applyScreen.waterApplication.securityCharge", securityCharges));
+                        //
+                      }else{
+                        dispatch(
+                          handleField(
+                            "apply",
+                            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
+                            "props.disabled",
+                            false
+                          )
+                        );
+                      }
+                    }
+                    else
+                    {
                       dispatch(
                         handleField(
                           "apply",
                           "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
                           "props.disabled",
                           false
-                        )
-                      );
+                        ))
+
                     }
+                  
                     
 
                 }

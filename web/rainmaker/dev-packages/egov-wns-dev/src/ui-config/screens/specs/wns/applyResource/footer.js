@@ -232,10 +232,16 @@ if(water || sewerage || tubewell)
       let applyScreenObj =  findAndReplace(applyScreenObject, 0, null);
        //connectionholdercode
        let connectionHolderObj = get(state.screenConfiguration.preparedFinalObject, "connectionHolders");
+       let ownershipCategory_H= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", 'INDIVIDUAL.SINGLEOWNER' )
        if(connectionHolderObj[0].ownerType === null)
        {
-        connectionHolderObj[0].ownerType= "INDIVIDUAL.SINGLEOWNER";
+        connectionHolderObj[0].ownerType= ownershipCategory_H;
        }
+       else{
+         connectionHolderObj[0].ownerType= ownershipCategory_H;
+  
+       }
+       
        
        let holderData = connectionHolderObj[0];
         if (holderData !== null && holderData !== undefined) {
@@ -270,6 +276,14 @@ if(wnsStatus && wnsStatus === "CONNECTION_CONVERSION"){
     "apply"
   );
 
+const proposedUsageCategory = get(
+  state.screenConfiguration.preparedFinalObject,
+  "WaterConnection[0].proposedUsageCategory"
+);
+const usageCategory = get(
+  state.screenConfiguration.preparedFinalObject,
+  "WaterConnection[0].waterProperty.usageCategory"
+);
   if(!iswaterConnFomValid){
     dispatch(
       toggleSnackbar(
@@ -281,6 +295,21 @@ if(wnsStatus && wnsStatus === "CONNECTION_CONVERSION"){
       )
     )
     return;
+  }
+  if(usageCategory === proposedUsageCategory)
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_PROPERTY_USAGE_TYPE_TARRIF_LABEL_INPUT_PROPOSED_VALIDATION",
+        labelName: "Please select different proposed tarif type"
+      },
+        "warning"
+      )
+    )
+
+    return
+
   }
   removingDocumentsWorkFlow(state, dispatch) ;
   try{
@@ -548,10 +577,14 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" ||
       //connectionholdercode
 
      let connectionHolderObj = get(state.screenConfiguration.preparedFinalObject, "connectionHolders");
-
+     let ownershipCategory_T= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", 'INDIVIDUAL.SINGLEOWNER' )
      if(connectionHolderObj[0].ownerType === null)
      {
-      connectionHolderObj[0].ownerType= "INDIVIDUAL.SINGLEOWNER";
+      connectionHolderObj[0].ownerType= ownershipCategory_T;
+     }
+     else{
+       connectionHolderObj[0].ownerType= ownershipCategory_T;
+
      }
      //connectionHolderObj.ownerType = "INDIVIDUAL.SINGLEOWNER"
      let holderData = connectionHolderObj[0];
