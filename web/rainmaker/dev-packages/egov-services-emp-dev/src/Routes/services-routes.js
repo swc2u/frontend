@@ -101,6 +101,11 @@ const CreateSuccessForPCC= Loadable({
   loader: () => import("../Screens/CreateSuccessForPCC"),
   loading: Loading
 });
+
+const CreateSuccessForRoomBooking= Loadable({
+  loader: () => import("../Screens/CreateSuccessForRoomBooking"),
+  loading: Loading
+});
 //NewLocationApplicationDetails
 const NewLocationApplicationDetails = Loadable({
   loader: () => import("../Screens/NewLocationApplicationDetails"),
@@ -111,6 +116,12 @@ const PaymentSuccessForEmployee = Loadable({
   loader: () => import("../Screens/PaymentSuccessForEmployee"),
   loading: Loading
 });
+//PaymentSuccessForEmployeeRoomBooking
+const PaymentSuccessForEmployeeRoomBooking = Loadable({
+  loader: () => import("../Screens/PaymentSuccessForEmployeeRoom"),
+  loading: Loading
+});
+
 //Cancel an application from emp
 const ApplyCancelEmpApplication = Loadable({
   loader: () => import("../Screens/ApplyCancelEmpApplication"),
@@ -153,6 +164,14 @@ const RoomSteeper = Loadable({
   loader: () => import("../Screens/EmployeeRoomBooking/formForRoomApplication"),
   loading: Loading
 })
+const ApplicationDetailForRoom = Loadable({
+  loader: () => import("../Screens/EmployeeRoomBooking/ApplicationDetailsPage"),
+  loading: Loading
+})
+// const RoomSteeper = Loadable({
+//   loader: () => import("../Screens/EmployeeRoomBooking/formForRoomApplication"),
+//   loading: Loading
+// })
 const ServiceHome = Loadable({
   loader: () => import("../Screens/ApplicationDetails"),
   loading: Loading
@@ -266,18 +285,6 @@ const testing= Loadable({
   loader: () => import("../Screens/testing"),
   loading: Loading
 })
-
-const ReservedDatesList= Loadable({
-  loader: () => import("../Screens/ReservedBookingDates"),
-  loading: Loading
-})
-
-const ReserveDates= Loadable({
-  loader: () => import("../Screens/ApplyParkAndCommunity/components/CheckAvailability/ReserveDates"),
-  loading: Loading
-})
-
-
 
 // const MyTry = Loadable({
 //   loader: () => import("../Screens/MyTry/payment-methods"),
@@ -394,6 +401,20 @@ const routes = [
       customTitle: "BK_MYBK_APPLY_FOR_ROOM_BOOKING"
     }
   },
+  //ApplicationDetailForRoom
+  {
+    path: "egov-services/Employee/ApplicationDetailsForRoom/:applicationId",
+    component: ApplicationDetailForRoom,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      // title: "ES_OPEN_APPLICAION_HEADER",
+      hideTitle: false,
+      customFor: "employee",
+      // customTitle: "Make Offline Payment",
+      // customTitle: "BK_MYBK_APPLY_FOR_ROOM_BOOKING"
+    }
+  },
   {
     path: "egov-services/ServicesTest",
     component: ServicesTest,
@@ -424,7 +445,34 @@ const routes = [
     redirectionUrl
   }
 },
-
+//CreateSuccessForRoomBooking
+{
+  path: "egov-services/RoomBooking-Created-Successfully",
+  component: CreateSuccessForRoomBooking,
+  needsAuthentication: true,
+  options: {
+    hideBackButton: true,
+    customFor: "employee",
+    hideFooter: true,
+    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    hideTitle: true,
+    redirectionUrl
+  }
+},
+//room success page
+{
+  path: "egov-services/Room-Payment-Success",
+  component: PaymentSuccessForEmployeeRoomBooking,
+  needsAuthentication: true,
+  options: {
+    hideBackButton: true,
+    customFor: "employee",
+    hideFooter: true,
+    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    hideTitle: true,
+    redirectionUrl
+  }
+},
 // PaymentForEmployee
 {
   path: "egov-services/success-payment",
@@ -454,7 +502,7 @@ const routes = [
   }
 },
 
-//ApplyCancelEmpApplication
+//ApplyCancelEmpApplication 
 {
   path: "egov-services/application-cancelled-success",
   component: ApplyCancelEmpApplication,
@@ -521,11 +569,11 @@ const routes = [
   options: {
     hideFooter: true,
     title: "BK_MYBK_APPLY_PACC_REQUEST_HEADER",
-
+    
     customTitle: "BK_MYBK_CHECK_AVAILABILITY_HEADER"
   }
 },
-
+  
 {
   path: "egov-services/admin/osbmFee",
   component: OsbmFeeMasterData,
@@ -533,7 +581,7 @@ const routes = [
   options: {
     hideFooter: true,
     title: "BK_MYBK_ADMIN_OSBM_FEE_HEADER",
-
+  
     hideTitle: false,
     redirectionUrl,
     hideFor: "ao",
@@ -652,7 +700,7 @@ const routes = [
     }
   },
 
-
+  
   // {
   //   path: "egov-services/new-location-details/:applicationId",
   //   component: LocationSummary,
@@ -663,7 +711,7 @@ const routes = [
   //     redirectionUrl
   //   }
   // },
-
+ 
   {
     path: "egov-services/cg-application-details/:applicationId",
     component: CGApplicationDetails,
@@ -709,7 +757,7 @@ const routes = [
       redirectionUrl
     }
   },
-
+ 
   {
     path: "egov-services/bwt-application-details/:applicationId",
     component: ApplicationBWTSummary,
@@ -731,8 +779,8 @@ const routes = [
       redirectionUrl
     }
   },
-  //
-
+  // 
+  
   // {
   //   path: "complaint-reassigned/:serviceRequestId?",
   //   component: ComplaintAssigned,
@@ -942,8 +990,8 @@ const routes = [
       redirectionUrl
     }
   },
-
-
+  
+ 
   {
     path: "egov-services/assignto-driver/:applicationId?",
     component: AssignToDriver,
@@ -1009,36 +1057,6 @@ const routes = [
   //     customFor: "employee",
   //   }
   // },
-  {
-    path: "egov-services/reservedbookingdates",
-    component: ReservedDatesList,
-    needsAuthentication: true,
-    options: {
-      hideFooter: true,
-      title: "BK_MYBK_ADMIN_PACC_HOLD_DATES_HEADER",
-
-      hideTitle: false,
-      redirectionUrl,
-      hideFor: "ao",
-      customFor: "employee",
-      customTitle: "BK_MYBK_ADMIN_PACC_HOLD_DATES_HEADER"
-    }
-  },
-  {
-    path: "egov-services/reservedates",
-    component: ReserveDates,
-    needsAuthentication: true,
-    options: {
-      hideFooter: true,
-      title: "BK_MYBK_ADMIN_PACC_HOLD_DATES_HEADER",
-
-      hideTitle: false,
-      redirectionUrl,
-      hideFor: "ao",
-      customFor: "employee",
-      customTitle: "BK_MYBK_ADMIN_PACC_HOLD_DATES_HEADER"
-    }
-  },
 
 ];
 

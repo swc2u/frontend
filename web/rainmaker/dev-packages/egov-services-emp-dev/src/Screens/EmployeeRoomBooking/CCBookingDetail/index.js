@@ -134,7 +134,7 @@ let xyz = abc[0]
             floatingLabelText={
               <Label
                 key={0}
-                label="BK_MYBK_CREATE_CITIZEN_NAME"
+                label="BK_MYBK_CC_ROOM_NAME"
                 color="rgba(0,0,0,0.60)"
                 fontSize="12px"
               />
@@ -242,7 +242,7 @@ let xyz = abc[0]
               id="gst"
               name="gst"
               type="text"
-              value={this.props.gstNo}
+              value={this.props.gstNo == "NA" ? "NOT APPLICABLE" : this.props.gstNo}
               required = {true}
               hintText={
                 <Label
