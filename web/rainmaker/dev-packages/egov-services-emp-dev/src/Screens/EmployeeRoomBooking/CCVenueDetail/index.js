@@ -297,10 +297,72 @@ class ApplicatInfo extends Component {
             />
           </div>
 
+
           <div className="col-sm-6 col-xs-6">
             <TextField
               id="houseNo"
               name="houseNo"
+              type="text"
+              value={this.props.ReasonForDiscount}
+              required = {true}
+              hintText={
+                <Label
+                  label="BK_MYBK_ROOM_REASON_FOR_DISCOUNT"
+                  color="rgba(0, 0, 0, 0.3799999952316284)"
+                  fontSize={16}
+                  labelStyle={hintTextStyle}
+                />
+              }
+              floatingLabelText={
+                <Label
+                  key={0}
+                  label="BK_MYBK_ROOM_REASON_FOR_DISCOUNT"
+                  color="rgba(0,0,0,0.60)"
+                  fontSize="12px"
+                />
+              }
+              onChange={handleChange('houseNo')}
+              underlineStyle={{ bottom: 7 }}
+              underlineFocusStyle={{ bottom: 7 }}
+              hintStyle={{ width: "100%" }}
+            />
+          </div>
+
+          <div className="col-sm-6 col-xs-6">
+            <TextField
+              id="houseNo"
+              name="houseNo"
+              type="text"
+              value={this.props.discount}
+              required = {true}
+              hintText={
+                <Label
+                  label="BK_MYBK_ROOM_DISCOUNT"
+                  color="rgba(0, 0, 0, 0.3799999952316284)"
+                  fontSize={16}
+                  labelStyle={hintTextStyle}
+                />
+              }
+              floatingLabelText={
+                <Label
+                  key={0}
+                  label="BK_MYBK_ROOM_DISCOUNT"
+                  color="rgba(0,0,0,0.60)"
+                  fontSize="12px"
+                />
+              }
+              onChange={handleChange('houseNo')}
+              underlineStyle={{ bottom: 7 }}
+              underlineFocusStyle={{ bottom: 7 }}
+              hintStyle={{ width: "100%" }}
+            />
+          </div>
+
+
+          {/* <div className="col-sm-6 col-xs-6">
+            <TextField
+              id="houseNo"
+              name="houseNo"  //discount
               type="text"
               value={this.props.RefundableSecurity}
               required = {true}
@@ -325,7 +387,7 @@ class ApplicatInfo extends Component {
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
             />
-          </div>
+          </div> */}
 
 
           <div className="col-sm-6 col-xs-6">
@@ -485,7 +547,8 @@ class ApplicatInfo extends Component {
               id="houseNo"
               name="houseNo"
               type="text"
-              value={this.props.facilitationCharges}
+              // value={this.props.facilitationCharges}
+              value={"100"}
               required = {true}
               hintText={
                 <Label

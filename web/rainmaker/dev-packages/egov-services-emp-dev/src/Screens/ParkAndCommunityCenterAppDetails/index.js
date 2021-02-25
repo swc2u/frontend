@@ -7,13 +7,16 @@ import { Screen } from "modules/common";
 import { resetFiles } from "egov-ui-kit/redux/form/actions";
 import get from "lodash/get";
 import isEqual from "lodash/isEqual";
+import _ from "lodash"
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import { prepareFormData } from "egov-ui-kit/redux/common/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import OSMCCBookingDetails from "../AllApplications/components/OSMCCBookingDetails"
 import AppDetails from "./components/ApplicantDetails"; 
-import ViewBankDetails from "./components/ViewBankDetails"; 
+import ViewBankDetails from "./components/ViewBankDetails";
+import RoomCard from "./components/RoomCard";  //RoomCard  PaymentCardForRoom
 import RefundCard from "./components/RefundCard"; 
+import PaymentCardForRoom from "./components/PaymentCardForRoom"; 
 import BookingDetails from "./components/BookingDetails"
 import DocumentPreview from "../AllApplications/components/DocumentPreview"
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -57,6 +60,19 @@ class ApplicationDetails extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			 BKROOM_TAX : '',//operatorCode,Address,hsnCode
+ BKROOM : "",
+BKROOM_ROUND_OFF : "",   
+four : "",
+totalAmountPaid : "",
+PaymentDate : "",
+receiptNumber : "",
+PaymentMode : "",
+transactionNumber : "",
+operatorCode : "",
+Address: "",
+hsnCode : "",
+name: "",
 			openMap: false,
 			docFileData: [],
 			bookingType: '',
@@ -76,7 +92,8 @@ class ApplicationDetails extends Component {
 			modifiedSecondAmount: '',
 			newPaymentDetails: 'NotFound',
 			checkGreaterDate: '',
-			checkNumDays: ''
+			checkNumDays: '',
+			createdDate:''
 		};
 	};
 
@@ -115,6 +132,49 @@ class ApplicationDetails extends Component {
 
 	   let funtenantId = selectedComplaint.tenantId
 	   console.log("funtenantId--",funtenantId)
+
+
+
+	   let mdmsBody = {
+		MdmsCriteria: {
+			tenantId: funtenantId,
+			moduleDetails: [
+
+				{
+					moduleName: "Booking",
+					masterDetails: [
+						{
+							name: "E_SAMPARK_BOOKING",
+						}
+					],
+				},
+
+			],
+		},
+	};
+
+	let payloadRes = null;
+	payloadRes = await httpRequest(
+		"egov-mdms-service/v1/_search",
+		"_search",[],
+		mdmsBody
+	);
+	console.log(payloadRes, "hsncodeAndAll");
+
+let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING[0]
+
+let operatorCode = samparkDetail.operatorCode
+let Address = samparkDetail.centreAddres
+let hsnCode = samparkDetail.hsnCode
+let name = samparkDetail.name
+this.setState({
+	operatorCode:operatorCode,
+	Address:Address,  //operatorCode,Address,hsnCode
+	hsnCode:hsnCode,
+	name:name
+})
+
+
 
 	   let FromDate = selectedComplaint.bkFromDate
 	   console.log("FromDate--",FromDate)
@@ -251,30 +311,75 @@ class ApplicationDetails extends Component {
 		fetchDataAfterPayment(
 			[{ key: "consumerCodes", value: match.params.applicationId }, { key: "tenantId", value: userInfo.tenantId }
 			])
-		// if(selectedComplaint.bkApplicationStatus === "PENDING_FOR_APPROVAL_CLEARK_DEO" || selectedComplaint.bkApplicationStatus === "PENDING_FOR_APPROVAL_SENIOR_ASSISTANT" || selectedComplaint.bkApplicationStatus === "PENDING_FOR_APPROVAL_AUDIT_DEPARTMENT" ||
-		// selectedComplaint.bkApplicationStatus === "PENDING_FOR_APPROVAL_CAO" || 	selectedComplaint.bkApplicationStatus === "PENDING_FOR_APPROVAL_CAO"
-		// )
 
-		let totalRes = await this.calculateCancelledBookingRefundAmount(AppNo, funtenantId, FromDate);
+	// 	let totalRes = await this.calculateCancelledBookingRefundAmount(AppNo, funtenantId, FromDate);
+	// 	console.log("totalRes--inrefundPage",totalRes)
+	  
+    //    this.setState({
+	// totalRefundAmount : totalRes
+    //     })
+
+	// 	if(selectedComplaint.bkApplicationStatus === "PENDING_FOR_DISBURSEMENT"){
+
+	// 		this.setState({
+	// 			refundCard: true
+	// 		})	
+	// 	}
+
+	if(selectedComplaint.bkApplicationStatus === "PENDING_FOR_DISBURSEMENT"){   //second option for detail page of room
+
+	let totalRes = await this.calculateCancelledBookingRefundAmount(AppNo, funtenantId, FromDate);
 		console.log("totalRes--inrefundPage",totalRes)
 	  
        this.setState({
 	totalRefundAmount : totalRes
         })
 
-		if(selectedComplaint.bkApplicationStatus === "PENDING_FOR_DISBURSEMENT"){
 			this.setState({
 				refundCard: true
 			})	
 		}
 
-
-
 		let { details } = this.state;
 	}
 
-	BookRoom = () => {
-		this.props.history.push(`/egov-services/ApplyForRoomBooking`);
+BookRoom = async () => {
+		let { prepareFinalObject,userInfo,toggleSnackbarAndSetText } = this.props;
+		let {selectedComplaint} = this.props
+	let ApplicationNumber = selectedComplaint.bkApplicationNumber
+		 let complaintCountRequest = 
+  {
+    "applicationNumber": ApplicationNumber, 
+  }
+  
+let dataforSectorAndCategory = await httpRequest( 	
+  "bookings/api/community/center/_search",
+    "_search",[],
+    complaintCountRequest 
+  );
+console.log("dataforSectorAndCategory --",dataforSectorAndCategory)
+if(dataforSectorAndCategory.bookingsModelList.length > 0){
+
+  prepareFinalObject("RoomBookingData", dataforSectorAndCategory)
+  prepareFinalObject("SetPaymentURL", this.props.history.push)
+  console.log("historyPropsToConsole--",this.props.history.push)
+  console.log("historyPropsToConsole--",this.props.history)
+  this.props.history.push(`/egov-services/ApplyRoomBooking`);
+
+}
+else{
+  
+  toggleSnackbarAndSetText(
+    true,
+    {
+      labelName: "No Application Found With This Application Number",
+      labelKey: `BK_ERR_APPLICATION_NOT_FOUND`
+    },
+    "error"
+  );
+
+}
+		// this.props.history.push(`/egov-services/ApplyForRoomBooking`);
 	}
 
 	calculateCancelledBookingRefundAmount = async (applicationNumber, tenantId, bookingDate) => {
@@ -1129,7 +1234,7 @@ ApplyOfflineSecurityRefund = async () =>{
 			"bkStatusUpdateRequest": null,
 			"bkStatus": null,
 			"bkDriverName": null,
-			"bkVehicleNumber": null,
+			"bkVehicleNumber": null, 
 			"bkEstimatedDeliveryTime": null,
 			"bkActualDeliveryTime": null,
 			"bkNormalWaterFailureRequest": null,
@@ -1228,12 +1333,12 @@ else{
 
 	render() {
 		const dropbordernone = {
-			float: "right",
+			float: "right",  
 			paddingRight: "20px"
 
 		};
 		let { shareCallback } = this;
-		let { comments, openMap,AppName,checkNumDays,checkGreaterDate} = this.state;
+		let { operatorCode,Address,hsnCode,comments, openMap,AppName,name,checkNumDays,checkGreaterDate,createdDate,BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF,four,totalAmountPaid,PaymentDate,receiptNumber,PaymentMode,transactionNumber} = this.state;
 		console.log("CheckstateForRefund--",this.state)
 		let { complaint, timeLine } = this.props.transformedComplaint;
 		let { documentMap,selectedComplaint,Difference_In_Days_check,first } = this.props;
@@ -1402,6 +1507,7 @@ else{
 												}} />
 
 											</div>
+										
 										</div>
 									</div>
 								</div>
@@ -1411,21 +1517,8 @@ else{
 									historyApiData={historyApiData && historyApiData}
 								/>
 
-								<AppDetails
-									{...complaint}
 
-								/>
- 
-								<BookingDetails
-									{...complaint}
-									historyApiData={historyApiData && historyApiData}
-								/>
-						 		<ViewBankDetails
-									{...complaint}
-
-								/>
-
-								{this.state.CheckStatus != "OFFLINE_MODIFIED" ? <PaymentDetails
+{this.state.CheckStatus != "OFFLINE_MODIFIED" ? <PaymentDetails
 									paymentDetails={paymentDetails && paymentDetails}
 									PayMentTwo={PayMentTwo && PayMentTwo}
 									PayMentOne={PayMentOne && PayMentOne}
@@ -1450,6 +1543,57 @@ paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
 </div>
 : " "}
 
+								<AppDetails
+									{...complaint}
+
+								/>
+ 
+								<BookingDetails
+									{...complaint}
+									historyApiData={historyApiData && historyApiData}
+								/>
+
+{this.props.showRoomCard == true ? <RoomCard 
+// roomData={this.props.roomsData}
+history={this.props.history}
+roomData = {this.props.roomsData}
+RoomApplicationNumber = {this.props.RoomApplicationNumber}
+totalNumber = {this.props.totalNumber}
+typeOfRoom = {this.props.typeOfRoom}
+roomFromDate = {this.props.roomFromDate}
+roomToDate = {this.props.roomToDate}
+createdDate={createdDate}
+selectedComplaint={selectedComplaint}
+userInfo={this.props.userInfo}
+BKROOM_TAX = {BKROOM_TAX}
+BKROOM = {BKROOM}
+BKROOM_ROUND_OFF = {BKROOM_ROUND_OFF}
+four = {four}
+totalAmountPaid = {totalAmountPaid}
+PaymentDate = {PaymentDate}
+receiptNumber = {receiptNumber}
+PaymentMode = {PaymentMode}
+transactionNumber = {transactionNumber}
+operatorCode = {operatorCode}
+Address = {Address}
+hsnCode = {hsnCode}
+name = {name}
+ 
+//PaymentDate,receiptNumber,PaymentMode,transactionNumber   operatorCode,Address,hsnCode
+/> : ""}
+ 
+{/* {this.props.showRoomCard == true ? <PaymentCardForRoom   //BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF,four
+BKROOM_TAX = {BKROOM_TAX}
+BKROOM = {BKROOM}
+BKROOM_ROUND_OFF = {BKROOM_ROUND_OFF}
+four = {four}
+totalAmountPaid = {totalAmountPaid}
+/> : ""} */}
+
+						 		<ViewBankDetails
+									{...complaint}
+
+								/>
 							 {this.state.refundCard == true ? <RefundCard 
 							paymentDetails={this.state.newPaymentDetails != "NotFound" && this.state.newPaymentDetails}
 							RefAmount={this.state.totalRefundAmount && this.state.totalRefundAmount}
@@ -1618,12 +1762,12 @@ paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
 <Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
       <div className="col-sm-12 col-xs-12" style={{textAlign: 'right'}}>
 		  {/*Cancel Button    checkNumDays,checkGreaterDate*/}  
-		  <Button
+		  {/* <Button
 		  label={
 			<Label
 			  buttonLabel={true}
 			  color="#fe7a51"
-			  label="Room Book"
+			  label="Book Room"
 			/>
 		  }
 		  labelStyle={{
@@ -1634,9 +1778,9 @@ paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
 		  buttonStyle={{ border: "1px solid #fe7a51" }}
 		  style={{ width: "15%" }}
 		  onClick={() => this.BookRoom()}
-		/> 
+		/>  */}
 
-		  {/* {( this.props.RoomBookingDate === "Valid" && complaint.bkBookingType == "Community Center") ? 
+		  {(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") ? 
 		  <Button
 		  label={
 			<Label
@@ -1654,7 +1798,7 @@ paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
 		  style={{ width: "15%" }}
 		  onClick={() => this.BookRoom()}
 		/> 
-		  : ""} */}
+		  : ""}
 
 		  {(Difference_In_Days_check > 15 || Difference_In_Days_check == 15 )? 
 		  <Button
@@ -1671,7 +1815,7 @@ paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
 			color: "#fe7a51"
 		  }}
 		  buttonStyle={{ border: "1px solid #fe7a51" }}
-		  style={{ width: "15%" }}
+		  style={{ width: "15%", marginLeft: "2%"}}
 		  onClick={() => this.CancelEmpBooking()}
 		/> 
 		  : ""}
@@ -1880,6 +2024,67 @@ const mapStateToProps = (state, ownProps) => {
 	let selectedNumber = selectedComplaint ? selectedComplaint.bkApplicationNumber : "NotFoundAnyApplicationNumber"
 	console.log("selectedNumber--",selectedNumber)
 
+
+let roomData =selectedComplaint.roomsModel ? (selectedComplaint.roomsModel.length > 0 ? (selectedComplaint.roomsModel) : "NA") : "NA"
+console.log("roomData-----",roomData)
+let RoomApplicationNumber = 'NA';
+let showRoomCard;
+let totalNumber;
+let typeOfRoom;
+let roomFromDate;  
+let roomToDate;
+let dataForBothSelection;
+if(roomData !== "NA"){
+let roomModels = roomData
+console.log("roomModels-roomModels-roomModels",roomModels)
+let tempArray = []
+var roomsData = roomModels.map((roomData) => {
+
+  if (!tempArray.includes(roomData.roomApplicationNumber)) {
+    tempArray.push(roomData.roomApplicationNumber)
+    let slicearray = roomModels.slice(_.findIndex(roomModels, roomData) + 1, roomModels.length)
+    let duplicateObject = slicearray.filter((data) => data.roomApplicationNumber == roomData.roomApplicationNumber)
+    if (duplicateObject.length > 0) {
+      let newObj = { roomApplicationNumber: roomData.roomApplicationNumber, toDate: roomData.toDate, fromDate: roomData.fromDate, typeOfRooms: "BOTH" }
+      if (duplicateObject[0].typeOfRoom == "NON-AC") {
+        newObj.totalNoOfACRooms = roomData.totalNoOfRooms;
+        newObj.totalNoOfNonACRooms = duplicateObject[0].totalNoOfRooms
+      } else {
+        newObj.totalNoOfACRooms = duplicateObject[0].totalNoOfRooms;
+        newObj.totalNoOfNonACRooms = roomData.totalNoOfRooms;
+      }
+      return newObj
+    } else {
+      let newObj = { roomApplicationNumber: roomData.roomApplicationNumber, toDate: roomData.toDate, fromDate: roomData.fromDate }
+      if (roomData.typeOfRoom === "NON-AC") {
+        newObj.totalNoOfACRooms = 0;
+        newObj.typeOfRooms = "NON-AC";
+        newObj.totalNoOfNonACRooms = roomData.totalNoOfRooms;
+      } else {
+        newObj.totalNoOfACRooms = roomData.totalNoOfRooms;
+        newObj.typeOfRooms = "AC";
+        newObj.totalNoOfNonACRooms = 0;
+      }
+      return newObj
+    }
+
+  }
+  return;
+}).filter(Boolean)
+
+console.log("DataForRoomsData--",roomsData)
+	console.log("dataForBothSelection--",dataForBothSelection)
+	showRoomCard = true;
+	RoomApplicationNumber = roomData[0].roomApplicationNumber;
+	totalNumber = roomData[0].totalNoOfRooms;
+	typeOfRoom = roomData[0].typeOfRoom;
+	roomFromDate = roomData[0].fromDate;
+	roomToDate = roomData[0].toDate;
+} 
+
+let newRoomAppNumber = RoomApplicationNumber != 'NA' ? RoomApplicationNumber : ""
+console.log("newRoomAppNumber--",newRoomAppNumber)
+
 	let bookFDate = selectedComplaint ? selectedComplaint.bkFromDate : ""
 	console.log("bookFDate--",bookFDate)
 
@@ -1899,7 +2104,7 @@ const mapStateToProps = (state, ownProps) => {
 	if(Todaydate.getTime() < RoomDate.getTime()){
 		RoomBookingDate = "Valid"
 	}
-
+console.log("RoomBookingDate--",RoomBookingDate)
 	let first = false;
 	if(dateFromDate < Todaydate){
 		first = true
@@ -1908,16 +2113,10 @@ console.log("first--",first)
 
 let Difference_In_Time_check = dateFromDate.getTime() - Todaydate.getTime();
 console.log("Difference_In_Time--uuuuu-fgfgfg",Difference_In_Time_check)
-   // To calculate the no. of days between two dates
+   
 let Difference_In_Days_check = Difference_In_Time_check / (1000 * 3600 * 24);
 console.log("Difference_In_Days--dadada",Difference_In_Days_check)
 
-/*
- let dateFromDate = new Date(bookingDate)
-	 console.log("dateFromDate--gg",dateFromDate)
-	 let CurrentDate = new Date();
-	 console.log("CurrentDate--",CurrentDate)
-*/
 	let businessService = applicationData ? applicationData.businessService : "";
 	let bookingDocs;
 	let documentMap = applicationData && applicationData.documentMap ? applicationData.documentMap : '';
@@ -1964,23 +2163,26 @@ else{
 
   let ReceiptPaymentDetails = fetchPaymentAfterPayment;
   console.log("ReceiptPaymentDetails--",ReceiptPaymentDetails)
-
-  let offlinePayementMode = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].paymentMode : "NotFound"
+//let offlinePayementMode = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments[0].paymentMode ): "NotFound"
+  let offlinePayementMode = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].paymentMode !== undefined && ReceiptPaymentDetails.Payments[0].paymentMode !== null ? (ReceiptPaymentDetails.Payments[0].paymentMode): "NotFound"): "NotFound"): "NotFound"
   console.log("offlinePayementMode--",offlinePayementMode)
 	  
 //transactionDate
-let offlineTransactionDate = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].transactionDate : "NotFound"
+// let offlineTransactionDate = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].transactionDate : "NotFound"
+let offlineTransactionDate = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].transactionDate !== undefined && ReceiptPaymentDetails.Payments[0].transactionDate !== null ? (ReceiptPaymentDetails.Payments[0].transactionDate) : "NotFound"): "NotFound"): "NotFound"
 console.log("offlineTransactionDate--",offlineTransactionDate) 
 
 
-let offlineTransactionNum = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].transactionNumber : "NotFound"
+// let offlineTransactionNum = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].transactionNumber : "NotFound"
+let offlineTransactionNum = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].transactionNumber !== undefined && ReceiptPaymentDetails.Payments[0].transactionNumber !== null ? (ReceiptPaymentDetails.Payments[0].transactionNumber) : "NotFound"): "NotFound"): "NotFound"
 console.log("offlineTransactionNum--",offlineTransactionNum) 
 //receipt Number
 
-let recNumber = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].paymentDetails[0].receiptNumber : "NotFound"
+// let recNumber = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].paymentDetails[0].receiptNumber : "NotFound"
+let recNumber = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].receiptNumber !== undefined && ReceiptPaymentDetails.Payments[0].receiptNumber !== null ? (ReceiptPaymentDetails.Payments[0].receiptNumber) : "NotFound"): "NotFound"): "NotFound"
 console.log("recNumber--",recNumber)
-
-let billAccountDetailsArray =  ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails : "NOt found Any Array"
+//ReceiptPaymentDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
+let billAccountDetailsArray =  ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails): "NOt found Any Array") : "NOt found Any Array"
 console.log("billAccountDetailsArray--",billAccountDetailsArray)
 let PACC = 0;
 let LUXURY_TAX = 0;
@@ -1989,7 +2191,7 @@ let PACC_TAX = 0;
 let PACC_ROUND_OFF = 0;
 let FACILITATION_CHARGE = 0;
 
-
+if(billAccountDetailsArray !== "NOt found Any Array"){
 for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
 if(billAccountDetailsArray[i].taxHeadCode == "PACC"){
@@ -2011,13 +2213,14 @@ else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHARGE"){
     FACILITATION_CHARGE = billAccountDetailsArray[i].amount
 }
 }
-
+}
 let one = 0;
 let two = 0;
 let three = 0;
 let four = 0;
 let five = 0;
 let six = 0;
+if(billAccountDetailsArray !== "NOt found Any Array"){
 for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
 if(billAccountDetailsArray[i].taxHeadCode == "PACC"){
@@ -2039,7 +2242,8 @@ else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHARGE"){
     six = billAccountDetailsArray[i].amount
 }
 }
-
+}
+if(billAccountDetailsArray !== "NOt found Any Array"){
 for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
 	if(billAccountDetailsArray[i].taxHeadCode == "PACC"){
@@ -2061,7 +2265,7 @@ for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 		FACILITATION_CHARGE = billAccountDetailsArray[i].amount
 	}
 	}
-
+}
 	let historyApiData = {}
 	if (historyObject) {
 		historyApiData = historyObject;
@@ -2086,10 +2290,10 @@ for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 			status: selectedComplaint.bkApplicationStatus,
 			applicationNo: selectedComplaint.bkApplicationNumber,
 			address: selectedComplaint.bkCompleteAddress,
-			bookingType: selectedComplaint.bkBookingType,
+			bookingType: selectedComplaint.bkBookingType, //bkBookingType
 			sector: selectedComplaint.bkSector,
 			bkEmail: selectedComplaint.bkEmail,
-			bkMobileNumber: selectedComplaint.bkMobileNumber,
+			bkMobileNumber: selectedComplaint.bkMobileNumber,   
 			houseNo: selectedComplaint.bkHouseNo,
 			dateCreated: selectedComplaint.bkDateCreated,
 			areaRequired: selectedComplaint.bkAreaRequired,
@@ -2133,8 +2337,8 @@ for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
 		return {
 			paymentDetails,offlineTransactionNum,recNumber,DownloadReceiptDetailsforPCC,refConAmount,RoomBookingDate,
-			offlineTransactionDate,
-			historyApiData,
+			offlineTransactionDate,RoomApplicationNumber,totalNumber,typeOfRoom,roomFromDate,roomToDate,
+			historyApiData,showRoomCard,roomData,
 			DownloadPaymentReceiptDetails,
 			paymentDetailsForReceipt, DownloadApplicationDetails, DownloadPermissionLetterDetails,
 			documentMap,
@@ -2156,17 +2360,17 @@ for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 			REFUNDABLE_SECURITY,
 			PACC_TAX,
 			PACC_ROUND_OFF,
-			FACILITATION_CHARGE,one,two,three,four,five
+			FACILITATION_CHARGE,one,two,three,four,five,newRoomAppNumber,dataForBothSelection,roomsData
 			
 		};
 	} else {
-		return {
+		return {dataForBothSelection,roomsData,
 			paymentDetails,offlineTransactionNum,recNumber,DownloadReceiptDetailsforPCC,refConAmount,RoomBookingDate,
-			offlinePayementMode,Difference_In_Days_check,first,
-			offlineTransactionDate,
+			offlinePayementMode,Difference_In_Days_check,first,showRoomCard,
+			offlineTransactionDate,RoomApplicationNumber,totalNumber,typeOfRoom,roomFromDate,roomToDate,
 			historyApiData,
 			DownloadPaymentReceiptDetails,
-			paymentDetailsForReceipt, DownloadApplicationDetails, DownloadPermissionLetterDetails,
+			paymentDetailsForReceipt, DownloadApplicationDetails, DownloadPermissionLetterDetails,newRoomAppNumber,
 			documentMap,
 			form,
 			transformedComplaint: {},
@@ -2184,7 +2388,7 @@ for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 			REFUNDABLE_SECURITY,
 			PACC_TAX,
 			PACC_ROUND_OFF,
-			FACILITATION_CHARGE,one,two,three,four,five,six
+			FACILITATION_CHARGE,one,two,three,four,five,six,roomData
 			
 		};
 	}

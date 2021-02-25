@@ -603,7 +603,7 @@ class BookingsDetails extends Component {
                 onChange={handleChange('residenials')}
               >
                 <MenuItem value="" disabled>Normal/Residential</MenuItem>
-                <MenuItem value='Nomal'>Nomal</MenuItem>
+                <MenuItem value='Nomal'>Normal</MenuItem>
                 <MenuItem value='Residential'>Residential</MenuItem>
               </Select>
             </FormControl>
