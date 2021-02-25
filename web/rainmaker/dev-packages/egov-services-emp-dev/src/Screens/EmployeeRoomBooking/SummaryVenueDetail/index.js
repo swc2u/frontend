@@ -30,7 +30,7 @@ return (
                                     label={this.props.location}
                                 />
                             </div>
-                            <div className="col-md-4">
+                            {/* <div className="col-md-4">
                                 <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CC_ROOM_NUMBER_OF_DAYS" />
                                 <Label
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
@@ -38,7 +38,7 @@ return (
                                     labelStyle={{ color: "inherit" }}
                                     label={this.props.NoOfDays}
                                 />
-                            </div>
+                            </div> */}
                             <div className="col-md-4">
                                 <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CC_ROOM_HOUSENO" />
                                 <Label
@@ -87,7 +87,7 @@ return (
                                 />
                             </div>
 
-                            <div className="col-md-4">
+                            {/* <div className="col-md-4">
                                 <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_ROOM_REFUNDABLE_SECURITY" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
@@ -95,7 +95,7 @@ return (
                                     id="complaint-details-complaint-number"
                                     label={this.props.RefundableSecurity}
                                 />
-                            </div>
+                            </div> */}
 
                             <div className="col-md-4">
                                 <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_ROOM_CLEANING_CHARGES" />
@@ -153,7 +153,7 @@ return (
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-complaint-number"
-                                    label={this.props.facilitationCharges}
+                                    label={"100"}
                                 />
                             </div>
 

@@ -21,7 +21,7 @@ import isEmpty from "lodash/isEmpty";
 // };
 
 const intialState = {
-  loading: false,
+  loading: false, 
   error: false,
   CheckConRefAmt: false,
   name: "Ram",
@@ -61,6 +61,54 @@ const complaintsReducer = (state = intialState, action) => {
             error: true,
             errorMessage: action.error,
           };
+          case actionTypes.ROOMPAYMENTCOMPLETE:
+            console.log('BOOKING_DATA_COMPLETE',action.payload)
+            return {
+              ...state,
+              loading: false,
+              fetchSuccess: true,
+              RoomPaymentReceipt: action.payload
+            };
+            case actionTypes.ROOMPAYMENT_ERROR:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                error: true,
+                errorMessage: action.error,
+              };     
+              case actionTypes.ROOMPERMISSIONLETTERCOMPLETE:
+                console.log('BOOKING_DATA_COMPLETE',action.payload)
+                return {
+                  ...state,
+                  loading: false,
+                  fetchSuccess: true,
+                  RoomPermissionLetter: action.payload
+                };
+                case actionTypes.ROOMPERMISSIONLETTER_ERROR:
+                  return {
+                    ...state,
+                    loading: false,
+                    fetchSuccess: true,
+                    error: true,
+                    errorMessage: action.error,
+                  };     
+                  case actionTypes.EMPPACCPERMISSIONLETTERCOMPLETE:
+                    console.log('BOOKING_DATA_COMPLETE',action.payload)
+                    return {
+                      ...state,
+                      loading: false,
+                      fetchSuccess: true,
+                      EmpPaccPermissionLetter: action.payload
+                    };
+                    case actionTypes.EMPPACCPERMISSIONLETTER_ERROR:
+                      return {
+                        ...state,
+                        loading: false,
+                        fetchSuccess: true,
+                        error: true,
+                        errorMessage: action.error,
+                      };     
     case actionTypes.CREATE_WATER_TANKER_COMPLETE:
       return {
         ...state,
