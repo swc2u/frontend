@@ -312,6 +312,29 @@ export const getOwnerDetails = (isEditable = true) => {
                 disabled:IsEdit
               }
             }),
+            aadharCardnumber: getTextField({
+              label: {
+                labelName: "Aadhar Card number",
+                labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+              },
+              placeholder: {
+                labelName: "Enter Aadhar Card number",
+                labelKey: "WS_OWN_DETAIL_ADDHAR_NO_PLACEHOLDER"
+              },
+              pattern: getPattern("AdharCardNumber"),
+              required: false,
+              
+             // errorMessage: "Invalid Address",
+              jsonPath: "applyScreen.property.owners[0].aadharCardnumber",
+              gridDefination: {
+                xs: 12,
+                sm: 6
+              },
+              props: {
+                className: "applicant-details-error",
+                disabled:IsEdit
+              }
+            }),
             // ownerMobileNumber: getLabelWithValue(
             //   {
             //     labelName: "Mobile Number",
@@ -505,6 +528,29 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
               },
               props: {
                 className: "applicant-details-error"
+              }
+            }),
+            aadharCardnumber: getTextField({
+              label: {
+                labelName: "Aadhar Card number",
+                labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+              },
+              placeholder: {
+                labelName: "Enter Aadhar Card number",
+                labelKey: "WS_OWN_DETAIL_ADDHAR_NO_PLACEHOLDER"
+              },
+              pattern: getPattern("AdharCardNumber"),
+              required: true,
+              
+             // errorMessage: "Invalid Address",
+              jsonPath: "applyScreen.property.owners[0].aadharCardnumber",
+              gridDefination: {
+                xs: 12,
+                sm: 6
+              },
+              props: {
+                className: "applicant-details-error",
+                disabled:IsEdit
               }
             }),
             // ownerMobileNumber: getLabelWithValue(

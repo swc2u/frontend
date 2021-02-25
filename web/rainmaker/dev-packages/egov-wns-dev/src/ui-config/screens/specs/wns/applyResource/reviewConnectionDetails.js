@@ -412,6 +412,14 @@ const getPropertyConnectionOtherDetails = {
             { jsonPath: "applyScreen.contractValue",
             callBack: handleNA }
           ),
+          reviewferruleSize: getLabelWithValue(
+            {
+              labelName: "contract Value",
+              labelKey: "WS_ADDN_DETAILS_FERRULE_INPUT"
+            },
+            { jsonPath: "applyScreen.ferruleSize",
+            callBack: handleNA }
+          ),
           
         })
     }),
