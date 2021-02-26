@@ -253,19 +253,19 @@ const screenConfig = {
                     }
                   )
                 },
-                word2: {
-                  ...getCommonTitle({
-                    labelName: "Active",
-                    // jsonPath: "WaterConnection[0].headerSideText.word2"
-                  }
-                    ,
-                    {
-                      style: {
-                        marginRight: "10px",
-                        color: "rgba(0, 0, 0, 0.6000000238418579)"
-                      }
-                    })
-                },
+                // word2: {
+                //   ...getCommonTitle({
+                //     labelName: "Active",
+                //     // jsonPath: "WaterConnection[0].headerSideText.word2"
+                //   }
+                //     ,
+                //     {
+                //       style: {
+                //         marginRight: "10px",
+                //         color: "rgba(0, 0, 0, 0.6000000238418579)"
+                //       }
+                //     })
+                // },
               }
             },
             ...connectionDetailsFooter,
