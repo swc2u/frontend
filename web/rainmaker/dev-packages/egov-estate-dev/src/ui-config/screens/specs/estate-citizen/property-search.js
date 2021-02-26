@@ -63,7 +63,6 @@ const citizenEstateSearchAndResult = {
     const manimajraRefundPageAccess = roles.find(item => /^ES_EB/.test(item.code));
     const params = new URLSearchParams(window.location.search)
     const paramTypeValue = params.get('type')
-    debugger;
     if(manimajraRefundPageAccess === undefined && userInfo.type != "CITIZEN" && paramTypeValue === "refund"){
       dispatch(
         setRoute(

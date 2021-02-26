@@ -351,7 +351,6 @@ true
     const {ManiMajraAccountStatement} = state.screenConfiguration.preparedFinalObject
     if(ManiMajraAccountStatement && ManiMajraAccountStatement!=null){
       fromDate = ManiMajraAccountStatement[0].date
-      debugger;
       let fromDateStr = convertEpochToDate(fromDate)
       dispatch(prepareFinalObject(
         "payment.fromDate", fromDateStr.split("/").reverse().join("-")
