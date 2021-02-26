@@ -809,6 +809,13 @@ export const downloadPaymentReceipt = (receiptQueryString, payload, data , gener
       ACTION: "_get",
     },
   };
+
+  payload = [{
+    ...payload[0],
+    year: payload[0].applicationSubmissionDate 
+    ? moment(payload[0].applicationSubmissionDate).format('YYYY') : ''
+  }]
+
   try {
     httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
       let queryStr = [
@@ -1013,6 +1020,11 @@ export const downloadPaymentReceipt = (receiptQueryString, payload, data , gener
 
 export const downloadAmountLetter = (Applications, applicationType, mode = 'download') => {
 
+  Applications = [{
+    ...Applications[0],
+    year: Applications[0].applicationSubmissionDate ? 
+    moment(Applications[0].applicationSubmissionDate).format('YYYY') : ' '
+  }]
   let queryStr = []
     switch (applicationType) {
       case 'LeaseholdToFreehold':
@@ -1069,6 +1081,11 @@ export const downloadAmountLetter = (Applications, applicationType, mode = 'down
 
 export const downloadHousingBoardLetter = (Applications, applicationType, mode = 'download') => {
 
+  Applications = [{
+    ...Applications[0],
+    year: Applications[0].applicationSubmissionDate ?
+    moment(Applications[0].applicationSubmissionDate).format('YYYY') : ' '
+  }]
   let queryStr = []
     switch (applicationType) {
       case 'LeaseholdToFreehold':
@@ -1125,7 +1142,11 @@ export const downloadHousingBoardLetter = (Applications, applicationType, mode =
 
 
 export const downloadLetter = (Applications, applicationType, mode = 'download') => {
-
+  Applications = [{
+    ...Applications[0],
+    year: Applications[0].applicationSubmissionDate 
+    ? moment(Applications[0].applicationSubmissionDate).format('YYYY') : ''
+  }]
 let queryStr = []
   switch (applicationType) {
     case 'SaleDeed':
@@ -1336,6 +1357,11 @@ let queryStr = []
   }
 }
 export const downloadEmailNotice = (Applications, applicationType, mode = 'download') => {
+  Applications = [{
+    ...Applications[0],
+    year: Applications[0].applicationSubmissionDate ? 
+    moment(Applications[0].applicationSubmissionDate).format('YYYY') : ' '
+ }]
 
   let queryStr = []
     switch (applicationType) {
@@ -1422,6 +1448,12 @@ export const downloadEmailNotice = (Applications, applicationType, mode = 'downl
 
 
 export const downloadNotice = (Applications, applicationType,noticeType, mode = 'download') => {
+  
+  Applications = [{
+    ...Applications[0],
+    year: Applications[0].applicationSubmissionDate ? 
+    moment(Applications[0].applicationSubmissionDate).format('YYYY') : ' '
+  }]
   let queryStr = []
   switch (applicationType) {
     
