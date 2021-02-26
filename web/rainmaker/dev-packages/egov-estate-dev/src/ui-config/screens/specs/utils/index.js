@@ -628,6 +628,30 @@ export const downloadAcknowledgementForm = (Applications, applicationType,feeEst
             key:"key",
             value:"bb-IssuanceOfNotice-application"
           }] 
+          Applications = [{
+            ...Applications[0],
+            applicationDetails:{
+              ...Applications[0].applicationDetails,
+              groundCoverage: Applications[0].applicationDetails.groundCoverage == 'false' ? "No" : 'Yes',
+              groundCoverageSanctionable: Applications[0].applicationDetails.groundCoverageSanctionable == 'false' ? "No" : 'Yes',
+              maximumFloors: Applications[0].applicationDetails.maximumFloors == 'false' ? "No" : 'Yes',
+              maximumFloorsSanctionable: Applications[0].applicationDetails.maximumFloorsSanctionable == 'false' ? "No" : 'Yes',
+              maximumHeight: Applications[0].applicationDetails.maximumHeight == 'false' ? "No" : 'Yes',
+              maximumHeightSanctionable: Applications[0].applicationDetails.maximumHeightSanctionable == 'false' ? "No" : 'Yes',
+              minimumCeilingHeight: Applications[0].applicationDetails.minimumCeilingHeight == 'false' ? "No" : 'Yes',
+              minimumCeilingHeightSanctionable: Applications[0].applicationDetails.minimumCeilingHeightSanctionable == 'false' ? "No" : 'Yes',
+              minimunRoomsSize: Applications[0].applicationDetails.minimunRoomsSize == 'false' ? "No" : 'Yes',
+              minimunRoomsSizeSanctionable: Applications[0].applicationDetails.minimunRoomsSizeSanctionable == 'false' ? "No" : 'Yes',
+              permissible: Applications[0].applicationDetails.permissible == 'false' ? "No" : 'Yes',
+              permissibleSanctionable:Applications[0].applicationDetails.permissibleSanctionable == 'false' ? "No" : 'Yes',
+              plinthLevel: Applications[0].applicationDetails.plinthLevel == 'false' ? "No" : 'Yes',
+              plinthLevelSanctionable: Applications[0].applicationDetails.plinthLevelSanctionable == 'false' ? "No" : 'Yes',
+              setBack: Applications[0].applicationDetails.setBack == 'false' ? "No" : 'Yes',
+              setBackSanctionable: Applications[0].applicationDetails.setBackSanctionable == 'false' ? "No" : 'Yes',
+              staircase: Applications[0].applicationDetails.staircase == 'false' ? "No" : 'Yes',
+              staircaseSanctionable: Applications[0].applicationDetails.staircaseSanctionable == 'false' ? "No" : 'Yes'
+            }
+          }]
           break; 
       case 'MM-NDC':
           queryStr = [{
