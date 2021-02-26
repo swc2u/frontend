@@ -181,7 +181,16 @@ tenantId = data.property.tenantId;
                       </Grid>
                       <div>
                         {item.status === "NA" ?
-                          (<div></div>)
+                          (<div>
+                            <LabelContainer
+                                labelKey={item.error}
+                                labelName ={item.error}
+                                style={{
+                                  color: "#FF6347",
+                                  fontSize: 14,
+                                }}
+                              />
+                          </div>)
                           : item.status !== "INITIATED" ?
                             (<div> <LabelContainer
                               labelKey="WS_COMMON_PAID_LABEL"

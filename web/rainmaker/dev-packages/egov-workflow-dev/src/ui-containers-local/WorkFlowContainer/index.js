@@ -688,6 +688,7 @@ ValidateRequest =(payload) =>{
   }
   else{
     isvalidRequest = true
+    payload.waterApplication.isFerruleApplicable = true;
   }
   // change tarrif type when state is PENDING_FOR_CONNECTION_TARIFF_CHANGE for action CHANGE_TARIFF
 

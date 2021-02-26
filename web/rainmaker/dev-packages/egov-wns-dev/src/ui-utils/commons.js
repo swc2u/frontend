@@ -308,7 +308,7 @@ export const getMyConnectionResults = async (queryObject, dispatch) => {
                         const data = await httpRequest(
                             "post",
                             //`billing-service/bill/v2/_fetchbill?consumerCode=${response.WaterConnection[i].connectionNo}&tenantId=${response.WaterConnection[i].property.tenantId}&businessService=WS`,
-                            'ws-calculator/billing/_getBillData',
+                            '/ws-services/billGeneration/_getBillData',
                             "_search",
                             [],
                             queryObject
@@ -317,17 +317,21 @@ export const getMyConnectionResults = async (queryObject, dispatch) => {
                             if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
                                response.WaterConnection[i].due = 0//data.billGeneration[0].totalAmount
                                 response.WaterConnection[i].status = data.billGeneration[0].status
+                                response.WaterConnection[i].error = ""
                             }
 
                         } else {
                             response.WaterConnection[i].due = "NA"
                             response.WaterConnection[i].status = "NA"
+                            response.WaterConnection[i].error = ""
                         }
 
                     } catch (err) {
                         console.log(err)
                         response.WaterConnection[i].due = "NA"
                         response.WaterConnection[i].status = "NA"
+                        response.WaterConnection[i].error = err.message
+                        //Error.message
                     }
                 }
             }
@@ -366,7 +370,7 @@ export const getMyApplicationResults = async (queryObject, dispatch) => {
                         const data = await httpRequest(
                             "post",
                             //`billing-service/bill/v2/_fetchbill?consumerCode=${response.WaterConnection[i].applicationNo}&tenantId=${response.WaterConnection[i].property.tenantId}&businessService=WS.ONE_TIME_FEE`,
-                            'ws-calculator/billing/_getBillData',
+                            '/ws-services/billGeneration/_getBillData',
                             "_search",
                              queryObject
                         );
@@ -386,17 +390,20 @@ export const getMyApplicationResults = async (queryObject, dispatch) => {
                             if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
                                response.WaterConnection[i].due = 0//data.billGeneration[0].totalAmount
                                 response.WaterConnection[i].status = data.billGeneration[0].status
+                                response.WaterConnection[i].error = ""
                             }
 
                         } else {
                             response.WaterConnection[i].due = "NA"
                             response.WaterConnection[i].status = "NA"
+                            response.WaterConnection[i].error = ""
                         }
 
                     } catch (err) {
                         console.log(err)
                         response.WaterConnection[i].due = "NA"
                         response.WaterConnection[i].status = "NA"
+                        response.WaterConnection[i].error = err.message
                     }
                 }
             }
@@ -435,7 +442,7 @@ export const getSWMyApplicationResults = async (queryObject, dispatch) => {
                         const data = await httpRequest(
                             "post",
                             //`billing-service/bill/v2/_fetchbill?consumerCode=${response.SewerageConnections[i].applicationNo}&tenantId=${response.SewerageConnections[i].property.tenantId}&businessService=SW.ONE_TIME_FEE`,
-                            'ws-calculator/billing/_getBillData',
+                            '/ws-services/billGeneration/_getBillData',
                             "_search",
                             queryObject
                         );
@@ -455,17 +462,20 @@ export const getSWMyApplicationResults = async (queryObject, dispatch) => {
                             if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
                                response.SewerageConnections[i].due = 0//data.billGeneration[0].totalAmount
                                 response.SewerageConnections[i].status = data.billGeneration[0].status
+                                response.SewerageConnections[i].error = ""
                             }
 
                         } else {
                             response.SewerageConnections[i].due = "NA"
                             response.SewerageConnections[i].status = "NA"
+                            response.SewerageConnections[i].error = ""
                         }
 
                     } catch (err) {
                         console.log(err)
                         response.SewerageConnections[i].due = "NA"
                         response.SewerageConnections[i].status = "NA"
+                        response.SewerageConnections[i].error = err.message
                     }
                 }
             }
@@ -839,8 +849,15 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             ''
         );
         const wnsStatus =  window.localStorage.getItem("WNS_STATUS"); 
+        const wns_workflow =  window.localStorage.getItem("wns_workflow"); 
                 if(wnsStatus){
                     activityType = wnsStatus
+                }
+                else
+                {
+                    if(wns_workflow){
+                        activityType = wnsStatus
+                    }
                 }
         //
             if(water)
@@ -867,15 +884,17 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
+                     || activityType ==='REGULARWSCONNECTION'
+                     || activityType ==='TEMPORARY_WSCONNECTION'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                 {
-                    if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
+                    if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP')
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.category === category)
                         // &&x.occupancycode === occupancycode)
                     }
-                    else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION')
+                    else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR')
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.occupancycode === occupancycode)
@@ -996,6 +1015,12 @@ const parserFunction = (state) => {
     let queryObject = JSON.parse(JSON.stringify(get(state.screenConfiguration.preparedFinalObject, "applyScreen", {})));
     let usageCategory ='SW_TEMP'
     let usageSubCategory =null
+    let isFerruleApplicable = false
+    if(queryObject.waterApplication.applicationStatus !=='PENDING_FOR_SECURITY_DEPOSIT')
+    {
+        isFerruleApplicable  =true;
+
+    }
     if(queryObject.water)
     {
         usageCategory =(queryObject.waterProperty.usageCategory === null || queryObject.waterProperty.usageCategory === "NA") ? "" : queryObject.waterProperty.usageCategory
@@ -1009,9 +1034,10 @@ const parserFunction = (state) => {
         proposedWaterClosets: parseInt(queryObject.proposedWaterClosets),
         proposedToilets: parseInt(queryObject.proposedToilets),
         noOfTaps: parseInt(queryObject.noOfTaps),
+        isFerruleApplicable:isFerruleApplicable,
         noOfWaterClosets: parseInt(queryObject.noOfWaterClosets),
         noOfToilets: parseInt(queryObject.noOfToilets),
-        proposedTaps: parseInt(queryObject.proposedTaps),        
+       // proposedTaps: parseInt(queryObject.proposedTaps),        
         waterApplicationType: (queryObject.waterApplicationType === null || queryObject.waterApplicationType === "NA") ? "" : queryObject.waterApplicationType,
         waterProperty :{
         //id : get(state.screenConfiguration.preparedFinalObject, "Properties.id", null),
@@ -1307,8 +1333,15 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                     ''
                 );
                 const wnsStatus =  window.localStorage.getItem("WNS_STATUS"); 
+                const wns_workflow =  window.localStorage.getItem("wns_workflow"); 
                 if(wnsStatus){
                     activityType = wnsStatus
+                }
+                else
+                {
+                    if(wns_workflow){
+                        activityType = wnsStatus
+                    }
                 }
                 //
             if(water)
@@ -1336,15 +1369,17 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
+                     || activityType ==='REGULARWSCONNECTION'
+                     || activityType ==='TEMPORARY_WSCONNECTION'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                 {
-                    if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
+                    if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP')
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.category === category)
                         // &&x.occupancycode === occupancycode)
                     }
-                    else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION')
+                    else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR')
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.occupancycode === occupancycode)
@@ -2195,7 +2230,7 @@ export const getSWMyConnectionResults = async (queryObject, dispatch) => {
                         const data = await httpRequest(
                             "post",
                             //`billing-service/bill/v2/_fetchbill?consumerCode=${response.WaterConnection[i].connectionNo}&tenantId=${response.WaterConnection[i].property.tenantId}&businessService=WS`,
-                            'ws-calculator/billing/_getBillData',
+                            '/ws-services/billGeneration/_getBillData',
                             "_search",
                             [],
                             queryObject
@@ -2219,17 +2254,20 @@ export const getSWMyConnectionResults = async (queryObject, dispatch) => {
                             if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
                                response.SewerageConnections[i].due = 0//data.billGeneration[0].totalAmount
                                 response.SewerageConnections[i].status = data.billGeneration[0].status
+                                response.SewerageConnections[i].error = ""
                             }
 
                         } else {
                             response.SewerageConnections[i].due = "NA"
                             response.SewerageConnections[i].status = "NA"
+                            response.SewerageConnections[i].error = ""
                         }
 
                     } catch (err) {
                         console.log(err)
                         response.SewerageConnections[i].due = "NA"
                         response.SewerageConnections[i].status = "NA"
+                        response.SewerageConnections[i].error = err.message
                     }
                 }
             }
