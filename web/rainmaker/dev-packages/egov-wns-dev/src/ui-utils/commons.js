@@ -686,10 +686,10 @@ export const validateFeildsForBothWaterAndSewerage = (applyScreenObject) => {
         applyScreenObject.hasOwnProperty("sewerage") &&
         applyScreenObject["sewerage"] !== undefined &&
         applyScreenObject["sewerage"] !== "" &&
-        applyScreenObject.hasOwnProperty("proposedTaps") &&
-        applyScreenObject["proposedTaps"] !== undefined &&
-        applyScreenObject["proposedTaps"] !== "" &&
-        applyScreenObject["proposedTaps"].match(/^[0-9]*$/i) &&
+        // applyScreenObject.hasOwnProperty("proposedTaps") &&
+        // applyScreenObject["proposedTaps"] !== undefined &&
+        // applyScreenObject["proposedTaps"] !== "" &&
+        // applyScreenObject["proposedTaps"].match(/^[0-9]*$/i) &&
         applyScreenObject.hasOwnProperty("proposedPipeSize") &&
         applyScreenObject["proposedPipeSize"] !== undefined &&
         applyScreenObject["proposedPipeSize"] !== "" &&
@@ -715,10 +715,10 @@ export const validateFeildsForWater = (applyScreenObject) => {
         applyScreenObject.hasOwnProperty("sewerage") &&
         applyScreenObject["sewerage"] !== undefined &&
         applyScreenObject["sewerage"] !== "" &&
-        applyScreenObject.hasOwnProperty("proposedTaps") &&
-        applyScreenObject["proposedTaps"] !== undefined &&
-        applyScreenObject["proposedTaps"] !== "" &&
-        applyScreenObject["proposedTaps"].match(/^[0-9]*$/i) &&
+        // applyScreenObject.hasOwnProperty("proposedTaps") &&
+        // applyScreenObject["proposedTaps"] !== undefined &&
+        // applyScreenObject["proposedTaps"] !== "" &&
+        // applyScreenObject["proposedTaps"].match(/^[0-9]*$/i) &&
         applyScreenObject.hasOwnProperty("proposedPipeSize") &&
         applyScreenObject["proposedPipeSize"] !== undefined &&
         applyScreenObject["proposedPipeSize"] !== ""
@@ -856,7 +856,7 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 else
                 {
                     if(wns_workflow){
-                        activityType = wnsStatus
+                        activityType = wns_workflow
                     }
                 }
         //
@@ -886,6 +886,7 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
                      || activityType ==='REGULARWSCONNECTION'
                      || activityType ==='TEMPORARY_WSCONNECTION'
+                     || activityType === 'WS_TUBEWELL'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                 {
                     if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP')
@@ -1016,10 +1017,14 @@ const parserFunction = (state) => {
     let usageCategory ='SW_TEMP'
     let usageSubCategory =null
     let isFerruleApplicable = false
-    if(queryObject.waterApplication.applicationStatus !=='PENDING_FOR_SECURITY_DEPOSIT')
+    if(queryObject.waterApplication && queryObject.waterApplication!== undefined)
     {
-        isFerruleApplicable  =true;
-
+        if (queryObject.waterApplication.applicationStatus !== 'PENDING_FOR_SECURITY_DEPOSIT') {
+            isFerruleApplicable = true;
+        }
+    }
+    else{
+        isFerruleApplicable = true;
     }
     if(queryObject.water)
     {
@@ -1340,7 +1345,7 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 else
                 {
                     if(wns_workflow){
-                        activityType = wnsStatus
+                        activityType = wns_workflow
                     }
                 }
                 //
@@ -1371,6 +1376,7 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
                      || activityType ==='REGULARWSCONNECTION'
                      || activityType ==='TEMPORARY_WSCONNECTION'
+                     || activityType === 'WS_TUBEWELL'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                 {
                     if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP')

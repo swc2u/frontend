@@ -101,7 +101,7 @@ export const aadharNo = getLabelWithValue(
     labelKey: "WS_OWN_DETAIL_ADDHAR_NO",
     callBack: handleNA 
   },
-  { jsonPath: "WaterConnection[0].property.owners[0].aadharNo" }
+  { jsonPath: "WaterConnection[0].aadharNo" }
 )
 export const getOwnerDetails = (isEditable = true) => {
   return getCommonGrayCard({

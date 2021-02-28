@@ -674,6 +674,43 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" ||
            }
         
        // propertyPayload.address.locality.code = propertyPayload.address.locality.code.value;
+       // validate water field 
+       if (water) {
+        if (validateFeildsForWater(applyScreenObject)) {
+          isFormValid = true;
+          hasFieldToaster = false;
+        } else {
+          isFormValid = false;
+          dispatch(
+            toggleSnackbar(
+              true, {
+              labelKey: "WS_FILL_REQUIRED_FIELDS",
+              labelName: "Please fill Required details"
+            },
+              "warning"
+            )
+          )
+          return;
+        }
+      }
+      if (sewerage) {
+        if (validateFeildsForSewerage(applyScreenObject)) {
+          isFormValid = true;
+          hasFieldToaster = false;
+        } else {
+          isFormValid = false;
+          dispatch(
+            toggleSnackbar(
+              true, {
+              labelKey: "WS_FILL_REQUIRED_FIELDS",
+              labelName: "Please fill Required details"
+            },
+              "warning"
+            )
+          )
+          return;
+        }
+      }
         propertyPayload.rainWaterHarvesting=false;
         try {
         propertyPayload.creationReason = 'CREATE';

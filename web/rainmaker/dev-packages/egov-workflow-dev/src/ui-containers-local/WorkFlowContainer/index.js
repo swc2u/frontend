@@ -274,9 +274,10 @@ class WorkFlowContainer extends React.Component {
         if(curstateactions && curstateactions[0])
         {
           nextActions = curstateactions[0].actions.filter(x=>x.action === data.action)
-          if(nextStateid !== undefined && nextStateid !== null)
+          if(nextActions !== undefined && nextActions !== null)
           {
           nextStateid = nextActions[0].nextState
+          if(nextStateid !== undefined && nextStateid !== null)
           businessServiceData = businessServiceData[0].states.filter(x=>x.uuid === nextStateid )
           }
         } 
@@ -372,9 +373,7 @@ class WorkFlowContainer extends React.Component {
       || moduleName === "WS_TUBEWELL")
       {
         validRequest =  this.ValidateRequest(data)
-
-      }
-    
+      }   
 
     try {
       let payload = null
@@ -386,11 +385,21 @@ class WorkFlowContainer extends React.Component {
       payload = response
     }
     else{
+
+      let labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
+      if(data.applicationStatus ==='PENDING_FOR_SECURITY_DEPOSIT' && data.action==='VERIFY_AND_FORWARD_FOR_PAYMENT')
+      {
+        labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
+      }
+      else if(data.applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN' && data.action ==='SUBMIT_ROADCUT_NOC')
+      {
+        labelKey = 'WS_SUBMIT_ROADCUT_NOC_VALIDATION_MESSAGE'
+      }
       toggleSnackbar(
         true,
         {
           labelName: "Please update filed which is use in calculation",
-          labelKey: 'WS_REQUEST_VALIDATION_MESSAGE'
+          labelKey: labelKey
         },
         "error"
       ); 
@@ -686,6 +695,35 @@ ValidateRequest =(payload) =>{
     /// end
 
   }
+  // validation to check road cut document uploaded
+  else if(payload.applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN' && payload.action ==='SUBMIT_ROADCUT_NOC')
+  {
+    let activityType_=  payload.activityType
+    let documents=  get(payload, "documents",[]);
+    if(documents !== undefined && documents!== null && documents.length>0)
+    {
+      let duplicatedoc =  documents.filter(x=>x.documentCode === `${activityType_}_ROADCUT_NOC`)
+      if(duplicatedoc !== undefined)
+        {
+        if(duplicatedoc && duplicatedoc.length == 0)
+        {
+          isvalidRequest = false
+          
+        }
+        else{
+          isvalidRequest = true
+        }
+      }
+      else{
+        isvalidRequest = true
+      }
+    }
+    else
+   {
+     isvalidRequest = true
+    }
+
+  }
   else{
     isvalidRequest = true
     payload.waterApplication.isFerruleApplicable = true;
@@ -702,7 +740,7 @@ ValidateRequest =(payload) =>{
   {
     payload.waterApplicationType = "REGULAR";
   }
-
+//return  false
   return isvalidRequest
 }
   getHeaderName = action => {

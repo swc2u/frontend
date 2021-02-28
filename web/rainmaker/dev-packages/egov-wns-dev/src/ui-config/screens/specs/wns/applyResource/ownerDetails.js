@@ -325,7 +325,7 @@ export const getOwnerDetails = (isEditable = true) => {
               required: false,
               
              // errorMessage: "Invalid Address",
-              jsonPath: "applyScreen.property.owners[0].aadharNo",
+              jsonPath: "applyScreen.aadharNo",
               gridDefination: {
                 xs: 12,
                 sm: 6
@@ -543,7 +543,7 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
               required: true,
               
              // errorMessage: "Invalid Address",
-              jsonPath: "applyScreen.property.owners[0].aadharNo",
+              jsonPath: "applyScreen.aadharNo",
               gridDefination: {
                 xs: 12,
                 sm: 6
