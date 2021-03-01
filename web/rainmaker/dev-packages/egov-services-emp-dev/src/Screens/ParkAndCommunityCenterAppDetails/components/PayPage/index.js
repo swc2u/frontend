@@ -111,6 +111,10 @@ class SummaryDetails extends Component {
     prepareFinalObject("ChangeDdDate", cDdDate)
 }
 
+GoToApplyPage = (e) => {
+    this.props.history.push(`/egov-services/applyPark-community-center`);
+}
+
     submit = async (e) => {
     
     // alert("hello generate receipt")
@@ -404,10 +408,19 @@ Status={this.props.ApplicantAppStatus && this.props.ApplicantAppStatus}
                             primary={true}
                             label={<Label buttonLabel={true} label="BK_CORE_COMMON_GOBACK" />}
                             fullWidth={true}
-                            onClick={this.back}
+                             onClick={this.back}
                             style={{ marginRight: 18 }}
                             startIcon={<ArrowBackIosIcon />}
                         /> */}
+                         <Button
+                className="responsive-action-button"
+                primary={true}
+                label={<Label buttonLabel={true} label="BK_MYBK_PAYMENT_PAGE_BACK" />}
+                fullWidth={true}
+                onClick={this.GoToApplyPage}
+                style={{ marginRight: 18 }}
+                startIcon={<ArrowBackIosIcon />}
+              />
                         <Button
                             className="responsive-action-button"
                             primary={true}

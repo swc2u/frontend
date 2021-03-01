@@ -22,7 +22,7 @@ return (
               
               <div className="complaint-detail-detail-section-status row">
               <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CC_ROOM_NAME" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_NAME_CITIZEN_PLACEHOLDER" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
@@ -31,7 +31,7 @@ return (
                                 />
                             </div>
                             <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CC_ROOM_PURPOSE" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_NAME_PURPOSE_PLACEHOLDER" />
                                 <Label
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
@@ -40,7 +40,7 @@ return (
                                 />
                             </div>
                             <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CC_ROOM_HOUSENO" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CITIZEN_HOUSE_NUMBER_PLACEHOLDER" />
                                 <Label
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
@@ -50,7 +50,7 @@ return (
                             </div>
 
                             <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CC_ROOM_MOBILENO" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CITIZEN_MOBILENO_PLACEHOLDER" />
                                 <Label
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
@@ -67,7 +67,7 @@ return (
                                     id="complaint-details-complaint-number"
                                     label={this.props.Sector}
                                 />
-                                </div>
+                                </div> 
 
                             <div className="col-md-4">
                                 <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CC_ROOM_GST_NO" />

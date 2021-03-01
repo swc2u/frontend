@@ -1,7 +1,7 @@
 import * as actionTypes from "./actionTypes";
 // import {CREATEBWTAPPLICATION,APPLICATION,MCCAPPLICATION, COMPLAINT, CATEGORY,PAYMENT,HISTORY,AFTERPAYMENTAPI,DWONLOADPAYMENTRECEIPT,DOWNLOADBWTAPPLICATION,DOWNLOADAPPLICATION,DWONLOADPERMISSIONLETTER,OSBMPerDayRateAmount,PerDayRateAmount,DWONLOADNEWRECEIPTFORCG,PermissionLetterDWNOSMCC,ApplicationDWNOSMCC, DWONLOADPAYMENTRECEIPTFORCG,DWONLOADAPPLICATIONFORCG,CREATEPACCAPPLICATION } from "../../utils/endPoints";
 import {CREATEBWTAPPLICATION,PGService,DWONLOADPLFORPCC,DWONLOADRECEIPTFORPCC,APPLICATION,MCCAPPLICATION, COMPLAINT, CATEGORY,PAYMENT,HISTORY,AFTERPAYMENTAPI,DWONLOADPAYMENTRECEIPT,DOWNLOADBWTAPPLICATION,DOWNLOADAPPLICATION,DWONLOADPERMISSIONLETTER,OSBMPerDayRateAmount,PerDayRateAmount,DWONLOADNEWRECEIPTFORCG,PermissionLetterDWNOSMCC,ApplicationDWNOSMCC, DWONLOADPAYMENTRECEIPTFORCG,DWONLOADAPPLICATIONFORCG,DWONLOADAPPFORPCC,CREATEPACCAPPLICATION,UPDATEPACCAPPLICATION,ESAMPARK,ESAMPARKPL,WATERTANKERPAYRECEIPT
-,DownloadEmpRoomPaymentReceipt,DownloadEmpRoomPermissionLetter,DownloadEmpPACCPermissionLetter} from "egov-ui-kit/utils/endPoints";
+,DownloadEmpRoomPaymentReceipt,DownloadEmpRoomPermissionLetter,DownloadEmpPACCPermissionLetter,DownloadESAMPRECEIPT} from "egov-ui-kit/utils/endPoints";
 import { httpRequest } from "egov-ui-kit/utils/api";
 import commonConfig from "config/common.js";
 
@@ -474,7 +474,7 @@ export const downloadBWTApplication = (requestBody, hasUsers = true, overWrite) 
 		} catch (error) {
 			dispatch(downloadBWTApplicationError(error.message));
 		}
-	};
+	}; 
 	};
 	//PACC
 	export const downloadPaccPermissionLetter = (requestBody, hasUsers = true, overWrite) => {
@@ -503,6 +503,34 @@ export const downloadBWTApplication = (requestBody, hasUsers = true, overWrite) 
 				error,
 			};
 		};
+//e-sam payment receipt
+
+export const downloadEsampPaymentReceipt = (requestBody, hasUsers = true, overWrite) => {
+	return async (dispatch, getState) => {
+		try {
+			let tenantId = "";
+			const payload = await httpRequest(DownloadESAMPRECEIPT.POST.URL, DownloadESAMPRECEIPT.POST.ACTION, [], requestBody);
+			console.log('payload6----6', payload)
+			dispatch(DownloadESAMPRECEIPTComplete(payload, overWrite));
+		} catch (error) {
+			dispatch(DownloadESAMPRECEIPTError(error.message));
+		}
+	};
+	};
+	const DownloadESAMPRECEIPTComplete = (payload, overWrite) => {
+		console.log('payload', payload, overWrite)
+		return {
+			type: actionTypes.ESAMPARKRECEIPTCOMPLETE,
+			payload,
+			overWrite: overWrite,
+		};
+	};
+	const DownloadESAMPRECEIPTError = (error) => {
+		return {
+			type: actionTypes.ESAMPARKRECEIPTCOMPLETE_ERROR,
+			error,
+		};
+	};
 
 
 	//Room

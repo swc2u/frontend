@@ -321,7 +321,9 @@ console.log("Booking-requestBody--",Booking)
       <Screen loading={loading}>
       <div className="success-message-main-screen resolve-success">
       <SuccessMessageForPayment
-         headermessage="Collection Details"
+        //  headermessage="Collection Details"
+		//{`Parks & Community Centre/Banquet hall application number`}
+	      headermessage = {`Parks & Community Centre/Banquet hall`}
           successmessage="Payment has been collected successfully!"
           secondaryLabel="A notification regarding Payment Collection has been sent to property owner at registered Mobile No."
           containerStyle={{ display: "inline-block" }}

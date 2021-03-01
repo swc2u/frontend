@@ -109,6 +109,22 @@ const complaintsReducer = (state = intialState, action) => {
                         error: true,
                         errorMessage: action.error,
                       };     
+                      case actionTypes.ESAMPARKRECEIPTCOMPLETE:
+                    console.log('BOOKING_DATA_COMPLETE',action.payload)
+                    return {
+                      ...state,
+                      loading: false,
+                      fetchSuccess: true,
+                      PaymentReceiptByESamp: action.payload
+                    };
+                    case actionTypes.ESAMPARKRECEIPTCOMPLETE_ERROR:
+                      return {
+                        ...state,
+                        loading: false,
+                        fetchSuccess: true,
+                        error: true,
+                        errorMessage: action.error,
+                      };     
     case actionTypes.CREATE_WATER_TANKER_COMPLETE:
       return {
         ...state,
