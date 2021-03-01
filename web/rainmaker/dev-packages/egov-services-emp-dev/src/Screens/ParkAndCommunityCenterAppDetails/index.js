@@ -45,7 +45,7 @@ import {
 import {
 	fetchApplications,fetchPayment, fetchHistory, fetchDataAfterPayment, downloadReceiptForPCC, downloadAppForPCC,
 	sendMessage, downloadPLForPCC,
-	sendMessageMedia
+	sendMessageMedia,downloadEsampPaymentReceipt,downloadPaccPermissionLetter
 } from "egov-ui-kit/redux/bookings/actions";
 import { connect } from "react-redux";
 import DialogContainer from '../../modules/DialogContainer';
@@ -774,59 +774,127 @@ console.log("AmountCondition--",AmountCondition)
 
 	downloadPaymentReceiptFunction = async (e) => {
 		const { transformedComplaint, paymentDetailsForReceipt,paymentDetails,offlineTransactionDate, offlinePayementMode,offlineTransactionNum,
-			six,one,recNumber,	downloadReceiptForPCC, userInfo,selectedComplaint } = this.props;
+			six,one,recNumber,	downloadReceiptForPCC, userInfo,selectedComplaint,downloadEsampPaymentReceipt,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE } = this.props;
 		const { complaint } = transformedComplaint;
 
-
-		let BookingInfo = [{
-			"applicantDetail": {
-				"name":  selectedComplaint.bkApplicantName,
-				"mobileNumber": selectedComplaint.bkMobileNumber,
-				"houseNo": selectedComplaint.bkHouseNo,
-				"permanentAddress": "",
-				"permanentCity": "Chandigarh",
-				"sector": selectedComplaint.bkSector
-			},
-			"booking": {
-				"bkApplicationNumber": selectedComplaint.bkApplicationNumber
-			},
-			"paymentInfo": {
-				"paymentDate": convertEpochToDate(offlineTransactionDate, "dayend"),
-				"transactionId": offlineTransactionNum,
-				"bookingPeriod": getDurationDate(
-					selectedComplaint.bkFromDate,
-					selectedComplaint.bkToDate
-				),
-				"bookingItem": `Online Payment Against Booking of ${selectedComplaint.bkLocation}`,
-				"amountInWords":  this.NumInWords(paymentDetails && paymentDetails.totalAmount),
-				paymentItemExtraColumnLabel: "Booking Period",
-				"paymentMode": offlinePayementMode,
-				"receiptNo": recNumber,
-				"baseCharge": one,
-				"cleaningCharges": selectedComplaint.bkCleansingCharges,
-				"surcharges": selectedComplaint.bkSurchargeRent,
-				"facilitationCharge": six,
-				"utgst": selectedComplaint.bkCgst,
-				"cgst": selectedComplaint.bkCgst,
-				"gst": selectedComplaint.bkCgst,
-				"totalAmount": paymentDetails && paymentDetails.totalAmount
-			},
-			"payerInfo": {
-				"payerName":  selectedComplaint.bkApplicantName,
-				"payerMobile": selectedComplaint.bkMobileNumber,
-			},
-			"generatedBy": {
-				"generatedBy": userInfo.name
-			},
-			"tenantInfo": {
-				"municipalityName": "Municipal Corporation Chandigarh",
-				"address": "New Deluxe Building, Sector 17, Chandigarh",
-				"contactNumber": "+91-172-2541002, 0172-2541003"
-			}
+let applicationDetails = selectedComplaint
+		let Newugst;
+		let perFind = 50;
+		let ugst = PACC_TAX 
+		let find50Per = (perFind/100) * ugst
+		console.log("find50Per--",find50Per)		
+		let findNumOrNot = Number.isInteger(find50Per);
+		console.log("findNumOrNot--",findNumOrNot)
+		if(findNumOrNot == true){
+		  Newugst = find50Per
+		  console.log("trueCondition")
 		}
-		]
-		downloadReceiptForPCC({ BookingInfo: BookingInfo })
-	}
+		else{
+		  Newugst = find50Per.toFixed(2);
+		  console.log("second-Newugst-",Newugst)
+		}
+	
+		let approverName;
+	  for(let i = 0; i < userInfo.roles.length ; i++ ){
+		if(userInfo.roles[i].code == "BK_E-SAMPARK-CENTER"){
+		  approverName = userInfo.roles[i].name
+		}
+	  }
+		// let fdocname = Object.entries(documentMap)[0][1]
+	
+		let BookingInfo = [
+		  {
+			  "applicantDetail": {
+				"name": applicationDetails.bkApplicantName,
+				"mobileNumber":applicationDetails.bkMobileNumber,
+				"email": applicationDetails.bkEmail,
+				  "permanentAddress": "",
+				  "permanentCity": "Chandigarh",
+				  "sector": applicationDetails.bkSector,
+				  "fatherName": "",
+				  "custGSTN": applicationDetails.bkCustomerGstNo,
+				  "placeOfService": "Chandigarh"
+			  },
+			  "bookingDetail": {
+				  "applicationNumber": applicationDetails.bkApplicationNumber,
+				  "applicationDate":applicationDetails. createdDate,
+				  "bookingPeriod": getDurationDate(
+					applicationDetails.bkFromDate,
+					applicationDetails.bkToDate
+				  ),
+				  "bookingType": applicationDetails.bkBookingType,
+				  "venueName": applicationDetails.bkLocation,
+				  "sector": applicationDetails.bkSector,
+				  "bookingPurpose": applicationDetails.bkBookingPurpose,
+				  
+			  },
+			  "booking": {
+				  "bkLocation": applicationDetails.bkLocation,
+				  "bkDept": applicationDetails.bkBookingType,
+				  "bkFromTo": getDurationDate(
+					applicationDetails.bkFromDate,
+					applicationDetails.bkToDate
+				  ),
+			  },
+			  "generated": {
+				"generatedBy": userInfo.name,
+			  },
+			  "approvedBy": {
+				"approvedBy": userInfo.name,      
+				"role": approverName
+			},
+			"emp": {
+				"samparkName": this.state.name,
+				"address":this.state.Address,
+				"OpCode":this.state.operatorCode
+			},
+			  "paymentInfo": {
+				"cleaningCharges": applicationDetails.bkCleansingCharges,
+				"baseCharge": PACC,
+				"cgst" :applicationDetails.bkCgst,
+				"utgst": applicationDetails.bkCgst,
+				"totalgst": PACC_TAX,
+				"refundableCharges": applicationDetails.bkRefundAmount,
+				"totalPayment": this.props.totalAmount,
+				"paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
+				"receiptNo": this.props.recNumber,
+				  "paymentType": this.props.offlinePayementMode,
+				  "facilitationCharge": FACILITATION_CHARGE,
+				  "discType": applicationDetails.discount,
+				  "transactionId": this.props.offlineTransactionNum,
+				  "totalPaymentInWords": this.NumInWords(
+					this.props.totalAmount
+				  ),  //offlineTransactionDate,,
+				  "bankName":""
+			  },
+			  "OtherDetails": {
+				"clchargeforwest":  applicationDetails.bkCleansingCharges,
+				"westaddress": "",
+				"clchargeforother": ""
+			},
+			  "tenantInfo": {
+				  "municipalityName": "Municipal Corporation Chandigarh",
+				  "address": "New Deluxe Building, Sector 17, Chandigarh",
+				  "contactNumber": "+91-172-2541002, 0172-2541003",
+				  "logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
+				  "webSite": "http://mcchandigarh.gov.in",
+				  "mcGSTN": "",
+				  "statecode": "998",
+				  "hsncode": this.state.hsnCode 
+			  },
+	  
+			  "bankInfo": {
+				"accountholderName": applicationDetails.bkBankAccountHolder,
+				"rBankName": applicationDetails.bkBankName,
+				"rBankACNo": applicationDetails.bkBankAccountNumber,
+				"rIFSCCode": applicationDetails.bkIfscCode
+			}
+	
+	
+		  }
+	  ]
+	  downloadEsampPaymentReceipt({ BookingInfo: BookingInfo })
+	 };
 
 	downloadApplicationFunction = async (e) => {
 		const { downloadEsamparkApp, userInfo,createPACCApplicationData,selectedComplaint,documentMap,six} = this.props;
@@ -877,12 +945,13 @@ console.log("AmountCondition--",AmountCondition)
 	  downloadEsamparkApp({ BookingInfo: BookingInfo })
 	  };
 
-	downloadApplicationButton = async (e) => {
-		await this.downloadApplicationFunction();
-		const { DownloadApplicationDetails,userInfo,Downloadesamparkdetails } = this.props;
-		var documentsPreview = [];
-		let documentsPreviewData;
-		if (Downloadesamparkdetails && Downloadesamparkdetails.filestoreIds.length > 0) {	
+	downloadApplicationButton = async (mode) => {
+		await this.downloadApplicationFunction();//Downloadesamparkdetails
+		setTimeout(async()=>{
+			let documentsPreviewData;
+			const { Downloadesamparkdetails,userInfo } = this.props;
+			var documentsPreview = [];
+			if (Downloadesamparkdetails && Downloadesamparkdetails.filestoreIds.length > 0) {	
 			documentsPreviewData = Downloadesamparkdetails.filestoreIds[0];
 				documentsPreview.push({
 					title: "DOC_DOC_PICTURE",
@@ -892,8 +961,8 @@ console.log("AmountCondition--",AmountCondition)
 				let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
 				let fileUrls =
 					fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-				
-					
+			
+	
 				documentsPreview = documentsPreview.map(function (doc, index) {
 					doc["link"] =
 						(fileUrls &&
@@ -914,168 +983,299 @@ console.log("AmountCondition--",AmountCondition)
 						`Document - ${index + 1}`;
 					return doc;
 				});
-			
-				setTimeout(() => {
+				
+				if(mode==='print'){
+	
+					var response = await axios.get(documentsPreview[0].link, {
+						//responseType: "blob",
+						responseType: "arraybuffer",
+						
+						
+						headers: {
+							"Content-Type": "application/json",
+							Accept: "application/pdf",
+						},
+					});
+					console.log("responseData---", response);
+					const file = new Blob([response.data], { type: "application/pdf" });
+					const fileURL = URL.createObjectURL(file);
+					var myWindow = window.open(fileURL);
+					if (myWindow != undefined) {
+						myWindow.addEventListener("load", (event) => {
+							myWindow.focus();
+							myWindow.print();
+						});
+					}
+	
+				}
+				else{
+	
+					setTimeout(() => {
 					
-					window.open(documentsPreview[0].link);
-				}, 100);
+						window.open(documentsPreview[0].link);
+					}, 100);
+				}
+				
 				prepareFinalObject('documentsPreview', documentsPreview)
 			}
+		},1500)
 
 	}
 
-	downloadPermissionLetterButton = async (e) => {
-		await this.downloadPermissionLetterFunction();
-		let documentsPreviewData;
-		const { DownloadPermissionLetterDetails,userInfo,Downloadesamparkdetailspl
-		} = this.props;
-		var documentsPreview = [];
-		if (Downloadesamparkdetailspl
-			&& Downloadesamparkdetailspl
-			.filestoreIds.length > 0) {
-			 documentsPreviewData=Downloadesamparkdetailspl
-			 .filestoreIds[0];
-			documentsPreview.push({
-				title: "DOC_DOC_PICTURE",
-				fileStoreId: documentsPreviewData,
-				linkText: "View",
-			});
-			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-			let fileUrls =
-				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-		
-	
-			documentsPreview = documentsPreview.map(function (doc, index) {
-				doc["link"] =
-					(fileUrls &&
-						fileUrls[doc.fileStoreId] &&
-						fileUrls[doc.fileStoreId].split(",")[0]) ||
-					"";
-				
-				doc["name"] =
-					(fileUrls[doc.fileStoreId] &&
-						decodeURIComponent(
-							fileUrls[doc.fileStoreId]
-								.split(",")[0]
-								.split("?")[0]
-								.split("/")
-								.pop()
-								.slice(13)
-						)) ||
-					`Document - ${index + 1}`;
-				return doc;
-			});
+	downloadPermissionLetterButton = async (mode) => {
+		await this.downloadPermissionLetterFunction(); //
+		setTimeout(async()=>{
+			let documentsPreviewData;
+			const { EmpPaccPermissionLetter,userInfo } = this.props;
+			var documentsPreview = [];
+			if (EmpPaccPermissionLetter && EmpPaccPermissionLetter.filestoreIds.length > 0) {	
+			documentsPreviewData = EmpPaccPermissionLetter.filestoreIds[0];
+				documentsPreview.push({
+					title: "DOC_DOC_PICTURE",
+					fileStoreId: documentsPreviewData,
+					linkText: "View",
+				});
+				let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+				let fileUrls =
+					fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
 			
-			setTimeout(() => {
-				window.open(documentsPreview[0].link);
-			}, 100);
-			prepareFinalObject('documentsPreview', documentsPreview)
-		}
 	
+				documentsPreview = documentsPreview.map(function (doc, index) {
+					doc["link"] =
+						(fileUrls &&
+							fileUrls[doc.fileStoreId] &&
+							fileUrls[doc.fileStoreId].split(",")[0]) ||
+						"";
+					
+					doc["name"] =
+						(fileUrls[doc.fileStoreId] &&
+							decodeURIComponent(
+								fileUrls[doc.fileStoreId]
+									.split(",")[0]
+									.split("?")[0]
+									.split("/")
+									.pop()
+									.slice(13)
+							)) ||
+						`Document - ${index + 1}`;
+					return doc;
+				});
+				
+				if(mode==='print'){
+	
+					var response = await axios.get(documentsPreview[0].link, {
+						//responseType: "blob",
+						responseType: "arraybuffer",
+						
+						
+						headers: {
+							"Content-Type": "application/json",
+							Accept: "application/pdf",
+						},
+					});
+					console.log("responseData---", response);
+					const file = new Blob([response.data], { type: "application/pdf" });
+					const fileURL = URL.createObjectURL(file);
+					var myWindow = window.open(fileURL);
+					if (myWindow != undefined) {
+						myWindow.addEventListener("load", (event) => {
+							myWindow.focus();
+							myWindow.print();
+						});
+					}
+	
+				}
+				else{
+	
+					setTimeout(() => {
+					
+						window.open(documentsPreview[0].link);
+					}, 100);
+				}
+				
+				prepareFinalObject('documentsPreview', documentsPreview)
+			}
+		},1500)	
 	}
 
 	downloadPermissionLetterFunction = async (e) => {
-		const { transformedComplaint,paymentDetails,downloadPLForPCC ,userInfo,createPACCApplicationData,downloadEsamparkPL,Downloadesamparkdetailspl,selectedComplaint	} = this.props;
-		let applicationDetails = createPACCApplicationData ? createPACCApplicationData.data : '';
-		const {complaint} = transformedComplaint;
-		let receiptData = [
-			{
-				"applicantDetail": {
-					"name": selectedComplaint.bkApplicantName,
-					"mobileNumber": selectedComplaint.bkMobileNumber,
-					"houseNo":selectedComplaint.bkHouseNo,
-					"permanentAddress": " ",
-					"permanentCity": "Chandigarh",
-					"sector": selectedComplaint.bkSector,
-					"fatherName": ""
-				},
-				"bookingDetail": {
-					"applicationNumber": selectedComplaint.bkApplicationNumber,
-					"applicationDate": selectedComplaint.bkDateCreated,
-					"bookingType": selectedComplaint.bkBookingType,
-					"villageOrCity": null,
-					"residentialOrCommercial": null,
-					"areaRequired": null,
-					"category": null,
-					"typeOfConstruction": null,
-					"permissionPeriod": getDurationDate(
-						selectedComplaint.bkFromDate,
-						selectedComplaint.bkToDate
-					),
-					"bookingPeriod": getDurationDate(
-						selectedComplaint.bkFromDate,
-						selectedComplaint.bkToDate
-					),
-					"venueName": selectedComplaint.bkLocation,
-					"sector": selectedComplaint.bkSector,
-					"groundName": selectedComplaint.bkSector,
-					"bookingPupose": selectedComplaint.bkBookingPurpose,
-					"duration": "FULLDAY Months",
-					"categoryImage": "",
-					"parkDim": selectedComplaint.bkDimension
-				},
-				"generatedBy":{
-					"generatedBy": userInfo.name,
-				},
-				"approvedBy": {
-					"approvedBy": "Renil Commissioner",
-					"role": "Additional Commissioner"
-				},
-				"tenantInfo": {
-					"municipalityName": "Municipal Corporation Chandigarh",
-					"address": "New Deluxe Building, Sector 17, Chandigarh",
-					"contactNumber": "+91-172-2541002, 0172-2541003",
-					"logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
-					"webSite": "http://mcchandigarh.gov.in"
-				}
-			}]
-	
-			downloadEsamparkPL({BookingInfo:receiptData})
-	}
-
-	downloadPaymentReceiptButton = async (e) => {
-		this.downloadPaymentReceiptFunction();
-		let documentsPreviewData;
-		const { DownloadReceiptDetailsforPCC,userInfo } = this.props;
-		var documentsPreview = [];
-		if (DownloadReceiptDetailsforPCC && DownloadReceiptDetailsforPCC.filestoreIds.length > 0) {
-			documentsPreviewData = DownloadReceiptDetailsforPCC.filestoreIds[0];
-			documentsPreview.push({
-				title: "DOC_DOC_PICTURE",
-				fileStoreId: documentsPreviewData,
-				linkText: "View",
-			});
-			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-			let fileUrls =
-			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-
-
-			documentsPreview = documentsPreview.map(function (doc, index) {
-				doc["link"] =
-					(fileUrls &&
-						fileUrls[doc.fileStoreId] &&
-						fileUrls[doc.fileStoreId].split(",")[0]) ||
-					"";
-
-				doc["name"] =
-					(fileUrls[doc.fileStoreId] &&
-						decodeURIComponent(
-							fileUrls[doc.fileStoreId]
-								.split(",")[0]
-								.split("?")[0]
-								.split("/")
-								.pop()
-								.slice(13)
-						)) ||
-					`Document - ${index + 1}`;
-				return doc;
-			});
-
-			setTimeout(() => {
-				window.open(documentsPreview[0].link);
-			}, 100);
-			prepareFinalObject('documentsPreview', documentsPreview)
+		const { transformedComplaint,paymentDetails,downloadPLForPCC ,userInfo,createPACCApplicationData,downloadEsamparkPL,Downloadesamparkdetailspl,selectedComplaint,
+			PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE,downloadPaccPermissionLetter	} = this.props;
+			let applicationDetails = selectedComplaint;
+		let Newugst;
+		let perFind = 50;
+		let ugst = PACC_TAX 
+		let find50Per = (perFind/100) * ugst
+		console.log("find50Per--",find50Per)		
+		let findNumOrNot = Number.isInteger(find50Per);
+		console.log("findNumOrNot--",findNumOrNot)
+		if(findNumOrNot == true){
+		  Newugst = find50Per
+		  console.log("trueCondition")
 		}
+		else{
+		  Newugst = find50Per.toFixed(2);
+		  console.log("second-Newugst-",Newugst)
+		}
+	
+		let approverName;
+	  for(let i = 0; i < userInfo.roles.length ; i++ ){
+		if(userInfo.roles[i].code == "BK_E-SAMPARK-CENTER"){
+		  approverName = userInfo.roles[i].name
+		}
+	  }
+		// let fdocname = Object.entries(documentMap)[0][1]
+	   let BookingInfo  = [
+		 {
+		"applicantDetail": {
+		  "name": applicationDetails.bkApplicantName,
+		  "mobileNumber":applicationDetails.bkMobileNumber,
+		  "email": applicationDetails.bkEmail,
+		  "permanentAddress": "Not Applicable",
+		  "permanentCity": "Chandigarh",
+		  "sector": applicationDetails.bkSector,
+		  "fatherName": "",
+		  "custGSTN": applicationDetails.bkCustomerGstNo,
+		  "placeOfService": "Chandigarh"
+	  },
+				"bookingDetail": {
+				  "applicationNumber": applicationDetails.bkApplicationNumber,
+				  "applicationDate": applicationDetails.bkDateCreated,
+				  "bookingPeriod":  getDurationDate(
+					applicationDetails.bkFromDate,
+					applicationDetails.bkToDate
+				  ),
+				  "bookingType": applicationDetails.bkBookingType,
+				   "venueName": applicationDetails.bkLocation,
+				  "sector": applicationDetails.bkSector,
+				  "bookingPurpose": applicationDetails.bkBookingPurpose,
+			  },
+			  "generated": {
+				"generatedBy": userInfo.name,
+			  },
+			  "approvedBy": {
+				"approvedBy": userInfo.name,
+				"role": approverName
+			},
+			"emp": {
+				"samparkName": this.state.name,
+				"address":this.state.Address,
+				"OpCode":this.state.operatorCode
+			},
+	  //PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE     
+			  "paymentInfo": {
+				  "cleaningCharges": applicationDetails.bkCleansingCharges,
+				  "baseCharge": PACC,
+				  "cgst" :applicationDetails.bkCgst,
+				  "utgst": applicationDetails.bkCgst,
+				  "totalgst": PACC_TAX,
+				  "refundableCharges": applicationDetails.bkRefundAmount,
+				  "totalPayment": this.props.totalAmount,
+				  "paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
+				  "receiptNo": this.props.recNumber,
+			  },
+			  "OtherDetails": {
+				  "clchargeforwest":  applicationDetails.bkCleansingCharges,
+				  "westaddress": "",
+				  "clchargeforother": ""
+			  },
+			  "tenantInfo": {
+				  "municipalityName": "Municipal Corporation Chandigarh",
+				  "address": "New Deluxe Building, Sector 17, Chandigarh",
+				  "contactNumber": "+91-172-2541002, 0172-2541003",
+				  "logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
+				  "webSite": "http://mcchandigarh.gov.in",
+				  "statecode": "998",
+				  "hsncode": this.state.hsnCode,
+				  "mcGSTN":""
+			  },
+			  "bankInfo": {
+				  "accountholderName": applicationDetails.bkBankAccountHolder,
+				  "rBankName": applicationDetails.bkBankName,
+				  "rBankACNo": applicationDetails.bkBankAccountNumber,
+				  "rIFSCCode": applicationDetails.bkIfscCode
+			  }
+		  }
+	  ]
+	  // downloadEsamparkApp({ BookingInfo: BookingInfo })
+	  downloadPaccPermissionLetter({ BookingInfo: BookingInfo })
+	
+	  }
+
+	downloadPaymentReceiptButton = async (mode) => { //
+		this.downloadPaymentReceiptFunction();
+		setTimeout(async()=>{
+			let documentsPreviewData;
+			const { PaymentReceiptByESamp,userInfo } = this.props;
+			var documentsPreview = [];
+			if (PaymentReceiptByESamp && PaymentReceiptByESamp.filestoreIds.length > 0) {	
+			documentsPreviewData = PaymentReceiptByESamp.filestoreIds[0];
+				documentsPreview.push({
+					title: "DOC_DOC_PICTURE",
+					fileStoreId: documentsPreviewData,
+					linkText: "View",
+				});
+				let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+				let fileUrls =
+					fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+			
+	
+				documentsPreview = documentsPreview.map(function (doc, index) {
+					doc["link"] =
+						(fileUrls &&
+							fileUrls[doc.fileStoreId] &&
+							fileUrls[doc.fileStoreId].split(",")[0]) ||
+						"";
+					
+					doc["name"] =
+						(fileUrls[doc.fileStoreId] &&
+							decodeURIComponent(
+								fileUrls[doc.fileStoreId]
+									.split(",")[0]
+									.split("?")[0]
+									.split("/")
+									.pop()
+									.slice(13)
+							)) ||
+						`Document - ${index + 1}`;
+					return doc;
+				});
+				
+				if(mode==='print'){
+	
+					var response = await axios.get(documentsPreview[0].link, {
+						//responseType: "blob",
+						responseType: "arraybuffer",
+						
+						
+						headers: {
+							"Content-Type": "application/json",
+							Accept: "application/pdf",
+						},
+					});
+					console.log("responseData---", response);
+					const file = new Blob([response.data], { type: "application/pdf" });
+					const fileURL = URL.createObjectURL(file);
+					var myWindow = window.open(fileURL);
+					if (myWindow != undefined) {
+						myWindow.addEventListener("load", (event) => {
+							myWindow.focus();
+							myWindow.print();
+						});
+					}
+	
+				}
+				else{
+	
+					setTimeout(() => {
+					
+						window.open(documentsPreview[0].link);
+					}, 100);
+				}
+				
+				prepareFinalObject('documentsPreview', documentsPreview)
+			}
+		},1500)
 	}
 
 	callApiForDocumentData = async (e) => {
@@ -1412,7 +1612,7 @@ else{
 														variant: "outlined",
 														style: { marginLeft: 5, marginRight: 15, color: "#FE7A51", height: "60px" }, className: "tl-download-button"
 													},
-													menu: (complaint.bkPaymentStatus == 'SUCCESS') ? [{
+													menu:[{
 														label: {
 															labelName: "Receipt",
 															labelKey: "BK_MYBK_DOWNLOAD_RECEIPT"
@@ -1434,34 +1634,9 @@ else{
 															labelName: "Application",
 															labelKey: "BK_MYBK_PRINT_APPLICATION"
 														},
-														link: () => this.downloadApplicationButton('state', "dispatch", 'REJECT'),
+														link: () => this.downloadApplicationButton('Application'),
 														leftIcon: "assignment"
-													}] :
-														[{
-															label: {
-																labelName: "Receipt",
-																labelKey: "BK_MYBK_DOWNLOAD_RECEIPT"
-															},
-	
-															link: () => this.downloadPaymentReceiptButton('Receipt'),
-															leftIcon: "receipt"
-														},
-														{
-															label: {
-																labelName: "PermissionLetter",
-																labelKey: "BK_MYBK_DOWNLOAD_PERMISSION_LETTER"
-															},
-															link: () => this.downloadPermissionLetterButton('PermissionLetter'),
-															leftIcon: "book"
-														}, 
-														{
-															label: {
-																labelName: "Application",
-																labelKey: "BK_MYBK_PRINT_APPLICATION"
-															},
-															link: () => this.downloadApplicationButton('state', "dispatch", 'REJECT'),
-															leftIcon: "assignment"
-														}]
+													}] 
 												}} />
 											</div>
 											<div class="col-12 col-md-6 col-sm-3" >
@@ -1473,13 +1648,13 @@ else{
 														variant: "outlined",
 														style: { marginLeft: 5, marginRight: 15, color: "#FE7A51", height: "60px" }, className: "tl-download-button"
 													},
-													menu: (complaint.status == 'APPROVED') ? [{
+													menu: [{
 														label: {
 															labelName: "Receipt",
 															labelKey: "BK_MYBK_PRINT_RECEIPT"
 														},
 
-														link: () => this.downloadPaymentReceiptButton('Receipt'),
+														link: () => this.downloadPaymentReceiptButton('print'),
 														leftIcon: "receipt"
 													},
 													{
@@ -1487,23 +1662,24 @@ else{
 															labelName: "PermissionLetter",
 															labelKey: "BK_MYBK_DOWNLOAD_PERMISSION_LETTER"
 														},
-														link: () => this.downloadPermissionLetterButton('state', "dispatch", 'REJECT'),
+														link: () => this.downloadPermissionLetterButton('print'),
 														leftIcon: "book"
 													}, {
 														label: {
 															labelName: "Application",
 															labelKey: "BK_MYBK_PRINT_APPLICATION"
 														},
-														link: () => this.downloadApplicationButton('state', "dispatch", 'REJECT'),
-														leftIcon: "assignment"
-													}] : [{
-														label: {
-															labelName: "Application",
-															labelKey: "BK_MYBK_PRINT_APPLICATION"
-														},
-														link: () => this.downloadApplicationButton('state', "dispatch", 'REJECT'),
+														link: () => this.downloadApplicationButton('print'),
 														leftIcon: "assignment"
 													}]
+													// }] : [{
+													// 	label: {
+													// 		labelName: "Application",
+													// 		labelKey: "BK_MYBK_PRINT_APPLICATION"
+													// 	},
+													// 	link: () => this.downloadApplicationButton('print'),
+													// 	leftIcon: "assignment"
+													// }]
 												}} />
 
 											</div>
@@ -2012,8 +2188,8 @@ const mapStateToProps = (state, ownProps) => {
 	const { bookings, common, auth, form } = state;
 	const {DownloadReceiptDetailsforPCC} = bookings;
 
-	const { applicationData, createPACCApplicationData,Downloadesamparkdetails,Downloadesamparkdetailspl} = bookings;
-	const { DownloadPaymentReceiptDetails, DownloadApplicationDetails, DownloadPermissionLetterDetails} = bookings;
+	const { applicationData, createPACCApplicationData,Downloadesamparkdetails,Downloadesamparkdetailspl,PaymentReceiptByESamp} = bookings;
+	const { DownloadPaymentReceiptDetails, DownloadApplicationDetails, DownloadPermissionLetterDetails,EmpPaccPermissionLetter} = bookings;
 	const { id } = auth.userInfo;
 	const { employeeById, departmentById, designationsById, cities } =
 		common || {};
@@ -2169,20 +2345,24 @@ else{
 	  
 //transactionDate
 // let offlineTransactionDate = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].transactionDate : "NotFound"
-let offlineTransactionDate = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].transactionDate !== undefined && ReceiptPaymentDetails.Payments[0].transactionDate !== null ? (ReceiptPaymentDetails.Payments[0].transactionDate) : "NotFound"): "NotFound"): "NotFound"
+let offlineTransactionDate = ReceiptPaymentDetails !== undefined && ReceiptPaymentDetails !== null ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].transactionDate !== undefined && ReceiptPaymentDetails.Payments[0].transactionDate !== null ? (ReceiptPaymentDetails.Payments[0].transactionDate) : "NotFound"): "NotFound"): "NotFound"
 console.log("offlineTransactionDate--",offlineTransactionDate) 
 
 
 // let offlineTransactionNum = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].transactionNumber : "NotFound"
-let offlineTransactionNum = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].transactionNumber !== undefined && ReceiptPaymentDetails.Payments[0].transactionNumber !== null ? (ReceiptPaymentDetails.Payments[0].transactionNumber) : "NotFound"): "NotFound"): "NotFound"
+let offlineTransactionNum = ReceiptPaymentDetails !== undefined && ReceiptPaymentDetails !== null ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].transactionNumber !== undefined && ReceiptPaymentDetails.Payments[0].transactionNumber !== null ? (ReceiptPaymentDetails.Payments[0].transactionNumber) : "NotFound"): "NotFound"): "NotFound"
 console.log("offlineTransactionNum--",offlineTransactionNum) 
 //receipt Number
 
 // let recNumber = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].paymentDetails[0].receiptNumber : "NotFound"
-let recNumber = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].receiptNumber !== undefined && ReceiptPaymentDetails.Payments[0].receiptNumber !== null ? (ReceiptPaymentDetails.Payments[0].receiptNumber) : "NotFound"): "NotFound"): "NotFound"
+let recNumber = ReceiptPaymentDetails !== undefined && ReceiptPaymentDetails !== null? (ReceiptPaymentDetails.Payments.length > 0 ? 
+(ReceiptPaymentDetails.Payments[0].paymentDetails[0].receiptNumber !== undefined && ReceiptPaymentDetails.Payments[0].paymentDetails[0].receiptNumber
+	!== null ? (ReceiptPaymentDetails.Payments[0].paymentDetails[0].receiptNumber) : "NotFound"): "NotFound"): "NotFound"
 console.log("recNumber--",recNumber)
+
+                                                                                                
 //ReceiptPaymentDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
-let billAccountDetailsArray =  ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails): "NOt found Any Array") : "NOt found Any Array"
+let billAccountDetailsArray =  ReceiptPaymentDetails !== undefined && ReceiptPaymentDetails !== null ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails): "NOt found Any Array") : "NOt found Any Array"
 console.log("billAccountDetailsArray--",billAccountDetailsArray)
 let PACC = 0;
 let LUXURY_TAX = 0;
@@ -2360,7 +2540,8 @@ for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 			REFUNDABLE_SECURITY,
 			PACC_TAX,
 			PACC_ROUND_OFF,
-			FACILITATION_CHARGE,one,two,three,four,five,newRoomAppNumber,dataForBothSelection,roomsData
+			FACILITATION_CHARGE,one,two,three,four,five,newRoomAppNumber,dataForBothSelection,roomsData,
+			PaymentReceiptByESamp,EmpPaccPermissionLetter
 			
 		};
 	} else {
@@ -2388,9 +2569,10 @@ for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 			REFUNDABLE_SECURITY,
 			PACC_TAX,
 			PACC_ROUND_OFF,
-			FACILITATION_CHARGE,one,two,three,four,five,six,roomData
+			FACILITATION_CHARGE,one,two,three,four,five,six,roomData,
+			PaymentReceiptByESamp,EmpPaccPermissionLetter
 			
-		};
+		}; 
 	}
 };
 
@@ -2399,8 +2581,9 @@ const mapDispatchToProps = dispatch => {
 		fetchApplications: criteria => dispatch(fetchApplications(criteria)), //fetchResponseForRefdunf
 		// fetchResponseForRefdunf: criteria => dispatch(fetchResponseForRefdunf(criteria)),
 		fetchPayment: criteria => dispatch(fetchPayment(criteria)),
-		fetchDataAfterPayment: criteria => dispatch(fetchDataAfterPayment(criteria)),
-
+		fetchDataAfterPayment: criteria => dispatch(fetchDataAfterPayment(criteria)), //
+		downloadEsampPaymentReceipt: criteria => dispatch(downloadEsampPaymentReceipt(criteria)), 
+		downloadPaccPermissionLetter: criteria => dispatch(downloadPaccPermissionLetter(criteria)),
 		downloadReceiptForPCC: criteria => dispatch(downloadReceiptForPCC(criteria)),
 		downloadPLForPCC: criteria => dispatch(downloadPLForPCC(criteria)),
 		downloadAppForPCC: criteria => dispatch(downloadAppForPCC(criteria)),

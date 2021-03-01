@@ -377,6 +377,10 @@ export const DownloadEmpPACCPermissionLetter = {
     ACTION: "_search",
   },
 };
-//http://localhost:8080/pdf-service/v1/_create?key=bk-room-booking-pl-emp&tenantId=ch
 
-// http://localhost:8080/pdf-service/v1/_create?key=bk-pk-booking-pl-emp&tenantId=ch
+export const DownloadESAMPRECEIPT = {
+  POST: {
+    URL: "pdf-service/v1/_create?key=pacc-payment-receipt-new-emp",
+    ACTION: "_search",
+  },
+};
