@@ -910,17 +910,18 @@ ValidateRequest =(payload) =>{
     actions = actions.filter(item => item.buttonLabel !== 'INITIATE');
     //workflow change for water connection 
     if((businessService=='NewWS1' 
-      || businessService === "REGULARWSCONNECTION"  
-        || businessService === 'SW_SEWERAGE' 
-        || businessService === "TEMPORARY_WSCONNECTION"
-        || businessService === "WS_TEMP_TEMP" 
-        ||businessService === "WS_TEMP_REGULAR"
-        ||businessService === "WS_DISCONNECTION" 
-        ||businessService === "WS_TEMP_DISCONNECTION"
-        || businessService === "WS_RENAME" 
-        || businessService === "WS_CONVERSION" 
-        || businessService === "WS_REACTIVATE"     
-    || businessService === "WS_TUBEWELL") && applicationStatus == 'PENDING_FOR_SDE_APPROVAL'){
+      || businessService === "REGULARWSCONNECTION"  // 15 status ''
+        // || businessService === 'SW_SEWERAGE' 
+        // || businessService === "TEMPORARY_WSCONNECTION"
+        // || businessService === "WS_TEMP_TEMP" 
+        // || businessService === "WS_TEMP_REGULAR"
+        // || businessService === "WS_DISCONNECTION" 
+        // || businessService === "WS_TEMP_DISCONNECTION"
+        // || businessService === "WS_RENAME" 
+        // || businessService === "WS_CONVERSION" 
+        // || businessService === "WS_REACTIVATE"     
+        // || businessService === "WS_TUBEWELL"
+    ) && applicationStatus == 'PENDING_FOR_SDE_APPROVAL'){
       const {WaterConnection} = preparedFinalObject;
       let pipeSize = 0 ;
       //applicationStatus: "PENDING_FOR_SDE_APPROVAL"
@@ -930,35 +931,17 @@ ValidateRequest =(payload) =>{
        // actions = actions.filter(item => item.buttonLabel !== 'FORWARD');
        if(WaterConnection[0].applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
        actions = actions.filter(item => item.buttonLabel !== 'FORWARD_TO_EE');
-       else
-       actions = actions.filter(item => item.buttonLabel !== 'FORWARD');
-      }
-      else if (pipeSize >= 20 && pipeSize <= 40)
-      {
-        // required to modify the connection
-        actions = actions.filter(item => item.buttonLabel !== 'FORWARD_TO_JE_FOR_SECURITY_DEPOSIT');
-
+      //  else
+      //  actions = actions.filter(item => item.buttonLabel !== 'FORWARD');
       }
       else{
-        //actions = actions.filter(item => item.buttonLabel !== 'APPROVE_FOR_CONNECTION');
-        if(WaterConnection[0].applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
-        actions = actions.filter(item => item.buttonLabel !== 'FORWARD_TO_JE_FOR_SECURITY_DEPOSIT');
-        else
-       actions = actions.filter(item => item.buttonLabel !== 'APPROVE_FOR_CONNECTION');
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_PAYMENT');
+
       }
+      
     }
-    if((businessService=='NewWS1' 
-      || businessService === "REGULARWSCONNECTION"  
-        || businessService === 'SW_SEWERAGE' 
-       // || businessService === "TEMPORARY_WSCONNECTION"
-        || businessService === "WS_TEMP_TEMP" 
-        ||businessService === "WS_TEMP_REGULAR"
-       // ||businessService === "WS_DISCONNECTION" 
-       // ||businessService === "WS_TEMP_DISCONNECTION"
-        || businessService === "WS_RENAME" 
-        //|| businessService === "WS_CONVERSION" 
-        || businessService === "WS_REACTIVATE"     
-        //|| businessService === "WS_TUBEWELL"
+    if(( businessService === "REGULARWSCONNECTION"  
+        
     ) && applicationStatus == 'PENDING_FOR_EE_APPROVAL'){
       const {WaterConnection} = preparedFinalObject;
       let pipeSize = 0 ;
@@ -977,6 +960,28 @@ ValidateRequest =(payload) =>{
         
       }
     }
+
+    if(( businessService === "TEMPORARY_WSCONNECTION"  
+        
+    ) && applicationStatus == 'PENDING_FOR_SDE_APPROVAL_AFTER_SUPERINTENDENT'){
+      const {WaterConnection} = preparedFinalObject;
+      let pipeSize = 0 ;
+      //applicationStatus: "PENDING_FOR_SDE_APPROVAL"
+      pipeSize = WaterConnection && WaterConnection[0].proposedPipeSize;
+      pipeSize = parseInt(pipeSize);
+       if (pipeSize ===15)
+      {
+        // required to modify the connection
+        actions = actions.filter(item => item.buttonLabel !== 'PENDING_FOR_SE_REVIEW');
+
+      }
+      else{
+        // "VERIFY_AND_FORWARD_TO_SDE
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_JE');
+        
+      }
+    }
+    //end pipe size filter
     // VERIFY_AND_FORWARD_TO_JE_FOR_FEE VERIFY_AND_FORWARD_TO_SE, PENDING_FOR_SDE_APPROVAL_FOR_JE TEMPORARY_WSCONNECTION
     if(businessService === "TEMPORARY_WSCONNECTION"  && applicationStatus == 'PENDING_FOR_SDE_APPROVAL_FOR_JE' )
     {
