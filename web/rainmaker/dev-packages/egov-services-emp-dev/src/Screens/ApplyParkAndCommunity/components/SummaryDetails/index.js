@@ -30,7 +30,7 @@ class SummaryDetails extends Component {
     componentDidMount = async () => {
        
         let {createPACCApplication, userInfo, documentMap,fetchPayment,prepareFinalObject,fetchApplications,conJsonSecond,conJsonfirst } = this.props;
-        let { firstName, venueType, bokingType, bookingData, email, mobileNo, surcharge, fromDate, toDate,myLocationtwo,ReasonForDiscount,
+        let { DiscountReason,firstName, venueType, bokingType, bookingData, email, mobileNo, surcharge, fromDate, toDate,myLocationtwo,ReasonForDiscount,
             utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, 
             BankAccountName,NomineeName,BankAccountNumber,IFSCCode,AccountHolderName,accountType,SecTimeSlotFromTime,SecTimeSlotToTime,
             locality, residenials, facilationChargesSuccess,discountType,checkAppStatus,checkAppNum,firstToTimeSlot } = this.props;
@@ -93,7 +93,7 @@ else if(discountType == "20%"){
         let fid = documentMap ? Object.keys(documentMap) : ""
         let Booking = {
             "uuid": userInfo.uuid,
-           "bkRemarks": ReasonForDiscount,
+           "bkRemarks": DiscountReason,
             "discount": finalDiscount,
             "bkBookingType": venueType,
             "bkBookingVenue": bokingType,
@@ -130,7 +130,8 @@ else if(discountType == "20%"){
             "bkBankName":BankAccountName,
             "bkIfscCode":IFSCCode,
             "bkAccountType":accountType,
-            "bkBankAccountHolder":AccountHolderName
+            "bkBankAccountHolder":AccountHolderName,
+            
         }
 
 if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
@@ -311,7 +312,7 @@ this.props.history.push(`/egov-services/PaymentReceiptDteail/${this.state.CashPa
                            
 
 <PaccFeeEstimate
-one={one}
+one={one} 
 two={two}
 three={three} 
 four={four}
@@ -332,11 +333,13 @@ totalAmountSuPage={totalAmountSuPage}
                             />
 
                             <SummaryApplicantDetail
+                             firstStep={this.firstStep}
                                 firstName={firstName}
                                 email={email}
                                 mobileNo={mobileNo}
                             />                   
                             <SummaryApplicationDetail
+                             firstStep={this.firstStep}
                                 purpose={purpose}
                                 locality={locality}
                                 dimension={dimension}
@@ -349,7 +352,8 @@ totalAmountSuPage={totalAmountSuPage}
                                 utGST={this.props.utGST}
                                 GSTnumber={GSTnumber}
                             />
-                            <SummaryBankDetails   
+                            <SummaryBankDetails  
+                               firstStep={this.firstStep} 
                                 BankAccountName={BankAccountName}
                                 NomineeName={NomineeName}
                                 BankAccountNumber={BankAccountNumber}
