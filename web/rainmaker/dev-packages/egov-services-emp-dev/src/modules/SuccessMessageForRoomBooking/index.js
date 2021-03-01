@@ -3,19 +3,20 @@ import { Image, Card, Icon } from "components";
 import Label from "egov-ui-kit/utils/translationNode";
 import FloatingActionButton from "material-ui/FloatingActionButton";
 import "./index.css";
- 
+
 class SuccessMessage extends Component {
   render() {
-    const { headermessage,successmessage, employeeName, secondaryLabel, applicationNumber, tertiaryLabel, icon, backgroundColor, ReceiptNumber } = this.props;
+    const { successmessage, employeeName, secondaryLabel, applicationNumber, tertiaryLabel, icon, backgroundColor } = this.props;
     const label1 = `Application No.${applicationNumber}`
     return (
       <div className="wt-app-details">
         <div className="container-fluid">
           <div className="row spl-application-header" style={{ marginTop: '40px', marginBottom: '30px', marginLeft: '-6px' }}>
-            <div className="col-sm-6 spl-app-header-text">  <Label label={headermessage} /></div>
-            <div className="col-sm-5 spl-app-header-number" > <Label label={label1} /></div>
+            <div className="col-sm-6 spl-app-header-text">  <Label label={"BK_MYBK_ROOM_COMPLETED_APPLICATION_REQUEST"} /></div>
+            {/* <div className="col-sm-5 spl-app-header-number" > <Label label={label1} /></div> */}
             {/* <div class="col-sm-5">  </div> */}
           </div>
+
         </div>
         <Card
 
@@ -35,10 +36,10 @@ class SuccessMessage extends Component {
                     <div class="col-sm-4 application-number-div">
                     <Label  className="application-text-one"    
                     labelClassName={"myDOC"}
-                    label={"Payment Receipt No."} />
+                    label={"BK_MYBK_WATER_TANKER_REQUESTNO"} />
                     <Label className="application-text-two"  
                     labelClassName={"myDOC"}
-                    label={ReceiptNumber} />
+                    label={applicationNumber} />
                      </div>
               </div>
 

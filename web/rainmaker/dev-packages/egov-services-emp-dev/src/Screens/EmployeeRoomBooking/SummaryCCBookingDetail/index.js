@@ -16,29 +16,29 @@ return (
             <div>
               <div className="rainmaker-displayInline">
                 
-                <Label label="BK_MYBK_COMMUNITY_CENTER_DETAILS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
+                <Label label="BK_MYBK_EMP_BOOKING_DETAILS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
               </div>
               <div key={10} className="complaint-detail-full-width">
               
               <div className="complaint-detail-detail-section-status row">
               <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_APPLICANT_SECTOR_FOR_PARK" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_NAME_CITIZEN_PLACEHOLDER" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                      id="complaint-details-complaint-number"
-                                    label={this.props.location}
+                                    label={this.props.Name}
                                 />
                             </div>
-                            {/* <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CC_ROOM_NUMBER_OF_DAYS" />
+                            <div className="col-md-4">
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_NAME_PURPOSE_PLACEHOLDER" />
                                 <Label
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
                                     labelStyle={{ color: "inherit" }}
-                                    label={this.props.NoOfDays}
+                                    label={this.props.purpose}
                                 />
-                            </div> */}
+                            </div>
                             <div className="col-md-4">
                                 <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CITIZEN_HOUSE_NUMBER_PLACEHOLDER" />
                                 <Label
@@ -49,36 +49,46 @@ return (
                                 />
                             </div>
 
-                            {/* <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_ROOM_LOCALITY" />
+                            <div className="col-md-4">
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CITIZEN_MOBILENO_PLACEHOLDER" />
                                 <Label
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
                                     labelStyle={{ color: "inherit" }}
-                                    label={this.props.locality}
+                                    label={this.props.mobileNo}
                                 />
-                            </div> */}
+                            </div>
 
                             <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MY_BK_ROOM_FROM_DATE" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CC_ROOM_SECTOR" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-complaint-number"
-                                    label={this.props.fromDate}
+                                    label={this.props.Sector}
+                                />
+                                </div> 
+
+                            <div className="col-md-4">
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CC_ROOM_GST_NO" />
+                                 <Label
+                                    labelStyle={{ color: "inherit" }}
+                                    className="col-xs-12  col-sm-12 col-md-12  status-result-color"
+                                    id="complaint-details-complaint-number"
+                                    label={this.props.gstNo == "NA" ? "NOT APPLICABLE" : this.props.gstNo}
                                 />
                             </div>
-                            <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MY_BK_ROOM_TO_DATE" />
+                            {/* <div className="col-md-4">
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CC_ROOM_RESIDENCE_PROOF" />
                                 <Label
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
                                     labelStyle={{ color: "inherit" }}
-                                    label={this.props.toDate}
+                                    label={this.props.ProofOfResidence}
                                 />
-                            </div>     
-                            <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_DIMENSION_PLACEHOLDER" />
+                            </div>      */}
+                            {/* <div className="col-md-4">
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_ROOM_DIMENSION" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
@@ -87,7 +97,7 @@ return (
                                 />
                             </div>
 
-                            {/* <div className="col-md-4">
+                            <div className="col-md-4">
                                 <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_ROOM_REFUNDABLE_SECURITY" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
@@ -95,10 +105,10 @@ return (
                                     id="complaint-details-complaint-number"
                                     label={this.props.RefundableSecurity}
                                 />
-                            </div> */}
+                            </div>
 
                             <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CLEANING_CHARGES_PLACEHOLDER" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_ROOM_CLEANING_CHARGES" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
@@ -108,7 +118,7 @@ return (
                             </div>
 
                             <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_RENT_PLACEHOLDER" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_ROOM_CC_RENT" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
@@ -118,7 +128,7 @@ return (
                             </div>
 
                             <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CGST_PLACEHOLDER" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_ROOM_CGST" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
@@ -128,7 +138,7 @@ return (
                             </div>
 
                             <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="UTGST" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_ROOM_CC_UGST" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
@@ -138,7 +148,7 @@ return (
                             </div>
 
                             <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="Surcharge On Rent" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_ROOM_CC_SURCHARGES" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
@@ -148,14 +158,14 @@ return (
                             </div>
 
                             <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_FACILITATION_CHARGES_PLACEHOLDER" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_ROOM_CC_FACILITATION_CHARGES" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-complaint-number"
-                                    label={"100"}
+                                    label={this.props.facilitationCharges}
                                 />
-                            </div>
+                            </div> */}
 
                           </div>
             </div>
