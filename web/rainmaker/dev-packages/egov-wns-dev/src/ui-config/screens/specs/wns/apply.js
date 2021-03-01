@@ -219,6 +219,7 @@ export const getMdmsData = async (state,dispatch) => {
             {name:"MeterUnit"},
             {name:"MFRCode"},
             {name:"sectorList"},
+            {name:"swSectorList"},
             {name:"tariffType"},
             {name:"wsCategory"},
             { name: "wsWorkflowRole" },
@@ -331,6 +332,8 @@ export const getMdmsData = async (state,dispatch) => {
     payload.MdmsRes.City = City
     dispatch(prepareFinalObject("applyScreen.property.address.city", City[0].name));
     dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
+    if(payload.MdmsRes['ws-services-masters'].sectorList !== undefined)
+    dispatch(prepareFinalObject("applyScreenMdmsData.ws-services-masters.wssectorList", payload.MdmsRes['ws-services-masters'].sectorList));
     //
   } catch (e) { console.log(e); }
 };
@@ -727,12 +730,12 @@ const getApplyScreenChildren = () => {
     case "APPLY_FOR_REGULAR_INFO":
     case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION": 
     case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION": 
-      return { IDDetails, Details,OwnerInfoCard, propertyUsageDetails, ownerDetails,connectionHolderDetails,  };
-    default :    return { IDDetails, Details, OwnerInfoCard,propertyUsageDetails,ownerDetails, connectionHolderDetails,  };
+      return { IDDetails, OwnerInfoCard,Details, propertyUsageDetails, ownerDetails,connectionHolderDetails,  };
+    default :    return { IDDetails,OwnerInfoCard, Details, propertyUsageDetails,ownerDetails, connectionHolderDetails,  };
   }
  }
  else {
-   return { IDDetails, Details, OwnerInfoCard, propertyUsageDetails,ownerDetails, connectionHolderDetails,  };
+   return { IDDetails,OwnerInfoCard, Details,  propertyUsageDetails,ownerDetails, connectionHolderDetails,  };
  }
 
 }
@@ -1041,9 +1044,9 @@ const screenConfig = {
       togglePropertyFeilds(action, true)
       if (get(state.screenConfiguration.preparedFinalObject, "applyScreen.water") && get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage")) {
         toggleWaterFeilds(action, true);
-        toggleSewerageFeilds(action, true);
+        toggleSewerageFeilds(action, false);
       } else if (get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage")) {
-        toggleWaterFeilds(action, true);
+        toggleWaterFeilds(action, false);
         toggleSewerageFeilds(action, true);
       } else {
         toggleWaterFeilds(action, true);
