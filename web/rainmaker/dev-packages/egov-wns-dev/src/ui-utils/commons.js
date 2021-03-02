@@ -244,6 +244,11 @@ export const fetchBill = async (queryObject, dispatch) => {
     } catch (error) {
         dispatch(toggleSpinner());
         console.log(error)
+        let errorMessage = {
+            labelName: error.message,
+            labelKey: error.message
+          };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
     }
 };
 export const getBillingEstimation = async (queryObject, dispatch) => {
@@ -261,6 +266,11 @@ export const getBillingEstimation = async (queryObject, dispatch) => {
     } catch (error) {
         dispatch(toggleSpinner());
         console.log(error)
+        let errorMessage = {
+            labelName: error.message,
+            labelKey: error.message
+          };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
     }
 };
 
@@ -317,12 +327,14 @@ export const getMyConnectionResults = async (queryObject, dispatch) => {
                             if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
                                response.WaterConnection[i].due = 0//data.billGeneration[0].totalAmount
                                 response.WaterConnection[i].status = data.billGeneration[0].status
+                                response.WaterConnection[i].id = data.billGeneration[0].billGenerationId
                                 response.WaterConnection[i].error = ""
                             }
 
                         } else {
                             response.WaterConnection[i].due = "NA"
                             response.WaterConnection[i].status = "NA"
+                            response.WaterConnection[i].id = 0
                             response.WaterConnection[i].error = ""
                         }
 
@@ -331,6 +343,7 @@ export const getMyConnectionResults = async (queryObject, dispatch) => {
                         response.WaterConnection[i].due = "NA"
                         response.WaterConnection[i].status = "NA"
                         response.WaterConnection[i].error = err.message
+                        response.WaterConnection[i].id = 0
                         //Error.message
                     }
                 }
@@ -390,6 +403,7 @@ export const getMyApplicationResults = async (queryObject, dispatch) => {
                             if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
                                response.WaterConnection[i].due = 0//data.billGeneration[0].totalAmount
                                 response.WaterConnection[i].status = data.billGeneration[0].status
+                                response.WaterConnection[i].id = data.billGeneration[0].billGenerationId
                                 response.WaterConnection[i].error = ""
                             }
 
@@ -397,6 +411,7 @@ export const getMyApplicationResults = async (queryObject, dispatch) => {
                             response.WaterConnection[i].due = "NA"
                             response.WaterConnection[i].status = "NA"
                             response.WaterConnection[i].error = ""
+                            response.WaterConnection[i].id = 0
                         }
 
                     } catch (err) {
@@ -404,6 +419,7 @@ export const getMyApplicationResults = async (queryObject, dispatch) => {
                         response.WaterConnection[i].due = "NA"
                         response.WaterConnection[i].status = "NA"
                         response.WaterConnection[i].error = err.message
+                        response.WaterConnection[i].id = 0
                     }
                 }
             }
@@ -462,6 +478,7 @@ export const getSWMyApplicationResults = async (queryObject, dispatch) => {
                             if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
                                response.SewerageConnections[i].due = 0//data.billGeneration[0].totalAmount
                                 response.SewerageConnections[i].status = data.billGeneration[0].status
+                                response.SewerageConnections[i].id = data.billGeneration[0].billGenerationId
                                 response.SewerageConnections[i].error = ""
                             }
 
@@ -469,6 +486,7 @@ export const getSWMyApplicationResults = async (queryObject, dispatch) => {
                             response.SewerageConnections[i].due = "NA"
                             response.SewerageConnections[i].status = "NA"
                             response.SewerageConnections[i].error = ""
+                            response.SewerageConnections[i].id = 0
                         }
 
                     } catch (err) {
@@ -476,6 +494,7 @@ export const getSWMyApplicationResults = async (queryObject, dispatch) => {
                         response.SewerageConnections[i].due = "NA"
                         response.SewerageConnections[i].status = "NA"
                         response.SewerageConnections[i].error = err.message
+                        response.SewerageConnections[i].id = 0
                     }
                 }
             }
@@ -1322,7 +1341,14 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
             }
                 let documents = '';
                 let wsDocument ='';
+                if(payload.applyScreenMdmsData['ws-services-masters']!== undefined)
                 wsDocument = payload.applyScreenMdmsData['ws-services-masters'].wsDocument; 
+                else{
+                    if(localStorage.getItem("WNS_STATUS")){
+                        window.localStorage.removeItem("WNS_STATUS");
+                    }
+
+                }
                 // let subusageCategory = get(
                 //     payload,
                 //     "applyScreen.property.subusageCategory",
@@ -2261,12 +2287,14 @@ export const getSWMyConnectionResults = async (queryObject, dispatch) => {
                                response.SewerageConnections[i].due = 0//data.billGeneration[0].totalAmount
                                 response.SewerageConnections[i].status = data.billGeneration[0].status
                                 response.SewerageConnections[i].error = ""
+                                response.SewerageConnections[i].id = data.billGeneration[0].billGenerationId
                             }
 
                         } else {
                             response.SewerageConnections[i].due = "NA"
                             response.SewerageConnections[i].status = "NA"
                             response.SewerageConnections[i].error = ""
+                            response.SewerageConnections[i].id = 0
                         }
 
                     } catch (err) {
@@ -2274,6 +2302,7 @@ export const getSWMyConnectionResults = async (queryObject, dispatch) => {
                         response.SewerageConnections[i].due = "NA"
                         response.SewerageConnections[i].status = "NA"
                         response.SewerageConnections[i].error = err.message
+                        response.SewerageConnections[i].id = 0
                     }
                 }
             }

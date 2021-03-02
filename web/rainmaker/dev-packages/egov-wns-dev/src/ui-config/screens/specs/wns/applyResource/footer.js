@@ -310,8 +310,9 @@ const usageCategory = get(
 
     return
 
-  }
+  }  
   removingDocumentsWorkFlow(state, dispatch) ;
+  prepareDocumentsUploadData(state, dispatch);
   try{
     let abc = await applyForWater(state, dispatch);
     window.localStorage.setItem("ActivityStatusFlag","true");
@@ -339,7 +340,9 @@ else if(wnsStatus && wnsStatus === "UPDATE_CONNECTION_HOLDER_INFO"){
     )
     return;
   }
+  
   removingDocumentsWorkFlow(state, dispatch) ;
+  prepareDocumentsUploadData(state, dispatch);
   try{
     let abc = await applyForWater(state, dispatch);
     window.localStorage.setItem("ActivityStatusFlag","true");
@@ -368,7 +371,9 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMP
     )
     return;
   }
+ 
   removingDocumentsWorkFlow(state, dispatch) ;
+  prepareDocumentsUploadData(state, dispatch);
   try{
     let abc = await applyForWater(state, dispatch);
     window.localStorage.setItem("ActivityStatusFlag","true");
@@ -412,6 +417,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" ||
   }
   
   removingDocumentsWorkFlow(state, dispatch) ;
+  prepareDocumentsUploadData(state, dispatch);
   try{
     // call api property search then property-services/property/_update  
     let queryObject = [];//[{ key: "tenantId", value: tenantId }];
