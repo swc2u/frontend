@@ -54,7 +54,10 @@ import { penaltySummary } from "./generatePenaltyStatement";
     ]
     const response = await getSearchResults(queryObject)
     if(!!response.Properties && !!response.Properties.length) {
-       dispatch(prepareFinalObject("Properties", response.Properties))
+      let owners = response.Properties[0].propertyDetails.owners;
+      owners = owners.map(item => ({...item, name: item.ownerDetails.ownerName}))
+      const properties = [{...response.Properties[0], propertyDetails: {...response.Properties[0].propertyDetails, owners}}]
+       dispatch(prepareFinalObject("Properties", properties))
     }
     const data=[{
       "active": "true",
@@ -318,6 +321,28 @@ import { penaltySummary } from "./generatePenaltyStatement";
     visible: process.env.REACT_APP_NAME !== "Citizen"
   }
 
+  const payerField = {
+    label: {
+      labelName: "Payer",
+      labelKey: "ES_PAYER"
+    },
+    placeholder: {
+      labelName: "Select Payer",
+      labelKey: "ES_SELECT_PAYER"
+    },
+    required: true,
+    jsonPath: "payment.payer",
+    visible: process.env.REACT_APP_NAME !== "Citizen",
+    errorMessage:"ES_ERR_PAYER",
+    optionValue: "id",
+    optionLabel: "name",
+    sourceJsonPath: "Properties[0].propertyDetails.owners",
+    gridDefination: {
+        xs: 12,
+        sm: 6
+    },
+  }
+
   const paymentDate = {
     label: {
       labelName: "Date of Payment",
@@ -464,6 +489,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
       header: offlinePaymentDetailsHeader,
       detailsContainer: getCommonContainer({
         // paymentType: getSelectField(paymentType),
+        payer: getSelectField(payerField),
         Amount: getTextField(paymentAmount),
         dateOfPayment: getDateField(paymentDate),
         bankName: getTextField(bankName),
