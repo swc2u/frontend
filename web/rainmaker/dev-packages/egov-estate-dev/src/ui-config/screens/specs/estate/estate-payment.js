@@ -321,7 +321,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
     visible: process.env.REACT_APP_NAME !== "Citizen"
   }
 
-  const payerField = {
+  export const payerField = {
     label: {
       labelName: "Payer",
       labelKey: "ES_PAYER"
@@ -331,7 +331,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
       labelKey: "ES_SELECT_PAYER"
     },
     required: true,
-    jsonPath: "payment.payer",
+    jsonPath: "payment.payer.uuid",
     visible: process.env.REACT_APP_NAME !== "Citizen",
     errorMessage:"ES_ERR_PAYER",
     optionValue: "id",
@@ -607,7 +607,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
     if(isValid && ((Number.isInteger(parseInt(amountValue)) && amountValue.length >= 1 && amountValue.length <= 7))) {
       const propertyId = getQueryArg(window.location.href, "propertyId")
       const offlinePaymentDetails = get(state.screenConfiguration.preparedFinalObject, "payment")
-      const {paymentAmount, paymentType, ...rest} = offlinePaymentDetails
+      const {paymentAmount, paymentType, payer, ...rest} = offlinePaymentDetails
       switch(paymentType){
         case 'PAYMENTTYPE.PENALTY':
           const PenaltyStatementSummary = get(state.screenConfiguration.preparedFinalObject, "PenaltyStatementSummary")
@@ -658,6 +658,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
       if(!!propertyId && isValidAmount) {
         const payload = [
           { id: propertyId, 
+            payer,
             propertyDetails: {
               offlinePaymentDetails: [{...rest, amount: paymentAmount, paymentType}]
             }
