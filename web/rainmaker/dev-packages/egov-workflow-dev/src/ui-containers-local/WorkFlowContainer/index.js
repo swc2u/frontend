@@ -662,7 +662,9 @@ class WorkFlowContainer extends React.Component {
 ValidateRequest =(payload) =>{
   let isvalidRequest = false
 
-  if(payload.applicationStatus ==='PENDING_FOR_SECURITY_DEPOSIT' && payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT')
+  //if(payload.applicationStatus ==='PENDING_FOR_SECURITY_DEPOSIT' && payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT')
+  //PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT
+  if(payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
   {
     isvalidRequest = false;
     // logic for null value validation for Connection Details date and Activation Details
@@ -702,7 +704,7 @@ ValidateRequest =(payload) =>{
     let documents=  get(payload, "documents",[]);
     if(documents !== undefined && documents!== null && documents.length>0)
     {
-      let duplicatedoc =  documents.filter(x=>x.documentCode === `${activityType_}_ROADCUT_NOC`)
+      let duplicatedoc =  documents.filter(x=>x.documentType === `${activityType_}_ROADCUT_NOC`)
       if(duplicatedoc !== undefined)
         {
         if(duplicatedoc && duplicatedoc.length == 0)
@@ -898,10 +900,15 @@ ValidateRequest =(payload) =>{
         buttonUrl: getRedirectUrl(item.action, businessId, businessService),
         dialogHeader: getHeaderName(item.action),
         showEmployeeList: (businessService === "NewWS1" 
-                          || businessService === "SW_SEWERAGE" 
-                          ||businessService === "WS_CONVERSION" 
+                          || businessService === "REGULARWSCONNECTION" 
+                          || businessService === "TEMPORARY_WSCONNECTION" 
+                          || businessService === "WS_TEMP_TEMP" 
+                          || businessService === "WS_TEMP_REGULAR" 
                           || businessService === "WS_DISCONNECTION" 
-                          || businessService === "WS_RENAME" 
+                          || businessService === "WS_TEMP_DISCONNECTION" 
+                          ||businessService === "WS_RENAME" 
+                          || businessService === "WS_CONVERSION" 
+                          || businessService === "WS_REACTIVATE" 
                           || businessService === "WS_TUBEWELL") ? !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SEND_BACK_TO_CITIZEN" && item.action !== "RESUBMIT_APPLICATION" : !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
         roles: getEmployeeRoles(item.nextState, item.currentState, businessService),
         isDocRequired: checkIfDocumentRequired(item.nextState, businessService)
