@@ -116,6 +116,7 @@ const getFormattedTill = (startMonth, endMonth, paymentConfigData) => {
           return years + " Year(s)"
         }
       }
+    }
     return "-"
 }
 
