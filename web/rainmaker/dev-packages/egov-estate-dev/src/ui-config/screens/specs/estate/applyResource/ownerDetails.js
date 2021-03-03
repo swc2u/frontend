@@ -244,7 +244,31 @@ const cpNumberField = {
     }
   }
 }
-
+const npNumberField = {
+  label: {
+    labelName: "NP No.",
+    labelKey: "ES_NP_NUMBER_LABEL"
+  },
+  placeholder: {
+    labelName: "Enter CP No.",
+    labelKey: "ES_NP_NUMBER_PLACEHOLDER"
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  pattern: _getPattern("alphaNumeric"),
+  errorMessage:"ES_ERR_NPNUMBER",
+  jsonPath: "Properties[0].propertyDetails.owners[0].npNumber",
+  afterFieldChange: (action, state, dispatch) => {
+    if (action.value.length > 100) {
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_100", screenName);
+    }
+    else {
+      displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_NPNUMBER", screenName);
+    }
+  }
+}
 const possessionDateField = {
   label: {
     labelName: "Possession Date",
@@ -360,6 +384,7 @@ const commonOwnerInformation = () => {
       mobileNumber: getTextField(mobileNumberField),
       share: getTextField(shareField),
       cpNumber: getTextField(cpNumberField),
+      npNumber:getTextField(npNumberField),
       dateOfAllotment: getDateField(dateOfAllotmentField),
       allotmentNumber: getTextField(allotmentNumberField),
       possessionDate: getDateField(possessionDateField),
