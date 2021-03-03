@@ -589,12 +589,12 @@ export const downloadAcknowledgementForm = (Applications, applicationType,feeEst
       if(applicationType == 'MortgageIntimation') {
         Applications = [{
           ...Applications[0],
-          applicationHeader : 'Intimation to Mortgage'
+          "applicationHeader" : 'Intimation to Mortgage'
         }]
       }else{
         Applications = [{
           ...Applications[0],
-          applicationHeader : 'Permission to Mortgage'
+          "applicationHeader" : 'Permission to Mortgage'
         }]
       }
           queryStr = [{
