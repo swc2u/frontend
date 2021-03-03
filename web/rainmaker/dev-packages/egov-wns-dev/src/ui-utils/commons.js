@@ -54,8 +54,8 @@ export const pushTheDocsUploadedToRedux = async (state, dispatch) => {
                     })
                 })
                 let docs = get(state, "screenConfiguration.preparedFinalObject");
-                await setDocuments(docs, "applyScreen.documents", "UploadedDocs", dispatch, "WS");
-                await setDocuments(docs, "applyScreen.documents", "DocumentsData", dispatch, "WS");
+                await setDocuments(docs, "applyScreen.documents", "UploadedDocs", dispatch);
+                await setDocuments(docs, "applyScreen.documents", "DocumentsData", dispatch);
                 let applyScreenObject = findAndReplace(get(state.screenConfiguration.preparedFinalObject, "applyScreen", {}), "NA", null);
                 let applyScreenObj = findAndReplace(applyScreenObject, 0, null);
                 dispatch(prepareFinalObject("applyScreen", applyScreenObj));
@@ -373,11 +373,12 @@ export const getMyApplicationResults = async (queryObject, dispatch) => {
             response.WaterConnection = await getPropertyObj(response.WaterConnection);
             for (let i = 0; i < response.WaterConnection.length; i++) {
                 response.WaterConnection[i].service = "Water"
+
                 if (response.WaterConnection[i].applicationNo !== null && response.WaterConnection[i].applicationNo !== undefined) {
                     try {
                         let queryObject = {billGeneration:
                             {            
-                              consumerCode:response.SewerageConnections[i].connectionNo,                                        
+                              consumerCode:response.WaterConnection[i].connectionNo,                                        
                             }
                         }
                         const data = await httpRequest(
@@ -934,6 +935,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 /// logic for sewarage document
                 wsDocument = wsDocument.filter(x=>x.WaterActivity === 'NEW_TUBEWELL_CONNECTION')
             }
+            if(sewerage === undefined && tubewell === undefined && water === undefined)
+            {
+                wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+            }
             if( sewerage === false && tubewell === false && water === false)
             {
                 wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
@@ -1229,7 +1234,7 @@ export const downloadAndPrintForNonApply = async (state, dispatch) => {
         documentPath,
         "DocumentsData",
         dispatch,
-        "WS"
+       // "WS"
     );
 }
 
@@ -1430,6 +1435,14 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
             {
                 /// logic for sewarage document
                 wsDocument = wsDocument.filter(x=>x.WaterActivity === 'NEW_TUBEWELL_CONNECTION')
+            }
+            if(sewerage === undefined && tubewell === undefined && water === undefined)
+            {
+                wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+            }
+            if(sewerage === false && tubewell === false && water === false)
+            {
+                wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
             }
                 
                 if(wsDocument && wsDocument[0])
@@ -1633,6 +1646,9 @@ export const applyForWater = async (state, dispatch) => {
     } catch (error) {
         dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
         console.log(error);
+        if(localStorage.getItem("WNS_STATUS")){
+            window.localStorage.removeItem("WNS_STATUS");
+        }
         return false;
     }
 }
