@@ -131,6 +131,22 @@ const DashboardOSBM = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardStoreIndent = Loadable({
+  loader: () => import("./DashboardStoreIndent"),
+  loading: () => <Loading />
+});
+
+const DashboardStoreManagement = Loadable({
+  loader: () => import("./DashboardStoreManagement"),
+  loading: () => <Loading />
+});
+
+const DashboardWNS = Loadable({
+  loader: () => import("./DashboardWNS"),
+  loading: () => <Loading />
+});
+
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -157,5 +173,8 @@ export {
   DashboardTradeLicense,
   DashboardEaawas,
   DashboardOPMS,
-  DashboardOSBM
+  DashboardOSBM,
+  DashboardStoreIndent,
+  DashboardStoreManagement,
+  DashboardWNS
 };
