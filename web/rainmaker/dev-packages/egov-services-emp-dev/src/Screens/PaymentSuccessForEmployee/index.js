@@ -135,7 +135,8 @@ console.log("AllPropsOfSubmitPage--",this.props)
 				"bkBankName":data.bkBankName,
 				"bkIfscCode":data.bkIfscCode,
 				"bkAccountType":data.bkAccountType,
-				"bkBankAccountHolder":data.bkBankAccountHolder
+				"bkBankAccountHolder":data.bkBankAccountHolder,
+				"bkNomineeName": data.bkNomineeName
             }
 
 
@@ -204,7 +205,7 @@ console.log("Booking-requestBody--",Booking)
 		var documentsPreview = [];
 		if (DownloadReceiptDetailsforPCC && DownloadReceiptDetailsforPCC.filestoreIds.length > 0) {
 			documentsPreviewData = DownloadReceiptDetailsforPCC.filestoreIds[0];
-			documentsPreview.push({
+			documentsPreview.push({ 
 				title: "DOC_DOC_PICTURE",
 				fileStoreId: documentsPreviewData,
 				linkText: "View",
@@ -305,24 +306,10 @@ console.log("Booking-requestBody--",Booking)
 
   render() {
   const { RecNumber,createWaterTankerApplicationData,myLocationtwo, downloadBWTApplication,loading,createPACCApplicationData, updatePACCApplicationData,AppNum} = this.props;
-	console.log("this.props-in-paymentSuccessForEmp-",this.props)
-	console.log(RecNumber?RecNumber:"notfound","RecNumber")
-	console.log("AppNum--",AppNum?AppNum:"non")
-    //BK_MYBK_PCC_CREATE_APPLICATION_HEADER
-    // Park And Community Centre
-
-    console.log("InSuccessPage--",
-    { labelName: "BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER-Value", labelKey: "BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER" },
-    { labelName: "BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE--", labelKey: "BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE" },
-    { labelName: "BK_CS_COMMON_SEND_MESSAGE--", labelKey: "BK_CS_COMMON_SEND_MESSAGE" },
-)
-
     return (
       <Screen loading={loading}>
       <div className="success-message-main-screen resolve-success">
       <SuccessMessageForPayment
-        //  headermessage="Collection Details"
-		//{`Parks & Community Centre/Banquet hall application number`}
 	      headermessage = {`Parks & Community Centre/Banquet hall`}
           successmessage="Payment has been collected successfully!"
           secondaryLabel="A notification regarding Payment Collection has been sent to property owner at registered Mobile No."
@@ -330,17 +317,17 @@ console.log("Booking-requestBody--",Booking)
           icon={<Icon action="navigation" name="check" />}
           backgroundColor={"#22b25f"}
           applicationNumber={AppNum}
-          ReceiptNumber={RecNumber}
+          ReceiptNumber={RecNumber} 
         />
         <div className="responsive-action-button-cont">
-          <Button
+          {/* <Button
             className="responsive-action-button"
             primary={true}
-            label={<Label buttonLabel={true} label="BK_CORE_COMMON_DOWNLOAD"/>}
+            label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PAYMENT_BUTTON"/>}
             fullWidth={true}
             onClick={this.downloadPaymentReceiptButton}
             style={{ marginRight: 18 }}
-          />
+          /> */}
           <Button
             id="resolve-success-continue"
             primary={true}
@@ -563,7 +550,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(CreateWBTApplicationSuccess);
-/**
- {"ResponseInfo":{"apiId":"Rainmaker","ver":".01","ts":null,"resMsgId":"uief87324","msgId":"20170310130900|en_IN","status":"200"},"Payments":[{"id":"38bfccf5-3045-4702-aa09-a208e4c1f02c","tenantId":"ch.chandigarh","totalDue":1634.00,"totalAmountPaid":1634,"transactionNumber":"2484302323152424","transactionDate":1613705879797,"paymentMode":"CASH","instrumentDate":1613705879797,"instrumentNumber":null,"instrumentStatus":"APPROVED","ifscCode":null,"auditDetails":{"createdBy":"182","createdTime":1613705879742,"lastModifiedBy":"182","lastModifiedTime":1613705879742},"additionalDetails":null,"paymentDetails":[{"id":"264e1d50-2763-4197-8c82-1161853410af","tenantId":"ch.chandigarh","totalDue":1634.00,"totalAmountPaid":1634,"receiptNumber":"02/2020-21/001166","manualReceiptNumber":null,"manualReceiptDate":null,"receiptDate":1613705879742,"receiptType":"BILLBASED","businessService":"BKROOM","billId":"b5e9a7c2-8fea-4954-8c3a-a2cacb4bb9f5","bill":{"id":"b5e9a7c2-8fea-4954-8c3a-a2cacb4bb9f5","mobileNumber":"6398193660","paidBy":" ","payerName":"Vandana","payerAddress":null,"payerEmail":null,"payerId":null,"status":"ACTIVE","reasonForCancellation":null,"isCancelled":null,"additionalDetails":null,"billDetails":[{"billDescription":null,"displayMessage":null,"callBackForApportioning":null,"cancellationRemarks":null,"id":"4b2b8810-e370-469d-98b7-4360c4cdd42d","tenantId":"ch.chandigarh","demandId":"c43668ff-e495-4f6f-b64b-e565309afd3b","billId":"b5e9a7c2-8fea-4954-8c3a-a2cacb4bb9f5","amount":1634.00,"amountPaid":1634,"fromPeriod":1554057000000,"toPeriod":1869676199000,"additionalDetails":{"calculationDes1cription":[]},"channel":null,"voucherHeader":null,"boundary":null,"manualReceiptNumber":null,"manualReceiptDate":null,"billAccountDetails":[{"id":"c88db73d-32e3-4b13-9bbe-ddc47376c29b","tenantId":"ch.chandigarh","billDetailId":"4b2b8810-e370-469d-98b7-4360c4cdd42d","demandDetailId":"58289005-7195-4d10-adc8-de26503ba2e7","order":0,"amount":100.00,"adjustedAmount":100.00,"isActualDemand":null,"taxHeadCode":"ROOM_FACILITATION_CHARGE","additionalDetails":null,"purpose":null,"auditDetails":null},{"id":"f54233b5-a83c-4f45-aacb-d1fa4ab4e2e8","tenantId":"ch.chandigarh","billDetailId":"4b2b8810-e370-469d-98b7-4360c4cdd42d","demandDetailId":"834c0892-9dcd-4bd2-b404-9559d04822d5","order":0,"amount":234.00,"adjustedAmount":234.00,"isActualDemand":null,"taxHeadCode":"BKROOM_TAX","additionalDetails":null,"purpose":null,"auditDetails":null},{"id":"71d446bb-cb85-4394-931c-e7d579086c09","tenantId":"ch.chandigarh","billDetailId":"4b2b8810-e370-469d-98b7-4360c4cdd42d","demandDetailId":"3cac7095-7d20-4ae1-a915-72a38b5ecf09","order":0,"amount":1300.00,"adjustedAmount":1300.00,"isActualDemand":null,"taxHeadCode":"BKROOM","additionalDetails":null,"purpose":null,"auditDetails":null}],"collectionType":null,"auditDetails":null,"expiryDate":1613779199770}],"tenantId":"ch.chandigarh","auditDetails":{"createdBy":"28df855b-d5ff-43ff-bd13-fdf28875106b","createdTime":1613705864770,"lastModifiedBy":"28df855b-d5ff-43ff-bd13-fdf28875106b","lastModifiedTime":1613705864770},"collectionModesNotAllowed":null,"partPaymentAllowed":false,"isAdvanceAllowed":false,"minimumAmountToBePaid":null,"businessService":"BKROOM","totalAmount":1634.00,"consumerCode":"CH-BK-ROOM-2021-02-19-004381","billNumber":"BILLNO-BKROOM-004670","billDate":1613705864770,"amountPaid":1634},"additionalDetails":null,"auditDetails":{"createdBy":"182","createdTime":1613705879742,"lastModifiedBy":"182","lastModifiedTime":1613705879742}}],"paidBy":" ","mobileNumber":"6398193660","payerName":"Vandana","payerAddress":null,"payerEmail":null,"payerId":null,"paymentStatus":"NEW","fileStoreId":null}]}
-  
- */

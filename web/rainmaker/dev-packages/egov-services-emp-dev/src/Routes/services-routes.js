@@ -286,6 +286,15 @@ const testing= Loadable({
   loading: Loading
 })
 
+const ReservedDatesList= Loadable({
+  loader: () => import("../Screens/ReservedBookingDates"),
+  loading: Loading
+})
+
+const ReserveDates= Loadable({
+  loader: () => import("../Screens/ApplyParkAndCommunity/components/CheckAvailability/ReserveDates"),
+  loading: Loading
+})
 // const MyTry = Loadable({
 //   loader: () => import("../Screens/MyTry/payment-methods"),
 //   loading: Loading
@@ -502,7 +511,7 @@ const routes = [
   }
 },
 
-//ApplyCancelEmpApplication 
+//ApplyCancelEmpApplication
 {
   path: "egov-services/application-cancelled-success",
   component: ApplyCancelEmpApplication,
@@ -569,11 +578,11 @@ const routes = [
   options: {
     hideFooter: true,
     title: "BK_MYBK_APPLY_PACC_REQUEST_HEADER",
-    
+
     customTitle: "BK_MYBK_CHECK_AVAILABILITY_HEADER"
   }
 },
-  
+
 {
   path: "egov-services/admin/osbmFee",
   component: OsbmFeeMasterData,
@@ -581,7 +590,7 @@ const routes = [
   options: {
     hideFooter: true,
     title: "BK_MYBK_ADMIN_OSBM_FEE_HEADER",
-  
+
     hideTitle: false,
     redirectionUrl,
     hideFor: "ao",
@@ -700,7 +709,7 @@ const routes = [
     }
   },
 
-  
+
   // {
   //   path: "egov-services/new-location-details/:applicationId",
   //   component: LocationSummary,
@@ -711,7 +720,7 @@ const routes = [
   //     redirectionUrl
   //   }
   // },
- 
+
   {
     path: "egov-services/cg-application-details/:applicationId",
     component: CGApplicationDetails,
@@ -757,7 +766,7 @@ const routes = [
       redirectionUrl
     }
   },
- 
+
   {
     path: "egov-services/bwt-application-details/:applicationId",
     component: ApplicationBWTSummary,
@@ -779,8 +788,8 @@ const routes = [
       redirectionUrl
     }
   },
-  // 
-  
+  //
+
   // {
   //   path: "complaint-reassigned/:serviceRequestId?",
   //   component: ComplaintAssigned,
@@ -990,8 +999,8 @@ const routes = [
       redirectionUrl
     }
   },
-  
- 
+
+
   {
     path: "egov-services/assignto-driver/:applicationId?",
     component: AssignToDriver,
@@ -1057,6 +1066,36 @@ const routes = [
   //     customFor: "employee",
   //   }
   // },
+  {
+    path: "egov-services/reservedbookingdates",
+    component: ReservedDatesList,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      title: "BK_MYBK_ADMIN_PACC_HOLD_DATES_HEADER",
+
+      hideTitle: false,
+      redirectionUrl,
+      hideFor: "ao",
+      customFor: "employee",
+      customTitle: "BK_MYBK_ADMIN_PACC_HOLD_DATES_HEADER"
+    }
+  },
+  {
+    path: "egov-services/reservedates",
+    component: ReserveDates,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      title: "BK_MYBK_ADMIN_PACC_HOLD_DATES_HEADER",
+
+      hideTitle: false,
+      redirectionUrl,
+      hideFor: "ao",
+      customFor: "employee",
+      customTitle: "BK_MYBK_ADMIN_PACC_HOLD_DATES_HEADER"
+    }
+  },
 
 ];
 
