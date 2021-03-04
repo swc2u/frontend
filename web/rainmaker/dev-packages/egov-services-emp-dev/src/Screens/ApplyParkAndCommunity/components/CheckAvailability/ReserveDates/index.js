@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Tabs, Card, TextField, Icon, Button } from "components";
+import { Tabs, Card, TextField, Icon, Button, TextArea } from "components";
 import Label from "egov-ui-kit/utils/translationNode";
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import { connect } from "react-redux";
@@ -78,7 +78,11 @@ class CheckAvailability extends Component {
         ? this.props.oldBookingData.bkBookingType
         : "",
     },
-    setAllForCG: false
+    setAllForCG: false,
+    holdingremark: "",
+    showHoldingRemark: false,
+    submitButtonTriggered: false,
+    holdingRemarkLength: 0
   };
 
   handleClose = () => {
@@ -188,7 +192,8 @@ class CheckAvailability extends Component {
 
   //for parkCommunity and date/venue change Sector handling
   sectorHandleChange = (input) => (e) => {
-    this.setState({ setAllForCG: false });
+    this.setState({ setAllForCG: false, showHoldingRemark: true });
+
     this.setState({ masterDataPCC: [] });
     let availabilityCheck = {
       bkSector: e.target.value,
@@ -203,7 +208,7 @@ class CheckAvailability extends Component {
 
   //for commercial sector handling
   sectorHandleForCommercial = async (e) => {
-    this.setState({ setAllForCG: true });
+    this.setState({ setAllForCG: true, showHoldingRemark: true });
     const { prepareFinalObject } = this.props;
 
     this.setState({ masterDataPCC: [] });
@@ -460,7 +465,21 @@ class CheckAvailability extends Component {
     }
 
     //let venueName = stateData.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation;
-
+    console.log(this.state.holdingremark.length, "Nero Hold Remark");
+    this.setState({holdingRemarkLength: this.state.holdingremark.length})
+    //ssconsole.log(holdDatesforSave.length, "Nero Holding Date")
+    if (this.state.holdingremark.length < 1) {
+      //console.log(holdDatesforSave && holdDatesforSave.length, "hjhjhjh");
+      toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Select fill all the mandetory fields",
+          labelKey: `BK_ERR_VALUE_HOLDING_DATES`
+        },
+        "error"
+      );
+      return false;
+    }
     const { prepareFinalObject } = this.props;
 
     let holdingDatesArray = [];
@@ -470,7 +489,7 @@ class CheckAvailability extends Component {
           fromDate: this.convertEpochToDate(holdDatesforSave[i]),
           toDate: this.convertEpochToDate(holdDatesforSave[i]),
           locked: true,
-          // id: bookingPropertyId,
+          holdingremark: this.state.holdingremark,
           bookingVenue: venueName,
           venueType: bookingPropertyType
         });
@@ -500,6 +519,10 @@ class CheckAvailability extends Component {
     return daysCount;
   };
 
+  holdingRemarkChange = (e) => {
+
+    this.setState({ holdingremark: e.target.value });
+  }
   render() {
     const {
       firstName,
@@ -758,7 +781,23 @@ class CheckAvailability extends Component {
               )}
 
             {/*Button Code For Submit And Reset*/}
+            {this.state && this.state.showHoldingRemark ?
+              <div style={{ marginBottom: "50px" }}>
+                <Label label="Reason for locking dates" />
+                <TextArea
+                  isRequired={true}
+                  value={this.state.holdingremark}
+                  onChange={this.holdingRemarkChange}
+                  hintText="BK_MYBK_DATE_LOCK_REMARK"
 
+                /> </div> : ""
+            }
+
+            {this.state && this.state.submitButtonTriggered && this.state.holdingRemarkLength < 1 ?
+              <div style={{ marginBottom: "50px" }}>
+                <Label style={{color: "red"}}label="Fill all mandetory fields then proceed" />
+                </div> : ""
+            }
             {/*start of book button for commercil*/}
             {this.state.setAllForCG && this.state.vanueType === "Commercial Ground" &&
               this.state.locality && (
