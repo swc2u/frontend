@@ -1938,6 +1938,66 @@ export const getWNSData = async ( dispatch, data ) => {
   }
 };
 
+// Get Dashboard Data for Work
+export const getWorkData = async ( dispatch, data ) => {
+  
+  debugger;
+  // Same as per Sport and culture but module code is different
+  var payloadData = {
+  "tenantId": data.tenantId,
+  "RequestBody": {
+    "tenantId": data.tenantId,
+    "moduleCode": "PR",
+    "eventDetailUuid": "",
+    "eventTitle": "",
+    "eventStatus": "",
+    "status": "",
+    "startDate": data.fromDate,
+    "endDate": data.toDate,
+    "eventId": "",
+    "defaultGrid": false
+  },
+  "reportSortBy": data.reportSortBy
+  }
+  let response = payloadData.reportSortBy ;
+  try {
+    store.dispatch(toggleSpinner());
+    // const DescriptionReport = await httpRequest(
+    //   "post",
+    //   "/prscp-services/v1/event/_get",
+    //   "",
+    //   [],
+    //   payloadData
+    // );
+
+    // //debugger;
+    // var response = [ DescriptionReport, payloadData.reportSortBy ];
+    // dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+    // // OK
+    dispatch(
+      handleField(
+      "WorkDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
 //---------------------------------------DROPDOWN----------------------------------------
 // API call for Dropdown Data
 export const getWorkflowDropdownData = async (state, dispatch, status) => {
