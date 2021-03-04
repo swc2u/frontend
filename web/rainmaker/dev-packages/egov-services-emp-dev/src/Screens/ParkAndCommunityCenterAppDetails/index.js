@@ -898,7 +898,18 @@ let applicationDetails = selectedComplaint
 
 	downloadApplicationFunction = async (e) => {
 		const { downloadEsamparkApp, userInfo,createPACCApplicationData,selectedComplaint,documentMap,six} = this.props;
-		let fdocname = Object.entries(documentMap)[0][1]
+		let fdocname;
+		let checkDocumentUpload = Object.entries(documentMap).length === 0;
+        console.log("checkDocumentUpload",checkDocumentUpload)
+
+		if(checkDocumentUpload === true){
+			fdocname = "Not Found"
+		}
+		if(checkDocumentUpload === false){
+			fdocname = Object.entries(documentMap)[0][1]
+		}
+
+
 	   let BookingInfo = [
 		  {
 			  "applicantDetail": {
@@ -1158,8 +1169,8 @@ let applicationDetails = selectedComplaint
 				"role": approverName
 			},
 			"emp": {
-				"samparkName": this.state.name,
-				"address":this.state.Address,
+				"samparkName":  this.state.name,    //"": 
+				"samparkaddress":this.state.Address,
 				"OpCode":this.state.operatorCode
 			},
 	  //PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE     
