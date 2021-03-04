@@ -455,13 +455,13 @@ class ApplicationDetails extends Component {
 							: paymentDetails.totalAmount,
 				},
 			},
-		];
+		]; 
 
 
 		downloadApplication({ BookingInfo: appData })
 	}
 	// Download Application 
-	downloadApplicationButton = async (e) => {
+	downloadApplicationButton = async (mode) => {
 		// this.downloadApplicationFunction(); 
 		const { transformedComplaint, paymentDetailsForReceipt, downloadApplication, paymentDetails, userInfo } = this.props;
 
