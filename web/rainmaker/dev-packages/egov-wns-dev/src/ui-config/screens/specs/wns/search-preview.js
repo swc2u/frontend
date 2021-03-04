@@ -509,6 +509,7 @@ const screenConfig = {
                 sm: 4,
                 align: "right"
               },
+              visible:false
             }
           }
         },
