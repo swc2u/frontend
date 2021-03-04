@@ -146,6 +146,11 @@ const DashboardWNS = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardWork = Loadable({
+  loader: () => import("./DashboardWork"),
+  loading: () => <Loading />
+});
+
 
 export {
   TestMolecules,
@@ -176,5 +181,6 @@ export {
   DashboardOSBM,
   DashboardStoreIndent,
   DashboardStoreManagement,
-  DashboardWNS
+  DashboardWNS,
+  DashboardWork
 };
