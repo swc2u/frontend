@@ -1744,7 +1744,8 @@ export const downloadApplication = async (
     }
     let paymentData = get(
         state.screenConfiguration.preparedFinalObject,
-        "ReceiptTemp[0].Bill[0]"
+        "ReceiptTemp[0].Bill[0]",
+        []
     );
 
 
@@ -1880,7 +1881,7 @@ export const downloadApplication = async (
                 (el) => el.taxHeadCode.includes("TAX")
             )[0].amount;
 
-        }else {
+        }else if(applicationData.businessService !== "NLUJM"){
 
             baseCharge = paymentData.billDetails[0].billAccountDetails.filter(
                 (el) => !el.taxHeadCode.includes("TAX")
