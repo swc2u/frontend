@@ -317,6 +317,9 @@ const usageCategory = get(
     let abc = await applyForWater(state, dispatch);
     window.localStorage.setItem("ActivityStatusFlag","true");
   }catch (err){
+    if(localStorage.getItem("WNS_STATUS")){
+      window.localStorage.removeItem("WNS_STATUS");
+  }
     console.log("errrr")
   }
 }
@@ -348,6 +351,9 @@ else if(wnsStatus && wnsStatus === "UPDATE_CONNECTION_HOLDER_INFO"){
     window.localStorage.setItem("ActivityStatusFlag","true");
  
   }catch (err){
+    if(localStorage.getItem("WNS_STATUS")){
+      window.localStorage.removeItem("WNS_STATUS");
+  }
     console.log("errrr")
   }
 } 
@@ -378,6 +384,9 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMP
     let abc = await applyForWater(state, dispatch);
     window.localStorage.setItem("ActivityStatusFlag","true");
   }catch (err){
+    if(localStorage.getItem("WNS_STATUS")){
+      window.localStorage.removeItem("WNS_STATUS");
+  }
     console.log("errrr")
   }
  

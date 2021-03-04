@@ -915,6 +915,46 @@ ValidateRequest =(payload) =>{
       };
     });
     actions = actions.filter(item => item.buttonLabel !== 'INITIATE');
+    // filter action for tempt-regular and PENDING_FOR_SDE_APPROVAL
+    if((businessService=='WS_TEMP_REGULAR') && applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
+    {
+      const {WaterConnection} = preparedFinalObject;
+      let securityCharge = 0 ;
+      securityCharge = WaterConnection && WaterConnection[0].securityCharge;
+      securityCharge = parseInt(securityCharge);
+      if(securityCharge ===0)
+      {
+        //FORWARD_TO_JE_TARIFF_CHANGE
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_PAYMENT');
+
+      }
+      else{
+        //FORWARD_TO_JE_TARIFF_CHANGE
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_JE');
+
+      }
+
+    }
+    if((businessService=='WS_CONVERSION') && applicationStatus ==='PENDING_FOR_SDC_APPROVAL')
+    {
+      const {WaterConnection} = preparedFinalObject;
+      let securityCharge = 0 ;
+      securityCharge = WaterConnection && WaterConnection[0].securityCharge;
+      securityCharge = parseInt(securityCharge);
+      if(securityCharge ===0)
+      {
+        //FORWARD_TO_JE_TARIFF_CHANGE
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_PAYMENT');
+
+      }
+      else{
+        //FORWARD_TO_JE_TARIFF_CHANGE
+        actions = actions.filter(item => item.buttonLabel !== 'FORWARD_TO_JE_TARIFF_CHANGE');
+
+      }
+
+    }
+    //PENDING_FOR_SDC_APPROVAL and WS_CONVERSION
     //workflow change for water connection 
     if((businessService=='NewWS1' 
       || businessService === "REGULARWSCONNECTION"  // 15 status ''

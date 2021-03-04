@@ -179,6 +179,7 @@ export const documentDetails = getCommonCard({
         labelName: "UPLOAD FILE",
         labelKey: "WS_DOCUMENT_DETAILS_BUTTON_UPLOAD_FILE"
       },
+      pageName:"wns",
       // description: "Only .jpg and .pdf files. 6MB max file size.",
       inputProps: {
         accept: "image/*, .pdf, .png, .jpeg"
@@ -405,7 +406,7 @@ export const getData = async (action, state, dispatch) => {
     displaysubUsageType(usageCategory_, dispatch, state);
     displayUsagecategory(waterApplicationType, dispatch, state);
                 // check for security deposite for PENDING_FOR_SECURITY_DEPOSIT//PENDING_ROADCUT_NOC_BY_CITIZEN
-                if(applicationStatus === "PENDING_FOR_SECURITY_DEPOSIT" || applicationStatus === "PENDING_FOR_JE_APPROVAL_FOR_PAYMENT"){
+                if(applicationStatus === "PENDING_FOR_SECURITY_DEPOSIT" || applicationStatus === "PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT"){
                     //regular
                     if(waterApplicationType ==='REGULAR')
                     {
@@ -423,6 +424,8 @@ export const getData = async (action, state, dispatch) => {
                             securityCharges
                           )
                         );
+                       
+                        applyScreen.waterApplication.securityCharge
   
                         dispatch(
                           handleField(
@@ -433,7 +436,8 @@ export const getData = async (action, state, dispatch) => {
                           )
                         );
                         payloadWater.WaterConnection[0].securityCharge = securityCharges;
-                        dispatch(prepareFinalObject("applyScreen.securityCharge", securityCharges));
+                         //set security
+                        dispatch(prepareFinalObject("applyScreen.waterApplication.securityCharge", securityCharges));                        
                         payloadWater.WaterConnection[0].waterApplication.securityCharge = securityCharges;
                         dispatch(prepareFinalObject("applyScreen.waterApplication.securityCharge", securityCharges));
                         //
