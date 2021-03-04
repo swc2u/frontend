@@ -383,42 +383,42 @@ export const getMyApplicationResults = async (queryObject, dispatch) => {
                         }
                         const data = await httpRequest(
                             "post",
-                            //`billing-service/bill/v2/_fetchbill?consumerCode=${response.WaterConnection[i].applicationNo}&tenantId=${response.WaterConnection[i].property.tenantId}&businessService=WS.ONE_TIME_FEE`,
-                            '/ws-services/billGeneration/_getBillData',
+                            `billing-service/bill/v2/_fetchbill?consumerCode=${response.WaterConnection[i].applicationNo}&tenantId=${response.WaterConnection[i].property.tenantId}&businessService=WS.ONE_TIME_FEE`,
+                            //'/ws-services/billGeneration/_getBillData',
                             "_search",
                              queryObject
                         );
-                        // if (data && data !== undefined) {
-                        //     if (data.Bill !== undefined && data.Bill.length > 0) {
-                        //         if (data.Bill[0].totalAmount !== 0) {
-                        //             response.WaterConnection[i].due = data.Bill[0].totalAmount
-                        //         } else {
-                        //             response.WaterConnection[i].due = "NA"
-                        //         }
-                        //     }
-
-                        // } else {
-                        //     response.WaterConnection[i].due = 0
-                        // }
                         if (data && data !== undefined) {
-                            if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
-                               response.WaterConnection[i].due = 0//data.billGeneration[0].totalAmount
-                                response.WaterConnection[i].status = data.billGeneration[0].status
-                                response.WaterConnection[i].id = data.billGeneration[0].billGenerationId
-                                response.WaterConnection[i].error = ""
+                            if (data.Bill !== undefined && data.Bill.length > 0) {
+                                if (data.Bill[0].totalAmount !== 0) {
+                                    response.WaterConnection[i].due = data.Bill[0].totalAmount
+                                } else {
+                                    response.WaterConnection[i].due = "NA"
+                                }
                             }
 
                         } else {
-                            response.WaterConnection[i].due = "NA"
-                            response.WaterConnection[i].status = "NA"
-                            response.WaterConnection[i].error = ""
-                            response.WaterConnection[i].id = 0
+                            response.WaterConnection[i].due = 0
                         }
+                        // if (data && data !== undefined) {
+                        //     if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
+                        //        response.WaterConnection[i].due = 0//data.billGeneration[0].totalAmount
+                        //         response.WaterConnection[i].status = data.billGeneration[0].status
+                        //         response.WaterConnection[i].id = data.billGeneration[0].billGenerationId
+                        //         response.WaterConnection[i].error = ""
+                        //     }
+
+                        // } else {
+                        //     response.WaterConnection[i].due = "NA"
+                        //     response.WaterConnection[i].status = "NA"
+                        //     response.WaterConnection[i].error = ""
+                        //     response.WaterConnection[i].id = 0
+                        // }
 
                     } catch (err) {
                         console.log(err)
                         response.WaterConnection[i].due = "NA"
-                        response.WaterConnection[i].status = "NA"
+                        //response.WaterConnection[i].status = "NA"
                         response.WaterConnection[i].error = err.message
                         response.WaterConnection[i].id = 0
                     }
@@ -463,37 +463,37 @@ export const getSWMyApplicationResults = async (queryObject, dispatch) => {
                             "_search",
                             queryObject
                         );
-                        // if (data && data !== undefined) {
-                        //     if (data.Bill !== undefined && data.Bill.length > 0) {
-                        //         if (data.Bill[0].totalAmount !== 0) {
-                        //             response.SewerageConnections[i].due = data.Bill[0].totalAmount
-                        //         } else {
-                        //             response.SewerageConnections[i].due = "NA"
-                        //         }
-                        //     }
-
-                        // } else {
-                        //     response.SewerageConnections[i].due = 0
-                        // }
                         if (data && data !== undefined) {
-                            if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
-                               response.SewerageConnections[i].due = 0//data.billGeneration[0].totalAmount
-                                response.SewerageConnections[i].status = data.billGeneration[0].status
-                                response.SewerageConnections[i].id = data.billGeneration[0].billGenerationId
-                                response.SewerageConnections[i].error = ""
+                            if (data.Bill !== undefined && data.Bill.length > 0) {
+                                if (data.Bill[0].totalAmount !== 0) {
+                                    response.SewerageConnections[i].due = data.Bill[0].totalAmount
+                                } else {
+                                    response.SewerageConnections[i].due = "NA"
+                                }
                             }
 
                         } else {
-                            response.SewerageConnections[i].due = "NA"
-                            response.SewerageConnections[i].status = "NA"
-                            response.SewerageConnections[i].error = ""
-                            response.SewerageConnections[i].id = 0
+                            response.SewerageConnections[i].due = 0
                         }
+                        // if (data && data !== undefined) {
+                        //     if (data.billGeneration !== undefined && data.billGeneration.length > 0) {
+                        //        response.SewerageConnections[i].due = 0//data.billGeneration[0].totalAmount
+                        //         response.SewerageConnections[i].status = data.billGeneration[0].status
+                        //         response.SewerageConnections[i].id = data.billGeneration[0].billGenerationId
+                        //         response.SewerageConnections[i].error = ""
+                        //     }
+
+                        // } else {
+                        //     response.SewerageConnections[i].due = "NA"
+                        //     response.SewerageConnections[i].status = "NA"
+                        //     response.SewerageConnections[i].error = ""
+                        //     response.SewerageConnections[i].id = 0
+                        // }
 
                     } catch (err) {
                         console.log(err)
                         response.SewerageConnections[i].due = "NA"
-                        response.SewerageConnections[i].status = "NA"
+                       // response.SewerageConnections[i].status = "NA"
                         response.SewerageConnections[i].error = err.message
                         response.SewerageConnections[i].id = 0
                     }

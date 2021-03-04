@@ -43,12 +43,12 @@ class EofficestatContainer extends Component {
             return  ( <div>
               {
                  APIData&&(
-                 
+                  APIData.map((item,i)=>{
+                    return (
+                    
                   <div>
- {
-               
-               <div style={{ overscrollBehaviorX:"overlay",overflow:"overlay"}}>
-                 
+                 {               
+               <div style={{ overscrollBehaviorX:"overlay",overflow:"overlay"}}>                 
               <table  id="reportTable"
                  style={{
                    width: "100%",
@@ -64,6 +64,20 @@ class EofficestatContainer extends Component {
                     labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
                     label="INTIGRATION_EOFFICE_STATE_HEADING"
                   />
+                  </th>
+                 
+                 </tr>
+                 <tr className="report-table-header">
+                 <th   colSpan="1">
+                 <Label
+                    className="report-header-row-label"
+                    labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
+                    label="INTIGRATION_EOFFICE_POST_DETAIL_NAME_HEADING"
+                  />
+                 
+                  </th>
+                  <th  style={{ verticalAlign:"middle", textAlign: "center"}} colSpan="1">
+                  {get(APIData[i].eofficestat, `postdetailid`, "-")}
                   </th>
                  
                  </tr>
@@ -96,7 +110,7 @@ class EofficestatContainer extends Component {
                     labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
                     label="INTIGRATION_TOTAL_FILE_PENDING_CNT"
                   /></th>                            
-                            <th>{get(APIData.eofficestat, `totalFilesPendingCnt`, "-") || "-"}</th>                                            
+                            <th>{get(APIData[i].eofficestat, `totalFilesPendingCnt`, "-") || "-"}</th>                                            
                             {/* <th>{get(APIData.eofficestat, `totalFilesClosed`, "-") || "-"}</th>
                             <th>{get(APIData.eofficestat, `totalReceiptsPending`, "-") || "-"}</th>
                             <th>{get(APIData.eofficestat, "totalReceiptsClosed", "-") || "-"}</th>
@@ -111,7 +125,7 @@ class EofficestatContainer extends Component {
                     labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
                     label="INTIGRATION_TOTAL_FILE_CLOSED_CNT"
                   /></th>                            
-                            <th>{get(APIData.eofficestat, `totalFilesClosed`, "-") || "-"}</th> 
+                            <th>{get(APIData[i].eofficestat, `totalFilesClosed`, "-") || "-"}</th> 
                            </tr>
                          }
                           {
@@ -121,7 +135,7 @@ class EofficestatContainer extends Component {
                     labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
                     label="INTIGRATION_TOTAL_RECEIPT_PENDING_CNT"
                   /></th>                            
-                            <th>{get(APIData.eofficestat, `totalReceiptsPending`, "-") || "-"}</th> 
+                            <th>{get(APIData[i].eofficestat, `totalReceiptsPending`, "-") || "-"}</th> 
                            </tr>
                          }
                           {
@@ -131,7 +145,7 @@ class EofficestatContainer extends Component {
                     labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
                     label="INTIGRATION_TOTAL_RECEIPT_CLOSED_CNT"
                   /></th>                            
-                            <th>{get(APIData.eofficestat, `totalReceiptsClosed`, "-") || "-"}</th> 
+                            <th>{get(APIData[i].eofficestat, `totalReceiptsClosed`, "-") || "-"}</th> 
                            </tr>
                          }
                           {
@@ -141,7 +155,7 @@ class EofficestatContainer extends Component {
                     labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
                     label="INTIGRATION_TOTAL_VIP_RECEIPT_PENDING_CNT"
                   /></th>                            
-                            <th>{get(APIData.eofficestat, `totalVIPReceiptsPending`, "-") || "-"}</th> 
+                            <th>{get(APIData[i].eofficestat, `totalVIPReceiptsPending`, "-") || "-"}</th> 
                            </tr>
                          }
     
@@ -151,12 +165,12 @@ class EofficestatContainer extends Component {
                  </table>
                 
                   </div>
-               
-            }
+                    }
                   </div>
+                  )
                  
                
-                 )
+                }))
               }         
             
                

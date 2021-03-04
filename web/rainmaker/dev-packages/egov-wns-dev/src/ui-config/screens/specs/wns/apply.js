@@ -437,8 +437,7 @@ export const getData = async (action, state, dispatch) => {
                         );
                         payloadWater.WaterConnection[0].securityCharge = securityCharges;
                          //set security
-                        dispatch(prepareFinalObject("applyScreen.securityCharge", securityCharges));
-                        dispatch(prepareFinalObject("WaterConnection[0].securityCharge", securityCharges));
+                        dispatch(prepareFinalObject("applyScreen.waterApplication.securityCharge", securityCharges));                        
                         payloadWater.WaterConnection[0].waterApplication.securityCharge = securityCharges;
                         dispatch(prepareFinalObject("applyScreen.waterApplication.securityCharge", securityCharges));
                         //
