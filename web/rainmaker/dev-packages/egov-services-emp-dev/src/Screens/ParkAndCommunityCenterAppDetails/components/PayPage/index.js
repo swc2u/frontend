@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import EditIcon from '@material-ui/icons/Edit';
-import "./index.css";
+import "./index.css"; 
 import Footer from "../../../../modules/footer"
 import PaymentReceiptDetail from "../PaymentReceiptDetail"
 import PaymentOptionDetails from "../PaymentOptionDetails"
@@ -16,7 +16,8 @@ import SubmitPaymentDetails from "../SubmitPaymentDetails"
 import { getFileUrlFromAPI } from '../../../../modules/commonFunction'
 import jp from "jsonpath";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { httpRequest } from "egov-ui-kit/utils/api"
+import { httpRequest } from "egov-ui-kit/utils/api" //PaymentDetailsTwo
+import PaymentDetailsTwo from "../PaymentDetailsTwo"  
 
 class SummaryDetails extends Component {
 
@@ -56,6 +57,15 @@ class SummaryDetails extends Component {
             utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, locality, residenials, facilationChargesSuccess,discountType } = this.props;
 
 
+            await fetchApplications(
+                {
+                    "applicationNumber": fetchApplicationNumber, 'uuid': userInfo.uuid,
+                    "applicationStatus": "",
+                    "mobileNumber": "", "bookingType": "",
+                    "tenantId":userInfo.tenantId
+                }
+            );
+
  fetchPayment(
     [{ key: "consumerCode", value: fetchApplicationNumber }, { key: "businessService", value: "PACC" }, { key: "tenantId", value: userInfo.tenantId }
     ])
@@ -64,14 +74,7 @@ class SummaryDetails extends Component {
         [{ key: "consumerCodes", value: fetchApplicationNumber }, { key: "tenantId", value: userInfo.tenantId }
         ])
 
-    await fetchApplications(
-        {
-            "applicationNumber": fetchApplicationNumber, 'uuid': userInfo.uuid,
-            "applicationStatus": "",
-            "mobileNumber": "", "bookingType": "",
-            "tenantId":userInfo.tenantId
-        }
-    );
+   
     }
 
     handleChange = input => e => {
@@ -106,6 +109,10 @@ class SummaryDetails extends Component {
         ddDate: cDdDate
     })
     prepareFinalObject("ChangeDdDate", cDdDate)
+}
+
+GoToApplyPage = (e) => {
+    this.props.history.push(`/egov-services/applyPark-community-center`);
 }
 
     submit = async (e) => {
@@ -311,10 +318,21 @@ console.log("this.state--PaidBy",PaidBy)
                 <div className="form-without-button-cont-generic">
                     <div classsName="container">
                         <div className="col-xs-12">
-{this.props.ApplicantAppStatus != "OFFLINE_RE_INITIATED" ? 
- <PaymentDetails
+{/* {this.props.ApplicantAppStatus != "OFFLINE_RE_INITIATED" ? 
+ <PaymentDetails 
  paymentDetails={paymentDetails && paymentDetails}
   />     
+: ""} */}  
+{this.props.ApplicantAppStatus != "OFFLINE_RE_INITIATED" ? 
+ <PaymentDetailsTwo
+ paymentDetails={paymentDetails && paymentDetails}
+ one={this.props.one}
+ two={this.props.two}
+ three={this.props.three}
+ four={this.props.four}
+ five={this.props.five}
+ six={this.props.six}
+ />     
 : ""}
                        
 
@@ -390,10 +408,19 @@ Status={this.props.ApplicantAppStatus && this.props.ApplicantAppStatus}
                             primary={true}
                             label={<Label buttonLabel={true} label="BK_CORE_COMMON_GOBACK" />}
                             fullWidth={true}
-                            onClick={this.back}
+                             onClick={this.back}
                             style={{ marginRight: 18 }}
                             startIcon={<ArrowBackIosIcon />}
                         /> */}
+                         <Button
+                className="responsive-action-button"
+                primary={true}
+                label={<Label buttonLabel={true} label="BK_MYBK_PAYMENT_PAGE_BACK" />}
+                fullWidth={true}
+                onClick={this.GoToApplyPage}
+                style={{ marginRight: 18 }}
+                startIcon={<ArrowBackIosIcon />}
+              />
                         <Button
                             className="responsive-action-button"
                             primary={true}
@@ -410,6 +437,7 @@ Status={this.props.ApplicantAppStatus && this.props.ApplicantAppStatus}
     }
 }
 
+
 const mapStateToProps = state => {
 
     const { bookings, common, auth, form } = state;
@@ -417,6 +445,8 @@ const mapStateToProps = state => {
     const { userInfo } = state.auth;
     const { facilationChargesSuccess, arrayName } = bookings;
     const { applicationData } = bookings;
+    
+    
     let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
     
     let ApplicantName = selectedComplaint ? selectedComplaint.bkApplicantName : 'notFound'
@@ -434,14 +464,67 @@ const mapStateToProps = state => {
 
     const { paymentData } = bookings;
 
+
+    let paymentDataOne = paymentData ? paymentData : "wrong";
+    console.log("paymentDataOne--",paymentDataOne)
+
+    let checkBillLength =  paymentDataOne != "wrong" ? paymentDataOne.Bill.length > 0 : "";
 	console.log("paymentData--",paymentData ? paymentData : "NopaymentData")
+    // Bill[0].totalAmount
+    let billAccountDetailsArray =  checkBillLength ? paymentDataOne.Bill[0].billDetails[0].billAccountDetails : "NOt found Any Array"
+    console.log("billAccountDetailsArray--",billAccountDetailsArray)
+    let one = 0;
+    let two = 0;
+    let three = 0;
+    let four = 0; //
+    let five = 0;
+    let six = 0;
+    let seven = 0;
+for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
+
+    if(billAccountDetailsArray[i].taxHeadCode == "PACC"){
+        one = billAccountDetailsArray[i].amount
+    }
+    else if(billAccountDetailsArray[i].taxHeadCode == "LUXURY_TAX"){
+        two = billAccountDetailsArray[i].amount
+    }
+    else if(billAccountDetailsArray[i].taxHeadCode == "REFUNDABLE_SECURITY"){
+        three = billAccountDetailsArray[i].amount
+    }
+    else if(billAccountDetailsArray[i].taxHeadCode == "PACC_TAX"){
+        four = billAccountDetailsArray[i].amount
+    }
+    else if(billAccountDetailsArray[i].taxHeadCode == "PACC_ROUND_OFF"){
+        five = billAccountDetailsArray[i].amount
+    }
+    else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHARGE"){
+        six = billAccountDetailsArray[i].amount
+    }
+    else if(billAccountDetailsArray[i].taxHeadCode == "PACC_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+        seven = billAccountDetailsArray[i].amount
+    }
+}
+
+console.log("one--",one)
+console.log("two--",two)
+console.log("three--",three)
+console.log("four--",four)
+console.log("five--",five)
+console.log("six--",six)
+console.log("seven--",seven ? seven : "sdfg")
+
+
+
 
 	const { fetchPaymentAfterPayment } = bookings;
 	console.log("fetchPaymentAfterPayment--",fetchPaymentAfterPayment ? fetchPaymentAfterPayment : "NofetchPaymentAfterPaymentData")
 
-    
-    
-    if(selectedComplaint && selectedComplaint.bkApplicationStatus == "OFFLINE_INITIATE" || selectedComplaint.bkApplicationStatus == "OFFLINE_INITIATED"){
+ 
+let abc = applicationData !== undefined && applicationData !== null ? (applicationData.bookingsModelList != undefined && applicationData.bookingsModelList != null ? (applicationData.bookingsModelList.length > 0 ? (applicationData.bookingsModelList): "NA"): "NA") : "NA"
+
+    if(abc !== "NA"){
+
+    if(selectedComplaint && selectedComplaint.bkApplicationStatus != undefined && selectedComplaint.bkApplicationStatus != null && selectedComplaint.bkApplicationStatus == "OFFLINE_INITIATE" || selectedComplaint.bkApplicationStatus == "OFFLINE_INITIATED"){
         console.log("offlineApplied--",selectedComplaint.bkApplicationStatus)
            if(selectedComplaint.bkPaymentStatus == "SUCCESS"){
             console.log("one")
@@ -454,7 +537,7 @@ const mapStateToProps = state => {
             console.log("paymentDetails-two--",paymentDetails)
             }
         }
-        else if(selectedComplaint && selectedComplaint.bkApplicationStatus == "OFFLINE_RE_INITIATED" || selectedComplaint.bkApplicationStatus == "OFFLINE_RE_INITIATE"){
+        else if(selectedComplaint && selectedComplaint.bkApplicationStatus != undefined && selectedComplaint.bkApplicationStatus != null &&selectedComplaint.bkApplicationStatus == "OFFLINE_RE_INITIATED" || selectedComplaint.bkApplicationStatus == "OFFLINE_RE_INITIATE"){
                   console.log("OFFLINE_RE_INITIATE--",selectedComplaint.bkApplicationStatus)
                   console.log("one+++++")
                   paymentDetails = paymentData ? paymentData.Bill[0] : '';
@@ -465,7 +548,7 @@ const mapStateToProps = state => {
             paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
         
           }
-
+        }
 
     let TotalAmount  = paymentDetails ? paymentDetails.totalAmount : "NotFoundAnyAmount";
     console.log("TotalAmount--",TotalAmount)
@@ -535,10 +618,10 @@ let IFSC = state.screenConfiguration.preparedFinalObject.IFSC ?  state.screenCon
     let NewTrxNo = TrxNo && TrxNo ? TrxNo : " "
     console.log("NewTrxNo--",NewTrxNo)
 
-    return {
+    return {one,two,three,four,five,six,seven,
         createPACCApplicationData,userInfo,ppaidBy,pChequeNo,ChnChqDate,newDDno,NewTrxNo,NewddDate,ApplicantAppStatus,
         documentMap,facilationChargesSuccess,billId,ApplicantName,ApplicantMobNum,pddIFSC,pIFSC,
-        fCharges,myLocationtwo,paymentDetails,TotalAmount,paymentMode
+        fCharges,myLocationtwo,paymentDetails,TotalAmount,paymentMode,applicationData,selectedComplaint
     }
 
 }

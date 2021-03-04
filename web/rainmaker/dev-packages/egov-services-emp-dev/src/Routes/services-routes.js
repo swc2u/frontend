@@ -19,7 +19,10 @@ const RequestReAssign = Loadable({
   loader: () => import("../Screens/RequestReAssign"),
   loading: Loading
 });
-
+// const AllComplaints = Loadable({
+//   loader: () => import("../Screens/AllComplaints"),
+//   loading: Loading
+// });
 const AllRequests = Loadable({
   loader: () => import("../Screens/AllApplications"),
   loading: Loading
@@ -31,7 +34,10 @@ const ServicesTest = Loadable({
   loading: Loading
 })
 
-
+// const MasterData = Loadable({
+//   loader: () => import("../Screens/MasterData"),
+//   loading: Loading
+// });
 const OsbmFeeMasterData = Loadable({
   loader: () => import("../Screens/MasterData/OsbmFeeMasterData"),
   loading: Loading
@@ -52,7 +58,10 @@ const ApplicationResolved = Loadable({
   loader: () => import("../Screens/ApplicationResolved"),
   loading: Loading
 });
-
+// const ComplaintCreated = Loadable({
+//   loader: () => import("../Screens/ComplaintCreated"),
+//   loading: Loading
+// });
 const ApplicationSummary = Loadable({
   loader: () => import("../Screens/ApplicationDetails"),
   loading: Loading
@@ -63,6 +72,10 @@ const ParkAndCommunityCenterAppDetails=Loadable({
   loader: () => import("../Screens/ParkAndCommunityCenterAppDetails"),
   loading: Loading
 });
+// const LocationSummary = Loadable({
+//   loader: () => import("../Screens/LocationSummaryComponent"),
+//   loading: Loading
+// });
 
 const CGApplicationDetails = Loadable({
   loader: () => import("../Screens/CGApplicationDetails"),
@@ -88,6 +101,11 @@ const CreateSuccessForPCC= Loadable({
   loader: () => import("../Screens/CreateSuccessForPCC"),
   loading: Loading
 });
+
+const CreateSuccessForRoomBooking= Loadable({
+  loader: () => import("../Screens/CreateSuccessForRoomBooking"),
+  loading: Loading
+});
 //NewLocationApplicationDetails
 const NewLocationApplicationDetails = Loadable({
   loader: () => import("../Screens/NewLocationApplicationDetails"),
@@ -98,6 +116,12 @@ const PaymentSuccessForEmployee = Loadable({
   loader: () => import("../Screens/PaymentSuccessForEmployee"),
   loading: Loading
 });
+//PaymentSuccessForEmployeeRoomBooking
+const PaymentSuccessForEmployeeRoomBooking = Loadable({
+  loader: () => import("../Screens/PaymentSuccessForEmployeeRoom"),
+  loading: Loading
+});
+
 //Cancel an application from emp
 const ApplyCancelEmpApplication = Loadable({
   loader: () => import("../Screens/ApplyCancelEmpApplication"),
@@ -122,7 +146,32 @@ const PaymentReceiptDteail = Loadable({
   loader: () => import("../Screens/ParkAndCommunityCenterAppDetails/components/PayPage"),
   loading: Loading
 })
-
+// RoomPayment
+const RoomPayment = Loadable({
+  loader: () => import("../Screens/EmployeeRoomBooking/PayPage"),
+  loading: Loading
+})
+//RoomBooking
+const RoomBooking = Loadable({
+  loader: () => import("../Screens/EmployeeRoomBooking/CheckApplicationPage"),
+  loading: Loading
+})
+const BeforeApplyScreen = Loadable({
+  loader: () => import("../Screens/EmployeeRoomBooking/BeforeApplyScreen"),
+  loading: Loading
+})
+const RoomSteeper = Loadable({
+  loader: () => import("../Screens/EmployeeRoomBooking/formForRoomApplication"),
+  loading: Loading
+})
+const ApplicationDetailForRoom = Loadable({
+  loader: () => import("../Screens/EmployeeRoomBooking/ApplicationDetailsPage"),
+  loading: Loading
+})
+// const RoomSteeper = Loadable({
+//   loader: () => import("../Screens/EmployeeRoomBooking/formForRoomApplication"),
+//   loading: Loading
+// })
 const ServiceHome = Loadable({
   loader: () => import("../Screens/ApplicationDetails"),
   loading: Loading
@@ -137,7 +186,10 @@ const EmployeeDirectory = Loadable({
   loader: () => import("../Screens/EmployeeDirectory"),
   loading: Loading
 });
-
+// const ClosedComplaints = Loadable({
+//   loader: () => import("../Screens/ClosedComplaints"),
+//   loading: Loading
+// });
 const RejectComplaint = Loadable({
   loader: () => import("../Screens/RejectComplaint"),
   loading: Loading
@@ -164,7 +216,10 @@ const ApplicationRejected = Loadable({
   loader: () => import("../Screens/ApplicationRejected"),
   loading: Loading
 });
-
+// const ComplaintAssigned = Loadable({
+//   loader: () => import("../Screens/ComplaintAssigned"),
+//   loading: Loading
+// });
 const ResolveSuccess = Loadable({
   loader: () => import("../Screens/ResolveSuccess"),
   loading: Loading
@@ -200,7 +255,10 @@ const ReassignSuccess = Loadable({
   loader: () => import("../Screens/ReassignSuccess"),
   loading: Loading
 });
-
+// const CreateComplaint = Loadable({
+//   loader: () => import("../Screens/CreateComplaint"),
+//   loading: Loading
+// });
 const SearchScreen = Loadable({
   loader: () => import("../Screens/SearchScreen"),
   loading: Loading
@@ -228,10 +286,19 @@ const testing= Loadable({
   loading: Loading
 })
 
-const MyTry = Loadable({
-  loader: () => import("../Screens/MyTry/payment-methods"),
+const ReservedDatesList= Loadable({
+  loader: () => import("../Screens/ReservedBookingDates"),
   loading: Loading
 })
+
+const ReserveDates= Loadable({
+  loader: () => import("../Screens/ApplyParkAndCommunity/components/CheckAvailability/ReserveDates"),
+  loading: Loading
+})
+// const MyTry = Loadable({
+//   loader: () => import("../Screens/MyTry/payment-methods"),
+//   loading: Loading
+// })
 
 // import CreateEmployee from "modules/employee/pgr/CreateEmployee";
 const redirectionUrl = "/user/login";
@@ -248,6 +315,20 @@ const routes = [
     needsAuthentication: false,
     redirectionUrl: "/"
   },
+  // {
+  //   path: "all-complaints",
+  //   component: AllComplaints,
+  //   needsAuthentication: true,
+  //   options: {
+  //     hideFooter: true,
+  //     title: "ES_OPEN_COMPLAINTS_HEADER",
+  //     hideTitle: false,
+  //     redirectionUrl,
+  //     hideFor: "ao",
+  //     customFor: "csr",
+  //     customTitle: "ES_ALL_COMPLAINTS_HEADER"
+  //   }
+  // },
   {
     path: "egov-services/all-applications",
     component: AllRequests,
@@ -271,7 +352,76 @@ const routes = [
       // title: "ES_OPEN_APPLICAION_HEADER",
       hideTitle: false,
       customFor: "employee",
-      customTitle: "BK_MYBK_PAYMENT_RCPT_DETAILS"
+      customTitle: "Make Offline Payment"
+      // customTitle: "BK_MYBK_PAYMENT_RCPT_DETAILS"
+    }
+  },
+  {
+    path: "egov-services/PaymentReceiptDteail/ForRoomBooking/:applicationId",
+    component: RoomPayment,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      // title: "ES_OPEN_APPLICAION_HEADER",
+      hideTitle: false,
+      customFor: "employee",
+      customTitle: "Make Offline Payment"
+      // customTitle: "BK_MYBK_PAYMENT_RCPT_DETAILS"
+    }
+  },
+  //RoomBooking
+  {
+    path: "egov-services/ApplyForRoomBooking",
+    component: RoomBooking,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      // title: "ES_OPEN_APPLICAION_HEADER",
+      hideTitle: false,
+      customFor: "employee",
+      customTitle: "Make Offline Payment",
+      customTitle: "BK_MYBK_APPLY_FOR_ROOM_BOOKING"
+    }
+  },//BeforeApplyScreen
+  {
+    path: "egov-services/ApplyRoomBooking",
+    component: BeforeApplyScreen,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      // title: "ES_OPEN_APPLICAION_HEADER",
+      hideTitle: false,
+      customFor: "employee",
+      customTitle: "Make Offline Payment",
+      customTitle: "BK_MYBK_APPLY_FOR_ROOM_BOOKING"
+    }
+  },
+  //RoomSteeper
+  {
+    path: "egov-services/Employee/ApplyRoomBooking",
+    component: RoomSteeper,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      // title: "ES_OPEN_APPLICAION_HEADER",
+      hideTitle: false,
+      customFor: "employee",
+      customTitle: "Make Offline Payment",
+      customTitle: "BK_MYBK_APPLY_FOR_ROOM_BOOKING"
+    }
+  },
+  //ApplicationDetailForRoom
+  {
+    path: "egov-services/Employee/ApplicationDetailsForRoom/:applicationId",
+    component: ApplicationDetailForRoom,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      // title: "ES_OPEN_APPLICAION_HEADER",
+      hideTitle: false,
+      customFor: "employee",
+      // customTitle: "Make Offline Payment",
+      // customTitle: "BK_MYBK_APPLY_FOR_ROOM_BOOKING"
     }
   },
   {
@@ -304,7 +454,34 @@ const routes = [
     redirectionUrl
   }
 },
-
+//CreateSuccessForRoomBooking
+{
+  path: "egov-services/RoomBooking-Created-Successfully",
+  component: CreateSuccessForRoomBooking,
+  needsAuthentication: true,
+  options: {
+    hideBackButton: true,
+    customFor: "employee",
+    hideFooter: true,
+    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    hideTitle: true,
+    redirectionUrl
+  }
+},
+//room success page
+{
+  path: "egov-services/Room-Payment-Success",
+  component: PaymentSuccessForEmployeeRoomBooking,
+  needsAuthentication: true,
+  options: {
+    hideBackButton: true,
+    customFor: "employee",
+    hideFooter: true,
+    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    hideTitle: true,
+    redirectionUrl
+  }
+},
 // PaymentForEmployee
 {
   path: "egov-services/success-payment",
@@ -334,7 +511,7 @@ const routes = [
   }
 },
 
-//ApplyCancelEmpApplication 
+//ApplyCancelEmpApplication
 {
   path: "egov-services/application-cancelled-success",
   component: ApplyCancelEmpApplication,
@@ -379,6 +556,21 @@ const routes = [
     customTitle: "BK_MYBK_APPLY_PACC_REQUEST_HEADER"
   }
 },
+//newMasterData
+// {
+//   path: "egov-services/MasterData",
+//   component: MasterData,
+//   needsAuthentication: true,
+//   options: {
+//     hideFooter: true,
+//     title: "ES_OPEN_APPLICAION_HEADER",
+//     hideTitle: false,
+//     redirectionUrl,
+//     hideFor: "ao",
+//     customFor: "employee",
+//     customTitle: "MYBK_ALL_APPLICAION_HEADER"
+//   }
+// },
 {
   path: "egov-services/checkavailability_pcc",
   component: CheckAvailabilityPcc,
@@ -386,11 +578,11 @@ const routes = [
   options: {
     hideFooter: true,
     title: "BK_MYBK_APPLY_PACC_REQUEST_HEADER",
-    
+
     customTitle: "BK_MYBK_CHECK_AVAILABILITY_HEADER"
   }
 },
-  
+
 {
   path: "egov-services/admin/osbmFee",
   component: OsbmFeeMasterData,
@@ -398,7 +590,7 @@ const routes = [
   options: {
     hideFooter: true,
     title: "BK_MYBK_ADMIN_OSBM_FEE_HEADER",
-  
+
     hideTitle: false,
     redirectionUrl,
     hideFor: "ao",
@@ -516,6 +708,19 @@ const routes = [
       redirectionUrl
     }
   },
+
+
+  // {
+  //   path: "egov-services/new-location-details/:applicationId",
+  //   component: LocationSummary,
+  //   needsAuthentication: true,
+  //   options: {
+  //     hideFooter: true,
+  //     // title: "BK_CS_HEADER_APPLICATION_SUMMARY",
+  //     redirectionUrl
+  //   }
+  // },
+
   {
     path: "egov-services/cg-application-details/:applicationId",
     component: CGApplicationDetails,
@@ -561,7 +766,7 @@ const routes = [
       redirectionUrl
     }
   },
- 
+
   {
     path: "egov-services/bwt-application-details/:applicationId",
     component: ApplicationBWTSummary,
@@ -583,6 +788,19 @@ const routes = [
       redirectionUrl
     }
   },
+  //
+
+  // {
+  //   path: "complaint-reassigned/:serviceRequestId?",
+  //   component: ComplaintAssigned,
+  //   needsAuthentication: true,
+  //   options: {
+  //     hideFooter: true,
+  //     title: "ES_COMPLAINT_REASSIGNED_HEADER",
+  //     hideTitle: true,
+  //     redirectionUrl
+  //   }
+  // },
   {
     path: "egov-services/DataSubmitted",
     component: ResolveSuccess,
@@ -677,6 +895,18 @@ const routes = [
       redirectionUrl
     }
   },
+  // {
+  //   path: "complaint-assigned/:serviceRequestId?",
+  //   component: ComplaintAssigned,
+  //   needsAuthentication: true,
+  //   options: {
+  //     hideBackButton: true,
+  //     hideFooter: true,
+  //     hideTitle: true,
+  //     title: "ES_COMPLAINT_ASSIGNED_HEADER",
+  //     redirectionUrl
+  //   }
+  // },
   {
     path: "egov-services/application-rejected",
     component: ApplicationRejected,
@@ -769,8 +999,8 @@ const routes = [
       redirectionUrl
     }
   },
-  
- 
+
+
   {
     path: "egov-services/assignto-driver/:applicationId?",
     component: AssignToDriver,
@@ -825,16 +1055,45 @@ const routes = [
     }
   },
 
-  
+  // {
+  //   path: "/egov-services/MyTry",
+  //   component: MyTry,
+  //   needsAuthentication: true,
+  //   options: {
+  //     hideFooter: false,
+  //     hideBackButton: true,
+  //     title: "BK_MYBK_PCC_APPLICATION_REQUEST",
+  //     customFor: "employee",
+  //   }
+  // },
   {
-    path: "/egov-services/MyTry",
-    component: MyTry,
+    path: "egov-services/reservedbookingdates",
+    component: ReservedDatesList,
     needsAuthentication: true,
     options: {
-      hideFooter: false,
-      hideBackButton: true,
-      title: "BK_MYBK_PCC_APPLICATION_REQUEST",
+      hideFooter: true,
+      title: "BK_MYBK_ADMIN_PACC_HOLD_DATES_HEADER",
+
+      hideTitle: false,
+      redirectionUrl,
+      hideFor: "ao",
       customFor: "employee",
+      customTitle: "BK_MYBK_ADMIN_PACC_HOLD_DATES_HEADER"
+    }
+  },
+  {
+    path: "egov-services/reservedates",
+    component: ReserveDates,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      title: "BK_MYBK_ADMIN_PACC_HOLD_DATES_HEADER",
+
+      hideTitle: false,
+      redirectionUrl,
+      hideFor: "ao",
+      customFor: "employee",
+      customTitle: "BK_MYBK_ADMIN_PACC_HOLD_DATES_HEADER"
     }
   },
 

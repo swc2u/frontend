@@ -16,6 +16,11 @@ const LabelContainer = Loadable({
   loader: () => import("./LabelContainer"),
   loading: () => <Loading />
 });
+const ParkChangeDateVenueFieldDisabler = Loadable({
+  loader: () => import("./ParkChangeDateVenueFieldDisabler"),
+  loading: () => <Loading />
+});
+
 
 const CheckboxContainer = Loadable({
   loader: () => import("./CheckboxContainer"),
@@ -27,6 +32,10 @@ const DownloadFileContainer = Loadable({
 });
 const EstimateCardContainer = Loadable({
   loader: () => import("./EstimateCardContainer"),
+  loading: () => <Loading />
+});
+const RoomCardsContainer = Loadable({
+  loader: () => import("./RoomCardsContainer"),
   loading: () => <Loading />
 });
 const DocumentListContainer = Loadable({
@@ -100,5 +109,7 @@ export {
   BookingMediaContainer,
   RefundAmountContainer,
   RefundFeeAmountContainer,
-  modifiedBookingPaymentCard
+  modifiedBookingPaymentCard,
+  RoomCardsContainer,
+  ParkChangeDateVenueFieldDisabler
 };

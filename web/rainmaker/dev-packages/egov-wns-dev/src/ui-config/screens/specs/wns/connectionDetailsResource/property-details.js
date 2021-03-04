@@ -50,9 +50,22 @@ const propertyDetails = getCommonContainer({
       labelKey: "WS_PROPERTY_USAGE_TYPE_LABEL"
     },
     { jsonPath: "WaterConnection[0].property.usageCategory",
+    callBack: handleNA,
     localePrefix: {
       moduleName: "WS",
       masterName: "PROPUSGTYPE"
+    } 
+ }
+  ),
+  propertysubUsageType: getLabelWithValue(
+    {
+      labelKey: "WS_PROPERTY_SUB_USAGE_TYPE_LABEL"
+    },
+    { jsonPath: "WaterConnection[0].property.subusageCategory",
+    callBack: handleNA,
+    localePrefix: {
+      moduleName: "WS",
+      masterName: "PROPSUBUSGTYPE"
     }
  }
   ),
@@ -70,6 +83,14 @@ const propertyDetails = getCommonContainer({
       labelKey: "WS_PROPERTY_NO_OF_FLOOR_LABEL"
     },
     { jsonPath: "WaterConnection[0].property.noOfFloors",
+    callBack: handleNA }
+  ),
+  reviewCoveredArea: getLabelWithValue(
+    {
+      labelName: "Covered Area",
+      labelKey: "WS_PROP_DETAIL_BUILD_UP_AREA_LABEL_INPUT"
+    },
+    { jsonPath: "WaterConnection[0].property.superBuiltUpArea",
     callBack: handleNA }
   ),
 })
@@ -107,14 +128,14 @@ const propertyLocationDetails = getCommonContainer({
       jsonPath: "WaterConnection[0].property.address.buildingName"
     }
   ),
-  streetName: getLabelWithValue(
-    {
-      labelKey: "WS_PROP_DETAIL_STREET_NAME"
-    },
-    {
-      jsonPath: "WaterConnection[0].property.address.street"
-    }
-  ),
+  // streetName: getLabelWithValue(
+  //   {
+  //     labelKey: "WS_PROP_DETAIL_STREET_NAME"
+  //   },
+  //   {
+  //     jsonPath: "WaterConnection[0].property.address.street"
+  //   }
+  // ),
   locality: getLabelWithValue(
     {
       labelKey: "WS_PROP_DETAIL_LOCALITY_LABEL"
@@ -123,20 +144,20 @@ const propertyLocationDetails = getCommonContainer({
       jsonPath: "WaterConnection[0].property.address.locality.name",
     }
   ),
-  pincode: getLabelWithValue(
-    {
-      labelKey: "WS_PROP_DETAIL_PINCODE"
-    },
-    { jsonPath: "WaterConnection[0].property.address.pincode" }
-  ),
-  locationOnMap: getLabelWithValue(
-    {
-      labelKey: "WS_PROP_DETAIL_MAP_LOC"
-    },
-    {
-      jsonPath: "WaterConnection[0].property.address.locality.locationOnMap"
-    }
-  ),
+  // pincode: getLabelWithValue(
+  //   {
+  //     labelKey: "WS_PROP_DETAIL_PINCODE"
+  //   },
+  //   { jsonPath: "WaterConnection[0].property.address.pincode" }
+  // ),
+  // locationOnMap: getLabelWithValue(
+  //   {
+  //     labelKey: "WS_PROP_DETAIL_MAP_LOC"
+  //   },
+  //   {
+  //     jsonPath: "WaterConnection[0].property.address.locality.locationOnMap"
+  //   }
+  // ),
 })
 
 export const getPropertyDetails = (isEditable = true) => {

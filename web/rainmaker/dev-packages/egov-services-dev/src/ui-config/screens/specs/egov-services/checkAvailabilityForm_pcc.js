@@ -10,6 +10,11 @@ import {
   getLabel,
   getPattern,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import {
+  
+  getAvailabilityData,
+  getBetweenDays,
+} from "../utils";
 
 import {
   prepareFinalObject,
@@ -23,7 +28,12 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 import set from "lodash/set";
 import { convertDateInYMD, calculateBetweenDaysCount } from "../utils";
-
+import {
+  getFileUrlFromAPI,
+  getQueryArg,
+  getTransformedLocale,
+  setBusinessServiceDataToLocalStorage,
+} from "egov-ui-framework/ui-utils/commons";
 
 export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
   let allAreFilled = true;
@@ -187,15 +197,23 @@ const callBackForBook = async (state, dispatch) => {
     "screenConfiguration.preparedFinalObject.oldAvailabilityCheckData",
     {}
   );
+
+  
   console.log(availabilityCheckData, "availabilityCheckData");
   console.log(oldAvailabilityCheckData, "oldAvailabilityCheckData");
   if (availabilityCheckData === undefined || !("bkToDate" in availabilityCheckData) || (availabilityCheckData.bkToDate == null)) {
     let warrningMsg = {
-      labelName: "Please Select Date Range",
+      labelName: "Please select date range",
       labelKey: "",
     };
     dispatch(toggleSnackbar(true, warrningMsg, "warning"));
-  } else {
+  } else if(availabilityCheckData.bkBookingType==="Commercial Ground"){
+
+
+    dispatch(setRoute(`/egov-services/applycommercialground`));
+        
+  }
+  else {
 
     let daysCount = calculateBetweenDaysCount(
         availabilityCheckData.bkFromDate,
@@ -251,11 +269,25 @@ console.log(alreadyBookedDaysCount, selectedDaysCount, "aNero from file");
 
 
       } else {
+
+        let routeUrl
+        const changeDateVenue = getQueryArg(
+          window.location.href,
+          "changeDateVenue"
+        );
+       
         if ("bkApplicationNumber" in availabilityCheckData) {
-          dispatch(
+          if(changeDateVenue!= null){
+            routeUrl= `/egov-services/applyparkcommunitycenter?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&changeDateVenue=Enabled`
+            
+          }else{
+            routeUrl= `/egov-services/applyparkcommunitycenter?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
+            
+          }
+              dispatch(
             setRoute(
-              `/egov-services/applyparkcommunitycenter?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
-            )
+              routeUrl
+              )
           );
         } else {
           dispatch(setRoute(`/egov-services/applyparkcommunitycenter`));
@@ -268,7 +300,7 @@ console.log(alreadyBookedDaysCount, selectedDaysCount, "aNero from file");
         availabilityCheckData.bkToDate === null
       ) {
         let warrningMsg = {
-          labelName: "Please Select Date Range",
+          labelName: "Please select date range",
           labelKey: "",
         };
         dispatch(toggleSnackbar(true, warrningMsg, "warning"));
@@ -297,6 +329,10 @@ const calculateBetweenDaysCount1 = (startDate, endDate) => {
     return daysCount;
 };
 const callBackForResetCalender = (state, dispatch, action) => {
+  
+
+  dispatch(prepareFinalObject("isSameDate", null));
+  
   const availabilityCheckData = get(
     state,
     "screenConfiguration.preparedFinalObject.availabilityCheckData"
@@ -305,6 +341,9 @@ const callBackForResetCalender = (state, dispatch, action) => {
   if (availabilityCheckData !== undefined) {
     dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", null));
     dispatch(prepareFinalObject("availabilityCheckData.bkToDate", null));
+    dispatch(prepareFinalObject("availabilityCheckData.bkFromDateTwo", null));
+    dispatch(prepareFinalObject("availabilityCheckData.bkToDateTwo", null));
+    dispatch(prepareFinalObject("Booking.timeslots", null));
   }
 };
 
@@ -354,6 +393,11 @@ export const availabilityForm = getCommonCard({
             labelKey: "Parks",
             value: "Parks",
           },
+          {
+            label: "Commercial Ground",
+            labelKey: "Commercial Ground",
+            value: "Commercial Ground",
+          },
         ],
         jsonPath: "availabilityCheckData.bkBookingType",
         defaultValue: "Parks",
@@ -393,6 +437,33 @@ export const availabilityForm = getCommonCard({
         //     )
         // );
       },
+      afterFieldChange : (action , state, dispatch)=>{
+        
+        if (action.value) {
+          
+
+          let availabilityCheckData = get(
+            state,
+            "screenConfiguration.preparedFinalObject.availabilityCheckData"
+          );
+          
+            
+          let bkBookingType =
+            availabilityCheckData !== undefined
+              ? availabilityCheckData.bkBookingType
+              : "Parks";
+
+        (bkBookingType==="Commercial Ground") ? dispatch(prepareFinalObject("sectorJsonPath", get(
+          state,
+          "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Booking_Vanue"
+           )))
+          : dispatch(prepareFinalObject("sectorJsonPath",get(
+            state,
+            "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Sector"
+          )))
+
+      }
+      }
     },
 
     bkSector: {
@@ -412,7 +483,7 @@ export const availabilityForm = getCommonCard({
           md: 6,
         },
 
-        sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
+        sourceJsonPath: "sectorJsonPath",
         jsonPath: "availabilityCheckData.bkSector",
         required: true,
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
@@ -424,10 +495,13 @@ export const availabilityForm = getCommonCard({
       }),
       beforeFieldChange: async (action, state, dispatch) => {
         if (action.value) {
+
+
           let availabilityCheckData = get(
             state,
             "screenConfiguration.preparedFinalObject.availabilityCheckData"
           );
+
 
           let bkBookingType =
             availabilityCheckData !== undefined
@@ -456,7 +530,56 @@ export const availabilityForm = getCommonCard({
           //     ],
           //     "components.div.children.availabilityTimeSlotWrapper.visible",
           //     bkBookingType === "Parks" ? false : true
+          // ); 
+
+          // set(
+          //     state.screenConfiguration.screenConfig[
+          //     "checkavailability_pcc"
+          //     ],
+          //     "components.div.children.availabilityCalendarWrapper.visible",
+          //     bkBookingType === "Parks" ? true : false
           // );
+            if(bkBookingType=== "Commercial Ground"){
+
+              set(
+                state,
+                "screenConfiguration.screenConfig.checkavailability_pcc.components.div.children.availabilityCalendarWrapper.children.availabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props.venueDataKey",
+                "bkSector"
+              )
+
+              set(
+                state.screenConfiguration.screenConfig["checkavailability_pcc"],
+                "components.div.children.availabilityCalendarWrapper.visible",
+                true
+              );
+      
+
+              let availabilityData = await getAvailabilityData(
+                action.value
+            );
+
+            if (availabilityData !== undefined) {
+                let data = availabilityData.data;
+                let reservedDates = [];
+                var daylist = [];
+                data.map((dataitem) => {
+                    let start = dataitem.fromDate;
+                    let end = dataitem.toDate;
+                    daylist = getBetweenDays(start, end);
+                    daylist.map((v) => {
+                        reservedDates.push(v.toISOString().slice(0, 10));
+                    });
+                });
+                dispatch(
+                    prepareFinalObject(
+                        "availabilityCheckData.reservedDays",
+                        reservedDates
+                    )
+                );
+                    }
+
+            }else{
+           
           set(
             state.screenConfiguration.screenConfig["checkavailability_pcc"],
             "components.div.children.availabilityCalendarWrapper.visible",
@@ -467,14 +590,6 @@ export const availabilityForm = getCommonCard({
             "components.div.children.availabilityTimeSlotWrapper.visible",
             false
           );
-          // set(
-          //     state.screenConfiguration.screenConfig[
-          //     "checkavailability_pcc"
-          //     ],
-          //     "components.div.children.availabilityCalendarWrapper.visible",
-          //     bkBookingType === "Parks" ? true : false
-          // );
-
           let requestBody = {
             venueType: bkBookingType,
             sector: action.value,
@@ -517,7 +632,14 @@ export const availabilityForm = getCommonCard({
             dispatch(toggleSnackbar(true, errorMessage, "error"));
           }
         }
-      },
+
+      }
+      }, 
+    afterFieldChange:  async (action, state, dispatch) =>{
+      
+    }
+
+    
     },
     // bkFromDate: {
     //     ...getDateField({
@@ -671,6 +793,9 @@ export const availabilityMediaCard = getCommonCard({
         sm: 12,
         md: 12,
       },
+      props : {
+        style : { overflowX : scroll}
+      }
     },
   }),
 });

@@ -40,6 +40,30 @@ export const toggleWater = (onFieldChange, value) => {
   );
   onFieldChange(
     "apply",
+    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.contractValue",
+    "visible",
+    value
+  );
+  onFieldChange(
+    "apply",
+    "components.div.children.formwizardFirstStep.children.propertyUsageDetails",
+    "visible",
+    true
+  );
+  // onFieldChange(
+  //   "apply",
+  //   "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.ferruleSize",
+  //   "visible",
+  //   value
+  // );
+  // onFieldChange(
+  //   "apply",
+  //   "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput",
+  //   "visible",
+  //   value
+  // );
+  onFieldChange(
+    "apply",
     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.connectiondetailscontainer.children.cardContent.children.connectionDetails.children.connectionType",
     "visible",
     value
@@ -179,6 +203,30 @@ export const toggleSewerage = (onFieldChange, value) => {
     "visible",
     value
   );
+  if(value)
+  {
+    onFieldChange(
+      "apply",
+      "components.div.children.formwizardFirstStep.children.propertyUsageDetails",
+      "visible",
+      false
+    );
+    //"components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.contractValue.visible
+    onFieldChange(
+      "apply",
+      "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.contractValue",
+      "visible",
+      false
+    );
+    // onFieldChange(
+    //   "apply",
+    //   "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.ferruleSize",
+    //   "visible",
+    //   false
+    // );
+
+  }
+
   onFieldChange(
     "apply",
     "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfWaterClosets",
@@ -321,6 +369,26 @@ export const toggleSewerageFeilds = (action, value) => {
     "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfWaterClosets.visible",
     value
   );
+  if(value)
+  {
+    set(
+      action.screenConfig,
+      "components.div.children.formwizardFirstStep.children.propertyUsageDetails.visible",
+      false
+    );
+    set(
+      action.screenConfig,
+      "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.contractValue.visible",
+      //"components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.contractValue"
+      false
+    );
+    // set(
+    //   action.screenConfig,
+    //   "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.ferruleSize.visible",
+    //   false
+    // );
+
+  }
   set(
     action.screenConfig,
     "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewFour.children.view.children.taskNoOfClosets.visible",
@@ -369,6 +437,7 @@ export const toggleWaterFeilds = (action, value) => {
     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.connectiondetailscontainer.children.cardContent.children.connectionDetails.children.waterApplicationType.visible",
     value
   ); 
+
   set(
     action.screenConfig,
     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterID.visible",
@@ -393,7 +462,8 @@ export const toggleWaterFeilds = (action, value) => {
     action.screenConfig,
     "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.waterApplicationType.visible",
     value
-  ); 
+  );
+
   set(
     action.screenConfig,
     "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfTaps.visible",
@@ -442,6 +512,11 @@ export const toggleWaterFeilds = (action, value) => {
   set(
     action.screenConfig,
     "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewSix.children.reviewNumberOfTaps.visible",
+    value
+  );
+  set(
+    action.screenConfig,
+    "components.div.children.formwizardFirstStep.children.propertyUsageDetails.visible",
     value
   );
   // set(

@@ -1,10 +1,11 @@
 import * as actionTypes from "./actionTypes";
 // import {CREATEBWTAPPLICATION,APPLICATION,MCCAPPLICATION, COMPLAINT, CATEGORY,PAYMENT,HISTORY,AFTERPAYMENTAPI,DWONLOADPAYMENTRECEIPT,DOWNLOADBWTAPPLICATION,DOWNLOADAPPLICATION,DWONLOADPERMISSIONLETTER,OSBMPerDayRateAmount,PerDayRateAmount,DWONLOADNEWRECEIPTFORCG,PermissionLetterDWNOSMCC,ApplicationDWNOSMCC, DWONLOADPAYMENTRECEIPTFORCG,DWONLOADAPPLICATIONFORCG,CREATEPACCAPPLICATION } from "../../utils/endPoints";
-import {CREATEBWTAPPLICATION,PGService,DWONLOADPLFORPCC,DWONLOADRECEIPTFORPCC,APPLICATION,MCCAPPLICATION, COMPLAINT, CATEGORY,PAYMENT,HISTORY,AFTERPAYMENTAPI,DWONLOADPAYMENTRECEIPT,DOWNLOADBWTAPPLICATION,DOWNLOADAPPLICATION,DWONLOADPERMISSIONLETTER,OSBMPerDayRateAmount,PerDayRateAmount,DWONLOADNEWRECEIPTFORCG,PermissionLetterDWNOSMCC,ApplicationDWNOSMCC, DWONLOADPAYMENTRECEIPTFORCG,DWONLOADAPPLICATIONFORCG,DWONLOADAPPFORPCC,CREATEPACCAPPLICATION,UPDATEPACCAPPLICATION,ESAMPARK,ESAMPARKPL,WATERTANKERPAYRECEIPT} from "egov-ui-kit/utils/endPoints";
+import {CREATEBWTAPPLICATION,PGService,DWONLOADPLFORPCC,DWONLOADRECEIPTFORPCC,APPLICATION,MCCAPPLICATION, COMPLAINT, CATEGORY,PAYMENT,HISTORY,AFTERPAYMENTAPI,DWONLOADPAYMENTRECEIPT,DOWNLOADBWTAPPLICATION,DOWNLOADAPPLICATION,DWONLOADPERMISSIONLETTER,OSBMPerDayRateAmount,PerDayRateAmount,DWONLOADNEWRECEIPTFORCG,PermissionLetterDWNOSMCC,ApplicationDWNOSMCC, DWONLOADPAYMENTRECEIPTFORCG,DWONLOADAPPLICATIONFORCG,DWONLOADAPPFORPCC,CREATEPACCAPPLICATION,UPDATEPACCAPPLICATION,ESAMPARK,ESAMPARKPL,WATERTANKERPAYRECEIPT
+,DownloadEmpRoomPaymentReceipt,DownloadEmpRoomPermissionLetter,DownloadEmpPACCPermissionLetter,DownloadESAMPRECEIPT} from "egov-ui-kit/utils/endPoints";
 import { httpRequest } from "egov-ui-kit/utils/api";
 import commonConfig from "config/common.js";
 
-
+ 
 const applicationSectorFetchSucess = (payload) => {
 	console.log("payload--",payload)
 	return {
@@ -382,6 +383,16 @@ export const getComplaintDisplayOrder = (order) => {
 	};
 };
 
+const CompleteAmountCondition = () => {
+	return { type: actionTypes.REF_AMOUNT_CONDITION};
+};
+
+export const AmountRefCondition = () => {
+	console.log("come AmountRefCondition")
+	return async (dispatch) => {
+		dispatch(CompleteAmountCondition())
+	}
+}
 
 export const fetchApplications = (requestBody, hasUsers = true, overWrite) => {
 	console.log('requestBody in own module',requestBody)
@@ -396,6 +407,36 @@ export const fetchApplications = (requestBody, hasUsers = true, overWrite) => {
 		}
 	};
 };
+
+export const clearBookingData = (data, hasUsers = true, overWrite) => {
+	console.log('clearBookingData',data)
+	return async (dispatch, getState) => {
+		try {
+			console.log('dataToClear', data)
+			dispatch(clearBookingDataComplete(data, overWrite));
+		} catch (error) {
+			dispatch(clearBookingDataFetchError(error.message));
+		}
+	};
+};
+
+const clearBookingDataComplete = (payload, overWrite) => {
+	console.log('payload', payload, overWrite)
+	 console.log('actionTypes.APPLICATION_FETCH_COMPLETE',actionTypes)
+	return {
+		type: actionTypes.BOOKING_DATA_COMPLETE,
+		payload,
+		overWrite: overWrite,
+	};
+};
+const clearBookingDataFetchError = (error) => {
+	return {
+		type: actionTypes.BOOKING_DATA_ERROR,
+		error,
+	};
+};
+
+
 export const downloadPaymentReceipt = (requestBody, hasUsers = true, overWrite) => {
 	//   requestBody.tenantId = "ch"
 	return async (dispatch, getState) => {
@@ -433,10 +474,120 @@ export const downloadBWTApplication = (requestBody, hasUsers = true, overWrite) 
 		} catch (error) {
 			dispatch(downloadBWTApplicationError(error.message));
 		}
+	}; 
 	};
-	
-	
-};
+	//PACC
+	export const downloadPaccPermissionLetter = (requestBody, hasUsers = true, overWrite) => {
+		return async (dispatch, getState) => {
+			try {
+				let tenantId = "";
+				const payload = await httpRequest(DownloadEmpPACCPermissionLetter.POST.URL, DownloadEmpPACCPermissionLetter.POST.ACTION, [], requestBody);
+				console.log('payload6----6', payload)
+				dispatch(downloadPaccPermissionLetterComplete(payload, overWrite));
+			} catch (error) {
+				dispatch(downloadPaccPermissionLetterError(error.message));
+			}
+		};
+		};
+		const downloadPaccPermissionLetterComplete = (payload, overWrite) => {
+			console.log('payload', payload, overWrite)
+			return {
+				type: actionTypes.EMPPACCPERMISSIONLETTERCOMPLETE,
+				payload,
+				overWrite: overWrite,
+			};
+		};
+		const downloadPaccPermissionLetterError = (error) => {
+			return {
+				type: actionTypes.EMPPACCPERMISSIONLETTER_ERROR,
+				error,
+			};
+		};
+//e-sam payment receipt
+
+export const downloadEsampPaymentReceipt = (requestBody, hasUsers = true, overWrite) => {
+	return async (dispatch, getState) => {
+		try {
+			let tenantId = "";
+			const payload = await httpRequest(DownloadESAMPRECEIPT.POST.URL, DownloadESAMPRECEIPT.POST.ACTION, [], requestBody);
+			console.log('payload6----6', payload)
+			dispatch(DownloadESAMPRECEIPTComplete(payload, overWrite));
+		} catch (error) {
+			dispatch(DownloadESAMPRECEIPTError(error.message));
+		}
+	};
+	};
+	const DownloadESAMPRECEIPTComplete = (payload, overWrite) => {
+		console.log('payload', payload, overWrite)
+		return {
+			type: actionTypes.ESAMPARKRECEIPTCOMPLETE,
+			payload,
+			overWrite: overWrite,
+		};
+	};
+	const DownloadESAMPRECEIPTError = (error) => {
+		return {
+			type: actionTypes.ESAMPARKRECEIPTCOMPLETE_ERROR,
+			error,
+		};
+	};
+
+
+	//Room
+	export const downloadRoomPaymentRecipt = (requestBody, hasUsers = true, overWrite) => {
+		return async (dispatch, getState) => {
+			try {
+				let tenantId = "";
+				const payload = await httpRequest(DownloadEmpRoomPaymentReceipt.POST.URL, DownloadEmpRoomPaymentReceipt.POST.ACTION, [], requestBody);
+				console.log('payload6----6', payload)
+				dispatch(downloadRoomPaymentReciptComplete(payload, overWrite));
+			} catch (error) {
+				dispatch(downloadRoomPaymentReciptError(error.message));
+			}
+		};
+		};
+		const downloadRoomPaymentReciptComplete = (payload, overWrite) => {
+			console.log('payload', payload, overWrite)
+			return {
+				type: actionTypes.ROOMPAYMENTCOMPLETE,
+				payload,
+				overWrite: overWrite,
+			};
+		};
+		const downloadRoomPaymentReciptError = (error) => {
+			return {
+				type: actionTypes.ROOMPAYMENT_ERROR,
+				error,
+			};
+		};
+
+		export const downloadRoomPermissionLetter = (requestBody, hasUsers = true, overWrite) => {
+			return async (dispatch, getState) => {
+				try {
+					let tenantId = "";
+					const payload = await httpRequest(DownloadEmpRoomPermissionLetter.POST.URL, DownloadEmpRoomPermissionLetter.POST.ACTION, [], requestBody);
+					console.log('payload6----6', payload)
+					dispatch(downloadRoomPermissionLetterComplete(payload, overWrite));
+				} catch (error) {
+					dispatch(downloadRoomPermissionLetterError(error.message));
+				}
+			};
+			};
+			const downloadRoomPermissionLetterComplete = (payload, overWrite) => {
+				console.log('payload', payload, overWrite)
+				return {
+					type: actionTypes.ROOMPERMISSIONLETTERCOMPLETE,
+					payload,
+					overWrite: overWrite,
+				};
+			};
+			const downloadRoomPermissionLetterError = (error) => {
+				return {
+					type: actionTypes.ROOMPERMISSIONLETTER_ERROR,
+					error,
+				};
+			};
+	//Room
 export const downloadPermissionLetter = (requestBody, hasUsers = true, overWrite) => {
 	//   requestBody.tenantId = "ch"
 	return async (dispatch, getState) => {
@@ -954,7 +1105,7 @@ export const OSBMfetchperDayRate = (requestBody, hasUsers = true, overWrite) => 
 		return async (dispatch, getState) => {
 		  try {
 			let tenantId = "";
-			const payload = await httpRequest(ESAMPARK.POST.URL, ESAMPARK.POST.ACTION, [], requestBody);
+			const payload = await httpRequest(ESAMPARKPL.POST.URL, ESAMPARKPL.POST.ACTION, [], requestBody);
 			dispatch(downloadESAMPARKPLComplete(payload, overWrite));
 		  } catch (error) {
 			dispatch(downloadESAMPARKPLError(error.message));

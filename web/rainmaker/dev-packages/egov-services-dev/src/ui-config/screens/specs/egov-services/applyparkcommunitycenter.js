@@ -5,9 +5,12 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { footer } from "./applyResourceParkCommunityCenter/footer";
 import {
-    bankAccountDetails, 
+    bankAccountDetails,
+    bankAccountDetailsDisabled, 
     personalDetails,
+    personalDetailsDisabled,
     bookingDetails,
+    bookingDetailsDisabled
 } from "./applyResourceParkCommunityCenter/nocDetails";
 import { convertDateInYMD, getBill } from "../utils";
 import { documentDetails } from "./applyResourceParkCommunityCenter/documentDetails";
@@ -41,8 +44,8 @@ import {
 
 export const stepsData = [
     { labelName: "Applicant Details", labelKey: "BK_PCC_APPLICANT_DETAILS" },
-    { labelName: "Booking Details", labelKey: "BK_PCC_BOOKING_DETAILS" },
-    { labelName: "Bank Account Details", labelKey: "BK_PCC_BANK_ACCOUNT_DETAILS" },
+    { labelName: "Venue Details", labelKey: "BK_PCC_BOOKING_DETAILS" },
+    { labelName: "Bank Account Details", labelKey: "Bank Account Details" },
     { labelName: "Documents", labelKey: "BK_PCC_DOCUMENTS" },
     { labelName: "Summary", labelKey: "BK_PCC_SUMMARY" },
 ];
@@ -94,6 +97,7 @@ export const formwizardFirstStep = {
     },
     children: {
         personalDetails,
+        personalDetailsDisabled
     },
 };
 
@@ -105,6 +109,7 @@ export const formwizardSecondStep = {
     },
     children: {
         bookingDetails,
+        bookingDetailsDisabled
     },
     visible: false,
 };
@@ -117,6 +122,7 @@ export const formwizardThirdStep = {
     },
     children: {
         bankAccountDetails ,
+        bankAccountDetailsDisabled
     },
     visible: false,
 };
@@ -493,7 +499,7 @@ const screenConfig = {
                 prepareFinalObject("Booking.bkAccountType", "Saving")
             );
 
-            
+
             dispatch(
                 prepareFinalObject(
                     "Booking.bkFromDate",
@@ -650,6 +656,12 @@ const screenConfig = {
                 formwizardFourthStep,
                 formwizardFifthStep,
                 footer,
+                ParkChangeDateVenueFieldDisabler: {
+                    uiFramework: "custom-containers-local",
+                    moduleName: "egov-services",
+                    componentPath: "ParkChangeDateVenueFieldDisabler",
+                   
+                },
             },
         },
     },

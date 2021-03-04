@@ -22,13 +22,15 @@ class MyConnections extends React.Component {
 
     if(data.activityType){
       switch(data.activityType){
-        case "UPDATE_CONNECTION_HOLDER_INFO" :  window.localStorage.setItem("wns_workflow","WS_RENAME"); break;
-        case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTIONA"); break;
-        case "TEMPORARY_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTION"); break;
-        case "APPLY_FOR_REGULAR_INFO":  window.localStorage.setItem("wns_workflow","REGULARWSCONNECTION"); break;
         case "NEW_WS_CONNECTION":  window.localStorage.setItem("wns_workflow","REGULARWSCONNECTION"); break;
-     //   case "PERMANENT_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTION"); break;
+        case "APPLY_FOR_TEMPORARY_CONNECTION" :  window.localStorage.setItem("wns_workflow","TEMPORARY_WSCONNECTION"); break;
+        case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_TEMP"); break;
+        case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_REGULAR"); break;
+        case "PERMANENT_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTION"); break;        
+        case "TEMPORARY_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_DISCONNECTION"); break;
+        case "UPDATE_CONNECTION_HOLDER_INFO":  window.localStorage.setItem("wns_workflow","WS_RENAME"); break;
         case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_CONVERSION"); break;
+        case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_REACTIVATE"); break;
         case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
       }
 }
@@ -40,7 +42,7 @@ tenantId = data.property.tenantId;
   }
 
   getViewBillDetails = data => {
-    window.location.href = `/citizen/wns/viewBill?connectionNumber=${data.connectionNo}&tenantId=${data.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
+    window.location.href = `/citizen/wns/viewBill?connectionNumber=${data.connectionNo}&tenantId=${data.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}&id=${data.id}`
   }
 
   render() {
@@ -150,9 +152,18 @@ tenantId = data.property.tenantId;
                           />
                         </Grid>
                         <Grid item md={8} xs={6}>
-                        { (item.property && item.property.address && item.property.address.street) ?
+                        {/* { (item.property && item.property.address && item.property.address.street) ?
                             (<Label
                             labelName={item.property.address.street}
+                            fontSize={14}
+                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
+                          />) :
+                          (<div></div>)
+                        } */}
+                        
+                        { (item.connectionHolders && item.connectionHolders[0]) ?
+                            (<Label
+                            labelName={item.connectionHolders[0].correspondenceAddress}
                             fontSize={14}
                             style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                           />) :
@@ -178,9 +189,18 @@ tenantId = data.property.tenantId;
                         </Grid>
                       </Grid>
                       <div>
-                        {item.due === "NA" ?
-                          (<div></div>)
-                          : item.due === 0 ?
+                        {item.status === "NA" ?
+                          (<div>
+                            <LabelContainer
+                                labelKey={item.error}
+                                labelName ={item.error}
+                                style={{
+                                  color: "#FF6347",
+                                  fontSize: 14,
+                                }}
+                              />
+                          </div>)
+                          : item.status !== "INITIATED" ?
                             (<div> <LabelContainer
                               labelKey="WS_COMMON_PAID_LABEL"
                               style={{ color: '#008000', textTransform: 'uppercase', fontWeight: 400 }}
