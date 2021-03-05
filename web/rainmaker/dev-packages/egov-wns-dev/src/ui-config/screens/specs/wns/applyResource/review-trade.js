@@ -304,16 +304,16 @@ export const propertyUsesDetails={
   ),
 }
 export const propertyConnectionDetails={
-  reviewnumberOfTaps: getLabelWithValue(
-    {
-      labelName: "proposed Taps",
-      labelKey: "WS_CONN_DETAIL_NO_OF_TAPS"
-    },
-    {
-      jsonPath: "WaterConnection[0].proposedTaps",
-      callBack: handleNA
-    }
-  ),
+  // reviewnumberOfTaps: getLabelWithValue(
+  //   {
+  //     labelName: "proposed Taps",
+  //     labelKey: "WS_CONN_DETAIL_NO_OF_TAPS"
+  //   },
+  //   {
+  //     jsonPath: "WaterConnection[0].proposedTaps",
+  //     callBack: handleNA
+  //   }
+  // ),
 
   reviewpipeSize: getLabelWithValue(
     {
@@ -346,6 +346,14 @@ export const propertyConnectionDetails={
       labelKey: "WS_ADDN_DETAILS_CONTRACT_VALUE"
     },
     { jsonPath: "WaterConnection[0].contractValue",
+    callBack: handleNA }
+  ),
+  reviewferruleSize: getLabelWithValue(
+    {
+      labelName: "Ferrule Size",
+      labelKey: "WS_ADDN_DETAILS_FERRULE_INPUT"
+    },
+    { jsonPath: "WaterConnection[0].ferruleSize",
     callBack: handleNA }
   ),
 
@@ -483,6 +491,13 @@ export const propertyOwnerDetail={
    { jsonPath: "WaterConnection[0].property.owners[0].correspondenceAddress",
    callBack: handleNA }
  ), 
+ aadharCardnumber: getLabelWithValue(
+  {
+    labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+  },
+  { jsonPath: "WaterConnection[0].aadharNo",
+  callBack: handleNA }
+),
 //  specialApplicantCategory: getLabelWithValue(
 //    {
 //      labelKey: "WS_OWN_DETAIL_SPECIAL_APPLICANT_LABEL"

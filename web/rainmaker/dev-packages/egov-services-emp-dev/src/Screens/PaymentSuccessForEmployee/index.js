@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from "react"; 
 import { Button, Icon } from "components";
 import Label from "egov-ui-kit/utils/translationNode";
 import SuccessMessageForPayment from "../../modules/SuccessMessageForPayment";
@@ -13,7 +13,7 @@ import {
 } from "egov-ui-kit/redux/bookings/actions";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { convertEpochToDate, getDurationDate,getFileUrlFromAPI} from '../../modules/commonFunction'
-
+import { httpRequest } from "egov-ui-kit/utils/api";
 
 class CreateWBTApplicationSuccess extends Component {
 
@@ -88,7 +88,7 @@ class CreateWBTApplicationSuccess extends Component {
 
   Submit = async () => {
 	//   alert("comesInSubmit Function")
-   let { conJsonSecond,conJsonfirst,updatePACCApplication, documentMap,createAppData, bookingData, venueType,prepareFinalObject,createPACCApplicationData,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot} = this.props;
+   let { conJsonSecond,conJsonfirst,updatePACCApplication, documentMap,createAppData, bookingData, venueType,prepareFinalObject,createPACCApplicationData,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,ReasonForDiscount} = this.props;
 console.log("AllPropsOfSubmitPage--",this.props)	   
    let data = createAppData.data
 		console.log("data--",data)
@@ -101,6 +101,8 @@ console.log("AllPropsOfSubmitPage--",this.props)
         if (data) {
 			console.log("HereIsData--",data)
             let Booking = {
+				bkRemarks: ReasonForDiscount,
+				discount:data.discount,
                 bkBookingType: data.bkBookingType,
                 bkBookingVenue: data.bkBookingVenue,
                 bkApplicantName: data.bkApplicantName,
@@ -133,7 +135,8 @@ console.log("AllPropsOfSubmitPage--",this.props)
 				"bkBankName":data.bkBankName,
 				"bkIfscCode":data.bkIfscCode,
 				"bkAccountType":data.bkAccountType,
-				"bkBankAccountHolder":data.bkBankAccountHolder
+				"bkBankAccountHolder":data.bkBankAccountHolder,
+				"bkNomineeName": data.bkNomineeName
             }
 
 
@@ -190,8 +193,10 @@ console.log("Booking-requestBody--",Booking)
             this.props.history.push(`/egov-services/create-success-pcc`);
         }
   };
-  componentDidMount = async () => {   
-  }
+//   componentDidMount = async () => {   
+
+
+//   }
 
 	downloadPaymentReceiptButton = async (e) => {
 		this.downloadPaymentReceiptFunction();
@@ -200,7 +205,7 @@ console.log("Booking-requestBody--",Booking)
 		var documentsPreview = [];
 		if (DownloadReceiptDetailsforPCC && DownloadReceiptDetailsforPCC.filestoreIds.length > 0) {
 			documentsPreviewData = DownloadReceiptDetailsforPCC.filestoreIds[0];
-			documentsPreview.push({
+			documentsPreview.push({ 
 				title: "DOC_DOC_PICTURE",
 				fileStoreId: documentsPreviewData,
 				linkText: "View",
@@ -291,47 +296,38 @@ console.log("Booking-requestBody--",Booking)
 			}
 		}
 		]
+
 		downloadReceiptForPCC({ BookingInfo: BookingInfo })
 	}
 
-
+	// downloadpermissionletter = async = (e) => {
+	// 	alert("hlo")
+	// }
 
   render() {
   const { RecNumber,createWaterTankerApplicationData,myLocationtwo, downloadBWTApplication,loading,createPACCApplicationData, updatePACCApplicationData,AppNum} = this.props;
-	console.log("this.props-in-paymentSuccessForEmp-",this.props)
-	console.log(RecNumber?RecNumber:"notfound","RecNumber")
-	console.log("AppNum--",AppNum?AppNum:"non")
-    //BK_MYBK_PCC_CREATE_APPLICATION_HEADER
-    // Park And Community Centre
-
-    console.log("InSuccessPage--",
-    { labelName: "BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER-Value", labelKey: "BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER" },
-    { labelName: "BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE--", labelKey: "BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE" },
-    { labelName: "BK_CS_COMMON_SEND_MESSAGE--", labelKey: "BK_CS_COMMON_SEND_MESSAGE" },
-)
-
     return (
       <Screen loading={loading}>
       <div className="success-message-main-screen resolve-success">
       <SuccessMessageForPayment
-         headermessage="Collection Details"
+	      headermessage = {`Parks & Community Centre/Banquet hall`}
           successmessage="Payment has been collected successfully!"
           secondaryLabel="A notification regarding Payment Collection has been sent to property owner at registered Mobile No."
           containerStyle={{ display: "inline-block" }}
           icon={<Icon action="navigation" name="check" />}
           backgroundColor={"#22b25f"}
           applicationNumber={AppNum}
-          ReceiptNumber={RecNumber}
+          ReceiptNumber={RecNumber} 
         />
         <div className="responsive-action-button-cont">
-          <Button
+          {/* <Button
             className="responsive-action-button"
             primary={true}
-            label={<Label buttonLabel={true} label="BK_CORE_COMMON_DOWNLOAD" />}
+            label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PAYMENT_BUTTON"/>}
             fullWidth={true}
             onClick={this.downloadPaymentReceiptButton}
             style={{ marginRight: 18 }}
-          />
+          /> */}
           <Button
             id="resolve-success-continue"
             primary={true}
@@ -362,6 +358,11 @@ const mapStateToProps = state => {
   let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
 console.log("selectedComplaint--",selectedComplaint)
 const loading = false;
+
+let ReasonForDiscount = state.screenConfiguration.preparedFinalObject ? 
+(state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== undefined && state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== null ? (state.screenConfiguration.preparedFinalObject.ReasonForDiscount):'NA') :"NA";  
+
+console.log("ReasonForDiscount--",ReasonForDiscount)
 
 let bookingData = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData:""
 console.log("bookingData.bkFromDate--",bookingData.bkFromDate)  
@@ -436,6 +437,8 @@ else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHARGE"){
     six = billAccountDetailsArray[i].amount
 }
 }
+
+
 
 //surcharges
 let firstrent = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData: "";
@@ -521,7 +524,7 @@ let SecTimeSlotFromTime = ""
 
    }
 
-  return {first,second,firstToTimeSlot, firstTimeSlotValue,SecondTimeSlotValue,conJsonSecond,conJsonfirst,
+  return {first,second,firstToTimeSlot, firstTimeSlotValue,SecondTimeSlotValue,conJsonSecond,conJsonfirst,ReasonForDiscount,
     createWaterTankerApplicationData, DownloadBWTApplicationDetails,loading,fetchSuccess,createPACCApplicationData,selectedComplaint,
     updatePACCApplicationData,Downloadesamparkdetails,userInfo,documentMap,AppNum,DownloadReceiptDetailsforPCC,RecNumber,createAppData
  ,venueType,vanueData,bookingData,bookingData,offlinePayment,offlineTransactionNum,offlineTransactionDate,

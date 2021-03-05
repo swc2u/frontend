@@ -368,16 +368,16 @@ const getPropertyConnectionOtherDetails = {
       div2: propertyConnectionDetailsHeader,
         getPropertyDetailsContainerC: getCommonContainer({
          
-          reviewnumberOfTaps: getLabelWithValue(
-            {
-              labelName: "proposed Taps",
-              labelKey: "WS_CONN_DETAIL_NO_OF_TAPS"
-            },
-            {
-              jsonPath: "applyScreen.proposedTaps",
-              callBack: handleNA
-            }
-          ),
+          // reviewnumberOfTaps: getLabelWithValue(
+          //   {
+          //     labelName: "proposed Taps",
+          //     labelKey: "WS_CONN_DETAIL_NO_OF_TAPS"
+          //   },
+          //   {
+          //     jsonPath: "applyScreen.proposedTaps",
+          //     callBack: handleNA
+          //   }
+          // ),
         
           reviewpipeSize: getLabelWithValue(
             {
@@ -410,6 +410,14 @@ const getPropertyConnectionOtherDetails = {
               labelKey: "WS_ADDN_DETAILS_CONTRACT_VALUE"
             },
             { jsonPath: "applyScreen.contractValue",
+            callBack: handleNA }
+          ),
+          reviewferruleSize: getLabelWithValue(
+            {
+              labelName: "contract Value",
+              labelKey: "WS_ADDN_DETAILS_FERRULE_INPUT"
+            },
+            { jsonPath: "applyScreen.ferruleSize",
             callBack: handleNA }
           ),
           
@@ -750,7 +758,7 @@ const getConnectionDetails = () => {
 export const renderService = () => {
   return getCommonContainer({
     taskApplicationType,
-    taskNumberOfTapsPropsed,
+   // taskNumberOfTapsPropsed,
     taskPipeSizeProposed,
     taskWaterApplicationType,
     taskNoOfClosets,

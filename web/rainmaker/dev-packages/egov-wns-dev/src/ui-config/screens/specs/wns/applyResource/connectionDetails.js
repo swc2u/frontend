@@ -65,19 +65,20 @@ export const OwnerInfoCard = getCommonCard({
   tradeUnitCardContainer: getCommonContainer({
     getCheckboxContainer,
 
-    numberOfTaps: getTextField({
-      label: { labelKey: "WS_CONN_DETAIL_NO_OF_TAPS" },
-      placeholder: { labelKey: "WS_SERV_DETAIL_NO_OF_TAPS_PLACEHOLDER" },
-      gridDefination: { xs: 12, sm: 6 },
-      required: true,
-      props:{
-        disabled:IsEdit
-      },
-      sourceJsonPath: "applyScreen.proposedTaps",
-      jsonPath: "applyScreen.proposedTaps",
-      pattern: /^[0-9]*$/i,
-      errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-    }),
+    // numberOfTaps: getTextField({
+    //   label: { labelKey: "WS_CONN_DETAIL_NO_OF_TAPS" },
+    //   placeholder: { labelKey: "WS_SERV_DETAIL_NO_OF_TAPS_PLACEHOLDER" },
+    //   gridDefination: { xs: 12, sm: 6 },
+    //   required: true,
+    //   visible:false,
+    //   props:{
+    //     disabled:IsEdit
+    //   },
+    //   sourceJsonPath: "applyScreen.proposedTaps",
+    //   jsonPath: "applyScreen.proposedTaps",
+    //   pattern: /^[0-9]*$/i,
+    //   errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+    // }),
 
     // pipeSize: getSelectField({
     //   label: { labelKey: "WS_CONN_DETAIL_PIPE_SIZE" },
@@ -170,6 +171,20 @@ export const OwnerInfoCard = getCommonCard({
       },
       jsonPath: "applyScreen.contractValue",
       pattern: /^[0-9]*$/i,
+      
+     // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+    }),
+    ferruleSize: getTextField({
+      label: { labelKey: "WS_ADDN_DETAILS_FERRULE_INPUT" },
+      placeholder: { labelKey: "WS_ADDN_DETAILS_FERRULE_INPUT_PLACEHOLDER" },
+      gridDefination: { xs: 12, sm: 6 },
+      pattern: getPattern("AlphaNumValidation"),
+      visible:false,
+      props:{
+        disabled:IsEdit
+      },
+      jsonPath: "applyScreen.ferruleSize",
+      //pattern: /^[0-9]*$/i,
       
      // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
     }),

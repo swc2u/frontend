@@ -58,6 +58,19 @@ export const reviewConnectionType = getLabelWithValue(
     // }
   }
 );
+export const reviewferruleSize = getLabelWithValue(
+  {
+    labelName: "Connection Type",
+    labelKey: "WS_SERV_DETAIL_CONN_TYPE"
+  },
+  {
+    jsonPath: "WaterConnection[0].ferruleSize",
+    callBack: handleNA
+    // callBack: value => {
+    //   return value.split(".")[0];
+    // }
+  }
+);
 export const reviewNumberOfTaps = getLabelWithValue(
   {
     labelName: "No. of Taps",
@@ -242,7 +255,7 @@ export const reviewSecurityCharge = getLabelWithValue(
     labelKey: "WS_ADDN_DETAILS_SECURITY_CHARGES_LABEL"
   },
   {
-    jsonPath: "WaterConnection[0].securityCharge",
+    jsonPath: "WaterConnection[0].waterApplication.securityCharge",
     callBack: handleNA
   }
 );
@@ -461,6 +474,7 @@ export const renderService = () => {
               reviewledgerGroup,
               reviewccCode ,
               reviewConnectionType, 
+              reviewferruleSize
               //reviewNumberOfTaps, 
               //reviewWaterSource,
               //reviewWaterSubSource, 
@@ -470,6 +484,6 @@ export const renderService = () => {
     return getCommonContainer({ reviewConnectionType, reviewWaterClosets,reviewNoOfToilets })
   }
   else{
-    return getCommonContainer({ reviewConnectionType, reviewNumberOfTaps, reviewWaterSource, reviewWaterSubSource, reviewPipeSize });
+    return getCommonContainer({ reviewConnectionType, reviewNumberOfTaps, reviewWaterSource, reviewWaterSubSource, reviewPipeSize,reviewferruleSize });
   }
 }

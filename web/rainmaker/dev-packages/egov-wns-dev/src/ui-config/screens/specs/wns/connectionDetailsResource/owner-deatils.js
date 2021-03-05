@@ -95,7 +95,14 @@ export const correspondenceAddress = getLabelWithValue(
   },
   { jsonPath: "WaterConnection[0].property.owners[0].correspondenceAddress" }
 )
-
+export const aadharNo = getLabelWithValue(
+  {
+    labelName: "Correspondence Address",
+    labelKey: "WS_OWN_DETAIL_ADDHAR_NO",
+    callBack: handleNA 
+  },
+  { jsonPath: "WaterConnection[0].aadharNo" }
+)
 export const getOwnerDetails = (isEditable = true) => {
   return getCommonGrayCard({
     headerDiv: {
@@ -160,7 +167,8 @@ export const getOwnerDetails = (isEditable = true) => {
             guardianName,
             ownerCategory,
             email,
-            correspondenceAddress
+            correspondenceAddress,
+            aadharNo
           }),
         }),
         items: [],
@@ -263,6 +271,22 @@ export const connectionHolderDetails={
       callBack: handleNA
     }
   ),
+  // aadharNo: getLabelWithValueForModifiedLabel(
+  //   {
+  //     labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+  //   },
+  //   {
+  //     jsonPath: "WaterConnection[0].connectionHolders[0].aadharNo",
+  //     callBack: handleNA
+  //   },
+  //   {
+  //     labelKey: "WS_OLD_LABEL_NAME"
+  //   },
+  //   {
+  //     jsonPath: "applyScreenOld.connectionHolders[0].aadharNo",
+  //     callBack: handleNA
+  //   }
+  // ),
   // specialApplicantCategory: getLabelWithValueForModifiedLabel(
   //   {
   //     labelKey: "WS_CONN_HOLDER_OWN_DETAIL_SPECIAL_APPLICANT_LABEL"

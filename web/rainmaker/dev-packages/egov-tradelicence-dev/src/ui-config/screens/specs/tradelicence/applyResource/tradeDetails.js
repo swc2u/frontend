@@ -1205,12 +1205,20 @@ const ageField = {
     const licenseType = get(state.screenConfiguration.preparedFinalObject,
         "Licenses[0].businessService","")
 		if (licenseType === DL_PEDAL_RICKSHAW_LOADING_REHRI) {
+            // change login for this case afer client feedback on 25-02-2021
+            let _licensePeriod = get(state,'applyScreenMdmsData.TradeLicense.LicensePeriod',[])
+                            let code = "5"
+                            if(_licensePeriod && _licensePeriod[0])
+                            {
+                                code = _licensePeriod[0].code;
+                            }
 				dispatch(
 					handleField(
 							"apply",
 							"components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.detailsContainer.children._licensePeriod",
 							"props.value",
-							action.value > 50 ? "5" : "15"
+                            //action.value > 50 ? "5" : "15"
+                            code
 					)
 				); 			
         }
