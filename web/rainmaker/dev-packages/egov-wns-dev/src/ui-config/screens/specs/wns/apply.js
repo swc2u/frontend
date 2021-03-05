@@ -469,6 +469,7 @@ export const getData = async (action, state, dispatch) => {
                 }
                 else {
                   dispatch(prepareFinalObject("applyScreen.waterApplication.isFerruleApplicable",true));
+                  dispatch(prepareFinalObject("WaterConnection[0].waterApplication.isFerruleApplicable",true));
                   dispatch(
                     handleField(
                       "apply",

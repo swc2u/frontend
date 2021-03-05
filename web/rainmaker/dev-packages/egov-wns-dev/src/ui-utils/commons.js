@@ -423,6 +423,7 @@ export const getMyApplicationResults = async (queryObject, dispatch) => {
                         response.WaterConnection[i].id = 0
                     }
                 }
+                
             }
             // });
         }
