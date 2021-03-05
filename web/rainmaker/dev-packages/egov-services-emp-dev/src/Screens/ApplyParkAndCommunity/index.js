@@ -21,6 +21,7 @@ export class StepForm extends Component {
     state = {
         step: 0,
         firstName: this.props.appData.bkApplicantName ? this.props.appData.bkApplicantName : '',
+        bookingStepRefundAmount:'',
         BankAccountName: '',
         NomineeName:'',
         BankAccountNumber:'',
@@ -255,8 +256,9 @@ let vrent = Number(vanueData.rent);
         location = bookingData.bkLocation;
         console.log("location--",location)
         amount = vanueData.amount;
-
-        // rent = totalAmount;
+let displayRefundAmount =   vanueData!== undefined && vanueData!== null ? (vanueData.refundabelSecurity !== undefined && vanueData.refundabelSecurity !== null ? (vanueData.refundabelSecurity) : "") : ""
+console.log("typesOfdisplayRefundAmount-",typeof(displayRefundAmount))        
+// rent = totalAmount;
         cleaningCharges = Number(vanueData.cleaningCharges);
         let RentPlusCcharges = Number(cleaningCharges) + Number(totalAmount1);
         console.log("RentPlusCcharges--",RentPlusCcharges)
@@ -307,6 +309,7 @@ let vrent = Number(vanueData.rent);
         if (step === 1)
             return (<BookingDetails
                 houseNo={houseNo}
+                refundAbleAmount={displayRefundAmount}
                 handleChangeDiscount={this.handleChangeDiscount}
                 discountType={discountType}
                 onFromDateChange={this.onFromDateChange}
@@ -314,7 +317,7 @@ let vrent = Number(vanueData.rent);
                 fromDate={fromDate}
                 toDate={toDate}
                 dimension={dimension}
-                location={location}
+                 location={location}
                 cleaningCharges={cleaningCharges}
                 purpose={purpose}
                 rent={vrent}

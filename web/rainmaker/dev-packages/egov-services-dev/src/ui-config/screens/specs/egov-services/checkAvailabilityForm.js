@@ -7,7 +7,7 @@ import {
     getSelectField,
     getLabel,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import "./checkAvailabilityCss/index.css";
+import "./checkAvailabilityCss/commercialGroundCheckAvailability.css";
 import {
     getTenantId,
     setapplicationType,
