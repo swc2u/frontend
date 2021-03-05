@@ -527,6 +527,16 @@ class ApplicationDetails extends Component {
 	downloadApplicationFunction = async (e) => {
 		const { transformedComplaint,paymentDetailsForReceipt,paymentDetails,downloadPermissionLetter, downloadMccApp, userInfo} = this.props;
 		const {complaint} = transformedComplaint;
+let ApplicationStatus;
+if(complaint.status == "PENDINGAPPROVAL"){
+	ApplicationStatus = "Pending Approval"
+}
+if(complaint.status == "PENDINGPAYMENT"){
+	ApplicationStatus = "Pending Payment"
+}  
+if(complaint.status == "APPROVED"){
+	ApplicationStatus = "Approved"
+}  
 		let receiptData = [
 			{
 				applicantDetail: {
@@ -551,6 +561,7 @@ class ApplicationDetails extends Component {
 					venueName : complaint.bkBookingVenue,
 					sector: complaint.sector,
 					bookingPurpose : complaint.bkBookingPurpose,
+					status: ApplicationStatus
 				},
 				feeDetail: {
                     baseCharge:
@@ -625,7 +636,7 @@ class ApplicationDetails extends Component {
 			prepareFinalObject('documentsPreview', documentsPreview)
 		}
 	}
-	downloadPLFunction = async (e) => {
+downloadPLFunction = async (e) => {
 		const { transformedComplaint, paymentDetailsForReceipt,downloadMccPL,downloadPaymentReceiptforCG, userInfo, paymentDetails } = this.props;
 		const { complaint } = transformedComplaint;
 	
