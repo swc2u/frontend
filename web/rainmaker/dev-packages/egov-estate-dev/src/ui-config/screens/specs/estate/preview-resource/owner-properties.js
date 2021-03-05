@@ -327,7 +327,7 @@ export const headerDiv = {
           ),
           npNumber: getLabelWithValue(
             npNumberLabel, {
-              jsonPath: `Properties[0].propertyDetails.owners[${owner}].npNumber`
+              jsonPath: `Properties[0].propertyDetails.owners[${index}].npNumber`
             }
           ),
         cpNumber: getLabelWithValue(
