@@ -19,7 +19,7 @@ import { estimateSummary } from "./summaryResource/estimateSummary";
 import { searchResultsSummary, serachResultGridSM, searchResultsSummaryHOD, searchVehicleResultsSummary } from "./summaryResource/summaryGrid";
 import { footer, takeactionfooter } from "./summaryResource/footer";
 import { titlebarfooter } from "./summaryResource/citizenFooter";
-import { getSearchResultsView, getSearchResultsForNocCretificate, getSearchResultsForNocCretificateDownload, fetchStoreItemHODMasterChallanData, fetchMdmsData, setCurrentApplicationProcessInstance, checkVisibility } from "../../../../ui-utils/commons";
+import { getSearchResultsView, getSearchResultsForNocCretificate, getSearchResultsForNocCretificateDownload, fetchStoreItemHODMasterChallanData, fetchMdmsData, setCurrentApplicationProcessInstance, checkVisibility, getSearchResultsPaymentServiceData } from "../../../../ui-utils/commons";
 import { setEncroachmentType, getAccessToken, setapplicationType, getTenantId, getLocale, getUserInfo, localStorageGet, localStorageSet, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import store from "ui-redux/store";
 import "./index.css";
@@ -772,6 +772,10 @@ const setSearchResponse = async (
     if (checkForRole(roles, 'challanSM') || checkForRole(roles, 'challanSI') || checkForRole(roles, 'CITIZEN')) {
       setSearchResponseForNocCretificate(state, dispatch, applicationNumber, tenantId);
     }
+    if (checkForRole(roles, 'challanSI')) {
+      setPaymentServiceResponse(state, dispatch,paystatus);
+    }
+
 
     let violationDate = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].violationDate", new Date());
     if (getDiffernceBetweenTodayDate(violationDate) > 30 && encroachmentType !== "Seizure of Vehicles") {
@@ -1040,6 +1044,44 @@ const setSearchResponseForNocCretificate = async (
   );
 
   //setDownloadMenu(state, dispatch);
+};
+
+const setPaymentServiceResponse = async (
+  state,
+  dispatch,
+  paystatus
+) => {
+  
+  let paymentStatus = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].paymentDetails.paymentStatus", {});
+  let challanId = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].challanId");
+  let tenantId = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].tenantId");
+  if (paystatus === 'UNPAID') {
+    const pgResponse = await getSearchResultsPaymentServiceData([
+      { key: "tenantId", value: tenantId },
+      { key: "consumerCode", value: challanId }
+    ]);
+    if (pgResponse &&
+      pgResponse.Transaction.length > 0) {
+      dispatch(
+        prepareFinalObject(
+          "eChallan.paymentServiceData",
+          pgResponse.Transaction
+        )
+      );
+      let txnStatus = get(pgResponse, "Transaction[0].txnStatus");
+      
+      if (paystatus === 'UNPAID' && txnStatus === "SUCCESS") {
+        dispatch(
+          handleField(
+            "search-preview",
+            "components.div.children.employeeFooter.children.markAsPaidButton",
+            "visible",
+            true
+          )
+        );
+      }
+    }
+  }
 };
 
 const createDemandforChallanCertificate = async (state, dispatch, tenantId) => {

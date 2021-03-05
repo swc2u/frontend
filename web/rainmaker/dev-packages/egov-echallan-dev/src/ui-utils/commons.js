@@ -1029,6 +1029,22 @@ export const getSearchResultsView = async requestBody => {
   //alert(JSON.stringify(response));
 };
 
+export const getSearchResultsPaymentServiceData = async queryObject => {
+  try {
+    
+    const response = await httpRequest("post", "/pg-service/transaction/v1/_search", "", queryObject, {});
+    return response;
+  } catch (error) {
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+}
+
 export const getSearchResultsForNocCretificate = async queryObject => {
   try {
     const response = await httpRequest("post", get(queryObject[3], "value"), "", [], get(queryObject[2], "value"));
