@@ -123,8 +123,8 @@ import { stringify } from "jsonpath";
       let postdetailid_ =''
       if (response_ && response_.ResponseBody) {
         //[{"post_detail_id" : "1882"},{"post_detail_id" : "2323"}]
-        if(response_.ResponseBody.length>0)
-        {
+        // if(response_.ResponseBody.length>0)
+        // {
         for (let index = 0; index < response_.ResponseBody.length; index++) {
           postdetailid =[];
           const element = response_.ResponseBody[index];
@@ -292,6 +292,8 @@ import { stringify } from "jsonpath";
         dispatch(prepareFinalObject("APIData",APIData_));
         
         //dispatch(toggleSpinner());
+     // }   
+
       }
       else{
         const errorMessage = {
@@ -299,8 +301,6 @@ import { stringify } from "jsonpath";
           labelKey: "INTIGRATION_EOFFICE_POST_DETAIL_DATAS_HEADING"
         };
         dispatch(toggleSnackbar(true, errorMessage, "warning"));
-      }
-
       }
   } catch (error) {
     
