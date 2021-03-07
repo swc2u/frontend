@@ -44,10 +44,7 @@ const styles = (theme) => ({
 class CheckAvailability extends Component {
   state = {
     NewbkBookingType: "Normal Booking",
-    vanueType:
-      this.props.oldBookingData != "notfound"
-        ? this.props.oldBookingData.bkBookingType
-        : "Parks",
+    vanueType: "",
     oldBookingData: "",
     SetForCommercial: false,
     SetForParkComm: true,
@@ -440,7 +437,8 @@ class CheckAvailability extends Component {
 
   callBackForResetCalender = () => {
 
-    window.location.href = "/egov-services/reservedates";
+   // window.location.href = "/egov-services/reservedates";
+   this.props.history.push("/egov-services/reservedbookingdates");
   };
 
   convertEpochToDate = (dateEpoch) => {
@@ -478,7 +476,7 @@ class CheckAvailability extends Component {
         },
         "error"
       );
-      return false;
+     // return false;
     }
     const { prepareFinalObject } = this.props;
 
@@ -505,7 +503,8 @@ class CheckAvailability extends Component {
       requestBody
     );
     if (apiResponse.status == "200") {
-      window.location.href = "/egov-services/reservedbookingdates";
+      //window.location.href = "/egov-services/reservedbookingdates";
+      this.props.history.push(`/egov-services/reservedbookingdates`);
     }
 
   }
