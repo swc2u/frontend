@@ -34,7 +34,7 @@ class ApplicatInfo extends Component {
     NewbkBookingType: "Normal Booking",
     ReasonForDiscount : ""
   }
-
+ 
   componentDidMount = async () => {
     let ShowAmountBooking;    
     if(this.props.venueType == "Parks"){
