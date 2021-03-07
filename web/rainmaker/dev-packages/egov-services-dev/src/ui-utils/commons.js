@@ -132,7 +132,7 @@ export const getSearchResultsViewForHall = async (queryObject) => {
             [],
             {
                 applicationNumber: queryObject[0]["value"],
-
+                
             }
         );
         return response;
@@ -155,7 +155,7 @@ export const getRoomDataForHall = async (queryObject) => {
             [],
             {
                 applicationNumber: queryObject[0]["value"],
-
+                
             }
         );
         return response;
@@ -288,7 +288,7 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
                 dropdown.menu = dropdown.menu.map((item) => {
                     return {
                         code: item.code,
-                        label: item.code,
+                        label: getTransformedLocale(item.code),
                     };
                 });
                 card["dropdown"] = dropdown;
@@ -456,9 +456,17 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                 }
             }
         });
-
+        let bookType = payload.bkBookingType
+     
+       
+        let businessService=""
+        if(bookType==="Community Center"){
+            businessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
+        }else{
+            businessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
+        }
        // if (action === "INITIATE") {
-            set(payload, "financeBusinessService", "PACC");
+            set(payload, "financeBusinessService", businessService);
        // }
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "tenantId", tenantId);
@@ -507,11 +515,11 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                     if(response.data.timeslots && response.data.timeslots.length > 1){
                         var [fromTime, toTimeOne] = response.data.timeslots[0].slot.split('-')
                         var [fromTimeTwo, toTime] = response.data.timeslots[1].slot.split('-')
-
-
+                   
+                   
                     }else{
                         var [fromTime, toTime] = response.data.timeslots[0].slot.split('-')
-
+                   
                     }
                     let DisplayPaccObject = {
                         bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,
@@ -530,7 +538,7 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                 return { status: "fail", data: response.data };
             }
         } else if (method === "UPDATE") {
-
+            delete payload["financeBusinessService"];
 
             response = await httpRequest(
                 "post",
@@ -601,9 +609,8 @@ export const createUpdateOSWMCCApplication = async (
                 }
             }
         });
-
         if (action === "INITIATE") {
-            set(payload, "financeBusinessService", "OSUJM");
+            set(payload, "financeBusinessService", "BOOKING_BRANCH_SERVICES.BOOKING_GROUND_OPEN_SPACES");
         }
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "OSUJM");
@@ -635,6 +642,8 @@ export const createUpdateOSWMCCApplication = async (
                 return { status: "fail", data: response.data };
             }
         } else if (method === "UPDATE") {
+            
+          delete payload["financeBusinessService"];
             response = await httpRequest(
                 "post",
                 "/bookings/api/_update",
@@ -796,7 +805,7 @@ export const createUpdateCgbApplication = async (state, dispatch, action) => {
         });
 
         if (action === "INITIATE") {
-            set(payload, "financeBusinessService", "GFCP");
+            set(payload, "financeBusinessService", "BOOKING_BRANCH_SERVICES.BOOKING_COMMERCIAL_GROUND");
         }
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "GROUND_FOR_COMMERCIAL_PURPOSE");
@@ -827,6 +836,7 @@ export const createUpdateCgbApplication = async (state, dispatch, action) => {
                 return { status: "fail", data: response.data };
             }
         } else if (method === "UPDATE") {
+            delete payload["financeBusinessService"];
             response = await httpRequest(
                 "post",
                 "/bookings/api/_update",
@@ -929,7 +939,7 @@ export const createUpdateWtbApplication = async (state, dispatch, action) => {
 
 
 export const createUpdateRoomApplication = async (state, dispatch, action) => {
-
+    
     let response = "";
     let tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
     // let applicationNumber =
@@ -949,14 +959,16 @@ export const createUpdateRoomApplication = async (state, dispatch, action) => {
         );
 
         let roomType = roomData.typeOfRoom
-
         if (action === "INITIATE") {
-            set(payload, "financeBusinessService", "BKROOM");
+            set(payload, "financeBusinessService", "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR");
+        }
+        if (action === "INITIATE") {
+        
             set(payload, "roomBusinessService", "BKROOM");
         }
         let roomObject=[]
         if(roomType==='Both'){
-
+            
              roomObject= [{
                 'action':action,
                 'remarks':"string",
@@ -980,7 +992,7 @@ export const createUpdateRoomApplication = async (state, dispatch, action) => {
 
         }else{
 
-
+            
              roomObject= [{
                 'action':action,
                 'remarks':"string",
@@ -991,13 +1003,13 @@ export const createUpdateRoomApplication = async (state, dispatch, action) => {
                 'toDate': roomData.toDate
             }]
             set(payload, "roomsModel", roomObject);
-
-
+           
+            
         }
-
+        
         set(payload, "financialYear", `${getCurrentFinancialYear()}`);
-
-
+        
+        
         console.log('payload1234', payload)
         if (method === "CREATE") {
             response = await httpRequest(
@@ -1021,6 +1033,7 @@ export const createUpdateRoomApplication = async (state, dispatch, action) => {
                 return { status: "fail", data: response.data };
             }
         } else if (method === "UPDATE") {
+            delete payload["financeBusinessService"];
             response = await httpRequest(
                 "post",
                 "bookings/community/room/_update",
@@ -1035,7 +1048,7 @@ export const createUpdateRoomApplication = async (state, dispatch, action) => {
             return { status: "success", data: response.data };
         }
     } catch (error) {
-
+        
         dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
 
         // Revert the changed pfo in case of request failure
