@@ -133,7 +133,6 @@ const requiredIcon = (
 class DocumentList extends Component {
     state = {
         uploadedDocIndex: 0,
-        test: 1
     };
 
     componentDidMount = () => {
@@ -192,7 +191,6 @@ class DocumentList extends Component {
                                 oldDocumentData = {
                                     documents: [documentsUploadReduxOld.documents[index]],
                                 };
-                                this.setState({test: 0})
                             }
                             let newDocumentData = {
                                 documentType: docType.code,
@@ -209,21 +207,13 @@ class DocumentList extends Component {
                             //         ...newDocumentData,
                             //     })
                             //     :
-
-                            Object.keys(documentsUploadReduxOld).length > 0
-                            ? (documentsUploadRedux[index] = {
-                                ...oldDocumentData,
-
-                            })
-                            :
-                     (documentsUploadRedux[index] = { ...newDocumentData });
+                            (documentsUploadRedux[index] = { ...newDocumentData });
                         }
                         index++;
                     }
                 });
         });
         prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
-
     };
 
     onUploadClick = (uploadedDocIndex) => {
@@ -278,8 +268,8 @@ console.log(card, "Card He");
             <Grid container={true}>
                 <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
                     {documentsUploadRedux[key] &&
-            documentsUploadRedux[key].documents && documentsUploadRedux[key].documents[0]!= undefined ? (
-                                        <div className={classes.documentSuccess}>
+                        documentsUploadRedux[key].documents ? (
+                            <div className={classes.documentSuccess}>
                                 <Icon>
                                     <i class="material-icons">done</i>
                                 </Icon>
@@ -293,8 +283,8 @@ console.log(card, "Card He");
                 <Grid
                     item={true}
                     xs={10}
-                    sm={5}
-                    md={4}
+                    sm={6}
+                    md={6}
                     align="left"
                     className={classes.descriptionDiv}
                 >
@@ -304,26 +294,11 @@ console.log(card, "Card He");
                     />
                     {card.required && requiredIcon}
                 </Grid>
-                <Grid item={true} xs={12} sm={6} md={4}>
-          {card.dropdown && (
-            <TextFieldContainer
-              select={true}
-              label={{ labelKey: getTransformedLocale(card.dropdown.label) }}
-              placeholder={{ labelKey: card.dropdown.label }}
-              data={card.dropdown.menu}
-              optionValue="code"
-              optionLabel="label"
-              autoSelect={true}
-              required={card.required}
-              onChange={event => this.handleChange(key, event)}
-              jsonPath={jsonPath}
-            />
-          )}
-        </Grid>
+
                 <Grid
                     item={true}
                     xs={12}
-                    sm={12}
+                    sm={4}
                     md={3}
                     align="right"
                     className={classes.fileUploadDiv}
@@ -335,8 +310,8 @@ console.log(card, "Card He");
                         }
                         uploaded={
                             documentsUploadRedux[key] &&
-                            documentsUploadRedux[key].documents && documentsUploadRedux[key].documents[0]!= undefined
-                            ? true
+                                documentsUploadRedux[key].documents
+                                ? true
                                 : false
                         }
                         removeDocument={() => this.removeDocument(key)}
