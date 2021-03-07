@@ -34,12 +34,6 @@ class SummaryDetails extends Component {
             utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, 
             BankAccountName,NomineeName,BankAccountNumber,IFSCCode,AccountHolderName,accountType,SecTimeSlotFromTime,SecTimeSlotToTime,
             locality, residenials, facilationChargesSuccess,discountType,checkAppStatus,checkAppNum,firstToTimeSlot } = this.props;
-console.log("this.propos--insummaryPage--",this.props)
-console.log("discountType--",discountType)
-console.log("newConsole--ut",utGST)
-
-console.log("checkAppStatus-props-",checkAppStatus ? checkAppStatus : "notFound")
-console.log("checkAppStatus-props-",checkAppNum ? checkAppNum : "notFound")
 this.setState({
     appStatus : checkAppStatus
 })
@@ -57,9 +51,15 @@ if(checkAppStatus){
 prepareFinalObject("SummaryutGST",this.props.utGST);
 prepareFinalObject("SummarycGST",this.props.cGST);
 prepareFinalObject("Summarysurcharge",this.props.surcharge);
-
-
 prepareFinalObject("cGSTSummary",cGST);
+
+let NewfinanceBusinessService;
+if(venueType == "Parks"){
+    NewfinanceBusinessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE"
+}
+if(venueType == "Community Center"){
+    NewfinanceBusinessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR"
+}
 
 
 let newDisCount;
@@ -96,7 +96,7 @@ else if(discountType == "20%"){
            "bkRemarks": DiscountReason,
             "discount": finalDiscount,
             "bkBookingType": venueType,
-            "bkBookingVenue": bokingType,
+            "bkBookingVenue": bokingType,  //bkBookingType
             "bkApplicantName": firstName,
             "bkMobileNumber": mobileNo,
             "bkDimension": dimension,
@@ -123,15 +123,15 @@ else if(discountType == "20%"){
             // "bkAction": checkAppStatus == "OFFLINE_APPLIED" ? "OFFLINE_RE_INITIATE" : "OFFLINE_INITIATE", //sendCurrentStatus
             "bkAction": sendCurrentStatus,
             "businessService": "PACC",
-            "financeBusinessService": "PACC",
+            "financeBusinessService": NewfinanceBusinessService,
             "reInitiateStatus": checkAppStatus == "OFFLINE_APPLIED" ? true : false,
             "financialYear": "2020-2021",
             "bkBankAccountNumber":BankAccountNumber,
-            "bkBankName":BankAccountName,
+             "bkBankName":BankAccountName,
             "bkIfscCode":IFSCCode,
             "bkAccountType":accountType,
             "bkBankAccountHolder":AccountHolderName,
-            
+            "bkNomineeName": NomineeName
         }
 
 if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
@@ -161,7 +161,7 @@ console.log("slotArray_",slotArray)   //checkslotArray
 console.log("checkslotArray",checkslotArray)
 				Booking.timeslots = checkslotArray,
                 Booking.bkDuration = "HOURLY",
-                Booking.bkFromDate = bookingData.bkFromDate,
+                Booking.bkFromDate = bookingData.bkFromDate, 
                 Booking.bkToDate = bookingData.bkToDate,
                 Booking.bkFromTime = bookingData.bkFromTime,
                 Booking.bkToTime = bookingData.bkToTime
@@ -210,7 +210,7 @@ let payloadfund = await httpRequest(
 
  prepareFinalObject("CurrentApplicationNumber",appNumber)
 
- this.setState({
+ this.setState({    
     createPACCApp : payloadfund,
     CashPaymentApplicationNumber : appNumber,
     currentAppStatus : AAppStatus
@@ -218,7 +218,7 @@ let payloadfund = await httpRequest(
 
 
  fetchPayment(
-    [{ key: "consumerCode", value: appNumber }, { key: "businessService", value: "PACC" }, { key: "tenantId", value: userInfo.tenantId }
+    [{ key: "consumerCode", value: appNumber }, { key: "businessService", value: NewfinanceBusinessService }, { key: "tenantId", value: userInfo.tenantId }
     ])
     }
 
@@ -313,7 +313,7 @@ this.props.history.push(`/egov-services/PaymentReceiptDteail/${this.state.CashPa
 
 <PaccFeeEstimate
 one={one} 
-two={two}
+two={two} 
 three={three} 
 four={four}
 five={five}
@@ -416,7 +416,12 @@ const mapStateToProps = state => {
     let checkBillLength =  paymentDataOne != "wrong" ? paymentDataOne.Bill.length > 0 : "";
     let totalAmountSuPage = checkBillLength ? paymentDataOne.Bill[0].totalAmount: "notfound";
     console.log("totalAmountSuPage-",totalAmountSuPage)
- 
+let  dropDownalue;
+dropDownalue = state.screenConfiguration.preparedFinalObject.DropDownValue
+console.log("dropDownalue",dropDownalue)
+let findTypeOfBooking =  state.screenConfiguration.preparedFinalObject.ShowAmountBooking
+console.log("findTypeOfBooking--",findTypeOfBooking)
+console.log("FinalAmount--",state.screenConfiguration.preparedFinalObject)
 
     let ReasonForDiscount = state.screenConfiguration.preparedFinalObject ? 
     (state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== undefined && state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== null ? (state.screenConfiguration.preparedFinalObject.ReasonForDiscount):'NA') :"NA";  
@@ -432,30 +437,62 @@ const mapStateToProps = state => {
     let five = 0;
     let six = 0;
     let seven = 0;
-for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
+//
+if(findTypeOfBooking == "Parks"){
+    console.log("park condition")
+    for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
-    if(billAccountDetailsArray[i].taxHeadCode == "PACC"){
-        one = billAccountDetailsArray[i].amount
-    }
-    else if(billAccountDetailsArray[i].taxHeadCode == "LUXURY_TAX"){
-        two = billAccountDetailsArray[i].amount
-    }
-    else if(billAccountDetailsArray[i].taxHeadCode == "REFUNDABLE_SECURITY"){
-        three = billAccountDetailsArray[i].amount
-    }
-    else if(billAccountDetailsArray[i].taxHeadCode == "PACC_TAX"){
-        four = billAccountDetailsArray[i].amount
-    }
-    else if(billAccountDetailsArray[i].taxHeadCode == "PACC_ROUND_OFF"){
-        five = billAccountDetailsArray[i].amount
-    }
-    else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHARGE"){
-        six = billAccountDetailsArray[i].amount
-    }
-    else if(billAccountDetailsArray[i].taxHeadCode == "PACC_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
-        seven = billAccountDetailsArray[i].amount
+        if(billAccountDetailsArray[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//PACC
+            one = billAccountDetailsArray[i].amount 
+         }
+        else if(billAccountDetailsArray[i].taxHeadCode == "CLEANING_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//LUXURY_TAX
+            two = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//REFUNDABLE_SECURITY
+            three = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){ //PACC TAX
+            four = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "PACC_ROUND_OFF"){
+            five = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){ //FACILITATION_CHARGE
+            six = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "PACC_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+            seven = billAccountDetailsArray[i].amount
+        }
     }
 }
+if(findTypeOfBooking == "Community Center"){
+    console.log("cc condition")
+    for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
+
+        if(billAccountDetailsArray[i].taxHeadCode == "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//PACC
+            one = billAccountDetailsArray[i].amount 
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "CLEANING_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//LUXURY_TAX
+            two = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//REFUNDABLE_SECURITY
+            three = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){ //PACC TAX
+            four = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "PACC_ROUND_OFF"){
+            five = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){ //FACILITATION_CHARGE
+            six = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "PACC_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+            seven = billAccountDetailsArray[i].amount
+        }
+    }
+}
+
 
 console.log("one--",one)
 console.log("two--",two)
