@@ -7,7 +7,7 @@ import DocumentDetails from './components/DocumentsDetails';
 import ParkPaymentDetails from './components/PaccPaymentDetails'
 import fetchfacilationCharges from 'egov-ui-kit/redux/bookings/actions'
 import { connect } from "react-redux";
-import get from "lodash/get";
+import get from "lodash/get"; 
 import moment from 'moment';
 import { httpRequest } from "egov-ui-kit/utils/api";
 import Label from "egov-ui-kit/utils/translationNode";
@@ -286,9 +286,15 @@ console.log("typesOfdisplayRefundAmount-",typeof(displayRefundAmount))
         let typefc = typeof(facCharges)
         console.log("typefc--",typefc)
         let conFc = Number(facCharges)
+        let showAmount;
         // finalRent = totalAmount + surcharge + utGST + cGST + conFc
         finalRent = RentPlusCcharges + utGST + cGST + conFc;
         console.log("finalAmount--for--paymentPage--",finalRent)
+        let checkOne = Number.isNaN(finalRent)
+        if(checkOne == false){
+            showAmount = finalRent
+        }
+        console.log("showAmount",showAmount)
         let finalRent1 = Number(finalRent)
         let VfinalAmount = finalRent1.toFixed()
         console.log("VfinalAmount--",VfinalAmount)
@@ -358,6 +364,7 @@ console.log("typesOfdisplayRefundAmount-",typeof(displayRefundAmount))
                 nextStep={this.nextStep}
                 prevStep={this.prevStep}
                 handleChange={this.handleChange}
+                showAmount={showAmount}
                 transactionNumber={transactionNumber}
                 transactionDateChange={this.transactionDateChange}
                 bankName={bankName}
@@ -383,6 +390,7 @@ console.log("typesOfdisplayRefundAmount-",typeof(displayRefundAmount))
             />);
         if (step === 5)
             return (<SummaryInfo
+
                 bookingData={bookingData}
                 venueType={venueType}
                 bokingType={bokingType}
