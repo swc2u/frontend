@@ -3,6 +3,8 @@ import {
     prepareFinalObject,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+
+import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 import {
     getTenantId,
     getUserInfo,
