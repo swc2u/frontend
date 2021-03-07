@@ -322,7 +322,7 @@ let RequestData = [
 			let PaymentMode = ResponseOfPaymentCall ? ResponseOfPaymentCall.Payments[0].paymentMode : ""
 			
 			let transactionNumber =  ResponseOfPaymentCall ? ResponseOfPaymentCall.Payments[0].transactionNumber : ""
-
+ 
 		let BKROOM_TAX = 0;
 		let BKROOM = 0;
 		let BKROOM_ROUND_OFF = 0;  
@@ -330,10 +330,10 @@ let RequestData = [
 		
 		for(let i = 0; i < paymentData.length ; i++ ){
 		
-		if(paymentData[i].taxHeadCode == "BKROOM_TAX"){  
+		if(paymentData[i].taxHeadCode == "CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){
 		BKROOM_TAX = paymentData[i].amount
 		}
-		else if(paymentData[i].taxHeadCode == "BKROOM"){
+		else if(paymentData[i].taxHeadCode == "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){
 		BKROOM = paymentData[i].amount
 		}
 		else if(paymentData[i].taxHeadCode == "BKROOM_ROUND_OFF"){
@@ -511,7 +511,7 @@ else{
 		var date2 = new Date();
 
 		var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
-	
+ 	
 
 		let BookingInfo = [
 			{
@@ -527,6 +527,7 @@ else{
 					"bkStartDate": this.state.FromDate,
 					"bkEndDate": this.state.ToDate,
 					"placeOfService": "Chandigarh",
+					"applicationNumber":this.state.ApplicationNumber
 				},
 				"generated": {
 				  "generatedBy": approverName,
