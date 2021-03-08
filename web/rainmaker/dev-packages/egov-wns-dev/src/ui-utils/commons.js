@@ -423,6 +423,7 @@ export const getMyApplicationResults = async (queryObject, dispatch) => {
                         response.WaterConnection[i].id = 0
                     }
                 }
+                
             }
             // });
         }
@@ -868,7 +869,14 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType",
             ''
         );
-        const wnsStatus =  window.localStorage.getItem("WNS_STATUS"); 
+        //const wnsStatus =  window.localStorage.getItem("WNS_STATUS");
+        let wnsStatus =  window.localStorage.getItem("WNS_STATUS");
+        let  ActionType = getQueryArg(window.location.href, "actionType");
+        if(wnsStatus === null)
+        {
+        wnsStatus =ActionType;
+        } 
+
         const wns_workflow =  window.localStorage.getItem("wns_workflow"); 
                 if(wnsStatus){
                     activityType = wnsStatus
@@ -885,21 +893,21 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             if(occupancycode && applicationType && category)
             {
 
-                if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO')
+                if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO' || activityType ==='WS_RENAME')
                 {
-                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "UPDATE_CONNECTION_HOLDER_INFO")
                 }
-                else if(activityType ==='TEMPORARY_DISCONNECTION')
+                else if(activityType ==='TEMPORARY_DISCONNECTION' || activityType ==='WS_TEMP_DISCONNECTION')
                 {
-                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "TEMPORARY_DISCONNECTION")
                 }
-                else if(activityType ==='CONNECTION_CONVERSION')
+                else if(activityType ==='CONNECTION_CONVERSION' || activityType ==='WS_CONVERSION')
                 {
-                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "CONNECTION_CONVERSION")
                 }
-                else if(activityType ==='PERMANENT_DISCONNECTION')
+                else if(activityType ==='PERMANENT_DISCONNECTION' || activityType ==='WS_DISCONNECTION')
                 {
-                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
                 }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
@@ -1368,7 +1376,13 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                     "WaterConnection[0].activityType",
                     ''
                 );
-                const wnsStatus =  window.localStorage.getItem("WNS_STATUS"); 
+               // const wnsStatus =  window.localStorage.getItem("WNS_STATUS"); 
+                let wnsStatus =  window.localStorage.getItem("WNS_STATUS");
+                let  ActionType = getQueryArg(window.location.href, "actionType");
+                if(wnsStatus === null)
+                {
+                wnsStatus =ActionType;
+                }
                 const wns_workflow =  window.localStorage.getItem("wns_workflow"); 
                 if(wnsStatus){
                     activityType = wnsStatus
@@ -1386,21 +1400,21 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
             {
                 
                 console.log(activityType);
-                if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO')
+                if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO' || activityType ==='WS_RENAME')
                 {
-                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "UPDATE_CONNECTION_HOLDER_INFO")
                 }
-                else if(activityType ==='TEMPORARY_DISCONNECTION')
+                else if(activityType ==='TEMPORARY_DISCONNECTION' || activityType ==='WS_TEMP_DISCONNECTION')
                 {
-                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "TEMPORARY_DISCONNECTION")
                 }
-                else if(activityType ==='CONNECTION_CONVERSION')
+                else if(activityType ==='CONNECTION_CONVERSION' || activityType ==='WS_CONVERSION')
                 {
-                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "CONNECTION_CONVERSION")
                 }
-                else if(activityType ==='PERMANENT_DISCONNECTION')
+                else if(activityType ==='PERMANENT_DISCONNECTION' || activityType ==='WS_DISCONNECTION')
                 {
-                    wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
                 }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
@@ -1524,6 +1538,7 @@ export const applyForWaterOrSewerage = async (state, dispatch) => {
 export const applyForWater = async (state, dispatch) => {
     let queryObject = parserFunction(state);
     let waterId = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].id");
+    let plotNo = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.address.plotNo");
     let method = waterId ? "UPDATE" : "CREATE";
     try {
         const tenantId = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].property.tenantId");
@@ -1541,7 +1556,14 @@ export const applyForWater = async (state, dispatch) => {
             queryObjectForUpdate = { ...queryObjectForUpdate, ...queryObject }
             set(queryObjectForUpdate, "processInstance.action", "SUBMIT_APPLICATION");
             // need to add status from the localstorage here for the status and remove the local storage
-            const wnsStatus =  window.localStorage.getItem("WNS_STATUS"); 
+           // const wnsStatus =  window.localStorage.getItem("WNS_STATUS"); 
+            let wnsStatus =  window.localStorage.getItem("WNS_STATUS");
+            let  ActionType = getQueryArg(window.location.href, "actionType");
+            if(wnsStatus === null)
+            {
+              wnsStatus =ActionType;
+            }
+
             if(wnsStatus){
               switch(wnsStatus){
                 case "UPDATE_CONNECTION_HOLDER_INFO" :   dispatch(prepareFinalObject("WaterConnection[0].activityType", "UPDATE_CONNECTION_HOLDER_INFO")); break;
@@ -1621,6 +1643,8 @@ export const applyForWater = async (state, dispatch) => {
             
         } else {
             set(queryObject, "processInstance.action", "INITIATE")
+            //set doorNo
+            set(queryObject, "property.address.doorNo", plotNo)
             queryObject = findAndReplace(queryObject, "NA", null);
             if(get(state, "screenConfiguration.preparedFinalObject.applyScreen.tubewell")){
                 queryObject.activityType = "NEW_TUBEWELL_CONNECTION";

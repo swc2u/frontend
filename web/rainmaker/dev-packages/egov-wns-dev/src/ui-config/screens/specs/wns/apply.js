@@ -101,9 +101,56 @@ export const stepper = getStepperObject({ props: { activeStep: 0 } }, stepperDat
 
 const getLabelForWnsHeader = () => {
   const wnsHeader =  window.localStorage.getItem("WNS_STATUS");
+  const ActionType = getQueryArg(window.location.href, "actionType");
 
-  if(wnsHeader)
+  if(wnsHeader ||ActionType)
+  {
+  if(ActionType)
+  {
+    let header =''
+    if(ActionType ==='UPDATE_CONNECTION_HOLDER_INFO')
+    {
+      header = 'WS_RENAME_DETAIL_HEADER'
+
+    }
+    if(ActionType==='TEMPORARY_DISCONNECTION')
+    {
+      header = 'WS_TEMP_DISCONNECTION_DETAIL_HEADER'
+
+    }
+    if(ActionType==='CONNECTION_CONVERSION')
+    {
+      header = 'WS_CONVERSION_DETAIL_HEADER'
+
+    }
+    if(ActionType==='PERMANENT_DISCONNECTION')
+    {
+      header = 'WS_DISCONNECTION_DETAIL_HEADER'
+
+    }
+    if(ActionType==='REACTIVATE_CONNECTION')
+    {
+      header = 'WS_REACTIVATE_DETAIL_HEADER'
+
+    }
+    if(ActionType==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
+    {
+      header = 'WS_TEMP_TEMP_DETAIL_HEADER'
+
+    }
+    if(ActionType==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION')
+    {
+      header = 'WS_TEMP_REGULAR_DETAIL_HEADER'
+    }
+    return header
+
+  }
+  else{
     return `${wnsHeader}_HEADER`;
+
+  }
+}
+    
   else if( process.env.REACT_APP_NAME === "Citizen")
     return  "WS_APPLY_NEW_CONNECTION_HEADER"
   else
@@ -402,7 +449,7 @@ export const getData = async (action, state, dispatch) => {
     // binddependent dropdown object Property Sub Usage Type , Uses Caregory
     const usageCategory_ = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].property.usageCategory");
     const waterApplicationType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplicationType");
-    const activityType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplicationType");
+    const activityType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType");
     displaysubUsageType(usageCategory_, dispatch, state);
     displayUsagecategory(waterApplicationType, dispatch, state);
                 // check for security deposite for PENDING_FOR_SECURITY_DEPOSIT//PENDING_ROADCUT_NOC_BY_CITIZEN
@@ -423,10 +470,8 @@ export const getData = async (action, state, dispatch) => {
                             "props.value",
                             securityCharges
                           )
-                        );
-                       
-                        applyScreen.waterApplication.securityCharge
-  
+                        );                       
+                       // payloadWater.WaterConnection[0].waterApplication.securityCharge  
                         dispatch(
                           handleField(
                             "apply",
@@ -469,6 +514,7 @@ export const getData = async (action, state, dispatch) => {
                 }
                 else {
                   dispatch(prepareFinalObject("applyScreen.waterApplication.isFerruleApplicable",true));
+                  dispatch(prepareFinalObject("WaterConnection[0].waterApplication.isFerruleApplicable",true));
                   dispatch(
                     handleField(
                       "apply",
@@ -721,9 +767,11 @@ export const getData = async (action, state, dispatch) => {
 
 const getApplyScreenChildren = () => {
  const wnsStatus =  window.localStorage.getItem("WNS_STATUS");
+ const ActionType = getQueryArg(window.location.href, "actionType");
+ let Action = wnsStatus !== null?wnsStatus:ActionType;
  
- if(wnsStatus){
-  switch(wnsStatus){
+ if(wnsStatus || ActionType){
+  switch(Action){
     case "UPDATE_CONNECTION_HOLDER_INFO" : return {connectionHolderDetails }; 
     case "REACTIVATE_CONNECTION":
     case "TEMPORARY_DISCONNECTION":
@@ -990,6 +1038,10 @@ const screenConfig = {
     if(!applicationNumber)
     {
       window.localStorage.removeItem("WNS_STATUS");
+      if(localStorage.getItem("wns_workflow")){
+        window.localStorage.removeItem("wns_workflow");
+      }
+
     }
 
     if (propertyId) {
