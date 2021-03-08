@@ -1984,6 +1984,15 @@ export const downloadPrintContainer = (
             break;
         case 'NOC-ES_PENDING_SDE_APPROVAL': 
         case 'NOC-ES_APPROVED' : 
+          if(process.env.REACT_APP_NAME === "Citizen"){
+            downloadMenu = [
+              applicationDownloadObject
+              
+            ]
+            printMenu = [
+              applicationPrintObject
+            ]
+          }else{
             downloadMenu = [
               applicationDownloadObject,
               LetterDownloadObject,
@@ -1996,7 +2005,8 @@ export const downloadPrintContainer = (
               LetterPrintObject,
               NOCproposalLetterPrintObject,
               paymentLetterPrintObject
-            ] 
+            ]
+          }
           break;
         case 'IssuanceOfNotice-ES_REJECTED':  
         case 'IssuanceOfNotice-ES_PENDING_JE_CLARIFICATION':
