@@ -746,6 +746,15 @@ const setSearchResponse = async (
           true
         )
       );
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.div.children.employeeFooter.children.deleteChallanButton",
+          "visible",
+          true
+        )
+      );
+
     }
 
     let encroachmentType = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].encroachmentType", '');
@@ -962,6 +971,7 @@ const setSearchResponseForNocCretificate = async (
     };
 
   }
+  
   if (paymentStatus === 'PAID') {
     let violatorDetails = get(state, 'screenConfiguration.preparedFinalObject.eChallanDetail[0]', []);
     let paydetails = get(state, 'screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].billDetails[0].billAccountDetails', []);
@@ -1055,6 +1065,7 @@ const setPaymentServiceResponse = async (
   let paymentStatus = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].paymentDetails.paymentStatus", {});
   let challanId = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].challanId");
   let tenantId = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].tenantId");
+  
   if (paystatus === 'UNPAID') {
     const pgResponse = await getSearchResultsPaymentServiceData([
       { key: "tenantId", value: tenantId },

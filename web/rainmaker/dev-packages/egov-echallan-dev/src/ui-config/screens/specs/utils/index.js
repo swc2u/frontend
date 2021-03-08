@@ -457,7 +457,7 @@ export const searchBill = async (dispatch, applicationNumber, tenantId, paymentS
     ];
 
     let response = [];
-    if (paymentStatus !== 'PAID') {
+    if (paymentStatus != 'PAID') {
       response = await getBill(queryObj);
     } else {
       response = await billingsearchBill(queryObj, dispatch);
