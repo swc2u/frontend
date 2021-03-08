@@ -46,7 +46,7 @@ class WorkFlowContainer extends React.Component {
     }
   }
 
-  getRedirectUrl = (action, businessId, moduleName) => {
+  getRedirectUrl = (action, businessId, moduleName,ActionType) => {
 
     const isAlreadyEdited = getQueryArg(window.location.href, "edited");
     const tenant = getQueryArg(window.location.href, "tenantId");
@@ -85,12 +85,12 @@ class WorkFlowContainer extends React.Component {
     switch (action) {
 
       case "EDIT": return isAlreadyEdited
-        ? `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit&edited=true`
-        : `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit`;
+        ? `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit&edited=trueservice=WATER&actionType=${ActionType}`
+        : `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=editservice=WATER&actionType=${ActionType}`;
         case "WATERMODIFY":
           return isAlreadyEdited
-          ? `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit&edited=true&service=WATER&actionType=${moduleName}`
-          : `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit&service=WATER&actionType=${moduleName}`;
+          ? `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit&edited=true&service=WATER&actionType=${ActionType}`
+          : `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit&service=WATER&actionType=${ActionType}`;
     }
   };
 
@@ -193,13 +193,21 @@ class WorkFlowContainer extends React.Component {
             }
           }
         }
-
+        // const btnName = ["UPDATE_CONNECTION_HOLDER_INFO",
+        // "TEMPORARY_DISCONNECTION",
+        // "CONNECTION_CONVERSION",
+        // "PERMANENT_DISCONNECTION",
+        // "REACTIVATE_CONNECTION",
+        // "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION",
+        // "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION"];
+        // if(btnName.includes(btn))
+        //    moduleName = btn;
               const buttonObj = {
                 buttonLabel: btn,
                 moduleName: moduleName,
                 tenantId: "ch.chandigarh",
                 isLast: true,
-                buttonUrl: this.getRedirectUrl("WATERMODIFY", businessId, moduleName)
+                buttonUrl: this.getRedirectUrl("WATERMODIFY", businessId, moduleName,btn)
               }
 
               return buttonObj;

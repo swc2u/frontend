@@ -484,6 +484,11 @@ export const renderService = () => {
     return getCommonContainer({ reviewConnectionType, reviewWaterClosets,reviewNoOfToilets })
   }
   else{
-    return getCommonContainer({ reviewConnectionType, reviewNumberOfTaps, reviewWaterSource, reviewWaterSubSource, reviewPipeSize,reviewferruleSize });
+    return getCommonContainer({ reviewConnectionType, 
+                               // reviewNumberOfTaps, 
+                                reviewWaterSource, 
+                                reviewWaterSubSource, 
+                                reviewPipeSize,
+                                reviewferruleSize });
   }
 }
