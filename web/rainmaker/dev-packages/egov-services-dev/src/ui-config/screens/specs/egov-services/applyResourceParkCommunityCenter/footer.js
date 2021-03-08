@@ -196,7 +196,7 @@ const callBackForNext = async (state, dispatch) => {
                     "data.bkBookingType",
                     ""
                 );
-                alert(bookType)
+               
                 let businessService=""
                 if(bookType==="Community Center"){
                     businessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
