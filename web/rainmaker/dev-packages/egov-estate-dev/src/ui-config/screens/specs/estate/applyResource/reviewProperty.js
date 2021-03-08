@@ -23,7 +23,12 @@ import { changeStep as changeStepManimajra} from "../applyResourceManimajra/foot
 import React from "react";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-
+export const roundup = value => {
+  if (value) {
+let val=value.toFixed(2)
+return Number(val)
+  }
+};
 function getLabelWithValue(labelName, path, visible) {
   const label = _getLabelWithValue(labelName, path);
   label.visible = visible
@@ -1956,6 +1961,7 @@ export const getReviewConsolidatedPaymentDetails = (isEditable = true, screenkey
         }, 
         {
           jsonPath: "Properties[0].propertyDetails.estateDemands[0].rent",
+          callBack:roundup
         }
       ),
       consolidatedGst: getLabelWithValue(
@@ -1964,7 +1970,8 @@ export const getReviewConsolidatedPaymentDetails = (isEditable = true, screenkey
           labelKey: "ES_CONSOLIDATED_GST_LABEL"
         },
         {
-          jsonPath: "Properties[0].propertyDetails.estateDemands[0].gst"
+          jsonPath: "Properties[0].propertyDetails.estateDemands[0].gst",
+          callBack:roundup
         }
       ),
       consolidatedInterestOnRent: getLabelWithValue(
@@ -1973,7 +1980,8 @@ export const getReviewConsolidatedPaymentDetails = (isEditable = true, screenkey
           labelKey: "ES_CONSOLIDATED_INTEREST_ON_RENT_LABEL"
         },
         {
-          jsonPath: "Properties[0].propertyDetails.estateDemands[0].penaltyInterest"
+          jsonPath: "Properties[0].propertyDetails.estateDemands[0].penaltyInterest",
+          callBack:roundup
         }
       ),
       consolidatedInterestOnGst: getLabelWithValue(
@@ -1982,7 +1990,8 @@ export const getReviewConsolidatedPaymentDetails = (isEditable = true, screenkey
           labelKey: "ES_CONSOLIDATED_INTEREST_ON_GST_LABEL"
         },
         {
-          jsonPath: "Properties[0].propertyDetails.estateDemands[0].gstInterest"
+          jsonPath: "Properties[0].propertyDetails.estateDemands[0].gstInterest",
+          callBack:roundup
         }
       ),
       consolidatedTill: getLabelWithValue(
