@@ -382,7 +382,10 @@ const cpNumberLabel = {
   labelName: "CP No.",
   labelKey: "ES_CP_NUMBER_LABEL"
 }
-
+const npNumberLabel = {
+  labelName: "NP No.",
+  labelKey: "ES_NP_NUMBER_LABEL"
+}
 export const getReviewOwner = (isEditable = true, owner = 0) => {
   return getCommonGrayCard({
     headerDiv: {
@@ -436,6 +439,11 @@ export const getReviewOwner = (isEditable = true, owner = 0) => {
       share: getLabelWithValue(
         shareLabel, {
           jsonPath: `Properties[0].propertyDetails.owners[${owner}].share`
+        }
+      ),
+      npNumber: getLabelWithValue(
+        npNumberLabel, {
+          jsonPath: `Properties[0].propertyDetails.owners[${owner}].npNumber`
         }
       ),
       cpNumber: getLabelWithValue(
@@ -1920,6 +1928,15 @@ export const getReviewProprietorshipDetails = (isEditable = true, screenkey = "a
         },
         {
           jsonPath: "Properties[0].propertyDetails.owners[0].ownerDetails.mobileNumber"
+        }
+      ),
+      npNumber: getLabelWithValue(
+        {
+          labelName: "NP Number",
+          labelKey: "ES_NP_NUMBER_LABEL"
+        },
+        {
+          jsonPath: "Properties[0].propertyDetails.owners[0].npNumber"
         }
       ),
       cpNumber: getLabelWithValue(
