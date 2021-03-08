@@ -895,7 +895,7 @@ markAsPaidButton: {
         action: "condition",
         callBack: callbackforDeleteChallan
       },
-      visible: true,
+      visible: false,
       roleDefination: {
         rolePath: "user-info.roles",
         roles: ["CHALLAN_DELETE"]
