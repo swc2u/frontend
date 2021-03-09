@@ -34,7 +34,7 @@ const mapStateToProps = (state, ownProps) => {
     );
     let refundAmount = 0;
     for(let i = 0; i<billAccountDetails.length; i++){
-        if(billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
+        if(billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
             refundAmount += billAccountDetails[i].amount;
         }
 
