@@ -7,6 +7,7 @@ import { resetFiles } from "egov-ui-kit/redux/form/actions";
 import get from "lodash/get";
 import isEqual from "lodash/isEqual";
 import { prepareFormData } from "egov-ui-kit/redux/common/actions";
+import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 // import OSMCCBookingDetails from "../AllApplications/components/OSMCCBookingDetails"
 // import AppDetails from "../AllApplications/components/ApplicantDetails"
@@ -196,6 +197,7 @@ const {userInfo} = this.props
 		name:name
 	})
    let createAppData = {
+	"uuid": userInfo.uuid,
     "applicationNumber": fetchApplicationNumber,
 	"applicationStatus": "",
 	"typeOfRoom": "",
@@ -208,11 +210,32 @@ const {userInfo} = this.props
 			"_search",[],
 			createAppData
 			);
-
+ 
 	console.log("payloadfund--",payloadfund)		
 	this.props.prepareFinalObject("DataOfRoomAndCommunity",payloadfund)
-	let documentForBothBooking = payloadfund.communityCenterDocumentMap
-	console.log("documentForBothBooking-",documentForBothBooking)
+	let documentForBothBooking;
+	
+  if(payloadfund.communityCenterDocumentMap !== undefined && payloadfund.communityCenterDocumentMap !== null){
+
+	let checkDocumentUpload = Object.entries(payloadfund.communityCenterDocumentMap).length === 0;
+	console.log("checkDocumentUpload",checkDocumentUpload)
+
+	if(checkDocumentUpload === true){
+		documentForBothBooking = "Not Applicable"
+		console.log("firstDocument--",documentForBothBooking)
+	}
+	if(checkDocumentUpload === false){
+		documentForBothBooking = payloadfund.communityCenterDocumentMap
+		console.log("documentForBothBooking-second",documentForBothBooking)
+	}
+
+}
+
+	// documentForBothBooking = payloadfund.communityCenterDocumentMap
+	// console.log("documentForBothBooking-",documentForBothBooking)
+
+if(payloadfund.communityCenterRoomBookingMap !== undefined && payloadfund.communityCenterRoomBookingMap !== null){
+
 	let RoomCommData = payloadfund.communityCenterRoomBookingMap
     console.log("RoomCommData--",RoomCommData)
 	let AllKeysOfRoom = []
@@ -333,7 +356,19 @@ PaymentMode : PaymentMode,
 transactionNumber : transactionNumber
 		})
 
-	}
+
+}
+else{
+	this.props.toggleSnackbarAndSetText(
+		true,
+		{
+		  labelName: "From_Date_Is_Greater_Than_To_Date",
+		  labelKey: `From_Date_Is_Greater_Than_To_Date`
+		},
+		"warning"
+	  );
+}
+}
 	
 
 	actionButtonOnClick = (e, complaintNo, label) => {
@@ -1448,6 +1483,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
 	return {
+		toggleSnackbarAndSetText: (open, message, error) =>
+		dispatch(toggleSnackbarAndSetText(open, message, error)),
 		fetchApplications: criteria => dispatch(fetchApplications(criteria)), //
 		downloadRoomPermissionLetter: criteria => dispatch(downloadRoomPermissionLetter(criteria)),
 		fetchPayment: criteria => dispatch(fetchPayment(criteria)),

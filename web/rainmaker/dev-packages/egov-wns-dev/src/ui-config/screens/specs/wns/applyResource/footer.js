@@ -267,7 +267,13 @@ if(water || sewerage || tubewell)
         return false;
       }
       // if wnsStatus is present then check the required fields
-const wnsStatus =  window.localStorage.getItem("WNS_STATUS");
+let wnsStatus =  window.localStorage.getItem("WNS_STATUS");
+let  ActionType = getQueryArg(window.location.href, "actionType");
+if(wnsStatus === null)
+{
+  wnsStatus =ActionType;
+}
+
 if(wnsStatus && wnsStatus === "CONNECTION_CONVERSION"){
   const iswaterConnFomValid = validateFields(
     "components.div.children.formwizardFirstStep.children.connConversionDetails.children.cardContent.children.connectionConversionDetails.children.ConnectionConversionDetails.children",

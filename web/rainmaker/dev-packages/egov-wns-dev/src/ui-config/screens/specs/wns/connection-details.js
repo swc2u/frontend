@@ -321,7 +321,7 @@ const screenConfig = {
                 },
               }
             },
-            ...connectionDetailsFooter,
+           // ...connectionDetailsFooter,
           }
         },
         connectionDetails,

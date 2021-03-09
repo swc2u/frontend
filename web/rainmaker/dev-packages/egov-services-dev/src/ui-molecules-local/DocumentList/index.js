@@ -209,11 +209,11 @@ class DocumentList extends Component {
                             //         ...newDocumentData,
                             //     })
                             //     :
-                            
+
                             Object.keys(documentsUploadReduxOld).length > 0
                             ? (documentsUploadRedux[index] = {
                                 ...oldDocumentData,
-                            
+
                             })
                             :
                      (documentsUploadRedux[index] = { ...newDocumentData });
@@ -293,8 +293,8 @@ console.log(card, "Card He");
                 <Grid
                     item={true}
                     xs={10}
-                    sm={6}
-                    md={6}
+                    sm={5}
+                    md={4}
                     align="left"
                     className={classes.descriptionDiv}
                 >
@@ -304,11 +304,26 @@ console.log(card, "Card He");
                     />
                     {card.required && requiredIcon}
                 </Grid>
-
+                <Grid item={true} xs={12} sm={6} md={4}>
+          {card.dropdown && (
+            <TextFieldContainer
+              select={true}
+              label={{ labelKey: getTransformedLocale(card.dropdown.label) }}
+              placeholder={{ labelKey: card.dropdown.label }}
+              data={card.dropdown.menu}
+              optionValue="code"
+              optionLabel="label"
+              autoSelect={true}
+              required={card.required}
+              onChange={event => this.handleChange(key, event)}
+              jsonPath={jsonPath}
+            />
+          )}
+        </Grid>
                 <Grid
                     item={true}
                     xs={12}
-                    sm={4}
+                    sm={12}
                     md={3}
                     align="right"
                     className={classes.fileUploadDiv}
