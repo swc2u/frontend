@@ -457,6 +457,7 @@ const modifiedOwner = PropertiesTempOwners.map((owner) => {
        owner.ownerDetails.ownerDocuments = modifiedOwner[index].ownerDetails.ownerDocuments
        owner.ownerDetails.guardianRelation = getLocaleLabels(owner.ownerDetails.guardianRelation, owner.ownerDetails.guardianRelation)
        owner.ownerDetails.possesionDate = moment(new Date(owner.ownerDetails.possesionDate)).format('DD-MMM-YYYY')
+       owner.ownerDetails.isCurrentOwner = owner.ownerDetails.isCurrentOwner ? 'Yes' : 'No'
        return owner
     })
 
