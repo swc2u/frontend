@@ -45,11 +45,11 @@ const mapStateToProps =  (state, ownProps) => {
     let bookingAmount = 0;
     let securityAmount = 0;
     for(let i = 0; i<billAccountDetails.length; i++){
-        if(billAccountDetails[i].taxHeadCode == "REFUNDABLE_SECURITY"){
+        if(billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
             bookingAmount += billAccountDetails[i].amount;
             securityAmount += billAccountDetails[i].amount;
         }
-        if(billAccountDetails[i].taxHeadCode == "PACC"){
+        if(billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
             bookingAmount += billAccountDetails[i].amount;
         }
     }

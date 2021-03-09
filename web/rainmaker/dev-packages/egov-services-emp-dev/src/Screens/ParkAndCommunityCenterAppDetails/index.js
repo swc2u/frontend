@@ -6,6 +6,7 @@ import { Comments } from "modules/common";
 import { Screen } from "modules/common";
 import { resetFiles } from "egov-ui-kit/redux/form/actions";
 import get from "lodash/get";
+import axios from "axios";
 import isEqual from "lodash/isEqual";
 import _ from "lodash"
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
@@ -246,6 +247,15 @@ this.setState({
 
 	}
 
+	let NewfinanceBusinessService;
+	if(bkBookingType == "Parks"){
+		NewfinanceBusinessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE"
+	}
+	if(bkBookingType == "Community Center"){
+		NewfinanceBusinessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR"
+	}
+	
+
     prepareFinalObject("oldAvailabilityCheckData.bkBookingType",bkBookingType);
 
     prepareFinalObject("oldAvailabilityCheckData.Sector",Sector);
@@ -306,7 +316,7 @@ this.setState({
 			{ key: "businessIds", value: match.params.applicationId }, { key: "history", value: true }, { key: "tenantId", value: userInfo.tenantId }])
 
 		fetchPayment(
-			[{ key: "consumerCode", value: match.params.applicationId }, { key: "businessService", value: "PACC" }, { key: "tenantId", value: userInfo.tenantId }
+			[{ key: "consumerCode", value: match.params.applicationId }, { key: "businessService", value: NewfinanceBusinessService }, { key: "tenantId", value: userInfo.tenantId }
 			])
 		fetchDataAfterPayment(
 			[{ key: "consumerCodes", value: match.params.applicationId }, { key: "tenantId", value: userInfo.tenantId }
@@ -808,7 +818,7 @@ let applicationDetails = selectedComplaint
 				"name": applicationDetails.bkApplicantName,
 				"mobileNumber":applicationDetails.bkMobileNumber,
 				"email": applicationDetails.bkEmail,
-				  "permanentAddress": "",
+				  "permanentAddress": applicationDetails.bkHouseNo,
 				  "permanentCity": "Chandigarh",
 				  "sector": applicationDetails.bkSector,
 				  "fatherName": "",
@@ -835,6 +845,7 @@ let applicationDetails = selectedComplaint
 					applicationDetails.bkFromDate,
 					applicationDetails.bkToDate
 				  ),
+				  "applicationNumber": applicationDetails.bkApplicationNumber,
 			  },
 			  "generated": {
 				"generatedBy": userInfo.name,
@@ -987,7 +998,7 @@ let applicationDetails = selectedComplaint
 								fileUrls[doc.fileStoreId]
 									.split(",")[0]
 									.split("?")[0]
-									.split("/")
+ 									.split("/")
 									.pop()
 									.slice(13)
 							)) ||
@@ -1142,7 +1153,7 @@ let applicationDetails = selectedComplaint
 		  "name": applicationDetails.bkApplicantName,
 		  "mobileNumber":applicationDetails.bkMobileNumber,
 		  "email": applicationDetails.bkEmail,
-		  "permanentAddress": "Not Applicable",
+		  "permanentAddress": applicationDetails.bkHouseNo,
 		  "permanentCity": "Chandigarh",
 		  "sector": applicationDetails.bkSector,
 		  "fatherName": "",
@@ -1967,7 +1978,7 @@ totalAmountPaid = {totalAmountPaid}
 		  onClick={() => this.BookRoom()}
 		/>  */}
 
-		  {(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") ? 
+		  {(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid"? 
 		  <Button
 		  label={
 			<Label
@@ -2211,6 +2222,13 @@ const mapStateToProps = (state, ownProps) => {
 	let selectedNumber = selectedComplaint ? selectedComplaint.bkApplicationNumber : "NotFoundAnyApplicationNumber"
 	console.log("selectedNumber--",selectedNumber)
 
+	let OfflineInitatePayArray
+	let PACC = 0;
+	let LUXURY_TAX = 0;
+	let REFUNDABLE_SECURITY = 0;
+	let PACC_TAX = 0;
+	let PACC_ROUND_OFF = 0;
+	let FACILITATION_CHARGE = 0;
 
 let roomData =selectedComplaint.roomsModel ? (selectedComplaint.roomsModel.length > 0 ? (selectedComplaint.roomsModel) : "NA") : "NA"
 console.log("roomData-----",roomData)
@@ -2341,6 +2359,67 @@ else{
 	console.log("paymentDetails-two--",paymentDetails)
     }
 }
+if(selectedComplaint && selectedComplaint.bkApplicationStatus == "OFFLINE_INITIATED"){  
+	paymentDetails =paymentData && paymentData !== null && paymentData !== undefined ? 
+	(paymentData.Bill && paymentData.Bill !== undefined && paymentData.Bill !== null ? 
+	(paymentData.Bill.length > 0 ?(paymentData.Bill[0]):"NA"):"NA"): "NA";
+	if(paymentDetails !== "NA"){//paymentData.Bill[0].billDetails[0].billAccountDetails
+	OfflineInitatePayArray = paymentData.Bill[0].billDetails !== undefined && paymentData.Bill[0].billDetails !== null ? 
+	(paymentData.Bill[0].billDetails !== undefined && paymentData.Bill[0].billDetails !== null ? (paymentData.Bill[0].billDetails.length > 0 ? (paymentData.Bill[0].billDetails[0].billAccountDetails !== undefined && paymentData.Bill[0].billDetails[0].billAccountDetails !== null ? 
+	(paymentData.Bill[0].billDetails[0].billAccountDetails ? (paymentData.Bill[0].billDetails[0].billAccountDetails.length > 0 ? (paymentData.Bill[0].billDetails[0].billAccountDetails) : "NA"): "NA"): "NA"): "NA"): "NA") : "NA"
+	}
+	
+	if(OfflineInitatePayArray !== "NA" && OfflineInitatePayArray !== undefined && OfflineInitatePayArray !== null){
+
+		if(selectedComplaint.bkBookingType == "Parks"){
+			for(let i = 0; i < OfflineInitatePayArray.length ; i++ ){
+		
+				if(OfflineInitatePayArray[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
+					PACC = OfflineInitatePayArray[i].amount
+				}
+				else if(OfflineInitatePayArray[i].taxHeadCode == "CLEANING_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
+					LUXURY_TAX = OfflineInitatePayArray[i].amount
+				}
+				else if(OfflineInitatePayArray[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
+					REFUNDABLE_SECURITY = OfflineInitatePayArray[i].amount
+				}
+				else if(OfflineInitatePayArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
+					PACC_TAX = OfflineInitatePayArray[i].amount
+				}
+				else if(OfflineInitatePayArray[i].taxHeadCode == "PACC_ROUND_OFF"){
+					PACC_ROUND_OFF = OfflineInitatePayArray[i].amount
+				}
+				else if(OfflineInitatePayArray[i].taxHeadCode == "FACILITATION_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
+					FACILITATION_CHARGE = OfflineInitatePayArray[i].amount
+				}
+				}
+		}
+	
+		if(selectedComplaint.bkBookingType == "Community Center"){
+			for(let i = 0; i < OfflineInitatePayArray.length ; i++ ){
+		
+				if(OfflineInitatePayArray[i].taxHeadCode == "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){
+					PACC = OfflineInitatePayArray[i].amount
+				}
+				else if(OfflineInitatePayArray[i].taxHeadCode == "CLEANING_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){
+					LUXURY_TAX = OfflineInitatePayArray[i].amount
+				}
+				else if(OfflineInitatePayArray[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){
+					REFUNDABLE_SECURITY = OfflineInitatePayArray[i].amount
+				}
+				else if(OfflineInitatePayArray[i].taxHeadCode == "CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){
+					PACC_TAX = OfflineInitatePayArray[i].amount
+				}
+				else if(OfflineInitatePayArray[i].taxHeadCode == "PACC_ROUND_OFF"){
+					PACC_ROUND_OFF = OfflineInitatePayArray[i].amount
+				}
+				else if(OfflineInitatePayArray[i].taxHeadCode == "FACILITATION_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){
+					FACILITATION_CHARGE = OfflineInitatePayArray[i].amount
+				}
+				}
+		}
+}
+}
   else{
 	paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
   }
@@ -2375,36 +2454,61 @@ console.log("recNumber--",recNumber)
 //ReceiptPaymentDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
 let billAccountDetailsArray =  ReceiptPaymentDetails !== undefined && ReceiptPaymentDetails !== null ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails): "NOt found Any Array") : "NOt found Any Array"
 console.log("billAccountDetailsArray--",billAccountDetailsArray)
-let PACC = 0;
-let LUXURY_TAX = 0;
-let REFUNDABLE_SECURITY = 0;
-let PACC_TAX = 0;
-let PACC_ROUND_OFF = 0;
-let FACILITATION_CHARGE = 0;
 
-if(billAccountDetailsArray !== "NOt found Any Array"){
-for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
-if(billAccountDetailsArray[i].taxHeadCode == "PACC"){
-    PACC = billAccountDetailsArray[i].amount
-}
-else if(billAccountDetailsArray[i].taxHeadCode == "LUXURY_TAX"){
-    LUXURY_TAX = billAccountDetailsArray[i].amount
-}
-else if(billAccountDetailsArray[i].taxHeadCode == "REFUNDABLE_SECURITY"){
-    REFUNDABLE_SECURITY = billAccountDetailsArray[i].amount
-}
-else if(billAccountDetailsArray[i].taxHeadCode == "PACC_TAX"){
-    PACC_TAX = billAccountDetailsArray[i].amount
-}
-else if(billAccountDetailsArray[i].taxHeadCode == "PACC_ROUND_OFF"){
-    PACC_ROUND_OFF = billAccountDetailsArray[i].amount
-}
-else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHARGE"){
-    FACILITATION_CHARGE = billAccountDetailsArray[i].amount
-}
-}
-}
+if(billAccountDetailsArray !== "NOt found Any Array" && billAccountDetailsArray !== undefined && billAccountDetailsArray !== null){
+
+if(selectedComplaint.bkBookingType == "Parks"){
+	for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
+
+		if(billAccountDetailsArray[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//PACC
+			PACC = billAccountDetailsArray[i].amount
+		}
+		else if(billAccountDetailsArray[i].taxHeadCode == "CLEANING_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//LUXURY_TAX
+			LUXURY_TAX = billAccountDetailsArray[i].amount
+		}
+		else if(billAccountDetailsArray[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//REFUNDABLE_SECURITY
+			REFUNDABLE_SECURITY = billAccountDetailsArray[i].amount
+		}
+		else if(billAccountDetailsArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//PACC_TAX
+			PACC_TAX = billAccountDetailsArray[i].amount
+		}
+		else if(billAccountDetailsArray[i].taxHeadCode == "PACC_ROUND_OFF"){
+			PACC_ROUND_OFF = billAccountDetailsArray[i].amount
+		}
+		else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//FACILITATION_CHARGE
+			FACILITATION_CHARGE = billAccountDetailsArray[i].amount
+		}
+		}
+		}
+
+if(selectedComplaint.bkBookingType == "Community Center"){
+			for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
+		
+				if(billAccountDetailsArray[i].taxHeadCode == "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//PACC
+					PACC = billAccountDetailsArray[i].amount
+				}
+				else if(billAccountDetailsArray[i].taxHeadCode == "CLEANING_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//LUXURY_TAX
+					LUXURY_TAX = billAccountDetailsArray[i].amount
+				}
+				else if(billAccountDetailsArray[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//REFUNDABLE_SECURITY
+					REFUNDABLE_SECURITY = billAccountDetailsArray[i].amount
+				}
+				else if(billAccountDetailsArray[i].taxHeadCode == "CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//PACC_TAX
+					PACC_TAX = billAccountDetailsArray[i].amount
+				}
+				else if(billAccountDetailsArray[i].taxHeadCode == "PACC_ROUND_OFF"){
+					PACC_ROUND_OFF = billAccountDetailsArray[i].amount
+				}
+				else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){ //FACILITATION_CHARGE
+					FACILITATION_CHARGE = billAccountDetailsArray[i].amount
+				}
+				}
+				}
+		
+}	
+
+
 let one = 0;
 let two = 0;
 let three = 0;

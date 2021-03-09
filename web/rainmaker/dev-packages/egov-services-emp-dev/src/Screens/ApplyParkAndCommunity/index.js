@@ -7,7 +7,7 @@ import DocumentDetails from './components/DocumentsDetails';
 import ParkPaymentDetails from './components/PaccPaymentDetails'
 import fetchfacilationCharges from 'egov-ui-kit/redux/bookings/actions'
 import { connect } from "react-redux";
-import get from "lodash/get";
+import get from "lodash/get"; 
 import moment from 'moment';
 import { httpRequest } from "egov-ui-kit/utils/api";
 import Label from "egov-ui-kit/utils/translationNode";
@@ -193,11 +193,9 @@ export class StepForm extends Component {
             jobCompany, approverName, comment, jobLocation, mobileNo, email,fCharges,
             dimension, cleaningCharges, houseNo, rent, purpose, locality, residenials, discountType,NewfCharges,accountType } = this.state;
             let fc = fCharges?fCharges.facilitationCharge:'100';
+ var facCharges = NewfCharges !== "valueNotsetYet" && NewfCharges !== undefined && NewfCharges !== null && NewfCharges !== ""? NewfCharges : fc
 
-            let facCharges = NewfCharges ? NewfCharges : fc ;
-          
-
-        let bookingData = this.props.stateData.screenConfiguration.preparedFinalObject ? this.props.stateData.screenConfiguration.preparedFinalObject.availabilityCheckData:""
+      let bookingData = this.props.stateData.screenConfiguration.preparedFinalObject ? this.props.stateData.screenConfiguration.preparedFinalObject.availabilityCheckData:""
       console.log("bookingData.bkFromDate--",bookingData.bkFromDate)  
       console.log("bookingData.bkToDate--",bookingData.bkToDate)  
         let vanueData = this.props.stateData.screenConfiguration.preparedFinalObject ? this.props.stateData.screenConfiguration.preparedFinalObject.bkBookingData:""
@@ -257,7 +255,9 @@ let vrent = Number(vanueData.rent);
         console.log("location--",location)
         amount = vanueData.amount;
 let displayRefundAmount =   vanueData!== undefined && vanueData!== null ? (vanueData.refundabelSecurity !== undefined && vanueData.refundabelSecurity !== null ? (vanueData.refundabelSecurity) : "") : ""
-console.log("typesOfdisplayRefundAmount-",typeof(displayRefundAmount))        
+console.log("typesOfdisplayRefundAmount-",typeof(displayRefundAmount))  
+let NumberRefundAmount = Number(displayRefundAmount);
+
 // rent = totalAmount;
         cleaningCharges = Number(vanueData.cleaningCharges);
         let RentPlusCcharges = Number(cleaningCharges) + Number(totalAmount1);
@@ -286,10 +286,27 @@ console.log("typesOfdisplayRefundAmount-",typeof(displayRefundAmount))
         let typefc = typeof(facCharges)
         console.log("typefc--",typefc)
         let conFc = Number(facCharges)
+        let showAmount;
         // finalRent = totalAmount + surcharge + utGST + cGST + conFc
         finalRent = RentPlusCcharges + utGST + cGST + conFc;
         console.log("finalAmount--for--paymentPage--",finalRent)
+//
+        let checkOne = Number.isNaN(finalRent)
+        if(checkOne == false){
+            showAmount = finalRent
+        }
+        console.log("showAmount",showAmount)
         let finalRent1 = Number(finalRent)
+
+        let RefundPlusAllRent = finalRent1 + NumberRefundAmount;
+        console.log("RefundPlusAllRent--",RefundPlusAllRent)
+        console.log("RefundPlusAllRenttypeof",typeof(RefundPlusAllRent))
+        console.log("finalRent1--",finalRent1)
+
+        let RefundPlusAllRentNum = Number(RefundPlusAllRent)
+        console.log("RefundPlusAllRentNum",RefundPlusAllRentNum)
+        let fixedRefundPlusAllRentNum = RefundPlusAllRentNum.toFixed()
+console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
         let VfinalAmount = finalRent1.toFixed()
         console.log("VfinalAmount--",VfinalAmount)
         let propsData = this.props
@@ -358,6 +375,7 @@ console.log("typesOfdisplayRefundAmount-",typeof(displayRefundAmount))
                 nextStep={this.nextStep}
                 prevStep={this.prevStep}
                 handleChange={this.handleChange}
+                showAmount={showAmount}
                 transactionNumber={transactionNumber}
                 transactionDateChange={this.transactionDateChange}
                 bankName={bankName}
@@ -366,7 +384,8 @@ console.log("typesOfdisplayRefundAmount-",typeof(displayRefundAmount))
                 finalRent={finalRent}
                 transactionDate={transactionDate}
                 discountType={discountType}
-                rent={VfinalAmount}
+                // rent={VfinalAmount}  
+                rent={fixedRefundPlusAllRentNum}
                 facilitationCharges={facilitationCharges}
             />);
 
@@ -383,6 +402,7 @@ console.log("typesOfdisplayRefundAmount-",typeof(displayRefundAmount))
             />);
         if (step === 5)
             return (<SummaryInfo
+
                 bookingData={bookingData}
                 venueType={venueType}
                 bokingType={bokingType}
