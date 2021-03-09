@@ -22,27 +22,27 @@ export class StepForm extends Component {
         step: 0,
         firstName: this.props.appData.bkApplicantName ? this.props.appData.bkApplicantName : '',
         bookingStepRefundAmount:'',
-        BankAccountName: '',
-        NomineeName:'',
-        BankAccountNumber:'',
-        IFSCCode:'',
-        AccountHolderName:'',
+        BankAccountName: this.props.appData.bkBankName ? this.props.appData.bkBankName : '',
+        NomineeName:this.props.appData.bkNomineeName ? this.props.appData.bkNomineeName : '',
+        BankAccountNumber:this.props.appData.bkBankAccountNumber ? this.props.appData.bkBankAccountNumber : '',
+        IFSCCode:this.props.appData.bkIfscCode ? this.props.appData.bkIfscCode : '',
+        AccountHolderName:this.props.appData.bkBankAccountHolder ? this.props.appData.bkBankAccountHolder : '',
         accountType: 'Saving',
         lastName: '',
         email: this.props.appData.bkEmail ? this.props.appData.bkEmail : '',
         mobileNo: this.props.appData.bkMobileNumber ? this.props.appData.bkMobileNumber : '',
-        jobTitle: '',
+        jobTitle: '', 
         jobCompany: '',
         jobLocation: '',
         houseNo: this.props.appData.bkHouseNo ? this.props.appData.bkHouseNo : '',
         purpose: this.props.appData.bkBookingPurpose ? this.props.appData.bkBookingPurpose : '',
-        locality: '',
+        locality: this.props.appData.bkLocation ? this.props.appData.bkLocation : '',
         residenials: '',
         approverName: '',//bkBookingPurpose
         comment: '',
         dimension: '',
         DiscountReason : '',
-        location: '',
+        location: this.props.appData.bkLocation ? this.props.appData.bkLocation : '',//bkLocation
         cleaningCharges: '',
         rent: '',
         facilitationCharges: '',
@@ -201,6 +201,7 @@ export class StepForm extends Component {
         let vanueData = this.props.stateData.screenConfiguration.preparedFinalObject ? this.props.stateData.screenConfiguration.preparedFinalObject.bkBookingData:""
         console.log("vanueData--",vanueData)
         let { fromDate, toDate, location, amount, finalRent } = this.state;
+        console.log("ApplyParkState--",this.state)
         let paccDate = this.props.stateData.screenConfiguration.preparedFinalObject ? this.props.stateData.screenConfiguration.preparedFinalObject.DisplayPacc : '';
         let daysCount = this.calculateBetweenDaysCount(
             bookingData ? bookingData.bkFromDate: "",
@@ -251,8 +252,11 @@ let vrent = Number(vanueData.rent);
             toDate = moment(bookingData.bkToDate).format("YYYY-MM-DD");
             console.log("toDate--moment",toDate)
         }
-        location = bookingData.bkLocation;
-        console.log("location--",location)
+
+        if(location == ''){
+            location = bookingData.bkLocation;
+            console.log("location--",location)
+        }
         amount = vanueData.amount;
 let displayRefundAmount =   vanueData!== undefined && vanueData!== null ? (vanueData.refundabelSecurity !== undefined && vanueData.refundabelSecurity !== null ? (vanueData.refundabelSecurity) : "") : ""
 console.log("typesOfdisplayRefundAmount-",typeof(displayRefundAmount))  

@@ -282,24 +282,25 @@ this.setState({
         { key: "consumerCode", value: match.params.applicationId },
         { key: "tenantId", value: userInfo.tenantId }
 		];
-		
-
+console.log("reqParams2--",reqParams)		
     let BillingServiceData = await httpRequest( 	
 	"billing-service/bill/v2/_search",
 	"_search",
 	reqParams
    );
 
-   console.log("BillingService--",BillingServiceData)
-
-
+   console.log("BillingService--abc",BillingServiceData)
+   prepareFinalObject("DateVenueChngeAmount",BillingServiceData)
+//Bill[2].billDetails[0].billAccountDetails
+// let BillArray = BillingServiceData.Bill[2].billDetails[0].billAccountDetails
+// console.log("BillArray-",BillArray)
 
 
 	this.setState({
 		AppName : dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicantName : 'NA',
-		fullAmountDetail : BillingServiceData.Bill[2],
+		fullAmountDetail : BillingServiceData.Bill[0],//BillingServiceData.Bill[2],
 		CheckStatus : AppStatus,
-		modifiedFirstAmount : BillingServiceData.Bill[0]
+		modifiedFirstAmount : BillingServiceData.Bill[2],//BillingServiceData.Bill[0]
 	})
 
 		prepareFormData("complaints", transformedComplaint);
@@ -1730,13 +1731,26 @@ else{
 
 
 								
-{this.state.CheckStatus == "OFFLINE_MODIFIED" ? 
+{/* {this.state.CheckStatus == "OFFLINE_MODIFIED" ?  
 <div>
 <PaymentDetailFirstModified 
 paymentDetails={this.state.modifiedFirstAmount && this.state.modifiedFirstAmount}
 />
 <AppStateModifiedPayDetail 
 paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
+/>
+</div>
+: " "} */}
+
+
+
+{this.state.CheckStatus == "OFFLINE_MODIFIED" ?  /*Bill[2].totalAmount   Bill[0].totalAmount       */
+<div>
+<PaymentDetailFirstModified
+paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}									
+								/> 
+<AppStateModifiedPayDetail 
+paymentDetails={this.state.modifiedFirstAmount}
 />
 </div>
 : " "}
