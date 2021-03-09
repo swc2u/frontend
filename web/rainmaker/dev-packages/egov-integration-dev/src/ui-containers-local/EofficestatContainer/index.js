@@ -80,6 +80,13 @@ class EofficestatContainer extends Component {
                   <Label
                     className="report-header-row-label"
                     labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
+                    label="INTIGRATION_ORG_NAME_LABEL"
+                  />
+                  </th>
+                  <th   style={{ verticalAlign:"middle", textAlign: "center"}} >
+                  <Label
+                    className="report-header-row-label"
+                    labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
                     label="INTIGRATION_DEPARTMENT_NAME_LABLE"
                   />
                   </th>
@@ -88,13 +95,6 @@ class EofficestatContainer extends Component {
                     className="report-header-row-label"
                     labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
                     label="INTIGRATION_EMPLOYEE_NAME_LABEL"
-                  />
-                  </th>
-                  <th   style={{ verticalAlign:"middle", textAlign: "center"}} >
-                  <Label
-                    className="report-header-row-label"
-                    labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
-                    label="INTIGRATION_ORG_NAME_LABEL"
                   />
                   </th>
                   <th   style={{ verticalAlign:"middle", textAlign: "center"}} >
@@ -135,11 +135,11 @@ class EofficestatContainer extends Component {
                     /></th>
                             {/* <th>{get(APIData[i].eofficestat, `FilePending.FilesPendingDepartmentName`, "-") || "-"}</th>                                                        */}
                             <th>{get(APIData[i].eofficestat, `FilePending.FilesPendingOrgName`, "-") || "-"}</th>                                          
-                            <th>{get(APIData[i].eofficestat, `FilePending.FilesPendingDepartmentName`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `FilePending.FilesPendingEmployeeName`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `FilePending.ElectronicFile`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `FilePending.PhysicalFile`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `FilePending.totalFilesPendingCnt`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "center"}}>{get(APIData[i].eofficestat, `FilePending.FilesPendingDepartmentName`, "-") || "-"}</th>
+                            <th >{get(APIData[i].eofficestat, `FilePending.FilesPendingEmployeeName`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `FilePending.ElectronicFile`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `FilePending.PhysicalFile`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `FilePending.totalFilesPendingCnt`, "-") || "-"}</th>
                            
                            
                           </tr>
@@ -152,11 +152,11 @@ class EofficestatContainer extends Component {
                       label="INTIGRATION_EOFFICE_OPER_TYPE_FILECLOSED_HEADING"
                     /></th>                            
                              <th>{get(APIData[i].eofficestat, `FileClosed.ReceiptsClosedOrgName`, "-") || "-"}</th>                                          
-                            <th>{get(APIData[i].eofficestat, `FileClosed.ReceiptsClosedDepartmentName`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "center"}}>{get(APIData[i].eofficestat, `FileClosed.ReceiptsClosedDepartmentName`, "-") || "-"}</th>
                             <th>{get(APIData[i].eofficestat, `FileClosed.ReceiptsClosedEmployeeName`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `FileClosed.PhysicalFileReceiptClosed`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `FileClosed.ElectronicFileReceiptClosed`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `FileClosed.totalReceiptsClosed`, "-") || "-"}</th>                                          
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `FileClosed.PhysicalFileReceiptClosed`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `FileClosed.ElectronicFileReceiptClosed`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `FileClosed.totalReceiptsClosed`, "-") || "-"}</th>                                          
                              
                              
                             </tr>
@@ -169,11 +169,11 @@ class EofficestatContainer extends Component {
                       label="INTIGRATION_EOFFICE_OPER_TYPE_RECEIPT_PENDING_HEADING"
                     /></th>                            
                             <th>{get(APIData[i].eofficestat, `ReceiptPending.ReceiptsPendingOrgName`, "-") || "-"}</th>                                          
-                            <th>{get(APIData[i].eofficestat, `ReceiptPending.ReceiptsPendingDepartmentName`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "center"}}>{get(APIData[i].eofficestat, `ReceiptPending.ReceiptsPendingDepartmentName`, "-") || "-"}</th>
                             <th>{get(APIData[i].eofficestat, `ReceiptPending.ReceiptsPendingEmployeeName`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `ReceiptPending.ElectronicReceipt`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `ReceiptPending.PhysicalReceipt`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `ReceiptPending.totalReceiptsPending`, "-") || "-"}</th>                                          
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `ReceiptPending.ElectronicReceipt`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `ReceiptPending.PhysicalReceipt`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `ReceiptPending.totalReceiptsPending`, "-") || "-"}</th>                                          
                              
                              
                             </tr>
@@ -186,18 +186,18 @@ class EofficestatContainer extends Component {
                       label="INTIGRATION_EOFFICE_OPER_TYPE_RECEIPT_CLOSED_HEADING"
                     /></th>                            
                             <th>{get(APIData[i].eofficestat, `ReceiptClosed.ReceiptsClosedOrgName`, "-") || "-"}</th>                                          
-                            <th>{get(APIData[i].eofficestat, `ReceiptClosed.ReceiptsClosedDepartmentName`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "center"}}>{get(APIData[i].eofficestat, `ReceiptClosed.ReceiptsClosedDepartmentName`, "-") || "-"}</th>
                             <th>{get(APIData[i].eofficestat, `ReceiptClosed.ReceiptsClosedEmployeeName`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `ReceiptClosed.PhysicalFileReceiptClosed`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `ReceiptClosed.ElectronicFileReceiptClosed`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `ReceiptClosed.totalReceiptsClosed`, "-") || "-"}</th>                                          
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `ReceiptClosed.PhysicalFileReceiptClosed`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `ReceiptClosed.ElectronicFileReceiptClosed`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `ReceiptClosed.totalReceiptsClosed`, "-") || "-"}</th>                                          
                              
                              
                             </tr>
                            }
                            {//FileClosed
-                             <tr className="report-table-header">
-                             <th   style={{ verticalAlign:"middle", textAlign: "center"}} >
+                             <tr>
+                             <th >
                               <Label
                                 className="report-header-row-label"
                                 labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
@@ -205,11 +205,11 @@ class EofficestatContainer extends Component {
                               />
                               </th>  
                               <th>{get(APIData[i].eofficestat, `VIPReceiptsPending.VIPReceiptsPendingOrgName`, "-") || "-"}</th>                                          
-                            <th>{get(APIData[i].eofficestat, `VIPReceiptsPending.VIPReceiptsPendingDepartmentName`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "center"}}>{get(APIData[i].eofficestat, `VIPReceiptsPending.VIPReceiptsPendingDepartmentName`, "-") || "-"}</th>
                             <th>{get(APIData[i].eofficestat, `VIPReceiptsPending.VIPReceiptsPendingEmployeeName`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `VIPReceiptsPending.NumberOfElectronicVipreceipt`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `VIPReceiptsPending.NumberOfPhysicalVipreceipt`, "-") || "-"}</th>
-                            <th>{get(APIData[i].eofficestat, `VIPReceiptsPending.totalVIPReceiptsPending`, "-") || "-"}</th>                            
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `VIPReceiptsPending.NumberOfElectronicVipreceipt`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `VIPReceiptsPending.NumberOfPhysicalVipreceipt`, "-") || "-"}</th>
+                            <th style={{ verticalAlign:"middle", textAlign: "right"}}>{get(APIData[i].eofficestat, `VIPReceiptsPending.totalVIPReceiptsPending`, "-") || "-"}</th>                            
                              
                              </tr>
                            }                         
