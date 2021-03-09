@@ -530,7 +530,7 @@ class ApplicationDetails extends Component {
 	}
 	/*Cancel Emp Booking function*/
 	CancelEmpBooking = async () => {
-		alert("ComeInCancelEmpBooking")
+
 		let { selectedComplaint } = this.props
 		console.log("propsInCancelEmpBooking--", selectedComplaint)
 
@@ -1391,7 +1391,7 @@ class ApplicationDetails extends Component {
 	}
 
 	ApplyOfflineSecurityRefund = async () => {
-		alert("ComeInRefundEmpBooking")
+
 		let { selectedComplaint } = this.props
 		console.log("propsInCancelEmpBooking--", selectedComplaint)
 
