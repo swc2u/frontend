@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import EditIcon from '@material-ui/icons/Edit';
-import "./index.css"; 
+import "./index.css";  
 import Footer from "../../../../modules/footer"
 import PaymentReceiptDetail from "../PaymentReceiptDetail"
 import PaymentOptionDetails from "../PaymentOptionDetails"
@@ -509,7 +509,7 @@ if(selectedComplaint.bkBookingType == "Parks"){
         else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){ //FACILITATION_CHARGE
             six = billAccountDetailsArray[i].amount
         }
-        else if(billAccountDetailsArray[i].taxHeadCode == "PACC_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+        else if(billAccountDetailsArray[i].taxHeadCode == "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
             seven = billAccountDetailsArray[i].amount
         }
     }
@@ -535,7 +535,7 @@ if(selectedComplaint.bkBookingType == "Community Center"){
         else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){ //FACILITATION_CHARGE
             six = billAccountDetailsArray[i].amount
         }
-        else if(billAccountDetailsArray[i].taxHeadCode == "PACC_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+        else if(billAccountDetailsArray[i].taxHeadCode == "COMMUNITY_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
             seven = billAccountDetailsArray[i].amount
         }
     }
