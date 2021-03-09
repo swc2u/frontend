@@ -600,7 +600,7 @@ const screenConfig = {
                 )
             );
         } else {
-            // dispatch(setRoute(`/egov-services/checkavailability_pcc`));
+            dispatch(setRoute(`/egov-services/checkavailability_pcc`));
         }
 
         // Code to goto a specific step through URL
