@@ -144,11 +144,11 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
     let refundSecAmount = 0;
     // let refundAmount = 0;
     for (let i = 0; i < billAccountDetails.length; i++) {
-        if (billAccountDetails[i].taxHeadCode == "REFUNDABLE_SECURITY") {
+        if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
             bookingAmount += billAccountDetails[i].amount;
             refundSecAmount += billAccountDetails[i].amount;
         }
-        if (billAccountDetails[i].taxHeadCode == "PACC") {
+        if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
             bookingAmount += billAccountDetails[i].amount;
         }
     }
