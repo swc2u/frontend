@@ -2642,11 +2642,11 @@ export const calculateCancelledBookingRefundAmount = async (applicationNumber, t
             let bookingAmount = 0;
             let refundSecurity = 0;
             for (let i = 0; i < billAccountDetails.length; i++) {
-                if (billAccountDetails[i].taxHeadCode == "REFUNDABLE_SECURITY") {
+                if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" ||billAccountDetails[i].taxHeadCode =="SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                     bookingAmount += billAccountDetails[i].amount;
                     refundSecurity += billAccountDetails[i].amount;
                 }
-                if (billAccountDetails[i].taxHeadCode == "PACC") {
+                if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode =="RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                     bookingAmount += billAccountDetails[i].amount;
                 }
             }
