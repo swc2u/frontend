@@ -284,6 +284,7 @@ export const getMdmsData = async queryObject => {
 };
 
 export const downloadSummary = (Properties, PropertiesTemp, branch, mode = "download") => {
+ 
   let queryStr = []
   switch(branch){
     case "MANI_MAJRA":
@@ -374,7 +375,7 @@ if(Property.propertyDetails.purchaser.length > 0){
   })
 }
 
-if(isGroundRent){
+if(isGroundRent == 'true' || isGroundRent == true){
   Property.propertyDetails["groundRentDetails"] = {
     "groundRentGenerationType" : Property.propertyDetails.paymentConfig.groundRentGenerationType,
     "groundRentGenerateDemand" : Property.propertyDetails.paymentConfig.groundRentGenerateDemand,
@@ -456,6 +457,7 @@ const modifiedOwner = PropertiesTempOwners.map((owner) => {
        owner.ownerDetails.ownerDocuments = modifiedOwner[index].ownerDetails.ownerDocuments
        owner.ownerDetails.guardianRelation = getLocaleLabels(owner.ownerDetails.guardianRelation, owner.ownerDetails.guardianRelation)
        owner.ownerDetails.possesionDate = moment(new Date(owner.ownerDetails.possesionDate)).format('DD-MMM-YYYY')
+       owner.ownerDetails.isCurrentOwner = owner.ownerDetails.isCurrentOwner ? 'Yes' : 'No'
        return owner
     })
 
