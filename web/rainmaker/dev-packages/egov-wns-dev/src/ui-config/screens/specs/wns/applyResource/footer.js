@@ -233,6 +233,9 @@ if(water || sewerage || tubewell)
        //connectionholdercode
        let connectionHolderObj = get(state.screenConfiguration.preparedFinalObject, "connectionHolders");
        let ownershipCategory_H= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", 'INDIVIDUAL.SINGLEOWNER' )
+       let holderData =null;
+       if(connectionHolderObj.length!==0)
+      {
        if(connectionHolderObj[0].ownerType === null)
        {
         connectionHolderObj[0].ownerType= ownershipCategory_H;
@@ -243,12 +246,13 @@ if(water || sewerage || tubewell)
        }
        
        
-       let holderData = connectionHolderObj[0];
+        holderData = connectionHolderObj[0];
         if (holderData !== null && holderData !== undefined) {
           if (holderData.sameAsPropertyAddress === true) {
             holderData = connectionHolderObj[0];
           }
         }
+      }
         if (holderData == null) {
           applyScreenObject.connectionHolders = holderData;
        } else {

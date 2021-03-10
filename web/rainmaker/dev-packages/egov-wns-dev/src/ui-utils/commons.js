@@ -1637,9 +1637,7 @@ export const applyForWater = async (state, dispatch) => {
                 state.screenConfiguration.preparedFinalObject,
                 "WaterConnection[0].additionalDetails.appCreatedDate"
             )
-
-            let queryObjectForUpdate = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0]");
-                                  
+            let queryObjectForUpdate = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0]");                                  
             set(queryObjectForUpdate, "tenantId", queryObject.tenantId);
             queryObjectForUpdate = { ...queryObjectForUpdate, ...queryObject }
             set(queryObjectForUpdate, "processInstance.action", "SUBMIT_APPLICATION");
@@ -1663,13 +1661,19 @@ export const applyForWater = async (state, dispatch) => {
                 case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION")); break;
                 case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION")); break;
               }
-              set(queryObjectForUpdate, "processInstance.action", "INITIATE");  
-
-              set(queryObjectForUpdate, "processInstance.action", "INITIATE");
-              ///
-              set(queryObjectForUpdate, "waterApplication", null);
+              let activeStep = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.stepper.props.activeStep", 0);
+              if(activeStep === 0)
+              {
+                set(queryObjectForUpdate, "processInstance.action", "INITIATE"); 
+                set(queryObjectForUpdate, "waterApplication", null);
+              }
+              else{
+                set(queryObjectForUpdate, "processInstance.action", "SUBMIT_APPLICATION");
+              }             
+              
               set(queryObjectForUpdate, "activityType", wnsStatus);
-            }             
+            } 
+            
            
             set(queryObjectForUpdate, "waterSource", (queryObjectForUpdate.waterSource + "." + queryObjectForUpdate.waterSubSource));
             const appNumber =   getQueryArg(window.location.href, "applicationNumber");
