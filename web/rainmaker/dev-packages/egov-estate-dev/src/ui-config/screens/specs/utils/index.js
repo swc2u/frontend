@@ -889,7 +889,7 @@ export const downloadPaymentReceipt = (receiptQueryString, payload, data , gener
       } = payloadReceiptDetails;
       let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
       if(time){
-        time = moment(new Date(time)).format("h:mm:ss a")
+        time = moment(new Date(time)).format("h:mm:ss A")
       }
       Payments = [{
         ...Payments[0],paymentDetails:[{
