@@ -521,7 +521,8 @@ export const getPropertyResults = async (queryObject, dispatch) => {
             queryObject
         );
         dispatch(toggleSpinner());
-        return findAndReplace(response, null, "NA");
+       // return findAndReplace(response, null, "NA");
+       return response;
     } catch (error) {
         dispatch(toggleSpinner());
         console.log(error);
@@ -915,6 +916,13 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                      || activityType ==='REGULARWSCONNECTION'
                      || activityType ==='TEMPORARY_WSCONNECTION'
                      || activityType === 'WS_TUBEWELL'
+                     || activityType === 'WS_TEMP_TEMP'
+                     || activityType === 'WS_TEMP_REGULAR'
+                     || activityType === 'WS_DISCONNECTION'
+                     || activityType === 'WS_TEMP_DISCONNECTION'
+                     || activityType === 'WS_RENAME'
+                     || activityType === 'WS_CONVERSION'
+                     || activityType === 'WS_REACTIVATE'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                 {
                     if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP')
@@ -929,6 +937,34 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                             && x.occupancycode === occupancycode)
                     } 
                 }  
+            }
+            else{
+                if(applicationType ==='REGULAR')
+                {
+                
+                if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO' || activityType ==='WS_RENAME')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "UPDATE_CONNECTION_HOLDER_INFO")
+                }
+                else if(activityType ==='TEMPORARY_DISCONNECTION' || activityType ==='WS_TEMP_DISCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "TEMPORARY_DISCONNECTION")
+                }
+                else if(activityType ==='CONNECTION_CONVERSION' || activityType ==='WS_CONVERSION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "CONNECTION_CONVERSION")
+                }
+                else if(activityType ==='PERMANENT_DISCONNECTION' || activityType ==='WS_DISCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
+                }
+            }
+            else if(applicationType ==='TEMPORARY'){
+                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                    && x.category === category)
+
+            }
+
             }
             }
             else if (sewerage)
@@ -949,6 +985,12 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             }
             if( sewerage === false && tubewell === false && water === false)
             {
+                if(applicationType ==='TEMPORARY'){
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        && x.category === category)
+    
+                }
+                else
                 wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
             }
             if(wsDocument && wsDocument[0])
@@ -1422,6 +1464,13 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                      || activityType ==='REGULARWSCONNECTION'
                      || activityType ==='TEMPORARY_WSCONNECTION'
                      || activityType === 'WS_TUBEWELL'
+                     || activityType === 'WS_TEMP_TEMP'
+                     || activityType === 'WS_TEMP_REGULAR'
+                     || activityType === 'WS_DISCONNECTION'
+                     || activityType === 'WS_TEMP_DISCONNECTION'
+                     || activityType === 'WS_RENAME'
+                     || activityType === 'WS_CONVERSION'
+                     || activityType === 'WS_REACTIVATE'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                 {
                     if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP')
@@ -1436,6 +1485,34 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                             && x.occupancycode === occupancycode)
                     } 
                 }  
+            }
+            else{
+                if(applicationType ==='REGULAR')
+                {
+                
+                if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO' || activityType ==='WS_RENAME')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "UPDATE_CONNECTION_HOLDER_INFO")
+                }
+                else if(activityType ==='TEMPORARY_DISCONNECTION' || activityType ==='WS_TEMP_DISCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "TEMPORARY_DISCONNECTION")
+                }
+                else if(activityType ==='CONNECTION_CONVERSION' || activityType ==='WS_CONVERSION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "CONNECTION_CONVERSION")
+                }
+                else if(activityType ==='PERMANENT_DISCONNECTION' || activityType ==='WS_DISCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
+                }
+            }
+            else if(applicationType ==='TEMPORARY'){
+                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                    && x.category === category)
+
+            }
+
             }
             }
             else if (sewerage)
@@ -1456,6 +1533,17 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
             }
             if(sewerage === false && tubewell === false && water === false)
             {
+                if(applicationType ==='TEMPORARY'){
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        && x.category === category)
+    
+                }
+                // else if(applicationType ==='REGULAR'){
+                //     wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                //         && x.occupancycode === occupancycode)
+    
+                // }
+                else
                 wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType)
             }
                 
@@ -1549,9 +1637,7 @@ export const applyForWater = async (state, dispatch) => {
                 state.screenConfiguration.preparedFinalObject,
                 "WaterConnection[0].additionalDetails.appCreatedDate"
             )
-
-            let queryObjectForUpdate = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0]");
-                                  
+            let queryObjectForUpdate = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0]");                                  
             set(queryObjectForUpdate, "tenantId", queryObject.tenantId);
             queryObjectForUpdate = { ...queryObjectForUpdate, ...queryObject }
             set(queryObjectForUpdate, "processInstance.action", "SUBMIT_APPLICATION");
@@ -1575,13 +1661,19 @@ export const applyForWater = async (state, dispatch) => {
                 case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION")); break;
                 case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION")); break;
               }
-              set(queryObjectForUpdate, "processInstance.action", "INITIATE");  
-
-              set(queryObjectForUpdate, "processInstance.action", "INITIATE");
-              ///
-              set(queryObjectForUpdate, "waterApplication", null);
+              let activeStep = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.stepper.props.activeStep", 0);
+              if(activeStep === 0)
+              {
+                set(queryObjectForUpdate, "processInstance.action", "INITIATE"); 
+                set(queryObjectForUpdate, "waterApplication", null);
+              }
+              else{
+                set(queryObjectForUpdate, "processInstance.action", "SUBMIT_APPLICATION");
+              }             
+              
               set(queryObjectForUpdate, "activityType", wnsStatus);
-            }             
+            } 
+            
            
             set(queryObjectForUpdate, "waterSource", (queryObjectForUpdate.waterSource + "." + queryObjectForUpdate.waterSubSource));
             const appNumber =   getQueryArg(window.location.href, "applicationNumber");
