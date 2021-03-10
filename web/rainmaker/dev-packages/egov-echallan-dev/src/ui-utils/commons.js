@@ -380,7 +380,8 @@ export const fetchItemListMasterData = async (action, state, dispatch) => {
       'code': item['itemName'] || "-",
       'name': item['itemName'] || "-"
     }));
-    data.push({ 'id': 'Other', 'code': 'Other', 'name': 'Other' })
+    // data.push({ 'id': 'Other', 'code': 'Other', 'name': 'Other' })
+    data=[{ 'id': 'Other', 'code': 'Other', 'name': 'Other' },...data]
 
     store.dispatch(prepareFinalObject("applyScreenMdmsData.egec.ItemList", data));
     //this is kept purposely if the data does not get at the load then it would be assigned.
