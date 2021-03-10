@@ -369,7 +369,7 @@ if(documentMap !== undefined && documentMap !== null){
 
   if(checkDocumentUpload == false){
     fdocname = Object.entries(documentMap)[0][1]
-  }
+  } 
 
 }
     let BookingInfo = [
@@ -378,11 +378,11 @@ if(documentMap !== undefined && documentMap !== null){
             "name": applicationDetails.bkApplicantName,
             "mobileNumber":applicationDetails.bkMobileNumber,
             "email": applicationDetails.bkEmail,
-              "permanentAddress": "",
+              "permanentAddress": applicationDetails.bkHouseNo,
               "permanentCity": "Chandigarh",
               "sector": applicationDetails.bkSector,
               "fatherName": "",
-              "custGSTN": applicationDetails.bkCustomerGstNo,
+              "custGSTN": applicationDetails.bkCustomerGstNo == "NA" ? "Not Applicable":applicationDetails.bkCustomerGstNo ,
               "placeOfService": "Chandigarh"
           },
           "bookingDetail": {
@@ -405,6 +405,7 @@ if(documentMap !== undefined && documentMap !== null){
                 applicationDetails.bkFromDate,
                 applicationDetails.bkToDate
               ),
+              "applicationNumber": applicationDetails.bkApplicationNumber,
           },
           "generated": {
             "generatedBy": userInfo.name,
@@ -424,7 +425,7 @@ if(documentMap !== undefined && documentMap !== null){
             "cgst" :applicationDetails.bkCgst,
             "utgst": applicationDetails.bkCgst,
             "totalgst": PACC_TAX,
-            "refundableCharges": applicationDetails.bkRefundAmount,
+            "refundableCharges": this.props.REFUNDABLE_SECURITY,    //applicationDetails.bkRefundAmount,
             "totalPayment": this.props.totalAmount,
             "paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
             "receiptNo": this.props.recNumber,
@@ -598,22 +599,22 @@ let FACILITATION_CHARGE = 0;
 if(billAccountDetailsArray !== "NOt found Any Array"){
 for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
-if(billAccountDetailsArray[i].taxHeadCode == "PACC"){
+  if(billAccountDetailsArray[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//PACC
     PACC = billAccountDetailsArray[i].amount
 }
-else if(billAccountDetailsArray[i].taxHeadCode == "LUXURY_TAX"){
+else if(billAccountDetailsArray[i].taxHeadCode == "CLEANING_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//LUXURY_TAX
     LUXURY_TAX = billAccountDetailsArray[i].amount
 }
-else if(billAccountDetailsArray[i].taxHeadCode == "REFUNDABLE_SECURITY"){
+else if(billAccountDetailsArray[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//REFUNDABLE_SECURITY
     REFUNDABLE_SECURITY = billAccountDetailsArray[i].amount
 }
-else if(billAccountDetailsArray[i].taxHeadCode == "PACC_TAX"){
+else if(billAccountDetailsArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//PACC_TAX
     PACC_TAX = billAccountDetailsArray[i].amount
 }
-else if(billAccountDetailsArray[i].taxHeadCode == "PACC_ROUND_OFF"){
+else if(billAccountDetailsArray[i].taxHeadCode == "PACC_ROUND_OFF"){//FACILITATION_CHARGE
     PACC_ROUND_OFF = billAccountDetailsArray[i].amount
 }
-else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHARGE"){
+else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
     FACILITATION_CHARGE = billAccountDetailsArray[i].amount
 }
 }

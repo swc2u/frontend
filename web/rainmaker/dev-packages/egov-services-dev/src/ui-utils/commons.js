@@ -3,6 +3,7 @@ import {
     prepareFinalObject,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 import {
     getTenantId,
     getUserInfo,
@@ -456,9 +457,17 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                 }
             }
         });
+        let bookType = payload.bkBookingType
 
+
+        let businessService=""
+        if(bookType==="Community Center"){
+            businessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
+        }else{
+            businessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
+        }
        // if (action === "INITIATE") {
-            set(payload, "financeBusinessService", "PACC");
+            set(payload, "financeBusinessService", businessService);
        // }
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "tenantId", tenantId);
@@ -530,7 +539,7 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                 return { status: "fail", data: response.data };
             }
         } else if (method === "UPDATE") {
-
+            delete payload["financeBusinessService"];
 
             response = await httpRequest(
                 "post",
@@ -601,9 +610,8 @@ export const createUpdateOSWMCCApplication = async (
                 }
             }
         });
-
         if (action === "INITIATE") {
-            set(payload, "financeBusinessService", "OSUJM");
+            set(payload, "financeBusinessService", "BOOKING_BRANCH_SERVICES.BOOKING_GROUND_OPEN_SPACES");
         }
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "OSUJM");
@@ -635,6 +643,8 @@ export const createUpdateOSWMCCApplication = async (
                 return { status: "fail", data: response.data };
             }
         } else if (method === "UPDATE") {
+
+          delete payload["financeBusinessService"];
             response = await httpRequest(
                 "post",
                 "/bookings/api/_update",
@@ -796,7 +806,7 @@ export const createUpdateCgbApplication = async (state, dispatch, action) => {
         });
 
         if (action === "INITIATE") {
-            set(payload, "financeBusinessService", "GFCP");
+            set(payload, "financeBusinessService", "BOOKING_BRANCH_SERVICES.BOOKING_COMMERCIAL_GROUND");
         }
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "GROUND_FOR_COMMERCIAL_PURPOSE");
@@ -827,6 +837,7 @@ export const createUpdateCgbApplication = async (state, dispatch, action) => {
                 return { status: "fail", data: response.data };
             }
         } else if (method === "UPDATE") {
+            delete payload["financeBusinessService"];
             response = await httpRequest(
                 "post",
                 "/bookings/api/_update",
@@ -949,9 +960,11 @@ export const createUpdateRoomApplication = async (state, dispatch, action) => {
         );
 
         let roomType = roomData.typeOfRoom
-
         if (action === "INITIATE") {
-            set(payload, "financeBusinessService", "BKROOM");
+            set(payload, "financeBusinessService", "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR");
+        }
+        if (action === "INITIATE") {
+
             set(payload, "roomBusinessService", "BKROOM");
         }
         let roomObject=[]
@@ -1021,6 +1034,7 @@ export const createUpdateRoomApplication = async (state, dispatch, action) => {
                 return { status: "fail", data: response.data };
             }
         } else if (method === "UPDATE") {
+            delete payload["financeBusinessService"];
             response = await httpRequest(
                 "post",
                 "bookings/community/room/_update",

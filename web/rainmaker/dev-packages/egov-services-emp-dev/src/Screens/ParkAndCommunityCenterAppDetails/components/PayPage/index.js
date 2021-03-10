@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import EditIcon from '@material-ui/icons/Edit';
-import "./index.css"; 
+import "./index.css";  
 import Footer from "../../../../modules/footer"
 import PaymentReceiptDetail from "../PaymentReceiptDetail"
 import PaymentOptionDetails from "../PaymentOptionDetails"
@@ -53,9 +53,16 @@ class SummaryDetails extends Component {
         console.log("fetchApplicationNumber--",fetchApplicationNumber)
        
         let { createPACCApplication, userInfo, documentMap,fetchPayment,fetchDataAfterPayment,prepareFinalObject,fetchApplications } = this.props;
-        let { firstName, venueType, bokingType, bookingData, email, mobileNo, surcharge, fromDate, toDate,myLocationtwo,
+        let { firstName, venueType, bokingType, bookingData, email, mobileNo, surcharge, fromDate, toDate,myLocationtwo,selectedComplaint,
             utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, locality, residenials, facilationChargesSuccess,discountType } = this.props;
 
+let NewfinanceBusinessService;
+if(selectedComplaint.bkBookingType == "Parks"){
+    NewfinanceBusinessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE"
+}
+if(selectedComplaint.bkBookingType == "Community Center"){
+    NewfinanceBusinessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR"
+}
 
             await fetchApplications(
                 {
@@ -67,7 +74,7 @@ class SummaryDetails extends Component {
             );
 
  fetchPayment(
-    [{ key: "consumerCode", value: fetchApplicationNumber }, { key: "businessService", value: "PACC" }, { key: "tenantId", value: userInfo.tenantId }
+    [{ key: "consumerCode", value: fetchApplicationNumber }, { key: "businessService", value: NewfinanceBusinessService }, { key: "tenantId", value: userInfo.tenantId }
     ])
 
  fetchDataAfterPayment(
@@ -326,7 +333,7 @@ console.log("this.state--PaidBy",PaidBy)
 {this.props.ApplicantAppStatus != "OFFLINE_RE_INITIATED" ? 
  <PaymentDetailsTwo
  paymentDetails={paymentDetails && paymentDetails}
- one={this.props.one}
+ one={this.props.one} 
  two={this.props.two}
  three={this.props.three}
  four={this.props.four}
@@ -476,34 +483,64 @@ const mapStateToProps = state => {
     let one = 0;
     let two = 0;
     let three = 0;
-    let four = 0; //
+    let four = 0;
     let five = 0;
     let six = 0;
     let seven = 0;
-for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
-    if(billAccountDetailsArray[i].taxHeadCode == "PACC"){
-        one = billAccountDetailsArray[i].amount
-    }
-    else if(billAccountDetailsArray[i].taxHeadCode == "LUXURY_TAX"){
-        two = billAccountDetailsArray[i].amount
-    }
-    else if(billAccountDetailsArray[i].taxHeadCode == "REFUNDABLE_SECURITY"){
-        three = billAccountDetailsArray[i].amount
-    }
-    else if(billAccountDetailsArray[i].taxHeadCode == "PACC_TAX"){
-        four = billAccountDetailsArray[i].amount
-    }
-    else if(billAccountDetailsArray[i].taxHeadCode == "PACC_ROUND_OFF"){
-        five = billAccountDetailsArray[i].amount
-    }
-    else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHARGE"){
-        six = billAccountDetailsArray[i].amount
-    }
-    else if(billAccountDetailsArray[i].taxHeadCode == "PACC_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
-        seven = billAccountDetailsArray[i].amount
+if(selectedComplaint.bkBookingType == "Parks"){
+    for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
+
+        if(billAccountDetailsArray[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//PACC
+            one = billAccountDetailsArray[i].amount 
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "CLEANING_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//LUXURY_TAX
+            two = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//REFUNDABLE_SECURITY
+            three = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){ //PACC TAX
+            four = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "PACC_ROUND_OFF"){
+            five = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){ //FACILITATION_CHARGE
+            six = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+            seven = billAccountDetailsArray[i].amount
+        }
     }
 }
+if(selectedComplaint.bkBookingType == "Community Center"){
+    for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
+
+        if(billAccountDetailsArray[i].taxHeadCode == "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//PACC
+            one = billAccountDetailsArray[i].amount 
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "CLEANING_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//LUXURY_TAX
+            two = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//REFUNDABLE_SECURITY
+            three = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){ //PACC TAX
+            four = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "PACC_ROUND_OFF"){
+            five = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){ //FACILITATION_CHARGE
+            six = billAccountDetailsArray[i].amount
+        }
+        else if(billAccountDetailsArray[i].taxHeadCode == "COMMUNITY_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+            seven = billAccountDetailsArray[i].amount
+        }
+    }
+}
+
 
 console.log("one--",one)
 console.log("two--",two)
