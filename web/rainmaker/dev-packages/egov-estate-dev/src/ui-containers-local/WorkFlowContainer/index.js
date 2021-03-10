@@ -421,7 +421,7 @@ class WorkFlowContainer extends React.Component {
     let applicationState = get(preparedFinalObject,"Applications[0].state")
     if(applicationState === "ES_MM_PENDING_SO_NOTICE" && applicationType === "IntestateDeath"){
       filteredActions = get(data[data.length - 1], "nextActions", []).map(
-        item => item.action = item.action === "FORWARD" ? "APPROVE" : item.action
+        item => ({...item, action: item.action === "FORWARD" ? "APPROVE" : item.action})
       );
     }
     if(propertyType === "CAT.RESIDENTIAL"){
