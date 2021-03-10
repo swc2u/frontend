@@ -146,13 +146,30 @@ const getLabelForWnsHeader = () => {
 
   }
   else{
-    return `${wnsHeader}_HEADER`;
+ 
+    const wnsHeader_ =  window.localStorage.getItem("wns_workflow");
+    if(wnsHeader_)
+    {
+      return `${wnsHeader_}_DETAIL_HEADER`;
+    }
+    else
+    return `${wnsHeader}_DETAIL_HEADER`;
 
   }
 }
     
   else if( process.env.REACT_APP_NAME === "Citizen")
+  {
+    const wnsHeader_ =  window.localStorage.getItem("wns_workflow");
+    if(wnsHeader_)
+    {
+      return `${wnsHeader_}_DETAIL_HEADER`;
+    }
+    else   
     return  "WS_APPLY_NEW_CONNECTION_HEADER"
+
+  }
+    
   else
   {
     const wnsHeaderTepm =  window.localStorage.getItem("wns_workflow");
@@ -772,7 +789,7 @@ const getApplyScreenChildren = () => {
  
  if(wnsStatus || ActionType){
   switch(Action){
-    case "UPDATE_CONNECTION_HOLDER_INFO" : return {connectionHolderDetails }; 
+    case "UPDATE_CONNECTION_HOLDER_INFO" : return {connConversionDetails,connectionHolderDetails }; 
     case "REACTIVATE_CONNECTION":
     case "TEMPORARY_DISCONNECTION":
     case "PERMANENT_DISCONNECTION":

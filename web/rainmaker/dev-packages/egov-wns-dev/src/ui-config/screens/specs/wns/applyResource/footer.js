@@ -32,10 +32,10 @@ import {
 } from "../../../../../ui-utils/commons";
 import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getTenantIdCommon } from "egov-ui-kit/utils/localStorageUtils";
- 
+
 const setReviewPageRoute = (state, dispatch) => {
   const service = getQueryArg(window.location.href, "service");
-  let tenantId = getTenantIdCommon();
+  let tenantId = getTenantIdCommon() === null?commonConfig.tenantId:getTenantIdCommon();
   const applicationNumber = get(state, "screenConfiguration.preparedFinalObject.applyScreen.applicationNo");
   const appendUrl =
     process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
@@ -75,13 +75,13 @@ let index = documentsContract.length;
           // if (get(documentsFormat[i], "dropdown.value") !== null && get(documentsFormat[i]).dropdown !==undefined ){
             validateDocumentField = true;
           } else {
-            dispatch(
-              toggleSnackbar(
-                true,
-                { labelName: "Please select type of Document!", labelKey: "" },
-                "warning"
-              )
-            );
+//             dispatch(
+//               toggleSnackbar(
+//                 true,
+//                 { labelName: "Please select type of Document!", labelKey: "" },
+//                 "warning"
+//               )
+//             );
            // validateDocumentField = false;
             //validateDocumentselect = false;
             validateDocumentField = true;
@@ -256,7 +256,7 @@ if(water || sewerage || tubewell)
           arrayHolderData.push(holderData);
           if (getQueryArg(window.location.href, "action") !== "edit" ) {
           applyScreenObj.connectionHolders = arrayHolderData;
-         applyScreenObject.connectionHolders = applyScreenObj;
+        // applyScreenObject.connectionHolders = applyScreenObj;
           }
         }
 
@@ -271,10 +271,15 @@ let wnsStatus =  window.localStorage.getItem("WNS_STATUS");
 let  ActionType = getQueryArg(window.location.href, "actionType");
 if(wnsStatus === null)
 {
+  if(ActionType!== null)
   wnsStatus =ActionType;
+  else{
+    if(process.env.REACT_APP_NAME === "Citizen" && ActionType)
+    wnsStatus =  window.localStorage.getItem("wns_workflow")
+  }
 }
 
-if(wnsStatus && wnsStatus === "CONNECTION_CONVERSION"){
+if(wnsStatus && wnsStatus === "CONNECTION_CONVERSION" || wnsStatus === "WS_CONVERSION"){
   const iswaterConnFomValid = validateFields(
     "components.div.children.formwizardFirstStep.children.connConversionDetails.children.cardContent.children.connectionConversionDetails.children.ConnectionConversionDetails.children",
     state,
@@ -316,7 +321,8 @@ const usageCategory = get(
 
     return
 
-  }  
+  } 
+
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   try{
@@ -329,14 +335,22 @@ const usageCategory = get(
     console.log("errrr")
   }
 }
-else if(wnsStatus && wnsStatus === "UPDATE_CONNECTION_HOLDER_INFO"){
+else if(wnsStatus && wnsStatus === "UPDATE_CONNECTION_HOLDER_INFO" || wnsStatus === "WS_RENAME"){
   const iswaterConnFomValid = validateFields(
-    "components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children",
+    "components.div.children.formwizardFirstStep.children.connConversionDetails.children.cardContent.children.connectionConversionDetails.children.ConnectionConversionDetails.children",
     state,
     dispatch,
     "apply"
   );
 
+const proposedUsageCategory = get(
+  state.screenConfiguration.preparedFinalObject,
+  "WaterConnection[0].proposedUsageCategory"
+);
+const usageCategory = get(
+  state.screenConfiguration.preparedFinalObject,
+  "WaterConnection[0].waterProperty.usageCategory"
+);
   if(!iswaterConnFomValid){
     dispatch(
       toggleSnackbar(
@@ -348,6 +362,21 @@ else if(wnsStatus && wnsStatus === "UPDATE_CONNECTION_HOLDER_INFO"){
       )
     )
     return;
+  }
+  if(usageCategory === proposedUsageCategory)
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_PROPERTY_USAGE_TYPE_TARRIF_LABEL_INPUT_PROPOSED_VALIDATION",
+        labelName: "Please select different proposed tarif type"
+      },
+        "warning"
+      )
+    )
+
+    return
+
   }
   
   removingDocumentsWorkFlow(state, dispatch) ;
@@ -363,7 +392,12 @@ else if(wnsStatus && wnsStatus === "UPDATE_CONNECTION_HOLDER_INFO"){
     console.log("errrr")
   }
 } 
-else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMPORARY_DISCONNECTION"||wnsStatus === "PERMANENT_DISCONNECTION")){
+else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
+                      wnsStatus === "WS_REACTIVATE"||                     
+                      wnsStatus === "WS_DISCONNECTION"||
+                      wnsStatus === "TEMPORARY_DISCONNECTION"||                     
+                      wnsStatus === "WS_TEMP_DISCONNECTION"||
+                      wnsStatus === "PERMANENT_DISCONNECTION")){
   const iswaterConnFomValid = validateFields(
     "components.div.children.formwizardFirstStep.children.commentSectionDetails.children.cardContent.children.commentDetails.children.CommentDetails.children",
     state,
@@ -397,7 +431,10 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||wnsStatus === "TEMP
   }
  
 }
-else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" || wnsStatus === "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION" )
+else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" 
+                    || wnsStatus === "WS_TEMP_TEMP" 
+                    ||wnsStatus === "WS_TEMP_REGULAR" 
+                    || wnsStatus === "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION" )
 {
   const isPropertyDetailsValid= validateFields(
     "components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children",
@@ -443,7 +480,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" ||
      }
    }
     let response = await getPropertyResults(queryObject, dispatch);
-    if (response && response.Properties.length > 0) {
+    if (response && response.Properties) {
      if(response.Properties[0].status === 'INACTIVE'){
       if(localStorage.getItem("WNS_STATUS")){
         window.localStorage.removeItem("WNS_STATUS");
@@ -453,8 +490,9 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" ||
        let propertyData = response.Properties[0];
        // let contractedCorAddress = "";
     dispatch(prepareFinalObject("applyScreen.property", propertyData));
-    let response = await propertyUpdate(state, dispatch,propertyData)
-    if(response)
+    set(propertyData, "creationReason", "UPDATE");
+    let response_ = await propertyUpdate(state, dispatch,propertyData)
+    if(response_)
     {
     let abc = await applyForWater(state, dispatch);
     window.localStorage.setItem("ActivityStatusFlag","true");
@@ -983,6 +1021,12 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" ||
 
     }
     }
+    const applicationNo_ = getQueryArg(window.location.href, "applicationNumber");
+    if(process.env.REACT_APP_NAME === "Citizen" && !applicationNo_)
+    {
+      removingDocumentsWorkFlow(state, dispatch);
+    }
+    
     prepareDocumentsUploadData(state, dispatch);
   }
   // console.log(activeStep);
