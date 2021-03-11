@@ -417,7 +417,7 @@ class SummaryDetails extends Component {
   />     
 : ""} */}
 
-              {this.props.ApplicantAppStatus != "OFFLINE_RE_INITIATED" ? (
+              {this.props.ApplicantAppStatus !== "OFFLINE_RE_INITIATED" && this.props.ApplicantAppStatus !== "OFFLINE_MODIFIED"? (
                 <PaymentDetailsTwo
                   paymentDetails={paymentDetails && paymentDetails}
                   one={this.props.one}
@@ -432,7 +432,7 @@ class SummaryDetails extends Component {
               )}
 
               {/*Amount,dateVenueCharge,Taxes,luxarytaxes,refundabelSecurity,facilitationCHG,OfflineRenArray*/}
-              {this.props.ApplicantAppStatus == "OFFLINE_RE_INITIATED" ? (
+              {this.props.ApplicantAppStatus == "OFFLINE_MODIFIED" ? (
                 <DateVenueChangePayDetail
                   Amount={this.props.Amount}
                   dateVenueCharge={this.props.dateVenueCharge}
@@ -864,6 +864,105 @@ const mapStateToProps = (state) => {
       ){
         paymentDetails = paymentData ? paymentData.Bill[0] : "";
         console.log("paymentDetails-two--reinitiate", paymentDetails);
+      }
+      else if (
+        (selectedComplaint &&
+          selectedComplaint.bkApplicationStatus != undefined &&
+          selectedComplaint.bkApplicationStatus != null &&
+          selectedComplaint.bkApplicationStatus == "OFFLINE_MODIFIED") ||
+        selectedComplaint.bkAction == "OFFLINE_MODIFY"
+      ){
+        paymentDetails = paymentData ? paymentData.Bill[0] : "";
+        console.log("paymentDetails-two--modified", paymentDetails);
+
+        OfflineRenArray = paymentData
+        ? paymentData.Bill[0].billDetails[0].billAccountDetails
+        : "NOt found Any Array";
+      console.log("OfflineRenArray--", OfflineRenArray);
+
+      if (selectedComplaint.bkBookingType == "Parks") {
+        console.log("park condition");
+        for (let i = 0; i < OfflineRenArray.length; i++) {
+          if (
+            OfflineRenArray[i].taxHeadCode ==
+            "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"
+          ) {
+            //PACC
+            Amount = OfflineRenArray[i].amount;
+          } else if (
+            OfflineRenArray[i].taxHeadCode ==
+            "CLEANING_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"
+          ) {
+            //LUXURY_TAX
+            luxarytaxes = OfflineRenArray[i].amount;
+          } else if (
+            OfflineRenArray[i].taxHeadCode ==
+            "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH"
+          ) {
+            //REFUNDABLE_SECURITY
+            refundabelSecurity = OfflineRenArray[i].amount;
+          } else if (
+            OfflineRenArray[i].taxHeadCode ==
+            "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"
+          ) {
+            //PACC TAX
+            Taxes = OfflineRenArray[i].amount;
+          } else if (
+            OfflineRenArray[i].taxHeadCode ==
+            "FACILITATION_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"
+          ) {
+            //FACILITATION_CHARGE
+            facilitationCHG = OfflineRenArray[i].amount;
+          } else if (
+            OfflineRenArray[i].taxHeadCode ==
+            "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"
+          ) {
+            dateVenueCharge = OfflineRenArray[i].amount;
+          }
+        }
+      }
+      if (selectedComplaint.bkBookingType == "Community Center") {
+        console.log("cc condition");
+        for (let i = 0; i < OfflineRenArray.length; i++) {
+          if (
+            OfflineRenArray[i].taxHeadCode ==
+            "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"
+          ) {
+            //PACC
+            Amount = OfflineRenArray[i].amount;
+          } else if (
+            OfflineRenArray[i].taxHeadCode ==
+            "CLEANING_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"
+          ) {
+            //LUXURY_TAX
+            luxarytaxes = OfflineRenArray[i].amount;
+          } else if (
+            OfflineRenArray[i].taxHeadCode ==
+            "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"
+          ) {
+            //REFUNDABLE_SECURITY
+            refundabelSecurity = OfflineRenArray[i].amount;
+          } else if (
+            OfflineRenArray[i].taxHeadCode ==
+            "CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"
+          ) {
+            //PACC TAX
+            Taxes = OfflineRenArray[i].amount;
+          } else if (
+            OfflineRenArray[i].taxHeadCode ==
+            "FACILITATION_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"
+          ) {
+            //FACILITATION_CHARGE
+            facilitationCHG = OfflineRenArray[i].amount;
+          } else if (
+            OfflineRenArray[i].taxHeadCode ==
+            "COMMUNITY_LOCATION_AND_VENUE_CHANGE_AMOUNT"
+          ) {
+            dateVenueCharge = OfflineRenArray[i].amount;
+          }
+        }
+      }
+
       }
     else {
       console.log("else-last-condition--");
