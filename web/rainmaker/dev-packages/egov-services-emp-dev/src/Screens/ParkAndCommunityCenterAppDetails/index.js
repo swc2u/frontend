@@ -1750,7 +1750,7 @@ paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
 paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}									
 								/> 
 <AppStateModifiedPayDetail 
-paymentDetails={this.state.modifiedFirstAmount}
+paymentDetails={this.state.modifiedFirstAmount} 
 />
 </div>
 : " "}
