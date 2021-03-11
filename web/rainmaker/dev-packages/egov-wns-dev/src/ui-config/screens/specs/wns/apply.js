@@ -424,6 +424,16 @@ export const getData = async (action, state, dispatch) => {
         try { payloadSewerage = await getSearchResultsForSewerage(queryObject, dispatch) } catch (error) { console.error(error); }
         payloadSewerage.SewerageConnections[0].water = false;
         payloadSewerage.SewerageConnections[0].sewerage = true;
+         //set modify property
+         payloadSewerage.SewerageConnections[0].property.subusageCategory = payloadSewerage.SewerageConnections[0].property.usageCategory;
+         if(payloadSewerage.SewerageConnections[0].property.usageCategory !==undefined)
+         { 
+          const swusageCategory_ = payloadSewerage.SewerageConnections[0].property.usageCategory;
+         payloadSewerage.SewerageConnections[0].property.usageCategory = payloadSewerage.SewerageConnections[0].property.usageCategory.split('.')[0]; 
+         
+        
+         displaysubUsageType(swusageCategory_, dispatch, state);
+         }
         dispatch(prepareFinalObject("SewerageConnection", payloadSewerage.SewerageConnections));
       } else {
         try { payloadWater = await getSearchResults(queryObject) } catch (error) { console.error(error); };

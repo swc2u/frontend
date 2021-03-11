@@ -41,7 +41,9 @@ import { getWorkFlowData } from "../../../../ui-utils/commons";
 const tenantId = getQueryArg(window.location.href, "tenantId");
 let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
 let service = getQueryArg(window.location.href, "service");
-const serviceModuleName = service === "WATER" ? window.localStorage.getItem("wns_workflow")==="SW_SEWERAGE" ? "SW_SEWERAGE":  window.localStorage.getItem("wns_workflow"):"REGULARWSCONNECTION";
+const serviceModuleName = service === "WATER" ? 
+(window.localStorage.getItem("wns_workflow")===null ? "REGULARWSCONNECTION":  window.localStorage.getItem("wns_workflow"))
+:"SW_SEWERAGE";
 const serviceUrl = serviceModuleName === "SW_SEWERAGE" ?  "/sw-services/swc/_update" : "/ws-services/wc/_update" ;
 
 const getLabelForWnsHeader = () => {
@@ -103,12 +105,19 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
 
     if (!getQueryArg(window.location.href, "edited")) {
       (await searchResults(action, state, dispatch, applicationNumber,processInstanceAppStatus));
+      // set 
+      let service_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.service");
+      if(service_ ==='SEWERAGE')
+        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyUsageDetail.visible",false);
     } else {
       let applyScreenObject = get(state.screenConfiguration.preparedFinalObject, "applyScreen");
       applyScreenObject.applicationNo.includes("WS")?applyScreenObject.service="WATER":applyScreenObject.service="SEWERAGE";
       let parsedObject = parserFunction(findAndReplace(applyScreenObject, "NA", null));
       let code = '03';
+      if (service === "WATER") 
         code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",parsedObject.property.address.locality.code)   
+        if (service === "SEWERAGE") 
+        code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.swSectorList",parsedObject.property.address.locality.code)   
       set(parsedObject, 'property.address.locality.name', code);
       //set ferrul
       let isFerruleApplicable = false
@@ -409,6 +418,7 @@ export const getMdmsData = async (state,dispatch) => {
         masterDetails: [
           { name: "wsWorkflowRole" },
           { name: "sectorList" },
+          { name: "swSectorList" },
         
         ] },
         
@@ -477,10 +487,12 @@ const screenConfig = {
     // if (status !== "pending_payment") {
     //   set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.viewBreakupButton.visible", false);
     // }
-   
+    const serviceModuleNameCurrent = service === "WATER" ? 
+    (window.localStorage.getItem("wns_workflow")===null ? "REGULARWSCONNECTION":  window.localStorage.getItem("wns_workflow"))
+    :"SW_SEWERAGE";
     const queryObject = [
       { key: "tenantId", value: tenantId },
-      { key: "businessServices", value: serviceModuleName }
+      { key: "businessServices", value: serviceModuleNameCurrent }
     ];
 
     setBusinessServiceDataToLocalStorage(queryObject, dispatch);
@@ -659,6 +671,17 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
     payload = [];
     payload = await getSearchResultsForSewerage(queryObjForSearch, dispatch);
     payload.SewerageConnections[0].service = service;
+    payload.SewerageConnections[0].property.subusageCategory = payload.SewerageConnections[0].property.usageCategory;
+    payload.SewerageConnections[0].property.usageCategory = payload.SewerageConnections[0].property.usageCategory.split('.')[0];
+    //
+     set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyUsageDetail.visible",false);
+      let code = '';
+        code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.swSectorList",payload.SewerageConnections[0].property.address.locality.code)   
+        payload.SewerageConnections[0].property.address.locality.name = code;
+        // set visible false for sw
+
+     // set(payload, 'property.address.locality.name', code);
+    ///
     if (payload !== undefined && payload !== null) {
       dispatch(prepareFinalObject("SewerageConnection[0]", payload.SewerageConnections[0]));
       dispatch(prepareFinalObject("WaterConnection[0]", payload.SewerageConnections[0]));
@@ -722,6 +745,17 @@ const parserFunction = (obj) => {
   // else{
   //   isFerruleApplicable = obj.waterApplication.isFerruleApplicable
   // }
+  let usageCategory = null
+  let usageSubCategory = null
+  if(obj.service==='WATER')
+  {
+    usageCategory =(obj.waterProperty.usageCategory === null || obj.waterProperty.usageCategory === "NA") ? "" : obj.waterProperty.usageCategory
+    usageSubCategory = (obj.waterProperty.usageSubCategory === null || obj.waterProperty.usageSubCategory === "NA") ? "" : obj.waterProperty.usageSubCategory
+  }
+  if(obj.service==='SEWERAGE')
+  {
+    usageCategory = obj.swProperty.usageCategory
+  }
   let parsedObject = {
     roadCuttingArea: parseInt(obj.roadCuttingArea),
     meterInstallationDate: convertDateToEpoch(obj.meterInstallationDate),
@@ -748,9 +782,8 @@ const parserFunction = (obj) => {
     // },
    // proposedTaps: parseInt(obj.proposedTaps),
     waterProperty :{
-    usageCategory: (obj.waterProperty.usageCategory === null || obj.waterProperty.usageCategory === "NA") ? "" : obj.waterProperty.usageCategory,
-    usageSubCategory: (obj.waterProperty.usageSubCategory === null || obj.waterProperty.usageSubCategory === "NA") ? "" : obj.waterProperty.usageSubCategory,
-    },
+    usageCategory: usageCategory,
+    usageSubCategory: usageSubCategory,    },
     waterApplicationType: (obj.waterApplicationType === null || obj.waterApplicationType === "NA") ? "" : obj.waterApplicationType,
     plumberInfo: (obj.plumberInfo === null || obj.plumberInfo === "NA") ? [] : obj.plumberInfo
   }

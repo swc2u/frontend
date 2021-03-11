@@ -542,16 +542,17 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         dispatch,
         "apply"
       ); 
+      let isOwnershipsingleValid =false
 
       // for Ownership Type
       let x = get('applyScreen.property.ownershipCategory')
       let ownershipCategory= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", '' )
       if(ownershipCategory)
       {
-        if(ownershipCategory ==='INDIVIDUAL.MULTIPLEOWNERS')
+        if(ownershipCategory !=='INDIVIDUAL.MULTIPLEOWNERS')
         {
-          const isOwnershipsingleValid =  validateFields(
-            "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput",
+           isOwnershipsingleValid =  validateFields(
+            "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items[0].item0.children.cardContent.children.viewFive.children",
             state,
             dispatch,
             "apply"
@@ -567,6 +568,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
           []
         );
         let isMasterDetailsValid = true;
+        isOwnershipsingleValid = true;
         for (var j = 0; j < SingleOwnerDetailsItems.length; j++) {
           if (
             (SingleOwnerDetailsItems[j].isDeleted === undefined ||
@@ -579,6 +581,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
             )
           )
           isMasterDetailsValid = false; 
+          isOwnershipsingleValid = false;
 
         }
       }
@@ -628,7 +631,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       }
       
 
-      if(!isPropertyUsageValid || !isConnectionHolderDetailsValid || !isOwnershipTypeInputValid ||!isPropertyLocationDetailValid || !isPropertyDetailsValid){
+      if(!isPropertyUsageValid || !isConnectionHolderDetailsValid || !isOwnershipTypeInputValid ||!isPropertyLocationDetailValid || !isPropertyDetailsValid || !isOwnershipsingleValid){
         isFormValid = false;
       }
       

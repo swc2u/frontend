@@ -324,7 +324,7 @@ class WorkFlowContainer extends React.Component {
       {
         data.processInstance = {
           documents: data.wfDocuments,
-          assignes: data.assignees,
+          assignee: data.assignees[0],
           comment: data.comment,
           action: data.action,
           additionalDetails:{
@@ -336,7 +336,7 @@ class WorkFlowContainer extends React.Component {
       else{
               data.processInstance = {
                 documents: data.wfDocuments,
-                assignes: data.assignees,
+                assignee: data.assignees.length === 0?null:data.assignees[0],
                 comment: data.comment,
                 action: data.action,
                 additionalDetails:null
@@ -372,7 +372,7 @@ class WorkFlowContainer extends React.Component {
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
       {
-        validRequest =  this.ValidateRequest(data)
+        validRequest = this.ValidateRequest(data)
       }   
 
     try {
