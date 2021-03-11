@@ -890,7 +890,7 @@ export const downloadPaymentReceipt = (receiptQueryString, payload, data , gener
       } = payloadReceiptDetails;
       let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
       if(time){
-        time = moment(new Date(time)).format("h:mm:ss a")
+        time = moment(new Date(time)).format("h:mm:ss A")
       }
       Payments = [{
         ...Payments[0],paymentDetails:[{
@@ -1984,7 +1984,15 @@ export const getTodaysDateInYMD = () => {
   // date = epochToYmdDate(date);
   return date;
 };
-
+export const getYesterdaysDateInYMD = () => {
+  let date = new Date();
+  //date = date.valueOf();
+  let month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+  let day = date.getDate() - 1 < 10 ? `0${date.getDate()-1}` : date.getDate()-1;
+  date = `${date.getFullYear()}-${month}-${day}`;
+  // date = epochToYmdDate(date);
+  return date;
+};
 export const getNextMonthDateInYMD = () => {
   //For getting date of same day but of next month
   let date = getTodaysDateInYMD();
