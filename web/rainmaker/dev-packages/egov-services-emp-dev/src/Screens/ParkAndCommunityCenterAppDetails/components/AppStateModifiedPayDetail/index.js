@@ -46,7 +46,7 @@ class PayDetails extends Component {
 
               <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px',marginTop:30}}>
                 <div className="col-sm-4 col-xs-12">
-                  <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_Date/Venue_CHANGE_CHARGES" />
+                  <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_DATE/VENUE_CHANGE_CHARGES" />
                 </div>
                 <div className="col-sm-4 col-xs-12">
                   <h5 style={{ textAlign: "right" }}>{this.props.ChangeAmount}</h5>
@@ -55,7 +55,7 @@ class PayDetails extends Component {
 
               <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px'}}>
                 <div className="col-sm-4 col-xs-12">
-                  <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_TAXES" />
+                  <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_AMOUNT" />
                 </div>
                 <div className="col-sm-4 col-xs-12">
                   <h5 style={{ textAlign: "right" }}>{this.props.taxes}</h5>
