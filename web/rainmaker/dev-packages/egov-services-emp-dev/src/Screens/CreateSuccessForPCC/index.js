@@ -272,7 +272,8 @@ if(documentMap !== undefined && documentMap !== null){
                 applicationDetails.bkFromDate,
                 applicationDetails.bkToDate
               ),
-              "bookingType": applicationDetails.bkBookingType,
+              "bookingType": applicationDetails.bkBookingType, 
+              "bkRemarks": applicationDetails.bkRemarks,
                "venueName": applicationDetails.bkLocation,
               "sector": applicationDetails.bkSector,
               "bookingPurpose": applicationDetails.bkBookingPurpose,
@@ -391,7 +392,7 @@ if(documentMap !== undefined && documentMap !== null){
               "bookingPeriod": getDurationDate(
                 applicationDetails.bkFromDate,
                 applicationDetails.bkToDate
-              ),
+              ), 
               "bookingType": applicationDetails.bkBookingType,
               "venueName": applicationDetails.bkLocation,
               "sector": applicationDetails.bkSector,
