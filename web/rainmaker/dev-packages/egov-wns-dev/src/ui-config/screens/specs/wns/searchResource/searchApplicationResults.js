@@ -273,12 +273,12 @@ const getApplicationDetails = data => {
     }
 }
 
-  window.location.href = `search-preview?applicationNumber=${data.rowData[1]}&tenantId=${data.rowData[6]}&history=true&service=${data.rowData[7]}`
+  window.location.href = `search-preview?applicationNumber=${data.rowData[1]}&tenantId=${data.rowData[7]}&history=true&service=${data.rowData[8]}`
 }
 
 const getConnectionDetails = data => {
   window.location.href = `connection-details?connectionNumber=${data.rowData[0]}&tenantId=${data.rowData[7]}&service=${data.rowData[8]}&connectionType=${data.rowData[9]}`
 }
 const getViewBillDetails = data => {
-  window.location.href = `viewBill?connectionNumber=${data.rowData[1]}&tenantId=${data.rowData[7]}&service=${data.rowData[0]}&connectionType=${data.rowData[9]}`//&id=${data.rowData[11]}`
+  window.location.href = `viewBill?connectionNumber=${data.rowData[1]}&tenantId=${data.rowData[7]}&service=${data.rowData[8]}&connectionType=${data.rowData[9]}&id=${data.rowData[11]}`
 }
