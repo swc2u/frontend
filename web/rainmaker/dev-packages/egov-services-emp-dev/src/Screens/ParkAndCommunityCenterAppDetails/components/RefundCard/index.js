@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import { Card, Image, Icon, Button } from "components";
 import Label from "egov-ui-kit/utils/translationNode";
 import isEmpty from "lodash/isEmpty";
 import "./index.css";
 import { httpRequest } from "egov-ui-kit/utils/api";
 import { fetchDataAfterPayment} from "egov-ui-kit/redux/bookings/actions";
 import { connect } from "react-redux";
-
+import { Tabs, Card, TextField, Icon, Button } from "components";
+import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 
 class AppDetails extends Component {
@@ -18,7 +18,8 @@ class AppDetails extends Component {
       payload : '',
       one: '',
       NewReFund: '',
-      lastAmountShow: ''
+      lastAmountShow: '',
+      ShowRefundAmount:''
 		};
 	};
 
@@ -62,7 +63,8 @@ if(hh != "NotFound"){
     const labelLast = `Refund Amount - Rs.${SecondFunRefAmt}`
     console.log("labelLast-labelLast",labelLast)
     this.setState({
-      lastAmountShow : labelLast
+      lastAmountShow : labelLast,
+      ShowRefundAmount : SecondFunRefAmt
     })
 
 //BookingRefundAmount
@@ -109,7 +111,7 @@ if(hh != "NotFound"){
                 let billAccountDetails = this.state.payload.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails;
                 let bookingAmount = 0;
                 for (let i = 0; i < billAccountDetails.length; i++) {
-                    if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+                  if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                         bookingAmount += billAccountDetails[i].amount;
                     }
                 }
@@ -122,10 +124,10 @@ if(hh != "NotFound"){
                 let billAccountDetails =this.state.payload.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails;
                 let bookingAmount = 0;
                 for (let i = 0; i < billAccountDetails.length; i++) {
-                    if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+                  if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                         bookingAmount += billAccountDetails[i].amount;
                     }
-                    if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+                    if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                         bookingAmount += billAccountDetails[i].amount;
                     }
                 }
@@ -195,6 +197,13 @@ if(hh != "NotFound"){
 
     }
 
+    ChangeRefundAmount = (e) => {
+      console.log("ChangeRefundAmount-",e.target.value)
+      this.setState({...this.state,ShowRefundAmount:e.target.value},
+      this.props.prepareFinalObject("editableRefundAmount",e.target.value)
+        )
+      }
+
     BookingRefundAmount = async (applicationNumber, tenantId, bookingDate,AmountFromBackEnd) => {
       const {payloadone, payload, payloadTwo, ConRefAmt,fetchPaymentAfterPayment} = this.props;
       console.log("propsforcalculateCancelledBookingRefundAmount--second",this.props)
@@ -218,7 +227,7 @@ if(hh != "NotFound"){
                   let billAccountDetails = AmountFromBackEnd[0].paymentDetails[0].bill.billDetails[0].billAccountDetails;
                   let bookingAmount = 0;
                   for (let i = 0; i < billAccountDetails.length; i++) {
-                      if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+                    if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                           bookingAmount += billAccountDetails[i].amount;
                       }
                   }
@@ -231,10 +240,10 @@ if(hh != "NotFound"){
                   let billAccountDetails = AmountFromBackEnd[0].paymentDetails[0].bill.billDetails[0].billAccountDetails;
                   let bookingAmount = 0;
                   for (let i = 0; i < billAccountDetails.length; i++) {
-                      if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+                    if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                           bookingAmount += billAccountDetails[i].amount;
                       }
-                      if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+                      if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode === "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                           bookingAmount += billAccountDetails[i].amount;
                       }
                   }
@@ -308,33 +317,82 @@ if(hh != "NotFound"){
 
   render() {
     const { RefAmount } = this.props;
+    const hintTextStyle = {
+      letterSpacing: "0.7px",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      width: "90%",
+      overflow: "hidden"
+    };
     // console.log("stateOftotal--",this.state.totalAmount, this.state.one)
     // console.log("this.props--RefAmount",RefAmount)
     // const label1 = `Refund Amount - Rs.${RefAmount}`
     // const label2 = `Refund Amount - Rs.${this.state.totalAmount}`
     // const label3 = `Refund Amount - Rs.${this.state.NewReFund}`
     return (
+
       <div>
-        <Card
-          textChildren={
-            <div>
-              <div className="rainmaker-displayInline">
-                <Label label="BK_MYBK_REFUND_DETAILS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
-              </div>
-              <div key={10} className="complaint-detail-full-width">
-                <div className="complaint-detail-detail-section-status row">
-                  <div className="col-md-4">
-                    <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label={this.state.lastAmountShow}/>
-                  </div>
-                  {/* <h5>{this.state.NewReFund}</h5>
-                  <h3>{this.state.lastAmountShow}</h3> */}
-                </div>
-              </div>
-            </div>
-          }
-        />
-      </div>
-    );
+      <div style={{float: 'left', width: '100%', padding: '36px 15px' }}>
+     <div className="col-xs-12" style={{background:'#fff', padding: '15px 0'}}>
+    <div className="col-sm-6 col-xs-6">
+     <TextField
+         id="RefundAmount"
+         name="RefundAmount"
+         type="number"
+         value={this.state.ShowRefundAmount}
+         pattern="[A-Za-z]"
+         // required = {true}
+         hintText={
+           <Label
+             label="Refund Amount"
+             color="rgba(0, 0, 0, 0.3799999952316284)"
+             fontSize={16}
+             labelStyle={hintTextStyle}
+           />
+         }
+         floatingLabelText={
+           <Label
+             key={0}
+             label="Refund Amount"
+             color="rgba(0,0,0,0.60)"
+             fontSize="12px"
+           />
+         }
+         onChange={(e)=>this.ChangeRefundAmount(e)}
+         underlineStyle={{ bottom: 7 }}
+         underlineFocusStyle={{ bottom: 7 }}
+         hintStyle={{ width: "100%" }}
+       />
+     </div>
+     </div>
+   </div>
+   </div>
+
+
+
+      // <div>
+      //   <Card
+      //     textChildren={
+      //       <div>
+      //         <div className="rainmaker-displayInline">
+      //           <Label label="BK_MYBK_REFUND_DETAILS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
+      //         </div>
+      //         <div key={10} className="complaint-detail-full-width">
+      //           <div className="complaint-detail-detail-section-status row">
+      //             <div className="col-md-4">
+      //               <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label={this.state.lastAmountShow}/>
+      //             </div>
+      //             {/* <h5>{this.state.NewReFund}</h5>
+      //             <h3>{this.state.lastAmountShow}</h3> */}
+      //           </div>
+      //         </div>
+      //       </div>
+      //     }
+      //   />
+      // </div>
+
+
+  );
   }
 }
 
@@ -355,6 +413,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchDataAfterPayment: (jsonPath, value) => dispatch(fetchDataAfterPayment(jsonPath, value)),
+    prepareFinalObject: (jsonPath, value) =>
+    dispatch(prepareFinalObject(jsonPath, value)),
   }
 }
 
