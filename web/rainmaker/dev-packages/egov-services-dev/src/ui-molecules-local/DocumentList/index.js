@@ -350,9 +350,9 @@ console.log(card, "Card He");
                     <LabelContainer
                         labelKey={(()=>{
                             if(card.code == "OSWMCC_LOCATION_IMAGE_1" || card.code == "OSWMCC_LOCATION_IMAGE_2" || card.code == "OSWMCC_LOCATION_IMAGE_3"){
-                                return "Supported Documents: jpg, png. Max file size: 1MB";
+                                return "Supported Documents: jpg, png. Max file size: 5MB";
                             }else{
-                                return "Supported Documents: pdf, jpg, png. Max file size: 1MB";
+                                return "Supported Documents: pdf, jpg, png. Max file size: 5MB";
                             }
                         })()}
 

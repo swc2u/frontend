@@ -13,7 +13,7 @@ import { loginRequest, wrapRequestBody, } from "egov-ui-kit/utils/api";
 import {
   getLocale
 } from "egov-ui-kit/utils/localStorageUtils";
-
+import get from "lodash/get";
 
 
 const CancelRequestApprovedHOC = formHOC({
@@ -518,7 +518,14 @@ class CancelRequestApproved extends Component {
   render() {
     let { match, userInfo, dataforRefund } = this.props;
 
-
+    console.log("this.props.editableRefundAmount--",this.props.editableRefundAmount)
+    let NumberReturnAmount;
+    if(this.props.editableRefundAmount){
+      NumberReturnAmount = Number(this.props.editableRefundAmount)
+    }
+    else{
+      NumberReturnAmount = null
+    }
     const { handleCommentsChange, handleOptionsChange, onSubmit, handleChangeAssigneeData, handleOpen, handleClose } = this;
     const { valueSelected, commentValue, assignee, assignToMe } = this.state;
     const { trasformData, businessServiceData, applicationNumber, Cancelstatus } = this.props;
@@ -563,6 +570,7 @@ class CancelRequestApproved extends Component {
         createdBy={userInfo.name}
         tenantId={userInfo.tenantId}
         onSubmit={onSubmit}
+        editableRefundAmount={NumberReturnAmount}
         userInfo={userInfo}
         // bookingtype={trasformData.bkBookingType}
         CancelStatus={CheckCancelStatus ? CheckCancelStatus : ""}
@@ -589,7 +597,12 @@ const mapStateToProps = (state, ownProps) => {
   let paymentDetailsForReceipt = fetchPaymentAfterPayment;
 
 
-
+  let editableRefundAmount = get(
+    state,
+    "screenConfiguration.preparedFinalObject.editableRefundAmount",
+    []
+  );
+  console.log("editableRefundAmount",editableRefundAmount)  
 
   // const serviceRequestId = ownProps.match.params.applicationId;
   let trasformData = applicationData ? applicationData.bookingsModelList[0] : '';
@@ -605,7 +618,7 @@ const mapStateToProps = (state, ownProps) => {
   let Cancelstatus = trasformData.bkStatus;
 
 
-  return { trasformData, businessServiceData, dataforRefund, payloadone, ConRefAmt, Cancelstatus, paymentDetailsForReceipt };
+  return { trasformData, editableRefundAmount,businessServiceData, dataforRefund, payloadone, ConRefAmt, Cancelstatus, paymentDetailsForReceipt };
 }
 
 
