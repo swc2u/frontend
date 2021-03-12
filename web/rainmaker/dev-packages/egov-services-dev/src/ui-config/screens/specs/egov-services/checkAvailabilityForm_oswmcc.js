@@ -543,7 +543,7 @@ export const availabilityForm = getCommonCard({
                 },
 
                 placeholder: {
-                    labelName: "Select Booking Location",
+                    labelName: "Select Booking Venue",
                     labelKey: "BK_OSWMCC_BOOKING_VENUE_PLACEHOLDER",
                 },
                 gridDefination: {
