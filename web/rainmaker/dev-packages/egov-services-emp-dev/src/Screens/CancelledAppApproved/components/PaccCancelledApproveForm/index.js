@@ -50,7 +50,7 @@ const styles = theme => ({
   }
 });
 
-const NewLocationResolvedForm = ({ form, handleChangeAssignee, assignToMe, assignee, foundFifthLavel,foundSixthLavel, foundSecondLavel,foundFourthLavel, foundthirdLavel, foundSevenLavel, foundEightLavel,foundFirstLavels, handleOpen, handleClose, options, setOpen, userInfo, classes, onSubmit, bookingservice, bookingtype, applicationNumber, createdBy, tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue,CancelStatus }) => {
+const NewLocationResolvedForm = ({ form, handleChangeAssignee, editableRefundAmount,assignToMe, assignee, foundFifthLavel,foundSixthLavel, foundSecondLavel,foundFourthLavel, foundthirdLavel, foundSevenLavel, foundEightLavel,foundFirstLavels, handleOpen, handleClose, options, setOpen, userInfo, classes, onSubmit, bookingservice, bookingtype, applicationNumber, createdBy, tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue,CancelStatus }) => {
   if (form && form.fields) {
     let formValue = { ...form.fields };
 
@@ -95,7 +95,8 @@ const NewLocationResolvedForm = ({ form, handleChangeAssignee, assignToMe, assig
     // formValue.createdOn.value = new Date()
     formValue.assignee.value = assignee;
     formValue.businessService.value = bookingservice;
-    formValue.CancelStatus.value = CancelStatus;
+    formValue.CancelStatus.value = CancelStatus; 
+    formValue.editableRefundAmount.value = editableRefundAmount;
 
   }
   const fields = form.fields || {};
