@@ -397,11 +397,11 @@ export const availabilityForm = getCommonCard({
             labelKey: "Parks",
             value: "Parks",
           },
-          {
-            label: "Commercial Ground",
-            labelKey: "Commercial Ground",
-            value: "Commercial Ground",
-          },
+         // {
+          //   label: "Commercial Ground",
+          //   labelKey: "Commercial Ground",
+          //   value: "Commercial Ground",
+          // },
         ],
         jsonPath: "availabilityCheckData.bkBookingType",
         defaultValue: "Parks",
