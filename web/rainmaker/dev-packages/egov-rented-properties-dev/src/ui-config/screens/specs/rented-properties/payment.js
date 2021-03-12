@@ -630,45 +630,6 @@ const amount = {
   props:{
     disabled: true
   }
-  // errorMessage: "RP_ERR_AMOUNT_FIELD",
-  // afterFieldChange: (action, state, dispatch) => {
-  //   if (action.value.length > 7) {
-  //       dispatch(
-  //           handleField(
-  //             "pay",
-  //             action.componentJsonpath,
-  //             "errorMessage",
-  //             "RP_ERR_AMOUNT_FIELD_MAXLENGTH"
-  //           )
-  //       )
-  //       dispatch(
-  //           handleField(
-  //             "pay",
-  //             action.componentJsonpath,
-  //             "props.errorMessage",
-  //             "RP_ERR_AMOUNT_FIELD_MAXLENGTH"
-  //           )
-  //       )
-  //   }
-  //   else {
-  //       dispatch(
-  //           handleField(
-  //             "pay",
-  //             action.componentJsonpath,
-  //             "errorMessage",
-  //             "RP_ERR_AMOUNT_FIELD"
-  //           )
-  //       )
-  //       dispatch(
-  //           handleField(
-  //             "pay",
-  //             action.componentJsonpath,
-  //             "props.errorMessage",
-  //             "RP_ERR_AMOUNT_FIELD"
-  //           )
-  //       )
-  //   }
-  // }
 }
 export const applicationOfflinePaymentDetails = getCommonCard({
   header: offlinePaymentDetailsHeader,
