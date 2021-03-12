@@ -111,7 +111,7 @@ if(hh != "NotFound"){
                 let billAccountDetails = this.state.payload.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails;
                 let bookingAmount = 0;
                 for (let i = 0; i < billAccountDetails.length; i++) {
-                    if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+                  if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                         bookingAmount += billAccountDetails[i].amount;
                     }
                 }
@@ -124,10 +124,10 @@ if(hh != "NotFound"){
                 let billAccountDetails =this.state.payload.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails;
                 let bookingAmount = 0;
                 for (let i = 0; i < billAccountDetails.length; i++) {
-                    if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+                  if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                         bookingAmount += billAccountDetails[i].amount;
                     }
-                    if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+                    if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                         bookingAmount += billAccountDetails[i].amount;
                     }
                 }
@@ -200,7 +200,7 @@ if(hh != "NotFound"){
     ChangeRefundAmount = (e) => {
       console.log("ChangeRefundAmount-",e.target.value)
       this.setState({...this.state,ShowRefundAmount:e.target.value},
-      this.props.prepareFinalObject("editableRefundAmount",e.target.value)  
+      this.props.prepareFinalObject("editableRefundAmount",e.target.value)
         )
       }
 
@@ -227,7 +227,7 @@ if(hh != "NotFound"){
                   let billAccountDetails = AmountFromBackEnd[0].paymentDetails[0].bill.billDetails[0].billAccountDetails;
                   let bookingAmount = 0;
                   for (let i = 0; i < billAccountDetails.length; i++) {
-                      if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+                    if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                           bookingAmount += billAccountDetails[i].amount;
                       }
                   }
@@ -240,10 +240,10 @@ if(hh != "NotFound"){
                   let billAccountDetails = AmountFromBackEnd[0].paymentDetails[0].bill.billDetails[0].billAccountDetails;
                   let bookingAmount = 0;
                   for (let i = 0; i < billAccountDetails.length; i++) {
-                      if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+                    if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                           bookingAmount += billAccountDetails[i].amount;
                       }
-                      if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+                      if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode === "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
                           bookingAmount += billAccountDetails[i].amount;
                       }
                   }
@@ -317,6 +317,13 @@ if(hh != "NotFound"){
 
   render() {
     const { RefAmount } = this.props;
+    const hintTextStyle = {
+      letterSpacing: "0.7px",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      width: "90%",
+      overflow: "hidden"
+    };
     // console.log("stateOftotal--",this.state.totalAmount, this.state.one)
     // console.log("this.props--RefAmount",RefAmount)
     // const label1 = `Refund Amount - Rs.${RefAmount}`
@@ -327,12 +334,12 @@ if(hh != "NotFound"){
       <div>
       <div style={{float: 'left', width: '100%', padding: '36px 15px' }}>
      <div className="col-xs-12" style={{background:'#fff', padding: '15px 0'}}>
-    <div className="col-sm-6 col-xs-6">       
+    <div className="col-sm-6 col-xs-6">
      <TextField
          id="RefundAmount"
          name="RefundAmount"
          type="number"
-         value={this.state.ShowRefundAmount} 
+         value={this.state.ShowRefundAmount}
          pattern="[A-Za-z]"
          // required = {true}
          hintText={
@@ -383,8 +390,8 @@ if(hh != "NotFound"){
       //     }
       //   />
       // </div>
-  
-  
+
+
   );
   }
 }

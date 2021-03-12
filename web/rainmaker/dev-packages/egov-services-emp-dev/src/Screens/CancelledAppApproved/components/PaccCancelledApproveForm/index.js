@@ -54,7 +54,7 @@ const NewLocationResolvedForm = ({ form, handleChangeAssignee, editableRefundAmo
   if (form && form.fields) {
     let formValue = { ...form.fields };
 
-    // const foundFirstLavels = userInfo && userInfo.roles.some(el => el.code === 'CLERK'||el.code === 'DEO'); 
+    // const foundFirstLavels = userInfo && userInfo.roles.some(el => el.code === 'CLERK'||el.code === 'DEO');
     if (foundFirstLavels) {
       formValue.action.value = 'APPROVE_CLERK_DEO';
     }
@@ -95,44 +95,17 @@ const NewLocationResolvedForm = ({ form, handleChangeAssignee, editableRefundAmo
     // formValue.createdOn.value = new Date()
     formValue.assignee.value = assignee;
     formValue.businessService.value = bookingservice;
-    formValue.CancelStatus.value = CancelStatus; 
+    formValue.CancelStatus.value = CancelStatus;
     formValue.editableRefundAmount.value = editableRefundAmount;
 
   }
   const fields = form.fields || {};
   const submit = form.submit;
-  
+
   return (
     <div>
       <div className="custom-padding-for-screens">
         <div className="complaint-resolved-main-container">
-          {((foundFirstLavels || foundSecondLavel || foundthirdLavel || foundFourthLavel || foundSixthLavel || foundSevenLavel || foundEightLavel) &&
-            <FormControl style={{ width: '100%' }}>
-              <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label">Assignee</InputLabel>
-              <Select
-                maxWidth={false}
-                labelId="demo-controlled-open-select-label-Locality"
-                id="demo-controlled-open-select-locality"
-                open={setOpen}
-                onClose={handleClose}
-                onOpen={handleOpen}
-                value={assignee}
-                displayEmpty
-                onChange={handleChangeAssignee}
-              >
-                {assignToMe.map((child, index) => (
-                  
-                  <MenuItem value={child.uuid}>{child.userName}</MenuItem>
-                ))}
-                {/* <MenuItem value='sumit kumar'>sumit kumar</MenuItem>
-              <MenuItem value='sonu kumar'>sonu kumar</MenuItem>
-              <MenuItem value='rahul kumar'>rahul kumar</MenuItem> */}
-
-              </Select>
-            </FormControl>
-
-
-          )}
 
 
           <TextField
