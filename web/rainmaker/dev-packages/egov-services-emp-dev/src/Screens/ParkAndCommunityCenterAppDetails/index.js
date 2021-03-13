@@ -127,7 +127,7 @@ class ApplicationDetails extends Component {
 
 		} = this.props;
 		console.log("propsforRefund--", this.props)
-
+console.log(selectedComplaint, "Nero Complaint")
 		let AppNo = selectedComplaint.bkApplicationNumber
 		console.log("AppNo--", AppNo)
 
@@ -1814,6 +1814,7 @@ totalAmountPaid = {totalAmountPaid}
 									paymentDetails={this.state.newPaymentDetails != "NotFound" && this.state.newPaymentDetails}
 									RefAmount={this.state.totalRefundAmount && this.state.totalRefundAmount}
 									payload={paymentDetailsForReceipt}
+									refundableSecurityMoney={this.props.selectedComplaint.refundableSecurityMoney}
 									{...complaint}
 								/> : " "}
 
@@ -2632,8 +2633,8 @@ const mapStateToProps = (state, ownProps) => {
 			bkSurchargeRent: selectedComplaint.bkSurchargeRent,
 			bkRent: selectedComplaint.bkRent,
 			bkUtgst: selectedComplaint.bkUtgst,
-			bkCgst: selectedComplaint.bkCgst
-
+			bkCgst: selectedComplaint.bkCgst,
+			refundableSecurityMoney: selectedComplaint.refundableSecurityMoney
 		}
 
 		let transformedComplaint;
