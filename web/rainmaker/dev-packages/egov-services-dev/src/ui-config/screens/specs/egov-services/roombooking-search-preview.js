@@ -29,7 +29,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { generageBillCollection, generateBill, clearlocalstorageAppDetails, calculateCancelledBookingRefundAmount, getAllbillsOfBooking } from "../utils";
 import { pccSummary, changedVenueDatepccSummary } from "./summaryResource/pccSummary";
-import { pccApplicantSummary,pccBankSummary,roomBookingSummary ,roomDetaiPage} from "./summaryResource/pccApplicantSummary";
+import { pccApplicantSummary,pccBankSummary,roomBookingSummary ,roomDetaiPage, roomBookingFooter} from "./summaryResource/pccApplicantSummary";
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import { estimateSummary, modifiedBookingPaymentCard } from "./summaryResource/estimateSummary";
 import { remarksSummary } from "./searchResource/remarksSummary";
@@ -213,7 +213,7 @@ const screenConfig = {
                     // pccBankSummary: pccBankSummary, 
                     
                 }),
-              
+                footer: roomBookingFooter,
             },
         },
     },
