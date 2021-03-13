@@ -553,7 +553,7 @@ else{
 			"bkAddress": null,
 			"bkSector": selectedComplaint.bkSector,
 			"bkVillCity": null,
-			"bkAreaRequired": null,
+			"bkAreaRequired": null, 
 			"bkDuration": null,
 			"bkCategory": null,
 			"bkEmail": selectedComplaint.bkEmail,
@@ -628,6 +628,12 @@ else{
 			"assignee": null,
 			"wfDocuments": [],
 			"financialYear": selectedComplaint.financialYear,
+			"bkBankAccountNumber":selectedComplaint.bkBankAccountNumber,
+            "bkBankName":selectedComplaint.bkBankName,
+            "bkIfscCode":selectedComplaint.bkIfscCode,
+            "bkAccountType":selectedComplaint.bkAccountType,
+            "bkBankAccountHolder":selectedComplaint.bkBankAccountHolder,
+            "bkNomineeName": selectedComplaint.bkNomineeName,
 			"financeBusinessService": null
 		}
 		console.log("CancelEmpBooking-Booking", Booking)
@@ -1498,6 +1504,12 @@ let refundAction;
 			"assignee": null,
 			"wfDocuments": [],
 			"financialYear": selectedComplaint.financialYear,
+			"bkBankAccountNumber":selectedComplaint.bkBankAccountNumber,
+            "bkBankName":selectedComplaint.bkBankName,
+            "bkIfscCode":selectedComplaint.bkIfscCode,
+            "bkAccountType":selectedComplaint.bkAccountType,
+            "bkBankAccountHolder":selectedComplaint.bkBankAccountHolder,
+            "bkNomineeName": selectedComplaint.bkNomineeName,
 			"financeBusinessService": null
 		}
 		console.log("CancelEmpBooking-Booking", Booking)
@@ -1778,7 +1790,15 @@ paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
 									</div>
 									: " "}
 
-								<AppDetails
+{this.state.refundCard == true ? <RefundCard
+									paymentDetails={this.state.newPaymentDetails != "NotFound" && this.state.newPaymentDetails}
+									RefAmount={this.state.totalRefundAmount && this.state.totalRefundAmount}
+									payload={paymentDetailsForReceipt}
+									refundableSecurityMoney={this.props.selectedComplaint.refundableSecurityMoney}
+									{...complaint}
+								/> : " "}
+
+	 							<AppDetails
 									{...complaint}
 
 								/>
@@ -1829,14 +1849,7 @@ totalAmountPaid = {totalAmountPaid}
 									{...complaint}
 
 								/>
-								{this.state.refundCard == true ? <RefundCard
-									paymentDetails={this.state.newPaymentDetails != "NotFound" && this.state.newPaymentDetails}
-									RefAmount={this.state.totalRefundAmount && this.state.totalRefundAmount}
-									payload={paymentDetailsForReceipt}
-									refundableSecurityMoney={this.props.selectedComplaint.refundableSecurityMoney}
-									{...complaint}
-								/> : " "}
-
+							
 								<div style={{
 									height: "100px",
 				 					width: "100",
@@ -2714,6 +2727,7 @@ const mapStateToProps = (state, ownProps) => {
 			bkLocation: selectedComplaint.bkLocation,
 			tenantId: selectedComplaint.tenantId,
 			bkBankAccountNumber: selectedComplaint.bkBankAccountNumber,
+			bkNomineeName:selectedComplaint.bkNomineeName,
 			bkBankName: selectedComplaint.bkBankName,
 			bkIfscCode: selectedComplaint.bkIfscCode,
 			bkAccountType: selectedComplaint.bkAccountType,
