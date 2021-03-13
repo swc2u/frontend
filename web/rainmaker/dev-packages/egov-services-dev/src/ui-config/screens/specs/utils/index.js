@@ -912,18 +912,23 @@ export const downloadReceipt = async (
             return;
         }
         let tenantData = await getMdmsTenantsData();
-        console.log(tenantData,"nero TenatntData")
+
         let paymentInfoData = "";
         let bankInfo = {};
         let tenantInfo = "";
         if (applicationData.businessService === "PACC") {
+            let noOfTxns = payloadReceiptDetails.Payments.length;
+            let TxnNo = 0;
+            if(noOfTxns === 2){
+                TxnNo = 1;
+            }
             paymentInfoData = {
                 paymentDate: convertEpochToDate(
-                    payloadReceiptDetails.Payments[0].transactionDate,
+                    payloadReceiptDetails.Payments[TxnNo].transactionDate,
                     "dayend"
                 ),
                 transactionId:
-                    payloadReceiptDetails.Payments[0].transactionNumber,
+                    payloadReceiptDetails.Payments[TxnNo].transactionNumber,
                 bookingPeriod: getDurationDate(
                     applicationData.bkFromDate,
                     applicationData.bkToDate
@@ -954,10 +959,10 @@ export const downloadReceipt = async (
                 ),
                 paymentItemExtraColumnLabel: "Booking Period",
 
-                paymentMode: payloadReceiptDetails.Payments[0].paymentMode,
+                paymentMode: payloadReceiptDetails.Payments[TxnNo].paymentMode,
                 bankName: bankName,
                 receiptNo:
-                    payloadReceiptDetails.Payments[0].paymentDetails[0]
+                    payloadReceiptDetails.Payments[TxnNo].paymentDetails[0]
                         .receiptNumber,
                 cleaningCharges: parseFloat(
                     applicationData.bkCleansingCharges
@@ -971,22 +976,22 @@ export const downloadReceipt = async (
                 ).toFixed(2),
                 refundableCharges: applicationData.bkRefundAmount,
                 totalPayment: (
-                    parseFloat(applicationData.bkRent) +
-                    parseFloat(applicationData.bkCleansingCharges) +
-                    parseFloat(applicationData.bkSurchargeRent)
+                    parseFloat(payloadReceiptDetails.Payments[TxnNo].totalAmountPaid)
                 ).toFixed(2),
                 paymentDate: convertEpochToDate(
-                    payloadReceiptDetails.Payments[0].transactionDate,
+                    payloadReceiptDetails.Payments[TxnNo].transactionDate,
                     "dayend"
                 ),
-                paymentType: payloadReceiptDetails.Payments[0].paymentMode,
+                paymentType: payloadReceiptDetails.Payments[TxnNo].paymentMode,
                 facilitationCharge: applicationData.bkFacilitationCharges ? parseFloat(applicationData.bkFacilitationCharges).toFixed(2) : 0,
                 discType: "NotFound",
                 totalPaymentInWords: NumInWords(
-                    payloadReceiptDetails.Payments[0].totalAmountPaid
+                    payloadReceiptDetails.Payments[TxnNo].totalAmountPaid
                 ),
                 custGSTN: applicationData.bkCustomerGstNo? applicationData.bkCustomerGstNo : "NA",
                 mcGSTN: "04AAALM0758K1Z1",
+                dateVenueChangeCharges: noOfTxns === 2? payloadReceiptDetails.Payments[0].totalAmountPaid:0
+
 
             };
             bankInfo.accountholderName = applicationData.bkBankAccountHolder;
@@ -1191,6 +1196,14 @@ export const downloadReceipt = async (
                     payloadReceiptDetails.Payments[0].paymentDetails[0]
                         .receiptNumber,
             };
+            // let noOfBookedRooms = '';
+            // if(roomDataForGivenApplicationNumber.totalNoOfACRooms > 0 && roomDataForGivenApplicationNumber.totalNoOfNonACRooms > 0){
+            //     noOfBookedRooms = ``
+            // }else if(roomDataForGivenApplicationNumber.totalNoOfACRooms > 0){
+
+            // }else if(roomDataForGivenApplicationNumber.totalNoOfNonACRooms >){
+
+            // }
              receiptData = [
                 {
                      applicantDetails: {
@@ -1489,6 +1502,11 @@ export const downloadCertificate = async (
                 receiptQueryString
             )
 
+            let noOfTxns = payloadReceiptDetails.Payments.length;
+            let TxnNo = 0;
+            if(noOfTxns === 2){
+                TxnNo = 1;
+            }
 
             paymentInfo.cleaningCharges = parseFloat(
                 applicationData.bkCleansingCharges
@@ -1510,10 +1528,11 @@ export const downloadCertificate = async (
                 payloadReceiptDetails.Payments[0].transactionDate,
                 "dayend"
             );
-            paymentInfo.receiptNo = payloadReceiptDetails.Payments[0].paymentDetails[0]
+            paymentInfo.receiptNo = payloadReceiptDetails.Payments[TxnNo].paymentDetails[0]
                 .receiptNumber;
             paymentInfo.custGSTN = applicationData.bkCustomerGstNo? applicationData.bkCustomerGstNo : "NA";
             paymentInfo.mcGSTN = "04AAALM0758K1Z1";
+            paymentInfo.dateVenueChangeCharges = noOfTxns === 2? payloadReceiptDetails.Payments[0].totalAmountPaid:0
 
             bankInfo.accountholderName = applicationData.bkBankAccountHolder;
             bankInfo.rBankName = applicationData.bkBankName;
@@ -1846,7 +1865,7 @@ export const downloadApplication = async (
             ),
             bookingPurpose: applicationData.bkBookingPurpose,
             status:  applicationData.bkApplicationStatus === "PENDINGAPPROVAL" ? "Pending Approval" : applicationData.bkApplicationStatus === "PENDINGPAYMENT" ? "Pending Payment" : applicationData.bkApplicationStatus === "APPROVED" ? "Approved" : applicationData.bkApplicationStatus,
-        
+
         };
         let bookingDataPacc = {
             applicationNumber: applicationNumber,
