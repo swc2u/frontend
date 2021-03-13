@@ -9,7 +9,12 @@ import {
     convertEpochToDate,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { gotoApplyWithStep } from "../../utils/index";
+import { getCommonApplyFooter, showHideAdhocPopup } from "../../utils";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
+import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import "./index.css";
+import get from "lodash/get";
 import {
     convertDateInDMY
 } from "../../utils";
@@ -20,6 +25,26 @@ import {
     setapplicationNumber,
     getapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
+
+
+export const callBackForBack = (state, dispatch) => {
+    const applicationNumber = getQueryArg(
+        window.location.href,
+        "applicationNumber"
+    );
+    const businessService = get(
+        state,
+        "screenConfiguration.preparedFinalObject.Booking.businessService",
+        {}
+    );
+    dispatch(
+        setRoute(
+            `/egov-services/pcc-search-preview?applicationNumber=${applicationNumber}&tenantId=${
+            getTenantId()
+            }&businessService=${businessService}`
+        )
+    );
+};
 
 export const pccApplicantSummary = getCommonGrayCard({
     header: {
@@ -559,4 +584,32 @@ cardOne: {
     }, 
     type: "array",
 },
+});
+
+
+export const roomBookingFooter = getCommonApplyFooter({
+    cancelButton: {
+        componentPath: "Button",
+        props: {
+            variant: "outlined",
+            color: "primary",
+            style: {
+                minWidth: "180px",
+                height: "48px",
+                marginRight: "16px",
+                borderRadius: "inherit",
+            },
+        },
+        children: {
+            previousButtonLabel: getLabel({
+                labelName: "Back",
+                labelKey: "BK_PACC_BUTTON_BACK_BOOKING",
+            }),
+        },
+        onClickDefination: {
+            action: "condition",
+            callBack: callBackForBack,
+        },
+        visible: true,
+    },
 });
