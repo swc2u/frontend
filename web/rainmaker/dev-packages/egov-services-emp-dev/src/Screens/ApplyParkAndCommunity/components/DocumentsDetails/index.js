@@ -221,6 +221,7 @@ let documentCode = [
         <div>
         <div classsName="container">
          <div className="col-xs-12">
+
         {this.state.documentsContract.length > 0 && (
           <DocumentList
             documentsList={this.state.documentsContract}
