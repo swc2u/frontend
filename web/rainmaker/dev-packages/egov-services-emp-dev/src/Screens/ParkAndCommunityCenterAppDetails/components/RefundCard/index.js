@@ -341,44 +341,86 @@ class AppDetails extends Component {
     // const label3 = `Refund Amount - Rs.${this.state.NewReFund}`
     return (
 
-      <div>
-        <div style={{ float: 'left', width: '100%', padding: '36px 15px' }}>
-          <div className="col-xs-12" style={{ background: '#fff', padding: '15px 0' }}>
-            <div className="col-sm-6 col-xs-6">
-              <TextField
-                id="RefundAmount"
-                name="RefundAmount"
-                type="number"
-                value={this.state.ShowRefundAmount}
-                disabled={this.state.refundableSecurityFieldDisabled}
-                pattern="[A-Za-z]"
-                // required = {true}
-                hintText={
-                  <Label
-                    label="Refund Amount"
-                    color="rgba(0, 0, 0, 0.3799999952316284)"
-                    fontSize={16}
-                    labelStyle={hintTextStyle}
-                  />
-                }
-                floatingLabelText={
-                  <Label
-                    key={0}
-                    label="Refund Amount"
-                    color="rgba(0,0,0,0.60)"
-                    fontSize="12px"
-                  />
-                }
-                onChange={(e) => this.ChangeRefundAmount(e)}
-                underlineStyle={{ bottom: 7 }}
-                underlineFocusStyle={{ bottom: 7 }}
-                hintStyle={{ width: "100%" }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      // <div>
+      //   <div style={{ float: 'left', width: '100%', padding: '36px 15px' }}>
+      //     <div className="col-xs-12" style={{ background: '#fff', padding: '15px 0' }}>
+      //       <div className="col-sm-6 col-xs-6">
+      //         <TextField
+      //           id="RefundAmount"
+      //           name="RefundAmount"
+      //           type="number"
+      //           value={this.state.ShowRefundAmount}
+      //           disabled={this.state.refundableSecurityFieldDisabled}
+      //           pattern="[A-Za-z]"
+      //           // required = {true}
+      //           hintText={
+      //             <Label
+      //               label="Refund Amount"
+      //               color="rgba(0, 0, 0, 0.3799999952316284)"
+      //               fontSize={16}
+      //               labelStyle={hintTextStyle}
+      //             />
+      //           }
+      //           floatingLabelText={
+      //             <Label
+      //               key={0}
+      //               label="Refund Amount"
+      //               color="rgba(0,0,0,0.60)"
+      //               fontSize="12px"
+      //             />
+      //           }
+      //           onChange={(e) => this.ChangeRefundAmount(e)}
+      //           underlineStyle={{ bottom: 7 }}
+      //           underlineFocusStyle={{ bottom: 7 }}
+      //           hintStyle={{ width: "100%" }}
+      //         />
+      //       </div>
+      //     </div>
+      //   </div>
+      // </div>
 
+
+    
+
+
+ <div>
+        <Card
+          textChildren={
+            <div>
+            <TextField
+            id="RefundAmount"
+            name="RefundAmount"
+            type="number"
+            value={this.state.ShowRefundAmount}
+            disabled={this.state.refundableSecurityFieldDisabled}
+            pattern="[A-Za-z]"
+            // required = {true}
+            style={{ width: '60%', paddingLeft:"2%" }}
+            hintText={
+              <Label
+                label="Refund Amount"
+                color="rgba(0, 0, 0, 0.3799999952316284)"
+                fontSize={16}
+                labelStyle={hintTextStyle}
+              />
+            }
+            floatingLabelText={
+              <Label
+                key={0}
+                label="Refund Amount"
+                color="rgba(0,0,0,0.60)"
+                fontSize="12px"
+              />
+            }
+            onChange={(e) => this.ChangeRefundAmount(e)}
+            underlineStyle={{ bottom: 7 }}
+            underlineFocusStyle={{ bottom: 7 }}
+            hintStyle={{ width: "100%" }}
+          />
+            </div>
+          }
+        />
+      </div>
 
 
       // <div>
