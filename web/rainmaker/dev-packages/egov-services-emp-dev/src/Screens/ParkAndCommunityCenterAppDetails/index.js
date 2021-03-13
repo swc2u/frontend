@@ -534,6 +534,15 @@ class ApplicationDetails extends Component {
 		let { selectedComplaint } = this.props
 		console.log("propsInCancelEmpBooking--", selectedComplaint)
 
+
+let cancelAction;
+if(selectedComplaint.bkApplicationStatus == "APPLIED"){
+	cancelAction = "CANCEL" 
+}
+else{
+	cancelAction = "OFFLINE_CANCEL"	
+}
+
 		let Booking = {
 			"bkRemarks": null,
 			"timeslots": [],
@@ -610,7 +619,7 @@ class ApplicationDetails extends Component {
 			"bkModuleType": null,
 			"uuid": null,
 			"tenantId": selectedComplaint.tenantId,
-			"bkAction": "OFFLINE_CANCEL",
+			"bkAction": cancelAction,
 			"bkConstructionType": null,
 			"businessService": selectedComplaint.businessService,
 			"bkApproverName": null,
@@ -1395,6 +1404,15 @@ class ApplicationDetails extends Component {
 		let { selectedComplaint } = this.props
 		console.log("propsInCancelEmpBooking--", selectedComplaint)
 
+let refundAction;
+
+		if(selectedComplaint.bkApplicationStatus == "APPLIED")  
+         {
+			refundAction =  "SECURITY_REFUND" 
+         }
+		else{
+			refundAction = "OFFLINE_SECURITY_REFUND"
+		}
 		let Booking = {
 			"bkRemarks": null,
 			"timeslots": [],
@@ -1455,7 +1473,7 @@ class ApplicationDetails extends Component {
 			"bkResidentialOrCommercial": null,
 			"bkMaterialStorageArea": null,
 			"bkPlotSketch": null,
-			"bkApplicationStatus": selectedComplaint.bkApplicationStatus,
+			"bkApplicationStatus": selectedComplaint.bkApplicationStatus,  
 			"bkTime": null,
 			"bkStatusUpdateRequest": null,
 			"bkStatus": null,
@@ -1471,7 +1489,7 @@ class ApplicationDetails extends Component {
 			"bkModuleType": null,
 			"uuid": null,
 			"tenantId": selectedComplaint.tenantId,
-			"bkAction": "OFFLINE_SECURITY_REFUND",
+			"bkAction": refundAction,
 			"bkConstructionType": null,
 			"businessService": selectedComplaint.businessService,
 			"bkApproverName": null,
@@ -1607,6 +1625,7 @@ class ApplicationDetails extends Component {
 		const foundThirdLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_AUDIT_DEPARTMENT');
 		const foundFourthLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_CHIEF_ACCOUNT_OFFICER');
 		const foundFifthLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_PAYMENT_PROCESSING_AUTHORITY');
+		const foundTenthLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_MCC_USER'); //BK_MCC_USER
 		const foundSixthLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_E-SAMPARK-CENTER');
 		const foundSevenLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_SUPERVISOR');
 		const foundEightLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_OSD');
@@ -1818,7 +1837,7 @@ totalAmountPaid = {totalAmountPaid}
 
 								<div style={{
 									height: "100px",
-									width: "100",
+				 					width: "100",
 									backgroundColor: "white",
 									border: "2px solid white",
 									boxShadow: "0 0 2px 2px #e7dcdc", paddingLeft: "30px", paddingTop: "10px"
@@ -1976,25 +1995,6 @@ totalAmountPaid = {totalAmountPaid}
 									(complaint.status == "OFFLINE_APPLIED" && foundSixthLavel &&
 										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
 											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
-												{/*Cancel Button    checkNumDays,checkGreaterDate*/}
-												{/* <Button
-		  label={
-			<Label
-			  buttonLabel={true}
-			  color="#fe7a51"
-			  label="Book Room"
-			/>
-		  }
-		  labelStyle={{
-			letterSpacing: 0.7,
-			padding: 0,
-			color: "#fe7a51"
-		  }}
-		  buttonStyle={{ border: "1px solid #fe7a51" }}
-		  style={{ width: "15%" }}
-		  onClick={() => this.BookRoom()}
-		/>  */}
-
 												{(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?
 													<Button
 														label={
@@ -2015,7 +2015,7 @@ totalAmountPaid = {totalAmountPaid}
 													/>
 													: ""}
 
-												{(Difference_In_Days_check > 15 || Difference_In_Days_check == 15) ?
+												{/* {(Difference_In_Days_check > 15 || Difference_In_Days_check == 15) ?
 													<Button
 														label={
 															<Label
@@ -2033,7 +2033,7 @@ totalAmountPaid = {totalAmountPaid}
 														style={{ width: "15%", marginLeft: "2%" }}
 														onClick={() => this.CancelEmpBooking()}
 													/>
-													: ""}
+													: ""} */}
 
 												{/*Date Venue Change*/}
 
@@ -2057,6 +2057,92 @@ totalAmountPaid = {totalAmountPaid}
 													/>
 													: ""}
 
+												{/*Security Refund*/}
+												{/* {first == true ?
+													<Button
+														label={
+															<Label
+																buttonLabel={true}
+																color="#fe7a51"
+																label="SECURITY REFUND"
+															/>
+														}
+														labelStyle={{
+															letterSpacing: 0.7,
+															padding: 0,
+															color: "#fe7a51",
+														}}
+														buttonStyle={{ border: "1px solid #fe7a51" }}
+														style={{ width: "15%", marginLeft: "2%" }}
+														onClick={() => this.ApplyOfflineSecurityRefund()}
+													/>
+													: ""} */}
+
+
+											</div>
+										}></Footer>
+
+									)
+								)}
+								{/*Cancel button MCC User*/}
+
+								{(role === "employee" &&
+									((complaint.status == "OFFLINE_APPLIED" || complaint.status =="APPLIED") && foundTenthLavel &&
+										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
+											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
+												{(Difference_In_Days_check > 15 || Difference_In_Days_check == 15) ?
+													<Button
+														label={
+															<Label
+																buttonLabel={true}
+																color="#fe7a51"
+																label="CANCEL BOOKING"
+															/>
+														}
+														labelStyle={{
+															letterSpacing: 0.7,
+															padding: 0,
+															color: "#fe7a51"
+														}}
+														buttonStyle={{ border: "1px solid #fe7a51" }}
+														style={{ width: "15%", marginLeft: "2%" }}
+														onClick={() => this.CancelEmpBooking()}
+													/>
+													: ""}
+												{/*Security Refund*/}
+												{/* {first == true ?
+													<Button
+														label={
+															<Label
+																buttonLabel={true}
+																color="#fe7a51"
+																label="SECURITY REFUND"
+															/>
+														}
+														labelStyle={{
+															letterSpacing: 0.7,
+															padding: 0,
+															color: "#fe7a51",
+														}}
+														buttonStyle={{ border: "1px solid #fe7a51" }}
+														style={{ width: "15%", marginLeft: "2%" }}
+														onClick={() => this.ApplyOfflineSecurityRefund()}
+													/>
+													: ""} */}
+
+
+											</div>
+										}></Footer>
+
+									)
+								)}
+								{/*Refund Button for MCC user*/}
+
+
+								{(role === "employee" &&
+									((complaint.status == "OFFLINE_MODIFIED" || complaint.status =="MODIFIED")&& foundTenthLavel &&
+										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
+											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
 												{/*Security Refund*/}
 												{first == true ?
 													<Button
@@ -2084,7 +2170,9 @@ totalAmountPaid = {totalAmountPaid}
 
 									)
 								)}
-								{/*sixStep*/}
+
+
+								{/*sevenlevel*/}
 
 								{(role === "employee" &&
 

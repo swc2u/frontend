@@ -317,6 +317,13 @@ if(hh != "NotFound"){
 
   render() {
     const { RefAmount } = this.props;
+    const hintTextStyle = {
+      letterSpacing: "0.7px",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      width: "90%",
+      overflow: "hidden"
+    };
     // console.log("stateOftotal--",this.state.totalAmount, this.state.one)
     // console.log("this.props--RefAmount",RefAmount)
     // const label1 = `Refund Amount - Rs.${RefAmount}`
