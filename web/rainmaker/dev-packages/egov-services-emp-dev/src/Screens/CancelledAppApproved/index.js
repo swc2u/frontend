@@ -89,7 +89,7 @@ class CancelRequestApproved extends Component {
 
         for (let g = 0; g < ledgers.length; g++) {
 
-          if (ledgers[g].taxHeadCode === "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+          if (ledgers[g].taxHeadCode === "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || ledgers[g].taxHeadCode === "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
             calculatedAppliedRefundWithGLCodes.push({
               "glcode": ledgers[g].glcode,
               "debitAmount": ((parseFloat(ledgers[g].debitAmount) * refundPercent) / 100),
@@ -97,7 +97,7 @@ class CancelRequestApproved extends Component {
               "taxHeadCode": ledgers[g].taxHeadCode
             });
           }
-          if (ledgers[g].taxHeadCode === "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+          if (ledgers[g].taxHeadCode === "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || ledgers[g].taxHeadCode === "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
             calculatedAppliedRefundWithGLCodes.push({
               "glcode": ledgers[g].glcode,
               "debitAmount": parseFloat(ledgers[g].debitAmount),
@@ -110,7 +110,7 @@ class CancelRequestApproved extends Component {
         let refundPercent = refundPercentage.LETTHAN30MORETHAN15DAYS.refundpercentage;
         for (let g = 0; g < ledgers.length; g++) {
 
-          if (ledgers[g].taxHeadCode === "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+          if (ledgers[g].taxHeadCode === "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || ledgers[g].taxHeadCode === "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
             calculatedAppliedRefundWithGLCodes.push({
               "glcode": ledgers[g].glcode,
               "debitAmount": ((parseFloat(ledgers[g].debitAmount) * refundPercent) / 100),
@@ -118,7 +118,7 @@ class CancelRequestApproved extends Component {
               "taxHeadCode": ledgers[g].taxHeadCode
             });
           }
-          if (ledgers[g].taxHeadCode === "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+          if (ledgers[g].taxHeadCode === "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || ledgers[g].taxHeadCode === "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
             calculatedAppliedRefundWithGLCodes.push({
               "glcode": ledgers[g].glcode,
               "debitAmount": parseFloat(ledgers[g].debitAmount),
