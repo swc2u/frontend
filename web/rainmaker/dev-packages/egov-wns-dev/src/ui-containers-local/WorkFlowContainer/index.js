@@ -223,14 +223,14 @@ class WorkFlowContainer extends React.Component {
               actions = [];
             }
            // else if(status === "CONNECTION_ACTIVATED" && WaterConnection[0].waterApplicationType==='REGULAR')
-            else if((status == "CONNECTION_ACTIVATED"|| status == "NA") && WaterConnection[0].waterApplicationType==='REGULAR')
+            else if(status !== "" && WaterConnection[0].waterApplicationType==='REGULAR')
             {
               actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
                                               && item.buttonLabel !=='REACTIVATE_CONNECTION'
                                               &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
             }
-            else if((status === "CONNECTION_ACTIVATED" || status == "NA")&& WaterConnection[0].waterApplicationType ==='TEMPORARY')
-           // else if( status !== "" && (WaterConnection[0].waterApplicationType ==='TEMPORARY') )
+            //else if(status === "CONNECTION_ACTIVATED" && WaterConnection[0].waterApplicationType ==='TEMPORARY')
+            else if( status !== "" && (WaterConnection[0].waterApplicationType ==='TEMPORARY') )
             {
               actions = actions.filter(item => item.buttonLabel !== 'PERMANENT_DISCONNECTION' 
                                                 &&  item.buttonLabel !== 'TEMPORARY_DISCONNECTION'

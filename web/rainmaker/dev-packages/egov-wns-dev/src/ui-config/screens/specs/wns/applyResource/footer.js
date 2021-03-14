@@ -1054,7 +1054,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       //   }
       // }
       if(process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit"&& window.localStorage.getItem("ActivityStatusFlag")=== "true"){
-        window.localStorage.removeItem("ActivityStatusFlag");
+        //window.localStorage.removeItem("ActivityStatusFlag");
       }
      else if (process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit") {  
         setReviewPageRoute(state, dispatch);
@@ -1196,6 +1196,12 @@ const moveToSuccess = (combinedArray, dispatch) => {
   const status = "success";
   const applicationNoWater = get(combinedArray[0], "applicationNo");
   const applicationNoSewerage = get(combinedArray[1], "applicationNo");
+  if(process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit"&& window.localStorage.getItem("ActivityStatusFlag")=== "true"){
+    window.localStorage.removeItem("ActivityStatusFlag");
+  }
+  if(localStorage.getItem("ActivityStatusFlag")){
+    window.localStorage.removeItem("ActivityStatusFlag");
+  }
   if (applicationNoWater && applicationNoSewerage) {
     dispatch(
       setRoute(
@@ -1215,6 +1221,7 @@ const moveToSuccess = (combinedArray, dispatch) => {
       )
     );
   }
+
 };
 
 const acknoledgementForBothWaterAndSewerage = async (state, activeStep, isFormValid, dispatch) => {

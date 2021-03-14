@@ -387,18 +387,27 @@ class WorkFlowContainer extends React.Component {
     else{
 
       let labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
+      let labelName='Please fill the required field in Edit section'
       if(data.applicationStatus ==='PENDING_FOR_SECURITY_DEPOSIT' && data.action==='VERIFY_AND_FORWARD_FOR_PAYMENT')
       {
         labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
+        labelName = 'Please fill the required field in Edit section'
       }
       else if(data.applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN' && data.action ==='SUBMIT_ROADCUT_NOC')
       {
         labelKey = 'WS_SUBMIT_ROADCUT_NOC_VALIDATION_MESSAGE'
+        labelName = 'Please upload road cut NOC document in document section then submit'
+      }
+      else  if(data.applicationStatus ==='INITIATED' && data.action==='SUBMIT_APPLICATION')
+      {
+        labelKey = 'WS_RESUBMIT_DOCUMENT_UPLOAD_VALIDATION_MESSAGE'
+        labelName = 'Please upload mandatory document in document section then submit'
+
       }
       toggleSnackbar(
         true,
         {
-          labelName: "Please update filed which is use in calculation",
+          labelName: labelName,
           labelKey: labelKey
         },
         "error"
@@ -742,6 +751,14 @@ ValidateRequest =(payload) =>{
   if(payload.applicationStatus ==='PENDING_FOR_CONNECTION_EXTENSION_REGULAR' && payload.action==='CONVERT_INTO_REGULAR_CONNECTION')
   {
     payload.waterApplicationType = "REGULAR";
+  }
+  if(payload.applicationStatus ==='INITIATED' && payload.action==='SUBMIT_APPLICATION')
+  {
+    if(payload.documents === null)
+    {
+      isvalidRequest = false
+
+    }
   }
 //return  false
   return isvalidRequest
