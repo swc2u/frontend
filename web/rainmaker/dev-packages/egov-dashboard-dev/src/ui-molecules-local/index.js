@@ -151,6 +151,15 @@ const DashboardWork = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardEstate = Loadable({
+  loader: () => import("./DashboardEstate"),
+  loading: () => <Loading />
+});
+
+const DashboardRentedProperty = Loadable({
+  loader: () => import("./DashboardRentedProperty"),
+  loading: () => <Loading />
+});
 
 export {
   TestMolecules,
@@ -182,5 +191,7 @@ export {
   DashboardStoreIndent,
   DashboardStoreManagement,
   DashboardWNS,
-  DashboardWork
+  DashboardWork,
+  DashboardEstate,
+  DashboardRentedProperty
 };

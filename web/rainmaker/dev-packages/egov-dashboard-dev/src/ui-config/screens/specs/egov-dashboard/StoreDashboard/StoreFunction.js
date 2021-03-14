@@ -7,7 +7,7 @@ import { getStoreIndentData } from "../../../../../ui-utils/commons";
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
-  //debugger;
+  debugger;
   var flag_for_api_call = true
   let queryObject = [
     {

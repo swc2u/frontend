@@ -1,6 +1,6 @@
 import { getCommonCard, getCommonContainer, getDateField, getLabel, getPattern,} from "egov-ui-framework/ui-config/screens/specs/utils";
 // import { searchAPICall, SearchDashboardData, SearchPGRDashboardData } from "./functions";
-import { SearchDashboardData } from "./OPMSFunction";
+import { SearchDashboardData } from "./EstateFunction";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import './index.css';
 
@@ -125,7 +125,7 @@ export const FilterForm = getCommonCard({
 export const DashboardResults = {
   uiFramework: "custom-molecules-local",
   moduleName: "egov-dashboard",
-  componentPath: "DashboardOPMS",
+  componentPath: "DashboardEstate",
   props: {
   // className: "dashboard-graph",
   formKey: `newapplication`,
