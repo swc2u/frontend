@@ -377,7 +377,7 @@ const mapDispatchToProps = (dispatch) => {
                     true,
                     {
                         labelName:
-                            "Selected Range Should Not Contain Reserved Date",
+                            "Selected range should not contain reserved date",
                         labelKey: "",
                     },
                     "warning"

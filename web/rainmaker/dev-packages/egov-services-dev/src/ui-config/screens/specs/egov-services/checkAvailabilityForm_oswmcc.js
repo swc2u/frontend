@@ -253,7 +253,7 @@ const callBackForSearch = async (state, dispatch) => {
         //     dispatch(
         //         toggleSnackbar(
         //             true,
-        //             { labelName: "Please Select Booking Venue!", labelKey: "" },
+        //             { labelName: "Please select booking venue!", labelKey: "" },
         //             "warning"
         //         )
         //     );
