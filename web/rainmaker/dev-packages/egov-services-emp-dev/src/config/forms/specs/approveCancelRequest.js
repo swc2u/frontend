@@ -20,6 +20,11 @@ const formConfig = {
         jsonPath: "Booking.bkStatus",
         value:''
       },
+      editableRefundAmount: {
+        id: "Booking-editableRefundAmount",
+        jsonPath: "Booking.refundableSecurityMoney",
+        value:''
+      },
       assignee: {
         id: "Booking-type",
         jsonPath: "Booking.assignee",

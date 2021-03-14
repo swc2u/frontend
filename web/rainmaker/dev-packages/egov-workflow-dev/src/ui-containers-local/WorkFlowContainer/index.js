@@ -324,7 +324,7 @@ class WorkFlowContainer extends React.Component {
       {
         data.processInstance = {
           documents: data.wfDocuments,
-          assignes: data.assignees,
+          assignee: data.assignees[0],
           comment: data.comment,
           action: data.action,
           additionalDetails:{
@@ -336,7 +336,7 @@ class WorkFlowContainer extends React.Component {
       else{
               data.processInstance = {
                 documents: data.wfDocuments,
-                assignes: data.assignees,
+                assignee: data.assignees.length === 0?null:data.assignees[0],
                 comment: data.comment,
                 action: data.action,
                 additionalDetails:null
@@ -372,7 +372,7 @@ class WorkFlowContainer extends React.Component {
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
       {
-        validRequest =  this.ValidateRequest(data)
+        validRequest = this.ValidateRequest(data)
       }   
 
     try {
@@ -387,18 +387,27 @@ class WorkFlowContainer extends React.Component {
     else{
 
       let labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
+      let labelName='Please fill the required field in Edit section'
       if(data.applicationStatus ==='PENDING_FOR_SECURITY_DEPOSIT' && data.action==='VERIFY_AND_FORWARD_FOR_PAYMENT')
       {
         labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
+        labelName = 'Please fill the required field in Edit section'
       }
       else if(data.applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN' && data.action ==='SUBMIT_ROADCUT_NOC')
       {
         labelKey = 'WS_SUBMIT_ROADCUT_NOC_VALIDATION_MESSAGE'
+        labelName = 'Please upload road cut NOC document in document section then submit'
+      }
+      else  if(data.applicationStatus ==='INITIATED' && data.action==='SUBMIT_APPLICATION')
+      {
+        labelKey = 'WS_RESUBMIT_DOCUMENT_UPLOAD_VALIDATION_MESSAGE'
+        labelName = 'Please upload mandatory document in document section then submit'
+
       }
       toggleSnackbar(
         true,
         {
-          labelName: "Please update filed which is use in calculation",
+          labelName: labelName,
           labelKey: labelKey
         },
         "error"
@@ -732,7 +741,8 @@ ValidateRequest =(payload) =>{
   }
   // change tarrif type when state is PENDING_FOR_CONNECTION_TARIFF_CHANGE for action CHANGE_TARIFF
 
- if(payload.applicationStatus ==='PENDING_FOR_CONNECTION_TARIFF_CHANGE' && payload.action==='CHANGE_TARIFF')
+ if((payload.applicationStatus ==='PENDING_FOR_CONNECTION_TARIFF_CHANGE' && payload.action==='CHANGE_TARIFF')
+    ||(payload.applicationStatus ==='PENDING_FOR_CONNECTION_HOLDER_CHANGE' && payload.action==='CHANGE_CONNECTION_HOLDER'))//PENDING_FOR_CONNECTION_HOLDER_CHANGE may be include for UPDATE_CONNECTION_HOLDER_INFO and CHANGE_CONNECTION_HOLDER
   {
     if(payload.proposedUsageCategory !==null)
     payload.waterProperty.usageCategory = payload.proposedUsageCategory
@@ -741,6 +751,14 @@ ValidateRequest =(payload) =>{
   if(payload.applicationStatus ==='PENDING_FOR_CONNECTION_EXTENSION_REGULAR' && payload.action==='CONVERT_INTO_REGULAR_CONNECTION')
   {
     payload.waterApplicationType = "REGULAR";
+  }
+  if(payload.applicationStatus ==='INITIATED' && payload.action==='SUBMIT_APPLICATION')
+  {
+    if(payload.documents === null)
+    {
+      isvalidRequest = false
+
+    }
   }
 //return  false
   return isvalidRequest

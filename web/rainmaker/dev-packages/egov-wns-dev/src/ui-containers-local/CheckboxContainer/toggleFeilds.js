@@ -48,7 +48,7 @@ export const toggleWater = (onFieldChange, value) => {
     "apply",
     "components.div.children.formwizardFirstStep.children.propertyUsageDetails",
     "visible",
-    true
+    value
   );
   // onFieldChange(
   //   "apply",

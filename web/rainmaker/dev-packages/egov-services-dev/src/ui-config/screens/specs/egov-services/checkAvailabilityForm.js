@@ -27,6 +27,7 @@ import { dispatchMultipleFieldChangeAction } from "egov-ui-framework/ui-config/s
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 
+import set from "lodash/set";
 const callBackForReset = (state, dispatch, action) => {
     const availabilityCheckData = get(
         state,
@@ -216,7 +217,7 @@ const callBackForSearch = async (state, dispatch) => {
         dispatch(
             toggleSnackbar(
                 true,
-                { labelName: "Please Select Booking Venue!", labelKey: "" },
+                { labelName: "Please select booking venue!", labelKey: "" },
                 "warning"
             )
         );
@@ -236,9 +237,16 @@ const callBackForSearch = async (state, dispatch) => {
                     daylist.map((v) => {
                         reservedDates.push(v.toISOString().slice(0, 10));
                     });
-                });
+                });  
+                 set(
+                    state.screenConfiguration.screenConfig["checkavailability"],
+                    "components.div.children.checkAvailabilityCalendar.visible", 
+                       true
+                );
                 dispatch(prepareFinalObject("availabilityCheckData.reservedDays", reservedDates));
-                // const actionDefination = [
+                
+    
+              // const actionDefination = [
                 //     {
                 //         path:
                 //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
@@ -264,7 +272,7 @@ const callBackForSearch = async (state, dispatch) => {
             dispatch(
                 toggleSnackbar(
                     true,
-                    { labelName: "Please Select Booking Venue!", labelKey: "" },
+                    { labelName: "Please select booking venue!", labelKey: "" },
                     "warning"
                 )
             );
@@ -275,7 +283,7 @@ const callBackForSearch = async (state, dispatch) => {
     //     dispatch(
     //         toggleSnackbar(
     //             true,
-    //             { labelName: "Please Select Booking Venue!", labelKey: "" },
+    //             { labelName: "Please select booking venue!", labelKey: "" },
     //             "warning"
     //         )
     //     );

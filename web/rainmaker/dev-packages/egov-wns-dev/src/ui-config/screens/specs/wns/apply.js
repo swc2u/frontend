@@ -146,13 +146,30 @@ const getLabelForWnsHeader = () => {
 
   }
   else{
-    return `${wnsHeader}_HEADER`;
+ 
+    const wnsHeader_ =  window.localStorage.getItem("wns_workflow");
+    if(wnsHeader_)
+    {
+      return `${wnsHeader_}_DETAIL_HEADER`;
+    }
+    else
+    return `${wnsHeader}_DETAIL_HEADER`;
 
   }
 }
     
   else if( process.env.REACT_APP_NAME === "Citizen")
+  {
+    const wnsHeader_ =  window.localStorage.getItem("wns_workflow");
+    if(wnsHeader_)
+    {
+      return `${wnsHeader_}_DETAIL_HEADER`;
+    }
+    else   
     return  "WS_APPLY_NEW_CONNECTION_HEADER"
+
+  }
+    
   else
   {
     const wnsHeaderTepm =  window.localStorage.getItem("wns_workflow");
@@ -407,6 +424,16 @@ export const getData = async (action, state, dispatch) => {
         try { payloadSewerage = await getSearchResultsForSewerage(queryObject, dispatch) } catch (error) { console.error(error); }
         payloadSewerage.SewerageConnections[0].water = false;
         payloadSewerage.SewerageConnections[0].sewerage = true;
+         //set modify property
+         payloadSewerage.SewerageConnections[0].property.subusageCategory = payloadSewerage.SewerageConnections[0].property.usageCategory;
+         if(payloadSewerage.SewerageConnections[0].property.usageCategory !==undefined)
+         { 
+          const swusageCategory_ = payloadSewerage.SewerageConnections[0].property.usageCategory;
+         payloadSewerage.SewerageConnections[0].property.usageCategory = payloadSewerage.SewerageConnections[0].property.usageCategory.split('.')[0]; 
+         
+        
+         displaysubUsageType(swusageCategory_, dispatch, state);
+         }
         dispatch(prepareFinalObject("SewerageConnection", payloadSewerage.SewerageConnections));
       } else {
         try { payloadWater = await getSearchResults(queryObject) } catch (error) { console.error(error); };
@@ -772,7 +799,7 @@ const getApplyScreenChildren = () => {
  
  if(wnsStatus || ActionType){
   switch(Action){
-    case "UPDATE_CONNECTION_HOLDER_INFO" : return {connectionHolderDetails }; 
+    case "UPDATE_CONNECTION_HOLDER_INFO" : return {connConversionDetails,connectionHolderDetails }; 
     case "REACTIVATE_CONNECTION":
     case "TEMPORARY_DISCONNECTION":
     case "PERMANENT_DISCONNECTION":

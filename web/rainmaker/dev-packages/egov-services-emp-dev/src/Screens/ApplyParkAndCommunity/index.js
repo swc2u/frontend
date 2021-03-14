@@ -37,25 +37,28 @@ export class StepForm extends Component {
         houseNo: this.props.appData.bkHouseNo ? this.props.appData.bkHouseNo : '',
         purpose: this.props.appData.bkBookingPurpose ? this.props.appData.bkBookingPurpose : '',
         locality: this.props.appData.bkLocation ? this.props.appData.bkLocation : '',
-        residenials: '',
+        residenials: this.props.appData.bkResidentialOrCommercial !== undefined && this.props.appData.bkResidentialOrCommercial !== null ? this.props.appData.bkResidentialOrCommercial : '',
         approverName: '',//bkBookingPurpose
         comment: '',
-        dimension: '',
-        DiscountReason : '',
+        dimension: '', 
+        DiscountReason : this.props.appData.bkRemarks ? this.props.appData.bkRemarks : '',//
         location: this.props.appData.bkLocation ? this.props.appData.bkLocation : '',//bkLocation
-        cleaningCharges: '',
+        cleaningCharges: '', 
         rent: '',
         facilitationCharges: '',
         NewfCharges: '',
         surcharge: '', utGST: '', cGST: '',
         GSTnumber: this.props.appData &&  this.props.appData.bkCustomerGstNo ||  "", type: '',
         fromDate: '', finalRent: '',
-        toDate: '', transactionNumber: '', bankName: '', paymentMode: '', amount: '', transactionDate: '', discountType: 'General',          
+        toDate: '', transactionNumber: '', bankName: '', 
+        paymentMode: this.props.appData.bkMaterialStorageArea !== undefined && this.props.appData.bkMaterialStorageArea !== null ? this.props.appData.bkMaterialStorageArea : '',
+         amount: '', transactionDate: '', 
+        discountType: this.props.appData.bkPlotSketch ? this.props.appData.bkPlotSketch : 'General',       //bkPlotSketch 
         childrenArray: [
             { labelName: "Applicant Details", labelKey: "APPLICANT DETAILS" },
             { labelName: "Booking Details", labelKey: "BOOKING DETAILS" },
             { labelName: "Bank Details", labelKey: "BANK DETAILS" },
-            { labelName: "Payments Details", labelKey: "PAYMENT DETAILS" },
+            // { labelName: "Payments Details", labelKey: "PAYMENT DETAILS" },
             { labelName: "Documents", labelKey: "DOCUMENTS" },
             { labelName: "Summary", labelKey: "SUMMARY" },]
 
@@ -131,7 +134,7 @@ export class StepForm extends Component {
     firstStep = () => {
         const { step } = this.state;
         this.setState({
-            step: step - 5
+            step: step - 4
         });
     }
 
@@ -374,26 +377,26 @@ console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
                 prevStep={this.prevStep}
             />);
 
-        if (step === 3)
-            return (<ParkPaymentDetails
-                nextStep={this.nextStep}
-                prevStep={this.prevStep}
-                handleChange={this.handleChange}
-                showAmount={showAmount}
-                transactionNumber={transactionNumber}
-                transactionDateChange={this.transactionDateChange}
-                bankName={bankName}
-                paymentMode={paymentMode}
-                amount={VfinalAmount}
-                finalRent={finalRent}
-                transactionDate={transactionDate}
-                discountType={discountType}
-                // rent={VfinalAmount}  
-                rent={fixedRefundPlusAllRentNum}
-                facilitationCharges={facilitationCharges}
-            />);
+        // if (step === 3)
+        //     return (<ParkPaymentDetails
+        //         nextStep={this.nextStep}
+        //         prevStep={this.prevStep}
+        //         handleChange={this.handleChange}
+        //         showAmount={showAmount}
+        //         transactionNumber={transactionNumber}
+        //         transactionDateChange={this.transactionDateChange}
+        //         bankName={bankName}
+        //         paymentMode={paymentMode}
+        //         amount={VfinalAmount}
+        //         finalRent={finalRent}
+        //         transactionDate={transactionDate}
+        //         discountType={discountType}
+        //         // rent={VfinalAmount}  
+        //         rent={fixedRefundPlusAllRentNum}
+        //         facilitationCharges={facilitationCharges}
+        //     />);
 
-        if (step === 4)
+        if (step === 3)
             return (<DocumentDetails
                 nextStep={this.nextStep}
                 rent={vrent}
@@ -404,7 +407,7 @@ console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
                 email={email}
                 mobileNo={mobileNo}
             />);
-        if (step === 5)
+        if (step === 4)
             return (<SummaryInfo
 
                 bookingData={bookingData}
@@ -486,12 +489,27 @@ const mapStateToProps = state => {
   let fromDateone = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData : "one"
   let bookingOne = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData:"two"
   let stateData = state;
-
+  let Previousdiscount = "NotFound"
 //   let appData = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0] : ""
 //   console.log("appData--",appData)
 
   let appData = state.bookings ? (state.bookings.applicationData !== undefined && state.bookings.applicationData !== null ? state.bookings.applicationData.bookingsModelList.length > 0 ?(state.bookings.applicationData.bookingsModelList[0]) :'NA' : 'NA'): 'NA'
   console.log("appData--",appData)
+
+  if(appData !== undefined && appData !== null && appData !== 'NA'){
+     if(appData.discount == 0){
+        Previousdiscount = "General"
+     } 
+     if(appData.discount == 50){
+        Previousdiscount = "50%"
+     }
+     if(appData.discount == 20){
+        Previousdiscount = "50%"
+     }
+     if(appData.discount == 100){
+        Previousdiscount = "100%"
+     }
+  }
   
   
   let fCharges;
@@ -510,7 +528,8 @@ const mapStateToProps = state => {
         fromDateone,
         bookingOne,
         fCharges,
-        appData
+        appData,
+        Previousdiscount
     }
 }
 
