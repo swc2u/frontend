@@ -4,15 +4,15 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { getUserInfo, setapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 import { getDashboardDropdownData } from "../../../../ui-utils/commons";
 // import { HCDashboardFilterForm, HCDashboardResults } from "./HCDashboard/HCDashboard";
-import { FilterForm, DashboardResults } from "./OPMSDashboard/OPMSDashboard";
+import { FilterForm, DashboardResults } from "./RentedPropertyDashboard/RentedPropertyDashboard";
 import './index.css';
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 
 const header = getCommonHeader(
   {
-    labelName: "OPMS Dashboard",
-    labelKey: "OPMS_dashboard_1"
+    labelName: "Rented Property Dashboard",
+    labelKey: "RentedProperty_dashboard_1"
   },
   {
     classes: {
@@ -44,15 +44,15 @@ const getDropDownData = async (action, state, dispatch) => {
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
-    "name" : "Status Report",
-    "code" : "statusReport"
+    "name" : "Collection Report",
+    "code" : "collectionReport"
     },
     {
-      "name" : "Collection Report",
-      "code" : "collectionReport"
+      "name" : "Due Report",
+      "code" : "dueReport"
     }
   ]
-  var selectedDefaultData = {value: "statusReport", label: "Status Report"};
+  var selectedDefaultData = {value: "collectionReport", label: "Collection Report"};
 
   // Date default
   var fromDate = new Date();
@@ -64,9 +64,9 @@ const getDropDownData = async (action, state, dispatch) => {
   dispatch(prepareFinalObject("dahsboardHome.defaulttoDate", formatDt));
 }
 
-const OPMSDashboard = {
+const RentedPropertyDashboard = {
   uiFramework: "material-ui",
-  name: "OPMSDashboard",
+  name: "RentedPropertyDashboard",
   beforeInitScreen: (action, state, dispatch) => {
     
     debugger
@@ -101,4 +101,4 @@ const OPMSDashboard = {
   }
 };
 
-export default OPMSDashboard;
+export default RentedPropertyDashboard;

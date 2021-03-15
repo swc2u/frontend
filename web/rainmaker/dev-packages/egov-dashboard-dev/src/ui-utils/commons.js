@@ -1449,6 +1449,141 @@ export const getPublicRelationData = async ( dispatch, data ) => {
   }
 };
 
+// Get Dashboard Data for Rented Property CollectionReport
+export const getRentedPropertyData = async ( dispatch, data ) => {
+  
+  debugger;
+  var payloadDataCollection = {
+    "tenantId": data.tenantId,
+    "reportName": "RPRentRegistryReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ],
+    "reportSortBy": data.reportSortBy
+  }
+
+  var payloadDataDue = {
+    "tenantId": data.tenantId,
+    "reportName": "RPDueAmountReport",
+    "searchParams": [],
+    "reportSortBy": data.reportSortBy
+  }
+
+  try {
+    store.dispatch(toggleSpinner());
+    const CollectionData = await httpRequest(
+      "post",
+      "/report/rainmaker-rp/RPRentRegistryReport/_get?tenantId=ch.chandigarh&pageSize=false&offset=0",
+      "",
+      [],
+      payloadDataCollection
+    );
+
+    const DueData = await httpRequest(
+      "post",
+      "/report/rainmaker-rp/RPDueAmountReport/_get?tenantId=ch.chandigarh&pageSize=false&offset=0",
+      "",
+      [],
+      payloadDataDue
+    );
+
+    //debugger;
+    const DescriptionReport = [CollectionData, DueData];
+    var response = [ DescriptionReport, payloadDataCollection.reportSortBy ];
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+    // OK
+    dispatch(
+      handleField(
+      "RentedPropertyDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+
+// Get Dashboard Data for Estate Data
+export const getEStateData = async ( dispatch, data ) => {
+  
+  debugger;
+  // Same as per Sport and culture but module code is different
+  var payloadData = {
+  "tenantId": data.tenantId,
+  "RequestBody": {
+    "tenantId": data.tenantId,
+    "moduleCode": "",
+    "eventDetailUuid": "",
+    "eventTitle": "",
+    "eventStatus": "",
+    "status": "",
+    "startDate": data.fromDate,
+    "endDate": data.toDate,
+    "eventId": "",
+    "defaultGrid": false
+  },
+  "reportSortBy": data.reportSortBy
+  }
+
+  try {
+    store.dispatch(toggleSpinner());
+    const DescriptionReport = await httpRequest(
+      "post",
+      "/est-services/application/_search?branchType=EstateBranch",
+      "",
+      [],
+      payloadData
+    );
+
+    //debugger;
+    var response = [ DescriptionReport, payloadData.reportSortBy ];
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+    // OK
+    dispatch(
+      handleField(
+      "EstateDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
 // Get Dashboard Data for TradeLicense
 export const getTradeLicenseData = async ( dispatch, data ) => {
   
@@ -1582,36 +1717,141 @@ export const getLegalDashboardData = async ( dispatch, data ) => {
   }
 }; 
 
-// Get Dashboard Data for OPMS Revenue
-export const getOPMSData = async ( dispatch, data ) => {
+// Get Dashboard Data for OPMS (Status))
+export const getStatusOPMSData = async ( dispatch, data ) => {
   
   debugger;
-  // Same as per Sport and culture but module code is different
-  var payloadData_Revenue = {
-  "tenantId": data.tenantId,
-  "applicationType": null,
-  "applicationStatus": null,
-  "applicationId": null,
-  "reportName": "RevenueCollectionReportApplicationTypeWise",
-  "searchParams": [
-    {
-      "name": "fromDate",
-      "input": data.fromDate
+  // Payload for all Status 4 API OPMS report 
+  var petnocPayload = {
+    "applicationType": "PETNOC",
+    "applicationStatus": null,
+    "reportName": "",
+    "tenantId": data.tenantId,
+    "dataPayload": {
+      "fromDate": data.fromDate,
+      "toDate": data.toDate,
+      "applicationStatus": null
     },
-    {
-      "name": "toDate",
-      "input": data.toDate
-    }
-  ],
-  "reportSortBy": data.reportSortBy
+    "reportSortBy": data.reportSortBy
   }
 
-  var payloadData_Summary = {
-    "applicationType": null,
+  var roadcutnocPayload = {
+    "applicationType": "ROADCUTNOC",
     "applicationStatus": null,
-    "applicationId": null,
+    "reportName": "",
     "tenantId": data.tenantId,
-    "reportName": "MISSummaryReport",
+    "dataPayload": {
+      "fromDate": data.fromDate,
+      "toDate": data.toDate,
+      "applicationStatus": null
+    },
+    "reportSortBy": data.reportSortBy
+  }
+
+  var advertisementnocPayload = {
+    "applicationType": "ADVERTISEMENTNOC",
+    "applicationStatus": null,
+    "reportName": "",
+    "tenantId": data.tenantId,
+    "dataPayload": {
+      "fromDate": data.fromDate,
+      "toDate": data.toDate,
+      "applicationStatus": null
+    },
+    "reportSortBy": data.reportSortBy
+  }
+
+  var sellmeatnocPayload = {
+    "applicationType": "SELLMEATNOC",
+    "applicationStatus": null,
+    "reportName": "",
+    "tenantId": data.tenantId,
+    "dataPayload": {
+      "fromDate": data.fromDate,
+      "toDate": data.toDate,
+      "applicationStatus": null
+    },
+    "reportSortBy": data.reportSortBy
+  }
+  
+  try {
+    store.dispatch(toggleSpinner());
+    const petnocStatusRes = await httpRequest(
+      "post",
+      "/pm-services/noc/_get",
+      "",
+      [],
+      petnocPayload
+    );
+
+    const roadcutStatusRes = await httpRequest(
+      "post",
+      "/pm-services/noc/_get",
+      "",
+      [],
+      roadcutnocPayload
+    );
+    
+    const advertisementStatusRes = await httpRequest(
+      "post",
+      "/pm-services/noc/_get",
+      "",
+      [],
+      advertisementnocPayload
+    );
+    
+    const sellmeatStatusRes = await httpRequest(
+      "post",
+      "/pm-services/noc/_get",
+      "",
+      [],
+      sellmeatnocPayload
+    );
+
+    const DescriptionReport2 = [];
+
+    //debugger;
+    var resJSON = {
+      "PETNOC" : petnocStatusRes.nocApplicationDetail,
+      "ROADCUTNOC": roadcutStatusRes.nocApplicationDetail,
+      "ADVERTISEMENTNOC": advertisementStatusRes.nocApplicationDetail,
+      "SELLMEATNOC": sellmeatStatusRes.nocApplicationDetail
+    }
+    var response = [ resJSON, petnocPayload.reportSortBy ];
+    dispatch(prepareFinalObject("allDashboardSearchData", resJSON));
+
+    // OK
+    dispatch(
+      handleField(
+      "OPMSDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+export const getCollectionOPMSData = async ( dispatch, data ) => {
+  
+  debugger;
+  
+  const typewisePayloadData = {
+    "applicationStatus": null,
+    "tenantId": data.tenantId,
+    "reportName": "RevenueCollectionReportApplicationTypeWise",
     "searchParams": [
       {
         "name": "fromDate",
@@ -1622,39 +1862,54 @@ export const getOPMSData = async ( dispatch, data ) => {
         "input": data.toDate
       }
     ],
-    "reportSortBy": data.reportSortBy
-    }
+    "reportSortBy" : data.reportSortBy
+  };
+
+  const sectorwisePayloadData = {
+    "applicationStatus": null,
+    "tenantId": data.tenantId,
+    "reportName": "RevenueCollectionReportSectorWise",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      },
+      {
+        "name": "sector",
+        "input": ""
+      }
+    ],
+    "reportSortBy" : data.reportSortBy
+  };
 
   try {
     store.dispatch(toggleSpinner());
-    const DescriptionReport = await httpRequest(
+    const typeWiseData = await httpRequest(
       "post",
       "/report/pm-services/RevenueCollectionReportApplicationTypeWise/_get",
       "",
       [],
-      payloadData_Revenue
+      typewisePayloadData
     );
 
-    const DescriptionReport2 = await httpRequest(
+    const sectorWiseData = await httpRequest(
       "post",
-      "/report/pm-services/MISSummaryReport/_get",
+      "/report/pm-services/RevenueCollectionReportSectorWise/_get",
       "",
       [],
-      payloadData_Summary
-    );
+      sectorwisePayloadData
+    );;
 
     //debugger;
     var resJSON = {
-      "graphOne" : {
-        "reportHeader": DescriptionReport.reportResponses[0].reportHeader,
-        "reportData" : DescriptionReport.reportResponses[0].reportData
-      },
-      "graphTwo": {
-        "reportHeader": DescriptionReport2.reportResponses[0].reportHeader,
-        "reportData" : DescriptionReport2.reportResponses[0].reportData
-      }
+      "revenueCollectionTypeWise" : typeWiseData.reportResponses,
+      "revenueCollectionSectorWise": sectorWiseData.reportResponses,
     }
-    var response = [ resJSON, payloadData_Summary.reportSortBy ];
+    var response = [ resJSON, typewisePayloadData.reportSortBy ];
     dispatch(prepareFinalObject("allDashboardSearchData", resJSON));
 
     // OK
@@ -1738,7 +1993,7 @@ export const getStoreIndentData = async ( dispatch, data ) => {
     const DescriptionReport = await httpRequest(
       "post",
       "/store-asset-services/materialissues/_search?tenantId="+getTenantId()
-      +"&fromStore="+payloadData.storeName.value+"&issueFromDate="+payloadData.fromDate
+      +"&fromStore="+payloadData.reportSortBy.value+"&issueFromDate="+payloadData.fromDate
       +"&issueToDate="+payloadData.toDate+"",
       "",
       [],

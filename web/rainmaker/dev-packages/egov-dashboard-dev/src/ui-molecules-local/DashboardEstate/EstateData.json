@@ -1,0 +1,1103 @@
+{
+    "ResponseInfo": {
+        "apiId": "Rainmaker",
+        "ver": ".01",
+        "ts": null,
+        "resMsgId": "uief87324",
+        "msgId": "20170310130900|en_IN",
+        "status": "successful"
+    },
+    "Applications": [
+        {
+            "allDocuments": [
+                {
+                    "id": "0abb198f-79b4-4222-8817-8455109e0755",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "AFFIDAVIT_EFFECT_UNDER_HAND_SALE",
+                    "fileStoreId": "2abeece3-0ccf-4042-b38a-b2fc7129f2fa",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913805097,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "4342f7a5-9acd-4d03-a7e0-7241ba97a72e",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "NO_DUE_CERTIFICATE",
+                    "fileStoreId": "fb517f6c-7e29-4231-bdd3-61a5259e9402",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913810089,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "e485e02b-6d07-452f-9ded-7112f36101fc",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "CERTIFIED_COPY_OF_LEASE_RIGHT",
+                    "fileStoreId": "a61417c4-f43e-4b3a-87fd-a61157a6a211",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913485775,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "c61418fc-893a-4256-b662-eda49d5a2f4c",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "NOTARIZED_COPY_GPA_SPA",
+                    "fileStoreId": "b4122faa-1ec4-4a34-9ade-115b97333bdc",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913794017,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "0c53462d-8181-4ed9-9f2a-b3774ae1e22a",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "CERTIFIED_COPY_OF_LEASE_RIGHT",
+                    "fileStoreId": "72285d24-c4d1-4320-a0da-68bfd3b82a07",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913750663,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "c31ffc76-960c-4102-bfdc-4c2c39570b46",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "NOTARIZED_COPY_OF_SALE_DEED",
+                    "fileStoreId": "cd85ba76-e99d-4568-b6ca-5bb65edbd19c",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913497354,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "6641877f-9ccd-460c-8d48-1d0f62d007db",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "SELF_ATTESTED_PHOTO",
+                    "fileStoreId": "a83021de-f19c-4ec7-8029-04041e89d243",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913764340,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "277d2ec2-879e-470d-98b9-ae483ecb58f6",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "INDEMINITY_BOND_OF_TRANSFEREE",
+                    "fileStoreId": "c4a9331d-c2a4-4886-9a97-e00a30057b91",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913755112,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "4c9e54ed-56be-4502-8d60-e7cccc0009d4",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "SELF_ATTESTED_PHOTO_OF_WITNESSES",
+                    "fileStoreId": "ff8d4e0a-e5ae-4d27-9dcd-d3b216a6fd1d",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913770096,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "7c3a3caf-35f4-4dbf-94c7-ec4108f5722f",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "CLEARANCE_OF_PREVIOUS_LOANS",
+                    "fileStoreId": "2c5e3b91-48f4-4826-b2d5-e91782d2eb6f",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913776981,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "1ead41b1-2e8f-4cbe-8b19-8faecac47af5",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "SEWERAGE_CONNECTION_OR_OCCUPATION_CERTIFICATE_FURNISH_PROOF",
+                    "fileStoreId": "09635803-035f-4870-a25f-1b5c3c755b58",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913783219,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "c1bd31fa-767e-4132-b462-46d6cf3d0ca9",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "AN_UNDERTAKING_BY_WAY_INDEMITY_BOND",
+                    "fileStoreId": "236ccf5e-5335-4db1-a1ea-3140a5038278",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913788358,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "ec597036-dbc7-4433-aa7b-e72217e4bfc9",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "AFFIDAVIT_REGARDING_GPA_SPA",
+                    "fileStoreId": "9fc0cadd-44e3-4770-b80e-91ecf84567c9",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913799671,
+                        "lastModifiedTime": 1613914658291
+                    }
+                }
+            ],
+            "id": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+            "tenantId": "ch.chandigarh",
+            "property": {
+                "penaltyBusinessService": "ESTATE_SERVICE_ESTATE_BRANCH.PROPERTY_VIOLATION",
+                "extensionFeeBusinessService": "ESTATE_SERVICE_ESTATE_BRANCH.EXTENSION_FEE",
+                "securityDepositBusinessService": "ESTATE_SERVICE_ESTATE_BRANCH.SECURITY_DEPOSIT",
+                "id": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                "tenantId": "ch.chandigarh",
+                "fileNumber": "123",
+                "category": "CAT.RESIDENTIAL",
+                "subCategory": "SUBCAT.HOUSE",
+                "siteNumber": "123",
+                "sectorNumber": "SECTOR-1",
+                "propertyMasterOrAllotmentOfSite": "PROPERTY_MASTER",
+                "isCancelationOfSite": false,
+                "state": "ES_APPROVED",
+                "action": "APPROVE",
+                "assignee": null,
+                "comments": null,
+                "propertyDetails": {
+                    "inActiveBidders": null,
+                    "inActiveEstateDemands": null,
+                    "inActiveEstatePayments": null,
+                    "offlinePaymentDetails": [],
+                    "inActiveManiMajraDemands": null,
+                    "inActiveManiMajraPayments": null,
+                    "workFlowBusinessService": "ES-ESTATEBRANCH",
+                    "id": "f6b9d34c-a62c-4bec-9fd7-f28da376831c",
+                    "tenantId": "ch.chandigarh",
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "branchType": "ESTATE_BRANCH",
+                    "propertyType": "PROPERTY_TYPE.FREEHOLD",
+                    "demandType": null,
+                    "typeOfAllocation": "ALLOCATION_TYPE.ALLOTMENT",
+                    "emdAmount": null,
+                    "emdDate": 0,
+                    "modeOfAuction": null,
+                    "schemeName": null,
+                    "dateOfAuction": 0,
+                    "areaSqft": 300,
+                    "ratePerSqft": 10,
+                    "lastNocDate": 0,
+                    "serviceCategory": null,
+                    "isPropertyActive": false,
+                    "tradeType": null,
+                    "companyName": null,
+                    "companyAddress": null,
+                    "companyRegistrationNumber": null,
+                    "companyType": null,
+                    "decreeDate": 0,
+                    "courtDetails": null,
+                    "civilTitledAs": null,
+                    "auditDetails": {
+                        "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613443215388,
+                        "lastModifiedTime": 1613912286851
+                    },
+                    "companyRegistrationDate": 0,
+                    "companyOrFirm": null,
+                    "propertyRegisteredTo": "INDIVIDUAL",
+                    "entityType": null,
+                    "houseNumber": null,
+                    "village": null,
+                    "mohalla": null,
+                    "street": null,
+                    "addCourtCases": "",
+                    "owners": [
+                        {
+                            "id": "69107f13-6f2c-4ee5-a8ad-106ba96b5e7e",
+                            "tenantId": "ch.chandigarh",
+                            "propertyDetailsId": "f6b9d34c-a62c-4bec-9fd7-f28da376831c",
+                            "serialNumber": null,
+                            "share": 0,
+                            "cpNumber": null,
+                            "state": null,
+                            "ownershipType": null,
+                            "action": null,
+                            "assignee": null,
+                            "comments": null,
+                            "ownerDetails": {
+                                "id": "ac5ff136-2350-4470-bb33-e44a71d2946b",
+                                "tenantId": "ch.chandigarh",
+                                "ownerId": "69107f13-6f2c-4ee5-a8ad-106ba96b5e7e",
+                                "ownerName": "ABC",
+                                "guardianName": "XYZ",
+                                "guardianRelation": "FATHER",
+                                "mobileNumber": "9999999999",
+                                "allotmentNumber": null,
+                                "dateOfAllotment": 297455399000,
+                                "possesionDate": 0,
+                                "isApproved": false,
+                                "isCurrentOwner": false,
+                                "isMasterEntry": false,
+                                "isPreviousOwnerRequired": false,
+                                "address": "100, Sector 1",
+                                "isDirector": false,
+                                "sellerName": null,
+                                "sellerGuardianName": null,
+                                "sellerRelation": null,
+                                "modeOfTransfer": null,
+                                "dob": 159128999000,
+                                "auditDetails": {
+                                    "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                    "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                    "createdTime": 1613443302607,
+                                    "lastModifiedTime": 1613912286851
+                                },
+                                "ownerDocuments": [
+                                    {
+                                        "id": "01be1100-02aa-43bc-bf2a-f1ff1c94dcde",
+                                        "tenantId": "ch.chandigarh",
+                                        "referenceId": "ac5ff136-2350-4470-bb33-e44a71d2946b",
+                                        "documentType": "CERTIFIED_COPY_LEASE",
+                                        "fileStoreId": "654eeab6-b901-4c71-9457-1c168fac6353",
+                                        "isActive": true,
+                                        "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                                        "auditDetails": {
+                                            "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                            "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                            "createdTime": 1613443317062,
+                                            "lastModifiedTime": 1613912286851
+                                        }
+                                    }
+                                ]
+                            },
+                            "auditDetails": {
+                                "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                "createdTime": 1613443302607,
+                                "lastModifiedTime": 1613912286851
+                            },
+                            "mortgageDetails": null
+                        },
+                        {
+                            "id": "4f02f63a-7e97-4c8a-a872-cf40492c4736",
+                            "tenantId": "ch.chandigarh",
+                            "propertyDetailsId": "f6b9d34c-a62c-4bec-9fd7-f28da376831c",
+                            "serialNumber": null,
+                            "share": 100,
+                            "cpNumber": null,
+                            "state": null,
+                            "ownershipType": null,
+                            "action": null,
+                            "assignee": null,
+                            "comments": null,
+                            "ownerDetails": {
+                                "id": "ca8c1fb5-121d-4d9b-a879-65dd111bb15a",
+                                "tenantId": "ch.chandigarh",
+                                "ownerId": "4f02f63a-7e97-4c8a-a872-cf40492c4736",
+                                "ownerName": "XYZ",
+                                "guardianName": "TUV",
+                                "guardianRelation": "FATHER",
+                                "mobileNumber": "9474637382",
+                                "allotmentNumber": null,
+                                "dateOfAllotment": 1613914597683,
+                                "possesionDate": 1613914597683,
+                                "isApproved": true,
+                                "isCurrentOwner": true,
+                                "isMasterEntry": false,
+                                "isPreviousOwnerRequired": false,
+                                "address": "abc",
+                                "isDirector": false,
+                                "sellerName": "ABC",
+                                "sellerGuardianName": null,
+                                "sellerRelation": null,
+                                "modeOfTransfer": "MODE_OF_TRANSFER.SALEDEED",
+                                "dob": 378844199000,
+                                "auditDetails": {
+                                    "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                    "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                    "createdTime": 1613914597683,
+                                    "lastModifiedTime": 1613914597683
+                                },
+                                "ownerDocuments": []
+                            },
+                            "auditDetails": {
+                                "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                "createdTime": 1613914597683,
+                                "lastModifiedTime": 1613914597683
+                            },
+                            "mortgageDetails": null
+                        },
+                        {
+                            "id": "547ab143-1f29-41e7-9e34-76bdeaacc9bd",
+                            "tenantId": "ch.chandigarh",
+                            "propertyDetailsId": "f6b9d34c-a62c-4bec-9fd7-f28da376831c",
+                            "serialNumber": null,
+                            "share": 100,
+                            "cpNumber": null,
+                            "state": null,
+                            "ownershipType": null,
+                            "action": null,
+                            "assignee": null,
+                            "comments": null,
+                            "ownerDetails": {
+                                "id": "66b78a52-9ece-4758-911f-0d932b73aa71",
+                                "tenantId": "ch.chandigarh",
+                                "ownerId": "547ab143-1f29-41e7-9e34-76bdeaacc9bd",
+                                "ownerName": "XYZ",
+                                "guardianName": "TUV",
+                                "guardianRelation": "FATHER",
+                                "mobileNumber": "9474637382",
+                                "allotmentNumber": null,
+                                "dateOfAllotment": 1613914658298,
+                                "possesionDate": 1613914658298,
+                                "isApproved": true,
+                                "isCurrentOwner": true,
+                                "isMasterEntry": false,
+                                "isPreviousOwnerRequired": false,
+                                "address": "abc",
+                                "isDirector": false,
+                                "sellerName": "ABC",
+                                "sellerGuardianName": null,
+                                "sellerRelation": null,
+                                "modeOfTransfer": "MODE_OF_TRANSFER.SALEDEED",
+                                "dob": 378844199000,
+                                "auditDetails": {
+                                    "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                    "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                    "createdTime": 1613914658298,
+                                    "lastModifiedTime": 1613914658298
+                                },
+                                "ownerDocuments": []
+                            },
+                            "auditDetails": {
+                                "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                "createdTime": 1613914658298,
+                                "lastModifiedTime": 1613914658298
+                            },
+                            "mortgageDetails": null
+                        }
+                    ],
+                    "accountStatementDocument": [],
+                    "courtCases": [],
+                    "paymentConfig": null,
+                    "bidders": [],
+                    "estateDemands": [],
+                    "estatePayments": [],
+                    "estateAccount": null,
+                    "estateRentCollections": null,
+                    "interestRate": 0,
+                    "maniMajraDemands": [],
+                    "maniMajraPayments": [],
+                    "maniMajraRentCollections": null,
+                    "billingBusinessService": "ESTATE_SERVICE_ESTATE_BRANCH.PROPERTY_MASTER",
+                    "mmDemandStartYear": 0,
+                    "mmDemandStartMonth": 0
+                },
+                "auditDetails": {
+                    "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                    "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                    "createdTime": 1613443215388,
+                    "lastModifiedTime": 1613912286851
+                },
+                "estateRentSummary": null,
+                "notificationCode": null,
+                "payer": null,
+                "notifyingOwner": null,
+                "paymentAmount": null,
+                "paymentType": null,
+                "transactionNumber": null,
+                "demandDate": null,
+                "rentPaymentConsumerCode": null,
+                "calculation": null
+            },
+            "applicationNumber": "CH-ES-APPL-2021-02-21-000002",
+            "branchType": "EstateBranch",
+            "moduleType": "OwnershipTransfer",
+            "applicationType": "SaleDeed",
+            "assignee": null,
+            "comments": "ok",
+            "hardcopyReceivedDate": 1613932199000,
+            "applicationDetails": {
+                "transferee": {
+                    "id": null,
+                    "dob": 378844199000,
+                    "name": "XYZ",
+                    "address": "abc",
+                    "mobileNo": "9474637382",
+                    "relation": "FATHER",
+                    "fatherOrHusbandName": "TUV",
+                    "percentageOfShareTransferred": "100"
+                },
+                "transferor": {
+                    "id": "69107f13-6f2c-4ee5-a8ad-106ba96b5e7e",
+                    "name": "ABC",
+                    "share": 0,
+                    "cpNumber": null,
+                    "serialNumber": null,
+                    "transferorDetails": {
+                        "address": "100, Sector 1",
+                        "ownerName": "ABC",
+                        "isApproved": false,
+                        "guardianName": "XYZ",
+                        "mobileNumber": "9999999999",
+                        "isMasterEntry": false,
+                        "possesionDate": 0,
+                        "isCurrentOwner": false,
+                        "allotmentNumber": null,
+                        "dateOfAllotment": 297455399000,
+                        "guardianRelation": "FATHER"
+                    }
+                },
+                "modeOfTransfer": "MODE_OF_TRANSFER.SALEDEED",
+                "dateOfRegistration": 1613413799000,
+                "registrationNumber": "12345"
+            },
+            "state": "ES_APPROVED",
+            "action": "APPROVE",
+            "auditDetails": {
+                "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                "createdTime": 1613913474452,
+                "lastModifiedTime": 1613914658284
+            },
+            "workFlowBusinessService": "ES-EB-OT-SaleDeed",
+            "billingBusinessService": "ESTATE_SERVICE_ESTATE_BRANCH.SALE_DEED",
+            "applicationDocuments": [
+                {
+                    "id": "0abb198f-79b4-4222-8817-8455109e0755",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "AFFIDAVIT_EFFECT_UNDER_HAND_SALE",
+                    "fileStoreId": "2abeece3-0ccf-4042-b38a-b2fc7129f2fa",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913805097,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "4342f7a5-9acd-4d03-a7e0-7241ba97a72e",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "NO_DUE_CERTIFICATE",
+                    "fileStoreId": "fb517f6c-7e29-4231-bdd3-61a5259e9402",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913810089,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "e485e02b-6d07-452f-9ded-7112f36101fc",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "CERTIFIED_COPY_OF_LEASE_RIGHT",
+                    "fileStoreId": "a61417c4-f43e-4b3a-87fd-a61157a6a211",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913485775,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "c61418fc-893a-4256-b662-eda49d5a2f4c",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "NOTARIZED_COPY_GPA_SPA",
+                    "fileStoreId": "b4122faa-1ec4-4a34-9ade-115b97333bdc",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913794017,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "0c53462d-8181-4ed9-9f2a-b3774ae1e22a",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "CERTIFIED_COPY_OF_LEASE_RIGHT",
+                    "fileStoreId": "72285d24-c4d1-4320-a0da-68bfd3b82a07",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913750663,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "c31ffc76-960c-4102-bfdc-4c2c39570b46",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "NOTARIZED_COPY_OF_SALE_DEED",
+                    "fileStoreId": "cd85ba76-e99d-4568-b6ca-5bb65edbd19c",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913497354,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "6641877f-9ccd-460c-8d48-1d0f62d007db",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "SELF_ATTESTED_PHOTO",
+                    "fileStoreId": "a83021de-f19c-4ec7-8029-04041e89d243",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913764340,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "277d2ec2-879e-470d-98b9-ae483ecb58f6",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "INDEMINITY_BOND_OF_TRANSFEREE",
+                    "fileStoreId": "c4a9331d-c2a4-4886-9a97-e00a30057b91",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913755112,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "4c9e54ed-56be-4502-8d60-e7cccc0009d4",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "SELF_ATTESTED_PHOTO_OF_WITNESSES",
+                    "fileStoreId": "ff8d4e0a-e5ae-4d27-9dcd-d3b216a6fd1d",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913770096,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "7c3a3caf-35f4-4dbf-94c7-ec4108f5722f",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "CLEARANCE_OF_PREVIOUS_LOANS",
+                    "fileStoreId": "2c5e3b91-48f4-4826-b2d5-e91782d2eb6f",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913776981,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "1ead41b1-2e8f-4cbe-8b19-8faecac47af5",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "SEWERAGE_CONNECTION_OR_OCCUPATION_CERTIFICATE_FURNISH_PROOF",
+                    "fileStoreId": "09635803-035f-4870-a25f-1b5c3c755b58",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913783219,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "c1bd31fa-767e-4132-b462-46d6cf3d0ca9",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "AN_UNDERTAKING_BY_WAY_INDEMITY_BOND",
+                    "fileStoreId": "236ccf5e-5335-4db1-a1ea-3140a5038278",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913788358,
+                        "lastModifiedTime": 1613914658291
+                    }
+                },
+                {
+                    "id": "ec597036-dbc7-4433-aa7b-e72217e4bfc9",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "02dafd50-c07c-4b7e-8051-4aae899f84d9",
+                    "documentType": "AFFIDAVIT_REGARDING_GPA_SPA",
+                    "fileStoreId": "9fc0cadd-44e3-4770-b80e-91ecf84567c9",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613913799671,
+                        "lastModifiedTime": 1613914658291
+                    }
+                }
+            ],
+            "wfDocuments": [],
+            "calculation": null,
+            "createdBy": null,
+            "totalDue": null,
+            "payer": null,
+            "recieptNumber": null,
+            "paymentAmount": null,
+            "gst": null,
+            "bankName": null,
+            "transactionId": null,
+            "paymentType": null,
+            "dateOfPayment": 0,
+            "newsPaperAdvertisementDate": 0
+        },
+        {
+            "allDocuments": [
+                {
+                    "id": "81a931be-679f-48ba-9143-49ce420a21ea",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "58fc1101-c031-4791-8d1e-b2d0fd634961",
+                    "documentType": "DDR_COPY",
+                    "fileStoreId": "e20c92a9-3d22-449c-8196-cc689355ef0c",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613912361732,
+                        "lastModifiedTime": 1613912961791
+                    }
+                }
+            ],
+            "id": "58fc1101-c031-4791-8d1e-b2d0fd634961",
+            "tenantId": "ch.chandigarh",
+            "property": {
+                "penaltyBusinessService": "ESTATE_SERVICE_ESTATE_BRANCH.PROPERTY_VIOLATION",
+                "extensionFeeBusinessService": "ESTATE_SERVICE_ESTATE_BRANCH.EXTENSION_FEE",
+                "securityDepositBusinessService": "ESTATE_SERVICE_ESTATE_BRANCH.SECURITY_DEPOSIT",
+                "id": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                "tenantId": "ch.chandigarh",
+                "fileNumber": "123",
+                "category": "CAT.RESIDENTIAL",
+                "subCategory": "SUBCAT.HOUSE",
+                "siteNumber": "123",
+                "sectorNumber": "SECTOR-1",
+                "propertyMasterOrAllotmentOfSite": "PROPERTY_MASTER",
+                "isCancelationOfSite": false,
+                "state": "ES_APPROVED",
+                "action": "APPROVE",
+                "assignee": null,
+                "comments": null,
+                "propertyDetails": {
+                    "inActiveBidders": null,
+                    "inActiveEstateDemands": null,
+                    "inActiveEstatePayments": null,
+                    "offlinePaymentDetails": [],
+                    "inActiveManiMajraDemands": null,
+                    "inActiveManiMajraPayments": null,
+                    "workFlowBusinessService": "ES-ESTATEBRANCH",
+                    "id": "f6b9d34c-a62c-4bec-9fd7-f28da376831c",
+                    "tenantId": "ch.chandigarh",
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "branchType": "ESTATE_BRANCH",
+                    "propertyType": "PROPERTY_TYPE.FREEHOLD",
+                    "demandType": null,
+                    "typeOfAllocation": "ALLOCATION_TYPE.ALLOTMENT",
+                    "emdAmount": null,
+                    "emdDate": 0,
+                    "modeOfAuction": null,
+                    "schemeName": null,
+                    "dateOfAuction": 0,
+                    "areaSqft": 300,
+                    "ratePerSqft": 10,
+                    "lastNocDate": 0,
+                    "serviceCategory": null,
+                    "isPropertyActive": false,
+                    "tradeType": null,
+                    "companyName": null,
+                    "companyAddress": null,
+                    "companyRegistrationNumber": null,
+                    "companyType": null,
+                    "decreeDate": 0,
+                    "courtDetails": null,
+                    "civilTitledAs": null,
+                    "auditDetails": {
+                        "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613443215388,
+                        "lastModifiedTime": 1613912286851
+                    },
+                    "companyRegistrationDate": 0,
+                    "companyOrFirm": null,
+                    "propertyRegisteredTo": "INDIVIDUAL",
+                    "entityType": null,
+                    "houseNumber": null,
+                    "village": null,
+                    "mohalla": null,
+                    "street": null,
+                    "addCourtCases": "",
+                    "owners": [
+                        {
+                            "id": "69107f13-6f2c-4ee5-a8ad-106ba96b5e7e",
+                            "tenantId": "ch.chandigarh",
+                            "propertyDetailsId": "f6b9d34c-a62c-4bec-9fd7-f28da376831c",
+                            "serialNumber": null,
+                            "share": 0,
+                            "cpNumber": null,
+                            "state": null,
+                            "ownershipType": null,
+                            "action": null,
+                            "assignee": null,
+                            "comments": null,
+                            "ownerDetails": {
+                                "id": "ac5ff136-2350-4470-bb33-e44a71d2946b",
+                                "tenantId": "ch.chandigarh",
+                                "ownerId": "69107f13-6f2c-4ee5-a8ad-106ba96b5e7e",
+                                "ownerName": "ABC",
+                                "guardianName": "XYZ",
+                                "guardianRelation": "FATHER",
+                                "mobileNumber": "9999999999",
+                                "allotmentNumber": null,
+                                "dateOfAllotment": 297455399000,
+                                "possesionDate": 0,
+                                "isApproved": false,
+                                "isCurrentOwner": false,
+                                "isMasterEntry": false,
+                                "isPreviousOwnerRequired": false,
+                                "address": "100, Sector 1",
+                                "isDirector": false,
+                                "sellerName": null,
+                                "sellerGuardianName": null,
+                                "sellerRelation": null,
+                                "modeOfTransfer": null,
+                                "dob": 159128999000,
+                                "auditDetails": {
+                                    "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                    "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                    "createdTime": 1613443302607,
+                                    "lastModifiedTime": 1613912286851
+                                },
+                                "ownerDocuments": [
+                                    {
+                                        "id": "01be1100-02aa-43bc-bf2a-f1ff1c94dcde",
+                                        "tenantId": "ch.chandigarh",
+                                        "referenceId": "ac5ff136-2350-4470-bb33-e44a71d2946b",
+                                        "documentType": "CERTIFIED_COPY_LEASE",
+                                        "fileStoreId": "654eeab6-b901-4c71-9457-1c168fac6353",
+                                        "isActive": true,
+                                        "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                                        "auditDetails": {
+                                            "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                            "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                            "createdTime": 1613443317062,
+                                            "lastModifiedTime": 1613912286851
+                                        }
+                                    }
+                                ]
+                            },
+                            "auditDetails": {
+                                "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                "createdTime": 1613443302607,
+                                "lastModifiedTime": 1613912286851
+                            },
+                            "mortgageDetails": null
+                        },
+                        {
+                            "id": "4f02f63a-7e97-4c8a-a872-cf40492c4736",
+                            "tenantId": "ch.chandigarh",
+                            "propertyDetailsId": "f6b9d34c-a62c-4bec-9fd7-f28da376831c",
+                            "serialNumber": null,
+                            "share": 100,
+                            "cpNumber": null,
+                            "state": null,
+                            "ownershipType": null,
+                            "action": null,
+                            "assignee": null,
+                            "comments": null,
+                            "ownerDetails": {
+                                "id": "ca8c1fb5-121d-4d9b-a879-65dd111bb15a",
+                                "tenantId": "ch.chandigarh",
+                                "ownerId": "4f02f63a-7e97-4c8a-a872-cf40492c4736",
+                                "ownerName": "XYZ",
+                                "guardianName": "TUV",
+                                "guardianRelation": "FATHER",
+                                "mobileNumber": "9474637382",
+                                "allotmentNumber": null,
+                                "dateOfAllotment": 1613914597683,
+                                "possesionDate": 1613914597683,
+                                "isApproved": true,
+                                "isCurrentOwner": true,
+                                "isMasterEntry": false,
+                                "isPreviousOwnerRequired": false,
+                                "address": "abc",
+                                "isDirector": false,
+                                "sellerName": "ABC",
+                                "sellerGuardianName": null,
+                                "sellerRelation": null,
+                                "modeOfTransfer": "MODE_OF_TRANSFER.SALEDEED",
+                                "dob": 378844199000,
+                                "auditDetails": {
+                                    "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                    "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                    "createdTime": 1613914597683,
+                                    "lastModifiedTime": 1613914597683
+                                },
+                                "ownerDocuments": []
+                            },
+                            "auditDetails": {
+                                "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                "createdTime": 1613914597683,
+                                "lastModifiedTime": 1613914597683
+                            },
+                            "mortgageDetails": null
+                        },
+                        {
+                            "id": "547ab143-1f29-41e7-9e34-76bdeaacc9bd",
+                            "tenantId": "ch.chandigarh",
+                            "propertyDetailsId": "f6b9d34c-a62c-4bec-9fd7-f28da376831c",
+                            "serialNumber": null,
+                            "share": 100,
+                            "cpNumber": null,
+                            "state": null,
+                            "ownershipType": null,
+                            "action": null,
+                            "assignee": null,
+                            "comments": null,
+                            "ownerDetails": {
+                                "id": "66b78a52-9ece-4758-911f-0d932b73aa71",
+                                "tenantId": "ch.chandigarh",
+                                "ownerId": "547ab143-1f29-41e7-9e34-76bdeaacc9bd",
+                                "ownerName": "XYZ",
+                                "guardianName": "TUV",
+                                "guardianRelation": "FATHER",
+                                "mobileNumber": "9474637382",
+                                "allotmentNumber": null,
+                                "dateOfAllotment": 1613914658298,
+                                "possesionDate": 1613914658298,
+                                "isApproved": true,
+                                "isCurrentOwner": true,
+                                "isMasterEntry": false,
+                                "isPreviousOwnerRequired": false,
+                                "address": "abc",
+                                "isDirector": false,
+                                "sellerName": "ABC",
+                                "sellerGuardianName": null,
+                                "sellerRelation": null,
+                                "modeOfTransfer": "MODE_OF_TRANSFER.SALEDEED",
+                                "dob": 378844199000,
+                                "auditDetails": {
+                                    "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                    "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                    "createdTime": 1613914658298,
+                                    "lastModifiedTime": 1613914658298
+                                },
+                                "ownerDocuments": []
+                            },
+                            "auditDetails": {
+                                "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                                "createdTime": 1613914658298,
+                                "lastModifiedTime": 1613914658298
+                            },
+                            "mortgageDetails": null
+                        }
+                    ],
+                    "accountStatementDocument": [],
+                    "courtCases": [],
+                    "paymentConfig": null,
+                    "bidders": [],
+                    "estateDemands": [],
+                    "estatePayments": [],
+                    "estateAccount": null,
+                    "estateRentCollections": null,
+                    "interestRate": 0,
+                    "maniMajraDemands": [],
+                    "maniMajraPayments": [],
+                    "maniMajraRentCollections": null,
+                    "billingBusinessService": "ESTATE_SERVICE_ESTATE_BRANCH.PROPERTY_MASTER",
+                    "mmDemandStartYear": 0,
+                    "mmDemandStartMonth": 0
+                },
+                "auditDetails": {
+                    "createdBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                    "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                    "createdTime": 1613443215388,
+                    "lastModifiedTime": 1613912286851
+                },
+                "estateRentSummary": null,
+                "notificationCode": null,
+                "payer": null,
+                "notifyingOwner": null,
+                "paymentAmount": null,
+                "paymentType": null,
+                "transactionNumber": null,
+                "demandDate": null,
+                "rentPaymentConsumerCode": null,
+                "calculation": null
+            },
+            "applicationNumber": "CH-ES-APPL-2021-02-21-000001",
+            "branchType": "EstateBranch",
+            "moduleType": "OtherCitizenService",
+            "applicationType": "DuplicateCopy",
+            "assignee": null,
+            "comments": "ok",
+            "hardcopyReceivedDate": 1613932199000,
+            "applicationDetails": {
+                "owner": {
+                    "id": "69107f13-6f2c-4ee5-a8ad-106ba96b5e7e",
+                    "name": "ABC",
+                    "share": 100,
+                    "cpNumber": null,
+                    "ownerDetails": {
+                        "address": "100, Sector 1",
+                        "guardianName": "XYZ",
+                        "mobileNumber": "9999999999"
+                    },
+                    "serialNumber": null,
+                    "transferorDetails": {
+                        "address": "100, Sector 1",
+                        "ownerName": "ABC",
+                        "isApproved": false,
+                        "guardianName": "XYZ",
+                        "mobileNumber": "9999999999",
+                        "isMasterEntry": false,
+                        "possesionDate": 0,
+                        "isCurrentOwner": true,
+                        "allotmentNumber": null,
+                        "dateOfAllotment": 297455399000,
+                        "guardianRelation": "FATHER"
+                    }
+                },
+                "typeOfLetter": "TYPE_OF_LETTER.ALLOTMENTLETTER"
+            },
+            "state": "ES_APPROVED",
+            "action": "APPROVE",
+            "auditDetails": {
+                "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                "createdTime": 1613912349982,
+                "lastModifiedTime": 1613912961784
+            },
+            "workFlowBusinessService": "ES-EB-OCS-DuplicateCopy",
+            "billingBusinessService": "ESTATE_SERVICE_ESTATE_BRANCH.DUPLICATE_COPY",
+            "applicationDocuments": [
+                {
+                    "id": "81a931be-679f-48ba-9143-49ce420a21ea",
+                    "tenantId": "ch.chandigarh",
+                    "referenceId": "58fc1101-c031-4791-8d1e-b2d0fd634961",
+                    "documentType": "DDR_COPY",
+                    "fileStoreId": "e20c92a9-3d22-449c-8196-cc689355ef0c",
+                    "isActive": true,
+                    "propertyId": "800d3020-0f11-4a8c-9b0a-aea5f0a269e9",
+                    "auditDetails": {
+                        "createdBy": "97de4b63-f4e8-4cd7-8b36-cbd90963b277",
+                        "lastModifiedBy": "2743bf22-6499-4029-bd26-79e5d0ce6504",
+                        "createdTime": 1613912361732,
+                        "lastModifiedTime": 1613912961791
+                    }
+                }
+            ],
+            "wfDocuments": [],
+            "calculation": null,
+            "createdBy": null,
+            "totalDue": null,
+            "payer": null,
+            "recieptNumber": null,
+            "paymentAmount": null,
+            "gst": null,
+            "bankName": null,
+            "transactionId": null,
+            "paymentType": null,
+            "dateOfPayment": 0,
+            "newsPaperAdvertisementDate": 0
+        }
+    ]
+}

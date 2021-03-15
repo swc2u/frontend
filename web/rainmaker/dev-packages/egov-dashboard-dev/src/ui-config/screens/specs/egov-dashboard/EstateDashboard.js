@@ -3,16 +3,15 @@ import { getBreak, getCommonHeader } from "egov-ui-framework/ui-config/screens/s
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getUserInfo, setapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 import { getDashboardDropdownData } from "../../../../ui-utils/commons";
-// import { HCDashboardFilterForm, HCDashboardResults } from "./HCDashboard/HCDashboard";
-import { FilterForm, DashboardResults } from "./OPMSDashboard/OPMSDashboard";
+import { FilterForm, DashboardResults } from "./EstateDashboard/EstateDashboard";
 import './index.css';
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 
 const header = getCommonHeader(
   {
-    labelName: "OPMS Dashboard",
-    labelKey: "OPMS_dashboard_1"
+    labelName: "Estate Management Dashboard",
+    labelKey: "EState_dashboard_1"
   },
   {
     classes: {
@@ -44,15 +43,15 @@ const getDropDownData = async (action, state, dispatch) => {
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
-    "name" : "Status Report",
-    "code" : "statusReport"
+    "name" : "Application Type",
+    "code" : "applicationType"
     },
     {
-      "name" : "Collection Report",
-      "code" : "collectionReport"
+      "name" : "Branch Type",
+      "code" : "branchType"
     }
   ]
-  var selectedDefaultData = {value: "statusReport", label: "Status Report"};
+  var selectedDefaultData = {value: "applicationType", label: "Application Type"};
 
   // Date default
   var fromDate = new Date();
@@ -64,9 +63,9 @@ const getDropDownData = async (action, state, dispatch) => {
   dispatch(prepareFinalObject("dahsboardHome.defaulttoDate", formatDt));
 }
 
-const OPMSDashboard = {
+const EstateDashboard = {
   uiFramework: "material-ui",
-  name: "OPMSDashboard",
+  name: "EstateDashboard",
   beforeInitScreen: (action, state, dispatch) => {
     
     debugger
@@ -101,4 +100,4 @@ const OPMSDashboard = {
   }
 };
 
-export default OPMSDashboard;
+export default EstateDashboard;
