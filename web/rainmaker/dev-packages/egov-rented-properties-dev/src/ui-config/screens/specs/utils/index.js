@@ -51,6 +51,7 @@ import {
 } from "../../../../ui-utils/commons";
 import moment from "moment";
 import { BILLING_BUSINESS_SERVICE_DC, BILLING_BUSINESS_SERVICE_OT, WORKFLOW_BUSINESS_SERVICE_OT, WORKFLOW_BUSINESS_SERVICE_DC, BILLING_BUSINESS_SERVICE_RENT } from "../../../../ui-constants";
+import { FETCHRECEIPT } from "egov-ui-kit/utils/endPoints";
 
 export const getCommonApplyFooter = children => {
   return {
@@ -734,31 +735,21 @@ try {
 }
 }
 
-export const download = (receiptQueryString, Properties, data, generatedBy,type, mode = "download") => {
-  const FETCHRECEIPT = {
+export const download = async (receiptQueryString, Properties, data, generatedBy,type, mode = "download") => {
+  const FETCHRECEIPT_PAYMENT = {
     GET: {
       URL: "/collection-services/payments/_search",
       ACTION: "_get",
     },
   };
-  const DOWNLOADRECEIPT = {
+  const DOWNLOADRECEIPT= {
     GET: {
       URL: "/pdf-service/v1/_create",
       ACTION: "_get",
     },
   };
   try {
-    httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
-      // const queryStr = [{
-      //     key: "key",
-      //     value: "rp-payment-receipt"
-      //   },
-      //   {
-      //     key: "tenantId",
-      //     value: receiptQueryString[1].value.split('.')[0]
-      //   }
-      // ]
-
+    httpRequest("post", FETCHRECEIPT_PAYMENT.GET.URL, FETCHRECEIPT_PAYMENT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
       const queryStr = [{
         key: "key",
         value: `rp-${type}-receipt`
@@ -772,9 +763,26 @@ export const download = (receiptQueryString, Properties, data, generatedBy,type,
         console.log("Could not find any receipts");
         return;
       }
-      let {
-        Payments
-      } = payloadReceiptDetails;
+
+      let Payments = []
+      if(type != 'rent-payment'){
+        Payments = payloadReceiptDetails.Payments;
+      }else{
+        const receiptNumber = payloadReceiptDetails.Payments[0].paymentDetails[0].receiptNumber
+        const query = [{
+            key: "receiptNumbers",
+            value: receiptNumber
+        }, {
+            key: "tenantId",
+            value: receiptQueryString[1].value.split('.')[0]
+        }]
+        httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, query).then((response) => {
+          Payments = response.Payments;
+        })
+        // const response =  httpRequest(FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, query);
+        // Payments = response.Payments;
+      }
+     
       let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
 
       let {
