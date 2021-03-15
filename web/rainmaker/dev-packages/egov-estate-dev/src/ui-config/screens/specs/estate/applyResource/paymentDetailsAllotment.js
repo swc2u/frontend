@@ -15,10 +15,12 @@ import {
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
   getTodaysDateInYMD,
-  _getPattern
+  _getPattern,
+  displayCustomErr
 } from "../../utils";
 import get from "lodash/get";
 import { set } from "lodash";
+import store from "../../../../../ui-redux/store";
 
 function getLabelWithValue(labelName, path) {
   const label = _getLabelWithValue(labelName, path);
@@ -61,6 +63,7 @@ const advancedRentField = {
   },
   // visible:false,
   pattern: _getPattern("float"),
+  errorMessage:"ES_ERR_ADVANCED_RENT",
   required: true,
   jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentAdvanceRent"
 }
@@ -75,6 +78,7 @@ const dateOfPaymentOfAdvanceRentField = {
       labelKey: "ES_DATE_OF_PAYMENT_OF_ADVANCE_RENT_PLACEHOLDER"
   },
   pattern: getPattern("Date"),
+  errorMessage:"ES_ERR_PAYMENT_DATE",
   jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentAdvanceRentDate",
   required: true
 }
@@ -93,10 +97,22 @@ const premiumAmountField = {
       xs: 12,
       sm: 6
   },
-  maxLength: 100,
-  minLength: 1,
+  maxLength: 50,
+  minLength: 2,
   required: true,
-  jsonPath: "Properties[0].propertyDetails.paymentConfig.totalAmount"
+  pattern:_getPattern("numeric"),
+  errorMessage:"ES_ERR_PREMIUM_AMOUNT",
+  jsonPath: "Properties[0].propertyDetails.paymentConfig.totalAmount",
+  afterFieldChange: (action, state, dispatch) => {
+    if (action.value.length > 50) {
+      displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_50", action.screenKey);
+    } else if(action.value.length < 2) {
+      displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_MIN_PREMIUM_AMOUNT", action.screenKey);
+    }
+    else{
+      displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_PREMIUM_AMOUNT", action.screenKey);
+    }
+  }
 }
 
 const installmentField = {
@@ -302,6 +318,7 @@ const groundRentGenerationTypeField = {
       sm: 6
   },
   required: true,
+  errorMessage:"ES_ERR_GROUND_RENT",
   jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentGenerationType",
   props: {
     data: [
@@ -323,121 +340,6 @@ const groundRentGenerationTypeField = {
       )
     )
   },
-  afterFieldChange: (action, state, dispatch) => {
-    if(action.value == 'Monthly'){
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardSixthStepAllotment.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.endYear",
-        "props.label.labelKey",
-        "ES_END_MONTH_LABEL"
-      )) 
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardSixthStepAllotment.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.endYear",
-        "props.placeholder.labelKey",
-        "ES_END_MONTH_PLACEHOLDER"
-      )) 
-      
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardSixthStepAllotment.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.startYear",
-        "props.label.labelKey",
-        "ES_START_MONTH_LABEL"
-      )) 
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardSixthStepAllotment.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.startYear",
-        "props.placeholder.labelKey",
-        "ES_START_MONTH_PLACEHOLDER"
-      )) 
-      // for PM rent details step
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardEighthStep.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.endYear",
-        "props.label.labelKey",
-        "ES_END_MONTH_LABEL"
-      )) 
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardEighthStep.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.endYear",
-        "props.placeholder.labelKey",
-        "ES_END_MONTH_PLACEHOLDER"
-      )) 
-      
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardEighthStep.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.startYear",
-        "props.label.labelKey",
-        "ES_START_MONTH_LABEL"
-      )) 
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardEighthStep.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.startYear",
-        "props.placeholder.labelKey",
-        "ES_START_MONTH_PLACEHOLDER"
-      )) 
-
-    }else{
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardSixthStepAllotment.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.endYear",
-        "props.label.labelKey",
-        "ES_END_YEAR_LABEL"
-      ))
-
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardSixthStepAllotment.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.startYear",
-        "props.label.labelKey",
-        "ES_START_YEAR_LABEL"
-      )) 
-
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardSixthStepAllotment.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.endYear",
-        "props.placeholder.labelKey",
-        "ES_END_YEAR_PLACEHOLDER"
-      ))
-
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardSixthStepAllotment.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.startYear",
-        "props.placeholder.labelKey",
-        "ES_START_YEAR_PLACEHOLDER"
-      )) 
-
-      // For PM rent details step
-
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardEighthStep.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.endYear",
-        "props.label.labelKey",
-        "ES_END_YEAR_LABEL"
-      ))
-
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardEighthStep.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.startYear",
-        "props.label.labelKey",
-        "ES_START_YEAR_LABEL"
-      )) 
-
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardEighthStep.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.endYear",
-        "props.placeholder.labelKey",
-        "ES_END_YEAR_PLACEHOLDER"
-      ))
-
-      dispatch(handleField(
-        action.screenKey,
-        "components.div.children.formwizardEighthStep.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[0].item0.children.cardContent.children.rentCard.children.startYear",
-        "props.placeholder.labelKey",
-        "ES_START_YEAR_PLACEHOLDER"
-      )) 
-    }
-  }
-
 }
 
 const billingStartDateField = {
@@ -450,6 +352,7 @@ const billingStartDateField = {
       labelKey: "ES_BILLING_START_DATE_PLACEHOLDER"
   },
   pattern: getPattern("Date"),
+  errorMessage:"ES_ERR_START_DATE",
   jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentBillStartDate",
   required: true
 }
@@ -469,6 +372,7 @@ const dateToGenerateDemandRentField = {
     sm: 6
   },
   required: true,
+  errorMessage:"ES_ERR_GENERATION_DATE",
   props: {
       data: data
   },
@@ -477,12 +381,12 @@ const dateToGenerateDemandRentField = {
 
 const rentAmountField = {
   label: {
-      labelName: "Monthly Rent",
-      labelKey: "ES_MONTHLY_RENT_LABEL"
+      labelName: "Monthly/ Yearly Rent",
+      labelKey: "ES_MONTHLY_YEARLY_RENT_LABEL"
   },
   placeholder: {
-      labelName: "Enter Monthly Rent",
-      labelKey: "ES_MONTHLY_RENT_PLACEHOLDER"
+      labelName: "Enter Monthly/ Yearly Rent",
+      labelKey: "ES_MONTHLY_YEARLY_RENT_PLACEHOLDER"
   },
   gridDefination: {
       xs: 12,
@@ -491,19 +395,19 @@ const rentAmountField = {
   maxLength: 100,
   minLength: 1,
   required: true,
-  errorMessage:"ES_ERR_MONTHLY_RENT",
+  errorMessage:"ES_ERR_MONTHLY_YEARLY_RENT",
   pattern: _getPattern("float"),
   jsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems[0].groundRentAmount"
 }
 
 const startYearField = {
   label: {
-      labelName: "Start Month",
-      labelKey: "ES_START_MONTH_LABEL"
+      labelName: "Start Month/ Year",
+      labelKey: "ES_START_MONTH_YEAR_LABEL"
   },
   placeholder: {
-      labelName: "Enter Start Month",
-      labelKey: "ES_START_MONTH_PLACEHOLDER"
+      labelName: "Enter Start Month/ Year",
+      labelKey: "ES_START_MONTH_YEAR_PLACEHOLDER"
   },
   gridDefination: {
       xs: 12,
@@ -519,12 +423,12 @@ const startYearField = {
 
 const endYearField = {
   label: {
-      labelName: "End Month",
-      labelKey: "ES_END_MONTH_LABEL"
+      labelName: "End Month/ Year",
+      labelKey: "ES_END_MONTH_YEAR_LABEL"
   },
   placeholder: {
-      labelName: "Enter End Month",
-      labelKey: "ES_END_MONTH_PLACEHOLDER"
+      labelName: "Enter End Month/ Year",
+      labelKey: "ES_END_MONTH_YEAR_PLACEHOLDER"
   },
   gridDefination: {
       xs: 12,
@@ -572,22 +476,19 @@ const commonRentInformation = () => {
         labelKey: "ES_TILL_LABEL_IN_YEARS"
       },
       {
-        jsonPath: "Properties[0].propertyDetails.paymentConfig",
+        jsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems[0].tillDate",
         callBack: (value) =>  {
-          // console.log(this.state);
-          // let groundRentGenerationType = get(state.screenConfiguration.preparedFinalObject, "Properties[0].propertyDetails.paymentConfig.groundRentGenerationType")
-          // if(!!groundRentGenerationType && value && groundRentGenerationType === "Annually"){
-          //   return years + " Year(s)"
-          // }
-          if(value.isGroundRent){
-            if(value.groundRentGenerationType === "Annually"){
-              let tillDateData = value.paymentConfigItems[0].tillDate;
-              return tillDateData + " Year(s)"
+          const state = store.getState()
+          const groundRentGenerationType = get(state.screenConfiguration.preparedFinalObject, "Properties[0].propertyDetails.paymentConfig.groundRentGenerationType")
+          if(groundRentGenerationType === "Annually") {
+            if(value) {
+              return value + " Year(s)"
             }
-            else if (value.groundRentGenerationType === "Monthly") {
-              let tillDateData = value.paymentConfigItems[0].tillDate;
-              const years = (Number(tillDateData) / 12 | 0)
-              const months = Number(tillDateData) % 12
+            return "-"
+          } else if(groundRentGenerationType === "Monthly") {
+            if (value) {
+              const years = (Number(value) / 12 | 0)
+              const months = Number(value) % 12
               if(years > 0 && months > 0) {
                 return years + " Year(s) " + months +" Month(s)"
               } else if(years < 1) {
@@ -596,10 +497,8 @@ const commonRentInformation = () => {
                 return years + " Year(s)"
               }
             }
-            
+            return "-"
           }
-          
-          return "-"
         }
       }
       )
@@ -662,12 +561,12 @@ export const rentDetails = getCommonGrayCard({
                 "Properties[0].propertyDetails.paymentConfig.paymentConfigItems",
                 []
               );
-              let changeFieldPath = `components.div.children.${paymentStep}.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[${nextYearObj}].item${nextYearObj}.children.cardContent.children.rentCard.children.startYear`;
-              if (screenName == "edit-rent-info") {
-                changeFieldPath = `components.div.children.reviewRentInfo.children.cardContent.children.rentTable.children.cardContent.children.detailsContainer.childre.multipleRentContainer.children.multipleRentInfo.props.items[${nextYearObj}].item${nextYearObj}.children.cardContent.children.rentCard.children.startYear`
-              }
                 const previewYearObj = rent.filter((item, index) => index < deletedIndex && !item.isDeleted).pop()
                 const nextYearObj = rent.findIndex((item, index) => index > deletedIndex && !item.isDeleted)
+                let changeFieldPath = `components.div.children.${paymentStep}.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items[${nextYearObj}].item${nextYearObj}.children.cardContent.children.rentCard.children.startYear`;
+                if (screenName == "edit-rent-info") {
+                  changeFieldPath = `components.div.children.reviewRentInfo.children.cardContent.children.rentTable.children.cardContent.children.detailsContainer.childre.multipleRentContainer.children.multipleRentInfo.props.items[${nextYearObj}].item${nextYearObj}.children.cardContent.children.rentCard.children.startYear`
+                }
                 nextYearObj !== -1 && changeField(
                   screenName,
                   changeFieldPath,
@@ -722,6 +621,7 @@ const licenseFeeGenerationTypeField = {
   maxLength: 100,
   minLength: 1,
   required: true,
+  errorMessage:"ES_ERR_LICENCE_FEE_TYPE",
   jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentGenerationType",
   props: {
     data: [
@@ -742,8 +642,7 @@ const licenseFeeGenerationTypeField = {
         !!(action.value == "Monthly")
       )
     )
-  }
-
+  },
 }
 
 const dateToGenerateDemandLicenseFeeField = {
@@ -761,6 +660,7 @@ const dateToGenerateDemandLicenseFeeField = {
     sm: 6
   },
   required: true,
+  errorMessage:"ES_ERR_DATE_LICENSE_FEE",
   props: {
       data: data
   },
@@ -777,6 +677,7 @@ const billingStartDateLicenseFeeField = {
       labelKey: "ES_BILLING_START_DATE_PLACEHOLDER"
   },
   pattern: getPattern("Date"),
+  errorMessage:"ES_ERR_START_DATE",
   jsonPath: "Properties[0].propertyDetails.paymentConfig.groundRentBillStartDate",
   gridDefination: {
     xs: 12,
@@ -806,12 +707,12 @@ const licenseFeeField = {
 
 const startYearLfField = {
   label: {
-      labelName: "Start Month",
-      labelKey: "ES_START_MONTH_LABEL"
+      labelName: "Start Month/ Year",
+      labelKey: "ES_START_MONTH_YEAR_LABEL"
   },
   placeholder: {
-      labelName: "Enter Start Month",
-      labelKey: "ES_START_MONTH_PLACEHOLDER"
+      labelName: "Enter Start Month/ Year",
+      labelKey: "ES_START_MONTH_YEAR_PLACEHOLDER"
   },
   gridDefination: {
       xs: 12,
@@ -827,12 +728,12 @@ const startYearLfField = {
 
 const endYearLfField = {
   label: {
-      labelName: "End Month",
-      labelKey: "ES_END_MONTH_LABEL"
+      labelName: "End Month/ Year",
+      labelKey: "ES_END_MONTH_YEAR_LABEL"
   },
   placeholder: {
-      labelName: "Enter End Month",
-      labelKey: "ES_END_MONTH_PLACEHOLDER"
+      labelName: "Enter End Month/ Year",
+      labelKey: "ES_END_MONTH_YEAR_PLACEHOLDER"
   },
   gridDefination: {
       xs: 12,
@@ -874,18 +775,27 @@ const commonLicenseInformation = () => {
       {
         jsonPath: "Properties[0].propertyDetails.paymentConfig.paymentConfigItems[0].tillDate",
         callBack: (value) =>  {
-          if (value) {
-            const years = (Number(value) / 12 | 0)
-            const months = Number(value) % 12
-            if(years > 0 && months > 0) {
-              return years + " Year(s) " + months +" Month(s)"
-            } else if(years < 1) {
-              return months + " Month(s)"
-            } else if(months < 1) {
-              return years + " Year(s)"
+          const state = store.getState()
+          const groundRentGenerationType = get(state.screenConfiguration.preparedFinalObject, "Properties[0].propertyDetails.paymentConfig.groundRentGenerationType")
+          if(groundRentGenerationType === "Annually") {
+            if(value) {
+              return value + " Year(s)"
             }
+            return "-"
+          } else if(groundRentGenerationType === "Monthly") {
+            if (value) {
+              const years = (Number(value) / 12 | 0)
+              const months = Number(value) % 12
+              if(years > 0 && months > 0) {
+                return years + " Year(s) " + months +" Month(s)"
+              } else if(years < 1) {
+                return months + " Month(s)"
+              } else if(months < 1) {
+                return years + " Year(s)"
+              }
+            }
+            return "-"
           }
-          return "-"
         }
       }
       )
@@ -1019,6 +929,7 @@ const dateOfPaymentField = {
       labelKey: "ES_DATE_OF_PAYMENT_PLACEHOLDER"
   },
   pattern: getPattern("Date"),
+  errorMessage:"ES_ERR_DATE_OF_PAYMENT",
   jsonPath: "Properties[0].propertyDetails.paymentConfig.dueDateOfPayment",
   required: true
 }
@@ -1047,6 +958,16 @@ const getMonthsOfRentRadioButton = {
         label: "3 months rent",
         labelKey: "ES_THREE_MONTHS_RENT_LABEL",
         value: 3
+      },
+      {
+        label: "6 months rent",
+        labelKey: "ES_SIX_MONTHS_RENT_LABEL",
+        value: 6
+      },
+      {
+        label: "12 months rent",
+        labelKey: "ES_TWELVE_MONTHS_RENT_LABEL",
+        value: 12
       }
     ],
     jsonPath: "Properties[0].propertyDetails.paymentConfig.noOfMonths",

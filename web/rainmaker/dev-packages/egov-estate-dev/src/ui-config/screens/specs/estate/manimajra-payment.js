@@ -1,20 +1,33 @@
 import { handleScreenConfigurationFieldChange as handleField, prepareFinalObject,toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getCommonHeader,getBreak, getCommonCard, getCommonContainer, getTextField, getSelectField,getPattern, getCommonGrayCard, getCommonTitle, getLabel, getDateField  } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getCommonHeader,getBreak, getCommonCard, getCommonContainer, getTextField, getSelectField,getPattern, getCommonGrayCard, getCommonTitle, getLabel, getDateField, convertEpochToDate  } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { httpRequest } from "../../../../ui-utils";
 import { getSearchResults } from "../../../../ui-utils/commons";
 import { getPropertyInfoManimajra } from "./applyResourceManimajra/reviewDetails";
 import { getQueryArg, getTodaysDateInYMD } from "egov-ui-framework/ui-utils/commons";
-import { convertDateToEpoch, validateFields, getRentSummaryCard, getTextToLocalMapping } from "../utils";
+import { convertDateToEpoch, validateFields, getRentSummaryCard, getTextToLocalMapping, _getPattern,displayCustomErr } from "../utils";
 import {demandResults} from './searchResource/searchResults'
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-
+import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 import moment from 'moment'
+import { payerField } from "./estate-payment";
+
   const header = getCommonHeader({
     labelName: "Rent Payment",
     labelKey: "ES_RENT_PAYMENT_HEADER"
   });
   
   const beforeInitFn = async(action, state, dispatch)=>{
+    const userInfo = JSON.parse(getUserInfo());
+    const {roles = []} = userInfo
+    const manimajraPaymentPageAccess = roles.find(item => item.code === "ES_MM_FINANCIAL_OFFICER");
+    if(manimajraPaymentPageAccess === undefined && userInfo.type != "CITIZEN"){
+      dispatch(
+        setRoute(
+         `/estate/home`
+        )
+      )
+    }
+
     dispatch(prepareFinalObject("Properties", []))
     let propertyId = getQueryArg(window.location.href, "propertyId")
     const fileNumber = getQueryArg(window.location.href, "fileNumber")
@@ -224,9 +237,22 @@ export const monthField = {
       labelName: "Enter Bank Name",
       labelKey: "ES_ENTER_BANK_NAME_PLACEHOLDER"
   },
+  minLength:3,
+  maxLength:250,
     required: true,
     jsonPath: "payment.bankName",
-    visible: process.env.REACT_APP_NAME !== "Citizen"
+    visible: process.env.REACT_APP_NAME !== "Citizen",
+    afterFieldChange: (action, state, dispatch) => {
+      if (action.value.length > 250) {
+          displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_250", action.screenKey);
+      }
+      else if(action.value.length<3){
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_BANK_NAME_3", action.screenKey);
+      }
+      else {
+          displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_BANK_NAME_FIELD",action.screenKey);
+      }
+  }
   }
 
   const transactionId = {
@@ -244,8 +270,22 @@ export const monthField = {
       labelKey: "ES_ENTER_TRANSACTION_ID_PLACEHOLDER"
     },
     required: true,
+    minLength:3,
+    maxLength:250,
     jsonPath: "payment.transactionNumber",
-    visible: process.env.REACT_APP_NAME !== "Citizen"
+    visible: process.env.REACT_APP_NAME !== "Citizen",
+    pattern:_getPattern("transactionid"),
+    afterFieldChange: (action, state, dispatch) => {
+      if (action.value.length > 250) {
+          displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_250", action.screenKey);
+      }
+      else if(action.value.length <3){
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_TRANSACTION_ID_3", action.screenKey);
+      }
+      else {
+          displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_TRANSACTION_ID_FIELD",action.screenKey);
+      }
+  }
   }
   
   const paymentDate = {
@@ -266,6 +306,7 @@ export const monthField = {
         max: getTodaysDateInYMD()
     }
     },
+    errorMessage:"ES_ERR_DATE_OF_PAYMENT",
     afterFieldChange: (action, state, dispatch) => {
       dispatch(prepareFinalObject(
         "payment.dateOfPayment", convertDateToEpoch(action.value)
@@ -291,12 +332,31 @@ export const monthField = {
     }
     },
     afterFieldChange: (action, state, dispatch) => {
+      dispatch(
+        handleField(
+"manimajra-payment",
+"components.div.children.loader",
+"visible",
+true
+      ))
+      setTimeout(() => {
+        
+
     let {toDate} = state.screenConfiguration.preparedFinalObject.offlinePaymentDetails
+    let todaysdate=getTodaysDateInYMD()
+    todaysdate=convertDateToEpoch(todaysdate)
     toDate = convertDateToEpoch(toDate)
     var fromDate = ""
     const {ManiMajraAccountStatement} = state.screenConfiguration.preparedFinalObject
     if(ManiMajraAccountStatement && ManiMajraAccountStatement!=null){
       fromDate = ManiMajraAccountStatement[0].date
+      let fromDateStr = convertEpochToDate(fromDate)
+      dispatch(prepareFinalObject(
+        "payment.fromDate", fromDateStr.split("/").reverse().join("-")
+      ))
+      dispatch(prepareFinalObject(
+        "payment.toDate", convertEpochToDate(toDate).split("/").reverse().join("-")
+      ))
    }
    fromDate = convertDateToEpoch(fromDate)
 
@@ -327,7 +387,17 @@ export const monthField = {
       [getTextToLocalMapping("Total Due")]: (item.dueAmount.toFixed(2)) || "-",
       [getTextToLocalMapping("Rent")]: item.rent || "-"
     }));
-
+ let lastrow=  data.pop()
+if(todaysdate===toDate){
+  data.push({
+    "Date": `Balance as on ${moment(toDate).format("DD-MMM-YYYY")}`,
+    "Demand Type": "-",
+    "GST": "-",
+    "Rent": lastrow["Total Due"],
+    "Total Due": "-"
+})
+}
+else{
     data.push({
         "Date": `Balance as on ${moment(toDate).format("DD-MMM-YYYY")}`,
         "Demand Type": "-",
@@ -335,7 +405,7 @@ export const monthField = {
         "Rent": amount,
         "Total Due": "-"
     })
-
+  }
     dispatch(
       handleField(
         "manimajra-payment",
@@ -344,6 +414,17 @@ export const monthField = {
         data
       )
     );
+    if(todaysdate===toDate){
+      dispatch(
+        handleField(
+          "manimajra-payment",
+          "components.div.children.detailsContainer.children.paymentDetails.children.cardContent.children.detailsContainer.children.Amount",
+          "props.value",
+          lastrow["Total Due"]
+        )
+      );
+    }
+    else{
     dispatch(
       handleField(
         "manimajra-payment",
@@ -352,7 +433,15 @@ export const monthField = {
         amount
       )
     );
-   
+      }
+      dispatch(
+        handleField(
+  "manimajra-payment",
+  "components.div.children.loader",
+  "visible",
+  false
+      ))
+    }, 5000);
     }
   }
 
@@ -380,6 +469,7 @@ export const monthField = {
   export const paymentDetails = getCommonCard({
     // header: paymentDetailsHeader,
     detailsContainer: getCommonContainer({
+      payer: getSelectField(payerField),
       Amount: getTextField(paymentAmount),
       bankName: getTextField(bankName),
       dateOfPayment: getDateField(paymentDate),
@@ -435,13 +525,24 @@ export const monthField = {
 
     if(!!isValid) {
       let {amount} = state.screenConfiguration.preparedFinalObject.payment
+      if(parseInt(amount)===0){
+        let errorMessage = {
+          labelName:
+              "Please enter amount greater then zero",
+          labelKey: "ES_ERR_ZERO_AMOUNT"
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      }
+      else{
       const propertyId = getQueryArg(window.location.href, "propertyId")
       const {payment} = state.screenConfiguration.preparedFinalObject
+      const {payer, ...rest} = payment
       if(!!propertyId ) {
         const payload = [
           { id: propertyId, 
+            payer,
             propertyDetails: {
-              offlinePaymentDetails: [payment]
+              offlinePaymentDetails: [rest]
             }
           }
         ]
@@ -471,6 +572,7 @@ export const monthField = {
           console.log("error", error)
         }
       }
+    }
     }
   }
   
@@ -542,6 +644,11 @@ const manimajraPayment = {
                   ...header
                 }
               }
+            },
+            loader:{
+              uiFramework: "custom-molecules",
+              componentPath: "LoadingIndicator",
+              visible:false
             },
             detailsContainer :  detailsContainer,
             footer: paymentFooter
