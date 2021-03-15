@@ -927,7 +927,15 @@ ValidateRequest =(payload) =>{
                           ||businessService === "WS_RENAME" 
                           || businessService === "WS_CONVERSION" 
                           || businessService === "WS_REACTIVATE" 
-                          || businessService === "WS_TUBEWELL") ? !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SEND_BACK_TO_CITIZEN" && item.action !== "RESUBMIT_APPLICATION" : !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
+                          || businessService === "WS_TUBEWELL") 
+                          ? !checkIfTerminatedState(item.nextState, businessService) 
+                          && item.action !== "SEND_BACK_TO_CITIZEN" 
+                          && item.action !== "RESUBMIT_APPLICATION" 
+                          && item.action !== "SUBMIT_ROADCUT_NOC" 
+                          && item.action !== "SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC"
+                          && item.action !== "VERIFY_AND_FORWARD_FOR_PAYMENT"// VERIFY_AND_FORWARD_FOR_PAYMENT
+                          : !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
+                          // new action added SUBMIT_ROADCUT_NOC,SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC
         roles: getEmployeeRoles(item.nextState, item.currentState, businessService),
         isDocRequired: checkIfDocumentRequired(item.nextState, businessService)
       };
@@ -1089,17 +1097,17 @@ ValidateRequest =(payload) =>{
       }
     }
     if((businessService=='NewWS1' 
-      || businessService === "REGULARWSCONNECTION"  
+        || businessService === "REGULARWSCONNECTION"  
         || businessService === 'SW_SEWERAGE' 
         || businessService === "TEMPORARY_WSCONNECTION"
         || businessService === "WS_TEMP_TEMP" 
-        ||businessService === "WS_TEMP_REGULAR"
-        ||businessService === "WS_DISCONNECTION" 
-        ||businessService === "WS_TEMP_DISCONNECTION"
+        || businessService === "WS_TEMP_REGULAR"
+        || businessService === "WS_DISCONNECTION" 
+        || businessService === "WS_TEMP_DISCONNECTION"
         || businessService === "WS_RENAME" 
         || businessService === "WS_CONVERSION" 
         || businessService === "WS_REACTIVATE"     
-    || businessService === "WS_TUBEWELL")
+        || businessService === "WS_TUBEWELL")
     && applicationStatus == 'PENDING_FOR_TEMPORARY_TO_REGULAR_CONNECTION_APPROVAL'){
       //    actions.forEach(item => {
       //     if(item.buttonLabel === 'APPROVE_FOR_CONNECTION_CONVERSION')

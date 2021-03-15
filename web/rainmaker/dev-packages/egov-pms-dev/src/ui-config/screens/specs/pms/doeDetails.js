@@ -2,6 +2,8 @@ import {
   getCommonContainer,
   getCommonCard,
   getCommonHeader,
+  getTextField,  
+  getCommonSubHeader,
   getCommonTitle,
   getCommonParagraph,
   getLabel,
@@ -13,7 +15,7 @@ import {
 import { footer } from "./doeDetailsResource/footer";
 import { empDetails } from "./doeDetailsResource/empDetails";
 import { employeeOtherDetails } from "./doeDetailsResource/employeeOtherDetails";
-import { pensionDetails } from "./doeDetailsResource/pensionDetails";
+import { pensionDetails ,arrealPensionDetails} from "./doeDetailsResource/pensionDetails";
 //import { propertyLocationDetails } from "./applyResource/propertyLocationDetails";
 import { otherDetails } from "./doeDetailsResource/otherDetails";
 import { documentDetails } from "./doeDetailsResource/documentDetails";
@@ -42,6 +44,11 @@ import {
   setApplicationNumberBox
 } from "../../../../ui-utils/commons";
 import { stringify } from "jsonpath";
+import {
+  
+  epochToYmd,
+  showHideAdhocPopup,
+} from "../utils";
 
   //SU0001 fix for set application number
   const tenantId = getQueryArg(window.location.href, "tenantId");
@@ -228,6 +235,8 @@ export const formwizardSecondStep = {
   children: {
     
     pensionDetails:pensionDetails(Accesslable),
+    arrealPensionDetails:arrealPensionDetails(Accesslable),
+
   },
   visible: false
 };
@@ -652,6 +661,28 @@ export const prepareEditFlow = async (
        set(state,"screenConfiguration.preparedFinalObject.ProcessInstances[0].employee.assignments[0].designation", codeNames);
        
      }
+     let dateOfDeath = get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].employee.dateOfDeath", 0 )
+     let CurrentDate = new Date()
+     if(Number(dateOfDeath))
+     dateOfDeath = epochToYmd(dateOfDeath)
+     const  dateOfDeath_ = new Date(dateOfDeath)
+     if(dateOfDeath_ <CurrentDate)
+     {
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardSecondStep.children.arrealPensionDetails.visible",
+        true
+      );
+
+     }
+     else{
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardSecondStep.children.arrealPensionDetails.visible",
+        false
+      );
+
+     }
   prepareDocumentsUploadData(state, dispatch);
  // window.location.reload(false);
 };
@@ -771,6 +802,122 @@ prepareEditFlow(state, dispatch, applicationNumber, tenantId, action).then(res=>
         formwizardThirdStep,
         footer:footer(pensiondata)
        // pmsfooter
+      }
+    },
+    adhocDialog: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-pms",
+      componentPath: "DialogContainer",
+      props: {
+        open: false,
+       maxWidth: "xl",
+        screenKey: "doeDetails"
+      },
+      children: {
+        // popup:{
+        //   PensionArrealInfo: {
+        //     uiFramework: "custom-containers-local",
+        //     componentPath: "EmployeeServiceContainer",
+        //     moduleName: "egov-pms",
+        //     // visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+        //     props: {
+        //       dataPath: "ProcessInstances",
+        //       moduleName: "RRP_SERVICE",       
+        //     }
+        //   },
+        // }
+        popup: getCommonContainer({
+          header: {
+            uiFramework: "custom-atoms",
+            componentPath: "Container",
+            props: {
+              style: {
+                width: "100%",
+                float: "right"
+              }
+            },
+            children: {
+              div1: {
+                uiFramework: "custom-atoms",
+                componentPath: "Div",
+                gridDefination: {
+                  xs: 10,
+                  sm: 10
+                },
+                props: {
+                  style: {
+                    width: "100%",
+                    float: "right"
+                  }
+                },
+                children: {
+                  div: getCommonHeader(
+                    {
+                      labelKey: "PENSION_POPUP_HEAD_ARREAR"
+                    },
+                    {
+                      style: {
+                        fontSize: "20px"
+                      }
+                    }
+                  )
+                }
+              },
+              div2: {
+                uiFramework: "custom-atoms",
+                componentPath: "Div",
+                gridDefination: {
+                  xs: 2,
+                  sm: 2
+                },
+                props: {
+                  style: {
+                    width: "100%",
+                    float: "right",
+                    cursor: "pointer"
+                  }
+                },
+                children: {
+                  closeButton: {
+                    componentPath: "Button",
+                    props: {
+                      style: {
+                        float: "right",
+                        color: "rgba(0, 0, 0, 0.60)"
+                      }
+                    },
+                    children: {
+                      previousButtonIcon: {
+                        uiFramework: "custom-atoms",
+                        componentPath: "Icon",
+                        props: {
+                          iconName: "close"
+                        }
+                      }
+                    },
+                    onClickDefination: {
+                      action: "condition",
+                      callBack: (state, dispatch) => {
+                        showHideAdhocPopup(state, dispatch, "doeDetails");
+                      }
+                    }
+                  }
+                }
+              },
+              
+            }
+          },
+          pensionArrears: {
+            uiFramework: "custom-containers-local",
+            componentPath: "EmployeeServiceContainer",
+            moduleName: "egov-pms",
+            props: {
+              dataPath: "taskInstance",
+              moduleName: "RRP_SERVICE_ARREAR",
+              updateUrl: "/tl-services/v1/_processWorkflow"
+                    }
+          },
+        })
       }
     }
   },
