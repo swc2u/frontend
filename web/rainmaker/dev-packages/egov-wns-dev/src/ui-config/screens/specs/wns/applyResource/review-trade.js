@@ -37,6 +37,9 @@ export const propertyLocationDetailsHeader = getHeader({
 export const propertyUsageDetailsHeader = getHeader({
   labelKey: "WS_COMMON_PROPERTY_USAGE_HEADER"
 });
+export const propertyproposedUsageDetailsHeader = getHeader({
+  labelKey: "WS_COMMON_PROPERTY_USAGE_HEADER_PROPOSED"
+});
 
 
 export const connectionDetailsHeader = getHeader({
@@ -97,6 +100,7 @@ export const getReviewConnectionDetails = (isEditable = true) => {
     },
     viewOne: getPropertyDetails,
     viewpropertyUsageDetail: getpropertyUsageDetail,
+    viewpropertyproposedUsageDetail: getproposedpropertyUsageDetail,
     viewConnection: getPropertyConnectionOtherDetails,
   //  viewConnectionHeader: propertyConnectionDetailsHeader,
   //  viewConnection: renderService(),
@@ -104,6 +108,7 @@ export const getReviewConnectionDetails = (isEditable = true) => {
     viewThree: ownerDetails,
     //viewFour: getConnectionDetails(),
     viewFive:taskConnHolderDetailsSummary(),
+    viewproposedHolderInfo:taskConnHolderDetailsProposedSummary(),
     viewSix:connHolderDetailsSameAsOwnerSummary()
 
   });
@@ -271,6 +276,25 @@ export const propertyDetails={
   //   callBack: handleNA }
   // )
 }
+//proposed
+export const proposedpropertyUsesDetails={
+ 
+  reviewpropertyproposedUsageCategory: getLabelWithValue(
+    {
+      labelName: "proposedUsageCategory",
+      labelKey: "WS_PROPERTY_USAGE_TYPE_TARRIF_LABEL_INPUT_PROPOSED"
+    },
+    {
+      jsonPath: "WaterConnection[0].proposedUsageCategory",
+      callBack: handleNA,
+      localePrefix: {
+        moduleName: "WS",
+        masterName: "TARRIF"
+      } 
+    }
+  ),
+
+}
 export const propertyUsesDetails={
   reviewpropertyUsageType: getLabelWithValue(
     {
@@ -286,6 +310,7 @@ export const propertyUsesDetails={
       } 
     }
   ),
+
 
   reviewpropertySubUsageType: getLabelWithValue(
     {
@@ -367,6 +392,25 @@ const getpropertyUsageDetail ={
     scheama: getCommonGrayCard({
       div2: propertyUsageDetailsHeader,
       getpropertyUsageDetailsHeaderContainer: getCommonContainer(propertyUsesDetails)
+    }),
+    items: [],
+    hasAddItem: false,
+    isReviewPage: true,
+    sourceJsonPath: "Licenses[0].tradeLicenseDetail.tradeUnits",
+    prefixSourceJsonPath:
+      "children.cardContent.children.getPropertyDetailsContainer.children",
+    afterPrefixJsonPath: "children.value.children.key"
+  },
+  type: "array"
+};
+const getproposedpropertyUsageDetail ={
+  uiFramework: "custom-containers",
+  componentPath: "MultiItem",
+  props: {
+    className: "common-div-css search-preview",
+    scheama: getCommonGrayCard({
+      div2: propertyproposedUsageDetailsHeader,
+      getproposedpropertyUsageDetailHeaderContainer: getCommonContainer(proposedpropertyUsesDetails)
     }),
     items: [],
     hasAddItem: false,
@@ -547,6 +591,10 @@ const holderHeader = getHeader({
   labelKey: "WS_COMMON_CONNECTION_HOLDER_DETAILS_HEADER",
   labelName: "Connection Holder Details"
 })
+const proposedholderHeader = getHeader({
+  labelKey: "WS_COMMON_CONNECTION_HOLDER_DETAILS_HEADER_PROPOSED",
+  labelName: "proposed Connection Holder Details"
+})
 
 export const connectionHolderDetails={
   mobileNumber : getLabelWithValue(
@@ -602,6 +650,55 @@ export const connectionHolderDetails={
     //  }
    //)
  };
+ export const proposedconnectionHolderDetails={
+  proposedMobileNo : getLabelWithValue(
+     {
+       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_MOBILE_NO_LABEL"
+     },
+     { jsonPath: "WaterConnection[0].connectionHolders[0].proposedMobileNo", callBack: handleNA }
+   ),
+   proposedName : getLabelWithValue(
+     {
+       labelName: "Name",
+       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_OWN_NAME_LABEL"
+     },
+     { jsonPath: "WaterConnection[0].connectionHolders[0].proposedName", callBack: handleNA }
+   ),
+  //   gender : getLabelWithValue(
+  //    {
+  //      labelKey: "WS_CONN_HOLDER_OWN_DETAIL_GENDER_LABEL"
+  //    },
+  //    {
+  //      jsonPath: "WaterConnection[0].connectionHolders[0].gender",
+  //      callBack: handleNA
+  //    }
+  //  ),
+    
+  //   relationship : getLabelWithValue(
+  //    {
+  //      labelKey: "WS_CONN_HOLDER_OWN_DETAIL_RELATION_LABEL"
+  //    },
+  //    { jsonPath: "WaterConnection[0].connectionHolders[0].relationship", callBack: handleNA }
+  //  ),
+  proposedCorrespondanceAddress :getLabelWithValue(
+     {
+       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_CROSADD"
+     },
+     {
+       jsonPath: "WaterConnection[0].connectionHolders[0].proposedCorrespondanceAddress",
+       callBack: handleNA
+     }
+   ),
+    // specialApplicantCategory : getLabelWithValue(
+    //  {
+    //    labelKey: "WS_CONN_HOLDER_OWN_DETAIL_SPECIAL_APPLICANT_LABEL"
+    //  },
+    //  {
+    //    jsonPath: "WaterConnection[0].connectionHolders[0].ownerType",
+    //    callBack: handleNA
+    //  }
+   //)
+ };
 const taskConnHolderDetailsSummary = () => {
   return ({
     uiFramework: "custom-containers",
@@ -611,6 +708,25 @@ const taskConnHolderDetailsSummary = () => {
       scheama: getCommonGrayCard({
         div4: holderHeader,
         connHoldDetail:getCommonContainer(connectionHolderDetails)
+      }),
+      items: [],
+      hasAddItem: false,
+      sourceJsonPath: "WaterConnection[0].connectionHolders",
+      prefixSourceJsonPath: "children.cardContent.children.connHoldDetail.children",
+      afterPrefixJsonPath: "children.value.children.key"
+    },
+    type: "array"
+  })
+}
+const taskConnHolderDetailsProposedSummary = () => {
+  return ({
+    uiFramework: "custom-containers",
+    componentPath: "MultiItem",
+    props: {
+      className: "common-div-css search-preview",
+      scheama: getCommonGrayCard({
+        div4: proposedholderHeader,
+        connHoldDetail:getCommonContainer(proposedconnectionHolderDetails)
       }),
       items: [],
       hasAddItem: false,
