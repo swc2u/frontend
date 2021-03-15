@@ -13,7 +13,7 @@ import { changeStep, changePropertyStep } from "./footer";
 import { DOWNLOADRECEIPT, FETCHRECEIPT } from "egov-ui-kit/utils/endPoints";
 import { downloadReceiptFromFilestoreID } from "egov-common/ui-utils/commons";
 import { get } from "lodash";
-
+import moment from 'moment'
 export const areaLabel = {
     labelName: "Locality",
     labelKey: "RP_LOCALITY_LABEL"
@@ -711,11 +711,36 @@ const downloadReceipt = async (data, preparedObject,properties) => {
           { key: "tenantId", value: receiptQueryString[1].value.split('.')[0] }
         ]
         const oldFileStoreId = get(payloadReceiptDetails.Payments[0], "fileStoreId")
+        let {
+            Payments
+          } = payloadReceiptDetails;
+
         if (oldFileStoreId) {
           downloadReceiptFromFilestoreID(oldFileStoreId, "download")
         }
         else {
-          httpRequest(DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Properties:properties,Payments: payloadReceiptDetails.Payments, generatedBy: "" }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+            if(!properties[0].offlinePaymentDetails){
+                properties[0]["offlinePaymentDetails"] = []
+            
+                let transactionNumber = {
+                "transactionNumber" : Payments[0].transactionNumber
+                }
+                properties[0].offlinePaymentDetails.push(transactionNumber)
+            }  
+              let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
+
+              if(time){
+                time = moment(new Date(time)).format("h:mm:ss a")
+              }
+              Payments = [{
+                ...Payments[0],paymentDetails:[{
+                  ...Payments[0].paymentDetails[0],auditDetails:{
+                    ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
+                  }
+                }]
+              }]
+
+          httpRequest(DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Properties:properties, Payments, generatedBy: "" }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
             .then(res => {
               getFileUrlFromAPI(res.filestoreIds[0]).then((fileRes) => {
                 var win = window.open(fileRes[res.filestoreIds[0]], '_blank');
