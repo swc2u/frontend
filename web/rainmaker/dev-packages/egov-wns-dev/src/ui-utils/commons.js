@@ -182,9 +182,14 @@ export const getSearchResults = async queryObject => {
         result.WaterConnection[0].waterSubSource = waterSubSource;
         if(result.WaterConnection[0].connectionHolders && result.WaterConnection[0].connectionHolders[0] && result.WaterConnection[0].connectionHolders !=='NA')
         {
-        result.WaterConnection[0].connectionHolders[0].proposedName = null;
-        result.WaterConnection[0].connectionHolders[0].proposedMobileNo = null;
-        result.WaterConnection[0].connectionHolders[0].proposedCorrespondanceAddress = null;
+            if(result.WaterConnection[0].activityType='UPDATE_CONNECTION_HOLDER_INFO' &&  result.WaterConnection[0].applicationStatus==='PENDING_FOR_DOCUMENT_VERIFICATION')
+            {
+                result.WaterConnection[0].connectionHolders[0].proposedName = result.WaterConnection[0].connectionHolders[0].proposedName;
+                result.WaterConnection[0].connectionHolders[0].proposedMobileNo = result.WaterConnection[0].connectionHolders[0].proposedMobileNo;
+                result.WaterConnection[0].connectionHolders[0].proposedCorrespondanceAddress = result.WaterConnection[0].connectionHolders[0].proposedCorrespondanceAddress;
+
+            }
+               
 
         }
         
