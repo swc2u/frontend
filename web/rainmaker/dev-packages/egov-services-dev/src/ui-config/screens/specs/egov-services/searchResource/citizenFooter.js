@@ -1,6 +1,7 @@
 import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getCommonApplyFooter, showHideAdhocPopup } from "../../utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
+import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import {
     getapplicationType,
@@ -13,12 +14,39 @@ import get from "lodash/get";
 export const callBackForCancel = (state, dispatch) => {
     dispatch(setRoute("/egov-services/my-applications"));
 };
-export const callBackForEdit = (state, dispatch) => {
+
+export const goAfterConfirmation = (state, dispatch) => {
     let applicationNumber = getapplicationNumber()
     let businessService = getapplicationType();
     let tenantId = getTenantId().split(".")[0]
-    dispatch(setRoute(`/egov-services/checkavailability_pcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}&changeDateVenue=Enabled`));
+    const booktingVenueType = get(
+        state,
+        "screenConfiguration.preparedFinalObject.Booking.bkBookingType",
+        {}
+    );
+    dispatch(setRoute(`/egov-services/checkavailability_pcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}&changeDateVenue=Enabled&booktingVenueType=${booktingVenueType}`));
 };
+
+export const callBackForEdit = (state, dispatch) => {
+    let toggle = get(
+      state.screenConfiguration.screenConfig["pcc-search-preview"],
+      "components.cityPickerDialog.props.open",
+      false
+    );
+    const roomsExistsInBooking = get(
+        state,
+        "screenConfiguration.preparedFinalObject.Booking.roomsModel",
+        {}
+    );
+    if(roomsExistsInBooking.length > 0){
+        dispatch(
+            handleField("pcc-search-preview", "components.cityPickerDialog", "props.open", !toggle)
+          );
+    }else{
+        goAfterConfirmation();
+    }
+
+  };
 
 export const callBackForNext = (state, dispatch, pathKey) => {
     const applicationNumber = getQueryArg(

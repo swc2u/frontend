@@ -43,6 +43,11 @@ import set from "lodash/set";
 
 const getMdmsData = async (action, state, dispatch) => {
     let tenantId = getTenantId().split(".")[0];
+    const booktingVenueType = getQueryArg(
+        window.location.href,
+        "booktingVenueType"
+    );
+
     let mdmsBody = {
         MdmsCriteria: {
             tenantId: tenantId,
@@ -87,20 +92,95 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
+        let ccSectorsRes;
+        let parkSectorsRes
+        if (booktingVenueType) {
+            if (booktingVenueType === "Community Center") {
+                ccSectorsRes = await httpRequest(
+                    "post",
+                    "/bookings/park/community/sector/_fetch?venueType=Community Center",
+                    "_fetch",
+                    []
+
+                );
+            } else if (booktingVenueType === "Parks") {
+                parkSectorsRes = await httpRequest(
+                    "post",
+                    "/bookings/park/community/sector/_fetch?venueType=Parks",
+                    "_fetch",
+                    []
+
+                );
+            }
+        } else {
+            ccSectorsRes = await httpRequest(
+                "post",
+                "/bookings/park/community/sector/_fetch?venueType=Community Center",
+                "_fetch",
+                []
+
+            );
+
+            parkSectorsRes = await httpRequest(
+                "post",
+                "/bookings/park/community/sector/_fetch?venueType=Parks",
+                "_fetch",
+                []
+
+            );
+        }
+
+        let parkSectors;
+        let ccSectors;
+        if (booktingVenueType) {
+            if (booktingVenueType === "Community Center") {
+                ccSectors = ccSectorsRes.data.map((item) => {
+                    return { code: item.sector, active: item.isActive, name: item.sector }
+                })
+            } else if (booktingVenueType === "Parks") {
+                parkSectors = parkSectorsRes.data.map((item) => {
+                    return { code: item.sector, active: item.isActive, name: item.sector }
+                })
+            }
+        } else {
+            if (parkSectorsRes.status === "200") {
+                parkSectors = parkSectorsRes.data.map((item) => {
+                    return { code: item.sector, active: item.isActive, name: item.sector }
+                })
+            }
+            if (ccSectorsRes.status === "200") {
+                ccSectors = ccSectorsRes.data.map((item) => {
+                    return { code: item.sector, active: item.isActive, name: item.sector }
+                })
+            }
+        }
+
+        dispatch(prepareFinalObject("parkSectors", parkSectors));
+        dispatch(prepareFinalObject("ccSectors", ccSectors));
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
         let bookingTypeData = get(
             state,
-            "screenConfiguration.preparedFinalObject.Booking.bkBookingType", 
+            "screenConfiguration.preparedFinalObject.Booking.bkBookingType",
             ""
         );
-        if(bookingTypeData=== "Commercial Ground"){
-            dispatch(prepareFinalObject("sectorJsonPath", payload.MdmsRes.Booking.Booking_Vanue));
-        
-        }else{
-            dispatch(prepareFinalObject("sectorJsonPath", payload.MdmsRes.Booking.Sector));
-        
+
+        if (booktingVenueType) {
+            if (booktingVenueType === "Community Center") {
+                dispatch(prepareFinalObject("sectorJsonPath", ccSectors));
+            } else if (booktingVenueType === "Parks") {
+                dispatch(prepareFinalObject("sectorJsonPath", parkSectors));
+            }
+        } else {
+            if (bookingTypeData === "Commercial Ground") {
+                dispatch(prepareFinalObject("sectorJsonPath", payload.MdmsRes.Booking.Booking_Vanue));
+
+            } else {
+                //dispatch(prepareFinalObject("sectorJsonPath", payload.MdmsRes.Booking.Sector));
+                dispatch(prepareFinalObject("sectorJsonPath", parkSectors));
+
+            }
         }
-        
+
     } catch (e) {
         console.log(e);
     }
@@ -192,7 +272,6 @@ const prepareEditFlow = async (
             let response = await getMasterDataPCC(requestBody);
             let responseStatus = get(response, "status", "");
             if (responseStatus == "SUCCESS" || responseStatus == "success") {
-
                 dispatch(prepareFinalObject("masterData", response.data));
                 requestBody = {
                     bookingType: bookingsModelList[0].bkBookingType,
@@ -373,7 +452,7 @@ const availabilityMediaCardWrapper = {
     },
     children: {
         availabilityMediaCard,
-        
+
     },
     visible: false,
 };

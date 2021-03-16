@@ -6,12 +6,141 @@ import {
     getLabel,
     getLabelWithValue,
     convertEpochToDate,
+    getCommonHeader
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { gotoApplyWithStep } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 import {
     convertDateInDMY
 } from "../../utils";
+import { goAfterConfirmation, callBackForEdit } from "../searchResource/citizenFooter";
+
+export const cityPicker = getCommonContainer({
+    div1: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        gridDefination: {
+            xs: 10,
+            sm: 10
+        },
+        props: {
+            style: {
+                width: "100%",
+                float: "right"
+            }
+        },
+        children: {
+            div: getCommonHeader(
+                {
+                    labelName: "Date/Venue change Terms & Conditions",
+                    labelKey: "BK_PACC_BOOKING_CHANGE_DATE_VENUE_TNC"
+                },
+                {
+                    style: {
+                        fontSize: "20px"
+                    }
+                }
+            )
+        }
+    },
+    div2: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        gridDefination: {
+            xs: 2,
+            sm: 2
+        },
+        props: {
+            style: {
+                width: "100%",
+                float: "right",
+                cursor: "pointer"
+            }
+        },
+        children: {
+            closeButton: {
+                componentPath: "Button",
+                props: {
+                    style: {
+                        float: "right",
+                        color: "rgba(0, 0, 0, 0.60)",
+                        marginTop: "-8px",
+                        marginRight: "-15px"
+                    }
+                },
+                children: {
+                    previousButtonIcon: {
+                        uiFramework: "custom-atoms",
+                        componentPath: "Icon",
+                        props: {
+                            iconName: "close"
+                        }
+                    }
+                },
+                onClickDefination: {
+                    action: "condition",
+                    callBack: callBackForEdit
+                }
+            }
+        }
+    },
+
+    div3: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        gridDefination: {
+            xs: 10,
+            sm: 10
+        },
+        props: {
+            style: {
+                width: "100%",
+                float: "right",
+                marginBottom: "20px"
+            }
+        },
+        children: {
+            div: getCommonHeader(
+                {
+                    labelName: "By changing date/venue, the booked rooms will be cancelled",
+                    labelKey: "BK_PACC_CHANGE_DATE_VENUE_TNC_DESC"
+                },
+                {
+                    style: {
+                        fontSize: "15px"
+                    }
+                }
+            )
+        }
+    },
+    cityPicker: getCommonContainer({
+
+        div: {
+            uiFramework: "custom-atoms",
+            componentPath: "Div",
+            children: {
+                selectButton: {
+                    componentPath: "Button",
+                    props: {
+                        variant: "contained",
+                        color: "primary",
+                        className: "hrmsCityPickerButton"
+                    },
+                    children: {
+                        previousButtonLabel: getLabel({
+                            labelName: "SELECT",
+                            labelKey: "BK_PACC_BOOKING_CHANGE_DATE_VENUE_SELECT"
+                        })
+                    },
+                    onClickDefination: {
+                        action: "condition",
+                        callBack: goAfterConfirmation
+                    }
+                }
+            }
+        }
+    })
+});
 
 export const pccSummary = getCommonGrayCard({
     header: {
@@ -28,7 +157,7 @@ export const pccSummary = getCommonGrayCard({
                 ...getCommonSubHeader({
                     labelName: "Venue Details",
                     labelKey: "BK_PCC_BOOKING_DETAILS",
-                   }),
+                }),
             },
         },
     },
@@ -114,7 +243,7 @@ export const pccSummary = getCommonGrayCard({
                             jsonPath: "Booking.bkLocation",
                         }
                     ),
-              // FromDate: getLabelWithValue(
+                    // FromDate: getLabelWithValue(
                     //     {
                     //         labelName: "From Date",
                     //         labelKey: "BK_PCC_FROM_DATE_LABEL",
@@ -149,8 +278,8 @@ export const pccSummary = getCommonGrayCard({
 
                         }
                     ),
-                    
-      // ToDate: getLabelWithValue(
+
+                    // ToDate: getLabelWithValue(
                     //     {
                     //         labelName: "To Date",
                     //         labelKey: "BK_PCC_TO_DATE_LABEL",
