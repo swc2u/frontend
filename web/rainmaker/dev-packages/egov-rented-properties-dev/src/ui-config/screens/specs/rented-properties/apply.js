@@ -231,6 +231,14 @@ const getData = async(action, state, dispatch) => {
         true
       )
     )
+    dispatch(
+      handleField(
+        "apply",
+        "components.div.children.formwizardFirstStep.children.propertyDetails.children.cardContent.children.detailsContainer.children.colony",
+        "props.disabled",
+        true
+      )
+    )
     if(colony === 'COLONY_KUMHAR' || colony === 'COLONY_MILK'){
         dispatch(
             handleField(
