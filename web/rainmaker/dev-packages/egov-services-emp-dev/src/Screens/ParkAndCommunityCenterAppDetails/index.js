@@ -94,7 +94,10 @@ class ApplicationDetails extends Component {
 			newPaymentDetails: 'NotFound',
 			checkGreaterDate: '',
 			checkNumDays: '',
-			createdDate: ''
+			createdDate: '',
+			stateCode :"" ,
+			placeOfService : "",
+			 mcGSTN : ""
 		};
 	};
 
@@ -161,6 +164,42 @@ class ApplicationDetails extends Component {
 			mdmsBody
 		);
 		console.log(payloadRes, "hsncodeAndAll");
+
+		let mdmsBodyTwo = {
+			MdmsCriteria: {
+				tenantId: userInfo.tenantId,
+				moduleDetails: [
+	
+					{
+						moduleName: "Booking",
+						masterDetails: [
+							{
+								name: "PDF_BOOKING_DETAILS",
+							}
+						],
+					},
+	
+				],
+			},
+		}; 
+	
+		let payloadResTwo = null;
+		payloadResTwo = await httpRequest(
+			"egov-mdms-service/v1/_search",
+			"_search",[],
+			mdmsBodyTwo
+		);
+		console.log(payloadResTwo, "MCGSTnumberDetail");
+
+	let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS	
+	console.log("pdfDetails-",pdfDetails)   //stateCode  placeOfService  mcGSTN
+
+this.setState({
+	stateCode : pdfDetails[0].stateCode,
+	placeOfService : pdfDetails[0].placeOfService,
+	mcGSTN : pdfDetails[0].mcGSTN
+},console.log("thisStatestateCode",this.state.stateCode,this.state.placeOfService,this.state.mcGSTN))
+
 
 		let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING[0]
 
@@ -891,7 +930,7 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 					"sector": applicationDetails.bkSector,
 					"fatherName": "",
 					"custGSTN": applicationDetails.bkCustomerGstNo,
-					"placeOfService": "Chandigarh"
+					"placeOfService": this.state.placeOfService
 				},
 				"bookingDetail": {
 					"applicationNumber": applicationDetails.bkApplicationNumber,
@@ -933,18 +972,20 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 					"cgst": applicationDetails.bkCgst,
 					"utgst": applicationDetails.bkCgst,
 					"totalgst": PACC_TAX,
-					"refundableCharges": applicationDetails.bkRefundAmount,
+					"refundableCharges": this.props.REFUNDABLE_SECURITY,
 					"totalPayment": this.props.totalAmount,
 					"paymentDate": convertEpochToDate(this.props.offlineTransactionDate, "dayend"),
 					"receiptNo": this.props.recNumber,
 					"paymentType": this.props.offlinePayementMode,
 					"facilitationCharge": FACILITATION_CHARGE,
-					"discType": applicationDetails.discount,
+					"discType": applicationDetails.bkPlotSketch,
 					"transactionId": this.props.offlineTransactionNum,
 					"totalPaymentInWords": this.NumInWords(
 						this.props.totalAmount
 					),  //offlineTransactionDate,,
-					"bankName": ""
+					"bankName": "",
+					"cardNumberLast4": "Not Applicable",
+					"dateVenueChangeCharges": this.props.DATEVENUECHARGE == 0 ?"Not Applicable":this.props.DATEVENUECHARGE,
 				},
 				"OtherDetails": {
 					"clchargeforwest": applicationDetails.bkCleansingCharges,
@@ -957,8 +998,8 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 					"contactNumber": "+91-172-2541002, 0172-2541003",
 					"logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
 					"webSite": "http://mcchandigarh.gov.in",
-					"mcGSTN": "",
-					"statecode": "998",
+					"mcGSTN": this.state.mcGSTN,
+					"statecode": this.state.stateCode,   ////stateCode  placeOfService  mcGSTN
 					"hsncode": this.state.hsnCode
 				},
 
@@ -995,7 +1036,7 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 					"name": selectedComplaint.bkApplicantName,
 					"mobileNumber": selectedComplaint.bkMobileNumber,
 					"email": selectedComplaint.bkEmail,
-					"permanentAddress": "",
+					"permanentAddress": selectedComplaint.bkHouseNo,
 					"permanentCity": "Chandigarh",
 					"sector": selectedComplaint.bkSector,
 					"fatherName": " "
@@ -1226,7 +1267,7 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 					"sector": applicationDetails.bkSector,
 					"fatherName": "",
 					"custGSTN": applicationDetails.bkCustomerGstNo,
-					"placeOfService": "Chandigarh"
+					"placeOfService": this.state.placeOfService
 				},
 				"bookingDetail": {
 					"applicationNumber": applicationDetails.bkApplicationNumber,
@@ -1259,10 +1300,12 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 					"cgst": applicationDetails.bkCgst,
 					"utgst": applicationDetails.bkCgst,
 					"totalgst": PACC_TAX,
-					"refundableCharges": applicationDetails.bkRefundAmount,
+					"refundableCharges": this.props.REFUNDABLE_SECURITY,
 					"totalPayment": this.props.totalAmount,
 					"paymentDate": convertEpochToDate(this.props.offlineTransactionDate, "dayend"),
 					"receiptNo": this.props.recNumber,
+					"cardNumberLast4": "Not Applicable",
+					"dateVenueChangeCharges": this.props.DATEVENUECHARGE == 0 ?"Not Applicable":this.props.DATEVENUECHARGE,
 				},
 				"OtherDetails": {
 					"clchargeforwest": applicationDetails.bkCleansingCharges,
@@ -1275,9 +1318,9 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 					"contactNumber": "+91-172-2541002, 0172-2541003",
 					"logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
 					"webSite": "http://mcchandigarh.gov.in",
-					"statecode": "998",
+					"statecode": this.state.stateCode,
 					"hsncode": this.state.hsnCode,
-					"mcGSTN": ""
+					"mcGSTN": this.state.mcGSTN ////stateCode  placeOfService  mcGSTN
 				},
 				"bankInfo": {
 					"accountholderName": applicationDetails.bkBankAccountHolder,
@@ -2391,13 +2434,14 @@ const mapStateToProps = (state, ownProps) => {
 	let selectedNumber = selectedComplaint ? selectedComplaint.bkApplicationNumber : "NotFoundAnyApplicationNumber"
 	console.log("selectedNumber--", selectedNumber)
 
-	let OfflineInitatePayArray
+	let OfflineInitatePayArray;
 	let PACC = 0;
 	let LUXURY_TAX = 0;
 	let REFUNDABLE_SECURITY = 0;
 	let PACC_TAX = 0;
 	let PACC_ROUND_OFF = 0;
 	let FACILITATION_CHARGE = 0;
+	let DATEVENUECHARGE = 0;
 
 	let roomData = selectedComplaint.roomsModel ? (selectedComplaint.roomsModel.length > 0 ? (selectedComplaint.roomsModel) : "NA") : "NA"
 	console.log("roomData-----", roomData)
@@ -2561,6 +2605,9 @@ const mapStateToProps = (state, ownProps) => {
 					else if (OfflineInitatePayArray[i].taxHeadCode == "FACILITATION_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
 						FACILITATION_CHARGE = OfflineInitatePayArray[i].amount
 					}
+					else if(OfflineInitatePayArray[i].taxHeadCode == "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+						DATEVENUECHARGE = OfflineInitatePayArray[i].amount
+					}
 				}
 			}
 
@@ -2584,6 +2631,9 @@ const mapStateToProps = (state, ownProps) => {
 					}
 					else if (OfflineInitatePayArray[i].taxHeadCode == "FACILITATION_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
 						FACILITATION_CHARGE = OfflineInitatePayArray[i].amount
+					}
+					else if (OfflineInitatePayArray[i].taxHeadCode == "COMMUNITY_LOCATION_AND_VENUE_CHANGE_AMOUNT") {
+						DATEVENUECHARGE = OfflineInitatePayArray[i].amount
 					}
 				}
 			}
@@ -2648,6 +2698,9 @@ const mapStateToProps = (state, ownProps) => {
 				else if (billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {//FACILITATION_CHARGE
 					FACILITATION_CHARGE = billAccountDetailsArray[i].amount
 				}
+				else if(billAccountDetailsArray[i].taxHeadCode == "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+					DATEVENUECHARGE = billAccountDetailsArray[i].amount
+				}
 			}
 		}
 
@@ -2671,6 +2724,9 @@ const mapStateToProps = (state, ownProps) => {
 				}
 				else if (billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") { //FACILITATION_CHARGE
 					FACILITATION_CHARGE = billAccountDetailsArray[i].amount
+				}
+				else if (billAccountDetailsArray[i].taxHeadCode == "COMMUNITY_LOCATION_AND_VENUE_CHANGE_AMOUNT") {
+					DATEVENUECHARGE = billAccountDetailsArray[i].amount
 				}
 			}
 		}
@@ -2824,14 +2880,14 @@ const mapStateToProps = (state, ownProps) => {
 			LUXURY_TAX,
 			REFUNDABLE_SECURITY,
 			PACC_TAX,
-			PACC_ROUND_OFF,
+			PACC_ROUND_OFF,DATEVENUECHARGE,
 			FACILITATION_CHARGE, one, two, three, four, five, newRoomAppNumber, dataForBothSelection, roomsData,
 			PaymentReceiptByESamp, EmpPaccPermissionLetter
 
 		};
 	} else {
 		return {
-			dataForBothSelection, roomsData,
+			dataForBothSelection, roomsData,DATEVENUECHARGE,
 			paymentDetails, offlineTransactionNum, recNumber, DownloadReceiptDetailsforPCC, refConAmount, RoomBookingDate,
 			offlinePayementMode, Difference_In_Days_check, first, showRoomCard,
 			offlineTransactionDate, RoomApplicationNumber, totalNumber, typeOfRoom, roomFromDate, roomToDate,
