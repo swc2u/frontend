@@ -180,7 +180,7 @@ export const getSearchResults = async queryObject => {
         let waterSubSource = result.WaterConnection[0].waterSource.includes("null") ? "NA" : result.WaterConnection[0].waterSource.split(".")[1];
         result.WaterConnection[0].waterSource = waterSource;
         result.WaterConnection[0].waterSubSource = waterSubSource;
-        if(result.WaterConnection[0].connectionHolders && result.WaterConnection[0].connectionHolders[0])
+        if(result.WaterConnection[0].connectionHolders && result.WaterConnection[0].connectionHolders[0] && result.WaterConnection[0].connectionHolders !=='NA')
         {
         result.WaterConnection[0].connectionHolders[0].proposedName = null;
         result.WaterConnection[0].connectionHolders[0].proposedMobileNo = null;
