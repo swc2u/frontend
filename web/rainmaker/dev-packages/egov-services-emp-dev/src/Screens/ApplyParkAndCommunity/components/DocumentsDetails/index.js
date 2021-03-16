@@ -201,7 +201,7 @@ let documentCode = [
       accept: ".pdf,.png,.jpg,.jpeg",
     };
 
-    let maxFileSize = 1025;
+    let maxFileSize = 5121;
 
     let documentDatatwo = [
       {

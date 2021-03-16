@@ -307,6 +307,7 @@ class DocumentList extends Component {
                 />
                 <Label label="BK_MYBK_DOCUMENT_VALIDATION_MSG"
                 />
+                {/*Supported Documents: pdf, jpg, png. Max file size: 5MB*/}
                 <Grid container={true}>
                     <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
                         {documentsUploadRedux[key] &&
@@ -385,6 +386,21 @@ class DocumentList extends Component {
 
                         />
                     </Grid>
+                    
+                </Grid>
+                <Grid container={true}>
+                <Grid item={true} xs={2} sm={1} md={1}>
+                </Grid>
+                <Grid
+                        item={true}
+                        xs={10}
+                        sm={5}
+                        md={5}
+                        align="left"
+                        
+                    >   
+                    <div><h5>Supported Documents: pdf, jpg, png. Max file size: 5MB</h5></div>           
+                    </Grid>           
                 </Grid>
             </div>
            
