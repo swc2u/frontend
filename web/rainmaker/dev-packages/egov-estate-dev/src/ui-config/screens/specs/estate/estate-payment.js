@@ -7,7 +7,7 @@ import { ESTATE_SERVICES_MDMS_MODULE } from "../../../../ui-constants";
 import { getSearchResults } from "../../../../ui-utils/commons";
 import { propertyInfo } from "./preview-resource/preview-properties";
 import { getQueryArg, getTodaysDateInYMD } from "egov-ui-framework/ui-utils/commons";
-import { convertDateToEpoch, validateFields, getRentSummaryCard } from "../utils";
+import { convertDateToEpoch, validateFields, getRentSummaryCard,displayCustomErr,_getPattern } from "../utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import {penaltyStatmentResult,extensionStatmentResult,securityStatmentResult} from './searchResource/functions'
 import { penaltySummary } from "./generatePenaltyStatement";
@@ -54,9 +54,30 @@ import { penaltySummary } from "./generatePenaltyStatement";
     ]
     const response = await getSearchResults(queryObject)
     if(!!response.Properties && !!response.Properties.length) {
-       dispatch(prepareFinalObject("Properties", response.Properties))
+      let owners = response.Properties[0].propertyDetails.owners;
+      owners = owners.map(item => ({...item, name: item.ownerDetails.ownerName}))
+      const properties = [{...response.Properties[0], propertyDetails: {...response.Properties[0].propertyDetails, owners}}]
+       dispatch(prepareFinalObject("Properties", properties))
     }
+    const data=[{
+      "active": "true",
+"code": "PAYMENTTYPE.PREMIUMAMOUNT",
+"name": "Premium Amount"
+    }]
+    if(!!response && response.Properties[0].propertyMasterOrAllotmentOfSite==="ALLOTMENT_OF_SITE" && response.Properties[0].state !=="ES_APPROVED"){
+      dispatch(
+        handleField(
+          action.screenKey,
+          "components.div.children.detailsContainer.children.offlinePaymentType.children.cardContent.children.detailsContainer.children.paymentType",
+          "props.data",
+          data
+        )
+      )
+      dispatch(prepareFinalObject("payment.paymentType","PAYMENTTYPE.PREMIUMAMOUNT"))
+    }
+    else{
     dispatch(prepareFinalObject("payment.paymentType","PAYMENTTYPE.RENT"))
+    }
   }
 
   const propertyDetailsHeader = getCommonTitle(
@@ -131,7 +152,13 @@ import { penaltySummary } from "./generatePenaltyStatement";
         xs: 12,
         sm: 6
     },
-    jsonPath: "payment.comments"
+    jsonPath: "payment.comments",
+    pattern:_getPattern("courtCase"),
+    afterFieldChange: (action, state, dispatch) => {
+      if (action.value.length > 250) {
+          displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_250", action.screenKey);
+      }
+  }
   }
 
   const paymentType = {
@@ -252,6 +279,15 @@ import { penaltySummary } from "./generatePenaltyStatement";
             break; 
 
           default : 
+          if(Properties[0].state!=="ES_APPROVED" && Properties[0].propertyMasterOrAllotmentOfSite==="ALLOTMENT_OF_SITE"){
+
+            dispatch(handleField(
+              "estate-payment",
+              "components.div.children.detailsContainer.children.rentSummaryDetails.children",
+              "rentCard",
+              premiumAmountSummary     
+            ));
+          }else{
               const rentCard = getCommonCard({
                 header: rentSummaryHeader,
                 detailsContainer: rentSummary
@@ -263,6 +299,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
                 "rentCard",
                 rentCard     
               ));
+          }
             break;  
         }
       }
@@ -284,6 +321,28 @@ import { penaltySummary } from "./generatePenaltyStatement";
     visible: process.env.REACT_APP_NAME !== "Citizen"
   }
 
+  export const payerField = {
+    label: {
+      labelName: "Payer",
+      labelKey: "ES_PAYER"
+    },
+    placeholder: {
+      labelName: "Select Payer",
+      labelKey: "ES_SELECT_PAYER"
+    },
+    required: true,
+    jsonPath: "payment.payer.uuid",
+    visible: process.env.REACT_APP_NAME !== "Citizen",
+    errorMessage:"ES_ERR_PAYER",
+    optionValue: "id",
+    optionLabel: "name",
+    sourceJsonPath: "Properties[0].propertyDetails.owners",
+    gridDefination: {
+        xs: 12,
+        sm: 6
+    },
+  }
+
   const paymentDate = {
     label: {
       labelName: "Date of Payment",
@@ -302,6 +361,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
         max: getTodaysDateInYMD()
     }
     },
+    errorMessage:"ES_ERR_DATE_OF_PAYMENT",
     afterFieldChange: (action, state, dispatch) => {
       dispatch(prepareFinalObject(
         "payment.dateOfPayment", convertDateToEpoch(action.value)
@@ -312,7 +372,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
   const getPatternAmount = (type) => {
     switch (type) {
       case "Amount":
-        return (/^[1-9][0-9]{0,9}$/i
+        return (/^[1-9][0-9]{1,7}$/i
         );
     }
   }
@@ -336,7 +396,18 @@ import { penaltySummary } from "./generatePenaltyStatement";
   },
     required: true,
     pattern: getPatternAmount("Amount"),
-    jsonPath: "payment.paymentAmount"
+    jsonPath: "payment.paymentAmount",
+    minLength:2,
+    maxLength:7,
+    afterFieldChange: (action, state, dispatch) => {
+      if (action.value.length > 7) {
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_7", action.screenKey);
+      } else if(action.value.length < 2){
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AMOUNT_MIN", action.screenKey);
+      }else{
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AMOUNT_FIELD",action.screenKey);
+      }
+    }
   }
 
   const bankName = {
@@ -355,7 +426,21 @@ import { penaltySummary } from "./generatePenaltyStatement";
   },
     required: true,
     jsonPath: "payment.bankName",
-    visible: process.env.REACT_APP_NAME !== "Citizen"
+    minLength:3,
+    maxLength:250,
+    pattern:_getPattern("BankName"),
+    visible: process.env.REACT_APP_NAME !== "Citizen",
+    afterFieldChange: (action, state, dispatch) => {
+      if (action.value.length > 250) {
+          displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_250", action.screenKey);
+      }
+      else if(action.value.length<3){
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_BANK_NAME_3", action.screenKey);
+      }
+      else {
+          displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_BANK_NAME_FIELD",action.screenKey);
+      }
+  }
   }
 
   const transactionId = {
@@ -373,8 +458,22 @@ import { penaltySummary } from "./generatePenaltyStatement";
       labelKey: "ES_ENTER_TRANSACTION_ID_PLACEHOLDER"
     },
     required: true,
+    minLength:3,
+    maxLength:250,
     jsonPath: "payment.transactionNumber",
-    visible: process.env.REACT_APP_NAME !== "Citizen"
+    visible: process.env.REACT_APP_NAME !== "Citizen",
+    pattern:_getPattern("transactionid"),
+    afterFieldChange: (action, state, dispatch) => {
+      if (action.value.length > 250) {
+          displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_250", action.screenKey);
+      }
+      else if(action.value.length <3){
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_TRANSACTION_ID_3", action.screenKey);
+      }
+      else {
+          displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_TRANSACTION_ID_FIELD",action.screenKey);
+      }
+  }
   }
 
   export const applicationOfflinePaymentDetails = getCommonCard({
@@ -390,6 +489,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
       header: offlinePaymentDetailsHeader,
       detailsContainer: getCommonContainer({
         // paymentType: getSelectField(paymentType),
+        payer: getSelectField(payerField),
         Amount: getTextField(paymentAmount),
         dateOfPayment: getDateField(paymentDate),
         bankName: getTextField(bankName),
@@ -435,6 +535,25 @@ import { penaltySummary } from "./generatePenaltyStatement";
     })
     }
   }
+  const premiumAmountSummary = getCommonCard({
+      header: getCommonTitle({
+        labelName: "Premium Amount",
+        labelKey: "ES_PREMIUM_AMOUNT"
+      }, {
+        style: {
+          marginBottom: 18,
+          marginTop: 18
+        }
+      }),
+      detailsContainer: getCommonGrayCard({
+    rentSection: getRentSummaryCard({
+      sourceJsonPath: "Properties[0].propertyDetails.paymentConfig.premiumAmountConfigItems",
+      dataArray: ["premiumAmount"],
+      type:"premiumAmount"
+    })
+  })
+  });
+
 
   const detailsContainer = {
     uiFramework: "custom-atoms",
@@ -488,7 +607,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
     if(isValid && ((Number.isInteger(parseInt(amountValue)) && amountValue.length >= 1 && amountValue.length <= 7))) {
       const propertyId = getQueryArg(window.location.href, "propertyId")
       const offlinePaymentDetails = get(state.screenConfiguration.preparedFinalObject, "payment")
-      const {paymentAmount, paymentType, ...rest} = offlinePaymentDetails
+      const {paymentAmount, paymentType, payer, ...rest} = offlinePaymentDetails
       switch(paymentType){
         case 'PAYMENTTYPE.PENALTY':
           const PenaltyStatementSummary = get(state.screenConfiguration.preparedFinalObject, "PenaltyStatementSummary")
@@ -539,6 +658,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
       if(!!propertyId && isValidAmount) {
         const payload = [
           { id: propertyId, 
+            payer,
             propertyDetails: {
               offlinePaymentDetails: [{...rest, amount: paymentAmount, paymentType}]
             }

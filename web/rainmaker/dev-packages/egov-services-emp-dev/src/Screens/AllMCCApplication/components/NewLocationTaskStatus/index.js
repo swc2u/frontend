@@ -161,29 +161,33 @@ class BookingDetails extends Component {
   };
 
   render() {
-    const { status, historyApiData, bkBookingVenue,bkFromDate, bkToDate,applicantName, applicationNo, submittedDate, dateCreated, address, sector, houseNo, bookingType, mapAction, images, action, role } = this.props;
+    const { status, historyApiData, bkBookingVenue, bkFromDate, bkToDate, applicantName, applicationNo, submittedDate, dateCreated, address, sector, houseNo, bookingType, mapAction, images, action, role } = this.props;
     var ProcessInstances = [];
 
     if (historyApiData != undefined && historyApiData.ProcessInstances && historyApiData.ProcessInstances.length > 0) {
       ProcessInstances = [...historyApiData.ProcessInstances];
-    } 
+    }
+    let array2 = [];
+    for (let i = ProcessInstances.length - 1; i > -1; i--) {
+      array2.push(ProcessInstances[i]);
+    }
     return (
       <div>
         <Card
           textChildren={
             <div>
-                <div className="rainmaker-displayInline row">
+              <div className="rainmaker-displayInline row">
 
-                <div className="col-8" style={{paddingLeft:"10px"}}>
+                <div className="col-8" style={{ paddingLeft: "10px" }}>
                   <Label label="BK_MYBK_TASK_STATUS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
                 </div>
                 <div style={{ position: "absolute", right: "100px" }} className="col-4">
-                <button
+                  <button
                     style={{ color: "#FE7A51", border: "none", outline: "none", fontWeight: "500", background: "white" }}
                     onClick={() => { this.handleClickOpen() }}>
-                   <HistoryIcon />
-                    <h5 style={{ marginTop: "-25px", marginBottom: "60px", marginLeft: "130px"}}>
-                    VIEW HISTORY
+                    <HistoryIcon />
+                    <h5 style={{ marginTop: "-25px", marginBottom: "60px", marginLeft: "130px" }}>
+                      VIEW HISTORY
                     </h5>
                   </button>
                 </div>
@@ -196,7 +200,7 @@ class BookingDetails extends Component {
                   <DialogContent>
                     <Typography>
                       <Stepper orientation="vertical">
-                        {ProcessInstances.map(
+                        {array2.map(
                           (item, index) =>
                             item && (
                               <Step key={index} active={true}>
@@ -204,9 +208,8 @@ class BookingDetails extends Component {
                                   <LabelContainer
                                     labelName={this.getCurrentStatus(item.state.applicationStatus)}
                                     labelKey={
-                                       item.businessService
-                                        ? `BK_WF_${item.businessService.toUpperCase()}_${
-                                        item.state.applicationStatus
+                                      item.businessService
+                                        ? `BK_WF_${item.businessService.toUpperCase()}_${item.state.applicationStatus
                                         }`
                                         : ""
                                     }
@@ -224,69 +227,68 @@ class BookingDetails extends Component {
                   </DialogContent>
                 </Dialog>
 
-  <div className="complaint-detail-detail-section-status row">
-  <div className="col-md-2">
-     <Typography variant="caption">
-     <LabelContainer labelName="Date" labelKey="BK_DATE_LABEL" />
-        </Typography>
-        <Typography variant="body2">
-          {/* <LabelContainer  complaint && complaint.applicantName ? complaint.applicantName : 'NA',
+                <div className="complaint-detail-detail-section-status row">
+                  <div className="col-md-2">
+                    <Typography variant="caption">
+                      <LabelContainer labelName="Date" labelKey="BK_DATE_LABEL" />
+                    </Typography>
+                    <Typography variant="body2">
+                      {/* <LabelContainer  complaint && complaint.applicantName ? complaint.applicantName : 'NA',
             labelName={this.convertEpochToDate(lastModifiedTime,"dayend")}
           /> */}
-<LabelContainer
+                      <LabelContainer
 
-            labelName={ProcessInstances && ProcessInstances.length>0 && ProcessInstances[0].auditDetails?
-              this.convertEpochToDate(ProcessInstances[0].auditDetails.lastModifiedTime): ''}
-          /> 
+                        labelName={ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].auditDetails ?
+                          this.convertEpochToDate(ProcessInstances[0].auditDetails.lastModifiedTime) : ''}
+                      />
 
-        </Typography>
-        </div>
-        <div className="col-md-3">
-        <Typography variant="caption">
-          <LabelContainer
-            labelName="Updated By"
-            labelKey="BK_UPDATED_BY_LABEL"
-          />
-        </Typography>
-        <Typography variant="body2">
-          
-          <LabelContainer labelName={ProcessInstances && ProcessInstances.length>0 && ProcessInstances[0].assigner? ProcessInstances[0].assigner.name : ''} />
-        </Typography>
-          </div>
-          <div className="col-md-3">
+                    </Typography>
+                  </div>
+                  <div className="col-md-3">
+                    <Typography variant="caption">
+                      <LabelContainer
+                        labelName="Updated By"
+                        labelKey="BK_UPDATED_BY_LABEL"
+                      />
+                    </Typography>
+                    <Typography variant="body2">
 
-          <Typography variant="caption">
-          <LabelContainer
-            labelName="Status"
-            labelKey="BK_COMMON_TABLE_COL_STATUS"
-          />
-        </Typography>
-        <Typography
-          variant="body2"
-          classes={{
-            body2: "body2-word-wrap"
-          }}
-        >
-        {/*<LabelContainer
+                      <LabelContainer labelName={ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].assigner ? ProcessInstances[0].assigner.name : ''} />
+                    </Typography>
+                  </div>
+                  <div className="col-md-3">
+
+                    <Typography variant="caption">
+                      <LabelContainer
+                        labelName="Status"
+                        labelKey="BK_COMMON_TABLE_COL_STATUS"
+                      />
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      classes={{
+                        body2: "body2-word-wrap"
+                      }}
+                    >
+                      {/*<LabelContainer
             labelName={ProcessInstances && ProcessInstances.length>0 && 
               ProcessInstances[0].state? ProcessInstances[0].state.state: ''
             }
           />*/}
-<LabelContainer
-            labelName={ProcessInstances && ProcessInstances.length>0 && 
-              ProcessInstances[0].state? this.getCurrentStatus(ProcessInstances[0].state.state): ''
-            }
+                      <LabelContainer
+                        labelName={ProcessInstances && ProcessInstances.length > 0 &&
+                          ProcessInstances[0].state ? this.getCurrentStatus(ProcessInstances[0].state.state) : ''
+                        }
 
- labelKey={
-  ProcessInstances && ProcessInstances.length>0 && ProcessInstances[0].businessService
-                ? `BK_WF_${ProcessInstances[0].businessService.toUpperCase()}_${
-                  ProcessInstances[0]. state.state          
-                  }`
-                : ""
-            }           
-          />
+                        labelKey={
+                          ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].businessService
+                            ? `BK_WF_${ProcessInstances[0].businessService.toUpperCase()}_${ProcessInstances[0].state.state
+                            }`
+                            : ""
+                        }
+                      />
 
-          {/* <LabelContainer
+                      {/* <LabelContainer
             labelName={getCurrentStatus(ProcessInstances[0].state.state)}
             labelKey={
               ProcessInstances[0].businessService
@@ -297,50 +299,50 @@ class BookingDetails extends Component {
                 : ""
             }
           /> */}
-        </Typography>
-          </div>
-          <div className="col-md-2">
-          <Typography variant="caption">
-          <LabelContainer
-            labelName="Current Owner"
-            labelKey="BK_CURRENT_OWNER_LABEL"
-          />
-        </Typography>
-        <Typography
-          variant="body2"
-          classes={{
-            body2: "body2-word-wrap"
-          }}
-        >
-          <LabelContainer
-            labelName={ ProcessInstances && ProcessInstances.length>0 && ProcessInstances[0].assignee?
-                ProcessInstances[0].assignee.name
-                : "NA"
-            }
-          />
-        </Typography>          
-            </div>
-            <div className="col-md-2">
-            <Typography variant="caption">
-          <LabelContainer
-            labelName="Comments"
-            labelKey="BK_APPROVAL_CHECKLIST_COMMENTS_LABEL"
-          />
-        </Typography>
-        <Typography
-          variant="body2"
-          classes={{
-            body2: "body2-word-wrap"
-          }}
-        >
-          <LabelContainer   
-            labelName= {
-              ProcessInstances && ProcessInstances.length>0 && ProcessInstances[0].comment ?
-              ProcessInstances[0].comment : ''}
-           />
-        </Typography>
-              </div>
-</div>
+                    </Typography>
+                  </div>
+                  <div className="col-md-2">
+                    <Typography variant="caption">
+                      <LabelContainer
+                        labelName="Current Owner"
+                        labelKey="BK_CURRENT_OWNER_LABEL"
+                      />
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      classes={{
+                        body2: "body2-word-wrap"
+                      }}
+                    >
+                      <LabelContainer
+                        labelName={ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].assignee ?
+                          ProcessInstances[0].assignee.name
+                          : "NA"
+                        }
+                      />
+                    </Typography>
+                  </div>
+                  <div className="col-md-2">
+                    <Typography variant="caption">
+                      <LabelContainer
+                        labelName="Comments"
+                        labelKey="BK_APPROVAL_CHECKLIST_COMMENTS_LABEL"
+                      />
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      classes={{
+                        body2: "body2-word-wrap"
+                      }}
+                    >
+                      <LabelContainer
+                        labelName={
+                          ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].comment ?
+                            ProcessInstances[0].comment : ''}
+                      />
+                    </Typography>
+                  </div>
+                </div>
               </div>
             </div>
           }

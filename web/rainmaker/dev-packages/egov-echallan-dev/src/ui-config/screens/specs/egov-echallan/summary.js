@@ -776,6 +776,11 @@ const setSearchResponseForNocCretificate = async (
           get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].violationItem[0].remark", "NA")
         );
         break;
+      case "Without License Rehri":
+        encorachmentvalue = "withoutrehri";
+        pdfCreateKey = "withoutrehri-ec";
+        break;
+
       default:
         break;
     }

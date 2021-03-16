@@ -95,7 +95,11 @@ const callBackForNext = async (state, dispatch) => {
   let hasFieldToaster = true;
   let ownerPosAllotDateValid = true;
   let isDOBValid = true;
+  let ispurchaserDOBValid = true;
+  let isOwnerShareValid = true;
   let isBiddersListValid = true;
+  let isAuctionIdValid = true;
+  let iscourtCaseFieldLengthValid = true;
   // let ownerTwoPosAllotDateValid = true;
   let auctionEMDDateValid = true;
   let isStartAndEndYearValid = true
@@ -195,11 +199,20 @@ const callBackForNext = async (state, dispatch) => {
         
         auctionEMDDateValid = auctionDateEpoch - emdDateEpoch > 0 ? true : false;
       }
+      // check for auction id to be alphanumeric only else throw validation error
+      let auctionList =  get(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.bidders");
+      for (let i = 0; i < auctionList.length; i++) {
+        let singleAuctionId = Number.isInteger(Number(auctionList[i].auctionId)) ? parseInt(Number(auctionList[i].auctionId)).toString() : auctionList[i].auctionId
+        if(!(/^[a-z0-9]+$/i.test(singleAuctionId))){
+          isAuctionIdValid = false;
+        }
+        
+      }
       let biddersListArr = get(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.bidders");
       if(biddersListArr === null || biddersListArr.length === 0){
           isBiddersListValid = false;
       }
-      if (isAuctionValid && auctionEMDDateValid && isBiddersListValid) {
+      if (isAuctionValid && auctionEMDDateValid && isBiddersListValid && isAuctionIdValid) {
         const res = await applyEstates(state, dispatch, activeStep);
         if (!res) {
           return
@@ -229,6 +242,21 @@ const callBackForNext = async (state, dispatch) => {
       state.screenConfiguration.screenConfig,
       `apply.components.div.children.formwizardThirdStep.children.ownerDetails.children.cardContent.children.detailsContainer.children.multipleApplicantContainer.children.multipleApplicantInfo.props.items`
     );
+
+    let ownerShareSum = 0;
+    if (propertyOwnersItems && propertyOwnersItems.length) {
+      
+      for (var i = 0; i < propertyOwnersItems.length; i++) {
+        let ownerShareEntered = get(state.screenConfiguration.preparedFinalObject, `Properties[0].propertyDetails.owners[${i}].share`);
+        let ownerShareFieldValue = get(state.screenConfiguration.screenConfig, `apply.components.div.children.formwizardThirdStep.children.ownerDetails.children.cardContent.children.detailsContainer.children.multipleApplicantContainer.children.multipleApplicantInfo.props.items[${i}].item0.children.cardContent.children.ownerCard.children.share.props.value`)
+        ownerShareSum += Number(ownerShareEntered)
+        if(parseInt(ownerShareFieldValue) > 100){
+          isOwnerShareValid = false;
+        }
+      }
+    if(ownerShareSum > 100)
+      isOwnerShareValid = false;
+    }
 
     if (propertyOwnersItems && propertyOwnersItems.length) {
       for (var i = 0; i < propertyOwnersItems.length; i++) {
@@ -313,7 +341,7 @@ const callBackForNext = async (state, dispatch) => {
         );
 
         isOwnerOrPartnerDetailsValid = setOwnersOrPartners(state, dispatch, "ownerDetails", entityType);
-        if (isOwnerOrPartnerDetailsValid && isCompanyDetailsValid && (ownerPosAllotDateValid) && (isDOBValid)) {
+        if (isOwnerOrPartnerDetailsValid && isCompanyDetailsValid && (ownerPosAllotDateValid) && (isDOBValid) && isOwnerShareValid) {
           const res = await applyEstates(state, dispatch, activeStep, screenKey);
           if (!res) {
             return
@@ -331,7 +359,7 @@ const callBackForNext = async (state, dispatch) => {
         )
 
         isOwnerOrPartnerDetailsValid = setOwnersOrPartners(state, dispatch, "partnerDetails", entityType);
-        if (isFirmDetailsValid && isOwnerOrPartnerDetailsValid && ownerPosAllotDateValid && isDOBValid) {
+        if (isFirmDetailsValid && isOwnerOrPartnerDetailsValid && ownerPosAllotDateValid && isDOBValid && isOwnerShareValid) {
           const res = await applyEstates(state, dispatch, activeStep, screenKey);
           if (!res) {
             return
@@ -353,7 +381,7 @@ const callBackForNext = async (state, dispatch) => {
           dispatch,
           screenKey
         )
-        if (isFirmDetailsValid && isProprietorshipDetailsValid && ownerPosAllotDateValid && isDOBValid) {
+        if (isFirmDetailsValid && isProprietorshipDetailsValid && ownerPosAllotDateValid && isDOBValid && isOwnerShareValid) {
           const res = await applyEstates(state, dispatch, activeStep, screenKey);
           if (!res) {
             return
@@ -364,7 +392,7 @@ const callBackForNext = async (state, dispatch) => {
         break;
       default:
         isOwnerOrPartnerDetailsValid = setOwnersOrPartners(state, dispatch, "ownerDetails", entityType);
-        if (isOwnerOrPartnerDetailsValid && ownerPosAllotDateValid && isDOBValid) {
+        if (isOwnerOrPartnerDetailsValid && ownerPosAllotDateValid && isDOBValid && isOwnerShareValid) {
           const res = await applyEstates(state, dispatch, activeStep, screenKey);
           if (!res) {
             return
@@ -473,6 +501,26 @@ const callBackForNext = async (state, dispatch) => {
         if (!!propertyPurchaserItems[i].isDeleted) {
           continue;
         }
+        let purchaserDOBEntered = get(state.screenConfiguration.preparedFinalObject, `Properties[0].propertyDetails.purchaser[${i}].ownerDetails.dob`);
+        if(!!purchaserDOBEntered)
+        {
+        let purchaserDOBEnteredEpoch = convertDateToEpoch(purchaserDOBEntered)
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+  
+        today = yyyy + '-' + mm + '-' + dd;
+        let currentDateEpoch = convertDateToEpoch(today);
+        if(purchaserDOBEnteredEpoch !== undefined){
+          ispurchaserDOBValid = purchaserDOBEnteredEpoch - currentDateEpoch >= 0 ? false : true
+          isFormValid = ispurchaserDOBValid == true ? true : false;
+        }
+  
+        if (!ispurchaserDOBValid) {
+          break;
+        }
+      }
         var isPurchaserDetailsValid = validateFields(
           `components.div.children.formwizardFifthStep.children.purchaserDetails.children.cardContent.children.detailsContainer.children.multipleApplicantContainer.children.multipleApplicantInfo.props.items[${i}].item${i}.children.cardContent.children.purchaserCard.children`,
           state,
@@ -532,7 +580,7 @@ const callBackForNext = async (state, dispatch) => {
       }
     }
 
-    if (isPurchaserDetailsValid) {
+    if (isPurchaserDetailsValid && ispurchaserDOBValid) {
       const res = await applyEstates(state, dispatch, activeStep);
       if (!res) {
         return
@@ -627,6 +675,20 @@ const callBackForNext = async (state, dispatch) => {
       "screenConfiguration.screenConfig.apply.components.div.children.formwizardSeventhStep.children.courtCaseDetails.children.cardContent.children.detailsContainer.children.multipleApplicantContainer.children.multipleApplicantInfo.props.items"
     );
 
+    if(courtCases && courtCases.length > 0){
+      for (let i = 0; i < courtCases.length; i++) {
+        let advisorToAdminCourt = !!courtCases[i].advisorToAdminCourt ? courtCases[i].advisorToAdminCourt.length : 0
+        let chiefAdministartorsCourt = !!courtCases[i].chiefAdministartorsCourt ? courtCases[i].chiefAdministartorsCourt.length : 0
+        let commissionersCourt = !!courtCases[i].commissionersCourt ? courtCases[i].commissionersCourt.length : 0
+        let estateOfficerCourt = !!courtCases[i].estateOfficerCourt ? courtCases[i].estateOfficerCourt.length : 0
+        let honorableDistrictCourt = !!courtCases[i].honorableDistrictCourt ? courtCases[i].honorableDistrictCourt.length : 0
+        let honorableHighCourt = !!courtCases[i].honorableHighCourt ? courtCases[i].honorableHighCourt.length : 0
+        let honorableSupremeCourt = !!courtCases[i].honorableSupremeCourt ? courtCases[i].honorableSupremeCourt.length : 0
+        if(advisorToAdminCourt > 250 || chiefAdministartorsCourt > 250 || commissionersCourt > 250 || estateOfficerCourt > 250 || honorableDistrictCourt > 250 || honorableHighCourt > 250 || honorableSupremeCourt > 250)
+        iscourtCaseFieldLengthValid = false;
+      }
+    }
+
     if (courtCaseItems && courtCaseItems.length > 0) {
       for (var i = 0; i < courtCaseItems.length; i++) {
         if (courtCaseItems[i].isDeleted) {
@@ -647,7 +709,7 @@ const callBackForNext = async (state, dispatch) => {
       }
     }
 
-    if (isCourtCaseDetailsValid) {
+    if (isCourtCaseDetailsValid && iscourtCaseFieldLengthValid) {
       const res = await applyEstates(state, dispatch, activeStep);
       if (!res) {
         return
@@ -695,7 +757,8 @@ const callBackForNext = async (state, dispatch) => {
       "Properties[0].propertyDetails.paymentConfig.noOfMonths"
     )
 
-    const isGroundRent = get(state.screenConfiguration.preparedFinalObject, "Properties[0].propertyDetails.paymentConfig.isGroundRent")
+    let isGroundRent = get(state.screenConfiguration.preparedFinalObject, "Properties[0].propertyDetails.paymentConfig.isGroundRent")
+    isGroundRent = isGroundRent == "true" ? true : false; 
     const _componentJsonPath = !!isGroundRent ? 
     "apply.components.div.children.formwizardEighthStep.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items"
     : "apply.components.div.children.formwizardEighthStep.children.licenseFeeDetails.children.cardContent.children.licenseFeeForYearContainer.children.cardContent.children.detailsContainer.children.multipleLicenseContainer.children.multipleLicenseInfo.props.items"
@@ -708,13 +771,17 @@ const callBackForNext = async (state, dispatch) => {
       `Properties[0].propertyDetails.paymentConfig.paymentConfigItems`,
       []
     )
+    let rentItemGroundRentType = get(
+      state.screenConfiguration.preparedFinalObject,
+      `Properties[0].propertyDetails.paymentConfig.groundRentGenerationType`
+    )
     const reviewJsonPath = !!isGroundRent ? "components.div.children.formwizardTenthStep.children.reviewDetails.children.cardContent.children.reviewGroundRent.children.cardContent.children.viewRents" : "components.div.children.formwizardTenthStep.children.reviewDetails.children.cardContent.children.reviewLicenseFee.children.cardContent.children.viewLicenses";
 
     let securityAmount = rentItems[0].groundRentAmount * noOfMonths;
     dispatch(prepareFinalObject("Properties[0].propertyDetails.paymentConfig.securityAmount", securityAmount));
 
       const _cardName = !!isGroundRent ? "groundRent" : "licenseFee"
-
+      const monthlyYearlyLabel = rentItemGroundRentType === "Monthly" ? "Monthly" : "Annually"
       if (_components && _components.length > 0) {
         for (var i = 0; i < _components.length; i++) {
           if (!_components[i].isDeleted) {
@@ -733,7 +800,7 @@ const callBackForNext = async (state, dispatch) => {
       isStartAndEndYearValid = rentItems.every(item => item.groundRentEndMonth > item.groundRentStartMonth)
       if(!!isRentDetailsValid) {
         dispatch(prepareFinalObject("Properties[0].propertyDetails.paymentConfig.paymentConfigItems", rentItems))
-        getReviewAllotmentMultipleSectionDetails(state, dispatch, screenKey, reviewJsonPath, _cardName, rentItems.length);
+        getReviewAllotmentMultipleSectionDetails(state, dispatch, screenKey, reviewJsonPath, _cardName, rentItems.length, monthlyYearlyLabel);
       }
     }
     const hasValidation = !!isGroundRent ? isGroundRentValid && isSecurityDetailsValid && isRentDetailsValid && isDemandValid && isInterestDetailsValid && isStartAndEndYearValid : isLicenseFeeValid && isSecurityDetailsValid && isRentDetailsValid && isDemandValid && isInterestDetailsValid && isStartAndEndYearValid
@@ -786,6 +853,12 @@ const callBackForNext = async (state, dispatch) => {
         if (!res) {
           return
         }
+        dispatch(handleField(
+          "apply",
+          "components.div.children.formwizardTenthStep.children.reviewDetails.children.cardContent.children.reviewAdvanceRent",
+          "visible",
+          false
+        ))
       } else {
         isFormValid = false;
       }
@@ -814,6 +887,21 @@ const callBackForNext = async (state, dispatch) => {
       scrollTop = false
       dispatch(toggleSnackbar(true, errorMessage, "warning"));
     } 
+    else if(!iscourtCaseFieldLengthValid) {
+      let errorMessage = {
+        labelName: "Shouldn't exceed 250 characters",
+        labelKey: "ERR_COURT_DETAILS_250_CHARACTERS"
+      }
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    }
+    else if(ispurchaserDOBValid === false){
+      let errorMessage = {
+        labelName: "Date of birth cannot be current or future date",
+        labelKey: "ES_ERR_DATE_OF_BIRTH_CANNOT_BE_CURRENT_OR_FUTURE"
+    };
+      scrollTop = false
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    }  
     else if(isDOBValid === false){
       let errorMessage = {
         labelName: "Date of birth cannot be current or future date",
@@ -822,10 +910,26 @@ const callBackForNext = async (state, dispatch) => {
       scrollTop = false
       dispatch(toggleSnackbar(true, errorMessage, "warning"));
     } 
+    else if(isOwnerShareValid === false){
+      let errorMessage = {
+        labelName: "Total owner share of all owners cannot exceed 100",
+        labelKey: "ES_ERR_TOTAL_OWNER_SHARE_CANNOT_EXCEED_100"
+    };
+      scrollTop = false
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    } 
     else if(isBiddersListValid === false){
       let errorMessage = {
         labelName: "Please fill all mandatory fields and upload the documents !",
         labelKey: "ES_ERR_FILL_MANDATORY_FIELDS_UPLOAD_DOCS"
+      };
+      scrollTop = false
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    } 
+    else if(isAuctionIdValid === false){
+      let errorMessage = {
+        labelName: "Invalid Auction ID. Only alphenumeric allowed.",
+        labelKey: "ES_ERR_INVALID_AUCTION_ID_ONLY_ALPHANUMERIC_ALLOWED"
       };
       scrollTop = false
       dispatch(toggleSnackbar(true, errorMessage, "warning"));
@@ -1442,6 +1546,7 @@ export const downloadPrintContainer = (
     link: () => {
       const { Applications,temp } = state.screenConfiguration.preparedFinalObject;
       const documents = temp[0].reviewDocData;
+      const wfDocuments = temp[0].reviewWfDocData ? temp[0].reviewWfDocData : []
       let { applicationType} = Applications[0];
       const {branchType} = Applications[0];
       if(branchType === "BuildingBranch"){
@@ -1451,6 +1556,7 @@ export const downloadPrintContainer = (
         applicationType =  "MM-" + applicationType 
        }
       set(Applications[0],"additionalDetails.documents",documents)
+      set(Applications[0],"additionalDetails.wfDocuments",wfDocuments)
       const feeEstimate = temp[0].estimateCardData;
       downloadAcknowledgementForm(Applications,applicationType,feeEstimate,applicationState);
     },
@@ -1609,6 +1715,7 @@ export const downloadPrintContainer = (
     link: () => {
       const { Applications,temp } = state.screenConfiguration.preparedFinalObject;
       const documents = temp[0].reviewDocData;
+      const wfDocuments = temp[0].reviewWfDocData ? temp[0].reviewWfDocData : []
       let { applicationType} = Applications[0];
       const {branchType} = Applications[0];
       if(branchType === "BuildingBranch"){
@@ -1618,6 +1725,7 @@ export const downloadPrintContainer = (
         applicationType =  "MM-" + applicationType 
        }
       set(Applications[0],"additionalDetails.documents",documents)
+      set(Applications[0],"additionalDetails.wfDocuments",wfDocuments)
       const feeEstimate = temp[0].estimateCardData;
       downloadAcknowledgementForm(Applications,applicationType,feeEstimate,applicationState,'print');    },
     leftIcon: "assignment"
@@ -1880,6 +1988,15 @@ export const downloadPrintContainer = (
             break;
         case 'NOC-ES_PENDING_SDE_APPROVAL': 
         case 'NOC-ES_APPROVED' : 
+          if(process.env.REACT_APP_NAME === "Citizen"){
+            downloadMenu = [
+              applicationDownloadObject
+              
+            ]
+            printMenu = [
+              applicationPrintObject
+            ]
+          }else{
             downloadMenu = [
               applicationDownloadObject,
               LetterDownloadObject,
@@ -1892,7 +2009,8 @@ export const downloadPrintContainer = (
               LetterPrintObject,
               NOCproposalLetterPrintObject,
               paymentLetterPrintObject
-            ] 
+            ]
+          }
           break;
         case 'IssuanceOfNotice-ES_REJECTED':  
         case 'IssuanceOfNotice-ES_PENDING_JE_CLARIFICATION':
@@ -1954,7 +2072,7 @@ export const downloadPrintContainer = (
              applicationDownloadObject
            ]
            printMenu = [
-               applicationPrintObject
+              applicationPrintObject
           ]
       break;
 

@@ -102,7 +102,25 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         { display: "none" }
       ); 
     }
+    //set proposed holder info if activityType: "UPDATE_CONNECTION_HOLDER_INFO"
+    const activityTypeHolder =Response.ProcessInstances[0].businessService;// get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType");
+    if(activityTypeHolder ==='UPDATE_CONNECTION_HOLDER_INFO' || activityTypeHolder ==='WS_RENAME' )
+    {
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewproposedHolderInfo.visible",true);
 
+    }
+    else{
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewproposedHolderInfo.visible",false);
+    }
+
+    if(activityTypeHolder ==='CONNECTION_CONVERSION'|| activityTypeHolder ==='WS_CONVERSION')
+    {
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyproposedUsageDetail.visible",true);
+
+    }
+    else{
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyproposedUsageDetail.visible",false);
+    }
     if (!getQueryArg(window.location.href, "edited")) {
       (await searchResults(action, state, dispatch, applicationNumber,processInstanceAppStatus));
       // set 
@@ -119,6 +137,8 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         if (service === "SEWERAGE") 
         code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.swSectorList",parsedObject.property.address.locality.code)   
       set(parsedObject, 'property.address.locality.name', code);
+      
+     
       //set ferrul
       let isFerruleApplicable = false
       if(parsedObject.waterApplication.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')

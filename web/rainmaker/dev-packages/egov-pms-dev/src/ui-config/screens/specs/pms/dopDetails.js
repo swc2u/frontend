@@ -13,7 +13,7 @@ import {
 import { footer } from "./dopDetailsResource/footer";
 import { empDetails } from "./dopDetailsResource/empDetails";
 import { employeeOtherDetails } from "./dopDetailsResource/employeeOtherDetails";
-import { pensionDetails } from "./dopDetailsResource/pensionDetails";
+import { pensionDetails,arrealPensionDetails } from "./dopDetailsResource/pensionDetails";
 //import { propertyLocationDetails } from "./applyResource/propertyLocationDetails";
 import { otherDetails } from "./dopDetailsResource/otherDetails";
 import { documentDetails } from "./dopDetailsResource/documentDetails";
@@ -23,7 +23,11 @@ import {
   handleScreenConfigurationFieldChange as handleField
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-
+import {
+  
+  epochToYmd,
+  showHideAdhocPopup,
+} from "../utils";
 import { httpRequest } from "../../../../ui-utils";
 import {
   sampleSearch,
@@ -229,6 +233,7 @@ export const formwizardSecondStep = {
   children: {
     
     pensionDetails:pensionDetails(Accesslable),
+    arrealPensionDetails:arrealPensionDetails(Accesslable),
   },
   visible: false
 };
@@ -674,6 +679,27 @@ for (let index = 0; index < dependents.length; index++) {
        set(state,"screenConfiguration.preparedFinalObject.ProcessInstances[0].employee.assignments[0].designation", codeNames);
        
      }
+     let dateOfDeath = get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].employee.dateOfDeath", 0 )
+     let CurrentDate = new Date()
+     if(Number(dateOfDeath))
+     dateOfDeath = epochToYmd(dateOfDeath)
+     const  dateOfDeath_ = new Date(dateOfDeath)
+     if(dateOfDeath_ <CurrentDate)
+     {
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardSecondStep.children.arrealPensionDetails.visible",
+        true
+      );
+
+     }
+     else{
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardSecondStep.children.arrealPensionDetails.visible",
+        false
+      );
+     }
   prepareDocumentsUploadData(state, dispatch);
 };
 export const pmsfooter = footer(response) ;
@@ -791,6 +817,111 @@ prepareEditFlow(state, dispatch, applicationNumber, tenantId, action).then(res=>
         formwizardThirdStep,
         footer:footer(pensiondata)
        // pmsfooter
+      }
+    },
+    adhocDialog: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-pms",
+      componentPath: "DialogContainer",
+      props: {
+        open: false,
+       maxWidth: "xi",
+        screenKey: "dopDetails"
+      },
+      children: {
+        
+        popup: getCommonContainer({
+          header: {
+            uiFramework: "custom-atoms",
+            componentPath: "Container",
+            props: {
+              style: {
+                width: "100%",
+                float: "right"
+              }
+            },
+            children: {
+              div1: {
+                uiFramework: "custom-atoms",
+                componentPath: "Div",
+                gridDefination: {
+                  xs: 10,
+                  sm: 10
+                },
+                props: {
+                  style: {
+                    width: "100%",
+                    float: "right"
+                  }
+                },
+                children: {
+                  div: getCommonHeader(
+                    {
+                      labelKey: "PENSION_POPUP_HEAD_ARREAR"
+                    },
+                    {
+                      style: {
+                        fontSize: "20px"
+                      }
+                    }
+                  )
+                }
+              },
+              div2: {
+                uiFramework: "custom-atoms",
+                componentPath: "Div",
+                gridDefination: {
+                  xs: 2,
+                  sm: 2
+                },
+                props: {
+                  style: {
+                    width: "100%",
+                    float: "right",
+                    cursor: "pointer"
+                  }
+                },
+                children: {
+                  closeButton: {
+                    componentPath: "Button",
+                    props: {
+                      style: {
+                        float: "right",
+                        color: "rgba(0, 0, 0, 0.60)"
+                      }
+                    },
+                    children: {
+                      previousButtonIcon: {
+                        uiFramework: "custom-atoms",
+                        componentPath: "Icon",
+                        props: {
+                          iconName: "close"
+                        }
+                      }
+                    },
+                    onClickDefination: {
+                      action: "condition",
+                      callBack: (state, dispatch) => {
+                        showHideAdhocPopup(state, dispatch, "dopDetails");
+                      }
+                    }
+                  }
+                }
+              },
+             
+            }
+          },
+          pensionArrears: {
+            uiFramework: "custom-containers-local",
+            componentPath: "EmployeeServiceContainer",
+            moduleName: "egov-pms",
+            props: {
+              dataPath: "taskInstance",
+              moduleName: "RRP_SERVICE_ARREAR",
+              updateUrl: "/tl-services/v1/_processWorkflow"
+                    }
+          },
+        })
       }
     }
   }

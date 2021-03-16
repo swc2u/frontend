@@ -81,6 +81,14 @@ const PensionBasicContainer = Loadable({
   loader: () => import("./PensionBasicContainer"),
   loading: () => <Loading />
 });
+const PensionArrealPopContainer = Loadable({
+  loader: () => import("./PensionArrealPopContainer"),
+  loading: () => <Loading />
+});
+const PensionArrealContainer = Loadable({
+  loader: () => import("./PensionArrealContainer"),
+  loading: () => <Loading />
+});
 
 export {
   CustomTabContainer,
@@ -100,6 +108,8 @@ export {
  DropdownButton,
  PensionReviewContainer,
  GridContainer,
- PensionBasicContainer
+ PensionBasicContainer,
+ PensionArrealContainer,
+ PensionArrealPopContainer,
 
 };

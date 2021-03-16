@@ -452,18 +452,21 @@ class CheckAvailability extends Component {
   };
   callBackForHoldDates = async (e) => {
     const { stateData } = this.props;
-    console.log(stateData, "Nero stateData")
+
     let venueName = '';
+    let sector = '';
     let holdDatesforSave = stateData.screenConfiguration.preparedFinalObject.availabilityCheckData.holdDatesForSave;
     let bookingPropertyType = stateData.screenConfiguration.preparedFinalObject.DropDownValue === "Commercial Ground" || stateData.screenConfiguration.preparedFinalObject.DropDownValue === "Community Center" ? stateData.screenConfiguration.preparedFinalObject.DropDownValue : "Parks";
     if (stateData.screenConfiguration.preparedFinalObject.DropDownValue !== "Commercial Ground") {
       venueName = stateData.screenConfiguration.preparedFinalObject.bkBookingData.id;
+      sector = stateData.screenConfiguration.preparedFinalObject.bkBookingData.sector;
     } else {
       venueName = stateData.screenConfiguration.preparedFinalObject.CommercialEmpBooking.BookingVenue;
+      sector = venueName;
     }
 
     //let venueName = stateData.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation;
-    console.log(this.state.holdingremark.length, "Nero Hold Remark");
+
     this.setState({holdingRemarkLength: this.state.holdingremark.length})
     //ssconsole.log(holdDatesforSave.length, "Nero Holding Date")
     if (this.state.holdingremark.length < 1) {
@@ -487,9 +490,10 @@ class CheckAvailability extends Component {
           fromDate: this.convertEpochToDate(holdDatesforSave[i]),
           toDate: this.convertEpochToDate(holdDatesforSave[i]),
           locked: true,
-          holdingremark: this.state.holdingremark,
+          reasonForHold: this.state.holdingremark,
           bookingVenue: venueName,
-          venueType: bookingPropertyType
+          venueType: bookingPropertyType,
+          sector: sector
         });
       }
     }

@@ -19,7 +19,8 @@ import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import { footer } from "./applyResource/footer";
 import { getPropertyIDDetails, propertyID, propertyHeader } from "./applyResource/propertyDetails";
 import { getPropertyDetails } from "./applyResource/property-locationDetails";
-import { getHolderDetails, sameAsOwner, holderHeader } from "./applyResource/connectionHolder";
+import { getHolderDetails, sameAsOwner, holderHeader ,
+   proposedholderHeader, getproposedHolderDetails} from "./applyResource/connectionHolder";
 import { ownerDetailsHeader, getOwnerDetails, ownershipType
 ,getMultipleOwnerDetails
 } from "./applyResource/ownerDetails";
@@ -653,6 +654,18 @@ export const getData = async (action, state, dispatch) => {
           true
         ); 
 
+        // set true if wf is 
+        const activityTypeHolder = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType");
+        if(activityTypeHolder ==='WS_RENAME' || activityTypeHolder ==='UPDATE_CONNECTION_HOLDER_INFO')
+        {
+          set(
+            action.screenConfig,
+            "components.div.children.formwizardFirstStep.children.proposedconnectionHolderDetails.visible",
+            true
+          );
+
+        }
+
       }
       let data = get(state.screenConfiguration.preparedFinalObject, "applyScreen")
       if (data.connectionType !== "Metered") {
@@ -799,7 +812,7 @@ const getApplyScreenChildren = () => {
  
  if(wnsStatus || ActionType){
   switch(Action){
-    case "UPDATE_CONNECTION_HOLDER_INFO" : return {connConversionDetails,connectionHolderDetails }; 
+    case "UPDATE_CONNECTION_HOLDER_INFO" : return {connectionHolderDetails,proposedconnectionHolderDetails }; 
     case "REACTIVATE_CONNECTION":
     case "TEMPORARY_DISCONNECTION":
     case "PERMANENT_DISCONNECTION":
@@ -917,6 +930,7 @@ const MultiownerDetail = getMultipleOwnerDetails();
 //   type: "array"
 // };
 const holderDetails = getHolderDetails();
+const proposedholderDetails = getproposedHolderDetails();
 const commentDetails = getCommentDetails();
  const connectionConversionDetails =getConnectionConversionDetails();
  const propertyUsage = getPropertyUsageDetails();
@@ -1007,6 +1021,7 @@ export const ownerDetails = getCommonCard({ ownerDetailsHeader,
 export const IDDetails = getCommonCard({ propertyHeader, propertyID, propertyIDDetails });//propertyID
 export const Details = getCommonCard({ propertyDetail });
 export const connectionHolderDetails = getCommonCard({ holderHeader, sameAsOwner, holderDetails })
+export const proposedconnectionHolderDetails = getCommonCard({ proposedholderHeader,  proposedholderDetails })
 export const propertyUsageDetails = getCommonCard({PropertyUsageHeader,propertyUsage});
 export const commentSectionDetails = getCommonCard({commentHeader,commentDetails})
 export const connConversionDetails = getCommonCard({ ConnectionConversionHeader,connectionConversionDetails})
