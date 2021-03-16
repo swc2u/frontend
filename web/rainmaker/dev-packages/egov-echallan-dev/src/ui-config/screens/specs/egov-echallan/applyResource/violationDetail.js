@@ -266,10 +266,27 @@ export const violationsDetails = getCommonCard({
         required: true,
         errorMessage: "EC_ERR_DEFAULT_INPUT_ENCROACHMENT_TYPE_FIELD_MSG",
         afterFieldChange: (action, state, dispatch) => {
-          if (action.value == "Registered Street Vendors") { 
+          if (action.value == "Registered Street Vendors") {
             dispatch(toggleSpinner())
+            dispatch(
+              handleField(
+                "apply",
+                'components.div.children.formwizardFirstStep.children.violationsDetails.children.cardContent.children.violationsDetailsContainer.children.NumberOFviolations',
+                "visible", true
+              )
+            );
+  
             getVendorDetail(action, state, dispatch);
             dispatch(toggleSpinner())
+          } else { 
+            dispatch(
+              handleField(
+                "apply",
+                'components.div.children.formwizardFirstStep.children.violationsDetails.children.cardContent.children.violationsDetailsContainer.children.NumberOFviolations',
+                "visible",false
+              )
+            );
+
           }
          }
         ,
@@ -582,6 +599,7 @@ export const violationsDetails = getCommonCard({
       jsonPath: "eChallan.numberOfViolation",
       errorMessage: "EC_ERR_DEFAULT_INPUT_VIOLATION_COUNT_FIELD_MSG",
       required: false,
+      visible: false,
       props: {
         required: false,
         style: {
