@@ -30,7 +30,8 @@ import set from "lodash/set";
 import {
     generageBillCollection,
     generateBill,
-    getRefundDetails
+    getRefundDetails,
+    getBookedRoomsPaymentDetails
 } from "../utils";
 import { pccSummary } from "./refundResource/pccSummary";
 
@@ -201,6 +202,10 @@ const setSearchResponse = async (
     dispatch(
         prepareFinalObject("refundData", refundDetailsResp.data[0])
     );
+    const bookedRoomsPaymentDetails = await getBookedRoomsPaymentDetails(recData[0].roomsModel, tenantId, dispatch);
+    // dispatch(
+    //     prepareFinalObject("bookedRoomsPaymentDetails", bookedRoomsPaymentDetails)
+    // );
 
     localStorageSet("bookingStatus", bookingStatus);
     HideshowFooter(action, bookingStatus);
