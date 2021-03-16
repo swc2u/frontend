@@ -891,6 +891,10 @@ const setSearchResponseForNocCretificate = async (
         data.remark = nullToNa(
           get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].violationItem[0].remark", "NA")
         );
+        break;      
+      case "Without License Rehri":
+        encorachmentvalue = "withoutrehri";
+        pdfCreateKey = "withoutrehri-ec";
         break;
       default:
         break;
@@ -940,8 +944,9 @@ const setSearchResponseForNocCretificate = async (
         get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].violationTime", "NA")
       );
 
+    
     let getFileStoreIdForChallan = { [encorachmentvalue]: [data] };
-
+    
     const response1GenerateChallan = await getSearchResultsForNocCretificate([
       { key: "tenantId", value: tenant },
       { key: "applicationNumber", value: applicationNumber },
