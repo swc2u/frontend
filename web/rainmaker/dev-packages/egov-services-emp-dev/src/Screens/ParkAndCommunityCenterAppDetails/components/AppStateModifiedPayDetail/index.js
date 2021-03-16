@@ -101,7 +101,7 @@ if(selectedType == "Community Center"){
     }
       }
 }
-
+ 
 if(selectedType == "Parks"){
   for(let i=0; i<DateVenueChangeArray.length ; i++){
     if(DateVenueChangeArray[i].taxHeadCode == "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
