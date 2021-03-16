@@ -89,7 +89,7 @@ const searchBy = {
       }
       else {
         // let siteNumberContainerItems = ["category", "siteNumber", "sectorNumber"];
-        let siteNumberContainerItems = branchType === 'MANI_MAJRA' ? ["sectorNumber","houseNumber","street","mohalla"] : ["category", "siteNumber", "sectorNumber"];
+        let siteNumberContainerItems = branchType === 'MANI_MAJRA' ? ["sectorNumber","houseNumber","street","mohalla"] : branchType==='BUILDING_BRANCH'?["category", "houseNumber", "sectorNumber"]:["category", "siteNumber", "sectorNumber"];
         dispatch(
           handleField(
             "property-search",

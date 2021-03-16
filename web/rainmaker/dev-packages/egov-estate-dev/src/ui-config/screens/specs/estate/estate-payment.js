@@ -56,6 +56,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
     if(!!response.Properties && !!response.Properties.length) {
       let owners = response.Properties[0].propertyDetails.owners;
       owners = owners.map(item => ({...item, name: item.ownerDetails.ownerName}))
+      owners=owners.filter(item=>item.ownerDetails.isCurrentOwner===true)
       const properties = [{...response.Properties[0], propertyDetails: {...response.Properties[0].propertyDetails, owners}}]
        dispatch(prepareFinalObject("Properties", properties))
     }
