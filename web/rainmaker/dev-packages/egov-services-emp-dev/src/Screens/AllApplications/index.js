@@ -108,13 +108,25 @@ class AllRequests extends Component {
   };
 
   onSortClick = () => {
-    this.setState({
+    this.setState({ 
       sortPopOpen: true
     });
-  };
+  }; 
   gotoPArkAndCommunityTanker = () => {
+    let {PreviousBookingData ,oldBookingData,prepareFinalObject,clearAvailable} = this.props
     let ApplicationData = this.props.bookings;
     let CheckData = this.props.bookings ? (this.props.bookings.applicationData ?(this.props.bookings.applicationData.bookingsModelList.length > 0 ? (this.props.bookings.applicationData.bookingsModelList): 'NA'): 'NA'): "NA"
+//screenConfiguration.preparedFinalObject.PreviousBookingData    
+    if(PreviousBookingData !== "NotFound"){
+      prepareFinalObject("PreviousBookingData",null)
+    }
+    //screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
+    if(oldBookingData !== "NotFound"){
+      prepareFinalObject("oldAvailabilityCheckData",null)
+    }
+    if(clearAvailable !== "NotFound"){
+      prepareFinalObject("availabilityCheckData",null)
+    }
     if(CheckData !== 'NA'){
       // let newbooking ={...this.props.bookings,applicationData:null} 
 
@@ -1228,6 +1240,26 @@ const mapStateToProps = state => {
   const { userInfo } = state.auth;
   const roles = userInfo.roles
   console.log("roles--Of-mainUser",roles)
+//screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
+let PreviousBookingData  = get(
+    state,
+    "screenConfiguration.preparedFinalObject.oldAvailabilityCheckData",
+    "NotFound"
+); 
+let clearAvailable = get(
+  state,
+  "screenConfiguration.preparedFinalObject.availabilityCheckData",
+  "NotFound"
+)
+console.log("clearAvailable",clearAvailable)
+// screenConfiguration.preparedFinalObject.PreviousBookingData    screenConfiguration.preparedFinalObject.availabilityCheckData
+console.log("PreviousBookingData-",PreviousBookingData)
+let oldBookingData  = get(
+  state,
+  "screenConfiguration.preparedFinalObject.PreviousBookingData",
+  "NotFound"
+);
+console.log("oldBookingData-",oldBookingData)
 
   console.log()
   const role =
@@ -1255,7 +1287,7 @@ const mapStateToProps = state => {
 
   return {
     searchForm: state && state.formtemp && state.formtemp.form ? state.formtemp.form : '',
-    assignedComplaints,
+    assignedComplaints,PreviousBookingData ,oldBookingData,clearAvailable,
     unassignedComplaints,
     csrComplaints,
     applicationType,
