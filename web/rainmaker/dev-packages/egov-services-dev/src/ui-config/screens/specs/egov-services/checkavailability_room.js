@@ -225,7 +225,7 @@ const prepareEditFlow = async (
 const header = getCommonContainer({
     header: getCommonHeader({
         labelName: `Apply for Room Booking`,
-        labelKey: "Apply for Room Booking",
+        labelKey: "BK_CC_ROOM_APPLY",
     }),
     applicationNumber: {
         uiFramework: "custom-atoms-local",

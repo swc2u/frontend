@@ -1764,14 +1764,14 @@ export const downloadApplication = async (
             state.screenConfiguration.preparedFinalObject,
             "documentsPreview"
         );
-        documentName = attachedDocuments && attachedDocuments[0].name;
         console.log(attachedDocuments, "Nero AttachedDocument");
+        documentName = attachedDocuments && attachedDocuments.length > 0 && attachedDocuments[0].name;
         if (applicationData.businessService == "OSBM") {
             let attachedDocuments = get(
                 state.screenConfiguration.preparedFinalObject,
                 "approvalDocument"
             );
-            document2 = attachedDocuments && attachedDocuments[0].name;
+            document2 = attachedDocuments && attachedDocuments.length > 0 && attachedDocuments[0].name;
         }
     }
     let paymentData = get(
@@ -1923,7 +1923,24 @@ export const downloadApplication = async (
             )[0].amount;
 
         }
-        else if (applicationData.businessService !== "NLUJM") {
+         else if (applicationData.businessService === "PACC"){
+             if(applicationData.bkBookingType === "Parks") {
+                baseCharge = paymentData.billDetails[0].billAccountDetails.filter(
+                    (el) => (el.taxHeadCode=="PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH")
+                )[0].amount;
+                taxes = paymentData.billDetails[0].billAccountDetails.filter(
+                    (el) => el.taxHeadCode.includes("CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH")
+                )[0].amount;
+             } else {
+                baseCharge = paymentData.billDetails[0].billAccountDetails.filter(
+                    (el) => (el.taxHeadCode=="RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH")
+                )[0].amount;
+                taxes = paymentData.billDetails[0].billAccountDetails.filter(
+                    (el) => el.taxHeadCode.includes("CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH")
+                )[0].amount;
+             }
+         }
+        else if(applicationData.businessService !== "NLUJM"){
 
             baseCharge = paymentData.billDetails[0].billAccountDetails.filter(
                 (el) => !el.taxHeadCode.includes("TAX")

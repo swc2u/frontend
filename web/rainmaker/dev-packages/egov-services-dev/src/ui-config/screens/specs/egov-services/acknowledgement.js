@@ -228,7 +228,7 @@ const getAcknowledgementCard = (
                         },
                         body: {
                             labelName:
-                                "A notification regarding Application Submission has been sent to the applicant registered Mobile No.",
+                                "A notification regarding application submission has been sent to the applicant registered mobile no.",
                             labelKey: "BK_APPLICATION_SUCCESS_MESSAGE_SUB",
                         },
 
@@ -266,7 +266,7 @@ const getAcknowledgementCard = (
                         },
                         body: {
                             labelName:
-                                "A notification regarding Payment Collection has been sent to the applicant at registered Mobile No.",
+                                "A notification regarding payment collection has been sent to the applicant at registered mobile no.",
                             labelKey: "BK_PAYMENT_SUCCESS_MESSAGE_SUB",
                         },
                         tailText: {

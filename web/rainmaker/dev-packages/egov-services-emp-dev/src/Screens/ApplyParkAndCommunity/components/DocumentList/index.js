@@ -1,7 +1,7 @@
 import Grid from "@material-ui/core/Grid";
 import Icon from "@material-ui/core/Icon";
 import { withStyles } from "@material-ui/core/styles";
-import { Tabs, Card, TextField,Button } from "components";
+import { Tabs, Card, TextField, Button } from "components";
 import {
     LabelContainer,
     TextFieldContainer,
@@ -20,6 +20,10 @@ import Label from "egov-ui-kit/utils/translationNode";
 import UploadSingleFile from "../UploadSingleFile";
 import "./index.css";
 
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 const themeStyles = (theme) => ({
     documentContainer: {
         backgroundColor: "#F2F2F2",
@@ -134,6 +138,8 @@ const requiredIcon = (
 class DocumentList extends Component {
 
     state = {
+        open: false, setOpen: false,
+        idProffType:'',
         uploadedDocIndex: 0,
         documentsUploadRedux: [
             {
@@ -141,12 +147,28 @@ class DocumentList extends Component {
                 documentType: "DOC",
                 isDocumentRequired: false,
                 isDocumentTypeRequired: false,
-                mendatoryDoc : false,
-                mydocstate : false
+                mendatoryDoc: false,
+                mydocstate: false
             }
         ]
     };
+    onbookingChange = e => {
+        const inputValue = e.target.value;
+        this.setState({ idProffType: inputValue });
+console.log('this.state.idProffType',this.state.idProffType);
+    }
 
+    handleClose = () => {
+        this.setState({
+          setOpen: false
+        })
+      };
+    
+      handleOpen = () => {
+        this.setState({
+          setOpen: true
+        })
+      };
     componentDidMount = () => {
         const {
             documentsList, buttonLabel, description, inputProps, maxFileSize, documentsUploadReduxOld, documentsUploadRedux, handleChange,
@@ -197,17 +219,17 @@ class DocumentList extends Component {
                             oldDocType != docType.code ||
                             oldDocCode != card.name
                         ) {
-                           
+
                             let newDocumentData = {
                                 documentType: docType.code,
                                 documentCode: card.name,
-                             isDocumentRequired: card.required,
+                                isDocumentRequired: card.required,
                                 isDocumentTypeRequired: card.dropdown
                                     ? card.dropdown.required
                                     : false,
-                             mydocstate: false
+                                mydocstate: false
                             };
-                           
+
                             documentsUploadRedux[index] = { ...newDocumentData };
                         }
                         index++;
@@ -215,19 +237,19 @@ class DocumentList extends Component {
                 });
         });
         prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
-      
+
     };
 
     onUploadClick = (uploadedDocIndex) => {
         const { fetchUploadedDoc, userInfo } = this.props;
-            this.setState({ uploadedDocIndex });
+        this.setState({ uploadedDocIndex });
     };
 
     handleDocument = async (file, fileStoreId) => {
         let { uploadedDocIndex } = this.state;
         let documentMap = {};
         const { prepareFinalObject, documentsUploadRedux, fetchUploadedDoc, userInfo } = this.props;
-       
+
         documentMap[`${fileStoreId}`] = file.name;
 
         this.props.prepareFinalObject(
@@ -241,28 +263,28 @@ class DocumentList extends Component {
         let documentMap2 = [{ fileStoreId: file.name }]
 
         const fileUrl = await getFileUrlFromAPI(fileStoreId);
-            prepareFinalObject("documentsUploadRedux", {
-                ...documentsUploadRedux,
-                [uploadedDocIndex]: {
-                    ...documentsUploadRedux[uploadedDocIndex],
-                    mydocstate : true,
-                    documents: [
-                        {
-                            fileName: file.name,
-                            fileStoreId,
-                            fileUrl: Object.values(fileUrl)[0],
-                            mendatoryDoc: true
-                        },
-                    ],
-                },
-            });
+        prepareFinalObject("documentsUploadRedux", {
+            ...documentsUploadRedux,
+            [uploadedDocIndex]: {
+                ...documentsUploadRedux[uploadedDocIndex],
+                mydocstate: true,
+                documents: [
+                    {
+                        fileName: file.name,
+                        fileStoreId,
+                        fileUrl: Object.values(fileUrl)[0],
+                        mendatoryDoc: true
+                    },
+                ],
+            },
+        });
 
 
     };
 
-    removeDocument = (remDocIndex) => {  
+    removeDocument = (remDocIndex) => {
         const { prepareFinalObject } = this.props;
-    
+
         this.props.prepareFinalObject(
             "documentMap",
             "Document Not Found"
@@ -279,8 +301,8 @@ class DocumentList extends Component {
     };
 
     handleChangeTwo = (key, event) => {
-       
-        const { documentsUploadRedux, prepareFinalObject } = this.props;  
+
+        const { documentsUploadRedux, prepareFinalObject } = this.props;
         prepareFinalObject(`documentsUploadRedux`, {
             ...documentsUploadRedux,
             [key]: {
@@ -291,104 +313,130 @@ class DocumentList extends Component {
     };
 
     getUploadCard = (card, key) => {
-       
+
         let { classes, documentsUploadRedux } = this.props;
         documentsUploadRedux.documents = documentsUploadRedux;
         let jsonPath = `documentsUploadRedux[${key}].dropdown.value`;
         return (
             <div>
-            <div>
-                <Label
-                    label="BK_MYBK_REQUIRED_DOC_HEADING"
-                    color="#000000"
-                    fontSize="21px"
-                    alignItems="left"
-                    labelClassName={"myDOC"}                   
-                />
-                <Label label="BK_MYBK_DOCUMENT_VALIDATION_MSG"
-                />
-                <Grid container={true}>
-                    <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
-                        {documentsUploadRedux[key] &&
-                            documentsUploadRedux[key].documents ? (
-                                <div className={classes.documentSuccess}>
-                                    <Icon>
-                                        <i class="material-icons">done</i>
-                                    </Icon>
-                                </div>
-                            ) : (
-                                <div className={classes.documentIcon}>
-                                    <span>{key + 1}</span>
-                                </div>
-                            )}
-                    </Grid>
-                    <Grid
-                        item={true}
-                        xs={10}
-                        sm={5}
-                        md={4}
-                        align="left"
-                        className={classes.descriptionDiv}
-                    >
-                        <LabelContainer
-                            labelKey={getTransformedLocale(card.name)}
-                            style={styles.documentName}
-                        />
-                        {/* {card.required && requiredIcon} */}
-                    </Grid>
-                    <Grid item={true} xs={12} sm={6} md={4}>
-                        {card.dropdown && (
-                            <TextFieldContainer
-                                select={true}
-                                label={{
-                                    labelKey: getTransformedLocale(
-                                        card.dropdown.label
-                                    ),
-                                }}
-                                placeholder={{ labelKey: card.dropdown.label }}
-                                data={card.dropdown.menu}
-                                optionValue="code"
-                                optionLabel="label"
-                                onChange={(event) => this.handleChange(key, event),
-                                    (event) => this.handleChangeTwo(key, event)
-                                }
-                                jsonPath={jsonPath}
+                <div>
+                    <Label
+                        label="BK_MYBK_REQUIRED_DOC_HEADING"
+                        color="#000000"
+                        fontSize="21px"
+                        alignItems="left"
+                        labelClassName={"myDOC"}
+                    />
+                    <Label label="BK_MYBK_DOCUMENT_VALIDATION_MSG"
+                    />
+                    <Grid container={true}>
+                        <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
+                            {documentsUploadRedux[key] &&
+                                documentsUploadRedux[key].documents ? (
+                                    <div className={classes.documentSuccess}>
+                                        <Icon>
+                                            <i class="material-icons">done</i>
+                                        </Icon>
+                                    </div>
+                                ) : (
+                                    <div className={classes.documentIcon}>
+                                        <span>{key + 1}</span>
+                                    </div>
+                                )}
+                        </Grid>
+                        <Grid
+                            item={true}
+                            xs={10}
+                            sm={5}
+                            md={4}
+                            align="left"
+                            className={classes.descriptionDiv}
+                        >
+                            <LabelContainer
+                                labelKey={getTransformedLocale(card.name)}
+                                style={styles.documentName}
                             />
-                        )}
-                    </Grid>
-                    <Grid
-                        item={true}
-                        xs={12}
-                        sm={12}
-                        md={3}
-                        className={classes.fileUploadDiv}
+                            {/* {card.required && requiredIcon} */}
+                        </Grid>
+                        <Grid item={true}>
+                            {card.dropdown && (
+                                <TextFieldContainer
+                                    select={true}
+                                    label={{
+                                        labelKey: getTransformedLocale(
+                                            card.dropdown.label
+                                        ),
+                                    }}
+                                    placeholder={{ labelKey: card.dropdown.label }}
+                                    data={card.dropdown.menu}
+                                    optionValue="code"
+                                    optionLabel="label"
+                                    onChange={(event) => this.handleChange(key, event),
+                                        (event) => this.handleChangeTwo(key, event)
+                                    }
+                                    jsonPath={jsonPath}
+                                />
+                            )}
+                        </Grid>
+                        <Grid item={true} md={4}>
+                            
+                    <FormControl style={{ width: '100%' }}>
+                    <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-proof">Proof Type</InputLabel>
+                    <Select
+                      maxWidth={false}
+                      labelId="demo-controlled-open-select-proof"
+                      id="demo-controlled-open-select-label"
+                      open={this.state.SetOpen}
+                      displayEmpty
+                      onClose={() => this.handleClose()}
+                      onOpen={() => this.handleOpen()}
+                      value={this.state.idProffType}
+                      onChange={(e, value) => this.onbookingChange(e)}
                     >
-                        <UploadSingleFile
-                            classes={this.props.classes}
-                            handleFileUpload={(e) =>
-                                handleFileUpload(e, this.handleDocument, this.props)
-                            }
-                            uploaded={
-                                documentsUploadRedux[key] &&
-                                    documentsUploadRedux[key].documents
-                                    ? true
-                                    : false
-                            }
-                            removeDocument={() => this.removeDocument(key)}
-                            documents={
-                                documentsUploadRedux[key] &&
-                                documentsUploadRedux[key].documents
-                            }
-                            onButtonClick={() => this.onUploadClick(key)}
-                            inputProps={this.props.inputProps}
-                            buttonLabel={this.props.buttonLabel}
+                    <MenuItem  value="" disabled>Proof Type</MenuItem>
+                     <MenuItem value="Ration_Card">Ration Card</MenuItem>
+                     <MenuItem value="Aadhar_Card">Aadhar Card</MenuItem>
+                     <MenuItem value="Voter_Id">Voter Id Card</MenuItem>
+                     <MenuItem value="Driving_License">Driving License</MenuItem>
+                     <MenuItem value="others">Others</MenuItem>
+                    </Select>
+                  </FormControl>
+                            </Grid>
 
-                        />
+
+                        <Grid
+                            item={true}
+                            xs={12}
+                            sm={12}
+                            md={3}
+                            className={classes.fileUploadDiv}
+                        >
+                            <UploadSingleFile
+                                classes={this.props.classes}
+                                handleFileUpload={(e) =>
+                                    handleFileUpload(e, this.handleDocument, this.props)
+                                }
+                                uploaded={
+                                    documentsUploadRedux[key] &&
+                                        documentsUploadRedux[key].documents
+                                        ? true
+                                        : false
+                                }
+                                removeDocument={() => this.removeDocument(key)}
+                                documents={
+                                    documentsUploadRedux[key] &&
+                                    documentsUploadRedux[key].documents
+                                }
+                                onButtonClick={() => this.onUploadClick(key)}
+                                inputProps={this.props.inputProps}
+                                buttonLabel={this.props.buttonLabel}
+
+                            />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </div>
-           
-            {/* <div>
+                </div>
+
+                {/* <div>
                 <Label
                     label="BK_MYBK_REQUIRED_DOC_HEADING"
                     color="#000000"
@@ -478,21 +526,21 @@ class DocumentList extends Component {
                     </Grid>
                 </Grid>
             </div> */}
-  
+
             </div>
         );
     };
 
     render() {
         const { classes, documentsList, handleChange } = this.props;
-    
+
         let index = 0;
 
 
 
         return (
             <div>
-               
+
                 <Card
                     textChildren={
                         <div>
