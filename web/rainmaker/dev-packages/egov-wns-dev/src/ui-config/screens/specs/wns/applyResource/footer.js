@@ -365,9 +365,9 @@ if(!proconnHolderDetail){
   return false;
 }
 
-  if(connectionHolders.proposedName === connectionHolders.name
-    && connectionHolders.proposedMobileNo === connectionHolders.mobileNumber
-    &&connectionHolders.proposedCorrespondanceAddress === connectionHolders.correspondenceAddress    
+  if((connectionHolders.proposedName === connectionHolders.name || connectionHolders.proposedName ==='NA')
+    && (connectionHolders.proposedMobileNo === connectionHolders.mobileNumber || connectionHolders.proposedMobileNo ==='NA')
+    && (connectionHolders.proposedCorrespondanceAddress === connectionHolders.correspondenceAddress || connectionHolders.proposedCorrespondanceAddress ==='NA')   
     ){
     dispatch(
       toggleSnackbar(
