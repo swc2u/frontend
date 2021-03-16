@@ -19,9 +19,9 @@ class BookingMedia extends React.Component {
         }
 
         return (
-            <div style ={{ "overflowX": "scroll"}}>
-            <div style={{"textAlign": "center", "fontSize": "large", "marginBottom": "20px" }} >Select venue from below picture</div>
-             <img
+            <div style={{ "overflowX": "scroll" }}>
+                <div style={{ "textAlign": "center", "fontSize": "large", "marginBottom": "20px" }} >Select venue from below picture</div>
+                <img
                     id="imageMap-pccMaps"
                     src={`${pacc_image
 
@@ -42,9 +42,15 @@ class BookingMedia extends React.Component {
     }
 }
 const mapStateToProps = (state) => {
-    return {
-        pacc_image_initial_path: state.screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Booking_Config[0].Value,
-    };
+    if (state.screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking && state.screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Booking_Config) {
+        return {
+
+            pacc_image_initial_path: state.screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Booking_Config[0].Value,
+        }
+
+    } else {
+        return null;
+    }
 };
 
 // const mapDispatchToProps = (dispatch) => {

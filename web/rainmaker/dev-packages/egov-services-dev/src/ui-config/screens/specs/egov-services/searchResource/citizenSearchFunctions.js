@@ -46,8 +46,16 @@ export const fetchData = async (action, state, dispatch) => {
 console.log(response, "search response")
     try {
         if (response.bookingsModelList.length > 0) {
+            const restrucArray = response.bookingsModelList.map( (item) => {
+                if(item.roomsModel && item.roomsModel.length > 0){
+                    return {neroName: "RituName", ...item}
+                }else{
+                    return {neroName: "NoName", ...item}
+                }
+
+            })
             dispatch(
-                prepareFinalObject("searchResults", response.bookingsModelList)
+                prepareFinalObject("searchResults", restrucArray)
             );
             dispatch(
                 prepareFinalObject(
