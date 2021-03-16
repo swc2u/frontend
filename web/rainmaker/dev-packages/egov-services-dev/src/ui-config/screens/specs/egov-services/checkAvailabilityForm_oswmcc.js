@@ -253,7 +253,7 @@ const callBackForSearch = async (state, dispatch) => {
         //     dispatch(
         //         toggleSnackbar(
         //             true,
-        //             { labelName: "Please Select Booking Venue!", labelKey: "" },
+        //             { labelName: "Please select booking venue!", labelKey: "" },
         //             "warning"
         //         )
         //     );
@@ -543,7 +543,7 @@ export const availabilityForm = getCommonCard({
                 },
 
                 placeholder: {
-                    labelName: "Select Booking Location",
+                    labelName: "Select Booking Venue",
                     labelKey: "BK_OSWMCC_BOOKING_VENUE_PLACEHOLDER",
                 },
                 gridDefination: {

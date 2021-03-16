@@ -148,6 +148,9 @@
   width: 50%;
   border-style: ridge; }
 
+.rt-tbody {
+  text-align: center; }
+
 @media only screen and (max-width: 500px) {
   .graphDashboard {
     display: contents;

@@ -51,45 +51,45 @@ export const FilterForm = getCommonCard({
       jsonPath: "dahsboardHome.defaulttoDate",
       required: true,
     }),
-    // moduleDashboardDropdown: {
-    //   uiFramework: "custom-containers-local",
-    //   moduleName: "egov-dashboard",
-    //   componentPath: "AutosuggestContainer",
-    //   jsonPath: "dahsboardHome.dropDownData2",
-    //   required: true,
-    //   gridDefination: {
-    //         xs: 6,
-    //         sm: 2,
-    //         md: 2
-    //       },
-    //   props: {
-    //     style: {
-    //     width: "100%",
-    //     cursor: "pointer"
-    //   },
+    moduleDashboardDropdown: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-dashboard",
+      componentPath: "AutosuggestContainer",
+      jsonPath: "dahsboardHome.dropDownData2",
+      required: true,
+      gridDefination: {
+            xs: 6,
+            sm: 2,
+            md: 2
+          },
+      props: {
+        style: {
+        width: "100%",
+        cursor: "pointer"
+      },
   
-    //   className: "citizen-city-picker",
-    //   label: { labelName: "Report Type", labelKey: "DASHBOARD_DROPDOWN_REPORT_TYPE_LABEL" },
-    //   placeholder: {
-    //     labelName: "",
-    //     labelKey: "Select Module"
-    //   },
-    //   sourceJsonPath: "dahsboardHome.dropDownData",
-    //   jsonPath: "dahsboardHome.dropDownData2",
-    //   maxLength:5,
-    //   labelsFromLocalisation: false,
-    //   suggestions: [],
-    //   fullwidth: true,
-    //   // required: true,
-    //   inputLabelProps: {
-    //     shrink: true
-    //   },
-    //   isMulti: false,
-    //   labelName: "name",
-    //   valueName: "name"
-    //   },
+      className: "citizen-city-picker",
+      label: { labelName: "Report Type", labelKey: "DASHBOARD_DROPDOWN_REPORT_TYPE_LABEL" },
+      placeholder: {
+        labelName: "",
+        labelKey: "Select Module"
+      },
+      sourceJsonPath: "dahsboardHome.dropDownData",
+      jsonPath: "dahsboardHome.dropDownData2",
+      maxLength:5,
+      labelsFromLocalisation: false,
+      suggestions: [],
+      fullwidth: true,
+      // required: true,
+      inputLabelProps: {
+        shrink: true
+      },
+      isMulti: false,
+      labelName: "name",
+      valueName: "name"
+      },
     
-    // },
+    },
     searchButton: {
       componentPath: "Button",
       gridDefination: {

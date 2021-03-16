@@ -340,48 +340,47 @@ const usageCategory = get(
   }
 }
 else if(wnsStatus && wnsStatus === "UPDATE_CONNECTION_HOLDER_INFO" || wnsStatus === "WS_RENAME"){
-  const iswaterConnFomValid = validateFields(
-    "components.div.children.formwizardFirstStep.children.connConversionDetails.children.cardContent.children.connectionConversionDetails.children.ConnectionConversionDetails.children",
+  const proconnHolderDetail = validateFields(
+    "components.div.children.formwizardFirstStep.children.proposedconnectionHolderDetails.children.cardContent.children.proposedholderDetails.children.holderDetails.children",
     state,
     dispatch,
     "apply"
   );
 
-const proposedUsageCategory = get(
+const connectionHolders = get(
   state.screenConfiguration.preparedFinalObject,
-  "WaterConnection[0].proposedUsageCategory"
+  "WaterConnection[0].connectionHolders[0]"
 );
-const usageCategory = get(
-  state.screenConfiguration.preparedFinalObject,
-  "WaterConnection[0].waterProperty.usageCategory"
-);
-  if(!iswaterConnFomValid){
+
+if(!proconnHolderDetail){
+  dispatch(
+    toggleSnackbar(
+      true, {
+      labelKey: "WS_FILL_REQUIRED_FIELDS",
+      labelName: "Please fill Required details"
+    },
+      "warning"
+    )
+  )
+  return false;
+}
+
+  if(connectionHolders.proposedName === connectionHolders.name
+    && connectionHolders.proposedMobileNo === connectionHolders.mobileNumber
+    &&connectionHolders.proposedCorrespondanceAddress === connectionHolders.correspondenceAddress    
+    ){
     dispatch(
       toggleSnackbar(
         true, {
-        labelKey: "WS_FILL_REQUIRED_FIELDS",
-        labelName: "Please fill Required details"
+        labelKey: "WS_OWNER_DETAILS_PROPOSED_DUPLICATE_VALIDATION",
+        labelName: "Proposed Holder details can not be same"
       },
         "warning"
       )
     )
-    return;
+    return false;
   }
-  if(usageCategory === proposedUsageCategory)
-  {
-    dispatch(
-      toggleSnackbar(
-        true, {
-        labelKey: "WS_PROPERTY_USAGE_TYPE_TARRIF_LABEL_INPUT_PROPOSED_VALIDATION",
-        labelName: "Please select different proposed tarif type"
-      },
-        "warning"
-      )
-    )
-
-    return
-
-  }
+ 
   
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
@@ -1054,7 +1053,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       //   }
       // }
       if(process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit"&& window.localStorage.getItem("ActivityStatusFlag")=== "true"){
-        window.localStorage.removeItem("ActivityStatusFlag");
+        //window.localStorage.removeItem("ActivityStatusFlag");
       }
      else if (process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit") {  
         setReviewPageRoute(state, dispatch);
@@ -1196,6 +1195,12 @@ const moveToSuccess = (combinedArray, dispatch) => {
   const status = "success";
   const applicationNoWater = get(combinedArray[0], "applicationNo");
   const applicationNoSewerage = get(combinedArray[1], "applicationNo");
+  if(process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit"&& window.localStorage.getItem("ActivityStatusFlag")=== "true"){
+    window.localStorage.removeItem("ActivityStatusFlag");
+  }
+  if(localStorage.getItem("ActivityStatusFlag")){
+    window.localStorage.removeItem("ActivityStatusFlag");
+  }
   if (applicationNoWater && applicationNoSewerage) {
     dispatch(
       setRoute(
@@ -1215,6 +1220,7 @@ const moveToSuccess = (combinedArray, dispatch) => {
       )
     );
   }
+
 };
 
 const acknoledgementForBothWaterAndSewerage = async (state, activeStep, isFormValid, dispatch) => {
