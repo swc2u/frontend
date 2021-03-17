@@ -283,7 +283,6 @@ const getData = async (action, state, dispatch) => {
   )
 }
 export const check = value => {
-  debugger
   if (value) {
 let val="ES_"+value.toUpperCase()
 return val
