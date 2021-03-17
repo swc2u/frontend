@@ -282,7 +282,13 @@ const getData = async (action, state, dispatch) => {
     )
   )
 }
-
+export const check = value => {
+  debugger
+  if (value) {
+let val="ES_"+value.toUpperCase()
+return val
+  }
+};
 const screenConfig = {
   uiFramework: "material-ui",
   name: "my-applications",
@@ -321,7 +327,8 @@ const screenConfig = {
               },
               {
                 label: "ES_APPLICATION_TYPE_LABEL",
-                jsonPath: "applicationType"
+                jsonPath: "applicationType",
+                callBack:check
               }
             ],
             moduleName: "EST",
