@@ -696,8 +696,8 @@ class CheckAvailability extends Component {
             {this.props.DropDownValue != "notfound" &&
               this.props.DropDownValue === "Commercial Ground" ? (
               <div>
-                <div className="col-sm-6 col-xs-6">
-                  {" "}
+               <div className="col-sm-6 col-xs-6" style={{ marginTop : "40px" }}>
+                     {" "}
                   {/*for commercial selection*/}
                   {console.log("comeInCommercial")}
                   <FormControl style={{ width: "100%" }}>
@@ -735,8 +735,8 @@ class CheckAvailability extends Component {
             ) : (
               <div>
                 {console.log("comeInpark")}
-                <div className="col-sm-6 col-xs-6">
-                  {" "}
+                <div className="col-sm-6 col-xs-6" style={{ marginTop : "40px" }}>
+                 {" "}
                   {/*for park & community*/}
                   {console.log("comeInsecondPark")}
                   <FormControl style={{ width: "100%" }}>
@@ -799,7 +799,12 @@ class CheckAvailability extends Component {
 
             {/*for old availbility check Import Image*/}
             {this.state.availabilityCheckData &&
-              this.state.availabilityCheckData.bkSector && this.state.setAllForCG === false ? (
+        this.state.availabilityCheckData.bkSector && this.state.setAllForCG === false ? (
+              
+          <div
+            className="col-sm-12 col-xs-12"
+
+          >
               <BookingMedia
                 changeCalendar={changeCalendar}
                 handleCalAfterImage={handleCalAfterImage}
@@ -807,7 +812,7 @@ class CheckAvailability extends Component {
                 masterDataPCC={this.state.masterDataPCC}
                 availabilityCheckData={this.state.availabilityCheckData}
                 pacc_image_initial_path={sImageUrl && sImageUrl[0].Value}
-              />
+              /></div>
             ) : ""}
 
 
