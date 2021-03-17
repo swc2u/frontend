@@ -180,6 +180,19 @@ export const getSearchResults = async queryObject => {
         let waterSubSource = result.WaterConnection[0].waterSource.includes("null") ? "NA" : result.WaterConnection[0].waterSource.split(".")[1];
         result.WaterConnection[0].waterSource = waterSource;
         result.WaterConnection[0].waterSubSource = waterSubSource;
+        // if(result.WaterConnection[0].connectionHolders && result.WaterConnection[0].connectionHolders[0] && result.WaterConnection[0].connectionHolders !=='NA')
+        // {
+        //     if(result.WaterConnection[0].activityType='UPDATE_CONNECTION_HOLDER_INFO' &&  result.WaterConnection[0].applicationStatus==='PENDING_FOR_DOCUMENT_VERIFICATION')
+        //     {
+        //         result.WaterConnection[0].connectionHolders[0].proposedName = result.WaterConnection[0].connectionHolders[0].proposedName;
+        //         result.WaterConnection[0].connectionHolders[0].proposedMobileNo = result.WaterConnection[0].connectionHolders[0].proposedMobileNo;
+        //         result.WaterConnection[0].connectionHolders[0].proposedCorrespondanceAddress = result.WaterConnection[0].connectionHolders[0].proposedCorrespondanceAddress;
+
+        //     }
+               
+
+        // }
+        
         result.WaterConnection = await getPropertyObj(result.WaterConnection); 
         return result;
     } catch (error) { console.log(error) }

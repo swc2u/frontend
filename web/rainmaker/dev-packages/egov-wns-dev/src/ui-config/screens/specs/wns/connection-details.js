@@ -4,6 +4,7 @@ import {
   getCommonTitle,
   getCommonGrayCard,
   getCommonContainer,
+  getCommonSubHeader,
   convertEpochToDate
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
@@ -218,9 +219,36 @@ const propertyDetails = getPropertyDetails(false);
 const ownerDetails = getOwnerDetails(false);
 
 const connectionHolders = connHolderDetailsSummary();
+export const getHeader = label => {
+  return getCommonGrayCard({
+    headerDiv: {
+      uiFramework: "custom-atoms",
+      componentPath: "Container",
+      props: {
+        style: { marginBottom: "10px" }
+      },
+      children: {
+        header: {
+          gridDefination: {
+            xs: 12,
+            sm: 10
+          },
+          ...getCommonSubHeader({
+            labelKey: "WS_COMMON_CONNECTION_HOLDER_DETAILS_HEADER"
+          })
+        },
+       
+      }
+    },
+    Viewholder:connectionHolders,
+  });
+};
+const connectionHoldersHeader = getHeader({
+  labelKey: "WS_COMMON_CONNECTION_HOLDER_DETAILS_HEADER"
+});
 
 const connectionHoldersSameAsOwner = connHolderDetailsSameAsOwnerSummary();
-export const connectionDetails = getCommonCard({ serviceDetails, propertyDetails, ownerDetails, connectionHolders, connectionHoldersSameAsOwner});
+export const connectionDetails = getCommonCard({ serviceDetails, propertyDetails, ownerDetails, connectionHoldersHeader, connectionHoldersSameAsOwner});
 export const getData = async (action, state, dispatch) => {  
   await getMdmsData(state, dispatch);
 }

@@ -38,6 +38,7 @@ const companyNameField = {
     sm: 6
   },
   required: true,
+  errorMessage:"ES_ERR_COMPANY_NAME",
   pattern: _getPattern("alphabet"),
   jsonPath: "Properties[0].propertyDetails.companyName",
   afterFieldChange: (action, state, dispatch) => {
@@ -64,6 +65,7 @@ const companyRegNoField = {
     sm: 6
   },
   required: true,
+  errorMessage:"ES_ERR_COMPANY_REG_NUMBER",
   jsonPath: "Properties[0].propertyDetails.companyRegistrationNumber",
   pattern: _getPattern("alphaNumeric"),
   afterFieldChange: (action, state, dispatch) => {
@@ -82,6 +84,7 @@ const companyRegDateField = {
     labelKey: "ES_REGISTRATION_DATE_LABEL"
   },
   pattern: getPattern("Date"),
+  errorMessage:"ES_ERR_REG_DATE",
   jsonPath: "Properties[0].propertyDetails.companyRegistrationDate",
   required: true
   // props: {
@@ -109,6 +112,7 @@ const companyAddressField = {
     multiline: true,
     rows: "2"
   },
+  errorMessage:"ES_ERR_ADDRESS_FEILD",
   required: true,
   pattern: _getPattern("address"),
   afterFieldChange: (action, state, dispatch) => {
@@ -157,6 +161,7 @@ const firmNameField = {
   },
   jsonPath: "Properties[0].propertyDetails.companyName",
   required: true,
+  errorMessage:"ES_ERR_FIRM_NAME",
   pattern: _getPattern("alphabet"),
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
@@ -299,6 +304,7 @@ const firmAddressField = {
     rows: "2"
   },
   required: true,
+  errorMessage:"ES_ERR_ADDRESS_FEILD",
   pattern: _getPattern("address"),
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
@@ -346,6 +352,7 @@ const nameField = {
   },
   required: true,
   pattern: _getPattern("alphabet"),
+  errorMessage:"ES_ERR_PARTNER_NAME",
   jsonPath: "Properties[0].propertyDetails.owners[0].ownerDetails.ownerName",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
@@ -372,6 +379,7 @@ const husbandFatherNameField = {
   },
   required: true,
   pattern: _getPattern("alphabet"),
+  errorMessage:"ES_ERR_PARTNER_FATHER_HUSBAND_NAME",
   jsonPath: "Properties[0].propertyDetails.owners[0].ownerDetails.guardianName",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
@@ -398,6 +406,7 @@ const addressField = {
   },
   required: true,
   pattern: _getPattern("address"),
+  errorMessage:"ES_ERR_ADDRESS_FEILD",
   jsonPath: "Properties[0].propertyDetails.owners[0].ownerDetails.address",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
@@ -472,7 +481,31 @@ const cpNumberField = {
     }
   }
 }
-
+const npNumberField = {
+  label: {
+    labelName: "NP No.",
+    labelKey: "ES_NP_NUMBER_LABEL"
+  },
+  placeholder: {
+    labelName: "Enter NP No.",
+    labelKey: "ES_NP_NUMBER_PLACEHOLDER"
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  pattern: _getPattern("alphaNumeric"),
+  errorMessage:"ES_ERR_NPNUMBER",
+  jsonPath: "Properties[0].propertyDetails.owners[0].npNumber",
+  afterFieldChange: (action, state, dispatch) => {
+    if (action.value.length > 100) {
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_100", screenName);
+    }
+    else {
+      displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_NPNUMBER", screenName);
+    }
+  }
+}
 const getRelationshipRadioButton = {
   uiFramework: "custom-containers",
   componentPath: "RadioGroupContainer",
@@ -531,6 +564,7 @@ const commonPartnerInformation = () => {
       address: getTextField(addressField),
       mobileNumber: getTextField(mobileNumberField),
       share: getTextField(shareField),
+      npNumber:getTextField(npNumberField),
       cpNumber: getTextField(cpNumberField)
     })
   });
@@ -562,7 +596,8 @@ const commonPartnerInformation = () => {
             headerName: "Partner Information",
             headerJsonPath: "children.cardContent.children.header.children.Partner Information.props.label",
             sourceJsonPath: "Properties[0].propertyDetails.owners",
-            prefixSourceJsonPath: "children.cardContent.children.ownerCard.children"
+            prefixSourceJsonPath: "children.cardContent.children.ownerCard.children",
+            disableDeleteIfKeyExists: "id"
           },
           type: "array"
         }
@@ -591,6 +626,7 @@ export const proprietorshipDetails = getCommonCard({
     address: getTextField(addressField),
     mobileNumber: getTextField(mobileNumberField),
     // share: getTextField(shareField),
+    npNumber:getTextField(npNumberField),
     cpNumber: getTextField(cpNumberField)
   })
 });

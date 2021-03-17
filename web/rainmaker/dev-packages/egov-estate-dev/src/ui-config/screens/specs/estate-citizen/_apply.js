@@ -1,5 +1,5 @@
 import { dispatchMultipleFieldChangeAction, getCommonCard, getCommonHeader, getStepperObject,getCommonTitle } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getCommonContainer } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {footer, stepsData} from './footer'
@@ -52,6 +52,12 @@ const hideFooter = async (action, state, dispatch) => {
                 value: false
             }]
     await dispatchMultipleFieldChangeAction("_apply", actionDefination, dispatch);
+    dispatch(handleField(
+      "_apply",
+      "components.div.children.footer.children.nextButton",
+      "props.disabled",
+      false
+    ))
   }
 }
 
@@ -140,6 +146,11 @@ const getData = async (action, state, dispatch) => {
     set(
       third_step, 
       "children.cardContent.children.ES_SAMPLE_SITE_MAP_HEADER.visible",
+      process.env.REACT_APP_NAME !== "Citizen"
+    )
+    set(
+      third_step, 
+      "children.cardContent.children.ES_HARD_COPY_DATE.visible",
       process.env.REACT_APP_NAME !== "Citizen"
     )
     inputProps.push(...second_step_sections);

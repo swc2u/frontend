@@ -34,7 +34,8 @@ const houseNumberField = {
     sm: 6
   },
   required: true,
-  pattern: _getPattern("fileNumber"),
+  pattern: _getPattern("HouseNumber"),
+  errorMessage:"ES_ERR_HOUSE_NUMBER",
   jsonPath: "Properties[0].propertyDetails.houseNumber",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 50) {
@@ -63,6 +64,7 @@ const streetField = {
   maxLength: 100,
   pattern:_getPattern("street"),
   jsonPath: "Properties[0].propertyDetails.street",
+  errorMessage:"ES_ERR_STREET_NUMBER",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 100) {
       displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_100", screenName);
@@ -91,6 +93,7 @@ const areaofPropertyField = {
   pattern: _getPattern("numeric-with-no-firstdigit-zero"),
   required: true,
   jsonPath: "Properties[0].propertyDetails.areaSqft",
+  errorMessage:"ES_ERR_AREA_OF_PROPERTY_FIELD",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 25) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AREA_OF_PROPERTY_MAX_25", screenName);
@@ -314,6 +317,7 @@ export const annualTextField = {
       xs: 12,
       sm: 6
   },
+  errorMessage:"ES_ERR_YEARLY_LICENCE_FEE",
   afterFieldChange: (action, state, dispatch) => {
 let mmyear=get(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.mmDemandStartYear")
 
@@ -324,6 +328,30 @@ dispatch(
     "components.div.children.formwizardFirstStep.children.monthlyDetails.children.cardContent.children.detailsContainer.children.yearly",
     "props.disabled",
     true
+  )
+)
+dispatch(
+  handleField(
+    action.screenKey,
+    "components.div.children.formwizardFirstStep.children.monthlyDetails.children.cardContent.children.detailsContainer.children.yearly",
+    "props.errorMessage",
+    ""
+  )
+)
+dispatch(
+  handleField(
+    action.screenKey,
+    "components.div.children.formwizardFirstStep.children.monthlyDetails.children.cardContent.children.detailsContainer.children.yearly",
+    "props.error",
+    false
+  )
+)
+dispatch(
+  handleField(
+    action.screenKey,
+    "components.div.children.formwizardFirstStep.children.monthlyDetails.children.cardContent.children.detailsContainer.children.yearly",
+    "props.helperText",
+    ""
   )
 )
   }
@@ -344,6 +372,7 @@ export const yearTextField = {
       xs: 12,
       sm: 6
   },
+  errorMessage:"ES_ERR_YEARLY_LICENCE_FEE",
   afterFieldChange: (action, state, dispatch) => {
 let mmanualyear=get(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.mmDemandStartYear")
 
@@ -354,6 +383,30 @@ dispatch(
     "components.div.children.formwizardFirstStep.children.annualDetails.children.cardContent.children.detailsContainer.children.annual",
     "props.disabled",
     true
+  )
+)
+dispatch(
+  handleField(
+    action.screenKey,
+    "components.div.children.formwizardFirstStep.children.annualDetails.children.cardContent.children.detailsContainer.children.annual",
+    "props.errorMessage",
+    ""
+  )
+)
+dispatch(
+  handleField(
+    action.screenKey,
+    "components.div.children.formwizardFirstStep.children.annualDetails.children.cardContent.children.detailsContainer.children.annual",
+    "props.error",
+    false
+  )
+)
+dispatch(
+  handleField(
+    action.screenKey,
+    "components.div.children.formwizardFirstStep.children.annualDetails.children.cardContent.children.detailsContainer.children.annual",
+    "props.helperText",
+    ""
   )
 )
   }
@@ -375,8 +428,8 @@ export const monthTextField = {
   gridDefination: {
       xs: 12,
       sm: 6
-  }
- 
+  },
+ errorMessage:"ES_ERR_MONTHLY_CHARGES"
 }
 
 export const annualDetailsHeader = getCommonTitle({

@@ -132,7 +132,7 @@ const { bookingLocation, fromTime, toTime, bkDisplayFromDateTime,  bkDisplayToDa
                             letterSpacing: "0.67px",
                         }}
                     >
-                        {console.log("fromTime--",fromTime)};
+                        {console.log("fromTime--",fromTime)}
                         {console.log("bkDisplayFromDateTime--23",bkDisplayFromDateTime)}
                         {console.log("fromTime && fromTime.length == 0?'--/--/--':bkDisplayFromDateTime",
                         fromTime && fromTime.length == 0?'--/--/--':bkDisplayFromDateTime

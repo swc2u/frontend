@@ -31,8 +31,8 @@ class SuccessMessage extends Component {
                   {icon}
                 </FloatingActionButton></div>
                 <div class="col-sm-7" >
-                  <Label className="thankyou-text" style={{ fontSize: 30, fontWeight: 'bold'}} label={successmessage} color="#767676" />
-                  <Label className="thankyou-text-message" label={secondaryLabel} color="#767676" /></div>
+                  <Label className="thankyou-text" style={{ fontSize: 30, fontWeight: 'bold'}} label={"BK_PAYMENT_COLLECTION_SUCCESS_MESSAGE_MAIN"} color="#767676" />
+                  <Label className="thankyou-text-message" label={"BK_PAYMENT_SUCCESS_MESSAGE_SUB"} color="#767676" /></div>
                     <div class="col-sm-4 application-number-div">
                     <Label  className="application-text-one"    
                     labelClassName={"myDOC"}

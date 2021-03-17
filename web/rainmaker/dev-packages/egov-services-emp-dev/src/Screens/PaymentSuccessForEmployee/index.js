@@ -26,6 +26,9 @@ operatorCode : "",
 Address: "",
 hsnCode : "",
 name: "",
+stateCode :"" ,
+			placeOfService : "",
+			 mcGSTN : ""
   }  
   }
 
@@ -244,6 +247,42 @@ componentDidMount = async () => {
         mdmsBody
       );
       console.log(payloadRes, "hsncodeAndAll");
+
+	  let mdmsBodyTwo = {
+		MdmsCriteria: {
+			tenantId: userInfo.tenantId,
+			moduleDetails: [
+
+				{
+					moduleName: "Booking",
+					masterDetails: [
+						{
+							name: "PDF_BOOKING_DETAILS",
+						}
+					],
+				},
+
+			],
+		},
+	}; 
+
+	let payloadResTwo = null;
+	payloadResTwo = await httpRequest(
+		"egov-mdms-service/v1/_search",
+		"_search",[],
+		mdmsBodyTwo
+	);
+	console.log(payloadResTwo, "MCGSTnumberDetail");
+
+let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS	
+console.log("pdfDetails-",pdfDetails)   //stateCode  placeOfService  mcGSTN
+
+this.setState({
+stateCode : pdfDetails[0].stateCode,
+placeOfService : pdfDetails[0].placeOfService,
+mcGSTN : pdfDetails[0].mcGSTN
+},console.log("thisStatestateCode",this.state.stateCode,this.state.placeOfService,this.state.mcGSTN))
+
     
     let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING
     
@@ -365,16 +404,16 @@ downloadPermissionButton = async (e) => {
 	}
 	   let BookingInfo  = [
 		 {
-		"applicantDetail": {
+		"applicantDetail": { 
 		  "name": applicationDetails.bkApplicantName,
 		  "mobileNumber":applicationDetails.bkMobileNumber,
 		  "email": applicationDetails.bkEmail,
-		  "permanentAddress": "Not Applicable",
+		  "permanentAddress": applicationDetails.bkHouseNo,
 		  "permanentCity": "Chandigarh",
 		  "sector": applicationDetails.bkSector,
 		  "fatherName": "",
 		  "custGSTN": applicationDetails.bkCustomerGstNo,
-		  "placeOfService": "Chandigarh"
+		  "placeOfService": this.state.placeOfService
 	  },
 				"bookingDetail": {
 				  "applicationNumber": applicationDetails.bkApplicationNumber,
@@ -408,10 +447,13 @@ downloadPermissionButton = async (e) => {
 				  "cgst" :applicationDetails.bkCgst,
 				  "utgst": applicationDetails.bkCgst,
 				  "totalgst": PACC_TAX,
-				  "refundableCharges": REFUNDABLE_SECURITY,
-				  "totalPayment": this.props.totalAmount,
+				  "refundableCharges": this.props.REFUNDABLE_SECURITY,
+			 	  "totalPayment": this.props.totalAmountPaid,        //this.props.totalAmount,
 				  "paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
 				  "receiptNo": this.props.recNumber,
+				  "cardNumberLast4": "Not Applicable",
+				  "dateVenueChangeCharges": this.props.DATEVENUECHARGE == 0 ?"Not Applicable":this.props.DATEVENUECHARGE,
+
 			  },
 			  "OtherDetails": {
 				  "clchargeforwest":  applicationDetails.bkCleansingCharges,
@@ -424,9 +466,9 @@ downloadPermissionButton = async (e) => {
 				  "contactNumber": "+91-172-2541002, 0172-2541003",
 				  "logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
 				  "webSite": "http://mcchandigarh.gov.in",
-				  "statecode": "998",
+				  "statecode": this.state.stateCode,
 				  "hsncode": this.state.hsnCode,
-				  "mcGSTN":""
+				  "mcGSTN": this.state.mcGSTN,
 			  },
 			  "bankInfo": {
 				  "accountholderName": applicationDetails.bkBankAccountHolder,
@@ -603,7 +645,7 @@ downloadPermissionButton = async (e) => {
 				  "sector": applicationDetails.bkSector,
 				  "fatherName": "",
 				  "custGSTN": applicationDetails.bkCustomerGstNo == "NA" ? "Not Applicable":applicationDetails.bkCustomerGstNo ,
-				  "placeOfService": "Chandigarh"
+				  "placeOfService": this.state.placeOfService
 			  },
 			  "bookingDetail": {
 				  "applicationNumber": applicationDetails.bkApplicationNumber,
@@ -646,17 +688,19 @@ downloadPermissionButton = async (e) => {
 				"utgst": applicationDetails.bkCgst,
 				"totalgst": PACC_TAX,
 				"refundableCharges": this.props.REFUNDABLE_SECURITY,    //applicationDetails.bkRefundAmount,
-				"totalPayment": this.props.totalAmount,
+				"totalPayment": this.props.totalAmountPaid,//this.props.totalAmount,
 				"paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
 				"receiptNo": this.props.recNumber,
 				  "paymentType": this.props.offlinePayementMode,
 				  "facilitationCharge": FACILITATION_CHARGE,
-				  "discType": applicationDetails.discount,
+				  "discType": applicationDetails.bkPlotSketch,
 				  "transactionId": this.props.offlineTransactionNum,
 				  "totalPaymentInWords": this.NumInWords(
-					this.props.totalAmount
+					this.props.totalAmountPaid
 				  ),  //offlineTransactionDate,,
-				  "bankName":""
+				  "bankName":"",
+				  "cardNumberLast4": "Not Applicable",
+				   "dateVenueChangeCharges": this.props.DATEVENUECHARGE == 0 ?"Not Applicable":this.props.DATEVENUECHARGE,
 			  },
 			  "OtherDetails": {
 				"clchargeforwest":  applicationDetails.bkCleansingCharges,
@@ -669,8 +713,8 @@ downloadPermissionButton = async (e) => {
 				  "contactNumber": "+91-172-2541002, 0172-2541003",
 				  "logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
 				  "webSite": "http://mcchandigarh.gov.in",
-				  "mcGSTN": "",
-				  "statecode": "998",
+				  "mcGSTN": this.state.mcGSTN,
+				  "statecode": this.state.stateCode,
 				  "hsncode": this.state.hsnCode
 			  },
 	  
@@ -899,7 +943,7 @@ let REFUNDABLE_SECURITY = 0;
 let PACC_TAX = 0;  
 let PACC_ROUND_OFF = 0;
 let FACILITATION_CHARGE = 0;
-
+let DATEVENUECHARGE = 0;
 
 if(billAccountDetailsArray !== "NOt found Any Array"){
 	for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
@@ -924,6 +968,9 @@ if(billAccountDetailsArray !== "NOt found Any Array"){
 	else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
 		FACILITATION_CHARGE = billAccountDetailsArray[i].amount
 	}
+	else if(billAccountDetailsArray[i].taxHeadCode == "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+		DATEVENUECHARGE = billAccountDetailsArray[i].amount
+	}
        }
     if(selectedComplaint.bkBookingType == "Community Center"){
 
@@ -944,6 +991,9 @@ if(billAccountDetailsArray !== "NOt found Any Array"){
 	}
 	else if(billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){
 		FACILITATION_CHARGE = billAccountDetailsArray[i].amount
+	}
+	else if(billAccountDetailsArray[i].taxHeadCode == "COMMUNITY_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+		DATEVENUECHARGE = billAccountDetailsArray[i].amount
 	}
 }
 	}
@@ -1038,7 +1088,7 @@ let SecTimeSlotFromTime = ""
     createWaterTankerApplicationData, DownloadBWTApplicationDetails,loading,fetchSuccess,createPACCApplicationData,selectedComplaint,
     updatePACCApplicationData,Downloadesamparkdetails,userInfo,documentMap,AppNum,DownloadReceiptDetailsforPCC,RecNumber,createAppData
  ,venueType,vanueData,bookingData,bookingData,offlinePayment,offlineTransactionNum,offlineTransactionDate,recNumber,
- PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE,totalAmount,PaymentReceiptByESamp,
+ DATEVENUECHARGE,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE,totalAmount,PaymentReceiptByESamp,
  offlinePayementMode,location,totalAmountPaid,six,one,Summarysurcharge,cleanOne,SummarycGST,SecTimeSlotFromTime,SecTimeSlotToTime,EmpPaccPermissionLetter
 }
 }

@@ -3,10 +3,10 @@ import { getLocaleLabels, getTodaysDateInYMD } from "egov-ui-framework/ui-utils/
 import {viewFour} from './review'
 import {getOptions} from '../dataSources'
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { convertDateToEpoch } from "../../utils";
+import { convertDateToEpoch,getYesterdaysDateInYMD } from "../../utils";
 import { setFieldProperty } from './afterFieldChange'
 import { get } from "lodash";
-
+import {handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 const _getPattern = (type) => {
   switch(type) {
     case "Percentage": 
@@ -26,7 +26,7 @@ const _getPattern = (type) => {
           case "violationdetails":
               return /^([\s\S]){5,150}$/i;
               case "area":
-                  return /^[1-9][0-9]{2,5}$/i;
+                  return /^[1-9][0-9]{1,5}$/i;
   }
 }
 
@@ -106,7 +106,7 @@ export const updateReadOnlyForAllFields = (action, state, dispatch) => {
           /*
            * removing error message if the field is not changed by the user
            */
-          actionItem = [{path: curr.componentJsonpath, property: currValue.property, value: evaluate(evalParams)}, {path: curr.componentJsonpath, property: "props.error", value: false}]
+          actionItem = [{path: curr.componentJsonpath, property: currValue.property, value: evaluate(evalParams)}, {path: curr.componentJsonpath, property: "props.error", value: !!curr.props.error && !!curr.props.disabled?false:!!curr.props.error?curr.props.error:false}]
         } 
         else if(currValue.value === "disability" && curr.componentPath === "RadioGroupContainer") {
           /*
@@ -147,6 +147,38 @@ export const updateReadOnlyForAllFields = (action, state, dispatch) => {
     pendingFieldChanges = [...pendingFieldChanges, ...actionDefiniton]
     setFieldProperty({dispatch, actionDefiniton})
   }
+  dispatch(
+    handleField(
+      "_apply",
+      "components.div.children.formwizardFirstStep.children.ES_PURCHASER_DETAILS_HEADER.children.cardContent.children.details_container.children.ES_DOB_LABEL",
+      "props.inputProps.max",
+      getYesterdaysDateInYMD()
+    )
+  )
+  dispatch(
+    handleField(
+      "_apply",
+      "components.div.children.formwizardFirstStep.children.ES_LEGAL_BENEFICIARY_DETAILS.children.cardContent.children.details_container.children.ES_DOB_LABEL",
+      "props.inputProps.max",
+      getYesterdaysDateInYMD()
+    )
+  )
+  dispatch(
+    handleField(
+      "_apply",
+      "components.div.children.formwizardFirstStep.children.ES_LEGAL_HEIR_DETAILS_HEADER.children.cardContent.children.details_container.children.ES_LEGAL_HEIR_DOB_LABEL",
+      "props.inputProps.max",
+      getYesterdaysDateInYMD()
+    )
+  )
+  dispatch(
+    handleField(
+      "_apply",
+      "components.div.children.formwizardFirstStep.children.ES_TRANSFEREE_DETAILS_HEADER.children.cardContent.children.details_container.children.ES_DOB_LABEL",
+      "props.inputProps.max",
+      getYesterdaysDateInYMD()
+    )
+  )
 }
 
 const headerObj = value => {

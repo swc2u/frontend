@@ -127,7 +127,7 @@ e.preventDefault();
             required = {true}
             hintText={
               <Label
-                label="Bank Account Name"// label="BK_MYBK_Bank_Account_Name"
+                label="Bank Account Name"// label="BK_MYBK_Bank_Account_Name" Bank Name(For security refund)
                 color="rgba(0, 0, 0, 0.3799999952316284)"
                 fontSize={16}
                 labelStyle={hintTextStyle}
@@ -136,7 +136,7 @@ e.preventDefault();
             floatingLabelText={
               <Label
                 key={0}
-                label="Bank Name"
+                label="Bank Account Name(For security refund)"
                 color="rgba(0,0,0,0.60)"
                 fontSize="12px"
               />
