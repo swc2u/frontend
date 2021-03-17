@@ -611,24 +611,17 @@ downloadRoomPermissionLetter({ BookingInfo: BookingInfo })
     const { AppNum,userInfo,CreateRoomApplication,createWaterTankerApplicationData,myLocationtwo, downloadBWTApplication,loading,createPACCApplicationData, updatePACCApplicationData } = this.props;
     //BK_MYBK_PCC_CREATE_APPLICATION_HEADER
     // Park And Community Centre
-
-    console.log("InSuccessPage--",
-    { labelName: "BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER-Value", labelKey: "BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER" },
-    { labelName: "BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE--", labelKey: "BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE" },
-    { labelName: "BK_CS_COMMON_SEND_MESSAGE--", labelKey: "BK_CS_COMMON_SEND_MESSAGE" },
-)
- 
     return (
       <Screen loading={loading}>
       <div className="success-message-main-screen resolve-success">
       <SuccessMessageForRoomBooking
-         headermessage="BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER"
+         headermessage="BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER" 
           successmessage="BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE"
           secondaryLabel="BK_CS_COMMON_SEND_MESSAGE"
           containerStyle={{ display: "inline-block" }} 
           icon={<Icon action="navigation" name="check" />}
           backgroundColor={"#22b25f"}
-          applicationNumber={AppNum}
+          applicationNumber={AppNum} 
         />
         <div className="responsive-action-button-cont">
           <Button
