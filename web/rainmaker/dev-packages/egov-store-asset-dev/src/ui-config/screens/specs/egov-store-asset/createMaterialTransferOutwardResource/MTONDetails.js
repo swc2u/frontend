@@ -62,13 +62,13 @@ const MTONDetailsCard = {
               {
                 dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentQuantity`, indentDetails[0].indentQuantity));
                 dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.indentQuantity`, indentDetails[0].indentQuantity));
-                dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.indentIssuedQuantity`, indentDetails[0].indentQuantity-indentDetails[0].indentIssuedQuantity));
+                dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.indentIssuedQuantity`,indentDetails[0].indentIssuedQuantity ));//indentDetails[0].indentQuantity-indentDetails[0].indentIssuedQuantity
                 let id = getQueryArg(window.location.href, "id");
                 if(id)
                 {
                   
                   let quantityIssued =  get(state, `screenConfiguration.preparedFinalObject.materialIssues[0].materialIssueDetails[${cardIndex}].quantityIssued`,0)
-                  dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].quantityIssuedE`, (indentDetails[0].indentQuantity-indentDetails[0].indentIssuedQuantity)+quantityIssued));
+                  dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].quantityIssuedE`, (indentDetails[0].indentQuantity-indentDetails[0].indentIssuedQuantity)))//+quantityIssued));
                   // let indentIssuedQuantity = get(state, `screenConfiguration.preparedFinalObject.materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.indentIssuedQuantity`,0)
                   // dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].quantityIssuedE`, indentIssuedQuantity +quantityIssued));               
 

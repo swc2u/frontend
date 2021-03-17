@@ -171,6 +171,7 @@ import {
                   dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].material.name`,matname));                
                   dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.uom.code`,indentsmaterial[0].uomCode));                
                   dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.balanceQty`,indentsmaterial[0].balance));
+                  dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.issuedQuantityEdit`,indentsmaterial[0].issuedQuantityEdit));
                   dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.unitRate`,indentsmaterial[0].unitRate));
                 }
                  // pass only material code as per discussion 
