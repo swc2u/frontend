@@ -312,7 +312,7 @@ export const connHolderDetailsSummary = () => {
     props: {
       className: "common-div-css search-preview",
       scheama: getCommonGrayCard({
-        div4: holderHeader,
+       // div4: holderHeader,
         connHoldDetail:getCommonContainer(connectionHolderDetails),
       }),
       items: [],
