@@ -44,7 +44,7 @@ const styles = (theme) => ({
 
 class CheckAvailability extends Component {
   state = {
-    arrayData : [],
+    arrayData: [],
     NewbkBookingType: "Normal Booking",
     vanueType: "",
     oldBookingData: "",
@@ -81,7 +81,8 @@ class CheckAvailability extends Component {
     holdingremark: "",
     showHoldingRemark: false,
     submitButtonTriggered: false,
-    holdingRemarkLength: 0
+    holdingRemarkLength: 0,
+    isValidate: false
   };
 
   handleClose = () => {
@@ -99,37 +100,40 @@ class CheckAvailability extends Component {
     let { userInfo, prepareFinalObject } = this.props;
     // this.setState({ vanueType: event.target.value },this.SetDataParkCom());
     this.setState(
-      { vanueType: event.target.value,
+      {
+        vanueType: event.target.value,
         availabilityCheckData: { bkBookingType: event.target.value }
       },
       prepareFinalObject("DropDownValue", event.target.value)
     );
 
     let RequestData = [
-      { key: "venueType", value: event.target.value},
+      { key: "venueType", value: event.target.value },
     ];
-    console.log("RequestData-",RequestData)
+    console.log("RequestData-", RequestData)
     let ResponseOfSelectedSector = await httpRequest(
       "bookings/park/community/sector/_fetch",
       "_search",
       RequestData,
     );
     let LocalityWiseSector = ResponseOfSelectedSector.data
-    console.log("ResponseOfSelectedSector",ResponseOfSelectedSector)
-    console.log("LocalityWiseSector",LocalityWiseSector)
-  
+    console.log("ResponseOfSelectedSector", ResponseOfSelectedSector)
+    console.log("LocalityWiseSector", LocalityWiseSector)
+
     let arrayData = LocalityWiseSector.map((item) => {
       return { code: item.sector, active: item.isActive, name: item.sector }
-  })
-  this.setState({
-    arrayData : arrayData
-  })
-  console.log("arrayData--SecondTime",arrayData)
-  {arrayData.map((child, index) => (
-    console.log(child.name,"DuplicateArrayData")
-  ))}
-  prepareFinalObject("LocalityWiseSector",LocalityWiseSector)
-  
+    })
+    this.setState({
+      arrayData: arrayData
+    })
+    console.log("arrayData--SecondTime", arrayData)
+    {
+      arrayData.map((child, index) => (
+        console.log(child.name, "DuplicateArrayData")
+      ))
+    }
+    prepareFinalObject("LocalityWiseSector", LocalityWiseSector)
+
   };
 
 
@@ -453,8 +457,8 @@ class CheckAvailability extends Component {
 
   callBackForResetCalender = () => {
 
-   // window.location.href = "/egov-services/reservedates";
-   this.props.history.push("/egov-services/reservedbookingdates");
+    // window.location.href = "/egov-services/reservedates";
+    this.props.history.push("/egov-services/reservedbookingdates");
   };
 
   convertEpochToDate = (dateEpoch) => {
@@ -483,20 +487,20 @@ class CheckAvailability extends Component {
 
     //let venueName = stateData.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation;
 
-    this.setState({holdingRemarkLength: this.state.holdingremark.length})
+    this.setState({ holdingRemarkLength: this.state.holdingremark.length })
     //ssconsole.log(holdDatesforSave.length, "Nero Holding Date")
-    if (this.state.holdingremark.length < 1) {
-      //console.log(holdDatesforSave && holdDatesforSave.length, "hjhjhjh");
-      toggleSnackbarAndSetText(
-        true,
-        {
-          labelName: "Select fill all the mandetory fields",
-          labelKey: `BK_ERR_VALUE_HOLDING_DATES`
-        },
-        "error"
-      );
-     // return false;
-    }
+    // if (this.state.holdingremark.length < 1) {
+    //   //console.log(holdDatesforSave && holdDatesforSave.length, "hjhjhjh");
+    //   toggleSnackbarAndSetText(
+    //     true,
+    //     {
+    //       labelName: "Select fill all the mandetory fields",
+    //       labelKey: `BK_ERR_VALUE_HOLDING_DATES`
+    //     },
+    //     "error"
+    //   );
+    //   // return false;
+    // }
     const { prepareFinalObject } = this.props;
 
     let holdingDatesArray = [];
@@ -513,6 +517,19 @@ class CheckAvailability extends Component {
         });
       }
     }
+    if (holdingDatesArray && holdingDatesArray.length < 1) {
+      // this.setState({ isValidate: false });
+      // return false;
+      this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Select fill all the mandetory fields",
+          labelKey: `BK_ERR_VALUE_HOLDING_DATES`
+        },
+        "error"
+      );
+      return false;
+    }
 
     let requestBody = { commercialGrndAvailabilityLock: holdingDatesArray }
 
@@ -522,9 +539,21 @@ class CheckAvailability extends Component {
       [],
       requestBody
     );
-    if (apiResponse.status == "200") {
+    if (apiResponse && apiResponse.status == "200") {
+      if(apiResponse && apiResponse.message === "Already Booked"){
+        this.props.toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "Selected dates already booked",
+            labelKey: `BK_ERR_VALUE_HOLDING_DATES_ALREADY_BOOKED`
+          },
+          "error"
+        );
+        return false;
+      }else{
       //window.location.href = "/egov-services/reservedbookingdates";
       this.props.history.push(`/egov-services/reservedbookingdates`);
+      }
     }
 
   }
@@ -666,80 +695,80 @@ class CheckAvailability extends Component {
             {/*condition rendering for Dropdown according to Booking Type*/}
             {this.props.DropDownValue != "notfound" &&
               this.props.DropDownValue === "Commercial Ground" ? (
-                <div>
-             <div className="col-sm-6 col-xs-6" style={{ marginTop : "40px" }}>
-                       {" "}
-                    {/*for commercial selection*/}
-                    {console.log("comeInCommercial")}
-                    <FormControl style={{ width: "100%" }}>
-                      <InputLabel
-                        shrink
-                        style={{ width: "100%" }}
-                        id="demo-controlled-open-select-label"
-                      >
-                        <Label label="Booking Venue" />
-                      </InputLabel>
-                      <Select
-                        maxWidth={false}
-                        labelId="demo-controlled-open-select-label-Locality"
-                        id="demo-controlled-open-select-locality"
-                        open={this.state.SetOpen}
-                        onClose={() => this.handleClose()}
-                        onOpen={() => this.handleOpen()}
-                        value={this.state.locality}
-                        displayEmpty
-                        // onChange={this.sectorHandleForCommercial()}
-                        onChange={(e) => {
-                          this.sectorHandleForCommercial(e);
-                        }}
-                      >
-                        <MenuItem value="" disabled>
-                          Booking Venue
+              <div>
+                <div className="col-sm-6 col-xs-6">
+                  {" "}
+                  {/*for commercial selection*/}
+                  {console.log("comeInCommercial")}
+                  <FormControl style={{ width: "100%" }}>
+                    <InputLabel
+                      shrink
+                      style={{ width: "100%" }}
+                      id="demo-controlled-open-select-label"
+                    >
+                      <Label label="Booking Venue" />
+                    </InputLabel>
+                    <Select
+                      maxWidth={false}
+                      labelId="demo-controlled-open-select-label-Locality"
+                      id="demo-controlled-open-select-locality"
+                      open={this.state.SetOpen}
+                      onClose={() => this.handleClose()}
+                      onOpen={() => this.handleOpen()}
+                      value={this.state.locality}
+                      displayEmpty
+                      // onChange={this.sectorHandleForCommercial()}
+                      onChange={(e) => {
+                        this.sectorHandleForCommercial(e);
+                      }}
+                    >
+                      <MenuItem value="" disabled>
+                        Booking Venue
                       </MenuItem>
-                        {this.state.SectorArrayCommercial.map((child, index) => (
-                          <MenuItem value={child.code}>{child.name}</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </div>
+                      {this.state.SectorArrayCommercial.map((child, index) => (
+                        <MenuItem value={child.code}>{child.name}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </div>
-              ) : (
-                <div>
-                  {console.log("comeInpark")}
-                  <div className="col-sm-6 col-xs-6" style={{ marginTop : "40px" }}>
-                   {" "}
-                    {/*for park & community*/}
-                    {console.log("comeInsecondPark")}
-                    <FormControl style={{ width: "100%" }}>
-                      <InputLabel
-                        shrink
-                        style={{ width: "100%" }}
-                        id="demo-controlled-open-select-label"
-                      >
-                        <Label label="Locality" />
-                      </InputLabel>
-                      <Select
-                        maxWidth={false}
-                        labelId="demo-controlled-open-select-label-Locality"
-                        id="demo-controlled-open-select-locality"
-                        open={this.state.SetOpen}
-                        onClose={() => this.handleClose()}
-                        onOpen={() => this.handleOpen()}
-                        value={this.state.locality}
-                        displayEmpty
-                        onChange={this.sectorHandleChange("locality")}
-                      >
-                        <MenuItem value="" disabled>
-                          Locality
+              </div>
+            ) : (
+              <div>
+                {console.log("comeInpark")}
+                <div className="col-sm-6 col-xs-6">
+                  {" "}
+                  {/*for park & community*/}
+                  {console.log("comeInsecondPark")}
+                  <FormControl style={{ width: "100%" }}>
+                    <InputLabel
+                      shrink
+                      style={{ width: "100%" }}
+                      id="demo-controlled-open-select-label"
+                    >
+                      <Label label="Locality" />
+                    </InputLabel>
+                    <Select
+                      maxWidth={false}
+                      labelId="demo-controlled-open-select-label-Locality"
+                      id="demo-controlled-open-select-locality"
+                      open={this.state.SetOpen}
+                      onClose={() => this.handleClose()}
+                      onOpen={() => this.handleOpen()}
+                      value={this.state.locality}
+                      displayEmpty
+                      onChange={this.sectorHandleChange("locality")}
+                    >
+                      <MenuItem value="" disabled>
+                        Locality
                       </MenuItem>
                       {this.state.arrayData.map((child, index) => (
                         <MenuItem value={child.code}>{child.name}</MenuItem>
-                       ))}
-                      </Select>
-                    </FormControl>
-                  </div>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </div>
-              )}
+              </div>
+            )}
 
             {/* sector drop down for date/venue change */}
             {console.log(
@@ -752,39 +781,34 @@ class CheckAvailability extends Component {
             {this.state.setAllForCG && this.state.vanueType === "Commercial Ground" &&
               this.state.locality ? (
 
-                <div
-                  className="col-sm-12 col-xs-12"
+              <div
+                className="col-sm-12 col-xs-12"
 
-                >
-                  <BookingCalendar
-                    witholDdATA={"withNewData"}
-                    masterDataPCC={this.state.masterDataPCC}
-                    availabilityCheckData={this.state.availabilityCheckData}
-                    bookingVenue={this.props && this.props.bookingVenue}
-                    oldBookingData={this.state.oldBookingData}
-                  /> </div>
-              ) : (
-                ""
-              )}
+              >
+                <BookingCalendar
+                  witholDdATA={"withNewData"}
+                  masterDataPCC={this.state.masterDataPCC}
+                  availabilityCheckData={this.state.availabilityCheckData}
+                  bookingVenue={this.props && this.props.bookingVenue}
+                  oldBookingData={this.state.oldBookingData}
+                /> </div>
+            ) : (
+              ""
+            )}
 
 
             {/*for old availbility check Import Image*/}
             {this.state.availabilityCheckData &&
               this.state.availabilityCheckData.bkSector && this.state.setAllForCG === false ? (
-        
-                <div
-                  className="col-sm-12 col-xs-12"
-
-                >
-          <BookingMedia
-                  changeCalendar={changeCalendar}
-                  handleCalAfterImage={handleCalAfterImage}
-                  one={"withBookingMediaNew"}
-                  masterDataPCC={this.state.masterDataPCC}
-                  availabilityCheckData={this.state.availabilityCheckData}
-                  pacc_image_initial_path={sImageUrl && sImageUrl[0].Value}
-                /></div>
-              ) : ""}
+              <BookingMedia
+                changeCalendar={changeCalendar}
+                handleCalAfterImage={handleCalAfterImage}
+                one={"withBookingMediaNew"}
+                masterDataPCC={this.state.masterDataPCC}
+                availabilityCheckData={this.state.availabilityCheckData}
+                pacc_image_initial_path={sImageUrl && sImageUrl[0].Value}
+              />
+            ) : ""}
 
 
 
@@ -825,8 +849,8 @@ class CheckAvailability extends Component {
 
             {this.state && this.state.submitButtonTriggered && this.state.holdingRemarkLength < 1 ?
               <div style={{ marginBottom: "50px" }}>
-                <Label style={{color: "red"}}label="Fill all mandetory fields then proceed" />
-                </div> : ""
+                <Label style={{ color: "red" }} label="Fill all mandetory fields then proceed" />
+              </div> : ""
             }
             {/*start of book button for commercil*/}
             {this.state.setAllForCG && this.state.vanueType === "Commercial Ground" &&
