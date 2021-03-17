@@ -160,8 +160,8 @@ class SingleApplication extends React.Component {
       }
     } else if(moduleName === "OWNERSHIPTRANSFERRP") {
       switch (item.applicationState) {
-        case "OT_DRAFTED": 
-        case "OT_PENDINGCLARIFICATION": 
+        case "OT_DRAFTED":
+        case "OT_PENDINGCLARIFICATION":
           setRoute(`/rented-properties-citizen/ownership-apply?applicationNumber=${item.ownerDetails.applicationNumber}&tenantId=${item.tenantId}`)
           break;
         default:
@@ -171,7 +171,7 @@ class SingleApplication extends React.Component {
     else if(moduleName === "DUPLICATECOPYOFALLOTMENTLETTERRP") {
       switch (item.state) {
         case "DC_DRAFTED":
-        case "DC_PENDINGCLARIFICATION": 
+        case "DC_PENDINGCLARIFICATION":
         setRoute(`/rented-properties-citizen/duplicate-copy-apply?applicationNumber=${item.applicationNumber}&tenantId=${item.tenantId}`)
           break;
         default:
@@ -180,13 +180,13 @@ class SingleApplication extends React.Component {
     } else if(moduleName === "MORTGAGERP") {
       switch(item.state) {
         case "MG_DRAFTED":
-        case "MG_PENDINGCLARIFICATION":  
+        case "MG_PENDINGCLARIFICATION":
         setRoute(`/rented-properties-citizen/mortage-apply?applicationNumber=${item.applicationNumber}&tenantId=${item.tenantId}`)
         break;
         default:
           setRoute(`/rented-properties/mortgage-search-preview?applicationNumber=${item.applicationNumber}&tenantId=${item.tenantId}`)
     }
-   } 
+   }
     else if (moduleName === "MyBooking") {
       if (item.businessService === "OSBM") {
           setapplicationType(item.businessService);
@@ -236,7 +236,7 @@ class SingleApplication extends React.Component {
           setapplicationType(item.businessService);
           if (item.bkApplicationStatus === "INITIATED") {
               setRoute(
-                  `/egov-services/checkavailability_pcc?applicationNumber=${item.bkApplicationNumber}&tenantId=${item.tenantId}&businessService=${item.businessService}`
+                  `/egov-services/checkavailability_pcc?applicationNumber=${item.bkApplicationNumber}&tenantId=${item.tenantId}&businessService=${item.businessService}&booktingVenueType=${item.bkBookingType}`
               );
           } else {
               setRoute(
@@ -302,7 +302,7 @@ class SingleApplication extends React.Component {
     } else {
       LabelKey = content.label === "PT_MUTATION_CREATION_DATE" ? `${epochToDate(get(item, content.jsonPath, ""))}` : `${get(item, content.jsonPath, "")}`;
     }
-  
+
     return LabelKey;
   };
 
@@ -426,12 +426,12 @@ class SingleApplication extends React.Component {
                         }}
                       />
                     </div>
-                
+
                     {/* </Link> */}
                     </div>
-             
+
                   </div>
-                  
+
                 </CardContent>
               </Card>
             );

@@ -198,7 +198,7 @@ class SummaryDetails extends Component {
             "Payment" : {         
                 "paymentDetails": [
                     {
-                      "businessService": "BKROOM",
+                      "businessService": "BKROOM", 
                       "billId": billId,
                       "totalDue": TotalAmount,
                       "totalAmountPaid": TotalAmount

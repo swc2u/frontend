@@ -23,6 +23,9 @@ operatorCode : "",
 Address: "",
 hsnCode : "",
 name: "",
+stateCode :"" ,
+			placeOfService : "",
+			 mcGSTN : ""
   }  
   }
   NumInWords = (number) => {
@@ -123,13 +126,49 @@ let {userInfo} = this.props
 	};
 
 	let payloadRes = null;
-	payloadRes = await httpRequest(
+	payloadRes = await httpRequest( 
 		"egov-mdms-service/v1/_search",
 		"_search",[],
 		mdmsBody
 	);
 	console.log(payloadRes, "hsncodeAndAll");
+ 
+	let mdmsBodyTwo = {
+    MdmsCriteria: {
+      tenantId: userInfo.tenantId,
+      moduleDetails: [
 
+        {
+          moduleName: "Booking",
+          masterDetails: [
+            {
+              name: "PDF_BOOKING_DETAILS",
+            }
+          ],
+        },
+
+      ],
+    },
+  }; 
+
+  let payloadResTwo = null;
+  payloadResTwo = await httpRequest(
+    "egov-mdms-service/v1/_search",
+    "_search",[],
+    mdmsBodyTwo
+  );
+  console.log(payloadResTwo, "MCGSTnumberDetail");
+
+let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS	
+console.log("pdfDetails-",pdfDetails)   //stateCode  placeOfService  mcGSTN
+
+
+  this.setState({
+    stateCode : pdfDetails[0].stateCode,
+    placeOfService : pdfDetails[0].placeOfService,
+    mcGSTN : pdfDetails[0].mcGSTN
+  },console.log("thisStatestateCode",this.state.stateCode,this.state.placeOfService,this.state.mcGSTN))
+   
 let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING
 
 let operatorCode;
@@ -214,7 +253,7 @@ this.setState({
     let CreatedDate;
     let ApplicationNumber;
     let discountForRoom;
-      
+    let bookedrooms;
     for(let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++){
     if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "AC"){
       totalACRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms
@@ -227,6 +266,17 @@ this.setState({
     if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "NON-AC"){
       totalNonAcRoom = CreateRoomApplication.data.roomsModel.totalNoOfRooms	
     }
+    }
+
+
+    if(totalACRoom !== 0 && totalNonAcRoom == 0){
+      bookedrooms = `${totalACRoom} AC` 
+    }
+    if(totalACRoom == 0 && totalNonAcRoom !== 0){
+      bookedrooms = `${totalNonAcRoom} Non AC` 
+    }
+    if(totalACRoom !== 0 && totalNonAcRoom !== 0){
+      bookedrooms = `${totalACRoom} AC and ${totalNonAcRoom} Non AC` 
     }
 
 let RoomFromDate = CreateRoomApplication.data.roomsModel[0].fromDate
@@ -281,12 +331,11 @@ else{
         "booking": {
             "bkLocation":  applicationDetails.bkLocation,
             "bkDept":  applicationDetails.bkBookingType,
-            "noOfAcRooms": totalACRoom,
-            "noOfNonAcRooms": totalNonAcRoom,
+            "bookedRooms": bookedrooms,
             "bookingPurpose": applicationDetails.bkBookingPurpose,
             "bkStartDate":RoomFromDate,
             "bkEndDate":  RoomToDate,
-            "placeOfService": "Chandigarh",
+            "placeOfService": this.state.placeOfService,
             "applicationNumber":this.props.AppNum
         },
         "generatedBy":{
@@ -315,13 +364,15 @@ else{
             "paymentType": this.props.paymentMode,
             "facilitationCharge": "100",
             "custGSTN": applicationDetails.bkCustomerGstNo == "NA" ? "Not Applicable": applicationDetails.bkCustomerGstNo,
-            "mcGSTN": "Not Applicable",
+            "mcGSTN": this.state.mcGSTN,
             "bankName": "",
             "transactionId": this.props.transactionNumber,
             "totalPaymentInWords": this.NumInWords(
               this.props.totalAmount
             ),
-            "discType": applicationDetails.discount 
+            "discType": applicationDetails.bkPlotSketch,
+            "cardNumberLast4": "Not Applicable",
+            "dateVenueChangeCharges": "Not Applicable" 
         },
         "tenantInfo": {
             "municipalityName": "Municipal Corporation Chandigarh",
@@ -329,8 +380,8 @@ else{
             "contactNumber": "+91-172-2541002, 0172-2541003",
             "logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
             "webSite": "http://mcchandigarh.gov.in",
-            "mcGSTN": "aasdadad",
-            "statecode": "04",
+            "mcGSTN": this.state.mcGSTN,
+            "statecode": this.state.stateCode,
             "hsncode": this.state.hsnCode
         },
         "bankInfo": {
@@ -402,7 +453,7 @@ downloadRoomPaymentRecipt({ BookingInfo: BookingInfo })
     let CreatedDate;
     let ApplicationNumber;
     let discountForRoom;
-      
+    let bookedrooms;  
     for(let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++){
     if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "AC"){
       totalACRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms
@@ -417,7 +468,15 @@ downloadRoomPaymentRecipt({ BookingInfo: BookingInfo })
     }
     }
 
-
+if(totalACRoom !== 0 && totalNonAcRoom == 0){
+  bookedrooms = `${totalACRoom} AC` 
+}
+if(totalACRoom == 0 && totalNonAcRoom !== 0){
+  bookedrooms = `${totalNonAcRoom} Non AC` 
+}
+if(totalACRoom !== 0 && totalNonAcRoom !== 0){
+  bookedrooms = `${totalACRoom} AC and ${totalNonAcRoom} Non AC` 
+}
 
 let RoomFromDate = CreateRoomApplication.data.roomsModel[0].fromDate
 let RoomToDate = CreateRoomApplication.data.roomsModel[0].toDate
@@ -436,6 +495,7 @@ let totalNumber = CreateRoomApplication.data.roomsModel[0].totalNoOfRooms
       NonAC = totalNumber
     }
 
+   
 
 let Newugst;
 let perFind = 50;
@@ -469,17 +529,16 @@ else{
             "name": applicationDetails.bkApplicantName,
             "permanentAddress": applicationDetails.bkSector,
             "permanentCity": "chandigarh",
-            "placeOfService": "Chandigarh"
+            "placeOfService": this.state.placeOfService,
         },
         "bookingDetails": {
             "bkLocation": applicationDetails.bkLocation,
             "bkDept": applicationDetails.bkBookingType,
-            "noOfACRooms": totalACRoom,
-            "noOfNonACRooms": totalNonAcRoom,
+            "bookedRooms": bookedrooms,
             "bookingPurpose": applicationDetails.bkBookingPurpose,
             "bkStartDate": RoomFromDate,
             "bkEndDate": RoomToDate,
-            "placeOfService": "Chandigarh",
+            "placeOfService": this.state.placeOfService,
             "venueName": applicationDetails.bkLocation,
             "sector": applicationDetails.bkSector,
             "bookingType":applicationDetails.bkBookingType,
@@ -521,7 +580,9 @@ else{
           "totalPaymentInWords": this.NumInWords(
             this.props.totalAmount
           ),
-          "discType": applicationDetails.discount 
+          "discType": applicationDetails.bkPlotSketch,
+          "cardNumberLast4": "Not Applicable",
+          "dateVenueChangeCharges": "Not Applicable" 
       },
         "tenantInfo": {
             "municipalityName": "Municipal Corporation Chandigarh",
@@ -529,8 +590,8 @@ else{
             "contactNumber": "+91-172-2541002, 0172-2541003",
             "logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
             "webSite": "http://mcchandigarh.gov.in",
-            "mcGSTN": "aasdadad",
-            "statecode": "04",
+            "mcGSTN": this.state.mcGSTN,
+            "statecode": this.state.stateCode,
             "hsncode": this.state.hsnCode
         },
         "bankInfo": {
