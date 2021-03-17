@@ -2,11 +2,19 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import PlotArea from "./plotArea";
-
+import { withStyles } from "@material-ui/core/styles";
 import CC from "./Sector 39_CG1731_Photo.jpg";
 import Park from "./park11.jpeg";
+const styles = (theme) => ({
 
-export default class BookingMedia extends React.Component {
+  root: {
+    "&::-webkit-scrollbar": {
+      display: "none"
+    }
+  }
+});
+
+class BookingMedia extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -35,7 +43,7 @@ export default class BookingMedia extends React.Component {
     }
 
     return (
-      <div>
+      <div className={this.props.classes.root}  style={{textAlign : 'center' , overflowX : "scroll" }}>
         <img
           id="imageMap-pccMaps"
           src={`${pacc_image}`}
@@ -61,3 +69,5 @@ export default class BookingMedia extends React.Component {
     );
   }
 }
+
+export default (withStyles(styles)(BookingMedia));

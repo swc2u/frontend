@@ -39,6 +39,7 @@ const styles = (theme) => ({
   label: {
     marginBottom: "0px !important",
   },
+
 });
 
 class CheckAvailability extends Component {
@@ -638,21 +639,21 @@ class CheckAvailability extends Component {
                       value="Community Center"
                       control={<Radio color="primary" />}
                       label="Community Center"
-                      classes={classes.label}
+                     classes={{label:classes.label}}
                       labelPlacement="end"
                     />
                     <FormControlLabel
                       value="Parks"
                       control={<Radio color="primary" />}
                       label="Park"
-                      classes={classes.label}
+                      classes={{label:classes.label}}
                       labelPlacement="end"
                     />
                     <FormControlLabel
                       value="Commercial Ground"
                       control={<Radio color="primary" />}
                       label="Commercial Ground"
-                      classes={classes.label}
+                      classes={{label:classes.label}}
                       labelPlacement="end"
                     />
                   </RadioGroup>
@@ -666,8 +667,8 @@ class CheckAvailability extends Component {
             {this.props.DropDownValue != "notfound" &&
               this.props.DropDownValue === "Commercial Ground" ? (
                 <div>
-                  <div className="col-sm-6 col-xs-6">
-                    {" "}
+             <div className="col-sm-6 col-xs-6" style={{ marginTop : "40px" }}>
+                       {" "}
                     {/*for commercial selection*/}
                     {console.log("comeInCommercial")}
                     <FormControl style={{ width: "100%" }}>
@@ -705,8 +706,8 @@ class CheckAvailability extends Component {
               ) : (
                 <div>
                   {console.log("comeInpark")}
-                  <div className="col-sm-6 col-xs-6">
-                    {" "}
+                  <div className="col-sm-6 col-xs-6" style={{ marginTop : "40px" }}>
+                   {" "}
                     {/*for park & community*/}
                     {console.log("comeInsecondPark")}
                     <FormControl style={{ width: "100%" }}>
@@ -770,14 +771,19 @@ class CheckAvailability extends Component {
             {/*for old availbility check Import Image*/}
             {this.state.availabilityCheckData &&
               this.state.availabilityCheckData.bkSector && this.state.setAllForCG === false ? (
-                <BookingMedia
+        
+                <div
+                  className="col-sm-12 col-xs-12"
+
+                >
+          <BookingMedia
                   changeCalendar={changeCalendar}
                   handleCalAfterImage={handleCalAfterImage}
                   one={"withBookingMediaNew"}
                   masterDataPCC={this.state.masterDataPCC}
                   availabilityCheckData={this.state.availabilityCheckData}
                   pacc_image_initial_path={sImageUrl && sImageUrl[0].Value}
-                />
+                /></div>
               ) : ""}
 
 
@@ -789,6 +795,11 @@ class CheckAvailability extends Component {
               vanueData.bookingAllowedFor == "" &&
               this.state.showCalendar &&
               this.state.calendarAfterImg && (
+                
+                <div
+                  className="col-sm-12 col-xs-12"
+
+                >
                 <BookingCalendar
                   witholDdATA={"withNewData"}
                   masterDataPCC={this.state.masterDataPCC}
@@ -796,17 +807,18 @@ class CheckAvailability extends Component {
                   bookingVenue={this.props && this.props.bookingVenue}
                   oldBookingData={this.state.oldBookingData}
                 />
+                </div>
               )}
 
             {/*Button Code For Submit And Reset*/}
             {this.state && this.state.showHoldingRemark ?
-              <div style={{ marginBottom: "50px" }}>
-                <Label label="Reason for locking dates" />
+              <div style={{ marginBottom: "50px", width: "calc(100% - 50px)",  margin: "auto" }}>
+              <Label label="Reason for locking dates" />
                 <TextArea
                   isRequired={true}
                   value={this.state.holdingremark}
                   onChange={this.holdingRemarkChange}
-                  hintText="BK_MYBK_DATE_LOCK_REMARK"
+                  hintText="Please enter reason for locking dates"
 
                 /> </div> : ""
             }
