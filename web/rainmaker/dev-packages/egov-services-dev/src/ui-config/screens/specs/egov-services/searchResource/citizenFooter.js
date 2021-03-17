@@ -43,7 +43,7 @@ export const callBackForEdit = (state, dispatch) => {
             handleField("pcc-search-preview", "components.cityPickerDialog", "props.open", !toggle)
           );
     }else{
-        goAfterConfirmation();
+        goAfterConfirmation(state, dispatch);
     }
 
   };
