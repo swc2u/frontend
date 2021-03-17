@@ -412,7 +412,7 @@ class BookingCalendar extends React.Component {
               Booking Venue
             </span>
             <span
-              // bkVenue,oldFromDate,oldToDate
+              // bkVenue,oldFromDate,oldToDate 
 
               style={{
                 color: "rgba(0, 0, 0, 0.87)",

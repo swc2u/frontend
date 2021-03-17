@@ -43,6 +43,7 @@ const styles = (theme) => ({
 
 class CheckAvailability extends Component {
   state = {
+    arrayData : [],
     NewbkBookingType: "Normal Booking",
     vanueType: "",
     oldBookingData: "",
@@ -97,23 +98,37 @@ class CheckAvailability extends Component {
     let { userInfo, prepareFinalObject } = this.props;
     // this.setState({ vanueType: event.target.value },this.SetDataParkCom());
     this.setState(
-      { vanueType: event.target.value },
+      { vanueType: event.target.value,
+        availabilityCheckData: { bkBookingType: event.target.value }
+      },
       prepareFinalObject("DropDownValue", event.target.value)
     );
 
-    if (this.state.vanueType != undefined) {
-      if (this.state.vanueType == "Commercial Ground") {
-        // alert("Commercial Ground");
-      } else if (
-        this.state.vanueType === "Community Center" ||
-        this.state.vanueType === "Parks"
-      ) {
-        // alert("park & community");
-      }
-    }
-    this.setState({
-      availabilityCheckData: { bkBookingType: event.target.value },
-    });
+    let RequestData = [
+      { key: "venueType", value: event.target.value},
+    ];
+    console.log("RequestData-",RequestData)
+    let ResponseOfSelectedSector = await httpRequest(
+      "bookings/park/community/sector/_fetch",
+      "_search",
+      RequestData,
+    );
+    let LocalityWiseSector = ResponseOfSelectedSector.data
+    console.log("ResponseOfSelectedSector",ResponseOfSelectedSector)
+    console.log("LocalityWiseSector",LocalityWiseSector)
+  
+    let arrayData = LocalityWiseSector.map((item) => {
+      return { code: item.sector, active: item.isActive, name: item.sector }
+  })
+  this.setState({
+    arrayData : arrayData
+  })
+  console.log("arrayData--SecondTime",arrayData)
+  {arrayData.map((child, index) => (
+    console.log(child.name,"DuplicateArrayData")
+  ))}
+  prepareFinalObject("LocalityWiseSector",LocalityWiseSector)
+  
   };
 
 
@@ -716,9 +731,9 @@ class CheckAvailability extends Component {
                         <MenuItem value="" disabled>
                           Locality
                       </MenuItem>
-                        {arrayData.map((child, index) => (
-                          <MenuItem value={child.code}>{child.name}</MenuItem>
-                        ))}
+                      {this.state.arrayData.map((child, index) => (
+                        <MenuItem value={child.code}>{child.name}</MenuItem>
+                       ))}
                       </Select>
                     </FormControl>
                   </div>
