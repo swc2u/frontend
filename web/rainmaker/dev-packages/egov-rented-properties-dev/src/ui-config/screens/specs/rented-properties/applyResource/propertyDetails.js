@@ -318,6 +318,8 @@ export const transitNumberLookUp = {
 
 const duplicateCopyTransitField = {
     ...transitNumberLookUp,
+    pattern:"",
+    maxLength:"",
     jsonPath: "DuplicateCopyApplications[0].property.transitNumber",
     iconObj: {
         ...transitNumberLookUp.iconObj,
