@@ -136,6 +136,14 @@ export const setApplicationNumberBox = (state, dispatch, applicationNumber, scre
             true
           )
         )
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardFirstStep.children.propertyDetails.children.cardContent.children.detailsContainer.children.colony",
+            "props.disabled",
+            true
+          )
+        )
         return true;
     } catch (error) {
         dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
