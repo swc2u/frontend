@@ -80,6 +80,7 @@ class ApplicationDetails extends Component {
 			open: false,
 			setOpen: false,
 			togglepopup: false,
+			dateVenchangePop:false,
 			actionOnApplication: '',
 			actionTittle: '',
 			actionOpen: false,
@@ -740,6 +741,52 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 		console.log("payloadfund--cancel--", payloadfund)
 		this.props.history.push(`/egov-services/application-cancelled-success`);
 	}
+
+	testpopup = () =>{
+		this.setState({
+			dateVenchangePop :false
+		})
+	}
+
+	redirectToAvailPage =()=>{
+		console.log("Come in redirectToAvailPage")
+		return (
+		<div>
+		<h5 style={{marginBottom: "4%"}}>By changing date/venue, the booked rooms will be cancelled</h5>	
+		{/* <Button
+            className="responsive-action-button"
+            label={<Label
+				buttonLabel={true}
+				label="CONFIRM AND GO" 
+			/>}
+            // fullWidth={true}
+            primary={true}
+            // style={{ float: 'right', marginRight: '50px', marginTop: '40px' }}
+			style={{ width: "15%" }}
+            onClick={() => this.continue()
+            } /> */}
+
+		<Button
+		label={
+			<Label
+				buttonLabel={true}
+				label="CONFIRM AND GO" 
+			/>
+		}
+		primary={true}
+		labelStyle={{
+			letterSpacing: 0.7,
+			padding: 0,
+			// color: "#fe7a51"
+		}}
+		// buttonStyle={{ border: "1px solid #fe7a51" }}
+		style={{ width: "28%" }}
+		onClick={() => this.continue()}
+		
+	/>
+	</div>
+	)}
+
 	//actionButtonOnClick = (e, complaintNo, label)
 	actionButtonOnClick = async (e, complaintNo, label) => {
 
@@ -1465,8 +1512,9 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 		this.props.history.push(`/egov-services/PaymentReceiptDteail/${selectedNumber}`);
 	}
 
-	continue = () => {
 
+	continue = () => {
+console.log("InContinue Function")
 		let { selectedComplaint, toggleSnackbarAndSetText } = this.props;
 
 		let bookingDate = selectedComplaint.bkFromDate
@@ -1483,6 +1531,12 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 		let Difference_In_Days_check = Difference_In_Time_check / (1000 * 3600 * 24);
 		console.log("Difference_In_Days--", Difference_In_Days_check)
 		if (Difference_In_Days_check === 1 || Difference_In_Days_check > 1) {
+
+			// this.setState({
+			// 	dateVenchangePop : true,
+			// 	togglepopup: !this.state.togglepopup
+			// })
+
 			this.props.history.push(`/egov-services/checkavailability_pcc`);
 		}
 		else {
@@ -1496,6 +1550,19 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 			);
 		}
 	}
+
+
+	setPop = (booking) => {
+		//complaint.bookingType == "Community Center"   bookingType
+   if(booking.bookingType == "Community Center" && booking.roomsModel.length > 0){
+	   this.setState({
+		   dateVenchangePop: true
+	   })
+   }
+   else{
+   this.continue()	
+   }
+   }
 
 	ApplyOfflineSecurityRefund = async () => {
 
@@ -2096,12 +2163,12 @@ totalAmountPaid = {totalAmountPaid}
 
 									)
 								)}
-								{/*sixStep*/}
-								{(role === "employee" &&
-									(complaint.status == "OFFLINE_APPLIED" && foundSixthLavel &&
+{/*Book Room After Date/Venue Change*/}
+{(role === "employee" &&
+									(complaint.status == "OFFLINE_MODIFIED" && foundSixthLavel &&
 										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
 											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
-												{(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?
+												{(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?  //"OFFLINE_APPLIED"
 													<Button
 														label={
 															<Label
@@ -2121,13 +2188,24 @@ totalAmountPaid = {totalAmountPaid}
 													/>
 													: ""}
 
-												{/* {(Difference_In_Days_check > 15 || Difference_In_Days_check == 15) ?
+											</div>
+										}></Footer>
+									)
+								)}
+
+
+								{/*sixStep*/}
+								{(role === "employee" &&
+									(complaint.status == "OFFLINE_APPLIED" && foundSixthLavel &&
+										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
+											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
+												{(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?  //"OFFLINE_APPLIED"
 													<Button
 														label={
 															<Label
 																buttonLabel={true}
 																color="#fe7a51"
-																label="CANCEL BOOKING"
+																label="Room Book"
 															/>
 														}
 														labelStyle={{
@@ -2136,10 +2214,10 @@ totalAmountPaid = {totalAmountPaid}
 															color: "#fe7a51"
 														}}
 														buttonStyle={{ border: "1px solid #fe7a51" }}
-														style={{ width: "15%", marginLeft: "2%" }}
-														onClick={() => this.CancelEmpBooking()}
+														style={{ width: "15%" }}
+														onClick={() => this.BookRoom()}
 													/>
-													: ""} */}
+													: ""}
 
 												{/*Date Venue Change*/}
 
@@ -2159,35 +2237,11 @@ totalAmountPaid = {totalAmountPaid}
 														}}
 														buttonStyle={{ border: "1px solid #fe7a51" }}
 														style={{ width: "15%", marginLeft: "2%" }}
-														onClick={() => this.continue()}
+														onClick={() => this.setPop(complaint)}
 													/>
 													: ""}
-
-												{/*Security Refund*/}
-												{/* {first == true ?
-													<Button
-														label={
-															<Label
-																buttonLabel={true}
-																color="#fe7a51"
-																label="SECURITY REFUND"
-															/>
-														}
-														labelStyle={{
-															letterSpacing: 0.7,
-															padding: 0,
-															color: "#fe7a51",
-														}}
-														buttonStyle={{ border: "1px solid #fe7a51" }}
-														style={{ width: "15%", marginLeft: "2%" }}
-														onClick={() => this.ApplyOfflineSecurityRefund()}
-													/>
-													: ""} */}
-
-
 											</div>
 										}></Footer>
-
 									)
 								)}
 								{/*Cancel button MCC User*/}
@@ -2374,6 +2428,18 @@ totalAmountPaid = {totalAmountPaid}
 									)
 								)}
 								{console.log("match.params.applicationId--", match.params.applicationId)}
+
+
+                                   <DialogContainer
+									toggle={this.state.dateVenchangePop}  //open
+									actionTittle={"Date/Venue change Terms & Conditions"}   //data 
+									togglepopup={this.testpopup}  //close 
+									children={this.redirectToAvailPage()}
+									maxWidth={'sm'}
+								/>
+
+
+								
 								<DialogContainer
 									toggle={this.state.togglepopup}
 									actionTittle={this.state.actionTittle}
@@ -2807,6 +2873,7 @@ const mapStateToProps = (state, ownProps) => {
 
 		let details = {
 			applicantName: selectedComplaint.bkApplicantName,
+			roomsModel:selectedComplaint.roomsModel,
 			status: selectedComplaint.bkApplicationStatus,
 			applicationNo: selectedComplaint.bkApplicationNumber,
 			address: selectedComplaint.bkCompleteAddress,
