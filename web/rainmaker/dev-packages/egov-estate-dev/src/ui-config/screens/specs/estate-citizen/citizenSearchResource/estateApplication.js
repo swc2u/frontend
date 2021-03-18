@@ -65,7 +65,7 @@ const searchBy = {
     if (action.value) {
       if (action.value == "File Number") {
         // let siteNumberContainerItems =  ["category", "subCategory", "siteNumber", "sectorNumber"];
-        let siteNumberContainerItems = branchType === 'MANI_MAJRA' ? ["sectorNumber","houseNumber","street","mohalla"] : ["category", "subCategory", "siteNumber", "sectorNumber"];
+        let siteNumberContainerItems = branchType === 'MANI_MAJRA' ? ["sectorNumber","houseNumber","street","mohalla"] : branchType==='BUILDING_BRANCH'?["category", "houseNumber", "sectorNumber"] : ["category", "subCategory", "siteNumber", "sectorNumber"];
         dispatch(
           handleField(
             "property-search",
