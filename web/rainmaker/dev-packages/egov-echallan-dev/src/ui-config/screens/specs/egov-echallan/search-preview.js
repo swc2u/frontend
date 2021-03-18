@@ -23,7 +23,7 @@ import { getSearchResultsView, getSearchResultsForNocCretificate, getSearchResul
 import { setEncroachmentType, getAccessToken, setapplicationType, getTenantId, getLocale, getUserInfo, localStorageGet, localStorageSet, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import store from "ui-redux/store";
 import "./index.css";
-import { adhocPopupReceivePayment, adhocPopupStockViolationForwardHOD, challanDeletionPopup, returnAndCloseConfirmationPopup } from "./payResource/adhocPopup";
+import { adhocPopupReceivePayment, adhocPopupStockViolationForwardHOD, adhocPopupUpdateContact, challanDeletionPopup, returnAndCloseConfirmationPopup } from "./payResource/adhocPopup";
 
 let roles = JSON.parse(getUserInfo()).roles;
 
@@ -755,6 +755,26 @@ const setSearchResponse = async (
         )
       );
 
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.div.children.employeeFooter.children.editChallanButton",
+          "visible",
+          true
+        )
+      );
+      
+      let contactNumber = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].contactNumber", '');
+      dispatch(prepareFinalObject("eChallanUpdateContact[0].contact", contactNumber));
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.updateContact.children.popup.children.updateContactCard.children.updateContactContainer.children.updateContactField",
+          "props.value",
+          contactNumber
+        )
+      );
+ 
     }
 
     let encroachmentType = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].encroachmentType", '');
@@ -1230,6 +1250,19 @@ const screenConfig = {
         popup: returnAndCloseConfirmationPopup
       },
       visible: true
+    },
+    updateContact: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-echallan",
+      componentPath: "UpdateContactContainer",
+      props: {
+        open: false,
+        maxWidth: "sm",
+        screenKey: "search-preview"
+      },
+      children: {
+        popup: adhocPopupUpdateContact
+      }
     }
   }
 };
