@@ -173,7 +173,7 @@ export const getReceiptNoteListDetailsView = (isReview = true) => {
         {
          // jsonPath: "materialReceipt[0].inspectedBy",
           //inspectedByName
-          jsonPath: "materialReceipt[0].inspectedByName",
+          jsonPath: "materialReceipt[0].inspectedBy",
         }
       ),
       InspectionDate: getLabelWithValue(
