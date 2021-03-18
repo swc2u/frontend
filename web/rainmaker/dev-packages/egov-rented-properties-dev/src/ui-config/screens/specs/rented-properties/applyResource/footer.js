@@ -1203,15 +1203,15 @@ export const footer = getCommonApplyFooter({
         break;
 
       case 'MG_APPROVED':  
-      //  if(process.env.REACT_APP_NAME === 'Citizen'){
-      //   downloadMenu = [
-      //     applicationDownloadObjectForMG,
-      //   ];
-      //   printMenu = [
-      //     applicationPrintObjectForMG,
+       if(process.env.REACT_APP_NAME === 'Citizen'){
+        downloadMenu = [
+          applicationDownloadObjectForMG,
+        ];
+        printMenu = [
+          applicationPrintObjectForMG,
 
-      //   ]
-      //  }else{
+        ]
+       }else{
         downloadMenu = [
           applicationDownloadObjectForMG,
           certificateDownloadObjectMG
@@ -1220,7 +1220,7 @@ export const footer = getCommonApplyFooter({
           applicationPrintObjectForMG,
           certificatePrintObjectMG
         ];
-      //  }
+       }
           break;  
 
       case "MG_PENDINGCLVERIFICATION":
