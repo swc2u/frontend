@@ -752,7 +752,15 @@ console.log("twoRole--",twoRole)
         />
       </div>
     ) : role === "employee" ? (
+     
       <Screen loading={loading}>
+         <style>
+      {`
+  @media screen and (min-width: 320px) and (max-width: 568px) {
+    .btn-sampark{margin-top:20px !important; margin-right:0 !important}
+    }
+  `}
+  </style>
          {/* {foundWaterTanker ?   // Apply for water tanker hide for temporary
           <Button
             className="responsive-action-button"
@@ -778,7 +786,7 @@ console.log("twoRole--",twoRole)
         }
       {foundfourthLavel ? //foundfourthLavel || foundfifthLavel ? 
       <Button
-            className="responsive-action-button"
+            className="responsive-action-button btn-sampark"
             label={<Label buttonLabel={true} label="Apply E-Sampark" />}
             fullWidth={true}
             primary={true}
