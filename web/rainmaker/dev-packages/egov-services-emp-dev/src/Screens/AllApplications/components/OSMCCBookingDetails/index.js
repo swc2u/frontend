@@ -121,12 +121,21 @@ class BookingDetails extends Component {
         <Card
           textChildren={
             <div>
+              <style>
+        {`
+    @media screen and (min-width: 320px) and (max-width: 568px) {
+.btnViewHistory{right: 10px !important;}
+.btnViewHistory button{background:none !important;}
+
+}
+    `}
+    </style>
               <div className="rainmaker-displayInline row">
 
                 <div className="col-8" style={{ paddingLeft: "10px" }}>
                   <Label label="BK_MYBK_TASK_STATUS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
                 </div>
-                <div style={{ position: "absolute", right: "100px" }} className="col-4">
+                <div style={{ position: "absolute", right: "100px" }} className="col-4 btnViewHistory">
                 <button
                     style={{ color: "#FE7A51", border: "none", outline: "none", fontWeight: "500", background: "white" }}
                     onClick={() => { this.handleClickOpen() }}>

@@ -43,7 +43,7 @@ class BookingMedia extends React.Component {
     }
 
     return (
-      <div className={this.props.classes.root}  style={{textAlign : 'center' , overflowX : "scroll" }}>
+      <div className="imageMap">
         <img
           id="imageMap-pccMaps"
           src={`${pacc_image}`}
