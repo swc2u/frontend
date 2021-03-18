@@ -124,7 +124,10 @@ name: "",
 PaymentDate : "",
 			receiptNumber : "",
 			PaymentMode : "",
-			transactionNumber : ""
+			transactionNumber : "",
+			stateCode :"" ,
+			placeOfService : "",
+			 mcGSTN : ""
 		};
 	};
 
@@ -174,6 +177,41 @@ const {userInfo} = this.props
 			mdmsBody
 		);
 		console.log(payloadRes, "hsncodeAndAll");
+
+		let mdmsBodyTwo = {
+			MdmsCriteria: {
+				tenantId: userInfo.tenantId,
+				moduleDetails: [
+	
+					{
+						moduleName: "Booking",
+						masterDetails: [
+							{
+								name: "PDF_BOOKING_DETAILS",
+							}
+						],
+					},
+	
+				],
+			},
+		};
+	
+		let payloadResTwo = null;
+		payloadResTwo = await httpRequest(
+			"egov-mdms-service/v1/_search",
+			"_search",[],
+			mdmsBodyTwo
+		);
+		console.log(payloadResTwo, "MCGSTnumberDetail");
+
+	let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS	
+	console.log("pdfDetails-",pdfDetails)   //stateCode  placeOfService  mcGSTN
+
+this.setState({
+	stateCode : pdfDetails[0].stateCode,
+	placeOfService : pdfDetails[0].placeOfService,
+	mcGSTN : pdfDetails[0].mcGSTN
+},console.log("thisStatestateCode",this.state.stateCode,this.state.placeOfService,this.state.mcGSTN))
 	
 	let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING
 
@@ -484,7 +522,8 @@ else{
  
 	downloadPaymentReceiptFunction = async (e) => {
 		const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceipt, userInfo,pdfBankName,downloadRoomPaymentRecipt } = this.props;
-		
+	
+	let bookedrooms;	
 	let Newugst;
     let perFind = 50;
     let ugst = this.state.BKROOM_TAX
@@ -500,6 +539,17 @@ else{
       Newugst = find50Per.toFixed(2);
       console.log("second-Newugst-",Newugst)
     }
+
+	if(this.state.totalNonAcRoom !== 0 && this.state.totalACRoom == 0){
+		bookedrooms = `${this.state.totalNonAcRoom} Non AC` 
+	} 
+	if(this.state.totalACRoom !== 0 && this.state.totalNonAcRoom == 0){
+		bookedrooms = `${this.state.totalACRoom} AC` 
+	} 
+	if(this.state.totalACRoom !== 0 && this.state.totalNonAcRoom !== 0){  //"2AC and 3 Non AC"
+		bookedrooms = `${this.state.totalACRoom} AC and ${this.state.totalNonAcRoom} Non AC` 
+	} 
+
 		
 		let approverName;
 		for(let i = 0; i < userInfo.roles.length ; i++ ){
@@ -521,12 +571,11 @@ else{
 				"booking": {
 					"bkLocation": this.state.AllValues[0].bkLocation,
 					"bkDept": this.state.AllValues[0].bkBookingType,
-					"noOfAcRooms": this.state.totalACRoom,
-					"noOfNonAcRooms": this.state.totalNonAcRoom,
+					"bookedRooms": bookedrooms,
 					"bookingPurpose": this.state.AllValues[0].bkBookingPurpose,
 					"bkStartDate": this.state.FromDate,
 					"bkEndDate": this.state.ToDate,
-					"placeOfService": "Chandigarh",
+					"placeOfService": this.state.placeOfService,
 					"applicationNumber":this.state.ApplicationNumber
 				},
 				"generated": {
@@ -555,13 +604,15 @@ else{
 				"paymentType": this.state.PaymentMode,
 				"facilitationCharge": this.state.four,
 				"custGSTN": this.state.AllValues[0].bkCustomerGstNo,
-				"mcGSTN": "aasdadad",
+				"mcGSTN": this.state.mcGSTN,
 				"bankName": "",
 				"transactionId":this.state.transactionNumber,
 				"totalPaymentInWords": this.NumInWords(
 					this.state.totalAmountPaid
 				),
-				"discType": this.state.AllValues[0].discount
+				"discType": this.state.AllValues[0].bkPlotSketch,
+				"cardNumberLast4": "Not Applicable",
+                "dateVenueChangeCharges": "Not Applicable"
 			},
 				"tenantInfo": {
 					"municipalityName": "Municipal Corporation Chandigarh",
@@ -569,8 +620,8 @@ else{
 					"contactNumber": "+91-172-2541002, 0172-2541003",
 					"logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
 					"webSite": "http://mcchandigarh.gov.in",
-					"mcGSTN": "aasdadad",
-					"statecode": " 04",
+					"mcGSTN": this.state.mcGSTN,
+					"statecode": this.state.stateCode,  //this.state.stateCode,this.state.placeOfService,this.state.mcGSTN
 					"hsncode": this.state.hsnCode
 				},
 				"bankInfo": {
@@ -832,7 +883,7 @@ downloadPermissionLetterButton = async (mode) => {
 
 downloadPermissionLetterFunction = async (e) => {
 	const {selectedComplaint,userInfo,downloadRoomPermissionLetter} = this.props
-	
+	let bookedrooms;
 	let Newugst;
     let perFind = 50;
     let ugst = this.state.BKROOM_TAX
@@ -848,7 +899,16 @@ downloadPermissionLetterFunction = async (e) => {
       Newugst = find50Per.toFixed(2);
       console.log("second-Newugst-",Newugst)
     }
-		
+	if(this.state.totalNonAcRoom !== 0 && this.state.totalACRoom == 0){
+		bookedrooms = `${this.state.totalNonAcRoom} Non AC` 
+	} 
+	if(this.state.totalACRoom !== 0 && this.state.totalNonAcRoom == 0){
+		bookedrooms = `${this.state.totalACRoom} AC` 
+	} 
+	if(this.state.totalACRoom !== 0 && this.state.totalNonAcRoom !== 0){  //"2AC and 3 Non AC"
+		bookedrooms = `${this.state.totalACRoom} AC and ${this.state.totalNonAcRoom} Non AC` 
+	} 
+
 		let approverName;
 		for(let i = 0; i < userInfo.roles.length ; i++ ){
 		  if(userInfo.roles[i].code == "BK_E-SAMPARK-CENTER"){
@@ -871,12 +931,12 @@ downloadPermissionLetterFunction = async (e) => {
 				"bookingDetails": {
 					"bkLocation": this.state.AllValues[0].bkLocation,
 					"bkDept": this.state.AllValues[0].bkBookingType,
-					"noOfACRooms": this.state.totalACRoom,
-					"noOfNonACRooms": this.state.totalNonAcRoom,
+					"bookedRooms": bookedrooms,
+					// "noOfNonACRooms": this.state.totalNonAcRoom,
 					"bookingPurpose": this.state.AllValues[0].bkBookingPurpose,
 					"bkStartDate": this.state.FromDate,
 					"bkEndDate": this.state.ToDate,
-					"placeOfService": "Chandigarh",
+					"placeOfService": this.state.placeOfService,
 	 				"venueName": this.state.AllValues[0].bkLocation,
 					"sector": this.state.AllValues[0].bkSector,
 					"bookingType":this.state.AllValues[0].bkBookingType,
@@ -885,6 +945,7 @@ downloadPermissionLetterFunction = async (e) => {
 						this.state.FromDate,
 						this.state.ToDate
 					),
+					"applicationNumber":this.state.ApplicationNumber
 				},
 				"generated": {
 					"generatedBy": approverName,
@@ -904,7 +965,7 @@ downloadPermissionLetterFunction = async (e) => {
 					"cgst": Newugst,
 					"utgst": Newugst,
 					"totalgst":this.state.BKROOM_TAX,
-					"refundableCharges": "",
+					"refundableCharges": "Not Applicable",
 					"totalPayment": this.state.TotalPaidAmount,
 					"paymentDate": convertEpochToDate(this.state.PaymentDate, "dayend"),
 					"receiptNo": this.state.receiptNumber,
@@ -912,13 +973,15 @@ downloadPermissionLetterFunction = async (e) => {
 					"paymentType": this.state.PaymentMode,
 					"facilitationCharge": this.state.four,
 					"custGSTN": this.state.AllValues[0].bkCustomerGstNo,
-					"mcGSTN": "aasdadad",
+					"mcGSTN": this.state.mcGSTN,
 					"bankName": "",
 					"transactionId":this.state.transactionNumber,
 					"totalPaymentInWords": this.NumInWords(
 						this.state.totalAmountPaid
 					),
-					"discType": this.state.AllValues[0].discount
+					"discType": this.state.AllValues[0].bkPlotSketch,
+					"cardNumberLast4": "Not Applicable",
+					"dateVenueChangeCharges": "Not Applicable"
 				},
 				"tenantInfo": {
 					"municipalityName": "Municipal Corporation Chandigarh",
@@ -926,8 +989,8 @@ downloadPermissionLetterFunction = async (e) => {
 					"contactNumber": "+91-172-2541002, 0172-2541003",
 					"logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
 					 "webSite": "http://mcchandigarh.gov.in",
-					"mcGSTN": "aasdadad",
-					"statecode": "04",
+					"mcGSTN": this.state.mcGSTN,
+					"statecode": this.state.stateCode,   ////this.state.stateCode,this.state.placeOfService,this.state.mcGSTN
 					"hsncode": this.props.hsnCode
 				},
 				"bankInfo": {

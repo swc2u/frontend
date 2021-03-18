@@ -94,7 +94,10 @@ class ApplicationDetails extends Component {
 			newPaymentDetails: 'NotFound',
 			checkGreaterDate: '',
 			checkNumDays: '',
-			createdDate: ''
+			createdDate: '',
+			stateCode :"" ,
+			placeOfService : "",
+			 mcGSTN : ""
 		};
 	};
 
@@ -127,7 +130,7 @@ class ApplicationDetails extends Component {
 
 		} = this.props;
 		console.log("propsforRefund--", this.props)
-console.log(selectedComplaint, "Nero Complaint")
+		console.log(selectedComplaint, "Nero Complaint")
 		let AppNo = selectedComplaint.bkApplicationNumber
 		console.log("AppNo--", AppNo)
 
@@ -161,6 +164,42 @@ console.log(selectedComplaint, "Nero Complaint")
 			mdmsBody
 		);
 		console.log(payloadRes, "hsncodeAndAll");
+
+		let mdmsBodyTwo = {
+			MdmsCriteria: {
+				tenantId: userInfo.tenantId,
+				moduleDetails: [
+	
+					{
+						moduleName: "Booking",
+						masterDetails: [
+							{
+								name: "PDF_BOOKING_DETAILS",
+							}
+						],
+					},
+	
+				],
+			},
+		}; 
+	
+		let payloadResTwo = null;
+		payloadResTwo = await httpRequest(
+			"egov-mdms-service/v1/_search",
+			"_search",[],
+			mdmsBodyTwo
+		);
+		console.log(payloadResTwo, "MCGSTnumberDetail");
+
+	let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS	
+	console.log("pdfDetails-",pdfDetails)   //stateCode  placeOfService  mcGSTN
+
+this.setState({
+	stateCode : pdfDetails[0].stateCode,
+	placeOfService : pdfDetails[0].placeOfService,
+	mcGSTN : pdfDetails[0].mcGSTN
+},console.log("thisStatestateCode",this.state.stateCode,this.state.placeOfService,this.state.mcGSTN))
+
 
 		let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING[0]
 
@@ -342,7 +381,7 @@ console.log(selectedComplaint, "Nero Complaint")
 
 		//if(selectedComplaint.bkApplicationStatus === "PENDING_FOR_DISBURSEMENT"){   //second option for detail page of room
 		if (cancelBookingWfUsersRoles) {
-			let totalRes = await this.calculateCancelledBookingRefundAmount(AppNo, funtenantId, FromDate);
+			let totalRes = await this.calculateCancelledBookingRefundAmount(AppNo, funtenantId, FromDate, dataforSectorAndCategory.bookingsModelList[0].roomsModel);
 			console.log("totalRes--inrefundPage", totalRes)
 
 			this.setState({
@@ -396,10 +435,10 @@ console.log(selectedComplaint, "Nero Complaint")
 		// this.props.history.push(`/egov-services/ApplyForRoomBooking`);
 	}
 
-	calculateCancelledBookingRefundAmount = async (applicationNumber, tenantId, bookingDate) => {
+	calculateCancelledBookingRefundAmount = async (applicationNumber, tenantId, bookingDate, bookedRoomArray) => {
 		const { payloadone, paymentDetailsForReceipt, payloadTwo, ConRefAmt, refConAmount } = this.props;
 		console.log("propsforcalculateCancelledBookingRefundAmount--", this.props)
-
+		console.log(bookedRoomArray, "Nero bookedRoomArray")
 		//refConAmount
 		if (refConAmount != "NotFound") {
 			this.setState({
@@ -420,6 +459,7 @@ console.log(selectedComplaint, "Nero Complaint")
 
 			console.log("Payment Details", this.state.payload ? this.state.payload : "NOTFOUND");
 			if (this.state.payload) {
+				console.log(CheckDate, todayDate, "Nero checkdate")
 
 				if (todayDate > CheckDate) {
 					// alert("refundCondition")
@@ -435,6 +475,51 @@ console.log(selectedComplaint, "Nero Complaint")
 
 				}
 				if (todayDate < CheckDate) {
+					console.log("Hello Booked")
+					/********************************/
+					let bookingNos = [];
+					let bookingNosString = '';
+					for (let i = 0; i < bookedRoomArray.length; i++) {
+						if (!bookingNos.includes(bookedRoomArray[i].roomApplicationNumber)) {
+							bookingNos.push(bookedRoomArray[i].roomApplicationNumber);
+							bookingNosString += bookedRoomArray[i].roomApplicationNumber + ",";
+						}
+					}
+					bookingNosString = bookingNosString.slice(0, -1); //Removing last Character
+					if (bookingNosString && tenantId) {
+						let queryObject = [
+							{ key: "tenantId", value: tenantId },
+							{ key: "consumerCodes", value: bookingNosString },
+						];
+						const payload = await httpRequest(
+							"post",
+							"/collection-services/payments/_search",
+							"",
+							queryObject
+						);
+						let roomBookingAmount = 0;
+						if (payload) {
+							console.log(payload, "Nero Payload")
+							// dispatch(
+							// 	prepareFinalObject("bookedRoomsPaymentDetails", [
+							// 		payload.Payments,
+							// 	])
+							// );
+							let bookedRoomsPaymentDetails = payload.Payments;
+
+							if (bookedRoomsPaymentDetails && bookedRoomsPaymentDetails.length > 0) {
+								for (let j = 0; j < bookedRoomsPaymentDetails[0].length; j++) {
+									for (let k = 0; k < bookedRoomsPaymentDetails[0][j].paymentDetails[0].bill.billDetails[0].billAccountDetails.length; k++) {
+										if (bookedRoomsPaymentDetails[0][j].paymentDetails[0].bill.billDetails[0].billAccountDetails[k].taxHeadCode === "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
+											roomBookingAmount += bookedRoomsPaymentDetails[0][j].paymentDetails[0].bill.billDetails[0].billAccountDetails[k].amount;
+										}
+									}
+								}
+							}
+
+						}
+					}
+					/********************************/
 					// alert("cancelCondition")
 					let billAccountDetails = this.state.payload.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails;
 					let bookingAmount = 0;
@@ -448,8 +533,10 @@ console.log(selectedComplaint, "Nero Complaint")
 						}
 					}
 
-
-
+					if(roomBookingAmount > 0){
+						bookingAmount += roomBookingAmount;
+					}
+console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 					let mdmsBody = {
 						MdmsCriteria: {
 							tenantId: tenantId,
@@ -536,13 +623,13 @@ console.log(selectedComplaint, "Nero Complaint")
 		console.log("propsInCancelEmpBooking--", selectedComplaint)
 
 
-let cancelAction;
-if(selectedComplaint.bkApplicationStatus == "APPLIED"){
-	cancelAction = "CANCEL" 
-}
-else{
-	cancelAction = "OFFLINE_CANCEL"	
-}
+		let cancelAction;
+		if (selectedComplaint.bkApplicationStatus == "APPLIED") {
+			cancelAction = "CANCEL"
+		}
+		else {
+			cancelAction = "OFFLINE_CANCEL"
+		}
 
 		let Booking = {
 			"bkRemarks": null,
@@ -553,7 +640,7 @@ else{
 			"bkAddress": null,
 			"bkSector": selectedComplaint.bkSector,
 			"bkVillCity": null,
-			"bkAreaRequired": null, 
+			"bkAreaRequired": null,
 			"bkDuration": null,
 			"bkCategory": null,
 			"bkEmail": selectedComplaint.bkEmail,
@@ -628,12 +715,12 @@ else{
 			"assignee": null,
 			"wfDocuments": [],
 			"financialYear": selectedComplaint.financialYear,
-			"bkBankAccountNumber":selectedComplaint.bkBankAccountNumber,
-            "bkBankName":selectedComplaint.bkBankName,
-            "bkIfscCode":selectedComplaint.bkIfscCode,
-            "bkAccountType":selectedComplaint.bkAccountType,
-            "bkBankAccountHolder":selectedComplaint.bkBankAccountHolder,
-            "bkNomineeName": selectedComplaint.bkNomineeName,
+			"bkBankAccountNumber": selectedComplaint.bkBankAccountNumber,
+			"bkBankName": selectedComplaint.bkBankName,
+			"bkIfscCode": selectedComplaint.bkIfscCode,
+			"bkAccountType": selectedComplaint.bkAccountType,
+			"bkBankAccountHolder": selectedComplaint.bkBankAccountHolder,
+			"bkNomineeName": selectedComplaint.bkNomineeName,
 			"financeBusinessService": null
 		}
 		console.log("CancelEmpBooking-Booking", Booking)
@@ -843,7 +930,7 @@ else{
 					"sector": applicationDetails.bkSector,
 					"fatherName": "",
 					"custGSTN": applicationDetails.bkCustomerGstNo,
-					"placeOfService": "Chandigarh"
+					"placeOfService": this.state.placeOfService
 				},
 				"bookingDetail": {
 					"applicationNumber": applicationDetails.bkApplicationNumber,
@@ -885,18 +972,20 @@ else{
 					"cgst": applicationDetails.bkCgst,
 					"utgst": applicationDetails.bkCgst,
 					"totalgst": PACC_TAX,
-					"refundableCharges": applicationDetails.bkRefundAmount,
+					"refundableCharges": this.props.REFUNDABLE_SECURITY,
 					"totalPayment": this.props.totalAmount,
 					"paymentDate": convertEpochToDate(this.props.offlineTransactionDate, "dayend"),
 					"receiptNo": this.props.recNumber,
 					"paymentType": this.props.offlinePayementMode,
 					"facilitationCharge": FACILITATION_CHARGE,
-					"discType": applicationDetails.discount,
+					"discType": applicationDetails.bkPlotSketch,
 					"transactionId": this.props.offlineTransactionNum,
 					"totalPaymentInWords": this.NumInWords(
 						this.props.totalAmount
 					),  //offlineTransactionDate,,
-					"bankName": ""
+					"bankName": "",
+					"cardNumberLast4": "Not Applicable",
+					"dateVenueChangeCharges": this.props.DATEVENUECHARGE == 0 ?"Not Applicable":this.props.DATEVENUECHARGE,
 				},
 				"OtherDetails": {
 					"clchargeforwest": applicationDetails.bkCleansingCharges,
@@ -909,8 +998,8 @@ else{
 					"contactNumber": "+91-172-2541002, 0172-2541003",
 					"logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
 					"webSite": "http://mcchandigarh.gov.in",
-					"mcGSTN": "",
-					"statecode": "998",
+					"mcGSTN": this.state.mcGSTN,
+					"statecode": this.state.stateCode,   ////stateCode  placeOfService  mcGSTN
 					"hsncode": this.state.hsnCode
 				},
 
@@ -947,7 +1036,7 @@ else{
 					"name": selectedComplaint.bkApplicantName,
 					"mobileNumber": selectedComplaint.bkMobileNumber,
 					"email": selectedComplaint.bkEmail,
-					"permanentAddress": "",
+					"permanentAddress": selectedComplaint.bkHouseNo,
 					"permanentCity": "Chandigarh",
 					"sector": selectedComplaint.bkSector,
 					"fatherName": " "
@@ -1178,7 +1267,7 @@ else{
 					"sector": applicationDetails.bkSector,
 					"fatherName": "",
 					"custGSTN": applicationDetails.bkCustomerGstNo,
-					"placeOfService": "Chandigarh"
+					"placeOfService": this.state.placeOfService
 				},
 				"bookingDetail": {
 					"applicationNumber": applicationDetails.bkApplicationNumber,
@@ -1211,10 +1300,12 @@ else{
 					"cgst": applicationDetails.bkCgst,
 					"utgst": applicationDetails.bkCgst,
 					"totalgst": PACC_TAX,
-					"refundableCharges": applicationDetails.bkRefundAmount,
+					"refundableCharges": this.props.REFUNDABLE_SECURITY,
 					"totalPayment": this.props.totalAmount,
 					"paymentDate": convertEpochToDate(this.props.offlineTransactionDate, "dayend"),
 					"receiptNo": this.props.recNumber,
+					"cardNumberLast4": "Not Applicable",
+					"dateVenueChangeCharges": this.props.DATEVENUECHARGE == 0 ?"Not Applicable":this.props.DATEVENUECHARGE,
 				},
 				"OtherDetails": {
 					"clchargeforwest": applicationDetails.bkCleansingCharges,
@@ -1227,9 +1318,9 @@ else{
 					"contactNumber": "+91-172-2541002, 0172-2541003",
 					"logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
 					"webSite": "http://mcchandigarh.gov.in",
-					"statecode": "998",
+					"statecode": this.state.stateCode,
 					"hsncode": this.state.hsnCode,
-					"mcGSTN": ""
+					"mcGSTN": this.state.mcGSTN ////stateCode  placeOfService  mcGSTN
 				},
 				"bankInfo": {
 					"accountholderName": applicationDetails.bkBankAccountHolder,
@@ -1411,13 +1502,12 @@ else{
 		let { selectedComplaint } = this.props
 		console.log("propsInCancelEmpBooking--", selectedComplaint)
 
-let refundAction;
+		let refundAction;
 
-		if(selectedComplaint.bkApplicationStatus == "APPLIED")  
-         {
-			refundAction =  "SECURITY_REFUND" 
-         }
-		else{
+		if (selectedComplaint.bkApplicationStatus == "APPLIED") {
+			refundAction = "SECURITY_REFUND"
+		}
+		else {
 			refundAction = "OFFLINE_SECURITY_REFUND"
 		}
 		let Booking = {
@@ -1480,7 +1570,7 @@ let refundAction;
 			"bkResidentialOrCommercial": null,
 			"bkMaterialStorageArea": null,
 			"bkPlotSketch": null,
-			"bkApplicationStatus": selectedComplaint.bkApplicationStatus,  
+			"bkApplicationStatus": selectedComplaint.bkApplicationStatus,
 			"bkTime": null,
 			"bkStatusUpdateRequest": null,
 			"bkStatus": null,
@@ -1504,12 +1594,12 @@ let refundAction;
 			"assignee": null,
 			"wfDocuments": [],
 			"financialYear": selectedComplaint.financialYear,
-			"bkBankAccountNumber":selectedComplaint.bkBankAccountNumber,
-            "bkBankName":selectedComplaint.bkBankName,
-            "bkIfscCode":selectedComplaint.bkIfscCode,
-            "bkAccountType":selectedComplaint.bkAccountType,
-            "bkBankAccountHolder":selectedComplaint.bkBankAccountHolder,
-            "bkNomineeName": selectedComplaint.bkNomineeName,
+			"bkBankAccountNumber": selectedComplaint.bkBankAccountNumber,
+			"bkBankName": selectedComplaint.bkBankName,
+			"bkIfscCode": selectedComplaint.bkIfscCode,
+			"bkAccountType": selectedComplaint.bkAccountType,
+			"bkBankAccountHolder": selectedComplaint.bkBankAccountHolder,
+			"bkNomineeName": selectedComplaint.bkNomineeName,
 			"financeBusinessService": null
 		}
 		console.log("CancelEmpBooking-Booking", Booking)
@@ -1790,15 +1880,16 @@ paymentDetails={this.state.fullAmountDetail && this.state.fullAmountDetail}
 									</div>
 									: " "}
 
-{this.state.refundCard == true ? <RefundCard
+								{this.state.refundCard == true ? <RefundCard
 									paymentDetails={this.state.newPaymentDetails != "NotFound" && this.state.newPaymentDetails}
 									RefAmount={this.state.totalRefundAmount && this.state.totalRefundAmount}
 									payload={paymentDetailsForReceipt}
 									refundableSecurityMoney={this.props.selectedComplaint.refundableSecurityMoney}
+									bookedRoomArray={this.props.selectedComplaint.roomsModel}
 									{...complaint}
 								/> : " "}
 
-	 							<AppDetails
+								<AppDetails
 									{...complaint}
 
 								/>
@@ -1849,10 +1940,10 @@ totalAmountPaid = {totalAmountPaid}
 									{...complaint}
 
 								/>
-							
+
 								<div style={{
 									height: "100px",
-				 					width: "100",
+									width: "100",
 									backgroundColor: "white",
 									border: "2px solid white",
 									boxShadow: "0 0 2px 2px #e7dcdc", paddingLeft: "30px", paddingTop: "10px"
@@ -2102,7 +2193,7 @@ totalAmountPaid = {totalAmountPaid}
 								{/*Cancel button MCC User*/}
 
 								{(role === "employee" &&
-									((complaint.status == "OFFLINE_APPLIED" || complaint.status =="APPLIED") && foundTenthLavel &&
+									((complaint.status == "OFFLINE_APPLIED" || complaint.status == "APPLIED") && foundTenthLavel &&
 										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
 											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
 												{(Difference_In_Days_check > 15 || Difference_In_Days_check == 15) ?
@@ -2155,7 +2246,7 @@ totalAmountPaid = {totalAmountPaid}
 
 
 								{(role === "employee" &&
-									((complaint.status == "OFFLINE_MODIFIED" || complaint.status =="MODIFIED")&& foundTenthLavel &&
+									((complaint.status == "OFFLINE_MODIFIED" || complaint.status == "MODIFIED") && foundTenthLavel &&
 										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
 											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
 												{/*Security Refund*/}
@@ -2297,9 +2388,9 @@ totalAmountPaid = {totalAmountPaid}
 										payload={paymentDetailsForReceipt}
 										payloadTwo={this.props.paymentDetailsForReceipt}
 									/> : <RejectCancellation
-											applicationNumber={match.params.applicationId}
-											userInfo={userInfo}
-										/>}
+										applicationNumber={match.params.applicationId}
+										userInfo={userInfo}
+									/>}
 								/>
 
 							</div>
@@ -2343,13 +2434,14 @@ const mapStateToProps = (state, ownProps) => {
 	let selectedNumber = selectedComplaint ? selectedComplaint.bkApplicationNumber : "NotFoundAnyApplicationNumber"
 	console.log("selectedNumber--", selectedNumber)
 
-	let OfflineInitatePayArray
+	let OfflineInitatePayArray;
 	let PACC = 0;
 	let LUXURY_TAX = 0;
 	let REFUNDABLE_SECURITY = 0;
 	let PACC_TAX = 0;
 	let PACC_ROUND_OFF = 0;
 	let FACILITATION_CHARGE = 0;
+	let DATEVENUECHARGE = 0;
 
 	let roomData = selectedComplaint.roomsModel ? (selectedComplaint.roomsModel.length > 0 ? (selectedComplaint.roomsModel) : "NA") : "NA"
 	console.log("roomData-----", roomData)
@@ -2513,6 +2605,9 @@ const mapStateToProps = (state, ownProps) => {
 					else if (OfflineInitatePayArray[i].taxHeadCode == "FACILITATION_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
 						FACILITATION_CHARGE = OfflineInitatePayArray[i].amount
 					}
+					else if(OfflineInitatePayArray[i].taxHeadCode == "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+						DATEVENUECHARGE = OfflineInitatePayArray[i].amount
+					}
 				}
 			}
 
@@ -2536,6 +2631,9 @@ const mapStateToProps = (state, ownProps) => {
 					}
 					else if (OfflineInitatePayArray[i].taxHeadCode == "FACILITATION_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
 						FACILITATION_CHARGE = OfflineInitatePayArray[i].amount
+					}
+					else if (OfflineInitatePayArray[i].taxHeadCode == "COMMUNITY_LOCATION_AND_VENUE_CHANGE_AMOUNT") {
+						DATEVENUECHARGE = OfflineInitatePayArray[i].amount
 					}
 				}
 			}
@@ -2600,6 +2698,9 @@ const mapStateToProps = (state, ownProps) => {
 				else if (billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {//FACILITATION_CHARGE
 					FACILITATION_CHARGE = billAccountDetailsArray[i].amount
 				}
+				else if(billAccountDetailsArray[i].taxHeadCode == "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+					DATEVENUECHARGE = billAccountDetailsArray[i].amount
+				}
 			}
 		}
 
@@ -2623,6 +2724,9 @@ const mapStateToProps = (state, ownProps) => {
 				}
 				else if (billAccountDetailsArray[i].taxHeadCode == "FACILITATION_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") { //FACILITATION_CHARGE
 					FACILITATION_CHARGE = billAccountDetailsArray[i].amount
+				}
+				else if (billAccountDetailsArray[i].taxHeadCode == "COMMUNITY_LOCATION_AND_VENUE_CHANGE_AMOUNT") {
+					DATEVENUECHARGE = billAccountDetailsArray[i].amount
 				}
 			}
 		}
@@ -2727,7 +2831,7 @@ const mapStateToProps = (state, ownProps) => {
 			bkLocation: selectedComplaint.bkLocation,
 			tenantId: selectedComplaint.tenantId,
 			bkBankAccountNumber: selectedComplaint.bkBankAccountNumber,
-			bkNomineeName:selectedComplaint.bkNomineeName,
+			bkNomineeName: selectedComplaint.bkNomineeName,
 			bkBankName: selectedComplaint.bkBankName,
 			bkIfscCode: selectedComplaint.bkIfscCode,
 			bkAccountType: selectedComplaint.bkAccountType,
@@ -2776,14 +2880,14 @@ const mapStateToProps = (state, ownProps) => {
 			LUXURY_TAX,
 			REFUNDABLE_SECURITY,
 			PACC_TAX,
-			PACC_ROUND_OFF,
+			PACC_ROUND_OFF,DATEVENUECHARGE,
 			FACILITATION_CHARGE, one, two, three, four, five, newRoomAppNumber, dataForBothSelection, roomsData,
 			PaymentReceiptByESamp, EmpPaccPermissionLetter
 
 		};
 	} else {
 		return {
-			dataForBothSelection, roomsData,
+			dataForBothSelection, roomsData,DATEVENUECHARGE,
 			paymentDetails, offlineTransactionNum, recNumber, DownloadReceiptDetailsforPCC, refConAmount, RoomBookingDate,
 			offlinePayementMode, Difference_In_Days_check, first, showRoomCard,
 			offlineTransactionDate, RoomApplicationNumber, totalNumber, typeOfRoom, roomFromDate, roomToDate,

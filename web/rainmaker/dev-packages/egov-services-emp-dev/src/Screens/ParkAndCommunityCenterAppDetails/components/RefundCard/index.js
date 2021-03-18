@@ -26,7 +26,7 @@ class AppDetails extends Component {
 
   async componentDidMount() {
 
-    const { applicationNo, bkFromDate, bkToDate, tenantId, paymentDetails, fetchDataAfterPayment, fetchPaymentAfterPayment, hh, bkApplicationStatus, refundableSecurityMoney, status } = this.props
+    const { applicationNo, bkFromDate, bkToDate, tenantId, paymentDetails, fetchDataAfterPayment, fetchPaymentAfterPayment, hh, bkApplicationStatus, refundableSecurityMoney, status, bookedRoomArray } = this.props
     console.log("propsInrefundPage--", this.props)
 
     console.log("hh-com-", hh ? hh : "nnnn")
@@ -61,7 +61,7 @@ class AppDetails extends Component {
     if (status === "REFUND_APPROVED") {
       SecondFunRefAmt = refundableSecurityMoney;
     } else {
-      SecondFunRefAmt = await this.BookingRefundAmount(applicationNo, tenantId, bkFromDate, AmountFromBackEnd);
+      SecondFunRefAmt = await this.BookingRefundAmount(applicationNo, tenantId, bkFromDate, AmountFromBackEnd, bookedRoomArray);
     }
 
     console.log("totalRes--inrefundPageoneone", SecondFunRefAmt)
@@ -213,10 +213,10 @@ class AppDetails extends Component {
     )
   }
 
-  BookingRefundAmount = async (applicationNumber, tenantId, bookingDate, AmountFromBackEnd) => {
+  BookingRefundAmount = async (applicationNumber, tenantId, bookingDate, AmountFromBackEnd, bookedRoomArray) => {
     const { payloadone, payload, payloadTwo, ConRefAmt, fetchPaymentAfterPayment } = this.props;
 
-
+    console.log(bookedRoomArray, "Nero booked Nero")
     // this.setState({
     //   payload :AmountFromBackEnd
     // })
@@ -245,6 +245,68 @@ class AppDetails extends Component {
 
         }
         if (todayDate < CheckDate) {
+
+          /********************************/
+          let bookingNos = [];
+          let bookingNosString = '';
+          let roomBookingAmount = 0;
+          if (bookedRoomArray && bookedRoomArray.length > 0) {
+            for (let i = 0; i < bookedRoomArray.length; i++) {
+              if (!bookingNos.includes(bookedRoomArray[i].roomApplicationNumber)) {
+                bookingNos.push(bookedRoomArray[i].roomApplicationNumber);
+                bookingNosString += bookedRoomArray[i].roomApplicationNumber + ",";
+              }
+            }
+            bookingNosString = bookingNosString.slice(0, -1); //Removing last Character
+
+            console.log(bookingNosString, "Nero String")
+            // let queryObject = [
+            // 	{ key: "tenantId", value: tenantId },
+            // 	{ key: "consumerCodes", value: bookingNosString },
+            // ];
+            // const payload = await httpRequest(
+            // 	"post",
+            // 	"/collection-services/payments/_search",
+            // 	"",
+            // 	queryObject
+            // );
+
+            let RequestData = [
+              { key: "consumerCodes", value: bookingNosString },
+              { key: "tenantId", value: tenantId }
+            ];
+
+            let payload = await httpRequest(
+              "collection-services/payments/_search",
+              "_search",
+              RequestData,
+            );
+
+
+
+            if (payload) {
+              console.log(payload, "Nero Payload")
+              // dispatch(
+              // 	prepareFinalObject("bookedRoomsPaymentDetails", [
+              // 		payload.Payments,
+              // 	])
+              // );
+              let bookedRoomsPaymentDetails = payload.Payments;
+
+              if (bookedRoomsPaymentDetails && bookedRoomsPaymentDetails.length > 0) {
+                for (let j = 0; j < bookedRoomsPaymentDetails.length; j++) {
+                  for (let k = 0; k < bookedRoomsPaymentDetails[j].paymentDetails[0].bill.billDetails[0].billAccountDetails.length; k++) {
+                    if (bookedRoomsPaymentDetails[j].paymentDetails[0].bill.billDetails[0].billAccountDetails[k].taxHeadCode === "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
+                      roomBookingAmount += bookedRoomsPaymentDetails[j].paymentDetails[0].bill.billDetails[0].billAccountDetails[k].amount;
+                    }
+                  }
+                }
+              }
+
+            }
+          }
+
+          /********************************/
           // alert("cancelCondition")
           let billAccountDetails = AmountFromBackEnd[0].paymentDetails[0].bill.billDetails[0].billAccountDetails;
           let bookingAmount = 0;
@@ -257,8 +319,11 @@ class AppDetails extends Component {
               bookingAmount = billAccountDetails[i].amount;
             }
           }
-
-
+          console.log(bookingAmount, "Nero bookingAmount", roomBookingAmount, "Nero RoomBooking Amontsss")
+          if (roomBookingAmount && roomBookingAmount > 0) {
+            console.log(bookingAmount, "Nero bookingAmount fg", roomBookingAmount, "Nero RoomBooking Amontsss insdie")
+            bookingAmount += roomBookingAmount;
+          }
 
           let mdmsBody = {
             MdmsCriteria: {
@@ -286,7 +351,7 @@ class AppDetails extends Component {
             "_search", [],
             mdmsBody
           );
-
+          console.log(bookingAmount, "Nero bookingAmount finalsss")
           refundPercentage = payloadRes.MdmsRes.Booking.bookingCancellationRefundCalc[0];
 
 
@@ -312,7 +377,7 @@ class AppDetails extends Component {
 
           }
 
-
+          console.log(refundAmount + securityAmount, "Nero Final Amount")
           return refundAmount + securityAmount;
         }
 
@@ -380,43 +445,43 @@ class AppDetails extends Component {
       // </div>
 
 
-    
 
 
- <div>
+
+      <div>
         <Card
           textChildren={
             <div>
-            <TextField
-            id="RefundAmount"
-            name="RefundAmount"
-            type="number"
-            value={this.state.ShowRefundAmount}
-            disabled={this.state.refundableSecurityFieldDisabled}
-            pattern="[A-Za-z]"
-            // required = {true}
-            style={{ width: '60%', paddingLeft:"2%" }}
-            hintText={
-              <Label
-                label="Refund Amount"
-                color="rgba(0, 0, 0, 0.3799999952316284)"
-                fontSize={16}
-                labelStyle={hintTextStyle}
+              <TextField
+                id="RefundAmount"
+                name="RefundAmount"
+                type="number"
+                value={this.state.ShowRefundAmount}
+                disabled={this.state.refundableSecurityFieldDisabled}
+                pattern="[A-Za-z]"
+                // required = {true}
+                style={{ width: '60%', paddingLeft: "2%" }}
+                hintText={
+                  <Label
+                    label="Refund Amount"
+                    color="rgba(0, 0, 0, 0.3799999952316284)"
+                    fontSize={16}
+                    labelStyle={hintTextStyle}
+                  />
+                }
+                floatingLabelText={
+                  <Label
+                    key={0}
+                    label="Refund Amount"
+                    color="rgba(0,0,0,0.60)"
+                    fontSize="12px"
+                  />
+                }
+                onChange={(e) => this.ChangeRefundAmount(e)}
+                underlineStyle={{ bottom: 7 }}
+                underlineFocusStyle={{ bottom: 7 }}
+                hintStyle={{ width: "100%" }}
               />
-            }
-            floatingLabelText={
-              <Label
-                key={0}
-                label="Refund Amount"
-                color="rgba(0,0,0,0.60)"
-                fontSize="12px"
-              />
-            }
-            onChange={(e) => this.ChangeRefundAmount(e)}
-            underlineStyle={{ bottom: 7 }}
-            underlineFocusStyle={{ bottom: 7 }}
-            hintStyle={{ width: "100%" }}
-          />
             </div>
           }
         />

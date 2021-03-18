@@ -653,7 +653,18 @@ const detailsContainer = {
     },
     visible: true
   }
-
+const detailsContainerCitizen={
+  uiFramework: "custom-atoms",
+  componentPath: "Form",
+  props: {
+    id: "apply_form1"
+  },
+  children: {
+    propertyDetails,
+    rentSummaryDetails
+  },
+  visible: true
+}
 const getConsumerCode = async (state, dispatch, payload) => {
   try {
     let response = await httpRequest(
@@ -815,7 +826,7 @@ const payment = {
                 }
               }
             },
-            detailsContainer,
+            detailsContainer:  process.env.REACT_APP_NAME !== "Citizen" ? detailsContainer : detailsContainerCitizen,
             footer: paymentFooter
           }
         }
