@@ -513,7 +513,7 @@ totalAmountSuPage={totalAmountSuPage}
 
                     </div></div>
                 <Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
-                    <div className="responsive-action-button-cont">
+                  <div className="col-sm-12 col-xs-12 applyBtnWrapper responsive-action-button-cont">
                         <Button
                             className="responsive-action-button"
                             primary={true}
