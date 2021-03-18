@@ -1805,6 +1805,15 @@ console.log("InContinue Function")
 
 		return (
 			<div>
+				<style>
+        {`
+    @media screen and (min-width: 320px) and (max-width: 568px) {
+.mob-mb10{margin-bottom:10px;}
+
+}
+    `}
+    </style>
+
 				<Screen>
 					{complaint && !openMap && (
 						<div>
@@ -1818,7 +1827,7 @@ console.log("InContinue Function")
 											Application Details
 										</div>
 										<div className="col-12 col-md-6 row">
-											<div class="col-12 col-md-6 col-sm-3" >
+											<div class="col-12 col-md-6 col-sm-3 mob-mb10" >
 												<ActionButtonDropdown data={{
 													label: { labelName: "Download ", labelKey: "BK_COMMON_DOWNLOAD_ACTION" },
 													rightIcon: "arrow_drop_down",

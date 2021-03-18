@@ -260,7 +260,7 @@ if(ShowAmountBooking !== null && ShowAmountBooking !== undefined){
             />
           </div>
           {this.props.venueType === "Parks" ?
-           <div className="col-sm-12" style={{marginTop: '19px'}}>
+           <div className="col-sm-12 clearMob" style={{marginTop: '19px'}}>
            <FormControl component="fieldset">
              <FormLabel component="legend"><Label label="BK_MYBK_CATEGORY_TYPE" /></FormLabel>
              <RadioGroup row aria-label="position" name="gender1" value={discountType} onChange={handleChangeDiscount}>
@@ -273,7 +273,7 @@ if(ShowAmountBooking !== null && ShowAmountBooking !== undefined){
            </RadioGroup>
            </FormControl>         
          </div>
-          :   <div className="col-sm-12" style={{marginTop: '19px'}}>
+          :   <div className="col-sm-12 clearMob" style={{marginTop: '19px'}}>
           <FormControl component="fieldset">
             <FormLabel component="legend"><Label label="BK_MYBK_CATEGORY_TYPE" /></FormLabel>
             <RadioGroup row aria-label="position" name="gender1" value={discountType} onChange={handleChangeDiscount}>

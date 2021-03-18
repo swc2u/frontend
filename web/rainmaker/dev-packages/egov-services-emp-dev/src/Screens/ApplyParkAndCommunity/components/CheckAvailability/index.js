@@ -793,7 +793,7 @@ console.log("GetSeprateSectorData--",GetSeprateSectorData)
 
     return (
       <div>
-        <div style={{ float: "left", width: "100%", padding: "36px 15px" }}>
+        <div className="bookingTopSec" style={{ float: "left", width: "100%", padding: "36px 15px" }}>
           <div
             className="col-xs-12"
             style={{ background: "#fff", padding: "15px 0" }}
@@ -805,7 +805,7 @@ console.log("GetSeprateSectorData--",GetSeprateSectorData)
                   labelClassName="dark-heading"
                 />
               </div>
-              <div className="col-sm-6 col-xs-6">
+              <div className="col-sm-6 col-xs-6 bookingType">
                 <FormControl component="fieldset">
                   <FormLabel component="legend">
                     <Label label="BK_MYBK_BOOKING_TYPE" />
@@ -921,7 +921,7 @@ console.log("GetSeprateSectorData--",GetSeprateSectorData)
             ) : (
               <div>
                 {console.log("comeInpark")}
-                <div className="col-sm-6 col-xs-6">
+                <div className="col-sm-6 col-xs-6 locality">
                   {" "}
                   {/*for park & community*/}
                   {console.log("comeInsecondPark")}
