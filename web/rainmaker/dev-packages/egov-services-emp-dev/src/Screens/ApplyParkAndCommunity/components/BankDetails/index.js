@@ -272,7 +272,7 @@ e.preventDefault();
           </div>
 
           {/*newRequirement*/} 
-          <div className="col-sm-12" style={{marginTop: '19px'}}> 
+          <div className="col-sm-12 clearMob" style={{marginTop: '19px'}}> 
             <FormControl component="fieldset">  {/*label="BK_MYBK_BankAccount_Type"*/}
               <FormLabel component="legend"><Label label="Bank Account Type" /></FormLabel>
               <RadioGroup row aria-label="position" name="gender1"  value={accountType} onChange={AccountType}>
@@ -283,7 +283,7 @@ e.preventDefault();
           </div>
   
           <Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
-            <div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
+            <div className="col-sm-12 col-xs-12 applyBtnWrapper" style={{ textAlign: 'right' }}>
               <Button
                 className="responsive-action-button"
                 primary={true}

@@ -657,7 +657,7 @@ class BookingsDetails extends Component {
             </FormControl>
           </div> */}
           <Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
-            <div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
+            <div className="col-sm-12 col-xs-12 applyBtnWrapper" style={{ textAlign: 'right' }}>
               <Button
                 className="responsive-action-button"
                 primary={true}

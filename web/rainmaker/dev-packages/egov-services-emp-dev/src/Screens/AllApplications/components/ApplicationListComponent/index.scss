@@ -171,3 +171,7 @@
 .application-format{
   padding-left:10px;
 }
+@media screen and (min-width: 320px) and (max-width: 568px) {
+  .compList{display:flex !important}
+  .listFirst{width:49% !important}
+  }
