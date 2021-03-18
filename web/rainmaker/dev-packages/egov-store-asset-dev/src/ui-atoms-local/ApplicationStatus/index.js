@@ -1,5 +1,5 @@
 import React from "react";
-
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 const styles = {
   backgroundColor: "rgba(0, 0, 0, 0.6000000238418579)",
   color: "rgba(255, 255, 255, 0.8700000047683716)",
@@ -30,8 +30,8 @@ const getApplicationDisplayCode =(screenName) => {
 }
 function ApplicationStatusContainer(props) {
   const { status } = props;
- 
-  return <div style={styles}>Status : {status}</div>;
+  let status_ = getQueryArg(window.location.href, "Status");
+  return <div style={styles}>Status : {status_}</div>;
 }
 
 export default ApplicationStatusContainer;

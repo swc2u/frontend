@@ -32,7 +32,7 @@ const moveToReview = dispatch => {
       : `/egov-store-asset/reviewmaterialreceipt?step=0`;
   dispatch(setRoute(reviewUrl));
 };
-const getpurchaseOrder = async ( state,dispatch)=>{
+export const getpurchaseOrder = async ( state,dispatch)=>{
   const tenantId = getTenantId();
   let storecode = get(state,"screenConfiguration.preparedFinalObject.materialReceipt[0].receivingStore.code",'')
   let suppliercode = get(state,"screenConfiguration.preparedFinalObject.materialReceipt[0].supplier.code",'')
@@ -225,7 +225,11 @@ export const callBackForNext = async (state, dispatch) => {
       );
         if(activeStep ===0)
         {
-          getpurchaseOrder(state, dispatch);
+          const step = getQueryArg(window.location.href, "step");
+          const mrnNumber = getQueryArg(window.location.href, "mrnNumber");
+          if(!step && !mrnNumber){
+              getpurchaseOrder(state, dispatch);
+          }
         }
         if(activeStep ===1)
         {

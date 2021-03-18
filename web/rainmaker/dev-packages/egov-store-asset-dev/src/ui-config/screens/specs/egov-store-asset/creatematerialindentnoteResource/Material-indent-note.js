@@ -225,8 +225,36 @@ console.log(matcodes)
                 dispatch(prepareFinalObject("materialIssues[0].fromStore.storeInCharge.code",fromstore[0].storeInCharge.code));
                 dispatch(prepareFinalObject("materialIssues[0].fromStore.tenantId",getTenantId())); 
                 const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
-                if(!applicationNumber)        
-                getMaterialData(action,state,dispatch)               
+                if(!applicationNumber)  
+                {      
+                getMaterialData(action,state,dispatch) 
+                }
+                // else{
+                //   let indentsmaterial =[];
+                //     const {materialIssues} = state.screenConfiguration.preparedFinalObject
+                //     const{materialIssueDetails} =materialIssues[0]
+                //     for (let index = 0; index < materialIssueDetails.length; index++) {
+                //       const element = materialIssueDetails[index];
+                //       const{materialIssuedFromReceipts} = element
+                //       let materialIssuedFromReceipts_ = materialIssuedFromReceipts.filter(x=>x.status === true)
+                //       if(materialIssuedFromReceipts_&&materialIssuedFromReceipts_[0])
+                //       {
+                //         indentsmaterial.push(
+                //           {
+                //             receiptId :materialIssuedFromReceipts_[0].materialReceiptId,
+                //             receiptDetailId:materialIssuedFromReceipts_[0].materialReceiptDetail.id,
+                //             mrnNumber:materialIssuedFromReceipts_[0].materialReceiptDetail.mrnNumber,
+                //             materialCode:element.material.code,
+                //             materialName:`${element.material.name}(Qty:${element.quantityIssued}, Rate: ${materialIssuedFromReceipts_[0].materialReceiptDetail.unitRate})`,
+                //             balance:element.quantityIssued,
+                //             uomCode:element.uom.code,
+                //             unitRate:materialIssuedFromReceipts_[0].materialReceiptDetail.unitRate,
+                //           }
+                //         )
+                //       }                      
+                //     }
+                //     dispatch(prepareFinalObject("indentsmaterial", indentsmaterial));
+                // }              
             }
           // }
           // else{

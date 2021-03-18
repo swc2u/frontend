@@ -706,6 +706,8 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         propertyPayload.landArea = parseInt(propertyPayload.landArea);
         propertyPayload.totalConstructedArea = parseInt(propertyPayload.landArea);
         propertyPayload.tenantId = tenantId;
+        propertyPayload.address.doorNo = propertyPayload.address.plotNo;
+        set(propertyPayload, "address.doorNo", propertyPayload.address.plotNo);
         if(propertyPayload.address.city !== undefined)
         propertyPayload.address.city = propertyPayload.address.city;
         else

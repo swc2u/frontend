@@ -141,6 +141,23 @@ class PensionArrealContainer extends React.Component {
                     label="PENSION_EMPLOYEE_PENSION_FINAL_TEN_ALLOWANCE_R"
                   />
                   </th>
+                  {/* PENSION_EMPLOYEE_PENSION_OVER_PAYMENT_R */}
+                  
+                  <th   style={{ verticalAlign:"middle", textAlign: "center"}} colSpan="0">
+                  <Label
+                    className="report-header-row-label"
+                    labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
+                    label="PENSION_EMPLOYEE_PENSION_OVER_PAYMENT_R"
+                  />
+                  {/* PENSION_EMPLOYEE_PENSION_INCOMETAX_R */}
+                  </th>
+                  <th   style={{ verticalAlign:"middle", textAlign: "center"}} colSpan="0">
+                  <Label
+                    className="report-header-row-label"
+                    labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
+                    label="PENSION_EMPLOYEE_PENSION_INCOMETAX_R"
+                  />
+                  </th>
                   <th   style={{ verticalAlign:"middle", textAlign: "center"}} colSpan="0">
                   <Label
                     className="report-header-row-label"
@@ -166,14 +183,14 @@ class PensionArrealContainer extends React.Component {
                   <Label
                     className="report-header-row-label"
                     labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
-                    label="netDeductions"
+                    label="PENSION_EMPLOYEE_PENSION_NET_DEDUCTIONS_V"
                   />
                   </th>
                   <th   style={{ verticalAlign:"middle", textAlign: "center"}} colSpan="0">
                   <Label
                     className="report-header-row-label"
                     labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
-                    label="PENSION_EMPLOYEE_PENSION_NET_DEDUCTION_R"
+                    label="PENSION_PENSION_REVISION_NP"
                   />
                   </th>
                   </tr>
@@ -207,6 +224,8 @@ class PensionArrealContainer extends React.Component {
                         <th>{get(pensionArrears_.pensionArrears[i], `miscellaneous`, "0") || "0"}</th>
                         <th>{get(pensionArrears_.pensionArrears[i], `woundExtraOrdinaryPension`, "0") || "0"}</th>
                         <th>{get(pensionArrears_.pensionArrears[i], `attendantAllowance`, "0") || "0"}</th>
+                        <th>{get(pensionArrears_.pensionArrears[i], `overpayment`, "0") || "0"}</th>
+                        <th>{get(pensionArrears_.pensionArrears[i], `incomeTax`, "0") || "0"}</th>
                         <th>{get(pensionArrears_.pensionArrears[i], `cess`, "0") || "0"}</th>
                         <th>{get(pensionArrears_.pensionArrears[i], `pensionDeductions`, "0") || "0"}</th>
                         <th>{get(pensionArrears_.pensionArrears[i], `totalPension`, "0") || "0"}</th>
