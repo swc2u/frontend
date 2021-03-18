@@ -187,14 +187,22 @@ export class StepForm extends Component {
 
 
     handleChange = input => e => {
+        console.log("input",input);
+        console.log("e.target.value",e.target.value);
         this.setState({ [input]: e.target.value });
         if(e.target.value === "Both"){
+            this.setState({ "AccRoomToBook": 0 });
+            this.setState({ "NonAccRoomToBook": 0 });
             this.props.prepareFinalObject("GlobalTypeOfRoom",e.target.value)
         }
         else if(e.target.value === "AC"){
+            this.setState({ "AccRoomToBook": 0 });
+            this.setState({ "NonAccRoomToBook": 0 });
             this.props.prepareFinalObject("GlobalTypeOfRoom",e.target.value)
         }
         else if(e.target.value === "NON-AC"){
+            this.setState({ "AccRoomToBook": 0 });
+            this.setState({ "NonAccRoomToBook": 0 });
             this.props.prepareFinalObject("GlobalTypeOfRoom",e.target.value)
         }
         else if(e.target.value === "AccRoomToBook"){
@@ -202,6 +210,17 @@ export class StepForm extends Component {
         }
         else if(e.target.value ===  "NonAccRoomToBook"){
             this.props.prepareFinalObject("GlobalNonAccRoomToBook",e.target.value)
+        }
+        else if(input ===  "SelectBookingDates"){
+           
+            let value=e.target.value;
+            value.split("#").length
+           
+            this.setState({ "roomFromDate": value.split("#")[0] });
+            this.setState({ "roomToDate": value.split("#").length > 1 ? value.split("#")[1] : value });
+
+            this.props.prepareFinalObject("roomFromDate",value.split("#")[0])
+            this.props.prepareFinalObject("roomToDate",value.split("#").length > 1 ? value.split("#")[1] : value)
         }
     }
 

@@ -171,6 +171,8 @@ export const getReceiptNoteListDetailsView = (isReview = true) => {
         { labelName: "Inspected By",
         labelKey: "STORE_MATERIAL_RECEIPT_INSPECTED_BY" },
         {
+         // jsonPath: "materialReceipt[0].inspectedBy",
+          //inspectedByName
           jsonPath: "materialReceipt[0].inspectedBy",
         }
       ),

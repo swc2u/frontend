@@ -191,7 +191,7 @@ export const getSearchResults = async queryObject => {
         //     }
                
 
-        }
+        // }
         
         result.WaterConnection = await getPropertyObj(result.WaterConnection); 
         return result;

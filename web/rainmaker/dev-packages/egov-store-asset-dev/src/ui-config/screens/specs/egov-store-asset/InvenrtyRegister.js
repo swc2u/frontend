@@ -290,6 +290,52 @@ const RegisterReviewResult = {
               optionLabel: "name"
             }
           }),
+          beforeFieldChange: (action, state, dispatch) => {
+            let store = get(
+              state.screenConfiguration.preparedFinalObject,
+              `searchMaster.storeNames`,
+              []
+            ); 
+            store =  store.filter(x=> x.code === action.value) 
+            if(store&& store[0])  
+            {           
+            let Material = get(state, "screenConfiguration.preparedFinalObject.searchScreenMdmsData.store-asset.Material",[]) 
+            if(store[0].code){
+              const queryObject = [{ key: "tenantId", value: getTenantId()},{ key: "store", value: store[0].code}];
+              getSearchResults(queryObject, dispatch,"materials")
+              .then(async response =>{
+                if(response){
+                  let materials = []
+                  for (let index = 0; index < Material.length; index++) {
+                    const element = Material[index];
+                    for (let index = 0; index < response.materials.length; index++) {
+                      const element_ = response.materials[index];
+  // filter material which is active in material map.
+                      var element_filter = element_.storeMapping.filter(function (x) {
+                        return x.store.code === store[0].code && x.active === true;
+                      });
+                      if (element_filter.length > 0) {
+                      if(element.code ===element_.code)
+                      {
+                        materials.push(element)
+                      }
+                    }
+                      
+                    }
+                    
+                  }
+                  dispatch(prepareFinalObject("materials.materials", materials));
+                  
+                          
+               }
+                
+              });   
+  
+              }
+            }
+           
+            
+        }
 
         },
         materialName: getSelectField({
@@ -305,7 +351,8 @@ const RegisterReviewResult = {
             xs: 12,
             sm: 4,
           },
-          sourceJsonPath: "searchScreenMdmsData.store-asset.Material",
+         // sourceJsonPath: "searchScreenMdmsData.store-asset.Material",
+          sourceJsonPath:"materials.materials",
           props: {
             optionValue: "code",
             optionLabel: "name",

@@ -229,6 +229,7 @@ const purchaseOrderDetailsCard = {
               },
              // pattern: getPattern("numeric-only"),
               pattern: getSTOREPattern("Quantity"),
+              required: true,
               jsonPath: "purchaseOrders[0].purchaseOrderDetails[0].orderQuantity"
             }),
             beforeFieldChange: async (action, state, dispatch) => {
