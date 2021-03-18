@@ -35,6 +35,7 @@ export const categoryField = {
     xs: 12,
     sm: 6
   },
+  errorMessage:"ES_ERR_CATEGORY",
   afterFieldChange: (action, state, dispatch) => {
     dispatch(
       handleField(
@@ -97,7 +98,8 @@ export const subCategoryField = {
   gridDefination: {
     xs: 12,
     sm: 6
-  }
+  },
+  errorMessage:"ES_ERR_SUB_CATEGORY"
 }
 
 export const siteNumberField = {
@@ -144,7 +146,8 @@ export const sectorNumberField = {
   gridDefination: {
     xs: 12,
     sm: 6
-  }
+  },
+  errorMessage:"ES_ERR_SECTOR_NUMBER"
 }
 
 const fileNumberField = {
@@ -161,7 +164,8 @@ const fileNumberField = {
     sm: 6
   },
   required: true,
-  pattern: _getPattern("fileNumber"),
+  errorMessage:"ES_ERR_FILENUMBER_FEILD",
+  pattern: _getPattern("file-number-no-firstdigit-zero"),
   jsonPath: "Properties[0].fileNumber",
   afterFieldChange: (action, state, dispatch) => {
     dispatch(handleField(
@@ -192,7 +196,8 @@ const houseNumberField = {
     sm: 6
   },
   required: true,
-  pattern: _getPattern("fileNumber"),
+  pattern: _getPattern("HouseNumber"),
+  errorMessage:"ES_ERR_HOUSE_NUMBER",
   jsonPath: "Properties[0].propertyDetails.houseNumber",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 50) {
@@ -219,6 +224,7 @@ export const mohallaField = {
   required: true,
   pattern: _getPattern("alphabet"),
   jsonPath: "Properties[0].propertyDetails.mohalla",
+  errorMessage:"ES_ERR_MOHALLA_FEILD",
   afterFieldChange: (action, state, dispatch) => {
       if (action.value.length > 150) {
           displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
@@ -245,6 +251,7 @@ const villageField = {
   required: true,
   pattern: _getPattern("alphabet"),
   jsonPath: "Properties[0].propertyDetails.village",
+  errorMessage:"ES_ERR_VILLAGE_FEILD",
   afterFieldChange: (action, state, dispatch) => {
       if (action.value.length > 150) {
           displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
@@ -268,10 +275,21 @@ const sizeOfAreaPurchasedField = {
       xs: 12,
       sm: 6
   },
-  pattern: _getPattern("areaOfProperty"),
+  pattern: _getPattern("numeric"),
   required: true,
   errorMessage:"ES_ERR_SIZE_OF_AREA_PROPERTY",
-  jsonPath: "Properties[0].propertyDetails.areaSqft"
+  jsonPath: "Properties[0].propertyDetails.areaSqft",
+  afterFieldChange: (action, state, dispatch) => {
+    if (action.value.length > 150) {
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
+    }
+    else if(action.value.length<2){
+      displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AREA_MIN", action.screenKey);
+    }
+    else {
+      displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_SIZE_OF_AREA_PROPERTY",action.screenKey);
+    }
+}
 }
 
 export const propertyDetailsHeader = getCommonTitle({

@@ -81,6 +81,7 @@ const colonyField = {
                         findItem.rentIncrementPercentage.toString()
                     )
                 )
+                
                 dispatch(
                     handleField(
                         "apply",
@@ -89,6 +90,36 @@ const colonyField = {
                         findItem.rentIncrementPeriod.toString()
                     )
                 )
+                if(action.value==="COLONY_VIKAS_NAGAR"){
+                dispatch(handleField(
+                  "apply",
+                  "components.div.children.formwizardFirstStep.children.propertyDetails.children.cardContent.children.detailsContainer.children.transitNumber",
+                  "props.value",
+                  "VK-"
+                ))
+                dispatch(handleField(
+                  "apply",
+                  "components.div.children.formwizardFirstStep.children.propertyDetails.children.cardContent.children.detailsContainer.children.transitNumber",
+                  "pattern",
+                  /^((\w+)\-(\d+))$/
+                ))
+                dispatch(
+                  handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.propertyDetails.children.cardContent.children.detailsContainer.children.transitNumber",
+                    "maxLength",
+                    ""
+                  )
+                )
+                  }
+                  else{
+                        dispatch(handleField(
+            "apply",
+            "components.div.children.formwizardFirstStep.children.propertyDetails.children.cardContent.children.detailsContainer.children.transitNumber",
+            "props.value",
+            ""
+          ))
+                  }
               }
         if(action.value === 'COLONY_KUMHAR' || action.value === 'COLONY_MILK'){
             dispatch(
@@ -108,36 +139,6 @@ const colonyField = {
                     "/rp-services/v1/excel/read?fileFormat=1"
                 )
             );
-        }
-        if(action.value==="COLONY_VIKAS_NAGAR"){
-          dispatch(handleField(
-            "apply",
-            "components.div.children.formwizardFirstStep.children.propertyDetails.children.cardContent.children.detailsContainer.children.transitNumber",
-            "props.value",
-            "VK-"
-          ))
-          dispatch(handleField(
-            "apply",
-            "components.div.children.formwizardFirstStep.children.propertyDetails.children.cardContent.children.detailsContainer.children.transitNumber",
-            "pattern",
-            /^((\w+)\-(\d+))$/
-          ))
-          dispatch(
-            handleField(
-              "apply",
-              "components.div.children.formwizardFirstStep.children.propertyDetails.children.cardContent.children.detailsContainer.children.transitNumber",
-              "maxLength",
-              ""
-            )
-          )
-        }
-        else{
-          dispatch(handleField(
-            "apply",
-            "components.div.children.formwizardFirstStep.children.propertyDetails.children.cardContent.children.detailsContainer.children.transitNumber",
-            "props.value",
-            ""
-          ))
         }
       }
 }
@@ -317,6 +318,8 @@ export const transitNumberLookUp = {
 
 const duplicateCopyTransitField = {
     ...transitNumberLookUp,
+    pattern:"",
+    maxLength:"",
     jsonPath: "DuplicateCopyApplications[0].property.transitNumber",
     iconObj: {
         ...transitNumberLookUp.iconObj,

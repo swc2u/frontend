@@ -41,9 +41,11 @@ const styles = (theme) => ({
     marginBottom: "0px !important",
   },
 });
-
+ 
 class CheckAvailability extends Component {
-  state = {
+  state = 
+  {
+    arrayData : [],
     NewbkBookingType: "Normal Booking",
     vanueType:
       this.props.oldBookingData != "notfound"
@@ -96,25 +98,42 @@ class CheckAvailability extends Component {
     let { userInfo, prepareFinalObject } = this.props;
     // this.setState({ vanueType: event.target.value },this.SetDataParkCom());
     this.setState(
-      { vanueType: event.target.value },
+      { vanueType: event.target.value,
+        availabilityCheckData: { bkBookingType: event.target.value },
+      },
       prepareFinalObject("DropDownValue", event.target.value),
       prepareFinalObject("DropDownValue333",this.state.vanueType)
     );
 
-    if (this.state.vanueType != undefined) {
-      if (this.state.vanueType == "Commercial Ground") {
-        // alert("Commercial Ground");
-      } else if (
-        this.state.vanueType === "Community Center" ||
-        this.state.vanueType === "Parks"
-      ) {
-        // alert("park & community");
-      }
-    }
-    prepareFinalObject("DropDownValue222", this.state.vanueType)
-    this.setState({
-      availabilityCheckData: { bkBookingType: event.target.value },
-    });
+  // this.setState({
+  //     availabilityCheckData: { bkBookingType: event.target.value },
+  //   });
+let RequestData = [
+    { key: "venueType", value: event.target.value},
+  ];
+  console.log("RequestData-",RequestData)
+  let ResponseOfSelectedSector = await httpRequest(
+    "bookings/park/community/sector/_fetch",
+    "_search",
+    RequestData,
+  );
+  let LocalityWiseSector = ResponseOfSelectedSector.data
+  console.log("ResponseOfSelectedSector",ResponseOfSelectedSector)
+  console.log("LocalityWiseSector",LocalityWiseSector)
+
+  let arrayData = LocalityWiseSector.map((item) => {
+    return { code: item.sector, active: item.isActive, name: item.sector }
+})
+this.setState({
+  arrayData : arrayData
+})
+console.log("arrayData--SecondTime",arrayData)
+{arrayData.map((child, index) => (
+  console.log(child.name,"DuplicateArrayData")
+))}
+prepareFinalObject("LocalityWiseSector",LocalityWiseSector)
+
+prepareFinalObject("DropDownValue222", this.state.vanueType)
   };
 newBookingType = async (event) => {
   let { prepareFinalObject } = this.props;
@@ -375,6 +394,33 @@ let payload = null;
     this.setState({
       oldBookingData,
     });
+
+    let RequestData = [
+      { key: "venueType", value: this.state.vanueType},
+    ];
+    console.log("RequestData-",RequestData)
+    let ResponseOfSelectedSector = await httpRequest(
+      "bookings/park/community/sector/_fetch",
+      "_search",
+      RequestData,
+    );
+    let LocalityWiseSector = ResponseOfSelectedSector.data
+    console.log("ResponseOfSelectedSector",ResponseOfSelectedSector)
+    console.log("LocalityWiseSector",LocalityWiseSector)
+   
+
+ let arrayData = LocalityWiseSector.map((item) => {
+    return { code: item.sector, active: item.isActive, name: item.sector }
+})
+this.setState({
+  arrayData : arrayData
+})
+console.log("arrayData--SecondTime",arrayData)
+{arrayData.map((child, index) => (
+  console.log(child.name,"DuplicateArrayData")
+))}
+
+
     if (oldBookingData != "notfound") {
       console.log("ComeInMainIfCondition");
       this.toGetOldImage(oldBookingData);
@@ -664,7 +710,7 @@ else{  /**loop for new Booking Create**/
     const {
       firstName,
       email,
-      mobileNo,
+      mobileNo, 
       lastName,
       stateData,
       handleChange,
@@ -678,11 +724,13 @@ else{  /**loop for new Booking Create**/
       oldBookingData,
       DropDownValue,
       NewBookToDate,
-      NewBookFromDate
+      NewBookFromDate,
+      getSelectedSector
     } = this.props;
     console.log("propsInCheckAvail--", this.props);
     console.log("StateInCheckAvailPage--", this.state);
     let sectorData = [];
+    let GetSeprateSectorData;
     let vanueData = this.props.stateData.screenConfiguration.preparedFinalObject
       .bkBookingData;
 
@@ -691,8 +739,19 @@ else{  /**loop for new Booking Create**/
       this.props.stateData.screenConfiguration.preparedFinalObject
     );
     console.log("vanueData--", vanueData);
-    sectorData.push(applicationSector);
+    // sectorData.push(applicationSector);    LocalityWiseSector  
 
+if(getSelectedSector !== "NotFound"){
+console.log("NotFoundConition99999")
+ GetSeprateSectorData = getSelectedSector.map((item) => {
+                    return { code: item.sector, active: item.isActive, name: item.sector }
+                })
+}
+
+console.log("GetSeprateSectorData--",GetSeprateSectorData)
+ 
+ 
+    sectorData.push(applicationSector);
     let arrayData = [];
     let witholDdATA = console.log("witholDdATA");
 
@@ -888,9 +947,9 @@ else{  /**loop for new Booking Create**/
                       <MenuItem value="" disabled>
                         Locality
                       </MenuItem>
-                      {arrayData.map((child, index) => (
+                      {this.state.arrayData.map((child, index) => (
                         <MenuItem value={child.code}>{child.name}</MenuItem>
-                      ))}
+                       ))}
                     </Select>
                   </FormControl>
                 </div>
@@ -1037,7 +1096,7 @@ else{  /**loop for new Booking Create**/
                   availabilityCheckData={this.state.availabilityCheckData}
                   oldAvailabilityCheckData={
                     this.state.oldBookingData && this.state.oldBookingData
-                  }
+                  }//bkLocation   availabilityCheckData.bkLocation
                   bookingVenue={
                     this.state.oldBookingData.bkBookingVenue
                       ? this.state.oldBookingData.bkBookingVenue
@@ -1235,6 +1294,7 @@ const mapStateToProps = (state) => {
     state &&
     state.screenConfiguration.preparedFinalObject.availabilityCheckData;  //bkLocation
   console.log("bookingVenueData--map--", bookingVenueData);
+//screenConfiguration.preparedFinalObject.oldAvailabilityCheckData.bkBookingVenue
   let bookingVenue =
     bookingVenueData && bookingVenueData.bkLocation
       ? bookingVenueData.bkLocation
@@ -1247,6 +1307,13 @@ const mapStateToProps = (state) => {
         .bkBookingVenue
     : "notfound";
   console.log("bkVenue--", bkVenue);
+
+  let getSelectedSector = get(
+    state,
+    "screenConfiguration.preparedFinalObject.LocalityWiseSector",
+    "NotFound"
+);
+console.log("getSelectedSector",getSelectedSector)
 
   let oldFromDate = state.screenConfiguration.preparedFinalObject
     .oldAvailabilityCheckData
@@ -1321,6 +1388,7 @@ else{
     oldFromDate,
     oldToDate,
     oldBookingData,
+    getSelectedSector
   };
 };
 const mapDispatchToProps = (dispatch) => {

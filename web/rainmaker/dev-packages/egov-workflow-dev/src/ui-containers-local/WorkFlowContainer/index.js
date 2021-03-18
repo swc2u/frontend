@@ -387,18 +387,27 @@ class WorkFlowContainer extends React.Component {
     else{
 
       let labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
+      let labelName='Please fill the required field in Edit section'
       if(data.applicationStatus ==='PENDING_FOR_SECURITY_DEPOSIT' && data.action==='VERIFY_AND_FORWARD_FOR_PAYMENT')
       {
         labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
+        labelName = 'Please fill the required field in Edit section'
       }
       else if(data.applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN' && data.action ==='SUBMIT_ROADCUT_NOC')
       {
         labelKey = 'WS_SUBMIT_ROADCUT_NOC_VALIDATION_MESSAGE'
+        labelName = 'Please upload road cut NOC document in document section then submit'
+      }
+      else  if(data.applicationStatus ==='INITIATED' && data.action==='SUBMIT_APPLICATION')
+      {
+        labelKey = 'WS_RESUBMIT_DOCUMENT_UPLOAD_VALIDATION_MESSAGE'
+        labelName = 'Please upload mandatory document in document section then submit'
+
       }
       toggleSnackbar(
         true,
         {
-          labelName: "Please update filed which is use in calculation",
+          labelName: labelName,
           labelKey: labelKey
         },
         "error"
@@ -732,16 +741,35 @@ ValidateRequest =(payload) =>{
   }
   // change tarrif type when state is PENDING_FOR_CONNECTION_TARIFF_CHANGE for action CHANGE_TARIFF
 
- if((payload.applicationStatus ==='PENDING_FOR_CONNECTION_TARIFF_CHANGE' && payload.action==='CHANGE_TARIFF')
-    ||(payload.applicationStatus ==='PENDING_FOR_CONNECTION_HOLDER_CHANGE' && payload.action==='CHANGE_CONNECTION_HOLDER'))//PENDING_FOR_CONNECTION_HOLDER_CHANGE may be include for UPDATE_CONNECTION_HOLDER_INFO and CHANGE_CONNECTION_HOLDER
+ if((payload.applicationStatus ==='PENDING_FOR_CONNECTION_TARIFF_CHANGE' && payload.action==='CHANGE_TARIFF'))//PENDING_FOR_CONNECTION_HOLDER_CHANGE may be include for UPDATE_CONNECTION_HOLDER_INFO and CHANGE_CONNECTION_HOLDER
   {
     if(payload.proposedUsageCategory !==null)
     payload.waterProperty.usageCategory = payload.proposedUsageCategory
    
   }
+  if((payload.applicationStatus ==='PENDING_FOR_CONNECTION_HOLDER_CHANGE' && payload.action==='CHANGE_CONNECTION_HOLDER'))//PENDING_FOR_CONNECTION_HOLDER_CHANGE may be include for UPDATE_CONNECTION_HOLDER_INFO and CHANGE_CONNECTION_HOLDER
+{
+  if(payload.connectionHolders !==null)
+  {
+    payload.connectionHolders[0].name = payload.connectionHolders[0].proposedName
+    payload.connectionHolders[0].mobileNumber = payload.connectionHolders[0].proposedMobileNo
+    payload.connectionHolders[0].correspondenceAddress = payload.connectionHolders[0].proposedCorrespondanceAddress
+
+  }
+  
+ 
+}
   if(payload.applicationStatus ==='PENDING_FOR_CONNECTION_EXTENSION_REGULAR' && payload.action==='CONVERT_INTO_REGULAR_CONNECTION')
   {
     payload.waterApplicationType = "REGULAR";
+  }
+  if(payload.applicationStatus ==='INITIATED' && payload.action==='SUBMIT_APPLICATION')
+  {
+    if(payload.documents === null)
+    {
+      isvalidRequest = false
+
+    }
   }
 //return  false
   return isvalidRequest
@@ -910,7 +938,15 @@ ValidateRequest =(payload) =>{
                           ||businessService === "WS_RENAME" 
                           || businessService === "WS_CONVERSION" 
                           || businessService === "WS_REACTIVATE" 
-                          || businessService === "WS_TUBEWELL") ? !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SEND_BACK_TO_CITIZEN" && item.action !== "RESUBMIT_APPLICATION" : !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
+                          || businessService === "WS_TUBEWELL") 
+                          ? !checkIfTerminatedState(item.nextState, businessService) 
+                          && item.action !== "SEND_BACK_TO_CITIZEN" 
+                          && item.action !== "RESUBMIT_APPLICATION" 
+                          && item.action !== "SUBMIT_ROADCUT_NOC" 
+                          && item.action !== "SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC"
+                          && item.action !== "VERIFY_AND_FORWARD_FOR_PAYMENT"// VERIFY_AND_FORWARD_FOR_PAYMENT
+                          : !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
+                          // new action added SUBMIT_ROADCUT_NOC,SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC
         roles: getEmployeeRoles(item.nextState, item.currentState, businessService),
         isDocRequired: checkIfDocumentRequired(item.nextState, businessService)
       };
@@ -1072,17 +1108,17 @@ ValidateRequest =(payload) =>{
       }
     }
     if((businessService=='NewWS1' 
-      || businessService === "REGULARWSCONNECTION"  
+        || businessService === "REGULARWSCONNECTION"  
         || businessService === 'SW_SEWERAGE' 
         || businessService === "TEMPORARY_WSCONNECTION"
         || businessService === "WS_TEMP_TEMP" 
-        ||businessService === "WS_TEMP_REGULAR"
-        ||businessService === "WS_DISCONNECTION" 
-        ||businessService === "WS_TEMP_DISCONNECTION"
+        || businessService === "WS_TEMP_REGULAR"
+        || businessService === "WS_DISCONNECTION" 
+        || businessService === "WS_TEMP_DISCONNECTION"
         || businessService === "WS_RENAME" 
         || businessService === "WS_CONVERSION" 
         || businessService === "WS_REACTIVATE"     
-    || businessService === "WS_TUBEWELL")
+        || businessService === "WS_TUBEWELL")
     && applicationStatus == 'PENDING_FOR_TEMPORARY_TO_REGULAR_CONNECTION_APPROVAL'){
       //    actions.forEach(item => {
       //     if(item.buttonLabel === 'APPROVE_FOR_CONNECTION_CONVERSION')

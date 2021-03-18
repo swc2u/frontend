@@ -329,10 +329,19 @@ export const getExcelData = async (excelUrl, fileStoreId, screenKey, componentJs
 
 export const populateBiddersTable = (biddersList, screenKey, componentJsonPath) => {
   console.log(biddersList);
-
+  if(biddersList.length > 0){
+    let auctionIdField = biddersList[0].auctionId
+    auctionIdField = Number.isInteger(Number(auctionIdField)) ? parseInt(Number(auctionIdField)).toString() : auctionIdField || "-"
+    store.dispatch(
+      prepareFinalObject(
+        `auctionIdFieldValue`,
+        auctionIdField
+      )
+    );
+  }
   if (!!biddersList) {
     let data = biddersList.map(item => ({
-      [getTextToLocalMapping("Auction Id")]: item.auctionId || "-",
+      [getTextToLocalMapping("Auction Id")]: Number.isInteger(Number(item.auctionId)) ? parseInt(Number(item.auctionId)).toString() : item.auctionId || "-",
       [getTextToLocalMapping("Bidder Name")]: item.bidderName || "-",
       [getTextToLocalMapping("Deposited EMD Amount")]: item.depositedEMDAmount || "-",
       [getTextToLocalMapping("Deposit Date")]: convertEpochToDate(item.depositDate) || "-",
@@ -365,7 +374,7 @@ export const populateBiddersTable = (biddersList, screenKey, componentJsonPath) 
             )
           }
         }),
-      [getTextToLocalMapping("Refund Status")]: item.refundStatus || "-",
+      [getTextToLocalMapping("Refund Status")]: getTextToLocalMapping(item.refundStatus) || "-",
     }));
 
     store.dispatch(

@@ -25,8 +25,7 @@ import {
     applicationNumber,
     tenantId,
     businessService,
-    branchType,
-    userRole
+    branchType
   ) => {
     /** MenuButton data based on status */
     
@@ -83,9 +82,6 @@ import {
                     ];
                   
                   const billPayload = await getBill(queryObj);
-                  // debugger
-                  console.log(billPayload);
-                
                   const taxAmount = Number(get(billPayload, "Bill[0].totalAmount"));
                     if(taxAmount === 0){
                       dispatch(toggleSnackbar(
@@ -108,7 +104,7 @@ import {
                   },
   
                 },
-                visible: process.env.REACT_APP_NAME === "Citizen"  && getButtonVisibility(status, "PENDINGPAYMENT", JSON.parse(getUserInfo()).roles[0].code) ? true : false
+                visible: process.env.REACT_APP_NAME === "Citizen"  && getButtonVisibility(status, "PENDINGPAYMENT") ? true : false
               },
               uploadDocument: {
                 componentPath: "Button",
@@ -173,9 +169,6 @@ import {
                     ];
                   
                   const billPayload = await getBill(queryObj);
-                  // debugger
-                  console.log(billPayload);
-                
                   const taxAmount = Number(get(billPayload, "Bill[0].totalAmount"));
                     if(taxAmount === 100){
                       dispatch(toggleSnackbar(
@@ -196,7 +189,7 @@ import {
                     }
                   },
                 },
-                visible: process.env.REACT_APP_NAME === "Employee" && getButtonVisibility(status, "PENDINGPAYMENT", JSON.parse(getUserInfo()).roles[0].code) ? true : false
+                visible: process.env.REACT_APP_NAME === "Employee" && getButtonVisibility(status, "PENDINGPAYMENT") ? true : false
               },
               nocVerification: {
                 componentPath: "Button",
@@ -263,7 +256,7 @@ import {
                     );
                   },
                 },
-                visible: process.env.REACT_APP_NAME === "Employee" && getButtonVisibility(status, "SITEREPORT", JSON.parse(getUserInfo()).roles[0].code) ? true : false
+                visible: process.env.REACT_APP_NAME === "Employee" && getButtonVisibility(status, "SITEREPORT", JSON.parse(getUserInfo()).roles[0].code === "ES_MM_BUILDING_INSPECTOR" ? true : false) ? true : false
               }
             },
             gridDefination: {

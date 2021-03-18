@@ -70,16 +70,7 @@ class CGBookingDetails extends Component {
                     label={bookingType}
                   />
                 </div>
-                <div className="col-md-4">
-                  <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_APPLICATION_BOOKING_PURPOSE" />
-                  <Label
-                    className="col-xs-12  col-sm-12 col-md-12  status-result-color"
-                    
-                    id="complaint-details-submission-date"
-                    labelStyle={{ color: "inherit" }}
-                    label={bkBookingPurpose}
-                  />
-                </div>
+            
               <div className="col-md-4">
                   <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_APPLICATION_FROM_DATE" />
                   <Label
@@ -116,6 +107,16 @@ class CGBookingDetails extends Component {
                     id="complaint-details-submission-date"
                     labelStyle={{ color: "inherit" }}
                     label={sector}
+                  />
+                </div>
+                <div className="col-md-4">
+                  <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_APPLICATION_BOOKING_PURPOSE" />
+                  <Label
+                    className="col-xs-12  col-sm-12 col-md-12  status-result-color"
+                    
+                    id="complaint-details-submission-date"
+                    labelStyle={{ color: "inherit" }}
+                    label={bkBookingPurpose}
                   />
                 </div>
               </div>

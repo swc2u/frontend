@@ -117,7 +117,7 @@ export const reviewConnectionDetails = (isEditable = true) => {
     viewTwo: propertyLocationDetails ,
     //viewThree: propertyOwnerDetails(),
     //viewFour: getConnectionDetails(),
-    viewFive:connHolderDetailsSummary(),
+    viewFive:   connHolderDetailsSummary(),
     viewSix:connHolderDetailsSameAsOwnerSummary()
   });
 };
@@ -815,16 +815,16 @@ export const connectionHolderDetails={
   //     }
   //   },
   // ),
-  fatherName: getLabelWithValueForModifiedLabel(
-    {
-      labelKey: "WS_CONN_HOLDER_COMMON_FATHER_OR_HUSBAND_NAME"
-    },
-    { jsonPath: "applyScreen.connectionHolders[0].fatherOrHusbandName", callBack: handleNA },
-    {
-      labelKey: "WS_OLD_LABEL_NAME"
-    },
-    { jsonPath: "applyScreenOld.connectionHolders[0].fatherOrHusbandName", callBack: handleNA }
-  ),
+  // fatherName: getLabelWithValueForModifiedLabel(
+  //   {
+  //     labelKey: "WS_CONN_HOLDER_COMMON_FATHER_OR_HUSBAND_NAME"
+  //   },
+  //   { jsonPath: "applyScreen.connectionHolders[0].fatherOrHusbandName", callBack: handleNA },
+  //   {
+  //     labelKey: "WS_OLD_LABEL_NAME"
+  //   },
+  //   { jsonPath: "applyScreenOld.connectionHolders[0].fatherOrHusbandName", callBack: handleNA }
+  // ),
   // relationship: getLabelWithValueForModifiedLabel(
   //   {
   //     labelKey: "WS_CONN_HOLDER_OWN_DETAIL_RELATION_LABEL"
@@ -835,6 +835,16 @@ export const connectionHolderDetails={
   //   },
   //   { jsonPath: "applyScreenOld.connectionHolders[0].relationship", callBack: handleNA }
   // ),
+  mailid: getLabelWithValueForModifiedLabel(
+      {
+        labelKey: "WS_OWNER_DETAILS_EMAIL_LABEL"
+      },
+      { jsonPath: "applyScreen.connectionHolders[0].emailId", callBack: handleNA },
+      // {
+      //   labelKey: "WS_OLD_LABEL_NAME"
+      // },
+      // { jsonPath: "applyScreenOld.connectionHolders[0].fatherOrHusbandName", callBack: handleNA }
+    ),
   correspondenceAddress: getLabelWithValueForModifiedLabel(
     {
       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_CROSADD"

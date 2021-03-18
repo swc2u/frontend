@@ -83,7 +83,7 @@ fileUpload = true
         }
         try{
           let abc = await savebillGeneration(state, dispatch,billGeneration);
-          window.localStorage.setItem("ActivityStatusFlag","true");
+         // window.localStorage.setItem("ActivityStatusFlag","true");
         }catch (err){
           console.log("errrr")
         }

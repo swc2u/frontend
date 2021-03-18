@@ -156,8 +156,8 @@ class MultiItemsWithImage extends Component {
                                                     item
                                                     sm={3}
                                                     xs={12}
-                                                    style={{ marginBottom: 12 }}
                                                 >
+                                                    <div style={{marginBottom: 16, wordBreak: 'break-word', marginRight: 8}}>
                                                     <Label
                                                         labelKey={this.getMessageFromLocalization(
                                                             content.label
@@ -201,14 +201,15 @@ class MultiItemsWithImage extends Component {
                                                                 "0.67px",
                                                         }}
                                                     />
+                                                    </div>
                                                 </Grid>
                                             ) : (
                                                 <Grid
                                                     item
                                                     sm={3}
                                                     xs={12}
-                                                    style={{ marginBottom: 12 }}
                                                 >
+                                                    <div style={{marginBottom: 16, wordBreak: 'break-word', marginRight: 8}}>
                                                     <Label
                                                         labelKey={this.getMessageFromLocalization(
                                                             content.label
@@ -240,6 +241,7 @@ class MultiItemsWithImage extends Component {
                                                                 "0.67px",
                                                         }}
                                                     />
+                                                    </div>
                                                 </Grid>
                                             );
                                         })}

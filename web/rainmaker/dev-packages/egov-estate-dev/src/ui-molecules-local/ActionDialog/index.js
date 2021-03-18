@@ -82,7 +82,8 @@ const getEpoch = (dateString, dayStartOrEnd = "dayend") => {
 class ActionDialog extends React.Component {
   state = {
     hardCopyReceivedDateError: false,
-    commentsErr:false
+    commentsErr:false,
+    documentsErr: false
   };
 
   getButtonLabelName = label => {
@@ -110,12 +111,26 @@ class ActionDialog extends React.Component {
       dataPath = `${dataPath}[0]`;
       const data = get(state.screenConfiguration.preparedFinalObject, dataPath)
       const validationDate = data.hardCopyReceivedDate;
-      let formIsValid = true;
-      if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DS_VERIFICATION"){
+      const {dialogData} = this.props;
+      const {documentsJsonPath, documentProps} = dialogData
+      if(!!documentProps) {
+        let documents = get(state.screenConfiguration.preparedFinalObject, documentsJsonPath)
+        documents = documents.filter(item => !!item)
+        if (!documents || !documents.length) {
+          this.setState({
+            documentsErr: true
+          })
+          return
+        } else {
+          this.setState({
+            documentsErr: false
+          })
+        }
+      }
+      if(buttonLabel === "FORWARD" && (applicationState === "ES_PENDING_DS_VERIFICATION"||applicationState==="ES_MM_PENDING_DS_VERIFICATION")){
         if(!!validationDate) {
           this.props.onButtonClick(buttonLabel, isDocRequired)
         } else {
-          formIsValid = false
           this.setState({
             hardCopyReceivedDateError: true
           })
@@ -125,27 +140,20 @@ class ActionDialog extends React.Component {
         if(!!comments) {
           this.props.onButtonClick(buttonLabel, isDocRequired)
         } else {
-          formIsValid = false
           this.setState({
             commentsErr: true
           })
         }
       } else {
-    
-        if(applicationState === "ES_PENDING_CITIZEN_NOTICE_DOCUMENTS"){
-          
-          this.props.onButtonClick(buttonLabel, isDocRequired = true);
-        }
-        else{
-          this.props.onButtonClick(buttonLabel, isDocRequired)
-        }
+        this.props.onButtonClick(buttonLabel, isDocRequired)
       }
   }
 
   onClose = () => {
     this.setState({
       hardCopyReceivedDateError: false,
-      commentsErr:false
+      commentsErr:false,
+      documentsErr: false
     })
     this.props.onClose()
   }
@@ -167,7 +175,8 @@ class ActionDialog extends React.Component {
       dialogHeader,
       moduleName,
       isDocRequired,
-      documentProps
+      documentProps,
+      documentsJsonPath
     } = dialogData;
     const { getButtonLabelName } = this;
     let fullscreen = false;
@@ -177,6 +186,8 @@ class ActionDialog extends React.Component {
     dataPath = `${dataPath}[0]`;
 
     const applicationState = (get(state.screenConfiguration.preparedFinalObject, dataPath) || {}).state
+      let documents = get(state.screenConfiguration.preparedFinalObject, documentsJsonPath) || []
+      documents = documents.filter(item => !!item)
     return (
       <Dialog
         fullScreen={fullscreen}
@@ -258,11 +269,11 @@ class ActionDialog extends React.Component {
                         handleFieldChange(`${dataPath}.comments`, e.target.value)
                       }
                       // required = {true}
-                      jsonPath={this.open != true ? "" : `${dataPath}.comments`}
+                      //jsonPath={this.open != true ? "" : `${dataPath}.comments`}
                       placeholder={fieldConfig.comments.placeholder}
                       inputProps={{ maxLength: 120 }}
                     />
-                    {!!this.state.commentsErr && (<span style={{color: "red"}}>Please enter Comments</span>)}
+                    {!!this.state.commentsErr && (<span style={{color: "red"}}>Please enter comments</span>)}
                   </Grid>
                   {buttonLabel === "FORWARD" && (applicationState === "ES_PENDING_DS_VERIFICATION" || applicationState == "ES_MM_PENDING_DS_VERIFICATION") && (
                     <Grid item sm="12">
@@ -307,9 +318,9 @@ class ActionDialog extends React.Component {
                     </div>
                   </Typography>
                   <DocumentListContainer {...documentProps}/>
+                  {(this.state.documentsErr && (!documents || !documents.length)) && (<span style={{color: "red"}}>Please upload documents</span>)}
                   </Grid>
                   )}
-
                   {/* {(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_SO_TEMPLATE_CREATION") && (<Grid item sm="12">
                   <Typography
                       component="h3"

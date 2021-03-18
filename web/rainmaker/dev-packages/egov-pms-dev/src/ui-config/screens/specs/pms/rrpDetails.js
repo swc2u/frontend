@@ -15,7 +15,7 @@ import { ifUserRoleExists } from "../utils";
 import { footer } from "./rrpDetailsResource/footer";
 import { empDetails } from "./rrpDetailsResource/empDetails";
 import { employeeOtherDetails } from "./rrpDetailsResource/employeeOtherDetails";
-import { pensionDetails } from "./rrpDetailsResource/pensionDetails";
+import { pensionDetails,arrealPensionDetails } from "./rrpDetailsResource/pensionDetails";
 //import { propertyLocationDetails } from "./applyResource/propertyLocationDetails";
 import { otherDetails } from "./rrpDetailsResource/otherDetails";
 import { documentDetails } from "./rrpDetailsResource/documentDetails";
@@ -25,7 +25,11 @@ import {
   handleScreenConfigurationFieldChange as handleField
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-
+import {
+  
+  epochToYmd,
+  showHideAdhocPopup,
+} from "../utils";
 import { httpRequest } from "../../../../ui-utils";
 import {
   sampleSearch,
@@ -234,6 +238,7 @@ export const formwizardSecondStep = {
   children: {
     
     pensionDetails:pensionDetails(Accesslable),
+    arrealPensionDetails:arrealPensionDetails(Accesslable),
   },
   visible: false
 };
@@ -431,7 +436,8 @@ export const prepareEditFlow = async (
   state,
   dispatch,
   applicationNumber,
-  tenantId
+  tenantId,
+  action
 ) => {
  
   
@@ -473,6 +479,27 @@ export const prepareEditFlow = async (
       else 
       dispatch(prepareFinalObject("IsCalculated", false));
       dispatch(prepareFinalObject("IsCalculatedWarning", false));
+      let dob = get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].employee.user.dob", 0 )
+      let CurrentDate = new Date()
+      if(Number(dob))
+      dob = epochToYmd(dob)
+      const  dob_ = new Date(dob)
+      if(dob_ <CurrentDate)
+      {
+       set(
+         action.screenConfig,
+         "components.div.children.formwizardSecondStep.children.arrealPensionDetails.visible",
+         true
+       );
+ 
+      }
+      else{
+       set(
+         action.screenConfig,
+         "components.div.children.formwizardSecondStep.children.arrealPensionDetails.visible",
+         false
+       );
+      }
 
      prepareDocumentsUploadData(state, dispatch);
     // if (applicationNumber) {
@@ -786,7 +813,7 @@ const screenConfig = {
     set(state, "screenConfiguration.moduleName", "RRP_Service");
    
 //get workflow details data
-prepareEditFlow(state, dispatch, applicationNumber, tenantId).then(res=>
+prepareEditFlow(state, dispatch, applicationNumber, tenantId, action).then(res=>
   {
 
   }
@@ -886,6 +913,122 @@ console.log('state');
         formwizardThirdStep,
         footer:footer(Accesslable)
        // pmsfooter
+      }
+    },
+    adhocDialog: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-pms",
+      componentPath: "DialogContainer",
+      props: {
+        open: false,
+        maxWidth: "xl",
+        screenKey: "rrpDetails"
+      },
+      children: {
+        // popup: {
+        //   uiFramework: "custom-containers-local",
+        //   componentPath: "EmployeeServiceContainer",
+        //   moduleName: "egov-pms",
+        //   // visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+        //   props: {
+        //     dataPath: "taskInstance",
+        //     moduleName: "RRP_SERVICE",
+        //     updateUrl: "/tl-services/v1/_processWorkflow"
+        //   }
+        // },
+        
+        popup: getCommonContainer({
+          header: {
+            uiFramework: "custom-atoms",
+            componentPath: "Container",
+            props: {
+              style: {
+                width: "100%",
+                float: "right"
+              }
+            },
+            children: {
+              div1: {
+                uiFramework: "custom-atoms",
+                componentPath: "Div",
+                gridDefination: {
+                  xs: 10,
+                  sm: 10
+                },
+                props: {
+                  style: {
+                    width: "100%",
+                    float: "right"
+                  }
+                },
+                children: {
+                  div: getCommonHeader(
+                    {
+                      labelKey: "PENSION_POPUP_HEAD_ARREAR"
+                    },
+                    {
+                      style: {
+                        fontSize: "20px"
+                      }
+                    }
+                  )
+                }
+              },
+              div2: {
+                uiFramework: "custom-atoms",
+                componentPath: "Div",
+                gridDefination: {
+                  xs: 2,
+                  sm: 2
+                },
+                props: {
+                  style: {
+                    width: "100%",
+                    float: "right",
+                    cursor: "pointer"
+                  }
+                },
+                children: {
+                  closeButton: {
+                    componentPath: "Button",
+                    props: {
+                      style: {
+                        float: "right",
+                        color: "rgba(0, 0, 0, 0.60)"
+                      }
+                    },
+                    children: {
+                      previousButtonIcon: {
+                        uiFramework: "custom-atoms",
+                        componentPath: "Icon",
+                        props: {
+                          iconName: "close"
+                        }
+                      }
+                    },
+                    onClickDefination: {
+                      action: "condition",
+                      callBack: (state, dispatch) => {
+                        showHideAdhocPopup(state, dispatch, "rrpDetails");
+                      }
+                    }
+                  }
+                }
+              },
+
+            }
+          },
+          pensionArrears: {
+            uiFramework: "custom-containers-local",
+            componentPath: "EmployeeServiceContainer",
+            moduleName: "egov-pms",
+            props: {
+              dataPath: "taskInstance",
+              moduleName: "RRP_SERVICE_ARREAR",
+              updateUrl: "/tl-services/v1/_processWorkflow"
+                    }
+          },
+        })
       }
     }
   }

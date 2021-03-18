@@ -14,7 +14,7 @@ import {
 
   const userInfo = JSON.parse(getUserInfo());
   const {roles = []} = userInfo
-  const findItem = roles.find(item => item.code === "RP_CLERK");
+  const findItem = roles.find(item => item.code === "RP_CLERK" || item.code === "RP_JA");
   export const footerReview = (
     action,
     state,

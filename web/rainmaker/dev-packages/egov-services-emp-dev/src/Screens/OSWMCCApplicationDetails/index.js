@@ -533,20 +533,24 @@ class ApplicationDetails extends Component {
 	
 	
 	}
-	downloadApplicationFunction = async (e) => {
+	downloadApplicationFunction =  (e) => {
 		const { transformedComplaint,paymentDetailsForReceipt,paymentDetails,downloadPermissionLetter, downloadMccApp, userInfo} = this.props;
-		const {complaint} = transformedComplaint;
-let ApplicationStatus;
-if(complaint.status == "PENDINGAPPROVAL"){
-	ApplicationStatus = "Pending Approval"
-}
-if(complaint.status == "PENDINGPAYMENT"){
-	ApplicationStatus = "Pending Payment"
-}  
-if(complaint.status == "APPROVED"){
-	ApplicationStatus = "Approved"
-}  
-		let receiptData = [
+		const {complaint} =  transformedComplaint;
+// let ApplicationStatus;
+// if(complaint.status == "PENDINGAPPROVAL"){
+// 	ApplicationStatus = "Pending Approval"
+// }
+// if(complaint.status == "PENDINGPAYMENT"){
+// 	ApplicationStatus = "Pending Payment"
+// }  
+// if(complaint.status == "APPROVED"){
+// 	ApplicationStatus = "Approved"
+// }  
+// if(complaint.status == "REJECTED"){
+// 	ApplicationStatus = "Rejected"
+// }  
+
+		let receiptData =  [
 			{
 				applicantDetail: {
 					name: complaint.applicantName,
@@ -570,7 +574,7 @@ if(complaint.status == "APPROVED"){
 					venueName : complaint.bkBookingVenue,
 					sector: complaint.sector,
 					bookingPurpose : complaint.bkBookingPurpose,
-					status: ApplicationStatus
+					status: complaint.status == "PENDINGAPPROVAL"?"Pending Approval": complaint.status == "PENDINGPAYMENT"?"Pending Payment":complaint.status == "REJECTED"?"Rejected":complaint.status == "APPROVED"?"Approved":"NA"
 				},
 				// feeDetail: {
                 //     baseCharge:
@@ -599,7 +603,7 @@ if(complaint.status == "APPROVED"){
 				},
 			}]
 	
-			downloadMccApp({BookingInfo:receiptData})
+			 downloadMccApp({BookingInfo:receiptData})
 	}
 
 

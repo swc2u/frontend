@@ -201,7 +201,7 @@ let documentCode = [
       accept: ".pdf,.png,.jpg,.jpeg",
     };
 
-    let maxFileSize = 1025;
+    let maxFileSize = 5121;
 
     let documentDatatwo = [
       {
@@ -221,6 +221,7 @@ let documentCode = [
         <div>
         <div classsName="container">
          <div className="col-xs-12">
+
         {this.state.documentsContract.length > 0 && (
           <DocumentList
             documentsList={this.state.documentsContract}

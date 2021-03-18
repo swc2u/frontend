@@ -355,7 +355,7 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
             labelKey: "STORE_MATERIAL_RECEIPT_INSPECTED_BY_SELECT"
           },         
           required: false,
-          jsonPath: "materialReceipt[0].inspectedBy",         
+          jsonPath: "materialReceipt[0].inspectedByName",         
           sourceJsonPath: "createScreenMdmsData.employee",
           props: {
             className: "applicant-details-error",
@@ -364,12 +364,12 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
           },
         }),
         beforeFieldChange: (action, state, dispatch) => {
-          // let emp = get(state, "screenConfiguration.preparedFinalObject.createScreenMdmsData.employee",[]) 
-          // let designation=action.value ;
-          // emp = emp.filter(x=>x.code ===action.value)
-          // let issuedToDesignation =GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.common-masters.Designation",designation)   
-       
-          // dispatch(prepareFinalObject("materialReceipt[0].issuedToDesignation", issuedToDesignation));
+          let emp = get(state, "screenConfiguration.preparedFinalObject.createScreenMdmsData.employee",[]) 
+          let designation=action.value ;
+          emp = emp.filter(x=>x.code ===action.value)
+         // let issuedToDesignation =GetMdmsNameBycode(state, dispatch,"createScreenMdmsData.common-masters.Designation",designation)   
+       if(emp && emp[0])
+          dispatch(prepareFinalObject("materialReceipt[0].inspectedBy", emp[0].name));
 
   
         }

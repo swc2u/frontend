@@ -34,6 +34,8 @@ getCommonHeader({
 
 const transitNumberField = {
   ...transitNumberLookUp,
+  pattern:"",
+  maxLength:"",
   jsonPath: "property.transitNumber",
   iconObj: {
     ...transitNumberLookUp.iconObj,
@@ -416,7 +418,12 @@ const paymentInfo = getCommonCard({
     transactionNumber: getTextField(transactionNumberField),
   })
 })
-
+const paymentInfoOffline = getCommonCard({
+  header: paymentInfoHeader,
+  detailsContainer: getCommonContainer({
+    amount: getTextField(amountField),
+  })
+})
 const paymenttype = {
   label: {
     labelName: "Payment Mode",
@@ -653,7 +660,19 @@ const detailsContainer = {
     },
     visible: true
   }
-
+const detailsContainerCitizen={
+  uiFramework: "custom-atoms",
+  componentPath: "Form",
+  props: {
+    id: "apply_form1"
+  },
+  children: {
+    propertyDetails,
+    rentSummaryDetails,
+    paymentInfoOffline
+  },
+  visible: true
+}
 const getConsumerCode = async (state, dispatch, payload) => {
   try {
     let response = await httpRequest(
@@ -815,7 +834,7 @@ const payment = {
                 }
               }
             },
-            detailsContainer,
+            detailsContainer:  process.env.REACT_APP_NAME !== "Citizen" ? detailsContainer : detailsContainerCitizen,
             footer: paymentFooter
           }
         }

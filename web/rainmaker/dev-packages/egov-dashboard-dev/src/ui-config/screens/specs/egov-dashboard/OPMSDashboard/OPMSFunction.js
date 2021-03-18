@@ -3,19 +3,11 @@ import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 // import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
 import set from "lodash/set";
-import { getOPMSData } from "../../../../../ui-utils/commons";
+import { getStatusOPMSData, getCollectionOPMSData } from "../../../../../ui-utils/commons";
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
-  //debugger;
-  var flag_for_api_call = true
-  let queryObject = [
-    {
-      key: "tenantId",
-      value: getTenantId()
-    },
-    { key: "offset", value: "0" }
-  ];
+  debugger;
   let dashboardFilterDAta = get(
     state.screenConfiguration.preparedFinalObject,
     "dahsboardHome",
@@ -43,14 +35,14 @@ export const SearchDashboardData = async (state, dispatch) =>{
   }
   else{ 
 
-  var data = {
-    "tenantId" : getTenantId(),
-    "fromDate":fromDateNumeric,
+  let requestBody = {
+    "tenantId": getTenantId(),
+    "fromDate": fromDateNumeric,
     "toDate": toDateNumeric,
     "reportSortBy": reportSortBy
-    
   }
-  let requestBody = {
+
+  let requestBody2 = {
     "tenantId": getTenantId(),
     "fromDate": def_fromDate,
     "toDate": def_toDate,
@@ -59,7 +51,13 @@ export const SearchDashboardData = async (state, dispatch) =>{
     debugger;
     try {
       // API call for Description Report
-      const response = await getOPMSData( dispatch, requestBody );
+      var response = [];
+      if(reportSortBy.value === "statusReport"){
+        response = await getStatusOPMSData( dispatch, requestBody );
+      }else if(reportSortBy.value === "collectionReport"){
+        response = await getCollectionOPMSData( dispatch, requestBody2 );
+      }
+      
 
     } catch (error) {
 
