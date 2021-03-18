@@ -72,6 +72,10 @@ const ReturnCloseConfirmationContainer = Loadable({
   loading: () => <Loading />
 })
 
+const UpdateContactContainer = Loadable({
+  loader: () => import("./UpdateContactContainer"),
+  loading: () => <Loading />
+})
 
 export {
   CustomTabContainer,
@@ -88,5 +92,6 @@ export {
   PopupContainer,
   CustomizeTableContainer,
   ForwardContainer,
-  ReturnCloseConfirmationContainer
+  ReturnCloseConfirmationContainer,
+  UpdateContactContainer
 };

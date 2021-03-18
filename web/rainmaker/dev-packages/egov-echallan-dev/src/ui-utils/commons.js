@@ -695,10 +695,10 @@ export const createVendorDetails = async (file) => {
   }
 }
 
-export const createCitizenBasedonMobileNumber = async (state, dispatch) => {
+export const createCitizenBasedonMobileNumber = async (state, dispatch,dataPayload) => {
   let response = '';
   try {
-    let payload = get(state.screenConfiguration.preparedFinalObject, "eChallan", []);
+    let payload = get(state.screenConfiguration.preparedFinalObject, dataPayload, []);
     let tenantId = getTenantId().length > 2 ? getTenantId().split('.')[0] : getTenantId()
     let User = {
       name: payload.violatorName,
