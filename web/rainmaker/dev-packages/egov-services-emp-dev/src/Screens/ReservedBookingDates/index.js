@@ -79,6 +79,8 @@ class SimpleTable extends React.Component {
       "Type",
       "",
       "",
+      "Reason For Hold",
+      "Sector",
       ""
     ]
 
@@ -121,9 +123,11 @@ class SimpleTable extends React.Component {
       "Dates locked",
       "",
       "",
-      "Action",
+      "Type",
       "",
       "",
+      "Reason For Hold",
+      "Sector",
       ""
     ]
 
