@@ -34,6 +34,8 @@ getCommonHeader({
 
 const transitNumberField = {
   ...transitNumberLookUp,
+  pattern:"",
+  maxLength:"",
   jsonPath: "property.transitNumber",
   iconObj: {
     ...transitNumberLookUp.iconObj,
@@ -416,7 +418,12 @@ const paymentInfo = getCommonCard({
     transactionNumber: getTextField(transactionNumberField),
   })
 })
-
+const paymentInfoOffline = getCommonCard({
+  header: paymentInfoHeader,
+  detailsContainer: getCommonContainer({
+    amount: getTextField(amountField),
+  })
+})
 const paymenttype = {
   label: {
     labelName: "Payment Mode",
@@ -661,7 +668,8 @@ const detailsContainerCitizen={
   },
   children: {
     propertyDetails,
-    rentSummaryDetails
+    rentSummaryDetails,
+    paymentInfoOffline
   },
   visible: true
 }
