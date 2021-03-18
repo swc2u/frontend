@@ -1127,16 +1127,16 @@ export const footer = getCommonApplyFooter({
 
     switch (status) {
       case "OT_APPROVED":
-          if(process.env.REACT_APP_NAME === "Citizen"){
-            downloadMenu = [
-              receiptDownloadObjectForOT,
-              applicationDownloadObjectForOT,
-            ];
-            printMenu = [
-              receiptPrintObjectForOT,
-              applicationPrintObjectForOT,
-            ];
-          }else{
+          // if(process.env.REACT_APP_NAME === "Citizen"){
+          //   downloadMenu = [
+          //     receiptDownloadObjectForOT,
+          //     applicationDownloadObjectForOT,
+          //   ];
+          //   printMenu = [
+          //     receiptPrintObjectForOT,
+          //     applicationPrintObjectForOT,
+          //   ];
+          // }else{
             downloadMenu = [
               receiptDownloadObjectForOT,
               applicationDownloadObjectForOT,
@@ -1148,7 +1148,7 @@ export const footer = getCommonApplyFooter({
               applicationPrintObjectForOT,
               certificatePrintObjectOT
             ];
-          }
+          // }
       break;    
       case "OT_PENDINGCLAPPROVAL": 
       case "OT_REJECTEDPAID":  
@@ -1165,16 +1165,16 @@ export const footer = getCommonApplyFooter({
 
         break;
       case "DC_APPROVED":
-          if(process.env.REACT_APP_NAME === "Citizen"){
-            downloadMenu = [
-              receiptDownloadObjectForDC,
-              applicationDownloadObjectForDC,
-            ];
-            printMenu = [
-              receiptPrintObjectForDC,
-              applicationPrintObjectForDC,
-            ];
-          }else{
+          // if(process.env.REACT_APP_NAME === "Citizen"){
+          //   downloadMenu = [
+          //     receiptDownloadObjectForDC,
+          //     applicationDownloadObjectForDC,
+          //   ];
+          //   printMenu = [
+          //     receiptPrintObjectForDC,
+          //     applicationPrintObjectForDC,
+          //   ];
+          // }else{
             printMenu = [
               receiptPrintObjectForDC,
               applicationPrintObjectForDC,
@@ -1185,7 +1185,7 @@ export const footer = getCommonApplyFooter({
               applicationDownloadObjectForDC,
               certificateDownloadObjectDC
             ];
-          }
+          // }
         break;
 
       case "DC_REJECTEDPAID": 
@@ -1203,15 +1203,15 @@ export const footer = getCommonApplyFooter({
         break;
 
       case 'MG_APPROVED':  
-       if(process.env.REACT_APP_NAME === 'Citizen'){
-        downloadMenu = [
-          applicationDownloadObjectForMG,
-        ];
-        printMenu = [
-          applicationPrintObjectForMG,
+      //  if(process.env.REACT_APP_NAME === 'Citizen'){
+      //   downloadMenu = [
+      //     applicationDownloadObjectForMG,
+      //   ];
+      //   printMenu = [
+      //     applicationPrintObjectForMG,
 
-        ]
-       }else{
+      //   ]
+      //  }else{
         downloadMenu = [
           applicationDownloadObjectForMG,
           certificateDownloadObjectMG
@@ -1220,7 +1220,7 @@ export const footer = getCommonApplyFooter({
           applicationPrintObjectForMG,
           certificatePrintObjectMG
         ];
-       }
+      //  }
           break;  
 
       case "MG_PENDINGCLVERIFICATION":
