@@ -22,7 +22,18 @@ const header = getCommonHeader({
   labelName: "Search Property",
   labelKey: "ES_SEARCH_PROPERTY_HEADER"
 });
-
+const  updateAllFields=async(action, state, dispatch)=>{
+  const branchType = getQueryArg(window.location.href, "branchType") || "ESTATE_BRANCH";
+  if(branchType==="BUILDING_BRANCH")
+  {
+  dispatch(handleField(
+    "property-search",
+    "components.div.children.estateApplication.children.cardContent.children.searchBoxContainer.children.searchBy",
+    "props.buttons[1].labelKey" ,
+    "ES_BB_HOUSE_NUMBER_LABEL"
+  ))
+  }
+}
 const getMdmsData = async (dispatch) => {
   const branchType = getQueryArg(window.location.href, "branchType")
   let mdmsBody = {
@@ -83,6 +94,7 @@ const citizenEstateSearchAndResult = {
     state.screenConfiguration.preparedFinalObject.citizenSearchScreen = {}
     resetFields(state, dispatch);
     getMdmsData(dispatch);
+    setTimeout(() => updateAllFields(action, state, dispatch), 100)
     return action
   },
   components: {
