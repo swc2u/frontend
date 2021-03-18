@@ -767,6 +767,73 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
       let Payments = []
       if(type != 'rent-payment'){
         Payments = payloadReceiptDetails.Payments;
+        let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
+
+        let {
+          billAccountDetails
+        } = Payments[0].paymentDetails[0].bill.billDetails[0];
+        billAccountDetails = billAccountDetails.map(({
+          taxHeadCode,
+          ...rest
+        }) => ({
+          ...rest,
+          taxHeadCode: taxHeadCode.includes("_APPLICATION_FEE") ? "RP_DUE" : taxHeadCode.includes("_PENALTY") ? "RP_PENALTY" : taxHeadCode.includes("_TAX") ? "RP_TAX" : taxHeadCode.includes("_ROUNDOFF") ? "RP_ROUNDOFF" : taxHeadCode.includes("_PUBLICATION_FEE") ? "RP_CHARGES" : taxHeadCode
+        }))
+        Payments = [{
+          ...Payments[0],
+          paymentDetails: [{
+            ...Payments[0].paymentDetails[0],
+            bill: {
+              ...Payments[0].paymentDetails[0].bill,
+              billDetails: [{
+                ...Payments[0].paymentDetails[0].bill.billDetails[0],
+                billAccountDetails
+              }]
+            }
+          }]
+        }]
+  
+        if(time){
+          time = moment(new Date(time)).format("h:mm:ss a")
+        }
+        Payments = [{
+          ...Payments[0],paymentDetails:[{
+            ...Payments[0].paymentDetails[0],auditDetails:{
+              ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
+            }
+          }]
+        }]
+        
+        const roleExists = ifUserRoleExists("CITIZEN");
+         if(roleExists && type==="rent-payment"){
+        
+            Properties[0]["offlinePaymentDetails"] = []
+          
+            let transactionNumber = {
+              "transactionNumber" : Payments[0].transactionNumber
+            }
+            Properties[0].offlinePaymentDetails.push(transactionNumber)
+        }
+        
+        httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
+            Payments,
+            Properties,
+            generatedBy
+          }, {
+            'Accept': 'application/json'
+          }, {
+            responseType: 'arraybuffer'
+          })
+          .then(res => {
+            res.filestoreIds[0]
+            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
+              res.filestoreIds.map(fileStoreId => {
+                downloadReceiptFromFilestoreID(fileStoreId, mode)
+              })
+            } else {
+              console.log("Error In Receipt Download");
+            }
+          });
       }else{
         const receiptNumber = payloadReceiptDetails.Payments[0].paymentDetails[0].receiptNumber
         const query = [{
@@ -778,78 +845,77 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
         }]
         httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, query).then((response) => {
           Payments = response.Payments;
+          let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
+
+          let {
+            billAccountDetails
+          } = Payments[0].paymentDetails[0].bill.billDetails[0];
+          billAccountDetails = billAccountDetails.map(({
+            taxHeadCode,
+            ...rest
+          }) => ({
+            ...rest,
+            taxHeadCode: taxHeadCode.includes("_APPLICATION_FEE") ? "RP_DUE" : taxHeadCode.includes("_PENALTY") ? "RP_PENALTY" : taxHeadCode.includes("_TAX") ? "RP_TAX" : taxHeadCode.includes("_ROUNDOFF") ? "RP_ROUNDOFF" : taxHeadCode.includes("_PUBLICATION_FEE") ? "RP_CHARGES" : taxHeadCode
+          }))
+          Payments = [{
+            ...Payments[0],
+            paymentDetails: [{
+              ...Payments[0].paymentDetails[0],
+              bill: {
+                ...Payments[0].paymentDetails[0].bill,
+                billDetails: [{
+                  ...Payments[0].paymentDetails[0].bill.billDetails[0],
+                  billAccountDetails
+                }]
+              }
+            }]
+          }]
+    
+          if(time){
+            time = moment(new Date(time)).format("h:mm:ss a")
+          }
+          Payments = [{
+            ...Payments[0],paymentDetails:[{
+              ...Payments[0].paymentDetails[0],auditDetails:{
+                ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
+              }
+            }]
+          }]
+          
+          const roleExists = ifUserRoleExists("CITIZEN");
+           if(roleExists && type==="rent-payment"){
+          
+              Properties[0]["offlinePaymentDetails"] = []
+            
+              let transactionNumber = {
+                "transactionNumber" : Payments[0].transactionNumber
+              }
+              Properties[0].offlinePaymentDetails.push(transactionNumber)
+          }
+          
+          httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
+              Payments,
+              Properties,
+              generatedBy
+            }, {
+              'Accept': 'application/json'
+            }, {
+              responseType: 'arraybuffer'
+            })
+            .then(res => {
+              res.filestoreIds[0]
+              if (res && res.filestoreIds && res.filestoreIds.length > 0) {
+                res.filestoreIds.map(fileStoreId => {
+                  downloadReceiptFromFilestoreID(fileStoreId, mode)
+                })
+              } else {
+                console.log("Error In Receipt Download");
+              }
+            });
         })
         // const response =  httpRequest(FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, query);
         // Payments = response.Payments;
       }
-     
-      let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
-
-      let {
-        billAccountDetails
-      } = Payments[0].paymentDetails[0].bill.billDetails[0];
-      billAccountDetails = billAccountDetails.map(({
-        taxHeadCode,
-        ...rest
-      }) => ({
-        ...rest,
-        taxHeadCode: taxHeadCode.includes("_APPLICATION_FEE") ? "RP_DUE" : taxHeadCode.includes("_PENALTY") ? "RP_PENALTY" : taxHeadCode.includes("_TAX") ? "RP_TAX" : taxHeadCode.includes("_ROUNDOFF") ? "RP_ROUNDOFF" : taxHeadCode.includes("_PUBLICATION_FEE") ? "RP_CHARGES" : taxHeadCode
-      }))
-      Payments = [{
-        ...Payments[0],
-        paymentDetails: [{
-          ...Payments[0].paymentDetails[0],
-          bill: {
-            ...Payments[0].paymentDetails[0].bill,
-            billDetails: [{
-              ...Payments[0].paymentDetails[0].bill.billDetails[0],
-              billAccountDetails
-            }]
-          }
-        }]
-      }]
-
-      if(time){
-        time = moment(new Date(time)).format("h:mm:ss a")
-      }
-      Payments = [{
-        ...Payments[0],paymentDetails:[{
-          ...Payments[0].paymentDetails[0],auditDetails:{
-            ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
-          }
-        }]
-      }]
-      
-      const roleExists = ifUserRoleExists("CITIZEN");
-       if(roleExists && type==="rent-payment"){
-      
-          Properties[0]["offlinePaymentDetails"] = []
-        
-          let transactionNumber = {
-            "transactionNumber" : Payments[0].transactionNumber
-          }
-          Properties[0].offlinePaymentDetails.push(transactionNumber)
-      }
-      
-      httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
-          Payments,
-          Properties,
-          generatedBy
-        }, {
-          'Accept': 'application/json'
-        }, {
-          responseType: 'arraybuffer'
-        })
-        .then(res => {
-          res.filestoreIds[0]
-          if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-            res.filestoreIds.map(fileStoreId => {
-              downloadReceiptFromFilestoreID(fileStoreId, mode)
-            })
-          } else {
-            console.log("Error In Receipt Download");
-          }
-        });
     })
   } catch (exception) {
     alert('Some Error Occured while downloading Receipt!');
