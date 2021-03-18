@@ -23,7 +23,7 @@ let transitNumber = getQueryArg(window.location.href, "transitNumber");
 export const searchResults = async (action, state, dispatch, transitNumber) => {
 const userInfo = JSON.parse(getUserInfo());
 const {roles = []} = userInfo
-const findItem = roles.find(item => item.code === "RP_CLERK");
+const findItem = roles.find(item => item.code === "RP_CLERK" || item.code === "RP_JA");
   let queryObject = [
     { key: "transitNumber", value: transitNumber }
   ];
