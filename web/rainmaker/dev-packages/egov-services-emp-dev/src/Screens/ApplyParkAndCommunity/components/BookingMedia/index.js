@@ -35,7 +35,7 @@ export default class BookingMedia extends React.Component {
     }
 
     return (
-      <div>
+      <div className="imageMap">
         <img
           id="imageMap-pccMaps"
           src={`${pacc_image}`}
