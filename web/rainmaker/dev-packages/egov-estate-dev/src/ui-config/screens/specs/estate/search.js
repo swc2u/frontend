@@ -44,7 +44,7 @@ console.log(roles);
 let findItem;
 switch(branchType) {
   case "ESTATE_BRANCH":
-    findItem = roles.find(item => item.code === "ES_EB_SECTION_OFFICER");
+    findItem = roles.find(item => item.code === "ES_EB_DISPATCH_OFFICER");
     break;
   case "BUILDING_BRANCH":
     findItem = roles.find(item => item.code === "ES_BB_DISPATCH_OFFICER");
