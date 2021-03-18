@@ -102,8 +102,9 @@ const getData = async (action, state, dispatch) => {
       const estateRentSummary = property.estateRentSummary
       const dueAmount = !!estateRentSummary ? estateRentSummary.balanceRent + estateRentSummary.balanceRentPenalty + estateRentSummary.balanceGSTPenalty + estateRentSummary.balanceGST : "0"
       property = {...property, propertyDetails: {...property.propertyDetails, owners, dueAmount: dueAmount || "0"}}
-      dispatch(prepareFinalObject("property", property));
     }
+    
+    dispatch(prepareFinalObject("property", property));
 
     await hideFooter(action, state, dispatch)
     

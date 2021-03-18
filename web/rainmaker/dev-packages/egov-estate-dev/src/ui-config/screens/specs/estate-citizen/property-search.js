@@ -24,6 +24,7 @@ const header = getCommonHeader({
 });
 
 const getMdmsData = async (dispatch) => {
+  const branchType = getQueryArg(window.location.href, "branchType")
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: commonConfig.tenantId,
@@ -48,7 +49,15 @@ const getMdmsData = async (dispatch) => {
       [],
       mdmsBody
     );
-    return dispatch(prepareFinalObject("searchScreenMdmsData", payload.MdmsRes));
+    dispatch(prepareFinalObject("searchScreenMdmsData", payload.MdmsRes));
+    dispatch(
+      handleField(
+        "property-search",
+        "components.div.children.headerDiv.children.addButton",
+        "visible",
+        branchType === "BUILDING_BRANCH"
+      )
+    )
   } catch (e) {
     console.log(e);
   }
@@ -98,7 +107,7 @@ const citizenEstateSearchAndResult = {
             },
             addButton: {
               componentPath: "Button",
-              visible: getQueryArg(window.location.href, "branchType") === "BUILDING_BRANCH",
+              visible: false,
               gridDefination: {
                 xs: 12,
                 sm: 4,

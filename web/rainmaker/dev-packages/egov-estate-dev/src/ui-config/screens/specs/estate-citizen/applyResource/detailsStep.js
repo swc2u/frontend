@@ -485,6 +485,7 @@ const tableSection = (section, state) => {
 export const setFirstStep = async (state, dispatch, {data_config, format_config}) => {
     const {sections = []} = format_config
     const propertyData = get(state.screenConfiguration.preparedFinalObject, "property");
+    const owners = get(state, "screenConfiguration.preparedFinalObject.property.propertyDetails.owners") || [];
     const uiConfig = await arrayReduce(sections, async (acc, section) => {
         const section_header = section.type === "TABLE" ? tableSection(section, state) : section.type === "EXPANSION_DETAIL" ? expansionSection(section) : getCommonCard({
           header: headerObj(section.header),
