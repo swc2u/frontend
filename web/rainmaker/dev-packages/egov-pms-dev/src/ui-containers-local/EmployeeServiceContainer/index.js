@@ -9,6 +9,7 @@ import { convertEpochToDate } from "egov-ui-framework/ui-config/screens/specs/ut
 import { connect } from "react-redux";
 import { convertDateToEpoch } from "egov-ui-framework/ui-config/screens/specs/utils";
 import EmployeeServiceDataContainer from "../EmployeeServiceDataContainer";
+import PensionArrealContainer from "../PensionArrealContainer"
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 
@@ -30,16 +31,35 @@ class EmployeeServiceContainer extends React.Component {
       dataPath,
       moduleName
     } = this.props;
-    
+    if(moduleName ==="RRP_SERVICE_ARREAR")
+    {
     return (
+      
       <div>
+        
         {ProcessInstances  && (
-          <EmployeeServiceDataContainer ProcessInstances={ProcessInstances} />
+          <PensionArrealContainer ProcessInstances={ProcessInstances} />
         )
         }
         
       </div>
     );
+    }
+    else
+    {
+      return (
+      
+        <div>
+          
+          {ProcessInstances  && (
+            <EmployeeServiceDataContainer ProcessInstances={ProcessInstances} />
+          )
+          }
+          
+        </div>
+      );
+
+    }
   }
 }
 

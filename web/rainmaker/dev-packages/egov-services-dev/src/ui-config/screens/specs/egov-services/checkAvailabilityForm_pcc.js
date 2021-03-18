@@ -13,7 +13,7 @@ import {
 
 import "./checkAvailabilityCss/pccCheckAvailability.css";
 import {
-  
+
   getAvailabilityData,
   getBetweenDays,
 } from "../utils";
@@ -200,7 +200,7 @@ const callBackForBook = async (state, dispatch) => {
     {}
   );
 
-  
+
   console.log(availabilityCheckData, "availabilityCheckData");
   console.log(oldAvailabilityCheckData, "oldAvailabilityCheckData");
   if (availabilityCheckData === undefined || !("bkToDate" in availabilityCheckData) || (availabilityCheckData.bkToDate == null)) {
@@ -213,7 +213,7 @@ const callBackForBook = async (state, dispatch) => {
 
 
     dispatch(setRoute(`/egov-services/applycommercialground`));
-        
+
   }
   else {
 
@@ -277,14 +277,14 @@ console.log(alreadyBookedDaysCount, selectedDaysCount, "aNero from file");
           window.location.href,
           "changeDateVenue"
         );
-       
+
         if ("bkApplicationNumber" in availabilityCheckData) {
           if(changeDateVenue!= null){
             routeUrl= `/egov-services/applyparkcommunitycenter?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&changeDateVenue=Enabled`
-            
+
           }else{
             routeUrl= `/egov-services/applyparkcommunitycenter?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
-            
+
           }
               dispatch(
             setRoute(
@@ -331,10 +331,10 @@ const calculateBetweenDaysCount1 = (startDate, endDate) => {
     return daysCount;
 };
 const callBackForResetCalender = (state, dispatch, action) => {
-  
+
 
   dispatch(prepareFinalObject("isSameDate", null));
-  
+
   const availabilityCheckData = get(
     state,
     "screenConfiguration.preparedFinalObject.availabilityCheckData"
@@ -354,7 +354,7 @@ export const availabilityForm = getCommonCard({
     uiFramework: "custom-atoms",
     componentPath: "Container",
     props: {
-      
+
       className: "checkavailability-footer",
       style: { marginBottom: "10px" },
     },
@@ -442,28 +442,37 @@ export const availabilityForm = getCommonCard({
         // );
       },
       afterFieldChange : (action , state, dispatch)=>{
-        
+
         if (action.value) {
-          
+
 
           let availabilityCheckData = get(
             state,
             "screenConfiguration.preparedFinalObject.availabilityCheckData"
           );
-          
-            
+
+
           let bkBookingType =
             availabilityCheckData !== undefined
               ? availabilityCheckData.bkBookingType
               : "Parks";
 
-        (bkBookingType==="Commercial Ground") ? dispatch(prepareFinalObject("sectorJsonPath", get(
+        // (bkBookingType==="Commercial Ground") ? dispatch(prepareFinalObject("sectorJsonPath", get(
+        //   state,
+        //   "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Booking_Vanue"
+        //    )))
+        //   : dispatch(prepareFinalObject("sectorJsonPath",get(
+        //     state,
+        //     "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Sector"
+        //   )))
+
+        (bkBookingType==="Community Center") ? dispatch(prepareFinalObject("sectorJsonPath", get(
           state,
-          "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Booking_Vanue"
+          "screenConfiguration.preparedFinalObject.ccSectors"
            )))
           : dispatch(prepareFinalObject("sectorJsonPath",get(
             state,
-            "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Sector"
+            "screenConfiguration.preparedFinalObject.parkSectors"
           )))
 
       }
@@ -534,7 +543,7 @@ export const availabilityForm = getCommonCard({
           //     ],
           //     "components.div.children.availabilityTimeSlotWrapper.visible",
           //     bkBookingType === "Parks" ? false : true
-          // ); 
+          // );
 
           // set(
           //     state.screenConfiguration.screenConfig[
@@ -556,7 +565,7 @@ export const availabilityForm = getCommonCard({
                 "components.div.children.availabilityCalendarWrapper.visible",
                 true
               );
-      
+
 
               let availabilityData = await getAvailabilityData(
                 action.value
@@ -583,7 +592,7 @@ export const availabilityForm = getCommonCard({
                     }
 
             }else{
-           
+
           set(
             state.screenConfiguration.screenConfig["checkavailability_pcc"],
             "components.div.children.availabilityCalendarWrapper.visible",
@@ -638,12 +647,12 @@ export const availabilityForm = getCommonCard({
         }
 
       }
-      }, 
+      },
     afterFieldChange:  async (action, state, dispatch) =>{
-      
+
     }
 
-    
+
     },
     // bkFromDate: {
     //     ...getDateField({
@@ -945,7 +954,7 @@ export const availabilityCalendar = getCommonCard({
         xs: 12,
       },
       props: {
-        
+
         className: "checkavailability-footer",
         style: {
           justifyContent: "flex-end",

@@ -33,7 +33,7 @@ ConfigStatus = ConfigStatus.filter(x=>x.code.toUpperCase() === status.toUpperCas
 if(ConfigStatus.length >0)
 IsEdit = false;
 const applicationNumberContainer = () => {
-
+  applicationNumber = getQueryArg(window.location.href, "applicationNumber");
   if (applicationNumber)
     return {
       uiFramework: "custom-atoms-local",
@@ -50,6 +50,7 @@ const applicationNumberContainer = () => {
 };
 const statusContainer = () => {
 
+ status = getQueryArg(window.location.href, "Status");
 if(status)
     return {
     uiFramework: "custom-atoms-local",
@@ -171,7 +172,8 @@ printMenu = [receiptPrintObject];
     beforeInitScreen: (action, state, dispatch) => {
       //let poNumber = getQueryArg(window.location.href, "poNumber");
       let poNumber = getQueryArg(window.location.href, "applicationNumber");
-
+      status = getQueryArg(window.location.href, "Status");
+      applicationNumber = getQueryArg(window.location.href, "applicationNumber");
       let tenantId = getQueryArg(window.location.href, "tenantId");
       const queryObject = [{ key: "tenantId", value: tenantId},{ key: "purchaseOrderNumber", value: poNumber}];
       getSearchResults(queryObject, dispatch,"purchaseOrder")

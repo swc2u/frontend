@@ -43,6 +43,7 @@ const styles = (theme) => ({
 
 class CheckAvailability extends Component {
   state = {
+    arrayData : [],
     NewbkBookingType: "Normal Booking",
     vanueType: "",
     oldBookingData: "",
@@ -97,23 +98,37 @@ class CheckAvailability extends Component {
     let { userInfo, prepareFinalObject } = this.props;
     // this.setState({ vanueType: event.target.value },this.SetDataParkCom());
     this.setState(
-      { vanueType: event.target.value },
+      { vanueType: event.target.value,
+        availabilityCheckData: { bkBookingType: event.target.value }
+      },
       prepareFinalObject("DropDownValue", event.target.value)
     );
 
-    if (this.state.vanueType != undefined) {
-      if (this.state.vanueType == "Commercial Ground") {
-        // alert("Commercial Ground");
-      } else if (
-        this.state.vanueType === "Community Center" ||
-        this.state.vanueType === "Parks"
-      ) {
-        // alert("park & community");
-      }
-    }
-    this.setState({
-      availabilityCheckData: { bkBookingType: event.target.value },
-    });
+    let RequestData = [
+      { key: "venueType", value: event.target.value},
+    ];
+    console.log("RequestData-",RequestData)
+    let ResponseOfSelectedSector = await httpRequest(
+      "bookings/park/community/sector/_fetch",
+      "_search",
+      RequestData,
+    );
+    let LocalityWiseSector = ResponseOfSelectedSector.data
+    console.log("ResponseOfSelectedSector",ResponseOfSelectedSector)
+    console.log("LocalityWiseSector",LocalityWiseSector)
+  
+    let arrayData = LocalityWiseSector.map((item) => {
+      return { code: item.sector, active: item.isActive, name: item.sector }
+  })
+  this.setState({
+    arrayData : arrayData
+  })
+  console.log("arrayData--SecondTime",arrayData)
+  {arrayData.map((child, index) => (
+    console.log(child.name,"DuplicateArrayData")
+  ))}
+  prepareFinalObject("LocalityWiseSector",LocalityWiseSector)
+  
   };
 
 
@@ -452,18 +467,21 @@ class CheckAvailability extends Component {
   };
   callBackForHoldDates = async (e) => {
     const { stateData } = this.props;
-    console.log(stateData, "Nero stateData")
+
     let venueName = '';
+    let sector = '';
     let holdDatesforSave = stateData.screenConfiguration.preparedFinalObject.availabilityCheckData.holdDatesForSave;
     let bookingPropertyType = stateData.screenConfiguration.preparedFinalObject.DropDownValue === "Commercial Ground" || stateData.screenConfiguration.preparedFinalObject.DropDownValue === "Community Center" ? stateData.screenConfiguration.preparedFinalObject.DropDownValue : "Parks";
     if (stateData.screenConfiguration.preparedFinalObject.DropDownValue !== "Commercial Ground") {
       venueName = stateData.screenConfiguration.preparedFinalObject.bkBookingData.id;
+      sector = stateData.screenConfiguration.preparedFinalObject.bkBookingData.sector;
     } else {
       venueName = stateData.screenConfiguration.preparedFinalObject.CommercialEmpBooking.BookingVenue;
+      sector = venueName;
     }
 
     //let venueName = stateData.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation;
-    console.log(this.state.holdingremark.length, "Nero Hold Remark");
+
     this.setState({holdingRemarkLength: this.state.holdingremark.length})
     //ssconsole.log(holdDatesforSave.length, "Nero Holding Date")
     if (this.state.holdingremark.length < 1) {
@@ -487,9 +505,10 @@ class CheckAvailability extends Component {
           fromDate: this.convertEpochToDate(holdDatesforSave[i]),
           toDate: this.convertEpochToDate(holdDatesforSave[i]),
           locked: true,
-          holdingremark: this.state.holdingremark,
+          reasonForHold: this.state.holdingremark,
           bookingVenue: venueName,
-          venueType: bookingPropertyType
+          venueType: bookingPropertyType,
+          sector: sector
         });
       }
     }
@@ -712,9 +731,9 @@ class CheckAvailability extends Component {
                         <MenuItem value="" disabled>
                           Locality
                       </MenuItem>
-                        {arrayData.map((child, index) => (
-                          <MenuItem value={child.code}>{child.name}</MenuItem>
-                        ))}
+                      {this.state.arrayData.map((child, index) => (
+                        <MenuItem value={child.code}>{child.name}</MenuItem>
+                       ))}
                       </Select>
                     </FormControl>
                   </div>

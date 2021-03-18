@@ -17,7 +17,7 @@ import { getBill } from "../../utils";
 import {
     getUserInfo,
   } from "egov-ui-kit/utils/localStorageUtils";
-
+  import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 export const callPGService = async (state, dispatch, item, _businessService) => {
   const tenantId = getQueryArg(window.location.href, "tenantId");
   const consumerCode = getQueryArg(window.location.href, "consumerCode");
@@ -51,7 +51,17 @@ export const callPGService = async (state, dispatch, item, _businessService) => 
   //     : taxAmount;
   // amtToPay = amtToPay ? Number(amtToPay) : taxAmount;
   const amtToPay = Number(taxAmount)
-
+  if(taxAmount === 0){
+    dispatch(toggleSnackbar(
+      true,
+      {
+        labelName: "Amount already Paid !",
+        labelKey: "RP_ERR_FEE_AMOUNT_PAID"
+      },
+      "error"
+    ));
+  }
+  else{
   // if(amtToPay>taxAmount&&!isAdvancePaymentAllowed){
   //   alert("Advance Payment is not allowed");
   //   return;
@@ -143,11 +153,127 @@ export const callPGService = async (state, dispatch, item, _businessService) => 
       moveToFailure(dispatch);
     }
   }
-} catch (error) {
+} }catch (error) {
   console.log(error);
 }
 };
+const callBackForOfflinePayment = async (state, dispatch) => {
+  let isValid = true;
+  isValid = validateFields("components.div.children.formwizardFirstStep.children.offlinePaymentDetails.children.cardContent.children.detailsContainer.children", state, dispatch, "pay")
+  const consumerCode = getQueryArg(window.location, "consumerCode");
+  const tenantId = getQueryArg(window.location, "tenantId");
+  let consumerNumber=consumerCode.split("-")[2]
+ // const businessService = getQueryArg(window.location, "businessService")
+  const businessService = get(state.screenConfiguration.preparedFinalObject,"Owners[0].billingBusinessService")
+  const queryObj = [
+    
+    {
+      key: "consumerCode",
+      value: consumerCode
+    },
+    {
+      key: "tenantId",
+      value: tenantId
+    },
+    {
+      key: "businessService",
+      value: businessService
+    }
+  ];
 
+const billPayload = await getBill(queryObj);
+const taxAmount = Number(get(billPayload, "Bill[0].totalAmount"));
+  if(taxAmount === 0){
+    dispatch(toggleSnackbar(
+      true,
+      {
+        labelName: "Amount already Paid !",
+        labelKey: "RP_ERR_FEE_AMOUNT_PAID"
+      },
+      "error"
+    ));
+  }
+  else{
+    if(isValid) {
+      const applicationNumber = getQueryArg(window.location.href, "consumerCode")
+      const tenantId = getTenantId()
+      const id=get(state.screenConfiguration.preparedFinalObject,"Owners[0].id")
+      const  ownerid=get(state.screenConfiguration.preparedFinalObject,"Owners[0].ownerDetails.ownerId")
+      const paymentInfo = get(state.screenConfiguration.preparedFinalObject, "payment")
+
+      
+let paths
+      if(consumerNumber==="OT"){
+          paths="/rp-services/ownership-transfer/_pay-fee"
+          const payload = 
+          [
+          {
+            id:id,
+            tenantId:tenantId,
+            ownerDetails: {
+              ownerId:ownerid,
+              applicationNumber:applicationNumber,
+              transactionId:paymentInfo.transactionNumber,
+              bankName:paymentInfo.bankName,
+              paymentAmount:paymentInfo.amount,
+              paymentMode:paymentInfo.paymentMode
+            }
+          }
+          ]
+          try {
+            const response = await httpRequest("post",
+            paths,
+            "",
+            [],
+            { Owners : payload })
+            if(!!response) {
+              const path = `/rented-properties/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${applicationNumber}&tenantId=${tenantId}&type=${businessService}`
+              dispatch(
+                setRoute(path)
+              );
+            }
+          } catch (error) {
+            console.log("error", error)
+          }
+      }
+      else if(consumerNumber==="DC"){
+           paths ="/rp-services/duplicatecopy/_pay-fee"
+           const res = 
+           [
+           {
+             
+             tenantId:tenantId,
+              
+               applicationNumber:applicationNumber,
+               transactionId:paymentInfo.transactionNumber,
+               bankName:paymentInfo.bankName,
+               paymentAmount:paymentInfo.amount,
+               paymentMode:paymentInfo.paymentMode
+            
+           }
+           ]
+           try {
+            const response = await httpRequest("post",
+            paths,
+            "",
+            [],
+            { DuplicateCopyApplications : res })
+            if(!!response) {
+              const path = `/rented-properties/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${applicationNumber}&tenantId=${tenantId}&type=${businessService}`
+              dispatch(
+                setRoute(path)
+              );
+            }
+          } catch (error) {
+            console.log("error", error)
+          }
+      }
+
+ 
+    }
+  }
+ 
+}
 const moveToSuccess = (href, dispatch, receiptNumber) => {
   const applicationNo = getQueryArg(href, "applicationNumber");
   const tenantId = getQueryArg(href, "tenantId");
@@ -381,6 +507,7 @@ export const footer = getCommonApplyFooter({
     uiFramework: "custom-atoms-local",
     moduleName: "egov-rented-properties",
     componentPath: "MenuButton",
+    visible: process.env.REACT_APP_NAME === "Citizen",
     props: {
       data: {
         label: {labelName : "MAKE PAYMENT" , labelKey :"COMMON_MAKE_PAYMENT"},
@@ -389,6 +516,30 @@ export const footer = getCommonApplyFooter({
         style: { marginLeft: 5, marginRight: 15, backgroundColor: "#FE7A51", color: "#fff", border: "none", height: "60px", width: "250px" } },
         menu: []
       }
+    },
+  },
+  paymentButton: {
+    componentPath: "Button",
+    visible: process.env.REACT_APP_NAME !== "Citizen",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "180px",
+        height: "48px",
+        marginRight: "45px",
+        borderRadius: "inherit"
+      }
+    },
+    children: {
+          submitButtonLabel: getLabel({
+            labelName: "MAKE PAYMENT",
+            labelKey: "COMMON_MAKE_PAYMENT"
+          })
+        },
+    onClickDefination: {
+      action: "condition",
+      callBack: callBackForOfflinePayment
     },
   }
 });
