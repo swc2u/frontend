@@ -255,7 +255,14 @@ const getData = async (action, state, dispatch, purpose, status, tenant, transit
       )
     );
   }
-
+const getTransitnumber=(applictionnumber)=>{
+  debugger
+  var array = applictionnumber.split("-");
+  array.splice(array.length - 6);
+  array.splice(0, 1);
+  let transitNumber = array.join("-");
+  return transitNumber
+}
 
 const screenConfig = {
     uiFramework: "material-ui",
@@ -271,7 +278,7 @@ const screenConfig = {
         window.location.href,
         "applicationNumber"
       );
-      transitNumber = !!applicationNumber && applicationNumber.startsWith("SITE") ? applicationNumber.split("-")[1] : transitNumber
+      transitNumber = !!applicationNumber && applicationNumber.startsWith("SITE") ? getTransitnumber(applicationNumber) : transitNumber
       const tenant = getQueryArg(window.location.href, "tenantId");
       const type = getQueryArg(window.location.href , "type")
       const businessService = getQueryArg(window.location.href, "businessService")
