@@ -196,14 +196,14 @@ const callBackForNext = async (state, dispatch) => {
                     "data.bkBookingType",
                     ""
                 );
-               
+
                 let businessService=""
                 if(bookType==="Community Center"){
                     businessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
                 }else{
                     businessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
                 }
-                 
+
                  const reviewUrl = `/egov-services/applyparkcommunitycenter?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
                 dispatch(setRoute(reviewUrl));
 
@@ -227,6 +227,11 @@ const callBackForNext = async (state, dispatch) => {
                     "documentsUploadRedux[0].documents",
                     []
                 );
+                const documentType = get(
+                    state.screenConfiguration.preparedFinalObject,
+                    "documentsUploadRedux[0].dropdown.value",
+                    []
+                );
                 const documentsPreview =
                     uploadedDocData &&
                     uploadedDocData.map((item) => {
@@ -236,6 +241,7 @@ const callBackForNext = async (state, dispatch) => {
                             linkText: "View",
                             name: item.fileName,
                             fileStoreId: item.fileStoreId,
+                            documentType: documentType
                         };
                     });
 
@@ -396,7 +402,7 @@ export const renderSteps = (activeStep, dispatch) => {
                     ),
                     dispatch
                 );
-                break;   
+                break;
         default:
             dispatchMultipleFieldChangeAction(
                 "applyparkcommunitycenter",
