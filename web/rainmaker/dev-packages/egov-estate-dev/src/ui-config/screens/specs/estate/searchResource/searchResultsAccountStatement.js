@@ -42,6 +42,7 @@ export const searchResultsAccountStatement = {
         getTextToLocalMapping("Total Due"),
         getTextToLocalMapping("Account Balance"),
         getTextToLocalMapping("Receipt No."),
+        getTextToLocalMapping("comment"),
       {
         name: "propertyId",
         options: {
