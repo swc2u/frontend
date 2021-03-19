@@ -299,7 +299,11 @@ export const applicationSuccessFooter = (
                 case 'RENTED_PROPERTIES_COLONY_KUMHAR.DUPLICATE_ALLOTMENT_LETTER':                   
               let consumerCodes = getQueryArg(window.location.href, "applicationNumber");
               if(consumerCodes.startsWith('SITE')){
-                let transitNumber = consumerCodes.split('-')[1]
+                var array = consumerCodes.split("-");
+                array.splice(array.length - 6);
+                array.splice(0, 1);
+                let transitNumber = array.join("-");
+                // let transitNumber = consumerCodes.split('-')[1]
                 let queryObject = [
                   { key: "transitNumber", value: transitNumber },
                   {key:"state",value:"PM_APPROVED"},
@@ -398,7 +402,11 @@ export const applicationSuccessFooter = (
 
               let consumerCodes = getQueryArg(window.location.href, "applicationNumber");
               if(consumerCodes.startsWith('SITE')){
-                let transitNumber = consumerCodes.split('-')[1]
+                var array = consumerCodes.split("-");
+                array.splice(array.length - 6);
+                array.splice(0, 1);
+                let transitNumber = array.join("-");
+                // let transitNumber = consumerCodes.split('-')[1]
                 let queryObject = [
                   { key: "transitNumber", value: transitNumber },
                   {key:"state",value:"PM_APPROVED"},
