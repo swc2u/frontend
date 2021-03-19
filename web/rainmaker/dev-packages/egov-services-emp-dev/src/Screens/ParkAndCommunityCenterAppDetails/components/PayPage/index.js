@@ -186,29 +186,7 @@ class SummaryDetails extends Component {
       pIFSC,state,selectedComplaint
     } = this.props;
     console.log("this.props---", this.props);
-if(selectedComplaint !== undefined && selectedComplaint!== null){
 
-let Booking = {
-    "bkApplicationNumber": selectedComplaint.bkApplicationNumber,
-    "bkSector": selectedComplaint.bkSector,
-    "bkBookingVenue": selectedComplaint.bkBookingVenue,
-    "bkBookingType": selectedComplaint.bkBookingType,
-    "bkFromDate": selectedComplaint.bkFromDate,
-    "bkToDate": selectedComplaint.bkToDate
-} 
-console.log("RequestBodyAvailCheckForSameTime",Booking)
-let AvailCheckForSameTime = await httpRequest(
-  "bookings/park/community/booked/dates/_search",
-  "_search",
-  [],
-  {Booking:Booking}
-);
-console.log("AvailCheckForSameTime",AvailCheckForSameTime)
-let checkResponseAvailForSameTime = AvailCheckForSameTime !== undefined && AvailCheckForSameTime !== null ? 
-(AvailCheckForSameTime.data && AvailCheckForSameTime.data !== null && AvailCheckForSameTime.data !== null ?AvailCheckForSameTime.data:""): ""
-if(checkResponseAvailForSameTime !== ""){
-  if(AvailCheckForSameTime.data.length == 0){
-console.log("Come to call payment API")
     let ppMode = paymentMode && paymentMode ? paymentMode : " ";
     let PaymentReqBody;
     if (ppMode == "Cash") {
@@ -327,31 +305,6 @@ console.log("Come to call payment API")
 
     this.props.history.push(`/egov-services/success-payment`);
 
-
-  }
-  else{
-    this.props.toggleSnackbarAndSetText(
-        true,
-        {
-          labelName: "Dates are already booked",
-          labelKey: `BK_ERR_PACC_DATE_ALREADY_BOOKED`
-        },
-        "error"
-      );
-}
-}
-else{
-this.props.toggleSnackbarAndSetText(
-    true,
-    {
-      labelName: "Somthing went wrong",
-      labelKey: `BK_ERR_PACC_SOMTHING_ERR_NOT_FOUND`
-    },
-    "error"
-  );
-}
-
-}
 };
 
   firstStep = (e) => {
