@@ -347,6 +347,7 @@ const paymentMode = {
     labelKey: "RP_PAYMENT_MODE_PLACEHOLDER",
   },
   required: true,
+  visible: process.env.REACT_APP_NAME !== "Citizen",
   optionValue: "value",
   optionLabel: "label",
   jsonPath: "paymentInfo.paymentMode",
@@ -834,7 +835,7 @@ const payment = {
                 }
               }
             },
-            detailsContainer:  process.env.REACT_APP_NAME !== "Citizen" ? detailsContainer : detailsContainerCitizen,
+            detailsContainer: detailsContainer,
             footer: paymentFooter
           }
         }
