@@ -43,7 +43,7 @@ class AllRequests extends Component {
     sortPopOpen: false,
     errorText: "",
     currency: '',
-    open: false, setOpen: false,applicationList:[],
+    open: false, setOpen: false,applicationList:[],appStatusArray:[],
   };
   style = {
     iconStyle: {
@@ -161,14 +161,22 @@ class AllRequests extends Component {
   };
 
   onbookingChange = e => {
+    let {applicationType}=this.props;
+    let appStats;
     const inputValue = e.target.value;
     this.setState({ bookingType: inputValue });
+      applicationType&&applicationType.Status.forEach((item)=>{
+    if(e.target.value==item.code){
+        appStats=item.status}
+      })
+    
+      this.setState({ appStatusArray: appStats });
+
   };
   onApplicationStatusChange = e => {
     const inputValue = e.target.value;
     this.setState({ applicationStatus: inputValue });
   };
-
   onSearch = () => {
     const { complaintNo, mobileNo, bookingType, applicationStatus, fromDate, toDate } = this.state;
     const { fetchApplications, fetchMccApplications, searchForm, userInfo, toggleSnackbarAndSetText } = this.props;
@@ -365,7 +373,7 @@ class AllRequests extends Component {
       top: "30px"
 
     };
-    const { loading, history } = this.props;
+    const { loading, history,applicationType } = this.props;
     const {
       mobileNo,
       bookingType,
@@ -375,7 +383,7 @@ class AllRequests extends Component {
       sortPopOpen,
       errorText,
       fromDate,
-      toDate
+      toDate,appStatusArray
     } = this.state;
     const tabStyle = {
       letterSpacing: "0.6px"
@@ -623,7 +631,7 @@ class AllRequests extends Component {
                         color="rgba(0,0,0,0.60)"
                         fontSize="12px"
                       />
-                    }
+                    } 
                     onChange={(e, value) => this.onComplaintChange(e)}
                     underlineStyle={{
                       bottom: 7,
@@ -636,39 +644,7 @@ class AllRequests extends Component {
                     hintStyle={{ width: "100%" }}
                   />
                 </div>
-
-
-                <div className="col-sm-4 col-xs-12" style={{ minHeight: '72px', marginTop: '10px' }}>
-
-
-
-                  <FormControl style={{ width: '100%' }}>
-                    <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label">Application Status</InputLabel>
-                    <Select
-                      maxWidth={false}
-                      labelId="demo-controlled-open-select-label"
-                      id="demo-controlled-open-select"
-                      open={this.state.SetOpen}
-                      onClose={() => this.handleClose()}
-                      onOpen={() => this.handleOpen()}
-                      value={this.state.applicationStatus}
-                      displayEmpty
-                      onChange={(e, value) => this.onApplicationStatusChange(e)}
-                    >
-                      <MenuItem value="" disabled>Application Status</MenuItem>
-                      <MenuItem value='PENDINGAPPROVAL'>Pending Approval</MenuItem>
-                      <MenuItem value='PENDINGPAYMENT'>Pending Payment</MenuItem>
-                      <MenuItem value='PENDINGUPDATE'>Pending Update</MenuItem>
-                      <MenuItem value='PENDINGASSIGNMENTDRIVER'>Pending Assignment Driver</MenuItem>
-                    </Select>
-                  </FormControl>
-              
-                </div>
                 <div className="col-sm-4 col-xs-12" style={{ minHeight: '72px', paddingTop: "18px", paddingLeft: "8px" }}>
-                
-
-
-
                   <FormControl style={{ width: '100%' }}>
                     <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label">Booking Type</InputLabel>
                     <Select
@@ -682,14 +658,41 @@ class AllRequests extends Component {
                       value={bookingType}
                       onChange={(e, value) => this.onbookingChange(e)}
                     >
-                      <MenuItem value="" disabled>Booking Type</MenuItem>
-                      <MenuItem value='OSBM'>Open Space To Store Building Material</MenuItem>
-                      <MenuItem value='WATER_TANKERS'>Water Tankers</MenuItem>
+                     <MenuItem value=""disabled>Booking Type</MenuItem>
+                      {applicationType && applicationType.Status.map((item, index) => {
+                       return item.code == "NLUJM" ?  <MenuItem value={item.code}>{item.name}</MenuItem> : ""
+                        
+            })}
                     </Select>
                   </FormControl>
+                  </div>
 
-
+                  <div className="col-sm-4 col-xs-12" style={{ minHeight: '72px', paddingTop: "18px", paddingLeft: "8px" }}>
+                <FormControl style={{ width: '100%' }}>
+                    <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label">Application Status</InputLabel>
+                    <Select
+                      maxWidth={false}
+                      labelId="demo-controlled-open-select-label"
+                      id="demo-controlled-open-select"
+                      open={this.state.SetOpen}
+                      onClose={() => this.handleClose()}
+                      onOpen={() => this.handleOpen()}
+                      value={this.state.applicationStatus}
+                      displayEmpty
+                      onChange={(e, value) => this.onApplicationStatusChange(e)}
+                    > 
+                    <MenuItem value="" disabled>Application Status</MenuItem>
+                    {appStatusArray && appStatusArray.map((item, index) => (
+                        <MenuItem value={item.code}>{item.name}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>                           
+               
                 </div>
+    
+
+
+               
                 <div className="col-sm-4 col-xs-12" style={{ minHeight: '72px', paddingTop: "10px" }}>
                   <TextField
                     id="from-Date"
@@ -768,9 +771,6 @@ class AllRequests extends Component {
                     }}
                   />
                 </div>
-
-
-
                 <div
                   className="col-sm-12 col-xs-12"
                   style={{ marginTop: 10, paddingRight: 8, marginLeft: "16%" }}
@@ -1015,7 +1015,7 @@ const roleFromUserInfo = (roles = [], role) => {
 const mapStateToProps = state => {
   const { bookings, common, screenConfiguration = {} } = state || {};
   // const { categoriesById, byId, order } = bookings;
-  const { fetchSuccess, MccApplicationData } = bookings;
+  const { fetchSuccess, MccApplicationData,applicationType } = bookings;
   const { preparedFinalObject = {} } = screenConfiguration;
   const { pgrComplaintCount = {} } = preparedFinalObject;
 
@@ -1066,7 +1066,8 @@ const mapStateToProps = state => {
     employeeComplaints,
     role,
     loading,
-    transformedComplaints
+    transformedComplaints,
+    applicationType
   };
 };
 

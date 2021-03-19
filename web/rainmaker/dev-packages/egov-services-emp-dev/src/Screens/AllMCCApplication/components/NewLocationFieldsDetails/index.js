@@ -108,7 +108,7 @@ class BookingDetails extends Component {
                
 
                 <div className="col-8" style={{ paddingLeft: "10px" }}>
-                  <Label label="BK_MCC_NEW_LOCATION_DETAILS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
+                  <Label label="BK_OSWMCC_NEW_LOC_DETAILS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
                 </div>
 
                 {/* <button onClick={() => this.editButtonOnClick()}>Edit Details</button> */}
