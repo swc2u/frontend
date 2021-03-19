@@ -147,11 +147,20 @@ class BookingDetails extends Component {
                 </div>
               </div>
               <div key={10} className="complaint-detail-full-width">
-                <Dialog maxWidth={false} style={{ zIndex: 2000 }} onClose={() => { this.handleClose() }} aria-labelledby="customized-dialog-title" open={this.state.open} >
+                <Dialog   maxWidth={false} style={{ zIndex: 2000 }} onClose={() => { this.handleClose() }} aria-labelledby="customized-dialog-title" open={this.state.open} >
+                 
+                <style>
+                  {`
+              @media screen and (min-width: 320px) and (max-width: 568px) {
+                .taskStatusBody{    padding: 0 10px 24px !important;}
+                }
+              `}
+              </style>
+              
                   <DialogTitle id="customized-dialog-title" onClose={() => { this.handleClose() }}>
                     <b>Task Status</b>
                   </DialogTitle>
-                  <DialogContent>
+                  <DialogContent className="taskStatusBody">
                     <Typography>
                       <Stepper orientation="vertical">
                         {ProcessInstances.map(
