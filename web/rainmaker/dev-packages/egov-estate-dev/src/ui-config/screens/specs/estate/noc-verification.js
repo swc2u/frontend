@@ -1418,7 +1418,7 @@ const detailsContainer = {
   visible: true
 }
 
-const validateNocForm = (state, dispatch) => {
+const validateNocForm = (state, handleFieldChange) => {
   const isNocVerificationDetailValid = validateFields(
     "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children",
     state,
@@ -1438,31 +1438,31 @@ const validateNocForm = (state, dispatch) => {
   const sameHeightOfSideStreetInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.sameHeightOfSideStreetInch")
 
   if(!frontElevationWidth) {
-    dispatch(prepareFinalObject("Applications[0].applicationDetails.frontElevationWidth", "0"))
+    handleFieldChange("Applications[0].applicationDetails.frontElevationWidth", "0")
   }
   if(!frontElevationWidthInch) {
-    dispatch(prepareFinalObject("Applications[0].applicationDetails.frontElevationWidthInch", "0"))
+    handleFieldChange("Applications[0].applicationDetails.frontElevationWidthInch", "0")
   }
   if(!streetWidth) {
-    dispatch(prepareFinalObject("Applications[0].applicationDetails.streetWidth", "0"))
+    handleFieldChange("Applications[0].applicationDetails.streetWidth", "0")
   }
   if(!streetWidthInch) {
-    dispatch(prepareFinalObject("Applications[0].applicationDetails.streetWidthInch", "0"))
+    handleFieldChange("Applications[0].applicationDetails.streetWidthInch", "0")
   }
   if(!otherSideStreet) {
-    dispatch(prepareFinalObject("Applications[0].applicationDetails.otherSideStreet", "0"))
+    handleFieldChange("Applications[0].applicationDetails.otherSideStreet", "0")
   }
   if(!sameWidthOfSideStreet) {
-    dispatch(prepareFinalObject("Applications[0].applicationDetails.sameWidthOfSideStreet", "0"))
+    handleFieldChange("Applications[0].applicationDetails.sameWidthOfSideStreet", "0")
   }
   if(!sameWidthOfSideStreetInch) {
-    dispatch(prepareFinalObject("Applications[0].applicationDetails.sameWidthOfSideStreetInch", "0"))
+    handleFieldChange("Applications[0].applicationDetails.sameWidthOfSideStreetInch", "0")
   }
   if(!sameHeightOfSideStreet) {
-    dispatch(prepareFinalObject("Applications[0].applicationDetails.sameHeightOfSideStreet", "0"))
+    handleFieldChange("Applications[0].applicationDetails.sameHeightOfSideStreet", "0")
   }
   if(!sameHeightOfSideStreetInch) {
-    dispatch(prepareFinalObject("Applications[0].applicationDetails.sameHeightOfSideStreetInch", "0"))
+    handleFieldChange("Applications[0].applicationDetails.sameHeightOfSideStreetInch", "0")
   }
   if(isCommercialActivity === "true" || isCommercialActivity === true) {
     const groundFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivity")
@@ -1472,22 +1472,22 @@ const validateNocForm = (state, dispatch) => {
     const secondFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivity")
     const secondFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivityInch")
     if(!groundFloorCommercialActivity) {
-      dispatch(prepareFinalObject("Applications[0].applicationDetails.groundFloorCommercialActivity", "0"))
+      handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivity", "0")
     }
     if(!groundFloorCommercialActivityInch) {
-      dispatch(prepareFinalObject("Applications[0].applicationDetails.groundFloorCommercialActivityInch", "0"))
+      handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivityInch", "0")
     }
     if(!firstFloorCommercialActivity) {
-      dispatch(prepareFinalObject("Applications[0].applicationDetails.firstFloorCommercialActivity", "0"))
+      handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivity", "0")
     }
     if(!firstFloorCommercialActivityInch) {
-      dispatch(prepareFinalObject("Applications[0].applicationDetails.firstFloorCommercialActivityInch", "0"))
+      handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivityInch", "0")
     }
     if(!secondFloorCommercialActivity) {
-      dispatch(prepareFinalObject("Applications[0].applicationDetails.secondFloorCommercialActivity", "0"))
+      handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivity", "0")
     }
     if(!secondFloorCommercialActivityInch) {
-      dispatch(prepareFinalObject("Applications[0].applicationDetails.secondFloorCommercialActivityInch", "0"))
+      handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivityInch", "0")
     }
   }
 
