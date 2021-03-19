@@ -51,6 +51,7 @@ import {
 } from "../../../../ui-utils/commons";
 import moment from "moment";
 import { BILLING_BUSINESS_SERVICE_DC, BILLING_BUSINESS_SERVICE_OT, WORKFLOW_BUSINESS_SERVICE_OT, WORKFLOW_BUSINESS_SERVICE_DC, BILLING_BUSINESS_SERVICE_RENT } from "../../../../ui-constants";
+import { FETCHRECEIPT } from "egov-ui-kit/utils/endPoints";
 
 export const getCommonApplyFooter = children => {
   return {
@@ -734,31 +735,21 @@ try {
 }
 }
 
-export const download = (receiptQueryString, Properties, data, generatedBy,type, mode = "download") => {
-  const FETCHRECEIPT = {
+export const download = async (receiptQueryString, Properties, data, generatedBy,type, mode = "download") => {
+  const FETCHRECEIPT_PAYMENT = {
     GET: {
       URL: "/collection-services/payments/_search",
       ACTION: "_get",
     },
   };
-  const DOWNLOADRECEIPT = {
+  const DOWNLOADRECEIPT= {
     GET: {
       URL: "/pdf-service/v1/_create",
       ACTION: "_get",
     },
   };
   try {
-    httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
-      // const queryStr = [{
-      //     key: "key",
-      //     value: "rp-payment-receipt"
-      //   },
-      //   {
-      //     key: "tenantId",
-      //     value: receiptQueryString[1].value.split('.')[0]
-      //   }
-      // ]
-
+    httpRequest("post", FETCHRECEIPT_PAYMENT.GET.URL, FETCHRECEIPT_PAYMENT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
       const queryStr = [{
         key: "key",
         value: `rp-${type}-receipt`
@@ -772,76 +763,159 @@ export const download = (receiptQueryString, Properties, data, generatedBy,type,
         console.log("Could not find any receipts");
         return;
       }
-      let {
-        Payments
-      } = payloadReceiptDetails;
-      let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
 
-      let {
-        billAccountDetails
-      } = Payments[0].paymentDetails[0].bill.billDetails[0];
-      billAccountDetails = billAccountDetails.map(({
-        taxHeadCode,
-        ...rest
-      }) => ({
-        ...rest,
-        taxHeadCode: taxHeadCode.includes("_APPLICATION_FEE") ? "RP_DUE" : taxHeadCode.includes("_PENALTY") ? "RP_PENALTY" : taxHeadCode.includes("_TAX") ? "RP_TAX" : taxHeadCode.includes("_ROUNDOFF") ? "RP_ROUNDOFF" : taxHeadCode.includes("_PUBLICATION_FEE") ? "RP_CHARGES" : taxHeadCode
-      }))
-      Payments = [{
-        ...Payments[0],
-        paymentDetails: [{
-          ...Payments[0].paymentDetails[0],
-          bill: {
-            ...Payments[0].paymentDetails[0].bill,
-            billDetails: [{
-              ...Payments[0].paymentDetails[0].bill.billDetails[0],
-              billAccountDetails
-            }]
-          }
-        }]
-      }]
+      let Payments = []
+      if(type != 'rent-payment'){
+        Payments = payloadReceiptDetails.Payments;
+        let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
 
-      if(time){
-        time = moment(new Date(time)).format("h:mm:ss a")
-      }
-      Payments = [{
-        ...Payments[0],paymentDetails:[{
-          ...Payments[0].paymentDetails[0],auditDetails:{
-            ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
-          }
+        let {
+          billAccountDetails
+        } = Payments[0].paymentDetails[0].bill.billDetails[0];
+        billAccountDetails = billAccountDetails.map(({
+          taxHeadCode,
+          ...rest
+        }) => ({
+          ...rest,
+          taxHeadCode: taxHeadCode.includes("_APPLICATION_FEE") ? "RP_DUE" : taxHeadCode.includes("_PENALTY") ? "RP_PENALTY" : taxHeadCode.includes("_TAX") ? "RP_TAX" : taxHeadCode.includes("_ROUNDOFF") ? "RP_ROUNDOFF" : taxHeadCode.includes("_PUBLICATION_FEE") ? "RP_CHARGES" : taxHeadCode
+        }))
+        Payments = [{
+          ...Payments[0],
+          paymentDetails: [{
+            ...Payments[0].paymentDetails[0],
+            bill: {
+              ...Payments[0].paymentDetails[0].bill,
+              billDetails: [{
+                ...Payments[0].paymentDetails[0].bill.billDetails[0],
+                billAccountDetails
+              }]
+            }
+          }]
         }]
-      }]
-      
-      const roleExists = ifUserRoleExists("CITIZEN");
-       if(roleExists && type==="rent-payment"){
-      
-          Properties[0]["offlinePaymentDetails"] = []
+  
+        if(time){
+          time = moment(new Date(time)).format("h:mm:ss a")
+        }
+        Payments = [{
+          ...Payments[0],paymentDetails:[{
+            ...Payments[0].paymentDetails[0],auditDetails:{
+              ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
+            }
+          }]
+        }]
         
-          let transactionNumber = {
-            "transactionNumber" : Payments[0].transactionNumber
+        const roleExists = ifUserRoleExists("CITIZEN");
+         if(roleExists && type==="rent-payment"){
+        
+            Properties[0]["offlinePaymentDetails"] = []
+          
+            let transactionNumber = {
+              "transactionNumber" : Payments[0].transactionNumber
+            }
+            Properties[0].offlinePaymentDetails.push(transactionNumber)
+        }
+        
+        httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
+            Payments,
+            Properties,
+            generatedBy
+          }, {
+            'Accept': 'application/json'
+          }, {
+            responseType: 'arraybuffer'
+          })
+          .then(res => {
+            res.filestoreIds[0]
+            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
+              res.filestoreIds.map(fileStoreId => {
+                downloadReceiptFromFilestoreID(fileStoreId, mode)
+              })
+            } else {
+              console.log("Error In Receipt Download");
+            }
+          });
+      }else{
+        const receiptNumber = payloadReceiptDetails.Payments[0].paymentDetails[0].receiptNumber
+        const query = [{
+            key: "receiptNumbers",
+            value: receiptNumber
+        }, {
+            key: "tenantId",
+            value: receiptQueryString[1].value.split('.')[0]
+        }]
+        httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, query).then((response) => {
+          Payments = response.Payments;
+          let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
+
+          let {
+            billAccountDetails
+          } = Payments[0].paymentDetails[0].bill.billDetails[0];
+          billAccountDetails = billAccountDetails.map(({
+            taxHeadCode,
+            ...rest
+          }) => ({
+            ...rest,
+            taxHeadCode: taxHeadCode.includes("_APPLICATION_FEE") ? "RP_DUE" : taxHeadCode.includes("_PENALTY") ? "RP_PENALTY" : taxHeadCode.includes("_TAX") ? "RP_TAX" : taxHeadCode.includes("_ROUNDOFF") ? "RP_ROUNDOFF" : taxHeadCode.includes("_PUBLICATION_FEE") ? "RP_CHARGES" : taxHeadCode
+          }))
+          Payments = [{
+            ...Payments[0],
+            paymentDetails: [{
+              ...Payments[0].paymentDetails[0],
+              bill: {
+                ...Payments[0].paymentDetails[0].bill,
+                billDetails: [{
+                  ...Payments[0].paymentDetails[0].bill.billDetails[0],
+                  billAccountDetails
+                }]
+              }
+            }]
+          }]
+    
+          if(time){
+            time = moment(new Date(time)).format("h:mm:ss a")
           }
-          Properties[0].offlinePaymentDetails.push(transactionNumber)
-      }
-      
-      httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
-          Payments,
-          Properties,
-          generatedBy
-        }, {
-          'Accept': 'application/json'
-        }, {
-          responseType: 'arraybuffer'
-        })
-        .then(res => {
-          res.filestoreIds[0]
-          if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-            res.filestoreIds.map(fileStoreId => {
-              downloadReceiptFromFilestoreID(fileStoreId, mode)
+          Payments = [{
+            ...Payments[0],paymentDetails:[{
+              ...Payments[0].paymentDetails[0],auditDetails:{
+                ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
+              }
+            }]
+          }]
+          
+          const roleExists = ifUserRoleExists("CITIZEN");
+           if(roleExists && type==="rent-payment"){
+          
+              Properties[0]["offlinePaymentDetails"] = []
+            
+              let transactionNumber = {
+                "transactionNumber" : Payments[0].transactionNumber
+              }
+              Properties[0].offlinePaymentDetails.push(transactionNumber)
+          }
+          
+          httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
+              Payments,
+              Properties,
+              generatedBy
+            }, {
+              'Accept': 'application/json'
+            }, {
+              responseType: 'arraybuffer'
             })
-          } else {
-            console.log("Error In Receipt Download");
-          }
-        });
+            .then(res => {
+              res.filestoreIds[0]
+              if (res && res.filestoreIds && res.filestoreIds.length > 0) {
+                res.filestoreIds.map(fileStoreId => {
+                  downloadReceiptFromFilestoreID(fileStoreId, mode)
+                })
+              } else {
+                console.log("Error In Receipt Download");
+              }
+            });
+        })
+        // const response =  httpRequest(FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, query);
+        // Payments = response.Payments;
+      }
     })
   } catch (exception) {
     alert('Some Error Occured while downloading Receipt!');

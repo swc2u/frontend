@@ -164,7 +164,8 @@ const callBackForOfflinePayment = async (state, dispatch) => {
   const tenantId = getQueryArg(window.location, "tenantId");
   let consumerNumber=consumerCode.split("-")[2]
  // const businessService = getQueryArg(window.location, "businessService")
-  const businessService = get(state.screenConfiguration.preparedFinalObject,"Owners[0].billingBusinessService")
+  const businessService = get(state.screenConfiguration.preparedFinalObject,"Owners[0].billingBusinessService") || get(state.screenConfiguration.preparedFinalObject,"DuplicateCopyApplications[0].billingBusinessService")
+  || getQueryArg(window.location, "businessService")
   const queryObj = [
     
     {
