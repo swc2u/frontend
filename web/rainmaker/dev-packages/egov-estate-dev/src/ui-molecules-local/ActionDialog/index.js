@@ -208,7 +208,7 @@ class ActionDialog extends React.Component {
             hardCopyReceivedDateError: true
           })
         }
-      } else if(buttonLabel === "FORWARD" && applicationState === "ES_BB_PENDING_DRAFSMAN_CALCULATION") {
+      } else if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DRAFSMAN_CALCULATION") {
         bb_payment_config = bb_payment_config.map(payment => ({...payment, isError: !data.applicationDetails[payment.path]}))
         const isError = bb_payment_config.some(payment => !!payment.isError)
         if(isError) {
@@ -373,7 +373,7 @@ class ActionDialog extends React.Component {
                     {!!this.state.hardCopyReceivedDateError && (<span style={{color: "red"}}>Please enter hard copy received date</span>)}
                     </Grid>
                   )}
-                  {applicationState === "ES_BB_PENDING_DRAFSMAN_CALCULATION" && buttonLabel === "FORWARD" && bb_payment_config.map(payment => (
+                  {applicationState === "ES_PENDING_DRAFSMAN_CALCULATION" && buttonLabel === "FORWARD" && bb_payment_config.map(payment => (
                     <Grid payment sm="12">
                     <TextFieldContainer
                     InputLabelProps={{ shrink: true }}
