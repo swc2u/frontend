@@ -170,7 +170,7 @@ if(employeeList.length===0){
           labelKey: `WF_${moduleName.toUpperCase()}_${buttonLabel}`,
           link: redirectLink ? () => window.location.href = redirectLink : () => {
             if (screenName == "noc-verification") {
-              let isNocFormValid = validateFn(this.props.state);
+              let isNocFormValid = validateFn(this.props.state, this.props.dispatch);
               if (isNocFormValid) {
                 this.openActionDialog(item);
               }
