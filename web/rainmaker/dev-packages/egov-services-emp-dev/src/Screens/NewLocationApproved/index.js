@@ -18,7 +18,7 @@ class NewLocationApproved extends Component {
     this.props.history.push(`/egov-services/all-applications`);
   
   };
-
+ 
   render() {
     let {applicationNumber} = this.props;
     return (
@@ -26,7 +26,7 @@ class NewLocationApproved extends Component {
         <CommonSuccessMessage
           headermessage="BK_ES_APPLICATION_HEADER_MESSAGE"
           successmessage="BK_ES_APPLICATION_RESOLVED_SUCCESS_MESSAGE"
-          secondaryLabel="BK_CS_COMMON_SEND_MESSAGE_APPROVAL"
+          secondaryLabel= "BK_CS_COMMON_SEND_MESSAGE_APPROVAL"  //"BK_CS_COMMON_SEND_MESSAGE"
           containerStyle={{ display: "inline-block" }}
           icon={<Icon action="navigation" name="check" />}
           backgroundColor={"#22b25f"}
