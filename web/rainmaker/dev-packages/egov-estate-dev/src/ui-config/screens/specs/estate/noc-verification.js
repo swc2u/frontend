@@ -1427,7 +1427,43 @@ const validateNocForm = (state, dispatch) => {
   )
 
   const isCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.commercialActivity")
-  
+  const frontElevationWidth = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.frontElevationWidth")
+  const frontElevationWidthInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.frontElevationWidthInch")
+  const streetWidth = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.streetWidth")
+  const streetWidthInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.streetWidthInch")
+  const otherSideStreet = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.otherSideStreet")
+  const sameWidthOfSideStreet = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.sameWidthOfSideStreet")
+  const sameWidthOfSideStreetInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.sameWidthOfSideStreetInch")
+  const sameHeightOfSideStreet = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.sameHeightOfSideStreet")
+  const sameHeightOfSideStreetInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.sameHeightOfSideStreetInch")
+
+  if(!frontElevationWidth) {
+    dispatch(prepareFinalObject("Applications[0].applicationDetails.frontElevationWidth", "0"))
+  }
+  if(!frontElevationWidthInch) {
+    dispatch(prepareFinalObject("Applications[0].applicationDetails.frontElevationWidthInch", "0"))
+  }
+  if(!streetWidth) {
+    dispatch(prepareFinalObject("Applications[0].applicationDetails.streetWidth", "0"))
+  }
+  if(!streetWidthInch) {
+    dispatch(prepareFinalObject("Applications[0].applicationDetails.streetWidthInch", "0"))
+  }
+  if(!otherSideStreet) {
+    dispatch(prepareFinalObject("Applications[0].applicationDetails.otherSideStreet", "0"))
+  }
+  if(!sameWidthOfSideStreet) {
+    dispatch(prepareFinalObject("Applications[0].applicationDetails.sameWidthOfSideStreet", "0"))
+  }
+  if(!sameWidthOfSideStreetInch) {
+    dispatch(prepareFinalObject("Applications[0].applicationDetails.sameWidthOfSideStreetInch", "0"))
+  }
+  if(!sameHeightOfSideStreet) {
+    dispatch(prepareFinalObject("Applications[0].applicationDetails.sameHeightOfSideStreet", "0"))
+  }
+  if(!sameHeightOfSideStreetInch) {
+    dispatch(prepareFinalObject("Applications[0].applicationDetails.sameHeightOfSideStreetInch", "0"))
+  }
   if(isCommercialActivity === "true" || isCommercialActivity === true) {
     const groundFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivity")
     const groundFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivityInch")

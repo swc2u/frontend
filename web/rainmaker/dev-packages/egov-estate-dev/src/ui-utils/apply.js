@@ -150,7 +150,7 @@ export const applyforApplication = async (state, dispatch, activeIndex) => {
             removedDocs
           )
         );
-        let property = Applications[0].property
+        let property = Applications[0].property || Applications[0].applicationDetails.property
         const estateRentSummary = property.estateRentSummary
         const dueAmount = !!estateRentSummary ? estateRentSummary.balanceRent + estateRentSummary.balanceRentPenalty + estateRentSummary.balanceGSTPenalty + estateRentSummary.balanceGST : "0"
         property = {...property, propertyDetails: {...property.propertyDetails, dueAmount: dueAmount || "0"}}

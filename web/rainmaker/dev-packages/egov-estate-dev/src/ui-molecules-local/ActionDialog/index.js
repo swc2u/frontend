@@ -63,6 +63,79 @@ const fieldConfig = {
   }
 };
 
+let bb_payment_config = [
+  {
+    label: {
+      labelName: "Development Charges",
+      labelKey: "ES_BB_DEVELOPMENT_CHARGES"
+    },
+    placeholder: {
+      labelName: "Enter Development Charges",
+      labelKey: "ES_BB_DEVELOPMENT_CHARGES_PLACEHOLDER"
+    },
+    path: "developmentCharges",
+    required: true,
+    errorMessage: "ES_ERR_DEVELOPMENT_CHARGES",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "Conversion Charges",
+      labelKey: "ES_BB_CONVERSION_CHARGES"
+    },
+    placeholder: {
+      labelName: "Enter Conversion Charges",
+      labelKey: "ES_BB_CONVERSION_CHARGES_PLACEHOLDER"
+    },
+    path: "conversionFee",
+    required: true,
+    errorMessage: "ES_ERR_CONVERSION_CHARGES",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "Scrutiny Charges",
+      labelKey: "ES_BB_SCRUTINY_CHARGES"
+    },
+    placeholder: {
+      labelName: "Enter Scrutiny Charges",
+      labelKey: "ES_BB_SCRUTINY_CHARGES_PLACEHOLDER"
+    },
+    path: "scrutinyCharges",
+    required: true,
+    errorMessage: "ES_ERR_SCRUTINY_CHARGES",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "Transfer Fees",
+      labelKey: "ES_BB_TRANSFER_FEES"
+    },
+    placeholder: {
+      labelName: "Enter Transfer Fees",
+      labelKey: "ES_BB_TRANSFER_FEES_PLACEHOLDER"
+    },
+    path: "transferFee",
+    required: true,
+    errorMessage: "ES_ERR_TRANSFER_FEES",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "Allotment Number",
+      labelKey: "ES_BB_ALLOTMENT_NUMBER"
+    },
+    placeholder: {
+      labelName: "Enter Allotment Number",
+      labelKey: "ES_BB_ALLOTMENT_NUMBER_PLACEHOLDER"
+    },
+    path: "applicationNumberCharges",
+    required: true,
+    errorMessage: "ES_ERR_ALLOTMENT_NUMBER",
+    showError: false
+  }
+]
+
 const getEpoch = (dateString, dayStartOrEnd = "dayend") => {
   //example input format : "2018-10-02"
   try {
@@ -135,7 +208,15 @@ class ActionDialog extends React.Component {
             hardCopyReceivedDateError: true
           })
         }
-      }else if(buttonLabel == 'APPROVE' || buttonLabel == 'REJECT'){
+      } else if(buttonLabel === "FORWARD" && applicationState === "ES_BB_PENDING_DRAFSMAN_CALCULATION") {
+        bb_payment_config = bb_payment_config.map(payment => ({...payment, isError: !data.applicationDetails[payment.path]}))
+        const isError = bb_payment_config.some(payment => !!payment.isError)
+        if(isError) {
+          return
+        } else {
+          this.props.onButtonClick(buttonLabel, isDocRequired)
+        }
+      } else if(buttonLabel == 'APPROVE' || buttonLabel == 'REJECT'){
         const comments = data.comments;
         if(!!comments) {
           this.props.onButtonClick(buttonLabel, isDocRequired)
@@ -292,6 +373,22 @@ class ActionDialog extends React.Component {
                     {!!this.state.hardCopyReceivedDateError && (<span style={{color: "red"}}>Please enter hard copy received date</span>)}
                     </Grid>
                   )}
+                  {applicationState === "ES_BB_PENDING_DRAFSMAN_CALCULATION" && buttonLabel === "FORWARD" && bb_payment_config.map(payment => (
+                    <Grid payment sm="12">
+                    <TextFieldContainer
+                    InputLabelProps={{ shrink: true }}
+                    label= {payment.label}
+                    onChange={e =>
+                      handleFieldChange(`${dataPath}.applicationDetails.${payment.path}`, e.target.value)
+                    }
+                    // required = {true}
+                    jsonPath={`${dataPath}.applicationDetails.${payment.path}`}
+                    placeholder={payment.placeholder}
+                    inputProps={{ maxLength: 120 }}
+                    /> 
+                    {!!payment.isError && (<span style={{color: "red"}}>{payment.errorMessage}</span>)}
+                    </Grid>
+                  ))}
 
                   {!!documentProps && buttonLabel != "SENDBACK" && (
                     <Grid item sm="12">
