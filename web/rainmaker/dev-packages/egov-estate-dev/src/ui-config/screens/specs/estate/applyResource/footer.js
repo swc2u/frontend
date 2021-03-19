@@ -1990,11 +1990,17 @@ export const downloadPrintContainer = (
         case 'NOC-ES_APPROVED' : 
           if(process.env.REACT_APP_NAME === "Citizen"){
             downloadMenu = [
-              applicationDownloadObject
+              applicationDownloadObject,
+              LetterDownloadObject,
+              // NOCproposalLetterDownloadObject,
+              paymentLetterDownloadObject
               
             ]
             printMenu = [
-              applicationPrintObject
+              applicationPrintObject,
+              LetterPrintObject,
+              // NOCproposalLetterPrintObject,
+              paymentLetterPrintObject
             ]
           }else{
             downloadMenu = [
