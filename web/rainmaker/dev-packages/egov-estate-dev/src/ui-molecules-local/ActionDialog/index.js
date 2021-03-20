@@ -44,6 +44,16 @@ const fieldConfig = {
       labelKey: "WF_ADD_HOC_CHARGES_POPUP_COMMENT_LABEL"
     }
   },
+  termsandcondition: {
+    label: {
+      labelName: "Comments",
+      labelKey: "ES_COMMON_TERMS AND CONDITIONS"
+    },
+    placeholder: {
+      labelName: "Enter Comments",
+      labelKey: "ES_COMMON_TERMS AND CONDITIONS_PLACEHOLDER"
+    }
+  },
   mandatoryComments: {
     label: {
       labelName: "Comments",
@@ -356,6 +366,26 @@ class ActionDialog extends React.Component {
                     />
                     {!!this.state.commentsErr && (<span style={{color: "red"}}>Please enter comments</span>)}
                   </Grid>
+
+                  {buttonLabel === "FORWARD" && (applicationState === "ES_PENDING_DA_PREPARE_LETTER") && (
+                  <Grid item sm="12">
+                    <TextFieldContainer
+                      InputLabelProps={{ shrink: true }}
+                      // label= {fieldConfig.comments.label }
+                      label= { fieldConfig.termsandcondition.label}
+                      onChange={e =>
+                        handleFieldChange(`${dataPath}.termsandconditions`, e.target.value)
+                      }
+                      // required = {true}
+                      //jsonPath={this.open != true ? "" : `${dataPath}.comments`}
+                      placeholder={fieldConfig.termsandcondition.placeholder}
+                      inputProps={{ maxLength: 120 }}
+                    />
+                    {/* {!!this.state.commentsErr && (<span style={{color: "red"}}>Please enter comments</span>)} */}
+                  </Grid>
+                  )}
+
+
                   {buttonLabel === "FORWARD" && (applicationState === "ES_PENDING_DS_VERIFICATION" || applicationState == "ES_MM_PENDING_DS_VERIFICATION") && (
                     <Grid item sm="12">
                     <TextFieldContainer
