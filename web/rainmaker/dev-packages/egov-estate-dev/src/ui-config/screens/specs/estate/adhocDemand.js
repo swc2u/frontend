@@ -11,7 +11,8 @@ import {
     getDateField,
     getPattern,
     getCommonTitle,
-    getLabel
+    getLabel,
+    getSelectField
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   
   import {
@@ -27,6 +28,7 @@ import {
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import get from "lodash/get";
   import { validateFields,getTodaysDateInYMD, _getPattern } from "../utils";
+import { set } from "lodash";
   
   const header = getCommonHeader({
     labelName: "Adhoc Demand",
@@ -166,8 +168,47 @@ const commentsField = {
   },
   jsonPath: "adhocDetails.comment"
 }
-    
-  
+ 
+
+const adhocdemand = {
+  label: {
+    labelName: "Payment Mode",
+    labelKey: "ES_ADHOC_DEMAND",
+  },
+  placeholder: {
+    labelName: "Select Payment Mode",
+    labelKey: "ES_ADHOC_DEMAND_PLACEHOLDER",
+  },
+  required: true,
+  optionValue: "value",
+  optionLabel: "label",
+  jsonPath: "adhocDetails.adhocdemand",
+  data: [
+    {
+      label: "RP_ADHOC_DEMAND",
+      value: "AdhocDemand",
+    },
+    {
+      label: "RP_ADHOC_PAYMENT",
+      value: "AdhocPayment",
+    }
+  ],
+  gridDefination: {
+    xs: 12,
+    sm: 6,
+  },
+  errorMessage: "RP_ERR_ADHOC_DEMAND_FIELD",
+  afterFieldChange: (action, state, dispatch) => {
+ if(action.value==="AdhocDemand"){
+   set(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.adhocDemand",true)
+   set(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.adhocPayment",false)
+ }
+ if(action.value==="AdhocPayment"){
+  set(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.adhocDemand",false)
+  set(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.adhocPayment",true)
+ }
+  }
+};
   export const adhocDetails = getCommonCard({
     header: adhocDetailsHeader,
     detailsContainer: getCommonContainer({
@@ -176,7 +217,8 @@ const commentsField = {
       gst:getTextField(gstField),
       gstInterest:getTextField(intestOnGstField) ,
       adjustmentEntryDate: getDateField(dateOfAdjustmentEntryField),
-      comments : getTextField(commentsField)
+      comments : getTextField(commentsField),
+      adhocdemand:getSelectField(adhocdemand)
     })
   })
     
