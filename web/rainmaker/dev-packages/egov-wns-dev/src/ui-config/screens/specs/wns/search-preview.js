@@ -133,52 +133,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       (await searchResults(action, state, dispatch, applicationNumber,processInstanceAppStatus));
       // set Billing info frm API calling ws-calculator/billing/_getBillingEstimation
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",true);
-      let connectionNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].connectionNo",'');
-      if(connectionNo)
-      {
 
-      let requestBody=
-      {
-        billGeneration:
-        {            
-        consumerCode:connectionNo,
-        tenantId:tenantId,
-        paymentMode:'cash',
-        isGenerateDemand:true,            
-        }
-      }
-      try{
-      let BillingEstimation = await getSearchBillingEstimation(requestBody,dispatch,action); 
-        if(BillingEstimation)
-        {
-          set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetailException.visible",false);
-          if(BillingEstimation.billGeneration[0].status ==='PAID')
-          {
-            dispatch(prepareFinalObject("billGenerationdata.status", BillingEstimation.billGeneration[0].status))
-          }
-        
-        else
-        {
-          dispatch(prepareFinalObject("billGenerationdata.status", 'NOT PAID'))
-        }        
-        dispatch(prepareFinalObject("billGenerationdata.totalNetAmount", BillingEstimation.billGeneration[0].totalNetAmount))
-        dispatch(prepareFinalObject("billGenerationdata.dueDateCash", BillingEstimation.billGeneration[0].dueDateCash))
-          
-        }
-      }
-      catch(error)
-      {
-        //viewConnectionBillDetailException
-       
-        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetailException.visible",true);
-        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",false);
-        dispatch(prepareFinalObject("billGenerationdata.status", 'No Data Found'))
-        dispatch(prepareFinalObject("billGenerationdata.totalNetAmount", ''))
-        dispatch(prepareFinalObject("billGenerationdata.dueDateCash", ''))
-
-
-      }
-      }
       let service_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.service");
       if(service_ ==='SEWERAGE')
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyUsageDetail.visible",false);
@@ -256,7 +211,58 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       }
     }
 
+    let connectionNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].connectionNo",'');
+    if(connectionNo)
+    {
 
+    let requestBody=
+    {
+      billGeneration:
+      {            
+      consumerCode:connectionNo,
+      tenantId:tenantId,
+      paymentMode:'cash',
+      isGenerateDemand:true,            
+      }
+    }
+    try{
+    let BillingEstimation = await getSearchBillingEstimation(requestBody,dispatch,action); 
+      if(BillingEstimation)
+      {
+        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetailException.visible",false);
+        if(BillingEstimation.billGeneration[0].status ==='PAID')
+        {
+          dispatch(prepareFinalObject("billGenerationdata.status", BillingEstimation.billGeneration[0].status))
+        }
+      
+      else
+      {
+        dispatch(prepareFinalObject("billGenerationdata.status", 'NOT PAID'))
+      }        
+      dispatch(prepareFinalObject("billGenerationdata.totalNetAmount", BillingEstimation.billGeneration[0].totalNetAmount))
+      dispatch(prepareFinalObject("billGenerationdata.dueDateCash", BillingEstimation.billGeneration[0].dueDateCash))
+        
+      }
+    }
+    catch(error)
+    {
+      //viewConnectionBillDetailException
+     
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetailException.visible",true);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",false);
+      dispatch(prepareFinalObject("billGenerationdata.status", 'No Data Found'))
+      dispatch(prepareFinalObject("billGenerationdata.totalNetAmount", ''))
+      dispatch(prepareFinalObject("billGenerationdata.dueDateCash", ''))
+
+
+    }
+    }
+    else
+    {
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetailException.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",false);
+
+    }
     let connectionType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].connectionType");
     if (connectionType === "Metered") {
       set(
