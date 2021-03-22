@@ -214,7 +214,8 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
     let connectionNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].connectionNo",'');
     if(connectionNo)
     {
-
+      set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.props.number", connectionNo);
+      set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",true ); 
     let requestBody=
     {
       billGeneration:
@@ -259,6 +260,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
     }
     else
     {
+      set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetailException.visible",false);
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",false);
 
