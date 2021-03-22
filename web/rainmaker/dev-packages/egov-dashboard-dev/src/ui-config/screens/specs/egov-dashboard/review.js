@@ -162,7 +162,7 @@ const screenConfig = {
                   },
             props: {
               style: {
-              width: "100%",
+              // width: "100%",
               cursor: "pointer"
               },
             className: "citizen-city-picker",
@@ -211,8 +211,8 @@ const screenConfig = {
                   },
             props: {
               style: {
-              width: "100%",
-              marginLeft: "50px",
+              // width: "100%",
+              // marginLeft: "50px",
               cursor: "pointer"
               },
             className: "citizen-city-picker",

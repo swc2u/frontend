@@ -38,10 +38,10 @@ class RPDueReport extends React.Component {
 
 
     // PDF function 
-    pdfDownload = () => {
+    pdfDownload = (e) => {
 
     debugger;
-
+    e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
     var rowData = this.state.rowData
@@ -156,7 +156,7 @@ class RPDueReport extends React.Component {
 
     // Toggle Column 
     toggleColumn = (e) => {
-        // e.preventDefault();
+        e.preventDefault();
         debugger;
         const data = this.state.columnData
         this.setState({
@@ -314,10 +314,13 @@ class RPDueReport extends React.Component {
         
         // Column Data
         const tableData = data[0] ? Object.keys(data[0]) : [];
-        var columnData = []
+        var columnData = [];
+        const tableDataHeader = ["Receipt Number", "Colony", "Name", "Moble No", "Total", "Transaction Number",
+         "Payment type", "Total"];
+
         for(var i=0; i<tableData.length; i++){
             var itemHeader = {}
-            itemHeader["Header"] = this.camelize(tableData[i]);
+            itemHeader["Header"] = this.camelize(tableDataHeader[i]);
             itemHeader["accessor"] = tableData[i];
             itemHeader["show"]= (i === 1 || i === 2 || i === 3 || i === 4 
                 || i === 15 || i === 18 || i === 20
@@ -370,10 +373,13 @@ class RPDueReport extends React.Component {
             
             // Column Data
             const tableData = data[0] ? Object.keys(data[0]) : [];
-            var columnData = []
+            var columnData = [];
+            const tableDataHeader = ["Receipt Number", "Colony", "Name", "Moble No", "Total", "Transaction Number",
+            "Payment type", "Total"];
+
             for(var i=0; i<tableData.length; i++){
                 var itemHeader = {}
-                itemHeader["Header"] = this.camelize(tableData[i]);
+                itemHeader["Header"] = this.camelize(tableDataHeader[i]);
                 itemHeader["accessor"] = tableData[i];
                 itemHeader["show"]= (i === 1 || i === 2 || i === 3 || i === 4 
                     || i === 15 || i === 18 || i === 20
