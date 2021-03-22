@@ -231,11 +231,11 @@ const adhocdemand = {
   jsonPath: "adhocDetails.type",
   data: [
     {
-      label: "RP_ADHOC_DEMAND",
+      label: "ES_ADHOC_DEMAND",
       value: "AdhocDemand",
     },
     {
-      label: "RP_ADHOC_PAYMENT",
+      label: "ES_ADHOC_PAYMENT",
       value: "AdhocPayment",
     }
   ],
