@@ -593,7 +593,7 @@ export const addHocDemandUpdate = async (state, dispatch) => {
         get(state.screenConfiguration.preparedFinalObject, "adhocDetails", {})
       )
     );
-    
+    if(adhocDetails.type==="AdhocDemand"){
     set(adhocDetails , "isAdjustment","true")
     set(adhocDetails, "adjustmentDate", convertDateToEpoch(adhocDetails.adjustmentDate))
     set(adhocDetails, "generationDate", convertDateToEpoch(moment(new Date()).format('YYYY-MM-DD')));
@@ -608,6 +608,13 @@ export const addHocDemandUpdate = async (state, dispatch) => {
     set(adhocDetails , "collectedGSTPenalty",0 )
     queryObject[0].propertyDetails.estateDemands.push(adhocDetails)
     set(queryObject[0].propertyDetails.adhocDemand, true)
+    }
+    else if(adhocDetails.type==="AdhocPayment"){
+      set(adhocDetails , "amountPaid",adhocDetails.amountPaid)
+      set(adhocDetails, "dateOfPayment", convertDateToEpoch(adhocDetails.dateOfPayment))
+      queryObject[0].propertyDetails.estatePayments.push(adhocDetails)
+      set(queryObject[0].propertyDetails.adhocPayment, true)
+    }
     let response;
     if(queryObject) {  
       response = await httpRequest(

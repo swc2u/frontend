@@ -74,7 +74,8 @@ import { set } from "lodash";
     errorMessage:"ES_ERROR_ONLY_NUMBERIC_VALUE",
     pattern: _getPattern('float'),
     required: true,
-    jsonPath: "adhocDetails.rent"
+    jsonPath: "adhocDetails.rent",
+    visible:false
   }
 
   const gstField = {
@@ -93,7 +94,8 @@ import { set } from "lodash";
     errorMessage:"ES_ERROR_ONLY_NUMBERIC_VALUE",
     pattern: _getPattern('float'),
     required: true,
-    jsonPath: "adhocDetails.gst"
+    jsonPath: "adhocDetails.gst",
+    visible:false
   }
 
   const interestOnRentField = {
@@ -112,7 +114,8 @@ import { set } from "lodash";
     errorMessage:"ES_ERROR_ONLY_NUMBERIC_VALUE",
     pattern: _getPattern('float'),
     required: true,
-    jsonPath: "adhocDetails.penaltyInterest"
+    jsonPath: "adhocDetails.penaltyInterest",
+    visible:false
   }
 
   const intestOnGstField = {
@@ -131,7 +134,8 @@ import { set } from "lodash";
     errorMessage:"ES_ERROR_ONLY_NUMBERIC_VALUE",
     pattern: _getPattern('float'),
     required: true,
-    jsonPath: "adhocDetails.gstInterest"
+    jsonPath: "adhocDetails.gstInterest",
+    visible:false
   }
 
 const dateOfAdjustmentEntryField = {
@@ -150,7 +154,9 @@ const dateOfAdjustmentEntryField = {
       inputProps: {
           max: getTodaysDateInYMD()
       }
-  }
+  },
+  errorMessage:"ES_ERR_DATE_OF_ADJUSTMENT",
+  visible:false
 }
 
 const commentsField = {
@@ -169,6 +175,46 @@ const commentsField = {
   jsonPath: "adhocDetails.comment"
 }
  
+const AmountPaid = {
+  label: {
+      labelName: "Amount",
+      labelKey: "ES_AMOUNT_LABEL"
+  },
+  placeholder: {
+      labelName: "Enter Amount",
+      labelKey: "ES_AMOUNT_PLACEHOLDER"
+  },
+  gridDefination: {
+      xs: 12,
+      sm: 6
+  },
+  errorMessage:"ES_ERROR_ONLY_NUMBERIC_VALUE",
+  pattern: _getPattern('float'),
+  required: true,
+  jsonPath: "adhocDetails.amountPaid",
+  visible:false
+}
+
+const dateOfPaymentField = {
+  label: {
+    labelName: "Date of Payment",
+    labelKey: "ES_DATE_OF_PAYMENT_LABEL"
+  },
+  placeholder: {
+    labelName: "Select Date",
+    labelKey: "ES_DATE_OF_PAYMENT_PLACEHOLDER"
+  },
+  required: true,
+  pattern: getPattern("Date"),
+  jsonPath: "adhocDetails.dateOfPayment",
+  props: {
+      inputProps: {
+          max: getTodaysDateInYMD()
+      }
+  },
+  errorMessage:"ES_ERR_DATE_OF_PAYMENT",
+  visible:false
+}
 
 const adhocdemand = {
   label: {
@@ -182,7 +228,7 @@ const adhocdemand = {
   required: true,
   optionValue: "value",
   optionLabel: "label",
-  jsonPath: "adhocDetails.adhocdemand",
+  jsonPath: "adhocDetails.type",
   data: [
     {
       label: "RP_ADHOC_DEMAND",
@@ -202,23 +248,137 @@ const adhocdemand = {
  if(action.value==="AdhocDemand"){
    set(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.adhocDemand",true)
    set(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.adhocPayment",false)
+   dispatch(
+     handleField(
+       "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.adjustmentEntryDate",
+      "visible",
+      true
+     )
+   )
+   dispatch(
+    handleField(
+      "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.gst",
+     "visible",
+     true
+    )
+  )
+  dispatch(
+    handleField(
+      "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.gstInterest",
+     "visible",
+     true
+    )
+  )
+  dispatch(
+    handleField(
+      "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.rent",
+     "visible",
+     true
+    )
+  )
+  dispatch(
+    handleField(
+      "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.rentInterest",
+     "visible",
+     true
+    )
+  )
+  dispatch(
+    handleField(
+      "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.AmountPaid",
+     "visible",
+     false
+    )
+  )
+  dispatch(
+    handleField(
+      "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.dateOfPaymentField",
+     "visible",
+     false
+    )
+  )
  }
  if(action.value==="AdhocPayment"){
   set(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.adhocDemand",false)
   set(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.adhocPayment",true)
+  dispatch(
+    handleField(
+      "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.AmountPaid",
+     "visible",
+     true
+    )
+  )
+  dispatch(
+    handleField(
+      "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.dateOfPaymentField",
+     "visible",
+     true
+    )
+  )
+  dispatch(
+    handleField(
+      "adhocDemand",
+     "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.adjustmentEntryDate",
+     "visible",
+     false
+    )
+  )
+  dispatch(
+   handleField(
+     "adhocDemand",
+     "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.gst",
+    "visible",
+    false
+   )
+ )
+ dispatch(
+   handleField(
+     "adhocDemand",
+     "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.gstInterest",
+    "visible",
+    false
+   )
+ )
+ dispatch(
+   handleField(
+     "adhocDemand",
+     "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.rent",
+    "visible",
+    false
+   )
+ )
+ dispatch(
+   handleField(
+     "adhocDemand",
+     "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.rentInterest",
+    "visible",
+    false
+   )
+ )
  }
   }
 };
   export const adhocDetails = getCommonCard({
     header: adhocDetailsHeader,
     detailsContainer: getCommonContainer({
+      adhocdemand:getSelectField(adhocdemand),
       rent:getTextField(RentField),
       rentInterest: getTextField(interestOnRentField),
       gst:getTextField(gstField),
       gstInterest:getTextField(intestOnGstField) ,
       adjustmentEntryDate: getDateField(dateOfAdjustmentEntryField),
-      comments : getTextField(commentsField),
-      adhocdemand:getSelectField(adhocdemand)
+      AmountPaid:getTextField(AmountPaid),
+      dateOfPaymentField:getDateField(dateOfPaymentField),
+      comments : getTextField(commentsField)
     })
   })
     
