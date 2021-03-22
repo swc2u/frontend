@@ -83,6 +83,11 @@ const getData = async (action, state, dispatch) => {
       property = Applications[0].property
       propertyId = Applications[0].property.id
       fileNumber = Applications[0].property.fileNumber
+      if(fileNumber ===  "BBNOC-1") {
+        property = Applications[0].applicationDetails.property;
+        fileNumber = ""
+        propertyId = ""
+      }
     } catch (error) {
       return {}
     }

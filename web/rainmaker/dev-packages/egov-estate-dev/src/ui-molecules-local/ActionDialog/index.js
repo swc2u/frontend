@@ -209,13 +209,18 @@ class ActionDialog extends React.Component {
           })
         }
       } else if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DRAFSMAN_CALCULATION") {
-        bb_payment_config = bb_payment_config.map(payment => ({...payment, isError: !data.applicationDetails[payment.path]}))
-        const isError = bb_payment_config.some(payment => !!payment.isError)
-        if(isError) {
-          return
-        } else {
+        // bb_payment_config = bb_payment_config.map(payment => ({...payment, isError: !data.applicationDetails[payment.path]}))
+        // const isError = bb_payment_config.some(payment => !!payment.isError)
+        // if(isError) {
+        //   return
+        // } else {
+          for(let i=0; i < bb_payment_config.length-1; i++) {
+            if(!data.applicationDetails[bb_payment_config[i].path]) {
+              this.props.handleFieldChange(`${dataPath}.applicationDetails.${bb_payment_config[i].path}`, "0")
+            }
+          }
           this.props.onButtonClick(buttonLabel, isDocRequired)
-        }
+        // }
       } else if(buttonLabel == 'APPROVE' || buttonLabel == 'REJECT'){
         const comments = data.comments;
         if(!!comments) {

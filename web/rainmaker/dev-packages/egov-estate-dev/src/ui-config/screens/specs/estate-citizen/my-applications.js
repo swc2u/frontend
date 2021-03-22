@@ -251,6 +251,10 @@ const getData = async (action, state, dispatch) => {
     let applicationsPayload =  response.Applications.map(item => {
       return {...item, state: !!item.state ? item.state : "ES_DRAFTED"}
       })
+
+      if(branchType === "BuildingBranch") {
+        applicationsPayload = applicationsPayload.map(item => ({...item, property: item.property.fileNumber === "BBNOC-1" ? item.applicationDetails.property : item.property}))
+      }
       
     dispatch(prepareFinalObject("actualResults", applicationsPayload));
     dispatch(prepareFinalObject("searchResults", applicationsPayload));
