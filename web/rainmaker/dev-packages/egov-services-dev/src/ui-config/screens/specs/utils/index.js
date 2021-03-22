@@ -1211,10 +1211,17 @@ export const downloadReceipt = async (
 
                     },
                     booking: {
-
-                        noOfAcRooms: roomDataForGivenApplicationNumber.totalNoOfACRooms,
-                        noOfNonAcRooms: roomDataForGivenApplicationNumber.totalNoOfNonACRooms,
-                        placeOfService: "Chandigarh",
+                        bookedRooms: roomDataForGivenApplicationNumber.totalNoOfACRooms>0 && roomDataForGivenApplicationNumber.totalNoOfNonACRooms>0 
+                        ? `${roomDataForGivenApplicationNumber.totalNoOfACRooms} AC and ${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Rooms`
+                            :roomDataForGivenApplicationNumber.totalNoOfACRooms>1 && roomDataForGivenApplicationNumber.totalNoOfNonACRooms===0
+                                ? `${roomDataForGivenApplicationNumber.totalNoOfACRooms} AC Rooms`
+                                    :roomDataForGivenApplicationNumber.totalNoOfACRooms>0 && roomDataForGivenApplicationNumber.totalNoOfNonACRooms===0
+                                        ? `${roomDataForGivenApplicationNumber.totalNoOfACRooms} AC Room`
+                                            :roomDataForGivenApplicationNumber.totalNoOfACRooms===0 && roomDataForGivenApplicationNumber.totalNoOfNonACRooms>1
+                                                ?`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Rooms`
+                                                    :`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Room`,
+                             
+                      placeOfService: "Chandigarh",
                         bkDept: applicationData.bkBookingType,
                         bkStartDate: applicationData.bkFromDate,
                         bkEndDate: applicationData.bkToDate,
@@ -1651,11 +1658,18 @@ export const downloadCertificate = async (
                 },
                 bookingDetails: {
                     bkLocation: applicationData.bkLocation,
-                    bkDept: applicationData.bkBookingType,
-
-                    noOfACRooms: roomDataForGivenApplicationNumber.totalNoOfACRooms,
-                    noOfNonACRooms: roomDataForGivenApplicationNumber.totalNoOfNonACRooms,
-                    bookingPupose: applicationData.bkBookingPurpose,
+                    bkDept: applicationData.bkBookingType,  
+                    bookedRooms: roomDataForGivenApplicationNumber.totalNoOfACRooms>0 && roomDataForGivenApplicationNumber.totalNoOfNonACRooms>0 
+                    ? `${roomDataForGivenApplicationNumber.totalNoOfACRooms} AC and ${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Rooms`
+                        :roomDataForGivenApplicationNumber.totalNoOfACRooms>1 && roomDataForGivenApplicationNumber.totalNoOfNonACRooms===0
+                            ? `${roomDataForGivenApplicationNumber.totalNoOfACRooms} AC Rooms`
+                                :roomDataForGivenApplicationNumber.totalNoOfACRooms>0 && roomDataForGivenApplicationNumber.totalNoOfNonACRooms===0
+                                    ? `${roomDataForGivenApplicationNumber.totalNoOfACRooms} AC Room`
+                                        :roomDataForGivenApplicationNumber.totalNoOfACRooms===0 && roomDataForGivenApplicationNumber.totalNoOfNonACRooms>1
+                                            ?`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Rooms`
+                                                :`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Room`,
+                 
+                     bookingPupose: applicationData.bkBookingPurpose,
                     bkStartDate: applicationData.bkFromDate,
                     bkEndDate: applicationData.bkToDate,
                     placeOfService: "Chandigarh",
@@ -2236,35 +2250,6 @@ export const checkAvaialbilityAtSubmitCgb = async (bookingVenue, from, to) => {
         console.log(exception);
     }
 };
-export const checkAvaialbilityAtSubmitOsujm = async (
-    sector,
-    bookingVenue,
-    from,
-    to
-) => {
-    let requestBody = {
-        Booking: {
-            bkSector: sector,
-            bkBookingType: "OSUJM",
-            bkBookingVenue: bookingVenue,
-            bkFromDate: from,
-            bkToDate: to,
-        },
-    };
-    try {
-        const response = await httpRequest(
-            "post",
-            "bookings/osujm/booked/dates/_fetch",
-            "",
-            [],
-            requestBody
-        );
-        // return response;
-        return { status: "success", data: response.data };
-    } catch (exception) {
-        console.log(exception);
-    }
-};
 export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
     let businessService = bookingData.businessService;
     let requestBody = {};
@@ -2272,10 +2257,12 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
     if (businessService === "GFCP") {
         requestBody = {
             Booking: {
+                bkApplicationNumber:bookingData.bkApplicationNumber,
                 bkBookingType: "GROUND_FOR_COMMERCIAL_PURPOSE",
                 bkBookingVenue: bookingData.bkBookingVenue,
                 bkFromDate: bookingData.bkFromDate,
                 bkToDate: bookingData.bkToDate,
+                bkSector:bookingData.bkBookingVenue
             },
         };
         try {
@@ -2329,7 +2316,41 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
         } catch (exception) {
             console.log(exception);
         }
-    } else {
+    }  else if (businessService === "PACC") {
+
+        requestBody = {
+            Booking: {
+                
+                bkApplicationNumber:bookingData.bkApplicationNumber,
+                bkSector: bookingData.bkSector,
+                bkBookingType: bookingData.bkBookingType,
+                bkBookingVenue: bookingData.bkBookingVenue,
+                bkFromDate: bookingData.bkFromDate,
+                bkToDate: bookingData.bkToDate,
+            },
+        };
+
+        try {
+            const bookedDates = await httpRequest(
+                "post",
+                "bookings/park/community/booked/dates/_search",
+                "",
+                [],
+                requestBody
+            );
+            bookedDates.data.length > 0
+                ? bookedDates.data.map((val) => {
+                    if (val === from || val === to) {
+                        isAvailable = false;
+                    } else {
+                        isAvailable = true
+                    }
+                })
+                : (isAvailable = true);
+        } catch (exception) {
+            console.log(exception);
+        }
+    }else {
         isAvailable = true;
     }
     return isAvailable;

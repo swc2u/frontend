@@ -26,6 +26,7 @@ import { httpRequest } from "egov-ui-kit/utils/api"; //PaymentDetailsTwo
 import PaymentDetailsTwo from "../PaymentDetailsTwo";
 // import SuccessMessageForPCC from "../../modules/SuccessMessageForPCC";
 import SuccessMessageForPCC from "../../../../modules/SuccessMessageForPCC"
+import get from "lodash.get";
 
 class SummaryDetails extends Component {
   state = {
@@ -182,7 +183,7 @@ class SummaryDetails extends Component {
       NewTrxNo,
       NewddDate,
       pddIFSC,
-      pIFSC,
+      pIFSC,state,selectedComplaint
     } = this.props;
     console.log("this.props---", this.props);
 
@@ -303,7 +304,8 @@ class SummaryDetails extends Component {
     prepareFinalObject("CollectionReceiptNum", ReceiptNum);
 
     this.props.history.push(`/egov-services/success-payment`);
-  };
+
+};
 
   firstStep = (e) => {
     e.preventDefault();
@@ -1066,6 +1068,7 @@ const mapStateToProps = (state) => {
   console.log("NewTrxNo--", NewTrxNo);
 
   return {
+    state,
     one,
     two,
     three,

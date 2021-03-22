@@ -17,15 +17,10 @@ class AppDetails extends Component {
           textChildren={
             <div>
               <div className="rainmaker-displayInline">
-                {/* <Icon action="notification" name="sms-failed" color="#767676" />{" "} */}
                 <Label label="BK_MYBK_APPLICANT_DETAILS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
               </div>
-              <div key={10} className="complaint-detail-full-width">
-              
-              
+              <div key={10} className="complaint-detail-full-width">    
                 <div className="complaint-detail-detail-section-status row">
-                 
-
                   <div className="col-md-4">
                     <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_APPLICANT_NAME" />
                     <Label
@@ -84,11 +79,7 @@ class AppDetails extends Component {
                       label={areaRequired?areaRequired:'NA'}
                     />
                   </div>    
-                </div>
-
-      
-               
-               
+                </div>   
               </div>
             </div>
           }

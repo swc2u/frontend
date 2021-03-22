@@ -2,7 +2,7 @@ import { getLabel, getTodaysDateInYMD, convertEpochToDate } from "egov-ui-framew
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 import { createUpdateNocApplication, UpdateChallanStatus, addToStoreViolationData, addToStoreReturnCloseData } from "../../../../../ui-utils/commons";
-import { getCommonApplyFooter, showHideAdhocPopupReceivePayment, showHideAdhocPopupForwardUploadDocs, callbackforsearchPreviewAction, getDiffernceBetweenTodayDate, getTextToLocalSeizedItemDetailHeader, showHideChallanConfirmation,showHideChallanReturnAndCloseConfirmation } from "../../utils";
+import { getCommonApplyFooter, showHideAdhocPopupReceivePayment, showHideAdhocPopupForwardUploadDocs, callbackforsearchPreviewAction, getDiffernceBetweenTodayDate, getTextToLocalSeizedItemDetailHeader, showHideChallanConfirmation,showHideChallanReturnAndCloseConfirmation, showHideAdhocPopupUpdateContact } from "../../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import {
   toggleSnackbar, prepareFinalObject, handleScreenConfigurationFieldChange as handleField,
@@ -900,7 +900,54 @@ markAsPaidButton: {
         rolePath: "user-info.roles",
         roles: ["CHALLAN_DELETE"]
       }
+  },
+  editChallanButton:  {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "200px",
+        height: "48px",
+        marginRight: "16px",
+        background: "#fff",
+        border: "1px solid #ddd",
+        color: "#000"
+      }
+    },
+    gridDefination: {
+      xs: 12,
+      sm: 12,
+      md: 12,
+    },
+    children: {
+      nextButtonLabel: getLabel({
+        labelName: "Edit Challan",
+        labelKey: "EC_EDIT_CHALLAN_BUTTON"
+      }),
+      nextButtonIcon: {
+        uiFramework: "custom-atoms",
+        componentPath: "Icon",
+        props: {
+          iconName: "keyboard_arrow_right"
+        }
+      }
+    },
+    onClickDefination: {
+      action: "condition",
+      callBack: (state, dispatch) =>{
+        showHideAdhocPopupUpdateContact(state, dispatch, "search-preview")
+        let contactNumber = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].contactNumber", '');
+        dispatch(prepareFinalObject("eChallanUpdateContact[0].contact", contactNumber));
+  
+      }
+    },
+    visible: false,
+    roleDefination: {
+      rolePath: "user-info.roles",
+      roles: ["CHALLAN_EDIT"]
     }
+}
 });
 
 

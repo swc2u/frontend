@@ -7,13 +7,15 @@ import {
   showHideAdhocPopup, showHideAdhocPopupReceivePayment, showHideAdhocPopupForwardUploadDocs, 
   callbackforsearchPreviewAction, generateReceiptNumber, showHideDeleteConfirmation,
   showHideChallanConfirmation,
-  showHideChallanReturnAndCloseConfirmation
+  showHideChallanReturnAndCloseConfirmation,
+  showHideAdhocPopupUpdateContact,
+  validateFields
 } from "../../utils";
 import get from "lodash/get";
 import { httpRequest } from "../../../../../ui-utils/api";
 import { prepareFinalObject, toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import set from "lodash/set";
-import { UpdateStatus, addToStoreViolationData, UpdateChallanStatus } from "../../../../../ui-utils/commons";
+import { UpdateStatus, addToStoreViolationData, UpdateChallanStatus, createCitizenBasedonMobileNumber } from "../../../../../ui-utils/commons";
 import { documentDetails } from "./documentDetails";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { callPGService } from "./footer";
@@ -231,6 +233,47 @@ const challanCloseOnGround = async (state,dispatch)=> {
   }
 }
 
+const callbackforEditChallan = async (state, dispatch) => {
+  let challandetails = get(state, 'screenConfiguration.preparedFinalObject.eChallanDetail[0]', {});
+  try {
+    let isFormValid =
+    validateFields(
+      "components.updateContact.children.popup.children.updateContactCard.children.updateContactContainer.children",
+      state,
+      dispatch,
+      "search-preview"
+    );
+    if (isFormValid) {
+      let requestBody = {};
+      requestBody.violationUuid = challandetails.violationUuid;
+      requestBody.tenantId = challandetails.tenantId;
+      requestBody.contactNumber = get(state, 'screenConfiguration.preparedFinalObject.eChallanUpdateContact[0].contact');
+
+      dispatch(prepareFinalObject("eChallanDetail[0].contactNumber", requestBody.contactNumber));
+
+      let userResponse = await createCitizenBasedonMobileNumber(state, dispatch,"eChallanDetail[0]");
+      let response = await httpRequest("post", "/ec-services/violation/_EditChallan", "", [], { requestBody: requestBody });
+      if (response.ResponseInfo.status == 'Success') {
+        // dispatch(setRoute("/egov-echallan/echallan-landing"));
+        dispatch(toggleSnackbar(true, { labelName: "Success", labelKey: "EC_UPDATE_CHALLAN_SUCCESS" }, "success"));
+        showHideAdhocPopupUpdateContact(state, dispatch, "search-preview")
+    
+      } else {
+        dispatch(toggleSnackbar(true, { labelName: "ERROR" }, "error"));
+      }
+    }
+  else {
+    let errorMessage = {
+      labelName:
+        "Please fill all mandatory fields for Applicant Details, then proceed!",
+      labelKey: "EC_ERR_FILL_ALL_MANDATORY_FIELDS_APPLICANT_TOAST"
+    };
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+  }
+  } catch (error) {
+  dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+  }
+}
 const receivePaymentUpdateStatus = async (state, dispatch) => {
   let isFormValid = get(state, 'screenConfiguration.preparedFinalObject.eChallanReceivePayament[0].paymentMode', '') === '' ? false : true;
   if (isFormValid) {
@@ -807,6 +850,141 @@ export const adhocPopupReceivePayment = getCommonContainer({
         onClickDefination: {
           action: "condition",
           callBack: receivePaymentUpdateStatus
+        }
+      }
+    }
+  }
+});
+
+export const adhocPopupUpdateContact = getCommonContainer({
+  header: {
+    uiFramework: "custom-atoms",
+    componentPath: "Container",
+    props: {
+      style: {
+        width: "100%",
+        float: "right"
+      }
+    },
+    children: {
+      div1: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        gridDefination: {
+          xs: 12,
+          sm: 12
+        },
+        props: {
+          style: {
+            width: "100%",
+            float: "right"
+          }
+        },
+        children: {
+          div: getCommonHeader(
+            {
+              labelName: "Update Contact",
+              labelKey: "EC_SM_UPDATE_CONTACT_POPUP_HEADER"
+            },
+            {
+              style: {
+                fontSize: "20px"
+              }
+            }
+          )
+        }
+      }
+    }
+  },
+  updateContactCard: getCommonContainer(
+    {
+      updateContactContainer: getCommonContainer({
+        updateContactField: getTextField({
+          label: {
+            labelName: "Enter Contact",
+            labelKey: "EC_POPUP_SM_UPDATE_CONTACT_LABEL"
+          },
+          placeholder: {
+            labelName: "Enter Contact",
+            labelKey: "EC_POPUP_SM_UPDATE_CONTACT_PLACEHOLDER"
+          },
+          gridDefination: {
+            xs: 12,
+            sm: 12
+          },
+          props: {
+            style: {
+              width: "100%"
+            }
+          },
+          jsonPath: "eChallanUpdateContact[0].contact",
+          required: true,
+          pattern: getPattern("MobileNo"),
+          visible: true
+        })
+      })
+    },
+    {
+      style: {
+        marginTop: "24px"
+      }
+    }
+  ),
+  div: {
+    uiFramework: "custom-atoms",
+    componentPath: "Div",
+    props: {
+      style: {
+        width: "100%",
+        // textAlign: "right"
+      }
+    },
+    children: {
+      cancelButton: {
+        componentPath: "Button",
+        props: {
+          variant: "outlined",
+          color: "primary",
+          style: {
+            minWidth: "180px",
+            height: "48px",
+            marginRight: "16px",
+            marginBottom: "8px"
+          }
+        },
+        children: {
+          previousButtonLabel: getLabel({
+            labelName: "CANCEL",
+            labelKey: "EC_POPUP_SM_RECEIVE_CANCEL"
+          })
+        },
+        onClickDefination: {
+          action: "condition",
+          callBack: (state, dispatch) => {
+            showHideAdhocPopupUpdateContact(state, dispatch, "search-preview");
+          }
+        }
+      },
+      addButton: {
+        componentPath: "Button",
+        props: {
+          variant: "contained",
+          color: "primary",
+          style: {
+            minWidth: "180px",
+            height: "48px",
+            marginBottom: "8px"
+          }
+        },
+        children: {
+          previousButtonLabel: getLabel({
+            labelName: "SUBMIT",
+            labelKey: "EC_POPUP_SM_RECEIVE_SUBMIT"
+          })
+        },
+        onClickDefination: {
+          action: "condition",
+          callBack: callbackforEditChallan
         }
       }
     }

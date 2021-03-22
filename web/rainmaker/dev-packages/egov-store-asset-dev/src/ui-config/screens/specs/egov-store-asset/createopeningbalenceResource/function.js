@@ -314,10 +314,10 @@ export const handleCreateUpdateOpeningBalence = (state, dispatch) => {
        set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].lotNo`, element.lotNo);
        set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].userQuantity`, element.userQuantity);
        set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].oldReceiptNumber`, element.oldReceiptNumber);       
-       set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].receivedDate`, convertDateToEpoch(element.receivedDate, "dayStart"));
-       set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].expiryDate`, convertDateToEpoch(element.expiryDate, "dayStart"));
-       set(materialReceiptObject[0], `receiptDetails[${index}].receivedDate`, convertDateToEpoch(element.receivedDate, "dayStart"));
-       set(materialReceiptObject[0], `receiptDetails[${index}].expiryDate`, convertDateToEpoch(element.expiryDate, "dayStart"));
+       set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].receivedDate`, convertDateToEpoch(element.receivedDate, "daymid"));
+       set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].expiryDate`, convertDateToEpoch(element.expiryDate, "daymid"));
+       set(materialReceiptObject[0], `receiptDetails[${index}].receivedDate`, convertDateToEpoch(element.receivedDate, "daymid"));
+       set(materialReceiptObject[0], `receiptDetails[${index}].expiryDate`, convertDateToEpoch(element.expiryDate, "daymid"));
        set(materialReceiptObject[0],"receiptDate",element.receivedDate);
   }
 
