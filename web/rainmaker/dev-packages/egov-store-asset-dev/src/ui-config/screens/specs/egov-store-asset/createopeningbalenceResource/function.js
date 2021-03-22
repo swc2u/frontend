@@ -338,6 +338,7 @@ export const handleCreateUpdateOpeningBalence = (state, dispatch) => {
           let mrnNumber = response.materialReceipt[0].mrnNumber
 //          dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=OPENINGBALANCE&mode=create&code=${mrnNumber}`));
             dispatch(setRoute(`/egov-store-asset/view-opening-balence?applicationNumber=${mrnNumber}&tenantId=${response.materialReceipt[0].tenantId}`));
+           // window.location.href =`/egov-store-asset/view-opening-balence?applicationNumber=${mrnNumber}&tenantId=${response.materialReceipt[0].tenantId}`
         }
       } catch (error) {
         //furnishmaterialsData(state, dispatch);
@@ -352,6 +353,7 @@ export const handleCreateUpdateOpeningBalence = (state, dispatch) => {
         if(response){
           let mrnNumber = response.materialReceipt[0].mrnNumber
           dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=OPENINGBALANCE&mode=update&code=${mrnNumber}`));
+          window.location.href =`/egov-store-asset/acknowledgement?screen=OPENINGBALANCE&mode=update&code=${mrnNumber}`
          }
       } catch (error) {
         //furnishmaterialsData(state, dispatch);
