@@ -286,6 +286,33 @@ export const getBillingEstimation = async (queryObject, dispatch) => {
         dispatch(toggleSnackbar(true, errorMessage, "warning"));
     }
 };
+export const getSearchBillingEstimation = async (queryObject, dispatch, action) => {
+    dispatch(toggleSpinner());
+    try {
+        const response = await httpRequest(
+            "post",
+            "/ws-calculator/billing/_getBillingEstimation",
+            "_search",
+            [],
+            queryObject
+        );
+        dispatch(toggleSpinner());
+        return findAndReplace(response, null, "NA");
+    } catch (error) {
+        dispatch(toggleSpinner());
+        console.log(error)
+        let errorMessage = {
+            labelName: error.message,
+            labelKey: error.message
+          };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetailException.visible",true);
+        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",false);
+        dispatch(prepareFinalObject("billGenerationdata.status", 'No Data Found'))
+        dispatch(prepareFinalObject("billGenerationdata.totalNetAmount", ''))
+        dispatch(prepareFinalObject("billGenerationdata.dueDateCash", ''))
+    }
+};
 
 //Workflow process instances for application status
 export const getWorkFlowData = async (queryObject) => {
@@ -2953,4 +2980,30 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
     //   );
     //   throw error;
     // }
+  };
+  export const generateBillFile = async (queryObject , api) => {
+
+    try {
+      store.dispatch(toggleSpinner());
+      const response = await httpRequest(
+        "post",
+        api,     
+        "",
+        queryObject,
+        { billGeneration: {}}
+      );
+      store.dispatch(toggleSpinner());
+      return response;
+    } catch (error) {
+      store.dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: error.message, labelKey: error.message },
+          "error"
+        )
+      );
+      store.dispatch(toggleSpinner());
+     // throw error;
+    }
+  
   };

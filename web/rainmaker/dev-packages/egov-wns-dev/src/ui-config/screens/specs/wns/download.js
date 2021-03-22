@@ -8,6 +8,7 @@ import {
   import set from "lodash/set";
   import { httpRequest } from "../../../../ui-utils";  
   import { searchResults } from "./downloadResourse/searchResults";
+  import { searchForm } from "./downloadResourse/searchForm";
   import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import { getResults } from "../../../../ui-utils/commons"; 
@@ -146,9 +147,9 @@ dispatch(prepareFinalObject("searchScreen",{}));
              
             },
           },
-         // searchForm,
+         searchForm,
           breakAfterSearch: getBreak(),
-          searchResults,
+          //searchResults,
         },
       },
     },

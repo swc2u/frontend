@@ -1198,8 +1198,7 @@ const screenConfig = {
     // const tenantId = getTenantId();
     // dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
 
-   
-    
+      
     return action;
   },
 
