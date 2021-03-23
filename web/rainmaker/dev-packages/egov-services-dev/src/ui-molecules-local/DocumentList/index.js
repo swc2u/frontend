@@ -261,6 +261,7 @@ class DocumentList extends Component {
 
     handleChange = (key, event) => {
         const { documentsUploadRedux, prepareFinalObject } = this.props;
+        prepareFinalObject("dropDown.value" , event.target.value)
         prepareFinalObject(`documentsUploadRedux`, {
             ...documentsUploadRedux,
             [key]: {
@@ -273,7 +274,7 @@ class DocumentList extends Component {
     getUploadCard = (card, key) => {
 console.log(card, "Card He");
         const { classes, documentsUploadRedux } = this.props;
-        let jsonPath = `documentsUploadRedux[${key}].documents[${key}].dropdown.value`;
+        let jsonPath ="dropDown.value" ;
         return (
             <Grid container={true}>
                 <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>

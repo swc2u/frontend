@@ -7,7 +7,7 @@ import classNames from "classnames";
 import Button from "@material-ui/core/Button";
 //import { LabelContainer } from "../../ui-containers";
 import { LabelContainer } from "egov-ui-framework/ui-containers"
-import "./index.css";
+//import "./index.css";
 
 const styles = {
   whiteCard: {
