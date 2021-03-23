@@ -463,7 +463,7 @@ const setSearchResponse = async (
         dispatch(
             prepareFinalObject(
                 "paccBooking.bkCleansingCharges",
-                masterItemData[0].cleaningCharges * daysCount
+                masterItemData[0].cleaningCharges 
             )
         );
         dispatch(

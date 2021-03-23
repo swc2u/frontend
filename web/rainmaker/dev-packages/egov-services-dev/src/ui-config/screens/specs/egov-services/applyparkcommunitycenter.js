@@ -327,7 +327,7 @@ export const prepareEditFlow = async (
             dispatch(
                 prepareFinalObject(
                     "Booking.bkCleansingCharges",
-                    masterDataItem[0].cleaningCharges * daysCount
+                    masterDataItem[0].cleaningCharges 
                 )
             );
             dispatch(
@@ -554,7 +554,7 @@ const screenConfig = {
             dispatch(
                 prepareFinalObject(
                     "Booking.bkCleansingCharges",
-                    masterDataItem[0].cleaningCharges * daysCount
+                    masterDataItem[0].cleaningCharges 
                 )
             );
             dispatch(

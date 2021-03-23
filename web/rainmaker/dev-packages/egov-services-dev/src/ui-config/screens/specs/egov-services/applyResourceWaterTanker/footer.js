@@ -94,29 +94,57 @@ const callBackForNext = async (state, dispatch) => {
         isFormValid = moveToReview(state, dispatch);
     }
     if (activeStep === 1 && isFormValid != false) {
-        let response = await createUpdateWtbApplication(
-            state,
-            dispatch,
-            "INITIATE"
-        );
-        let responseStatus = get(response, "status", "");
-        if (responseStatus == "SUCCESS" || responseStatus == "success") {
-            isFormValid = true;
-
-            // DISPLAY SUCCESS MESSAGE
-            // let successMessage = {
-            //     labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
-            //     labelKey: "", //UPLOAD_FILE_TOAST
-            // };
-            // dispatch(toggleSnackbar(true, successMessage, "success"));
-
-            let tenantId = getTenantId().split(".")[0];
-            let applicationNumber = get(
-                response,
-                "data.bkApplicationNumber",
-                ""
+     
+            let response ={}
+        
+            let responseStatus = {}
+            let applicationNumber= ""
+            let bookingStatus = get(
+                state.screenConfiguration.preparedFinalObject,
+                "Booking.bkApplicationStatus",
+                []
             );
-            let businessService = get(response, "data.businessService", "");
+            
+            if(bookingStatus !== "INITIATED"){
+                response = await createUpdateWtbApplication(
+                    state,
+                    dispatch,
+                    "INITIATE"
+                );
+                responseStatus = get(response, "status", "");
+                if (responseStatus == "SUCCESS" || responseStatus == "success") {
+                    applicationNumber = get(
+                    response,
+                    "data.bkApplicationNumber",
+                    ""
+    
+                );
+                }
+            }
+            else{
+           
+                 applicationNumber = get(
+                    state.screenConfiguration.preparedFinalObject,
+                    "Booking.bkApplicationNumber",
+                    []
+                );
+            }
+            console.log(response, "myResponse");
+            responseStatus = get(response, "status", "");
+            if (responseStatus == "SUCCESS" || responseStatus == "success" || applicationNumber) {
+    
+                isFormValid = true;
+    
+                // DISPLAY SUCCESS MESSAGE
+                // let successMessage = {
+                //     labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
+                //     labelKey: "", //UPLOAD_FILE_TOAST
+                // };
+                // dispatch(toggleSnackbar(true, successMessage, "success"));
+    
+                let tenantId = getTenantId().split(".")[0];
+               
+               let businessService = get(response, "data.businessService", "");
             const reviewUrl = `/egov-services/applywatertanker?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
             dispatch(setRoute(reviewUrl));
 

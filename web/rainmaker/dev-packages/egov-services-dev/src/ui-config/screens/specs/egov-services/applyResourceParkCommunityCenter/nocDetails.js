@@ -303,7 +303,7 @@ export const bankAccountDetails = getCommonCard({
                     //labelKey: "BK_PCC_IFSC_CODE_LABEL",
                 },
                 required: true,
-                pattern: getPattern("Name"),
+                pattern: getPattern("IFSCCode"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkIfscCode",
             }),
