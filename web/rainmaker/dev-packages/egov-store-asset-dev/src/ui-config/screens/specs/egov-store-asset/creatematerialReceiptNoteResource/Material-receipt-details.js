@@ -189,7 +189,10 @@ import {
                   dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].supplier.code`,purchaseOrder[0].supplier.code));
                   dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].supplier.name`,purchaseOrder[0].supplier.name));
                  }
-                //set AvailableQty from  po purchaseOrderDetails 0 index receivedQuantity,orderQuantity,unitPrice(unitRate) null                  
+                //set AvailableQty from  po purchaseOrderDetails 0 index receivedQuantity,orderQuantity,unitPrice(unitRate) null 
+                const step = getQueryArg(window.location.href, "step");
+                const mrnNumber = getQueryArg(window.location.href, "mrnNumber");
+                if(!step && !mrnNumber){                 
                 dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].uom.code`,''));
                 dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].uom.name`,''));
                 dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].AvailableQty`,''));
@@ -198,6 +201,7 @@ import {
                 dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].material.name`,''));
                 dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].material.code`,''));
                 dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].material.description`,''));
+                }
                  
                  //dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].receivedQty`,purchaseOrderDetails[0].receivedQuantity));
                 // dispatch(prepareFinalObject(`materialReceipt[0].receiptDetails[${cardIndex}].acceptedQty`,purchaseOrderDetails[0].orderQuantity));

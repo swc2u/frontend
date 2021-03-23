@@ -167,7 +167,7 @@ export const header = getCommonContainer({
           dispatch(prepareFinalObject("transferInwards[0].issueNumber",materialIssues[0].issueNumber));
           dispatch(prepareFinalObject("transferInwards[0].receivingStore.code",materialIssues[0].toStore.code));
           dispatch(prepareFinalObject("transferInwards[0].issueingStore.code",materialIssues[0].fromStore.code));
-          dispatch(prepareFinalObject("transferInwards[0].issueDate", convertDateToEpoch(materialIssues[0].issueDate, "dayStart")));
+          dispatch(prepareFinalObject("transferInwards[0].issueDate", convertDateToEpoch(materialIssues[0].issueDate, "daymid")));
           dispatch(prepareFinalObject("transferInwards[0].indent.issueStore.code",materialIssues[0].indent.issueStore.code));
           dispatch(prepareFinalObject("transferInwards[0].indent.indentStore.code",materialIssues[0].indent.indentStore.code));
           dispatch(prepareFinalObject("transferInwards[0].indent.indentPurpose",materialIssues[0].indent.indentPurpose));
@@ -198,7 +198,7 @@ export const header = getCommonContainer({
               // fetching employee designation
       const userInfo = JSON.parse(getUserInfo());
       if(userInfo){
-        dispatch(prepareFinalObject("transferInwards[0].createdByName", userInfo.name));
+        dispatch(prepareFinalObject("transferInwards[0].receivedBy", userInfo.name));
         const queryParams = [{ key: "codes", value: userInfo.userName },{ key: "tenantId", value:  getTenantId() }];
         try { 
           const payload = await httpRequest(
@@ -314,12 +314,12 @@ export const header = getCommonContainer({
         "ASST-ENG",
       )
     );
-    dispatch(
-      prepareFinalObject(
-        "transferInwards[0].receivedBy",
-        "sanjeev",
-      )
-    );
+    // dispatch(
+    //   prepareFinalObject(
+    //     "transferInwards[0].receivedBy",
+    //     "sanjeev",
+    //   )
+    // );
     dispatch(
       prepareFinalObject(
         "transferInwards[0].inspectedBy",

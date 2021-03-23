@@ -70,7 +70,7 @@ return (
             name="PaymentReceiptNumber"
             type="string" 
             value={PaymentReceiptNumber}
-            required = {true}
+            // required = {true}
             hintText={
               <Label
                 label="BK_MYBK_CREATE_TRANSACTION_NUMBER"   // label="BK_MYBK_RECEIPT_NUMBER"

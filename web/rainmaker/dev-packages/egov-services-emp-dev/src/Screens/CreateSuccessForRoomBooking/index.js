@@ -264,12 +264,12 @@ this.setState({
       discountForRoom = CreateRoomApplication.data.roomsModel[i].discount
     }
     if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "NON-AC"){
-      totalNonAcRoom = CreateRoomApplication.data.roomsModel.totalNoOfRooms	
+      totalNonAcRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms	//{"ResponseInfo":{"apiId":"Rainmaker","ver":".01","ts":"","action":"_search","did":"1","key":"","msgId":"20170310130900|en_IN","userInfo":{"id":182,"uuid":"28df855b-d5ff-43ff-bd13-fdf28875106b","userName":"e_sampark","name":"e_sampark Kumar","type":"EMPLOYEE","mobileNumber":"9811658211","emailId":"e_sampark@gmail.com","tenantId":"ch.chandigarh","roles":[{"id":null,"name":"Parks and Community Centre Offline Applier","code":"BK_E-SAMPARK-CENTER","tenantId":"ch.chandigarh"},{"id":null,"name":"Employee","code":"EMPLOYEE","tenantId":"ch.chandigarh"}]},"correlationId":"925ccbbe-b800-44af-a459-d8887ffba86c"},"message":"Success","filestoreIds":["3906bd13-e235-47b8-853e-8fb1cbe4ff60"],"jobid":"bk-room-booking-pl-emp1616087147289","createdtime":1616087147204,"endtime":1616087147715,"tenantid":"ch.chandigarh","totalcount":1}
     }
     }
 
 
-    if(totalACRoom !== 0 && totalNonAcRoom == 0){
+    if(totalACRoom !== 0 && totalNonAcRoom == 0){ 
       bookedrooms = `${totalACRoom} AC` 
     }
     if(totalACRoom == 0 && totalNonAcRoom !== 0){
@@ -464,18 +464,18 @@ downloadRoomPaymentRecipt({ BookingInfo: BookingInfo })
       discountForRoom = CreateRoomApplication.data.roomsModel[i].discount
     }
     if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "NON-AC"){
-      totalNonAcRoom = CreateRoomApplication.data.roomsModel.totalNoOfRooms	
+      totalNonAcRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms	
     }
     }
 
 if(totalACRoom !== 0 && totalNonAcRoom == 0){
-  bookedrooms = `${totalACRoom} AC` 
+  bookedrooms = `${totalACRoom} AC Room(s)` 
 }
 if(totalACRoom == 0 && totalNonAcRoom !== 0){
-  bookedrooms = `${totalNonAcRoom} Non AC` 
+  bookedrooms = `${totalNonAcRoom} Non AC Room(s)` 
 }
 if(totalACRoom !== 0 && totalNonAcRoom !== 0){
-  bookedrooms = `${totalACRoom} AC and ${totalNonAcRoom} Non AC` 
+  bookedrooms = `${totalACRoom} AC and ${totalNonAcRoom} Non AC Room(s)` 
 }
 
 let RoomFromDate = CreateRoomApplication.data.roomsModel[0].fromDate
@@ -547,6 +547,7 @@ else{
               applicationDetails.bkFromDate,
               applicationDetails.bkToDate
             ),
+            "applicationNumber":this.props.AppNum
         },
         "generated": {
           "generatedBy": userInfo.name,
@@ -611,24 +612,17 @@ downloadRoomPermissionLetter({ BookingInfo: BookingInfo })
     const { AppNum,userInfo,CreateRoomApplication,createWaterTankerApplicationData,myLocationtwo, downloadBWTApplication,loading,createPACCApplicationData, updatePACCApplicationData } = this.props;
     //BK_MYBK_PCC_CREATE_APPLICATION_HEADER
     // Park And Community Centre
-
-    console.log("InSuccessPage--",
-    { labelName: "BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER-Value", labelKey: "BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER" },
-    { labelName: "BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE--", labelKey: "BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE" },
-    { labelName: "BK_CS_COMMON_SEND_MESSAGE--", labelKey: "BK_CS_COMMON_SEND_MESSAGE" },
-)
- 
     return (
       <Screen loading={loading}>
       <div className="success-message-main-screen resolve-success">
       <SuccessMessageForRoomBooking
-         headermessage="BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER"
+         headermessage="BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER" 
           successmessage="BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE"
           secondaryLabel="BK_CS_COMMON_SEND_MESSAGE"
           containerStyle={{ display: "inline-block" }} 
           icon={<Icon action="navigation" name="check" />}
           backgroundColor={"#22b25f"}
-          applicationNumber={AppNum}
+          applicationNumber={AppNum} 
         />
         <div className="responsive-action-button-cont">
           <Button

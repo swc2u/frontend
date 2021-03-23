@@ -55,10 +55,10 @@ class DashboardEstate extends React.Component {
 
 
     // PDF function 
-    pdfDownload = () => {
+    pdfDownload = (e) => {
 
     debugger;
-
+    e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
     var rowData = this.state.rowData
@@ -173,7 +173,7 @@ class DashboardEstate extends React.Component {
 
     // Toggle Column 
     toggleColumn = (e) => {
-        // e.preventDefault();
+        e.preventDefault();
         debugger;
         const data = this.state.columnData
         this.setState({
@@ -308,21 +308,21 @@ class DashboardEstate extends React.Component {
         var hardJSON = propSortBy === "applicationType" ? [
             {
             "sortBy": "applicationType",
-            "msgX": "Status",
+            "msgX": "Application Type",
             "msgY": "No of request",
-            "title": "Application Typewise wise Estate Report"
+            "title": "Application Typewise Estate Report"
             }, 
             {
-            "sortBy": "hardcopyReceivedDate",
+            "sortBy": "action",
             "msgX": "No of request",
-            "msgY": "Application Received Date ",
-            "title": "Date wise Application type Estate report"
+            "msgY": "Action",
+            "title": "Application Typewise Estate Action Report"
             },
             { 
-            "sortBy": "action",
-            "msgX": "Action",
+            "sortBy": "hardcopyReceivedDate",
+            "msgX": "Month",
             "msgY": "No of request",
-            "title": "Action wise Estate report"
+            "title": "Application Typewise Estate Monthwise Action Report"
             },
             { 
             "sortBy": ["paymentDetails","paymentMode","PAIDPaymentMode",{"null":"PENDING"}],
@@ -346,21 +346,21 @@ class DashboardEstate extends React.Component {
         : propSortBy === "branchType" ? [
             {
             "sortBy": "branchType",
-            "msgX": "Status",
+            "msgX": "Branch",
             "msgY": "No of request",
-            "title": "Application Typewise wise Estate Report"
+            "title": "Branchwise Estate Report"
             }, 
             {
             "sortBy": "applicationType",
             "msgX": "No of request",
-            "msgY": "Application Received Date ",
-            "title": "Date wise Application type Estate report"
+            "msgY": "Application Type",
+            "title": "Branchwise Estate Application type report"
             },
             { 
             "sortBy": "hardcopyReceivedDate",
-            "msgX": "Action",
+            "msgX": "Month",
             "msgY": "No of request",
-            "title": "Action wise Estate report"
+            "title": "Branchwise Estate Application type Monthwise report"
             },
             { 
             "sortBy": ["paymentDetails","paymentMode","PAIDPaymentMode",{"null":"PENDING"}],
@@ -522,21 +522,21 @@ class DashboardEstate extends React.Component {
             var hardJSON = propSortBy === "applicationType" ? [
                 {
                 "sortBy": "applicationType",
-                "msgX": "Status",
+                "msgX": "Application Type",
                 "msgY": "No of request",
-                "title": "Application Typewise wise Estate Report"
+                "title": "Application Typewise Estate Report"
                 }, 
                 {
-                "sortBy": "hardcopyReceivedDate",
+                "sortBy": "action",
                 "msgX": "No of request",
-                "msgY": "Application Received Date ",
-                "title": "Date wise Application type Estate report"
+                "msgY": "Action",
+                "title": "Application Typewise Estate Action Report"
                 },
                 { 
-                "sortBy": "action",
-                "msgX": "Action",
+                "sortBy": "hardcopyReceivedDate",
+                "msgX": "Month",
                 "msgY": "No of request",
-                "title": "Action wise Estate report"
+                "title": "Application Typewise Estate Monthwise Action Report"
                 },
                 { 
                 "sortBy": ["paymentDetails","paymentMode","PAIDPaymentMode",{"null":"PENDING"}],
@@ -560,21 +560,21 @@ class DashboardEstate extends React.Component {
             : propSortBy === "branchType" ? [
                 {
                 "sortBy": "branchType",
-                "msgX": "Status",
+                "msgX": "Branch",
                 "msgY": "No of request",
-                "title": "Application Typewise wise Estate Report"
+                "title": "Branchwise Estate Report"
                 }, 
                 {
                 "sortBy": "applicationType",
                 "msgX": "No of request",
-                "msgY": "Application Received Date ",
-                "title": "Date wise Application type Estate report"
+                "msgY": "Application Type",
+                "title": "Branchwise Estate Application type report"
                 },
                 { 
                 "sortBy": "hardcopyReceivedDate",
-                "msgX": "Action",
+                "msgX": "Month",
                 "msgY": "No of request",
-                "title": "Action wise Estate report"
+                "title": "Branchwise Estate Application type Monthwise report"
                 },
                 { 
                 "sortBy": ["paymentDetails","paymentMode","PAIDPaymentMode",{"null":"PENDING"}],
@@ -889,8 +889,18 @@ class DashboardEstate extends React.Component {
                 const sortingHard = this.state.graphHardThirdData.sortBy
                 var graphSorting = this.graphSorting( sortingHard, this.state.dataTwo[selectedVal], sortingHard[2] );
                 
+                var graphThirdLabel = graphSorting[0];
+                var labels = [];
+                debugger;
+                var months = {0:"JAN", 1:"FEB", 2:"MAR", 3:"APR", 4:"MAY", 5:"JUN", 6:"JUL", 7:"AUG", 8:"SEP", 9:"OCT", 10:"NOV", 11:"DEC"}
+                for(var i=0; i<graphThirdLabel.length; i++){
+                    var dt = new Date(JSON.parse(graphThirdLabel[0]))
+                    labels.push(months[dt.getMonth()])
+                }
+                graphThirdLabel = labels
+
                 this.setState({
-                    graphThirdLabel: graphSorting[0],
+                    graphThirdLabel: graphThirdLabel,
                     graphThirdData: graphSorting[1],
                     dataThird: graphSorting[2],
                     graphClicked: 2,

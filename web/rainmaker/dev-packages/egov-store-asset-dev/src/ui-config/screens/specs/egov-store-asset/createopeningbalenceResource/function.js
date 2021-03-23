@@ -314,10 +314,10 @@ export const handleCreateUpdateOpeningBalence = (state, dispatch) => {
        set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].lotNo`, element.lotNo);
        set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].userQuantity`, element.userQuantity);
        set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].oldReceiptNumber`, element.oldReceiptNumber);       
-       set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].receivedDate`, convertDateToEpoch(element.receivedDate, "dayStart"));
-       set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].expiryDate`, convertDateToEpoch(element.expiryDate, "dayStart"));
-       set(materialReceiptObject[0], `receiptDetails[${index}].receivedDate`, convertDateToEpoch(element.receivedDate, "dayStart"));
-       set(materialReceiptObject[0], `receiptDetails[${index}].expiryDate`, convertDateToEpoch(element.expiryDate, "dayStart"));
+       set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].receivedDate`, convertDateToEpoch(element.receivedDate, "daymid"));
+       set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].expiryDate`, convertDateToEpoch(element.expiryDate, "daymid"));
+       set(materialReceiptObject[0], `receiptDetails[${index}].receivedDate`, convertDateToEpoch(element.receivedDate, "daymid"));
+       set(materialReceiptObject[0], `receiptDetails[${index}].expiryDate`, convertDateToEpoch(element.expiryDate, "daymid"));
        set(materialReceiptObject[0],"receiptDate",element.receivedDate);
   }
 
@@ -338,6 +338,7 @@ export const handleCreateUpdateOpeningBalence = (state, dispatch) => {
           let mrnNumber = response.materialReceipt[0].mrnNumber
 //          dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=OPENINGBALANCE&mode=create&code=${mrnNumber}`));
             dispatch(setRoute(`/egov-store-asset/view-opening-balence?applicationNumber=${mrnNumber}&tenantId=${response.materialReceipt[0].tenantId}`));
+           // window.location.href =`/egov-store-asset/view-opening-balence?applicationNumber=${mrnNumber}&tenantId=${response.materialReceipt[0].tenantId}`
         }
       } catch (error) {
         //furnishmaterialsData(state, dispatch);
@@ -352,6 +353,7 @@ export const handleCreateUpdateOpeningBalence = (state, dispatch) => {
         if(response){
           let mrnNumber = response.materialReceipt[0].mrnNumber
           dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=OPENINGBALANCE&mode=update&code=${mrnNumber}`));
+          window.location.href =`/egov-store-asset/acknowledgement?screen=OPENINGBALANCE&mode=update&code=${mrnNumber}`
          }
       } catch (error) {
         //furnishmaterialsData(state, dispatch);

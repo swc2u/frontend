@@ -20,7 +20,9 @@ const formConfig = {
       floatingLabelText: "CORE_LOGIN_NEW_PASSWORD",
       errorMessage: "CORE_LOGIN_PASSWORD_ERRORMSG",
       hintText: "CORE_LOGIN_NEW_PASSWORD_PLACEHOLDER",
-      pattern: "^([a-zA-Z0-9@])+$",
+      //pattern: "^([a-zA-Z0-9@])+$",
+      pattern:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/i,
+     
       value: "",
     },
     confirmnewpassword: {
@@ -31,7 +33,8 @@ const formConfig = {
       floatingLabelText: "CORE_LOGIN_CONFIRM_NEW_PASSWORD",
       errorMessage: "CORE_LOGIN_PASSWORD_ERRORMSG",
       hintText: "CORE_LOGIN_CONNFIRM_NEW_PASSWORD_PLACEHOLDER",
-      pattern: "^([a-zA-Z0-9@])+$",
+     // pattern: "^([a-zA-Z0-9@])+$",
+      pattern:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/i,
       value: "",
     },
   },

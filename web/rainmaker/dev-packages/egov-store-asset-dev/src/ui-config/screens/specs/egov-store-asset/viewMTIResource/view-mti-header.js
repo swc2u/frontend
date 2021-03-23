@@ -119,7 +119,7 @@ export const getMTIHeaderView = (isReview = true) => {
       createdBy: getLabelWithValue(
         { labelName: "Created by", labelKey: "STORE_PURCHASE_ORDER_CREATEBY" },
         {
-          jsonPath: "indents[0].indentCreatedBy",
+          jsonPath: "indents[0].receivedBy",
         }
       ),
       designation: getLabelWithValue(

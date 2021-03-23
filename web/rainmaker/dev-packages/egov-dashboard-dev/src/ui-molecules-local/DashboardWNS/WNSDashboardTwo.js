@@ -10,7 +10,7 @@ import 'jspdf-autotable'
 // import Dashboardtable from './Dashboardtable';
 // import Pagination from "./Pagination";
 // import Water_data from './WNS_data.json';
-import BillData from './BillData.json';
+// import BillData from './BillData.json';
 import './Water.css'
 
 class WNSDashboardTwo extends React.Component {
@@ -349,10 +349,10 @@ class WNSDashboardTwo extends React.Component {
         const propSortBy = "dashboardType1";
         // const propSortBy = "status";
         const dt = this.props.data;
-        const data = dt.WaterConnection;
+        const data = dt[0].WaterConnection;
         const valueData = [];
 
-        const demoBillData = BillData.billData;
+        const demoBillData = dt[1].billData;
 
         for(var i=0; i<data.length; i++){
             for(var j=0; j<data[i].waterApplicationList.length; j++){
