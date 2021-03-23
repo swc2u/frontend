@@ -45,6 +45,16 @@ const fieldConfig = {
       labelKey: "WF_ADD_HOC_CHARGES_POPUP_COMMENT_LABEL"
     }
   },
+  termsandcondition: {
+    label: {
+      labelName: "Comments",
+      labelKey: "ES_COMMON_TERMS_AND_CONDITIONS"
+    },
+    placeholder: {
+      labelName: "Enter Comments",
+      labelKey: "ES_COMMON_TERMS_AND_CONDITIONS_PLACEHOLDER"
+    }
+  },
   mandatoryComments: {
     label: {
       labelName: "Comments",
@@ -132,7 +142,7 @@ let bb_payment_config = [
     },
     path: "applicationNumberCharges",
     required: true,
-    errorMessage: "ES_ERR_ALLOTMENT_NUMBER",
+    errorMessage: "ES_ERR_BB_ALLOTMENT_NUMBER",
     showError: false
   }
 ]
@@ -424,6 +434,7 @@ class ActionDialog extends React.Component {
     dataPath = `${dataPath}[0]`;
 
     const applicationState = (get(state.screenConfiguration.preparedFinalObject, dataPath) || {}).state
+    const branchtype=(get(state.screenConfiguration.preparedFinalObject,dataPath)||{}).branchType
       let documents = get(state.screenConfiguration.preparedFinalObject, documentsJsonPath) || []
       documents = documents.filter(item => !!item)
     return (
@@ -513,6 +524,26 @@ class ActionDialog extends React.Component {
                     />
                     {!!this.state.commentsErr && (<span style={{color: "red"}}>Please enter comments</span>)}
                   </Grid>
+
+                  {buttonLabel === "FORWARD" && (applicationState === "ES_PENDING_DA_PREPARE_LETTER" && branchtype==="EstateBranch") && (
+                  <Grid item sm="12">
+                    <TextFieldContainer
+                      InputLabelProps={{ shrink: true }}
+                      // label= {fieldConfig.comments.label }
+                      label= { fieldConfig.termsandcondition.label}
+                      onChange={e =>
+                        handleFieldChange(`${dataPath}.termsAndConditions`, e.target.value)
+                      }
+                      // required = {true}
+                      //jsonPath={this.open != true ? "" : `${dataPath}.comments`}
+                      placeholder={fieldConfig.termsandcondition.placeholder}
+                      inputProps={{ maxLength: 120 }}
+                    />
+                    {/* {!!this.state.commentsErr && (<span style={{color: "red"}}>Please enter comments</span>)} */}
+                  </Grid>
+                  )}
+
+
                   {buttonLabel === "FORWARD" && (applicationState === "ES_PENDING_DS_VERIFICATION" || applicationState == "ES_MM_PENDING_DS_VERIFICATION") && (
                     <Grid item sm="12">
                     <TextFieldContainer
