@@ -29,7 +29,7 @@ import set from "lodash/set";
 import { generageBillCollection, generateBill, clearlocalstorageAppDetails, calculateCancelledBookingRefundAmount, getAllbillsOfBooking } from "../utils";
 import { pccSummary, pccParkSummary, changedVenueDatepccSummary, cityPicker } from "./summaryResource/pccSummary";
 import { pccApplicantSummary, pccBankSummary, roomBookingSummary } from "./summaryResource/pccApplicantSummary";
-import { documentsSummary } from "./summaryResource/documentsSummary";
+import { documentsSummaryForPacc } from "./summaryResource/documentsSummary";
 import { estimateSummary, modifiedBookingPaymentCard } from "./summaryResource/estimateSummary";
 import { remarksSummary } from "./searchResource/remarksSummary";
 import { footerForParkAndCC } from "./searchResource/citizenFooter";
@@ -66,6 +66,13 @@ const prepareDocumentsView = async (state, dispatch) => {
         "screenConfiguration.preparedFinalObject.BookingDocument",
         {}
     );
+    let BookingDocumentType = get(
+        state,
+        "screenConfiguration.preparedFinalObject.BookingDocumentType",
+        {}
+    );
+
+    BookingDocumentType = BookingDocumentType[0].documentType;
 
     if (Object.keys(bookingDocs).length > 0) {
         let keys = Object.keys(bookingDocs);
@@ -77,6 +84,7 @@ const prepareDocumentsView = async (state, dispatch) => {
             title: "BK_PCC_DOCUMENT",
             fileStoreId: id,
             linkText: "View",
+            documentType: BookingDocumentType
         });
         let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
         let fileUrls =
@@ -102,6 +110,8 @@ const prepareDocumentsView = async (state, dispatch) => {
                 `Document - ${index + 1}`;
             return doc;
         });
+
+
         dispatch(prepareFinalObject("documentsPreview", documentsPreview));
     }
 };
@@ -312,6 +322,13 @@ const setSearchResponse = async (
             prepareFinalObject(
                 "BookingDocument",
                 get(response, "documentMap", {})
+            )
+        );
+
+        dispatch(
+            prepareFinalObject(
+                "BookingDocumentType",
+                get(response, "documentList", {})
             )
         );
 
@@ -690,7 +707,7 @@ const screenConfig = {
                     changedVenueDatepccSummary: changedVenueDatepccSummary,
                     pccBankSummary: pccBankSummary,
                     //roomBookingSummary :roomBookingSummary,
-                    documentsSummary: documentsSummary,
+                    documentsSummary: documentsSummaryForPacc,
                     // remarksSummary: remarksSummary,
                 }),
                 ParkChangeDateVenueFieldDisablerNew: {
