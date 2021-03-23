@@ -33,86 +33,86 @@ class DashboardOPMSStatus extends React.Component {
     // PDF function 
     pdfDownload = (e) => {
 
-        debugger;
-        e.preventDefault();
-        var columnData = this.state.tableHeader
-        // var columnDataCamelize = this.state.columnData
-        var rowData = this.state.tableRow
-    
-        var group = columnData.reduce((r, a) => {
-            r[a["show"]] = [...r[a["show"]] || [], a];
-            return r;
-            }, {});
-    
-        columnData = group["true"]
-        var tableColumnData = []
-        var tableColumnDataCamel = []
-        for(var i=0; i<columnData.length; i++){
-            tableColumnData.push(columnData[i]["accessor"]);
-            // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
-        }
-    
-        var tableRowData = [];
-        for(var i=0; i<rowData.length; i++){
-            var rowItem = [];
-            for(var j=0; j<tableColumnData.length; j++){
-                const demo1 = rowData[i]
-                var demo2 = tableColumnData[j].replace(".", ",");
-                demo2 = demo2.split(",")
-                if(typeof(demo2) === "object"){   
-                    if(demo2.length > 1){
-                        rowItem.push(rowData[i][demo2[0]][demo2[1]]);
-                    }
-                    else{
-                        rowItem.push(rowData[i][demo2]);
-                    }
-                }else{
+    debugger;
+    e.preventDefault();
+    var columnData = this.state.tableHeader
+    // var columnDataCamelize = this.state.columnData
+    var rowData = this.state.tableRow
+
+    var group = columnData.reduce((r, a) => {
+        r[a["show"]] = [...r[a["show"]] || [], a];
+        return r;
+        }, {});
+
+    columnData = group["true"]
+    var tableColumnData = []
+    var tableColumnDataCamel = []
+    for(var i=0; i<columnData.length; i++){
+        tableColumnData.push(columnData[i]["accessor"]);
+        // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
+    }
+
+    var tableRowData = [];
+    for(var i=0; i<rowData.length; i++){
+        var rowItem = [];
+        for(var j=0; j<tableColumnData.length; j++){
+            const demo1 = rowData[i]
+            var demo2 = tableColumnData[j].replace(".", ",");
+            demo2 = demo2.split(",")
+            if(typeof(demo2) === "object"){   
+                if(demo2.length > 1){
+                    rowItem.push(rowData[i][demo2[0]][demo2[1]]);
+                }
+                else{
                     rowItem.push(rowData[i][demo2]);
                 }
+            }else{
+                rowItem.push(rowData[i][demo2]);
             }
-            tableRowData.push(rowItem);
         }
-    
-        var tableRowDataFinal = []
-        for(var i=0; i<tableRowData.length; i++){
-            tableRowDataFinal.push(tableRowData[i]);
-        }
-    
-    
-        debugger;
-        // PDF Code 
-        const unit = "pt";
-        const size = "A4"; // Use A1, A2, A3 or A4
-        const orientation = "portrait"; // portrait or landscape
-        const marginLeft = 40;
-        const doc = new jsPDF(orientation, unit, size);
-    
-        var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-        var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-    
-        doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
-    
-        doc.setFontSize(10);
-        const pdfTitle =  "OPMS Title"
-        doc.text(pdfTitle, pageWidth / 2, 40, 'center');
-    
-        doc.autoTable({ html: '#my-table' });
-        doc.setFontSize(5);
-    
-        doc.autoTable({
-            // head: [tableColumnDataCamel],
-            head: [tableColumnData],
-            theme: "striped",
-            styles: {
-                fontSize: 7,
-            },
-            body:tableRowData
-        });
-    
-        doc.save(pdfTitle+".pdf");
-    
-        }
-    
+        tableRowData.push(rowItem);
+    }
+
+    var tableRowDataFinal = []
+    for(var i=0; i<tableRowData.length; i++){
+        tableRowDataFinal.push(tableRowData[i]);
+    }
+
+
+    debugger;
+    // PDF Code 
+    const unit = "pt";
+    const size = "A4"; // Use A1, A2, A3 or A4
+    const orientation = "portrait"; // portrait or landscape
+    const marginLeft = 40;
+    const doc = new jsPDF(orientation, unit, size);
+
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+    doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
+
+    doc.setFontSize(10);
+    const pdfTitle =  "OPMS Title"
+    doc.text(pdfTitle, pageWidth / 2, 40, 'center');
+
+    doc.autoTable({ html: '#my-table' });
+    doc.setFontSize(5);
+
+    doc.autoTable({
+        // head: [tableColumnDataCamel],
+        head: [tableColumnData],
+        theme: "striped",
+        styles: {
+            fontSize: 7,
+        },
+        body:tableRowData
+    });
+
+    doc.save(pdfTitle+".pdf");
+
+    }
+
     // Column Unchange Data
     columnUnchange=(e)=>{
         debugger;
@@ -150,7 +150,7 @@ class DashboardOPMSStatus extends React.Component {
 
     // Toggle Column 
     toggleColumn = (e) => {
-        // e.preventDefault();
+        e.preventDefault();
         debugger;
         const data = this.state.columnData
         this.setState({

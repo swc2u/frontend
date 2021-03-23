@@ -37,10 +37,10 @@ class RPCollectionReport extends React.Component {
 
 
     // PDF function 
-    pdfDownload = () => {
+    pdfDownload = (e) => {
 
     debugger;
-
+    e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
     var rowData = this.state.rowData
@@ -155,7 +155,7 @@ class RPCollectionReport extends React.Component {
 
     // Toggle Column 
     toggleColumn = (e) => {
-        // e.preventDefault();
+        e.preventDefault();
         debugger;
         const data = this.state.columnData
         this.setState({
@@ -298,10 +298,13 @@ class RPCollectionReport extends React.Component {
         
         // Column Data
         const tableData = data[0] ? Object.keys(data[0]) : [];
-        var columnData = []
+        var columnData = [];
+        const tableDataHeader = ["Receipt Number", "Receipt Issue Date", "Transit Number", "NAme", "Mobile No", "Transaction Number",
+         "Payment type", "Total"];
+
         for(var i=0; i<tableData.length; i++){
             var itemHeader = {}
-            itemHeader["Header"] = this.camelize(tableData[i]);
+            itemHeader["Header"] = this.camelize(tableDataHeader[i]);
             itemHeader["accessor"] = tableData[i];
             itemHeader["show"]= (i === 1 || i === 2 || i === 3 || i === 4 
                 || i === 15 || i === 18 || i === 20
@@ -354,10 +357,13 @@ class RPCollectionReport extends React.Component {
             
             // Column Data
             const tableData = data[0] ? Object.keys(data[0]) : [];
-            var columnData = []
+            var columnData = [];
+            const tableDataHeader = ["Receipt Number", "Receipt Issue Date", "Transit Number", "NAme", "Mobile No", "Transaction Number",
+            "Payment type", "Total"];
+
             for(var i=0; i<tableData.length; i++){
                 var itemHeader = {}
-                itemHeader["Header"] = this.camelize(tableData[i]);
+                itemHeader["Header"] = this.camelize(tableDataHeader[i]);
                 itemHeader["accessor"] = tableData[i];
                 itemHeader["show"]= (i === 1 || i === 2 || i === 3 || i === 4 
                     || i === 15 || i === 18 || i === 20
@@ -486,8 +492,23 @@ class RPCollectionReport extends React.Component {
                 const hardval = this.state.hardJSON[1]
                 var graphSorting = this.graphSorting( ind, this.state.dataOne[selectedVal], "dashboard 2" );
                 
+                debugger;
+                var graphTwoLabel = graphSorting[0];
+                var labels = [];
+                var months = {0:"JAN", 1:"FEB", 2:"MAR", 3:"APR", 4:"MAY", 5:"JUN", 6:"JUL", 7:"AUG", 8:"SEP", 9:"OCT", 10:"NOV", 11:"DEC"}
+                for(var i=0; i<graphTwoLabel.length; i++){
+                    var dt = graphTwoLabel[i];
+                    var mon = dt[3]+""+dt[4];
+                    var dayDt = dt[0]+""+dt[1];
+                    var yr = dt[6]+""+dt[7]+dt[8]+""+dt[9]
+                    var dtObj = mon+"-"+dayDt+"-"+yr
+                    var dt = new Date(dtObj)
+                    labels.push(months[dt.getMonth()])
+                }
+                graphTwoLabel = labels
+
                 this.setState({
-                    graphTwoLabel: graphSorting[0],
+                    graphTwoLabel: graphTwoLabel,
                     graphTwoData: graphSorting[1],
                     dataTwo: graphSorting[2],
                     graphClicked: 1,

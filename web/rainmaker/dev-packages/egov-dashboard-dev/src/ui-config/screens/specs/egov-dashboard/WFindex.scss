@@ -8,19 +8,23 @@ div#material-ui-cardContent {
   width: 100%;
   display: flex; }
 
-div#custom-containers-local-buisnessService {
-  width: 350px; }
+  div#custom-containers-local-buisnessService {
+    width: 350px;
+    position: absolute;
+}
 
 div#custom-containers-local-buisnessService2 {
-  width: 350px; }
+    width: 350px;
+    margin-left: 50px;
+    position: absolute;
+}
 
 @media only screen and (max-width: 700px) {
   .ack-body, .ack-tail {
     display: contents;
     text-align: center !important; }
   div#material-ui-cardContent {
-    width: 200%;
-    display: block; }
+    width: 200%; }
   .apply-wizard-footer button {
     margin-left: 0 !important;
     margin-right: 0 !important;
@@ -30,14 +34,32 @@ div#custom-containers-local-buisnessService2 {
   button#material-ui-searchBTN {
     width: 100%;
     margin-left: 0 !important; }
+  
+  div#custom-containers-local-buisnessService {
+      width: 100px;
+      margin-left: 0 !important;
+  }
+  
   div#custom-containers-local-buisnessService2 {
-    width: 100%;
-    margin-left: 0 !important; } }
+      width: 100px;
+      margin-left: 40px;
+      margin-left: 0 !important;
+  }
+  }
 
 @media only screen and (max-width: 1200px) {
   button#material-ui-searchBTN {
     width: 100px;
     margin-left: 50%; }
+  
+  div#custom-containers-local-buisnessService {
+      width: 350px;
+      margin-left: 0 !important;
+  }
+  
   div#custom-containers-local-buisnessService2 {
-    width: 350px;
-    margin-left: 100%; } }
+      width: 350px;
+      margin-left: 50px;
+      margin-left: 0 !important;
+  }
+ }
