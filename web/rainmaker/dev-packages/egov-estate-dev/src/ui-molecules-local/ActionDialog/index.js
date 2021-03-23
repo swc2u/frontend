@@ -180,7 +180,7 @@ let eb_payment_config = [
       labelKey: "ES_EB_APPLICATION_FEE"
     },
     placeholder: {
-      labelName: "Enter Scrutiny Charges",
+      labelName: "Enter Application Charges",
       labelKey: "ES_EB_APPLICATION_FEE_PLACEHOLDER"
     },
     path: "applicationFee",
