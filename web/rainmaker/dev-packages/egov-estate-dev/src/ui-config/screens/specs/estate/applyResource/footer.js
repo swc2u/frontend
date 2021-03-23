@@ -797,7 +797,7 @@ const callBackForNext = async (state, dispatch) => {
 
       const rentValidation = rentItems.filter(item => !item.groundRentAmount || !item.groundRentEndMonth)
       isRentDetailsValid = rentValidation.length === 0
-      isStartAndEndYearValid = rentItems.every(item => item.groundRentEndMonth > item.groundRentStartMonth)
+      isStartAndEndYearValid = rentItems.every(item => item.groundRentEndMonth >= item.groundRentStartMonth)
       if(!!isRentDetailsValid) {
         dispatch(prepareFinalObject("Properties[0].propertyDetails.paymentConfig.paymentConfigItems", rentItems))
         getReviewAllotmentMultipleSectionDetails(state, dispatch, screenKey, reviewJsonPath, _cardName, rentItems.length, monthlyYearlyLabel);
@@ -968,7 +968,7 @@ const callBackForNext = async (state, dispatch) => {
     dispatch(toggleSnackbar(true, errorMessage, "warning"));
     } else if(!isStartAndEndYearValid) {
       let errorMessage = {
-        labelName: "End Month should be greater than Start Month",
+        labelName: "End Month should be greater than or equal to Start Month",
         labelKey: "ES_ERR_END_MONTH_START_MONTH"
       }
       scrollTop = false

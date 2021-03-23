@@ -15,6 +15,7 @@ import "./index.css";
 import { get } from "lodash";
 import {DocumentListContainer} from "../../ui-containers-local";
 import store from "egov-workflow/ui-redux/store";
+import { getLocaleLabels } from "egov-ui-framework/ui-utils/commons";
 
 const styles = theme => ({
   root: {
@@ -136,6 +137,140 @@ let bb_payment_config = [
   }
 ]
 
+let eb_payment_config = [
+  {
+    label: {
+      labelName: "Transfer Charges",
+      labelKey: "ES_EB_TRANSFER_CHARGES"
+    },
+    placeholder: {
+      labelName: "Enter Transfer Charges",
+      labelKey: "ES_EB_TRANSFER_CHARGES_PLACEHOLDER"
+    },
+    path: "transferCharges",
+    errorMessage: "ES_ERR_TRANSFER_CHARGES",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "GST",
+      labelKey: "ES_EB_GST_CHARGES"
+    },
+    placeholder: {
+      labelName: "Enter GST",
+      labelKey: "ES_EB_GST_PLACEHOLDER"
+    },
+    path: "GST",
+    errorMessage: "ES_ERR_GST",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "Application Fee",
+      labelKey: "ES_EB_APPLICATION_FEE"
+    },
+    placeholder: {
+      labelName: "Enter Scrutiny Charges",
+      labelKey: "ES_EB_APPLICATION_FEE_PLACEHOLDER"
+    },
+    path: "applicationFee",
+    required: true,
+    errorMessage: "ES_ERR_APPLICATION_FEE",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "Inspection Fees",
+      labelKey: "ES_EB_INSPECTION_FEES"
+    },
+    placeholder: {
+      labelName: "Enter Inspection Fees",
+      labelKey: "ES_EB_INSPECTION_FEES_PLACEHOLDER"
+    },
+    path: "inspectionFee",
+    errorMessage: "ES_ERR_INSPECTION_FEES",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "Security Fee",
+      labelKey: "ES_EB_SECURITY_FEE"
+    },
+    placeholder: {
+      labelName: "Enter Security Fee",
+      labelKey: "ES_EB_SECURITY_FEE_PLACEHOLDER"
+    },
+    path: "securityFee",
+    errorMessage: "ES_ERR_SECURITY_FEE",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "Extension Fee",
+      labelKey: "ES_EB_EXTENSION_FEE"
+    },
+    placeholder: {
+      labelName: "Enter Extension Fee",
+      labelKey: "ES_EB_EXTENSION_FEE_PLACEHOLDER"
+    },
+    path: "extensionFee",
+    errorMessage: "ES_ERR_EXTENSION_FEE",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "Document copying Fee",
+      labelKey: "ES_EB_DOCUMENT_COPYING_FEE"
+    },
+    placeholder: {
+      labelName: "Enter Document copying Fee",
+      labelKey: "ES_EB_DOCUMENT_COPYING_FEE_PLACEHOLDER"
+    },
+    path: "DocumentCopyingFee",
+    errorMessage: "ES_ERR_DOCUMENT_COPYING_FEE",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "Allotment Fee",
+      labelKey: "ES_EB_ALLOTMENT_FEE"
+    },
+    placeholder: {
+      labelName: "Enter Allotment Fee",
+      labelKey: "ES_EB_ALLOTMENT_FEE_PLACEHOLDER"
+    },
+    path: "allotmentFee",
+    errorMessage: "ES_ERR_ALLOTMENT_FEE",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "Conversion Fee",
+      labelKey: "ES_EB_CONVERSION_FEE"
+    },
+    placeholder: {
+      labelName: "Enter Conversion Fee",
+      labelKey: "ES_EB_CONVERSION_FEE_PLACEHOLDER"
+    },
+    path: "conversionFee",
+    errorMessage: "ES_ERR_CONVERSION_FEE",
+    showError: false
+  },
+  {
+    label: {
+      labelName: "Property Transfer Charge",
+      labelKey: "ES_EB_PROPERTY_TRANSFER_CHARGE"
+    },
+    placeholder: {
+      labelName: "Enter Property Transfer Charge",
+      labelKey: "ES_EB_PROPERTY_TRANSFER_CHARGE_PLACEHOLDER"
+    },
+    path: "propertyTransferCharge",
+    errorMessage: "ES_ERR_PROPERTY_TRANSFER_CHARGE",
+    showError: false
+  }
+]
+
 const getEpoch = (dateString, dayStartOrEnd = "dayend") => {
   //example input format : "2018-10-02"
   try {
@@ -156,7 +291,8 @@ class ActionDialog extends React.Component {
   state = {
     hardCopyReceivedDateError: false,
     commentsErr:false,
-    documentsErr: false
+    documentsErr: false,
+    paymentErr: false
   };
 
   getButtonLabelName = label => {
@@ -207,6 +343,22 @@ class ActionDialog extends React.Component {
           this.setState({
             hardCopyReceivedDateError: true
           })
+        }
+      } else if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DA_FEE") {
+        eb_payment_config = eb_payment_config.map(payment => ({...payment, isError: !data.applicationDetails[payment.path]}))
+        const isError = eb_payment_config.some(payment => !!payment.isError)
+        if(isError) {
+          this.setState({
+            paymentErr: true
+          })
+          return
+        } else {
+          for(let i=0; i < eb_payment_config.length-1; i++) {
+            if(!data.applicationDetails[eb_payment_config[i].path]) {
+              this.props.handleFieldChange(`${dataPath}.applicationDetails.${eb_payment_config[i].path}`, "0")
+            }
+          }
+          this.props.onButtonClick(buttonLabel, isDocRequired)
         }
       } else if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DRAFSMAN_CALCULATION") {
         // bb_payment_config = bb_payment_config.map(payment => ({...payment, isError: !data.applicationDetails[payment.path]}))
@@ -378,6 +530,22 @@ class ActionDialog extends React.Component {
                     {!!this.state.hardCopyReceivedDateError && (<span style={{color: "red"}}>Please enter hard copy received date</span>)}
                     </Grid>
                   )}
+                   {applicationState === "ES_PENDING_DA_FEE" && buttonLabel === "FORWARD" && eb_payment_config.map(payment => (
+                    <Grid payment sm="12">
+                    <TextFieldContainer
+                    InputLabelProps={{ shrink: true }}
+                    label= {payment.label}
+                    onChange={e =>
+                      handleFieldChange(`${dataPath}.applicationDetails.${payment.path}`, e.target.value)
+                    }
+                    required = {payment.required}
+                    jsonPath={`${dataPath}.applicationDetails.${payment.path}`}
+                    placeholder={payment.placeholder}
+                    inputProps={{ maxLength: 120 }}
+                    /> 
+                    {!!payment.isError && !!payment.required && (<span style={{color: "red"}}>{getLocaleLabels(payment.errorMessage, payment.errorMessage)}</span>)}
+                    </Grid>)
+                    )}
                   {applicationState === "ES_PENDING_DRAFSMAN_CALCULATION" && buttonLabel === "FORWARD" && bb_payment_config.map(payment => (
                     <Grid payment sm="12">
                     <TextFieldContainer
