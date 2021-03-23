@@ -15,6 +15,7 @@ import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { httpRequest } from "../../../../../ui-utils";
 import {
     createUpdateCgbApplication,
+    getSearchResultsView,
     prepareDocumentsUploadData,
 } from "../../../../../ui-utils/commons";
 import {
@@ -137,27 +138,39 @@ const callBackForNext = async (state, dispatch) => {
             dispatch(prepareFinalObject("BaseCharge", `@Rs.${baseCharge.data.ratePerDay}/day`));
         }
 
-
-        response = await createUpdateCgbApplication(state, dispatch, "INITIATE");
-        console.log(response, "myResponse");
-        let responseStatus = get(response, "status", "");
-        if (responseStatus == "SUCCESS" || responseStatus == "success") {
-
-            // DISPLAY SUCCESS MESSAGE
-            // let successMessage = {
-            //     labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
-            //     labelKey: "", //UPLOAD_FILE_TOAST
-            // };
-            // dispatch(toggleSnackbar(true, successMessage, "success"));
-
-            // GET FEE DETAILS
-            tenantId = getTenantId().split(".")[0];
-            applicationNumber = get(
+        let bookingStatus = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking.bkApplicationStatus",
+            []
+        );
+        
+        let responseStatus = {}
+        if(bookingStatus !== "INITIATED"){
+            response = await createUpdateCgbApplication(state, dispatch, "INITIATE"); 
+            responseStatus = get(response, "status", "");
+            if (responseStatus == "SUCCESS" || responseStatus == "success") {
+                applicationNumber = get(
                 response,
                 "data.bkApplicationNumber",
                 ""
 
             );
+            }
+        }
+        else{
+       
+             applicationNumber = get(
+                state.screenConfiguration.preparedFinalObject,
+                "Booking.bkApplicationNumber",
+                []
+            );
+        }
+        console.log(response, "myResponse");
+        responseStatus = get(response, "status", "");
+        if (responseStatus == "SUCCESS" || responseStatus == "success" || applicationNumber) {
+
+            tenantId = getTenantId().split(".")[0];
+            
             let businessService = "BOOKING_BRANCH_SERVICES.BOOKING_COMMERCIAL_GROUND";
             
             const reviewUrl = `/egov-services/applycommercialground?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;

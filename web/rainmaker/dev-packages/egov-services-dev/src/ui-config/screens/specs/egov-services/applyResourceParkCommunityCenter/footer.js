@@ -171,31 +171,52 @@ const callBackForNext = async (state, dispatch) => {
 
         }else { */
 
+            let response ={}
+            let bookType=""
+            let responseStatus = {}
+            let applicationNumber= ""
             let action = "INITIATE";
+           
             let appStatus = get(state, "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus", "");
             if(appStatus == "APPLIED" || appStatus == "RE_INITIATED"){
                 action = "RE_INITIATE";
             }
             console.log(appStatus, "Nero appStatus");
-            let response = await createUpdatePCCApplication(
-                state,
-                dispatch,
-                action
-               // paymentStatus === "SUCCESS" || paymentStatus === "succes" ? "RE_INITIATE" : "INITIATE"
 
-            );
-            let responseStatus = get(response, "status", "");
-            if (responseStatus == "SUCCESS" || responseStatus == "success") {
-                let applicationNumber = get(
-                    response,
-                    "data.bkApplicationNumber",
-                    ""
+
+            if(appStatus !== "INITIATED"){
+                let response = await createUpdatePCCApplication(
+                    state,
+                    dispatch,
+                    action
+                   // paymentStatus === "SUCCESS" || paymentStatus === "succes" ? "RE_INITIATE" : "INITIATE"
+    
                 );
-                let bookType = get(
-                    response,
-                    "data.bkBookingType",
-                    ""
+                let responseStatus = get(response, "status", "");
+                if (responseStatus == "SUCCESS" || responseStatus == "success") {
+                    applicationNumber = get(
+                        response,
+                        "data.bkApplicationNumber",
+                        ""
+                    );
+                    bookType = get(
+                        response,
+                        "data.bkBookingType",
+                        ""
+                    );
+            }
+        }
+            else{
+           
+                 applicationNumber = get(
+                    state.screenConfiguration.preparedFinalObject,
+                    "Booking.bkApplicationNumber",
+                    []
                 );
+            }
+            console.log(response, "myResponse");
+            responseStatus = get(response, "status", "");
+            if (responseStatus == "SUCCESS" || responseStatus == "success" || applicationNumber) {
 
                 let businessService=""
                 if(bookType==="Community Center"){

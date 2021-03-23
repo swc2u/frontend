@@ -284,6 +284,18 @@ const screenConfig = {
             "components.div.children.checkAvailabilityCalendar.visible",
             false
         );
+        dispatch(
+            prepareFinalObject(
+                "availabilityCheckData.bkToDate",
+                null
+            )
+        );
+        dispatch(
+            prepareFinalObject(
+                "availabilityCheckData.bkFromDate",
+                null
+            )
+        );
         // clearlocalstorageAppDetails(state);
         const applicationNumber = getQueryArg(
             window.location.href,
