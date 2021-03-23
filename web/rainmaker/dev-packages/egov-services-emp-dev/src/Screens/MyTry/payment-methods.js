@@ -35,7 +35,7 @@ const onIconClick = (state, dispatch, index) => {
               true,
               {
                 labelName: "Bankdetails not found for this IFSC",
-                labelKey: "ERR_BANK_DETAILS_NOT_FOUND_FOR_IFSC"
+                labelKey: "ERR_NOT_FOUND_FOR_IFSC_PACC_EMP"
               },
               "error"
             )

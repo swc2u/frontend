@@ -61,8 +61,8 @@ class CGBookingDetails extends Component {
             toggleSnackbarAndSetText(
               true,
               {
-                labelName: "ERR_BANK_DETAILS_NOT_FOUND_FOR_IFSC",
-                labelKey: `ERR_BANK_DETAILS_NOT_FOUND_FOR_IFSC`
+                labelName: "ERR_NOT_FOUND_FOR_IFSC_PACC_EMP",
+                labelKey: `ERR_NOT_FOUND_FOR_IFSC_PACC_EMP`
               },
               "error"  
             );
