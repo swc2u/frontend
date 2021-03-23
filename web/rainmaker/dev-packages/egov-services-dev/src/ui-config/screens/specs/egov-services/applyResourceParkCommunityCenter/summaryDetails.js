@@ -12,7 +12,7 @@ import {
 import get from "lodash/get";
 import { pccSummary, pccParkSummary,changedVenueDatepccSummary } from "../summaryResource/pccSummary";
 import { pccApplicantSummary,pccBankSummary } from "../summaryResource/pccApplicantSummary";
-import { documentsSummary } from "../summaryResource/documentsSummary";
+import { documentsSummaryForPacc } from "../summaryResource/documentsSummary";
 import { estimateSummary } from "../summaryResource/estimateSummary";
 
 export const callBackForPrevious = (state, dispatch) => {
@@ -231,7 +231,7 @@ export const summaryDetails = getCommonCard({
    pccParkSummary : pccParkSummary,
    pccBankSummary:pccBankSummary,
  //  changedVenueDatepccSummary: changedVenueDatepccSummary,
-   documentsSummary: documentsSummary,
+   documentsSummary: documentsSummaryForPacc,
    ParkChangeDateVenueFieldDisabler: {
        uiFramework: "custom-containers-local",
        moduleName: "egov-services",
