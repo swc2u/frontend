@@ -202,19 +202,27 @@ this.setState({
 },console.log("thisStatestateCode",this.state.stateCode,this.state.placeOfService,this.state.mcGSTN))
 
 
-		let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING[0]
+let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING
+    
+let operatorCode;
+let Address;
+let hsnCode;
+let name;
 
-		let operatorCode = samparkDetail.operatorCode
-		let Address = samparkDetail.centreAddres
-		let hsnCode = samparkDetail.hsnCode
-		let name = samparkDetail.name
-		this.setState({
-			operatorCode: operatorCode,
-			Address: Address,  //operatorCode,Address,hsnCode
-			hsnCode: hsnCode,
-			name: name
-		})
-
+for(let i = 0; i < samparkDetail.length; i++){
+  if(samparkDetail[i].id == userInfo.fatherOrHusbandName){
+  operatorCode = samparkDetail[i].operatorCode
+  hsnCode = samparkDetail[i].hsnCode
+  name = samparkDetail[i].name
+  Address = samparkDetail[i].centreAddres
+  }
+}
+this.setState({
+  operatorCode:operatorCode,
+  Address:Address,  
+  hsnCode:hsnCode,
+  name:name
+})
 
 
 		let FromDate = selectedComplaint.bkFromDate
@@ -765,7 +773,7 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 			style={{ width: "15%" }}
             onClick={() => this.continue()
             } /> */}
-
+ 
 		<Button
 		label={
 			<Label
