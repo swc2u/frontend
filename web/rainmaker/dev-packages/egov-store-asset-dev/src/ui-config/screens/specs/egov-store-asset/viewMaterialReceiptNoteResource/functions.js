@@ -19,8 +19,10 @@ import {
   convertDateToEpoch,
   epochToYmdDate,
   showHideAdhocPopup,
-  validateFields
+  validateFields,
+  
 } from "../../utils";
+import {httpRequest} from '../../../../../ui-utils'
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {  
@@ -395,6 +397,40 @@ let TotalQty = 0;
     set(response[0], `receiptDate`, epochToYmdDate(response[0].receiptDate));
     set(response[0], `supplierBillDate`, epochToYmdDate(response[0].supplierBillDate));
     set(response[0], `inspectionDate`, epochToYmdDate(response[0].inspectionDate));
+    // set inspectedByName
+    // get employee list
+    const queryParams = [{ key: "roles", value: "EMPLOYEE" },{ key: "tenantId", value:  getTenantId() }];
+    const payload = await httpRequest(
+      "post",
+      "/egov-hrms/employees/_search",
+      "_search",
+      queryParams,
+    );
+    if(payload){
+      if (payload.Employees) {
+        let empDetails_=[]
+        const empDetails =
+        payload.Employees.map((item, index) => {
+            const deptCode = item.assignments[0] && item.assignments[0].department;
+            const designation =   item.assignments[0] && item.assignments[0].designation;
+            const empCode = item.code;
+            const empName = `${item.user.name}`;
+          return {
+                  code : empCode,
+                  name : empName,
+                  dept : deptCode,
+                  designation:designation,
+          };
+        });
+      
+        if(empDetails){
+          empDetails_ = empDetails.filter(x=>x.name === response[0].inspectedBy )
+        }
+        set(response[0], `inspectedByName`, empDetails_[0].code);
+        
+      }
+    }
+    
    
   for (let index = 0; index < response[0].receiptDetails.length; index++) {
     const element = response[0].receiptDetails[index];
