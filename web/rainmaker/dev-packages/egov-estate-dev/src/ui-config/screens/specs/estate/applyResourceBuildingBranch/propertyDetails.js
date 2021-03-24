@@ -278,7 +278,7 @@ const sizeOfAreaPurchasedField = {
       sm: 6
   },
   pattern: _getPattern("numeric"),
-  required: true,
+  required: false,
   errorMessage:"ES_ERR_SIZE_OF_AREA_PROPERTY",
   jsonPath: "Properties[0].propertyDetails.areaSqft",
   afterFieldChange: (action, state, dispatch) => {
@@ -311,9 +311,9 @@ export const propertyDetails = getCommonCard({
     subCategory: getSelectField(subCategoryField),
  //   siteNumber: getTextField(siteNumberField),
     sectorNumber: getSelectField(sectorNumberField),
-    houseNumber: getTextField(houseNumberField),
     mohalla: getTextField(mohallaField),
     village: getSelectField(villageField),
-    sizeOfAreaPurchase: getTextField(sizeOfAreaPurchasedField)
+    sizeOfAreaPurchase: getTextField(sizeOfAreaPurchasedField),
+    houseNumber: getTextField(houseNumberField)
   })
 })
