@@ -893,6 +893,13 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
               Properties[0].offlinePaymentDetails.push(transactionNumber)
           }
           
+          let transactionNumber = Properties[0].transitNumber.split('-')[1] ? Properties[0].transitNumber.split('-')[1] :
+          Properties[0].transitNumber.split('-')[0]
+          
+          Properties = [{
+            ...Properties[0],
+            transitNumber: transactionNumber
+          }]
           httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
               Payments,
               Properties,
