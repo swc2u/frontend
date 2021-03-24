@@ -1042,7 +1042,9 @@ export const downloadPaymentReceipt = (receiptQueryString, payload, data , gener
             }]
            queryStr = [{
               key: "key",
-              value: "application-payment-receipt"
+              value: payload[0].branchType == 'EstateBranch' ? 'eb-application-payment-receipt' : 
+              payload[0].branchType == 'BuildingBranch' ? 'bb-application-payment-receipt' : 
+              "application-payment-receipt"
             },
             {
               key: "tenantId",
