@@ -468,6 +468,11 @@ downloadReceiptFunction = async (e) => {
 	const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceiptforCG,downloadReceiptforCG, userInfo, paymentDetails } = this.props;
 	const { complaint } = transformedComplaint;
 
+	var date2 = new Date();
+
+	var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+
+
 	let BookingInfo = [{
 		"applicantDetail": {
 			"name": complaint && complaint.applicantName ? complaint.applicantName : 'NA',
@@ -490,7 +495,7 @@ downloadReceiptFunction = async (e) => {
 			"bookingItem": "Online Payment Against Booking of Commercial Ground",//
 			// "amount": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
 			// 	(el) => !el.taxHeadCode.includes("TAX")
-			// )[0].amount,
+			// )[0].amount, 
 			"amount": this.props.CommercialParkingCharges,
 			// "tax": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
 			// 	(el) => el.taxHeadCode.includes("TAX")
@@ -514,6 +519,7 @@ downloadReceiptFunction = async (e) => {
 		},
 		generatedBy: {
 			generatedBy: userInfo.name,
+			"generatedDateTime":generatedDateTime
 		},
 	}
 	]
