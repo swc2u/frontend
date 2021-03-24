@@ -18,10 +18,12 @@ import {
 import {ValidateCardMultiItem , ValidateCardQty} from '../../../../../ui-utils/storecommonsapi'
 const moveToReview = dispatch => {
   const IndentId = getQueryArg(window.location.href, "IndentId");
+  const tenantId = getQueryArg(window.location.href, "tenantId");
+  const issueNoteNumber = getQueryArg(window.location.href, "issueNoteNumber");
   const reviewUrl =
     process.env.REACT_APP_SELF_RUNNING === "true"
-      ? `/egov-ui-framework/egov-store-asset/reviewnonindentnote?step=0&IndentId=${IndentId}`
-      : `/egov-store-asset/reviewnonindentnote?step=0&IndentId=${IndentId}`;
+      ? `/egov-ui-framework/egov-store-asset/reviewnonindentnote?step=0&IndentId=${IndentId}&tenantId=${tenantId}&issueNoteNumber=${issueNoteNumber}`
+      : `/egov-store-asset/reviewnonindentnote?step=0&IndentId=${IndentId}&tenantId=${tenantId}&issueNoteNumber=${issueNoteNumber}`;
   dispatch(setRoute(reviewUrl));
 };
 

@@ -19,7 +19,8 @@ const styles = {
 
 class MyConnections extends React.Component {
   getConnectionDetails = data => {
-
+    data.service = data.service.toUpperCase();
+    if(data.service ==='WATER'){
     if(data.activityType){
       switch(data.activityType){
         case "NEW_WS_CONNECTION":  window.localStorage.setItem("wns_workflow","REGULARWSCONNECTION"); break;
@@ -34,6 +35,11 @@ class MyConnections extends React.Component {
         case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
       }
 }
+    }
+    else if(data.service ==='SEWERAGE'){
+      window.localStorage.setItem("wns_workflow","SW_SEWERAGE");
+    
+    }
 
 let tenantId = data.tenantId;
 if(data.property)

@@ -324,7 +324,7 @@ export const getOwnerDetails = (isEditable = true) => {
               },
               pattern: getPattern("AdharCardNumber"),
               required: false,
-              
+              visible:false,
              // errorMessage: "Invalid Address",
               jsonPath: "applyScreen.aadharNo",
               gridDefination: {
@@ -543,6 +543,7 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
               },
               pattern: getPattern("AdharCardNumber"),
               required: true,
+              visible:false,
               
              // errorMessage: "Invalid Address",
               jsonPath: "applyScreen.aadharNo",
