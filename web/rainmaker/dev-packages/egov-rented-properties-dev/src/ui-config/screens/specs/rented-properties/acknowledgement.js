@@ -256,7 +256,6 @@ const getData = async (action, state, dispatch, purpose, status, tenant, transit
     );
   }
 const getTransitnumber=(applictionnumber)=>{
-  debugger
   var array = applictionnumber.split("-");
   array.splice(array.length - 6);
   array.splice(0, 1);
