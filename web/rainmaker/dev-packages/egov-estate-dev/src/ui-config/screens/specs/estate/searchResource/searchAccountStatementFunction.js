@@ -127,7 +127,7 @@ var isfileNumberValid = validateFields(
                   [getTextToLocalMapping("Account Balance")]: formatAmount(item.remainingBalance.toFixed(2)) || "-",
                   [getTextToLocalMapping("Receipt No.")]: item.receiptNo || "-",
                   [getTextToLocalMapping("Consolidated Demand")]: item.isPrevious ? "CF" : "-",
-                  [getTextToLocalMapping("comment")]: item.comment || "-"
+                  [getTextToLocalMapping("comments")]: item.comment || "-"
                   
                 }));
               }
