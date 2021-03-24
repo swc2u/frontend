@@ -33,7 +33,7 @@ export const footerReviewTop = (
             labelKey: "BK_MY_BK_CERTIFICATE_PRINT",
         },
         link: () => {
-            downloadCertificate(state, applicationNumber, tenantId, "print");
+            downloadCertificate(state, applicationNumber, tenantId, "false", "print");
         },
         leftIcon: "book",
     };
@@ -48,7 +48,7 @@ export const footerReviewTop = (
     let receiptPrintObject = {
         label: { labelName: "Receipt", labelKey: "BK_MY_BK_RECEIPT_PRINT" },
         link: () => {
-            downloadReceipt(state, applicationNumber, tenantId, "print");
+            downloadReceipt(state, applicationNumber, tenantId, "false", "print");
         },
         leftIcon: "receipt",
     };

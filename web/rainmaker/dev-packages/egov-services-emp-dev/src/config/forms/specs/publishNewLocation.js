@@ -39,7 +39,7 @@ const formConfig = {
       },
       textarea: {
         id: "textarea",
-        hintText: "CS_COMMON_COMMENTS_PLACEHOLDER",
+        hintText: "NEW_LOCATION_ENTER_COMMENT_LABEL", //hintText: "CS_COMMON_COMMENTS_PLACEHOLDER",
       },
       action: {
         id: "action",

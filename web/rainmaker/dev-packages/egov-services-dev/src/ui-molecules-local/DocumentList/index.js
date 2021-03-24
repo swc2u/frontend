@@ -133,6 +133,7 @@ const requiredIcon = (
 class DocumentList extends Component {
     state = {
         uploadedDocIndex: 0,
+        test: 1
     };
 
     componentDidMount = () => {
@@ -191,6 +192,7 @@ class DocumentList extends Component {
                                 oldDocumentData = {
                                     documents: [documentsUploadReduxOld.documents[index]],
                                 };
+                                this.setState({test: 0})
                             }
                             let newDocumentData = {
                                 documentType: docType.code,
@@ -207,6 +209,13 @@ class DocumentList extends Component {
                             //         ...newDocumentData,
                             //     })
                             //     :
+                                  
+                            Object.keys(documentsUploadReduxOld).length > 0
+                            ? (documentsUploadRedux[index] = {
+                                ...oldDocumentData,
+                            
+                            })
+                            :
                             (documentsUploadRedux[index] = { ...newDocumentData });
                         }
                         index++;
@@ -214,6 +223,7 @@ class DocumentList extends Component {
                 });
         });
         prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
+    
     };
 
     onUploadClick = (uploadedDocIndex) => {
@@ -251,6 +261,7 @@ class DocumentList extends Component {
 
     handleChange = (key, event) => {
         const { documentsUploadRedux, prepareFinalObject } = this.props;
+        prepareFinalObject("dropDown.value" , event.target.value)
         prepareFinalObject(`documentsUploadRedux`, {
             ...documentsUploadRedux,
             [key]: {
@@ -263,13 +274,13 @@ class DocumentList extends Component {
     getUploadCard = (card, key) => {
 console.log(card, "Card He");
         const { classes, documentsUploadRedux } = this.props;
-        let jsonPath = `documentsUploadRedux[${key}].dropdown.value`;
+        let jsonPath ="dropDown.value" ;
         return (
             <Grid container={true}>
                 <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
                     {documentsUploadRedux[key] &&
-                        documentsUploadRedux[key].documents ? (
-                            <div className={classes.documentSuccess}>
+            documentsUploadRedux[key].documents && documentsUploadRedux[key].documents[0]!= undefined ? (
+                           <div className={classes.documentSuccess}>
                                 <Icon>
                                     <i class="material-icons">done</i>
                                 </Icon>
@@ -325,8 +336,8 @@ console.log(card, "Card He");
                         }
                         uploaded={
                             documentsUploadRedux[key] &&
-                                documentsUploadRedux[key].documents
-                                ? true
+                            documentsUploadRedux[key].documents && documentsUploadRedux[key].documents[0]!= undefined
+                            ? true
                                 : false
                         }
                         removeDocument={() => this.removeDocument(key)}
@@ -349,7 +360,7 @@ console.log(card, "Card He");
                 >
                     <LabelContainer
                         labelKey={(()=>{
-                            if(card.code == "OSWMCC_LOCATION_IMAGE_1" || card.code == "OSWMCC_LOCATION_IMAGE_2" || card.code == "OSWMCC_LOCATION_IMAGE_3"){
+                            if(card.code == "BK_OSWMCC_LOCATION_IMAGE_1" || card.code == "BK_OSWMCC_LOCATION_IMAGE_2" || card.code == "BK_OSWMCC_LOCATION_IMAGE_3"){
                                 return "Supported Documents: jpg, png. Max file size: 5MB";
                             }else{
                                 return "Supported Documents: pdf, jpg, png. Max file size: 5MB";

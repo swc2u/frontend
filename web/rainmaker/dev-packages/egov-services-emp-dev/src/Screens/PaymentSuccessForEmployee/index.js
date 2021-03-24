@@ -799,15 +799,13 @@ downloadPermissionButton = async (e) => {
             label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PAYMENT_BUTTON" />}
             fullWidth={true}
             onClick={this.downloadPaymentReceiptButton}
-            style={{ marginRight: 18 }}
+            style={{ marginRight: "1.5%" }}
           />
-           <Button
-            className="responsive-action-button"
+           <Button 
             primary={true}
             label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PERMISSION_LETTER_BUTTON" />}
-            fullWidth={true}
             onClick={this.downloadPermissionButton}
-            style={{ marginRight: 18 }}
+            style={{ marginRight: "1.5%",width: "19%" }} 
           />
           <Button
             id="resolve-success-continue"

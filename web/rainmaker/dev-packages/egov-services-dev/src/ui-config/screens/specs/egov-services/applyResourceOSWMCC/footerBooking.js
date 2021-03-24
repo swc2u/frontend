@@ -155,32 +155,47 @@ const callBackForNext = async (state, dispatch) => {
 
         dispatch(prepareFinalObject("BaseCharge", `for ${totalArea} sqft X ${Difference_In_Days} days
                                                                             (@Rs.${rateData.data.ratePerSqrFeetPerDay}/sqft)`));
-        let response = await createUpdateOSWMCCApplication(
-            state,
-            dispatch,
-            "INITIATE"
-        );
-        let responseStatus = get(response, "status", "");
-        if (responseStatus == "SUCCESS" || responseStatus == "success") {
-            // DISPLAY SUCCESS MESSAGE
-            // let successMessage = {
-            //     labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
-            //     labelKey: "", //UPLOAD_FILE_TOAST
-            // };
-            // dispatch(toggleSnackbar(true, successMessage, "success"));
+  
 
-            // GET FEE DETAILS
-            // let applicationData = get(
-            //         response,
-            //         "data",
-            //         ""
-            //     );
-            let tenantId = getTenantId().split(".")[0];
-            let applicationNumber = get(
+        let response ={}
+
+        let responseStatus = {}
+        let applicationNumber= ""
+        let bookingStatus = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking.bkApplicationStatus",
+            []
+        );
+        
+        if(bookingStatus !== "INITIATED"){
+            response = await createUpdateOSWMCCApplication(
+                state,
+                dispatch,
+                "INITIATE"
+            );
+            responseStatus = get(response, "status", "");
+            if (responseStatus == "SUCCESS" || responseStatus == "success") {
+                applicationNumber = get(
                 response,
                 "data.bkApplicationNumber",
                 ""
+
             );
+            }
+        }
+        else{
+        
+                applicationNumber = get(
+                state.screenConfiguration.preparedFinalObject,
+                "Booking.bkApplicationNumber",
+                []
+            );
+        }
+        console.log(response, "myResponse");
+        responseStatus = get(response, "status", "");
+        if (responseStatus == "SUCCESS" || responseStatus == "success" || applicationNumber) {
+            let tenantId = getTenantId().split(".")[0];
+           
             let businessService = "BOOKING_BRANCH_SERVICES.BOOKING_GROUND_OPEN_SPACES";
             // const reviewUrl = `/egov-services/applyopenspacewmcc?applicationNumber=${applicationData.bkApplicationNumber}&tenantId=${applicationData.tenantId}&businessService=${applicationData.businessService}&fromDate=${applicationData.bkFromDate}&toDate=${applicationData.bkToDate}&sector=${applicationData.bkSector}&venue=${applicationData.bkBookingVenue}`;
             const reviewUrl = `/egov-services/applyopenspacewmcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
