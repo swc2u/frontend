@@ -542,7 +542,7 @@ export const estateApplication = getCommonCard({
                 approvedState = MM_APPROVED_STATE;
                 break;
               default:
-                approvedState = ESTATE_APPROVED_STATE;
+                approvedState = "ES_PM_EB_APPROVED,ES_APPROVED";
                 break;
             }
             searchApiCall(state, dispatch, [

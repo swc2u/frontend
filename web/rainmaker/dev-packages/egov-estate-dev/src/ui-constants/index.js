@@ -17,6 +17,7 @@ export const ES_INTEREST_ON_DELAYED_PAYMENT = getLocaleLabels("ES_INTEREST_ON_DE
 export const ESTATE_SERVICES_MDMS_MODULE = "EstateServices"
 export const WF_ALLOTMENT_OF_SITE = "ES-EB-AllotmentOfSite";
 export const ESTATE_APPROVED_STATE = "ES_PM_EB_APPROVED";
+export const ESTATE_ALOTMENT_APPROVED_STATE="ES_APPROVED"
 export const ESTATE_DRAFTED_STATE = "ES_DRAFTED";
 export const WF_BB_PROPERTY_MASTER = "ES-BB-PropertyMaster";
 export const BB_PM_APPROVED_STATE = "ES_PM_APPROVED";

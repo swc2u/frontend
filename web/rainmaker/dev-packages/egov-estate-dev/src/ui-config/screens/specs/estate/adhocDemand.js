@@ -219,7 +219,7 @@ const dateOfPaymentField = {
 const adhocdemand = {
   label: {
     labelName: "Payment Mode",
-    labelKey: "ES_ADHOC_DEMAND",
+    labelKey: "ES_ADHOC_DEMAND_PAYMENT",
   },
   placeholder: {
     labelName: "Select Payment Mode",
