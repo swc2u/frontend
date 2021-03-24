@@ -155,6 +155,10 @@ if(employeeList.length===0){
                 redirectLink = `allotment?fileNumber=${fileNumber}&tenantId=${tenant}&stepNumber=6`;
               }
               break;
+              case "ES-EB-PropertyMaster":
+                if (_data[0].propertyMasterOrAllotmentOfSite === "PROPERTY_MASTER") {
+                  redirectLink = `apply?fileNumber=${fileNumber}&tenantId=${tenant}&stepNumber=9`;
+                }
             case "ES-BB-PropertyMaster":
               redirectLink = `apply-building-branch?fileNumber=${fileNumber}&tenantId=${tenant}&stepNumber=3`;
               break;

@@ -65,7 +65,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
 "code": "PAYMENTTYPE.PREMIUMAMOUNT",
 "name": "Premium Amount"
     }]
-    if(!!response && response.Properties[0].propertyMasterOrAllotmentOfSite==="ALLOTMENT_OF_SITE" && response.Properties[0].state !=="ES_PM_EB_APPROVED"){
+    if(!!response && response.Properties[0].propertyMasterOrAllotmentOfSite==="ALLOTMENT_OF_SITE" && response.Properties[0].state !=="ES_APPROVED"){
       dispatch(
         handleField(
           action.screenKey,
@@ -280,7 +280,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
             break; 
 
           default : 
-          if(Properties[0].state!=="ES_PM_EB_APPROVED" && Properties[0].propertyMasterOrAllotmentOfSite==="ALLOTMENT_OF_SITE"){
+          if(Properties[0].state!=="ES_APPROVED" && Properties[0].propertyMasterOrAllotmentOfSite==="ALLOTMENT_OF_SITE"){
 
             dispatch(handleField(
               "estate-payment",

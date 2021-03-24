@@ -525,9 +525,15 @@ export const estateApplication = getCommonCard({
           action: "condition",
           callBack: (state, dispatch) => {
             const roleExists = ifUserRoleExists("ES_EB_FINANCIAL_OFFICER");
+            const sorole=ifUserRoleExists("ES_EB_SECTION_OFFICER")
             const type=getQueryArg(window.location.href,"type")
             const branchType = getQueryArg(window.location.href, "branchType") || "ESTATE_BRANCH";
             if(type==="payment" && branchType==="ESTATE_BRANCH" && process.env.REACT_APP_NAME !== "Citizen" &&  roleExists){
+              searchApiCall(state, dispatch, [
+                { key: "branchType", value: branchType }
+              ])
+            }
+          else  if(type==="refund" && branchType==="ESTATE_BRANCH" && process.env.REACT_APP_NAME !== "Citizen" &&  sorole){
               searchApiCall(state, dispatch, [
                 { key: "branchType", value: branchType }
               ])
@@ -542,7 +548,7 @@ export const estateApplication = getCommonCard({
                 approvedState = MM_APPROVED_STATE;
                 break;
               default:
-                approvedState = ESTATE_APPROVED_STATE;
+                approvedState = "ES_PM_EB_APPROVED,ES_APPROVED";
                 break;
             }
             searchApiCall(state, dispatch, [

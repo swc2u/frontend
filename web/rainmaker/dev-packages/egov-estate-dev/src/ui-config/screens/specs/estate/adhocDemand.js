@@ -172,9 +172,25 @@ const commentsField = {
       xs: 12,
       sm: 6
   },
-  jsonPath: "adhocDetails.comment"
+  jsonPath: "adhocDetails.comment",
+  visible:false
 }
- 
+const commentField = {
+  label: {
+      labelName: "Comments",
+      labelKey: "ES_COMMENTS_LABEL"
+  },
+  placeholder: {
+      labelName: "Enter Comments",
+      labelKey: "ES_COMMENTS_PLACEHOLDER"
+  },
+  gridDefination: {
+      xs: 12,
+      sm: 6
+  },
+  jsonPath: "adhocDetails.comments",
+  visible:false
+}
 const AmountPaid = {
   label: {
       labelName: "Amount",
@@ -219,7 +235,7 @@ const dateOfPaymentField = {
 const adhocdemand = {
   label: {
     labelName: "Payment Mode",
-    labelKey: "ES_ADHOC_DEMAND",
+    labelKey: "ES_ADHOC_DEMAND_PAYMENT",
   },
   placeholder: {
     labelName: "Select Payment Mode",
@@ -291,6 +307,22 @@ const adhocdemand = {
   dispatch(
     handleField(
       "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.comment",
+     "visible",
+     false
+    )
+  )
+  dispatch(
+    handleField(
+      "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.comments",
+     "visible",
+     true
+    )
+  )
+  dispatch(
+    handleField(
+      "adhocDemand",
       "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.AmountPaid",
      "visible",
      false
@@ -322,6 +354,22 @@ const adhocdemand = {
       "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.dateOfPaymentField",
      "visible",
      true
+    )
+  )
+  dispatch(
+    handleField(
+      "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.comment",
+     "visible",
+     true
+    )
+  )
+  dispatch(
+    handleField(
+      "adhocDemand",
+      "components.div.children.detailsContainer.children.adhocDetails.children.cardContent.children.detailsContainer.children.comments",
+     "visible",
+     false
     )
   )
   dispatch(
@@ -378,7 +426,8 @@ const adhocdemand = {
       adjustmentEntryDate: getDateField(dateOfAdjustmentEntryField),
       AmountPaid:getTextField(AmountPaid),
       dateOfPaymentField:getDateField(dateOfPaymentField),
-      comments : getTextField(commentsField)
+      comments : getTextField(commentsField),
+      comment:getTextField(commentField)
     })
   })
     

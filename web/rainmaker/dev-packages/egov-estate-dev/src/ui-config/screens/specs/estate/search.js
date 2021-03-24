@@ -116,7 +116,7 @@ const estateSearchAndResult = {
     let wkfConstant;
     switch(branchType) {
       case "ESTATE_BRANCH":
-        wkfConstant = WF_ALLOTMENT_OF_SITE;
+        wkfConstant = "ES-EB-AllotmentOfSite,ES-EB-PropertyMaster";
         break;
       case "BUILDING_BRANCH":
         wkfConstant = WF_BB_PROPERTY_MASTER;
