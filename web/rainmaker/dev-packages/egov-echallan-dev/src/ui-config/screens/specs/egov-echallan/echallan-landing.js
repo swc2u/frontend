@@ -55,6 +55,7 @@ const MANAGECHALLANSearchAndResult = {
       dispatch(prepareFinalObject("searchCriteriaManageChallan[0].sector",searchCrieteria.sector));
       dispatch(prepareFinalObject("searchCriteriaManageChallan[0].SIName",searchCrieteria.siName));
       dispatch(prepareFinalObject("searchCriteriaManageChallan[0].Status", searchCrieteria.status));
+      dispatch(prepareFinalObject("searchCriteriaManageChallan[0].challanId", searchCrieteria.challanId));
       // await searchResultApiResponse(state, dispatch);
       
     }
