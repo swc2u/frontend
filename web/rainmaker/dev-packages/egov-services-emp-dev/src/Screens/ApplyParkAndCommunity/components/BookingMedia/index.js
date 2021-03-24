@@ -30,6 +30,7 @@ class BookingMedia extends React.Component {
       one,
       changeCalendar,
       handleCalAfterImage,
+      mediaStyle
     } = this.props;
     console.log("propsOfMediaFile--", this.props);
 
@@ -43,7 +44,7 @@ class BookingMedia extends React.Component {
     }
 
     return (
-      <div className="imageMap">
+      <div className="imageMap"  {...mediaStyle}>
         <img
           id="imageMap-pccMaps"
           src={`${pacc_image}`}
