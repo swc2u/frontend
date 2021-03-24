@@ -355,7 +355,7 @@ class ActionDialog extends React.Component {
           })
         }
       } else if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DA_FEE") {
-        eb_payment_config = eb_payment_config.map(payment => ({...payment, isError: !data.applicationDetails[payment.path]}))
+        eb_payment_config = eb_payment_config.map(payment => ({...payment, isError: payment.required && !data.applicationDetails[payment.path]}))
         const isError = eb_payment_config.some(payment => !!payment.isError)
         if(isError) {
           this.setState({
