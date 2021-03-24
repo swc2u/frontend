@@ -109,6 +109,10 @@ export const applyforApplication = async (state, dispatch, activeIndex) => {
      }
     })
     let response;
+    const _property = get(queryObject[0], _property)
+    if(!!_property && _property.fileNumber === "BBNOC-1") {
+      set(queryObject[0], "property", _property)
+    }
     if(!id) {
       set(queryObject[0], "state", "");
       set(queryObject[0], "action", "");
@@ -151,6 +155,7 @@ export const applyforApplication = async (state, dispatch, activeIndex) => {
           )
         );
         let property = Applications[0].property || Applications[0].applicationDetails.property
+        let _property = Applications[0].property
         if(property.fileNumber === "BBNOC-1") {
           property = Applications[0].applicationDetails.property
         }
@@ -159,7 +164,7 @@ export const applyforApplication = async (state, dispatch, activeIndex) => {
         property = {...property, propertyDetails: {...property.propertyDetails, dueAmount: dueAmount || "0"}}
         Applications = [
           {
-            ...Applications[0], property:property
+            ...Applications[0], property:property, _property
           }
         ]
         dispatch(prepareFinalObject("Applications", Applications));

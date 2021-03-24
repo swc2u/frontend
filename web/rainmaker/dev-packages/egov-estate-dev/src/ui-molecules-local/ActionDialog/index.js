@@ -85,7 +85,6 @@ let bb_payment_config = [
       labelKey: "ES_BB_DEVELOPMENT_CHARGES_PLACEHOLDER"
     },
     path: "developmentCharges",
-    required: true,
     errorMessage: "ES_ERR_DEVELOPMENT_CHARGES",
     showError: false
   },
@@ -99,7 +98,6 @@ let bb_payment_config = [
       labelKey: "ES_BB_CONVERSION_CHARGES_PLACEHOLDER"
     },
     path: "conversionFee",
-    required: true,
     errorMessage: "ES_ERR_CONVERSION_CHARGES",
     showError: false
   },
@@ -113,7 +111,6 @@ let bb_payment_config = [
       labelKey: "ES_BB_SCRUTINY_CHARGES_PLACEHOLDER"
     },
     path: "scrutinyCharges",
-    required: true,
     errorMessage: "ES_ERR_SCRUTINY_CHARGES",
     showError: false
   },
@@ -127,21 +124,19 @@ let bb_payment_config = [
       labelKey: "ES_BB_TRANSFER_FEES_PLACEHOLDER"
     },
     path: "transferFee",
-    required: true,
     errorMessage: "ES_ERR_TRANSFER_FEES",
     showError: false
   },
   {
     label: {
-      labelName: "Allotment Number",
-      labelKey: "ES_BB_ALLOTMENT_NUMBER"
+      labelName: "Allotment Number Charges",
+      labelKey: "ES_BB_ALLOTMENT_NUMBER_CHARGES"
     },
     placeholder: {
-      labelName: "Enter Allotment Number",
-      labelKey: "ES_BB_ALLOTMENT_NUMBER_PLACEHOLDER"
+      labelName: "Enter Allotment Number Charges",
+      labelKey: "ES_BB_ALLOTMENT_NUMBER_CHARGES_PLACEHOLDER"
     },
     path: "applicationNumberCharges",
-    required: true,
     errorMessage: "ES_ERR_BB_ALLOTMENT_NUMBER",
     showError: false
   }
@@ -355,7 +350,14 @@ class ActionDialog extends React.Component {
           })
         }
       } else if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DA_FEE") {
-        eb_payment_config = eb_payment_config.map(payment => ({...payment, isError: payment.required && !data.applicationDetails[payment.path]}))
+        eb_payment_config = eb_payment_config.map((payment) => ({
+          ...payment,
+          isError: payment.required
+            ? !data.applicationDetails[payment.path]
+            : !!data.applicationDetails[payment.path]
+            ? isNaN(data.applicationDetails[payment.path])
+            : false,
+        }));
         const isError = eb_payment_config.some(payment => !!payment.isError)
         if(isError) {
           this.setState({
@@ -363,7 +365,7 @@ class ActionDialog extends React.Component {
           })
           return
         } else {
-          for(let i=0; i < eb_payment_config.length-1; i++) {
+          for(let i=0; i < eb_payment_config.length; i++) {
             if(!data.applicationDetails[eb_payment_config[i].path]) {
               this.props.handleFieldChange(`${dataPath}.applicationDetails.${eb_payment_config[i].path}`, "0")
             }
@@ -371,18 +373,28 @@ class ActionDialog extends React.Component {
           this.props.onButtonClick(buttonLabel, isDocRequired)
         }
       } else if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DRAFSMAN_CALCULATION") {
-        // bb_payment_config = bb_payment_config.map(payment => ({...payment, isError: !data.applicationDetails[payment.path]}))
-        // const isError = bb_payment_config.some(payment => !!payment.isError)
-        // if(isError) {
-        //   return
-        // } else {
-          for(let i=0; i < bb_payment_config.length-1; i++) {
+        bb_payment_config = bb_payment_config.map((payment) => ({
+          ...payment,
+          isError: payment.required
+          ? !data.applicationDetails[payment.path]
+          : !!data.applicationDetails[payment.path]
+          ? isNaN(data.applicationDetails[payment.path])
+          : false
+        }));
+        const isError = bb_payment_config.some(payment => !!payment.isError)
+        if(isError) {
+          this.setState({
+            paymentErr: true
+          })
+          return
+        } else {
+          for(let i=0; i < bb_payment_config.length; i++) {
             if(!data.applicationDetails[bb_payment_config[i].path]) {
               this.props.handleFieldChange(`${dataPath}.applicationDetails.${bb_payment_config[i].path}`, "0")
             }
           }
           this.props.onButtonClick(buttonLabel, isDocRequired)
-        // }
+        }
       } else if(buttonLabel == 'APPROVE' || buttonLabel == 'REJECT'){
         const comments = data.comments;
         if(!!comments) {
@@ -561,20 +573,23 @@ class ActionDialog extends React.Component {
                     {!!this.state.hardCopyReceivedDateError && (<span style={{color: "red"}}>Please enter hard copy received date</span>)}
                     </Grid>
                   )}
-                   {applicationState === "ES_PENDING_DA_FEE" && buttonLabel === "FORWARD" && eb_payment_config.map(payment => (
+                   {applicationState === "ES_PENDING_DA_FEE" && buttonLabel === "FORWARD" && eb_payment_config.map((payment, ind) => (
                     <Grid payment sm="12">
                     <TextFieldContainer
                     InputLabelProps={{ shrink: true }}
                     label= {payment.label}
                     onChange={e =>
-                      handleFieldChange(`${dataPath}.applicationDetails.${payment.path}`, e.target.value)
+                      {
+                        handleFieldChange(`${dataPath}.applicationDetails.${payment.path}`, e.target.value)
+                        eb_payment_config[ind].isError = false
+                      }
                     }
                     required = {payment.required}
                     jsonPath={`${dataPath}.applicationDetails.${payment.path}`}
                     placeholder={payment.placeholder}
                     inputProps={{ maxLength: 120 }}
                     /> 
-                    {!!payment.isError && !!payment.required && (<span style={{color: "red"}}>{getLocaleLabels(payment.errorMessage, payment.errorMessage)}</span>)}
+                    {!!payment.isError && (<span style={{color: "red"}}>{getLocaleLabels(payment.errorMessage, payment.errorMessage)}</span>)}
                     </Grid>)
                     )}
                   {applicationState === "ES_PENDING_DRAFSMAN_CALCULATION" && buttonLabel === "FORWARD" && bb_payment_config.map(payment => (
@@ -582,15 +597,16 @@ class ActionDialog extends React.Component {
                     <TextFieldContainer
                     InputLabelProps={{ shrink: true }}
                     label= {payment.label}
-                    onChange={e =>
+                    onChange={e =>{
                       handleFieldChange(`${dataPath}.applicationDetails.${payment.path}`, e.target.value)
-                    }
+                      bb_payment_config[ind].isError = false
+                    }}
                     // required = {true}
                     jsonPath={`${dataPath}.applicationDetails.${payment.path}`}
                     placeholder={payment.placeholder}
                     inputProps={{ maxLength: 120 }}
                     /> 
-                    {!!payment.isError && (<span style={{color: "red"}}>{payment.errorMessage}</span>)}
+                    {!!payment.isError && (<span style={{color: "red"}}>{getLocaleLabels(payment.errorMessage, payment.errorMessage)}</span>)}
                     </Grid>
                   ))}
 
