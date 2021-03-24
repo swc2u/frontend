@@ -108,7 +108,11 @@ export const applicationSuccessFooter = (
               default:
                   let consumerCodes = getQueryArg(window.location.href, "applicationNumber");
                   if(consumerCodes.startsWith('SITE')){
-                    let transitNumber = consumerCodes.split('-')[1]
+                    var array = consumerCodes.split("-");
+                    array.splice(array.length - 6);
+                    array.splice(0, 1);
+                    let transitNumber = array.join("-");
+                    // let transitNumber = consumerCodes.split('-')[1]
                     let queryObject = [
                       { key: "transitNumber", value: transitNumber }
                     ];
@@ -196,7 +200,11 @@ export const applicationSuccessFooter = (
               default:
                   let consumerCodes = getQueryArg(window.location.href, "applicationNumber");
                   if(consumerCodes.startsWith('SITE')){
-                    let transitNumber = consumerCodes.split('-')[1]
+                    var array = consumerCodes.split("-");
+                    array.splice(array.length - 6);
+                    array.splice(0, 1);
+                    let transitNumber = array.join("-");
+                    // let transitNumber = consumerCodes.split('-')[1]
                     let queryObject = [
                       { key: "transitNumber", value: transitNumber }
                     ];

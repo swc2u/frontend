@@ -703,11 +703,17 @@ const downloadReceipt = async (data, preparedObject,properties) => {
         key: "tenantId",
         value: getQueryArg(window.location.href, "tenantId")
     }]
-
+    let transactionNumber = properties[0].transitNumber.split('-')[1] ? properties[0].transitNumber.split('-')[1] :
+    properties[0].transitNumber.split('-')[0]
+    
+    properties = [{
+      ...properties[0],
+      transitNumber: transactionNumber
+    }]
     try {
         const payloadReceiptDetails = await httpRequest(FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString);
         const queryStr = [
-          { key: "key", value: "rp-rent-payment-receipt" },
+          { key: "key", value: "rp-payment-history-receipt" },
           { key: "tenantId", value: receiptQueryString[1].value.split('.')[0] }
         ]
         const oldFileStoreId = get(payloadReceiptDetails.Payments[0], "fileStoreId")
