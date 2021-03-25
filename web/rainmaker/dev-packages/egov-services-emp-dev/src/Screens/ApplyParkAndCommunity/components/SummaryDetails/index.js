@@ -30,13 +30,20 @@ class SummaryDetails extends Component {
     componentDidMount = async () => {
        
         let {createPACCApplication, userInfo, documentMap,fetchPayment,prepareFinalObject,fetchApplications,conJsonSecond,conJsonfirst } = this.props;
-        let { DiscountReason,firstName, venueType, bokingType, bookingData, email, mobileNo, surcharge, fromDate, toDate,myLocationtwo,ReasonForDiscount,
+        let { uploadeDocType,DiscountReason,firstName, venueType, bokingType, bookingData, email, mobileNo, surcharge, fromDate, toDate,myLocationtwo,ReasonForDiscount,
             utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, 
             BankAccountName,NomineeName,BankAccountNumber,IFSCCode,AccountHolderName,accountType,SecTimeSlotFromTime,SecTimeSlotToTime,
             locality, residenials, paymentMode,facilationChargesSuccess,discountType,checkAppStatus,checkAppNum,firstToTimeSlot,ReqbodybookingVenue,ReqbodybookingVenueID } = this.props;
-this.setState({
+
+console.log("propsInsummaryCompDidMount",this.props)
+            this.setState({
     appStatus : checkAppStatus
 })
+let EmpSideDocType = null
+
+if(uploadeDocType !== "NotFound"){
+    EmpSideDocType = uploadeDocType
+}
 
 let sendCurrentStatus;
 if(checkAppStatus){
@@ -122,6 +129,7 @@ else if(discountType == "20%"){
             "bkApplicationNumber": checkAppNum !== "NOTFOUND" ? checkAppNum : null,
             "bkCustomerGstNo": GSTnumber,
             "wfDocuments": [{
+                "documentType" : EmpSideDocType,
                 "fileStoreId": fid[0]
             }],
             "tenantId": userInfo.tenantId,
@@ -284,13 +292,19 @@ let payloadfund = await httpRequest(
   
 submit = async (InitiateAppNumber) => {
 
-    let { conJsonSecond,conJsonfirst,updatePACCApplication, state,documentMap, bookingData, venueType,prepareFinalObject,createPACCApplicationData,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,ReasonForDiscount} = this.props;
+    let { uploadeDocType,conJsonSecond,conJsonfirst,updatePACCApplication, state,documentMap, bookingData, venueType,prepareFinalObject,createPACCApplicationData,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,ReasonForDiscount} = this.props;
     console.log("AllPropsOfSubmitPage--",this.props)	 
 let dataOne = get(
     state,
     "screenConfiguration.preparedFinalObject.createAppData",
     "NotFound"
 );
+
+let EmpSideDocType = null
+
+if(uploadeDocType !== "NotFound"){
+    EmpSideDocType = uploadeDocType
+}
 
 if(dataOne !== "NotFound"){
     let data = dataOne.data
@@ -352,6 +366,7 @@ if(dataOne !== "NotFound"){
                     bkApplicationNumber: data.bkApplicationNumber,
                     bkCustomerGstNo: data.bkCustomerGstNo ? data.bkCustomerGstNo : 'NA',
                     "wfDocuments": [{
+                        "documentType" : EmpSideDocType,
                         "fileStoreId": fid[0]
                     }],
                     "tenantId": userInfo.tenantId,
@@ -547,6 +562,7 @@ totalAmountSuPage={totalAmountSuPage}
                                 accountType={accountType}
                             />
                             <SummaryDocumentDetail
+                            uploadeDocType={this.props.uploadeDocType}
                                 documentMap={documentMap}
                             />
                             <div className="col-xs-12" style={{ marginLeft: '10px' }}>
@@ -620,6 +636,13 @@ let ReqbodybookingVenueID  = get(
     "screenConfiguration.preparedFinalObject.bkBookingData.id",
     "NotFound"
 );
+
+let uploadeDocType = get(  
+    state,
+    "screenConfiguration.preparedFinalObject.UploadedDocType",
+    "NotFound"
+);
+console.log("summaryuploadeDocType",uploadeDocType)
 console.log("ReqbodybookingVenueID",ReqbodybookingVenueID)
     let ReasonForDiscount = state.screenConfiguration.preparedFinalObject ? 
     (state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== undefined && state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== null ? (state.screenConfiguration.preparedFinalObject.ReasonForDiscount):'NA') :"NA";  
@@ -820,7 +843,7 @@ console.log("seven--",seven)
         //PACPACC_ROUND_OFFC_TAX,FACILITATION_CHARGE,
         firstTimeSlotValue,SecondTimeSlotValue,first,second,ReasonForDiscount,ReqbodybookingVenue,ReqbodybookingVenueID,
         createPACCApplicationData,userInfo,InitiateAppNumber,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,conJsonSecond,conJsonfirst,
-        documentMap, bkLocation, facilationChargesSuccess,seven,state,
+        documentMap, bkLocation, facilationChargesSuccess,seven,state,uploadeDocType,
         fCharges,myLocationtwo,totalAmountSuPage,one,two,three,four,five,six,checkAppStatus,checkAppNum
     }
 

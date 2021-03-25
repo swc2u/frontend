@@ -154,14 +154,16 @@ class DocumentList extends Component {
     };
     onbookingChange = e => {
         const inputValue = e.target.value;
+        console.log("inputValue",inputValue)
         this.setState({ idProffType: inputValue });
+        this.props.prepareFinalObject("UploadedDocType",e.target.value)
 console.log('this.state.idProffType',this.state.idProffType);
     }
 
     handleClose = () => {
         this.setState({
           setOpen: false
-        })
+        }) 
       };
     
       handleOpen = () => {
@@ -449,98 +451,6 @@ console.log('this.state.idProffType',this.state.idProffType);
                     </Grid>           
                 </Grid>
                 </div>
-
-                {/* <div>
-                <Label
-                    label="BK_MYBK_REQUIRED_DOC_HEADING"
-                    color="#000000"
-                    fontSize="21px"
-                    alignItems="left"
-                    labelClassName={"myDOC"}                   
-                />
-                <Label label="BK_MYBK_DOCUMENT_VALIDATION_MSG"
-                />
-                <Grid container={true}>
-                    <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
-                        {documentsUploadRedux[key] &&
-                            documentsUploadRedux[key].documents ? (
-                                <div className={classes.documentSuccess}>
-                                    <Icon>
-                                        <i class="material-icons">done</i>
-                                    </Icon>
-                                </div>
-                            ) : (
-                                <div className={classes.documentIcon}>
-                                    <span>{key + 1}</span>
-                                </div>
-                            )}
-                    </Grid>
-                    <Grid
-                        item={true}
-                        xs={10}
-                        sm={5}
-                        md={4}
-                        align="left"
-                        className={classes.descriptionDiv}
-                    >
-                        <LabelContainer
-                            labelKey={getTransformedLocale(card.name)}
-                            style={styles.documentName}
-                        />
-                        {card.required && requiredIcon}
-                    </Grid>
-                    <Grid item={true} xs={12} sm={6} md={4}>
-                        {card.dropdown && (
-                            <TextFieldContainer
-                                select={true}
-                                label={{
-                                    labelKey: getTransformedLocale(
-                                        card.dropdown.label
-                                    ),
-                                }}
-                                placeholder={{ labelKey: card.dropdown.label }}
-                                data={card.dropdown.menu}
-                                optionValue="code"
-                                optionLabel="label"
-                                onChange={(event) => this.handleChange(key, event),
-                                    (event) => this.handleChangeTwo(key, event)
-                                }
-                                jsonPath={jsonPath}
-                            />
-                        )}
-                    </Grid>
-                    <Grid
-                        item={true}
-                        xs={12}
-                        sm={12}
-                        md={3}
-                        className={classes.fileUploadDiv}
-                    >
-                        <UploadSingleFile
-                             classes={this.props.classes}
-                            handleFileUpload={(e) =>
-                                handleFileUpload(e, this.handleDocument, this.props)
-                            }
-                            uploaded={
-                                documentsUploadRedux[key] &&
-                                    documentsUploadRedux[key].documents
-                                    ? true
-                                    : false
-                            }
-                            removeDocument={() => this.removeDocument(key)}
-                            documents={
-                                documentsUploadRedux[key] &&
-                                documentsUploadRedux[key].documents
-                            }
-                            onButtonClick={() => this.onUploadClick(key)}
-                            inputProps={this.props.inputProps}
-                            buttonLabel={this.props.buttonLabel}
-
-                        />
-                    </Grid>
-                </Grid>
-            </div> */}
-
             </div>
         );
     };
