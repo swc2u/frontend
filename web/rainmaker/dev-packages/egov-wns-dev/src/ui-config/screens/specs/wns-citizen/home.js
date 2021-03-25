@@ -36,10 +36,10 @@ const waterAndSewerageSearchAndResult = {
     name: "home",
     moduleName: "egov-wns",
     beforeInitScreen: (action, state, dispatch) => {
-        setModule("rainmaker-wns");
-    const userInfo = JSON.parse(getUserInfo());
-    const tenantId = process.env.REACT_APP_NAME === "Citizen" ? (userInfo.permanentCity || userInfo.tenantId): getTenantId();
-      dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
+    //     setModule("rainmaker-wns");
+    // const userInfo = JSON.parse(getUserInfo());
+    // const tenantId = process.env.REACT_APP_NAME === "Citizen" ? (userInfo.permanentCity || userInfo.tenantId): getTenantId();
+    //   dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
         fetchData(action, state, dispatch);
         const moduleDetails = [
             {
