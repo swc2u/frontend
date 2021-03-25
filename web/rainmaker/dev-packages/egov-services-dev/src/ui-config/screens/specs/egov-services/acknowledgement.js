@@ -39,6 +39,45 @@ export const header = getCommonContainer({
     },
 });
 
+
+export const paymentFailureFooter = (
+    state,
+    applicationNumber,
+    tenantId,
+    businessService
+) => {
+    return getCommonApplyFooter({
+  
+        gotoHome: {
+            componentPath: "Button",
+            props: {
+                variant: "contained",
+                color: "primary",
+                style: {
+                    //    minWidth: "200px",
+                    height: "48px",
+                    marginRight: "16px",
+                },
+            },
+            children: {
+                goToHomeButtonLabel: getLabel({
+                    labelName: "GO TO HOME",
+                    labelKey: "BK_BUTTON_HOME",
+                }),
+            },
+            onClickDefination: {
+                action: "page_change",
+                path:
+                    process.env.REACT_APP_SELF_RUNNING === "true"
+                        ? `/egov-ui-framework/egov-services/search`
+                        : `/`,
+            },
+            visible: true,
+        },
+    });
+};
+
+
 export const paymentSuccessFooter = (
     state,
     applicationNumber,

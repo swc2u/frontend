@@ -555,5 +555,3 @@ export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
     }
     return [isFormValid, hasFieldToaster];
 };
-
-
