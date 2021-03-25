@@ -500,6 +500,7 @@ export const getMdmsData = async (state,dispatch) => {
         { moduleName: "ws-services-masters", 
         masterDetails: [
           { name: "wsWorkflowRole" },
+          { name: "swWorkflowRole" },
           { name: "sectorList" },
           { name: "swSectorList" },
         
