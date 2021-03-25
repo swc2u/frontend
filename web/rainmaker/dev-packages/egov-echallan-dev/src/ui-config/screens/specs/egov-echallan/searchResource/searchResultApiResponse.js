@@ -56,23 +56,37 @@ export const searchResultApiResponse = async (state, dispatch) => {
     "searchCriteriaManageChallan[0].Status", ''
   ).trim();
 
-  if ((fromdate === undefined || fromdate === '')) {
-    dispatch(
-      toggleSnackbar(
-        true,
-        { labelName: "Please fill Date", labelKey: "EC_ERR_FILL_DATE" },
-        "warning"
-      )
-    );
-  } else if ((Todate === undefined || Todate === '')) {
-    dispatch(
-      toggleSnackbar(
-        true,
-        { labelName: "Please fill Date", labelKey: "EC_ERR_FILL_DATE" },
-        "warning"
-      )
-    );
+  let challanId = get(
+    state.screenConfiguration.preparedFinalObject,
+    "searchCriteriaManageChallan[0].challanId", '')
+
+  if ((fromdate === undefined || fromdate === '') && (Todate === undefined || Todate === '') && challanId =='') {
+      dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: "Please fill Date Or Challan ID", labelKey: "EC_ERR_FILL_DATE_OR_CHALLANID" },
+          "warning"
+        )
+      );
   }
+  // else if ((fromdate === undefined || fromdate === '')) {
+  //   dispatch(
+  //     toggleSnackbar(
+  //       true,
+  //       { labelName: "Please fill Date", labelKey: "EC_ERR_FILL_DATE" },
+  //       "warning"
+  //     )
+  //   );
+  // }
+  // else if ((Todate === undefined || Todate === '')) {
+  //   dispatch(
+  //     toggleSnackbar(
+  //       true,
+  //       { labelName: "Please fill Date", labelKey: "EC_ERR_FILL_DATE" },
+  //       "warning"
+  //     )
+  //   );
+  // }
   else if (fromdate > Todate) {
     dispatch(
       toggleSnackbar(
@@ -98,7 +112,8 @@ export const searchResultApiResponse = async (state, dispatch) => {
       "encroachmentType": encroachmentType,
       "sector": sector,
       "siName": siName,
-      "status": challanStatus
+      "status": challanStatus,
+      "challanId":challanId
     }
     try {
       localStorageSet("echallanSearchCrieteria", JSON.stringify(requestBody));
