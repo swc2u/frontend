@@ -633,6 +633,22 @@ export const downloadAcknowledgementForm = (Applications, applicationType,feeEst
         }]
         break;
       case 'BB-NOC':
+          Application = {
+            ...Application,
+            applicationDetails:{
+              ...Application.applicationDetails,
+              typeOfNoc: (Application.applicationDetails.typeOfNoc && Application.applicationDetails.typeOfNoc.length == 3 ) ? [
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[0])}` + ',' + 
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[1])}` + ',' + 
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[2],Application.applicationDetails.typeOfNoc[2])}`
+              ] : (Application.applicationDetails.typeOfNoc && Application.applicationDetails.typeOfNoc.length == 1) ? [
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[0])}`
+              ] :(Application.applicationDetails.typeOfNoc && Application.applicationDetails.typeOfNoc.length == 2) ? [
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[0])}` + ',' + 
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[1])}`
+              ] : 'NA'
+            }
+          }
           queryStr = [{
             key: "key",
             value: (state == "ES_PENDING_PAYMENT" || state == "ES_PENDING_DA_PREPARE_LETTER" ||
