@@ -257,6 +257,7 @@ export const getMdmsData = async queryObject => {
 
 export const downloadAcknowledgementForm = (Owners, feeEstimate, status, pdfkey, applicationType, mode = "download") => {
   let queryStr = []
+  let transactionNumber 
   switch (applicationType) {
     case 'MG':
       queryStr = [{
@@ -318,8 +319,14 @@ export const downloadAcknowledgementForm = (Owners, feeEstimate, status, pdfkey,
 
   switch (applicationType) {
     case 'OT':
+      transactionNumber = ownerInfo.property.transitNumber.split('-')[1] ? ownerInfo.property.transitNumber.split('-')[1] :
+      ownerInfo.property.transitNumber.split('-')[0]
       ownerInfo = {
         ...ownerInfo,
+        property:{
+          ...ownerInfo.property,
+          transitNumber:transactionNumber
+        },
         ownerDetails: {
           ...Owners[0].ownerDetails,
           ownershipTransferDocuments: myDocuments
@@ -328,8 +335,14 @@ export const downloadAcknowledgementForm = (Owners, feeEstimate, status, pdfkey,
       break;
     case 'DC':
     case 'MG':
+      transactionNumber = ownerInfo.property.transitNumber.split('-')[1] ? ownerInfo.property.transitNumber.split('-')[1] :
+      ownerInfo.property.transitNumber.split('-')[0]
       ownerInfo = {
         ...ownerInfo,
+        property:{
+          ...ownerInfo.property,
+          transitNumber:transactionNumber
+        },
         applicationDocuments: myDocuments
       }
       break;
@@ -555,6 +568,7 @@ export const downloadAcknowledgementFormForCitizen = (Owners, feeEstimate, type,
 
 export const downloadCertificateForm = (Owners, data, applicationType,tenantId, mode = 'download') => {
   let queryStr = []
+  let transactionNumber = ''
   switch(applicationType){
     case 'mg':
         queryStr = [{
@@ -592,6 +606,16 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
   try {
     switch (applicationType) {
       case 'dc':
+        transactionNumber = ownersData.property.transitNumber.split('-')[1] ? ownersData.property.transitNumber.split('-')[1] :
+        ownersData.property.transitNumber.split('-')[0]
+        ownersData = {
+          ...ownersData,
+          property:{
+            ...ownersData.property,
+              transitNumber:transactionNumber
+          
+          }
+        }
         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
             DuplicateCopyApplications: [ownersData]
           }, {
@@ -612,6 +636,16 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
         break;
 
       case 'ot':
+          transactionNumber = ownersData.property.transitNumber.split('-')[1] ? ownersData.property.transitNumber.split('-')[1] :
+          ownersData.property.transitNumber.split('-')[0]
+          ownersData = {
+            ...ownersData,
+            property:{
+              ...ownersData.property,
+                transitNumber:transactionNumber
+            
+            }
+          }
         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
             Owners: [ownersData]
           }, {
@@ -632,6 +666,18 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
         break;
         
       case 'original':
+        transactionNumber = ownersData.transitNumber.split('-')[1] ? ownersData.transitNumber.split('-')[1] :
+        ownersData.transitNumber.split('-')[0]
+          ownersData = {
+            ...ownersData,
+            propertyDetails:{
+              ...ownersData.propertyDetails,
+              address:{
+                ...ownersData.propertyDetails.address,
+                transitNumber:transactionNumber
+              }
+            }
+          }
         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
             Properties: [ownersData]
           }, {
@@ -651,6 +697,16 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
           });
         break;
       case 'mg':
+          transactionNumber = ownersData.property.transitNumber.split('-')[1] ? ownersData.property.transitNumber.split('-')[1] :
+          ownersData.property.transitNumber.split('-')[0]
+          ownersData = {
+            ...ownersData,
+            property:{
+              ...ownersData.property,
+                transitNumber:transactionNumber
+           
+            }
+          }
           httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
             MortgageApplications: [ownersData]
           }, {
@@ -709,6 +765,16 @@ const DOWNLOADRECEIPT = {
     ACTION: "_get",
   },
 };
+
+let transitNumber = notice[0].property.transitNumber.split('-')[1] ? notice[0].property.transitNumber.split('-')[1] :
+notice[0].property.transitNumber.split('-')[0]
+notice = [{
+  ...notice[0],
+  property:{
+    ...notice[0].property,
+    transitNumber:transitNumber
+  }
+}]
 try {
       httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
           notices:notice
