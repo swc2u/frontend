@@ -909,6 +909,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
             key: "tenantId",
             value: receiptQueryString[1].value.split('.')[0]
         }]
+
         httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, query).then((response) => {
           Payments = response.Payments;
           let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
@@ -957,6 +958,15 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
                 "transactionNumber" : Payments[0].transactionNumber
               }
               Properties[0].offlinePaymentDetails.push(transactionNumber)
+          }
+          
+          if(!roleExists && Payments[0].paymentMode == 'CASH'){
+            Properties[0]["offlinePaymentDetails"] = []
+            
+            let transactionNumber = {
+              "transactionNumber" : Payments[0].transactionNumber
+            }
+            Properties[0].offlinePaymentDetails.push(transactionNumber)
           }
           
           let transactionNumber = Properties[0].transitNumber.split('-')[1] ? Properties[0].transitNumber.split('-')[1] :
