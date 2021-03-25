@@ -247,13 +247,24 @@ const callBackForNext = async (state, dispatch) => {
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
           isFormValid = moveToReview(state, dispatch, applicationId);
           if (isFormValid) {
-            setReviewPageRoute(state, dispatch, applicationId);
+            setTimeout(function () {
+              setReviewPageRoute(state, dispatch, applicationId);
+              let errorMessage = {
+                labelName: 'SUCCESS ',
+                labelKey: "" //UPLOAD_FILE_TOAST
+              };
+              dispatch(toggleSnackbar(true, errorMessage, "success"));
+    
+            }, 2000);
+
+
+           // setReviewPageRoute(state, dispatch, applicationId);
           }
-          let errorMessage = {
-            labelName: 'SUCCESS ',
-            labelKey: "" //UPLOAD_FILE_TOAST
-          };
-          dispatch(toggleSnackbar(true, errorMessage, "success"));
+          // let errorMessage = {
+          //   labelName: 'SUCCESS ',
+          //   labelKey: "" //UPLOAD_FILE_TOAST
+          // };
+          // dispatch(toggleSnackbar(true, errorMessage, "success"));
 
         } else {
 
