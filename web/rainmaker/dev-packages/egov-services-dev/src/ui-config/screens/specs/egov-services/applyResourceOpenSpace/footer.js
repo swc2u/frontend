@@ -107,49 +107,32 @@ const callBackForNext = async (state, dispatch) => {
         isFormValid = moveToReview(state, dispatch);
     }
     if (activeStep === 2 && isFormValid != false) {
-        let response ={}
-        
-        let responseStatus = {}
-        let applicationNumber= ""
-        let bookingStatus = get(
-            state.screenConfiguration.preparedFinalObject,
-            "Booking.bkApplicationStatus",
-            []
+        // prepareDocumentsUploadData(state, dispatch);
+        let response = await createUpdateOsbApplication(
+            state,
+            dispatch,
+            "INITIATE"
         );
-        
-        if(bookingStatus !== "INITIATED"){
-             response = await createUpdateOsbApplication(
-                state,
-                dispatch,
-                "INITIATE"
-            );
-            responseStatus = get(response, "status", "");
-            if (responseStatus == "SUCCESS" || responseStatus == "success") {
-                applicationNumber = get(
+        console.log(response, "myResponse");
+        let responseStatus = get(response, "status", "");
+        if (responseStatus == "SUCCESS" || responseStatus == "success") {
+            // DISPLAY SUCCESS MESSAGE
+            // let successMessage = {
+            //     labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
+            //     labelKey: "", //UPLOAD_FILE_TOAST
+            // };
+            // dispatch(toggleSnackbar(true, successMessage, "success"));
+
+            // GET FEE DETAILS
+            // let tenantId = getTenantId().split(".")[0];
+            let tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
+            console.log(tenantId, 'tenantId..............', JSON.parse(getUserInfo()).permanentCity, getTenantId());
+            let applicationNumber = get(
                 response,
                 "data.bkApplicationNumber",
                 ""
-
             );
-            }
-        }
-        else{
-       
-             applicationNumber = get(
-                state.screenConfiguration.preparedFinalObject,
-                "Booking.bkApplicationNumber",
-                []
-            );
-        }
-        console.log(response, "myResponse");
-        responseStatus = get(response, "status", "");
-        if (responseStatus == "SUCCESS" || responseStatus == "success" || applicationNumber) {
-
-
-         
-            let tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
-            console.log(tenantId, 'tenantId..............', JSON.parse(getUserInfo()).permanentCity, getTenantId());
-    
+            //let businessService = get(response, "data.businessService", "");
             let businessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
             const reviewUrl = `/egov-services/applyopenspace?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
             dispatch(setRoute(reviewUrl));
