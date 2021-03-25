@@ -812,6 +812,7 @@ class CheckAvailability extends Component {
                 masterDataPCC={this.state.masterDataPCC}
                 availabilityCheckData={this.state.availabilityCheckData}
                 pacc_image_initial_path={sImageUrl && sImageUrl[0].Value}
+                mediaStyle={{style : { textAlign : "center"}}}
               /></div>
             ) : ""}
 
