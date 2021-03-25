@@ -59,7 +59,10 @@ callApiForDocumentData = async (e) => {
 
 
   render() {
-    const { documentMap } = this.props;
+    const { documentMap,uploadeDocType } = this.props;
+
+    let dropdownValue = `-${uploadeDocType}`
+    console.log("dropdownValue--docTpe",dropdownValue)
      
 return (
       <div>
@@ -74,6 +77,14 @@ return (
               
               <div className="complaint-detail-detail-section-status row">
               <div className="col-md-4">
+      {uploadeDocType !== "NotFound" ? 
+                           <Label                                    
+                           className="col-xs-12  col-sm-12 col-md-12  status-result-color"
+                                    id="complaint-details-current-status"
+                                    labelStyle={{ color: "inherit" }}
+                                    label={`BK_PCC_DOCUMENT ${dropdownValue}`}
+                                />: ""}             
+
                           <Label                                    
                            className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"

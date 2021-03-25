@@ -128,18 +128,16 @@ class ApplicationDetails extends Component {
 			userInfo,
 			documentMap,
 			prepareFinalObject, selectedComplaint,
-
 		} = this.props;
 		console.log("propsforRefund--", this.props)
-		console.log(selectedComplaint, "Nero Complaint")
-		let AppNo = selectedComplaint.bkApplicationNumber
-		console.log("AppNo--", AppNo)
+		// let AppNo = selectedComplaint.bkApplicationNumber
+		// console.log("AppNo--", AppNo)
 
-		let funtenantId = selectedComplaint.tenantId
+		let funtenantId = userInfo.tenantId
 		console.log("funtenantId--", funtenantId)
 
 
-
+ 
 		let mdmsBody = {
 			MdmsCriteria: {
 				tenantId: funtenantId,
@@ -248,7 +246,8 @@ this.setState({
 		let bkBookingType = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingType : 'NA'
 		let Sector = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkSector : 'NA'
 		let bkBookingVenue = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue : 'NA'
-
+		let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'
+		console.log("AppNo--", AppNo)
 		if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
 			let timeSlot = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot
 			console.log("timeSlot--", timeSlot)
@@ -372,23 +371,8 @@ this.setState({
 			[{ key: "consumerCodes", value: match.params.applicationId }, { key: "tenantId", value: userInfo.tenantId }
 			])
 
-		// 	let totalRes = await this.calculateCancelledBookingRefundAmount(AppNo, funtenantId, FromDate);
-		// 	console.log("totalRes--inrefundPage",totalRes)
-
-		//    this.setState({
-		// totalRefundAmount : totalRes
-		//     })
-
-		// 	if(selectedComplaint.bkApplicationStatus === "PENDING_FOR_DISBURSEMENT"){
-
-		// 		this.setState({
-		// 			refundCard: true
-		// 		})
-		// 	}
-
 		const cancelBookingWfUsersRoles = userInfo && userInfo.roles.some(el => el.code === 'BK_CLERK' || el.code === 'BK_DEO' || el.code === 'BK_SENIOR_ASSISTANT' || el.code === 'BK_AUDIT_DEPARTMENT' || el.code === 'BK_CHIEF_ACCOUNT_OFFICER' || el.code === 'BK_PAYMENT_PROCESSING_AUTHORITY' || el.code === 'BK_SUPERVISOR' || el.code === 'BK_OSD');
 
-		//if(selectedComplaint.bkApplicationStatus === "PENDING_FOR_DISBURSEMENT"){   //second option for detail page of room
 		if (cancelBookingWfUsersRoles) {
 			let totalRes = await this.calculateCancelledBookingRefundAmount(AppNo, funtenantId, FromDate, dataforSectorAndCategory.bookingsModelList[0].roomsModel);
 			console.log("totalRes--inrefundPage", totalRes)
@@ -946,8 +930,11 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 
 	downloadPaymentReceiptFunction = async (e) => {
 		const { transformedComplaint, paymentDetailsForReceipt, paymentDetails, offlineTransactionDate, offlinePayementMode, offlineTransactionNum,
-			six, one, recNumber, downloadReceiptForPCC, userInfo, selectedComplaint, downloadEsampPaymentReceipt, PACC, LUXURY_TAX, REFUNDABLE_SECURITY, PACC_TAX, PACC_ROUND_OFF, FACILITATION_CHARGE } = this.props;
-		const { complaint } = transformedComplaint;
+			six, one, recNumber, downloadReceiptForPCC, userInfo, selectedComplaint, downloadEsampPaymentReceipt, PACC, LUXURY_TAX, REFUNDABLE_SECURITY, PACC_TAX, PACC_ROUND_OFF, FACILITATION_CHARGE,amountTodisplay } = this.props;
+	console.log("pcccpaymentreceipt",this.props)
+	let NumAmount = 0;
+	NumAmount = Number(amountTodisplay)
+		const { complaint } = transformedComplaint;  //amountTodisplay
 
 		let applicationDetails = selectedComplaint
 		let Newugst;
@@ -1028,7 +1015,7 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 					"utgst": applicationDetails.bkCgst,
 					"totalgst": PACC_TAX,
 					"refundableCharges": this.props.REFUNDABLE_SECURITY,
-					"totalPayment": this.props.totalAmount,
+					"totalPayment": amountTodisplay,
 					"paymentDate": convertEpochToDate(this.props.offlineTransactionDate, "dayend"),
 					"receiptNo": this.props.recNumber,
 					"paymentType": this.props.offlinePayementMode,
@@ -1036,7 +1023,7 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 					"discType": applicationDetails.bkPlotSketch,
 					"transactionId": this.props.offlineTransactionNum,
 					"totalPaymentInWords": this.NumInWords(
-						this.props.totalAmount
+						NumAmount
 					),  //offlineTransactionDate,,
 					"bankName": "",
 					"cardNumberLast4": "Not Applicable",
@@ -1763,7 +1750,7 @@ console.log("InContinue Function")
 		let { operatorCode, Address, hsnCode, comments, openMap, AppName, name, checkNumDays, checkGreaterDate, createdDate, BKROOM_TAX, BKROOM, BKROOM_ROUND_OFF, four, totalAmountPaid, PaymentDate, receiptNumber, PaymentMode, transactionNumber } = this.state;
 		console.log("CheckstateForRefund--", this.state)
 		let { complaint, timeLine } = this.props.transformedComplaint;
-		let { documentMap, selectedComplaint, Difference_In_Days_check, first } = this.props;
+		let { documentMap, selectedComplaint, Difference_In_Days_check, first,uploadeDocType } = this.props;
 		let { historyApiData, paymentDetails, match, userInfo, paymentDetailsForReceipt, PayMentTwo, PayMentOne, selectedNumber } = this.props;
 		console.log("this.props.match--", this.props)
 		console.log("this.state.totalRefundAmount", this.state.totalRefundAmount)
@@ -1774,9 +1761,19 @@ console.log("InContinue Function")
 			isAssignedToEmployee,
 			reopenValidChecker
 		} = this.props;
+let checkuploadeDocType = "NotFound"
+let valueForDocDropDown;
+ 
+checkuploadeDocType = uploadeDocType !== undefined && uploadeDocType !== null ? (uploadeDocType.length > 0 ? (uploadeDocType[0].documentType !== undefined && uploadeDocType[0].documentType !== null ? uploadeDocType[0].documentType :"NotFound") :"NotFound"):"NotFound"
 
-		// var ForAllNoDays = this.TotalPACCDays();
-		// console.log("ForAllNoDays--",ForAllNoDays)
+if(checkuploadeDocType !== "NotFound"){
+	valueForDocDropDown = `-${checkuploadeDocType}`
+}
+
+console.log("valueForDocDropDown",valueForDocDropDown)
+
+// var ForAllNoDays = this.TotalPACCDays();     `-${uploadeDocType}`
+		// console.log("ForAllNoDays--",ForAllNoDays)    uploadeDocType[0].documentType    uploadeDocType.length > 0 ?
 
 		// var check = this.CheckGreaterDate();
 		// console.log("CheckGreaterDat--",check)
@@ -2026,12 +2023,19 @@ totalAmountPaid = {totalAmountPaid}
 								/>
 
 								<div style={{
-									height: "100px",
+									height: "130px",
 									width: "100",
 									backgroundColor: "white",
 									border: "2px solid white",
 									boxShadow: "0 0 2px 2px #e7dcdc", paddingLeft: "30px", paddingTop: "10px"
 								}}><b>Documents</b><br></br>
+
+                         {checkuploadeDocType !== "NotFound" ? <Label                                    
+                           className="col-xs-12  col-sm-12 col-md-12  status-result-color"
+                                    id="complaint-details-current-status"
+                                    labelStyle={{ color: "inherit" }}
+                                    label={`BK_PCC_DOCUMENT ${valueForDocDropDown}`}
+                                /> :""}       
 
 									{documentMap && Object.values(documentMap) ? Object.values(documentMap) : "Not found"}
 									<button className="ViewDetailButton" data-doc={documentMap} onClick={(e) => { this.callApiForDocumentData(e) }}>VIEW</button>
@@ -2621,6 +2625,16 @@ const mapStateToProps = (state, ownProps) => {
 	let businessService = applicationData ? applicationData.businessService : "";
 	let bookingDocs;
 	let documentMap = applicationData && applicationData.documentMap ? applicationData.documentMap : '';
+	
+
+	
+	let uploadeDocType = get(  
+		state,
+		"bookings.applicationData.documentList",
+		"NotFound"
+	);
+
+	console.log("DetailPageDocType",uploadeDocType)
 	const { HistoryData } = bookings;
 	let historyObject = HistoryData ? HistoryData : ''
 	const { paymentData } = bookings;
@@ -2730,7 +2744,15 @@ const mapStateToProps = (state, ownProps) => {
 	console.log("refConAmount", refConAmount)
 
 	let ReceiptPaymentDetails = fetchPaymentAfterPayment;
-	console.log("ReceiptPaymentDetails--", ReceiptPaymentDetails)
+	console.log("ReceiptPaymentDetails--", ReceiptPaymentDetails)   //Payments[0].totalAmountPaid
+
+	let amountTodisplay = 0;
+
+	if(ReceiptPaymentDetails !== undefined && ReceiptPaymentDetails !== null){
+		amountTodisplay = ReceiptPaymentDetails.Payments[0].totalAmountPaid
+	}
+
+
 	//let offlinePayementMode = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments[0].paymentMode ): "NotFound"
 	let offlinePayementMode = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].paymentMode !== undefined && ReceiptPaymentDetails.Payments[0].paymentMode !== null ? (ReceiptPaymentDetails.Payments[0].paymentMode) : "NotFound") : "NotFound") : "NotFound"
 	console.log("offlinePayementMode--", offlinePayementMode)
@@ -2965,14 +2987,14 @@ const mapStateToProps = (state, ownProps) => {
 			REFUNDABLE_SECURITY,
 			PACC_TAX,
 			PACC_ROUND_OFF,DATEVENUECHARGE,
-			FACILITATION_CHARGE, one, two, three, four, five, newRoomAppNumber, dataForBothSelection, roomsData,
-			PaymentReceiptByESamp, EmpPaccPermissionLetter
+			FACILITATION_CHARGE, one, two, three, four, five, newRoomAppNumber, dataForBothSelection, roomsData,amountTodisplay,
+			PaymentReceiptByESamp, EmpPaccPermissionLetter,uploadeDocType
 
 		};
 	} else {
 		return {
-			dataForBothSelection, roomsData,DATEVENUECHARGE,
-			paymentDetails, offlineTransactionNum, recNumber, DownloadReceiptDetailsforPCC, refConAmount, RoomBookingDate,
+			dataForBothSelection, roomsData,DATEVENUECHARGE,uploadeDocType,
+			paymentDetails, offlineTransactionNum, recNumber, DownloadReceiptDetailsforPCC, refConAmount, RoomBookingDate,amountTodisplay,
 			offlinePayementMode, Difference_In_Days_check, first, showRoomCard,
 			offlineTransactionDate, RoomApplicationNumber, totalNumber, typeOfRoom, roomFromDate, roomToDate,
 			historyApiData,

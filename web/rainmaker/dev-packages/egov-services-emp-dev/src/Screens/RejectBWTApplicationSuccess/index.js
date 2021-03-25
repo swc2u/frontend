@@ -23,7 +23,7 @@ class RejectBWTApplicationSuccess extends Component {
           <Button
             className="responsive-action-button"
             primary={true}
-            label={<Label buttonLabel={true} label="CORE_COMMON_GOTOHOME" />}
+            label={<Label buttonLabel={true} label="BK_CORE_PACC_EMP_COMMON_GOTOHOME" />}
             fullWidth={true}
             onClick={this.handleComplaintReassigned}
           />
