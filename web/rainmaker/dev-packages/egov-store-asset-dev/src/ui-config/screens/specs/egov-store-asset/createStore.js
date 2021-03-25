@@ -86,7 +86,7 @@ const callBackForUpdate = async (state, dispatch) => {
       );
       if (response) {
         //dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=storeMaster&mode=update&code=${response.stores[0].name}`));
-        window.location.href =`/egov-store-asset/acknowledgement?screen=storeMaster&mode=update&code=${response.stores[0].name}`
+        window.location.href =`/employee/egov-store-asset/acknowledgement?screen=storeMaster&mode=update&code=${response.stores[0].name}`
       }
 
     } catch (error) {
@@ -148,7 +148,7 @@ const callBackForSubmit = async (state, dispatch) => {
       );
       if (response) {
         //dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=storeMaster&mode=create&code=${response.stores[0].name}`));
-        window.location.href =`/egov-store-asset/acknowledgement?screen=storeMaster&mode=create&code=${response.stores[0].name}`
+        window.location.href =`/employee/egov-store-asset/acknowledgement?screen=storeMaster&mode=create&code=${response.stores[0].name}`
       }
 
     } catch (error) {
