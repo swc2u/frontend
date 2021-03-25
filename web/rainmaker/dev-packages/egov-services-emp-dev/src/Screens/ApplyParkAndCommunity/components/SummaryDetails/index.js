@@ -28,12 +28,12 @@ class SummaryDetails extends Component {
     }
 
     componentDidMount = async () => {
-       
+
         let {createPACCApplication, userInfo, documentMap,fetchPayment,prepareFinalObject,fetchApplications,conJsonSecond,conJsonfirst } = this.props;
         let { uploadeDocType,DiscountReason,firstName, venueType, bokingType, bookingData, email, mobileNo, surcharge, fromDate, toDate,myLocationtwo,ReasonForDiscount,
-            utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, 
+            utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose,
             BankAccountName,NomineeName,BankAccountNumber,IFSCCode,AccountHolderName,accountType,SecTimeSlotFromTime,SecTimeSlotToTime,
-            locality, residenials, paymentMode,facilationChargesSuccess,discountType,checkAppStatus,checkAppNum,firstToTimeSlot,ReqbodybookingVenue,ReqbodybookingVenueID } = this.props;
+            locality, residenials, paymentMode,facilationChargesSuccess,discountType,checkAppStatus,checkAppNum,firstToTimeSlot,ReqbodybookingVenue,ReqbodybookingVenueID, discountDocs } = this.props;
 
 console.log("propsInsummaryCompDidMount",this.props)
             this.setState({
@@ -69,33 +69,35 @@ if(venueType == "Community Center"){
 }
 
 
-let newDisCount; 
+let newDisCount;
 let finalDiscount;
 if(discountType == "50%"){
-newDisCount = 50; 
+newDisCount = 50;
 finalDiscount = Number(newDisCount);
 console.log("newDisCount--",newDisCount)
 console.log("finalDiscount--",finalDiscount)
 }
 else if(discountType == "20%"){
-    newDisCount = 20; 
+    newDisCount = 20;
     finalDiscount = Number(newDisCount);
     console.log("newDisCount--",newDisCount)
     console.log("finalDiscount--",finalDiscount)
     }
     else if (discountType == '100%' || discountType == "KirayaBhog" || discountType == "ReligiousFunction"){
-        newDisCount = 100; 
+        newDisCount = 100;
         finalDiscount = Number(newDisCount);
         console.log("newDisCount--",newDisCount)
         console.log("finalDiscount--",finalDiscount)
-        } 
+        }
         else{
-            newDisCount = 0; 
+            newDisCount = 0;
             finalDiscount = Number(newDisCount);
             console.log("newDisCount--",newDisCount)
             console.log("finalDiscount--",finalDiscount)
             }
-
+            console.log(discountDocs, "Neeraj this pros")
+let discountDocType = discountDocs && discountDocs[0].documentCode;
+let discountDocFid = discountDocs && discountDocs[0].documents[0].fileStoreId;
 
         let fid = documentMap ? Object.keys(documentMap) : ""
         let Booking = {
@@ -112,7 +114,7 @@ else if(discountType == "20%"){
             "bkMobileNumber": mobileNo,
             "bkDimension": dimension,
             // "bkLocation": myLocationtwo === undefined ? null : myLocationtwo,
-            "bkLocation": ReqbodybookingVenue, 
+            "bkLocation": ReqbodybookingVenue,
             "bkFromDate": fromDate,
             "bkToDate": toDate,
             "bkCleansingCharges": cleaningCharges,
@@ -124,14 +126,19 @@ else if(discountType == "20%"){
             "bkEmail": email,
             "bkHouseNo": houseNo,
             "bkBookingPurpose": purpose,
-            // "bkPaymentStatus": checkAppStatus == "OFFLINE_APPLIED" ? "SUCCESS" : "",  
+            // "bkPaymentStatus": checkAppStatus == "OFFLINE_APPLIED" ? "SUCCESS" : "",
             "bkPaymentStatus": checkAppStatus == "OFFLINE_APPLIED" ? "SUCCESS" : "",
             "bkApplicationNumber": checkAppNum !== "NOTFOUND" ? checkAppNum : null,
             "bkCustomerGstNo": GSTnumber,
             "wfDocuments": [{
                 "documentType" : EmpSideDocType,
                 "fileStoreId": fid[0]
-            }],
+            },
+            {
+                "documentType" : discountDocType,
+                "fileStoreId": discountDocFid
+            }
+        ],
             "tenantId": userInfo.tenantId,
             // "bkAction": checkAppStatus == "OFFLINE_APPLIED" ? "OFFLINE_RE_INITIATE" : "OFFLINE_INITIATE", //sendCurrentStatus
             "bkAction": sendCurrentStatus,
@@ -174,7 +181,7 @@ console.log("slotArray_",slotArray)   //checkslotArray
 console.log("checkslotArray",checkslotArray)
 				Booking.timeslots = checkslotArray,
                 Booking.bkDuration = "HOURLY",
-                Booking.bkFromDate = bookingData.bkFromDate, 
+                Booking.bkFromDate = bookingData.bkFromDate,
                 Booking.bkToDate = bookingData.bkToDate,
                 Booking.bkFromTime = bookingData.bkFromTime,
                 Booking.bkToTime = bookingData.bkToTime
@@ -186,17 +193,17 @@ console.log("checkslotArray",checkslotArray)
                 Booking.bkDuration = "FULLDAY"
         }
         let createAppData = {
-             
+
                 "applicationType": "PACC",
                 "applicationStatus": "",
                 "applicationId": checkAppNum !== "NOTFOUND" ? checkAppNum : null,
                 "tenantId": userInfo.tenantId,
-                "Booking": Booking   
+                "Booking": Booking
             }
-        
+
 console.log("createAppData--",createAppData)
 
-/** 
+/**
  {
         "slot": "1PM-5PM"
       },
@@ -223,7 +230,7 @@ let payloadfund = await httpRequest(
 
  prepareFinalObject("CurrentApplicationNumber",appNumber)
 
- this.setState({    
+ this.setState({
     createPACCApp : payloadfund,
     CashPaymentApplicationNumber : appNumber,
     currentAppStatus : AAppStatus
@@ -289,11 +296,11 @@ let payloadfund = await httpRequest(
             prepareFinalObject('documentsPreview', documentsPreview)
         }
     }
-  
+
 submit = async (InitiateAppNumber) => {
 
     let { uploadeDocType,conJsonSecond,conJsonfirst,updatePACCApplication, state,documentMap, bookingData, venueType,prepareFinalObject,createPACCApplicationData,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,ReasonForDiscount} = this.props;
-    console.log("AllPropsOfSubmitPage--",this.props)	 
+    console.log("AllPropsOfSubmitPage--",this.props)
 let dataOne = get(
     state,
     "screenConfiguration.preparedFinalObject.createAppData",
@@ -314,7 +321,7 @@ if(dataOne !== "NotFound"){
     prepareFinalObject("CreatePaccAppData",data);
     let fid = documentMap ? Object.keys(documentMap) : ""
     const { firstName, userInfo, email, mobileNo, surcharge, fromDate, toDate, utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, locality, residenials } = this.props;
- 
+
 
     if (data) {
         console.log("HereIsData--",data)
@@ -325,7 +332,7 @@ if(dataOne !== "NotFound"){
             "bkBookingType": data.bkBookingType,
             "bkFromDate": data.bkFromDate,
             "bkToDate": data.bkToDate
-        } 
+        }
         console.log("RequestBodyAvailCheckForSameTime",Booking)
         let AvailCheckForSameTime = await httpRequest(
           "bookings/park/community/booked/dates/_search",
@@ -334,7 +341,7 @@ if(dataOne !== "NotFound"){
           {Booking:Booking}
         );
         console.log("AvailCheckForSameTime",AvailCheckForSameTime)
-        let checkResponseAvailForSameTime = AvailCheckForSameTime !== undefined && AvailCheckForSameTime !== null ? 
+        let checkResponseAvailForSameTime = AvailCheckForSameTime !== undefined && AvailCheckForSameTime !== null ?
         (AvailCheckForSameTime.data && AvailCheckForSameTime.data !== null && AvailCheckForSameTime.data !== null ?AvailCheckForSameTime.data:""): ""
     console.log("checkResponseAvailForSameTime",checkResponseAvailForSameTime)
         if(checkResponseAvailForSameTime !== ""){
@@ -381,8 +388,8 @@ if(dataOne !== "NotFound"){
                     "bkBankAccountHolder":data.bkBankAccountHolder,
                     "bkNomineeName": data.bkNomineeName
                 }
-        
-        
+
+
                 if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
                     let slotArray = []
                     let checkslotArray = []
@@ -396,7 +403,7 @@ if(dataOne !== "NotFound"){
                         console.log("secondTimeSlot")
                         slotArray[0] = conJsonfirst,
                         slotArray[1] = conJsonSecond //conJsonSecond,conJsonfirst
-                    
+
                         checkslotArray[0] = this.props.first,
                          checkslotArray[1] = this.props.second
                     }
@@ -421,9 +428,9 @@ if(dataOne !== "NotFound"){
                     }],
                         Booking.bkDuration = "FULLDAY"
                 }
-        
+
         console.log("Booking-requestBody--",Booking)
-        
+
         await updatePACCApplication(
                     {
                         "applicationType": "PACC",
@@ -432,19 +439,19 @@ if(dataOne !== "NotFound"){
                         "tenantId": userInfo.tenantId,
                         "Booking": Booking
                     });
-                    
+
                 // this.props.history.push(`/egov-services/create-success-pcc`);
-           
-           
-                console.log("this.state.CashPaymentApplicationNumber--",this.state.CashPaymentApplicationNumber)    
-        
+
+
+                console.log("this.state.CashPaymentApplicationNumber--",this.state.CashPaymentApplicationNumber)
+
                 let NumberApp = this.state.CashPaymentApplicationNumber;
-                
+
                 console.log("NumberApp--",NumberApp)
-                
+
                 this.props.history.push(`/egov-services/PaymentReceiptDteail/${this.state.CashPaymentApplicationNumber}`);
-        
-           
+
+
 
             }
 
@@ -461,8 +468,8 @@ if(dataOne !== "NotFound"){
 
 
             }
-           
-        }   
+
+        }
         else{
             this.props.toggleSnackbarAndSetText(
                 true,
@@ -472,10 +479,10 @@ if(dataOne !== "NotFound"){
                 },
                 "error"
               );
-            }     
+            }
 
 }
-    
+
 else {
   this.props.toggleSnackbarAndSetText(
       true,
@@ -497,24 +504,24 @@ else {
             PACPACC_ROUND_OFFC_TAX,FACILITATION_CHARGE,InitiateAppNumber,seven,
             BankAccountName,NomineeName,BankAccountNumber,IFSCCode,AccountHolderName,accountType,
             } = this.props;
-            
+
             console.log(",one,two,three,four,five,six--",one,two,three,four,five,six)
             console.log("propsInRendersummary--",this.props)
             let fc = fCharges?fCharges.facilitationCharge:'100';
             console.log("stateofBooking--",this.state.createPACCApp)
 
-            
+
         return (
             <div>
                 <div className="form-without-button-cont-generic">
                      <div classsName="container">
                         <div className="col-xs-12">
-                           
+
 
 <PaccFeeEstimate
-one={one} 
-two={two} 
-three={three}   
+one={one}
+two={two}
+three={three}
 four={four}
 five={five}
 six={six}
@@ -537,7 +544,7 @@ totalAmountSuPage={totalAmountSuPage}
                                 firstName={firstName}
                                 email={email}
                                 mobileNo={mobileNo}
-                            />                   
+                            />
                             <SummaryApplicationDetail
                              firstStep={this.firstStep}
                                 purpose={purpose}
@@ -552,8 +559,8 @@ totalAmountSuPage={totalAmountSuPage}
                                 utGST={this.props.utGST}
                                 GSTnumber={GSTnumber}
                             />
-                            <SummaryBankDetails  
-                               firstStep={this.firstStep} 
+                            <SummaryBankDetails
+                               firstStep={this.firstStep}
                                 BankAccountName={BankAccountName}
                                 NomineeName={NomineeName}
                                 BankAccountNumber={BankAccountNumber}
@@ -623,29 +630,33 @@ console.log("dropDownalue",dropDownalue)
 let findTypeOfBooking =  state.screenConfiguration.preparedFinalObject.ShowAmountBooking
 console.log("findTypeOfBooking--",findTypeOfBooking)
 console.log("FinalAmount--",state.screenConfiguration.preparedFinalObject)
-
-
-let ReqbodybookingVenue  = get(  
+let discountDocs = get(
     state,
-    "screenConfiguration.preparedFinalObject.bkBookingData.name",  
+    "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux",
+    "NotFound"
+);
+
+let ReqbodybookingVenue  = get(
+    state,
+    "screenConfiguration.preparedFinalObject.bkBookingData.name",
     "NotFound"
 );
 console.log("ReqbodybookingVenue",ReqbodybookingVenue)
-let ReqbodybookingVenueID  = get(  
+let ReqbodybookingVenueID  = get(
     state,
     "screenConfiguration.preparedFinalObject.bkBookingData.id",
     "NotFound"
 );
 
-let uploadeDocType = get(  
+let uploadeDocType = get(
     state,
     "screenConfiguration.preparedFinalObject.UploadedDocType",
     "NotFound"
 );
 console.log("summaryuploadeDocType",uploadeDocType)
 console.log("ReqbodybookingVenueID",ReqbodybookingVenueID)
-    let ReasonForDiscount = state.screenConfiguration.preparedFinalObject ? 
-    (state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== undefined && state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== null ? (state.screenConfiguration.preparedFinalObject.ReasonForDiscount):'NA') :"NA";  
+    let ReasonForDiscount = state.screenConfiguration.preparedFinalObject ?
+    (state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== undefined && state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== null ? (state.screenConfiguration.preparedFinalObject.ReasonForDiscount):'NA') :"NA";
 
     console.log("ReasonForDiscount--",ReasonForDiscount)
 
@@ -664,7 +675,7 @@ if(findTypeOfBooking == "Parks"){
     for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
         if(billAccountDetailsArray[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//PACC
-            one = billAccountDetailsArray[i].amount 
+            one = billAccountDetailsArray[i].amount
          }
         else if(billAccountDetailsArray[i].taxHeadCode == "CLEANING_CHRGS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//LUXURY_TAX
             two = billAccountDetailsArray[i].amount
@@ -691,7 +702,7 @@ if(findTypeOfBooking == "Community Center"){
     for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
         if(billAccountDetailsArray[i].taxHeadCode == "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//PACC
-            one = billAccountDetailsArray[i].amount 
+            one = billAccountDetailsArray[i].amount
         }
         else if(billAccountDetailsArray[i].taxHeadCode == "CLEANING_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//LUXURY_TAX
             two = billAccountDetailsArray[i].amount
@@ -723,8 +734,8 @@ console.log("five--",five)
 console.log("six--",six)
 console.log("seven--",seven)
 
-    let myLocation = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData:"";  
-    let myLocationtwo = myLocation?myLocation.bkLocation:"";  
+    let myLocation = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData:"";
+    let myLocationtwo = myLocation?myLocation.bkLocation:"";
 
     let NewAppNumber =  state.screenConfiguration.preparedFinalObject.CurrentApplicationNumber ? state.screenConfiguration.preparedFinalObject.CurrentApplicationNumber : "NotDetemine";
     console.log("NewAppNumber--",NewAppNumber)
@@ -737,13 +748,13 @@ console.log("seven--",seven)
     console.log("tryMyNumber--",tryMyNumber)
 
     let InitiateAppNumber = NewAppNumber && NewAppNumber ? NewAppNumber : "NotDetemine";
-    
+
     console.log("InitiateAppNumber--",InitiateAppNumber)
     let fCharges;
     if (arrayName && arrayName.length > 0) {
       arrayName.forEach((item) => {
         item.forEach((value) => {
-          if (value.code == "FACILITATION_CHARGE") { 
+          if (value.code == "FACILITATION_CHARGE") {
             fCharges = value
           }
         })
@@ -761,9 +772,9 @@ console.log("seven--",seven)
     checkAppStatus = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationStatus : "NOTFOUND";
     console.log("checkAppStatus-id",checkAppStatus)
     checkAppNum = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationNumber : "NOTFOUND";
-    console.log("checkAppNum-id",checkAppNum)   
+    console.log("checkAppNum-id",checkAppNum)
 }
-   
+
    console.log("checkAppStatus--",checkAppStatus)
    console.log("checkAppNum--",checkAppNum)
 // checkAppStatus = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationStatus : "NOTFOUND";
@@ -783,68 +794,68 @@ console.log("seven--",seven)
 
     SecTimeSlotFromTime = state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo || "notFound"
     console.log("SecTimeSlotFromTime--",SecTimeSlotFromTime)//screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo
-  
+
     SecTimeSlotToTime = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo || "notFound"
     console.log("SecTimeSlotToTime--",SecTimeSlotToTime)
      //OFFLINE_APPLIED
-  
+
      firstToTimeSlot = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTime || "notFound"
     console.log("firstToTimeSlot--",firstToTimeSlot)
-  
-  
+
+
   //Booking.wholeDay
   // let wholeDaySlot = state.screenConfiguration.preparedFinalObject.Booking.wholeDay && state.screenConfiguration.preparedFinalObject.Booking.wholeDay || "notFound"
   // console.log("wholeDaySlot--",wholeDaySlot)
-  
+
   // let firstTimeSlotValue = state.screenConfiguration.preparedFinalObject.Booking.timeslots !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] : "notFound"
   // console.log("firstTimeSlotValue-",firstTimeSlotValue)
-  
-  firstTimeSlotValue = 
+
+  firstTimeSlotValue =
     state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
     (state.screenConfiguration.preparedFinalObject.Booking.timeslots !== undefined ? (state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] : "notFound") : "notFound") :
     "notFound"
-  
- 
+
+
   if(firstTimeSlotValue !== "notFound"){
-      first=firstTimeSlotValue 
+      first=firstTimeSlotValue
   console.log("first--",first)
   }
-  
- 
+
+
   if(firstTimeSlotValue !== "notFound"){
   conJsonfirst= JSON.stringify(firstTimeSlotValue);
   console.log("conJsconJsonfirston--",conJsonfirst)
   }
   // let SecondTimeSlotValue = state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] : "notFound"
   // console.log("SecondTimeSlotValue-",SecondTimeSlotValue)
-  
-   SecondTimeSlotValue = 
+
+   SecondTimeSlotValue =
     state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
     (state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo !== undefined ? (state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] : "notFound") : "notFound") :
     "notFound"
-  
- 
+
+
   if(SecondTimeSlotValue !== "notFound"){
-      second=SecondTimeSlotValue 
+      second=SecondTimeSlotValue
   console.log("second--",second)
   }
-  
+
   if(SecondTimeSlotValue !== "notFound"){
   conJsonSecond = JSON.stringify(SecondTimeSlotValue);
   console.log("conJsonSecond--",conJsonSecond)
   }
-  
+
 
    }
 
-   
+
     return {
-        //BK_FEE_HEAD_PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,  wholeDay !== undefined ? 
+        //BK_FEE_HEAD_PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,  wholeDay !== undefined ?
         //PACPACC_ROUND_OFFC_TAX,FACILITATION_CHARGE,
         firstTimeSlotValue,SecondTimeSlotValue,first,second,ReasonForDiscount,ReqbodybookingVenue,ReqbodybookingVenueID,
         createPACCApplicationData,userInfo,InitiateAppNumber,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,conJsonSecond,conJsonfirst,
         documentMap, bkLocation, facilationChargesSuccess,seven,state,uploadeDocType,
-        fCharges,myLocationtwo,totalAmountSuPage,one,two,three,four,five,six,checkAppStatus,checkAppNum
+        fCharges,myLocationtwo,totalAmountSuPage,one,two,three,four,five,six,checkAppStatus,checkAppNum,discountDocs
     }
 
 }
@@ -855,7 +866,7 @@ const mapDispatchToProps = dispatch => {
         updatePACCApplication: (criteria, hasUsers, overWrite) => dispatch(updatePACCApplication(criteria, hasUsers, overWrite)),
         toggleSnackbarAndSetText: (open, message, error) =>
             dispatch(toggleSnackbarAndSetText(open, message, error)),
-            fetchPayment: criteria => dispatch(fetchPayment(criteria)), 
+            fetchPayment: criteria => dispatch(fetchPayment(criteria)),
             prepareFinalObject: (jsonPath, value) =>
             dispatch(prepareFinalObject(jsonPath, value)),
     }
