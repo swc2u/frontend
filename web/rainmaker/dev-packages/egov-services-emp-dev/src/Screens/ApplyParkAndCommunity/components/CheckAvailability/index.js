@@ -672,36 +672,37 @@ else{  /**loop for new Booking Create**/
       },
       "error"
     );
+    return;
   }
   if(NewBookFromDate && NewBookToDate){   /** Condition for New Booking Book For No of Days Check**/
-  let daysCount = this.calculateBetweenDaysCount(NewBookFromDate,NewBookToDate)
-  if(daysCount > 2){
-    toggleSnackbarAndSetText(
-      true,
-      {
-        labelName: "You can not book venue for more than 2 days",
-        labelKey: `You can not book venue for more than 2 days`
-      },
-      "error"
-    );
-   } 
-   if(this.props.DropDownValue === "Commercial Ground"){
-     console.log("fgasdfghjkklllll")
-    this.props.history.push(`/egov-services/applyResourceCommercialGround`);
-   }
-   if(NewBookFromDate == "notFound" && NewBookToDate == "notFound"){
-    toggleSnackbarAndSetText(
-      true,
-      {
-        labelName: "Please Select From Date & To Date",
-        labelKey: `Please Select From Date & To Date`
-      },
-      "error"
-    );
-   }
-   else{
-    this.props.history.push(`/egov-services/applyPark-community-center`); 
-   }
+
+    if(NewBookFromDate == "notFound" && NewBookToDate == "notFound"){
+      toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Please Select From Date & To Date",
+          labelKey: `Please Select From Date & To Date`
+        },
+        "error"
+      );
+     }
+     else{
+
+      let daysCount = this.calculateBetweenDaysCount(NewBookFromDate,NewBookToDate)
+      if(daysCount > 2){
+        toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "You can not book venue for more than 2 days",
+            labelKey: `You can not book venue for more than 2 days`
+          },
+          "error"
+        );
+       } 
+       else{
+        this.props.history.push(`/egov-services/applyPark-community-center`); 
+       }
+     }
   }
 }        
 };
