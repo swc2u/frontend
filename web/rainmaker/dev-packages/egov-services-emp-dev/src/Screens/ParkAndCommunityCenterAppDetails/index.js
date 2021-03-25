@@ -1750,7 +1750,7 @@ console.log("InContinue Function")
 		let { operatorCode, Address, hsnCode, comments, openMap, AppName, name, checkNumDays, checkGreaterDate, createdDate, BKROOM_TAX, BKROOM, BKROOM_ROUND_OFF, four, totalAmountPaid, PaymentDate, receiptNumber, PaymentMode, transactionNumber } = this.state;
 		console.log("CheckstateForRefund--", this.state)
 		let { complaint, timeLine } = this.props.transformedComplaint;
-		let { documentMap, selectedComplaint, Difference_In_Days_check, first } = this.props;
+		let { documentMap, selectedComplaint, Difference_In_Days_check, first,uploadeDocType } = this.props;
 		let { historyApiData, paymentDetails, match, userInfo, paymentDetailsForReceipt, PayMentTwo, PayMentOne, selectedNumber } = this.props;
 		console.log("this.props.match--", this.props)
 		console.log("this.state.totalRefundAmount", this.state.totalRefundAmount)
@@ -1761,9 +1761,19 @@ console.log("InContinue Function")
 			isAssignedToEmployee,
 			reopenValidChecker
 		} = this.props;
+let checkuploadeDocType = "NotFound"
+let valueForDocDropDown;
+ 
+checkuploadeDocType = uploadeDocType !== undefined && uploadeDocType !== null ? (uploadeDocType.length > 0 ? (uploadeDocType[0].documentType !== undefined && uploadeDocType[0].documentType !== null ? uploadeDocType[0].documentType :"NotFound") :"NotFound"):"NotFound"
 
-		// var ForAllNoDays = this.TotalPACCDays();
-		// console.log("ForAllNoDays--",ForAllNoDays)
+if(checkuploadeDocType !== "NotFound"){
+	valueForDocDropDown = `-${checkuploadeDocType}`
+}
+
+console.log("valueForDocDropDown",valueForDocDropDown)
+
+// var ForAllNoDays = this.TotalPACCDays();     `-${uploadeDocType}`
+		// console.log("ForAllNoDays--",ForAllNoDays)    uploadeDocType[0].documentType    uploadeDocType.length > 0 ?
 
 		// var check = this.CheckGreaterDate();
 		// console.log("CheckGreaterDat--",check)
@@ -2013,12 +2023,19 @@ totalAmountPaid = {totalAmountPaid}
 								/>
 
 								<div style={{
-									height: "100px",
+									height: "130px",
 									width: "100",
 									backgroundColor: "white",
 									border: "2px solid white",
 									boxShadow: "0 0 2px 2px #e7dcdc", paddingLeft: "30px", paddingTop: "10px"
 								}}><b>Documents</b><br></br>
+
+                         {checkuploadeDocType !== "NotFound" ? <Label                                    
+                           className="col-xs-12  col-sm-12 col-md-12  status-result-color"
+                                    id="complaint-details-current-status"
+                                    labelStyle={{ color: "inherit" }}
+                                    label={`BK_PCC_DOCUMENT ${valueForDocDropDown}`}
+                                /> :""}       
 
 									{documentMap && Object.values(documentMap) ? Object.values(documentMap) : "Not found"}
 									<button className="ViewDetailButton" data-doc={documentMap} onClick={(e) => { this.callApiForDocumentData(e) }}>VIEW</button>
@@ -2608,6 +2625,16 @@ const mapStateToProps = (state, ownProps) => {
 	let businessService = applicationData ? applicationData.businessService : "";
 	let bookingDocs;
 	let documentMap = applicationData && applicationData.documentMap ? applicationData.documentMap : '';
+	
+
+	
+	let uploadeDocType = get(  
+		state,
+		"bookings.applicationData.documentList",
+		"NotFound"
+	);
+
+	console.log("DetailPageDocType",uploadeDocType)
 	const { HistoryData } = bookings;
 	let historyObject = HistoryData ? HistoryData : ''
 	const { paymentData } = bookings;
@@ -2961,12 +2988,12 @@ const mapStateToProps = (state, ownProps) => {
 			PACC_TAX,
 			PACC_ROUND_OFF,DATEVENUECHARGE,
 			FACILITATION_CHARGE, one, two, three, four, five, newRoomAppNumber, dataForBothSelection, roomsData,amountTodisplay,
-			PaymentReceiptByESamp, EmpPaccPermissionLetter
+			PaymentReceiptByESamp, EmpPaccPermissionLetter,uploadeDocType
 
 		};
 	} else {
 		return {
-			dataForBothSelection, roomsData,DATEVENUECHARGE,
+			dataForBothSelection, roomsData,DATEVENUECHARGE,uploadeDocType,
 			paymentDetails, offlineTransactionNum, recNumber, DownloadReceiptDetailsforPCC, refConAmount, RoomBookingDate,amountTodisplay,
 			offlinePayementMode, Difference_In_Days_check, first, showRoomCard,
 			offlineTransactionDate, RoomApplicationNumber, totalNumber, typeOfRoom, roomFromDate, roomToDate,
