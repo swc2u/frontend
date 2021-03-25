@@ -126,7 +126,7 @@ export const applyforApplication = async (state, dispatch, activeIndex) => {
         } else {
           set(queryObject[0], "action", "SUBMIT")
           }
-        const property_copy = get(queryObject[0], property_copy)
+        const property_copy = get(queryObject[0], "property_copy")
         if(!!property_copy && property_copy.fileNumber === "BBNOC-1") {
           set(queryObject[0], "property", property_copy)
         }
