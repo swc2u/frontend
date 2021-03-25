@@ -396,11 +396,11 @@ console.log('this.state.idProffType',this.state.idProffType);
                       onChange={(e, value) => this.onbookingChange(e)}
                     >
                     <MenuItem  value="" disabled>Proof Type</MenuItem>
-                     <MenuItem value="Ration_Card">Ration Card</MenuItem>
-                     <MenuItem value="Aadhar_Card">Aadhar Card</MenuItem>
-                     <MenuItem value="Voter_Id">Voter Id Card</MenuItem>
-                     <MenuItem value="Driving_License">Driving License</MenuItem>
-                     <MenuItem value="others">Others</MenuItem>
+                     <MenuItem value="Ration Card">Ration Card</MenuItem> 
+                     <MenuItem value="Aadhar Card">Aadhar Card</MenuItem>
+                     <MenuItem value="Voter ID Card">Voter Id Card</MenuItem>
+                     <MenuItem value="Driving License">Driving License</MenuItem>
+                     <MenuItem value="Others">Others</MenuItem>
                     </Select>
                   </FormControl>
                             </Grid>
