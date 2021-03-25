@@ -2033,8 +2033,8 @@ totalAmountPaid = {totalAmountPaid}
                          {checkuploadeDocType !== "NotFound" ? <Label                                    
                            className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
-                                    labelStyle={{ color: "inherit" }}
-                                    label={`BK_PCC_DOCUMENT ${valueForDocDropDown}`}
+                                    labelStyle={{ color: "inherit" ,marginLeft:"-1%"}}
+                                    label={`Proof of Residence ${valueForDocDropDown}`}
                                 /> :""}       
 
 									{documentMap && Object.values(documentMap) ? Object.values(documentMap) : "Not found"}
