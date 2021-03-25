@@ -192,6 +192,26 @@ export const getWFConfig = (module, businessService, taskId) => {
       DEFAULT: "/egov-services/bwt-application-details",
     } 
   }
+else if (businessService == "NLUJM")
+  {
+    return {
+      DEFAULT: "/egov-services/newLocation-application-details",
+    } 
+  }
+  else if (businessService == "OSUJM")
+  {
+    return {
+      DEFAULT: "/egov-services/osmcc-application-details",
+    } 
+  }
+  else if (businessService == "PACC")
+  {
+    return {
+      DEFAULT: "/egov-services/park-and-community-center-appDetails-details",
+    } 
+  }
+
+
    else if (businessService == "NewTL") { 
     return {
       INITIATED: "/tradelicence/apply",

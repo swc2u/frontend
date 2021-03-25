@@ -1386,7 +1386,96 @@ export const ValidateCardQty = (state,dispatch,cardJsonPath,pagename,jasonpath,v
 
     }
     else{
-      if(InputQtyValue_>CompareQtyValue_ || InputQtyValue2_ > CompareQtyValue_ ||InputQtyValue_ === 0)       
+      if(pagename ==='createMaterialNonIndentNote')
+      {
+        let applicationNumber =  getQueryArg(window.location.href, "issueNoteNumber");
+        if(!applicationNumber)
+        {
+
+        if(InputQtyValue_>CompareQtyValue_ || InputQtyValue2_ > CompareQtyValue_ ||InputQtyValue_ === 0)       
+      {
+        if(InputQtyValue_ === 0)
+        {
+          matcode.push(
+            {
+              code:code,
+              InputQtyValue:0
+            }
+          )
+        }
+        else
+        {
+          matcode.push(
+            {
+              code:code,
+              InputQtyValue:1
+            }
+          )
+        }
+
+      }
+    }
+    else{
+      if(CompareQtyValue_ ==0)
+      {
+        let quantityIssued = Number(get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].quantityIssued`,0))
+        if(InputQtyValue_>quantityIssued || InputQtyValue_ ===0)
+        {
+          if(InputQtyValue_ === 0)
+          {
+            matcode.push(
+              {
+                code:code,
+                InputQtyValue:0
+              }
+            )
+          }
+          else
+          {
+            matcode.push(
+              {
+                code:code,
+                InputQtyValue:1
+              }
+            )
+          }
+
+
+        }
+
+      }
+      else{
+        if(InputQtyValue_>CompareQtyValue_ || InputQtyValue_ ===0)
+        {
+          if(InputQtyValue_ === 0)
+          {
+            matcode.push(
+              {
+                code:code,
+                InputQtyValue:0
+              }
+            )
+          }
+          else
+          {
+            matcode.push(
+              {
+                code:code,
+                InputQtyValue:1
+              }
+            )
+          }
+
+
+        }
+      }
+
+    }
+
+      }
+      else
+      {
+        if(InputQtyValue_>CompareQtyValue_ || InputQtyValue2_ > CompareQtyValue_ ||InputQtyValue_ === 0)       
       {
         if(InputQtyValue_ === 0)
         {
@@ -1408,6 +1497,7 @@ export const ValidateCardQty = (state,dispatch,cardJsonPath,pagename,jasonpath,v
         }
 
       } 
+      }
     }
     }
     

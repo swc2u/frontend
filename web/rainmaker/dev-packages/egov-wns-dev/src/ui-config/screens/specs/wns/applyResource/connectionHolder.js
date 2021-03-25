@@ -178,6 +178,29 @@ import {
         disabled: IsEdit,
       }
     }),
+    aadharNo: getTextField({
+      label: {
+        labelName: "Aadhar Card number",
+        labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+      },
+      placeholder: {
+        labelName: "Enter Aadhar Card number",
+        labelKey: "WS_OWN_DETAIL_ADDHAR_NO_PLACEHOLDER"
+      },
+      pattern: getPattern("AdharCardNumber"),
+      required: false,
+      visible:true,
+     // errorMessage: "Invalid Address",
+      jsonPath: "connectionHolders[0].aadhaarNumber",
+      gridDefination: {
+        xs: 12,
+        sm: 6
+      },
+      props: {
+        className: "applicant-details-error",
+        disabled:IsEdit
+      }
+    }),
     // specialApplicantCategory: getSelectField({
     //   label: {
     //     labelName: "Special Applicant Category",

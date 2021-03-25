@@ -376,6 +376,12 @@ export const getTextToLocalMapping = label => {
             "HC_COMMON_TABLE_COL_SERVICE_LOCALITY_LABEL",
             localisationLabels
           );
+        case "Current Owner":
+          return getLocaleLabels(
+            "Current Owner",
+            "HC_COMMON_TABLE_COL_SERVICE_CURRENT_OWNER_LABEL",
+            localisationLabels
+          );
 
   }
 };

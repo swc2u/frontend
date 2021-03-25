@@ -343,7 +343,7 @@ class WNSDashboardOne extends React.Component {
     componentDidMount(){
         debugger;
         const dt = this.props.data;
-        const propSortBy = "dashboardType1";
+        // const propSortBy = "dashboardType1";
         // const propSortBy = "status";
         const data = dt.WaterConnection;
 
@@ -372,7 +372,7 @@ class WNSDashboardOne extends React.Component {
             graphOneData: graphSort[1],
             graphOneLabel : graphSort[0],
             graphOneLabelSHOW: graphOneLabelSHOW,
-            propSortBy: propSortBy,
+            // propSortBy: propSortBy,
             graphClicked: 0,
             columnData: columnData,
             rowData: data,

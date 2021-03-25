@@ -93,6 +93,13 @@ const SelectedTimeSlotInfo = Loadable({
   loading: () => <Loading />
 });
 
+
+const MultiDownloadCardWithDocumentType = Loadable({
+  loader: () => import("./MultiDownloadCardWithDocumentType"),
+  loading: () => <Loading />
+});
+
+
 export {
   RadioButtonsGroup,
   CustomTab,
@@ -112,5 +119,6 @@ export {
   BookingTimeSlot,
   SelectedTimeSlotInfo,
   RoomDetailsComponents,
-  SingleApplication
+  SingleApplication,
+  MultiDownloadCardWithDocumentType
 };

@@ -216,7 +216,8 @@ const callBackForUpdate = async (state, dispatch) =>{
         requestBody
       );
        if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=materialType&mode=update&code=${materialTypes[0].name}`));
+        //dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=materialType&mode=update&code=${materialTypes[0].name}`));
+        window.location.href =`/egov-store-asset/acknowledgement?screen=materialType&mode=update&code=${materialTypes[0].name}`
        }
 
     } catch (error) {
@@ -303,7 +304,8 @@ const callBackForSubmit = async (state, dispatch) => {
         requestBody
       );
        if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=materialType&mode=create&code=${materialTypes[0].name}`));
+        //dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=materialType&mode=create&code=${materialTypes[0].name}`));
+        window.location.href =`/egov-store-asset/acknowledgement?screen=materialType&mode=create&code=${materialTypes[0].name}`
        }
 
     } catch (error) {

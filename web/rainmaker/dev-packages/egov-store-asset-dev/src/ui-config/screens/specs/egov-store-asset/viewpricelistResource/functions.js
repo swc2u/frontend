@@ -270,7 +270,8 @@ export const createUpdatePriceList = async (state, dispatch, action) => {
       //     : `/hrms/acknowledgement?purpose=create&status=success&applicationNumber=${employeeId}`;
       // dispatch(setRoute(acknowledgementUrl));
       if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=priceList&mode=create&code=`));
+        //dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=priceList&mode=create&code=`));
+        window.location.href =`/egov-store-asset/acknowledgement?screen=priceList&mode=create&code=`
        }
     } catch (error) {
       furnishPriceListData(state, dispatch);
@@ -289,7 +290,8 @@ export const createUpdatePriceList = async (state, dispatch, action) => {
       //     : `/hrms/acknowledgement?purpose=update&status=success&applicationNumber=${employeeId}`;
       // dispatch(setRoute(acknowledgementUrl));
       if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=priceList&mode=update&code=`));
+        //dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=priceList&mode=update&code=`));
+        window.location.href =`/egov-store-asset/acknowledgement?screen=priceList&mode=update&code=`
        }
     } catch (error) {
       furnishPriceListData(state, dispatch);

@@ -6,51 +6,51 @@ import './index.css';
 
 export const FilterForm = getCommonCard({
   FilterConstraintsContainer: getCommonContainer({
-    fromDate: getDateField({
-      label: { labelName: "From Date", labelKey: "DASHBOARD_FROM_DATE_LABEL" },
-      placeholder: {
-        labelName: "",
-        labelKey: "Select From Date"
-      },
-      gridDefination: {
-        xs: 6,
-        sm: 2,
-        md: 2
-      },
-      pattern: getPattern("Date"),
-      jsonPath: "dahsboardHome.defaultFromDate",
-      required: true,
-      afterFieldChange: (action, state, dispatch) => {
-        // dispatch(
-        //   handleField(
-        //     "dashboardSource",
-        //     "components.div.children.FilterFormforEmployee.children.cardContent.children.FilterConstraintsContainer.children.toDate",
-        //     "props.inputProps.min",
-        //     action.value
-        //   )
-        // );
-        }
-    }),
-    toDate: getDateField({
-      label: { labelName: "To Date", labelKey: "DASHBOARD_TO_DATE_LABEL" },
-      placeholder: {
-        labelName: "To Date",
-        labelKey: "Select To Date"
-      },
-      props: {
-        inputProps: {
-          min: ''
-        }
-      },
-      gridDefination: {
-        xs: 6,
-        sm: 2,
-        md: 2
-      },
-      pattern: getPattern("Date"),
-      jsonPath: "dahsboardHome.defaulttoDate",
-      required: true,
-    }),
+    // fromDate: getDateField({
+    //   label: { labelName: "From Date", labelKey: "DASHBOARD_FROM_DATE_LABEL" },
+    //   placeholder: {
+    //     labelName: "",
+    //     labelKey: "Select From Date"
+    //   },
+    //   gridDefination: {
+    //     xs: 6,
+    //     sm: 2,
+    //     md: 2
+    //   },
+    //   pattern: getPattern("Date"),
+    //   jsonPath: "dahsboardHome.defaultFromDate",
+    //   required: true,
+    //   afterFieldChange: (action, state, dispatch) => {
+    //     // dispatch(
+    //     //   handleField(
+    //     //     "dashboardSource",
+    //     //     "components.div.children.FilterFormforEmployee.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+    //     //     "props.inputProps.min",
+    //     //     action.value
+    //     //   )
+    //     // );
+    //     }
+    // }),
+    // toDate: getDateField({
+    //   label: { labelName: "To Date", labelKey: "DASHBOARD_TO_DATE_LABEL" },
+    //   placeholder: {
+    //     labelName: "To Date",
+    //     labelKey: "Select To Date"
+    //   },
+    //   props: {
+    //     inputProps: {
+    //       min: ''
+    //     }
+    //   },
+    //   gridDefination: {
+    //     xs: 6,
+    //     sm: 2,
+    //     md: 2
+    //   },
+    //   pattern: getPattern("Date"),
+    //   jsonPath: "dahsboardHome.defaulttoDate",
+    //   required: true,
+    // }),
     moduleDashboardDropdown: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-dashboard",
@@ -88,7 +88,6 @@ export const FilterForm = getCommonCard({
       labelName: "name",
       valueName: "name"
       },
-    
     },
     searchButton: {
       componentPath: "Button",

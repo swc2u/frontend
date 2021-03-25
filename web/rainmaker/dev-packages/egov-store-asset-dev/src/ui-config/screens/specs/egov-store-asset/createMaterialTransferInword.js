@@ -198,7 +198,7 @@ export const header = getCommonContainer({
               // fetching employee designation
       const userInfo = JSON.parse(getUserInfo());
       if(userInfo){
-        dispatch(prepareFinalObject("transferInwards[0].createdByName", userInfo.name));
+        dispatch(prepareFinalObject("transferInwards[0].receivedBy", userInfo.name));
         const queryParams = [{ key: "codes", value: userInfo.userName },{ key: "tenantId", value:  getTenantId() }];
         try { 
           const payload = await httpRequest(
@@ -314,12 +314,12 @@ export const header = getCommonContainer({
         "ASST-ENG",
       )
     );
-    dispatch(
-      prepareFinalObject(
-        "transferInwards[0].receivedBy",
-        "sanjeev",
-      )
-    );
+    // dispatch(
+    //   prepareFinalObject(
+    //     "transferInwards[0].receivedBy",
+    //     "sanjeev",
+    //   )
+    // );
     dispatch(
       prepareFinalObject(
         "transferInwards[0].inspectedBy",

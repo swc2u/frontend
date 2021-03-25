@@ -614,7 +614,7 @@ class WorkFlowContainer extends React.Component {
     {
       baseUrl = "wns"
       if (moduleName === "NewWS1" 
-      || moduleName === "SW_SEWERAGE"
+     // || moduleName === "SW_SEWERAGE"
       || moduleName === "REGULARWSCONNECTION"
       || moduleName === "TEMPORARY_WSCONNECTION"
       || moduleName === "WS_TEMP_TEMP" 
