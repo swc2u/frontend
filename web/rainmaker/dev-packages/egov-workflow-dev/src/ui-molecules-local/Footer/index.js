@@ -225,8 +225,15 @@ class Footer extends React.Component {
           }
         } 
          searchPreviewScreenMdmsData  = state.screenConfiguration.preparedFinalObject.searchPreviewScreenMdmsData;
-        searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
-       
+         if(data[0].service ==='WATER')
+         {
+          searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
+         }
+        
+        else if(data[0].service ==='SEWERAGE')
+        {
+          searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].swWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
+        }
         if(searchPreviewScreenMdmsData && searchPreviewScreenMdmsData[0])
         {
           roles =  searchPreviewScreenMdmsData = searchPreviewScreenMdmsData[0].roles

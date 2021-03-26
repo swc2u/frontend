@@ -69,3 +69,34 @@ export const documentsSummary1 = getCommonGrayCard({
     }
   }
 });
+
+export const documentsSummaryForPacc = getCommonGrayCard({
+  header: {
+    uiFramework: "custom-atoms",
+    componentPath: "Container",
+    props: {
+      style: { marginBottom: "10px" }
+    },
+    children: {
+      header: {
+        gridDefination: {
+          xs: 8
+        },
+        ...getCommonSubHeader({
+          labelName: "Documents",
+          //labelKey: "Document 1"
+          labelKey: "BK_OSB_DOCUMENTS_DETAILS_HEADER"
+        }),
+      },
+    }
+  },
+  body: {
+    uiFramework: "custom-containers-local",
+    moduleName: "egov-services",
+    componentPath: "DownloadFileContainerWithDocumentType",
+    props: {
+      sourceJsonPath: "documentsPreview",
+      className: "noc-review-documents"
+    }
+  }
+});

@@ -13,34 +13,36 @@ import 'jspdf-autotable'
 import './Water.css'
 import WNSDashboardOne from './WNSDashboardOne';
 import Water_data from './WNS_data.json';
+import BillData from './BillData.json';
 import WNSDashboardTwo from './WNSDashboardTwo';
 
 class WNSDashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state ={
-        propSortBy: ""
+        propSortBy: "",
+        data : [],
+        Water_data: [],
+        BillData: []
     }
   }
 
     componentDidMount(){
-        debugger;
-        const propSortBy = "dashboardType1";
-        // const propSortBy = "dashboardType2";
-        this.setState({
-            propSortBy: propSortBy
-        })        
+        debugger;       
     }
 
     componentDidUpdate(){
         debugger;
-        const propSortBy = this.props.data.value;
-        // const propSortBy = "dashboardType2";
-        if(JSON.stringify(this.state.propSortBy) !== JSON.stringify(propSortBy)){
+        const data = this.props.data
+          
+        if(this.props.data.length > 0 && JSON.stringify(this.state.data) !== JSON.stringify(data)){
             this.setState({
-                propSortBy: propSortBy
+                propSortBy: this.props.data[2].value,
+                data : data,
+                Water_data: this.props.data[0],
+                BillData: this.props.data[1]
             }) 
-        }       
+        }     
     }
 
     render() {
@@ -50,9 +52,9 @@ class WNSDashboard extends React.Component {
         {/* <h2> WNS Dashboard Route </h2>  */}
         {
             this.state.propSortBy === "dashboardType1" ?
-            <WNSDashboardOne data = {Water_data} />
+            <WNSDashboardOne data = {[this.state.Water_data, []]} />
             : this.state.propSortBy === "dashboardType2" ?
-            <WNSDashboardTwo data = {Water_data} />
+            <WNSDashboardTwo data = {[this.state.Water_data, this.state.BillData]} />
             : null
         }
         </div>

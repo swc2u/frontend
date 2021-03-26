@@ -80,6 +80,7 @@ class ApplicationDetails extends Component {
 			open: false,
 			setOpen: false,
 			togglepopup: false,
+			dateVenchangePop:false,
 			actionOnApplication: '',
 			actionTittle: '',
 			actionOpen: false,
@@ -97,7 +98,12 @@ class ApplicationDetails extends Component {
 			createdDate: '',
 			stateCode :"" ,
 			placeOfService : "",
-			 mcGSTN : ""
+			 mcGSTN : "",
+			 isDiscount:false,
+			 proofOfResDocumentType: '',
+			 proofOfResDocName: '',
+			 discountDocName: '',
+			 allDocumentList: []
 		};
 	};
 
@@ -127,14 +133,12 @@ class ApplicationDetails extends Component {
 			userInfo,
 			documentMap,
 			prepareFinalObject, selectedComplaint,
-
 		} = this.props;
 		console.log("propsforRefund--", this.props)
-		console.log(selectedComplaint, "Nero Complaint")
-		let AppNo = selectedComplaint.bkApplicationNumber
-		console.log("AppNo--", AppNo)
+		// let AppNo = selectedComplaint.bkApplicationNumber
+		// console.log("AppNo--", AppNo)
 
-		let funtenantId = selectedComplaint.tenantId
+		let funtenantId = userInfo.tenantId
 		console.log("funtenantId--", funtenantId)
 
 
@@ -169,7 +173,7 @@ class ApplicationDetails extends Component {
 			MdmsCriteria: {
 				tenantId: userInfo.tenantId,
 				moduleDetails: [
-	
+
 					{
 						moduleName: "Booking",
 						masterDetails: [
@@ -178,11 +182,11 @@ class ApplicationDetails extends Component {
 							}
 						],
 					},
-	
+
 				],
 			},
-		}; 
-	
+		};
+
 		let payloadResTwo = null;
 		payloadResTwo = await httpRequest(
 			"egov-mdms-service/v1/_search",
@@ -191,7 +195,7 @@ class ApplicationDetails extends Component {
 		);
 		console.log(payloadResTwo, "MCGSTnumberDetail");
 
-	let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS	
+	let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS
 	console.log("pdfDetails-",pdfDetails)   //stateCode  placeOfService  mcGSTN
 
 this.setState({
@@ -201,19 +205,27 @@ this.setState({
 },console.log("thisStatestateCode",this.state.stateCode,this.state.placeOfService,this.state.mcGSTN))
 
 
-		let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING[0]
+let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING
 
-		let operatorCode = samparkDetail.operatorCode
-		let Address = samparkDetail.centreAddres
-		let hsnCode = samparkDetail.hsnCode
-		let name = samparkDetail.name
-		this.setState({
-			operatorCode: operatorCode,
-			Address: Address,  //operatorCode,Address,hsnCode
-			hsnCode: hsnCode,
-			name: name
-		})
+let operatorCode;
+let Address;
+let hsnCode;
+let name;
 
+for(let i = 0; i < samparkDetail.length; i++){
+  if(samparkDetail[i].id == userInfo.fatherOrHusbandName){
+  operatorCode = samparkDetail[i].operatorCode
+  hsnCode = samparkDetail[i].hsnCode
+  name = samparkDetail[i].name
+  Address = samparkDetail[i].centreAddres
+  }
+}
+this.setState({
+  operatorCode:operatorCode,
+  Address:Address,
+  hsnCode:hsnCode,
+  name:name
+})
 
 
 		let FromDate = selectedComplaint.bkFromDate
@@ -239,7 +251,24 @@ this.setState({
 		let bkBookingType = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingType : 'NA'
 		let Sector = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkSector : 'NA'
 		let bkBookingVenue = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue : 'NA'
-
+		let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'
+		let isDiscount = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkPlotSketch : "Genral";
+		let allDocumentList = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.documentList : [];
+		//General
+		if(isDiscount != "General"){
+			this.setState({isDiscount: true});
+		}
+		let proofOfResDocs
+		if(allDocumentList && allDocumentList.length > 0){
+			 proofOfResDocs = allDocumentList.filter( (item) => {
+				return item.documentType != "BK_PCC_DISCOUNT_DOCUMENT";
+			})
+			this.setState({proofOfResDocName: proofOfResDocs[0].fileName,
+				proofOfResDocumentType: proofOfResDocs[0].documentType,
+				allDocumentList: allDocumentList
+			})
+		}
+		console.log("nero proofOfResDocs", proofOfResDocs, "----", allDocumentList)
 		if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
 			let timeSlot = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot
 			console.log("timeSlot--", timeSlot)
@@ -363,23 +392,8 @@ this.setState({
 			[{ key: "consumerCodes", value: match.params.applicationId }, { key: "tenantId", value: userInfo.tenantId }
 			])
 
-		// 	let totalRes = await this.calculateCancelledBookingRefundAmount(AppNo, funtenantId, FromDate);
-		// 	console.log("totalRes--inrefundPage",totalRes)
-
-		//    this.setState({
-		// totalRefundAmount : totalRes
-		//     })
-
-		// 	if(selectedComplaint.bkApplicationStatus === "PENDING_FOR_DISBURSEMENT"){
-
-		// 		this.setState({
-		// 			refundCard: true
-		// 		})
-		// 	}
-
 		const cancelBookingWfUsersRoles = userInfo && userInfo.roles.some(el => el.code === 'BK_CLERK' || el.code === 'BK_DEO' || el.code === 'BK_SENIOR_ASSISTANT' || el.code === 'BK_AUDIT_DEPARTMENT' || el.code === 'BK_CHIEF_ACCOUNT_OFFICER' || el.code === 'BK_PAYMENT_PROCESSING_AUTHORITY' || el.code === 'BK_SUPERVISOR' || el.code === 'BK_OSD');
 
-		//if(selectedComplaint.bkApplicationStatus === "PENDING_FOR_DISBURSEMENT"){   //second option for detail page of room
 		if (cancelBookingWfUsersRoles) {
 			let totalRes = await this.calculateCancelledBookingRefundAmount(AppNo, funtenantId, FromDate, dataforSectorAndCategory.bookingsModelList[0].roomsModel);
 			console.log("totalRes--inrefundPage", totalRes)
@@ -740,6 +754,52 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 		console.log("payloadfund--cancel--", payloadfund)
 		this.props.history.push(`/egov-services/application-cancelled-success`);
 	}
+
+	testpopup = () =>{
+		this.setState({
+			dateVenchangePop :false
+		})
+	}
+
+	redirectToAvailPage =()=>{
+		console.log("Come in redirectToAvailPage")
+		return (
+		<div>
+		<h5 style={{marginBottom: "4%"}}>By changing date/venue, the booked rooms will be cancelled</h5>
+		{/* <Button
+            className="responsive-action-button"
+            label={<Label
+				buttonLabel={true}
+				label="CONFIRM AND GO"
+			/>}
+            // fullWidth={true}
+            primary={true}
+            // style={{ float: 'right', marginRight: '50px', marginTop: '40px' }}
+			style={{ width: "15%" }}
+            onClick={() => this.continue()
+            } /> */}
+
+		<Button
+		label={
+			<Label
+				buttonLabel={true}
+				label="CONFIRM AND GO"
+			/>
+		}
+		primary={true}
+		labelStyle={{
+			letterSpacing: 0.7,
+			padding: 0,
+			// color: "#fe7a51"
+		}}
+		// buttonStyle={{ border: "1px solid #fe7a51" }}
+		style={{ width: "28%" }}
+		onClick={() => this.continue()}
+
+	/>
+	</div>
+	)}
+
 	//actionButtonOnClick = (e, complaintNo, label)
 	actionButtonOnClick = async (e, complaintNo, label) => {
 
@@ -891,8 +951,11 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 
 	downloadPaymentReceiptFunction = async (e) => {
 		const { transformedComplaint, paymentDetailsForReceipt, paymentDetails, offlineTransactionDate, offlinePayementMode, offlineTransactionNum,
-			six, one, recNumber, downloadReceiptForPCC, userInfo, selectedComplaint, downloadEsampPaymentReceipt, PACC, LUXURY_TAX, REFUNDABLE_SECURITY, PACC_TAX, PACC_ROUND_OFF, FACILITATION_CHARGE } = this.props;
-		const { complaint } = transformedComplaint;
+			six, one, recNumber, downloadReceiptForPCC, userInfo, selectedComplaint, downloadEsampPaymentReceipt, PACC, LUXURY_TAX, REFUNDABLE_SECURITY, PACC_TAX, PACC_ROUND_OFF, FACILITATION_CHARGE,amountTodisplay } = this.props;
+	console.log("pcccpaymentreceipt",this.props)
+	let NumAmount = 0;
+	NumAmount = Number(amountTodisplay)
+		const { complaint } = transformedComplaint;  //amountTodisplay
 
 		let applicationDetails = selectedComplaint
 		let Newugst;
@@ -973,7 +1036,7 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 					"utgst": applicationDetails.bkCgst,
 					"totalgst": PACC_TAX,
 					"refundableCharges": this.props.REFUNDABLE_SECURITY,
-					"totalPayment": this.props.totalAmount,
+					"totalPayment": amountTodisplay,
 					"paymentDate": convertEpochToDate(this.props.offlineTransactionDate, "dayend"),
 					"receiptNo": this.props.recNumber,
 					"paymentType": this.props.offlinePayementMode,
@@ -981,7 +1044,7 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 					"discType": applicationDetails.bkPlotSketch,
 					"transactionId": this.props.offlineTransactionNum,
 					"totalPaymentInWords": this.NumInWords(
-						this.props.totalAmount
+						NumAmount
 					),  //offlineTransactionDate,,
 					"bankName": "",
 					"cardNumberLast4": "Not Applicable",
@@ -1413,16 +1476,21 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 
 	callApiForDocumentData = async (e) => {
 		const { documentMap, userInfo } = this.props;
+		let allDocumentList = this.state && this.state.allDocumentList;
+		let proofOfResDocs;
+		if(allDocumentList && allDocumentList.length > 0){
+			proofOfResDocs = allDocumentList.filter( (item) => {
+			   return item.documentType != "BK_PCC_DISCOUNT_DOCUMENT";
+		   })
+
+	   }
 		var documentsPreview = [];
-		if (documentMap && Object.keys(documentMap).length > 0) {
-			let keys = Object.keys(documentMap);
-			let values = Object.values(documentMap);
-			let id = keys[0],
-				fileName = values[0];
+		if (proofOfResDocs && proofOfResDocs.length > 0) {
+
 
 			documentsPreview.push({
 				title: "DOC_DOC_PICTURE",
-				fileStoreId: id,
+				fileStoreId: proofOfResDocs && proofOfResDocs[0].fileStoreId,
 				linkText: "View",
 			});
 			let changetenantId = userInfo.tenantId ? userInfo.tenantId.split(".")[0] : "ch";
@@ -1460,13 +1528,63 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 
 
 	}
+	// callApiForDocumentData = async (e) => {
+	// 	const { documentMap, userInfo } = this.props;
+	// 	var documentsPreview = [];
+	// 	if (documentMap && Object.keys(documentMap).length > 0) {
+	// 		let keys = Object.keys(documentMap);
+	// 		let values = Object.values(documentMap);
+	// 		let id = keys[0],
+	// 			fileName = values[0];
+
+	// 		documentsPreview.push({
+	// 			title: "DOC_DOC_PICTURE",
+	// 			fileStoreId: id,
+	// 			linkText: "View",
+	// 		});
+	// 		let changetenantId = userInfo.tenantId ? userInfo.tenantId.split(".")[0] : "ch";
+	// 		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+	// 		let fileUrls =
+	// 			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds, changetenantId) : {};
+
+
+	// 		documentsPreview = documentsPreview.map(function (doc, index) {
+	// 			doc["link"] =
+	// 				(fileUrls &&
+	// 					fileUrls[doc.fileStoreId] &&
+	// 					fileUrls[doc.fileStoreId].split(",")[0]) ||
+	// 				"";
+
+	// 			doc["name"] =
+	// 				(fileUrls[doc.fileStoreId] &&
+	// 					decodeURIComponent(
+	// 						fileUrls[doc.fileStoreId]
+	// 							.split(",")[0]
+	// 							.split("?")[0]
+	// 							.split("/")
+	// 							.pop()
+	// 							.slice(13)
+	// 					)) ||
+	// 				`Document - ${index + 1}`;
+	// 			return doc;
+	// 		});
+	// 		setTimeout(() => {
+	// 			window.open(documentsPreview[0].link);
+	// 		}, 100);
+	// 		prepareFinalObject('documentsPreview', documentsPreview)
+	// 	}
+
+
+
+	// }
 
 	GOTOPAY = (selectedNumber) => {
 		this.props.history.push(`/egov-services/PaymentReceiptDteail/${selectedNumber}`);
 	}
 
-	continue = () => {
 
+	continue = () => {
+console.log("InContinue Function")
 		let { selectedComplaint, toggleSnackbarAndSetText } = this.props;
 
 		let bookingDate = selectedComplaint.bkFromDate
@@ -1483,6 +1601,12 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 		let Difference_In_Days_check = Difference_In_Time_check / (1000 * 3600 * 24);
 		console.log("Difference_In_Days--", Difference_In_Days_check)
 		if (Difference_In_Days_check === 1 || Difference_In_Days_check > 1) {
+
+			// this.setState({
+			// 	dateVenchangePop : true,
+			// 	togglepopup: !this.state.togglepopup
+			// })
+
 			this.props.history.push(`/egov-services/checkavailability_pcc`);
 		}
 		else {
@@ -1496,6 +1620,19 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 			);
 		}
 	}
+
+
+	setPop = (booking) => {
+		//complaint.bookingType == "Community Center"   bookingType
+   if(booking.bookingType == "Community Center" && booking.roomsModel.length > 0){
+	   this.setState({
+		   dateVenchangePop: true
+	   })
+   }
+   else{
+   this.continue()
+   }
+   }
 
 	ApplyOfflineSecurityRefund = async () => {
 
@@ -1688,7 +1825,7 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 		let { operatorCode, Address, hsnCode, comments, openMap, AppName, name, checkNumDays, checkGreaterDate, createdDate, BKROOM_TAX, BKROOM, BKROOM_ROUND_OFF, four, totalAmountPaid, PaymentDate, receiptNumber, PaymentMode, transactionNumber } = this.state;
 		console.log("CheckstateForRefund--", this.state)
 		let { complaint, timeLine } = this.props.transformedComplaint;
-		let { documentMap, selectedComplaint, Difference_In_Days_check, first } = this.props;
+		let { documentMap, selectedComplaint, Difference_In_Days_check, first,uploadeDocType } = this.props;
 		let { historyApiData, paymentDetails, match, userInfo, paymentDetailsForReceipt, PayMentTwo, PayMentOne, selectedNumber } = this.props;
 		console.log("this.props.match--", this.props)
 		console.log("this.state.totalRefundAmount", this.state.totalRefundAmount)
@@ -1699,9 +1836,19 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 			isAssignedToEmployee,
 			reopenValidChecker
 		} = this.props;
+let checkuploadeDocType = "NotFound"
+let valueForDocDropDown;
 
-		// var ForAllNoDays = this.TotalPACCDays();
-		// console.log("ForAllNoDays--",ForAllNoDays)
+checkuploadeDocType = uploadeDocType !== undefined && uploadeDocType !== null ? (uploadeDocType.length > 0 ? (uploadeDocType[0].documentType !== undefined && uploadeDocType[0].documentType !== null ? uploadeDocType[0].documentType :"NotFound") :"NotFound"):"NotFound"
+
+if(checkuploadeDocType !== "NotFound"){
+	valueForDocDropDown = `-${checkuploadeDocType}`
+}
+
+console.log("valueForDocDropDown",valueForDocDropDown)
+
+// var ForAllNoDays = this.TotalPACCDays();     `-${uploadeDocType}`
+		// console.log("ForAllNoDays--",ForAllNoDays)    uploadeDocType[0].documentType    uploadeDocType.length > 0 ?
 
 		// var check = this.CheckGreaterDate();
 		// console.log("CheckGreaterDat--",check)
@@ -1738,6 +1885,15 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 
 		return (
 			<div>
+				<style>
+        {`
+    @media screen and (min-width: 320px) and (max-width: 568px) {
+.mob-mb10{margin-bottom:10px;}
+
+}
+    `}
+    </style>
+
 				<Screen>
 					{complaint && !openMap && (
 						<div>
@@ -1751,7 +1907,7 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 											Application Details
 										</div>
 										<div className="col-12 col-md-6 row">
-											<div class="col-12 col-md-6 col-sm-3" >
+											<div class="col-12 col-md-6 col-sm-3 mob-mb10" >
 												<ActionButtonDropdown data={{
 													label: { labelName: "Download ", labelKey: "BK_COMMON_DOWNLOAD_ACTION" },
 													rightIcon: "arrow_drop_down",
@@ -1942,14 +2098,22 @@ totalAmountPaid = {totalAmountPaid}
 								/>
 
 								<div style={{
-									height: "100px",
+									height: "130px",
 									width: "100",
 									backgroundColor: "white",
 									border: "2px solid white",
 									boxShadow: "0 0 2px 2px #e7dcdc", paddingLeft: "30px", paddingTop: "10px"
 								}}><b>Documents</b><br></br>
 
-									{documentMap && Object.values(documentMap) ? Object.values(documentMap) : "Not found"}
+                         {checkuploadeDocType !== "NotFound" ? <Label
+                           className="col-xs-12  col-sm-12 col-md-12  status-result-color"
+                                    id="complaint-details-current-status"
+                                    labelStyle={{ color: "inherit" }}
+                                    label={`BK_PCC_DOCUMENT - ${this.state && this.state.proofOfResDocName}`}
+                                /> :""}
+
+									{/* {documentMap && Object.values(documentMap) ? Object.values(documentMap) : "Not found"} */}
+									{this.state && this.state.proofOfResDocumentType ? this.state.proofOfResDocumentType : "Not found"}
 									<button className="ViewDetailButton" data-doc={documentMap} onClick={(e) => { this.callApiForDocumentData(e) }}>VIEW</button>
 								</div>
 
@@ -2096,12 +2260,12 @@ totalAmountPaid = {totalAmountPaid}
 
 									)
 								)}
-								{/*sixStep*/}
-								{(role === "employee" &&
-									(complaint.status == "OFFLINE_APPLIED" && foundSixthLavel &&
+{/*Book Room After Date/Venue Change*/}
+{(role === "employee" &&
+									(complaint.status == "OFFLINE_MODIFIED" && foundSixthLavel &&
 										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
 											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
-												{(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?
+												{(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?  //"OFFLINE_APPLIED"
 													<Button
 														label={
 															<Label
@@ -2121,13 +2285,24 @@ totalAmountPaid = {totalAmountPaid}
 													/>
 													: ""}
 
-												{/* {(Difference_In_Days_check > 15 || Difference_In_Days_check == 15) ?
+											</div>
+										}></Footer>
+									)
+								)}
+
+
+								{/*sixStep*/}
+								{(role === "employee" &&
+									(complaint.status == "OFFLINE_APPLIED" && foundSixthLavel &&
+										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
+											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
+												{(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?  //"OFFLINE_APPLIED"
 													<Button
 														label={
 															<Label
 																buttonLabel={true}
 																color="#fe7a51"
-																label="CANCEL BOOKING"
+																label="Room Book"
 															/>
 														}
 														labelStyle={{
@@ -2136,10 +2311,10 @@ totalAmountPaid = {totalAmountPaid}
 															color: "#fe7a51"
 														}}
 														buttonStyle={{ border: "1px solid #fe7a51" }}
-														style={{ width: "15%", marginLeft: "2%" }}
-														onClick={() => this.CancelEmpBooking()}
+														style={{ width: "15%" }}
+														onClick={() => this.BookRoom()}
 													/>
-													: ""} */}
+													: ""}
 
 												{/*Date Venue Change*/}
 
@@ -2159,35 +2334,11 @@ totalAmountPaid = {totalAmountPaid}
 														}}
 														buttonStyle={{ border: "1px solid #fe7a51" }}
 														style={{ width: "15%", marginLeft: "2%" }}
-														onClick={() => this.continue()}
+														onClick={() => this.setPop(complaint)}
 													/>
 													: ""}
-
-												{/*Security Refund*/}
-												{/* {first == true ?
-													<Button
-														label={
-															<Label
-																buttonLabel={true}
-																color="#fe7a51"
-																label="SECURITY REFUND"
-															/>
-														}
-														labelStyle={{
-															letterSpacing: 0.7,
-															padding: 0,
-															color: "#fe7a51",
-														}}
-														buttonStyle={{ border: "1px solid #fe7a51" }}
-														style={{ width: "15%", marginLeft: "2%" }}
-														onClick={() => this.ApplyOfflineSecurityRefund()}
-													/>
-													: ""} */}
-
-
 											</div>
 										}></Footer>
-
 									)
 								)}
 								{/*Cancel button MCC User*/}
@@ -2374,6 +2525,18 @@ totalAmountPaid = {totalAmountPaid}
 									)
 								)}
 								{console.log("match.params.applicationId--", match.params.applicationId)}
+
+
+                                   <DialogContainer
+									toggle={this.state.dateVenchangePop}  //open
+									actionTittle={"Date/Venue change Terms & Conditions"}   //data
+									togglepopup={this.testpopup}  //close
+									children={this.redirectToAvailPage()}
+									maxWidth={'sm'}
+								/>
+
+
+
 								<DialogContainer
 									toggle={this.state.togglepopup}
 									actionTittle={this.state.actionTittle}
@@ -2538,6 +2701,16 @@ const mapStateToProps = (state, ownProps) => {
 	let businessService = applicationData ? applicationData.businessService : "";
 	let bookingDocs;
 	let documentMap = applicationData && applicationData.documentMap ? applicationData.documentMap : '';
+
+
+
+	let uploadeDocType = get(
+		state,
+		"bookings.applicationData.documentList",
+		"NotFound"
+	);
+
+	console.log("DetailPageDocType",uploadeDocType)
 	const { HistoryData } = bookings;
 	let historyObject = HistoryData ? HistoryData : ''
 	const { paymentData } = bookings;
@@ -2647,7 +2820,15 @@ const mapStateToProps = (state, ownProps) => {
 	console.log("refConAmount", refConAmount)
 
 	let ReceiptPaymentDetails = fetchPaymentAfterPayment;
-	console.log("ReceiptPaymentDetails--", ReceiptPaymentDetails)
+	console.log("ReceiptPaymentDetails--", ReceiptPaymentDetails)   //Payments[0].totalAmountPaid
+
+	let amountTodisplay = 0;
+
+	if(ReceiptPaymentDetails !== undefined && ReceiptPaymentDetails !== null){
+		amountTodisplay = ReceiptPaymentDetails.Payments[0].totalAmountPaid
+	}
+
+
 	//let offlinePayementMode = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments[0].paymentMode ): "NotFound"
 	let offlinePayementMode = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments.length > 0 ? (ReceiptPaymentDetails.Payments[0].paymentMode !== undefined && ReceiptPaymentDetails.Payments[0].paymentMode !== null ? (ReceiptPaymentDetails.Payments[0].paymentMode) : "NotFound") : "NotFound") : "NotFound"
 	console.log("offlinePayementMode--", offlinePayementMode)
@@ -2807,6 +2988,7 @@ const mapStateToProps = (state, ownProps) => {
 
 		let details = {
 			applicantName: selectedComplaint.bkApplicantName,
+			roomsModel:selectedComplaint.roomsModel,
 			status: selectedComplaint.bkApplicationStatus,
 			applicationNo: selectedComplaint.bkApplicationNumber,
 			address: selectedComplaint.bkCompleteAddress,
@@ -2881,14 +3063,14 @@ const mapStateToProps = (state, ownProps) => {
 			REFUNDABLE_SECURITY,
 			PACC_TAX,
 			PACC_ROUND_OFF,DATEVENUECHARGE,
-			FACILITATION_CHARGE, one, two, three, four, five, newRoomAppNumber, dataForBothSelection, roomsData,
-			PaymentReceiptByESamp, EmpPaccPermissionLetter
+			FACILITATION_CHARGE, one, two, three, four, five, newRoomAppNumber, dataForBothSelection, roomsData,amountTodisplay,
+			PaymentReceiptByESamp, EmpPaccPermissionLetter,uploadeDocType
 
 		};
 	} else {
 		return {
-			dataForBothSelection, roomsData,DATEVENUECHARGE,
-			paymentDetails, offlineTransactionNum, recNumber, DownloadReceiptDetailsforPCC, refConAmount, RoomBookingDate,
+			dataForBothSelection, roomsData,DATEVENUECHARGE,uploadeDocType,
+			paymentDetails, offlineTransactionNum, recNumber, DownloadReceiptDetailsforPCC, refConAmount, RoomBookingDate,amountTodisplay,
 			offlinePayementMode, Difference_In_Days_check, first, showRoomCard,
 			offlineTransactionDate, RoomApplicationNumber, totalNumber, typeOfRoom, roomFromDate, roomToDate,
 			historyApiData,

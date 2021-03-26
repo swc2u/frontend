@@ -40,7 +40,13 @@ export const propertyUsageDetailsHeader = getHeader({
 export const propertyproposedUsageDetailsHeader = getHeader({
   labelKey: "WS_COMMON_PROPERTY_USAGE_HEADER_PROPOSED"
 });
-
+//getConnectionBillDetail
+export const ConnectionBillDetailHeader = getHeader({
+  labelKey: "WS_COMMON_CONNECTION_BILL_INFO_HEADER"
+});
+export const ConnectionBillDetailExceptionHeader = getHeader({
+  labelKey: "WS_COMMON_CONNECTION_BILL_INFO_HEADER"
+});
 
 export const connectionDetailsHeader = getHeader({
   labelKey: "WS_COMMON_CONNECTION_DETAILS"
@@ -109,7 +115,9 @@ export const getReviewConnectionDetails = (isEditable = true) => {
     //viewFour: getConnectionDetails(),
     viewFive:taskConnHolderDetailsSummary(),
     viewproposedHolderInfo:taskConnHolderDetailsProposedSummary(),
-    viewSix:connHolderDetailsSameAsOwnerSummary()
+    viewSix:connHolderDetailsSameAsOwnerSummary(),
+    viewConnectionBillDetail:getConnectionBillDetail,
+    viewConnectionBillDetailException:getConnectionBillDetailException,
 
   });
 };
@@ -295,6 +303,55 @@ export const proposedpropertyUsesDetails={
   ),
 
 }
+export const ConnectionBillInfoDetails={
+ 
+  BillInfoPaymentStatus: getLabelWithValue(
+    {
+      labelName: "Payment Status",
+      labelKey: "WS_BILL_PAYMENT_STATUS_LABEL"
+    },
+    {
+      jsonPath: "billGenerationdata.status",
+      callBack: handleNA, 
+    }
+  ),
+  BillInfoPaymentDueAmount: getLabelWithValue(
+    {
+      labelName: "Amount Due",
+      labelKey: "WS_BILL_PAYMENT_DUE_AMOUNT_LABEL"
+    },
+    {
+      jsonPath: "billGenerationdata.totalNetAmount",
+      callBack: handleNA, 
+    }
+  ),
+  BillInfoPaymentDueDate: getLabelWithValue(
+    {
+      labelName: "Due Date",
+      labelKey: "WS_BILL_PAYMENT_DUE_DATE_LABEL"
+    },
+    {
+      jsonPath: "billGenerationdata.dueDateCash",
+      callBack: handleNA, 
+    }
+  ),
+
+}
+export const ConnectionBillInfoDetailsException={
+ 
+  BillInfoPaymentStatus: getLabelWithValue(
+    {
+      labelName: "Payment Status",
+      labelKey: "WS_BILL_PAYMENT_STATUS_LABEL"
+    },
+    {
+      jsonPath: "billGenerationdata.status",
+      callBack: handleNA, 
+    }
+  ),
+
+
+}
 export const propertyUsesDetails={
   reviewpropertyUsageType: getLabelWithValue(
     {
@@ -422,6 +479,44 @@ const getproposedpropertyUsageDetail ={
   },
   type: "array"
 };
+const getConnectionBillDetail ={
+  uiFramework: "custom-containers",
+  componentPath: "MultiItem",
+  props: {
+    className: "common-div-css search-preview",
+    scheama: getCommonGrayCard({
+      div2: ConnectionBillDetailHeader,
+      getConnectionBillDetailHeaderContainer: getCommonContainer(ConnectionBillInfoDetails)
+    }),
+    items: [],
+    hasAddItem: false,
+    isReviewPage: true,
+    sourceJsonPath: "Licenses[0].tradeLicenseDetail.tradeUnits",
+    prefixSourceJsonPath:
+      "children.cardContent.children.getPropertyDetailsContainer.children",
+    afterPrefixJsonPath: "children.value.children.key"
+  },
+  type: "array"
+};
+const getConnectionBillDetailException ={
+  uiFramework: "custom-containers",
+  componentPath: "MultiItem",
+  props: {
+    className: "common-div-css search-preview",
+    scheama: getCommonGrayCard({
+      div2: ConnectionBillDetailExceptionHeader,
+      getConnectionBillDetailExceptionHeaderContainer: getCommonContainer(ConnectionBillInfoDetailsException)
+    }),
+    items: [],
+    hasAddItem: false,
+    isReviewPage: true,
+    sourceJsonPath: "Licenses[0].tradeLicenseDetail.tradeUnits",
+    prefixSourceJsonPath:
+      "children.cardContent.children.getPropertyDetailsContainer.children",
+    afterPrefixJsonPath: "children.value.children.key"
+  },
+  type: "array"
+};
 
 const getPropertyDetails = {
   uiFramework: "custom-containers",
@@ -535,13 +630,13 @@ export const propertyOwnerDetail={
    { jsonPath: "WaterConnection[0].property.owners[0].correspondenceAddress",
    callBack: handleNA }
  ), 
- aadharCardnumber: getLabelWithValue(
-  {
-    labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
-  },
-  { jsonPath: "WaterConnection[0].aadharNo",
-  callBack: handleNA }
-),
+//  aadharCardnumber: getLabelWithValue(
+//   {
+//     labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+//   },
+//   { jsonPath: "WaterConnection[0].aadharNo",
+//   callBack: handleNA }
+// ),
 //  specialApplicantCategory: getLabelWithValue(
 //    {
 //      labelKey: "WS_OWN_DETAIL_SPECIAL_APPLICANT_LABEL"
@@ -640,6 +735,13 @@ export const connectionHolderDetails={
        callBack: handleNA
      }
    ),
+   aadhaarNumber : getLabelWithValue(
+    {
+      labelName: "aadhaarNumber",
+      labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+    },
+    { jsonPath: "WaterConnection[0].connectionHolders[0].aadhaarNumber", callBack: handleNA }
+  ),
     // specialApplicantCategory : getLabelWithValue(
     //  {
     //    labelKey: "WS_CONN_HOLDER_OWN_DETAIL_SPECIAL_APPLICANT_LABEL"

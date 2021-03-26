@@ -21,7 +21,7 @@ const styles = {
 class Applications extends React.Component {
   getTaskDetails = data => {
     data.service = data.service.toUpperCase();
-    if(data.activityType){
+    if(data.service ==='WATER'){
       switch(data.activityType){
         case "NEW_WS_CONNECTION":  window.localStorage.setItem("wns_workflow","REGULARWSCONNECTION"); break;
         case "APPLY_FOR_TEMPORARY_CONNECTION":  window.localStorage.setItem("wns_workflow","TEMPORARY_WSCONNECTION"); break;
@@ -35,6 +35,10 @@ class Applications extends React.Component {
         case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
         //case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
       }
+}
+else if(data.service ==='SEWERAGE'){
+  window.localStorage.setItem("wns_workflow","SW_SEWERAGE");
+
 }
     window.location.href = `/citizen/wns/search-preview?applicationNumber=${data.applicationNo}&history=${true}&tenantId=${data.property.tenantId}&service=${data.service}`
   }

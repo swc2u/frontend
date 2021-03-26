@@ -101,7 +101,7 @@ export const searchApiCall = async (state, dispatch) => {
          let  Dateselect = true;
           queryObject.push({
             key: key,
-            value: convertDateToEpoch(searchScreenObject[key], "dayStart")
+            value: convertDateToEpoch(searchScreenObject[key], "daymid")
           });
         } 
         else

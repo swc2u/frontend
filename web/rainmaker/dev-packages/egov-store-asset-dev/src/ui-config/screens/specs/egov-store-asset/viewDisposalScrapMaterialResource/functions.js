@@ -162,7 +162,7 @@ export const createUpdatePO = async (state, dispatch, action) => {
   set(
     disposals[0],
     "disposalDate",
-    convertDateToEpoch(get(disposals[0], "disposalDate"), "dayStart")
+    convertDateToEpoch(get(disposals[0], "disposalDate"), "daymid")
   );
 
 

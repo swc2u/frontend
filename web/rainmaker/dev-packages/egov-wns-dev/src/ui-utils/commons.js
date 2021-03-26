@@ -286,6 +286,33 @@ export const getBillingEstimation = async (queryObject, dispatch) => {
         dispatch(toggleSnackbar(true, errorMessage, "warning"));
     }
 };
+export const getSearchBillingEstimation = async (queryObject, dispatch, action) => {
+    dispatch(toggleSpinner());
+    try {
+        const response = await httpRequest(
+            "post",
+            "/ws-calculator/billing/_getBillingEstimation",
+            "_search",
+            [],
+            queryObject
+        );
+        dispatch(toggleSpinner());
+        return findAndReplace(response, null, "NA");
+    } catch (error) {
+        dispatch(toggleSpinner());
+        console.log(error)
+        let errorMessage = {
+            labelName: error.message,
+            labelKey: error.message
+          };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetailException.visible",true);
+        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",false);
+        dispatch(prepareFinalObject("billGenerationdata.status", 'No Data Found'))
+        dispatch(prepareFinalObject("billGenerationdata.totalNetAmount", ''))
+        dispatch(prepareFinalObject("billGenerationdata.dueDateCash", ''))
+    }
+};
 
 //Workflow process instances for application status
 export const getWorkFlowData = async (queryObject) => {
@@ -1826,6 +1853,31 @@ export const applyForSewerage = async (state, dispatch) => {
             set(queryObjectForUpdate, "processInstance.action", "SUBMIT_APPLICATION");
             set(queryObjectForUpdate, "connectionType", "Non Metered");
             queryObjectForUpdate = findAndReplace(queryObjectForUpdate, "NA", null);
+                       /// in case of connection state is INITIATED or PENDING_FOR_CITIZEN_ACTION
+           let subdiv = get(state, "screenConfiguration.preparedFinalObject.SewerageConnection[0].subdiv",'');
+           let searchPreviewScreenMdmsData  = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData");
+            
+           searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].swWorkflowRole.filter(x=>x.state === 'PENDING_FOR_DOCUMENT_VERIFICATION_BY_SDO')
+           let roles =[]
+           let rolecode ='';
+             if(searchPreviewScreenMdmsData && searchPreviewScreenMdmsData[0])
+             {
+             roles =  searchPreviewScreenMdmsData = searchPreviewScreenMdmsData[0].roles
+             roles = roles.filter(x=>x.subdivision === subdiv )
+             if(roles.length>0)
+             {
+             rolecode = roles[0].role 
+             }
+             }
+             if(rolecode)
+             {
+                 set(queryObjectForUpdate, "processInstance.additionalDetails.role", rolecode); 
+             }
+             else
+             {
+                 set(queryObjectForUpdate, "processInstance.additionalDetails", null); 
+
+             }
             await httpRequest("post", "/sw-services/swc/_update", "", [], { SewerageConnection: queryObjectForUpdate });
             let searchQueryObject = [{ key: "tenantId", value: queryObjectForUpdate.tenantId }, { key: "applicationNumber", value: queryObjectForUpdate.applicationNo }];
             let searchResponse = await getSearchResultsForSewerage(searchQueryObject, dispatch);
@@ -2953,4 +3005,30 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
     //   );
     //   throw error;
     // }
+  };
+  export const generateBillFile = async (queryObject , api) => {
+
+    try {
+      store.dispatch(toggleSpinner());
+      const response = await httpRequest(
+        "post",
+        api,     
+        "",
+        queryObject,
+        { billGeneration: {}}
+      );
+      store.dispatch(toggleSpinner());
+      return response;
+    } catch (error) {
+      store.dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: error.message, labelKey: error.message },
+          "error"
+        )
+      );
+      store.dispatch(toggleSpinner());
+     // throw error;
+    }
+  
   };

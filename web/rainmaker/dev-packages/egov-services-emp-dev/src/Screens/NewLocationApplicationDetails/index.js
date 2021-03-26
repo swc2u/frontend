@@ -11,7 +11,7 @@ import { resetFiles } from "egov-ui-kit/redux/form/actions";
 import Button from "@material-ui/core/Button";
 import ShareIcon from "@material-ui/icons/Share";
 import get from "lodash/get";
-import isEqual from "lodash/isEqual";
+import isEqual from "lodash/isEqual"; 
 import { prepareFormData } from "egov-ui-kit/redux/common/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import NewLocationTaskStatus from "../AllMCCApplication/components/NewLocationTaskStatus"

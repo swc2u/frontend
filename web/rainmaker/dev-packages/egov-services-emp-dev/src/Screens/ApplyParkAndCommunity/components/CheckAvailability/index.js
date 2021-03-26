@@ -672,36 +672,37 @@ else{  /**loop for new Booking Create**/
       },
       "error"
     );
+    return;
   }
   if(NewBookFromDate && NewBookToDate){   /** Condition for New Booking Book For No of Days Check**/
-  let daysCount = this.calculateBetweenDaysCount(NewBookFromDate,NewBookToDate)
-  if(daysCount > 2){
-    toggleSnackbarAndSetText(
-      true,
-      {
-        labelName: "You can not book venue for more than 2 days",
-        labelKey: `You can not book venue for more than 2 days`
-      },
-      "error"
-    );
-   } 
-   if(this.props.DropDownValue === "Commercial Ground"){
-     console.log("fgasdfghjkklllll")
-    this.props.history.push(`/egov-services/applyResourceCommercialGround`);
-   }
-   if(NewBookFromDate == "notFound" && NewBookToDate == "notFound"){
-    toggleSnackbarAndSetText(
-      true,
-      {
-        labelName: "Please Select From Date & To Date",
-        labelKey: `Please Select From Date & To Date`
-      },
-      "error"
-    );
-   }
-   else{
-    this.props.history.push(`/egov-services/applyPark-community-center`); 
-   }
+
+    if(NewBookFromDate == "notFound" && NewBookToDate == "notFound"){
+      toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Please Select From Date & To Date",
+          labelKey: `Please Select From Date & To Date`
+        },
+        "error"
+      );
+     }
+     else{
+
+      let daysCount = this.calculateBetweenDaysCount(NewBookFromDate,NewBookToDate)
+      if(daysCount > 2){
+        toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "You can not book venue for more than 2 days",
+            labelKey: `You can not book venue for more than 2 days`
+          },
+          "error"
+        );
+       } 
+       else{
+        this.props.history.push(`/egov-services/applyPark-community-center`); 
+       }
+     }
   }
 }        
 };
@@ -793,7 +794,7 @@ console.log("GetSeprateSectorData--",GetSeprateSectorData)
 
     return (
       <div>
-        <div style={{ float: "left", width: "100%", padding: "36px 15px" }}>
+        <div className="bookingTopSec" style={{ float: "left", width: "100%", padding: "36px 15px" }}>
           <div
             className="col-xs-12"
             style={{ background: "#fff", padding: "15px 0" }}
@@ -805,7 +806,7 @@ console.log("GetSeprateSectorData--",GetSeprateSectorData)
                   labelClassName="dark-heading"
                 />
               </div>
-              <div className="col-sm-6 col-xs-6">
+              <div className="col-sm-6 col-xs-6 bookingType">
                 <FormControl component="fieldset">
                   <FormLabel component="legend">
                     <Label label="BK_MYBK_BOOKING_TYPE" />
@@ -921,7 +922,7 @@ console.log("GetSeprateSectorData--",GetSeprateSectorData)
             ) : (
               <div>
                 {console.log("comeInpark")}
-                <div className="col-sm-6 col-xs-6">
+                <div className="col-sm-6 col-xs-6 locality">
                   {" "}
                   {/*for park & community*/}
                   {console.log("comeInsecondPark")}

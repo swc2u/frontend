@@ -60,6 +60,11 @@ const ImageUploadMolecule = Loadable({
   loading: () => <Loading />
 });
 
+const CustomizeTable = Loadable({
+  loader: () => import("./CustomizeTable"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -72,5 +77,6 @@ export {
   DividerWithLabel,
   HowItWorks,
   ImageUploadMolecule,
-  MapLocatorEdit
+  MapLocatorEdit,
+  CustomizeTable
 };
