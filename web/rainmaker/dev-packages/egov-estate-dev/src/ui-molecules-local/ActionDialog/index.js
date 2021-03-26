@@ -97,7 +97,7 @@ let bb_payment_config = [
       labelName: "Enter Conversion Charges",
       labelKey: "ES_BB_CONVERSION_CHARGES_PLACEHOLDER"
     },
-    path: "conversionFee",
+    path: "conversionCharges",
     errorMessage: "ES_ERR_CONVERSION_CHARGES",
     showError: false
   },
