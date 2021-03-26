@@ -549,7 +549,7 @@ class ActionDialog extends React.Component {
                       // required = {true}
                       //jsonPath={this.open != true ? "" : `${dataPath}.comments`}
                       placeholder={fieldConfig.termsandcondition.placeholder}
-                      inputProps={{ maxLength: 120 }}
+                      // inputProps={{ maxLength: 1000 }}
                     />
                     {/* {!!this.state.commentsErr && (<span style={{color: "red"}}>Please enter comments</span>)} */}
                   </Grid>
