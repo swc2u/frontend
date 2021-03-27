@@ -44,14 +44,18 @@ export const applicationSuccessFooter = (
             },
             onClickDefination: {
                 action: "condition",
-                callBack: () => {
-                    const receiptQueryString = [
-                        { key: "receiptNumbers", value: applicationNumber },
-                        { key: "tenantId", value: tenant }
-                    ]
-                    download(receiptQueryString);
-                }
-            }
+                callBack: download
+              },
+            // onClickDefination: {
+            //     action: "condition",
+            //     callBack: () => {
+            //         const receiptQueryString = [
+            //             { key: "receiptNumbers", value: applicationNumber },
+            //             { key: "tenantId", value: tenant }
+            //         ]
+            //         download(receiptQueryString);
+            //     }
+            // }
         },
         printFormButton: {
             componentPath: "Button",
@@ -74,14 +78,18 @@ export const applicationSuccessFooter = (
             },
             onClickDefination: {
                 action: "condition",
-                callBack: () => {
-                    const receiptQueryString = [
-                        { key: "receiptNumbers", value: applicationNumber },
-                        { key: "tenantId", value: tenant }
-                    ]
-                    download(receiptQueryString,"print");
-                }
-            }
+                callBack: download
+              },
+            // onClickDefination: {
+            //     action: "condition",
+            //     callBack: () => {
+            //         const receiptQueryString = [
+            //             { key: "receiptNumbers", value: applicationNumber },
+            //             { key: "tenantId", value: tenant }
+            //         ]
+            //         download(receiptQueryString,"print");
+            //     }
+            // }
         }
     });
 };

@@ -2682,7 +2682,7 @@ export const swEstimateCalculation = async (queryObject, dispatch) => {
 
 };
 // to download application 
-export const downloadApp = async (wnsConnection, type, mode = "download") => {
+export const downloadApp = async (state,wnsConnection, type, mode = "download") => {
     let estFileStrID = wnsConnection[0].additionalDetails.estimationFileStoreId
     let sanFileStrID = wnsConnection[0].additionalDetails.sanctionFileStoreId
 
@@ -2723,6 +2723,12 @@ export const downloadApp = async (wnsConnection, type, mode = "download") => {
     } else {
         apiUrl = "sw-calculator/sewerageCalculator/_estimate";
         appService = "ws-applicationsewerage";
+        //set usageCategory and subusageCategory from mdms call
+        let usageCategory = GetMdmsNameBycode(state, "searchPreviewScreenMdmsData.PropertyTax.UsageType",wnsConnection[0].property.usageCategory) 
+        let subusageCategory = GetMdmsNameBycode(state, "searchPreviewScreenMdmsData.PropertyTax.subUsageType",wnsConnection[0].property.subusageCategory) 
+
+        set( wnsConnection[0], `property.usageCategory`, usageCategory);
+        set( wnsConnection[0], `property.subusageCategory`, subusageCategory);
         queryObjectForEst = [{
             applicationNo: appNo,
             tenantId: getTenantIdCommon(),
@@ -2852,6 +2858,16 @@ export const downloadApp = async (wnsConnection, type, mode = "download") => {
         alert('Some Error Occured while downloading!');
     }
 }
+
+export const GetMdmsNameBycode = (state, jsonpath, code) => {
+    //Material
+    let Obj  = get(state, `screenConfiguration.preparedFinalObject.${jsonpath}`,[]) 
+    let Name = code
+    Obj = Obj.filter(x=>x.code === code)
+    if(Obj &&Obj[0])
+    Name = Obj[0].name
+    return Name;
+  };
 export const validateConnHolderDetails = (holderData) => {
     if(holderData.connectionHolders==null){
         return true
