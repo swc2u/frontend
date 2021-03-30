@@ -407,6 +407,7 @@ class ActionDialog extends React.Component {
           this.setState({
             finalLetterErr: false
           })
+          this.props.onButtonClick(buttonLabel, isDocRequired)
         }
       } else if(buttonLabel == 'APPROVE' || buttonLabel == 'REJECT'){
         const comments = data.comments;
