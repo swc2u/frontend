@@ -88,7 +88,9 @@ const getData = async (action, state, dispatch) => {
        getStatusList( state, dispatch, statusQueryObject)
        const removedDocs = applicationDocuments.filter(item => !item.isActive)
        applicationDocuments = applicationDocuments.filter(item => !!item.isActive)
-       Applications = [{...Applications[0], applicationDocuments, property}]
+       const finalLetter = applicationDocuments.find(item => item.documentType === "FINAL_LETTER")
+       applicationDocuments = applicationDocuments.filter(item => item.documentType !== "FINAL_LETTER")
+       Applications = [{...Applications[0], applicationDocuments, property, finalLetter}]
        dispatch(prepareFinalObject("Applications", Applications))
        dispatch(prepareFinalObject("temp[0].removedDocs", removedDocs))
        await setDocuments(

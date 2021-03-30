@@ -460,6 +460,7 @@ class ActionDialog extends React.Component {
     dataPath = `${dataPath}[0]`;
 
     const applicationState = (get(state.screenConfiguration.preparedFinalObject, dataPath) || {}).state
+    const applicationType = (get(state.screenConfiguration.preparedFinalObject, dataPath) || {}).applicationType
     const branchtype=(get(state.screenConfiguration.preparedFinalObject,dataPath)||{}).branchType
       let documents = get(state.screenConfiguration.preparedFinalObject, documentsJsonPath) || []
       documents = documents.filter(item => !!item)
@@ -648,7 +649,7 @@ class ActionDialog extends React.Component {
                   </Grid>
                   )}
 
-                  {(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DA_PREPARE_LETTER") && (<Grid item sm="12">
+                  {(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DA_PREPARE_LETTER" && applicationType !== "ChangeInTrade" && applicationType !== "DuplicateCopy") && (<Grid item sm="12">
                   <Typography
                       component="h3"
                       variant="subheading"
