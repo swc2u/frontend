@@ -445,6 +445,10 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                         ...bookingDocuments,
                         {
                             fileStoreId: doc.documents[0].fileStoreId,
+                            documentType: doc.dropdown.value,
+                            fileUrl: doc.documents[0].fileUrl,
+                            fileName: doc.documents[0].fileName,
+                            additionalDetails: {uploadedBy: "Citizen", uploadedTime: new Date().getTime()}
                         },
                     ];
                 } else if (!doc.documentSubCode) {

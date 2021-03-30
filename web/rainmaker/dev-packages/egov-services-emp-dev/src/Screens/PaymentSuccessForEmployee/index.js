@@ -15,7 +15,7 @@ import {
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { convertEpochToDate, getDurationDate,getFileUrlFromAPI} from '../../modules/commonFunction'
 import { httpRequest } from "egov-ui-kit/utils/api";
-
+import get from "lodash/get";
 
 class CreateWBTApplicationSuccess extends Component {
 
@@ -485,118 +485,14 @@ downloadPermissionButton = async (e) => {
 	
 	  }
 
-// 	downloadPaymentReceiptButton = async (e) => {
-// 		this.downloadPaymentReceiptFunction();
-// 		let documentsPreviewData;
-// 		const { DownloadReceiptDetailsforPCC,userInfo } = this.props;
-// 		var documentsPreview = [];
-// 		if (DownloadReceiptDetailsforPCC && DownloadReceiptDetailsforPCC.filestoreIds.length > 0) {
-// 			documentsPreviewData = DownloadReceiptDetailsforPCC.filestoreIds[0];
-// 			documentsPreview.push({ 
-// 				title: "DOC_DOC_PICTURE",
-// 				fileStoreId: documentsPreviewData,
-// 				linkText: "View",
-// 			});
-// 			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-// 			let fileUrls =
-// 				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-
-
-// 			documentsPreview = documentsPreview.map(function (doc, index) {
-// 				doc["link"] =
-// 					(fileUrls &&
-// 						fileUrls[doc.fileStoreId] &&
-// 						fileUrls[doc.fileStoreId].split(",")[0]) ||
-// 					"";
-
-// 				doc["name"] =
-// 					(fileUrls[doc.fileStoreId] &&
-// 						decodeURIComponent(
-// 							fileUrls[doc.fileStoreId]
-// 								.split(",")[0]
-// 								.split("?")[0]
-// 								.split("/")
-// 								.pop()
-// 								.slice(13)
-// 						)) ||
-// 					`Document - ${index + 1}`;
-// 				return doc;
-// 			});
-
-// 			setTimeout(() => {
-// 				window.open(documentsPreview[0].link);
-// 			}, 100);
-// 			prepareFinalObject('documentsPreview', documentsPreview)
-// 		}
-// 	}
-
-//   downloadPaymentReceiptFunction = async (e) => {
-//     const {  paymentDetailsForReceipt, downloadReceiptForPCC, userInfo, selectedComplaint,offlineTransactionNum,
-//       offlineTransactionDate,offlinePayementMode,location,RecNumber,totalAmountPaid,six,one,Summarysurcharge,cleanOne,SummarycGST } = this.props;
-// 	//offlineTransactionNum,offlineTransactionDate,offlinePayementMode	
-// 		let BookingInfo = [{
-// 			"applicantDetail": {
-// 				"name": selectedComplaint.bkApplicantName,
-// 				"mobileNumber": selectedComplaint.bkMobileNumber,
-// 				"houseNo": selectedComplaint.bkHouseNo,
-// 				"permanentAddress": "",
-// 				"permanentCity": "ch.chandigarh",
-// 				"sector": selectedComplaint.bkSector
-// 			},
-// 			"booking": {
-// 				"bkApplicationNumber": selectedComplaint.bkApplicationNumber
-// 			},
-// 			"paymentInfo": {
-// 				"paymentDate": convertEpochToDate(offlineTransactionDate, "dayend"),
-// 				"transactionId": offlineTransactionNum,
-// 				"bookingPeriod": getDurationDate(
-// 					selectedComplaint.bkFromDate,
-// 					selectedComplaint.bkToDate
-//         ),
-// 				"bookingItem": `Online Payment Against Booking of ${location}`,
-// 				"amountInWords": this.NumInWords(
-// 					totalAmountPaid
-// 				),
-//         paymentItemExtraColumnLabel: "Booking Period",
-// 				"paymentMode": offlinePayementMode,
-// 				"receiptNo": RecNumber,
-// 				"baseCharge": one,
-// 				"cleaningCharges": cleanOne,
-// 				"surcharges": Summarysurcharge,
-// 				"facilitationCharge": six,
-// 				"utgst": SummarycGST,
-// 				"cgst": SummarycGST,
-// 				"gst": SummarycGST,
-// 				"totalAmount": totalAmountPaid
-// 			},
-// 			"payerInfo": {
-// 				"payerName":  selectedComplaint.bkApplicantName,
-// 				"payerMobile":  selectedComplaint.bkMobileNumber
-// 			},
-// 			"generatedBy": {
-// 				"generatedBy": userInfo.name,
-// 			},
-// 			"tenantInfo": {
-// 				"municipalityName": "Municipal Corporation Chandigarh",
-// 				"address": "New Deluxe Building, Sector 17, Chandigarh",
-// 				"contactNumber": "+91-172-2541002, 0172-2541003"
-// 			}
-// 		}
-// 		]
-
-// 		downloadReceiptForPCC({ BookingInfo: BookingInfo })
-// 	}
-
-	
-
-	// downloadpermissionletter = async = (e) => {
-	// 	alert("hlo")
-	// }
-
 
 	downloadPaymentReceiptBody = async (e) => {
-		const { downloadEsamparkApp, userInfo,createPACCApplicationData,documentMap,downloadEsampPaymentReceipt,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE} = this.props;
-		
+		const { downloadEsamparkApp, userInfo,createPACCApplicationData,documentMap,downloadEsampPaymentReceipt,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE,amountToDisplay} = this.props;
+		console.log("propsInPaymentSuccess--",this.props)
+		let NumAmount = 0;
+		if(amountToDisplay !== "NotFound"){
+			NumAmount = Number(amountToDisplay)
+		}
 		let applicationDetails = createPACCApplicationData ? createPACCApplicationData : 'dataNotFound';
 		console.log("applicationDetails--",applicationDetails)
 		let Newugst;
@@ -688,7 +584,7 @@ downloadPermissionButton = async (e) => {
 				"utgst": applicationDetails.bkCgst,
 				"totalgst": PACC_TAX,
 				"refundableCharges": this.props.REFUNDABLE_SECURITY,    //applicationDetails.bkRefundAmount,
-				"totalPayment": this.props.totalAmountPaid,//this.props.totalAmount,
+				"totalPayment": amountToDisplay,//this.props.totalAmount,   
 				"paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
 				"receiptNo": this.props.recNumber,
 				  "paymentType": this.props.offlinePayementMode,
@@ -696,7 +592,7 @@ downloadPermissionButton = async (e) => {
 				  "discType": applicationDetails.bkPlotSketch,
 				  "transactionId": this.props.offlineTransactionNum,
 				  "totalPaymentInWords": this.NumInWords(
-					this.props.totalAmountPaid
+					NumAmount
 				  ),  //offlineTransactionDate,,
 				  "bankName":"",
 				  "cardNumberLast4": "Not Applicable",
@@ -799,20 +695,18 @@ downloadPermissionButton = async (e) => {
             label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PAYMENT_BUTTON" />}
             fullWidth={true}
             onClick={this.downloadPaymentReceiptButton}
-            style={{ marginRight: 18 }}
+            style={{ marginRight: "1.5%" }}
           />
-           <Button
-            className="responsive-action-button"
+           <Button 
             primary={true}
             label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PERMISSION_LETTER_BUTTON" />}
-            fullWidth={true}
             onClick={this.downloadPermissionButton}
-            style={{ marginRight: 18 }}
+            style={{ marginRight: "1.5%",width: "19%" }} 
           />
           <Button
             id="resolve-success-continue"
             primary={true}
-            label={<Label buttonLabel={true} label="CORE_COMMON_GOTOHOME" />}
+            label={<Label buttonLabel={true} label="BK_CORE_PACC_EMP_COMMON_GOTOHOME" />}
             fullWidth={true}
             onClick={this.Submit}
             className="responsive-action-button"
@@ -889,10 +783,18 @@ let totalAmountPaid = offlinePayment ? offlinePayment.Payments[0].paymentDetails
 console.log("totalAmountPaid--",totalAmountPaid)
 
 //base charges
+//screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentDetails[0].totalAmountPaid
+
 // let totalAmount =  offlinePayment ? offlinePayment.Payments[0].paymentDetails[0].bill : "NotFound" // till here
 
 let totalAmount = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentDetails[0].totalAmountPaid
   
+let amountToDisplay = get(
+    state,
+    "screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].totalAmountPaid",
+    "NotFound"
+);
+
 
   let offlinePayementMode = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentMode
   console.log("offlinePayementMode--",offlinePayementMode)
@@ -1089,7 +991,7 @@ let SecTimeSlotFromTime = ""
     updatePACCApplicationData,Downloadesamparkdetails,userInfo,documentMap,AppNum,DownloadReceiptDetailsforPCC,RecNumber,createAppData
  ,venueType,vanueData,bookingData,bookingData,offlinePayment,offlineTransactionNum,offlineTransactionDate,recNumber,
  DATEVENUECHARGE,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE,totalAmount,PaymentReceiptByESamp,
- offlinePayementMode,location,totalAmountPaid,six,one,Summarysurcharge,cleanOne,SummarycGST,SecTimeSlotFromTime,SecTimeSlotToTime,EmpPaccPermissionLetter
+ amountToDisplay,offlinePayementMode,location,totalAmountPaid,six,one,Summarysurcharge,cleanOne,SummarycGST,SecTimeSlotFromTime,SecTimeSlotToTime,EmpPaccPermissionLetter
 }
 }
 
@@ -1116,7 +1018,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(CreateWBTApplicationSuccess);
-/**
- {"ResponseInfo":{"apiId":"Rainmaker","ver":".01","ts":null,"resMsgId":"uief87324","msgId":"20170310130900|en_IN","status":"200"},"Payments":[{"id":"38bfccf5-3045-4702-aa09-a208e4c1f02c","tenantId":"ch.chandigarh","totalDue":1634.00,"totalAmountPaid":1634,"transactionNumber":"2484302323152424","transactionDate":1613705879797,"paymentMode":"CASH","instrumentDate":1613705879797,"instrumentNumber":null,"instrumentStatus":"APPROVED","ifscCode":null,"auditDetails":{"createdBy":"182","createdTime":1613705879742,"lastModifiedBy":"182","lastModifiedTime":1613705879742},"additionalDetails":null,"paymentDetails":[{"id":"264e1d50-2763-4197-8c82-1161853410af","tenantId":"ch.chandigarh","totalDue":1634.00,"totalAmountPaid":1634,"receiptNumber":"02/2020-21/001166","manualReceiptNumber":null,"manualReceiptDate":null,"receiptDate":1613705879742,"receiptType":"BILLBASED","businessService":"BKROOM","billId":"b5e9a7c2-8fea-4954-8c3a-a2cacb4bb9f5","bill":{"id":"b5e9a7c2-8fea-4954-8c3a-a2cacb4bb9f5","mobileNumber":"6398193660","paidBy":" ","payerName":"Vandana","payerAddress":null,"payerEmail":null,"payerId":null,"status":"ACTIVE","reasonForCancellation":null,"isCancelled":null,"additionalDetails":null,"billDetails":[{"billDescription":null,"displayMessage":null,"callBackForApportioning":null,"cancellationRemarks":null,"id":"4b2b8810-e370-469d-98b7-4360c4cdd42d","tenantId":"ch.chandigarh","demandId":"c43668ff-e495-4f6f-b64b-e565309afd3b","billId":"b5e9a7c2-8fea-4954-8c3a-a2cacb4bb9f5","amount":1634.00,"amountPaid":1634,"fromPeriod":1554057000000,"toPeriod":1869676199000,"additionalDetails":{"calculationDes1cription":[]},"channel":null,"voucherHeader":null,"boundary":null,"manualReceiptNumber":null,"manualReceiptDate":null,"billAccountDetails":[{"id":"c88db73d-32e3-4b13-9bbe-ddc47376c29b","tenantId":"ch.chandigarh","billDetailId":"4b2b8810-e370-469d-98b7-4360c4cdd42d","demandDetailId":"58289005-7195-4d10-adc8-de26503ba2e7","order":0,"amount":100.00,"adjustedAmount":100.00,"isActualDemand":null,"taxHeadCode":"ROOM_FACILITATION_CHARGE","additionalDetails":null,"purpose":null,"auditDetails":null},{"id":"f54233b5-a83c-4f45-aacb-d1fa4ab4e2e8","tenantId":"ch.chandigarh","billDetailId":"4b2b8810-e370-469d-98b7-4360c4cdd42d","demandDetailId":"834c0892-9dcd-4bd2-b404-9559d04822d5","order":0,"amount":234.00,"adjustedAmount":234.00,"isActualDemand":null,"taxHeadCode":"BKROOM_TAX","additionalDetails":null,"purpose":null,"auditDetails":null},{"id":"71d446bb-cb85-4394-931c-e7d579086c09","tenantId":"ch.chandigarh","billDetailId":"4b2b8810-e370-469d-98b7-4360c4cdd42d","demandDetailId":"3cac7095-7d20-4ae1-a915-72a38b5ecf09","order":0,"amount":1300.00,"adjustedAmount":1300.00,"isActualDemand":null,"taxHeadCode":"BKROOM","additionalDetails":null,"purpose":null,"auditDetails":null}],"collectionType":null,"auditDetails":null,"expiryDate":1613779199770}],"tenantId":"ch.chandigarh","auditDetails":{"createdBy":"28df855b-d5ff-43ff-bd13-fdf28875106b","createdTime":1613705864770,"lastModifiedBy":"28df855b-d5ff-43ff-bd13-fdf28875106b","lastModifiedTime":1613705864770},"collectionModesNotAllowed":null,"partPaymentAllowed":false,"isAdvanceAllowed":false,"minimumAmountToBePaid":null,"businessService":"BKROOM","totalAmount":1634.00,"consumerCode":"CH-BK-ROOM-2021-02-19-004381","billNumber":"BILLNO-BKROOM-004670","billDate":1613705864770,"amountPaid":1634},"additionalDetails":null,"auditDetails":{"createdBy":"182","createdTime":1613705879742,"lastModifiedBy":"182","lastModifiedTime":1613705879742}}],"paidBy":" ","mobileNumber":"6398193660","payerName":"Vandana","payerAddress":null,"payerEmail":null,"payerId":null,"paymentStatus":"NEW","fileStoreId":null}]}
-  
- */

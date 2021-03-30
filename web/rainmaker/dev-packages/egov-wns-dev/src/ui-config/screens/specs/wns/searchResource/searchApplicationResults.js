@@ -257,6 +257,11 @@ export const searchApplicationResults = {
 
 const getApplicationDetails = data => {
   const activityType = data.rowData[9]
+  if(data.rowData[7].toUpperCase() ==='SEWERAGE')
+  {
+    window.localStorage.setItem("wns_workflow","SW_SEWERAGE");
+  }
+  else{
   if(activityType){
     switch(activityType.toUpperCase()){
       case "NEW_WS_CONNECTION":  window.localStorage.setItem("wns_workflow","REGULARWSCONNECTION"); break;
@@ -272,6 +277,7 @@ const getApplicationDetails = data => {
       //case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
     }
 }
+  }
 
   window.location.href = `search-preview?applicationNumber=${data.rowData[1]}&tenantId=${data.rowData[7]}&history=true&service=${data.rowData[8]}`
 }

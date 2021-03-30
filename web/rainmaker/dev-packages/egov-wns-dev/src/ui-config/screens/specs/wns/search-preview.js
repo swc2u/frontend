@@ -500,10 +500,20 @@ export const getMdmsData = async (state,dispatch) => {
         { moduleName: "ws-services-masters", 
         masterDetails: [
           { name: "wsWorkflowRole" },
+          { name: "swWorkflowRole" },
           { name: "sectorList" },
           { name: "swSectorList" },
+          
         
         ] },
+        {
+          moduleName: "PropertyTax",
+          masterDetails: [
+          {name: "UsageCategory"},
+          // {name:"Floor"},
+          // {name:"OwnerShipCategory"},
+          ]
+        },
         
       ]
     }
@@ -511,8 +521,32 @@ export const getMdmsData = async (state,dispatch) => {
   try {
     let payload = null;
     payload = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
-    
-   
+    let UsageType=[] , subUsageType=[];
+    if( payload.MdmsRes['PropertyTax'].UsageCategory !== undefined){
+      payload.MdmsRes.PropertyTax.UsageCategory.forEach(item=>{
+        if(item.code.split(".").length<=1){
+            UsageType.push({
+              active:item.active,
+              name:item.name,
+              code:item.code,
+              fromFY:item.fromFY
+            })
+          }
+      });
+       payload.MdmsRes.PropertyTax.UsageType=UsageType;
+      
+       payload.MdmsRes.PropertyTax.UsageCategory.forEach(item=>{
+        if(item.code.split(".").length==2){
+          subUsageType.push({
+              active:item.active,
+              name:item.name,
+              code:item.code,
+              fromFY:item.fromFY
+            })
+          }
+      });
+      payload.MdmsRes.PropertyTax.subUsageType=subUsageType;
+    }
     dispatch(prepareFinalObject("searchPreviewScreenMdmsData", payload.MdmsRes));
     //
   } catch (e) { console.log(e); }
@@ -616,7 +650,7 @@ const screenConfig = {
                 sm: 4,
                 align: "right"
               },
-              visible:false
+              visible:true
             }
           }
         },

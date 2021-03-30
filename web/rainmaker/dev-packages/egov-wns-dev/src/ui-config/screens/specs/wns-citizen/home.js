@@ -5,7 +5,8 @@ import "../utils/index.css";
 import PayWnsBillIcon from "../../../../ui-atoms-local/Icons/PayWnsBillIcon/index";
 import MyConnectionsIcon from "../../../../ui-atoms-local/Icons/MyConnectionsIcon/index";
 import { getRequiredDocData } from "egov-ui-framework/ui-utils/commons";
-
+import { getLocale,getTenantId,getUserInfo,setModule } from "egov-ui-kit/utils/localStorageUtils";
+import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 const header = getCommonHeader({
     labelKey: "WS_COMMON_HEADER"
 }, {
@@ -35,6 +36,10 @@ const waterAndSewerageSearchAndResult = {
     name: "home",
     moduleName: "egov-wns",
     beforeInitScreen: (action, state, dispatch) => {
+    //     setModule("rainmaker-wns");
+    // const userInfo = JSON.parse(getUserInfo());
+    // const tenantId = process.env.REACT_APP_NAME === "Citizen" ? (userInfo.permanentCity || userInfo.tenantId): getTenantId();
+    //   dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
         fetchData(action, state, dispatch);
         const moduleDetails = [
             {

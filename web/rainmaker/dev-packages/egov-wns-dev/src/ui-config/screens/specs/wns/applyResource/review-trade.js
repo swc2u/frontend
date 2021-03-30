@@ -630,13 +630,13 @@ export const propertyOwnerDetail={
    { jsonPath: "WaterConnection[0].property.owners[0].correspondenceAddress",
    callBack: handleNA }
  ), 
- aadharCardnumber: getLabelWithValue(
-  {
-    labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
-  },
-  { jsonPath: "WaterConnection[0].aadharNo",
-  callBack: handleNA }
-),
+//  aadharCardnumber: getLabelWithValue(
+//   {
+//     labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+//   },
+//   { jsonPath: "WaterConnection[0].aadharNo",
+//   callBack: handleNA }
+// ),
 //  specialApplicantCategory: getLabelWithValue(
 //    {
 //      labelKey: "WS_OWN_DETAIL_SPECIAL_APPLICANT_LABEL"
@@ -735,6 +735,13 @@ export const connectionHolderDetails={
        callBack: handleNA
      }
    ),
+   aadhaarNumber : getLabelWithValue(
+    {
+      labelName: "aadhaarNumber",
+      labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+    },
+    { jsonPath: "WaterConnection[0].connectionHolders[0].aadhaarNumber", callBack: handleNA }
+  ),
     // specialApplicantCategory : getLabelWithValue(
     //  {
     //    labelKey: "WS_CONN_HOLDER_OWN_DETAIL_SPECIAL_APPLICANT_LABEL"

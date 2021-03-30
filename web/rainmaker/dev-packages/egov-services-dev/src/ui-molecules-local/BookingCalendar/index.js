@@ -321,8 +321,8 @@ class BookingCalendar extends React.Component {
                                 letterSpacing: "0.67px",
                             }}
                         >
-                            {!from ? "--/--/----" : from.toLocaleDateString()}
-                        </span>
+                     {from===undefined ||from=== null  || from.toLocaleDateString()==='1/1/1970' ? "--/--/----" : from.toLocaleDateString()}
+                    </span>
                     </div>
                     <div style={{ marginBottom: 12 }}>
                         <span
@@ -345,7 +345,7 @@ class BookingCalendar extends React.Component {
                                 letterSpacing: "0.67px",
                             }}
                         >
-                            {!to ? "--/--/----" : to.toLocaleDateString()}
+                                {to===undefined ||to=== null  || to.toLocaleDateString()==='1/1/1970' ? "--/--/----" : to.toLocaleDateString()}
                         </span>
                     </div>
 

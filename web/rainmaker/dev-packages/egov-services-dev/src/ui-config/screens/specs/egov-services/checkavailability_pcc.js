@@ -238,6 +238,7 @@ const prepareEditFlow = async (
 
         let bookingsModelList = get(response, "bookingsModelList", []);
         let documentMap = get(response, "documentMap", {});
+        let documentList=get(response, "documentList", {});
         if (bookingsModelList !== null && bookingsModelList.length > 0) {
 
             dispatch(prepareFinalObject("Booking", bookingsModelList[0]));
@@ -391,15 +392,18 @@ const prepareEditFlow = async (
                     fileStoreIds.length > 0
                         ? await getFileUrlFromAPI(fileStoreIds)
                         : {};
-                dispatch(
-                    prepareFinalObject("documentsUploadReduxOld.documents", [
-                        {
-                            fileName: fileStoreIdsValue[0],
-                            fileStoreId: fileStoreIds[0],
-                            fileUrl: fileUrls[fileStoreIds[0]],
-                        },
-                    ])
-                );
+                        dispatch(
+                            prepareFinalObject("documentsUploadReduxOld.documents", [
+                                {
+                                    fileName: fileStoreIdsValue[0],
+                                    fileStoreId: fileStoreIds[0],
+                                    fileUrl: fileUrls[fileStoreIds[0]],
+                                },
+                            ])
+                        );
+                        dispatch(
+                            prepareFinalObject("dropDown.value", documentList[0].documentType)
+                        );
             }
         } else {
             dispatch(
