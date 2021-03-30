@@ -395,6 +395,19 @@ class ActionDialog extends React.Component {
           }
           this.props.onButtonClick(buttonLabel, isDocRequired)
         }
+      } else if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DA_PREPARE_LETTER") {
+        let finalLetter = data.finalLetter;
+        finalLetter = finalLetter.filter(item => !!item);
+        if(!finalLetter || !finalLetter.length) {
+          this.setState({
+            finalLetterErr: true
+          })
+          return
+        } else {
+          this.setState({
+            finalLetterErr: false
+          })
+        }
       } else if(buttonLabel == 'APPROVE' || buttonLabel == 'REJECT'){
         const comments = data.comments;
         if(!!comments) {
@@ -537,23 +550,18 @@ class ActionDialog extends React.Component {
                     {!!this.state.commentsErr && (<span style={{color: "red"}}>Please enter comments</span>)}
                   </Grid>
 
-                  {buttonLabel === "FORWARD" && (applicationState === "ES_PENDING_DA_PREPARE_LETTER" && branchtype==="EstateBranch") && (
+                  {/* {buttonLabel === "FORWARD" && (applicationState === "ES_PENDING_DA_PREPARE_LETTER" && branchtype==="EstateBranch") && (
                   <Grid item sm="12">
                     <TextFieldContainer
                       InputLabelProps={{ shrink: true }}
-                      // label= {fieldConfig.comments.label }
                       label= { fieldConfig.termsandcondition.label}
                       onChange={e =>
                         handleFieldChange(`${dataPath}.termsAndConditions`, e.target.value)
                       }
-                      // required = {true}
-                      //jsonPath={this.open != true ? "" : `${dataPath}.comments`}
                       placeholder={fieldConfig.termsandcondition.placeholder}
-                      // inputProps={{ maxLength: 1000 }}
                     />
-                    {/* {!!this.state.commentsErr && (<span style={{color: "red"}}>Please enter comments</span>)} */}
                   </Grid>
-                  )}
+                  )} */}
 
 
                   {buttonLabel === "FORWARD" && (applicationState === "ES_PENDING_DS_VERIFICATION" || applicationState == "ES_MM_PENDING_DS_VERIFICATION") && (
@@ -638,7 +646,8 @@ class ActionDialog extends React.Component {
                   {(this.state.documentsErr && (!documents || !documents.length)) && (<span style={{color: "red"}}>Please upload documents</span>)}
                   </Grid>
                   )}
-                  {/* {(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_SO_TEMPLATE_CREATION") && (<Grid item sm="12">
+
+                  {(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DA_PREPARE_LETTER") && (<Grid item sm="12">
                   <Typography
                       component="h3"
                       variant="subheading"
@@ -653,12 +662,10 @@ class ActionDialog extends React.Component {
                     >
                       <div className="rainmaker-displayInline">
                         <LabelContainer
-                          labelName="Supporting Documents"
-                          labelKey="ES_WF_APPROVAL_UPLOAD_HEAD"
+                          labelName="Final Letter Document"
+                          labelKey="ES_UPLOAD_FINAL_LETTER_DOCUMENT"
                         />
-                        {isDocRequired && (
                           <span style={{ marginLeft: 5, color: "red" }}>*</span>
-                        )}
                       </div>
                     </Typography>
                     <div
@@ -671,20 +678,21 @@ class ActionDialog extends React.Component {
                       }}
                     >
                       <LabelContainer
-                        labelName="Only .jpg and .pdf files. 5MB max file size."
-                        labelKey="ES_WF_APPROVAL_UPLOAD_SUBHEAD"
+                        labelName="Only .pdf files. 5MB max file size."
+                        labelKey="ES_ONLY_PDF_FILES"
                       />
                     </div>
                     <UploadMultipleFiles
-                      maxFiles={4}
+                      maxFiles={1}
                       inputProps={{
-                        accept: "image/*, .pdf, .png, .jpeg"
+                        accept: ".pdf"
                       }}
                       buttonLabel={{ labelName: "UPLOAD FILES",labelKey : "ES_UPLOAD_FILES_BUTTON" }}
-                      jsonPath={`${dataPath}.wfDocuments`}
+                      jsonPath={`${dataPath}.finalLetter`}
                       maxFileSize={5000}
                     />
-                    </Grid>)} */}
+                    {this.state.finalLetterErr && (<span style={{color: "red"}}>Please upload documents</span>)}
+                    </Grid>)}
 
                   <Grid item sm="12">
                     <Typography

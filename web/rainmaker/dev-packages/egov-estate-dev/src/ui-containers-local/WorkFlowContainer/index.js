@@ -160,11 +160,20 @@ class WorkFlowContainer extends React.Component {
     } = this.props;
     const tenant = getQueryArg(window.location.href, "tenantId");
     let data = get(preparedFinalObject, dataPath, []);
+    const applicationState = data[0].state
 
     if(!!documentsJsonPath) {
       let documents = get(preparedFinalObject, documentsJsonPath)
       documents = documents.map(item => ({...item, isActive: true}))
       data = [{...data[0], applicationDocuments: [...data[0].applicationDocuments, ...documents]}]
+    }
+
+    if(applicationState === "ES_PENDING_DA_PREPARE_LETTER") {
+      let applicationDocuments = data[0].applicationDocuments
+      const finalLetter = data[0].finalLetter;
+      const finalLetterDocument = finalLetter[0];
+      applicationDocuments = [...applicationDocuments, {...finalLetterDocument, documentType: "FINAL_LETTER", isActive: true}]
+      data = [{...data[0], applicationDocuments}]
     }
 
     if (moduleName === WF_ALLOTMENT_OF_SITE) {
