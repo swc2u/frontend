@@ -138,9 +138,21 @@ class AllRequests extends Component {
     this.props.history.push(`/egov-services/all-MccApplications`);
   };
 
+ 
+getApplicationStatus = (applicationNumber) => { 
+  console.log("getApplicationStatus", applicationNumber)
+  let applicationsArray = this.props.csrComplaints
+  console.log("applicationsArray", applicationsArray)
+  let application = applicationsArray.filter((applicationDetail) => {
+    return applicationDetail.bkApplicationNumber == applicationNumber
+  })
+  console.log("application", application) //bkApplicationStatus: "OFFLINE_INITIATED"
+  console.log("CheckAppStatus",application[0].bkApplicationStatus == "OFFLINE_INITIATED")
+  return application[0].bkApplicationStatus == "OFFLINE_INITIATED"
+}
 
-  onComplaintClick = (complaintNo, bookingType) => {
-   
+  onComplaintClick = async(complaintNo, bookingType) => {
+   let {userInfo} = this.props
     if (bookingType && bookingType == "WATER_TANKERS") {
       this.props.history.push(`/egov-services/bwt-application-details/${complaintNo}`);
     }
@@ -159,14 +171,118 @@ class AllRequests extends Component {
 
       this.props.history.push(`/egov-services/osmcc-application-details/${complaintNo}`);
     }
-    if (bookingType && bookingType == "Parks") {
 
-      this.props.history.push(`/egov-services/park-and-community-center-appDetails-details/${complaintNo}`);
-    }
-    if (bookingType && bookingType == "Community Center") {
+    if (bookingType && (bookingType == "Parks" || bookingType == "Community Center")) {
+   if(this.getApplicationStatus(complaintNo)){
+console.log("Path change")
+    let RequestBodyForInitiateApplication =
+		{
+			"applicationNumber": complaintNo, 'uuid': userInfo.uuid,
+			"applicationStatus": "",
+			"mobileNumber": "", "bookingType": "", "tenantId": userInfo.tenantId
+		}
+    console.log("RequestBodyForInitiateApplication-",RequestBodyForInitiateApplication)
 
-      this.props.history.push(`/egov-services/park-and-community-center-appDetails-details/${complaintNo}`);
+    let dataforSectorAndCategory = await httpRequest(
+			"bookings/api/employee/_search",
+			"_search", [],
+			RequestBodyForInitiateApplication
+		);
+console.log("dataforSectorAndCategory",dataforSectorAndCategory)
+
+let bkLocation = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkLocation : 'NA'
+		let bkFromDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkFromDate : 'NA'
+		let bkToDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkToDate : 'NA'
+		let AppStatus = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationStatus : 'NA'
+		let bkBookingType = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingType : 'NA'
+		let Sector = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkSector : 'NA'
+		let bkBookingVenue = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue : 'NA'
+		let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'	
+		let bookingRent = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkRent : 'NA'
+
+		console.log("AppNo--", AppNo)
+		if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
+			let timeSlot = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot
+			console.log("timeSlot--", timeSlot)
+
+			prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
+
+			let res = timeSlot.split("-");
+			console.log("res--", res)
+
+			let fromTime = res[0]
+			console.log("fromTime--", fromTime)
+
+			prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
+
+
+			let ToTime = res[1]
+			console.log("ToTime--", ToTime);
+
+			prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
+
+
+			let strMid = ","
+
+			let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
+			console.log("ConcatFromDateTime--", ConcatFromDateTime)
+
+			prepareFinalObject("oldAvailabilityCheckData.ConcatFromDateTime", ConcatFromDateTime);
+
+			let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
+			console.log("ConcatToDateTime--", ConcatToDateTime)
+
+			prepareFinalObject("oldAvailabilityCheckData.ConcatToDateTime", ConcatToDateTime);
+
+
+
+			//let bkDisplayFromDateTime =
+
+			let timeSlotId = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id
+			console.log("timeSlotId--", timeSlotId)
+
+			prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
+
+
+
+		}
+
+    this.props.prepareFinalObject("oldAvailabilityCheckData.BookingRent", bookingRent);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.bkBookingType", bkBookingType);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.Sector", Sector);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.bkBookingVenue", bkLocation);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.FromDate", bkFromDate);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.bkFromDate", bkFromDate);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.bkToDate", bkToDate);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.bkBookingVenueID", bkBookingVenue);
+
+		this.props.prepareFinalObject("PreviousBookingData.ToDate", bkToDate);
+
+		this.props.prepareFinalObject("PreviousBookingData.FromDate", bkFromDate);
+
+		this.props.prepareFinalObject("PreviousBookingData.bkBookingVenue", bkLocation);
+
+		this.props.prepareFinalObject("PreviousBookingData.ApplicationStatus", AppStatus);
+    // this.props.prepareFinalObject("oldAvailabilityCheckData.bkBookingType", bkBookingType);
+
+this.props.history.push(`/egov-services/checkavailability_pcc`)
+}
+else{
+  this.props.history.push(`/egov-services/park-and-community-center-appDetails-details/${complaintNo}`);
+}  
     }
+
+    // if (bookingType && bookingType == "Community Center") {
+
+    //   this.props.history.push(`/egov-services/park-and-community-center-appDetails-details/${complaintNo}`);
+    // }
   };
 
   onComplaintChange = e => {
@@ -1220,7 +1336,7 @@ console.log("twoRole--",twoRole)
                     ? "No Search Results Found"
                     : "BK_MYBK_NO_APPLICATION_ASSIGNED"
                 }
-                onComplaintClick={onComplaintClick}
+                onComplaintClick={onComplaintClick} 
                 complaints={
                   search ? searchFilterEmployeeComplaints : employeeComplaints
                 }
@@ -1306,7 +1422,7 @@ console.log("oldBookingData-",oldBookingData)
     loading,
     transformedComplaints,
     roles,
-    bookings
+    bookings,userInfo
   };
 };
 

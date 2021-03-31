@@ -362,11 +362,6 @@ if(ShowAmountBooking !== null && ShowAmountBooking !== undefined){
         </div>    
 : ""}
 
-
-
-
-
-
 <div className="col-sm-6 col-xs-6">
   <div>
 

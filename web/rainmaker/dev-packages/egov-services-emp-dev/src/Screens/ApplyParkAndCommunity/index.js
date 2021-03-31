@@ -402,7 +402,7 @@ console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
                 rent={vrent}
                 prevStep={this.prevStep}
                 handleChange={this.handleChange}
-                firstName={firstName}
+                firstName={firstName} 
                 lastName={lastName}
                 email={email}
                 mobileNo={mobileNo}

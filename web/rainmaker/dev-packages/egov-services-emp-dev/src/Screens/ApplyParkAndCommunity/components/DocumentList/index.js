@@ -169,7 +169,7 @@ console.log('this.state.idProffType',this.state.idProffType);
       handleOpen = () => {
         this.setState({
           setOpen: true
-        })
+        }) 
       };
     componentDidMount = () => {
         const {
@@ -260,7 +260,7 @@ console.log('this.state.idProffType',this.state.idProffType);
         );
 
         this.setState({
-            documentMap: documentMap
+            documentMap: documentMap 
         })
         let documentMap2 = [{ fileStoreId: file.name }]
 
@@ -315,7 +315,7 @@ console.log('this.state.idProffType',this.state.idProffType);
     };
 
     getUploadCard = (card, key) => {
-
+console.log("KeyForDoc",key)
         let { classes, documentsUploadRedux } = this.props;
         documentsUploadRedux.documents = documentsUploadRedux;
         let jsonPath = `documentsUploadRedux[${key}].dropdown.value`;

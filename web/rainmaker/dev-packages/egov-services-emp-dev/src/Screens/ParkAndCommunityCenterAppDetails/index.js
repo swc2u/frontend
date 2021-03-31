@@ -246,7 +246,9 @@ this.setState({
 		let bkBookingType = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingType : 'NA'
 		let Sector = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkSector : 'NA'
 		let bkBookingVenue = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue : 'NA'
-		let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'
+		let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'	
+		let bookingRent = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkRent : 'NA'
+
 		console.log("AppNo--", AppNo)
 		if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
 			let timeSlot = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot
@@ -302,6 +304,7 @@ this.setState({
 			NewfinanceBusinessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR"
 		}
 
+		prepareFinalObject("oldAvailabilityCheckData.BookingRent", bookingRent);
 
 		prepareFinalObject("oldAvailabilityCheckData.bkBookingType", bkBookingType);
 
@@ -2189,7 +2192,7 @@ totalAmountPaid = {totalAmountPaid}
 									(complaint.status == "OFFLINE_MODIFIED" && foundSixthLavel &&
 										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
 											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
-												{(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?  //"OFFLINE_APPLIED"
+												{(complaint.bookingType == "Community Center" && complaint.bkLocation !== "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?  //"OFFLINE_APPLIED"
 													<Button
 														label={
 															<Label
@@ -2220,7 +2223,7 @@ totalAmountPaid = {totalAmountPaid}
 									(complaint.status == "OFFLINE_APPLIED" && foundSixthLavel &&
 										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
 											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
-												{(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?  //"OFFLINE_APPLIED"
+												{(complaint.bookingType == "Community Center" && complaint.bkLocation !== "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?  //"OFFLINE_APPLIED"
 													<Button
 														label={
 															<Label
