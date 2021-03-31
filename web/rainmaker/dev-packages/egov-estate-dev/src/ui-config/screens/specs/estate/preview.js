@@ -74,7 +74,10 @@ const getData = async (action, state, dispatch) => {
        const estateRentSummary = property.estateRentSummary
        const dueAmount = !!estateRentSummary ? estateRentSummary.balanceRent + estateRentSummary.balanceRentPenalty + estateRentSummary.balanceGSTPenalty + estateRentSummary.balanceGST : "0"
        property = {...property, propertyDetails: {...property.propertyDetails, dueAmount: dueAmount || "0"}}
-    
+       const property_copy = property;
+       if(property.fileNumber ===  "BBNOC-1") {
+        property = Applications[0].applicationDetails.property;
+        }
        applicationDocuments = applicationDocuments || []
        const statusQueryObject = [{
           key: "tenantId",
@@ -90,7 +93,7 @@ const getData = async (action, state, dispatch) => {
        applicationDocuments = applicationDocuments.filter(item => !!item.isActive)
        const finalLetter = applicationDocuments.find(item => item.documentType === "FINAL_LETTER")
        applicationDocuments = applicationDocuments.filter(item => item.documentType !== "FINAL_LETTER")
-       Applications = [{...Applications[0], applicationDocuments, property, finalLetter}]
+       Applications = [{...Applications[0], applicationDocuments, property, finalLetter, property_copy}]
        dispatch(prepareFinalObject("Applications", Applications))
        dispatch(prepareFinalObject("temp[0].removedDocs", removedDocs))
        await setDocuments(

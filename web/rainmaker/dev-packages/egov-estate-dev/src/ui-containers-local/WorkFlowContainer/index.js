@@ -162,6 +162,10 @@ class WorkFlowContainer extends React.Component {
     let data = get(preparedFinalObject, dataPath, []);
     const applicationState = data[0].state
 
+    if(!!data[0].property_copy) {
+      data = [{...data[0], property: data[0].property_copy}]
+    }
+
     if(!!documentsJsonPath) {
       let documents = get(preparedFinalObject, documentsJsonPath)
       documents = documents.map(item => ({...item, isActive: true}))
