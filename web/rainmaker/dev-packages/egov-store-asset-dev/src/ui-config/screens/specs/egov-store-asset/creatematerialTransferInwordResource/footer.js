@@ -218,7 +218,7 @@ export const callBackForNext = async (state, dispatch) => {
       issueDate = epochToYmd(issueDate)
 
       const  issueDate_ = new Date(issueDate)
-      if(receiptDate_ >issueDate_)
+      if(receiptDate_ >= issueDate_)
       {
         ValidreceiptDate = true
       }

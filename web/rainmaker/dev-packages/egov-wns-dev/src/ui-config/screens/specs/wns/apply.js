@@ -775,6 +775,46 @@ export const getData = async (action, state, dispatch) => {
         "displayDocs",
         dispatch
       );
+      if(data.property.ownershipCategory==='INDIVIDUAL.MULTIPLEOWNERS')
+      {
+        dispatch(prepareFinalObject("applyScreen.property.ownershipCategory",data.property.ownershipCategory));
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail",
+            "visible",
+            false
+          )
+        )
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail",
+            "visible",
+            true
+          )
+        )
+
+      }
+    else{
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail",
+          "visible",
+          true
+        )
+      )
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail",
+          "visible",
+          false
+        )
+      )
+
+    }
     }
   } else if (propertyID) {
     let queryObject = [{ key: "tenantId", value: tenantId }, { key: "propertyIds", value: propertyID }];
@@ -805,22 +845,7 @@ export const getData = async (action, state, dispatch) => {
   // dispatch(prepareFinalObject("applyScreen.waterApplicationType", "REGULAR"));
   // prepareDocumentsUploadData(state, dispatch);
 
-  dispatch(
-    handleField(
-      "apply",
-      "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail",
-      "visible",
-      true
-    )
-  )
-  dispatch(
-    handleField(
-      "apply",
-      "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail",
-      "visible",
-      false
-    )
-  )
+
 };
 
 const getApplyScreenChildren = () => {
@@ -985,6 +1010,26 @@ export const ownerDetails = getCommonCard({ ownerDetailsHeader,
     beforeFieldChange: (action, state, dispatch) => {
       //ReturntoSupplier In case user has selected ‘return to supplier’
       //dispatch(prepareFinalObject("applyScreen.connectionHolders[0].ownerType", action.value));
+      if(state.screenConfiguration.preparedFinalObject.applyScreen.property)
+          {
+          if(state.screenConfiguration.preparedFinalObject.applyScreen.property.owners)
+          {
+            let owners = state.screenConfiguration.preparedFinalObject.applyScreen.property.owners
+            if(owners.length>0)
+            {
+              dispatch(prepareFinalObject("applyScreen.property.owners",owners));
+              owners = owners.filter(x=>x.isDeleted !== false)
+              // if(action.value === "INDIVIDUAL.MULTIPLEOWNERS")
+              // {
+              // dispatch(prepareFinalObject("applyScreen.property.owners",owners));
+              // }
+              // else{
+              //   dispatch(prepareFinalObject("applyScreen.property.owners[0]",owners[0]));
+
+              // }
+            }
+          }
+          }
       if(action.value === "INDIVIDUAL.MULTIPLEOWNERS")
       {
         dispatch(handleField(
@@ -1015,18 +1060,7 @@ export const ownerDetails = getCommonCard({ ownerDetailsHeader,
             "visible",
             false
           ))
-          if(state.screenConfiguration.preparedFinalObject.applyScreen.property)
-          {
-          if(state.screenConfiguration.preparedFinalObject.applyScreen.property.owners)
-          {
-            let owners = state.screenConfiguration.preparedFinalObject.applyScreen.property.owners
-            if(owners.length>0)
-            {
-              owners = owners.filter(x=>x.isDeleted !== false)
-              dispatch(prepareFinalObject("applyScreen.property.owners",owners));
-            }
-          }
-          }
+          
           
 
         
@@ -1101,6 +1135,22 @@ const screenConfig = {
       if(localStorage.getItem("wns_workflow")){
         window.localStorage.removeItem("wns_workflow");
       }
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail",
+          "visible",
+          true
+        )
+      )
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail",
+          "visible",
+          false
+        )
+      )
 
     }
 

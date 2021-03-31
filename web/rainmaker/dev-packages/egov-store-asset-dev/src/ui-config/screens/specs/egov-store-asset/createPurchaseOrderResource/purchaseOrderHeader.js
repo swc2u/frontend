@@ -133,6 +133,9 @@ export const purchaseOrderHeader = getCommonCard({
                     })
                     dispatch(prepareFinalObject("searchMaster.materialNames", materialNames));          
               }
+              else{
+                dispatch(prepareFinalObject("searchMaster.materialNames", materialNames)); 
+              }
             
          }
           
