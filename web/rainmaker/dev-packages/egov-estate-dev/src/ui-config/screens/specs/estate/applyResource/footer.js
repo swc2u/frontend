@@ -2310,12 +2310,10 @@ export const downloadPrintContainer = (
            ]
          }else{
            downloadMenu = [
-             applicationDownloadObject,
-             finalLetterDownload
+             applicationDownloadObject
            ]
            printMenu = [
-             applicationPrintObject,
-             finalLetterPrint
+             applicationPrintObject
            ]
          }
            
@@ -2334,11 +2332,11 @@ export const downloadPrintContainer = (
 
        case 'NDC':
            downloadMenu = [
-             applicationDownloadObject,NDCWHODownloadObject, finalLetterDownload
+             applicationDownloadObject,NDCWHODownloadObject
            ]
          
            printMenu = [
-             applicationPrintObject,NDCWHOPrintObject, finalLetterPrint
+             applicationPrintObject,NDCWHOPrintObject
            ]
          break;
        case 'LeaseholdToFreehold':
@@ -2354,11 +2352,10 @@ export const downloadPrintContainer = (
              downloadMenu = [
                applicationDownloadObject,
                NoticeDownloadObject,
-               finalLetterDownload
              ]
            
              printMenu = [
-               applicationPrintObject,NoticePrintObject, finalLetterPrint
+               applicationPrintObject,NoticePrintObject,
              ]
            }
          
@@ -2375,11 +2372,11 @@ export const downloadPrintContainer = (
              ]
            }else{
              downloadMenu = [
-               applicationDownloadObject,NoticeDownloadObject,EmailDownloadObject, finalLetterDownload
+               applicationDownloadObject,NoticeDownloadObject,EmailDownloadObject
              ]
            
              printMenu = [
-               applicationPrintObject,NoticePrintObject,EmailPrintObject, finalLetterPrint
+               applicationPrintObject,NoticePrintObject,EmailPrintObject
              ]
            }
         
@@ -2396,11 +2393,11 @@ export const downloadPrintContainer = (
              ]
            }else{
              downloadMenu = [
-               applicationDownloadObject,NoticeDownloadObject,EmailDownloadObject, finalLetterDownload
+               applicationDownloadObject,NoticeDownloadObject,EmailDownloadObject
              ]
            
              printMenu = [
-               applicationPrintObject,NoticePrintObject,EmailPrintObject, finalLetterPrint
+               applicationPrintObject,NoticePrintObject,EmailPrintObject
              ]
            }
           
@@ -2417,11 +2414,11 @@ export const downloadPrintContainer = (
              ]
            }else{
              downloadMenu = [
-               applicationDownloadObject,NoticeDownloadObject,EmailDownloadObject, finalLetterDownload
+               applicationDownloadObject,NoticeDownloadObject,EmailDownloadObject
              ]
            
              printMenu = [
-               applicationPrintObject,NoticePrintObject,EmailPrintObject, finalLetterPrint
+               applicationPrintObject,NoticePrintObject,EmailPrintObject
              ]
            }
            
@@ -2654,13 +2651,11 @@ export const downloadPrintContainer = (
                    downloadMenu = [
                      applicationDownloadObject,
                      NoticeDownloadObject,
-                     finalLetterDownload
                    ]
                  
                    printMenu = [
                      applicationPrintObject,
                      NoticePrintObject,
-                     finalLetterPrint
                    ]
                  
                  break;
@@ -2741,13 +2736,15 @@ export const downloadPrintContainer = (
                    applicationDownloadObject,LetterDownloadObject,
                    AmountLetterAfterConversionDownloadObject,
                    HousingBoardNotificationDownloadObject,
-                   NoticeDownloadObject
+                   NoticeDownloadObject,
+                   finalLetterDownload
                  ]
                
                  printMenu = [
                    applicationPrintObject,LetterPrintObject,
                    AmountLetterAfterConversionPrintObject,
-                   HousingBoardNotificationPrintObject,NoticePrintObject
+                   HousingBoardNotificationPrintObject,NoticePrintObject,
+                   finalLetterPrint
                  ]
                  
                break;
@@ -2848,38 +2845,44 @@ export const downloadPrintContainer = (
                    downloadMenu = [
                      applicationDownloadObject,
                      nonPaymentNoticeDownloadObject,
-                     nonPaymentOrderDownloadObject
+                     nonPaymentOrderDownloadObject,
+                     finalLetterDownload
                    ]
                  
                    printMenu = [
                      applicationPrintObject,
                      nonPaymentNoticePrintObject,
-                     nonPaymentOrderPrintObject
+                     nonPaymentOrderPrintObject,
+                     finalLetterPrint
                    ]
                  }
                  else if(typeOfNotice == 'TYPE_OF_NOTICE.VIOLATION'){
                    downloadMenu = [
                      applicationDownloadObject,
                      NoticeDownloadObject,
-                     IssuanceViolationOrderDownloadObject
+                     IssuanceViolationOrderDownloadObject,
+                     finalLetterDownload
                    ]
                  
                    printMenu = [
                      applicationPrintObject,
                      NoticePrintObject,
-                     IssuanceViolationOrderPrintObject
+                     IssuanceViolationOrderPrintObject,
+                     finalLetterPrint
                    ]
                  }else{
                    downloadMenu = [
                      applicationDownloadObject,
                      cancellationOrderDownloadObject,
-                     occupationCertificateDownloadObject
+                     occupationCertificateDownloadObject,
+                     finalLetterDownload
                    ]
                  
                    printMenu = [
                      applicationPrintObject,
                      cancellationOrderPrintObject,
-                     occupationCertificatePrintObject
+                     occupationCertificatePrintObject,
+                     finalLetterPrint
                    ]
                  }
                  break;
