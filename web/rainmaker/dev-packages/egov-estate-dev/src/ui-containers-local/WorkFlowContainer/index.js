@@ -186,9 +186,11 @@ class WorkFlowContainer extends React.Component {
     if(applicationState === "ES_PENDING_DA_PREPARE_LETTER") {
       let applicationDocuments = data[0].applicationDocuments
       const finalLetter = data[0].finalLetter;
-      const finalLetterDocument = finalLetter[0];
-      applicationDocuments = [...applicationDocuments, {...finalLetterDocument, documentType: "FINAL_LETTER", isActive: true}]
-      data = [{...data[0], applicationDocuments}]
+      if(!!finalLetter && !!finalLetter.length) {
+        const finalLetterDocument = finalLetter[0];
+        applicationDocuments = [...applicationDocuments, {...finalLetterDocument, documentType: "FINAL_LETTER", isActive: true}]
+        data = [{...data[0], applicationDocuments}]
+      }
     }
 
     if (moduleName === WF_ALLOTMENT_OF_SITE) {
