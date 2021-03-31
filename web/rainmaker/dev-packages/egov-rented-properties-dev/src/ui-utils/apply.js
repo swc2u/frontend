@@ -83,7 +83,7 @@ export const setApplicationNumberBox = (state, dispatch, applicationNumber, scre
             set(queryObject[0], "masterDataAction", "SUBMIT")
           }
           let applicationDocuments = get(queryObject[0], "propertyDetails.applicationDocuments") || [];
-          applicationDocuments = applicationDocuments.map(item => ({...item, active: true}))
+          applicationDocuments = applicationDocuments.filter(item => !!item && !!item.fileStoreId).filter((item, index, arr) => (arr.findIndex((arrItem) => arrItem.fileStoreId === item.fileStoreId)) === index).map(item => ({...item, active: true}))
           const removedDocs = get(state.screenConfiguration.preparedFinalObject, "PropertiesTemp[0].removedDocs") || [];
           applicationDocuments = [...applicationDocuments, ...removedDocs]
           set(queryObject[0], "propertyDetails.applicationDocuments", applicationDocuments)

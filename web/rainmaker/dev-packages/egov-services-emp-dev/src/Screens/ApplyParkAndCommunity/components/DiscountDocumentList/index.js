@@ -139,11 +139,11 @@ class DocumentList extends Component {
 
     state = {
         open: false, setOpen: false,
-        idProffType:'',
+        idProffType:'Discount_Document',
         uploadedDocIndex: 0,
-        documentsUploadRedux: [
+        discountDocumentsUploadRedux: [
             {
-                documentCode: "BK_DOC.DOC_PICTURE",
+                documentCode: "BK_DOC.DOC_DISCOUNT_PICTURE",
                 documentType: "DOC",
                 isDocumentRequired: false,
                 isDocumentTypeRequired: false,
@@ -154,18 +154,16 @@ class DocumentList extends Component {
     };
     onbookingChange = e => {
         const inputValue = e.target.value;
-        console.log("inputValue",inputValue)
         this.setState({ idProffType: inputValue });
-        this.props.prepareFinalObject("UploadedDocType",e.target.value)
 console.log('this.state.idProffType',this.state.idProffType);
     }
 
     handleClose = () => {
         this.setState({
           setOpen: false
-        }) 
+        })
       };
-    
+
       handleOpen = () => {
         this.setState({
           setOpen: true
@@ -173,7 +171,7 @@ console.log('this.state.idProffType',this.state.idProffType);
       };
     componentDidMount = () => {
         const {
-            documentsList, buttonLabel, description, inputProps, maxFileSize, documentsUploadReduxOld, documentsUploadRedux, handleChange,
+            documentsList, buttonLabel, description, inputProps, maxFileSize, documentsUploadReduxOld, discountDocumentsUploadRedux, handleChange,
             prepareFinalObject
         } = this.props;
         let index = 0;
@@ -184,15 +182,15 @@ console.log('this.state.idProffType',this.state.idProffType);
                     if (card.subCards) {
                         card.subCards.forEach((subCard) => {
                             let oldDocType = get(
-                                documentsUploadRedux,
+                                discountDocumentsUploadRedux,
                                 `[${index}].documentType`
                             );
                             let oldDocCode = get(
-                                documentsUploadRedux,
+                                discountDocumentsUploadRedux,
                                 `[${index}].documentCode`
                             );
                             let oldDocSubCode = get(
-                                documentsUploadRedux,
+                                discountDocumentsUploadRedux,
                                 `[${index}].documentSubCode`
                             );
                             if (
@@ -200,7 +198,7 @@ console.log('this.state.idProffType',this.state.idProffType);
                                 oldDocCode != card.name ||
                                 oldDocSubCode != subCard.name
                             ) {
-                                documentsUploadRedux[index] = {
+                                discountDocumentsUploadRedux[index] = {
                                     documentType: docType.code,
                                     documentCode: card.name,
                                     documentSubCode: subCard.name,
@@ -210,11 +208,11 @@ console.log('this.state.idProffType',this.state.idProffType);
                         });
                     } else {
                         let oldDocType = get(
-                            documentsUploadRedux,
+                            discountDocumentsUploadRedux,
                             `[${index}].documentType`
                         );
                         let oldDocCode = get(
-                            documentsUploadRedux,
+                            discountDocumentsUploadRedux,
                             `[${index}].documentCode`
                         );
                         if (
@@ -232,13 +230,13 @@ console.log('this.state.idProffType',this.state.idProffType);
                                 mydocstate: false
                             };
 
-                            documentsUploadRedux[index] = { ...newDocumentData };
+                            discountDocumentsUploadRedux[index] = { ...newDocumentData };
                         }
                         index++;
                     }
                 });
         });
-        prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
+        prepareFinalObject("discountDocumentsUploadRedux", discountDocumentsUploadRedux);
 
     };
 
@@ -250,7 +248,7 @@ console.log('this.state.idProffType',this.state.idProffType);
     handleDocument = async (file, fileStoreId) => {
         let { uploadedDocIndex } = this.state;
         let documentMap = {};
-        const { prepareFinalObject, documentsUploadRedux, fetchUploadedDoc, userInfo } = this.props;
+        const { prepareFinalObject, discountDocumentsUploadRedux, fetchUploadedDoc, userInfo } = this.props;
 
         documentMap[`${fileStoreId}`] = file.name;
 
@@ -265,10 +263,10 @@ console.log('this.state.idProffType',this.state.idProffType);
         let documentMap2 = [{ fileStoreId: file.name }]
 
         const fileUrl = await getFileUrlFromAPI(fileStoreId);
-        prepareFinalObject("documentsUploadRedux", {
-            ...documentsUploadRedux,
+        prepareFinalObject("discountDocumentsUploadRedux", {
+            ...discountDocumentsUploadRedux,
             [uploadedDocIndex]: {
-                ...documentsUploadRedux[uploadedDocIndex],
+                ...discountDocumentsUploadRedux[uploadedDocIndex],
                 mydocstate: true,
                 documents: [
                     {
@@ -292,11 +290,11 @@ console.log('this.state.idProffType',this.state.idProffType);
             "Document Not Found"
         );
         prepareFinalObject(
-            `documentsUploadRedux.${remDocIndex}.mydocstate`,
+            `discountDocumentsUploadRedux.${remDocIndex}.mydocstate`,
             false
         );
         prepareFinalObject(
-            `documentsUploadRedux.${remDocIndex}.documents`,
+            `discountDocumentsUploadRedux.${remDocIndex}.documents`,
             undefined
         );
         this.forceUpdate();
@@ -304,11 +302,11 @@ console.log('this.state.idProffType',this.state.idProffType);
 
     handleChangeTwo = (key, event) => {
 
-        const { documentsUploadRedux, prepareFinalObject } = this.props;
-        prepareFinalObject(`documentsUploadRedux`, {
-            ...documentsUploadRedux,
+        const { discountDocumentsUploadRedux, prepareFinalObject } = this.props;
+        prepareFinalObject(`discountDocumentsUploadRedux`, {
+            ...discountDocumentsUploadRedux,
             [key]: {
-                ...documentsUploadRedux[key],
+                ...discountDocumentsUploadRedux[key],
                 dropdown: { value: event.target.value },
             },
         });
@@ -316,9 +314,9 @@ console.log('this.state.idProffType',this.state.idProffType);
 
     getUploadCard = (card, key) => {
 
-        let { classes, documentsUploadRedux } = this.props;
-        documentsUploadRedux.documents = documentsUploadRedux;
-        let jsonPath = `documentsUploadRedux[${key}].dropdown.value`;
+        let { classes, discountDocumentsUploadRedux } = this.props;
+        discountDocumentsUploadRedux.documents = discountDocumentsUploadRedux;
+        let jsonPath = `discountDocumentsUploadRedux[${key}].dropdown.value`;
         return (
             <div>
                 <div>
@@ -333,8 +331,8 @@ console.log('this.state.idProffType',this.state.idProffType);
                     />
                     <Grid container={true}>
                         <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
-                            {documentsUploadRedux[key] &&
-                                documentsUploadRedux[key].documents ? (
+                            {discountDocumentsUploadRedux[key] &&
+                                discountDocumentsUploadRedux[key].documents ? (
                                     <div className={classes.documentSuccess}>
                                         <Icon>
                                             <i class="material-icons">done</i>
@@ -381,7 +379,7 @@ console.log('this.state.idProffType',this.state.idProffType);
                             )}
                         </Grid>
                         <Grid item={true} md={4}>
-                            
+
                     <FormControl style={{ width: '100%' }}>
                     <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-proof">Proof Type</InputLabel>
                     <Select
@@ -395,12 +393,9 @@ console.log('this.state.idProffType',this.state.idProffType);
                       value={this.state.idProffType}
                       onChange={(e, value) => this.onbookingChange(e)}
                     >
-                    <MenuItem  value="" disabled>Proof Type</MenuItem>
-                     <MenuItem value="Ration Card">Ration Card</MenuItem> 
-                     <MenuItem value="Aadhar Card">Aadhar Card</MenuItem>
-                     <MenuItem value="Voter ID Card">Voter Id Card</MenuItem>
-                     <MenuItem value="Driving License">Driving License</MenuItem>
-                     <MenuItem value="Others">Others</MenuItem>
+                    <MenuItem  value="" disabled>Select Document</MenuItem>
+                     <MenuItem value="Discount_Document">Discount Document</MenuItem>
+
                     </Select>
                   </FormControl>
                             </Grid>
@@ -419,15 +414,15 @@ console.log('this.state.idProffType',this.state.idProffType);
                                     handleFileUpload(e, this.handleDocument, this.props)
                                 }
                                 uploaded={
-                                    documentsUploadRedux[key] &&
-                                        documentsUploadRedux[key].documents
+                                    discountDocumentsUploadRedux[key] &&
+                                        discountDocumentsUploadRedux[key].documents
                                         ? true
                                         : false
                                 }
                                 removeDocument={() => this.removeDocument(key)}
                                 documents={
-                                    documentsUploadRedux[key] &&
-                                    documentsUploadRedux[key].documents
+                                    discountDocumentsUploadRedux[key] &&
+                                    discountDocumentsUploadRedux[key].documents
                                 }
                                 onButtonClick={() => this.onUploadClick(key)}
                                 inputProps={this.props.inputProps}
@@ -445,12 +440,15 @@ console.log('this.state.idProffType',this.state.idProffType);
                         sm={5}
                         md={5}
                         align="left"
-                        
-                    >   
-                    <div><h5>Supported Documents: pdf, jpg, png. Max file size: 5MB</h5></div>           
-                    </Grid>           
+
+                    >
+                    <div><h5>Supported Documents: pdf, jpg, png. Max file size: 5MB</h5></div>
+                    </Grid>
                 </Grid>
                 </div>
+
+
+
             </div>
         );
     };
@@ -533,12 +531,12 @@ const mapStateToProps = (state) => {
     const { id } = auth.userInfo;
     const { userInfo } = state.auth;
     const { moduleName } = screenConfiguration;
-    const documentsUploadRedux = get(
+    const discountDocumentsUploadRedux = get(
         screenConfiguration.preparedFinalObject,
-        "documentsUploadRedux",
+        "discountDocumentsUploadRedux",
         {}
     );
-    return { documentsUploadRedux, moduleName, DocumentUploadMap, userInfo, documentMap };
+    return { discountDocumentsUploadRedux, moduleName, DocumentUploadMap, userInfo, documentMap };
 };
 
 const mapDispatchToProps = (dispatch) => {

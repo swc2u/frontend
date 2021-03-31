@@ -24,7 +24,7 @@ import { setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils
 const userInfo = JSON.parse(getUserInfo());
 const tenantId = getTenantId();
 const {roles = []} = userInfo
-const findItem = roles.find(item => item.code === "RP_CLERK");
+const findItem = roles.find(item => item.code === "RP_CLERK" || item.code === "RP_JA");
 
 let transitNumber = getQueryArg(window.location.href, "transitNumber");
 

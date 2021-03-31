@@ -289,6 +289,7 @@ export const getMdmsData = async (state,dispatch) => {
             {name:"tariffType"},
             {name:"wsCategory"},
             { name: "wsWorkflowRole" },
+            { name: "swWorkflowRole" },
             {name:"billGroup"},
             {name:"wsDocument"}
           ]
@@ -386,11 +387,28 @@ export const getMdmsData = async (state,dispatch) => {
     let City = []
     for (let index = 0; index < cities.length; index++) {
       const element = cities[index];
-      
+      if(cities.length >0)
+      {
+        City.push(
+          {
+            name:element.city.name,
+            code:element.code
+          }
+        )
+      }
+      else{
+        
+        
+
+      }
+     
+    }
+    if(cities.length ===0)
+    {
       City.push(
         {
-          name:element.city.name,
-          code:element.code
+          name:payload.MdmsRes.tenant.tenants[0].city.name,
+          code:payload.MdmsRes.tenant.tenants[0].city.code
         }
       )
     }

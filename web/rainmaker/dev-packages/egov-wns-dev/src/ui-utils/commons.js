@@ -1853,6 +1853,31 @@ export const applyForSewerage = async (state, dispatch) => {
             set(queryObjectForUpdate, "processInstance.action", "SUBMIT_APPLICATION");
             set(queryObjectForUpdate, "connectionType", "Non Metered");
             queryObjectForUpdate = findAndReplace(queryObjectForUpdate, "NA", null);
+                       /// in case of connection state is INITIATED or PENDING_FOR_CITIZEN_ACTION
+           let subdiv = get(state, "screenConfiguration.preparedFinalObject.SewerageConnection[0].subdiv",'');
+           let searchPreviewScreenMdmsData  = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData");
+            
+           searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].swWorkflowRole.filter(x=>x.state === 'PENDING_FOR_DOCUMENT_VERIFICATION_BY_SDO')
+           let roles =[]
+           let rolecode ='';
+             if(searchPreviewScreenMdmsData && searchPreviewScreenMdmsData[0])
+             {
+             roles =  searchPreviewScreenMdmsData = searchPreviewScreenMdmsData[0].roles
+             roles = roles.filter(x=>x.subdivision === subdiv )
+             if(roles.length>0)
+             {
+             rolecode = roles[0].role 
+             }
+             }
+             if(rolecode)
+             {
+                 set(queryObjectForUpdate, "processInstance.additionalDetails.role", rolecode); 
+             }
+             else
+             {
+                 set(queryObjectForUpdate, "processInstance.additionalDetails", null); 
+
+             }
             await httpRequest("post", "/sw-services/swc/_update", "", [], { SewerageConnection: queryObjectForUpdate });
             let searchQueryObject = [{ key: "tenantId", value: queryObjectForUpdate.tenantId }, { key: "applicationNumber", value: queryObjectForUpdate.applicationNo }];
             let searchResponse = await getSearchResultsForSewerage(searchQueryObject, dispatch);
@@ -2657,7 +2682,7 @@ export const swEstimateCalculation = async (queryObject, dispatch) => {
 
 };
 // to download application 
-export const downloadApp = async (wnsConnection, type, mode = "download") => {
+export const downloadApp = async (state,wnsConnection, type, mode = "download") => {
     let estFileStrID = wnsConnection[0].additionalDetails.estimationFileStoreId
     let sanFileStrID = wnsConnection[0].additionalDetails.sanctionFileStoreId
 
@@ -2698,6 +2723,12 @@ export const downloadApp = async (wnsConnection, type, mode = "download") => {
     } else {
         apiUrl = "sw-calculator/sewerageCalculator/_estimate";
         appService = "ws-applicationsewerage";
+        //set usageCategory and subusageCategory from mdms call
+        let usageCategory = GetMdmsNameBycode(state, "searchPreviewScreenMdmsData.PropertyTax.UsageType",wnsConnection[0].property.usageCategory) 
+        let subusageCategory = GetMdmsNameBycode(state, "searchPreviewScreenMdmsData.PropertyTax.subUsageType",wnsConnection[0].property.subusageCategory) 
+
+        set( wnsConnection[0], `property.usageCategory`, usageCategory);
+        set( wnsConnection[0], `property.subusageCategory`, subusageCategory);
         queryObjectForEst = [{
             applicationNo: appNo,
             tenantId: getTenantIdCommon(),
@@ -2827,6 +2858,16 @@ export const downloadApp = async (wnsConnection, type, mode = "download") => {
         alert('Some Error Occured while downloading!');
     }
 }
+
+export const GetMdmsNameBycode = (state, jsonpath, code) => {
+    //Material
+    let Obj  = get(state, `screenConfiguration.preparedFinalObject.${jsonpath}`,[]) 
+    let Name = code
+    Obj = Obj.filter(x=>x.code === code)
+    if(Obj &&Obj[0])
+    Name = Obj[0].name
+    return Name;
+  };
 export const validateConnHolderDetails = (holderData) => {
     if(holderData.connectionHolders==null){
         return true

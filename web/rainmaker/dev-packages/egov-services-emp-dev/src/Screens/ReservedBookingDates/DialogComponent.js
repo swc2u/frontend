@@ -184,8 +184,8 @@ class DialogComponent extends Component {
       this.props.toggleSnackbarAndSetText(
         true,
         {
-          labelName: "Date unlocked Successfully",
-          labelKey: `Date unlocked Successfully`
+          labelName: "Date unlocked successfully",
+          labelKey: `Date unlocked successfully`
         },
         "success"
       );

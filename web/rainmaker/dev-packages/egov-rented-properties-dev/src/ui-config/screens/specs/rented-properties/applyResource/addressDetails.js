@@ -213,6 +213,8 @@ const colonyNameField = {
 
 const ownershipTransitNumberField = {
     ...transitNumberLookUp,
+    pattern:"",
+    maxLength:"",
     jsonPath: "Owners[0].property.transitNumber",
     iconObj: {
         ...transitNumberLookUp.iconObj,
@@ -259,6 +261,8 @@ const ownershipTransitNumberField = {
 
 const mortgageTransitNumberField = {
   ...transitNumberLookUp,
+  pattern:"",
+  maxLength:"",
   jsonPath: "MortgageApplications[0].property.transitNumber",
   iconObj: {
       ...transitNumberLookUp.iconObj,
@@ -323,6 +327,8 @@ const mortgageTransitNumberField = {
 
 const TransitsiteTransitNumberField = {
   ...transitNumberLookUp,
+  pattern:"",
+  maxLength:"",
   jsonPath: "PropertyImagesApplications[0].property.transitNumber",
   iconObj: {
       ...transitNumberLookUp.iconObj,

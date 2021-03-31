@@ -1077,10 +1077,7 @@ downloadPermissionLetterFunction = async (e) => {
 									isAssignedToEmployee={isAssignedToEmployee}
 								/>
 							</div>
-							<div style={{
-								paddingTop: "30px",
-								paddingRight: "30px", float: "right",
-							}}>
+							<div >
 								{(role === "ao" &&
 									complaint.complaintStatus.toLowerCase() !== "closed") ||
 									(role === "eo" &&
@@ -1092,7 +1089,7 @@ downloadPermissionLetterFunction = async (e) => {
 											(complaint.status == "PENDINGAPPROVAL" &&
 												
 
-												<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={<ActionButtonDropdown data={{
+												<Footer className="apply-wizard-footer approve-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={<ActionButtonDropdown data={{
 													label: { labelName: "TAKE ACTION ", labelKey: "BK_COMMON_TAKE_ACTION" },
 													rightIcon: "arrow_drop_down",
 													props: {

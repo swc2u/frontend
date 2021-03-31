@@ -48,7 +48,7 @@ import {
            
         }
         this.setState({test: 2})
-	    this.props.prepareFinalObject("changeDateVenue",'Enabled')
+	    
 	} 
     parkSummaryVenueDetailsDisabler(){
         const bookingType = get(
@@ -75,7 +75,7 @@ import {
            
         }
         this.setState({test: 2})
-	    this.props.prepareFinalObject("changeDateVenue",'Enabled')
+	    
 	} 
     changeDateVenueCardDisabler(){
         const changeDateVenue = getQueryArg(
@@ -118,7 +118,7 @@ import {
             );
         }
         this.setState({test: 2})
-	    this.props.prepareFinalObject("changeDateVenue",'Enabled')
+	    
 	}   
 
     state={

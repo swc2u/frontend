@@ -10,7 +10,7 @@ import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { prepareDocumentTypeObj } from "../utils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { get } from "lodash";
-import { updatePFOforSearchResults } from "../../../../ui-utils/commons";
+import { updatePFOforSearchResults ,setDocsForEditFlow} from "../../../../ui-utils/commons";
 
 const propertyId = getQueryArg(window.location.href, "propertyId")
 
@@ -217,7 +217,22 @@ const getData = async(action, state, dispatch) => {
     )
   )
   if(transitNumber) {
-    await updatePFOforSearchResults(action, state, dispatch, transitNumber, "owner")
+  const response=  await updatePFOforSearchResults(action, state, dispatch, transitNumber, "owner")
+    if (response && response.Properties) {
+      let {Properties} = response
+    let applicationDocuments = Properties[0].propertyDetails.applicationDocuments || [];
+    const removedDocs = applicationDocuments.filter(item => !item.active)
+    applicationDocuments = applicationDocuments.filter(item => !!item.active)
+    Properties = [{...Properties[0], propertyDetails: {...Properties[0].propertyDetails, applicationDocuments}}]
+    dispatch(prepareFinalObject("Properties", Properties))
+    dispatch(
+      prepareFinalObject(
+        "PropertiesTemp[0].removedDocs",
+        removedDocs
+      )
+    );
+    }
+    setDocsForEditFlow(state, dispatch, "Properties[0].propertyDetails.applicationDocuments", "PropertiesTemp[0].uploadedDocsInRedux");
   }
   setDocumentData(action, state, dispatch)
   const id=get(state.screenConfiguration.preparedFinalObject,"Properties[0].id")

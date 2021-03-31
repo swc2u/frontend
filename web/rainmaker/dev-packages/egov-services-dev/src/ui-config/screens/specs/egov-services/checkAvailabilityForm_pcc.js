@@ -280,9 +280,13 @@ console.log(alreadyBookedDaysCount, selectedDaysCount, "aNero from file");
 
         if ("bkApplicationNumber" in availabilityCheckData) {
           if(changeDateVenue!= null){
+            
+            dispatch(prepareFinalObject("changeDateVenue",'Enabled'));
             routeUrl= `/egov-services/applyparkcommunitycenter?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&changeDateVenue=Enabled`
 
           }else{
+            
+            dispatch(prepareFinalObject("changeDateVenue",'Disabled'));
             routeUrl= `/egov-services/applyparkcommunitycenter?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
 
           }
@@ -292,6 +296,8 @@ console.log(alreadyBookedDaysCount, selectedDaysCount, "aNero from file");
               )
           );
         } else {
+          
+          dispatch(prepareFinalObject("changeDateVenue",'Disabled'));
           dispatch(setRoute(`/egov-services/applyparkcommunitycenter`));
         }
       }

@@ -78,8 +78,8 @@ class PaymentRedirect extends Component {
           { key: "applicationNumber", value: consumerCode }
         ]);
 
-        response = await httpRequest(
-          "post", "pm-services/noc/_updateappstatus", "", [], data);
+//        response = await httpRequest(
+//          "post", "pm-services/noc/_updateappstatus", "", [], data);
         lSRemoveItem(`amount`);
         lSRemoveItem(`gstAmount`);
         lSRemoveItem(`performanceBankGuaranteeCharges`)
