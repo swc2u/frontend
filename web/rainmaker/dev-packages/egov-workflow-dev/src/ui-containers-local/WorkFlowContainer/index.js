@@ -980,6 +980,13 @@ ValidateRequest =(payload) =>{
       }
 
     }
+    if(true)
+    {
+      //WS_TEMP_REGULAR ~businessService
+//       PENDING_FOR_SDE_APPROVAL ~applicationStatus
+// VERIFY_AND_FORWARD_TO_JE action
+// VERIFY_AND_FORWARD_FOR_PAYMENT
+    }
     if((businessService=='WS_CONVERSION') && applicationStatus ==='PENDING_FOR_SDC_APPROVAL')
     {
       const {WaterConnection} = preparedFinalObject;
