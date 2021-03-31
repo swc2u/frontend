@@ -773,8 +773,8 @@ console.log("twoRole--",twoRole)
         }  */}
         {foundFirstLavel || foundSecondLavel || foundthirdLavel ?
           <Button
-            className="responsive-action-button"
-            label={<Label buttonLabel={true} label="BK_NEW_LOCATION_LIST" />}
+          className="responsive-action-button btn-sampark"
+          label={<Label buttonLabel={true} label="BK_NEW_LOCATION_LIST" />}
             style={{ float: 'right', marginRight: '50px', marginTop: '40px' }}
             backgroundColor="#fe7a51"
             // labelStyle={{ letterSpacing: 0.7, padding: 0, color: "#fff" }}

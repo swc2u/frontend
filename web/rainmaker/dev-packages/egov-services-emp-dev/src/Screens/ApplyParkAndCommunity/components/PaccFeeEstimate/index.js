@@ -80,6 +80,7 @@ let SEVEN = (Math.round(totalAmountSuPage * 100) / 100).toFixed(2);
         <Card 
           textChildren={
             <div>  
+               <div style={{display : "flex"  , justifyContent: "space-between"}}>
                 <Label label="BK_MYBK_FEE_ESTIMATE" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
                       <button
                         style={{ color: "#FE7A51", border: "none", outline: "none", fontWeight: "650", float: 'right', marginRight: '43px', marginTop: '-2px', background: "white" }}
@@ -91,7 +92,8 @@ let SEVEN = (Math.round(totalAmountSuPage * 100) / 100).toFixed(2);
                        
               </h5>
                     </button>
-                {currentAppStatus == "OFFLINE_RE_INITIATED" ?  <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px',marginTop:30}}>
+                    </div>
+                                    {currentAppStatus == "OFFLINE_RE_INITIATED" ?  <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px',marginTop:30}}>
                 <div className="col-sm-4 col-xs-12">
                   <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_TAXES" />
                 </div>
