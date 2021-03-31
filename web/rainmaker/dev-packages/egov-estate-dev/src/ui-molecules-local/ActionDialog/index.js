@@ -327,6 +327,7 @@ class ActionDialog extends React.Component {
       const validationDate = data.hardCopyReceivedDate;
       const {dialogData} = this.props;
       const {documentsJsonPath, documentProps} = dialogData
+      const applicationType = (get(state.screenConfiguration.preparedFinalObject, dataPath) || {}).applicationType
       if(!!documentProps) {
         let documents = get(state.screenConfiguration.preparedFinalObject, documentsJsonPath)
         documents = documents.filter(item => !!item)
@@ -395,8 +396,8 @@ class ActionDialog extends React.Component {
           }
           this.props.onButtonClick(buttonLabel, isDocRequired)
         }
-      } else if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DA_PREPARE_LETTER") {
-        let finalLetter = data.finalLetter;
+      } else if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DA_PREPARE_LETTER" && applicationType !== "ChangeInTrade" && applicationType !== "DuplicateCopy") {
+        let finalLetter = data.finalLetter || [];
         finalLetter = finalLetter.filter(item => !!item);
         if(!finalLetter || !finalLetter.length) {
           this.setState({
