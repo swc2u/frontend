@@ -27,8 +27,15 @@ class Footer extends React.Component {
     const findIndex = processInstances.map(processInstance => processInstance.action === item&& processInstance.state.applicationStatus === state).lastIndexOf(true)
     return processInstances[findIndex]
   }
-
   openActionDialog = async item => {
+    let employeeList = []
+    if(!item.roleProps || (!!item.roleProps && item.roleProps.length === 1)) {
+      const data = !!item.roleProps ? {...item, ...item.roleProps[0]} : item
+      employeeList = await this.renderemployeeList(data)
+    }
+    this.setState({ open: true, data: item, employeeList})
+  }
+  renderemployeeList = async item => {
     const { handleFieldChange, setRoute, dataPath, moduleName } = this.props;
     const {preparedFinalObject} = this.props.state.screenConfiguration;
     const {workflow: {ProcessInstances = []}} = preparedFinalObject || {}
@@ -109,9 +116,12 @@ if(employeeList.length===0){
   assignee=[]
   handleFieldChange(`${dataPath}[0].assignee`, assignee);
 }
-    this.setState({ open: true, data: item, employeeList });
+return employeeList
   };
-
+  onRoleSelect = async item => {
+    const employeeList = await this.renderemployeeList(item)
+    this.setState({ employeeList})
+  };
   onClose = () => {
     this.setState({
       open: false
@@ -236,6 +246,7 @@ if(employeeList.length===0){
           dialogData={dialogData}
           dropDownData={employeeList}
           handleFieldChange={handleFieldChange}
+          onRoleSelect={this.onRoleSelect}
           onButtonClick={onDialogButtonClick}
           dataPath={dataPath}
           state={this.props.state}
