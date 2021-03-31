@@ -122,6 +122,11 @@ class WorkFlowContainer extends React.Component {
       case "RESUBMIT":
       case "FORWARD_COMMERCIAL":
       case "FORWARD_RESIDENTIAL":
+      case "FORWARD_TO_SI":
+       case "FORWARD_TO_SA":
+       case "FORWARD_TO_SO":
+       case "FORWARD_TO_AC":
+       case "FORWARD_TO_DA":
         return "purpose=forward&status=success";
       case "MARK":
         return "purpose=mark&status=success";
@@ -135,10 +140,16 @@ class WorkFlowContainer extends React.Component {
         return "purpose=approve&status=success";
       case "SENTBACK":
       case "SENDBACK":
+          case "SENDBACK_TO_DA":
+              case "SENDBACK_TO_SA":
+                  case "SENDBACK_TO_SI":
+                      case "SENDBACK_TO_SO":
+                          case "SENDBACK_TO_DS":
         return "purpose=sendback&status=success";
       case "REFER":
         return "purpose=refer&status=success";
       case "SENDBACKTOCITIZEN":
+        case "SENDBACK_TO_CITIZEN":
         return "purpose=sendbacktocitizen&status=success";
       case "SUBMIT_APPLICATION":
         return "purpose=apply&status=success";
