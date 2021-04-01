@@ -479,7 +479,7 @@ class WorkFlowContainer extends React.Component {
       const roles = getEmployeeRoles(curr.nextState, curr.currentState, businessService)
       const role = action_type.length > 1 && action_type[action_type.length - 1]
       const isDocRequired =  checkIfDocumentRequired(curr.nextState, businessService)
-      const showEmployeeList = !checkIfTerminatedState(curr.nextState, businessService) && curr.action !== "SENDBACKTOCITIZEN"
+      const showEmployeeList = !checkIfTerminatedState(curr.nextState, businessService) && (curr.action !== "SENDBACKTOCITIZEN" || curr.action !== "SENDBACK_TO_CITIZEN")
       if(findIndex === -1) {
 
         const item = !!role ? {
