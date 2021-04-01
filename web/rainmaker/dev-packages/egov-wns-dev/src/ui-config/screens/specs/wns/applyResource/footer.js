@@ -1111,6 +1111,23 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     {
       removingDocumentsWorkFlow(state, dispatch);
     }
+    // validate category if Application Type is changged
+    let category_ = get(
+      state.screenConfiguration.preparedFinalObject,
+      "applyScreen.waterProperty.usageSubCategory",
+      null
+    );
+    if(category_ === null)
+    {
+      let errorMessage_ = {
+        labelName: "Please select Usage Caregory",
+        labelKey: "WS_APPLICATION_TYPE_CHANGGED_VALIDATION"
+      };
+
+      dispatch(toggleSnackbar(true, errorMessage_, "warning"));
+      return false;
+
+    }
     
     prepareDocumentsUploadData(state, dispatch);
   }
