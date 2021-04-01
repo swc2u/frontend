@@ -47,7 +47,7 @@ if(uploadeDocType !== "NotFound"){
 
 let sendCurrentStatus;
 if(checkAppStatus){
-    if(checkAppStatus == "NOTFOUND"){
+    if(checkAppStatus == "NOTFOUND" || checkAppStatus == "OFFLINE_INITIATED"){
         sendCurrentStatus = "OFFLINE_INITIATE"
     }
    else if(checkAppStatus == "OFFLINE_APPLIED"){

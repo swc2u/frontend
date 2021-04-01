@@ -251,11 +251,14 @@ this.setState({
 		let bkBookingType = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingType : 'NA'
 		let Sector = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkSector : 'NA'
 		let bkBookingVenue = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue : 'NA'
+		// let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'	
+		let bookingRent = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkRent : 'NA'
+		console.log("AppNo--", AppNo)
 		let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'
 		let isDiscount = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkPlotSketch : "Genral";
 		let allDocumentList = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.documentList : [];
 		//General
-		if(isDiscount != "General"){
+ 		if(isDiscount != "General"){
 			this.setState({isDiscount: true});
 		}
 		let proofOfResDocs
@@ -323,6 +326,7 @@ this.setState({
 			NewfinanceBusinessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR"
 		}
 
+		prepareFinalObject("oldAvailabilityCheckData.BookingRent", bookingRent);
 
 		prepareFinalObject("oldAvailabilityCheckData.bkBookingType", bkBookingType);
 
@@ -345,6 +349,58 @@ this.setState({
 		prepareFinalObject("PreviousBookingData.bkBookingVenue", bkLocation);
 
 		prepareFinalObject("PreviousBookingData.ApplicationStatus", AppStatus);
+
+		allDocumentList.map(async (doc) => {
+			console.log("Doccc---", doc);
+			// doc.docmentType
+			// doc.fileName
+			// doc.fileStoreId
+			let fileLink = await getFileUrlFromAPI(doc.fileStoreId, "ch");
+			console.log("filelink--", fileLink);
+			if (doc.documentType === "BK_PCC_DISCOUNT_DOCUMENT") {
+			  console.log("DIscountDoc==", doc);
+			  let dicscountDoc = [
+				{
+				  documentCode: doc.documentType,
+				  documentType: "DOC",
+				  documents: [
+					{
+					  fileName: doc.fileName,
+					  fileStoreId: doc.fileStoreId,
+					  fileUrl: fileLink[doc.fileStoreId],
+					  mendatoryDoc: true,
+					},
+				  ],
+				  isDocumentRequired: true,
+				  isDocumentTypeRequired: true,
+				  mydocstate: true,
+				},
+			  ];
+			  prepareFinalObject("discountDocumentsUploadRedux", dicscountDoc);
+			  return;
+			} else {
+			  console.log("DocFIle==", doc);
+			  let Doc = [
+				{
+				  documentCode: doc.documentType,
+				  documentType: "DOC",
+				  documents: [
+					{
+					  fileName: doc.fileName,
+					  fileStoreId: doc.fileStoreId,
+					  fileUrl: fileLink[doc.fileStoreId],
+					  mendatoryDoc: true,
+					},
+				  ],
+				  isDocumentRequired: true,
+				  isDocumentTypeRequired: true,
+				  mydocstate: true,
+				},
+			  ];
+			  prepareFinalObject("documentsUploadRedux", Doc);
+			  return;
+			}
+		  });
 
 		let reqParams = [
 			{ key: "consumerCode", value: match.params.applicationId },
@@ -2265,7 +2321,7 @@ totalAmountPaid = {totalAmountPaid}
 									(complaint.status == "OFFLINE_MODIFIED" && foundSixthLavel &&
 										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
 											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
-												{(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?  //"OFFLINE_APPLIED"
+												{(complaint.bookingType == "Community Center" && complaint.bkLocation !== "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?  //"OFFLINE_APPLIED"
 													<Button
 														label={
 															<Label
@@ -2296,7 +2352,7 @@ totalAmountPaid = {totalAmountPaid}
 									(complaint.status == "OFFLINE_APPLIED" && foundSixthLavel &&
 										<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
 											<div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
-												{(complaint.bookingType == "Community Center" && complaint.bkLocation == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?  //"OFFLINE_APPLIED"
+												{(complaint.bookingType == "Community Center" && complaint.bkLocation !== "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") && this.props.RoomBookingDate == "Valid" ?  //"OFFLINE_APPLIED"
 													<Button
 														label={
 															<Label

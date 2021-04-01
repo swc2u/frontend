@@ -510,12 +510,6 @@ class ApplicatInfo extends Component {
             </div>
 
             : ""}
-
-
-
-
-
-
           <div className="col-sm-6 col-xs-6">
             <div>
 
