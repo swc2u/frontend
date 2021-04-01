@@ -44,32 +44,32 @@ export default class CustomComplaints extends React.Component {
                   <div className="complaint-card-wrapper">
 
                     <div className="complaint-number-cont row application-format">
-                      <div className="complaint-number complaint-date">
-                        <Label fontSize="12px" className="col-md-6" label={"BK_MYBK_COMMON_APPLICATION_NO"} />
+                    <div className="complaint-number complaint-date compList">
+                        <Label fontSize="12px" className="col-md-6 listFirst" label={"BK_MYBK_COMMON_APPLICATION_NO"} />
                         {/* <Label fontSize="12px" label={" : "} /> */}
                         <Label fontSize="12px" className="col-md-6" label={complaint.applicationNumber} className="complaint-complaint-number" />
                       </div>
                     </div>
 
-                    <div className="complaint-number-cont row application-format">
+                    <div className="complaint-number-cont row application-format compList">
                       {/* <div className="complaint-number complaint-date"> */}
-                      <Label fontSize="12px" className="col-md-6" label={"BK_MYBK_APPLICATION_DETAILS_CURRENT_STATUS"} />
+                      <Label fontSize="12px" className="col-md-6 listFirst" label={"BK_MYBK_APPLICATION_DETAILS_CURRENT_STATUS"} />
                       {/* <Label fontSize="12px" label={" : "} /> */}
                       <Label fontSize="12px" className="col-md-6" label={'BK_' + complaint.applicationStatus} className="complaint-complaint-number" />
                       {/* </div> */}
                     </div>
                     <div className="complaint-number-cont row application-format">
-                      <div className="complaint-number complaint-date">
-                        <Label fontSize="12px" className="col-md-6" label={"BK_MYBK_APPLICATION_BOOKING_TYPE"} />
+                      <div className="complaint-number complaint-date compList">
+                        <Label fontSize="12px" className="col-md-6 listFirst" label={"BK_MYBK_APPLICATION_BOOKING_TYPE"} />
                         <Label fontSize="12px" className="col-md-6" label={'BK_' + complaint.businessService} className="complaint-complaint-number" />
                       </div>
                     </div>
 
                     <div className="complaint-number-cont row application-format">
-                      <div className="complaint-number complaint-date">
-                        <Label fontSize="12px" className="col-md-6" label={"BK_MYBK_APPLICATION_DETAILS_SUBMISSION_DATE"} />
+                      <div className="complaint-number complaint-date compList">
+                        <Label fontSize="12px" className="col-md-6 listFirst" label={"BK_MYBK_APPLICATION_DETAILS_SUBMISSION_DATE"} />
                         <Label fontSize="12px" className="col-md-6" label={this.convertEpochToDate(
-                          complaint.dateCreated, "dayend"
+                           complaint.dateCreated, "dayend"
                         )} className="complaint-complaint-number" />
                         {/*label={complaint.bkDateCreated}*/}
                         {/* label= {this.convertEpochToDate(
