@@ -25,6 +25,16 @@ const styles = theme => ({
 });
 
 const fieldConfig = {
+  to: {
+    label: {
+      labelName: "To",
+      labelKey: "WF_ROLE_TO_LABEL"
+    },
+    placeholder: {
+      labelName: "Select To",
+      labelKey: "WF_SELECT_ROLE_TO"
+    }
+  },
   approverName: {
     label: {
       labelName: "Assignee Name",
@@ -294,10 +304,13 @@ const getEpoch = (dateString, dayStartOrEnd = "dayend") => {
 
 class ActionDialog extends React.Component {
   state = {
+    showEmployeeList: false,
+    isDocRequired: false,
+    roleserror:false,
     hardCopyReceivedDateError: false,
     commentsErr:false,
     documentsErr: false,
-    paymentErr: false
+    paymentErr: false,
   };
 
   getButtonLabelName = label => {
@@ -319,7 +332,21 @@ class ActionDialog extends React.Component {
         return label;
     }
   };
-
+  componentDidUpdate(prevProps) {
+    if(prevProps.open === true && this.props.open === false) {
+      this.setState({
+        showEmployeeList: false,
+        isDocRequired: false,
+        selectedData: null
+      })
+    }
+    if(this.props.open === true && prevProps.open === false) {
+      const {dialogData} = this.props
+      this.setState({
+        selectedData: dialogData && dialogData.roleProps && dialogData.roleProps.length === 1 ? dialogData.roleProps[0] : null
+      })
+    }
+  }
   handleValidation = (buttonLabel, isDocRequired, applicationState) => {
       let {dataPath, state} = this.props;
       dataPath = `${dataPath}[0]`;
@@ -327,6 +354,20 @@ class ActionDialog extends React.Component {
       const validationDate = data.hardCopyReceivedDate;
       const {dialogData} = this.props;
       const {documentsJsonPath, documentProps} = dialogData
+      if(!!dialogData.roleProps) {
+        if(!this.state.selectedData){
+        this.setState({
+          roleserror:true
+        })
+        return
+      }
+      else {
+        this.setState({
+          roleserror: false
+        })
+      }
+    }
+      const _buttonLabel = !!this.state.selectedData ? `${buttonLabel}_TO_${this.state.selectedData.role}` : buttonLabel
       const applicationType = (get(state.screenConfiguration.preparedFinalObject, dataPath) || {}).applicationType
       if(!!documentProps) {
         let documents = get(state.screenConfiguration.preparedFinalObject, documentsJsonPath)
@@ -344,7 +385,7 @@ class ActionDialog extends React.Component {
       }
       if(buttonLabel === "FORWARD" && (applicationState === "ES_PENDING_DS_VERIFICATION"||applicationState==="ES_MM_PENDING_DS_VERIFICATION")){
         if(!!validationDate) {
-          this.props.onButtonClick(buttonLabel, isDocRequired)
+          this.props.onButtonClick(_buttonLabel, isDocRequired)
         } else {
           this.setState({
             hardCopyReceivedDateError: true
@@ -371,7 +412,7 @@ class ActionDialog extends React.Component {
               this.props.handleFieldChange(`${dataPath}.applicationDetails.${eb_payment_config[i].path}`, "0")
             }
           }
-          this.props.onButtonClick(buttonLabel, isDocRequired)
+          this.props.onButtonClick(_buttonLabel, isDocRequired)
         }
       } else if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DRAFSMAN_CALCULATION") {
         bb_payment_config = bb_payment_config.map((payment) => ({
@@ -394,7 +435,7 @@ class ActionDialog extends React.Component {
               this.props.handleFieldChange(`${dataPath}.applicationDetails.${bb_payment_config[i].path}`, "0")
             }
           }
-          this.props.onButtonClick(buttonLabel, isDocRequired)
+          this.props.onButtonClick(_buttonLabel, isDocRequired)
         }
       } else if(buttonLabel === "FORWARD" && applicationState === "ES_PENDING_DA_PREPARE_LETTER" && applicationType !== "ChangeInTrade" && applicationType !== "DuplicateCopy") {
         let finalLetter = data.finalLetter || [];
@@ -408,19 +449,19 @@ class ActionDialog extends React.Component {
           this.setState({
             finalLetterErr: false
           })
-          this.props.onButtonClick(buttonLabel, isDocRequired)
+          this.props.onButtonClick(_buttonLabel, isDocRequired)
         }
       } else if(buttonLabel == 'APPROVE' || buttonLabel == 'REJECT'){
         const comments = data.comments;
         if(!!comments) {
-          this.props.onButtonClick(buttonLabel, isDocRequired)
+          this.props.onButtonClick(_buttonLabel, isDocRequired)
         } else {
           this.setState({
             commentsErr: true
           })
         }
       } else {
-        this.props.onButtonClick(buttonLabel, isDocRequired)
+        this.props.onButtonClick(_buttonLabel, isDocRequired)
       }
   }
 
@@ -432,7 +473,23 @@ class ActionDialog extends React.Component {
     })
     this.props.onClose()
   }
-
+  onRoleToClick = (e) => {
+    const {dialogData} = this.props
+    this.setState({
+      selectedData: e.target.value,
+      showEmployeeList: e.target.value.showEmployeeList,
+      isDocRequired: e.target.value.isDocRequired
+    })
+    const item = {
+      buttonLabel: dialogData.buttonLabel,
+      buttonUrl: dialogData.buttonUrl,
+      dialogHeader: dialogData.dialogHeader,
+      isLast: dialogData.isLast,
+      moduleName: dialogData.moduleName,
+      ...e.target.value
+    }
+    this.props.onRoleSelect(item)
+  }
   render() {  
     let {
       open,
@@ -444,12 +501,16 @@ class ActionDialog extends React.Component {
       dataPath,
       state
     } = this.props;
+    const showEmployeeList = !!dialogData && !!dialogData.roleProps && dialogData.roleProps.length === 1 ? dialogData.roleProps[0].showEmployeeList : !!dialogData && !!dialogData.showEmployeeList? !!dialogData.showEmployeeList : this.state.showEmployeeList
+    const isDocRequired = !!dialogData && !!dialogData.roleProps && dialogData.roleProps.length === 1 ? dialogData.roleProps[0].isDocRequired : !!dialogData && !!dialogData.isDocRequired? !!dialogData.isDocRequired : this.state.isDocRequired
+    const rolesData =  !!dialogData && !!dialogData.roleProps && !!dialogData.roleProps.length ? dialogData.roleProps.map(roledata => ({
+      label: roledata.role,
+      value: roledata
+    })) : []
     const {
       buttonLabel,
-      showEmployeeList,
       dialogHeader,
       moduleName,
-      isDocRequired,
       documentProps,
       documentsJsonPath
     } = dialogData;
@@ -509,6 +570,35 @@ class ActionDialog extends React.Component {
                   >
                     <CloseIcon />
                   </Grid>
+
+                  {!!rolesData.length && (<Grid 
+                  item
+                  sm="12"
+                  style={{
+                    marginTop: 16
+                  }}>
+                    <TextFieldContainer
+                        select={true}
+                        style={{ marginRight: "15px", width: "90%" }}
+                        label={fieldConfig.to.label}
+                        placeholder={fieldConfig.to.placeholder}
+                        required={true}
+                        data={rolesData}
+                        value={this.state.selectedData}
+                        optionValue="value"
+                        optionLabel="label"
+                        hasLocalization={false}
+                        jsonPath={`${dataPath}.roles[0]`}
+                        onChange={e => {this.onRoleToClick(e)
+                        handleFieldChange(`${dataPath}.roles`, e.target.value) } }                        
+                      />
+                       {/* <span style={{color: "red"}}>{this.state.errors["roles"]}</span> */}
+                       {!!this.state.roleserror && (<span style={{color: "red"}}>Please select the role</span>)}
+                  </Grid>)}
+
+
+
+
                   {showEmployeeList && applicationState !== "ES_MM_PENDING_DA_FEE" &&!!dropDownData.length && (moduleName === "ES-EB-IS-RefundOfEmd" ? buttonLabel !== "MODIFY" : true) && (
                     <Grid
                       item

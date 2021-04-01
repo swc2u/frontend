@@ -139,6 +139,7 @@ class WorkFlowContainer extends React.Component {
       case "REFER":
         return "purpose=refer&status=success";
       case "SENDBACKTOCITIZEN":
+        case "SENDBACK_TO_CITIZEN":
         return "purpose=sendbacktocitizen&status=success";
       case "SUBMIT_APPLICATION":
         return "purpose=apply&status=success";
@@ -232,7 +233,7 @@ class WorkFlowContainer extends React.Component {
           }
         }
         window.location.href = `acknowledgement?${this.getPurposeString(
-          label
+          label.split("_")[0]
         )}${path}`;
       }
     } catch (e) {
@@ -461,18 +462,60 @@ class WorkFlowContainer extends React.Component {
     );
     let actions = orderBy(filteredActions, ["action"], ["desc"]);
 
-    actions = actions.map(item => {
-      return {
-        buttonLabel: item.action,
-        moduleName: data[data.length - 1].businessService,
-        isLast: item.action === "PAY" ? true : false,
-        buttonUrl: getRedirectUrl(item.action, businessId, businessService),
-        dialogHeader: getHeaderName(item.action),
-        showEmployeeList: !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
-        roles: getEmployeeRoles(item.nextState, item.currentState, businessService),
-        isDocRequired: checkIfDocumentRequired(item.nextState, businessService)
-      };
-    });
+    actions = actions.reduce((prev, curr) => {
+      const action_type = curr.action.split("_");
+      const buttonLabel = action_type[0];
+      const findIndex = prev.findIndex(actionItem => actionItem.buttonLabel === buttonLabel);
+      const roles = getEmployeeRoles(curr.nextState, curr.currentState, businessService)
+      const role = action_type.length > 1 && action_type[action_type.length - 1]
+      const isDocRequired =  checkIfDocumentRequired(curr.nextState, businessService)
+      const showEmployeeList = !checkIfTerminatedState(curr.nextState, businessService) && (curr.action !== "SENDBACKTOCITIZEN" || curr.action !== "SENDBACK_TO_CITIZEN")
+      if(findIndex === -1) {
+
+        const item = !!role ? {
+          buttonLabel,
+          moduleName: data[data.length - 1].businessService,
+          isLast: curr.action === "PAY" ? true : false,
+          buttonUrl: getRedirectUrl(curr.action, businessId, businessService),
+          dialogHeader: getHeaderName(buttonLabel),
+          roleProps: [
+            {
+              role,
+              roles,
+              isDocRequired,
+              showEmployeeList
+            }
+          ]
+        } : {
+          buttonLabel,
+          moduleName: data[data.length - 1].businessService,
+          isLast: curr.action === "PAY" ? true : false,
+          buttonUrl: getRedirectUrl(curr.action, businessId, businessService),
+          dialogHeader: getHeaderName(buttonLabel),
+          roles,
+          isDocRequired,
+          showEmployeeList
+        }
+        prev = [...prev, item]
+      } else {
+        prev = [...prev.slice(0, findIndex), {...prev[findIndex], roleProps: [...prev[findIndex].roleProps, {
+          role, roles, isDocRequired, showEmployeeList
+        }]}]
+      }
+      return prev
+    }, []) 
+    // actions = actions.map(item => {
+    //   return {
+    //     buttonLabel: item.action,
+    //     moduleName: data[data.length - 1].businessService,
+    //     isLast: item.action === "PAY" ? true : false,
+    //     buttonUrl: getRedirectUrl(item.action, businessId, businessService),
+    //     dialogHeader: getHeaderName(item.action),
+    //     showEmployeeList: !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
+    //     roles: getEmployeeRoles(item.nextState, item.currentState, businessService),
+    //     isDocRequired: checkIfDocumentRequired(item.nextState, businessService)
+    //   };
+    // });
     actions = actions.filter(item => item.buttonLabel !== 'INITIATE');
     let editAction = getActionIfEditable(
       applicationStatus,
