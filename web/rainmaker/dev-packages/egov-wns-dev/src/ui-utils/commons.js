@@ -965,17 +965,45 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                      || activityType === 'WS_REACTIVATE'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                 {
-                    if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP')
+                    if(applicationType ==='TEMPORARY' &&( activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP'))
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.category === category)
                         // &&x.occupancycode === occupancycode)
                     }
-                    else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR')
+                    else if(applicationType ==='TEMPORARY' &&( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
+                    {
+                        // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        //     && x.occupancycode === occupancycode)
+                            wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                    }
+                    else if(applicationType ==='REGULAR' &&( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.occupancycode === occupancycode)
                     } 
+                    else if(applicationType ==='REGULAR' &&( activityType ==='NEW_WS_CONNECTION' || activityType ==='REGULARWSCONNECTION'))
+                    {
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                            && x.occupancycode === occupancycode)
+                    }
+                    
+                    else if(applicationType === 'TEMPORARY')
+                    {
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.category === category;
+                        });
+
+                    }
+                    else if(applicationType === 'REGULAR')
+                    {
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.occupancycode === occupancycode;
+                        });
+                        
+                    } 
+
+                    
                 }  
             }
             else{
@@ -1513,17 +1541,42 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                      || activityType === 'WS_REACTIVATE'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                 {
-                    if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP')
+                    if(applicationType ==='TEMPORARY' && ( activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP'))
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.category === category)
                         // &&x.occupancycode === occupancycode)
+                    }
+                    else if(applicationType ==='TEMPORARY' && ( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
+                    {
+                        // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        //     && x.occupancycode === occupancycode)
+                        wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
                     }
                     else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR')
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.occupancycode === occupancycode)
                     } 
+                    else if(applicationType ==='REGULAR' &&( activityType ==='NEW_WS_CONNECTION' || activityType ==='REGULARWSCONNECTION'))
+                    {
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                            && x.occupancycode === occupancycode)
+                    } 
+                    else if(applicationType === 'TEMPORARY')
+                    {
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.category === category;
+                        });
+
+                    }
+                    else if(applicationType === 'REGULAR')
+                    {
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.occupancycode === occupancycode;
+                        });
+                        
+                    }
                 }  
             }
             else{

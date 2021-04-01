@@ -779,8 +779,28 @@ ValidateRequest =(payload) =>{
 
     }
   }
+  // remove duplicate document
+
+  let tmp = [];
+    // for(let i = 0; i < payload.documents.length; i++){
+    //     if(tmp.indexOf(payload.documents[i]) == -1){
+    //     tmp.push(payload.documents[i]);
+    //     }
+    // }
+    if(payload.documents !== null)
+    {
+    payload.documents =  this.uniqueBycode(payload.documents, x=>x.documentType);//payload.documents.filter((value,index) => payload.documents.indexOf(value) ===index)
+    }
+    //payload.documents = tmp;
 //return  false
   return isvalidRequest
+}
+
+uniqueBycode =(data,key)=>{
+  return [
+    ... new Map(data.map(x=> [key(x),x])).values()
+  ]
+
 }
   getHeaderName = action => {
     return {
@@ -983,9 +1003,11 @@ ValidateRequest =(payload) =>{
     if(true)
     {
       //WS_TEMP_REGULAR ~businessService
-//       PENDING_FOR_SDE_APPROVAL ~applicationStatus
-// VERIFY_AND_FORWARD_TO_JE action
-// VERIFY_AND_FORWARD_FOR_PAYMENT
+      // PENDING_FOR_SDE_APPROVAL ~applicationStatus
+      // VERIFY_AND_FORWARD_TO_JE action
+      // VERIFY_AND_FORWARD_FOR_PAYMENT
+
+      
     }
     if((businessService=='WS_CONVERSION') && applicationStatus ==='PENDING_FOR_SDC_APPROVAL')
     {

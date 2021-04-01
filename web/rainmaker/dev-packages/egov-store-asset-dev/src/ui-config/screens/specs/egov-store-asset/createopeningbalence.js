@@ -13,7 +13,11 @@ import {
   import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import get from "lodash/get";
-  
+  import {
+    convertDateToEpoch,
+    uniqueBycode  ,
+    epochToYmdDate  
+  } from "../utils";
   const hasButton = getQueryArg(window.location.href, "hasButton");
   let enableButton = true;
   //enableButton = hasButton && hasButton === "false" ? false : true;
@@ -60,7 +64,16 @@ import {
         [],
         mdmsBody
       );
-      dispatch(prepareFinalObject("searchScreenMdmsData", payload.MdmsRes));
+            // filter 
+            let Month = (new Date().getMonth()+1)<10?`0${(new Date().getMonth()+1)}`:(new Date().getMonth()+1);
+            let Day = new Date().getDate()<10?`0${new Date().getDate()}`:new Date().getDate();
+            let CurrentDate = `${new Date().getFullYear()}-${Month}-${Day}`;
+            CurrentDate = convertDateToEpoch(CurrentDate, "dayStart");
+            let CurrentDateYnd =  epochToYmdDate(CurrentDate);
+            let FinancialYear = uniqueBycode(payload.MdmsRes['egf-master'].FinancialYear, x=>x.code)
+            FinancialYear = FinancialYear.filter(x=>x.endingDate >= CurrentDate && x.startingDate<= CurrentDate)
+            payload.MdmsRes['egf-master'].FinancialYear=FinancialYear      
+            dispatch(prepareFinalObject("searchScreenMdmsData", payload.MdmsRes));
     } catch (e) {
       console.log(e);
     }
