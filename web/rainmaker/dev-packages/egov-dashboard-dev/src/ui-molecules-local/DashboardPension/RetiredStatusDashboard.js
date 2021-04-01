@@ -19,7 +19,8 @@ class RetiredStatusDashboard extends React.Component {
         columnData: [],
         // Feature Table
         toggleColumnCheck: false,
-        unchangeColumnData: []
+        unchangeColumnData: [],
+        checkData : []
     }
     }
 
@@ -333,8 +334,90 @@ class RetiredStatusDashboard extends React.Component {
               graphOneLabel : xLabel,
               rowData: rowData,
               columnData: columnData,
-              unchangeColumnData: columnData
+              unchangeColumnData: columnData,
+              checkData : this.props.data
           })
+        }
+
+        componentDidUpdate(){
+            const propData = this.props.data;
+            if(JSON.stringify(propData) !== JSON.stringify(this.state.checkData)){
+                debugger;
+                var fromDt = new Date(1604169000000).getMonth();
+                var toDt = new Date(1616427545717).getMonth();
+        
+                var hardMonths = {0:"JAN", 1:"FEB", 2:"MAR", 3:"APR", 4:"MAY", 5:"JUN", 6:"JUL", 7:"AUG", 8:"SEP", 9:"OCT", 10:"NOV", 11:"DEC"};
+                // var monthArray = Object.keys(hardMonths);
+                // for(var i=0; i<""; i++){
+        
+                // }
+        
+                
+                // ============================= EmployeeToBeRetire =========================
+                var data = propData[0];
+
+                var groupOne = data["employeeTobeRetired"].reduce((r, a) => {
+                    r[new Date(a[4]).getMonth()] = [...r[new Date(a[4]).getMonth()] || [], a];
+                    return r;
+                    }, {});
+                
+                var employeeToBeRetire = [];
+                for(var i=0; i<Object.keys(groupOne).length; i++){
+                    employeeToBeRetire.push(Object.values(groupOne)[i].length);
+                }
+        
+                // ============================= Normal / Death / Pensioner =========================
+        
+                debugger;
+        
+                var allMergeData = [];
+                allMergeData = allMergeData.concat(data["regularPension"]);
+                allMergeData = allMergeData.concat(data["deathofPensioner"]);
+                allMergeData = allMergeData.concat(data["deathofEmplyee"]);
+        
+                var group = allMergeData.reduce((r, a) => {
+                    r[new Date(a[2]).getMonth()] = [...r[new Date(a[2]).getMonth()] || [], a];
+                    return r;
+                    }, {});
+                
+                var mergeData = [];
+                for(var i=0; i<Object.keys(group).length; i++){
+                    mergeData.push(Object.values(group)[i].length);
+                }
+        
+                // ================================ Month X Axis ===================
+                var xLabel =  [];
+                for(var i=0; i<Object.keys(groupOne).length; i++){
+                    xLabel.push(hardMonths[parseInt(Object.keys(groupOne)[i])])
+                }
+        
+                var graphOneData = [employeeToBeRetire, mergeData];
+        
+                // =============================== Table DAta================================
+        
+                debugger;
+        
+                var rowData = data["employeeTobeRetired"];
+                var columnData = [];
+        
+                for(var i=0; i<Object.keys(data["reportHeader"]).length; i++){
+                    var item = {};
+                    item["Header"] = Object.values(data["reportHeader"])[i]["label"];
+                    item["id"] = i;
+                    item["accessor"] = i.toString();
+                    item["show"] = true;
+                    columnData.push(item)
+                }
+        
+                this.setState({
+                    graphOneData : graphOneData,
+                    graphOneLabel : xLabel,
+                    rowData: rowData,
+                    columnData: columnData,
+                    unchangeColumnData: columnData,
+                    checkData : this.props.data
+                })
+            }
         }
     
         render() {

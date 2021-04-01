@@ -2391,20 +2391,20 @@ export const getWorkData = async ( dispatch, data ) => {
   },
   "reportSortBy": data.reportSortBy
   }
-  let response = payloadData.reportSortBy ;
+  var response = payloadData.reportSortBy ;
   try {
     store.dispatch(toggleSpinner());
-    // const DescriptionReport = await httpRequest(
-    //   "post",
-    //   "/prscp-services/v1/event/_get",
-    //   "",
-    //   [],
-    //   payloadData
-    // );
+    const DescriptionReport = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/dashboard/getAllEstimationPreparation",
+      "",
+      [],
+      {}
+    );
 
-    // //debugger;
-    // var response = [ DescriptionReport, payloadData.reportSortBy ];
-    // dispatch(prepareFinalObject("allDashboardSearchData", response));
+    //debugger;
+    response = [ DescriptionReport, payloadData.reportSortBy ];
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // // OK
     dispatch(
@@ -2455,7 +2455,11 @@ export const getWorkflowDropdownData = async (state, dispatch, status) => {
     dispatch(toggleSpinner());
   
     // response = await httpRequest("post", "egov-workflow-v2/egov-wf/businessservice/_search?businessServices=ROADCUTNOC&tenantId=ch.chandigarh", "", [], {services: arraypayload });
-    response = await httpRequest("post", "/egov-workflow-v2/egov-wf/businessservice/_desc?tenantId=ch.chandigarh", "", [], {services: arraypayload });
+    response = await httpRequest("post", 
+    "/egov-workflow-v2/egov-wf/businessservice/_desc?tenantId=ch.chandigarh", 
+    "",
+    [], 
+    {services: arraypayload });
  
     //debugger;
     const HARDDATA = response
@@ -2558,7 +2562,11 @@ export const workflowPreview = async (state, dispatch, status) => {
 	  if (method === "CREATE") {
     dispatch(toggleSpinner());
   
-    response = await httpRequest("post", "egov-workflow-v2/egov-wf/businessservice/_search?businessServices="+getModuleNAme.value+"&tenantId=ch.chandigarh", "", [], {services: arraypayload });
+    response = await httpRequest("post", 
+    "egov-workflow-v2/egov-wf/businessservice/_search?businessServices="+getModuleNAme.value+"&tenantId=ch.chandigarh", 
+    "", 
+    [], 
+    {services: arraypayload });
     // response = await httpRequest("post", "egov-workflow-v2/egov-wf/businessservice/_desc?tenantId=ch.chandigarh", "", [], {services: arraypayload });
     
     //debugger;
