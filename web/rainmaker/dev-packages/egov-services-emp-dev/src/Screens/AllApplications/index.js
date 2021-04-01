@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Tabs, Card, TextField, Icon, Button } from "components";
-
+import { getFileUrlFromAPI } from '../../modules/commonFunction'
 import get from "lodash/get";
 import MenuButton from "egov-ui-framework/ui-molecules/MenuButton";
 import FloatingActionButton from "material-ui/FloatingActionButton";
@@ -35,6 +35,7 @@ class AllRequests extends Component {
     applicationStatus: '',
     complaints: [],
     search: false,
+    proofOfResDocName: '',
     value: 0,
     sortPopOpen: false,
     errorText: "",
@@ -112,12 +113,18 @@ class AllRequests extends Component {
     });
   }; 
   gotoPArkAndCommunityTanker = () => {
-    let {PreviousBookingData ,oldBookingData,prepareFinalObject,clearAvailable} = this.props
+    let {PreviousBookingData ,oldBookingData,prepareFinalObject,clearAvailable,discountOldDoc,previousResidenceProof} = this.props
     let ApplicationData = this.props.bookings;
     let CheckData = this.props.bookings ? (this.props.bookings.applicationData ?(this.props.bookings.applicationData.bookingsModelList.length > 0 ? (this.props.bookings.applicationData.bookingsModelList): 'NA'): 'NA'): "NA"
 //screenConfiguration.preparedFinalObject.PreviousBookingData    
     if(PreviousBookingData !== "NotFound"){
       prepareFinalObject("PreviousBookingData",null)
+    }
+    if(discountOldDoc !== "NotFound"){
+      prepareFinalObject("discountDocumentsUploadRedux",null)
+    }
+    if(previousResidenceProof !== "NotFound"){
+      prepareFinalObject("documentsUploadRedux",null)
     }
     //screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
     if(oldBookingData !== "NotFound"){
@@ -200,6 +207,19 @@ let bkLocation = dataforSectorAndCategory && dataforSectorAndCategory.bookingsMo
 		let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'	
 		let bookingRent = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkRent : 'NA'
 
+    let allDocumentList = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.documentList : [];
+
+    let proofOfResDocs
+		if(allDocumentList && allDocumentList.length > 0){
+			 proofOfResDocs = allDocumentList.filter( (item) => {
+				return item.documentType != "BK_PCC_DISCOUNT_DOCUMENT";
+			})
+			this.setState({proofOfResDocName: proofOfResDocs[0].fileName,
+				proofOfResDocumentType: proofOfResDocs[0].documentType,
+				allDocumentList: allDocumentList
+			})
+		}
+    console.log("nero proofOfResDocs", proofOfResDocs, "----", allDocumentList)
 		console.log("AppNo--", AppNo)
 		if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
 			let timeSlot = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot
@@ -246,6 +266,58 @@ let bkLocation = dataforSectorAndCategory && dataforSectorAndCategory.bookingsMo
 
 
 		}
+
+    allDocumentList.map(async (doc) => {
+			console.log("Doccc---", doc);
+			// doc.docmentType
+			// doc.fileName
+			// doc.fileStoreId
+			let fileLink = await getFileUrlFromAPI(doc.fileStoreId, "ch");
+			console.log("filelink--", fileLink);
+			if (doc.documentType === "BK_PCC_DISCOUNT_DOCUMENT") {
+			  console.log("DIscountDoc==", doc);
+			  let dicscountDoc = [
+				{
+				  documentCode: doc.documentType,
+				  documentType: "DOC",
+				  documents: [
+					{
+					  fileName: doc.fileName,
+					  fileStoreId: doc.fileStoreId,
+					  fileUrl: fileLink[doc.fileStoreId],
+					  mendatoryDoc: true,
+					},
+				  ],
+				  isDocumentRequired: true,
+				  isDocumentTypeRequired: true,
+				  mydocstate: true,
+				},
+			  ];
+			 this.props.prepareFinalObject("discountDocumentsUploadRedux", dicscountDoc);
+			  return;
+			} else {
+			  console.log("DocFIle==", doc);
+			  let Doc = [
+				{
+				  documentCode: doc.documentType,
+				  documentType: "DOC",
+				  documents: [
+					{
+					  fileName: doc.fileName,
+					  fileStoreId: doc.fileStoreId,
+					  fileUrl: fileLink[doc.fileStoreId],
+					  mendatoryDoc: true,
+					},
+				  ],
+				  isDocumentRequired: true,
+				  isDocumentTypeRequired: true,
+				  mydocstate: true,
+				},
+			  ];
+			 this.props.prepareFinalObject("documentsUploadRedux", Doc);
+			  return;
+			}
+		  });
 
     this.props.prepareFinalObject("oldAvailabilityCheckData.BookingRent", bookingRent);
 
@@ -733,143 +805,7 @@ console.log("twoRole--",twoRole)
     const foundfourthLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_E-SAMPARK-CENTER');
     const foundfifthLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_MCC_USER');
 
-    return role === "ao" ? (
-      <div>
-        <div
-          className="sort-button rainmaker-displayInline"
-          style={{ padding: "20px 20px 0px 0px", justifyContent: "flex-end" }}
-        >
-          <div
-            className="rainmaker-displayInline"
-            style={{ cursor: "pointer", marginRight: "20px" }}
-            onClick={onSortClick}
-          >
-            <Label
-              label="ES_SORT_BUTTON"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-              containerStyle={{ marginRight: 5 }}
-              labelStyle={{ fontWeight: 500 }}
-            />
-            <Icon
-              style={style.iconStyle}
-              action="action"
-              name="swap-vert"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-            />
-          </div>
-          <div
-            className="rainmaker-displayInline"
-            style={{ cursor: "pointer" }}
-            onClick={() => history.push("search-complaint")}
-          >
-            <Label
-              label="ES_SEARCH_BUTTON"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-              containerStyle={{ marginRight: 5 }}
-              labelStyle={{ fontWeight: 500 }}
-            />
-            <Icon
-              style={style.iconStyle}
-              action="action"
-              name="search"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-            />
-          </div>
-          <SortDialog
-            sortPopOpen={sortPopOpen}
-            closeSortDialog={closeSortDialog}
-          />
-        </div>
-        <Tabs
-          className="employee-complaints-tab"
-          onChange={this.onChange}
-          tabs={[
-            {
-              label: (
-                <div className="inline-Localization-text">
-                  <Label
-                    //labelClassName = "unassigned-label-text"
-                    labelClassName={
-                      this.state.value === 0
-                        ? "selected-tab-label-text"
-                        : "unselected-tab-label-text"
-                    }
-                    //color={this.state.value === 0 ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.7)"}
-                    bold={true}
-                    label={`ES_ALL_COMPLAINTS_UNASSIGNED_TAB_LABEL2`}
-                    labelStyle={tabStyle}
-                  />
-
-                </div>
-              ),
-              children: (
-                <Screen className="gro-screen" loading={loading}>
-                  <div className="tab1-content form-without-button-cont-generic">
-                    <CountDetails
-                      count={unassignedComplaints.length}
-                      total={unassignedTotalComplaints}
-                      status="unassigned"
-                    />
-                    <CustomComplaints
-                      noComplaintMessage={
-                        "ES_MYCOMPLAINTS_NO_COMPLAINTS_TO_ASSIGN1"
-                      }
-                      onComplaintClick={onComplaintClick}
-                      complaints={unassignedComplaints}
-                      complaintLocation={true}
-                      role={role}
-                      heightOffset="116px"
-                    />
-                  </div>
-                </Screen>
-              )
-            },
-            {
-              label: (
-                <div className="inline-Localization-text">
-                  <Label
-                    // labelClassName="assigned-label-text"
-                    labelClassName={
-                      this.state.value === 1
-                        ? "selected-tab-label-text"
-                        : "unselected-tab-label-text"
-                    }
-                    //color={this.state.value === 1 ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.7)"}
-                    bold={true}
-                    label={`ES_ALL_COMPLAINTS_ASSIGNED_TAB_LABEL`}
-                    labelStyle={tabStyle}
-                  />
-
-                </div>
-              ),
-              children: (
-                <Screen className="gro-screen" loading={loading}>
-                  <div className="tab2-content form-without-button-cont-generic">
-                    <CountDetails
-                      count={assignedComplaints.length}
-                      total={assignedTotalComplaints}
-                      status="assigned"
-                    />
-                    <CustomComplaints
-                      noComplaintMessage={
-                        "ES_MYCOMPLAINTS_NO_ASSIGNED_COMPLAINTS"
-                      }
-                      onComplaintClick={onComplaintClick}
-                      complaints={assignedComplaints}
-                      complaintLocation={true}
-                      role={role}
-                      heightOffset="116px"
-                    />
-                  </div>
-                </Screen>
-              )
-            }
-          ]}
-        />
-      </div>
-    ) : role === "employee" ? (
-     
-      <Screen loading={loading}>
+    return role === "employee" ? ( <Screen loading={loading}>
          <style>
       {`
   @media screen and (min-width: 320px) and (max-width: 568px) {
@@ -1387,17 +1323,34 @@ let oldBookingData  = get(
 );
 console.log("oldBookingData-",oldBookingData)
 
-  console.log()
-  const role =
-    roleFromUserInfo(userInfo.roles, "GRO") ||
-      roleFromUserInfo(userInfo.roles, "DGRO")
-      ? "ao"
-      : roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-        roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-        ? "eo"
-        : roleFromUserInfo(userInfo.roles, "CSR")
-          ? "csr"
-          : "employee";
+
+let discountOldDoc  = get(
+  state,
+  "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux",
+  "NotFound"
+);
+console.log("discountOldDoc-",discountOldDoc)
+
+let previousResidenceProof  = get(
+  state,
+  "screenConfiguration.preparedFinalObject.documentsUploadRedux",
+  "NotFound"
+);
+console.log("previousResidenceProof-",previousResidenceProof)
+
+  
+  // const role =
+  //   roleFromUserInfo(userInfo.roles, "GRO") ||
+  //     roleFromUserInfo(userInfo.roles, "DGRO")
+  //     ? "ao"
+  //     : roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
+  //       roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
+  //       ? "eo"
+  //       : roleFromUserInfo(userInfo.roles, "CSR")
+  //         ? "csr"
+  //         : "employee";
+
+  const role = "employee";
   let assignedComplaints = [],
     unassignedComplaints = [],
     employeeComplaints = [],
@@ -1422,7 +1375,7 @@ console.log("oldBookingData-",oldBookingData)
     loading,
     transformedComplaints,
     roles,
-    bookings,userInfo
+    bookings,userInfo,discountOldDoc,previousResidenceProof
   };
 };
 
