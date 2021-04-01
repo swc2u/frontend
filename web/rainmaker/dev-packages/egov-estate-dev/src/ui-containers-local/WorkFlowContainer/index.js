@@ -273,6 +273,11 @@ class WorkFlowContainer extends React.Component {
       let bidders = data.propertyDetails.bidders;
       bidders = bidders.map(item => ({ ...item, action: label }))
       set(data, "propertyDetails.bidders", bidders)
+    }  else if(this.props.moduleName === WF_ALLOTMENT_OF_SITE) {
+      let bidders = data.propertyDetails.bidders;
+      bidders = bidders.map(item => ({ ...item, action: "" }))
+      set(data, "propertyDetails.bidders", bidders)
+      set(data, `${appendToPath}action`, label);
     }
     else {
       set(data, `${appendToPath}action`, label);
