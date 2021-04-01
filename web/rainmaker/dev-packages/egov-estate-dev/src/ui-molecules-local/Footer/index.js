@@ -23,8 +23,9 @@ class Footer extends React.Component {
     //responseLength: 0
   };
 
-  findAssigner = (item, processInstances,state) => {
-    const findIndex = processInstances.map(processInstance => processInstance.action === item&& processInstance.state.applicationStatus === state).lastIndexOf(true)
+  findAssigner = (item, processInstances,state,role) => {
+    const label = !!role ? `${item}_TO_${role}` : item
+    const findIndex = processInstances.map(processInstance => processInstance.action === label&& processInstance.state.applicationStatus === state).lastIndexOf(true)
     return processInstances[findIndex]
   }
   openActionDialog = async item => {
@@ -57,14 +58,14 @@ class Footer extends React.Component {
     switch(moduleName) {
       case WF_ALLOTMENT_OF_SITE: {
         if(!!action && data[0].masterDataState !== "PM_PENDING_DA_VERIFICATION") {
-          const {assigner = {}} = this.findAssigner(action, ProcessInstances,data[0].masterDataState) || {}
+          const {assigner = {}} = this.findAssigner(action, ProcessInstances,data[0].masterDataState,item.role) || {}
           assignee = !!assigner.uuid ? [assigner.uuid] : []
         }
         break
       }
       default: {
         if(!!action && data[0].state !== "ES_PENDING_DS_VERIFICATION"){
-          const {assigner = {}} = this.findAssigner(action, ProcessInstances,data[0].state) || {}
+          const {assigner = {}} = this.findAssigner(action, ProcessInstances,data[0].state,item.role) || {}
           assignee = !!assigner.uuid ? [assigner.uuid] : []
         }
       }
