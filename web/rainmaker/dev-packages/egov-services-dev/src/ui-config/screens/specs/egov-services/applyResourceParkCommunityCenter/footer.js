@@ -119,149 +119,112 @@ const callBackForNext = async (state, dispatch) => {
         // prepareDocumentsUploadData(state, dispatch);
         let tenantId = getTenantId().split(".")[0];
         let paymentStatus = get(state, "screenConfiguration.preparedFinalObject.Booking.bkPaymentStatus", "");
-        /* let appStatus = get(state, "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus", "");
-         if ((paymentStatus === "SUCCESS" || paymentStatus === "succes") && appStatus == "APPLIED") {
-             let businessService = get(state, "screenConfiguration.preparedFinalObject.Booking.businessService", "");
-             let applicationNumber = get(state, "screenConfiguration.preparedFinalObject.Booking.bkApplicationNumber", "");
-             const reviewUrl = `/egov-services/applyparkcommunitycenter?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
-                 dispatch(setRoute(reviewUrl));
+       /* let appStatus = get(state, "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus", "");
+        if ((paymentStatus === "SUCCESS" || paymentStatus === "succes") && appStatus == "APPLIED") {
+            let businessService = get(state, "screenConfiguration.preparedFinalObject.Booking.businessService", "");
+            let applicationNumber = get(state, "screenConfiguration.preparedFinalObject.Booking.bkApplicationNumber", "");
+            const reviewUrl = `/egov-services/applyparkcommunitycenter?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
+                dispatch(setRoute(reviewUrl));
+                set(
+                    state.screenConfiguration.screenConfig["applyparkcommunitycenter"],
+                    "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+                    true
+                );
+                await updateBillDemand(
+                    state,
+                    dispatch,
+                    applicationNumber,
+                    tenantId,
+                    businessService
+                );
+                await generateBill(
+                    state,
+                    dispatch,
+                    applicationNumber,
+                    tenantId,
+                    businessService
+                );
+                // GET DOCUMENT DATA FOR DOWNLOAD
+                const uploadedDocData = get(
+                    state.screenConfiguration.preparedFinalObject,
+                    "documentsUploadRedux[0].documents",
+                    []
+                );
+                const documentsPreview =
+                    uploadedDocData &&
+                    uploadedDocData.map((item) => {
+                        return {
+                            title: "BK_PCC_DOCUMENT",
+                            link: item.fileUrl && item.fileUrl.split(",")[0],
+                            linkText: "View",
+                            name: item.fileName,
+                            fileStoreId: item.fileStoreId,
+                        };
+                    });
+                dispatch(prepareFinalObject("documentsPreview", documentsPreview));
+        }else { */
 
-                 set(
-                     state.screenConfiguration.screenConfig["applyparkcommunitycenter"],
-                     "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
-                     true
-                 );
-
-
-                 await updateBillDemand(
-                     state,
-                     dispatch,
-                     applicationNumber,
-                     tenantId,
-                     businessService
-                 );
-
-                 await generateBill(
-                     state,
-                     dispatch,
-                     applicationNumber,
-                     tenantId,
-                     businessService
-                 );
-
-                 // GET DOCUMENT DATA FOR DOWNLOAD
-                 const uploadedDocData = get(
-                     state.screenConfiguration.preparedFinalObject,
-                     "documentsUploadRedux[0].documents",
-                     []
-                 );
-                 const documentsPreview =
-                     uploadedDocData &&
-                     uploadedDocData.map((item) => {
-                         return {
-                             title: "BK_PCC_DOCUMENT",
-                             link: item.fileUrl && item.fileUrl.split(",")[0],
-                             linkText: "View",
-                             name: item.fileName,
-                             fileStoreId: item.fileStoreId,
-                         };
-                     });
-
-                 dispatch(prepareFinalObject("documentsPreview", documentsPreview));
-
-         }else { */
-
-        let response = {}
-        let bookType = ""
-        let responseStatus = {}
-        let applicationNumber = ""
-        let action = "INITIATE";
-
-        let appStatus = get(state, "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus", "");
-        if (appStatus == "APPLIED" || appStatus == "RE_INITIATED") {
-            action = "RE_INITIATE";
-        }
-        console.log(appStatus, "Nero appStatus");
-
-
-        if (appStatus !== "INITIATED") {
+            let action = "INITIATE";
+            let appStatus = get(state, "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus", "");
+            if(appStatus == "APPLIED" || appStatus == "RE_INITIATED"){
+                action = "RE_INITIATE";
+            }
+            console.log(appStatus, "Nero appStatus");
             let response = await createUpdatePCCApplication(
                 state,
                 dispatch,
                 action
-                // paymentStatus === "SUCCESS" || paymentStatus === "succes" ? "RE_INITIATE" : "INITIATE"
+               // paymentStatus === "SUCCESS" || paymentStatus === "succes" ? "RE_INITIATE" : "INITIATE"
 
             );
             let responseStatus = get(response, "status", "");
             if (responseStatus == "SUCCESS" || responseStatus == "success") {
-                applicationNumber = get(
+                let applicationNumber = get(
                     response,
                     "data.bkApplicationNumber",
                     ""
                 );
-                bookType = get(
+                let bookType = get(
                     response,
                     "data.bkBookingType",
                     ""
                 );
-            }
-        }
-        else {
 
-            applicationNumber = get(
-                state.screenConfiguration.preparedFinalObject,
-                "Booking.bkApplicationNumber",
-                []
-            );
-        }
-        console.log(response, "myResponse");
-        responseStatus = get(response, "status", "");
-        if (responseStatus == "SUCCESS" || responseStatus == "success" || applicationNumber) {
+                let businessService=""
+                if(bookType==="Community Center"){
+                    businessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
+                }else{
+                    businessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
+                }
 
-            let businessService = ""
-            if (bookType === "Community Center") {
-                businessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
-            } else {
-                businessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
-            }
+                 const reviewUrl = `/egov-services/applyparkcommunitycenter?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
+                dispatch(setRoute(reviewUrl));
 
-            const reviewUrl = `/egov-services/applyparkcommunitycenter?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
-            dispatch(setRoute(reviewUrl));
+                set(
+                    state.screenConfiguration.screenConfig["applyparkcommunitycenter"],
+                    "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+                    true
+                );
 
-            set(
-                state.screenConfiguration.screenConfig["applyparkcommunitycenter"],
-                "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
-                true
-            );
+                await generateBill(
+                    state,
+                    dispatch,
+                    applicationNumber,
+                    tenantId,
+                    businessService
+                );
 
-            await generateBill(
-                state,
-                dispatch,
-                applicationNumber,
-                tenantId,
-                businessService
-            );
-
-            // GET DOCUMENT DATA FOR DOWNLOAD
-            const uploadedDocData = get(
-                state.screenConfiguration.preparedFinalObject,
-                "documentsUploadRedux[0].documents",
-                []
-            );
-            const documentType = get(
-                state.screenConfiguration.preparedFinalObject,
-                "documentsUploadRedux[0].dropdown.value",
-                []
-            );
-
-            const changeDateVenue = get(
-                state.screenConfiguration.preparedFinalObject,
-                "changeDateVenue",
-                ''
-            );
-
-            if (changeDateVenue != "Enabled") {
-
+                // GET DOCUMENT DATA FOR DOWNLOAD
+                const uploadedDocData = get(
+                    state.screenConfiguration.preparedFinalObject,
+                    "documentsUploadRedux[0].documents",
+                    []
+                );
+                const documentType = get(
+                    state.screenConfiguration.preparedFinalObject,
+                    "documentsUploadRedux[0].dropdown.value",
+                    []
+                );
                 const documentsPreview =
                     uploadedDocData &&
                     uploadedDocData.map((item) => {
@@ -276,16 +239,15 @@ const callBackForNext = async (state, dispatch) => {
                     });
 
                 dispatch(prepareFinalObject("documentsPreview", documentsPreview));
-            }
 
-        } else {
-            let errorMessage = {
-                labelName: "Submission Falied, Try Again later!",
-                labelKey: "", //UPLOAD_FILE_TOAST
-            };
-            dispatch(toggleSnackbar(true, errorMessage, "error"));
-        }
-        // }
+            } else {
+                let errorMessage = {
+                    labelName: "Submission Falied, Try Again later!",
+                    labelKey: "", //UPLOAD_FILE_TOAST
+                };
+                dispatch(toggleSnackbar(true, errorMessage, "error"));
+            }
+       // }
     }
     if (activeStep === 4) {
         // prepareDocumentsUploadData(state, dispatch);

@@ -98,7 +98,12 @@ class ApplicationDetails extends Component {
 			createdDate: '',
 			stateCode :"" ,
 			placeOfService : "",
-			 mcGSTN : ""
+			 mcGSTN : "",
+			 isDiscount:false,
+			 proofOfResDocumentType: '',
+			 proofOfResDocName: '',
+			 discountDocName: '',
+			 allDocumentList: []
 		};
 	};
 
@@ -137,7 +142,7 @@ class ApplicationDetails extends Component {
 		console.log("funtenantId--", funtenantId)
 
 
- 
+
 		let mdmsBody = {
 			MdmsCriteria: {
 				tenantId: funtenantId,
@@ -168,7 +173,7 @@ class ApplicationDetails extends Component {
 			MdmsCriteria: {
 				tenantId: userInfo.tenantId,
 				moduleDetails: [
-	
+
 					{
 						moduleName: "Booking",
 						masterDetails: [
@@ -177,11 +182,11 @@ class ApplicationDetails extends Component {
 							}
 						],
 					},
-	
+
 				],
 			},
-		}; 
-	
+		};
+
 		let payloadResTwo = null;
 		payloadResTwo = await httpRequest(
 			"egov-mdms-service/v1/_search",
@@ -190,7 +195,7 @@ class ApplicationDetails extends Component {
 		);
 		console.log(payloadResTwo, "MCGSTnumberDetail");
 
-	let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS	
+	let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS
 	console.log("pdfDetails-",pdfDetails)   //stateCode  placeOfService  mcGSTN
 
 this.setState({
@@ -201,7 +206,7 @@ this.setState({
 
 
 let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING
-    
+
 let operatorCode;
 let Address;
 let hsnCode;
@@ -217,7 +222,7 @@ for(let i = 0; i < samparkDetail.length; i++){
 }
 this.setState({
   operatorCode:operatorCode,
-  Address:Address,  
+  Address:Address,
   hsnCode:hsnCode,
   name:name
 })
@@ -246,10 +251,27 @@ this.setState({
 		let bkBookingType = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingType : 'NA'
 		let Sector = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkSector : 'NA'
 		let bkBookingVenue = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue : 'NA'
-		let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'	
+		// let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'	
 		let bookingRent = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkRent : 'NA'
-
 		console.log("AppNo--", AppNo)
+		let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'
+		let isDiscount = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkPlotSketch : "Genral";
+		let allDocumentList = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.documentList : [];
+		//General
+ 		if(isDiscount != "General"){
+			this.setState({isDiscount: true});
+		}
+		let proofOfResDocs
+		if(allDocumentList && allDocumentList.length > 0){
+			 proofOfResDocs = allDocumentList.filter( (item) => {
+				return item.documentType != "BK_PCC_DISCOUNT_DOCUMENT";
+			})
+			this.setState({proofOfResDocName: proofOfResDocs[0].fileName,
+				proofOfResDocumentType: proofOfResDocs[0].documentType,
+				allDocumentList: allDocumentList
+			})
+		}
+		console.log("nero proofOfResDocs", proofOfResDocs, "----", allDocumentList)
 		if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
 			let timeSlot = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot
 			console.log("timeSlot--", timeSlot)
@@ -327,6 +349,58 @@ this.setState({
 		prepareFinalObject("PreviousBookingData.bkBookingVenue", bkLocation);
 
 		prepareFinalObject("PreviousBookingData.ApplicationStatus", AppStatus);
+
+		allDocumentList.map(async (doc) => {
+			console.log("Doccc---", doc);
+			// doc.docmentType
+			// doc.fileName
+			// doc.fileStoreId
+			let fileLink = await getFileUrlFromAPI(doc.fileStoreId, "ch");
+			console.log("filelink--", fileLink);
+			if (doc.documentType === "BK_PCC_DISCOUNT_DOCUMENT") {
+			  console.log("DIscountDoc==", doc);
+			  let dicscountDoc = [
+				{
+				  documentCode: doc.documentType,
+				  documentType: "DOC",
+				  documents: [
+					{
+					  fileName: doc.fileName,
+					  fileStoreId: doc.fileStoreId,
+					  fileUrl: fileLink[doc.fileStoreId],
+					  mendatoryDoc: true,
+					},
+				  ],
+				  isDocumentRequired: true,
+				  isDocumentTypeRequired: true,
+				  mydocstate: true,
+				},
+			  ];
+			  prepareFinalObject("discountDocumentsUploadRedux", dicscountDoc);
+			  return;
+			} else {
+			  console.log("DocFIle==", doc);
+			  let Doc = [
+				{
+				  documentCode: doc.documentType,
+				  documentType: "DOC",
+				  documents: [
+					{
+					  fileName: doc.fileName,
+					  fileStoreId: doc.fileStoreId,
+					  fileUrl: fileLink[doc.fileStoreId],
+					  mendatoryDoc: true,
+					},
+				  ],
+				  isDocumentRequired: true,
+				  isDocumentTypeRequired: true,
+				  mydocstate: true,
+				},
+			  ];
+			  prepareFinalObject("documentsUploadRedux", Doc);
+			  return;
+			}
+		  });
 
 		let reqParams = [
 			{ key: "consumerCode", value: match.params.applicationId },
@@ -747,12 +821,12 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 		console.log("Come in redirectToAvailPage")
 		return (
 		<div>
-		<h5 style={{marginBottom: "4%"}}>By changing date/venue, the booked rooms will be cancelled</h5>	
+		<h5 style={{marginBottom: "4%"}}>By changing date/venue, the booked rooms will be cancelled</h5>
 		{/* <Button
             className="responsive-action-button"
             label={<Label
 				buttonLabel={true}
-				label="CONFIRM AND GO" 
+				label="CONFIRM AND GO"
 			/>}
             // fullWidth={true}
             primary={true}
@@ -760,12 +834,12 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 			style={{ width: "15%" }}
             onClick={() => this.continue()
             } /> */}
- 
+
 		<Button
 		label={
 			<Label
 				buttonLabel={true}
-				label="CONFIRM AND GO" 
+				label="CONFIRM AND GO"
 			/>
 		}
 		primary={true}
@@ -777,7 +851,7 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 		// buttonStyle={{ border: "1px solid #fe7a51" }}
 		style={{ width: "28%" }}
 		onClick={() => this.continue()}
-		
+
 	/>
 	</div>
 	)}
@@ -1458,16 +1532,21 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 
 	callApiForDocumentData = async (e) => {
 		const { documentMap, userInfo } = this.props;
+		let allDocumentList = this.state && this.state.allDocumentList;
+		let proofOfResDocs;
+		if(allDocumentList && allDocumentList.length > 0){
+			proofOfResDocs = allDocumentList.filter( (item) => {
+			   return item.documentType != "BK_PCC_DISCOUNT_DOCUMENT";
+		   })
+
+	   }
 		var documentsPreview = [];
-		if (documentMap && Object.keys(documentMap).length > 0) {
-			let keys = Object.keys(documentMap);
-			let values = Object.values(documentMap);
-			let id = keys[0],
-				fileName = values[0];
+		if (proofOfResDocs && proofOfResDocs.length > 0) {
+
 
 			documentsPreview.push({
 				title: "DOC_DOC_PICTURE",
-				fileStoreId: id,
+				fileStoreId: proofOfResDocs && proofOfResDocs[0].fileStoreId,
 				linkText: "View",
 			});
 			let changetenantId = userInfo.tenantId ? userInfo.tenantId.split(".")[0] : "ch";
@@ -1505,6 +1584,55 @@ console.log(bookingAmount, bookingNosString, "Nero Booking Amount")
 
 
 	}
+	// callApiForDocumentData = async (e) => {
+	// 	const { documentMap, userInfo } = this.props;
+	// 	var documentsPreview = [];
+	// 	if (documentMap && Object.keys(documentMap).length > 0) {
+	// 		let keys = Object.keys(documentMap);
+	// 		let values = Object.values(documentMap);
+	// 		let id = keys[0],
+	// 			fileName = values[0];
+
+	// 		documentsPreview.push({
+	// 			title: "DOC_DOC_PICTURE",
+	// 			fileStoreId: id,
+	// 			linkText: "View",
+	// 		});
+	// 		let changetenantId = userInfo.tenantId ? userInfo.tenantId.split(".")[0] : "ch";
+	// 		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+	// 		let fileUrls =
+	// 			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds, changetenantId) : {};
+
+
+	// 		documentsPreview = documentsPreview.map(function (doc, index) {
+	// 			doc["link"] =
+	// 				(fileUrls &&
+	// 					fileUrls[doc.fileStoreId] &&
+	// 					fileUrls[doc.fileStoreId].split(",")[0]) ||
+	// 				"";
+
+	// 			doc["name"] =
+	// 				(fileUrls[doc.fileStoreId] &&
+	// 					decodeURIComponent(
+	// 						fileUrls[doc.fileStoreId]
+	// 							.split(",")[0]
+	// 							.split("?")[0]
+	// 							.split("/")
+	// 							.pop()
+	// 							.slice(13)
+	// 					)) ||
+	// 				`Document - ${index + 1}`;
+	// 			return doc;
+	// 		});
+	// 		setTimeout(() => {
+	// 			window.open(documentsPreview[0].link);
+	// 		}, 100);
+	// 		prepareFinalObject('documentsPreview', documentsPreview)
+	// 	}
+
+
+
+	// }
 
 	GOTOPAY = (selectedNumber) => {
 		this.props.history.push(`/egov-services/PaymentReceiptDteail/${selectedNumber}`);
@@ -1558,7 +1686,7 @@ console.log("InContinue Function")
 	   })
    }
    else{
-   this.continue()	
+   this.continue()
    }
    }
 
@@ -1766,7 +1894,7 @@ console.log("InContinue Function")
 		} = this.props;
 let checkuploadeDocType = "NotFound"
 let valueForDocDropDown;
- 
+
 checkuploadeDocType = uploadeDocType !== undefined && uploadeDocType !== null ? (uploadeDocType.length > 0 ? (uploadeDocType[0].documentType !== undefined && uploadeDocType[0].documentType !== null ? uploadeDocType[0].documentType :"NotFound") :"NotFound"):"NotFound"
 
 if(checkuploadeDocType !== "NotFound"){
@@ -2033,14 +2161,15 @@ totalAmountPaid = {totalAmountPaid}
 									boxShadow: "0 0 2px 2px #e7dcdc", paddingLeft: "30px", paddingTop: "10px"
 								}}><b>Documents</b><br></br>
 
-                         {checkuploadeDocType !== "NotFound" ? <Label                                    
+                         {checkuploadeDocType !== "NotFound" ? <Label
                            className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
-                                    labelStyle={{ color: "inherit" ,marginLeft:"-1%"}}
-                                    label={`Proof of Residence ${valueForDocDropDown}`}
-                                /> :""}       
+                                    labelStyle={{ color: "inherit" }}
+                                    label={`BK_PCC_DOCUMENT - ${this.state && this.state.proofOfResDocName}`}
+                                /> :""}
 
-									{documentMap && Object.values(documentMap) ? Object.values(documentMap) : "Not found"}
+									{/* {documentMap && Object.values(documentMap) ? Object.values(documentMap) : "Not found"} */}
+									{this.state && this.state.proofOfResDocumentType ? this.state.proofOfResDocumentType : "Not found"}
 									<button className="ViewDetailButton" data-doc={documentMap} onClick={(e) => { this.callApiForDocumentData(e) }}>VIEW</button>
 								</div>
 
@@ -2456,14 +2585,14 @@ totalAmountPaid = {totalAmountPaid}
 
                                    <DialogContainer
 									toggle={this.state.dateVenchangePop}  //open
-									actionTittle={"Date/Venue change Terms & Conditions"}   //data 
-									togglepopup={this.testpopup}  //close 
+									actionTittle={"Date/Venue change Terms & Conditions"}   //data
+									togglepopup={this.testpopup}  //close
 									children={this.redirectToAvailPage()}
 									maxWidth={'sm'}
 								/>
 
 
-								
+
 								<DialogContainer
 									toggle={this.state.togglepopup}
 									actionTittle={this.state.actionTittle}
@@ -2628,10 +2757,10 @@ const mapStateToProps = (state, ownProps) => {
 	let businessService = applicationData ? applicationData.businessService : "";
 	let bookingDocs;
 	let documentMap = applicationData && applicationData.documentMap ? applicationData.documentMap : '';
-	
 
-	
-	let uploadeDocType = get(  
+
+
+	let uploadeDocType = get(
 		state,
 		"bookings.applicationData.documentList",
 		"NotFound"
