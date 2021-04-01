@@ -426,6 +426,7 @@ export const downloadAcknowledgementForm = (Owners, feeEstimate, status, pdfkey,
 
 export const downloadAcknowledgementFormForCitizen = (Owners, feeEstimate, type, pdfkey, mode = "download") => {
   let queryStr = []
+  let transactionNumber
   switch (type) {
     case 'PERMISSIONTOMORTGAGE':
       queryStr = [{
@@ -473,20 +474,32 @@ export const downloadAcknowledgementFormForCitizen = (Owners, feeEstimate, type,
 
   switch (type) {
     case 'OWNERSHIPTRANSFERRP':
-      ownerInfo = {
-        ...ownerInfo,
-        ownerDetails: {
-          ...Owners[0].ownerDetails,
-          ownershipTransferDocuments: myDocuments
+        transactionNumber = ownerInfo.property.transitNumber.split('-')[1] ? ownerInfo.property.transitNumber.split('-')[1] :
+        ownerInfo.property.transitNumber.split('-')[0]
+        ownerInfo = {
+          ...ownerInfo,
+          property:{
+            ...ownerInfo.property,
+            transitNumber:transactionNumber
+          },
+          ownerDetails: {
+            ...Owners[0].ownerDetails,
+            ownershipTransferDocuments: myDocuments
+          }
         }
-      }
       break;
     case 'DUPLICATECOPYOFALLOTMENTLETTERRP':
     case 'PERMISSIONTOMORTGAGE':
-      ownerInfo = {
-        ...ownerInfo,
-        applicationDocuments: myDocuments
-      }
+        transactionNumber = ownerInfo.property.transitNumber.split('-')[1] ? ownerInfo.property.transitNumber.split('-')[1] :
+        ownerInfo.property.transitNumber.split('-')[0]
+        ownerInfo = {
+          ...ownerInfo,
+          property:{
+            ...ownerInfo.property,
+            transitNumber:transactionNumber
+          },
+          applicationDocuments: myDocuments
+        }
       break;
     default:
       break;
