@@ -2394,13 +2394,15 @@ export const getWorkData = async ( dispatch, data ) => {
   var response = payloadData.reportSortBy ;
   try {
     store.dispatch(toggleSpinner());
-    const DescriptionReport = await httpRequest(
-      "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/dashboard/getAllEstimationPreparation",
-      "",
-      [],
-      {}
-    );
+    //const DescriptionReport = await httpRequest(
+      //"get",
+      //"https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/dashboard/getAllEstimationPreparation",
+      //"",
+      //[],
+      //{}
+    //);
+	
+	const DescriptionReport = [];
 
     //debugger;
     response = [ DescriptionReport, payloadData.reportSortBy ];
