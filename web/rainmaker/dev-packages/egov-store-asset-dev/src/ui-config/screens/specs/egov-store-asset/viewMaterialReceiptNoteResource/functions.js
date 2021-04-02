@@ -425,8 +425,24 @@ let TotalQty = 0;
       
         if(empDetails){
           empDetails_ = empDetails.filter(x=>x.name === response[0].inspectedBy )
+          if( empDetails_ && empDetails_[0])
+          {
+            if(empDetails_.length>0)
+            {
+              set(response[0], `inspectedByName`, empDetails_[0].code);
+            }
+            else
+            {
+              set(response[0], `inspectedByName`, response[0].inspectedBy);
+            }            
+          }
+          else{
+            set(response[0], `inspectedByName`, response[0].inspectedBy);
+            
+          }
         }
-        set(response[0], `inspectedByName`, empDetails_[0].code);
+
+        
         
       }
     }
