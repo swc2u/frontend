@@ -323,7 +323,7 @@ export const header = getCommonContainer({
     dispatch(
       prepareFinalObject(
         "transferInwards[0].inspectedBy",
-        "Ramesh",
+        "",
       )
     );
 

@@ -155,9 +155,10 @@ printMenu = [receiptPrintObject];
        set(purchaseOrders[0], `purchaseOrderDetails[${index}].balenceQty`,balenceQty);
       
        totalvalue = totalvalue+(unitPrice*userQuantity)
+       let totalvalue_ = unitPrice*userQuantity
        //totalIndentQty = totalIndentQty+ indentQuantity
        TotalQty = TotalQty+ orderQuantity
-       set(purchaseOrders[0], `purchaseOrderDetails[${index}].totalValue`,totalvalue);
+       set(purchaseOrders[0], `purchaseOrderDetails[${index}].totalValue`,totalvalue_);
      } 
      if(purchaseOrders[0].rateType==='Gem')
      set(purchaseOrders[0], `supplier.name`,purchaseOrders[0].supplier.code);

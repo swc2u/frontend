@@ -53,7 +53,7 @@ const getApplicationDisplayCode =(screenName) => {
     }
     break; 
     case "Indent Transfer Outword": labelValue = {
-      labelName: "MRIN Outword No.",
+      labelName: "MRIN Outward No.",
       labelKey: `STORE_APPLICATION_NUMBER_INDENT`,
     }
     break; 

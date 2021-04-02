@@ -365,7 +365,7 @@ export const header = getCommonContainer({
     dispatch(
       prepareFinalObject(
         "materialReceipt[0].inspectedBy",
-        "Ramesh",
+        "",
       )
     );
 
