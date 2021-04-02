@@ -424,140 +424,7 @@ class AllRequests extends Component {
       props: { variant: "outlined", style: { marginLeft: 5, marginRight: 15, backgroundColor: "#FE7A51", color: "#fff", border: "none", height: "60px", width: "250px" } },
       menu: downloadMenu
     }
-    return role === "ao" ? (
-      <div>
-        <div
-          className="sort-button rainmaker-displayInline"
-          style={{ padding: "20px 20px 0px 0px", justifyContent: "flex-end" }}
-        >
-          <div
-            className="rainmaker-displayInline"
-            style={{ cursor: "pointer", marginRight: "20px" }}
-            onClick={onSortClick}
-          >
-            <Label
-              label="ES_SORT_BUTTON"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-              containerStyle={{ marginRight: 5 }}
-              labelStyle={{ fontWeight: 500 }}
-            />
-            <Icon
-              style={style.iconStyle}
-              action="action"
-              name="swap-vert"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-            />
-          </div>
-          <div
-            className="rainmaker-displayInline"
-            style={{ cursor: "pointer" }}
-            onClick={() => history.push("search-complaint")}
-          >
-            <Label
-              label="ES_SEARCH_BUTTON"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-              containerStyle={{ marginRight: 5 }}
-              labelStyle={{ fontWeight: 500 }}
-            />
-            <Icon
-              style={style.iconStyle}
-              action="action"
-              name="search"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-            />
-          </div>
-          <SortDialog
-            sortPopOpen={sortPopOpen}
-            closeSortDialog={closeSortDialog}
-          />
-        </div>
-        <Tabs
-          className="employee-complaints-tab"
-          onChange={this.onChange}
-          tabs={[
-            {
-              label: (
-                <div className="inline-Localization-text">
-                  <Label
-                    //labelClassName = "unassigned-label-text"
-                    labelClassName={
-                      this.state.value === 0
-                        ? "selected-tab-label-text"
-                        : "unselected-tab-label-text"
-                    }
-
-                    bold={true}
-                    label={`ES_ALL_COMPLAINTS_UNASSIGNED_TAB_LABEL2`}
-                    labelStyle={tabStyle}
-                  />
-                </div>
-              ),
-              children: (
-                <Screen className="gro-screen" loading={loading}>
-                  <div className="tab1-content form-without-button-cont-generic">
-                    <CountDetails
-                      count={unassignedComplaints.length}
-                      total={unassignedTotalComplaints}
-                      status="unassigned"
-                    />
-                    <CustomComplaints
-                      noComplaintMessage={
-                        "ES_MYCOMPLAINTS_NO_COMPLAINTS_TO_ASSIGN1"
-                      }
-                      onComplaintClick={onComplaintClick}
-                      complaints={unassignedComplaints}
-                      complaintLocation={true}
-                      role={role}
-                      heightOffset="116px"
-                    />
-                  </div>
-                </Screen>
-              )
-            },
-            {
-              label: (
-                <div className="inline-Localization-text">
-                  <Label
-                    // labelClassName="assigned-label-text"
-                    labelClassName={
-                      this.state.value === 1
-                        ? "selected-tab-label-text"
-                        : "unselected-tab-label-text"
-                    }
-                    //color={this.state.value === 1 ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.7)"}
-                    bold={true}
-                    label={`ES_ALL_COMPLAINTS_ASSIGNED_TAB_LABEL`}
-                    labelStyle={tabStyle}
-                  />
-
-                </div>
-              ),
-              children: (
-                <Screen className="gro-screen" loading={loading}>
-                  <div className="tab2-content form-without-button-cont-generic">
-                    <CountDetails
-                      count={assignedComplaints.length}
-                      total={assignedTotalComplaints}
-                      status="assigned"
-                    />
-                    <CustomComplaints
-                      noComplaintMessage={
-                        "ES_MYCOMPLAINTS_NO_ASSIGNED_COMPLAINTS"
-                      }
-                      onComplaintClick={onComplaintClick}
-                      complaints={assignedComplaints}
-                      complaintLocation={true}
-                      role={role}
-                      heightOffset="116px"
-                    />
-                  </div>
-                </Screen>
-              )
-            }
-          ]}
-        />
-      </div>
-    ) : role === "employee" ? (
+    return role === "employee" ? (
       <Screen loading={loading}>
 
         {/* <div style={{float: "right"}} className="quick-action-button">
@@ -1027,16 +894,19 @@ const mapStateToProps = state => {
   //   : true;
   const { citizenById, employeeById } = common || {};
   const { userInfo } = state.auth;
-  const role =
-    roleFromUserInfo(userInfo.roles, "GRO") ||
-      roleFromUserInfo(userInfo.roles, "DGRO")
-      ? "ao"
-      : roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-        roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-        ? "eo"
-        : roleFromUserInfo(userInfo.roles, "CSR")
-          ? "csr"
-          : "employee";
+  // const role =
+  //   roleFromUserInfo(userInfo.roles, "GRO") ||
+  //     roleFromUserInfo(userInfo.roles, "DGRO")
+  //     ? "ao"
+  //     : roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
+  //       roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
+  //       ? "eo"
+  //       : roleFromUserInfo(userInfo.roles, "CSR")
+  //         ? "csr"
+  //         : "employee";
+
+  const role = "employee";
+
   let assignedComplaints = [],
     unassignedComplaints = [],
     employeeComplaints = [],

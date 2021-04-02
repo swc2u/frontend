@@ -43,3 +43,9 @@
    flex-direction: column !important;
   }
 }
+@media only screen and (max-width: 568px) {
+  .card-view{
+   display: block !important; text-align: left !important; flex: auto !important; margin-top: 10px;
+  }
+  #custom-containers-key{word-break: inherit !important;}
+}
