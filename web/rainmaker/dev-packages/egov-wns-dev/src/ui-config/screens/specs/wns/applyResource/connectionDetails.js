@@ -2,6 +2,16 @@ import { getCommonCard, getPattern, getCommonSubHeader, getTextField, getSelectF
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from 'lodash/get';
 let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
+let ApplicationType = false;
+let wns_workflow = window.localStorage.getItem("wns_workflow");
+if(wns_workflow ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION'
+|| wns_workflow ==='WS_TEMP_TEMP'
+|| wns_workflow ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION'
+|| wns_workflow ==='WS_TEMP_REGULAR')
+{
+  ApplicationType = true;
+
+}
 // export const getGenderRadioButton = {
 //   uiFramework: "custom-containers",
 //   componentPath: "RadioGroupContainer",
@@ -34,6 +44,7 @@ const displaysubUsageType = (usageType, dispatch, state) => {
           if(subUsage&&subUsage[0])
           {
             dispatch(prepareFinalObject("propsubusagetypeForSelectedusageCategory",subUsage[0].category));
+            dispatch(prepareFinalObject("applyScreen.waterProperty.usageSubCategory",null))
           }
         }
           
@@ -141,7 +152,7 @@ export const OwnerInfoCard = getCommonCard({
       props: {
         optionValue: "code",
         optionLabel: "name",
-        disabled:IsEdit
+        disabled: ApplicationType === false?IsEdit:ApplicationType
       // data:
       // [
       //   {

@@ -146,7 +146,8 @@ printMenu = [receiptPrintObject];
        let poOrderedQuantity = get(purchaseOrders[0], `purchaseOrderDetails[${index}].purchaseIndentDetails[0].indentDetail.poOrderedQuantity`,0)
        let indentNumber = get(purchaseOrders[0], `purchaseOrderDetails[${index}].indentNumber`,'')
        let orderQuantity = get(purchaseOrders[0], `purchaseOrderDetails[${index}].orderQuantity`,0)
-       let indentIssuedQuantity = get(purchaseOrders[0], `purchaseOrderDetails[${index}].indentIssuedQuantity`,0)
+       let indentIssuedQuantity = get(purchaseOrders[0], `purchaseOrderDetails[${index}].purchaseIndentDetails[0].indentDetail.indentIssuedQuantity`,0)
+       indentQuantity = get(purchaseOrders[0], `purchaseOrderDetails[${index}].purchaseIndentDetails[0].indentDetail.indentQuantity`,0)
        set(purchaseOrders[0], `purchaseOrderDetails[${index}].indentNumber`,indentNumber);
        set(purchaseOrders[0], `purchaseOrderDetails[${index}].indentQuantity`,indentQuantity);
        set(purchaseOrders[0], `purchaseOrderDetails[${index}].poOrderedQuantity`,poOrderedQuantity);
@@ -154,9 +155,10 @@ printMenu = [receiptPrintObject];
        set(purchaseOrders[0], `purchaseOrderDetails[${index}].balenceQty`,balenceQty);
       
        totalvalue = totalvalue+(unitPrice*userQuantity)
+       let totalvalue_ = unitPrice*userQuantity
        //totalIndentQty = totalIndentQty+ indentQuantity
        TotalQty = TotalQty+ orderQuantity
-       set(purchaseOrders[0], `purchaseOrderDetails[${index}].totalValue`,totalvalue);
+       set(purchaseOrders[0], `purchaseOrderDetails[${index}].totalValue`,totalvalue_);
      } 
      if(purchaseOrders[0].rateType==='Gem')
      set(purchaseOrders[0], `supplier.name`,purchaseOrders[0].supplier.code);

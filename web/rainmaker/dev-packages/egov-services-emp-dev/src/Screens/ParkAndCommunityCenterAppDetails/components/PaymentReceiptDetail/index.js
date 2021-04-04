@@ -94,8 +94,8 @@ return (
           />
         
         </div>
-
-        <div className="col-sm-6 col-xs-12" style={{ minHeight: '72px', paddingTop: "10px" }}>
+        
+        <div className="col-sm-6 col-xs-12" style={{ minHeight: '72px'}}>
                   <TextField
                     id="transactionDate"
                     name="transactionDate"

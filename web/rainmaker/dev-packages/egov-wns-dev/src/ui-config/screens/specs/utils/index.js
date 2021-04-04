@@ -623,7 +623,16 @@ export const convertDateTimeToEpoch = dateTimeString => {
     return dateTimeString;
   }
 };
+export const getLocalizationCodeValue =lable =>{
+  const localisationLabels = getTransformedLocalStorgaeLabels();
+  return getLocaleLabels(
+    lable,
+    lable,
+    //"PENSION_COMMON_TABLE_COL_EMMPLOYEE_NAME",
+    localisationLabels
+  );
 
+}
 export const getReceiptData = async queryObject => {
   try {
     const response = await httpRequest(

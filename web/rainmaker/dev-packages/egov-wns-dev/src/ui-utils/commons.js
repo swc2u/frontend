@@ -965,17 +965,45 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                      || activityType === 'WS_REACTIVATE'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                 {
-                    if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP')
+                    if(applicationType ==='TEMPORARY' &&( activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP'))
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.category === category)
                         // &&x.occupancycode === occupancycode)
                     }
-                    else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR')
+                    else if(applicationType ==='TEMPORARY' &&( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
+                    {
+                        // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        //     && x.occupancycode === occupancycode)
+                            wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                    }
+                    else if(applicationType ==='REGULAR' &&( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.occupancycode === occupancycode)
                     } 
+                    else if(applicationType ==='REGULAR' &&( activityType ==='NEW_WS_CONNECTION' || activityType ==='REGULARWSCONNECTION'))
+                    {
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                            && x.occupancycode === occupancycode)
+                    }
+                    
+                    else if(applicationType === 'TEMPORARY')
+                    {
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.category === category;
+                        });
+
+                    }
+                    else if(applicationType === 'REGULAR')
+                    {
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.occupancycode === occupancycode;
+                        });
+                        
+                    } 
+
+                    
                 }  
             }
             else{
@@ -1513,17 +1541,42 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                      || activityType === 'WS_REACTIVATE'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                 {
-                    if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP')
+                    if(applicationType ==='TEMPORARY' && ( activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP'))
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.category === category)
                         // &&x.occupancycode === occupancycode)
+                    }
+                    else if(applicationType ==='TEMPORARY' && ( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
+                    {
+                        // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        //     && x.occupancycode === occupancycode)
+                        wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
                     }
                     else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR')
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.occupancycode === occupancycode)
                     } 
+                    else if(applicationType ==='REGULAR' &&( activityType ==='NEW_WS_CONNECTION' || activityType ==='REGULARWSCONNECTION'))
+                    {
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                            && x.occupancycode === occupancycode)
+                    } 
+                    else if(applicationType === 'TEMPORARY')
+                    {
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.category === category;
+                        });
+
+                    }
+                    else if(applicationType === 'REGULAR')
+                    {
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.occupancycode === occupancycode;
+                        });
+                        
+                    }
                 }  
             }
             else{
@@ -2867,6 +2920,59 @@ export const GetMdmsNameBycode = (state, jsonpath, code) => {
     if(Obj &&Obj[0])
     Name = Obj[0].name
     return Name;
+  };
+  export const ValidateCard = (state,dispatch,cardJsonPath,pagename,jasonpath,value) => {
+    let  DuplicatItem =[];
+    let CardItem = get(
+      state.screenConfiguration.screenConfig[`${pagename}`],
+      cardJsonPath,
+      []
+    );
+   let matcode =[];
+    for (let index = 0; index < CardItem.length; index++) {
+      if(CardItem[index].isDeleted === undefined ||
+      CardItem[index].isDeleted !== false)
+      {
+      let code = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value}`,'')
+      matcode.push(code)
+      }
+    } 
+    var uniq = matcode
+    .map((name) => {
+      return {
+        count: 1,
+        name: name
+      }
+    })
+    .reduce((a, b) => {
+      a[b.name] = (a[b.name] || 0) + b.count
+      return a
+    }, {})  
+    var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
+    if(duplicates.length>0)
+    {
+    duplicates= duplicates.map(itm => {
+        return `${itm}`;
+      })
+      .join() || "-"
+     // IsDuplicatItem = true;  
+      DuplicatItem.push(
+        {
+          duplicates: duplicates,
+          IsDuplicatItem:true
+        }      
+      )  
+    } 
+    else{
+      DuplicatItem.push(
+        {
+          duplicates: duplicates,
+          IsDuplicatItem:false
+        });
+  
+    }
+  
+    return DuplicatItem;
   };
 export const validateConnHolderDetails = (holderData) => {
     if(holderData.connectionHolders==null){

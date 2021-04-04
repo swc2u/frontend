@@ -11,7 +11,7 @@ import { getPensionData,
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
-  debugger;
+  // debugger;
   var flag_for_api_call = true
   let queryObject = [
     {
@@ -59,13 +59,13 @@ export const SearchDashboardData = async (state, dispatch) =>{
     "tenantId" : getTenantId(),
     "reportSortBy": reportSortBy 
   }
-    debugger;
+    // debugger;
     try {
       //
       var response = [];
       var requestBody;
       if(reportSortBy.value === "amountDisbursed"){
-        debugger;
+        // debugger;
       var response = [];
       var requestBody;
       dispatch(prepareFinalObject("allDashboardSearchData", {"sortBy" : data.reportSortBy }));
@@ -100,66 +100,66 @@ export const SearchDashboardData = async (state, dispatch) =>{
       
       }else if(reportSortBy.value === "retireStatus"){
 
-        debugger;
+        // debugger;
         var requestBody = {};
-        requestBody["fromDt"] = dateFromObject;
-        requestBody["toDt"] = dateToObject;
+        requestBody["fromDt"] = dateFromObject.getTime();
+        requestBody["toDt"] = dateToObject.getTime();
         requestBody["reportSortBy"] = reportSortBy;
         requestBody["tenantId"] = getTenantId();
 
         var payloadEmpToBeRetired = {
-          "tenantId": "ch.chandigarh",
+          "tenantId": requestBody.tenantId,
           "reportName": "EmployeeToBeRetired",
           "searchParams": [
             {
               "name": "fromDate",
-              "input": 1604169000000
+              "input": requestBody.fromDt
             },
             {
               "name": "toDate",
-              "input": 1616437799000
+              "input": requestBody.toDt
             }
           ],
         }
         var payloadNormal = {
-          "tenantId": "ch.chandigarh",
+          "tenantId": requestBody.tenantId,
           "reportName": "RegularNormalPension",
           "searchParams": [
             {
               "name": "fromDate",
-              "input": 1604169000000
+              "input": requestBody.fromDt
             },
             {
               "name": "toDate",
-              "input": 1616437799000
+              "input": requestBody.toDt
             }
           ],
         };
         var payloadDeathOfEmp = {
-          "tenantId": "ch.chandigarh",
+          "tenantId": requestBody.tenantId,
           "reportName": "DeathOfAnEmployee",
           "searchParams": [
             {
               "name": "fromDate",
-              "input": 1604169000000
+              "input": requestBody.fromDt
             },
             {
               "name": "toDate",
-              "input": 1616437799000
+              "input": requestBody.toDt
             }
           ],
         };
         var payloadDeathOfPensioner = {
-          "tenantId": "ch.chandigarh",
+          "tenantId": requestBody.tenantId,
           "reportName": "DeathOfPensioner",
           "searchParams": [
             {
               "name": "fromDate",
-              "input": 1604169000000
+              "input": requestBody.fromDt
             },
             {
               "name": "toDate",
-              "input": 1616437799000
+              "input": requestBody.toDt
             }
           ],
         };

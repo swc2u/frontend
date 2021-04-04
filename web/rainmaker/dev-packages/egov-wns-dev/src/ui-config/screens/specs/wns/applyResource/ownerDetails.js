@@ -391,7 +391,7 @@ export const getOwnerDetails = (isEditable = true) => {
         items: [],
         hasAddItem: false,
         sourceJsonPath: "applyScreen.property.owners",
-        prefixSourceJsonPath: "children.cardContent.children.viewFive.children",
+        prefixSourceJsonPath: "children.cardContent.children.viewFive.children",//children.cardContent.children.scheama.children
         afterPrefixJsonPath: "children.value.children.key"
       },
       type: "array"
@@ -409,28 +409,7 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
       props: {
         //className: "common-div-css search-preview",
         scheama: getCommonGrayCard({
-          // div1: specialApplicantCategory,
-          //   style: { marginBottom: "10px" }
-          // },
-          // children: {
-          //   header: {
-          //     gridDefination: {
-          //       xs: 12,
-          //       sm: 10
-          //     },
-          //     ...getCommonSubHeader({
-          //     labelKey:"WS_OWN_DETAIL_HEADER_INFO"
-          //     })
-          //   },
-
-          // }
-          // },
-
-          // multiOwner: {
-          //   uiFramework: "custom-containers",
-          //   componentPath: "MultiItem",
-          //   props: {
-          //     scheama: getCommonGrayCard({
+         
           div3: propertyOwnerDetailsHeader,
           viewFive: getCommonContainer({
             ownerName: getTextField({
@@ -608,6 +587,9 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
             
           }),
         }),
+        onMultiItemAdd: (state, muliItemContent) => {          
+          return muliItemContent;
+        },
         items: [],
         hasAddItem: true,
         sourceJsonPath: "applyScreen.property.owners",

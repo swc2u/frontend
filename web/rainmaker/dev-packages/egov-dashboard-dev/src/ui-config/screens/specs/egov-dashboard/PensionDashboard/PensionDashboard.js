@@ -1,6 +1,7 @@
 import { getCommonCard, getCommonContainer, getDateField, getLabel, getPattern,} from "egov-ui-framework/ui-config/screens/specs/utils";
 // import { searchAPICall, SearchDashboardData, SearchPGRDashboardData } from "./functions";
 import { SearchDashboardData } from "./PensionFunction";
+import get from "lodash/get";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import './index.css';
 
@@ -58,10 +59,10 @@ export const FilterForm = getCommonCard({
       jsonPath: "dahsboardHome.dropDownData2",
       required: true,
       gridDefination: {
-            xs: 6,
-            sm: 2,
-            md: 2
-          },
+        xs: 6,
+        sm: 2,
+        md: 2
+      },
       props: {
         style: {
         width: "100%",
@@ -88,7 +89,49 @@ export const FilterForm = getCommonCard({
       labelName: "name",
       valueName: "name"
       },
-    
+      afterFieldChange: (action, state, dispatch) => {
+        
+        // debugger;
+        const selectedVAl = get(state.screenConfiguration.preparedFinalObject,"dahsboardHome.dropDownData2",{});
+        if(selectedVAl.value === "amountDisbursed"){
+          dispatch(
+            handleField(
+              "PensionDashboard",
+              "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.fromDate",
+              "props.disabled",
+              true
+            )
+          );
+
+          dispatch(
+            handleField(
+              "PensionDashboard",
+              "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+              "props.disabled",
+              true
+            )
+          );
+        }else{
+          dispatch(
+            handleField(
+              "PensionDashboard",
+              "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.fromDate",
+              "props.disabled",
+              false
+            )
+          );
+
+          dispatch(
+            handleField(
+              "PensionDashboard",
+              "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+              "props.disabled",
+              false
+            )
+          );
+        }
+
+        }
     },
     searchButton: {
       componentPath: "Button",

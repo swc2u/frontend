@@ -163,7 +163,7 @@ const callBackForNext = async(state, dispatch) => {
                       linkText: "Download",
                       name: item.fileName
                   };
-              });
+              }).filter(item => !!item.link && !!item.name);
               dispatch(
                 prepareFinalObject("PropertiesTemp[0].reviewDocData", reviewDocData)
             );

@@ -17,7 +17,13 @@ class AmountDisbursedDashboard extends React.Component {
             graphOneLabel: [],
             graphOneData: [],
             graphClicked: -1,
-            dataOne: []
+            dataOne: [],
+
+            rowData: [],
+            columnData: [],
+            // Feature Table
+            toggleColumnCheck: false,
+            unchangeColumnData: []
         }
     }
 
@@ -199,6 +205,49 @@ class AmountDisbursedDashboard extends React.Component {
             :null
         }
 
+        </div>
+
+        {/* Table  */}
+
+        <div className="tableContainer">
+        {
+            this.state.unchangeColumnData.length > 0  ? 
+            <div className="tableFeature">
+                <div className="columnToggle-Text"> Download As: </div>
+                <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+
+                <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+            </div>
+            :null
+        }
+        {
+           this.state.toggleColumnCheck ?
+           <div className="columnVisibilityCard">
+            <dl>
+                {
+                    this.state.unchangeColumnData.map((data, index)=>{
+                        return(
+                            <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
+                        )
+                    })
+                }
+            </dl>
+            </div> 
+           : null
+        }
+
+        {
+            // this.state.graphClicked >= 0 ?
+            <ReactTable id="customReactTable"
+            // PaginationComponent={Pagination}
+            data={ this.state.rowData }  
+            columns={ this.state.columnData }  
+            defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
+            pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
+            pageSizeOptions = {[20,40,60]}  
+            /> 
+            // :null
+        }
         </div>
 
         </div>
