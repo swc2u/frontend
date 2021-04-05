@@ -44,15 +44,15 @@ const getDropDownData = async (action, state, dispatch) => {
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
-    "name" : "Pension Amount Disbursed",
-    "code" : "amountDisbursed"
+    "name" : "Employee Retire Status",
+    "code" : "retireStatus"
     },
     {
-      "name" : "Employee Retire Status",
-      "code" : "retireStatus"
+    "name" : "Pension Amount Disbursed",
+    "code" : "amountDisbursed"
     }
   ]
-  var selectedDefaultData = {value: "amountDisbursed", label: "Pension Amount Disbursed"};
+  var selectedDefaultData = {value: "retireStatus", label: "Employee Retire Status"};
 
   // Date default
   var fromDate = new Date();

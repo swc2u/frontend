@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Tabs, Card, TextField, Icon, Button } from "components";
-
+import { getFileUrlFromAPI } from '../../modules/commonFunction'
 import get from "lodash/get";
 import MenuButton from "egov-ui-framework/ui-molecules/MenuButton";
 import FloatingActionButton from "material-ui/FloatingActionButton";
@@ -35,6 +35,7 @@ class AllRequests extends Component {
     applicationStatus: '',
     complaints: [],
     search: false,
+    proofOfResDocName: '',
     value: 0,
     sortPopOpen: false,
     errorText: "",
@@ -112,12 +113,18 @@ class AllRequests extends Component {
     });
   }; 
   gotoPArkAndCommunityTanker = () => {
-    let {PreviousBookingData ,oldBookingData,prepareFinalObject,clearAvailable} = this.props
+    let {PreviousBookingData ,oldBookingData,prepareFinalObject,clearAvailable,discountOldDoc,previousResidenceProof} = this.props
     let ApplicationData = this.props.bookings;
     let CheckData = this.props.bookings ? (this.props.bookings.applicationData ?(this.props.bookings.applicationData.bookingsModelList.length > 0 ? (this.props.bookings.applicationData.bookingsModelList): 'NA'): 'NA'): "NA"
 //screenConfiguration.preparedFinalObject.PreviousBookingData    
     if(PreviousBookingData !== "NotFound"){
       prepareFinalObject("PreviousBookingData",null)
+    }
+    if(discountOldDoc !== "NotFound"){
+      prepareFinalObject("discountDocumentsUploadRedux",null)
+    }
+    if(previousResidenceProof !== "NotFound"){
+      prepareFinalObject("documentsUploadRedux",null)
     }
     //screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
     if(oldBookingData !== "NotFound"){
@@ -138,9 +145,21 @@ class AllRequests extends Component {
     this.props.history.push(`/egov-services/all-MccApplications`);
   };
 
+ 
+getApplicationStatus = (applicationNumber) => { 
+  console.log("getApplicationStatus", applicationNumber)
+  let applicationsArray = this.props.csrComplaints
+  console.log("applicationsArray", applicationsArray)
+  let application = applicationsArray.filter((applicationDetail) => {
+    return applicationDetail.bkApplicationNumber == applicationNumber
+  })
+  console.log("application", application) //bkApplicationStatus: "OFFLINE_INITIATED"
+  console.log("CheckAppStatus",application[0].bkApplicationStatus == "OFFLINE_INITIATED")
+  return application[0].bkApplicationStatus == "OFFLINE_INITIATED"
+}
 
-  onComplaintClick = (complaintNo, bookingType) => {
-   
+  onComplaintClick = async(complaintNo, bookingType) => {
+   let {userInfo} = this.props
     if (bookingType && bookingType == "WATER_TANKERS") {
       this.props.history.push(`/egov-services/bwt-application-details/${complaintNo}`);
     }
@@ -159,14 +178,183 @@ class AllRequests extends Component {
 
       this.props.history.push(`/egov-services/osmcc-application-details/${complaintNo}`);
     }
-    if (bookingType && bookingType == "Parks") {
 
-      this.props.history.push(`/egov-services/park-and-community-center-appDetails-details/${complaintNo}`);
-    }
-    if (bookingType && bookingType == "Community Center") {
+    if (bookingType && (bookingType == "Parks" || bookingType == "Community Center")) {
+   if(this.getApplicationStatus(complaintNo)){
+console.log("Path change")
+    let RequestBodyForInitiateApplication =
+		{
+			"applicationNumber": complaintNo, 'uuid': userInfo.uuid,
+			"applicationStatus": "",
+			"mobileNumber": "", "bookingType": "", "tenantId": userInfo.tenantId
+		}
+    console.log("RequestBodyForInitiateApplication-",RequestBodyForInitiateApplication)
 
-      this.props.history.push(`/egov-services/park-and-community-center-appDetails-details/${complaintNo}`);
+    let dataforSectorAndCategory = await httpRequest(
+			"bookings/api/employee/_search",
+			"_search", [],
+			RequestBodyForInitiateApplication
+		);
+console.log("dataforSectorAndCategory",dataforSectorAndCategory)
+
+let bkLocation = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkLocation : 'NA'
+		let bkFromDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkFromDate : 'NA'
+		let bkToDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkToDate : 'NA'
+		let AppStatus = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationStatus : 'NA'
+		let bkBookingType = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingType : 'NA'
+		let Sector = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkSector : 'NA'
+		let bkBookingVenue = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue : 'NA'
+		let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'	
+		let bookingRent = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkRent : 'NA'
+
+    let allDocumentList = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.documentList : [];
+
+    let proofOfResDocs
+		if(allDocumentList && allDocumentList.length > 0){
+			 proofOfResDocs = allDocumentList.filter( (item) => {
+				return item.documentType != "BK_PCC_DISCOUNT_DOCUMENT";
+			})
+			this.setState({proofOfResDocName: proofOfResDocs[0].fileName,
+				proofOfResDocumentType: proofOfResDocs[0].documentType,
+				allDocumentList: allDocumentList
+			})
+		}
+    console.log("nero proofOfResDocs", proofOfResDocs, "----", allDocumentList)
+		console.log("AppNo--", AppNo)
+		if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
+			let timeSlot = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot
+			console.log("timeSlot--", timeSlot)
+
+			prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
+
+			let res = timeSlot.split("-");
+			console.log("res--", res)
+
+			let fromTime = res[0]
+			console.log("fromTime--", fromTime)
+
+			prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
+
+
+			let ToTime = res[1]
+			console.log("ToTime--", ToTime);
+
+			prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
+
+
+			let strMid = ","
+
+			let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
+			console.log("ConcatFromDateTime--", ConcatFromDateTime)
+
+			prepareFinalObject("oldAvailabilityCheckData.ConcatFromDateTime", ConcatFromDateTime);
+
+			let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
+			console.log("ConcatToDateTime--", ConcatToDateTime)
+
+			prepareFinalObject("oldAvailabilityCheckData.ConcatToDateTime", ConcatToDateTime);
+
+
+
+			//let bkDisplayFromDateTime =
+
+			let timeSlotId = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id
+			console.log("timeSlotId--", timeSlotId)
+
+			prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
+
+
+
+		}
+
+    allDocumentList.map(async (doc) => {
+			console.log("Doccc---", doc);
+			// doc.docmentType
+			// doc.fileName
+			// doc.fileStoreId
+			let fileLink = await getFileUrlFromAPI(doc.fileStoreId, "ch");
+			console.log("filelink--", fileLink);
+			if (doc.documentType === "BK_PCC_DISCOUNT_DOCUMENT") {
+			  console.log("DIscountDoc==", doc);
+			  let dicscountDoc = [
+				{
+				  documentCode: doc.documentType,
+				  documentType: "DOC",
+				  documents: [
+					{
+					  fileName: doc.fileName,
+					  fileStoreId: doc.fileStoreId,
+					  fileUrl: fileLink[doc.fileStoreId],
+					  mendatoryDoc: true,
+					},
+				  ],
+				  isDocumentRequired: true,
+				  isDocumentTypeRequired: true,
+				  mydocstate: true,
+				},
+			  ];
+			 this.props.prepareFinalObject("discountDocumentsUploadRedux", dicscountDoc);
+			  return;
+			} else {
+			  console.log("DocFIle==", doc);
+			  let Doc = [
+				{
+				  documentCode: doc.documentType,
+				  documentType: "DOC",
+				  documents: [
+					{
+					  fileName: doc.fileName,
+					  fileStoreId: doc.fileStoreId,
+					  fileUrl: fileLink[doc.fileStoreId],
+					  mendatoryDoc: true,
+					},
+				  ],
+				  isDocumentRequired: true,
+				  isDocumentTypeRequired: true,
+				  mydocstate: true,
+				},
+			  ];
+			 this.props.prepareFinalObject("documentsUploadRedux", Doc);
+			  return;
+			}
+		  });
+
+    this.props.prepareFinalObject("oldAvailabilityCheckData.BookingRent", bookingRent);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.bkBookingType", bkBookingType);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.Sector", Sector);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.bkBookingVenue", bkLocation);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.FromDate", bkFromDate);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.bkFromDate", bkFromDate);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.bkToDate", bkToDate);
+
+		this.props.prepareFinalObject("oldAvailabilityCheckData.bkBookingVenueID", bkBookingVenue);
+
+		this.props.prepareFinalObject("PreviousBookingData.ToDate", bkToDate);
+
+		this.props.prepareFinalObject("PreviousBookingData.FromDate", bkFromDate);
+
+		this.props.prepareFinalObject("PreviousBookingData.bkBookingVenue", bkLocation);
+
+		this.props.prepareFinalObject("PreviousBookingData.ApplicationStatus", AppStatus);
+    // this.props.prepareFinalObject("oldAvailabilityCheckData.bkBookingType", bkBookingType);
+
+this.props.history.push(`/egov-services/checkavailability_pcc`)
+}
+else{
+  this.props.history.push(`/egov-services/park-and-community-center-appDetails-details/${complaintNo}`);
+}  
     }
+
+    // if (bookingType && bookingType == "Community Center") {
+
+    //   this.props.history.push(`/egov-services/park-and-community-center-appDetails-details/${complaintNo}`);
+    // }
   };
 
   onComplaintChange = e => {
@@ -617,143 +805,7 @@ console.log("twoRole--",twoRole)
     const foundfourthLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_E-SAMPARK-CENTER');
     const foundfifthLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_MCC_USER');
 
-    return role === "ao" ? (
-      <div>
-        <div
-          className="sort-button rainmaker-displayInline"
-          style={{ padding: "20px 20px 0px 0px", justifyContent: "flex-end" }}
-        >
-          <div
-            className="rainmaker-displayInline"
-            style={{ cursor: "pointer", marginRight: "20px" }}
-            onClick={onSortClick}
-          >
-            <Label
-              label="ES_SORT_BUTTON"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-              containerStyle={{ marginRight: 5 }}
-              labelStyle={{ fontWeight: 500 }}
-            />
-            <Icon
-              style={style.iconStyle}
-              action="action"
-              name="swap-vert"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-            />
-          </div>
-          <div
-            className="rainmaker-displayInline"
-            style={{ cursor: "pointer" }}
-            onClick={() => history.push("search-complaint")}
-          >
-            <Label
-              label="ES_SEARCH_BUTTON"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-              containerStyle={{ marginRight: 5 }}
-              labelStyle={{ fontWeight: 500 }}
-            />
-            <Icon
-              style={style.iconStyle}
-              action="action"
-              name="search"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-            />
-          </div>
-          <SortDialog
-            sortPopOpen={sortPopOpen}
-            closeSortDialog={closeSortDialog}
-          />
-        </div>
-        <Tabs
-          className="employee-complaints-tab"
-          onChange={this.onChange}
-          tabs={[
-            {
-              label: (
-                <div className="inline-Localization-text">
-                  <Label
-                    //labelClassName = "unassigned-label-text"
-                    labelClassName={
-                      this.state.value === 0
-                        ? "selected-tab-label-text"
-                        : "unselected-tab-label-text"
-                    }
-                    //color={this.state.value === 0 ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.7)"}
-                    bold={true}
-                    label={`ES_ALL_COMPLAINTS_UNASSIGNED_TAB_LABEL2`}
-                    labelStyle={tabStyle}
-                  />
-
-                </div>
-              ),
-              children: (
-                <Screen className="gro-screen" loading={loading}>
-                  <div className="tab1-content form-without-button-cont-generic">
-                    <CountDetails
-                      count={unassignedComplaints.length}
-                      total={unassignedTotalComplaints}
-                      status="unassigned"
-                    />
-                    <CustomComplaints
-                      noComplaintMessage={
-                        "ES_MYCOMPLAINTS_NO_COMPLAINTS_TO_ASSIGN1"
-                      }
-                      onComplaintClick={onComplaintClick}
-                      complaints={unassignedComplaints}
-                      complaintLocation={true}
-                      role={role}
-                      heightOffset="116px"
-                    />
-                  </div>
-                </Screen>
-              )
-            },
-            {
-              label: (
-                <div className="inline-Localization-text">
-                  <Label
-                    // labelClassName="assigned-label-text"
-                    labelClassName={
-                      this.state.value === 1
-                        ? "selected-tab-label-text"
-                        : "unselected-tab-label-text"
-                    }
-                    //color={this.state.value === 1 ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.7)"}
-                    bold={true}
-                    label={`ES_ALL_COMPLAINTS_ASSIGNED_TAB_LABEL`}
-                    labelStyle={tabStyle}
-                  />
-
-                </div>
-              ),
-              children: (
-                <Screen className="gro-screen" loading={loading}>
-                  <div className="tab2-content form-without-button-cont-generic">
-                    <CountDetails
-                      count={assignedComplaints.length}
-                      total={assignedTotalComplaints}
-                      status="assigned"
-                    />
-                    <CustomComplaints
-                      noComplaintMessage={
-                        "ES_MYCOMPLAINTS_NO_ASSIGNED_COMPLAINTS"
-                      }
-                      onComplaintClick={onComplaintClick}
-                      complaints={assignedComplaints}
-                      complaintLocation={true}
-                      role={role}
-                      heightOffset="116px"
-                    />
-                  </div>
-                </Screen>
-              )
-            }
-          ]}
-        />
-      </div>
-    ) : role === "employee" ? (
-     
-      <Screen loading={loading}>
+    return role === "employee" ? ( <Screen loading={loading}>
          <style>
       {`
   @media screen and (min-width: 320px) and (max-width: 568px) {
@@ -773,8 +825,8 @@ console.log("twoRole--",twoRole)
         }  */}
         {foundFirstLavel || foundSecondLavel || foundthirdLavel ?
           <Button
-            className="responsive-action-button"
-            label={<Label buttonLabel={true} label="BK_NEW_LOCATION_LIST" />}
+          className="responsive-action-button btn-sampark"
+          label={<Label buttonLabel={true} label="BK_NEW_LOCATION_LIST" />}
             style={{ float: 'right', marginRight: '50px', marginTop: '40px' }}
             backgroundColor="#fe7a51"
             // labelStyle={{ letterSpacing: 0.7, padding: 0, color: "#fff" }}
@@ -1220,7 +1272,7 @@ console.log("twoRole--",twoRole)
                     ? "No Search Results Found"
                     : "BK_MYBK_NO_APPLICATION_ASSIGNED"
                 }
-                onComplaintClick={onComplaintClick}
+                onComplaintClick={onComplaintClick} 
                 complaints={
                   search ? searchFilterEmployeeComplaints : employeeComplaints
                 }
@@ -1271,17 +1323,34 @@ let oldBookingData  = get(
 );
 console.log("oldBookingData-",oldBookingData)
 
-  console.log()
-  const role =
-    roleFromUserInfo(userInfo.roles, "GRO") ||
-      roleFromUserInfo(userInfo.roles, "DGRO")
-      ? "ao"
-      : roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-        roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-        ? "eo"
-        : roleFromUserInfo(userInfo.roles, "CSR")
-          ? "csr"
-          : "employee";
+
+let discountOldDoc  = get(
+  state,
+  "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux",
+  "NotFound"
+);
+console.log("discountOldDoc-",discountOldDoc)
+
+let previousResidenceProof  = get(
+  state,
+  "screenConfiguration.preparedFinalObject.documentsUploadRedux",
+  "NotFound"
+);
+console.log("previousResidenceProof-",previousResidenceProof)
+
+  
+  // const role =
+  //   roleFromUserInfo(userInfo.roles, "GRO") ||
+  //     roleFromUserInfo(userInfo.roles, "DGRO")
+  //     ? "ao"
+  //     : roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
+  //       roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
+  //       ? "eo"
+  //       : roleFromUserInfo(userInfo.roles, "CSR")
+  //         ? "csr"
+  //         : "employee";
+
+  const role = "employee";
   let assignedComplaints = [],
     unassignedComplaints = [],
     employeeComplaints = [],
@@ -1306,7 +1375,7 @@ console.log("oldBookingData-",oldBookingData)
     loading,
     transformedComplaints,
     roles,
-    bookings
+    bookings,userInfo,discountOldDoc,previousResidenceProof
   };
 };
 
