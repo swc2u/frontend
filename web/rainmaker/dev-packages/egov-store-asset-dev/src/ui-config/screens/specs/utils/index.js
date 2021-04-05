@@ -107,6 +107,12 @@ export const validateFields = (
   }
   return isFormValid;
 };
+export const uniqueBycode =(data,key)=>{
+  return [
+    ... new Map(data.map(x=> [key(x),x])).values()
+  ]
+
+}
 
 export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
   //example input format : "2018-10-02"

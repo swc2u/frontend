@@ -250,7 +250,8 @@ class WorkFlowContainer extends React.Component {
       }
       // set additionalDetails for W&S module
       if (moduleName === "NewWS1" 
-        || moduleName === "REGULARWSCONNECTION"
+      || moduleName === "REGULARWSCONNECTION"
+        || moduleName === "SW_SEWERAGE"
         || moduleName === "TEMPORARY_WSCONNECTION"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
@@ -285,8 +286,14 @@ class WorkFlowContainer extends React.Component {
         // for sw swSectorList
           //swWorkflowRole
           // for water wsWorkflowRole
-        searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
-       
+          if(data.service ==='WATER')
+          {
+            searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
+          }        
+          else if(data.service ==='SEWERAGE')
+          {
+            searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].swWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
+          }
         //let searchPreviewScreenMdmsData =[]
         // if(nextActions && nextActions[0])
         // {
@@ -439,6 +446,7 @@ class WorkFlowContainer extends React.Component {
         )}&applicationNumber=${applicationNumber}&tenantId=${tenant}&secondNumber=${licenseNumber}`;
 
         if (moduleName === "NewWS1" 
+        || moduleName ==="SW_SEWERAGE"
         || moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
         || moduleName === "WS_TEMP_TEMP" 
@@ -469,7 +477,7 @@ class WorkFlowContainer extends React.Component {
           "error"
         );
       }else 
-      if (moduleName === "NewWS1" 
+      if (moduleName === "SW_SEWERAGE" 
         || moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
         || moduleName === "WS_TEMP_TEMP" 
@@ -541,7 +549,7 @@ class WorkFlowContainer extends React.Component {
     else {
       var validated = true;
       const{WaterConnection} = preparedFinalObject
-      if (moduleName === "NewWS1" 
+      if (moduleName === "SW_SEWERAGE" 
         || moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
         || moduleName === "WS_TEMP_TEMP" 
@@ -614,7 +622,7 @@ class WorkFlowContainer extends React.Component {
     {
       baseUrl = "wns"
       if (moduleName === "NewWS1" 
-      || moduleName === "SW_SEWERAGE"
+     // || moduleName === "SW_SEWERAGE"
       || moduleName === "REGULARWSCONNECTION"
       || moduleName === "TEMPORARY_WSCONNECTION"
       || moduleName === "WS_TEMP_TEMP" 
@@ -771,8 +779,28 @@ ValidateRequest =(payload) =>{
 
     }
   }
+  // remove duplicate document
+
+  let tmp = [];
+    // for(let i = 0; i < payload.documents.length; i++){
+    //     if(tmp.indexOf(payload.documents[i]) == -1){
+    //     tmp.push(payload.documents[i]);
+    //     }
+    // }
+    if(payload.documents !== null)
+    {
+    payload.documents =  this.uniqueBycode(payload.documents, x=>x.documentType);//payload.documents.filter((value,index) => payload.documents.indexOf(value) ===index)
+    }
+    //payload.documents = tmp;
 //return  false
   return isvalidRequest
+}
+
+uniqueBycode =(data,key)=>{
+  return [
+    ... new Map(data.map(x=> [key(x),x])).values()
+  ]
+
 }
   getHeaderName = action => {
     return {
@@ -928,7 +956,7 @@ ValidateRequest =(payload) =>{
         isLast: item.action === "PAY"||  item.action ===  "PAY_FOR_TEMPORARY_CONNECTION"||item.action === "PAY_FOR_REGULAR_CONNECTION" ? true : false,
         buttonUrl: getRedirectUrl(item.action, businessId, businessService),
         dialogHeader: getHeaderName(item.action),
-        showEmployeeList: (businessService === "NewWS1" 
+        showEmployeeList: (businessService === "SW_SEWERAGE" 
                           || businessService === "REGULARWSCONNECTION" 
                           || businessService === "TEMPORARY_WSCONNECTION" 
                           || businessService === "WS_TEMP_TEMP" 
@@ -971,6 +999,15 @@ ValidateRequest =(payload) =>{
 
       }
 
+    }
+    if(true)
+    {
+      //WS_TEMP_REGULAR ~businessService
+      // PENDING_FOR_SDE_APPROVAL ~applicationStatus
+      // VERIFY_AND_FORWARD_TO_JE action
+      // VERIFY_AND_FORWARD_FOR_PAYMENT
+
+      
     }
     if((businessService=='WS_CONVERSION') && applicationStatus ==='PENDING_FOR_SDC_APPROVAL')
     {

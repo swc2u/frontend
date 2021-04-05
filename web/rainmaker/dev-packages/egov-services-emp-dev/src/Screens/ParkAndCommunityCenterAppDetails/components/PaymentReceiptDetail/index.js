@@ -70,7 +70,7 @@ return (
             name="PaymentReceiptNumber"
             type="string" 
             value={PaymentReceiptNumber}
-            required = {true}
+            // required = {true}
             hintText={
               <Label
                 label="BK_MYBK_CREATE_TRANSACTION_NUMBER"   // label="BK_MYBK_RECEIPT_NUMBER"
@@ -94,8 +94,8 @@ return (
           />
         
         </div>
-
-        <div className="col-sm-6 col-xs-12" style={{ minHeight: '72px', paddingTop: "10px" }}>
+        
+        <div className="col-sm-6 col-xs-12" style={{ minHeight: '72px'}}>
                   <TextField
                     id="transactionDate"
                     name="transactionDate"

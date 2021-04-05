@@ -241,12 +241,12 @@ export const createUpdateEmployee = async (state, dispatch, action) => {
   set(
     employeeObject[0],
     "dateOfAppointment",
-    convertDateToEpoch(get(employeeObject[0], "dateOfAppointment"), "dayStart")
+    convertDateToEpoch(get(employeeObject[0], "dateOfAppointment"), "daymid")
   );
   set(
     employeeObject[0],
     "user.dob",
-    convertDateToEpoch(get(employeeObject[0], "user.dob"), "dayStart")
+    convertDateToEpoch(get(employeeObject[0], "user.dob"), "daymid")
   );
 
   let assignments = returnEmptyArrayIfNull(
@@ -258,7 +258,7 @@ export const createUpdateEmployee = async (state, dispatch, action) => {
       `assignments[${i}].fromDate`,
       convertDateToEpoch(
         get(employeeObject[0], `assignments[${i}].fromDate`),
-        "dayStart"
+        "daymid"
       )
     );
     set(
@@ -290,7 +290,7 @@ export const createUpdateEmployee = async (state, dispatch, action) => {
       `serviceHistory[${i}].serviceFrom`,
       convertDateToEpoch(
         get(employeeObject[0], `serviceHistory[${i}].serviceFrom`),
-        "dayStart"
+        "daymid"
       )
     );
     set(
@@ -316,7 +316,7 @@ export const createUpdateEmployee = async (state, dispatch, action) => {
         employeeObject[0],
         `education[${i}].yearOfPassing`,
         convertDateToEpoch(`${educationYearOfPassing}-01-01`),
-        "dayStart"
+        "daymid"
       );
   }
 
@@ -332,7 +332,7 @@ export const createUpdateEmployee = async (state, dispatch, action) => {
         employeeObject[0],
         `tests[${i}].yearOfPassing`,
         convertDateToEpoch(`${testsYearOfPassing}-01-01`),
-        "dayStart"
+        "daymid"
       );
   }
 
@@ -386,7 +386,7 @@ export const createUpdateEmployee = async (state, dispatch, action) => {
         `deactivationDetails[0].effectiveFrom`,
         convertDateToEpoch(
           get(employeeObject[0], `deactivationDetails[0].effectiveFrom`),
-          "dayStart"
+          "daymid"
         )
       );
       setDeactivationDocuments(state, dispatch);

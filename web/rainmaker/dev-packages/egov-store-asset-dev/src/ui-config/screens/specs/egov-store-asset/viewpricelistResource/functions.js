@@ -207,17 +207,17 @@ export const createUpdatePriceList = async (state, dispatch, action) => {
 
   let rateContractDate =
   get(state, "screenConfiguration.preparedFinalObject.priceLists[0].rateContractDate",0) 
-  rateContractDate = convertDateToEpoch(rateContractDate, "dayStart");
+  rateContractDate = convertDateToEpoch(rateContractDate, "daymid");
   set(priceLists[0],"rateContractDate", rateContractDate);
 
   let agreementDate =
   get(state, "screenConfiguration.preparedFinalObject.priceLists[0].agreementDate",0) 
-  agreementDate = convertDateToEpoch(agreementDate, "dayStart");
+  agreementDate = convertDateToEpoch(agreementDate, "daymid");
   set(priceLists[0],"agreementDate", agreementDate);
 
   let agreementStartDate =
   get(state, "screenConfiguration.preparedFinalObject.priceLists[0].agreementStartDate",0) 
-  agreementStartDate = convertDateToEpoch(agreementStartDate, "dayStart");
+  agreementStartDate = convertDateToEpoch(agreementStartDate, "daymid");
   set(priceLists[0],"agreementStartDate", agreementStartDate);
 
   let agreementEndDate =
@@ -270,7 +270,8 @@ export const createUpdatePriceList = async (state, dispatch, action) => {
       //     : `/hrms/acknowledgement?purpose=create&status=success&applicationNumber=${employeeId}`;
       // dispatch(setRoute(acknowledgementUrl));
       if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=priceList&mode=create&code=`));
+        //dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=priceList&mode=create&code=`));
+        window.location.href =`/employee/egov-store-asset/acknowledgement?screen=priceList&mode=create&code=`
        }
     } catch (error) {
       furnishPriceListData(state, dispatch);
@@ -289,7 +290,8 @@ export const createUpdatePriceList = async (state, dispatch, action) => {
       //     : `/hrms/acknowledgement?purpose=update&status=success&applicationNumber=${employeeId}`;
       // dispatch(setRoute(acknowledgementUrl));
       if(response){
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=priceList&mode=update&code=`));
+        //dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=priceList&mode=update&code=`));
+        window.location.href =`/employee/egov-store-asset/acknowledgement?screen=priceList&mode=update&code=`
        }
     } catch (error) {
       furnishPriceListData(state, dispatch);

@@ -204,7 +204,7 @@ export const header = getCommonContainer({
       // fetching employee designation
       const userInfo = JSON.parse(getUserInfo());
       if(userInfo){
-        dispatch(prepareFinalObject("materialReceipt[0].createdByName", userInfo.name));
+        dispatch(prepareFinalObject("materialReceipt[0].receivedBy", userInfo.name));
         const queryParams = [{ key: "codes", value: userInfo.userName },{ key: "tenantId", value:  getTenantId() }];
         try { 
           const payload = await httpRequest(
@@ -353,16 +353,16 @@ export const header = getCommonContainer({
         )
       );
      
-      dispatch(
-        prepareFinalObject(
-          "materialReceipt[0].receivedBy",
-          "sanjeev",
-        )
-      );
+      // dispatch(
+      //   prepareFinalObject(
+      //     "materialReceipt[0].receivedBy",
+      //     "sanjeev",
+      //   )
+      // );
       dispatch(
         prepareFinalObject(
           "materialReceipt[0].inspectedBy",
-          "Ramesh",
+          "",
         )
       );
      }

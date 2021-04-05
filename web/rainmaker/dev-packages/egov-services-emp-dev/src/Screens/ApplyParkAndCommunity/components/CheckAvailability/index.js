@@ -100,6 +100,8 @@ class CheckAvailability extends Component {
     this.setState(
       { vanueType: event.target.value,
         availabilityCheckData: { bkBookingType: event.target.value },
+        locality:"",
+        availabilityCheckData:{ bkSector:undefined}
       },
       prepareFinalObject("DropDownValue", event.target.value),
       prepareFinalObject("DropDownValue333",this.state.vanueType)
@@ -510,13 +512,16 @@ console.log("arrayData--SecondTime",arrayData)
     const {NewBookFromDate , AppStatus, NewBookToDate, toggleSnackbarAndSetText,oldToDate,oldFromDate,AgainNewFromDate,AgainNewToDate,PrevFromDate,PrevToDate,
       oldBookingData,bookingVenue,prepareFinalObject} = this.props
       console.log("propsInContinue--",this.props)
+    var result;
     let d1,d2,PrevBookdaysCount,newBookdaysCount,d1NewFromDate,d2NewToDate,AgainNewd1,
     AgainNewd2,forOldMasterData,checkType,RepeatSectorData
+
 //this.props.DropDownValue === "Commercial Ground
 
-if(AppStatus === "OFFLINE_APPLIED" || AppStatus != "notFound"){
+if(AppStatus === "OFFLINE_APPLIED" && AppStatus != "notFound"){  //OFFLINE_INITIATED
   console.log("ComeInAppStatus If Condition")
-
+console.log("AppStatus",AppStatus)
+console.log("PrintCondition",AppStatus === "OFFLINE_APPLIED",AppStatus != "notFound")
   d1 = new Date(PrevFromDate)
   d2 = new Date(PrevToDate)
 
@@ -541,7 +546,7 @@ PrevBookdaysCount = this.calculateBetweenDaysCount(PrevFromDate,PrevToDate)
 console.log("PrevBookdaysCount--",PrevBookdaysCount)
 
 
- if(bookingVenue === "NotFound"){  /**first Condition**Not Selected Venue means Venue remain same but here date Change**/
+ if(bookingVenue === "NotFound"){  /**first Condition**Not Selected Venue means Venue remain same but here date Change  suggestionComment{Not selected date/Venue}**/
    console.log("testingPurpose")
   if(d1 == AgainNewd1 && d2 == AgainNewd2){
     console.log("testingPurpose--one")
@@ -585,7 +590,7 @@ if(NewBookFromDate != "notFound" && NewBookToDate != "notFound"){
     console.log("forOldMasterData--",forOldMasterData)
     checkType = typeof(forOldMasterData)
     console.log("--checkType",checkType)
-    var result = forOldMasterData.filter((x) => { 
+    result = forOldMasterData.filter((x) => { 
       console.log("oldBookingData.Sector--fff",oldBookingData.Sector)
       console.log("xinMap--",x)
       // if(x.name == oldBookingData.Sector){
@@ -643,10 +648,30 @@ if(NewBookFromDate != "notFound" && NewBookToDate != "notFound"){
   if(bookingVenue != "NotFound" && oldBookingData.bkBookingVenue != bookingVenue){   /**Third Condition**Change Venue but date remain same in this Condition**/
   console.log("PineApple")
   if((NewBookFromDate === "notFound" && NewBookToDate ==="notFound") || (d1 == AgainNewd1 && d2 == AgainNewd2)){
-    console.log("grapes--")
-    this.props.history.push(`/egov-services/applyPark-community-center`);
-    prepareFinalObject("availabilityCheckData.bkFromDate", d1);
-    prepareFinalObject("availabilityCheckData.bkToDate", d2);
+
+if("bkBookingData" in this.props.stateData.screenConfiguration.preparedFinalObject){
+  let NewVenueAmount = this.props.stateData.screenConfiguration.preparedFinalObject.bkBookingData.rent
+  let oldVenueRent = oldBookingData.BookingRent 
+
+  if(NewVenueAmount > oldVenueRent){
+    toggleSnackbarAndSetText(
+      true,
+      {
+        labelName: "Selected venue amount is higher than previous booked venue",
+        labelKey: `Selected venue amount is higher than previous booked venue`
+      },
+      "error"
+    );
+  }
+else{
+  console.log("grapes--")
+  this.props.history.push(`/egov-services/applyPark-community-center`);
+  prepareFinalObject("availabilityCheckData.bkFromDate", d1);
+  prepareFinalObject("availabilityCheckData.bkToDate", d2);
+}
+
+}
+   
   }
   else{
     console.log("ssssssssss")
@@ -662,6 +687,33 @@ if(NewBookFromDate != "notFound" && NewBookToDate != "notFound"){
  }
  }
 } /**If Condition "END" for Date/Venue Change**/
+
+else if(AppStatus === "OFFLINE_INITIATED" && AppStatus != "notFound"){
+  console.log("Condition for Initate case")
+
+   forOldMasterData=this.state.masterDataPCC,
+    console.log("forOldMasterData--",forOldMasterData)
+    checkType = typeof(forOldMasterData)
+    console.log("--checkType",checkType)
+    result = forOldMasterData.filter((x) => { 
+      console.log("oldBookingData.Sector--fff",oldBookingData.Sector)
+      console.log("xinMap--",x)
+      // if(x.name == oldBookingData.Sector){
+      //   RepeatSectorData = x
+      // } 
+      console.log("x.name == oldBookingData.Sector--",x.name == oldBookingData.Sector)
+      // console.log("dfghkllll--",RepeatSectorData)
+      return x.name == oldBookingData.bkBookingVenue 
+    });
+    console.log("result--",result)
+    prepareFinalObject(
+      "bkBookingData",
+      result[0]
+  );
+    console.log("testingPurpose--fouruuuuu")
+    this.props.history.push(`/egov-services/applyPark-community-center`);
+}
+
 else{  /**loop for new Booking Create**/
   if(NewBookFromDate && NewBookToDate === "notFound"){   /** Condition for New Booking Book To Check BothDates**/
     toggleSnackbarAndSetText(
@@ -672,36 +724,37 @@ else{  /**loop for new Booking Create**/
       },
       "error"
     );
+    return;
   }
   if(NewBookFromDate && NewBookToDate){   /** Condition for New Booking Book For No of Days Check**/
-  let daysCount = this.calculateBetweenDaysCount(NewBookFromDate,NewBookToDate)
-  if(daysCount > 2){
-    toggleSnackbarAndSetText(
-      true,
-      {
-        labelName: "You can not book venue for more than 2 days",
-        labelKey: `You can not book venue for more than 2 days`
-      },
-      "error"
-    );
-   } 
-   if(this.props.DropDownValue === "Commercial Ground"){
-     console.log("fgasdfghjkklllll")
-    this.props.history.push(`/egov-services/applyResourceCommercialGround`);
-   }
-   if(NewBookFromDate == "notFound" && NewBookToDate == "notFound"){
-    toggleSnackbarAndSetText(
-      true,
-      {
-        labelName: "Please Select From Date & To Date",
-        labelKey: `Please Select From Date & To Date`
-      },
-      "error"
-    );
-   }
-   else{
-    this.props.history.push(`/egov-services/applyPark-community-center`); 
-   }
+
+    if(NewBookFromDate == "notFound" && NewBookToDate == "notFound"){
+      toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Please Select From Date & To Date",
+          labelKey: `Please Select From Date & To Date`
+        },
+        "error"
+      );
+     }
+     else{
+
+      let daysCount = this.calculateBetweenDaysCount(NewBookFromDate,NewBookToDate)
+      if(daysCount > 2){
+        toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "You can not book venue for more than 2 days",
+            labelKey: `You can not book venue for more than 2 days`
+          },
+          "error"
+        );
+       } 
+       else{
+        this.props.history.push(`/egov-services/applyPark-community-center`); 
+       }
+     }
   }
 }        
 };
@@ -793,7 +846,7 @@ console.log("GetSeprateSectorData--",GetSeprateSectorData)
 
     return (
       <div>
-        <div style={{ float: "left", width: "100%", padding: "36px 15px" }}>
+        <div className="bookingTopSec" style={{ float: "left", width: "100%", padding: "36px 15px" }}>
           <div
             className="col-xs-12"
             style={{ background: "#fff", padding: "15px 0" }}
@@ -805,7 +858,7 @@ console.log("GetSeprateSectorData--",GetSeprateSectorData)
                   labelClassName="dark-heading"
                 />
               </div>
-              <div className="col-sm-6 col-xs-6">
+              <div className="col-sm-6 col-xs-6 bookingType">
                 <FormControl component="fieldset">
                   <FormLabel component="legend">
                     <Label label="BK_MYBK_BOOKING_TYPE" />
@@ -921,7 +974,7 @@ console.log("GetSeprateSectorData--",GetSeprateSectorData)
             ) : (
               <div>
                 {console.log("comeInpark")}
-                <div className="col-sm-6 col-xs-6">
+                <div className="col-sm-6 col-xs-6 locality">
                   {" "}
                   {/*for park & community*/}
                   {console.log("comeInsecondPark")}
@@ -1021,7 +1074,7 @@ console.log("GetSeprateSectorData--",GetSeprateSectorData)
             )}
 
             {/*for old availbility check Import Image*/}
-            {this.state.availabilityCheckData &&
+            {/* {this.state.availabilityCheckData &&
             this.state.availabilityCheckData.bkSector ? (
               <BookingMedia
                 changeCalendar={changeCalendar}
@@ -1040,21 +1093,50 @@ console.log("GetSeprateSectorData--",GetSeprateSectorData)
                 availabilityCheckData={this.state.availabilityCheckData}
                 pacc_image_initial_path={sImageUrl && sImageUrl[0].Value}
               />
-            )}
+            )} */}
+
+
+
+{this.state.availabilityCheckData && this.state.oldBookingData == "notfound" &&
+            this.state.availabilityCheckData.bkSector ? (
+              <BookingMedia
+                changeCalendar={changeCalendar}
+                handleCalAfterImage={handleCalAfterImage}
+                one={"withBookingMediaNew"}
+                masterDataPCC={this.state.masterDataPCC}
+                availabilityCheckData={this.state.availabilityCheckData}
+                pacc_image_initial_path={sImageUrl && sImageUrl[0].Value}
+              />
+            ): ""}
+
+{this.state.oldBookingData &&
+this.state.oldBookingData.Sector != undefined ? 
+<BookingMedia
+                changeCalendar={changeCalendar}
+                handleCalAfterImage={handleCalAfterImage}
+                one={"withBookingMediaOld"}
+                masterDataPCC={this.state.masterDataPCC}
+                availabilityCheckData={this.state.availabilityCheckData}
+                pacc_image_initial_path={sImageUrl && sImageUrl[0].Value}
+              /> : ""
+}
+
 
             {/*for old availbility check  import timeSlot Selected One*/}
             {this.state.oldBookingData &&
             this.state.oldBookingData.bkBookingType == "Community Center" &&
-            this.state.oldBookingData.bkBookingVenue !== "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" &&
-            this.state.availabilityCheckData.bkBookingType ==
-              "Community Center" &&
+            this.state.oldBookingData.bkBookingVenue !== "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" && 
+            this.state.oldBookingData.bkBookingVenue !== "HALL+ LAWN AT COMMUNITY CENTRE DHANAS CHANDIGARH" &&//
+            this.state.oldBookingData.bkBookingVenue !==  "HALL AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" &&
+            this.state.oldBookingData.bkBookingVenue !== "LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" &&
+            this.state.availabilityCheckData.bkBookingType == "Community Center" &&
             this.props.bookingVenue == "NotFound" ? (
               <BookingTimeSlot
                 masterDataPCC={this.state.masterDataPCC}
                 availabilityCheckData={this.state.availabilityCheckData}
                 oldAvailabilityCheckData={
                   this.state.oldBookingData && this.state.oldBookingData
-                }
+                } 
               />
             ) : (
               ""
@@ -1062,6 +1144,9 @@ console.log("GetSeprateSectorData--",GetSeprateSectorData)
 
             {/*for old availbility check  import Selected timeSlot To show On UI*/}
             {this.state.oldBookingData && this.state.oldBookingData.bkBookingVenue !== "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" &&
+          this.state.oldBookingData.bkBookingVenue !== "HALL+ LAWN AT COMMUNITY CENTRE DHANAS CHANDIGARH" &&
+          this.state.oldBookingData.bkBookingVenue !==  "HALL AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" &&
+            this.state.oldBookingData.bkBookingVenue !== "LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" &&
             this.state.oldBookingData.bkBookingType == "Community Center" &&
             this.state.availabilityCheckData.bkBookingType ==
               "Community Center" &&
@@ -1328,7 +1413,7 @@ console.log("getSelectedSector",getSelectedSector)
         .bkToDate
     : "notfound";
   console.log("oldToDate--", oldToDate);
-
+ 
   let oldBookingData = state.screenConfiguration.preparedFinalObject
     .oldAvailabilityCheckData
     ? state.screenConfiguration.preparedFinalObject.oldAvailabilityCheckData

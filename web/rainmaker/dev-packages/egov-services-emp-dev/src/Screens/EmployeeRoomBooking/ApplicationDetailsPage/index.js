@@ -541,7 +541,7 @@ else{
     }
 
 	if(this.state.totalNonAcRoom !== 0 && this.state.totalACRoom == 0){
-		bookedrooms = `${this.state.totalNonAcRoom} Non AC` 
+		bookedrooms = `${this.state.totalNonAcRoom} Non AC`
 	} 
 	if(this.state.totalACRoom !== 0 && this.state.totalNonAcRoom == 0){
 		bookedrooms = `${this.state.totalACRoom} AC` 
@@ -900,13 +900,13 @@ downloadPermissionLetterFunction = async (e) => {
       console.log("second-Newugst-",Newugst)
     }
 	if(this.state.totalNonAcRoom !== 0 && this.state.totalACRoom == 0){
-		bookedrooms = `${this.state.totalNonAcRoom} Non AC` 
+		bookedrooms = `${this.state.totalNonAcRoom} Non AC Room(s)` 
 	} 
 	if(this.state.totalACRoom !== 0 && this.state.totalNonAcRoom == 0){
-		bookedrooms = `${this.state.totalACRoom} AC` 
+		bookedrooms = `${this.state.totalACRoom} AC Room(s)` 
 	} 
 	if(this.state.totalACRoom !== 0 && this.state.totalNonAcRoom !== 0){  //"2AC and 3 Non AC"
-		bookedrooms = `${this.state.totalACRoom} AC and ${this.state.totalNonAcRoom} Non AC` 
+		bookedrooms = `${this.state.totalACRoom} AC and ${this.state.totalNonAcRoom} Non AC Room(s)` 
 	} 
 
 		let approverName;

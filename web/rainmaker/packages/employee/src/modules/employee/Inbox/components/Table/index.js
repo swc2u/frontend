@@ -157,7 +157,7 @@ class InboxData extends React.Component {
     if(contextPath === 'estate/refund'){
       queryParams = `fileNumber=${taskId}&tenantId=${tenantId}`;
     }
-    if(contextPath=='/egov-services/application-details'||contextPath=='/egov-services/bwt-application-details'|| contextPath=="/egov-services/newLocation-application-details"){
+    if(contextPath=='/egov-services/application-details'||contextPath=='/egov-services/bwt-application-details'|| contextPath=="/egov-services/newLocation-application-details" || contextPath=="/egov-services/osmcc-application-details" || contextPath=="/egov-services/park-and-community-center-appDetails-details"){
       queryParams = `${taskId}`;
     }
 
@@ -204,7 +204,7 @@ class InboxData extends React.Component {
     else if(row[0].subtext === "ES-EB-IS-RefundOfEmd") {
       queryParams = `auctionId=${taskId}&tenantId=${tenantId}&branchType=${row[0].hiddenText}`
     } 
-    if(contextPath=='/egov-services/application-details'||contextPath=='/egov-services/bwt-application-details'||contextPath== "/egov-services/newLocation-application-details"){
+    if(contextPath=='/egov-services/application-details'||contextPath=='/egov-services/bwt-application-details'||contextPath== "/egov-services/newLocation-application-details" || contextPath=="/egov-services/osmcc-application-details" || contextPath=="/egov-services/park-and-community-center-appDetails-details"){
       this.props.setRoute(`${contextPath}/${queryParams}`);
 
     }else{

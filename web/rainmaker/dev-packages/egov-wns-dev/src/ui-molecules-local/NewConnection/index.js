@@ -42,7 +42,8 @@ class NewConnection extends React.Component {
    // handleField(route.screenKey, route.jsonPath, "props.open", !toggle);
   // window.location.href = "wns/apply"
   const applyUrl = "../wns/apply"
-  setRoute(applyUrl)
+  //setRoute(applyUrl)
+  window.location.href = applyUrl
   //dispatch(setRoute(applyUrl));
 
   };

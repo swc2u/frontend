@@ -161,6 +161,11 @@ const DashboardRentedProperty = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardPension = Loadable({
+  loader: () => import("./DashboardPension"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -193,5 +198,6 @@ export {
   DashboardWNS,
   DashboardWork,
   DashboardEstate,
-  DashboardRentedProperty
+  DashboardRentedProperty,
+  DashboardPension
 };

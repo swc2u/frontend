@@ -1449,6 +1449,168 @@ export const getPublicRelationData = async ( dispatch, data ) => {
   }
 };
 
+// Get Dashboard Data for Pension
+export const getPensionData = async ( state, dispatch, data ) => {
+  
+  // debugger;
+  var payloadData = data;
+
+  try {
+    store.dispatch(toggleSpinner());
+    const DescriptionReport = await httpRequest(
+      "post",
+      "/pension-services/v1/_searchPensionDisbursement?tenantId=ch.chandigarh&pageSize=200&offset=0",
+      "",
+      [],
+      payloadData
+    );
+
+    // debugger;
+
+    var response = [ DescriptionReport, "payloadData.reportSortBy" ];
+    
+    
+    var listMonthData = get(state.screenConfiguration.preparedFinalObject,"allDashboardSearchData",{});
+    listMonthData[payloadData.searchParams[1].input] = response[0].reportResponses[0].reportData;
+    dispatch(prepareFinalObject("allDashboardSearchData", listMonthData));    
+    dispatch(prepareFinalObject(payloadData.searchParams[1].input, response));
+      
+    store.dispatch(toggleSpinner());
+    return listMonthData;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+// Get Pension Data from Three APIS
+export const getEmpToRetirePensionData = async ( state, dispatch, data ) => {
+  
+  // debugger;
+  var payloadData = data;
+
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/report/rainmaker-pension/EmployeeToBeRetired/_get?tenantId=ch.chandigarh&pageSize=false&offset=0",
+      "",
+      [],
+      payloadData
+    );
+
+    // debugger;      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+export const getNormalPensionData = async ( state, dispatch, data ) => {
+  
+  // debugger;
+  var payloadData = data;
+
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/report/rainmaker-pension/RegularNormalPension/_get?tenantId=ch.chandigarh&pageSize=false&offset=0",
+      "",
+      [],
+      payloadData
+    );
+
+    // debugger;      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+export const getDeathOfEmpPensionData = async ( state, dispatch, data ) => {
+  
+  // debugger;
+  var payloadData = data;
+
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/report/rainmaker-pension/DeathOfAnEmployee/_get?tenantId=ch.chandigarh&pageSize=false&offset=0",
+      "",
+      [],
+      payloadData
+    );
+
+    // debugger;
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+export const getDeathPensionerPensionData = async ( state, dispatch, data ) => {
+  
+  // debugger;
+  var payloadData = data;
+
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/report/rainmaker-pension/DeathOfPensioner/_get?tenantId=ch.chandigarh&pageSize=false&offset=0",
+      "",
+      [],
+      payloadData
+    );
+
+    // debugger;
+
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
 // Get Dashboard Data for Rented Property CollectionReport
 export const getRentedPropertyData = async ( dispatch, data ) => {
   
@@ -2154,19 +2316,34 @@ export const getWNSData = async ( dispatch, data ) => {
   },
   "reportSortBy": data.reportSortBy
   }
-  let response = payloadData.reportSortBy ;
+  // let response = payloadData.reportSortBy ;
   try {
     store.dispatch(toggleSpinner());
-    // const DescriptionReport = await httpRequest(
-    //   "post",
-    //   "/prscp-services/v1/event/_get",
-    //   "",
-    //   [],
-    //   payloadData
-    // );
+    
+    const applicationList = await httpRequest(
+      "post",
+      "/ws-services/wc/_search?tenantId=ch.chandigarh&fromDate="+data.fromDate+"&toDate="+data.toDate+"",
+      "",
+      [],
+      payloadData
+    );
+
+    var billPayload = {
+      "billGeneration": {
+        "fromDate":data.fromDate,
+        "toDate":data.toDate
+        }
+    }
+    const billData = await httpRequest(
+      "post",
+      "/ws-services/wsreport/_getBillReportData?",
+      "",
+      [],
+      billPayload
+    );
 
     // //debugger;
-    // var response = [ DescriptionReport, payloadData.reportSortBy ];
+    var response = [ applicationList, billData, payloadData.reportSortBy ];
     // dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // // OK
@@ -2214,20 +2391,22 @@ export const getWorkData = async ( dispatch, data ) => {
   },
   "reportSortBy": data.reportSortBy
   }
-  let response = payloadData.reportSortBy ;
+  var response = payloadData.reportSortBy ;
   try {
     store.dispatch(toggleSpinner());
-    // const DescriptionReport = await httpRequest(
-    //   "post",
-    //   "/prscp-services/v1/event/_get",
-    //   "",
-    //   [],
-    //   payloadData
-    // );
+    //const DescriptionReport = await httpRequest(
+      //"get",
+      //"https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/dashboard/getAllEstimationPreparation",
+      //"",
+      //[],
+      //{}
+    //);
+	
+	const DescriptionReport = [];
 
-    // //debugger;
-    // var response = [ DescriptionReport, payloadData.reportSortBy ];
-    // dispatch(prepareFinalObject("allDashboardSearchData", response));
+    //debugger;
+    response = [ DescriptionReport, payloadData.reportSortBy ];
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // // OK
     dispatch(
@@ -2278,7 +2457,11 @@ export const getWorkflowDropdownData = async (state, dispatch, status) => {
     dispatch(toggleSpinner());
   
     // response = await httpRequest("post", "egov-workflow-v2/egov-wf/businessservice/_search?businessServices=ROADCUTNOC&tenantId=ch.chandigarh", "", [], {services: arraypayload });
-    response = await httpRequest("post", "/egov-workflow-v2/egov-wf/businessservice/_desc?tenantId=ch.chandigarh", "", [], {services: arraypayload });
+    response = await httpRequest("post", 
+    "/egov-workflow-v2/egov-wf/businessservice/_desc?tenantId=ch.chandigarh", 
+    "",
+    [], 
+    {services: arraypayload });
  
     //debugger;
     const HARDDATA = response
@@ -2381,7 +2564,11 @@ export const workflowPreview = async (state, dispatch, status) => {
 	  if (method === "CREATE") {
     dispatch(toggleSpinner());
   
-    response = await httpRequest("post", "egov-workflow-v2/egov-wf/businessservice/_search?businessServices="+getModuleNAme.value+"&tenantId=ch.chandigarh", "", [], {services: arraypayload });
+    response = await httpRequest("post", 
+    "egov-workflow-v2/egov-wf/businessservice/_search?businessServices="+getModuleNAme.value+"&tenantId=ch.chandigarh", 
+    "", 
+    [], 
+    {services: arraypayload });
     // response = await httpRequest("post", "egov-workflow-v2/egov-wf/businessservice/_desc?tenantId=ch.chandigarh", "", [], {services: arraypayload });
     
     //debugger;

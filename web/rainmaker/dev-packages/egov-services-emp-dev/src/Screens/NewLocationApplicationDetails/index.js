@@ -11,7 +11,7 @@ import { resetFiles } from "egov-ui-kit/redux/form/actions";
 import Button from "@material-ui/core/Button";
 import ShareIcon from "@material-ui/icons/Share";
 import get from "lodash/get";
-import isEqual from "lodash/isEqual";
+import isEqual from "lodash/isEqual"; 
 import { prepareFormData } from "egov-ui-kit/redux/common/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import NewLocationTaskStatus from "../AllMCCApplication/components/NewLocationTaskStatus"
@@ -825,37 +825,34 @@ class ApplicationDetails extends Component {
 		let complaintLoc = {};
 		
 		if (complaint) {
-			if (role === "ao") {
-				if (complaint.complaintStatus.toLowerCase() === "unassigned") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_COMMON_ASSIGN";
-				} else if (complaint.complaintStatus.toLowerCase() === "reassign") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_COMMON_REASSIGN";
-				} else if (complaint.complaintStatus.toLowerCase() === "assigned") {
-					btnTwoLabel = "ES_COMMON_REASSIGN";
-				}
-				else if (complaint.complaintStatus.toLowerCase() === "escalated") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-			} else if (role == "eo") {
-				if (complaint.status.toLowerCase() === "escalatedlevel1pending" ||
-					complaint.status.toLowerCase() === "escalatedlevel2pending") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-				else if (complaint.status.toLowerCase() === "assigned") {
-					btnOneLabel = "ES_REQUEST_REQUEST_RE_ASSIGN";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-			}
-			else if (role === "employee") {
-
-				//  if () {
+			// if (role === "ao") {
+			// 	if (complaint.complaintStatus.toLowerCase() === "unassigned") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_COMMON_ASSIGN";
+			// 	} else if (complaint.complaintStatus.toLowerCase() === "reassign") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_COMMON_REASSIGN";
+			// 	} else if (complaint.complaintStatus.toLowerCase() === "assigned") {
+			// 		btnTwoLabel = "ES_COMMON_REASSIGN";
+			// 	}
+			// 	else if (complaint.complaintStatus.toLowerCase() === "escalated") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
+			// 	}
+			// } else if (role == "eo") {
+			// 	if (complaint.status.toLowerCase() === "escalatedlevel1pending" ||
+			// 		complaint.status.toLowerCase() === "escalatedlevel2pending") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
+			// 	}
+			// 	else if (complaint.status.toLowerCase() === "assigned") {
+			// 		btnOneLabel = "ES_REQUEST_REQUEST_RE_ASSIGN";
+			// 		btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
+			// 	}
+			// }
+			if (role === "employee") {
 				btnOneLabel = "BK_MYBK_REJECT_BUTTON";
-				btnTwoLabel = "BK_MYBK_RESOLVE_MARK_RESOLVED";
-				//  }
+				btnTwoLabel = "BK_MYBK_RESOLVE_MARK_RESOLVED";		
 			}
 		}
 		if (timeLine && timeLine[0]) {
@@ -996,12 +993,13 @@ class ApplicationDetails extends Component {
 								paddingTop: "30px",
 								paddingRight: "30px", float: "right",
 							}}>
-								{(role === "ao" &&
-									complaint.complaintStatus.toLowerCase() !== "closed") ||
-									(role === "eo" &&
-										(complaint.status.toLowerCase() === "escalatedlevel1pending" ||
-											complaint.status.toLowerCase() === "escalatedlevel2pending" ||
-											complaint.status.toLowerCase() === "assigned")) ||
+								{
+								// (role === "ao" &&
+								// 	complaint.complaintStatus.toLowerCase() !== "closed") ||
+								// 	(role === "eo" &&
+								// 		(complaint.status.toLowerCase() === "escalatedlevel1pending" ||
+								// 			complaint.status.toLowerCase() === "escalatedlevel2pending" ||
+								// 			complaint.status.toLowerCase() === "assigned")) ||
 									(role === "employee" &&
 										(
 											(complaint.status == "PENDINGAPPROVAL" && foundFirstLavel &&
@@ -1186,16 +1184,18 @@ const mapStateToProps = (state, ownProps) => {
 		historyApiData = historyObject;
 	}
 
-	const role =
-		roleFromUserInfo(userInfo.roles, "GRO") ||
-			roleFromUserInfo(userInfo.roles, "DGRO")
-			? "ao"
-			: roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-				roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-				? "eo"
-				: roleFromUserInfo(userInfo.roles, "CSR")
-					? "csr"
-					: "employee";
+	// const role =
+	// 	roleFromUserInfo(userInfo.roles, "GRO") ||
+	// 		roleFromUserInfo(userInfo.roles, "DGRO")
+	// 		? "ao"
+	// 		: roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
+	// 			roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
+	// 			? "eo"
+	// 			: roleFromUserInfo(userInfo.roles, "CSR")
+	// 				? "csr"
+	// 				: "employee";
+
+	const role = "employee";
 
 	let isAssignedToEmployee = true;
 	if (selectedComplaint && businessService) {

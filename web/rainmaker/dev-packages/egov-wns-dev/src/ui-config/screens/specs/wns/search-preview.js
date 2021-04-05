@@ -14,7 +14,14 @@ import set from "lodash/set";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getQueryArg, setDocuments, setBusinessServiceDataToLocalStorage, getFileUrlFromAPI } from "egov-ui-framework/ui-utils/commons";
 import { prepareFinalObject, preparedFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getSearchResults, getSearchResultsForSewerage, waterEstimateCalculation, getDescriptionFromMDMS, findAndReplace, swEstimateCalculation, setWSDocuments } from "../../../../ui-utils/commons";
+import { getSearchResults, 
+  getSearchResultsForSewerage, 
+  waterEstimateCalculation, 
+  getDescriptionFromMDMS, 
+  findAndReplace, 
+  getSearchBillingEstimation,
+  swEstimateCalculation, 
+  setWSDocuments } from "../../../../ui-utils/commons";
 import {
   createEstimateData,
   setMultiOwnerForSV,
@@ -24,6 +31,7 @@ import {
   showHideAdhocPopup,
   GetMdmsNameBycode
 } from "../utils";
+
 import { footerReview } from "./applyResource/footer";
 import { downloadPrintContainer } from "../wns/acknowledgement";
 import {
@@ -123,7 +131,9 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
     }
     if (!getQueryArg(window.location.href, "edited")) {
       (await searchResults(action, state, dispatch, applicationNumber,processInstanceAppStatus));
-      // set 
+      // set Billing info frm API calling ws-calculator/billing/_getBillingEstimation
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",true);
+
       let service_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.service");
       if(service_ ==='SEWERAGE')
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyUsageDetail.visible",false);
@@ -201,7 +211,60 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       }
     }
 
+    let connectionNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].connectionNo",'');
+    if(connectionNo)
+    {
+      set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.props.number", connectionNo);
+      set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",true ); 
+    let requestBody=
+    {
+      billGeneration:
+      {            
+      consumerCode:connectionNo,
+      tenantId:tenantId,
+      paymentMode:'cash',
+      isGenerateDemand:true,            
+      }
+    }
+    try{
+    let BillingEstimation = await getSearchBillingEstimation(requestBody,dispatch,action); 
+      if(BillingEstimation)
+      {
+        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetailException.visible",false);
+        if(BillingEstimation.billGeneration[0].status ==='PAID')
+        {
+          dispatch(prepareFinalObject("billGenerationdata.status", BillingEstimation.billGeneration[0].status))
+        }
+      
+      else
+      {
+        dispatch(prepareFinalObject("billGenerationdata.status", 'NOT PAID'))
+      }        
+      dispatch(prepareFinalObject("billGenerationdata.totalNetAmount", BillingEstimation.billGeneration[0].totalNetAmount))
+      dispatch(prepareFinalObject("billGenerationdata.dueDateCash", BillingEstimation.billGeneration[0].dueDateCash))
+        
+      }
+    }
+    catch(error)
+    {
+      //viewConnectionBillDetailException
+     
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetailException.visible",true);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",false);
+      dispatch(prepareFinalObject("billGenerationdata.status", 'No Data Found'))
+      dispatch(prepareFinalObject("billGenerationdata.totalNetAmount", ''))
+      dispatch(prepareFinalObject("billGenerationdata.dueDateCash", ''))
 
+
+    }
+    }
+    else
+    {
+      set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetailException.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",false);
+
+    }
     let connectionType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].connectionType");
     if (connectionType === "Metered") {
       set(
@@ -437,10 +500,20 @@ export const getMdmsData = async (state,dispatch) => {
         { moduleName: "ws-services-masters", 
         masterDetails: [
           { name: "wsWorkflowRole" },
+          { name: "swWorkflowRole" },
           { name: "sectorList" },
           { name: "swSectorList" },
+          
         
         ] },
+        {
+          moduleName: "PropertyTax",
+          masterDetails: [
+          {name: "UsageCategory"},
+          // {name:"Floor"},
+          // {name:"OwnerShipCategory"},
+          ]
+        },
         
       ]
     }
@@ -448,8 +521,32 @@ export const getMdmsData = async (state,dispatch) => {
   try {
     let payload = null;
     payload = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
-    
-   
+    let UsageType=[] , subUsageType=[];
+    if( payload.MdmsRes['PropertyTax'].UsageCategory !== undefined){
+      payload.MdmsRes.PropertyTax.UsageCategory.forEach(item=>{
+        if(item.code.split(".").length<=1){
+            UsageType.push({
+              active:item.active,
+              name:item.name,
+              code:item.code,
+              fromFY:item.fromFY
+            })
+          }
+      });
+       payload.MdmsRes.PropertyTax.UsageType=UsageType;
+      
+       payload.MdmsRes.PropertyTax.UsageCategory.forEach(item=>{
+        if(item.code.split(".").length==2){
+          subUsageType.push({
+              active:item.active,
+              name:item.name,
+              code:item.code,
+              fromFY:item.fromFY
+            })
+          }
+      });
+      payload.MdmsRes.PropertyTax.subUsageType=subUsageType;
+    }
     dispatch(prepareFinalObject("searchPreviewScreenMdmsData", payload.MdmsRes));
     //
   } catch (e) { console.log(e); }
@@ -553,7 +650,7 @@ const screenConfig = {
                 sm: 4,
                 align: "right"
               },
-              visible:false
+              visible:true
             }
           }
         },

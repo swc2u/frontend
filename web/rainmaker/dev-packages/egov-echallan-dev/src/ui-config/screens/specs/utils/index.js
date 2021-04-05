@@ -1428,6 +1428,16 @@ export const numWords = (input) => {
 
   return str.trim()
 }
+export const showHideAdhocPopupUpdateContact = (state, dispatch, screenKey, type) => {
+  //setTimeout(function () {
+  let toggle = get(
+    state.screenConfiguration.screenConfig[screenKey],
+    "components.updateContact.props.open", false
+  );
+  dispatch(
+    handleField(screenKey, "components.updateContact", "props.open", !toggle)
+  );
+};
 
 export const showHideAdhocPopupReceivePayment = (state, dispatch, screenKey, type) => {
   //setTimeout(function () {

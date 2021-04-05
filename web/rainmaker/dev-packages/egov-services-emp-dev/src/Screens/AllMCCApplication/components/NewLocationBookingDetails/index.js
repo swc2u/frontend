@@ -88,7 +88,7 @@ class BookingDetails extends Component {
     }
 
     return (
-      <div>
+      <div> 
         <Card
           textChildren={
             <div>
@@ -96,7 +96,7 @@ class BookingDetails extends Component {
               
 
                 <div className="col-8" style={{paddingLeft:"10px"}}>
-                  <Label label="BK_MYBK_TASK_STATUS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
+                  <Label label="BK_MYBK_APPLICATION_DETAILS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
                 </div>
                 
               </div>
@@ -153,14 +153,13 @@ class BookingDetails extends Component {
                       className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                       id="complaint-details-current-status"
                       labelStyle={{ color: "inherit" }}
-                      label={status}
+                      label={'BK_WF_NLUJM_'+status}
                     />
                   </div>
                   <div className="col-md-4">
                     <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_APPLICATION_DETAILS_SUBMISSION_DATE" />
                     <b><Label
                       className="col-xs-12  col-sm-12 col-md-12  status-result-color"
-                      label={submittedDate}
                       id="complaint-details-submission-date"
                       labelStyle={{ color: "inherit" }}
                       label={dateCreated}
@@ -170,10 +169,9 @@ class BookingDetails extends Component {
                     <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_APPLICATION_BOOKING_TYPE" />
                     <Label
                       className="col-xs-12  col-sm-12 col-md-12  status-result-color"
-                      label={submittedDate}
                       id="complaint-details-submission-date"
                       labelStyle={{ color: "inherit" }}
-                      label={businessService}
+                      label={'BK_'+businessService}   //`BK_WF_${businessService}`
                     />
                   </div>
 

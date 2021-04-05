@@ -34,6 +34,8 @@ getCommonHeader({
 
 const transitNumberField = {
   ...transitNumberLookUp,
+  pattern:"",
+  maxLength:"",
   jsonPath: "property.transitNumber",
   iconObj: {
     ...transitNumberLookUp.iconObj,
@@ -345,6 +347,7 @@ const paymentMode = {
     labelKey: "RP_PAYMENT_MODE_PLACEHOLDER",
   },
   required: true,
+  visible: process.env.REACT_APP_NAME !== "Citizen",
   optionValue: "value",
   optionLabel: "label",
   jsonPath: "paymentInfo.paymentMode",
@@ -416,7 +419,12 @@ const paymentInfo = getCommonCard({
     transactionNumber: getTextField(transactionNumberField),
   })
 })
-
+const paymentInfoOffline = getCommonCard({
+  header: paymentInfoHeader,
+  detailsContainer: getCommonContainer({
+    amount: getTextField(amountField),
+  })
+})
 const paymenttype = {
   label: {
     labelName: "Payment Mode",
@@ -661,7 +669,8 @@ const detailsContainerCitizen={
   },
   children: {
     propertyDetails,
-    rentSummaryDetails
+    rentSummaryDetails,
+    paymentInfoOffline
   },
   visible: true
 }
@@ -826,7 +835,7 @@ const payment = {
                 }
               }
             },
-            detailsContainer:  process.env.REACT_APP_NAME !== "Citizen" ? detailsContainer : detailsContainerCitizen,
+            detailsContainer: detailsContainer,
             footer: paymentFooter
           }
         }

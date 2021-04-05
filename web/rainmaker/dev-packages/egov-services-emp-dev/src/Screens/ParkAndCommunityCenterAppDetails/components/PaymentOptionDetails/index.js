@@ -61,8 +61,8 @@ class CGBookingDetails extends Component {
             toggleSnackbarAndSetText(
               true,
               {
-                labelName: "ERR_BANK_DETAILS_NOT_FOUND_FOR_IFSC",
-                labelKey: `ERR_BANK_DETAILS_NOT_FOUND_FOR_IFSC`
+                labelName: "ERR_NOT_FOUND_FOR_IFSC_PACC_EMP",
+                labelKey: `ERR_NOT_FOUND_FOR_IFSC_PACC_EMP`
               },
               "error"  
             );
@@ -236,12 +236,13 @@ return (
     <div>
     <div className="col-xs-12" style={{ paddingLeft: 8 }}>
     <div className="col-sm-6 col-xs-12">
-    <FormControl style={{ width: '100%' }}>
+    <FormControl style={{ width: '100%'}}>
       <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label"><Label
         required={true}
         label="Paid By" /*BK_MYBK_PAYMENT_PAID_BY_LABEL*/
       /></InputLabel>
       <Select
+       style={{  marginTop:'24px'}}
         maxWidth={false}
         required={true}
         labelId="demo-controlled-open-select-label"

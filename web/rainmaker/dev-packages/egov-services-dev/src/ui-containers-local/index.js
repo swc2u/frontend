@@ -90,7 +90,10 @@ const modifiedBookingPaymentCard = Loadable({
   loading: () => <Loading />
 });
 
-
+const DownloadFileContainerWithDocumentType = Loadable({
+  loader: () => import("./DownloadFileContainerWithDocumentType"),
+  loading: () => <Loading />
+});
 export {
   RadioGroupWithIconContainer,
   TextFieldContainerReadOnly,
@@ -111,5 +114,6 @@ export {
   RefundFeeAmountContainer,
   modifiedBookingPaymentCard,
   RoomCardsContainer,
-  ParkChangeDateVenueFieldDisabler
+  ParkChangeDateVenueFieldDisabler,
+  DownloadFileContainerWithDocumentType
 };

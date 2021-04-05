@@ -20,9 +20,18 @@ class DialogContainer extends React.Component {
   render() {
     const { open, maxWidth, children } = this.props;
     return (
-      <Dialog open={open} maxWidth={maxWidth} onClose={this.handleClose}>
-        <DialogContent children={children} />
-      </Dialog>
+      <Dialog 
+      open={open} 
+      maxWidth={maxWidth}  
+      onClose={this.handleClose}
+      PaperProps={{
+        style: {
+          minWidth: "600px"
+        }
+      }}
+    >
+      <DialogContent children={children} />
+    </Dialog>
     );
   }
 }

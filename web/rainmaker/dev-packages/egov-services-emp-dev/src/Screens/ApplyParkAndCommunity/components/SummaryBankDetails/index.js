@@ -32,9 +32,9 @@ return (
               
               <div className="complaint-detail-detail-section-status row">
               <div className="col-md-4">
-                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="Bank Name" />
+                                <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="Bank Account Name" />
                                 <Label
-                                    labelStyle={{ color: "inherit" }}
+                                    labelStyle={{ color: "inherit" }} 
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-complaint-number"
                                     label={BankAccountName}

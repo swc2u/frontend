@@ -11,7 +11,8 @@ import LabelContainer from "../../ui-containers/LabelContainer";
 const styles = theme => ({
   root: {
     width: "100%",
-    overflowY:window.innerWidth <900 ?"auto !important":""
+    overflowY:window.innerWidth <900 ?"auto !important":"",
+    overflowX : "auto"
   }
 });
 

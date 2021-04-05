@@ -12,7 +12,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 //import Icon from "@material-ui/core/Icon";
 import Icon from "egov-ui-framework/ui-atoms/Icon";
-
+import './index.css'
 const styles = theme => ({
   root: {
     display: "flex"
@@ -59,8 +59,8 @@ class MenuListComposition extends React.Component {
     const { open } = this.state;
 
     return (
-      <div className={classes.root} data-html2canvas-ignore={true}>
-        <div>
+      <div className={classes.root , "outerDiv"} data-html2canvas-ignore={true}>
+        <div className = {"innerDiv"}>
           <Button className={classes.button}
             buttonRef={node => {
               this.anchorEl = node;

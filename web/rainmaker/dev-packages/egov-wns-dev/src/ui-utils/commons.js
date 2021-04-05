@@ -286,6 +286,33 @@ export const getBillingEstimation = async (queryObject, dispatch) => {
         dispatch(toggleSnackbar(true, errorMessage, "warning"));
     }
 };
+export const getSearchBillingEstimation = async (queryObject, dispatch, action) => {
+    dispatch(toggleSpinner());
+    try {
+        const response = await httpRequest(
+            "post",
+            "/ws-calculator/billing/_getBillingEstimation",
+            "_search",
+            [],
+            queryObject
+        );
+        dispatch(toggleSpinner());
+        return findAndReplace(response, null, "NA");
+    } catch (error) {
+        dispatch(toggleSpinner());
+        console.log(error)
+        let errorMessage = {
+            labelName: error.message,
+            labelKey: error.message
+          };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetailException.visible",true);
+        set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",false);
+        dispatch(prepareFinalObject("billGenerationdata.status", 'No Data Found'))
+        dispatch(prepareFinalObject("billGenerationdata.totalNetAmount", ''))
+        dispatch(prepareFinalObject("billGenerationdata.dueDateCash", ''))
+    }
+};
 
 //Workflow process instances for application status
 export const getWorkFlowData = async (queryObject) => {
@@ -938,17 +965,45 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                      || activityType === 'WS_REACTIVATE'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                 {
-                    if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP')
+                    if(applicationType ==='TEMPORARY' &&( activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP'))
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.category === category)
                         // &&x.occupancycode === occupancycode)
                     }
-                    else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR')
+                    else if(applicationType ==='TEMPORARY' &&( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
+                    {
+                        // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        //     && x.occupancycode === occupancycode)
+                            wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                    }
+                    else if(applicationType ==='REGULAR' &&( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.occupancycode === occupancycode)
                     } 
+                    else if(applicationType ==='REGULAR' &&( activityType ==='NEW_WS_CONNECTION' || activityType ==='REGULARWSCONNECTION'))
+                    {
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                            && x.occupancycode === occupancycode)
+                    }
+                    
+                    else if(applicationType === 'TEMPORARY')
+                    {
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.category === category;
+                        });
+
+                    }
+                    else if(applicationType === 'REGULAR')
+                    {
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.occupancycode === occupancycode;
+                        });
+                        
+                    } 
+
+                    
                 }  
             }
             else{
@@ -1486,17 +1541,42 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                      || activityType === 'WS_REACTIVATE'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
                 {
-                    if(applicationType ==='TEMPORARY' ||  activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP')
+                    if(applicationType ==='TEMPORARY' && ( activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || activityType ==='WS_TEMP_TEMP'))
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.category === category)
                         // &&x.occupancycode === occupancycode)
+                    }
+                    else if(applicationType ==='TEMPORARY' && ( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
+                    {
+                        // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        //     && x.occupancycode === occupancycode)
+                        wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
                     }
                     else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR')
                     {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.occupancycode === occupancycode)
                     } 
+                    else if(applicationType ==='REGULAR' &&( activityType ==='NEW_WS_CONNECTION' || activityType ==='REGULARWSCONNECTION'))
+                    {
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                            && x.occupancycode === occupancycode)
+                    } 
+                    else if(applicationType === 'TEMPORARY')
+                    {
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.category === category;
+                        });
+
+                    }
+                    else if(applicationType === 'REGULAR')
+                    {
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.occupancycode === occupancycode;
+                        });
+                        
+                    }
                 }  
             }
             else{
@@ -1826,6 +1906,31 @@ export const applyForSewerage = async (state, dispatch) => {
             set(queryObjectForUpdate, "processInstance.action", "SUBMIT_APPLICATION");
             set(queryObjectForUpdate, "connectionType", "Non Metered");
             queryObjectForUpdate = findAndReplace(queryObjectForUpdate, "NA", null);
+                       /// in case of connection state is INITIATED or PENDING_FOR_CITIZEN_ACTION
+           let subdiv = get(state, "screenConfiguration.preparedFinalObject.SewerageConnection[0].subdiv",'');
+           let searchPreviewScreenMdmsData  = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData");
+            
+           searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].swWorkflowRole.filter(x=>x.state === 'PENDING_FOR_DOCUMENT_VERIFICATION_BY_SDO')
+           let roles =[]
+           let rolecode ='';
+             if(searchPreviewScreenMdmsData && searchPreviewScreenMdmsData[0])
+             {
+             roles =  searchPreviewScreenMdmsData = searchPreviewScreenMdmsData[0].roles
+             roles = roles.filter(x=>x.subdivision === subdiv )
+             if(roles.length>0)
+             {
+             rolecode = roles[0].role 
+             }
+             }
+             if(rolecode)
+             {
+                 set(queryObjectForUpdate, "processInstance.additionalDetails.role", rolecode); 
+             }
+             else
+             {
+                 set(queryObjectForUpdate, "processInstance.additionalDetails", null); 
+
+             }
             await httpRequest("post", "/sw-services/swc/_update", "", [], { SewerageConnection: queryObjectForUpdate });
             let searchQueryObject = [{ key: "tenantId", value: queryObjectForUpdate.tenantId }, { key: "applicationNumber", value: queryObjectForUpdate.applicationNo }];
             let searchResponse = await getSearchResultsForSewerage(searchQueryObject, dispatch);
@@ -2630,7 +2735,7 @@ export const swEstimateCalculation = async (queryObject, dispatch) => {
 
 };
 // to download application 
-export const downloadApp = async (wnsConnection, type, mode = "download") => {
+export const downloadApp = async (state,wnsConnection, type, mode = "download") => {
     let estFileStrID = wnsConnection[0].additionalDetails.estimationFileStoreId
     let sanFileStrID = wnsConnection[0].additionalDetails.sanctionFileStoreId
 
@@ -2671,6 +2776,12 @@ export const downloadApp = async (wnsConnection, type, mode = "download") => {
     } else {
         apiUrl = "sw-calculator/sewerageCalculator/_estimate";
         appService = "ws-applicationsewerage";
+        //set usageCategory and subusageCategory from mdms call
+        let usageCategory = GetMdmsNameBycode(state, "searchPreviewScreenMdmsData.PropertyTax.UsageType",wnsConnection[0].property.usageCategory) 
+        let subusageCategory = GetMdmsNameBycode(state, "searchPreviewScreenMdmsData.PropertyTax.subUsageType",wnsConnection[0].property.subusageCategory) 
+
+        set( wnsConnection[0], `property.usageCategory`, usageCategory);
+        set( wnsConnection[0], `property.subusageCategory`, subusageCategory);
         queryObjectForEst = [{
             applicationNo: appNo,
             tenantId: getTenantIdCommon(),
@@ -2800,6 +2911,69 @@ export const downloadApp = async (wnsConnection, type, mode = "download") => {
         alert('Some Error Occured while downloading!');
     }
 }
+
+export const GetMdmsNameBycode = (state, jsonpath, code) => {
+    //Material
+    let Obj  = get(state, `screenConfiguration.preparedFinalObject.${jsonpath}`,[]) 
+    let Name = code
+    Obj = Obj.filter(x=>x.code === code)
+    if(Obj &&Obj[0])
+    Name = Obj[0].name
+    return Name;
+  };
+  export const ValidateCard = (state,dispatch,cardJsonPath,pagename,jasonpath,value) => {
+    let  DuplicatItem =[];
+    let CardItem = get(
+      state.screenConfiguration.screenConfig[`${pagename}`],
+      cardJsonPath,
+      []
+    );
+   let matcode =[];
+    for (let index = 0; index < CardItem.length; index++) {
+      if(CardItem[index].isDeleted === undefined ||
+      CardItem[index].isDeleted !== false)
+      {
+      let code = get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].${value}`,'')
+      matcode.push(code)
+      }
+    } 
+    var uniq = matcode
+    .map((name) => {
+      return {
+        count: 1,
+        name: name
+      }
+    })
+    .reduce((a, b) => {
+      a[b.name] = (a[b.name] || 0) + b.count
+      return a
+    }, {})  
+    var duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1)
+    if(duplicates.length>0)
+    {
+    duplicates= duplicates.map(itm => {
+        return `${itm}`;
+      })
+      .join() || "-"
+     // IsDuplicatItem = true;  
+      DuplicatItem.push(
+        {
+          duplicates: duplicates,
+          IsDuplicatItem:true
+        }      
+      )  
+    } 
+    else{
+      DuplicatItem.push(
+        {
+          duplicates: duplicates,
+          IsDuplicatItem:false
+        });
+  
+    }
+  
+    return DuplicatItem;
+  };
 export const validateConnHolderDetails = (holderData) => {
     if(holderData.connectionHolders==null){
         return true
@@ -2953,4 +3127,30 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
     //   );
     //   throw error;
     // }
+  };
+  export const generateBillFile = async (queryObject , api) => {
+
+    try {
+      store.dispatch(toggleSpinner());
+      const response = await httpRequest(
+        "post",
+        api,     
+        "",
+        queryObject,
+        { billGeneration: {}}
+      );
+      store.dispatch(toggleSpinner());
+      return response;
+    } catch (error) {
+      store.dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: error.message, labelKey: error.message },
+          "error"
+        )
+      );
+      store.dispatch(toggleSpinner());
+     // throw error;
+    }
+  
   };

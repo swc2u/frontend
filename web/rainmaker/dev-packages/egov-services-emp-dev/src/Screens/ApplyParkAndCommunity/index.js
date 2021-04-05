@@ -402,7 +402,7 @@ console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
                 rent={vrent}
                 prevStep={this.prevStep}
                 handleChange={this.handleChange}
-                firstName={firstName}
+                firstName={firstName} 
                 lastName={lastName}
                 email={email}
                 mobileNo={mobileNo}
@@ -458,14 +458,18 @@ console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
     }
 
     render() {
+        
+    
+
     const { step } = this.state;
     const {fromDateone,
     bookingOne} = this.props;
         return (
-            <div style={{ backgroundColor: 'aliceblue'}}>
+
+            <div className="stepBarSec" style={{ backgroundColor: 'aliceblue'}}>
                 <div className="col-xs-12" style={{ padding: 0, float: 'left', width: '100%', backgroundColor: 'aliceblue'}}>
                     <div className="col-sm-12 col-xs-12" style={{ backgroundColor: 'aliceblue'}}>
-                        <Stepper  style={{ backgroundColor: "transparent" }} alternativeLabel activeStep={step}>
+                        <Stepper className="stepBar" style={{ backgroundColor: "transparent" }} alternativeLabel activeStep={step}>
                             {this.state.childrenArray.map((child, index) => (
                                 <Step key={child.labelKey}>
                                     <StepLabel>{child.labelKey}</StepLabel>
@@ -476,7 +480,25 @@ console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
                     </div>
                 </div>
                 {this.showStep()}
+
+                <style>
+        {`
+    @media screen and (min-width: 320px) and (max-width: 568px) {
+.stepBarSec{margin-top:50px;}
+.stepBar{overflow-x: auto; padding: 24px 15px 15px 15px;}
+.apply-wizard-footer {left: 0; position: static !important;}
+.applyBtnWrapper{display:flex !important; position: static !important;}
+.applyBtnWrapper .responsive-action-button{min-width:auto !important; width:50%;}
+.rainmaker-displayInline{display:block !important;}
+.clearMob{clear: both;}
+
+}
+    `}
+    </style>
             </div>
+
+           
+           
         );
     }
 }

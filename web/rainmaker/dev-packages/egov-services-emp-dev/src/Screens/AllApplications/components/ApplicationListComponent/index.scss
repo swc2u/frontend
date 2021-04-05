@@ -171,3 +171,11 @@
 .application-format{
   padding-left:10px;
 }
+@media screen and (min-width: 320px) and (max-width: 568px) {
+  .screenHeaderLabelStyle .label-text{font-size:15px !important}
+  .complaint-number-cont.application-format{padding-left:5px !important}
+  .compList{display:flex !important}
+  .listFirst{width:47% !important}
+  .complaint-complaint-number{width:50% !important}
+  .complaint-number{height: auto !important;}
+  }
