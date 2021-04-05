@@ -609,6 +609,11 @@ import { penaltySummary } from "./generatePenaltyStatement";
       const propertyId = getQueryArg(window.location.href, "propertyId")
       const offlinePaymentDetails = get(state.screenConfiguration.preparedFinalObject, "payment")
       const {paymentAmount, paymentType, payer, ...rest} = offlinePaymentDetails
+      const owners = get(state.screenConfiguration.preparedFinalObject, "Properties[0].propertyDetails.owners")
+      let owner
+      if(!!payer && !!payer.uuid){
+       owner=owners.filter(item=>item.id===payer.uuid)
+      }
       switch(paymentType){
         case 'PAYMENTTYPE.PENALTY':
           const PenaltyStatementSummary = get(state.screenConfiguration.preparedFinalObject, "PenaltyStatementSummary")
@@ -657,7 +662,19 @@ import { penaltySummary } from "./generatePenaltyStatement";
         isValidAmount = true
       }
       if(!!propertyId && isValidAmount) {
-        const payload = [
+        let payload
+        if(type==="OFFLINE"){
+          payload = [
+            { id: propertyId, 
+              payer,
+              propertyDetails: {
+                offlinePaymentDetails: [{...rest, amount: paymentAmount, paymentType,payerName:owner[0].name}]
+              }
+            }
+          ]
+        }
+        else{
+        payload = [
           { id: propertyId, 
             payer,
             propertyDetails: {
@@ -665,6 +682,7 @@ import { penaltySummary } from "./generatePenaltyStatement";
             }
           }
         ]
+      }
         try {
           const url = paymentType === "PAYMENTTYPE.PENALTY" ? "/est-services/violation/_penalty_payment" : paymentType === "PAYMENTTYPE.EXTENSIONFEE" ? "/est-services/extension-fee/_payment" : paymentType === "PAYMENTTYPE.SECURITYFEE" ? "/est-services/security_deposit/_payment" : "/est-services/property-master/_payrent"
           const response = await httpRequest("post",
