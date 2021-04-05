@@ -88,6 +88,26 @@ export const callBackForNext = async (state, dispatch) => {
       }
     }
     //
+    if(NulmSusvRequest ){
+      if(!NulmSusvRequest.category ){
+        const errorMessage = {
+          labelName: "Please select cast of an applicant",
+          labelKey: "ERR_NULM_SELECT_CAST_APPLICANT"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return;
+      }
+    }
+    if(NulmSusvRequest ){
+      if(!NulmSusvRequest.gender ){
+        const errorMessage = {
+          labelName: "Please select gender of an applicant",
+          labelKey: "ERR_NULM_SELECT_GENDER_APPLICANT"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return;
+      }
+    }
   }
 
   if (activeStep === 1) {
