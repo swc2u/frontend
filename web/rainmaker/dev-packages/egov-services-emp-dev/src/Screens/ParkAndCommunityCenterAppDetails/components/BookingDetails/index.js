@@ -200,7 +200,7 @@ class BookingDetails extends Component {
                       className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                       id="complaint-details-current-status"
                       labelStyle={{ color: "inherit" }}
-                      label={status}
+                      label={`RPT_BK_WF_${status}`}
                     />
                   </div>
 
