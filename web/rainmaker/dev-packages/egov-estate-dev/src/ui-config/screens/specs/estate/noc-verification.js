@@ -525,14 +525,14 @@ const housesOfSouthField = {
 }
 }
 
-const widthOfFrontElevationOfHouseField = {
+const widthOfFrontElevationOfHouseField = ({jsonPath, label, placeholder}) => ({
   label: {
     labelName: "Width of the front elevation of house (in ft.)",
-    labelKey: "ES_WIDTH_OF_FRONT_ELEVATION_OF_HOUSE_LABEL"
+    labelKey: label
   },
   placeholder: {
     labelName: "Enter width of the front elevation of house (in ft.)",
-    labelKey: "ES_WIDTH_OF_FRONT_ELEVATION_OF_HOUSE_PLACEHOLDER"
+    labelKey: placeholder
   },
   gridDefination: {
     xs: 12,
@@ -542,7 +542,7 @@ const widthOfFrontElevationOfHouseField = {
   minLength: 2,
   maxLength: 150,
   pattern:_getPattern("numeric-firstdigit-nonzero"),
-  jsonPath: "Applications[0].applicationDetails.frontElevationWidth",
+  jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
@@ -554,16 +554,16 @@ const widthOfFrontElevationOfHouseField = {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_WIDTH_NUMBER",action.screenKey);
     }
 }
-}
+})
 
-const totalWidthOfPublicStreetField = {
+const totalWidthOfPublicStreetField = ({jsonPath, label, placeholder}) =>  ({
   label: {
     labelName: "Total width of the public street (in ft.)",
-    labelKey: "ES_TOTAL_WIDTH_OF_PUBLIC_STREET_LABEL"
+    labelKey: label
   },
   placeholder: {
     labelName: "Enter total width of the public street (in ft.)",
-    labelKey: "ES_TOTAL_WIDTH_OF_PUBLIC_STREET_PLACEHOLDER"
+    labelKey: placeholder
   },
   gridDefination: {
     xs: 12,
@@ -573,7 +573,7 @@ const totalWidthOfPublicStreetField = {
   minLength: 2,
   maxLength: 150,
   pattern:_getPattern("numeric-firstdigit-nonzero"),
-  jsonPath: "Applications[0].applicationDetails.streetWidth",
+  jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
@@ -585,7 +585,7 @@ const totalWidthOfPublicStreetField = {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_WIDTH_OF_PUBLIC_STREET_NUMBER",action.screenKey);
     }
 }
-}
+})
 
 const getWhetherThereIsStreetOnOtherSideOfHouseRadioButton = {
   uiFramework: "custom-containers",
@@ -625,17 +625,41 @@ const getWhetherThereIsStreetOnOtherSideOfHouseRadioButton = {
         !!(action.value == "true")
       )
     )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.widthOfStreetWithLenghtOfHouseInch",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.heightOfStreeOtherSide",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.heightOfStreeOtherSideInch",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
   }
 };
 
-const widthOfStreetWithLengthOfHouseField = {
+const widthOfStreetWithLengthOfHouseField = ({jsonPath, label, placeholder}) => ({
   label: {
     labelName: "Width of the same with the length of house adjoining to that side of street",
-    labelKey: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_LABEL"
+    labelKey: label
   },
   placeholder: {
     labelName: "Enter width of the same with the length of house adjoining to that side of street",
-    labelKey: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_PLACEHOLDER"
+    labelKey: placeholder
   },
   gridDefination: {
     xs: 12,
@@ -643,7 +667,7 @@ const widthOfStreetWithLengthOfHouseField = {
   },
   // required: true,
   visible: false,
-  jsonPath: "Applications[0].applicationDetails.sameWidthOfSideStreet",
+  jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
   pattern:_getPattern("width"),
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 50) {
@@ -656,7 +680,34 @@ const widthOfStreetWithLengthOfHouseField = {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_WIDTH_NUMBER",action.screenKey);
     }
 }
+})
+
+const commercialActivity = ({jsonPath, label, placeholder}) => ({
+  label: {
+    labelName: "Commercial Activity Floor",
+    labelKey: label
+  },
+  placeholder: {
+    labelName: "Enter Commercial Activity Floor",
+    labelKey: placeholder
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  // required: true,
+  visible: false,
+  jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
+  pattern:_getPattern("width"),
+  afterFieldChange: (action, state, dispatch) => {
+    if (action.value.length > 50) {
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_50", action.screenKey);
+    }
+    else {
+        displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_WIDTH_NUMBER",action.screenKey);
+    }
 }
+})
 
 const getWhetherAreaOfHouseAtSiteIsSameRadioButton = {
   uiFramework: "custom-containers",
@@ -1005,6 +1056,56 @@ const getAnyCommercialActivityGoingOnRadioButton = {
   },
   required: true,
   type: "array",
+  afterFieldChange: (action, state, dispatch) => {
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.groundFloorCommercialActivity",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.groundFloorCommercialActivityInch",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.firstFloorCommercialActivity",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.firstFloorCommercialActivityInch",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.secondFloorCommercialActivity",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.secondFloorCommercialActivityInch",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
+  }
 };
 
 const getAnyBasementsOnRadioButton = {
@@ -1267,10 +1368,15 @@ export const nocVerificationDetails = getCommonCard({
     housesOfWest: getTextField(housesOfWestField),
     housesOfNorth: getTextField(housesOfNorthField),
     housesOfSouth: getTextField(housesOfSouthField),
-    widthOfFrontElevationOfHouse: getTextField(widthOfFrontElevationOfHouseField),
-    totalWidthOfPublicStreet: getTextField(totalWidthOfPublicStreetField),
+    widthOfFrontElevationOfHouse: getTextField(widthOfFrontElevationOfHouseField({jsonPath: "frontElevationWidth", label: "ES_WIDTH_OF_FRONT_ELEVATION_OF_HOUSE_LABEL", placeholder: "ES_WIDTH_OF_FRONT_ELEVATION_OF_HOUSE_PLACEHOLDER"})),
+    widthOfFrontElevationInch: getTextField(widthOfFrontElevationOfHouseField({jsonPath: "frontElevationWidthInch", label: "ES_WIDTH_OF_FRONT_ELEVATION_OF_HOUSE_INCH_LABEL", placeholder: "ES_WIDTH_OF_FRONT_ELEVATION_OF_HOUSE_INCH_PLACEHOLDER"})),
+    totalWidthOfPublicStreet: getTextField(totalWidthOfPublicStreetField({jsonPath: "streetWidth", label: "ES_TOTAL_WIDTH_OF_PUBLIC_STREET_LABEL", placeholder: "ES_TOTAL_WIDTH_OF_PUBLIC_STREET_PLACEHOLDER"})),
+    totalWidthOfPublicStreetInch: getTextField(totalWidthOfPublicStreetField({jsonPath: "streetWidthInch", label: "ES_TOTAL_WIDTH_OF_PUBLIC_STREET_INCH_LABEL", placeholder: "ES_TOTAL_WIDTH_OF_PUBLIC_STREET_INCH_PLACEHOLDER"})),
     streetOnOtherSideOfHouse: getWhetherThereIsStreetOnOtherSideOfHouseRadioButton,
-    widthOfStreetWithLengthOfHouse: getTextField(widthOfStreetWithLengthOfHouseField),
+    widthOfStreetWithLengthOfHouse: getTextField(widthOfStreetWithLengthOfHouseField({jsonPath: "sameWidthOfSideStreet", label: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_LABEL", placeholder: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_PLACEHOLDER"})),
+    widthOfStreetWithLenghtOfHouseInch: getTextField(widthOfStreetWithLengthOfHouseField({jsonPath: "sameWidthOfSideStreetInch", label: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_INCH_LABEL", placeholder: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_INCH_PLACEHOLDER"})),
+    heightOfStreeOtherSide:getTextField(widthOfStreetWithLengthOfHouseField({jsonPath: "sameHeightOfSideStreet", label: "ES_HEIGHT_OF_THE_STREET", placeholder: "ES_HEIGHT_OF_THE_STREET_PLACEHOLDER"})),
+    heightOfStreeOtherSideInch:getTextField(widthOfStreetWithLengthOfHouseField({jsonPath: "sameHeightOfSideStreetInch", label: "ES_HEIGHT_OF_THE_STREET_INCH", placeholder: "ES_HEIGHT_OF_THE_STREET_INCH_PLACEHOLDER"})),
     areaOfHouseAtSiteIsSame: getWhetherAreaOfHouseAtSiteIsSameRadioButton,
     variationDetail: getTextField(variationDetailField),
     houseWithinLalLakir: getWhetherHouseWithinLalLakirRadioButton,
@@ -1282,6 +1388,12 @@ export const nocVerificationDetails = getCommonCard({
     anyCantilever: getAnyCantileverRadioButton,
     cantileverDetails: getTextField(cantileverDetailsField),
     commercialActivityGoingOn: getAnyCommercialActivityGoingOnRadioButton,
+    groundFloorCommercialActivity: getTextField(commercialActivity({jsonPath: "groundFloorcommercialActivity", label: "ES_GROUND_FLOOR_COMMERCIAL", placeholder: "ES_GROUND_FLOOR_COMMERCIAL_PLACEHOLDER"})),
+    groundFloorCommercialActivityInch: getTextField(commercialActivity({jsonPath: "groundFloorcommercialActivityInch", label: "ES_GROUND_FLOOR_COMMERCIAL_INCH", placeholder: "ES_GROUND_FLOOR_COMMERCIAL_INCH_PLACEHOLDER"})),
+    firstFloorCommercialActivity: getTextField(commercialActivity({jsonPath: "firstFloorcommercialActivity", label: "ES_FIRST_FLOOR_COMMERCIAL", placeholder: "ES_FIRST_FLOOR_COMMERCIAL_PLACEHOLDER"})),
+    firstFloorCommercialActivityInch: getTextField(commercialActivity({jsonPath: "firstFloorcommercialActivityInch", label: "ES_FIRST_FLOOR_COMMERCIAL_INCH", placeholder: "ES_FIRST_FLOOR_COMMERCIAL_INCH_PLACEHOLDER"})),
+    secondFloorCommercialActivity: getTextField(commercialActivity({jsonPath: "secondFloorcommercialActivity", label: "ES_SECOND_FLOOR_COMMERCIAL", placeholder: "ES_SECOND_FLOOR_COMMERCIAL_PLACEHOLDER"})),
+    secondFloorCommercialActivityInch: getTextField(commercialActivity({jsonPath: "secondFloorcommercialActivityInch", label: "ES_SECOND_FLOOR_COMMERCIAL_INCH", placeholder: "ES_SECOND_FLOOR_COMMERCIAL_INCH_PLACEHOLDER"})),
     anyBasements: getAnyBasementsOnRadioButton,
     otherViolationDetails: getTextField(otherViolationDetailsField),
     recommendedForIssueOfNoc: getRecommendedForIssueOfNocOnRadioButton,
@@ -1306,13 +1418,78 @@ const detailsContainer = {
   visible: true
 }
 
-const validateNocForm = (state) => {
+const validateNocForm = (state, handleFieldChange) => {
   const isNocVerificationDetailValid = validateFields(
     "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children",
     state,
     store.dispatch,
     "noc-verification"
   )
+
+  const isCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.commercialActivity")
+  const frontElevationWidth = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.frontElevationWidth")
+  const frontElevationWidthInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.frontElevationWidthInch")
+  const streetWidth = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.streetWidth")
+  const streetWidthInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.streetWidthInch")
+  const otherSideStreet = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.otherSideStreet")
+  const sameWidthOfSideStreet = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.sameWidthOfSideStreet")
+  const sameWidthOfSideStreetInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.sameWidthOfSideStreetInch")
+  const sameHeightOfSideStreet = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.sameHeightOfSideStreet")
+  const sameHeightOfSideStreetInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.sameHeightOfSideStreetInch")
+
+  if(!frontElevationWidth) {
+    handleFieldChange("Applications[0].applicationDetails.frontElevationWidth", "0")
+  }
+  if(!frontElevationWidthInch) {
+    handleFieldChange("Applications[0].applicationDetails.frontElevationWidthInch", "0")
+  }
+  if(!streetWidth) {
+    handleFieldChange("Applications[0].applicationDetails.streetWidth", "0")
+  }
+  if(!streetWidthInch) {
+    handleFieldChange("Applications[0].applicationDetails.streetWidthInch", "0")
+  }
+  if(!otherSideStreet) {
+    handleFieldChange("Applications[0].applicationDetails.otherSideStreet", "0")
+  }
+  if(!sameWidthOfSideStreet) {
+    handleFieldChange("Applications[0].applicationDetails.sameWidthOfSideStreet", "0")
+  }
+  if(!sameWidthOfSideStreetInch) {
+    handleFieldChange("Applications[0].applicationDetails.sameWidthOfSideStreetInch", "0")
+  }
+  if(!sameHeightOfSideStreet) {
+    handleFieldChange("Applications[0].applicationDetails.sameHeightOfSideStreet", "0")
+  }
+  if(!sameHeightOfSideStreetInch) {
+    handleFieldChange("Applications[0].applicationDetails.sameHeightOfSideStreetInch", "0")
+  }
+  if(isCommercialActivity === "true" || isCommercialActivity === true) {
+    const groundFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivity")
+    const groundFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivityInch")
+    const firstFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.firstFloorCommercialActivity")
+    const firstFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.firstFloorCommercialActivityInch")
+    const secondFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivity")
+    const secondFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivityInch")
+    if(!groundFloorCommercialActivity) {
+      handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivity", "0")
+    }
+    if(!groundFloorCommercialActivityInch) {
+      handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivityInch", "0")
+    }
+    if(!firstFloorCommercialActivity) {
+      handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivity", "0")
+    }
+    if(!firstFloorCommercialActivityInch) {
+      handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivityInch", "0")
+    }
+    if(!secondFloorCommercialActivity) {
+      handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivity", "0")
+    }
+    if(!secondFloorCommercialActivityInch) {
+      handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivityInch", "0")
+    }
+  }
 
   return isNocVerificationDetailValid;
 }

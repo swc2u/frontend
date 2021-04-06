@@ -185,27 +185,21 @@ const fileNumberField = {
 const houseNumberField = {
   label: {
     labelName: "House Number",
-    labelKey: "ES_HOUSE_NUMBER_LABEL"
+    labelKey: "ES_BB_HOUSE_NUMBER_LABEL"
   },
   placeholder: {
     labelName: "Enter House Number",
-    labelKey: "ES_HOUSE_NUMBER_PLACEHOLDER"
+    labelKey: "ES_BB_HOUSE_NUMBER_PLACEHOLDER"
   },
   gridDefination: {
     xs: 12,
     sm: 6
   },
   required: true,
-  pattern: _getPattern("HouseNumber"),
-  errorMessage:"ES_ERR_HOUSE_NUMBER",
+  pattern: /^((\w+)\-(\d+))$/,
+  errorMessage:"ES_BB_ERR_HOUSE_NUMBER",
   jsonPath: "Properties[0].propertyDetails.houseNumber",
-  afterFieldChange: (action, state, dispatch) => {
-    if (action.value.length > 50) {
-      displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_50", action.screenKey);
-    } else {
-      displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HOUSE_NUMBER",action.screenKey);
-    }
-  }
+
 }
 
 export const mohallaField = {
@@ -249,17 +243,25 @@ const villageField = {
       sm: 6
   },
   required: true,
-  pattern: _getPattern("alphabet"),
+  //pattern: _getPattern("alphabet"),
+  sourceJsonPath: "applyScreenMdmsData.EstateServices.village",
   jsonPath: "Properties[0].propertyDetails.village",
   errorMessage:"ES_ERR_VILLAGE_FEILD",
-  afterFieldChange: (action, state, dispatch) => {
-      if (action.value.length > 150) {
-          displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
-      }
-      else {
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_VILLAGE_FEILD",action.screenKey);
-      }
+  beforeFieldChange: (action, state, dispatch) => {
+    const villages = get(state.screenConfiguration.preparedFinalObject, "applyScreenMdmsData.EstateServices.village") || []
+    const findItem = villages.find(item => item.code === action.value)
+    let currentvillage=get(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.village")
+    if(action.value !== currentvillage){
+      dispatch(
+              handleField(
+               "apply-building-branch",
+                "components.div.children.formwizardFirstStep.children.propertyDetails.children.cardContent.children.detailsContainer.children.houseNumber",
+                "props.value",
+                findItem.house
+              )
+            )
   }
+}
 }
 
 const sizeOfAreaPurchasedField = {
@@ -276,7 +278,7 @@ const sizeOfAreaPurchasedField = {
       sm: 6
   },
   pattern: _getPattern("numeric"),
-  required: true,
+  required: false,
   errorMessage:"ES_ERR_SIZE_OF_AREA_PROPERTY",
   jsonPath: "Properties[0].propertyDetails.areaSqft",
   afterFieldChange: (action, state, dispatch) => {
@@ -307,11 +309,11 @@ export const propertyDetails = getCommonCard({
     fileNumber: getTextField(fileNumberField),
     category: getSelectField(categoryField),
     subCategory: getSelectField(subCategoryField),
-    siteNumber: getTextField(siteNumberField),
+ //   siteNumber: getTextField(siteNumberField),
     sectorNumber: getSelectField(sectorNumberField),
-    houseNumber: getTextField(houseNumberField),
     mohalla: getTextField(mohallaField),
-    village: getTextField(villageField),
-    sizeOfAreaPurchase: getTextField(sizeOfAreaPurchasedField)
+    village: getSelectField(villageField),
+    sizeOfAreaPurchase: getTextField(sizeOfAreaPurchasedField),
+    houseNumber: getTextField(houseNumberField)
   })
 })
