@@ -11,7 +11,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getTodaysDateInYMD } from "../../utils";
 import { handleScreenConfigurationFieldChange as handleField, prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { searchApiCall, searchTransferProperties,searchDuplicateCopy, searchMortgage, searchAccountStatement ,downloadAccountStatementPdf} from "./functions";
+import { searchApiCall,searchPropertycall, searchTransferProperties,searchDuplicateCopy, searchMortgage, searchAccountStatement ,downloadAccountStatementPdf} from "./functions";
 import { getAccountStatementProperty } from "../../../../../ui-utils/apply";
 import{colonyFieldDup} from "../../rented-properties/applyResource/propertyDetails"
 const colonyField = {
@@ -557,7 +557,44 @@ export const rentedPropertyApplication = getCommonCard({
     })
   })
 });
-
+export const rentedPropertyPropertySearch = getCommonCard({
+  subParagraph: getCommonParagraph({
+    labelName: "Please provide atleast one parameter to search Property",
+    labelKey: "RP_PLEASE_PROVIDE_ONE_PARAMETER_TO_SEARCH_PROPERTY_LABEL"
+  }),
+  // colonyContainer: getCommonContainer({
+  //   colony: getSelectField(colonyField),
+  //   status: getSelectField(statusField)
+  // }),
+  transitNumberContainer: getCommonContainer({
+    transitNumber: getTextField(transitNumberField),
+    //phone: getTextField(propertyMasterphoneNumberField)
+  }),
+  button: getCommonContainer({
+    buttonContainer: getCommonContainer(
+      {...buttonItem, searchButton: {...buttonItem.searchButton, 
+        onClickDefination: {
+          action: "condition",
+          callBack: searchPropertycall
+        }
+      },
+        resetButton:{...buttonItem.resetButton,
+          onClickDefination: {
+            action: "condition",
+            callBack: resetFields
+          }
+        },
+       lastCont: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        gridDefination: {
+          xs: 12,
+          sm: 4
+        }
+      }
+    })
+  })
+});
 const commonSearchForm = {
   // subHeader: getCommonTitle({
   //   labelName: "Search Ownership Transfer Property",
@@ -797,6 +834,14 @@ export const searchMortgageApplication = getCommonCard(
 
 
 function resetFields(state, dispatch) {
+  dispatch(
+    handleField(
+      "property-search",
+      "components.div.children.rentedPropertyPropertySearch.children.cardContent.children.transitNumberContainer.children.transitNumber",
+      "props.value",
+      ""
+    )
+  )
   dispatch(
     handleField(
       "search",

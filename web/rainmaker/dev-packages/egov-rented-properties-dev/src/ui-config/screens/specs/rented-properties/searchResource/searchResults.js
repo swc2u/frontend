@@ -7,7 +7,7 @@ import {
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 import { RP_DEMAND_GENERATION_DATE, RP_PAYMENT_DATE, RP_ASSESSMENT_AMOUNT, RP_REALIZATION_AMOUNT, RP_RECEIPT_NO } from "../../../../../ui-constants";
-
+import commonConfig from "config/common.js";
 const userInfo = JSON.parse(getUserInfo());
 
 export const APPLICATION_NO = getTextToLocalMapping("RP_COMMON_TABLE_COL_APPLICAITON_NUMBER")
@@ -34,7 +34,14 @@ export const searchResults = {
       getTextToLocalMapping("Colony"),
       getTextToLocalMapping("Owner"),
       getTextToLocalMapping("Status"),
-      LAST_MODIFIED_ON
+      LAST_MODIFIED_ON,
+      {
+        name: "Tenantid",
+        options: {
+          display: false,
+          viewColumns: false
+        }
+      },
     ],
     options: {
       filter: false,
@@ -71,7 +78,7 @@ const onRowClick = rowData => {
   if(rowData[3] === "Drafted (PM)") {
     window.location.href = `apply?tenantId=${getTenantId()}&transitNumber=${rowData[0]}`
   } else {
-    window.location.href = `search-preview?transitNumber=${rowData[0]}&tenantId=${getTenantId()}`;
+    process.env.REACT_APP_NAME === "Citizen" ? window.location.href = `search-preview?transitNumber=${rowData[0]}&tenantId=${rowData[5]}` :window.location.href = `search-preview?transitNumber=${rowData[0]}&tenantId=${getTenantId()}`;
   }
 };
 

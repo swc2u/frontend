@@ -226,7 +226,26 @@ export const searchResults = async (action, state, dispatch, transitNumber) => {
         
   }
   const rentPaymentConsumerCode = properties[0].rentPaymentConsumerCode;
-  const paymentQueryObj = [
+  let paymentQueryObj =[]
+  if(process.env.REACT_APP_NAME === "Citizen")
+  {
+     paymentQueryObj = [
+      {
+        key: "tenantId",
+        value: properties[0].tenantId,
+      },
+      {
+        key: "consumerCodes",
+        value: rentPaymentConsumerCode,
+      },
+      {
+        key: "mobileNumber",
+        value: properties[0].owners[0].ownerDetails.phone,
+      },
+    ];
+  }
+  else{
+  paymentQueryObj = [
     {
       key: "tenantId",
       value: properties[0].tenantId,
@@ -236,6 +255,7 @@ export const searchResults = async (action, state, dispatch, transitNumber) => {
       value: rentPaymentConsumerCode,
     },
   ];
+}
   const paymentResponse = await getReceipt(paymentQueryObj)
   const _date = new Date().getTime() - 90 * 24 * 60 * 60 * 1000
   const payments = paymentResponse.Payments.filter(item => item.transactionDate >= _date);
