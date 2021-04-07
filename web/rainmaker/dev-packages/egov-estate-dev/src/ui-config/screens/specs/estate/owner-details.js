@@ -28,7 +28,7 @@ import {
   httpRequest
 } from "../../../../ui-utils";
 import {
-  ESTATE_APPROVED_STATE,
+  ESTATE_APPROVED_STATE,ESTATE_ALOTMENT_APPROVED_STATE,
   BUILDING_BRANCH_TABS as tabsBB,
   MANIMAJRA_BRANCH_TABS as tabsMM
 } from "../../../../ui-constants";
@@ -367,7 +367,7 @@ const updateAllFields = async (action, state, dispatch) => {
     let applicationsPresent = false;
      await asyncForEach(properties[0].propertyDetails.owners, async (element,index) => {
       if (!!element.ownerDetails.isCurrentOwner) {
-        let ownerdetailsComponent = getOwnerDetails(false, index, (!!findItem && applicationState == ESTATE_APPROVED_STATE));
+        let ownerdetailsComponent = getOwnerDetails(false, index, (!!findItem && (applicationState == ESTATE_APPROVED_STATE || applicationState==ESTATE_ALOTMENT_APPROVED_STATE)));
         let allotmentDetailsComponent = getAllotmentDetails(false,index);
         if(branchType == 'MANI_MAJRA'){
           delete ownerdetailsComponent.children.cardContent.children.viewFour.children.dob
@@ -375,7 +375,7 @@ const updateAllFields = async (action, state, dispatch) => {
           delete allotmentDetailsComponent.children.cardContent.children.viewFour.children.dateOfAllotment
           delete allotmentDetailsComponent.children.cardContent.children.viewFour.children.allotmentNumber
         }
-        if (applicationState == ESTATE_APPROVED_STATE) {
+        if (applicationState == (ESTATE_APPROVED_STATE || ESTATE_ALOTMENT_APPROVED_STATE)) {
           switch(branchType) {
             case "BUILDING_BRANCH":
               applicationBranchType = "BuildingBranch";
@@ -388,7 +388,7 @@ const updateAllFields = async (action, state, dispatch) => {
           let queryObject = [
             { key: "ownerId", value: ownerId },
             { key: "branchType", value: applicationBranchType },
-            { key: "state", value: ESTATE_APPROVED_STATE },
+            { key: "state", value:  "ES_PM_EB_APPROVED,ES_APPROVED" },
             { key: "moduleType", value: "OwnershipTransfer"},
             {key: "relations", value: "owner"}
           ]

@@ -106,6 +106,16 @@ import {
     if(NulmSuhCitizenNGORequest && ( !NulmSuhCitizenNGORequest.hasOwnProperty("gender"))){
       isFormValid = false;
     }
+    if(NulmSuhCitizenNGORequest ){
+      if(!NulmSuhCitizenNGORequest.gender ){
+        const errorMessage = {
+          labelName: "Please select gender of an applicant",
+          labelKey: "ERR_NULM_SELECT_GENDER_APPLICANT"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return;
+      }
+    }
   
     if (!isFormValid) {
       const errorMessage = {
@@ -163,6 +173,16 @@ import {
       }
     }
     //
+    if(NulmSuhCitizenNGORequest ){
+      if(!NulmSuhCitizenNGORequest.gender ){
+        const errorMessage = {
+          labelName: "Please select gender of an applicant",
+          labelKey: "ERR_NULM_SELECT_GENDER_APPLICANT"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return;
+      }
+    }
 
       //trigger api for create store
       const { screenConfiguration } = state;

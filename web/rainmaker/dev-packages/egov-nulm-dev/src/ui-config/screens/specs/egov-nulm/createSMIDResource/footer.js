@@ -96,6 +96,28 @@ if(NULMSMIDRequest ){
     return;
   }
 }
+
+if(NULMSMIDRequest ){
+  if(!NULMSMIDRequest.caste ){
+    const errorMessage = {
+      labelName: "Please select cast of an applicant",
+      labelKey: "ERR_NULM_SELECT_CAST_APPLICANT"
+    };
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    return;
+  }
+}
+if(NULMSMIDRequest ){
+  if(!NULMSMIDRequest.gender ){
+    const errorMessage = {
+      labelName: "Please select gender of an applicant",
+      labelKey: "ERR_NULM_SELECT_GENDER_APPLICANT"
+    };
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    return;
+  }
+}
+
 if(NULMSMIDRequest && NULMSMIDRequest.isRegistered){
   if(NULMSMIDRequest.isRegistered =="Yes" && !NULMSMIDRequest.cobNumber ){
     const errorMessage = {

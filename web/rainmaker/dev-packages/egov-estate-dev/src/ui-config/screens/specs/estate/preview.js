@@ -74,7 +74,10 @@ const getData = async (action, state, dispatch) => {
        const estateRentSummary = property.estateRentSummary
        const dueAmount = !!estateRentSummary ? estateRentSummary.balanceRent + estateRentSummary.balanceRentPenalty + estateRentSummary.balanceGSTPenalty + estateRentSummary.balanceGST : "0"
        property = {...property, propertyDetails: {...property.propertyDetails, dueAmount: dueAmount || "0"}}
-    
+       const property_copy = property;
+       if(property.fileNumber ===  "BBNOC-1") {
+        property = Applications[0].applicationDetails.property;
+        }
        applicationDocuments = applicationDocuments || []
        const statusQueryObject = [{
           key: "tenantId",
@@ -88,7 +91,9 @@ const getData = async (action, state, dispatch) => {
        getStatusList( state, dispatch, statusQueryObject)
        const removedDocs = applicationDocuments.filter(item => !item.isActive)
        applicationDocuments = applicationDocuments.filter(item => !!item.isActive)
-       Applications = [{...Applications[0], applicationDocuments, property}]
+       const finalLetter = applicationDocuments.find(item => item.documentType === "FINAL_LETTER")
+       applicationDocuments = applicationDocuments.filter(item => item.documentType !== "FINAL_LETTER")
+       Applications = [{...Applications[0], applicationDocuments, property, finalLetter, property_copy}]
        dispatch(prepareFinalObject("Applications", Applications))
        dispatch(prepareFinalObject("temp[0].removedDocs", removedDocs))
        await setDocuments(
@@ -133,7 +138,7 @@ const getData = async (action, state, dispatch) => {
           }) : {}
           reviewDetails = {estimate, ...reviewDetails}
        }
-        if(process.env.REACT_APP_NAME === "Citizen" ? applicationState === "ES_PENDING_PAYMENT" || applicationState === "ES_MM_PENDING_PAYMENT" || applicationState === "ES_PENDING_CITIZEN_TEMPLATE_SUBMISSION" || applicationState === "ES_PENDING_CITIZEN_NOTICE_DOCUMENTS" || applicationState === "ES_PENDING_JE_VERIFICATION" || applicationState === "ES_MM_PENDING_BI_VERIFICATION" || applicationState === "ES_MM_PENIDNG_CITIZEN_NOTICE" : applicationState === "ES_PENDING_JE_VERIFICATION" || applicationState === "ES_MM_PENDING_BI_VERIFICATION") {
+        if(process.env.REACT_APP_NAME === "Citizen" ? applicationState === "ES_PENDING_PAYMENT" || applicationState === "ES_MM_PENDING_PAYMENT" || applicationState === "ES_PENDING_CITIZEN_TEMPLATE_SUBMISSION" || applicationState === "ES_PENDING_CITIZEN_NOTICE_SUBMISSION" || applicationState === "ES_PENDING_CITIZEN_NOTICE_DOCUMENTS" || applicationState === "ES_PENDING_JE_VERIFICATION" || applicationState === "ES_MM_PENDING_BI_VERIFICATION" || applicationState === "ES_MM_PENIDNG_CITIZEN_NOTICE" : applicationState === "ES_PENDING_JE_VERIFICATION" || applicationState === "ES_MM_PENDING_BI_VERIFICATION") {
           footer = footerReview(
             action,
             state,

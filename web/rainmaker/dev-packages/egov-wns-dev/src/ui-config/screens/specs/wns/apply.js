@@ -1019,14 +1019,16 @@ export const ownerDetails = getCommonCard({ ownerDetailsHeader,
             {
               dispatch(prepareFinalObject("applyScreen.property.owners",owners));
               owners = owners.filter(x=>x.isDeleted !== false)
-              // if(action.value === "INDIVIDUAL.MULTIPLEOWNERS")
-              // {
-              // dispatch(prepareFinalObject("applyScreen.property.owners",owners));
-              // }
-              // else{
-              //   dispatch(prepareFinalObject("applyScreen.property.owners[0]",owners[0]));
+              if(action.value === "INDIVIDUAL.MULTIPLEOWNERS")
+              {
+             // dispatch(prepareFinalObject("applyScreen.property.owners",owners));
+              //set(state.screenConfiguration.preparedFinalObject, "applyScreen.property", owners);
+              }
+              else{
+               // dispatch(prepareFinalObject("applyScreen.property.owners[0]",owners[0]));
+                //set(state.screenConfiguration.preparedFinalObject, "applyScreen.property", owners[0]);
 
-              // }
+              }
             }
           }
           }

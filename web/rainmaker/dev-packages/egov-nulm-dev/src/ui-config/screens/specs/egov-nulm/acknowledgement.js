@@ -105,7 +105,7 @@ const getAcknowledgementCard = (state, dispatch, applicationNumber) => {
           body: {
             labelName:
               "A notification regarding Application Submission has been sent to the applicant",
-            labelKey: "PET_NOC_APPLICATION_SUCCESS_MESSAGE_SUB",
+            labelKey: "NULM_APPLICATION_SUCCESS_MESSAGE_SUB",
           },
           tailText: getApplicationDisplayCode(),
           number: applicationNumber,
