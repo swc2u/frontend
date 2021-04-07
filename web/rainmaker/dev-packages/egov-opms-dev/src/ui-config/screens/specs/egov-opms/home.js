@@ -33,8 +33,8 @@ const header = getCommonHeader(
 
 let PETNOC = {
   label: {
-    labelKey: "NOC to keep pet",
-    labelName: "NOC to keep pet"
+    labelKey: "NOC to Keep Pet",
+    labelName: "NOC to Keep Pet"
   },
   icon: <i
     viewBox="0 -8 35 42"
@@ -48,8 +48,8 @@ let PETNOC = {
 
 let SELLMEATNOC = {
   label: {
-    labelKey: "NOC to sell meat",
-    labelName: "NOC to sell meat"
+    labelKey: "NOC to Sell Meat",
+    labelName: "NOC to Sell Meat"
   },
   icon: <i
     viewBox="0 -8 35 42"

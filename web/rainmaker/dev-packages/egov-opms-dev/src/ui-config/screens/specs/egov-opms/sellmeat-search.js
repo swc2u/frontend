@@ -22,6 +22,7 @@ import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 import { getGridDataSellMeat, getTextForSellMeatNoc } from "./searchResource/citizenSearchFunctions";
 import { SearchFormForEmployee } from "./searchResource/EmployeeSearchForm";
 import "./searchGrid.css";
+import { getBusinessServiceData } from "../../../../ui-utils/commons";
 
 const hasButton = getQueryArg(window.location.href, "hasButton");
 let enableButton = true;
@@ -32,24 +33,10 @@ const header = getCommonHeader({
   labelKey: "SELLMEAT_COMMON_NOC"
 });
 
-
-const NOCSearchAndResult = {
-  uiFramework: "material-ui",
-  name: "sellmeat-search",
-  beforeInitScreen: (action, state, dispatch) => {
-    setapplicationType("SELLMEATNOC")
-
-    //getGridDataSellMeat(action, state, dispatch);
-    const tenantId = getOPMSTenantId();
-    const BSqueryObject = [
-      { key: "tenantId", value: tenantId },
-      { key: "businessServices", value: "SELLMEATNOC" }
-    ];
-    setBusinessServiceDataToLocalStorage(BSqueryObject, dispatch);
-    const businessServiceData = JSON.parse(
-      localStorageGet("businessServiceData")
-    );
-    const data = find(businessServiceData, { businessService: "SELLMEATNOC" });
+const setApplicationStatus = async (state, dispatch) => { 
+  let businessServiceData = await getBusinessServiceData("SELLMEATNOC");
+  if (businessServiceData) {
+    const data = find(businessServiceData.BusinessServices, { businessService: "SELLMEATNOC" });
     const { states } = data || [];
     if (states && states.length > 0) {
       const status = states.map((item, index) => {
@@ -59,16 +46,43 @@ const NOCSearchAndResult = {
         }
       });
       let arr = status.slice(1)
+      
       dispatch(
         prepareFinalObject(
           "applyScreenMdmsData.searchScreen.status",
           arr.filter(item => item.code != null)
         )
       );
-
     }
+  }
+}
 
-    return action;
+const NOCSearchAndResult = {
+  uiFramework: "material-ui",
+  name: "sellmeat-search",
+  beforeInitScreen: (action, state, dispatch) => {
+    setapplicationType("SELLMEATNOC")
+
+    //getGridDataSellMeat(action, state, dispatch);
+    // const tenantId = getOPMSTenantId();
+    // const BSqueryObject = [
+    //   { key: "tenantId", value: tenantId },
+    //   { key: "businessServices", value: "SELLMEATNOC" }
+    // ];
+    // setBusinessServiceDataToLocalStorage(BSqueryObject, dispatch);
+    // const businessServiceData = JSON.parse(
+    //   localStorageGet("businessServiceData")
+    // );
+    
+    dispatch(
+      prepareFinalObject(
+        "OPMS.searchFilter",
+        {}
+      )
+    );
+
+    setApplicationStatus(state, dispatch);
+     return action;
   },
   components: {
     div: {

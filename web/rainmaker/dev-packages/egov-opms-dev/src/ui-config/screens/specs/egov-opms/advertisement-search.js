@@ -22,6 +22,7 @@ import {
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 import { getGridDataAdvertisement, getTextAdvertisement } from "./searchResource/citizenSearchFunctions";
+import { getBusinessServiceData } from "../../../../ui-utils/commons";
 
 const hasButton = getQueryArg(window.location.href, "hasButton");
 let enableButton = true;
@@ -32,25 +33,11 @@ const header = getCommonHeader({
   labelKey: "ADVT_COMMON_NOC"
 });
 
-
-const NOCSearchAndResult = {
-  uiFramework: "material-ui",
-  name: "advertisement-search",
-  beforeInitScreen: (action, state, dispatch) => {
-    setapplicationType("ADVERTISEMENTNOC")
-    //getGridDataAdvertisement(action, state, dispatch);
-
-
-    const tenantId = getOPMSTenantId();
-    const BSqueryObject = [
-      { key: "tenantId", value: tenantId },
-      { key: "businessServices", value: "ADVERTISEMENTNOC" }
-    ];
-    setBusinessServiceDataToLocalStorage(BSqueryObject, dispatch);
-    const businessServiceData = JSON.parse(
-      localStorageGet("businessServiceData")
-    );
-    const data = find(businessServiceData, { businessService: "ADVERTISEMENTNOC" });
+const setApplicationStatus = async (state, dispatch) => { 
+  let businessServiceData = await getBusinessServiceData("ADVERTISEMENTNOC");
+  
+  if (businessServiceData) {
+    const data = find(businessServiceData.BusinessServices, { businessService: "ADVERTISEMENTNOC" });
     const { states } = data || [];
     if (states && states.length > 0) {
       const status = states.map((item, index) => {
@@ -74,6 +61,60 @@ const NOCSearchAndResult = {
         )
       );
     }
+
+  }
+}
+
+const NOCSearchAndResult = {
+  uiFramework: "material-ui",
+  name: "advertisement-search",
+  beforeInitScreen: (action, state, dispatch) => {
+    setapplicationType("ADVERTISEMENTNOC")
+    //getGridDataAdvertisement(action, state, dispatch);
+
+
+    // const tenantId = getOPMSTenantId();
+    // const BSqueryObject = [
+    //   { key: "tenantId", value: tenantId },
+    //   { key: "businessServices", value: "ADVERTISEMENTNOC" }
+    // ];
+    // setBusinessServiceDataToLocalStorage(BSqueryObject, dispatch);
+    // const businessServiceData = JSON.parse(
+    //   localStorageGet("businessServiceData")
+    // );
+    // const data = find(businessServiceData, { businessService: "ADVERTISEMENTNOC" });
+    // const { states } = data || [];
+    // if (states && states.length > 0) {
+    //   const status = states.map((item, index) => {
+    //     return {
+    //       code: item.state,
+    //       name: getTextAdvertisement(item.state, "0")
+    //     }
+    //   });
+    //   let arr = status.slice(1)
+    //   arr = arr.filter(item => item.code != "WITHDRAWREJECTED")
+    //   arr = arr.filter(item => item.code != "WITHDRAWAPPROVAL")
+    //   arr = arr.filter(item => item.code != "WITHDRAW")
+    //   // WITHDRAW
+    //   // arr.push({ code: "APPROVEFORWITHDRAW", name: getTextAdvertisement("APPROVEFORWITHDRAW", "0") })
+    //   // arr.push({ code: "REJECTEFORWITHDRAW", name: getTextAdvertisement("REJECTEFORWITHDRAW", "0") })
+
+    //   dispatch(
+    //     prepareFinalObject(
+    //       "applyScreenMdmsData.searchScreen.status",
+    //       arr.filter(item => item.code != null)
+    //     )
+    //   );
+    // }
+    dispatch(
+      prepareFinalObject(
+        "OPMS.searchFilter",
+        {}
+      )
+    );
+
+    setApplicationStatus(state, dispatch);
+
     return action;
   },
   components: {
