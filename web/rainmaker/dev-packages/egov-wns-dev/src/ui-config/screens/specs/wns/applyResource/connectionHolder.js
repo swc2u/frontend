@@ -8,8 +8,20 @@ import {
     getLabel,
     getSelectField,
   } from "egov-ui-framework/ui-config/screens/specs/utils";
-
+  import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
   let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
+  let IsEditP = process.env.REACT_APP_NAME === "Citizen"?false:true;
+  const service = getQueryArg(window.location.href, "actionType");
+  if(service === 'UPDATE_CONNECTION_HOLDER_INFO')
+  {
+    IsEdit = true
+
+  }
+  else
+  {
+    IsEdit = false;
+  }
+
   const connHolderDetail = getCommonContainer({
     applicantName: getTextField({
       label: {
@@ -237,7 +249,7 @@ import {
       required: true,
       props: {
         
-        disabled: IsEdit,
+        disabled: IsEditP,
     },
       pattern: getPattern("Name"),
       errorMessage: "WS_CONN_HOLDER_OWN_DETAIL_OWN_NAME_LABEL_VALIDATION",
@@ -258,7 +270,7 @@ import {
       },
       props: {
         
-        disabled: IsEdit,
+        disabled: IsEditP,
     },
       required: true,
       pattern: getPattern("MobileNo"),
@@ -290,7 +302,7 @@ import {
       },
       props: {
         className: "applicant-details-error",
-        disabled: IsEdit,
+        disabled: IsEditP,
       }
     }),
 
@@ -316,7 +328,7 @@ import {
       },
       props: {
         className: "applicant-details-error",
-        disabled: IsEdit,
+        disabled: IsEditP,
       }
     }),
    
