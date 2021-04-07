@@ -109,6 +109,7 @@ export const applyforApplication = async (state, dispatch, activeIndex) => {
      }
     })
     let response;
+    
     if(!id) {
       set(queryObject[0], "state", "");
       set(queryObject[0], "action", "");
@@ -125,6 +126,10 @@ export const applyforApplication = async (state, dispatch, activeIndex) => {
         } else {
           set(queryObject[0], "action", "SUBMIT")
           }
+        const property_copy = get(queryObject[0], "property_copy")
+        if(!!property_copy && property_copy.fileNumber === "BBNOC-1") {
+          set(queryObject[0], "property", property_copy)
+        }
         let applicationDocuments = get(queryObject[0], "applicationDocuments") || [];
         applicationDocuments = applicationDocuments.filter(item => !!item && !!item.fileStoreId).filter((item, index, arr) => (arr.findIndex((arrItem) => arrItem.fileStoreId === item.fileStoreId)) === index).map(item => ({...item, isActive: true}))
           const removedDocs = get(state.screenConfiguration.preparedFinalObject, "temp[0].removedDocs") || [];
@@ -150,13 +155,17 @@ export const applyforApplication = async (state, dispatch, activeIndex) => {
             removedDocs
           )
         );
-        let property = Applications[0].property
+        let property = Applications[0].property || Applications[0].applicationDetails.property
+        let property_copy = Applications[0].property
+        if(property.fileNumber === "BBNOC-1") {
+          property = Applications[0].applicationDetails.property
+        }
         const estateRentSummary = property.estateRentSummary
         const dueAmount = !!estateRentSummary ? estateRentSummary.balanceRent + estateRentSummary.balanceRentPenalty + estateRentSummary.balanceGSTPenalty + estateRentSummary.balanceGST : "0"
         property = {...property, propertyDetails: {...property.propertyDetails, dueAmount: dueAmount || "0"}}
         Applications = [
           {
-            ...Applications[0], property:property
+            ...Applications[0], property:property, property_copy
           }
         ]
         dispatch(prepareFinalObject("Applications", Applications));
@@ -593,7 +602,7 @@ export const addHocDemandUpdate = async (state, dispatch) => {
         get(state.screenConfiguration.preparedFinalObject, "adhocDetails", {})
       )
     );
-    
+    if(adhocDetails.type==="AdhocDemand"){
     set(adhocDetails , "isAdjustment","true")
     set(adhocDetails, "adjustmentDate", convertDateToEpoch(adhocDetails.adjustmentDate))
     set(adhocDetails, "generationDate", convertDateToEpoch(moment(new Date()).format('YYYY-MM-DD')));
@@ -608,6 +617,13 @@ export const addHocDemandUpdate = async (state, dispatch) => {
     set(adhocDetails , "collectedGSTPenalty",0 )
     queryObject[0].propertyDetails.estateDemands.push(adhocDetails)
     set(queryObject[0].propertyDetails.adhocDemand, true)
+    }
+    else if(adhocDetails.type==="AdhocPayment"){
+      set(adhocDetails , "amountPaid",adhocDetails.amountPaid)
+      set(adhocDetails, "dateOfPayment", convertDateToEpoch(adhocDetails.dateOfPayment))
+      queryObject[0].propertyDetails.estatePayments.push(adhocDetails)
+      set(queryObject[0].propertyDetails.adhocPayment, true)
+    }
     let response;
     if(queryObject) {  
       response = await httpRequest(

@@ -15,14 +15,27 @@ import {
 import { ESTATE_SERVICES_MDMS_MODULE } from "../../../../ui-constants";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 
 
 const header = getCommonHeader({
   labelName: "Search Property",
   labelKey: "ES_SEARCH_PROPERTY_HEADER"
 });
-
+const  updateAllFields=async(action, state, dispatch)=>{
+  const branchType = getQueryArg(window.location.href, "branchType") || "ESTATE_BRANCH";
+  if(branchType==="BUILDING_BRANCH")
+  {
+  dispatch(handleField(
+    "property-search",
+    "components.div.children.estateApplication.children.cardContent.children.searchBoxContainer.children.searchBy",
+    "props.buttons[1].labelKey" ,
+    "ES_BB_HOUSE_NUMBER_LABEL"
+  ))
+  }
+}
 const getMdmsData = async (dispatch) => {
+  const branchType = getQueryArg(window.location.href, "branchType")
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: commonConfig.tenantId,
@@ -47,7 +60,15 @@ const getMdmsData = async (dispatch) => {
       [],
       mdmsBody
     );
-    return dispatch(prepareFinalObject("searchScreenMdmsData", payload.MdmsRes));
+    dispatch(prepareFinalObject("searchScreenMdmsData", payload.MdmsRes));
+    dispatch(
+      handleField(
+        "property-search",
+        "components.div.children.headerDiv.children.addButton",
+        "visible",
+        branchType === "BUILDING_BRANCH"
+      )
+    )
   } catch (e) {
     console.log(e);
   }
@@ -73,6 +94,7 @@ const citizenEstateSearchAndResult = {
     state.screenConfiguration.preparedFinalObject.citizenSearchScreen = {}
     resetFields(state, dispatch);
     getMdmsData(dispatch);
+    setTimeout(() => updateAllFields(action, state, dispatch), 100)
     return action
   },
   components: {
@@ -95,14 +117,46 @@ const citizenEstateSearchAndResult = {
               },
               ...header
             },
-          }
-        },
+            addButton: {
+              componentPath: "Button",
+              visible: false,
+              gridDefination: {
+                xs: 12,
+                sm: 4,
+                align: "right"
+              },
+              props: {
+                variant: "contained",
+                style: {
+                  color: "white",
+                  backgroundColor: "#fe7a51",
+                  borderColor: "#fe7a51",
+                  borderRadius: "2px",
+                  width: "50%",
+                  height: "48px",
+                }
+              },
+              children: {
+                buttonLabel: getLabel({
+                  labelName: "Add Property Master",
+                  labelKey: "ES_ESTATE_HOME_ADD_BUTTON"
+                })
+              },
+              onClickDefination: {
+                action: "condition",
+                callBack: (state, dispatch) => {
+                  window.location.href = `_apply?applicationType=${getQueryArg(window.location.href, "type")}`;
+                  }
+                }
+              }
+            }
+          },
         estateApplication,
         breakAfterSearch: getBreak(),
         searchResults
+      },
       }
     }
-  }
 };
 
 export default citizenEstateSearchAndResult;

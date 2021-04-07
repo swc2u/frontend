@@ -10,7 +10,7 @@ import { getReviewLicenseFee, getReviewInterest, getReviewSecurity, getReviewGro
 import { getTextToLocalMapping } from "../utils";
 import get from "lodash/get";
 import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
-import { ESTATE_APPROVED_STATE } from "../../../../ui-constants";
+import { ESTATE_APPROVED_STATE,ESTATE_ALOTMENT_APPROVED_STATE } from "../../../../ui-constants";
 
 let isPropertyMasterOrAllotmentOfSite;
 
@@ -224,7 +224,7 @@ const updateAllFields = (action, state, dispatch) => {
     )
   )
 
-  if (!!findItem && properties[0].state == ESTATE_APPROVED_STATE) {
+  if (!!findItem && properties[0].state == (ESTATE_APPROVED_STATE || ESTATE_ALOTMENT_APPROVED_STATE)) {
     dispatch(
       handleField(
         action.screenKey,

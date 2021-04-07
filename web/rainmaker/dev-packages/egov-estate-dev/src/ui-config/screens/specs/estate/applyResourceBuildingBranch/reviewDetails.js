@@ -139,11 +139,11 @@ export const getReviewPropertyDetails = (isEditable = true) => {
           jsonPath: "Properties[0].subCategory"
         }
       ),
-      siteNumber: getLabelWithValue(
-        siteNumberLabel, {
-          jsonPath: "Properties[0].siteNumber"
-        }
-      ),
+      // siteNumber: getLabelWithValue(
+      //   siteNumberLabel, {
+      //     jsonPath: "Properties[0].siteNumber"
+      //   }
+      // ),
       sectorNumber: getLabelWithValue(
         sectorNumberLabel, {
           jsonPath: "Properties[0].sectorNumber"
