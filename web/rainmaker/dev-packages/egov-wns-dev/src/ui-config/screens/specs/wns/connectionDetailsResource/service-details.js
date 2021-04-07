@@ -26,17 +26,17 @@ export const renderService = () => {
        // rainwaterHarvestingFacility: getLabelWithValue({ labelKey: "WS_SERV_DETAIL_CONN_RAIN_WATER_HARVESTING_FAC" }, { jsonPath: "WaterConnection[0].rainWaterHarvesting" }),
        // waterSource: getLabelWithValue({ labelKey: "WS_SERV_DETAIL_WATER_SOURCE" }, { jsonPath: "WaterConnection[0].waterSource" }),
        // waterSubSource: getLabelWithValue({ labelKey: "WS_SERV_DETAIL_WATER_SUB_SOURCE" }, { jsonPath: "WaterConnection[0].waterSubSource" }),
-        editSection: {
-          componentPath: "Button",
-          props: { color: "primary", style: { margin: "-16px" } },
-          visible: true,
-          gridDefination: { xs: 12, sm: 12, align: "left" },
-          children: { buttonLabel: getLabel({ labelKey: "WS_CONNECTION_DETAILS_VIEW_CONSUMPTION_LABEL" }) },
-          onClickDefination: {
-            action: "page_change",
-            path: `meter-reading?connectionNos=${connectionNumber}&tenantId=${tenantId}`
-          }
-        },
+        // editSection: {
+        //   componentPath: "Button",
+        //   props: { color: "primary", style: { margin: "-16px" } },
+        //   visible: true,
+        //   gridDefination: { xs: 12, sm: 12, align: "left" },
+        //   children: { buttonLabel: getLabel({ labelKey: "WS_CONNECTION_DETAILS_VIEW_CONSUMPTION_LABEL" }) },
+        //   onClickDefination: {
+        //     action: "page_change",
+        //     path: `meter-reading?connectionNos=${connectionNumber}&tenantId=${tenantId}`
+        //   }
+        // },
       })
     } else {
       return getCommonContainer({
