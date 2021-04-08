@@ -95,6 +95,10 @@ import {
             masterDetails: [
               {
                 name: "SusvDocuments",
+              },
+              {
+                name: "Qualification",
+                
               }
             ]
           },

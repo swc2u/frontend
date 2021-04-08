@@ -229,8 +229,23 @@ export const SUSVDetails = getCommonCard({
       })
     },
     
+    // qualification: {
+    //   ...getTextField({
+    //     label: {
+    //       labelName: "Qualification",
+    //       labelKey: "NULM_SEP_QUALIFACATION"
+    //     },
+    //     placeholder: {
+    //       labelName: "Enter Qualification",
+    //       labelKey: "NULM_SEP_QUALIFACATION_PLACEHOLDER"
+    //     },
+    //     required: true,
+    //     pattern: getPattern("Address") || null,
+    //     jsonPath: "NulmSusvRequest.qualification"
+    //   })
+    // },
     qualification: {
-      ...getTextField({
+      ...getSelectField({
         label: {
           labelName: "Qualification",
           labelKey: "NULM_SEP_QUALIFACATION"
@@ -241,7 +256,14 @@ export const SUSVDetails = getCommonCard({
         },
         required: true,
         pattern: getPattern("Address") || null,
-        jsonPath: "NulmSusvRequest.qualification"
+        //applyScreenMdmsData
+        sourceJsonPath:
+       "applyScreenMdmsData.NULM.Qualification",
+        jsonPath: "NulmSusvRequest.qualification",
+        props: {
+          optionValue: "code",
+          optionLabel: "name",
+        },
       })
     },
     adharNo: {
