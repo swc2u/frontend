@@ -620,7 +620,8 @@ export const searchPropertycall = async (state, dispatch, onInit, relations = "o
     },
     { key: "offset", value: offset },
     { key: "limit", value: limit },
-    { key: "relations", value: relations}
+    { key: "relations", value: relations},
+    {key: "state",value:"PM_APPROVED"}
   ];
   queryObject = queryObject.filter(({value}) => !!value)
   let searchScreenObject = get(
@@ -673,9 +674,6 @@ export const searchPropertycall = async (state, dispatch, onInit, relations = "o
         }
     }
     const response = await getSearchResults(queryObject);
-    if(!!response && !!response.Properties &&!!response.Properties.length>0 && response.Properties[0].masterDataState !="PM_APPROVED"){
-      response.Properties=[]
-    }
     try {
       let data = response.Properties.map(item => {
         const findOwner = item.owners.find(itemdat => itemdat.activeState === true)
