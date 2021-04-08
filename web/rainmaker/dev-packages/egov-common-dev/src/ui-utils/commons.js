@@ -16,7 +16,8 @@ import { getTranslatedLabel } from "../ui-config/screens/specs/utils";
 import printJS from 'print-js';
 import axios from 'axios';
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-
+import { loadReceiptGenerationData } from "egov-tradelicence/ui-config/screens/specs/utils/receiptTransformer";
+import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 const handleDeletedCards = (jsonObject, jsonPath, key) => {
   let originalArray = get(jsonObject, jsonPath, []);
   let modifiedArray = originalArray.filter(element => {
@@ -571,7 +572,15 @@ export const download  = async ( state, dispatch, mode = "download") => {
         keyvalue ='ws-bill'
         //KeytenantId =receiptQueryString[1].value
        }
-       else{
+     else
+       if (businessServiceInfo.code.includes("CTL"))
+       {
+        keyvalue ='tl-receipt'
+        //KeytenantId =receiptQueryString[1].value
+        loadReceiptGenerationData(getQueryArg(window.location.href, "consumerCode"), getQueryArg(window.location.href, "tenantId"), state, dispatch);
+       }
+
+     else {
         KeytenantId =receiptQueryString[1].value.split('.')[0]
 
        }
@@ -598,6 +607,54 @@ export const download  = async ( state, dispatch, mode = "download") => {
             console.log("Error In Receipt Download");        
           }         
         });
+       }
+       else if(businessServiceInfo.code.includes('CTL'))
+       {
+        const data = function() {
+          let data1 = get(
+            state.screenConfiguration.preparedFinalObject,
+            "applicationDataForReceipt",
+            {}
+          );
+          let data2 = get(
+            state.screenConfiguration.preparedFinalObject,
+            "receiptDataForReceipt",
+            {}
+          );
+          let data3 = get(
+            state.screenConfiguration.preparedFinalObject,
+            "mdmsDataForReceipt",
+            {}
+          );
+          let data4 = get(
+            state.screenConfiguration.preparedFinalObject,
+            "userDataForReceipt",
+            {}
+          );
+          return {...data1, ...data2, ...data3, ...data4}
+         }
+         const { Licenses } = state.screenConfiguration.preparedFinalObject;
+         let {Payments} = payloadReceiptDetails;
+         let {billAccountDetails} = Payments[0].paymentDetails[0].bill.billDetails[0];
+         billAccountDetails = billAccountDetails.map(({taxHeadCode, ...rest}) => ({
+           ...rest,
+           taxHeadCode: taxHeadCode.includes("_FEE") ? "TL_FEE" : taxHeadCode.includes("_PENALTY") ? "TL_TIME_PENALTY" : taxHeadCode.includes("_TAX") ? "TL_TAX" : taxHeadCode.includes("_ROUNDOFF") ? "TL_ROUNDOFF" : taxHeadCode.includes("REHRI_REGISTRATION_CHARGES") ? "TL_CHARGES"  : taxHeadCode
+         }))
+         Payments = [{...Payments[0], paymentDetails: [{...Payments[0].paymentDetails[0], bill: {...Payments[0].paymentDetails[0].bill, billDetails: [{...Payments[0].paymentDetails[0].bill.billDetails[0],billAccountDetails }] } }]}]
+   
+         let data1 = data();
+         let generateBy = JSON.parse(getUserInfo()).name;
+         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Payments, Licenses, data1, generateBy }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+         .then(res => {
+           res.filestoreIds[0]
+           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
+             res.filestoreIds.map(fileStoreId=>{
+               downloadReceiptFromFilestoreID(fileStoreId,"download")
+             })          
+           }else{
+             console.log("Error In Receipt Download");        
+           }         
+         });
        }
        else{
         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Payments: payloadReceiptDetails.Payments }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })

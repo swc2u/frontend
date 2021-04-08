@@ -189,6 +189,7 @@ const titlebar = getCommonContainer({
   downloadMenu: {
     uiFramework: "custom-atoms",
     componentPath: "MenuButton",
+    visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
     props: {
       data: {
         label: "Download",

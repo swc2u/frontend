@@ -151,20 +151,36 @@ const renderSearchConnectionTable = async (state, dispatch) => {
           }
 
          // let billResults = await fetchBill(queryObjectForWaterFetchBill, dispatch)
+         try{
           let billResults = await getBillingEstimation(queryObjectForWaterFetchBill, dispatch)
-          billResults ? billResults.billGeneration.map(bill => {
-            let updatedDueDate = 0;
-            // if (element.service === "WATER") {
-            //   updatedDueDate = (element.connectionType === 'Metered' ?//
-            //     (bill.billDetails[0].toPeriod + waterMeteredDemandExipryDate) :
-            //     (bill.billDetails[0].toPeriod + waterNonMeteredDemandExipryDate));
-            // } else if (element.service === "SEWERAGE") {
-            //   updatedDueDate = bill[0].billDetails[0].toPeriod + sewerageNonMeteredDemandExpiryDate;
-            // }
-            finalArray.push({
-              //due: bill.totalAmount ===null?'':bill.totalAmount,
-              due: bill.totalNetAmount ===null?'':bill.totalNetAmount,
-              dueDate:bill.dueDateCash,// updatedDueDate>0? convertDateToEpoch(updatedDueDate):'',
+          if(billResults !== undefined)
+          {
+            billResults ? billResults.billGeneration.map(bill => {
+              let updatedDueDate = 0;
+              // if (element.service === "WATER") {
+              //   updatedDueDate = (element.connectionType === 'Metered' ?//
+              //     (bill.billDetails[0].toPeriod + waterMeteredDemandExipryDate) :
+              //     (bill.billDetails[0].toPeriod + waterNonMeteredDemandExipryDate));
+              // } else if (element.service === "SEWERAGE") {
+              //   updatedDueDate = bill[0].billDetails[0].toPeriod + sewerageNonMeteredDemandExpiryDate;
+              // }
+              finalArray.push({
+                //due: bill.totalAmount ===null?'':bill.totalAmount,
+                due: bill.totalNetAmount ===null?'':bill.totalNetAmount,
+                dueDate:bill.dueDateCash,// updatedDueDate>0? convertDateToEpoch(updatedDueDate):'',
+                service: element.service,
+                connectionNo: element.connectionNo,
+                billGenerationId:bill.billGenerationId,
+                name: (element.property) ? element.property.owners[0].name : '',
+                status: element.status,
+                address: handleAddress(element),
+                connectionType: element.connectionType,
+                tenantId: element.tenantId,
+                ActionType:element.activityType
+              })
+            }) : finalArray.push({
+              due: 'NA',
+              dueDate: 'NA',
               service: element.service,
               connectionNo: element.connectionNo,
               billGenerationId:bill.billGenerationId,
@@ -175,19 +191,29 @@ const renderSearchConnectionTable = async (state, dispatch) => {
               tenantId: element.tenantId,
               ActionType:element.activityType
             })
-          }) : finalArray.push({
+
+          }
+          else{
+            finalArray.push({
             due: 'NA',
-            dueDate: 'NA',
-            service: element.service,
-            connectionNo: element.connectionNo,
-            billGenerationId:bill.billGenerationId,
-            name: (element.property) ? element.property.owners[0].name : '',
-            status: element.status,
-            address: handleAddress(element),
-            connectionType: element.connectionType,
-            tenantId: element.tenantId,
-            ActionType:element.activityType
-          })
+              dueDate: 'NA',
+              service: element.service,
+              connectionNo: element.connectionNo,
+              billGenerationId:0,
+              name: (element.property) ? element.property.owners[0].name : '',
+              status: element.status,
+              address: handleAddress(element),
+              connectionType: element.connectionType,
+              tenantId: element.tenantId,
+              ActionType:element.activityType
+            })
+          }
+          
+        }
+        catch(err)
+        {
+          console.log(err)
+        }
         }
 
       }

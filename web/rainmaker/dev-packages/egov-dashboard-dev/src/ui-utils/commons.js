@@ -1449,6 +1449,115 @@ export const getPublicRelationData = async ( dispatch, data ) => {
   }
 };
 
+// Get Dashboard Data for NULM
+export const getNULMData = async ( dispatch, data ) => {
+  
+  debugger;
+  // const data = data;
+  // Same as per Sport and culture but module code is different
+  const check = data.reportSortBy.value;
+
+  var payloadData = {};
+  var resData;
+  try {
+    store.dispatch(toggleSpinner());
+    if(check === "SEP"){
+      payloadData = {
+        "NULMSEPRequest": {
+          "fromDate": data.fromDate,
+          "toDate": data.toDate,
+          "tenantId": getTenantId()
+        },
+        "reportSOrtBy": data.reportSortBy
+      }
+      resData = await httpRequest(
+        "post",
+        "/nulm-services/v1/sep/_get",
+        "",
+        [],
+        payloadData
+      );
+    }
+    if(check === "SMID"){
+      payloadData = {
+        "NULMSMIDRequest": {
+          "fromDate": data.fromDate,
+          "toDate": data.toDate,
+          "tenantId": getTenantId()
+        },
+        "reportSOrtBy": data.reportSortBy
+      }
+      resData = await httpRequest(
+        "post",
+        "/nulm-services/v1/smid/_get",
+        "",
+        [],
+        payloadData
+      );
+    }
+    if(check === "SUSV"){
+      payloadData = {
+        "NulmSusvRequest": {
+          "fromDate": data.fromDate,
+          "toDate": data.toDate,
+          "tenantId": getTenantId()
+        },
+        "reportSOrtBy": data.reportSortBy
+      }
+      resData = await httpRequest(
+        "post",
+        "/nulm-services/v1/susv/_get",
+        "",
+        [],
+        payloadData
+      );
+    }
+    if(check === "SUH"){
+      payloadData = {
+        "NulmSuhRequest": {
+          "fromDate": data.fromDate,
+          "toDate": data.toDate,
+          "tenantId": getTenantId()
+        },
+        "reportSOrtBy": data.reportSortBy
+      }
+      resData = await httpRequest(
+        "post",
+        "/nulm-services/v1/suh/_get",
+        "",
+        [],
+        payloadData
+      );
+    }
+
+    //debugger;
+    var response = [ resData, payloadData.reportSOrtBy ];
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+    // // OK
+    dispatch(
+      handleField(
+      "NULMDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
 // Get Dashboard Data for Pension
 export const getPensionData = async ( state, dispatch, data ) => {
   
@@ -2394,15 +2503,13 @@ export const getWorkData = async ( dispatch, data ) => {
   var response = payloadData.reportSortBy ;
   try {
     store.dispatch(toggleSpinner());
-    //const DescriptionReport = await httpRequest(
-      //"get",
-      //"https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/dashboard/getAllEstimationPreparation",
-      //"",
-      //[],
-      //{}
-    //);
-	
-	const DescriptionReport = [];
+    const DescriptionReport = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/dashboard/getAllEstimationPreparation",
+      "",
+      [],
+      {}
+    );
 
     //debugger;
     response = [ DescriptionReport, payloadData.reportSortBy ];

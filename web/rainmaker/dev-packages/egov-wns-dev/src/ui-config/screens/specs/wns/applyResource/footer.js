@@ -264,6 +264,144 @@ if(water || sewerage || tubewell)
         // applyScreenObject.connectionHolders = applyScreenObj;
           }
         }
+        // multi ownner validation and set valid ownner
+
+        if(ownershipCategory_H === "INDIVIDUAL.MULTIPLEOWNERS")
+        {
+          let owners = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.owners",[])
+          if(owners.length === 1)
+          {
+            errorMessage_.labelName="Please add multilple ownner data"
+            errorMessage_.labelKey="WS_FILL_MULTIPLEOWNERS_FIELDS"
+            
+            dispatch(toggleSnackbar(true, errorMessage_, "warning"));
+            return false
+
+          }
+          else if (owners.length>1)
+          {
+            let cardJsonPath =
+            "components.div.children.formwizardSecondStep.children.MaterialIndentMapDetails.children.cardContent.children.MaterialIndentDetailsCard.props.items";
+            cardJsonPath ="components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items";
+            //[0].item0.children.cardContent.children.viewFive.children"
+            let pagename = "apply";
+            let jasonpath =  "applyScreen.property.owners";//indents[0].indentDetails
+            let value = "name";
+            let DuplicatItem = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)
+            if(DuplicatItem && DuplicatItem[0])
+            {
+              if(DuplicatItem[0].IsDuplicatItem)
+              {
+              const LocalizationCodeValueN = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_NAME_FIELDS")
+              const errorMessageN = {
+                labelName: "Duplicate name Added",
+                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+                labelKey:   LocalizationCodeValueN+' '+DuplicatItem[0].duplicates
+              };
+              dispatch(toggleSnackbar(true, errorMessageN, "warning"));
+              return false;
+            }
+            }
+            value = "mobileNumber";
+            let DuplicatItemM = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
+            if(DuplicatItemM && DuplicatItemM[0])
+            {
+              if(DuplicatItemM[0].IsDuplicatItem)
+              {
+              const LocalizationCodeValueM = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_MOBILE_FIELDS")
+              const errorMessageM = {
+                labelName: "Duplicate mobile number Added",
+                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+                labelKey:   LocalizationCodeValueM+' '+DuplicatItemM[0].duplicates
+              };
+              dispatch(toggleSnackbar(true, errorMessageM, "warning"));
+              return false;
+            }
+            }
+            value = "emailId";
+            let DuplicatItemE = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
+            if(DuplicatItemE && DuplicatItemE[0])
+            {
+              if(DuplicatItemE[0].IsDuplicatItem)
+              {
+              const LocalizationCodeValueE = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_EMAIL_FIELDS")
+              const errorMessageE = {
+                labelName: "Duplicate email id Added",
+                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+                labelKey:   LocalizationCodeValueE+' '+DuplicatItemE[0].duplicates
+              };
+              dispatch(toggleSnackbar(true, errorMessageE, "warning"));
+              return false;
+            }
+            }
+          }
+        }
+        else if(ownershipCategory_H !== "INDIVIDUAL.MULTIPLEOWNERS")
+        {
+          let owners = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.owners",[])
+          let SingleOwnerDetailsCardPathS = "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items"
+          let SingleOwnerDetailsItemsS = get(
+            state.screenConfiguration.screenConfig.apply,
+            SingleOwnerDetailsCardPathS,
+            []
+          );
+          SingleOwnerDetailsItemsS = SingleOwnerDetailsItemsS.filter( x=>x.isDeleted === undefined || x.isDeleted !== false)
+          if (SingleOwnerDetailsItemsS.length>1)
+          {
+            let errorMessageS = {
+              labelName: "Please remove multilple ownner data",
+              labelKey: "WS_FILL_SINGLEOWNERS_FIELDS"
+            };
+            
+            dispatch(toggleSnackbar(true, errorMessageS, "warning"));
+            return false
+
+          }
+
+        }
+
+        let SingleOwnerDetailsCardPath =
+          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items";
+        let SingleOwnerDetailsItems = get(
+          state.screenConfiguration.screenConfig.apply,
+          SingleOwnerDetailsCardPath,
+          []
+        );
+        if(ownershipCategory_H !=="INDIVIDUAL.MULTIPLEOWNERS")
+        {
+          SingleOwnerDetailsCardPath = "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items"
+          SingleOwnerDetailsItems = get(
+            state.screenConfiguration.screenConfig.apply,
+            SingleOwnerDetailsCardPath,
+            []
+          );
+          SingleOwnerDetailsItems = SingleOwnerDetailsItems.filter( x=>x.isDeleted === undefined || x.isDeleted !== false)
+          //
+          let owners = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.owners",[])
+          let jsonPath = ''//SingleOwnerDetailsItems.item0.children.cardContent.children.viewFive.children.ownerName.props.jsonPath
+           jsonPath = SingleOwnerDetailsItems[0].item0.children.cardContent.children.viewFive.children.ownerName.props.jsonPath
+          let name = get(
+            state.screenConfiguration.preparedFinalObject,
+            jsonPath,
+            ''
+          );
+          owners = owners.filter(x=>x.name ===name);
+          set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.owners", owners);
+          
+
+        }
+        else if(ownershipCategory_H ==="INDIVIDUAL.MULTIPLEOWNERS"){
+          SingleOwnerDetailsCardPath = "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items"
+          SingleOwnerDetailsItems = get(
+            state.screenConfiguration.screenConfig.apply,
+            SingleOwnerDetailsCardPath,
+            []
+          );
+          SingleOwnerDetailsItems = SingleOwnerDetailsItems.filter( x=>x.isDeleted === undefined || x.isDeleted !== false)
+
+        }
+
+        //
 
       if(!isActiveProperty(applyScreenObj.property)){
         dispatch(toggleSnackbar(true, { labelKey: `ERR_WS_PROP_STATUS_${applyScreenObj.property.status}`, labelName: `Property Status is ${applyScreenObj.property.status}` }, "warning"));     
@@ -561,7 +699,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         }
         else{
           let SingleOwnerDetailsCardPath =
-          "components.div.children.formwizardSecondStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items";
+          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items";
         let SingleOwnerDetailsItems = get(
           state.screenConfiguration.screenConfig.apply,
           SingleOwnerDetailsCardPath,
@@ -1117,7 +1255,9 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       "applyScreen.waterProperty.usageSubCategory",
       null
     );
-    if(category_ === null)
+    if(water)
+    {
+      if(category_ === null)
     {
       let errorMessage_ = {
         labelName: "Please select Usage Caregory",
@@ -1128,6 +1268,9 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       return false;
 
     }
+
+    }
+    
     
     prepareDocumentsUploadData(state, dispatch);
   }
