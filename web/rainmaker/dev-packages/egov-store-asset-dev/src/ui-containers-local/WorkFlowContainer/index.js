@@ -390,7 +390,7 @@ if(purchaseOrders)
     };
   };
 
-  getEmployeeRoles = async(nextAction, currentAction, moduleName) => {
+  getEmployeeRoles = (nextAction, currentAction, moduleName) => {
     let businessServiceData = JSON.parse(
       localStorageGet("businessServiceData")
     );
@@ -401,32 +401,32 @@ if(purchaseOrders)
         { key: "businessServices", value: moduleName }
       ];
   
-      try {
+      // try {
         
-        const payload = await httpRequest(
-          "post",
-          "egov-workflow-v2/egov-wf/businessservice/_search",
-          "_search",
-          queryObject
-        );
-        if (
-          payload &&
-          payload.BusinessServices &&
-          payload.BusinessServices.length > 0
-        ) {
-          localStorageSet(
-            "businessServiceData",
-            JSON.stringify(get(payload, "BusinessServices"))
-          );
+      //   const payload = await httpRequest(
+      //     "post",
+      //     "egov-workflow-v2/egov-wf/businessservice/_search",
+      //     "_search",
+      //     queryObject
+      //   );
+      //   if (
+      //     payload &&
+      //     payload.BusinessServices &&
+      //     payload.BusinessServices.length > 0
+      //   ) {
+      //     localStorageSet(
+      //       "businessServiceData",
+      //       JSON.stringify(get(payload, "BusinessServices"))
+      //     );
 
-          businessServiceData = JSON.stringify(get(payload, "BusinessServices"))
-        } else {
+      //     businessServiceData = JSON.stringify(get(payload, "BusinessServices"))
+      //   } else {
           
-        }
+      //   }
         
-      } catch (e) {
+      // } catch (e) {
         
-      }
+      // }
 
     }
     businessServiceData = JSON.parse(
