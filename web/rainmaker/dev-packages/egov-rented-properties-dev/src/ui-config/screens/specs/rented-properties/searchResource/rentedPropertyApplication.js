@@ -562,13 +562,9 @@ export const rentedPropertyPropertySearch = getCommonCard({
     labelName: "Please provide atleast one parameter to search Property",
     labelKey: "RP_PLEASE_PROVIDE_ONE_PARAMETER_TO_SEARCH_PROPERTY_LABEL"
   }),
-  // colonyContainer: getCommonContainer({
-  //   colony: getSelectField(colonyField),
-  //   status: getSelectField(statusField)
-  // }),
+
   transitNumberContainer: getCommonContainer({
-    transitNumber: getTextField(transitNumberField),
-    //phone: getTextField(propertyMasterphoneNumberField)
+    transitNumber: getTextField(transitNumberField)
   }),
   button: getCommonContainer({
     buttonContainer: getCommonContainer(

@@ -4,78 +4,20 @@ import {
     getBreak,
     getCommonContainer
   } from "egov-ui-framework/ui-config/screens/specs/utils";
-//   import { estateApplication, resetFields } from './citizenSearchResource/estateApplication';
 import { searchResults } from "./searchResource/searchResults";
 import { rentedPropertyPropertySearch } from "./searchResource/rentedPropertyApplication";
-//   import commonConfig from "config/common.js";
-//   import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-//   import { httpRequest } from "../../../../ui-utils";
-//   import {
-//     handleScreenConfigurationFieldChange as handleField
-//   } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-//   import { ESTATE_SERVICES_MDMS_MODULE } from "../../../../ui-constants";
-//   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-//   import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
-  
+
   
   const header = getCommonHeader({
     labelName: "Search Property",
     labelKey: "RP_SEARCH_PROPERTY_HEADER"
   });
   
-//   const getMdmsData = async (dispatch) => {
-//     let mdmsBody = {
-//       MdmsCriteria: {
-//         tenantId: commonConfig.tenantId,
-//         moduleDetails: [{
-//           moduleName: ESTATE_SERVICES_MDMS_MODULE,
-//           masterDetails: [
-//             {
-//               name: "categories"
-//             },
-//             {
-//               name: "sector"
-//             }
-//         ]
-//         }]
-//       }
-//     };
-//     try {
-//       let payload = await httpRequest(
-//         "post",
-//         "/egov-mdms-service/v1/_search",
-//         "_search",
-//         [],
-//         mdmsBody
-//       );
-//       return dispatch(prepareFinalObject("searchScreenMdmsData", payload.MdmsRes));
-//     } catch (e) {
-//       console.log(e);
-//     }
-//   }
+
   
   const citizenRentedPropertiesSearchAndResult = {
     uiFramework: "material-ui",
     name: "property-search",
-//     beforeInitScreen: (action, state, dispatch) => {
-//       const userInfo = JSON.parse(getUserInfo());
-//       const {roles = []} = userInfo
-//       // block refund tile access in Manimajra as there is no refund page there
-//       const manimajraRefundPageAccess = roles.find(item => /^ES_EB/.test(item.code));
-//       const params = new URLSearchParams(window.location.search)
-//       const paramTypeValue = params.get('type')
-//       if(manimajraRefundPageAccess === undefined && userInfo.type != "CITIZEN" && paramTypeValue === "refund"){
-//         dispatch(
-//           setRoute(
-//            `/estate/home`
-//           )
-//         )
-//       }
-//       state.screenConfiguration.preparedFinalObject.citizenSearchScreen = {}
-//       resetFields(state, dispatch);
-//       getMdmsData(dispatch);
-//       return action
-//     },
     components: {
       div: {
         uiFramework: "custom-atoms",

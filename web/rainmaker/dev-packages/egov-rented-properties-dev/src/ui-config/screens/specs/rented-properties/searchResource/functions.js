@@ -629,12 +629,7 @@ export const searchPropertycall = async (state, dispatch, onInit, relations = "o
     {}
   );
 
-  // const isSearchBoxFirstRowValid = validateFields(
-  //   "components.div.children.rentedPropertyApplication.children.cardContent.children.colonyContainer.children",
-  //   state,
-  //   dispatch,
-  //   "search"
-  // );
+
 
   const isSearchBoxSecondRowValid = validateFields(
     "components.div.children.rentedPropertyApplication.children.cardContent.children.transitNumberContainer.children",
