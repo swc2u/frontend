@@ -673,6 +673,9 @@ export const searchPropertycall = async (state, dispatch, onInit, relations = "o
         }
     }
     const response = await getSearchResults(queryObject);
+    if(!!response && !!response.Properties &&!!response.Properties.length>0 && response.Properties[0].masterDataState !="PM_APPROVED"){
+      response.Properties=[]
+    }
     try {
       let data = response.Properties.map(item => {
         const findOwner = item.owners.find(itemdat => itemdat.activeState === true)
