@@ -29,8 +29,8 @@ let enableButton = true;
 enableButton = hasButton && hasButton === "false" ? false : true;
 
 const header = getCommonHeader({
-  labelName: "Advertisement NOC",
-  labelKey: "ADVT_COMMON_NOC"
+  labelName: "Search Applications",
+  labelKey: "PM_SEARCH_NOC"
 });
 
 const setApplicationStatus = async (state, dispatch) => { 
@@ -129,7 +129,15 @@ const NOCSearchAndResult = {
         headerDiv: {
           uiFramework: "custom-atoms",
           componentPath: "Container",
-
+          children: {
+            header: {
+              gridDefination: {
+                xs: 12,
+                sm: 6
+              },
+              ...header
+            }
+          }
         },
 
         SearchFormForEmployee,
