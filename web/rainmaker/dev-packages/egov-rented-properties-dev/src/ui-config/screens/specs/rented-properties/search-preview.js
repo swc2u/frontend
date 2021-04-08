@@ -240,7 +240,7 @@ export const searchResults = async (action, state, dispatch, transitNumber) => {
       },
       {
         key: "mobileNumber",
-        value: properties[0].owners[0].ownerDetails.phone,
+        value: userInfo.mobileNumber,
       },
     ];
   }
