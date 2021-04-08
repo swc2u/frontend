@@ -48,7 +48,7 @@ class PensionDashbaord extends React.Component {
         
     return (
         <div>
-        <h2> Pension Dashboard Graph </h2> 
+        {/* <h2> Pension Dashboard Graph </h2>  */}
         {
             this.props.data.length > 0 ? 
                 this.props.data[1].value === "amountDisbursed" ?

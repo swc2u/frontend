@@ -6,7 +6,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import get from "lodash/get";
-import { getCurrentFinancialYear, generateBill, getBusinessServiceMdmsData } from "../utils";
+import { getCurrentFinancialYear, generateBill, getBillingEstimation,getBusinessServiceMdmsData } from "../utils";
 import capturePaymentDetails from "./payResource/capture-payment-details";
 import estimateDetails from "./payResource/estimate-details";
 import { footer } from "./payResource/footer";
@@ -160,6 +160,8 @@ const fetchBill = async (state, dispatch, consumerCode, tenantId, billBusinessSe
     {
        let  consumerCode =  getQueryArg(window.location.href, "consumerCode");
         dispatch(handleField("pay", consumeCodeComponentPath, "props.number", consumerCode));
+         //set _getBillingEstimation for gerenerate receipt for WNS
+         getBillingEstimation(state, dispatch, consumerCode, tenantId  );
 
     }
     else
@@ -209,7 +211,8 @@ const screenConfig = {
         {
             consumerCode = getQueryArg(window.location.href, "id");  
         }
-        fetchBill(state, dispatch, consumerCode, tenantId, businessService);
+        fetchBill(state, dispatch, consumerCode, tenantId,  );
+       
         const data = getPaymentCard();
         set(action, "screenConfig.components.div.children.formwizardFirstStep", data);
         return action;

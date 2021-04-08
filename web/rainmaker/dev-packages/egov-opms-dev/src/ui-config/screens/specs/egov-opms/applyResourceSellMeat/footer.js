@@ -256,16 +256,10 @@ const callBackForNext = async (state, dispatch) => {
               dispatch(toggleSnackbar(true, errorMessage, "success"));
     
             }, 2000);
+            // setReviewPageRoute(state, dispatch, applicationId);
 
-
-           // setReviewPageRoute(state, dispatch, applicationId);
+  
           }
-          // let errorMessage = {
-          //   labelName: 'SUCCESS ',
-          //   labelKey: "" //UPLOAD_FILE_TOAST
-          // };
-          // dispatch(toggleSnackbar(true, errorMessage, "success"));
-
         } else {
 
           let errorMessage = {

@@ -32,7 +32,10 @@ import {
   } from "../../../../ui-utils/sampleResponses";
   import { httpRequest } from "../../../../ui-utils";
   import {    
-    validateFields,    
+    validateFields, 
+    convertDateToEpoch,
+    uniqueBycode  ,
+    epochToYmdDate    
   } from "../utils";
   import { getSearchResults } from "../../../../ui-utils/commons"; 
   const resetFields = (state, dispatch) => {
@@ -207,15 +210,26 @@ const getMdmsData = async (state, dispatch) => {
     }
   };
   try {
-    const response = await httpRequest(
+    const payload = await httpRequest(
       "post",
       "/egov-mdms-service/v1/_search",
       "_search",
       [],
       mdmsBody
     );
-    dispatch(prepareFinalObject("searchScreenMdmsData", get(response, "MdmsRes"))
-    );
+     // filter 
+     let Month = (new Date().getMonth()+1)<10?`0${(new Date().getMonth()+1)}`:(new Date().getMonth()+1);
+     let Day = new Date().getDate()<10?`0${new Date().getDate()}`:new Date().getDate();
+     let CurrentDate = `${new Date().getFullYear()}-${Month}-${Day}`;
+     CurrentDate = convertDateToEpoch(CurrentDate, "dayStart");
+     let CurrentDateYnd =  epochToYmdDate(CurrentDate);
+     let FinancialYear = uniqueBycode(payload.MdmsRes['egf-master'].FinancialYear, x=>x.code)
+    // FinancialYear = FinancialYear.filter(x=>x.endingDate >= CurrentDate && x.startingDate<= CurrentDate)
+     payload.MdmsRes['egf-master'].FinancialYear=FinancialYear
+
+     dispatch(prepareFinalObject("searchScreenMdmsData", payload.MdmsRes));
+    // dispatch(prepareFinalObject("searchScreenMdmsData", get(response, "MdmsRes"))
+    // );
 
     return true;
   } catch (e) {

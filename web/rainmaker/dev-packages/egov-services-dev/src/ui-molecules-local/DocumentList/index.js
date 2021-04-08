@@ -17,6 +17,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { UploadSingleFile } from "../../ui-molecules-local";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import './index.css'
 const themeStyles = (theme) => ({
     documentContainer: {
         backgroundColor: "#F2F2F2",
@@ -314,7 +315,7 @@ class DocumentList extends Component {
                     sm={5}
                     md={4}
                     align="left"
-                    className={classes.descriptionDiv}
+                    className={classes.descriptionDiv  }
                 >
                     <LabelContainer
                         labelKey={getTransformedLocale(card.name)}
@@ -345,7 +346,7 @@ class DocumentList extends Component {
                     sm={12}
                     md={3}
                     align="right"
-                    className={classes.fileUploadDiv}
+                    className={classes.fileUploadDiv,"fileUploadBox"}
                 >
                     <UploadSingleFile
                         classes={this.props.classes}
@@ -374,7 +375,7 @@ class DocumentList extends Component {
                     sm={12}
                     md={12}
                     align="left"
-                    className={classes.descriptionDiv}
+                    className={classes.descriptionDiv ,"descriptionBox"}
                 >
                     <LabelContainer
                         labelKey={(() => {

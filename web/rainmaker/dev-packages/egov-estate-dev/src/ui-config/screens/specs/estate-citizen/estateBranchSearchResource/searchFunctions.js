@@ -30,7 +30,7 @@ export const searchApiCall = async (state, dispatch, onInit, offset, limit = 100
     },
     {
       key: "state",
-      value: ESTATE_APPROVED_STATE
+      value: "ES_PM_EB_APPROVED,ES_APPROVED"
     }
   ];
   queryObject = queryObject.filter(({

@@ -288,24 +288,24 @@ const getPropertyDetails = {
               labelKey: "WS_PROPERTY_SUB_USAGE_TYPE_LABEL"
             },
             {
-              jsonPath: "applyScreen.property.subusageCategory",
+              jsonPath: "applyScreen.property.usageCategory",
               callBack: handlePropertySubUsageType,
               localePrefix: {
                 moduleName: "WS",
                 masterName: "PROPSUBUSGTYPE"
               }
             },
-            {
-              labelKey: "WS_OLD_LABEL_NAME"
-            },
-            {
-              jsonPath: "applyScreen.property.subusageCategory",
-              callBack: handlePropertySubUsageType,
-              localePrefix: {
-                moduleName: "WS",
-                masterName: "PROPSUBUSGTYPE"
-              }
-            }
+            // {
+            //   labelKey: "WS_OLD_LABEL_NAME"
+            // },
+            // {
+            //   jsonPath: "applyScreen.property.subusageCategory",
+            //   callBack: handlePropertySubUsageType,
+            //   localePrefix: {
+            //     moduleName: "WS",
+            //     masterName: "PROPSUBUSGTYPE"
+            //   }
+            // }
 
           ),
           reviewPlotSize: getLabelWithValueForModifiedLabel(

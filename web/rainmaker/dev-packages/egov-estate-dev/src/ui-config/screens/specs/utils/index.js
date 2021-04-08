@@ -150,7 +150,7 @@ export const getButtonVisibility = (status, button, userRole = true) => {
   if ((status === "ES_PENDING_PAYMENT" || status === "ES_MM_PENDING_PAYMENT") && button === "PENDINGPAYMENT") return true;
   if (status === "ES_PENDING_JE_VERIFICATION" && button === "NOCVERIFICATION") return true;
   if (status === "ES_MM_PENDING_BI_VERIFICATION" && button === "SITEREPORT" && userRole) return true;
-  if ((status === "ES_PENDING_CITIZEN_TEMPLATE_SUBMISSION" || status === "ES_PENDING_CITIZEN_NOTICE_DOCUMENTS" || status === "ES_MM_PENIDNG_CITIZEN_NOTICE") && button === "UPLOAD_DOCUMENT") return true
+  if ((status === "ES_PENDING_CITIZEN_TEMPLATE_SUBMISSION" || status === "ES_PENDING_CITIZEN_NOTICE_DOCUMENTS" || status === "ES_MM_PENIDNG_CITIZEN_NOTICE" || status ==="ES_PENDING_CITIZEN_NOTICE_SUBMISSION") && button === "UPLOAD_DOCUMENT") return true
   return false;
 };
 
@@ -633,6 +633,22 @@ export const downloadAcknowledgementForm = (Applications, applicationType,feeEst
         }]
         break;
       case 'BB-NOC':
+          Application = {
+            ...Application,
+            applicationDetails:{
+              ...Application.applicationDetails,
+              typeOfNoc: (Application.applicationDetails.typeOfNoc && Application.applicationDetails.typeOfNoc.length == 3 ) ? [
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[0])}` + ',' + 
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[1])}` + ',' + 
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[2],Application.applicationDetails.typeOfNoc[2])}`
+              ] : (Application.applicationDetails.typeOfNoc && Application.applicationDetails.typeOfNoc.length == 1) ? [
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[0])}`
+              ] :(Application.applicationDetails.typeOfNoc && Application.applicationDetails.typeOfNoc.length == 2) ? [
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[0])}` + ',' + 
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[1])}`
+              ] : 'NA'
+            }
+          }
           queryStr = [{
             key: "key",
             value: (state == "ES_PENDING_PAYMENT" || state == "ES_PENDING_DA_PREPARE_LETTER" ||
@@ -1042,7 +1058,9 @@ export const downloadPaymentReceipt = (receiptQueryString, payload, data , gener
             }]
            queryStr = [{
               key: "key",
-              value: "application-payment-receipt"
+              value: payload[0].branchType == 'EstateBranch' ? 'eb-application-payment-receipt' : 
+              payload[0].branchType == 'BuildingBranch' ? 'bb-application-payment-receipt' : 
+              "application-payment-receipt"
             },
             {
               key: "tenantId",

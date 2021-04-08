@@ -503,8 +503,17 @@ export const getMdmsData = async (state,dispatch) => {
           { name: "swWorkflowRole" },
           { name: "sectorList" },
           { name: "swSectorList" },
+          
         
         ] },
+        {
+          moduleName: "PropertyTax",
+          masterDetails: [
+          {name: "UsageCategory"},
+          // {name:"Floor"},
+          // {name:"OwnerShipCategory"},
+          ]
+        },
         
       ]
     }
@@ -512,8 +521,32 @@ export const getMdmsData = async (state,dispatch) => {
   try {
     let payload = null;
     payload = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
-    
-   
+    let UsageType=[] , subUsageType=[];
+    if( payload.MdmsRes['PropertyTax'].UsageCategory !== undefined){
+      payload.MdmsRes.PropertyTax.UsageCategory.forEach(item=>{
+        if(item.code.split(".").length<=1){
+            UsageType.push({
+              active:item.active,
+              name:item.name,
+              code:item.code,
+              fromFY:item.fromFY
+            })
+          }
+      });
+       payload.MdmsRes.PropertyTax.UsageType=UsageType;
+      
+       payload.MdmsRes.PropertyTax.UsageCategory.forEach(item=>{
+        if(item.code.split(".").length==2){
+          subUsageType.push({
+              active:item.active,
+              name:item.name,
+              code:item.code,
+              fromFY:item.fromFY
+            })
+          }
+      });
+      payload.MdmsRes.PropertyTax.subUsageType=subUsageType;
+    }
     dispatch(prepareFinalObject("searchPreviewScreenMdmsData", payload.MdmsRes));
     //
   } catch (e) { console.log(e); }
@@ -617,7 +650,7 @@ const screenConfig = {
                 sm: 4,
                 align: "right"
               },
-              visible:false
+              visible:true
             }
           }
         },
@@ -632,31 +665,31 @@ const screenConfig = {
             updateUrl: serviceUrl
           }
         },
-        actionDialog: {
-          uiFramework: "custom-containers-local",
-          componentPath: "ResubmitActionContainer",
-          moduleName: "egov-wns",
-          visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
-          props: {
-            open: true,
-            dataPath: "WaterConnection",
-            moduleName: serviceModuleName,
-            updateUrl: serviceUrl,
-            data: {
-              buttonLabel: "RESUBMIT",
-              moduleName: serviceModuleName,
-              isLast: false,
-              dialogHeader: {
-                labelName: "RESUBMIT Application",
-                labelKey: "WF_RESUBMIT_APPLICATION"
+        // actionDialog: {
+        //   uiFramework: "custom-containers-local",
+        //   componentPath: "ResubmitActionContainer",
+        //   moduleName: "egov-wns",
+        //   visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
+        //   props: {
+        //     open: true,
+        //     dataPath: "WaterConnection",
+        //     moduleName: serviceModuleName,
+        //     updateUrl: serviceUrl,
+        //     data: {
+        //       buttonLabel: "RESUBMIT",
+        //       moduleName: serviceModuleName,
+        //       isLast: false,
+        //       dialogHeader: {
+        //         labelName: "RESUBMIT Application",
+        //         labelKey: "WF_RESUBMIT_APPLICATION"
 
-              },
-              showEmployeeList: false,
-              roles: "CITIZEN",
-              isDocRequired: false
-            }
-          }
-        },
+        //       },
+        //       showEmployeeList: false,
+        //       roles: "CITIZEN",
+        //       isDocRequired: false
+        //     }
+        //   }
+        // },
         taskDetails,
       }
     },

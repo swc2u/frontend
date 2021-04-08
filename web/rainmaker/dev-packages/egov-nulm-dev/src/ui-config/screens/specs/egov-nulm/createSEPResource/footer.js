@@ -77,6 +77,26 @@ if(NULMSEPRequest && NULMSEPRequest.isMinority){
   }
 }
 
+if(NULMSEPRequest ){
+  if(!NULMSEPRequest.gender ){
+    const errorMessage = {
+      labelName: "Please select gender of an applicant",
+      labelKey: "ERR_NULM_SELECT_GENDER_APPLICANT"
+    };
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    return;
+  }
+}
+if(NULMSEPRequest ){
+  if(!NULMSEPRequest.category ){
+    const errorMessage = {
+      labelName: "Please select Category of an applicant",
+      labelKey: "ERR_NULM_SELECT_CATEGORY_APPLICANT"
+    };
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    return;
+  }
+}
 if(NULMSEPRequest && NULMSEPRequest.isUrbanPoor){
   if(NULMSEPRequest.isUrbanPoor =="Yes" && !NULMSEPRequest.bplNo ){
     const errorMessage = {

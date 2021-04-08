@@ -616,7 +616,46 @@ export const getPMDetailsByFileNumber = async (
     let ratePerSqft = (properties[0].propertyDetails.ratePerSqft).toString();
     let areaSqft = (properties[0].propertyDetails.areaSqft).toString();
 
-    properties = [{...properties[0], propertyDetails: {...properties[0].propertyDetails, owners: currOwners, purchaser: prevOwners, ratePerSqft: ratePerSqft, areaSqft: areaSqft}}]
+    let isGroundRent, isIntrestApplicable, noOfMonths, premiumAmountConfigItems
+
+    if (properties[0].propertyDetails.paymentConfig) {
+       
+    }
+
+
+    let {estateRentSummary, propertyDetails} = properties[0]
+    if(!!estateRentSummary){
+      estateRentSummary.outstanding =  (Number(estateRentSummary.balanceRent) + 
+      Number(estateRentSummary.balanceGST) + Number(estateRentSummary.balanceGSTPenalty) +
+      Number(estateRentSummary.balanceRentPenalty)).toFixed(2)
+      estateRentSummary.balanceGST =  Number(estateRentSummary.balanceGST).toFixed(2)
+      estateRentSummary.balanceRent = Number(estateRentSummary.balanceRent).toFixed(2)
+      estateRentSummary.collectedRent = Number(estateRentSummary.collectedRent).toFixed(2)
+      estateRentSummary.balanceGSTPenalty = Number(estateRentSummary.balanceGSTPenalty).toFixed(2)
+      estateRentSummary.balanceRentPenalty = Number(estateRentSummary.balanceRentPenalty).toFixed(2)
+  }
+  let {paymentConfig = {}} = propertyDetails
+  let paymentConfigItems = []
+  if(!!paymentConfig) {
+      isGroundRent = paymentConfig.isGroundRent;
+       isIntrestApplicable = paymentConfig.isIntrestApplicable;
+       noOfMonths = paymentConfig.noOfMonths;
+       premiumAmountConfigItems = paymentConfig.premiumAmountConfigItems ? paymentConfig.premiumAmountConfigItems : []
+
+      isGroundRent = isGroundRent != null ? isGroundRent.toString() : isGroundRent;
+      isIntrestApplicable = isIntrestApplicable != null ? isIntrestApplicable.toString() : isIntrestApplicable;
+      noOfMonths = noOfMonths != null ? noOfMonths.toString() : noOfMonths;
+  }
+  if(!!paymentConfig && !!paymentConfig.paymentConfigItems && !!paymentConfig.paymentConfigItems.length) {
+    paymentConfigItems = paymentConfig.paymentConfigItems.sort((a, b) => {
+      return a.groundRentStartMonth - b.groundRentStartMonth
+    });
+    paymentConfigItems = paymentConfigItems.map(item => ({...item, tillDate: (item.groundRentEndMonth - item.groundRentStartMonth) + 1}))
+  } else {
+    paymentConfigItems = [{groundRentStartMonth: "1"}]
+  }
+
+    properties = [{...properties[0], estateRentSummary, propertyDetails: {...properties[0].propertyDetails, owners: currOwners, purchaser: prevOwners, ratePerSqft: ratePerSqft, areaSqft: areaSqft,  paymentConfig : !!paymentConfig ? {...paymentConfig, paymentConfigItems, isGroundRent: isGroundRent, isIntrestApplicable: isIntrestApplicable, noOfMonths: noOfMonths, premiumAmountConfigItems: premiumAmountConfigItems} : paymentConfig}}]
 
     dispatch(
       prepareFinalObject(

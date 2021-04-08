@@ -570,7 +570,7 @@ export const downloadPrintContainer = (
     label: { labelKey: "WS_ESTIMATION_NOTICE" },
     link: () => {
       const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
-      downloadApp(WaterConnection, 'estimateNotice');
+      downloadApp(state,WaterConnection, 'estimateNotice');
     },
     leftIcon: "book"
   };
@@ -578,7 +578,7 @@ export const downloadPrintContainer = (
     label: { labelKey: "WS_ESTIMATION_NOTICE" },
     link: () => {
       const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
-      downloadApp(WaterConnection, 'estimateNotice', 'print');
+      downloadApp(state,WaterConnection, 'estimateNotice', 'print');
     },
     leftIcon: "book"
   };
@@ -589,7 +589,7 @@ export const downloadPrintContainer = (
       const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "To Citizen" : "Department Use";
       WaterConnection[0].appUserType = appUserType;
       WaterConnection[0].commissionerName = "S.Ravindra Babu";
-      downloadApp(WaterConnection, 'sanctionLetter');
+      downloadApp(state,WaterConnection, 'sanctionLetter');
     },
     leftIcon: "receipt"
   };
@@ -600,7 +600,7 @@ export const downloadPrintContainer = (
       const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "Department Use" : "To Citizen";
       WaterConnection[0].appUserType = appUserType;
       WaterConnection[0].commissionerName = "S.Ravindra Babu";
-      downloadApp(WaterConnection, 'sanctionLetter', 'print');
+      downloadApp(state,WaterConnection, 'sanctionLetter', 'print');
     },
     leftIcon: "receipt"
   };
@@ -617,7 +617,7 @@ export const downloadPrintContainer = (
         }
       });
       WaterConnection[0].pdfDocuments = filteredDocs;
-      downloadApp(WaterConnection, 'application');
+      downloadApp(state,WaterConnection, 'application');
     },
     leftIcon: "assignment"
   };
@@ -634,7 +634,7 @@ export const downloadPrintContainer = (
         }
       });
       WaterConnection[0].pdfDocuments = filteredDocs;
-      downloadApp(WaterConnection, 'application', 'print');
+      downloadApp(state,WaterConnection, 'application', 'print');
     },
     leftIcon: "assignment"
   };

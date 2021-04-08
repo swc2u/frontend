@@ -169,6 +169,9 @@ console.log('this.state.idProffType',this.state.idProffType);
           setOpen: true
         })
       };
+
+    // docTypeConfig ={"":"","BK_PCC_DISCOUNT_DOCUMENT":"Discount_Document"}
+
     componentDidMount = () => {
         const {
             documentsList, buttonLabel, description, inputProps, maxFileSize, documentsUploadReduxOld, discountDocumentsUploadRedux, handleChange,
@@ -176,7 +179,14 @@ console.log('this.state.idProffType',this.state.idProffType);
         } = this.props;
         let index = 0;
 
+        let docTypeConfig ={"":"","BK_PCC_DISCOUNT_DOCUMENT":"Discount_Document"}
+
+        let docTypeDrop = get(discountDocumentsUploadRedux, `[${index}].documentCode`,"");
+        this.setState({ idProffType:docTypeConfig[docTypeDrop] });
+        console.log("doctyp----",docTypeDrop)
+
         documentsList.forEach((docType) => {
+            console.log("doctyyype----",docType)
             docType.cards &&
                 docType.cards.forEach((card) => {
                     if (card.subCards) {
@@ -193,16 +203,41 @@ console.log('this.state.idProffType',this.state.idProffType);
                                 discountDocumentsUploadRedux,
                                 `[${index}].documentSubCode`
                             );
+                            let oldDocuments=get(
+                                discountDocumentsUploadRedux,
+                                `[${index}].documents[0]`
+                              );
                             if (
                                 oldDocType != docType.code ||
                                 oldDocCode != card.name ||
                                 oldDocSubCode != subCard.name
                             ) {
-                                discountDocumentsUploadRedux[index] = {
-                                    documentType: docType.code,
-                                    documentCode: card.name,
-                                    documentSubCode: subCard.name,
-                                };
+                                if(oldDocuments){
+                                    let newDocumentData = {
+                                        documentType: docType.code,
+                                        documentCode: card.name,
+                                        isDocumentRequired: card.required,
+                                        isDocumentTypeRequired: card.dropdown
+                                            ? card.dropdown.required
+                                            : false,
+                                        mydocstate: false,
+                                        documents: [oldDocuments]
+                                    };
+        
+                                    discountDocumentsUploadRedux[index] = { ...newDocumentData };
+                                }else{
+                                    let newDocumentData = {
+                                        documentType: docType.code,
+                                        documentCode: card.name,
+                                        isDocumentRequired: card.required,
+                                        isDocumentTypeRequired: card.dropdown
+                                            ? card.dropdown.required
+                                            : false,
+                                        mydocstate: false
+                                    };
+        
+                                    discountDocumentsUploadRedux[index] = { ...newDocumentData };
+                                }
                             }
                             index++;
                         });
@@ -215,22 +250,41 @@ console.log('this.state.idProffType',this.state.idProffType);
                             discountDocumentsUploadRedux,
                             `[${index}].documentCode`
                         );
+                        let oldDocuments=get(
+                            discountDocumentsUploadRedux,
+                            `[${index}].documents[0]`
+                          );
                         if (
                             oldDocType != docType.code ||
                             oldDocCode != card.name
                         ) {
 
-                            let newDocumentData = {
-                                documentType: docType.code,
-                                documentCode: card.name,
-                                isDocumentRequired: card.required,
-                                isDocumentTypeRequired: card.dropdown
-                                    ? card.dropdown.required
-                                    : false,
-                                mydocstate: false
-                            };
-
-                            discountDocumentsUploadRedux[index] = { ...newDocumentData };
+                            if(oldDocuments){
+                                let newDocumentData = {
+                                    documentType: docType.code,
+                                    documentCode: card.name,
+                                    isDocumentRequired: card.required,
+                                    isDocumentTypeRequired: card.dropdown
+                                        ? card.dropdown.required
+                                        : false,
+                                    mydocstate: false,
+                                    documents: [oldDocuments]
+                                };
+    
+                                discountDocumentsUploadRedux[index] = { ...newDocumentData };
+                            }else{
+                                let newDocumentData = {
+                                    documentType: docType.code,
+                                    documentCode: card.name,
+                                    isDocumentRequired: card.required,
+                                    isDocumentTypeRequired: card.dropdown
+                                        ? card.dropdown.required
+                                        : false,
+                                    mydocstate: false
+                                };
+    
+                                discountDocumentsUploadRedux[index] = { ...newDocumentData };
+                            }
                         }
                         index++;
                     }
