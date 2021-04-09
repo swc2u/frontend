@@ -315,6 +315,14 @@ const HideshowEdit = (state, action, nocStatus, amount, applicationNumber,dispat
         : false
       : false
   );
+  
+  let statusArray = get(state, 'screenConfiguration.preparedFinalObject.WFStatus', []);
+  let takeActionButtonVisible = false;
+  if (statusArray.length != 0) {
+    takeActionButtonVisible = true;
+  } else { 
+    takeActionButtonVisible = false;
+  }
 
   set(
     action,
@@ -323,7 +331,7 @@ const HideshowEdit = (state, action, nocStatus, amount, applicationNumber,dispat
       nocStatus === "DRAFT" || nocStatus === "REASSIGN" || nocStatus === "VERIFY AFTER APPROVAL L3" ?
         true
         : false
-      : true
+      : takeActionButtonVisible
   );
   set(
     action,
