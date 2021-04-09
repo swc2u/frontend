@@ -195,7 +195,7 @@ class DocumentList extends Component {
     prepareFinalObject("documentsUploadRedux", {
       ...documentsUploadRedux,
       [uploadedDocIndex]: {
-        ...documentsUploadRedux[uploadedDocIndex], documents: [{ fileName: file.name, fileStoreId, fileUrl: Object.values(fileUrl)[0] }]
+        ...documentsUploadRedux[uploadedDocIndex], documents: [{ fileName: file.name, fileSize : file.size, fileStoreId, fileUrl: Object.values(fileUrl)[0] }]
       }
     });
   };
