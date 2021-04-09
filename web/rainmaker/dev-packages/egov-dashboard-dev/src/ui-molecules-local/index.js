@@ -166,6 +166,11 @@ const DashboardPension = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardNULM = Loadable({
+  loader: () => import("./DashboardNULM"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -199,5 +204,6 @@ export {
   DashboardWork,
   DashboardEstate,
   DashboardRentedProperty,
-  DashboardPension
+  DashboardPension,
+  DashboardNULM
 };
