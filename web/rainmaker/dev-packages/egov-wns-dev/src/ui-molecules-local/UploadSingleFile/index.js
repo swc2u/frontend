@@ -43,6 +43,7 @@ const UploadSingleFile = ({
                       pagename={pagename}
                     />
                   )}
+				<p style={{paddingTop: "10px", textAlign: "right"}} > Size : { document.fileSize } Kb. </p>
                 </div>
               );
             })}
