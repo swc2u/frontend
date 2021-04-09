@@ -51,7 +51,7 @@ const grantDetailAvailed=getGrantDetailsAvailed(false)
 const reviewGrantDetails = getReviewGrantDetails(false)
 const grantDetail=getGrantDetails(false)
 const reviewPaymentHistory = getPaymentHistory()
-export const propertyReviewDetails = getCommonCard({
+export const propertyReviewDetails =  process.env.REACT_APP_NAME != "Citizen"?getCommonCard({
   reviewPropertyDetails,
   reviewAddressDetails,
   reviewOwnerDetails,
@@ -62,7 +62,10 @@ export const propertyReviewDetails = getCommonCard({
   grantDetailAvailed,
   reviewGrantDetails,
   grantDetail
-});
+}):
+getCommonCard({
+  reviewPaymentHistory,
+})
 
 export const searchResults = async (action, state, dispatch, transitNumber) => {
   let queryObject = [
@@ -286,7 +289,7 @@ export const onTabChange = async(tabIndex, dispatch, state) => {
   dispatch(setRoute(path))
 }
 
-export const tabs = [
+export const tabs = process.env.REACT_APP_NAME != "Citizen"?[
   {
     tabButton: { labelName: "Property Details", labelKey: "RP_PROPERTY_DETAILS" },
   },
@@ -298,6 +301,11 @@ export const tabs = [
   },
   {
     tabButton: {labelName: "Rent History", labelKey: "RP_COMMON_RENT_HISTORY"}
+  }
+]:
+[
+  {
+    tabButton: { labelName: "Property Details", labelKey: "RP_PROPERTY_DETAILS" },
   }
 ]
 
@@ -323,6 +331,7 @@ const buttonComponent = (label) => ({
       labelKey: label
     })
   },
+  visible:process.env.REACT_APP_NAME != "Citizen",
   onClickDefination: {
     action: "condition",
     callBack: (state, dispatch) => {
