@@ -145,14 +145,13 @@ class BwtApplicationDetails extends Component {
 			"_search",
 			RequestGateWay
 			);
-		 console.log("payloadGateWay--",payloadGateWay)   //Transaction[0].gateway
+		  //Transaction[0].gateway
 		 
 		 if(payloadGateWay.Transaction.length > 0){
-console.log("consoleDataForGateWay--",payloadGateWay.Transaction.length > 0 ? payloadGateWay.Transaction : "abababa") 
 	
 let gateWay = payloadGateWay.Transaction[0].gateway; 
 
-console.log("gateWay--",gateWay ? gateWay : "NotFound")
+
 
 prepareFinalObject('GateWayName', gateWay)
 
@@ -307,7 +306,7 @@ this.setState({
 						Accept: "application/pdf",
 					},
 				});
-				console.log("responseData---", response);
+			
 				const file = new Blob([response.data], { type: "application/pdf" });
 				const fileURL = URL.createObjectURL(file);
 				var myWindow = window.open(fileURL);
@@ -423,10 +422,8 @@ this.setState({
 downloadReceiptFunction = async (e) => {
 	const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceiptforCG,downloadReceiptforCG,downloadWaterTankerReceipt, userInfo, paymentDetails,bkDate,
 		pdfBankName,bkTime } = this.props;
-		console.log("propsofPdfPayment--",this.props)
-		console.log("stateBankName--",this.state.BankName ? this.state.BankName : "NotFound")
 	const { complaint } = transformedComplaint;
-	console.log("complaintPayemnet--",complaint)
+
 
 	var date2 = new Date();
 
@@ -478,7 +475,7 @@ downloadReceiptFunction = async (e) => {
 	}
 	]
 	// downloadReceiptforCG({BookingInfo: BookingInfo})
-	console.log("requestBodyOfPayment--",BookingInfo)
+
 	downloadWaterTankerReceipt({BookingInfo: BookingInfo})
 }
 
@@ -604,7 +601,7 @@ downloadApplicationMCCButton = async (mode) => {
 							Accept: "application/pdf",
 						},
 					});
-					console.log("responseData---", response);
+			
 					const file = new Blob([response.data], { type: "application/pdf" });
 					const fileURL = URL.createObjectURL(file);
 					var myWindow = window.open(fileURL);
@@ -636,7 +633,7 @@ downloadApplicationFunction = async (e) => {
 		bkTime,bookingForDate,
 		bookingForTime } = this.props;
 	const {complaint} = transformedComplaint;
-	console.log("complaint--In-Water-Tanker--",complaint)
+
 	let PdfStatus;
 if(complaint.status){
 	if(complaint.status == "PENDINGASSIGNMENTDRIVER"){
@@ -703,7 +700,7 @@ if(complaint.status){
         }
       }
     ]
-console.log("requestBodyOfApplication--",BookingInfo)
+
     downloadBWTApplication({ BookingInfo: BookingInfo })
     
   };
@@ -869,10 +866,6 @@ console.log("requestBodyOfApplication--",BookingInfo)
 		let { documentMap } = this.props;
 		let { historyApiData, paymentDetails, match, userInfo,
 			bookingForTime,bookingForDate} = this.props;
-		console.log("bookingForTime--props--",bookingForTime)
-		console.log("bookingForDate--props--",bookingForDate)
-		console.log("StateForWaterTanker--",this.state)
-
 		let {
 			role,
 			serviceRequestId,
@@ -1001,8 +994,7 @@ console.log("requestBodyOfApplication--",BookingInfo)
 									bookingForDate={bookingForDate && bookingForDate}
                                     bookingForTime={bookingForTime && bookingForTime}
 								/>
-								
-								{(complaint.bkStatus).includes("Paid") &&
+								{complaint.bkStatus && (complaint.bkStatus).includes("Paid") &&
 									<BWTPaymentDetails
 										paymentDetails={paymentDetails && paymentDetails}
 									/>
@@ -1146,26 +1138,25 @@ const mapStateToProps = (state, ownProps) => {
 	const { userInfo } = state.auth;
 
 	let pdfBankName = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.GateWayName:"wrongNumber";  
-  console.log("pdfBankName--",pdfBankName)
+
   
 
 	const serviceRequestId = ownProps.match.params.applicationId;
 	let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
-	console.log("selectedComplaint--",selectedComplaint)
 
 	let businessService = applicationData ? applicationData.businessService : '';
 	let bookingDocs;
 
 	let bkTime = selectedComplaint ? selectedComplaint.bkTime : "NoTimeFound"
-	console.log("bkTime--",bkTime)
+
 	
 	let bkDate =  selectedComplaint ? selectedComplaint.bkDate : "NoTimeFound"
-	console.log("bkDate--",bkDate)
+
 
 	let bookingForDate = selectedComplaint.bkDate != null ? selectedComplaint.bkDate : 'NA'
-	console.log("bookingForDate--",bookingForDate)
+
 	let bookingForTime = selectedComplaint.bkTime != null ? selectedComplaint.bkTime : 'NA'
-    console.log("bookingForTime--",bookingForTime)
+ 
 
 	let documentMap = applicationData && applicationData.documentMap ? applicationData.documentMap : '';
 	const { HistoryData } = bookings;
@@ -1178,7 +1169,7 @@ const mapStateToProps = (state, ownProps) => {
 let paymentDetailsForReceipt = fetchPaymentAfterPayment;
 	let paymentDetails;
 	paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
-	console.log("paymentDetails--wt",paymentDetails)
+
 	let historyApiData = {}
 	if (historyObject) {
 		historyApiData = historyObject;
