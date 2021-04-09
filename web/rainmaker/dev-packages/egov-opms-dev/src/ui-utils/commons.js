@@ -1154,6 +1154,29 @@ export const getGridDataRoadcut1 = async () => {
 };
 
 
+export const getBusinessServiceData = async (businessService) => {
+  let queryObject = [
+    {
+      key:"businessServices",value:businessService
+    },
+    {
+      key:"tenantId",value:getOPMSTenantId()
+    }
+  ];
+  try {
+      const payload = await httpRequest(
+        "post",
+        "/egov-workflow-v2/egov-wf/businessservice/_search",
+        "",
+        queryObject,
+        {}
+      );
+    return payload;
+  } catch (error) {
+
+  }
+};
+
 export const getGridDataSellMeat1 = async () => {
   let queryObject = [];
   var requestBody = {
@@ -1812,7 +1835,8 @@ const callPMUpdateStatusAPI = async (code,url,dispatch) => {
     );
     if (response.ResponseInfo.status == "success") {
       dispatch(toggleSpinner());
-      dispatch(setRoute('/inbox'))
+      // dispatch(setRoute('/inbox'))
+      dispatch(setRoute(`/egov-opms/acknowledgement-workflow?purpose=${code.applicationStatus}&applicationNumber=${code.applicationId}&tenantId=${code.tenantId}`))
     }
     else {
       dispatch(toggleSpinner());
