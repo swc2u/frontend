@@ -9,13 +9,12 @@ class PayDetails extends Component {
  
 
   render() {
-    const { bkPaymentDate, paymentDetails, bkPaymentReceiptNumber, bkPaymentStatus } = this.props;
-    console.log("payemntProps--",this.props)
-
+    const { bkPaymentDate, paymentDetails, bkPaymentReceiptNumber, bkPaymentStatus,baseAmount,taxes} = this.props;
+  
     return (
       <div>
-        <Card
-          textChildren={
+        <Card  
+          textChildren={    //bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.totalAmount
             <div>
               <div className="rainmaker-displayInline row">
                 <div className="col-md-4">
@@ -32,7 +31,7 @@ class PayDetails extends Component {
                   <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_REGISTRATION_RENT" />
                 </div>
                 <div className="col-sm-4 col-xs-12">
-                  <h5 style={{ textAlign: "right" }}>{paymentDetails && paymentDetails.billDetails[0] && paymentDetails.billDetails[0].billAccountDetails[1].amount}</h5>
+                  <h5 style={{ textAlign: "right" }}>{baseAmount}</h5>
                 </div>
               </div>
 
@@ -41,7 +40,7 @@ class PayDetails extends Component {
                   <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_TAX_RENT" />
                 </div>
                 <div className="col-sm-4 col-xs-12">
-                  <h5 style={{ textAlign: "right" }}>{paymentDetails && paymentDetails.billDetails[0] && paymentDetails.billDetails[0].billAccountDetails[0].amount}</h5>
+                  <h5 style={{ textAlign: "right" }}>{taxes}</h5>
                 </div>
               </div>
               <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px'}}>
