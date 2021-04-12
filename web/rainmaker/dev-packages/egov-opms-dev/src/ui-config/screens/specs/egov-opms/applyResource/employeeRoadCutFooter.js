@@ -594,6 +594,6 @@ export const takeactionfooter = getCommonApplyFooter({
         toggleactionmenu(state, dispatch)
       }
     },
-    visible: true
+    visible: false
   }
 });
