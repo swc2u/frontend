@@ -50,7 +50,7 @@ export const callPGService = async (state, dispatch) => {
 
 
 const userInfo = JSON.parse(getUserInfo());
-const user =  (businessService ==='WS.ONE_TIME_FEE' || businessService ==="WS") ?
+const user =  (businessService ==='WS.ONE_TIME_FEE' || businessService ==="WS" || businessService ==="SW.ONE_TIME_FEE") ?
 {
 
   name: userInfo.name,

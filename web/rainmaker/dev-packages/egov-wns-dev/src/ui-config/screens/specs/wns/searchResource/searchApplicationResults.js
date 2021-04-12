@@ -172,7 +172,7 @@ export const searchApplicationResults = {
           filter: false,
           customBodyRender: (value, data) => {
            // if (data.rowData[4] > 0 && data.rowData[4] !== 0) {
-              if ((data.rowData[4] > 0 && data.rowData[4] !== 0) &&(data.rowData[3] !== undefined? data.rowData[3].toUpperCase() !== "INITIATED":'')) {
+              if ((data.rowData[4] > 0 && data.rowData[4] !== 0) &&(data.rowData[3] !== undefined? data.rowData[3].toUpperCase() !== "PAID":'')) {
               return (
                 <div className="linkStyle" onClick={() => getViewBillDetails(data)} style={{ color: '#fe7a51', textTransform: 'uppercase' }}>
                   <LabelContainer
