@@ -69,7 +69,8 @@ const prepareDocumentsView = async (state, dispatch) => {
     documentsPreview.push({
     title: "ID Proof",
     fileStoreId: element.media,
-    linkText: "DOWNLOAD"
+    linkText: "DOWNLOAD",
+    IsDelete:false,
     
     })
     cnt = cnt +1;
@@ -77,8 +78,8 @@ const prepareDocumentsView = async (state, dispatch) => {
     else{documentsPreview.push({
       title: "Uploaded Document "+cnt,
       fileStoreId: element.media,
-      linkText: "DOWNLOAD"
-      
+      linkText: "DOWNLOAD",
+      IsDelete: cnt ===1?false :true,
       })
       cnt = cnt +1;}
     }

@@ -64,6 +64,10 @@ const CustomizeTable = Loadable({
   loader: () => import("./CustomizeTable"),
   loading: () => <Loading />
 });
+const MultiCardDownloadGrid = Loadable({
+  loader: () => import("./MultiDownloadCard"),
+  loading: () => <Loading />
+});
 
 export {
   TestMolecules,
@@ -78,5 +82,6 @@ export {
   HowItWorks,
   ImageUploadMolecule,
   MapLocatorEdit,
+  MultiCardDownloadGrid,
   CustomizeTable
 };

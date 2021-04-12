@@ -544,8 +544,22 @@ export const downloadReceiptFromFilestoreID=(fileStoreId,mode,tenantId)=>{
     }
   });
 }
+export const epochToYmdDate = et => {
+  if (!et) return null;
+  if (typeof et === "string") return et;
+  let d = new Date(et),
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [year, month, day].join("-");
+};
 export const download  = async ( state, dispatch, mode = "download") => {
   let businessServiceInfo = get(state.screenConfiguration.preparedFinalObject, "businessServiceInfo", {});
+  let businessServicewsbillreceipt = get(state.screenConfiguration.preparedFinalObject, "businessServicewsbillreceipt", '');
   let billGeneration = get(state.screenConfiguration.preparedFinalObject, "billGeneration", []);
    console.log(businessServiceInfo);
    const receiptQueryString = [
@@ -567,10 +581,14 @@ export const download  = async ( state, dispatch, mode = "download") => {
    try {
      let keyvalue ='consolidatedreceipt'
      let KeytenantId =receiptQueryString[1].value
-     if(businessServiceInfo.code ==='WS')
+     if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE' || businessServicewsbillreceipt ==='SW.ONE_TIME_FEE')
        {
-        keyvalue ='ws-bill'
-        //KeytenantId =receiptQueryString[1].value
+        keyvalue ='ws-bill-receipt' 
+       }
+       else if(businessServicewsbillreceipt ==='WS')
+       {
+        keyvalue ='ws-bill'        
+        
        }
      else
        if (businessServiceInfo.code.includes("CTL"))
@@ -594,9 +612,50 @@ export const download  = async ( state, dispatch, mode = "download") => {
          console.log("Could not find any receipts");   
          return;
        }
-       if(businessServiceInfo.code ==='WS')
+       if(businessServicewsbillreceipt ==='WS')
        {
         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { billGeneration: billGeneration }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+        .then(res => {
+          res.filestoreIds[0]
+          if(res&&res.filestoreIds&&res.filestoreIds.length>0){
+            res.filestoreIds.map(fileStoreId=>{
+              downloadReceiptFromFilestoreID(fileStoreId,"download")
+            })          
+          }else{
+            console.log("Error In Receipt Download");        
+          }         
+        });
+       }
+       else if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE'|| businessServicewsbillreceipt ==='SW.ONE_TIME_FEE')
+      
+       {
+         let paymentReceiptDate = 0;
+         let paidAmount =0;
+         let dueAmount = 0;
+         if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length>0)
+         {
+          paymentReceiptDate = epochToYmdDate(get(payloadReceiptDetails, "Payments[0].transactionDate", ''))
+          paidAmount = get(payloadReceiptDetails, "Payments[0].paymentDetails[0].totalAmountPaid", '')
+          dueAmount = get(payloadReceiptDetails, "Payments[0].paymentDetails[0].totalDue", '')
+
+         }
+        billGeneration =[
+          {
+            div: get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].div", ''),
+            subDiv: get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].subdiv", ''),
+            applicationNumber:getQueryArg(window.location.href, "consumerCode"),
+            receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
+            activityType: get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].activityType", ''),
+            applicantName: get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].connectionHolders[0].name", ''),
+            applicantAddress: get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].connectionHolders[0].correspondenceAddress", ''),
+            paymentReceiptDate:paymentReceiptDate,
+            dueAmount: dueAmount,
+            paidAmount:paidAmount,
+            status:'Payment complete',
+          }
+        ]
+
+        httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { WSReceiptRequest: billGeneration }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
         .then(res => {
           res.filestoreIds[0]
           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
@@ -657,17 +716,17 @@ export const download  = async ( state, dispatch, mode = "download") => {
          });
        }
        else{
-        httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Payments: payloadReceiptDetails.Payments }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
-        .then(res => {
-          res.filestoreIds[0]
-          if(res&&res.filestoreIds&&res.filestoreIds.length>0){
-            res.filestoreIds.map(fileStoreId=>{
-              downloadReceiptFromFilestoreID(fileStoreId,"download")
-            })          
-          }else{
-            console.log("Error In Receipt Download");        
-          }         
-        });
+        // httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Payments: payloadReceiptDetails.Payments }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+        // .then(res => {
+        //   res.filestoreIds[0]
+        //   if(res&&res.filestoreIds&&res.filestoreIds.length>0){
+        //     res.filestoreIds.map(fileStoreId=>{
+        //       downloadReceiptFromFilestoreID(fileStoreId,"download")
+        //     })          
+        //   }else{
+        //     console.log("Error In Receipt Download");        
+        //   }         
+        // });
        }
       
      })
@@ -677,6 +736,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
  }
  export const downloadprint  = async ( state, dispatch, mode = "download") => {
   let businessServiceInfo = get(state.screenConfiguration.preparedFinalObject, "businessServiceInfo", {});
+  let businessServicewsbillreceipt = get(state.screenConfiguration.preparedFinalObject, "businessServicewsbillreceipt", '');
   let billGeneration = get(state.screenConfiguration.preparedFinalObject, "billGeneration", []);
    console.log(businessServiceInfo);
    const receiptQueryString = [
@@ -701,9 +761,22 @@ export const download  = async ( state, dispatch, mode = "download") => {
      if(businessServiceInfo.code ==='WS')
        {
         keyvalue ='ws-bill'
+         
+        if(businessServicewsbillreceipt === 'WS')
+        {
+          keyvalue ='ws-bill-receipt'
+        }
         //KeytenantId =receiptQueryString[1].value
        }
-       else{
+     else
+       if (businessServiceInfo.code.includes("CTL"))
+       {
+        keyvalue ='tl-receipt'
+        //KeytenantId =receiptQueryString[1].value
+        loadReceiptGenerationData(getQueryArg(window.location.href, "consumerCode"), getQueryArg(window.location.href, "tenantId"), state, dispatch);
+       }
+
+     else {
         KeytenantId =receiptQueryString[1].value.split('.')[0]
 
        }
@@ -717,7 +790,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
          console.log("Could not find any receipts");   
          return;
        }
-       if(businessServiceInfo.code ==='WS')
+       if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE'||businessServicewsbillreceipt ==='SW.ONE_TIME_FEE')
        {
         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { billGeneration: billGeneration }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
         .then(res => {
@@ -730,6 +803,94 @@ export const download  = async ( state, dispatch, mode = "download") => {
             console.log("Error In Receipt Download");        
           }         
         });
+       }
+       if(businessServicewsbillreceipt ==='WS')
+       {
+         let paymentReceiptDate = 0;
+         let paidAmount =0;
+         let dueAmount = 0;
+         if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length>0)
+         {
+          paymentReceiptDate = epochToYmdDate(get(payloadReceiptDetails, "Payments[0].transactionDate", ''))
+          paidAmount = get(payloadReceiptDetails, "Payments[0].paymentDetails[0].totalAmountPaid", '')
+          dueAmount = get(payloadReceiptDetails, "Payments[0].paymentDetails[0].totalDue", '')
+
+         }
+        billGeneration =[
+          {
+            div: get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].div", ''),
+            subDiv: get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].subdiv", ''),
+            applicationNumber:getQueryArg(window.location.href, "consumerCode"),
+            receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
+            activityType: get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].activityType", ''),
+            applicantName: get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].connectionHolders[0].name", ''),
+            applicantAddress: get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].connectionHolders[0].correspondenceAddress", ''),
+            paymentReceiptDate:paymentReceiptDate,
+            dueAmount: dueAmount,
+            paidAmount:paidAmount,
+            status:'Payment complete',
+          }
+        ]
+
+        httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { WSReceiptRequest: billGeneration }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+        .then(res => {
+          res.filestoreIds[0]
+          if(res&&res.filestoreIds&&res.filestoreIds.length>0){
+            res.filestoreIds.map(fileStoreId=>{
+              downloadReceiptFromFilestoreID(fileStoreId,"print")
+            })          
+          }else{
+            console.log("Error In Receipt Download");        
+          }         
+        });
+       }
+       else if(businessServiceInfo.code.includes('CTL'))
+       {
+        const data = function() {
+          let data1 = get(
+            state.screenConfiguration.preparedFinalObject,
+            "applicationDataForReceipt",
+            {}
+          );
+          let data2 = get(
+            state.screenConfiguration.preparedFinalObject,
+            "receiptDataForReceipt",
+            {}
+          );
+          let data3 = get(
+            state.screenConfiguration.preparedFinalObject,
+            "mdmsDataForReceipt",
+            {}
+          );
+          let data4 = get(
+            state.screenConfiguration.preparedFinalObject,
+            "userDataForReceipt",
+            {}
+          );
+          return {...data1, ...data2, ...data3, ...data4}
+         }
+         const { Licenses } = state.screenConfiguration.preparedFinalObject;
+         let {Payments} = payloadReceiptDetails;
+         let {billAccountDetails} = Payments[0].paymentDetails[0].bill.billDetails[0];
+         billAccountDetails = billAccountDetails.map(({taxHeadCode, ...rest}) => ({
+           ...rest,
+           taxHeadCode: taxHeadCode.includes("_FEE") ? "TL_FEE" : taxHeadCode.includes("_PENALTY") ? "TL_TIME_PENALTY" : taxHeadCode.includes("_TAX") ? "TL_TAX" : taxHeadCode.includes("_ROUNDOFF") ? "TL_ROUNDOFF" : taxHeadCode.includes("REHRI_REGISTRATION_CHARGES") ? "TL_CHARGES"  : taxHeadCode
+         }))
+         Payments = [{...Payments[0], paymentDetails: [{...Payments[0].paymentDetails[0], bill: {...Payments[0].paymentDetails[0].bill, billDetails: [{...Payments[0].paymentDetails[0].bill.billDetails[0],billAccountDetails }] } }]}]
+   
+         let data1 = data();
+         let generateBy = JSON.parse(getUserInfo()).name;
+         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Payments, Licenses, data1, generateBy }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+         .then(res => {
+           res.filestoreIds[0]
+           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
+             res.filestoreIds.map(fileStoreId=>{
+               downloadReceiptFromFilestoreID(fileStoreId,"print")
+             })          
+           }else{
+             console.log("Error In Receipt Download");        
+           }         
+         });
        }
        else{
         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Payments: payloadReceiptDetails.Payments }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
@@ -750,6 +911,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
      alert('Some Error Occured while downloading Receipt!');
    }
  }
+
 
 
 

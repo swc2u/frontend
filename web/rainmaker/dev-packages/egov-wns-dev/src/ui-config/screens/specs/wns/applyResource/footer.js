@@ -4,7 +4,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { getCommonApplyFooter,validateFields,getLocalizationCodeValue,GetMdmsNameBycode } from "../../utils";
+import { getCommonApplyFooter,validateFields,getLocalizationCodeValue } from "../../utils";
 import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import commonConfig from "config/common.js";
@@ -829,15 +829,6 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
           if(ownershipCategory_ === "INDIVIDUAL.MULTIPLEOWNERS")
           {
             let owners = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.owners",[])
-			if(owners.length === 0)
-            {
-              errorMessage_.labelName="Please add multilple ownner data"
-              errorMessage_.labelKey="WS_FILL_MULTIPLEOWNERS_FIELDS"
-              
-              dispatch(toggleSnackbar(true, errorMessage_, "warning"));
-              return false
-
-            }
             if(owners.length === 1)
             {
               errorMessage_.labelName="Please add multilple ownner data"
@@ -1037,9 +1028,6 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
             dispatch(toggleSnackbar(true, { labelKey: "ERR_WS_PROP_STATUS_INACTIVE", labelName: "Property Status is INACTIVE" }, "warning"));
           }else{
             let propertyData = response.Properties[0];
-            // set name applyScreen.property.address.locality.name
-            let locality_name =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.sectorList",propertyData.address.locality.code)
-            set(propertyData,'address.locality.name',locality_name)
          // let contractedCorAddress = "";
          dispatch(prepareFinalObject("applyScreen.property", propertyData));
           }
