@@ -9,7 +9,7 @@ import Grid from "@material-ui/core/Grid";
 import classNames from "classnames";
 import Button from "@material-ui/core/Button";
 import { LabelContainer } from "../../ui-containers-local";
-import "./index.css";
+//import "./index.css";
 
 const styles = {
   whiteCard: {
