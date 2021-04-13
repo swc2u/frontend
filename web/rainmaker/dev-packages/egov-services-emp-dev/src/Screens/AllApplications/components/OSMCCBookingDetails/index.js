@@ -15,7 +15,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import TaskStatusComponents from "../TaskStatusComponents";
 import TaskStatusContainer from "../TaskStatusContainer";
-
+ 
 import PropTypes from "prop-types";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -190,7 +190,6 @@ class BookingDetails extends Component {
                     </Typography>
                   </DialogContent>
                 </Dialog>
-
                 <div className="complaint-detail-detail-section-status row">
                   <div className="col-md-2">
                     <Typography variant="caption">
@@ -205,7 +204,7 @@ class BookingDetails extends Component {
 
                     </Typography>
                   </div>
-                  <div className="col-md-3">
+                  <div className="col-md-3" style={{wordBreak: "break-word"}}>
                     <Typography variant="caption">
                       <LabelContainer
                         labelName="Updated By"
@@ -217,7 +216,7 @@ class BookingDetails extends Component {
                       <LabelContainer labelName={ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].assigner ? ProcessInstances[0].assigner.name : ''} />
                     </Typography>
                   </div>
-                  <div className="col-md-3">
+                  <div className="col-md-3"  style={{wordBreak: "break-word"}}>
 
                     <Typography variant="caption">
                       <LabelContainer
@@ -246,7 +245,7 @@ class BookingDetails extends Component {
                       />
                     </Typography>
                   </div>
-                  <div className="col-md-2">
+                  <div className="col-md-2"  style={{wordBreak: "break-word"}}>
                     <Typography variant="caption">
                       <LabelContainer
                         labelName="Current Owner"
@@ -268,7 +267,7 @@ class BookingDetails extends Component {
                       />
                     </Typography>
                   </div>
-                  <div className="col-md-2" style={{wordBreak: "break-word"}}>
+                  <div className="col-md-2" style={{wordBreak: "break-word", paddingLeft:"3%"}}>
                     <Typography variant="caption">
                       <LabelContainer
                         labelName="Comments"
