@@ -326,7 +326,7 @@ class ApplicationDetails extends Component {
 				), 
 				"bookingItem": "Online Payment Against Booking of Open Space for Building Material",
 				"amount": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-					(el) => !el.taxHeadCode.includes("PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH")
+					(el) => el.taxHeadCode.includes("PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH")
 				)[0].amount,
 				"tax": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
 					(el) => el.taxHeadCode.includes("CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH")
@@ -410,7 +410,7 @@ class ApplicationDetails extends Component {
                     baseCharge:
                         paymentDetails === undefined
                             ? null
-                            : paymentDetails.billDetails[0].billAccountDetails.filter(el => !el.taxHeadCode.includes("PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"))[0].amount,
+                            : paymentDetails.billDetails[0].billAccountDetails.filter(el => el.taxHeadCode.includes("PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"))[0].amount,
                     taxes:
                         paymentDetails === undefined
                             ? null
