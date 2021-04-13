@@ -619,7 +619,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
           res.filestoreIds[0]
           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
             res.filestoreIds.map(fileStoreId=>{
-              downloadReceiptFromFilestoreID(fileStoreId,"download")
+              downloadReceiptFromFilestoreID(fileStoreId,"download",KeytenantId)
             })          
           }else{
             console.log("Error In Receipt Download");        
@@ -660,7 +660,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
           res.filestoreIds[0]
           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
             res.filestoreIds.map(fileStoreId=>{
-              downloadReceiptFromFilestoreID(fileStoreId,"download")
+              downloadReceiptFromFilestoreID(fileStoreId,"download",KeytenantId)
             })          
           }else{
             console.log("Error In Receipt Download");        
@@ -797,7 +797,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
           res.filestoreIds[0]
           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
             res.filestoreIds.map(fileStoreId=>{
-              downloadReceiptFromFilestoreID(fileStoreId,"print")
+              downloadReceiptFromFilestoreID(fileStoreId,"print",KeytenantId)
             })          
           }else{
             console.log("Error In Receipt Download");        
@@ -837,7 +837,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
           res.filestoreIds[0]
           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
             res.filestoreIds.map(fileStoreId=>{
-              downloadReceiptFromFilestoreID(fileStoreId,"print")
+              downloadReceiptFromFilestoreID(fileStoreId,"print",KeytenantId)
             })          
           }else{
             console.log("Error In Receipt Download");        
