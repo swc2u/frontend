@@ -184,7 +184,7 @@ export const DownloadAndPrint = (state,
         action: "condition",
         callBack: () => { handleAppDownloadAndPrint(state, "download") }
       },
-      visible:false
+      visible:true
     },
     printFormButton: {
       componentPath: "Button",
@@ -208,7 +208,7 @@ export const DownloadAndPrint = (state,
         action: "condition",
         callBack: () => { handleAppDownloadAndPrint(state, "print") }
       },
-      visible:false
+      visible:true
     }
   })
 

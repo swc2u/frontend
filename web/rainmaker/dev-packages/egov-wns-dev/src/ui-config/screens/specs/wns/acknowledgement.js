@@ -605,7 +605,7 @@ export const downloadPrintContainer = (
     leftIcon: "receipt"
   };
   let applicationDownloadObject = {
-    label: { labelKey: "WS_APPLICATION" },
+    label: { labelKey: "WS_SANCTION_LETTER" },
     link: () => {
       const { WaterConnection, DocumentsData } = state.screenConfiguration.preparedFinalObject;
       let filteredDocs = DocumentsData;
@@ -622,7 +622,7 @@ export const downloadPrintContainer = (
     leftIcon: "assignment"
   };
   let applicationPrintObject = {
-    label: { labelName: "Application", labelKey: "WS_APPLICATION" },
+    label: { labelName: "Application", labelKey: "WS_SANCTION_LETTER" },
     link: () => {
       const { WaterConnection, DocumentsData } = state.screenConfiguration.preparedFinalObject;
       let filteredDocs = DocumentsData;
@@ -639,31 +639,44 @@ export const downloadPrintContainer = (
     leftIcon: "assignment"
   };
   switch (appStatus) {
-    case "PENDING_FOR_DOCUMENT_VERIFICATION":
-    case "PENDING_FOR_CITIZEN_ACTION":
-    case "PENDING_FOR_FIELD_INSPECTION":
-      downloadMenu = [applicationDownloadObject];
-      printMenu = [applicationPrintObject];
-      break;
-    case "PENDING_APPROVAL_FOR_CONNECTION":
-    case "PENDING_FOR_PAYMENT":
-      downloadMenu = [applicationDownloadObject, wsEstimateDownloadObject];
-      printMenu = [applicationPrintObject, wsEstimatePrintObject];
-      break;
+    // case "PENDING_FOR_DOCUMENT_VERIFICATION":
+    // case "PENDING_FOR_CITIZEN_ACTION":
+    // case "PENDING_FOR_FIELD_INSPECTION":
+    //   downloadMenu = [applicationDownloadObject];
+    //   printMenu = [applicationPrintObject];
+    //   break;
+    // case "PENDING_APPROVAL_FOR_CONNECTION":
+    // case "PENDING_FOR_PAYMENT":
+    //   downloadMenu = [applicationDownloadObject, wsEstimateDownloadObject];
+    //   printMenu = [applicationPrintObject, wsEstimatePrintObject];
+    //   break;
     case "PENDING_FOR_CONNECTION_ACTIVATION":
+    case "SEWERAGE_CONNECTION_ACTIVATED":
     case "CONNECTION_ACTIVATED":
-      downloadMenu = [sanctionDownloadObject, wsEstimateDownloadObject, applicationDownloadObject];
-      printMenu = [sanctionPrintObject, wsEstimatePrintObject, applicationPrintObject];
+      // downloadMenu = [sanctionDownloadObject, wsEstimateDownloadObject, applicationDownloadObject];
+      // printMenu = [sanctionPrintObject, wsEstimatePrintObject, applicationPrintObject];
+      downloadMenu = [applicationDownloadObject, ];
+      printMenu = [applicationPrintObject,];
       break;
-    case "REJECTED":
-      downloadMenu = [applicationDownloadObject];
-      printMenu = [applicationPrintObject];
-      break;
-    default: downloadMenu = [applicationDownloadObject];
-      printMenu = [applicationPrintObject];
+    // case "REJECTED":
+    //   downloadMenu = [applicationDownloadObject];
+    //   printMenu = [applicationPrintObject];
+    //   break;
+    default: downloadMenu = [];
+      printMenu = [];
       break;
   }
   /** END */
+  // if(appStatus==="CONNECTION_ACTIVATED" || appStatus==="SEWERAGE_CONNECTION_ACTIVATED"){
+  //   set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",true );
+  //   set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",true );
+
+  // }
+  // else{
+  //   set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",false );
+  //   set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",false );
+
+  // }
 
   return {
     rightdiv: {
