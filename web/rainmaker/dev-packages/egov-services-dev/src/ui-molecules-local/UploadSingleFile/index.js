@@ -2,6 +2,7 @@ import React from "react";
 import { UploadFile, UploadedDocument } from "egov-ui-framework/ui-atoms";
 
 const UploadSingleFile = ({
+  id ,
   uploaded,
   classes,
   handleFileUpload,
@@ -11,10 +12,12 @@ const UploadSingleFile = ({
   inputProps,
   buttonLabel
 }) => {
+  console.log('cool :>> ', inputProps);
   return (
     <div>
       {!uploaded && (
         <UploadFile
+          id={id}
           buttonProps={{
             variant: "outlined",
             color: "primary",

@@ -28,7 +28,22 @@ import {
 
 
 export const callBackForBack = (state, dispatch) => {
-    window.history.back();
+    const applicationNumber = getQueryArg(
+        window.location.href,
+        "applicationNumber"
+    );
+    const businessService = get(
+        state,
+        "screenConfiguration.preparedFinalObject.Booking.businessService",
+        {}
+    );
+    dispatch(
+        setRoute(
+            `/egov-services/pcc-search-preview?applicationNumber=${applicationNumber}&tenantId=${
+            getTenantId()
+            }&businessService=${businessService}`
+        )
+    );
 };
 
 export const pccApplicantSummary = getCommonGrayCard({
