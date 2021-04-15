@@ -1,29 +1,29 @@
+import FormControl from "@material-ui/core/FormControl";
 import Grid from "@material-ui/core/Grid";
 import Icon from "@material-ui/core/Icon";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 import { withStyles } from "@material-ui/core/styles";
-import { Tabs, Card, TextField, Button } from "components";
+import { Card } from "components";
 import {
   LabelContainer,
-  TextFieldContainer,
+  TextFieldContainer
 } from "egov-ui-framework/ui-containers";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
   getFileUrlFromAPI,
-  handleFileUpload,
-  getTransformedLocale,
+
+  getTransformedLocale, handleFileUpload
 } from "egov-ui-framework/ui-utils/commons";
+import Label from "egov-ui-kit/utils/translationNode";
 import get from "lodash/get";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import Label from "egov-ui-kit/utils/translationNode";
 import UploadSingleFile from "../UploadSingleFile";
 import "./index.css";
 
-import MenuItem from "@material-ui/core/MenuItem";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
 const themeStyles = (theme) => ({
   documentContainer: {
     backgroundColor: "#F2F2F2",
@@ -177,19 +177,6 @@ class DocumentList extends Component {
     "Driving License":"Driving License",
     "Others":"Others"
     };
-
-
-
-    // <MenuItem value="Ration Card">Ration Card</MenuItem>
-    // <MenuItem value="Aadhar Card">Aadhar Card</MenuItem>
-    // <MenuItem value="Voter ID Card">Voter Id Card</MenuItem>
-    // <MenuItem value="Driving License">Driving License</MenuItem>
-    // <MenuItem value="Others">Others</MenuItem>
-
-
-
-
-
     const {
       documentsList,
       buttonLabel,
@@ -199,12 +186,21 @@ class DocumentList extends Component {
       documentsUploadReduxOld,
       documentsUploadRedux,
       handleChange,
-      prepareFinalObject,
+      prepareFinalObject,getdropDownValue
     } = this.props;
     let index = 0;
-    let docTypeDrop = get(documentsUploadRedux, `[${index}].documentCode`, "");
-    this.setState({ idProffType: docTypeConfig[docTypeDrop] });
-    console.log("doctyp----", docTypeDrop);
+    
+if(getdropDownValue){
+  console.log("getdropDownValue",getdropDownValue)
+  this.setState({ idProffType: getdropDownValue});
+}
+else{
+  let docTypeDrop = get(documentsUploadRedux, `[${index}].documentCode`, "");
+  this.setState({ idProffType: docTypeConfig[docTypeDrop] });
+  console.log("doctyp----", docTypeDrop);
+}
+
+   
     documentsList.forEach((docType) => {
       docType.cards &&
         docType.cards.forEach((card) => {
@@ -365,7 +361,7 @@ else{
     console.log("KeyForDoc", key);
     console.log("state-----------", this.state);
     let { classes, documentsUploadRedux } = this.props;
-    documentsUploadRedux.documents = documentsUploadRedux;
+  /**documentsUploadRedux.documents = documentsUploadRedux;**/  
     let jsonPath = `documentsUploadRedux[${key}].dropdown.value`;
     return (
       <div>
@@ -571,12 +567,19 @@ const mapStateToProps = (state) => {
     "documentsUploadRedux",
     {}
   );
+
+  const getdropDownValue = get(
+    screenConfiguration.preparedFinalObject,
+    "UploadedDocType",
+    ""
+  );
+
   return {
     documentsUploadRedux,
     moduleName,
     DocumentUploadMap,
     userInfo,
-    documentMap,
+    documentMap,getdropDownValue
   };
 };
 

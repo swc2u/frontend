@@ -290,9 +290,21 @@ class DocumentList extends Component {
 
     getUploadCard = (card, key) => {
         console.log(card, "Card He");
+        console.log('inputProps :>> ', this.props.inputProps);
         const { classes, documentsUploadRedux } = this.props;
         console.log(this.props,)
         let jsonPath = "dropDown.value";
+        let testInputProps ={}
+        
+        if(card.name==="BK_OSWMCC_LOCATION_IMAGE_1" || card.name==="BK_OSWMCC_LOCATION_IMAGE_2" || card.name==="BK_OSWMCC_LOCATION_IMAGE_3"  ){
+            testInputProps ={
+                accept: ".png,.jpg,.jpeg"
+       
+            } 
+        }
+        else {
+            testInputProps= this.props.inputProps
+        }
         return (
             <Grid container={true}>
                 <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
@@ -349,6 +361,7 @@ class DocumentList extends Component {
                     className={classes.fileUploadDiv,"fileUploadBox"}
                 >
                     <UploadSingleFile
+                        id = {key}
                         classes={this.props.classes}
                         handleFileUpload={(e) =>
                             handleFileUpload(e, this.handleDocument, this.props)
@@ -365,7 +378,7 @@ class DocumentList extends Component {
                             documentsUploadRedux[key].documents
                         }
                         onButtonClick={() => this.onUploadClick(key)}
-                        inputProps={this.props.inputProps}
+                        inputProps={testInputProps}
                         buttonLabel={this.props.buttonLabel}
                     />
                 </Grid>

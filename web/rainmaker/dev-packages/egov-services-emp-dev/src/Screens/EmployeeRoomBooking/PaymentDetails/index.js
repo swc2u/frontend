@@ -30,7 +30,7 @@ class PayDetails extends Component {
 
     return (
       <div>
-        <Card
+        <Card 
           textChildren={
             <div>
               <div className="rainmaker-displayInline row">
