@@ -385,6 +385,46 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
 
     setActionItems(action, obj);
     loadReceiptGenerationData(applicationNumber, tenantId);
+    if(processInstanceAppStatus==="CONNECTION_ACTIVATED" || processInstanceAppStatus==="SEWERAGE_CONNECTION_ACTIVATED"){
+      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.visible",true );
+      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",true );
+      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",true );
+      let action = false
+      let service_ = getQueryArg(window.location.href, "service");
+      if(service_ ==='SEWERAGE')
+      {
+        action = true
+      }
+      else if(service_ ==='WATER')
+      {
+        action = false
+
+      }
+      
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.div.children.headerDiv.children.helpSection",
+          "visible",
+          action
+        )
+      );
+
+    }
+    else{
+      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.visible",false );
+      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",false );
+      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",false );
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.div.children.headerDiv.children.helpSection",
+          "visible",
+          false
+        )
+      );
+
+    }
   }
 
 
@@ -759,8 +799,10 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
     if(processInstanceAppStatus==="CONNECTION_ACTIVATED"){
       let connectionNumber= payload.WaterConnection[0].connectionNo;
       set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.props.number",connectionNumber );
+     // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.visible",true );
     }else{
       set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
+      //set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.visible",false );
     }
 
     // to set documents 
@@ -805,17 +847,23 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
       if(!payload.SewerageConnections[0].connectionHolders || payload.SewerageConnections[0].connectionHolders === 'NA'){        
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewFive.visible",false);
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewSix.visible",true);
+        
       }else{
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewSix.visible",false);
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewFive.visible",true);
       }
     }
     //connection number display
-    if(processInstanceAppStatus==="CONNECTION_ACTIVATED"){
+    if(processInstanceAppStatus==="CONNECTION_ACTIVATED" || processInstanceAppStatus==="SEWERAGE_CONNECTION_ACTIVATED"){
       let connectionNumber= payload.SewerageConnections[0].connectionNo;
       set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.props.number",connectionNumber );
+      //set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",true );
+    // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.visible",true );
     }else{
       set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
+      //set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu",false );
+     // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",true );
+     //set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.visible",false );
     }
 
     // to set documents 

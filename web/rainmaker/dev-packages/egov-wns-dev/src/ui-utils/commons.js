@@ -2753,7 +2753,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
     wnsConnection[0].tenantName = tenantName.toUpperCase();
     const appNo = wnsConnection[0].applicationNo;
 
-    let queryStr = [{ key: "tenantId", value: getTenantIdCommon().split('.')[0] }];
+    let queryStr = [{ key: "tenantId", value: getTenantIdCommon() !== null?getTenantIdCommon():getTenantId() }];
     let apiUrl, appService, estKey, queryObjectForEst
     if (wnsConnection[0].service === "WATER") {
 
@@ -2769,7 +2769,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
         appService = "ws-applicationwater";
         queryObjectForEst = [{
             applicationNo: appNo,
-            tenantId: getTenantIdCommon(),
+            tenantId: getTenantIdCommon() !== null?getTenantIdCommon():getTenantId(),
             waterConnection: wnsConnection[0]
         }]
 
@@ -2784,7 +2784,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
         set( wnsConnection[0], `property.subusageCategory`, subusageCategory);
         queryObjectForEst = [{
             applicationNo: appNo,
-            tenantId: getTenantIdCommon(),
+            tenantId: getTenantIdCommon() !== null?getTenantIdCommon():getTenantId(),
             sewerageConnection: wnsConnection[0]
         }]
     }
@@ -2882,11 +2882,11 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
                     }
                 }
                 obj = {
-                    WaterConnection: wnsConnection
+                    WaterConnection: wnsConnection[0]
                 }
             } else {
                 obj = {
-                    SewerageConnection: wnsConnection
+                    SewerageConnection: wnsConnection[0]
                 }
             }
         }

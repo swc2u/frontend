@@ -63,7 +63,6 @@ return (
             name="PaymentReceiptNumber"
             type="string"
             value={PaymentReceiptNumber}
-            required = {true}
             hintText={
               <Label
                 label="Receipt Number"   // label="BK_MYBK_RECEIPT_NUMBER"

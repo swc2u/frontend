@@ -792,32 +792,32 @@ downloadPLFunction = async (e) => {
 		let action;
 		let complaintLoc = {};
 		if (complaint) {
-			if (role === "ao") {
-				if (complaint.complaintStatus.toLowerCase() === "unassigned") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_COMMON_ASSIGN";
-				} else if (complaint.complaintStatus.toLowerCase() === "reassign") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_COMMON_REASSIGN";
-				} else if (complaint.complaintStatus.toLowerCase() === "assigned") {
-					btnTwoLabel = "ES_COMMON_REASSIGN";
-				}
-				else if (complaint.complaintStatus.toLowerCase() === "escalated") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-			} else if (role == "eo") {
-				if (complaint.status.toLowerCase() === "escalatedlevel1pending" ||
-					complaint.status.toLowerCase() === "escalatedlevel2pending") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-				else if (complaint.status.toLowerCase() === "assigned") {
-					btnOneLabel = "ES_REQUEST_REQUEST_RE_ASSIGN";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-			}
-			else if (role === "employee") {
+			// if (role === "ao") {
+			// 	if (complaint.complaintStatus.toLowerCase() === "unassigned") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_COMMON_ASSIGN";
+			// 	} else if (complaint.complaintStatus.toLowerCase() === "reassign") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_COMMON_REASSIGN";
+			// 	} else if (complaint.complaintStatus.toLowerCase() === "assigned") {
+			// 		btnTwoLabel = "ES_COMMON_REASSIGN";
+			// 	}
+			// 	else if (complaint.complaintStatus.toLowerCase() === "escalated") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
+			// 	}
+			// } else if (role == "eo") {
+			// 	if (complaint.status.toLowerCase() === "escalatedlevel1pending" ||
+			// 		complaint.status.toLowerCase() === "escalatedlevel2pending") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
+			// 	}
+			// 	else if (complaint.status.toLowerCase() === "assigned") {
+			// 		btnOneLabel = "ES_REQUEST_REQUEST_RE_ASSIGN";
+			// 		btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
+			// 	}
+			// }
+			if (role === "employee") {
 			
 			
 				btnOneLabel = "BK_MYBK_REJECT_BUTTON";
@@ -981,12 +981,13 @@ downloadPLFunction = async (e) => {
 								paddingTop: "30px",
 								paddingRight: "30px", float: "right",
 							}}>
-								{(role === "ao" &&
-									complaint.complaintStatus.toLowerCase() !== "closed") ||
-									(role === "eo" &&
-										(complaint.status.toLowerCase() === "escalatedlevel1pending" ||
-											complaint.status.toLowerCase() === "escalatedlevel2pending" ||
-											complaint.status.toLowerCase() === "assigned")) ||
+								{
+								// (role === "ao" &&
+								// 	complaint.complaintStatus.toLowerCase() !== "closed") ||
+								// 	(role === "eo" &&
+								// 		(complaint.status.toLowerCase() === "escalatedlevel1pending" ||
+								// 			complaint.status.toLowerCase() === "escalatedlevel2pending" ||
+								// 			complaint.status.toLowerCase() === "assigned")) ||
 									(role === "employee" &&
 										(
 											(complaint.status == "PENDINGAPPROVAL" &&
@@ -1189,16 +1190,18 @@ console.log("OfflineInitatePayArray-1",OfflineInitatePayArray)
 		historyApiData = historyObject;
 	}
 
-	const role =
-		roleFromUserInfo(userInfo.roles, "GRO") ||
-			roleFromUserInfo(userInfo.roles, "DGRO")
-			? "ao"
-			: roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-				roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-				? "eo"
-				: roleFromUserInfo(userInfo.roles, "CSR")
-					? "csr"
-					: "employee";
+	// const role =
+	// 	roleFromUserInfo(userInfo.roles, "GRO") ||
+	// 		roleFromUserInfo(userInfo.roles, "DGRO")
+	// 		? "ao"
+	// 		: roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
+	// 			roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
+	// 			? "eo"
+	// 			: roleFromUserInfo(userInfo.roles, "CSR")
+	// 				? "csr"
+	// 				: "employee";
+
+					const role = "employee";
 
 	let isAssignedToEmployee = true;
 	if (selectedComplaint && businessService) {

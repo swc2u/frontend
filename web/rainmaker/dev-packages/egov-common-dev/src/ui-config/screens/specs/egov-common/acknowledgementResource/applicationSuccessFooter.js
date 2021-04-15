@@ -1,6 +1,6 @@
 import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { ifUserRoleExists } from "../../utils";
-import {download} from  "../../../../../ui-utils/commons"
+import {download, downloadprint} from  "../../../../../ui-utils/commons"
 
 
 const getCommonApplyFooter = children => {
@@ -78,7 +78,7 @@ export const applicationSuccessFooter = (
             },
             onClickDefination: {
                 action: "condition",
-                callBack: download
+                callBack: downloadprint
               },
             // onClickDefination: {
             //     action: "condition",

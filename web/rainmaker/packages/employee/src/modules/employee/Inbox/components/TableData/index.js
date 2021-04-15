@@ -311,7 +311,12 @@ class TableData extends Component {
     let moduleDropdownList=[];
     let statusDropdownList=[];
 
-    
+const checkBusinessServices = (businessServices) =>{
+let selectedBusinessServices = ["GFCP","PACC"]  
+return !selectedBusinessServices.includes(businessServices)
+}    
+
+
     const initialData = data.map((item) => {
       const locality = localitymap.find(locality => {
         return locality.referencenumber === item.businessId;
@@ -323,11 +328,11 @@ class TableData extends Component {
         text: item.state ? (
           <Label
             label={`WF_${item.businessService.toUpperCase()}_${item.state.state}`}
-            defaultLabel={getWFstatus(item.state.state)}
+            defaultLabel={checkBusinessServices(item.businessService) ? getWFstatus(item.state.state) :undefined}
             color="#000000"
           />
         ) : (
-            "NA"
+            "NA" 
           ),
       };
 

@@ -829,15 +829,6 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
           if(ownershipCategory_ === "INDIVIDUAL.MULTIPLEOWNERS")
           {
             let owners = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.owners",[])
-			if(owners.length === 0)
-            {
-              errorMessage_.labelName="Please add multilple ownner data"
-              errorMessage_.labelKey="WS_FILL_MULTIPLEOWNERS_FIELDS"
-              
-              dispatch(toggleSnackbar(true, errorMessage_, "warning"));
-              return false
-
-            }
             if(owners.length === 1)
             {
               errorMessage_.labelName="Please add multilple ownner data"

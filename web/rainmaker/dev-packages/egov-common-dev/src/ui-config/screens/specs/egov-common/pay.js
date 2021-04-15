@@ -207,6 +207,7 @@ const screenConfig = {
         let consumerCode = getQueryArg(window.location.href, "consumerCode");
         let tenantId = getQueryArg(window.location.href, "tenantId");
         let businessService = getQueryArg(window.location.href, "businessService");
+        dispatch(prepareFinalObject("businessServicewsbillreceipt", businessService));
         if(businessService === "WS")
         {
             consumerCode = getQueryArg(window.location.href, "id");  

@@ -410,7 +410,7 @@ console.log('this.state.idProffType',this.state.idProffType);
                                 labelKey={getTransformedLocale(card.name)}
                                 style={styles.documentName}
                             />
-                            {/* {card.required && requiredIcon} */}
+                            {card.required && requiredIcon}
                         </Grid>
                         <Grid item={true}>
                             {card.dropdown && (
@@ -441,6 +441,7 @@ console.log('this.state.idProffType',this.state.idProffType);
                       labelId="demo-controlled-open-select-proof"
                       id="demo-controlled-open-select-label"
                       open={this.state.SetOpen}
+                    //   required={true}
                       displayEmpty
                       onClose={() => this.handleClose()}
                       onOpen={() => this.handleOpen()}

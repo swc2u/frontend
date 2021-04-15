@@ -97,6 +97,9 @@ class CheckAvailability extends Component {
     });
   };
   handleChange = async (event) => {
+       
+    this.setState({holdingDatesArray : []})
+    this.props.prepareFinalObject("availabilityCheckData.holdDatesForSave",[])
     let { userInfo, prepareFinalObject } = this.props;
     // this.setState({ vanueType: event.target.value },this.SetDataParkCom());
     this.setState(
@@ -337,7 +340,8 @@ class CheckAvailability extends Component {
       userInfo,
     } = this.props;
 
-
+    this.setState({holdingDatesArray : []})
+    prepareFinalObject("availabilityCheckData.holdDatesForSave",[])
     let PreBookingData = {
       bkSector: oldBookingData.Sector,
       bkBookingType: oldBookingData.bkBookingType,
@@ -523,10 +527,10 @@ class CheckAvailability extends Component {
       this.props.toggleSnackbarAndSetText(
         true,
         {
-          labelName: "Select fill all the mandetory fields",
-          labelKey: `BK_ERR_VALUE_HOLDING_DATES`
+          labelName: "Please select dates to be locked",
+          labelKey: `Please select dates to be locked`
         },
-        "error"
+        "warning"
       );
       return false;
     }
