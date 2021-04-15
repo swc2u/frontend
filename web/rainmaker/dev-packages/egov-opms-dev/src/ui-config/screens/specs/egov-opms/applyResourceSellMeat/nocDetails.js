@@ -30,7 +30,7 @@ export const nocDetails = getCommonCard({
         labelKey: "SELLMEAT_APPLICANT_NAME_PLACEHOLDER"
       },
       pattern: getOPMSPattern("petnocApplicantName"),
-      errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+      errorMessage: "ERR_NOC_SELLMEAT_APPLICANT_NAME_LABEL",
       required: true,      
       jsonPath:"SELLMEATNOC.applicantName"
     })
@@ -47,7 +47,7 @@ export const nocDetails = getCommonCard({
        },
        required:true,
        pattern:getOPMSPattern("petnocApplicantName"),
-       errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+       errorMessage:"ERR_NOC_SELLMEAT_FATHERHUSBANDNAME",
        jsonPath:"SELLMEATNOC.fatherHusbandName"
     })
   },
@@ -63,7 +63,7 @@ export const nocDetails = getCommonCard({
        },
        required:true,
        pattern:getOPMSPattern("DoorHouseNo"),
-       errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+       errorMessage:"ERR_NOC_SELLMEAT_HOUSENO",
        jsonPath:"SELLMEATNOC.houseNo"
     })
   },
@@ -79,7 +79,7 @@ export const nocDetails = getCommonCard({
        },
        required:true,
        pattern:getPattern("DoorHouseNo"),
-       errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+       errorMessage:"ERR_NOC_SELLMEAT_SHOPNO",
        jsonPath:"SELLMEATNOC.shopNumber"
     })
   },
@@ -95,7 +95,7 @@ export const nocDetails = getCommonCard({
        },
        required:true,
        pattern:getPattern("DoorHouseNo"),
-       errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+       errorMessage:"ERR_NOC_SELLMEAT_WARD",
        jsonPath:"SELLMEATNOC.ward"
     })
   },
@@ -111,7 +111,7 @@ export const nocDetails = getCommonCard({
        },
        required:true,
        pattern:getPattern("DoorHouseNo"),
-       errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+       errorMessage:"ERR_SELLMEAT_DIVISION",
        jsonPath:"SELLMEATNOC.division"
     })
   },
@@ -129,7 +129,7 @@ export const nocDetails = getCommonCard({
       sourceJsonPath: "applyScreenMdmsData.egpm.sector",
       jsonPath: "SELLMEATNOC.sector",
       required: true,
-      errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+      errorMessage:"ERR_SELLMEAT_SECTOR",
 
       props: {
         className: "applicant-details-error",
@@ -152,7 +152,7 @@ export const nocDetails = getCommonCard({
       sourceJsonPath: "applyScreenMdmsData.egpm.nocSought",
       jsonPath: "SELLMEATNOC.nocSought",
       required: true,
-      errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+      errorMessage:"ERR_NOC_SELLMEAT_NOCSOUGHT_LABEL",
       props: {
         className: "applicant-details-error",
         // disabled: true,

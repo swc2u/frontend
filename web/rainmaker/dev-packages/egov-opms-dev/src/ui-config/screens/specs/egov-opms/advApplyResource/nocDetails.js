@@ -36,6 +36,7 @@ export const AdvtDetails = getCommonCard({
         sourceJsonPath: "applyScreenMdmsData.egpm.typeOfApplicant",
         jsonPath: "ADVERTISEMENTNOC.typeOfApplicant",
         required: true,
+        errorMessage: "ERR_NOC_ADV_TYPE_OF_APPLICANT",
         props: {
           className: "hr-generic-selectfield",
           optionLabel: "name"
@@ -168,7 +169,7 @@ export const AdvtDetails = getCommonCard({
         },
         required: true,
         pattern: getOPMSPattern("petnocApplicantName"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_NAME_OF_APPLICANT",
         jsonPath: "ADVERTISEMENTNOC.applicantName",
       })
     },
@@ -187,7 +188,7 @@ export const AdvtDetails = getCommonCard({
         },
         required: false,
         pattern: getPattern("PAN"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_PAN",
         jsonPath: "ADVERTISEMENTNOC.pan",
       })
     },
@@ -206,7 +207,7 @@ export const AdvtDetails = getCommonCard({
         },
         required: false,
         pattern: getPattern("PAN"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_TAN",
         jsonPath: "ADVERTISEMENTNOC.tan",
       })
     },
@@ -225,7 +226,7 @@ export const AdvtDetails = getCommonCard({
         },
         required: false,
         pattern: getOPMSPattern("cin"),
-        errorMessage: "CIN_NO_INVALID",
+        errorMessage: "ERR_NOC_ADV_CIN",
         jsonPath: "ADVERTISEMENTNOC.cin",
       })
     },
@@ -244,7 +245,7 @@ export const AdvtDetails = getCommonCard({
         },
         required: false,
         pattern: getPattern("GSTNo"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_GST",
         jsonPath: "ADVERTISEMENTNOC.gstin",
       })
     },
@@ -266,7 +267,7 @@ export const AdvtDetails = getCommonCard({
                     },
         required: true,
         pattern: getOPMSPattern("TexrearAddress"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_APPLICANTADDR",
         jsonPath: "ADVERTISEMENTNOC.applicantAddress",
       })
     },
@@ -283,7 +284,7 @@ export const AdvtDetails = getCommonCard({
         
         required: true,
         pattern: getOPMSPattern("Address"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_LANDMARK",
         jsonPath: "ADVERTISEMENTNOC.applicantLandmark",
       })
     },
@@ -299,7 +300,7 @@ export const AdvtDetails = getCommonCard({
         },
         required: true,
         pattern: getOPMSPattern("Address"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_APPLDIVISION",
         jsonPath: "ADVERTISEMENTNOC.applicantDivision",
       })
     },
@@ -340,6 +341,7 @@ export const AdvtDetails = getCommonCard({
         },
         jsonPath: "ADVERTISEMENTNOC.applicantWard",
         required: true,
+        errorMessage: "ERR_NOC_ADV_WARD",
         pattern: getOPMSPattern("Address"),
         props: {
           className: "applicant-details-error",
@@ -361,6 +363,7 @@ export const AdvtDetails = getCommonCard({
         },
         sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         jsonPath: "ADVERTISEMENTNOC.sector",
+        errorMessage: "ERR_NOC_ADV_SECTOR",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -381,7 +384,7 @@ export const AdvtDetails = getCommonCard({
         },
         required: true,
         pattern: getOPMSPattern("petnocApplicantName"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_VILLAGE",
         jsonPath: "ADVERTISEMENTNOC.applicantVillageSuSector",
       })
     },
@@ -397,7 +400,7 @@ export const AdvtDetails = getCommonCard({
         },
         required: true,
         pattern: getPattern("MobileNo"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_MOBILE",
         jsonPath: "ADVERTISEMENTNOC.mobileNo",
       })
     },
@@ -413,7 +416,7 @@ export const AdvtDetails = getCommonCard({
         },
         required: true,
         pattern: getOPMSPattern("Email"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_EMAILID",
         jsonPath: "ADVERTISEMENTNOC.emailId",
       })
     },
