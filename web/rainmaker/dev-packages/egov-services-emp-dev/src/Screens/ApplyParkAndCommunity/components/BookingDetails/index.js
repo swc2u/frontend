@@ -17,7 +17,7 @@ import moment from 'moment';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-
+import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import FormLabel from '@material-ui/core/FormLabel';
 
 
@@ -85,9 +85,27 @@ class BookingsDetails extends Component {
 
  
   render() {
-    const { arrayName, result,fCharges, jobTitle, jobCompany, jobLocation, handleChangeDiscount, discountType, dimension, complaintSector, fromDate, surcharge, toDate, onFromDateChange, onToDateChange, utGST, cGST, GSTnumber, handleChange, location, facilitationCharges, cleaningCharges, rent, approverName, comment, houseNo, type, purpose, locality, residenials, facilationChargesSuccess,firstToTimeSlot,
+    const { arrayName, result,fCharges, jobTitle, jobCompany, jobLocation, handleChangeDiscount, checkDateVenueChange,
+      discountType, dimension, complaintSector, fromDate, surcharge, toDate, onFromDateChange, onToDateChange, utGST, cGST, GSTnumber, handleChange, location, facilitationCharges, cleaningCharges, rent, approverName, comment, houseNo, type, purpose, locality, residenials, facilationChargesSuccess,firstToTimeSlot,
       refundAbleAmount } = this.props;
       console.log("propsForApplyBooking--",this.props)
+      let localRent;
+      let localUTGST;
+      let LocalGST;
+
+      if(discountType == "100%" || discountType == "KirayaBhog" || discountType == "ReligiousFunction"){
+        localRent = 0,
+        localUTGST = 0,
+        LocalGST = 0
+      }
+      else{
+        localRent = rent 
+        localUTGST  = utGST 
+        LocalGST = cGST
+      }
+      this.props.prepareFinalObject("PaccDiscount.localRent", localRent);
+      this.props.prepareFinalObject("PaccDiscount.localUTGST", localUTGST);
+      this.props.prepareFinalObject("PaccDiscount.LocalGST", LocalGST);
     let sectorData = [];
     sectorData.push(complaintSector);
     let fc = fCharges ? fCharges.facilitationCharge :'100'
@@ -109,6 +127,7 @@ class BookingsDetails extends Component {
               id="purpose"
               name="purpose"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={purpose}
               required={true}
               hintText={
@@ -138,6 +157,7 @@ class BookingsDetails extends Component {
               id="location"
               name="location"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={location}
               required={true}
               disabled
@@ -168,6 +188,7 @@ class BookingsDetails extends Component {
               id="cleaningCharges"
               name="cleaningCharges"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={cleaningCharges}
               required={true}
               hintText={
@@ -197,7 +218,8 @@ class BookingsDetails extends Component {
               id="rent"
               name="rent"
               type="text"
-              value={rent}
+              disabled = {checkDateVenueChange == true ? true : false}
+              value={localRent}
               required={true}
               hintText={
                 <Label
@@ -227,6 +249,7 @@ class BookingsDetails extends Component {
               id="rent"
               name="rent"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={refundAbleAmount}
               required={true}
               hintText={ 
@@ -258,6 +281,7 @@ class BookingsDetails extends Component {
               id="facilitationCharges"
               name="facilitationCharges"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={fc}
               required={true}
               hintText={
@@ -287,6 +311,7 @@ class BookingsDetails extends Component {
               id="surcharge"
               name="surcharge"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={surcharge}
               required={true}
               hintText={
@@ -316,7 +341,8 @@ class BookingsDetails extends Component {
               id="utGST"
               name="utGST"
               type="text"
-              value={utGST}
+              disabled = {checkDateVenueChange == true ? true : false}
+              value={localUTGST}
               required={true}
               hintText={
                 <Label
@@ -345,7 +371,8 @@ class BookingsDetails extends Component {
               id="cGST"
               name="cGST"
               type="text"
-              value={cGST}
+              disabled = {checkDateVenueChange == true ? true : false}
+              value={LocalGST}
               required={true}
               hintText={
                 <Label
@@ -374,6 +401,7 @@ class BookingsDetails extends Component {
               id="GSTnumber"
               name="GSTnumber"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={GSTnumber}
               hintText={
                 <Label
@@ -403,6 +431,7 @@ class BookingsDetails extends Component {
               id="locality"
               name="locality"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={locality}
               required={true}
               hintText={
@@ -433,7 +462,7 @@ class BookingsDetails extends Component {
               id="from-Date"
               name="from-Date"
               type="text"
-
+              disabled = {checkDateVenueChange == true ? true : false}
               value={fromDate}
               required={true}
               disabled={true}
@@ -465,6 +494,7 @@ class BookingsDetails extends Component {
               id="to-date"
               name="to-date"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={toDate}   
               // value={ConcatFirstToDate}
               required={true}
@@ -569,7 +599,7 @@ class BookingsDetails extends Component {
               id="dimension"
               name="dimension"
               type="text"
-
+              disabled = {checkDateVenueChange == true ? true : false}
               value={dimension}
               required={true}
               hintText={
@@ -633,6 +663,7 @@ class BookingsDetails extends Component {
                 displayEmpty
                 onClose={() => this.handleClose()}
                 onOpen={() => this.handleOpen()}
+                disabled = {checkDateVenueChange == true ? true : false}
                 value={residenials}
                 onChange={handleChange('residenials')}
               >
@@ -763,7 +794,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(toggleSnackbarAndSetText(open, message, error)),
     fetchApplicaionSector: criteria => dispatch(fetchApplicaionSector(criteria)),
     fetchfacilationCharges: () => dispatch(fetchfacilationCharges()),
-    
+    prepareFinalObject: (jsonPath, value) =>
+      dispatch(prepareFinalObject(jsonPath, value)),
   }
 }
 

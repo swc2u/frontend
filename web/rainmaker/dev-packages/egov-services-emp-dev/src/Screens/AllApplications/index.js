@@ -180,8 +180,19 @@ getApplicationStatus = (applicationNumber) => {
     }
 
     if (bookingType && (bookingType == "Parks" || bookingType == "Community Center")) {
-   if(this.getApplicationStatus(complaintNo)){
-console.log("Path change")
+    if(this.getApplicationStatus(complaintNo)){ 
+    console.log("Path change")
+
+   this.props.fetchApplications(
+			{
+				"applicationNumber": complaintNo, 'uuid': userInfo.uuid,
+				"applicationStatus": "",
+				"mobileNumber": "", "bookingType": "",
+        "tenantId":userInfo.tenantId
+			}
+		);
+
+
     let RequestBodyForInitiateApplication =
 		{
 			"applicationNumber": complaintNo, 'uuid': userInfo.uuid,
