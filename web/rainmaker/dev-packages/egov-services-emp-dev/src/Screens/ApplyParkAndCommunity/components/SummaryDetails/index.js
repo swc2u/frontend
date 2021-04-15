@@ -18,13 +18,15 @@ import SummaryDocumentDetail from "../SummaryDocumentDetail"
 import { httpRequest } from "egov-ui-kit/utils/api";
 import SummaryBankDetails from "../SummaryBankDetails"
 import get from "lodash/get";
+import { isArray } from "lodash";
 class SummaryDetails extends Component {
 
     state = {
         createPACCApp: '',
         CashPaymentApplicationNumber: '',
         appStatus: '',
-        currentAppStatus: ''
+        currentAppStatus: '',
+        documentList:[],
     }
 
     componentDidMount = async () => {
@@ -33,10 +35,49 @@ class SummaryDetails extends Component {
         let { uploadeDocType,DiscountReason,firstName, venueType, bokingType, bookingData, email, mobileNo, surcharge, fromDate, toDate,myLocationtwo,ReasonForDiscount,
             utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose,
             BankAccountName,NomineeName,BankAccountNumber,IFSCCode,AccountHolderName,accountType,SecTimeSlotFromTime,SecTimeSlotToTime,
-            locality, residenials, paymentMode,facilationChargesSuccess,discountType,checkAppStatus,checkAppNum,firstToTimeSlot,ReqbodybookingVenue,ReqbodybookingVenueID, discountDocs } = this.props;
+            locality, residenials, paymentMode,facilationChargesSuccess,
+            discountType,checkAppStatus,checkAppNum,firstToTimeSlot,
+            ReqbodybookingVenue,ReqbodybookingVenueID, discountDocs,
+            discountDocumentsUploadRedux,
+            documentsUploadRedux
+          } = this.props;
 
 console.log("propsInsummaryCompDidMount",this.props)
-            this.setState({
+
+let documentsData=[]
+
+if(discountDocumentsUploadRedux!=="NotFound" && discountDocumentsUploadRedux.documents &&discountDocumentsUploadRedux.documents.length>0 && discountDocumentsUploadRedux.documents[0].fileName ){
+    let newObj = 
+    {documentCode: discountDocumentsUploadRedux.documentCode,
+    documentType:discountDocumentsUploadRedux.documentType,
+    fileName:discountDocumentsUploadRedux.documents[0].fileName,
+    fileStoreId:discountDocumentsUploadRedux.documents[0].fileStoreId
+    
+}
+console.log("newObj1=-----",newObj)
+documentsData.push(newObj)
+
+}
+if(documentsUploadRedux!=="NotFound" &&  documentsUploadRedux.documents &&documentsUploadRedux.documents.length>0 && documentsUploadRedux.documents[0].fileName ){
+    let newObj = 
+    {documentCode: documentsUploadRedux.documentCode,
+    documentType:documentsUploadRedux.documentType,
+    fileName:documentsUploadRedux.documents[0].fileName,
+    fileStoreId:documentsUploadRedux.documents[0].fileStoreId
+    
+}
+console.log("newObj2=-----",newObj)
+documentsData.push(newObj)
+}
+console.log("DocumentData----",documentsData)
+console.log("State--------",this.state)
+this.setState({
+  documentList: documentsData,
+});
+console.log("propsInsummaryCompDidMount", this.props);
+console.log("stateset------", this.state);
+
+this.setState({
     appStatus : checkAppStatus
 })
 let EmpSideDocType = null
@@ -95,9 +136,15 @@ else if(discountType == "20%"){
             console.log("newDisCount--",newDisCount)
             console.log("finalDiscount--",finalDiscount)
             }
-            console.log(discountDocs, "Neeraj this pros")
+//             console.log(discountDocs, "Neeraj this pros")
+// let discountDocType = discountDocs && discountDocs[0].documentCode;
+console.log(discountDocs, "Neeraj this pros");
 let discountDocType = discountDocs && discountDocs[0].documentCode;
-let discountDocFid = discountDocs && discountDocs[0].documents[0].fileStoreId;
+let discountDocFid =
+  discountDocs &&
+  discountDocs[0].documents &&
+  isArray(discountDocs[0].documents) &&
+  discountDocs[0].documents[0].fileStoreId;
 
         let fid = documentMap ? Object.keys(documentMap) : ""
         let Booking = {
@@ -250,57 +297,66 @@ let payloadfund = await httpRequest(
         e.preventDefault();
         this.props.prevStep();
     }
-    callApiForDocumentData = async (e) => {
-        const { documentMap, userInfo } = this.props;
-        var documentsPreview = [];
-        if (documentMap && Object.keys(documentMap).length > 0) {
-            let keys = Object.keys(documentMap);
-            let values = Object.values(documentMap);
-            let id = keys[0],
-                fileName = values[0];
+    // callApiForDocumentData = async (e) => {
+    //     const { documentMap, userInfo } = this.props;
+    //     var documentsPreview = [];
+    //     if (documentMap && Object.keys(documentMap).length > 0) {
+    //         let keys = Object.keys(documentMap);
+    //         let values = Object.values(documentMap);
+    //         let id = keys[0],
+    //             fileName = values[0];
 
-            documentsPreview.push({
-                title: "DOC_DOC_PICTURE",
-                fileStoreId: id,
-                linkText: "View",
-            });
-            let changetenantId = userInfo.tenantId ? userInfo.tenantId.split(".")[0] : "ch";
-            let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-            let fileUrls =
-                fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds, changetenantId) : {};
+    //         documentsPreview.push({
+    //             title: "DOC_DOC_PICTURE",
+    //             fileStoreId: id,
+    //             linkText: "View",
+    //         });
+    //         let changetenantId = userInfo.tenantId ? userInfo.tenantId.split(".")[0] : "ch";
+    //         let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+    //         let fileUrls =
+    //             fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds, changetenantId) : {};
 
 
-            documentsPreview = documentsPreview.map(function (doc, index) {
-                doc["link"] =
-                    (fileUrls &&
-                        fileUrls[doc.fileStoreId] &&
-                        fileUrls[doc.fileStoreId].split(",")[0]) ||
-                    "";
+    //         documentsPreview = documentsPreview.map(function (doc, index) {
+    //             doc["link"] =
+    //                 (fileUrls &&
+    //                     fileUrls[doc.fileStoreId] &&
+    //                     fileUrls[doc.fileStoreId].split(",")[0]) ||
+    //                 "";
 
-                doc["name"] =
-                    (fileUrls[doc.fileStoreId] &&
-                        decodeURIComponent(
-                            fileUrls[doc.fileStoreId]
-                                .split(",")[0]
-                                .split("?")[0]
-                                .split("/")
-                                .pop()
-                                .slice(13)
-                        )) ||
-                    `Document - ${index + 1}`;
-                return doc;
-            });
-            setTimeout(() => {
-                window.open(documentsPreview[0].link);
-            }, 100);
-            prepareFinalObject('documentsPreview', documentsPreview)
-        }
-    }
+    //             doc["name"] =
+    //                 (fileUrls[doc.fileStoreId] &&
+    //                     decodeURIComponent(
+    //                         fileUrls[doc.fileStoreId]
+    //                             .split(",")[0]
+    //                             .split("?")[0]
+    //                             .split("/")
+    //                             .pop()
+    //                             .slice(13)
+    //                     )) ||
+    //                 `Document - ${index + 1}`;
+    //             return doc;
+    //         });
+    //         setTimeout(() => {
+    //             window.open(documentsPreview[0].link);
+    //         }, 100);
+    //         prepareFinalObject('documentsPreview', documentsPreview)
+    //     }
+    // }
 
 submit = async (InitiateAppNumber) => {
 
-    let { uploadeDocType,conJsonSecond,conJsonfirst,updatePACCApplication, state,documentMap, bookingData, venueType,prepareFinalObject,createPACCApplicationData,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,ReasonForDiscount} = this.props;
+    let { uploadeDocType,conJsonSecond,conJsonfirst,updatePACCApplication, discountDocs,state,documentMap, bookingData, venueType,prepareFinalObject,createPACCApplicationData,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,ReasonForDiscount} = this.props;
     console.log("AllPropsOfSubmitPage--",this.props)
+
+    console.log(discountDocs, "Neeraj this pros");
+    let discountDocType = discountDocs && discountDocs[0].documentCode;
+    let discountDocFid =
+      discountDocs &&
+      discountDocs[0].documents &&
+      isArray(discountDocs[0].documents) &&
+      discountDocs[0].documents[0].fileStoreId;
+
 let dataOne = get(
     state,
     "screenConfiguration.preparedFinalObject.createAppData",
@@ -372,10 +428,20 @@ if(dataOne !== "NotFound"){
                     bkBookingPurpose: data.bkBookingPurpose,
                     bkApplicationNumber: data.bkApplicationNumber,
                     bkCustomerGstNo: data.bkCustomerGstNo ? data.bkCustomerGstNo : 'NA',
-                    "wfDocuments": [{
-                        "documentType" : EmpSideDocType,
-                        "fileStoreId": fid[0]
-                    }],
+                    // "wfDocuments": [{
+                    //     "documentType" : EmpSideDocType,
+                    //     "fileStoreId": fid[0]
+                    // }],
+                    wfDocuments: [
+                        {
+                          documentType: EmpSideDocType,
+                          fileStoreId: fid[0],
+                        },
+                        {
+                          documentType: discountDocType,
+                          fileStoreId: discountDocFid,
+                        },
+                      ],
                     "tenantId": userInfo.tenantId,
                     "bkAction": data.bkApplicationStatus == "OFFLINE_RE_INITIATED" ? "OFFLINE_MODIFY" : "OFFLINE_APPLY",
                     "businessService": "PACC",
@@ -568,23 +634,31 @@ totalAmountSuPage={totalAmountSuPage}
                                 AccountHolderName={AccountHolderName}
                                 accountType={accountType}
                             />
-                            <SummaryDocumentDetail
+                            {/* <SummaryDocumentDetail
                             uploadeDocType={this.props.uploadeDocType}
                                 documentMap={documentMap}
-                            />
-                            <div className="col-xs-12" style={{ marginLeft: '10px' }}>
-                                <div className="col-sm-12 col-xs-12" style={{ marginBottom: '90px' }}>
-                                    <div className="complaint-detail-detail-section-status row">
-                                        <div className="col-md-4">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            /> */}
 
-
-                        </div>
-
-                    </div></div>
+{this.state.documentList && this.state.documentList.length>0 && this.state.documentList.map(doc=>
+                <SummaryDocumentDetail
+                uploadeDocType={doc.documentCode}
+                TypeOfResidence={this.props.uploadeDocType}
+                documentMap={doc}
+              />
+              )}
+              <div className="col-xs-12" style={{ marginLeft: "10px" }}>
+                <div
+                  className="col-sm-12 col-xs-12"
+                  style={{ marginBottom: "90px" }}
+                >
+                  <div className="complaint-detail-detail-section-status row">
+                    <div className="col-md-4"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
                 <Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
                   <div className="col-sm-12 col-xs-12 applyBtnWrapper responsive-action-button-cont">
                         <Button
@@ -653,6 +727,16 @@ let uploadeDocType = get(
     "screenConfiguration.preparedFinalObject.UploadedDocType",
     "NotFound"
 );
+let documentsUploadRedux = get(
+    state,
+    "screenConfiguration.preparedFinalObject.documentsUploadRedux[0]",
+    "NotFound"
+  );
+  let discountDocumentsUploadRedux = get(
+    state,
+    "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux[0]",
+    "NotFound"
+  );
 console.log("summaryuploadeDocType",uploadeDocType)
 console.log("ReqbodybookingVenueID",ReqbodybookingVenueID)
     let ReasonForDiscount = state.screenConfiguration.preparedFinalObject ?
@@ -855,7 +939,9 @@ console.log("seven--",seven)
         firstTimeSlotValue,SecondTimeSlotValue,first,second,ReasonForDiscount,ReqbodybookingVenue,ReqbodybookingVenueID,
         createPACCApplicationData,userInfo,InitiateAppNumber,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,conJsonSecond,conJsonfirst,
         documentMap, bkLocation, facilationChargesSuccess,seven,state,uploadeDocType,
-        fCharges,myLocationtwo,totalAmountSuPage,one,two,three,four,five,six,checkAppStatus,checkAppNum,discountDocs
+        fCharges,myLocationtwo,totalAmountSuPage,one,two,three,four,five,six,checkAppStatus,checkAppNum,discountDocs,
+        discountDocumentsUploadRedux,
+        documentsUploadRedux
     }
 
 }
