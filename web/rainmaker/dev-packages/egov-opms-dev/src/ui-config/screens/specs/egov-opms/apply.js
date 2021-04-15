@@ -208,6 +208,10 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
     let uploadPetPicture = petnocdetails.hasOwnProperty('uploadPetPicture') ?
       petnocdetails.uploadPetPicture[0]['fileStoreId'] : '';
 
+    let ownerIdProof = petnocdetails.hasOwnProperty('ownerIdProof') && petnocdetails.ownerIdProof != undefined ?
+      petnocdetails.ownerIdProof[0]['fileStoreId'] : '';
+
+    
     if (uploadVaccinationCertificate !== '' && uploadPetPicture !== '') {
       documentsPreview.push({
         title: "VACCINATION_CERTIFIACTE",
@@ -219,6 +223,14 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
           fileStoreId: uploadPetPicture,
           linkText: "View"
         });
+      if (ownerIdProof != '') { 
+      documentsPreview.push(
+        {
+          title: "PET_OWNER_ID_PROOF",
+          fileStoreId: ownerIdProof,
+          linkText: "View"
+        });
+      }
       let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
       let fileUrls =
         fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};
@@ -251,13 +263,29 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
               )) ||
             `Document - ${index + 1}`;
 
+            doc["fileUrl"] = fileUrls && fileUrls[doc.fileStoreId] && fileUrls[doc.fileStoreId].split(",")[0] || "";
+            doc["fileName"] =
+              (fileUrls[doc.fileStoreId] &&
+                decodeURIComponent(
+                  fileUrls[doc.fileStoreId]
+                    .split(",")[0]
+                    .split("?")[0]
+                    .split("/")
+                    .pop()
+                    .slice(13)
+                )) ||
+              `Document - ${index + 1}`;
+          
+        
         return doc;
       });
       dispatch(prepareFinalObject("documentsPreview", documentsPreview));
 
     dispatch(prepareFinalObject("documentsUploadRedux[0].documents[0]", documentsPreview[1]));    
     dispatch(prepareFinalObject("documentsUploadRedux[1].documents[0]", documentsPreview[0]));    
-    
+      if (documentsPreview[2]) {
+        dispatch(prepareFinalObject("documentsUploadRedux[2].documents[0]", documentsPreview[2]));
+      }
     }
 
 

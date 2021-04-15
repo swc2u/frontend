@@ -702,9 +702,17 @@ export const createUpdateNocApplication = async (state, dispatch, status) => {
           fileStoreId: reduxDocuments[1].documents[0].fileStoreId
         }
       ];
+      let ownerIdProof = [
+        ...otherDocuments,
+        {
+          fileStoreId: reduxDocuments[2].documents[0].fileStoreId
+        }
+      ];
+
       set(payload, "uploadVaccinationCertificate", otherDocuments_Vaccine);
       set(payload, "uploadPetPicture", otherDocuments_pet);
-      set(payload, "idName", getIdName(state,"PETNOC",get(payload, null)));
+      set(payload, "ownerIdProof", ownerIdProof);
+      set(payload, "idName", getIdName(state, "PETNOC", get(payload, null)));
       response = await httpRequest("post", "/pm-services/noc/_create", "", [], { dataPayload: payload });
       console.log('pet response : ', response)
 
@@ -720,6 +728,8 @@ export const createUpdateNocApplication = async (state, dispatch, status) => {
     } else if (method === "UPDATE") {
       let otherDocuments_pet = []
       let otherDocuments_Vaccine = []
+      let ownerIdProof = []
+
       jp.query(reduxDocuments, "$.*").forEach(doc => {
         if (doc.documents && doc.documents.length > 0) {
 
@@ -742,7 +752,7 @@ export const createUpdateNocApplication = async (state, dispatch, status) => {
               }
             ];
             set(payload, "uploadPetPicture", otherDocuments);
-          }
+          }         
           else {
             otherDocuments_pet = [
               {
@@ -755,8 +765,14 @@ export const createUpdateNocApplication = async (state, dispatch, status) => {
                 fileStoreId: reduxDocuments[1].documents[0].fileStoreId
               }
             ];
+            ownerIdProof = [
+              {
+                fileStoreId: reduxDocuments[2].documents[0].fileStoreId
+              }
+            ];
             set(payload, "uploadVaccinationCertificate", otherDocuments_Vaccine);
             set(payload, "uploadPetPicture", otherDocuments_pet);
+            set(payload, "ownerIdProof", ownerIdProof);
          
 
           }
@@ -876,7 +892,8 @@ export const furnishNocResponse = response => {
   set(refurnishresponse, "immunizationSector", applicationdetail.immunizationSector);
   set(refurnishresponse, "uploadVaccinationCertificate", applicationdetail.uploadVaccinationCertificate);
   set(refurnishresponse, "uploadPetPicture", applicationdetail.uploadPetPicture);
-
+  set(refurnishresponse, "ownerIdProof", applicationdetail.ownerIdProof);
+  set(refurnishresponse, "uploadPetPicture", applicationdetail.uploadPetPicture);
   set(refurnishresponse, "houseNo", response.nocApplicationDetail[0].housenumber);
   set(refurnishresponse, "applieddate", applicationdetail.applieddate);
   set(refurnishresponse, "remarks", response.nocApplicationDetail[0].remarks);
