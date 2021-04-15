@@ -210,6 +210,12 @@ else if (businessService == "NLUJM")
       DEFAULT: "/egov-services/park-and-community-center-appDetails-details",
     } 
   }
+  else if (businessService == "GFCP")
+  {
+    return { 
+      DEFAULT: "/egov-services/cg-application-details",
+    } 
+  }
 
 
    else if (businessService == "NewTL") { 
