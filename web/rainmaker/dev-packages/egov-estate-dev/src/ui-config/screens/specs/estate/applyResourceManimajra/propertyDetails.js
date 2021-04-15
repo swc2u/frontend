@@ -90,21 +90,10 @@ const areaofPropertyField = {
       xs: 12,
       sm: 6
   },
-  pattern: _getPattern("numeric-with-no-firstdigit-zero"),
+  pattern: _getPattern("areaSqFeet"),
   required: true,
   jsonPath: "Properties[0].propertyDetails.areaSqft",
-  errorMessage:"ES_ERR_AREA_OF_PROPERTY_FIELD",
-  afterFieldChange: (action, state, dispatch) => {
-    if (action.value.length > 25) {
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AREA_OF_PROPERTY_MAX_25", screenName);
-    }
-    else if(action.value.length < 3){
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AREA_OF_PROPERTY_MIN_3", screenName);
-    }
-    else {
-        displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_AREA_OF_PROPERTY_FIELD",screenName);
-    }
-}
+  errorMessage:"ES_ERR_AREA_OF_PROPERTY_FIELD_TWO_TO_FIVE",
 }
 
 export const propertyTypeField = {

@@ -277,21 +277,10 @@ const sizeOfAreaPurchasedField = {
       xs: 12,
       sm: 6
   },
-  pattern: _getPattern("numeric"),
+  pattern: _getPattern("areaSqFeet"),
   required: false,
-  errorMessage:"ES_ERR_SIZE_OF_AREA_PROPERTY",
+  errorMessage:"ES_ERR_AREA_OF_PROPERTY_FIELD_TWO_TO_FIVE",
   jsonPath: "Properties[0].propertyDetails.areaSqft",
-  afterFieldChange: (action, state, dispatch) => {
-    if (action.value.length > 150) {
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
-    }
-    else if(action.value.length<2){
-      displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AREA_MIN", action.screenKey);
-    }
-    else {
-      displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_SIZE_OF_AREA_PROPERTY",action.screenKey);
-    }
-}
 }
 
 export const propertyDetailsHeader = getCommonTitle({
