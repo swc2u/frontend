@@ -260,6 +260,9 @@ const prepareDocumentsView = async (state, dispatch) => {
   let uploadPetPicture = JSON.parse(petnocdetail.applicationdetail).hasOwnProperty('uploadPetPicture') ?
     JSON.parse(petnocdetail.applicationdetail).uploadPetPicture[0]['fileStoreId'] : '';
 
+  let ownerIdProof = JSON.parse(petnocdetail.applicationdetail).hasOwnProperty('ownerIdProof') ?
+    JSON.parse(petnocdetail.applicationdetail).ownerIdProof[0]['fileStoreId'] : '';
+  
   if (uploadVaccinationCertificate !== '' && uploadPetPicture !== '') {
     documentsPreview.push({
       title: "VACCINATION_CERTIFIACTE",
@@ -270,7 +273,18 @@ const prepareDocumentsView = async (state, dispatch) => {
         title: "PET_PICTURE",
         fileStoreId: uploadPetPicture,
         linkText: "View"
-      });
+      }
+    );
+
+    if (ownerIdProof != '') { 
+      documentsPreview.push(
+        {
+          title: "PET_OWNER_ID_PROOF",
+          fileStoreId: ownerIdProof,
+          linkText: "View"
+        }
+      );
+    }
     let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
     let fileUrls =
       fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};
@@ -293,6 +307,7 @@ const prepareDocumentsView = async (state, dispatch) => {
     });
     dispatch(prepareFinalObject("documentsPreview", documentsPreview));
   }
+  
 };
 
 

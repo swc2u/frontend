@@ -5,8 +5,6 @@ import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import { connect } from "react-redux";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import Grid from "@material-ui/core/Grid";
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
-import Footer from "../../../../modules/footer";
 import "./index.css";
 import FormControl from "@material-ui/core/FormControl";
 import Radio from "@material-ui/core/Radio";

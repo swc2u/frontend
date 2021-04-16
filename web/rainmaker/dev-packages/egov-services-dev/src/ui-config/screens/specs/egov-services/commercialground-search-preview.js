@@ -29,7 +29,7 @@ import {
     generateBill,
 } from "../utils";
 import { commercialGroundSummary } from "./summaryResource/commercialGroundSummary";
-import { applicantSummary } from "./summaryResource/applicantSummaryCgb";
+import { applicantSummary,cgbBankSummary } from "./summaryResource/applicantSummaryCgb";
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import { estimateSummary } from "./summaryResource/estimateSummary";
 import { remarksSummary } from "./searchResource/remarksSummary";
@@ -300,6 +300,7 @@ const screenConfig = {
                     estimateSummary: estimateSummary,
                     applicantSummary: applicantSummary,
                     commercialGroundSummary: commercialGroundSummary,
+                    cgbBankSummary:cgbBankSummary,
                     documentsSummary: documentsSummary,
                     // remarksSummary: remarksSummary,
                 }),

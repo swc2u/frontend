@@ -287,12 +287,17 @@ const prepareDocumentsView = async (state, dispatch) => {
 
     let uploadPetPicture = JSON.parse(petnocdetail).hasOwnProperty('uploadPetPicture') ?
       JSON.parse(petnocdetail).uploadPetPicture[0]['fileStoreId'] : '';
+    
+    let ownerIdProof = JSON.parse(petnocdetail).hasOwnProperty('ownerIdProof') ?
+    JSON.parse(petnocdetail).ownerIdProof[0]['fileStoreId'] : '';
+
 
     let allDocuments = [];
     allDocuments.push(uploadVaccinationCertificate)
     allDocuments.push(uploadPetPicture)
+    allDocuments.push(ownerIdProof)
 
-
+    
     if (uploadVaccinationCertificate !== '' && uploadPetPicture !== '') {
       documentsPreview.push({
         title: "uploadVaccinationCertificate",
@@ -303,6 +308,13 @@ const prepareDocumentsView = async (state, dispatch) => {
         fileStoreId: uploadPetPicture,
         linkText: "View"
       });
+      if (ownerIdProof != '') { 
+          documentsPreview.push({
+              title: "ownerIdProof",
+              fileStoreId: ownerIdProof,
+              linkText: "View"
+            });
+        }
       let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
       let fileUrls =
         fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};

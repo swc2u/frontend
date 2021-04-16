@@ -46,7 +46,7 @@ const moveToReview = (state, dispatch, applnid) => {
 
     let validateDocumentField = false;
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 3; i++) {
       let isDocumentRequired = get(documentsFormat[i], "isDocumentRequired");
       let isDocumentTypeRequired = get(
         documentsFormat[i], "isDocumentTypeRequired");

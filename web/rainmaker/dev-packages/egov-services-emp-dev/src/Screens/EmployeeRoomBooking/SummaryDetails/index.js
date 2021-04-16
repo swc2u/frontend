@@ -331,7 +331,7 @@ this.props.SetPaymentURL(`/egov-services/PaymentReceiptDteail/ForRoomBooking/${t
                         <div className="col-xs-12">
 
                             <RoomPaymentCard
-                            TotalAmount={this.props.TotalAmount}
+                            TotalAmount={this.props.TotalAmount} 
                             BKROOM_TAX={this.props.BKROOM_TAX}
                             BKROOM={this.props.BKROOM}
                             BKROOM_ROUND_OFF={this.props.BKROOM_ROUND_OFF}

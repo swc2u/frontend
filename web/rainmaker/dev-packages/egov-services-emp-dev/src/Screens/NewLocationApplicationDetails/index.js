@@ -872,7 +872,13 @@ class ApplicationDetails extends Component {
 								<div className="container" >
 									<div className="row">
 										<div className="col-12 col-md-6" style={{ fontSize: 'x-large' }}>
-											Application Details
+
+										Application Details
+										<div style={{ backgroundColor: "Black", color: "rgba(255, 255, 255, 0.87)", 
+										marginLeft:"217px", paddingLeft:"5px", textAlign:"center", verticalAlign:"middle", 
+										lineHeight:"32px",fontSize:"16px",marginTop:"-6%"}}>
+											Application No. {complaint.applicationNo}
+										</div>	
 										</div>
 										<div className="col-12 col-md-6 row">
 											<div class="col-12 col-md-6 col-sm-3" >

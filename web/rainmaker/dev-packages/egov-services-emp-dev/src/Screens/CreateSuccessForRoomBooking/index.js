@@ -197,6 +197,12 @@ this.setState({
 
 
   }
+
+
+
+
+
+  
   downloadPaymentReceipt = async (e) => {
     await this.downloadPaymentFunction();
      const {DownloadBWTApplicationDetails,userInfo,RoomPaymentReceipt}=this.props;

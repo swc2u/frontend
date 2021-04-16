@@ -230,3 +230,165 @@ export const bookingDetails = getCommonCard({
     },
   }),
 });
+
+
+export const bankAccountDetails = getCommonCard({
+  // header: getCommonTitle(
+  //   {
+  //     labelName: "Applicant Details",
+  //     labelKey: "BK_PCC_HEADER_STEP_1",
+  //   },
+  //   {
+  //     style: {
+  //       marginBottom: 18,
+  //     },
+  //   }
+  // ),
+  // break: getBreak(),
+
+  personalDetailsContainer: getCommonContainer({
+      bkAccountName: {
+          ...getTextField({
+              label: {
+                  labelName: "Bank Name(For security refund)",
+                  labelKey:  "Bank Name(For security refund)",
+                  
+                 },
+              placeholder: {
+                  labelName: "Bank Name",
+                  labelKey:  "Bank Name",
+               
+              },
+              required: true,
+              pattern: getPattern("Name"),
+              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              jsonPath: "Booking.bkBankName",
+          }),
+      },
+
+      bkAccountNumber: {
+          ...getTextField({
+              label: {
+                  labelName: "Account Number",
+                  labelKey: "Account Number",
+                  //labelKey: "BK_PCC_ACCOUNT_NUMBER_LABEL",
+              },
+              placeholder: {
+                  labelName: "Account Number",
+                  labelKey: "Account Number",
+                  //labelKey: "BK_PCC_ACCOUNT_NUMBER_LABEL",
+               },
+              required: true,
+              pattern: getPattern("bankAccountNo"),
+              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              requiredMessage: "required Message",
+              jsonPath: "Booking.bkBankAccountNumber",
+              props: {
+                  required: true,
+              },
+          }),
+      },
+      bkIFSCCode: {
+          ...getTextField({
+              label: {
+                  labelName: "IFSC Code",
+                  labelKey:  "IFSC Code",
+                  //labelKey: "BK_PCC_IFSC_CODE_LABEL",
+              },
+              placeholder: {
+                  labelName: "IFSC Code",
+                  labelKey:  "IFSC Code",
+                  //labelKey: "BK_PCC_IFSC_CODE_LABEL",
+              },
+              required: true,
+              pattern: getPattern("IFSCCode"),
+              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              jsonPath: "Booking.bkIfscCode",
+          }),
+      },
+      bkAccountHolderName: {
+          ...getTextField({
+              label: {
+                  labelName: "Account Holder Name",
+                  labelKey: "Account Holder Name",
+                  //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
+              },
+              placeholder: {
+                  labelName: "Account Holder Name",
+                  labelKey: "Account Holder Name",
+                  //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
+              },
+              required: true,
+              pattern: getPattern("Name"),
+              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              jsonPath: "Booking.bkBankAccountHolder",
+          }),
+      },
+
+        bankAccountTypeRadioGroup: {
+          uiFramework: "custom-containers",
+          componentPath: "RadioGroupContainer",
+          moduleName: "egov-services",
+          gridDefination: {
+            xs: 12,
+            sm: 12,
+            md: 6,
+          },
+          jsonPath: "Booking.bkAccountType",
+          props: {
+            label: {
+              name: "Bank Account Type",
+              key: "Bank Account Type",
+              },
+            buttons: [
+              {
+                labelName: "Saving",
+                labelKey: "Saving",
+                value: "Saving"
+              },
+              {
+                label: "Current",
+                labelKey: "Current",
+                value: "Current"
+              }
+            ],
+            jsonPath: "Booking.bkAccountType",
+            defaultValue: "Saving",
+            required: true,
+          },
+          required: true,
+          type: "array",
+      },
+      bkNomineeName: {
+          ...getTextField({
+              label: {
+                  labelName: "Nominee Name",
+                  labelKey: "Nominee Name",
+                  //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
+              },
+              placeholder: {
+                  labelName: "Nominee Name",
+                  labelKey: "Nominee Name",
+                  //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
+              },
+              required: true,
+              pattern: getPattern("Name"),
+              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              jsonPath: "Booking.bkNomineeName",
+          }),
+      },
+
+      dummyDiv: {
+          uiFramework: "custom-atoms",
+          componentPath: "Div",
+          gridDefination: {
+              xs: 12,
+              sm: 12,
+              md: 6,
+          },
+          props: {
+              disabled: true,
+          },
+      },
+  }),
+});

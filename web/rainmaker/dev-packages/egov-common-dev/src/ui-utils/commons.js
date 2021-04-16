@@ -716,17 +716,17 @@ export const download  = async ( state, dispatch, mode = "download") => {
          });
        }
        else{
-        // httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Payments: payloadReceiptDetails.Payments }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
-        // .then(res => {
-        //   res.filestoreIds[0]
-        //   if(res&&res.filestoreIds&&res.filestoreIds.length>0){
-        //     res.filestoreIds.map(fileStoreId=>{
-        //       downloadReceiptFromFilestoreID(fileStoreId,"download")
-        //     })          
-        //   }else{
-        //     console.log("Error In Receipt Download");        
-        //   }         
-        // });
+        httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Payments: payloadReceiptDetails.Payments }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+        .then(res => {
+          res.filestoreIds[0]
+          if(res&&res.filestoreIds&&res.filestoreIds.length>0){
+            res.filestoreIds.map(fileStoreId=>{
+              downloadReceiptFromFilestoreID(fileStoreId,"download")
+            })          
+          }else{
+            console.log("Error In Receipt Download");        
+          }         
+        });
        }
       
      })
@@ -768,8 +768,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
         }
         //KeytenantId =receiptQueryString[1].value
        }
-     else
-       if (businessServiceInfo.code.includes("CTL"))
+     else  if (businessServiceInfo.code.includes("CTL"))
        {
         keyvalue ='tl-receipt'
         //KeytenantId =receiptQueryString[1].value
@@ -804,7 +803,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
           }         
         });
        }
-       if(businessServicewsbillreceipt ==='WS')
+      else if(businessServicewsbillreceipt ==='WS')
        {
          let paymentReceiptDate = 0;
          let paidAmount =0;

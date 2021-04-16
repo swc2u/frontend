@@ -186,12 +186,13 @@ export const bookingDetails = getCommonCard({
                     labelName: "Area requirement",
                     labelKey: "BK_OSWMCC_LOC_AREA_REQUIRED_PLACEHOLDER",
                 },
-                pattern: getPattern("areaRequired"),
+               
+                minValue : 1, 
+                maxValue : 1000, 
+                
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 // helperText : "new helper outside",
                 required: true,
-                maxLength: 3,
-                
                 jsonPath: "Booking.areaRequirement",
                 props: {
                     required: true,
