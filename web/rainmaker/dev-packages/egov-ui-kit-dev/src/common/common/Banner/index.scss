@@ -123,3 +123,13 @@
     overflow-y: unset;
   }
 }
+
+@media only screen and (max-width: 551px)
+{
+  .banner-main-content {
+	position: relative;
+	min-height: 70vh;
+	padding-top: 475px;
+	width: 100%;
+}
+}
