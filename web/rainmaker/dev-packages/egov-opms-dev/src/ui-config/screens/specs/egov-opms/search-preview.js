@@ -47,6 +47,7 @@ import {
 } from "../../../../ui-utils/commons";
 import { citizenFooter } from "./searchResource/citizenFooter";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
+import { getTextForPetNoc } from "./searchResource/citizenSearchFunctions";
 
 
 let roles = JSON.parse(getUserInfo()).roles
@@ -162,10 +163,19 @@ const titlebar = getCommonContainer({
       number: getapplicationNumber(),
     }
   },
+  applicationStatus: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+      status: "NA",
+    }
+  },
   downloadMenu: {
     uiFramework: "custom-atoms",
     componentPath: "MenuButton",
-    visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
+    // visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
+    visible: false,
     props: {
       data: {
         label: "Download",
@@ -328,6 +338,15 @@ const setSearchResponse = async (state, dispatch, action, applicationNumber, ten
 
     let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
     localStorageSet("app_noc_status", nocStatus);
+    dispatch(
+      handleField(
+        "search-preview",
+        "components.div.children.headerDiv.children.header.children.applicationStatus",
+        "props.status",
+        getTextForPetNoc(nocStatus)
+      )
+    );
+
     await setCurrentApplicationProcessInstance(state);
     HideshowEdit(state, action, nocStatus);
 
@@ -534,6 +553,17 @@ const setSearchResponseForNocCretificate = async (state, dispatch, action, appli
     downloadMenu = [
       certificateDownloadObjectPET_RECEIPT
     ];
+  }
+
+  if (nocStatus == "APPROVED" || nocRemark == "PAID") {
+    dispatch(
+      handleField(
+        "search-preview",
+        "components.div.children.headerDiv.children.header.children.downloadMenu",
+        "visible",
+        true
+      )
+    );  
   }
   dispatch(
     handleField(

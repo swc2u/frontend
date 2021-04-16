@@ -57,6 +57,7 @@ import {
   getCommonApplyFooter,
 
 } from "../utils";
+import { getTextForRoadCuttNoc } from "./searchResource/citizenSearchFunctions";
 
 
 export const stepsData = [
@@ -96,6 +97,14 @@ const titlebar = getCommonContainer({
       number: getQueryArg(window.location.href, "applicationNumber")
     }
   },
+  applicationStatus: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+      status: "NA",
+    }
+  }
 });
 
 const routePage = (dispatch) => {
@@ -289,6 +298,16 @@ const setSearchResponse = async (
   }
   else {
     dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
+    let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", "-");
+    dispatch(
+      handleField(
+        "roadcutnoc_summary",
+        "components.div.children.headerDiv.children.header.children.applicationStatus",
+        "props.status",
+        getTextForRoadCuttNoc(nocStatus)
+      )
+    );
+
     prepareDocumentsView(state, dispatch);
   }
 
