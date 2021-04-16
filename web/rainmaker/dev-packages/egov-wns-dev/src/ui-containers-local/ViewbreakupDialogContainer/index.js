@@ -244,14 +244,14 @@ class ViewBreakupContainer extends React.Component {
               {taxUnitData && taxUnitData.length > 0 && (
                 getMultiItemForTax(taxUnitData, classes)
               )}
-              <Divider className={classes.root} />
+              {/* <Divider className={classes.root} /> */}
               {/* {taxUnitData &&
                 taxUnitData.length > 0 &&
                 getGridItem(taxTotal, classes)} */}
 
               {/* {serviceUnitData &&
                 serviceUnitData.length > 0 && */}
-              {getGridItem(totalAmount, classes, style)}
+              {/* {getGridItem(totalAmount, classes, style)} */}
             </div>
           ) : (
               <div style={{ padding: "16px", width: "500px" }}>

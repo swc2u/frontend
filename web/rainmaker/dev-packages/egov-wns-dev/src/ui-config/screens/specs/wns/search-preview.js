@@ -184,6 +184,11 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
               // viewBreakUp 
               estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
               estimate.Calculation[0].appStatus = processInstanceAppStatus; 
+              if(parsedObject.waterApplication.totalAmountPaid !== null ||parsedObject.waterApplication.totalAmountPaid !== 'NA')
+              set(estimate.Calculation[0], 'totalAmountPaid', parseInt(parsedObject.waterApplication.totalAmountPaid));
+              else
+              set(estimate.Calculation[0], 'totalAmountPaid', 0);
+              
               dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
             }
           } 
@@ -201,6 +206,10 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
               // viewBreakUp 
               estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
               estimate.Calculation[0].appStatus = processInstanceAppStatus; 
+              if(parsedObject.totalAmountPaid !== null || parsedObject.totalAmountPaid !=='NA' )
+              set(estimate.Calculation[0], 'totalAmountPaid', parseInt(parsedObject.totalAmountPaid));
+              else
+              set(estimate.Calculation[0], 'totalAmountPaid', 0);
               dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
             }
           }
@@ -823,6 +832,10 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
         // viewBreakUp 
         estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
         estimate.Calculation[0].appStatus = processInstanceAppStatus; 
+        if(payload.WaterConnection[0].waterApplication.totalAmountPaid!== null)
+        set(estimate.Calculation[0], 'totalAmountPaid', parseInt(payload.WaterConnection[0].waterApplication.totalAmountPaid));
+        else
+        set(estimate.Calculation[0], 'totalAmountPaid', 0);
         dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
       }
     }
@@ -891,6 +904,11 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
         // viewBreakUp 
         estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
         estimate.Calculation[0].appStatus = processInstanceAppStatus; 
+        if(payload.SewerageConnections[0].totalAmountPaid!== null)
+        set(estimate.Calculation[0], 'totalAmountPaid', parseInt(payload.SewerageConnections[0].totalAmountPaid));
+        else{
+          set(estimate.Calculation[0], 'totalAmountPaid', 0);
+        }
         dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
       }
     }

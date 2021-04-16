@@ -4,7 +4,7 @@ import {
     getCommonContainer
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { footer } from "./createSMIDResource/footer";
-  
+
   import { SMIDDetails } from "./createSMIDResource/smid-Details";
   import { documentDetails } from "./createSMIDResource/documentDetails";
   import get from "lodash/get";
@@ -14,7 +14,7 @@ import {
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
   import { NULMConfiguration } from "../../../../ui-utils/sampleResponses";
   import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-  import { prepareDocumentsUploadData } from "../../../../ui-utils/storecommonsapi";
+  import { prepareDocumentsUploadData,prefillDocuments } from "../../../../ui-utils/storecommonsapi";
   import commonConfig from "../../../../config/common";
   
   export const stepsData = [
@@ -124,12 +124,18 @@ import {
                   ]
     const resp = {SMIDDocuments}
    // dispatch(prepareFinalObject("applyScreenMdmsDocumentType.NULM", resp));
-    dispatch(prepareFinalObject("applyScreenMdmsData", get(response, "MdmsRes")));
-  
-      // setting documents
-      prepareDocumentsUploadData(state, dispatch, 'SMIDApplication');
-  
-      return true;
+    dispatch(prepareFinalObject("applyScreenMdmsData", get(response, "MdmsRes"))); 
+    prepareDocumentsUploadData(state, dispatch, 'SMIDApplication');     
+    // setting documents
+    let docs = get(state, "screenConfiguration.preparedFinalObject");
+    await prefillDocuments(
+      state.screenConfiguration.preparedFinalObject,
+      "displayDocs",
+      dispatch,
+      'NULMSMIDRequest.documentAttachemnt',
+      'SMIDDocuments', 
+    );
+    return true;
     } catch (e) {
       console.log(e);
     }
@@ -297,6 +303,7 @@ import {
         { display: "inline-block" }
       );
      // dispatch(prepareFinalObject("NULMSMIDRequest.insuranceThrough",''));
+
       return action;
     },
   

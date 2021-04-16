@@ -16,7 +16,7 @@ import {
 import { searchApiCall } from "./functions";
 
 const resetFields = (state, dispatch) => {
-  const textFields = ["applicationStatus","applicationId","nameOfShelter","fromDate","toDate"];
+  const textFields = ["applicationId","nameOfShelter","fromDate","toDate"];
   for (let i = 0; i < textFields.length; i++) {
     if (
       `state.screenConfiguration.screenConfig.search-suh.searchForm.children.cardContent.children.searchFormContainer.children.${textFields[i]}.props.value`

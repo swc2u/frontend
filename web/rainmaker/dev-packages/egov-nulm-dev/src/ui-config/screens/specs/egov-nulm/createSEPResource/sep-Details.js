@@ -530,7 +530,7 @@ export const SepDetails = getCommonCard({
           labelName: "Enter Previous experience in the line if any",
           labelKey: "NULM_SEP_PREVIOUS_EXPERIENCE_IN_THE_LINE_IF_ANY_PLACEHOLDER"
         },
-        required: true,
+        required: false,
         props: {
           className: "applicant-details-error",
           multiline: "multiline",
