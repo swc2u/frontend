@@ -54,7 +54,7 @@ export const searchResults = {
            // if (data.rowData[4] > 0 && data.rowData[4] !== 0) {
              // check role exists for WS_CEMP
              const roleExists = ifUserRoleExists("WS_CEMP");
-              if ((data.rowData[4] > 0 && data.rowData[4] !== 0 && roleExists) &&(data.rowData[3] !== undefined? data.rowData[3].toUpperCase() !== "PAID":'')) {
+              if ((data.rowData[4] > 0 && data.rowData[4] !== 0 && roleExists) &&(data.rowData[3] !== undefined? data.rowData[3].toUpperCase() === "INITIATED":'')) {
               return (
                 <div className="linkStyle" onClick={() => getViewBillDetails(data)} style={{ color: '#fe7a51', textTransform: 'uppercase' }}>
                   <LabelContainer

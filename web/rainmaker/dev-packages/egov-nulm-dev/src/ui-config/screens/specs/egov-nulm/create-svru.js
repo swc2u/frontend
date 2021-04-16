@@ -14,7 +14,7 @@ import { prepareFinalObject,handleScreenConfigurationFieldChange as handleField 
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { NULMConfiguration } from "../../../../ui-utils/sampleResponses";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-import { prepareDocumentsUploadData } from "../../../../ui-utils/storecommonsapi";
+import { prepareDocumentsUploadData,prefillDocuments } from "../../../../ui-utils/storecommonsapi";
 import commonConfig from "../../../../config/common";
 import { TFCDetails } from './createSVRUResource/tfc-details';
 import { bankDetailToProcess } from './createSVRUResource/bankDetailToProcess';
@@ -130,7 +130,13 @@ const getMdmsData = async (state, dispatch) => {
 
     // setting documents
     prepareDocumentsUploadData(state, dispatch, 'SVRUApplication');
-
+    await prefillDocuments(
+      state.screenConfiguration.preparedFinalObject,
+      "displayDocs",
+      dispatch,
+      'NulmSusvRenewRequest.applicationDocument',
+      'SUSVRDocuments', 
+    );
     return true;
   } catch (e) {
     console.log(e);

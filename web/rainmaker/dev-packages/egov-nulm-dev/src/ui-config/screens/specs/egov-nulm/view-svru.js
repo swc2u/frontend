@@ -68,7 +68,7 @@ import {
             moduleName: "NULM",
             masterDetails: [
               {
-                name: "SEPDocuments",
+                name: "SUSVRDocuments",
               }
             ]
           },

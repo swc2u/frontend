@@ -116,6 +116,26 @@ import {
         return;
       }
     }
+
+    if(NulmSuhCitizenNGORequest ){
+      if(NulmSuhCitizenNGORequest.dob ){
+    
+        let Month = (new Date().getMonth()+1)<10?`0${(new Date().getMonth()+1)}`:(new Date().getMonth()+1);
+        let Day = new Date().getDate()<10?`0${new Date().getDate()}`:new Date().getDate();
+        let CurrentDate = `${new Date().getFullYear()}-${Month}-${Day}`;
+            CurrentDate = convertDateToEpoch(CurrentDate, "dayStart");
+        let dob = convertDateToEpoch(NulmSuhCitizenNGORequest.dob,"dayStart");
+        if(CurrentDate === dob)
+        {
+        const errorMessage = {
+          labelName: "Date of birth can not be currrent date",
+          labelKey: "ERR_NULM_CURRENT_DATE_VALIDATION"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return;
+      }
+      }
+    }
   
     if (!isFormValid) {
       const errorMessage = {

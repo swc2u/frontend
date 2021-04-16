@@ -2882,11 +2882,11 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
                     }
                 }
                 obj = {
-                    WaterConnection: wnsConnection[0]
+                    WaterConnection: wnsConnection
                 }
             } else {
                 obj = {
-                    SewerageConnection: wnsConnection[0]
+                    SewerageConnection: wnsConnection
                 }
             }
         }
