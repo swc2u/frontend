@@ -39,6 +39,7 @@ import {
 } from "../../../../ui-utils/commons";
 import { taskStatusSummary } from './summaryResource/taskStatusSummary';
 import { checkVisibility } from '../../../../ui-utils/commons'
+import { getTextForRoadCuttNoc } from "./searchResource/citizenSearchFunctions";
 
 let roles = JSON.parse(getUserInfo()).roles
 
@@ -151,10 +152,19 @@ const titlebar = getCommonContainer({
       number: getapplicationNumber()
     }
   },
+  applicationStatus: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+      status: "NA",
+    }
+  },
   downloadMenu: {
     uiFramework: "custom-atoms",
     componentPath: "MenuButton",
-    visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
+    // visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
+    visible: false,
     props: {
       data: {
         label: "Download",
@@ -384,6 +394,15 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
     let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
     localStorageSet("app_noc_status", nocStatus);
     localStorageSet("applicationStatus", applicationStatus);
+    dispatch(
+      handleField(
+        "roadcutnoc-search-preview",
+        "components.div.children.headerDiv.children.header.children.applicationStatus",
+        "props.status",
+        getTextForRoadCuttNoc(nocStatus)
+      )
+    );
+
     let amount = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].amount", {});
     let performancebankguaranteecharges = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].performancebankguaranteecharges", {});
     let gstamount = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].gstamount", {});
@@ -543,6 +562,15 @@ const setSearchResponseForNocCretificate = async (state, dispatch, applicationNu
   }
 
   if (nocRemark == "PAID") {
+    dispatch(
+      handleField(
+        "roadcutnoc-search-preview",
+        "components.div.children.headerDiv.children.header.children.downloadMenu",
+        "visible",
+        true
+      )
+    );
+  
     downloadMenu = [
       //certificateDownloadObjectROADCUT,
       certificateDownloadObjectROADCUT_RECEIPT

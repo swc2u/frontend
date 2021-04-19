@@ -680,11 +680,11 @@ export const getTextForPetNoc = label => {
     case "PAID":
       return 'Paid'
     case "REASSIGNTOSI":
-      return 'Application Reassigned To SI'
+      return 'Reassigned To SI'
     case "RESENT":
       return 'Resent'
     case "APPROVED":
-      return 'Apllication Approved'
+      return 'Approved'
     case "REASSIGN":
       return 'Application Reassigned To Citizen'
     case "INITIATED":
@@ -692,7 +692,9 @@ export const getTextForPetNoc = label => {
     case "PENDINGAPPROVAL":
       return 'Pending Approval'
     case "REJECTED":
-      return "Application Rejected"
+      return "Rejected"
+    case "DRAFT":
+      return "Draft"
 
     default:
       return '-'
@@ -712,15 +714,17 @@ export const getTextForSellMeatNoc = label => {
     case "RESENT":
       return 'Resent'
     case "APPROVED":
-      return 'Application Approved'
+      return 'Approved'
     case "REVIEWOFSUPERINTENDENT":
       return 'Review Of Superintendent'
     case "REASSIGNTOSUPERINTENDENT":
       return 'Reassign To Superintendent'
     case "REJECTED":
-      return "Application Rejected"
+      return "Rejected"
     case "REASSIGN":
-      return 'Application Reassigned To Citizen'
+      return 'Reassigned To Citizen'
+    case "DRAFT":
+      return "Draft"
 
     default:
       return '-'
@@ -798,7 +802,8 @@ export const getTextAdvertisement = (label, isWithdrawn) => {
       return 'Withdraw Request';
     case "REVIEWOFSECFORWITHDRAW":
       return 'Withdraw Request';
-
+    case "DRAFT":
+      return 'Draft';
     default:
       return '-'
   }
@@ -903,9 +908,10 @@ export const getTextForRoadCuttNoc = label => {
       return 'Review Of SDEHQ'
     case "REASSIGNTOSDEHQ":
       return 'Reassign To SDEHQ'
-
     case "COMPLETE":
       return 'Completed'
+    case "DRAFT":
+      return 'Draft'
       default:
       return '-'
   }

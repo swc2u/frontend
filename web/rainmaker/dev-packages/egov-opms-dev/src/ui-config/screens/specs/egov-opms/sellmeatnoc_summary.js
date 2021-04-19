@@ -41,6 +41,7 @@ import {
   getCommonApplyFooter,
 
 } from "../utils";
+import { getTextForSellMeatNoc } from "./searchResource/citizenSearchFunctions";
 
 
 const undertakingsellmeatButton = getCommonContainer({
@@ -72,6 +73,14 @@ const titlebar = getCommonContainer({
       number: getQueryArg(window.location.href, "applicationNumber")
     }
   },
+  applicationStatus: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+      status: "NA",
+    }
+  }
 });
 
 const routePage = (dispatch) => {
@@ -259,6 +268,16 @@ const setSearchResponse = async (
   else {
 
     dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
+    
+    let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", "-");
+    dispatch(
+      handleField(
+        "sellmeatnoc_summary",
+        "components.div.children.headerDiv.children.header.children.applicationStatus",
+        "props.status",
+        getTextForSellMeatNoc(nocStatus)
+      )
+    );
 
     prepareDocumentsView(state, dispatch);
   }
