@@ -47,6 +47,7 @@ import {
 import { getSearchResultsView, getSearchResultsForNocCretificate, getSearchResultsForNocCretificateDownload, setCurrentApplicationProcessInstance, checkVisibility } from "../../../../ui-utils/commons";
 import { preparepopupDocumentsSellMeatUploadData, prepareDocumentsUploadData } from "../../../../ui-utils/commons";
 import { httpRequest } from "../../../../ui-utils";
+import { getTextForSellMeatNoc } from "./searchResource/citizenSearchFunctions";
 
 
 let roles = JSON.parse(getUserInfo()).roles
@@ -186,10 +187,19 @@ const titlebar = getCommonContainer({
       number: getapplicationNumber(), //localStorage.getItem('applicationsellmeatNumber')
     }
   },
+  applicationStatus: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+      status: "NA",
+    }
+  },
   downloadMenu: {
     uiFramework: "custom-atoms",
     componentPath: "MenuButton",
-    visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
+    // visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
+    visible: false,
     props: {
       data: {
         label: "Download",
@@ -353,6 +363,15 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
 
     nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
     localStorageSet("app_noc_status", nocStatus);
+    dispatch(
+      handleField(
+        "sellmeatnoc-search-preview",
+        "components.div.children.headerDiv.children.header.children.applicationStatus",
+        "props.status",
+        getTextForSellMeatNoc(nocStatus)
+      )
+    );
+
     await setCurrentApplicationProcessInstance(state)
     HideshowEdit(state, action, nocStatus);
 
@@ -433,9 +452,16 @@ const setSearchResponseForNocCretificate = async (
     downloadMenu = [
       certificateDownloadObjectSELLMEAT
     ];
+    dispatch(
+      handleField(
+        "sellmeatnoc-search-preview",
+        "components.div.children.headerDiv.children.header.children.downloadMenu",
+        "visible",
+        true
+      )
+    );
+  
   }
-
-
 
   dispatch(
     handleField(

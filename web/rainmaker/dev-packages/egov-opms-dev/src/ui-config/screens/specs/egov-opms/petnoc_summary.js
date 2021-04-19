@@ -51,6 +51,7 @@ import {
   getCommonApplyFooter,
 
 } from "../utils";
+import { getTextForPetNoc } from "./searchResource/citizenSearchFunctions";
 
 
 let roles = JSON.parse(getUserInfo()).roles
@@ -130,6 +131,14 @@ const titlebar = getCommonContainer({
       number: getQueryArg(window.location.href, "applicationNumber")
     }
   },
+  applicationStatus: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+      status: "NA",
+    }
+  }
 });
 
 const routeToPage = (dispatch, type) => {
@@ -350,6 +359,16 @@ const setSearchResponse = async (state, dispatch, applicationNumber, tenantId) =
   }
   else {
     dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
+    let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", "-");
+    dispatch(
+      handleField(
+        "petnoc_summary",
+        "components.div.children.headerDiv.children.header.children.applicationStatus",
+        "props.status",
+        getTextForPetNoc(nocStatus)
+      )
+    );
+
 
     prepareDocumentsView(state, dispatch);
   }
