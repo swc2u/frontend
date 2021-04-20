@@ -1,6 +1,7 @@
 import { getCommonCard, getCommonContainer, getDateField, getLabel, getPattern,} from "egov-ui-framework/ui-config/screens/specs/utils";
 // import { searchAPICall, SearchDashboardData, SearchPGRDashboardData } from "./functions";
 import { SearchHCDashboardData } from "./HCFunction";
+import get from "lodash/get";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import './index.css';
 
@@ -20,15 +21,36 @@ export const HCDashboardFilterForm = getCommonCard({
       pattern: getPattern("Date"),
       jsonPath: "HCdahsboardHome.defaultFromDate",
       required: true,
+      beforeFieldChange: (action, state, dispatch) => {
+        debugger;
+        const data = "data"
+      },
       afterFieldChange: (action, state, dispatch) => {
+        debugger;
+        var dt = new Date();
+        var year= dt.getFullYear();
+        var month = parseInt(dt.getMonth()+1) < 10 ? "0"+parseInt(dt.getMonth()+1) : parseInt(dt.getMonth()+1);
+        var currentDt = dt.getDate() < 10 ? "0"+dt.getDate() : dt.getDate();
+        var todayDt = year+"-"+month+"-"+currentDt;
         dispatch(
           handleField(
-            "dashboardSource",
-            "components.div.children.FilterFormforEmployee.children.cardContent.children.FilterConstraintsContainer.children.toDate",
-            "props.inputProps.min",
-            action.value
+            "HCDashboard",
+            "components.div.children.HCDashboardFilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+            "props.inputProps.max",
+            todayDt
           )
         );
+
+        var selectedDt = get(state, "screenConfiguration.preparedFinalObject.HCdahsboardHome.defaultFromDate",'')
+        dispatch(
+          handleField(
+            "HCDashboard",
+            "components.div.children.HCDashboardFilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+            "props.inputProps.min",
+            selectedDt
+          )
+        );
+
         }
     }),
     toDate: getDateField({
