@@ -1,4 +1,4 @@
-import { getBreak, getCommonCard, getCommonContainer, getCommonTitle, getPattern, getTextField } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getBreak, getCommonCard, getCommonContainer, getCommonTitle, getPattern, getSelectField, getTextField } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
 import { NumberOfTreesInPruning, TypeOfServiceRequest } from "../../../../../ui-utils/commons";
@@ -123,56 +123,87 @@ export const servicerequestdetails = getCommonCard({
 
   break: getBreak(),
   servicerequestdetailsContainer: getCommonContainer({
-  typeofrequest: {
-      uiFramework: "custom-containers-local",
-      moduleName: "egov-hc",
-      componentPath: "AutosuggestContainer",
-      jsonPath: "SERVICEREQUEST.serviceType",
-            required: true,
-            gridDefination: {
-                    xs: 12,
-                    sm: 12,
-                    md: 12,
-                    lg:12
-                  },
-    props: {
-    style: {
-    width: "100%",
-    cursor: "pointer"
-    },
+  // typeofrequest: {
+  //     uiFramework: "custom-containers-local",
+  //     moduleName: "egov-hc",
+  //     componentPath: "AutosuggestContainer",
+  //     jsonPath: "SERVICEREQUEST.serviceType",
+  //           required: true,
+  //           gridDefination: {
+  //                   xs: 12,
+  //                   sm: 12,
+  //                   md: 12,
+  //                   lg:12
+  //                 },
+  //   props: {
+  //   style: {
+  //   width: "100%",
+  //   cursor: "pointer"
+  //   },
    
-    className: "citizen-city-picker",
-    label: { labelName: "Service Request Type", labelKey: "HC_SERVICE_REQUEST_TYPE" },
-    placeholder: {
-      labelName: "Select Service Request Type",
-      labelKey: "HC_SERVICE_REQUEST_TYPE_PLACEHOLDER"
-    },
-    sourceJsonPath: "applyScreenMdmsData.eg-horticulture.ServiceType",
-    jsonPath: "SERVICEREQUEST.serviceType",
-    maxLength:5,
-    labelsFromLocalisation: false,
-    suggestions: [],
-    fullwidth: true,
-    required: true,
-    inputLabelProps: {
-      shrink: true
-    },
-    isMulti: false,
-    labelName: "name",
-    valueName: "name"
-    },
+  //   className: "citizen-city-picker",
+  //   label: { labelName: "Service Request Type", labelKey: "HC_SERVICE_REQUEST_TYPE" },
+  //   placeholder: {
+  //     labelName: "Select Service Request Type",
+  //     labelKey: "HC_SERVICE_REQUEST_TYPE_PLACEHOLDER"
+  //   },
+  //   sourceJsonPath: "applyScreenMdmsData.eg-horticulture.ServiceType",
+  //   jsonPath: "SERVICEREQUEST.serviceType",
+  //   maxLength:5,
+  //   labelsFromLocalisation: false,
+  //   suggestions: [],
+  //   fullwidth: true,
+  //   required: true,
+  //   inputLabelProps: {
+  //     shrink: true
+  //   },
+  //   isMulti: false,
+  //   labelName: "name",
+  //   valueName: "name"
+  //   },
     
+  //   afterFieldChange: (action, state, dispatch) => {
+  //     var currentSelectedServiceType = get(state, "screenConfiguration.preparedFinalObject.SERVICEREQUEST.serviceType")
+    
+  //     if (currentSelectedServiceType.value != undefined)
+  //     {
+  //       setRadioButtonFeatures(currentSelectedServiceType, state, dispatch)
+  //       setNumberOfTreesForPruning(currentSelectedServiceType, state, dispatch)
+  //     }
+  //   }
+    
+  // },
+  typeofrequest: {
+    ...getSelectField({
+      label: {
+        labelName: "Service Request Type",
+        labelKey: "HC_SERVICE_REQUEST_TYPE"
+      },
+      placeholder: {
+        labelName: "Select Service Request Type",
+        labelKey: "HC_SERVICE_REQUEST_TYPE_PLACEHOLDER"
+      },
+      required: true,   
+      errorMessage: "STORE_VALIDATION_MATERIAL_NAME_SELECT",            
+      jsonPath: "SERVICEREQUEST.serviceType",
+      sourceJsonPath: "applyScreenMdmsData.eg-horticulture.ServiceType",
+      props: {
+        optionValue: "code",
+        optionLabel: "name",
+       // disabled: disabled,
+      },
+    }),
     afterFieldChange: (action, state, dispatch) => {
       var currentSelectedServiceType = get(state, "screenConfiguration.preparedFinalObject.SERVICEREQUEST.serviceType")
     
-      if (currentSelectedServiceType.value != undefined)
-      {
-        setRadioButtonFeatures(currentSelectedServiceType, state, dispatch)
-        setNumberOfTreesForPruning(currentSelectedServiceType, state, dispatch)
-      }
+          if (currentSelectedServiceType.value != undefined)
+          {
+            setRadioButtonFeatures(currentSelectedServiceType, state, dispatch)
+            setNumberOfTreesForPruning(currentSelectedServiceType, state, dispatch)
+          }        
     }
-    
   },
+  
   serviceRequestSubtype: {
     uiFramework: "custom-containers",
     componentPath: "RadioGroupContainer",
