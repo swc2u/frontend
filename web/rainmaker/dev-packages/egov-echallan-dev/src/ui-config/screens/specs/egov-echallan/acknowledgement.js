@@ -174,7 +174,7 @@ const setSearchResponseForNocCretificate = async (state, dispatch, applicationNu
     "memoNo": violatorDetails.challanId,
     "fineAmount": violatorDetails.challanAmount,
     "storageAmount": violatorDetails.penaltyAmount,
- 
+    "itemDetails":violatorDetails.violationItem 
   }
 
   let getFileStoreIdFor_RECEIPT = { "paymentEchallan": [data] }

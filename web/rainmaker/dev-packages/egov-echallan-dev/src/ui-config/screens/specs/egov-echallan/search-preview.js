@@ -998,6 +998,7 @@ const setSearchResponseForNocCretificate = async (
   }
   
   if (paymentStatus === 'PAID') {
+    
     let violatorDetails = get(state, 'screenConfiguration.preparedFinalObject.eChallanDetail[0]', []);
     let paydetails = get(state, 'screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].billDetails[0].billAccountDetails', []);
     let numbertowords = numWords(violatorDetails.totalChallanAmount) + ' ' + 'only'
@@ -1013,6 +1014,7 @@ const setSearchResponseForNocCretificate = async (
       "fineAmount": violatorDetails.challanAmount,//paydetails[0].taxHeadCode === 'EC_ECHALLAN_FEE' ? paydetails[0].amount : paydetails[1].amount,
       "storageAmount": violatorDetails.penaltyAmount, //paydetails[1].taxHeadCode === 'EC_ECHALLAN_PENALTY' ? paydetails[1].amount : paydetails[0].amount,
       //"smName" : nullToNa(JSON.parse(getUserInfo()).name, 'NA')
+      "itemDetails":violatorDetails.violationItem
     }
 
     let getFileStoreIdFor_RECEIPT = { "paymentEchallan": [paymentdata] }
