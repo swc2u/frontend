@@ -159,8 +159,8 @@ export const cgbBankSummary = getCommonGrayCard({
                 applicantContainer: getCommonContainer({
                     bkBankName: getLabelWithValue(
                         {
-                            labelName: "Bank Name",
-                            labelKey:  "Bank Name",
+                            labelName: "Bank Account Name",
+                            labelKey:  "Bank Account Name",
                             //labelKey: "BK_PCC_BANK_NAME_LABEL",
                         },
                         {

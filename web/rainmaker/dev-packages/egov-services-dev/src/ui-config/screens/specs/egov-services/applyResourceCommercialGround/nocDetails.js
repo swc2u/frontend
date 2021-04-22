@@ -39,7 +39,7 @@ export const personalDetails = getCommonCard({
         },
         required: true,
         pattern: getPattern("Name"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "Please check the missing/invalid fields, then proceed!",
         jsonPath: "Booking.bkApplicantName",
       }),
     },
@@ -55,7 +55,7 @@ export const personalDetails = getCommonCard({
         },
         required: true,
         pattern: getPattern("Name"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "Please check the missing/invalid fields, then proceed!",
         jsonPath: "Booking.bkFatherName",
       }),
     },
@@ -71,7 +71,7 @@ export const personalDetails = getCommonCard({
         },
         required: true,
         pattern: getPattern("Email"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "Please check the missing/invalid fields, then proceed!",
         jsonPath: "Booking.bkEmail",
       }),
     },
@@ -87,7 +87,7 @@ export const personalDetails = getCommonCard({
         },
         required: true,
         pattern: getPattern("MobileNo"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "Please check the missing/invalid fields, then proceed!",
         jsonPath: "Booking.bkMobileNumber",
       }),
     },
@@ -101,7 +101,7 @@ export const personalDetails = getCommonCard({
           labelName: "Complete Address",
           labelKey: "BK_CGB_COMPLETE_ADDRESS_PLACEHOLDER",
         },
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "Please check the missing/invalid fields, then proceed!",
         required: true,
         jsonPath: "Booking.bkCompleteAddress",
         maxLength: 500,
@@ -141,7 +141,7 @@ export const bookingDetails = getCommonCard({
         readOnlyValue: true,
         required: true,
 
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "Please check the missing/invalid fields, then proceed!",
 
         jsonPath: "Display.bkFromDate",
 
@@ -162,7 +162,7 @@ export const bookingDetails = getCommonCard({
         required: true,
         readOnlyValue: true,
      
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "Please check the missing/invalid fields, then proceed!",
         jsonPath: "Display.bkToDate",
 
       })
@@ -182,7 +182,7 @@ export const bookingDetails = getCommonCard({
         readOnlyValue: true,
         required: true,
     
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "Please check the missing/invalid fields, then proceed!",
         jsonPath: "Booking.bkBookingVenue",
       })
     },
@@ -199,7 +199,7 @@ export const bookingDetails = getCommonCard({
         },
         required: true,
         //pattern: getPattern("Name"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "Please check the missing/invalid fields, then proceed!",
         jsonPath: "Booking.bkBookingPurpose",
         maxLength: 500,
       }),
@@ -250,18 +250,18 @@ export const bankAccountDetails = getCommonCard({
       bkAccountName: {
           ...getTextField({
               label: {
-                  labelName: "Bank Name(For security refund)",
-                  labelKey:  "Bank Name(For security refund)",
+                  labelName: "Bank Account Name(For security refund)",
+                  labelKey:  "Bank Account Name(For security refund)",
                   
                  },
               placeholder: {
-                  labelName: "Bank Name",
-                  labelKey:  "Bank Name",
+                  labelName: "Bank Account Name",
+                  labelKey:  "Bank Account Name",
                
               },
               required: true,
               pattern: getPattern("Name"),
-              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              errorMessage: "Please check the missing/invalid fields, then proceed!",
               jsonPath: "Booking.bkBankName",
           }),
       },
@@ -280,7 +280,7 @@ export const bankAccountDetails = getCommonCard({
                },
               required: true,
               pattern: getPattern("bankAccountNo"),
-              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              errorMessage: "Please check the missing/invalid fields, then proceed!",
               requiredMessage: "required Message",
               jsonPath: "Booking.bkBankAccountNumber",
               props: {
@@ -302,7 +302,7 @@ export const bankAccountDetails = getCommonCard({
               },
               required: true,
               pattern: getPattern("IFSCCode"),
-              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              errorMessage: "Please check the missing/invalid fields, then proceed!",
               jsonPath: "Booking.bkIfscCode",
           }),
       },
@@ -320,7 +320,7 @@ export const bankAccountDetails = getCommonCard({
               },
               required: true,
               pattern: getPattern("Name"),
-              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              errorMessage: "Please check the missing/invalid fields, then proceed!",
               jsonPath: "Booking.bkBankAccountHolder",
           }),
       },
@@ -373,7 +373,7 @@ export const bankAccountDetails = getCommonCard({
               },
               required: true,
               pattern: getPattern("Name"),
-              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              errorMessage: "Please check the missing/invalid fields, then proceed!",
               jsonPath: "Booking.bkNomineeName",
           }),
       },

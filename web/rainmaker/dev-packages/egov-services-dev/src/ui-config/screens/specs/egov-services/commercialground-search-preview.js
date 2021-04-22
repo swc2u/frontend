@@ -33,7 +33,7 @@ import { applicantSummary,cgbBankSummary } from "./summaryResource/applicantSumm
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import { estimateSummary } from "./summaryResource/estimateSummary";
 import { remarksSummary } from "./searchResource/remarksSummary";
-import { footer } from "./searchResource/citizenFooter";
+import { footerForCg } from "./searchResource/citizenFooter";
 import {
     footerReviewTop,
 } from "./searchResource/footer";
@@ -117,12 +117,41 @@ const prepareDocumentsView = async (state, dispatch) => {
     }
 };
 
-const HideshowFooter = (action, bookingStatus) => {
+const HideshowFooter = (action, bookingStatus, fromDate,state) => {
+    let bookingTimeStamp = new Date(fromDate).getTime();
+    let currentTimeStamp = new Date().getTime();
+
+
+    
+    var billAccountDetails = get(
+        state,
+        "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].billDetails[0].billAccountDetails",
+        []
+    );
+
+    let showFooter = false;
+    let bookingAmount = 0;
+    let refundSecAmount = 0;
+    // let refundAmount = 0;
+    for (let i = 0; i < billAccountDetails.length; i++) {
+        if (billAccountDetails[i].taxHeadCode == "SECURITY_COMMERCIAL_GROUND_BOOKING_BRANCH") {
+            bookingAmount += billAccountDetails[i].amount;
+            refundSecAmount += billAccountDetails[i].amount;
+        }
+        if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_COMMERCIAL_GROUND_BOOKING_BRANCH" ) {
+            bookingAmount += billAccountDetails[i].amount;
+        }
+    }
     // Hide edit Footer
     // console.log("actionnew", action);
-    let showFooter = false;
+   
     if (bookingStatus === "PENDINGPAYMENT") {
         showFooter = true;
+        set(
+            action,
+            "screenConfig.components.div.children.footer.visible",
+            showFooter === true ? true : false
+        );
     }
     // set(
     //     action,
@@ -131,9 +160,28 @@ const HideshowFooter = (action, bookingStatus) => {
     // );
     set(
         action,
+        "screenConfig.components.div.children.footer.visible",
+        showFooter === true ? true : false
+    );
+    set(
+        action,
         "screenConfig.components.div.children.footer.children.submitButton.visible",
         role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
     );
+
+    if ((bookingTimeStamp < currentTimeStamp) && refundSecAmount > 0) {
+        showFooter === true
+        set(
+            action,
+            "screenConfig.components.div.children.footer.visible",
+            showFooter === true ? true : false
+        );
+        set(
+            action,
+            "screenConfig.components.div.children.footer.children.refundSecurityFeeButton.visible",
+            showFooter === true ? true : false
+        );
+    }
 };
 
 const setSearchResponse = async (
@@ -159,6 +207,12 @@ const setSearchResponse = async (
         []
     );
 
+    let fromDate = get(
+        state.screenConfiguration.preparedFinalObject,
+        "Booking.bkFromDate",
+        []
+    );
+
     let baseCharge = await getPerDayRateCgb(venue)
     dispatch(prepareFinalObject("BaseCharge", `  @ Rs.${baseCharge.data.ratePerDay}/day`));
     dispatch(
@@ -170,7 +224,7 @@ const setSearchResponse = async (
         "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus",
         {}
     );
-    if (bookingStatus === "APPLIED") {
+    if (bookingStatus === "APPLIED" || bookingStatus === "PENDING_FOR_APPROVAL_CLEARK_DEO" || bookingStatus === "REFUND_APPROVED" || bookingStatus === "REJECTED") {
         await generageBillCollection(state, dispatch, applicationNumber, tenantId)
     } else {
         await generateBill(state, dispatch, applicationNumber, tenantId, "BOOKING_BRANCH_SERVICES.BOOKING_COMMERCIAL_GROUND");
@@ -179,7 +233,7 @@ const setSearchResponse = async (
 
 
     localStorageSet("bookingStatus", bookingStatus);
-    HideshowFooter(action, bookingStatus);
+    HideshowFooter(action, bookingStatus,fromDate, state);
 
     prepareDocumentsView(state, dispatch);
 
@@ -305,7 +359,7 @@ const screenConfig = {
                     // remarksSummary: remarksSummary,
                 }),
                 // break: getBreak(),
-                // footer: footer,
+                footer: footerForCg,
             }
         }
     }
