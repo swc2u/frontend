@@ -2,9 +2,8 @@ import {
     getCommonCard,
     getCommonContainer,
     getCommonHeader,
-    getTextField,
-    getCommonGrayCard,
-    getPattern
+    getBreak,
+    getCommonGrayCard
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     handleScreenConfigurationFieldChange as handleField,
@@ -30,14 +29,14 @@ import set from "lodash/set";
 import {
     generageBillCollection,
     generateBill,
-    getRefundDetails,
-    getBookedRoomsPaymentDetails
+    getRefundDetails
 } from "../utils";
-import { pccSummary } from "./refundResource/pccSummary";
+import { commercialGroundSummary } from "./refundResource/cgSummary";
 
-import { estimateSummary } from "./refundResource/estimateSummary";
-
-import { footerForParkAndCC } from "./refundResource/citizenFooter";
+import {
+    getRefundEstimateSummary
+} from "./refundResource/estimateSummary";
+import { footerForSecFeeRefundParkAndCC } from "./refundResource/citizenFooter";
 import {
     footerReviewTop,
 } from "./searchResource/footer";
@@ -52,36 +51,6 @@ import { httpRequest } from "../../../../ui-utils";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code;
 let bookingStatus = "";
-
-const reasonForCancellation = getCommonCard({
-    reasonForCancellation: getCommonContainer({
-        bkRemarks: {
-            ...getTextField({
-                label: {
-                    labelName: "Booking Cancelation Reason",
-                    labelKey: "BK_PCC_CANCELLATION_REASON",
-                },
-                placeholder: {
-                    labelName: "Enter cancellation reason",
-                    labelKey: "BK_PCC_CANCELLATION_REASON_PLACEHOLDER",
-                },
-                required: true,
-                pattern: getPattern("Name"),
-                errorMessage: "Please check the missing/invalid fields, then proceed!",
-                jsonPath: "Booking.bkRemarks",
-            }),
-        }
-    })
-});
-const confirmationStatement = getCommonGrayCard({
-
-    header: getCommonHeader({
-        labelName: "Please confirm booking cancelation by clicking confirm button",
-        labelKey: "BK_PACC_CONFIRMATION_MSG",
-    })
-
-
-})
 
 const titlebar = getCommonContainer({
     header: getCommonHeader({
@@ -156,7 +125,7 @@ const HideshowFooter = (action, bookingStatus) => {
     }
     set(
         action,
-        "screenConfig.components.div.children.footer.children.cancelButton.visible",
+        "screenConfig.components.div.children.footer.children.securityFeeButton.visible",
         role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
     );
     set(
@@ -202,8 +171,6 @@ const setSearchResponse = async (
     dispatch(
         prepareFinalObject("refundData", refundDetailsResp.data[0])
     );
-    const bookedRoomsPaymentDetails = await getBookedRoomsPaymentDetails(recData[0].roomsModel, tenantId, dispatch);
-
 
     localStorageSet("bookingStatus", bookingStatus);
     HideshowFooter(action, bookingStatus);
@@ -263,18 +230,6 @@ const getMdmsData = async (action, state, dispatch) => {
             mdmsBody
         );
 
-        // let bookingCancellationRefundCalc = {
-        //     "MORETHAN30DAYS": {
-        //         "refundpercentage": 50
-        //     },
-        //     "LETTHAN30MORETHAN15DAYS": {
-        //         "refundpercentage": 25
-        //     },
-        //     "LESSTHAN15DAYS": {
-        //         "refundpercentage": 0
-        //     },
-        // }
-        // payload.MdmsRes.bookingCancellationRefundCalc = bookingCancellationRefundCalc;
         dispatch(prepareFinalObject("cancelParkCcScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
@@ -283,7 +238,7 @@ const getMdmsData = async (action, state, dispatch) => {
 
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "cancelparkccbooking",
+    name: "refundsecfeecgbooking",
     beforeInitScreen: (action, state, dispatch) => {
         const applicationNumber = getQueryArg(
             window.location.href,
@@ -303,13 +258,15 @@ const screenConfig = {
         // });
         // Set MDMS Data
         getMdmsData(action, state, dispatch).then((response) => {
-            console.log("Calling MDMS");
+
         });
         const queryObject = [
             { key: "tenantId", value: tenantId },
-            { key: "businessServices", value: "PACC" },
+            { key: "businessServices", value: "GFCP" },
         ];
         setBusinessServiceDataToLocalStorage(queryObject, dispatch);
+
+
 
         return action;
     },
@@ -337,14 +294,13 @@ const screenConfig = {
                 },
 
                 body: getCommonCard({
-                    estimateSummary: estimateSummary,
-                    pccSummary: pccSummary,
-                    reasonForCancellation: reasonForCancellation,
-                    confirmationStatement: confirmationStatement,
-
+                    estimateSummary: getRefundEstimateSummary,
+                    cgSummary: commercialGroundSummary
 
                 }),
-                footer: footerForParkAndCC,
+                footer: footerForSecFeeRefundParkAndCC
+
+
             }
         }
     }

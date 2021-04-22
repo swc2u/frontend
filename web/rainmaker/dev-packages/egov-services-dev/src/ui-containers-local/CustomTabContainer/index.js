@@ -95,7 +95,7 @@ class MultiItem extends React.Component {
     ) {
       dispatch(prepareFinalObject("ReceiptTemp[0].instrument.bank.name", ""));
       dispatch(prepareFinalObject("ReceiptTemp[0].instrument.branchName", ""));
-    } // Has to manually clear bank name and branch
+    } // Has to manually clear Bank Account Name and branch
     const keyToIndexMapping = [
       {
         index: 0,
