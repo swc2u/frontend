@@ -346,7 +346,17 @@ const setSearchResponse = async (state, dispatch, action, applicationNumber, ten
         getTextForPetNoc(nocStatus)
       )
     );
-
+    if (nocStatus != "DRAFT") { 
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.div.children.taskStatus",
+          "visible",
+          true
+        )
+      );
+  
+    }
     await setCurrentApplicationProcessInstance(state);
     HideshowEdit(state, action, nocStatus);
 
@@ -647,12 +657,11 @@ const screenConfig = {
           uiFramework: "custom-containers-local",
           componentPath: "WorkFlowContainer",
           moduleName: "egov-workflow",
-          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          visible:  false, //process.env.REACT_APP_NAME === "Citizen" ? false : true,
           props: {
             dataPath: "Licenses",
             moduleName: "PETNOC",
           }
-
         },
         body: checkForRole(roles, 'CITIZEN') ? getCommonCard({
           estimateSummary: estimateSummary,
@@ -662,9 +671,7 @@ const screenConfig = {
           documentsSummary: documentsSummary,
           taskStatusSummary: taskStatusSummary,
           undertakingButton1
-        })
-
-          :
+        }):
           getCommonCard({
             estimateSummary: estimateSummary,
             applicantSummary: applicantSummary,
