@@ -169,17 +169,21 @@ const HideshowFooter = (action, bookingStatus, fromDate,state) => {
         role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
     );
 
-    if ((bookingTimeStamp < currentTimeStamp) && refundSecAmount > 0) {
+  
+    if ((bookingTimeStamp < currentTimeStamp) && refundSecAmount > 0 && bookingStatus === "APPLIED" ) {
+     
         showFooter === true
         set(
             action,
             "screenConfig.components.div.children.footer.visible",
-            showFooter === true ? true : false
+            true
+            //showFooter === true ? true : false
         );
         set(
             action,
             "screenConfig.components.div.children.footer.children.refundSecurityFeeButton.visible",
-            showFooter === true ? true : false
+            true
+           //showFooter === true ? true : false
         );
     }
 };
