@@ -558,7 +558,20 @@ class SummaryDetails extends Component {
             </div>
           }
         ></Footer>
-      </div>
+        <style>{
+       `
+         
+           @media only screen and (max-width: 768px)
+             {
+
+               .form-without-button-cont-generic {
+                 margin-top: 100px;
+             }
+             }
+         `
+     }
+     </style>
+   </div>
     );
   }
 }

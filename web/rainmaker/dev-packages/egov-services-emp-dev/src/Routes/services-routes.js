@@ -449,7 +449,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -463,7 +463,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -477,7 +477,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -491,7 +491,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -505,7 +505,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -520,7 +520,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -808,7 +808,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -821,7 +821,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -836,7 +836,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -849,7 +849,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -863,7 +863,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -877,7 +877,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -1049,7 +1049,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
     }
