@@ -83,6 +83,14 @@
   background-color: #f3e1e1;
 }
 
+.fix-for-layout-break {
+  margin-bottom: 10px;
+  position: relative;
+}
+label > .label-container {
+  display: inline-block !important;
+}
+
 [labelId="demo-controlled-open-select-label-button"] [class*="MuiSelect-selectMenu-"] {
   padding-top: 25px;
   padding-bottom: 25px;

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import formHOC from "egov-ui-kit/hocs/form";
 import { Screen } from "modules/common";
-import PaccCancelledApproveForm from "./components/PaccCancelledApproveForm";
+import PaccCancelledApproveForm from "./components/PaccCancelledApproveForm"; 
 import { fetchApplications, fetchResponseForRefdunf, fetchDataAfterPayment } from "egov-ui-kit/redux/bookings/actions";
 import Label from "egov-ui-kit/utils/translationNode";
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
@@ -19,9 +19,7 @@ import get from "lodash/get";
 const CancelRequestApprovedHOC = formHOC({
   formKey: "approveCancelRequest",
   isCoreConfiguration: 'false',
-})(PaccCancelledApproveForm);
-
-
+})(PaccCancelledApproveForm);   
 class CancelRequestApproved extends Component {
   state = {
     valueSelected: "",
@@ -360,7 +358,7 @@ class CancelRequestApproved extends Component {
     }
     if (val.textVal) {
       com2 = val.textVal;
-    }
+    } 
     let concatvalue = com1 + com2;
     this.props.handleFieldChange("approveCancelRequest", "comments", concatvalue);
   };
@@ -516,27 +514,43 @@ class CancelRequestApproved extends Component {
 
 
   render() {
-    let { match, userInfo, dataforRefund } = this.props;
-
-    console.log("this.props.editableRefundAmount--",this.props.editableRefundAmount)
-    let NumberReturnAmount;
-    if(this.props.editableRefundAmount){
-      NumberReturnAmount = Number(this.props.editableRefundAmount)
-    }
-    else{
-      NumberReturnAmount = null
-    }
+    
+//editableCommercialGrndRefundAmount       NotFound    
     const { handleCommentsChange, handleOptionsChange, onSubmit, handleChangeAssigneeData, handleOpen, handleClose } = this;
     const { valueSelected, commentValue, assignee, assignToMe } = this.state;
-    const { trasformData, businessServiceData, applicationNumber, Cancelstatus } = this.props;
+    const { trasformData, businessServiceData, applicationNumber, Cancelstatus,editableCommercialGrndRefundAmount,
+      applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,bkBookingVenue,
+      fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,
+    bkBankAccountHolder,
+    } = this.props;
+    console.log("this.props.editableRefundAmount--",this.props)
+    let NumberReturnAmount;
     let CheckCancelStatus;
-    if (Cancelstatus == "CANCEL") {
-      CheckCancelStatus = Cancelstatus
-    }
-    else {
-      CheckCancelStatus = "null"
-    }
-
+    let { match, userInfo, dataforRefund } = this.props;
+if(businessServiceData == "GFCP"){
+  if(editableCommercialGrndRefundAmount !== "NotFound"){
+    NumberReturnAmount = Number(editableCommercialGrndRefundAmount)
+  }
+  else{
+    NumberReturnAmount = null
+  }
+}
+else{
+  
+  if (Cancelstatus == "CANCEL") {
+    CheckCancelStatus = Cancelstatus
+  }
+  else {
+    CheckCancelStatus = "null"
+  }
+  if(this.props.editableRefundAmount){
+    NumberReturnAmount = Number(this.props.editableRefundAmount)
+  }
+  else{
+    NumberReturnAmount = null
+  }
+}
+console.log("NumberReturnAmount",NumberReturnAmount)
     const foundFirstLavels = userInfo && userInfo.roles.some(el => el.code === 'BK_CLERK' || el.code === 'BK_DEO');
     const foundSecondLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_SENIOR_ASSISTANT');
     const foundthirdLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_AUDIT_DEPARTMENT');
@@ -545,11 +559,26 @@ class CancelRequestApproved extends Component {
     const foundSixthLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_E-SAMPARK-CENTER');
     const foundSevenLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_SUPERVISOR');
     const foundEightLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_OSD');
-    return (
-
-      <CancelRequestApprovedHOC
-        // options={this.options}
-        handleOpen={handleOpen}
+    return (     
+<CancelRequestApprovedHOC
+        fatherName = {fatherName}
+        bkBookingVenue = {bkBookingVenue}
+        bkEmail = {bkEmail}
+        bkCompleteAddress = {bkCompleteAddress}
+        bkCategory = {bkCategory}
+        bkBookingPurpose = {bkBookingPurpose}
+        bkFromDate = {bkFromDate}
+        bkToDate = {bkToDate}
+        bkBankAccountNumber = {bkBankAccountNumber}
+        bkBankName = {bkBankName}
+        bkIfscCode = {bkIfscCode}
+        bkAccountType = {bkAccountType}
+        bkBankAccountHolder = {bkBankAccountHolder}
+        applicationStatus = {applicationStatus}
+        ApplicantMobileNum = {ApplicantMobileNum}
+        ApplicantName = {ApplicantName}
+        BookingType = {BookingType}
+        handleOpen={handleOpen} 
         handleClose={handleClose}
         handleChangeAssignee={handleChangeAssigneeData}
         ontextAreaChange={handleCommentsChange}
@@ -565,7 +594,7 @@ class CancelRequestApproved extends Component {
         foundSevenLavel={foundSevenLavel}
         foundEightLavel={foundEightLavel}
         assignee={assignee}
-        assignToMe={assignToMe}
+        assignToMe={assignToMe} 
         applicationNumber={applicationNumber}
         createdBy={userInfo.name}
         tenantId={userInfo.tenantId}
@@ -595,7 +624,7 @@ const mapStateToProps = (state, ownProps) => {
 
 
   let paymentDetailsForReceipt = fetchPaymentAfterPayment;
-
+     
 
   let editableRefundAmount = get(
     state,
@@ -604,21 +633,90 @@ const mapStateToProps = (state, ownProps) => {
   );
   console.log("editableRefundAmount",editableRefundAmount)  
 
+//editableCommercialGrndRefundAmount
+let editableCommercialGrndRefundAmount = get(
+  state,
+  "screenConfiguration.preparedFinalObject.editableCommercialGrndRefundAmount",
+  "NotFound"
+);
+console.log("editableCommercialGrndRefundAmount",editableCommercialGrndRefundAmount) 
+
+
   // const serviceRequestId = ownProps.match.params.applicationId;
   let trasformData = applicationData ? applicationData.bookingsModelList[0] : '';
-
+console.log(trasformData,"trasformData")
 
 
   // console.log("dataforRefund--",dataforRefund)
 
   let businessServiceData = applicationData.businessService;
 
+//applicationStatus,ApplicantMobileNum,ApplicantName,BookingType
+
+  let applicationStatus  = trasformData !== undefined && trasformData !== null ?  trasformData.bkApplicationStatus : ""
+  console.log("applicationStatus",applicationStatus)
+
+  let ApplicantMobileNum = trasformData !== undefined && trasformData !== null ?  trasformData.bkMobileNumber : ""
+  console.log("ApplicantMobileNum",ApplicantMobileNum)
+
+  let ApplicantName = trasformData !== undefined && trasformData !== null ?  trasformData.bkApplicantName : ""
+  console.log("ApplicantName",ApplicantName)
+
+  let BookingType = trasformData !== undefined && trasformData !== null ?  trasformData.bkBookingType : ""
+  console.log("BookingType",BookingType)
+
+  let fatherName = trasformData !== undefined && trasformData !== null ?  trasformData.bkFatherName : ""
+  console.log("bkFatherName",fatherName)
+
+  let bkEmail = trasformData !== undefined && trasformData !== null ?  trasformData.bkEmail : ""
+  console.log("bkEmail",bkEmail)
+
+  let bkCompleteAddress = trasformData !== undefined && trasformData !== null ?  trasformData.bkCompleteAddress : ""
+  console.log("bkCompleteAddress",bkCompleteAddress)
+
+  let bkCategory = trasformData !== undefined && trasformData !== null ?  trasformData.bkCategory : ""
+  console.log("bkCategory",bkCategory)
+
+  let bkBookingPurpose = trasformData !== undefined && trasformData !== null ?  trasformData.bkBookingPurpose : ""
+  console.log("bkBookingPurpose",bkBookingPurpose)
+
+  let bkFromDate = trasformData !== undefined && trasformData !== null ?  trasformData.bkFromDate : ""
+  console.log("bkFromDate",bkFromDate)
+  // let bkBankAccountHolder = trasformData !== undefined && trasformData !== null ?  trasformData.bkBankAccountHolder : ""
+  
+  let bkToDate = trasformData !== undefined && trasformData !== null ?  trasformData.bkToDate : ""
+  console.log("bkBookingPurpose",bkToDate)
+
+
+let bkBankAccountNumber = trasformData !== undefined && trasformData !== null ?  trasformData.bkBankAccountNumber : ""
+  console.log("bkBankAccountNumber",bkBankAccountNumber)
+
+  let bkBankName = trasformData !== undefined && trasformData !== null ?  trasformData.bkBankName : ""
+  console.log("bkBankName",bkBankName)
+
+
+  let bkIfscCode = trasformData !== undefined && trasformData !== null ?  trasformData.bkIfscCode : ""
+  console.log("bkIfscCode",bkIfscCode)
+
+
+  let bkAccountType = trasformData !== undefined && trasformData !== null ?  trasformData.bkAccountType : ""
+  console.log("bkAccountType",bkAccountType)
+
+  let bkBankAccountHolder = trasformData !== undefined && trasformData !== null ?  trasformData.bkBankAccountHolder : ""
+  console.log("bkBankAccountHolder",bkBankAccountHolder)
+
+  let bkBookingVenue = trasformData !== undefined && trasformData !== null ?  trasformData.bkBookingVenue : ""
+  console.log("bkBookingVenue",bkBookingVenue)
 
 
   let Cancelstatus = trasformData.bkStatus;
 
 
-  return { trasformData, editableRefundAmount,businessServiceData, dataforRefund, payloadone, ConRefAmt, Cancelstatus, paymentDetailsForReceipt };
+  return {businessServiceData, trasformData, editableRefundAmount,editableCommercialGrndRefundAmount, dataforRefund, payloadone, 
+    applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,
+    fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,
+    bkBankAccountHolder,bkBookingVenue,
+    ConRefAmt, Cancelstatus, paymentDetailsForReceipt };
 }
 
 
