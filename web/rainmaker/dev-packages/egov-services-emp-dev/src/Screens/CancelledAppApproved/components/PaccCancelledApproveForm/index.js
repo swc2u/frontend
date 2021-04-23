@@ -48,9 +48,16 @@ const styles = theme => ({
       outline: 0
     }
   }
-});
+}); 
 
-const NewLocationResolvedForm = ({ form, handleChangeAssignee, editableRefundAmount,assignToMe, assignee, foundFifthLavel,foundSixthLavel, foundSecondLavel,foundFourthLavel, foundthirdLavel, foundSevenLavel, foundEightLavel,foundFirstLavels, handleOpen, handleClose, options, setOpen, userInfo, classes, onSubmit, bookingservice, bookingtype, applicationNumber, createdBy, tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue,CancelStatus }) => {
+const NewLocationResolvedForm = ({ form, handleChangeAssignee, editableRefundAmount,assignToMe, assignee, foundFifthLavel,foundSixthLavel, foundSecondLavel,foundFourthLavel, foundthirdLavel, foundSevenLavel, 
+  applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,
+  fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,
+      bkBankName,bkIfscCode,bkAccountType,
+      bkBankAccountHolder, bkBookingVenue,
+  foundEightLavel,foundFirstLavels, handleOpen, handleClose, options, setOpen, userInfo, classes, onSubmit, bookingservice, bookingtype, applicationNumber, createdBy, tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue,CancelStatus }) => {
+  console.log("propsInNewLocationResolvedForm",handleChangeAssignee, editableRefundAmount,assignToMe, assignee, foundFifthLavel,foundSixthLavel, foundSecondLavel,foundFourthLavel, foundthirdLavel, foundSevenLavel, foundEightLavel,foundFirstLavels, handleOpen, handleClose, options, setOpen, userInfo, classes, onSubmit, bookingservice, bookingtype, applicationNumber, createdBy, tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue,CancelStatus)
+  console.log("editableRefundAmount,bookingservice",bookingservice,editableRefundAmount)
   if (form && form.fields) {
     let formValue = { ...form.fields };
 
@@ -77,7 +84,7 @@ const NewLocationResolvedForm = ({ form, handleChangeAssignee, editableRefundAmo
     }
     if (foundFifthLavel) {
       formValue.action.value = 'PAY';
-    }
+    } 
     if (foundSixthLavel) {
       formValue.action.value = 'OFFLINE_CANCEL';
     }
@@ -88,16 +95,30 @@ const NewLocationResolvedForm = ({ form, handleChangeAssignee, editableRefundAmo
     if (foundEightLavel) {
       formValue.action.value = 'APPROVE_OSD';
     }
+    formValue.applicationStatus.value = applicationStatus;
+    formValue.ApplicantMobileNum.value = ApplicantMobileNum;
+    formValue.ApplicantName.value = ApplicantName;
+    formValue.BookingType.value = BookingType;
     formValue.applicationNumber.value = applicationNumber;
     formValue.tenantId.value = tenantId;
-    // formValue.createdBy.value = createdBy;
     formValue.remarks.value = commentValue;
-    // formValue.createdOn.value = new Date()
     formValue.assignee.value = assignee;
     formValue.businessService.value = bookingservice;
     formValue.CancelStatus.value = CancelStatus;
     formValue.editableRefundAmount.value = editableRefundAmount;
-
+formValue.fatherName.value = fatherName;
+formValue.bkEmail.value = bkEmail;
+formValue.bkCompleteAddress.value = bkCompleteAddress;
+formValue.bkCategory.value = bkCategory;
+formValue.bkBookingPurpose.value = bkBookingPurpose;
+formValue.bkFromDate.value = bkFromDate;
+formValue.bkToDate.value = bkToDate;
+formValue.bkBankAccountNumber.value = bkBankAccountNumber;
+formValue.bkBankName.value = bkBankName;
+formValue.bkIfscCode.value = bkIfscCode;
+formValue.bkAccountType.value = bkAccountType;
+formValue.bkBankAccountHolder.value = bkBankAccountHolder;  //
+formValue.bkBookingVenue.value = bkBookingVenue;
   }
   const fields = form.fields || {};
   const submit = form.submit;

@@ -8,10 +8,12 @@ import CommonShare from "egov-ui-kit/components/CommonShare";
 import { Screen } from "modules/common";
 import pinIcon from "egov-ui-kit/assets/Location_pin.svg";
 import { resetFiles } from "egov-ui-kit/redux/form/actions";
-import Button from "@material-ui/core/Button";
+import { Button, TextField } from "components";
 import ShareIcon from "@material-ui/icons/Share";
 import get from "lodash/get"; 
+import Footer from "../../modules/footer"
 import isEqual from "lodash/isEqual";
+import Label from "egov-ui-kit/utils/translationNode"; 
 import { httpRequest } from "egov-ui-kit/utils/api";
 import { prepareFormData } from "egov-ui-kit/redux/common/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
@@ -23,6 +25,11 @@ import DocumentPreview from "../AllApplications/components/DocumentPreview"
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import DownloadFileContainer from "../../modules/DownloadFileContainer";
 import jp from "jsonpath";
+import ApproveCancellation from "../CancelledAppApproved";
+import RejectCancellation from "../CancelledAppReject";
+import RefundCard from "../ParkAndCommunityCenterAppDetails/components/RefundCard"
+import ViewBankDetails  from "../ParkAndCommunityCenterAppDetails/components/ViewBankDetails"
+
 // import {
 // 	getQueryArg,
 // 	setBusinessServiceDataToLocalStorage,
@@ -49,6 +56,7 @@ import { connect } from "react-redux";
 import "./index.css";
 
 import { convertEpochToDate, getDurationDate,getFileUrlFromAPI} from '../../modules/commonFunction'
+import DialogContainer from "../../modules/DialogContainer";
 import ActionButtonDropdown from "../../modules/ActionButtonDropdown"
 class CGApplicationDetails extends Component {
 	constructor(props) {
@@ -58,7 +66,10 @@ class CGApplicationDetails extends Component {
 			docFileData: [],
 			bookingType:'',
 			rSector:'',
-            rCategormy:''
+            rCategormy:'',
+			togglepopup: false,
+			actionTittle: "",
+			actionOnApplication: "",
 		};
 	};
 
@@ -121,6 +132,24 @@ class CGApplicationDetails extends Component {
 	          	category:categoryData
 			});
 	}
+	
+	actionButtonOnClick = async (e, complaintNo, label) => {
+		const { prepareFinalObject } = this.props;
+		let { match, userInfo, selectedComplaint } = this.props;
+		if (label == "APPROVED") {
+		  this.setState({
+			actionTittle: "Approve Application",
+		  });
+		} else {
+		  this.setState({
+			actionTittle: "Reject Application",
+		  });
+		}
+		this.setState({
+		  togglepopup: !this.state.togglepopup,
+		  actionOnApplication: label,
+		});
+	  };
 	
 	
 
@@ -686,6 +715,127 @@ const {documentMap,userInfo}=this.props;
 
 	}
 
+	OfflineRefundForCG = async () => {
+		let { selectedComplaint } = this.props;
+		console.log("propsInCancelEmpBooking--CG", selectedComplaint);
+	   
+		let Booking = {
+		  "bkRemarks": selectedComplaint.bkRemarks,
+		  "timeslots": [],
+		  "roomsModel": [],
+		  "reInitiateStatus": false,
+		  "createdDate": selectedComplaint.createdDate,
+		  "lastModifiedDate": selectedComplaint.lastModifiedDate,
+		  "bkNomineeName": selectedComplaint.bkNomineeName,
+		  "refundableSecurityMoney": null,
+		  "bkApplicationNumber": selectedComplaint.bkApplicationNumber,
+		  "bkHouseNo": selectedComplaint.bkHouseNo,
+		  "bkAddress": selectedComplaint.bkAddress,
+		  "bkSector": selectedComplaint.bkSector,
+		  "bkVillCity": selectedComplaint.bkVillCity,
+		  "bkAreaRequired": selectedComplaint.bkVillCity,
+		  "bkDuration": selectedComplaint.bkDuration,
+		  "bkCategory": selectedComplaint.bkCategory,
+		  "bkEmail": selectedComplaint.bkEmail,
+		  "bkContactNo": selectedComplaint.bkContactNo,
+		  "bkDocumentUploadedUrl": selectedComplaint.bkDocumentUploadedUrl,
+		  "bkDateCreated": selectedComplaint.bkDateCreated,
+		  "bkCreatedBy": selectedComplaint.bkCreatedBy,
+		  "bkWfStatus": selectedComplaint.bkWfStatus,
+		  "bkAmount": selectedComplaint.bkAmount,
+		  "bkPaymentStatus": selectedComplaint.bkPaymentStatus,
+		  "bkBookingType": selectedComplaint.bkBookingType,
+		  "bkFromDate": selectedComplaint.bkFromDate,
+		  "bkToDate": selectedComplaint.bkToDate,
+		  "bkApplicantName": selectedComplaint.bkApplicantName,
+		  "bkBookingPurpose": selectedComplaint.bkBookingPurpose,
+		  "bkVillage": selectedComplaint.bkVillage,
+		  "bkDimension": selectedComplaint.bkDimension,
+		  "bkLocation": selectedComplaint.bkLocation,
+		  "bkStartingDate": selectedComplaint.bkStartingDate,
+		  "bkEndingDate": selectedComplaint.bkEndingDate,
+		  "bkType": selectedComplaint.bkType,
+		  "bkResidenceProof": selectedComplaint.bkResidenceProof,
+		  "bkCleansingCharges": selectedComplaint.bkCleansingCharges,
+		  "bkRent": selectedComplaint.bkRent,
+		  "bkSurchargeRent": selectedComplaint.bkSurchargeRent,
+		  "bkFacilitationCharges": selectedComplaint.bkFacilitationCharges,
+		  "bkUtgst": selectedComplaint.bkUtgst,
+		  "bkCgst": selectedComplaint.bkCgst,
+		  "bkMobileNumber": selectedComplaint.bkMobileNumber,
+		  "bkCustomerGstNo": selectedComplaint.bkCustomerGstNo,
+		  "bkCurrentCharges": selectedComplaint.bkCurrentCharges,
+		  "bkLocationChangeAmount": selectedComplaint.bkLocationChangeAmount,
+		  "bkVenue": selectedComplaint.bkVenue,
+		  "bkDate": selectedComplaint.bkDate,
+		  "bkFatherName": selectedComplaint.bkFatherName,
+		  "bkBookingVenue": selectedComplaint.bkBookingVenue,
+		  "bkBookingDuration": selectedComplaint.bkBookingDuration,
+		  "bkIdProof": selectedComplaint.bkIdProof,
+		  "bkApplicantContact": selectedComplaint.bkApplicantContact,
+		  "bkOpenSpaceLocation": selectedComplaint.bkOpenSpaceLocation,
+		  "bkLandmark": selectedComplaint.bkLandmark,
+		  "bkRequirementArea": selectedComplaint.bkRequirementArea,
+		  "bkLocationPictures": selectedComplaint.bkLocationPictures,
+		  "bkParkOrCommunityCenter": selectedComplaint.bkParkOrCommunityCenter,
+		  "bkRefundAmount": null,
+		  "bkBankAccountNumber": selectedComplaint.bkBankAccountNumber,
+		  "bkBankName": selectedComplaint.bkBankName,
+		  "bkIfscCode": selectedComplaint.bkIfscCode,
+		  "bkAccountType": selectedComplaint.bkAccountType,
+		  "bkBankAccountHolder": selectedComplaint.bkBankAccountHolder,
+		  "bkPropertyOwnerName": selectedComplaint.bkPropertyOwnerName,
+		  "bkCompleteAddress": selectedComplaint.bkCompleteAddress,
+		  "bkResidentialOrCommercial": selectedComplaint.bkResidentialOrCommercial,
+		  "bkMaterialStorageArea": selectedComplaint.bkMaterialStorageArea,
+		  "bkPlotSketch": selectedComplaint.bkPlotSketch,
+		  "bkApplicationStatus": selectedComplaint.bkApplicationStatus,
+		  "bkTime": selectedComplaint.bkTime,
+		  "bkStatusUpdateRequest": selectedComplaint.bkStatusUpdateRequest,
+		  "bkStatus": selectedComplaint.bkStatus,
+		  "bkDriverName": selectedComplaint.bkDriverName,
+		  "bkVehicleNumber": selectedComplaint.bkVehicleNumber,
+		  "bkEstimatedDeliveryTime": selectedComplaint.bkEstimatedDeliveryTime,
+		  "bkActualDeliveryTime": selectedComplaint.bkActualDeliveryTime,
+		  "bkNormalWaterFailureRequest": selectedComplaint.bkNormalWaterFailureRequest,
+		  "bkUpdateStatusOption": selectedComplaint.bkUpdateStatusOption,
+		  "bkAddSpecialRequestDetails": selectedComplaint.bkAddSpecialRequestDetails,
+		  "bkBookingTime": selectedComplaint.bkBookingTime,
+		  "bkApprovedBy": selectedComplaint.bkApprovedBy,
+		  "bkModuleType": selectedComplaint.bkModuleType,
+		  "uuid": selectedComplaint.uuid,
+		  "tenantId": selectedComplaint.tenantId,
+		  "bkAction": "SECURITY_REFUND",
+		  "bkConstructionType": selectedComplaint.bkConstructionType,
+		  "businessService": selectedComplaint.businessService,
+		  "bkApproverName": selectedComplaint.bkApproverName,
+		  "discount": selectedComplaint.discount,
+		  "assignee": selectedComplaint.assignee,
+		  "wfDocuments": selectedComplaint.wfDocuments,
+		  "financialYear": "2020-2021",
+		  "financeBusinessService": selectedComplaint.financeBusinessService
+		}
+	  
+		console.log("BookingRequestBodyforCommercial", Booking);
+		let createAppData = {
+		  applicationType: "GFCP",
+		  applicationStatus: "",
+		  applicationId: selectedComplaint.bkApplicationNumber,
+		  tenantId: selectedComplaint.tenantId,
+		  Booking: Booking,
+		};
+		console.log("updateForSecurityRefundforCommercial", createAppData);
+		let payloadRefundCommercial = await httpRequest(
+		  "bookings/api/_update",  
+		  "_search",
+		  [],
+		  createAppData
+		);
+		console.log("payloadRefundCommercial", payloadRefundCommercial);
+		this.props.history.push(`/egov-services/apply-refund-success`);
+	  };
+	  
+
 	render() {
 		const dropbordernone = {
 			float: "right",
@@ -712,6 +862,16 @@ const {documentMap,userInfo}=this.props;
 let checkDocumentUpload = Object.entries(documentMap).length === 0;
 console.log("checkDocumentUpload",checkDocumentUpload)
 
+const foundTenthLavel =
+userInfo && userInfo.roles.some((el) => el.code === "BK_MCC_USER"); 
+console.log("foundTenthLavel",foundTenthLavel)
+
+const foundFirstLavel =
+userInfo &&
+userInfo.roles.some(
+  (el) => el.code === "BK_CLERK" || el.code === "BK_DEO"
+);
+console.log("foundFirstLavel",foundFirstLavel)
 
 		if (complaint) {
 			// if (role === "ao") {
@@ -842,18 +1002,7 @@ Application Details
 									</div>
 								</div>
 
-
-								<CGAppDetails
-									{...complaint}
-								/>
-
-                              <CGBookingDetails
-									{...complaint}
-								/> 
-                                 
-							
-
-<CGPaymentDetails
+								<CGPaymentDetails  
 	paymentDetails={paymentDetails && paymentDetails}
 	perDayRupees={perDayRupees && perDayRupees}
 	CommercialcleaningCharge={this.props.CommercialcleaningCharge}//1
@@ -862,6 +1011,35 @@ Application Details
 	CommercialTaxes={this.props.CommercialTaxes}//4
 	CommercialParkingCharges={this.props.CommercialParkingCharges}//5
 />
+
+{this.props.selectedComplaint.bkApplicationStatus == "PENDING_FOR_APPROVAL_CLEARK_DEO" || this.props.selectedComplaint.bkApplicationStatus == "REFUND_APPROVED" ? (
+                  <RefundCard
+				  CGRefundAmount = {this.props.CommercialSecurityCharges}
+				  refundableSecurityMoney={
+					this.props.selectedComplaint.refundableSecurityMoney
+	 			  }
+				  selectedComplaint={this.props.selectedComplaint}
+                  />
+                ) : (
+                  " "
+                )}
+
+								<CGAppDetails
+									{...complaint}
+								/>
+ 
+                              <CGBookingDetails
+									{...complaint}
+								/> 
+                                 
+								< ViewBankDetails 
+							    	{...complaint}
+									bkBankAccountNumber={this.props.selectedComplaint.bkBankAccountNumber}
+									bkBankName={this.props.selectedComplaint.bkBankName}
+									bkIfscCode={this.props.selectedComplaint.bkIfscCode}
+									bkAccountType={this.props.selectedComplaint.bkAccountType}
+									bkBankAccountHolder={this.props.selectedComplaint.bkBankAccountHolder}
+								/>
 
                              <div style={{
 									height: "100px",
@@ -875,6 +1053,129 @@ Application Details
 									{checkDocumentUpload == true ? " ":<button className="ViewDetailButton" data-doc={documentMap} onClick={(e) => { this.callApiForDocumentData(e) }}>VIEW</button>}
                         		</div>
 							</div>
+
+
+
+							{role === "employee" && this.props.first == true &&complaint.status == "APPLIED" && complaint.businessService == "GFCP" && this.props.RefoundCGAmount > 0 &&
+                  foundTenthLavel && (
+                    <Footer
+                      className="apply-wizard-footer"
+                      style={{ display: "flex", justifyContent: "flex-end" }}
+                      children={
+                        <div
+                          className="col-sm-12 col-xs-12"
+                          style={{ textAlign: "right" }}
+                        >
+							{console.log("hello come In footer condition",this.props.RefoundCGAmount)}
+                          {/*Security Refund*/}  
+                            <Button
+                              label={
+                                <Label
+                                  buttonLabel={true}
+                                  color="#fe7a51"
+                                  label="SECURITY REFUND"
+                                />
+                              }
+                              labelStyle={{
+                                letterSpacing: 0.7,
+                                padding: 0,
+                                color: "#fe7a51",
+                              }}
+                              buttonStyle={{ border: "1px solid #fe7a51" }}
+                              style={{ width: "15%", marginLeft: "2%" }}
+                              onClick={() => this.OfflineRefundForCG()}
+                            /> 
+                        </div>
+                      }
+                    ></Footer>
+                  )}
+
+
+{role === "employee" &&
+                  complaint.status == "PENDING_FOR_APPROVAL_CLEARK_DEO" &&
+                  foundFirstLavel && (
+                    <Footer
+                      className="apply-wizard-footer"
+                      style={{ display: "flex", justifyContent: "flex-end" }}
+                      children={
+                        <ActionButtonDropdown
+                          data={{
+                            label: {
+                              labelName: "TAKE ACTION ",
+                              labelKey: "BK_COMMON_TAKE_ACTION",
+                            },
+                            rightIcon: "arrow_drop_down",
+                            props: {
+                              variant: "outlined",
+                              style: {
+                                marginLeft: 5,
+                                marginRight: 15,
+                                backgroundColor: "#FE7A51",
+                                color: "#fff",
+                                border: "none",
+                                height: "60px",
+                                width: "250px",
+                              },
+                            },
+                            menu: [
+                              {
+                                label: {
+                                  labelName: "Approve",
+                                  labelKey: "BK_MYBK_APPROVE_ACTION_BUTTON",
+                                },
+
+                                link: () =>
+                                  this.actionButtonOnClick(
+                                    "state",
+                                    "dispatch",
+                                    "APPROVED"
+                                  ),
+                              },
+                              {
+                                label: {
+                                  labelName: "Reject",
+                                  labelKey: "BK_MYBK_REJECT_ACTION_BUTTON",
+                                },
+                                link: () =>
+                                  this.actionButtonOnClick(
+                                    "state",
+                                    "dispatch",
+                                    "REJECT"
+                                  ),
+                              },
+                            ],
+                          }}
+                        />
+                      }
+                    ></Footer>
+                    // 						<button
+                    // onClick={(e)=>this.GOTOPAY(selectedNumber)}
+                    // >PAY </button>
+                  )}
+
+
+<DialogContainer
+                  toggle={this.state.togglepopup}
+                  actionTittle={this.state.actionTittle}
+                  togglepopup={this.actionButtonOnClick}
+                  maxWidth={"md"}
+                  children={
+                    this.state.actionOnApplication == "APPROVED" ? (
+                      <ApproveCancellation
+                        applicationNumber={match.params.applicationId}
+                        matchparams={match.params}
+                        selectedComplaint={this.props.selectedComplaint}
+                         userInfo={userInfo}
+                        payloadTwo={this.props.paymentDetailsForReceipt}
+                      />
+                    ) : (
+                      <RejectCancellation
+                        applicationNumber={match.params.applicationId}
+                        userInfo={userInfo}
+                      />
+                    )
+                  }
+                />
 						</div>
 					)}
 				</Screen>
@@ -921,6 +1222,75 @@ const mapStateToProps = (state, ownProps) => {
 	let paymentDetailsForReceipt = fetchPaymentAfterPayment;
 	let paymentDetails;  //bookings.paymentData.Bill[0].billDetails[0].billAccountDetails
 	let perDayRupees;
+
+	let bookFDate = selectedComplaint ? selectedComplaint.bkFromDate : "";
+	console.log("bookFDate--", bookFDate);
+
+	let bookTDate = selectedComplaint ? selectedComplaint.bkToDate : "";
+  console.log("bookTDate--", bookTDate);
+
+  let dateFromDate = new Date(bookFDate);
+  console.log("dateFromDate--gg", dateFromDate);
+
+  let RoomDate = new Date(bookTDate);
+  console.log("RoomDate--", RoomDate);
+
+  let Todaydate = new Date();
+  console.log("Todaydate--", Todaydate);
+
+  let RoomBookingDate = "";
+  if (Todaydate.getTime() < RoomDate.getTime()) {
+    RoomBookingDate = "Valid";
+  }
+  console.log("RoomBookingDate--", RoomBookingDate);
+  let first = false;
+  if (dateFromDate < Todaydate) {
+    first = true;
+  }
+  console.log("first--", first);
+
+  let RefoundCGAmount = 0;
+  let getChargesArray;
+  let cgSecurityAmount
+  if(selectedComplaint.bkBookingType == "GROUND_FOR_COMMERCIAL_PURPOSE"){
+	 cgSecurityAmount = get(
+	  state,
+	  "bookings.fetchPaymentAfterPayment.Payments",
+	  "NotFound"
+	);
+	// bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[2].taxHeadCode
+
+	console.log("cgSecurityAmount",cgSecurityAmount)
+	if(cgSecurityAmount !== "NotFound"){
+console.log("comeInCheckNotFoundCondition")
+		getChargesArray = bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
+
+		let cgSecurityAmount2 = get(
+			state,
+			"bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails",
+			"NotFound"
+		  );
+console.log("cgSecurityAmount2",cgSecurityAmount2)
+		// getChargesArray =  cgSecurityAmount !== null && cgSecurityAmount !== undefined &&  cgSecurityAmount.length > 0 ? 
+		//      (cgSecurityAmount[0].paymentDetails !== null && cgSecurityAmount[0].paymentDetails !== undefined && cgSecurityAmount[0].paymentDetails.length >0 ?
+		// 	 (cgSecurityAmount[0].paymentDetails[0].bill !== null && cgSecurityAmount[0].paymentDetails[0].bill !== undefined ? 
+		// 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails != null && cgSecurityAmount[0].paymentDetails[0].bill.billDetails != undefined && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.length > 0 ?	
+		// 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails !== null && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails !== undefined && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails.length > 0 ? 
+		// 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails): "NotFound"): "NotFound") :"NotFound") : "NotFound" ): "NotFound"
+            console.log("getChargesArray",getChargesArray)
+
+for(let i = 0; i < getChargesArray.length; i++){
+	if(getChargesArray[i].taxHeadCode == "SECURITY_COMMERCIAL_GROUND_BOOKING_BRANCH"){
+		console.log("getChargesArray[i].taxHeadCode",getChargesArray[i].taxHeadCode)
+		console.log("getChargesArray[i]",getChargesArray[i])
+		RefoundCGAmount = getChargesArray[i].amount
+		console.log("RefoundCGAmount-in-loop",RefoundCGAmount)
+	}
+}
+console.log("RefoundCGAmount",RefoundCGAmount)
+	}
+}
+
 let OfflineInitatePayArray;
 //Variables to show Amount
 let CommercialcleaningCharge = 0;
@@ -928,11 +1298,11 @@ let CommercialFaciliCharges = 0;
 let CommercialSecurityCharges = 0;
 let CommercialTaxes = 0;
 let CommercialParkingCharges = 0;//CommercialcleaningCharge,CommercialFaciliCharges,CommercialSecurityCharges,CommercialTaxes,CommercialParkingCharges
-	if (selectedComplaint && selectedComplaint.bkApplicationStatus == "APPLIED") {
+	if (selectedComplaint && selectedComplaint.bkApplicationStatus == "APPLIED" || selectedComplaint && selectedComplaint.bkApplicationStatus == "PENDING_FOR_APPROVAL_CLEARK_DEO") {
 //bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill
 //bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
 
-		paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill ;
+paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill ;
 console.log("paymentDetails-1",paymentDetails)
 
 OfflineInitatePayArray = paymentDetails !== undefined && paymentDetails !== null ? 
@@ -941,19 +1311,28 @@ OfflineInitatePayArray = paymentDetails !== undefined && paymentDetails !== null
 (paymentDetails.billDetails[0].billAccountDetails): "NA"): "NA") : "NA"): "NA"
 console.log("OfflineInitatePayArray-1",OfflineInitatePayArray)		
 perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
-	} 
+} 
 	else { 
-		paymentDetails =paymentData && paymentData !== null && paymentData !== undefined ? 
-		(paymentData.Bill && paymentData.Bill !== undefined && paymentData.Bill !== null ? 
-		(paymentData.Bill.length > 0 ?(paymentData.Bill[0]):"NA"):"NA"): "NA";
-        console.log("paymentDetails-2",paymentDetails)
-		if(paymentDetails !== "NA"){
-			OfflineInitatePayArray = paymentData.Bill[0].billDetails !== undefined && paymentData.Bill[0].billDetails !== null ? 
-			(paymentData.Bill[0].billDetails !== undefined && paymentData.Bill[0].billDetails !== null ? (paymentData.Bill[0].billDetails.length > 0 ? (paymentData.Bill[0].billDetails[0].billAccountDetails !== undefined && paymentData.Bill[0].billDetails[0].billAccountDetails !== null ? 
-			(paymentData.Bill[0].billDetails[0].billAccountDetails ? (paymentData.Bill[0].billDetails[0].billAccountDetails.length > 0 ? (paymentData.Bill[0].billDetails[0].billAccountDetails) : "NA"): "NA"): "NA"): "NA"): "NA") : "NA"
-			}
-			console.log("OfflineInitatePayArray-1",OfflineInitatePayArray)		
-		perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
+paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill ;
+console.log("paymentDetails-In-Case-Of-Else Condition",paymentDetails)
+
+OfflineInitatePayArray = paymentDetails !== undefined && paymentDetails !== null ? 
+(paymentDetails.billDetails !== undefined && paymentDetails.billDetails !== null ? (paymentDetails.billDetails.length > 0 ? 
+(paymentDetails.billDetails[0].billAccountDetails !== undefined && paymentDetails.billDetails[0].billAccountDetails !== null ?
+(paymentDetails.billDetails[0].billAccountDetails): "NA"): "NA") : "NA"): "NA"
+console.log("OfflineInitatePayArray-else-condition",OfflineInitatePayArray)		
+perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
+		// paymentDetails =paymentData && paymentData !== null && paymentData !== undefined ? 
+		// (paymentData.Bill && paymentData.Bill !== undefined && paymentData.Bill !== null ? 
+		// (paymentData.Bill.length > 0 ?(paymentData.Bill[0]):"NA"):"NA"): "NA";
+        // console.log("paymentDetails-2",paymentDetails)
+		// if(paymentDetails !== "NA"){
+		// 	OfflineInitatePayArray = paymentData.Bill[0].billDetails !== undefined && paymentData.Bill[0].billDetails !== null ? 
+		// 	(paymentData.Bill[0].billDetails !== undefined && paymentData.Bill[0].billDetails !== null ? (paymentData.Bill[0].billDetails.length > 0 ? (paymentData.Bill[0].billDetails[0].billAccountDetails !== undefined && paymentData.Bill[0].billDetails[0].billAccountDetails !== null ? 
+		// 	(paymentData.Bill[0].billDetails[0].billAccountDetails ? (paymentData.Bill[0].billDetails[0].billAccountDetails.length > 0 ? (paymentData.Bill[0].billDetails[0].billAccountDetails) : "NA"): "NA"): "NA"): "NA"): "NA") : "NA"
+		// 	}
+		// 	console.log("OfflineInitatePayArray-1",OfflineInitatePayArray)		
+		// perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
 	} 
 
 	if(OfflineInitatePayArray !== "NA"){
@@ -981,18 +1360,7 @@ perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
 		historyApiData = historyObject;
 	}
 	
-	// const role =
-	// 	roleFromUserInfo(userInfo.roles, "GRO") ||
-	// 		roleFromUserInfo(userInfo.roles, "DGRO")
-	// 		? "ao"
-	// 		: roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-	// 			roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-	// 			? "eo"
-	// 			: roleFromUserInfo(userInfo.roles, "CSR")
-	// 				? "csr"
-	// 				: "employee";
-
-					const role = "employee";
+    const role = "employee";
 
 	let isAssignedToEmployee = true;
 	if (selectedComplaint && businessService) {
@@ -1056,11 +1424,11 @@ perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
 			serviceRequestId,
 			isAssignedToEmployee,
 			complaintTypeLocalised,
-		
+			first,RefoundCGAmount,selectedComplaint
 		};
 	} else {
 		return {
-			CommercialcleaningCharge,CommercialFaciliCharges,CommercialSecurityCharges,CommercialTaxes,CommercialParkingCharges,
+			CommercialcleaningCharge,CommercialFaciliCharges,CommercialSecurityCharges,CommercialTaxes,CommercialParkingCharges,selectedComplaint,
 			paymentDetails,
 			historyApiData,
 			DownloadPaymentReceiptDetailsforCG,
@@ -1076,7 +1444,7 @@ perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
 			role,
 			serviceRequestId,
 			isAssignedToEmployee,
-		
+			first,RefoundCGAmount
 		};
 	}
 };
