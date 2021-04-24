@@ -415,6 +415,17 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
         getTextAdvertisement(nocStatus)
       )
     );
+    if (nocStatus != "DRAFT") { 
+      dispatch(
+        handleField(
+          "advertisementnoc-search-preview",
+          "components.div.children.taskStatus",
+          "visible",
+          true
+        )
+      );
+  
+    }
 
     let remarksData = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].remarks", []);
 
@@ -777,7 +788,7 @@ const screenConfig = {
           uiFramework: "custom-containers-local",
           componentPath: "WorkFlowContainer",
           moduleName: "egov-workflow",
-          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          visible: false,//process.env.REACT_APP_NAME === "Citizen" ? false : true,
           props: {
             dataPath: "Licenses",
             moduleName: "ADVERTISEMENTNOC",

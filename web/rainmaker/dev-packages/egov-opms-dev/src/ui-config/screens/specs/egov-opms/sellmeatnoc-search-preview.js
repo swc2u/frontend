@@ -371,6 +371,17 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
         getTextForSellMeatNoc(nocStatus)
       )
     );
+    if (nocStatus != "DRAFT") { 
+      dispatch(
+        handleField(
+          "sellmeatnoc-search-preview",
+          "components.div.children.taskStatus",
+          "visible",
+          true
+        )
+      );
+  
+    }
 
     await setCurrentApplicationProcessInstance(state)
     HideshowEdit(state, action, nocStatus);
@@ -540,7 +551,7 @@ const screenConfig = {
           uiFramework: "custom-containers-local",
           componentPath: "WorkFlowContainer",
           moduleName: "egov-workflow",
-          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          visible: false,//process.env.REACT_APP_NAME === "Citizen" ? false : true,
           props: {
             dataPath: "Licenses",
             moduleName: "SELLMEATNOC",

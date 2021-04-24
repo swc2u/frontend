@@ -237,31 +237,137 @@ export const prepareDocumentsUploadData = async (state, dispatch, type) => {
   dispatch(prepareFinalObject("documentsContract", documentsContract));
 };
 
-export const getprintpdf = async (queryObject , api) => {
-
+export const getprintpdf = async (queryObject , api,pagename) => {
+let requestBody ={}
   try {
     store.dispatch(toggleSpinner());
    const state = store.getState();
-const {NULMSEPRequest} = state.screenConfiguration.preparedFinalObject;
+   if(pagename ==='Sep')
+   {
+    const {NULMSEPRequest} = state.screenConfiguration.preparedFinalObject;
 
-const SepApplication = [NULMSEPRequest]; 
+    const SepApplication = [NULMSEPRequest]; 
+    
+    const fileStoreIdsObj = NULMSEPRequest.applicationDocument.filter(docInfo => {
+      if(docInfo.documentType==="Photo copy of Applicant" || docInfo.documentType==="Photo of Applicant" || docInfo.documentType==="Applicant Photo – Passport Size") 
+      return docInfo.filestoreId
+      });
+      const fileStoreIds = fileStoreIdsObj[0].filestoreId;
+       const fileUrlPayload =  fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+       if(fileUrlPayload){
+        const photoUrl = getFileUrl(fileUrlPayload[fileStoreIds]);
+        SepApplication[0].applicantPhoto = photoUrl;
+        // Hard code value is set which is not get from API responce
+          SepApplication[0].corporationName = "MUNICIPAL CORPORATION CHANDIGARH";
+          SepApplication[0].corporationAddress = "New Deluxe Building, Sector 17, Chandigarh";
+          SepApplication[0].corporationContact = "+91-172-2541002, 0172-2541003";
+          SepApplication[0].corporationWebsite = "http://mcchandigarh.gov.in";
+          SepApplication[0].corporationEmail = null;
+          requestBody = {SepApplication}
+   }
+  }
+   else if(pagename ==='SMID')
+   {
+    const {NULMSMIDRequest} = state.screenConfiguration.preparedFinalObject;
 
-const fileStoreIdsObj = NULMSEPRequest.applicationDocument.filter(docInfo => {
-  if(docInfo.documentType==="Photo copy of Applicant" || docInfo.documentType==="Photo of Applicant" || docInfo.documentType==="Applicant Photo – Passport Size") 
-  return docInfo.filestoreId
-  });
-  const fileStoreIds = fileStoreIdsObj[0].filestoreId;
-   const fileUrlPayload =  fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
-   if(fileUrlPayload){
-    const photoUrl = getFileUrl(fileUrlPayload[fileStoreIds]);
-    SepApplication[0].applicantPhoto = photoUrl;
-    // Hard code value is set which is not get from API responce
-      SepApplication[0].corporationName = "MUNICIPAL CORPORATION CHANDIGARH";
-      SepApplication[0].corporationAddress = "New Deluxe Building, Sector 17, Chandigarh";
-      SepApplication[0].corporationContact = "+91-172-2541002, 0172-2541003";
-      SepApplication[0].corporationWebsite = "http://mcchandigarh.gov.in";
-      SepApplication[0].corporationEmail = null;
-   let requestBody = {SepApplication};
+    const SmidCitizenApplication = [NULMSMIDRequest]; 
+    
+    const fileStoreIdsObj = NULMSMIDRequest.documentAttachemnt.filter(docInfo => {
+      if(docInfo.documentType==="Applicant Photo – Passport Size") 
+      return docInfo.filestoreId
+      });
+      const fileStoreIds = fileStoreIdsObj[0].filestoreId;
+       const fileUrlPayload =  fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+       if(fileUrlPayload){
+        const photoUrl = getFileUrl(fileUrlPayload[fileStoreIds]);
+        SmidCitizenApplication[0].applicantPhoto = photoUrl;
+        // Hard code value is set which is not get from API responce
+        SmidCitizenApplication[0].corporationName = "MUNICIPAL CORPORATION CHANDIGARH";
+        SmidCitizenApplication[0].corporationAddress = "New Deluxe Building, Sector 17, Chandigarh";
+        SmidCitizenApplication[0].corporationContact = "+91-172-2541002, 0172-2541003";
+        SmidCitizenApplication[0].corporationWebsite = "http://mcchandigarh.gov.in";
+        SmidCitizenApplication[0].corporationEmail = null;
+          requestBody = {SmidCitizenApplication}
+
+   }
+  }
+  else if(pagename ==='SUSV')
+  {
+   const {NulmSusvRequest} = state.screenConfiguration.preparedFinalObject;
+
+   const SmidCitizenApplication = [NulmSusvRequest]; 
+   
+   const fileStoreIdsObj = NulmSusvRequest.applicationDocument.filter(docInfo => {
+     if(docInfo.documentType==="Identity Proof") 
+     return docInfo.filestoreId
+     });
+     const fileStoreIds = fileStoreIdsObj[0].filestoreId;
+      const fileUrlPayload =  fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+      if(fileUrlPayload){
+      const photoUrl = getFileUrl(fileUrlPayload[fileStoreIds]);
+       SmidCitizenApplication[0].applicantPhoto = photoUrl;
+       // Hard code value is set which is not get from API responce
+       SmidCitizenApplication[0].corporationName = "MUNICIPAL CORPORATION CHANDIGARH";
+       SmidCitizenApplication[0].corporationAddress = "New Deluxe Building, Sector 17, Chandigarh";
+       SmidCitizenApplication[0].corporationContact = "+91-172-2541002, 0172-2541003";
+       SmidCitizenApplication[0].corporationWebsite = "http://mcchandigarh.gov.in";
+       SmidCitizenApplication[0].corporationEmail = null;
+         requestBody = {SmidCitizenApplication}
+
+  }
+ }
+ else if(pagename ==='SUSV_UPDATE')//svru
+ {
+  const {NulmSusvRenewRequest} = state.screenConfiguration.preparedFinalObject;
+
+  const SmidCitizenApplication = [NulmSusvRenewRequest]; 
+  
+  // const fileStoreIdsObj = NulmSusvRenewRequest.documentAttachemnt.filter(docInfo => {
+  //   if(docInfo.documentType==="Identity Proof") 
+  //   return docInfo.filestoreId
+  //   });
+  //   const fileStoreIds = fileStoreIdsObj[0].filestoreId;
+  //    const fileUrlPayload =  fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+  //    if(fileUrlPayload){
+  //    const photoUrl = getFileUrl(fileUrlPayload[fileStoreIds]);
+  //     SmidCitizenApplication[0].applicantPhoto = photoUrl;
+      // Hard code value is set which is not get from API responce
+      SmidCitizenApplication[0].corporationName = "MUNICIPAL CORPORATION CHANDIGARH";
+      SmidCitizenApplication[0].corporationAddress = "New Deluxe Building, Sector 17, Chandigarh";
+      SmidCitizenApplication[0].corporationContact = "+91-172-2541002, 0172-2541003";
+      SmidCitizenApplication[0].corporationWebsite = "http://mcchandigarh.gov.in";
+      SmidCitizenApplication[0].corporationEmail = null;
+        requestBody = {SmidCitizenApplication}
+
+// }
+}
+else if(pagename ==='SUH')
+{
+ const {NulmSuhRequest} = state.screenConfiguration.preparedFinalObject;
+
+ const SmidCitizenApplication = [NulmSuhRequest]; 
+ 
+ // const fileStoreIdsObj = NulmSusvRenewRequest.documentAttachemnt.filter(docInfo => {
+ //   if(docInfo.documentType==="Identity Proof") 
+ //   return docInfo.filestoreId
+ //   });
+ //   const fileStoreIds = fileStoreIdsObj[0].filestoreId;
+ //    const fileUrlPayload =  fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+ //    if(fileUrlPayload){
+ //    const photoUrl = getFileUrl(fileUrlPayload[fileStoreIds]);
+ //     SmidCitizenApplication[0].applicantPhoto = photoUrl;
+     // Hard code value is set which is not get from API responce
+     SmidCitizenApplication[0].corporationName = "MUNICIPAL CORPORATION CHANDIGARH";
+     SmidCitizenApplication[0].corporationAddress = "New Deluxe Building, Sector 17, Chandigarh";
+     SmidCitizenApplication[0].corporationContact = "+91-172-2541002, 0172-2541003";
+     SmidCitizenApplication[0].corporationWebsite = "http://mcchandigarh.gov.in";
+     SmidCitizenApplication[0].corporationEmail = null;
+       requestBody = {SmidCitizenApplication}
+
+// }
+}
+
+   let requestBody = requestBody// {SepApplication};
     const response = await httpRequest(
       "post",
       api,     
@@ -271,7 +377,7 @@ const fileStoreIdsObj = NULMSEPRequest.applicationDocument.filter(docInfo => {
     );
     store.dispatch(toggleSpinner());
     return response;
-   }
+   
   } catch (error) {
     store.dispatch(
       toggleSnackbar(

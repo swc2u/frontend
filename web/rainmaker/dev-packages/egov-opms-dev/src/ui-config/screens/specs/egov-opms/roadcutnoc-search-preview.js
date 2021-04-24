@@ -402,6 +402,17 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
         getTextForRoadCuttNoc(nocStatus)
       )
     );
+    if (nocStatus != "DRAFT") { 
+      dispatch(
+        handleField(
+          "roadcutnoc-search-preview",
+          "components.div.children.taskStatus",
+          "visible",
+          true
+        )
+      );
+  
+    }
 
     let amount = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].amount", {});
     let performancebankguaranteecharges = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].performancebankguaranteecharges", {});
@@ -655,7 +666,7 @@ const screenConfig = {
           uiFramework: "custom-containers-local",
           componentPath: "WorkFlowContainer",
           moduleName: "egov-workflow",
-          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          visible: false,//process.env.REACT_APP_NAME === "Citizen" ? false : true,
           props: {
             moduleName: "ROADCUTNOC",
           }
