@@ -393,10 +393,6 @@ export const SUSVDetails = getCommonCard({
       jsonPath: "NulmSusvRequest.govermentScheme",
      //sourceJsonPath: "createScreenMdmsData.NULM.govermentScheme",
       props: {
-		style:{
-			"marginTop": "10px",
-			"paddingTop": "20px"
-		},
         optionValue: "code",
         optionLabel: "name",
         data: [
