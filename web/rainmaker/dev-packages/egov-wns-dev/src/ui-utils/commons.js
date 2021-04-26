@@ -6,7 +6,7 @@ import { getTenantId, getUserInfo, getTenantIdCommon } from "egov-ui-kit/utils/l
 import get from "lodash/get";
 import set from "lodash/set";
 import store from "redux/store";
-import { convertDateToEpoch, getCheckBoxJsonpath, getHygeneLevelJson, getLocalityHarmedJson, getSafetyNormsJson, getTranslatedLabel, ifUserRoleExists, updateDropDowns } from "../ui-config/screens/specs/utils";
+import { convertDateToEpoch,convertEpochToDate, getCheckBoxJsonpath, getHygeneLevelJson, getLocalityHarmedJson, getSafetyNormsJson, getTranslatedLabel, ifUserRoleExists, updateDropDowns } from "../ui-config/screens/specs/utils";
 import { httpRequest } from "./api";
 
 import cloneDeep from "lodash/cloneDeep";
@@ -2779,9 +2779,10 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
         //set usageCategory and subusageCategory from mdms call
         let usageCategory = GetMdmsNameBycode(state, "searchPreviewScreenMdmsData.PropertyTax.UsageType",wnsConnection[0].property.usageCategory) 
         let subusageCategory = GetMdmsNameBycode(state, "searchPreviewScreenMdmsData.PropertyTax.subUsageType",wnsConnection[0].property.subusageCategory) 
-
+let lastModifiedTime = convertEpochToDate(wnsConnection[0].auditDetails.lastModifiedTime)
         set( wnsConnection[0], `property.usageCategory`, usageCategory);
         set( wnsConnection[0], `property.subusageCategory`, subusageCategory);
+        set( wnsConnection[0], `connectionExecutionDate`, lastModifiedTime);
         queryObjectForEst = [{
             applicationNo: appNo,
             tenantId: getTenantIdCommon() !== null?getTenantIdCommon():getTenantId(),
