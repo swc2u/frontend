@@ -367,7 +367,7 @@ class CancelRequestApproved extends Component {
 
     const { valueSelected, commentValue, FinApirequestBody } = this.state;
     const { toggleSnackbarAndSetText } = this.props;
-    console.log(FinApirequestBody, "Hello Nero")
+    
     // let ResOfRefund = await httpRequest(
     //   "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/refund/_processRefund",
     //   "_search", [],
@@ -521,7 +521,7 @@ class CancelRequestApproved extends Component {
     const { trasformData, businessServiceData, applicationNumber, Cancelstatus,editableCommercialGrndRefundAmount,
       applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,bkBookingVenue,
       fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,
-    bkBankAccountHolder,
+    bkBankAccountHolder,bkNomineeName
     } = this.props;
     console.log("this.props.editableRefundAmount--",this.props)
     let NumberReturnAmount;
@@ -550,7 +550,6 @@ else{
     NumberReturnAmount = null
   }
 }
-console.log("NumberReturnAmount",NumberReturnAmount)
     const foundFirstLavels = userInfo && userInfo.roles.some(el => el.code === 'BK_CLERK' || el.code === 'BK_DEO');
     const foundSecondLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_SENIOR_ASSISTANT');
     const foundthirdLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_AUDIT_DEPARTMENT');
@@ -572,6 +571,7 @@ console.log("NumberReturnAmount",NumberReturnAmount)
         bkBankAccountNumber = {bkBankAccountNumber}
         bkBankName = {bkBankName}
         bkIfscCode = {bkIfscCode}
+        bkNomineeName = {bkNomineeName}
         bkAccountType = {bkAccountType}
         bkBankAccountHolder = {bkBankAccountHolder}
         applicationStatus = {applicationStatus}
@@ -615,8 +615,7 @@ const mapStateToProps = (state, ownProps) => {
   const { bookings = {} } = state || {};
   const { applicationData, dataforRefund } = bookings;
   const { fetchPaymentAfterPayment } = bookings;
-  // let myMobNum = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.MNumToCreateCitizen:"wrongNumber";
-  // console.log("myMobNum--",myMobNum)
+  
 
   let ConRefAmt = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.ConditionForAmount : "notFound";
 
@@ -631,82 +630,75 @@ const mapStateToProps = (state, ownProps) => {
     "screenConfiguration.preparedFinalObject.editableRefundAmount",
     []
   );
-  console.log("editableRefundAmount",editableRefundAmount)  
-
-//editableCommercialGrndRefundAmount
+ 
 let editableCommercialGrndRefundAmount = get(
   state,
   "screenConfiguration.preparedFinalObject.editableCommercialGrndRefundAmount",
   "NotFound"
 );
-console.log("editableCommercialGrndRefundAmount",editableCommercialGrndRefundAmount) 
-
-
-  // const serviceRequestId = ownProps.match.params.applicationId;
   let trasformData = applicationData ? applicationData.bookingsModelList[0] : '';
-console.log(trasformData,"trasformData")
 
-
-  // console.log("dataforRefund--",dataforRefund)
 
   let businessServiceData = applicationData.businessService;
 
 //applicationStatus,ApplicantMobileNum,ApplicantName,BookingType
 
   let applicationStatus  = trasformData !== undefined && trasformData !== null ?  trasformData.bkApplicationStatus : ""
-  console.log("applicationStatus",applicationStatus)
+  
 
   let ApplicantMobileNum = trasformData !== undefined && trasformData !== null ?  trasformData.bkMobileNumber : ""
-  console.log("ApplicantMobileNum",ApplicantMobileNum)
+  
 
   let ApplicantName = trasformData !== undefined && trasformData !== null ?  trasformData.bkApplicantName : ""
-  console.log("ApplicantName",ApplicantName)
+  
 
   let BookingType = trasformData !== undefined && trasformData !== null ?  trasformData.bkBookingType : ""
-  console.log("BookingType",BookingType)
+  
 
   let fatherName = trasformData !== undefined && trasformData !== null ?  trasformData.bkFatherName : ""
-  console.log("bkFatherName",fatherName)
+  
 
   let bkEmail = trasformData !== undefined && trasformData !== null ?  trasformData.bkEmail : ""
-  console.log("bkEmail",bkEmail)
+  
 
   let bkCompleteAddress = trasformData !== undefined && trasformData !== null ?  trasformData.bkCompleteAddress : ""
-  console.log("bkCompleteAddress",bkCompleteAddress)
+  
 
   let bkCategory = trasformData !== undefined && trasformData !== null ?  trasformData.bkCategory : ""
-  console.log("bkCategory",bkCategory)
+  
 
   let bkBookingPurpose = trasformData !== undefined && trasformData !== null ?  trasformData.bkBookingPurpose : ""
-  console.log("bkBookingPurpose",bkBookingPurpose)
+  
 
   let bkFromDate = trasformData !== undefined && trasformData !== null ?  trasformData.bkFromDate : ""
-  console.log("bkFromDate",bkFromDate)
+ 
   // let bkBankAccountHolder = trasformData !== undefined && trasformData !== null ?  trasformData.bkBankAccountHolder : ""
   
   let bkToDate = trasformData !== undefined && trasformData !== null ?  trasformData.bkToDate : ""
-  console.log("bkBookingPurpose",bkToDate)
+  
 
 
 let bkBankAccountNumber = trasformData !== undefined && trasformData !== null ?  trasformData.bkBankAccountNumber : ""
-  console.log("bkBankAccountNumber",bkBankAccountNumber)
+  
 
   let bkBankName = trasformData !== undefined && trasformData !== null ?  trasformData.bkBankName : ""
-  console.log("bkBankName",bkBankName)
+  
 
 
   let bkIfscCode = trasformData !== undefined && trasformData !== null ?  trasformData.bkIfscCode : ""
-  console.log("bkIfscCode",bkIfscCode)
-
+  
 
   let bkAccountType = trasformData !== undefined && trasformData !== null ?  trasformData.bkAccountType : ""
-  console.log("bkAccountType",bkAccountType)
+  
 
   let bkBankAccountHolder = trasformData !== undefined && trasformData !== null ?  trasformData.bkBankAccountHolder : ""
-  console.log("bkBankAccountHolder",bkBankAccountHolder)
+
 
   let bkBookingVenue = trasformData !== undefined && trasformData !== null ?  trasformData.bkBookingVenue : ""
-  console.log("bkBookingVenue",bkBookingVenue)
+ 
+
+  let bkNomineeName = trasformData !== undefined && trasformData !== null ?  trasformData.bkNomineeName : ""
+  console.log("bkNomineeName",bkNomineeName)
 
 
   let Cancelstatus = trasformData.bkStatus;
@@ -715,7 +707,7 @@ let bkBankAccountNumber = trasformData !== undefined && trasformData !== null ? 
   return {businessServiceData, trasformData, editableRefundAmount,editableCommercialGrndRefundAmount, dataforRefund, payloadone, 
     applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,
     fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,
-    bkBankAccountHolder,bkBookingVenue,
+    bkBankAccountHolder,bkBookingVenue,bkNomineeName,
     ConRefAmt, Cancelstatus, paymentDetailsForReceipt };
 }
 

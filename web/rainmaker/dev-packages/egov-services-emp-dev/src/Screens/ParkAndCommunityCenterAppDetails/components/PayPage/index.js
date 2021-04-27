@@ -54,13 +54,9 @@ class SummaryDetails extends Component {
 
   componentDidMount = async () => {
     let fetchUrl = window.location.pathname;
-    console.log(fetchUrl);
-
     let fetchApplicationNumber = fetchUrl.substring(
       fetchUrl.lastIndexOf("/") + 1
     );
-    console.log("fetchApplicationNumber--", fetchApplicationNumber);
-
     let {
       createPACCApplication,
       userInfo,
@@ -167,7 +163,6 @@ class SummaryDetails extends Component {
   };
 
   submit = async (e) => {
-    // alert("hello generate receipt")
     const {
       TotalAmount,
       billId,
@@ -185,7 +180,7 @@ class SummaryDetails extends Component {
       pddIFSC,
       pIFSC,state,selectedComplaint
     } = this.props;
-    console.log("this.props---", this.props);
+  
 
     let ppMode = paymentMode && paymentMode ? paymentMode : " ";
     let PaymentReqBody;
@@ -209,102 +204,257 @@ class SummaryDetails extends Component {
           totalAmountPaid: TotalAmount,
         },
       };
+      let EmpPayment = await httpRequest(
+        "collection-services/payments/_create?",
+        "_search",
+        [],
+        PaymentReqBody
+      );
+  
+     
+  
+      prepareFinalObject("ResponseOfCashPayment", EmpPayment);
+  
+      let ReceiptNum =
+        EmpPayment && EmpPayment
+          ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+          : "notFound";
+      
+  
+      prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+  
+      this.props.history.push(`/egov-services/success-payment`);
     }
     if (ppMode == "Cheque") {
-      PaymentReqBody = {
-        Payment: {
-          paymentDetails: [
-            {
-              businessService: "PACC",
-              billId: billId,
-              totalDue: TotalAmount,
-              totalAmountPaid: TotalAmount,
-            },
-          ],
-          tenantId: userInfo.tenantId,
-          totalDue: TotalAmount,
-          paymentMode: ppMode,
-          paidBy: ppaidBy,
-          mobileNumber: ApplicantMobNum,
-          payerName: ApplicantName,
-          transactionNumber: pChequeNo,
-          instrumentNumber: pChequeNo,
-          instrumentDate: ChnChqDate,
-          totalAmountPaid: TotalAmount,
+      if(pChequeNo !== " " && pChequeNo !== null && pChequeNo !== undefined && 
+      ChnChqDate  !== "" && ChnChqDate  !== undefined && ChnChqDate  !== ""  && 
+      this.state.ChequeNo !== "" && this.state.ChequeDate !== "" && this.state.IFSC !== "" && this.props.BranchName !== "NotFound" &&
+      this.props.BankName !== "NotFound"){
+
+if(ChnChqDate <= this.props.longtodayDate){
+  
+        PaymentReqBody = {
+          Payment: {
+            paymentDetails: [
+              {
+                businessService: "PACC",
+                billId: billId,
+                totalDue: TotalAmount,
+                totalAmountPaid: TotalAmount,
+              },
+            ],
+            tenantId: userInfo.tenantId,
+            totalDue: TotalAmount,
+            paymentMode: ppMode,
+            paidBy: ppaidBy,
+            mobileNumber: ApplicantMobNum,
+            payerName: ApplicantName,
+            transactionNumber: pChequeNo,
+            instrumentNumber: pChequeNo,
+            instrumentDate: ChnChqDate,
+            totalAmountPaid: TotalAmount,
+          },
+        };
+        let EmpPayment = await httpRequest(
+          "collection-services/payments/_create?",
+          "_search",
+          [],
+          PaymentReqBody
+        );
+    
+        
+    
+        prepareFinalObject("ResponseOfCashPayment", EmpPayment);
+    
+        let ReceiptNum =
+          EmpPayment && EmpPayment
+            ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+            : "notFound";
+        
+    
+        prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+    
+        this.props.history.push(`/egov-services/success-payment`);
+
+}
+else{
+  this.props.toggleSnackbarAndSetText(
+    true,
+    {
+      labelName: "Cheque/DD date can not be future Date",
+      labelKey: `BK_CHEQUE_DD_NOT_FUTURE_DATE`
+    },
+    "error"
+  );  
+}  
+      }
+     else{
+       
+      this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "All fields are mandatory",
+          labelKey: `BK_OFFLINE_PAYMENT_MANDATORY`
         },
-      };
+        "error"
+      ); 
+     }
     }
     if (ppMode == "DD") {
-      PaymentReqBody = {
-        Payment: {
-          paymentDetails: [
-            {
-              businessService: "PACC",
-              billId: billId,
+      if(newDDno !== " " && NewddDate !== " " && this.state.DDno !== "" &&   this.state.ddDate !== "" && this.state.ddIFSC !== "" && this.props.BranchName !== "NotFound" &&
+      this.props.BankName !== "NotFound"){
+        if(NewddDate <= this.props.longtodayDate){
+          PaymentReqBody = {
+            Payment: {
+              paymentDetails: [
+                {
+                  businessService: "PACC",
+                  billId: billId,
+                  totalDue: TotalAmount,
+                  totalAmountPaid: TotalAmount,
+                },
+              ],
+              tenantId: userInfo.tenantId,
               totalDue: TotalAmount,
+              paymentMode: ppMode,
+              paidBy: ppaidBy,
+              mobileNumber: ApplicantMobNum,
+              payerName: ApplicantName,
+              transactionNumber: newDDno,
+              instrumentNumber: newDDno,
+              instrumentDate: NewddDate,
               totalAmountPaid: TotalAmount,
             },
-          ],
-          tenantId: userInfo.tenantId,
-          totalDue: TotalAmount,
-          paymentMode: ppMode,
-          paidBy: ppaidBy,
-          mobileNumber: ApplicantMobNum,
-          payerName: ApplicantName,
-          transactionNumber: newDDno,
-          instrumentNumber: newDDno,
-          instrumentDate: NewddDate,
-          totalAmountPaid: TotalAmount,
-        },
-      };
+          };
+          let EmpPayment = await httpRequest(
+            "collection-services/payments/_create?",
+            "_search",
+            [],
+            PaymentReqBody
+          );
+      
+         
+      
+          prepareFinalObject("ResponseOfCashPayment", EmpPayment);
+      
+          let ReceiptNum =
+            EmpPayment && EmpPayment
+              ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+              : "notFound";
+          
+      
+          prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+      
+          this.props.history.push(`/egov-services/success-payment`);
+        }
+else{
+  this.props.toggleSnackbarAndSetText(
+    true,
+    {
+      labelName: "Cheque/DD date can not be future Date",
+      labelKey: `BK_CHEQUE_DD_NOT_FUTURE_DATE`
+    },
+    "error"
+  );  
+}  
+      }
+      else{
+        this.props.toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "All fields are mandatory",
+            labelKey: `BK_OFFLINE_PAYMENT_MANDATORY`
+          },
+          "error"
+        ); 
+       }
     }
     if (ppMode == "Card") {
-      PaymentReqBody = {
-        Payment: {
-          paymentDetails: [
-            {
-              businessService: "PACC",
-              billId: billId,
-              totalDue: TotalAmount,
-              totalAmountPaid: TotalAmount,
-            },
-          ],
-          tenantId: userInfo.tenantId,
-          totalDue: TotalAmount,
-          paymentMode: ppMode,
-          paidBy: ppaidBy,
-          mobileNumber: ApplicantMobNum,
-          payerName: ApplicantName,
-          transactionNumber: NewTrxNo,
-          instrumentNumber: NewTrxNo,
-          totalAmountPaid: TotalAmount,
-        },
-      };
+      if(NewTrxNo !== " " && this.state.TrxNo !== ""){
+        PaymentReqBody = {
+          Payment: {
+            paymentDetails: [
+              {
+                businessService: "PACC",
+                billId: billId,
+                totalDue: TotalAmount,
+                totalAmountPaid: TotalAmount,
+              },
+            ],
+            tenantId: userInfo.tenantId,
+            totalDue: TotalAmount,
+            paymentMode: ppMode,
+            paidBy: ppaidBy,
+            mobileNumber: ApplicantMobNum,
+            payerName: ApplicantName,
+            transactionNumber: NewTrxNo,
+            instrumentNumber: NewTrxNo,
+            totalAmountPaid: TotalAmount,
+          },
+        };
+        let EmpPayment = await httpRequest(
+          "collection-services/payments/_create?",
+          "_search",
+          [],
+          PaymentReqBody
+        );
+      
+        prepareFinalObject("ResponseOfCashPayment", EmpPayment);
+    
+        let ReceiptNum =
+          EmpPayment && EmpPayment
+            ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+            : "notFound";
+
+    
+        prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+    
+        this.props.history.push(`/egov-services/success-payment`);
+      }
+      else{
+        this.props.toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "All fields are mandatory",
+            labelKey: `BK_OFFLINE_PAYMENT_MANDATORY`
+          },
+          "error"
+        ); 
+       }
     }
 
-    console.log("PaymentReqBody--", PaymentReqBody);
-
-    let EmpPayment = await httpRequest(
-      "collection-services/payments/_create?",
-      "_search",
-      [],
-      PaymentReqBody
-    );
-
-    console.log("EmpPayment--", EmpPayment);
-
-    prepareFinalObject("ResponseOfCashPayment", EmpPayment);
-
-    let ReceiptNum =
-      EmpPayment && EmpPayment
-        ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
-        : "notFound";
-    console.log("ReceiptNum--", ReceiptNum);
-
-    prepareFinalObject("CollectionReceiptNum", ReceiptNum);
-
-    this.props.history.push(`/egov-services/success-payment`);
-
+  //   if(PaymentReqBody !== undefined && PaymentReqBody !== null){
+  //     let EmpPayment = await httpRequest(
+  //       "collection-services/payments/_create?",
+  //       "_search",
+  //       [],
+  //       PaymentReqBody
+  //     );
+  
+  //     console.log("EmpPayment--", EmpPayment);
+  
+  //     prepareFinalObject("ResponseOfCashPayment", EmpPayment);
+  
+  //     let ReceiptNum =
+  //       EmpPayment && EmpPayment
+  //         ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+  //         : "notFound";
+  //     console.log("ReceiptNum--", ReceiptNum);
+  
+  //     prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+  
+  //     this.props.history.push(`/egov-services/success-payment`);
+  //   }
+  //   else{
+  //     this.props.toggleSnackbarAndSetText(
+  //         true,
+  //         {
+  //           labelName: "Something went wrong.Try Again",
+  //           labelKey: `BK_CC_ROOM_GETTING_WRONG`
+  //         },
+  //         "error"
+  //       );
+  // }
 };
 
   firstStep = (e) => {
@@ -385,7 +535,6 @@ class SummaryDetails extends Component {
       billId,
       userInfo,createPACCApplicationData
     } = this.props;
-    console.log("propsInpayPage--", this.props);
     let {
       PayerName,
       mobileNo,
@@ -406,8 +555,6 @@ class SummaryDetails extends Component {
       ddBank,
       ddBranch,
     } = this.state;
-    console.log("this.state--", ChequeNo);
-    console.log("this.state--PaidBy", PaidBy);
     return (
       <div>
         <div className="form-without-button-cont-generic">
@@ -577,17 +724,17 @@ const mapStateToProps = (state) => {
   let ApplicantName = selectedComplaint
     ? selectedComplaint.bkApplicantName
     : "notFound";
-  console.log("ApplicantName--", ApplicantName);
+ 
 
   let ApplicantMobNum = selectedComplaint
     ? selectedComplaint.bkMobileNumber
     : "notFound";
-  console.log("ApplicantMobNum--", ApplicantMobNum);
+  
 
   let ApplicantAppStatus = selectedComplaint
     ? selectedComplaint.bkApplicationStatus
     : "notFound";
-  console.log("ApplicantAppStatus--", ApplicantAppStatus);
+ 
 
   let paymentDetails;
 
@@ -596,16 +743,16 @@ const mapStateToProps = (state) => {
   const { paymentData } = bookings;
 
   let paymentDataOne = paymentData ? paymentData : "wrong";
-  console.log("paymentDataOne--", paymentDataOne);
+  
 
   let checkBillLength =
     paymentDataOne != "wrong" ? paymentDataOne.Bill.length > 0 : "";
-  console.log("paymentData--", paymentData ? paymentData : "NopaymentData");
+  
   // Bill[0].totalAmount
   let billAccountDetailsArray = checkBillLength
     ? paymentDataOne.Bill[0].billDetails[0].billAccountDetails
     : "NOt found Any Array";
-  console.log("billAccountDetailsArray--", billAccountDetailsArray);
+  
   let one = 0;
   let two = 0;
   let three = 0;
@@ -699,14 +846,6 @@ const mapStateToProps = (state) => {
     }
   }
 
-  console.log("one--", one);
-  console.log("two--", two);
-  console.log("three--", three);
-  console.log("four--", four);
-  console.log("five--", five);
-  console.log("six--", six);
-  console.log("seven--", seven ? seven : "sdfg");
-
   let Amount = 0;
   let dateVenueCharge = 0;
   let Taxes = 0;
@@ -741,18 +880,18 @@ const mapStateToProps = (state) => {
         selectedComplaint.bkApplicationStatus == "OFFLINE_INITIATE") ||
       selectedComplaint.bkApplicationStatus == "OFFLINE_INITIATED"
     ) {
-      console.log("offlineApplied--", selectedComplaint.bkApplicationStatus);
+      
       if (selectedComplaint.bkPaymentStatus == "SUCCESS") {
-        console.log("one");
+      
         paymentDetails =
           fetchPaymentAfterPayment &&
           fetchPaymentAfterPayment.Payments[0] &&
           fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
-        console.log("paymentDetails-One--", paymentDetails);
+        
       } else {
-        console.log("two");
+        
         paymentDetails = paymentData ? paymentData.Bill[0] : "";
-        console.log("paymentDetails-two--", paymentDetails);
+        
       }
     } else if (
       (selectedComplaint &&
@@ -761,21 +900,13 @@ const mapStateToProps = (state) => {
         selectedComplaint.bkApplicationStatus == "OFFLINE_RE_INITIATED") ||
       selectedComplaint.bkApplicationStatus == "OFFLINE_RE_INITIATE"
     ) {
-      console.log(
-        "OFFLINE_RE_INITIATE--",
-        selectedComplaint.bkApplicationStatus
-      );
-      console.log("one+++++");
       paymentDetails = paymentData ? paymentData.Bill[0] : "";
-      console.log("paymentDetails-two--reinitiate", paymentDetails);
-
       OfflineRenArray = paymentData
         ? paymentData.Bill[0].billDetails[0].billAccountDetails
         : "NOt found Any Array";
-      console.log("OfflineRenArray--", OfflineRenArray);
+      
 
       if (selectedComplaint.bkBookingType == "Parks") {
-        console.log("park condition");
         for (let i = 0; i < OfflineRenArray.length; i++) {
           if (
             OfflineRenArray[i].taxHeadCode ==
@@ -816,7 +947,7 @@ const mapStateToProps = (state) => {
         }
       }
       if (selectedComplaint.bkBookingType == "Community Center") {
-        console.log("cc condition");
+       
         for (let i = 0; i < OfflineRenArray.length; i++) {
           if (
             OfflineRenArray[i].taxHeadCode ==
@@ -865,7 +996,7 @@ const mapStateToProps = (state) => {
         selectedComplaint.bkAction == "OFFLINE_APPLY"
       ){
         paymentDetails = paymentData ? paymentData.Bill[0] : "";
-        console.log("paymentDetails-two--reinitiate", paymentDetails);
+       
       }
       else if (
         (selectedComplaint &&
@@ -875,15 +1006,15 @@ const mapStateToProps = (state) => {
         selectedComplaint.bkAction == "OFFLINE_MODIFY"
       ){
         paymentDetails = paymentData ? paymentData.Bill[0] : "";
-        console.log("paymentDetails-two--modified", paymentDetails);
+        
 
         OfflineRenArray = paymentData
         ? paymentData.Bill[0].billDetails[0].billAccountDetails
         : "NOt found Any Array";
-      console.log("OfflineRenArray--", OfflineRenArray);
+      
 
       if (selectedComplaint.bkBookingType == "Parks") {
-        console.log("park condition");
+        
         for (let i = 0; i < OfflineRenArray.length; i++) {
           if (
             OfflineRenArray[i].taxHeadCode ==
@@ -924,7 +1055,6 @@ const mapStateToProps = (state) => {
         }
       }
       if (selectedComplaint.bkBookingType == "Community Center") {
-        console.log("cc condition");
         for (let i = 0; i < OfflineRenArray.length; i++) {
           if (
             OfflineRenArray[i].taxHeadCode ==
@@ -967,7 +1097,7 @@ const mapStateToProps = (state) => {
 
       }
     else {
-      console.log("else-last-condition--");
+      
       paymentDetails =
         fetchPaymentAfterPayment &&
         fetchPaymentAfterPayment.Payments[0] &&
@@ -978,11 +1108,11 @@ const mapStateToProps = (state) => {
   let TotalAmount = paymentDetails
     ? paymentDetails.totalAmount
     : "NotFoundAnyAmount";
-  console.log("TotalAmount--", TotalAmount);
+  
   let billId = paymentDetails
     ? paymentData.Bill[0].billDetails[0].billId
     : "NotFoundAnyBillId";
-  console.log("billId--", billId);
+  
 
   let myLocation = state.screenConfiguration.preparedFinalObject
     ? state.screenConfiguration.preparedFinalObject.availabilityCheckData
@@ -1013,7 +1143,7 @@ const mapStateToProps = (state) => {
     : " ";
 
   let ppaidBy = paidBy && paidBy ? paidBy : " ";
-  console.log("ppaidBy--", ppaidBy);
+  
 
   //IFSC
 
@@ -1022,14 +1152,14 @@ const mapStateToProps = (state) => {
     : " ";
 
   let pIFSC = IFSC && IFSC ? IFSC : " ";
-  console.log("pIFSC--", pIFSC);
+ 
 
   let ddIFSC = state.screenConfiguration.preparedFinalObject.ddIFSC
     ? state.screenConfiguration.preparedFinalObject.ddIFSC
     : " ";
 
   let pddIFSC = ddIFSC && ddIFSC ? ddIFSC : " ";
-  console.log("pddIFSC", pddIFSC);
+  
 
   //ChequeNo
   let ChequeNo = state.screenConfiguration.preparedFinalObject.ChequeNo
@@ -1037,38 +1167,75 @@ const mapStateToProps = (state) => {
     : " ";
 
   let pChequeNo = ChequeNo && ChequeNo ? ChequeNo : " ";
-  console.log("pChequeNo--", pChequeNo);
+  
 
   let NewChequeDate = state.screenConfiguration.preparedFinalObject.ChequeDate
     ? state.screenConfiguration.preparedFinalObject.ChequeDate
     : " ";
 
-  let ChnChqDate = NewChequeDate && NewChequeDate ? NewChequeDate : "";
-  console.log("ChnChqDate--", ChnChqDate);
+  let StrNewChequeDate =  NewChequeDate.toString();
+  
+
+  let changeDateNewChequeDate = Date.parse(StrNewChequeDate);
+
+  let ChnChqDate = changeDateNewChequeDate && changeDateNewChequeDate ? changeDateNewChequeDate : "";
+  
 
   let DDno = state.screenConfiguration.preparedFinalObject.DDno
     ? state.screenConfiguration.preparedFinalObject.DDno
     : " ";
 
   let newDDno = DDno && DDno ? DDno : " ";
-  console.log("newDDno--", newDDno);
+  
 
-  let DdDate = state.screenConfiguration.preparedFinalObject.ddDate
-    ? state.screenConfiguration.preparedFinalObject.ddDate
+  let DdDate = state.screenConfiguration.preparedFinalObject.ChangeDdDate
+    ? state.screenConfiguration.preparedFinalObject.ChangeDdDate
     : " ";
+ 
+  let strNewddDate = DdDate.toString();
+  
 
-  let NewddDate = DdDate && DdDate ? DdDate : " ";
-  console.log("NewddDate--", NewddDate);
+  let changeNewddDate = Date.parse(strNewddDate);
+
+
+let NewddDate = changeNewddDate && changeNewddDate ? changeNewddDate : " ";
+  
+
+let todayDate = new Date()
+
+
+let todaystrDate = todayDate.toString();
+
+
+let longtodayDate = Date.parse(todaystrDate);
+
+
   //TrxNo
   let TrxNo = state.screenConfiguration.preparedFinalObject.TrxNo
     ? state.screenConfiguration.preparedFinalObject.TrxNo
     : " ";
 
   let NewTrxNo = TrxNo && TrxNo ? TrxNo : " ";
-  console.log("NewTrxNo--", NewTrxNo);
+  
+  
+ let BankName = get(
+        state,
+        "screenConfiguration.preparedFinalObject.OfflineBank",
+        "NotFound"
+      );
+
+
+let BranchName = get(
+  state,
+  "screenConfiguration.preparedFinalObject.OfflineBranch",
+  "NotFound"
+);
 
   return {
     state,
+    longtodayDate,
+    BranchName,
+    BankName,
     one,
     two,
     three,

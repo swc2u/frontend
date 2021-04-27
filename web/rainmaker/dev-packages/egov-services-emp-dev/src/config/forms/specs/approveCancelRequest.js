@@ -26,7 +26,7 @@ const formConfig = {
       value:''
     },
     assignee: {
-      id: "Booking-type",
+      id: "Booking-assignee",
       jsonPath: "Booking.assignee",
       value:''
     },
@@ -56,62 +56,67 @@ const formConfig = {
         value:''
       },
       bkEmail: {
-        id: "Booking-type",
+        id: "Booking-bkEmail",
         jsonPath: "Booking.bkEmail",
         value:''
       },
       bkCompleteAddress: {
-        id: "Booking-type",
+        id: "Booking-bkCompleteAddress",
         jsonPath: "Booking.bkCompleteAddress",
         value:''
       },
       bkCategory: {
-        id: "Booking-type",
+        id: "Booking-bkCategory",
         jsonPath: "Booking.bkCategory",
         value:''
       },
       bkBookingPurpose: {
-        id: "Booking-type",
+        id: "Booking-bkBookingPurpose",
         jsonPath: "Booking.bkBookingPurpose",
         value:''
       },
       bkFromDate: {
-        id: "Booking-type",
+        id: "Booking-bkFromDate",
         jsonPath: "Booking.bkFromDate",
         value:''
       },
       bkToDate: {
-        id: "Booking-type",
+        id: "Booking-bkToDate",
         jsonPath: "Booking.bkToDate",
         value:''
       },
       bkBankAccountNumber: {
-        id: "Booking-type",
+        id: "Booking-bkBankAccountNumber",
         jsonPath: "Booking.bkBankAccountNumber",
         value:''
       },
       bkBankName: {
-        id: "Booking-type",
+        id: "Booking-bkBankName",
         jsonPath: "Booking.bkBankName",
         value:''
       },
+      bkNomineeName: {
+        id: "Booking-bkNomineeName",
+        jsonPath: "Booking.bkNomineeName",
+        value:''
+      },
       bkIfscCode: {
-        id: "Booking-type",
+        id: "Booking-bkIfscCode",
         jsonPath: "Booking.bkIfscCode",
         value:''
       },
       bkAccountType: {
-        id: "Booking-type",
+        id: "Booking-bkAccountType",
         jsonPath: "Booking.bkAccountType",
         value:''
       },
       bkBankAccountHolder: {
-        id: "Booking-type",
+        id: "Booking-bkBankAccountHolder",
         jsonPath: "Booking.bkBankAccountHolder",
         value:''
       },
       bkBookingVenue: {
-        id: "Booking-type",
+        id: "Booking-bkBookingVenue",
         jsonPath: "Booking.bkBookingVenue",
         value:''
       },

@@ -51,13 +51,11 @@ const styles = theme => ({
 }); 
 
 const NewLocationResolvedForm = ({ form, handleChangeAssignee, editableRefundAmount,assignToMe, assignee, foundFifthLavel,foundSixthLavel, foundSecondLavel,foundFourthLavel, foundthirdLavel, foundSevenLavel, 
-  applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,
+  applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,bkNomineeName,
   fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,
       bkBankName,bkIfscCode,bkAccountType,
       bkBankAccountHolder, bkBookingVenue,
   foundEightLavel,foundFirstLavels, handleOpen, handleClose, options, setOpen, userInfo, classes, onSubmit, bookingservice, bookingtype, applicationNumber, createdBy, tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue,CancelStatus }) => {
-  console.log("propsInNewLocationResolvedForm",handleChangeAssignee, editableRefundAmount,assignToMe, assignee, foundFifthLavel,foundSixthLavel, foundSecondLavel,foundFourthLavel, foundthirdLavel, foundSevenLavel, foundEightLavel,foundFirstLavels, handleOpen, handleClose, options, setOpen, userInfo, classes, onSubmit, bookingservice, bookingtype, applicationNumber, createdBy, tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue,CancelStatus)
-  console.log("editableRefundAmount,bookingservice",bookingservice,editableRefundAmount)
   if (form && form.fields) {
     let formValue = { ...form.fields };
 
@@ -117,8 +115,9 @@ formValue.bkBankAccountNumber.value = bkBankAccountNumber;
 formValue.bkBankName.value = bkBankName;
 formValue.bkIfscCode.value = bkIfscCode;
 formValue.bkAccountType.value = bkAccountType;
-formValue.bkBankAccountHolder.value = bkBankAccountHolder;  //
+formValue.bkBankAccountHolder.value = bkBankAccountHolder;  
 formValue.bkBookingVenue.value = bkBookingVenue;
+formValue.bkNomineeName.value = bkNomineeName;
   }
   const fields = form.fields || {};
   const submit = form.submit;
