@@ -284,6 +284,7 @@ export const DWONLOADNEWRECEIPTFORCG = {
     URL: "pdf-service/v1/_create?key=bk-payment-receipt",
     ACTION: "_search",
   },
+  
 };
 export const PermissionLetterDWNOSMCC = {
   POST: {
@@ -405,3 +406,18 @@ export const citizenCCpermissionLetter = {
     ACTION: "_search",
   },
 };
+
+export const cgRefundPaymentReceipt = {
+  POST: {
+    URL: "pdf-service/v1/_create?key=bk-cg-payment-receipt",
+    ACTION: "_search",
+  },
+};
+
+export const cgRefundApplicationform = {
+  POST: {
+    URL: "pdf-service/v1/_create?key=bk-cg-app-form",
+    ACTION: "_search",
+  },
+};
+

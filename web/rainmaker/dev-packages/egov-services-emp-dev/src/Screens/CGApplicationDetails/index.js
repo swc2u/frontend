@@ -48,7 +48,7 @@ import {
 } from "egov-ui-kit/utils/commons";
 import {
 	fetchApplications, fetchPayment, fetchperDayRate,fetchHistory, fetchDataAfterPayment,downloadPaymentReceiptforCG,downloadReceiptforCG,
-	sendMessage,downloadLetterforCG,
+	sendMessage,downloadLetterforCG,cgRefundReceipt,
 	sendMessageMedia,downloadPermissionLetterforCG,downloadApplicationforCG
 } from "egov-ui-kit/redux/bookings/actions";
 import { connect } from "react-redux";
@@ -70,6 +70,7 @@ class CGApplicationDetails extends Component {
 			togglepopup: false,
 			actionTittle: "",
 			actionOnApplication: "",
+			BankName: ''
 		};
 	};
 
@@ -100,6 +101,28 @@ class CGApplicationDetails extends Component {
 				"tenantId":userInfo.tenantId
 			}
 		);
+
+		let  RequestGateWay = [
+			{ key: "consumerCode", value: match.params.applicationId },
+			{ key: "tenantId", value: userInfo.tenantId }
+			];
+		  let payloadGateWay = await httpRequest(
+			"pg-service/transaction/v1/_search",
+			"_search",
+			RequestGateWay
+			);
+		  //Transaction[0].gateway
+		 
+		 if(payloadGateWay.Transaction.length > 0){
+	
+let gateWay = payloadGateWay.Transaction[0].gateway; 
+
+this.setState({
+   BankName: gateWay
+})
+
+}
+
 		fetchHistory([
 			{ key: "businessIds", value: match.params.applicationId }, { key: "history", value: true }, { key: "tenantId", value: userInfo.tenantId }])
 		
@@ -383,6 +406,7 @@ let BookingInfo = [{
 			// )[0].amount,
 			"taxes": this.props.CommercialTaxes,
 		"totalAmount": paymentDetailsForReceipt.Payments[0].totalAmountPaid,
+		"refundableSecurity":this.props.CommercialSecurityCharges	
 	},
 	generatedBy: {
 		generatedBy: userInfo.name,
@@ -445,114 +469,216 @@ downloadApplicationButton = async (e) => {
 downloadReceiptButton = async (e) => {
 	
 	await this.downloadReceiptFunction();
+		let documentsPreviewData;
+		const { cgRefundReceiptData,userInfo } = this.props;
+		
+		var documentsPreview = [];
+		if (cgRefundReceiptData && cgRefundReceiptData.filestoreIds.length > 0) {
+			documentsPreviewData=cgRefundReceiptData.filestoreIds[0];
+			
+	
+			documentsPreview.push({
+				title: "DOC_DOC_PICTURE",
+				fileStoreId: documentsPreviewData,
+				linkText: "View",
+			});
+			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+			let fileUrls =
+				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+			
+	
+			documentsPreview = documentsPreview.map(function (doc, index) {
+				doc["link"] =
+					(fileUrls &&
+						fileUrls[doc.fileStoreId] &&
+						fileUrls[doc.fileStoreId].split(",")[0]) ||
+					"";
+			
+				doc["name"] =
+					(fileUrls[doc.fileStoreId] &&
+						decodeURIComponent(
+							fileUrls[doc.fileStoreId]
+								.split(",")[0]
+								.split("?")[0]
+								.split("/")
+								.pop()
+								.slice(13)
+						)) ||
+					`Document - ${index + 1}`;
+				return doc;
+			});
+		
+			setTimeout(() => {
+				window.open(documentsPreview[0].link);
+			}, 100);
+			prepareFinalObject('documentsPreview', documentsPreview)
+		}
 
 	
-	let documentsPreviewData;
-	const { DownloadReceiptDetailsforCG,userInfo } = this.props;
+	// else{
+	// 	let documentsPreviewData;
+	// 	const { DownloadReceiptDetailsforCG,userInfo } = this.props;
+		
+	// 	var documentsPreview = [];
+	// 	if (DownloadReceiptDetailsforCG && DownloadReceiptDetailsforCG.filestoreIds.length > 0) {
+	// 		 documentsPreviewData=DownloadReceiptDetailsforCG.filestoreIds[0];
+			
 	
-	var documentsPreview = [];
-	if (DownloadReceiptDetailsforCG && DownloadReceiptDetailsforCG.filestoreIds.length > 0) {
-		 documentsPreviewData=DownloadReceiptDetailsforCG.filestoreIds[0];
-		
-
-		documentsPreview.push({
-			title: "DOC_DOC_PICTURE",
-			fileStoreId: documentsPreviewData,
-			linkText: "View",
-		});
-		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-		let fileUrls =
-			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-		
-
-		documentsPreview = documentsPreview.map(function (doc, index) {
-			doc["link"] =
-				(fileUrls &&
-					fileUrls[doc.fileStoreId] &&
-					fileUrls[doc.fileStoreId].split(",")[0]) ||
-				"";
-		
-			doc["name"] =
-				(fileUrls[doc.fileStoreId] &&
-					decodeURIComponent(
-						fileUrls[doc.fileStoreId]
-							.split(",")[0]
-							.split("?")[0]
-							.split("/")
-							.pop()
-							.slice(13)
-					)) ||
-				`Document - ${index + 1}`;
-			return doc;
-		});
+	// 		documentsPreview.push({
+	// 			title: "DOC_DOC_PICTURE",
+	// 			fileStoreId: documentsPreviewData,
+	// 			linkText: "View",
+	// 		});
+	// 		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+	// 		let fileUrls =
+	// 			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+			
 	
-		setTimeout(() => {
-			window.open(documentsPreview[0].link);
-		}, 100);
-		prepareFinalObject('documentsPreview', documentsPreview)
-	}
+	// 		documentsPreview = documentsPreview.map(function (doc, index) {
+	// 			doc["link"] =
+	// 				(fileUrls &&
+	// 					fileUrls[doc.fileStoreId] &&
+	// 					fileUrls[doc.fileStoreId].split(",")[0]) ||
+	// 				"";
+			
+	// 			doc["name"] =
+	// 				(fileUrls[doc.fileStoreId] &&
+	// 					decodeURIComponent(
+	// 						fileUrls[doc.fileStoreId]
+	// 							.split(",")[0]
+	// 							.split("?")[0]
+	// 							.split("/")
+	// 							.pop()
+	// 							.slice(13)
+	// 					)) ||
+	// 				`Document - ${index + 1}`;
+	// 			return doc;
+	// 		});
+		
+	// 		setTimeout(() => {
+	// 			window.open(documentsPreview[0].link);
+	// 		}, 100);
+	// 		prepareFinalObject('documentsPreview', documentsPreview)
+	// 	}
+	// }	
 }
 
 downloadReceiptFunction = async (e) => {
-	const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceiptforCG,downloadReceiptforCG, userInfo, paymentDetails } = this.props;
+	const { transformedComplaint, paymentDetailsForReceipt, cgRefundReceipt,downloadPaymentReceiptforCG,downloadReceiptforCG, userInfo, paymentDetails,selectedComplaint } = this.props;
 	const { complaint } = transformedComplaint;
 
 	var date2 = new Date();
 
 	var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
 
+	if(complaint.status == ""){
 
-	let BookingInfo = [{
-		"applicantDetail": {
-			"name": complaint && complaint.applicantName ? complaint.applicantName : 'NA',
-			"mobileNumber": complaint && complaint.bkMobileNumber ? complaint.bkMobileNumber : '',
-			"houseNo": complaint && complaint.houseNo ? complaint.houseNo : '',
-			"permanentAddress": complaint && complaint.address ? complaint.address : '',
-			"permanentCity": complaint && complaint.villageCity ? complaint.villageCity : '',
-			"sector": complaint && complaint.sector ? complaint.sector : ''
-		},
-		"booking": {
-			"bkApplicationNumber": complaint && complaint.applicationNo ? complaint.applicationNo : ''
-		},
-		"paymentInfo": {
-			"paymentDate": paymentDetailsForReceipt && convertEpochToDate(paymentDetailsForReceipt.Payments[0].transactionDate, "dayend"),
-			"transactionId": paymentDetailsForReceipt && paymentDetailsForReceipt.Payments[0].transactionNumber,
-			"bookingPeriod": getDurationDate(
-				complaint.bkFromDate,
-				complaint.bkToDate
-			),
-			"bookingItem": "Online Payment Against Booking of Commercial Ground",//
-			// "amount": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-			// 	(el) => !el.taxHeadCode.includes("TAX")
-			// )[0].amount, 
-			"amount": this.props.CommercialParkingCharges,
-			// "tax": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-			// 	(el) => el.taxHeadCode.includes("TAX")
-			// )[0].amount,
-			"tax": this.props.CommercialTaxes,
-			"grandTotal": paymentDetailsForReceipt.Payments[0].totalAmountPaid,
-			"amountInWords": this.NumInWords(
-				paymentDetailsForReceipt.Payments[0].totalAmountPaid
-			),
-			paymentItemExtraColumnLabel: "Booking Period",
-			paymentMode:
-				paymentDetailsForReceipt.Payments[0].paymentMode,
-			receiptNo:
-				paymentDetailsForReceipt.Payments[0].paymentDetails[0]
-					.receiptNumber,
-		},
-		payerInfo: {
-			payerName: paymentDetailsForReceipt.Payments[0].payerName,
-			payerMobile:
-				paymentDetailsForReceipt.Payments[0].mobileNumber,
-		},
-		generatedBy: {
-			generatedBy: userInfo.name,
-			"generatedDateTime":generatedDateTime
-		},
+		let BookingInfo = [
+			{
+				"applicantDetail": {
+					"name": complaint && complaint.applicantName ? complaint.applicantName : 'NA',
+					"mobileNumber": complaint && complaint.bkMobileNumber ? complaint.bkMobileNumber : '',
+					"houseNo": complaint && complaint.houseNo ? complaint.houseNo : '',
+					"permanentAddress": complaint && complaint.address ? complaint.address : '',
+					"permanentCity": complaint && complaint.villageCity ? complaint.villageCity : '',
+					"sector": complaint && complaint.sector ? complaint.sector : ''
+				},
+				"booking": {
+					"bkApplicationNumber": complaint && complaint.applicationNo ? complaint.applicationNo : ''
+				},
+			"paymentInfo": {
+				"paymentDate": paymentDetailsForReceipt && convertEpochToDate(paymentDetailsForReceipt.Payments[0].transactionDate, "dayend"),
+				"transactionId": paymentDetailsForReceipt && paymentDetailsForReceipt.Payments[0].transactionNumber,
+				"bookingPeriod": getDurationDate(
+					complaint.bkFromDate,
+					complaint.bkToDate
+				),
+				"bookingItem": "Online Payment Against Booking of Commercial Ground",//
+				"amount": this.props.CommercialParkingCharges,
+				"tax": this.props.CommercialTaxes,
+				"grandTotal": paymentDetailsForReceipt.Payments[0].totalAmountPaid,
+				"amountInWords": this.NumInWords(
+					paymentDetailsForReceipt.Payments[0].totalAmountPaid
+				),
+				paymentItemExtraColumnLabel: "Booking Period",
+				paymentMode:
+					paymentDetailsForReceipt.Payments[0].paymentMode,
+				receiptNo:
+					paymentDetailsForReceipt.Payments[0].paymentDetails[0]
+						.receiptNumber,
+				"bankName": this.state.BankName,
+				"refundableSecurity":selectedComplaint.refundableSecurityMoney
+			},
+			payerInfo: {
+				payerName: paymentDetailsForReceipt.Payments[0].payerName,
+				payerMobile:
+					paymentDetailsForReceipt.Payments[0].mobileNumber,
+			},
+			generatedBy: {
+				generatedBy: userInfo.name,
+				"generatedDateTime":generatedDateTime
+			}
+		}
+		]
+		cgRefundReceipt({BookingInfo: BookingInfo})
+	} 
+
+	else{
+		let BookingInfo = [{
+			"applicantDetail": {
+				"name": complaint && complaint.applicantName ? complaint.applicantName : 'NA',
+				"mobileNumber": complaint && complaint.bkMobileNumber ? complaint.bkMobileNumber : '',
+				"houseNo": complaint && complaint.houseNo ? complaint.houseNo : '',
+				"permanentAddress": complaint && complaint.address ? complaint.address : '',
+				"permanentCity": complaint && complaint.villageCity ? complaint.villageCity : '',
+				"sector": complaint && complaint.sector ? complaint.sector : ''
+			},
+			"booking": {
+				"bkApplicationNumber": complaint && complaint.applicationNo ? complaint.applicationNo : ''
+			},
+			"paymentInfo": {
+				"paymentDate": paymentDetailsForReceipt && convertEpochToDate(paymentDetailsForReceipt.Payments[0].transactionDate, "dayend"),
+				"transactionId": paymentDetailsForReceipt && paymentDetailsForReceipt.Payments[0].transactionNumber,
+				"bookingPeriod": getDurationDate(
+					complaint.bkFromDate,
+					complaint.bkToDate
+				),
+				"bookingItem": "Online Payment Against Booking of Commercial Ground",//
+				// "amount": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+				// 	(el) => !el.taxHeadCode.includes("TAX")
+				// )[0].amount, 
+				"amount": this.props.CommercialParkingCharges,
+				// "tax": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+				// 	(el) => el.taxHeadCode.includes("TAX")
+				// )[0].amount,
+				"tax": this.props.CommercialTaxes,
+				"grandTotal": paymentDetailsForReceipt.Payments[0].totalAmountPaid,
+				"amountInWords": this.NumInWords(
+					paymentDetailsForReceipt.Payments[0].totalAmountPaid
+				),
+				paymentItemExtraColumnLabel: "Booking Period",
+				paymentMode:
+					paymentDetailsForReceipt.Payments[0].paymentMode,
+				receiptNo:
+					paymentDetailsForReceipt.Payments[0].paymentDetails[0]
+						.receiptNumber,
+				"bankName": this.state.BankName,
+				"refundableSecurity":this.props.CommercialSecurityCharges		
+			},
+			payerInfo: {
+				payerName: paymentDetailsForReceipt.Payments[0].payerName,
+				payerMobile:
+					paymentDetailsForReceipt.Payments[0].mobileNumber,
+			},
+			generatedBy: {
+				generatedBy: userInfo.name,
+				"generatedDateTime":generatedDateTime
+			},
+		}
+		]
+		cgRefundReceipt({BookingInfo: BookingInfo})
+	
 	}
-	]
-	downloadReceiptforCG({BookingInfo: BookingInfo})
 }
 
 downloadPaymentReceiptButton = async (e) => {
@@ -663,17 +789,11 @@ const {documentMap,userInfo}=this.props;
 	callApiForDocumentData = async (e) => {
 		const { documentMap,userInfo } = this.props;
 		var documentsPreview = [];
-		console.log("document--",documentMap)
 		if (documentMap && Object.keys(documentMap).length > 0) {
 			let keys = Object.keys(documentMap);
-			console.log("keys--",keys)
-			console.log("Types--keys--",typeof(keys))
 			let values = Object.values(documentMap);
-			console.log("values--values",values)
 			let id = keys[0]
-			console.log("id--cg",id);
 			let	fileName = values[0];
-            console.log("fileName--",fileName)
 			documentsPreview.push({
 				title: "DOC_DOC_PICTURE",
 				fileStoreId: id,
@@ -717,8 +837,6 @@ const {documentMap,userInfo}=this.props;
 
 	OfflineRefundForCG = async () => {
 		let { selectedComplaint } = this.props;
-		console.log("propsInCancelEmpBooking--CG", selectedComplaint);
-	   
 		let Booking = {
 		  "bkRemarks": selectedComplaint.bkRemarks,
 		  "timeslots": [],
@@ -815,8 +933,6 @@ const {documentMap,userInfo}=this.props;
 		  "financialYear": "2020-2021",
 		  "financeBusinessService": selectedComplaint.financeBusinessService
 		}
-	  
-		console.log("BookingRequestBodyforCommercial", Booking);
 		let createAppData = {
 		  applicationType: "GFCP",
 		  applicationStatus: "",
@@ -824,14 +940,12 @@ const {documentMap,userInfo}=this.props;
 		  tenantId: selectedComplaint.tenantId,
 		  Booking: Booking,
 		};
-		console.log("updateForSecurityRefundforCommercial", createAppData);
 		let payloadRefundCommercial = await httpRequest(
 		  "bookings/api/_update",  
 		  "_search",
 		  [],
 		  createAppData
 		);
-		console.log("payloadRefundCommercial", payloadRefundCommercial);
 		this.props.history.push(`/egov-services/apply-refund-success`);
 	  };
 	  
@@ -860,19 +974,16 @@ const {documentMap,userInfo}=this.props;
 		let complaintLoc = {};
 		
 let checkDocumentUpload = Object.entries(documentMap).length === 0;
-console.log("checkDocumentUpload",checkDocumentUpload)
+
 
 const foundTenthLavel =
 userInfo && userInfo.roles.some((el) => el.code === "BK_MCC_USER"); 
-console.log("foundTenthLavel",foundTenthLavel)
 
 const foundFirstLavel =
 userInfo &&
 userInfo.roles.some(
   (el) => el.code === "BK_CLERK" || el.code === "BK_DEO"
 );
-console.log("foundFirstLavel",foundFirstLavel)
-
 		if (complaint) {
 			// if (role === "ao") {
 			// 	if (complaint.complaintStatus.toLowerCase() === "unassigned") {
@@ -1066,7 +1177,6 @@ Application Details
                           className="col-sm-12 col-xs-12"
                           style={{ textAlign: "right" }}
                         >
-							{console.log("hello come In footer condition",this.props.RefoundCGAmount)}
                           {/*Security Refund*/}  
                             <Button
                               label={
@@ -1200,7 +1310,7 @@ const mapStateToProps = (state, ownProps) => {
 	const { applicationData } = bookings;
 	const {DownloadPaymentReceiptDetailsforCG}=bookings;
 	const {DownloadPermissionLetterDetailsforCG}=bookings;
-	const {DownloadApplicationDetailsforCG,DownloadReceiptDetailsforCG}=bookings;
+	const {DownloadApplicationDetailsforCG,DownloadReceiptDetailsforCG,cgRefundReceiptData}=bookings;
 	const { id } = auth.userInfo;
 	const { citizenById } = common || {};
 	const { employeeById, departmentById, designationsById, cities } =
@@ -1217,37 +1327,32 @@ const mapStateToProps = (state, ownProps) => {
 	let historyObject = HistoryData ? HistoryData : ''
 	const { paymentData } = bookings;
 	const { fetchPaymentAfterPayment } = bookings;
-	console.log("fetchPaymentAfterPayment-123-comm",fetchPaymentAfterPayment)
 	const { perDayRate } = bookings;
 	let paymentDetailsForReceipt = fetchPaymentAfterPayment;
 	let paymentDetails;  //bookings.paymentData.Bill[0].billDetails[0].billAccountDetails
 	let perDayRupees;
 
 	let bookFDate = selectedComplaint ? selectedComplaint.bkFromDate : "";
-	console.log("bookFDate--", bookFDate);
+
 
 	let bookTDate = selectedComplaint ? selectedComplaint.bkToDate : "";
-  console.log("bookTDate--", bookTDate);
-
+  
   let dateFromDate = new Date(bookFDate);
-  console.log("dateFromDate--gg", dateFromDate);
 
   let RoomDate = new Date(bookTDate);
-  console.log("RoomDate--", RoomDate);
-
+ 
   let Todaydate = new Date();
-  console.log("Todaydate--", Todaydate);
+ 
 
   let RoomBookingDate = "";
   if (Todaydate.getTime() < RoomDate.getTime()) {
     RoomBookingDate = "Valid";
   }
-  console.log("RoomBookingDate--", RoomBookingDate);
+  
   let first = false;
   if (dateFromDate < Todaydate) {
     first = true;
   }
-  console.log("first--", first);
 
   let RefoundCGAmount = 0;
   let getChargesArray;
@@ -1260,9 +1365,9 @@ const mapStateToProps = (state, ownProps) => {
 	);
 	// bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[2].taxHeadCode
 
-	console.log("cgSecurityAmount",cgSecurityAmount)
+	
 	if(cgSecurityAmount !== "NotFound"){
-console.log("comeInCheckNotFoundCondition")
+
 		getChargesArray = bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
 
 		let cgSecurityAmount2 = get(
@@ -1270,24 +1375,18 @@ console.log("comeInCheckNotFoundCondition")
 			"bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails",
 			"NotFound"
 		  );
-console.log("cgSecurityAmount2",cgSecurityAmount2)
 		// getChargesArray =  cgSecurityAmount !== null && cgSecurityAmount !== undefined &&  cgSecurityAmount.length > 0 ? 
 		//      (cgSecurityAmount[0].paymentDetails !== null && cgSecurityAmount[0].paymentDetails !== undefined && cgSecurityAmount[0].paymentDetails.length >0 ?
 		// 	 (cgSecurityAmount[0].paymentDetails[0].bill !== null && cgSecurityAmount[0].paymentDetails[0].bill !== undefined ? 
 		// 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails != null && cgSecurityAmount[0].paymentDetails[0].bill.billDetails != undefined && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.length > 0 ?	
 		// 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails !== null && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails !== undefined && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails.length > 0 ? 
 		// 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails): "NotFound"): "NotFound") :"NotFound") : "NotFound" ): "NotFound"
-            console.log("getChargesArray",getChargesArray)
 
 for(let i = 0; i < getChargesArray.length; i++){
 	if(getChargesArray[i].taxHeadCode == "SECURITY_COMMERCIAL_GROUND_BOOKING_BRANCH"){
-		console.log("getChargesArray[i].taxHeadCode",getChargesArray[i].taxHeadCode)
-		console.log("getChargesArray[i]",getChargesArray[i])
 		RefoundCGAmount = getChargesArray[i].amount
-		console.log("RefoundCGAmount-in-loop",RefoundCGAmount)
 	}
 }
-console.log("RefoundCGAmount",RefoundCGAmount)
 	}
 }
 
@@ -1303,36 +1402,23 @@ let CommercialParkingCharges = 0;//CommercialcleaningCharge,CommercialFaciliChar
 //bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
 
 paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill ;
-console.log("paymentDetails-1",paymentDetails)
+
 
 OfflineInitatePayArray = paymentDetails !== undefined && paymentDetails !== null ? 
 (paymentDetails.billDetails !== undefined && paymentDetails.billDetails !== null ? (paymentDetails.billDetails.length > 0 ? 
 (paymentDetails.billDetails[0].billAccountDetails !== undefined && paymentDetails.billDetails[0].billAccountDetails !== null ?
-(paymentDetails.billDetails[0].billAccountDetails): "NA"): "NA") : "NA"): "NA"
-console.log("OfflineInitatePayArray-1",OfflineInitatePayArray)		
+(paymentDetails.billDetails[0].billAccountDetails): "NA"): "NA") : "NA"): "NA"		
 perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
 } 
 	else { 
 paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill ;
-console.log("paymentDetails-In-Case-Of-Else Condition",paymentDetails)
+
 
 OfflineInitatePayArray = paymentDetails !== undefined && paymentDetails !== null ? 
 (paymentDetails.billDetails !== undefined && paymentDetails.billDetails !== null ? (paymentDetails.billDetails.length > 0 ? 
 (paymentDetails.billDetails[0].billAccountDetails !== undefined && paymentDetails.billDetails[0].billAccountDetails !== null ?
 (paymentDetails.billDetails[0].billAccountDetails): "NA"): "NA") : "NA"): "NA"
-console.log("OfflineInitatePayArray-else-condition",OfflineInitatePayArray)		
 perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
-		// paymentDetails =paymentData && paymentData !== null && paymentData !== undefined ? 
-		// (paymentData.Bill && paymentData.Bill !== undefined && paymentData.Bill !== null ? 
-		// (paymentData.Bill.length > 0 ?(paymentData.Bill[0]):"NA"):"NA"): "NA";
-        // console.log("paymentDetails-2",paymentDetails)
-		// if(paymentDetails !== "NA"){
-		// 	OfflineInitatePayArray = paymentData.Bill[0].billDetails !== undefined && paymentData.Bill[0].billDetails !== null ? 
-		// 	(paymentData.Bill[0].billDetails !== undefined && paymentData.Bill[0].billDetails !== null ? (paymentData.Bill[0].billDetails.length > 0 ? (paymentData.Bill[0].billDetails[0].billAccountDetails !== undefined && paymentData.Bill[0].billDetails[0].billAccountDetails !== null ? 
-		// 	(paymentData.Bill[0].billDetails[0].billAccountDetails ? (paymentData.Bill[0].billDetails[0].billAccountDetails.length > 0 ? (paymentData.Bill[0].billDetails[0].billAccountDetails) : "NA"): "NA"): "NA"): "NA"): "NA") : "NA"
-		// 	}
-		// 	console.log("OfflineInitatePayArray-1",OfflineInitatePayArray)		
-		// perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
 	} 
 
 	if(OfflineInitatePayArray !== "NA"){
@@ -1424,10 +1510,10 @@ perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
 			serviceRequestId,
 			isAssignedToEmployee,
 			complaintTypeLocalised,
-			first,RefoundCGAmount,selectedComplaint
+			first,RefoundCGAmount,selectedComplaint,cgRefundReceiptData
 		};
 	} else {
-		return {
+		return {cgRefundReceiptData,
 			CommercialcleaningCharge,CommercialFaciliCharges,CommercialSecurityCharges,CommercialTaxes,CommercialParkingCharges,selectedComplaint,
 			paymentDetails,
 			historyApiData,
@@ -1456,8 +1542,9 @@ const mapDispatchToProps = dispatch => {
 		fetchperDayRate: criteria => dispatch(fetchperDayRate(criteria)),
 		fetchDataAfterPayment: criteria => dispatch(fetchDataAfterPayment(criteria)),
 
-		downloadPaymentReceiptforCG: criteria => dispatch(downloadPaymentReceiptforCG(criteria)),
+		downloadPaymentReceiptforCG: criteria => dispatch(downloadPaymentReceiptforCG(criteria)), //
 		downloadReceiptforCG: criteria => dispatch(downloadReceiptforCG(criteria)),
+		cgRefundReceipt: criteria => dispatch(cgRefundReceipt(criteria)),
 		downloadLetterforCG: criteria => dispatch(downloadLetterforCG(criteria)),
 		downloadPermissionLetterforCG: criteria => dispatch(downloadPermissionLetterforCG(criteria)),
 		downloadApplicationforCG: criteria => dispatch(downloadApplicationforCG(criteria)),
