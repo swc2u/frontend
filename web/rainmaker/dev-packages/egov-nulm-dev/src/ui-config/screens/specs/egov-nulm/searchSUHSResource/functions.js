@@ -102,6 +102,11 @@ if(toDate && toDate)
     IsValidDate = true
 
   }
+  else if(fromDate === toDate)
+  {
+    IsValidDate = true
+
+  }
   else
   {
     IsValidDate = false
