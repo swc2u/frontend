@@ -737,6 +737,36 @@ const complaintsReducer = (state = intialState, action) => {
                 error: true,
                 errorMessage: action.error,
               };
+              case actionTypes.DOWNLOAD_CG_REFUND_RECEIPT_COMPLETE:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                cgRefundReceiptData: action.payload
+              };
+            case actionTypes.DOWNLOAD_CG_REFUND_RECEIPT_ERROR:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                error: true,
+                errorMessage: action.error,
+              };
+              case actionTypes.DOWNLOAD_CG_REFUND_APPLICATION_COMPLETE:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                cgRefundApplicationData: action.payload
+              };
+            case actionTypes.DOWNLOAD_CG_REFUND_APPLICATION_ERROR:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                error: true,
+                errorMessage: action.error,
+              };
 
         case actionTypes.FACILATION_FETCH_SUCCESS:
           let applicationFetchfaciliation = transformById(action.payload.MdmsRes["BillingService"].TaxHeadMaster, "code");

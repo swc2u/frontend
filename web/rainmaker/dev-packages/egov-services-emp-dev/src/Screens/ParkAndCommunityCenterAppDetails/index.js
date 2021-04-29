@@ -1057,6 +1057,22 @@ class ApplicationDetails extends Component {
 
 if(applicationDetails.bkAction === "RE_INITIATE" || applicationDetails.bkAction === "APPLY" || applicationDetails.bkAction === "CANCEL" || applicationDetails.bkAction === "MODIFY"){
 console.log("comeInCitizenPaymentReceipt")
+
+let  RequestGateWay = [
+  { key: "consumerCode", value: match.params.applicationId },
+  { key: "tenantId", value: userInfo.tenantId }
+  ];
+  let payloadGateWay = await httpRequest(
+  "pg-service/transaction/v1/_search",
+  "_search",
+  RequestGateWay
+  );
+  //Transaction[0].gateway
+let gateWay
+ if(payloadGateWay.Transaction.length > 0){
+gateWay = payloadGateWay.Transaction[0].gateway; 
+}
+
  let BookingInfo = [
     {
       applicantDetail: {
@@ -1104,7 +1120,7 @@ console.log("comeInCitizenPaymentReceipt")
           discType: applicationDetails.bkPlotSketch,
           transactionId: this.props.offlineTransactionNum,
           totalPaymentInWords: this.NumInWords(NumAmount), //offlineTransactionDate,,
-          bankName: "",
+          bankName: gateWay,
           mcGSTN: this.state.mcGSTN,
           "custGSTN": applicationDetails.bkCustomerGstNo
         },
