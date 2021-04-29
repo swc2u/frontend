@@ -297,7 +297,7 @@ class ApplicatInfo extends Component {
       <div style={{ float: 'left', width: '100%', padding: '36px 15px' }}>
         <div className="col-xs-12" style={{ background: '#fff', padding: '15px 0' }}>
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="name"
               name="name"
@@ -329,7 +329,7 @@ class ApplicatInfo extends Component {
             />
           </div>
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="email"
               name="email"
@@ -361,7 +361,7 @@ class ApplicatInfo extends Component {
 
           </div>
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="mobile-no"
               name="mobile-no"
@@ -392,7 +392,7 @@ class ApplicatInfo extends Component {
             />
           </div>
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="houseNo"
               name="houseNo"
@@ -423,7 +423,7 @@ class ApplicatInfo extends Component {
             />
           </div>
           {this.props.venueType === "Parks" ?
-            <div className="col-sm-12 clearMob" style={{ marginTop: '19px' }}>
+            <div className="col-sm-12 clearMob labelStyle" style={{ marginTop: '19px' }}>
               <FormControl component="fieldset">
                 <FormLabel component="legend"><Label label="BK_MYBK_CATEGORY_TYPE" /></FormLabel>
                 <RadioGroup row aria-label="position" name="gender1" value={discountType} onChange={handleChangeDiscount}>
@@ -436,7 +436,7 @@ class ApplicatInfo extends Component {
                 </RadioGroup>
               </FormControl>
             </div>
-            : <div className="col-sm-12 clearMob" style={{ marginTop: '19px' }}>
+            : <div className="col-sm-12 clearMob labelStyle" style={{ marginTop: '19px' }}>
               <FormControl component="fieldset">
                 <FormLabel component="legend"><Label label="BK_MYBK_CATEGORY_TYPE" /></FormLabel>
                 <RadioGroup row aria-label="position" name="gender1" value={discountType} onChange={handleChangeDiscount}>
@@ -451,7 +451,7 @@ class ApplicatInfo extends Component {
 
           {discountType === "100%" || discountType === "50%" || discountType === "20%" || discountType === "KirayaBhog" || discountType === "ReligiousFunction" ?
             <div>
-              <div className="col-sm-6 col-xs-6">
+              <div className="col-sm-6 col-xs-12">
                 <TextField
                   id="reasonForDiscount"
                   name="reasonForDiscount"
@@ -503,7 +503,7 @@ class ApplicatInfo extends Component {
             </div>
 
             : ""}
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <div>
 
             </div>
@@ -523,6 +523,20 @@ class ApplicatInfo extends Component {
             </div>
           }></Footer>
         </div>
+        <style>{
+          `
+            
+              @media only screen and (max-width: 768px)
+                {
+
+                  .labelStyle label{
+                    width : 100%
+                   
+                }
+                }
+            `
+        }
+        </style>
       </div>
     );
   }

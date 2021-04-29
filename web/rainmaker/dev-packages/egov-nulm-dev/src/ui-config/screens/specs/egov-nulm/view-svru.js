@@ -203,9 +203,9 @@ const roleBasedValidationForFooter = () => {
 }
 let printMenu = [];
 let receiptPrintObject = {
-  label: { labelName: "Receipt", labelKey: "NULM_PRINT_SEP" },
+  label: { labelName: "Receipt", labelKey: "NULM_PRINT_SVRU" },
   link: () => {
-    downloadAcknowledgementForm("svru");
+    downloadAcknowledgementForm("SUSV_UPDATE");
   },
   leftIcon: "receipt"
 };

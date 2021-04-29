@@ -2,12 +2,14 @@ import React from "react";
 import Field from "egov-ui-kit/utils/field";
 import { Link } from "react-router-dom";
 import { Button, Card, Image ,Icon , DropDown} from "components";
+import IconButton from "material-ui/IconButton";
 import Label from "egov-ui-kit/utils/translationNode";
 import { startSMSRecevier } from "egov-ui-kit/utils/commons";
 import Hidden from "@material-ui/core/Hidden";
 import logo from "egov-ui-kit/assets/images/logo_black.png";
 import qrlogo from "egov-ui-kit/assets/images/qrImage.png";
 import "./index.css";
+import { blue } from "@material-ui/core/colors";
 
 const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,languages,onLanguageChange,languageSelected,hasLocalisation }) => {
   const fields = form.fields || {};
@@ -66,7 +68,7 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
               </div>
             </Link>
             </div>
-            <div>
+            {/* <div>
             
             <div style={{ marginBottom: "10px", position: "relative", zIndex: 10 }} className="text-right">
            
@@ -89,7 +91,7 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
          )}  
           </div>
        </div>
-            </div>
+            </div> */}
            
             
           <Button
@@ -108,6 +110,21 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
               </div>
             </Link>
             </div>
+            
+            <div style={{  position: "relative",}} className="text-center"> 
+            {/* <IconButton style={{paddingLeft:0,paddingRight:0}}>
+            <Icon action="action" name="help" color="#000" />  
+           
+              </IconButton>  */}
+                <p>
+                In case of any support or query, kindly contact us on
+                <br></br>   
+                <b  style={{  color:"blue"}} > 0172 2787200</b>
+                </p> 
+              {/* <Label bold={false} color="black" fontSize= "14px" label="In case of any support or query, kindly contact us on"/> */}
+              
+               
+              </div>
           {enableWhatsApp&&
            <Hidden mdUp>
           <div>

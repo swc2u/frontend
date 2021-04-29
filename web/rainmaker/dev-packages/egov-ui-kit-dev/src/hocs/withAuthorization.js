@@ -189,7 +189,8 @@ const withAuthorization = (options = {}) => (Component) => {
               </div>
             )}
 
-            <div className={`col-xs-12 col-sm-10 ${screencls}`} style={{ padding: 0 }}>
+            <div className={`col-xs-12 col-sm-10 ${screencls}`} >
+            {/* style={{ padding: 0 }} */}
               {authenticated ? (
                 <div>
                   {!hideTitle && role !== hideFor && (

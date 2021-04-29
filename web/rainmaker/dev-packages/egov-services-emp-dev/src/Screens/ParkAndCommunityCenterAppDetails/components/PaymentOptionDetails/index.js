@@ -191,7 +191,7 @@ return (
               // className="ViewPaymentModeButton"
               onClick={(e)=>this.GOTOCASH(e)}
               >
-              <h5 style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "28px" }}>
+              <h5 className="mobileResponsive" style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "28px" }}>
                   CASH
              
          </h5>
@@ -203,7 +203,7 @@ return (
               // className="ViewPaymentModeButton"
               onClick={(e)=>this.Second(e)}
               >
-              <h5 style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "-107px" }}>
+              <h5 className="mobileResponsive" style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "-107px" }}>
               CHEQUE 
          </h5>
       </button>
@@ -214,7 +214,7 @@ return (
               // className="ViewPaymentModeButton"
               onClick={(e)=>this.Third(e)}
               >
-              <h5 style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "-239px" }}>
+              <h5 className="mobileResponsive" style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "-239px" }}>
               DD
          </h5>
       </button>
@@ -225,7 +225,7 @@ return (
               // className="ViewPaymentModeButton"
               onClick={(e)=>this.Fourth(e)}
               >
-              <h5 style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "-367px" }}>
+              <h5 className="mobileResponsive" style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "-367px" }}>
               Credit/DebitCard
          </h5>
       </button>
@@ -1083,6 +1083,20 @@ return (
 </div>  
   }
 />         
+<style>{
+          `
+            
+              @media only screen and (max-width: 768px)
+                {
+
+                  .mobileResponsive {
+                    margin: 0px !important;
+                    margin-bottom: 10px !important;
+                }
+                }
+            `
+        }
+        </style>
 </div>
   );
 }

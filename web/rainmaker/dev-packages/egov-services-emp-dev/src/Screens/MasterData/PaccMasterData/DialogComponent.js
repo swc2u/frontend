@@ -69,6 +69,7 @@ class DialogComponent extends Component {
 
         this.props.prepareFinalObject('mdmsRes.sectorList', this.props.sectorList)
         this.props.prepareFinalObject('mdmsRes.isActiveList', [{name: "Yes"},{name: "No"}])
+        this.props.prepareFinalObject('mdmsRes.venueType', [{name: "Parks"},{name: "Community Center"}])
         if(this.props.updateData!=={})
         {
             this.setState({updateData: this.props.updateData})
@@ -91,7 +92,8 @@ class DialogComponent extends Component {
 
       this.props.prepareFinalObject('mdmsRes.sectorList', this.props.sectorList)
       this.props.prepareFinalObject('mdmsRes.isActiveList', [{name: "Yes"},{name: "No"}])
-        if(this.props.updateData !== prevProps.updateData){
+      this.props.prepareFinalObject('mdmsRes.venueType', [{name: "Parks"},{name: "Community Center"}])
+      if(this.props.updateData !== prevProps.updateData){
 
             this.setState({updateData: this.props.updateData, errors: {}})
             this.props.prepareFinalObject('updateData', this.props.updateData)
@@ -168,7 +170,7 @@ class DialogComponent extends Component {
               today.getMinutes() +
               ":" +
               today.getSeconds();
-
+              time= '00:00:00';
 
             var reqBody =  {
               
@@ -246,7 +248,7 @@ class DialogComponent extends Component {
               today.getMinutes() +
               ":" +
               today.getSeconds();
-
+              time= '00:00:00';
 
 
             var reqBody =  {
@@ -555,7 +557,7 @@ class DialogComponent extends Component {
             fullWidth="true"
             placeholder= {{
               labelName: "Cleaning Charges",
-              labelKey: "BK_PACC_ADMIN_CLEANING_CHARGES_LABEL_LABEL",
+              labelKey: "BK_PACC_ADMIN_CLEANING_CHARGES_LABEL",
             }}
             
             jsonPath="updateData.cleaningCharges"
@@ -917,35 +919,38 @@ class DialogComponent extends Component {
           </div>
           <div className="col-xs-12 col-sm-12">
           <div className="col-xs-12 col-sm-4">
-          <TextFieldContainer
-            
+          <TextFieldContainer 
             error={this.state.errors.venueType }
+            select="true"
+            optionValue="name"
+            optionLabel="name"
             label={{
               labelName : "Venue Type",
               labelKey: "BK_PACC_ADMIN_VENUE_TYPE_LABEL",
               }}
-            onChange={(e, value) => {
-              let updateData = {...this.state.updateData}
+              placeholder= {{
+                labelName: "Venue Type",
+                labelKey: "BK_PACC_ADMIN_VENUE_TYPE_LABEL",
+              }}
+            onChange={(e, key, value)=> { 
+            
+              let updateData =this.state.updateData
+              updateData.venueType= e.target.value
               let errors= {...this.state.errors}
               errors.venueType=""
-              updateData.venueType= e.target.value
-              this.setState({updateData:updateData, errors:errors})
+              this.setState({updateData: updateData, errors: errors})
               prepareFinalObject('updateData.venueType', e.target.value)
             }}
-            
-            fullWidth="true"
-            placeholder= {{
-              labelName: "Venue Type",
-              labelKey: "BK_PACC_ADMIN_VENUE_TYPE_LABEL",
-            }}
-            
+            required= "true" 
+            sourceJsonPath= "mdmsRes.venueType"
             jsonPath="updateData.venueType"
-             
-            InputLabelProps={{
-            shrink: true,
-           }}
-          />
-            </div> 
+            
+            gridDefination= {{
+                xs: 12,
+                sm: 6
+            }}
+            />
+          </div>
             <div className="col-xs-12 col-sm-4">
           <TextFieldContainer
             
@@ -1147,13 +1152,13 @@ class DialogComponent extends Component {
             optionValue="code"
             optionLabel="code"
             label={{
-                labelName : "Valid From Date",
-                labelKey: "BK_PACC_ADMIN_VALID_FROM_DATE_LABEL",
-            }}
-            placeholder= {{
-                labelName: "Valid From Date",
-                labelKey: "BK_PACC_ADMIN_VALID_FROM_DATE_LABEL",
-            }}
+              labelName : "Valid From Date",
+              labelKey: "Valid From Date",
+          }}
+          placeholder= {{
+              labelName: "Valid From Date",
+              labelKey: "Valid From Date",
+          }}
             type= "date"
             onChange={(e, key, value)=> { 
 

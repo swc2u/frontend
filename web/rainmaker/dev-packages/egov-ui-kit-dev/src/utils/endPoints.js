@@ -284,6 +284,7 @@ export const DWONLOADNEWRECEIPTFORCG = {
     URL: "pdf-service/v1/_create?key=bk-payment-receipt",
     ACTION: "_search",
   },
+  
 };
 export const PermissionLetterDWNOSMCC = {
   POST: {
@@ -384,3 +385,39 @@ export const DownloadESAMPRECEIPT = {
     ACTION: "_search",
   },
 };
+
+export const downloadPaccCitizenReceipt = {
+  POST: {
+    URL: "pdf-service/v1/_create?key=pacc-payment-receipt-new",
+    ACTION: "_search",
+  },
+};
+
+export const downloadPaccCitizenpermissionLetter = {
+  POST: {
+    URL: "pdf-service/v1/_create?key=bk-pk-booking-pl",
+    ACTION: "_search",
+  },
+};
+ 
+export const citizenCCpermissionLetter = {
+  POST: {
+    URL: "pdf-service/v1/_create?key=bk-cc-booking-pl",
+    ACTION: "_search",
+  },
+};
+
+export const cgRefundPaymentReceipt = {
+  POST: {
+    URL: "pdf-service/v1/_create?key=bk-cg-payment-receipt",
+    ACTION: "_search",
+  },
+};
+
+export const cgRefundApplicationform = {
+  POST: {
+    URL: "pdf-service/v1/_create?key=bk-cg-app-form",
+    ACTION: "_search",
+  },
+};
+

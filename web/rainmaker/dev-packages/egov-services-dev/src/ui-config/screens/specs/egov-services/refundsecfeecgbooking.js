@@ -3,6 +3,7 @@ import {
     getCommonContainer,
     getCommonHeader,
     getBreak,
+    getCommonGrayCard
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     handleScreenConfigurationFieldChange as handleField,
@@ -10,12 +11,13 @@ import {
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
-    localStorageGet,
+    getTenantId,
     localStorageSet,
     setapplicationNumber,
     getapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
 import {
+
     getFileUrlFromAPI,
     getQueryArg,
     setBusinessServiceDataToLocalStorage,
@@ -27,13 +29,14 @@ import set from "lodash/set";
 import {
     generageBillCollection,
     generateBill,
+    getRefundDetails
 } from "../utils";
-import { commercialGroundSummary } from "./summaryResource/commercialGroundSummary";
-import { applicantSummary,cgbBankSummary } from "./summaryResource/applicantSummaryCgb";
-import { documentsSummary } from "./summaryResource/documentsSummary";
-import { estimateSummary } from "./summaryResource/estimateSummary";
-import { remarksSummary } from "./searchResource/remarksSummary";
-import { footerForCg } from "./searchResource/citizenFooter";
+import { commercialGroundSummary } from "./refundResource/cgSummary";
+
+import {
+    getRefundEstimateSummary
+} from "./refundResource/estimateSummary";
+import { footerForSecFeeRefundParkAndCC } from "./refundResource/citizenFooter";
 import {
     footerReviewTop,
 } from "./searchResource/footer";
@@ -45,17 +48,13 @@ import {
     getSearchResultsView
 } from "../../../../ui-utils/commons";
 import { httpRequest } from "../../../../ui-utils";
-import {
-    getPerDayRateCgb
-
-} from "../utils";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code;
 let bookingStatus = "";
 
 const titlebar = getCommonContainer({
     header: getCommonHeader({
-        labelName: "Task Details",
+        labelName: "Application Details",
         labelKey: "BK_MY_BK_APPLICATION_DETAILS_HEADER",
     }),
     applicationNumber: {
@@ -85,7 +84,7 @@ const prepareDocumentsView = async (state, dispatch) => {
             fileName = values[0];
 
         documentsPreview.push({
-            title: "BK_GFCP_DOCUMENT",
+            title: "BK_PCC_DOCUMENT",
             fileStoreId: id,
             linkText: "View",
         });
@@ -117,74 +116,23 @@ const prepareDocumentsView = async (state, dispatch) => {
     }
 };
 
-const HideshowFooter = (action, bookingStatus, fromDate,state) => {
-    let bookingTimeStamp = new Date(fromDate).getTime();
-    let currentTimeStamp = new Date().getTime();
-
-
-    
-    var billAccountDetails = get(
-        state,
-        "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].billDetails[0].billAccountDetails",
-        []
-    );
-
-    let showFooter = false;
-    let bookingAmount = 0;
-    let refundSecAmount = 0;
-    // let refundAmount = 0;
-    for (let i = 0; i < billAccountDetails.length; i++) {
-        if (billAccountDetails[i].taxHeadCode == "SECURITY_COMMERCIAL_GROUND_BOOKING_BRANCH") {
-            bookingAmount += billAccountDetails[i].amount;
-            refundSecAmount += billAccountDetails[i].amount;
-        }
-        if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_COMMERCIAL_GROUND_BOOKING_BRANCH" ) {
-            bookingAmount += billAccountDetails[i].amount;
-        }
-    }
+const HideshowFooter = (action, bookingStatus) => {
     // Hide edit Footer
     // console.log("actionnew", action);
-   
-    if (bookingStatus === "PENDINGPAYMENT") {
+    let showFooter = false;
+    if (bookingStatus === "APPLIED") {
         showFooter = true;
-        set(
-            action,
-            "screenConfig.components.div.children.footer.visible",
-            showFooter === true ? true : false
-        );
     }
-    // set(
-    //     action,
-    //     "screenConfig.components.div.children.footer.children.cancelButton.visible",
-    //     role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
-    // );
     set(
         action,
-        "screenConfig.components.div.children.footer.visible",
-        showFooter === true ? true : false
-    );
-    set(
-        action,
-        "screenConfig.components.div.children.footer.children.submitButton.visible",
+        "screenConfig.components.div.children.footer.children.securityFeeButton.visible",
         role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
     );
-  
-    if ((bookingTimeStamp < currentTimeStamp) && refundSecAmount > 0 && bookingStatus === "APPLIED" ) {
-     
-        showFooter === true
-        set(
-            action,
-            "screenConfig.components.div.children.footer.visible",
-            true
-            //showFooter === true ? true : false
-        );
-        set(
-            action,
-            "screenConfig.components.div.children.footer.children.refundSecurityFeeButton.visible",
-            true
-           //showFooter === true ? true : false
-        );
-    }
+    set(
+        action,
+        "screenConfig.components.div.children.footer.children.editButton.visible",
+        role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
+    );
 };
 
 const setSearchResponse = async (
@@ -198,26 +146,11 @@ const setSearchResponse = async (
         { key: "tenantId", value: tenantId },
         { key: "applicationNumber", value: applicationNumber },
     ]);
-
     let recData = get(response, "bookingsModelList", []);
+
     dispatch(
         prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
     );
-
-    let venue = get(
-        state.screenConfiguration.preparedFinalObject,
-        "Booking.bkBookingVenue",
-        []
-    );
-
-    let fromDate = get(
-        state.screenConfiguration.preparedFinalObject,
-        "Booking.bkFromDate",
-        []
-    );
-
-    let baseCharge = await getPerDayRateCgb(venue)
-    dispatch(prepareFinalObject("BaseCharge", `  @ Rs.${baseCharge.data.ratePerDay}/day`));
     dispatch(
         prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
     );
@@ -227,16 +160,20 @@ const setSearchResponse = async (
         "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus",
         {}
     );
-    if (bookingStatus === "APPLIED" || bookingStatus === "PENDING_FOR_APPROVAL_CLEARK_DEO" || bookingStatus === "REFUND_APPROVED" || bookingStatus === "REJECTED") {
+    if (bookingStatus === "APPLIED") {
         await generageBillCollection(state, dispatch, applicationNumber, tenantId)
     } else {
-        await generateBill(state, dispatch, applicationNumber, tenantId, "BOOKING_BRANCH_SERVICES.BOOKING_COMMERCIAL_GROUND");
-     }
+        await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
+    }
 
+    const refundDetailsResp = await getRefundDetails(applicationNumber, tenantId);
 
+    dispatch(
+        prepareFinalObject("refundData", refundDetailsResp.data[0])
+    );
 
     localStorageSet("bookingStatus", bookingStatus);
-    HideshowFooter(action, bookingStatus,fromDate, state);
+    HideshowFooter(action, bookingStatus);
 
     prepareDocumentsView(state, dispatch);
 
@@ -257,35 +194,51 @@ const setSearchResponse = async (
     )
 };
 
-const getPaymentGatwayList = async (action, state, dispatch) => {
+const getMdmsData = async (action, state, dispatch) => {
+    let tenantId = getTenantId().split(".")[0];
+    let mdmsBody = {
+        MdmsCriteria: {
+            tenantId: tenantId,
+            moduleDetails: [
+                {
+                    moduleName: "tenant",
+                    masterDetails: [
+                        {
+                            name: "tenants",
+                        },
+                    ],
+                },
+                {
+                    moduleName: "Booking",
+                    masterDetails: [
+                        {
+                            name: "bookingCancellationRefundCalc",
+                        }
+                    ],
+                },
+
+            ],
+        },
+    };
     try {
         let payload = null;
         payload = await httpRequest(
             "post",
-            "/pg-service/gateway/v1/_search",
+            "/egov-mdms-service/v1/_search",
             "_search",
             [],
-            {}
+            mdmsBody
         );
-        let payloadprocess = [];
-        for (let index = 0; index < payload.length; index++) {
-            const element = payload[index];
-            let pay = {
-                element: element
-            }
-            payloadprocess.push(pay);
-        }
 
-        dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
+        dispatch(prepareFinalObject("cancelParkCcScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
     }
 };
 
-
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "commercialground-search-preview",
+    name: "refundsecfeecgbooking",
     beforeInitScreen: (action, state, dispatch) => {
         const applicationNumber = getQueryArg(
             window.location.href,
@@ -301,15 +254,19 @@ const screenConfig = {
         );
         setapplicationNumber(applicationNumber);
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
+        // getPaymentGatwayList(action, state, dispatch).then(response => {
+        // });
+        // Set MDMS Data
+        getMdmsData(action, state, dispatch).then((response) => {
 
-
-        getPaymentGatwayList(action, state, dispatch).then(response => {
         });
         const queryObject = [
             { key: "tenantId", value: tenantId },
             { key: "businessServices", value: "GFCP" },
         ];
         setBusinessServiceDataToLocalStorage(queryObject, dispatch);
+
+
 
         return action;
     },
@@ -332,37 +289,18 @@ const screenConfig = {
                             },
                             ...titlebar,
                         },
-                        helpSection: {
-                            uiFramework: "custom-atoms",
-                            componentPath: "Container",
-                            props: {
-                                color: "primary",
-                                style: { justifyContent: "flex-end" },
-                            },
-                            gridDefination: {
-                                xs: 12,
-                                sm: 4,
-                                align: "right",
-                            },
-                        },
+
                     },
                 },
-                taskStatus: {
-                    uiFramework: "custom-containers-local",
-                    componentPath: "WorkFlowContainer",
-                    moduleName: "egov-services",
-                    visible: true,
-                },
+
                 body: getCommonCard({
-                    estimateSummary: estimateSummary,
-                    applicantSummary: applicantSummary,
-                    commercialGroundSummary: commercialGroundSummary,
-                    cgbBankSummary:cgbBankSummary,
-                    documentsSummary: documentsSummary,
-                    // remarksSummary: remarksSummary,
+                    estimateSummary: getRefundEstimateSummary,
+                    cgSummary: commercialGroundSummary
+
                 }),
-                // break: getBreak(),
-                footer: footerForCg,
+                footer: footerForSecFeeRefundParkAndCC
+
+
             }
         }
     }

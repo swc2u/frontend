@@ -190,21 +190,21 @@ export const getSEPDetailsView = (isReview = true) => {
           labelName: "BPL NULM_SEP_BPL_NUMBER",
           labelKey: "NULM_SMID_BPL_NUMBER"
         },
-        { jsonPath: "NULMSEPRequest.bplNo" }
+        { jsonPath: "NULMSEPRequest.bplNo",callBack: checkValueForNA }
       ),
       isMinority: getLabelWithValue(
         {
           labelName: "Minority",
           labelKey: "NULM_SEP_MINORITY"
         },
-        { jsonPath: "NULMSEPRequest.isMinority" }
+        { jsonPath: "NULMSEPRequest.isMinority",callBack: checkValueForNA }
       ),
       minority: getLabelWithValue(
         {
           labelName: "Minority Religion",
           labelKey: "NULM_SEP_MINORITY_RELIGION"
         },
-        { jsonPath: "NULMSEPRequest.minority" }
+        { jsonPath: "NULMSEPRequest.minority",callBack: checkValueForNA }
       ),
       isHandicapped: getLabelWithValue(
         {
@@ -225,14 +225,14 @@ export const getSEPDetailsView = (isReview = true) => {
           labelName: "Previous experience in the line if any",
           labelKey: "NULM_SEP_PREVIOUS_EXPERIENCE_IN_THE_LINE_IF_ANY"
         },
-        { jsonPath: "NULMSEPRequest.previousExperience" }
+        { jsonPath: "NULMSEPRequest.previousExperience",callBack: checkValueForNA }
       ),
       placeOfWork: getLabelWithValue(
         {
           labelName: "Place of work whether the activity is proposed to be started",
           labelKey: "NULM_SEP_PLACE_OF_WORK_WHETHER_THE_ACTIVITY_IS_PROPOSED_TO_BE_STARTED"
         },
-        { jsonPath: "NULMSEPRequest.placeOfWork" }
+        { jsonPath: "NULMSEPRequest.placeOfWork",callBack: checkValueForNA }
       ),
 
       // bankDetails: getLabelWithValue(
@@ -247,21 +247,21 @@ export const getSEPDetailsView = (isReview = true) => {
           labelName: "Bank Name(Only in Chandigarh)",
           labelKey: "NULM_SEP_BANK_NAME"
         },
-        { jsonPath: "NULMSEPRequest.bankName" }
+        { jsonPath: "NULMSEPRequest.bankName",callBack: checkValueForNA }
       ),
       branchName: getLabelWithValue(
         {
           labelName: "Branch Name",
           labelKey: "NULM_SEP_BRANCH_NAME"
         },
-        { jsonPath: "NULMSEPRequest.branchName" }
+        { jsonPath: "NULMSEPRequest.branchName",callBack: checkValueForNA }
       ),
       accountName: getLabelWithValue(
         {
           labelName: "Acount Name",
           labelKey: "NULM_SEP_AC_NAME"
         },
-        { jsonPath: "NULMSEPRequest.accountName" }
+        { jsonPath: "NULMSEPRequest.accountName",callBack: checkValueForNA }
       ),
       noOfFamilyMembers: getLabelWithValue(
         {
@@ -312,21 +312,21 @@ export const getSEPDetailsView = (isReview = true) => {
           labelName: "Recommended by",
           labelKey: "NULM_SEP_RECOMMENDED_BY"
         },
-        { jsonPath: "NULMSEPRequest.recommendedBy" }
+        { jsonPath: "NULMSEPRequest.recommendedBy",callBack: checkValueForNA }
       ),
       representativeName: getLabelWithValue(
         {
           labelName: "Particulars of representative Name",
           labelKey: "NULM_SEP_PARTICULARS_OF_REPRESENTATIVE_NAME"
         },
-        { jsonPath: "NULMSEPRequest.representativeName" }
+        { jsonPath: "NULMSEPRequest.representativeName",callBack: checkValueForNA }
       ),
       representativeAddress: getLabelWithValue(
         {
           labelName: "Particulars of representative Address",
           labelKey: "NULM_SEP_PARTICULARS_OF_REPRESENTATIVE_ADDRESS"
         },
-        { jsonPath: "NULMSEPRequest.representativeAddress" }
+        { jsonPath: "NULMSEPRequest.representativeAddress",callBack: checkValueForNA }
       ),
     }),
   });

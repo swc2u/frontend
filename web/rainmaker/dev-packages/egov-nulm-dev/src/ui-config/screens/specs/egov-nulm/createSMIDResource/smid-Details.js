@@ -304,7 +304,7 @@ export const SMIDDetails = getCommonCard({
         props: {
           className: "applicant-details-error",
           multiline: "multiline",
-          rowsMax: 2,
+          rowsMax: 3,
         },
         required: true,
         pattern: getNULMPattern("Comment") || null,

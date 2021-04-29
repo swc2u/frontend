@@ -478,7 +478,7 @@ export const availabilityForm = getCommonCard({
                 sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
                 jsonPath: "availabilityCheckData.bkSector",
                 required: true,
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 props: {
                     className: "applicant-details-error",
                     required: true,
@@ -555,7 +555,7 @@ export const availabilityForm = getCommonCard({
                 sourceJsonPath: "venueList",
                 jsonPath: "availabilityCheckData.bkBookingVenue",
                 required: true,
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 props: {
                     className: "applicant-details-error",
                     required: true,

@@ -216,7 +216,6 @@ const callBackForBook = async (state, dispatch) => {
 
   }
   else {
-
     let daysCount = calculateBetweenDaysCount(
         availabilityCheckData.bkFromDate,
         availabilityCheckData.bkToDate
@@ -505,7 +504,7 @@ export const availabilityForm = getCommonCard({
         sourceJsonPath: "sectorJsonPath",
         jsonPath: "availabilityCheckData.bkSector",
         required: true,
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "Please check the missing/invalid fields, then proceed!",
         props: {
           className: "applicant-details-error",
           required: true,
@@ -673,7 +672,7 @@ export const availabilityForm = getCommonCard({
     //         // required: true,
     //         pattern: getPattern("Date"),
     //         jsonPath: "Booking.bkFromDate",
-    //         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+    //         errorMessage: "Please check the missing/invalid fields, then proceed!",
     //         props: {
     //             className: "applicant-details-error",
     //             inputProps: {
@@ -701,7 +700,7 @@ export const availabilityForm = getCommonCard({
     //         // required: true,
     //         pattern: getPattern("Date"),
     //         jsonPath: "Booking.bkToDate",
-    //         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+    //         errorMessage: "Please check the missing/invalid fields, then proceed!",
     //         props: {
     //             className: "applicant-details-error",
     //             inputProps: {

@@ -62,24 +62,27 @@ class DialogComponent extends Component {
     async componentDidMount(){
     
       
-
-        this.setState({mdmsRes: this.props.mdmsResOsbm})
-        this.props.prepareFinalObject('mdmsRes', this.props.mdmsResOsbm)
+        this.getCCName()
+        this.setState({mdmsRes: this.props.mdmsRes})
+        this.props.prepareFinalObject('mdmsRes', this.props.mdmsRes)
      
      
+        this.props.prepareFinalObject('roomType', [{code : 'AC'}, {code : 'NON-AC'}])
     }
 
     componentDidUpdate(prevProps){
     
         
         if(this.props.updateMasterData !== prevProps.updateMasterData){
-
+            this.getCCName()
                 
-            this.setState({mdmsRes: this.props.mdmsResOsbm})
-            this.props.prepareFinalObject('mdmsRes', this.props.mdmsResOsbm)
+            this.setState({mdmsRes: this.props.mdmsRes})
+            this.props.prepareFinalObject('mdmsRes', this.props.mdmsRes)
             
             this.setState({updateData: this.props.updateMasterData, errors: {}})
             this.props.prepareFinalObject('updateData', this.props.updateMasterData)
+
+            this.props.prepareFinalObject('roomType', [{code : 'AC' , value  : 'AC'}, {code : 'NON-AC' , value : 'NON-AC'}])
 
             if(Object.keys(this.props.updateMasterData).length === 0){
                 this.setState({create: true})
@@ -91,7 +94,18 @@ class DialogComponent extends Component {
     }
     
 
-
+    getCCName= async ()=> {
+     let {data} = await httpRequest(  
+        "bookings/master/communityCenter/name/_fetch",
+         );
+     let ccNameList = Object.values(data)
+     console.log('ccNameList :>> ', ccNameList);
+     let ccSectors = ccNameList.map((item) => {
+      return { code: item, name: item }
+       })
+     this.props.prepareFinalObject('ccNameList', ccSectors) 
+      
+    }
     state={
 
         updateData: {}, 
@@ -103,15 +117,16 @@ class DialogComponent extends Component {
 
 
     validate (){
-
         let temp= {}
         const submitData= this.state.updateData
-        temp.villageCity=submitData.villageCity? false: true
-        temp.residentialCommercial=submitData.residentialCommercial? false: true
-        temp.storage=submitData.storage? false: true
-        temp.durationInMonths=submitData.durationInMonths? false: true
-        temp.constructionType=submitData.constructionType? false: true
-        temp.amount=submitData.amount? false: true
+        temp.sectorName=submitData.sectorName? false: true
+        temp.totalNumberOfRooms=submitData.totalNumberOfRooms? false: true
+        temp.typeOfRoom=submitData.typeOfRoom? false: true
+        temp.rentForOneDay=submitData.rentForOneDay? false: true
+        temp.rentFor3Hrs=submitData.rentFor3Hrs? false: true
+        temp.rentFor6Hrs=submitData.rentFor6Hrs? false: true
+        temp.communityCenterName=submitData.communityCenterName? false: true
+        temp.rentFor9Hrs=submitData.rentFor9Hrs? false: true
         temp.fromDate=submitData.fromDate? false: true
 
         this.setState({errors: temp})
@@ -138,25 +153,28 @@ class DialogComponent extends Component {
             var reqBody =  {
               
               
-              "OsbmFeeDetails": [
+              "CommunityCenterRoomFeeDetails": [
 
                 {
+                  
+                  "sector":  this.state.updateData.sectorName,
+                  "fromDate" : `${this.state.updateData.fromDate} ${time}`, 
+                  "totalNumberOfRooms":  this.state.updateData.totalNumberOfRooms,
+                  "typeOfRoom":  this.state.updateData.typeOfRoom,
+                  "rentForOneDay": this.state.updateData.rentForOneDay,
+                  "rentFor3Hrs":  this.state.updateData.rentFor3Hrs,
+                  "rentFor6Hrs":  this.state.updateData.rentFor6Hrs,
+                  "rentFor9Hrs":  this.state.updateData.rentFor9Hrs,
+                  "communityCenterName": this.state.updateData.communityCenterName
 
-                  "villageCity": this.state.updateData.villageCity ,
-                  "residentialCommercial": this.state.updateData.residentialCommercial,
-                  "storage":this.state.updateData.storage,
-                  "durationInMonths":this.state.updateData.durationInMonths,
-                  "constructionType":this.state.updateData.constructionType,
-                  "amount":this.state.updateData.amount, 
-                  "fromDate" : `${this.state.updateData.fromDate} ${time}`
-
+              
                 }
                
                ]
               }
             const responseStatus = await httpRequest(
                   
-              "bookings/master/osbm/fee/_create",
+              "bookings/master/communitycenter/room/fee/_create",
               "_search",
               [],
               reqBody
@@ -198,18 +216,20 @@ class DialogComponent extends Component {
               time= '00:00:00';
               var reqBody =  {
               
-                "OsbmFeeDetails": [
+                "CommunityCenterRoomFeeDetails": [
 
                   {
 
                     "id": this.state.updateData.id,
-                    "villageCity": this.state.updateData.villageCity ,
-                    "residentialCommercial": this.state.updateData.residentialCommercial,
-                    "storage":this.state.updateData.storage,
-                    "durationInMonths":this.state.updateData.durationInMonths,
-                    "constructionType":this.state.updateData.constructionType,
-                    "amount":this.state.updateData.amount, 
-                    "fromDate" : `${this.state.updateData.fromDate} ${time}`
+                    "sector":  this.state.updateData.sectorName,
+                    "fromDate" : `${this.state.updateData.fromDate} ${time}`, 
+                    "totalNumberOfRooms":  this.state.updateData.totalNumberOfRooms,
+                    "typeOfRoom":  this.state.updateData.typeOfRoom,
+                    "rentForOneDay": this.state.updateData.rentForOneDay,
+                    "rentFor3Hrs":  this.state.updateData.rentFor3Hrs,
+                    "rentFor6Hrs":  this.state.updateData.rentFor6Hrs,
+                    "rentFor9Hrs":  this.state.updateData.rentFor9Hrs,
+                    "communityCenterName": this.state.updateData.communityCenterName
   
                   }
                  
@@ -217,7 +237,7 @@ class DialogComponent extends Component {
                 }
               const responseStatus = await httpRequest(
                     
-                "bookings/master/osbm/fee/_update",
+                "bookings/master/communitycenter/room/fee/_update",
                 "_search",
                 [],
                 reqBody
@@ -264,8 +284,7 @@ class DialogComponent extends Component {
 
       
         Object.keys(this.state.mdmsRes).length === 0?<div > <CircularProgress style={{position: "fixed" , top: '50%', left: '50%'}} /> </div> :
-      <div>
-{console.log(this.state.updateData)}
+        <div>
         <Dialog
             classes={{ paper :classes.dialogStyle}}
             minWidth="md"
@@ -278,34 +297,35 @@ class DialogComponent extends Component {
           {/* <DialogContentText style={{margin : '15px '}}>
             Please fill the form to update fee master of OSBM
           </DialogContentText> */}
+
           <div className="col-xs-12 col-sm-12">
           <div className="col-xs-12 col-sm-6">
           <TextFieldContainer 
-            error={this.state.errors.villageCity }
+            error={this.state.errors.sectorName }
             select="true"
             optionValue="code"
             optionLabel="code"
             label={{
-                labelName : "Village/City",
-                labelKey: "BK_OSBM_ADMIN_VILLAGE/CITY_LABEL",
+                labelName : "Sector",
+                labelKey: "Sector",
             }}
             placeholder= {{
-                labelName: "Village/City",
-                labelKey: "BK_OSBM_ADMIN_VILLAGE/CITY_LABEL",
+                labelName: "Sector",
+                labelKey: "Sector",
             }}
             onChange={(e, key, value)=> { 
             
               let updateData =this.state.updateData
-              updateData.villageCity= e.target.value
+              updateData.sectorName= e.target.value
               let errors= {...this.state.errors}
-              errors.villageCity=""
+              errors.sectorName=""
               this.setState({updateData: updateData, errors: errors})
-              prepareFinalObject('updateData.villageCity', e.target.value)
+              prepareFinalObject('updateData.sectorName', e.target.value)
               
             }}
             required= "true" 
-            sourceJsonPath= "mdmsRes.VillageCity"
-            jsonPath="updateData.villageCity"
+            sourceJsonPath= "mdmsRes.Sector"
+            jsonPath="updateData.sectorName"
              
             gridDefination= {{
                 xs: 12,
@@ -314,216 +334,235 @@ class DialogComponent extends Component {
          />
          
           </div>
-          <div className="col-xs-12 col-sm-6">
-            
-          <TextFieldContainer 
-            error={this.state.errors.residentialCommercial }
-            select="true"
-            optionValue="code"
-            optionLabel="code"
-            label={{
-                labelName : "City Type",
-                labelKey: "BK_OSBM_ADMIN_CITY_TYPE_LABEL",
-            }}
-            placeholder= {{
-                labelName: "City Type",
-                labelKey: "BK_OSBM_ADMIN_CITY_TYPE_LABEL",
-            }}
-            onChange={(e, key, value)=> { 
-            
-              let updateData =this.state.updateData
-              updateData.residentialCommercial= e.target.value
-              let errors= {...this.state.errors}
-              errors.residentialCommercial=""
-              this.setState({updateData: updateData, errors: errors})
-              prepareFinalObject('updateData.residentialCommercial', e.target.value)
-              
-            }}
-            required= "true" 
-            sourceJsonPath= "mdmsRes.CityType"
-            jsonPath="updateData.residentialCommercial"
-             
-            gridDefination= {{
-                xs: 12,
-                sm: 6
-            }}
-         />
-         
-          </div>
-          </div>
-          <div className="col-xs-12 col-sm-12">
-          <div className="col-xs-12 col-sm-6">
-              
-          
-          {this.state.updateData.constructionType==="New"?
-            <TextFieldContainer 
-            error={this.state.errors.durationInMonths }
-            select="true"
-            optionValue="code"
-            optionLabel="code"
-            label={{
-                labelName : "Duration",
-                labelKey: "BK_OSBM_ADMIN_DURATION_LABEL",
-            }}
-            placeholder= {{
-                labelName: "Duration",
-                labelKey: "BK_OSBM_ADMIN_DURATION_LABEL",
-            }}
-            onChange={(e, key, value)=> { 
-            
-              let updateData =this.state.updateData
-              updateData.durationInMonths= e.target.value
-              let errors= {...this.state.errors}
-              errors.durationInMonths=""
-              this.setState({updateData: updateData, errors: errors})
-              prepareFinalObject('updateData.durationInMonths', e.target.value)
-              
-            }}
-            required= "true" 
-            sourceJsonPath= "mdmsRes.Duration"
-            jsonPath="updateData.durationInMonths"
-             
-            gridDefination= {{
-                xs: 12,
-                sm: 6
-            }}
-         />   
-           :
-           <TextFieldContainer 
-            error={this.state.errors.durationInMonths }
-            select="true"
-            optionValue="code"
-            optionLabel="code"
-            label={{
-                labelName : "Duration",
-                labelKey: "BK_OSBM_ADMIN_DURATION_LABEL",
-            }}
-            placeholder= {{
-                labelName: "Duration",
-                labelKey: "BK_OSBM_ADMIN_DURATION_LABEL",
-            }}
-            onChange={(e, key, value)=> { 
-            
-              let updateData =this.state.updateData
-              updateData.durationInMonths= e.target.value
-              let errors= {...this.state.errors}
-              errors.durationInMonths=""
-              this.setState({updateData: updateData, errors: errors})
-              prepareFinalObject('updateData.durationInMonths', e.target.value)
-              
-            }}
-            required= "true" 
-            sourceJsonPath= "mdmsRes.Duration"
-            jsonPath="updateData.durationInMonths"
-             
-            gridDefination= {{
-                xs: 12,
-                sm: 6
-            }}
-         />  
-          }
-          </div> 
-          <div className="col-xs-12 col-sm-6">
-          <TextFieldContainer 
-            error={this.state.errors.storage }
-            select="true"
-            optionValue="code"
-            optionLabel="code"
-            label={{
-                labelName : "Area",
-                labelKey: "BK_OSBM_ADMIN_AREA_LABEL",
-            }}
-            placeholder= {{
-                labelName: "Area",
-                labelKey: "BK_OSBM_ADMIN_AREA_LABEL",
-            }}
-            onChange={(e, key, value)=> { 
-            
-              let updateData =this.state.updateData
-              updateData.storage= e.target.value
-              let errors= {...this.state.errors}
-              errors.storage=""
-              this.setState({updateData: updateData, errors: errors})
-               prepareFinalObject('updateData.storage', e.target.value)
-              
-            }}
-            required= "true" 
-            sourceJsonPath= "mdmsRes.Area"
-            jsonPath="updateData.storage"
-             
-            gridDefination= {{
-                xs: 12,
-                sm: 6
-            }}
-         />
-        </div> 
-        </div> 
-          <div className="col-xs-12 col-sm-12">
-          <div className="col-xs-12 col-sm-6">
-          <TextFieldContainer 
-            error={this.state.errors.constructionType }
-            select="true"
-            optionValue="code"
-            optionLabel="code"
-            label={{
-                labelName : "Type of Construction",
-                labelKey: "BK_OSBM_ADMIN_CONSTRUCTION_TYPE_LABEL",
-            }}
-            placeholder= {{
-                labelName: "Type of Construction",
-                labelKey: "BK_OSBM_ADMIN_CONSTRUCTION_TYPE_LABEL",
-            }}
-            onChange={(e, key, value)=> { 
-            
-              let updateData =this.state.updateData
-              updateData.constructionType= e.target.value
-              let errors= {...this.state.errors}
-              errors.constructionType=""
-              this.setState({updateData: updateData, errors: errors})
-              prepareFinalObject('updateData.constructionType', e.target.value)
-              
-            }}
-            required= "true" 
-            sourceJsonPath= "mdmsRes.Type_of_Construction"
-            jsonPath="updateData.constructionType"
-             
-            gridDefination= {{
-                xs: 12,
-                sm: 6
-            }}
-         />
-          </div> 
           <div className="col-xs-12 col-sm-6">
           <TextFieldContainer
-            error={this.state.errors.amount }
+            error={this.state.errors.totalNumberOfRooms }
             label={{
-              labelName : "Amount",
-              labelKey: "BK_OSBM_ADMIN_AMOUNT_LABEL",
+              labelName : "Total Number Of Rooms",
+              labelKey: "Total Number Of Rooms",
               }}
             onChange={(e, value) => {
               
               let updateData = {...this.state.updateData}
               let errors= {...this.state.errors}
-              errors.amount=""
-              updateData.amount= e.target.value
+              errors.totalNumberOfRooms=""
+              updateData.totalNumberOfRooms= e.target.value
               this.setState({updateData:updateData, errors:errors})
-               prepareFinalObject('updateData.amount', e.target.value)
+               prepareFinalObject('updateData.totalNumberOfRooms', e.target.value)
             }}
             
             fullWidth="true"
             placeholder= {{
-              labelName: "Amount",
-              labelKey: "BK_OSBM_ADMIN_AMOUNT_LABEL",
+              labelName: "Total Number Of Rooms",
+              labelKey: "Total Number Of Rooms",
             }}
             
-            jsonPath="updateData.amount"
+            jsonPath="updateData.totalNumberOfRooms"
              
             InputLabelProps={{
             shrink: true,
            }}
-          />
-            </div> 
+          /> 
           </div>
+          </div>
+          <div className="col-xs-12 col-sm-12">
+          <div className="col-xs-12 col-sm-6">
+          <TextFieldContainer 
+            error={this.state.errors.typeOfRoom }
+            select="true"
+            optionValue="code"
+            optionLabel="code"
+            label={{
+                labelName : "Type Of Room",
+                labelKey: "Type Of Room",
+            }}
+            placeholder= {{
+                labelName: "Type Of Room",
+                labelKey: "Type Of Room",
+            }}
+            onChange={(e, key, value)=> { 
+            
+              let updateData =this.state.updateData
+              updateData.typeOfRoom= e.target.value
+              let errors= {...this.state.errors}
+              errors.typeOfRoom=""
+              this.setState({updateData: updateData, errors: errors})
+              prepareFinalObject('updateData.typeOfRoom', e.target.value)
+              
+            }}
+            required= "true" 
+            sourceJsonPath= "roomType"
+            jsonPath="updateData.typeOfRoom"
+             
+            gridDefination= {{
+                xs: 12,
+                sm: 6
+            }}
+         />
+         
+          </div>
+          <div className="col-xs-12 col-sm-6">
+            
+          <TextFieldContainer 
+            error={this.state.errors.communityCenterName }
+            select="true"
+            optionValue="code"
+            optionLabel="code"
+            label={{
+                labelName : "Community Center Name",
+                labelKey: "Community Center Name",
+            }}
+            placeholder= {{
+                labelName: "Community Center Name",
+                labelKey: "Community Center Name",
+            }}
+            onChange={(e, key, value)=> { 
+            
+              let updateData =this.state.updateData
+              updateData.communityCenterName= e.target.value
+              let errors= {...this.state.errors}
+              errors.communityCenterName=""
+              this.setState({updateData: updateData, errors: errors})
+              prepareFinalObject('updateData.communityCenterName', e.target.value)
+              
+            }}
+            required= "true" 
+            sourceJsonPath= "ccNameList"
+            jsonPath="updateData.communityCenterName"
+             
+            gridDefination= {{
+                xs: 12,
+                sm: 6
+            }}
+         />
+         
+          </div>
+          </div>
+          <div className="col-xs-12 col-sm-12">
+          <div className="col-xs-12 col-sm-6">
+          <TextFieldContainer
+            error={this.state.errors.rentForOneDay }
+            label={{
+              labelName : "Rent For One Day",
+              labelKey: "Rent For One Day",
+              }}
+            onChange={(e, value) => {
+              
+              let updateData = {...this.state.updateData}
+              let errors= {...this.state.errors}
+              errors.rentForOneDay=""
+              updateData.rentForOneDay= e.target.value
+              this.setState({updateData:updateData, errors:errors})
+               prepareFinalObject('updateData.rentForOneDay', e.target.value)
+            }}
+            
+            fullWidth="true"
+            placeholder= {{
+              labelName: "Rent For One Day",
+              labelKey: "Rent For One Day",
+            }}
+            
+            jsonPath="updateData.rentForOneDay"
+             
+            InputLabelProps={{
+            shrink: true,
+           }}
+          />  
+         </div>
+          <div className="col-xs-12 col-sm-6">
+          <TextFieldContainer
+            error={this.state.errors.rentFor3Hrs }
+            label={{
+              labelName : "Rent For 3Hrs",
+              labelKey: "Rent For 3Hrs",
+              }}
+            onChange={(e, value) => {
+              
+              let updateData = {...this.state.updateData}
+              let errors= {...this.state.errors}
+              errors.rentFor3Hrs=""
+              updateData.rentFor3Hrs= e.target.value
+              this.setState({updateData:updateData, errors:errors})
+               prepareFinalObject('updateData.rentFor3Hrs', e.target.value)
+            }}
+            
+            fullWidth="true"
+            placeholder= {{
+              labelName: "Rent For 3Hrs",
+              labelKey: "Rent For 3Hrs",
+            }}
+            
+            jsonPath="updateData.rentFor3Hrs"
+             
+            InputLabelProps={{
+            shrink: true,
+           }}
+          />  
+          </div>
+          </div>
+          <div className="col-xs-12 col-sm-12">
+          <div className="col-xs-12 col-sm-6">
+          <TextFieldContainer
+            error={this.state.errors.rentFor6Hrs }
+            label={{
+              labelName : "Rent For 6Hrs",
+              labelKey: "Rent For 6Hrs",
+              }}
+            onChange={(e, value) => {
+              
+              let updateData = {...this.state.updateData}
+              let errors= {...this.state.errors}
+              errors.rentFor6Hrs=""
+              updateData.rentFor6Hrs= e.target.value
+              this.setState({updateData:updateData, errors:errors})
+               prepareFinalObject('updateData.rentFor6Hrs', e.target.value)
+            }}
+            
+            fullWidth="true"
+            placeholder= {{
+              labelName: "Rent For 6Hrs",
+              labelKey: "Rent For 6Hrs",
+            }}
+            
+            jsonPath="updateData.rentFor6Hrs"
+             
+            InputLabelProps={{
+            shrink: true,
+           }}
+          />  
+          </div>
+          <div className="col-xs-12 col-sm-6">
+          <TextFieldContainer
+            error={this.state.errors.rentFor9Hrs }
+            label={{
+              labelName : "Rent For 9Hrs",
+              labelKey: "Rent For 9Hrs",
+              }}
+            onChange={(e, value) => {
+              
+              let updateData = {...this.state.updateData}
+              let errors= {...this.state.errors}
+              errors.rentFor9Hrs=""
+              updateData.rentFor9Hrs= e.target.value
+              this.setState({updateData:updateData, errors:errors})
+               prepareFinalObject('updateData.rentFor9Hrs', e.target.value)
+            }}
+            
+            fullWidth="true"
+            placeholder= {{
+              labelName: "Rent For 9Hrs",
+              labelKey: "Rent For 9Hrs",
+            }}
+            
+            jsonPath="updateData.rentFor9Hrs"
+             
+            InputLabelProps={{
+            shrink: true,
+           }}
+          />  
+          </div>
+          </div>
+          
           <div className="col-xs-12 col-sm-12">
           <div className="col-xs-12 col-sm-6">
           <TextFieldContainer 

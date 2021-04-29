@@ -7,7 +7,7 @@ import {
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-  
+  import {  checkValueForNA } from "../../utils";
   const gotoCreatePage = (state, dispatch) => {
      const createUrl = `/egov-nulm/create-suh?step=4`;
     dispatch(setRoute(createUrl));
@@ -76,7 +76,7 @@ import {
             labelName: "Remarks",
             labelKey: "NULM_SUH_REMARKS"
           },
-          { jsonPath: "NulmSuhRequest.constitutionOfShelterManagementCommitteeRemark" }
+          { jsonPath: "NulmSuhRequest.constitutionOfShelterManagementCommitteeRemark" ,callBack: checkValueForNA }
         ),
         isSocialAudit: getLabelWithValue(
             {
@@ -90,7 +90,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.socialAuditRemark" }
+            { jsonPath: "NulmSuhRequest.socialAuditRemark" ,callBack: checkValueForNA }
           ),
           isLinkageToCentralGovtWelfareSchemes: getLabelWithValue(
             {
@@ -104,7 +104,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.linkageToCentralGovtWelfareSchemesRemark" }
+            { jsonPath: "NulmSuhRequest.linkageToCentralGovtWelfareSchemesRemark" ,callBack: checkValueForNA }
           ),
           isLinkageToPublicHealthInitiatives: getLabelWithValue(
             {
@@ -118,7 +118,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.linkageToPublicHealthInitiativesRemark" }
+            { jsonPath: "NulmSuhRequest.linkageToPublicHealthInitiativesRemark" ,callBack: checkValueForNA }
           ),
           isLinkageToOtherGovtSchemes: getLabelWithValue(
             {
@@ -132,7 +132,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.linkageToOtherGovtSchemesRemark" }
+            { jsonPath: "NulmSuhRequest.linkageToOtherGovtSchemesRemark" ,callBack: checkValueForNA }
           ),
           isLinkageToLocalCommunity: getLabelWithValue(
             {
@@ -146,7 +146,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.linkageToLocalCommunityRemark" }
+            { jsonPath: "NulmSuhRequest.linkageToLocalCommunityRemark" ,callBack: checkValueForNA }
           ),
           isLinkageToSocialWorkersAndPhilanthropists: getLabelWithValue(
             {
@@ -160,7 +160,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.linkageToSocialWorkersAndPhilanthropistsRemark" }
+            { jsonPath: "NulmSuhRequest.linkageToSocialWorkersAndPhilanthropistsRemark" ,callBack: checkValueForNA }
           ),
           isUserCharges: getLabelWithValue(
             {
@@ -174,7 +174,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.userChargesRemark" }
+            { jsonPath: "NulmSuhRequest.userChargesRemark" ,callBack: checkValueForNA }
           ),
           isIECAndPromotionalInitiatives: getLabelWithValue(
             {
@@ -188,7 +188,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.iecAndPromotionalInitiativesRemark" }
+            { jsonPath: "NulmSuhRequest.iecAndPromotionalInitiativesRemark" ,callBack: checkValueForNA }
           ),
           isQuarterlyReporting: getLabelWithValue(
             {
@@ -202,7 +202,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.quarterlyReportingRemark" }
+            { jsonPath: "NulmSuhRequest.quarterlyReportingRemark" ,callBack: checkValueForNA }
           ),
           isVisits: getLabelWithValue(
             {
@@ -216,7 +216,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.visitsRemark" }
+            { jsonPath: "NulmSuhRequest.visitsRemark" ,callBack: checkValueForNA }
           ),
         
       }),

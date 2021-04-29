@@ -28,22 +28,7 @@ import {
 
 
 export const callBackForBack = (state, dispatch) => {
-    const applicationNumber = getQueryArg(
-        window.location.href,
-        "applicationNumber"
-    );
-    const businessService = get(
-        state,
-        "screenConfiguration.preparedFinalObject.Booking.businessService",
-        {}
-    );
-    dispatch(
-        setRoute(
-            `/egov-services/pcc-search-preview?applicationNumber=${applicationNumber}&tenantId=${
-            getTenantId()
-            }&businessService=${businessService}`
-        )
-    );
+    window.history.back();
 };
 
 export const pccApplicantSummary = getCommonGrayCard({
@@ -195,8 +180,8 @@ export const pccBankSummary = getCommonGrayCard({
                 applicantContainer: getCommonContainer({
                     bkBankName: getLabelWithValue(
                         {
-                            labelName: "Bank Name",
-                            labelKey:  "Bank Name",
+                            labelName: "Bank Account Name",
+                            labelKey:  "Bank Account Name",
                             //labelKey: "BK_PCC_BANK_NAME_LABEL",
                         },
                         {

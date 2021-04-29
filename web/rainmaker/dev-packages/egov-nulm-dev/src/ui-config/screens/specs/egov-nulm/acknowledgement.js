@@ -10,13 +10,15 @@ import set from "lodash/set";
 import { Icon } from "egov-ui-framework/ui-atoms";
 import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-const screenName = getQueryArg(window.location.href, "screen").toUpperCase();
-const mode = getQueryArg(window.location.href, "mode").toUpperCase();
-const code = getQueryArg(window.location.href, "code");
+let screenName = getQueryArg(window.location.href, "screen").toUpperCase();
+let mode = getQueryArg(window.location.href, "mode").toUpperCase();
+let code = getQueryArg(window.location.href, "code");
 
 
 const getLabelForStoreAsset = () => {
 let labelValue = "";
+ screenName = getQueryArg(window.location.href, "screen").toUpperCase();
+ mode = getQueryArg(window.location.href, "mode").toUpperCase();
   switch(screenName){
     case "SEP":
     case "SMID" :
@@ -52,6 +54,7 @@ case "REGORGANIZATION" :
 
 const getApplicationDisplayCode =() => {
   let labelValue = "";
+  let screenName = getQueryArg(window.location.href, "screen").toUpperCase();
   switch(screenName){
     case "SEP":
     case "SMID" :
@@ -129,7 +132,8 @@ const screenConfig = {
     },
   },
   beforeInitScreen: (action, state, dispatch) => {
-    let applicationNumber = code;
+    let applicationNumber = getQueryArg(window.location.href, "code");;
+
     const data = getAcknowledgementCard(
       state,
       dispatch,
