@@ -106,12 +106,15 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
           <Link to="/user/privacy"> 
            {/*  */}
               <div style={{ display: "inline-block" }}  >
-                <Label containerStyle={{ cursor: "pointer" }} id="privacy"  className="privacy" label="Privacy Policy" />
+               {/* <u> <Label containerStyle={{ cursor: "pointer" }}
+               style={{ color: "lightsalmon",fontSize:"12px",textDEcoration:"underline"}}
+               id="privacy"  className="privacy" label="Privacy Policy" /></u> */}
+               <p style={{ color: "burlywood",fontSize:"12px",textDecorationLine:"underline"}} >Privacy Policy</p>
               </div>
             </Link>
             </div>
             
-            <div style={{  position: "relative",}} className="text-center"> 
+            <div style={{  position: "relative",paddingTop:"0px"}} className="text-center"> 
             {/* <IconButton style={{paddingLeft:0,paddingRight:0}}>
             <Icon action="action" name="help" color="#000" />  
            
