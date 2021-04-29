@@ -606,6 +606,7 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "pcc-search-preview",
     beforeInitScreen: (action, state, dispatch) => {
+        
         let test= localStorage.getItem('location') ?localStorage.getItem('location').replace('#loaded', '').trim():''
         
         let newTest= window.location.href

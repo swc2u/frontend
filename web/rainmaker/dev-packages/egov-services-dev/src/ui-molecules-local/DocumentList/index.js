@@ -75,6 +75,7 @@ const themeStyles = (theme) => ({
     iconDiv: {
         display: "flex",
         alignItems: "center",
+        maxWidth :'75px'
     },
     descriptionDiv: {
         display: "flex",
@@ -128,7 +129,7 @@ const styles = {
 };
 
 const requiredIcon = (
-    <sup style={{ color: "#E54D42", paddingLeft: "5px" }}>*</sup>
+    <sup style={{ color: "#E54D42", paddingLeft: "5px" , fontSize : "120%"}}>*</sup>
 );
 
 class DocumentList extends Component {
