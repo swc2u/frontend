@@ -171,6 +171,16 @@ const DashboardNULM = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardLegal = Loadable({
+  loader: () => import("./DashboardLegal"),
+  loading: () => <Loading />
+});
+
+const DashboardAgenda = Loadable({
+  loader: () => import("./DashboardAgenda"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -205,5 +215,7 @@ export {
   DashboardEstate,
   DashboardRentedProperty,
   DashboardPension,
-  DashboardNULM
+  DashboardNULM,
+  DashboardLegal,
+  DashboardAgenda
 };
