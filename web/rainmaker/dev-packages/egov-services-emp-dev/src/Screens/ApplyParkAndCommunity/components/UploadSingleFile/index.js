@@ -7,7 +7,7 @@ export default class UploadSingleFile extends Component {
  render() {
   let {uploaded,classes,handleFileUpload,removeDocument,documents,onButtonClick,inputProps,buttonLabel} = this.props
   return (
-    <div>
+    <div className="uploadButton">
     {!uploaded && (
       <UploadFile
         buttonProps={{
@@ -36,6 +36,16 @@ export default class UploadSingleFile extends Component {
           })}
       </div>
     )}
+    <style>{
+      `
+      @media screen and (min-width: 320px) and (max-width: 568px) {
+        .uploadButton {
+          min-width : 104%
+        }
+      }
+    
+      `}
+    </style>
   </div>
   )
 }

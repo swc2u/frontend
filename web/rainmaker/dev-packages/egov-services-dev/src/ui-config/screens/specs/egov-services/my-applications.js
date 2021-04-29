@@ -84,6 +84,7 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "my-applications",
     beforeInitScreen: (action, state, dispatch) => {
+        localStorage.removeItem('location')
         getMdmsData(action, state, dispatch).then((response) => {
             fetchData(action, state, dispatch);
         });

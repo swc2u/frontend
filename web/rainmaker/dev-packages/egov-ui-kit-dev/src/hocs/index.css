@@ -71,14 +71,12 @@
   .rainmaker-header-cont > div:first-child {
     height: 64px !important;
   }
-  .appbar-left-icon {
-    display: none;
-  }
+  
 }
 
 #icon-hamburger,
 #back-navigator {
-  fill: #ffffff !important;
+  fill: #fe7a51 !important;
 }
 
 .rainmaker-content {
@@ -147,4 +145,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+@media only screen and (min-width: 769px) {
+  .appbar-left-icon {
+    display: none;
+  }
 }

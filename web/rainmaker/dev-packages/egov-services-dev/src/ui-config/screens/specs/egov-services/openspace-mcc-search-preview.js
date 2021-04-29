@@ -127,6 +127,11 @@ const HideshowFooter = (action, bookingStatus) => {
     // );
     set(
         action,
+        "screenConfig.components.div.children.footer.children.submitButton.visible",
+        role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
+    );
+    set(
+        action,
         "screenConfig.components.div.children.footer.visible",
         role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
     );

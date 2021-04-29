@@ -689,6 +689,85 @@ const complaintsReducer = (state = intialState, action) => {
             waterTankerPaymentReceipt: action.payload,
           }
 
+
+          case actionTypes.PACC_CITIZEN_RECEIPT_COMPLETE:
+            return {
+              ...state,
+              loading: false,
+              fetchSuccess: true,
+              DownloadCitizenPACCReceipt: action.payload
+            };
+          case actionTypes.PACC_CITIZEN_RECEIPT_ERROR:
+            return {
+              ...state,
+              loading: false,
+              fetchSuccess: true,
+              error: true,
+              errorMessage: action.error,
+            };
+
+            case actionTypes.PACC_CITIZEN_PERMISSION_LETTER_COMPLETE:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                DownloadCitizenPACCPermissionLetter: action.payload
+              };
+            case actionTypes.PACC_CITIZEN_RECEIPT_PERMISSION_LETTER_ERROR:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                error: true,
+                errorMessage: action.error,
+              };
+
+              case actionTypes.CITIZEN_COMM_PL_COMPLETE:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                CitizenCCPermissionLetter: action.payload
+              };
+            case actionTypes.CITIZEN_COMM_PL_COMPLETE_ERROR:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                error: true,
+                errorMessage: action.error,
+              };
+              case actionTypes.DOWNLOAD_CG_REFUND_RECEIPT_COMPLETE:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                cgRefundReceiptData: action.payload
+              };
+            case actionTypes.DOWNLOAD_CG_REFUND_RECEIPT_ERROR:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                error: true,
+                errorMessage: action.error,
+              };
+              case actionTypes.DOWNLOAD_CG_REFUND_APPLICATION_COMPLETE:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                cgRefundApplicationData: action.payload
+              };
+            case actionTypes.DOWNLOAD_CG_REFUND_APPLICATION_ERROR:
+              return {
+                ...state,
+                loading: false,
+                fetchSuccess: true,
+                error: true,
+                errorMessage: action.error,
+              };
+
         case actionTypes.FACILATION_FETCH_SUCCESS:
           let applicationFetchfaciliation = transformById(action.payload.MdmsRes["BillingService"].TaxHeadMaster, "code");
           console.log("applicationFetchfaciliation--",applicationFetchfaciliation)
