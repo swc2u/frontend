@@ -606,6 +606,18 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "pcc-search-preview",
     beforeInitScreen: (action, state, dispatch) => {
+        let test= localStorage.getItem('location') ?localStorage.getItem('location').replace('#loaded', '').trim():''
+        
+        let newTest= window.location.href
+        if(test !== newTest.trim()){
+            localStorage.setItem('location', window.location); 
+        }
+
+        if(!localStorage.getItem('location').includes('#loaded')) {
+            localStorage.setItem('location', window.location + '#loaded');            
+            window.location.reload();
+        }
+        
         clearlocalstorageAppDetails(state);
         const applicationNumber = getQueryArg(
             window.location.href,

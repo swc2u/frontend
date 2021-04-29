@@ -422,7 +422,7 @@ else{
                 />
               )}
             </Grid>
-            <Grid item={true} md={4}>
+            <Grid item={true} md={4} xs={12}>
               <FormControl style={{ width: "100%" }}>
                 <InputLabel
                   shrink
@@ -484,8 +484,8 @@ else{
             </Grid>
           </Grid>
           <Grid container={true}>
-            <Grid item={true} xs={2} sm={1} md={1}></Grid>
-            <Grid item={true} xs={10} sm={5} md={5} align="left">
+          <Grid item={true} xs={0} sm={1} md={1}></Grid>
+             <Grid item={true} xs={10} sm={5} md={5} align="left">
               <div>
                 <h5>Supported Documents: pdf, jpg, png. Max file size: 5MB</h5>
               </div>

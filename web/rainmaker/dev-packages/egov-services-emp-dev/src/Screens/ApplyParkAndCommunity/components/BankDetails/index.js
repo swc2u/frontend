@@ -118,7 +118,7 @@ e.preventDefault();
       <div style={{float: 'left', width: '100%', padding: '36px 15px' }}>
       <div className="col-xs-12" style={{background:'#fff', padding: '15px 0'}}>
      
-      <div className="col-sm-6 col-xs-6">       
+      <div className="col-sm-6 col-xs-12">       
           <TextField
             id="Bank Account Name"
             name="Bank Account Name"
@@ -150,7 +150,7 @@ e.preventDefault();
           />
         </div>
         
-        <div className="col-sm-6 col-xs-6">
+        <div className="col-sm-6 col-xs-12">
           <TextField
             id="Nominee Name"
             name="Nominee Name"
@@ -182,7 +182,7 @@ e.preventDefault();
         
         </div>
         
-        <div className="col-sm-6 col-xs-6">
+        <div className="col-sm-6 col-xs-12">
           <TextField
             id="Bank Account Number"
             name="Bank Account Number"
@@ -215,7 +215,7 @@ e.preventDefault();
         
         </div>    
 
-        <div className="col-sm-6 col-xs-6">
+        <div className="col-sm-6 col-xs-12">
             <TextField
               id="IFSC Code"
               name="IFSC Code"
@@ -246,7 +246,7 @@ e.preventDefault();
             />
           </div>
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="Account Holder Name"
               name="Account Holder Name"
