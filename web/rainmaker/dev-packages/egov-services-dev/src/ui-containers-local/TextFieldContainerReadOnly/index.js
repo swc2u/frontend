@@ -69,7 +69,7 @@ class TextFieldContainer extends React.Component {
     );
     let translateddefaultErrorMsg = getLocaleLabels(
       "Invalid input",
-      "ERR_DEFAULT_INPUT_FIELD_MSG",
+      "Please check the missing/invalid fields, then proceed!",
       localizationLabels
     );
     errorMessage = error

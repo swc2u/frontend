@@ -127,8 +127,25 @@ export const SepDetails = getCommonCard({
         },
         placeholder: {
           labelName: "Enter Adhar Number",
-          labelKey: "NULM_SEP_ADHAR_NUMBER_PLACEHOLDER"
+          labelKey: "NULM_SEP_ADHAR_NUMBER_PLACEHOLDER",
+          props: {
+              //InputLabelProps: {
+                style:{
+                  marginTop: 30
+                }
+                
+              //},
+            },
         },
+        // props: {
+        //   InputLabelProps: {
+        //     style:{
+        //       marginTop: 30
+        //     }
+            
+        //   },
+        // },
+       
         required: true,
         pattern: getPattern("UOMValue") || null,
         errorMessage: "NULM_SEP_ADHAR_NUMBER_INPUT_VALIDATION",

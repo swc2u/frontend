@@ -95,7 +95,7 @@ componentDidUpdate(prevProps){
 
 
     validate (){
-
+      
         let temp= {}
         const submitData= this.state.updateData
         //temp.locality=submitData.locality? false: true
@@ -103,6 +103,7 @@ componentDidUpdate(prevProps){
         temp.ratePerDay=submitData.ratePerDay?false: true
         temp.bookingVenue=submitData.bookingVenue? false: true
         temp.fromDate=submitData.fromDate? false: true
+        temp.refundabelSecurity=submitData.refundabelSecurity? false: true
 
         this.setState({errors: temp})
 
@@ -123,7 +124,7 @@ componentDidUpdate(prevProps){
               today.getMinutes() +
               ":" +
               today.getSeconds();
-
+              time= '00:00:00';
 
             var reqBody =  {
               
@@ -133,7 +134,8 @@ componentDidUpdate(prevProps){
                     category:this.state.updateData.category,
                     ratePerDay:this.state.updateData.ratePerDay,
                     bookingVenue:this.state.updateData.bookingVenue,
-                    fromDate : `${this.state.updateData.fromDate} ${time}`
+                    fromDate : `${this.state.updateData.fromDate} ${time}`, 
+                    refundabelSecurity : this.state.updateData.refundabelSecurity
                 }
              ],
             }
@@ -179,7 +181,7 @@ componentDidUpdate(prevProps){
               today.getMinutes() +
               ":" +
               today.getSeconds();
-
+              time= '00:00:00';
 
 
               var reqBody =  {
@@ -190,7 +192,8 @@ componentDidUpdate(prevProps){
                       category:this.state.updateData.category,
                       ratePerDay:this.state.updateData.ratePerDay,
                       bookingVenue:this.state.updateData.bookingVenue,
-                      fromDate : `${this.state.updateData.fromDate} ${time}`
+                      fromDate : `${this.state.updateData.fromDate} ${time}`, 
+                      refundabelSecurity : this.state.updateData.refundabelSecurity
                   }
                 ]
                 }
@@ -429,6 +432,39 @@ componentDidUpdate(prevProps){
          />
           </div>
           </div> 
+          <div className="col-xs-12 col-sm-12"   > 
+         
+         <div className="col-xs-12 col-sm-6"   > 
+          <TextFieldContainer
+ 
+             type= {"number"}
+             error={this.state.errors.refundabelSecurity }
+             label={{
+             labelName :"Refundabel Security",
+             labelKey:"Refundabel Security",
+             }}
+             onChange={(e, value) => {
+               let updateData = {...this.state.updateData}
+               let errors= {...this.state.errors}
+               errors.refundabelSecurity=""
+               updateData.refundabelSecurity= e.target.value
+               this.setState({updateData:updateData, errors:errors})
+               prepareFinalObject('updateData.refundabelSecurity', e.target.value)
+             }}
+             
+             fullWidth="true"
+             placeholder= {{
+             labelName: "Refundabel Security",
+             labelKey: "Refundabel Security",
+              }}
+             jsonPath="updateData.refundabelSecurity"
+              
+             InputLabelProps={{
+             shrink: true,
+            }}
+           /> 
+           </div>
+           </div>
         </DialogContent>
         <DialogActions>
           <Button label="Cancel" onClick={()=>{ this.props.handleClose()

@@ -3,7 +3,7 @@ import { Card, Image, Icon, Button } from "components";
 import Label from "egov-ui-kit/utils/translationNode";
 import isEmpty from "lodash/isEmpty";
 import "./index.css";
-
+ 
 class AppDetails extends Component {
   render() {
     const { bkBankAccountNumber, bkBankName, bkIfscCode,bkAccountType, bkBankAccountHolder,applicantName,bkMobileNumber} = this.props;

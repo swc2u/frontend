@@ -42,6 +42,12 @@ const OsbmFeeMasterData = Loadable({
   loader: () => import("../Screens/MasterData/OsbmFeeMasterData"),
   loading: Loading
 });
+ 
+const RoomFeeMasterData = Loadable({
+  loader: () => import("../Screens/MasterData/RoomFeeMasterData"),
+  loading: Loading
+});
+ 
 const OsujmFeeMasterData = Loadable({
   loader: () => import("../Screens/MasterData/OsujmFeeMasterData"),
   loading: Loading
@@ -449,7 +455,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -463,7 +469,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -477,7 +483,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -491,7 +497,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -505,7 +511,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -520,7 +526,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -586,6 +592,22 @@ const routes = [
 {
   path: "egov-services/admin/osbmFee",
   component: OsbmFeeMasterData,
+  needsAuthentication: true,
+  options: {
+    hideFooter: true,
+    title: "BK_MYBK_ADMIN_OSBM_FEE_HEADER",
+
+    hideTitle: false,
+    redirectionUrl,
+    hideFor: "ao",
+    customFor: "employee",
+    customTitle: "BK_MYBK_ADMIN_OSBM_FEE_HEADER"
+  }
+},
+
+{
+  path: "egov-services/admin/roomFee",
+  component: RoomFeeMasterData,
   needsAuthentication: true,
   options: {
     hideFooter: true,
@@ -808,7 +830,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -821,7 +843,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -836,7 +858,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -849,7 +871,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -863,7 +885,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -877,7 +899,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -1049,7 +1071,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
     }

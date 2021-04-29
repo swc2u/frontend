@@ -38,6 +38,27 @@ const formConfig = {
       errorStyle: { position: "absolute", bottom: -8, zIndex: 5 },
       errorText: "",
     },
+    mohalla: {
+      id: "mohalla",
+      required: true,
+      jsonPath: "services[0].addressDetail.mohalla",
+      floatingLabelText: "CS_CREATECOMPLAINT_MOHALLA",
+      hintText: "CS_CREATECOMPLAINT_MOHALLA_PLACEHOLDER",
+      errorMessage: "CS_ADDCOMPLAINT_COMPLAINT_TYPE_PLACEHOLDER",
+      boundary: true,
+      dropDownData: [],
+    /*  dataFetchConfig: {
+        url: "egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality",
+        action: "",
+        queryParams: [],
+        requestBody: {},
+        isDependent: true,
+        hierarchyType: "ADMIN",
+      },
+          */
+      errorStyle: { position: "absolute", bottom: -8, zIndex: 5 },
+      errorText: "",
+    },
     complaintType: {
       id: "complaint-type",
       jsonPath: "services[0].serviceCode",
@@ -98,27 +119,7 @@ const formConfig = {
         ],
       }, */
     },
-    mohalla: {
-      id: "mohalla",
-      required: true,
-      jsonPath: "services[0].addressDetail.mohalla",
-      floatingLabelText: "CS_CREATECOMPLAINT_MOHALLA",
-      hintText: "CS_CREATECOMPLAINT_MOHALLA_PLACEHOLDER",
-      errorMessage: "CS_ADDCOMPLAINT_COMPLAINT_TYPE_PLACEHOLDER",
-      boundary: true,
-      dropDownData: [],
-    /*  dataFetchConfig: {
-        url: "egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality",
-        action: "",
-        queryParams: [],
-        requestBody: {},
-        isDependent: true,
-        hierarchyType: "ADMIN",
-      },
-          */
-      errorStyle: { position: "absolute", bottom: -8, zIndex: 5 },
-      errorText: "",
-    },
+  
     houseNo: {
       id: "houseNo",
       jsonPath: "services[0].addressDetail.houseNoAndStreetName",

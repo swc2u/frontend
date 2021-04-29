@@ -92,6 +92,11 @@ export const searchApiCall = async (state, dispatch) => {
      IsValidDate = true
  
    }
+   else if(fromDate === toDate)
+   {
+     IsValidDate = true
+ 
+   }
    else
    {
      IsValidDate = false

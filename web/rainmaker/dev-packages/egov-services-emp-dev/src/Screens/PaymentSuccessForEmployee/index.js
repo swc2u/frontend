@@ -676,8 +676,8 @@ downloadPermissionButton = async (e) => {
   const { RecNumber,createWaterTankerApplicationData,myLocationtwo, downloadBWTApplication,loading,createPACCApplicationData, updatePACCApplicationData,AppNum} = this.props;
     return (
       <Screen loading={loading}>
-      <div className="success-message-main-screen resolve-success">
-      <SuccessMessageForPayment
+   <div className="success-message-main-screen resolve-success mobileResponse">
+         <SuccessMessageForPayment
 	      headermessage = {`Parks & Community Centre/Banquet hall`}
           successmessage="Payment has been collected successfully!"
           secondaryLabel="A notification regarding Payment Collection has been sent to property owner at registered Mobile No."
@@ -695,15 +695,16 @@ downloadPermissionButton = async (e) => {
             label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PAYMENT_BUTTON" />}
             fullWidth={true}
             onClick={this.downloadPaymentReceiptButton}
-            style={{ marginRight: "1.5%" }}
-          />
-           <Button 
-            primary={true}
-            label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PERMISSION_LETTER_BUTTON" />}
-            onClick={this.downloadPermissionButton}
-            style={{ marginRight: "1.5%",width: "19%" }} 
-          />
-          <Button
+			style={{ marginRight: "1.5%" , minWidth: "fit-content !important" }}
+			/>
+			 <Button 
+				className="responsive-action-button"
+			  primary={true}
+			  label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PERMISSION_LETTER_BUTTON" />}
+			  onClick={this.downloadPermissionButton}
+			  style={{ marginRight: "1.5%",minWidth: "fit-content !important" }} 
+			/>
+			  <Button
             id="resolve-success-continue"
             primary={true}
             label={<Label buttonLabel={true} label="BK_CORE_PACC_EMP_COMMON_GOTOHOME" />}
@@ -713,6 +714,19 @@ downloadPermissionButton = async (e) => {
           />
         </div>
         </div>
+		<style>{
+          `
+           
+              @media only screen and (max-width: 768px)
+                {
+                  .mobileResponse{
+                    min-height: 125vh;
+                  }
+              
+                }
+            `
+        }
+        </style>
       </div>
       </Screen>
     );
