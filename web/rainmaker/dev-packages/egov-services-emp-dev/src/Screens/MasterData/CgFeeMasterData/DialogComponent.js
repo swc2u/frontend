@@ -124,7 +124,7 @@ componentDidUpdate(prevProps){
               today.getMinutes() +
               ":" +
               today.getSeconds();
-
+              time= '00:00:00';
 
             var reqBody =  {
               
@@ -181,7 +181,7 @@ componentDidUpdate(prevProps){
               today.getMinutes() +
               ":" +
               today.getSeconds();
-
+              time= '00:00:00';
 
 
               var reqBody =  {

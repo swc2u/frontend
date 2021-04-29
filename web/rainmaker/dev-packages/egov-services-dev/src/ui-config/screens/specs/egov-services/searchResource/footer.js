@@ -84,7 +84,7 @@ export const footerReviewTop = (
                 certificatePrintObject,
             ];
         }else if (
-        (status === "APPLIED" || status === "APPROVED"  || status === "MODIFIED" || status === "RE_INITIATED")
+            (status === "APPLIED" || status === "APPROVED"  || status === "MODIFIED" || status === "RE_INITIATED" ||  status== "PENDING_FOR_APPROVAL_CLEARK_DEO" || status== "REFUND_APPROVED" )
     ) {
         downloadMenu = [
             applicationDownloadObject,
