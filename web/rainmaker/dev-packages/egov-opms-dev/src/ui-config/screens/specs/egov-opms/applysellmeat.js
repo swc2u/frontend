@@ -152,7 +152,7 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
       { key: "tenantId", value: tenantId },
       { key: "applicationNumber", value: applicationNumber }
     ]);
-    let Refurbishresponse = furnishSellMeatNocResponse(response);
+    let Refurbishresponse = furnishSellMeatNocResponse(state,response);
 
     dispatch(prepareFinalObject("SELLMEATNOC", Refurbishresponse));
     if (applicationNumber) {
@@ -166,6 +166,9 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
     let sellmeatnocdetail = get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC", {});
     let uploadVaccinationCertificate = sellmeatnocdetail.hasOwnProperty('uploadDocuments') ?
       sellmeatnocdetail.uploadDocuments[0]['fileStoreId'] : '';
+
+    let idProof = sellmeatnocdetail.hasOwnProperty('idProof') && sellmeatnocdetail.idProof != undefined ?
+      sellmeatnocdetail.idProof[0]['fileStoreId'] : '';
     
     if (uploadVaccinationCertificate !== '') {
       documentsPreview.push({
@@ -173,6 +176,13 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
         fileStoreId: uploadVaccinationCertificate,
         linkText: "View"
       });
+      if (idProof && idProof != '') {
+        documentsPreview.push({
+          title: "ID_PROOF",
+          fileStoreId: idProof,
+          linkText: "View"
+        });          
+       }
       let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
       let fileUrls =
         fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};
@@ -208,7 +218,11 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
         return doc;
       });
       dispatch(prepareFinalObject("documentsPreview", documentsPreview));
-      dispatch(prepareFinalObject("documentsUploadRedux[0].documents", documentsPreview));
+      dispatch(prepareFinalObject("documentsUploadRedux[0].documents[0]", documentsPreview[0]));
+      if (documentsPreview[1]) {
+        dispatch(prepareFinalObject("documentsUploadRedux[1].documents[0]", documentsPreview[1]));
+      }
+
      }
   }
 };
@@ -236,10 +250,11 @@ const screenConfig = {
 
       // Set Documents Data (TEMP)
       prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');
-    });
-
     // Search in case of EDIT flow
     prepareEditFlow(state, dispatch, applicationNumber, tenantId);
+
+    });
+
 
 
     // Code to goto a specific step through URL

@@ -902,7 +902,7 @@ export const furnishNocResponse = response => {
   return refurnishresponse;
 };
 
-export const furnishSellMeatNocResponse = response => {
+export const furnishSellMeatNocResponse = (state,response) => {
   // Handle applicant ownership dependent dropdowns
   let refurnishresponse = {};
 
@@ -916,9 +916,22 @@ export const furnishSellMeatNocResponse = response => {
   set(refurnishresponse, "division", applicationdetail.division);
   set(refurnishresponse, "shopNumber", applicationdetail.shopNumber);
   set(refurnishresponse, "ward", applicationdetail.ward);
-  set(refurnishresponse, "nocSought", applicationdetail.nocSought);
+//  set(refurnishresponse, "nocSought", applicationdetail.nocSought);
+  let mdmsDataForNocSought = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.nocSought", []);
+  let nocSoughtFinalData = [];
+  applicationdetail.nocSought.split(",").map(item => { 
+    
+    if (mdmsDataForNocSought.find(str => str.code == item.trim())) {
+      nocSoughtFinalData.push({
+        value: mdmsDataForNocSought.find(str => str.code == item.trim()).code,
+        label:mdmsDataForNocSought.find(str => str.code == item.trim()).name
+      });
+    }
+  });
+  set(refurnishresponse, "nocSought", nocSoughtFinalData);
 
   set(refurnishresponse, "uploadDocuments", applicationdetail.uploadDocuments);
+  set(refurnishresponse, "idProof", applicationdetail.idProof);
   set(refurnishresponse, "remarks", applicationdetail.remarks);
 
   return refurnishresponse;
@@ -1261,27 +1274,53 @@ export const createUpdateSellMeatNocApplication = async (state, dispatch, status
   try {
     let payload = get(state.screenConfiguration.preparedFinalObject, "SELLMEATNOC", []);
     let tenantId = get(state.screenConfiguration.preparedFinalObject, "", getOPMSTenantId());
-
+    let nocSought = payload.nocSought;
     let reduxDocuments = get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux", {});
 
 
     // Set owners & other documents
     let ownerDocuments = [];
-    let otherDocuments = [];
+    let idProof = [];
     let Remarks = "";
 
-    jp.query(reduxDocuments, "$.*").forEach(doc => {
-      if (doc.documents && doc.documents.length > 0) {
-        ownerDocuments = [
-          ...ownerDocuments,
-          {
-            fileStoreId: doc.documents[0].fileStoreId
-          }
-        ];
+    // jp.query(reduxDocuments, "$.*").forEach(doc => {
+    //   if (doc.documents && doc.documents.length > 0) {
+    //     ownerDocuments = [
+    //       ...ownerDocuments,
+    //       {
+    //         fileStoreId: doc.documents[0].fileStoreId
+    //       }
+    //     ];
+    //   }
+    // });
+    ownerDocuments = [
+      {
+        fileStoreId: reduxDocuments[0].documents[0].fileStoreId
       }
-    });
+    ];
+
+    idProof = [
+      {
+        fileStoreId: reduxDocuments[1].documents[0].fileStoreId
+      }
+    ];
+
+    payload.hasOwnProperty("division") === false ? set(payload, "division", "") : ''
+    payload.hasOwnProperty("ward") === false ? set(payload, "ward", "") : ''
+
     set(payload, "uploadDocuments", ownerDocuments);
+    set(payload, "idProof", idProof);
+
     set(payload, "remarks", Remarks);
+    let str = "";
+    if (nocSought) { 
+      nocSought.map(item => {
+        str = str + ", "+item.value;
+      })
+    }
+    
+    console.log('nocsought : ', str.slice(2))
+    set(payload, "nocSought", str.slice(2));
     console.log('payload : ', payload)
     let response = '';
     setapplicationMode(status);
