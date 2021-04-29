@@ -42,6 +42,12 @@ const OsbmFeeMasterData = Loadable({
   loader: () => import("../Screens/MasterData/OsbmFeeMasterData"),
   loading: Loading
 });
+ 
+const RoomFeeMasterData = Loadable({
+  loader: () => import("../Screens/MasterData/RoomFeeMasterData"),
+  loading: Loading
+});
+ 
 const OsujmFeeMasterData = Loadable({
   loader: () => import("../Screens/MasterData/OsujmFeeMasterData"),
   loading: Loading
@@ -586,6 +592,22 @@ const routes = [
 {
   path: "egov-services/admin/osbmFee",
   component: OsbmFeeMasterData,
+  needsAuthentication: true,
+  options: {
+    hideFooter: true,
+    title: "BK_MYBK_ADMIN_OSBM_FEE_HEADER",
+
+    hideTitle: false,
+    redirectionUrl,
+    hideFor: "ao",
+    customFor: "employee",
+    customTitle: "BK_MYBK_ADMIN_OSBM_FEE_HEADER"
+  }
+},
+
+{
+  path: "egov-services/admin/roomFee",
+  component: RoomFeeMasterData,
   needsAuthentication: true,
   options: {
     hideFooter: true,
