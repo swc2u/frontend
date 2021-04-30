@@ -4,19 +4,15 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { getUserInfo, setapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 import { getDashboardDropdownData } from "../../../../ui-utils/commons";
 // import { HCDashboardFilterForm, HCDashboardResults } from "./HCDashboard/HCDashboard";
-import { DashboardFilterForm, DashboardResults } from "./LegalDashboard/LegalDashboard";
-// import { PGRDashboardResults } from "./searchResource/dashboardTypeSearchResults";
-
-import { getLegalDashboardData } from "../../../../ui-utils/commons"; 
-
+import { FilterForm, DashboardResults } from "./AgendaDashboard/AgendaDashboard";
 import './index.css';
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 
 const header = getCommonHeader(
   {
-    labelName: "Legal Dashboard",
-    labelKey: "Legal_dashboard_1"
+    labelName: "Agenda Dashboard",
+    labelKey: "Agenda_dashboard_1"
   },
   {
     classes: {
@@ -48,11 +44,15 @@ const getDropDownData = async (action, state, dispatch) => {
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
-    "name" : "Case Type",
-    "code" : "status"
+    "name" : "Meeting Status",
+    "code" : "getAllMeeting"
+    },
+    {
+      "name" : "All Agenda",
+      "code" : "getAllAgenda"
     }
   ]
-  var selectedDefaultData = {value: "status", label: "Case Type"};
+  var selectedDefaultData = {value: "getAllMeeting", label: "Event Type"};
 
   // Date default
   var fromDate = new Date();
@@ -64,20 +64,13 @@ const getDropDownData = async (action, state, dispatch) => {
   dispatch(prepareFinalObject("dahsboardHome.defaulttoDate", formatDt));
 }
 
-const getDashboardData = async (state, dispatch) => {
-  let requestBody = {};
-  const response = await getLegalDashboardData( dispatch, requestBody );
-    // return checkData;
-}
-const LegalDashboard = {
+const AgendaDashboard = {
   uiFramework: "material-ui",
-  name: "LegalDashboard",
+  name: "AgendaDashboard",
   beforeInitScreen: (action, state, dispatch) => {
     
     debugger
     getDropDownData(action, state, dispatch);
-
-    getDashboardData(state, dispatch);
     return action;
   },
   components: {
@@ -100,12 +93,12 @@ const LegalDashboard = {
             
           }
         },
-        // DashboardFilterForm,
-        // breakAfterSearch: getBreak(),
+        FilterForm,
+        breakAfterSearch: getBreak(),
         DashboardResults
       }
     },
   }
 };
 
-export default LegalDashboard;
+export default AgendaDashboard;
