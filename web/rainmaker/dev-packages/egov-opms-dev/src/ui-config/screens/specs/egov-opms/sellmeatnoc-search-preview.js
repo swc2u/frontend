@@ -222,6 +222,8 @@ const prepareDocumentsView = async (state, dispatch) => {
   let aggrementdocumnet = JSON.parse(docs.applicationdetail).hasOwnProperty('uploadDocuments') ?
     JSON.parse(docs.applicationdetail).uploadDocuments[0]['fileStoreId'] : '';
 
+  let idProof = JSON.parse(docs.applicationdetail).hasOwnProperty('idProof') ?
+    JSON.parse(docs.applicationdetail).idProof[0]['fileStoreId'] : '';
   // let uploadPetPicture=JSON.parse(doc.applicationdetail).hasOwnProperty('uploadPetPicture')?
   // JSON.parse(doc.applicationdetail).uploadPetPicture[0]['fileStoreId']:'';
   if (aggrementdocumnet !== '') {
@@ -230,6 +232,14 @@ const prepareDocumentsView = async (state, dispatch) => {
       fileStoreId: aggrementdocumnet,
       linkText: "View"
     });
+    if (idProof && idProof != '') { 
+      documentsPreview.push({
+        title: "SELLMEAT.ID_PROOF",
+        fileStoreId: idProof,
+        linkText: "View"
+      });       
+
+    }
     let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
     let fileUrls =
       fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};
@@ -360,7 +370,18 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
   }
   else {
     dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
-
+    let applicationdetail = JSON.parse(get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationdetail", {}));
+    let nocSoughtFromAPI = applicationdetail.nocSought;
+    let mdmsDataForNocSought = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.nocSought", []);
+    let nocSoughtFinalData = "";
+    nocSoughtFromAPI.split(",").map(item => { 
+      
+      if (mdmsDataForNocSought.find(str => str.code == item.trim())) {
+        nocSoughtFinalData = nocSoughtFinalData + " , " +mdmsDataForNocSought.find(str => str.code == item.trim()).name;
+      }
+    });
+    dispatch(prepareFinalObject("nocApplicationDetail[0].nocSoughtFinalData",nocSoughtFinalData.slice(2) ));
+    
     nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
     localStorageSet("app_noc_status", nocStatus);
     dispatch(
@@ -417,7 +438,7 @@ const setSearchResponseForNocCretificate = async (
 
   if (nocStatus == "APPROVED") {
     let getCertificateDataForSELLMEAT = { "applicationType": "SELLMEATNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "certificateData" } };
-
+   
     //SELLMEAT
     const response0SELLMEAT = await getSearchResultsForNocCretificate([
       { key: "tenantId", value: tenantId },
@@ -434,7 +455,16 @@ const setSearchResponseForNocCretificate = async (
       dispatch(toggleSnackbar(true, errorMessage, "error"));
     } else {
       let getFileStoreIdForSELLMEAT = { "nocApplicationDetail": [get(response0SELLMEAT, "nocApplicationDetail[0]", "")] }
-
+      let nocSoughtFromAPI=get(response0SELLMEAT, "nocApplicationDetail[0].licenseType", "")
+      let mdmsDataForNocSought = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.nocSought", []);
+      let nocSoughtFinalData = "";
+      
+      nocSoughtFromAPI.split(",").map(item => { 
+        if (mdmsDataForNocSought.find(str => str.code == item.trim())) {
+          nocSoughtFinalData = nocSoughtFinalData + " , " +mdmsDataForNocSought.find(str => str.code == item.trim()).name;
+        }
+      });
+      set(response0SELLMEAT, "nocApplicationDetail[0].licenseType", nocSoughtFinalData.slice(2))
       const response1SELLMEAT = await getSearchResultsForNocCretificate([
         { key: "tenantId", value: tenantId },
         { key: "applicationNumber", value: applicationNumber },

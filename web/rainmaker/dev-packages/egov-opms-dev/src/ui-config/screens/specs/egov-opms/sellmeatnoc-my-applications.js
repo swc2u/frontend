@@ -1,7 +1,10 @@
 import { fetchData } from "./searchResource/citizenSearchFunctions";
 import { getCommonHeader } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { setapplicationType, localStorageSet } from "egov-ui-kit/utils/localStorageUtils";
-
+import { setapplicationType, localStorageSet, getOPMSTenantId } from "egov-ui-kit/utils/localStorageUtils";
+import {
+  prepareFinalObject
+} from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { httpRequest } from "../../../../ui-utils";
 const header = getCommonHeader(
   {
     labelName: "My Applications",
@@ -15,12 +18,46 @@ const header = getCommonHeader(
 );
 //alert("Hii...");
 setapplicationType("SELLMEATNOC");
+const getMdmsData = async (action, state, dispatch) => {
+  let tenantId = getOPMSTenantId();
+  let mdmsBody = {
+    MdmsCriteria: {
+      tenantId: tenantId,
+      moduleDetails: [
+        {
+          moduleName: "egpm",
+          masterDetails: [
+            {
+              name: "nocSought"
+            },
+            {
+              name: "sector"
+            },
+            {
+              name: "applicationType"
+            }
+          ]
+        }
+      ]
+    }
+  };
+  try {
+    let payload = null;
+    payload = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
+   dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 const screenConfig = {
   uiFramework: "material-ui",
   name: "my-applications",
   beforeInitScreen: (action, state, dispatch) => {
-    fetchData(action, state, dispatch);
+    getMdmsData(action, state, dispatch).then(response => {
+      fetchData(action, state, dispatch,"SELLMEATNOC");
+    });
+
     return action;
   },
   components: {
