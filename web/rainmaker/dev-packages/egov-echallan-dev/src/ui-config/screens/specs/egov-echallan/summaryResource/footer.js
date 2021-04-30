@@ -336,7 +336,8 @@ const callBackAddToStore = async (state, dispatch, isVerified) => {
     store.dispatch(toggleSpinner());
     let responseStatus = get(response, "status", "");
     if (responseStatus == "SUCCESS" || responseStatus == "success") {
-      let successMessage = getTextToLocalSeizedItemDetailHeader("challanVerified");
+      let successMessage = getTextToLocalSeizedItemDetailHeader("challanVerified")
+      callbackforSendMessage(state,dispatch);
       dispatch(toggleSnackbar(true,
         {
           labelName: successMessage,
