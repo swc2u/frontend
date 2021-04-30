@@ -779,8 +779,8 @@ const setSearchResponse = async (
 
     let encroachmentType = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].encroachmentType", '');
     let paymentStatus = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].paymentDetails.paymentStatus", 'PENDING');
-    let receiveVisible = appstatus === "PENDING FOR AUCTION" ? false : paymentStatus === 'PAID' ? false : true;
-
+    let receiveVisible = appstatus === "PENDING FOR AUCTION" || appstatus === "SENT TO STORE" || appstatus === "CHALLAN ISSUED" ? false : paymentStatus === 'PAID' ? false : true;
+    
     setGridVisibleTrueFalse(state, encroachmentType, appstatus, dispatch);
 
     setReceiveButtonVisibleTrueFalse(receiveVisible, dispatch, appstatus);
