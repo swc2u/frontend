@@ -12,8 +12,6 @@ import 'jspdf-autotable'
 // import Water_data from './WNS_data.json';
 import './Water.css'
 import WNSDashboardOne from './WNSDashboardOne';
-import Water_data from './WNS_data.json';
-import BillData from './BillData.json';
 import WNSDashboardTwo from './WNSDashboardTwo';
 
 class WNSDashboard extends React.Component {

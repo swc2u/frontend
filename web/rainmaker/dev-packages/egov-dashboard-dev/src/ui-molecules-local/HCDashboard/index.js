@@ -423,7 +423,20 @@ class HCDashboard extends React.Component {
             const selectedVal = this.state.graphOneLabel[ind];
             var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
             
-            this.setState({
+            // Copy CLone array
+            var graphlabel = graphSorting[0].map((item) => item);
+            
+            for(var i=0; i<graphlabel.length; i++){
+                if(graphlabel[i].length > 30){
+                    var labelSlice = [];
+                    labelSlice.push(graphlabel[i].substring(0,30));
+                    labelSlice.push(graphlabel[i].substring(30,));
+                    graphlabel[i] = labelSlice;
+                }
+            }
+            
+			this.setState({
+				graphTwoShowlabel : graphlabel,
                 graphTwoLabel: graphSorting[0],
                 graphTwoData: graphSorting[1],
                 dataTwo: graphSorting[2],
@@ -495,7 +508,7 @@ class HCDashboard extends React.Component {
 
     // Second Horizontal Graph
     var graphTwoSortedData = {
-        labels: this.state.graphTwoLabel,
+        labels: this.state.graphTwoShowlabel,
         datasets: [
             {
             // label: this.state.drildownGraphLabel,
@@ -531,7 +544,7 @@ class HCDashboard extends React.Component {
             position: 'bottom',
             labels: {
             fontFamily: "Comic Sans MS",
-            boxWidth: 20,
+            boxWidth: 15,
             boxHeight: 2
             }
         },
@@ -580,7 +593,8 @@ class HCDashboard extends React.Component {
                 },
                 ticks: {
                     suggestedMin: 0,
-                    stepSize: 1
+                    stepSize: 1,
+                    // fontSize: 10
                 },
                 scaleLabel: {
                     display: true,
@@ -589,17 +603,13 @@ class HCDashboard extends React.Component {
             }]
         },
         plugins: {
-            datalabels: {
-                display: false
-            //     color: 'white',
-            //     backgroundColor: 'grey',
-            //     labels: {
-            //         title: {
-            //             font: {
-            //                 weight: 'bold'
-            //             }
-            //         }
-            //     }}
+            legend: {
+                labels: {
+                    // This more specific font property overrides the global property
+                    font: {
+                        size: 10
+                    }
+                }
             }
             }
     }
@@ -762,7 +772,7 @@ class HCDashboard extends React.Component {
             this.state.graphClicked >= 0 ?
             <CardContent className="halfGraph-40">
                 <React.Fragment>
-                    <Pie
+                    <Pie style = {{"display": "block","width": "317px","height": "462px"}}
                     data={ PIEgraphOneSortedData }
                     options={ PIEgraphOneOption } 
                     />
@@ -775,7 +785,7 @@ class HCDashboard extends React.Component {
             this.state.graphClicked > 0 ?
             <CardContent className="halfGraph-60">
                 <React.Fragment>
-                    <HorizontalBar
+                    <HorizontalBar style={{"display": "block","width": "623px","height": "454px"}}
                     data={ graphTwoSortedData } 
                     options={ graphTwoOption } 
                     />
