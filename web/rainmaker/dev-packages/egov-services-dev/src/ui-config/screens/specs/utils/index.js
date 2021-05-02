@@ -1478,15 +1478,21 @@ export const downloadCertificate = async (
         if (applicationData.timeslots && applicationData.timeslots.length > 0) {
 
             var [fromTime, toTime] = applicationData.timeslots[0].slot.split('-')
-
+            let newToDate= applicationData.bkToDate
+            if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+              
+                let d = new Date(new Date(applicationData.bkToDate).setDate(new Date(applicationData.bkToDate).getDate() + 1));  
+                newToDate= d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+              
+            }
             bookingDuration = getDurationDateWithTime(
                 applicationData.bkFromDate,
-                applicationData.bkToDate,
+                newToDate,
                 fromTime,
                 toTime
             )
 
-
+            
         }
     } else {
         bookingDuration = getDurationDate(
