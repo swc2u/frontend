@@ -106,7 +106,7 @@ class SummaryDetails extends Component {
 //             "tenantId": userInfo.tenantId,
 //             "bkAction": "OFFLINE_INITIATE",
 //             "businessService": "PACC",
-//             "financialYear": "2020-2021"
+//             "financialYear": "2021-2022"
 //         }
 
 //         if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
@@ -270,7 +270,7 @@ class SummaryDetails extends Component {
                 "tenantId": userInfo.tenantId,
                 "bkAction": "OFFLINE_APPLY",
                 "businessService": "PACC",
-                "financialYear": "2020-2021"
+                "financialYear": "2021-2022"
             }
 
 

@@ -270,7 +270,14 @@ if(oldDocuments){
         mydocstate: false,
         documents: [oldDocuments], 
 }
-documentsUploadRedux[index] = { ...newDocumentData };
+if(documentsUploadRedux === null){
+  prepareFinalObject("newBooking",true)
+  window.location.href = `/egov-services/all-applications`
+  
+}else{
+  documentsUploadRedux[index] = { ...newDocumentData };
+
+}
 }
 else{
     let newDocumentData = {
@@ -282,8 +289,14 @@ else{
           : false,
         mydocstate: false
       };
-      documentsUploadRedux[index] = { ...newDocumentData };  
-}
+      if(documentsUploadRedux === null){
+        prepareFinalObject("newBooking",true)
+        window.location.href = `/egov-services/all-applications`
+      }else{
+        documentsUploadRedux[index] = { ...newDocumentData };
+      
+      }
+    }
             }
             index++;
           }
@@ -376,7 +389,7 @@ else{
           <Label label="BK_MYBK_DOCUMENT_VALIDATION_MSG" />
           <Grid container={true}>
             <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
-              {documentsUploadRedux[key] &&
+            {documentsUploadRedux && documentsUploadRedux[key] &&
               documentsUploadRedux[key].documents ? (
                 <div className={classes.documentSuccess}>
                   <Icon>
@@ -467,14 +480,14 @@ else{
                   handleFileUpload(e, this.handleDocument, this.props)
                 }
                 uploaded={
-                  documentsUploadRedux[key] &&
+                  documentsUploadRedux && documentsUploadRedux[key] &&
                   documentsUploadRedux[key].documents
                     ? true
                     : false
                 }
                 removeDocument={() => this.removeDocument(key)}
                 documents={
-                  documentsUploadRedux[key] &&
+                  documentsUploadRedux &&  documentsUploadRedux[key] &&
                   documentsUploadRedux[key].documents
                 }
                 onButtonClick={() => this.onUploadClick(key)}

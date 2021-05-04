@@ -930,7 +930,7 @@ const {documentMap,userInfo}=this.props;
 		  "discount": selectedComplaint.discount,
 		  "assignee": selectedComplaint.assignee,
 		  "wfDocuments": selectedComplaint.wfDocuments,
-		  "financialYear": "2020-2021",
+		  "financialYear": "2021-2022",
 		  "financeBusinessService": selectedComplaint.financeBusinessService
 		}
 		let createAppData = {

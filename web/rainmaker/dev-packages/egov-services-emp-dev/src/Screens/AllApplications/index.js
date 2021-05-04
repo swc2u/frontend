@@ -138,6 +138,9 @@ class AllRequests extends Component {
 
     this.props.clearBookingData(null,true,true)
       }
+      prepareFinalObject("newBooking",true)
+      prepareFinalObject("EmployeeDateVenueChange","NotFound")
+    
 
     this.props.history.push(`/egov-services/checkavailability_pcc`);
   };
