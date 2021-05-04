@@ -1241,7 +1241,7 @@ export const downloadReceipt = async (
                         bkStartDate: applicationData.bkFromDate,
                         bkEndDate: applicationData.bkToDate,
                         bkLocation: applicationData.bkLocation,
-                        bookingPupose: applicationData.bkBookingPurpose,
+                        bookingPurpose: applicationData.bkBookingPurpose,
                         applicationNumber :
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.consumerCode,
@@ -1605,7 +1605,7 @@ export const downloadCertificate = async (
                 venueName: applicationData.bkLocation,
                 sector: applicationData.bkSector,
                 groundName: applicationData.bkSector,
-                bookingPupose: applicationData.bkBookingPurpose,
+                bookingPurpose: applicationData.bkBookingPurpose,
                 duration:
                     applicationData.bkDuration == "1"
                         ? `${applicationData.bkDuration} Month`
@@ -1690,7 +1690,7 @@ export const downloadCertificate = async (
                                             ?`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Rooms`
                                                 :`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Room`,
                  
-                     bookingPupose: applicationData.bkBookingPurpose,
+                     bookingPurpose: applicationData.bkBookingPurpose,
                     bkStartDate: applicationData.bkFromDate,
                     bkEndDate: applicationData.bkToDate,
                     placeOfService: "Chandigarh",
