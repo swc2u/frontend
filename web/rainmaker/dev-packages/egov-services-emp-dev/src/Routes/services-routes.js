@@ -341,7 +341,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      title: "ES_OPEN_APPLICAION_HEADER",
+      title: " ",
       hideTitle: false,
       // redirectionUrl,
       // hideFor: "ao",
@@ -355,7 +355,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      // title: "ES_OPEN_APPLICAION_HEADER",
+      // title: " ",
       hideTitle: false,
       customFor: "employee",
       customTitle: "Make Offline Payment"
@@ -368,7 +368,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      // title: "ES_OPEN_APPLICAION_HEADER",
+      // title: " ",
       hideTitle: false,
       customFor: "employee",
       customTitle: "Make Offline Payment"
@@ -382,7 +382,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      // title: "ES_OPEN_APPLICAION_HEADER",
+      // title: " ",
       hideTitle: false,
       customFor: "employee",
       customTitle: "Make Offline Payment",
@@ -395,7 +395,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      // title: "ES_OPEN_APPLICAION_HEADER",
+      // title: " ",
       hideTitle: false,
       customFor: "employee",
       customTitle: "Make Offline Payment",
@@ -409,7 +409,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      // title: "ES_OPEN_APPLICAION_HEADER",
+      // title: " ",
       hideTitle: false,
       customFor: "employee",
       customTitle: "Make Offline Payment",
@@ -423,7 +423,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      // title: "ES_OPEN_APPLICAION_HEADER",
+      // title: " ",
       hideTitle: false,
       customFor: "employee",
       // customTitle: "Make Offline Payment",
@@ -436,7 +436,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      title: "ES_OPEN_APPLICAION_HEADER",
+      title: " ",
       hideTitle: false,
       // redirectionUrl,
       // hideFor: "ao",
@@ -569,7 +569,7 @@ const routes = [
 //   needsAuthentication: true,
 //   options: {
 //     hideFooter: true,
-//     title: "ES_OPEN_APPLICAION_HEADER",
+//     title: " ",
 //     hideTitle: false,
 //     redirectionUrl,
 //     hideFor: "ao",
@@ -611,13 +611,13 @@ const routes = [
   needsAuthentication: true,
   options: {
     hideFooter: true,
-    title: "BK_MYBK_ADMIN_OSBM_FEE_HEADER",
+    title: "Community Center Room Fee Master",
 
     hideTitle: false,
     redirectionUrl,
     hideFor: "ao",
     customFor: "employee",
-    customTitle: "BK_MYBK_ADMIN_OSBM_FEE_HEADER"
+    customTitle: "Community Center Room Fee Master"
   }
 },
 {
@@ -1055,7 +1055,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      title: "ES_OPEN_APPLICAION_HEADER",
+      title: " ",
       hideTitle: false,
       // redirectionUrl,
       // hideFor: "ao",

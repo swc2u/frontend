@@ -530,7 +530,15 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                         bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,
                         bkDisplayToDateTime: response.data.bkToDate + "#" + toTime
                     }
-
+                    if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+              
+                        let d = new Date(new Date(response.data.bkToDate).setDate(new Date(response.data.bkToDate).getDate() + 1));
+                        DisplayPaccObject = {
+                            bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,  
+                            bkDisplayToDateTime: d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate() + "#" + toTime,
+                        };  
+                    }
+                    
                     dispatch(prepareFinalObject("DisplayTimeSlotData", DisplayPaccObject))
                     // dispatch(prepareFinalObject("DisplayPacc", { bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime }));
                     // dispatch(prepareFinalObject("DisplayPacc", { bkDisplayToDateTime: response.data.bkToDate + "#" + toTime }));

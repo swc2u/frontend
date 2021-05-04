@@ -1241,7 +1241,7 @@ export const downloadReceipt = async (
                         bkStartDate: applicationData.bkFromDate,
                         bkEndDate: applicationData.bkToDate,
                         bkLocation: applicationData.bkLocation,
-                        bookingPupose: applicationData.bkBookingPurpose,
+                        bookingPurpose: applicationData.bkBookingPurpose,
                         applicationNumber :
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.consumerCode,
@@ -1478,15 +1478,21 @@ export const downloadCertificate = async (
         if (applicationData.timeslots && applicationData.timeslots.length > 0) {
 
             var [fromTime, toTime] = applicationData.timeslots[0].slot.split('-')
-
+            let newToDate= applicationData.bkToDate
+            if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+              
+                let d = new Date(new Date(applicationData.bkToDate).setDate(new Date(applicationData.bkToDate).getDate() + 1));  
+                newToDate= d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+              
+            }
             bookingDuration = getDurationDateWithTime(
                 applicationData.bkFromDate,
-                applicationData.bkToDate,
+                newToDate,
                 fromTime,
                 toTime
             )
 
-
+            
         }
     } else {
         bookingDuration = getDurationDate(
@@ -1599,7 +1605,7 @@ export const downloadCertificate = async (
                 venueName: applicationData.bkLocation,
                 sector: applicationData.bkSector,
                 groundName: applicationData.bkSector,
-                bookingPupose: applicationData.bkBookingPurpose,
+                bookingPurpose: applicationData.bkBookingPurpose,
                 duration:
                     applicationData.bkDuration == "1"
                         ? `${applicationData.bkDuration} Month`
@@ -1684,7 +1690,7 @@ export const downloadCertificate = async (
                                             ?`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Rooms`
                                                 :`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Room`,
                  
-                     bookingPupose: applicationData.bkBookingPurpose,
+                     bookingPurpose: applicationData.bkBookingPurpose,
                     bkStartDate: applicationData.bkFromDate,
                     bkEndDate: applicationData.bkToDate,
                     placeOfService: "Chandigarh",

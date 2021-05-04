@@ -192,7 +192,7 @@ let discountDocFid =
             "businessService": "PACC",
             "financeBusinessService": NewfinanceBusinessService,
             "reInitiateStatus": checkAppStatus == "OFFLINE_APPLIED" ? true : false,
-            "financialYear": "2020-2021",
+            "financialYear": "2021-2022",
             "bkBankAccountNumber":BankAccountNumber,
              "bkBankName":BankAccountName,
             "bkIfscCode":IFSCCode,
@@ -446,7 +446,7 @@ if(dataOne !== "NotFound"){
                     "bkAction": data.bkApplicationStatus == "OFFLINE_RE_INITIATED" ? "OFFLINE_MODIFY" : "OFFLINE_APPLY",
                     "businessService": "PACC",
                     "reInitiateStatus": false,
-                    "financialYear": "2020-2021",
+                    "financialYear": "2021-2022",
                     "bkBankAccountNumber":data.bkBankAccountNumber,
                     "bkBankName":data.bkBankName,
                     "bkIfscCode":data.bkIfscCode,
@@ -844,21 +844,29 @@ console.log("seven--",seven)
         })
       })
     }
-
+    let newBooking= state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.newBooking :"false"
+ 
     let documentMap = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.documentMap : "";
     let bkLocation = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation : "";
    let checkAppStatus = 'NOTFOUND';
    let checkAppNum = 'NOTFOUND';
    let createInitateApp = bookings ? (bookings.applicationData ?(bookings.applicationData.bookingsModelList.length > 0 ? (bookings.applicationData.bookingsModelList): 'NA'): 'NA'): "NA"
   console.log("createInitateApp--createInitateApp",createInitateApp)
+ 
    if(createInitateApp !== "NA"){
     console.log("comeInFoundCondition")
+   
     checkAppStatus = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationStatus : "NOTFOUND";
     console.log("checkAppStatus-id",checkAppStatus)
     checkAppNum = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationNumber : "NOTFOUND";
     console.log("checkAppNum-id",checkAppNum)
-}
 
+}
+if(newBooking=== true){
+    checkAppStatus = 'NOTFOUND';
+    createInitateApp === "NA";
+    checkAppNum=  "NOTFOUND";
+    }
    console.log("checkAppStatus--",checkAppStatus)
    console.log("checkAppNum--",checkAppNum)
 // checkAppStatus = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationStatus : "NOTFOUND";

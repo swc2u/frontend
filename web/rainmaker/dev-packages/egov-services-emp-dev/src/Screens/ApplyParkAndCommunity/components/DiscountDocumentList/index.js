@@ -357,13 +357,21 @@ console.log('this.state.idProffType',this.state.idProffType);
     handleChangeTwo = (key, event) => {
 
         const { discountDocumentsUploadRedux, prepareFinalObject } = this.props;
-        prepareFinalObject(`discountDocumentsUploadRedux`, {
-            ...discountDocumentsUploadRedux,
-            [key]: {
-                ...discountDocumentsUploadRedux[key],
-                dropdown: { value: event.target.value },
-            },
-        });
+        if(discountDocumentsUploadRedux === null){
+            prepareFinalObject("newBooking",true)
+            window.location.href = `/egov-services/all-applications`
+            
+          }else{
+            prepareFinalObject(`discountDocumentsUploadRedux`, {
+                ...discountDocumentsUploadRedux,
+                [key]: {
+                    ...discountDocumentsUploadRedux[key],
+                    dropdown: { value: event.target.value },
+                },
+            });
+          
+          }
+     
     };
 
     getUploadCard = (card, key) => {
