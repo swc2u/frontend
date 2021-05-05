@@ -9,29 +9,28 @@ import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 // import Dashboardtable from './Dashboardtable';
 // import Pagination from "./Pagination";
-import SportCulture_data from './SportCulture_data.json';
 import './PRDashboardIndex.css'
 
 class PublicRelationDashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state ={
+        recordNotFound : "",
+        dropdownSelected : "",
         checkData: [],
         allData: [],
+        graphOneLabel : [],
+        graphOneData : [],
         dataOne: [],
-        dataTwo: [],
-        graphOneLabel: [],
-        graphOneData: [],
-        graphTwoLabel: [],
-        graphTwoData: [],
-        graphClicked: -1,
-        hardJSON: [],
-        graphHardOneData : {},
-        graphHardTwoData : {},
+        graphTwoLabel : [],
+        graphTwoData : [],
+        dataTwo : [],
+        graphThirdLabel : [],
+        graphThirdData : [],
+        dataThird: [],
+        graphClicked : -1,
         rowData: [],
         columnData: [],
-        // Feature Table
-        toggleColumnCheck: false,
         unchangeColumnData: []
     }
   }
@@ -100,7 +99,7 @@ class PublicRelationDashboard extends React.Component {
     doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
 
     doc.setFontSize(10);
-    const pdfTitle = this.state.graphHardOneData.title ? this.state.graphHardOneData.title : "Title"
+    const pdfTitle = "Public Relation Dashboard"
     doc.text(pdfTitle, pageWidth / 2, 40, 'center');
 
     doc.autoTable({ html: '#my-table' });
@@ -155,7 +154,7 @@ class PublicRelationDashboard extends React.Component {
 
     // Toggle Column 
     toggleColumn = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         debugger;
         const data = this.state.columnData
         this.setState({
@@ -164,23 +163,20 @@ class PublicRelationDashboard extends React.Component {
     }
     
     graphSorting = ( sortBy, data, checkGraph ) => {
+        debugger;
+        var sortNo = null;
+        var group = data.reduce((r, a) => {
+            r[a[sortBy]] = [...r[a[sortBy]] || [], a];
+            return r;
+            }, {});
 
-    
-    debugger;
-    var sortNo = null;
-    var group = data.reduce((r, a) => {
-        r[a[sortBy]] = [...r[a[sortBy]] || [], a];
-        return r;
-        }, {});
+        var graphOneLabel = Object.keys(group);
+        var graphOneData = []
+        for(var i=0; i<Object.keys(group).length ; i++){
+            graphOneData.push(group[graphOneLabel[i]].length);
+        }
 
-    var graphOneLabel = Object.keys(group);
-    var graphOneData = []
-    for(var i=0; i<Object.keys(group).length ; i++){
-        graphOneData.push(group[graphOneLabel[i]].length);
-    }
-
-    return [ graphOneLabel, graphOneData, group ]
-    
+        return [ graphOneLabel, graphOneData, group ]
     }
 
     // CamelCase Column Name 
@@ -202,63 +198,8 @@ class PublicRelationDashboard extends React.Component {
         const data = this.props.data.length > 0 ? this.props.data[0].ResponseBody : [];
         const propSortBy = this.props.data.length > 0 ? this.props.data[1].value : [];
         if(data.length > 0){
-            const hardJSON = propSortBy === "eventStatus" ? [{ 
-                "sortBy": "eventStatus",
-                "msgX": "",
-                "msgY": "",
-                "title": "Event StatusWise Public Relation Dashboard"
-                },
-                { 
-                "sortBy": "status",
-                "msgX": "",
-                "msgY": "",
-                "title": "MoM Statuswise Public Relation Dashboard"
-                }] : propSortBy === "status" ? [
-                    { 
-                    "sortBy": "status",
-                    "msgX": "",
-                    "msgY": "",
-                    "title": "MoM Statuswise Public Relation Dashboard"
-                    },
-                    { 
-                    "sortBy": "eventStatus",
-                    "msgX": "",
-                    "msgY": "",
-                    "title": "Event StatusWise Public Relation Dashboard"
-                    }
-                    ] : []
-    
-            // Graph One Sorting Function 
-            var graphOneData2 = this.graphSorting( propSortBy, data );
-    
-            
-            // Column Data
-            const tableData = data[0] ? Object.keys(data[0]) : [];
-            var columnData = []
-            for(var i=0; i<tableData.length; i++){
-                var itemHeader = {}
-                itemHeader["Header"] = this.camelize(tableData[i]);
-                itemHeader["accessor"] = tableData[i];
-                itemHeader["show"]= (i === 3 || i === 4 || i === 9 || i === 13 
-                    || i === 15 || i === 18 || i === 20
-                    || i === 23 || i === 24 || i === 33 || i === 35 ) ? true : false ;
-                columnData.push(itemHeader);
-            }
-    
-            // Column Unchange Data 
-            const unchangeColumnData = this.columnUnchange(columnData)
-    
-            
             this.setState({
-                graphOneLabel: graphOneData2[0],
-                graphOneData: graphOneData2[1],
-                graphClicked: 0,
-                dataOne: graphOneData2[2],
-                columnData: columnData,
-                unchangeColumnData: unchangeColumnData,
-                rowData: data,
-                hardJSON: hardJSON,
-                checkData: this.props.data
+                checkData : this.props.data
             })
         }
     }
@@ -267,65 +208,58 @@ class PublicRelationDashboard extends React.Component {
         debugger;
         const data = this.props.data.length > 0 ? this.props.data[0].ResponseBody : [];
         const propSortBy = this.props.data.length > 0 ? this.props.data[1].value : [];
-
+        var recordNotFound = "";
         if(JSON.stringify(this.props.data) !== JSON.stringify(this.state.checkData)){
-            const hardJSON = propSortBy === "eventStatus" ? [{ 
-                "sortBy": "eventStatus",
-                "msgX": "",
-                "msgY": "",
-                "title": "Event StatusWise Public Relation Dashboard"
-                },
-                { 
-                "sortBy": "status",
-                "msgX": "",
-                "msgY": "",
-                "title": "MoM Statuswise Public Relation Dashboard"
-                }] : propSortBy === "status" ? [
-                    { 
-                    "sortBy": "status",
-                    "msgX": "",
-                    "msgY": "",
-                    "title": "MoM Statuswise Public Relation Dashboard"
-                    },
-                    { 
-                    "sortBy": "eventStatus",
-                    "msgX": "",
-                    "msgY": "",
-                    "title": "Event StatusWise Public Relation Dashboard"
+            var dropdownSelected = propSortBy;
+            var group = data.reduce((r, a) => {
+                r[a["eventStatus"]] = [...r[a["eventStatus"]] || [], a];
+                return r;
+                }, {});
+            var selectedData = group[dropdownSelected];
+            if(selectedData){
+                var graphData = this.graphSorting("eventType", selectedData, "checkGraph");
+                // Column Data
+                var tableData = Object.keys(selectedData[0]);
+                var columnData = []
+                for(var i=0; i<tableData.length; i++){
+                    var itemHeader = {}
+                    itemHeader["Header"] = this.camelize(tableData[i]);
+                    itemHeader["accessor"] = tableData[i];
+                    // itemHeader["show"]= (i === 3 || i === 4 || i === 9 || i === 13 
+                    //     || i === 15 || i === 18 || i === 20
+                    //     || i === 23 || i === 24 || i === 33 || i === 35 ) ? true : false ;
+                    if(i === 3 || i === 4 || i === 9 || i === 13 
+                        || i === 15 || i === 18 || i === 20
+                        || i === 23 || i === 24 || i === 33 || i === 35 ){
+                            itemHeader["show"] = true;
+                            columnData.push(itemHeader);
                     }
-                    ] : []
-    
-            // Graph One Sorting Function 
-            var graphOneData2 = this.graphSorting( propSortBy, data );
-    
-            
-            // Column Data
-            const tableData = data[0] ? Object.keys(data[0]) : [];
-            var columnData = []
-            for(var i=0; i<tableData.length; i++){
-                var itemHeader = {}
-                itemHeader["Header"] = this.camelize(tableData[i]);
-                itemHeader["accessor"] = tableData[i];
-                itemHeader["show"]= (i === 3 || i === 4 || i === 9 || i === 13 
-                    || i === 15 || i === 18 || i === 20
-                    || i === 23 || i === 24 || i === 33 || i === 35 ) ? true : false ;
-                columnData.push(itemHeader);
+                    
+                }
+                debugger;
+                
+        
+                // Column Unchange Data 
+                const unchangeColumnData = columnData
+        
+                
+                this.setState({
+                    graphOneLabel: graphData[0],
+                    graphOneData: graphData[1],
+                    graphClicked: 0,
+                    dataOne: graphData[2],
+                    columnData: columnData,
+                    unchangeColumnData: unchangeColumnData,
+                    rowData: selectedData,
+                    // hardJSON: hardJSON,
+                    dropdownSelected : dropdownSelected
+                })
+            }else{
+                recordNotFound = "Record not found..!"
             }
-    
-            // Column Unchange Data 
-            const unchangeColumnData = this.columnUnchange(columnData)
-    
-            
             this.setState({
-                graphOneLabel: graphOneData2[0],
-                graphOneData: graphOneData2[1],
-                graphClicked: 0,
-                dataOne: graphOneData2[2],
-                columnData: columnData,
-                unchangeColumnData: unchangeColumnData,
-                rowData: data,
-                hardJSON: hardJSON,
-                checkData: this.props.data
+                recordNotFound : recordNotFound,
+                checkData : this.props.data
             })
         }
     }
@@ -333,304 +267,450 @@ class PublicRelationDashboard extends React.Component {
     render() {
     
 
-    // First Double Bar Graph Graph
-    var PIEgraphOneSortedData = {
-        labels: this.state.graphOneLabel,
-        // labels: ["Label1", "Label2"],
-        datasets: [
-            {
-            label: "Apani Mandi",
-            fill: false,
-            lineTension: 0.1,
-            hoverBorderWidth : 12,
-            // backgroundColor : this.state.colorRandom,
-            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-            borderColor: "rgba(75,192,192,0.4)",
-            borderCapStyle: "butt",
-            barPercentage: 2,
-            borderWidth: 5,
-            barThickness: 25,
-            maxBarThickness: 10,
-            minBarLength: 2,
-            data: this.state.graphOneData
-            // data:[10,20,30]
-            }
-        ]
-    }
-
-    var PIEgraphOneOption = {
-        responsive : true,
-        // aspectRatio : 3,
-        maintainAspectRatio: false,
-        cutoutPercentage : 0,
-        datasets : [
-            {
-            backgroundColor : "rgba(0, 0, 0, 0.1)",
-            weight: 0
-            }
-        ], 
-        legend: {
-            display: true,
-            position: 'bottom',
-            labels: {
-            fontFamily: "Comic Sans MS",
-            boxWidth: 20,
-            boxHeight: 2
-            }
-        },
-        tooltips: {
-            enabled: true
-        },
-        title: {
-            display: true,
-            text: this.state.hardJSON[0] ? this.state.hardJSON[0].title : ""
-        },
-        // scales: {
-        //     xAxes: [{
-        //         gridLines: {
-        //             display:true
-        //         },
-        //         scaleLabel: {
-        //             display: true,
-        //             labelString:" this.state.graphHardThirdData.msgX"
-        //             }, 
-        //     }],
-        //     yAxes: [{
-        //         gridLines: {
-        //             display:true
-        //         },
-        //         ticks: {
-        //             // suggestedMin: 0,
-        //             // suggestedMax: 100,
-        //             stepSize: 1
-        //         },
-        //         scaleLabel: {
-        //             display: true,
-        //             labelString: "this.state.graphHardThirdData.msgY"
-        //             }, 
-        //     }]
-        // },
-        plugins: {
-            datalabels: {
-                display: false
-            //     color: 'white',
-            //     backgroundColor: 'grey',
-            //     labels: {
-            //         title: {
-            //             font: {
-            //                 weight: 'bold'
-            //             }
-            //         }
-            //     }}
-            }
-        },
-        onClick: (e, element) => {
-            if (element.length > 0) {
-                
-                debugger;
-                var ind = element[0]._index;   
-                const selectedVal = this.state.graphOneLabel[ind];
-                // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
-                const hardval = this.state.hardJSON[1]
-                var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataOne[selectedVal] );
-                
-                this.setState({
-                    graphTwoLabel: graphSorting[0],
-                    graphTwoData: graphSorting[1],
-                    dataTwo: graphSorting[2],
-                    graphClicked: 1,
-                    rowData: this.state.dataOne[selectedVal]
-                })
-                
-            }
-        },
-    }
-    
-
-    // Second Horizontal Graph
-    var graphTwoSortedData = {
-        labels: this.state.graphTwoLabel,
-        datasets: [
-            {
-            // label: this.state.drildownGraphLabel,
-            fill: false,
-            lineTension: 5,
-            hoverBorderWidth : 12,
-            // backgroundColor : this.state.colorRandom,
-            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-            borderColor: "rgba(75,192,192,0.4)",
-            borderCapStyle: "butt",
-            barPercentage: 2,
-            barThickness: 25,
-            maxBarThickness: 25,
-            minBarLength: 2,
-            data: this.state.graphTwoData
-            }
-        ]
-    }
-
-    var graphTwoOption = {
-        responsive : true,
-        // aspectRatio : 3,
-        maintainAspectRatio: false,
-        cutoutPercentage : 0,
-        datasets : [
-            {
-            backgroundColor : "rgba(0, 0, 0, 0.1)",
-            weight: 0
-            }
-        ], 
-        legend: {
-            display: true,
-            position: 'bottom',
-            labels: {
-            fontFamily: "Comic Sans MS",
-            boxWidth: 20,
-            boxHeight: 2
-            }
-        },
-        tooltips: {
-            enabled: true
-        },
-        title: {
-            display: true,
-            text: this.state.hardJSON[0] ? this.state.hardJSON[1].title : ""
-        },
-        onClick: (e, element) => {
-            if (element.length > 0) {
-                var ind = element[0]._index;
-                debugger;
-                const selectedVal = this.state.graphTwoLabel[ind];
-                
-                this.setState({
-                    graphClicked: 2,
-                    rowData: this.state.dataTwo[selectedVal]
-                })
-            }
-        },
-        // scales: {
-        //     xAxes: [{
-        //         gridLines: {
-        //             display:true
-        //         },
-        //         ticks: {
-        //             suggestedMin: 0,
-        //             // suggestedMax: 100,
-        //             stepSize: 1
-        //         },
-        //         scaleLabel: {
-        //             display: true,
-        //             labelString: this.state.graphHardTwoData.msgX
-        //             }, 
-        //     }],
-        //     yAxes: [{
-        //         gridLines: {
-        //             display: true
-        //         },
-        //         ticks: {
-        //             suggestedMin: 0,
-        //             stepSize: 1
-        //         },
-        //         scaleLabel: {
-        //             display: true,
-        //             labelString: this.state.graphHardTwoData.msgY
-        //             }, 
-        //     }]
-        // },
-        plugins: {
-            datalabels: {
-                display: false
-            //     color: 'white',
-            //     backgroundColor: 'grey',
-            //     labels: {
-            //         title: {
-            //             font: {
-            //                 weight: 'bold'
-            //             }
-            //         }
-            //     }}
-            }
-            }
-    }
-
-
-        
-    return (
-        <div>
-        
-        <div className="graphDashboard">
-        
-
-        {
-            this.state.graphClicked >= 0 ?
-            <CardContent className="halfGraph">
-                <React.Fragment>
-                    <Pie
-                    data={ PIEgraphOneSortedData }
-                    options={ PIEgraphOneOption } 
-                    />
-                </React.Fragment>
-            </CardContent>
-            :null
-        }
-
-        {
-            this.state.graphClicked > 0 ?
-            <CardContent className="halfGraph">
-                <React.Fragment>
-                    <Pie
-                    data={ graphTwoSortedData } 
-                    options={ graphTwoOption } 
-                    />
-                </React.Fragment>
-            </CardContent> 
-            :null
-        }
-
-        </div>
-
-        {/* Table Feature  */}
-        
-        <div className="tableContainer">
-        {
-            this.state.unchangeColumnData.length > 0  ? 
-            <div className="tableFeature">
-                <div className="columnToggle-Text"> Download As: </div>
-                <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
-
-                <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
-            </div>
-            :null
-        }
-
-        {
-           this.state.toggleColumnCheck ?
-           <div className="columnVisibilityCard">
-            <dl>
+        // First Double Bar Graph Graph
+        var PIEgraphOneSortedData = {
+            labels: this.state.graphOneLabel,
+            // labels: ["Label1", "Label2"],
+            datasets: [
                 {
-                    this.state.unchangeColumnData.map((data, index)=>{
-                        return(
-                            <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
-                        )
+                label: "Event",
+                fill: false,
+                lineTension: 0.1,
+                hoverBorderWidth : 12,
+                // backgroundColor : this.state.colorRandom,
+                backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+                borderColor: "rgba(75,192,192,0.4)",
+                borderCapStyle: "butt",
+                barPercentage: 2,
+                borderWidth: 5,
+                barThickness: 25,
+                maxBarThickness: 10,
+                minBarLength: 2,
+                data: this.state.graphOneData
+                // data:[10,20,30]
+                }
+            ]
+        }
+    
+        var PIEgraphOneOption = {
+            responsive : true,
+            // aspectRatio : 3,
+            maintainAspectRatio: false,
+            cutoutPercentage : 0,
+            datasets : [
+                {
+                backgroundColor : "rgba(0, 0, 0, 0.1)",
+                weight: 0
+                }
+            ], 
+            legend: {
+                display: false,
+                position: 'bottom',
+                labels: {
+                fontFamily: "Comic Sans MS",
+                boxWidth: 20,
+                boxHeight: 2
+                }
+            },
+            tooltips: {
+                enabled: true
+            },
+            title: {
+                display: true,
+                text: this.state.dropdownSelected === "PUBLISHED" ? "Published Event Statuswise Dashboard" : "Cancelled Event Statuswise Dashboard" 
+            },
+            scales: {
+                xAxes: [{
+                    gridLines: {
+                        display:true
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Event"
+                        }, 
+                }],
+                yAxes: [{
+                    gridLines: {
+                        display:true
+                    },
+                    ticks: {
+                        suggestedMin: 0,
+                        // suggestedMax: 100,
+                        stepSize: 1
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "No of Event"
+                        }, 
+                }]
+            },
+            plugins: {
+                datalabels: {
+                    display: false
+                //     color: 'white',
+                //     backgroundColor: 'grey',
+                //     labels: {
+                //         title: {
+                //             font: {
+                //                 weight: 'bold'
+                //             }
+                //         }
+                //     }}
+                }
+            },
+            onClick: (e, element) => {
+                if (element.length > 0) {
+                    
+                    debugger;
+                    var ind = element[0]._index;   
+                    const selectedVal = this.state.graphOneLabel[ind];
+                    const data = this.state.dataOne[selectedVal];
+                    var graphData = this.graphSorting("sector", data, "checkGraph");
+            
+                    debugger;
+                    // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
+                    // const hardval = this.state.hardJSON[1]
+                    // var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataOne[selectedVal] );
+                    
+                    this.setState({
+                        graphTwoLabel: graphData[0],
+                        graphTwoData: graphData[1],
+                        dataTwo: graphData[2],
+                        graphClicked: 1,
+                        rowData: this.state.dataOne[selectedVal]
+                    })
+                    
+                }
+            },
+        }
+        
+    
+        // Second Horizontal Graph
+        var graphTwoSortedData = {
+            labels: this.state.graphTwoLabel,
+            // labels: ["Label1", "Label2"],
+            datasets: [
+                {
+                label: "Event",
+                fill: false,
+                lineTension: 5,
+                hoverBorderWidth : 12,
+                // backgroundColor : this.state.colorRandom,
+                backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+                borderColor: "rgba(75,192,192,0.4)",
+                borderCapStyle: "butt",
+                barPercentage: 2,
+                barThickness: 25,
+                maxBarThickness: 25,
+                minBarLength: 2,
+                data: this.state.graphTwoData
+                // data: [10,20]
+                }
+            ]
+        }
+    
+        var graphTwoOption = {
+            responsive : true,
+            // aspectRatio : 3,
+            maintainAspectRatio: false,
+            cutoutPercentage : 0,
+            datasets : [
+                {
+                backgroundColor : "rgba(0, 0, 0, 0.1)",
+                weight: 0
+                }
+            ], 
+            legend: {
+                display: false,
+                position: 'bottom',
+                labels: {
+                fontFamily: "Comic Sans MS",
+                boxWidth: 20,
+                boxHeight: 2
+                }
+            },
+            tooltips: {
+                enabled: true
+            },
+            title: {
+                display: true,
+                text: this.state.dropdownSelected === "PUBLISHED" ? "Published Events Sectorwise Dashboard" : "Cancelled Events Sectorwise Dashboard"
+            },
+            onClick: (e, element) => {
+                if (element.length > 0) {
+                    debugger;
+                    var ind = element[0]._index;   
+                    const selectedVal = this.state.graphTwoLabel[ind];
+                    const data = this.state.dataTwo[selectedVal];
+                    var graphData = this.graphSorting("area", data, "checkGraph");
+            
+                    debugger;
+                    // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
+                    // const hardval = this.state.hardJSON[1]
+                    // var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataOne[selectedVal] );
+                    
+                    this.setState({
+                        graphThirdLabel: graphData[0],
+                        graphThirdData: graphData[1],
+                        dataThird: graphData[2],
+                        graphClicked: 2,
+                        rowData: this.state.dataTwo[selectedVal]
                     })
                 }
-            </dl>
-            </div> 
-           : null
+            },
+            scales: {
+                xAxes: [{
+                    gridLines: {
+                        display:true
+                    },
+                    ticks: {
+                        suggestedMin: 0,
+                        // suggestedMax: 100,
+                        stepSize: 1
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Event Sector"
+                        }, 
+                }],
+                yAxes: [{
+                    gridLines: {
+                        display: true
+                    },
+                    ticks: {
+                        suggestedMin: 0,
+                        stepSize: 1
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "No of Events"
+                        }, 
+                }]
+            },
+            plugins: {
+                datalabels: {
+                    display: false
+                //     color: 'white',
+                //     backgroundColor: 'grey',
+                //     labels: {
+                //         title: {
+                //             font: {
+                //                 weight: 'bold'
+                //             }
+                //         }
+                //     }}
+                }
+                }
         }
+    
+        // Third Horizontal Graph
+        var graphThirdSortedData = {
+            labels: this.state.graphThirdLabel,
+            // labels: ["Label1", "Label2"],
+            datasets: [
+                {
+                label: "Event",
+                fill: false,
+                lineTension: 5,
+                hoverBorderWidth : 12,
+                // backgroundColor : this.state.colorRandom,
+                backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+                borderColor: "rgba(75,192,192,0.4)",
+                borderCapStyle: "butt",
+                barPercentage: 2,
+                barThickness: 25,
+                maxBarThickness: 25,
+                minBarLength: 2,
+                data: this.state.graphThirdData
+                // data: [10,20]
+                }
+            ]
+        }
+    
+        var graphThirdOption = {
+            responsive : true,
+            // aspectRatio : 3,
+            maintainAspectRatio: false,
+            cutoutPercentage : 0,
+            datasets : [
+                {
+                backgroundColor : "rgba(0, 0, 0, 0.1)",
+                weight: 0
+                }
+            ], 
+            legend: {
+                display: false,
+                position: 'bottom',
+                labels: {
+                fontFamily: "Comic Sans MS",
+                boxWidth: 20,
+                boxHeight: 2
+                }
+            },
+            tooltips: {
+                enabled: true
+            },
+            title: {
+                display: true,
+                text: this.state.dropdownSelected === "PUBLISHED" ? "Published Event Areawise Dashboard" : "Cancelled Event Areawise Dashboard"
+            },
+            onClick: (e, element) => {
+                if (element.length > 0) {
+                    debugger;
+                    // var ind = element[0]._index;   
+                    // const selectedVal = this.state.graphTwoLabel[ind];
+                    // const data = this.state.dataTwo[selectedVal];
+                    // var graphData = this.graphSorting("area", data, "checkGraph");
+            
+                    // debugger;
+                    // // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
+                    // // const hardval = this.state.hardJSON[1]
+                    // // var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataOne[selectedVal] );
+                    
+                    // this.setState({
+                    //     graphThirdLabel: graphData[0],
+                    //     graphThirdData: graphData[1],
+                    //     dataThird: graphData[2],
+                    //     graphClicked: 2,
+                    //     rowData: this.state.dataTwo[selectedVal]
+                    // })
+                }
+            },
+            scales: {
+                xAxes: [{
+                    gridLines: {
+                        display:true
+                    },
+                    ticks: {
+                        suggestedMin: 0,
+                        // suggestedMax: 100,
+                        stepSize: 1
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Area"
+                        }, 
+                }],
+                yAxes: [{
+                    gridLines: {
+                        display: true
+                    },
+                    ticks: {
+                        suggestedMin: 0,
+                        stepSize: 1
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "No of Events"
+                        }, 
+                }]
+            },
+            plugins: {
+                datalabels: {
+                    display: false
+                //     color: 'white',
+                //     backgroundColor: 'grey',
+                //     labels: {
+                //         title: {
+                //             font: {
+                //                 weight: 'bold'
+                //             }
+                //         }
+                //     }}
+                }
+                }
+        }
+            
+        return (
+            <div>
+            <div className="graphDashboard">
 
-            <ReactTable
-            // PaginationComponent={Pagination}
-            data={ this.state.rowData }  
-            columns={ this.state.columnData }  
-            defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
-            pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
-            pageSizeOptions = {[20,40,60]}  
-            />
-        </div>
-        </div>
-    );
-    }
+            <div> {this.state.recordNotFound} </div> 
+    
+            {
+                this.state.graphClicked >=0 ?
+                <CardContent className="halfGraph">
+                    <React.Fragment>
+                        <Bar
+                        data={ PIEgraphOneSortedData }
+                        options={ PIEgraphOneOption } 
+                        />
+                    </React.Fragment>
+                </CardContent>
+                :null
+            }
+    
+            {
+                this.state.graphClicked > 0 ?
+                <CardContent className="halfGraph">
+                    <React.Fragment>
+                        <Bar
+                        data={ graphTwoSortedData } 
+                        options={ graphTwoOption } 
+                        />
+                    </React.Fragment>
+                </CardContent> 
+                :null
+            }
+    
+            </div>
+            {
+                this.state.graphClicked > 1 ?
+                <CardContent style={{"height": "350px"}}>
+                    <React.Fragment>
+                        <Bar
+                        data={ graphThirdSortedData } 
+                        options={ graphThirdOption } 
+                        />
+                    </React.Fragment>
+                </CardContent> 
+                :null
+            }
+    
+            {/* Table Feature  */}
+            <div className={this.state.graphClicked >=0 ? "tableContainer" : ""}>
+            {
+                this.state.unchangeColumnData.length > 0  ? 
+                <div className="tableFeature">
+                    <div className="columnToggle-Text"> Download As: </div>
+                    <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+    
+                    <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+                </div>
+                :null
+            }
+            {
+               this.state.toggleColumnCheck ?
+               <div className="columnVisibilityCard">
+                <dl>
+                    {
+                        this.state.unchangeColumnData.map((data, index)=>{
+                            return(
+                                <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
+                            )
+                        })
+                    }
+                </dl>
+                </div> 
+               : null
+            }
+    
+            {
+                this.state.graphClicked >= 0 ?
+                <ReactTable id="customReactTable"
+                // PaginationComponent={Pagination}
+                data={ this.state.rowData }  
+                columns={ this.state.columnData }  
+                defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
+                pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
+                pageSizeOptions = {[20,40,60]}  
+                /> 
+                :null
+            }
+            </div>
+            </div>
+        );
+        }
 }
 
 export default PublicRelationDashboard;

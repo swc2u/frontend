@@ -3,19 +3,11 @@ import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 // import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
 import set from "lodash/set";
-import { getStoreIndentData } from "../../../../../ui-utils/commons";
+import { getStoreIndentData2, getStoreMaterialReceiptData2, getStorePurchaseOrderData2 } from "../../../../../ui-utils/commons";
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
   debugger;
-  var flag_for_api_call = true
-  let queryObject = [
-    {
-      key: "tenantId",
-      value: getTenantId()
-    },
-    { key: "offset", value: "0" }
-  ];
   let dashboardFilterDAta = get(
     state.screenConfiguration.preparedFinalObject,
     "dahsboardHome",
@@ -29,6 +21,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
   var fromDateNumeric = dateFromObject.getTime()  ? dateFromObject.getTime() : null;
   var toDateNumeric = dateToObject.getTime() ? dateToObject.getTime() : null;
   var reportSortBy = get(state.screenConfiguration.preparedFinalObject,"dahsboardHome.dropDownData2",{});
+  var storeName = get(state.screenConfiguration.preparedFinalObject,"dahsboardHome.storeNameDefault",{});
   // var reportName = get(state.screenConfiguration.preparedFinalObject,"dahsboardHome.reportdefaultDropDownData",{});
 
   // Validation For api call
@@ -47,13 +40,20 @@ export const SearchDashboardData = async (state, dispatch) =>{
     "tenantId" : getTenantId(),
     "fromDate":fromDateNumeric,
     "toDate": toDateNumeric,
-    "reportSortBy": reportSortBy
-    
+    "reportSortBy": reportSortBy,
+    "storeName" : storeName
   }
       debugger;
     try {
       // API call for Description Report
-      const response = await getStoreIndentData( dispatch, data );
+      if(reportSortBy.value === "indentingStore"){
+        const response = await getStoreIndentData2( dispatch, data );
+      }else if(reportSortBy.value === "MaterialReceipt"){
+        const response = await getStoreMaterialReceiptData2( dispatch, data );
+      }else if(reportSortBy.value === "purchaseOrders"){
+        const response = await getStorePurchaseOrderData2( dispatch, data );
+      }
+      
 
     } catch (error) {
 

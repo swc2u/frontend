@@ -125,7 +125,7 @@ export const FilterFormDashboard = getCommonCard({
       },
       props: {
         style: {
-          width: "80%",
+          width: "130px",
         }
       },
       gridDefination: {
@@ -139,8 +139,8 @@ export const FilterFormDashboard = getCommonCard({
       afterFieldChange: (action, state, dispatch) => {
         dispatch(
           handleField(
-            "dashboardSource",
-            "components.div.children.FilterFormforEmployee.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+            "PGRDashboard",
+            "components.div.children.FilterFormDashboard.children.cardContent.children.FilterConstraintsContainer.children.toDate",
             "props.inputProps.min",
             action.value
           )
@@ -155,7 +155,7 @@ export const FilterFormDashboard = getCommonCard({
       },
       props: {
         style: {
-          width: "80%",
+          width: "130px",
         },
         inputProps: {
           min: ''

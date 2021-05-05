@@ -15,7 +15,7 @@ export const HCDashboardFilterForm = getCommonCard({
       },
       props: {
         style: {
-          width: "80%",
+          width: "130px",
         }
       },
       gridDefination: {
@@ -32,27 +32,12 @@ export const HCDashboardFilterForm = getCommonCard({
       },
       afterFieldChange: (action, state, dispatch) => {
         debugger;
-        var dt = new Date();
-        var year= dt.getFullYear();
-        var month = parseInt(dt.getMonth()+1) < 10 ? "0"+parseInt(dt.getMonth()+1) : parseInt(dt.getMonth()+1);
-        var currentDt = dt.getDate() < 10 ? "0"+dt.getDate() : dt.getDate();
-        var todayDt = year+"-"+month+"-"+currentDt;
-        dispatch(
-          handleField(
-            "HCDashboard",
-            "components.div.children.HCDashboardFilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
-            "props.inputProps.max",
-            todayDt
-          )
-        );
-
-        var selectedDt = get(state, "screenConfiguration.preparedFinalObject.HCdahsboardHome.defaultFromDate",'')
         dispatch(
           handleField(
             "HCDashboard",
             "components.div.children.HCDashboardFilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
             "props.inputProps.min",
-            selectedDt
+            action.value
           )
         );
 
@@ -66,7 +51,7 @@ export const HCDashboardFilterForm = getCommonCard({
       },
       props: {
         style: {
-          width: "80%",
+          width: "130px",
         },
         inputProps: {
           min: ''
@@ -134,7 +119,7 @@ export const HCDashboardFilterForm = getCommonCard({
         width: "75%",
         height: "55px",
         /* margin-right: 80px; */
-        // marginLeft: "90%"
+        // marginLeft: "145px"
         }
       },
       children: {

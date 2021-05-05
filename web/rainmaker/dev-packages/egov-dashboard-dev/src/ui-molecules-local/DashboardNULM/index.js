@@ -15,29 +15,32 @@ class NULMDashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state ={
-      checkData: [],
-      allData: [],
-      dataOne: [],
-      dataTwo: [],
-      graphOneLabel: [],
-      graphOneData: [],
-      graphTwoLabel: [],
-      graphTwoData: [],
-      graphClicked: -1,
-      hardJSON: [],
-      graphHardOneData : {},
-      graphHardTwoData : {},
-      rowData: [],
-      columnData: [],
-      // Feature Table
-      toggleColumnCheck: false,
-      unchangeColumnData: []
+        dropdownSelected : "",
+        allData: [],
+        dataOne: [],
+        dataTwo: [],
+        dataThird : [],
+        graphOneLabel: [],
+        graphOneData: [],
+        graphTwoLabel: [],
+        graphTwoData: [],
+        graphThreeLabel : [],
+        graphThreeData : [],
+        graphClicked: -1,
+        hardJSON: [],
+        graphHardOneData : {},
+        graphHardTwoData : {},
+        rowData: [],
+        columnData: [],
+        // Feature Table
+        toggleColumnCheck: false,
+        unchangeColumnData: []
     }
   }
 
+
     // PDF function 
     pdfDownload = (e) => {
-
     debugger;
     e.preventDefault();
     var columnData = this.state.unchangeColumnData
@@ -160,25 +163,223 @@ class NULMDashboard extends React.Component {
             toggleColumnCheck : !this.state.toggleColumnCheck
         })
     }
+    
+    graphSorting = (data, sortBy, dropdownSelected, selectedDashboard ) => {
+        var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
+        "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
+        if(selectedDashboard === "Single Program"){
+            debugger;
+            var dateRange = sortBy;
+            var group = data.reduce((r, a) => {
+                r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] =
+                 [...r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] || [], a];
+                return r;
+                }, {});
+            
+            var graphLabel = dateRange;
+            var graphData = [];
+            for(var i=0; i<graphLabel.length; i++){
+                if(group[graphLabel[i]]){
+                    graphData.push(group[graphLabel[i]].length);
+                }else{
+                    graphData.push(0);
+                }
+            }
 
-    graphSorting = ( sortBy, data, checkGraph ) => {
+            var headerData = [];
+            var keys = Object.keys(data[0]);
+            for(var i=0; i<Object.keys(data[0]).length; i++){
+                var itemHeader = {}
+                itemHeader["Header"] = keys[i];
+                itemHeader["accessor"] = keys[i];
+                if(dropdownSelected === "SEP Program"){
+                    if(i === 1 || i === 3 || i === 5 || i === 6 || i === 7 || i === 14){
+                        itemHeader["show"]= true ;
+                    }else{
+                        itemHeader["show"]= false ;
+                    }                    
+                }else if(dropdownSelected === "SMID Program"){
+                    if(i === 1 || i === 3 || i === 5 || i === 13 || i === 15 || i === 19){
+                        itemHeader["show"]= true ;
+                    }else{
+                        itemHeader["show"]= false ;
+                    }                    
+                }else if(dropdownSelected === "SUSV Program"){
+                    if(i === 1 || i === 3 || i === 5 || i === 6 || i === 7 || i === 14){
+                        itemHeader["show"]= true ;
+                    }else{
+                        itemHeader["show"]= false ;
+                    }                    
+                }else if(dropdownSelected === "SUH Program"){
+                    if(i === 1 || i === 3 || i === 6 || i === 7 || i === 10 || i === 14){
+                        itemHeader["show"]= true ;
+                    }else{
+                        itemHeader["show"]= false ;
+                    }                    
+                }
+                headerData.push(itemHeader);
+            }
 
+            var rowData = data;
 
-    debugger;
-    var sortNo = null;
-    var group = data.reduce((r, a) => {
-        r[a[sortBy]] = [...r[a[sortBy]] || [], a];
-        return r;
-        }, {});
+            this.setState({
+                graphOneLabel : graphLabel,
+                graphOneData : graphData,
+                dataOne : group,
+                columnData : headerData,
+                unchangeColumnData : headerData,
+                rowData : rowData,
+                graphClicked : 0,
+                dropdownSelected : dropdownSelected
+            })
+                
+        }if(selectedDashboard === "SEP Program Status"){
+            debugger;
+            var group = data.reduce((r, a) => {
+                r[a[sortBy]] = [...r[a[sortBy]] || [], a];
+                return r;
+                }, {});
 
-    var graphOneLabel = Object.keys(group);
-    var graphOneData = []
-    for(var i=0; i<Object.keys(group).length ; i++){
-        graphOneData.push(group[graphOneLabel[i]].length);
-    }
+            var graphLabel = Object.keys(group);
+            var graphData = []
+            for(var i=0; i<Object.keys(group).length ; i++){
+                graphData.push(group[graphLabel[i]].length);
+            } 
+            
+            var rowData = data;
 
-    return [ graphOneLabel, graphOneData, group ]
+            this.setState({
+                graphTwoLabel : graphLabel,
+                graphTwoData : graphData,
+                dataTwo : group,
+                rowData : rowData,
+                graphClicked : 0
+            })
+        }
+        if(selectedDashboard === "All Program"){
+            debugger;
+            var SEP = data.SEP.ResponseBody;
+            var SMID = data.SMID.ResponseBody;
+            var SUSV = data.SUSV.ResponseBody;
+            var SUH = data.SUH.ResponseBody;
+            var allData = SEP.concat(SMID).concat(SUSV).concat(SUH)
 
+            var graphLabel = ["SEP", "SMID", "SUSV", "SUH"];
+            var graphData = [SEP.length, SMID.length, SUSV.length, SUH.length];
+            
+            var headerData = []
+            // var keys = allData;
+
+            var keys = Object.keys(allData[0]);
+            for(var i=0; i<5; i++){
+                if(Object.keys(allData[0])[i] === "applicationDocument" || 
+                Object.keys(allData[0])[i] === "auditDetails" ||
+                Object.keys(allData[0])[i] === "applicationDocument" ||
+                Object.keys(allData[0])[i] === "documentAttachemnt" ||
+                Object.keys(allData[0])[i] === "susvApplicationFamilyDetails" ||
+                Object.keys(allData[0])[i] === "suhFacilitiesDetails" ||
+                Object.keys(allData[0])[i] === "addressPicture" ||
+                Object.keys(allData[0])[i] === "programPicture" ||
+                Object.keys(allData[0])[i] === "documentAttachment"){
+                    
+                }else{
+                    var itemHeader = {}
+                    itemHeader["Header"] = keys[i];
+                    itemHeader["accessor"] = keys[i];
+                    itemHeader["show"]= true ;
+                }
+
+                headerData.push(itemHeader);
+            }
+            var rowData = allData;
+
+            this.setState({
+                graphOneLabel : graphLabel,
+                graphOneData : graphData,
+                dataOne : data,
+                columnData : headerData,
+                unchangeColumnData : headerData,
+                rowData : rowData,
+                graphClicked : 0,
+            })
+            var sortBy =sortBy;
+            var dropdownSelected = dropdownSelected;
+            var selectedDashboard = selectedDashboard;
+        }
+        if(selectedDashboard === "AllDataMonthWise"){
+            debugger;
+            var dateRange = sortBy;
+            var group = data.reduce((r, a) => {
+                r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] =
+                 [...r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] || [], a];
+                return r;
+                }, {});
+            
+            var graphLabel = dateRange;
+            var graphData = [];
+            for(var i=0; i<graphLabel.length; i++){
+                if(group[graphLabel[i]]){
+                    graphData.push(group[graphLabel[i]].length);
+                }else{
+                    graphData.push(0);
+                }
+            }
+
+            // var headerData = [];
+            // var keys = Object.keys(data[0]);
+            // for(var i=0; i<Object.keys(data[0]).length; i++){
+            //     var itemHeader = {}
+            //     itemHeader["Header"] = keys[i];
+            //     itemHeader["accessor"] = keys[i];
+            //     if(dropdownSelected === "All Program"){
+            //         if(i === 1 || i === 3 || i === 5 || i === 6 || i === 7 || i === 14){
+            //             itemHeader["show"]= true ;
+            //         }else{
+            //             itemHeader["show"]= false ;
+            //         }                    
+            //     }
+            //     headerData.push(itemHeader);
+            // }
+
+            var rowData = data;
+
+            this.setState({
+                graphTwoLabel : graphLabel,
+                graphTwoData : graphData,
+                dataTwo : group,
+                // columnData : headerData,
+                // unchangeColumnData : headerData,
+                rowData : rowData,
+                graphClicked : 1,
+                dropdownSelected : dropdownSelected
+            })
+        }
+        if(selectedDashboard === "Final Dashboard"){
+            debugger;
+
+            debugger;
+            var group = data.reduce((r, a) => {
+                r[a[sortBy]] = [...r[a[sortBy]] || [], a];
+                return r;
+                }, {});
+
+            var graphLabel = Object.keys(group);
+            var graphData = []
+            for(var i=0; i<Object.keys(group).length ; i++){
+                graphData.push(group[graphLabel[i]].length);
+            } 
+            
+            var rowData = data;
+
+            this.setState({
+                graphThreeLabel : graphLabel,
+                graphThreeData : graphData,
+                dataThird : group,
+                rowData : rowData,
+                graphClicked : 3
+            })
+
+        }
     }
 
     // CamelCase Column Name 
@@ -192,89 +393,36 @@ class NULMDashboard extends React.Component {
     });
     }
 
+    dateRange = (startDate, endDate) => {
+        var monthJSON = {"01":"JAN","02":"FEB","03":"MAR","04":"APR","05":"MAY","06":"JUN","07":"JUL",
+        "08":"AUG","09":"SEP","10":"OCT","11":"NOV","12":"DEC"};
+        var start      = startDate.split('-');
+        var end        = endDate.split('-');
+        var startYear  = parseInt(start[0]);
+        var endYear    = parseInt(end[0]);
+        var dates      = [];
+
+        for(var i = startYear; i <= endYear; i++) {
+            var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+            var startMon = i === startYear ? parseInt(start[1])-1 : 0;
+            for(var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j+1) {
+            var month = j+1;
+            var displayMonth = month < 10 ? '0'+month : month;
+            // dates.push([i, displayMonth, '01'].join('-'));
+            dates.push([i, monthJSON[displayMonth]].join('-'));
+            }
+        }
+        return dates;
+    }
+
     componentDidMount(){
         debugger;
         const data = this.props.data;
-        if(data.length>0){
+        if(data.length>0 && JSON.stringify(data) !== JSON.stringify(this.state.checkData)){
           const propData = data[0].ResponseBody;
-          const monthsJSON = {0:"JAN",1:"FEB",2:"MAR",3:"APR",4:"MAY",5:"JUN",6:"JUL",7:"AUG",8:"SEP",9:"OCT",10:"NOV",11:"DEC"}
-
-          var group = propData.reduce((r, a) => {
-          r[monthsJSON[new Date(a["auditDetails"]["createdTime"]).getMonth()]] =
-          [...r[monthsJSON[new Date(a["auditDetails"]["createdTime"]).getMonth()]] || [], a];
-          return r;
-          }, {});
-
-          var monthYearGroup = propData.reduce((r, a) => {
-          r[new Date(a["auditDetails"]["createdTime"]).getMonth()+""+new Date(a["auditDetails"]["createdTime"]).getFullYear()] =
-              [...r[new Date(a["auditDetails"]["createdTime"]).getMonth()+""+new Date(a["auditDetails"]["createdTime"]).getFullYear()] || [], a];
-          return r;
-          }, {});
-
-          var graphOneLabel = Object.keys(group);
-          var graphOneData = [];
-
-          for(var i=0; i<graphOneLabel.length; i++){
-              graphOneData.push(group[graphOneLabel[i]].length);
-          }
-
-          // Table Data
-          var colHeader = ["applicationId","name","applicationStatus","auditDetails.createdTime"];
-          const tableData = propData;
-          var columnData = []
-          for(var i=0; i<colHeader.length; i++){
-              var itemHeader = {}
-              itemHeader["Header"] = this.camelize(colHeader[i]);
-              itemHeader["accessor"] = colHeader[i];
-              itemHeader["show"]= true;
-              columnData.push(itemHeader);
-          }
-
-          graphOneLabel = Object.keys(monthYearGroup);
-          
-          var arrangeGraphOneLabel = [];
-          var arrangeGraphData = [];        
-          
-          for(var i=0; i<graphOneLabel.length; i++){
-              for(var j=1; j<graphOneLabel.length; j++){
-                  if(parseInt(graphOneLabel[i]) > parseInt(graphOneLabel[j])){
-                      var temp = graphOneLabel[i];
-                      graphOneLabel[i] = graphOneLabel[j];
-                      graphOneLabel[j] = temp;
-
-                      var temp = graphOneData[i];
-                      graphOneData[i] = graphOneData[j];
-                      graphOneData[j] = temp;
-                  }
-              }
-          }
-
-          for(var i=0; i<graphOneLabel.length; i++){
-              var dt = graphOneLabel[i];
-              var yr = dt.substr(dt.length-4, dt.length);
-              dt = dt.replaceAll(dt.substr(dt.length-4, dt.length), "");
-              graphOneLabel[i] = monthsJSON[dt]+"-"+yr
-          }
-
-          debugger;
-
-          const rowData = propData;
-          rowData.forEach(function(item) {
-              var dt = new Date(item["auditDetails"]["createdTime"]);
-              item["auditDetails"]["createdTime"] = dt.getDate()+"-"+monthsJSON[dt.getMonth()]+"-"+dt.getFullYear();
-          });
-          
+        
           this.setState({
-              graphOneLabel: graphOneLabel,
-              graphOneData: graphOneData,
-              graphClicked: 0,
-              dataOne: [],
-              columnData: columnData,
-              unchangeColumnData: columnData,
-              rowData: rowData,
-              hardJSON: [],
-              checkData : data,
-              graphClicked: 0
+            checkData : data
           })
         }
     }
@@ -284,84 +432,46 @@ class NULMDashboard extends React.Component {
         const data = this.props.data;
         if(data.length>0 && JSON.stringify(data) !== JSON.stringify(this.state.checkData)){
           const propData = data[0].ResponseBody;
-          const monthsJSON = {0:"JAN",1:"FEB",2:"MAR",3:"APR",4:"MAY",5:"JUN",6:"JUL",7:"AUG",8:"SEP",9:"OCT",10:"NOV",11:"DEC"}
+        // Payload values 
+        var fromDate = data[1].fromDate;
+        var toDate = data[1].toDate;
+        var selectedVAL = data[1].reportSortBy.label;
 
-          var group = propData.reduce((r, a) => {
-          r[monthsJSON[new Date(a["auditDetails"]["createdTime"]).getMonth()]] =
-          [...r[monthsJSON[new Date(a["auditDetails"]["createdTime"]).getMonth()]] || [], a];
-          return r;
-          }, {});
-
-          var monthYearGroup = propData.reduce((r, a) => {
-          r[new Date(a["auditDetails"]["createdTime"]).getMonth()+""+new Date(a["auditDetails"]["createdTime"]).getFullYear()] =
-              [...r[new Date(a["auditDetails"]["createdTime"]).getMonth()+""+new Date(a["auditDetails"]["createdTime"]).getFullYear()] || [], a];
-          return r;
-          }, {});
-
-          var graphOneLabel = Object.keys(group);
-          var graphOneData = [];
-
-          for(var i=0; i<graphOneLabel.length; i++){
-              graphOneData.push(group[graphOneLabel[i]].length);
-          }
-
-          // Table Data
-          var colHeader = ["applicationId","name","applicationStatus","auditDetails.createdTime"];
-          const tableData = propData;
-          var columnData = []
-          for(var i=0; i<colHeader.length; i++){
-              var itemHeader = {}
-              itemHeader["Header"] = this.camelize(colHeader[i]);
-              itemHeader["accessor"] = colHeader[i];
-              itemHeader["show"]= true;
-              columnData.push(itemHeader);
-          }
-
-          graphOneLabel = Object.keys(monthYearGroup);
-          
-          var arrangeGraphOneLabel = [];
-          var arrangeGraphData = [];        
-          
-          for(var i=0; i<graphOneLabel.length; i++){
-              for(var j=1; j<graphOneLabel.length; j++){
-                  if(parseInt(graphOneLabel[i]) > parseInt(graphOneLabel[j])){
-                      var temp = graphOneLabel[i];
-                      graphOneLabel[i] = graphOneLabel[j];
-                      graphOneLabel[j] = temp;
-
-                      var temp = graphOneData[i];
-                      graphOneData[i] = graphOneData[j];
-                      graphOneData[j] = temp;
-                  }
-              }
-          }
-
-          for(var i=0; i<graphOneLabel.length; i++){
-              var dt = graphOneLabel[i];
-              var yr = dt.substr(dt.length-4, dt.length);
-              dt = dt.replaceAll(dt.substr(dt.length-4, dt.length), "");
-              graphOneLabel[i] = monthsJSON[dt]+"-"+yr
-          }
-
-          debugger;
-
-          const rowData = propData;
-          rowData.forEach(function(item) {
-              var dt = new Date(item["auditDetails"]["createdTime"]);
-              item["auditDetails"]["createdTime"] = dt.getDate()+"-"+monthsJSON[dt.getMonth()]+"-"+dt.getFullYear();
-          });
-          
+        var fromDT = fromDate;
+        var toDT = toDate;
+        var dateRange = this.dateRange(fromDT, toDT);
+        // var dropdownSelected = "SEP Program";
+        // var dropdownSelected = "SMID Program";
+        // var dropdownSelected = "SUSV Program";
+        // var dropdownSelected = "SUH Program";
+        var dropdownSelected = selectedVAL;
+        debugger;
+        var JSONdata;
+        if(dropdownSelected === "SEP Program"){
+            JSONdata = data[0].ResponseBody; 
+            var sortData = this.graphSorting(JSONdata, dateRange, dropdownSelected, "Single Program");
+        }
+        if(dropdownSelected === "SMID Program"){
+            JSONdata = data[0].ResponseBody; 
+            var sortData = this.graphSorting(JSONdata, dateRange, dropdownSelected, "Single Program");
+        }
+        if(dropdownSelected === "SUSV Program"){
+            JSONdata = data[0].ResponseBody; 
+            var sortData = this.graphSorting(JSONdata, dateRange, dropdownSelected, "Single Program");
+        }
+        if(dropdownSelected === "SUH Program"){
+            JSONdata = data[0].ResponseBody; 
+            var sortData = this.graphSorting(JSONdata, dateRange, dropdownSelected, "Single Program");
+        }
+        if(dropdownSelected === "All Program"){
+            JSONdata = data[0]
+            var sortData = this.graphSorting(JSONdata, dateRange, dropdownSelected, "All Program");
+        }
           this.setState({
-              graphOneLabel: graphOneLabel,
-              graphOneData: graphOneData,
-              graphClicked: 0,
-              dataOne: [],
-              columnData: columnData,
-              unchangeColumnData: columnData,
-              rowData: rowData,
-              hardJSON: [],
-              checkData : data,
-              graphClicked: 0
+            fromDate : fromDate,
+            toDate : toDate,
+            dropdownSelected : dropdownSelected,
+            checkData : data
           })
         }
     }
@@ -419,7 +529,7 @@ class NULMDashboard extends React.Component {
           },
           title: {
               display: true,
-              text: this.state.hardJSON[0] ? this.state.hardJSON[0].title : ""
+              text: this.state.dropdownSelected === "All Program" ? "All Programs Dashboard" : "Month wise Program"
           },
           scales: {
               xAxes: [{
@@ -428,7 +538,7 @@ class NULMDashboard extends React.Component {
                   },
                   scaleLabel: {
                       display: true,
-                      labelString:"Months"
+                      labelString: this.state.dropdownSelected === "All Program" ? "Programs" : "Months"
                       }, 
               }],
               yAxes: [{
@@ -439,6 +549,241 @@ class NULMDashboard extends React.Component {
                       suggestedMin: 0,
                       // suggestedMax: 100,
                       // stepSize: 1
+                  },
+                  scaleLabel: {
+                      display: true,
+                      labelString: this.state.dropdownSelected === "All Program" ? "No of Application" : "No of Application"
+                      }, 
+              }]
+          },
+          plugins: {
+              datalabels: {
+                  display: false
+              //     color: 'white',
+              //     backgroundColor: 'grey',
+              //     labels: {
+              //         title: {
+              //             font: {
+              //                 weight: 'bold'
+              //             }
+              //         }
+              //     }}
+              }
+          },
+          onClick: (e, element) => {
+              if (element.length > 0) {
+                  
+                  debugger;
+                  var ind = element[0]._index;   
+                  const selectedVal = this.state.graphOneLabel[ind];
+                  var data;
+                  if(this.state.dropdownSelected === "All Program"){
+                      data = this.state.dataOne[selectedVal].ResponseBody;
+                      if(data){
+                          var dateRange = this.dateRange(this.state.fromDate, this.state.toDate);
+                          var graphSorting = this.graphSorting(data, dateRange, this.state.dropdownSelected, "AllDataMonthWise");
+                      }
+                      else{return 0}
+                  }else{
+                      data = this.state.dataOne[selectedVal];
+                      if(data){
+                          var graphSorting = this.graphSorting(data, "applicationStatus", this.state.dropdownSelected, "SEP Program Status");
+                      }else{return 0}
+                  }
+                  
+                  this.setState({
+                  //     graphTwoLabel: graphSorting[0],
+                  //     graphTwoData: graphSorting[1],
+                  //     dataTwo: graphSorting[2],
+                      graphClicked: 1,
+                  //     rowData: this.state.dataOne[selectedVal]
+                  })
+                  
+              }
+          },
+      }
+  
+      // Second Graph
+      var graphTwoSortedData = {
+          labels: this.state.graphTwoLabel,
+          // labels: ["Label1", "Label2"],
+          datasets: [
+              {
+              label: "SEP",
+              fill: false,
+              lineTension: 0.1,
+              hoverBorderWidth : 12,
+              // backgroundColor : this.state.colorRandom,
+              backgroundColor : ["#9DC4E1", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+              borderColor: "rgba(75,192,192,0.4)",
+              borderCapStyle: "butt",
+              barPercentage: 2,
+              borderWidth: 5,
+              barThickness: 25,
+              maxBarThickness: 10,
+              minBarLength: 2,
+              data: this.state.graphTwoData
+              // data:[10,20,30]
+              }
+          ]
+      }
+  
+      var graphTwoOption = {
+          responsive : true,
+          // aspectRatio : 3,
+          maintainAspectRatio: false,
+          cutoutPercentage : 0,
+          datasets : [
+              {
+              backgroundColor : "rgba(0, 0, 0, 0.1)",
+              weight: 0
+              }
+          ], 
+          legend: {
+              display: false,
+              position: 'bottom',
+              labels: {
+              fontFamily: "Comic Sans MS",
+              boxWidth: 20,
+              boxHeight: 2
+              }
+          },
+          tooltips: {
+              enabled: true
+          },
+          title: {
+              display: true,
+              text: this.state.dropdownSelected === "All Program" ? "Monthwise Applicaiton Program Dashboard" : "Statuswise Monthly Program"
+          },
+          scales: {
+              xAxes: [{
+                  gridLines: {
+                      display:true
+                  },
+                  scaleLabel: {
+                      display: true,
+                      labelString: this.state.dropdownSelected === "All Program" ? "Months" : "Application Status"
+                      }, 
+              }],
+              yAxes: [{
+                  gridLines: {
+                      display:true
+                  },
+                  ticks: {
+                      suggestedMin: 0,
+                      // suggestedMax: 100,
+                      stepSize: 1
+                  },
+                  scaleLabel: {
+                      display: true,
+                      labelString: this.state.dropdownSelected === "All Program" ? "No of Application" : "No of Application"
+                      }, 
+              }]
+          },
+          plugins: {
+              datalabels: {
+                  display: false
+              //     color: 'white',
+              //     backgroundColor: 'grey',
+              //     labels: {
+              //         title: {
+              //             font: {
+              //                 weight: 'bold'
+              //             }
+              //         }
+              //     }}
+              }
+          },
+          onClick: (e, element) => {
+              if (element.length > 0) {
+                  
+                  debugger;
+                  var ind = element[0]._index;   
+                  const selectedVal = this.state.graphTwoLabel[ind];
+                  const data = this.state.dataTwo[selectedVal];              
+                  if(this.state.dropdownSelected === "All Program" && data){
+                      var graphSorting = this.graphSorting(data, "applicationStatus", this.state.dropdownSelected, "Final Dashboard");  
+                  }else{
+                      return 0;
+                  }
+                  this.setState({
+                      rowData: data,
+                      graphClicked : 2
+                  })
+              }
+          },
+      }
+  
+      // Second Graph
+      var graphThreeSortedData = {
+          labels: this.state.graphThreeLabel,
+          // labels: ["Label1", "Label2"],
+          datasets: [
+              {
+              label: "SEP",
+              fill: false,
+              lineTension: 0.1,
+              hoverBorderWidth : 12,
+              // backgroundColor : this.state.colorRandom,
+              backgroundColor : ["#9DC4E1", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+              borderColor: "rgba(75,192,192,0.4)",
+              borderCapStyle: "butt",
+              barPercentage: 2,
+              borderWidth: 5,
+              barThickness: 25,
+              maxBarThickness: 10,
+              minBarLength: 2,
+              data: this.state.graphThreeData
+              // data:[10,20,30]
+              }
+          ]
+      }
+  
+      var graphThreeOption = {
+          responsive : true,
+          // aspectRatio : 3,
+          maintainAspectRatio: false,
+          cutoutPercentage : 0,
+          datasets : [
+              {
+              backgroundColor : "rgba(0, 0, 0, 0.1)",
+              weight: 0
+              }
+          ], 
+          legend: {
+              display: false,
+              position: 'bottom',
+              labels: {
+              fontFamily: "Comic Sans MS",
+              boxWidth: 20,
+              boxHeight: 2
+              }
+          },
+          tooltips: {
+              enabled: true
+          },
+          title: {
+              display: true,
+              text: "Statuswise Monthly Application Program Dashboard"
+          },
+          scales: {
+              xAxes: [{
+                  gridLines: {
+                      display:true
+                  },
+                  scaleLabel: {
+                      display: true,
+                      labelString:"Application Status"
+                      }, 
+              }],
+              yAxes: [{
+                  gridLines: {
+                      display:true
+                  },
+                  ticks: {
+                      suggestedMin: 0,
+                      // suggestedMax: 100,
+                      stepSize: 1
                   },
                   scaleLabel: {
                       display: true,
@@ -464,19 +809,12 @@ class NULMDashboard extends React.Component {
               if (element.length > 0) {
                   
                   debugger;
-                  // var ind = element[0]._index;   
-                  // const selectedVal = this.state.graphOneLabel[ind];
-                  // // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
-                  // const hardval = this.state.hardJSON[1]
-                  // var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataOne[selectedVal] );
-                  
-                  // this.setState({
-                  //     graphTwoLabel: graphSorting[0],
-                  //     graphTwoData: graphSorting[1],
-                  //     dataTwo: graphSorting[2],
-                  //     graphClicked: 1,
-                  //     rowData: this.state.dataOne[selectedVal]
-                  // })
+                  var ind = element[0]._index;   
+                  const selectedVal = this.state.graphThreeLabel[ind];
+                  const data = this.state.dataThird[selectedVal];              
+                  this.setState({
+                      rowData: data
+                  })
                   
               }
           },
@@ -486,24 +824,47 @@ class NULMDashboard extends React.Component {
           
       return (
           <div>
-          
           <div className="graphDashboard">
-          
+          {
+            this.state.graphClicked >= 0 ?
+            <CardContent className="halfGraph">
+            <React.Fragment>
+                <Bar
+                data={ PIEgraphOneSortedData }
+                options={ PIEgraphOneOption } 
+                />
+            </React.Fragment>
+            </CardContent>
+            :null
+          }
   
           {
-            this.state.graphClicked >= 0 ? 
-            <CardContent className="halfGraph">
-              <React.Fragment>
-                  <Bar
-                  data={ PIEgraphOneSortedData }
-                  options={ PIEgraphOneOption } 
-                  />
-              </React.Fragment>
-          </CardContent>
-          :null
+              this.state.graphClicked > 0 ?
+              <CardContent className="halfGraph">
+                  <React.Fragment>
+                      <Bar
+                      data={ graphTwoSortedData }
+                      options={ graphTwoOption } 
+                      />
+                  </React.Fragment>
+              </CardContent>
+          : null
           }
   
           </div>
+  
+          {
+              this.state.graphClicked > 1 && this.state.dropdownSelected === "All Program" ?
+              <CardContent style={{"height" : "350px"}}>
+                  <React.Fragment>
+                      <Bar
+                      data={ graphThreeSortedData }
+                      options={ graphThreeOption } 
+                      />
+                  </React.Fragment>
+              </CardContent>
+          : null
+          }
   
           {/* Table Feature  */}
           <div className="tableContainer">
@@ -534,7 +895,7 @@ class NULMDashboard extends React.Component {
           }
   
           {
-              this.state.graphClicked >= 0 ?
+              // this.state.graphClicked >= 0 ?
               <ReactTable id="customReactTable"
               // PaginationComponent={Pagination}
               data={ this.state.rowData }  
@@ -543,7 +904,7 @@ class NULMDashboard extends React.Component {
               pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
               pageSizeOptions = {[20,40,60]}  
               /> 
-              :null
+              // :null
           }
           </div>
           </div>
