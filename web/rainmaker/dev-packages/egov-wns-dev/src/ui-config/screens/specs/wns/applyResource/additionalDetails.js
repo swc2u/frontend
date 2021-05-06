@@ -589,6 +589,12 @@ export const additionDetails = getCommonCard({
                   MFRCode[0].Digit
                 )
               )
+              dispatch(
+                prepareFinalObject(
+                  "applyScreen.proposedMeterDigits",
+                  MFRCode[0].Digit
+                )
+              )
             }
            
           }
@@ -650,6 +656,207 @@ export const additionDetails = getCommonCard({
     placeholder: { labelKey: "WS_SERV_DETAIL_METER_RENT_CODE_PLACEHOLDER" },
     gridDefination: { xs: 12, sm: 6 },        
     jsonPath: "applyScreen.meterRentCode",
+    pattern: /^[0-9]*$/i,
+    props: {         
+      disabled: true
+    },
+    errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+  }),
+    })
+  }),
+  ProposedActivationDetailsContainer: getCommonGrayCard({
+    subHeader: getCommonTitle({
+      labelKey: "WS_PROPOSED_ACTIVATION_DETAILS"
+    }),
+    PropactiveDetails: getCommonContainer({
+      PropconnectionExecutionDate: getDateField({
+        label: { labelName: "connectionExecutionDate", labelKey: "WS_PROP_SERV_DETAIL_CONN_EXECUTION_DATE" },
+        // placeholder: {
+        //   labelName: "Select From Date",
+        //   labelKey: "WS_FROM_DATE_PLACEHOLDER"
+        // },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        props: {
+          inputProps: {
+            min: new Date().toISOString().slice(0, 10),
+          },
+        },
+        required: false,
+        pattern: getPattern("Date"),
+        errorMessage: "ERR_INVALID_DATE",
+        jsonPath: "applyScreen.connectionExecutionDate"
+      }),
+      PropmeterID: getTextField({
+        label: {
+          labelKey: "WS_PROP_SERV_DETAIL_METER_ID"
+        },
+        placeholder: {
+          labelKey: "WS_PROP_SERV_DETAIL_METER_ID_PLACEHOLDER"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        pattern: /^[a-z0-9]+$/i,
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.proposedMeterId"
+      }),
+      PropmeterInstallationDate: getDateField({
+        label: { labelName: "meterInstallationDate", labelKey: "WS_PROP_ADDN_DETAIL_METER_INSTALL_DATE" },
+        // placeholder: {
+        //   labelName: "Select From Date",
+        //   labelKey: "WS_FROM_DATE_PLACEHOLDER"
+        // },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        props: {
+          inputProps: {
+            min: new Date().toISOString().slice(0, 10),
+          },
+        },
+        required: false,
+        pattern: getPattern("Date"),
+        errorMessage: "ERR_INVALID_DATE",
+        jsonPath: "applyScreen.proposedMeterInstallationDate"
+      }),
+      PropinitialMeterReading: getTextField({
+        label: {
+          labelKey: "WS_PROP_ADDN_DETAILS_INITIAL_METER_READING"
+        },
+        placeholder: {
+          labelKey: "WS_PROP_ADDN_DETAILS_INITIAL_METER_READING_PLACEHOLDER"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        pattern: /^[0-9]\d{0,9}(\.\d{1,3})?%?$/,
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.proposedInitialMeterReading"
+      }),
+      PropmeterCount: getTextField({
+        label: {
+          labelKey: "WS_PROP_ADDN_DETAILS_INITIAL_METER_COUNT"
+        },
+        placeholder: {
+          labelKey: "WS_PROP_ADDN_DETAILS_INITIAL_METER_COUNT_PLACEHOLDER"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        pattern: /^[0-9]\d{0,9}(\.\d{1,3})?%?$/,
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.proposedMeterCount"
+      }),
+
+      PropmfrCode: {
+        ...getSelectField({
+          label: { labelKey: "WS_PROP_SERV_DETAIL_MFRCODE" },
+          placeholder: { labelKey: "WS_PROP_SERV_DETAIL_MFRCODE_PLACEHOLDER" },
+          required: false,
+          sourceJsonPath: "applyScreenMdmsData.ws-services-masters.MFRCode",
+          gridDefination: { xs: 12, sm: 6 },
+          errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+          jsonPath: "applyScreen.proposedMfrCode",
+          props: {
+            optionValue: "Code",
+            optionLabel: "MakeOfMeter",
+            
+          },
+        }),
+        beforeFieldChange: async (action, state, dispatch) => {
+
+          if(action.value)
+          {
+            let MFRCode = get(
+              state.screenConfiguration.preparedFinalObject,
+              "applyScreenMdmsData.ws-services-masters.MFRCode"
+            )
+            MFRCode = MFRCode.filter(x=>x.Code === action.value)
+             if(MFRCode&&MFRCode[0])
+            {
+              dispatch(
+                prepareFinalObject(
+                  "applyScreen.meterDigits",
+                  MFRCode[0].Digit
+                )
+              )
+              dispatch(
+                prepareFinalObject(
+                  "applyScreen.proposedMeterDigits",
+                  MFRCode[0].Digit
+                )
+              )
+            }
+           
+          }
+         
+        }
+      },
+      PropmeterDigits:
+      getTextField({
+       label: { labelKey: "WS_PROP_SERV_DETAIL_METER_DIGIT" },
+       placeholder: { labelKey: "WS_PROP_SERV_DETAIL_METER_DIGIT_PLACEHOLDER" },
+       gridDefination: { xs: 12, sm: 6 },        
+       jsonPath: "applyScreen.proposedMeterDigits",
+       pattern: /^[0-9]*$/i,
+       props: {         
+         disabled: true
+       },
+       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+     }),
+     PropmeterUnit: {
+      ...getSelectField({
+        label: { labelKey: "WS_PROP_SERV_DETAIL_METER_UNIT" },
+        placeholder: { labelKey: "WS_PROP_SERV_DETAIL_METER_UNIT_PLACEHOLDER" },
+        required: false,
+        sourceJsonPath: "applyScreenMdmsData.ws-services-masters.MeterUnit",
+        gridDefination: { xs: 12, sm: 6 },
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.proposedMeterUnit",
+        props: {
+          optionValue: "Name",
+          optionLabel: "Name",
+          
+        },
+      }),
+      beforeFieldChange: async (action, state, dispatch) => {
+
+        if(action.value)
+        {
+          
+         
+        }
+       
+      }
+    },
+    PropsanctionedCapacity:
+    getTextField({
+     label: { labelKey: "WS_PROP_SERV_DETAIL_SANCTION_CAPACITY" },
+     placeholder: { labelKey: "WS_PROP_SERV_DETAIL_SANCTION_CAPACITY_PLACEHOLDER" },
+     gridDefination: { xs: 12, sm: 6 },        
+     jsonPath: "applyScreen.proposedSanctionedCapacity",
+     pattern: /^[0-9]*$/i,
+     props: {         
+       disabled: true
+     },
+     errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+   }),
+   PropmeterRentCode:
+   getTextField({
+    label: { labelKey: "WS_PROP_SERV_DETAIL_METER_RENT_CODE" },
+    placeholder: { labelKey: "WS_PROP_SERV_DETAIL_METER_RENT_CODE_PLACEHOLDER" },
+    gridDefination: { xs: 12, sm: 6 },        
+    jsonPath: "applyScreen.proposedMeterRentCode",
     pattern: /^[0-9]*$/i,
     props: {         
       disabled: true

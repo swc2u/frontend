@@ -34,7 +34,7 @@ export const searchResults = {
         options: {
           filter: false,
           customBodyRender: (value, index) => (
-            <div className="linkStyle" onClick={() => getConnectionDetails(index)}>
+            <div className="linkStyle" onClick={() => getConnectionDetails(index,false)}>
               <a>{value}</a>
             </div>
           )
@@ -54,6 +54,28 @@ export const searchResults = {
            // if (data.rowData[4] > 0 && data.rowData[4] !== 0) {
              // check role exists for WS_CEMP
              const roleExists = ifUserRoleExists("WS_CEMP");
+             let subdiv = '00';
+              const subdiv_ =`WS_SDE_${subdiv}`
+              if(data.rowData[1] !== undefined)
+              {
+                subdiv = data.rowData[1].substring(1,3) //str.substring(1,2)
+              }
+              
+              let sdeRole = false;
+              let jeRole = false;
+              let roleExistsDeavtivate = true
+              sdeRole = ifUserRoleExists(`WS_SDE_${subdiv}`)
+              jeRole = ifUserRoleExists(`WS_JE_${subdiv}`)
+              if(sdeRole || jeRole)
+              {
+                roleExistsDeavtivate = true
+              }
+              else
+              {
+                roleExistsDeavtivate = false
+
+              }             
+             
               if ((data.rowData[4] > 0 && data.rowData[4] !== 0 && roleExists) &&(data.rowData[3] !== undefined? data.rowData[3].toUpperCase() === "INITIATED":'')) {
               return (
                 <div className="linkStyle" onClick={() => getViewBillDetails(data)} style={{ color: '#fe7a51', textTransform: 'uppercase' }}>
@@ -66,7 +88,22 @@ export const searchResults = {
                   />
                 </div>
               )
-            } else if (data.rowData[4] === 0) {
+            }
+            else if(roleExistsDeavtivate)//&& subdiv ===subdiv_
+            {
+              return(
+                <div className="linkStyle" onClick={() => getConnectionDetails(data,true)} style={{ color: '#fe7a51', textTransform: 'uppercase' }}>
+                  <LabelContainer
+                    labelKey="WS_COMMON_DEACTIVE_LABEL"
+                    style={{
+                      color: "#fe7a51",
+                      fontSize: 14,
+                    }}
+                  />
+                </div>
+              )
+            }
+            else if (data.rowData[4] === 0) {
               return (
                 <div style={{ textTransform: 'uppercase',color: "#008000", }}>
                   Paid
@@ -125,8 +162,8 @@ export const searchResults = {
   }
 };
 
-const getConnectionDetails = data => {
-  window.location.href = `connection-details?connectionNumber=${data.rowData[1]}&tenantId=${data.rowData[8]}&service=${data.rowData[0]}&connectionType=${data.rowData[9]}`
+const getConnectionDetails = (data,Active) => {
+  window.location.href = `connection-details?connectionNumber=${data.rowData[1]}&tenantId=${data.rowData[8]}&service=${data.rowData[0]}&connectionType=${data.rowData[9]}&Active=${Active}`
 }
 
 const getViewBillDetails = data => {

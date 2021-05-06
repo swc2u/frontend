@@ -271,6 +271,7 @@ const getApplicationDetails = data => {
       case "PERMANENT_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTION"); break;        
       case "TEMPORARY_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_DISCONNECTION"); break;
       case "UPDATE_CONNECTION_HOLDER_INFO":  window.localStorage.setItem("wns_workflow","WS_RENAME"); break;
+      case "UPDATE_METER_INFO":  window.localStorage.setItem("wns_workflow","WS_METER_UPDATE"); break;
       case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_CONVERSION"); break;
       case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_REACTIVATE"); break;
       case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;

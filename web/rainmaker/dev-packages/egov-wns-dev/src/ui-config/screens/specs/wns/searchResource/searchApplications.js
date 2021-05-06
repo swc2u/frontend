@@ -11,7 +11,8 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { searchApiCall } from "./functions";
 import { resetFieldsForApplication } from '../../utils';
-
+import get from "lodash/get";
+import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 export const searchApplications = getCommonCard({
   subHeader: getCommonTitle({
     labelKey: "WS_SEARCH_APPLICATION_SUB_HEADER"
@@ -73,14 +74,14 @@ export const searchApplications = getCommonCard({
       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
       jsonPath: "searchScreen.mobileNumber"
     }),
-    applicationType: getSelectField({
-      label: { labelName: "To Date", labelKey: "WS_APPLICATION_TYPE_LABEL" },
-      placeholder: { labelName: "Select to Date", labelKey: "WS_COMMON_APPLICATION_TYPE_PLACEHOLDER" },
-      sourceJsonPath: "applyScreenMdmsData.searchScreen.applicationType",
-      jsonPath: "searchScreen.appType",
-      gridDefination: { xs: 12, sm: 4 },
-      required: false
-    }),
+    // applicationType: getSelectField({
+    //   label: { labelName: "To Date", labelKey: "WS_APPLICATION_TYPE_LABEL" },
+    //   placeholder: { labelName: "Select to Date", labelKey: "WS_COMMON_APPLICATION_TYPE_PLACEHOLDER" },
+    //   sourceJsonPath: "applyScreenMdmsData.searchScreen.applicationType",
+    //   jsonPath: "searchScreen.appType",
+    //   gridDefination: { xs: 12, sm: 4 },
+    //   required: false
+    // }),
     applicationstatus: getSelectField({
       label: {
         labelKey: "WS_HOME_SEARCH_RESULTS_APP_STATUS_LABEL"
@@ -130,14 +131,113 @@ export const searchApplications = getCommonCard({
       errorMessage: "ERR_INVALID_DATE",
       required: false
     }),
-    applicationType: getSelectField({
-      label: { labelName: "To Date", labelKey: "WS_APPLICATION_TYPE_LABEL" },
-      placeholder: { labelName: "Select to Date", labelKey: "WS_COMMON_APPLICATION_TYPE_PLACEHOLDER" },
+    // applicationType: getSelectField({
+    //   label: { labelName: "To Date", labelKey: "WS_APPLICATION_TYPE_LABEL" },
+    //   placeholder: { labelName: "Select to Date", labelKey: "WS_COMMON_APPLICATION_TYPE_PLACEHOLDER" },
+    //   sourceJsonPath: "applyScreenMdmsData.searchScreen.applicationType",
+    //   jsonPath: "searchScreen.applicationType",
+    //   gridDefination: { xs: 12, sm: 4 },
+    //   required: false
+    // }),
+    applicationType : getSelectField({
+      label: { labelKey: "WS_APPLICATION_TYPE_LABEL" },
       sourceJsonPath: "applyScreenMdmsData.searchScreen.applicationType",
-      jsonPath: "searchScreen.applicationType",
+      placeholder: { labelKey: "WATER_APPLICATION_TYPE_PLACEHOLDER" },
+      required: true,
       gridDefination: { xs: 12, sm: 4 },
-      required: false
-    })
+      jsonPath: "searchScreen.applicationType",
+      props: {
+        optionValue: "code",
+        optionLabel: "name",
+       
+      
+    },
+    beforeFieldChange: async (action, state, dispatch) => {
+      dispatch(
+        handleField(
+          "search",
+          "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.sectorNo",
+          "props.value",
+          ""
+        )
+      );
+      if(action.value)
+      {
+        let swSectorList = state.screenConfiguration.preparedFinalObject.applyScreenMdmsData1['ws-services-masters'].swSectorList
+        let sectorList = state.screenConfiguration.preparedFinalObject.applyScreenMdmsData1['ws-services-masters'].sectorList
+       // get(state.screenConfiguration.preparedFinalObject, "SewerageConnection");
+        if(action.value ==='New Sewerage Connection')
+        {
+          dispatch(prepareFinalObject("applyScreenMdmsData1.ws-services-masters.wssectorList", swSectorList));
+        }
+        else{
+          dispatch(prepareFinalObject("applyScreenMdmsData1.ws-services-masters.wssectorList", sectorList));
+
+        }
+      }
+       
+   }
+    }),
+
+    sectorNo : getSelectField({
+      label: { labelName: "Sector/Locality", labelKey: "WS_PROP_DETAIL_LOCALITY_MOHALLA_LABEL_INPUT" },
+      placeholder: {
+        labelName: "Select Sector/Locality",
+        labelKey: "WS_PROP_DETAIL_LOCALITY_MOHALLA_LABEL_INPUT_PLACEHOLDER"
+      },
+      sourceJsonPath: "applyScreenMdmsData1.ws-services-masters.wssectorList",
+      placeholder: { labelKey: "WATER_APPLICATION_TYPE_PLACEHOLDER" },
+      required: false,
+      gridDefination: { xs: 12, sm: 4 },
+      jsonPath: "searchScreen.sectorNo",
+      props: {
+        optionValue: "code",
+        optionLabel: "name",
+       
+      
+    },
+    beforeFieldChange: async (action, state, dispatch) => {
+      if(action.value)
+      {
+
+      }
+       
+   }
+    }),
+    groupNo: getTextField({
+      label: {
+        labelKey: "WS_GROUP_NUMBER_INPUT"
+      },
+      placeholder: {
+        labelKey: "WS_GROUP_NUMBER_INPUT_PLACEHOLDER"
+      },
+      gridDefination: {
+        xs: 12,
+        sm: 4
+      },
+      
+      required: false,
+     // pattern: getPattern("MobileNo"),
+      errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+      jsonPath: "searchScreen.groupNo"
+    }),
+    plotNo: getTextField({
+      label: {
+        labelKey: "WS_PROP_DETAIL_DHNO_INPUT"
+      },
+      placeholder: {
+        labelKey: "WS_PROP_DETAIL_DHNO_INPUT_PLACEHOLDER"
+      },
+      gridDefination: {
+        xs: 12,
+        sm: 4
+      },
+      
+      required: false,
+     // pattern: getPattern("MobileNo"),
+      errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+      jsonPath: "searchScreen.plotNo"
+    }),
   }),
 
   button: getCommonContainer({

@@ -13,7 +13,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import filter from "lodash/filter";
 import { httpRequest } from "../../../../ui-utils/api";
-import {generateBillFile} from "../../../../ui-utils/commons"
+import {generateBillFile, getDataExchangeFile} from "../../../../ui-utils/commons"
 import {
   prepareFinalObject,
   initScreen
@@ -2244,6 +2244,30 @@ export const resetFieldsForApplication = (state, dispatch) => {
       ""
     )
   );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.sectorNo",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.groupNo",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.plotNo",
+      "props.value",
+      ""
+    )
+  );
 };
 
 export const resetFieldsForConnection = (state, dispatch) => {
@@ -2519,22 +2543,41 @@ export const downloadReceiptFromFilestoreID=(fileStoreId,mode,tenantId)=>{
   // });
   
 }
-export const downloadAcknowledgementForm = async () => {
+export const downloadAcknowledgementForm = async ( state,dispatch,downloadtype,Fromdate,Todate) => {
   let tenantId =  getQueryArg(window.location.href, "tenantId");
-  let APIUrl =`ws-services/billGeneration/_generateBillFile`
+  let APIUrl =`ws-services/billGeneration/_${downloadtype}`  
+if(downloadtype ==='generateBillFile')
+{
+  APIUrl  =`ws-services/billGeneration/_generateBillFile`
+}
+
   let ApplicationNo ='';
   let queryObject = [
     
   ]
   
-    try {    
-      const response = await generateBillFile(queryObject,APIUrl);
-      if(response)
+    try {  
+      if(downloadtype ==='generateBillFile')  
       {
-        let filestoreId = response.billGenerationFile[0].billFileStoreId
-        let billFileStoreUrl = response.billGenerationFile[0].billFileStoreUrl
-        downloadReceiptFromFilestoreID(billFileStoreUrl,"download",tenantId)
+        const response = await generateBillFile(queryObject,APIUrl);
+        if(response)
+        {
+          let filestoreId = response.billGenerationFile[0].billFileStoreId
+          let billFileStoreUrl = response.billGenerationFile[0].billFileStoreUrl
+          downloadReceiptFromFilestoreID(billFileStoreUrl,"download",tenantId)
+        }
       }
+      else if(downloadtype ==='getDataExchangeFile'){
+        const response = await getDataExchangeFile(queryObject,APIUrl,Fromdate, Todate);
+        if(response)
+        {
+          let filestoreId = response.billGenerationFile[0].billFileStoreId
+          let billFileStoreUrl = response.billGenerationFile[0].billFileStoreUrl
+          downloadReceiptFromFilestoreID(billFileStoreUrl,"download",tenantId)
+        }
+      }
+     // const response = await generateBillFile(queryObject,APIUrl);
+      
      
     } catch (error) {
       dispatch(

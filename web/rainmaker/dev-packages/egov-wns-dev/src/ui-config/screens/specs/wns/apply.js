@@ -129,6 +129,11 @@ const getLabelForWnsHeader = () => {
       header = 'WS_DISCONNECTION_DETAIL_HEADER'
 
     }
+    if(ActionType==='UPDATE_METER_INFO')
+    {
+      header = 'WS_UPDATE_METER_INFO_DETAIL_HEADER'
+
+    }
     if(ActionType==='REACTIVATE_CONNECTION')
     {
       header = 'WS_REACTIVATE_DETAIL_HEADER'
@@ -496,6 +501,44 @@ export const getData = async (action, state, dispatch) => {
     const usageCategory_ = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].property.usageCategory");
     const waterApplicationType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplicationType");
     const activityType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType");
+    //set proposed meter inout for new WF UPDATE_METER_INFO
+    
+    if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE')
+    {
+      // set(
+      //   action.screenConfig,
+      //   "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+      //   "visible",
+      //   true
+      // );
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+          "visible",
+          true
+        )
+      );
+
+    }
+    else{
+
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+          "visible",
+          false
+        )
+      );
+      // set(
+      //   action.screenConfig,
+      //   "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+      //   "visible",
+      //   false
+      // );
+
+    }
     displaysubUsageType(usageCategory_, dispatch, state);
     displayUsagecategory(waterApplicationType, dispatch, state);
                 // check for security deposite for PENDING_FOR_SECURITY_DEPOSIT//PENDING_ROADCUT_NOC_BY_CITIZEN
@@ -590,6 +633,8 @@ export const getData = async (action, state, dispatch) => {
        {  
          set(combinedArray[0],'sanctionedCapacity',pipeSize[0].SanctionCapacity)          
          set(combinedArray[0],'meterRentCode',pipeSize[0].MeterRentCode)
+         set(combinedArray[0],'proposedSanctionedCapacity',pipeSize[0].SanctionCapacity)          
+         set(combinedArray[0],'proposedMeterRentCode',pipeSize[0].MeterRentCode)
         dispatch(
           prepareFinalObject(
             "applyScreen.sanctionedCapacity",
@@ -599,6 +644,18 @@ export const getData = async (action, state, dispatch) => {
         dispatch(
           prepareFinalObject(
             "applyScreen.meterRentCode",
+            pipeSize[0].MeterRentCode
+          )
+        )
+        dispatch(
+          prepareFinalObject(
+            "applyScreen.proposedSanctionedCapacity",
+            pipeSize[0].SanctionCapacity
+          )
+        )
+        dispatch(
+          prepareFinalObject(
+            "applyScreen.proposedMeterRentCode",
             pipeSize[0].MeterRentCode
           )
         )
@@ -683,6 +740,7 @@ export const getData = async (action, state, dispatch) => {
           );
 
         }
+
 
       }
       let data = get(state.screenConfiguration.preparedFinalObject, "applyScreen")
@@ -859,6 +917,7 @@ const getApplyScreenChildren = () => {
     case "REACTIVATE_CONNECTION":
     case "TEMPORARY_DISCONNECTION":
     case "PERMANENT_DISCONNECTION":
+    case "UPDATE_METER_INFO" : 
        return {commentSectionDetails };  
     case "CONNECTION_CONVERSION":
     return {connConversionDetails};

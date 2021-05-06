@@ -235,7 +235,8 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
+        || moduleName === "WS_RENAME"
+        || moduleName === 'WS_METER_UPDATE' 
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
         || moduleName === "WS_TUBEWELL") {
@@ -258,6 +259,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -375,6 +377,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -409,6 +412,12 @@ class WorkFlowContainer extends React.Component {
       {
         labelKey = 'WS_RESUBMIT_DOCUMENT_UPLOAD_VALIDATION_MESSAGE'
         labelName = 'Please upload mandatory document in document section then submit'
+
+      }
+      else  if(data.applicationStatus ==='PENDING_FOR_METER_UPDATE' && data.action==='UPDATE_METER_INFORMATION')
+      {
+        labelKey = 'WS_SUBMIT_UPDATE_METER_INFORMATION_VALIDATION_MESSAGE'
+        labelName = 'Proposed connection execution details can not be blank'
 
       }
       toggleSnackbar(
@@ -454,6 +463,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -485,6 +495,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -557,6 +568,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -616,6 +628,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -629,7 +642,8 @@ class WorkFlowContainer extends React.Component {
       ||moduleName === "WS_TEMP_REGULAR"
       ||moduleName === "WS_DISCONNECTION" 
       ||moduleName === "WS_TEMP_DISCONNECTION"
-      || moduleName === "WS_RENAME" 
+      || moduleName === "WS_RENAME"
+      || moduleName === 'WS_METER_UPDATE' 
       || moduleName === "WS_CONVERSION" 
       || moduleName === "WS_REACTIVATE"
     || moduleName === "WS_TUBEWELL")
@@ -642,7 +656,8 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
+        || moduleName === "WS_RENAME"
+        || moduleName === 'WS_METER_UPDATE' 
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -779,6 +794,44 @@ ValidateRequest =(payload) =>{
 
     }
   }
+  if((payload.applicationStatus ==='PENDING_FOR_METER_UPDATE' && payload.action==='UPDATE_METER_INFORMATION'))
+  {
+    if((payload.connectionExecutionDate !== null || payload.connectionExecutionDate !=="") 
+     && (payload.proposedMeterId !== null || payload.proposedMeterId !=="")
+     && (payload.proposedMeterInstallationDate !== null || payload.proposedMeterInstallationDate !=="")
+     && (payload.proposedInitialMeterReading !== null || payload.proposedInitialMeterReading !=="")
+     && (payload.proposedMeterCount !== null || payload.proposedMeterCount !=="")
+     && (payload.proposedMfrCode !== null || payload.proposedMfrCode !=="")
+     && (payload.proposedMeterDigits !== null || payload.proposedMeterDigits !=="")
+     && (payload.proposedMeterUnit !== null || payload.proposedMeterUnit !=="")
+     && (payload.proposedSanctionedCapacity !== null || payload.proposedSanctionedCapacity !=="")
+     && (payload.proposedMeterRentCode !== null || payload.proposedMeterRentCode !=="")     
+    )
+    {
+      isvalidRequest = true
+      payload.meterId = payload.proposedMeterId
+      payload.meterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+      payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+      payload.additionalDetails.initialMeterReading = payload.proposedInitialMeterReading
+      payload.meterCount = payload.proposedMeterCount
+      payload.mfrCode = payload.proposedMfrCode
+      payload.meterDigits = payload.proposedMeterDigits
+      payload.meterUnit = payload.proposedMeterUnit
+      payload.sanctionedCapacity = payload.proposedSanctionedCapacity
+      payload.meterRentCode = payload.proposedMeterRentCode
+      // payload.waterProperty.usageCategory = payload.proposedMeterId
+      // payload.waterProperty.usageCategory = payload.proposedMeterId
+    }
+    else{
+      isvalidRequest = false
+      
+    }
+
+  }
+  else{
+    payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+
+  }
   // remove duplicate document
 
   let tmp = [];
@@ -824,16 +877,20 @@ uniqueBycode =(data,key)=>{
             });
         });
     } else {
+      if( data !== undefined)
+      {
       const states = find(data.states, { uuid: nextAction });
       states &&
         states.actions &&
         states.actions.forEach(action => {
           roles = [...roles, ...action.roles];
         });
-    }
+    
     roles = [...new Set(roles)];
     roles.indexOf("*") > -1 && roles.splice(roles.indexOf("*"), 1);
     return roles.toString();
+  }
+}
   };
 
   checkIfTerminatedState = (nextStateUUID, moduleName) => {
@@ -852,8 +909,15 @@ uniqueBycode =(data,key)=>{
       localStorageGet("businessServiceData")
     );
     const data = find(businessServiceData, { businessService: moduleName });
+    if(data!== undefined)
+    {
     const nextState = find(data.states, { uuid: nextStateUUID });
     return nextState.docUploadRequired;
+    }
+    else
+    {
+      return false;
+    }
   };
 
   getActionIfEditable = (status, businessId, moduleName) => {
@@ -964,6 +1028,7 @@ uniqueBycode =(data,key)=>{
                           || businessService === "WS_DISCONNECTION" 
                           || businessService === "WS_TEMP_DISCONNECTION" 
                           ||businessService === "WS_RENAME" 
+                          || businessService === 'WS_METER_UPDATE'
                           || businessService === "WS_CONVERSION" 
                           || businessService === "WS_REACTIVATE" 
                           || businessService === "WS_TUBEWELL") 
@@ -1000,12 +1065,21 @@ uniqueBycode =(data,key)=>{
       }
 
     }
-    if(true)
+    if((businessService=='WS_METER_UPDATE') && applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
     {
-      //WS_TEMP_REGULAR ~businessService
-      // PENDING_FOR_SDE_APPROVAL ~applicationStatus
-      // VERIFY_AND_FORWARD_TO_JE action
-      // VERIFY_AND_FORWARD_FOR_PAYMENT
+      const {WaterConnection} = preparedFinalObject;
+      let pipeSize = 0 ;
+      //applicationStatus: "PENDING_FOR_SDE_APPROVAL"
+      pipeSize = WaterConnection && WaterConnection[0].proposedPipeSize;     
+      if(  pipeSize === 'Private Meter'){
+        //FORWARD_TO_JE_TARIFF_CHANGE
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_PAYMENT');
+
+      }
+      else{
+        //VERIFY_AND_FORWARD_FOR_PAYMENT,VERIFY_AND_FORWARD_TO_JE
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_JE');
+      }
 
       
     }
@@ -1129,7 +1203,8 @@ uniqueBycode =(data,key)=>{
         ||businessService === "WS_TEMP_REGULAR"
         ||businessService === "WS_DISCONNECTION" 
         ||businessService === "WS_TEMP_DISCONNECTION"
-        || businessService === "WS_RENAME" 
+        || businessService === "WS_RENAME"
+        || businessService === "WS_METER_UPDATE" 
         || businessService === "WS_CONVERSION" 
         || businessService === "WS_REACTIVATE"     
     || businessService === "WS_TUBEWELL") 
@@ -1153,6 +1228,7 @@ uniqueBycode =(data,key)=>{
         || businessService === "WS_DISCONNECTION" 
         || businessService === "WS_TEMP_DISCONNECTION"
         || businessService === "WS_RENAME" 
+        || businessService ==='WS_METER_UPDATE'
         || businessService === "WS_CONVERSION" 
         || businessService === "WS_REACTIVATE"     
         || businessService === "WS_TUBEWELL")
@@ -1183,6 +1259,7 @@ uniqueBycode =(data,key)=>{
         ||businessService === "WS_DISCONNECTION" 
         ||businessService === "WS_TEMP_DISCONNECTION"
         || businessService === "WS_RENAME" 
+        || businessService === 'WS_METER_UPDATE'
         || businessService === "WS_CONVERSION" 
         || businessService === "WS_REACTIVATE"  
         ||  businessService === "WS_TUBEWELL")
@@ -1244,6 +1321,7 @@ uniqueBycode =(data,key)=>{
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
         || moduleName === "WS_TUBEWELL") 
