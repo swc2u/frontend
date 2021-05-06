@@ -220,10 +220,6 @@ if(ApplyForDateVenueChange !== "NotFound"){
 
     //     let tAmount = vanueData ? Number(vanueData.rent) + Number(vanueData.cleaningCharges) : ""
     //    console.log("tAmount--",tAmount)
-    if(vanueData ===undefined){
-        window.location.href = `/egov-services/all-applications` 
-    
-    }
 let vrent = Number(vanueData.rent);
 
         let totalAmount1 = vrent * daysCount;
@@ -517,7 +513,6 @@ const mapStateToProps = state => {
     const { facilationChargesSuccess, arrayName } = bookings;
   let fromDateone = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData : "one"
   let bookingOne = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData:"two"
-  let newBooking= state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.newBooking :"false"
   let stateData = state;
   let Previousdiscount = "NotFound"
 //   let appData = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0] : ""
@@ -525,10 +520,8 @@ const mapStateToProps = state => {
 
   let appData = state.bookings ? (state.bookings.applicationData !== undefined && state.bookings.applicationData !== null ? state.bookings.applicationData.bookingsModelList.length > 0 ?(state.bookings.applicationData.bookingsModelList[0]) :'NA' : 'NA'): 'NA'
   console.log("appData--",appData)
-    if(newBooking=== true){
-        appData= {}
-    }
-    if(appData !== undefined && appData !== null && appData !== 'NA'){
+
+  if(appData !== undefined && appData !== null && appData !== 'NA'){
      if(appData.discount == 0){
         Previousdiscount = "General"
      } 
