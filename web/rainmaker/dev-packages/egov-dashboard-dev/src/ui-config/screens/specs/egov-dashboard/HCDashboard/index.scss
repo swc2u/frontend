@@ -42,12 +42,11 @@ form#datagridsummary .MuiPaper-elevation4-466 {
   word-break: break-all !important; }
 
 .css-16pqwjk-indicatorContainer {
-  color: rgb(19, 14, 14);
+  color: #130e0e;
   display: grid;
   padding: 8px;
   transition: color 150ms ease 0s;
-  box-sizing: border-box;
-}
+  box-sizing: border-box; }
 
 .MuiGrid-container-59 {
   width: 125%;
@@ -64,6 +63,9 @@ div#material-ui-FilterConstraintsContainer {
 input#custom-containers-toDate {
   height: 10%; }
 
+input#custom-containers-fromDate {
+  height: 10%; }
+
 div#material-ui-FilterConstraintsContainer {
   width: 150%; }
 
@@ -72,9 +74,9 @@ div#custom-containers-local-moduleDashboardDropdown {
   width: 325px; }
 
 button#material-ui-searchButton {
-  margin-left: 165px; }
+  margin-left: 145px; }
 
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 1100px) {
   div#material-ui-FilterConstraintsContainer {
     display: block; }
   button#material-ui-searchButton {

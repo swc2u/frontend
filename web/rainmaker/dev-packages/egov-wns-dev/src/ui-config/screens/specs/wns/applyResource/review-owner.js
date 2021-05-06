@@ -44,6 +44,9 @@ const otherChargesDetailsHeader =  getHeader({
 const activationDetailsHeader = getHeader({
   labelKey: "WS_ACTIVATION_DETAILS"
 });
+const PropactivationDetailsHeader = getHeader({
+  labelKey: "WS_PROPOSED_ACTIVATION_DETAILS"
+});
 
 export const reviewConnectionType = getLabelWithValue(
   {
@@ -367,6 +370,94 @@ export const reviewmeterRentCode = getLabelWithValue(
   { jsonPath: "WaterConnection[0].meterRentCode",
     callBack: handleNA }
 );
+export const PropreviewConnectionExecutionDate = getLabelWithValue(
+  {
+    labelName: "Connection Execution Date",
+    labelKey: "WS_PROP_SERV_DETAIL_CONN_EXECUTION_DATE"
+  },
+  {
+    jsonPath: "WaterConnection[0].connectionExecutionDate",
+    callBack: convertEpochToDateAndHandleNA
+  }
+);
+export const PropreviewMeterId = getLabelWithValue(
+  {
+    labelName: "Meter ID",
+    labelKey: "WS_PROP_SERV_DETAIL_METER_ID"
+  },
+  { jsonPath: "WaterConnection[0].proposedMeterId",
+    callBack: handleNA }
+);
+
+export const PropreviewMeterInstallationDate = getLabelWithValue(
+  {
+    labelName: "Meter Installation Date",
+    labelKey: "WS_PROP_ADDN_DETAIL_METER_INSTALL_DATE"
+  },
+  {
+    jsonPath: "WaterConnection[0].proposedMeterInstallationDate",
+    callBack: convertEpochToDateAndHandleNA
+  }
+);
+
+export const PropreviewInitialMeterReading = getLabelWithValue(
+  {
+    labelName: "Initial Meter Reading",
+    labelKey: "WS_PROP_ADDN_DETAILS_INITIAL_METER_READING"
+  },
+  { jsonPath: "WaterConnection[0].proposedInitialMeterReading",
+    callBack: handleNA }
+);
+// new field
+
+export const PropreviewMeterCount = getLabelWithValue(
+  {
+    labelName: "Meter Count",
+    labelKey: "WS_PROP_ADDN_DETAILS_INITIAL_METER_COUNT"
+  },
+  { jsonPath: "WaterConnection[0].proposedMeterUnit",
+    callBack: handleNA }
+);
+export const PropreviewmfrCode = getLabelWithValue(
+  {
+    labelName: "mfr Code",
+    labelKey: "WS_PROP_SERV_DETAIL_MFRCODE"
+  },
+  { jsonPath: "WaterConnection[0].proposedMfrCode",
+    callBack: handleNA }
+);
+export const PropreviewmeterDigits = getLabelWithValue(
+  {
+    labelName: "Meter Digits",
+    labelKey: "WS_PROP_SERV_DETAIL_METER_DIGIT"
+  },
+  { jsonPath: "WaterConnection[0].proposedMeterDigits",
+    callBack: handleNA }
+);
+export const PropreviewmeterUnit = getLabelWithValue(
+  {
+    labelName: "Meter Unit",
+    labelKey: "WS_PROP_SERV_DETAIL_METER_UNIT"
+  },
+  { jsonPath: "WaterConnection[0].proposedMeterUnit",
+    callBack: handleNA }
+);
+export const PropreviewsanctionedCapacity = getLabelWithValue(
+  {
+    labelName: "Sanctioned Capacity",
+    labelKey: "WS_PROP_SERV_DETAIL_SANCTION_CAPACITY"
+  },
+  { jsonPath: "WaterConnection[0].proposedSanctionedCapacity",
+    callBack: handleNA }
+);
+export const PropreviewmeterRentCode = getLabelWithValue(
+  {
+    labelName: "Meter Rent Code",
+    labelKey: "WS_PROP_SERV_DETAIL_METER_RENT_CODE"
+  },
+  { jsonPath: "WaterConnection[0].proposedMeterRentCode",
+    callBack: handleNA }
+);
 export const getReviewOwner = (isEditable = true) => {
   return getCommonGrayCard({
     headerDiv: {
@@ -432,6 +523,8 @@ export const getReviewOwner = (isEditable = true) => {
     viewTwelve: otherChargesDetails,
     viewThirteen :activationDetailsHeader ,
     viewFourteen: activationDetails,
+    viewFifteen :PropactivationDetailsHeader ,
+    viewSixteen: PropactivationDetails,
   })
 };
 
@@ -462,6 +555,18 @@ const activationDetails = getCommonContainer({
   reviewsanctionedCapacity,
   reviewmeterRentCode,
   reviewMeterCount
+});
+const PropactivationDetails = getCommonContainer({
+  PropreviewConnectionExecutionDate,
+  PropreviewMeterId,
+  PropreviewMeterInstallationDate,
+  PropreviewInitialMeterReading,
+  PropreviewmfrCode,
+  PropreviewmeterDigits,
+  PropreviewmeterUnit,
+  PropreviewsanctionedCapacity,
+  PropreviewmeterRentCode,
+  PropreviewMeterCount
 });
 
 export const renderService = () => {

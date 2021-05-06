@@ -13,6 +13,11 @@ export const HCDashboardFilterForm = getCommonCard({
         labelName: "",
         labelKey: "Select From Date"
       },
+      props: {
+        style: {
+          width: "80%",
+        }
+      },
       gridDefination: {
         xs: 6,
         sm: 2,
@@ -60,6 +65,9 @@ export const HCDashboardFilterForm = getCommonCard({
         labelKey: "Select To Date"
       },
       props: {
+        style: {
+          width: "80%",
+        },
         inputProps: {
           min: ''
         }

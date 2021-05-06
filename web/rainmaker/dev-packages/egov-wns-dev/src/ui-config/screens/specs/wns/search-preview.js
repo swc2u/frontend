@@ -121,6 +121,17 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewproposedHolderInfo.visible",false);
     }
 
+    if(activityTypeHolder ==='UPDATE_METER_INFO' || activityTypeHolder ==='WS_METER_UPDATE' )
+    {
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFifteen.visible",true);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewSixteen.visible",true);
+
+    }
+    else{
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFifteen.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewSixteen.visible",false);
+    }
+
     if(activityTypeHolder ==='CONNECTION_CONVERSION'|| activityTypeHolder ==='WS_CONVERSION')
     {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyproposedUsageDetail.visible",true);

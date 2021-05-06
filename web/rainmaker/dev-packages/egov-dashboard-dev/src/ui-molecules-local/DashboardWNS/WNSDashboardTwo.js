@@ -37,15 +37,15 @@ class WNSDashboardTwo extends React.Component {
 
         columnData: [],
         rowData: [],
+        unchangeColumnData : [],
+        checkData : []
     }
   }
 
 
     // PDF function 
-    pdfDownload = () => {
-
-    debugger;
-
+    pdfDownload = (e) => {
+    e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
     var rowData = this.state.rowData
@@ -104,7 +104,7 @@ class WNSDashboardTwo extends React.Component {
     doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
 
     doc.setFontSize(10);
-    const pdfTitle = this.state.graphHardOneData.title ? this.state.graphHardOneData.title : "Title"
+    const pdfTitle = "Title"
     doc.text(pdfTitle, pageWidth / 2, 40, 'center');
 
     doc.autoTable({ html: '#my-table' });
@@ -127,6 +127,7 @@ class WNSDashboardTwo extends React.Component {
     // Column Unchange Data
     columnUnchange=(e)=>{
         debugger;
+        e.preventDefault();
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -159,7 +160,7 @@ class WNSDashboardTwo extends React.Component {
 
     // Toggle Column 
     toggleColumn = (e) => {
-        // e.preventDefault();
+        e.preventDefault();
         debugger;
         const data = this.state.columnData
         this.setState({
@@ -352,8 +353,9 @@ class WNSDashboardTwo extends React.Component {
         const data = dt[0].WaterConnection;
         const valueData = [];
 
-        const demoBillData = dt[1].billData;
+        const demoBillData = dt[1].billGeneration;
 
+        var categoryData = [];
         for(var i=0; i<data.length; i++){
             for(var j=0; j<data[i].waterApplicationList.length; j++){
                 // if( data[i].waterApplicationList[j].applicationStatus === "CONNECTION_ACTIVATED"){
@@ -366,8 +368,17 @@ class WNSDashboardTwo extends React.Component {
                 //     valueData.push(data[i]);
                 // }
                 valueData.push(data[i]);
+                categoryData.push( data[i].waterApplicationList[j]);
             }
         }
+
+        debugger;
+        var group = categoryData.reduce((r, a) => {
+            r[a["applicationStatus"]] = [...r[a["applicationStatus"]] || [], a];
+            return r;
+           }, {});
+        
+        debugger;
 
         var MonthMap = { 0: "Jan", 1: "Feb", 2: "Mar", 3: "Apr", 4: "May", 5: "Jun", 6: "Jul", 7: "Aug", 8: "Sep", 9: "Oct", 10: "Nov", 11: "Dec"}
         var fromDT = 1604188800000;
@@ -377,19 +388,24 @@ class WNSDashboardTwo extends React.Component {
         var dataJSONListMain = {};
         var dataJSONListBillData = {};
 
+        var categoryJSON = {};
         for(var i=0; i<valueData.length; i++){
             const demodt = valueData[i].waterApplication.auditDetails.lastModifiedTime;
             const dtMonth = new Date(demodt).getMonth();
             const dtYear = new Date(demodt).getFullYear();
             const strDate = MonthMap[dtMonth]+" "+dtYear;
+            categoryJSON[strDate] = categoryJSON[strDate] ? categoryJSON[strDate] : [];
+            categoryJSON[strDate].push(categoryData[i]);
             const val = valueData[i].contractValue === null ? 0 : valueData[i].contractValue ;
             var preval = dataJSON[strDate] ? parseInt(dataJSON[strDate]) : 0;
             dataJSON[strDate] = parseInt(val) + preval ;
             dataJSONListMain[strDate] = parseInt(val) + preval ;
         }
 
+        // var category = {};
+
         for(var i=0; i<demoBillData.length; i++){
-            const demodt = demoBillData[i].lastModifiedTime;
+            const demodt = demoBillData[i].receiptDate;
             const dtMonth = new Date(demodt).getMonth();
             const dtYear = new Date(demodt).getFullYear();
             const strDate = MonthMap[dtMonth]+" "+dtYear;
@@ -408,8 +424,10 @@ class WNSDashboardTwo extends React.Component {
             var itemHeader = {}
             itemHeader["Header"] = this.camelize(tableData[i]);
             itemHeader["accessor"] = tableData[i];
-            itemHeader["show"]= (i === 1 || i === 3 || i === 4 || i === 5 ) ? true : false ;
-            columnData.push(itemHeader);
+            itemHeader["show"]= (i === 3 || i === 4 || i === 5 || i === 21 ) ? true : false ;
+            if(itemHeader.show === true){
+                columnData.push(itemHeader);    
+            }
         }
 
         this.setState({
@@ -423,7 +441,114 @@ class WNSDashboardTwo extends React.Component {
             // graphClicked: 0,
             columnData: columnData,
             rowData: data,
+            unchangeColumnData : columnData,
+            categoryJSON: categoryJSON,
+            checkData : this.props.data
         })
+    }
+
+    componentDidUpdate(){
+        debugger;
+        const propSortBy = "dashboardType1";
+        // const propSortBy = "status";
+        const dt = this.props.data;
+        if(JSON.stringify(this.state.checkData) !== JSON.stringify(dt)){
+            const data = dt[0].WaterConnection;
+        const valueData = [];
+
+        const demoBillData = dt[1].billGeneration;
+
+        var categoryData = [];
+        for(var i=0; i<data.length; i++){
+            for(var j=0; j<data[i].waterApplicationList.length; j++){
+                // if( data[i].waterApplicationList[j].applicationStatus === "CONNECTION_ACTIVATED"){
+                //     valueData.push(data[i]);
+                // }
+                // if( data[i].waterApplicationList[j].applicationStatus === "CONNECTION_UPDATED"){
+                //     valueData.push(data[i]);
+                // }
+                // if( data[i].waterApplicationList[j].applicationStatus === "CONNECTION_TARIFF_CHANGED"){
+                //     valueData.push(data[i]);
+                // }
+                valueData.push(data[i]);
+                categoryData.push( data[i].waterApplicationList[j]);
+            }
+        }
+
+        debugger;
+        var group = categoryData.reduce((r, a) => {
+            r[a["applicationStatus"]] = [...r[a["applicationStatus"]] || [], a];
+            return r;
+           }, {});
+        
+        debugger;
+
+        var MonthMap = { 0: "Jan", 1: "Feb", 2: "Mar", 3: "Apr", 4: "May", 5: "Jun", 6: "Jul", 7: "Aug", 8: "Sep", 9: "Oct", 10: "Nov", 11: "Dec"}
+        var fromDT = 1604188800000;
+        var toDT = 1614717798986;
+
+        var dataJSON = {};
+        var dataJSONListMain = {};
+        var dataJSONListBillData = {};
+
+        var categoryJSON = {};
+        for(var i=0; i<valueData.length; i++){
+            const demodt = valueData[i].waterApplication.auditDetails.lastModifiedTime;
+            const dtMonth = new Date(demodt).getMonth();
+            const dtYear = new Date(demodt).getFullYear();
+            const strDate = MonthMap[dtMonth]+" "+dtYear;
+            categoryJSON[strDate] = categoryJSON[strDate] ? categoryJSON[strDate] : [];
+            categoryJSON[strDate].push(categoryData[i]);
+            const val = valueData[i].contractValue === null ? 0 : valueData[i].contractValue ;
+            var preval = dataJSON[strDate] ? parseInt(dataJSON[strDate]) : 0;
+            dataJSON[strDate] = parseInt(val) + preval ;
+            dataJSONListMain[strDate] = parseInt(val) + preval ;
+        }
+
+        // var category = {};
+
+        for(var i=0; i<demoBillData.length; i++){
+            const demodt = demoBillData[i].receiptDate;
+            const dtMonth = new Date(demodt).getMonth();
+            const dtYear = new Date(demodt).getFullYear();
+            const strDate = MonthMap[dtMonth]+" "+dtYear;
+            const val = demoBillData[i].totalAmountPaid ;
+            var preval = dataJSON[strDate] ? parseInt(dataJSON[strDate]) : 0;
+            dataJSON[strDate] = parseInt(val) + preval ;
+
+            var preval = dataJSONListBillData[strDate] ? parseInt(dataJSONListBillData[strDate]) : 0;
+            dataJSONListBillData[strDate] = parseInt(val) + preval ;
+        }
+
+
+        const tableData = data[0] ? Object.keys(data[0]) : [];
+        var columnData = []
+        for(var i=0; i<tableData.length; i++){
+            var itemHeader = {}
+            itemHeader["Header"] = this.camelize(tableData[i]);
+            itemHeader["accessor"] = tableData[i];
+            itemHeader["show"]= (i === 3 || i === 4 || i === 5 || i === 21 ) ? true : false ;
+            if(itemHeader.show === true){
+                columnData.push(itemHeader);    
+            }
+        }
+
+        this.setState({
+            // dataOne: graphSort[2],
+            graphOneData: Object.values(dataJSON),
+            graphOneLabel : Object.keys(dataJSON),
+            dataJSONListMain: dataJSONListMain,
+            dataJSONListBillData: dataJSONListBillData,
+            // graphOneLabelSHOW: graphOneLabelSHOW,
+            // propSortBy: propSortBy,
+            // graphClicked: 0,
+            columnData: columnData,
+            rowData: data,
+            unchangeColumnData : columnData,
+            categoryJSON: categoryJSON,
+            checkData : this.props.data
+        })
+        }
     }
 
     render() {  
@@ -707,29 +832,29 @@ class WNSDashboardTwo extends React.Component {
         {/* Table Feature  */}
         <div className="tableContainer">
         {
-            // this.state.unchangeColumnData.length > 0  ? 
-            // <div className="tableFeature">
-            //     <div className="columnToggle-Text"> Download As: </div>
-            //     <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+            this.state.unchangeColumnData.length > 0  ? 
+            <div className="tableFeature">
+                <div className="columnToggle-Text"> Download As: </div>
+                <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
 
-            //     <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
-            // </div>
-            // :null
+                <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+            </div>
+            :null
         }
         {
-        //    this.state.toggleColumnCheck ?
-        //    <div className="columnVisibilityCard">
-        //     <dl>
-        //         {
-        //             this.state.unchangeColumnData.map((data, index)=>{
-        //                 return(
-        //                     <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
-        //                 )
-        //             })
-        //         }
-        //     </dl>
-        //     </div> 
-        //    : null
+           this.state.toggleColumnCheck ?
+           <div className="columnVisibilityCard">
+            <dl>
+                {
+                    this.state.unchangeColumnData.map((data, index)=>{
+                        return(
+                            <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
+                        )
+                    })
+                }
+            </dl>
+            </div> 
+           : null
         }
 
         {

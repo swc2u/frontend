@@ -20,53 +20,48 @@ export const searchApiCall = async (state, dispatch) => {
       value: tenantId,
     },
   ];
-  downloadAcknowledgementForm( state,dispatch)
-
- 
-    // Add selected search fields to queryobject , "dayStart"
-    
-    // let response = await getSearchResults(queryObject, dispatch,"purchaseOrder");
-    // try {
-    //   let data = response.purchaseOrders.map((item) => {
-    //     return {
-           
-    //         [getTextToLocalMapping("Col 1")]: get(item, "rateType", "-") || "-",
-    //         [getTextToLocalMapping("Col 2")]: get(item, "supplier.name", "-") || "-",
-    //         [getTextToLocalMapping("Download")]: get(item, "status", "-") || "-",
-    //     };
-    //   });
-
-    //   dispatch(
-    //     handleField(
-    //       "download",
-    //       "components.div.children.searchResults",
-    //       "props.data",
-    //       data
-    //     )
-    //   );
-    //   dispatch(
-    //     handleField(
-    //       "download",
-    //       "components.div.children.searchResults",
-    //       "props.title",
-    //       `${getTextToLocalMapping("Search Results for Purchase Order")} (${
-    //         response.purchaseOrders.length
-    //       })`
-    //     )
-    //   );
-    //   showHideTable(true, dispatch);
-    // } catch (error) {
-    //   dispatch(
-    //     toggleSnackbar(
-    //       true,
-    //       { labelName: "Unable to parse search results!" },
-    //       "error"
-    //     )
-    //   );
-    // }
-  
+  downloadAcknowledgementForm( state,dispatch,"generateBillFile",0,0)  
 };
-
+export const getDataExchangeFile = async (state, dispatch) => {
+  let { localisationLabels } = state.app || {};
+ // showHideTable(false, dispatch);
+ const isdateValid = validateFields(
+  "components.div.children.DownloadDataExchangeFile.children.cardContent.children.searchFormContainer.children",
+  state,
+  dispatch,
+  "download"
+);
+if(isdateValid)
+{
+  const tenantId =  getTenantId();
+  let searchScreenObject = get(
+    state.screenConfiguration.preparedFinalObject,
+    "searchScreen",
+    {}
+  );
+  let Fromdate = convertDateToEpoch(searchScreenObject.fromDate);
+  let Todate =convertDateToEpoch(searchScreenObject.toDate)
+  let queryObject = [
+    {
+      key: "tenantId",
+      value: tenantId,
+    },
+  ];
+  downloadAcknowledgementForm( state,dispatch,"getDataExchangeFile",Fromdate,Todate)  
+}
+else
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_REQUIRED_FIELDS",
+        labelName: "Please fill Required details"
+      },
+        "warning"
+      )
+    )
+  }
+};
 const showHideTable = (booleanHideOrShow, dispatch) => {
   dispatch(
     handleField(

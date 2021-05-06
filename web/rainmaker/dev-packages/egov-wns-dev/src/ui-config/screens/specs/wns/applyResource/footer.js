@@ -379,6 +379,8 @@ if(water || sewerage || tubewell)
           //
           let owners = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.owners",[])
           let jsonPath = ''//SingleOwnerDetailsItems.item0.children.cardContent.children.viewFive.children.ownerName.props.jsonPath
+          if(SingleOwnerDetailsItems && SingleOwnerDetailsItems[0] && SingleOwnerDetailsItems !== undefined)
+          {
            jsonPath = SingleOwnerDetailsItems[0].item0.children.cardContent.children.viewFive.children.ownerName.props.jsonPath
           let name = get(
             state.screenConfiguration.preparedFinalObject,
@@ -387,6 +389,7 @@ if(water || sewerage || tubewell)
           );
           owners = owners.filter(x=>x.name ===name);
           set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.owners", owners);
+          }
           
 
         }
@@ -534,6 +537,39 @@ if(!proconnHolderDetail){
     console.log("errrr")
   }
 } 
+else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER_UPDATE' ){
+  const iswaterConnFomValid = validateFields(
+    "components.div.children.formwizardFirstStep.children.commentSectionDetails.children.cardContent.children.commentDetails.children.CommentDetails.children",
+    state,
+    dispatch,
+    "apply"
+  );
+
+  if(!iswaterConnFomValid){
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_REQUIRED_FIELDS",
+        labelName: "Please fill Required details"
+      },
+        "warning"
+      )
+    )
+    return;
+  } 
+  removingDocumentsWorkFlow(state, dispatch) ;
+  prepareDocumentsUploadData(state, dispatch);
+  try{
+    let abc = await applyForWater(state, dispatch);
+    window.localStorage.setItem("ActivityStatusFlag","true");
+ 
+  }catch (err){
+    if(localStorage.getItem("WNS_STATUS")){
+      window.localStorage.removeItem("WNS_STATUS");
+  }
+    console.log("errrr")
+  }
+}
 else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
                       wnsStatus === "WS_REACTIVATE"||                     
                       wnsStatus === "WS_DISCONNECTION"||
@@ -1382,6 +1418,35 @@ if(!isConnectionDetailsValid)
     //   isFormValid = false;
     //   hasFieldToaster = true;
     // }
+      let proposedMeterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.proposedMeterInstallationDate");
+      let connectionExecutionDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.connectionExecutionDate");
+      let meterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.meterInstallationDate");
+      if(proposedMeterInstallationDate && connectionExecutionDate)
+      {
+        // proposedMeterInstallationDate =proposedMeterInstallationDate
+        // proposedMeterInstallationDate =proposedMeterInstallationDate
+      if(connectionExecutionDate> proposedMeterInstallationDate)
+      {
+        const errorMessage = {
+          labelName: "Meter installation date must be greater then connection execution date",
+          labelKey: "WS_METER_INSTALATION_DATE_VALIDATION"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return 
+      }
+      }
+      if(connectionExecutionDate && meterInstallationDate)
+      {
+      if(connectionExecutionDate >meterInstallationDate)
+      {
+        const errorMessage = {
+          labelName: "Proposed meter installation date must be greater then connection execution date",
+          labelKey: "WS_PROP_METER_INSTALATION_DATE_VALIDATION"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return 
+      }
+      }
 
     isFormValid = isFormValid;
   }

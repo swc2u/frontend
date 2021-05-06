@@ -55,7 +55,7 @@ class SummaryDetails extends Component {
                 "tenantId": userInfo.tenantId,
                 "bkAction": "INITIATE",
                 "businessService": "GFCP",
-                "financialYear": "2020-2021"
+                "financialYear": "2021-2022"
               }
         let createAppData = {
              

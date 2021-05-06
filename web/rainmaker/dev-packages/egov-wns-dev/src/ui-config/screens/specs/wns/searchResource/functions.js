@@ -19,7 +19,29 @@ export const searchApiCall = async (state, dispatch) => {
     await renderSearchApplicationTable(state, dispatch);
   }
 }
+export const deactivateConnection = async (state, dispatch) => {
 
+  try
+  {
+    let queryObjectForUpdate = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0]");
+   const payloadbillingPeriod = await httpRequest("post", "/ws-services/wc/_deactivateConnection", "", [], { WaterConnection: queryObjectForUpdate });
+   let errorMessage = {
+    labelName: "Connection deactivate successfully!",
+    labelKey: "WS_DEACTIVATE_SUCCESS"
+  };
+  dispatch(toggleSnackbar(true, errorMessage, "success"));
+  }
+  catch(error)
+        {
+          dispatch(
+            toggleSnackbar(
+              true,
+              { labelName: error.message, labelKey: error.message },
+              "error"
+            )
+          );
+        }
+}
 const renderSearchConnectionTable = async (state, dispatch) => {
   let queryObject = [{ key: "tenantId", value: getTenantIdCommon() }];
   let searchScreenObject = get(state.screenConfiguration.preparedFinalObject, "searchConnection", {});

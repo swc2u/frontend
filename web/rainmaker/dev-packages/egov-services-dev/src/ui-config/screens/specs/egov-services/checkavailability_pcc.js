@@ -320,6 +320,33 @@ const prepareEditFlow = async (
                     );
 
                     if (bookingsModelList[0].timeslots.length > 0) {
+                                   
+                    if( bookingsModelList[0].timeslots[0].slot.split("-")[0].trim()=='9:00 AM' &&  bookingsModelList[0].timeslots[0].slot.split("-")[1].trim()=='8:59 AM'){
+                    
+                        let d = new Date(new Date(bookingsModelList[0].bkToDate).setDate(new Date(bookingsModelList[0].bkToDate).getDate() + 1));
+                        let  newToDate= d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+                         
+                        dispatch(
+                            prepareFinalObject(
+                                "DisplayPacc.bkDisplayFromDateTime",
+                                bookingsModelList[0].bkFromDate +
+                                ", " +
+                                bookingsModelList[0].timeslots[0].slot.split(
+                                    "-"
+                                )[0]
+                            )
+                        );
+                        dispatch(
+                            prepareFinalObject(
+                                "DisplayPacc.bkDisplayToDateTime",
+                                newToDate +
+                                ", " +
+                                bookingsModelList[0].timeslots[0].slot.split(
+                                    "-"
+                                )[1]
+                            )
+                        );
+                    }else{
                         dispatch(
                             prepareFinalObject(
                                 "DisplayPacc.bkDisplayFromDateTime",
@@ -342,6 +369,8 @@ const prepareEditFlow = async (
                         );
                     }
 
+                }
+                
                     let data = availabilityData.data;
                     let reservedDates = [];
                     var daylist = [];

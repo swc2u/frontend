@@ -490,6 +490,7 @@ return !selectedBusinessServices.includes(businessServices)
     "WS_DISCONNECTION",
     "WS_TEMP_DISCONNECTION",
     "WS_RENAME",
+    "WS_METER_UPDATE",
     "WS_CONVERSION",
     "WS_REACTIVATE",
     "WS_TUBEWELL" ,]
@@ -587,6 +588,7 @@ return !selectedBusinessServices.includes(businessServices)
         || window.localStorage.getItem("wns_workflow") === "WS_DISCONNECTION" 
         || window.localStorage.getItem("wns_workflow") === "WS_TEMP_DISCONNECTION"
         || window.localStorage.getItem("wns_workflow") === "WS_RENAME" 
+        || window.localStorage.getItem("wns_workflow") === "WS_METER_UPDATE" 
         || window.localStorage.getItem("wns_workflow") === "WS_CONVERSION" 
         || window.localStorage.getItem("wns_workflow") === "WS_REACTIVATE"  
         || window.localStorage.getItem("wns_workflow") === "WS_TUBEWELL"

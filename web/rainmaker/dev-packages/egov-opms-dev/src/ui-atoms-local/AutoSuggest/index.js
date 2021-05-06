@@ -31,8 +31,9 @@ const styles = theme => ({
     padding: 0
   },
   ac_valueContainer: {
-    display: "flex",
+    // display: "flex",
     // flexWrap: "wrap",
+    display: "inline-block",
     flex: 1,
     alignItems: "center"
   },
@@ -155,6 +156,9 @@ function MultiValue(props) {
       className={classNames(props.selectProps.classes.chip, {
         [props.selectProps.classes.chipFocused]: props.isFocused
       })}
+      style={{
+        fontSize: 12
+      }}
       onDelete={props.removeProps.onClick}
       deleteIcon={<CancelIcon {...props.removeProps} />}
     />

@@ -950,6 +950,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
                 }
+                else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
@@ -961,6 +965,7 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                      || activityType === 'WS_DISCONNECTION'
                      || activityType === 'WS_TEMP_DISCONNECTION'
                      || activityType === 'WS_RENAME'
+                     || activityType ==='WS_METER_UPDATE'
                      || activityType === 'WS_CONVERSION'
                      || activityType === 'WS_REACTIVATE'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
@@ -1025,6 +1030,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 else if(activityType ==='PERMANENT_DISCONNECTION' || activityType ==='WS_DISCONNECTION')
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
+                }
+                else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
             }
             else if(applicationType ==='TEMPORARY'){
@@ -1526,6 +1535,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
                 }
+                else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
@@ -1537,6 +1550,7 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                      || activityType === 'WS_DISCONNECTION'
                      || activityType === 'WS_TEMP_DISCONNECTION'
                      || activityType === 'WS_RENAME'
+                     || activityType === 'WS_METER_UPDATE'
                      || activityType === 'WS_CONVERSION'
                      || activityType === 'WS_REACTIVATE'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
@@ -1598,6 +1612,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 else if(activityType ==='PERMANENT_DISCONNECTION' || activityType ==='WS_DISCONNECTION')
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
+                }
+                else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
             }
             else if(applicationType ==='TEMPORARY'){
@@ -3128,6 +3146,32 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
     //   );
     //   throw error;
     // }
+  };
+  export const getDataExchangeFile = async (queryObject , api,fromdate,todate) => {
+
+    try {
+      store.dispatch(toggleSpinner());
+      const response = await httpRequest(
+        "post",
+        api,     
+        "",
+        queryObject,
+        { billGeneration: {fromDate:fromdate,toDate:todate}}
+      );
+      store.dispatch(toggleSpinner());
+      return response;
+    } catch (error) {
+      store.dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: error.message, labelKey: error.message },
+          "error"
+        )
+      );
+      store.dispatch(toggleSpinner());
+     // throw error;
+    }
+  
   };
   export const generateBillFile = async (queryObject , api) => {
 

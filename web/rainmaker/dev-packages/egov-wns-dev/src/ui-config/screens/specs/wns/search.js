@@ -10,21 +10,34 @@ import { resetFieldsForConnection, resetFieldsForApplication } from '../utils';
 import "./index.css";
 import { getRequiredDocData, showHideAdhocPopup } from "egov-ui-framework/ui-utils/commons";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-
-const getMDMSData = (action, dispatch) => {
-  const moduleDetails = [
-    {
-      moduleName: "ws-services-masters",
-      masterDetails: [
-        { name: "Documents" }
+import commonConfig from "config/common.js";
+import { httpRequest } from "../../../../ui-utils";
+const getMDMSData = async (action, dispatch) => {
+  let mdmsBody = {
+    MdmsCriteria: {
+      tenantId: commonConfig.tenantId,
+      moduleDetails: [
+       // { moduleName: "common-masters", masterDetails: [{ name: "OwnerType" }, { name: "OwnerShipCategory" }] },
+        { moduleName: "tenant", masterDetails: [{ name: "tenants" }] },        
+        {
+          moduleName: "ws-services-masters", masterDetails: [            
+            {name:"sectorList"},
+            {name:"swSectorList"},
+            
+          ]
+        }
       ]
     }
-  ]
+  };
   try {
-    getRequiredDocData(action, dispatch, moduleDetails)
-  } catch (e) {
-    console.log(e);
-  }
+    let payload = null;
+    payload = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
+
+    dispatch(prepareFinalObject("applyScreenMdmsData1", payload.MdmsRes));
+    if(payload.MdmsRes['ws-services-masters'].sectorList !== undefined)
+    dispatch(prepareFinalObject("applyScreenMdmsData1.ws-services-masters.wssectorList", payload.MdmsRes['ws-services-masters'].sectorList));
+    //
+  } catch (e) { console.log(e); }
 };
 
 const header = getCommonHeader({

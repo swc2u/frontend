@@ -4,17 +4,19 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { getUserInfo, setapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 import { getDashboardDropdownData } from "../../../../ui-utils/commons";
 // import { HCDashboardFilterForm, HCDashboardResults } from "./HCDashboard/HCDashboard";
-import { LegalDashboardFilterForm, LegalDashboardResults } from "./LegalDashboard/LegalDashboard";
+import { DashboardFilterForm, DashboardResults } from "./LegalDashboard/LegalDashboard";
 // import { PGRDashboardResults } from "./searchResource/dashboardTypeSearchResults";
-// import { allDashboardSearchAPICall, SearchDashboardData } from "./searchResource/functions";
+
+import { getLegalDashboardData } from "../../../../ui-utils/commons"; 
+
 import './index.css';
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 
 const header = getCommonHeader(
   {
-    labelName: "HC Dashboard",
-    labelKey: "DASHBOARD_2"
+    labelName: "Legal Dashboard",
+    labelKey: "Legal_dashboard_1"
   },
   {
     classes: {
@@ -62,6 +64,11 @@ const getDropDownData = async (action, state, dispatch) => {
   dispatch(prepareFinalObject("dahsboardHome.defaulttoDate", formatDt));
 }
 
+const getDashboardData = async (state, dispatch) => {
+  let requestBody = {};
+  const response = await getLegalDashboardData( dispatch, requestBody );
+    // return checkData;
+}
 const LegalDashboard = {
   uiFramework: "material-ui",
   name: "LegalDashboard",
@@ -69,6 +76,8 @@ const LegalDashboard = {
     
     debugger
     getDropDownData(action, state, dispatch);
+
+    getDashboardData(state, dispatch);
     return action;
   },
   components: {
@@ -91,9 +100,9 @@ const LegalDashboard = {
             
           }
         },
-        LegalDashboardFilterForm,
-        breakAfterSearch: getBreak(),
-        LegalDashboardResults
+        // DashboardFilterForm,
+        // breakAfterSearch: getBreak(),
+        DashboardResults
       }
     },
   }

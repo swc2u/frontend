@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 import { Doughnut, Bar, HorizontalBar, Line, Pie } from 'react-chartjs-2';
 import CardContent from '@material-ui/core/CardContent';
-import Chart from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+// import Chart from 'chart.js';
+// import ChartDataLabels from 'chartjs-plugin-datalabels';
 import ReactTable from "react-table-6";  
 import "react-table-6/react-table.css" ;
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 // import Dashboardtable from './Dashboardtable';
 // import Pagination from "./Pagination";
-import EChallandata from './EChallan_data.json';
+// import EChallandata from './EChallan_data.json';
 import './index.css'
 
 class DashboardEchallan extends React.Component {
@@ -476,7 +476,12 @@ class DashboardEchallan extends React.Component {
     var columnData = []
     for(var i=0; i<tableData.length; i++){
         var itemHeader = {}
-        itemHeader["Header"] = this.camelize(tableData[i]);
+        // Camel Case to String COde here...
+        var text = this.camelize(tableData[i]);
+        var result = text.replace( /([A-Z])/g, " $1" );
+        var finalResult = result.charAt(0).toUpperCase() + result.slice(1);
+
+        itemHeader["Header"] = finalResult;
         itemHeader["accessor"] = tableData[i];
         itemHeader["show"]= (i === 4 || i === 5 || i === 8 || i === 9 || i === 23 || i === 24 || i === 24 ) ? true : false
         columnData.push(itemHeader);
@@ -687,7 +692,12 @@ class DashboardEchallan extends React.Component {
         var columnData = []
         for(var i=0; i<tableData.length; i++){
             var itemHeader = {}
-            itemHeader["Header"] = this.camelize(tableData[i]);
+            // Camel Case to String COde here...
+            var text = this.camelize(tableData[i]);
+            var result = text.replace( /([A-Z])/g, " $1" );
+            var finalResult = result.charAt(0).toUpperCase() + result.slice(1);
+
+            itemHeader["Header"] = finalResult;
             itemHeader["accessor"] = tableData[i];
             itemHeader["show"]= (i === 4 || i === 5 || i === 8 || i === 9 || i === 23 || i === 24 || i === 24 ) ? true : false
             columnData.push(itemHeader);
@@ -824,23 +834,23 @@ class DashboardEchallan extends React.Component {
                 labelString: this.state.graphHardOneData ? this.state.graphHardOneData.msgY : "",
                 },  
             ticks: {
-            stepSize: 1
+            // stepSize: 1
             },
         }],
     },
-    plugins: {
-        datalabels: {
-        //     color: 'white',
-        //     backgroundColor: 'grey',
-        //     labels: {
-        //         title: {
-        //             font: {
-        //                 weight: 'bold'
-        //             }
-        //         }
-        //     }}
-        }
-        }
+    // plugins: {
+    //     datalabels: {
+    //     //     color: 'white',
+    //     //     backgroundColor: 'grey',
+    //     //     labels: {
+    //     //         title: {
+    //     //             font: {
+    //     //                 weight: 'bold'
+    //     //             }
+    //     //         }
+    //     //     }}
+    //     }
+    //     }
     }
 
     // Second Horizontal Graph
@@ -938,20 +948,20 @@ class DashboardEchallan extends React.Component {
                     }, 
             }]
         },
-        plugins: {
-            datalabels: {
-                display: false
-            //     color: 'white',
-            //     backgroundColor: 'grey',
-            //     labels: {
-            //         title: {
-            //             font: {
-            //                 weight: 'bold'
-            //             }
-            //         }
-            //     }}
-            }
-            }
+        // plugins: {
+        //     datalabels: {
+        //         display: false
+        //     //     color: 'white',
+        //     //     backgroundColor: 'grey',
+        //     //     labels: {
+        //     //         title: {
+        //     //             font: {
+        //     //                 weight: 'bold'
+        //     //             }
+        //     //         }
+        //     //     }}
+        //     }
+        //     }
     }
 
     // Third Double Bar Graph Graph
@@ -1045,20 +1055,20 @@ class DashboardEchallan extends React.Component {
                     }, 
             }]
         },
-        plugins: {
-            datalabels: {
-                display: false
-            //     color: 'white',
-            //     backgroundColor: 'grey',
-            //     labels: {
-            //         title: {
-            //             font: {
-            //                 weight: 'bold'
-            //             }
-            //         }
-            //     }}
-            }
-        },
+        // plugins: {
+        //     datalabels: {
+        //         display: false
+        //     //     color: 'white',
+        //     //     backgroundColor: 'grey',
+        //     //     labels: {
+        //     //         title: {
+        //     //             font: {
+        //     //                 weight: 'bold'
+        //     //             }
+        //     //         }
+        //     //     }}
+        //     }
+        // },
         onClick: (e, element) => {
             if (element.length > 0) {
                 
@@ -1180,19 +1190,19 @@ class DashboardEchallan extends React.Component {
     //         },
     //     }],
     // },
-    plugins: {
-        datalabels: {
-        //     color: 'white',
-        //     backgroundColor: 'grey',
-        //     labels: {
-        //         title: {
-        //             font: {
-        //                 weight: 'bold'
-        //             }
-        //         }
-        //     }}
-        }
-        }
+    // plugins: {
+    //     datalabels: {
+    //     //     color: 'white',
+    //     //     backgroundColor: 'grey',
+    //     //     labels: {
+    //     //         title: {
+    //     //             font: {
+    //     //                 weight: 'bold'
+    //     //             }
+    //     //         }
+    //     //     }}
+    //     }
+    //     }
     }
 
     // Fifth Bar Graph
@@ -1285,19 +1295,19 @@ class DashboardEchallan extends React.Component {
             },
         }],
     },
-    plugins: {
-        datalabels: {
-        //     color: 'white',
-        //     backgroundColor: 'grey',
-        //     labels: {
-        //         title: {
-        //             font: {
-        //                 weight: 'bold'
-        //             }
-        //         }
-        //     }}
-        }
-        }
+    // plugins: {
+    //     datalabels: {
+    //     //     color: 'white',
+    //     //     backgroundColor: 'grey',
+    //     //     labels: {
+    //     //         title: {
+    //     //             font: {
+    //     //                 weight: 'bold'
+    //     //             }
+    //     //         }
+    //     //     }}
+    //     }
+    //     }
     }
 
     // Sixth Bar Graph
@@ -1386,19 +1396,19 @@ class DashboardEchallan extends React.Component {
             },
         }],
     },
-    plugins: {
-        datalabels: {
-        //     color: 'white',
-        //     backgroundColor: 'grey',
-        //     labels: {
-        //         title: {
-        //             font: {
-        //                 weight: 'bold'
-        //             }
-        //         }
-        //     }}
-        }
-        }
+    // plugins: {
+    //     datalabels: {
+    //     //     color: 'white',
+    //     //     backgroundColor: 'grey',
+    //     //     labels: {
+    //     //         title: {
+    //     //             font: {
+    //     //                 weight: 'bold'
+    //     //             }
+    //     //         }
+    //     //     }}
+    //     }
+    //     }
     }
 
 

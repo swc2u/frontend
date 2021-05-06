@@ -102,7 +102,7 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
               startSMSRecevier();
             }}
           />
-          <div style={{ marginBottom: "0px", position: "relative", zIndex: 10,marginRight:10}} className="text-right">           
+          <div style={{ marginBottom: "0px", position: "relative", zIndex: 10,marginRight:0}} className="text-right">           
           <Link to="/user/privacy"> 
            {/*  */}
               <div style={{ display: "inline-block" }}  >
@@ -120,9 +120,8 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
            
               </IconButton>  */}
                 <p>
-                In case of any support or query, kindly contact us on
-                <br></br>   
-                <b  style={{  color:"blue"}} > 0172 2787200</b>
+                In case of any support or query,<br></br> kindly contact us on                   
+                <b  style={{  color:"blue"}} > 0172-2787200</b>
                 </p> 
               {/* <Label bold={false} color="black" fontSize= "14px" label="In case of any support or query, kindly contact us on"/> */}
               

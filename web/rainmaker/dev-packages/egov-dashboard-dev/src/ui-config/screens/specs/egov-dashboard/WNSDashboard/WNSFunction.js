@@ -59,7 +59,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
     debugger;
     try {
       // API call for Description Report
-      const response = await getWNSData( dispatch, requestBody );
+      const response = await getWNSData( dispatch, data );
 
     } catch (error) {
 
