@@ -44,15 +44,15 @@ const getDropDownData = async (action, state, dispatch) => {
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
-    "name" : "Event Type",
-    "code" : "eventStatus"
+    "name" : "Published Events",
+    "code" : "PUBLISHED"
     },
     {
-      "name" : "Event Status",
-      "code" : "status"
+      "name" : "Cancelled Events",
+      "code" : "CANCELLED"
     }
   ]
-  var selectedDefaultData = {value: "eventStatus", label: "Event Type"};
+  var selectedDefaultData = {value: "PUBLISHED", label: "Published Events"};
 
   // Date default
   var fromDate = new Date();

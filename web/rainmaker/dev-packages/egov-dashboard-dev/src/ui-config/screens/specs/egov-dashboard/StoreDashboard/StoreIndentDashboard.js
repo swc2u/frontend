@@ -1,4 +1,6 @@
-import { getCommonCard, getCommonContainer, getDateField, getLabel, getPattern,} from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getCommonCard, getCommonContainer,
+  getSelectField,
+  getDateField, getLabel, getPattern,} from "egov-ui-framework/ui-config/screens/specs/utils";
 // import { searchAPICall, SearchDashboardData, SearchPGRDashboardData } from "./functions";
 import { SearchDashboardData } from "./StoreFunction";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -16,6 +18,13 @@ export const FilterForm = getCommonCard({
         xs: 6,
         sm: 2,
         md: 2
+      },
+      props: {
+        style: {
+        width: "150px",
+        // height: "55px",
+        // marginLeft: "90%"
+        }
       },
       pattern: getPattern("Date"),
       jsonPath: "dahsboardHome.defaultFromDate",
@@ -37,20 +46,64 @@ export const FilterForm = getCommonCard({
         labelName: "To Date",
         labelKey: "Select To Date"
       },
-      props: {
-        inputProps: {
-          min: ''
-        }
-      },
       gridDefination: {
         xs: 6,
         sm: 2,
         md: 2
       },
+      props: {
+        inputProps: {
+          min: ''
+        },
+        style: {
+        width: "150px",
+        // height: "55px",
+        // marginLeft: "90%"
+        }
+      },
       pattern: getPattern("Date"),
       jsonPath: "dahsboardHome.defaulttoDate",
       required: true,
     }),
+    moduleDashboardDropdownStore: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-dashboard",
+      componentPath: "AutosuggestContainer",
+      jsonPath: "dahsboardHome.storeNameDefault",
+      required: true,
+      gridDefination: {
+            xs: 6,
+            sm: 2,
+            md: 2
+          },
+      props: {
+        style: {
+        width: "100%",
+        cursor: "pointer",
+      },
+  
+      className: "citizen-city-picker",
+      label: { labelName: "Report Type", labelKey: "DASHBOARD_DROPDOWN_REPORT_TYPE_LABEL" },
+      placeholder: {
+        labelName: "",
+        labelKey: "Select Module"
+      },
+      sourceJsonPath: "dahsboardHome.storeName",
+      jsonPath: "dahsboardHome.storeNameDefault",
+      maxLength:5,
+      labelsFromLocalisation: false,
+      suggestions: [],
+      fullwidth: true,
+      // required: true,
+      inputLabelProps: {
+        shrink: true
+      },
+      isMulti: false,
+      labelName: "name",
+      valueName: "name"
+      },
+    
+    },
     moduleDashboardDropdown: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-dashboard",
@@ -65,7 +118,8 @@ export const FilterForm = getCommonCard({
       props: {
         style: {
         width: "100%",
-        cursor: "pointer"
+        cursor: "pointer",
+        height: "55px"
       },
   
       className: "citizen-city-picker",

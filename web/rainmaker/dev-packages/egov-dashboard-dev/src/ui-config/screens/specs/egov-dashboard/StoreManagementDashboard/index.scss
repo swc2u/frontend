@@ -26,9 +26,6 @@ form#datagridsummary .MuiPaper-elevation4-466 {
 .applicant-details-error p {
   font-size: 14px; }
 
-#custom-containers-propertyMohalla div p {
-  font-size: 14px; }
-
 #custom-containers-key {
   word-break: break-all !important; }
 
@@ -41,53 +38,57 @@ form#datagridsummary .MuiPaper-elevation4-466 {
   letter-spacing: 0.67px;
   word-break: break-all !important; }
 
-.MuiGrid-container-59 {
-  width: 125%;
-  display: flex;
-  flex-wrap: wrap;
-  box-sizing: border-box; }
-
-div#material-ui-FilterConstraintsContainer {
-  width: 121%;
-  display: flex;
-  flex-wrap: wrap;
-  box-sizing: border-box; }
-
-input#custom-containers-toDate {
-  height: 10%; }
-
-input#custom-containers-fromDate {
-  height: 10%; }
-
-div#material-ui-FilterConstraintsContainer {
-  width: 150%; }
-
-div#custom-containers-local-moduleDashboardDropdown {
-  position: absolute;
-  width: 260px;
-  margin-left: 95px;
+  div#custom-containers-local-moduleDashboardDropdown {
+    width: 330px;
+	position: absolute;
 }
 
 div#custom-containers-local-moduleDashboardDropdownStore {
-  position: absolute;
-  width: 300px;
+    width: 300px;
+    margin-left: 120px;
+	position: absolute;
+}
+
+div#custom-containers-local-financialDropdownStore {
+    margin-left: 240px;
+    width: 150px;
+    position: absolute;
 }
 
 button#material-ui-searchButton {
-  margin-left: 165px; }
+    margin-left: 250px;
+}	
 
 @media only screen and (max-width: 900px) {
-  div#material-ui-FilterConstraintsContainer {
-    display: block; }
-  button#material-ui-searchButton {
-    margin-left: 0px;
-    margin-top: 150px;
-    width: 150px;  
-  }
-  div#custom-containers-local-moduleDashboardDropdown {
-    position: absolute;
-    width: 250px;
-    margin-top: 70px;
-    margin-left: 0px;
-  } 
+	.MuiGrid-container-59 {
+		width: 125%;
+		display: block;
+		flex-wrap: wrap;
+		box-sizing: border-box;
+	}
+	div#material-ui-cardContent {
+		width: 100%;
+		display: block;
+	}
+	div#custom-containers-local-moduleDashboardDropdown {
+    width: 350px;
+	margin: 0px;
+	position: initial;
+	}
+
+	div#custom-containers-local-moduleDashboardDropdownStore {
+		width: 250px;
+		margin: 0px;
+		position: initial;
+	}
+
+	div#custom-containers-local-financialDropdownStore {
+		width: 250px;
+		position: initial;
+		margin: 0px;
+	}
+
+	button#material-ui-searchButton {
+		margin-left: 0px;
+	}	
 }
