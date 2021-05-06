@@ -1991,35 +1991,24 @@ export const getTradeLicenseData = async ( dispatch, data ) => {
   
   debugger;
   // Same as per Sport and culture but module code is different
-  var payloadData = {
-  "tenantId": data.tenantId,
-  "RequestBody": {
-    "tenantId": data.tenantId,
-    "moduleCode": "PR",
-    "eventDetailUuid": "",
-    "eventTitle": "",
-    "eventStatus": "",
-    "status": "",
-    "startDate": data.fromDate,
-    "endDate": data.toDate,
-    "eventId": "",
-    "defaultGrid": false
-  },
-  "reportSortBy": data.reportSortBy
-  }
+  var payloadData = data;
 
   try {
     store.dispatch(toggleSpinner());
-    const DescriptionReport = await httpRequest(
+    var DescriptionReport = [];
+    const res1 = await httpRequest(
       "post",
-      "/tl-services/v1/_search?tenantId="+data.tenantId+"&limit=100&fromDate="+data.fromDate+"&toDate="+data.toDate+"",
+      "/tl-services/v1/_search?tenantId="+data.tenantId+"&limit=100&fromDate="+data.fromDate+"&toDate="+data.toDate,
+      // "/tl-services/v1/_search?tenantId="+data.tenantId+"&limit=100&fromDate="+data.fromDate+"&toDate="+data.toDate+"",
       "",
       [],
-      payloadData
+      {}
     );
-
+    
+    DescriptionReport = res1;
     //debugger;
-    var response = [ DescriptionReport, payloadData.reportSortBy ];
+    
+    var response = [ DescriptionReport, payloadData ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // OK
