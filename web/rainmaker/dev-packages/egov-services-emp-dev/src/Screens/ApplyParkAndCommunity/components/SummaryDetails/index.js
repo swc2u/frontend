@@ -844,29 +844,21 @@ console.log("seven--",seven)
         })
       })
     }
-    let newBooking= state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.newBooking :"false"
- 
+
     let documentMap = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.documentMap : "";
     let bkLocation = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation : "";
    let checkAppStatus = 'NOTFOUND';
    let checkAppNum = 'NOTFOUND';
    let createInitateApp = bookings ? (bookings.applicationData ?(bookings.applicationData.bookingsModelList.length > 0 ? (bookings.applicationData.bookingsModelList): 'NA'): 'NA'): "NA"
   console.log("createInitateApp--createInitateApp",createInitateApp)
- 
    if(createInitateApp !== "NA"){
     console.log("comeInFoundCondition")
-   
     checkAppStatus = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationStatus : "NOTFOUND";
     console.log("checkAppStatus-id",checkAppStatus)
     checkAppNum = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationNumber : "NOTFOUND";
     console.log("checkAppNum-id",checkAppNum)
-
 }
-if(newBooking=== true){
-    checkAppStatus = 'NOTFOUND';
-    createInitateApp === "NA";
-    checkAppNum=  "NOTFOUND";
-    }
+
    console.log("checkAppStatus--",checkAppStatus)
    console.log("checkAppNum--",checkAppNum)
 // checkAppStatus = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationStatus : "NOTFOUND";

@@ -259,51 +259,38 @@ else{
             );
             if (oldDocType != docType.code || oldDocCode != card.name) {
 
-if(oldDocuments){
-    let newDocumentData = {
-        documentType: docType.code,
-        documentCode: card.name,
-        isDocumentRequired: card.required,
-        isDocumentTypeRequired: card.dropdown
-          ? card.dropdown.required
-          : false,
-        mydocstate: false,
-        documents: [oldDocuments], 
-}
-if(documentsUploadRedux === null){
-  prepareFinalObject("newBooking",true)
-  window.location.href = `/egov-services/all-applications`
-  
-}else{
-  documentsUploadRedux[index] = { ...newDocumentData };
-
-}
-}
-else{
-    let newDocumentData = {
-        documentType: docType.code,
-        documentCode: card.name,
-        isDocumentRequired: card.required,
-        isDocumentTypeRequired: card.dropdown
-          ? card.dropdown.required
-          : false,
-        mydocstate: false
-      };
-      if(documentsUploadRedux === null){
-        prepareFinalObject("newBooking",true)
-        window.location.href = `/egov-services/all-applications`
-      }else{
-        documentsUploadRedux[index] = { ...newDocumentData };
-      
-      }
-    }
+              if(oldDocuments){
+                let newDocumentData = {
+                    documentType: docType.code,
+                    documentCode: card.name,
+                    isDocumentRequired: card.required,
+                    isDocumentTypeRequired: card.dropdown
+                      ? card.dropdown.required
+                      : false,
+                    mydocstate: false,
+                    documents: [oldDocuments], 
             }
-            index++;
+            documentsUploadRedux[index] = { ...newDocumentData };
+            }
+            else{
+              let newDocumentData = {
+                  documentType: docType.code,
+                  documentCode: card.name,
+                  isDocumentRequired: card.required,
+                  isDocumentTypeRequired: card.dropdown
+                    ? card.dropdown.required
+                    : false,
+                  mydocstate: false
+                };
+                documentsUploadRedux[index] = { ...newDocumentData };  
           }
-        });
-    });
-    prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
-  };
+                      }
+                      index++;
+                    }
+                  });
+              });
+              prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
+            };
 
   onUploadClick = (uploadedDocIndex) => {
     const { fetchUploadedDoc, userInfo } = this.props;
@@ -389,7 +376,7 @@ else{
           <Label label="BK_MYBK_DOCUMENT_VALIDATION_MSG" />
           <Grid container={true}>
             <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
-            {documentsUploadRedux && documentsUploadRedux[key] &&
+            {documentsUploadRedux[key] &&
               documentsUploadRedux[key].documents ? (
                 <div className={classes.documentSuccess}>
                   <Icon>
@@ -474,20 +461,20 @@ else{
               md={3}
               className={classes.fileUploadDiv}
             >
-              <UploadSingleFile
+        <UploadSingleFile
                 classes={this.props.classes}
                 handleFileUpload={(e) =>
                   handleFileUpload(e, this.handleDocument, this.props)
                 }
                 uploaded={
-                  documentsUploadRedux && documentsUploadRedux[key] &&
+                  documentsUploadRedux[key] &&
                   documentsUploadRedux[key].documents
                     ? true
                     : false
                 }
                 removeDocument={() => this.removeDocument(key)}
                 documents={
-                  documentsUploadRedux &&  documentsUploadRedux[key] &&
+                  documentsUploadRedux[key] &&
                   documentsUploadRedux[key].documents
                 }
                 onButtonClick={() => this.onUploadClick(key)}
