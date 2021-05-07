@@ -171,7 +171,13 @@ export const searchResults = {
       },
       getTextToLocalMapping("Owner Name"),
       getTextToLocalMapping("Status"),     
-      getTextToLocalMapping("Address"),
+     // getTextToLocalMapping("Address"),
+      {
+        name:  getTextToLocalMapping("Address"),
+        options: {
+          display: false
+        }
+      },
       
       {
         name:  getTextToLocalMapping("tenantId"),
