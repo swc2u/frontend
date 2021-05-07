@@ -7,25 +7,18 @@ import { getStoreIndentData, getStoreMaterialReceiptData, getStorePurchaseOrderD
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
-  debugger;
   let dashboardFilterDAta = get(
     state.screenConfiguration.preparedFinalObject,
     "dahsboardHome",
     {}
   );
   
-  var def_fromDate = dashboardFilterDAta["defaultFromDate"];
-  var def_toDate = dashboardFilterDAta["defaulttoDate"];
-  var dateFromObject = new Date(dashboardFilterDAta["defaultFromDate"]);
-  var dateToObject = new Date(dashboardFilterDAta["defaulttoDate"]);
-  var fromDateNumeric = dateFromObject.getTime()  ? dateFromObject.getTime() : null;
-  var toDateNumeric = dateToObject.getTime() ? dateToObject.getTime() : null;
   var reportSortBy = get(state.screenConfiguration.preparedFinalObject,"dahsboardHome.dropDownData2",{});
   var storeName = get(state.screenConfiguration.preparedFinalObject,"dahsboardHome.storeNameDefault",{});
-  // var reportName = get(state.screenConfiguration.preparedFinalObject,"dahsboardHome.reportdefaultDropDownData",{});
-
+  var selectedYear = get(state.screenConfiguration.preparedFinalObject,"dahsboardHome.selectedFinancialYearData",{});
+  
   // Validation For api call
-  if(fromDateNumeric === null || toDateNumeric === null || reportSortBy.value === undefined ){
+  if(reportSortBy.value === undefined ){
     dispatch(
       toggleSnackbar(
         true,
@@ -38,19 +31,17 @@ export const SearchDashboardData = async (state, dispatch) =>{
 
   var data = {
     "tenantId" : getTenantId(),
-    "fromDate":fromDateNumeric,
-    "toDate": toDateNumeric,
     "reportSortBy": reportSortBy,
-    "storeName" : storeName
+    "storeName" : storeName,
+    "selectedYear" : selectedYear
   }
-      debugger;
     try {
       // API call for Description Report
-      if(reportSortBy.value === "indentingStore"){
+      if(reportSortBy.value === "Material Issued from Store"){
         const response = await getStoreIndentData( dispatch, data );
-      }else if(reportSortBy.value === "MaterialReceipt"){
+      }else if(reportSortBy.value === "Material Received at Store"){
         const response = await getStoreMaterialReceiptData( dispatch, data );
-      }else if(reportSortBy.value === "purchaseOrders"){
+      }else if(reportSortBy.value === "Storewise Department Requisition"){
         const response = await getStorePurchaseOrderData( dispatch, data );
       }
       

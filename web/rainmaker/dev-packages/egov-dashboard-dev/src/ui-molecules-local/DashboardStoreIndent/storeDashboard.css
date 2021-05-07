@@ -1,5 +1,6 @@
 /* .ReactTable .-pagination .-previous, .ReactTable .-pagination .-next */
 .columnVisibilityCard {
+  position: absolute;
   z-index: 1000;
   /* display: none; */
   /* float: left; */
@@ -119,7 +120,7 @@
   margin: 0; }
 
 .tableContainer {
-  position: absolute;
+  /* position: absolute; */
   z-index: 1000;
   /* display: none; */
   /* float: left; */
@@ -137,6 +138,9 @@
   /* -webkit-box-shadow: 0 6px 12px rgb(0 0 0 / 18%); */
   /* box-shadow: 0 6px 12px rgb(0 0 0 / 18%); */
   /* margin-left: 80%; */ }
+
+.rt-tbody {
+  text-align: center; }
 
 /* Graph Dashboard Response try */
 .graphDashboard {

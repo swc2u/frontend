@@ -40,23 +40,20 @@ const defaultDate = (date) => {
 
 const getDropDownData = async (action, state, dispatch) => {
 
-  debugger
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
-    "name" : "Store Issue Note",
-    "code" : "indentingStore"
+    "name" : "Material Received at Store",
+    "code" : "Material Received at Store"
     },
     {
-      "name" : "Purchase Order",
-      "code" : "purchaseOrders"
-    },
-    {
-      "name" : "Material Receipt",
-      "code" : "MaterialReceipt"
+      "name" : "Material Issued from Store",
+      "code" : "Material Issued from Store"
     }
   ]
-  var selectedDefaultData = {value: "indentingStore", label: "Store Issue Note"};
+
+  var selectedDefaultData = {value: "Material Received at Store", label: "Material Received at Store"};
+
 
   // Date default
   var fromDate = new Date();
@@ -69,7 +66,7 @@ const getDropDownData = async (action, state, dispatch) => {
 }
 
 const getStoreDropdown = async (action, state, dispatch) => {
-  debugger;
+
   const storeName = getStoreDropdownData(action, state, dispatch);
   return;
 }
@@ -79,8 +76,8 @@ const StoreDashboard = {
   name: "StoreDashboard",
   beforeInitScreen: (action, state, dispatch) => {
     
-    debugger
     getDropDownData(action, state, dispatch);
+    // Store NAme and MDMS financial year data
     getStoreDropdown(action, state, dispatch);
     return action;
   },
