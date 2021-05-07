@@ -252,6 +252,14 @@ if(businessService === WFConfig().businessServiceRRP)
                     <LabelContainer labelName={get(currentObj, "PensionersBasicData[0].bankIfsc")} />
                     </Typography>
                   </Grid>
+                  <Grid item xs={12} sm={6} md={4}lg={3} style={{ marginTop: 10, paddingRight: 20 }}>
+                    <Typography variant="caption">
+                    <LabelContainer labelName="Active" labelKey="PENSION_ACTIVE" />
+                    </Typography>
+                    <Typography variant="body2">
+                    <LabelContainer labelName={get(currentObj, "PensionersBasicData[0].active") === true?'Yes':'No'} />
+                    </Typography>
+                  </Grid>
                   {/* <Grid item xs={12} sm={6} md={4}lg={3} style={{ marginTop: 10, paddingRight: 20 }}>
                     <Typography variant="caption">
                     <LabelContainer labelName="wef" labelKey="PENSION_EMPLOYEE_PENSION_WEF" />

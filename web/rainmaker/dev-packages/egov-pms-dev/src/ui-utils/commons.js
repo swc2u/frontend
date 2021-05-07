@@ -169,7 +169,7 @@ export const getSearchPensioner = async (queryObject, dispatch) => {
         "error"
       )
     );
-    throw error;
+   // throw error;
   }
 };
 export const getSearchPensionerForPensionRevision = async (queryObject, dispatch) => {
@@ -192,7 +192,7 @@ export const getSearchPensionerForPensionRevision = async (queryObject, dispatch
         "error"
       )
     );
-    throw error;
+   // throw error;
   }
 };
 export const getsearchPensionRegister = async (queryObject, dispatch) => {
