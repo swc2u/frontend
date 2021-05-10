@@ -414,7 +414,8 @@ class WorkFlowContainer extends React.Component {
         labelName = 'Please upload mandatory document in document section then submit'
 
       }
-      else  if(data.applicationStatus ==='PENDING_FOR_METER_UPDATE' && data.action==='UPDATE_METER_INFORMATION')
+      else  if((data.applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
+      && (data.action==='VERIFY_AND_FORWARD_FOR_PAYMENT'|| data.action==='VERIFY_AND_FORWARD_TO_JE' ))//PENDING_FOR_SDE_APPROVAL,VERIFY_AND_FORWARD_FOR_PAYMENT
       {
         labelKey = 'WS_SUBMIT_UPDATE_METER_INFORMATION_VALIDATION_MESSAGE'
         labelName = 'Proposed connection execution details can not be blank'
@@ -782,7 +783,7 @@ ValidateRequest =(payload) =>{
   
  
 }
-  if(payload.applicationStatus ==='PENDING_FOR_CONNECTION_EXTENSION_REGULAR' && payload.action==='CONVERT_INTO_REGULAR_CONNECTION')
+  if(payload.applicationStatus ==='PENDING_FOR_CONNECTION_EXTENSION_REGULAR' && payload.action==='CONVERT_INTO_REGULAR_CONNECTION')//
   {
     payload.waterApplicationType = "REGULAR";
   }
@@ -794,18 +795,19 @@ ValidateRequest =(payload) =>{
 
     }
   }
-  if((payload.applicationStatus ==='PENDING_FOR_METER_UPDATE' && payload.action==='UPDATE_METER_INFORMATION'))
+  if((payload.applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
+  && (payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT'|| payload.action==='VERIFY_AND_FORWARD_TO_JE' ))//PENDING_FOR_SDE_APPROVAL,VERIFY_AND_FORWARD_FOR_PAYMENT
   {
-    if((payload.connectionExecutionDate !== null || payload.connectionExecutionDate !=="") 
-     && (payload.proposedMeterId !== null || payload.proposedMeterId !=="")
-     && (payload.proposedMeterInstallationDate !== null || payload.proposedMeterInstallationDate !=="")
-     && (payload.proposedInitialMeterReading !== null || payload.proposedInitialMeterReading !=="")
-     && (payload.proposedMeterCount !== null || payload.proposedMeterCount !=="")
-     && (payload.proposedMfrCode !== null || payload.proposedMfrCode !=="")
-     && (payload.proposedMeterDigits !== null || payload.proposedMeterDigits !=="")
-     && (payload.proposedMeterUnit !== null || payload.proposedMeterUnit !=="")
-     && (payload.proposedSanctionedCapacity !== null || payload.proposedSanctionedCapacity !=="")
-     && (payload.proposedMeterRentCode !== null || payload.proposedMeterRentCode !=="")     
+    if((payload.connectionExecutionDate !== 0 ) 
+     && (payload.proposedMeterId !== null)
+     && (payload.proposedMeterInstallationDate !== 0 )
+     && (payload.proposedInitialMeterReading !== null )
+     && (payload.proposedMeterCount !== null )
+     && (payload.proposedMfrCode !== null )
+     && (payload.proposedMeterDigits !== null )
+     && (payload.proposedMeterUnit !== null )
+     && (payload.proposedSanctionedCapacity !== null )
+     && (payload.proposedMeterRentCode !== null )     
     )
     {
       isvalidRequest = true

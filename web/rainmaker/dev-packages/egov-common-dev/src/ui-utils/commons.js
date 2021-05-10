@@ -560,6 +560,11 @@ export const epochToYmdDate = et => {
 export const download  = async ( state, dispatch, mode = "download") => {
   let businessServiceInfo = get(state.screenConfiguration.preparedFinalObject, "businessServiceInfo", {});
   let businessServicewsbillreceipt = get(state.screenConfiguration.preparedFinalObject, "businessServicewsbillreceipt", '');
+
+  if(businessServicewsbillreceipt === null || businessServicewsbillreceipt ==='')
+  {
+    businessServicewsbillreceipt =  getQueryArg(window.location.href, "businessService")
+  }
   let billGeneration = get(state.screenConfiguration.preparedFinalObject, "billGeneration", []);
    console.log(businessServiceInfo);
    const receiptQueryString = [
@@ -737,6 +742,10 @@ export const download  = async ( state, dispatch, mode = "download") => {
  export const downloadprint  = async ( state, dispatch, mode = "download") => {
   let businessServiceInfo = get(state.screenConfiguration.preparedFinalObject, "businessServiceInfo", {});
   let businessServicewsbillreceipt = get(state.screenConfiguration.preparedFinalObject, "businessServicewsbillreceipt", '');
+  if(businessServicewsbillreceipt === null || businessServicewsbillreceipt ==='')
+  {
+    businessServicewsbillreceipt =  getQueryArg(window.location.href, "businessService")
+  }
   let billGeneration = get(state.screenConfiguration.preparedFinalObject, "billGeneration", []);
    console.log(businessServiceInfo);
    const receiptQueryString = [

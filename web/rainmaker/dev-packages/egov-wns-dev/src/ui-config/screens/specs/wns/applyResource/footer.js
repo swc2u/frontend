@@ -1402,7 +1402,48 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
 if(isConnectionDetailsValid)
 {
   isFormValid = isConnectionDetailsValid
+  let errorMessage = {
+    labelName: "Meter installation date must be greater then connection execution date",
+    labelKey: "WS_METER_INSTALATION_DATE_VALIDATION"
+  };
+  let proposedMeterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.proposedMeterInstallationDate");
+  let connectionExecutionDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.connectionExecutionDate");
+  let meterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.meterInstallationDate");
+  if(proposedMeterInstallationDate && connectionExecutionDate)
+  {
+    // proposedMeterInstallationDate =proposedMeterInstallationDate
+    // proposedMeterInstallationDate =proposedMeterInstallationDate
+  if(connectionExecutionDate> proposedMeterInstallationDate)
+  {
+    isFormValid = false;
+    errorMessage = {
+      labelName: "Meter installation date must be greater then connection execution date",
+      labelKey: "WS_PROP_METER_INSTALATION_DATE_VALIDATION"//WS_METER_INSTALATION_DATE_VALIDATION
+    };
+   // dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    //return 
+  }
+  }
+ else  if(connectionExecutionDate && meterInstallationDate)
+  {
+  if(connectionExecutionDate >meterInstallationDate)
+  {
+    isFormValid = false;
+     errorMessage = {
+      labelName: "Proposed meter installation date must be greater then connection execution date",
+      labelKey: "WS_METER_INSTALATION_DATE_VALIDATION"
+    };
+   
+    
+   // return 
+  }
+  }
+  if(isFormValid)
   setReviewPageRoute(state, dispatch);
+  else{
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    return;
+  }
 }
 if(!isConnectionDetailsValid)
       {
@@ -1418,35 +1459,7 @@ if(!isConnectionDetailsValid)
     //   isFormValid = false;
     //   hasFieldToaster = true;
     // }
-      let proposedMeterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.proposedMeterInstallationDate");
-      let connectionExecutionDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.connectionExecutionDate");
-      let meterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.meterInstallationDate");
-      if(proposedMeterInstallationDate && connectionExecutionDate)
-      {
-        // proposedMeterInstallationDate =proposedMeterInstallationDate
-        // proposedMeterInstallationDate =proposedMeterInstallationDate
-      if(connectionExecutionDate> proposedMeterInstallationDate)
-      {
-        const errorMessage = {
-          labelName: "Meter installation date must be greater then connection execution date",
-          labelKey: "WS_METER_INSTALATION_DATE_VALIDATION"
-        };
-        dispatch(toggleSnackbar(true, errorMessage, "warning"));
-        return 
-      }
-      }
-      if(connectionExecutionDate && meterInstallationDate)
-      {
-      if(connectionExecutionDate >meterInstallationDate)
-      {
-        const errorMessage = {
-          labelName: "Proposed meter installation date must be greater then connection execution date",
-          labelKey: "WS_PROP_METER_INSTALATION_DATE_VALIDATION"
-        };
-        dispatch(toggleSnackbar(true, errorMessage, "warning"));
-        return 
-      }
-      }
+
 
     isFormValid = isFormValid;
   }

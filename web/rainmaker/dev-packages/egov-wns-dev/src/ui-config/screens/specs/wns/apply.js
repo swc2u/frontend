@@ -55,6 +55,17 @@ export const stepperData = () => {
   }
 }
 let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
+let IsEdit_Additional_Details = false
+const WNS_STATUS =  window.localStorage.getItem("wns_workflow");
+if(WNS_STATUS)
+{
+  if(WNS_STATUS ==='WS_METER_UPDATE')
+  {
+    IsEdit_Additional_Details = true
+
+  }
+
+}
 
 const displaysubUsageType = (usageType, dispatch, state) => {
 
@@ -511,6 +522,7 @@ export const getData = async (action, state, dispatch) => {
       //   "visible",
       //   true
       // );
+      IsEdit = true;
       dispatch(
         handleField(
           "apply",
@@ -522,7 +534,7 @@ export const getData = async (action, state, dispatch) => {
 
     }
     else{
-
+      IsEdit = false;
       dispatch(
         handleField(
           "apply",
@@ -1157,7 +1169,7 @@ export const formwizardThirdStep = {
   uiFramework: "custom-atoms",
   componentPath: "Form",
   props: { id: "apply_form3" },
-  children: { additionDetails },
+  children: {additionDetails:additionDetails(IsEdit_Additional_Details) },
   visible: false
 };
 

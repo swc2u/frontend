@@ -41,7 +41,7 @@ const getPlumberRadioButton = {
 };
 let IsEdit = false;
 
-export const additionDetails = getCommonCard({
+export const additionDetails =(Disabled)=> getCommonCard({
   header: getCommonHeader({
     labelKey: "WS_COMMON_ADDN_DETAILS_HEADER"
   }),
@@ -482,7 +482,9 @@ export const additionDetails = getCommonCard({
           inputProps: {
             min: new Date().toISOString().slice(0, 10),
           },
+          disabled: Disabled
         },
+        
         required: false,
         pattern: getPattern("Date"),
         errorMessage: "ERR_INVALID_DATE",
@@ -498,6 +500,9 @@ export const additionDetails = getCommonCard({
         gridDefination: {
           xs: 12,
           sm: 6
+        },
+        props: {         
+          disabled: Disabled
         },
         required: false,
         pattern: /^[a-z0-9]+$/i,
@@ -518,6 +523,7 @@ export const additionDetails = getCommonCard({
           inputProps: {
             min: new Date().toISOString().slice(0, 10),
           },
+          disabled: Disabled
         },
         required: false,
         pattern: getPattern("Date"),
@@ -536,6 +542,9 @@ export const additionDetails = getCommonCard({
           sm: 6
         },
         required: false,
+        props: {         
+          disabled: Disabled
+        },
         pattern: /^[0-9]\d{0,9}(\.\d{1,3})?%?$/,
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "applyScreen.additionalDetails.initialMeterReading"
@@ -552,6 +561,10 @@ export const additionDetails = getCommonCard({
           sm: 6
         },
         required: false,
+        props: {         
+          disabled: Disabled
+        },
+        
         pattern: /^[0-9]\d{0,9}(\.\d{1,3})?%?$/,
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "applyScreen.meterCount"
@@ -569,7 +582,7 @@ export const additionDetails = getCommonCard({
           props: {
             optionValue: "Code",
             optionLabel: "MakeOfMeter",
-            
+            disabled: Disabled,
           },
         }),
         beforeFieldChange: async (action, state, dispatch) => {
@@ -625,7 +638,7 @@ export const additionDetails = getCommonCard({
         props: {
           optionValue: "Name",
           optionLabel: "Name",
-          
+          disabled: Disabled
         },
       }),
       beforeFieldChange: async (action, state, dispatch) => {
