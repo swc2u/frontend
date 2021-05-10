@@ -111,12 +111,23 @@ const user =  (businessService ==='WS.ONE_TIME_FEE' || businessService ==="WS" |
         searchResponse,
         "Payments[0].paymentDetails[0].receiptNumber"
       );
+if(businessService ==='WS.ONE_TIME_FEE' || businessService ==="SW.ONE_TIME_FEE")
+{
+  dispatch(
+    setRoute(
+      `/egov-common/acknowledgement?status=${"success"}&consumerCode=${consumerCode}&tenantId=${tenantId}&receiptNumber=${transactionId}&businessService=${businessService}`
+    )
+  );
+}
+else{
+  dispatch(
+    setRoute(
+      `/egov-common/acknowledgement?status=${"success"}&consumerCode=${consumerCode}&tenantId=${tenantId}&receiptNumber=${transactionId}`
+    )
+  );
 
-      dispatch(
-        setRoute(
-          `/egov-common/acknowledgement?status=${"success"}&consumerCode=${consumerCode}&tenantId=${tenantId}&receiptNumber=${transactionId}`
-        )
-      );
+}
+      
     } else {
       const redirectionUrl =
         get(goToPaymentGateway, "Transaction.redirectUrl") ||
