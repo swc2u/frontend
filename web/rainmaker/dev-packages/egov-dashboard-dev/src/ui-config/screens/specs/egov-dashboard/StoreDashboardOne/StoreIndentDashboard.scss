@@ -40,57 +40,28 @@ form#datagridsummary .MuiPaper-elevation4-466 {
   line-height: 19px;
   letter-spacing: 0.67px;
   word-break: break-all !important; }
-
-.MuiGrid-container-59 {
-  width: 125%;
-  display: flex;
-  flex-wrap: wrap;
-  box-sizing: border-box; }
-
-div#material-ui-FilterConstraintsContainer {
-  width: 121%;
-  display: flex;
-  flex-wrap: wrap;
-  box-sizing: border-box; }
-
-input#custom-containers-toDate {
-  height: 10%; }
-
-input#custom-containers-fromDate {
-  height: 10%; }
-
-div#material-ui-FilterConstraintsContainer {
-  width: 150%; }
-
-button#material-ui-searchButton {
-margin-left: 165px;
+  div#custom-containers-local-storeIndentDropdownOne {
+    position: absolute;
+    width: 320px;
 }
-
-div#custom-containers-local-moduleDashboardDropdown {
-  position: absolute;
-  width: 250px;
-  margin-left: 100px;
+div#custom-containers-local-storeIndentDropdownTwo {
+    position: absolute;
+    width: 250px;
+    margin-left: 100px;
 }
-
-div#custom-containers-local-moduleDashboardDropdownStore {
-  width: 300px;
-position: inherit;
+button#material-ui-storeIndentSearchButton {
+    margin-left: 180px;
 }
 
 @media only screen and (max-width: 900px) {
-  div#material-ui-FilterConstraintsContainer {
-  display: block;
-  }
-
-  div#custom-containers-local-moduleDashboardDropdown {
+  div#custom-containers-local-storeIndentDropdownTwo {
     position: absolute;
     width: 250px;
-    margin: 0px;
-  }
-
-  button#material-ui-searchButton {
-  margin-left: 0px;
-  margin-top: 94px;
-  width: 150px;
-  }
+    margin-left: 0px;
+    margin-top: 80px;
+}
+button#material-ui-storeIndentSearchButton {
+    margin-left: 0px;
+    margin-top: 180px;
+}
 }

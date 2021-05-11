@@ -4,7 +4,7 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { getUserInfo, setapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 import { getStoreDropdownData } from "../../../../ui-utils/commons";
 // import { HCDashboardFilterForm, HCDashboardResults } from "./HCDashboard/HCDashboard";
-import { FilterForm, DashboardResults } from "./StoreDashboard/StoreIndentDashboard";
+import { FilterForm, DashboardResults } from "./StoreDashboardOne/StoreIndentDashboard";
 import './index.css';
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
@@ -12,7 +12,7 @@ let role_name = JSON.parse(getUserInfo()).roles[0].code
 const header = getCommonHeader(
   {
     labelName: "Store Indent Dashboard",
-    labelKey: "StoreIndent_dashboard_1"
+    labelKey: "Store_dashboard_1"
   },
   {
     classes: {

@@ -7,13 +7,14 @@ import ReactTable from "react-table-6";
 import "react-table-6/react-table.css" ;
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import './Legalindex.css'
+import './Legalindex.css';
+
 
 class DashboardLegal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state ={
-        checkData: [],
+    constructor(props) {
+        super(props);
+        this.state ={
+            checkData:[],
         allData: [],
         dataOne: [],
         dataTwo: [],
@@ -30,14 +31,15 @@ class DashboardLegal extends React.Component {
         // Feature Table
         toggleColumnCheck: false,
         unchangeColumnData: []
+        }
     }
-  }
 
-  // PDF function 
-  pdfDownload = () => {
+
+    // PDF function 
+    pdfDownload = (e) => {
 
     debugger;
-
+    e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
     var rowData = this.state.rowData
@@ -96,7 +98,7 @@ class DashboardLegal extends React.Component {
     doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
 
     doc.setFontSize(10);
-    const pdfTitle = this.state.graphHardOneData.title ? this.state.graphHardOneData.title : "Title"
+    const pdfTitle = "Legal Dashboard"
     doc.text(pdfTitle, pageWidth / 2, 40, 'center');
 
     doc.autoTable({ html: '#my-table' });
@@ -151,7 +153,7 @@ class DashboardLegal extends React.Component {
 
     // Toggle Column 
     toggleColumn = (e) => {
-        // e.preventDefault();
+        e.preventDefault();
         debugger;
         const data = this.state.columnData
         this.setState({
@@ -192,37 +194,72 @@ class DashboardLegal extends React.Component {
 
     componentDidMount(){
         debugger;
-        const propSortBy = "caseStatus";
-        // const propSortBy = "status";
-        const data = this.props.data.ResponseBody
-        if(data){
+        const data = this.props.data;
+        this.setState({
+            checkData : data
+        })
+    }
+
+    componentDidUpdate(){
+        debugger;
+        const propsData = this.props.data;
+        if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
+            const propSortBy = propsData[1].reportSortBy.value;
+            var fromDate = propsData[1].fromDate;
+            var toDate = propsData[1].toDate;
+
+            var data = propsData[0].ResponseBody
+
+            // Remove Unwanted Data
+            var sortedData = [];
+            for(var i=0;i <data.length; i++){
+                if(new Date(data[i]["caseFromDate"]).getTime() < new Date(toDate).getTime() &&
+                new Date(data[i]["caseFromDate"]).getTime() > new Date(fromDate).getTime()){
+                    sortedData.push(data[i]);
+                }
+            }
     
-            const hardJSON = propSortBy === "caseStatus" ? [{ 
-                "sortBy": "caseStatus",
+            // data = sortedData;
+    
+            const hardJSON = propSortBy === "courtName" ? [{ 
+                "sortBy": "courtName",
                 "msgX": "",
                 "msgY": "",
-                "title": "Case StatusWise Legal Dashboard"
+                "title": "Courtwise Legal Dashboard"
                 },
                 { 
-                "sortBy": "petitionType",
+                "sortBy": "concernedBranch",
                 "msgX": "",
                 "msgY": "",
-                "title": "Petition typewise Case status Legal Dashboard"
-                }] : propSortBy === "status" ? [
+                "title": "Bramchwise Court Legal Dashboard"
+                },
+                { 
+                "sortBy": "judgmentTypeId",
+                "msgX": "",
+                "msgY": "",
+                "title": "Judgement wise Court Case Legal Dashboard"
+                }] : propSortBy === "iscaseImp" ? [
                     { 
-                    "sortBy": "petitionType",
+                    "sortBy": "iscaseImp",
                     "msgX": "",
                     "msgY": "",
-                    "title": "Petition typewise Legal Dashboard"
+                    "title": "Imp Casewise Legal Dashboard"
                     },
                     { 
                     "sortBy": "caseStatus",
                     "msgX": "",
                     "msgY": "",
-                    "title": "Case statuswise Petition type Legal Dashboard"
+                    "title": "Case statuswise Imp Case Legal Dashboard"
+                    },
+                    { 
+                    "sortBy": "judgmentTypeId",
+                    "msgX": "",
+                    "msgY": "",
+                    "title": "Judgement wise Imp Case Legal Dashboard"
                     }
                     ] : []
-                    
+    
+    
             // Graph One Sorting Function 
             var graphOneData2 = this.graphSorting( propSortBy, data );
     
@@ -251,309 +288,362 @@ class DashboardLegal extends React.Component {
                 columnData: columnData,
                 unchangeColumnData: unchangeColumnData,
                 rowData: data,
-                hardJSON: hardJSON,
-                checkData : this.props.data
+                hardJSON: hardJSON
+            })
+
+            this.setState({
+                checkData : propsData
             })
         }
-    }
-
-    componentDidUpdate(){
-        debugger;
-        const data = this.props.data;
-        if(JSON.stringify(data) !== JSON.stringify(this.state.checkData)){
-            const data = this.props.data.ResponseBody;
-
-        const propSortBy = "caseStatus";
-        const hardJSON = propSortBy === "caseStatus" ? [{ 
-            "sortBy": "caseStatus",
-            "msgX": "",
-            "msgY": "",
-            "title": "Case StatusWise Legal Dashboard"
-            },
-            { 
-            "sortBy": "petitionType",
-            "msgX": "",
-            "msgY": "",
-            "title": "Petition typewise Case status Legal Dashboard"
-            }] : propSortBy === "status" ? [
-                { 
-                "sortBy": "petitionType",
-                "msgX": "",
-                "msgY": "",
-                "title": "Petition typewise Legal Dashboard"
-                },
-                { 
-                "sortBy": "caseStatus",
-                "msgX": "",
-                "msgY": "",
-                "title": "Case statuswise Petition type Legal Dashboard"
-                }
-                ] : []
-
-        // Graph One Sorting Function 
-        var graphOneData2 = this.graphSorting( propSortBy, data );
-
-        
-        // Column Data
-        const tableData = data[0] ? Object.keys(data[0]) : [];
-        var columnData = []
-        for(var i=0; i<tableData.length; i++){
-            var itemHeader = {}
-            itemHeader["Header"] = this.camelize(tableData[i]);
-            itemHeader["accessor"] = tableData[i];
-            itemHeader["show"]= (i === 0 || i === 1 || i === 6 || i === 9 
-                || i === 12 || i === 16 || i === 20 ) ? true : false ;
-            columnData.push(itemHeader);
-        }
-
-        // Column Unchange Data 
-        const unchangeColumnData = this.columnUnchange(columnData)
-
-        
-        this.setState({
-            graphOneLabel: graphOneData2[0],
-            graphOneData: graphOneData2[1],
-            graphClicked: 0,
-            dataOne: graphOneData2[2],
-            columnData: columnData,
-            unchangeColumnData: unchangeColumnData,
-            rowData: data,
-            hardJSON: hardJSON,
-            checkData : this.props.data
-        })
-        }
+        // const propSortBy = "courtName";
+        // const propSortBy = "iscaseImp";
+        // var fromDate = "2021-04-01";
+        // var toDate ="2021-05-09";
     }
 
     render() {
     
 
-        // First Double Bar Graph Graph
-        var PIEgraphOneSortedData = {
-            labels: this.state.graphOneLabel,
-            // labels: ["Label1", "Label2"],
-            datasets: [
-                {
-                label: "Apani Mandi",
-                fill: false,
-                lineTension: 0.1,
-                hoverBorderWidth : 12,
-                // backgroundColor : this.state.colorRandom,
-                backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-                borderColor: "rgba(75,192,192,0.4)",
-                borderCapStyle: "butt",
-                barPercentage: 2,
-                borderWidth: 5,
-                barThickness: 25,
-                maxBarThickness: 10,
-                minBarLength: 2,
-                data: this.state.graphOneData
-                // data:[10,20,30]
-                }
-            ]
-        }
+    // First Double Bar Graph Graph
+    var PIEgraphOneSortedData = {
+        labels: this.state.graphOneLabel,
+        // labels: ["Label1", "Label2"],
+        datasets: [
+            {
+            label: "Apani Mandi",
+            fill: false,
+            lineTension: 0.1,
+            hoverBorderWidth : 12,
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            borderColor: "rgba(75,192,192,0.4)",
+            borderCapStyle: "butt",
+            barPercentage: 2,
+            borderWidth: 5,
+            barThickness: 25,
+            maxBarThickness: 10,
+            minBarLength: 2,
+            data: this.state.graphOneData
+            // data:[10,20,30]
+            }
+        ]
+    }
+
+    var PIEgraphOneOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+            {
+            backgroundColor : "rgba(0, 0, 0, 0.1)",
+            weight: 0
+            }
+        ], 
+        legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+            fontFamily: "Comic Sans MS",
+            boxWidth: 20,
+            boxHeight: 2
+            }
+        },
+        tooltips: {
+            enabled: true
+        },
+        title: {
+            display: true,
+            text: this.state.hardJSON[0] ? this.state.hardJSON[0].title : ""
+        },
+        // scales: {
+        //     xAxes: [{
+        //         gridLines: {
+        //             display:true
+        //         },
+        //         scaleLabel: {
+        //             display: true,
+        //             labelString:" this.state.graphHardThirdData.msgX"
+        //             }, 
+        //     }],
+        //     yAxes: [{
+        //         gridLines: {
+        //             display:true
+        //         },
+        //         ticks: {
+        //             // suggestedMin: 0,
+        //             // suggestedMax: 100,
+        //             stepSize: 1
+        //         },
+        //         scaleLabel: {
+        //             display: true,
+        //             labelString: "this.state.graphHardThirdData.msgY"
+        //             }, 
+        //     }]
+        // },
+        plugins: {
+            datalabels: {
+                display: false
+            //     color: 'white',
+            //     backgroundColor: 'grey',
+            //     labels: {
+            //         title: {
+            //             font: {
+            //                 weight: 'bold'
+            //             }
+            //         }
+            //     }}
+            }
+        },
+        onClick: (e, element) => {
+            if (element.length > 0) {
+                
+                debugger;
+                var ind = element[0]._index;   
+                const selectedVal = this.state.graphOneLabel[ind];
+                // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
+                const hardval = this.state.hardJSON[1]
+                var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataOne[selectedVal] );
+                
+                this.setState({
+                    graphTwoLabel: graphSorting[0],
+                    graphTwoData: graphSorting[1],
+                    dataTwo: graphSorting[2],
+                    graphClicked: 1,
+                    rowData: this.state.dataOne[selectedVal]
+                })
+                
+            }
+        },
+    }
     
-        var PIEgraphOneOption = {
-            responsive : true,
-            // aspectRatio : 3,
-            maintainAspectRatio: false,
-            cutoutPercentage : 0,
-            datasets : [
-                {
-                backgroundColor : "rgba(0, 0, 0, 0.1)",
-                weight: 0
-                }
-            ], 
-            legend: {
-                display: true,
-                position: 'bottom',
-                labels: {
-                fontFamily: "Comic Sans MS",
-                boxWidth: 20,
-                boxHeight: 2
-                }
-            },
-            tooltips: {
-                enabled: true
-            },
-            title: {
-                display: true,
-                text: this.state.hardJSON[0] ? this.state.hardJSON[0].title : ""
-            },
-            // scales: {
-            //     xAxes: [{
-            //         gridLines: {
-            //             display:true
-            //         },
-            //         scaleLabel: {
-            //             display: true,
-            //             labelString:" this.state.graphHardThirdData.msgX"
-            //             }, 
-            //     }],
-            //     yAxes: [{
-            //         gridLines: {
-            //             display:true
-            //         },
-            //         ticks: {
-            //             // suggestedMin: 0,
-            //             // suggestedMax: 100,
-            //             stepSize: 1
-            //         },
-            //         scaleLabel: {
-            //             display: true,
-            //             labelString: "this.state.graphHardThirdData.msgY"
-            //             }, 
-            //     }]
-            // },
-            plugins: {
-                datalabels: {
-                    display: false
-                //     color: 'white',
-                //     backgroundColor: 'grey',
-                //     labels: {
-                //         title: {
-                //             font: {
-                //                 weight: 'bold'
-                //             }
-                //         }
-                //     }}
-                }
-            },
-            onClick: (e, element) => {
-                if (element.length > 0) {
-                    
-                    debugger;
-                    var ind = element[0]._index;   
-                    const selectedVal = this.state.graphOneLabel[ind];
-                    // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
-                    const hardval = this.state.hardJSON[1]
-                    var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataOne[selectedVal] );
-                    
-                    this.setState({
-                        graphTwoLabel: graphSorting[0],
-                        graphTwoData: graphSorting[1],
-                        dataTwo: graphSorting[2],
-                        graphClicked: 1,
-                        rowData: this.state.dataOne[selectedVal]
-                    })
-                    
-                }
-            },
-        }
+
+    // Second Horizontal Graph
+    var graphTwoSortedData = {
+        labels: this.state.graphTwoLabel,
+        datasets: [
+            {
+            // label: this.state.drildownGraphLabel,
+            fill: false,
+            lineTension: 5,
+            hoverBorderWidth : 12,
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            borderColor: "rgba(75,192,192,0.4)",
+            borderCapStyle: "butt",
+            barPercentage: 2,
+            barThickness: 25,
+            maxBarThickness: 25,
+            minBarLength: 2,
+            data: this.state.graphTwoData
+            }
+        ]
+    }
+
+    var graphTwoOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+            {
+            backgroundColor : "rgba(0, 0, 0, 0.1)",
+            weight: 0
+            }
+        ], 
+        legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+            fontFamily: "Comic Sans MS",
+            boxWidth: 20,
+            boxHeight: 2
+            }
+        },
+        tooltips: {
+            enabled: true
+        },
+        title: {
+            display: true,
+            text: this.state.hardJSON[0] ? this.state.hardJSON[1].title : ""
+        },
+        onClick: (e, element) => {
+            if (element.length > 0) {
+                debugger;
+                var ind = element[0]._index;   
+                const selectedVal = this.state.graphTwoLabel[ind];
+                // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
+                const hardval = this.state.hardJSON[2]
+                var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataTwo[selectedVal] );
+                
+                this.setState({
+                    graphThirdLabel: graphSorting[0],
+                    graphThirdData: graphSorting[1],
+                    dataThird: graphSorting[2],
+                    graphClicked: 2,
+                    rowData: this.state.dataTwo[selectedVal]
+                })
+            }
+        },
+        // scales: {
+        //     xAxes: [{
+        //         gridLines: {
+        //             display:true
+        //         },
+        //         ticks: {
+        //             suggestedMin: 0,
+        //             // suggestedMax: 100,
+        //             stepSize: 1
+        //         },
+        //         scaleLabel: {
+        //             display: true,
+        //             labelString: this.state.graphHardTwoData.msgX
+        //             }, 
+        //     }],
+        //     yAxes: [{
+        //         gridLines: {
+        //             display: true
+        //         },
+        //         ticks: {
+        //             suggestedMin: 0,
+        //             stepSize: 1
+        //         },
+        //         scaleLabel: {
+        //             display: true,
+        //             labelString: this.state.graphHardTwoData.msgY
+        //             }, 
+        //     }]
+        // },
+        plugins: {
+            datalabels: {
+                display: false
+            //     color: 'white',
+            //     backgroundColor: 'grey',
+            //     labels: {
+            //         title: {
+            //             font: {
+            //                 weight: 'bold'
+            //             }
+            //         }
+            //     }}
+            }
+            }
+    }
+
+    // Third Horizontal Graph
+    var graphThirdSortedData = {
+        labels: this.state.graphThirdLabel,
+        datasets: [
+            {
+            // label: this.state.drildownGraphLabel,
+            fill: false,
+            lineTension: 5,
+            hoverBorderWidth : 12,
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            borderColor: "rgba(75,192,192,0.4)",
+            borderCapStyle: "butt",
+            barPercentage: 2,
+            barThickness: 25,
+            maxBarThickness: 25,
+            minBarLength: 2,
+            data: this.state.graphThirdData
+            }
+        ]
+    }
+
+    var graphThirdOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+            {
+            backgroundColor : "rgba(0, 0, 0, 0.1)",
+            weight: 0
+            }
+        ], 
+        legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+            fontFamily: "Comic Sans MS",
+            boxWidth: 20,
+            boxHeight: 2
+            }
+        },
+        tooltips: {
+            enabled: true
+        },
+        title: {
+            display: true,
+            text: this.state.hardJSON[0] ? this.state.hardJSON[1].title : ""
+        },
+        onClick: (e, element) => {
+            if (element.length > 0) {
+                var ind = element[0]._index;
+                debugger;
+                const selectedVal = this.state.graphTwoLabel[ind];
+                
+                this.setState({
+                    graphClicked: 2,
+                    rowData: this.state.dataTwo[selectedVal]
+                })
+            }
+        },
+        // scales: {
+        //     xAxes: [{
+        //         gridLines: {
+        //             display:true
+        //         },
+        //         ticks: {
+        //             suggestedMin: 0,
+        //             // suggestedMax: 100,
+        //             stepSize: 1
+        //         },
+        //         scaleLabel: {
+        //             display: true,
+        //             labelString: this.state.graphHardTwoData.msgX
+        //             }, 
+        //     }],
+        //     yAxes: [{
+        //         gridLines: {
+        //             display: true
+        //         },
+        //         ticks: {
+        //             suggestedMin: 0,
+        //             stepSize: 1
+        //         },
+        //         scaleLabel: {
+        //             display: true,
+        //             labelString: this.state.graphHardTwoData.msgY
+        //             }, 
+        //     }]
+        // },
+        plugins: {
+            datalabels: {
+                display: false
+            //     color: 'white',
+            //     backgroundColor: 'grey',
+            //     labels: {
+            //         title: {
+            //             font: {
+            //                 weight: 'bold'
+            //             }
+            //         }
+            //     }}
+            }
+            }
+    }
+
+
         
+    return (
+        <div>        
+        <div className="graphDashboard">
     
-        // Second Horizontal Graph
-        var graphTwoSortedData = {
-            labels: this.state.graphTwoLabel,
-            datasets: [
-                {
-                // label: this.state.drildownGraphLabel,
-                fill: false,
-                lineTension: 5,
-                hoverBorderWidth : 12,
-                // backgroundColor : this.state.colorRandom,
-                backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-                borderColor: "rgba(75,192,192,0.4)",
-                borderCapStyle: "butt",
-                barPercentage: 2,
-                barThickness: 25,
-                maxBarThickness: 25,
-                minBarLength: 2,
-                data: this.state.graphTwoData
-                }
-            ]
-        }
-    
-        var graphTwoOption = {
-            responsive : true,
-            // aspectRatio : 3,
-            maintainAspectRatio: false,
-            cutoutPercentage : 0,
-            datasets : [
-                {
-                backgroundColor : "rgba(0, 0, 0, 0.1)",
-                weight: 0
-                }
-            ], 
-            legend: {
-                display: true,
-                position: 'bottom',
-                labels: {
-                fontFamily: "Comic Sans MS",
-                boxWidth: 20,
-                boxHeight: 2
-                }
-            },
-            tooltips: {
-                enabled: true
-            },
-            title: {
-                display: true,
-                text: this.state.hardJSON[0] ? this.state.hardJSON[1].title : ""
-            },
-            onClick: (e, element) => {
-                if (element.length > 0) {
-                    var ind = element[0]._index;
-                    debugger;
-                    const selectedVal = this.state.graphTwoLabel[ind];
-                    
-                    this.setState({
-                        graphClicked: 2,
-                        rowData: this.state.dataTwo[selectedVal]
-                    })
-                }
-            },
-            // scales: {
-            //     xAxes: [{
-            //         gridLines: {
-            //             display:true
-            //         },
-            //         ticks: {
-            //             suggestedMin: 0,
-            //             // suggestedMax: 100,
-            //             stepSize: 1
-            //         },
-            //         scaleLabel: {
-            //             display: true,
-            //             labelString: this.state.graphHardTwoData.msgX
-            //             }, 
-            //     }],
-            //     yAxes: [{
-            //         gridLines: {
-            //             display: true
-            //         },
-            //         ticks: {
-            //             suggestedMin: 0,
-            //             stepSize: 1
-            //         },
-            //         scaleLabel: {
-            //             display: true,
-            //             labelString: this.state.graphHardTwoData.msgY
-            //             }, 
-            //     }]
-            // },
-            plugins: {
-                datalabels: {
-                    display: false
-                //     color: 'white',
-                //     backgroundColor: 'grey',
-                //     labels: {
-                //         title: {
-                //             font: {
-                //                 weight: 'bold'
-                //             }
-                //         }
-                //     }}
-                }
-                }
-        }
-    
-    
-            
-        return (
-            <div>        
-            <div className="graphDashboard">
-            
-    
+        {
+            this.state.graphClicked >= 0 ?
             <CardContent className="halfGraph">
                 <React.Fragment>
                     <Pie
@@ -562,66 +652,81 @@ class DashboardLegal extends React.Component {
                     />
                 </React.Fragment>
             </CardContent>
-    
-            {
-                this.state.graphClicked > 0 ?
-                <CardContent className="halfGraph">
-                    <React.Fragment>
-                        <Pie
-                        data={ graphTwoSortedData } 
-                        options={ graphTwoOption } 
-                        />
-                    </React.Fragment>
-                </CardContent> 
-                :null
-            }
-    
-            </div>
-    
-            {/* Table Feature  */}
-            <div className="tableContainer">
-            {
-                this.state.unchangeColumnData.length > 0  ? 
-                <div className="tableFeature">
-                    <div className="columnToggle-Text"> Download As: </div>
-                    <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
-    
-                    <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
-                </div>
-                :null
-            }
-            {
-               this.state.toggleColumnCheck ?
-               <div className="columnVisibilityCard">
-                <dl>
-                    {
-                        this.state.unchangeColumnData.map((data, index)=>{
-                            return(
-                                <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
-                            )
-                        })
-                    }
-                </dl>
-                </div> 
-               : null
-            }
-    
-            {
-                // this.state.graphClicked >= 0 ?
-                <ReactTable id="customReactTable"
-                // PaginationComponent={Pagination}
-                data={ this.state.rowData }  
-                columns={ this.state.columnData }  
-                defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
-                pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
-                pageSizeOptions = {[20,40,60]}  
-                /> 
-                // :null
-            }
-            </div>
-            </div>
-        );
+            :null
         }
+
+        {
+            this.state.graphClicked > 0 ?
+            <CardContent className="halfGraph">
+                <React.Fragment>
+                    <Pie
+                    data={ graphTwoSortedData } 
+                    options={ graphTwoOption } 
+                    />
+                </React.Fragment>
+            </CardContent> 
+            :null
+        }
+
+        </div>
+
+        {
+            this.state.graphClicked > 1 ?
+            <CardContent className="fullGraph">
+                <React.Fragment>
+                    <Pie
+                    data={ graphThirdSortedData } 
+                    options={ graphThirdOption } 
+                    />
+                </React.Fragment>
+            </CardContent> 
+            :null
+        }
+
+        {/* Table Feature  */}
+        <div className="tableContainer" style={this.state.rowData.length === 0 ? {display : "none"} :null}>
+        {
+            this.state.unchangeColumnData.length > 0  ? 
+            <div className="tableFeature">
+                <div className="columnToggle-Text"> Download As: </div>
+                <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+
+                <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+            </div>
+            :null
+        }
+        {
+           this.state.toggleColumnCheck ?
+           <div className="columnVisibilityCard">
+            <dl>
+                {
+                    this.state.unchangeColumnData.map((data, index)=>{
+                        return(
+                            <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
+                        )
+                    })
+                }
+            </dl>
+            </div> 
+           : null
+        }
+
+        {
+            this.state.graphClicked >= 0 ?
+            <ReactTable id="customReactTable"
+            // PaginationComponent={Pagination}
+            data={ this.state.rowData }  
+            columns={ this.state.columnData }  
+            defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
+            pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
+            pageSizeOptions = {[20,40,60]}  
+            /> 
+            :null
+        }
+        </div>
+        </div>
+    );
+    }
 }
 
 export default DashboardLegal;

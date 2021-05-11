@@ -26,6 +26,9 @@ form#datagridsummary .MuiPaper-elevation4-466 {
 .applicant-details-error p {
   font-size: 14px; }
 
+#custom-containers-propertyMohalla div p {
+  font-size: 14px; }
+
 #custom-containers-key {
   word-break: break-all !important; }
 
@@ -38,57 +41,24 @@ form#datagridsummary .MuiPaper-elevation4-466 {
   letter-spacing: 0.67px;
   word-break: break-all !important; }
 
-  div#custom-containers-local-moduleDashboardDropdown {
-    width: 330px;
-	position: absolute;
-}
+div#custom-containers-local-storeIndentDropdownOne {
+  position: absolute;
+  width: 320px; }
 
-div#custom-containers-local-moduleDashboardDropdownStore {
-    width: 300px;
-    margin-left: 120px;
-	position: absolute;
-}
+div#custom-containers-local-storeIndentDropdownTwo {
+  position: absolute;
+  width: 250px;
+  margin-left: 100px; }
 
-div#custom-containers-local-financialDropdownStore {
-    margin-left: 240px;
-    width: 150px;
-    position: absolute;
-}
-
-button#material-ui-searchButton {
-    margin-left: 250px;
-}	
+button#material-ui-storeIndentSearchButton {
+  margin-left: 180px; }
 
 @media only screen and (max-width: 900px) {
-	.MuiGrid-container-59 {
-		width: 125%;
-		display: block;
-		flex-wrap: wrap;
-		box-sizing: border-box;
-	}
-	div#material-ui-cardContent {
-		width: 100%;
-		display: block;
-	}
-	div#custom-containers-local-moduleDashboardDropdown {
-    width: 350px;
-	margin: 0px;
-	position: initial;
-	}
-
-	div#custom-containers-local-moduleDashboardDropdownStore {
-		width: 250px;
-		margin: 0px;
-		position: initial;
-	}
-
-	div#custom-containers-local-financialDropdownStore {
-		width: 250px;
-		position: initial;
-		margin: 0px;
-	}
-
-	button#material-ui-searchButton {
-		margin-left: 0px;
-	}	
-}
+  div#custom-containers-local-storeIndentDropdownTwo {
+    position: absolute;
+    width: 250px;
+    margin-left: 0px;
+    margin-top: 80px; }
+  button#material-ui-storeIndentSearchButton {
+    margin-left: 0px;
+    margin-top: 180px; } }

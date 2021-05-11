@@ -42,17 +42,24 @@ const getDropDownData = async (action, state, dispatch) => {
 
   debugger
 //   let data = getDashboardDropdownData(state, dispatch, status)
+//const propSortBy = "getAllAgenda";
+// const propSortBy = "getAllMom";
+// const propSortBy = "getAllMeeting";
   var data =  [
     {
-    "name" : "Meeting Status",
-    "code" : "getAllMeeting"
+    "name" : "All Agenda's Dashboard",
+    "code" : "getAllAgenda"
     },
     {
-      "name" : "All Agenda",
-      "code" : "getAllAgenda"
-    }
+      "name" : "All MoM's Dashboard",
+      "code" : "getAllMom"
+    },
+    {
+      "name" : "All Meeting Dashboard",
+      "code" : "getAllMeeting"
+      }
   ]
-  var selectedDefaultData = {value: "getAllMeeting", label: "Event Type"};
+  var selectedDefaultData = {value: "getAllAgenda", label: "All Agenda's Dashboard"};
 
   // Date default
   var fromDate = new Date();

@@ -44,15 +44,19 @@ const getDropDownData = async (action, state, dispatch) => {
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
-    "name" : "Application Type",
-    "code" : "bkBookingType"
+    "name" : "Type of Request Report",
+    "code" : "dashboard1_bookingVenueType"
     },
     {
-      "name" : "Application Status",
-      "code" : "bkApplicationStatus"
-    }
+    "name" : "Status Report",
+    "code" : "dashboard2_status"
+    },
+    {
+    "name" : "Collection Report",
+    "code" : "dashboard3_collectionReport"
+    },
   ]
-  var selectedDefaultData = {value: "bkBookingType", label: "Application Type"};
+  var selectedDefaultData = {value: "dashboard1_bookingVenueType", label: "Type of Request Report"};
 
   // Date default
   var fromDate = new Date();

@@ -48,11 +48,15 @@ const getDropDownData = async (action, state, dispatch) => {
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
-    "name" : "Case Type",
-    "code" : "status"
+    "name" : "Case/Court type wise Dashboard",
+    "code" : "courtName"
+    },
+    {
+    "name" : "Imp case wise dashboard",
+    "code" : "iscaseImp"
     }
   ]
-  var selectedDefaultData = {value: "status", label: "Case Type"};
+  var selectedDefaultData = {value: "courtName", label: "Case/Court type wise Dashboard"};
 
   // Date default
   var fromDate = new Date();
@@ -66,7 +70,7 @@ const getDropDownData = async (action, state, dispatch) => {
 
 const getDashboardData = async (state, dispatch) => {
   let requestBody = {};
-  const response = await getLegalDashboardData( dispatch, requestBody );
+  // const response = await getLegalDashboardData( dispatch, requestBody );
     // return checkData;
 }
 const LegalDashboard = {
@@ -77,7 +81,7 @@ const LegalDashboard = {
     debugger
     getDropDownData(action, state, dispatch);
 
-    getDashboardData(state, dispatch);
+    // getDashboardData(state, dispatch);
     return action;
   },
   components: {
@@ -100,8 +104,8 @@ const LegalDashboard = {
             
           }
         },
-        // DashboardFilterForm,
-        // breakAfterSearch: getBreak(),
+        DashboardFilterForm,
+        breakAfterSearch: getBreak(),
         DashboardResults
       }
     },

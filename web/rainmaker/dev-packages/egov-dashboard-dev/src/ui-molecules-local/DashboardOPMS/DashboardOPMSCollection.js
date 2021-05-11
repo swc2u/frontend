@@ -93,7 +93,7 @@ class DashboardOPMSCollection extends React.Component {
     doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
 
     doc.setFontSize(10);
-    const pdfTitle =  "OPMS Title"
+    const pdfTitle =  "OPMS Collection Report Dashboard"
     doc.text(pdfTitle, pageWidth / 2, 40, 'center');
 
     doc.autoTable({ html: '#my-table' });
@@ -212,7 +212,8 @@ class DashboardOPMSCollection extends React.Component {
             firstGraphLabel : graphLabel,
             firstData : reportGraphData,
             tableHeader: col,
-            tableRow: row
+            tableRow: row,
+            graphClicked : 0
         })  
     }
 
@@ -262,7 +263,8 @@ class DashboardOPMSCollection extends React.Component {
             firstGraphLabel : graphLabel,
             firstData : reportGraphData,
             tableHeader: col,
-            tableRow: row
+            tableRow: row,
+            graphClicked : 0
         })  
         }
     }
@@ -341,7 +343,7 @@ class DashboardOPMSCollection extends React.Component {
                     },
                     scaleLabel: {
                         display: true,
-                        labelString: "Revenue Collection"
+                        labelString: "Revenue Collection (INR)"
                         }, 
                 }]
             },
@@ -492,7 +494,7 @@ class DashboardOPMSCollection extends React.Component {
                     },
                     scaleLabel: {
                         display: true,
-                        labelString: "Revenue Collection"
+                        labelString: "Revenue Collection (INR)"
                         }, 
                 }]
             },
@@ -530,14 +532,18 @@ class DashboardOPMSCollection extends React.Component {
                     </React.Fragment>
                 </CardContent>
 
-                <CardContent className="halfGraph">
-                    <React.Fragment>
-                        <Bar
-                        data={ graphTwoData }
-                        options={ graphTwoOption } 
-                        />
-                    </React.Fragment>
-                </CardContent>
+                {
+                    this.state.graphClicked > 0 ?
+                    <CardContent className="halfGraph">
+                        <React.Fragment>
+                            <Bar
+                            data={ graphTwoData }
+                            options={ graphTwoOption } 
+                            />
+                        </React.Fragment>
+                    </CardContent> 
+                    :null
+                }
             </div>
 
             {/* Table Feature  */}
