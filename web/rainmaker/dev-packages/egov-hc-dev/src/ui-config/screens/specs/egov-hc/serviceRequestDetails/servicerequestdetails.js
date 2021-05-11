@@ -29,7 +29,7 @@ const showHideMapPopup = (state, dispatch) => {
   );
 };
 const setRadioButtonFeatures = (currentSelectedServiceType, state, dispatch) => {
-  if(currentSelectedServiceType.value ===TypeOfServiceRequest.REMOVALOFDEADDRY )
+  if(currentSelectedServiceType ===TypeOfServiceRequest.REMOVALOFDEADDRY )
   {
               dispatch(handleField("servicerequest",
               "components.div.children.formwizardFirstStep.children.servicerequestdetails.children.cardContent.children.servicerequestdetailsContainer.children.serviceRequestSubtype",
@@ -196,7 +196,7 @@ export const servicerequestdetails = getCommonCard({
     afterFieldChange: (action, state, dispatch) => {
       var currentSelectedServiceType = get(state, "screenConfiguration.preparedFinalObject.SERVICEREQUEST.serviceType")
     
-          if (currentSelectedServiceType.value != undefined)
+          if (currentSelectedServiceType!= undefined)
           {
             setRadioButtonFeatures(currentSelectedServiceType, state, dispatch)
             setNumberOfTreesForPruning(currentSelectedServiceType, state, dispatch)
