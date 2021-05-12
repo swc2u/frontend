@@ -438,7 +438,7 @@ class WNSDashboardTwo extends React.Component {
             dataJSONListBillData: dataJSONListBillData,
             // graphOneLabelSHOW: graphOneLabelSHOW,
             // propSortBy: propSortBy,
-            // graphClicked: 0,
+            graphClicked: 0,
             columnData: columnData,
             rowData: data,
             unchangeColumnData : columnData,
@@ -541,7 +541,7 @@ class WNSDashboardTwo extends React.Component {
             dataJSONListBillData: dataJSONListBillData,
             // graphOneLabelSHOW: graphOneLabelSHOW,
             // propSortBy: propSortBy,
-            // graphClicked: 0,
+            graphClicked: 0,
             columnData: columnData,
             rowData: data,
             unchangeColumnData : columnData,
@@ -665,7 +665,7 @@ class WNSDashboardTwo extends React.Component {
                     graphTwoData: graphData,
                     graphTwoLabel : [selectedVal],
                     // graphTwoLabelSHOW: graphTwoLabelSHOW,
-                    // graphClicked: 1
+                    graphClicked: 1
                 })
             }
         },
@@ -739,7 +739,7 @@ class WNSDashboardTwo extends React.Component {
         scales: {
             xAxes: [{
                 gridLines: {
-                    display:false
+                    display:true
                 },
                 scaleLabel: {
                     display: false,
@@ -748,7 +748,7 @@ class WNSDashboardTwo extends React.Component {
             }],
             yAxes: [{
                 gridLines: {
-                    display:false
+                    display:true
                 },
                 ticks: {
                     suggestedMin: 0,
@@ -809,23 +809,31 @@ class WNSDashboardTwo extends React.Component {
         <div className="graphDashboard">
         
 
-        <CardContent style={{width: "700px", height : "450px"}}>
-            <React.Fragment>
-                <Bar
-                data={ graphOneSortedData }
-                options={ graphOneOption } 
-                />
-            </React.Fragment>
-        </CardContent>
+        {
+            this.state.graphClicked >=0 ?
+            <CardContent style={{width: "700px", height : "450px"}}>
+                <React.Fragment>
+                    <Bar
+                    data={ graphOneSortedData }
+                    options={ graphOneOption } 
+                    />
+                </React.Fragment>
+            </CardContent>
+            :null
+        }
 
-        <CardContent style={{height : "450px"}}>
-            <React.Fragment>
-                <Bar
-                data={ graphTwoSortedData }
-                options={ graphTwoOption } 
-                />
-            </React.Fragment>
-        </CardContent>
+        {
+            this.state.graphClicked > 0 ?
+            <CardContent style={{height : "450px"}}>
+                <React.Fragment>
+                    <Bar
+                    data={ graphTwoSortedData }
+                    options={ graphTwoOption } 
+                    />
+                </React.Fragment>
+            </CardContent>
+            :null
+        }
 
         </div>
 
@@ -858,7 +866,7 @@ class WNSDashboardTwo extends React.Component {
         }
 
         {
-            // this.state.graphClicked >= 0 ?
+            this.state.graphClicked >= 0 ?
             <ReactTable id="customReactTable"
             // PaginationComponent={Pagination}
             data={ this.state.rowData }  
@@ -867,7 +875,7 @@ class WNSDashboardTwo extends React.Component {
             pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
             pageSizeOptions = {[20,40,60]}  
             /> 
-            // :null
+            :null
         }
         </div>
         </div>

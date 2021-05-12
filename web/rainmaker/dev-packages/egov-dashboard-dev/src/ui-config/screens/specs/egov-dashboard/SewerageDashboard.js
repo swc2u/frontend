@@ -4,15 +4,15 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { getUserInfo, setapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 import { getDashboardDropdownData } from "../../../../ui-utils/commons";
 // import { HCDashboardFilterForm, HCDashboardResults } from "./HCDashboard/HCDashboard";
-import { FilterForm, DashboardResults } from "./WNSDashboard/WNSDashboard";
+import { FilterForm, DashboardResults } from "./SewerageDashboard/SewerageDashboard";
 import './index.css';
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 
 const header = getCommonHeader(
   {
-    labelName: "WNS Dashboard",
-    labelKey: "WNS_dashboard_1"
+    labelName: "Sewerage Dashboard",
+    labelKey: "Sewerage_dashboard_1"
   },
   {
     classes: {
@@ -44,12 +44,8 @@ const getDropDownData = async (action, state, dispatch) => {
 //   let data = getDashboardDropdownData(state, dispatch, status)
 var data = data =  [
   {
-  "name" : "Application Status Report",
-  "code" : "dashboardType1"
-  },
-  {
-    "name" : "Collection Report",
-    "code" : "dashboardType2"
+  "name" : "Sewerage Dashboard",
+  "code" : "Sewerage Dashboard"
   }
 ]
   
@@ -65,9 +61,9 @@ var data = data =  [
   dispatch(prepareFinalObject("dahsboardHome.defaulttoDate", formatDt));
 }
 
-const WNSDashboard = {
+const SewerageDashboard = {
   uiFramework: "material-ui",
-  name: "WNSDashboard",
+  name: "SewerageDashboard",
   beforeInitScreen: (action, state, dispatch) => {
     
     debugger
@@ -102,4 +98,4 @@ const WNSDashboard = {
   }
 };
 
-export default WNSDashboard;
+export default SewerageDashboard;

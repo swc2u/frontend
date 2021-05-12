@@ -2110,7 +2110,7 @@ export const getLegalDashboardData = async ( dispatch, data ) => {
     store.dispatch(toggleSpinner());
     const DescriptionReport = await httpRequest(
       "get",
-      "http://chandigarh-uat.chandigarhsmartcity.in/services/EGF/legalcase/getLegalCase",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/legalcase/getLegalCase",
       "",
       [],
       {}
@@ -2150,7 +2150,7 @@ export const getLegalDashboardData2 = async ( dispatch, data ) => {
 
     const response = await httpRequest(
       "get",
-      "http://chandigarh-uat.chandigarhsmartcity.in/services/EGF/legalcase/getLegalCase",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/legalcase/getLegalCase",
       "", 
       []);
     return response;
@@ -2187,7 +2187,7 @@ export const getAgendaDashboardData = async ( dispatch, data ) => {
     store.dispatch(toggleSpinner());
     const getAllAgenda = await httpRequest(
       "get",
-      "http://chandigarh-uat.chandigarhsmartcity.in/services/EGF/agenda/getAllAgenda",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/agenda/getAllAgenda",
       "",
       [],
       {}
@@ -2195,7 +2195,7 @@ export const getAgendaDashboardData = async ( dispatch, data ) => {
 
     const getAllMeeting = await httpRequest(
       "get",
-      "http://chandigarh-uat.chandigarhsmartcity.in/services/EGF/agenda/getAllMeeting",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/agenda/getAllMeeting",
       "",
       [],
       {}
@@ -2203,7 +2203,7 @@ export const getAgendaDashboardData = async ( dispatch, data ) => {
 
     const getAllMoM = await httpRequest(
       "get",
-      "http://chandigarh-uat.chandigarhsmartcity.in/services/EGF/agenda/getAllMom",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/agenda/getAllMom",
       "",
       [],
       {}
@@ -2866,6 +2866,47 @@ export const getWNSData = async ( dispatch, data ) => {
     dispatch(
       handleField(
       "WNSDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+// Get Dashboard Data for Water n Sewerage
+export const getSewerageData = async ( dispatch, data ) => {
+  
+  debugger;
+  try {
+    store.dispatch(toggleSpinner());
+    
+    const sewerageApplication = await httpRequest(
+      "post",
+      "/sw-services/swc/_search?tenantId="+data.tenantId+"&fromDate="+data.fromDate+"&toDate="+data.toDate,
+      "",
+      [],
+      {}
+    );
+    var response = [ sewerageApplication, data ];
+    // dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+    // // OK
+    dispatch(
+      handleField(
+      "SewerageDashboard",
       "components.div.children.DashboardResults",
       "props.data",
       response

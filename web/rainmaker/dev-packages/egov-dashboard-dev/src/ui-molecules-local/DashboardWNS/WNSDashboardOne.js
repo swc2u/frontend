@@ -442,7 +442,7 @@ class WNSDashboardOne extends React.Component {
         // labels: ["Label1", "Label2", "Label3"],
         datasets: [
             {
-            label: "Apani Mandi",
+            label: "",
             fill: false,
             lineTension: 0.1,
             hoverBorderWidth : 12,
@@ -558,7 +558,7 @@ class WNSDashboardOne extends React.Component {
         // labels: ["Label1", "Label2", "Label3"],
         datasets: [
             {
-            label: "Apani Mandi",
+            label: "",
             fill: false,
             lineTension: 0.1,
             hoverBorderWidth : 12,
@@ -930,7 +930,7 @@ class WNSDashboardOne extends React.Component {
 
         </div>
 
-        <div className="graphDashboard">
+        <div className="graphDashboard" style={this.state.graphClicked <= 1 ? {display :"none"} :null}>
             {
                 this.state.graphClicked > 1 ?
                 <CardContent className="halfGraph">
@@ -986,7 +986,7 @@ class WNSDashboardOne extends React.Component {
         }
 
         {
-            // this.state.graphClicked >= 0 ?
+            this.state.graphClicked >= 0 ?
             <ReactTable id="customReactTable"
             // PaginationComponent={Pagination}
             data={ this.state.rowData }  
@@ -995,7 +995,7 @@ class WNSDashboardOne extends React.Component {
             pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
             pageSizeOptions = {[20,40,60]}  
             /> 
-            // :null
+            :null
         }
         </div>
         </div>

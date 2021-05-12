@@ -181,6 +181,11 @@ const DashboardAgenda = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardSewerage = Loadable({
+  loader: () => import("./DashboardSewerage"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -217,5 +222,6 @@ export {
   DashboardPension,
   DashboardNULM,
   DashboardLegal,
-  DashboardAgenda
+  DashboardAgenda,
+  DashboardSewerage
 };

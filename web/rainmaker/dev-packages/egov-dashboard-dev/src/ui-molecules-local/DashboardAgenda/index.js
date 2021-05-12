@@ -230,9 +230,9 @@ class DashboardAgenda extends React.Component {
             // const propSortBy = "getAllAgenda";
             // const propSortBy = "getAllMom";
             // const propSortBy = "getAllMeeting";
-            const propSortBy = this.props.data[1].sortBy.reportSortBy.value;
-            var fromDT = this.props.data[1].sortBy.RequestBody.startDate;
-            var toDT = this.props.data[1].sortBy.RequestBody.endDate;
+            const propSortBy = this.props.data[1].sortby.reportSortBy.value;
+            var fromDT = this.props.data[1].sortby.RequestBody.startDate;
+            var toDT = this.props.data[1].sortby.RequestBody.endDate;
 
             var allMonth = this.dateRange(fromDT, toDT);
             var data = [];
