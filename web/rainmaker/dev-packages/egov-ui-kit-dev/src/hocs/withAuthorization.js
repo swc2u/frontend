@@ -140,13 +140,34 @@ const withAuthorization = (options = {}) => (Component) => {
       const lastLoginTime = new Date().getTime();
       const lastlogintime = localStorageGet("last-login-time");
       const LoginDifferent = lastLoginTime-lastlogintime
+      console.log(lastLoginTime-lastlogintime)
+      const dateFromApi = new Date(lastLoginTime);
+      let month = dateFromApi.getMonth() + 1;
+      let day = dateFromApi.getDate();
+      let year = dateFromApi.getFullYear();
+      let Hour = dateFromApi.getHours();
+      let Minutes = dateFromApi.getMinutes();
+      let Seconds = dateFromApi.getSeconds();
+      month = (month > 9 ? "" : "0") + month;
+      day = (day > 9 ? "" : "0") + day;
+      const dateFromApi_c = new Date(parseInt(lastlogintime));
+      let month_c = dateFromApi_c.getMonth() + 1;
+      let day_c = dateFromApi_c.getDate();
+      let year_c = dateFromApi_c.getFullYear();
+      let Hour_c = dateFromApi_c.getHours();
+      let Minutes_c = dateFromApi_c.getMinutes();
+      let Seconds_c = dateFromApi_c.getSeconds();
+      month_c = (month_c > 9 ? "" : "0") + month_c;
+      day_c = (day_c > 9 ? "" : "0") + day_c;
+      console.log(`${Seconds}/${Minutes}/${Hour}/${day}/${month}/${year}`)
+      console.log(`${Seconds_c}/${Minutes_c}/${Hour_c}/${day_c}/${month_c}/${year_c}`)
       if (process.env.NODE_ENV === "production") {
         const _role = role === "citizen" ? "citizen" : "employee";
         if (window.basename.slice(1).toLowerCase() !== _role) {
           this.props.logout();
         }
       }
-      else if(LoginDifferent>=600000)
+      else if(LoginDifferent>=900000)
       {
         localStorageSet("last-login-time", lastLoginTime);
         this.props.logout();

@@ -6,6 +6,7 @@ import { validateFields } from "../../utils";
 import { convertDateToEpoch, convertEpochToDate, resetFieldsForApplication, resetFieldsForConnection } from "../../utils/index";
 import { httpRequest } from "../../../../../ui-utils";
 import { getTextToLocalMapping } from "./searchApplicationResults";
+import { set } from "lodash";
 export const searchApiCall = async (state, dispatch) => {
   showHideApplicationTable(false, dispatch);
   showHideConnectionTable(false, dispatch);
@@ -19,11 +20,35 @@ export const searchApiCall = async (state, dispatch) => {
     await renderSearchApplicationTable(state, dispatch);
   }
 }
+// export const findAndReplace = (obj, oldValue, newValue) => {
+//   Object.keys(obj).forEach(key => {
+//       if ((obj[key] instanceof Object) || (obj[key] instanceof Array)) findAndReplace(obj[key], oldValue, newValue)
+//       obj[key] = obj[key] === oldValue ? newValue : obj[key]
+//   })
+//   return obj
+// }
 export const deactivateConnection = async (state, dispatch) => {
 
   try
   {
+    
     let queryObjectForUpdate = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0]");
+    queryObjectForUpdate = findAndReplace(queryObjectForUpdate, "NA", null);
+   if(!Number(queryObjectForUpdate.connectionExecutionDate) ||  queryObjectForUpdate.connectionExecutionDate !=='')
+   {
+     if(queryObjectForUpdate.connectionExecutionDate ==='01/01/1970')
+     {
+      set(queryObjectForUpdate, "connectionExecutionDate", 0);
+     }
+     else
+     {
+      set(queryObjectForUpdate, "connectionExecutionDate", convertDateToEpoch(queryObjectForUpdate.connectionExecutionDate));
+     }
+    
+   }
+   //INDIVIDUAL.SINGLEOWNER
+   set(queryObjectForUpdate, "connectionHolders[0].ownerType", "INDIVIDUAL.SINGLEOWNER");
+    
    const payloadbillingPeriod = await httpRequest("post", "/ws-services/wc/_deactivateConnection", "", [], { WaterConnection: queryObjectForUpdate });
    let errorMessage = {
     labelName: "Connection deactivate successfully!",

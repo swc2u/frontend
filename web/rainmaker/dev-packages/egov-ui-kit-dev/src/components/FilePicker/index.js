@@ -27,7 +27,9 @@ class FilePicker extends Component {
                       || (file.name.toLowerCase().indexOf(".php") !== -1)
                       || (file.name.toLowerCase().indexOf(".exe") !== -1)
                       || (file.name.toLowerCase().indexOf(".json") !== -1))//extension.includes(file.name);
-            if(!valid)
+                      if(file.size<5242880)
+                      {
+                        if(!valid)
             {
             if (file.type.match(/^image\//)) {
               const imageUri = await getImageUrlByFile(file);
@@ -51,6 +53,13 @@ class FilePicker extends Component {
               toggleSnackbarAndSetText(true, { labelName: "Please select valid file!", labelKey: "CORE_COMMON_INVALID_FILE_EXTENSION" }, "warning");
   
             }
+
+                      }
+                      else{
+                        toggleSnackbarAndSetText(true, { labelName: "The file is more than 5mb", labelKey: "ERR_FILE_MORE_THAN_FIVEMB" }, "warning");
+
+                      }
+            
         });
     }
   };
