@@ -10,7 +10,7 @@ import Label from "egov-ui-kit/utils/translationNode";
 import { getQueryArg,getModuleName } from "egov-ui-kit/utils/commons";
 import { logout } from "egov-ui-kit/redux/auth/actions";
 import SortDialog from "../common/common/Header/components/SortDialog";
-import {  setModule, getTenantId, getLocale, getUserInfo} from "../utils/localStorageUtils";
+import {  setModule, getTenantId, getLocale, getUserInfo,localStorageGet,localStorageSet } from "../utils/localStorageUtils";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 const withAuthorization = (options = {}) => (Component) => {
   class Wrapper extends React.Component {
@@ -137,12 +137,19 @@ const withAuthorization = (options = {}) => (Component) => {
         : "";
 
       //For restricting citizen to access employee url
-
+      const lastLoginTime = new Date().getTime();
+      const lastlogintime = localStorageGet("last-login-time");
+      const LoginDifferent = lastLoginTime-lastlogintime
       if (process.env.NODE_ENV === "production") {
         const _role = role === "citizen" ? "citizen" : "employee";
         if (window.basename.slice(1).toLowerCase() !== _role) {
           this.props.logout();
         }
+      }
+      else if(LoginDifferent>=600000)
+      {
+        localStorageSet("last-login-time", lastLoginTime);
+        this.props.logout();
       }
       const getUserRole = () => {
         let { userInfo } = this.props;
