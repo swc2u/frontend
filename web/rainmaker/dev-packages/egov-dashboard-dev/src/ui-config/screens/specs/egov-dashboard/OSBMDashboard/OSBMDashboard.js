@@ -12,6 +12,11 @@ export const FilterForm = getCommonCard({
         labelName: "",
         labelKey: "Select From Date"
       },
+      props: {
+        style:{
+          width : "130px"
+        }
+      },
       gridDefination: {
         xs: 6,
         sm: 2,
@@ -21,14 +26,14 @@ export const FilterForm = getCommonCard({
       jsonPath: "dahsboardHome.defaultFromDate",
       required: true,
       afterFieldChange: (action, state, dispatch) => {
-        // dispatch(
-        //   handleField(
-        //     "dashboardSource",
-        //     "components.div.children.FilterFormforEmployee.children.cardContent.children.FilterConstraintsContainer.children.toDate",
-        //     "props.inputProps.min",
-        //     action.value
-        //   )
-        // );
+        dispatch(
+          handleField(
+            "OSBMDashboard",
+            "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+            "props.inputProps.min",
+            action.value
+          )
+        );
         }
     }),
     toDate: getDateField({
@@ -38,6 +43,9 @@ export const FilterForm = getCommonCard({
         labelKey: "Select To Date"
       },
       props: {
+        style:{
+          width : "130px"
+        },
         inputProps: {
           min: ''
         }

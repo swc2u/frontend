@@ -17,18 +17,23 @@ export const FilterForm = getCommonCard({
         sm: 2,
         md: 2
       },
+      props : {
+        style:{
+          width : "130px"
+        },
+      },
       pattern: getPattern("Date"),
       jsonPath: "dahsboardHome.defaultFromDate",
       required: true,
       afterFieldChange: (action, state, dispatch) => {
-        // dispatch(
-        //   handleField(
-        //     "dashboardSource",
-        //     "components.div.children.FilterFormforEmployee.children.cardContent.children.FilterConstraintsContainer.children.toDate",
-        //     "props.inputProps.min",
-        //     action.value
-        //   )
-        // );
+        dispatch(
+          handleField(
+            "OPMSDashboard",
+            "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+            "props.inputProps.min",
+            action.value
+          )
+        );
         }
     }),
     toDate: getDateField({
@@ -38,6 +43,9 @@ export const FilterForm = getCommonCard({
         labelKey: "Select To Date"
       },
       props: {
+        style:{
+          width : "130px"
+        },
         inputProps: {
           min: ''
         }
