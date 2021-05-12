@@ -101,11 +101,28 @@ if(toDate && toDate)
     IsValidDate = true
 
   }
+  else if(fromDate === toDate)
+  {
+    IsValidDate = true
+
+  }
   else
   {
     IsValidDate = false
   }
 }
+// if(toDate && toDate)
+// {
+//   if(fromDate< toDate)
+//   {
+//     IsValidDate = true
+
+//   }
+//   else
+//   {
+//     IsValidDate = false
+//   }
+// }
 if(IsValidDate)
 {
    const requestBody = {OrganizationRequest}
