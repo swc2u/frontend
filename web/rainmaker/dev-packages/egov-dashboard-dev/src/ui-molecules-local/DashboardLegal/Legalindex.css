@@ -153,6 +153,9 @@
   height: 350px;
   border-style: ridge; }
 
+.rt-tbody {
+  text-align: center; }
+
 @media only screen and (max-width: 500px) {
   .graphDashboard {
     display: contents;
@@ -164,7 +167,7 @@
     height: 300px;
     border-style: ridge; }
   .tableContainer {
-    display: contents; }
+    position: initial; }
   .tableFeature {
     position: relative;
     margin-left: 10%;

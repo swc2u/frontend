@@ -110,9 +110,7 @@ export const DashboardFilterForm = getCommonCard({
         color: "primary",
         style: {
         width: "60%",
-        height: "55px",
-        /* margin-right: 80px; */
-        marginLeft: "180px"
+        height: "55px"
         }
       },
       children: {
