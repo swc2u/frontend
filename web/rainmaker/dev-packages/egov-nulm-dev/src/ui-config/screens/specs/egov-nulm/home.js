@@ -166,7 +166,7 @@ let allCardList = [{ "code": "SEP", "value": SEP }, { "code": "SMID", "value": S
 
 const getMdmsData = async (action, state, dispatch) => {
 
-  let tenantId = getNULMTenantId();
+  let tenantId = "ch.chandigarh";//getTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,
@@ -247,7 +247,7 @@ const PermissionManagementSearchAndResult = {
   beforeInitScreen: (action, state, dispatch) => {
     let UsertenantInfo = JSON.parse(getUserInfo()).permanentCity;
     if (JSON.parse(getUserInfo()).type === "CITIZEN")
-    setNULMTenantId(UsertenantInfo);
+    setNULMTenantId('ch');
     else
     setNULMTenantId(getTenantId());
 
