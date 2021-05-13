@@ -1,5 +1,6 @@
 import * as actionTypes from "./actionTypes";
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
+import { logout } from "egov-ui-kit/redux/auth/actions";
 import { httpRequest, loginRequest, uploadFile } from "egov-ui-kit/utils/api";
 import { FILE_UPLOAD } from "egov-ui-kit/utils/endPoints";
 import { validateForm } from "./utils";
@@ -84,6 +85,10 @@ export const submitForm = (formKey, saveUrl) => {
           formResponse = await httpRequest(saveUrl, action, [], formData);
         }
         dispatch(submitFormComplete(formKey, formResponse, saveUrl));
+        if(saveUrl ==='/user/password/_update')
+        {
+          dispatch(logout())
+        }
       } catch (error) {
         const { message } = error;
         // throw new Error(error);
