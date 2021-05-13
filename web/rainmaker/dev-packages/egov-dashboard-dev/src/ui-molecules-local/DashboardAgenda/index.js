@@ -9,36 +9,37 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './AgendaIndex.css'
 
-import Agenda_data from './data.json';
-
 class DashboardAgenda extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state ={
-      allData: [],
-      dataOne: [],
-      dataTwo: [],
-      graphOneLabel: [],
-      graphOneData: [],
-      graphTwoLabel: [],
-      graphTwoData: [],
-      graphClicked: -1,
-      hardJSON: [],
-      graphHardOneData : {},
-      graphHardTwoData : {},
-      rowData: [],
-      columnData: [],
-      // Feature Table
-      toggleColumnCheck: false,
-      unchangeColumnData: []
+    constructor(props) {
+        super(props);
+        this.state ={
+            checkData : [],
+            dropdownSelected : "",
+            allData: [],
+            dataOne: [],
+            dataTwo: [],
+            graphOneLabel: [],
+            graphOneData: [],
+            graphTwoLabel: [],
+            graphTwoData: [],
+            graphClicked: -1,
+            hardJSON: [],
+            graphHardOneData : {},
+            graphHardTwoData : {},
+            rowData: [],
+            columnData: [],
+            // Feature Table
+            toggleColumnCheck: false,
+            unchangeColumnData: []
+        }
     }
-  }
 
-  // PDF function 
-  pdfDownload = () => {
+
+    // PDF function 
+    pdfDownload = (e) => {
 
     debugger;
-
+    e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
     var rowData = this.state.rowData
@@ -97,7 +98,7 @@ class DashboardAgenda extends React.Component {
     doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
 
     doc.setFontSize(10);
-    const pdfTitle = this.state.graphHardOneData.title ? this.state.graphHardOneData.title : "Title"
+    const pdfTitle = "Agenda Dashboard"
     doc.text(pdfTitle, pageWidth / 2, 40, 'center');
 
     doc.autoTable({ html: '#my-table' });
@@ -152,7 +153,7 @@ class DashboardAgenda extends React.Component {
 
     // Toggle Column 
     toggleColumn = (e) => {
-        // e.preventDefault();
+        e.preventDefault();
         debugger;
         const data = this.state.columnData
         this.setState({
@@ -191,77 +192,166 @@ class DashboardAgenda extends React.Component {
     });
     }
 
+    dateRange = (startDate, endDate) => {
+        var monthJSON = {"01":"JAN","02":"FEB","03":"MAR","04":"APR","05":"MAY","06":"JUN","07":"JUL",
+        "08":"AUG","09":"SEP","10":"OCT","11":"NOV","12":"DEC"};
+        var start      = startDate.split('-');
+        var end        = endDate.split('-');
+        var startYear  = parseInt(start[0]);
+        var endYear    = parseInt(end[0]);
+        var dates      = [];
+
+        for(var i = startYear; i <= endYear; i++) {
+            var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+            var startMon = i === startYear ? parseInt(start[1])-1 : 0;
+            for(var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j+1) {
+            var month = j+1;
+            var displayMonth = month < 10 ? '0'+month : month;
+            // dates.push([i, displayMonth, '01'].join('-'));
+            dates.push([i, monthJSON[displayMonth]].join('-'));
+            }
+        }
+        return dates;
+    }
+
     componentDidMount(){
         debugger;
-        const propSortBy = "getAllMeeting";
-        // const propSortBy = "getAllAgenda";
-        const data = propSortBy === "getAllMeeting" ? Agenda_data.getAllMeeting.ResponseBody :
-        propSortBy === "getAllMom" ? Agenda_data.getAllMom.ResponseBody :
-        propSortBy === "getAllAgenda" ? Agenda_data.getAllAgenda.ResponseBody : [];
-
-        const hardJSON = propSortBy === "getAllMeeting" ? [{ 
-            "sortBy": "meetingStatus",
-            "msgX": "",
-            "msgY": "",
-            "title": "Meeting StatusWise Agenda Dashboard"
-            },
-            { 
-            "sortBy": "meetingType",
-            "msgX": "",
-            "msgY": "",
-            "title": "MoM Typewise status Agenda Dashboard"
-            }] : propSortBy === "getAllAgenda" ? [
-                    { 
-                    "sortBy": "department",
-                    "msgX": "",
-                    "msgY": "",
-                    "title": "DepartmentWise Agenda Dashboard"
-                    }
-                    ] : []
-
-        // Graph One Sorting Function 
-        var graphOneData2 = this.graphSorting( hardJSON[0].sortBy, data );
-
-        
-        // Column Data
-        const tableData = data[0] ? Object.keys(data[0]) : [];
-        var columnData = []
-        for(var i=0; i<tableData.length; i++){
-            var itemHeader = {}
-            itemHeader["Header"] = this.camelize(tableData[i]);
-            itemHeader["accessor"] = tableData[i];
-            itemHeader["show"]= (i === 0 || i === 1 || i === 6 || i === 9 
-                || i === 12 || i === 16 || i === 20 ) ? true : false ;
-            columnData.push(itemHeader);
-        }
-
-        // Column Unchange Data 
-        const unchangeColumnData = this.columnUnchange(columnData)
-
-        
+        const data = this.props.data;
         this.setState({
-            graphOneLabel: graphOneData2[0],
-            graphOneData: graphOneData2[1],
-            graphClicked: 0,
-            dataOne: graphOneData2[2],
-            columnData: columnData,
-            unchangeColumnData: unchangeColumnData,
-            rowData: data,
-            hardJSON: hardJSON
+            checkData : data
         })
+    }
 
+    componentDidUpdate(){
+        debugger;
+        var data = this.props.data;
+        if(JSON.stringify(this.state.checkData) !== JSON.stringify(data)){
+            
+            // const propSortBy = "getAllAgenda";
+            // const propSortBy = "getAllMom";
+            // const propSortBy = "getAllMeeting";
+            const propSortBy = this.props.data[1].sortby.reportSortBy.value;
+            var fromDT = this.props.data[1].sortby.RequestBody.startDate;
+            var toDT = this.props.data[1].sortby.RequestBody.endDate;
+
+            var allMonth = this.dateRange(fromDT, toDT);
+            var data = [];
+
+            var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
+            "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
+
+            if(propSortBy === "getAllAgenda"){
+                data = this.props.data[0].respData.getAllAgenda.ResponseBody;
+                
+                var group = data.reduce((r, a) => {
+                    r[new Date(a["createdDate"]).getFullYear()+"-"+monthJSON[new Date(a["createdDate"]).getMonth()]] 
+                    = [...r[new Date(a["createdDate"]).getFullYear()+"-"+monthJSON[new Date(a["createdDate"]).getMonth()]] || [], a];
+                    return r;
+                    }, {});
+                var graphLabel = allMonth;
+                var graphData = [];
+                for(var i=0; i<graphLabel.length; i++){
+                    if(group[graphLabel[i]]){
+                        graphData.push(group[graphLabel[i]].length);
+                    }else{
+                        graphData.push(0);
+                    }
+                }
+                this.setState({
+                    graphOneLabel: graphLabel,
+                    graphOneData: graphData,
+                    dataOne: group
+                })
+            }
+            if(propSortBy === "getAllMom"){
+                data =  this.props.data[0].respData.getAllMom.ResponseBody;
+
+                var group = data.reduce((r, a) => {
+                    r[new Date(a["meetingDate"]).getFullYear()+"-"+monthJSON[new Date(a["meetingDate"]).getMonth()]] 
+                    = [...r[new Date(a["meetingDate"]).getFullYear()+"-"+monthJSON[new Date(a["meetingDate"]).getMonth()]] || [], a];
+                    return r;
+                    }, {});
+                var graphLabel = allMonth;
+                var graphData = [];
+                for(var i=0; i<graphLabel.length; i++){
+                    if(group[graphLabel[i]]){
+                        graphData.push(group[graphLabel[i]].length);
+                    }else{
+                        graphData.push(0);
+                    }
+                }
+                this.setState({
+                    graphFifthLabel: graphLabel,
+                    graphFifthData: graphData,
+                    dataFifth: group
+                })
+
+            }
+            if(propSortBy === "getAllMeeting"){
+                data =  this.props.data[0].respData.getAllMeeting.ResponseBody;
+
+                var group = data.reduce((r, a) => {
+                    r[new Date(a["meetingDate"]).getFullYear()+"-"+monthJSON[new Date(a["meetingDate"]).getMonth()]] 
+                    = [...r[new Date(a["meetingDate"]).getFullYear()+"-"+monthJSON[new Date(a["meetingDate"]).getMonth()]] || [], a];
+                    return r;
+                    }, {});
+                var graphLabel = allMonth;
+                var graphData = [];
+                for(var i=0; i<graphLabel.length; i++){
+                    if(group[graphLabel[i]]){
+                        graphData.push(group[graphLabel[i]].length);
+                    }else{
+                        graphData.push(0);
+                    }
+                }
+                this.setState({
+                    graphSevenLabel: graphLabel,
+                    graphSevenData: graphData,
+                    dataSeven: group
+                })
+            }
+
+            
+            // Column Data
+            const tableData = data[0] ? Object.keys(data[0]) : [];
+            var columnData = []
+            for(var i=0; i<tableData.length; i++){
+                var itemHeader = {}
+                itemHeader["Header"] = this.camelize(tableData[i]);
+                itemHeader["accessor"] = tableData[i];
+                itemHeader["show"]= (i === 0 || i === 1 || i === 6 || i === 9 
+                    || i === 12 || i === 16 || i === 20 ) ? true : false ;
+                columnData.push(itemHeader);
+            }
+
+            // Column Unchange Data 
+            const unchangeColumnData = this.columnUnchange(columnData)
+
+            
+            this.setState({
+                graphClicked: 0,
+                columnData: columnData,
+                unchangeColumnData: unchangeColumnData,
+                rowData: data,
+                dropdownSelected : propSortBy
+            })
+
+            this.setState({
+                checkData : this.props.data
+            })
+            
+        }
+        
     }
 
     render() {
-    
-
-    // First Double Bar Graph Graph
-    var PIEgraphOneSortedData = {
+    // Dashboard 1
+    var graphOneSortedData = {
         labels: this.state.graphOneLabel,
         // labels: ["Label1", "Label2"],
         datasets: [
             {
-            label: "Apani Mandi",
+            label: "Total",
             fill: false,
             lineTension: 0.1,
             hoverBorderWidth : 12,
@@ -279,8 +369,7 @@ class DashboardAgenda extends React.Component {
             }
         ]
     }
-
-    var PIEgraphOneOption = {
+    var graphOneOption = {
         responsive : true,
         // aspectRatio : 3,
         maintainAspectRatio: false,
@@ -292,7 +381,7 @@ class DashboardAgenda extends React.Component {
             }
         ], 
         legend: {
-            display: true,
+            display: false,
             position: 'bottom',
             labels: {
             fontFamily: "Comic Sans MS",
@@ -305,33 +394,33 @@ class DashboardAgenda extends React.Component {
         },
         title: {
             display: true,
-            text: this.state.hardJSON[0] ? this.state.hardJSON[0].title : ""
+            text: "Monthwise All Agenda's Dashboard"
         },
-        // scales: {
-        //     xAxes: [{
-        //         gridLines: {
-        //             display:true
-        //         },
-        //         scaleLabel: {
-        //             display: true,
-        //             labelString:" this.state.graphHardThirdData.msgX"
-        //             }, 
-        //     }],
-        //     yAxes: [{
-        //         gridLines: {
-        //             display:true
-        //         },
-        //         ticks: {
-        //             // suggestedMin: 0,
-        //             // suggestedMax: 100,
-        //             stepSize: 1
-        //         },
-        //         scaleLabel: {
-        //             display: true,
-        //             labelString: "this.state.graphHardThirdData.msgY"
-        //             }, 
-        //     }]
-        // },
+        scales: {
+            xAxes: [{
+                gridLines: {
+                    display:true
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "Months"
+                    }, 
+            }],
+            yAxes: [{
+                gridLines: {
+                    display:true
+                },
+                ticks: {
+                    suggestedMin: 0,
+                    // suggestedMax: 100,
+                    stepSize: 5
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "No of Agenda"
+                    }, 
+            }]
+        },
         plugins: {
             datalabels: {
                 display: false
@@ -352,26 +441,20 @@ class DashboardAgenda extends React.Component {
                 debugger;
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphOneLabel[ind];
-                // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
-                if(this.state.hardJSON.length > 1){
-                    const hardval = this.state.hardJSON[1]
-                    var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataOne[selectedVal] );
-                    
-                    this.setState({
-                        graphTwoLabel: graphSorting[0],
-                        graphTwoData: graphSorting[1],
-                        dataTwo: graphSorting[2],
-                        graphClicked: 1,
-                        rowData: this.state.dataOne[selectedVal]
-                    })
-                }
+                var graphSorting = this.graphSorting( "agendatype", this.state.dataOne[selectedVal] );
+                
+                this.setState({
+                    graphTwoLabel: graphSorting[0],
+                    graphTwoData: graphSorting[1],
+                    dataTwo: graphSorting[2],
+                    graphClicked: 1,
+                    rowData: this.state.dataOne[selectedVal]
+                })
                 
             }
         },
     }
-    
-
-    // Second Horizontal Graph
+    // Second Graph
     var graphTwoSortedData = {
         labels: this.state.graphTwoLabel,
         datasets: [
@@ -392,7 +475,6 @@ class DashboardAgenda extends React.Component {
             }
         ]
     }
-
     var graphTwoOption = {
         responsive : true,
         // aspectRatio : 3,
@@ -418,15 +500,19 @@ class DashboardAgenda extends React.Component {
         },
         title: {
             display: true,
-            text: this.state.hardJSON.length > 1 ? this.state.hardJSON[1].title : ""
+            text: "Type wise Monthly Agenda Dashboard"
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                var ind = element[0]._index;
                 debugger;
+                var ind = element[0]._index;   
                 const selectedVal = this.state.graphTwoLabel[ind];
+                var graphSorting = this.graphSorting( "department", this.state.dataTwo[selectedVal] );
                 
                 this.setState({
+                    graphThirdLabel: graphSorting[0],
+                    graphThirdData: graphSorting[1],
+                    dataThird: graphSorting[2],
                     graphClicked: 2,
                     rowData: this.state.dataTwo[selectedVal]
                 })
@@ -476,22 +562,680 @@ class DashboardAgenda extends React.Component {
             }
             }
     }
+    // Third Graph
+    var graphThirdSortedData = {
+        labels: this.state.graphThirdLabel,
+        datasets: [
+            {
+            // label: this.state.drildownGraphLabel,
+            fill: false,
+            lineTension: 5,
+            hoverBorderWidth : 12,
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#FF5733", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            borderColor: "rgba(75,192,192,0.4)",
+            borderCapStyle: "butt",
+            barPercentage: 2,
+            barThickness: 25,
+            maxBarThickness: 25,
+            minBarLength: 2,
+            data: this.state.graphThirdData
+            }
+        ]
+    }
+    var graphThirdOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+            {
+            backgroundColor : "rgba(0, 0, 0, 0.1)",
+            weight: 0
+            }
+        ], 
+        legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+            fontFamily: "Comic Sans MS",
+            boxWidth: 20,
+            boxHeight: 2
+            }
+        },
+        tooltips: {
+            enabled: true
+        },
+        title: {
+            display: true,
+            text: "Departmentwise Monthly Agenda Dashboard"
+        },
+        onClick: (e, element) => {
+            if (element.length > 0) {
+                debugger;
+                var ind = element[0]._index;   
+                const selectedVal = this.state.graphThirdLabel[ind];
+                var graphSorting = this.graphSorting( "meetingType", this.state.dataThird[selectedVal] );
+                
+                this.setState({
+                    graphFourthLabel: graphSorting[0],
+                    graphFourthData: graphSorting[1],
+                    dataFourth: graphSorting[2],
+                    graphClicked: 3,
+                    rowData: this.state.dataThird[selectedVal]
+                })
+            }
+        },
+        // scales: {
+        //     xAxes: [{
+        //         gridLines: {
+        //             display:true
+        //         },
+        //         ticks: {
+        //             suggestedMin: 0,
+        //             // suggestedMax: 100,
+        //             stepSize: 1
+        //         },
+        //         scaleLabel: {
+        //             display: true,
+        //             labelString: this.state.graphHardTwoData.msgX
+        //             }, 
+        //     }],
+        //     yAxes: [{
+        //         gridLines: {
+        //             display: true
+        //         },
+        //         ticks: {
+        //             suggestedMin: 0,
+        //             stepSize: 1
+        //         },
+        //         scaleLabel: {
+        //             display: true,
+        //             labelString: this.state.graphHardTwoData.msgY
+        //             }, 
+        //     }]
+        // },
+        plugins: {
+            datalabels: {
+                display: false
+            //     color: 'white',
+            //     backgroundColor: 'grey',
+            //     labels: {
+            //         title: {
+            //             font: {
+            //                 weight: 'bold'
+            //             }
+            //         }
+            //     }}
+            }
+            }
+    }
+    // Fourth Graph
+    var graphFourthSortedData = {
+        labels: this.state.graphFourthLabel,
+        datasets: [
+            {
+            // label: this.state.drildownGraphLabel,
+            fill: false,
+            lineTension: 5,
+            hoverBorderWidth : 12,
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#9DC4E1", "#385BC8", "#FF5733", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            borderColor: "rgba(75,192,192,0.4)",
+            borderCapStyle: "butt",
+            barPercentage: 2,
+            barThickness: 25,
+            maxBarThickness: 25,
+            minBarLength: 2,
+            data: this.state.graphFourthData
+            }
+        ]
+    }
+    var graphFourthOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+            {
+            backgroundColor : "rgba(0, 0, 0, 0.1)",
+            weight: 0
+            }
+        ], 
+        legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+            fontFamily: "Comic Sans MS",
+            boxWidth: 20,
+            boxHeight: 2
+            }
+        },
+        tooltips: {
+            enabled: true
+        },
+        title: {
+            display: true,
+            text: "Meeting typewise Monthly Agenda Dashboard"
+        },
+        onClick: (e, element) => {
+            if (element.length > 0) {
+                debugger;
+                var ind = element[0]._index;   
+                const selectedVal = this.state.graphFourthLabel[ind];
+                var graphSorting = this.graphSorting( "meetingType", this.state.dataFourth[selectedVal] );
+                
+                this.setState({
+                    // graphThirdLabel: graphSorting[0],
+                    // graphThirdData: graphSorting[1],
+                    // dataThird: graphSorting[2],
+                    graphClicked: 3,
+                    rowData: this.state.dataFourth[selectedVal]
+                })
+            }
+        },
+        // scales: {
+        //     xAxes: [{
+        //         gridLines: {
+        //             display:true
+        //         },
+        //         ticks: {
+        //             suggestedMin: 0,
+        //             // suggestedMax: 100,
+        //             stepSize: 1
+        //         },
+        //         scaleLabel: {
+        //             display: true,
+        //             labelString: this.state.graphHardTwoData.msgX
+        //             }, 
+        //     }],
+        //     yAxes: [{
+        //         gridLines: {
+        //             display: true
+        //         },
+        //         ticks: {
+        //             suggestedMin: 0,
+        //             stepSize: 1
+        //         },
+        //         scaleLabel: {
+        //             display: true,
+        //             labelString: this.state.graphHardTwoData.msgY
+        //             }, 
+        //     }]
+        // },
+        plugins: {
+            datalabels: {
+                display: false
+            //     color: 'white',
+            //     backgroundColor: 'grey',
+            //     labels: {
+            //         title: {
+            //             font: {
+            //                 weight: 'bold'
+            //             }
+            //         }
+            //     }}
+            }
+            }
+    }
+
+    // Dashboard 2
+    // Fifth Graph
+    var graphFifthSortedData = {
+        labels: this.state.graphFifthLabel,
+        // labels: ["Label1", "Label2"],
+        datasets: [
+            {
+            label: "Total",
+            fill: false,
+            lineTension: 0.1,
+            hoverBorderWidth : 12,
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            borderColor: "rgba(75,192,192,0.4)",
+            borderCapStyle: "butt",
+            barPercentage: 2,
+            borderWidth: 5,
+            barThickness: 25,
+            maxBarThickness: 10,
+            minBarLength: 2,
+            data: this.state.graphFifthData
+            // data:[10,20,30]
+            }
+        ]
+    }
+    var graphFifthOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+            {
+            backgroundColor : "rgba(0, 0, 0, 0.1)",
+            weight: 0
+            }
+        ], 
+        legend: {
+            display: false,
+            position: 'bottom',
+            labels: {
+            fontFamily: "Comic Sans MS",
+            boxWidth: 20,
+            boxHeight: 2
+            }
+        },
+        tooltips: {
+            enabled: true
+        },
+        title: {
+            display: true,
+            text: "Monthwise MoM Dashboard"
+        },
+        scales: {
+            xAxes: [{
+                gridLines: {
+                    display:true
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "Months"
+                    }, 
+            }],
+            yAxes: [{
+                gridLines: {
+                    display:true
+                },
+                ticks: {
+                    suggestedMin: 0,
+                    // suggestedMax: 100,
+                    stepSize: 5
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "No of MoM's"
+                    }, 
+            }]
+        },
+        plugins: {
+            datalabels: {
+                display: false
+            //     color: 'white',
+            //     backgroundColor: 'grey',
+            //     labels: {
+            //         title: {
+            //             font: {
+            //                 weight: 'bold'
+            //             }
+            //         }
+            //     }}
+            }
+        },
+        onClick: (e, element) => {
+            if (element.length > 0) {
+                
+                debugger;
+                var ind = element[0]._index;   
+                const selectedVal = this.state.graphFifthLabel[ind];
+                var graphSorting = this.graphSorting( "meetingType", this.state.dataFifth[selectedVal] );
+                
+                this.setState({
+                    graphSixthLabel: graphSorting[0],
+                    graphSixthData: graphSorting[1],
+                    dataSixth: graphSorting[2],
+                    graphClicked: 1,
+                    rowData: this.state.dataFifth[selectedVal]
+                })
+                
+            }
+        },
+    }
+    // Sixth Graph
+    var graphSixthSortedData = {
+        labels: this.state.graphSixthLabel,
+        // labels: ["Label1", "Label2"],
+        datasets: [
+            {
+            label: "Total",
+            fill: false,
+            lineTension: 0.1,
+            hoverBorderWidth : 12,
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            borderColor: "rgba(75,192,192,0.4)",
+            borderCapStyle: "butt",
+            barPercentage: 2,
+            borderWidth: 5,
+            barThickness: 25,
+            maxBarThickness: 10,
+            minBarLength: 2,
+            data: this.state.graphSixthData
+            // data:[10,20,30]
+            }
+        ]
+    }
+    var graphSixthOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+            {
+            backgroundColor : "rgba(0, 0, 0, 0.1)",
+            weight: 0
+            }
+        ], 
+        legend: {
+            display: false,
+            position: 'bottom',
+            labels: {
+            fontFamily: "Comic Sans MS",
+            boxWidth: 20,
+            boxHeight: 2
+            }
+        },
+        tooltips: {
+            enabled: true
+        },
+        title: {
+            display: true,
+            text: "Meeting typewise MoM's Monthly Dashboard"
+        },
+        scales: {
+            xAxes: [{
+                gridLines: {
+                    display:true
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "Meeting type"
+                    }, 
+            }],
+            yAxes: [{
+                gridLines: {
+                    display:true
+                },
+                ticks: {
+                    suggestedMin: 0,
+                    // suggestedMax: 100,
+                    stepSize: 5
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "No of Meetings"
+                    }, 
+            }]
+        },
+        plugins: {
+            datalabels: {
+                display: false
+            //     color: 'white',
+            //     backgroundColor: 'grey',
+            //     labels: {
+            //         title: {
+            //             font: {
+            //                 weight: 'bold'
+            //             }
+            //         }
+            //     }}
+            }
+        },
+        onClick: (e, element) => {
+            if (element.length > 0) {
+                
+                debugger;
+                var ind = element[0]._index;   
+                const selectedVal = this.state.graphSixthLabel[ind];
+                // var graphSorting = this.graphSorting( "agendatype", this.state.dataOne[selectedVal] );
+                
+                this.setState({
+                    // graphTwoLabel: graphSorting[0],
+                    // graphTwoData: graphSorting[1],
+                    // dataTwo: graphSorting[2],
+                    graphClicked: 1,
+                    rowData: this.state.dataSixth[selectedVal]
+                })
+                
+            }
+        },
+    }
+
+    // Dashboard 3
+    // Seven Graph
+    var graphSevenSortedData = {
+        labels: this.state.graphSevenLabel,
+        // labels: ["Label1", "Label2"],
+        datasets: [
+            {
+            label: "Total",
+            fill: false,
+            lineTension: 0.1,
+            hoverBorderWidth : 12,
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            borderColor: "rgba(75,192,192,0.4)",
+            borderCapStyle: "butt",
+            barPercentage: 2,
+            borderWidth: 5,
+            barThickness: 25,
+            maxBarThickness: 10,
+            minBarLength: 2,
+            data: this.state.graphSevenData
+            // data:[10,20,30]
+            }
+        ]
+    }
+    var graphSevenOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+            {
+            backgroundColor : "rgba(0, 0, 0, 0.1)",
+            weight: 0
+            }
+        ], 
+        legend: {
+            display: false,
+            position: 'bottom',
+            labels: {
+            fontFamily: "Comic Sans MS",
+            boxWidth: 20,
+            boxHeight: 2
+            }
+        },
+        tooltips: {
+            enabled: true
+        },
+        title: {
+            display: true,
+            text: "Monthwise Meeting Dashboard"
+        },
+        scales: {
+            xAxes: [{
+                gridLines: {
+                    display:true
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "Months"
+                    }, 
+            }],
+            yAxes: [{
+                gridLines: {
+                    display:true
+                },
+                ticks: {
+                    suggestedMin: 0,
+                    // suggestedMax: 100,
+                    stepSize: 5
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "No of Meetings"
+                    }, 
+            }]
+        },
+        plugins: {
+            datalabels: {
+                display: false
+            //     color: 'white',
+            //     backgroundColor: 'grey',
+            //     labels: {
+            //         title: {
+            //             font: {
+            //                 weight: 'bold'
+            //             }
+            //         }
+            //     }}
+            }
+        },
+        onClick: (e, element) => {
+            if (element.length > 0) {
+                
+                debugger;
+                var ind = element[0]._index;   
+                const selectedVal = this.state.graphSevenLabel[ind];
+                var graphSorting = this.graphSorting( "meetingType", this.state.dataSeven[selectedVal] );
+                
+                this.setState({
+                    graphEightLabel: graphSorting[0],
+                    graphEightData: graphSorting[1],
+                    dataEight: graphSorting[2],
+                    graphClicked: 1,
+                    rowData: this.state.dataSeven[selectedVal]
+                })
+                
+            }
+        },
+    }
+    // Eight Graph
+    var graphEightSortedData = {
+        labels: this.state.graphEightLabel,
+        // labels: ["Label1", "Label2"],
+        datasets: [
+            {
+            label: "Total",
+            fill: false,
+            lineTension: 0.1,
+            hoverBorderWidth : 12,
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            borderColor: "rgba(75,192,192,0.4)",
+            borderCapStyle: "butt",
+            barPercentage: 2,
+            borderWidth: 5,
+            barThickness: 25,
+            maxBarThickness: 10,
+            minBarLength: 2,
+            data: this.state.graphEightData
+            // data:[10,20,30]
+            }
+        ]
+    }
+    var graphEightOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+            {
+            backgroundColor : "rgba(0, 0, 0, 0.1)",
+            weight: 0
+            }
+        ], 
+        legend: {
+            display: false,
+            position: 'bottom',
+            labels: {
+            fontFamily: "Comic Sans MS",
+            boxWidth: 20,
+            boxHeight: 2
+            }
+        },
+        tooltips: {
+            enabled: true
+        },
+        title: {
+            display: true,
+            text: "Meeting typewise monthly Meeting Dashboard"
+        },
+        scales: {
+            xAxes: [{
+                gridLines: {
+                    display:true
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "Meeting Type"
+                    }, 
+            }],
+            yAxes: [{
+                gridLines: {
+                    display:true
+                },
+                ticks: {
+                    suggestedMin: 0,
+                    // suggestedMax: 100,
+                    stepSize: 5
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "No of Meeting"
+                    }, 
+            }]
+        },
+        plugins: {
+            datalabels: {
+                display: false
+            //     color: 'white',
+            //     backgroundColor: 'grey',
+            //     labels: {
+            //         title: {
+            //             font: {
+            //                 weight: 'bold'
+            //             }
+            //         }
+            //     }}
+            }
+        },
+        onClick: (e, element) => {
+            if (element.length > 0) {
+                
+                debugger;
+                var ind = element[0]._index;   
+                const selectedVal = this.state.graphEightLabel[ind];
+                // var graphSorting = this.graphSorting( "agendatype", this.state.dataOne[selectedVal] );
+                
+                this.setState({
+                    // graphTwoLabel: graphSorting[0],
+                    // graphTwoData: graphSorting[1],
+                    // dataTwo: graphSorting[2],
+                    graphClicked: 1,
+                    rowData: this.state.dataEight[selectedVal]
+                })
+                
+            }
+        },
+    }
 
 
         
     return (
-        <div>        
-        <div className="graphDashboard">
-        
-
-        <CardContent className={this.state.hardJSON.length > 1 ? "halfGraph" : "fullGraph"} >
-            <React.Fragment>
-                <Pie
-                data={ PIEgraphOneSortedData }
-                options={ PIEgraphOneOption } 
-                />
-            </React.Fragment>
-        </CardContent>
+        <div style={ this.state.rowData.length > 0 ? null : {display : "none"}}>        
+        <div className="graphDashboard" style={ this.state.dropdownSelected === "getAllAgenda" ? null : {display : "none"}}>
+        {
+            this.state.graphClicked >= 0 ?
+            <CardContent className="halfGraph" >
+                <React.Fragment>
+                    <Bar
+                    data={ graphOneSortedData }
+                    options={ graphOneOption } 
+                    />
+                </React.Fragment>
+            </CardContent>
+            :null
+        }
 
         {
             this.state.graphClicked > 0 ?
@@ -507,7 +1251,86 @@ class DashboardAgenda extends React.Component {
         }
 
         </div>
+        <div className="graphDashboard" style={ this.state.dropdownSelected === "getAllAgenda" && this.state.graphClicked > 1 ? null : {display : "none"}}>
+        {
+            this.state.graphClicked > 1 ?
+            <CardContent className="halfGraph">
+                <React.Fragment>
+                    <Pie
+                    data={ graphThirdSortedData } 
+                    options={ graphThirdOption } 
+                    />
+                </React.Fragment>
+            </CardContent> 
+            :null
+        }
+        {
+            this.state.graphClicked > 2 ?
+            <CardContent className="halfGraph">
+                <React.Fragment>
+                    <Pie
+                    data={ graphFourthSortedData } 
+                    options={ graphFourthOption } 
+                    />
+                </React.Fragment>
+            </CardContent> 
+            :null
+        }
+        </div>
 
+        <div className="graphDashboard" style={ this.state.dropdownSelected === "getAllMom" ? null : {display : "none"}}>
+        {
+            this.state.graphClicked >= 0?
+            <CardContent className="halfGraph">
+                <React.Fragment>
+                    <Bar
+                    data={ graphFifthSortedData } 
+                    options={ graphFifthOption } 
+                    />
+                </React.Fragment>
+            </CardContent> 
+            :null
+        }
+        {
+            this.state.graphClicked > 0?
+            <CardContent className="halfGraph">
+                <React.Fragment>
+                    <Bar
+                    data={ graphSixthSortedData } 
+                    options={ graphSixthOption } 
+                    />
+                </React.Fragment>
+            </CardContent> 
+            :null
+        }
+        </div>        
+        <div className="graphDashboard" style={ this.state.dropdownSelected === "getAllMeeting" ? null : {display : "none"}}>
+        {
+            this.state.graphClicked >= 0?
+            <CardContent className="halfGraph">
+                <React.Fragment>
+                    <Bar
+                    data={ graphSevenSortedData } 
+                    options={ graphSevenOption } 
+                    />
+                </React.Fragment>
+            </CardContent> 
+            :null
+        }
+        {
+            this.state.graphClicked > 0?
+            <CardContent className="halfGraph">
+                <React.Fragment>
+                    <Bar
+                    data={ graphEightSortedData } 
+                    options={ graphEightOption } 
+                    />
+                </React.Fragment>
+            </CardContent> 
+            :null
+        }
+        </div>        
+        
         {/* Table Feature  */}
         <div className="tableContainer">
         {
@@ -537,7 +1360,7 @@ class DashboardAgenda extends React.Component {
         }
 
         {
-            // this.state.graphClicked >= 0 ?
+            this.state.graphClicked >= 0 ?
             <ReactTable id="customReactTable"
             // PaginationComponent={Pagination}
             data={ this.state.rowData }  
@@ -546,7 +1369,7 @@ class DashboardAgenda extends React.Component {
             pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
             pageSizeOptions = {[20,40,60]}  
             /> 
-            // :null
+            :null
         }
         </div>
         </div>

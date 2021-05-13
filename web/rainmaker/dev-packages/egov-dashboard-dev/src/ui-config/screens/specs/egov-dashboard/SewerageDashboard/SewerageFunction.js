@@ -1,9 +1,9 @@
 import { handleScreenConfigurationFieldChange as handleField, toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getTenantId, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 // import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
 import set from "lodash/set";
-import { getOSBMData } from "../../../../../ui-utils/commons";
+import { getSewerageData } from "../../../../../ui-utils/commons";
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
@@ -43,29 +43,23 @@ export const SearchDashboardData = async (state, dispatch) =>{
   }
   else{ 
 
-    debugger;
-    var userUUID = JSON.parse(getUserInfo()).uuid;
   var data = {
-    "payload" : {
-      "tenantId": getTenantId(),
-      "reportName": "DescriptionReport",
-      "searchParams": [
-        {
-          "name": "fromDate",
-          "input": fromDateNumeric
-        },
-        {
-          "name": "toDate",
-          "input": toDateNumeric
-        }
-      ],
-    },
+    "tenantId" : getTenantId(),
+    "fromDate":fromDateNumeric,
+    "toDate": toDateNumeric,
+    "reportSortBy": reportSortBy
+    
+  }
+  let requestBody = {
+    "tenantId": getTenantId(),
+    "fromDate": def_fromDate,
+    "toDate": def_toDate,
     "reportSortBy": reportSortBy
   }
     debugger;
     try {
       // API call for Description Report
-      const response = await getOSBMData( dispatch, data );
+      const response = await getSewerageData( dispatch, data );
 
     } catch (error) {
 

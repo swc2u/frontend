@@ -53,29 +53,29 @@ div#material-ui-FilterConstraintsContainer {
   flex-wrap: wrap;
   box-sizing: border-box; }
 
-input#custom-containers-toDate {
-  height: 10%; }
-
-input#custom-containers-fromDate {
-  height: 10%; }
-
-div#material-ui-FilterConstraintsContainer {
-  width: 150%; }
-
-div#custom-containers-local-moduleDashboardDropdown {
-  position: absolute;
-  width: 325px; }
-
-button#material-ui-searchButton {
-  margin-left: 165px; }
+button#material-ui-sewerageSearchButton {
+    margin-left: 107px;
+}
+div#custom-containers-local-sewerageDashboardDropdown {
+    width: 307px;
+    position: absolute;
+}
 
 @media only screen and (max-width: 900px) {
   div#material-ui-FilterConstraintsContainer {
-    display: block; }
-  button#material-ui-searchButton {
+      width: 121%;
+      display: -ms-flexbox;
+      display: block;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+  }
+  div#custom-containers-local-sewerageDashboardDropdown {
+      width: 300px;
+  }
+  button#material-ui-sewerageSearchButton {
     margin-left: 0px;
-    margin-top: 94px;
-    width: 150px; }
-  div#custom-containers-local-moduleDashboardDropdown {
-    position: absolute;
-    width: 250px; } }
+    margin-top: 80px;
+  }
+}

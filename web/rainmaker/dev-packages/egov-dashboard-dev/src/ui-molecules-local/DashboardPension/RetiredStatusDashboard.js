@@ -10,23 +10,25 @@ import 'jspdf-autotable';
 import './pension.css';
 
 class RetiredStatusDashboard extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state ={
-        graphOneData : [[], []],
-        graphClicked: -1,
-        rowData: [],
-        columnData: [],
-        // Feature Table
-        toggleColumnCheck: false,
-        unchangeColumnData: [],
-        checkData : []
-    }
-    }
-
-      // PDF function 
-      pdfDownload = (e) => {
-  
+    constructor(props) {
+        super(props);
+        this.state ={
+            checkData : [],
+          graphOneData : [[], []],
+          graphTwoData : [[], []],
+          graphClicked: -1,
+          rowData: [],
+          columnData: [],
+          // Feature Table
+          toggleColumnCheck: false,
+          unchangeColumnData: []
+        }
+      }
+    
+    
+        // PDF function 
+        pdfDownload = (e) => {
+    
         debugger;
         e.preventDefault();
         var columnData = this.state.unchangeColumnData
@@ -87,7 +89,7 @@ class RetiredStatusDashboard extends React.Component {
         doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
     
         doc.setFontSize(10);
-        const pdfTitle = "Pension Dashboard";
+        const pdfTitle = "Pension Dashboard"
         doc.text(pdfTitle, pageWidth / 2, 40, 'center');
     
         doc.autoTable({ html: '#my-table' });
@@ -229,8 +231,46 @@ class RetiredStatusDashboard extends React.Component {
               groupData.push(group3);
   
               return [ graphOneLabel, graphOneData, groupData ];
-            }if(checkGraph === "dashboard2"){
+            }
+            if(checkGraph === "status"){
               debugger;
+              var sortNo = null;
+              var group = data.reduce((r, a) => {
+                  r[a[3]] = [...r[a[3]] || [], a];
+                  return r;
+                  }, {});
+          
+              var graphOneLabel = Object.keys(group);
+              var graphOneData = []
+              for(var i=0; i<Object.keys(group).length ; i++){
+                  graphOneData.push(group[graphOneLabel[i]].length);
+              }
+  
+              // Table contain Emp to be retire data
+              var rowData = data;
+              var columnData = [];
+              var hardCol = ["EMP Code", "Name", "Date", "Status"];
+  
+              data.forEach(function(a) {
+                  a[2] = new Date(a[2]).getFullYear()+"-"+new Date(a[2]).getMonth()+"-"+new Date(a[2]).getDate()
+              });
+  
+              for(var i=0; i<hardCol.length; i++){
+                  var item = {};
+                  item["Header"] = hardCol[i];
+                  item["id"] = i;
+                  item["accessor"] = i.toString();
+                  item["show"] = true;
+                  columnData.push(item)
+              }
+  
+              this.setState({
+                  rowData : rowData,
+                  columnData : columnData,
+                  unchangeColumnData : columnData
+              })
+  
+              return [ graphOneLabel, graphOneData, group ];
   
             }else{
               debugger;
@@ -259,150 +299,138 @@ class RetiredStatusDashboard extends React.Component {
         return res.toUpperCase();
         });
         }
-    
+        
+        dateRange = (startDate, endDate) => {
+          var monthJSON = {"01":"JAN","02":"FEB","03":"MAR","04":"APR","05":"MAY","06":"JUN","07":"JUL",
+          "08":"AUG","09":"SEP","10":"OCT","11":"NOV","12":"DEC"};
+          var start      = startDate.split('-');
+          var end        = endDate.split('-');
+          var startYear  = parseInt(start[0]);
+          var endYear    = parseInt(end[0]);
+          var dates      = [];
+  
+          for(var i = startYear; i <= endYear; i++) {
+          var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+          var startMon = i === startYear ? parseInt(start[1])-1 : 0;
+          for(var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j+1) {
+          var month = j+1;
+          var displayMonth = month < 10 ? '0'+month : month;
+          // dates.push([i, displayMonth, '01'].join('-'));
+          dates.push([i, monthJSON[displayMonth]].join('-'));
+          }
+          }
+          return dates;
+      }
+  
+          dateTimeToForma = (frommDT, toDT) => {
+              var dt1 = new Date(frommDT); 
+              var dateCnt = dt1.getDate() < 10 ? "0"+dt1.getDate() : dt1.getDate();
+              var month = dt1.getMonth() < 10 ? "0"+(dt1.getMonth()+1) : dt1.getMonth()+1;
+              var year = dt1.getFullYear();
+              dt1 = year+"-"+month+"-"+dateCnt
+              var dt2 = new Date(toDT);
+              dateCnt = dt2.getDate() < 10 ? "0"+dt2.getDate() : dt2.getDate();
+              month = dt2.getMonth() < 10 ? "0"+(dt2.getMonth()+1) : dt2.getMonth()+1;
+              year = dt2.getFullYear();
+              dt2 = year+"-"+month+"-"+dateCnt
+  
+  
+              return [dt1, dt2]
+          }
+  
         componentDidMount(){
-          debugger;
-          const propData = this.props.data;
-          var fromDt = new Date(1604169000000).getMonth();
-          var toDt = new Date(1616427545717).getMonth();
-  
-          var hardMonths = {0:"JAN", 1:"FEB", 2:"MAR", 3:"APR", 4:"MAY", 5:"JUN", 6:"JUL", 7:"AUG", 8:"SEP", 9:"OCT", 10:"NOV", 11:"DEC"};
-          // var monthArray = Object.keys(hardMonths);
-          // for(var i=0; i<""; i++){
-  
-          // }
-  
-          
-          // ============================= EmployeeToBeRetire =========================
-          var data = propData[0];
+            debugger;
+            const propsData = this.props.data;
+            if(propsData.length>0 && JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
 
-          var groupOne = data["employeeTobeRetired"].reduce((r, a) => {
-              r[new Date(a[4]).getMonth()] = [...r[new Date(a[4]).getMonth()] || [], a];
-              return r;
-              }, {});
-          
-          var employeeToBeRetire = [];
-          for(var i=0; i<Object.keys(groupOne).length; i++){
-              employeeToBeRetire.push(Object.values(groupOne)[i].length);
-          }
-  
-          // ============================= Normal / Death / Pensioner =========================
-  
-          debugger;
-  
-          var allMergeData = [];
-          allMergeData = allMergeData.concat(data["regularPension"]);
-          allMergeData = allMergeData.concat(data["deathofPensioner"]);
-          allMergeData = allMergeData.concat(data["deathofEmplyee"]);
-  
-          var group = allMergeData.reduce((r, a) => {
-              r[new Date(a[2]).getMonth()] = [...r[new Date(a[2]).getMonth()] || [], a];
-              return r;
-              }, {});
-          
-          var mergeData = [];
-          for(var i=0; i<Object.keys(group).length; i++){
-              mergeData.push(Object.values(group)[i].length);
-          }
-  
-          // ================================ Month X Axis ===================
-          var xLabel =  [];
-          for(var i=0; i<Object.keys(groupOne).length; i++){
-              xLabel.push(hardMonths[parseInt(Object.keys(groupOne)[i])])
-          }
-  
-          var graphOneData = [employeeToBeRetire, mergeData];
-  
-          // =============================== Table DAta================================
-  
-          debugger;
-  
-          var rowData = data["employeeTobeRetired"];
-          var columnData = [];
-  
-          for(var i=0; i<Object.keys(data["reportHeader"]).length; i++){
-              var item = {};
-              item["Header"] = Object.values(data["reportHeader"])[i]["label"];
-              item["id"] = i;
-              item["accessor"] = i.toString();
-              item["show"] = true;
-              columnData.push(item)
-          }
-  
-          this.setState({
-              graphOneData : graphOneData,
-              graphOneLabel : xLabel,
-              rowData: rowData,
-              columnData: columnData,
-              unchangeColumnData: columnData,
-              checkData : this.props.data
-          })
-        }
-
-        componentDidUpdate(){
-            const propData = this.props.data;
-            if(JSON.stringify(propData) !== JSON.stringify(this.state.checkData)){
+                const data = this.props.data;
+                var fromDt = this.props.data[0].criteria.fromDt;
+                var toDt = this.props.data[0].criteria.toDt;
+        
+                var dates = this.dateTimeToForma(fromDt, toDt);
+                var dateRange = this.dateRange(dates[0], dates[1]);
+        
+                var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
+                "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
+        
                 debugger;
-                var fromDt = new Date(1604169000000).getMonth();
-                var toDt = new Date(1616427545717).getMonth();
-        
-                var hardMonths = {0:"JAN", 1:"FEB", 2:"MAR", 3:"APR", 4:"MAY", 5:"JUN", 6:"JUL", 7:"AUG", 8:"SEP", 9:"OCT", 10:"NOV", 11:"DEC"};
-                // var monthArray = Object.keys(hardMonths);
-                // for(var i=0; i<""; i++){
-        
-                // }
-        
-                
-                // ============================= EmployeeToBeRetire =========================
-                var data = propData[0];
-
-                var groupOne = data["employeeTobeRetired"].reduce((r, a) => {
-                    r[new Date(a[4]).getMonth()] = [...r[new Date(a[4]).getMonth()] || [], a];
+                var empRetired =[];
+                var groupEmpRetired = this.props.data[0].employeeTobeRetired.reduce((r, a) => {
+                    r[new Date(a[3]).getFullYear()+"-"+monthJSON[new Date(a[3]).getMonth()]] 
+                    = [...r[new Date(a[3]).getFullYear()+"-"+monthJSON[new Date(a[3]).getMonth()]] || [], a];
                     return r;
                     }, {});
-                
-                var employeeToBeRetire = [];
-                for(var i=0; i<Object.keys(groupOne).length; i++){
-                    employeeToBeRetire.push(Object.values(groupOne)[i].length);
-                }
         
-                // ============================= Normal / Death / Pensioner =========================
-        
-                debugger;
-        
-                var allMergeData = [];
-                allMergeData = allMergeData.concat(data["regularPension"]);
-                allMergeData = allMergeData.concat(data["deathofPensioner"]);
-                allMergeData = allMergeData.concat(data["deathofEmplyee"]);
-        
-                var group = allMergeData.reduce((r, a) => {
-                    r[new Date(a[2]).getMonth()] = [...r[new Date(a[2]).getMonth()] || [], a];
+                var regularPension = [];
+                var groupRegularPension = this.props.data[0].regularPension.reduce((r, a) => {
+                    r[new Date(a[2]).getFullYear()+"-"+monthJSON[new Date(a[2]).getMonth()]] 
+                    = [...r[new Date(a[2]).getFullYear()+"-"+monthJSON[new Date(a[2]).getMonth()]] || [], a];
                     return r;
                     }, {});
-                
-                var mergeData = [];
-                for(var i=0; i<Object.keys(group).length; i++){
-                    mergeData.push(Object.values(group)[i].length);
+        
+                var deathOfEmp = [];
+                var groupDeathofEmp = this.props.data[0].deathofEmplyee.reduce((r, a) => {
+                    r[new Date(a[2]).getFullYear()+"-"+monthJSON[new Date(a[2]).getMonth()]] 
+                    = [...r[new Date(a[2]).getFullYear()+"-"+monthJSON[new Date(a[2]).getMonth()]] || [], a];
+                    return r;
+                    }, {});
+        
+                var deathofPensionerr = [];
+                var groupDeathOfPensioner = this.props.data[0].deathofPensioner.reduce((r, a) => {
+                    r[new Date(a[2]).getFullYear()+"-"+monthJSON[new Date(a[2]).getMonth()]] 
+                    = [...r[new Date(a[2]).getFullYear()+"-"+monthJSON[new Date(a[2]).getMonth()]] || [], a];
+                    return r;
+                    }, {});
+        
+                //All Data combination operation
+                debugger;
+                var processApplicationSUM = [];
+                for(var i=0; i<dateRange.length; i++){
+                    processApplicationSUM.push(0);
                 }
+                for(var i=0; i<dateRange.length; i++){
+                    if(groupRegularPension[dateRange[i]]){
+                        // empRetired.push(groupRegularPension[dateRange[i]].length);
+                        processApplicationSUM[i] = processApplicationSUM[i] + groupRegularPension[dateRange[i]].length;
+                    }else{
+                        processApplicationSUM[i] = processApplicationSUM[i] + 0;
+                        // empRetired.push(0);
+                    }
         
-                // ================================ Month X Axis ===================
-                var xLabel =  [];
-                for(var i=0; i<Object.keys(groupOne).length; i++){
-                    xLabel.push(hardMonths[parseInt(Object.keys(groupOne)[i])])
+                    if(groupDeathofEmp[dateRange[i]]){
+                        processApplicationSUM[i] = processApplicationSUM[i] + groupDeathofEmp[dateRange[i]].length;
+                        // empRetired.push(groupDeathofEmp[dateRange[i]].length);
+                    }else{
+                        // empRetired.push(0);
+                        processApplicationSUM[i] = processApplicationSUM[i] + 0;
+                    }
+        
+                    if(groupDeathOfPensioner[dateRange[i]]){
+                        processApplicationSUM[i] = processApplicationSUM[i] + groupDeathOfPensioner[dateRange[i]].length;
+                    }else{
+                        processApplicationSUM[i] = processApplicationSUM[i] + 0;
+                    }
                 }
-        
-                var graphOneData = [employeeToBeRetire, mergeData];
-        
-                // =============================== Table DAta================================
         
                 debugger;
+                var graphOneData = [];
+                for(var i=0; i<dateRange.length; i++){
+                    if(groupEmpRetired[dateRange[i]]){
+                        empRetired.push(groupEmpRetired[dateRange[i]].length);
+                    }else{
+                        empRetired.push(0);
+                    }
+                }
         
-                var rowData = data["employeeTobeRetired"];
+                var applicationProcessData = [groupRegularPension, groupDeathofEmp, groupDeathOfPensioner];
+        
+                // Table contain Emp to be retire data
+                var rowData = this.props.data[0].employeeTobeRetired;
                 var columnData = [];
         
-                for(var i=0; i<Object.keys(data["reportHeader"]).length; i++){
+                for(var i=0; i<Object.keys(this.props.data[0]["reportHeader"]).length; i++){
                     var item = {};
-                    item["Header"] = Object.values(data["reportHeader"])[i]["label"];
+                    item["Header"] = Object.values(this.props.data[0]["reportHeader"])[i]["label"];
                     item["id"] = i;
                     item["accessor"] = i.toString();
                     item["show"] = true;
@@ -410,14 +438,136 @@ class RetiredStatusDashboard extends React.Component {
                 }
         
                 this.setState({
-                    graphOneData : graphOneData,
-                    graphOneLabel : xLabel,
+                    graphOneData : [empRetired, processApplicationSUM],
+                    graphOneLabel : dateRange,
                     rowData: rowData,
+                    graphClicked: 0,
                     columnData: columnData,
                     unchangeColumnData: columnData,
+                    applicationProcessData : applicationProcessData
+                })
+
+                this.setState({
                     checkData : this.props.data
                 })
-            }
+            } 
+          
+        }
+
+        componentDidMount(){
+            debugger;
+            const propsData = this.props.data;
+            if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
+
+                const data = this.props.data;
+                var fromDt = this.props.data[0].criteria.fromDt;
+                var toDt = this.props.data[0].criteria.toDt;
+        
+                var dates = this.dateTimeToForma(fromDt, toDt);
+                var dateRange = this.dateRange(dates[0], dates[1]);
+        
+                var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
+                "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
+        
+                debugger;
+                var empRetired =[];
+                var groupEmpRetired = this.props.data[0].employeeTobeRetired.reduce((r, a) => {
+                    r[new Date(a[3]).getFullYear()+"-"+monthJSON[new Date(a[3]).getMonth()]] 
+                    = [...r[new Date(a[3]).getFullYear()+"-"+monthJSON[new Date(a[3]).getMonth()]] || [], a];
+                    return r;
+                    }, {});
+        
+                var regularPension = [];
+                var groupRegularPension = this.props.data[0].regularPension.reduce((r, a) => {
+                    r[new Date(a[2]).getFullYear()+"-"+monthJSON[new Date(a[2]).getMonth()]] 
+                    = [...r[new Date(a[2]).getFullYear()+"-"+monthJSON[new Date(a[2]).getMonth()]] || [], a];
+                    return r;
+                    }, {});
+        
+                var deathOfEmp = [];
+                var groupDeathofEmp = this.props.data[0].deathofEmplyee.reduce((r, a) => {
+                    r[new Date(a[2]).getFullYear()+"-"+monthJSON[new Date(a[2]).getMonth()]] 
+                    = [...r[new Date(a[2]).getFullYear()+"-"+monthJSON[new Date(a[2]).getMonth()]] || [], a];
+                    return r;
+                    }, {});
+        
+                var deathofPensionerr = [];
+                var groupDeathOfPensioner = this.props.data[0].deathofPensioner.reduce((r, a) => {
+                    r[new Date(a[2]).getFullYear()+"-"+monthJSON[new Date(a[2]).getMonth()]] 
+                    = [...r[new Date(a[2]).getFullYear()+"-"+monthJSON[new Date(a[2]).getMonth()]] || [], a];
+                    return r;
+                    }, {});
+        
+                //All Data combination operation
+                debugger;
+                var processApplicationSUM = [];
+                for(var i=0; i<dateRange.length; i++){
+                    processApplicationSUM.push(0);
+                }
+                for(var i=0; i<dateRange.length; i++){
+                    if(groupRegularPension[dateRange[i]]){
+                        // empRetired.push(groupRegularPension[dateRange[i]].length);
+                        processApplicationSUM[i] = processApplicationSUM[i] + groupRegularPension[dateRange[i]].length;
+                    }else{
+                        processApplicationSUM[i] = processApplicationSUM[i] + 0;
+                        // empRetired.push(0);
+                    }
+        
+                    if(groupDeathofEmp[dateRange[i]]){
+                        processApplicationSUM[i] = processApplicationSUM[i] + groupDeathofEmp[dateRange[i]].length;
+                        // empRetired.push(groupDeathofEmp[dateRange[i]].length);
+                    }else{
+                        // empRetired.push(0);
+                        processApplicationSUM[i] = processApplicationSUM[i] + 0;
+                    }
+        
+                    if(groupDeathOfPensioner[dateRange[i]]){
+                        processApplicationSUM[i] = processApplicationSUM[i] + groupDeathOfPensioner[dateRange[i]].length;
+                    }else{
+                        processApplicationSUM[i] = processApplicationSUM[i] + 0;
+                    }
+                }
+        
+                debugger;
+                var graphOneData = [];
+                for(var i=0; i<dateRange.length; i++){
+                    if(groupEmpRetired[dateRange[i]]){
+                        empRetired.push(groupEmpRetired[dateRange[i]].length);
+                    }else{
+                        empRetired.push(0);
+                    }
+                }
+        
+                var applicationProcessData = [groupRegularPension, groupDeathofEmp, groupDeathOfPensioner];
+        
+                // Table contain Emp to be retire data
+                var rowData = this.props.data[0].employeeTobeRetired;
+                var columnData = [];
+        
+                for(var i=0; i<Object.keys(this.props.data[0]["reportHeader"]).length; i++){
+                    var item = {};
+                    item["Header"] = Object.values(this.props.data[0]["reportHeader"])[i]["label"];
+                    item["id"] = i;
+                    item["accessor"] = i.toString();
+                    item["show"] = true;
+                    columnData.push(item)
+                }
+        
+                this.setState({
+                    graphOneData : [empRetired, processApplicationSUM],
+                    graphOneLabel : dateRange,
+                    rowData: rowData,
+                    columnData: columnData,
+                    graphClicked : 0,
+                    unchangeColumnData: columnData,
+                    applicationProcessData : applicationProcessData
+                })
+
+                this.setState({
+                    checkData : this.props.data
+                })
+            } 
+          
         }
     
         render() {
@@ -535,6 +685,126 @@ class RetiredStatusDashboard extends React.Component {
                       debugger;
                       var ind = element[0]._index;   
                       const selectedVal = this.state.graphOneLabel[ind];
+                      const data = this.state.applicationProcessData;
+                      var selectedData = [];
+                      for(var i=0; i<data.length; i++){
+                          for(var j=0; j<Object.keys(data[i]).length; j++){
+                              if(selectedVal === Object.keys(data[i])[j] ){
+                                  selectedData = selectedData.concat(Object.values(data[i])[j])
+                              }
+                          }
+                      }
+                      var graphData = this.graphSorting( "status", selectedData, "status" );
+  
+                      this.setState({
+                          graphTwoLabel: graphData[0],
+                          graphTwoData: graphData[1],
+                          dataTwo: graphData[2],
+                          graphClicked: 1,
+                        //   rowData: this.state.selectedData
+                      })
+                      
+                  }
+              },
+          }
+  
+          // First Double Bar Graph Graph
+          var graphTwoSortedData = {
+              labels: this.state.graphTwoLabel,
+              // labels: ["Label1", "Label2","Label3","Label4","Label5","Label6","Label7","Label8","Label9","Label10","Label11", "Label12"],
+              datasets: [
+                  {
+                  label: "Application",
+                  fill: false,
+                  lineTension: 0.1,
+                  hoverBorderWidth : 12,
+                  // backgroundColor : this.state.colorRandom,
+                  backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+                  borderColor: "rgba(75,192,192,0.4)",
+                  borderCapStyle: "butt",
+                  barPercentage: 2,
+                  borderWidth: 5,
+                  barThickness: 25,
+                  maxBarThickness: 10,
+                  minBarLength: 2,
+                  data: this.state.graphTwoData
+                  // data:[20, 50]
+                  }
+              ]
+          }
+  
+          var graphTwoOption = {
+              responsive : true,
+              // aspectRatio : 3,
+              maintainAspectRatio: false,
+              cutoutPercentage : 0,
+              datasets : [
+                  {
+                  backgroundColor : "rgba(0, 0, 0, 0.1)",
+                  weight: 0
+                  }
+              ], 
+              legend: {
+                  display: false,
+                  position: 'bottom',
+                  labels: {
+                  fontFamily: "Comic Sans MS",
+                  boxWidth: 20,
+                  boxHeight: 2
+                  }
+              },
+              tooltips: {
+                  enabled: true
+              },
+              title: {
+                  display: true,
+                  text: "Statuswise Application to be process for Retire"
+              },
+              scales: {
+                  xAxes: [{
+                      gridLines: {
+                          display:true
+                      },
+                      scaleLabel: {
+                          display: true,
+                          labelString: "Status of Application"
+                          }, 
+                  }],
+                  yAxes: [{
+                      gridLines: {
+                          display:true
+                      },
+                      ticks: {
+                          suggestedMin: 0,
+                          // suggestedMax: 100,
+                          // stepSize: 1
+                      },
+                      scaleLabel: {
+                          display: true,
+                          labelString: "No of Application"
+                          }, 
+                  }]
+              },
+              plugins: {
+                  datalabels: {
+                      display: false
+                  //     color: 'white',
+                  //     backgroundColor: 'grey',
+                  //     labels: {
+                  //         title: {
+                  //             font: {
+                  //                 weight: 'bold'
+                  //             }
+                  //         }
+                  //     }}
+                  }
+              },
+              onClick: (e, element) => {
+                  if (element.length > 0) {
+                      
+                      debugger;
+                      var ind = element[0]._index;   
+                      const selectedVal = this.state.graphOneLabel[ind];
   
                       // var graphData = this.graphSorting( "", data, "dashboard1" );
   
@@ -551,12 +821,11 @@ class RetiredStatusDashboard extends React.Component {
           }
             
         return (
-            <div>
-            {/* <h2> Pension Application process Dashboard Graph </h2>  */}
-            
+            <div style={this.state.rowData.length === 0 ? {display  : "none"} : null}>
             <div className="graphDashboard">
             
-    
+            {
+                this.state.graphClicked >= 0 ?
             <CardContent className="halfGraph">
                 <React.Fragment>
                     <Bar
@@ -565,7 +834,20 @@ class RetiredStatusDashboard extends React.Component {
                     />
                 </React.Fragment>
             </CardContent>
-    
+            :null
+            }
+            {
+                this.state.graphClicked > 0 ?
+                  <CardContent className="halfGraph">
+                      <React.Fragment>
+                          <Bar
+                          data={ graphTwoSortedData }
+                          options={ graphTwoOption } 
+                          />
+                      </React.Fragment>
+                  </CardContent>
+                  :null
+            }
             </div>
     
             {/* Table Feature  */}
@@ -597,7 +879,7 @@ class RetiredStatusDashboard extends React.Component {
             }
     
             {
-                // this.state.graphClicked >= 0 ?
+                this.state.graphClicked >= 0 ?
                 <ReactTable id="customReactTable"
                 // PaginationComponent={Pagination}
                 data={ this.state.rowData }  
@@ -606,7 +888,7 @@ class RetiredStatusDashboard extends React.Component {
                 pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
                 pageSizeOptions = {[20,40,60]}  
                 /> 
-                // :null
+                :null
             }
             </div>
             </div>

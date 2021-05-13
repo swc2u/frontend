@@ -4,7 +4,7 @@ import { getCommonCard, getCommonContainer,
 // import { searchAPICall, SearchDashboardData, SearchPGRDashboardData } from "./functions";
 import { SearchDashboardData } from "./StoreFunction";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import './index.css';
+import './StoreIndentDashboard.css';
 
 export const FilterForm = getCommonCard({
   FilterConstraintsContainer: getCommonContainer({
@@ -65,7 +65,7 @@ export const FilterForm = getCommonCard({
       jsonPath: "dahsboardHome.defaulttoDate",
       required: true,
     }),
-    moduleDashboardDropdownStore: {
+    storeIndentDropdownOne: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-dashboard",
       componentPath: "AutosuggestContainer",
@@ -104,7 +104,7 @@ export const FilterForm = getCommonCard({
       },
     
     },
-    moduleDashboardDropdown: {
+    storeIndentDropdownTwo: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-dashboard",
       componentPath: "AutosuggestContainer",
@@ -117,9 +117,9 @@ export const FilterForm = getCommonCard({
           },
       props: {
         style: {
-        width: "100%",
-        cursor: "pointer",
-        height: "55px"
+          width: "100%",
+          cursor: "pointer",
+          height: "55px"
       },
   
       className: "citizen-city-picker",
@@ -144,7 +144,7 @@ export const FilterForm = getCommonCard({
       },
     
     },
-    searchButton: {
+    storeIndentSearchButton: {
       componentPath: "Button",
       gridDefination: {
         xs: 6,
@@ -156,8 +156,7 @@ export const FilterForm = getCommonCard({
         color: "primary",
         style: {
         width: "100%",
-        height: "55px",
-        // marginLeft: "90%"
+        height: "55px"
         }
       },
       children: {

@@ -12,6 +12,11 @@ export const FilterForm = getCommonCard({
         labelName: "",
         labelKey: "Select From Date"
       },
+      props: {
+        style:{
+          width : "130px"
+        }
+      },
       gridDefination: {
         xs: 6,
         sm: 2,
@@ -40,6 +45,9 @@ export const FilterForm = getCommonCard({
       props: {
         inputProps: {
           min: ''
+        },
+        style:{
+          width : "130px"
         }
       },
       gridDefination: {

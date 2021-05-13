@@ -148,6 +148,10 @@
   width: 50%;
   border-style: ridge; }
 
+.fullGraph {
+  width: 100%;
+  border-style: ridge; }
+
 @media only screen and (max-width: 500px) {
   .graphDashboard {
     display: contents;

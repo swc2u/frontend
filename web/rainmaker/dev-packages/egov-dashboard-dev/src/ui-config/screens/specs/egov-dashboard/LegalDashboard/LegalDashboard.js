@@ -12,6 +12,11 @@ export const DashboardFilterForm = getCommonCard({
         labelName: "",
         labelKey: "Select From Date"
       },
+      props: {
+        style : {
+          width : "130px"
+        }
+      },
       gridDefination: {
         xs: 6,
         sm: 2,
@@ -23,8 +28,8 @@ export const DashboardFilterForm = getCommonCard({
       afterFieldChange: (action, state, dispatch) => {
         dispatch(
           handleField(
-            "dashboardSource",
-            "components.div.children.FilterFormforEmployee.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+            "LegalDashboard",
+            "components.div.children.DashboardFilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
             "props.inputProps.min",
             action.value
           )
@@ -38,6 +43,9 @@ export const DashboardFilterForm = getCommonCard({
         labelKey: "Select To Date"
       },
       props: {
+        style : {
+          width : "130px"
+        },
         inputProps: {
           min: ''
         }
@@ -51,45 +59,45 @@ export const DashboardFilterForm = getCommonCard({
       jsonPath: "dahsboardHome.defaulttoDate",
       required: true,
     }),
-    // moduleDashboardDropdown: {
-    //   uiFramework: "custom-containers-local",
-    //   moduleName: "egov-dashboard",
-    //   componentPath: "AutosuggestContainer",
-    //   jsonPath: "dahsboardHome.dropDownData2",
-    //   required: true,
-    //   gridDefination: {
-    //         xs: 6,
-    //         sm: 2,
-    //         md: 2
-    //       },
-    //   props: {
-    //     style: {
-    //     width: "200%",
-    //     cursor: "pointer"
-    //   },
+    moduleDashboardDropdown: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-dashboard",
+      componentPath: "AutosuggestContainer",
+      jsonPath: "dahsboardHome.dropDownData2",
+      required: true,
+      gridDefination: {
+            xs: 6,
+            sm: 2,
+            md: 2
+          },
+      props: {
+        style: {
+        width: "200%",
+        cursor: "pointer"
+      },
   
-    //   className: "citizen-city-picker",
-    //   label: { labelName: "Report Type", labelKey: "DASHBOARD_DROPDOWN_REPORT_TYPE_LABEL" },
-    //   placeholder: {
-    //     labelName: "",
-    //     labelKey: "Select Module"
-    //   },
-    //   sourceJsonPath: "dahsboardHome.dropDownData",
-    //   jsonPath: "dahsboardHome.dropDownData2",
-    //   maxLength:5,
-    //   labelsFromLocalisation: false,
-    //   suggestions: [],
-    //   fullwidth: true,
-    //   // required: true,
-    //   inputLabelProps: {
-    //     shrink: true
-    //   },
-    //   isMulti: false,
-    //   labelName: "name",
-    //   valueName: "name"
-    //   },
+      className: "citizen-city-picker",
+      label: { labelName: "Report Type", labelKey: "DASHBOARD_DROPDOWN_REPORT_TYPE_LABEL" },
+      placeholder: {
+        labelName: "",
+        labelKey: "Select Module"
+      },
+      sourceJsonPath: "dahsboardHome.dropDownData",
+      jsonPath: "dahsboardHome.dropDownData2",
+      maxLength:5,
+      labelsFromLocalisation: false,
+      suggestions: [],
+      fullwidth: true,
+      // required: true,
+      inputLabelProps: {
+        shrink: true
+      },
+      isMulti: false,
+      labelName: "name",
+      valueName: "name"
+      },
     
-    // },
+    },
     searchButton: {
       componentPath: "Button",
       gridDefination: {
@@ -102,9 +110,7 @@ export const DashboardFilterForm = getCommonCard({
         color: "primary",
         style: {
         width: "60%",
-        height: "55px",
-        /* margin-right: 80px; */
-        marginLeft: "180px"
+        height: "55px"
         }
       },
       children: {

@@ -1,6 +1,6 @@
 import { getCommonCard, getCommonContainer, getDateField, getLabel, getPattern,} from "egov-ui-framework/ui-config/screens/specs/utils";
 // import { searchAPICall, SearchDashboardData, SearchPGRDashboardData } from "./functions";
-import { SearchDashboardData } from "./OSBMFunction";
+import { SearchDashboardData } from "./SewerageFunction";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import './index.css';
 
@@ -26,14 +26,14 @@ export const FilterForm = getCommonCard({
       jsonPath: "dahsboardHome.defaultFromDate",
       required: true,
       afterFieldChange: (action, state, dispatch) => {
-        dispatch(
-          handleField(
-            "OSBMDashboard",
-            "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
-            "props.inputProps.min",
-            action.value
-          )
-        );
+        // dispatch(
+        //   handleField(
+        //     "dashboardSource",
+        //     "components.div.children.FilterFormforEmployee.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+        //     "props.inputProps.min",
+        //     action.value
+        //   )
+        // );
         }
     }),
     toDate: getDateField({
@@ -43,11 +43,11 @@ export const FilterForm = getCommonCard({
         labelKey: "Select To Date"
       },
       props: {
-        style:{
-          width : "130px"
-        },
         inputProps: {
           min: ''
+        },
+        style:{
+          width : "130px"
         }
       },
       gridDefination: {
@@ -59,7 +59,7 @@ export const FilterForm = getCommonCard({
       jsonPath: "dahsboardHome.defaulttoDate",
       required: true,
     }),
-    moduleDashboardDropdown: {
+    sewerageDashboardDropdown: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-dashboard",
       componentPath: "AutosuggestContainer",
@@ -98,7 +98,7 @@ export const FilterForm = getCommonCard({
       },
     
     },
-    searchButton: {
+    sewerageSearchButton: {
       componentPath: "Button",
       gridDefination: {
         xs: 6,
@@ -133,7 +133,7 @@ export const FilterForm = getCommonCard({
 export const DashboardResults = {
   uiFramework: "custom-molecules-local",
   moduleName: "egov-dashboard",
-  componentPath: "DashboardOSBM",
+  componentPath: "DashboardSewerage",
   props: {
   // className: "dashboard-graph",
   formKey: `newapplication`,

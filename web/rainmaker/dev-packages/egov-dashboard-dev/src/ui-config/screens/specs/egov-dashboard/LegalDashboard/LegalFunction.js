@@ -5,8 +5,6 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { getLegalDashboardData } from "../../../../../ui-utils/commons";
 
-// HARD Data CORS IASSUE
-import Legal_data from './data.json';
 
 export const SearchLegalDashboardData = async (state, dispatch) =>{
   
@@ -61,18 +59,6 @@ export const SearchLegalDashboardData = async (state, dispatch) =>{
       try {
         // API call for Description Report
         const response = await getLegalDashboardData( dispatch, requestBody );
-        
-        debugger;
-        const checkData = response ? response : Legal_data;
-
-        dispatch(
-          handleField(
-          "LegalDashboard",
-          "components.div.children.DashboardResults",
-          "props.data",
-          checkData
-          )
-          );
           
       } catch (error) {
   
