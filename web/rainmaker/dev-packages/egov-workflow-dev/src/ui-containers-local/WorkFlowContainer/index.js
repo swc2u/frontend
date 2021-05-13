@@ -795,45 +795,50 @@ ValidateRequest =(payload) =>{
 
     }
   }
-  if((payload.applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
-  && (payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT'|| payload.action==='VERIFY_AND_FORWARD_TO_JE' ))//PENDING_FOR_SDE_APPROVAL,VERIFY_AND_FORWARD_FOR_PAYMENT
+  if(payload.activityType ==='UPDATE_METER_INFO' || payload.activityType ==='WS_METER_UPDATE')// only for meter update
   {
-    if((payload.connectionExecutionDate !== 0 ) 
-     && (payload.proposedMeterId !== null)
-     && (payload.proposedMeterInstallationDate !== 0 )
-     && (payload.proposedInitialMeterReading !== null )
-     && (payload.proposedMeterCount !== null )
-     && (payload.proposedMfrCode !== null )
-     && (payload.proposedMeterDigits !== null )
-     && (payload.proposedMeterUnit !== null )
-     && (payload.proposedSanctionedCapacity !== null )
-     && (payload.proposedMeterRentCode !== null )     
-    )
+    if((payload.applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
+    && (payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT'|| payload.action==='VERIFY_AND_FORWARD_TO_JE' ))//PENDING_FOR_SDE_APPROVAL,VERIFY_AND_FORWARD_FOR_PAYMENT
     {
-      isvalidRequest = true
-      payload.meterId = payload.proposedMeterId
-      payload.meterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
-      payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
-      payload.additionalDetails.initialMeterReading = payload.proposedInitialMeterReading
-      payload.meterCount = payload.proposedMeterCount
-      payload.mfrCode = payload.proposedMfrCode
-      payload.meterDigits = payload.proposedMeterDigits
-      payload.meterUnit = payload.proposedMeterUnit
-      payload.sanctionedCapacity = payload.proposedSanctionedCapacity
-      payload.meterRentCode = payload.proposedMeterRentCode
-      // payload.waterProperty.usageCategory = payload.proposedMeterId
-      // payload.waterProperty.usageCategory = payload.proposedMeterId
+      if((payload.connectionExecutionDate !== 0 ) 
+       && (payload.proposedMeterId !== null)
+       && (payload.proposedMeterInstallationDate !== 0 )
+       && (payload.proposedInitialMeterReading !== null )
+       && (payload.proposedMeterCount !== null )
+       && (payload.proposedMfrCode !== null )
+       && (payload.proposedMeterDigits !== null )
+       && (payload.proposedMeterUnit !== null )
+       && (payload.proposedSanctionedCapacity !== null )
+       && (payload.proposedMeterRentCode !== null )     
+      )
+      {
+        isvalidRequest = true
+        payload.meterId = payload.proposedMeterId
+        payload.meterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+        payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+        payload.additionalDetails.initialMeterReading = payload.proposedInitialMeterReading
+        payload.meterCount = payload.proposedMeterCount
+        payload.mfrCode = payload.proposedMfrCode
+        payload.meterDigits = payload.proposedMeterDigits
+        payload.meterUnit = payload.proposedMeterUnit
+        payload.sanctionedCapacity = payload.proposedSanctionedCapacity
+        payload.meterRentCode = payload.proposedMeterRentCode
+        // payload.waterProperty.usageCategory = payload.proposedMeterId
+        // payload.waterProperty.usageCategory = payload.proposedMeterId
+      }
+      else{
+        isvalidRequest = false
+        
+      }
+  
     }
     else{
-      isvalidRequest = false
-      
+      payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+  
     }
 
   }
-  else{
-    payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
 
-  }
   // remove duplicate document
 
   let tmp = [];

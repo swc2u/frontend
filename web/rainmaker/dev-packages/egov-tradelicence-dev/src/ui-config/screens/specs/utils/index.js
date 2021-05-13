@@ -1034,7 +1034,7 @@ export const downloadCertificateForm = (Licenses, data, mode='download') => {
         res.filestoreIds[0]
         if (res && res.filestoreIds && res.filestoreIds.length > 0) {
           res.filestoreIds.map(fileStoreId => {
-            downloadReceiptFromFilestoreID(fileStoreId,mode)
+            downloadReceiptFromFilestoreID(fileStoreId,mode,'ch')
           })
         } else {
           console.log("Error In Acknowledgement form Download");
