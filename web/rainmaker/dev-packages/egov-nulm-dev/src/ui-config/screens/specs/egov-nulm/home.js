@@ -1,5 +1,5 @@
 import React from "react";
-import { getCommonHeader } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getCommonHeader,getCommonContainer } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getRequiredDocData, checkForRole } from "../utils";
 import {
   getUserInfo, setNULMTenantId, getTenantId, getNULMTenantId
@@ -14,22 +14,12 @@ import {
 
 
 let roles = JSON.parse(getUserInfo()).roles
-const header = getCommonHeader(
-  {
-    labelName: "National Urban Livelihood Mission",
-    labelKey: "ACTION_TEST_NULM_TITLE"
-  },
-  {
-    style: {
-      padding: "20px",
-    }
-  },
-  {
-    classes: {
-      root: "common-header-cont"
-    }
-  }
-);
+export const header = getCommonContainer({
+    header: getCommonHeader({
+      labelName: "National Urban Livelihood Mission",
+      labelKey: "ACTION_TEST_NULM_TITLE"
+    }),
+});
 
 let SEP = {
   label: {
@@ -61,7 +51,11 @@ let SMID = {
 let SUSV = {
   label: {
     labelKey: "NULM_SUSV_CARD_TITLE",
-    labelName: "Permission for Advertisement"
+    labelName: "Permission for Advertisement",
+    style:{
+        paddingLeft:"5px",
+
+    },
   },
   icon: <i
     viewBox="0 -8 35 42"
@@ -80,7 +74,7 @@ let SVRU = {
     viewBox="0 -8 35 42"
     color="primary"
     class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-    report_problem
+    picture_in_picture
   </i>,
   route: "search-svru"
 }
@@ -266,11 +260,29 @@ const PermissionManagementSearchAndResult = {
     div: {
       uiFramework: "custom-atoms",
       componentPath: "Div",
+      props: {
+        className: "common-div-css"
+      },
       children: {
-        header: header,
+        headerDiv: {
+            uiFramework: "custom-atoms",
+            componentPath: "Container",
+            children: {
+              header: {
+                gridDefination: {
+                  xs: 12,
+                  sm: 10
+                },
+                ...header
+              }
+            }
+          },
         applyCard: {
           uiFramework: "custom-molecules",
           componentPath: "LandingPage",
+          style: {
+            paddingTop: "20px",
+          },
           props: {
             items: [],
             history: {},
@@ -279,21 +291,21 @@ const PermissionManagementSearchAndResult = {
         }
       }
     },
-    adhocDialog: {
-      uiFramework: "custom-containers-local",
-      moduleName: "egov-nulm",
-      componentPath: "DialogContainer",
-      props: {
-        open: false,
-        maxWidth: false,
-        screenKey: "home",
+    // adhocDialog: {
+    //   uiFramework: "custom-containers-local",
+    //   moduleName: "egov-nulm",
+    //   componentPath: "DialogContainer",
+    //   props: {
+    //     open: false,
+    //     maxWidth: false,
+    //     screenKey: "home",
 
 
-      },
-      children: {
-        popup: {}
-      }
-    }
+    //   },
+    //   children: {
+    //     popup: {}
+    //   }
+    // }
   }
 };
 
