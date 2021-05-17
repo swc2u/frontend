@@ -1771,6 +1771,7 @@ export const applyForWater = async (state, dispatch) => {
                 case "CONNECTION_CONVERSION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "CONNECTION_CONVERSION")); break;
                 case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION")); break;
                 case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION")); break;
+                case "UPDATE_METER_INFO":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "UPDATE_METER_INFO")); break;
               }
               let activeStep = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.stepper.props.activeStep", 0);
               if(activeStep === 0)
@@ -1826,6 +1827,7 @@ export const applyForWater = async (state, dispatch) => {
                             "REACTIVATE_CONNECTION",
                             "CONNECTION_CONVERSION",
                             "TEMPORARY_DISCONNECTION",
+                            "UPDATE_METER_INFO",
                             "PERMANENT_DISCONNECTION"];
         if(btnName.includes(wnsStatus)){
             responseWater.WaterConnection[0].property = queryObjectForUpdate.property;
