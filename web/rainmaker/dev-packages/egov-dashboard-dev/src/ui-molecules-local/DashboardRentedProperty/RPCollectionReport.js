@@ -12,30 +12,34 @@ import 'jspdf-autotable'
 import './RPIndex.css'
 
 class RPCollectionReport extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state ={
-        checkData: [],
-        allData: [],
-        dataOne: [],
-        dataTwo: [],
-        graphOneLabel: [],
-        graphOneData: [],
-        graphTwoLabel: [],
-        graphTwoData: [],
-        graphClicked: -1,
-        hardJSON: [],
-        graphHardOneData : {},
-        graphHardTwoData : {},
-        rowData: [],
-        columnData: [],
-        // Feature Table
-        toggleColumnCheck: false,
-        unchangeColumnData: []
-    }
-  }
-
-
+    constructor(props) {
+        super(props);
+        this.state ={
+            checkData :[],
+            allGraphData :[],
+            allData: [],
+            dataOne: [],
+            dataTwo: [],
+            dataThird :[],
+            graphOneLabel: [],
+            graphOneData: [],
+            graphTwoLabel: [],
+            graphTwoData: [],
+            graphThirdLabel : [],
+            graphThirdData : [],
+            graphClicked: -1,
+            hardJSON: [],
+            graphHardOneData : {},
+            graphHardTwoData : {},
+            rowData: [],
+            columnData: [],
+            // Feature Table
+            toggleColumnCheck: false,
+            unchangeColumnData: []
+        }
+      }
+    
+    
     // PDF function 
     pdfDownload = (e) => {
 
@@ -99,7 +103,7 @@ class RPCollectionReport extends React.Component {
     doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
 
     doc.setFontSize(10);
-    const pdfTitle = this.state.graphHardOneData.title ? this.state.graphHardOneData.title : "Title"
+    const pdfTitle = "Rented Property Dashboard"
     doc.text(pdfTitle, pageWidth / 2, 40, 'center');
 
     doc.autoTable({ html: '#my-table' });
@@ -132,7 +136,6 @@ class RPCollectionReport extends React.Component {
         return unchangeData
 
     }
-
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
@@ -273,11 +276,55 @@ class RPCollectionReport extends React.Component {
     });
     }
 
+    dateTimeToForma = (frommDT, toDT) => {
+        var dt1 = new Date(frommDT); 
+        var dateCnt = dt1.getDate() < 10 ? "0"+dt1.getDate() : dt1.getDate();
+        var month = dt1.getMonth() < 10 ? "0"+(dt1.getMonth()+1) : dt1.getMonth()+1;
+        var year = dt1.getFullYear();
+        dt1 = year+"-"+month+"-"+dateCnt
+        var dt2 = new Date(toDT);
+        dateCnt = dt2.getDate() < 10 ? "0"+dt2.getDate() : dt2.getDate();
+        month = dt2.getMonth() < 10 ? "0"+(dt2.getMonth()+1) : dt2.getMonth()+1;
+        year = dt2.getFullYear();
+        dt2 = year+"-"+month+"-"+dateCnt
+
+
+        return [dt1, dt2]
+    }
+
+    dateRange = (startDate, endDate) => {
+        var monthJSON = {"01":"JAN","02":"FEB","03":"MAR","04":"APR","05":"MAY","06":"JUN","07":"JUL",
+        "08":"AUG","09":"SEP","10":"OCT","11":"NOV","12":"DEC"};
+        var start      = startDate.split('-');
+        var end        = endDate.split('-');
+        var startYear  = parseInt(start[0]);
+        var endYear    = parseInt(end[0]);
+        var dates      = [];
+
+        for(var i = startYear; i <= endYear; i++) {
+            var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+            var startMon = i === startYear ? parseInt(start[1])-1 : 0;
+            for(var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j+1) {
+            var month = j+1;
+            var displayMonth = month < 10 ? '0'+month : month;
+            // dates.push([i, displayMonth, '01'].join('-'));
+            dates.push([i, monthJSON[displayMonth]].join('-'));
+            }
+        }
+        return dates;
+    }
+
     componentDidMount(){
         debugger;
         const propSortBy = "eventStatus";
         // const propSortBy = "status";
-        const data = this.props.data.reportResponses[0].reportData
+        const data = this.props.data;
+        this.setState({
+            checkData : this.props.data
+        })
+
+        var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
+        "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
 
         const hardJSON = propSortBy === "eventStatus" ? [{ 
             "sortBy": "eventStatus",
@@ -292,52 +339,76 @@ class RPCollectionReport extends React.Component {
             "title": ""
             }] : []
 
+        var OwnershipTransfer = this.props.data[0].reportResponses[0].reportData;
+        var DuplicateCopy = this.props.data[1].reportResponses[0].reportData;
+        var PropertyRent = this.props.data[2].reportResponses[0].reportData;
+        
+        var allGraphData = [OwnershipTransfer, DuplicateCopy, PropertyRent];
+        var graphData = [];
+
+        for(var i=0;i<allGraphData.length; i++){
+            graphData.push(allGraphData[i].length);
+        }
+        debugger;
+        var allRowData = OwnershipTransfer;
+        allRowData = allRowData.concat(DuplicateCopy);
+        allRowData = allRowData.concat(PropertyRent);
+
+
         // Graph One Sorting Function 
-        var graphOneData2 = this.graphSorting( propSortBy, data, "dashboard 1" );
+        // var graphOneData2 = this.graphSorting( propSortBy, data, "dashboard 1" );
 
         
+        debugger;
         // Column Data
         const tableData = data[0] ? Object.keys(data[0]) : [];
-        var columnData = [];
-        const tableDataHeader = ["Receipt Number", "Receipt Issue Date", "Transit Number", "NAme", "Mobile No", "Transaction Number",
-         "Payment type", "Total"];
-
-        for(var i=0; i<tableData.length; i++){
+        const tableDataHeader = ["Receipt Number", "Receipt Issue Date", "Transit Number", "Name", "Mobile No", "Transaction Number",
+            "Payment type", "Total"];
+        var columnData = []
+        for(var i=0; i<tableDataHeader.length; i++){
             var itemHeader = {}
             itemHeader["Header"] = this.camelize(tableDataHeader[i]);
-            itemHeader["accessor"] = tableData[i];
-            itemHeader["show"]= (i === 1 || i === 2 || i === 3 || i === 4 
-                || i === 15 || i === 18 || i === 20
-                || i === 23 || i === 24 || i === 33 || i === 35 ) ? true : false ;
+            itemHeader["accessor"] = i.toString();
+            itemHeader["show"]=  true;
             columnData.push(itemHeader);
         }
 
+        // var item = {};
+        // item["Header"] = Object.values(data["reportHeader"])[i]["label"];
+        // item["id"] = i;
+        // item["accessor"] = i.toString();
+        // item["show"] = true;
+        // columnData.push(item)
+
         // Column Unchange Data 
-        const unchangeColumnData = this.columnUnchange(columnData)
+        // const unchangeColumnData = this.columnUnchange(columnData)
+        const unchangeColumnData = columnData
 
         
         this.setState({
-            graphOneLabel: graphOneData2[0],
-            graphOneData: graphOneData2[1],
+            graphOneLabel: [ "OwnershipTransfer", "DuplicateCopy", "PropertyRent"],
+            graphOneData: graphData,
             graphClicked: 0,
-            dataOne: graphOneData2[2],
+            // dataOne: graphOneData2[2],
             columnData: columnData,
             unchangeColumnData: unchangeColumnData,
-            rowData: data,
-            hardJSON: hardJSON,
-            checkData: this.props.data
+            rowData: allRowData,
+            // hardJSON: hardJSON,
+            allGraphData: allGraphData
         })
 
     }
 
-    componentDidUpdate(){
+    componentDidMount(){
         debugger;
-        const data = this.props.data;
-        if(JSON.stringify(this.state.checkData) !== JSON.stringify(data)){
+        if(JSON.stringify(this.state.checkData) !== JSON.stringify(this.props.data)){
             const propSortBy = "eventStatus";
             // const propSortBy = "status";
-            const data = this.props.data.reportResponses[0].reportData
-
+            const data = this.props.data;
+    
+            var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
+            "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
+    
             const hardJSON = propSortBy === "eventStatus" ? [{ 
                 "sortBy": "eventStatus",
                 "msgX": "",
@@ -350,44 +421,69 @@ class RPCollectionReport extends React.Component {
                 "msgY": "",
                 "title": ""
                 }] : []
-
-            // Graph One Sorting Function 
-            var graphOneData2 = this.graphSorting( propSortBy, data, "dashboard 1" );
-
+    
+            var OwnershipTransfer = this.props.data[0].reportResponses[0].reportData;
+            var DuplicateCopy = this.props.data[1].reportResponses[0].reportData;
+            var PropertyRent = this.props.data[2].reportResponses[0].reportData;
             
+            var allGraphData = [OwnershipTransfer, DuplicateCopy, PropertyRent];
+            var graphData = [];
+    
+            for(var i=0;i<allGraphData.length; i++){
+                graphData.push(allGraphData[i].length);
+            }
+            debugger;
+            var allRowData = OwnershipTransfer;
+            allRowData = allRowData.concat(DuplicateCopy);
+            allRowData = allRowData.concat(PropertyRent);
+    
+    
+            // Graph One Sorting Function 
+            // var graphOneData2 = this.graphSorting( propSortBy, data, "dashboard 1" );
+    
+            
+            debugger;
             // Column Data
             const tableData = data[0] ? Object.keys(data[0]) : [];
-            var columnData = [];
-            const tableDataHeader = ["Receipt Number", "Receipt Issue Date", "Transit Number", "NAme", "Mobile No", "Transaction Number",
-            "Payment type", "Total"];
-
-            for(var i=0; i<tableData.length; i++){
+            const tableDataHeader = ["Receipt Number", "Receipt Issue Date", "Transit Number", "Name", "Mobile No", "Transaction Number",
+                "Payment type", "Total"];
+            var columnData = []
+            for(var i=0; i<tableDataHeader.length; i++){
                 var itemHeader = {}
                 itemHeader["Header"] = this.camelize(tableDataHeader[i]);
-                itemHeader["accessor"] = tableData[i];
-                itemHeader["show"]= (i === 1 || i === 2 || i === 3 || i === 4 
-                    || i === 15 || i === 18 || i === 20
-                    || i === 23 || i === 24 || i === 33 || i === 35 ) ? true : false ;
+                itemHeader["accessor"] = i.toString();
+                itemHeader["show"]=  true;
                 columnData.push(itemHeader);
             }
-
+    
+            // var item = {};
+            // item["Header"] = Object.values(data["reportHeader"])[i]["label"];
+            // item["id"] = i;
+            // item["accessor"] = i.toString();
+            // item["show"] = true;
+            // columnData.push(item)
+    
             // Column Unchange Data 
-            const unchangeColumnData = this.columnUnchange(columnData)
-
+            // const unchangeColumnData = this.columnUnchange(columnData)
+            const unchangeColumnData = columnData
+    
             
             this.setState({
-                graphOneLabel: graphOneData2[0],
-                graphOneData: graphOneData2[1],
+                graphOneLabel: [ "OwnershipTransfer", "DuplicateCopy", "PropertyRent"],
+                graphOneData: graphData,
                 graphClicked: 0,
-                dataOne: graphOneData2[2],
+                // dataOne: graphOneData2[2],
                 columnData: columnData,
                 unchangeColumnData: unchangeColumnData,
-                rowData: data,
-                hardJSON: hardJSON,
-                checkData: this.props.data
-            })
+                rowData: allRowData,
+                // hardJSON: hardJSON,
+                allGraphData: allGraphData,
+                checkData : this.props.data
+            }) 
         }
+
     }
+
     render() {
     
 
@@ -397,7 +493,7 @@ class RPCollectionReport extends React.Component {
         // labels: ["Label1", "Label2"],
         datasets: [
             {
-            label: "RP Due Amount Report",
+            label: "Total",
             fill: false,
             lineTension: 0.1,
             hoverBorderWidth : 12,
@@ -441,7 +537,7 @@ class RPCollectionReport extends React.Component {
         },
         title: {
             display: true,
-            text: "Rented Properties Due Amount Report"
+            text: "Rented Properties Registry Report"
         },
         // scales: {
         //     xAxes: [{
@@ -488,31 +584,18 @@ class RPCollectionReport extends React.Component {
                 debugger;
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphOneLabel[ind];
-                // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
-                const hardval = this.state.hardJSON[1]
-                var graphSorting = this.graphSorting( ind, this.state.dataOne[selectedVal], "dashboard 2" );
-                
-                debugger;
-                var graphTwoLabel = graphSorting[0];
-                var labels = [];
-                var months = {0:"JAN", 1:"FEB", 2:"MAR", 3:"APR", 4:"MAY", 5:"JUN", 6:"JUL", 7:"AUG", 8:"SEP", 9:"OCT", 10:"NOV", 11:"DEC"}
-                for(var i=0; i<graphTwoLabel.length; i++){
-                    var dt = graphTwoLabel[i];
-                    var mon = dt[3]+""+dt[4];
-                    var dayDt = dt[0]+""+dt[1];
-                    var yr = dt[6]+""+dt[7]+dt[8]+""+dt[9]
-                    var dtObj = mon+"-"+dayDt+"-"+yr
-                    var dt = new Date(dtObj)
-                    labels.push(months[dt.getMonth()])
-                }
-                graphTwoLabel = labels
+                const data = this.state.allGraphData[ind];
 
+                var graphData = this.graphSorting( 2, data, "" );
+                debugger;
+                
                 this.setState({
-                    graphTwoLabel: graphTwoLabel,
-                    graphTwoData: graphSorting[1],
-                    dataTwo: graphSorting[2],
+                    graphTwoLabel: graphData[0],
+                    graphTwoData: graphData[1],
+                    dataTwo: graphData[2],
                     graphClicked: 1,
-                    rowData: this.state.dataOne[selectedVal]
+                    rowData: data,
+                    // columnData : columnData
                 })
                 
             }
@@ -520,17 +603,17 @@ class RPCollectionReport extends React.Component {
     }
     
 
-    // Second Graph
+    // Second Graph Colonywise
     var graphTwoSortedData = {
         labels: this.state.graphTwoLabel,
         datasets: [
             {
-            label: "RP Due Repot",
+            label: "Total",
             fill: false,
             lineTension: 5,
             hoverBorderWidth : 12,
-            backgroundColor : this.state.colorRandom,
-            // backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
             borderColor: "rgba(75,192,192,0.4)",
             borderCapStyle: "butt",
             barPercentage: 2,
@@ -567,18 +650,45 @@ class RPCollectionReport extends React.Component {
         },
         title: {
             display: true,
-            text: "Rented Properties Colonywise Due Amount Report"
+            text: "Rented Properties Colonywise Report"
         },
         onClick: (e, element) => {
             if (element.length > 0) {
                 var ind = element[0]._index;
-                debugger;
-                const selectedVal = this.state.graphTwoLabel[ind];
+                // debugger;
+                // const selectedVal = this.state.graphTwoLabel[ind];
                 
+                // this.setState({
+                //     graphClicked: 2,
+                //     rowData: this.state.dataTwo[selectedVal]
+                // })
+                debugger;
+                var ind = element[0]._index;   
+                const selectedVal = this.state.graphTwoLabel[ind];
+                const data = this.state.dataTwo[selectedVal];
+
+                var graphData = this.graphSorting( 10, data, "" );
+                debugger;
+                
+                var selectedData = graphData[2];
+                var amtGraphData = [];
+                for(var i=0;i<Object.keys(selectedData).length;i++){
+                    var amt = 0;
+                    for(var j=0;j<selectedData[Object.keys(selectedData)[i]].length;j++){
+                        var amtDatd = selectedData[Object.keys(selectedData)[i]][j][11];
+                        amt = amt + amtDatd;
+                    }
+                    amtGraphData.push(amt)
+                }
                 this.setState({
+                    graphThirdLabel: graphData[0],
+                    graphThirdData: amtGraphData,
+                    dataThird: graphData[2],
                     graphClicked: 2,
-                    rowData: this.state.dataTwo[selectedVal]
+                    rowData: data,
+                    // columnData : columnData
                 })
+
             }
         },
         scales: {
@@ -606,7 +716,7 @@ class RPCollectionReport extends React.Component {
                 },
                 scaleLabel: {
                     display: true,
-                    labelString: "Due Amount (in Lakh)"
+                    labelString: "Total Rented Report"
                     }, 
             }]
         },
@@ -626,26 +736,127 @@ class RPCollectionReport extends React.Component {
             }
     }
 
+    // Third Graph Payment Type
+    var graphThirdSortedData = {
+        labels: this.state.graphThirdLabel,
+        datasets: [
+            {
+            label: "Total Amt",
+            fill: false,
+            lineTension: 5,
+            hoverBorderWidth : 12,
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            borderColor: "rgba(75,192,192,0.4)",
+            borderCapStyle: "butt",
+            barPercentage: 2,
+            barThickness: 25,
+            maxBarThickness: 25,
+            minBarLength: 2,
+            data: this.state.graphThirdData
+            }
+        ]
+    }
+
+    var graphThirdOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+            {
+            backgroundColor : "rgba(0, 0, 0, 0.1)",
+            weight: 0
+            }
+        ], 
+        legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+            fontFamily: "Comic Sans MS",
+            boxWidth: 20,
+            boxHeight: 2
+            }
+        },
+        tooltips: {
+            enabled: true
+        },
+        title: {
+            display: true,
+            text: "Rented Properties Typewise Amount Report"
+        },
+        onClick: (e, element) => {
+            if (element.length > 0) {
+                var ind = element[0]._index;
+                debugger;
+                const selectedVal = this.state.graphThirdLabel[ind];
+                
+                this.setState({
+                    graphClicked: 3,
+                    rowData: this.state.dataThird[selectedVal]
+                })
+            }
+        },
+        // scales: {
+        //     xAxes: [{
+        //         gridLines: {
+        //             display:true
+        //         },
+        //         ticks: {
+        //             suggestedMin: 0,
+        //             // suggestedMax: 100,
+        //             // stepSize: 1
+        //         },
+        //         scaleLabel: {
+        //             display: true,
+        //             labelString: "Colony"
+        //             }, 
+        //     }],
+        //     yAxes: [{
+        //         gridLines: {
+        //             display: true
+        //         },
+        //         ticks: {
+        //             suggestedMin: 0,
+        //             // stepSize: 1
+        //         },
+        //         scaleLabel: {
+        //             display: true,
+        //             labelString: "Due Amount (in Lakh)"
+        //             }, 
+        //     }]
+        // },
+        plugins: {
+            datalabels: {
+                display: false
+            //     color: 'white',
+            //     backgroundColor: 'grey',
+            //     labels: {
+            //         title: {
+            //             font: {
+            //                 weight: 'bold'
+            //             }
+            //         }
+            //     }}
+            }
+            }
+    }
+
 
         
     return (
-        <div>
-        {/* <h2> Rented Properties Collection Graph </h2>  */}
+        <div style={this.state.rowData === 0 ? {display : "none"} :null}>
         
         <div className="graphDashboard">
-        {
-          this.state.graphClicked >= 0 ?
-            <CardContent className="halfGraph">
+        
+        <CardContent className="halfGraph">
             <React.Fragment>
                 <Pie
                 data={ graphOneSortedData }
                 options={ graphOneOption } 
                 />
             </React.Fragment>
-            </CardContent>
-          : null  
-        }
-        
+        </CardContent>
         {
             this.state.graphClicked > 0 ?
             <CardContent className="halfGraph">
@@ -661,6 +872,18 @@ class RPCollectionReport extends React.Component {
 
         </div>
 
+        <div className="graphDashboard" style={this.state.graphClicked < 2 ? {display : "none"} :null}>
+        
+        <CardContent className="fullGraph">
+            <React.Fragment>
+                <Pie
+                data={ graphThirdSortedData }
+                options={ graphThirdOption } 
+                />
+            </React.Fragment>
+        </CardContent>
+        </div>
+
         {/* Table Feature  */}
         <div className="tableContainer">
         {
@@ -674,8 +897,8 @@ class RPCollectionReport extends React.Component {
             :null
         }
         {
-           this.state.toggleColumnCheck ?
-           <div className="columnVisibilityCard">
+            this.state.toggleColumnCheck ?
+            <div className="columnVisibilityCard">
             <dl>
                 {
                     this.state.unchangeColumnData.map((data, index)=>{
@@ -686,7 +909,7 @@ class RPCollectionReport extends React.Component {
                 }
             </dl>
             </div> 
-           : null
+            : null
         }
 
         {

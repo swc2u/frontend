@@ -872,13 +872,13 @@ class DashboardOSBM extends React.Component {
                 debugger;
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphThirdLabel[ind];
-                var graphSorting = this.graphSorting( "dashboard1_sector", this.state.dataThird[selectedVal] );
+                // var graphSorting = this.graphSorting( "dashboard1_sector", this.state.dataThird[selectedVal] );
                 
                 this.setState({
-                    graphFourthLabel: graphSorting[0],
-                    graphFourthData: graphSorting[1],
+                    // graphFourthLabel: graphSorting[0],
+                    // graphFourthData: graphSorting[1],
                     graphClicked: 1,
-                    dataFourth: graphSorting[2],
+                    // dataFourth: graphSorting[2],
                     rowData: this.state.dataThird[selectedVal]
                 })
                 
