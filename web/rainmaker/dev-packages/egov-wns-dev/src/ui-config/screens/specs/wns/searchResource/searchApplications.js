@@ -11,8 +11,12 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { searchApiCall } from "./functions";
 import { resetFieldsForApplication } from '../../utils';
+import { localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
+import find from "lodash/find";
+import { setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
 import get from "lodash/get";
-import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField,toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 export const searchApplications = getCommonCard({
   subHeader: getCommonTitle({
     labelKey: "WS_SEARCH_APPLICATION_SUB_HEADER"
@@ -97,6 +101,10 @@ export const searchApplications = getCommonCard({
       },
       required: false,
       errorMessage: "ERR_INVALID_BILLING_PERIOD",
+      localePrefix: {
+        moduleName: "WF",
+        masterName: "REGULARWSCONNECTION"
+      },
       jsonPath: "searchScreen.applicationStatus"
     }),
 
@@ -146,6 +154,10 @@ export const searchApplications = getCommonCard({
       required: true,
       gridDefination: { xs: 12, sm: 4 },
       jsonPath: "searchScreen.applicationType",
+      localePrefix: {
+        moduleName: "CS",
+        masterName: "COMMON_INBOX"
+      },
       props: {
         optionValue: "code",
         optionLabel: "name",
@@ -161,19 +173,76 @@ export const searchApplications = getCommonCard({
           ""
         )
       );
+
       if(action.value)
       {
+        dispatch(toggleSpinner());
         let swSectorList = state.screenConfiguration.preparedFinalObject.applyScreenMdmsData1['ws-services-masters'].swSectorList
         let sectorList = state.screenConfiguration.preparedFinalObject.applyScreenMdmsData1['ws-services-masters'].sectorList
        // get(state.screenConfiguration.preparedFinalObject, "SewerageConnection");
-        if(action.value ==='New Sewerage Connection')
+        if(action.value ==='SW_SEWERAGE')
         {
+          dispatch(
+            handleField(
+              "search",
+              "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.applicationstatus",
+              "props.localePrefix",
+              {moduleName: "WF", masterName: "SW_SEWERAGE"}
+            )
+          );
           dispatch(prepareFinalObject("applyScreenMdmsData1.ws-services-masters.wssectorList", swSectorList));
         }
         else{
+          dispatch(
+            handleField(
+              "search",
+              "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.applicationstatus",
+              "props.localePrefix",
+              {moduleName: "WF", masterName: action.value}
+            )
+          );
           dispatch(prepareFinalObject("applyScreenMdmsData1.ws-services-masters.wssectorList", sectorList));
 
         }
+        const queryObject = [
+          { key: "tenantId", value: getTenantId() },
+          { key: "businessServices", value: action.value }
+        ];
+       await setBusinessServiceDataToLocalStorage(queryObject, dispatch);
+        const businessServiceData = JSON.parse(
+          localStorageGet("businessServiceData")
+        );
+        if(businessServiceData && businessServiceData[0])
+        {
+        if (businessServiceData[0].businessService === "REGULARWSCONNECTION" 
+          || businessServiceData[0].businessService === "WS_REACTIVATE" 
+          || businessServiceData[0].businessService === "WS_CONVERSION" 
+          || businessServiceData[0].businessService === "WS_TEMP_REGULAR" 
+          || businessServiceData[0].businessService === "WS_TEMP_DISCONNECTION" 
+          || businessServiceData[0].businessService === "WS_DISCONNECTION"
+          || businessServiceData[0].businessService === "WS_RENAME"
+          || businessServiceData[0].businessService === "TEMPORARY_WSCONNECTION"
+          || businessServiceData[0].businessService === "WS_METER_UPDATE"
+          || businessServiceData[0].businessService === "WS_TEMP_TEMP"
+          || businessServiceData[0].businessService === "SW_SEWERAGE"//
+         // || businessServiceData[0].businessService === "WS_METER_UPDATE"
+          || businessServiceData[0].businessService === "WS_TUBEWELL") {
+          const data = find(businessServiceData, { businessService: businessServiceData[0].businessService });
+          const { states } = data || [];
+          if (states && states.length > 0) {
+            const status = states.map((item) => { return { code: item.state } });
+            let applicationStatus = status.filter(item => item.code != null);
+            // applicationStatus.push(
+            //   {
+            //     code:"INITIATED"
+            //   }
+            // )  
+           const applicationdistStatus = applicationStatus.filter((n, i) => applicationStatus.indexOf(n) === i);
+            dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.applicationStatus", applicationdistStatus));
+            dispatch(toggleSpinner());
+          }
+        }
+      }
       }
        
    }
