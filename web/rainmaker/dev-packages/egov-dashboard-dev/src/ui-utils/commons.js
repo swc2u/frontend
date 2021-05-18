@@ -1855,7 +1855,7 @@ export const getDeathPensionerPensionData = async ( state, dispatch, data ) => {
 export const getRentedPropertyData = async ( dispatch, data ) => {
   
   debugger;
-  var payloadDataCollection = {
+  var payloadRP = {
     "tenantId": data.tenantId,
     "reportName": "RPRentRegistryReport",
     "searchParams": [
@@ -1869,7 +1869,37 @@ export const getRentedPropertyData = async ( dispatch, data ) => {
       }
     ],
     "reportSortBy": data.reportSortBy
-  }
+  };
+  var payloadOT ={
+    "tenantId": data.tenantId,
+    "reportName": "OTRegistryReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ],
+    "reportSortBy": data.reportSortBy
+  };
+  var payloadDC = {
+    "tenantId": data.tenantId,
+    "reportName": "DCRegistryReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ],
+    "reportSortBy": data.reportSortBy
+  };
 
   var payloadDataDue = {
     "tenantId": data.tenantId,
@@ -1880,12 +1910,28 @@ export const getRentedPropertyData = async ( dispatch, data ) => {
 
   try {
     store.dispatch(toggleSpinner());
-    const CollectionData = await httpRequest(
+    const resReistryReport = await httpRequest(
       "post",
-      "/report/rainmaker-rp/RPRentRegistryReport/_get?tenantId=ch.chandigarh&pageSize=false&offset=0",
+      "/report/rainmaker-rp/RPRentRegistryReport/_get?tenantId="+getTenantId()+"&pageSize=false&offset=0",
       "",
       [],
-      payloadDataCollection
+      payloadRP
+    );
+
+    const resOwnerReport = await httpRequest(
+      "post",
+      "/report/rainmaker-rp/OTRegistryReport/_get?tenantId="+getTenantId()+"&pageSize=false&offset=0",
+      "",
+      [],
+      payloadOT
+    );
+
+    const resDuplicateReport = await httpRequest(
+      "post",
+      "/report/rainmaker-rp/DCRegistryReport/_get?tenantId="+getTenantId()+"&pageSize=false&offset=0",
+      "",
+      [],
+      payloadDC
     );
 
     const DueData = await httpRequest(
@@ -1897,8 +1943,9 @@ export const getRentedPropertyData = async ( dispatch, data ) => {
     );
 
     //debugger;
+    var CollectionData = [resReistryReport, resOwnerReport, resDuplicateReport]
     const DescriptionReport = [CollectionData, DueData];
-    var response = [ DescriptionReport, payloadDataCollection.reportSortBy ];
+    var response = [ DescriptionReport, payloadDataDue ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // OK
@@ -2167,7 +2214,7 @@ export const getLegalDashboardData2 = async ( dispatch, data ) => {
   }
 }; 
 
-// Get Legal Dashboard Data
+// Get Agenda Dashboard Data
 export const getAgendaDashboardData = async ( dispatch, data ) => {
   
   debugger;
@@ -2226,6 +2273,47 @@ export const getAgendaDashboardData = async ( dispatch, data ) => {
     dispatch(
       handleField(
       "AgendaDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+// Get Audit Dashboard Data
+export const getAuditData = async ( dispatch, data ) => {
+  
+  
+  try {
+    store.dispatch(toggleSpinner());
+    const getAllAudit = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/auditrest/getAllAudit",
+      "",
+      [],
+      {}
+    );
+    
+    var response = [getAllAudit, data]
+    
+    dispatch(
+      handleField(
+      "AuditDashboard",
       "components.div.children.DashboardResults",
       "props.data",
       response

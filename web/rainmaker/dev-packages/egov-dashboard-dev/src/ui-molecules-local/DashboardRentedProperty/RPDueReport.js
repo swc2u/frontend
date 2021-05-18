@@ -218,6 +218,7 @@ class RPDueReport extends React.Component {
         }
 
         graphOneLabel = ["Principal Due", "Interest Due", "Total Due", "Account Balance", "Amount Paid"];
+        // graphOneLabel = ["Principal Due", "Interest Due", "Total Due", "Account Balance", "Amount Paid"];
         
         
         var dynamicColors = function() {
@@ -250,7 +251,7 @@ class RPDueReport extends React.Component {
         for(var i=0; i<group.length; i++){
             for(var j=0; j<collectionData.length; j++){
                 if(group[i][0] === collectionData[j][2]){
-                    amtPaid = amtPaid + collectionData[j][7];
+                    amtPaid = amtPaid + collectionData[j][8];
                 }
             }   
         }
@@ -292,8 +293,8 @@ class RPDueReport extends React.Component {
         debugger;
         const propSortBy = "eventStatus";
         // const propSortBy = "status";
-        const data = this.props.data[1].reportResponses[0].reportData;
-        const collectionData = this.props.data[0].reportResponses[0].reportData;
+        const data = this.props.data[0][1].reportResponses[0].reportData;
+        const collectionData = this.props.data[0][0][0].reportResponses[0].reportData;
 
         const hardJSON = propSortBy === "eventStatus" ? [{ 
             "sortBy": "eventStatus",
@@ -351,8 +352,8 @@ class RPDueReport extends React.Component {
         debugger;
         const data = this.props.data;
         if(JSON.stringify(data) !== JSON.stringify(this.state.checkData)){
-            const data = this.props.data[1].reportResponses[0].reportData;
-            const collectionData = this.props.data[0].reportResponses[0].reportData;
+            const data = this.props.data[0][1].reportResponses[0].reportData;
+            const collectionData = this.props.data[0][0][0].reportResponses[0].reportData;
 
             const hardJSON = propSortBy === "eventStatus" ? [{ 
                 "sortBy": "eventStatus",
@@ -510,9 +511,24 @@ class RPDueReport extends React.Component {
                 const hardval = this.state.hardJSON[1]
                 var graphSorting = this.graphSorting( ind, this.state.dataOne[selectedVal], "dashboard 2" );
                 
+                var sortGraphTwoLabel = [];
+                var sortGraphTwoData = [];
+                var totalDue =[];
+                for(var i=0; i<graphSorting[0].length; i++){
+                    if(graphSorting[0][i] === "Total Due"){
+                        totalDue.push(graphSorting[0][i]);
+                        totalDue.push(graphSorting[1][i]);
+                    }else{
+                        sortGraphTwoLabel.push(graphSorting[0][i]);
+                        sortGraphTwoData.push(graphSorting[1][i]);
+                    }
+                }
+                sortGraphTwoLabel.push(totalDue[0]);
+                sortGraphTwoData.push(totalDue[1]);
+
                 this.setState({
-                    graphTwoLabel: graphSorting[0],
-                    graphTwoData: graphSorting[1],
+                    graphTwoLabel: sortGraphTwoLabel,
+                    graphTwoData: sortGraphTwoData,
                     dataTwo: graphSorting[2],
                     graphClicked: 1,
                     rowData: this.state.dataOne[selectedVal]
@@ -632,7 +648,7 @@ class RPDueReport extends React.Component {
 
         
     return (
-        <div>
+        <div style={this.state.rowData === 0 ? {display : "none"} :null}>
         {/* <h2> Rented Properties Due Graph </h2>  */}
         
         <div className="graphDashboard">
@@ -665,7 +681,7 @@ class RPDueReport extends React.Component {
         </div>
 
         {/* Table Feature  */}
-        <div className="tableContainer">
+        <div className="tableContainerRented">
         {
             this.state.unchangeColumnData.length > 0  ? 
             <div className="tableFeature">

@@ -19,8 +19,6 @@
   border: 1px solid rgba(204, 204, 204, 1);
   border: 1px solid rgba(0,0,0,.15);
   border-radius: 4px;
-  -webkit-box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
-  box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
   margin-left: 80%;
 }
 
@@ -134,29 +132,8 @@
   margin: 0;
 }
 
-.tableBlock{
-  display: block;
-}
-
-.defaulttableContainer {
-  position: relative;
-  z-index: 1000;
-  /* display: none; */
-  /* float: left; */
-  width: 100%;
-  padding: 5px 0;
-  margin: 0 0 0;
-  font-size: 14px;
-  text-align: left;
-  list-style: none;
-  background-color:  rgba(255,255,255,1);
-  background-clip: padding-box;
-  border: 1px solid rgba(204, 204, 204, 1);
-  border: 1px solid rgba(99, 97, 97, 0.15);
-  border-radius: 4px;
-}
-.tableContainerRented{
-  position: relative;
+.tableContainer{
+  position: absolute;
   z-index: 1000;
   /* display: none; */
   /* float: left; */
@@ -176,10 +153,6 @@
   /* margin-left: 80%; */
 }
 
-.rt-tbody {
-  text-align: center;
-}
-
 /* Graph Dashboard Response try */
 
 .graphDashboard{
@@ -197,9 +170,10 @@
   border-style: ridge
 }
 
-.tableData{
-  padding: 15px;
+.rt-tbody {
+  text-align: center;
 }
+
 @media only screen and (max-width: 500px) {
   .graphDashboard {
   display: contents;
@@ -214,8 +188,13 @@
   border-style: ridge
   }
 
+  .fullGraph{
+      width: 100%; 
+      border-style: ridge
+  }
+
   .tableContainer{
-      display: contents; 
+    position: initial;
   }
 
   .tableFeature{

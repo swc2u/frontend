@@ -231,7 +231,7 @@ class DashboardLegal extends React.Component {
                 "sortBy": "concernedBranch",
                 "msgX": "",
                 "msgY": "",
-                "title": "Bramchwise Court Legal Dashboard"
+                "title": "Branchwise Court Legal Dashboard"
                 },
                 { 
                 "sortBy": "judgmentTypeId",
@@ -577,7 +577,7 @@ class DashboardLegal extends React.Component {
         },
         title: {
             display: true,
-            text: this.state.hardJSON[0] ? this.state.hardJSON[1].title : ""
+            text: this.state.hardJSON[0] ? this.state.hardJSON[2].title : ""
         },
         onClick: (e, element) => {
             if (element.length > 0) {

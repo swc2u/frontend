@@ -1,7 +1,6 @@
 import { getCommonCard, getCommonContainer, getDateField, getLabel, getPattern,} from "egov-ui-framework/ui-config/screens/specs/utils";
 // import { searchAPICall, SearchDashboardData, SearchPGRDashboardData } from "./functions";
-import { SearchDashboardData } from "./RentedPropertyFunction";
-import get from "lodash/get";
+import { SearchDashboardData } from "./AuditFunction";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import './index.css';
 
@@ -13,14 +12,15 @@ export const FilterForm = getCommonCard({
         labelName: "",
         labelKey: "Select From Date"
       },
+      props: {
+        style:{
+          width : "130px"
+        }
+      },
       gridDefination: {
         xs: 6,
         sm: 2,
         md: 2
-      },
-      props: {
-        style: {
-        }
       },
       pattern: getPattern("Date"),
       jsonPath: "dahsboardHome.defaultFromDate",
@@ -28,7 +28,7 @@ export const FilterForm = getCommonCard({
       afterFieldChange: (action, state, dispatch) => {
         dispatch(
           handleField(
-            "RentedPropertyDashboard",
+            "AgendaDashboard",
             "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
             "props.inputProps.min",
             action.value
@@ -45,6 +45,9 @@ export const FilterForm = getCommonCard({
       props: {
         inputProps: {
           min: ''
+        },
+        style:{
+          width : "130px"
         }
       },
       gridDefination: {
@@ -52,15 +55,11 @@ export const FilterForm = getCommonCard({
         sm: 2,
         md: 2
       },
-      props: {
-        style: {
-        }
-      },
       pattern: getPattern("Date"),
       jsonPath: "dahsboardHome.defaulttoDate",
       required: true,
     }),
-    moduleDashboardDropdown: {
+    auditDashboardDropdown: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-dashboard",
       componentPath: "AutosuggestContainer",
@@ -97,50 +96,9 @@ export const FilterForm = getCommonCard({
       labelName: "name",
       valueName: "name"
       },
-      afterFieldChange: (action, state, dispatch) => {
-      
-        debugger;
-        const selectedVAl = get(state.screenConfiguration.preparedFinalObject,"dahsboardHome.dropDownData2",{});
-        if(selectedVAl.value === "dueReport"){
-          dispatch(
-            handleField(
-              "RentedPropertyDashboard",
-              "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.fromDate",
-              "props.disabled",
-              true
-            )
-          );
-
-          dispatch(
-            handleField(
-              "RentedPropertyDashboard",
-              "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
-              "props.disabled",
-              true
-            )
-          );
-        }else{
-          dispatch(
-            handleField(
-              "RentedPropertyDashboard",
-              "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.fromDate",
-              "props.disabled",
-              false
-            )
-          );
-
-          dispatch(
-            handleField(
-              "RentedPropertyDashboard",
-              "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
-              "props.disabled",
-              false
-            )
-          );
-        }
-      }
+    
     },
-    searchButton: {
+    auditSearchButton: {
       componentPath: "Button",
       gridDefination: {
         xs: 6,
@@ -175,7 +133,7 @@ export const FilterForm = getCommonCard({
 export const DashboardResults = {
   uiFramework: "custom-molecules-local",
   moduleName: "egov-dashboard",
-  componentPath: "DashboardRentedProperty",
+  componentPath: "DashboardAudit",
   props: {
   // className: "dashboard-graph",
   formKey: `newapplication`,
