@@ -1,8 +1,8 @@
 import { getCommonCard, getCommonContainer, getDateField, getLabel, getPattern,} from "egov-ui-framework/ui-config/screens/specs/utils";
 // import { searchAPICall, SearchDashboardData, SearchPGRDashboardData } from "./functions";
-import { SearchDashboardData } from "./EstateFunction";
+import { SearchDashboardData } from "./FinanceFunction";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import './index.css';
+import './financeIndex.css';
 
 export const FilterForm = getCommonCard({
   FilterConstraintsContainer: getCommonContainer({
@@ -24,7 +24,7 @@ export const FilterForm = getCommonCard({
         
         dispatch(
           handleField(
-            "EstateDashboard",
+            "FinanceDashboard",
             "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
             "props.inputProps.min",
             action.value
@@ -125,7 +125,7 @@ export const FilterForm = getCommonCard({
 export const DashboardResults = {
   uiFramework: "custom-molecules-local",
   moduleName: "egov-dashboard",
-  componentPath: "DashboardEstate",
+  componentPath: "DashboardFinance",
   props: {
   // className: "dashboard-graph",
   formKey: `newapplication`,

@@ -7,9 +7,9 @@ import ReactTable from "react-table-6";
 import "react-table-6/react-table.css" ;
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
-import './EstateIndex.css'
+import './financeIndex.css'
 
-class DashboardEstate extends React.Component {
+class DashboardFinance extends React.Component {
   constructor(props) {
     super(props);
     this.state ={
@@ -31,10 +31,10 @@ class DashboardEstate extends React.Component {
 
     return(
         <div>
-            Estate Dashboard
+            Finance Dashboard
         </div>
     )
   }
 }
 
-export default DashboardEstate;
+export default DashboardFinance;
