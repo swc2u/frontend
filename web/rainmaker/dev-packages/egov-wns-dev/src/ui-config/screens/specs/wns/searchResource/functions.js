@@ -48,6 +48,7 @@ export const deactivateConnection = async (state, dispatch) => {
    }
    //INDIVIDUAL.SINGLEOWNER
    set(queryObjectForUpdate, "connectionHolders[0].ownerType", "INDIVIDUAL.SINGLEOWNER");
+   set(queryObjectForUpdate, "status", "Inactive");
     
    const payloadbillingPeriod = await httpRequest("post", "/ws-services/wc/_deactivateConnection", "", [], { WaterConnection: queryObjectForUpdate });
    let errorMessage = {

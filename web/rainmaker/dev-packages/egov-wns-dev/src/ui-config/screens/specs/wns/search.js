@@ -56,38 +56,49 @@ const employeeSearchResults = {
     getMDMSData(action, dispatch);
     resetFieldsForConnection(state, dispatch);
     resetFieldsForApplication(state, dispatch);
-    setBusinessServiceDataToLocalStorage(queryObject, dispatch);
-    const businessServiceData = JSON.parse(
-      localStorageGet("businessServiceData")
-    );
-    if(businessServiceData && businessServiceData[0])
-    {
-    if (businessServiceData[0].businessService === "REGULARWSCONNECTION" 
-      || businessServiceData[0].businessService === "TEMPORARY_WSCONNECTION" 
-      || businessServiceData[0].businessService === "WS_TEMP_TEMP" 
-      || businessServiceData[0].businessService === "WS_TEMP_REGULAR" 
-      || businessServiceData[0].businessService === "WS_DISCONNECTION" 
-      || businessServiceData[0].businessService === "WS_TEMP_DISCONNECTION"
-      || businessServiceData[0].businessService === "WS_CONVERSION"
-      || businessServiceData[0].businessService === "WS_REACTIVATE"
-      || businessServiceData[0].businessService === "WS_TUBEWELL") {
-      const data = find(businessServiceData, { businessService: businessServiceData[0].businessService });
-      const { states } = data || [];
-      if (states && states.length > 0) {
-        const status = states.map((item) => { return { code: item.state } });
-        let applicationStatus = status.filter(item => item.code != null);
-        applicationStatus.push(
-          {
-            code:"INITIATED"
-          }
-        )  
-       const applicationdistStatus = applicationStatus.filter((n, i) => applicationStatus.indexOf(n) === i);
-        dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.applicationStatus", applicationdistStatus));
-      }
-    }
-  }
-    const applicationType = [{ code: "New Water connection", code: "New Water connection" }, 
-    { code: "New Sewerage Connection", code: "New Sewerage Connection" }]
+    //setBusinessServiceDataToLocalStorage(queryObject, dispatch);
+  //   const businessServiceData = JSON.parse(
+  //     localStorageGet("businessServiceData")
+  //   );
+  //   if(businessServiceData && businessServiceData[0])
+  //   {
+  //   if (businessServiceData[0].businessService === "REGULARWSCONNECTION" 
+  //     || businessServiceData[0].businessService === "TEMPORARY_WSCONNECTION" 
+  //     || businessServiceData[0].businessService === "WS_TEMP_TEMP" 
+  //     || businessServiceData[0].businessService === "WS_TEMP_REGULAR" 
+  //     || businessServiceData[0].businessService === "WS_DISCONNECTION" 
+  //     || businessServiceData[0].businessService === "WS_TEMP_DISCONNECTION"
+  //     || businessServiceData[0].businessService === "WS_CONVERSION"
+  //     || businessServiceData[0].businessService === "WS_REACTIVATE"
+  //     || businessServiceData[0].businessService === "WS_TUBEWELL") {
+  //     const data = find(businessServiceData, { businessService: businessServiceData[0].businessService });
+  //     const { states } = data || [];
+  //     if (states && states.length > 0) {
+  //       const status = states.map((item) => { return { code: item.state } });
+  //       let applicationStatus = status.filter(item => item.code != null);
+  //       applicationStatus.push(
+  //         {
+  //           code:"INITIATED"
+  //         }
+  //       )  
+  //      const applicationdistStatus = applicationStatus.filter((n, i) => applicationStatus.indexOf(n) === i);
+  //       dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.applicationStatus", applicationdistStatus));
+  //     }
+  //   }
+  // }
+    const applicationType = [{ code: "REGULARWSCONNECTION", name: "NEW_WS_CONNECTION" }, 
+                              {code:"WS_REACTIVATE",name:"REACTIVATE_CONNECTION"},
+                              {code:"WS_CONVERSION",name:"CONNECTION_CONVERSION"},
+                              {code:"WS_TEMP_REGULAR",name:"APPLY_FOR_TEMPORARY_REGULAR_CONNECTION"},
+                              {code:"WS_TEMP_DISCONNECTION",name:"TEMPORARY_DISCONNECTION"},
+                              {code:"WS_DISCONNECTION",name:"PERMANENT_DISCONNECTION"},
+                              {code:"WS_RENAME",name:"UPDATE_CONNECTION_HOLDER_INFO"},
+                              {code:"TEMPORARY_WSCONNECTION",name:"APPLY_FOR_TEMPORARY_CONNECTION"},
+                              {code:"WS_METER_UPDATE",name:"UPDATE_METER_INFO"},
+                              {code:"WS_TUBEWELL",name:"NEW_TUBEWELL_CONNECTION"},
+                             // {code:"WS_TEMP_TEMP",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},
+                              {code:"WS_TEMP_TEMP",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},
+                             { code: "SW_SEWERAGE", name: "New Sewerage Connection" }]
     dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.applicationType", applicationType));
 
     return action;
