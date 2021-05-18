@@ -26,8 +26,8 @@ class RentedPropertyDashboard extends React.Component {
       const propsData = this.props.data;
       if(propsData.length > 0){
         this.setState({
-            checkData: propsData,
-            sortByRP : propsData[1].reportSortBy.value
+            // checkData: propsData,
+            // sortByRP : propsData[1].reportSortBy.value
         });
       }
   }
