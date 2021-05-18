@@ -177,6 +177,35 @@ export const searchApplications = getCommonCard({
       if(action.value)
       {
         dispatch(toggleSpinner());
+        let businessServices ='REGULARWSCONNECTION'
+        switch(action.value)
+        {
+          case"NEW_WS_CONNECTION":
+          businessServices = "REGULARWSCONNECTION"
+          case"REACTIVATE_CONNECTION":
+          businessServices = "WS_REACTIVATE"
+          case"CONNECTION_CONVERSION":
+          businessServices = "WS_CONVERSION"
+          case"APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
+          businessServices = "WS_TEMP_REGULAR"
+          case"TEMPORARY_DISCONNECTION":
+          businessServices = "WS_TEMP_DISCONNECTION"
+          case"PERMANENT_DISCONNECTION":
+          businessServices = "WS_DISCONNECTION"
+          case"UPDATE_CONNECTION_HOLDER_INFO":
+          businessServices = "WS_RENAME"
+          case"APPLY_FOR_TEMPORARY_CONNECTION":
+          businessServices = "TEMPORARY_WSCONNECTION"
+          case"UPDATE_METER_INFO":
+          businessServices = "WS_METER_UPDATE"
+          case"NEW_TUBEWELL_CONNECTION":
+          businessServices = "WS_TUBEWELL"
+          case"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
+          businessServices = "WS_TEMP_TEMP"
+          case"SW_SEWERAGE":
+          businessServices = "SW_SEWERAGE"
+
+        }
         let swSectorList = state.screenConfiguration.preparedFinalObject.applyScreenMdmsData1['ws-services-masters'].swSectorList
         let sectorList = state.screenConfiguration.preparedFinalObject.applyScreenMdmsData1['ws-services-masters'].sectorList
        // get(state.screenConfiguration.preparedFinalObject, "SewerageConnection");
@@ -198,15 +227,16 @@ export const searchApplications = getCommonCard({
               "search",
               "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.applicationstatus",
               "props.localePrefix",
-              {moduleName: "WF", masterName: action.value}
+              {moduleName: "WF", masterName: businessServices}
             )
           );
           dispatch(prepareFinalObject("applyScreenMdmsData1.ws-services-masters.wssectorList", sectorList));
 
         }
+       
         const queryObject = [
           { key: "tenantId", value: getTenantId() },
-          { key: "businessServices", value: action.value }
+          { key: "businessServices", value: businessServices }
         ];
        await setBusinessServiceDataToLocalStorage(queryObject, dispatch);
         const businessServiceData = JSON.parse(

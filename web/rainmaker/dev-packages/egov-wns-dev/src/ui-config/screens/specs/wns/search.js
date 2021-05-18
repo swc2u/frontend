@@ -86,19 +86,19 @@ const employeeSearchResults = {
   //     }
   //   }
   // }
-    const applicationType = [{ code: "REGULARWSCONNECTION", name: "NEW_WS_CONNECTION" }, 
-                              {code:"WS_REACTIVATE",name:"REACTIVATE_CONNECTION"},
-                              {code:"WS_CONVERSION",name:"CONNECTION_CONVERSION"},
-                              {code:"WS_TEMP_REGULAR",name:"APPLY_FOR_TEMPORARY_REGULAR_CONNECTION"},
-                              {code:"WS_TEMP_DISCONNECTION",name:"TEMPORARY_DISCONNECTION"},
-                              {code:"WS_DISCONNECTION",name:"PERMANENT_DISCONNECTION"},
-                              {code:"WS_RENAME",name:"UPDATE_CONNECTION_HOLDER_INFO"},
-                              {code:"TEMPORARY_WSCONNECTION",name:"APPLY_FOR_TEMPORARY_CONNECTION"},
-                              {code:"WS_METER_UPDATE",name:"UPDATE_METER_INFO"},
-                              {code:"WS_TUBEWELL",name:"NEW_TUBEWELL_CONNECTION"},
+    const applicationType = [{ code: "NEW_WS_CONNECTION", name: "NEW_WS_CONNECTION" }, //REGULARWSCONNECTION
+                              {code:"REACTIVATE_CONNECTION",name:"REACTIVATE_CONNECTION"},//WS_REACTIVATE
+                              {code:"CONNECTION_CONVERSION",name:"CONNECTION_CONVERSION"},//WS_CONVERSION
+                              {code:"APPLY_FOR_TEMPORARY_REGULAR_CONNECTION",name:"APPLY_FOR_TEMPORARY_REGULAR_CONNECTION"},//WS_TEMP_REGULAR
+                              {code:"TEMPORARY_DISCONNECTION",name:"TEMPORARY_DISCONNECTION"},//WS_TEMP_DISCONNECTION
+                              {code:"PERMANENT_DISCONNECTION",name:"PERMANENT_DISCONNECTION"},//WS_DISCONNECTION
+                              {code:"UPDATE_CONNECTION_HOLDER_INFO",name:"UPDATE_CONNECTION_HOLDER_INFO"},//WS_RENAME
+                              {code:"APPLY_FOR_TEMPORARY_CONNECTION",name:"APPLY_FOR_TEMPORARY_CONNECTION"},//TEMPORARY_WSCONNECTION
+                              {code:"UPDATE_METER_INFO",name:"UPDATE_METER_INFO"},//WS_METER_UPDATE
+                              {code:"NEW_TUBEWELL_CONNECTION",name:"NEW_TUBEWELL_CONNECTION"},//WS_TUBEWELL
                              // {code:"WS_TEMP_TEMP",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},
-                              {code:"WS_TEMP_TEMP",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},
-                             { code: "SW_SEWERAGE", name: "New Sewerage Connection" }]
+                              {code:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},//WS_TEMP_TEMP
+                             { code: "SW_SEWERAGE", name: "New Sewerage Connection" }]//SW_SEWERAGE
     dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.applicationType", applicationType));
 
     return action;
