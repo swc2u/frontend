@@ -1995,24 +1995,223 @@ export const getEStateData = async ( dispatch, data ) => {
   "reportSortBy": data.reportSortBy
   }
 
+  var collection_AppliationPayload = {
+    "tenantId": data.tenantId,
+    "reportName": "ESCollectionReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ]
+  }
+
+  var collection_PropertyRentPayload = {
+    "tenantId": data.tenantId,
+    "reportName": "EstateRentCollectionReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ]
+  }
+
+  var collection_PenaltyPayload = {
+    "tenantId": data.tenantId,
+    "reportName": "EstatePenaltyCollectionReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ]
+  }
+
+  var collection_ExtensionPayload = {
+    "tenantId": data.tenantId,
+    "reportName": "EstateExtensionFeeCollectionReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ]
+  };
+
+  var collection_SecurityDepositPayload = {
+    "tenantId": data.tenantId,
+    "reportName": "EstateSecurityDepositCollectionReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ]
+  };
+
+  var due_PropertyDuePayload = {
+    "tenantId": data.tenantId,
+    "reportName": "EstateRentDueReport",
+    "searchParams": []
+  };
+
   try {
     store.dispatch(toggleSpinner());
-    const DescriptionReport = await httpRequest(
+    const resCollectionApplication = await httpRequest(
       "post",
-      "/est-services/application/_search?branchType=EstateBranch",
+      "/report/rainmaker-es/ESCollectionReport/_get?tenantId="+data.tenantId+"&pageSize=false&offset=0",
+      // "/est-services/application/_search?branchType=EstateBranch",
       "",
       [],
-      payloadData
+      collection_AppliationPayload
     );
 
+    const resCollectionPropertyRent = await httpRequest(
+      "post",
+      "/report/rainmaker-es/EstateRentCollectionReport/_get?tenantId="+data.tenantId+"&pageSize=false&offset=0",
+      // "/est-services/application/_search?branchType=EstateBranch",
+      "",
+      [],
+      collection_PropertyRentPayload
+    );
+
+    const resCollectionPenalty = await httpRequest(
+      "post",
+      "/report/rainmaker-es/EstatePenaltyCollectionReport/_get?tenantId="+data.tenantId+"&pageSize=false&offset=0",
+      // "/est-services/application/_search?branchType=EstateBranch",
+      "",
+      [],
+      collection_PenaltyPayload
+    );
+
+    const resCollectionExtension = await httpRequest(
+      "post",
+      "/report/rainmaker-es/EstateExtensionFeeCollectionReport/_get?tenantId="+data.tenantId+"&pageSize=false&offset=0",
+      // "/est-services/application/_search?branchType=EstateBranch",
+      "",
+      [],
+      collection_ExtensionPayload
+    );
+
+    const resCollectionSecurityDeposit = await httpRequest(
+      "post",
+      "/report/rainmaker-es/EstateSecurityDepositCollectionReport/_get?tenantId="+data.tenantId+"&pageSize=false&offset=0",
+      // "/est-services/application/_search?branchType=EstateBranch",
+      "",
+      [],
+      collection_SecurityDepositPayload
+    );
+
+    const resDuePropertyDueReport = await httpRequest(
+      "post",
+      "/report/rainmaker-es/EstateRentDueReport/_get?tenantId="+data.tenantId+"&pageSize=false&offset=0",
+      // "/est-services/application/_search?branchType=EstateBranch",
+      "",
+      [],
+      due_PropertyDuePayload
+    );
+
+    var resJSON = {
+      "collectionReport" : [resCollectionApplication, resCollectionPropertyRent, resCollectionPenalty, resCollectionExtension,
+        resCollectionSecurityDeposit],
+      "dueReport" : resDuePropertyDueReport
+    };
+    
     //debugger;
-    var response = [ DescriptionReport, payloadData.reportSortBy ];
+    var response = [resJSON, data];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // OK
     dispatch(
       handleField(
       "EstateDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+// Get Dashboard Data for Estate Data
+export const getFinanceData = async ( dispatch, data ) => {
+  
+  debugger;
+
+  try {
+    store.dispatch(toggleSpinner());
+    const resgetAllIncomeExpentiureYearly = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureYearly?org_id=390&fin_id=13",
+      // "/est-services/application/_search?branchType=EstateBranch",
+      "",
+      [],
+      {}
+    );
+
+    const resgetAllIncomeExpentiureSchedules = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureSchedules?fin_id=13",
+      "",
+      [],
+      {}
+    );
+
+    const resgetAllBudgetVarianceReportRest = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllBudgetVarianceReportRest",
+      "",
+      [],
+      {}
+    );
+
+    var resJSON = {
+      "getAllIncomeExpenditureYearly" : resgetAllIncomeExpentiureYearly,
+      "getAllIncomeExpentiureSchedules" : resgetAllIncomeExpentiureSchedules,
+      "getAllBudgetVarianceReportRest" : resgetAllBudgetVarianceReportRest
+    };
+    
+    //debugger;
+    var response = [resJSON, data];
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+    // OK
+    dispatch(
+      handleField(
+      "FinanceDashboard",
       "components.div.children.DashboardResults",
       "props.data",
       response

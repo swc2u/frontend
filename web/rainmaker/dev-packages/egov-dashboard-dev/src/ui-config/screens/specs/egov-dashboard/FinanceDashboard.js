@@ -3,15 +3,15 @@ import { getBreak, getCommonHeader } from "egov-ui-framework/ui-config/screens/s
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getUserInfo, setapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 import { getDashboardDropdownData } from "../../../../ui-utils/commons";
-import { FilterForm, DashboardResults } from "./EstateDashboard/EstateDashboard";
+import { FilterForm, DashboardResults } from "./FinanceDashboard/FinanceDashboard";
 import './index.css';
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 
 const header = getCommonHeader(
   {
-    labelName: "Estate Management Dashboard",
-    labelKey: "EState_dashboard_1"
+    labelName: "FinanceDashboard Dashboard",
+    labelKey: "Finance_dashboard_1"
   },
   {
     classes: {
@@ -43,12 +43,16 @@ const getDropDownData = async (action, state, dispatch) => {
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
-    "name" : "Collection Report",
-    "code" : "collectionReport"
+    "name" : "Departmentwise Income",
+    "code" : "deptIncome"
     },
     {
-      "name" : "Property Due Report",
-      "code" : "dueReport"
+      "name" : "Departmentwise Expenditure",
+      "code" : "deptExpenditure"
+    },
+    {
+      "name" : "Departmentwise Budget and Expenditure",
+      "code" : "deptBudgetExpenditure"
     }
   ]
   var selectedDefaultData = {value: data[0].code, label: data[0].name};
@@ -63,9 +67,9 @@ const getDropDownData = async (action, state, dispatch) => {
   dispatch(prepareFinalObject("dahsboardHome.defaulttoDate", formatDt));
 }
 
-const EstateDashboard = {
+const FinanceDashboard = {
   uiFramework: "material-ui",
-  name: "EstateDashboard",
+  name: "FinanceDashboard",
   beforeInitScreen: (action, state, dispatch) => {
     
     debugger
@@ -100,4 +104,4 @@ const EstateDashboard = {
   }
 };
 
-export default EstateDashboard;
+export default FinanceDashboard;
