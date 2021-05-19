@@ -191,6 +191,11 @@ const DashboardAudit = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardFinance = Loadable({
+  loader: () => import("./DashboardFinance"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -229,5 +234,6 @@ export {
   DashboardLegal,
   DashboardAgenda,
   DashboardSewerage,
-  DashboardAudit
+  DashboardAudit,
+  DashboardFinance
 };

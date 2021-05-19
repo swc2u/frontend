@@ -52,6 +52,12 @@ class RPCollectionReport extends React.Component {
     pdfDownload = (e) => {
         debugger;
         e.preventDefault();
+        var tableDataHeader1 = ["Receipt Number", "Receipt Issue Date", "Colony", "Allotment Number",
+             "Allotment Date", "Name", "Mobile Number", "Transaction Number", "Status", "Application Type",
+              "Payment Type", "Total Amount"];
+        var tableDataHeader2 = ["Receipt Number", "Receipt Issue Date", "Transit Number",
+         "Colony",
+        "Name", "Mobile Number", "Transaction Number", "Payment Type", "Total Amount"];
         if(this.state.graphClicked === 0){
             
             var columnData = this.state.unchangeColumnData
@@ -112,7 +118,7 @@ class RPCollectionReport extends React.Component {
             doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
         
             doc.setFontSize(10);
-            var pdfTitle = "Registry Dashboard Data"
+            var pdfTitle = "OwnerShipTransfer Dashboard Data"
             doc.text(pdfTitle, pageWidth / 2, 40, 'center');
         
             doc.autoTable({ html: '#my-table' });
@@ -120,7 +126,7 @@ class RPCollectionReport extends React.Component {
         
             doc.autoTable({
                 // head: [tableColumnDataCamel],
-                head: [tableColumnData],
+                head: [tableDataHeader1],
                 theme: "striped",
                 styles: {
                     fontSize: 7,
@@ -189,7 +195,7 @@ class RPCollectionReport extends React.Component {
             doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
         
             doc.setFontSize(10);
-            var pdfTitle = "OwnershipTransfer Dashboard Data"
+            var pdfTitle = "Duplicate Copy Dashboard Data"
             doc.text(pdfTitle, pageWidth / 2, 40, 'center');
         
             doc.autoTable({ html: '#my-table' });
@@ -197,7 +203,7 @@ class RPCollectionReport extends React.Component {
         
             doc.autoTable({
                 // head: [tableColumnDataCamel],
-                head: [tableColumnData],
+                head: [tableDataHeader1],
                 theme: "striped",
                 styles: {
                     fontSize: 7,
@@ -266,7 +272,7 @@ class RPCollectionReport extends React.Component {
             doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
         
             doc.setFontSize(10);
-            var pdfTitle = "DuplicateCopy Dashboard Data"
+            var pdfTitle = "Rented Property Dashboard Data"
             doc.text(pdfTitle, pageWidth / 2, 40, 'center');
         
             doc.autoTable({ html: '#my-table' });
@@ -274,7 +280,7 @@ class RPCollectionReport extends React.Component {
         
             doc.autoTable({
                 // head: [tableColumnDataCamel],
-                head: [tableColumnData],
+                head: [tableDataHeader2],
                 theme: "striped",
                 styles: {
                     fontSize: 7,
@@ -284,6 +290,16 @@ class RPCollectionReport extends React.Component {
         
             doc.save(pdfTitle+".pdf");
         }else{
+            var tableDataHeader = [];
+            if(this.state.typeSelected === "PropertyRent"){
+                tableDataHeader = ["Receipt Number", "Receipt Issue Date", "Transit Number",
+                "Colony",
+               "Name", "Mobile Number", "Transaction Number", "Payment Type", "Total Amount"];
+            }else{
+                tableDataHeader = ["Receipt Number", "Receipt Issue Date", "Colony", "Allotment Number",
+                "Allotment Date", "Name", "Mobile Number", "Transaction Number", "Status", "Application Type",
+                 "Payment Type", "Total Amount"];
+            }
             var columnData = this.state.unchangeColumnData
             // var columnDataCamelize = this.state.columnData
             var rowData = this.state.rowData
@@ -293,7 +309,11 @@ class RPCollectionReport extends React.Component {
                 return r;
                 }, {});
         
-            columnData = group["true"]
+            columnData = group["true"];
+            var tableCol = [];
+            for(var i=0; i<columnData.length; i++){
+                tableCol.push(columnData[i].Header);
+            }
             var tableColumnData = []
             var tableColumnDataCamel = []
             for(var i=0; i<columnData.length; i++){
@@ -339,10 +359,10 @@ class RPCollectionReport extends React.Component {
             var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
             var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
         
-            doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
+            doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
         
             doc.setFontSize(10);
-            var pdfTitle = "Rented Property Dashboard"
+            var pdfTitle = this.state.typeSelected+" Dashboard"
             doc.text(pdfTitle, pageWidth / 2, 40, 'center');
         
             doc.autoTable({ html: '#my-table' });
@@ -350,7 +370,7 @@ class RPCollectionReport extends React.Component {
         
             doc.autoTable({
                 // head: [tableColumnDataCamel],
-                head: [tableColumnData],
+                head: [tableCol],
                 theme: "striped",
                 styles: {
                     fontSize: 7,

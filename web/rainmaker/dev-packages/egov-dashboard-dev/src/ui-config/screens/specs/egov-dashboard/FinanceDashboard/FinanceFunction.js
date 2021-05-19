@@ -3,7 +3,7 @@ import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 // import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
 import set from "lodash/set";
-import { getEStateData } from "../../../../../ui-utils/commons";
+import { getFinanceData } from "../../../../../ui-utils/commons";
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
@@ -59,7 +59,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
     debugger;
     try {
       // API call for Description Report
-      const response = await getEStateData( dispatch, data );
+      const response = await getFinanceData( dispatch, data );
 
     } catch (error) {
 
