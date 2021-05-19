@@ -18,6 +18,20 @@ export const CommonMenuItems = [
     renderforPGREmp: 1,
   },
   {
+    primaryText: <Label label="CS_HOME_HEADER_SUPPORT" />,
+    route: "/HelpSupport",
+    leftIcon: <Icon action="social" name="person" className="iconClassHover material-icons whiteColor customMenuItem" />,
+    style: {
+      paddingBottom: "3px",
+      paddingTop: "3px",
+    },
+    id: "header-HelpSupport",
+    path: "HelpSupport",
+    renderforcsr: 1,
+    renderforadmin: 1,
+    renderforPGREmp: 1,
+  },
+  {
     primaryText: <Label label="CORE_COMMON_LOGOUT" />,
     route: "/logout",
     leftIcon: <Icon action="action" name="power-settings-new" className="iconClassHover material-icons whiteColor customMenuItem" />,
