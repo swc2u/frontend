@@ -10,8 +10,9 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { getSearchResultsView, updateAppStatus } from "../../../../ui-utils/commons";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-
+import { searchBill, searchdemand } from "../utils/index";
 import { citizenFooter } from "./searchResource/citizenFooter";
+import { estimateSummary } from "./summaryResource/estimateSummary";
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import {
   sellmeatapplicantSummary
@@ -116,12 +117,20 @@ const titlebar = getCommonContainer({
   }
 });
 
-const routePage = (dispatch) => {
+const routePage = (dispatch,type) => {
+  let tenantId = getOPMSTenantId();
+  const applicationid = getQueryArg(window.location.href, "applicationNumber");
   const appendUrl =
     process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+    if (type === "payment") {
+      const reviewUrl = `${appendUrl}/egov-opms/pay?applicationNumber=${applicationid}&tenantId=${tenantId}`
+      dispatch(toggleSpinner());
+      dispatch(setRoute(reviewUrl));
+    } else if (type === "home") {
   const reviewUrl = `${appendUrl}/egov-opms/sellmeatnoc-my-applications`;
   dispatch(toggleSpinner());
   dispatch(setRoute(reviewUrl));
+    }
 
 }
 
@@ -140,17 +149,21 @@ export const callBackForNexthome = async (state, dispatch) => {
       let response = await updateAppStatus(state, dispatch, "INITIATED");
       let responseStatus = get(response, "status", "");
       if (responseStatus == "success") {
-        routePage(dispatch);
+        routePage(dispatch,"payment");
       }
       else if (responseStatus == "fail" || responseStatus == "Fail") {
         dispatch(toggleSpinner());
         dispatch(toggleSnackbar(true, { labelName: "API ERROR" }, "error"));
       }
-    } else if (applicationStatus === "REASSIGN") {
+    } 
+    else if (applicationStatus === "INITIATED") {
+      routePage(dispatch, "payment")
+    }
+    else if (applicationStatus === "REASSIGN") {
       let response = await updateAppStatus(state, dispatch, "RESENT");
       let responseStatus = get(response, "status", "");
       if (responseStatus == "success") {
-        routePage(dispatch);
+        routePage(dispatch,"home");
       }
       else if (responseStatus == "fail" || responseStatus == "Fail") {
         dispatch(toggleSpinner());
@@ -158,7 +171,7 @@ export const callBackForNexthome = async (state, dispatch) => {
       }
     }
     else {
-      routePage(dispatch);
+      routePage(dispatch,"home");
     }
   } catch (error) {
     dispatch(toggleSpinner());
@@ -355,6 +368,7 @@ const screenConfig = {
     dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
 
     getMdmsData(action, state, dispatch).then(response => {
+      searchBill(dispatch, applicationNumber, tenantId);
       setSearchResponse(state, dispatch, applicationNumber, tenantId);
 
     });
@@ -405,12 +419,14 @@ const screenConfig = {
           }
         },
         body: checkForRole(roles, 'CITIZEN') ? getCommonCard({
+          estimateSummary: estimateSummary,
           sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary,
           undertakingsellmeatButton: undertakingsellmeatButton
           //taskStatusSummary:taskStatusSummary
 
         }) : getCommonCard({
+          estimateSummary: estimateSummary,
           sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary
         })

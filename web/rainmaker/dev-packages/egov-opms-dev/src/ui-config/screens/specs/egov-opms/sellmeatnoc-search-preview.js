@@ -18,6 +18,7 @@ import {
   getTransformedLocale,
   setBusinessServiceDataToLocalStorage
 } from "egov-ui-framework/ui-utils/commons";
+import { estimateSummary } from "./summaryResource/estimateSummary";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import jp from "jsonpath";
 import get from "lodash/get";
@@ -537,7 +538,7 @@ const screenConfig = {
     }
 
     dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
-
+    searchBill(dispatch, applicationNumber, tenantId);
     setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
 
     const queryObject = [
@@ -589,7 +590,7 @@ const screenConfig = {
         },
 
         body: checkForRole(roles, 'CITIZEN') ? getCommonCard({
-
+          estimateSummary: estimateSummary,
           sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary,
           taskStatusSummary: taskStatusSummary,
@@ -597,6 +598,7 @@ const screenConfig = {
           undertakingsellmeatButton
         }) :
           getCommonCard({
+            estimateSummary: estimateSummary,
             sellmeatapplicantSummary: sellmeatapplicantSummary,
             documentsSummary: documentsSummary
           }),

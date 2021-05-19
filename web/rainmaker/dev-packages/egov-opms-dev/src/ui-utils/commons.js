@@ -1334,6 +1334,7 @@ export const createUpdateSellMeatNocApplication = async (state, dispatch, status
         dispatch(prepareFinalObject("SELLMEATNOC", response));
         setapplicationNumber(response.applicationId);
         setApplicationNumberBox(state, dispatch);
+        await searchdemand(dispatch, response.applicationId, getOPMSTenantId());
         return { status: "success", message: response };
       } else {
         return { status: "fail", message: response };
