@@ -161,17 +161,23 @@ const withAuthorization = (options = {}) => (Component) => {
       day_c = (day_c > 9 ? "" : "0") + day_c;
       console.log(`${Seconds}/${Minutes}/${Hour}/${day}/${month}/${year}`)
       console.log(`${Seconds_c}/${Minutes_c}/${Hour_c}/${day_c}/${month_c}/${year_c}`)
+      console.log(process.env.NODE_ENV)
       if (process.env.NODE_ENV === "production") {
         const _role = role === "citizen" ? "citizen" : "employee";
         if (window.basename.slice(1).toLowerCase() !== _role) {
           this.props.logout();
         }
+        if(LoginDifferent>=900000)
+          {
+            localStorageSet("last-login-time", lastLoginTime);
+            this.props.logout();
+          }
       }
-      else if(LoginDifferent>=900000)
-      {
-        localStorageSet("last-login-time", lastLoginTime);
-        this.props.logout();
-      }
+    //  if(LoginDifferent>=900000)
+    //   {
+    //     localStorageSet("last-login-time", lastLoginTime);
+    //     this.props.logout();
+    //   }
       const getUserRole = () => {
         let { userInfo } = this.props;
         return (userInfo && userInfo.roles && userInfo.roles.length > 0 && userInfo.roles[0].code.toUpperCase()) || null;
