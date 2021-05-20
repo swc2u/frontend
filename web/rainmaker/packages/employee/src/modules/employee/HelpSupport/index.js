@@ -7,7 +7,7 @@ import {
   import { Container } from "egov-ui-framework/ui-atoms";
 import get from "lodash/get";
 import { connect } from "react-redux";
-import "../index.css";
+//import "../index.css";
 import { getNotifications } from "egov-ui-kit/redux/app/actions";
 import { getAccessToken, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 import img from "egov-ui-kit/assets/images/contact.png";
@@ -55,7 +55,7 @@ class HelpSupport extends React.Component {
             <ProfileSection img={img} addIconName={true}  />
             </div>
             <div style={{ padding: "0 8px",minHeight:"340px" }} className="col-xs-12 col-sm-8 col-md-8 col-lg-8 profileFormContainer">
-            <Grid item xs={12} sm={6}  style={{ marginTop: 15, paddingRight: 10 ,paddingLeft: 10 }}>
+            <Grid item xs={12}  style={{ marginTop: 15, paddingRight: 10 ,paddingLeft: 10 }}>
                               <Typography variant="caption">
                               <LabelContainer labelName="In case of any support or query, kindly contact us"  />
                               </Typography>

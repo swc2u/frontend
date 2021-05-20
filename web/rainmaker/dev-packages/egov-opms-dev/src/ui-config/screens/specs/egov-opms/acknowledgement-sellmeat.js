@@ -487,7 +487,7 @@ const setSearchResponseForNocCretificate = async (applicationNumber, tenantId) =
     case "ADVERTISEMENTNOC":
       receiptName = "/pdf-service/v1/_create?key=advertisement-receipt&tenantId=" + tenantId
       break;
-      case "SELLMEAT":
+      case "SELLMEATNOC":
         receiptName = "/pdf-service/v1/_create?key=sellMeat-receipt&tenantId=" + tenantId
         break;
   }
