@@ -119,6 +119,26 @@
   padding: 0;
   margin: 0; }
 
+.tableContainerEstate {
+  position: relative;
+  z-index: 1000;
+  /* display: none; */
+  /* float: left; */
+  width: 100%;
+  padding: 5px 0;
+  margin: 0 0 0;
+  font-size: 14px;
+  text-align: left;
+  list-style: none;
+  background-color: white;
+  background-clip: padding-box;
+  border: 1px solid #cccccc;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  /* -webkit-box-shadow: 0 6px 12px rgb(0 0 0 / 18%); */
+  /* box-shadow: 0 6px 12px rgb(0 0 0 / 18%); */
+  /* margin-left: 80%; */ }
+
 .tableContainer {
   position: absolute;
   z-index: 1000;
@@ -139,11 +159,14 @@
   /* box-shadow: 0 6px 12px rgb(0 0 0 / 18%); */
   /* margin-left: 80%; */ }
 
-/* Responsive graph try */
+/* Graph Dashboard Response try */
 .graphDashboard {
   display: flex;
-  height: 500px;
-  width: 100%; }
+  height: 500px; }
+
+.fullGraph {
+  width: 100%;
+  border-style: ridge; }
 
 .halfGraph {
   width: 50%;
@@ -152,30 +175,22 @@
 @media only screen and (max-width: 500px) {
   .graphDashboard {
     display: contents;
-    height: 100px;
-    padding: 0px 0px 0px 8px;
-    display: none; }
+    height: 300px;
+    width: 700px;
+    padding: 0px 0px 0px 8px; }
   .halfGraph {
-    width: 90%;
-    height: 100%;
+    width: 100%;
+    height: 300px;
     border-style: ridge; }
   .tableContainer {
-    display: contents;
-    width: 100%;
-    /* display: none; */ }
+    /* display: contents;  */
+    /* background-color: white; */
+    position: absolute;
+    z-index: 1000;
+    background-color: white;
+    width: 92%; }
   .tableFeature {
     position: relative;
-    margin-left: 8%;
+    margin-left: 10%;
     margin-bottom: 10px;
-    margin-top: 10px; }
-  .columnVisibilityCard {
-    position: absolute;
-    margin-left: 50%; } }
-
-/* React Table  */
-.ReactTable .rt-tbody {
-  flex: 99999 1 auto;
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  text-align: center; }
+    margin-top: 10px; } }

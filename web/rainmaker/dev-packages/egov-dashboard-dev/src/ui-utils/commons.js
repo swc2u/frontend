@@ -3131,28 +3131,14 @@ export const getWNSData = async ( dispatch, data ) => {
       payloadData
     );
 
-    var billPayload = {
-      "billGeneration": {
-        "fromDate":data.fromDate,
-        "toDate":data.toDate
-        }
-    }
-    const billData = await httpRequest(
-      "post",
-      "/ws-services/wsreport/_getBillReportData?",
-      "",
-      [],
-      billPayload
-    );
-
     // //debugger;
-    var response = [ applicationList, billData, payloadData.reportSortBy ];
+    var response = [ applicationList, payloadData ];
     // dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // // OK
     dispatch(
       handleField(
-      "WNSDashboard",
+      "WaterDashboard",
       "components.div.children.DashboardResults",
       "props.data",
       response
