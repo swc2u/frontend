@@ -259,38 +259,38 @@ else{
             );
             if (oldDocType != docType.code || oldDocCode != card.name) {
 
-if(oldDocuments){
-    let newDocumentData = {
-        documentType: docType.code,
-        documentCode: card.name,
-        isDocumentRequired: card.required,
-        isDocumentTypeRequired: card.dropdown
-          ? card.dropdown.required
-          : false,
-        mydocstate: false,
-        documents: [oldDocuments], 
-}
-documentsUploadRedux[index] = { ...newDocumentData };
-}
-else{
-    let newDocumentData = {
-        documentType: docType.code,
-        documentCode: card.name,
-        isDocumentRequired: card.required,
-        isDocumentTypeRequired: card.dropdown
-          ? card.dropdown.required
-          : false,
-        mydocstate: false
-      };
-      documentsUploadRedux[index] = { ...newDocumentData };  
-}
+              if(oldDocuments){
+                let newDocumentData = {
+                    documentType: docType.code,
+                    documentCode: card.name,
+                    isDocumentRequired: card.required,
+                    isDocumentTypeRequired: card.dropdown
+                      ? card.dropdown.required
+                      : false,
+                    mydocstate: false,
+                    documents: [oldDocuments], 
             }
-            index++;
+            documentsUploadRedux[index] = { ...newDocumentData };
+            }
+            else{
+              let newDocumentData = {
+                  documentType: docType.code,
+                  documentCode: card.name,
+                  isDocumentRequired: card.required,
+                  isDocumentTypeRequired: card.dropdown
+                    ? card.dropdown.required
+                    : false,
+                  mydocstate: false
+                };
+                documentsUploadRedux[index] = { ...newDocumentData };  
           }
-        });
-    });
-    prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
-  };
+                      }
+                      index++;
+                    }
+                  });
+              });
+              prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
+            };
 
   onUploadClick = (uploadedDocIndex) => {
     const { fetchUploadedDoc, userInfo } = this.props;
@@ -376,7 +376,7 @@ else{
           <Label label="BK_MYBK_DOCUMENT_VALIDATION_MSG" />
           <Grid container={true}>
             <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
-              {documentsUploadRedux[key] &&
+            {documentsUploadRedux[key] &&
               documentsUploadRedux[key].documents ? (
                 <div className={classes.documentSuccess}>
                   <Icon>
@@ -422,7 +422,7 @@ else{
                 />
               )}
             </Grid>
-            <Grid item={true} md={4}>
+            <Grid item={true} md={4} xs={12}>
               <FormControl style={{ width: "100%" }}>
                 <InputLabel
                   shrink
@@ -461,7 +461,7 @@ else{
               md={3}
               className={classes.fileUploadDiv}
             >
-              <UploadSingleFile
+        <UploadSingleFile
                 classes={this.props.classes}
                 handleFileUpload={(e) =>
                   handleFileUpload(e, this.handleDocument, this.props)
@@ -484,8 +484,8 @@ else{
             </Grid>
           </Grid>
           <Grid container={true}>
-            <Grid item={true} xs={2} sm={1} md={1}></Grid>
-            <Grid item={true} xs={10} sm={5} md={5} align="left">
+          <Grid item={true} xs={0} sm={1} md={1}></Grid>
+             <Grid item={true} xs={10} sm={5} md={5} align="left">
               <div>
                 <h5>Supported Documents: pdf, jpg, png. Max file size: 5MB</h5>
               </div>

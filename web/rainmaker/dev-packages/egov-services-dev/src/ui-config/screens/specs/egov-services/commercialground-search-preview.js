@@ -168,7 +168,6 @@ const HideshowFooter = (action, bookingStatus, fromDate,state) => {
         "screenConfig.components.div.children.footer.children.submitButton.visible",
         role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
     );
-
   
     if ((bookingTimeStamp < currentTimeStamp) && refundSecAmount > 0 && bookingStatus === "APPLIED" ) {
      

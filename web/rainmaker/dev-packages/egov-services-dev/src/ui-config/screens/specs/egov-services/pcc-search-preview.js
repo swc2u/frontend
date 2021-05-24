@@ -261,6 +261,16 @@ const setSearchResponse = async (
                 bkDisplayFromDateTime: recData[0].bkFromDate + "#" + fromTime,
                 bkDisplayToDateTime: recData[0].bkToDate + "#" + toTime,
             };
+ 
+            if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+              
+                let d = new Date(new Date(recData[0].bkToDate).setDate(new Date(recData[0].bkToDate).getDate() + 1));
+                DisplayPaccObject = {
+                    bkDisplayFromDateTime: recData[0].bkFromDate + "#" + fromTime,  
+                    bkDisplayToDateTime: d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate() + "#" + toTime,
+                };  
+            }
+            
 
             dispatch(
                 prepareFinalObject("DisplayTimeSlotData", DisplayPaccObject)
@@ -606,6 +616,19 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "pcc-search-preview",
     beforeInitScreen: (action, state, dispatch) => {
+        
+        let test= localStorage.getItem('location') ?localStorage.getItem('location').replace('#loaded', '').trim():''
+        
+        let newTest= window.location.href
+        if(test !== newTest.trim()){
+            localStorage.setItem('location', window.location); 
+        }
+
+        if(!localStorage.getItem('location').includes('#loaded')) {
+            localStorage.setItem('location', window.location + '#loaded');            
+            window.location.reload();
+        }
+        
         clearlocalstorageAppDetails(state);
         const applicationNumber = getQueryArg(
             window.location.href,

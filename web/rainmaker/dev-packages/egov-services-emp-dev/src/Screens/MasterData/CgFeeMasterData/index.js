@@ -84,7 +84,7 @@ class SimpleTable extends React.Component {
   async fetchTableData(){
     this.setState({isLoading: true})
 
-    const headers=['Id','Locality','Category','Rate Per Day','Booking Venue','Last Modified Date','Created Date' , "Valid From Date", "Valid To Date" ,'Action']
+    const headers=['Id','Locality','Category','Rate Per Day','Booking Venue','Last Modified Date','Created Date' , "Valid From Date", "Valid To Date", "Refundabel Security" ,'Action']
 
     const foundUser = this.props.userInfo && this.props.userInfo.roles.some(el => el.code === 'BK_ADMIN');
     if(foundUser){

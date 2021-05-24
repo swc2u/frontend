@@ -138,7 +138,7 @@ class AllRequests extends Component {
 
     this.props.clearBookingData(null,true,true)
       }
-
+    
     this.props.history.push(`/egov-services/checkavailability_pcc`);
   };
   gotoMcc = () => {

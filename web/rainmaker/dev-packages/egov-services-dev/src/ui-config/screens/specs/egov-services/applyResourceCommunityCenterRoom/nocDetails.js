@@ -33,8 +33,8 @@ import set from "lodash/set";
 export const personalDetails = getCommonCard({
     header: getCommonTitle(
       {
-        labelName: "Hall Details For Entered Application Number",
-        labelKey: "Hall Details For Entered Application Number",
+        labelName: "Community Center Details For Entered Application Number",
+        labelKey: "Community Center Details For Entered Application Number",
       },
       {
         style: {
