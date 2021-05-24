@@ -401,7 +401,7 @@ const screenConfig = {
     set(
       action,
       "screenConfig.components.undertakingdialog.children.popup",
-      getRequiredDocuments()
+      getRequiredDocuments("PETNOC")
     );
     set(
       action, "screenConfig.components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton1.visible",

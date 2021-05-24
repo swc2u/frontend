@@ -253,56 +253,56 @@ export const getRequiredDocuments = (type) => {
           },
           subText1: getCommonParagraph({
             labelName: "UNDERTAKING1",
-            labelKey: "UNDERTAKING_POINT1"
+            labelKey: "SELLMEATNOC_UNDERTAKING_POINT1"
           }),
           subText2: getCommonParagraph({
             labelName: "UNDERTAKING2",
-            labelKey: "UNDERTAKING_POINT2"
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT2"
           }),
           subText3: getCommonParagraph({
             labelName: "UNDERTAKING3",
-            labelKey: "UNDERTAKING_POINT3"
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT3"
           }),
           subText4: getCommonParagraph({
             labelName: "UNDERTAKING4",
-            labelKey: "UNDERTAKING_POINT4"
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT4"
           }),
           subText5: getCommonParagraph({
             labelName: "UNDERTAKING5",
-            labelKey: "UNDERTAKING_POINT5"
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT5"
           }),
           subText6: getCommonParagraph({
             labelName: "UNDERTAKING6",
-            labelKey: "UNDERTAKING_POINT6"
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT6"
           }),
           subText7: getCommonParagraph({
             labelName: "UNDERTAKING7",
-            labelKey: "UNDERTAKING_POINT7"
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT7"
           }),
           subText8: getCommonParagraph({
             labelName: "UNDERTAKING8",
-            labelKey: "UNDERTAKING_POINT8"
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT8"
           }),
           subText9: getCommonParagraph({
             labelName: "UNDERTAKING9",
-            labelKey: "UNDERTAKING_POINT9"
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT9"
           }),
           subText10: getCommonParagraph({
             labelName: "UNDERTAKING10",
-            labelKey: "UNDERTAKING_POINT10"
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT10"
           }),
           subText13: getCommonParagraph({
             labelName: "UNDERTAKING13",
-            labelKey: "UNDERTAKING_POINT13"
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT13"
           }),
 
           subText11: getCommonParagraph({
             labelName: "UNDERTAKING11",
-            labelKey: "UNDERTAKING_POINT11"
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT11"
           }),
           subText12: getCommonParagraph({
             labelName: "UNDERTAKING12",
-            labelKey: "UNDERTAKING_POINT12"
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT12"
           }),
 
         }

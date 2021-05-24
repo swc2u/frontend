@@ -27,7 +27,8 @@ import {
 } from "egov-ui-kit/utils/localStorageUtils";
 import { toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { httpRequest } from "../../../../ui-utils";
-import { checkForRole } from "../utils";
+import { getRequiredDocuments } from "./requiredDocuments/reqDocsSellMeat";
+import { checkForRole,showHideAdhocPopups } from "../utils";
 
 export const stepsData = [
   { labelName: "Sell Meat NOC Details", labelKey: "SELLMEATNOC_APPLICANT_DETAILS_NOC" },
@@ -56,6 +57,59 @@ const undertakingsellmeatButton = getCommonContainer({
     visible: true,
   },
 
+});
+const undertakingButton1 = getCommonContainer({
+  addPenaltyRebateButton1: {
+    componentPath: "Checkbox",
+    props: {
+      checked: false,
+      variant: "contained",
+      color: "primary",
+      style: {
+        // minWidth: "20",
+        height: "10px",
+        marginRight: "5px",
+        marginTop: "15px"
+      }
+    },
+    children: {
+      previousButtonLabel: getLabel({
+        labelName: "Undertaking",
+        labelKey: "SELLMEATNOC_UNDERTAKING_HEADING"
+      }),
+    },
+    onClickDefination: {
+      action: "condition",
+      callBack: (state, dispatch) => showHideAdhocPopups(state, dispatch, "sellmeatnoc_summary")
+    },
+    //checked:true,
+    visible: localStorageGet('app_noc_status') === "DRAFT" ? true : false,
+  },
+  addPenaltyRebateButton: {
+    componentPath: "Button",
+    props: {
+      color: "primary",
+      style: {
+        //minWidth: "200px",
+        height: "48px",
+        marginRight: "40px",
+        paddingLeft: "0px",
+        paddingBottom: "14px",
+        textTransform: "capitalize"
+      }
+    },
+    children: {
+      previousButtonLabel: getLabel({
+        labelName: "Undertaking",
+        labelKey: "NOC_UNDERTAKING"
+      })
+    },
+    onClickDefination: {
+      action: "condition",
+      callBack: (state, dispatch) => showHideAdhocPopups(state, dispatch, "sellmeatnoc_summary")
+    },
+    visible: true,
+  }
 });
 
 let roles = JSON.parse(getUserInfo()).roles
@@ -146,6 +200,7 @@ export const callBackForNexthome = async (state, dispatch) => {
     );
 
     if (applicationStatus === "DRAFT") {
+      if (localStorageGet("undertaking") == "accept") {
       let response = await updateAppStatus(state, dispatch, "INITIATED");
       let responseStatus = get(response, "status", "");
       if (responseStatus == "success") {
@@ -155,6 +210,16 @@ export const callBackForNexthome = async (state, dispatch) => {
         dispatch(toggleSpinner());
         dispatch(toggleSnackbar(true, { labelName: "API ERROR" }, "error"));
       }
+    }
+    else {
+      dispatch(toggleSpinner());
+      let errorMessage = {
+        labelName:
+          "Please Check Undertaking box!",
+        labelKey: ""
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    }
     } 
     else if (applicationStatus === "INITIATED") {
       routePage(dispatch, "payment")
@@ -379,6 +444,19 @@ const screenConfig = {
       { key: "businessServices", value: "SELLMEATNOC" }
     ];
     setBusinessServiceDataToLocalStorage(queryObject, dispatch);
+    set(state, "screenConfiguration.moduleName", "opms");
+    set(
+      action,
+      "screenConfig.components.undertakingdialog.children.popup",
+      getRequiredDocuments("SELLMEATNOC")
+    );
+    set(
+      action, "screenConfig.components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton1.visible",
+      localStorageGet("app_noc_status") !== 'REASSIGN' ? true : false)
+
+    set(
+      action, "screenConfig.components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton.visible",
+      localStorageGet("app_noc_status") !== 'REASSIGN' ? true : false)
 
 
     return action;
@@ -422,7 +500,8 @@ const screenConfig = {
           estimateSummary: estimateSummary,
           sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary,
-          undertakingsellmeatButton: undertakingsellmeatButton
+          undertakingsellmeatButton: undertakingsellmeatButton,
+          undertakingButton1
           //taskStatusSummary:taskStatusSummary
 
         }) : getCommonCard({
