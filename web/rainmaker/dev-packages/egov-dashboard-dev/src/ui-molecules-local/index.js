@@ -196,6 +196,11 @@ const DashboardFinance = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardWater = Loadable({
+  loader: () => import("./DashboardWater"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -225,7 +230,7 @@ export {
   DashboardOSBM,
   DashboardStoreIndent,
   DashboardStoreManagement,
-  DashboardWNS,
+  // DashboardWNS,
   DashboardWork,
   DashboardEstate,
   DashboardRentedProperty,
@@ -235,5 +240,6 @@ export {
   DashboardAgenda,
   DashboardSewerage,
   DashboardAudit,
-  DashboardFinance
+  DashboardFinance,
+  DashboardWater
 };
