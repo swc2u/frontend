@@ -11,7 +11,7 @@ import {
   getBreak,
   getCommonApplyFooter
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { getSearchPensioner } from "../../../../ui-utils/commons";
+import { getPensionerDetails } from "../../../../ui-utils/commons";
 import { PensionerDetails,PensionerBankDetails,PensionerClaimantDetails} from "./PensionerDetailsResource/RevisionApplication"
 import { footer} from "./PensionerDetailsResource/footer"
 
@@ -115,8 +115,8 @@ export const prepareEditFlow = async (
     //   value: tenantId
     // });
      
-    const response_ = await getSearchPensioner(queryObject);
-    dispatch(prepareFinalObject("ProcessInstancesTemp", get(response_, "Pensioners", [])));
+    const response_ = await getPensionerDetails(queryObject);
+    dispatch(prepareFinalObject("PensionerDetails", get(response_, "PensionerDetails", [])));
     
     // dispatch(prepareFinalObject("pensionRevisionTemp", response.ProcessInstances[0].pensionRevision, []));
 

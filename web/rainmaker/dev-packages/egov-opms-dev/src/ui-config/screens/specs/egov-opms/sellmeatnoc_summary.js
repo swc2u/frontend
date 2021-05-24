@@ -436,6 +436,19 @@ const screenConfig = {
         // citizenFooter:
         //   process.env.REACT_APP_NAME === "Citizen" ? citizenFooter : citizenFooter
       }
+    },
+    undertakingdialog: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-opms",
+      componentPath: "UnderTakingContainer",
+      props: {
+        open: false,
+        maxWidth: "md",
+        screenKey: "sellmeatnoc_summary"
+      },
+      children: {
+        popup: {}
+      }
     }
   }
 };

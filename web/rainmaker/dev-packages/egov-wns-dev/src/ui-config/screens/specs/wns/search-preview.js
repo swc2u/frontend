@@ -150,26 +150,46 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyUsageDetail.visible",false);
     } else {
       let applyScreenObject = get(state.screenConfiguration.preparedFinalObject, "applyScreen");
-      applyScreenObject.applicationNo.includes("WS")?applyScreenObject.service="WATER":applyScreenObject.service="SEWERAGE";
+      // if(applyScreenObject)
+      // {
+        applyScreenObject.applicationNo.includes("WS")?applyScreenObject.service="WATER":applyScreenObject.service="SEWERAGE";
+     // }
+     
       let parsedObject = parserFunction(findAndReplace(applyScreenObject, "NA", null));
       let code = '03';
+      let isFerruleApplicable = false
       if (service === "WATER") 
+      {
         code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",parsedObject.property.address.locality.code)   
+        if(parsedObject.waterApplication.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
+        {
+            isFerruleApplicable  =true;
+  
+        }
+        else{
+          isFerruleApplicable = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplication.isFerruleApplicable",false);
+        }
+      }
+        
         if (service === "SEWERAGE") 
-        code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.swSectorList",parsedObject.property.address.locality.code)   
-      set(parsedObject, 'property.address.locality.name', code);
+        {
+          code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.swSectorList",parsedObject.property.address.locality.code)   
+          set(parsedObject, 'property.address.locality.name', code);
+              if(parsedObject.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
+          {
+              isFerruleApplicable  =true;
+
+          }
+          else{
+            isFerruleApplicable = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplication.isFerruleApplicable",false);
+          }
+        }
+        
       
      
       //set ferrul
-      let isFerruleApplicable = false
-      if(parsedObject.waterApplication.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
-      {
-          isFerruleApplicable  =true;
-
-      }
-      else{
-        isFerruleApplicable = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplication.isFerruleApplicable",false);
-      }
+     
+      
       set(parsedObject, 'waterApplication.isFerruleApplicable', isFerruleApplicable);
       dispatch(prepareFinalObject("WaterConnection[0]", parsedObject));
       //dispatch(prepareFinalObject("WaterConnection[0].waterApplication.isFerruleApplicable", isFerruleApplicable));
@@ -196,7 +216,14 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
               estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
               estimate.Calculation[0].appStatus = processInstanceAppStatus; 
               if(parsedObject.waterApplication.totalAmountPaid !== null ||parsedObject.waterApplication.totalAmountPaid !== 'NA')
-              set(estimate.Calculation[0], 'totalAmountPaid', parseInt(parsedObject.waterApplication.totalAmountPaid));
+              {
+                //dataCalculation
+                if(isNaN(parseInt(parsedObject.waterApplication.totalAmountPaid)))
+                set(estimate.Calculation[0], 'totalAmountPaid', 0);
+                else
+                set(estimate.Calculation[0], 'totalAmountPaid', parseInt(parsedObject.waterApplication.totalAmountPaid));
+              }
+             
               else
               set(estimate.Calculation[0], 'totalAmountPaid', 0);
               
@@ -218,7 +245,13 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
               estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
               estimate.Calculation[0].appStatus = processInstanceAppStatus; 
               if(parsedObject.totalAmountPaid !== null || parsedObject.totalAmountPaid !=='NA' )
-              set(estimate.Calculation[0], 'totalAmountPaid', parseInt(parsedObject.totalAmountPaid));
+              {
+                //dataCalculation
+                if(isNaN(parseInt(parsedObject.waterApplication.totalAmountPaid)))
+                set(estimate.Calculation[0], 'totalAmountPaid', 0);
+                else
+                set(estimate.Calculation[0], 'totalAmountPaid', parseInt(parsedObject.totalAmountPaid));
+              }              
               else
               set(estimate.Calculation[0], 'totalAmountPaid', 0);
               dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
