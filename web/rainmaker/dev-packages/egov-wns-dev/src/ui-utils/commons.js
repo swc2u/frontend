@@ -2799,17 +2799,27 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
         //set usageCategory and subusageCategory from mdms call
         let usageCategory = GetMdmsNameBycode(state, "searchPreviewScreenMdmsData.PropertyTax.UsageType",wnsConnection[0].property.usageCategory) 
         let subusageCategory = GetMdmsNameBycode(state, "searchPreviewScreenMdmsData.PropertyTax.subUsageType",wnsConnection[0].property.subusageCategory) 
-let lastModifiedTime = convertEpochToDate(wnsConnection[0].auditDetails.lastModifiedTime)
-        set( wnsConnection[0], `property.usageCategory`, usageCategory);
-        set( wnsConnection[0], `property.subusageCategory`, subusageCategory);
-        set( wnsConnection[0], `connectionExecutionDate`, lastModifiedTime);
+        let lastModifiedTime = convertDateToEpoch(wnsConnection[0].auditDetails.lastModifiedTime)
+            set( wnsConnection[0], `property.usageCategory`, usageCategory);
+            set( wnsConnection[0], `property.subusageCategory`, subusageCategory);
+        let connectionExecutionDate = get( wnsConnection[0], `connectionExecutionDate`)
+        if(connectionExecutionDate!== null)
+        {            
+            connectionExecutionDate =convertDateToEpoch(connectionExecutionDate)
+            if(connectionExecutionDate>0)
+            set( wnsConnection[0], `connectionExecutionDate`, connectionExecutionDate);
+            else
+            set( wnsConnection[0], `connectionExecutionDate`, lastModifiedTime);
+        }
+        else{            
+            set( wnsConnection[0], `connectionExecutionDate`, lastModifiedTime);
+        }        
         queryObjectForEst = [{
             applicationNo: appNo,
             tenantId: getTenantIdCommon() !== null?getTenantIdCommon():getTenantId(),
             sewerageConnection: wnsConnection[0]
         }]
     }
-
     const DOWNLOADCONNECTIONDETAILS = {
         GET: {
             URL: "/pdf-service/v1/_create",
@@ -2905,9 +2915,12 @@ let lastModifiedTime = convertEpochToDate(wnsConnection[0].auditDetails.lastModi
                 obj = {
                     WaterConnection: wnsConnection
                 }
+               // wnsConnection[0].connectionExecutionDate = 
+                set( wnsConnection, `connectionExecutionDate`, convertEpochToDate(wnsConnection[0].connectionExecutionDate));
             } else {
+                set(wnsConnection[0], `connectionExecutionDate`, convertEpochToDate(wnsConnection[0].connectionExecutionDate));
                 obj = {
-                    SewerageConnection: wnsConnection
+                    SewerageConnection: wnsConnection[0]
                 }
             }
         }
@@ -2921,7 +2934,7 @@ let lastModifiedTime = convertEpochToDate(wnsConnection[0].auditDetails.lastModi
                         } else if (type === "estimateNotice") {
                             store.dispatch(prepareFinalObject("WaterConnection[0].additionalDetails.estimationFileStoreId", fileStoreId));
                         }
-                        downloadReceiptFromFilestoreID(fileStoreId, mode)
+                        downloadReceiptFromFilestoreID(fileStoreId, mode,getTenantIdCommon() !== null?getTenantIdCommon():getTenantId())
                     })
                 } else {
                     console.log("Error In Download");

@@ -63,8 +63,8 @@ export const reviewConnectionType = getLabelWithValue(
 );
 export const reviewferruleSize = getLabelWithValue(
   {
-    labelName: "Connection Type",
-    labelKey: "WS_SERV_DETAIL_CONN_TYPE"
+    labelName: "ferrule Size",
+    labelKey: "WS_ADDN_DETAILS_FERRULE_INPUT"
   },
   {
     jsonPath: "WaterConnection[0].ferruleSize",

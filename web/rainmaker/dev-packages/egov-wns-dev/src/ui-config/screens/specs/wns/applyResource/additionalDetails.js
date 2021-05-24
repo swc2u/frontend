@@ -876,7 +876,8 @@ export const additionDetails =(Disabled)=> getCommonCard({
     },
     errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
   }),
-    })
+    }),
+    // visible:false
   })
 });
 

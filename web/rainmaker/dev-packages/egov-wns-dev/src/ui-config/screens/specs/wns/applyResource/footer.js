@@ -633,6 +633,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     "apply"
   );
 
+
   if(!isPropertyDetailsValid || !isPropertyLocationDetailValid ||!isPropertyUsageValid){
     dispatch(
       toggleSnackbar(
@@ -716,6 +717,94 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         dispatch,
         "apply"
       ); 
+      let isConnectionDetailsValidpipesize = validateFields(
+        "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children",//pipeSize
+        state,
+        dispatch,
+        "apply"
+      );
+      let isConnectionDetailsValid_ = true;
+      let water_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
+      let sewerage_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
+      let tubewell_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.tubewell", false);
+      const fields_ = get(
+        state.screenConfiguration.screenConfig["apply"],
+        "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children",
+        {}
+      );
+      if(water_)
+      {
+       
+        // let isConnectionDetailsValidApplicationType = validateFields(
+        //   "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.waterApplicationType",
+        //   state,
+        //   dispatch,
+        //   "apply"
+        // );
+        if(fields_.waterApplicationType!==undefined) 
+        {
+          if(fields_.waterApplicationType.isFieldValid ===false)
+          isConnectionDetailsValid_ = false
+          
+        }
+        if(fields_.pipeSize!==undefined)
+        {
+          if(fields_.pipeSize.isFieldValid ===false)
+          isConnectionDetailsValid_ = false
+          
+          
+        }
+        // if(isConnectionDetailsValidpipesize && isConnectionDetailsValidApplicationType)
+        // {
+        //   isConnectionDetailsValid_ = true
+    
+        // }
+        // else{
+        //   isConnectionDetailsValid_ = false
+        // }
+    
+      }
+      else if(sewerage_)
+      {
+        // let isConnectionDetailsValidNoOfWaterClosets = validateFields(
+        //   "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfWaterClosets",
+        //   state,
+        //   dispatch,
+        //   "apply"
+        // );
+        // let isConnectionDetailsValidNoOfToilets = validateFields(
+        //   "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfToilets",
+        //   state,
+        //   dispatch,
+        //   "apply"
+        // );
+        // if(isConnectionDetailsValidNoOfWaterClosets && isConnectionDetailsValidNoOfToilets)
+        // {
+        //   isConnectionDetailsValid_ = true
+    
+        // }
+        // else{
+        //   isConnectionDetailsValid_ = false
+        // }
+        if(fields_.numberOfToilets!==undefined) 
+        {
+          if(fields_.numberOfToilets.isFieldValid ===false)
+          isConnectionDetailsValid_ = false
+          
+        }
+         if(fields_.numberOfWaterClosets!==undefined)
+        {
+          if(fields_.numberOfWaterClosets.isFieldValid ===false)
+          isConnectionDetailsValid_ = false
+          
+          
+        }
+    
+      }
+      else if(tubewell_){
+        isConnectionDetailsValid_ = true 
+    
+      }
       let isOwnershipsingleValid =false
 
       // for Ownership Type
@@ -805,7 +894,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       }
       
 
-      if(!isPropertyUsageValid || !isConnectionHolderDetailsValid || !isOwnershipTypeInputValid ||!isPropertyLocationDetailValid || !isPropertyDetailsValid || !isOwnershipsingleValid){
+      if(!isPropertyUsageValid || !isConnectionHolderDetailsValid || !isOwnershipTypeInputValid ||!isPropertyLocationDetailValid || !isPropertyDetailsValid || !isOwnershipsingleValid || !isConnectionDetailsValid_){
         isFormValid = false;
       }
       

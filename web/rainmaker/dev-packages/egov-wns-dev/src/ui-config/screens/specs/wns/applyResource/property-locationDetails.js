@@ -146,6 +146,7 @@ import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField
         {
           dispatch(prepareFinalObject("applyScreen.subdiv", sectorList[0].subdivision));
           dispatch(prepareFinalObject("applyScreen.property.address.locality.name", action.value.label));
+          dispatch(prepareFinalObject("applyScreen.property.address.locality.name", sectorList[0].name));
         }
       }
       
