@@ -232,51 +232,130 @@ let bkLocation = dataforSectorAndCategory && dataforSectorAndCategory.bookingsMo
 		}
     console.log("nero proofOfResDocs", proofOfResDocs, "----", allDocumentList)
 		console.log("AppNo--", AppNo)
-		if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
-			let timeSlot = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot
-			console.log("timeSlot--", timeSlot)
+	  if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
+      let arr2 = [];
+      for(let i = 0; i < dataforSectorAndCategory.bookingsModelList[0].timeslots.length; i++){
+        arr2.push(dataforSectorAndCategory.bookingsModelList[0].timeslots[i].slot)
+      }
+      console.log("arr",arr2)
 
-			prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
+      if(arr2.length == 1){
+      console.log("it contain single element")
+      console.log("your time slot is",arr2[0])
+      let timeSlot =
+        dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot;
+      console.log("timeSlot--", timeSlot);
 
-			let res = timeSlot.split("-");
-			console.log("res--", res)
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
 
-			let fromTime = res[0]
-			console.log("fromTime--", fromTime)
+      let res = timeSlot.split("-");
+      console.log("res--", res);
 
-			prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
+      let fromTime = res[0];
+      console.log("fromTime--", fromTime);
+
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
+
+      let ToTime = res[1];
+      console.log("ToTime--", ToTime);
+
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
+
+      let strMid = ",";
+
+      let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
+      console.log("ConcatFromDateTime--", ConcatFromDateTime);
+
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatFromDateTime",
+        ConcatFromDateTime
+      );
+
+      let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
+      console.log("ConcatToDateTime--", ConcatToDateTime);
+
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatToDateTime",
+        ConcatToDateTime
+      );
+
+      //let bkDisplayFromDateTime =
+
+      let timeSlotId =
+        dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id;
+      console.log("timeSlotId--", timeSlotId);
+
+      prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
+      }
+       else{
+        let a = arr2[0]
+        let b = arr2[1]
+        console.log("a",a)
+        console.log("b",b)
+        let fromfirst = a.split("-")
+        console.log("first",fromfirst)
+       let fromsecond = b.split("-")
+      console.log("second",fromsecond)
+      
+      let first = fromfirst[0]
+      let second = fromsecond[1]
+      console.log("first",first)
+      console.log("second",second)
+
+      let comfirstsecond = first + "-" + second
+      console.log("comfirstsecond",comfirstsecond)
+
+      let timeSlot = comfirstsecond
+console.log("timeSlot54234",timeSlot)
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
 
 
-			let ToTime = res[1]
-			console.log("ToTime--", ToTime);
+      let res = timeSlot.split("-");
+      console.log("res--", res);
 
-			prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
+      let fromTime = res[0];
+      console.log("fromTime--", fromTime);
 
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
 
-			let strMid = ","
+      let ToTime = res[1];
+      console.log("ToTime--", ToTime);
 
-			let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
-			console.log("ConcatFromDateTime--", ConcatFromDateTime)
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
 
-			prepareFinalObject("oldAvailabilityCheckData.ConcatFromDateTime", ConcatFromDateTime);
+      let strMid = ",";
 
-			let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
-			console.log("ConcatToDateTime--", ConcatToDateTime)
+      let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
+      console.log("ConcatFromDateTime--", ConcatFromDateTime);
 
-			prepareFinalObject("oldAvailabilityCheckData.ConcatToDateTime", ConcatToDateTime);
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatFromDateTime",
+        ConcatFromDateTime
+      );
 
+      let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
+      console.log("ConcatToDateTime--", ConcatToDateTime);
 
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatToDateTime",
+        ConcatToDateTime
+      );
 
-			//let bkDisplayFromDateTime =
+      //let bkDisplayFromDateTime =
 
-			let timeSlotId = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id
-			console.log("timeSlotId--", timeSlotId)
+      let timeSlotId =
+        dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id;
+      console.log("timeSlotId--", timeSlotId);
 
-			prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
+      prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
 
+      let timeSlotIdTwo =
+      dataforSectorAndCategory.bookingsModelList[0].timeslots[1].id;
+    console.log("timeSlotIdTwo--", timeSlotIdTwo);
 
-
-		}
+    prepareFinalObject("oldAvailabilityCheckData.timeSlotIdTwo", timeSlotIdTwo);  
+       }
+    }
 
     allDocumentList.map(async (doc) => {
 			console.log("Doccc---", doc);
