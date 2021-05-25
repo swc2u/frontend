@@ -270,7 +270,7 @@ class WorkFlowContainer extends React.Component {
             //                                     &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
 
             // }
-            else if(((status === "TEMPORARY_CONNECTION_CLOSED" || status ==='TEMPORARY_DISCONNECTED' ||  status ==='METER_UPDATED')  || (status ==='REJECTED')) && WaterConnection[0].waterApplicationType==='REGULAR' )//TEMPORARY_CONNECTION_CLOSED
+            else if(((status === "TEMPORARY_CONNECTION_CLOSED" || status ==='TEMPORARY_DISCONNECTED' ||  status ==='METER_UPDATED')  || (status ==='REJECTED')) && (WaterConnection[0].waterApplicationType==='REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY') )//TEMPORARY_CONNECTION_CLOSED
             {
               if(WaterConnection[0].activityType==='REACTIVATE_CONNECTION' )
               actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
@@ -280,6 +280,24 @@ class WorkFlowContainer extends React.Component {
               || WaterConnection[0].activityType==='TEMPORARY_DISCONNECTION'
               || WaterConnection[0].activityType==='PERMANENT_DISCONNECTION'
               ){
+                actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
+                                              && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                                             // && item.buttonLabel !=='UPDATE_METER_INFO'
+                                              &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
+
+              }
+              if(WaterConnection[0].waterApplicationType === 'TEMPORARY' && status ==='REJECTED')
+              {
+                actions = actions.filter(item => item.buttonLabel !== 'PERMANENT_DISCONNECTION' 
+                                                &&  item.buttonLabel !== 'TEMPORARY_DISCONNECTION'
+                                                && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                                                &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
+                                               // && item.buttonLabel !=='UPDATE_METER_INFO'
+                                                &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
+
+              }
+              else if(WaterConnection[0].waterApplicationType === 'REGULAR' && status ==='REJECTED')
+              {
                 actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
                                               && item.buttonLabel !=='REACTIVATE_CONNECTION'
                                              // && item.buttonLabel !=='UPDATE_METER_INFO'

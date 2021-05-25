@@ -676,7 +676,20 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
      }else{
        let propertyData = response.Properties[0];
        // let contractedCorAddress = "";
+        propertyData = get(
+          state,
+          "screenConfiguration.preparedFinalObject.applyScreen.property"
+        );
+        let tenantId = get(
+          state,
+          "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
+        );
     dispatch(prepareFinalObject("applyScreen.property", propertyData));
+    propertyData.landArea = parseInt(propertyData.landArea);
+    propertyData.totalConstructedArea = parseInt(propertyData.landArea);
+    propertyData.tenantId = tenantId;
+    propertyData.address.doorNo = propertyData.address.plotNo;
+    set(propertyData, "address.doorNo", propertyData.address.plotNo);
     set(propertyData, "creationReason", "UPDATE");
     let response_ = await propertyUpdate(state, dispatch,propertyData)
     if(response_)
@@ -1385,26 +1398,31 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       removingDocumentsWorkFlow(state, dispatch);
     }
     // validate category if Application Type is changged
-    let category_ = get(
-      state.screenConfiguration.preparedFinalObject,
-      "applyScreen.waterProperty.usageSubCategory",
-      null
-    );
-    if(water)
+    if(process.env.REACT_APP_NAME === "Citizen")
     {
-      if(category_ === null)
-    {
-      let errorMessage_ = {
-        labelName: "Please select Usage Caregory",
-        labelKey: "WS_APPLICATION_TYPE_CHANGGED_VALIDATION"
-      };
-
-      dispatch(toggleSnackbar(true, errorMessage_, "warning"));
-      return false;
+      let category_ = get(
+        state.screenConfiguration.preparedFinalObject,
+        "applyScreen.waterProperty.usageSubCategory",
+        null
+      );
+      if(water)
+      {
+        if(category_ === null)
+      {
+        let errorMessage_ = {
+          labelName: "Please select Usage Caregory",
+          labelKey: "WS_APPLICATION_TYPE_CHANGGED_VALIDATION"
+        };
+  
+        dispatch(toggleSnackbar(true, errorMessage_, "warning"));
+        return false;
+  
+      }
+  
+      }
 
     }
-
-    }
+  
     
     
     prepareDocumentsUploadData(state, dispatch);
@@ -1426,8 +1444,51 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       //     case "CONNECTION_CONVERSION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "CONNECTION_CONVERSION")); break;
       //   }
       // }
+
+      //if(RESUBMIT_APPLICATION)
+      let water = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
+      let sewerage = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
+      let tubewell = get(state.screenConfiguration.preparedFinalObject, "applyScreen.tubewell", false);
+      if(water || tubewell)
+      {
+        let ProcessInstances =  get(
+          state,
+          `screenConfiguration.preparedFinalObject.workflow.ProcessInstances`,
+          ''
+      );
+        let action=  get(
+          state,
+          `screenConfiguration.preparedFinalObject.workflow.ProcessInstances[${ProcessInstances.length-1}].action`,
+          ''
+      );
+      if(action ==='SEND_BACK_TO_CITIZEN')
+      {
+        window.localStorage.removeItem("ActivityStatusFlag");
+      }
+
+      }
+      else if (sewerage)
+      {
+        let ProcessInstances =  get(
+          state,
+          `screenConfiguration.preparedFinalObject.workflow.ProcessInstances`,
+          ''
+      );
+        let action=  get(
+          state,
+          `screenConfiguration.preparedFinalObject.workflow.ProcessInstances[${ProcessInstances.length-1}].action`,
+          ''
+      );
+      if(action ==='SEND_BACK_TO_CITIZEN')
+      {
+        window.localStorage.removeItem("ActivityStatusFlag");
+      }
+
+      }
+
       if(process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit"&& window.localStorage.getItem("ActivityStatusFlag")=== "true"){
         //window.localStorage.removeItem("ActivityStatusFlag");
+        console.log('pritam')
       }
      else if (process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit") {  
         setReviewPageRoute(state, dispatch);
