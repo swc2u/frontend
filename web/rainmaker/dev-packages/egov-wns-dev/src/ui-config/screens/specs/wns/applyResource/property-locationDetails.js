@@ -174,28 +174,45 @@ import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField
        // errorMessage: "ERR_INVALID_BILLING_PERIOD",
         jsonPath: "applyScreen.property.address.doorNo",
        // pattern: getPattern("alpha-numeric-with-space-and-newline"),
-         pattern: /^(0)*[1-9][0-9]{0,3}$/i,
+         pattern: /^[a-z0-9]{0,4}$/i,
       }),
       beforeFieldChange: async (action, state, dispatch) => {
         if(action.value)
       { 
-        let plotNo  = Number(action.value)
-        if(plotNo<9)
+        // let plotNo  = Number(action.value)
+        // if(plotNo<9)
+        // {
+        //   plotNo =`000${plotNo}`
+        // }
+        // if(plotNo<99 && plotNo >9 )
+        // {
+        //   plotNo =`00${plotNo}`
+        // }
+        // if(plotNo<999 && plotNo >99 )
+        // {
+        //   plotNo =`0${plotNo}`
+        // }
+        // if(plotNo>999)
+        // {
+        //   plotNo =`${plotNo}`
+        // }
+        let plotNo=action.value;
+        if(action.value.length ===1)
         {
-          plotNo =`000${plotNo}`
+          plotNo =`000${plotNo}` 
         }
-        if(plotNo<99 && plotNo >9 )
+        else if(action.value.length ===2)
         {
-          plotNo =`00${plotNo}`
-        }
-        if(plotNo<999 && plotNo >99 )
+          plotNo =`00${plotNo}` 
+        } 
+        else if(action.value.length ===3)
         {
-          plotNo =`0${plotNo}`
-        }
-        if(plotNo>999)
-        {
-          plotNo =`${plotNo}`
-        }
+          plotNo =`0${plotNo}` 
+        } 
+        // else{
+
+        // }
+
           dispatch(prepareFinalObject("applyScreen.property.address.plotNo", plotNo)); 
           dispatch(prepareFinalObject("applyScreen.property.address.doorNo", plotNo));         
         

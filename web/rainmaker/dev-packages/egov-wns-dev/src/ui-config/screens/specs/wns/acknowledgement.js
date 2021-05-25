@@ -112,11 +112,11 @@ const getAcknowledgementCard = (
               labelName: "Thank you for submitting the Application",
               labelKey: "WS_APPLICATION_SUCCESS_MESSAGE_MAIN"
             },
-            body: {
-              labelName:
-                " A notification regarding Application Submission has been sent to trade owner at registered Mobile No. Please note your application No. for future reference ",
-              labelKey: "WS_APPLICATION_SUCCESS_ACKO_MESSAGE_SUB"
-            },
+            // body: {
+            //   labelName:
+            //     " A notification regarding Application Submission has been sent to trade owner at registered Mobile No. Please note your application No. for future reference ",
+            //   labelKey: "WS_APPLICATION_SUCCESS_ACKO_MESSAGE_SUB"
+            // },
             tailText: {
               labelName: "Water Application No.",
               labelKey: "WS_ACKNO_APP_NO_LABEL"
@@ -164,11 +164,11 @@ const getAcknowledgementCard = (
               labelName: "Thank you for submitting the Application",
               labelKey: "WS_APPLICATION_SUCCESS_MESSAGE_MAIN"
             },
-            body: {
-              labelName:
-                " A notification regarding application submission has been sent at registered mobile no. Please note the application no. for future reference. ",
-              labelKey: "WS_APPLICATION_SUCCESS_ACKO_MESSAGE_SUB"
-            },
+            // body: {
+            //   labelName:
+            //     " A notification regarding application submission has been sent at registered mobile no. Please note the application no. for future reference. ",
+            //   labelKey: "WS_APPLICATION_SUCCESS_ACKO_MESSAGE_SUB"
+            // },
             tailText: {
               labelName: "Application Number.",
               labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
@@ -218,11 +218,11 @@ const getAcknowledgementCard = (
                 "Payment is collected successfully, Now you can dowload and issue Trade License Certificate to citizen",
               labelKey: "WS_CONFIRMATION_MESSAGE_MAIN"
             },
-            body: {
-              labelName:
-                "A notification regarding Payment Collection has been sent to trade owner at registered Mobile No.",
-              labelKey: "WS_CONFIRMATION_MESSAGE_SUB"
-            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding Payment Collection has been sent to trade owner at registered Mobile No.",
+            //   labelKey: "WS_CONFIRMATION_MESSAGE_SUB"
+            // },
             tailText: {
               labelName: "Payment Receipt No.",
               labelKey: "WS_PMT_RCPT_NO"
@@ -256,11 +256,11 @@ const getAcknowledgementCard = (
               labelName: "Application is Approved Successfully",
               labelKey: "WS_APPROVAL_CHECKLIST_MESSAGE_HEAD"
             },
-            body: {
-              labelName:
-                "A notification regarding Approval connection has been sent to registered Mobile No.",
-              labelKey: "WS_APPROVAL_CHECKLIST_MESSAGE_SUB"
-            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding Approval connection has been sent to registered Mobile No.",
+            //   labelKey: "WS_APPROVAL_CHECKLIST_MESSAGE_SUB"
+            // },
             tailText: {
               labelName: "Application Number.",
               labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
@@ -308,11 +308,11 @@ const getAcknowledgementCard = (
               labelName: "Application is sent back Successfully",
               labelKey: "WS_SENDBACK_CHECKLIST_MESSAGE_HEAD"
             },
-            body: {
-              labelName:
-                "A notification regarding above application status has been sent to registered Mobile No.",
-              labelKey: "WS_SENDBACK_CHECKLIST_MESSAGE_SUB"
-            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding above application status has been sent to registered Mobile No.",
+            //   labelKey: "WS_SENDBACK_CHECKLIST_MESSAGE_SUB"
+            // },
             tailText: {
               labelName: "Application Number.",
               labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
@@ -345,11 +345,11 @@ const getAcknowledgementCard = (
               labelName: "Application Rejected",
               labelKey: "WS_APPROVAL_REJ_MESSAGE_HEAD"
             },
-            body: {
-              labelName:
-                "A notification regarding Application Rejection has been sent to registered Mobile No.",
-              labelKey: "WS_APPROVAL_REJ_MESSAGE_SUBHEAD"
-            }
+            // body: {
+            //   labelName:
+            //     "A notification regarding Application Rejection has been sent to registered Mobile No.",
+            //   labelKey: "WS_APPROVAL_REJ_MESSAGE_SUBHEAD"
+            // }
           })
         }
       },
@@ -388,11 +388,11 @@ const getAcknowledgementCard = (
               labelName: "Trade License Cancelled",
               labelKey: "WS_WS_CANCELLED_MESSAGE_HEAD"
             },
-            body: {
-              labelName:
-                "A notification regarding Trade License cancellation has been sent to trade owner at registered Mobile No.",
-              labelKey: "TL_TL_CANCELLED_MESSAGE_SUBHEAD"
-            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding Trade License cancellation has been sent to trade owner at registered Mobile No.",
+            //   labelKey: "TL_TL_CANCELLED_MESSAGE_SUBHEAD"
+            // },
             tailText: {
               labelName: "Trade License No.",
               labelKey: "TL_HOME_SEARCH_RESULTS_TL_NO_LABEL"
@@ -430,11 +430,11 @@ const getAcknowledgementCard = (
               labelName: "Payment has failed!",
               labelKey: "TL_PAYMENT_FAILED"
             },
-            body: {
-              labelName:
-                "A notification regarding payment failure has been sent to the trade owner and applicant.",
-              labelKey: "TL_PAYMENT_NOTIFICATION"
-            }
+            // body: {
+            //   labelName:
+            //     "A notification regarding payment failure has been sent to the trade owner and applicant.",
+            //   labelKey: "TL_PAYMENT_NOTIFICATION"
+            // }
           })
         }
       },
@@ -488,11 +488,11 @@ const getAcknowledgementCard = (
               labelName: "Application Forwarded Successfully",
               labelKey: "WS_FORWARD_SUCCESS_MESSAGE_MAIN"
             },
-            body: {
-              labelName:
-                "A notification regarding above application status has been sent to registered Mobile No.",
-              labelKey: "WS_APPLICATION_FORWARD_SUCCESS_SUBHEAD"
-            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding above application status has been sent to registered Mobile No.",
+            //   labelKey: "WS_APPLICATION_FORWARD_SUCCESS_SUBHEAD"
+            // },
             tailText: {
               labelName: "Application No.",
               labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
@@ -527,11 +527,11 @@ const getAcknowledgementCard = (
               labelName: "Connection Activated Successfully ",
               labelKey: "WS_ACTIVATE_SUCCESS_MESSAGE_MAIN"
             },
-            body: {
-              labelName:
-                "A notification regarding above application status has been sent to registered Mobile No.",
-              labelKey: "WS_CONNECTION_ACTIVATE_SUCCESS_SUBHEAD"
-            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding above application status has been sent to registered Mobile No.",
+            //   labelKey: "WS_CONNECTION_ACTIVATE_SUCCESS_SUBHEAD"
+            // },
             tailText: {
               labelName: "Application No.",
               labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
