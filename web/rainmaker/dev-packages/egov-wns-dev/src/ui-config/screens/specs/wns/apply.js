@@ -488,7 +488,7 @@ export const getData = async (action, state, dispatch) => {
         payloadWater.WaterConnection[0].property.usageCategory = payloadWater.WaterConnection[0].property.usageCategory.split('.')[0];        
         payloadWater.WaterConnection[0].property.noOfFloors = String(payloadWater.WaterConnection[0].property.noOfFloors);
 
-        
+       // payloadWater.WaterConnection =  findAndReplace(payloadWater.WaterConnection, "NA", null)
         dispatch(prepareFinalObject("WaterConnection", payloadWater.WaterConnection));
        
         if(payloadWater && payloadWater.WaterConnection.length > 0){
@@ -551,6 +551,10 @@ export const getData = async (action, state, dispatch) => {
       // );
 
     }
+    if(usageCategory_!== null && waterApplicationType !== null )
+    {
+
+
     displaysubUsageType(usageCategory_, dispatch, state);
     displayUsagecategory(waterApplicationType, dispatch, state);
                 // check for security deposite for PENDING_FOR_SECURITY_DEPOSIT//PENDING_ROADCUT_NOC_BY_CITIZEN
@@ -625,6 +629,7 @@ export const getData = async (action, state, dispatch) => {
                     )
                   );
                 }
+      }
         }
       }
       const waterConnections = payloadWater ? payloadWater.WaterConnection : []
@@ -675,9 +680,11 @@ export const getData = async (action, state, dispatch) => {
       }
     }
       dispatch(prepareFinalObject("applyScreen", findAndReplace(combinedArray[0], "null", "NA")));
+      //dispatch(prepareFinalObject("applyScreen", combinedArray[0]));
       // For oldvalue display
       let oldcombinedArray = cloneDeep(combinedArray[0]);
-      dispatch(prepareFinalObject("applyScreenOld", findAndReplace(oldcombinedArray, "null", "NA")));
+     dispatch(prepareFinalObject("applyScreenOld", findAndReplace(oldcombinedArray, "null", "NA")));
+      //dispatch(prepareFinalObject("applyScreenOld", oldcombinedArray));
       if(combinedArray[0].connectionHolders && combinedArray[0].connectionHolders !== "NA"){
         combinedArray[0].connectionHolders[0].sameAsPropertyAddress = false;
         dispatch(prepareFinalObject("connectionHolders", combinedArray[0].connectionHolders));
@@ -719,6 +726,7 @@ export const getData = async (action, state, dispatch) => {
       dispatch(prepareFinalObject("connectionHolders[0].ownerType", combinedArray[0].property.owners[0].ownerType ==='NA'?'':combinedArray[0].property.owners[0].ownerType));
     
        // dispatch(prepareFinalObject("connectionHolders", combinedArray[0].connectionHolders));
+       
         dispatch(
           handleField(
             "apply",
@@ -897,6 +905,19 @@ export const getData = async (action, state, dispatch) => {
       )
 
     }
+    // replace NA with null
+    dispatch(prepareFinalObject("applyScreen", findAndReplace(combinedArray[0], "NA", null)));
+    if(payloadWater!== undefined)
+    {
+      payloadWater.WaterConnection =  findAndReplace(payloadWater.WaterConnection, "NA", null)
+      dispatch(prepareFinalObject("WaterConnection", payloadWater.WaterConnection));
+    }
+   if(payloadSewerage!== undefined)
+   {
+    payloadSewerage.SewerageConnections =  findAndReplace(payloadSewerage.SewerageConnections, "NA", null)
+    dispatch(prepareFinalObject("SewerageConnection", payloadSewerage.SewerageConnections));
+   }
+    
     }
   } else if (propertyID) {
     let queryObject = [{ key: "tenantId", value: tenantId }, { key: "propertyIds", value: propertyID }];

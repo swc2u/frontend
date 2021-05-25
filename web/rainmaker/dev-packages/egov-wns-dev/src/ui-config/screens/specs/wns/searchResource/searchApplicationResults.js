@@ -256,7 +256,7 @@ export const searchApplicationResults = {
 };
 
 const getApplicationDetails = data => {
-  const activityType = data.rowData[9]
+  const activityType = data.rowData[10]
   if(data.rowData[8].toUpperCase() ==='SEWERAGE' || data.rowData[7].toUpperCase() ==='SEWERAGE')
   {
     window.localStorage.setItem("wns_workflow","SW_SEWERAGE");

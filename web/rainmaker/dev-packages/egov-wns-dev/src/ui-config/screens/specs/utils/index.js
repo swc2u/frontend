@@ -1327,7 +1327,19 @@ export const getTodaysDateInYMD = () => {
   // date = epochToYmdDate(date);
   return date;
 };
-
+export const epochToYmd = et => {
+  // Return null if et already null
+  if (!et) return null;
+  // Return the same format if et is already a string (boundary case)
+  if (typeof et === "string") return et;
+  let date = new Date(et);
+  let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+  let month =
+    date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+  // date = `${date.getFullYear()}-${month}-${day}`;
+  var formatted_date = date.getFullYear() + "-" + month + "-" + day;
+  return formatted_date;
+};
 export const getNextMonthDateInYMD = () => {
   //For getting date of same day but of next month
   let date = getTodaysDateInYMD();

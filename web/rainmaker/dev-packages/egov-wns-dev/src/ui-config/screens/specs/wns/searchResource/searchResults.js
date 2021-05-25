@@ -133,6 +133,12 @@ export const searchResults = {
         options: {
           display: false
         }
+      },
+      {
+        name: getTextToLocalMapping("ConStatus"),
+        options: {
+          display: false
+        }
       }
     ],
     title: getLocaleLabels("Search Results for Water & Sewerage Connections", "WS_HOME_SEARCH_RESULTS_TABLE_HEADING", localisationLabels),
@@ -163,6 +169,7 @@ export const searchResults = {
 };
 
 const getConnectionDetails = (data,Active) => {
+  Active = data.rowData[11] ==='Inactive'?false:true
   window.location.href = `connection-details?connectionNumber=${data.rowData[1]}&tenantId=${data.rowData[8]}&service=${data.rowData[0]}&connectionType=${data.rowData[9]}&Active=${Active}`
 }
 

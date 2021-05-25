@@ -1042,6 +1042,7 @@ uniqueBycode =(data,key)=>{
                           ? !checkIfTerminatedState(item.nextState, businessService) 
                           && item.action !== "SEND_BACK_TO_CITIZEN" 
                           && item.action !== "RESUBMIT_APPLICATION" 
+                          && item.action !== "SUBMIT_APPLICATION" 
                           && item.action !== "SUBMIT_ROADCUT_NOC" 
                           && item.action !== "SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC"
                           && item.action !== "VERIFY_AND_FORWARD_FOR_PAYMENT"// VERIFY_AND_FORWARD_FOR_PAYMENT
