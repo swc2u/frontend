@@ -9,6 +9,22 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './SewerageIndex.css'
 
+const isMobile = window.innerWidth < 500
+const responsiveSizeHack = isMobile ? window.innerWidth + 400 : window.innerWidth
+
+const containerGraphMobile = {
+    position: "relative",
+    display: "block",
+    overflowX: "auto"
+}
+
+const containerGraphWeb = {
+    position: "relative",
+    display: "block",
+    width : "700px"
+    // overflowX: "auto"
+}
+
 class SewerageDashboard extends React.Component {
     constructor(props) {
         super(props);
@@ -23,6 +39,7 @@ class SewerageDashboard extends React.Component {
             graphOneData: [],
             graphTwoLabel: [],
             graphTwoData: [],
+            graphThreeLabelSHOW : [],
             graphThreeLabel : [],
             graphThreeData : [],
             graphClicked: -1,
@@ -55,7 +72,7 @@ class SewerageDashboard extends React.Component {
     var tableColumnData = []
     var tableColumnDataCamel = []
     for(var i=0; i<columnData.length; i++){
-        tableColumnData.push(columnData[i]["accessor"]);
+        tableColumnData.push(columnData[i]["Header"]);
         // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
     }
 
@@ -100,7 +117,7 @@ class SewerageDashboard extends React.Component {
     doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
 
     doc.setFontSize(10);
-    const pdfTitle = this.state.graphHardOneData.title ? this.state.graphHardOneData.title : "Title"
+    const pdfTitle = "Sewerage Applications Dashboard"
     doc.text(pdfTitle, pageWidth / 2, 40, 'center');
 
     doc.autoTable({ html: '#my-table' });
@@ -238,6 +255,14 @@ class SewerageDashboard extends React.Component {
                 }
             }
 
+            graphLablelDisplay = [];
+            for(var i=0; i<graphLabel.length; i++){
+                var show_label = graphLabel[i] ;
+                show_label = show_label.replaceAll("_", " ");
+                show_label = show_label.charAt(0).toUpperCase() + show_label.substring(1).toLowerCase()
+                graphLablelDisplay.push(show_label);
+            }
+
             this.setState({
                 graphLabelTwoDisplay : graphLablelDisplay,
                 graphTwoLabel : graphLabel,
@@ -364,19 +389,29 @@ class SewerageDashboard extends React.Component {
                     amt = amt + amount;
                 }
                 // graphData.push(group[graphLabel[i]].length);
-                graphData.push(amt);
+                graphData.push(amt/100000);
             } 
             
             var rowData = data;
 
+            var rowData = data;
+            var graphLabelSHOW = [];
+            for(var i=0; i<graphLabel.length; i++){
+                if(graphLabel[i] === "null"){
+                    graphLabelSHOW.push("Sub-Division (null)");
+                }else{
+                    graphLabelSHOW.push("Sub-Division "+graphLabel[i]);
+                }
+            }
+
             this.setState({
+                graphLabelSHOW : graphLabelSHOW,
                 graphThreeLabel : graphLabel,
                 graphThreeData : graphData,
                 dataThird : group,
                 rowData : rowData,
                 graphClicked : 3
             })
-
         }
     }
 
@@ -454,7 +489,8 @@ class SewerageDashboard extends React.Component {
             }else{
                 this.setState({
                     graphClicked : -1,
-                    rowData : []
+                    rowData : [],
+                    recordNotFound : "Data Not Found..!"
                 })
             }
             this.setState({
@@ -523,7 +559,7 @@ class SewerageDashboard extends React.Component {
         },
         title: {
             display: true,
-            text: "Monthwise Sewerage Dashboard"
+            text: "Month Wise Sewerage Applications"
         },
         scales: {
             xAxes: [{
@@ -638,7 +674,7 @@ class SewerageDashboard extends React.Component {
         },
         title: {
             display: true,
-            text: "Statuswise Monthly Sewerage Dashboard"
+            text: "Sewerage Application Status"
         },
         scales: {
             xAxes: [{
@@ -652,7 +688,7 @@ class SewerageDashboard extends React.Component {
                 },
                 scaleLabel: {
                     display: true,
-                    labelString: this.state.dropdownSelected === "All Program" ? "Months" : "Application Status"
+                    labelString: "Application Status"
                     }, 
             }],
             yAxes: [{
@@ -666,7 +702,7 @@ class SewerageDashboard extends React.Component {
                 },
                 scaleLabel: {
                     display: true,
-                    labelString: this.state.dropdownSelected === "All Program" ? "No of Application" : "No of Application"
+                    labelString: "No pf Applications"
                     }, 
             }]
         },
@@ -692,6 +728,7 @@ class SewerageDashboard extends React.Component {
                 const selectedVal = this.state.graphTwoLabel[ind];
                 const data = this.state.dataTwo[selectedVal];              
                 var graphSorting = this.graphSorting(data, "subdiv", this.state.dropdownSelected, "Final Dashboard");
+                
                 this.setState({
                     rowData: data,
                     graphClicked : 2
@@ -702,7 +739,7 @@ class SewerageDashboard extends React.Component {
 
     // Second Graph
     var graphThreeSortedData = {
-        labels: this.state.graphThreeLabel,
+        labels: this.state.graphLabelSHOW,
         // labels: ["Label1", "Label2"],
         datasets: [
             {
@@ -750,7 +787,7 @@ class SewerageDashboard extends React.Component {
         },
         title: {
             display: true,
-            text: "Amount to be paid Division wise Sewerage Dashboard"
+            text: "Sewerage Connection Charges Collected"
         },
         scales: {
             xAxes: [{
@@ -759,7 +796,7 @@ class SewerageDashboard extends React.Component {
                 },
                 scaleLabel: {
                     display: true,
-                    labelString:"Division"
+                    labelString:"Sub-Division"
                     }, 
             }],
             yAxes: [{
@@ -773,7 +810,7 @@ class SewerageDashboard extends React.Component {
                 },
                 scaleLabel: {
                     display: true,
-                    labelString: "Amount (INR)"
+                    labelString: "Amount (In Lakh.)"
                     }, 
             }]
         },
@@ -810,49 +847,65 @@ class SewerageDashboard extends React.Component {
         
     return (
         <div>
-        <div className="graphDashboard" style={this.state.rowData.length === 0 ? {display : "none"} : null}>
-        
-        {this.state.graphClicked >= 0 ?
-        <CardContent className="halfGraph">
-            <React.Fragment>
-                <Bar
-                data={ PIEgraphOneSortedData }
-                options={ PIEgraphOneOption } 
-                />
-            </React.Fragment>
-        </CardContent>
-        :null}
-
-        {
-            this.state.graphClicked > 0 ?
-            <CardContent className="halfGraph">
-                <React.Fragment>
-                    <HorizontalBar
-                    data={ graphTwoSortedData }
-                    options={ graphTwoOption } 
-                    />
-                </React.Fragment>
-            </CardContent>
-        : null
-        }
-
+        <div style={this.state.rowData.length === 0 ? null : {display:"none"}}>
+            { this.state.recordNotFound }
         </div>
 
+        <div className="graphContainer">
+            {
+                this.state.graphClicked >= 0 ?
+                <div
+                style={window.innerWidth < 500 ? containerGraphMobile : containerGraphMobile}
+                >
+                    <div className="graphData">
+                        <Bar
+                            height="350px"
+                            data={ PIEgraphOneSortedData }
+                            options={ PIEgraphOneOption }                 
+                        />
+                    </div>
+                </div>
+                :null
+            }
+            
+            {
+                this.state.graphClicked > 0 ?
+                <div
+                style={window.innerWidth < 500 ? containerGraphMobile : containerGraphMobile}
+                >
+                    <div className="graphData" >
+                        <Bar
+                            // width="800px"
+                            height="350px"
+                            data={ graphTwoSortedData }
+                            options={ graphTwoOption }                 
+                        />
+                    </div>
+                </div>
+                :null
+            }
+        </div>
+        
         {
-            this.state.graphClicked > 1 && this.state.dropdownSelected === "Sewerage Dashboard" ?
-            <CardContent style={{"height" : "350px"}}>
-                <React.Fragment>
+            this.state.graphClicked > 1 ?
+            <div 
+            style={window.innerWidth < 500 ? containerGraphMobile : containerGraphMobile}
+            >
+                <div className="all-graphData">
                     <Bar
-                    data={ graphThreeSortedData }
-                    options={ graphThreeOption } 
+                        width="800px"
+                        height="350px"
+                        data={ graphThreeSortedData }
+                        options={ graphThreeOption }                 
                     />
-                </React.Fragment>
-            </CardContent>
-        : null
+                </div>
+            </div>
+            :null
         }
 
         {/* Table Feature  */}
-        <div className="tableContainer" style={this.state.rowData.length === 0 ? {display : "none"} : null}>
+        <div className="tableContainer" style={this.state.rowData.length === 0 ? 
+         {display:"none"} : null}>
         {
             this.state.unchangeColumnData.length > 0  ? 
             <div className="tableFeature">
