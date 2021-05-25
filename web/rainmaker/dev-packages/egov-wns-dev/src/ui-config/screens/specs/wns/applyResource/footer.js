@@ -478,6 +478,8 @@ const usageCategory = get(
     if(localStorage.getItem("WNS_STATUS")){
       window.localStorage.removeItem("WNS_STATUS");
   }
+  dispatch(toggleSnackbar(true, { labelName: err.message }, "error"));
+  return false;
     console.log("errrr")
   }
 }
@@ -534,6 +536,8 @@ if(!proconnHolderDetail){
     if(localStorage.getItem("WNS_STATUS")){
       window.localStorage.removeItem("WNS_STATUS");
   }
+  dispatch(toggleSnackbar(true, { labelName: err.message }, "error"));
+  return false;
     console.log("errrr")
   }
 } 
@@ -567,6 +571,8 @@ else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER
     if(localStorage.getItem("WNS_STATUS")){
       window.localStorage.removeItem("WNS_STATUS");
   }
+  dispatch(toggleSnackbar(true, { labelName: err.message }, "error"));
+  return false;
     console.log("errrr")
   }
 }
@@ -605,6 +611,8 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
     if(localStorage.getItem("WNS_STATUS")){
       window.localStorage.removeItem("WNS_STATUS");
   }
+  dispatch(toggleSnackbar(true, { labelName: err.message }, "error"));
+  return false;
     console.log("errrr")
   }
  
@@ -689,6 +697,8 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     if(localStorage.getItem("WNS_STATUS")){
       window.localStorage.removeItem("WNS_STATUS");
   }
+  dispatch(toggleSnackbar(true, { labelName: err.message }, "error"));
+  return false;
   }
 
 }
