@@ -2506,6 +2506,8 @@ export const _getPattern = (type) => {
               return /^[1-9][0-9]{1,7}$/i;
               case "BankName":
                 return /^[a-zA-Z ]{1,250}$/i;
+                case "areaSqFeet":
+                  return /^([1-9][0-9]{1,14})(\.\d{1,2})?$/i;
   }
 }
 
