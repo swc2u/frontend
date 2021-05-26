@@ -1095,17 +1095,17 @@ uniqueBycode =(data,key)=>{
     {
       const {WaterConnection} = preparedFinalObject;
       let securityCharge = 0 ;
-      securityCharge = WaterConnection && WaterConnection[0].securityCharge;
+      securityCharge = WaterConnection && WaterConnection[0].waterApplication.securityCharge;
       securityCharge = parseInt(securityCharge);
       if(securityCharge ===0)
       {
         //FORWARD_TO_JE_TARIFF_CHANGE
-        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_PAYMENT');
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_PAYMENT');//VERIFY_AND_FORWARD_FOR_PAYMENT
 
       }
       else{
         //FORWARD_TO_JE_TARIFF_CHANGE
-        actions = actions.filter(item => item.buttonLabel !== 'FORWARD_TO_JE_TARIFF_CHANGE');
+        actions = actions.filter(item => item.buttonLabel !== 'FORWARD_TO_JE_TARIFF_CHANGE');//FORWARD_TO_JE_TARIFF_CHANGE  
 
       }
 

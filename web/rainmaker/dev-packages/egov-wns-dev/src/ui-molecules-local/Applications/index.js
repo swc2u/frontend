@@ -106,7 +106,7 @@ else if(data.service ==='SEWERAGE'){
                         <Grid item md={8} xs={6}>
                           {item.property && item.property.owners&&
                           <LabelContainer
-                          labelName={item.property.owners.map(owner =>owner.name).join(",")}
+                          labelName={item.property.owners.map(owner =>owner.name).join(", ")}
                           fontSize={14}
                           style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                         />
