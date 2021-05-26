@@ -51,6 +51,7 @@ import {
   getCommonApplyFooter,
 
 } from "../utils";
+import { getTextForPetNoc } from "./searchResource/citizenSearchFunctions";
 
 
 let roles = JSON.parse(getUserInfo()).roles
@@ -130,6 +131,14 @@ const titlebar = getCommonContainer({
       number: getQueryArg(window.location.href, "applicationNumber")
     }
   },
+  applicationStatus: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+      status: "NA",
+    }
+  }
 });
 
 const routeToPage = (dispatch, type) => {
@@ -287,12 +296,17 @@ const prepareDocumentsView = async (state, dispatch) => {
 
     let uploadPetPicture = JSON.parse(petnocdetail).hasOwnProperty('uploadPetPicture') ?
       JSON.parse(petnocdetail).uploadPetPicture[0]['fileStoreId'] : '';
+    
+    let ownerIdProof = JSON.parse(petnocdetail).hasOwnProperty('ownerIdProof') ?
+    JSON.parse(petnocdetail).ownerIdProof[0]['fileStoreId'] : '';
+
 
     let allDocuments = [];
     allDocuments.push(uploadVaccinationCertificate)
     allDocuments.push(uploadPetPicture)
+    allDocuments.push(ownerIdProof)
 
-
+    
     if (uploadVaccinationCertificate !== '' && uploadPetPicture !== '') {
       documentsPreview.push({
         title: "uploadVaccinationCertificate",
@@ -303,6 +317,13 @@ const prepareDocumentsView = async (state, dispatch) => {
         fileStoreId: uploadPetPicture,
         linkText: "View"
       });
+      if (ownerIdProof != '') { 
+          documentsPreview.push({
+              title: "ownerIdProof",
+              fileStoreId: ownerIdProof,
+              linkText: "View"
+            });
+        }
       let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
       let fileUrls =
         fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};
@@ -338,6 +359,16 @@ const setSearchResponse = async (state, dispatch, applicationNumber, tenantId) =
   }
   else {
     dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
+    let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", "-");
+    dispatch(
+      handleField(
+        "petnoc_summary",
+        "components.div.children.headerDiv.children.header.children.applicationStatus",
+        "props.status",
+        getTextForPetNoc(nocStatus)
+      )
+    );
+
 
     prepareDocumentsView(state, dispatch);
   }
@@ -370,7 +401,7 @@ const screenConfig = {
     set(
       action,
       "screenConfig.components.undertakingdialog.children.popup",
-      getRequiredDocuments()
+      getRequiredDocuments("PETNOC")
     );
     set(
       action, "screenConfig.components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton1.visible",

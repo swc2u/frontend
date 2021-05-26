@@ -119,8 +119,28 @@
   padding: 0;
   margin: 0; }
 
-.tableContainer {
-  position: absolute;
+.tableBlock {
+  display: block; }
+
+.defaulttableContainer {
+  position: relative;
+  z-index: 1000;
+  /* display: none; */
+  /* float: left; */
+  width: 100%;
+  padding: 5px 0;
+  margin: 0 0 0;
+  font-size: 14px;
+  text-align: left;
+  list-style: none;
+  background-color: white;
+  background-clip: padding-box;
+  border: 1px solid #cccccc;
+  border: 1px solid rgba(99, 97, 97, 0.15);
+  border-radius: 4px; }
+
+.tableContainerRented {
+  position: relative;
   z-index: 1000;
   /* display: none; */
   /* float: left; */
@@ -150,6 +170,13 @@
 .halfGraph {
   width: 50%;
   border-style: ridge; }
+
+.fullGraph {
+  width: 100%;
+  border-style: ridge; }
+
+.tableData {
+  padding: 15px; }
 
 @media only screen and (max-width: 500px) {
   .graphDashboard {

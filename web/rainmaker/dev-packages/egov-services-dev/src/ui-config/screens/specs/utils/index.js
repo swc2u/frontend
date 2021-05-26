@@ -893,6 +893,15 @@ export const downloadReceipt = async (
 
                 },
             ];
+        } else if (applicationData.businessService === "GFCP") {
+            queryStr = [
+                { key: "key", value: "bk-cg-payment-receipt" },
+                {
+                    key: "tenantId",
+                    value: tenantId,
+
+                },
+            ];
         } else {
             queryStr = [
                 { key: "key", value: "bk-payment-receipt" },
@@ -1013,6 +1022,7 @@ export const downloadReceipt = async (
         } else {
             let tax = 0;
             let amount = 0;
+            let cgSecurityRefund= 0
             if (applicationData.businessService === "OSBM") {
                 tax = payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
                     (el) => el.taxHeadCode.includes("CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH")
@@ -1030,6 +1040,9 @@ export const downloadReceipt = async (
                 )[0].amount;
                 tax = payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
                     (el) => el.taxHeadCode.includes("CGST_UTGST_COMMERCIAL_GROUND_BOOKING_BRANCH")
+                )[0].amount;
+                cgSecurityRefund=payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                    (el) => el.taxHeadCode.includes("SECURITY_COMMERCIAL_GROUND_BOOKING_BRANCH")
                 )[0].amount;
             } else if (applicationData.businessService === "OSUJM") {
                 amount = payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
@@ -1099,6 +1112,7 @@ export const downloadReceipt = async (
                 receiptNo:
                     payloadReceiptDetails.Payments[0].paymentDetails[0]
                         .receiptNumber,
+                        refundableSecurity:   cgSecurityRefund
             };
         }
         console.log(paymentInfoData, "nero Qry str");
@@ -1195,6 +1209,7 @@ export const downloadReceipt = async (
                 receiptNo:
                     payloadReceiptDetails.Payments[0].paymentDetails[0]
                         .receiptNumber,
+
             };
             // let noOfBookedRooms = '';
             // if(roomDataForGivenApplicationNumber.totalNoOfACRooms > 0 && roomDataForGivenApplicationNumber.totalNoOfNonACRooms > 0){
@@ -1226,8 +1241,8 @@ export const downloadReceipt = async (
                         bkStartDate: applicationData.bkFromDate,
                         bkEndDate: applicationData.bkToDate,
                         bkLocation: applicationData.bkLocation,
-                        bookingPupose: applicationData.bkBookingPurpose,
-                        bkApplicationNumber:
+                        bookingPurpose: applicationData.bkBookingPurpose,
+                        applicationNumber :
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.consumerCode,
                     },
@@ -1463,15 +1478,21 @@ export const downloadCertificate = async (
         if (applicationData.timeslots && applicationData.timeslots.length > 0) {
 
             var [fromTime, toTime] = applicationData.timeslots[0].slot.split('-')
-
+            let newToDate= applicationData.bkToDate
+            if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+              
+                let d = new Date(new Date(applicationData.bkToDate).setDate(new Date(applicationData.bkToDate).getDate() + 1));  
+                newToDate= d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+              
+            }
             bookingDuration = getDurationDateWithTime(
                 applicationData.bkFromDate,
-                applicationData.bkToDate,
+                newToDate,
                 fromTime,
                 toTime
             )
 
-
+            
         }
     } else {
         bookingDuration = getDurationDate(
@@ -1584,7 +1605,7 @@ export const downloadCertificate = async (
                 venueName: applicationData.bkLocation,
                 sector: applicationData.bkSector,
                 groundName: applicationData.bkSector,
-                bookingPupose: applicationData.bkBookingPurpose,
+                bookingPurpose: applicationData.bkBookingPurpose,
                 duration:
                     applicationData.bkDuration == "1"
                         ? `${applicationData.bkDuration} Month`
@@ -1669,7 +1690,7 @@ export const downloadCertificate = async (
                                             ?`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Rooms`
                                                 :`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Room`,
                  
-                     bookingPupose: applicationData.bkBookingPurpose,
+                     bookingPurpose: applicationData.bkBookingPurpose,
                     bkStartDate: applicationData.bkFromDate,
                     bkEndDate: applicationData.bkToDate,
                     placeOfService: "Chandigarh",
@@ -1680,7 +1701,7 @@ export const downloadCertificate = async (
                         applicationData.bkDateCreated
                     ),
                     bookingPeriod: bookingDuration,
-                    bkApplicationNumber:
+                    applicationNumber :
                         payloadReceiptDetails.Payments[0].paymentDetails[0]
                             .bill.consumerCode,
                 },
@@ -1858,6 +1879,7 @@ export const downloadApplication = async (
             applicationType: applicationData.bkStatus,
         };
         let bookingDataGFCP = {
+
             applicationNumber: applicationNumber,
             venue: applicationData.bkBookingVenue,
             bookingCategory: applicationData.bkCategory,
@@ -1901,7 +1923,7 @@ export const downloadApplication = async (
         let taxes = null;
         let ugst = null;
         let cgst = null;
-
+        let  cgSecurityRefund=0
         if (applicationData.businessService == "OSBM") {
 
             baseCharge = paymentData.billDetails[0].billAccountDetails.filter(
@@ -1934,6 +1956,9 @@ export const downloadApplication = async (
             )[0].amount;
             taxes = paymentData.billDetails[0].billAccountDetails.filter(
                 (el) => el.taxHeadCode == "CGST_UTGST_COMMERCIAL_GROUND_BOOKING_BRANCH"
+            )[0].amount;
+            cgSecurityRefund= paymentData.billDetails[0].billAccountDetails.filter(
+                (el) => el.taxHeadCode == "SECURITY_COMMERCIAL_GROUND_BOOKING_BRANCH"
             )[0].amount;
 
         }
@@ -2094,6 +2119,7 @@ export const downloadApplication = async (
                             paymentData === undefined
                                 ? null
                                 : paymentData.totalAmount,
+                                  refundableSecurity:   cgSecurityRefund  
                     },
                     generatedBy: {
                         generatedBy: JSON.parse(getUserInfo()).name,

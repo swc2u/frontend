@@ -541,7 +541,20 @@ export const findItemInArrayOfObject = (arr, conditionCheckerFn) => {
 };
 
 
-
+export const delectDocument = async (payload) => {
+  
+  try {
+    const fileUrl = await httpRequest(
+      "post",
+      "/hc-services/serviceRequest/_delectDocument",
+      "",
+      [], {services: payload }
+    );
+    return fileUrl;
+  } catch (e) {
+    console.log(e);
+  }
+};
 export const EditServiceRequest = async (state, dispatch, status) => {
   let response = '';
   

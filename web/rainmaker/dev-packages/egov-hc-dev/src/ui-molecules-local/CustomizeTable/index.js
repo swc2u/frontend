@@ -9,7 +9,7 @@ import get from "lodash/get";
 import PropTypes from "prop-types";
 import cloneDeep from "lodash/cloneDeep";
 import { createMuiTheme, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
-import "./index.css";
+import "./index.scss";
 import { connect } from "react-redux";
 
 

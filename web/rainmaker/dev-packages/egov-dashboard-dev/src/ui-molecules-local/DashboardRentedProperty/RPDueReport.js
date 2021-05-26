@@ -40,85 +40,100 @@ class RPDueReport extends React.Component {
     // PDF function 
     pdfDownload = (e) => {
 
-    debugger;
-    e.preventDefault();
-    var columnData = this.state.unchangeColumnData
-    // var columnDataCamelize = this.state.columnData
-    var rowData = this.state.rowData
-
-    var group = columnData.reduce((r, a) => {
-        r[a["show"]] = [...r[a["show"]] || [], a];
-        return r;
-        }, {});
-
-    columnData = group["true"]
-    var tableColumnData = []
-    var tableColumnDataCamel = []
-    for(var i=0; i<columnData.length; i++){
-        tableColumnData.push(columnData[i]["accessor"]);
-        // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
-    }
-
-    var tableRowData = [];
-    for(var i=0; i<rowData.length; i++){
-        var rowItem = [];
-        for(var j=0; j<tableColumnData.length; j++){
-            const demo1 = rowData[i]
-            var demo2 = tableColumnData[j].replace(".", ",");
-            demo2 = demo2.split(",")
-            if(typeof(demo2) === "object"){   
-                if(demo2.length > 1){
-                    rowItem.push(rowData[i][demo2[0]][demo2[1]]);
-                }
-                else{
+        debugger;
+        e.preventDefault();
+        var hardJSON = {
+            "0":"Transit Number",
+            "1":"Colony",
+            "2":"Name",
+            "3":"Mobile Number",
+            "4":"Remaining Principal",
+            "5":"Balance Interest",
+            "6":"Total Due",
+            "7":"Balance Amount"};
+        const tableDataHeader = [];
+        var columnData = this.state.unchangeColumnData
+        // var columnDataCamelize = this.state.columnData
+        var rowData = this.state.rowData
+    
+        var group = columnData.reduce((r, a) => {
+            r[a["show"]] = [...r[a["show"]] || [], a];
+            return r;
+            }, {});
+    
+        columnData = group["true"]
+    
+        var tableCol = [];
+        for(var i=0; i<columnData.length; i++){
+            tableCol.push(columnData[i].Header);
+        }
+        var tableColumnData = []
+        var tableColumnDataCamel = []
+        for(var i=0; i<columnData.length; i++){
+            tableColumnData.push(columnData[i]["accessor"]);
+            tableColumnDataCamel.push(columnData[i]["Header"]);
+        }
+    
+        var tableRowData = [];
+        for(var i=0; i<rowData.length; i++){
+            var rowItem = [];
+            for(var j=0; j<tableColumnData.length; j++){
+                const demo1 = rowData[i]
+                var demo2 = tableColumnData[j].replace(".", ",");
+                demo2 = demo2.split(",")
+                if(typeof(demo2) === "object"){   
+                    if(demo2.length > 1){
+                        rowItem.push(rowData[i][demo2[0]][demo2[1]]);
+                    }
+                    else{
+                        rowItem.push(rowData[i][demo2]);
+                    }
+                }else{
                     rowItem.push(rowData[i][demo2]);
                 }
-            }else{
-                rowItem.push(rowData[i][demo2]);
             }
+            tableRowData.push(rowItem);
         }
-        tableRowData.push(rowItem);
-    }
-
-    var tableRowDataFinal = []
-    for(var i=0; i<tableRowData.length; i++){
-        tableRowDataFinal.push(tableRowData[i]);
-    }
-
-
-    debugger;
-    // PDF Code 
-    const unit = "pt";
-    const size = "A4"; // Use A1, A2, A3 or A4
-    const orientation = "portrait"; // portrait or landscape
-    const marginLeft = 40;
-    const doc = new jsPDF(orientation, unit, size);
-
-    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-
-    doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
-
-    doc.setFontSize(10);
-    const pdfTitle = this.state.graphHardOneData.title ? this.state.graphHardOneData.title : "Title"
-    doc.text(pdfTitle, pageWidth / 2, 40, 'center');
-
-    doc.autoTable({ html: '#my-table' });
-    doc.setFontSize(5);
-
-    doc.autoTable({
-        // head: [tableColumnDataCamel],
-        head: [tableColumnData],
-        theme: "striped",
-        styles: {
-            fontSize: 7,
-        },
-        body:tableRowData
-    });
-
-    doc.save(pdfTitle+".pdf");
-
-    }
+    
+        var tableRowDataFinal = []
+        for(var i=0; i<tableRowData.length; i++){
+            tableRowDataFinal.push(tableRowData[i]);
+        }
+    
+    
+        debugger;
+        // PDF Code 
+        const unit = "pt";
+        const size = "A4"; // Use A1, A2, A3 or A4
+        const orientation = "portrait"; // portrait or landscape
+        const marginLeft = 40;
+        const doc = new jsPDF(orientation, unit, size);
+    
+        var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+        var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    
+        doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
+    
+        doc.setFontSize(10);
+        const pdfTitle = "Rented Due Report"
+        doc.text(pdfTitle, pageWidth / 2, 40, 'center');
+    
+        doc.autoTable({ html: '#my-table' });
+        doc.setFontSize(5);
+    
+        doc.autoTable({
+            // head: [tableColumnDataCamel],
+            head: [tableCol],
+            theme: "striped",
+            styles: {
+                fontSize: 7,
+            },
+            body:tableRowData
+        });
+    
+        doc.save(pdfTitle+".pdf");
+    
+        }
 
     // Column Unchange Data
     columnUnchange=(e)=>{
@@ -218,6 +233,7 @@ class RPDueReport extends React.Component {
         }
 
         graphOneLabel = ["Principal Due", "Interest Due", "Total Due", "Account Balance", "Amount Paid"];
+        // graphOneLabel = ["Principal Due", "Interest Due", "Total Due", "Account Balance", "Amount Paid"];
         
         
         var dynamicColors = function() {
@@ -250,7 +266,7 @@ class RPDueReport extends React.Component {
         for(var i=0; i<group.length; i++){
             for(var j=0; j<collectionData.length; j++){
                 if(group[i][0] === collectionData[j][2]){
-                    amtPaid = amtPaid + collectionData[j][7];
+                    amtPaid = amtPaid + collectionData[j][8];
                 }
             }   
         }
@@ -292,8 +308,8 @@ class RPDueReport extends React.Component {
         debugger;
         const propSortBy = "eventStatus";
         // const propSortBy = "status";
-        const data = this.props.data[1].reportResponses[0].reportData;
-        const collectionData = this.props.data[0].reportResponses[0].reportData;
+        const data = this.props.data[0][1].reportResponses[0].reportData;
+        const collectionData = this.props.data[0][0][0].reportResponses[0].reportData;
 
         const hardJSON = propSortBy === "eventStatus" ? [{ 
             "sortBy": "eventStatus",
@@ -315,16 +331,14 @@ class RPDueReport extends React.Component {
         // Column Data
         const tableData = data[0] ? Object.keys(data[0]) : [];
         var columnData = [];
-        const tableDataHeader = ["Receipt Number", "Colony", "Name", "Moble No", "Total", "Transaction Number",
-         "Payment type", "Total"];
+        const tableDataHeader = ["Transit Number","Colony","Name","Mobile Number",
+        "Remaining Principal","Balance Interest","Total Due","Balance Amount"];
 
         for(var i=0; i<tableData.length; i++){
             var itemHeader = {}
             itemHeader["Header"] = this.camelize(tableDataHeader[i]);
             itemHeader["accessor"] = tableData[i];
-            itemHeader["show"]= (i === 1 || i === 2 || i === 3 || i === 4 
-                || i === 15 || i === 18 || i === 20
-                || i === 23 || i === 24 || i === 33 || i === 35 ) ? true : false ;
+            itemHeader["show"]= true ;
             columnData.push(itemHeader);
         }
 
@@ -351,8 +365,8 @@ class RPDueReport extends React.Component {
         debugger;
         const data = this.props.data;
         if(JSON.stringify(data) !== JSON.stringify(this.state.checkData)){
-            const data = this.props.data[1].reportResponses[0].reportData;
-            const collectionData = this.props.data[0].reportResponses[0].reportData;
+            const data = this.props.data[0][1].reportResponses[0].reportData;
+            const collectionData = this.props.data[0][0][0].reportResponses[0].reportData;
 
             const hardJSON = propSortBy === "eventStatus" ? [{ 
                 "sortBy": "eventStatus",
@@ -374,16 +388,14 @@ class RPDueReport extends React.Component {
             // Column Data
             const tableData = data[0] ? Object.keys(data[0]) : [];
             var columnData = [];
-            const tableDataHeader = ["Receipt Number", "Colony", "Name", "Moble No", "Total", "Transaction Number",
-            "Payment type", "Total"];
+            const tableDataHeader = ["Transit Number","Colony","Name","Mobile Number",
+            "Remaining Principal","Balance Interest","Total Due","Balance Amount"];
 
             for(var i=0; i<tableData.length; i++){
                 var itemHeader = {}
                 itemHeader["Header"] = this.camelize(tableDataHeader[i]);
                 itemHeader["accessor"] = tableData[i];
-                itemHeader["show"]= (i === 1 || i === 2 || i === 3 || i === 4 
-                    || i === 15 || i === 18 || i === 20
-                    || i === 23 || i === 24 || i === 33 || i === 35 ) ? true : false ;
+                itemHeader["show"]= true ;
                 columnData.push(itemHeader);
             }
 
@@ -510,9 +522,24 @@ class RPDueReport extends React.Component {
                 const hardval = this.state.hardJSON[1]
                 var graphSorting = this.graphSorting( ind, this.state.dataOne[selectedVal], "dashboard 2" );
                 
+                var sortGraphTwoLabel = [];
+                var sortGraphTwoData = [];
+                var totalDue =[];
+                for(var i=0; i<graphSorting[0].length; i++){
+                    if(graphSorting[0][i] === "Total Due"){
+                        totalDue.push(graphSorting[0][i]);
+                        totalDue.push(graphSorting[1][i]);
+                    }else{
+                        sortGraphTwoLabel.push(graphSorting[0][i]);
+                        sortGraphTwoData.push(graphSorting[1][i]);
+                    }
+                }
+                sortGraphTwoLabel.push(totalDue[0]);
+                sortGraphTwoData.push(totalDue[1]);
+
                 this.setState({
-                    graphTwoLabel: graphSorting[0],
-                    graphTwoData: graphSorting[1],
+                    graphTwoLabel: sortGraphTwoLabel,
+                    graphTwoData: sortGraphTwoData,
                     dataTwo: graphSorting[2],
                     graphClicked: 1,
                     rowData: this.state.dataOne[selectedVal]
@@ -632,7 +659,7 @@ class RPDueReport extends React.Component {
 
         
     return (
-        <div>
+        <div style={this.state.rowData === 0 ? {display : "none"} :null}>
         {/* <h2> Rented Properties Due Graph </h2>  */}
         
         <div className="graphDashboard">
@@ -665,7 +692,7 @@ class RPDueReport extends React.Component {
         </div>
 
         {/* Table Feature  */}
-        <div className="tableContainer">
+        <div className="tableContainerRented">
         {
             this.state.unchangeColumnData.length > 0  ? 
             <div className="tableFeature">

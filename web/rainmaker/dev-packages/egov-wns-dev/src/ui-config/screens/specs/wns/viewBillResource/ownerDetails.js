@@ -54,7 +54,7 @@ export const getOwner = () => {
 
                 items: [],
                 hasAddItem: false,
-                sourceJsonPath: "WaterConnection[0].property.owners",
+                sourceJsonPath: "WaterConnection[0].connectionHolders[0]",
                 prefixSourceJsonPath: "children.cardContent.children.viewFive.children",
                 afterPrefixJsonPath: "children.value.children.key"
             },

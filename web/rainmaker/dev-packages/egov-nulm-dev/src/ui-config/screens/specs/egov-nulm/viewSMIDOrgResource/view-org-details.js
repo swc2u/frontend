@@ -7,6 +7,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import {  checkValueForNA } from "../../utils";
 
 const gotoCreatePage = (state, dispatch) => {
    const createUrl = `/egov-nulm/create-smid-org?step=0`;
@@ -69,7 +70,7 @@ export const getSMIDOrgDetailsView = (isReview = true) => {
           labelName: "SHG Name",
           labelKey: "NULM_SHG_NAME"
         },
-        { jsonPath: "NulmShgRequest.name" }
+        { jsonPath: "NulmShgRequest.name" ,callBack: checkValueForNA }
       ),
       type: getLabelWithValue(
         {
@@ -83,7 +84,7 @@ export const getSMIDOrgDetailsView = (isReview = true) => {
           labelName: "SHG formatted through",
           labelKey: "NULM_SHG_FORMATTED_THROUGH"
         },
-        { jsonPath: "NulmShgRequest.formendThrough" }
+        { jsonPath: "NulmShgRequest.formendThrough" ,callBack: checkValueForNA}
       ),
       
       address: getLabelWithValue(
@@ -91,7 +92,7 @@ export const getSMIDOrgDetailsView = (isReview = true) => {
           labelName: "SHG Address",
           labelKey: "NULM_SHG_ADDRESS"
         },
-        { jsonPath: "NulmShgRequest.address" }
+        { jsonPath: "NulmShgRequest.address",callBack: checkValueForNA }
       ),
 
       dateOfFormation: getLabelWithValue(
@@ -99,14 +100,14 @@ export const getSMIDOrgDetailsView = (isReview = true) => {
           labelName: "SHG date of formation",
           labelKey: "NULM_SHG_DATE_OF_FORMATION"
         },
-        { jsonPath: "NulmShgRequest.dateOfFormation" }
+        { jsonPath: "NulmShgRequest.dateOfFormation"  ,callBack: checkValueForNA}
       ),
       contactNo: getLabelWithValue(
         {
           labelName: "Contact Number",
           labelKey: "NULM_SHG_CONTACT_NO"
         },
-        { jsonPath: "NulmShgRequest.contactNo" }
+        { jsonPath: "NulmShgRequest.contactNo" ,callBack: checkValueForNA }
       ),
       accountNo: getLabelWithValue(
         {
@@ -120,7 +121,7 @@ export const getSMIDOrgDetailsView = (isReview = true) => {
           labelName: "Date of opening account",
           labelKey: "NULM_SHG_DATE_OF_OPENING_ACCOUNT"
         },
-        { jsonPath: "NulmShgRequest.dateOfOpeningAccount" }
+        { jsonPath: "NulmShgRequest.dateOfOpeningAccount" ,callBack: checkValueForNA }
       ),
 
       bankName: getLabelWithValue(
@@ -128,7 +129,7 @@ export const getSMIDOrgDetailsView = (isReview = true) => {
           labelName: "SHG Bank Name",
           labelKey: "NULM_SHG_BANK_NAME"
         },
-        { jsonPath: "NulmShgRequest.bankName" }
+        { jsonPath: "NulmShgRequest.bankName" ,callBack: checkValueForNA }
       ),
 
       branchName: getLabelWithValue(
@@ -136,7 +137,7 @@ export const getSMIDOrgDetailsView = (isReview = true) => {
           labelName: "SHG Branch Name",
           labelKey: "NULM_SHG_BRANCH_NAME"
         },
-        { jsonPath: "NulmShgRequest.branchName" }
+        { jsonPath: "NulmShgRequest.branchName",callBack: checkValueForNA }
       ),
 
       mainAcitivity: getLabelWithValue(
@@ -144,7 +145,7 @@ export const getSMIDOrgDetailsView = (isReview = true) => {
           labelName: "SHG Main Activity",
           labelKey: "NULM_SHG_MAIN_ACTIVITY"
         },
-        { jsonPath: "NulmShgRequest.mainAcitivity" }
+        { jsonPath: "NulmShgRequest.mainAcitivity",callBack: checkValueForNA }
       ),
 
       groupNominatedBy: getLabelWithValue(
@@ -152,7 +153,7 @@ export const getSMIDOrgDetailsView = (isReview = true) => {
           labelName: "Groups Nominated By",
           labelKey: "NULM_SHG_GROUPS_NOMINATED_BY"
         },
-        { jsonPath: "NulmShgRequest.groupNominatedBy" }
+        { jsonPath: "NulmShgRequest.groupNominatedBy",callBack: checkValueForNA }
       ),
     }),
   });

@@ -2,12 +2,14 @@ import React from "react";
 import Field from "egov-ui-kit/utils/field";
 import { Link } from "react-router-dom";
 import { Button, Card, Image ,Icon , DropDown} from "components";
+import IconButton from "material-ui/IconButton";
 import Label from "egov-ui-kit/utils/translationNode";
 import { startSMSRecevier } from "egov-ui-kit/utils/commons";
 import Hidden from "@material-ui/core/Hidden";
 import logo from "egov-ui-kit/assets/images/logo_black.png";
 import qrlogo from "egov-ui-kit/assets/images/qrImage.png";
 import "./index.css";
+import { blue } from "@material-ui/core/colors";
 
 const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,languages,onLanguageChange,languageSelected,hasLocalisation }) => {
   const fields = form.fields || {};
@@ -66,7 +68,7 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
               </div>
             </Link>
             </div>
-            <div>
+            {/* <div>
             
             <div style={{ marginBottom: "10px", position: "relative", zIndex: 10 }} className="text-right">
            
@@ -89,7 +91,7 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
          )}  
           </div>
        </div>
-            </div>
+            </div> */}
            
             
           <Button
@@ -100,14 +102,31 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
               startSMSRecevier();
             }}
           />
-          <div style={{ marginBottom: "0px", position: "relative", zIndex: 10,marginRight:10}} className="text-right">           
+          <div style={{ marginBottom: "0px", position: "relative", zIndex: 10,marginRight:0}} className="text-right">           
           <Link to="/user/privacy"> 
            {/*  */}
               <div style={{ display: "inline-block" }}  >
-                <Label containerStyle={{ cursor: "pointer" }} id="privacy"  className="privacy" label="Privacy Policy" />
+               {/* <u> <Label containerStyle={{ cursor: "pointer" }}
+               style={{ color: "lightsalmon",fontSize:"12px",textDEcoration:"underline"}}
+               id="privacy"  className="privacy" label="Privacy Policy" /></u> */}
+               <p style={{ color: "burlywood",fontSize:"12px",textDecorationLine:"underline"}} >Privacy Policy</p>
               </div>
             </Link>
             </div>
+            
+            <div style={{  position: "relative",paddingTop:"0px"}} className="text-center"> 
+            {/* <IconButton style={{paddingLeft:0,paddingRight:0}}>
+            <Icon action="action" name="help" color="#000" />  
+           
+              </IconButton>  */}
+                <p>
+                In case of any support or query,<br></br> kindly contact us on                   
+                <b  style={{  color:"blue"}} > 0172-2787200</b>
+                </p> 
+              {/* <Label bold={false} color="black" fontSize= "14px" label="In case of any support or query, kindly contact us on"/> */}
+              
+               
+              </div>
           {enableWhatsApp&&
            <Hidden mdUp>
           <div>

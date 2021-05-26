@@ -172,7 +172,7 @@ export const searchApplicationResults = {
           filter: false,
           customBodyRender: (value, data) => {
            // if (data.rowData[4] > 0 && data.rowData[4] !== 0) {
-              if ((data.rowData[4] > 0 && data.rowData[4] !== 0) &&(data.rowData[3] !== undefined? data.rowData[3].toUpperCase() !== "INITIATED":'')) {
+              if ((data.rowData[4] > 0 && data.rowData[4] !== 0) &&(data.rowData[3] !== undefined? data.rowData[3].toUpperCase() === "INITIATED":'')) {
               return (
                 <div className="linkStyle" onClick={() => getViewBillDetails(data)} style={{ color: '#fe7a51', textTransform: 'uppercase' }}>
                   <LabelContainer
@@ -256,8 +256,8 @@ export const searchApplicationResults = {
 };
 
 const getApplicationDetails = data => {
-  const activityType = data.rowData[9]
-  if(data.rowData[7].toUpperCase() ==='SEWERAGE')
+  const activityType = data.rowData[10]
+  if(data.rowData[8].toUpperCase() ==='SEWERAGE' || data.rowData[7].toUpperCase() ==='SEWERAGE')
   {
     window.localStorage.setItem("wns_workflow","SW_SEWERAGE");
   }
@@ -271,6 +271,7 @@ const getApplicationDetails = data => {
       case "PERMANENT_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTION"); break;        
       case "TEMPORARY_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_DISCONNECTION"); break;
       case "UPDATE_CONNECTION_HOLDER_INFO":  window.localStorage.setItem("wns_workflow","WS_RENAME"); break;
+      case "UPDATE_METER_INFO":  window.localStorage.setItem("wns_workflow","WS_METER_UPDATE"); break;
       case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_CONVERSION"); break;
       case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_REACTIVATE"); break;
       case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;

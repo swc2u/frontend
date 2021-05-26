@@ -58,7 +58,7 @@ const TaskStatusComponents = ({ currentObj, index }) => {
         sm={6}
         md={4}
         lg={2}
-        style={{ marginTop: 15, paddingRight: 20 }}
+        style={{ marginTop: 15, paddingRight: 20,wordBreak: "break-word"}}
       >
         <Typography variant="caption">
           <LabelContainer
@@ -77,7 +77,7 @@ const TaskStatusComponents = ({ currentObj, index }) => {
         sm={6}
         md={4}
         lg={3}
-        style={{ marginTop: 15, paddingRight: 20 }}
+        style={{ marginTop: 15, paddingRight: 20,wordBreak: "break-word"}}   
       >
         <Typography variant="caption">
           <LabelContainer
@@ -110,7 +110,7 @@ const TaskStatusComponents = ({ currentObj, index }) => {
         sm={6}
         md={4}
         lg={2}
-        style={{ marginTop: 15, paddingRight: 20 }}
+        style={{ marginTop: 15, paddingRight: 20,wordBreak: "break-word"}}
       >
         <Typography variant="caption">
           <LabelContainer
@@ -133,7 +133,7 @@ const TaskStatusComponents = ({ currentObj, index }) => {
           />
         </Typography>
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={3} style={{ marginTop: 15 }}>
+      <Grid item xs={12} sm={6} md={4} lg={3} style={{ marginTop: 15,wordBreak: "break-word" }}>
         <Typography variant="caption">
           <LabelContainer
             labelName="Comments"

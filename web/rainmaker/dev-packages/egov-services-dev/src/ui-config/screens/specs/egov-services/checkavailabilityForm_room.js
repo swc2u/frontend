@@ -111,7 +111,7 @@ const callBackForSearch = async (state, dispatch, action) => {
                     if(response2.data.availableAcRooms==0 && response2.data.availableNonAcRooms==0){
                         set(
                             state.screenConfiguration.screenConfig["checkavailability_room"],
-                           "components.div.children.personalDetails.children.cardContent.children.personalDetailsContainer.children.buttonContainer.visible",
+                            "components.div.children.personalDetails.visible",
                             false
                         );
             
@@ -126,7 +126,7 @@ const callBackForSearch = async (state, dispatch, action) => {
                 }else{
                     set(
                         state.screenConfiguration.screenConfig["checkavailability_room"],
-                       "components.div.children.personalDetails.children.cardContent.children.personalDetailsContainer.children.buttonContainer.visible",
+                        "components.div.children.personalDetails.visible",
                         false
                     );
                     dispatch(

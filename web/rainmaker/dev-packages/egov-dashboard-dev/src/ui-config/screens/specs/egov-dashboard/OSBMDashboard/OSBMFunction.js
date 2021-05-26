@@ -46,14 +46,20 @@ export const SearchDashboardData = async (state, dispatch) =>{
     debugger;
     var userUUID = JSON.parse(getUserInfo()).uuid;
   var data = {
-    "uuid": userUUID,
-    "bookingType": "OSBM",
-    "mobileNumber": "",
-    "applicationNumber": "",
-    "applicationStatus": "",
-    "tenantId": getTenantId(),
-    "fromDate": def_fromDate,
-    "toDate": def_toDate,
+    "payload" : {
+      "tenantId": getTenantId(),
+      "reportName": "DescriptionReport",
+      "searchParams": [
+        {
+          "name": "fromDate",
+          "input": fromDateNumeric
+        },
+        {
+          "name": "toDate",
+          "input": toDateNumeric
+        }
+      ],
+    },
     "reportSortBy": reportSortBy
   }
     debugger;

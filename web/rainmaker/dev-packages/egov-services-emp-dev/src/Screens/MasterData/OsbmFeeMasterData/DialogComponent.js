@@ -133,7 +133,7 @@ class DialogComponent extends Component {
               today.getMinutes() +
               ":" +
               today.getSeconds();
-
+              time= '00:00:00';
 
             var reqBody =  {
               
@@ -195,7 +195,7 @@ class DialogComponent extends Component {
               today.getMinutes() +
               ":" +
               today.getSeconds();
-
+              time= '00:00:00';
               var reqBody =  {
               
                 "OsbmFeeDetails": [

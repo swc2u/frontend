@@ -121,6 +121,17 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewproposedHolderInfo.visible",false);
     }
 
+    if(activityTypeHolder ==='UPDATE_METER_INFO' || activityTypeHolder ==='WS_METER_UPDATE' )
+    {
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFifteen.visible",true);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewSixteen.visible",true);
+
+    }
+    else{
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFifteen.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewSixteen.visible",false);
+    }
+
     if(activityTypeHolder ==='CONNECTION_CONVERSION'|| activityTypeHolder ==='WS_CONVERSION')
     {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyproposedUsageDetail.visible",true);
@@ -139,26 +150,46 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyUsageDetail.visible",false);
     } else {
       let applyScreenObject = get(state.screenConfiguration.preparedFinalObject, "applyScreen");
-      applyScreenObject.applicationNo.includes("WS")?applyScreenObject.service="WATER":applyScreenObject.service="SEWERAGE";
+      // if(applyScreenObject)
+      // {
+        applyScreenObject.applicationNo.includes("WS")?applyScreenObject.service="WATER":applyScreenObject.service="SEWERAGE";
+     // }
+     
       let parsedObject = parserFunction(findAndReplace(applyScreenObject, "NA", null));
       let code = '03';
+      let isFerruleApplicable = false
       if (service === "WATER") 
+      {
         code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",parsedObject.property.address.locality.code)   
+        if(parsedObject.waterApplication.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
+        {
+            isFerruleApplicable  =true;
+  
+        }
+        else{
+          isFerruleApplicable = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplication.isFerruleApplicable",false);
+        }
+      }
+        
         if (service === "SEWERAGE") 
-        code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.swSectorList",parsedObject.property.address.locality.code)   
-      set(parsedObject, 'property.address.locality.name', code);
+        {
+          code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.swSectorList",parsedObject.property.address.locality.code)   
+          set(parsedObject, 'property.address.locality.name', code);
+              if(parsedObject.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
+          {
+              isFerruleApplicable  =true;
+
+          }
+          else{
+            isFerruleApplicable = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplication.isFerruleApplicable",false);
+          }
+        }
+        
       
      
       //set ferrul
-      let isFerruleApplicable = false
-      if(parsedObject.waterApplication.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
-      {
-          isFerruleApplicable  =true;
-
-      }
-      else{
-        isFerruleApplicable = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplication.isFerruleApplicable",false);
-      }
+     
+      
       set(parsedObject, 'waterApplication.isFerruleApplicable', isFerruleApplicable);
       dispatch(prepareFinalObject("WaterConnection[0]", parsedObject));
       //dispatch(prepareFinalObject("WaterConnection[0].waterApplication.isFerruleApplicable", isFerruleApplicable));
@@ -184,6 +215,18 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
               // viewBreakUp 
               estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
               estimate.Calculation[0].appStatus = processInstanceAppStatus; 
+              if(parsedObject.waterApplication.totalAmountPaid !== null ||parsedObject.waterApplication.totalAmountPaid !== 'NA')
+              {
+                //dataCalculation
+                if(isNaN(parseInt(parsedObject.waterApplication.totalAmountPaid)))
+                set(estimate.Calculation[0], 'totalAmountPaid', 0);
+                else
+                set(estimate.Calculation[0], 'totalAmountPaid', parseInt(parsedObject.waterApplication.totalAmountPaid));
+              }
+             
+              else
+              set(estimate.Calculation[0], 'totalAmountPaid', 0);
+              
               dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
             }
           } 
@@ -201,6 +244,16 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
               // viewBreakUp 
               estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
               estimate.Calculation[0].appStatus = processInstanceAppStatus; 
+              if(parsedObject.totalAmountPaid !== null || parsedObject.totalAmountPaid !=='NA' )
+              {
+                //dataCalculation
+                if(isNaN(parseInt(parsedObject.waterApplication.totalAmountPaid)))
+                set(estimate.Calculation[0], 'totalAmountPaid', 0);
+                else
+                set(estimate.Calculation[0], 'totalAmountPaid', parseInt(parsedObject.totalAmountPaid));
+              }              
+              else
+              set(estimate.Calculation[0], 'totalAmountPaid', 0);
               dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
             }
           }
@@ -385,6 +438,46 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
 
     setActionItems(action, obj);
     loadReceiptGenerationData(applicationNumber, tenantId);
+    if(processInstanceAppStatus==="CONNECTION_ACTIVATED" || processInstanceAppStatus==="SEWERAGE_CONNECTION_ACTIVATED"){
+      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.visible",true );
+      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",true );
+      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",true );
+      let action = false
+      let service_ = getQueryArg(window.location.href, "service");
+      if(service_ ==='SEWERAGE')
+      {
+        action = true
+      }
+      else if(service_ ==='WATER')
+      {
+        action = false
+
+      }
+      
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.div.children.headerDiv.children.helpSection",
+          "visible",
+          action
+        )
+      );
+
+    }
+    else{
+      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.visible",false );
+      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",false );
+      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",false );
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.div.children.headerDiv.children.helpSection",
+          "visible",
+          false
+        )
+      );
+
+    }
   }
 
 
@@ -759,8 +852,10 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
     if(processInstanceAppStatus==="CONNECTION_ACTIVATED"){
       let connectionNumber= payload.WaterConnection[0].connectionNo;
       set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.props.number",connectionNumber );
+     // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.visible",true );
     }else{
       set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
+      //set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.visible",false );
     }
 
     // to set documents 
@@ -781,6 +876,10 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
         // viewBreakUp 
         estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
         estimate.Calculation[0].appStatus = processInstanceAppStatus; 
+        if(payload.WaterConnection[0].waterApplication.totalAmountPaid!== null)
+        set(estimate.Calculation[0], 'totalAmountPaid', parseInt(payload.WaterConnection[0].waterApplication.totalAmountPaid));
+        else
+        set(estimate.Calculation[0], 'totalAmountPaid', 0);
         dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
       }
     }
@@ -805,17 +904,23 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
       if(!payload.SewerageConnections[0].connectionHolders || payload.SewerageConnections[0].connectionHolders === 'NA'){        
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewFive.visible",false);
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewSix.visible",true);
+        
       }else{
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewSix.visible",false);
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewFive.visible",true);
       }
     }
     //connection number display
-    if(processInstanceAppStatus==="CONNECTION_ACTIVATED"){
+    if(processInstanceAppStatus==="CONNECTION_ACTIVATED" || processInstanceAppStatus==="SEWERAGE_CONNECTION_ACTIVATED"){
       let connectionNumber= payload.SewerageConnections[0].connectionNo;
       set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.props.number",connectionNumber );
+      //set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",true );
+    // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.visible",true );
     }else{
       set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
+      //set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu",false );
+     // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",true );
+     //set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.visible",false );
     }
 
     // to set documents 
@@ -843,6 +948,11 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
         // viewBreakUp 
         estimate.Calculation[0].billSlabData = _.groupBy(estimate.Calculation[0].taxHeadEstimates, 'category')
         estimate.Calculation[0].appStatus = processInstanceAppStatus; 
+        if(payload.SewerageConnections[0].totalAmountPaid!== null)
+        set(estimate.Calculation[0], 'totalAmountPaid', parseInt(payload.SewerageConnections[0].totalAmountPaid));
+        else{
+          set(estimate.Calculation[0], 'totalAmountPaid', 0);
+        }
         dispatch(prepareFinalObject("dataCalculation", estimate.Calculation[0]));
       }
     }

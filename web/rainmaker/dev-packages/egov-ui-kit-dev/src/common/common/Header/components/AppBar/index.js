@@ -55,7 +55,7 @@ const EgovAppBar = ({
             <div className="citizen-header-logo">
               <img style = {{ height:55 , width:63}} src={ulbLogo ? ulbLogo : pbLogo} onError={(event) => event.target.setAttribute("src", pbLogo)} />
             </div>
-            <Label containerStyle={{ marginLeft: "0px" }} className="screenHeaderLabelStyle appbar-title-label" label={title} />
+            <Label containerStyle={{ marginLeft: "0px"  , overflow : "overlay"}} className="screenHeaderLabelStyle appbar-title-label" label={title} />
             {titleAddon && (
               <Label
                 containerStyle={{ display: "inline-block", marginLeft: 5 }}

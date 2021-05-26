@@ -311,7 +311,12 @@ class TableData extends Component {
     let moduleDropdownList=[];
     let statusDropdownList=[];
 
-    
+const checkBusinessServices = (businessServices) =>{
+let selectedBusinessServices = ["GFCP","PACC"]  
+return !selectedBusinessServices.includes(businessServices)
+}    
+
+
     const initialData = data.map((item) => {
       const locality = localitymap.find(locality => {
         return locality.referencenumber === item.businessId;
@@ -323,11 +328,11 @@ class TableData extends Component {
         text: item.state ? (
           <Label
             label={`WF_${item.businessService.toUpperCase()}_${item.state.state}`}
-            defaultLabel={getWFstatus(item.state.state)}
+            defaultLabel={checkBusinessServices(item.businessService) ? getWFstatus(item.state.state) :undefined}
             color="#000000"
           />
         ) : (
-            "NA"
+            "NA" 
           ),
       };
 
@@ -485,6 +490,7 @@ class TableData extends Component {
     "WS_DISCONNECTION",
     "WS_TEMP_DISCONNECTION",
     "WS_RENAME",
+    "WS_METER_UPDATE",
     "WS_CONVERSION",
     "WS_REACTIVATE",
     "WS_TUBEWELL" ,]
@@ -582,6 +588,7 @@ class TableData extends Component {
         || window.localStorage.getItem("wns_workflow") === "WS_DISCONNECTION" 
         || window.localStorage.getItem("wns_workflow") === "WS_TEMP_DISCONNECTION"
         || window.localStorage.getItem("wns_workflow") === "WS_RENAME" 
+        || window.localStorage.getItem("wns_workflow") === "WS_METER_UPDATE" 
         || window.localStorage.getItem("wns_workflow") === "WS_CONVERSION" 
         || window.localStorage.getItem("wns_workflow") === "WS_REACTIVATE"  
         || window.localStorage.getItem("wns_workflow") === "WS_TUBEWELL"

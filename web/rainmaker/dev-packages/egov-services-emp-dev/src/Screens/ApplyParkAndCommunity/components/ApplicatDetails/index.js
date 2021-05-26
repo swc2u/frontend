@@ -1,22 +1,20 @@
-import React, { Component } from 'react';
-import { Tabs, Card, TextField, Icon, Button } from "components";
-import Label from "egov-ui-kit/utils/translationNode";
-import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
-import { connect } from "react-redux";
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import Grid from '@material-ui/core/Grid';
-import Footer from "../../../../modules/footer"
-import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import Radio from '@material-ui/core/Radio';
-import "./index.css";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import RadioGroup from '@material-ui/core/RadioGroup';
 import { withStyles } from "@material-ui/core/styles";
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import { Button, TextField } from "components";
+import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
+import Label from "egov-ui-kit/utils/translationNode";
+import React, { Component } from 'react';
+import { connect } from "react-redux";
+import get from "lodash/get";
+import Footer from "../../../../modules/footer";
 import DocumentList from "../DiscountDocumentList";
+import "./index.css";
 
 const styles = (theme) => ({
   cool: {
@@ -98,7 +96,7 @@ class ApplicatInfo extends Component {
         card["required"] = doc.required ? true : false;
         if (doc.hasDropdown && doc.dropdownData) {
           let dropdown = {};
-          dropdown.label = "BK_SELECT_DOC_DD_LABEL";
+          dropdown.label = "BK_SELECT_DOC_DD_LABEL"; 
           dropdown.required = true;
           dropdown.menu = doc.dropdownData.filter((item) => {
             return item.active;
@@ -167,20 +165,20 @@ class ApplicatInfo extends Component {
   }
 
   continue = e => {
+    let {getDocumentDiscount,state} = this.props
+    let getDocumentDiscountTwo = get(
+      state,
+      "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux.documents[0].documents[0].fileName",
+      "NotFound"
+    );
+    console.log("getDocumentDiscountTwo",getDocumentDiscountTwo)
+
     let re = /\S+@\S+\.\S+/;
     let mb = /^\d{10}$/;
     let fname = /^[a-zA-Z'-]+$/;
+  
+    console.log("getDocumentDiscount-",getDocumentDiscount)
     e.preventDefault();
-    // if(this.props.firstName==""||this.props.mobileNo==""||this.props.houseNo=="" ||this.props.DiscountReason==""){
-    //   this.props.toggleSnackbarAndSetText(
-    //     true,
-    //     {
-    //       labelName: "Error_Message_For_Water_tanker_Application",
-    //       labelKey: `BK_ERROR_MESSAGE_FOR_WATER_TANKER_APPLICATION`
-    //     },
-    //     "warning"
-    //   );
-    // }
     if (this.props.firstName == "" || this.props.mobileNo == "" || this.props.houseNo == "") {
       this.props.toggleSnackbarAndSetText(
         true,
@@ -190,17 +188,44 @@ class ApplicatInfo extends Component {
         },
         "warning"
       );
+      return;
     }
     if (this.props.discountType !== "General" && this.props.DiscountReason == "") {
       this.props.toggleSnackbarAndSetText(
         true,
         {
           labelName: "Error_Message_For_Water_tanker_Application",
-          labelKey: `BK_ERROR_MESSAGE_FOR_WATER_TANKER_APPLICATION`
+          labelKey: `Please enter reason for discount`
         },
         "warning"
       );
+      return;
     }
+
+   else if (this.props.discountType !== "General" && getDocumentDiscountTwo == "NotFound") {
+      this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Error_Message_For_Water_tanker_Application",
+          labelKey: `please upload Mendatory document if you select discount`
+        },
+        "warning"
+      );
+      return;
+    }
+
+    else if (this.props.discountType !== "General" && this.props.DiscountReason == "" && getDocumentDiscountTwo == "NotFound") {
+      this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Error_Message_For_Water_tanker_Application",
+          labelKey: `Please select reason for discount and upload mendatory document`
+        },
+        "warning"
+      );
+      return;
+    }
+
     else if (!re.test(this.props.email)) {
       this.props.toggleSnackbarAndSetText(
         true,
@@ -210,6 +235,7 @@ class ApplicatInfo extends Component {
         },
         "warning"
       );
+      return;
     } else if (!mb.test(this.props.mobileNo)) {
       this.props.toggleSnackbarAndSetText(
         true,
@@ -219,7 +245,7 @@ class ApplicatInfo extends Component {
         },
         "warning"
       );
-
+        return;
     }
     else { this.props.nextStep(); }
 
@@ -243,7 +269,9 @@ class ApplicatInfo extends Component {
   };
 
   render() {
-    const { firstName, email, mobileNo, DiscountReason, lastName, houseNo, handleChange, discountType, handleChangeDiscount, classes, prepareFinalObject } = this.props;
+    const { firstName, email, mobileNo, DiscountReason, lastName, houseNo, checkDateVenueChange,
+    handleChange, discountType, handleChangeDiscount, classes, prepareFinalObject } = this.props;
+    console.log("ApplicationDetailPageState",this.state)
     const hintTextStyle = {
       letterSpacing: "0.7px",
       textOverflow: "ellipsis",
@@ -269,11 +297,12 @@ class ApplicatInfo extends Component {
       <div style={{ float: 'left', width: '100%', padding: '36px 15px' }}>
         <div className="col-xs-12" style={{ background: '#fff', padding: '15px 0' }}>
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="name"
               name="name"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={firstName}
               pattern="[A-Za-z]"
               required={true}
@@ -300,11 +329,12 @@ class ApplicatInfo extends Component {
             />
           </div>
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="email"
               name="email"
               type="string"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={email}
               required={true}
               hintText={
@@ -331,11 +361,12 @@ class ApplicatInfo extends Component {
 
           </div>
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="mobile-no"
               name="mobile-no"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={mobileNo}
               required={true}
               hintText={
@@ -361,11 +392,12 @@ class ApplicatInfo extends Component {
             />
           </div>
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="houseNo"
               name="houseNo"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={houseNo}
               required={true}
               hintText={
@@ -391,83 +423,40 @@ class ApplicatInfo extends Component {
             />
           </div>
           {this.props.venueType === "Parks" ?
-            <div className="col-sm-12 clearMob" style={{ marginTop: '19px' }}>
+            <div className="col-sm-12 clearMob labelStyle" style={{ marginTop: '19px' }}>
               <FormControl component="fieldset">
                 <FormLabel component="legend"><Label label="BK_MYBK_CATEGORY_TYPE" /></FormLabel>
                 <RadioGroup row aria-label="position" name="gender1" value={discountType} onChange={handleChangeDiscount}>
-                  <FormControlLabel classes={{ label: classes.label }} value="General" control={<Radio color="primary" />} label="General" />
-                  <FormControlLabel classes={{ label: classes.label }} value="100%" control={<Radio color="primary" />} label="Discount 100%" />
-                  <FormControlLabel classes={{ label: classes.label }} value="50%" control={<Radio color="primary" />} label="Discount 50%" />
-                  <FormControlLabel classes={{ label: classes.label }} value="20%" control={<Radio color="primary" />} label="Discount 20%" />
-                  <FormControlLabel classes={{ label: classes.label }} value="KirayaBhog" control={<Radio color="primary" />} label="Kiraya/Bhog" />
-                  <FormControlLabel classes={{ label: classes.label }} value="ReligiousFunction" control={<Radio color="primary" />} label="Religious Function" />
+                  <FormControlLabel classes={{ label: classes.label }} value="General"  disabled = {checkDateVenueChange == true ? true : false} control={<Radio color="primary" />} label="General" />
+                  <FormControlLabel classes={{ label: classes.label }} value="100%"  disabled = {checkDateVenueChange == true ? true : false} control={<Radio color="primary" />} label="Discount 100%" />
+                  <FormControlLabel classes={{ label: classes.label }} value="50%"  disabled = {checkDateVenueChange == true ? true : false} control={<Radio color="primary" />} label="Discount 50%" />
+                  <FormControlLabel classes={{ label: classes.label }} value="20%"  disabled = {checkDateVenueChange == true ? true : false} control={<Radio color="primary" />} label="Discount 20%" />
+                  <FormControlLabel classes={{ label: classes.label }} value="KirayaBhog"  disabled = {checkDateVenueChange == true ? true : false} control={<Radio color="primary" />} label="Kiraya/Bhog" />
+                  <FormControlLabel classes={{ label: classes.label }} value="ReligiousFunction"  disabled = {checkDateVenueChange == true ? true : false} control={<Radio color="primary" />} label="Religious Function" />
                 </RadioGroup>
               </FormControl>
             </div>
-            : <div className="col-sm-12 clearMob" style={{ marginTop: '19px' }}>
+            : <div className="col-sm-12 clearMob labelStyle" style={{ marginTop: '19px' }}>
               <FormControl component="fieldset">
                 <FormLabel component="legend"><Label label="BK_MYBK_CATEGORY_TYPE" /></FormLabel>
                 <RadioGroup row aria-label="position" name="gender1" value={discountType} onChange={handleChangeDiscount}>
-                  <FormControlLabel classes={{ label: classes.label }} value="General" control={<Radio color="primary" />} label="General" />
-                  <FormControlLabel classes={{ label: classes.label }} value="100%" control={<Radio color="primary" />} label="Discount 100%" />
-                  <FormControlLabel classes={{ label: classes.label }} value="50%" control={<Radio color="primary" />} label="Discount 50%" />
-                  <FormControlLabel classes={{ label: classes.label }} value="20%" control={<Radio color="primary" />} label="Discount 20%" />
-                  <FormControlLabel classes={{ label: classes.label }} value="KirayaBhog" control={<Radio color="primary" />} label="Kiraya/Bhog" />
+                  <FormControlLabel classes={{ label: classes.label }}  disabled = {checkDateVenueChange == true ? true : false} value="General" control={<Radio color="primary" />} label="General" />
+                  <FormControlLabel classes={{ label: classes.label }}  disabled = {checkDateVenueChange == true ? true : false} value="100%" control={<Radio color="primary" />} label="Discount 100%" />
+                  <FormControlLabel classes={{ label: classes.label }}  disabled = {checkDateVenueChange == true ? true : false} value="50%" control={<Radio color="primary" />} label="Discount 50%" />
+                  <FormControlLabel classes={{ label: classes.label }}  disabled = {checkDateVenueChange == true ? true : false} value="20%" control={<Radio color="primary" />} label="Discount 20%" />
+                  <FormControlLabel classes={{ label: classes.label }}  disabled = {checkDateVenueChange == true ? true : false} value="KirayaBhog" control={<Radio color="primary" />} label="Kiraya/Bhog" />
                 </RadioGroup>
               </FormControl>
             </div>}
 
-
-          {/*newRequirement*/}
-          {/* <div className="col-sm-12" style={{marginTop: '-3%'}}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend"><Label label="BK_MYBK_TYPES_OF_BOOKING" /></FormLabel>
-              <RadioGroup row aria-label="position" name="gender1"  value={this.state.NewbkBookingType} onChange={this.newBookingType}>
-                <FormControlLabel className={classes.cool} value="Normal Booking" control={<Radio color="primary" />} label="Normal Booking" />
-                <FormControlLabel className={classes.cool} value="Commercial Booking"  control={<Radio color="primary" />} label="Commercial Booking" />
-            </RadioGroup>
-            </FormControl>
-          </div> */}
-          {/* {discountType === "100%" || discountType === "50%" || discountType === "20%" || discountType === "KirayaBhog" || discountType ==="ReligiousFunction" ?
-<div className="col-sm-6 col-xs-6">
-          <TextField
-            id="reasonForDiscount"
-            name="reasonForDiscount"
-            type="text"
-            value={this.state.ReasonForDiscount}
-            required = {true}
-            hintText={
-              <Label
-                label="Reason For Discount"
-                color="rgba(0, 0, 0, 0.3799999952316284)"
-                fontSize={16}
-                labelStyle={hintTextStyle}
-              />
-            }
-            floatingLabelText={
-              <Label
-                key={0}
-                label="Reason For Discount"
-                color="rgba(0,0,0,0.60)"
-                fontSize="12px"
-              />
-            }
-            onChange={this.ResonForDiscount}
-            underlineStyle={{ bottom: 7 }}
-            underlineFocusStyle={{ bottom: 7 }}
-            hintStyle={{ width: "100%" }}
-          />
-        </div>
-: ""} */}
-
-
           {discountType === "100%" || discountType === "50%" || discountType === "20%" || discountType === "KirayaBhog" || discountType === "ReligiousFunction" ?
             <div>
-              <div className="col-sm-6 col-xs-6">
+              <div className="col-sm-6 col-xs-12">
                 <TextField
                   id="reasonForDiscount"
                   name="reasonForDiscount"
                   type="text"
+                  disabled = {checkDateVenueChange == true ? true : false}
                   value={DiscountReason}
                   required={true}
                   hintText={
@@ -491,7 +480,11 @@ class ApplicatInfo extends Component {
                   underlineFocusStyle={{ bottom: 7 }}
                   hintStyle={{ width: "100%" }}
                 />
+ 
 
+ {/* screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux.documents[0].documents[0].fileName
+
+ screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux.documents[0].documentCode */}
 
               </div>
               <div className="col-sm-12 col-xs-12">
@@ -510,7 +503,7 @@ class ApplicatInfo extends Component {
             </div>
 
             : ""}
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <div>
 
             </div>
@@ -530,6 +523,20 @@ class ApplicatInfo extends Component {
             </div>
           }></Footer>
         </div>
+        <style>{
+          `
+            
+              @media only screen and (max-width: 768px)
+                {
+
+                  .labelStyle label{
+                    width : 100%
+                   
+                }
+                }
+            `
+        }
+        </style>
       </div>
     );
   }
@@ -545,6 +552,17 @@ const mapStateToProps = state => {
   let DropDownValue = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData.name : "";
   console.log("DropDownValue--", DropDownValue)
 
+//screenConfiguration.preparedFinalObject.documentMap
+
+
+// screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux.documents[0].documents[0].fileName
+
+let getDocumentDiscount = get(
+  state,
+  "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux.documents[0].documents[0].fileName",
+  "NotFound"
+);
+console.log("getDocumentDiscount",getDocumentDiscount)
   let venueType = state.screenConfiguration.preparedFinalObject.bkBookingData ? state.screenConfiguration.preparedFinalObject.bkBookingData.venueType : "";
   console.log("venueType--", venueType)
   if (DropDownValue === "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") {
@@ -579,7 +597,7 @@ const mapStateToProps = state => {
 
 
   return {
-    state, venueType
+    state, venueType, getDocumentDiscount
   }
 }
 const mapDispatchToProps = dispatch => {

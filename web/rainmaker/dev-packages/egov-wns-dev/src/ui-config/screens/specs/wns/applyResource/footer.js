@@ -116,7 +116,43 @@ if(validateDocumentField)
 );
   if(applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN')
   {
-    if(documentsFormat.length !== documentsContract.length)
+    let ValidNoc = false
+    let documentsFormat_ = documentsFormat;
+    let documentsContract_ = documentsContract
+    documentsContract_ = documentsContract_.filter(x=>x.cards[0].required)
+   // documentsFormat_ = documentsFormat_.filter(x=>x.documents === undefined)
+    if(documentsContract_.length!=documentsFormat_.length)
+    {
+      ValidNoc = true
+    }
+    else  if(documentsContract_.length ===documentsFormat_.length)
+    {
+      documentsFormat_ = documentsFormat_.filter(x=>x.documents === undefined)
+       if(documentsFormat_.length>0)
+          {
+            ValidNoc = true
+          }
+
+     // ValidNoc = true
+    }
+
+    // if(documentsFormat_.length>0)
+    // {
+    //   ValidNoc = true
+    // }
+    // else if(documentsFormat_.length === 0)
+    // {
+    //   if(documentsFormat.length+1 !== documentsFormat.length)
+    // {
+    //   ValidNoc = true
+    // }
+    // }
+    // else if(documentsFormat.length+1 !== documentsFormat.length)
+    // {
+    //   ValidNoc = true
+    // }
+    if(ValidNoc)
+    //if(documentsFormat.length !== documentsContract.length)
     {
       dispatch(
                   toggleSnackbar(
@@ -379,6 +415,8 @@ if(water || sewerage || tubewell)
           //
           let owners = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.owners",[])
           let jsonPath = ''//SingleOwnerDetailsItems.item0.children.cardContent.children.viewFive.children.ownerName.props.jsonPath
+          if(SingleOwnerDetailsItems && SingleOwnerDetailsItems[0] && SingleOwnerDetailsItems !== undefined)
+          {
            jsonPath = SingleOwnerDetailsItems[0].item0.children.cardContent.children.viewFive.children.ownerName.props.jsonPath
           let name = get(
             state.screenConfiguration.preparedFinalObject,
@@ -387,6 +425,7 @@ if(water || sewerage || tubewell)
           );
           owners = owners.filter(x=>x.name ===name);
           set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.owners", owners);
+          }
           
 
         }
@@ -475,6 +514,8 @@ const usageCategory = get(
     if(localStorage.getItem("WNS_STATUS")){
       window.localStorage.removeItem("WNS_STATUS");
   }
+  dispatch(toggleSnackbar(true, { labelName: err.message }, "error"));
+  return false;
     console.log("errrr")
   }
 }
@@ -531,9 +572,46 @@ if(!proconnHolderDetail){
     if(localStorage.getItem("WNS_STATUS")){
       window.localStorage.removeItem("WNS_STATUS");
   }
+  dispatch(toggleSnackbar(true, { labelName: err.message }, "error"));
+  return false;
     console.log("errrr")
   }
 } 
+else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER_UPDATE' ){
+  const iswaterConnFomValid = validateFields(
+    "components.div.children.formwizardFirstStep.children.commentSectionDetails.children.cardContent.children.commentDetails.children.CommentDetails.children",
+    state,
+    dispatch,
+    "apply"
+  );
+
+  if(!iswaterConnFomValid){
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_REQUIRED_FIELDS",
+        labelName: "Please fill Required details"
+      },
+        "warning"
+      )
+    )
+    return;
+  } 
+  removingDocumentsWorkFlow(state, dispatch) ;
+  prepareDocumentsUploadData(state, dispatch);
+  try{
+    let abc = await applyForWater(state, dispatch);
+    window.localStorage.setItem("ActivityStatusFlag","true");
+ 
+  }catch (err){
+    if(localStorage.getItem("WNS_STATUS")){
+      window.localStorage.removeItem("WNS_STATUS");
+  }
+  dispatch(toggleSnackbar(true, { labelName: err.message }, "error"));
+  return false;
+    console.log("errrr")
+  }
+}
 else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
                       wnsStatus === "WS_REACTIVATE"||                     
                       wnsStatus === "WS_DISCONNECTION"||
@@ -569,6 +647,8 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
     if(localStorage.getItem("WNS_STATUS")){
       window.localStorage.removeItem("WNS_STATUS");
   }
+  dispatch(toggleSnackbar(true, { labelName: err.message }, "error"));
+  return false;
     console.log("errrr")
   }
  
@@ -596,6 +676,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     dispatch,
     "apply"
   );
+
 
   if(!isPropertyDetailsValid || !isPropertyLocationDetailValid ||!isPropertyUsageValid){
     dispatch(
@@ -631,7 +712,20 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
      }else{
        let propertyData = response.Properties[0];
        // let contractedCorAddress = "";
+        propertyData = get(
+          state,
+          "screenConfiguration.preparedFinalObject.applyScreen.property"
+        );
+        let tenantId = get(
+          state,
+          "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
+        );
     dispatch(prepareFinalObject("applyScreen.property", propertyData));
+    propertyData.landArea = parseInt(propertyData.landArea);
+    propertyData.totalConstructedArea = parseInt(propertyData.landArea);
+    propertyData.tenantId = tenantId;
+    propertyData.address.doorNo = propertyData.address.plotNo;
+    set(propertyData, "address.doorNo", propertyData.address.plotNo);
     set(propertyData, "creationReason", "UPDATE");
     let response_ = await propertyUpdate(state, dispatch,propertyData)
     if(response_)
@@ -652,6 +746,8 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     if(localStorage.getItem("WNS_STATUS")){
       window.localStorage.removeItem("WNS_STATUS");
   }
+  dispatch(toggleSnackbar(true, { labelName: err.message }, "error"));
+  return false;
   }
 
 }
@@ -680,6 +776,94 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         dispatch,
         "apply"
       ); 
+      let isConnectionDetailsValidpipesize = validateFields(
+        "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children",//pipeSize
+        state,
+        dispatch,
+        "apply"
+      );
+      let isConnectionDetailsValid_ = true;
+      let water_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
+      let sewerage_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
+      let tubewell_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.tubewell", false);
+      const fields_ = get(
+        state.screenConfiguration.screenConfig["apply"],
+        "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children",
+        {}
+      );
+      if(water_)
+      {
+       
+        // let isConnectionDetailsValidApplicationType = validateFields(
+        //   "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.waterApplicationType",
+        //   state,
+        //   dispatch,
+        //   "apply"
+        // );
+        if(fields_.waterApplicationType!==undefined) 
+        {
+          if(fields_.waterApplicationType.isFieldValid ===false)
+          isConnectionDetailsValid_ = false
+          
+        }
+        if(fields_.pipeSize!==undefined)
+        {
+          if(fields_.pipeSize.isFieldValid ===false)
+          isConnectionDetailsValid_ = false
+          
+          
+        }
+        // if(isConnectionDetailsValidpipesize && isConnectionDetailsValidApplicationType)
+        // {
+        //   isConnectionDetailsValid_ = true
+    
+        // }
+        // else{
+        //   isConnectionDetailsValid_ = false
+        // }
+    
+      }
+      else if(sewerage_)
+      {
+        // let isConnectionDetailsValidNoOfWaterClosets = validateFields(
+        //   "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfWaterClosets",
+        //   state,
+        //   dispatch,
+        //   "apply"
+        // );
+        // let isConnectionDetailsValidNoOfToilets = validateFields(
+        //   "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfToilets",
+        //   state,
+        //   dispatch,
+        //   "apply"
+        // );
+        // if(isConnectionDetailsValidNoOfWaterClosets && isConnectionDetailsValidNoOfToilets)
+        // {
+        //   isConnectionDetailsValid_ = true
+    
+        // }
+        // else{
+        //   isConnectionDetailsValid_ = false
+        // }
+        if(fields_.numberOfToilets!==undefined) 
+        {
+          if(fields_.numberOfToilets.isFieldValid ===false)
+          isConnectionDetailsValid_ = false
+          
+        }
+         if(fields_.numberOfWaterClosets!==undefined)
+        {
+          if(fields_.numberOfWaterClosets.isFieldValid ===false)
+          isConnectionDetailsValid_ = false
+          
+          
+        }
+    
+      }
+      else if(tubewell_){
+        isConnectionDetailsValid_ = true 
+    
+      }
       let isOwnershipsingleValid =false
 
       // for Ownership Type
@@ -769,7 +953,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       }
       
 
-      if(!isPropertyUsageValid || !isConnectionHolderDetailsValid || !isOwnershipTypeInputValid ||!isPropertyLocationDetailValid || !isPropertyDetailsValid || !isOwnershipsingleValid){
+      if(!isPropertyUsageValid || !isConnectionHolderDetailsValid || !isOwnershipTypeInputValid ||!isPropertyLocationDetailValid || !isPropertyDetailsValid || !isOwnershipsingleValid || !isConnectionDetailsValid_){
         isFormValid = false;
       }
       
@@ -1250,26 +1434,50 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       removingDocumentsWorkFlow(state, dispatch);
     }
     // validate category if Application Type is changged
-    let category_ = get(
-      state.screenConfiguration.preparedFinalObject,
-      "applyScreen.waterProperty.usageSubCategory",
-      null
-    );
-    if(water)
+    if(process.env.REACT_APP_NAME === "Citizen")
     {
+      let category_ = get(
+        state.screenConfiguration.preparedFinalObject,
+        "applyScreen.waterProperty.usageSubCategory",
+        null
+      );
+      if(water)
+      {
+        if(category_ === null)
+      {
+        category_ = get(
+          state.screenConfiguration.preparedFinalObject,
+          "WaterConnection[0].waterProperty.usageSubCategory",
+          null
+        );
       if(category_ === null)
-    {
-      let errorMessage_ = {
-        labelName: "Please select Usage Caregory",
-        labelKey: "WS_APPLICATION_TYPE_CHANGGED_VALIDATION"
-      };
+      {
+        let errorMessage_ = {
+          labelName: "Please select Usage Caregory",
+          labelKey: "WS_APPLICATION_TYPE_CHANGGED_VALIDATION"
+        };
 
-      dispatch(toggleSnackbar(true, errorMessage_, "warning"));
-      return false;
+        dispatch(toggleSnackbar(true, errorMessage_, "warning"));
+        return false;
+      }
+      else
+      {
+        set(
+          state.screenConfiguration.preparedFinalObject,
+          "applyScreen.waterProperty.usageSubCategory",
+          category_
+        );
+        dispatch(prepareFinalObject("applyScreen.waterProperty.usageSubCategory", category_));
+
+      }
+        
+  
+      }
+  
+      }
 
     }
-
-    }
+  
     
     
     prepareDocumentsUploadData(state, dispatch);
@@ -1291,8 +1499,51 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       //     case "CONNECTION_CONVERSION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "CONNECTION_CONVERSION")); break;
       //   }
       // }
+
+      //if(RESUBMIT_APPLICATION)
+      let water = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
+      let sewerage = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
+      let tubewell = get(state.screenConfiguration.preparedFinalObject, "applyScreen.tubewell", false);
+      if(water || tubewell)
+      {
+        let ProcessInstances =  get(
+          state,
+          `screenConfiguration.preparedFinalObject.workflow.ProcessInstances`,
+          ''
+      );
+        let action=  get(
+          state,
+          `screenConfiguration.preparedFinalObject.workflow.ProcessInstances[${ProcessInstances.length-1}].action`,
+          ''
+      );
+      if(action ==='SEND_BACK_TO_CITIZEN')
+      {
+        window.localStorage.removeItem("ActivityStatusFlag");
+      }
+
+      }
+      else if (sewerage)
+      {
+        let ProcessInstances =  get(
+          state,
+          `screenConfiguration.preparedFinalObject.workflow.ProcessInstances`,
+          ''
+      );
+        let action=  get(
+          state,
+          `screenConfiguration.preparedFinalObject.workflow.ProcessInstances[${ProcessInstances.length-1}].action`,
+          ''
+      );
+      if(action ==='SEND_BACK_TO_CITIZEN')
+      {
+        window.localStorage.removeItem("ActivityStatusFlag");
+      }
+
+      }
+
       if(process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit"&& window.localStorage.getItem("ActivityStatusFlag")=== "true"){
         //window.localStorage.removeItem("ActivityStatusFlag");
+        console.log('pritam')
       }
      else if (process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit") {  
         setReviewPageRoute(state, dispatch);
@@ -1366,7 +1617,48 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
 if(isConnectionDetailsValid)
 {
   isFormValid = isConnectionDetailsValid
+  let errorMessage = {
+    labelName: "Meter installation date must be greater then connection execution date",
+    labelKey: "WS_METER_INSTALATION_DATE_VALIDATION"
+  };
+  let proposedMeterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.proposedMeterInstallationDate");
+  let connectionExecutionDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.connectionExecutionDate");
+  let meterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.meterInstallationDate");
+  if(proposedMeterInstallationDate && connectionExecutionDate)
+  {
+    // proposedMeterInstallationDate =proposedMeterInstallationDate
+    // proposedMeterInstallationDate =proposedMeterInstallationDate
+  if(connectionExecutionDate> proposedMeterInstallationDate)
+  {
+    isFormValid = false;
+    errorMessage = {
+      labelName: "Meter installation date must be greater then connection execution date",
+      labelKey: "WS_PROP_METER_INSTALATION_DATE_VALIDATION"//WS_METER_INSTALATION_DATE_VALIDATION
+    };
+   // dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    //return 
+  }
+  }
+ else  if(connectionExecutionDate && meterInstallationDate)
+  {
+  if(connectionExecutionDate >meterInstallationDate)
+  {
+    isFormValid = false;
+     errorMessage = {
+      labelName: "Proposed meter installation date must be greater then connection execution date",
+      labelKey: "WS_METER_INSTALATION_DATE_VALIDATION"
+    };
+   
+    
+   // return 
+  }
+  }
+  if(isFormValid)
   setReviewPageRoute(state, dispatch);
+  else{
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    return;
+  }
 }
 if(!isConnectionDetailsValid)
       {
@@ -1382,6 +1674,7 @@ if(!isConnectionDetailsValid)
     //   isFormValid = false;
     //   hasFieldToaster = true;
     // }
+
 
     isFormValid = isFormValid;
   }

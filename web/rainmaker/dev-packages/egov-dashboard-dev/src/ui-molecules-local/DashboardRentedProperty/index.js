@@ -26,8 +26,8 @@ class RentedPropertyDashboard extends React.Component {
       const propsData = this.props.data;
       if(propsData.length > 0){
         this.setState({
-            checkData: propsData,
-            sortByRP : propsData[1].value
+            // checkData: propsData,
+            // sortByRP : propsData[1].reportSortBy.value
         });
       }
   }
@@ -38,7 +38,7 @@ class RentedPropertyDashboard extends React.Component {
     if(JSON.stringify(this.state.checkData) !== JSON.stringify(propsData)){
         this.setState({
         checkData: propsData,
-        sortByRP : propsData[1].value
+        sortByRP : propsData[1].reportSortBy.value
         });
     }
   }
@@ -57,7 +57,7 @@ class RentedPropertyDashboard extends React.Component {
                     : this.state.sortByRP === "dueReport" ?
                     <RPDueReport 
                     sortBy = {this.state.sortByRP} 
-                    data = {this.state.checkData[0]} 
+                    data = {this.state.checkData} 
                     />
                     :null
                 } 

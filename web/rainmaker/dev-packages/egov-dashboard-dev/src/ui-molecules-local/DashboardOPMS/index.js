@@ -17,16 +17,19 @@ class DashboardOPMS extends React.Component {
     super(props);
     this.state ={
         checkdata : [],
-        sortBy : ""
+        sortBy : "",
+        statusPayload : []
     }
   }
     componentDidMount(){
         debugger;
         var propData = this.props.data
         if(propData.length){
+            var statusPayload = propData[2] ? propData[2] : [];
             this.setState({
                 checkdata : propData,
-                sortBy : propData[1].value
+                sortBy : propData[1].value,
+                statusPayload : statusPayload
             })
         }
     }
@@ -35,9 +38,11 @@ class DashboardOPMS extends React.Component {
         debugger;
         var propData = this.props.data;
         if(JSON.stringify(this.state.checkdata) !== JSON.stringify(propData)){
+            var statusPayload = propData[2] ? propData[2] : [];
             this.setState({
                 checkdata : propData,
-                sortBy : propData[1].value
+                sortBy : propData[1].value,
+                statusPayload : statusPayload
             })
         }
         
@@ -51,6 +56,7 @@ class DashboardOPMS extends React.Component {
             {
                 this.state.sortBy === "statusReport" ?
                 <DashboardOPMSStatus 
+                statsPayload ={ this.state.statusPayload}
                 sortBy = {this.state.sortBy} 
                 data = {this.state.checkdata[0]} />
                 : this.state.sortBy === "collectionReport" ?

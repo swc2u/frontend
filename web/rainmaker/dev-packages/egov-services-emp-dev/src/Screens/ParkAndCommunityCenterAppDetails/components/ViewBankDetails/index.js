@@ -3,7 +3,7 @@ import { Card, Image, Icon, Button } from "components";
 import Label from "egov-ui-kit/utils/translationNode";
 import isEmpty from "lodash/isEmpty";
 import "./index.css";
-
+ 
 class AppDetails extends Component {
   render() {
     const { bkBankAccountNumber, bkBankName, bkIfscCode,bkAccountType, bkBankAccountHolder,applicantName,bkMobileNumber} = this.props;
@@ -29,7 +29,7 @@ class AppDetails extends Component {
                     />
                   </div>
                   <div className="col-md-4">
-                    <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="Bank Name" />
+                    <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="Bank Account Name" />
                     <Label
                       className="col-xs-6  col-sm-8 col-md-10  status-result-color"
                       id="complaint-details-current-status"

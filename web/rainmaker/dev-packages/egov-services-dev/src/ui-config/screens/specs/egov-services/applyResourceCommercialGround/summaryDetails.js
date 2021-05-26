@@ -10,7 +10,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
 import { commercialGroundSummary } from "../summaryResource/commercialGroundSummary";
-import { applicantSummary } from "../summaryResource/applicantSummaryCgb";
+import { applicantSummary ,cgbBankSummary} from "../summaryResource/applicantSummaryCgb";
 import { documentsSummary } from "../summaryResource/documentsSummary";
 import { estimateSummary } from "../summaryResource/estimateSummary";
 
@@ -35,8 +35,8 @@ export const changeStep = (
     }
 
     const isPreviousButtonVisible = activeStep > 0 ? true : false;
-    const isNextButtonVisible = activeStep < 3 ? true : false;
-    const isPayButtonVisible = activeStep === 3 ? true : false;
+    const isNextButtonVisible = activeStep < 4 ? true : false;
+    const isPayButtonVisible = activeStep === 4 ? true : false;
     const actionDefination = [
         {
             path: "components.div.children.stepper.props",
@@ -86,23 +86,32 @@ export const renderSteps = (activeStep, dispatch) => {
                 dispatch
             );
             break;
-        case 2:
-            dispatchMultipleFieldChangeAction(
-                "applycommercialground",
-                getActionDefinationForStepper(
-                    "components.div.children.formwizardThirdStep"
-                ),
-                dispatch
-            );
-            break;
-        default:
-            dispatchMultipleFieldChangeAction(
-                "applycommercialground",
-                getActionDefinationForStepper(
-                    "components.div.children.formwizardFourthStep"
-                ),
-                dispatch
-            );
+            case 2:
+                dispatchMultipleFieldChangeAction(
+                    "applycommercialground",
+                    getActionDefinationForStepper(
+                        "components.div.children.formwizardThirdStep"
+                    ),
+                    dispatch
+                );
+                break;
+            case 3:
+                dispatchMultipleFieldChangeAction(
+                    "applycommercialground",
+                    getActionDefinationForStepper(
+                        "components.div.children.formwizardFourthStep"
+                    ),
+                    dispatch
+                );
+                break;
+            default:
+                dispatchMultipleFieldChangeAction(
+                    "applycommercialground",
+                    getActionDefinationForStepper(
+                        "components.div.children.formwizardFifthStep"
+                    ),
+                    dispatch
+                );
     }
 };
 export const getActionDefinationForStepper = (path) => {
@@ -124,6 +133,11 @@ export const getActionDefinationForStepper = (path) => {
         },
         {
             path: "components.div.children.formwizardFourthStep",
+            property: "visible",
+            value: false,
+        },
+        {
+            path: "components.div.children.formwizardFifthStep",
             property: "visible",
             value: false,
         },
@@ -194,5 +208,6 @@ export const summaryDetails = getCommonCard({
     estimateSummary: estimateSummary,
     applicantSummary: applicantSummary,
     commercialGroundSummary: commercialGroundSummary,
+    cgbBankSummary:cgbBankSummary,
     documentsSummary: documentsSummary
 });

@@ -17,6 +17,7 @@ import MyNotifications from "modules/citizen/MyNotifications";
 import WhatsNew from "modules/citizen/WhatsNew";
 import { EventDetails } from "modules/common";
 import Events from "modules/citizen/Events";
+import HelpSupport from "modules/citizen/HelpSupport";
 import MyCity from "modules/citizen/MyCity";
 import { ImageModalDisplay } from "modules/common";
 
@@ -180,6 +181,16 @@ const routes = [
     options: {
       hideFooter: true,
       title: "CS_HEADER_EVENTS",
+      helpButton: true,
+    },
+  },
+  {
+    path: "HelpSupport",
+    component: HelpSupport,
+    needsAuthentication: true,
+    options: {
+      hideFooter: true,
+      title: "CS_HEADER_HELP_SUPPORT",
       helpButton: true,
     },
   },

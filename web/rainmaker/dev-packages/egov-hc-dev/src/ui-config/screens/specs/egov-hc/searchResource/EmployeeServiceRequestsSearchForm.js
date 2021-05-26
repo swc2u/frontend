@@ -581,49 +581,6 @@ serviceRequestidContactNoAndRequestTypeContainer: getCommonContainer({
   } 
   }),
   StatusLocalityAndFromToDateContainer: getCommonContainer({
-    fromDate: getDateField({
-      label: { labelName: "From Date", labelKey: "HC_FROM_DATE_LABEL" },
-      placeholder: {
-        labelName: "FromDate",
-        labelKey: "HC_FROM_DATE_PLACEHOLDER"
-      },
-      gridDefination: {
-        xs: 12,
-        sm: 6,
-        md: 4
-      },
-      pattern: getPattern("Date"),
-      jsonPath: "serviceRequests.fromDate",
-      afterFieldChange: (action, state, dispatch) => {
-        dispatch(
-          handleField(
-            "hcReport",
-            "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.toDate",
-            "props.inputProps.min",
-            action.value
-          )
-        );
-        }
-    }),
-    toDate: getDateField({
-      label: { labelName: "To Date", labelKey: "HC_TO_DATE_LABEL" },
-      placeholder: {
-        labelName: "To Date",
-        labelKey: "HC_TO_DATE_PLACEHOLDER"
-      },
-      props: {
-        inputProps: {
-          min: ''
-        }
-      },
-      gridDefination: {
-        xs: 12,
-        sm: 6,
-        md: 4
-      },
-      pattern: getPattern("Date"),
-      jsonPath: "serviceRequests.toDate",
-    }),
     ServiceRequestStatus: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-hc",
@@ -742,7 +699,50 @@ serviceRequestidContactNoAndRequestTypeContainer: getCommonContainer({
   labelName: "name",
   valueName: "name"
   }
-}
+    },
+    fromDate: getDateField({
+      label: { labelName: "From Date", labelKey: "HC_FROM_DATE_LABEL" },
+      placeholder: {
+        labelName: "FromDate",
+        labelKey: "HC_FROM_DATE_PLACEHOLDER"
+      },
+      gridDefination: {
+        xs: 12,
+        sm: 6,
+        md: 4
+      },
+      pattern: getPattern("Date"),
+      jsonPath: "serviceRequests.fromDate",
+      afterFieldChange: (action, state, dispatch) => {
+        dispatch(
+          handleField(
+            "hcReport",
+            "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.toDate",
+            "props.inputProps.min",
+            action.value
+          )
+        );
+        }
+    }),
+    toDate: getDateField({
+      label: { labelName: "To Date", labelKey: "HC_TO_DATE_LABEL" },
+      placeholder: {
+        labelName: "To Date",
+        labelKey: "HC_TO_DATE_PLACEHOLDER"
+      },
+      props: {
+        inputProps: {
+          min: ''
+        }
+      },
+      gridDefination: {
+        xs: 12,
+        sm: 6,
+        md: 4
+      },
+      pattern: getPattern("Date"),
+      jsonPath: "serviceRequests.toDate",
+    })
   }),
   button: getCommonContainer({
     buttonContainer: getCommonContainer({

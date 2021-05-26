@@ -46,6 +46,11 @@ const WithdrawRequestContainer = Loadable({
   loading: () => <Loading />
 });
 
+const ApplicationStatusContainer = Loadable({
+  loader: () => import("./applicationStatus"),
+  loading: () => <Loading />
+});
+
 export {
   ApplicationNoContainer,
   Checkbox,
@@ -54,5 +59,6 @@ export {
   Asteric,
   MenuButton,  
   MyApplicationIcon,
-  WithdrawRequestContainer
+  WithdrawRequestContainer,
+  ApplicationStatusContainer
 };

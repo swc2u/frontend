@@ -1,6 +1,7 @@
 import { getCommonCard, getCommonContainer, getDateField, getLabel, getPattern,} from "egov-ui-framework/ui-config/screens/specs/utils";
 // import { searchAPICall, SearchDashboardData, SearchPGRDashboardData } from "./functions";
 import { SearchHCDashboardData } from "./HCFunction";
+import get from "lodash/get";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import './index.css';
 
@@ -12,6 +13,11 @@ export const HCDashboardFilterForm = getCommonCard({
         labelName: "",
         labelKey: "Select From Date"
       },
+      props: {
+        style: {
+          width: "130px",
+        }
+      },
       gridDefination: {
         xs: 6,
         sm: 2,
@@ -20,15 +26,21 @@ export const HCDashboardFilterForm = getCommonCard({
       pattern: getPattern("Date"),
       jsonPath: "HCdahsboardHome.defaultFromDate",
       required: true,
+      beforeFieldChange: (action, state, dispatch) => {
+        debugger;
+        const data = "data"
+      },
       afterFieldChange: (action, state, dispatch) => {
+        debugger;
         dispatch(
           handleField(
-            "dashboardSource",
-            "components.div.children.FilterFormforEmployee.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+            "HCDashboard",
+            "components.div.children.HCDashboardFilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
             "props.inputProps.min",
             action.value
           )
         );
+
         }
     }),
     toDate: getDateField({
@@ -38,6 +50,9 @@ export const HCDashboardFilterForm = getCommonCard({
         labelKey: "Select To Date"
       },
       props: {
+        style: {
+          width: "130px",
+        },
         inputProps: {
           min: ''
         }
@@ -104,7 +119,7 @@ export const HCDashboardFilterForm = getCommonCard({
         width: "75%",
         height: "55px",
         /* margin-right: 80px; */
-        // marginLeft: "90%"
+        // marginLeft: "145px"
         }
       },
       children: {

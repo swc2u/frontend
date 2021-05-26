@@ -7,134 +7,553 @@ import ReactTable from "react-table-6";
 import "react-table-6/react-table.css" ;
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
-// import Dashboardtable from './Dashboardtable';
-// import Pagination from "./Pagination";
-import EStatedata from './EstateData.json';
 import './EstateIndex.css'
 
 class DashboardEstate extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state ={
-        checkData: [],
-        allData: [],
-        dataOne: [],
-        dataTwo: [],
-        dataThird: [],
-        graphOneLabel: [],
-        graphOneData: [],
-        graphTwoLabel: [],
-        graphTwoData: [],
-        graphThirdLabel: [],
-        graphThirdData: [],
-        graphClicked: -1,
-        hardJSON: [],
-        graphHardOneData : {},
-        graphHardTwoData : {},
-        graphHardThirdData : {},
-        graphHardFourthData : {},
-        graphHardFifthData : {},
-        graphHardSixthData: {},
-        rowData: [],
-        columnData: [],
-        // Double Graph data
-        graphFourthLabel: [],
-        graphFourthData: [],
-        dataFourth: [],
-        graphFifthLabel: [],
-        graphFifthData: [],
-        dataFifth: [],
-        graphSixthData: [],
-        graphSixthLabel: [],
-        dataSixth: [],
-        // Feature Table
-        toggleColumnCheck: false,
-        unchangeColumnData: []
+    constructor(props) {
+        super(props);
+        this.state ={
+            dropdownSelected : "",
+            graphOneLabel : [],
+            graphOneData : [],
+            dataOne: [],
+            graphTwoLabel : [],
+            graphTwoData : [],
+            dataTwo : [],
+            graphThirdLabel : [],
+            graphThirdData : [],
+            dataThird: [],
+            graphFourthLabel : [],
+            graphFourthData:[],
+            dataFourth : [],
+            graphFifthLabel : [],
+            graphFifthData:[],
+            dataFifth : [],
+            graphClicked : -1,
+            rowData: [],
+            columnData: [],
+            unchangeColumnData: [],
+
+            columnDataApplication : [],
+            unchangeColumnDataApplication : [],
+            rowDataApplication : [],
+            columnDataPropertyRent : [],
+            unchangeColumnDataPropertyRent : [],
+            rowDataPropertyRent : [],
+            columnDataPropertyPenalty : [],
+            unchangeColumnDataPropertyPenalty : [],
+            rowDataPropertyPenalty : [],
+            columnDataExtensionFee : [],
+            unchangeColumnDataExtensionFee : [],
+            rowDataExtensionFee : [],
+            columnDataSecurityDeposit : [],
+            unchangeColumnDataSecurityDeposit : [],
+            rowDataSecurityDeposit : [],
+        }
     }
-  }
 
 
     // PDF function 
     pdfDownload = (e) => {
-
     debugger;
     e.preventDefault();
-    var columnData = this.state.unchangeColumnData
-    // var columnDataCamelize = this.state.columnData
-    var rowData = this.state.rowData
 
-    var group = columnData.reduce((r, a) => {
-        r[a["show"]] = [...r[a["show"]] || [], a];
-        return r;
-        }, {});
+    if(this.state.graphClicked === 0){
+        // alert("ok");
 
-    columnData = group["true"]
-    var tableColumnData = []
-    var tableColumnDataCamel = []
-    for(var i=0; i<columnData.length; i++){
-        tableColumnData.push(columnData[i]["accessor"]);
-        // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
-    }
+        // Application
+        var columnData = this.state.unchangeColumnDataApplication
+        // var columnDataCamelize = this.state.columnData
+        var rowData = this.state.rowDataApplication
 
-    var tableRowData = [];
-    for(var i=0; i<rowData.length; i++){
-        var rowItem = [];
-        for(var j=0; j<tableColumnData.length; j++){
-            const demo1 = rowData[i]
-            var demo2 = tableColumnData[j].replace(".", ",");
-            demo2 = demo2.split(",")
-            if(typeof(demo2) === "object"){   
-                if(demo2.length > 1){
-                    rowItem.push(rowData[i][demo2[0]][demo2[1]]);
-                }
-                else{
+        var group = columnData.reduce((r, a) => {
+            r[a["show"]] = [...r[a["show"]] || [], a];
+            return r;
+            }, {});
+
+        columnData = group["true"]
+        var tableColumnData = []
+        var tableColumnDataCamel = []
+        for(var i=0; i<columnData.length; i++){
+            tableColumnData.push(columnData[i]["accessor"]);
+            // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
+        }
+
+        var tableRowData = [];
+        for(var i=0; i<rowData.length; i++){
+            var rowItem = [];
+            for(var j=0; j<tableColumnData.length; j++){
+                const demo1 = rowData[i]
+                var demo2 = tableColumnData[j].replace(".", ",");
+                demo2 = demo2.split(",")
+                if(typeof(demo2) === "object"){   
+                    if(demo2.length > 1){
+                        rowItem.push(rowData[i][demo2[0]][demo2[1]]);
+                    }
+                    else{
+                        rowItem.push(rowData[i][demo2]);
+                    }
+                }else{
                     rowItem.push(rowData[i][demo2]);
                 }
-            }else{
-                rowItem.push(rowData[i][demo2]);
             }
+            tableRowData.push(rowItem);
         }
-        tableRowData.push(rowItem);
+
+        var tableRowDataFinal = []
+        for(var i=0; i<tableRowData.length; i++){
+            tableRowDataFinal.push(tableRowData[i]);
+        }
+
+        var tableCol = [];
+        for(var i=0; i<columnData.length; i++){
+            tableCol.push(columnData[i].Header);
+        }
+
+
+        debugger;
+        // PDF Code 
+        var unit = "pt";
+        var size = "A4"; // Use A1, A2, A3 or A4
+        var orientation = "portrait"; // portrait or landscape
+        var marginLeft = 40;
+        var doc = new jsPDF(orientation, unit, size);
+
+        var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+        var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+        doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
+
+        doc.setFontSize(10);
+        var pdfTitle = "Estate Management Dashboard(Application)";
+        doc.text(pdfTitle, pageWidth / 2, 40, 'center');
+
+        doc.autoTable({ html: '#my-table' });
+        doc.setFontSize(5);
+
+        doc.autoTable({
+            // head: [tableColumnDataCamel],
+            head: [tableCol],
+            theme: "striped",
+            styles: {
+                fontSize: 7,
+            },
+            body:tableRowData
+        });
+
+        doc.save(pdfTitle+".pdf");
+
+        // Property Rent
+        var columnData = this.state.unchangeColumnDataPropertyRent;
+        // var columnDataCamelize = this.state.columnData
+        var rowData = this.state.rowDataPropertyRent;
+
+        var group = columnData.reduce((r, a) => {
+            r[a["show"]] = [...r[a["show"]] || [], a];
+            return r;
+            }, {});
+
+        columnData = group["true"]
+        var tableColumnData = []
+        var tableColumnDataCamel = []
+        for(var i=0; i<columnData.length; i++){
+            tableColumnData.push(columnData[i]["accessor"]);
+            // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
+        }
+
+        var tableRowData = [];
+        for(var i=0; i<rowData.length; i++){
+            var rowItem = [];
+            for(var j=0; j<tableColumnData.length; j++){
+                const demo1 = rowData[i]
+                var demo2 = tableColumnData[j].replace(".", ",");
+                demo2 = demo2.split(",")
+                if(typeof(demo2) === "object"){   
+                    if(demo2.length > 1){
+                        rowItem.push(rowData[i][demo2[0]][demo2[1]]);
+                    }
+                    else{
+                        rowItem.push(rowData[i][demo2]);
+                    }
+                }else{
+                    rowItem.push(rowData[i][demo2]);
+                }
+            }
+            tableRowData.push(rowItem);
+        }
+
+        var tableRowDataFinal = []
+        for(var i=0; i<tableRowData.length; i++){
+            tableRowDataFinal.push(tableRowData[i]);
+        }
+
+        var tableCol = [];
+        for(var i=0; i<columnData.length; i++){
+            tableCol.push(columnData[i].Header);
+        }
+
+
+        debugger;
+        // PDF Code 
+        var unit = "pt";
+        var size = "A4"; // Use A1, A2, A3 or A4
+        var orientation = "portrait"; // portrait or landscape
+        var marginLeft = 40;
+        var doc = new jsPDF(orientation, unit, size);
+
+        var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+        var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+        doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
+
+        doc.setFontSize(10);
+        var pdfTitle = "Estate Management Dashboard(Property Rent)";
+        doc.text(pdfTitle, pageWidth / 2, 40, 'center');
+
+        doc.autoTable({ html: '#my-table' });
+        doc.setFontSize(5);
+
+        doc.autoTable({
+            // head: [tableColumnDataCamel],
+            head: [tableCol],
+            theme: "striped",
+            styles: {
+                fontSize: 7,
+            },
+            body:tableRowData
+        });
+
+        doc.save(pdfTitle+".pdf");
+
+        // Property Penalty
+        var columnData = this.state.unchangeColumnDataPropertyPenalty;
+        // var columnDataCamelize = this.state.columnData
+        var rowData = this.state.rowDataPropertyPenalty;
+
+        var group = columnData.reduce((r, a) => {
+            r[a["show"]] = [...r[a["show"]] || [], a];
+            return r;
+            }, {});
+
+        columnData = group["true"]
+        var tableColumnData = []
+        var tableColumnDataCamel = []
+        for(var i=0; i<columnData.length; i++){
+            tableColumnData.push(columnData[i]["accessor"]);
+            // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
+        }
+
+        var tableRowData = [];
+        for(var i=0; i<rowData.length; i++){
+            var rowItem = [];
+            for(var j=0; j<tableColumnData.length; j++){
+                const demo1 = rowData[i]
+                var demo2 = tableColumnData[j].replace(".", ",");
+                demo2 = demo2.split(",")
+                if(typeof(demo2) === "object"){   
+                    if(demo2.length > 1){
+                        rowItem.push(rowData[i][demo2[0]][demo2[1]]);
+                    }
+                    else{
+                        rowItem.push(rowData[i][demo2]);
+                    }
+                }else{
+                    rowItem.push(rowData[i][demo2]);
+                }
+            }
+            tableRowData.push(rowItem);
+        }
+
+        var tableRowDataFinal = []
+        for(var i=0; i<tableRowData.length; i++){
+            tableRowDataFinal.push(tableRowData[i]);
+        }
+
+        var tableCol = [];
+        for(var i=0; i<columnData.length; i++){
+            tableCol.push(columnData[i].Header);
+        }
+
+
+        debugger;
+        // PDF Code 
+        var unit = "pt";
+        var size = "A4"; // Use A1, A2, A3 or A4
+        var orientation = "portrait"; // portrait or landscape
+        var marginLeft = 40;
+        var doc = new jsPDF(orientation, unit, size);
+
+        var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+        var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+        doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
+
+        doc.setFontSize(10);
+        var pdfTitle = "Estate Management Dashboard(Property Penalty)";
+        doc.text(pdfTitle, pageWidth / 2, 40, 'center');
+
+        doc.autoTable({ html: '#my-table' });
+        doc.setFontSize(5);
+
+        doc.autoTable({
+            // head: [tableColumnDataCamel],
+            head: [tableCol],
+            theme: "striped",
+            styles: {
+                fontSize: 7,
+            },
+            body:tableRowData
+        });
+
+        doc.save(pdfTitle+".pdf");
+
+        // Extension Fee
+        var columnData = this.state.unchangeColumnDataExtensionFee;
+        // var columnDataCamelize = this.state.columnData
+        var rowData = this.state.rowDataExtensionFee;
+
+        var group = columnData.reduce((r, a) => {
+            r[a["show"]] = [...r[a["show"]] || [], a];
+            return r;
+            }, {});
+
+        columnData = group["true"]
+        var tableColumnData = []
+        var tableColumnDataCamel = []
+        for(var i=0; i<columnData.length; i++){
+            tableColumnData.push(columnData[i]["accessor"]);
+            // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
+        }
+
+        var tableRowData = [];
+        for(var i=0; i<rowData.length; i++){
+            var rowItem = [];
+            for(var j=0; j<tableColumnData.length; j++){
+                const demo1 = rowData[i]
+                var demo2 = tableColumnData[j].replace(".", ",");
+                demo2 = demo2.split(",")
+                if(typeof(demo2) === "object"){   
+                    if(demo2.length > 1){
+                        rowItem.push(rowData[i][demo2[0]][demo2[1]]);
+                    }
+                    else{
+                        rowItem.push(rowData[i][demo2]);
+                    }
+                }else{
+                    rowItem.push(rowData[i][demo2]);
+                }
+            }
+            tableRowData.push(rowItem);
+        }
+
+        var tableRowDataFinal = []
+        for(var i=0; i<tableRowData.length; i++){
+            tableRowDataFinal.push(tableRowData[i]);
+        }
+
+        var tableCol = [];
+        for(var i=0; i<columnData.length; i++){
+            tableCol.push(columnData[i].Header);
+        }
+
+
+        debugger;
+        // PDF Code 
+        var unit = "pt";
+        var size = "A4"; // Use A1, A2, A3 or A4
+        var orientation = "portrait"; // portrait or landscape
+        var marginLeft = 40;
+        var doc = new jsPDF(orientation, unit, size);
+
+        var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+        var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+        doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
+
+        doc.setFontSize(10);
+        var pdfTitle = "Estate Management Dashboard(Extension Fee)";
+        doc.text(pdfTitle, pageWidth / 2, 40, 'center');
+
+        doc.autoTable({ html: '#my-table' });
+        doc.setFontSize(5);
+
+        doc.autoTable({
+            // head: [tableColumnDataCamel],
+            head: [tableCol],
+            theme: "striped",
+            styles: {
+                fontSize: 7,
+            },
+            body:tableRowData
+        });
+
+        doc.save(pdfTitle+".pdf");
+
+        // Security Deposit
+        var columnData = this.state.unchangeColumnDataSecurityDeposit;
+        // var columnDataCamelize = this.state.columnData
+        var rowData = this.state.rowDataSecurityDeposit;
+
+        var group = columnData.reduce((r, a) => {
+            r[a["show"]] = [...r[a["show"]] || [], a];
+            return r;
+            }, {});
+
+        columnData = group["true"]
+        var tableColumnData = []
+        var tableColumnDataCamel = []
+        for(var i=0; i<columnData.length; i++){
+            tableColumnData.push(columnData[i]["accessor"]);
+            // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
+        }
+
+        var tableRowData = [];
+        for(var i=0; i<rowData.length; i++){
+            var rowItem = [];
+            for(var j=0; j<tableColumnData.length; j++){
+                const demo1 = rowData[i]
+                var demo2 = tableColumnData[j].replace(".", ",");
+                demo2 = demo2.split(",")
+                if(typeof(demo2) === "object"){   
+                    if(demo2.length > 1){
+                        rowItem.push(rowData[i][demo2[0]][demo2[1]]);
+                    }
+                    else{
+                        rowItem.push(rowData[i][demo2]);
+                    }
+                }else{
+                    rowItem.push(rowData[i][demo2]);
+                }
+            }
+            tableRowData.push(rowItem);
+        }
+
+        var tableRowDataFinal = []
+        for(var i=0; i<tableRowData.length; i++){
+            tableRowDataFinal.push(tableRowData[i]);
+        }
+
+        var tableCol = [];
+        for(var i=0; i<columnData.length; i++){
+            tableCol.push(columnData[i].Header);
+        }
+
+
+        debugger;
+        // PDF Code 
+        var unit = "pt";
+        var size = "A4"; // Use A1, A2, A3 or A4
+        var orientation = "portrait"; // portrait or landscape
+        var marginLeft = 40;
+        var doc = new jsPDF(orientation, unit, size);
+
+        var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+        var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+        doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
+
+        doc.setFontSize(10);
+        var pdfTitle = "Estate Management Dashboard(Security Deposit)";
+        doc.text(pdfTitle, pageWidth / 2, 40, 'center');
+
+        doc.autoTable({ html: '#my-table' });
+        doc.setFontSize(5);
+
+        doc.autoTable({
+            // head: [tableColumnDataCamel],
+            head: [tableCol],
+            theme: "striped",
+            styles: {
+                fontSize: 7,
+            },
+            body:tableRowData
+        });
+
+        doc.save(pdfTitle+".pdf");
+
+
+    }else if(this.state.graphClicked > 0){
+        var columnData = this.state.unchangeColumnData
+        // var columnDataCamelize = this.state.columnData
+        var rowData = this.state.rowData
+
+        var group = columnData.reduce((r, a) => {
+            r[a["show"]] = [...r[a["show"]] || [], a];
+            return r;
+            }, {});
+
+        columnData = group["true"]
+        var tableColumnData = []
+        var tableColumnDataCamel = []
+        for(var i=0; i<columnData.length; i++){
+            tableColumnData.push(columnData[i]["accessor"]);
+            // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
+        }
+
+        var tableRowData = [];
+        for(var i=0; i<rowData.length; i++){
+            var rowItem = [];
+            for(var j=0; j<tableColumnData.length; j++){
+                const demo1 = rowData[i]
+                var demo2 = tableColumnData[j].replace(".", ",");
+                demo2 = demo2.split(",")
+                if(typeof(demo2) === "object"){   
+                    if(demo2.length > 1){
+                        rowItem.push(rowData[i][demo2[0]][demo2[1]]);
+                    }
+                    else{
+                        rowItem.push(rowData[i][demo2]);
+                    }
+                }else{
+                    rowItem.push(rowData[i][demo2]);
+                }
+            }
+            tableRowData.push(rowItem);
+        }
+
+        var tableRowDataFinal = []
+        for(var i=0; i<tableRowData.length; i++){
+            tableRowDataFinal.push(tableRowData[i]);
+        }
+
+        var tableCol = [];
+        for(var i=0; i<columnData.length; i++){
+            tableCol.push(columnData[i].Header);
+        }
+
+
+        debugger;
+        // PDF Code 
+        var unit = "pt";
+        var size = "A4"; // Use A1, A2, A3 or A4
+        var orientation = "portrait"; // portrait or landscape
+        var marginLeft = 40;
+        var doc = new jsPDF(orientation, unit, size);
+
+        var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+        var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+        doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
+
+        doc.setFontSize(10);
+        var pdfTitle = "Type/Branchwise Estate Management Dashboard"
+        doc.text(pdfTitle, pageWidth / 2, 40, 'center');
+
+        doc.autoTable({ html: '#my-table' });
+        doc.setFontSize(5);
+
+        doc.autoTable({
+            // head: [tableColumnDataCamel],
+            head: [tableCol],
+            theme: "striped",
+            styles: {
+                fontSize: 7,
+            },
+            body:tableRowData
+        });
+
+        doc.save(pdfTitle+".pdf");
     }
-
-    var tableRowDataFinal = []
-    for(var i=0; i<tableRowData.length; i++){
-        tableRowDataFinal.push(tableRowData[i]);
-    }
-
-
-    debugger;
-    // PDF Code 
-    const unit = "pt";
-    const size = "A4"; // Use A1, A2, A3 or A4
-    const orientation = "portrait"; // portrait or landscape
-    const marginLeft = 40;
-    const doc = new jsPDF(orientation, unit, size);
-
-    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-
-    doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
-
-    doc.setFontSize(10);
-    const pdfTitle = this.state.graphHardOneData ? this.state.graphHardOneData.title : "Title"
-    doc.text(pdfTitle, pageWidth / 2, 40, 'center');
-
-    doc.autoTable({ html: '#my-table' });
-    doc.setFontSize(5);
-
-    doc.autoTable({
-        // head: [tableColumnDataCamel],
-        head: [tableColumnData],
-        theme: "striped",
-        styles: {
-            fontSize: 7,
-        },
-        body:tableRowData
-    });
-
-    doc.save(pdfTitle+".pdf");
-
     }
 
     // Column Unchange Data
@@ -150,7 +569,6 @@ class DashboardEstate extends React.Component {
         return unchangeData
 
     }
-
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
@@ -183,103 +601,115 @@ class DashboardEstate extends React.Component {
     
     graphSorting = ( sortBy, data, checkGraph ) => {
 
-    
-    debugger;
-    // passing sortBy, data
-    if(typeof(sortBy) === "object" && checkGraph === this.state.graphHardThirdData.sortBy[2]){
-        var sortNo = null;
-
-        const sortpaymentStatus = [sortBy[0],sortBy[1], checkGraph] 
-        var group = data.reduce((r, a) => {
-            r[new Date(a[sortBy[0]][sortBy[1]]).getMonth()] = [...r[new Date(a[sortBy[0]][sortBy[1]]).getMonth()] || [], a];
-            return r;
-            }, {});
-        
-        var graphOneLabel = Object.keys(group);
-
-        var graphOneData = []
-        var PAID = []
-        var PENDING = []
-        for(var i=0; i<Object.keys(group).length ; i++){
-            // Data in two parts
-            const monthwiseData = group[graphOneLabel[i]]
-            var group2 = monthwiseData.reduce((r, a) => {
-                r[a[sortBy[0]][checkGraph]] = [...r[a[sortBy[0]][checkGraph]] || [], a];
+        debugger;
+        if(checkGraph[0] === "dashboard_1_Two"){
+            var sortNo = null;
+            var rowData = data.reportResponses[0].reportData;
+            var colData = data.reportResponses[0].reportHeader;
+            var group = rowData.reduce((r, a) => {
+                r[a[sortBy]] = [...r[a[sortBy]] || [], a];
                 return r;
                 }, {});
-            const dataPAID = group2[sortBy[3]] ? group2[sortBy[3]].length : 0
-            const dataPENDING = group2[sortBy[4]] ? group2[sortBy[4]].length : 0
-            PAID.push(dataPAID);
-            PENDING.push(dataPENDING)
-            // graphOneData.push(group[graphOneLabel[i]].length);
-            
-        }
-        graphOneData.push(PAID, PENDING);
     
-        var monthData = {}
-        var mL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];    
-        var graphOneLabel = Object.keys(group);
-        for(var i=0; i<graphOneLabel.length; i++)
-        {
-            monthData[graphOneLabel[i]] = mL[graphOneLabel[i]]
-        }
-
-        graphOneLabel = Object.values(monthData);
-        
-
-        return [ graphOneLabel, graphOneData, group ]
-
-    }else if(typeof(sortBy) === "object" && checkGraph === this.state.graphHardFourthData.sortBy[2]){
-        
-        
-        // Graph for PAyment Online or Offline
-        const nullJSON = sortBy[3]
-        var sortedGroup ={}
-        var group = data.reduce((r, a) => {
-            r[a[sortBy[0]][sortBy[1]]] = [...r[a[sortBy[0]][sortBy[1]]] || [], a];
-            return r;
-            }, {});
-        for(var i=0; i<Object.keys(group).length; i++){
-            if(Object.keys(group)[i] !== Object.keys(nullJSON)[0]){
-                sortedGroup[Object.keys(group)[i]] = group[Object.keys(group)[i]]
+            var graphOneLabel = Object.keys(group);
+            var graphOneData = []
+            for(var i=0; i<Object.keys(group).length ; i++){
+                var amt = 0;
+                var itemData = group[graphOneLabel[i]];
+                for(var j=0; j<itemData.length; j++){
+                    if(checkGraph[1] === "Applications"){
+                        amt = amt + itemData[j][4];
+                    }
+                    if(checkGraph[1] === "Property Rent"){
+                        amt = amt + itemData[j][5];
+                    }
+                    if(checkGraph[1] === "Property Penalty"){
+                        amt = amt + itemData[j][3];
+                    }
+                    if(checkGraph[1] === "Extension Fee"){
+                        amt = amt + itemData[j][3];
+                    }
+                    if(checkGraph[1] === "Security Deposit"){
+                        amt = amt + itemData[j][3];
+                    }
+                }
+                graphOneData.push(amt);
             }
-        }
-        // group = sortedGroup
-        var graphOneLabel = Object.keys(group);
-        var graphOneData = [];
-
-        for(var i=0; i<Object.keys(group).length ; i++){
             
-            graphOneData.push(group[graphOneLabel[i]].length);
-        }
-
-        for(var i=0; i<Object.keys(group).length ; i++){
-            if(graphOneLabel[i] === Object.keys(nullJSON)[0]){
-                graphOneLabel[i] = Object.values(nullJSON)[0]
+            // Setting Table Data
+            // Table Data Application
+            var columnData = [];
+            var unchangeColumnData = [];
+            // var rowData = data[0].reportResponses[0].reportData;
+            for(var i=0; i<colData.length; i++){
+                var dataItem = colData[i];
+                var item ={};
+                item["Header"] = this.camelize(dataItem.name);
+                item["id"] = i.toString();
+                item["accessor"] = i.toString();
+                item["show"] = true;
+                columnData.push(item);        
             }
+            unchangeColumnData = columnData;
+
+            this.setState({
+                rowData: rowData,
+                columnData: columnData,
+                unchangeColumnData: unchangeColumnData,
+            })
+
+            return [ graphOneLabel, graphOneData, group ]
         }
-        // var rowData = []
-        // var dataList = [group["OFFLINE"]]
-        // rowData.push(dataList);
-
-        return [ graphOneLabel, graphOneData, group ]
-
-    }else{
+        if(checkGraph[0] === "dashboard_2_Two"){
+            var sortNo = null;
+            // var rowData = data.reportResponses[0].reportData;
+            // var colData = data.reportResponses[0].reportHeader;
+            var group = data.reduce((r, a) => {
+                r[a[sortBy]] = [...r[a[sortBy]] || [], a];
+                return r;
+                }, {});
+    
+            var graphOneLabel = Object.keys(group);
+            var graphOneData = []
+            for(var i=0; i<Object.keys(group).length ; i++){
+                graphOneData.push(group[graphOneLabel[i]].length);
+            }
+            return [ graphOneLabel, graphOneData, group ]
+        }
+        if(checkGraph[0] === "dashboard_2_Three"){
+            var sortNo = null;
+            // var rowData = data.reportResponses[0].reportData;
+            // var colData = data.reportResponses[0].reportHeader;
+            var group = data.reduce((r, a) => {
+                r[a[sortBy]] = [...r[a[sortBy]] || [], a];
+                return r;
+                }, {});
+    
+            var graphOneLabel = Object.keys(group);
+            var graphOneData = []
+            for(var i=0; i<Object.keys(group).length ; i++){
+                var item = group[graphOneLabel[i]];
+                var total_due = 0;
+                for(var j=0; j<item.length; j++){
+                    total_due = total_due + item[j][11]; 
+                }
+                graphOneData.push(parseInt(total_due));
+            }
+            return [ graphOneLabel, graphOneData, group ]
+        }
         var sortNo = null;
         var group = data.reduce((r, a) => {
             r[a[sortBy]] = [...r[a[sortBy]] || [], a];
             return r;
             }, {});
-    
+
         var graphOneLabel = Object.keys(group);
         var graphOneData = []
         for(var i=0; i<Object.keys(group).length ; i++){
             graphOneData.push(group[graphOneLabel[i]].length);
         }
-    
+
         return [ graphOneLabel, graphOneData, group ]
-    }
-    
     }
 
     // CamelCase Column Name 
@@ -294,429 +724,194 @@ class DashboardEstate extends React.Component {
     }
 
     componentDidMount(){
-       
-    debugger;
-    const propsData = this.props.data
-    if(propsData.length > 0){
-        const propSortBy = propsData[1].value;
-        const data = propsData[0].Applications
-
-        // Graph One Sorting Function 
-        var graphOneData = this.graphSorting( propSortBy, data );
-
-        // Graph Hard JSON Create :: 
-        var hardJSON = propSortBy === "applicationType" ? [
-            {
-            "sortBy": "applicationType",
-            "msgX": "Application Type",
-            "msgY": "No of request",
-            "title": "Application Typewise Estate Report"
-            }, 
-            {
-            "sortBy": "action",
-            "msgX": "No of request",
-            "msgY": "Action",
-            "title": "Application Typewise Estate Action Report"
-            },
-            { 
-            "sortBy": "hardcopyReceivedDate",
-            "msgX": "Month",
-            "msgY": "No of request",
-            "title": "Application Typewise Estate Monthwise Action Report"
-            },
-            { 
-            "sortBy": ["paymentDetails","paymentMode","PAIDPaymentMode",{"null":"PENDING"}],
-            "msgX": "",
-            "msgY": "",
-            "title": "Payment Collection By Source"
-            },
-            { 
-            "sortBy": "siName",
-            "msgX": "Challan By SI",
-            "msgY": "No of Challan",
-            "title": "Challan Generation SI Wise"
-            },
-            { 
-            "sortBy": "sector",
-            "msgX": "Areawise Challan",
-            "msgY": "No of Challan",
-            "title": "Challan Generation Area Wise"
-            }
-        ]
-        : propSortBy === "branchType" ? [
-            {
-            "sortBy": "branchType",
-            "msgX": "Branch",
-            "msgY": "No of request",
-            "title": "Branchwise Estate Report"
-            }, 
-            {
-            "sortBy": "applicationType",
-            "msgX": "No of request",
-            "msgY": "Application Type",
-            "title": "Branchwise Estate Application type report"
-            },
-            { 
-            "sortBy": "hardcopyReceivedDate",
-            "msgX": "Month",
-            "msgY": "No of request",
-            "title": "Branchwise Estate Application type Monthwise report"
-            },
-            { 
-            "sortBy": ["paymentDetails","paymentMode","PAIDPaymentMode",{"null":"PENDING"}],
-            "msgX": "",
-            "msgY": "",
-            "title": "Payment Collection By Source"
-            },
-            { 
-            "sortBy": "sector",
-            "msgX": "Areawise Challan",
-            "msgY": "No of Challan",
-            "title": "Challan Generation Area Wise"
-            },
-            {
-            "sortBy": "status",
-            "msgX": "Status",
-            "msgY": "No of Challan",
-            "title": "Encroachment Typewise Challan Status Report"
-            }
-        ] : propSortBy === "siName" ? [
-            { 
-            "sortBy": "siName",
-            "msgX": "Challan By SI",
-            "msgY": "No of Challan",
-            "title": "Challan Generation SI Wise"
-            },
-            { 
-            "sortBy": "sector",
-            "msgX": "No of Challan",
-            "msgY": "Areawise Challan",
-            "title": "Challan Generation Area Wise"
-            },
-            { 
-            "sortBy": ["paymentDetails","lastModifiedTime","paymentStatus","PAID","PENDING"],
-            "msgX": "Months",
-            "msgY": "No of Challan",
-            "title": "Challan Monthly Payment Status"
-            },
-            { 
-            "sortBy": ["paymentDetails","paymentMode","PAIDPaymentMode",{"null":"PENDING"}],
-            "msgX": "",
-            "msgY": "",
-            "title": "Payment Collection By Source"
-            },
-            {
-            "sortBy": "status",
-            "msgX": "Status",
-            "msgY": "No of Challan",
-            "title": "Areawise Challan Status Report"
-            },
-            {
-            "sortBy": "encroachmentType",
-            "msgX": "Encroachment Type",
-            "msgY": "No of Challan",
-            "title": "Areawise Challan Encroachment Type Report"
-            }
-        ] : propSortBy === "sector" ? [
-            { 
-            "sortBy": "sector",
-            "msgX": "Areawise Challan",
-            "msgY": "No of Challan",
-            "title": "Challan Generation Area Wise"
-            },
-            {
-            "sortBy": "status",
-            "msgX": "No of Challan",
-            "msgY": "Status",
-            "title": "Statuswise Challan Area Report"
-            },
-            { 
-            "sortBy": ["paymentDetails","lastModifiedTime","paymentStatus","PAID","PENDING"],
-            "msgX": "Months",
-            "msgY": "No of Challan",
-            "title": "Challan Monthly Payment Status"
-            },
-            { 
-            "sortBy": ["paymentDetails","paymentMode","PAIDPaymentMode",{"null":"PENDING"}],
-            "msgX": "",
-            "msgY": "",
-            "title": "Payment Collection By Source"
-            },
-            {
-            "sortBy": "encroachmentType",
-            "msgX": "Encroachment Type",
-            "msgY": "No of Challan",
-            "title": "Encroachment Type wise Challan Area Report"
-            },
-            { 
-            "sortBy": "siName",
-            "msgX": "No of Challan",
-            "msgY": "Challan By SI",
-            "title": "Challan Generation SI Wise"
-            }
-        ] : []
-
         debugger;
-        // Table Data Header 
-        const tableData = data[0] ? Object.keys(data[0]) : [];
-        var columnData = []
-        for(var i=0; i<tableData.length; i++){
-            var itemHeader = {}
-            itemHeader["Header"] = this.camelize(tableData[i]);
-            itemHeader["accessor"] = tableData[i];
-            itemHeader["show"]= (i === 4 || i === 5 || i === 6 || i === 7 || i === 8 || i === 12 || i === 13 ) ? true : false
-            columnData.push(itemHeader);
-
-        }
-
-        // Parsing 2nd level for column
-        // var itemHeader = {}
-        // itemHeader["Header"] = "Payment Mode";
-        // itemHeader["accessor"] = "paymentDetails.paymentMode";
-        // itemHeader["show"] = true
-        // columnData.push(itemHeader);
-
-        // var itemHeader = {}
-        // itemHeader["Header"] = "Payment Status";
-        // itemHeader["accessor"] = "paymentDetails.paymentStatus";
-        // itemHeader["show"] = true
-        // columnData.push(itemHeader);
-
-        // Column Unchange Data 
-        const unchangeColumnData = this.columnUnchange(columnData)
-
-        debugger;
+        const propsData = this.props.data;
         this.setState({
-            allData: data,
-            graphOneLabel: graphOneData[0],
-            graphOneData: graphOneData[1],
-            hardJSON: hardJSON,
-            graphHardOneData : hardJSON[0],
-            graphHardTwoData : hardJSON[1],
-            graphHardThirdData : hardJSON[2],
-            graphHardFourthData : hardJSON[3],
-            graphHardFifthData : hardJSON[4],
-            graphHardSixthData : hardJSON[5],
-            graphClicked: 0,
-            dataOne: graphOneData[2],
-            columnData: columnData,
-            rowData: data,
-            unchangeColumnData: unchangeColumnData,
-            checkData: this.props.data
+        checkData : this.props.data
         })
-    }
-
     }
 
     componentDidUpdate(){
         debugger;
         const propsData = this.props.data;
-        if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
-            const propSortBy = propsData[1].value;
-            const data = propsData[0].Applications
-    
-            // Graph One Sorting Function 
-            var graphOneData = this.graphSorting( propSortBy, data );
-    
-            // Graph Hard JSON Create :: 
-            var hardJSON = propSortBy === "applicationType" ? [
-                {
-                "sortBy": "applicationType",
-                "msgX": "Application Type",
-                "msgY": "No of request",
-                "title": "Application Typewise Estate Report"
-                }, 
-                {
-                "sortBy": "action",
-                "msgX": "No of request",
-                "msgY": "Action",
-                "title": "Application Typewise Estate Action Report"
-                },
-                { 
-                "sortBy": "hardcopyReceivedDate",
-                "msgX": "Month",
-                "msgY": "No of request",
-                "title": "Application Typewise Estate Monthwise Action Report"
-                },
-                { 
-                "sortBy": ["paymentDetails","paymentMode","PAIDPaymentMode",{"null":"PENDING"}],
-                "msgX": "",
-                "msgY": "",
-                "title": "Payment Collection By Source"
-                },
-                { 
-                "sortBy": "siName",
-                "msgX": "Challan By SI",
-                "msgY": "No of Challan",
-                "title": "Challan Generation SI Wise"
-                },
-                { 
-                "sortBy": "sector",
-                "msgX": "Areawise Challan",
-                "msgY": "No of Challan",
-                "title": "Challan Generation Area Wise"
+        if(JSON.stringify(this.state.checkData) !== JSON.stringify(propsData)){
+
+            // const dropdownSelected = "collectionReport";
+            // const dropdownSelected = "dueReport";
+            const dropdownSelected = propsData[1].reportSortBy.value
+            var data = propsData[0];
+
+            if(dropdownSelected === "collectionReport"){
+                data = data.collectionReport;
+
+                var graphOneLabel = ["Applications", "Property Rent", "Property Penalty",
+                "Extension Fee", "Security Deposit"];
+                
+                var applications = data[0];
+                var propertyRent = data[1];
+                var propertyPenalty = data[2];
+                var extensionFee = data[3];
+                var secuityDeposit = data[4];
+
+                var graphOneData = [applications.reportResponses[0].reportData.length, 
+                propertyRent.reportResponses[0].reportData.length, propertyPenalty.reportResponses[0].reportData.length,
+                extensionFee.reportResponses[0].reportData.length, secuityDeposit.reportResponses[0].reportData.length];
+                
+                var dataJSON = {
+                    "Applications" : data[0],
+                    "Property Rent" : data[1],
+                    "Property Penalty":data[2],
+                    "Extension Fee":data[3],
+                    "Security Deposit":data[4]
                 }
-            ]
-            : propSortBy === "branchType" ? [
-                {
-                "sortBy": "branchType",
-                "msgX": "Branch",
-                "msgY": "No of request",
-                "title": "Branchwise Estate Report"
-                }, 
-                {
-                "sortBy": "applicationType",
-                "msgX": "No of request",
-                "msgY": "Application Type",
-                "title": "Branchwise Estate Application type report"
-                },
-                { 
-                "sortBy": "hardcopyReceivedDate",
-                "msgX": "Month",
-                "msgY": "No of request",
-                "title": "Branchwise Estate Application type Monthwise report"
-                },
-                { 
-                "sortBy": ["paymentDetails","paymentMode","PAIDPaymentMode",{"null":"PENDING"}],
-                "msgX": "",
-                "msgY": "",
-                "title": "Payment Collection By Source"
-                },
-                { 
-                "sortBy": "sector",
-                "msgX": "Areawise Challan",
-                "msgY": "No of Challan",
-                "title": "Challan Generation Area Wise"
-                },
-                {
-                "sortBy": "status",
-                "msgX": "Status",
-                "msgY": "No of Challan",
-                "title": "Encroachment Typewise Challan Status Report"
+
+                // Table Data Application
+                var columnDataApplication = [];
+                var unchangeColumnDataApplication = [];
+                var rowDataApplication = data[0].reportResponses[0].reportData;
+                for(var i=0; i<data[0].reportResponses[0].reportHeader.length; i++){
+                    var dataItem = data[0].reportResponses[0].reportHeader[i];
+                    var item ={};
+                    item["Header"] = this.camelize(dataItem.name);
+                    item["id"] = i.toString();
+                    item["accessor"] = i.toString();
+                    item["show"] = true;
+                    columnDataApplication.push(item);        
                 }
-            ] : propSortBy === "siName" ? [
-                { 
-                "sortBy": "siName",
-                "msgX": "Challan By SI",
-                "msgY": "No of Challan",
-                "title": "Challan Generation SI Wise"
-                },
-                { 
-                "sortBy": "sector",
-                "msgX": "No of Challan",
-                "msgY": "Areawise Challan",
-                "title": "Challan Generation Area Wise"
-                },
-                { 
-                "sortBy": ["paymentDetails","lastModifiedTime","paymentStatus","PAID","PENDING"],
-                "msgX": "Months",
-                "msgY": "No of Challan",
-                "title": "Challan Monthly Payment Status"
-                },
-                { 
-                "sortBy": ["paymentDetails","paymentMode","PAIDPaymentMode",{"null":"PENDING"}],
-                "msgX": "",
-                "msgY": "",
-                "title": "Payment Collection By Source"
-                },
-                {
-                "sortBy": "status",
-                "msgX": "Status",
-                "msgY": "No of Challan",
-                "title": "Areawise Challan Status Report"
-                },
-                {
-                "sortBy": "encroachmentType",
-                "msgX": "Encroachment Type",
-                "msgY": "No of Challan",
-                "title": "Areawise Challan Encroachment Type Report"
+                unchangeColumnDataApplication = columnDataApplication
+
+                // Table Data PropertyRent
+                var columnDataPropertyRent = [];
+                var unchangeColumnDataPropertyRent = [];
+                var rowDataPropertyRent = data[1].reportResponses[0].reportData;
+                for(var i=0; i<data[1].reportResponses[0].reportHeader.length; i++){
+                    var dataItem = data[1].reportResponses[0].reportHeader[i];
+                    var item ={};
+                    item["Header"] = this.camelize(dataItem.name);
+                    item["id"] = i.toString();
+                    item["accessor"] = i.toString();
+                    item["show"] = true;
+                    columnDataPropertyRent.push(item);        
                 }
-            ] : propSortBy === "sector" ? [
-                { 
-                "sortBy": "sector",
-                "msgX": "Areawise Challan",
-                "msgY": "No of Challan",
-                "title": "Challan Generation Area Wise"
-                },
-                {
-                "sortBy": "status",
-                "msgX": "No of Challan",
-                "msgY": "Status",
-                "title": "Statuswise Challan Area Report"
-                },
-                { 
-                "sortBy": ["paymentDetails","lastModifiedTime","paymentStatus","PAID","PENDING"],
-                "msgX": "Months",
-                "msgY": "No of Challan",
-                "title": "Challan Monthly Payment Status"
-                },
-                { 
-                "sortBy": ["paymentDetails","paymentMode","PAIDPaymentMode",{"null":"PENDING"}],
-                "msgX": "",
-                "msgY": "",
-                "title": "Payment Collection By Source"
-                },
-                {
-                "sortBy": "encroachmentType",
-                "msgX": "Encroachment Type",
-                "msgY": "No of Challan",
-                "title": "Encroachment Type wise Challan Area Report"
-                },
-                { 
-                "sortBy": "siName",
-                "msgX": "No of Challan",
-                "msgY": "Challan By SI",
-                "title": "Challan Generation SI Wise"
+                unchangeColumnDataPropertyRent = columnDataPropertyRent
+
+                // Table Data PropertyPenalty
+                var columnDataPropertyPenalty = [];
+                var unchangeColumnDataPropertyPenalty = [];
+                var rowDataPropertyPenalty = data[2].reportResponses[0].reportData;
+                for(var i=0; i<data[2].reportResponses[0].reportHeader.length; i++){
+                    var dataItem = data[2].reportResponses[0].reportHeader[i];
+                    var item ={};
+                    item["Header"] = this.camelize(dataItem.name);
+                    item["id"] = i.toString();
+                    item["accessor"] = i.toString();
+                    item["show"] = true;
+                    columnDataPropertyPenalty.push(item);        
                 }
-            ] : []
-    
-            debugger;
-            // Table Data Header 
-            const tableData = data[0] ? Object.keys(data[0]) : [];
-            var columnData = []
-            for(var i=0; i<tableData.length; i++){
-                var itemHeader = {}
-                itemHeader["Header"] = this.camelize(tableData[i]);
-                itemHeader["accessor"] = tableData[i];
-                itemHeader["show"]= (i === 4 || i === 5 || i === 6 || i === 7 || i === 8 || i === 12 || i === 13 ) ? true : false
-                columnData.push(itemHeader);
-    
+                unchangeColumnDataPropertyPenalty = columnDataPropertyPenalty
+
+                // Table Data ExtensionFee
+                var columnDataExtensionFee = [];
+                var unchangeColumnDataExtensionFee = [];
+                var rowDataExtensionFee = data[3].reportResponses[0].reportData;
+                for(var i=0; i<data[3].reportResponses[0].reportHeader.length; i++){
+                    var dataItem = data[3].reportResponses[0].reportHeader[i];
+                    var item ={};
+                    item["Header"] = this.camelize(dataItem.name);
+                    item["id"] = i.toString();
+                    item["accessor"] = i.toString();
+                    item["show"] = true;
+                    columnDataExtensionFee.push(item);        
+                }
+                unchangeColumnDataExtensionFee = columnDataExtensionFee
+
+                // Table Data SecurityDeposit
+                var columnDataSecurityDeposit = [];
+                var unchangeColumnDataSecurityDeposit = [];
+                var rowDataSecurityDeposit = data[4].reportResponses[0].reportData;
+                for(var i=0; i<data[4].reportResponses[0].reportHeader.length; i++){
+                    var dataItem = data[4].reportResponses[0].reportHeader[i];
+                    var item ={};
+                    item["Header"] = this.camelize(dataItem.name);
+                    item["id"] = i.toString();
+                    item["accessor"] = i.toString();
+                    item["show"] = true;
+                    columnDataSecurityDeposit.push(item);        
+                }
+                unchangeColumnDataSecurityDeposit = columnDataSecurityDeposit
+
+                this.setState({
+                    dropdownSelected : dropdownSelected,
+                    graphOneLabel : graphOneLabel,
+                    graphOneData : graphOneData,
+                    dataOne : dataJSON,
+                    graphClicked : 0,
+                    columnDataApplication : columnDataApplication,
+                    unchangeColumnDataApplication : unchangeColumnDataApplication,
+                    rowDataApplication : rowDataApplication,
+
+                    columnDataPropertyRent : columnDataPropertyRent,
+                    unchangeColumnDataPropertyRent : unchangeColumnDataPropertyRent,
+                    rowDataPropertyRent : rowDataPropertyRent,
+                    
+                    columnDataPropertyPenalty : columnDataPropertyPenalty,
+                    unchangeColumnDataPropertyPenalty : unchangeColumnDataPropertyPenalty,
+                    rowDataPropertyPenalty : rowDataPropertyPenalty,
+
+                    columnDataExtensionFee : columnDataExtensionFee,
+                    unchangeColumnDataExtensionFee : unchangeColumnDataExtensionFee,
+                    rowDataExtensionFee : rowDataExtensionFee,
+
+                    columnDataSecurityDeposit : columnDataSecurityDeposit,
+                    unchangeColumnDataSecurityDeposit : unchangeColumnDataSecurityDeposit,
+                    rowDataSecurityDeposit : rowDataSecurityDeposit,
+                })
+
             }
-    
-            // Parsing 2nd level for column
-            // var itemHeader = {}
-            // itemHeader["Header"] = "Payment Mode";
-            // itemHeader["accessor"] = "paymentDetails.paymentMode";
-            // itemHeader["show"] = true
-            // columnData.push(itemHeader);
-    
-            // var itemHeader = {}
-            // itemHeader["Header"] = "Payment Status";
-            // itemHeader["accessor"] = "paymentDetails.paymentStatus";
-            // itemHeader["show"] = true
-            // columnData.push(itemHeader);
-    
-            // Column Unchange Data 
-            const unchangeColumnData = this.columnUnchange(columnData)
-    
-            debugger;
+            if(dropdownSelected === "dueReport"){
+
+                data = data.dueReport.reportResponses[0];
+                var colData = data.reportHeader;
+                var rowsData = data.reportData;
+
+                var group = rowsData.reduce((r, a) => {
+                    r[a[1]] = [...r[a[1]] || [], a];
+                    return r;
+                    }, {});
+                
+                var graphThirdLabel = Object.keys(group);
+                var graphThirdData = [];
+                for(var i=0; i<graphThirdLabel.length; i++){
+                    graphThirdData.push(group[graphThirdLabel[i]].length);
+                }
+
+                var columnData = [];
+                var unchangeColumnData = [];
+                for(var i=0; i<colData.length; i++){
+                    var dataItem = colData[i];
+                    var item ={};
+                    item["Header"] = this.camelize(dataItem.name);
+                    item["id"] = i.toString();
+                    item["accessor"] = i.toString();
+                    item["show"] = true;
+                    columnData.push(item);        
+                }
+                unchangeColumnData = columnData;
+
+                this.setState({
+                    dropdownSelected : dropdownSelected,
+                    graphThirdLabel : graphThirdLabel,
+                    graphThirdData : graphThirdData,
+                    dataThird : group,
+                    graphClicked : 0,
+                    columnData : columnData,
+                    unchangeColumnData : unchangeColumnData,
+                    rowData : rowsData,
+                })
+            }
+
             this.setState({
-                allData: data,
-                graphOneLabel: graphOneData[0],
-                graphOneData: graphOneData[1],
-                hardJSON: hardJSON,
-                graphHardOneData : hardJSON[0],
-                graphHardTwoData : hardJSON[1],
-                graphHardThirdData : hardJSON[2],
-                graphHardFourthData : hardJSON[3],
-                graphHardFifthData : hardJSON[4],
-                graphHardSixthData : hardJSON[5],
-                graphClicked: 0,
-                dataOne: graphOneData[2],
-                columnData: columnData,
-                rowData: data,
-                unchangeColumnData: unchangeColumnData,
-                checkData: this.props.data
+                checkData : this.props.data
             })
         }
     }
@@ -724,397 +919,730 @@ class DashboardEstate extends React.Component {
     render() {
     
 
-    // First Bar Graph
-    var PIEgraphOneSortedData = {
-        labels: this.state.graphOneLabel,
-        // labels: ["Label 1", "Label 2"],
-        datasets: [
-            {
-            // label:  this.state.graphLabel,
-            fill: false,
-            lineTension: 0.1,
-            hoverBorderWidth : 12,
-            // backgroundColor : this.state.colorRandom,
-            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-            borderColor: "rgba(75,192,192,0.4)",
-            borderCapStyle: "butt",
-            barPercentage: 2,
-            barThickness: 25,
-            maxBarThickness: 25,
-            minBarLength: 2,
-            data: this.state.graphOneData
-            // data: [10, 20]
-            }
-        ]
+        // First Double Bar Graph Graph
+        var graphOneSortedData = {
+            labels: this.state.graphOneLabel,
+            datasets: [
+                {
+                label: "Application",
+                fill: false,
+                lineTension: 0.1,
+                hoverBorderWidth : 12,
+                backgroundColor : ["#F77C15", "#385BC8", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+                borderColor: "rgba(75,192,192,0.4)",
+                borderCapStyle: "butt",
+                barPercentage: 2,
+                borderWidth: 5,
+                barThickness: 25,
+                maxBarThickness: 10,
+                minBarLength: 2,
+                data: this.state.graphOneData
+                }
+            ]
         }
     
-    var PIEgraphOneOption = {
-    responsive : true,
-    // aspectRatio : 3,
-    maintainAspectRatio: false,
-    cutoutPercentage : 0,
-    // circumference : 12,
-    onClick: (e, element) => {
-        if (element.length > 0) {
-            var ind = element[0]._index;
-            
-            const selectedVal = this.state.graphOneLabel[ind];
-            // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
-            var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
-            
-            this.setState({
-                graphTwoLabel: graphSorting[0],
-                graphTwoData: graphSorting[1],
-                dataTwo: graphSorting[2],
-                graphClicked: 1,
-                rowData: this.state.dataOne[selectedVal]
-            })
-            // // alert(ind)
-        }
-    },
-    datasets : [
-        {
-        backgroundColor : "rgba(0, 0, 0, 0.1)",
-        weight: 0
-        }
-    ], 
-    legend: {
-        display: false,
-        position: 'bottom',
-        labels: {
-        fontFamily: "Comic Sans MS",
-        boxWidth: 20,
-        boxHeight: 2
-        }
-    },
-    tooltips: {
-        enabled: true
-    },
-    title: {
-        display: true,
-        text: this.state.graphHardOneData.title,
-    },
-    scales: {
-        xAxes: [{
-            gridLines: {
-                display:true
-            },
-            scaleLabel: {
-                display: true,
-                labelString: this.state.graphHardOneData.msgX,
-                },
-        }],
-        yAxes: [{
-            gridLines: {
-                display:true
-            },
-            scaleLabel: {
-                display: true,
-                labelString: this.state.graphHardOneData.msgY,
-                },  
-            ticks: {
-            stepSize: 1
-            },
-        }],
-    },
-    plugins: {
-        datalabels: {
-        //     color: 'white',
-        //     backgroundColor: 'grey',
-        //     labels: {
-        //         title: {
-        //             font: {
-        //                 weight: 'bold'
-        //             }
-        //         }
-        //     }}
-        }
-        }
-    }
-
-    // Second Horizontal Graph
-    var graphTwoSortedData = {
-        labels: this.state.graphTwoLabel,
-        datasets: [
-            {
-            // label: this.state.drildownGraphLabel,
-            fill: false,
-            lineTension: 5,
-            hoverBorderWidth : 12,
-            // backgroundColor : this.state.colorRandom,
-            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-            borderColor: "rgba(75,192,192,0.4)",
-            borderCapStyle: "butt",
-            barPercentage: 2,
-            barThickness: 25,
-            maxBarThickness: 25,
-            minBarLength: 2,
-            data: this.state.graphTwoData
-            }
-        ]
-    }
-
-    var graphTwoOption = {
-        responsive : true,
-        // aspectRatio : 3,
-        maintainAspectRatio: false,
-        cutoutPercentage : 0,
-        datasets : [
-            {
-            backgroundColor : "rgba(0, 0, 0, 0.1)",
-            weight: 0
-            }
-        ], 
-        legend: {
-            display: false,
-            position: 'bottom',
-            labels: {
-            fontFamily: "Comic Sans MS",
-            boxWidth: 20,
-            boxHeight: 2
-            }
-        },
-        tooltips: {
-            enabled: true
-        },
-        title: {
-            display: true,
-            text: this.state.graphHardTwoData.title
-        },
-        onClick: (e, element) => {
-            if (element.length > 0) {
-                var ind = element[0]._index;
-                debugger;
-                const selectedVal = this.state.graphTwoLabel[ind];
-                const sortingHard = this.state.graphHardThirdData.sortBy
-                var graphSorting = this.graphSorting( sortingHard, this.state.dataTwo[selectedVal], sortingHard[2] );
-                
-                var graphThirdLabel = graphSorting[0];
-                var labels = [];
-                debugger;
-                var months = {0:"JAN", 1:"FEB", 2:"MAR", 3:"APR", 4:"MAY", 5:"JUN", 6:"JUL", 7:"AUG", 8:"SEP", 9:"OCT", 10:"NOV", 11:"DEC"}
-                for(var i=0; i<graphThirdLabel.length; i++){
-                    var dt = new Date(JSON.parse(graphThirdLabel[0]))
-                    labels.push(months[dt.getMonth()])
+        var graphOneOption = {
+            responsive : true,
+            maintainAspectRatio: false,
+            cutoutPercentage : 0,
+            datasets : [
+                {
+                backgroundColor : "rgba(0, 0, 0, 0.1)",
+                weight: 0
                 }
-                graphThirdLabel = labels
-
-                this.setState({
-                    graphThirdLabel: graphThirdLabel,
-                    graphThirdData: graphSorting[1],
-                    dataThird: graphSorting[2],
-                    graphClicked: 2,
-                    rowData: this.state.dataTwo[selectedVal]
-                })
-            }
-        },
-        scales: {
-            xAxes: [{
-                gridLines: {
-                    display:true
-                },
-                ticks: {
-                    suggestedMin: 0,
-                    // suggestedMax: 100,
-                    stepSize: 1
-                },
-                scaleLabel: {
-                    display: true,
-                    labelString: this.state.graphHardTwoData.msgX
-                    }, 
-            }],
-            yAxes: [{
-                gridLines: {
-                    display: true
-                },
-                ticks: {
-                    suggestedMin: 0,
-                    stepSize: 1
-                },
-                scaleLabel: {
-                    display: true,
-                    labelString: this.state.graphHardTwoData.msgY
-                    }, 
-            }]
-        },
-        plugins: {
-            datalabels: {
-                display: false
-            //     color: 'white',
-            //     backgroundColor: 'grey',
-            //     labels: {
-            //         title: {
-            //             font: {
-            //                 weight: 'bold'
-            //             }
-            //         }
-            //     }}
-            }
-            }
-    }
-
-    // Third Double Bar Graph Graph
-    var graphThirdSortedData = {
-        labels: this.state.graphThirdLabel,
-        // labels: ["One"],
-        datasets: [
-            {
-            label: "PAID",
-            fill: false,
-            lineTension: 0.1,
-            hoverBorderWidth : 12,
-            // backgroundColor : this.state.colorRandom,
-            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-            borderColor: "rgba(75,192,192,0.4)",
-            borderCapStyle: "butt",
-            barPercentage: 2,
-            borderWidth: 5,
-            barThickness: 25,
-            maxBarThickness: 10,
-            minBarLength: 2,
-            data: this.state.graphThirdData
-            // data: [1]
-            }
-        ]
-    }
-
-    var graphThirdOption = {
-        responsive : true,
-        // aspectRatio : 3,
-        maintainAspectRatio: false,
-        cutoutPercentage : 0,
-        datasets : [
-            {
-            backgroundColor : "rgba(0, 0, 0, 0.1)",
-            weight: 0
-            }
-        ], 
-        legend: {
-            display: false,
-            position: 'bottom',
-            labels: {
-            fontFamily: "Comic Sans MS",
-            boxWidth: 20,
-            boxHeight: 2
-            }
-        },
-        tooltips: {
-            enabled: true
-        },
-        title: {
-            display: true,
-            text: this.state.graphHardThirdData.title
-        },
-        scales: {
-            xAxes: [{
-                gridLines: {
-                    display:true
-                },
-                scaleLabel: {
-                    display: true,
-                    labelString: this.state.graphHardThirdData.msgX
-                    }, 
-            }],
-            yAxes: [{
-                gridLines: {
-                    display:true
-                },
-                ticks: {
-                    // suggestedMin: 0,
-                    // suggestedMax: 100,
-                    stepSize: 1
-                },
-                scaleLabel: {
-                    display: true,
-                    labelString: this.state.graphHardThirdData.msgY
-                    }, 
-            }]
-        },
-        plugins: {
-            datalabels: {
-                display: false
-            //     color: 'white',
-            //     backgroundColor: 'grey',
-            //     labels: {
-            //         title: {
-            //             font: {
-            //                 weight: 'bold'
-            //             }
-            //         }
-            //     }}
-            }
-        },
-        onClick: (e, element) => {
-            if (element.length > 0) {
-                
-                debugger;
-                var ind = element[0]._index;   
-                const selectedVal = this.state.graphThirdLabel[ind];
-                // var monthNo = {
-                //     'January': 0, 'February': 1, 'March': 2, 'April': 3, 'May': 4, 'June': 5,
-                //      'July': 6, 'August': 7, 'September': 8, 'October': 9, 'November': 10, 'December':11
-                // }
-                // const sortingHard = this.state.graphHardFourthData.sortBy;
-                // var graphSorting = this.graphSorting( sortingHard, this.state.dataThird[monthNo[selectedVal]], sortingHard[2]);
-                // debugger;
-
-
-                // this.setState({
-                //     // graphThirdLabel: graphSorting[0],
-                //     // graphThirdData: graphSorting[1],
-                //     // dataThird: graphSorting[2],
-                //     graphClicked: 3,
-                //     rowData: this.state.dataThird[monthNo[selectedVal]],
-                //     // // Double Graph Data Fix
-                //     graphFourthData: graphSorting[1],
-                //     graphFourthLabel: graphSorting[0],
-                //     dataFourth: graphSorting[2],
-                // })       
-            }
-        },
-    }
-        
-    return (
-        <div>        
-        <div className="graphDashboard">
-        
-        {
-          this.state.graphClicked >= 0 ?
-            <CardContent className="halfGraph">
-                <React.Fragment>
-                    <Bar
-                    data={ PIEgraphOneSortedData }
-                    options={ PIEgraphOneOption } 
-                    />
-                </React.Fragment>
-            </CardContent>
-          :null
+            ], 
+            legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                fontFamily: "Comic Sans MS",
+                boxWidth: 20,
+                boxHeight: 2
+                }
+            },
+            tooltips: {
+                enabled: true
+            },
+            title: {
+                display: true,
+                text: "Collection Report Estate Dashboard"
+            },
+            // scales: {
+            //     xAxes: [{
+            //         gridLines: {
+            //             display:true
+            //         },
+            //         scaleLabel: {
+            //             display: true,
+            //             labelString: "X LABEL"
+            //             }, 
+            //     }],
+            //     yAxes: [{
+            //         gridLines: {
+            //             display:true
+            //         },
+            //         ticks: {
+            //             suggestedMin: 0,
+            //             // suggestedMax: 100,
+            //             stepSize: 1
+            //         },
+            //         scaleLabel: {
+            //             display: true,
+            //             labelString: "Y LABEL"
+            //             }, 
+            //     }]
+            // },
+            plugins: {
+                datalabels: {
+                    display: false
+                }
+            },
+            onClick: (e, element) => {
+                if (element.length > 0) {
+                    
+                    debugger;
+                    var ind = element[0]._index;   
+                    const selectedVal = this.state.graphOneLabel[ind];
+                    const data = this.state.dataOne[selectedVal];
+                    debugger;
+                    var graphData;
+                    if(selectedVal === "Applications"){
+                        graphData = this.graphSorting(0, data, ["dashboard_1_Two",selectedVal]);
+                    }else{
+                        graphData = this.graphSorting(1, data, ["dashboard_1_Two", selectedVal]);
+                    }
+    
+                    this.setState({
+                        graphTwoLabel : graphData[0],
+                        graphTwoData:graphData[1],
+                        dataTwo : graphData[2],
+                        graphClicked : 1
+                    })
+    
+                }
+            },
         }
-        {
-            this.state.graphClicked > 0 ?
-            <CardContent className="halfGraph">
-                <React.Fragment>
-                    <HorizontalBar
-                    data={ graphTwoSortedData } 
-                    options={ graphTwoOption } 
-                    />
-                </React.Fragment>
-            </CardContent> 
-            :null
+    
+        // First Double Bar Graph Graph
+        var graphTwoSortedData = {
+            labels: this.state.graphTwoLabel,
+            datasets: [
+                {
+                label: "Amount (INR)",
+                fill: false,
+                lineTension: 0.1,
+                hoverBorderWidth : 12,
+                backgroundColor : ["#F77C15", "#385BC8", "#FFC300", "#348AE4", "#FF5733",
+                 "#9DC4E1", "#3A3B7F", "#0000FF", "#00FF00", "#FF0000", "#00FFFF", "#0000FF", "#FF00FF"],
+                borderColor: "rgba(75,192,192,0.4)",
+                borderCapStyle: "butt",
+                barPercentage: 2,
+                borderWidth: 5,
+                barThickness: 25,
+                maxBarThickness: 10,
+                minBarLength: 2,
+                data: this.state.graphTwoData
+                }
+            ]
         }
-
-        </div>
-
-        {/* -------------------------- Dashboard layer 2 -------------------------------------------------------- */}
-
-        {
-            this.state.graphClicked > 1 ?
+    
+        var graphTwoOption = {
+            responsive : true,
+            maintainAspectRatio: false,
+            cutoutPercentage : 0,
+            datasets : [
+                {
+                backgroundColor : "rgba(0, 0, 0, 0.1)",
+                weight: 0
+                }
+            ], 
+            legend: {
+                display: false,
+                position: 'bottom',
+                labels: {
+                fontFamily: "Comic Sans MS",
+                boxWidth: 20,
+                boxHeight: 2
+                }
+            },
+            tooltips: {
+                enabled: true
+            },
+            title: {
+                display: true,
+                text: "Application/Branch Typewise Collection Report Estate Dashboard"
+            },
+            scales: {
+                xAxes: [{
+                    gridLines: {
+                        display:true
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Application/Branch Type"
+                        }, 
+                }],
+                yAxes: [{
+                    gridLines: {
+                        display:true
+                    },
+                    ticks: {
+                        suggestedMin: 0,
+                        // suggestedMax: 100,
+                        // stepSize: 1
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Total Collection (INR)"
+                        }, 
+                }]
+            },
+            plugins: {
+                datalabels: {
+                    display: false
+                }
+            },
+            onClick: (e, element) => {
+                if (element.length > 0) {
+                    
+                    debugger;
+                    var ind = element[0]._index;   
+                    const selectedVal = this.state.graphTwoLabel[ind];
+                    const data = this.state.dataTwo[selectedVal];
+    
+                    this.setState({
+                        rowData : data
+                    })
+    
+                }
+            },
+        }
+    
+    
+        // Dropdown 2 Due Report
+        // First Double Bar Graph Graph
+        var graphThirdSortedData = {
+            labels: this.state.graphThirdLabel,
+            datasets: [
+                {
+                label: "Application",
+                fill: false,
+                lineTension: 0.1,
+                hoverBorderWidth : 12,
+                backgroundColor : ["#F77C15", "#385BC8", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+                borderColor: "rgba(75,192,192,0.4)",
+                borderCapStyle: "butt",
+                barPercentage: 2,
+                borderWidth: 5,
+                barThickness: 25,
+                maxBarThickness: 10,
+                minBarLength: 2,
+                data: this.state.graphThirdData
+                }
+            ]
+        }
+    
+        var graphThirdOption = {
+            responsive : true,
+            maintainAspectRatio: false,
+            cutoutPercentage : 0,
+            datasets : [
+                {
+                backgroundColor : "rgba(0, 0, 0, 0.1)",
+                weight: 0
+                }
+            ], 
+            legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                fontFamily: "Comic Sans MS",
+                boxWidth: 20,
+                boxHeight: 2
+                }
+            },
+            tooltips: {
+                enabled: true
+            },
+            title: {
+                display: true,
+                text: "Property Due Report Estate Dashboard"
+            },
+            // scales: {
+            //     xAxes: [{
+            //         gridLines: {
+            //             display:true
+            //         },
+            //         scaleLabel: {
+            //             display: true,
+            //             labelString: "X LABEL"
+            //             }, 
+            //     }],
+            //     yAxes: [{
+            //         gridLines: {
+            //             display:true
+            //         },
+            //         ticks: {
+            //             suggestedMin: 0,
+            //             // suggestedMax: 100,
+            //             stepSize: 1
+            //         },
+            //         scaleLabel: {
+            //             display: true,
+            //             labelString: "Y LABEL"
+            //             }, 
+            //     }]
+            // },
+            plugins: {
+                datalabels: {
+                    display: false
+                }
+            },
+            onClick: (e, element) => {
+                if (element.length > 0) {
+                    
+                    debugger;
+                    var ind = element[0]._index;   
+                    const selectedVal = this.state.graphThirdLabel[ind];
+                    const data = this.state.dataThird[selectedVal];
+                    debugger;
+                    var graphData;
+                    graphData = this.graphSorting(2, data, ["dashboard_2_Two",selectedVal]);
+                    
+                    this.setState({
+                        graphFourthLabel : graphData[0],
+                        graphFourthData:graphData[1],
+                        dataFourth : graphData[2],
+                        graphClicked : 1,
+                        rowData : data
+                    })
+    
+                }
+            },
+        }
+        
+        var graphFourthSortedData = {
+            labels: this.state.graphFourthLabel,
+            datasets: [
+                {
+                label: "Application",
+                fill: false,
+                lineTension: 0.1,
+                hoverBorderWidth : 12,
+                backgroundColor : ["#F77C15", "#385BC8", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+                borderColor: "rgba(75,192,192,0.4)",
+                borderCapStyle: "butt",
+                barPercentage: 2,
+                borderWidth: 5,
+                barThickness: 25,
+                maxBarThickness: 10,
+                minBarLength: 2,
+                data: this.state.graphFourthData
+                }
+            ]
+        }
+    
+        var graphFourthOption = {
+            responsive : true,
+            maintainAspectRatio: false,
+            cutoutPercentage : 0,
+            datasets : [
+                {
+                backgroundColor : "rgba(0, 0, 0, 0.1)",
+                weight: 0
+                }
+            ], 
+            legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                fontFamily: "Comic Sans MS",
+                boxWidth: 20,
+                boxHeight: 2
+                }
+            },
+            tooltips: {
+                enabled: true
+            },
+            title: {
+                display: true,
+                text: "Poperty Typewise Due Report"
+            },
+            // scales: {
+            //     xAxes: [{
+            //         gridLines: {
+            //             display:true
+            //         },
+            //         scaleLabel: {
+            //             display: true,
+            //             labelString: "X LABEL"
+            //             }, 
+            //     }],
+            //     yAxes: [{
+            //         gridLines: {
+            //             display:true
+            //         },
+            //         ticks: {
+            //             suggestedMin: 0,
+            //             // suggestedMax: 100,
+            //             stepSize: 1
+            //         },
+            //         scaleLabel: {
+            //             display: true,
+            //             labelString: "Y LABEL"
+            //             }, 
+            //     }]
+            // },
+            plugins: {
+                datalabels: {
+                    display: false
+                }
+            },
+            onClick: (e, element) => {
+                if (element.length > 0) {
+                    
+                    debugger;
+                    var ind = element[0]._index;   
+                    const selectedVal = this.state.graphThirdLabel[ind];
+                    const data = this.state.dataThird[selectedVal];
+                    debugger;
+                    var graphData;
+                    graphData = this.graphSorting(3, data, ["dashboard_2_Three",selectedVal]);
+                    
+                    this.setState({
+                        graphFifthLabel : graphData[0],
+                        graphFifthData:graphData[1],
+                        dataFifth : graphData[2],
+                        graphClicked : 2,
+                        rowData : data
+                    })
+    
+                }
+            },
+        }
+    
+        var graphFifthSortedData = {
+            labels: this.state.graphFifthLabel,
+            datasets: [
+                {
+                label: "Total Due",
+                fill: false,
+                lineTension: 0.1,
+                hoverBorderWidth : 12,
+                backgroundColor : ["#F77C15", "#385BC8", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+                borderColor: "rgba(75,192,192,0.4)",
+                borderCapStyle: "butt",
+                barPercentage: 2,
+                borderWidth: 5,
+                barThickness: 25,
+                maxBarThickness: 10,
+                minBarLength: 2,
+                data: this.state.graphFifthData
+                }
+            ]
+        }
+    
+        var graphFifthOption = {
+            responsive : true,
+            maintainAspectRatio: false,
+            cutoutPercentage : 0,
+            datasets : [
+                {
+                backgroundColor : "rgba(0, 0, 0, 0.1)",
+                weight: 0
+                }
+            ], 
+            legend: {
+                display: false,
+                position: 'bottom',
+                labels: {
+                fontFamily: "Comic Sans MS",
+                boxWidth: 20,
+                boxHeight: 2
+                }
+            },
+            tooltips: {
+                enabled: true
+            },
+            title: {
+                display: true,
+                text: "Sectorwise Property Estate Due Report"
+            },
+            // scales: {
+            //     xAxes: [{
+            //         gridLines: {
+            //             display:true
+            //         },
+            //         scaleLabel: {
+            //             display: true,
+            //             labelString: "X LABEL"
+            //             }, 
+            //     }],
+            //     yAxes: [{
+            //         gridLines: {
+            //             display:true
+            //         },
+            //         ticks: {
+            //             suggestedMin: 0,
+            //             // suggestedMax: 100,
+            //             stepSize: 1
+            //         },
+            //         scaleLabel: {
+            //             display: true,
+            //             labelString: "Y LABEL"
+            //             }, 
+            //     }]
+            // },
+            plugins: {
+                datalabels: {
+                    display: false
+                }
+            },
+            onClick: (e, element) => {
+                if (element.length > 0) {
+                    
+                    debugger;
+                    var ind = element[0]._index;   
+                    const selectedVal = this.state.graphFifthLabel[ind];
+                    const data = this.state.dataFifth[selectedVal];
+                    debugger;
+                    var graphData;                
+                    this.setState({
+                        // graphTwoLabel : graphData[0],
+                        // graphTwoData:graphData[1],
+                        // dataTwo : graphData[2],
+                        graphClicked : 3,
+                        rowData : data
+                    })
+    
+                }
+            },
+        }
+        
+            
+        return (
+            <div style={this.state.graphClicked < 0 ? {display:"none"} :null}>            
+            <div style={ this.state.dropdownSelected === "dueReport" || this.state.dropdownSelected === "" ? {display:"none"} : null}>
             <div className="graphDashboard">
+            
             {
-                this.state.graphClicked > 1 ?
+                this.state.graphClicked >= 0 ?
+                <CardContent className="halfGraph">
+                    <React.Fragment>
+                        <Pie
+                        data={ graphOneSortedData }
+                        options={ graphOneOption } 
+                        />
+                    </React.Fragment>
+                </CardContent>
+                :null
+            }
+            {
+                this.state.graphClicked > 0 ?
                 <CardContent className="halfGraph">
                     <React.Fragment>
                         <Bar
+                        data={ graphTwoSortedData } 
+                        options={ graphTwoOption } 
+                        />
+                    </React.Fragment>
+                </CardContent> 
+                :null
+            }
+    
+            </div>
+            
+    
+            {/* Table Feature  */}
+            <div style={this.state.graphClicked > 0 ?
+             {display :"none"} :null}>
+                    {/* All Data Table Application  */}
+                    <div className="tableContainerEstate">
+                    <div className="tanleTitle"> Application Collection Report Data </div>
+                    {
+                        this.state.unchangeColumnDataApplication.length > 0  ? 
+                        <div className="tableFeature">
+                            <div className="columnToggle-Text"> Download As: </div>
+                            <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+    
+                            {/* <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button> */}
+                        </div>
+                        :null
+                    }
+                    {
+                        // this.state.graphClicked >= 1 ?
+                        <ReactTable id="customReactTable"
+                        // PaginationComponent={Pagination}
+                        data={ this.state.rowDataApplication }  
+                        columns={ this.state.columnDataApplication }  
+                        defaultPageSize = {this.state.rowDataApplication.length > 10 ? 10 : this.state.rowDataApplication.length}
+                        pageSize={this.state.rowDataApplication.length > 10 ? 10 : this.state.rowDataApplication.length}  
+                        pageSizeOptions = {[20,40,60]}  
+                        /> 
+                        // :null
+                    }
+                    </div>
+                    
+                    {/* All Data Table PropertyRent  */}
+                    <div className="tableContainerEstate">
+                    <div className="tanleTitle"> Property Rent Collection Report Data </div>
+                    {
+                        this.state.unchangeColumnDataPropertyRent.length > 0  ? 
+                        <div className="tableFeature">
+                            {/* <div className="columnToggle-Text"> Download As: </div> */}
+                            {/* <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button> */}
+    
+                            {/* <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button> */}
+                        </div>
+                        :null
+                    }
+                    {
+                        // this.state.graphClicked >= 1 ?
+                        <ReactTable id="customReactTable"
+                        // PaginationComponent={Pagination}
+                        data={ this.state.rowDataPropertyRent }  
+                        columns={ this.state.columnDataPropertyRent }  
+                        defaultPageSize = {this.state.rowDataPropertyRent.length > 10 ? 10 : this.state.rowDataPropertyRent.length}
+                        pageSize={this.state.rowDataPropertyRent.length > 10 ? 10 : this.state.rowDataPropertyRent.length}  
+                        pageSizeOptions = {[20,40,60]}  
+                        /> 
+                        // :null
+                    }
+                    </div>
+    
+                    {/* All Data Table PropertyPenalty  */}
+                    <div className="tableContainerEstate">
+                    <div className="tanleTitle"> PropertyPenalty Collection Report Data </div>
+                    {
+                        this.state.unchangeColumnDataPropertyPenalty.length > 0  ? 
+                        <div className="tableFeature">
+                            {/* <div className="columnToggle-Text"> Download As: </div>
+                            <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button> */}
+    
+                            {/* <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button> */}
+                        </div>
+                        :null
+                    }
+                    {
+                        // this.state.graphClicked >= 1 ?
+                        <ReactTable id="customReactTable"
+                        // PaginationComponent={Pagination}
+                        data={ this.state.rowDataPropertyPenalty }  
+                        columns={ this.state.columnDataPropertyPenalty }  
+                        defaultPageSize = {this.state.rowDataPropertyPenalty.length > 10 ? 10 : this.state.rowDataPropertyPenalty.length}
+                        pageSize={this.state.rowDataPropertyPenalty.length > 10 ? 10 : this.state.rowDataPropertyPenalty.length}  
+                        pageSizeOptions = {[20,40,60]}  
+                        /> 
+                        // :null
+                    }
+                    </div>
+    
+                    {/* All Data Table ExtensionFee  */}
+                    <div className="tableContainerEstate">
+                    <div className="tanleTitle"> ExtensionFee Collection Report Data </div>
+                    {
+                        this.state.unchangeColumnDataExtensionFee.length > 0  ? 
+                        <div className="tableFeature">
+                            {/* <div className="columnToggle-Text"> Download As: </div>
+                            <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button> */}
+    
+                            {/* <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button> */}
+                        </div>
+                        :null
+                    }
+                    {
+                        // this.state.graphClicked >= 1 ?
+                        <ReactTable id="customReactTable"
+                        // PaginationComponent={Pagination}
+                        data={ this.state.rowDataExtensionFee }  
+                        columns={ this.state.columnDataExtensionFee }  
+                        defaultPageSize = {this.state.rowDataExtensionFee.length > 10 ? 10 : this.state.rowDataExtensionFee.length}
+                        pageSize={this.state.rowDataExtensionFee.length > 10 ? 10 : this.state.rowDataExtensionFee.length}  
+                        pageSizeOptions = {[20,40,60]}  
+                        /> 
+                        // :null
+                    }
+                    </div>
+    
+                    {/* All Data Table SecurityDeposit  */}
+                    <div className="tableContainerEstate">
+                    <div className="tanleTitle"> SecurityDeposit Collection Report Data </div>
+                    {
+                        this.state.unchangeColumnDataSecurityDeposit.length > 0  ? 
+                        <div className="tableFeature">
+                            {/* <div className="columnToggle-Text"> Download As: </div>
+                            <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button> */}
+    
+                            {/* <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button> */}
+                        </div>
+                        :null
+                    }
+                    {
+                        // this.state.graphClicked >= 1 ?
+                        <ReactTable id="customReactTable"
+                        // PaginationComponent={Pagination}
+                        data={ this.state.rowDataSecurityDeposit }  
+                        columns={ this.state.columnDataSecurityDeposit }  
+                        defaultPageSize = {this.state.rowDataSecurityDeposit.length > 10 ? 10 : this.state.rowDataSecurityDeposit.length}
+                        pageSize={this.state.rowDataSecurityDeposit.length > 10 ? 10 : this.state.rowDataSecurityDeposit.length}  
+                        pageSizeOptions = {[20,40,60]}  
+                        /> 
+                        // :null
+                    }
+                    </div>
+            </div>
+    
+            <div className="tableContainer">
+            {
+                this.state.unchangeColumnData.length > 0  ? 
+                <div className="tableFeature">
+                    <div className="columnToggle-Text"> Download As: </div>
+                    <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+    
+                    <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+                </div>
+                :null
+            }
+            {
+               this.state.toggleColumnCheck ?
+               <div className="columnVisibilityCard">
+                <dl>
+                    {
+                        this.state.unchangeColumnData.map((data, index)=>{
+                            return(
+                                <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
+                            )
+                        })
+                    }
+                </dl>
+                </div> 
+               : null
+            }
+    
+            {
+                this.state.graphClicked >= 1 ?
+                <ReactTable id="customReactTable"
+                // PaginationComponent={Pagination}
+                data={ this.state.rowData }  
+                columns={ this.state.columnData }  
+                defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
+                pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
+                pageSizeOptions = {[20,40,60]}  
+                /> 
+                :null
+            }
+            </div>
+            
+            </div>
+            
+            <div style={ this.state.dropdownSelected === "collectionReport" ? {display:"none"} : null}>
+            <div className="graphDashboard">
+            
+            {
+                this.state.graphClicked >= 0 ?
+                <CardContent className="halfGraph">
+                    <React.Fragment>
+                        <Pie
                         data={ graphThirdSortedData }
                         options={ graphThirdOption } 
                         />
@@ -1122,53 +1650,80 @@ class DashboardEstate extends React.Component {
                 </CardContent>
                 :null
             }
-
-            
+            {
+                this.state.graphClicked > 0 ?
+                <CardContent className="halfGraph">
+                    <React.Fragment>
+                        <Pie
+                        data={ graphFourthSortedData } 
+                        options={ graphFourthOption } 
+                        />
+                    </React.Fragment>
+                </CardContent> 
+                :null
+            }
+    
             </div>
-            : null
-        }
-        
-        
-        {/* Table Feature  */}
-        <div className="tableContainer">
-        <div className="tableFeature">
-            <div className="columnToggle-Text"> Download As: </div>
-            <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
 
-            <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
-        </div>
-        {
-           this.state.toggleColumnCheck ?
-           <div className="columnVisibilityCard">
-            <dl>
-                {
-                    this.state.unchangeColumnData.map((data, index)=>{
-                        return(
-                            <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
-                        )
-                    })
-                }
-            </dl>
-            </div> 
-           : null
+            <div className="graphDashboard" style={this.state.graphClicked > 1 ? null : {display:"none"}}>
+            {
+                this.state.graphClicked > 1 ?
+                <CardContent className="fullGraph">
+                    <React.Fragment>
+                        <Bar
+                        data={ graphFifthSortedData } 
+                        options={ graphFifthOption } 
+                        />
+                    </React.Fragment>
+                </CardContent> 
+                :null
+            }
+            </div>
+    
+            <div className="tableContainer">
+            {
+                this.state.unchangeColumnData.length > 0  ? 
+                <div className="tableFeature">
+                    <div className="columnToggle-Text"> Download As: </div>
+                    <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+    
+                    <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+                </div>
+                :null
+            }
+            {
+               this.state.toggleColumnCheck ?
+               <div className="columnVisibilityCard">
+                <dl>
+                    {
+                        this.state.unchangeColumnData.map((data, index)=>{
+                            return(
+                                <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
+                            )
+                        })
+                    }
+                </dl>
+                </div> 
+               : null
+            }
+    
+            {
+                this.state.graphClicked >= 0 ?
+                <ReactTable id="customReactTable"
+                // PaginationComponent={Pagination}
+                data={ this.state.rowData }  
+                columns={ this.state.columnData }  
+                defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
+                pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
+                pageSizeOptions = {[20,40,60]}  
+                /> 
+                :null
+            }
+            </div>
+            </div>
+            </div>
+        );
         }
-
-        {
-            this.state.graphClicked >= 0 ?
-            <ReactTable id="customReactTable"
-            // PaginationComponent={Pagination}
-            data={ this.state.rowData }  
-            columns={ this.state.columnData }  
-            defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
-            pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
-            pageSizeOptions = {[20,40,60]}  
-            /> 
-            :null
-        }
-        </div>
-        </div>
-    );
-    }
 }
 
 export default DashboardEstate;

@@ -17,7 +17,7 @@ import moment from 'moment';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-
+import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import FormLabel from '@material-ui/core/FormLabel';
 
 
@@ -85,9 +85,27 @@ class BookingsDetails extends Component {
 
  
   render() {
-    const { arrayName, result,fCharges, jobTitle, jobCompany, jobLocation, handleChangeDiscount, discountType, dimension, complaintSector, fromDate, surcharge, toDate, onFromDateChange, onToDateChange, utGST, cGST, GSTnumber, handleChange, location, facilitationCharges, cleaningCharges, rent, approverName, comment, houseNo, type, purpose, locality, residenials, facilationChargesSuccess,firstToTimeSlot,
+    const { arrayName, result,fCharges, jobTitle, jobCompany, jobLocation, handleChangeDiscount, checkDateVenueChange,
+      discountType, dimension, complaintSector, fromDate, surcharge, toDate, onFromDateChange, onToDateChange, utGST, cGST, GSTnumber, handleChange, location, facilitationCharges, cleaningCharges, rent, approverName, comment, houseNo, type, purpose, locality, residenials, facilationChargesSuccess,firstToTimeSlot,
       refundAbleAmount } = this.props;
       console.log("propsForApplyBooking--",this.props)
+      let localRent;
+      let localUTGST;
+      let LocalGST;
+
+      if(discountType == "100%" || discountType == "KirayaBhog" || discountType == "ReligiousFunction"){
+        localRent = 0,
+        localUTGST = 0,
+        LocalGST = 0
+      }
+      else{
+        localRent = rent 
+        localUTGST  = utGST 
+        LocalGST = cGST
+      }
+      this.props.prepareFinalObject("PaccDiscount.localRent", localRent);
+      this.props.prepareFinalObject("PaccDiscount.localUTGST", localUTGST);
+      this.props.prepareFinalObject("PaccDiscount.LocalGST", LocalGST);
     let sectorData = [];
     sectorData.push(complaintSector);
     let fc = fCharges ? fCharges.facilitationCharge :'100'
@@ -104,11 +122,12 @@ class BookingsDetails extends Component {
         <div className="col-xs-12" style={{ background: '#fff', padding: '15px 0' }}>
 
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="purpose"
               name="purpose"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={purpose}
               required={true}
               hintText={
@@ -133,11 +152,12 @@ class BookingsDetails extends Component {
               hintStyle={{ width: "100%" }}
             />
           </div>
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="location"
               name="location"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={location}
               required={true}
               disabled
@@ -163,11 +183,12 @@ class BookingsDetails extends Component {
               hintStyle={{ width: "100%" }}
             />
           </div>
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="cleaningCharges"
               name="cleaningCharges"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={cleaningCharges}
               required={true}
               hintText={
@@ -192,12 +213,13 @@ class BookingsDetails extends Component {
               hintStyle={{ width: "100%" }}
             />
           </div>
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="rent"
               name="rent"
               type="text"
-              value={rent}
+              disabled = {checkDateVenueChange == true ? true : false}
+              value={localRent}
               required={true}
               hintText={
                 <Label
@@ -222,11 +244,12 @@ class BookingsDetails extends Component {
             />
           </div>
   
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="rent"
               name="rent"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={refundAbleAmount}
               required={true}
               hintText={ 
@@ -253,11 +276,12 @@ class BookingsDetails extends Component {
           </div>
  
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="facilitationCharges"
               name="facilitationCharges"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={fc}
               required={true}
               hintText={
@@ -282,11 +306,12 @@ class BookingsDetails extends Component {
               hintStyle={{ width: "100%" }}
             />
           </div>
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="surcharge"
               name="surcharge"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={surcharge}
               required={true}
               hintText={
@@ -311,12 +336,13 @@ class BookingsDetails extends Component {
               hintStyle={{ width: "100%" }}
             />
           </div>
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="utGST"
               name="utGST"
               type="text"
-              value={utGST}
+              disabled = {checkDateVenueChange == true ? true : false}
+              value={localUTGST}
               required={true}
               hintText={
                 <Label
@@ -340,12 +366,13 @@ class BookingsDetails extends Component {
               hintStyle={{ width: "100%" }}
             />
           </div>
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="cGST"
               name="cGST"
               type="text"
-              value={cGST}
+              disabled = {checkDateVenueChange == true ? true : false}
+              value={LocalGST}
               required={true}
               hintText={
                 <Label
@@ -369,11 +396,12 @@ class BookingsDetails extends Component {
               hintStyle={{ width: "100%" }}
             />
           </div>
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="GSTnumber"
               name="GSTnumber"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={GSTnumber}
               hintText={
                 <Label
@@ -398,11 +426,12 @@ class BookingsDetails extends Component {
             />
           </div>
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="locality"
               name="locality"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={locality}
               required={true}
               hintText={
@@ -427,13 +456,13 @@ class BookingsDetails extends Component {
               hintStyle={{ width: "100%" }}
             />
           </div>
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
 
             <TextField
               id="from-Date"
               name="from-Date"
               type="text"
-
+              disabled = {checkDateVenueChange == true ? true : false}
               value={fromDate}
               required={true}
               disabled={true}
@@ -460,11 +489,12 @@ class BookingsDetails extends Component {
             />
 
           </div>
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="to-date"
               name="to-date"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={toDate}   
               // value={ConcatFirstToDate}
               required={true}
@@ -498,7 +528,7 @@ class BookingsDetails extends Component {
           {/*new-requirement*/}
           {/* {this.props.SecTimeSlotFromTime != "notFound" && this.props.SecTimeSlotToTime != "notFound"? 
           <div>
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
           <TextField
             id="new-from-date"
             name="new-from-date"
@@ -529,7 +559,7 @@ class BookingsDetails extends Component {
             hintStyle={{ width: "100%" }}
           />
         </div>
-        <div className="col-sm-6 col-xs-6">
+        <div className="col-sm-6 col-xs-12">
           <TextField
             id="new_to-date"
             name="new_to-date"
@@ -564,12 +594,12 @@ class BookingsDetails extends Component {
           :""} */}
           
           {/*new requirement end*/}
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="dimension"
               name="dimension"
               type="text"
-
+              disabled = {checkDateVenueChange == true ? true : false}
               value={dimension}
               required={true}
               hintText={
@@ -595,7 +625,7 @@ class BookingsDetails extends Component {
             />
           </div>
 
-          {/* <div style={{marginTop:'10px'}}className="col-sm-6 col-xs-6">
+          {/* <div style={{marginTop:'10px'}}className="col-sm-6 col-xs-12">
             <FormControl style={{ width: '100%' }}>
               <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label"><Label label="BK_MYBK_LOCALITY" /></InputLabel>
               <Select
@@ -618,7 +648,7 @@ class BookingsDetails extends Component {
 
           </div> */}
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <FormControl style={{ width: '100%' }}>
               <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label"><Label
                 required={true}
@@ -633,6 +663,7 @@ class BookingsDetails extends Component {
                 displayEmpty
                 onClose={() => this.handleClose()}
                 onOpen={() => this.handleOpen()}
+                disabled = {checkDateVenueChange == true ? true : false}
                 value={residenials}
                 onChange={handleChange('residenials')}
               >
@@ -643,7 +674,7 @@ class BookingsDetails extends Component {
             </FormControl>
           </div>
           {/* 
-          <div className="col-sm-6 col-xs-6" style={{marginTop: '19px'}}>
+          <div className="col-sm-6 col-xs-12" style={{marginTop: '19px'}}>
             <FormControl component="fieldset">
               <FormLabel component="legend"><Label label="BK_MYBK_CATEGORY_TYPE" /></FormLabel>
               <RadioGroup row aria-label="position" name="gender1" value={discountType} onChange={handleChangeDiscount}>
@@ -763,7 +794,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(toggleSnackbarAndSetText(open, message, error)),
     fetchApplicaionSector: criteria => dispatch(fetchApplicaionSector(criteria)),
     fetchfacilationCharges: () => dispatch(fetchfacilationCharges()),
-    
+    prepareFinalObject: (jsonPath, value) =>
+      dispatch(prepareFinalObject(jsonPath, value)),
   }
 }
 

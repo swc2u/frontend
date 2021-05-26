@@ -15,7 +15,7 @@ import {
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
   import { NULMConfiguration } from "../../../../ui-utils/sampleResponses";
   import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-  import { prepareDocumentsUploadData } from "../../../../ui-utils/storecommonsapi";
+  import { prepareDocumentsUploadData,prefillDocuments } from "../../../../ui-utils/storecommonsapi";
   import commonConfig from "../../../../config/common";
   
   export const stepsData = [
@@ -95,6 +95,10 @@ import {
             masterDetails: [
               {
                 name: "SusvDocuments",
+              },
+              {
+                name: "Qualification",
+                
               }
             ]
           },
@@ -118,7 +122,13 @@ import {
   
       // setting documents
       prepareDocumentsUploadData(state, dispatch, 'SUSVApplication');
-  
+      await prefillDocuments(
+        state.screenConfiguration.preparedFinalObject,
+        "displayDocs",
+        dispatch,
+        'NulmSusvRequest.applicationDocument',
+        'SusvDocuments', 
+      );
       return true;
     } catch (e) {
       console.log(e);

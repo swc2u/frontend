@@ -42,6 +42,12 @@ const OsbmFeeMasterData = Loadable({
   loader: () => import("../Screens/MasterData/OsbmFeeMasterData"),
   loading: Loading
 });
+ 
+const RoomFeeMasterData = Loadable({
+  loader: () => import("../Screens/MasterData/RoomFeeMasterData"),
+  loading: Loading
+});
+ 
 const OsujmFeeMasterData = Loadable({
   loader: () => import("../Screens/MasterData/OsujmFeeMasterData"),
   loading: Loading
@@ -335,7 +341,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      title: "ES_OPEN_APPLICAION_HEADER",
+      title: " ",
       hideTitle: false,
       // redirectionUrl,
       // hideFor: "ao",
@@ -349,7 +355,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      // title: "ES_OPEN_APPLICAION_HEADER",
+      // title: " ",
       hideTitle: false,
       customFor: "employee",
       customTitle: "Make Offline Payment"
@@ -362,7 +368,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      // title: "ES_OPEN_APPLICAION_HEADER",
+      // title: " ",
       hideTitle: false,
       customFor: "employee",
       customTitle: "Make Offline Payment"
@@ -376,7 +382,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      // title: "ES_OPEN_APPLICAION_HEADER",
+      // title: " ",
       hideTitle: false,
       customFor: "employee",
       customTitle: "Make Offline Payment",
@@ -389,7 +395,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      // title: "ES_OPEN_APPLICAION_HEADER",
+      // title: " ",
       hideTitle: false,
       customFor: "employee",
       customTitle: "Make Offline Payment",
@@ -403,7 +409,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      // title: "ES_OPEN_APPLICAION_HEADER",
+      // title: " ",
       hideTitle: false,
       customFor: "employee",
       customTitle: "Make Offline Payment",
@@ -417,7 +423,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      // title: "ES_OPEN_APPLICAION_HEADER",
+      // title: " ",
       hideTitle: false,
       customFor: "employee",
       // customTitle: "Make Offline Payment",
@@ -430,7 +436,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      title: "ES_OPEN_APPLICAION_HEADER",
+      title: " ",
       hideTitle: false,
       // redirectionUrl,
       // hideFor: "ao",
@@ -449,7 +455,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -463,7 +469,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -477,7 +483,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -491,7 +497,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -505,7 +511,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -520,7 +526,7 @@ const routes = [
     hideBackButton: true,
     customFor: "employee",
     hideFooter: true,
-    title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+    title: "",
     hideTitle: true,
     redirectionUrl
   }
@@ -563,7 +569,7 @@ const routes = [
 //   needsAuthentication: true,
 //   options: {
 //     hideFooter: true,
-//     title: "ES_OPEN_APPLICAION_HEADER",
+//     title: " ",
 //     hideTitle: false,
 //     redirectionUrl,
 //     hideFor: "ao",
@@ -596,6 +602,22 @@ const routes = [
     hideFor: "ao",
     customFor: "employee",
     customTitle: "BK_MYBK_ADMIN_OSBM_FEE_HEADER"
+  }
+},
+
+{
+  path: "egov-services/admin/roomFee",
+  component: RoomFeeMasterData,
+  needsAuthentication: true,
+  options: {
+    hideFooter: true,
+    title: "Community Center Room Fee Master",
+
+    hideTitle: false,
+    redirectionUrl,
+    hideFor: "ao",
+    customFor: "employee",
+    customTitle: "Community Center Room Fee Master"
   }
 },
 {
@@ -808,7 +830,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -821,7 +843,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -836,7 +858,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -849,7 +871,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -863,7 +885,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -877,7 +899,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
       redirectionUrl
@@ -1033,7 +1055,7 @@ const routes = [
     needsAuthentication: true,
     options: {
       hideFooter: true,
-      title: "ES_OPEN_APPLICAION_HEADER",
+      title: " ",
       hideTitle: false,
       // redirectionUrl,
       // hideFor: "ao",
@@ -1049,7 +1071,7 @@ const routes = [
     options: {
       hideBackButton: true,
       hideFooter: true,
-      title: "CS_COMPLAINT_DETAILS_COMPLAINT_RESOLVED",
+      title: "",
       hideTitle: true,
       customFor: "employee",
     }

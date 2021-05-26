@@ -34,6 +34,7 @@ import {
   getCommonApplyFooter,
 
 } from "../utils";
+import { getTextAdvertisement } from "./searchResource/citizenSearchFunctions";
 
 export const stepsData = [
   { labelName: "Applicant Details", labelKey: "ADV_APPLICANT_DETAILS_NOC" },
@@ -108,6 +109,14 @@ const titlebar = getCommonContainer({
       number: getQueryArg(window.location.href, "applicationNumber")
     }
   },
+  applicationStatus: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+      status: "NA",
+    }
+  }
 });
 
 
@@ -354,6 +363,16 @@ const setSearchResponse = async (
   else {
     dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
     // Set Institution/Applicant info card visibility
+    let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
+    dispatch(
+      handleField(
+        "advertisement_summary",
+        "components.div.children.headerDiv.children.header.children.applicationStatus",
+        "props.status",
+        getTextAdvertisement(nocStatus)
+      )
+    );
+
 
     dispatch(
       handleField(

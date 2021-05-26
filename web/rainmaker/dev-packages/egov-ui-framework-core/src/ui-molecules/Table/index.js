@@ -127,8 +127,19 @@ class Table extends React.Component {
     }
     
     const locMessageTitleObj = localisationArray.find(locMessage => locMessage.code === title);
-    if (title && title != undefined && locMessageTitleObj!=undefined && locMessageTitleObj[0]!=undefined)  { 
+    if (title && title != undefined && locMessageTitleObj!=undefined && (locMessageTitleObj[0]!=undefined || locMessageTitleObj.message != undefined ))  { 
+     if(locMessageTitleObj[0] !== undefined)
+     {
       this.setState({title : locMessageTitleObj[0].message});
+
+     }
+     else if (locMessageTitleObj.message !== undefined)
+     {
+      this.setState({title : locMessageTitleObj.message});
+
+     }
+      
+
     }
   }
   

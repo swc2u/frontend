@@ -148,6 +148,30 @@ export const getSearchResultsEmployeeForDeath = async (queryObject, dispatch) =>
     throw error;
   }
 };
+export const getPensionerDetails = async (queryObject, dispatch) => {
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/pension-services/v1/_searchPensionerDetails",
+      //"/pension-services/v1/_searchPensionerForDeathRegistration",
+      // "/egov-hrms/employees/_search",
+      "",
+      queryObject
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+   // throw error;
+  }
+};
 export const getSearchPensioner = async (queryObject, dispatch) => {
   try {
     store.dispatch(toggleSpinner());
@@ -169,7 +193,7 @@ export const getSearchPensioner = async (queryObject, dispatch) => {
         "error"
       )
     );
-    throw error;
+   // throw error;
   }
 };
 export const getSearchPensionerForPensionRevision = async (queryObject, dispatch) => {
@@ -192,7 +216,7 @@ export const getSearchPensionerForPensionRevision = async (queryObject, dispatch
         "error"
       )
     );
-    throw error;
+   // throw error;
   }
 };
 export const getsearchPensionRegister = async (queryObject, dispatch) => {
@@ -332,6 +356,33 @@ export const initiateRegularRetirementPension = async (state, dispatch, tenantId
         "",
         [],
         { Employees: payload }
+      );
+     // response = furnishNocResponse(response);
+      dispatch(prepareFinalObject("Employees", response.Employee));
+      setApplicationNumberBox(state, dispatch);
+   
+    return { status: "success", message: response };
+  } catch (error) {
+    dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+    dispatch(prepareFinalObject("Employees", employeeData.Employees));
+
+    return { status: "failure", message: error };
+  }
+};
+export const updatePensionerDetails = async (state, dispatch) => {
+  try {
+    let PensionerDetails = get(state.screenConfiguration.preparedFinalObject,"PensionerDetails",{})
+    set(PensionerDetails,convertDateToEpoch(PensionerDetails.doc))
+    set(PensionerDetails,convertDateToEpoch(PensionerDetails.wef))
+    set(PensionerDetails,convertDateToEpoch(PensionerDetails.claimantDob))
+    let response;
+    
+      response = await httpRequest(
+        "post",
+        "/pension-services/v1/_updatePensionerDetails",
+        "",
+        [],
+        { PensionerDetails: PensionerDetails }
       );
      // response = furnishNocResponse(response);
       dispatch(prepareFinalObject("Employees", response.Employee));

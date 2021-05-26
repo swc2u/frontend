@@ -144,13 +144,13 @@
   height: 500px; }
 
 .halfGraph {
-  width: 100%;
+  width: 50%;
   border-style: ridge; }
 
 .rt-tbody {
   text-align: center; }
 
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 900px) {
   .graphDashboard {
     display: contents;
     height: 300px;

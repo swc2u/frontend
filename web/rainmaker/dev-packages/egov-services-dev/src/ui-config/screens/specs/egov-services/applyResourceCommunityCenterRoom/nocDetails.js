@@ -33,8 +33,8 @@ import set from "lodash/set";
 export const personalDetails = getCommonCard({
     header: getCommonTitle(
       {
-        labelName: "Hall Details For Entered Application Number",
-        labelKey: "Hall Details For Entered Application Number",
+        labelName: "Community Center Details For Entered Application Number",
+        labelKey: "Community Center Details For Entered Application Number",
       },
       {
         style: {
@@ -65,7 +65,7 @@ export const personalDetails = getCommonCard({
                     disabled: true,
                 },
                 //pattern: getPattern("Name"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkSector",
             }),
         },
@@ -85,7 +85,7 @@ export const personalDetails = getCommonCard({
                 },
                 required: true,
                 pattern: getPattern("Name"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkApplicantName",
             }),
         },
@@ -104,7 +104,7 @@ export const personalDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkBookingPurpose",
             }),
         },
@@ -123,7 +123,7 @@ export const personalDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkLocation",
             }),
         },
@@ -141,7 +141,7 @@ export const personalDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
 
                 jsonPath: "Booking.bkFromDate",
             }),
@@ -163,7 +163,7 @@ export const personalDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkToDate",
             }),
             visible: true,
@@ -182,7 +182,7 @@ export const personalDetails = getCommonCard({
         //         props: {
         //             disabled: true,
         //         },
-        //         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        //         errorMessage: "Please check the missing/invalid fields, then proceed!",
 
         //         jsonPath: "DisplayPacc.bkDisplayFromDateTime",
         //     }),
@@ -203,7 +203,7 @@ export const personalDetails = getCommonCard({
         //         props: {
         //             disabled: true,
         //         },
-        //         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        //         errorMessage: "Please check the missing/invalid fields, then proceed!",
         //         jsonPath: "DisplayPacc.bkDisplayToDateTime",
         //     }),
         //     visible: true,
@@ -287,7 +287,7 @@ export const communityHallDetails = getCommonCard({
                     },
                     required: true,
                     pattern: getPattern("Name"),
-                    errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                    errorMessage: "Please check the missing/invalid fields, then proceed!",
                     jsonPath: "Booking.bkApplicantName",
                 }),
             },
@@ -306,7 +306,7 @@ export const communityHallDetails = getCommonCard({
                     },
                     required: true,
                     pattern: getPattern("MobileNo"),
-                    errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                    errorMessage: "Please check the missing/invalid fields, then proceed!",
                     jsonPath: "Booking.bkMobileNumber",
                 }),
             },
@@ -321,7 +321,7 @@ export const communityHallDetails = getCommonCard({
                         labelKey: "BK_PCC_HOUSE_NUMBER_LABEL",
                     },
                     pattern: getPattern("DoorHouseNo"),
-                    errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                    errorMessage: "Please check the missing/invalid fields, then proceed!",
                     // helperText : "new helper outside",
                     required: true,
                     
@@ -348,7 +348,7 @@ export const communityHallDetails = getCommonCard({
                     props: {
                         disabled: true,
                     },
-                    errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                    errorMessage: "Please check the missing/invalid fields, then proceed!",
                     jsonPath: "Booking.bkBookingPurpose",
                 }),
             },
@@ -368,7 +368,7 @@ export const communityHallDetails = getCommonCard({
                         disabled: true,
                     },
                     //pattern: getPattern("Name"),
-                    errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                    errorMessage: "Please check the missing/invalid fields, then proceed!",
                     jsonPath: "Booking.bkSector",
                 }),
             },
@@ -388,7 +388,7 @@ export const communityHallDetails = getCommonCard({
                     props: {
                         disabled: true,
                     },
-                    errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                    errorMessage: "Please check the missing/invalid fields, then proceed!",
                     jsonPath: "Booking.bkLocation",
                 }),
             },
@@ -406,7 +406,7 @@ export const communityHallDetails = getCommonCard({
                     props: {
                         disabled: true,
                     },
-                    errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                    errorMessage: "Please check the missing/invalid fields, then proceed!",
 
                     jsonPath: "Booking.bkFromDate",
                 }),
@@ -428,7 +428,7 @@ export const communityHallDetails = getCommonCard({
                     props: {
                         disabled: true,
                     },
-                    errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                    errorMessage: "Please check the missing/invalid fields, then proceed!",
                     jsonPath: "Booking.bkToDate",
                 }),
                 visible: true,
@@ -447,7 +447,7 @@ export const communityHallDetails = getCommonCard({
                     props: {
                         disabled: true,
                     },
-                    errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                    errorMessage: "Please check the missing/invalid fields, then proceed!",
                     jsonPath: "Booking.bkCustomerGstNo",
                 }),
             },
@@ -487,7 +487,7 @@ export const venueDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkLocation",
             }),
         },
@@ -506,7 +506,7 @@ export const venueDetails = getCommonCard({
                     disabled: true,
                 },
                 //pattern: getPattern("Name"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkSector",
             }),
         },
@@ -525,7 +525,7 @@ export const venueDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
 
                 jsonPath: "Booking.bkFromDate",
             }),
@@ -547,7 +547,7 @@ export const venueDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkToDate",
             }),
             visible: false,
@@ -568,7 +568,7 @@ export const venueDetails = getCommonCard({
                     disabled: true,
                 },
                 //pattern: getPattern("NoOfEmp"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkDimension",
             }),
         },
@@ -587,7 +587,7 @@ export const venueDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkRefundAmount",
             }),
         },
@@ -607,7 +607,7 @@ export const venueDetails = getCommonCard({
                     disabled: true,
                 },
 
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkCleansingCharges",
             }),
         },
@@ -626,7 +626,7 @@ export const venueDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkRent",
             }),
         },
@@ -646,7 +646,7 @@ export const venueDetails = getCommonCard({
         //         //     disabled: true,
         //         // },
         //         //pattern: getPattern("NoOfEmp"),
-        //         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        //         errorMessage: "Please check the missing/invalid fields, then proceed!",
         //         jsonPath: "Booking.bkFacilitationCharges",
         //     }),
         // },
@@ -665,7 +665,7 @@ export const venueDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkSurchargeRent",
             }),
         },
@@ -684,7 +684,7 @@ export const venueDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkUtgst",
             }),
         },
@@ -703,7 +703,7 @@ export const venueDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkCgst",
             }),
         },
@@ -722,7 +722,7 @@ export const venueDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkRefundAmount",
             }),
         },
@@ -761,7 +761,7 @@ export const roomBookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "roomAvailabilityData.totalAcRooms",
             }),
         },
@@ -780,7 +780,7 @@ export const roomBookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "roomAvailabilityData.totalNonAcRooms",
             }),
         },
@@ -799,7 +799,7 @@ export const roomBookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "roomAvailabilityData.availableAcRooms",
             }),
         },
@@ -818,7 +818,7 @@ export const roomBookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "roomAvailabilityData.availableNonAcRooms",
             }),
         },
@@ -882,7 +882,7 @@ export const roomBookingDetails = getCommonCard({
                         sourceJsonPath: "roomAvailabilityData.roomTypeArray",
                         jsonPath: "roomData.typeOfRoom",
                         required: true,
-                        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                        errorMessage: "Please check the missing/invalid fields, then proceed!",
                         props: {
                             className: "applicant-details-error",
                             required: true,
@@ -1041,7 +1041,7 @@ export const roomBookingDetails = getCommonCard({
                 sourceJsonPath: "roomAvailabilityData.availableAcRoomsArray",
                 jsonPath: "roomData.bkAcRoomToBeBooked",
                 required: true,
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 props: {
                     className: "applicant-details-error",
                     required: true,
@@ -1086,7 +1086,7 @@ export const roomBookingDetails = getCommonCard({
                 sourceJsonPath: "roomAvailabilityData.availableNonAcRoomsArray",
                 jsonPath: "roomData.bkNonAcRoomToBeBooked",
                 required: true,
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 props: {
                     className: "applicant-details-error",
                     required: true,
@@ -1141,7 +1141,7 @@ export const roomBookingDetails = getCommonCard({
                 sourceJsonPath: "roomAvailabilityData.selectDateArray",
                 jsonPath: "roomData.bkDaySelect",
                 required: true,
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 props: {
                     className: "applicant-details-error",
                     required: true,

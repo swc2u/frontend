@@ -30,6 +30,7 @@ class Applications extends React.Component {
         case "PERMANENT_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTION"); break;        
         case "TEMPORARY_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_DISCONNECTION"); break;
         case "UPDATE_CONNECTION_HOLDER_INFO":  window.localStorage.setItem("wns_workflow","WS_RENAME"); break;
+        case "UPDATE_METER_INFO":  window.localStorage.setItem("wns_workflow","WS_METER_UPDATE"); break;
         case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_CONVERSION"); break;
         case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_REACTIVATE"); break;
         case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
@@ -105,7 +106,7 @@ else if(data.service ==='SEWERAGE'){
                         <Grid item md={8} xs={6}>
                           {item.property && item.property.owners&&
                           <LabelContainer
-                          labelName={item.property.owners.map(owner =>owner.name).join(",")}
+                          labelName={item.property.owners.map(owner =>owner.name).join(", ")}
                           fontSize={14}
                           style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                         />

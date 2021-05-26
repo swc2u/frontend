@@ -179,7 +179,7 @@ console.log("BothRoomSelect--",BothRoomSelect)
             "bkApproverName": null,
             "assignee": null,
             "wfDocuments": null,
-            "financialYear": "2020-2021",
+            "financialYear": "2021-2022",
             "financeBusinessService": "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR",//"BKROOM",//BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR
             // "roomBusinessService": "BKROOM",
             "roomsModel": BothRoomSelect,
@@ -331,7 +331,7 @@ this.props.SetPaymentURL(`/egov-services/PaymentReceiptDteail/ForRoomBooking/${t
                         <div className="col-xs-12">
 
                             <RoomPaymentCard
-                            TotalAmount={this.props.TotalAmount}
+                            TotalAmount={this.props.TotalAmount} 
                             BKROOM_TAX={this.props.BKROOM_TAX}
                             BKROOM={this.props.BKROOM}
                             BKROOM_ROUND_OFF={this.props.BKROOM_ROUND_OFF}

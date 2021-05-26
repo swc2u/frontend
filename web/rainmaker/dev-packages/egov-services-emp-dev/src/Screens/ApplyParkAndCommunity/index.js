@@ -89,14 +89,13 @@ export class StepForm extends Component {
             "_search", [],
             requestBody
           );
-        console.log("hereFcCharges--",hereFcCharges)  
-
+      
 
         let TaxHeadMaster = hereFcCharges.MdmsRes.BillingService.TaxHeadMaster
-        console.log("TaxHeadMaster--",TaxHeadMaster)
+       
         var arrayName = [];
         arrayName.push(hereFcCharges.MdmsRes.BillingService.TaxHeadMaster)
-        console.log("arrayName--",arrayName)
+        
 
         let IndexfCharges;
         if (arrayName && arrayName.length > 0) {
@@ -108,10 +107,8 @@ export class StepForm extends Component {
             })
           })
         }
-     console.log("fCharges--inindexPage--",IndexfCharges)
-
+    
    let testFcharges = IndexfCharges && IndexfCharges.facilitationCharge ? IndexfCharges.facilitationCharge : "valueNotsetYet"
-   console.log("testFcharges--",testFcharges)
      this.setState({
         NewfCharges : testFcharges
      })    
@@ -145,14 +142,10 @@ export class StepForm extends Component {
         })
     }
     handleChangeDiscount = (event) => {
-        console.log("event--",event)
         this.setState({ discountType: event.target.value });
-        console.log("this.state-of-discountType--",this.state.discountType)
     };
     AccountType = (event) => {
-        console.log("event--",event)
         this.setState({ accountType: event.target.value });
-        console.log("this.state-of-accountType--",this.state.discountType)
     };
 
     onToDateChange = e => {
@@ -189,18 +182,24 @@ export class StepForm extends Component {
         return daysCount;
     };
     showStep = () => {
-    console.log("fchargesInshowStep--",this.state.NewfCharges)
         let { step, firstName, transactionDate, transactionNumber, bankName, paymentMode,
             BankAccountName,NomineeName,BankAccountNumber,IFSCCode,AccountHolderName,
             lastName, utGST, cGST, GSTnumber, type, jobTitle, facilitationCharges, surcharge,DiscountReason,
             jobCompany, approverName, comment, jobLocation, mobileNo, email,fCharges,
             dimension, cleaningCharges, houseNo, rent, purpose, locality, residenials, discountType,NewfCharges,accountType } = this.state;
             let fc = fCharges?fCharges.facilitationCharge:'100';
- var facCharges = NewfCharges !== "valueNotsetYet" && NewfCharges !== undefined && NewfCharges !== null && NewfCharges !== ""? NewfCharges : fc
+            var facCharges = NewfCharges !== "valueNotsetYet" && NewfCharges !== undefined && NewfCharges !== null && NewfCharges !== ""? NewfCharges : fc
 
-      let bookingData = this.props.stateData.screenConfiguration.preparedFinalObject ? this.props.stateData.screenConfiguration.preparedFinalObject.availabilityCheckData:""
-      console.log("bookingData.bkFromDate--",bookingData.bkFromDate)  
-      console.log("bookingData.bkToDate--",bookingData.bkToDate)  
+      let checkDateVenueChange = false;
+
+       let {ApplyForDateVenueChange} = this.props
+      
+
+if(ApplyForDateVenueChange !== "NotFound"){
+    checkDateVenueChange = true
+}
+
+      let bookingData = this.props.stateData.screenConfiguration.preparedFinalObject ? this.props.stateData.screenConfiguration.preparedFinalObject.availabilityCheckData:""  
         let vanueData = this.props.stateData.screenConfiguration.preparedFinalObject ? this.props.stateData.screenConfiguration.preparedFinalObject.bkBookingData:""
         console.log("vanueData--",vanueData)
         let { fromDate, toDate, location, amount, finalRent } = this.state;
@@ -329,22 +328,25 @@ console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
                 handleChangeDiscount={this.handleChangeDiscount}
                 discountType={discountType}
                 DiscountReason={DiscountReason}
+                checkDateVenueChange={checkDateVenueChange}
             />);
         if (step === 1)
             return (<BookingDetails
+                checkDateVenueChange={checkDateVenueChange}
                 houseNo={houseNo}
                 refundAbleAmount={displayRefundAmount}
                 handleChangeDiscount={this.handleChangeDiscount}
                 discountType={discountType}
                 onFromDateChange={this.onFromDateChange}
                 onToDateChange={this.onToDateChange}
-                fromDate={fromDate}
+                fromDate={fromDate} 
                 toDate={toDate}
                 dimension={dimension}
                  location={location}
                 cleaningCharges={cleaningCharges}
                 purpose={purpose}
-                rent={vrent}
+                // rent={vrent}
+                rent={totalAmount1}
                 utGST={utGST}
                 cGST={cGST}
                 GSTnumber={GSTnumber}
@@ -364,6 +366,7 @@ console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
             />);
         if (step === 2)
             return (<BankDetails
+                checkDateVenueChange={checkDateVenueChange}
                 nextStep={this.nextStep}
                 handleChange={this.handleChange}
                 BankAccountName={BankAccountName}    
@@ -398,6 +401,7 @@ console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
 
         if (step === 3)
             return (<DocumentDetails
+                checkDateVenueChange={checkDateVenueChange}
                 nextStep={this.nextStep}
                 rent={vrent}
                 prevStep={this.prevStep}
@@ -409,7 +413,6 @@ console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
             />);
         if (step === 4)
             return (<SummaryInfo
-
                 bookingData={bookingData}
                 venueType={venueType}
                 bokingType={bokingType}
@@ -545,13 +548,20 @@ const mapStateToProps = state => {
     })
   }
 
+  let ApplyForDateVenueChange = get(
+    state,
+    "screenConfiguration.preparedFinalObject.EmployeeDateVenueChange",
+    "NotFound"
+  );
+
     return {
         stateData,
         fromDateone,
         bookingOne,
         fCharges,
         appData,
-        Previousdiscount
+        Previousdiscount,
+        ApplyForDateVenueChange
     }
 }
 

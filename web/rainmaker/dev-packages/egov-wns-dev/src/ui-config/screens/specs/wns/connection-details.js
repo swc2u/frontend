@@ -1,26 +1,39 @@
 import {
   getCommonHeader,
   getCommonCard,
+  getLabel,
   getCommonTitle,
   getCommonGrayCard,
   getCommonContainer,
   getCommonSubHeader,
   convertEpochToDate
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { deactivateConnection } from "../wns/searchResource/functions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getSearchResults, getSearchResultsForSewerage, getDescriptionFromMDMS } from "../../../../ui-utils/commons";
 import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { connectionDetailsFooter } from "./connectionDetailsResource/connectionDetailsFooter";
 import { getServiceDetails } from "./connectionDetailsResource/service-details";
 import { getPropertyDetails } from "./connectionDetailsResource/property-details";
+import { set } from "lodash";
 import { 
-  GetMdmsNameBycode
+  GetMdmsNameBycode,
+  epochToYmd
 } from "../utils";
 import { httpRequest } from "../../../../ui-utils";
 import commonConfig from "config/common.js";
 import { getOwnerDetails, connHolderDetailsSummary, connHolderDetailsSameAsOwnerSummary } from "./connectionDetailsResource/owner-deatils";
 const tenantId = getQueryArg(window.location.href, "tenantId")
 let connectionNumber = getQueryArg(window.location.href, "connectionNumber");
+let Active = getQueryArg(window.location.href, "Active") ==='true'?true:false
+if(Active)
+{
+  Active = true
+}
+else
+{
+  Active = false
+}
 const service = getQueryArg(window.location.href, "service");
 window.localStorage.getItem("wns_workflow")
 const serviceModuleName = service === "WATER" ? (window.localStorage.getItem("wns_workflow")===null ? "REGULARWSCONNECTION":  window.localStorage.getItem("wns_workflow")) : "SW_SEWERAGE";
@@ -126,7 +139,7 @@ const searchResults = async (action, state, dispatch, connectionNumber) => {
       payloadData.SewerageConnections[0].property.address.locality.name = code
       if (payloadData.SewerageConnections[0].noOfToilets === undefined) { payloadData.SewerageConnections[0].noOfToilets = "NA" }
       if (payloadData.SewerageConnections[0].noOfToilets === 0) { payloadData.SewerageConnections[0].noOfToilets = "0" }
-      payloadData.SewerageConnections[0].connectionExecutionDate = convertEpochToDate(payloadData.SewerageConnections[0].connectionExecutionDate)
+      payloadData.SewerageConnections[0].connectionExecutionDate = epochToYmd(payloadData.SewerageConnections[0].connectionExecutionDate)
       const lat = payloadData.SewerageConnections[0].property.address.locality.latitude ? payloadData.SewerageConnections[0].property.address.locality.latitude : 'NA'
       const long = payloadData.SewerageConnections[0].property.address.locality.longitude ? payloadData.SewerageConnections[0].property.address.locality.longitude : 'NA'
       payloadData.SewerageConnections[0].property.address.locality.locationOnMap = `${lat} ${long}`
@@ -150,7 +163,7 @@ const searchResults = async (action, state, dispatch, connectionNumber) => {
       payloadData.WaterConnection[0].service = service;
       let propTenantId = payloadData.WaterConnection[0].property.tenantId.split(".")[0];
       if (payloadData.WaterConnection[0].connectionExecutionDate !== undefined) {
-        payloadData.WaterConnection[0].connectionExecutionDate = convertEpochToDate(payloadData.WaterConnection[0].connectionExecutionDate)
+        payloadData.WaterConnection[0].connectionExecutionDate = epochToYmd(payloadData.WaterConnection[0].connectionExecutionDate)
       } else {
         payloadData.WaterConnection[0].connectionExecutionDate = 'NA'
       }
@@ -197,6 +210,12 @@ const beforeInitFn = async (action, state, dispatch, connectionNumber) => {
   //Search details for given application Number
   if (connectionNumber) {
     (await searchResults(action, state, dispatch, connectionNumber));
+    let ConActive = getQueryArg(window.location.href, "Active") === "true"?true:false
+    set(
+      action.screenConfig,
+      "components.div.children.connectionDetails.children.cardContent.children.button.children.buttonContainer.children.Deactivate.visible",
+      ConActive
+    );
   }
 };
 
@@ -248,7 +267,38 @@ const connectionHoldersHeader = getHeader({
 });
 
 const connectionHoldersSameAsOwner = connHolderDetailsSameAsOwnerSummary();
-export const connectionDetails = getCommonCard({ serviceDetails, propertyDetails, ownerDetails, connectionHoldersHeader, connectionHoldersSameAsOwner});
+export const connectionDetails = getCommonCard({ 
+  
+  button: getCommonContainer({
+    buttonContainer: getCommonContainer({
+      Deactivate: {
+        componentPath: "Button",
+        props: {
+          variant: "contained",
+          color: "primary",
+          style: {
+            minWidth: "200px",
+            height: "48px",
+            marginRight: "45px",
+            float: "right"
+          }
+        },
+        children: {
+          submitButtonLabel: getLabel({
+            labelName: "Submit",
+            labelKey: "WS_COMMON_DEACTIVE_LABEL"
+          }),                
+        },
+        onClickDefination: {
+          action: "condition",
+          callBack: deactivateConnection
+        },
+        visible: Active
+      },
+    })
+  }),
+
+  serviceDetails, propertyDetails, ownerDetails, connectionHoldersHeader, connectionHoldersSameAsOwner});
 export const getData = async (action, state, dispatch) => {  
   await getMdmsData(state, dispatch);
 }
@@ -352,6 +402,7 @@ const screenConfig = {
            // ...connectionDetailsFooter,
           }
         },
+        
         connectionDetails,
       //  connectionDetailsFooter
       taskStatus: {

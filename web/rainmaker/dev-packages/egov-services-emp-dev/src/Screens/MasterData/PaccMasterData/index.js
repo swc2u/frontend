@@ -211,21 +211,22 @@ class SimpleTable extends React.Component {
       else {
         return item.filter(
           (x) =>     
-          x.sccid.toString().includes(target.value) ||
-          x.scid.toString().includes(target.value) ||
-          x.x.toString().includes(target.value) ||
-          x.y.toString().includes(target.value) ||
-          x.dimensionSqrYards.toString().includes(target.value) ||
-          x.cleaningCharges.toString().includes(target.value) ||
-          x.surcharge.toString().includes(target.value) ||
-          x.rent.toString().includes(target.value) ||  
-          x.amount.toString().includes(target.value) ||
-          x.sector.toLowerCase().includes(target.value.toLowerCase()) ||
-          x.bookingAllowedFor.toLowerCase().includes(target.value.toLowerCase()) ||
-          x.venueType.toLowerCase().includes(target.value.toLowerCase()) ||
-          x.imagePath.toLowerCase().includes(target.value.toLowerCase()) ||
-          x.rentNextSession.toString().includes(target.value) ||
-          x.oldrent1.toString().includes(target.value) 
+          x.sccid && x.sccid.toString().includes(target.value) ||
+          x.scid && x.scid.toString().includes(target.value) ||
+          x.x && x.x.toString().includes(target.value) ||
+          x.y && x.y.toString().includes(target.value) ||
+          x.dimensionSqrYards && x.dimensionSqrYards.toString().includes(target.value) ||
+          x.cleaningCharges && x.cleaningCharges.toString().includes(target.value) ||
+          x.surcharge && x.surcharge.toString().includes(target.value) ||
+          x.rent && x.rent.toString().includes(target.value) ||  
+          x.amount && x.amount.toString().includes(target.value) ||
+          x.sector && x.sector.toLowerCase().includes(target.value.toLowerCase()) ||
+          x.bookingAllowedFor && x.bookingAllowedFor.toLowerCase().includes(target.value.toLowerCase()) ||
+          x.venueType && x.venueType.toLowerCase().includes(target.value.toLowerCase()) ||
+          x.imagePath && x.imagePath.toLowerCase().includes(target.value.toLowerCase()) ||
+          x.rentNextSession && x.rentNextSession.toString().includes(target.value) ||
+          x.oldrent1 && x.oldrent1.toString().includes(target.value) ||
+          x.refundabelSecurity && x.refundabelSecurity.toString().includes(target.value)
         );
       }
     };

@@ -17,14 +17,19 @@ export const EChallanDashboardFilterForm = getCommonCard({
         sm: 2,
         md: 2
       },
+      props: {
+        style: {
+        width: "130px",
+        }
+      },
       pattern: getPattern("Date"),
       jsonPath: "dahsboardHome.defaultFromDate",
       required: true,
       afterFieldChange: (action, state, dispatch) => {
         dispatch(
           handleField(
-            "dashboardSource",
-            "components.div.children.FilterFormforEmployee.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+            "EChallanDashboard",
+            "components.div.children.EChallanDashboardFilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
             "props.inputProps.min",
             action.value
           )
@@ -40,7 +45,10 @@ export const EChallanDashboardFilterForm = getCommonCard({
       props: {
         inputProps: {
           min: ''
-        }
+        },
+        style: {
+          width: "130px",
+        },
       },
       gridDefination: {
         xs: 6,

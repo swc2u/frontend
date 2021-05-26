@@ -93,31 +93,31 @@ import {
       ),
       address: getLabelWithValue(
         { labelKey: "NULM_SMID_ADDRESS" },
-        { jsonPath: "NulmSuhCitizenNGORequest.address" }
+        { jsonPath: "NulmSuhCitizenNGORequest.address" ,callBack: checkValueForNA }
       ),   
       reasonForStaying: getLabelWithValue(
         { labelKey: "NULM_SUH_LOG_REASON_FOR_STAY" },
-        { jsonPath: "NulmSuhCitizenNGORequest.reasonForStaying" }
+        { jsonPath: "NulmSuhCitizenNGORequest.reasonForStaying",callBack: checkValueForNA }
       ),
       isHandicapped: getLabelWithValue(
         { labelKey: "NULM_SEP_HANDICAPPED" },
-        { jsonPath: "NulmSuhCitizenNGORequest.isDisabled" }
+        { jsonPath: "NulmSuhCitizenNGORequest.isDisabled",callBack: checkValueForNA }
       ),
       nominatedBy: getLabelWithValue(
         { labelKey: "NULM_SUH_CITIZEN_SHELTER_NOMINATED_BY" },
-        { jsonPath: "NulmSuhCitizenNGORequest.nominatedBy" }
+        { jsonPath: "NulmSuhCitizenNGORequest.nominatedBy",callBack: checkValueForNA }
       ),
       nomineeName: getLabelWithValue(
         { labelKey: "NULM_SUH_CITIZEN_SHELTER_NOMINEE_NAME" },
-        { jsonPath: "NulmSuhCitizenNGORequest.nameOfNominatedPerson" }
+        { jsonPath: "NulmSuhCitizenNGORequest.nameOfNominatedPerson" ,callBack: checkValueForNA }
       ),
       nomineeNumber: getLabelWithValue(
         { labelKey: "NULM_SUH_CITIZEN_SHELTER_NOMINEE_CONTACT" },
-        { jsonPath: "NulmSuhCitizenNGORequest.contactNo" }
+        { jsonPath: "NulmSuhCitizenNGORequest.contactNo" ,callBack: checkValueForNA }
       ),
       nomineeNumber: getLabelWithValue(
         { labelKey: "NULM_SEP_CREATION_DATE" },
-        { jsonPath: "NulmSuhCitizenNGORequest.auditDetails.createdTime" }
+        { jsonPath: "NulmSuhCitizenNGORequest.auditDetails.createdTime" ,callBack: checkValueForNA}
       ),
     });
   };
