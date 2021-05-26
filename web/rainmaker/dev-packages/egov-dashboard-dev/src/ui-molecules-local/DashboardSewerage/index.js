@@ -206,16 +206,46 @@ class SewerageDashboard extends React.Component {
             var keys = Object.keys(data[0]);
             for(var i=0; i<Object.keys(data[0]).length; i++){
                 var itemHeader = {}
-                itemHeader["Header"] = this.camelize(keys[i]);
-                itemHeader["accessor"] = keys[i];
                 if(dropdownSelected === "Sewerage Dashboard"){
-                    if(i === 2 || i === 3 || i === 4 || i === 25 || i === 41){
+                    if(i === 3 || i === 4 || i === 25 || i === 16 || i=== 38 || i=== 34 || i=== 26 || i === 41){
+                        itemHeader["Header"] = this.camelize(keys[i]);
+                        itemHeader["accessor"] = keys[i];
                         itemHeader["show"]= true ;
-                    }else{
-                        itemHeader["show"]= false ;
-                    }                    
+                        headerData.push(itemHeader);
+                    }
+                    if(i === 5){
+                        itemHeader["Header"] = "Name";
+                        itemHeader["accessor"] = "connectionHolders[0].name";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+                    }
+                    if(i === 11){
+                        var itemHeader = {}
+                        itemHeader["Header"] = "PlotNo";
+                        itemHeader["accessor"] = "swProperty.plotNo";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+                    }
+                    if(i === 11){
+                        var itemHeader = {}
+                        itemHeader["Header"] = "SectorNo";
+                        itemHeader["accessor"] = "swProperty.sectorNo";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+
+                        var itemHeader = {}
+                        itemHeader["Header"] = "UsageCategory";
+                        itemHeader["accessor"] = "swProperty.usageCategory";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+
+                        var itemHeader = {}
+                        itemHeader["Header"] = "UsageSubCategory";
+                        itemHeader["accessor"] = "swProperty.usageSubCategory";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+                    }
                 }
-                headerData.push(itemHeader);
             }
 
             var rowData = data;
