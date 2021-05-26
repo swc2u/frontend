@@ -167,11 +167,11 @@ const withAuthorization = (options = {}) => (Component) => {
         if (window.basename.slice(1).toLowerCase() !== _role) {
           this.props.logout();
         }
-        if(LoginDifferent>=900000)
-          {
-            localStorageSet("last-login-time", lastLoginTime);
-            this.props.logout();
-          }
+        // if(LoginDifferent>=900000)
+        //   {
+        //     localStorageSet("last-login-time", lastLoginTime);
+        //     this.props.logout();
+        //   }
       }
     //  if(LoginDifferent>=900000)
     //   {
