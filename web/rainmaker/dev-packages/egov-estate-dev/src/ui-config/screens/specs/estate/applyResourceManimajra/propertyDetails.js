@@ -222,6 +222,30 @@ export const propertyTypeField = {
                true
             )
           )
+          dispatch(
+            handleField(
+              action.screenKey,
+              "components.div.children.formwizardFirstStep.children.annualDetails.children.cardContent.children.detailsContainer.children.annual",
+              "required",
+              true
+            )
+          )
+          dispatch(
+            handleField(
+              action.screenKey,
+              "components.div.children.formwizardFirstStep.children.monthlyDetails.children.cardContent.children.detailsContainer.children.monthly",
+              "required",
+              true
+            )
+          )
+          dispatch(
+            handleField(
+              action.screenKey,
+              "components.div.children.formwizardFirstStep.children.monthlyDetails.children.cardContent.children.detailsContainer.children.yearly",
+              "required",
+              true
+            )
+          )
          break;
       // case 'PROPERTY_TYPE.PUNJAB_AGRO_JUICE':
       //     dispatch(
@@ -244,6 +268,30 @@ export const propertyTypeField = {
           
       //    break;
       case 'PROPERTY_TYPE.OTHERS':
+        dispatch(
+          handleField(
+            action.screenKey,
+            "components.div.children.formwizardFirstStep.children.annualDetails.children.cardContent.children.detailsContainer.children.annual",
+            "required",
+            false
+          )
+        )
+        dispatch(
+          handleField(
+            action.screenKey,
+            "components.div.children.formwizardFirstStep.children.monthlyDetails.children.cardContent.children.detailsContainer.children.monthly",
+            "required",
+            false
+          )
+        )
+        dispatch(
+          handleField(
+            action.screenKey,
+            "components.div.children.formwizardFirstStep.children.monthlyDetails.children.cardContent.children.detailsContainer.children.yearly",
+            "required",
+            false
+          )
+        )
         //do nothing
         break;    
     }
