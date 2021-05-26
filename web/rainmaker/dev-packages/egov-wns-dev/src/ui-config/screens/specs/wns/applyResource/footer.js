@@ -116,7 +116,43 @@ if(validateDocumentField)
 );
   if(applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN')
   {
-    if(documentsFormat.length !== documentsContract.length)
+    let ValidNoc = false
+    let documentsFormat_ = documentsFormat;
+    let documentsContract_ = documentsContract
+    documentsContract_ = documentsContract_.filter(x=>x.cards[0].required)
+   // documentsFormat_ = documentsFormat_.filter(x=>x.documents === undefined)
+    if(documentsContract_.length!=documentsFormat_.length)
+    {
+      ValidNoc = true
+    }
+    else  if(documentsContract_.length ===documentsFormat_.length)
+    {
+      documentsFormat_ = documentsFormat_.filter(x=>x.documents === undefined)
+       if(documentsFormat_.length>0)
+          {
+            ValidNoc = true
+          }
+
+     // ValidNoc = true
+    }
+
+    // if(documentsFormat_.length>0)
+    // {
+    //   ValidNoc = true
+    // }
+    // else if(documentsFormat_.length === 0)
+    // {
+    //   if(documentsFormat.length+1 !== documentsFormat.length)
+    // {
+    //   ValidNoc = true
+    // }
+    // }
+    // else if(documentsFormat.length+1 !== documentsFormat.length)
+    // {
+    //   ValidNoc = true
+    // }
+    if(ValidNoc)
+    //if(documentsFormat.length !== documentsContract.length)
     {
       dispatch(
                   toggleSnackbar(
@@ -1409,13 +1445,32 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       {
         if(category_ === null)
       {
+        category_ = get(
+          state.screenConfiguration.preparedFinalObject,
+          "WaterConnection[0].waterProperty.usageSubCategory",
+          null
+        );
+      if(category_ === null)
+      {
         let errorMessage_ = {
           labelName: "Please select Usage Caregory",
           labelKey: "WS_APPLICATION_TYPE_CHANGGED_VALIDATION"
         };
-  
+
         dispatch(toggleSnackbar(true, errorMessage_, "warning"));
         return false;
+      }
+      else
+      {
+        set(
+          state.screenConfiguration.preparedFinalObject,
+          "applyScreen.waterProperty.usageSubCategory",
+          category_
+        );
+        dispatch(prepareFinalObject("applyScreen.waterProperty.usageSubCategory", category_));
+
+      }
+        
   
       }
   
