@@ -8,7 +8,11 @@ import "./index.css";
 class CGBookingDetails extends Component {
 
 render() {
-   
+let sumHosueNo = this.props.houseNo
+console.log("sumHosueNo",sumHosueNo)
+let strbkHouseNo = sumHosueNo.toString();
+console.log("strbkHouseNo",strbkHouseNo)
+
 return (
       <div>
         <Card
@@ -39,15 +43,15 @@ return (
                                     label={this.props.purpose}
                                 />
                             </div>
-                            <div className="col-md-4">
+                            {/* <div className="col-md-4">
                                 <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CITIZEN_HOUSE_NUMBER_PLACEHOLDER" />
-                                <Label
+                                 <Label
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
                                     labelStyle={{ color: "inherit" }}
-                                    label={this.props.houseNo}
+                                    label={strbkHouseNo}
                                 />
-                            </div>
+                            </div> */}
 
                             <div className="col-md-4">
                                 <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_CITIZEN_MOBILENO_PLACEHOLDER" />
