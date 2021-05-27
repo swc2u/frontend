@@ -7,7 +7,22 @@ import "./index.css";
 
 class CGBookingDetails extends Component {
 
+
   render() {
+      let strAcRoom; 
+      let strNonAcRoom;
+      if(this.props.AccRoomToBook == ''){
+        strAcRoom = 0
+      }
+      else{
+        strAcRoom = this.props.AccRoomToBook.toString();
+      }
+      if(this.props.NonAccRoomToBook == ''){
+        strNonAcRoom = 0
+      }
+      else{
+        strNonAcRoom = this.props.NonAccRoomToBook.toString();
+      }
 return (
       <div>
         <Card
@@ -76,29 +91,25 @@ return (
                                     label={this.props.RoomBookingData.availableNonAcRooms}
                                 />
                             </div>    
-{this.props.AccRoomToBook && <div className="col-md-4">
+{this.props.AccRoomToBook !== 0 ? <div className="col-md-4">
                                 <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_NO_ACC_ROOM_TO_BOOK" />
-                                <Label
+                                <Label 
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-complaint-number"
-                                    label={this.props.AccRoomToBook}
+                                    label={strAcRoom}
                                 />
-                            </div>}
+                            </div> : ""}
 
- {this.props.NonAccRoomToBook &&  <div className="col-md-4">
+ {this.props.NonAccRoomToBook !== 0 ? <div className="col-md-4">
                                 <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_NO_NON_ACC_ROOM_TO_BOOK" />
                                 <Label
                                     labelStyle={{ color: "inherit" }}
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-complaint-number"
-                                    label={this.props.NonAccRoomToBook}
+                                    label={strNonAcRoom}
                                 />
-                            </div>}
-                            
-
-                           
-
+                            </div> : ""}
                           </div>
             </div>
           </div>

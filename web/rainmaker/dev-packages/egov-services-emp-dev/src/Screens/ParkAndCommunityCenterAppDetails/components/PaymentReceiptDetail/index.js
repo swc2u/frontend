@@ -98,7 +98,7 @@ return (
         <div className="col-sm-6 col-xs-12" style={{ minHeight: '72px'}}>
                   <TextField
                     id="transactionDate"
-                    name="transactionDate"
+                    name="transactionDate" 
                     type="string"
                     value={strDate}
                     hintText={

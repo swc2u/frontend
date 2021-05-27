@@ -345,6 +345,15 @@ class ApplicationDetails extends Component {
     }
     console.log("nero proofOfResDocs", proofOfResDocs, "----", allDocumentList);
     if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
+      let arr2 = [];
+      for(let i = 0; i < dataforSectorAndCategory.bookingsModelList[0].timeslots.length; i++){
+        arr2.push(dataforSectorAndCategory.bookingsModelList[0].timeslots[i].slot)
+      }
+      console.log("arr",arr2)
+
+      if(arr2.length == 1){
+      console.log("it contain single element")
+      console.log("your time slot is",arr2[0])
       let timeSlot =
         dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot;
       console.log("timeSlot--", timeSlot);
@@ -389,6 +398,75 @@ class ApplicationDetails extends Component {
       console.log("timeSlotId--", timeSlotId);
 
       prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
+      }
+       else{
+        let a = arr2[0]
+        let b = arr2[1]
+        console.log("a",a)
+        console.log("b",b)
+        let fromfirst = a.split("-")
+        console.log("first",fromfirst)
+       let fromsecond = b.split("-")
+      console.log("second",fromsecond)
+      
+      let first = fromfirst[0]
+      let second = fromsecond[1]
+      console.log("first",first)
+      console.log("second",second)
+
+      let comfirstsecond = first + "-" + second
+      console.log("comfirstsecond",comfirstsecond)
+
+      let timeSlot = comfirstsecond
+console.log("timeSlot54234",timeSlot)
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
+
+
+      let res = timeSlot.split("-");
+      console.log("res--", res);
+
+      let fromTime = res[0];
+      console.log("fromTime--", fromTime);
+
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
+
+      let ToTime = res[1];
+      console.log("ToTime--", ToTime);
+
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
+
+      let strMid = ",";
+
+      let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
+      console.log("ConcatFromDateTime--", ConcatFromDateTime);
+
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatFromDateTime",
+        ConcatFromDateTime
+      );
+
+      let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
+      console.log("ConcatToDateTime--", ConcatToDateTime);
+
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatToDateTime",
+        ConcatToDateTime
+      );
+
+      //let bkDisplayFromDateTime =
+
+      let timeSlotId =
+        dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id;
+      console.log("timeSlotId--", timeSlotId);
+
+      prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
+
+      let timeSlotIdTwo =
+      dataforSectorAndCategory.bookingsModelList[0].timeslots[1].id;
+    console.log("timeSlotIdTwo--", timeSlotIdTwo);
+
+    prepareFinalObject("oldAvailabilityCheckData.timeSlotIdTwo", timeSlotIdTwo);  
+       }
     }
 
     let NewfinanceBusinessService;
@@ -1110,10 +1188,11 @@ gateWay = payloadGateWay.Transaction[0].gateway;
           totalgst: PACC_TAX,
           refundableCharges: this.props.REFUNDABLE_SECURITY,
           totalPayment: amountTodisplay,
-          paymentDate: convertEpochToDate(
-            this.props.offlineTransactionDate,
-            "dayend"
-          ),
+          // paymentDate: convertEpochToDate(
+          //   this.props.offlineTransactionDate,
+          //   "dayend"
+          // ),
+          paymentDate: applicationDetails.createdDate,
           receiptNo: this.props.recNumber,
           paymentType: this.props.offlinePayementMode,
           facilitationCharge: FACILITATION_CHARGE,
@@ -1143,6 +1222,7 @@ gateWay = payloadGateWay.Transaction[0].gateway;
           rBankName: applicationDetails.bkBankName,
           rBankACNo: applicationDetails.bkBankAccountNumber,
           rIFSCCode: applicationDetails.bkIfscCode,
+          nomName: applicationDetails.bkNomineeName,
         },
 
     }
@@ -1206,10 +1286,11 @@ console.log("employeePaymentReceipt")
           totalgst: PACC_TAX,
           refundableCharges: this.props.REFUNDABLE_SECURITY,
           totalPayment: amountTodisplay,
-          paymentDate: convertEpochToDate(
-            this.props.offlineTransactionDate,
-            "dayend"
-          ),
+          // paymentDate: convertEpochToDate(
+          //   this.props.offlineTransactionDate,
+          //   "dayend"
+          // ),
+          paymentDate: applicationDetails.createdDate,
           receiptNo: this.props.recNumber,
           paymentType: this.props.offlinePayementMode,
           facilitationCharge: FACILITATION_CHARGE,
@@ -1244,6 +1325,7 @@ console.log("employeePaymentReceipt")
           rBankName: applicationDetails.bkBankName,
           rBankACNo: applicationDetails.bkBankAccountNumber,
           rIFSCCode: applicationDetails.bkIfscCode,
+          nomName: applicationDetails.bkNomineeName,
         },
       },
     ];
@@ -1704,10 +1786,11 @@ console.log("citizenPaymentReceipt")
           totalgst: PACC_TAX,
           refundableCharges: this.props.REFUNDABLE_SECURITY,
           totalPayment: this.props.totalAmount,
-          paymentDate: convertEpochToDate(
-            this.props.offlineTransactionDate,
-            "dayend"
-          ),
+          // paymentDate: convertEpochToDate(
+          //   this.props.offlineTransactionDate,
+          //   "dayend"
+          // ),
+          paymentDate: applicationDetails.createdDate,
           receiptNo: this.props.recNumber,
           custGSTN: applicationDetails.bkCustomerGstNo,
           mcGSTN: this.state.mcGSTN,
@@ -1731,6 +1814,7 @@ console.log("citizenPaymentReceipt")
           rBankName: applicationDetails.bkBankName,
           rBankACNo: applicationDetails.bkBankAccountNumber,
           rIFSCCode: applicationDetails.bkIfscCode,
+          nomName: applicationDetails.bkNomineeName,
         },
     }
 ]
@@ -1778,10 +1862,11 @@ else{
           totalgst: PACC_TAX,
           refundableCharges: this.props.REFUNDABLE_SECURITY,
           totalPayment: this.props.totalAmount,
-          paymentDate: convertEpochToDate(
-            this.props.offlineTransactionDate,
-            "dayend"
-          ),
+          // paymentDate: convertEpochToDate(
+          //   this.props.offlineTransactionDate,
+          //   "dayend"
+          // ),
+          paymentDate: applicationDetails.createdDate,
           receiptNo: this.props.recNumber,
           custGSTN: applicationDetails.bkCustomerGstNo,
           mcGSTN: this.state.mcGSTN,
@@ -1806,6 +1891,7 @@ else{
           rBankName: applicationDetails.bkBankName,
           rBankACNo: applicationDetails.bkBankAccountNumber,
           rIFSCCode: applicationDetails.bkIfscCode,
+          nomName: applicationDetails.bkNomineeName,
         },
     }
 ]
@@ -1861,10 +1947,11 @@ else{
         totalgst: PACC_TAX,
         refundableCharges: this.props.REFUNDABLE_SECURITY,
         totalPayment: this.props.totalAmount,
-        paymentDate: convertEpochToDate(
-          this.props.offlineTransactionDate,
-          "dayend"
-        ),
+        // paymentDate: convertEpochToDate(
+        //   this.props.offlineTransactionDate,
+        //   "dayend"
+        // ),
+        paymentDate: applicationDetails.createdDate,
         receiptNo: this.props.recNumber,
         cardNumberLast4: "Not Applicable",
         dateVenueChangeCharges:
@@ -1892,6 +1979,7 @@ else{
         rBankName: applicationDetails.bkBankName,
         rBankACNo: applicationDetails.bkBankAccountNumber,
         rIFSCCode: applicationDetails.bkIfscCode,
+        nomName: applicationDetails.bkNomineeName,
       },
     },
   ];
