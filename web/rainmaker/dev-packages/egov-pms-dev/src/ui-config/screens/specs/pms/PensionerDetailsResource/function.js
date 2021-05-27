@@ -1,7 +1,7 @@
 
 import get from "lodash/get";
 import {prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getSearchPensionerForPensionRevision,getSearchPensioner,updatePensionerDetails } from "../../../../../ui-utils/commons";
+import { getSearchPensionerForPensionRevision,getSearchPensioner,updatePensionerDetails,validateFeildsupdatePensioner } from "../../../../../ui-utils/commons";
 import { convertEpochToDate, convertDateToEpoch,epochToYmd } from "../../utils/index";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { validateFields, getTextToLocalMapping } from "../../utils";
@@ -117,8 +117,11 @@ export const createUpdatePensionerdata = async (state, dispatch) => {
         ));
         return
       } 
+let Isvalid = true //validateFeildsupdatePensioner()
 
-      
+      if(Isvalid)
+
+      {
         const response_ = await updatePensionerDetails(state,dispatch);
         if(response_)
         {
@@ -131,22 +134,33 @@ export const createUpdatePensionerdata = async (state, dispatch) => {
           dispatch(toggleSnackbar(true, errorMessage, "success"));
         }
       }
-      const response_ = await updatePensionerDetails(state,dispatch);
-      if(response_)
+      else
       {
-        console.log(response_)
         let errorMessage = {
           labelName:
-            "Pensioner details save successfully!",
-          labelKey: "PENSION_SUCCESS_UPDATE_PENSIONER_DETAILS_MESSAGE"
+            "Please fill all mandatory fields for Pension  Details, then save !",
+          labelKey: "PENSION_ERR_FILL_PENSION_MANDATORY_FIELDS"
         };
-        dispatch(toggleSnackbar(true, errorMessage, "success"));
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+
       }
+      }
+      // const response_ = await updatePensionerDetails(state,dispatch);
+      // if(response_)
+      // {
+      //   console.log(response_)
+      //   let errorMessage = {
+      //     labelName:
+      //       "Pensioner details save successfully!",
+      //     labelKey: "PENSION_SUCCESS_UPDATE_PENSIONER_DETAILS_MESSAGE"
+      //   };
+      //   dispatch(toggleSnackbar(true, errorMessage, "success"));
+      // }
     }
     else{
       let errorMessage = {
         labelName:
-          "Please fill all mandatory fields for Pension  Details, then do next !",
+          "Please fill all mandatory fields for Pension  Details, then save !",
         labelKey: "PENSION_ERR_FILL_PENSION_MANDATORY_FIELDS"
       };
       dispatch(toggleSnackbar(true, errorMessage, "warning"));

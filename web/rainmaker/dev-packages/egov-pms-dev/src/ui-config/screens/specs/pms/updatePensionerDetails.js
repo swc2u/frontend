@@ -11,7 +11,7 @@ import {
   getBreak,
   getCommonApplyFooter
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { getPensionerDetails } from "../../../../ui-utils/commons";
+import { getPensionerDetails, findAndReplace } from "../../../../ui-utils/commons";
 import { PensionerDetails,PensionerBankDetails,PensionerClaimantDetails} from "./PensionerDetailsResource/RevisionApplication"
 import { footer} from "./PensionerDetailsResource/footer"
 
@@ -56,7 +56,9 @@ export const getMdmsData = async (action, state, dispatch) => {
           {
             name:"relationships"
           },
-          
+          {
+            name:"BankDetails"
+          },
           
         ] }
       ]
@@ -115,8 +117,11 @@ export const prepareEditFlow = async (
     //   value: tenantId
     // });
      
-    const response_ = await getPensionerDetails(queryObject);
-    dispatch(prepareFinalObject("PensionerDetails", get(response_, "PensionerDetails", [])));
+    let response_ = await getPensionerDetails(queryObject);
+    response_ = findAndReplace(response_.PensionerDetails, "NA", null)
+    set(response_,'gender',response_.gender.toUpperCase())
+    ///dispatch(prepareFinalObject("PensionerDetails", get(response_, "PensionerDetails", [])));
+    dispatch(prepareFinalObject("PensionerDetails", response_));
     
     // dispatch(prepareFinalObject("pensionRevisionTemp", response.ProcessInstances[0].pensionRevision, []));
 
