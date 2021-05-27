@@ -687,8 +687,8 @@ downloadPermissionButton = async (e) => {
           applicationNumber={AppNum}
           ReceiptNumber={RecNumber} 
         />
-        <div className="responsive-action-button-cont">
-		    <div className="responsive-action-button-cont">
+         <div className="responsive-action-button-cont" >
+		    <div className="responsive-action-button-cont" style={{minWidth : "fit-content"}}>
           <Button
             className="responsive-action-button"
             primary={true}
