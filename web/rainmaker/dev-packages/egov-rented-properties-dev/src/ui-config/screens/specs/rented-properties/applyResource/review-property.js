@@ -720,7 +720,7 @@ const downloadReceipt = async (data, preparedObject,properties) => {
         let {
             Payments
           } = payloadReceiptDetails;
-
+let paymentmode=Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_NEFT" ? "DIRECT BANK" :Payments[0].paymentMode
         if (oldFileStoreId) {
           downloadReceiptFromFilestoreID(oldFileStoreId, "download")
         }
@@ -739,7 +739,8 @@ const downloadReceipt = async (data, preparedObject,properties) => {
                 time = moment(new Date(time)).format("h:mm:ss a")
               }
               Payments = [{
-                ...Payments[0],paymentDetails:[{
+                ...Payments[0],paymentMode:paymentmode,
+                paymentDetails:[{
                   ...Payments[0].paymentDetails[0],auditDetails:{
                     ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
                   }
