@@ -2602,3 +2602,105 @@ if(downloadtype ==='generateBillFile')
     }
   
   }
+  export const getTextToLocalMappingCode = (label) => {
+    const localisationLabels = getTransformedLocalStorgaeLabels();
+    switch (label) {
+      case "Consumer No":
+        return getLocaleLabels(
+          "Consumer No",
+          "WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL",
+          localisationLabels
+        );
+      case "Application No":
+        return getLocaleLabels(
+          "Application No",
+          "WS_COMMON_TABLE_COL_APP_NO_LABEL",
+          localisationLabels
+        );
+      case "Application Type":
+        return getLocaleLabels(
+          "Application Type",
+          "WS_COMMON_TABLE_COL_APP_TYPE_LABEL",
+          localisationLabels
+        );
+      case "Owner Name":
+        return getLocaleLabels(
+          "Owner Name",
+          "WS_COMMON_TABLE_COL_OWN_NAME_LABEL",
+          localisationLabels
+        );
+      case "Application Status":
+        return getLocaleLabels(
+          "Application Status",
+          "WS_COMMON_TABLE_COL_APPLICATION_STATUS_LABEL",
+          localisationLabels
+        );
+      case "Address":
+        return getLocaleLabels(
+          "Address",
+          "WS_COMMON_TABLE_COL_ADDRESS",
+          localisationLabels
+        );
+      case "tenantId":
+        return getLocaleLabels(
+          "tenantId",
+          "WS_COMMON_TABLE_COL_TENANTID_LABEL",
+          localisationLabels
+        );
+      case "service":
+        return getLocaleLabels(
+          "service",
+          "WS_COMMON_TABLE_COL_SERVICE_LABEL",
+          localisationLabels
+        );
+      case "connectionType":
+        return getLocaleLabels(
+          "connectionType",
+          "WS_COMMON_TABLE_COL_CONNECTIONTYPE_LABEL",
+          localisationLabels
+        );
+        case "Status":
+          return getLocaleLabels(
+            "Status",
+            "WS_COMMON_TABLE_COL_STATUS_LABEL",
+            localisationLabels
+          );
+        case "Due":
+          return getLocaleLabels(
+            "Due",
+            "WS_COMMON_TABLE_COL_DUE_LABEL",
+            localisationLabels
+          );
+          case "Due Date":
+            return getLocaleLabels(
+              "Due Date",
+              "WS_COMMON_TABLE_COL_DUE_DATE_LABEL",
+              localisationLabels
+            );
+          case "Action":
+            return getLocaleLabels(
+              "Action",
+              "WS_COMMON_TABLE_COL_ACTION_LABEL",
+              localisationLabels
+            );
+            case "ActionType":
+              return getLocaleLabels(
+                "ActionType",
+                "Action Type",
+                localisationLabels
+              );
+              case"billGenerationId":
+              return getLocaleLabels(
+                "billGenerationId",
+                "billGenerationId",
+                localisationLabels
+              );
+  
+      case "Search Results for Water & Sewerage Application":
+        return getLocaleLabels(
+          "Search Results for Water & Sewerage Application",
+          "WS_HOME_SEARCH_APPLICATION_RESULTS_TABLE_HEADING",
+          localisationLabels
+        );
+    }
+  };

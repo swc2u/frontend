@@ -178,12 +178,20 @@ const getLabelForWnsHeader = () => {
   else if( process.env.REACT_APP_NAME === "Citizen")
   {
     const wnsHeader_ =  window.localStorage.getItem("wns_workflow");
-    if(wnsHeader_)
+    const applicationNo = getQueryArg(window.location.href, "applicationNumber");
+    let tenantId = getQueryArg(window.location.href, "tenantId");
+    if(applicationNo && tenantId)
     {
-      return `${wnsHeader_}_DETAIL_HEADER`;
+      if(wnsHeader_)
+      {
+        return `${wnsHeader_}_DETAIL_HEADER`;
+      }
+      else   
+      return  "WS_APPLY_NEW_CONNECTION_HEADER"
     }
-    else   
+    else
     return  "WS_APPLY_NEW_CONNECTION_HEADER"
+   
 
   }
     

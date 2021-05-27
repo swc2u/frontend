@@ -2,11 +2,12 @@ import { handleScreenConfigurationFieldChange as handleField, toggleSnackbar } f
 import { getUserInfo, getTenantIdCommon } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 import { fetchBill, findAndReplace, getSearchResults, getSearchResultsForSewerage, getWorkFlowData,getBillingEstimation } from "../../../../../ui-utils/commons";
-import { validateFields } from "../../utils";
+import { validateFields,getTextToLocalMapping,getTextToLocalMappingCode } from "../../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { convertDateToEpoch, convertEpochToDate, resetFieldsForApplication, resetFieldsForConnection } from "../../utils/index";
 import { httpRequest } from "../../../../../ui-utils";
-import { getTextToLocalMapping } from "./searchApplicationResults";
+//import { getTextToLocalMapping } from "./searchApplicationResults";
+//import { validateFields, getTextToLocalMapping } from "../../utils";
 import { set } from "lodash";
 export const searchApiCall = async (state, dispatch) => {
   showHideApplicationTable(false, dispatch);
@@ -469,19 +470,22 @@ const showHideApplicationTable = (booleanHideOrShow, dispatch) => {
 };
 
 const showConnectionResults = (connections, dispatch) => {
-  let data = connections.map(item => ({
-    [getTextToLocalMapping("service")]: item.service,
-    [getTextToLocalMapping("Consumer No")]: item.connectionNo,
-    [getTextToLocalMapping("Owner Name")]: item.name,
-    [getTextToLocalMapping("Status")]: item.status,
-    [getTextToLocalMapping("Due")]: item.due,
-    [getTextToLocalMapping("Address")]: item.address,
-    [getTextToLocalMapping("Due Date")]: (item.dueDate !== undefined && item.dueDate !== "NA") ? convertEpochToDate(item.dueDate) : item.dueDate,
-    [getTextToLocalMapping("tenantId")]: item.tenantId,
-    [getTextToLocalMapping("connectionType")]: item.connectionType,
-    [getTextToLocalMapping("billGenerationId")]: item.billGenerationId,
-    [getTextToLocalMapping("ConStatus")]: item.ConStatus
-  }));
+  let data = connections.map(item => {
+    return{
+      [getTextToLocalMappingCode("service")]: item.service,
+      [getTextToLocalMappingCode("Consumer No")]: item.connectionNo,
+      [getTextToLocalMappingCode("Owner Name")]: item.name,
+      [getTextToLocalMappingCode("Status")]: item.status,
+      [getTextToLocalMappingCode("Due")]: item.due,
+      [getTextToLocalMappingCode("Address")]: item.address,
+      [getTextToLocalMappingCode("Due Date")]: (item.dueDate !== undefined && item.dueDate !== "NA") ? convertEpochToDate(item.dueDate) : item.dueDate,
+      [getTextToLocalMappingCode("tenantId")]: item.tenantId,
+      [getTextToLocalMappingCode("connectionType")]: item.connectionType,
+      [getTextToLocalMappingCode("billGenerationId")]: item.billGenerationId,
+      [getTextToLocalMappingCode("ConStatus")]: item.ConStatus
+    }
+
+  });
   dispatch(handleField("search", "components.div.children.searchResults", "props.data", data));
   dispatch(handleField("search", "components.div.children.searchResults", "props.rows",
     connections.length
@@ -490,18 +494,31 @@ const showConnectionResults = (connections, dispatch) => {
 }
 
 const showApplicationResults = (connections, dispatch) => {
-  let data = connections.map(item => ({
-    [getTextToLocalMapping("Consumer No")]: item.connectionNo,
-    [getTextToLocalMapping("Application No")]: item.applicationNo,
-    [getTextToLocalMapping("Application Type")]: item.service === "WATER" ? "New Water Connection" : "New Sewerage Connection",
-    [getTextToLocalMapping("Owner Name")]: item.name,
-    [getTextToLocalMapping("Application Status")]: item.applicationStatus.split("_").join(" "),
-    [getTextToLocalMapping("Address")]: item.address,
-    [getTextToLocalMapping("tenantId")]: item.tenantId,
-    [getTextToLocalMapping("service")]: item.service,
-    [getTextToLocalMapping("connectionType")]: item.connectionType,
-    [getTextToLocalMapping("ActionType")]: item.ActionType,
-  }));
+  let data = connections.map(item => {
+    return{
+      [getTextToLocalMappingCode("Consumer No")]: item.connectionNo,
+    [getTextToLocalMappingCode("Application No")]: item.applicationNo,
+    [getTextToLocalMappingCode("Application Type")]: item.service === "WATER" ? "New Water Connection" : "New Sewerage Connection",
+    [getTextToLocalMappingCode("Owner Name")]: item.name,
+    [getTextToLocalMappingCode("Application Status")]: item.applicationStatus.split("_").join(" "),
+    [getTextToLocalMappingCode("Address")]: item.address,
+    [getTextToLocalMappingCode("tenantId")]: item.tenantId,
+    [getTextToLocalMappingCode("service")]: item.service,
+    [getTextToLocalMappingCode("connectionType")]: item.connectionType,
+    [getTextToLocalMappingCode("ActionType")]: item.ActionType,
+
+    }
+    // [getTextToLocalMapping("Consumer No")]: item.connectionNo,
+    // [getTextToLocalMapping("Application No")]: item.applicationNo,
+    // [getTextToLocalMapping("Application Type")]: item.service === "WATER" ? "New Water Connection" : "New Sewerage Connection",
+    // [getTextToLocalMapping("Owner Name")]: item.name,
+    // [getTextToLocalMapping("Application Status")]: item.applicationStatus.split("_").join(" "),
+    // [getTextToLocalMapping("Address")]: item.address,
+    // [getTextToLocalMapping("tenantId")]: item.tenantId,
+    // [getTextToLocalMapping("service")]: item.service,
+    // [getTextToLocalMapping("connectionType")]: item.connectionType,
+    // [getTextToLocalMapping("ActionType")]: item.ActionType,
+  });
   dispatch(handleField("search", "components.div.children.searchApplicationResults", "props.data", data));
   dispatch(handleField("search", "components.div.children.searchApplicationResults", "props.rows",
     connections.length
