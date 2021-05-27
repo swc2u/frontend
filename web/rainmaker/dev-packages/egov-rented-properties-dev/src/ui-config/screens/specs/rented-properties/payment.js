@@ -1,4 +1,4 @@
-import { getRentSummaryCard, getCommonApplyFooter } from "../utils";
+import { getRentSummaryCard, getCommonApplyFooter ,convertDateToEpoch} from "../utils";
 import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField, toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { get } from "lodash";
 const { getCommonHeader, getCommonCard, getCommonContainer, getTextField,getDateField,getSelectField,getPattern, getCommonGrayCard, getCommonTitle, getLabel } = require("egov-ui-framework/ui-config/screens/specs/utils");
@@ -215,7 +215,46 @@ const amountField = {
     }
   }
 }
-
+const transactiondate = {
+  label: {
+      labelName: "Date of Payment",
+      labelKey: "RP_DATE_TRANSACTION_LABEL"
+  },
+  placeholder: {
+      labelName: "Enter Date of Payment",
+      labelKey: "RP_DATE_TRANSACTION_PLACEHOLDER"
+  },
+  required: true,
+  visible:false,
+  errorMessage:"RP_ERR_TRANSACTION_DATE",
+  pattern: getPattern("Date"),
+  jsonPath: "paymentInfo.transactiondate",
+  props: {
+      inputProps: {
+          max: getTodaysDateInYMD()
+      }
+  }
+}
+const transactiondatefield = {
+  label: {
+      labelName: "Date of Payment",
+      labelKey: "RP_DATE_TRANSACTION_LABEL"
+  },
+  placeholder: {
+      labelName: "Enter Date of Payment",
+      labelKey: "RP_DATE_TRANSACTION_PLACEHOLDER"
+  },
+  required: true,
+  visible:false,
+  errorMessage:"RP_ERR_TRANSACTION_DATE",
+  pattern: getPattern("Date"),
+  jsonPath: "payment.transactiondate",
+  props: {
+      inputProps: {
+          max: getTodaysDateInYMD()
+      }
+  }
+}
 const bankNameField = {
   label: {
     labelName: "Bank Name",
@@ -364,6 +403,10 @@ const paymentMode = {
       label: "RP_PAYMENT_CHEQUE",
       value: "CHEQUE",
     },
+    {
+      label: "RP_PAYMENT_DIRECT_PAYMENT",
+      value: "OFFLINE_NEFT",
+    }
   ],
   gridDefination: {
     xs: 12,
@@ -377,9 +420,16 @@ const paymentMode = {
         screenName,
         `${commonPath}.bankName`,
         "visible",
-        action.value !== "CASH"
+        action.value !== "CASH" && action.value !== "OFFLINE_NEFT"
       )
     )
+    dispatch(handleField(
+      screenName,
+      `${commonPath}.transactiondate`,
+      "visible",
+      action.value === "OFFLINE_NEFT"
+    )
+  )
     dispatch(handleField(
         screenName,
         `${commonPath}.transactionNumber`,
@@ -394,7 +444,9 @@ const paymentMode = {
           "labelKey",
           action.value === "DD"
             ? "RP_DD_NUMBER_LABEL"
-            : "RP_CHEQUE_NUMBER_LABEL"
+            : action.value === "OFFLINE_NEFT"
+            ?"RP_DIRECT_BANK_LABEL"
+            :"RP_CHEQUE_NUMBER_LABEL"
         )
       );
       dispatch(
@@ -404,6 +456,8 @@ const paymentMode = {
           "labelKey",
           action.value === "DD"
             ? "RP_DD_NUMBER_PLACEHOLDER"
+            : action.value === "OFFLINE_NEFT"
+            ?"RP_DIRECT_BANK_PLACEHOLDER"
             : "RP_CHEQUE_NUMBER_PLACEHOLDER"
         )
       );
@@ -416,6 +470,7 @@ const paymentInfo = getCommonCard({
     type: getSelectField(paymentMode),
     amount: getTextField(amountField),
     bankName: getTextField(bankNameField),
+    transactiondate:getDateField(transactiondate),
     transactionNumber: getTextField(transactionNumberField),
   })
 })
@@ -451,6 +506,10 @@ const paymenttype = {
       label: "RP_PAYMENT_CHEQUE",
       value: "CHEQUE",
     },
+    {
+      label: "RP_PAYMENT_DIRECT_PAYMENT",
+      value: "OFFLINE_NEFT",
+    }
   ],
   gridDefination: {
     xs: 12,
@@ -464,9 +523,16 @@ const paymenttype = {
         screenName,
         `${commonPath}.bankName`,
         "visible",
-        action.value !== "CASH"
+        action.value !== "CASH" && action.value !== "OFFLINE_NEFT"
       )
     )
+    dispatch(handleField(
+      screenName,
+      `${commonPath}.transationdate`,
+      "visible",
+      action.value === "OFFLINE_NEFT"
+    )
+  )
     dispatch(handleField(
         screenName,
         `${commonPath}.transactionId`,
@@ -481,6 +547,8 @@ const paymenttype = {
           "labelKey",
           action.value === "DD"
             ? "RP_DD_NUMBER_LABEL"
+            : action.value === "OFFLINE_NEFT"
+            ?"RP_DIRECT_BANK_LABEL"
             : "RP_CHEQUE_NUMBER_LABEL"
         )
       );
@@ -491,6 +559,8 @@ const paymenttype = {
           "labelKey",
           action.value === "DD"
             ? "RP_DD_NUMBER_PLACEHOLDER"
+            : action.value === "OFFLINE_NEFT"
+            ?"RP_DIRECT_BANK_PLACEHOLDER"
             : "RP_CHEQUE_NUMBER_PLACEHOLDER"
         )
       );
@@ -645,6 +715,7 @@ export const applicationOfflinePaymentDetails = getCommonCard({
     mode: getSelectField(paymenttype),
     amount:getTextField(amount),
       bankName: getTextField(bankName),
+      transationdate:getDateField(transactiondatefield),
       transactionId: getTextField(transactionId)
   })
 })
@@ -716,6 +787,7 @@ const goToPayment = async (state, dispatch, type) => {
         id: propertyId || id,
         paymentAmount: paymentInfo.amount,
         transactionId: paymentInfo.transactionNumber,
+        transactionDate:convertDateToEpoch(paymentInfo.transactiondate),
         bankName: paymentInfo.bankName
       }]}
       payload = type === ONLINE ? payload : {
