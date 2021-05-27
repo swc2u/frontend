@@ -1183,6 +1183,12 @@ const parserFunction = (state) => {
         usageSubCategory = (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
 
     }
+    if(queryObject.waterProperty.usageCategory)
+    {
+        usageCategory = queryObject.waterProperty.usageCategory;
+
+    }
+
     let parsedObject = {
         roadCuttingArea: parseInt(queryObject.roadCuttingArea),
         meterInstallationDate: convertDateToEpoch(queryObject.meterInstallationDate),

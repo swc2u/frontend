@@ -213,7 +213,7 @@ import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField
 
         // }
 
-          dispatch(prepareFinalObject("applyScreen.property.address.plotNo", plotNo)); 
+         // dispatch(prepareFinalObject("applyScreen.property.address.plotNo", plotNo)); 
           dispatch(prepareFinalObject("applyScreen.property.address.doorNo", plotNo));         
         
       }
@@ -244,14 +244,23 @@ import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField
       
       }
     },
-    // streetName: getLabelWithValue(
-    //   {
-    //     labelKey: "WS_PROP_DETAIL_STREET_NAME"
-    //   },
-    //   {
-    //     jsonPath: "applyScreen.property.address.street"
-    //   }
-    // ),
+    plotNo: {
+      ...getTextField({
+        label: { labelKey: "WS_PROP_DETAIL_HOUSE_NAME_LABEL_INPUT" },
+        placeholder: { labelKey: "WS_PROP_DETAIL_HOUSE_NAME_LABEL_INPUT_PLACEHOLDER" },
+        required: false,  
+        props:{
+          disabled: IsEdit,
+        } ,    
+        gridDefination: { xs: 12, sm: 6 },
+       // errorMessage: "ERR_INVALID_BILLING_PERIOD",
+        jsonPath: "applyScreen.property.address.plotNo"
+      }),
+      beforeFieldChange: async (action, state, dispatch) => {
+      
+      }
+    },
+    
     streetName: {
       ...getTextField({
         label: { labelKey: "WS_PROP_DETAIL_STREET_NAME_INPUT" },

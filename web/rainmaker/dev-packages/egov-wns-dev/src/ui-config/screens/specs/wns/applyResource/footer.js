@@ -871,8 +871,10 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       let ownershipCategory= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", '' )
       if(ownershipCategory)
       {
+        let SingleOwnerDetailsCardPath =''
         if(ownershipCategory !=='INDIVIDUAL.MULTIPLEOWNERS')
         {
+          //SingleOwnerDetailsCardPath='components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items'
            isOwnershipsingleValid =  validateFields(
             "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items[0].item0.children.cardContent.children.viewFive.children",
             state,
@@ -902,8 +904,12 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
               "apply"
             )
           )
-          isMasterDetailsValid = false; 
-          isOwnershipsingleValid = false;
+          {
+            isMasterDetailsValid = false; 
+            isOwnershipsingleValid = false;
+
+          }
+
 
         }
       }

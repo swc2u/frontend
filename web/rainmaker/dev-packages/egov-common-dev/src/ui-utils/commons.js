@@ -586,7 +586,13 @@ export const download  = async ( state, dispatch, mode = "download") => {
    try {
      let keyvalue ='consolidatedreceipt'
      let KeytenantId =receiptQueryString[1].value
-     if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE' || businessServicewsbillreceipt ==='SW.ONE_TIME_FEE')
+     if(businessServicewsbillreceipt ==='' || businessServicewsbillreceipt === null)
+     {
+      businessServicewsbillreceipt =  getQueryArg(window.location.href, "consumerCode")
+     }
+     
+     //if()
+     if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE' || businessServicewsbillreceipt ==='SW.ONE_TIME_FEE' || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
        {
         keyvalue ='ws-bill-receipt' 
        }
@@ -607,7 +613,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
         KeytenantId =receiptQueryString[1].value.split('.')[0]
 
        }
-
+try{
      httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
        const queryStr = [
          { key: "key", value: keyvalue },
@@ -631,7 +637,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
           }         
         });
        }
-       else if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE'|| businessServicewsbillreceipt ==='SW.ONE_TIME_FEE')
+       else if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE'|| businessServicewsbillreceipt ==='SW.ONE_TIME_FEE'  || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
       
        {
          let paymentReceiptDate = 0;
@@ -662,6 +668,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
         //     queryObject
             
         // );
+        try{
         const wc_search = {
           GET: {
             URL: "/ws-services/wc/_search",
@@ -742,6 +749,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
             status:'Payment complete',
           }
         ]
+        
           httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { WSReceiptRequest: billGeneration_ }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
           .then(res => {
             res.filestoreIds[0]
@@ -753,11 +761,28 @@ export const download  = async ( state, dispatch, mode = "download") => {
               console.log("Error In Receipt Download");        
             }         
           });
+      
+       
                      
-          }else{
+          }
+          else{
             console.log("Error In Receipt Download");        
           }         
         });
+        //
+      }
+      catch(error)
+             {
+               dispatch(
+                 toggleSnackbar(
+                   true,
+                   { labelName: error.message, labelKey: error.message },
+                   "error"
+                 )
+               );
+               console.log(error)
+     
+             }
          }
          else if(applicationNumber.includes("SW"))
          {
@@ -879,6 +904,18 @@ export const download  = async ( state, dispatch, mode = "download") => {
        }
       
      })
+    }
+    catch(error)
+    {
+      dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: error.message, labelKey: error.message },
+          "error"
+        )
+      );
+      console.log(error)
+    }
    } catch (exception) {
      alert('Some Error Occured while downloading Receipt!');
    }
@@ -913,7 +950,13 @@ export const download  = async ( state, dispatch, mode = "download") => {
    try {
      let keyvalue ='consolidatedreceipt'
      let KeytenantId =receiptQueryString[1].value
-     if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE' || businessServicewsbillreceipt ==='SW.ONE_TIME_FEE')
+     if(businessServicewsbillreceipt ==='' || businessServicewsbillreceipt === null)
+     {
+      businessServicewsbillreceipt =  getQueryArg(window.location.href, "consumerCode")
+     }
+     
+     //if()
+     if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE' || businessServicewsbillreceipt ==='SW.ONE_TIME_FEE' || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
        {
         keyvalue ='ws-bill-receipt' 
        }
@@ -958,8 +1001,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
           }         
         });
        }
-       else if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE'|| businessServicewsbillreceipt ==='SW.ONE_TIME_FEE')
-      
+       else  if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE' || businessServicewsbillreceipt ==='SW.ONE_TIME_FEE' || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
        {
          let paymentReceiptDate = 0;
          let paidAmount =0;

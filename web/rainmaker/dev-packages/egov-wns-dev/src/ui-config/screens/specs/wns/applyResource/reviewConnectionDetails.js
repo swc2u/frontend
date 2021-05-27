@@ -163,6 +163,17 @@ const propertyLocationDetails = {
           },
           { jsonPath: "applyScreenOld.property.address.buildingName", callBack: handleNA },
         ),
+        reviewplotNo: getLabelWithValueForModifiedLabel(
+          {
+            labelName: "House Name",
+            labelKey: "WS_PROP_DETAIL_HOUSE_NAME_LABEL_INPUT"
+          },
+          { jsonPath: "applyScreen.property.address.plotNo", callBack: handleNA },
+          {
+            labelKey: "WS_OLD_LABEL_NAME"
+          },
+          { jsonPath: "applyScreenOld.property.address.plotNo", callBack: handleNA }
+        ),
         reviewStreetName: getLabelWithValueForModifiedLabel(
           {
             labelName: "Street Name",
@@ -772,11 +783,11 @@ export const connectionHolderDetails={
     {
       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_MOBILE_NO_LABEL"
     },
-    { jsonPath: "applyScreen.connectionHolders[0].mobileNumber", callBack: handleNA },
+    { jsonPath: "applyScreen.property.owners[0].mobileNumber", callBack: handleNA },
     {
       labelKey: "WS_OLD_LABEL_NAME"
     },
-    { jsonPath: "applyScreenOld.connectionHolders[0].mobileNumber", callBack: handleNA }
+    { jsonPath: "applyScreen.property.owners[0].mobileNumber", callBack: handleNA }
     
   ),
   name: getLabelWithValueForModifiedLabel(
@@ -784,11 +795,11 @@ export const connectionHolderDetails={
       labelName: "Name",
       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_OWN_NAME_LABEL"
     },
-    { jsonPath: "applyScreen.connectionHolders[0].name", callBack: handleNA },
+    { jsonPath: "applyScreen.property.owners[0].name", callBack: handleNA },
     {
       labelKey: "WS_OLD_LABEL_NAME"
     },
-    { jsonPath: "applyScreenOld.connectionHolders[0].name", callBack: handleNA }
+    { jsonPath: "applyScreen.property.owners[0].name", callBack: handleNA }
     
   ),
   // gender: getLabelWithValueForModifiedLabel(
@@ -839,7 +850,7 @@ export const connectionHolderDetails={
       {
         labelKey: "WS_OWNER_DETAILS_EMAIL_LABEL"
       },
-      { jsonPath: "applyScreen.connectionHolders[0].emailId", callBack: handleNA },
+      { jsonPath: "applyScreen.property.owners[0].emailId", callBack: handleNA },
       // {
       //   labelKey: "WS_OLD_LABEL_NAME"
       // },
@@ -850,14 +861,14 @@ export const connectionHolderDetails={
       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_CROSADD"
     },
     {
-      jsonPath: "applyScreen.connectionHolders[0].correspondenceAddress",
+      jsonPath: "applyScreen.property.owners[0].correspondenceAddress",
       callBack: handleNA
     },
     {
       labelKey: "WS_OLD_LABEL_NAME"
     },
     {
-      jsonPath: "applyScreenOld.connectionHolders[0].correspondenceAddress",
+      jsonPath: "applyScreen.property.owners[0].correspondenceAddress",
       callBack: handleNA
     }
   ),
@@ -866,7 +877,7 @@ export const connectionHolderDetails={
       labelName: "aadhaarNumber",
       labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
     },
-    { jsonPath: "WaterConnection[0].connectionHolders[0].aadhaarNumber", callBack: handleNA }
+    { jsonPath: "applyScreen.property.owners[0].aadhaarNumber", callBack: handleNA }
   ),
   // specialApplicantCategory: getLabelWithValueForModifiedLabel(
   //   {
@@ -898,7 +909,8 @@ const connHolderDetailsSummary = () => {
       }),
       items: [],
       hasAddItem: false,
-      sourceJsonPath: "applyScreen.connectionHolders",
+      isReviewPage: true,
+      sourceJsonPath: "applyScreen.property.owners",
       prefixSourceJsonPath: "children.cardContent.children.connHoldDetail.children",
       afterPrefixJsonPath: "children.value.children.key"
     },

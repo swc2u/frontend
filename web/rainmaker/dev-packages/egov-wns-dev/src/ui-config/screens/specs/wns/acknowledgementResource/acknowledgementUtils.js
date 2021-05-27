@@ -8,7 +8,8 @@ import {
 const style = {
   bodyBox: {
     marginLeft: 16,
-    flex: 2
+    flex: 2,
+    textAlign:"center"
   },
   tailText: {
     color: "rgba(0, 0, 0, 0.6000000238418579)",
@@ -20,7 +21,7 @@ const style = {
     fontWeight: 500
   },
   tailBox: {
-    textAlign: "right",
+    textAlign: "center",
     justifyContent: "center",
     flex: 1
   },
