@@ -1188,10 +1188,11 @@ gateWay = payloadGateWay.Transaction[0].gateway;
           totalgst: PACC_TAX,
           refundableCharges: this.props.REFUNDABLE_SECURITY,
           totalPayment: amountTodisplay,
-          paymentDate: convertEpochToDate(
-            this.props.offlineTransactionDate,
-            "dayend"
-          ),
+          // paymentDate: convertEpochToDate(
+          //   this.props.offlineTransactionDate,
+          //   "dayend"
+          // ),
+          paymentDate: applicationDetails.createdDate,
           receiptNo: this.props.recNumber,
           paymentType: this.props.offlinePayementMode,
           facilitationCharge: FACILITATION_CHARGE,
@@ -1221,6 +1222,7 @@ gateWay = payloadGateWay.Transaction[0].gateway;
           rBankName: applicationDetails.bkBankName,
           rBankACNo: applicationDetails.bkBankAccountNumber,
           rIFSCCode: applicationDetails.bkIfscCode,
+          nomName: applicationDetails.bkNomineeName,
         },
 
     }
@@ -1284,10 +1286,11 @@ console.log("employeePaymentReceipt")
           totalgst: PACC_TAX,
           refundableCharges: this.props.REFUNDABLE_SECURITY,
           totalPayment: amountTodisplay,
-          paymentDate: convertEpochToDate(
-            this.props.offlineTransactionDate,
-            "dayend"
-          ),
+          // paymentDate: convertEpochToDate(
+          //   this.props.offlineTransactionDate,
+          //   "dayend"
+          // ),
+          paymentDate: applicationDetails.createdDate,
           receiptNo: this.props.recNumber,
           paymentType: this.props.offlinePayementMode,
           facilitationCharge: FACILITATION_CHARGE,
@@ -1322,6 +1325,7 @@ console.log("employeePaymentReceipt")
           rBankName: applicationDetails.bkBankName,
           rBankACNo: applicationDetails.bkBankAccountNumber,
           rIFSCCode: applicationDetails.bkIfscCode,
+          nomName: applicationDetails.bkNomineeName,
         },
       },
     ];
@@ -1782,10 +1786,11 @@ console.log("citizenPaymentReceipt")
           totalgst: PACC_TAX,
           refundableCharges: this.props.REFUNDABLE_SECURITY,
           totalPayment: this.props.totalAmount,
-          paymentDate: convertEpochToDate(
-            this.props.offlineTransactionDate,
-            "dayend"
-          ),
+          // paymentDate: convertEpochToDate(
+          //   this.props.offlineTransactionDate,
+          //   "dayend"
+          // ),
+          paymentDate: applicationDetails.createdDate,
           receiptNo: this.props.recNumber,
           custGSTN: applicationDetails.bkCustomerGstNo,
           mcGSTN: this.state.mcGSTN,
@@ -1809,6 +1814,7 @@ console.log("citizenPaymentReceipt")
           rBankName: applicationDetails.bkBankName,
           rBankACNo: applicationDetails.bkBankAccountNumber,
           rIFSCCode: applicationDetails.bkIfscCode,
+          nomName: applicationDetails.bkNomineeName,
         },
     }
 ]
@@ -1856,10 +1862,11 @@ else{
           totalgst: PACC_TAX,
           refundableCharges: this.props.REFUNDABLE_SECURITY,
           totalPayment: this.props.totalAmount,
-          paymentDate: convertEpochToDate(
-            this.props.offlineTransactionDate,
-            "dayend"
-          ),
+          // paymentDate: convertEpochToDate(
+          //   this.props.offlineTransactionDate,
+          //   "dayend"
+          // ),
+          paymentDate: applicationDetails.createdDate,
           receiptNo: this.props.recNumber,
           custGSTN: applicationDetails.bkCustomerGstNo,
           mcGSTN: this.state.mcGSTN,
@@ -1884,6 +1891,7 @@ else{
           rBankName: applicationDetails.bkBankName,
           rBankACNo: applicationDetails.bkBankAccountNumber,
           rIFSCCode: applicationDetails.bkIfscCode,
+          nomName: applicationDetails.bkNomineeName,
         },
     }
 ]
@@ -1939,10 +1947,11 @@ else{
         totalgst: PACC_TAX,
         refundableCharges: this.props.REFUNDABLE_SECURITY,
         totalPayment: this.props.totalAmount,
-        paymentDate: convertEpochToDate(
-          this.props.offlineTransactionDate,
-          "dayend"
-        ),
+        // paymentDate: convertEpochToDate(
+        //   this.props.offlineTransactionDate,
+        //   "dayend"
+        // ),
+        paymentDate: applicationDetails.createdDate,
         receiptNo: this.props.recNumber,
         cardNumberLast4: "Not Applicable",
         dateVenueChangeCharges:
@@ -1970,6 +1979,7 @@ else{
         rBankName: applicationDetails.bkBankName,
         rBankACNo: applicationDetails.bkBankAccountNumber,
         rIFSCCode: applicationDetails.bkIfscCode,
+        nomName: applicationDetails.bkNomineeName,
       },
     },
   ];

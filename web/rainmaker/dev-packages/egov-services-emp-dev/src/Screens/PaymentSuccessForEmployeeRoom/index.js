@@ -23,6 +23,7 @@ class CreateWBTApplicationSuccess extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			RoomCreateTime : '',
 	operatorCode : "",
   Address : "",
   hsnCode : "",
@@ -528,7 +529,8 @@ componentDidMount = async () => {
 	
 	  downloadPermissionLetterFunction = async (e) => {
 		const { downloadRoomPermissionLetter, userInfo,createPACCApplicationData,documentMap,CreateRoomApplication,BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF,four} = this.props;
-	
+	console.log("PropsInPLfunction",this.props,CreateRoomApplication)
+	console.log("CreateRoomApplication.data.roomsModel-In-Pl-fun",CreateRoomApplication.data.roomsModel)
 	
 		let totalACRoom = 0;
 		let totalNonAcRoom = 0;
@@ -538,19 +540,30 @@ componentDidMount = async () => {
 		let ApplicationNumber;
 		let discountForRoom;
 		let bookedrooms;  
+		let RoomCreateTime;
+
 		for(let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++){
+			FromDate = CreateRoomApplication.data.roomsModel[i].fromDate
+			console.log("FromDate-In-loop",FromDate)
+			ToDate = CreateRoomApplication.data.roomsModel[i].toDate
+			console.log("ToDate-In-loop",ToDate)
+			CreatedDate = CreateRoomApplication.data.roomsModel[i].createdDate
+			ApplicationNumber = CreateRoomApplication.data.roomsModel[i].roomApplicationNumber
+			discountForRoom = CreateRoomApplication.data.roomsModel[i].discount
+			
 		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "AC"){
 		  totalACRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms
-		  FromDate = CreateRoomApplication.data.roomsModel[i].fromDate
-		  ToDate = CreateRoomApplication.data.roomsModel[i].toDate
-		  CreatedDate = CreateRoomApplication.data.roomsModel[i].createdDate
-		  ApplicationNumber = CreateRoomApplication.data.roomsModel[i].roomApplicationNumber
-		  discountForRoom = CreateRoomApplication.data.roomsModel[i].discount
+		  RoomCreateTime = CreateRoomApplication.data.roomsModel[i].roomCreatedDate
 		}
 		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "NON-AC"){
 		  totalNonAcRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms	
+		  RoomCreateTime = CreateRoomApplication.data.roomsModel[i].roomCreatedDate
 		}
 		}
+    let strfromDate = FromDate.toString(); 
+	let numFromDate = Number(strfromDate)
+	let strtoDate = ToDate.toString();
+	let numToDate = Number(strtoDate) 
 	
 	if(totalACRoom !== 0 && totalNonAcRoom == 0){
 	  bookedrooms = `${totalACRoom} AC Room(s)` 
@@ -628,8 +641,8 @@ componentDidMount = async () => {
 				"bookingType":applicationDetails.bkBookingType,
 				 "applicationDate":createdDate,
 				"bookingPeriod": getDurationDate(
-				  applicationDetails.bkFromDate,
-				  applicationDetails.bkToDate
+					strfromDate,
+					strtoDate 
 				),
 				"applicationNumber":this.props.AppNum
 			},
@@ -646,14 +659,15 @@ componentDidMount = async () => {
 				"samparkaddress": this.state.Address
 			},
 			"paymentInfo": {
-			  "cleaningCharges": "Not Applicable",
+			  "cleaningCharges": "Not Applicable", 
 			  "baseCharge": BKROOM,
 			  "cgst": Newugst,
 			  "utgst": Newugst,
 			  "totalgst": BKROOM_TAX,
 			  "refundableCharges": "",
 			  "totalPayment": this.props.totalAmountPaid,
-			  "paymentDate": convertEpochToDate(this.props.transactionDate,"dayend"),
+			//   "paymentDate": convertEpochToDate(this.props.transactionDate,"dayend"), 
+			  "paymentDate": RoomCreateTime, 
 			  "receiptNo": this.props.ReceiptNumber,
 			  "currentDate": convertEpochToDate(toDayDate,"dayend"),
 			  "paymentType": this.props.paymentMode,
@@ -683,7 +697,8 @@ componentDidMount = async () => {
 			  "accountholderName": applicationDetails.bkBankAccountHolder,
 			  "rBankName": applicationDetails.bkBankName,
 			  "rBankACNo": applicationDetails.bkBankAccountNumber,
-			  "rIFSCCode": applicationDetails.bkIfscCode
+			  "rIFSCCode": applicationDetails.bkIfscCode,
+			  nomName: applicationDetails.bkNomineeName,
 		  }
 		}
 	]
@@ -748,6 +763,8 @@ componentDidMount = async () => {
 		let ApplicationNumber;
 		let discountForRoom;
 		let bookedrooms;
+		let RoomCreateTime;
+
 		for(let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++){
 		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "AC"){
 		  totalACRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms
@@ -756,9 +773,11 @@ componentDidMount = async () => {
 		  CreatedDate = CreateRoomApplication.data.roomsModel[i].createdDate
 		  ApplicationNumber = CreateRoomApplication.data.roomsModel[i].roomApplicationNumber
 		  discountForRoom = CreateRoomApplication.data.roomsModel[i].discount
+		  RoomCreateTime = CreateRoomApplication.data.roomsModel[i].roomCreatedDate
 		}
 		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "NON-AC"){
 		  totalNonAcRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms	//{"ResponseInfo":{"apiId":"Rainmaker","ver":".01","ts":"","action":"_search","did":"1","key":"","msgId":"20170310130900|en_IN","userInfo":{"id":182,"uuid":"28df855b-d5ff-43ff-bd13-fdf28875106b","userName":"e_sampark","name":"e_sampark Kumar","type":"EMPLOYEE","mobileNumber":"9811658211","emailId":"e_sampark@gmail.com","tenantId":"ch.chandigarh","roles":[{"id":null,"name":"Parks and Community Centre Offline Applier","code":"BK_E-SAMPARK-CENTER","tenantId":"ch.chandigarh"},{"id":null,"name":"Employee","code":"EMPLOYEE","tenantId":"ch.chandigarh"}]},"correlationId":"925ccbbe-b800-44af-a459-d8887ffba86c"},"message":"Success","filestoreIds":["3906bd13-e235-47b8-853e-8fb1cbe4ff60"],"jobid":"bk-room-booking-pl-emp1616087147289","createdtime":1616087147204,"endtime":1616087147715,"tenantid":"ch.chandigarh","totalcount":1}
+		  RoomCreateTime = CreateRoomApplication.data.roomsModel[i].roomCreatedDate
 		}
 		}
 	
@@ -852,7 +871,8 @@ componentDidMount = async () => {
 				"totalgst": BKROOM_TAX,
 				"refundableCharges": applicationDetails.bkRefundAmount,
 				"totalPayment": this.props.totalAmountPaid,
-				"paymentDate": convertEpochToDate(this.props.transactionDate,"dayend"),
+				// "paymentDate": convertEpochToDate(this.props.transactionDate,"dayend"),
+				"paymentDate": RoomCreateTime, 
 				"receiptNo": this.props.ReceiptNumber,
 				"currentDate": convertEpochToDate(toDayDate,"dayend"),
 				"paymentType": this.props.paymentMode,
@@ -882,7 +902,8 @@ componentDidMount = async () => {
 				"accountholderName": applicationDetails.bkBankAccountHolder,
 				"rBankName": applicationDetails.bkBankName,
 				"rBankACNo": applicationDetails.bkBankAccountNumber,
-				"rIFSCCode": applicationDetails.bkIfscCode
+				"rIFSCCode": applicationDetails.bkIfscCode,
+				nomName: applicationDetails.bkNomineeName,
 			}
 		}
 	]
@@ -896,9 +917,7 @@ componentDidMount = async () => {
 	console.log("this.props-in-paymentSuccessForEmp-",this.props)
 	console.log(RecNumber?RecNumber:"notfound","RecNumber")
 	console.log("AppNum--",AppNum?AppNum:"non")
-    //BK_MYBK_PCC_CREATE_APPLICATION_HEADER
-    // Park And Community Centre
-
+   
     console.log("InSuccessPage--",
     { labelName: "BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER-Value", labelKey: "BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER" },
     { labelName: "BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE--", labelKey: "BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE" },
@@ -909,7 +928,6 @@ componentDidMount = async () => {
       <Screen loading={loading}>
       <div className="success-message-main-screen resolve-success">
       <SuccessMessageForPayment
-        //   headermessage="Collection Details"
 		  headermessage={`Rooms Booking`}
           successmessage="Payment has been collected successfully!"
           secondaryLabel="A notification regarding Payment Collection has been sent to property owner at registered Mobile No."
