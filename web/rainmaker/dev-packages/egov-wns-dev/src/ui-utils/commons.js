@@ -6,7 +6,7 @@ import { getTenantId, getUserInfo, getTenantIdCommon } from "egov-ui-kit/utils/l
 import get from "lodash/get";
 import set from "lodash/set";
 import store from "redux/store";
-import { convertDateToEpoch, getCheckBoxJsonpath, getHygeneLevelJson, getLocalityHarmedJson, getSafetyNormsJson, getTranslatedLabel, ifUserRoleExists, updateDropDowns } from "../ui-config/screens/specs/utils";
+import { convertDateToEpoch,convertEpochToDate, getCheckBoxJsonpath, getHygeneLevelJson, getLocalityHarmedJson, getSafetyNormsJson, getTranslatedLabel, ifUserRoleExists, updateDropDowns } from "../ui-config/screens/specs/utils";
 import { httpRequest } from "./api";
 
 import cloneDeep from "lodash/cloneDeep";
@@ -950,6 +950,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
                 }
+                else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
@@ -961,6 +965,7 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                      || activityType === 'WS_DISCONNECTION'
                      || activityType === 'WS_TEMP_DISCONNECTION'
                      || activityType === 'WS_RENAME'
+                     || activityType ==='WS_METER_UPDATE'
                      || activityType === 'WS_CONVERSION'
                      || activityType === 'WS_REACTIVATE'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
@@ -1025,6 +1030,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 else if(activityType ==='PERMANENT_DISCONNECTION' || activityType ==='WS_DISCONNECTION')
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
+                }
+                else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
             }
             else if(applicationType ==='TEMPORARY'){
@@ -1174,6 +1183,13 @@ const parserFunction = (state) => {
         usageSubCategory = (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
 
     }
+    if(queryObject.sewerage ===undefined && queryObject.water === undefined  && queryObject.tubewell === undefined)
+    {
+        if (queryObject.waterProperty.usageCategory) {
+            usageCategory = queryObject.waterProperty.usageCategory;
+        }
+    }
+
     let parsedObject = {
         roadCuttingArea: parseInt(queryObject.roadCuttingArea),
         meterInstallationDate: convertDateToEpoch(queryObject.meterInstallationDate),
@@ -1526,6 +1542,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
                 }
+                else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
@@ -1537,6 +1557,7 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                      || activityType === 'WS_DISCONNECTION'
                      || activityType === 'WS_TEMP_DISCONNECTION'
                      || activityType === 'WS_RENAME'
+                     || activityType === 'WS_METER_UPDATE'
                      || activityType === 'WS_CONVERSION'
                      || activityType === 'WS_REACTIVATE'
                      || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
@@ -1598,6 +1619,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 else if(activityType ==='PERMANENT_DISCONNECTION' || activityType ==='WS_DISCONNECTION')
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
+                }
+                else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
             }
             else if(applicationType ==='TEMPORARY'){
@@ -1753,6 +1778,7 @@ export const applyForWater = async (state, dispatch) => {
                 case "CONNECTION_CONVERSION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "CONNECTION_CONVERSION")); break;
                 case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION")); break;
                 case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION")); break;
+                case "UPDATE_METER_INFO":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "UPDATE_METER_INFO")); break;
               }
               let activeStep = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.stepper.props.activeStep", 0);
               if(activeStep === 0)
@@ -1808,6 +1834,7 @@ export const applyForWater = async (state, dispatch) => {
                             "REACTIVATE_CONNECTION",
                             "CONNECTION_CONVERSION",
                             "TEMPORARY_DISCONNECTION",
+                            "UPDATE_METER_INFO",
                             "PERMANENT_DISCONNECTION"];
         if(btnName.includes(wnsStatus)){
             responseWater.WaterConnection[0].property = queryObjectForUpdate.property;
@@ -2753,7 +2780,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
     wnsConnection[0].tenantName = tenantName.toUpperCase();
     const appNo = wnsConnection[0].applicationNo;
 
-    let queryStr = [{ key: "tenantId", value: getTenantIdCommon().split('.')[0] }];
+    let queryStr = [{ key: "tenantId", value: getTenantIdCommon() !== null?getTenantIdCommon():getTenantId() }];
     let apiUrl, appService, estKey, queryObjectForEst
     if (wnsConnection[0].service === "WATER") {
 
@@ -2769,7 +2796,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
         appService = "ws-applicationwater";
         queryObjectForEst = [{
             applicationNo: appNo,
-            tenantId: getTenantIdCommon(),
+            tenantId: getTenantIdCommon() !== null?getTenantIdCommon():getTenantId(),
             waterConnection: wnsConnection[0]
         }]
 
@@ -2779,16 +2806,27 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
         //set usageCategory and subusageCategory from mdms call
         let usageCategory = GetMdmsNameBycode(state, "searchPreviewScreenMdmsData.PropertyTax.UsageType",wnsConnection[0].property.usageCategory) 
         let subusageCategory = GetMdmsNameBycode(state, "searchPreviewScreenMdmsData.PropertyTax.subUsageType",wnsConnection[0].property.subusageCategory) 
-
-        set( wnsConnection[0], `property.usageCategory`, usageCategory);
-        set( wnsConnection[0], `property.subusageCategory`, subusageCategory);
+        let lastModifiedTime = convertDateToEpoch(wnsConnection[0].auditDetails.lastModifiedTime)
+            set( wnsConnection[0], `property.usageCategory`, usageCategory);
+            set( wnsConnection[0], `property.subusageCategory`, subusageCategory);
+        let connectionExecutionDate = get( wnsConnection[0], `connectionExecutionDate`)
+        if(connectionExecutionDate!== null)
+        {            
+            connectionExecutionDate =convertDateToEpoch(connectionExecutionDate)
+            if(connectionExecutionDate>0)
+            set( wnsConnection[0], `connectionExecutionDate`, connectionExecutionDate);
+            else
+            set( wnsConnection[0], `connectionExecutionDate`, lastModifiedTime);
+        }
+        else{            
+            set( wnsConnection[0], `connectionExecutionDate`, lastModifiedTime);
+        }        
         queryObjectForEst = [{
             applicationNo: appNo,
-            tenantId: getTenantIdCommon(),
+            tenantId: getTenantIdCommon() !== null?getTenantIdCommon():getTenantId(),
             sewerageConnection: wnsConnection[0]
         }]
     }
-
     const DOWNLOADCONNECTIONDETAILS = {
         GET: {
             URL: "/pdf-service/v1/_create",
@@ -2884,9 +2922,12 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
                 obj = {
                     WaterConnection: wnsConnection
                 }
+               // wnsConnection[0].connectionExecutionDate = 
+                set( wnsConnection, `connectionExecutionDate`, convertEpochToDate(wnsConnection[0].connectionExecutionDate));
             } else {
+                set(wnsConnection[0], `connectionExecutionDate`, convertEpochToDate(wnsConnection[0].connectionExecutionDate));
                 obj = {
-                    SewerageConnection: wnsConnection
+                    SewerageConnection: wnsConnection[0]
                 }
             }
         }
@@ -2900,7 +2941,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
                         } else if (type === "estimateNotice") {
                             store.dispatch(prepareFinalObject("WaterConnection[0].additionalDetails.estimationFileStoreId", fileStoreId));
                         }
-                        downloadReceiptFromFilestoreID(fileStoreId, mode)
+                        downloadReceiptFromFilestoreID(fileStoreId, mode,getTenantIdCommon() !== null?getTenantIdCommon():getTenantId())
                     })
                 } else {
                     console.log("Error In Download");
@@ -3127,6 +3168,32 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
     //   );
     //   throw error;
     // }
+  };
+  export const getDataExchangeFile = async (queryObject , api,fromdate,todate) => {
+
+    try {
+      store.dispatch(toggleSpinner());
+      const response = await httpRequest(
+        "post",
+        api,     
+        "",
+        queryObject,
+        { billGeneration: {fromDate:fromdate,toDate:todate}}
+      );
+      store.dispatch(toggleSpinner());
+      return response;
+    } catch (error) {
+      store.dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: error.message, labelKey: error.message },
+          "error"
+        )
+      );
+      store.dispatch(toggleSpinner());
+     // throw error;
+    }
+  
   };
   export const generateBillFile = async (queryObject , api) => {
 

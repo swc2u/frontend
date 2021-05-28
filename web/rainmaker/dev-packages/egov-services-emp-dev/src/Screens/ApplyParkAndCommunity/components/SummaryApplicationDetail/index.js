@@ -5,6 +5,7 @@ import isEmpty from "lodash/isEmpty";
 import { connect } from "react-redux";
 import "./index.css";
 import EditIcon from '@material-ui/icons/Edit';
+import get from "lodash.get";
 class CGBookingDetails extends Component {
 
   render() {
@@ -13,8 +14,46 @@ class CGBookingDetails extends Component {
         PrintcGST,
         Printsurcharge,
        utgstRateOne,surchargeOne,fCharges,firstStep,
-      dimension, cleaningCharges, rent, purpose, bkLocation, myLocation, secondRate ,myLocationtwo,firstrent, cleanOne} = this.props;
+      dimension, cleaningCharges, rent, purpose, bkLocation, myLocation, secondRate ,myLocationtwo,firstrent, cleanOne,state} = this.props;
       console.log("propsInbookingSummaryPage--",this.props)
+
+      let summarRent = get(
+        state,
+        "screenConfiguration.preparedFinalObject.PaccDiscount.localRent",   
+        "NotFound"
+      );
+console.log("summarRent",summarRent)
+let strsummarRent
+if(summarRent !== "NotFound"){
+  strsummarRent = summarRent.toString();
+}
+console.log("strsummarRent",strsummarRent)
+      let summarutgst = get(
+        state,
+        "screenConfiguration.preparedFinalObject.PaccDiscount.localUTGST",   
+        "NotFound"
+      );
+let strsummarutgst
+      if(summarutgst !== "NotFound"){
+        strsummarutgst = summarutgst.toString();
+      }
+console.log("strsummarutgst",strsummarutgst)
+console.log("summarutgst",summarutgst)
+      let summarcgst = get(
+        state,
+        "screenConfiguration.preparedFinalObject.PaccDiscount.LocalGST",   
+        "NotFound"
+      );
+console.log("summarcgst",summarcgst)
+
+let strsummarcgst
+if(summarcgst !== "NotFound"){
+  strsummarcgst = summarcgst.toString();
+}
+console.log("strsummarcgst",strsummarcgst)
+
+
+
       if(PrintutGST2 != "notfound"){
         let UTGST = PrintutGST2
         console.log("UTGST--",UTGST)
@@ -79,7 +118,7 @@ return (
         <Card
           textChildren={
             <div>
-              <div className="rainmaker-displayInline">
+              <div className="rainmaker-displayInline" style={{display: "flex",justifyContent: "space-between"}}>
                 
                 <Label label="BK_MYBK_APPLICANTION_DETAILS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
              
@@ -171,7 +210,7 @@ return (
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
                                     labelStyle={{ color: "inherit" }}
-                                    label={secondRate}
+                                    label={strsummarRent}
                                 />
                             </div>
 
@@ -190,7 +229,7 @@ return (
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
                                     labelStyle={{ color: "inherit" }}                
-                                    label={printvandanaOne}
+                                    label={strsummarutgst}
          
                                 />
                             </div>
@@ -200,7 +239,7 @@ return (
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
                                     labelStyle={{ color: "inherit" }}
-                                    label={printvandanaTwo}
+                                    label={strsummarcgst}
                                 />
                             </div>
                             <div className="col-md-4">
@@ -298,7 +337,8 @@ const mapStateToProps = state => {
          utgstRateOne,
          surchargeOne,
          facilationChargesSuccess,
-         fCharges
+         fCharges,
+         state
     }
 
 }

@@ -480,14 +480,14 @@ class CustomTimeSlots extends Component {
 
                                                                     if (
                                                                         singleTimeDigit ===
-                                                                        "2"
+                                                                        "1"
                                                                     ) {
-                                                                        slot = 14;
+                                                                        slot = 13;
                                                                     } else if (
                                                                         singleTimeDigit ===
-                                                                        "6"
+                                                                        "5"
                                                                     ) {
-                                                                        slot = 18;
+                                                                        slot = 17;
                                                                     }
                                                                 }
                                                                 if (

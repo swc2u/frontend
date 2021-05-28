@@ -150,6 +150,14 @@ export const locationDetails={
     { jsonPath: "WaterConnection[0].property.address.buildingName",
     callBack: handleNA }
   ),
+  reviewplotNo: getLabelWithValue(
+    {
+      labelName: "House Name",
+      labelKey: "WS_PROP_DETAIL_HOUSE_NAME_LABEL_INPUT"
+    },
+    { jsonPath: "WaterConnection[0].property.address.plotNo",
+    callBack: handleNA }
+  ),
   reviewStreetName: getLabelWithValue(
     {
       labelName: "Street Name",

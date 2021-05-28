@@ -33,15 +33,16 @@ class WNSDashboardOne extends React.Component {
         graphClicked: -1,
         columnData: [],
         rowData: [],
+        unchangeColumnData : [],
+        checkData : []
     }
   }
 
 
     // PDF function 
-    pdfDownload = () => {
+    pdfDownload = (e) => {
 
-    debugger;
-
+    e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
     var rowData = this.state.rowData
@@ -100,7 +101,8 @@ class WNSDashboardOne extends React.Component {
     doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
 
     doc.setFontSize(10);
-    const pdfTitle = this.state.graphHardOneData.title ? this.state.graphHardOneData.title : "Title"
+    // const pdfTitle = this.state.graphHardOneData.title ? this.state.graphHardOneData.title : "Title"
+    const pdfTitle = "Title";
     doc.text(pdfTitle, pageWidth / 2, 40, 'center');
 
     doc.autoTable({ html: '#my-table' });
@@ -122,7 +124,8 @@ class WNSDashboardOne extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
+        e.preventDefault();
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -155,7 +158,7 @@ class WNSDashboardOne extends React.Component {
 
     // Toggle Column 
     toggleColumn = (e) => {
-        // e.preventDefault();
+        e.preventDefault();
         debugger;
         const data = this.state.columnData
         this.setState({
@@ -342,7 +345,8 @@ class WNSDashboardOne extends React.Component {
 
     componentDidMount(){
         debugger;
-        const dt = this.props.data;
+        // const dt = this.props.data;
+        const dt = this.props.data.length > 0  ? this.props.data[0] : [];
         // const propSortBy = "dashboardType1";
         // const propSortBy = "status";
         const data = dt.WaterConnection;
@@ -362,8 +366,10 @@ class WNSDashboardOne extends React.Component {
             var itemHeader = {}
             itemHeader["Header"] = this.camelize(tableData[i]);
             itemHeader["accessor"] = tableData[i];
-            itemHeader["show"]= (i === 1 || i === 3 || i === 4 || i === 5 ) ? true : false ;
-            columnData.push(itemHeader);
+            itemHeader["show"]= (i === 3 || i === 4 || i === 5 || i === 21 ) ? true : false ;
+            if(itemHeader.show === true){
+                columnData.push(itemHeader);    
+            }
         }
 
 
@@ -375,8 +381,58 @@ class WNSDashboardOne extends React.Component {
             // propSortBy: propSortBy,
             graphClicked: 0,
             columnData: columnData,
+            unchangeColumnData : columnData,
             rowData: data,
+            checkData : this.props.data
         })
+    }
+
+    componentDidUpdate(){
+
+        debugger;
+        // const dt = this.props.data;
+        var dataCheck = this.props.data;
+        const dt = this.props.data.length > 0  ? this.props.data[0] : [];
+        // const propSortBy = "dashboardType1";
+        // const propSortBy = "status";
+        const data = dt.WaterConnection;
+
+		if(JSON.stringify(this.state.checkData) !== JSON.stringify(dataCheck)){
+		const graphSort = this.graphSorting(["waterApplication","activityType"], data, "dashboard 1");
+        debugger;
+        var graphOneLabelSHOW = [];
+        for(var i=0; i<graphSort[0].length; i++){
+            var labl = graphSort[0][i].replaceAll("_", " ");
+            graphOneLabelSHOW.push(labl);
+        }
+
+
+        const tableData = data[0] ? Object.keys(data[0]) : [];
+        var columnData = []
+        for(var i=0; i<tableData.length; i++){
+            var itemHeader = {}
+            itemHeader["Header"] = this.camelize(tableData[i]);
+            itemHeader["accessor"] = tableData[i];
+            itemHeader["show"]= (i === 3 || i === 4 || i === 5 || i === 21 ) ? true : false ;
+            if(itemHeader.show === true){
+                columnData.push(itemHeader);    
+            }
+        }
+
+
+        this.setState({
+            dataOne: graphSort[2],
+            graphOneData: graphSort[1],
+            graphOneLabel : graphSort[0],
+            graphOneLabelSHOW: graphOneLabelSHOW,
+            // propSortBy: propSortBy,
+            graphClicked: 0,
+            columnData: columnData,
+            unchangeColumnData : columnData,
+            rowData: data,
+			checkData : this.props.data
+        })
+		}
     }
 
     render() {  
@@ -386,7 +442,7 @@ class WNSDashboardOne extends React.Component {
         // labels: ["Label1", "Label2", "Label3"],
         datasets: [
             {
-            label: "Apani Mandi",
+            label: "",
             fill: false,
             lineTension: 0.1,
             hoverBorderWidth : 12,
@@ -502,7 +558,7 @@ class WNSDashboardOne extends React.Component {
         // labels: ["Label1", "Label2", "Label3"],
         datasets: [
             {
-            label: "Apani Mandi",
+            label: "",
             fill: false,
             lineTension: 0.1,
             hoverBorderWidth : 12,
@@ -612,11 +668,11 @@ class WNSDashboardOne extends React.Component {
         labels: ["Sub Division 8", "Sub Division 9", "Sub Division 14", "Sub Division 15", "Sub Division 20"],
         datasets: [
             {
-            label: "Previous",
+            label: "Water Connection",
             fill: false,
             lineTension: 0.1,
             hoverBorderWidth : 12,
-            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            backgroundColor : ["#F77C15", "#F77C15", "#F77C15", "#F77C15", "#F77C15", "#F77C15", "#F77C15", "#F77C15"],
             borderColor: "rgba(75,192,192,0.4)",
             borderCapStyle: "butt",
             barPercentage: 2,
@@ -628,11 +684,11 @@ class WNSDashboardOne extends React.Component {
             // data:[10,20,30]
             },
             {
-            label: "New",
+            label: "New Water Connection",
             fill: false,
             lineTension: 0.1,
             hoverBorderWidth : 12,
-            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            backgroundColor : ["#385BC8", "#385BC8", "#385BC8", "#385BC8", "#385BC8", "#385BC8", "#385BC8", "#385BC8"],
             borderColor: "rgba(75,192,192,0.4)",
             borderCapStyle: "butt",
             barPercentage: 2,
@@ -684,7 +740,7 @@ class WNSDashboardOne extends React.Component {
                 },
                 scaleLabel: {
                     display: true,
-                    labelString: "Sub Division"
+                    labelString: "Sub Divisionwise Water Connection (Both New and Old)"
                     }, 
             }],
             yAxes: [{
@@ -723,16 +779,17 @@ class WNSDashboardOne extends React.Component {
                 var ind = element[0]._index;
                 var graphThreeLabel = ["8","9","14","15","20"]
                 const selectedVal = graphThreeLabel[ind];
-                
-                const graphSort = this.graphSorting("", this.state.dataThird[selectedVal], "dashboard 4");
-                debugger;
-                this.setState({
-                    dataFourth : graphSort[2],
-                    graphFourthData: graphSort[1],
-                    graphFourthLabel : graphSort[0],
-                    graphClicked: 3,
-                    rowData: this.state.dataThird[selectedVal]
-                })
+                if(this.state.dataThird[selectedVal]){
+                    const graphSort = this.graphSorting("", this.state.dataThird[selectedVal], "dashboard 4");
+                    debugger;
+                    this.setState({
+                        dataFourth : graphSort[2],
+                        graphFourthData: graphSort[1],
+                        graphFourthLabel : graphSort[0],
+                        graphClicked: 3,
+                        rowData: this.state.dataThird[selectedVal]
+                    })
+                }
             }
         },
     }
@@ -873,7 +930,7 @@ class WNSDashboardOne extends React.Component {
 
         </div>
 
-        <div className="graphDashboard">
+        <div className="graphDashboard" style={this.state.graphClicked <= 1 ? {display :"none"} :null}>
             {
                 this.state.graphClicked > 1 ?
                 <CardContent className="halfGraph">
@@ -903,33 +960,33 @@ class WNSDashboardOne extends React.Component {
         {/* Table Feature  */}
         <div className="tableContainer">
         {
-            // this.state.unchangeColumnData.length > 0  ? 
-            // <div className="tableFeature">
-            //     <div className="columnToggle-Text"> Download As: </div>
-            //     <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+            this.state.unchangeColumnData.length > 0  ? 
+            <div className="tableFeature">
+                <div className="columnToggle-Text"> Download As: </div>
+                <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
 
-            //     <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
-            // </div>
-            // :null
+                <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+            </div>
+            :null
         }
         {
-        //    this.state.toggleColumnCheck ?
-        //    <div className="columnVisibilityCard">
-        //     <dl>
-        //         {
-        //             this.state.unchangeColumnData.map((data, index)=>{
-        //                 return(
-        //                     <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
-        //                 )
-        //             })
-        //         }
-        //     </dl>
-        //     </div> 
-        //    : null
+           this.state.toggleColumnCheck ?
+           <div className="columnVisibilityCard">
+            <dl>
+                {
+                    this.state.unchangeColumnData.map((data, index)=>{
+                        return(
+                            <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
+                        )
+                    })
+                }
+            </dl>
+            </div> 
+           : null
         }
 
         {
-            // this.state.graphClicked >= 0 ?
+            this.state.graphClicked >= 0 ?
             <ReactTable id="customReactTable"
             // PaginationComponent={Pagination}
             data={ this.state.rowData }  
@@ -938,7 +995,7 @@ class WNSDashboardOne extends React.Component {
             pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
             pageSizeOptions = {[20,40,60]}  
             /> 
-            // :null
+            :null
         }
         </div>
         </div>

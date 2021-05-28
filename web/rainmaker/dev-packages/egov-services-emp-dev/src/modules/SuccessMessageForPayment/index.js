@@ -27,7 +27,7 @@ class SuccessMessage extends Component {
               paddingBottom: '15px'
             }}>
               <div class="row">
-                <div class="col-sm-1"> <FloatingActionButton className="floating-button" style={{ boxShadow: 0, marginTop: 15 }} backgroundColor={backgroundColor}>
+                <div class="col-sm-1 col-xs-12 iconClass"> <FloatingActionButton className="floating-button" style={{ boxShadow: 0, marginTop: 15 }} backgroundColor={backgroundColor}>
                   {icon}
                 </FloatingActionButton></div>
                 <div class="col-sm-7" >
@@ -69,6 +69,29 @@ class SuccessMessage extends Component {
               line-height: 35px;
               font-size: 16px;}
               .wt-app-details .spl-application-header .spl-app-header-number .label-container div{color:white}
+
+              @media screen and (min-width: 320px) and (max-width: 568px){
+                .iconClass{
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin: auto;
+                  margin-bottom: 10px;
+              }
+              
+              }
+              @media only screen and (max-width: 768px)
+                {
+
+                  .label-container .label-text {
+                    display: flex;
+                    justify-content: flex-start !important;
+                    align-items: center;
+                    overflow: visible;
+                    margin-bottom: 0px;
+                    line-height: normal !important
+                }
+                }
             `
         }
         </style>

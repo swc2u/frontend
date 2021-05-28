@@ -64,6 +64,7 @@ class TastStatusContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === "WS_METER_UPDATE" 
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE" 
         || moduleName === "WS_TUBEWELL"){

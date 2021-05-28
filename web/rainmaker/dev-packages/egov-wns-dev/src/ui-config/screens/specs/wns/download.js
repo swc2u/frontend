@@ -8,7 +8,7 @@ import {
   import set from "lodash/set";
   import { httpRequest } from "../../../../ui-utils";  
   import { searchResults } from "./downloadResourse/searchResults";
-  import { searchForm } from "./downloadResourse/searchForm";
+  import { searchForm ,DownloadDataExchangeFile} from "./downloadResourse/searchForm";
   import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import { getResults } from "../../../../ui-utils/commons"; 
@@ -38,7 +38,10 @@ import {
     labelKey: "WS_BILL_DOWNLOAD",
   });
 
-  
+  const DownloadDataExchangeFileheader = getCommonHeader({
+    labelName: "Bill Download",
+    labelKey: "WS_BILL_DOWNLOAD",
+  });
  
   const getdownloadList = async (action, state, dispatch) => {
     const tenantId = getTenantId();  
@@ -148,6 +151,8 @@ dispatch(prepareFinalObject("searchScreen",{}));
             },
           },
          searchForm,
+        // DownloadDataExchangeFileheader,
+         DownloadDataExchangeFile,
           breakAfterSearch: getBreak(),
           //searchResults,
         },

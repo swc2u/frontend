@@ -209,14 +209,8 @@ const callBackForBook = async (state, dispatch) => {
       labelKey: "",
     };
     dispatch(toggleSnackbar(true, warrningMsg, "warning"));
-  } else if(availabilityCheckData.bkBookingType==="Commercial Ground"){
-
-
-    dispatch(setRoute(`/egov-services/applycommercialground`));
-
-  }
+  } 
   else {
-
     let daysCount = calculateBetweenDaysCount(
         availabilityCheckData.bkFromDate,
         availabilityCheckData.bkToDate
@@ -270,7 +264,22 @@ console.log(alreadyBookedDaysCount, selectedDaysCount, "aNero from file");
         dispatch(toggleSnackbar(true, warrningMsg, "warning"));
 
 
-      } else {
+      }  else if(    convertDateInYMD(availabilityCheckData.bkFromDate) !==
+      oldAvailabilityCheckData.bkFromDate &&
+      convertDateInYMD(availabilityCheckData.bkToDate) !==
+      oldAvailabilityCheckData.bkToDate &&
+      availabilityCheckData.bkBookingVenue !==
+      oldAvailabilityCheckData.bkBookingVenue &&
+      (availabilityCheckData.bkApplicationStatus == "APPLIED" || availabilityCheckData.bkApplicationStatus == "RE_INITIATED")
+      ){
+        let warrningMsg = {
+          labelName: "You can either change dates or booking venue but not both",
+          labelKey: "",
+        };
+        dispatch(toggleSnackbar(true, warrningMsg, "warning"));
+
+
+      }else {
 
         let routeUrl
         const changeDateVenue = getQueryArg(
@@ -505,7 +514,7 @@ export const availabilityForm = getCommonCard({
         sourceJsonPath: "sectorJsonPath",
         jsonPath: "availabilityCheckData.bkSector",
         required: true,
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "Please check the missing/invalid fields, then proceed!",
         props: {
           className: "applicant-details-error",
           required: true,
@@ -673,7 +682,7 @@ export const availabilityForm = getCommonCard({
     //         // required: true,
     //         pattern: getPattern("Date"),
     //         jsonPath: "Booking.bkFromDate",
-    //         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+    //         errorMessage: "Please check the missing/invalid fields, then proceed!",
     //         props: {
     //             className: "applicant-details-error",
     //             inputProps: {
@@ -701,7 +710,7 @@ export const availabilityForm = getCommonCard({
     //         // required: true,
     //         pattern: getPattern("Date"),
     //         jsonPath: "Booking.bkToDate",
-    //         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+    //         errorMessage: "Please check the missing/invalid fields, then proceed!",
     //         props: {
     //             className: "applicant-details-error",
     //             inputProps: {

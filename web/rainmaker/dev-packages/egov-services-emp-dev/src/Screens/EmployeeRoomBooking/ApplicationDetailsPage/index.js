@@ -92,6 +92,7 @@ class ApplicationDetails extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			RoomCreateTime : '',
 			openMap: false,
 			docFileData: [],
 			bookingType: '',
@@ -151,7 +152,7 @@ const {userInfo} = this.props
          
         let fetchApplicationNumber = fetchUrl.substring(fetchUrl.lastIndexOf('/') + 1)
         console.log("fetchApplicationNumber--",fetchApplicationNumber)
-
+  
 		let mdmsBody = {
 			MdmsCriteria: {
 				tenantId: userInfo.tenantId,
@@ -299,23 +300,37 @@ let ToDate;
 let CreatedDate;
 let ApplicationNumber;
 let discountForRoom;
+let RoomCreateTime;
+
+let particularRoomData;
 	
 for(let i = 0; i < AllValues[0].roomsModel.length; i++){
-if(AllValues[0].roomsModel[i].typeOfRoom == "AC"){
-	totalACRoom = AllValues[0].roomsModel[i].totalNoOfRooms
-	FromDate = AllValues[0].roomsModel[i].fromDate
-	ToDate = AllValues[0].roomsModel[i].toDate
-	CreatedDate = AllValues[0].roomsModel[i].createdDate
-	ApplicationNumber = AllValues[0].roomsModel[i].roomApplicationNumber
-	discountForRoom = AllValues[0].roomsModel[i].discount
-}
-if(AllValues[0].roomsModel[i].typeOfRoom == "NON-AC"){
-	totalNonAcRoom = AllValues[0].roomsModel[i].totalNoOfRooms	
-}
+	if(AllValues[0].roomsModel[i].roomApplicationNumber == fetchApplicationNumber){
+		FromDate = AllValues[0].roomsModel[i].fromDate
+		ToDate = AllValues[0].roomsModel[i].toDate
+		CreatedDate = AllValues[0].roomsModel[i].createdDate
+		ApplicationNumber = AllValues[0].roomsModel[i].roomApplicationNumber
+		discountForRoom = AllValues[0].roomsModel[i].discount
+	
+	if(AllValues[0].roomsModel[i].typeOfRoom == "AC"){
+		totalACRoom = AllValues[0].roomsModel[i].totalNoOfRooms
+		RoomCreateTime = AllValues[0].roomsModel[i].roomCreatedDate
+	}
+	if(AllValues[0].roomsModel[i].typeOfRoom == "NON-AC"){
+		totalNonAcRoom = AllValues[0].roomsModel[i].totalNoOfRooms	
+		RoomCreateTime = AllValues[0].roomsModel[i].roomCreatedDate
+	}
+
+
+
+	}
+
+	
 }
 this.setState({
 	totalACRoom : totalACRoom,
 	totalNonAcRoom : totalNonAcRoom,
+	RoomCreateTime : RoomCreateTime,
 	FromDate : FromDate,
 	ToDate : ToDate,
 	CreatedDate : CreatedDate,
@@ -598,7 +613,7 @@ else{
 				"totalgst":this.state.BKROOM_TAX,
 				"refundableCharges": "",
 				"totalPayment": this.state.TotalPaidAmount,
-				"paymentDate": convertEpochToDate(this.state.PaymentDate, "dayend"),
+				"paymentDate": this.state.RoomCreateTime,
 				"receiptNo": this.state.receiptNumber,
 				"currentDate":   convertEpochToDate(date2, "dayend"),
 				"paymentType": this.state.PaymentMode,
@@ -608,7 +623,7 @@ else{
 				"bankName": "",
 				"transactionId":this.state.transactionNumber,
 				"totalPaymentInWords": this.NumInWords(
-					this.state.totalAmountPaid
+					this.state.TotalPaidAmount
 				),
 				"discType": this.state.AllValues[0].bkPlotSketch,
 				"cardNumberLast4": "Not Applicable",
@@ -628,7 +643,8 @@ else{
 				  "accountholderName": this.state.AllValues[0].bkBankAccountHolder,
 				  "rBankName": this.state.AllValues[0].bkBankName,
 				  "rBankACNo": this.state.AllValues[0].bkBankAccountNumber,
-				  "rIFSCCode": this.state.AllValues[0].bkIfscCode
+				  "rIFSCCode": this.state.AllValues[0].bkIfscCode,
+				  nomName: this.state.AllValues[0].bkNomineeName,
 			  }
 			}
 		]
@@ -877,8 +893,6 @@ downloadPermissionLetterButton = async (mode) => {
 			
 	}
 	},1500)
-	
-
 }
 
 downloadPermissionLetterFunction = async (e) => {
@@ -919,6 +933,12 @@ downloadPermissionLetterFunction = async (e) => {
 		var date2 = new Date();
 
 		var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+
+let numFromDate = Number(this.state.FromDate)
+console.log("numFromDate",numFromDate)
+let numToDate= Number(this.state.ToDate)
+console.log("numToDate",numToDate)
+
 
 		let BookingInfo = [
 			{
@@ -962,12 +982,13 @@ downloadPermissionLetterFunction = async (e) => {
 				"paymentInfo": {
 					"cleaningCharges": "Not Applicable",
 					"baseCharge": this.state.BKROOM,
-					"cgst": Newugst,
+					"cgst": Newugst, 
 					"utgst": Newugst,
 					"totalgst":this.state.BKROOM_TAX,
 					"refundableCharges": "Not Applicable",
 					"totalPayment": this.state.TotalPaidAmount,
-					"paymentDate": convertEpochToDate(this.state.PaymentDate, "dayend"),
+					// "paymentDate": convertEpochToDate(this.state.PaymentDate, "dayend"),
+					"paymentDate": this.state.RoomCreateTime,
 					"receiptNo": this.state.receiptNumber,
 					"currentDate":   convertEpochToDate(date2, "dayend"),
 					"paymentType": this.state.PaymentMode,
@@ -977,8 +998,8 @@ downloadPermissionLetterFunction = async (e) => {
 					"bankName": "",
 					"transactionId":this.state.transactionNumber,
 					"totalPaymentInWords": this.NumInWords(
-						this.state.totalAmountPaid
-					),
+						this.state.TotalPaidAmount
+					), 
 					"discType": this.state.AllValues[0].bkPlotSketch,
 					"cardNumberLast4": "Not Applicable",
 					"dateVenueChangeCharges": "Not Applicable"
@@ -997,7 +1018,8 @@ downloadPermissionLetterFunction = async (e) => {
 					"accountholderName": this.state.AllValues[0].bkBankAccountHolder,
 					"rBankName": this.state.AllValues[0].bkBankName,
 					"rBankACNo": this.state.AllValues[0].bkBankAccountNumber,
-					"rIFSCCode": this.state.AllValues[0].bkIfscCode
+					"rIFSCCode": this.state.AllValues[0].bkIfscCode,
+					nomName: this.state.AllValues[0].bkNomineeName,
 				}
 			}
 		]

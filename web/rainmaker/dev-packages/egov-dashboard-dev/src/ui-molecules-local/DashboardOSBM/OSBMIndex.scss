@@ -20,10 +20,10 @@
     border: 1px solid rgba(0,0,0,.15);
     border-radius: 4px;
     margin-left: 80%;
-}
-
-
-.columnToggleBtn{
+  }
+  
+  
+  .columnToggleBtn{
     margin-left: 10px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
@@ -49,9 +49,9 @@
     background-image: none;
     border: 1px solid rgba(204, 204, 204, 1);
     border-radius: 4px;
-}
-
-.columnToggle-Text{
+  }
+  
+  .columnToggle-Text{
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     color: rgba(51, 51, 51, 1);
@@ -76,16 +76,16 @@
     background-image: none;
     border: 1px solid  rgba(255,255,255,1);
     border-radius: 4px;
-}
-
-.tableFeature{
+  }
+  
+  .tableFeature{
     position: relative;
     margin-left: 60%;
     margin-bottom: 10px;
     margin-top: 10px;
-}
-
-.toggleBtn{
+  }
+  
+  .toggleBtn{
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     color: rgba(51, 51, 51, 1);
@@ -113,26 +113,26 @@
     /* margin: 10px; */
     /* padding: 10px; */
     border-radius: 4px;
-}
-
-.toggleBtnClicked{
+  }
+  
+  .toggleBtnClicked{
     border:none;
     background-color:  rgba(255,255,255,1);
     margin-bottom: 0;
     font-size: 14px;
     cursor: pointer;
-}
-
-.toggleBtn:hover {
+  }
+  
+  .toggleBtn:hover {
     background-color: rgba(204, 204, 204, 1);
-}
-
-.clickedlistItem{
+  }
+  
+  .clickedlistItem{
     padding: 0;
     margin: 0;
-}
-
-.tableContainer{
+  }
+  
+  .tableContainer{
     position: absolute;
     z-index: 1000;
     /* display: none; */
@@ -151,43 +151,49 @@
     /* -webkit-box-shadow: 0 6px 12px rgb(0 0 0 / 18%); */
     /* box-shadow: 0 6px 12px rgb(0 0 0 / 18%); */
     /* margin-left: 80%; */
-}
-
-/* Graph Dashboard Response try */
-
-.graphDashboard{
+  }
+  
+  /* Graph Dashboard Response try */
+  
+  .graphDashboard{
     display: flex;
     height: 500px
-}
-
-.halfGraph{
+  }
+  
+  .halfGraph{
     width: 50%; 
     border-style: ridge
-}
-
-@media only screen and (max-width: 500px) {
+  }
+  
+  .fullGraph{
+    width: 100%; 
+    border-style: ridge
+  }
+  
+  @media only screen and (max-width: 500px) {
     .graphDashboard {
     display: contents;
     height: 300px;
     width: 700px;
     padding: 0px 0px 0px 8px; 
     } 
-
+  
     .halfGraph{
     width: 100%; 
     height: 300px;
     border-style: ridge
     }
-
+  
     .tableContainer{
         display: contents; 
     }
-
+  
     .tableFeature{
         position: relative;
         margin-left: 10%;
         margin-bottom: 10px;
         margin-top: 10px;
     }
-}
-
+  }
+  
+  

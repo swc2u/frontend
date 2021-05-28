@@ -2,10 +2,13 @@ import { handleScreenConfigurationFieldChange as handleField, toggleSnackbar } f
 import { getUserInfo, getTenantIdCommon } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 import { fetchBill, findAndReplace, getSearchResults, getSearchResultsForSewerage, getWorkFlowData,getBillingEstimation } from "../../../../../ui-utils/commons";
-import { validateFields } from "../../utils";
+import { validateFields,getTextToLocalMapping,getTextToLocalMappingCode } from "../../utils";
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { convertDateToEpoch, convertEpochToDate, resetFieldsForApplication, resetFieldsForConnection } from "../../utils/index";
 import { httpRequest } from "../../../../../ui-utils";
-import { getTextToLocalMapping } from "./searchApplicationResults";
+//import { getTextToLocalMapping } from "./searchApplicationResults";
+//import { validateFields, getTextToLocalMapping } from "../../utils";
+import { set } from "lodash";
 export const searchApiCall = async (state, dispatch) => {
   showHideApplicationTable(false, dispatch);
   showHideConnectionTable(false, dispatch);
@@ -19,7 +22,75 @@ export const searchApiCall = async (state, dispatch) => {
     await renderSearchApplicationTable(state, dispatch);
   }
 }
+// export const findAndReplace = (obj, oldValue, newValue) => {
+//   Object.keys(obj).forEach(key => {
+//       if ((obj[key] instanceof Object) || (obj[key] instanceof Array)) findAndReplace(obj[key], oldValue, newValue)
+//       obj[key] = obj[key] === oldValue ? newValue : obj[key]
+//   })
+//   return obj
+// }
+export const deactivateConnection = async (state, dispatch) => {
 
+  try
+  {
+    
+    let queryObjectForUpdate = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0]");
+    queryObjectForUpdate = findAndReplace(queryObjectForUpdate, "NA", null);
+   if(!Number(queryObjectForUpdate.connectionExecutionDate) ||  queryObjectForUpdate.connectionExecutionDate !=='')
+   {
+     if(queryObjectForUpdate.connectionExecutionDate ==='1970-01-01')
+     {
+      set(queryObjectForUpdate, "connectionExecutionDate", 0);
+     }
+     else
+     {
+      set(queryObjectForUpdate, "connectionExecutionDate", convertDateToEpoch(queryObjectForUpdate.connectionExecutionDate));
+     }
+    
+   }
+   //INDIVIDUAL.SINGLEOWNER
+   set(queryObjectForUpdate, "connectionHolders[0].ownerType", "INDIVIDUAL.SINGLEOWNER");
+   set(queryObjectForUpdate, "status", "Inactive");
+  //  if(queryObjectForUpdate.connectionExecutionDate !== null )
+  //  set(queryObjectForUpdate, "connectionExecutionDate", queryObjectForUpdate.connectionExecutionDate);
+  //  else{
+  //   set(queryObjectForUpdate, "connectionExecutionDate", 0);
+  //  }
+   const payloadbillingPeriod = await httpRequest("post", "/ws-services/wc/_deactivateConnection", "", [], { WaterConnection: queryObjectForUpdate });
+   let errorMessage = {
+    labelName: "Connection deactivate successfully!",
+    labelKey: "WS_DEACTIVATE_SUCCESS"
+  };
+   dispatch(toggleSnackbar(true, errorMessage, "success"));
+      dispatch(
+        handleField(
+          "connection-details",
+          "components.div.children.connectionDetails.children.cardContent.children.button.children.buttonContainer.children.Deactivate",
+          {visible:false}
+        )
+      );
+  set(
+    state.screenConfiguration.screenConfig,
+    "components.div.children.connectionDetails.children.cardContent.children.button.children.buttonContainer.children.Deactivate.visible",
+    false
+  );
+let connectionNumber =getQueryArg(window.location.href, "connectionNumber")
+let tenantId =getQueryArg(window.location.href, "tenantId")
+let service =getQueryArg(window.location.href, "service")
+let connectionType =getQueryArg(window.location.href, "connectionType")
+  window.location.href = `connection-details?connectionNumber=${connectionNumber}&tenantId=${tenantId}&service=${service}&connectionType=${connectionType}&Active=${false}`
+  }
+  catch(error)
+        {
+          dispatch(
+            toggleSnackbar(
+              true,
+              { labelName: error.message, labelKey: error.message },
+              "error"
+            )
+          );
+        }
+}
 const renderSearchConnectionTable = async (state, dispatch) => {
   let queryObject = [{ key: "tenantId", value: getTenantIdCommon() }];
   let searchScreenObject = get(state.screenConfiguration.preparedFinalObject, "searchConnection", {});
@@ -155,7 +226,8 @@ const renderSearchConnectionTable = async (state, dispatch) => {
           let billResults = await getBillingEstimation(queryObjectForWaterFetchBill, dispatch)
           if(billResults !== undefined)
           {
-            billResults ? billResults.billGeneration.map(bill => {
+            if(billResults && billResults.billGeneration.length>0)
+            {
               let updatedDueDate = 0;
               // if (element.service === "WATER") {
               //   updatedDueDate = (element.connectionType === 'Metered' ?//
@@ -172,25 +244,36 @@ const renderSearchConnectionTable = async (state, dispatch) => {
                 connectionNo: element.connectionNo,
                 billGenerationId:bill.billGenerationId,
                 name: (element.property) ? element.property.owners[0].name : '',
-                status: element.status,
+                //status: element.status,
+                status: bill.status,                
                 address: handleAddress(element),
                 connectionType: element.connectionType,
                 tenantId: element.tenantId,
-                ActionType:element.activityType
+                ActionType:element.activityType,
+                ConStatus:element.status
               })
-            }) : finalArray.push({
-              due: 'NA',
-              dueDate: 'NA',
-              service: element.service,
-              connectionNo: element.connectionNo,
-              billGenerationId:bill.billGenerationId,
-              name: (element.property) ? element.property.owners[0].name : '',
-              status: element.status,
-              address: handleAddress(element),
-              connectionType: element.connectionType,
-              tenantId: element.tenantId,
-              ActionType:element.activityType
-            })
+            }
+            else
+            {
+              finalArray.push({
+                due: 'NA',
+                dueDate: 'NA',
+                service: element.service,
+                connectionNo: element.connectionNo,
+                billGenerationId:0,
+                name: (element.property) ? element.property.owners[0].name : '',
+                status: "NA",//element.status,
+                address: handleAddress(element),
+                connectionType: element.connectionType,
+                tenantId: element.tenantId,
+                ActionType:element.activityType,
+                ConStatus:element.status
+              })
+
+            }
+            // billResults && billResults.billGeneration.length>0 ? billResults.billGeneration.map(bill => {
+
+            // }) : 
 
           }
           else{
@@ -201,11 +284,12 @@ const renderSearchConnectionTable = async (state, dispatch) => {
               connectionNo: element.connectionNo,
               billGenerationId:0,
               name: (element.property) ? element.property.owners[0].name : '',
-              status: element.status,
+              status: "NA",              
               address: handleAddress(element),
               connectionType: element.connectionType,
               tenantId: element.tenantId,
-              ActionType:element.activityType
+              ActionType:element.activityType,
+              ConStatus:element.status
             })
           }
           
@@ -386,18 +470,22 @@ const showHideApplicationTable = (booleanHideOrShow, dispatch) => {
 };
 
 const showConnectionResults = (connections, dispatch) => {
-  let data = connections.map(item => ({
-    [getTextToLocalMapping("service")]: item.service,
-    [getTextToLocalMapping("Consumer No")]: item.connectionNo,
-    [getTextToLocalMapping("Owner Name")]: item.name,
-    [getTextToLocalMapping("Status")]: item.status,
-    [getTextToLocalMapping("Due")]: item.due,
-    [getTextToLocalMapping("Address")]: item.address,
-    [getTextToLocalMapping("Due Date")]: (item.dueDate !== undefined && item.dueDate !== "NA") ? convertEpochToDate(item.dueDate) : item.dueDate,
-    [getTextToLocalMapping("tenantId")]: item.tenantId,
-    [getTextToLocalMapping("connectionType")]: item.connectionType,
-    [getTextToLocalMapping("billGenerationId")]: item.billGenerationId
-  }));
+  let data = connections.map(item => {
+    return{
+      [getTextToLocalMappingCode("service")]: item.service,
+      [getTextToLocalMappingCode("Consumer No")]: item.connectionNo,
+      [getTextToLocalMappingCode("Owner Name")]: item.name,
+      [getTextToLocalMappingCode("Status")]: item.status,
+      [getTextToLocalMappingCode("Due")]: item.due,
+      [getTextToLocalMappingCode("Address")]: item.address,
+      [getTextToLocalMappingCode("Due Date")]: (item.dueDate !== undefined && item.dueDate !== "NA") ? convertEpochToDate(item.dueDate) : item.dueDate,
+      [getTextToLocalMappingCode("tenantId")]: item.tenantId,
+      [getTextToLocalMappingCode("connectionType")]: item.connectionType,
+      [getTextToLocalMappingCode("billGenerationId")]: item.billGenerationId,
+      [getTextToLocalMappingCode("ConStatus")]: item.ConStatus
+    }
+
+  });
   dispatch(handleField("search", "components.div.children.searchResults", "props.data", data));
   dispatch(handleField("search", "components.div.children.searchResults", "props.rows",
     connections.length
@@ -406,18 +494,31 @@ const showConnectionResults = (connections, dispatch) => {
 }
 
 const showApplicationResults = (connections, dispatch) => {
-  let data = connections.map(item => ({
-    [getTextToLocalMapping("Consumer No")]: item.connectionNo,
-    [getTextToLocalMapping("Application No")]: item.applicationNo,
-    [getTextToLocalMapping("Application Type")]: item.service === "WATER" ? "New Water Connection" : "New Sewerage Connection",
-    [getTextToLocalMapping("Owner Name")]: item.name,
-    [getTextToLocalMapping("Application Status")]: item.applicationStatus.split("_").join(" "),
-    [getTextToLocalMapping("Address")]: item.address,
-    [getTextToLocalMapping("tenantId")]: item.tenantId,
-    [getTextToLocalMapping("service")]: item.service,
-    [getTextToLocalMapping("connectionType")]: item.connectionType,
-    [getTextToLocalMapping("ActionType")]: item.ActionType,
-  }));
+  let data = connections.map(item => {
+    return{
+      [getTextToLocalMappingCode("Consumer No")]: item.connectionNo,
+    [getTextToLocalMappingCode("Application No")]: item.applicationNo,
+    [getTextToLocalMappingCode("Application Type")]: item.service === "WATER" ? "New Water Connection" : "New Sewerage Connection",
+    [getTextToLocalMappingCode("Owner Name")]: item.name,
+    [getTextToLocalMappingCode("Application Status")]: item.applicationStatus.split("_").join(" "),
+    [getTextToLocalMappingCode("Address")]: item.address,
+    [getTextToLocalMappingCode("tenantId")]: item.tenantId,
+    [getTextToLocalMappingCode("service")]: item.service,
+    [getTextToLocalMappingCode("connectionType")]: item.connectionType,
+    [getTextToLocalMappingCode("ActionType")]: item.ActionType,
+
+    }
+    // [getTextToLocalMapping("Consumer No")]: item.connectionNo,
+    // [getTextToLocalMapping("Application No")]: item.applicationNo,
+    // [getTextToLocalMapping("Application Type")]: item.service === "WATER" ? "New Water Connection" : "New Sewerage Connection",
+    // [getTextToLocalMapping("Owner Name")]: item.name,
+    // [getTextToLocalMapping("Application Status")]: item.applicationStatus.split("_").join(" "),
+    // [getTextToLocalMapping("Address")]: item.address,
+    // [getTextToLocalMapping("tenantId")]: item.tenantId,
+    // [getTextToLocalMapping("service")]: item.service,
+    // [getTextToLocalMapping("connectionType")]: item.connectionType,
+    // [getTextToLocalMapping("ActionType")]: item.ActionType,
+  });
   dispatch(handleField("search", "components.div.children.searchApplicationResults", "props.data", data));
   dispatch(handleField("search", "components.div.children.searchApplicationResults", "props.rows",
     connections.length

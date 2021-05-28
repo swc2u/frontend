@@ -108,6 +108,37 @@ const callBackForNext = async (state, dispatch) => {
             ""
         );
         if(response !== undefined){
+                 
+            if (response.data.timeslots && response.data.timeslots.length > 0) {
+                if (response.data.timeslots && response.data.timeslots.length > 1) {
+                    var [fromTime, toTimeOne] = response.data.timeslots[0].slot.split("-");
+                    var [fromTimeTwo, toTime] = response.data.timeslots[1].slot.split("-");
+
+                } else {
+
+                    var [fromTime, toTime] = response.data.timeslots[0].slot.split("-");
+
+                }
+
+                let DisplayPaccObject = {
+                    bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,
+                    bkDisplayToDateTime: response.data.bkToDate + "#" + toTime,
+                };
+                
+                if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+                    
+                    let d = new Date(new Date(response.data.bkToDate).setDate(new Date(response.data.bkToDate).getDate() + 1));
+                    DisplayPaccObject = {
+                        bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,  
+                        bkDisplayToDateTime: d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate() + "#" + toTime,
+                    };  
+                }
+                
+
+                dispatch(
+                    prepareFinalObject("DisplayTimeSlotData", DisplayPaccObject)
+                );
+            }
             let roomModel=  response.data.roomsModel
             let newRoomModel=   prepareRoomCard(roomModel)
             console.log('newRoomModel', newRoomModel)

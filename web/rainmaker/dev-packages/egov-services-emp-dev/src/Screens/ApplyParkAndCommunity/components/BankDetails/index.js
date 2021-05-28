@@ -105,7 +105,8 @@ e.preventDefault();
   };
 
   render() {
-    const { BankAccountName, NomineeName, BankAccountNumber, IFSCCode,AccountHolderName, handleChange,accountType,AccountType,classes,prepareFinalObject} = this.props;
+    const { BankAccountName, NomineeName, BankAccountNumber, IFSCCode,AccountHolderName, checkDateVenueChange,
+      handleChange,accountType,AccountType,classes,prepareFinalObject} = this.props;
     const hintTextStyle = {
       letterSpacing: "0.7px",
       textOverflow: "ellipsis",
@@ -117,11 +118,12 @@ e.preventDefault();
       <div style={{float: 'left', width: '100%', padding: '36px 15px' }}>
       <div className="col-xs-12" style={{background:'#fff', padding: '15px 0'}}>
      
-      <div className="col-sm-6 col-xs-6">       
+      <div className="col-sm-6 col-xs-12">       
           <TextField
             id="Bank Account Name"
             name="Bank Account Name"
             type="text"
+            disabled = {checkDateVenueChange == true ? true : false}
             value={BankAccountName}
             pattern="[A-Za-z]"
             required = {true}
@@ -148,11 +150,12 @@ e.preventDefault();
           />
         </div>
         
-        <div className="col-sm-6 col-xs-6">
+        <div className="col-sm-6 col-xs-12">
           <TextField
             id="Nominee Name"
             name="Nominee Name"
             type="string"
+            disabled = {checkDateVenueChange == true ? true : false}
             value={NomineeName}
             required = {true}
             hintText={
@@ -179,11 +182,12 @@ e.preventDefault();
         
         </div>
         
-        <div className="col-sm-6 col-xs-6">
+        <div className="col-sm-6 col-xs-12">
           <TextField
             id="Bank Account Number"
             name="Bank Account Number"
             type="text"
+            disabled = {checkDateVenueChange == true ? true : false}
             value={BankAccountNumber}
             required = {true}
             hintText={
@@ -211,11 +215,12 @@ e.preventDefault();
         
         </div>    
 
-        <div className="col-sm-6 col-xs-6">
+        <div className="col-sm-6 col-xs-12">
             <TextField
               id="IFSC Code"
               name="IFSC Code"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={IFSCCode}
               required = {true}
               hintText={
@@ -241,11 +246,12 @@ e.preventDefault();
             />
           </div>
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="Account Holder Name"
               name="Account Holder Name"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={AccountHolderName}
               required = {true}
               hintText={
@@ -276,8 +282,8 @@ e.preventDefault();
             <FormControl component="fieldset">  {/*label="BK_MYBK_BankAccount_Type"*/}
               <FormLabel component="legend"><Label label="Bank Account Type" /></FormLabel>
               <RadioGroup row aria-label="position" name="gender1"  value={accountType} onChange={AccountType}>
-                <FormControlLabel className={classes.cool} value="Saving" control={<Radio color="primary" />} label="Saving" />
-                <FormControlLabel className={classes.cool} value="Current"  control={<Radio color="primary" />} label="Current" />
+                <FormControlLabel className={classes.cool} value="Saving" disabled = {checkDateVenueChange == true ? true : false} control={<Radio color="primary" />} label="Saving" />
+                <FormControlLabel className={classes.cool} value="Current" disabled = {checkDateVenueChange == true ? true : false}  control={<Radio color="primary" />} label="Current" />
             </RadioGroup>
             </FormControl>         
           </div>

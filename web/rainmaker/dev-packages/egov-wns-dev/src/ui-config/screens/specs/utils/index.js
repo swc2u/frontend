@@ -13,7 +13,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import filter from "lodash/filter";
 import { httpRequest } from "../../../../ui-utils/api";
-import {generateBillFile} from "../../../../ui-utils/commons"
+import {generateBillFile, getDataExchangeFile} from "../../../../ui-utils/commons"
 import {
   prepareFinalObject,
   initScreen
@@ -1327,7 +1327,19 @@ export const getTodaysDateInYMD = () => {
   // date = epochToYmdDate(date);
   return date;
 };
-
+export const epochToYmd = et => {
+  // Return null if et already null
+  if (!et) return null;
+  // Return the same format if et is already a string (boundary case)
+  if (typeof et === "string") return et;
+  let date = new Date(et);
+  let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+  let month =
+    date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+  // date = `${date.getFullYear()}-${month}-${day}`;
+  var formatted_date = date.getFullYear() + "-" + month + "-" + day;
+  return formatted_date;
+};
 export const getNextMonthDateInYMD = () => {
   //For getting date of same day but of next month
   let date = getTodaysDateInYMD();
@@ -2244,6 +2256,30 @@ export const resetFieldsForApplication = (state, dispatch) => {
       ""
     )
   );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.sectorNo",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.groupNo",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "search",
+      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.plotNo",
+      "props.value",
+      ""
+    )
+  );
 };
 
 export const resetFieldsForConnection = (state, dispatch) => {
@@ -2519,22 +2555,41 @@ export const downloadReceiptFromFilestoreID=(fileStoreId,mode,tenantId)=>{
   // });
   
 }
-export const downloadAcknowledgementForm = async () => {
+export const downloadAcknowledgementForm = async ( state,dispatch,downloadtype,Fromdate,Todate) => {
   let tenantId =  getQueryArg(window.location.href, "tenantId");
-  let APIUrl =`ws-services/billGeneration/_generateBillFile`
+  let APIUrl =`ws-services/billGeneration/_${downloadtype}`  
+if(downloadtype ==='generateBillFile')
+{
+  APIUrl  =`ws-services/billGeneration/_generateBillFile`
+}
+
   let ApplicationNo ='';
   let queryObject = [
     
   ]
   
-    try {    
-      const response = await generateBillFile(queryObject,APIUrl);
-      if(response)
+    try {  
+      if(downloadtype ==='generateBillFile')  
       {
-        let filestoreId = response.billGenerationFile[0].billFileStoreId
-        let billFileStoreUrl = response.billGenerationFile[0].billFileStoreUrl
-        downloadReceiptFromFilestoreID(billFileStoreUrl,"download",tenantId)
+        const response = await generateBillFile(queryObject,APIUrl);
+        if(response)
+        {
+          let filestoreId = response.billGenerationFile[0].billFileStoreId
+          let billFileStoreUrl = response.billGenerationFile[0].billFileStoreUrl
+          downloadReceiptFromFilestoreID(billFileStoreUrl,"download",tenantId)
+        }
       }
+      else if(downloadtype ==='getDataExchangeFile'){
+        const response = await getDataExchangeFile(queryObject,APIUrl,Fromdate, Todate);
+        if(response)
+        {
+          let filestoreId = response.billGenerationFile[0].billFileStoreId
+          let billFileStoreUrl = response.billGenerationFile[0].billFileStoreUrl
+          downloadReceiptFromFilestoreID(billFileStoreUrl,"download",tenantId)
+        }
+      }
+     // const response = await generateBillFile(queryObject,APIUrl);
+      
      
     } catch (error) {
       dispatch(
@@ -2547,3 +2602,105 @@ export const downloadAcknowledgementForm = async () => {
     }
   
   }
+  export const getTextToLocalMappingCode = (label) => {
+    const localisationLabels = getTransformedLocalStorgaeLabels();
+    switch (label) {
+      case "Consumer No":
+        return getLocaleLabels(
+          "Consumer No",
+          "WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL",
+          localisationLabels
+        );
+      case "Application No":
+        return getLocaleLabels(
+          "Application No",
+          "WS_COMMON_TABLE_COL_APP_NO_LABEL",
+          localisationLabels
+        );
+      case "Application Type":
+        return getLocaleLabels(
+          "Application Type",
+          "WS_COMMON_TABLE_COL_APP_TYPE_LABEL",
+          localisationLabels
+        );
+      case "Owner Name":
+        return getLocaleLabels(
+          "Owner Name",
+          "WS_COMMON_TABLE_COL_OWN_NAME_LABEL",
+          localisationLabels
+        );
+      case "Application Status":
+        return getLocaleLabels(
+          "Application Status",
+          "WS_COMMON_TABLE_COL_APPLICATION_STATUS_LABEL",
+          localisationLabels
+        );
+      case "Address":
+        return getLocaleLabels(
+          "Address",
+          "WS_COMMON_TABLE_COL_ADDRESS",
+          localisationLabels
+        );
+      case "tenantId":
+        return getLocaleLabels(
+          "tenantId",
+          "WS_COMMON_TABLE_COL_TENANTID_LABEL",
+          localisationLabels
+        );
+      case "service":
+        return getLocaleLabels(
+          "service",
+          "WS_COMMON_TABLE_COL_SERVICE_LABEL",
+          localisationLabels
+        );
+      case "connectionType":
+        return getLocaleLabels(
+          "connectionType",
+          "WS_COMMON_TABLE_COL_CONNECTIONTYPE_LABEL",
+          localisationLabels
+        );
+        case "Status":
+          return getLocaleLabels(
+            "Status",
+            "WS_COMMON_TABLE_COL_STATUS_LABEL",
+            localisationLabels
+          );
+        case "Due":
+          return getLocaleLabels(
+            "Due",
+            "WS_COMMON_TABLE_COL_DUE_LABEL",
+            localisationLabels
+          );
+          case "Due Date":
+            return getLocaleLabels(
+              "Due Date",
+              "WS_COMMON_TABLE_COL_DUE_DATE_LABEL",
+              localisationLabels
+            );
+          case "Action":
+            return getLocaleLabels(
+              "Action",
+              "WS_COMMON_TABLE_COL_ACTION_LABEL",
+              localisationLabels
+            );
+            case "ActionType":
+              return getLocaleLabels(
+                "ActionType",
+                "Action Type",
+                localisationLabels
+              );
+              case"billGenerationId":
+              return getLocaleLabels(
+                "billGenerationId",
+                "billGenerationId",
+                localisationLabels
+              );
+  
+      case "Search Results for Water & Sewerage Application":
+        return getLocaleLabels(
+          "Search Results for Water & Sewerage Application",
+          "WS_HOME_SEARCH_APPLICATION_RESULTS_TABLE_HEADING",
+          localisationLabels
+        );
+    }
+  };

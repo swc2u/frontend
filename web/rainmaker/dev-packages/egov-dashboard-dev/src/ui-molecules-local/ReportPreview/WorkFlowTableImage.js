@@ -1,5 +1,5 @@
 import React, { Component }  from "react";
-// import ImageViewer from "react-simple-image-viewer";
+import ImageViewer from "react-simple-image-viewer";
 import './index.css';
 
 

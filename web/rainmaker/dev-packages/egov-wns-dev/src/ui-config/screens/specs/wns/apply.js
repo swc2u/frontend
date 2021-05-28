@@ -55,6 +55,17 @@ export const stepperData = () => {
   }
 }
 let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
+let IsEdit_Additional_Details = false
+const WNS_STATUS =  window.localStorage.getItem("wns_workflow");
+if(WNS_STATUS)
+{
+  if(WNS_STATUS ==='WS_METER_UPDATE')
+  {
+    IsEdit_Additional_Details = true
+
+  }
+
+}
 
 const displaysubUsageType = (usageType, dispatch, state) => {
 
@@ -129,6 +140,11 @@ const getLabelForWnsHeader = () => {
       header = 'WS_DISCONNECTION_DETAIL_HEADER'
 
     }
+    if(ActionType==='UPDATE_METER_INFO')
+    {
+      header = 'WS_UPDATE_METER_INFO_DETAIL_HEADER'
+
+    }
     if(ActionType==='REACTIVATE_CONNECTION')
     {
       header = 'WS_REACTIVATE_DETAIL_HEADER'
@@ -162,12 +178,20 @@ const getLabelForWnsHeader = () => {
   else if( process.env.REACT_APP_NAME === "Citizen")
   {
     const wnsHeader_ =  window.localStorage.getItem("wns_workflow");
-    if(wnsHeader_)
+    const applicationNo = getQueryArg(window.location.href, "applicationNumber");
+    let tenantId = getQueryArg(window.location.href, "tenantId");
+    if(applicationNo && tenantId)
     {
-      return `${wnsHeader_}_DETAIL_HEADER`;
+      if(wnsHeader_)
+      {
+        return `${wnsHeader_}_DETAIL_HEADER`;
+      }
+      else   
+      return  "WS_APPLY_NEW_CONNECTION_HEADER"
     }
-    else   
+    else
     return  "WS_APPLY_NEW_CONNECTION_HEADER"
+   
 
   }
     
@@ -472,7 +496,7 @@ export const getData = async (action, state, dispatch) => {
         payloadWater.WaterConnection[0].property.usageCategory = payloadWater.WaterConnection[0].property.usageCategory.split('.')[0];        
         payloadWater.WaterConnection[0].property.noOfFloors = String(payloadWater.WaterConnection[0].property.noOfFloors);
 
-        
+       // payloadWater.WaterConnection =  findAndReplace(payloadWater.WaterConnection, "NA", null)
         dispatch(prepareFinalObject("WaterConnection", payloadWater.WaterConnection));
        
         if(payloadWater && payloadWater.WaterConnection.length > 0){
@@ -496,6 +520,49 @@ export const getData = async (action, state, dispatch) => {
     const usageCategory_ = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].property.usageCategory");
     const waterApplicationType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplicationType");
     const activityType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType");
+    //set proposed meter inout for new WF UPDATE_METER_INFO
+    
+    if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE')
+    {
+      // set(
+      //   action.screenConfig,
+      //   "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+      //   "visible",
+      //   true
+      // );
+      IsEdit = true;
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+          "visible",
+          true
+        )
+      );
+
+    }
+    else{
+      IsEdit = false;
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+          "visible",
+          false
+        )
+      );
+      // set(
+      //   action.screenConfig,
+      //   "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+      //   "visible",
+      //   false
+      // );
+
+    }
+    if(usageCategory_!== null && waterApplicationType !== null )
+    {
+
+
     displaysubUsageType(usageCategory_, dispatch, state);
     displayUsagecategory(waterApplicationType, dispatch, state);
                 // check for security deposite for PENDING_FOR_SECURITY_DEPOSIT//PENDING_ROADCUT_NOC_BY_CITIZEN
@@ -570,6 +637,7 @@ export const getData = async (action, state, dispatch) => {
                     )
                   );
                 }
+      }
         }
       }
       const waterConnections = payloadWater ? payloadWater.WaterConnection : []
@@ -590,6 +658,8 @@ export const getData = async (action, state, dispatch) => {
        {  
          set(combinedArray[0],'sanctionedCapacity',pipeSize[0].SanctionCapacity)          
          set(combinedArray[0],'meterRentCode',pipeSize[0].MeterRentCode)
+         set(combinedArray[0],'proposedSanctionedCapacity',pipeSize[0].SanctionCapacity)          
+         set(combinedArray[0],'proposedMeterRentCode',pipeSize[0].MeterRentCode)
         dispatch(
           prepareFinalObject(
             "applyScreen.sanctionedCapacity",
@@ -602,13 +672,27 @@ export const getData = async (action, state, dispatch) => {
             pipeSize[0].MeterRentCode
           )
         )
+        dispatch(
+          prepareFinalObject(
+            "applyScreen.proposedSanctionedCapacity",
+            pipeSize[0].SanctionCapacity
+          )
+        )
+        dispatch(
+          prepareFinalObject(
+            "applyScreen.proposedMeterRentCode",
+            pipeSize[0].MeterRentCode
+          )
+        )
        }
       }
     }
       dispatch(prepareFinalObject("applyScreen", findAndReplace(combinedArray[0], "null", "NA")));
+      //dispatch(prepareFinalObject("applyScreen", combinedArray[0]));
       // For oldvalue display
       let oldcombinedArray = cloneDeep(combinedArray[0]);
-      dispatch(prepareFinalObject("applyScreenOld", findAndReplace(oldcombinedArray, "null", "NA")));
+     dispatch(prepareFinalObject("applyScreenOld", findAndReplace(oldcombinedArray, "null", "NA")));
+      //dispatch(prepareFinalObject("applyScreenOld", oldcombinedArray));
       if(combinedArray[0].connectionHolders && combinedArray[0].connectionHolders !== "NA"){
         combinedArray[0].connectionHolders[0].sameAsPropertyAddress = false;
         dispatch(prepareFinalObject("connectionHolders", combinedArray[0].connectionHolders));
@@ -650,6 +734,7 @@ export const getData = async (action, state, dispatch) => {
       dispatch(prepareFinalObject("connectionHolders[0].ownerType", combinedArray[0].property.owners[0].ownerType ==='NA'?'':combinedArray[0].property.owners[0].ownerType));
     
        // dispatch(prepareFinalObject("connectionHolders", combinedArray[0].connectionHolders));
+       
         dispatch(
           handleField(
             "apply",
@@ -683,6 +768,7 @@ export const getData = async (action, state, dispatch) => {
           );
 
         }
+
 
       }
       let data = get(state.screenConfiguration.preparedFinalObject, "applyScreen")
@@ -765,6 +851,18 @@ export const getData = async (action, state, dispatch) => {
           );
         }
       }
+      if(data.sewerage === true)
+      {
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+            "visible",
+            false
+          )
+        );
+
+      }
       let propId = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.propertyId")
       dispatch(prepareFinalObject("searchScreen.propertyIds", propId));
 
@@ -815,6 +913,19 @@ export const getData = async (action, state, dispatch) => {
       )
 
     }
+    // replace NA with null
+    dispatch(prepareFinalObject("applyScreen", findAndReplace(combinedArray[0], "NA", null)));
+    if(payloadWater!== undefined)
+    {
+      payloadWater.WaterConnection =  findAndReplace(payloadWater.WaterConnection, "NA", null)
+      dispatch(prepareFinalObject("WaterConnection", payloadWater.WaterConnection));
+    }
+   if(payloadSewerage!== undefined)
+   {
+    payloadSewerage.SewerageConnections =  findAndReplace(payloadSewerage.SewerageConnections, "NA", null)
+    dispatch(prepareFinalObject("SewerageConnection", payloadSewerage.SewerageConnections));
+   }
+    
     }
   } else if (propertyID) {
     let queryObject = [{ key: "tenantId", value: tenantId }, { key: "propertyIds", value: propertyID }];
@@ -859,6 +970,7 @@ const getApplyScreenChildren = () => {
     case "REACTIVATE_CONNECTION":
     case "TEMPORARY_DISCONNECTION":
     case "PERMANENT_DISCONNECTION":
+    case "UPDATE_METER_INFO" : 
        return {commentSectionDetails };  
     case "CONNECTION_CONVERSION":
     return {connConversionDetails};
@@ -1098,7 +1210,7 @@ export const formwizardThirdStep = {
   uiFramework: "custom-atoms",
   componentPath: "Form",
   props: { id: "apply_form3" },
-  children: { additionDetails },
+  children: {additionDetails:additionDetails(IsEdit_Additional_Details) },
   visible: false
 };
 

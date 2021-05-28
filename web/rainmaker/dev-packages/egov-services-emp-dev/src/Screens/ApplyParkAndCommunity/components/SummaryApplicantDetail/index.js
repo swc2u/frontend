@@ -14,7 +14,7 @@ return (
         <Card
           textChildren={
             <div>
-              <div className="rainmaker-displayInline">
+              <div className="rainmaker-displayInline" style={{display: "flex",justifyContent: "space-between"}}>
                 
                 <Label label="BK_MYBK_APPLICANT_DETAILS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
               

@@ -7,7 +7,7 @@ import {
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-  
+  import {  checkValueForNA } from "../../utils";
   const gotoCreatePage = (state, dispatch) => {
      const createUrl = `/egov-nulm/create-suh?step=2`;
     dispatch(setRoute(createUrl));
@@ -76,7 +76,7 @@ import {
             labelName: "Remarks",
             labelKey: "NULM_SUH_REMARKS"
           },
-          { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].assetInventoryRegisterRemark" }
+          { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].assetInventoryRegisterRemark" ,callBack: checkValueForNA }
         ),
         isAccountRegister: getLabelWithValue(
             {
@@ -90,7 +90,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].accountRegisterRemark" }
+            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].accountRegisterRemark" ,callBack: checkValueForNA }
           ),
           isAttendanceRegisterOfStaff: getLabelWithValue(
             {
@@ -104,7 +104,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].attendanceRegisterOfStaffRemark" }
+            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].attendanceRegisterOfStaffRemark" ,callBack: checkValueForNA }
           ),
           isShelterManagementCommitteeRegister: getLabelWithValue(
             {
@@ -118,7 +118,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].shelterManagementCommitteeRegisteRemark" }
+            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].shelterManagementCommitteeRegisteRemark" ,callBack: checkValueForNA }
           ),
           isPersonnelAndSalaryRegister: getLabelWithValue(
             {
@@ -132,7 +132,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].personnelAndSalaryRegisterRemark" }
+            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].personnelAndSalaryRegisterRemark" ,callBack: checkValueForNA }
           ),
           isHousekeepingAndMaintenanceRegister: getLabelWithValue(
             {
@@ -146,7 +146,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].housekeepingAndMaintenanceRegisterRemark" }
+            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].housekeepingAndMaintenanceRegisterRemark" ,callBack: checkValueForNA }
           ),
           isComplaintAndSuggestionRegister: getLabelWithValue(
             {
@@ -160,7 +160,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].complaintAndSuggestionRegisterRemark" }
+            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].complaintAndSuggestionRegisterRemark" ,callBack: checkValueForNA }
           ),
           isVisitorRegister: getLabelWithValue(
             {
@@ -174,7 +174,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].visitorRegisterRemark" }
+            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].visitorRegisterRemark" ,callBack: checkValueForNA }
           ),
           isProfileRegister: getLabelWithValue(
             {
@@ -188,7 +188,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].profileRegisterRemark" }
+            { jsonPath: "NulmSuhRequest.suhRecordMaintenance[0].profileRegisterRemark" ,callBack: checkValueForNA }
           ),      
   
       }),

@@ -61,6 +61,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === "WS_METER_UPDATE" 
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE" 
         || moduleName === "WS_TUBEWELL") {
@@ -73,6 +74,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === "WS_METER_UPDATE" 
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL") {
@@ -169,6 +171,7 @@ class WorkFlowContainer extends React.Component {
       ,"CONNECTION_CONVERSION"//R
       ,"REACTIVATE_CONNECTION" //tep close
       ,"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"//T
+      ,"UPDATE_METER_INFO"//T,R
       ,"APPLY_FOR_TEMPORARY_REGULAR_CONNECTION"];
         
 
@@ -234,12 +237,13 @@ class WorkFlowContainer extends React.Component {
                                               &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
             }
             //else if(status === "CONNECTION_ACTIVATED" && WaterConnection[0].waterApplicationType ==='TEMPORARY')
-            else if((status === "CONNECTION_ACTIVATED" || status == "NA" || status ==='CONNECTION_EXTENDED')&& WaterConnection[0].waterApplicationType ==='TEMPORARY')
+            else if((status === "CONNECTION_ACTIVATED" || status == "NA" || status ==='CONNECTION_EXTENDED' ||  status ==='METER_UPDATED')&& WaterConnection[0].waterApplicationType ==='TEMPORARY')
             {
               actions = actions.filter(item => item.buttonLabel !== 'PERMANENT_DISCONNECTION' 
                                                 &&  item.buttonLabel !== 'TEMPORARY_DISCONNECTION'
                                                 && item.buttonLabel !=='REACTIVATE_CONNECTION'
                                                 &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
+                                               // && item.buttonLabel !=='UPDATE_METER_INFO'
                                                 &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
             }
             // else if(status === "PENDING_FOR_REGULAR_CONNECTION"){//remove
@@ -266,20 +270,46 @@ class WorkFlowContainer extends React.Component {
             //                                     &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
 
             // }
-            else if(((status === "TEMPORARY_CONNECTION_CLOSED" || status ==='TEMPORARY_DISCONNECTED')  || (status ==='REJECTED')) && WaterConnection[0].waterApplicationType==='REGULAR' )//TEMPORARY_CONNECTION_CLOSED
+            else if(((status === "TEMPORARY_CONNECTION_CLOSED" || status ==='TEMPORARY_DISCONNECTED' ||  status ==='METER_UPDATED')  || (status ==='REJECTED')) && (WaterConnection[0].waterApplicationType==='REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY') )//TEMPORARY_CONNECTION_CLOSED
             {
               if(WaterConnection[0].activityType==='REACTIVATE_CONNECTION' )
               actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+              else if(status ==="TEMPORARY_CONNECTION_CLOSED" && WaterConnection[0].activityType==='TEMPORARY_DISCONNECTION' )
+              {
+                actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+
+              }
               else if(WaterConnection[0].activityType==='CONNECTION_CONVERSION'
               || WaterConnection[0].activityType==='UPDATE_CONNECTION_HOLDER_INFO'
+              || WaterConnection[0].activityType==='UPDATE_METER_INFO'
               || WaterConnection[0].activityType==='TEMPORARY_DISCONNECTION'
               || WaterConnection[0].activityType==='PERMANENT_DISCONNECTION'
               ){
                 actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
                                               && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                                             // && item.buttonLabel !=='UPDATE_METER_INFO'
                                               &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
 
               }
+              if(WaterConnection[0].waterApplicationType === 'TEMPORARY' && status ==='REJECTED')
+              {
+                actions = actions.filter(item => item.buttonLabel !== 'PERMANENT_DISCONNECTION' 
+                                                &&  item.buttonLabel !== 'TEMPORARY_DISCONNECTION'
+                                                && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                                                &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
+                                               // && item.buttonLabel !=='UPDATE_METER_INFO'
+                                                &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
+
+              }
+              else if(WaterConnection[0].waterApplicationType === 'REGULAR' && status ==='REJECTED')
+              {
+                actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
+                                              && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                                             // && item.buttonLabel !=='UPDATE_METER_INFO'
+                                              &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
+
+              }
+              
 
             }
             else if (status ==='CONNECTION_CLOSED' && WaterConnection[0].activityType ==='PERMANENT_DISCONNECTION')
@@ -336,6 +366,7 @@ class WorkFlowContainer extends React.Component {
       || moduleName === "WS_TEMP_DISCONNECTION"
       || moduleName ==="WS_REACTIVATE"
       || moduleName === "WS_RENAME" 
+      || moduleName === "WS_METER_UPDATE" 
       || moduleName === "WS_TUBEWELL"){
          showFooter=true;
       }    else{

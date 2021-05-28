@@ -9,7 +9,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import "./index.css";
 import Footer from "../../../modules/footer"
 // import PaccFeeEstimate from "../PaccFeeEstimate"
-import SummaryCCBookingDetail from "../SummaryCCBookingDetail"
+import SummaryCCBookingDetail from "../SummaryCCBookingDetail" 
 import SummaryVenueDetail from "../SummaryVenueDetail"
 import SummaryRoomBookingDetail from "../SummaryRoomBookingDetail"
 // import { getFileUrlFromAPI } from '../../../../modules/commonFunction' //
@@ -104,7 +104,7 @@ console.log("BothRoomSelect--",BothRoomSelect)
             "bkAreaRequired": null,
             "bkDuration": "FULLDAY",
             "bkCategory": null,
-            "bkEmail": DataForRoomBooking.bookingsModelList[0].bkEmail,
+            "bkEmail": DataForRoomBooking.bookingsModelList[0].bkEmail, 
             "bkContactNo": null,
             "bkDocumentUploadedUrl": null,
             "bkDateCreated":  DataForRoomBooking.bookingsModelList[0].bkDateCreated,
@@ -142,11 +142,12 @@ console.log("BothRoomSelect--",BothRoomSelect)
             "bkIdProof": null,
             "bkApplicantContact": null,
             "bkOpenSpaceLocation": null,
-            "bkLandmark": null,
+            "bkLandmark": null, 
             "bkRequirementArea": null,
             "bkLocationPictures": null,
             "bkParkOrCommunityCenter": null,
             "bkRefundAmount": DataForRoomBooking.bookingsModelList[0].bkRefundAmount,
+            "bkNomineeName":DataForRoomBooking.bookingsModelList[0].bkNomineeName,
             "bkBankAccountNumber": DataForRoomBooking.bookingsModelList[0].bkBankAccountNumber,
             "bkBankName": DataForRoomBooking.bookingsModelList[0].bkBankName,
             "bkIfscCode": DataForRoomBooking.bookingsModelList[0].bkIfscCode,
@@ -179,7 +180,7 @@ console.log("BothRoomSelect--",BothRoomSelect)
             "bkApproverName": null,
             "assignee": null,
             "wfDocuments": null,
-            "financialYear": "2020-2021",
+            "financialYear": "2021-2022",
             "financeBusinessService": "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR",//"BKROOM",//BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR
             // "roomBusinessService": "BKROOM",
             "roomsModel": BothRoomSelect,
@@ -259,7 +260,7 @@ let payloadfund = await httpRequest(
 
             documentsPreview.push({
                 title: "DOC_DOC_PICTURE",
-                fileStoreId: id,
+                fileStoreId: id, 
                 linkText: "View",
             });
             let changetenantId = userInfo.tenantId ? userInfo.tenantId.split(".")[0] : "ch";
@@ -331,7 +332,7 @@ this.props.SetPaymentURL(`/egov-services/PaymentReceiptDteail/ForRoomBooking/${t
                         <div className="col-xs-12">
 
                             <RoomPaymentCard
-                            TotalAmount={this.props.TotalAmount}
+                            TotalAmount={this.props.TotalAmount} 
                             BKROOM_TAX={this.props.BKROOM_TAX}
                             BKROOM={this.props.BKROOM}
                             BKROOM_ROUND_OFF={this.props.BKROOM_ROUND_OFF}
@@ -361,7 +362,7 @@ ProofOfResidence={this.props.ProofOfResidence}
                                  Rent={this.props.Rent}
                                  utgst={this.props.utgst}
                                  cgst={this.props.cgst}
-                                 surcharge={this.props.surcharges}
+                                 surcharge={this.props.surcharge}
                                  facilitationCharges={this.props.facilitationCharges}
                             />                   
                             <SummaryRoomBookingDetail

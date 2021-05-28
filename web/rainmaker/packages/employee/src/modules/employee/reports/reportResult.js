@@ -128,6 +128,27 @@ class ShowField extends Component {
         messageTop: tabLabel,
         footer: true,
         className: "report-excel-button",
+        exportOptions: {
+          format: {
+                   body: function (data, row, column, node ) {
+                              return column === 6 ? "\0" + data : data;
+                              }
+            }
+         },
+      //   customizeData: function (data) {
+      //     for (var i = 0; i < data.body.length; i++) {
+      //         for (var j = 0; j < data.body[i].length; j++) {
+      //             data.body[i][6] = '\u200C' + data.body[i][6];
+      //         }
+      //     }
+      // },
+        // exportOptions: {
+        //   format: {
+        //            body: function (data, row, column, node ) {
+        //                       return column === 5 ? "\0" + data : data;
+        //                       }
+        //     }
+        //  }
       },
       "colvis",
     ];

@@ -66,8 +66,8 @@ const LoginForm = ({ handleFieldChange, form, onForgotPasswdCLick, logoUrl,langu
             </div>
           </Link>
           </div >
-          <div style={{ marginBottom: "10px", position: "relative", zIndex: 10,height: 40  }} className="text-right">
-              <div style={{ display: "inline-block", paddingTop : window.screen.availWidth > 770 ? 0 : 5 }}>
+          <div style={{ marginBottom: "10px", position: "relative", zIndex: 10,  }} className="text-right">
+              {/* <div style={{ display: "inline-block", paddingTop : window.screen.availWidth > 770 ? 0 : 5 }}>
               <Label containerStyle={{ cursor: "pointer" }} id="otp-resend" className="otp-resend" label={languageSelected ?`LANGUAGE_${languageSelected.toUpperCase()}`:'en_IN'} />
               </div>
               <div style={{ display: "inline-block" , float:"right", height:40 }}>
@@ -83,11 +83,19 @@ const LoginForm = ({ handleFieldChange, form, onForgotPasswdCLick, logoUrl,langu
             underlineStyle={{ borderBottom: "none" }}
           />
             )}  
-             </div>
+             </div> */}
           </div>
           </div>
           <Button {...submit} fullWidth={true} primary={true} />
+          <div style={{  position: "relative",paddingTop:"10px"}} className="text-center">            
+                <p>
+                In case of any support or query, kindly contact us on
+                <br></br>   
+                <b  style={{  color:"blue"}} > 0172 2787200</b>
+                </p> 
+              </div>
         </div>
+        
       }
     />
   );

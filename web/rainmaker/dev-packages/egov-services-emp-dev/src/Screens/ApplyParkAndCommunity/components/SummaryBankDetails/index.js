@@ -14,7 +14,7 @@ return (
         <Card
           textChildren={
             <div>
-              <div className="rainmaker-displayInline">
+              <div className="rainmaker-displayInline" style={{display: "flex",justifyContent: "space-between"}}>
                 {/*BK_MYKB_BANK_DETAILS*/}
                 <Label label="BANK DETAILS" containerStyle={{ marginLeft: "13px" }} labelClassName="dark-heading" />
                 <button

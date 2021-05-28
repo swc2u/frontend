@@ -449,7 +449,8 @@ downloadPermissionButton = async (e) => {
 				  "totalgst": PACC_TAX,
 				  "refundableCharges": this.props.REFUNDABLE_SECURITY,
 			 	  "totalPayment": this.props.totalAmountPaid,        //this.props.totalAmount,
-				  "paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
+				//   "paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
+				  "paymentDate": applicationDetails.createdDate, 
 				  "receiptNo": this.props.recNumber,
 				  "cardNumberLast4": "Not Applicable",
 				  "dateVenueChangeCharges": this.props.DATEVENUECHARGE == 0 ?"Not Applicable":this.props.DATEVENUECHARGE,
@@ -474,7 +475,8 @@ downloadPermissionButton = async (e) => {
 				  "accountholderName": applicationDetails.bkBankAccountHolder,
 				  "rBankName": applicationDetails.bkBankName,
 				  "rBankACNo": applicationDetails.bkBankAccountNumber,
-				  "rIFSCCode": applicationDetails.bkIfscCode
+				  "rIFSCCode": applicationDetails.bkIfscCode,
+				  "nomName": applicationDetails.bkNomineeName
 			  }
 		  }
 	  ]
@@ -585,7 +587,8 @@ downloadPermissionButton = async (e) => {
 				"totalgst": PACC_TAX,
 				"refundableCharges": this.props.REFUNDABLE_SECURITY,    //applicationDetails.bkRefundAmount,
 				"totalPayment": amountToDisplay,//this.props.totalAmount,   
-				"paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
+				// "paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
+				"paymentDate": applicationDetails.createdDate, 
 				"receiptNo": this.props.recNumber,
 				  "paymentType": this.props.offlinePayementMode,
 				  "facilitationCharge": FACILITATION_CHARGE,
@@ -618,7 +621,8 @@ downloadPermissionButton = async (e) => {
 				"accountholderName": applicationDetails.bkBankAccountHolder,
 				"rBankName": applicationDetails.bkBankName,
 				"rBankACNo": applicationDetails.bkBankAccountNumber,
-				"rIFSCCode": applicationDetails.bkIfscCode
+				"rIFSCCode": applicationDetails.bkIfscCode,
+				"nomName": applicationDetails.bkNomineeName
 			}
 	
 	
@@ -676,8 +680,8 @@ downloadPermissionButton = async (e) => {
   const { RecNumber,createWaterTankerApplicationData,myLocationtwo, downloadBWTApplication,loading,createPACCApplicationData, updatePACCApplicationData,AppNum} = this.props;
     return (
       <Screen loading={loading}>
-      <div className="success-message-main-screen resolve-success">
-      <SuccessMessageForPayment
+   <div className="success-message-main-screen resolve-success mobileResponse">
+         <SuccessMessageForPayment
 	      headermessage = {`Parks & Community Centre/Banquet hall`}
           successmessage="Payment has been collected successfully!"
           secondaryLabel="A notification regarding Payment Collection has been sent to property owner at registered Mobile No."
@@ -687,23 +691,24 @@ downloadPermissionButton = async (e) => {
           applicationNumber={AppNum}
           ReceiptNumber={RecNumber} 
         />
-        <div className="responsive-action-button-cont">
-		    <div className="responsive-action-button-cont">
+         <div className="responsive-action-button-cont" >
+		    <div className="responsive-action-button-cont" style={{minWidth : "fit-content"}}>
           <Button
             className="responsive-action-button"
             primary={true}
             label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PAYMENT_BUTTON" />}
             fullWidth={true}
             onClick={this.downloadPaymentReceiptButton}
-            style={{ marginRight: "1.5%" }}
-          />
-           <Button 
-            primary={true}
-            label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PERMISSION_LETTER_BUTTON" />}
-            onClick={this.downloadPermissionButton}
-            style={{ marginRight: "1.5%",width: "19%" }} 
-          />
-          <Button
+			style={{ marginRight: "1.5%" , minWidth: "fit-content !important" }}
+			/>
+			 <Button 
+				className="responsive-action-button"
+			  primary={true}
+			  label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PERMISSION_LETTER_BUTTON" />}
+			  onClick={this.downloadPermissionButton}
+			  style={{ marginRight: "1.5%", minWidth: "fit-content !important" }} 
+			/>
+			  <Button
             id="resolve-success-continue"
             primary={true}
             label={<Label buttonLabel={true} label="BK_CORE_PACC_EMP_COMMON_GOTOHOME" />}
@@ -713,6 +718,19 @@ downloadPermissionButton = async (e) => {
           />
         </div>
         </div>
+		<style>{
+          `
+           
+              @media only screen and (max-width: 768px)
+                {
+                  .mobileResponse{
+                    min-height: 125vh;
+                  }
+              
+                }
+            `
+        }
+        </style>
       </div>
       </Screen>
     );

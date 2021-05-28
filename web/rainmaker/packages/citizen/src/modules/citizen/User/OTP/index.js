@@ -19,7 +19,7 @@ import { AUTH} from "egov-ui-kit/utils/endPoints";
 const OTPFormHOC = formHoc({ formKey: "otp" })(OTPForm);
 
 class OTP extends Component {
-  state = {otpRedirect : false,disabled:false,pointer:"pointer"}
+  state = {otpRedirect : false,disabled:false,pointer:"pointer",otpresend:"otp-resend"}
   componentWillMount() {
     const { previousRoute } = this.props;
    // commented out as it was redirecting
@@ -142,6 +142,7 @@ class OTP extends Component {
     // });
     this.setState({disabled:true})
     this.setState({pointer:"no-drop"})
+    this.setState({otpresend:"otp-resendBlock"})
     if (intent) sendOTP(intent);
     else if (getQueryArg("", "smsLink")) this.sendOtpForAutoLogin();
   };
@@ -154,12 +155,12 @@ class OTP extends Component {
     const { resendOTP } = this;
    // let disabled = true
 
-    const {disabled,pointer} = this.state;
+    const {disabled,pointer,otpresend} = this.state;
 
     return (
       <Screen loading={loading} className="force-padding-0">
         <Banner bannerUrl={bannerUrl} logoUrl={logoUrl}>
-          <OTPFormHOC resendOTP={resendOTP} phoneNumber={phoneNumber} logoUrl={logoUrl} disabled={disabled} pointer={pointer} />
+          <OTPFormHOC resendOTP={resendOTP} phoneNumber={phoneNumber} logoUrl={logoUrl} disabled={disabled} pointer={pointer}  otpresend={otpresend} />
         </Banner>
       </Screen>
     );

@@ -235,7 +235,8 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
+        || moduleName === "WS_RENAME"
+        || moduleName === 'WS_METER_UPDATE' 
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
         || moduleName === "WS_TUBEWELL") {
@@ -258,6 +259,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -375,6 +377,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -409,6 +412,13 @@ class WorkFlowContainer extends React.Component {
       {
         labelKey = 'WS_RESUBMIT_DOCUMENT_UPLOAD_VALIDATION_MESSAGE'
         labelName = 'Please upload mandatory document in document section then submit'
+
+      }
+      else  if((data.applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
+      && (data.action==='VERIFY_AND_FORWARD_FOR_PAYMENT'|| data.action==='VERIFY_AND_FORWARD_TO_JE' ))//PENDING_FOR_SDE_APPROVAL,VERIFY_AND_FORWARD_FOR_PAYMENT
+      {
+        labelKey = 'WS_SUBMIT_UPDATE_METER_INFORMATION_VALIDATION_MESSAGE'
+        labelName = 'Proposed connection execution details can not be blank'
 
       }
       toggleSnackbar(
@@ -454,6 +464,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -485,6 +496,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -557,6 +569,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -616,6 +629,7 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -629,7 +643,8 @@ class WorkFlowContainer extends React.Component {
       ||moduleName === "WS_TEMP_REGULAR"
       ||moduleName === "WS_DISCONNECTION" 
       ||moduleName === "WS_TEMP_DISCONNECTION"
-      || moduleName === "WS_RENAME" 
+      || moduleName === "WS_RENAME"
+      || moduleName === 'WS_METER_UPDATE' 
       || moduleName === "WS_CONVERSION" 
       || moduleName === "WS_REACTIVATE"
     || moduleName === "WS_TUBEWELL")
@@ -642,7 +657,8 @@ class WorkFlowContainer extends React.Component {
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
+        || moduleName === "WS_RENAME"
+        || moduleName === 'WS_METER_UPDATE' 
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
@@ -767,7 +783,7 @@ ValidateRequest =(payload) =>{
   
  
 }
-  if(payload.applicationStatus ==='PENDING_FOR_CONNECTION_EXTENSION_REGULAR' && payload.action==='CONVERT_INTO_REGULAR_CONNECTION')
+  if(payload.applicationStatus ==='PENDING_FOR_CONNECTION_EXTENSION_REGULAR' && payload.action==='CONVERT_INTO_REGULAR_CONNECTION')//
   {
     payload.waterApplicationType = "REGULAR";
   }
@@ -779,6 +795,50 @@ ValidateRequest =(payload) =>{
 
     }
   }
+  if(payload.activityType ==='UPDATE_METER_INFO' || payload.activityType ==='WS_METER_UPDATE')// only for meter update
+  {
+    if((payload.applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
+    && (payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT'|| payload.action==='VERIFY_AND_FORWARD_TO_JE' ))//PENDING_FOR_SDE_APPROVAL,VERIFY_AND_FORWARD_FOR_PAYMENT
+    {
+      if((payload.connectionExecutionDate !== 0 ) 
+       && (payload.proposedMeterId !== null)
+       && (payload.proposedMeterInstallationDate !== 0 )
+       && (payload.proposedInitialMeterReading !== null )
+       && (payload.proposedMeterCount !== null )
+       && (payload.proposedMfrCode !== null )
+       && (payload.proposedMeterDigits !== null )
+       && (payload.proposedMeterUnit !== null )
+       && (payload.proposedSanctionedCapacity !== null )
+       && (payload.proposedMeterRentCode !== null )     
+      )
+      {
+        isvalidRequest = true
+        payload.meterId = payload.proposedMeterId
+        payload.meterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+        payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+        payload.additionalDetails.initialMeterReading = payload.proposedInitialMeterReading
+        payload.meterCount = payload.proposedMeterCount
+        payload.mfrCode = payload.proposedMfrCode
+        payload.meterDigits = payload.proposedMeterDigits
+        payload.meterUnit = payload.proposedMeterUnit
+        payload.sanctionedCapacity = payload.proposedSanctionedCapacity
+        payload.meterRentCode = payload.proposedMeterRentCode
+        // payload.waterProperty.usageCategory = payload.proposedMeterId
+        // payload.waterProperty.usageCategory = payload.proposedMeterId
+      }
+      else{
+        isvalidRequest = false
+        
+      }
+  
+    }
+    else{
+      payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+  
+    }
+
+  }
+
   // remove duplicate document
 
   let tmp = [];
@@ -824,16 +884,20 @@ uniqueBycode =(data,key)=>{
             });
         });
     } else {
+      if( data !== undefined)
+      {
       const states = find(data.states, { uuid: nextAction });
       states &&
         states.actions &&
         states.actions.forEach(action => {
           roles = [...roles, ...action.roles];
         });
-    }
+    
     roles = [...new Set(roles)];
     roles.indexOf("*") > -1 && roles.splice(roles.indexOf("*"), 1);
     return roles.toString();
+  }
+}
   };
 
   checkIfTerminatedState = (nextStateUUID, moduleName) => {
@@ -852,8 +916,15 @@ uniqueBycode =(data,key)=>{
       localStorageGet("businessServiceData")
     );
     const data = find(businessServiceData, { businessService: moduleName });
+    if(data!== undefined)
+    {
     const nextState = find(data.states, { uuid: nextStateUUID });
     return nextState.docUploadRequired;
+    }
+    else
+    {
+      return false;
+    }
   };
 
   getActionIfEditable = (status, businessId, moduleName) => {
@@ -964,12 +1035,14 @@ uniqueBycode =(data,key)=>{
                           || businessService === "WS_DISCONNECTION" 
                           || businessService === "WS_TEMP_DISCONNECTION" 
                           ||businessService === "WS_RENAME" 
+                          || businessService === 'WS_METER_UPDATE'
                           || businessService === "WS_CONVERSION" 
                           || businessService === "WS_REACTIVATE" 
                           || businessService === "WS_TUBEWELL") 
                           ? !checkIfTerminatedState(item.nextState, businessService) 
                           && item.action !== "SEND_BACK_TO_CITIZEN" 
                           && item.action !== "RESUBMIT_APPLICATION" 
+                          && item.action !== "SUBMIT_APPLICATION" 
                           && item.action !== "SUBMIT_ROADCUT_NOC" 
                           && item.action !== "SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC"
                           && item.action !== "VERIFY_AND_FORWARD_FOR_PAYMENT"// VERIFY_AND_FORWARD_FOR_PAYMENT
@@ -1000,12 +1073,21 @@ uniqueBycode =(data,key)=>{
       }
 
     }
-    if(true)
+    if((businessService=='WS_METER_UPDATE') && applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
     {
-      //WS_TEMP_REGULAR ~businessService
-      // PENDING_FOR_SDE_APPROVAL ~applicationStatus
-      // VERIFY_AND_FORWARD_TO_JE action
-      // VERIFY_AND_FORWARD_FOR_PAYMENT
+      const {WaterConnection} = preparedFinalObject;
+      let pipeSize = 0 ;
+      //applicationStatus: "PENDING_FOR_SDE_APPROVAL"
+      pipeSize = WaterConnection && WaterConnection[0].proposedPipeSize;     
+      if(  pipeSize === 'Private Meter'){
+        //FORWARD_TO_JE_TARIFF_CHANGE
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_PAYMENT');
+
+      }
+      else{
+        //VERIFY_AND_FORWARD_FOR_PAYMENT,VERIFY_AND_FORWARD_TO_JE
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_JE');
+      }
 
       
     }
@@ -1013,17 +1095,17 @@ uniqueBycode =(data,key)=>{
     {
       const {WaterConnection} = preparedFinalObject;
       let securityCharge = 0 ;
-      securityCharge = WaterConnection && WaterConnection[0].securityCharge;
+      securityCharge = WaterConnection && WaterConnection[0].waterApplication.securityCharge;
       securityCharge = parseInt(securityCharge);
       if(securityCharge ===0)
       {
         //FORWARD_TO_JE_TARIFF_CHANGE
-        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_PAYMENT');
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_PAYMENT');//VERIFY_AND_FORWARD_FOR_PAYMENT
 
       }
       else{
         //FORWARD_TO_JE_TARIFF_CHANGE
-        actions = actions.filter(item => item.buttonLabel !== 'FORWARD_TO_JE_TARIFF_CHANGE');
+        actions = actions.filter(item => item.buttonLabel !== 'FORWARD_TO_JE_TARIFF_CHANGE');//FORWARD_TO_JE_TARIFF_CHANGE  
 
       }
 
@@ -1129,7 +1211,8 @@ uniqueBycode =(data,key)=>{
         ||businessService === "WS_TEMP_REGULAR"
         ||businessService === "WS_DISCONNECTION" 
         ||businessService === "WS_TEMP_DISCONNECTION"
-        || businessService === "WS_RENAME" 
+        || businessService === "WS_RENAME"
+        || businessService === "WS_METER_UPDATE" 
         || businessService === "WS_CONVERSION" 
         || businessService === "WS_REACTIVATE"     
     || businessService === "WS_TUBEWELL") 
@@ -1153,6 +1236,7 @@ uniqueBycode =(data,key)=>{
         || businessService === "WS_DISCONNECTION" 
         || businessService === "WS_TEMP_DISCONNECTION"
         || businessService === "WS_RENAME" 
+        || businessService ==='WS_METER_UPDATE'
         || businessService === "WS_CONVERSION" 
         || businessService === "WS_REACTIVATE"     
         || businessService === "WS_TUBEWELL")
@@ -1183,6 +1267,7 @@ uniqueBycode =(data,key)=>{
         ||businessService === "WS_DISCONNECTION" 
         ||businessService === "WS_TEMP_DISCONNECTION"
         || businessService === "WS_RENAME" 
+        || businessService === 'WS_METER_UPDATE'
         || businessService === "WS_CONVERSION" 
         || businessService === "WS_REACTIVATE"  
         ||  businessService === "WS_TUBEWELL")
@@ -1244,6 +1329,7 @@ uniqueBycode =(data,key)=>{
         ||moduleName === "WS_DISCONNECTION" 
         ||moduleName === "WS_TEMP_DISCONNECTION"
         || moduleName === "WS_RENAME" 
+        || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
         || moduleName === "WS_TUBEWELL") 

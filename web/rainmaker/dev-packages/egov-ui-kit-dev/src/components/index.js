@@ -22,6 +22,7 @@ import MapLocation from "egov-ui-kit/components/MapLocation";
 import List from "egov-ui-kit/components/List";
 import AutoSuggest from "egov-ui-kit/components/AutoSuggestCommon";
 import ProfileSection from "egov-ui-kit/components/ProfileSection";
+import ContactUs from "egov-ui-kit/components/ContactUs";
 import Ratings from "egov-ui-kit/components/Ratings";
 import ButtonGroup from "egov-ui-kit/components/ButtonGroup";
 import DropDown from "egov-ui-kit/components/DropDown";
@@ -67,6 +68,7 @@ export {
   List,
   AutoSuggest,
   ProfileSection,
+  ContactUs,
   Ratings,
   ButtonGroup,
   DropDown,

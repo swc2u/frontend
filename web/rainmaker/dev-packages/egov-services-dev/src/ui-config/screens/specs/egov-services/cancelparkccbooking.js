@@ -67,7 +67,7 @@ const reasonForCancellation = getCommonCard({
                 },
                 required: true,
                 pattern: getPattern("Name"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkRemarks",
             }),
         }

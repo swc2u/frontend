@@ -37,6 +37,7 @@ import { showHideAdhocPopup, checkForRole } from "../utils";
 
 import { getAccessToken, getOPMSTenantId, getLocale, getUserInfo, localStorageGet, localStorageSet, setapplicationType, setapplicationNumber, getapplicationNumber, setOPMSTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { getSearchResultsView, getSearchResultsForNocCretificate, getSearchResultsForNocCretificateDownload } from "../../../../ui-utils/commons";
+import { getTextAdvertisement } from "./searchResource/citizenSearchFunctions";
 
 
 let roles = JSON.parse(getUserInfo()).roles
@@ -130,6 +131,14 @@ const titlebar = getCommonContainer({
       number: getapplicationNumber()
     }
   },
+  applicationStatus: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+      status: "NA",
+    }
+  },
   withdrawRequest: {
     uiFramework: "custom-atoms-local",
     moduleName: "egov-opms",
@@ -141,7 +150,8 @@ const titlebar = getCommonContainer({
   downloadMenu: {
     uiFramework: "custom-atoms",
     componentPath: "MenuButton",
-    visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
+    // visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
+    visible: false,
     props: {
       data: {
         label: "Download",
@@ -397,6 +407,26 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
     // Set Institution/Applicant info card visibility
     let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
     localStorageSet("app_noc_status", nocStatus);
+    dispatch(
+      handleField(
+        "advertisementnoc-search-preview",
+        "components.div.children.headerDiv.children.header.children.applicationStatus",
+        "props.status",
+        getTextAdvertisement(nocStatus)
+      )
+    );
+    if (nocStatus != "DRAFT") { 
+      dispatch(
+        handleField(
+          "advertisementnoc-search-preview",
+          "components.div.children.taskStatus",
+          "visible",
+          true
+        )
+      );
+  
+    }
+
     let remarksData = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].remarks", []);
 
     remarksData.forEach(doc => {
@@ -634,12 +664,29 @@ const setSearchResponseForNocCretificate = async (
 
   // if (nocStatus == "APPROVED" && nocRemark == "PAID" && resWITHDRAWAPPROVAL.length == 0) {
   if (nocRemark == "PAID" && resWITHDRAWAPPROVAL.length == 0) {
+    dispatch(
+      handleField(
+        "advertisementnoc-search-preview",
+        "components.div.children.headerDiv.children.header.children.downloadMenu",
+        "visible",
+        true
+      )
+    );
+  
     downloadMenu = [
       certificateDownloadObjectADVERTISEMENT,
       certificateDownloadObjectADVERTISEMENT_RECEIPT
     ];
   }
   else if (nocStatus == "APPROVED" && exemptedcategory == 1 && resWITHDRAWAPPROVAL.length == 0) {
+    dispatch(
+      handleField(
+        "advertisementnoc-search-preview",
+        "components.div.children.headerDiv.children.header.children.downloadMenu",
+        "visible",
+        true
+      )
+    );
     downloadMenu = [
       certificateDownloadObjectADVERTISEMENT
     ];
@@ -741,7 +788,7 @@ const screenConfig = {
           uiFramework: "custom-containers-local",
           componentPath: "WorkFlowContainer",
           moduleName: "egov-workflow",
-          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          visible: false,//process.env.REACT_APP_NAME === "Citizen" ? false : true,
           props: {
             dataPath: "Licenses",
             moduleName: "ADVERTISEMENTNOC",

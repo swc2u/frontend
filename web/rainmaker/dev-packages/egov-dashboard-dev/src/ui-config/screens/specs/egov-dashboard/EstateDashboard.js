@@ -43,15 +43,15 @@ const getDropDownData = async (action, state, dispatch) => {
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
-    "name" : "Application Type",
-    "code" : "applicationType"
+    "name" : "Collection Report",
+    "code" : "collectionReport"
     },
     {
-      "name" : "Branch Type",
-      "code" : "branchType"
+      "name" : "Property Due Report",
+      "code" : "dueReport"
     }
   ]
-  var selectedDefaultData = {value: "applicationType", label: "Application Type"};
+  var selectedDefaultData = {value: data[0].code, label: data[0].name};
 
   // Date default
   var fromDate = new Date();

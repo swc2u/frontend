@@ -2,9 +2,9 @@
 import { getBreak, getCommonHeader } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getUserInfo, setapplicationType } from "egov-ui-kit/utils/localStorageUtils";
-import { getDashboardDropdownData } from "../../../../ui-utils/commons";
+import { getStoreDropdownData } from "../../../../ui-utils/commons";
 // import { HCDashboardFilterForm, HCDashboardResults } from "./HCDashboard/HCDashboard";
-import { FilterForm, DashboardResults } from "./StoreDashboard/StoreIndentDashboard";
+import { FilterForm, DashboardResults } from "./StoreDashboardOne/StoreIndentDashboard";
 import './index.css';
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
@@ -12,7 +12,7 @@ let role_name = JSON.parse(getUserInfo()).roles[0].code
 const header = getCommonHeader(
   {
     labelName: "Store Indent Dashboard",
-    labelKey: "StoreIndent_dashboard_1"
+    labelKey: "Store_dashboard_1"
   },
   {
     classes: {
@@ -44,15 +44,19 @@ const getDropDownData = async (action, state, dispatch) => {
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
-    "name" : "Store Type",
+    "name" : "Store Issue Note",
     "code" : "indentingStore"
     },
     {
-      "name" : "Store Status",
-      "code" : "materialIssueStatus"
+      "name" : "Purchase Order",
+      "code" : "purchaseOrders"
+    },
+    {
+      "name" : "Material Receipt",
+      "code" : "MaterialReceipt"
     }
   ]
-  var selectedDefaultData = {value: "indentingStore", label: "Store Type"};
+  var selectedDefaultData = {value: "indentingStore", label: "Store Issue Note"};
 
   // Date default
   var fromDate = new Date();
@@ -64,6 +68,12 @@ const getDropDownData = async (action, state, dispatch) => {
   dispatch(prepareFinalObject("dahsboardHome.defaulttoDate", formatDt));
 }
 
+const getStoreDropdown = async (action, state, dispatch) => {
+  debugger;
+  const storeName = getStoreDropdownData(action, state, dispatch);
+  return;
+}
+
 const StoreIndentDashboard = {
   uiFramework: "material-ui",
   name: "StoreIndentDashboard",
@@ -71,6 +81,7 @@ const StoreIndentDashboard = {
     
     debugger
     getDropDownData(action, state, dispatch);
+    getStoreDropdown(action, state, dispatch);
     return action;
   },
   components: {

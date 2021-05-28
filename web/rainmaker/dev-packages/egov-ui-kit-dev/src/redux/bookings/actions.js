@@ -1,7 +1,9 @@
 import * as actionTypes from "./actionTypes";
 // import {CREATEBWTAPPLICATION,APPLICATION,MCCAPPLICATION, COMPLAINT, CATEGORY,PAYMENT,HISTORY,AFTERPAYMENTAPI,DWONLOADPAYMENTRECEIPT,DOWNLOADBWTAPPLICATION,DOWNLOADAPPLICATION,DWONLOADPERMISSIONLETTER,OSBMPerDayRateAmount,PerDayRateAmount,DWONLOADNEWRECEIPTFORCG,PermissionLetterDWNOSMCC,ApplicationDWNOSMCC, DWONLOADPAYMENTRECEIPTFORCG,DWONLOADAPPLICATIONFORCG,CREATEPACCAPPLICATION } from "../../utils/endPoints";
 import {CREATEBWTAPPLICATION,PGService,DWONLOADPLFORPCC,DWONLOADRECEIPTFORPCC,APPLICATION,MCCAPPLICATION, COMPLAINT, CATEGORY,PAYMENT,HISTORY,AFTERPAYMENTAPI,DWONLOADPAYMENTRECEIPT,DOWNLOADBWTAPPLICATION,DOWNLOADAPPLICATION,DWONLOADPERMISSIONLETTER,OSBMPerDayRateAmount,PerDayRateAmount,DWONLOADNEWRECEIPTFORCG,PermissionLetterDWNOSMCC,ApplicationDWNOSMCC, DWONLOADPAYMENTRECEIPTFORCG,DWONLOADAPPLICATIONFORCG,DWONLOADAPPFORPCC,CREATEPACCAPPLICATION,UPDATEPACCAPPLICATION,ESAMPARK,ESAMPARKPL,WATERTANKERPAYRECEIPT
-,DownloadEmpRoomPaymentReceipt,DownloadEmpRoomPermissionLetter,DownloadEmpPACCPermissionLetter,DownloadESAMPRECEIPT} from "egov-ui-kit/utils/endPoints";
+,DownloadEmpRoomPaymentReceipt,DownloadEmpRoomPermissionLetter,DownloadEmpPACCPermissionLetter,DownloadESAMPRECEIPT,
+downloadPaccCitizenReceipt,downloadPaccCitizenpermissionLetter,citizenCCpermissionLetter,cgRefundPaymentReceipt,cgRefundApplicationform
+} from "egov-ui-kit/utils/endPoints";
 import { httpRequest } from "egov-ui-kit/utils/api";
 import commonConfig from "config/common.js";
 
@@ -1072,6 +1074,154 @@ export const OSBMfetchperDayRate = (requestBody, hasUsers = true, overWrite) => 
 			error,
 		};
 	};
+
+//e-sampark on behalf of citizen side
+export const PaccCitizenPaymentRecpt = (requestBody, hasUsers = true, overWrite) => {
+	console.log('requestBody in cretae apacc application',requestBody,'UPDATEPACCAPPLICATION',UPDATEPACCAPPLICATION)
+	return async (dispatch, getState) => {
+		try {
+			let tenantId = "";
+
+			const payload = await httpRequest(downloadPaccCitizenReceipt.POST.URL, downloadPaccCitizenReceipt.POST.ACTION, [], requestBody);
+			console.log('payload1p----10', payload)
+			dispatch(PaccCitizenPaymentRecptomplete(payload, overWrite));
+		} catch (error) {
+			dispatch(PaccCitizenPaymentRecptError(error.message));
+		}
+	};
+};
+
+const PaccCitizenPaymentRecptomplete= (payload, overWrite) => {
+	return {
+		type: actionTypes.PACC_CITIZEN_RECEIPT_COMPLETE,
+		payload,
+		overWrite: overWrite,
+	};
+};
+	
+const PaccCitizenPaymentRecptError = (error) => {
+	return {
+		type: actionTypes.PACC_CITIZEN_RECEIPT_ERROR,
+		error,
+	};
+};
+
+
+export const PaccCitizenPermissionLetter = (requestBody, hasUsers = true, overWrite) => {
+	console.log('requestBody in cretae apacc application',requestBody,'UPDATEPACCAPPLICATION',UPDATEPACCAPPLICATION)
+	return async (dispatch, getState) => {
+		try {
+			let tenantId = "";
+
+			const payload = await httpRequest(downloadPaccCitizenpermissionLetter.POST.URL, downloadPaccCitizenpermissionLetter.POST.ACTION, [], requestBody);
+			console.log('payload1p----10', payload)
+			dispatch(PaccCitizenPermissionLetteromplete(payload, overWrite));
+		} catch (error) {
+			dispatch(PaccCitizenPermissionLetterError(error.message));
+		}
+	};
+};
+
+const PaccCitizenPermissionLetteromplete= (payload, overWrite) => {
+	return {
+		type: actionTypes.PACC_CITIZEN_PERMISSION_LETTER_COMPLETE,
+		payload,
+		overWrite: overWrite, 
+	};
+};
+	
+const PaccCitizenPermissionLetterError = (error) => {
+	return {
+		type: actionTypes.PACC_CITIZEN_RECEIPT_PERMISSION_LETTER_ERROR,
+		error,
+	};
+};
+
+export const citizenCommunityPL = (requestBody, hasUsers = true, overWrite) => {
+	console.log('requestBody in cretae apacc application',requestBody,'UPDATEPACCAPPLICATION',UPDATEPACCAPPLICATION)
+	return async (dispatch, getState) => {
+		try {
+			let tenantId = "";
+
+			const payload = await httpRequest(citizenCCpermissionLetter.POST.URL, citizenCCpermissionLetter.POST.ACTION, [], requestBody);
+			console.log('payload1p----10', payload)
+			dispatch(citizenCommunityPLomplete(payload, overWrite));
+		} catch (error) {
+			dispatch(citizenCommunityPLError(error.message));
+		}
+	};
+};
+
+const citizenCommunityPLomplete= (payload, overWrite) => {
+	return {
+		type: actionTypes.CITIZEN_COMM_PL_COMPLETE,
+		payload,
+		overWrite: overWrite, 
+	};
+};
+	
+const citizenCommunityPLError = (error) => {
+	return {
+		type: actionTypes.CITIZEN_COMM_PL_COMPLETE_ERROR,
+		error,
+	};
+};
+//cg refund pdf
+export const cgRefundReceipt = (requestBody, hasUsers = true, overWrite) => {
+	return async (dispatch, getState) => {
+	  try {
+		let tenantId = "";
+		const payload = await httpRequest(cgRefundPaymentReceipt.POST.URL, cgRefundPaymentReceipt.POST.ACTION, [], requestBody);
+		dispatch(cgRefundReceiptComplete(payload, overWrite));
+	  } catch (error) {
+		dispatch(cgRefundReceiptError(error.message));
+	  }
+	};
+  };
+
+  const cgRefundReceiptComplete = (payload, overWrite) => {
+	return {
+		type: actionTypes.DOWNLOAD_CG_REFUND_RECEIPT_COMPLETE,
+		payload,
+		overWrite: overWrite,
+	};
+};
+
+const cgRefundReceiptError = (error) => {
+	return {
+		type: actionTypes.DOWNLOAD_CG_REFUND_RECEIPT_ERROR,
+		error,
+	};
+};
+
+
+export const cgRefundApplicationForm = (requestBody, hasUsers = true, overWrite) => {
+	return async (dispatch, getState) => {
+	  try {
+		let tenantId = "";
+		const payload = await httpRequest(cgRefundApplicationForm.POST.URL, cgRefundApplicationForm.POST.ACTION, [], requestBody);
+		dispatch(cgRefundApplicationFormComplete(payload, overWrite));
+	  } catch (error) {
+		dispatch(cgRefundApplicationFormError(error.message));
+	  }
+	};
+  };
+
+  const cgRefundApplicationFormComplete = (payload, overWrite) => {
+	return {
+		type: actionTypes.DOWNLOAD_CG_REFUND_APPLICATION_COMPLETE,
+		payload,
+		overWrite: overWrite,
+	};
+};
+
+const cgRefundApplicationFormError = (error) => {
+	return {
+		type: actionTypes.DOWNLOAD_CG_REFUND_APPLICATION_ERROR,
+		error,
+	};
+};
+
 	//ESAMPARK    
 
 	export const downloadEsamparkApp = (requestBody, hasUsers = true, overWrite) => {

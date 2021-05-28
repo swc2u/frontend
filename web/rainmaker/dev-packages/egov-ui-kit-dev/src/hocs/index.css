@@ -56,7 +56,6 @@
   .rainmaker-header {
     background-color: #ffffff !important;
     position: fixed !important;
-    width: 100vw !important;
     padding-left: 53px !important;
     height: auto !important;
     background-image: none !important;
@@ -72,14 +71,12 @@
   .rainmaker-header-cont > div:first-child {
     height: 64px !important;
   }
-  .appbar-left-icon {
-    display: none;
-  }
+  
 }
 
 #icon-hamburger,
 #back-navigator {
-  fill: #ffffff !important;
+  fill: #fe7a51 !important;
 }
 
 .rainmaker-content {
@@ -96,7 +93,7 @@
 }
 
 .icon-button {
-  display: flex;
+  display: none;
   align-items: center;
 }
 
@@ -148,4 +145,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+@media only screen and (min-width: 769px) {
+  .appbar-left-icon {
+    display: none;
+  }
 }

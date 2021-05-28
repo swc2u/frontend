@@ -157,7 +157,7 @@ class InboxData extends React.Component {
     if(contextPath === 'estate/refund'){
       queryParams = `fileNumber=${taskId}&tenantId=${tenantId}`;
     }
-    if(contextPath=='/egov-services/application-details'||contextPath=='/egov-services/bwt-application-details'|| contextPath=="/egov-services/newLocation-application-details" || contextPath=="/egov-services/osmcc-application-details" || contextPath=="/egov-services/park-and-community-center-appDetails-details"){
+    if(contextPath=='/egov-services/application-details'||contextPath=='/egov-services/bwt-application-details'|| contextPath=="/egov-services/newLocation-application-details" || contextPath=="/egov-services/osmcc-application-details" || contextPath=="/egov-services/park-and-community-center-appDetails-details" || contextPath=="/egov-services/cg-application-details"){
       queryParams = `${taskId}`;
     }
 
@@ -182,6 +182,7 @@ class InboxData extends React.Component {
         ||row[0].subtext === "WS_DISCONNECTION" 
         ||row[0].subtext === "WS_TEMP_DISCONNECTION"
         || row[0].subtext === "WS_RENAME" 
+        || row[0].subtext === "WS_METER_UPDATE" 
         || row[0].subtext === "WS_CONVERSION" 
         || row[0].subtext === "WS_REACTIVATE"  
         ||  row[0].subtext === "WS_TUBEWELL") {
@@ -204,7 +205,7 @@ class InboxData extends React.Component {
     else if(row[0].subtext === "ES-EB-IS-RefundOfEmd") {
       queryParams = `auctionId=${taskId}&tenantId=${tenantId}&branchType=${row[0].hiddenText}`
     } 
-    if(contextPath=='/egov-services/application-details'||contextPath=='/egov-services/bwt-application-details'||contextPath== "/egov-services/newLocation-application-details" || contextPath=="/egov-services/osmcc-application-details" || contextPath=="/egov-services/park-and-community-center-appDetails-details"){
+    if(contextPath=='/egov-services/application-details'||contextPath=='/egov-services/bwt-application-details'||contextPath== "/egov-services/newLocation-application-details" || contextPath=="/egov-services/osmcc-application-details" || contextPath=="/egov-services/park-and-community-center-appDetails-details" || contextPath=="/egov-services/cg-application-details"){
       this.props.setRoute(`${contextPath}/${queryParams}`);
 
     }else{

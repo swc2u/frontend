@@ -171,6 +171,36 @@ const DashboardNULM = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardLegal = Loadable({
+  loader: () => import("./DashboardLegal"),
+  loading: () => <Loading />
+});
+
+const DashboardAgenda = Loadable({
+  loader: () => import("./DashboardAgenda"),
+  loading: () => <Loading />
+});
+
+const DashboardSewerage = Loadable({
+  loader: () => import("./DashboardSewerage"),
+  loading: () => <Loading />
+});
+
+const DashboardAudit = Loadable({
+  loader: () => import("./DashboardAudit"),
+  loading: () => <Loading />
+});
+
+const DashboardFinance = Loadable({
+  loader: () => import("./DashboardFinance"),
+  loading: () => <Loading />
+});
+
+const DashboardWater = Loadable({
+  loader: () => import("./DashboardWater"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -200,10 +230,16 @@ export {
   DashboardOSBM,
   DashboardStoreIndent,
   DashboardStoreManagement,
-  DashboardWNS,
+  // DashboardWNS,
   DashboardWork,
   DashboardEstate,
   DashboardRentedProperty,
   DashboardPension,
-  DashboardNULM
+  DashboardNULM,
+  DashboardLegal,
+  DashboardAgenda,
+  DashboardSewerage,
+  DashboardAudit,
+  DashboardFinance,
+  DashboardWater
 };

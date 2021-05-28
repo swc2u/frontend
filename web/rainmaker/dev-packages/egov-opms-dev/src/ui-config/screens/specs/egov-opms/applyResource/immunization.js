@@ -32,9 +32,9 @@ const immunizationData = buildingType => {
           labelName: "Name of Veterinary Doctor",
           labelKey: "NOC_PET_DETAILS_NAME_OF_VETERINARY_DOCTOR_PLACEHOLDER"
         },
-        required: false,
+        required: true,
         pattern: getOPMSPattern("petnocApplicantName"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_PET_DETAILS_NAME_OF_VETERINARY_DOCTOR",
         jsonPath: "PETNOC.immunizationNameVeterinaryDoctor",
         // props: {
         //   style: {
@@ -49,27 +49,27 @@ const immunizationData = buildingType => {
         props:{
           className:"applicant-details-error"
         },
-        afterFieldChange: (action, state, dispatch) => {
-          if (action.value) {
-            dispatch(
-              handleField(
-                "apply",
-                "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryDocName",
-                "props.required", true));
+        // afterFieldChange: (action, state, dispatch) => {
+        //   if (action.value) {
+        //     dispatch(
+        //       handleField(
+        //         "apply",
+        //         "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryDocName",
+        //         "props.required", true));
           
            
 
-          }
-          else{
-            dispatch(
-              handleField(
-                "apply",
-                "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryDocName",
-                "props.required", false));
-                dispatch(prepareFinalObject("PETNOC.immunizationNameVeterinaryDoctor",""));    
+        //   }
+        //   else{
+        //     dispatch(
+        //       handleField(
+        //         "apply",
+        //         "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryDocName",
+        //         "props.required", false));
+        //         dispatch(prepareFinalObject("PETNOC.immunizationNameVeterinaryDoctor",""));    
                 
-          }
-        }
+        //   }
+        // }
       })
     },
   
@@ -83,9 +83,9 @@ const immunizationData = buildingType => {
           labelName: "Veterinary Council Registration No",
           labelKey: "NOC_PET_DETAILS_VETERINARY_COUNCIL_REGISTRATION_NO_PLACEHOLDER"
         },
-        required: false,
+        required: true,
         pattern: getOPMSPattern("VeterinaryRegistrationNo"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_PET_DETAILS_VETERINARY_COUNCIL_REGISTRATION_NO",
         jsonPath: "PETNOC.veterinaryCouncilRegistrationNo",
          
         gridDefination: {
@@ -96,27 +96,27 @@ const immunizationData = buildingType => {
         props:{
           className:"applicant-details-error"
         },
-        afterFieldChange: (action, state, dispatch) => {
-          if (action.value) {
-            dispatch(
-              handleField(
-                "apply",
-                "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryCouncilRegNumber",
-                "props.required", true));
+        // afterFieldChange: (action, state, dispatch) => {
+        //   if (action.value) {
+        //     dispatch(
+        //       handleField(
+        //         "apply",
+        //         "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryCouncilRegNumber",
+        //         "props.required", true));
           
            
 
-          }
-          else{
-            dispatch(
-              handleField(
-                "apply",
-                "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryCouncilRegNumber",
-                "props.required", false));
-                dispatch(prepareFinalObject("PETNOC.veterinaryCouncilRegistrationNo",""));    
+        //   }
+        //   else{
+        //     dispatch(
+        //       handleField(
+        //         "apply",
+        //         "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryCouncilRegNumber",
+        //         "props.required", false));
+        //         dispatch(prepareFinalObject("PETNOC.veterinaryCouncilRegistrationNo",""));    
                 
-          }
-        }
+        //   }
+        // }
       })
     },   
     
@@ -130,9 +130,9 @@ const immunizationData = buildingType => {
           labelName: "Veterinary Contact No",
           labelKey: "NOC_PET_DETAILS_VETERINARY_CONTACT_NO_PLACEHOLDER"
         },
-        required: false,
+        required: true,
         pattern: getPattern("MobileNo"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_PET_DETAILS_VETERINARY_CONTACT_NO",
         jsonPath: "PETNOC.immunizationContactDetail",
          
         gridDefination: {
@@ -143,27 +143,27 @@ const immunizationData = buildingType => {
         props:{
           className:"applicant-details-error"
         },
-        afterFieldChange: (action, state, dispatch) => {
-          if (action.value) {
-            dispatch(
-              handleField(
-                "apply",
-                "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryCouncilContactNumber",
-                "props.required", true));
+        // afterFieldChange: (action, state, dispatch) => {
+        //   if (action.value) {
+        //     dispatch(
+        //       handleField(
+        //         "apply",
+        //         "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryCouncilContactNumber",
+        //         "props.required", true));
           
            
 
-          }
-          else{
-            dispatch(
-              handleField(
-                "apply",
-                "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryCouncilContactNumber",
-                "props.required", false));
-                dispatch(prepareFinalObject("PETNOC.immunizationContactDetail",""));    
+        //   }
+        //   else{
+        //     dispatch(
+        //       handleField(
+        //         "apply",
+        //         "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryCouncilContactNumber",
+        //         "props.required", false));
+        //         dispatch(prepareFinalObject("PETNOC.immunizationContactDetail",""));    
                 
-          }
-        }
+        //   }
+        // }
       })
     },
     
@@ -177,9 +177,9 @@ const immunizationData = buildingType => {
           labelName: "Clinic No",
           labelKey: "NOC_PET_DETAILS_VETERINARY_CLINIC_NO_PLACEHOLDER"
         },
-        required: false,
+        required: true,
         pattern: getOPMSPattern("DoorHouseNo"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_PET_DETAILS_VETERINARY_CLINIC_NO",
         jsonPath: "PETNOC.immunizationClinicNo",
          
         gridDefination: {
@@ -190,28 +190,28 @@ const immunizationData = buildingType => {
         props:{
           className:"applicant-details-error"
         },
-        afterFieldChange: (action, state, dispatch) => {
-          if (action.value) {
-            dispatch(
-              handleField(
-                "apply",
-                "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryClinicNo",
-                "props.required", true));
+        // afterFieldChange: (action, state, dispatch) => {
+        //   if (action.value) {
+        //     dispatch(
+        //       handleField(
+        //         "apply",
+        //         "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryClinicNo",
+        //         "props.required", true));
                 
            
 
-          }
+        //   }
 
-          else{
-            dispatch(
-              handleField(
-                "apply",
-                "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryClinicNo",
-                "props.required", false));
-                dispatch(prepareFinalObject("PETNOC.immunizationClinicNo",""));    
+        //   else{
+        //     dispatch(
+        //       handleField(
+        //         "apply",
+        //         "components.div.children.formwizardSecondStep.children.immunizationDetails.children.cardContent.children.immunizationDetailsConatiner.children.buildingDataCard.children.singleBuildingContainer.children.singleBuilding.children.cardContent.children.singleBuildingCard.children.VerterinaryClinicNo",
+        //         "props.required", false));
+        //         dispatch(prepareFinalObject("PETNOC.immunizationClinicNo",""));    
                 
-          }
-        }
+        //   }
+        // }
       })
     },
 	
@@ -231,7 +231,8 @@ const immunizationData = buildingType => {
           },
           sourceJsonPath: "applyScreenMdmsData.egpm.immunizationSector",
           jsonPath: "PETNOC.immunizationSector",
-          required: false,
+          errorMessage: "ERR_NOC_PROPERTY_SECTOR",
+          required: true,
 		  gridDefination: {
           xs: 12,
           sm: 12,
@@ -239,7 +240,7 @@ const immunizationData = buildingType => {
         },
           props: {
             className:"applicant-details-error",
-            required: false
+            required: true
             // disabled: true
           }
         })

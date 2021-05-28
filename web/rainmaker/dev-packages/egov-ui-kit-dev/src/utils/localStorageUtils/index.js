@@ -41,6 +41,9 @@ export const getapplicationMode = () => {
 export const getOPMSTenantId = () => {
   return localStorage.getItem('opms-tenant-id');
 };
+export const getNULMTenantId = () => {
+  return localStorage.getItem('opms-tenant-id');
+};
 
 export const getServiceRequestStatus = () => {
   return localStorage.getItem("ServiceRequestStatus");
@@ -121,6 +124,9 @@ export const setapplicationMode = (applicationMode) => {
 };
 export const setOPMSTenantId = (OPMSTenantId) => {
   localStorageSet('opms-tenant-id',OPMSTenantId);
+};
+export const setNULMTenantId = (NULMTenantId) => {
+  localStorageSet('nulm-tenant-id',NULMTenantId);
 };
 export const setModule = (moduleName) => {
   localStorageSet("module", moduleName);

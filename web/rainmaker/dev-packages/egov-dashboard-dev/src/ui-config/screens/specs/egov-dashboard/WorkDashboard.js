@@ -11,7 +11,7 @@ let role_name = JSON.parse(getUserInfo()).roles[0].code
 
 const header = getCommonHeader(
   {
-    labelName: "WNS Dashboard",
+    labelName: "Work Dashboard",
     labelKey: "Work_dashboard_1"
   },
   {
@@ -41,18 +41,22 @@ const defaultDate = (date) => {
 const getDropDownData = async (action, state, dispatch) => {
 
   debugger
-//   let data = getDashboardDropdownData(state, dispatch, status)
+//   let data = getDashboardDropdownData(state, dispatch, status);
   var data =  [
     {
-    "name" : "Dahboard 1",
-    "code" : "dashboardType1"
+    "name" : "Approval Status of Estimates",
+    "code" : "Approval Status of Estimates"
     },
     {
-      "name" : "Dashboard 2",
-      "code" : "dashboardType2"
+      "name" : "Approval Status of DNIT",
+      "code" : "Approval Status of DNIT"
+    },
+    {
+      "name" : "Status of Project Dept wise",
+      "code" : "Status of Project Dept wise"
     }
   ]
-  var selectedDefaultData = {value: "dashboardType1", label: "Dahboard 1"};
+  var selectedDefaultData = {value: "Approval Status of Estimates", label: "Approval Status of Estimates"};
 
   // Date default
   var fromDate = new Date();

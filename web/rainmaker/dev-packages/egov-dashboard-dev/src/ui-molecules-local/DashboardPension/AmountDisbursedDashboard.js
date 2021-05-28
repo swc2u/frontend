@@ -136,7 +136,7 @@ class AmountDisbursedDashboard extends React.Component {
                 },
                 scaleLabel: {
                     display: true,
-                    labelString: "Pension Amount (in Crores)"
+                    labelString: "Pension Amount (INR)"
                     }, 
             }]
         },
@@ -183,7 +183,10 @@ class AmountDisbursedDashboard extends React.Component {
         <div className="graphDashboard">
         
 
-        <CardContent className="halfGraph">
+        <CardContent style ={{
+            "width": "100%", 
+            "borderStyle": "ridge"
+        }}>
             <React.Fragment>
                 <Bar
                 data={ graphOneSortedData }

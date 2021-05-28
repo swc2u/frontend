@@ -945,6 +945,7 @@ export const getDashboardDropdownData = async (state, dispatch, status) =>  {
 
 export const getStoreDropdownData = async (action, state, dispatch) => {
   debugger;
+  // STore MDMS Store data
   try {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
@@ -969,6 +970,69 @@ export const getStoreDropdownData = async (action, state, dispatch) => {
     storeData["label"] = response.stores[0].name;
     storeData["value"] = response.stores[0].code;
     dispatch(prepareFinalObject("dahsboardHome.storeNameDefault", storeData));
+    store.dispatch(toggleSpinner());
+    // return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+
+  debugger;
+  // Store MDMS Financial data
+  try {
+    store.dispatch(toggleSpinner());
+    var mdmsCriteria = {
+      "MdmsCriteria": {
+      "tenantId": "ch",
+        "moduleDetails": [
+          {
+            "moduleName": "egf-master",
+            "masterDetails": [
+              {
+                "name": "FinancialYear"
+              }
+            ]
+          },
+          {
+            "moduleName": "store-asset",
+            "masterDetails": [
+              {
+                "name": "businessService"
+              }
+            ]
+          }
+        ]
+      }
+    }
+    const response = await httpRequest(
+      "post",
+      "/egov-mdms-service/v1/_search",
+      "",
+      [],
+      mdmsCriteria
+    );
+    // Store MDMS data Financial Year
+
+    var sortYearData = response;
+
+    const financialRes = response.MdmsRes["egf-master"]["FinancialYear"];
+    var Yeardata = []
+    for(var i=0; i<financialRes.length; i++ ){
+        var demo = {};
+        demo["name"] = financialRes[i].name;
+        demo["code"] = financialRes[i].code;
+        Yeardata.push(demo);
+    }
+    var selectedYear = {value: Yeardata[0].code, label: Yeardata[0].name};
+    dispatch(prepareFinalObject("dahsboardHome.financialYearData", Yeardata));
+    dispatch(prepareFinalObject("dahsboardHome.selectedFinancialYearData", selectedYear));
+    
     store.dispatch(toggleSpinner());
     return response;
   } catch (error) {
@@ -1529,9 +1593,76 @@ export const getNULMData = async ( dispatch, data ) => {
         payloadData
       );
     }
+    if(check === "All Program"){
+      var payloadData1 = {
+        "NULMSEPRequest": {
+          "fromDate": data.fromDate,
+          "toDate": data.toDate,
+          "tenantId": getTenantId()
+        },
+        "reportSOrtBy": data.reportSortBy
+      }
+      var resData1 = await httpRequest(
+        "post",
+        "/nulm-services/v1/sep/_get",
+        "",
+        [],
+        payloadData1
+      );
+      var payloadData2 = {
+        "NULMSMIDRequest": {
+          "fromDate": data.fromDate,
+          "toDate": data.toDate,
+          "tenantId": getTenantId()
+        },
+        "reportSOrtBy": data.reportSortBy
+      }
+      var resData2 = await httpRequest(
+        "post",
+        "/nulm-services/v1/smid/_get",
+        "",
+        [],
+        payloadData2
+      );
+      var payloadData3 = {
+        "NulmSusvRequest": {
+          "fromDate": data.fromDate,
+          "toDate": data.toDate,
+          "tenantId": getTenantId()
+        },
+        "reportSOrtBy": data.reportSortBy
+      }
+      var resData3 = await httpRequest(
+        "post",
+        "/nulm-services/v1/susv/_get",
+        "",
+        [],
+        payloadData3
+      );
+      var payloadData4 = {
+        "NulmSuhRequest": {
+          "fromDate": data.fromDate,
+          "toDate": data.toDate,
+          "tenantId": getTenantId()
+        },
+        "reportSOrtBy": data.reportSortBy
+      }
+      var resData4 = await httpRequest(
+        "post",
+        "/nulm-services/v1/suh/_get",
+        "",
+        [],
+        payloadData4
+      );
+      resData = {"SEP" : resData1,
+      "SMID" : resData2,
+      "SUSV" : resData3,
+      "SUH" : resData4}
+    }
+    
 
     //debugger;
-    var response = [ resData, payloadData.reportSOrtBy ];
+    var response = [ resData, data ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // // OK
@@ -1724,7 +1855,7 @@ export const getDeathPensionerPensionData = async ( state, dispatch, data ) => {
 export const getRentedPropertyData = async ( dispatch, data ) => {
   
   debugger;
-  var payloadDataCollection = {
+  var payloadRP = {
     "tenantId": data.tenantId,
     "reportName": "RPRentRegistryReport",
     "searchParams": [
@@ -1738,7 +1869,37 @@ export const getRentedPropertyData = async ( dispatch, data ) => {
       }
     ],
     "reportSortBy": data.reportSortBy
-  }
+  };
+  var payloadOT ={
+    "tenantId": data.tenantId,
+    "reportName": "OTRegistryReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ],
+    "reportSortBy": data.reportSortBy
+  };
+  var payloadDC = {
+    "tenantId": data.tenantId,
+    "reportName": "DCRegistryReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ],
+    "reportSortBy": data.reportSortBy
+  };
 
   var payloadDataDue = {
     "tenantId": data.tenantId,
@@ -1749,12 +1910,28 @@ export const getRentedPropertyData = async ( dispatch, data ) => {
 
   try {
     store.dispatch(toggleSpinner());
-    const CollectionData = await httpRequest(
+    const resReistryReport = await httpRequest(
       "post",
-      "/report/rainmaker-rp/RPRentRegistryReport/_get?tenantId=ch.chandigarh&pageSize=false&offset=0",
+      "/report/rainmaker-rp/RPRentRegistryReport/_get?tenantId="+getTenantId()+"&pageSize=false&offset=0",
       "",
       [],
-      payloadDataCollection
+      payloadRP
+    );
+
+    const resOwnerReport = await httpRequest(
+      "post",
+      "/report/rainmaker-rp/OTRegistryReport/_get?tenantId="+getTenantId()+"&pageSize=false&offset=0",
+      "",
+      [],
+      payloadOT
+    );
+
+    const resDuplicateReport = await httpRequest(
+      "post",
+      "/report/rainmaker-rp/DCRegistryReport/_get?tenantId="+getTenantId()+"&pageSize=false&offset=0",
+      "",
+      [],
+      payloadDC
     );
 
     const DueData = await httpRequest(
@@ -1766,8 +1943,9 @@ export const getRentedPropertyData = async ( dispatch, data ) => {
     );
 
     //debugger;
+    var CollectionData = [resReistryReport, resOwnerReport, resDuplicateReport]
     const DescriptionReport = [CollectionData, DueData];
-    var response = [ DescriptionReport, payloadDataCollection.reportSortBy ];
+    var response = [ DescriptionReport, payloadDataDue ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // OK
@@ -1817,18 +1995,151 @@ export const getEStateData = async ( dispatch, data ) => {
   "reportSortBy": data.reportSortBy
   }
 
+  var collection_AppliationPayload = {
+    "tenantId": data.tenantId,
+    "reportName": "ESCollectionReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ]
+  }
+
+  var collection_PropertyRentPayload = {
+    "tenantId": data.tenantId,
+    "reportName": "EstateRentCollectionReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ]
+  }
+
+  var collection_PenaltyPayload = {
+    "tenantId": data.tenantId,
+    "reportName": "EstatePenaltyCollectionReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ]
+  }
+
+  var collection_ExtensionPayload = {
+    "tenantId": data.tenantId,
+    "reportName": "EstateExtensionFeeCollectionReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ]
+  };
+
+  var collection_SecurityDepositPayload = {
+    "tenantId": data.tenantId,
+    "reportName": "EstateSecurityDepositCollectionReport",
+    "searchParams": [
+      {
+        "name": "fromDate",
+        "input": data.fromDate
+      },
+      {
+        "name": "toDate",
+        "input": data.toDate
+      }
+    ]
+  };
+
+  var due_PropertyDuePayload = {
+    "tenantId": data.tenantId,
+    "reportName": "EstateRentDueReport",
+    "searchParams": []
+  };
+
   try {
     store.dispatch(toggleSpinner());
-    const DescriptionReport = await httpRequest(
+    const resCollectionApplication = await httpRequest(
       "post",
-      "/est-services/application/_search?branchType=EstateBranch",
+      "/report/rainmaker-es/ESCollectionReport/_get?tenantId="+data.tenantId+"&pageSize=false&offset=0",
+      // "/est-services/application/_search?branchType=EstateBranch",
       "",
       [],
-      payloadData
+      collection_AppliationPayload
     );
 
+    const resCollectionPropertyRent = await httpRequest(
+      "post",
+      "/report/rainmaker-es/EstateRentCollectionReport/_get?tenantId="+data.tenantId+"&pageSize=false&offset=0",
+      // "/est-services/application/_search?branchType=EstateBranch",
+      "",
+      [],
+      collection_PropertyRentPayload
+    );
+
+    const resCollectionPenalty = await httpRequest(
+      "post",
+      "/report/rainmaker-es/EstatePenaltyCollectionReport/_get?tenantId="+data.tenantId+"&pageSize=false&offset=0",
+      // "/est-services/application/_search?branchType=EstateBranch",
+      "",
+      [],
+      collection_PenaltyPayload
+    );
+
+    const resCollectionExtension = await httpRequest(
+      "post",
+      "/report/rainmaker-es/EstateExtensionFeeCollectionReport/_get?tenantId="+data.tenantId+"&pageSize=false&offset=0",
+      // "/est-services/application/_search?branchType=EstateBranch",
+      "",
+      [],
+      collection_ExtensionPayload
+    );
+
+    const resCollectionSecurityDeposit = await httpRequest(
+      "post",
+      "/report/rainmaker-es/EstateSecurityDepositCollectionReport/_get?tenantId="+data.tenantId+"&pageSize=false&offset=0",
+      // "/est-services/application/_search?branchType=EstateBranch",
+      "",
+      [],
+      collection_SecurityDepositPayload
+    );
+
+    const resDuePropertyDueReport = await httpRequest(
+      "post",
+      "/report/rainmaker-es/EstateRentDueReport/_get?tenantId="+data.tenantId+"&pageSize=false&offset=0",
+      // "/est-services/application/_search?branchType=EstateBranch",
+      "",
+      [],
+      due_PropertyDuePayload
+    );
+
+    var resJSON = {
+      "collectionReport" : [resCollectionApplication, resCollectionPropertyRent, resCollectionPenalty, resCollectionExtension,
+        resCollectionSecurityDeposit],
+      "dueReport" : resDuePropertyDueReport
+    };
+    
     //debugger;
-    var response = [ DescriptionReport, payloadData.reportSortBy ];
+    var response = [resJSON, data];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // OK
@@ -1855,40 +2166,96 @@ export const getEStateData = async ( dispatch, data ) => {
   }
 };
 
+// Get Dashboard Data for Estate Data
+export const getFinanceData = async ( dispatch, data ) => {
+  
+  debugger;
+
+  try {
+    store.dispatch(toggleSpinner());
+    // const resgetAllIncomeExpentiureYearly = await httpRequest(
+    //   "get",
+    //   "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureYearly?org_id=390&fin_id=13",
+    //   // "/est-services/application/_search?branchType=EstateBranch",
+    //   "",
+    //   [],
+    //   {}
+    // );
+    const resgetAllIncomeExpentiureYearly = [];
+
+    const resgetAllIncomeExpentiureSchedules = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureSchedulesByFromToDate?fromDate="+data.fromDate+"&toDate="+data.toDate,
+      "",
+      [],
+      {}
+    );
+
+    const resgetAllBudgetVarianceReportRest = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllBudgetVarianceReportRest",
+      "",
+      [],
+      {}
+    );
+
+    var resJSON = {
+      "getAllIncomeExpenditureYearly" : resgetAllIncomeExpentiureYearly,
+      "getAllIncomeExpentiureSchedules" : resgetAllIncomeExpentiureSchedules,
+      "getAllBudgetVarianceReportRest" : resgetAllBudgetVarianceReportRest
+    };
+    
+    //debugger;
+    var response = [resJSON, data];
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+    // OK
+    dispatch(
+      handleField(
+      "FinanceDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
 // Get Dashboard Data for TradeLicense
 export const getTradeLicenseData = async ( dispatch, data ) => {
   
   debugger;
   // Same as per Sport and culture but module code is different
-  var payloadData = {
-  "tenantId": data.tenantId,
-  "RequestBody": {
-    "tenantId": data.tenantId,
-    "moduleCode": "PR",
-    "eventDetailUuid": "",
-    "eventTitle": "",
-    "eventStatus": "",
-    "status": "",
-    "startDate": data.fromDate,
-    "endDate": data.toDate,
-    "eventId": "",
-    "defaultGrid": false
-  },
-  "reportSortBy": data.reportSortBy
-  }
+  var payloadData = data;
 
   try {
     store.dispatch(toggleSpinner());
-    const DescriptionReport = await httpRequest(
+    var DescriptionReport = [];
+    const res1 = await httpRequest(
       "post",
-      "/tl-services/v1/_search?tenantId="+data.tenantId+"&limit=100&fromDate="+data.fromDate+"&toDate="+data.toDate+"",
+      "/tl-services/v1/_search?tenantId="+data.tenantId+"&limit=100&fromDate="+data.fromDate+"&toDate="+data.toDate,
+      // "/tl-services/v1/_search?tenantId="+data.tenantId+"&limit=100&fromDate="+data.fromDate+"&toDate="+data.toDate+"",
       "",
       [],
-      payloadData
+      {}
     );
-
+    
+    DescriptionReport = res1;
     //debugger;
-    var response = [ DescriptionReport, payloadData.reportSortBy ];
+    
+    var response = [ DescriptionReport, payloadData ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // OK
@@ -1966,14 +2333,73 @@ export const getEaawasData = async ( dispatch, data ) => {
 
 // Get Legal Dashboard Data
 export const getLegalDashboardData = async ( dispatch, data ) => {
+  
+  debugger;
+  // Same as per Sport and culture but module code is different
+  var payloadData = {
+  "tenantId": data.tenantId,
+  "RequestBody": {
+    "tenantId": data.tenantId,
+    "moduleCode": "PR",
+    "eventDetailUuid": "",
+    "eventTitle": "",
+    "eventStatus": "",
+    "status": "",
+    "startDate": data.fromDate,
+    "endDate": data.toDate,
+    "eventId": "",
+    "defaultGrid": false
+  },
+  "reportSortBy": data.reportSortBy
+  }
+  var response = payloadData.reportSortBy ;
+  try {
+    store.dispatch(toggleSpinner());
+    const DescriptionReport = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/legalcase/getLegalCase",
+      "",
+      [],
+      {}
+    );
+
+    //debugger;
+    var response = [DescriptionReport, data]
+    dispatch(
+      handleField(
+      "LegalDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+export const getLegalDashboardData2 = async ( dispatch, data ) => {
   try {
 
     // let filestoreIds = get(queryObject[2], "value");
 
     const response = await httpRequest(
       "get",
-      "/services/lcms/reports/genericSubResult?aggregatedBy=Case+Status&caseCategory=&standingCounsel=&courtType=&courtName=&judgmentType=&petitionType=&caseStatus=&officerIncharge=&reportStatus=&caseFromDate=&caseToDate=",
-      "", []);
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/legalcase/getLegalCase",
+      "", 
+      []);
     return response;
 
   } catch (error) {
@@ -1987,6 +2413,128 @@ export const getLegalDashboardData = async ( dispatch, data ) => {
     );
   }
 }; 
+
+// Get Agenda Dashboard Data
+export const getAgendaDashboardData = async ( dispatch, data ) => {
+  
+  debugger;
+  // Same as per Sport and culture but module code is different
+  var payloadData = {
+  "tenantId": data.tenantId,
+  "RequestBody": {
+    "tenantId": data.tenantId,
+    "startDate": data.fromDate,
+    "endDate": data.toDate,
+    "defaultGrid": false
+  },
+  "reportSortBy": data.reportSortBy
+  }
+  var response = payloadData.reportSortBy ;
+  try {
+    store.dispatch(toggleSpinner());
+    const getAllAgenda = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/agenda/getAllAgenda",
+      "",
+      [],
+      {}
+    );
+
+    const getAllMeeting = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/agenda/getAllMeeting",
+      "",
+      [],
+      {}
+    );
+
+    const getAllMoM = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/agenda/getAllMom",
+      "",
+      [],
+      {}
+    );
+
+    //debugger;
+    var response = [
+      {
+        "respData": {
+          "getAllAgenda": getAllAgenda,
+          "getAllMom": getAllMoM,
+          "getAllMeeting": getAllMeeting
+        }
+      },
+      {
+        "sortby": payloadData
+      }
+    ]
+
+    dispatch(
+      handleField(
+      "AgendaDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+// Get Audit Dashboard Data
+export const getAuditData = async ( dispatch, data ) => {
+  
+  
+  try {
+    store.dispatch(toggleSpinner());
+    const getAllAudit = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/auditrest/getAllAudit",
+      "",
+      [],
+      {}
+    );
+    
+    var response = [getAllAudit, data]
+    
+    dispatch(
+      handleField(
+      "AuditDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
 
 // Get Dashboard Data for OPMS (Status))
 export const getStatusOPMSData = async ( dispatch, data ) => {
@@ -2088,7 +2636,7 @@ export const getStatusOPMSData = async ( dispatch, data ) => {
       "ADVERTISEMENTNOC": advertisementStatusRes.nocApplicationDetail,
       "SELLMEATNOC": sellmeatStatusRes.nocApplicationDetail
     }
-    var response = [ resJSON, petnocPayload.reportSortBy ];
+    var response = [ resJSON, petnocPayload.reportSortBy, petnocPayload ];
     dispatch(prepareFinalObject("allDashboardSearchData", resJSON));
 
     // OK
@@ -2218,14 +2766,15 @@ export const getOSBMData = async ( dispatch, data ) => {
     store.dispatch(toggleSpinner());
     const DescriptionReport = await httpRequest(
       "post",
-      "/bookings/api/employee/_search?tenantId=ch.chandigarh",
+      // "/bookings/api/employee/_search?tenantId=ch.chandigarh",
+      "/report/rainmaker-services/DescriptionReport/_get?tenantId="+getTenantId()+"&pageSize=false&offset=0",
       "",
       [],
-      payloadData
+      payloadData.payload
     );
 
     //debugger;
-    var response = [ DescriptionReport, payloadData.reportSortBy ];
+    var response = [ DescriptionReport, payloadData ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // OK
@@ -2255,7 +2804,6 @@ export const getOSBMData = async ( dispatch, data ) => {
 // Get Dashboard Data for Store Indent Issue Note
 export const getStoreIndentData = async ( dispatch, data ) => {
   
-  debugger;
   // Same as per Sport and culture but module code is different
   var payloadData = data;
 
@@ -2263,28 +2811,24 @@ export const getStoreIndentData = async ( dispatch, data ) => {
     store.dispatch(toggleSpinner());
     const DescriptionReport = await httpRequest(
       "post",
-      "/store-asset-services/materialissues/_search?tenantId="+getTenantId()
-      +"&fromStore="+payloadData.reportSortBy.value+"&issueFromDate="+payloadData.fromDate
-      +"&issueToDate="+payloadData.toDate+"",
+      "/store-asset-services/materialissues/_search?tenantId="+data.tenantId+"&fromStore="+data.storeName.value,
       "",
       [],
       []
     );
 
-    //debugger;
-    var response = [ DescriptionReport.materialIssues, payloadData ];
+    var response = [ DescriptionReport, payloadData ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
-
-    // OK
+    
     dispatch(
       handleField(
-      "StoreDashboard",
-      "components.div.children.DashboardResults",
-      "props.data",
-      response
+        "StoreDashboard",
+        "components.div.children.DashboardResults",
+        "props.data",
+        response
       )
-      );
-      
+    );
+    
     store.dispatch(toggleSpinner());
     return response;
   } catch (error) {
@@ -2302,42 +2846,31 @@ export const getStoreIndentData = async ( dispatch, data ) => {
 // Get Dashboard Data for Store MaterialReceipt Data
 export const getStoreMaterialReceiptData = async ( dispatch, data ) => {
   
-  debugger;
-  // Same as per Sport and culture but module code is different
-  // var payloadData = {
-  //   "tenantId": data.tenantId,
-  //   "startDate": data.fromDate,
-  //   "endDate": data.toDate,
-  //   "reportSortBy": data.reportSortBy
-  // }
-
   var payloadData = data;
 
   try {
     store.dispatch(toggleSpinner());
     const DescriptionReport = await httpRequest(
       "post",
-      "store-asset-services/receiptnotes/_search?tenantId="+getTenantId()+"&receiptType=PURCHASE%20RECEIPT&receivingStore="
-      +payloadData.storeName.value+"",
+      "/store-asset-services/receiptnotes/_search?tenantId="+data.tenantId+"&receiptType=PURCHASE%20RECEIPT&receivingStore="+data.storeName.value,
       "",
       [],
       []
     );
 
     //debugger;
-    var response = [ DescriptionReport.MaterialReceipt, payloadData ];
+    var response = [ DescriptionReport, payloadData ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
-    // OK
     dispatch(
       handleField(
-      "StoreDashboard",
-      "components.div.children.DashboardResults",
-      "props.data",
-      response
+        "StoreDashboard",
+        "components.div.children.DashboardResults",
+        "props.data",
+        response
       )
-      );
-      
+    );
+
     store.dispatch(toggleSpinner());
     return response;
   } catch (error) {
@@ -2354,6 +2887,67 @@ export const getStoreMaterialReceiptData = async ( dispatch, data ) => {
 
 // Get Dashboard Data for Store Purchase Order Data
 export const getStorePurchaseOrderData = async ( dispatch, data ) => {
+  
+  var payloadData = data;
+
+  try {
+    store.dispatch(toggleSpinner());
+    const openBalance = await httpRequest(
+      "post",
+      "/store-asset-services/openingbalance/_report?tenantId="+data.tenantId+"&storecode="+data.storeName.value
+      +"&financialyear="+data.selectedYear.value+"&isprint=false",
+      "",
+      [],
+      []
+    );
+
+    var dt = data.selectedYear.value;
+    dt = dt.substring(dt.length, dt.length-2);
+    var formattedDate = "20"+dt+"-12-31";
+    const closeBalance = await httpRequest(
+      "post",
+      "/store-asset-services/openingbalance/_closingReport?tenantId="+data.tenantId+"&storecode="+data.storeName.value+"&asOnDate="+formattedDate+"&isprint=false",
+      "",
+      [],
+      []
+    );
+
+    //debugger;
+    var DescriptionReport = {
+      "OpenBalance" : openBalance,
+      "CloseBalance" : closeBalance
+    };
+    var response = [ DescriptionReport, payloadData ];
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+    dispatch(
+      handleField(
+        "StoreDashboard",
+        "components.div.children.DashboardResults",
+        "props.data",
+        response
+      )
+    );
+
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+
+
+// Get Dashboard 1 data
+// Get Dashboard Data for Store Purchase Order Data
+export const getStorePurchaseOrderData2 = async ( dispatch, data ) => {
   
   debugger;
   // Same as per Sport and culture but module code is different
@@ -2383,7 +2977,7 @@ export const getStorePurchaseOrderData = async ( dispatch, data ) => {
     // OK
     dispatch(
       handleField(
-      "StoreDashboard",
+      "StoreIndentDashboard",
       "components.div.children.DashboardResults",
       "props.data",
       response
@@ -2402,6 +2996,107 @@ export const getStorePurchaseOrderData = async ( dispatch, data ) => {
       )
     );
   }
+};
+
+
+// Get Dashboard Data for Store MaterialReceipt Data
+export const getStoreMaterialReceiptData2 = async ( dispatch, data ) => {
+
+debugger;
+// Same as per Sport and culture but module code is different
+// var payloadData = {
+//   "tenantId": data.tenantId,
+//   "startDate": data.fromDate,
+//   "endDate": data.toDate,
+//   "reportSortBy": data.reportSortBy
+// }
+
+var payloadData = data;
+
+try {
+  store.dispatch(toggleSpinner());
+  const DescriptionReport = await httpRequest(
+  "post",
+  "store-asset-services/receiptnotes/_search?tenantId="+getTenantId()+"&receiptType=PURCHASE%20RECEIPT&receivingStore="
+  +payloadData.storeName.value+"",
+  "",
+  [],
+  []
+  );
+
+  //debugger;
+  var response = [ DescriptionReport.MaterialReceipt, payloadData ];
+  dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+  // OK
+  dispatch(
+  handleField(
+  "StoreIndentDashboard",
+  "components.div.children.DashboardResults",
+  "props.data",
+  response
+  )
+  );
+  
+  store.dispatch(toggleSpinner());
+  return response;
+} catch (error) {
+  store.dispatch(toggleSpinner());
+  store.dispatch(
+  toggleSnackbar(
+      true,
+      { labelName: error.message, labelCode: error.message },
+      "error"
+  )
+  );
+}
+};
+
+// Get Dashboard Data for Store Indent Issue Note
+export const getStoreIndentData2 = async ( dispatch, data ) => {
+
+debugger;
+// Same as per Sport and culture but module code is different
+var payloadData = data;
+
+try {
+  store.dispatch(toggleSpinner());
+  const DescriptionReport = await httpRequest(
+  "post",
+  "/store-asset-services/materialissues/_search?tenantId="+getTenantId()
+  +"&fromStore="+payloadData.reportSortBy.value+"&issueFromDate="+payloadData.fromDate
+  +"&issueToDate="+payloadData.toDate+"",
+  "",
+  [],
+  []
+  );
+
+  //debugger;
+  var response = [ DescriptionReport.materialIssues, payloadData ];
+  dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+  // OK
+  dispatch(
+  handleField(
+  "StoreIndentDashboard",
+  "components.div.children.DashboardResults",
+  "props.data",
+  response
+  )
+  );
+  
+  store.dispatch(toggleSpinner());
+  return response;
+} catch (error) {
+  store.dispatch(toggleSpinner());
+  store.dispatch(
+  toggleSnackbar(
+      true,
+      { labelName: error.message, labelCode: error.message },
+      "error"
+  )
+  );
+}
 };
 
 // Get Dashboard Data for Water n Sewerage
@@ -2437,28 +3132,55 @@ export const getWNSData = async ( dispatch, data ) => {
       payloadData
     );
 
-    var billPayload = {
-      "billGeneration": {
-        "fromDate":data.fromDate,
-        "toDate":data.toDate
-        }
-    }
-    const billData = await httpRequest(
-      "post",
-      "/ws-services/wsreport/_getBillReportData?",
-      "",
-      [],
-      billPayload
-    );
-
     // //debugger;
-    var response = [ applicationList, billData, payloadData.reportSortBy ];
+    var response = [ applicationList, payloadData ];
     // dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // // OK
     dispatch(
       handleField(
-      "WNSDashboard",
+      "WaterDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+// Get Dashboard Data for Water n Sewerage
+export const getSewerageData = async ( dispatch, data ) => {
+  
+  debugger;
+  try {
+    store.dispatch(toggleSpinner());
+    
+    const sewerageApplication = await httpRequest(
+      "post",
+      "/sw-services/swc/_search?tenantId="+data.tenantId+"&fromDate="+data.fromDate+"&toDate="+data.toDate,
+      "",
+      [],
+      {}
+    );
+    var response = [ sewerageApplication, data ];
+    // dispatch(prepareFinalObject("allDashboardSearchData", response));
+
+    // // OK
+    dispatch(
+      handleField(
+      "SewerageDashboard",
       "components.div.children.DashboardResults",
       "props.data",
       response
@@ -2486,33 +3208,42 @@ export const getWorkData = async ( dispatch, data ) => {
   // Same as per Sport and culture but module code is different
   var payloadData = {
   "tenantId": data.tenantId,
-  "RequestBody": {
-    "tenantId": data.tenantId,
-    "moduleCode": "PR",
-    "eventDetailUuid": "",
-    "eventTitle": "",
-    "eventStatus": "",
-    "status": "",
-    "startDate": data.fromDate,
-    "endDate": data.toDate,
-    "eventId": "",
-    "defaultGrid": false
-  },
+  "startDate": data.fromDate,
+  "endDate": data.toDate,
   "reportSortBy": data.reportSortBy
   }
   var response = payloadData.reportSortBy ;
   try {
     store.dispatch(toggleSpinner());
-    const DescriptionReport = await httpRequest(
+    const getAllEstimate = await httpRequest(
       "get",
       "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/dashboard/getAllEstimationPreparation",
       "",
       [],
       {}
     );
+    const getAllDNIT = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/dashboard/getAllDnit",
+      "",
+      [],
+      {}
+    );
+    const getAllWorkAgreement = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/dashboard/getAllWorkAgreementByMilestone",
+      "",
+      [],
+      {}
+    );
 
+    var propsData = {
+      "getAllEstimationPreparation" : getAllEstimate,
+      "getAllDnit" : getAllDNIT,
+      "getAllWorkAgreementByMilestone" : getAllWorkAgreement
+    }
     //debugger;
-    response = [ DescriptionReport, payloadData.reportSortBy ];
+    response = [ propsData, payloadData ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
     // // OK
