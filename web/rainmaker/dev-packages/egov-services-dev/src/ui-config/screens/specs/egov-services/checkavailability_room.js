@@ -3,7 +3,7 @@ import {
     getCommonHeader,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
-
+import {callBackForSearch} from './checkavailabilityForm_room'
 import {
     getCurrentFinancialYear,
     clearlocalstorageAppDetails,
@@ -242,13 +242,30 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "checkavailability_room",
     beforeInitScreen: (action, state, dispatch) => {
+       
+        let ccApplicationNumber = get(
+            state,
+            "screenConfiguration.preparedFinalObject.ccApplicationNumber",
+            ""
+        );
+        
         clearlocalstorageAppDetails(state);
         set(
             action.screenConfig,
             "components.div.children.personalDetails.visible",
            false
         );
-
+        if(ccApplicationNumber!==""){
+            set(
+                    state.screenConfiguration.screenConfig["checkavailability_room"],
+                    "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector.props.value",
+                    ccApplicationNumber
+  
+                    ); 
+             dispatch(prepareFinalObject("availabilityCheckData.bkApplicationNumber",ccApplicationNumber));
+             callBackForSearch(state, dispatch, action)
+             
+         }
         return action;
     },
 
