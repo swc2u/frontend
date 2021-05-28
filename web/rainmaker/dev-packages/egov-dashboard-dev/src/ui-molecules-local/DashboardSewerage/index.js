@@ -72,7 +72,13 @@ class SewerageDashboard extends React.Component {
     var tableColumnData = []
     var tableColumnDataCamel = []
     for(var i=0; i<columnData.length; i++){
-        tableColumnData.push(columnData[i]["Header"]);
+        tableColumnData.push(columnData[i]["accessor"]);
+        // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
+    }
+
+    var colData = [];
+    for(var i=0; i<columnData.length; i++){
+        colData.push(columnData[i]["Header"]);
         // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
     }
 
@@ -85,7 +91,13 @@ class SewerageDashboard extends React.Component {
             demo2 = demo2.split(",")
             if(typeof(demo2) === "object"){   
                 if(demo2.length > 1){
-                    rowItem.push(rowData[i][demo2[0]][demo2[1]]);
+                    if(demo2[0] === "connectionHolders[0]"){
+                        rowItem.push(rowData[i]["connectionHolders"][0][demo2[1]]);  
+                    }
+                    if(demo2[0] === "swProperty"){
+                        rowItem.push(rowData[i]["swProperty"][demo2[1]]);  
+                    }
+                    // rowItem.push(rowData[i][demo2[0]][demo2[1]]);
                 }
                 else{
                     rowItem.push(rowData[i][demo2]);
@@ -114,7 +126,7 @@ class SewerageDashboard extends React.Component {
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
-    doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
+    doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
 
     doc.setFontSize(10);
     const pdfTitle = "Sewerage Applications Dashboard"
@@ -125,7 +137,7 @@ class SewerageDashboard extends React.Component {
 
     doc.autoTable({
         // head: [tableColumnDataCamel],
-        head: [tableColumnData],
+        head: [colData],
         theme: "striped",
         styles: {
             fontSize: 7,

@@ -451,6 +451,9 @@ class WaterDashboard extends React.Component {
                         graphClicked : 0
                     })
                 }
+                this.setState({
+                    recordNotFound : "",
+                })
             }else{
                 this.setState({
                     recordNotFound : "Record Not Found..!",
@@ -1111,7 +1114,7 @@ class WaterDashboard extends React.Component {
     return (
         <div>
         
-        <div style={this.state.rowData.length === 0 ? {display:"none"} : null}>
+        <div>
             { this.state.recordNotFound }
         </div>
 
