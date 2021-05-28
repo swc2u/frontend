@@ -274,6 +274,11 @@ class WorkFlowContainer extends React.Component {
             {
               if(WaterConnection[0].activityType==='REACTIVATE_CONNECTION' )
               actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+              else if(status ==="TEMPORARY_CONNECTION_CLOSED" && WaterConnection[0].activityType==='TEMPORARY_DISCONNECTION' )
+              {
+                actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+
+              }
               else if(WaterConnection[0].activityType==='CONNECTION_CONVERSION'
               || WaterConnection[0].activityType==='UPDATE_CONNECTION_HOLDER_INFO'
               || WaterConnection[0].activityType==='UPDATE_METER_INFO'
@@ -304,16 +309,7 @@ class WorkFlowContainer extends React.Component {
                                               &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
 
               }
-              else if(status ==="TEMPORARY_CONNECTION_CLOSED")
-              {
-                actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
-                                              && item.buttonLabel !=='REACTIVATE_CONNECTION'
-                                              && item.buttonLabel !=='UPDATE_METER_INFO'
-                                              && item.buttonLabel !=='UPDATE_CONNECTION_HOLDER_INFO'
-                                              && item.buttonLabel !=='CONNECTION_CONVERSION'
-                                              &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
-
-              }
+              
 
             }
             else if (status ==='CONNECTION_CLOSED' && WaterConnection[0].activityType ==='PERMANENT_DISCONNECTION')

@@ -1183,10 +1183,11 @@ const parserFunction = (state) => {
         usageSubCategory = (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
 
     }
-    if(queryObject.waterProperty.usageCategory)
+    if(queryObject.sewerage ===undefined && queryObject.water === undefined  && queryObject.tubewell === undefined)
     {
-        usageCategory = queryObject.waterProperty.usageCategory;
-
+        if (queryObject.waterProperty.usageCategory) {
+            usageCategory = queryObject.waterProperty.usageCategory;
+        }
     }
 
     let parsedObject = {
