@@ -2173,18 +2173,19 @@ export const getFinanceData = async ( dispatch, data ) => {
 
   try {
     store.dispatch(toggleSpinner());
-    const resgetAllIncomeExpentiureYearly = await httpRequest(
-      "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureYearly?org_id=390&fin_id=13",
-      // "/est-services/application/_search?branchType=EstateBranch",
-      "",
-      [],
-      {}
-    );
+    // const resgetAllIncomeExpentiureYearly = await httpRequest(
+    //   "get",
+    //   "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureYearly?org_id=390&fin_id=13",
+    //   // "/est-services/application/_search?branchType=EstateBranch",
+    //   "",
+    //   [],
+    //   {}
+    // );
+    const resgetAllIncomeExpentiureYearly = [];
 
     const resgetAllIncomeExpentiureSchedules = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureSchedules?fin_id=13",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureSchedulesByFromToDate?fromDate="+data.fromDate+"&toDate="+data.toDate,
       "",
       [],
       {}
