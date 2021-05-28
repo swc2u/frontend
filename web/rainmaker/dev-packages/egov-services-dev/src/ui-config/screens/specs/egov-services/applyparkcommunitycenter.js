@@ -518,6 +518,18 @@ const screenConfig = {
                     convertDateInYMD(availabilityCheckData.bkToDate)
                 )
             );
+            dispatch(
+                prepareFinalObject(
+                    "displayBkFromDate",
+                    convertDateInYMD(availabilityCheckData.bkFromDate)
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "displayBkToDate",
+                    convertDateInYMD(availabilityCheckData.bkToDate)
+                )
+            );
             if (
                 availabilityCheckData.bkBookingType !== "Parks" &&
                 availabilityCheckData.bkDuration === "FULLDAY"

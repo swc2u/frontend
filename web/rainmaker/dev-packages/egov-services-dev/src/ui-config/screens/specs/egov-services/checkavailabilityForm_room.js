@@ -65,13 +65,15 @@ const callBackForReset =async (state, dispatch, action) => {
 };
 
 
-const callBackForSearch = async (state, dispatch, action) => {
+export const callBackForSearch = async (state, dispatch, action) => {
+    
     let applicationNumber = get(
         state,
         "screenConfiguration.preparedFinalObject.availabilityCheckData.bkApplicationNumber"
     );
  
     if (applicationNumber) {
+      
         setapplicationNumber(applicationNumber);
         let response = await getSearchResultsViewForHall([
             
@@ -86,9 +88,15 @@ const callBackForSearch = async (state, dispatch, action) => {
         let bookingsModelList = get(response, "bookingsModelList", []);
     
         if (bookingsModelList[0]!==null && bookingsModelList.length > 0 && response2.data!={}) {
-            
+          
+               
             set(
                 state.screenConfiguration.screenConfig["checkavailability_room"],
+                "components.div.children.personalDetails.visible",
+               true
+            );
+            set(
+                action.screenConfig,
                 "components.div.children.personalDetails.visible",
                true
             );
@@ -128,6 +136,11 @@ const callBackForSearch = async (state, dispatch, action) => {
                         state.screenConfiguration.screenConfig["checkavailability_room"],
                         "components.div.children.personalDetails.visible",
                         false
+                    );
+                    set(
+                        action.screenConfig,
+                        "components.div.children.personalDetails.visible",
+                       false
                     );
                     dispatch(
                         toggleSnackbar(
@@ -205,6 +218,7 @@ const callBackForSearch = async (state, dispatch, action) => {
         }
        
         else{
+         
             dispatch(
                 toggleSnackbar(
                     true,

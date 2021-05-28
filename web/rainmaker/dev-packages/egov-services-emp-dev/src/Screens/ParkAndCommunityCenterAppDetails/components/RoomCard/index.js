@@ -266,7 +266,8 @@ var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getF
               "totalgst": BKROOM_TAX,
               "refundableCharges": "",
               "totalPayment": totalAmountPaid,
-              "paymentDate": convertEpochToDate(PaymentDate, "dayend"),
+            //  "paymentDate": convertEpochToDate(PaymentDate, "dayend"), 
+            "paymentDate": AllValues[0].createdDate,
               "receiptNo": receiptNumber,
               "currentDate":   convertEpochToDate(toDayDate, "dayend"),
               "paymentType": PaymentMode,
@@ -294,7 +295,8 @@ var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getF
               "accountholderName": AllValues[0].bkBankAccountHolder,
               "rBankName": AllValues[0].bkBankName,
               "rBankACNo": AllValues[0].bkBankAccountNumber,
-              "rIFSCCode": AllValues[0].bkIfscCode
+              "rIFSCCode": AllValues[0].bkIfscCode,
+              nomName: AllValues[0].bkNomineeName, 
           }
       }
   ]
@@ -564,7 +566,8 @@ var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getF
           "totalgst":BKROOM_TAX,
           "refundableCharges": "",
           "totalPayment": totalAmountPaid,
-          "paymentDate": convertEpochToDate(PaymentDate, "dayend"),
+          // "paymentDate": convertEpochToDate(PaymentDate, "dayend"),
+          "paymentDate": AllValues[0].createdDate,
           "receiptNo": receiptNumber,
           "currentDate":   convertEpochToDate(toDayDate, "dayend"),
           "paymentType": PaymentMode,
@@ -592,7 +595,8 @@ var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getF
             "accountholderName": AllValues[0].bkBankAccountHolder,
             "rBankName": AllValues[0].bkBankName,
             "rBankACNo": AllValues[0].bkBankAccountNumber,
-            "rIFSCCode": AllValues[0].bkIfscCode
+            "rIFSCCode": AllValues[0].bkIfscCode,
+            nomName: AllValues[0].bkNomineeName,
         }
       }
   ]

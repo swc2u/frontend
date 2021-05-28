@@ -921,7 +921,33 @@ export const downloadReceipt = async (
             return;
         }
         let tenantData = await getMdmsTenantsData();
-
+        let bookingDuration = '';
+        if (applicationData.businessService == "PACC" && applicationData.bkBookingType == "Community Center") {
+            if (applicationData.timeslots && applicationData.timeslots.length > 0) {
+    
+                var [fromTime, toTime] = applicationData.timeslots[0].slot.split('-')
+                let newToDate= applicationData.bkToDate
+                if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+                  
+                    let d = new Date(new Date(applicationData.bkToDate).setDate(new Date(applicationData.bkToDate).getDate() + 1));  
+                    newToDate= d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+                  
+                }
+                bookingDuration = getDurationDateWithTime(
+                    applicationData.bkFromDate,
+                    newToDate,
+                    fromTime,
+                    toTime
+                )
+    
+    
+            }
+        } else {
+            bookingDuration = getDurationDate(
+                applicationData.bkFromDate,
+                applicationData.bkToDate
+            )
+        }
         let paymentInfoData = "";
         let bankInfo = {};
         let tenantInfo = "";
@@ -932,10 +958,11 @@ export const downloadReceipt = async (
                 TxnNo = 1;
             }
             paymentInfoData = {
-                paymentDate: convertEpochToDate(
-                    payloadReceiptDetails.Payments[TxnNo].transactionDate,
-                    "dayend"
-                ),
+                // paymentDate: convertEpochToDate(
+                //     payloadReceiptDetails.Payments[TxnNo].transactionDate,
+                //     "dayend"
+                // ),
+                paymentDate:applicationData.createdDate,
                 transactionId:
                     payloadReceiptDetails.Payments[TxnNo].transactionNumber,
                 bookingPeriod: getDurationDate(
@@ -987,10 +1014,7 @@ export const downloadReceipt = async (
                 totalPayment: (
                     parseFloat(payloadReceiptDetails.Payments[TxnNo].totalAmountPaid)
                 ).toFixed(2),
-                paymentDate: convertEpochToDate(
-                    payloadReceiptDetails.Payments[TxnNo].transactionDate,
-                    "dayend"
-                ),
+                paymentDate:applicationData.createdDate,
                 paymentType: payloadReceiptDetails.Payments[TxnNo].paymentMode,
                 facilitationCharge: applicationData.bkFacilitationCharges ? parseFloat(applicationData.bkFacilitationCharges).toFixed(2) : 0,
                 discType: "NotFound",
@@ -1007,6 +1031,8 @@ export const downloadReceipt = async (
             bankInfo.rBankName = applicationData.bkBankName;
             bankInfo.rBankACNo = applicationData.bkBankAccountNumber;
             bankInfo.rIFSCCode = applicationData.bkIfscCode;
+            bankInfo.nomName = applicationData.bkNomineeName;
+            
             tenantInfo = {
                 municipalityName:
                     tenantData.tenants[0].city.municipalityName,
@@ -1060,10 +1086,7 @@ export const downloadReceipt = async (
                 )[0].amount;
             }
             paymentInfoData = {
-                paymentDate: convertEpochToDate(
-                    payloadReceiptDetails.Payments[0].transactionDate,
-                    "dayend"
-                ),
+                paymentDate:applicationData.createdDate,
                 transactionId:
                     payloadReceiptDetails.Payments[0].transactionNumber,
                 bookingPeriod:
@@ -1140,10 +1163,7 @@ export const downloadReceipt = async (
                     applicationDate: applicationData.bkDateCreated,
                     bkLocation: applicationData.bkLocation,
                     bkDept: applicationData.bkBookingType,
-                    bkFromTo: getDurationDate(
-                        applicationData.bkFromDate,
-                        applicationData.bkToDate
-                    )
+                    bkFromTo:bookingDuration,
 
                 },
                 paymentInfo: paymentInfoData,
@@ -1165,10 +1185,7 @@ export const downloadReceipt = async (
             paymentInfoData = {
                 currentDate: `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}`,
                 cleaningCharges: "0",
-                paymentDate: convertEpochToDate(
-                    payloadReceiptDetails.Payments[0].transactionDate,
-                    "dayend"
-                ),
+                paymentDate:applicationData.createdDate,
                 transactionId:
                     payloadReceiptDetails.Payments[0].transactionNumber,
                 bookingPeriod: getDurationDate(
@@ -1260,7 +1277,9 @@ export const downloadReceipt = async (
                         accountholderName: applicationData.bkBankAccountHolder,
                         rBankName: applicationData.bkBankName,
                         rBankACNo: applicationData.bkBankAccountNumber,
-                        rIFSCCode: applicationData.bkIfscCode
+                        rIFSCCode: applicationData.bkIfscCode,
+                        nomName: applicationData.bkNomineeName,
+                        
                     },
                     tenantInfo: {
                         municipalityName: "Municipal Corporation Chandigarh",
@@ -1551,10 +1570,7 @@ export const downloadCertificate = async (
             parseFloat(applicationData.bkCleansingCharges) +
             parseFloat(applicationData.bkSurchargeRent)
         ).toFixed(2);
-        paymentInfo.paymentDate = convertEpochToDate(
-            payloadReceiptDetails.Payments[0].transactionDate,
-            "dayend"
-        );
+        paymentInfo.paymentDate=applicationData.createdDate,
         paymentInfo.receiptNo = payloadReceiptDetails.Payments[TxnNo].paymentDetails[0]
             .receiptNumber;
         paymentInfo.custGSTN = applicationData.bkCustomerGstNo ? applicationData.bkCustomerGstNo : "NA";
@@ -1565,7 +1581,8 @@ export const downloadCertificate = async (
         bankInfo.rBankName = applicationData.bkBankName;
         bankInfo.rBankACNo = applicationData.bkBankAccountNumber;
         bankInfo.rIFSCCode = applicationData.bkIfscCode;
-
+        bankInfo.nomName = applicationData.bkNomineeName;
+       
 
 
     }
@@ -1651,10 +1668,7 @@ export const downloadCertificate = async (
             )[0].amount),
             refundableCharges: "",
             totalPayment: payloadReceiptDetails.Payments[0].totalAmountPaid,
-            paymentDate: convertEpochToDate(
-                payloadReceiptDetails.Payments[0].transactionDate,
-                "dayend"
-            ),
+            paymentDate:applicationData.createdDate,
             receiptNo: payloadReceiptDetails.Payments[0].paymentDetails[0]
                 .receiptNumber,
             currentDate: `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`,
@@ -1720,7 +1734,9 @@ export const downloadCertificate = async (
                     accountholderName: applicationData.bkBankAccountHolder,
                     rBankName: applicationData.bkBankName,
                     rBankACNo: applicationData.bkBankAccountNumber,
-                    rIFSCCode: applicationData.bkIfscCode
+                    rIFSCCode: applicationData.bkIfscCode,
+                    nomName: applicationData.bkNomineeName,
+                    
                 },
                 tenantInfo: {
                     municipalityName: "Municipal Corporation Chandigarh",
@@ -2301,7 +2317,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
             );
             bookedDates.data.length > 0
                 ? bookedDates.data.map((val) => {
-                    if (val === from || val === to) {
+                    if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
                         isAvailable = false;
                     } else {
                         isAvailable = true
@@ -2332,7 +2348,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
             );
             bookedDates.data.length > 0
                 ? bookedDates.data.map((val) => {
-                    if (val === from || val === to) {
+                    if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
                         isAvailable = false;
                     } else {
                         isAvailable = true
@@ -2366,7 +2382,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
             );
             bookedDates.data.length > 0
                 ? bookedDates.data.map((val) => {
-                    if (val === from || val === to) {
+                    if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
                         isAvailable = false;
                     } else {
                         isAvailable = true

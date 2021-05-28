@@ -410,7 +410,7 @@ class SummaryDetails extends Component {
             bkStartingDate: null,
             bkEndingDate: null,
             bkType: null,
-            bkResidenceProof: null,
+            bkResidenceProof: null, 
             bkCleansingCharges:
               DataForRoomBooking.bookingsModelList[0].bkCleansingCharges,
             bkRent: DataForRoomBooking.bookingsModelList[0].bkRent,
@@ -430,7 +430,7 @@ class SummaryDetails extends Component {
             bkBookingDuration: null,
             bkIdProof: null,
             bkApplicantContact: null,
-            bkOpenSpaceLocation: null,
+            bkOpenSpaceLocation: null, 
             bkLandmark: null,
             bkRequirementArea: null,
             bkLocationPictures: null,
@@ -438,6 +438,7 @@ class SummaryDetails extends Component {
             bkRefundAmount: DataForRoomBooking.bookingsModelList[0].bkRefundAmount,
             bkBankAccountNumber:
               DataForRoomBooking.bookingsModelList[0].bkBankAccountNumber,
+              "bkNomineeName":DataForRoomBooking.bookingsModelList[0].bkNomineeName,
             bkBankName: DataForRoomBooking.bookingsModelList[0].bkBankName,
             bkIfscCode: DataForRoomBooking.bookingsModelList[0].bkIfscCode,
             bkAccountType: DataForRoomBooking.bookingsModelList[0].bkAccountType,
