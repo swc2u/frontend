@@ -410,7 +410,7 @@ export const empDetails = () => {
           action: "condition",
           callBack: pensionerUpdate
         },
-        visible: true
+        visible: false
       },
     });
     }
