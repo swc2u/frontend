@@ -486,14 +486,14 @@ export const PensionerClaimantDetails = (IsEdit) => {
     ClaimantAdddress: getTextField({
       label: {
         labelName: "claimantAddress",
-        labelKey: "PENSION_EMPLOYEE_PENSION_CA"
+        labelKey: "PENSION_EMPLOYEE_PENSION_CA_LABEL"
       },
       props:{
         className:"applicant-details-error"
       }, 
       placeholder: {
         labelName: "claimantAddress",
-        labelKey: "PENSION_EMPLOYEE_PENSION_CA"
+        labelKey: "PENSION_EMPLOYEE_PENSION_CA_LABEL"
       },
       required: true,
       minValue:0,

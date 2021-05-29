@@ -372,7 +372,7 @@ export const initiateRegularRetirementPension = async (state, dispatch, tenantId
 export const updatePensionerDetails = async (state, dispatch) => {
   try {
     let PensionerDetails = get(state.screenConfiguration.preparedFinalObject,"PensionerDetails",{})
-    set(PensionerDetails,'doc',convertDateToEpoch(PensionerDetails.doc))
+    set(PensionerDetails,'dob',convertDateToEpoch(PensionerDetails.dob))
     set(PensionerDetails,'wef',convertDateToEpoch(PensionerDetails.wef))
     set(PensionerDetails,'claimantDob',convertDateToEpoch(PensionerDetails.claimantDob))
     let response;
