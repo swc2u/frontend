@@ -151,7 +151,7 @@ export const searchApplications = getCommonCard({
       label: { labelKey: "WS_APPLICATION_TYPE_LABEL" },
       sourceJsonPath: "applyScreenMdmsData.searchScreen.applicationType",
       placeholder: { labelKey: "WATER_APPLICATION_TYPE_PLACEHOLDER" },
-      required: true,
+      required: false,
       gridDefination: { xs: 12, sm: 4 },
       jsonPath: "searchScreen.applicationType",
       localePrefix: {

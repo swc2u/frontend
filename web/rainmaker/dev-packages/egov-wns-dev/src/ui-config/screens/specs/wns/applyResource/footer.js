@@ -307,11 +307,14 @@ if(water || sewerage || tubewell)
           let owners = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.owners",[])
           if(owners.length === 1)
           {
+            if(process.env.REACT_APP_NAME === "Citizen")
+            {
             errorMessage_.labelName="Please add multilple ownner data"
             errorMessage_.labelKey="WS_FILL_MULTIPLEOWNERS_FIELDS"
             
             dispatch(toggleSnackbar(true, errorMessage_, "warning"));
             return false
+            }
 
           }
           else if (owners.length>1)
@@ -384,13 +387,18 @@ if(water || sewerage || tubewell)
           SingleOwnerDetailsItemsS = SingleOwnerDetailsItemsS.filter( x=>x.isDeleted === undefined || x.isDeleted !== false)
           if (SingleOwnerDetailsItemsS.length>1)
           {
-            let errorMessageS = {
-              labelName: "Please remove multilple ownner data",
-              labelKey: "WS_FILL_SINGLEOWNERS_FIELDS"
-            };
-            
-            dispatch(toggleSnackbar(true, errorMessageS, "warning"));
-            return false
+            if(process.env.REACT_APP_NAME === "Citizen")
+            {
+              let errorMessageS = {
+                labelName: "Please remove multilple ownner data",
+                labelKey: "WS_FILL_SINGLEOWNERS_FIELDS"
+              };
+              
+              dispatch(toggleSnackbar(true, errorMessageS, "warning"));
+              return false
+
+            }
+           
 
           }
 

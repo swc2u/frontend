@@ -10,14 +10,16 @@ import { httpRequest } from "../../../../../ui-utils";
 //import { validateFields, getTextToLocalMapping } from "../../utils";
 import { set } from "lodash";
 export const searchApiCall = async (state, dispatch) => {
-  showHideApplicationTable(false, dispatch);
-  showHideConnectionTable(false, dispatch);
+
+ 
   let getCurrentTab = get(state.screenConfiguration.preparedFinalObject, "currentTab");
   let currentSearchTab = getCurrentTab === undefined ? "SEARCH_CONNECTION" : getCurrentTab;
   if (currentSearchTab === "SEARCH_CONNECTION") {
+    showHideConnectionTable(true, dispatch);
     resetFieldsForApplication(state, dispatch);
     await renderSearchConnectionTable(state, dispatch);
   } else {
+    showHideApplicationTable(true, dispatch);
     resetFieldsForConnection(state, dispatch);
     await renderSearchApplicationTable(state, dispatch);
   }
