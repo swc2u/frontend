@@ -2170,22 +2170,26 @@ export const getEStateData = async ( dispatch, data ) => {
 export const getFinanceData = async ( dispatch, data ) => {
   
   debugger;
+  var fromDate = data.fromDate.split("-");
+  fromDate = fromDate[2]+"/"+fromDate[1]+"/"+fromDate[0];
+  var toDate = data.toDate.split("-");
+  toDate = toDate[2]+"/"+toDate[1]+"/"+toDate[0];
 
   try {
     store.dispatch(toggleSpinner());
-    // const resgetAllIncomeExpentiureYearly = await httpRequest(
-    //   "get",
-    //   "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureYearly?org_id=390&fin_id=13",
-    //   // "/est-services/application/_search?branchType=EstateBranch",
-    //   "",
-    //   [],
-    //   {}
-    // );
-    const resgetAllIncomeExpentiureYearly = [];
+    const resgetAllIncomeExpentiureYearly = await httpRequest(
+      "get",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureByFromToDate?fromDate=05/09/2018&toDate=15/09/2020",
+      "",
+      [],
+      {}
+    );
+    // const resgetAllIncomeExpentiureYearly = [];
 
     const resgetAllIncomeExpentiureSchedules = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureSchedulesByFromToDate?fromDate="+data.fromDate+"&toDate="+data.toDate,
+      // "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureSchedulesByFromToDate?fromDate=05/09/2018&toDate=15/09/2020",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureSchedulesByFromToDate?fromDate="+fromDate+"&toDate="+toDate,
       "",
       [],
       {}
@@ -2202,7 +2206,7 @@ export const getFinanceData = async ( dispatch, data ) => {
     var resJSON = {
       "getAllIncomeExpenditureYearly" : resgetAllIncomeExpentiureYearly,
       "getAllIncomeExpentiureSchedules" : resgetAllIncomeExpentiureSchedules,
-      "getAllBudgetVarianceReportRest" : resgetAllBudgetVarianceReportRest
+      "getAllBudgetVarienceReport" : resgetAllBudgetVarianceReportRest
     };
     
     //debugger;
