@@ -931,7 +931,7 @@ uniqueBycode =(data,key)=>{
     const businessServiceData = JSON.parse(
       localStorageGet("businessServiceData")
     );
-    const data = find(businessServiceData, { businessService: moduleName });
+    const data = find(businessServiceData, { businessService: moduleName });    
     const state = find(data.states, { applicationStatus: status });
     let actions = [];
     state.actions &&
