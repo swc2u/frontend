@@ -1744,7 +1744,7 @@ export const applyForWaterOrSewerage = async (state, dispatch) => {
 export const applyForWater = async (state, dispatch) => {
     let queryObject = parserFunction(state);
     let waterId = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].id");
-    let plotNo = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.address.plotNo");
+    let doorNo = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.address.doorNo");
     let method = waterId ? "UPDATE" : "CREATE";
     try {
         const tenantId = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].property.tenantId");
@@ -1856,7 +1856,7 @@ export const applyForWater = async (state, dispatch) => {
         } else {
             set(queryObject, "processInstance.action", "INITIATE")
             //set doorNo
-            set(queryObject, "property.address.doorNo", plotNo)
+            set(queryObject, "property.address.doorNo", doorNo.toUpperCase())
             queryObject = findAndReplace(queryObject, "NA", null);
             if(get(state, "screenConfiguration.preparedFinalObject.applyScreen.tubewell")){
                 queryObject.activityType = "NEW_TUBEWELL_CONNECTION";
@@ -1904,11 +1904,12 @@ export const propertyUpdate = async (state, dispatch,propertyPayload)=>{
          
         }
         return true;
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        console.log(error);
         if(localStorage.getItem("WNS_STATUS")){
             window.localStorage.removeItem("WNS_STATUS");
         }
+        dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
         return false;
        
       }

@@ -220,6 +220,7 @@ const callBackForNext = async (state, dispatch) => {
     // if (validatePropertyLocationDetails && validatePropertyDetails && validateForm) {
     //   isFormValid = await appl;
     // }
+    
 
 //set for back and previous action
 let water = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
@@ -732,8 +733,42 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     propertyData.landArea = parseInt(propertyData.landArea);
     propertyData.totalConstructedArea = parseInt(propertyData.landArea);
     propertyData.tenantId = tenantId;
-    propertyData.address.doorNo = propertyData.address.plotNo;
-    set(propertyData, "address.doorNo", propertyData.address.plotNo);
+    //propertyData.address.doorNo = propertyData.address.plotNo;
+    set(propertyData, "address.doorNo", propertyData.address.doorNo.toUpperCase());
+    set(propertyData, "landArea", parseInt(propertyData.landArea));
+    set(propertyData, "totalConstructedArea", parseInt(propertyData.landArea));
+    if(propertyData.address.locality !== undefined)
+    {
+      if(propertyData.address.locality.code.value)
+      {
+      // propertyPayload.address.locality.code = propertyPayload.address.locality.code.value;
+      set(propertyData, "address.locality.code", propertyData.address.locality.code.value);
+      }
+      else if(propertyData.address.locality.code)
+      {
+        //propertyData.address.locality.code = propertyData.address.locality.code;
+        set(propertyData, "address.locality.code", propertyData.address.locality.code);
+      }
+      
+    }
+    //set usage category
+    let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
+    let subusageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+    if(usageCategory.split('.').length ===1)
+    {
+      //st
+      set(propertyData, "usageCategory", subusageCategory);
+
+    }
+    if(subusageCategory.split('.').length ===2)
+    {
+      //set 
+      set(propertyData, "usageCategory", subusageCategory);
+    }
+
+    // end set usage category
+    // propertyPayload.landArea = parseInt(propertyPayload.landArea);
+    // propertyPayload.totalConstructedArea = parseInt(propertyPayload.landArea);
     set(propertyData, "creationReason", "UPDATE");
     let response_ = await propertyUpdate(state, dispatch,propertyData)
     if(response_)
@@ -745,6 +780,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       if(localStorage.getItem("WNS_STATUS")){
         window.localStorage.removeItem("WNS_STATUS");
     }
+    return;
     }
      }
    }
@@ -1119,8 +1155,8 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         propertyPayload.landArea = parseInt(propertyPayload.landArea);
         propertyPayload.totalConstructedArea = parseInt(propertyPayload.landArea);
         propertyPayload.tenantId = tenantId;
-        propertyPayload.address.doorNo = propertyPayload.address.plotNo;
-        set(propertyPayload, "address.doorNo", propertyPayload.address.plotNo);
+       // propertyPayload.address.doorNo = propertyPayload.address.plotNo;
+        set(propertyPayload, "address.doorNo", propertyPayload.address.doorNo.toUpperCase());
         if(propertyPayload.address.city !== undefined)
         propertyPayload.address.city = propertyPayload.address.city;
         else

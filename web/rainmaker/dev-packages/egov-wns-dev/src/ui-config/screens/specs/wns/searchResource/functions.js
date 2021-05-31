@@ -53,6 +53,9 @@ export const deactivateConnection = async (state, dispatch) => {
    //INDIVIDUAL.SINGLEOWNER
    set(queryObjectForUpdate, "connectionHolders[0].ownerType", "INDIVIDUAL.SINGLEOWNER");
    set(queryObjectForUpdate, "status", "Inactive");
+   // set other propert as workflow service did in backend
+   set(queryObjectForUpdate, "applicationStatus", "CLOSE_CONNECTION");
+   set(queryObjectForUpdate, "activityType", "REACTIVATE_CONNECTION");
   //  if(queryObjectForUpdate.connectionExecutionDate !== null )
   //  set(queryObjectForUpdate, "connectionExecutionDate", queryObjectForUpdate.connectionExecutionDate);
   //  else{
