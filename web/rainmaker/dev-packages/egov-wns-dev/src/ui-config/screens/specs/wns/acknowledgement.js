@@ -583,24 +583,24 @@ export const downloadPrintContainer = (
     leftIcon: "book"
   };
   let sanctionDownloadObject = {
-    label: { labelKey: "WS_SANCTION_LETTER" },
+    label: { labelKey: "WS_RECEIPT_LETTER" },
     link: () => {
       const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
       const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "To Citizen" : "Department Use";
-      WaterConnection[0].appUserType = appUserType;
-      WaterConnection[0].commissionerName = "S.Ravindra Babu";
-      downloadApp(state,WaterConnection, 'sanctionLetter');
+      // WaterConnection[0].appUserType = appUserType;
+      // WaterConnection[0].commissionerName = "S.Ravindra Babu";
+      downloadApp(state,WaterConnection, 'receiptLetter');
     },
     leftIcon: "receipt"
   };
   let sanctionPrintObject = {
-    label: { labelKey: "WS_SANCTION_LETTER" },
+    label: { labelKey: "WS_RECEIPT_LETTER" },
     link: () => {
       const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
       const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "Department Use" : "To Citizen";
-      WaterConnection[0].appUserType = appUserType;
-      WaterConnection[0].commissionerName = "S.Ravindra Babu";
-      downloadApp(state,WaterConnection, 'sanctionLetter', 'print');
+      // WaterConnection[0].appUserType = appUserType;
+      // WaterConnection[0].commissionerName = "S.Ravindra Babu";
+      downloadApp(state,WaterConnection, 'receiptLetter', 'print');
     },
     leftIcon: "receipt"
   };
@@ -655,8 +655,10 @@ export const downloadPrintContainer = (
     case "CONNECTION_ACTIVATED":
       // downloadMenu = [sanctionDownloadObject, wsEstimateDownloadObject, applicationDownloadObject];
       // printMenu = [sanctionPrintObject, wsEstimatePrintObject, applicationPrintObject];
-      downloadMenu = [applicationDownloadObject, ];
-      printMenu = [applicationPrintObject,];
+      downloadMenu = [applicationDownloadObject];
+      printMenu = [applicationPrintObject];
+      // downloadMenu = [applicationDownloadObject, sanctionDownloadObject];
+      // printMenu = [applicationPrintObject,sanctionPrintObject];
       break;
     // case "REJECTED":
     //   downloadMenu = [applicationDownloadObject];

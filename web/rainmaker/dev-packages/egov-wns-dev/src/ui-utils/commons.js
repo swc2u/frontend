@@ -2764,16 +2764,32 @@ export const swEstimateCalculation = async (queryObject, dispatch) => {
 };
 // to download application 
 export const downloadApp = async (state,wnsConnection, type, mode = "download") => {
-    let estFileStrID = wnsConnection[0].additionalDetails.estimationFileStoreId
-    let sanFileStrID = wnsConnection[0].additionalDetails.sanctionFileStoreId
+    // let estFileStrID = wnsConnection[0].additionalDetails.estimationFileStoreId
+    // let sanFileStrID = wnsConnection[0].additionalDetails.sanctionFileStoreId
 
-    if (type === 'estimateNotice' && estFileStrID !== undefined && estFileStrID !== null) {
-        downloadReceiptFromFilestoreID(estFileStrID, mode)
-        return false;
-    } else if (type === 'sanctionLetter' && sanFileStrID !== undefined && sanFileStrID !== null) {
-        downloadReceiptFromFilestoreID(sanFileStrID, mode)
-        return false;
+    // if (type === 'estimateNotice' && estFileStrID !== undefined && estFileStrID !== null) {
+    //     downloadReceiptFromFilestoreID(estFileStrID, mode)
+    //     return false;
+    // } else if (type === 'sanctionLetter' && sanFileStrID !== undefined && sanFileStrID !== null) {
+    //     downloadReceiptFromFilestoreID(sanFileStrID, mode)
+    //     return false;
+    // }
+    // else 
+    if(type === 'receiptLetter'){
+       // console.log(wnsConnection)
+       if(wnsConnection[0].service ==='"SEWERAGE"')
+       {
+
+       }
+       else[
+           
+       ]
+        
+
     }
+    else{
+
+    
 
     let tenantName = wnsConnection[0].property.tenantId;
     tenantName = tenantName.split('.')[1];
@@ -2834,8 +2850,6 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
             ACTION: "_get",
         },
     };
-
-
     switch (type) {
         case 'application':
             queryStr.push({ key: "key", value: appService })
@@ -2849,7 +2863,6 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
             queryStr.push({ key: "key", value: appService });
             break;
     }
-
     try {
         const estResponse = await httpRequest(
             "post",
@@ -2952,6 +2965,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
     } catch (exception) {
         alert('Some Error Occured while downloading!');
     }
+}
 }
 
 export const GetMdmsNameBycode = (state, jsonpath, code) => {

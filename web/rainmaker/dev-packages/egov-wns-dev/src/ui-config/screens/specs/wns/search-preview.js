@@ -120,6 +120,20 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
     else{
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewproposedHolderInfo.visible",false);
     }
+    if(activityTypeHolder ==='SW_SEWERAGE')
+    {
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewMeterId.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewMeterInstallationDate.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewInitialMeterReading.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewmfrCode.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewmeterDigits.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewmeterUnit.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewsanctionedCapacity.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewmeterRentCode.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewMeterCount.visible",false);
+      
+
+    }
 
     if(activityTypeHolder ==='UPDATE_METER_INFO' || activityTypeHolder ==='WS_METER_UPDATE' )
     {
