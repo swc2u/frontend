@@ -734,7 +734,20 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     propertyData.totalConstructedArea = parseInt(propertyData.landArea);
     propertyData.tenantId = tenantId;
     //propertyData.address.doorNo = propertyData.address.plotNo;
-    set(propertyData, "address.doorNo", propertyData.address.doorNo.toUpperCase());
+    let doorNo =propertyData.address.doorNo
+    if(doorNo.length ===1)
+    {
+      doorNo =`000${doorNo}` 
+    }
+    else if(doorNo.length ===2)
+    {
+      doorNo =`00${doorNo}` 
+    } 
+    else if(doorNo.length ===3)
+    {
+      doorNo =`0${doorNo}` 
+    } 
+    set(propertyData, "address.doorNo", doorNo.toUpperCase());
     set(propertyData, "landArea", parseInt(propertyData.landArea));
     set(propertyData, "totalConstructedArea", parseInt(propertyData.landArea));
     if(propertyData.address.locality !== undefined)
@@ -1156,7 +1169,20 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         propertyPayload.totalConstructedArea = parseInt(propertyPayload.landArea);
         propertyPayload.tenantId = tenantId;
        // propertyPayload.address.doorNo = propertyPayload.address.plotNo;
-        set(propertyPayload, "address.doorNo", propertyPayload.address.doorNo.toUpperCase());
+       let doorNo =propertyPayload.address.doorNo
+      if(doorNo.length ===1)
+      {
+        doorNo =`000${doorNo}` 
+      }
+      else if(doorNo.length ===2)
+      {
+        doorNo =`00${doorNo}` 
+      } 
+      else if(doorNo.length ===3)
+      {
+        doorNo =`0${doorNo}` 
+      } 
+        set(propertyPayload, "address.doorNo", doorNo.toUpperCase());
         if(propertyPayload.address.city !== undefined)
         propertyPayload.address.city = propertyPayload.address.city;
         else
@@ -1611,6 +1637,31 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       "applyScreenMdmsData.ws-services-masters.sectorList",
       []
     );
+
+    let WaterConnection = get(state.screenConfiguration.preparedFinalObject, "WaterConnection");
+      let SewerageConnection = get(state.screenConfiguration.preparedFinalObject, "SewerageConnection");
+      if(SewerageConnection.length ==1)
+      {
+        if(SewerageConnection[0].sewerage === true)
+        {
+          sectorList = get(
+            state.screenConfiguration.preparedFinalObject,
+            "applyScreenMdmsData.ws-services-masters.swSectorList",
+            []
+          );
+        }
+      }
+      if(WaterConnection.length ==1)
+      {
+        if(WaterConnection[0].sewerage === true)
+        {
+          sectorList = get(
+            state.screenConfiguration.preparedFinalObject,
+            "applyScreenMdmsData.ws-services-masters.swSectorList",
+            []
+          );
+        }
+      }
     if(sectorcode.value!== undefined)
     sectorcode = sectorcode.value
     sectorList = sectorList.filter(x=>x.code === sectorcode);
@@ -1965,6 +2016,8 @@ export const changeStep = (
         isCheckedSameAsProperty
       )
     )
+    let applyScreen = get(state, "screenConfiguration.preparedFinalObject.applyScreen",{});
+    dispatch(prepareFinalObject("applyScreenOld", applyScreen));
   }
   
   const isPreviousButtonVisible = activeStep > 0 ? true : false;

@@ -93,10 +93,10 @@ class ServiceList extends React.Component {
       }
     ]
     ContactNumber = ContactNumber.filter((item)=>item.Number === userInfo.mobileNumber)
-    if(ContactNumber.length ===0)
-    {
-      list = list.filter((item)=>item.name !=='rainmaker-citizen-wns')
-    }
+    // if(ContactNumber.length ===0)
+    // {
+    //   list = list.filter((item)=>item.name !=='rainmaker-citizen-wns')
+    // }
     }else{
       list = menu && menu.filter((item) => item.url === "card");
     }
