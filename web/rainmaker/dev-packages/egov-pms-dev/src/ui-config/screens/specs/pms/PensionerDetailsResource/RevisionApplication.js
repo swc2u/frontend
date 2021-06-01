@@ -335,7 +335,7 @@ pensionBankDetailsConatiner: getCommonContainer({
       labelName: "bankCode",
       labelKey: "PENSION_BANK_CODE"
     },
-    required:true,
+    required:false,
     props: {
       disabled: false,       
     },
@@ -578,7 +578,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantBankCode",
         labelKey: "PENSION_BANK_CODE_C"
       },
-      required:true,
+      required:false,
       props: {
         disabled: false,       
       },
