@@ -121,6 +121,14 @@ let citizenCardItems = [{
         },
         icon: <TradeLicenseIcon />,
         route: `payment`
+      },
+      {
+        label: {
+          labelName: "Pay Rent",
+          labelKey: "RP_PROPERTY_SEARCH_HEADER"
+        },
+        icon: <TradeLicenseIcon />,
+        route: `property-search`
       }
 ]
 

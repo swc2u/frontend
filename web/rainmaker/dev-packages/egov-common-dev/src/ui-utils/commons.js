@@ -512,8 +512,8 @@ export const setApplicationNumberBox = (state, dispatch, applicationNo) => {
 };
 
 export const downloadReceiptFromFilestoreID=(fileStoreId,mode,tenantId)=>{
-  getFileUrlFromAPIWS(fileStoreId,tenantId).then(async(fileRes) => {
- // getFileUrlFromAPI(fileStoreId,tenantId).then(async(fileRes) => {
+ // getFileUrlFromAPIWS(fileStoreId,tenantId).then(async(fileRes) => {
+  getFileUrlFromAPI(fileStoreId,tenantId).then(async(fileRes) => {
     if (mode === 'download') {
       var win = window.open(fileRes[fileStoreId], '_blank');
       if(win){

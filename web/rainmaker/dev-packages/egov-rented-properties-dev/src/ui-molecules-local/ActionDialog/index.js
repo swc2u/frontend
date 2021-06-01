@@ -650,7 +650,7 @@ if(!document || document.length===0){
     const showEmployeeList = !!dialogData && !!dialogData.roleProps && dialogData.roleProps.length === 1 ? dialogData.roleProps[0].showEmployeeList : this.state.showEmployeeList
     const isDocRequired = !!dialogData && !!dialogData.roleProps && dialogData.roleProps.length === 1 ? dialogData.roleProps[0].isDocRequired : this.state.isDocRequired
     const rolesData =  !!dialogData && !!dialogData.roleProps && !!dialogData.roleProps.length ? dialogData.roleProps.map(roledata => ({
-      label: roledata.role,
+      label: roledata.role && roledata.role === "CLERKORJA"?"CLERK OR JA":roledata.role,
       value: roledata
     })) : []
     // const showEmployeeList = !!this.props.dialogData && !!this.props.dialogData.roleProps && this.props.dialogData.roleProps.length === 1 ? this.props.dialogData.roleProps[0].showEmployeeList : this.state.showEmployeeList,
