@@ -125,6 +125,30 @@ export const getPensionEmployees = async (queryObject, dispatch) => {
     throw error;
   }
 };
+//getSearchResultsEmployeeForPMSMap
+export const getSearchResultsEmployeeForPMSMap = async (queryObject, dispatch) => {
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      //"/pension-services/v1/_searchEmployeeForDeathRegistration",
+       "/pension-services/v1/_searchEmployee",
+      "",
+      queryObject
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+    throw error;
+  }
+};
 export const getSearchResultsEmployeeForDeath = async (queryObject, dispatch) => {
   try {
     store.dispatch(toggleSpinner());
