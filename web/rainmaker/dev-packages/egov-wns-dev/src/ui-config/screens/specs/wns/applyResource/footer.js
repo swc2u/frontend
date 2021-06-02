@@ -310,6 +310,10 @@ if(water || sewerage || tubewell)
           {
             if(process.env.REACT_APP_NAME === "Citizen")
             {
+              let errorMessage_ = {
+                labelName: "Please add multilple ownner data",
+                labelKey: "WS_FILL_MULTIPLEOWNERS_FIELDS"
+              };
             errorMessage_.labelName="Please add multilple ownner data"
             errorMessage_.labelKey="WS_FILL_MULTIPLEOWNERS_FIELDS"
             
@@ -1702,6 +1706,10 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     dispatch(prepareFinalObject("ledgerlist",ledgerRange));
     }
     else { isFormValid = false; hasFieldToaster = true; }
+
+    //set subusageCategory
+    let usageCategory_ = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.usageCategory");
+    set(state,"screenConfiguration.preparedFinalObject.applyScreen.property.subusageCategory",usageCategory_)
   }
 
   if (activeStep === 2 && process.env.REACT_APP_NAME !== "Citizen") {
