@@ -382,7 +382,7 @@ class WorkFlowContainer extends React.Component {
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
       {
-        validRequest = this.ValidateRequest(data)
+        validRequest = this.ValidateRequest(data,preparedFinalObject)
       }   
 
     try {
@@ -692,11 +692,17 @@ class WorkFlowContainer extends React.Component {
 //
 //validation methos for water Request if submit without filling rewuired field
 //
-ValidateRequest =(payload) =>{
+ValidateRequest =(payload,preparedFinalObject) =>{
   let isvalidRequest = false
 
   //if(payload.applicationStatus ==='PENDING_FOR_SECURITY_DEPOSIT' && payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT')
   //PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT
+  if(preparedFinalObject.applyScreen !==null && preparedFinalObject.applyScreen !== undefined)
+  {
+    payload.waterProperty.id = preparedFinalObject.applyScreen.waterProperty.id
+
+  }
+    
   if(payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
   {
     isvalidRequest = false;
@@ -853,7 +859,7 @@ ValidateRequest =(payload) =>{
     }
     //payload.documents = tmp;
 //return  false
-  return isvalidRequest
+ return isvalidRequest
 }
 
 uniqueBycode =(data,key)=>{

@@ -57,6 +57,7 @@ let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
  let pensionDataUpdate = true;
  let IsCalculate = false;
  let Isletter = false;
+ let Isletterdoc =false;
  //const Accesslable = [];
  let activeStep_= ActionStepDop()
  const step = getQueryArg(window.location.href, "step");
@@ -71,9 +72,11 @@ let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
     pensionCalculation = false;  
     pensionDataUpdate= false;
     IsCalculate = true;
+    Isletterdoc =true;
     break;
     case activeStep_.PENDING_FOR_AUDIT:  
     Isletter = true; 
+    Isletterdoc =true;
     break;
     // default:
     //   employeeOtherDetailsUpdate = true;

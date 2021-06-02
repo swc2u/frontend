@@ -1167,6 +1167,7 @@ const parserFunction = (state) => {
     let queryObject = JSON.parse(JSON.stringify(get(state.screenConfiguration.preparedFinalObject, "applyScreen", {})));
     let usageCategory ='SW_TEMP'
     let usageSubCategory =null
+    let id = null
     let isFerruleApplicable = false
     if(queryObject.waterApplication && queryObject.waterApplication!== undefined)
     {
@@ -1179,6 +1180,14 @@ const parserFunction = (state) => {
     }
     if(queryObject.water)
     {
+        if(queryObject.waterProperty.id)
+        {
+            id = queryObject.waterProperty.id
+        }
+        
+        else{
+            id =  get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null)
+        }
         usageCategory =(queryObject.waterProperty.usageCategory === null || queryObject.waterProperty.usageCategory === "NA") ? "" : queryObject.waterProperty.usageCategory
         usageSubCategory = (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
 
@@ -1204,7 +1213,7 @@ const parserFunction = (state) => {
         waterApplicationType: (queryObject.waterApplicationType === null || queryObject.waterApplicationType === "NA") ? "" : queryObject.waterApplicationType,
         waterProperty :{
         //id : get(state.screenConfiguration.preparedFinalObject, "Properties.id", null),
-        id : get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null),
+        id : id,
 
         usageCategory: usageCategory,// (queryObject.waterProperty.usageCategory === null || queryObject.waterProperty.usageCategory === "NA") ? "" : queryObject.waterProperty.usageCategory,
         usageSubCategory:usageSubCategory// (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
@@ -1212,7 +1221,7 @@ const parserFunction = (state) => {
         swProperty :{
            // id : get(state.screenConfiguration.preparedFinalObject, "Properties.id", null),
            // SW_TEMP
-            id : get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null),
+            id : id,//get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null),
             usageCategory: usageCategory,
             usageSubCategory: usageSubCategory,           
             },

@@ -129,9 +129,33 @@ class ShowField extends Component {
         footer: true,
         className: "report-excel-button",
         exportOptions: {
+         
           format: {
                    body: function (data, row, column, node ) {
-                              return column === 6 ? "\0" + data : data;
+                     if(_this.state.reportName ==='MonthlyPensionDrawn')
+                     {
+                      
+                      return column === 6 ? "\0" + data : data;
+                    }
+                    else{
+                      var str1 = new String(data);  
+                      var index = str1.indexOf( "data-localization" ); 
+                      if(index>0)
+                      {                        
+                        var Text = data;
+                        var template = document.createElement('template');
+                        Text = Text.trim(); 
+                        template.innerHTML = Text;
+                        data = template.content.firstChild.innerText === undefined?Text:template.content.firstChild.innerText;
+                        return column = data
+                      }
+                      else{
+                        data = data;
+                        return column = data
+                      }
+
+                    }
+                              
                               }
             }
          },

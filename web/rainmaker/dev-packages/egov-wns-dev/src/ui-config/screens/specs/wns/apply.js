@@ -1318,22 +1318,36 @@ const screenConfig = {
       if(localStorage.getItem("wns_workflow")){
         window.localStorage.removeItem("wns_workflow");
       }
-      dispatch(
-        handleField(
-          "apply",
-          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail",
-          "visible",
-          true
-        )
-      )
-      dispatch(
-        handleField(
-          "apply",
-          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail",
-          "visible",
-          false
-        )
-      )
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.visible",
+        true
+      );
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.visible",
+        false
+      );
+      // dispatch(
+      //   handleField(
+      //     "apply",
+      //     "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail",
+      //     "visible",
+      //     true
+      //   )
+      // )
+      // dispatch(
+      //   handleField(
+      //     "apply",
+      //     "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail",
+      //     "visible",
+      //     false
+      //   )
+      // )
+
+    }
+    else
+    {
 
     }
 

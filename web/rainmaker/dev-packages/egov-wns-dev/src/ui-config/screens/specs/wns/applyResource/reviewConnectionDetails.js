@@ -299,7 +299,9 @@ const getPropertyDetails = {
               labelKey: "WS_PROPERTY_SUB_USAGE_TYPE_LABEL"
             },
             {
-              jsonPath: "applyScreen.property.usageCategory",
+             jsonPath: "applyScreen.property.subusageCategory",//usageCategory
+             //jsonPath: "WaterConnection[0].property.subusageCategory",
+             //jsonPath: "WaterConnection[0].property.usageCategory",
               callBack: handlePropertySubUsageType,
               localePrefix: {
                 moduleName: "WS",
