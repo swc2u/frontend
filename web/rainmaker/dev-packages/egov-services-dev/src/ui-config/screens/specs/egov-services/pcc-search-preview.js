@@ -482,6 +482,18 @@ const setSearchResponse = async (
                 convertDateInYMD(recData[0].bkToDate)
             )
         );
+        dispatch(
+            prepareFinalObject(
+                "displayBkFromDate",
+                convertDateInYMD(recData[0].bkFromDate)
+            )
+        );
+        dispatch(
+            prepareFinalObject(
+                "displayBkToDate",
+                convertDateInYMD(recData[0].bkToDate)
+            )
+        );
         let rent = Number(masterItemData[0].rent);
         let cleaningCharges = Number(masterItemData[0].cleaningCharges);
         let amount = rent + cleaningCharges;
@@ -536,7 +548,20 @@ const setSearchResponse = async (
             )
         );
 
-
+        let appBookingType = get(
+            state,
+            "screenConfiguration.preparedFinalObject.Booking.bkBookingType"
+        );
+   
+        if(appBookingType==="Community Center" ){
+            set(
+                action,
+                "screenConfig.components.div.children.footer.children.bookRoomButton.visible",
+                true
+            );
+          
+        
+        }
     }
 };
 
@@ -666,6 +691,7 @@ const screenConfig = {
         //     false
         // );
 
+        
         return action;
     },
     components: {

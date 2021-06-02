@@ -532,7 +532,7 @@ export const pccParkSummary = getCommonGrayCard({
                             labelKey: "BK_PCC_FROM_DATE_LABEL",
                         },
                         {
-                            jsonPath: "Booking.bkFromDate",
+                            jsonPath: "displayBkFromDate",
                             callBack: (value) => {
                                 if (value === undefined || value === "" || value === null) {
                                     return "NA"
@@ -568,7 +568,7 @@ export const pccParkSummary = getCommonGrayCard({
                             labelKey: "BK_PCC_TO_DATE_LABEL",
                         },
                         {
-                            jsonPath: "Booking.bkToDate",
+                            jsonPath: "displayBkToDate",
                             callBack: (value) => {
                                 if (value === undefined || value === "" || value === null) {
                                     return "NA"
