@@ -2,7 +2,7 @@ import * as actionTypes from "./actionTypes";
 // import {CREATEBWTAPPLICATION,APPLICATION,MCCAPPLICATION, COMPLAINT, CATEGORY,PAYMENT,HISTORY,AFTERPAYMENTAPI,DWONLOADPAYMENTRECEIPT,DOWNLOADBWTAPPLICATION,DOWNLOADAPPLICATION,DWONLOADPERMISSIONLETTER,OSBMPerDayRateAmount,PerDayRateAmount,DWONLOADNEWRECEIPTFORCG,PermissionLetterDWNOSMCC,ApplicationDWNOSMCC, DWONLOADPAYMENTRECEIPTFORCG,DWONLOADAPPLICATIONFORCG,CREATEPACCAPPLICATION } from "../../utils/endPoints";
 import {CREATEBWTAPPLICATION,PGService,DWONLOADPLFORPCC,DWONLOADRECEIPTFORPCC,APPLICATION,MCCAPPLICATION, COMPLAINT, CATEGORY,PAYMENT,HISTORY,AFTERPAYMENTAPI,DWONLOADPAYMENTRECEIPT,DOWNLOADBWTAPPLICATION,DOWNLOADAPPLICATION,DWONLOADPERMISSIONLETTER,OSBMPerDayRateAmount,PerDayRateAmount,DWONLOADNEWRECEIPTFORCG,PermissionLetterDWNOSMCC,ApplicationDWNOSMCC, DWONLOADPAYMENTRECEIPTFORCG,DWONLOADAPPLICATIONFORCG,DWONLOADAPPFORPCC,CREATEPACCAPPLICATION,UPDATEPACCAPPLICATION,ESAMPARK,ESAMPARKPL,WATERTANKERPAYRECEIPT
 ,DownloadEmpRoomPaymentReceipt,DownloadEmpRoomPermissionLetter,DownloadEmpPACCPermissionLetter,DownloadESAMPRECEIPT,
-downloadPaccCitizenReceipt,downloadPaccCitizenpermissionLetter,citizenCCpermissionLetter,cgRefundPaymentReceipt,cgRefundApplicationform
+downloadPaccCitizenReceipt,downloadPaccCitizenpermissionLetter,citizenCCpermissionLetter,cgRefundPaymentReceipt,cgRefundApplicationform,cancelReceipt
 } from "egov-ui-kit/utils/endPoints";
 import { httpRequest } from "egov-ui-kit/utils/api";
 import commonConfig from "config/common.js";
@@ -1218,6 +1218,35 @@ export const cgRefundApplicationForm = (requestBody, hasUsers = true, overWrite)
 const cgRefundApplicationFormError = (error) => {
 	return {
 		type: actionTypes.DOWNLOAD_CG_REFUND_APPLICATION_ERROR,
+		error,
+	};
+};
+
+//cancelation receipt
+
+export const cancelBookingPayReceipt = (requestBody, hasUsers = true, overWrite) => {
+	return async (dispatch, getState) => {
+	  try {
+		let tenantId = "";
+		const payload = await httpRequest(cancelReceipt.POST.URL, cancelReceipt.POST.ACTION, [], requestBody);
+		dispatch(cancelReceiptComplete(payload, overWrite));
+	  } catch (error) {
+		dispatch(cancelReceiptError(error.message));
+	  }
+	};
+  };
+
+  const cancelReceiptComplete = (payload, overWrite) => {
+	return {
+		type: actionTypes.DOWNLOAD_CANCEL_RECEIPT_COMPLETE,
+		payload,
+		overWrite: overWrite,
+	};
+};
+
+const cancelReceiptError = (error) => {
+	return {
+		type: actionTypes.DOWNLOAD_CANCEL_RECEIPT_ERROR,
 		error,
 	};
 };

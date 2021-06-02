@@ -50,6 +50,7 @@ class SummaryDetails extends Component {
     repeatTrxNo: "",
     SubmitDetails: false,
     justTry: "",
+    CurrentApplicationNum: ""
   };
 
   componentDidMount = async () => {
@@ -57,6 +58,9 @@ class SummaryDetails extends Component {
     let fetchApplicationNumber = fetchUrl.substring(
       fetchUrl.lastIndexOf("/") + 1
     );
+    this.setState({
+      CurrentApplicationNum : fetchApplicationNumber
+    })
     let {
       createPACCApplication,
       userInfo,
@@ -180,8 +184,7 @@ class SummaryDetails extends Component {
       pddIFSC,
       pIFSC,state,selectedComplaint
     } = this.props;
-  
-
+    let cardNumber , TransactionNum
     let ppMode = paymentMode && paymentMode ? paymentMode : " ";
     let PaymentReqBody;
     if (ppMode == "Cash") {
@@ -204,26 +207,54 @@ class SummaryDetails extends Component {
           totalAmountPaid: TotalAmount,
         },
       };
-      let EmpPayment = await httpRequest(
-        "collection-services/payments/_create?",
-        "_search",
-        [],
-        PaymentReqBody
-      );
+      try{
+        let EmpPayment = await httpRequest(
+          "collection-services/payments/_create?",
+          "_search",
+          [],
+          PaymentReqBody
+        );
+        if(EmpPayment.ResponseInfo.status == "200" && EmpPayment.Payments.length > 0){
+
+          prepareFinalObject("ResponseOfCashPayment", EmpPayment);
   
-     
-  
-      prepareFinalObject("ResponseOfCashPayment", EmpPayment);
-  
-      let ReceiptNum =
-        EmpPayment && EmpPayment
-          ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
-          : "notFound";
+          let Booking = {
+            "bkApplicationNumber": this.state.CurrentApplicationNum,
+            "cardNumber": "0000",
+            "transactionNumber": this.state.PaymentReceiptNumber,
+        }
+          console.log("cash--Booking",Booking)
+          let saveCardNum = await httpRequest(
+            "bookings/api/save/cardDetails",
+            "_search",
+            [],
+            {Booking:Booking}
+          );
+          console.log("saveCardNum",saveCardNum)
+    
+          let ReceiptNum =
+            EmpPayment && EmpPayment
+              ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+              : "notFound";
+          
       
+          prepareFinalObject("CollectionReceiptNum", ReceiptNum);
   
-      prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+          // TransactionNum = this.state.PaymentReceiptNumber
+          // cardNumber = this.state.last4Digits
+          this.props.history.push(`/egov-services/success-payment`);
   
-      this.props.history.push(`/egov-services/success-payment`);
+        }
+      }catch (error){
+          this.props.toggleSnackbarAndSetText(
+            true,
+            {
+              labelName: "Payment failed please try again",
+              labelKey: `Payment failed please try again`
+            },
+            "error"
+          );  
+      }  
     }
     if (ppMode == "Cheque") {
       if(pChequeNo !== " " && pChequeNo !== null && pChequeNo !== undefined && 
@@ -255,27 +286,58 @@ if(ChnChqDate <= this.props.longtodayDate){
             totalAmountPaid: TotalAmount,
           },
         };
-        let EmpPayment = await httpRequest(
-          "collection-services/payments/_create?",
-          "_search",
-          [],
-          PaymentReqBody
-        );
-    
-        
-    
-        prepareFinalObject("ResponseOfCashPayment", EmpPayment);
-    
-        let ReceiptNum =
-          EmpPayment && EmpPayment
-            ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
-            : "notFound";
-        
-    
-        prepareFinalObject("CollectionReceiptNum", ReceiptNum);
-    
-        this.props.history.push(`/egov-services/success-payment`);
 
+        try{
+          let EmpPayment = await httpRequest(
+            "collection-services/payments/_create?",
+            "_search",
+            [],
+            PaymentReqBody
+          );
+      
+          
+      
+          if(EmpPayment.ResponseInfo.status == "200" && EmpPayment.Payments.length > 0){
+  
+            prepareFinalObject("ResponseOfCashPayment", EmpPayment);
+    
+            let Booking = {
+              "bkApplicationNumber": this.state.CurrentApplicationNum,
+              "cardNumber": "0000",
+              "transactionNumber": this.state.PaymentReceiptNumber,
+          }
+            console.log("cash--Booking",Booking)
+            let saveCardNum = await httpRequest(
+              "bookings/api/save/cardDetails",
+              "_search",
+              [],
+            {Booking:Booking}
+            );
+            console.log("saveCardNum",saveCardNum)
+      
+            let ReceiptNum =
+              EmpPayment && EmpPayment
+                ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+                : "notFound";
+            
+        
+            prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+    
+            // TransactionNum = this.state.PaymentReceiptNumber
+            // cardNumber = this.state.last4Digits
+            this.props.history.push(`/egov-services/success-payment`);
+    
+          }
+        }catch (error){
+          this.props.toggleSnackbarAndSetText(
+            true,
+            {
+              labelName: "Payment failed please try again",
+              labelKey: `Payment failed please try again`
+            },
+            "error"
+          );  
+        }
 }
 else{
   this.props.toggleSnackbarAndSetText(
@@ -287,7 +349,7 @@ else{
     "error"
   );  
 }  
-      }
+}
      else{
        
       this.props.toggleSnackbarAndSetText(
@@ -326,26 +388,57 @@ else{
               totalAmountPaid: TotalAmount,
             },
           };
-          let EmpPayment = await httpRequest(
-            "collection-services/payments/_create?",
-            "_search",
-            [],
-            PaymentReqBody
-          );
+          try{ 
+            let EmpPayment = await httpRequest(
+              "collection-services/payments/_create?",
+              "_search",
+              [],
+              PaymentReqBody
+            );
+        
+           
+        
+            if(EmpPayment.ResponseInfo.status == "200" && EmpPayment.Payments.length > 0){
+  
+              prepareFinalObject("ResponseOfCashPayment", EmpPayment);
       
-         
-      
-          prepareFinalObject("ResponseOfCashPayment", EmpPayment);
-      
-          let ReceiptNum =
-            EmpPayment && EmpPayment
-              ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
-              : "notFound";
+              let Booking = {
+                "bkApplicationNumber": this.state.CurrentApplicationNum,
+                "cardNumber": "0000",
+                "transactionNumber": this.state.PaymentReceiptNumber,
+            }
+              console.log("cash--Booking",Booking)
+              let saveCardNum = await httpRequest(
+                "bookings/api/save/cardDetails",
+                "_search",
+                [],
+                {Booking:Booking}
+              );
+              console.log("saveCardNum",saveCardNum)
+        
+              let ReceiptNum =
+                EmpPayment && EmpPayment
+                  ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+                  : "notFound";
+              
           
+              prepareFinalObject("CollectionReceiptNum", ReceiptNum);
       
-          prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+              // TransactionNum = this.state.PaymentReceiptNumber
+              // cardNumber = this.state.last4Digits
+              this.props.history.push(`/egov-services/success-payment`);
       
-          this.props.history.push(`/egov-services/success-payment`);
+            }
+          }catch (error) {
+            this.props.toggleSnackbarAndSetText(
+              true,
+              {
+                labelName: "Payment failed please try again",
+                labelKey: `Payment failed please try again`
+              },
+              "error"
+            );  
+          }
         }
 else{
   this.props.toggleSnackbarAndSetText(
@@ -392,24 +485,56 @@ else{
             totalAmountPaid: TotalAmount,
           },
         };
-        let EmpPayment = await httpRequest(
-          "collection-services/payments/_create?",
-          "_search",
-          [],
-          PaymentReqBody
-        );
-      
-        prepareFinalObject("ResponseOfCashPayment", EmpPayment);
-    
-        let ReceiptNum =
-          EmpPayment && EmpPayment
-            ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
-            : "notFound";
 
+        try{
+          let EmpPayment = await httpRequest(
+            "collection-services/payments/_create?",
+            "_search",
+            [],
+            PaymentReqBody
+          );
+        
+          if(EmpPayment.ResponseInfo.status == "200" && EmpPayment.Payments.length > 0){
+  
+            prepareFinalObject("ResponseOfCashPayment", EmpPayment);
     
-        prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+            let Booking = {
+              "bkApplicationNumber": this.state.CurrentApplicationNum,
+              "cardNumber": this.state.last4Digits,
+              "transactionNumber": this.state.PaymentReceiptNumber,
+          }
+            console.log("cash--Booking",Booking)
+            let saveCardNum = await httpRequest(
+              "bookings/api/save/cardDetails",
+              "_search",
+              [],
+              {Booking:Booking}
+            );
+            console.log("saveCardNum",saveCardNum)
+      
+            let ReceiptNum =
+              EmpPayment && EmpPayment
+                ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+                : "notFound";
+            
+        
+            prepareFinalObject("CollectionReceiptNum", ReceiptNum);
     
-        this.props.history.push(`/egov-services/success-payment`);
+            // TransactionNum = this.state.PaymentReceiptNumber
+            // cardNumber = this.state.last4Digits
+            this.props.history.push(`/egov-services/success-payment`);
+    
+          }
+        }catch (error) {
+          this.props.toggleSnackbarAndSetText(
+            true,
+            {
+              labelName: "Payment failed please try again",
+              labelKey: `Payment failed please try again`
+            },
+            "error"
+          );  
+        }
       }
       else{
         this.props.toggleSnackbarAndSetText(
@@ -423,38 +548,7 @@ else{
        }
     }
 
-  //   if(PaymentReqBody !== undefined && PaymentReqBody !== null){
-  //     let EmpPayment = await httpRequest(
-  //       "collection-services/payments/_create?",
-  //       "_search",
-  //       [],
-  //       PaymentReqBody
-  //     );
   
-  //     console.log("EmpPayment--", EmpPayment);
-  
-  //     prepareFinalObject("ResponseOfCashPayment", EmpPayment);
-  
-  //     let ReceiptNum =
-  //       EmpPayment && EmpPayment
-  //         ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
-  //         : "notFound";
-  //     console.log("ReceiptNum--", ReceiptNum);
-  
-  //     prepareFinalObject("CollectionReceiptNum", ReceiptNum);
-  
-  //     this.props.history.push(`/egov-services/success-payment`);
-  //   }
-  //   else{
-  //     this.props.toggleSnackbarAndSetText(
-  //         true,
-  //         {
-  //           labelName: "Something went wrong.Try Again",
-  //           labelKey: `BK_CC_ROOM_GETTING_WRONG`
-  //         },
-  //         "error"
-  //       );
-  // }
 };
 
   firstStep = (e) => {

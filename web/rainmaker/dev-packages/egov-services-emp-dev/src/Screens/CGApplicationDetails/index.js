@@ -417,83 +417,36 @@ downloadApplicationforCG({BookingInfo:BookingInfo})
 }
 
 
-downloadApplicationButton = async (e) => {
+downloadApplicationButton = async (mode) => {
 	await this.downloadApplicationFunction();
-	let documentsPreviewData;
-	const { DownloadApplicationDetailsforCG,userInfo } = this.props;
-	
-	var documentsPreview = [];
-	if (DownloadApplicationDetailsforCG && DownloadApplicationDetailsforCG.filestoreIds.length > 0) {
-
-		 documentsPreviewData=DownloadApplicationDetailsforCG.filestoreIds[0];
-
-		documentsPreview.push({
-			title: "DOC_DOC_PICTURE",
-			fileStoreId: documentsPreviewData,
-			linkText: "View",
-		});
-		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-		let fileUrls =
-			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-	
-
-		documentsPreview = documentsPreview.map(function (doc, index) {
-			doc["link"] =
-				(fileUrls &&
-					fileUrls[doc.fileStoreId] &&
-					fileUrls[doc.fileStoreId].split(",")[0]) ||
-				"";
-			
-			doc["name"] =
-				(fileUrls[doc.fileStoreId] &&
-					decodeURIComponent(
-						fileUrls[doc.fileStoreId]
-							.split(",")[0]
-							.split("?")[0]
-							.split("/")
-							.pop()
-							.slice(13)
-					)) ||
-				`Document - ${index + 1}`;
-			return doc;
-		});
-	
-		setTimeout(() => {
-			window.open(documentsPreview[0].link);
-		}, 100);
-		prepareFinalObject('documentsPreview', documentsPreview)
-	}
-}
-
-
-downloadReceiptButton = async (e) => {
-	
-	await this.downloadReceiptFunction();
+	setTimeout(async()=>{
 		let documentsPreviewData;
-		const { cgRefundReceiptData,userInfo } = this.props;
+		const { DownloadApplicationDetailsforCG,userInfo } = this.props;
 		
 		var documentsPreview = [];
-		if (cgRefundReceiptData && cgRefundReceiptData.filestoreIds.length > 0) {
-			documentsPreviewData=cgRefundReceiptData.filestoreIds[0];
-			
+		if (DownloadApplicationDetailsforCG && DownloadApplicationDetailsforCG.filestoreIds.length > 0) {
 	
-			documentsPreview.push({
+			 documentsPreviewData=DownloadApplicationDetailsforCG.filestoreIds[0];
+	
+			 documentsPreview.push({
 				title: "DOC_DOC_PICTURE",
 				fileStoreId: documentsPreviewData,
 				linkText: "View",
 			});
+			 
 			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+			
 			let fileUrls =
 				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-			
-	
+		   
+				
 			documentsPreview = documentsPreview.map(function (doc, index) {
 				doc["link"] =
 					(fileUrls &&
 						fileUrls[doc.fileStoreId] &&
 						fileUrls[doc.fileStoreId].split(",")[0]) ||
 					"";
-			
+				
 				doc["name"] =
 					(fileUrls[doc.fileStoreId] &&
 						decodeURIComponent(
@@ -507,60 +460,125 @@ downloadReceiptButton = async (e) => {
 					`Document - ${index + 1}`;
 				return doc;
 			});
-		
-			setTimeout(() => {
-				window.open(documentsPreview[0].link);
-			}, 100);
+			if(mode==='print'){
+
+				var response = await axios.get(documentsPreview[0].link, {
+					//responseType: "blob",
+					responseType: "arraybuffer",
+					
+					
+					headers: {
+						"Content-Type": "application/json",
+						Accept: "application/pdf",
+					},
+				});
+			
+				const file = new Blob([response.data], { type: "application/pdf" });
+				const fileURL = URL.createObjectURL(file);
+				var myWindow = window.open(fileURL);
+				if (myWindow != undefined) {
+					myWindow.addEventListener("load", (event) => {
+						myWindow.focus();
+						myWindow.print();
+					});
+				}
+
+			}
+
+
+			else{
+
+				setTimeout(() => {
+				
+					window.open(documentsPreview[0].link);
+				}, 100);
+			}
+			
 			prepareFinalObject('documentsPreview', documentsPreview)
 		}
+	},1500)
+}
 
+
+downloadReceiptButton = async (mode) => {
 	
-	// else{
-	// 	let documentsPreviewData;
-	// 	const { DownloadReceiptDetailsforCG,userInfo } = this.props;
-		
-	// 	var documentsPreview = [];
-	// 	if (DownloadReceiptDetailsforCG && DownloadReceiptDetailsforCG.filestoreIds.length > 0) {
-	// 		 documentsPreviewData=DownloadReceiptDetailsforCG.filestoreIds[0];
-			
+	await this.downloadReceiptFunction(); 
 	
-	// 		documentsPreview.push({
-	// 			title: "DOC_DOC_PICTURE",
-	// 			fileStoreId: documentsPreviewData,
-	// 			linkText: "View",
-	// 		});
-	// 		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-	// 		let fileUrls =
-	// 			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-			
-	
-	// 		documentsPreview = documentsPreview.map(function (doc, index) {
-	// 			doc["link"] =
-	// 				(fileUrls &&
-	// 					fileUrls[doc.fileStoreId] &&
-	// 					fileUrls[doc.fileStoreId].split(",")[0]) ||
-	// 				"";
-			
-	// 			doc["name"] =
-	// 				(fileUrls[doc.fileStoreId] &&
-	// 					decodeURIComponent(
-	// 						fileUrls[doc.fileStoreId]
-	// 							.split(",")[0]
-	// 							.split("?")[0]
-	// 							.split("/")
-	// 							.pop()
-	// 							.slice(13)
-	// 					)) ||
-	// 				`Document - ${index + 1}`;
-	// 			return doc;
-	// 		});
-		
-	// 		setTimeout(() => {
-	// 			window.open(documentsPreview[0].link);
-	// 		}, 100);
-	// 		prepareFinalObject('documentsPreview', documentsPreview)
-	// 	}
-	// }	
+	setTimeout(async()=>{
+		const { cgRefundReceiptData,userInfo } = this.props;
+		var documentsPreview = [];
+		let documentsPreviewData;
+		if (cgRefundReceiptData && cgRefundReceiptData.filestoreIds.length > 0) {	
+			documentsPreviewData = cgRefundReceiptData.filestoreIds[0];
+				documentsPreview.push({
+					title: "DOC_DOC_PICTURE",
+					fileStoreId: documentsPreviewData,
+					linkText: "View",
+				});
+				 
+				let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+				
+				let fileUrls =
+					fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+			   
+					
+				documentsPreview = documentsPreview.map(function (doc, index) {
+					doc["link"] =
+						(fileUrls &&
+							fileUrls[doc.fileStoreId] &&
+							fileUrls[doc.fileStoreId].split(",")[0]) ||
+						"";
+					
+					doc["name"] =
+						(fileUrls[doc.fileStoreId] &&
+							decodeURIComponent(
+								fileUrls[doc.fileStoreId]
+									.split(",")[0]
+									.split("?")[0]
+									.split("/")
+									.pop()
+									.slice(13)
+							)) ||
+						`Document - ${index + 1}`;
+					return doc;
+				});
+				if(mode==='print'){
+
+					var response = await axios.get(documentsPreview[0].link, {
+						//responseType: "blob",
+						responseType: "arraybuffer",
+						
+						
+						headers: {
+							"Content-Type": "application/json",
+							Accept: "application/pdf",
+						},
+					});
+				
+					const file = new Blob([response.data], { type: "application/pdf" });
+					const fileURL = URL.createObjectURL(file);
+					var myWindow = window.open(fileURL);
+					if (myWindow != undefined) {
+						myWindow.addEventListener("load", (event) => {
+							myWindow.focus();
+							myWindow.print();
+						});
+					}
+
+				}
+
+
+				else{
+
+					setTimeout(() => {
+					
+						window.open(documentsPreview[0].link);
+					}, 100);
+				}
+				
+				prepareFinalObject('documentsPreview', documentsPreview)
+			}
+		},1500)
 }
 
 downloadReceiptFunction = async (e) => {
@@ -681,56 +699,86 @@ downloadReceiptFunction = async (e) => {
 	}
 }
 
-downloadPaymentReceiptButton = async (e) => {
+downloadPaymentReceiptButton = async (mode) => {	
 	
 	await this.downloadPaymentReceiptFunction();
+	setTimeout(async()=>{
 
-	let documentsPreviewData;
-	const { DownloadPaymentReceiptDetailsforCG,userInfo } = this.props;
+		let documentsPreviewData;
+		const { DownloadPaymentReceiptDetailsforCG,userInfo } = this.props;
+		
+		var documentsPreview = [];
+		if (DownloadPaymentReceiptDetailsforCG && DownloadPaymentReceiptDetailsforCG.filestoreIds.length > 0) {
+			 documentsPreviewData=DownloadPaymentReceiptDetailsforCG.filestoreIds[0];
 	
-	var documentsPreview = [];
-	if (DownloadPaymentReceiptDetailsforCG && DownloadPaymentReceiptDetailsforCG.filestoreIds.length > 0) {
-		 documentsPreviewData=DownloadPaymentReceiptDetailsforCG.filestoreIds[0];
+			 documentsPreview.push({
+				title: "DOC_DOC_PICTURE",
+				fileStoreId: documentsPreviewData,
+				linkText: "View",
+			});
+			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+			let fileUrls =
+				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+		
 
-		documentsPreview.push({
-			title: "DOC_DOC_PICTURE",
-			fileStoreId: documentsPreviewData,
-			linkText: "View",
-		});
-		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-		let fileUrls =
-			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-	
-
-		documentsPreview = documentsPreview.map(function (doc, index) {
-			doc["link"] =
-				(fileUrls &&
-					fileUrls[doc.fileStoreId] &&
-					fileUrls[doc.fileStoreId].split(",")[0]) ||
-				"";
+			documentsPreview = documentsPreview.map(function (doc, index) {
+				doc["link"] =
+					(fileUrls &&
+						fileUrls[doc.fileStoreId] &&
+						fileUrls[doc.fileStoreId].split(",")[0]) ||
+					"";
+				
+				doc["name"] =
+					(fileUrls[doc.fileStoreId] &&
+						decodeURIComponent(
+							fileUrls[doc.fileStoreId]
+								.split(",")[0]
+								.split("?")[0]
+								.split("/")
+								.pop()
+								.slice(13)
+						)) ||
+					`Document - ${index + 1}`;
+				return doc;
+			});
 			
-			doc["name"] =
-				(fileUrls[doc.fileStoreId] &&
-					decodeURIComponent(
-						fileUrls[doc.fileStoreId]
-							.split(",")[0]
-							.split("?")[0]
-							.split("/")
-							.pop()
-							.slice(13)
-					)) ||
-				`Document - ${index + 1}`;
-			return doc;
-		});
-		setTimeout(() => {
-			window.open(documentsPreview[0].link);
-		}, 100);
-		prepareFinalObject('documentsPreview', documentsPreview)
+			if(mode==='print'){
+
+				var response = await axios.get(documentsPreview[0].link, {
+					//responseType: "blob",
+					responseType: "arraybuffer",
+					
+					
+					headers: {
+						"Content-Type": "application/json",
+						Accept: "application/pdf",
+					},
+				});
+			
+				const file = new Blob([response.data], { type: "application/pdf" });
+				const fileURL = URL.createObjectURL(file);
+				var myWindow = window.open(fileURL);
+				if (myWindow != undefined) {
+					myWindow.addEventListener("load", (event) => {
+						myWindow.focus();
+						myWindow.print();
+					}); 
+				}
+
+			}
+			else{
+
+				setTimeout(() => {
+				
+					window.open(documentsPreview[0].link);
+				}, 100);
+			}
+			
+			prepareFinalObject('documentsPreview', documentsPreview)
+		}
+	},1500)
 	}
 
-
-
-}
 
 callApiDorData = async (e) =>  {
 
@@ -891,7 +939,7 @@ const {documentMap,userInfo}=this.props;
 		  "bkBookingDuration": selectedComplaint.bkBookingDuration,
 		  "bkIdProof": selectedComplaint.bkIdProof,
 		  "bkApplicantContact": selectedComplaint.bkApplicantContact,
-		  "bkOpenSpaceLocation": selectedComplaint.bkOpenSpaceLocation,
+		  "bkOpenSpaceLocation": selectedComplaint.bkOpenSpaceLocation,   
 		  "bkLandmark": selectedComplaint.bkLandmark,
 		  "bkRequirementArea": selectedComplaint.bkRequirementArea,
 		  "bkLocationPictures": selectedComplaint.bkLocationPictures,
@@ -914,7 +962,7 @@ const {documentMap,userInfo}=this.props;
 		  "bkDriverName": selectedComplaint.bkDriverName,
 		  "bkVehicleNumber": selectedComplaint.bkVehicleNumber,
 		  "bkEstimatedDeliveryTime": selectedComplaint.bkEstimatedDeliveryTime,
-		  "bkActualDeliveryTime": selectedComplaint.bkActualDeliveryTime,
+		  "bkActualDeliveryTime": selectedComplaint.bkActualDeliveryTime,  
 		  "bkNormalWaterFailureRequest": selectedComplaint.bkNormalWaterFailureRequest,
 		  "bkUpdateStatusOption": selectedComplaint.bkUpdateStatusOption,
 		  "bkAddSpecialRequestDetails": selectedComplaint.bkAddSpecialRequestDetails,
@@ -1087,7 +1135,7 @@ Application Details
 											labelKey: "BK_MYBK_DOWNLOAD_PERMISSION_LETTER"
 										},
 										leftIcon: "book",
-										link: () => this.downloadPaymentReceiptButton('Receipt')
+										link: () => this.downloadPaymentReceiptButton('print')
 									},
 									{
 										label: {
@@ -1096,7 +1144,7 @@ Application Details
 										},
 										leftIcon: "receipt",
 
-										link: () => this.downloadReceiptButton('PermissionLetter')
+										link: () => this.downloadReceiptButton('print')
 									},
 									{
 										label: {
@@ -1104,7 +1152,7 @@ Application Details
 											labelKey: "BK_MYBK_DOWNLOAD_APPLICATION"
 										},
 										leftIcon:"assignment",
-										 link: () => this.downloadApplicationButton('Application')
+										 link: () => this.downloadApplicationButton('print')
 									}]
 								}} />
 
@@ -1321,7 +1369,8 @@ const mapStateToProps = (state, ownProps) => {
 	let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
 	let businessService = applicationData ? applicationData.businessService : "";
 	let bookingDocs;
-	const { documentMap } = applicationData;
+	// const { documentMap } = applicationData;
+	let documentMap = applicationData !== undefined  && applicationData !== null ? (applicationData.documentMap !== undefined && applicationData.documentMap !== null ? (applicationData.documentMap) : '') : ""
 	const { HistoryData } = bookings;
 	let temp;
 	let historyObject = HistoryData ? HistoryData : ''
@@ -1357,38 +1406,41 @@ const mapStateToProps = (state, ownProps) => {
   let RefoundCGAmount = 0;
   let getChargesArray;
   let cgSecurityAmount
-  if(selectedComplaint.bkBookingType == "GROUND_FOR_COMMERCIAL_PURPOSE"){
-	 cgSecurityAmount = get(
-	  state,
-	  "bookings.fetchPaymentAfterPayment.Payments",
-	  "NotFound"
-	);
-	// bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[2].taxHeadCode
-
-	
-	if(cgSecurityAmount !== "NotFound"){
-
-		getChargesArray = bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
-
-		let cgSecurityAmount2 = get(
-			state,
-			"bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails",
-			"NotFound"
-		  );
-		// getChargesArray =  cgSecurityAmount !== null && cgSecurityAmount !== undefined &&  cgSecurityAmount.length > 0 ? 
-		//      (cgSecurityAmount[0].paymentDetails !== null && cgSecurityAmount[0].paymentDetails !== undefined && cgSecurityAmount[0].paymentDetails.length >0 ?
-		// 	 (cgSecurityAmount[0].paymentDetails[0].bill !== null && cgSecurityAmount[0].paymentDetails[0].bill !== undefined ? 
-		// 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails != null && cgSecurityAmount[0].paymentDetails[0].bill.billDetails != undefined && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.length > 0 ?	
-		// 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails !== null && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails !== undefined && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails.length > 0 ? 
-		// 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails): "NotFound"): "NotFound") :"NotFound") : "NotFound" ): "NotFound"
-
-for(let i = 0; i < getChargesArray.length; i++){
-	if(getChargesArray[i].taxHeadCode == "SECURITY_COMMERCIAL_GROUND_BOOKING_BRANCH"){
-		RefoundCGAmount = getChargesArray[i].amount
-	}
-}
-	}
-}
+  if(selectedComplaint.bkBookingType !== undefined && selectedComplaint.bkBookingType !== null){
+	if(selectedComplaint.bkBookingType == "GROUND_FOR_COMMERCIAL_PURPOSE"){
+		cgSecurityAmount = get(
+		 state,
+		 "bookings.fetchPaymentAfterPayment.Payments",
+		 "NotFound"
+	   );
+	   // bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[2].taxHeadCode
+   
+	   
+	   if(cgSecurityAmount !== "NotFound"){
+   
+		   getChargesArray = bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
+   
+		   let cgSecurityAmount2 = get(
+			   state,
+			   "bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails",
+			   "NotFound"
+			 );
+		   // getChargesArray =  cgSecurityAmount !== null && cgSecurityAmount !== undefined &&  cgSecurityAmount.length > 0 ? 
+		   //      (cgSecurityAmount[0].paymentDetails !== null && cgSecurityAmount[0].paymentDetails !== undefined && cgSecurityAmount[0].paymentDetails.length >0 ?
+		   // 	 (cgSecurityAmount[0].paymentDetails[0].bill !== null && cgSecurityAmount[0].paymentDetails[0].bill !== undefined ? 
+		   // 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails != null && cgSecurityAmount[0].paymentDetails[0].bill.billDetails != undefined && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.length > 0 ?	
+		   // 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails !== null && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails !== undefined && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails.length > 0 ? 
+		   // 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails): "NotFound"): "NotFound") :"NotFound") : "NotFound" ): "NotFound"
+   
+   for(let i = 0; i < getChargesArray.length; i++){
+	   if(getChargesArray[i].taxHeadCode == "SECURITY_COMMERCIAL_GROUND_BOOKING_BRANCH"){
+		   RefoundCGAmount = getChargesArray[i].amount
+	   }
+   }
+	   }
+   }
+  }
+ 
 
 let OfflineInitatePayArray;
 //Variables to show Amount

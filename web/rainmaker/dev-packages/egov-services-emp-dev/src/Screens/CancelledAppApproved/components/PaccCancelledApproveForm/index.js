@@ -53,7 +53,7 @@ const styles = theme => ({
 const NewLocationResolvedForm = ({ form, handleChangeAssignee, editableRefundAmount,assignToMe, assignee, foundFifthLavel,foundSixthLavel, foundSecondLavel,foundFourthLavel, foundthirdLavel, foundSevenLavel, 
   applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,bkNomineeName,
   fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,
-      bkBankName,bkIfscCode,bkAccountType,
+      bkBankName,bkIfscCode,bkAccountType,bkStatusUpdateRequest,bkLocationPictures,
       bkBankAccountHolder, bkBookingVenue,
   foundEightLavel,foundFirstLavels, handleOpen, handleClose, options, setOpen, userInfo, classes, onSubmit, bookingservice, bookingtype, applicationNumber, createdBy, tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue,CancelStatus }) => {
   if (form && form.fields) {
@@ -118,7 +118,9 @@ formValue.bkAccountType.value = bkAccountType;
 formValue.bkBankAccountHolder.value = bkBankAccountHolder;  
 formValue.bkBookingVenue.value = bkBookingVenue;
 formValue.bkNomineeName.value = bkNomineeName;
-  }
+formValue.bkStatusUpdateRequest.value = bkStatusUpdateRequest;
+formValue.bkLocationPictures.value = bkLocationPictures;
+ }
   const fields = form.fields || {};
   const submit = form.submit;
 
