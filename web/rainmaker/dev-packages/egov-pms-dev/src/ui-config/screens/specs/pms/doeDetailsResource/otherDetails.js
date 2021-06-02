@@ -194,12 +194,13 @@ export const otherDetails = (data) => {
   //   }
 
   // },
-  
+  button: getCommonContainer({
+    buttonContainer: getCommonContainer({
   POApplication: {
     componentPath: "Button",
     gridDefination: {
       xs: 12,
-      sm: 6,
+      sm: 4,
       align: "left"
     },
     visible: data[5].Isletterdoc,
@@ -234,7 +235,7 @@ export const otherDetails = (data) => {
     componentPath: "Button",
     gridDefination: {
       xs: 12,
-      sm: 6,
+      sm: 4,
       align: "left"
     },
     visible: data[5].Isletterdoc,
@@ -264,5 +265,7 @@ export const otherDetails = (data) => {
     },
     
   },
+})
+})
 });
 }
