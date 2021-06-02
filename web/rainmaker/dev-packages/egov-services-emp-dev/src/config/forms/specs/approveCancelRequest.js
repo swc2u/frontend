@@ -110,6 +110,16 @@ const formConfig = {
         jsonPath: "Booking.bkAccountType",
         value:''
       },
+      bkStatusUpdateRequest: {
+        id: "Booking-bkStatusUpdateRequest",
+        jsonPath: "Booking.bkStatusUpdateRequest",
+        value:''
+      },
+      bkLocationPictures: {
+        id: "Booking-bkLocationPictures",
+        jsonPath: "Booking.bkLocationPictures",
+        value:''
+      },
       bkBankAccountHolder: {
         id: "Booking-bkBankAccountHolder",
         jsonPath: "Booking.bkBankAccountHolder",
