@@ -410,15 +410,27 @@ console.log("firstToTimeSlot--",firstToTimeSlot)
 //   console.log("firstToTimeSlot--",firstToTimeSlot)
 
   let strMid = ","
+  let ConcatFromDateTime = ''
+  let ConcatToDateTime = ''
+  let ConcatFirstToDate = ''
+  
 
-    let ConcatFromDateTime = NewBookFromDate.concat(strMid).concat(SecTimeSlotFromTime);
+
+if( NewBookFromDate !== "notFound"){
+    ConcatFromDateTime = NewBookFromDate.toString().concat(strMid).concat(SecTimeSlotFromTime);
     console.log("ConcatFromDateTime--",ConcatFromDateTime)
+}
     
-    let ConcatToDateTime = NewBookToDate.concat(strMid).concat(SecTimeSlotToTime);
-    console.log("ConcatToDateTime--",ConcatToDateTime)
-    
-    let ConcatFirstToDate = NewBookToDate.concat(strMid).concat(firstToTimeSlot);
+    if(NewBookToDate !== "notFound"){
+        ConcatToDateTime = NewBookToDate.toString().concat(strMid).concat(SecTimeSlotToTime);
+        console.log("ConcatToDateTime--",ConcatToDateTime)
+
+    ConcatFirstToDate = NewBookToDate.toString().concat(strMid).concat(firstToTimeSlot);
     console.log("ConcatFromDateTime--",ConcatFirstToDate)
+    }
+    
+    
+    
 //Booking.wholeDay.FromDate
     // let wholeDayFromDate = state.screenConfiguration.preparedFinalObject.Booking ?
     // state.screenConfiguration.preparedFinalObject.Booking.wholeDay ? state.screenConfiguration.preparedFinalObject.Booking.wholeDay.FromDate : "notFound"

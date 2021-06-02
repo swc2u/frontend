@@ -9,6 +9,19 @@ export const convertEpochToDate = (dateEpoch) => {
     return `${day}/${month}/${year}`;
   };
   
+export const convertDateInYMD = (data) => {
+    let date = new Date(data);
+    //date = date.valueOf();
+    let month =
+        date.getMonth() + 1 < 10
+            ? `0${date.getMonth() + 1}`
+            : date.getMonth() + 1;
+    let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+    date = `${date.getFullYear()}-${month}-${day}`;
+    // date = epochToYmdDate(date);
+    return date;
+};
+
   export const getDurationDate = (fromDate, toDate) => {
     let monthNames = [
         "Jan",
