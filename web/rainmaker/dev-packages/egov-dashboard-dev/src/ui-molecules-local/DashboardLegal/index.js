@@ -16,6 +16,7 @@ class DashboardLegal extends React.Component {
     constructor(props){
       super(props);
       this.state = {
+        checkData : [],
         propsLegalData : [],
         graphClicked : -1,
         totalCases : 0,
@@ -64,7 +65,12 @@ class DashboardLegal extends React.Component {
           tableColumnData.push(columnData[i]["accessor"]);
           // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
       }
-  
+      
+      var colData = [];
+      for(var i=0; i<columnData.length; i++){
+        colData.push(columnData[i]["Header"]);
+      }
+      
       var tableRowData = [];
       for(var i=0; i<rowData.length; i++){
           var rowItem = [];
@@ -114,7 +120,7 @@ class DashboardLegal extends React.Component {
   
       doc.autoTable({
           // head: [tableColumnDataCamel],
-          head: [tableColumnData],
+          head: [colData],
           theme: "striped",
           styles: {
               fontSize: 7,
@@ -281,41 +287,9 @@ class DashboardLegal extends React.Component {
       debugger;
       // const data = LegalData.ResponseBody;
       const propsData = this.props.data;
-      if(propsData[0].ResponseBody.length > 0){
-        const data = propsData[0].ResponseBody
-
-        var totalCases = data.length;
-
-        var judgmentCases = data.reduce((r, a) => {
-          r[a["judgmentTypeId"]] = [...r[a["judgmentTypeId"]] || [], a];
-          return r;
-          }, {});
-
-        var impCases = data.reduce((r, a) => {
-          r[a["iscaseImp"]] = [...r[a["iscaseImp"]] || [], a];
-          return r;
-          }, {});
-          
-        var hearingCases = data.reduce((r, a) => {
-          r[a["caseStatus"]] = [...r[a["caseStatus"]] || [], a];
-          return r;
-          }, {});;
-
-        this.setState({
-          dataOne : data,
-          dataTwo: judgmentCases,
-          dataThird : impCases,
-          dataFourth : []
-        })
-        this.setState({
-          totalCases : totalCases,
-          judgmentCases : judgmentCases["null"].length,
-          impCases : impCases["null"].length,
-          hearingCases : hearingCases["HEARING"].length,
-          propsLegalData : data,
-          checkData : propsData
-        })
-      }    
+      this.setState({
+        checkData : this.props.data
+      })  
     }
 
     componentDidUpdate(){

@@ -23,6 +23,7 @@ class DashboardFinance extends React.Component {
     constructor(props) {
         super(props);
         this.state ={
+            recordNotFound : "",
             checkData : [],
             dropdownSelected : "",
             allData: [],
@@ -349,203 +350,237 @@ class DashboardFinance extends React.Component {
             if(propSortBy === "budgetHeadwise"){
                 // data = Finance_data.getAllBudgetVarienceReport.ResponseBody;
                 data = propsData[0].getAllBudgetVarienceReport.ResponseBody
-                
-                var group = data.reduce((r, a) => {
-                    r[a["departmentName"]] = [...r[a["departmentName"]] || [], a];
-                    return r;
-                    }, {});
-                var graphLabel = Object.keys(group);
-                var graphData = [];
-                for(var i=0; i<graphLabel.length; i++){
-                    if(group[graphLabel[i]]){
-                        graphData.push(group[graphLabel[i]].length);
-                    }else{
-                        graphData.push(0);
+                if(data.length > 0){
+                    var group = data.reduce((r, a) => {
+                        r[a["departmentName"]] = [...r[a["departmentName"]] || [], a];
+                        return r;
+                        }, {});
+                    var graphLabel = Object.keys(group);
+                    var graphData = [];
+                    for(var i=0; i<graphLabel.length; i++){
+                        if(group[graphLabel[i]]){
+                            graphData.push(group[graphLabel[i]].length);
+                        }else{
+                            graphData.push(0);
+                        }
                     }
+    
+                    var colorRandom = this.colorRandom(graphLabel);
+                    this.setState({
+                        graphOneLabel: graphLabel,
+                        graphOneData: graphData,
+                        dataOne: group,
+                        colorRandom : colorRandom
+                    })
+    
+                    // Column Data
+                    const tableData = data[0] ? Object.keys(data[0]) : [];
+                    var columnData = []
+                    for(var i=0; i<tableData.length; i++){
+                        var itemHeader = {}
+                        itemHeader["Header"] = this.camelize(tableData[i]);
+                        itemHeader["accessor"] = tableData[i];
+                        itemHeader["show"]= true ;
+                        columnData.push(itemHeader);
+                    }
+    
+                    // Column Unchange Data 
+                    const unchangeColumnData = this.columnUnchange(columnData);
+    
+                    this.setState({
+                        graphDashboard : 0,
+                        graphClicked: 0,
+                        columnData: columnData,
+                        unchangeColumnData: unchangeColumnData,
+                        rowData: data,
+                        fromDT : fromDT,
+                        toDT : toDT,
+                    }) 
+                }else{
+                    this.setState({
+                        rowData : [],
+                        graphClicked : -1,
+                        columnData: [],
+                        unchangeColumnData: [],
+                    })
                 }
-
-                var colorRandom = this.colorRandom(graphLabel);
-                this.setState({
-                    graphOneLabel: graphLabel,
-                    graphOneData: graphData,
-                    dataOne: group,
-                    colorRandom : colorRandom
-                })
-
-                // Column Data
-                const tableData = data[0] ? Object.keys(data[0]) : [];
-                var columnData = []
-                for(var i=0; i<tableData.length; i++){
-                    var itemHeader = {}
-                    itemHeader["Header"] = this.camelize(tableData[i]);
-                    itemHeader["accessor"] = tableData[i];
-                    itemHeader["show"]= true ;
-                    columnData.push(itemHeader);
-                }
-
-                // Column Unchange Data 
-                const unchangeColumnData = this.columnUnchange(columnData);
-
-                this.setState({
-                    graphDashboard : 0,
-                    graphClicked: 0,
-                    columnData: columnData,
-                    unchangeColumnData: unchangeColumnData,
-                    rowData: data,
-                    fromDT : fromDT,
-                    toDT : toDT,
-                })
             }
             if(propSortBy === "incomeDeptwise"){
                 // data = Finance_data.getAllIncomeExpentiureSchedules.ResponseBody.Allschedulelist;
                 data = propsData[0].getAllIncomeExpentiureSchedules.ResponseBody.Allschedulelist;
-
-                var group = data.reduce((r, a) => {
-                    r[a["type"]] = [...r[a["type"]] || [], a];
-                    return r;
-                    }, {});
-                data = group["Income"];
-                debugger;
-                var sortedData = [];
-                for(var i=0; i<data.length; i++){
-                    var sotedJSON = {
-                        "glCode": data[i].glCode,
-                        "accountName": data[i].accountName,
-                        "scheduleNo": data[i].scheduleNo,
-                        "budgetAmount": data[i].budgetAmount,
-                        "majorCode": data[i].majorCode,
-                        "scheduleWiseTotal": "",
-                        "netAmount": data[i].netAmount["Municipal (General) Fund"],
-                        "previousYearAmount": "",
-                        "type": data[i].type,
-                        "department_name": data[i].department_name,
-                        "auditDetails": data[i].auditDetails["createddate"]
-                    };
-                    sortedData.push(sotedJSON);
-                }
-                data = sortedData;
-                var group = data.reduce((r, a) => {
-                    r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]).getMonth()]] 
-                    = [...r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]).getMonth()]] || [], a];
-                    return r;
-                    }, {});
-
-                
-                var graphLabel = dateRange;
-                var graphData = [];
-                for(var i=0; i<graphLabel.length; i++){
-                    if(group[graphLabel[i]]){
-                        graphData.push(group[graphLabel[i]].length);
-                    }else{
-                        graphData.push(0);
+                if(data.length > 0){
+                    var group = data.reduce((r, a) => {
+                        r[a["type"]] = [...r[a["type"]] || [], a];
+                        return r;
+                        }, {});
+                    data = group["Income"];
+                    debugger;
+                    var sortedData = [];
+                    for(var i=0; i<data.length; i++){
+                        var sotedJSON = {
+                            "glCode": data[i].glCode,
+                            "accountName": data[i].accountName,
+                            "scheduleNo": data[i].scheduleNo,
+                            "budgetAmount": data[i].budgetAmount,
+                            "majorCode": data[i].majorCode,
+                            "scheduleWiseTotal": "",
+                            "netAmount": data[i].netAmount["Municipal (General) Fund"],
+                            "previousYearAmount": "",
+                            "type": data[i].type,
+                            "department_name": data[i].department_name,
+                            "auditDetails": data[i].auditDetails["createddate"]
+                        };
+                        sortedData.push(sotedJSON);
                     }
+                    data = sortedData;
+                    var group = data.reduce((r, a) => {
+                        r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]).getMonth()]] 
+                        = [...r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]).getMonth()]] || [], a];
+                        return r;
+                        }, {});
+    
+                    
+                    var graphLabel = dateRange;
+                    var graphData = [];
+                    for(var i=0; i<graphLabel.length; i++){
+                        if(group[graphLabel[i]]){
+                            graphData.push(group[graphLabel[i]].length);
+                        }else{
+                            graphData.push(0);
+                        }
+                    }
+    
+                    var colorRandom = this.colorRandom(graphLabel);
+                    this.setState({
+                        graphThreeLabel: graphLabel,
+                        graphThreeData: graphData,
+                        dataThree: group,
+                        colorRandom : colorRandom
+                    })
+    
+                    // Column Data
+                    const tableData = data[0] ? Object.keys(data[0]) : [];
+                    var columnData = []
+                    for(var i=0; i<tableData.length; i++){
+                        var itemHeader = {}
+                        itemHeader["Header"] = this.camelize(tableData[i]);
+                        itemHeader["accessor"] = tableData[i];
+                        itemHeader["show"]= true ;
+                        columnData.push(itemHeader);
+                    }
+    
+                    // Column Unchange Data 
+                    const unchangeColumnData = this.columnUnchange(columnData);
+    
+                    this.setState({
+                        graphClicked: 0,
+                        columnData: columnData,
+                        unchangeColumnData: unchangeColumnData,
+                        rowData: data,
+                        fromDT : fromDT,
+                        toDT : toDT,
+                    })
+                }else{
+                    this.setState({
+                        rowData : [],
+                        graphClicked : -1,
+                        columnData: [],
+                        unchangeColumnData: [],
+                    })
                 }
-
-                var colorRandom = this.colorRandom(graphLabel);
-                this.setState({
-                    graphThreeLabel: graphLabel,
-                    graphThreeData: graphData,
-                    dataThree: group,
-                    colorRandom : colorRandom
-                })
-
-                // Column Data
-                const tableData = data[0] ? Object.keys(data[0]) : [];
-                var columnData = []
-                for(var i=0; i<tableData.length; i++){
-                    var itemHeader = {}
-                    itemHeader["Header"] = this.camelize(tableData[i]);
-                    itemHeader["accessor"] = tableData[i];
-                    itemHeader["show"]= true ;
-                    columnData.push(itemHeader);
-                }
-
-                // Column Unchange Data 
-                const unchangeColumnData = this.columnUnchange(columnData);
-
-                this.setState({
-                    graphClicked: 0,
-                    columnData: columnData,
-                    unchangeColumnData: unchangeColumnData,
-                    rowData: data,
-                    fromDT : fromDT,
-                    toDT : toDT,
-                })
             }
             if(propSortBy === "expDeptwise"){
                 // data = Finance_data.getAllIncomeExpentiureSchedules.ResponseBody.Allschedulelist;
                 data = propsData[0].getAllIncomeExpentiureSchedules.ResponseBody.Allschedulelist;
-  
-                var group = data.reduce((r, a) => {
-                    r[a["type"]] = [...r[a["type"]] || [], a];
-                    return r;
-                    }, {});
-                data = group["Expense"];
-                debugger;
-                var sortedData = [];
-                for(var i=0; i<data.length; i++){
-                    var sotedJSON = {
-                        "glCode": data[i].glCode,
-                        "accountName": data[i].accountName,
-                        "scheduleNo": data[i].scheduleNo,
-                        "budgetAmount": data[i].budgetAmount,
-                        "majorCode": data[i].majorCode,
-                        "scheduleWiseTotal": "",
-                        "netAmount": data[i].netAmount["Municipal (General) Fund"],
-                        "previousYearAmount": "",
-                        "type": data[i].type,
-                        "department_name": data[i].department_name,
-                        "auditDetails": data[i].auditDetails["createddate"]
-                    };
-                    sortedData.push(sotedJSON);
-                }
-                data = sortedData;
-                var group = data.reduce((r, a) => {
-                    r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]).getMonth()]] 
-                    = [...r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]).getMonth()]] || [], a];
-                    return r;
-                    }, {});
-
-                
-                var graphLabel = dateRange;
-                var graphData = [];
-                for(var i=0; i<graphLabel.length; i++){
-                    if(group[graphLabel[i]]){
-                        graphData.push(group[graphLabel[i]].length);
-                    }else{
-                        graphData.push(0);
+                if(data.length > 0){
+                    var group = data.reduce((r, a) => {
+                        r[a["type"]] = [...r[a["type"]] || [], a];
+                        return r;
+                        }, {});
+                    data = group["Expense"];
+                    debugger;
+                    var sortedData = [];
+                    for(var i=0; i<data.length; i++){
+                        var sotedJSON = {
+                            "glCode": data[i].glCode,
+                            "accountName": data[i].accountName,
+                            "scheduleNo": data[i].scheduleNo,
+                            "budgetAmount": data[i].budgetAmount,
+                            "majorCode": data[i].majorCode,
+                            "scheduleWiseTotal": "",
+                            "netAmount": data[i].netAmount["Municipal (General) Fund"],
+                            "previousYearAmount": "",
+                            "type": data[i].type,
+                            "department_name": data[i].department_name,
+                            "auditDetails": data[i].auditDetails["createddate"]
+                        };
+                        sortedData.push(sotedJSON);
                     }
+                    data = sortedData;
+                    var group = data.reduce((r, a) => {
+                        r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]).getMonth()]] 
+                        = [...r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]).getMonth()]] || [], a];
+                        return r;
+                        }, {});
+    
+                    
+                    var graphLabel = dateRange;
+                    var graphData = [];
+                    for(var i=0; i<graphLabel.length; i++){
+                        if(group[graphLabel[i]]){
+                            graphData.push(group[graphLabel[i]].length);
+                        }else{
+                            graphData.push(0);
+                        }
+                    }
+    
+                    var colorRandom = this.colorRandom(graphLabel);
+                    this.setState({
+                        graphSixLabel: graphLabel,
+                        graphSixData: graphData,
+                        dataSix: group,
+                        colorRandom : colorRandom
+                    })
+    
+                    // Column Data
+                    const tableData = data[0] ? Object.keys(data[0]) : [];
+                    var columnData = []
+                    for(var i=0; i<tableData.length; i++){
+                        var itemHeader = {}
+                        itemHeader["Header"] = this.camelize(tableData[i]);
+                        itemHeader["accessor"] = tableData[i];
+                        itemHeader["show"]= true ;
+                        columnData.push(itemHeader);
+                    }
+    
+                    // Column Unchange Data 
+                    const unchangeColumnData = this.columnUnchange(columnData);
+    
+                    this.setState({
+                        graphClicked: 0,
+                        columnData: columnData,
+                        unchangeColumnData: unchangeColumnData,
+                        rowData: data,
+                        fromDT : fromDT,
+                        toDT : toDT,
+                    })
+                }else{
+                    this.setState({
+                        rowData : [],
+                        graphClicked : -1,
+                        columnData: [],
+                        unchangeColumnData: [],
+                    })
                 }
+            }
 
-                var colorRandom = this.colorRandom(graphLabel);
+            if(data.length > 0 ){
                 this.setState({
-                    graphSixLabel: graphLabel,
-                    graphSixData: graphData,
-                    dataSix: group,
-                    colorRandom : colorRandom
+                    recordNotFound : "",
                 })
-
-                // Column Data
-                const tableData = data[0] ? Object.keys(data[0]) : [];
-                var columnData = []
-                for(var i=0; i<tableData.length; i++){
-                    var itemHeader = {}
-                    itemHeader["Header"] = this.camelize(tableData[i]);
-                    itemHeader["accessor"] = tableData[i];
-                    itemHeader["show"]= true ;
-                    columnData.push(itemHeader);
-                }
-
-                // Column Unchange Data 
-                const unchangeColumnData = this.columnUnchange(columnData);
-
+            }else if(data.length===0){
                 this.setState({
-                    graphClicked: 0,
-                    columnData: columnData,
-                    unchangeColumnData: unchangeColumnData,
-                    rowData: data,
-                    fromDT : fromDT,
-                    toDT : toDT,
+                    recordNotFound : "Record Not Found..!",
                 })
             }
 
@@ -1466,8 +1501,8 @@ class DashboardFinance extends React.Component {
       }
 
       return (
-          <div>        
-          
+          <div>
+              <div> { this.state.recordNotFound } </div>
           {/* Dropdown 1 */}
           {
             this.state.dropdownSelected === "budgetHeadwise" ?

@@ -2499,6 +2499,70 @@ export const getAgendaDashboardData = async ( dispatch, data ) => {
   }
 };
 
+// Get Apni Mandi Dashboard Data
+export const getApniMandiData = async ( dispatch, data ) => {
+  
+
+  var fromDt = data.fromDate;
+  fromDt = fromDt.split("-");
+  fromDt = fromDt[2]+"/"+fromDt[1]+"/"+fromDt[0];
+  var toDt = data.toDate // "2021-06-03"
+  toDt = toDt.split("-");
+  toDt = toDt[2]+"/"+toDt[1]+"/"+toDt[0];
+
+  debugger;
+  try {
+    store.dispatch(toggleSpinner());
+    const dayMarketData = await httpRequest(
+      "get",
+      // "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/apnimandiapi/getAllApniMandiDayMarketCollection?fromDate=01/01/2020&toDate=01/05/2021",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/apnimandiapi/getAllApniMandiDayMarketCollection?fromDate="+fromDt+"&toDate="+toDt,
+      "",
+      [],
+      {}
+    );
+
+    const allMarketData = await httpRequest(
+      "get",
+      // "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/apnimandiapi/getAllApniMandiCollection?fromDate=01/01/2020&toDate=01/05/2021",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/apnimandiapi/getAllApniMandiCollection?fromDate="+fromDt+"&toDate="+toDt,
+      "",
+      [],
+      {}
+    );
+
+    //debugger;
+    var response = [{
+      "dayMarketCollection": dayMarketData,
+      "getAllMarketCollection": allMarketData
+    }, data];
+
+    dispatch(
+      handleField(
+      "ApniMandiDashboard",
+      "components.div.children.DashboardResults",
+      "props.data",
+      response
+      )
+      );
+
+    dispatch(prepareFinalObject("allDashboardSearchData", response));
+      
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
+
+
 // Get Audit Dashboard Data
 export const getAuditData = async ( dispatch, data ) => {
   
