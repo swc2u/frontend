@@ -54,7 +54,7 @@ class CGBookingDetails extends Component {
     if (ifscCode) {
       fetch(`https://ifsc.razorpay.com/${ifscCode}`)
         .then(response => {
-          return response.json();
+          return response.json(); 
         })
         .then(payload => {
           if (payload === "Not Found") {

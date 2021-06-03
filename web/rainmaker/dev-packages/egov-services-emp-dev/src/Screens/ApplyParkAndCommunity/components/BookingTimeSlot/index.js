@@ -18,7 +18,7 @@ import {
   prepareFinalObject,
   toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-
+import { convertDateInYMD } from "../../../../modules/commonFunction"
 class CustomTimeSlots extends Component {
   constructor() {
     super();
@@ -120,13 +120,18 @@ class CustomTimeSlots extends Component {
     //         document.getElementById(currentSelectedTimeSlot).checked = true;
     //     }
     // }
+    console.log("CheckValueForThis",this)
+    console.log("PrpsTocheckThis",this.props)
     if (this.props.initiatedBookingFromDate) {
-      var [goYear, goMonth, goDay] = this.props.initiatedBookingFromDate.split(
+
+      let initiatedBookingFromDateYmdFormat= convertDateInYMD(this.props.initiatedBookingFromDate)
+
+      var [goYear, goMonth, goDay] = initiatedBookingFromDateYmdFormat.split(
         "-"
       );
       let goDate = `${goDay}-${goMonth}-${goYear}`;
       let i = 0;
-      console.log("this.porps.rows", this.porps.rows);
+      console.log("this.porps.rows", this.props.rows);
       for (i; i < this.props.rows.length; i++) {
         if (this.props.rows[i].date == goDate) {
           break;
@@ -729,11 +734,16 @@ const mapStateToProps = (state) => {
               );
             }
           }
-        }
+        } 
       }
     }
     if (initiatedBookingFromDate) {
-      var [goYear, goMonth, goDay] = initiatedBookingFromDate.split("-");
+console.log("initiatedBookingFromDate-map-stateProps",initiatedBookingFromDate)
+      let initiatedBookingFromDateYmdFormat= convertDateInYMD(initiatedBookingFromDate)
+
+      var [goYear, goMonth, goDay] = initiatedBookingFromDateYmdFormat.split(
+        "-"
+      );
       let goDate = `${goDay}-${goMonth}-${goYear}`;
       if (timeSlotArray[j].date === goDate && initiatedBookingTimeSlot) {
         for (let l = 0; l < timeSlotArray[j].timeSlots.length; l++) {

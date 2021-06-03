@@ -1185,12 +1185,16 @@ export const downloadReceipt = async (
             paymentInfoData = {
                 currentDate: `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}`,
                 cleaningCharges: "0",
-                paymentDate:applicationData.createdDate,
+                paymentDate:roomDataForGivenApplicationNumber.roomCreatedDate,
                 transactionId:
                     payloadReceiptDetails.Payments[0].transactionNumber,
+                // bookingPeriod: getDurationDate(
+                //     applicationData.roomsModel[0].fromDate,
+                //     applicationData.roomsModel[0].toDate
+                // ),
                 bookingPeriod: getDurationDate(
-                    applicationData.roomsModel[0].fromDate,
-                    applicationData.roomsModel[0].toDate
+                    roomDataForGivenApplicationNumber.fromDate,
+                    roomDataForGivenApplicationNumber.toDate
                 ),
                 cgst: (payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
                     (el) => el.taxHeadCode.includes("CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH")
@@ -1253,15 +1257,17 @@ export const downloadReceipt = async (
                                                 ?`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Rooms`
                                                     :`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Room`,
                              
-                      placeOfService: "Chandigarh",
-                        bkDept: applicationData.bkBookingType,
-                        bkStartDate: applicationData.bkFromDate,
-                        bkEndDate: applicationData.bkToDate,
-                        bkLocation: applicationData.bkLocation,
-                        bookingPurpose: applicationData.bkBookingPurpose,
-                        applicationNumber :
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.consumerCode,
+                    placeOfService: "Chandigarh",
+                    bkDept: applicationData.bkBookingType,
+                    bkStartDate: roomDataForGivenApplicationNumber.fromDate,
+                    bkEndDate: roomDataForGivenApplicationNumber.toDate,
+                    bkLocation: applicationData.bkLocation,
+                    bookingPurpose: applicationData.bkBookingPurpose,
+                    bookingPupose: applicationData.bkBookingPurpose,
+                            
+                    applicationNumber :
+                        payloadReceiptDetails.Payments[0].paymentDetails[0]
+                            .bill.consumerCode,
                     },
                     paymentInfo: paymentInfoData,
                     payerInfo: {
@@ -1619,10 +1625,13 @@ export const downloadCertificate = async (
                     applicationData.bkToDate
                 ),
                 bookingPeriod: bookingDuration,
-                venueName: applicationData.bkLocation,
+                venueName: applicationData.businessService == "OSUJM"? applicationData.bkBookingVenue:applicationData.bkLocation,
                 sector: applicationData.bkSector,
                 groundName: applicationData.bkSector,
                 bookingPurpose: applicationData.bkBookingPurpose,
+                bookingPupose: applicationData.bkBookingPurpose,
+                                
+                
                 duration:
                     applicationData.bkDuration == "1"
                         ? `${applicationData.bkDuration} Month`
@@ -1668,7 +1677,7 @@ export const downloadCertificate = async (
             )[0].amount),
             refundableCharges: "",
             totalPayment: payloadReceiptDetails.Payments[0].totalAmountPaid,
-            paymentDate:applicationData.createdDate,
+            paymentDate:roomDataForGivenApplicationNumber.roomCreatedDate,
             receiptNo: payloadReceiptDetails.Payments[0].paymentDetails[0]
                 .receiptNumber,
             currentDate: `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`,
@@ -1704,20 +1713,22 @@ export const downloadCertificate = async (
                                             ?`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Rooms`
                                                 :`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Room`,
                  
-                     bookingPurpose: applicationData.bkBookingPurpose,
-                    bkStartDate: applicationData.bkFromDate,
-                    bkEndDate: applicationData.bkToDate,
-                    placeOfService: "Chandigarh",
-                    venueName: applicationData.bkLocation,
-                    sector: applicationData.bkSector,
-                    bookingType: applicationData.bkBookingType,
-                    applicationDate: convertDateInDMY(
-                        applicationData.bkDateCreated
-                    ),
-                    bookingPeriod: bookingDuration,
-                    applicationNumber :
-                        payloadReceiptDetails.Payments[0].paymentDetails[0]
-                            .bill.consumerCode,
+                bookingPurpose: applicationData.bkBookingPurpose,
+                bookingPupose: applicationData.bkBookingPurpose,
+                            
+                bkStartDate: roomDataForGivenApplicationNumber.fromDate,
+                bkEndDate: roomDataForGivenApplicationNumber.toDate,
+                placeOfService: "Chandigarh",
+                venueName: applicationData.bkLocation,
+                sector: applicationData.bkSector,
+                bookingType: applicationData.bkBookingType,
+                applicationDate: convertDateInDMY(
+                    applicationData.bkDateCreated
+                ),
+                bookingPeriod: `${roomDataForGivenApplicationNumber.fromDate} to ${roomDataForGivenApplicationNumber.toDate}`,
+                applicationNumber :
+                    payloadReceiptDetails.Payments[0].paymentDetails[0]
+                        .bill.consumerCode,
                 },
 
                 payerInfo: {
@@ -1904,6 +1915,8 @@ export const downloadApplication = async (
                 applicationData.bkToDate
             ),
             bookingPurpose: applicationData.bkBookingPurpose,
+            bookingPupose: applicationData.bkBookingPurpose,
+          
         };
         let bookingDataOSUJM = {
             applicationNumber: applicationNumber,
@@ -1915,6 +1928,8 @@ export const downloadApplication = async (
                 applicationData.bkToDate
             ),
             bookingPurpose: applicationData.bkBookingPurpose,
+            bookingPupose: applicationData.bkBookingPurpose,
+                                
             status: applicationData.bkApplicationStatus === "PENDINGAPPROVAL" ? "Pending Approval" : applicationData.bkApplicationStatus === "PENDINGPAYMENT" ? "Pending Payment" : applicationData.bkApplicationStatus === "APPROVED" ? "Approved" : applicationData.bkApplicationStatus,
 
         };
@@ -1928,6 +1943,8 @@ export const downloadApplication = async (
                 applicationData.bkToDate
             ),
             bookingPurpose: applicationData.bkBookingPurpose,
+            bookingPupose: applicationData.bkBookingPurpose,
+                                
             parkDim: applicationData.bkDimension,
         };
 
@@ -2666,7 +2683,8 @@ export const downloadCancelledBookingReceipt = async (
                         mobileNumber:
                             payloadReceiptDetails.Payments[0].mobileNumber,
                         houseNo: applicationData.bkHouseNo,
-                        permanentAddress: applicationData.bkCompleteAddress,
+                        //permanentAddress: applicationData.bkCompleteAddress,
+                        permanentAddress:applicationData.bkHouseNo,
                         permanentCity:
                             payloadReceiptDetails.Payments[0].tenantId,
                         sector: applicationData.bkSector,
@@ -2995,7 +3013,8 @@ export const prepareRoomCard = (nonOptimisedRoomData) => {
                         roomApplicationNumber: roomData.roomApplicationNumber,
                         toDate: roomData.toDate,
                         fromDate: roomData.fromDate,
-                        typeOfRooms: "BOTH"
+                        typeOfRooms: "BOTH",
+                        roomCreatedDate:roomData.roomCreatedDate
                     };
                     if (duplicateObject[0].typeOfRoom === "NON-AC") {
                         newObj.totalNoOfACRooms = roomData.totalNoOfRooms;
@@ -3009,7 +3028,8 @@ export const prepareRoomCard = (nonOptimisedRoomData) => {
                     let newObj = {
                         roomApplicationNumber: roomData.roomApplicationNumber,
                         toDate: roomData.toDate,
-                        fromDate: roomData.fromDate
+                        fromDate: roomData.fromDate,
+                        roomCreatedDate:roomData.roomCreatedDate
                     };
                     if (roomData.typeOfRoom === "NON-AC") {
                         newObj.totalNoOfACRooms = 0;

@@ -521,7 +521,7 @@ class CancelRequestApproved extends Component {
     const { trasformData, businessServiceData, applicationNumber, Cancelstatus,editableCommercialGrndRefundAmount,
       applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,bkBookingVenue,
       fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,
-    bkBankAccountHolder,bkNomineeName
+    bkBankAccountHolder,bkNomineeName,bkStatusUpdateRequest,bkLocationPictures
     } = this.props;
     console.log("this.props.editableRefundAmount--",this.props)
     let NumberReturnAmount;
@@ -563,6 +563,8 @@ else{
         fatherName = {fatherName}
         bkBookingVenue = {bkBookingVenue}
         bkEmail = {bkEmail}
+        bkStatusUpdateRequest = {bkStatusUpdateRequest}
+        bkLocationPictures = {bkLocationPictures}
         bkCompleteAddress = {bkCompleteAddress}
         bkCategory = {bkCategory}
         bkBookingPurpose = {bkBookingPurpose}
@@ -700,14 +702,19 @@ let bkBankAccountNumber = trasformData !== undefined && trasformData !== null ? 
   let bkNomineeName = trasformData !== undefined && trasformData !== null ?  trasformData.bkNomineeName : ""
   console.log("bkNomineeName",bkNomineeName)
 
+  let bkStatusUpdateRequest = trasformData !== undefined && trasformData !== null ?  trasformData.bkStatusUpdateRequest : ""
+  console.log("bkStatusUpdateRequest",bkStatusUpdateRequest)
+//applicationDetails.
 
   let Cancelstatus = trasformData.bkStatus;
 
+  let bkLocationPictures = trasformData !== undefined && trasformData !== null ?  trasformData.bkLocationPictures : ""
+  console.log("bkLocationPictures--inAllStep",bkLocationPictures)
 
   return {businessServiceData, trasformData, editableRefundAmount,editableCommercialGrndRefundAmount, dataforRefund, payloadone, 
     applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,
     fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,
-    bkBankAccountHolder,bkBookingVenue,bkNomineeName,
+    bkBankAccountHolder,bkBookingVenue,bkNomineeName,bkStatusUpdateRequest,bkLocationPictures,
     ConRefAmt, Cancelstatus, paymentDetailsForReceipt };
 }
 
