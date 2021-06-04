@@ -27,6 +27,7 @@ class DashboardApniMandi extends React.Component {
         super(props);
         this.state ={
         checkData : [],
+        graphTitle : "",
         recordMotFound : "",
         fromDate : "",
         toDate : "",
@@ -127,7 +128,7 @@ class DashboardApniMandi extends React.Component {
         doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
     
         doc.setFontSize(10);
-        const pdfTitle = "Apni Mandi Dashboard"
+        const pdfTitle = this.state.graphTitle;
         doc.text(pdfTitle, pageWidth / 2, 40, 'center');
     
         doc.autoTable({ html: '#my-table' });
@@ -164,20 +165,32 @@ class DashboardApniMandi extends React.Component {
     showHideColumn = (e) => {
         e.preventDefault();
         debugger;
+
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
+        
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
         sortColumn[removeIndex]["show"] = !(sortColumn[removeIndex]["show"]);
 
+        var group = sortColumn.reduce((r, a) => {
+            r[a["show"]] = [...r[a["show"]] || [], a];
+            return r;
+            }, {});
+
+        if(!group["true"]){
+            return;
+        }
         var sortColumn2 = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex2 = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
-        sortColumn2[removeIndex2]["show"] = !(sortColumn2[removeIndex2]["show"])
+        sortColumn2[removeIndex2]["show"] = !(sortColumn2[removeIndex2]["show"]);
 
-        this.setState({
-            columnData: sortColumn,
-            unchangeColumnData: sortColumn2
-        })
+        if(group["true"].length <= 5){
+            this.setState({
+                columnData: sortColumn,
+                unchangeColumnData: sortColumn2
+            })
+        }
     }
 
     // Toggle Column 
@@ -273,6 +286,7 @@ class DashboardApniMandi extends React.Component {
         const propsData = this.props.data;
         if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
             debugger;
+            var graphTitle = "";
             var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
             "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
             var data = propsData[0];
@@ -316,7 +330,8 @@ class DashboardApniMandi extends React.Component {
                         var item = {};
                         item["Header"] = this.camelize(Object.keys(data[0])[i]);
                         item["accessor"] = Object.keys(data[0])[i];
-                        item["show"] = true;
+                        // item["show"] = true;
+                        item["show"] = i<5 ? true : false;
                         colData.push(item);
                     }
     
@@ -369,7 +384,8 @@ class DashboardApniMandi extends React.Component {
                         var item = {};
                         item["Header"] = this.camelize(Object.keys(data[0])[i]);
                         item["accessor"] = Object.keys(data[0])[i];
-                        item["show"] = true;
+                        // item["show"] = true;
+                        item["show"] = i<5 ? true : false;
                         colData.push(item);
                     }
     
@@ -392,7 +408,13 @@ class DashboardApniMandi extends React.Component {
                 }
             }
 
+            if(dropdownSelected === "dayMarketCollection"){
+                graphTitle = "Day Wise Collection Dashboard";
+            }else if(dropdownSelected === "allMarketCollection"){
+                graphTitle = "Market Collection Dashboard";
+            }
             this.setState({
+                graphTitle : graphTitle,
                 fromDate : fromDate,
                 toDate : toDate,
                 dropdownSelected : dropdownSelected,
@@ -454,7 +476,7 @@ class DashboardApniMandi extends React.Component {
             },
             title: {
                 display: true,
-                text: "Apni Mandi Dashboard"
+                text: this.state.graphTitle
             },
             scales: {
                 xAxes: [{

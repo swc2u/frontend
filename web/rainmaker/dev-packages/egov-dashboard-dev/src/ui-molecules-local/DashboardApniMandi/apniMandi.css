@@ -1,5 +1,7 @@
 /* .ReactTable .-pagination .-previous, .ReactTable .-pagination .-next */
 .columnVisibilityCard {
+  overflow: scroll;
+  height: 200px;
   position: absolute;
   z-index: 1000;
   /* display: none; */
@@ -120,7 +122,7 @@
   margin: 0; }
 
 .tableContainer {
-  position: absolute;
+  position: inherit;
   z-index: 1000;
   /* display: none; */
   /* float: left; */
