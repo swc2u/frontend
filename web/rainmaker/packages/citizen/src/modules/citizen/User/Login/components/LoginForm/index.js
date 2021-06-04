@@ -45,6 +45,12 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
       className={enableWhatsApp?"login-cardwidth user-screens-card":"login-cardwidthmob col-sm-offset-4 col-sm-4 user-screens-card"}
       textChildren={
         <div>
+           <marquee width="100%" direction="left" height="50px">.
+        <Label style={{ marginBottom: "12px" }}        
+        color="blue" 
+        bold={true} dark={false} 
+        fontSize={18} label="CORE_COMMON_MESSAGE_MARQEE" />
+        </marquee>
           <div className="rainmaker-displayInline" style={{ justifyContent: "center" }}>
         {/*}    <div style={{ marginBottom: "24px" }}>
               <Image className="mseva-logo" source={`${logo}`} />

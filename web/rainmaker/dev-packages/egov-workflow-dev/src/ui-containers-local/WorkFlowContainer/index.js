@@ -703,7 +703,7 @@ ValidateRequest =(payload,preparedFinalObject) =>{
 
   }
     
-  if(payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
+  if(payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT' && payload.action !=='REJECT' )
   {
     isvalidRequest = false;
     // logic for null value validation for Connection Details date and Activation Details
