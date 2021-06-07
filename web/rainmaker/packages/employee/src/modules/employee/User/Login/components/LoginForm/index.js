@@ -36,8 +36,8 @@ const LoginForm = ({ handleFieldChange, form, onForgotPasswdCLick, logoUrl,langu
       className="user-screens-card col-lg-offset-4 col-lg-4 col-md-offset-4 col-md-4 col-sm-offset-4 col-sm-4"
       textChildren={
         <div>
-        <marquee width="100%" direction="left" height="50px">.
-        <Label style={{ marginBottom: "12px" }}        
+        <marquee width="100%" direction="left" height="50px">
+        <Label style={{ marginBottom: "2px" }}        
         color="blue" 
         bold={true} dark={false} 
         fontSize={18} label="CORE_COMMON_MESSAGE_MARQEE" />

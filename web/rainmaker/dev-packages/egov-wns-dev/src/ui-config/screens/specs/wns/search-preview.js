@@ -124,6 +124,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
     {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewMeterId.visible",false);
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewMeterInstallationDate.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewlastMeterReading.visible",false);
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewInitialMeterReading.visible",false);
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewmfrCode.visible",false);
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewmeterDigits.visible",false);
@@ -349,6 +350,11 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.children.reviewInitialMeterReading.visible",
         true
       );
+      set(
+        action.screenConfig,
+        "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.children.reviewlastMeterReading.visible",
+        true
+      );
     } else {
       set(
         action.screenConfig,
@@ -358,6 +364,11 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       set(
         action.screenConfig,
         "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.children.reviewMeterInstallationDate.visible",
+        false
+      );
+      set(
+        action.screenConfig,
+        "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.children.reviewlastMeterReading.visible",
         false
       );
       set(
@@ -1010,6 +1021,10 @@ const parserFunction = (obj) => {
         obj.additionalDetails !== undefined &&
         obj.additionalDetails.initialMeterReading !== undefined
       ) ? parseFloat(obj.additionalDetails.initialMeterReading) : null,
+      lastMeterReading: (
+        obj.additionalDetails !== undefined &&
+        obj.additionalDetails.lastMeterReading !== undefined
+      ) ? parseFloat(obj.additionalDetails.lastMeterReading) : null,
       detailsProvidedBy: (
         obj.additionalDetails !== undefined &&
         obj.additionalDetails.detailsProvidedBy !== undefined &&

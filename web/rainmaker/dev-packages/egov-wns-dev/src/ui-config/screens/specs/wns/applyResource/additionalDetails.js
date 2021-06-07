@@ -549,6 +549,25 @@ export const additionDetails =(Disabled)=> getCommonCard({
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "applyScreen.additionalDetails.initialMeterReading"
       }),
+      lastMeterReading: getTextField({
+        label: {
+          labelKey: "WS_ADDN_DETAILS_INITIAL_METER_READING_LAST"
+        },
+        placeholder: {
+          labelKey: "WS_ADDN_DETAILS_INITIAL_METER_READING_LAST_PLACEHOLDER"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        props: {         
+          disabled: Disabled
+        },
+        pattern: /^[0-9]\d{0,9}(\.\d{1,3})?%?$/,
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.additionalDetails.lastMeterReading"
+      }),
       meterCount: getTextField({
         label: {
           labelKey: "WS_ADDN_DETAILS_INITIAL_METER_COUNT"
@@ -754,6 +773,22 @@ export const additionDetails =(Disabled)=> getCommonCard({
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "applyScreen.proposedInitialMeterReading"
       }),
+      proposedLastMeterReading: getTextField({
+        label: {
+          labelKey: "WS_PROP_ADDN_DETAILS_LAST_METER_READING"
+        },
+        placeholder: {
+          labelKey: "WS_PROP_ADDN_DETAILS_LAST_METER_READING_PLACEHOLDER"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        pattern: /^[0-9]\d{0,9}(\.\d{1,3})?%?$/,
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.proposedLastMeterReading"
+      }),
       PropmeterCount: getTextField({
         label: {
           labelKey: "WS_PROP_ADDN_DETAILS_INITIAL_METER_COUNT"
@@ -886,6 +921,14 @@ const showHideFeilds = (dispatch, value) => {
     handleField(
       "apply",
       "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.initialMeterReading",
+      "visible",
+      value
+    )
+  );
+  dispatch(
+    handleField(
+      "apply",
+      "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.lastMeterReading",
       "visible",
       value
     )

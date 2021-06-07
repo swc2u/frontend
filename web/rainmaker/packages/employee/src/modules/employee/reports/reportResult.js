@@ -110,7 +110,7 @@ class ShowField extends Component {
         messageTop: tabLabel,
         text: "PDF",
         orientation: orientation,
-        pageSize: "A0",//pageSize,
+        pageSize: reportHeader.length >15 ? "A0" :pageSize,// "A0",//pageSize,
         footer: true,
         customize: function(doc) {
           doc.content[0].text = [];
@@ -125,8 +125,12 @@ class ShowField extends Component {
           
           }
           //set width of all column
-          doc.content[2].table.widths = 
-        Array(doc.content[2].table.body[0].length + 1).join('*').split('');
+          if(reportHeader.length >15)
+          {
+            doc.content[2].table.widths = 
+            Array(doc.content[2].table.body[0].length + 1).join('*').split('');
+          }
+          
         },
         className: "report-pdf-button",
         
