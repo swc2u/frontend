@@ -1,5 +1,5 @@
 import React from "react";
-import { getCommonHeader } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getCommonHeader,getCommonContainer } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { fetchData } from "./citizenSearchResource/citizenFunctions";
 import "../utils/index.css";
 import PayWnsBillIcon from "../../../../ui-atoms-local/Icons/PayWnsBillIcon/index";
@@ -37,6 +37,18 @@ const cardItems = [{
     route: "my-connections"
 }
 ];
+
+const usermannulalButton = getCommonContainer({
+
+    downloadcard: {
+      uiFramework: "custom-molecules-local",
+      moduleName: "egov-wns",
+      componentPath: "SampleDownloadForWns",
+  
+      visible: true,
+    },
+  
+  });
 
 const waterAndSewerageSearchAndResult = {
     uiFramework: "material-ui",
@@ -124,6 +136,7 @@ const waterAndSewerageSearchAndResult = {
                 }
             }
         },
+        usermannulal: usermannulalButton,
         adhocDialog: {
             uiFramework: "custom-containers",
             componentPath: "DialogContainer",

@@ -289,6 +289,14 @@ export const reviewInitialMeterReading = getLabelWithValue(
   { jsonPath: "applyScreen.additionalDetails.initialMeterReading",
     callBack: handleNA }
 );
+export const reviewlastMeterReading = getLabelWithValue(
+  {
+    labelName: "Initial Meter Reading",
+    labelKey: "WS_ADDN_DETAILS_INITIAL_METER_READING"
+  },
+  { jsonPath: "applyScreen.additionalDetails.lastMeterReading",
+    callBack: handleNA }
+);
 export const reviewMeterCount = getLabelWithValue(
   {
     labelName: "Meter Count",
@@ -442,6 +450,7 @@ const activationDetails = getCommonContainer({
   reviewMeterId,
   reviewMeterInstallationDate,
   reviewInitialMeterReading,
+  reviewlastMeterReading,
   reviewmfrCode,
   reviewmeterDigits,
   reviewmeterUnit,

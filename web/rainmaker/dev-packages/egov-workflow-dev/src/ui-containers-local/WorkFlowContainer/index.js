@@ -703,7 +703,7 @@ ValidateRequest =(payload,preparedFinalObject) =>{
 
   }
     
-  if(payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT' && payload.action !=='REJECT' )
+  if((payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT' || payload.applicationStatus ==='PENDING_FOR_SUPERINTENDENT_APPROVAL_AFTER_JE' ) && payload.action !=='REJECT'  )
   {
     isvalidRequest = false;
     // logic for null value validation for Connection Details date and Activation Details
@@ -833,7 +833,12 @@ ValidateRequest =(payload,preparedFinalObject) =>{
         // payload.waterProperty.usageCategory = payload.proposedMeterId
       }
       else{
-        isvalidRequest = false
+        isvalidRequest = true
+        if(payload.proposedMeterInstallationDate)
+        payload.meterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate) 
+        if(payload.proposedMeterInstallationDate)
+        payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+
         
       }
   

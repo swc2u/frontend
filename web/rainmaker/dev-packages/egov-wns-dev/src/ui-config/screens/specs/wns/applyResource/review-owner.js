@@ -320,6 +320,14 @@ export const reviewInitialMeterReading = getLabelWithValue(
   { jsonPath: "WaterConnection[0].additionalDetails.initialMeterReading",
     callBack: handleNA }
 );
+export const reviewlastMeterReading = getLabelWithValue(
+  {
+    labelName: "Initial Meter Reading",
+    labelKey: "WS_ADDN_DETAILS_INITIAL_METER_READING_LAST"
+  },
+  { jsonPath: "WaterConnection[0].additionalDetails.lastMeterReading",
+    callBack: handleNA }
+);
 // new field
 
 export const reviewMeterCount = getLabelWithValue(
@@ -406,6 +414,14 @@ export const PropreviewInitialMeterReading = getLabelWithValue(
     labelKey: "WS_PROP_ADDN_DETAILS_INITIAL_METER_READING"
   },
   { jsonPath: "WaterConnection[0].proposedInitialMeterReading",
+    callBack: handleNA }
+);
+export const PropreviewproposedLastMeterReading = getLabelWithValue(
+  {
+    labelName: "Initial Meter Reading",
+    labelKey: "WS_PROP_ADDN_DETAILS_INITIAL_METER_READING"
+  },
+  { jsonPath: "WaterConnection[0].proposedLastMeterReading",
     callBack: handleNA }
 );
 // new field
@@ -549,6 +565,7 @@ const activationDetails = getCommonContainer({
   reviewMeterId,
   reviewMeterInstallationDate,
   reviewInitialMeterReading,
+  reviewlastMeterReading,
   reviewmfrCode,
   reviewmeterDigits,
   reviewmeterUnit,
@@ -561,6 +578,7 @@ const PropactivationDetails = getCommonContainer({
   PropreviewMeterId,
   PropreviewMeterInstallationDate,
   PropreviewInitialMeterReading,
+  PropreviewproposedLastMeterReading,
   PropreviewmfrCode,
   PropreviewmeterDigits,
   PropreviewmeterUnit,
