@@ -261,6 +261,7 @@ if(water || sewerage || tubewell)
           title: `WS_${item.documentType}`,
           link: item.fileUrl && item.fileUrl.split(",")[0],
           linkText: "View",
+          id:item.id,
           name: item.fileName
         };
       });
@@ -1115,36 +1116,36 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
               }
               value = "mobileNumber";
               let DuplicatItemM = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
-              if(DuplicatItemM && DuplicatItemM[0])
-              {
-                if(DuplicatItemM[0].IsDuplicatItem)
-                {
-                const LocalizationCodeValueM = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_MOBILE_FIELDS")
-                const errorMessageM = {
-                  labelName: "Duplicate mobile number Added",
-                  //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
-                  labelKey:   LocalizationCodeValueM+' '+DuplicatItemM[0].duplicates
-                };
-                dispatch(toggleSnackbar(true, errorMessageM, "warning"));
-                return false;
-              }
-              }
+              // if(DuplicatItemM && DuplicatItemM[0])
+              // {
+              //   if(DuplicatItemM[0].IsDuplicatItem)
+              //   {
+              //   const LocalizationCodeValueM = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_MOBILE_FIELDS")
+              //   const errorMessageM = {
+              //     labelName: "Duplicate mobile number Added",
+              //     //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+              //     labelKey:   LocalizationCodeValueM+' '+DuplicatItemM[0].duplicates
+              //   };
+              //   dispatch(toggleSnackbar(true, errorMessageM, "warning"));
+              //   return false;
+              // }
+              // }
               value = "emailId";
               let DuplicatItemE = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
-              if(DuplicatItemE && DuplicatItemE[0])
-              {
-                if(DuplicatItemE[0].IsDuplicatItem)
-                {
-                const LocalizationCodeValueE = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_EMAIL_FIELDS")
-                const errorMessageE = {
-                  labelName: "Duplicate email id Added",
-                  //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
-                  labelKey:   LocalizationCodeValueE+' '+DuplicatItemE[0].duplicates
-                };
-                dispatch(toggleSnackbar(true, errorMessageE, "warning"));
-                return false;
-              }
-              }
+              // if(DuplicatItemE && DuplicatItemE[0])
+              // {
+              //   if(DuplicatItemE[0].IsDuplicatItem)
+              //   {
+              //   const LocalizationCodeValueE = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_EMAIL_FIELDS")
+              //   const errorMessageE = {
+              //     labelName: "Duplicate email id Added",
+              //     //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+              //     labelKey:   LocalizationCodeValueE+' '+DuplicatItemE[0].duplicates
+              //   };
+              //   dispatch(toggleSnackbar(true, errorMessageE, "warning"));
+              //   return false;
+              // }
+              // }
             }
           }
 
