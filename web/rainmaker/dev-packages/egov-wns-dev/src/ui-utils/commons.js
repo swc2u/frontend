@@ -954,6 +954,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
+                }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
@@ -980,7 +984,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                     {
                         // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                         //     && x.occupancycode === occupancycode)
-                            wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                            // wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                            wsDocument = wsDocument.filter(function (x) {
+                                return x.applicationType === applicationType && x.category === category;
+                            });
                     }
                     else if(applicationType ==='REGULAR' &&( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
                     {
@@ -1555,6 +1562,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
+                }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
@@ -1579,9 +1590,12 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                     }
                     else if(applicationType ==='TEMPORARY' && ( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
                     {
-                        // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
-                        //     && x.occupancycode === occupancycode)
-                        wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                        // // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        // //     && x.occupancycode === occupancycode)
+                        // wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.category === category;
+                        });
                     }
                     else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR')
                     {

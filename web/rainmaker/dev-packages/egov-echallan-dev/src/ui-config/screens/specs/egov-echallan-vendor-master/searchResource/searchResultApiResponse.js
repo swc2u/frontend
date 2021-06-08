@@ -3,10 +3,16 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { getTextToLocalMappingVendorDetail, getTextToLocalMappingVendorErrorDetail } from "../../utils";
 import { fetchVendorData } from "../../../../../ui-utils/commons";
 import store from "ui-redux/store";
+import get from "lodash/get";
 
-export const searchVendorResultApiResponse = async (action, state, dispatch) => {
+export const searchVendorResultApiResponse = async (state, dispatch,covNo) => {
 
-  const response = await fetchVendorData();
+  covNo = get(
+    state.screenConfiguration.preparedFinalObject,
+    "searchScreen.covNo",
+    {}
+  );
+  const response = await fetchVendorData(covNo);
   try {
     console.log("res", response)
     let dataarray = [];

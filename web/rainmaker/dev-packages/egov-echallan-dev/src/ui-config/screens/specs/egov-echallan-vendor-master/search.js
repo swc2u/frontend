@@ -1,4 +1,4 @@
-import { getCommonHeader, getCommonContainer, getLabel, getBreak } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getCommonHeader, getCommonContainer, getLabel, getBreak,getTextField } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { adhocPopup } from "./popup/addpopup"
 import "./index.css"
@@ -24,7 +24,7 @@ const VENDORSearchAndResult = {
   beforeInitScreen: (action, state, dispatch) => {
     clearlocalstorageAppDetails(state);
     setapplicationType('VENDOR-MASTER');
-    searchVendorResultApiResponse(action, state, dispatch);
+   // searchVendorResultApiResponse(action, state, dispatch);
     return action;
   },
   components: {
@@ -51,8 +51,70 @@ const VENDORSearchAndResult = {
           }
         },
         vendorChooseFile,
+
         // viewErrorButton,
         breakAfterSearch: getBreak(),
+        //new input
+        appDOESearchContainer: getCommonContainer({
+          covNo: getTextField({
+            label: {
+              labelName: "COV Number",
+              labelKey: "EC_VENDOR_COMMON_TABLE_COL_COV_NUMBER"
+            },
+            placeholder: {
+              labelName: "COV Number",
+              labelKey: "EC_VENDOR_COMMON_TABLE_COL_COV_NUMBER"
+            },
+            gridDefination: {
+              xs: 12,
+              sm: 4
+            },
+            required: false,
+           // pattern: /^[a-zA-Z0-9-]*$/i,
+            errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+            jsonPath: "searchScreen.covNo"
+          }),
+
+        }),
+        
+      
+        button: getCommonContainer({
+          buttonContainer: getCommonContainer({
+            searchButton: {
+              componentPath: "Button",
+              gridDefination: {
+                xs: 12,
+                sm: 6
+                // align: "center"
+              },
+              props: {
+                variant: "contained",
+                style: {
+                  color: "white",
+                  margin: "8px",
+                  backgroundColor: "rgba(0, 0, 0, 0.6000000238418579)",
+                  borderRadius: "2px",
+                  width: "220px",
+                  height: "48px"
+                }
+              },
+              children: {
+                buttonLabel: getLabel({
+                  labelName: "searchdoe",
+                  labelKey: "SEARCH"
+                })
+              },
+              onClickDefination: {
+                action: "condition",
+                //callBack: searchVendorResultApiResponse
+                callBack: (state, dispatch) => {
+                  searchVendorResultApiResponse(state,dispatch,'')
+                }
+              }
+            }
+          })
+        }),
+        //
         serachVendorResultGrid,
       }
     },
