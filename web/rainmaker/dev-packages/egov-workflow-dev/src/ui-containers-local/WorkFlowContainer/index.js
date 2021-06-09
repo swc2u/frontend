@@ -707,11 +707,16 @@ ValidateRequest =(payload,preparedFinalObject) =>{
         const element = payload.documents[index];
 
         let doctype =`WS_${element.documentType}`
-        let ids = preparedFinalObject.WaterConnection[0].reviewDocData.filter(x=>x.title === doctype)
+        if(preparedFinalObject.WaterConnection[0].reviewDocData !== undefined)
+        {
+          let ids = preparedFinalObject.WaterConnection[0].reviewDocData.filter(x=>x.title === doctype)
         if(ids && ids[0])
         {
           set(payload.documents[index], "id", ids[0].id);
         }
+
+        }
+        
         
         
       }
@@ -919,8 +924,8 @@ ValidateRequest =(payload,preparedFinalObject) =>{
     payload.documents =  this.uniqueBycode(payload.documents, x=>x.documentType);//payload.documents.filter((value,index) => payload.documents.indexOf(value) ===index)
     }
     //payload.documents = tmp;
-return  false
- //return isvalidRequest
+//return  false
+ return isvalidRequest
 }
 
 uniqueBycode =(data,key)=>{
