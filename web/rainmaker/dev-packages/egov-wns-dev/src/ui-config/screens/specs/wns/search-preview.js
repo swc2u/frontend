@@ -99,6 +99,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
   ];
 
   let Response =await getWorkFlowData(queryObj);
+  let securityCharges =0;
   let processInstanceAppStatus=Response.ProcessInstances[0].state.applicationStatus;
   //Search details for given application Number
   if (applicationNumber) {
@@ -161,6 +162,33 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",true);
 
       let service_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.service");
+              //set security if bellow consition satisfy
+              const {WaterConnection} = state.screenConfiguration.preparedFinalObject;
+              if(WaterConnection &&WaterConnection[0])
+              {
+                if(WaterConnection[0].service ==='WATER')
+                {
+                  if(WaterConnection[0].applicationStatus === "PENDING_FOR_SECURITY_DEPOSIT" || WaterConnection[0].applicationStatus === "PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT")
+                  {
+                    //regular
+                    if(WaterConnection[0].waterApplicationType ==='REGULAR')
+                    {
+                      if(WaterConnection[0].proposedPipeSize == 15 && WaterConnection[0].activityType ==='NEW_WS_CONNECTION'){
+                        const {searchPreviewScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
+                        const pipeSize = searchPreviewScreenMdmsData['ws-services-calculation'].PipeSize.filter(pipeSize => pipeSize.size == 15);
+                         securityCharges = pipeSize[0].charges[0].security;
+                        set(state.screenConfiguration.preparedFinalObject.WaterConnection[0], 'waterApplication.securityCharge', securityCharges);
+                      }
+                    }
+                    
+                  }
+
+                }
+
+
+              }
+
+              
       if(service_ ==='SEWERAGE')
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyUsageDetail.visible",false);
     } else {
@@ -173,6 +201,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       let parsedObject = parserFunction(findAndReplace(applyScreenObject, "NA", null));
       let code = '03';
       let isFerruleApplicable = false
+     // let securityCharges = false
       if (service === "WATER") 
       {
         code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",parsedObject.property.address.locality.code)   
@@ -184,6 +213,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         else{
           isFerruleApplicable = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplication.isFerruleApplicable",false);
         }
+
       }
         
         if (service === "SEWERAGE") 
@@ -206,6 +236,11 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
      
       
       set(parsedObject, 'waterApplication.isFerruleApplicable', isFerruleApplicable);
+      
+     // set(parsedObject, 'waterApplication.securityCharge', securityCharges);
+      
+      
+
       dispatch(prepareFinalObject("WaterConnection[0]", parsedObject));
       //dispatch(prepareFinalObject("WaterConnection[0].waterApplication.isFerruleApplicable", isFerruleApplicable));
        let estimate;
@@ -216,6 +251,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
       }
       if(processInstanceAppStatus==="PENDING_FOR_FIELD_INSPECTION"|| processInstanceAppStatus==="PENDING_FOR_METER_INSTALLATION"|| processInstanceAppStatus==="PENDING_FOR_JE_BR_APPROVAL" || 1===1){
+        set(parsedObject, 'waterApplication.securityCharge', securityCharges);
         let queryObjectForEst = [{
           applicationNo: applicationNumber,
           tenantId: tenantId,
@@ -614,7 +650,7 @@ export const getMdmsData = async (state,dispatch) => {
       tenantId: commonConfig.tenantId,
       moduleDetails: [
        // { moduleName: "common-masters", masterDetails: [{ name: "OwnerType" }, { name: "OwnerShipCategory" }] },
-       
+       { moduleName: "ws-services-calculation", masterDetails: [{ name: "PipeSize" }] },
         { moduleName: "ws-services-masters", 
         masterDetails: [
           { name: "wsWorkflowRole" },
@@ -857,6 +893,32 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
     //payload.WaterConnection[0].service = service;
 
     const convPayload = findAndReplace(payload, "NA", null)
+    // securityCharges before api call _estimate in bellow condition.
+    if(convPayload.WaterConnection && convPayload.WaterConnection[0])
+    {
+      if(convPayload.WaterConnection[0].service ==='WATER')
+      {
+        if(convPayload.WaterConnection[0].applicationStatus === "PENDING_FOR_SECURITY_DEPOSIT" || convPayload.WaterConnection[0].applicationStatus === "PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT")
+        {
+          //regular
+          if(convPayload.WaterConnection[0].waterApplicationType ==='REGULAR')
+          {
+            if(convPayload.WaterConnection[0].proposedPipeSize == 15 && convPayload.WaterConnection[0].activityType ==='NEW_WS_CONNECTION'){
+              const {searchPreviewScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
+              const pipeSize = searchPreviewScreenMdmsData['ws-services-calculation'].PipeSize.filter(pipeSize => pipeSize.size == 15);
+               let securityCharges_ = pipeSize[0].charges[0].security;
+               set(convPayload.WaterConnection[0], 'waterApplication.securityCharge', securityCharges_);
+              
+            }
+          }
+          
+        }
+
+      }
+
+
+    }
+    //
     let queryObjectForEst = [{
       applicationNo: applicationNumber,
       tenantId: tenantId,

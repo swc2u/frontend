@@ -1042,6 +1042,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
+                }
             }
             else if(applicationType ==='TEMPORARY'){
                 wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
@@ -1646,6 +1650,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
                 }
             }
             else if(applicationType ==='TEMPORARY'){
