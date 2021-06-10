@@ -225,6 +225,24 @@ else if (businessService == "NLUJM")
     };
 
   }
+  else if (businessService == "REGULARWSCONNECTION"
+          || businessService == "TEMPORARY_WSCONNECTION"
+          || businessService == "WS_TEMP_TEMP"
+          || businessService == "WS_TEMP_REGULAR"
+          || businessService == "WS_DISCONNECTION"
+          || businessService == "WS_TEMP_DISCONNECTION"
+          || businessService == "WS_RENAME"
+          || businessService == "WS_METER_UPDATE"
+          || businessService == "WS_CONVERSION"
+          || businessService == "WS_REACTIVATE"
+          || businessService == "SW_SEWERAGE"   
+          || businessService == "WS_TUBEWELL") { 
+    return {
+      INITIATED: "/wns/search-preview",
+      DEFAULT: "/wns/search-preview",
+    };
+
+  }
 
   else {
     switch (module.toUpperCase()) {

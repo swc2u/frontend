@@ -789,7 +789,7 @@ try{
         
       const wswc_search = {
         GET: {
-          URL: "/ws-services/wc/_search",
+          URL: "/sw-services/swc/_search",
           ACTION: "_search",
         },
       };

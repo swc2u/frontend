@@ -1,8 +1,9 @@
 import React from "react";
-import { getCommonHeader } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getCommonHeader,getCommonContainer } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { fetchData } from "./citizenSearchResource/citizenFunctions";
 import "../utils/index.css";
 import PayWnsBillIcon from "../../../../ui-atoms-local/Icons/PayWnsBillIcon/index";
+import LinkConnectionsIcon from "../../../../ui-atoms-local/Icons/LinkConnectionsIcon/index";
 import MyConnectionsIcon from "../../../../ui-atoms-local/Icons/MyConnectionsIcon/index";
 import { getRequiredDocData } from "egov-ui-framework/ui-utils/commons";
 import { getLocale,getTenantId,getUserInfo,setModule } from "egov-ui-kit/utils/localStorageUtils";
@@ -16,11 +17,17 @@ const header = getCommonHeader({
 });
 
 const cardItems = [{
+//     label: {
+//         labelKey: "WS_COMMON_PAY_WS_BILL_HEADER",
+//     },
+//     icon: < PayWnsBillIcon />,
+//     route: "search"
+// },
     label: {
-        labelKey: "WS_COMMON_PAY_WS_BILL_HEADER",
+        labelKey: "WS_COMMON_APPL_LINK_CONNECTION",
     },
-    icon: < PayWnsBillIcon />,
-    route: "search"
+    icon: < LinkConnectionsIcon />,
+    route: "link-connection"
 },
 {
     label: {
@@ -30,6 +37,18 @@ const cardItems = [{
     route: "my-connections"
 }
 ];
+
+const usermannulalButton = getCommonContainer({
+
+    downloadcard: {
+      uiFramework: "custom-molecules-local",
+      moduleName: "egov-wns",
+      componentPath: "SampleDownloadForWns",
+  
+      visible: true,
+    },
+  
+  });
 
 const waterAndSewerageSearchAndResult = {
     uiFramework: "material-ui",
@@ -94,22 +113,22 @@ const waterAndSewerageSearchAndResult = {
                     componentPath: "MyApplications",
                     props: {}
                 },
-                listCard2: {
-                    uiFramework: "custom-molecules-local",
-                    moduleName: "egov-wns",
-                    componentPath: "PastPayments",
-                    props: {
-                        route: "my-connections"
-                    }
-                },
-                listCard4: {
-                    uiFramework: "custom-molecules-local",
-                    moduleName: "egov-wns",
-                    componentPath: "LinkConnection",
-                    props: {
-                        route: "link-connection"
-                    }
-                },
+                // listCard2: {
+                //     uiFramework: "custom-molecules-local",
+                //     moduleName: "egov-wns",
+                //     componentPath: "PastPayments",
+                //     props: {
+                //         route: "my-connections"
+                //     }
+                // },
+                // listCard4: {
+                //     uiFramework: "custom-molecules-local",
+                //     moduleName: "egov-wns",
+                //     componentPath: "LinkConnection",
+                //     props: {
+                //         route: "link-connection"
+                //     }
+                // },
                 listCard3: {
                     uiFramework: "custom-molecules-local",
                     moduleName: "egov-wns",
@@ -117,6 +136,7 @@ const waterAndSewerageSearchAndResult = {
                 }
             }
         },
+        usermannulal: usermannulalButton,
         adhocDialog: {
             uiFramework: "custom-containers",
             componentPath: "DialogContainer",

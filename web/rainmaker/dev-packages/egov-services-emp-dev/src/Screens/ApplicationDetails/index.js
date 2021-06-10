@@ -54,7 +54,7 @@ import Typography from '@material-ui/core/Typography';
 
 
 
-const styles = (theme) => ({
+const styles = (theme) => ({   
 
 });
 const dosalogStyle = {
@@ -455,7 +455,7 @@ class ApplicationDetails extends Component {
 					fileStoreId: documentsPreviewData,
 					linkText: "View",
 				});
-				
+				 
 				let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
 				
 				let fileUrls =

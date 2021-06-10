@@ -335,7 +335,7 @@ pensionBankDetailsConatiner: getCommonContainer({
       labelName: "bankCode",
       labelKey: "PENSION_BANK_CODE"
     },
-    required:true,
+    required:false,
     props: {
       disabled: false,       
     },
@@ -486,14 +486,14 @@ export const PensionerClaimantDetails = (IsEdit) => {
     ClaimantAdddress: getTextField({
       label: {
         labelName: "claimantAddress",
-        labelKey: "PENSION_EMPLOYEE_PENSION_CA"
+        labelKey: "PENSION_EMPLOYEE_PENSION_CA_LABEL"
       },
       props:{
         className:"applicant-details-error"
       }, 
       placeholder: {
         labelName: "claimantAddress",
-        labelKey: "PENSION_EMPLOYEE_PENSION_CA"
+        labelKey: "PENSION_EMPLOYEE_PENSION_CA_LABEL"
       },
       required: true,
       minValue:0,
@@ -578,7 +578,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantBankCode",
         labelKey: "PENSION_BANK_CODE_C"
       },
-      required:true,
+      required:false,
       props: {
         disabled: false,       
       },

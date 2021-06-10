@@ -9,13 +9,14 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './Legalindex.css';
 
-import LegalData from './Legal_data.json';
+// import LegalData from './Legal_data.json';
 import bgImage from './img/MCC_symbol.jpg';
 
 class DashboardLegal extends React.Component {
     constructor(props){
       super(props);
       this.state = {
+        checkData : [],
         propsLegalData : [],
         graphClicked : -1,
         totalCases : 0,
@@ -64,7 +65,12 @@ class DashboardLegal extends React.Component {
           tableColumnData.push(columnData[i]["accessor"]);
           // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
       }
-  
+      
+      var colData = [];
+      for(var i=0; i<columnData.length; i++){
+        colData.push(columnData[i]["Header"]);
+      }
+      
       var tableRowData = [];
       for(var i=0; i<rowData.length; i++){
           var rowItem = [];
@@ -114,7 +120,7 @@ class DashboardLegal extends React.Component {
   
       doc.autoTable({
           // head: [tableColumnDataCamel],
-          head: [tableColumnData],
+          head: [colData],
           theme: "striped",
           styles: {
               fontSize: 7,
@@ -278,40 +284,54 @@ class DashboardLegal extends React.Component {
     }
   
     componentDidMount(){
-  
-        debugger;
-      const data = LegalData.ResponseBody;
-      
-      var totalCases = data.length;
-      
-      var judgmentCases = data.reduce((r, a) => {
-        r[a["judgmentTypeId"]] = [...r[a["judgmentTypeId"]] || [], a];
-        return r;
-        }, {});
-  
-      var impCases = data.reduce((r, a) => {
-        r[a["iscaseImp"]] = [...r[a["iscaseImp"]] || [], a];
-        return r;
-        }, {});
-        
-      var hearingCases = data.reduce((r, a) => {
-        r[a["caseStatus"]] = [...r[a["caseStatus"]] || [], a];
-        return r;
-        }, {});;
-      
+      debugger;
+      // const data = LegalData.ResponseBody;
+      const propsData = this.props.data;
       this.setState({
-        dataOne : data,
-        dataTwo: judgmentCases,
-        dataThird : impCases,
-        dataFourth : []
-      })
-      this.setState({
-        totalCases : totalCases,
-        judgmentCases : judgmentCases["null"].length,
-        impCases : impCases["null"].length,
-        hearingCases : hearingCases["HEARING"].length,
-        propsLegalData : data
-      })
+        checkData : this.props.data
+      })  
+    }
+
+    componentDidUpdate(){
+
+      debugger;
+      const propsData = this.props.data;
+      if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
+        // const data = LegalData.ResponseBody;
+        const data = propsData[0].ResponseBody
+
+        var totalCases = data.length;
+
+        var judgmentCases = data.reduce((r, a) => {
+          r[a["judgmentTypeId"]] = [...r[a["judgmentTypeId"]] || [], a];
+          return r;
+          }, {});
+
+        var impCases = data.reduce((r, a) => {
+          r[a["iscaseImp"]] = [...r[a["iscaseImp"]] || [], a];
+          return r;
+          }, {});
+          
+        var hearingCases = data.reduce((r, a) => {
+          r[a["caseStatus"]] = [...r[a["caseStatus"]] || [], a];
+          return r;
+          }, {});;
+
+        this.setState({
+          dataOne : data,
+          dataTwo: judgmentCases,
+          dataThird : impCases,
+          dataFourth : []
+        })
+        this.setState({
+          totalCases : totalCases,
+          judgmentCases : judgmentCases["null"].length,
+          impCases : impCases["null"].length,
+          hearingCases : hearingCases["HEARING"].length,
+          propsLegalData : data,
+          checkData : propsData
+        })
+      }
     }
   
     render(){
@@ -839,7 +859,7 @@ class DashboardLegal extends React.Component {
           </div>
           
           {/* Table Feature  */}
-          <div className="tableContainer">
+          <div className="tableContainer" style={this.state.graphClicked >= 0 ? null : {display:"none"}}>
           {
               this.state.unchangeColumnData.length > 0  ? 
               <div className="tableFeature">

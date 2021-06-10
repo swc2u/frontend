@@ -26,7 +26,7 @@ class DialogContainer extends React.Component {
       onClose={this.handleClose}
       PaperProps={{
         style: {
-          minWidth: "600px"
+          minWidth: "80%"
         }
       }}
     >

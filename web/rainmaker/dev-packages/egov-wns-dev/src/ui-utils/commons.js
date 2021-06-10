@@ -954,6 +954,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
+                }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
@@ -980,7 +984,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                     {
                         // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                         //     && x.occupancycode === occupancycode)
-                            wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                            // wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                            wsDocument = wsDocument.filter(function (x) {
+                                return x.applicationType === applicationType && x.category === category;
+                            });
                     }
                     else if(applicationType ==='REGULAR' &&( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
                     {
@@ -1034,6 +1041,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
                 }
             }
             else if(applicationType ==='TEMPORARY'){
@@ -1167,6 +1178,7 @@ const parserFunction = (state) => {
     let queryObject = JSON.parse(JSON.stringify(get(state.screenConfiguration.preparedFinalObject, "applyScreen", {})));
     let usageCategory ='SW_TEMP'
     let usageSubCategory =null
+    let id = null
     let isFerruleApplicable = false
     if(queryObject.waterApplication && queryObject.waterApplication!== undefined)
     {
@@ -1179,6 +1191,14 @@ const parserFunction = (state) => {
     }
     if(queryObject.water)
     {
+        if(queryObject.waterProperty.id)
+        {
+            id = queryObject.waterProperty.id
+        }
+        
+        else{
+            id =  get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null)
+        }
         usageCategory =(queryObject.waterProperty.usageCategory === null || queryObject.waterProperty.usageCategory === "NA") ? "" : queryObject.waterProperty.usageCategory
         usageSubCategory = (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
 
@@ -1204,7 +1224,7 @@ const parserFunction = (state) => {
         waterApplicationType: (queryObject.waterApplicationType === null || queryObject.waterApplicationType === "NA") ? "" : queryObject.waterApplicationType,
         waterProperty :{
         //id : get(state.screenConfiguration.preparedFinalObject, "Properties.id", null),
-        id : get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null),
+        id : id,
 
         usageCategory: usageCategory,// (queryObject.waterProperty.usageCategory === null || queryObject.waterProperty.usageCategory === "NA") ? "" : queryObject.waterProperty.usageCategory,
         usageSubCategory:usageSubCategory// (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
@@ -1212,7 +1232,7 @@ const parserFunction = (state) => {
         swProperty :{
            // id : get(state.screenConfiguration.preparedFinalObject, "Properties.id", null),
            // SW_TEMP
-            id : get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null),
+            id : id,//get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null),
             usageCategory: usageCategory,
             usageSubCategory: usageSubCategory,           
             },
@@ -1546,6 +1566,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
+                }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
@@ -1570,9 +1594,12 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                     }
                     else if(applicationType ==='TEMPORARY' && ( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
                     {
-                        // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
-                        //     && x.occupancycode === occupancycode)
-                        wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                        // // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        // //     && x.occupancycode === occupancycode)
+                        // wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.category === category;
+                        });
                     }
                     else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR')
                     {
@@ -1623,6 +1650,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
                 }
             }
             else if(applicationType ==='TEMPORARY'){
@@ -1744,7 +1775,7 @@ export const applyForWaterOrSewerage = async (state, dispatch) => {
 export const applyForWater = async (state, dispatch) => {
     let queryObject = parserFunction(state);
     let waterId = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].id");
-    let plotNo = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.address.plotNo");
+    let doorNo = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.address.doorNo");
     let method = waterId ? "UPDATE" : "CREATE";
     try {
         const tenantId = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].property.tenantId");
@@ -1856,7 +1887,7 @@ export const applyForWater = async (state, dispatch) => {
         } else {
             set(queryObject, "processInstance.action", "INITIATE")
             //set doorNo
-            set(queryObject, "property.address.doorNo", plotNo)
+            set(queryObject, "property.address.doorNo", doorNo.toUpperCase())
             queryObject = findAndReplace(queryObject, "NA", null);
             if(get(state, "screenConfiguration.preparedFinalObject.applyScreen.tubewell")){
                 queryObject.activityType = "NEW_TUBEWELL_CONNECTION";
@@ -1904,11 +1935,12 @@ export const propertyUpdate = async (state, dispatch,propertyPayload)=>{
          
         }
         return true;
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        console.log(error);
         if(localStorage.getItem("WNS_STATUS")){
             window.localStorage.removeItem("WNS_STATUS");
         }
+        dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
         return false;
        
       }
@@ -2763,16 +2795,32 @@ export const swEstimateCalculation = async (queryObject, dispatch) => {
 };
 // to download application 
 export const downloadApp = async (state,wnsConnection, type, mode = "download") => {
-    let estFileStrID = wnsConnection[0].additionalDetails.estimationFileStoreId
-    let sanFileStrID = wnsConnection[0].additionalDetails.sanctionFileStoreId
+    // let estFileStrID = wnsConnection[0].additionalDetails.estimationFileStoreId
+    // let sanFileStrID = wnsConnection[0].additionalDetails.sanctionFileStoreId
 
-    if (type === 'estimateNotice' && estFileStrID !== undefined && estFileStrID !== null) {
-        downloadReceiptFromFilestoreID(estFileStrID, mode)
-        return false;
-    } else if (type === 'sanctionLetter' && sanFileStrID !== undefined && sanFileStrID !== null) {
-        downloadReceiptFromFilestoreID(sanFileStrID, mode)
-        return false;
+    // if (type === 'estimateNotice' && estFileStrID !== undefined && estFileStrID !== null) {
+    //     downloadReceiptFromFilestoreID(estFileStrID, mode)
+    //     return false;
+    // } else if (type === 'sanctionLetter' && sanFileStrID !== undefined && sanFileStrID !== null) {
+    //     downloadReceiptFromFilestoreID(sanFileStrID, mode)
+    //     return false;
+    // }
+    // else 
+    if(type === 'receiptLetter'){
+       // console.log(wnsConnection)
+       if(wnsConnection[0].service ==='"SEWERAGE"')
+       {
+
+       }
+       else[
+           
+       ]
+        
+
     }
+    else{
+
+    
 
     let tenantName = wnsConnection[0].property.tenantId;
     tenantName = tenantName.split('.')[1];
@@ -2833,8 +2881,6 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
             ACTION: "_get",
         },
     };
-
-
     switch (type) {
         case 'application':
             queryStr.push({ key: "key", value: appService })
@@ -2848,7 +2894,6 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
             queryStr.push({ key: "key", value: appService });
             break;
     }
-
     try {
         const estResponse = await httpRequest(
             "post",
@@ -2951,6 +2996,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
     } catch (exception) {
         alert('Some Error Occured while downloading!');
     }
+}
 }
 
 export const GetMdmsNameBycode = (state, jsonpath, code) => {

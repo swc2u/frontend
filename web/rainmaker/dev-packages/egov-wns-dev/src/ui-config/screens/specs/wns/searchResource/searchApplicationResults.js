@@ -1,5 +1,5 @@
 import React from "react";
-import { sortByEpoch, getEpochForDate } from "../../utils";
+import { sortByEpoch, getEpochForDate,getTextToLocalMappingCode } from "../../utils";
 import './index.css'
 import {
   getLocaleLabels,
@@ -115,7 +115,7 @@ export const searchApplicationResults = {
   props: {
     columns: [
       {
-        name: getTextToLocalMapping("Consumer No"),
+        name: getTextToLocalMappingCode("Consumer No"),
         options: {
           filter: false,
           customBodyRender: (value, data) => {
@@ -134,7 +134,7 @@ export const searchApplicationResults = {
         }
       },
       {
-        name: getTextToLocalMapping("Application No"),
+        name: getTextToLocalMappingCode("Application No"),
         options: {
           filter: false,
           customBodyRender: (value, data) => {
@@ -153,7 +153,7 @@ export const searchApplicationResults = {
         }
       },
       {
-        name: getTextToLocalMapping("Application Type"),
+        name: getTextToLocalMappingCode("Application Type"),
         options: {
           filter: false,
           customBodyRender: value => (
@@ -163,11 +163,11 @@ export const searchApplicationResults = {
           )
         }
       },
-      getTextToLocalMapping("Owner Name"),
-      getTextToLocalMapping("Application Status"),
-      getTextToLocalMapping("Address"),
+      getTextToLocalMappingCode("Owner Name"),
+      getTextToLocalMappingCode("Application Status"),
+      getTextToLocalMappingCode("Address"),
       {
-        name: getTextToLocalMapping("Action"),
+        name: getTextToLocalMappingCode("Action"),
         options: {
           filter: false,
           customBodyRender: (value, data) => {
@@ -198,37 +198,37 @@ export const searchApplicationResults = {
         }
       },
       {
-        name:   getTextToLocalMapping("tenantId"),
+        name:   getTextToLocalMappingCode("tenantId"),
         options: {
           display: false
         }
       },
       {
-        name:  getTextToLocalMapping("service"), 
+        name:  getTextToLocalMappingCode("service"), 
         options: {
           display: false
         }
       },
       {
-        name:   getTextToLocalMapping("connectionType"),
+        name:   getTextToLocalMappingCode("connectionType"),
         options: {
           display: false
         }
       },
       {
-        name:   getTextToLocalMapping("ActionType"),
+        name:   getTextToLocalMappingCode("ActionType"),
         options: {
           display: false
         }
       },
       {
-        name: getTextToLocalMapping("billGenerationId"),
+        name: getTextToLocalMappingCode("billGenerationId"),
         options: {
           display: false
         }
       }
     ],
-    title: getTextToLocalMapping("Search Results for Water & Sewerage Application"),
+    title: getTextToLocalMappingCode("Search Results for Water & Sewerage Application"),
     options: {
       filter: false,
       download: false,

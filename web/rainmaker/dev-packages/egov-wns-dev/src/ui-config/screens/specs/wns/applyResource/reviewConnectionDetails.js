@@ -117,7 +117,7 @@ export const reviewConnectionDetails = (isEditable = true) => {
     viewTwo: propertyLocationDetails ,
     //viewThree: propertyOwnerDetails(),
     //viewFour: getConnectionDetails(),
-    viewFive:   connHolderDetailsSummary(),
+    viewFive:   connHolderDetailsSummary,
     viewSix:connHolderDetailsSameAsOwnerSummary()
   });
 };
@@ -299,7 +299,9 @@ const getPropertyDetails = {
               labelKey: "WS_PROPERTY_SUB_USAGE_TYPE_LABEL"
             },
             {
-              jsonPath: "applyScreen.property.usageCategory",
+             jsonPath: "applyScreen.property.subusageCategory",//usageCategory
+             //jsonPath: "WaterConnection[0].property.subusageCategory",
+             //jsonPath: "WaterConnection[0].property.usageCategory",
               callBack: handlePropertySubUsageType,
               localePrefix: {
                 moduleName: "WS",
@@ -784,10 +786,10 @@ export const connectionHolderDetails={
       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_MOBILE_NO_LABEL"
     },
     { jsonPath: "applyScreen.property.owners[0].mobileNumber", callBack: handleNA },
-    {
-      labelKey: "WS_OLD_LABEL_NAME"
-    },
-    { jsonPath: "applyScreen.property.owners[0].mobileNumber", callBack: handleNA }
+    // {
+    //   labelKey: "WS_OLD_LABEL_NAME"
+    // },
+    // { jsonPath: "applyScreen.property.owners[0].mobileNumber", callBack: handleNA }
     
   ),
   name: getLabelWithValueForModifiedLabel(
@@ -796,10 +798,10 @@ export const connectionHolderDetails={
       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_OWN_NAME_LABEL"
     },
     { jsonPath: "applyScreen.property.owners[0].name", callBack: handleNA },
-    {
-      labelKey: "WS_OLD_LABEL_NAME"
-    },
-    { jsonPath: "applyScreen.property.owners[0].name", callBack: handleNA }
+    // {
+    //   labelKey: "WS_OLD_LABEL_NAME"
+    // },
+    // { jsonPath: "applyScreen.property.owners[0].name", callBack: handleNA }
     
   ),
   // gender: getLabelWithValueForModifiedLabel(
@@ -864,13 +866,13 @@ export const connectionHolderDetails={
       jsonPath: "applyScreen.property.owners[0].correspondenceAddress",
       callBack: handleNA
     },
-    {
-      labelKey: "WS_OLD_LABEL_NAME"
-    },
-    {
-      jsonPath: "applyScreen.property.owners[0].correspondenceAddress",
-      callBack: handleNA
-    }
+    // {
+    //   labelKey: "WS_OLD_LABEL_NAME"
+    // },
+    // {
+    //   jsonPath: "applyScreen.property.owners[0].correspondenceAddress",
+    //   callBack: handleNA
+    // }
   ),
   aadhaarNumber : getLabelWithValue(
     {
@@ -897,8 +899,8 @@ export const connectionHolderDetails={
   // )
 };
 
-const connHolderDetailsSummary = () => {
-  return ({
+const connHolderDetailsSummary =  {
+ // return ({
     uiFramework: "custom-containers",
     componentPath: "MultiItem",
     props: {
@@ -915,7 +917,7 @@ const connHolderDetailsSummary = () => {
       afterPrefixJsonPath: "children.value.children.key"
     },
     type: "array"
-  })
+ // })
 }
 
 

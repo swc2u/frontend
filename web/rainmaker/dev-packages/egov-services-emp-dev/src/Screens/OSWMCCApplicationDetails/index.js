@@ -167,8 +167,8 @@ class ApplicationDetails extends Component {
 			  );
 		
 
-		let venueData = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkAreaRequired : 'NA'
-        let categoryData = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkSector : 'NA'
+		let venueData = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? (dataforSectorAndCategory.bookingsModelList[0].bkAreaRequired !== undefined && dataforSectorAndCategory.bookingsModelList[0].bkAreaRequired !== null) ? (dataforSectorAndCategory.bookingsModelList[0].bkAreaRequired) : 'NA': 'NA'
+        let categoryData = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? (dataforSectorAndCategory.bookingsModelList[0].bkSector !== undefined && dataforSectorAndCategory.bookingsModelList[0].bkSector !== null) ? (dataforSectorAndCategory.bookingsModelList[0].bkSector) : 'NA' : 'NA'
 		OSBMfetchperDayRate({	
 		Booking:{
 				bkAreaRequired:venueData ,

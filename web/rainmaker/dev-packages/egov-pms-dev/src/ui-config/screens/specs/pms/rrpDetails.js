@@ -58,6 +58,7 @@ let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
  let pensionDataUpdate = true;
  let IsCalculate = false;
  let Isletter =false;
+ let Isletterdoc =false;
  let IsClose = false;
  //const Accesslable = [];
  let activeStep_= ActionStep()
@@ -73,9 +74,11 @@ let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
     pensionCalculation = false;  
     pensionDataUpdate= false;
     IsCalculate = true;
+    Isletterdoc = true;
     break;
     case activeStep_.PENDING_FOR_AUDIT:  
     Isletter = true; 
+    Isletterdoc= true
     break;
     case activeStep_.CLOSE:  
     IsClose = true; 

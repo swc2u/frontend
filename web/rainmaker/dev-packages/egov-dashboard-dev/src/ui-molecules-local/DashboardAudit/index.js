@@ -60,6 +60,11 @@ class DashboardAudit extends React.Component {
         for(var i=0; i<columnData.length; i++){
             tableColumnData.push(columnData[i]["accessor"]);
             // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
+        }            
+        
+        var colData = [];
+        for(var i=0; i<columnData.length; i++){
+            colData.push(columnData[i]["Header"]);
         }
     
         var tableRowData = [];
@@ -100,7 +105,7 @@ class DashboardAudit extends React.Component {
         var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
         var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
     
-        doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
+        doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
     
         doc.setFontSize(10);
         const pdfTitle = "Audit Dahboard"
@@ -111,7 +116,7 @@ class DashboardAudit extends React.Component {
     
         doc.autoTable({
             // head: [tableColumnDataCamel],
-            head: [tableColumnData],
+            head: [colData],
             theme: "striped",
             styles: {
                 fontSize: 7,

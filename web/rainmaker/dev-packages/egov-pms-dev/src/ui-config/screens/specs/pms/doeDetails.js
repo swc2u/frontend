@@ -59,6 +59,7 @@ import {
  let pensionDataUpdate = true;
  let IsCalculate = false;
  let Isletter = false;
+ let Isletterdoc =false;
  //const Accesslable = [];
  let activeStep_= ActionStepDoe()
  const step = getQueryArg(window.location.href, "step");
@@ -73,9 +74,11 @@ import {
     pensionCalculation = false;  
     pensionDataUpdate= false;
     IsCalculate = true;
+     Isletterdoc =true;
     break;
     case activeStep_.PENDING_FOR_AUDIT:  
     Isletter = true; 
+     Isletterdoc =true;
     break;
     // default:
     //   employeeOtherDetailsUpdate = true;

@@ -44,17 +44,18 @@ const getDropDownData = async (action, state, dispatch) => {
   var data =  [
     {
     "name" : "Departmentwise Income",
-    "code" : "deptIncome"
+    "code" : "incomeDeptwise"
     },
     {
       "name" : "Departmentwise Expenditure",
-      "code" : "deptExpenditure"
+      "code" : "expDeptwise"
     },
     {
-      "name" : "Departmentwise Budget and Expenditure",
-      "code" : "deptBudgetExpenditure"
+      "name" : "Budget Report",
+      "code" : "budgetHeadwise"
     }
-  ]
+  ];
+  
   var selectedDefaultData = {value: data[0].code, label: data[0].name};
 
   // Date default

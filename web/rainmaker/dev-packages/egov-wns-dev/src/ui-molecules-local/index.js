@@ -120,7 +120,10 @@ const Footer = Loadable({
   loader: () => import("./Footer"),
   loading: () => <Loading />
 });
-
+const SampleDownloadForWns = Loadable({
+  loader: () => import("./SampleDownloadForWns"),
+  loading: () => <Loading />
+});
 
 export {
   TestMolecules,
@@ -146,6 +149,7 @@ export {
   FeesEstimateOverviewCard,
   OwnerHeader,
   LinkConnection,
+  SampleDownloadForWns,
   Footer
 
   // PropertyTaxDetails

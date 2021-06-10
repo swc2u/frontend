@@ -7,6 +7,7 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import cloneDeep from "lodash/cloneDeep";
 import get from "lodash/get";
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 
 class MultiItem extends React.Component {
   state = {
@@ -83,6 +84,7 @@ class MultiItem extends React.Component {
     //   prepareFinalObject("ReceiptTemp[0].Bill[0].payerMobileNumber", "")
     // );
     // dispatch(prepareFinalObject("ReceiptTemp[0].instrument", {}));
+    let businessService = getQueryArg(window.location.href, "businessService");
     if (
       get(
         state.screenConfiguration.preparedFinalObject,
@@ -116,9 +118,16 @@ class MultiItem extends React.Component {
     ];
 
     keyToIndexMapping.forEach(item => {
-      const objectJsonPath = `components.div.children.formwizardFirstStep.children.paymentDetails.children.cardContent.children.capturePaymentDetails.children.cardContent.children.tabSection.props.tabs[${
+      let objectJsonPath = `components.div.children.formwizardFirstStep.children.paymentDetails.children.cardContent.children.capturePaymentDetails.children.cardContent.children.tabSection.props.tabs[${
         item.index
       }].tabContent[${item.key}].children`;
+      if(businessService ==='WS.ONE_TIME_FEE' || businessService ==='SW.ONE_TIME_FEE' || businessService.includes("SW") || businessService.includes("WS"))
+       {
+        objectJsonPath = `components.div.children.formwizardFirstStep.children.paymentDetails.children.cardContent.children.capturePaymentDetailswns.children.cardContent.children.tabSection.props.tabs[${
+          item.index
+        }].tabContent[${item.key}].children`;
+      }
+
       const children = get(
         state.screenConfiguration.screenConfig["pay"],
         objectJsonPath,

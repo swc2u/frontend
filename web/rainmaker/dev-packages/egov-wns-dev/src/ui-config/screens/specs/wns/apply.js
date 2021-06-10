@@ -524,12 +524,7 @@ export const getData = async (action, state, dispatch) => {
     
     if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE')
     {
-      // set(
-      //   action.screenConfig,
-      //   "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
-      //   "visible",
-      //   true
-      // );
+      
       IsEdit = true;
       dispatch(
         handleField(
@@ -550,13 +545,7 @@ export const getData = async (action, state, dispatch) => {
           "visible",
           false
         )
-      );
-      // set(
-      //   action.screenConfig,
-      //   "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
-      //   "visible",
-      //   false
-      // );
+      ); 
 
     }
     if(usageCategory_!== null && waterApplicationType !== null )
@@ -768,6 +757,14 @@ export const getData = async (action, state, dispatch) => {
           );
 
         }
+        // if(activityTypeHolder ==='SW_SEWERAGE' )
+        // {
+        //   set(
+        //     action.screenConfig,
+        //     "components.div.children.formwizardFirstStep.children.connectionHolderDetails.visible",
+        //     false
+        //   );
+        // }
 
 
       }
@@ -777,6 +774,14 @@ export const getData = async (action, state, dispatch) => {
           handleField(
             "apply",
             "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.initialMeterReading",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.lastMeterReading",
             "visible",
             false
           )
@@ -857,6 +862,86 @@ export const getData = async (action, state, dispatch) => {
           handleField(
             "apply",
             "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.initialMeterReading",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.lastMeterReading",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterCount",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterDigits",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterID",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterInstallationDate",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterRentCode",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterUnit",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.mfrCode",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.sanctionedCapacity",
             "visible",
             false
           )
@@ -1249,22 +1334,36 @@ const screenConfig = {
       if(localStorage.getItem("wns_workflow")){
         window.localStorage.removeItem("wns_workflow");
       }
-      dispatch(
-        handleField(
-          "apply",
-          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail",
-          "visible",
-          true
-        )
-      )
-      dispatch(
-        handleField(
-          "apply",
-          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail",
-          "visible",
-          false
-        )
-      )
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.visible",
+        true
+      );
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.visible",
+        false
+      );
+      // dispatch(
+      //   handleField(
+      //     "apply",
+      //     "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail",
+      //     "visible",
+      //     true
+      //   )
+      // )
+      // dispatch(
+      //   handleField(
+      //     "apply",
+      //     "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail",
+      //     "visible",
+      //     false
+      //   )
+      // )
+
+    }
+    else
+    {
 
     }
 

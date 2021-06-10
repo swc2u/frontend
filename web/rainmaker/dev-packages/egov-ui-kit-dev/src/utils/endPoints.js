@@ -421,3 +421,9 @@ export const cgRefundApplicationform = {
   },
 };
 
+export const cancelReceipt = {
+  POST: {
+    URL:"pdf-service/v1/_create?key=bk-cancel-receipt",
+    ACTION: "_search",
+  },
+};

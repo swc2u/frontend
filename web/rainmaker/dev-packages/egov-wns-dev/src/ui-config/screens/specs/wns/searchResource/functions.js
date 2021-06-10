@@ -10,14 +10,16 @@ import { httpRequest } from "../../../../../ui-utils";
 //import { validateFields, getTextToLocalMapping } from "../../utils";
 import { set } from "lodash";
 export const searchApiCall = async (state, dispatch) => {
-  showHideApplicationTable(false, dispatch);
-  showHideConnectionTable(false, dispatch);
+
+ 
   let getCurrentTab = get(state.screenConfiguration.preparedFinalObject, "currentTab");
   let currentSearchTab = getCurrentTab === undefined ? "SEARCH_CONNECTION" : getCurrentTab;
   if (currentSearchTab === "SEARCH_CONNECTION") {
+    showHideConnectionTable(true, dispatch);
     resetFieldsForApplication(state, dispatch);
     await renderSearchConnectionTable(state, dispatch);
   } else {
+    showHideApplicationTable(true, dispatch);
     resetFieldsForConnection(state, dispatch);
     await renderSearchApplicationTable(state, dispatch);
   }
@@ -51,6 +53,9 @@ export const deactivateConnection = async (state, dispatch) => {
    //INDIVIDUAL.SINGLEOWNER
    set(queryObjectForUpdate, "connectionHolders[0].ownerType", "INDIVIDUAL.SINGLEOWNER");
    set(queryObjectForUpdate, "status", "Inactive");
+   // set other propert as workflow service did in backend
+   set(queryObjectForUpdate, "applicationStatus", "CLOSE_CONNECTION");
+   set(queryObjectForUpdate, "activityType", "REACTIVATE_CONNECTION");
   //  if(queryObjectForUpdate.connectionExecutionDate !== null )
   //  set(queryObjectForUpdate, "connectionExecutionDate", queryObjectForUpdate.connectionExecutionDate);
   //  else{

@@ -220,6 +220,7 @@ const callBackForNext = async (state, dispatch) => {
     // if (validatePropertyLocationDetails && validatePropertyDetails && validateForm) {
     //   isFormValid = await appl;
     // }
+    
 
 //set for back and previous action
 let water = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
@@ -260,6 +261,7 @@ if(water || sewerage || tubewell)
           title: `WS_${item.documentType}`,
           link: item.fileUrl && item.fileUrl.split(",")[0],
           linkText: "View",
+          id:item.id,
           name: item.fileName
         };
       });
@@ -307,11 +309,18 @@ if(water || sewerage || tubewell)
           let owners = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.owners",[])
           if(owners.length === 1)
           {
+            if(process.env.REACT_APP_NAME === "Citizen")
+            {
+              let errorMessage_ = {
+                labelName: "Please add multilple ownner data",
+                labelKey: "WS_FILL_MULTIPLEOWNERS_FIELDS"
+              };
             errorMessage_.labelName="Please add multilple ownner data"
             errorMessage_.labelKey="WS_FILL_MULTIPLEOWNERS_FIELDS"
             
             dispatch(toggleSnackbar(true, errorMessage_, "warning"));
             return false
+            }
 
           }
           else if (owners.length>1)
@@ -384,13 +393,18 @@ if(water || sewerage || tubewell)
           SingleOwnerDetailsItemsS = SingleOwnerDetailsItemsS.filter( x=>x.isDeleted === undefined || x.isDeleted !== false)
           if (SingleOwnerDetailsItemsS.length>1)
           {
-            let errorMessageS = {
-              labelName: "Please remove multilple ownner data",
-              labelKey: "WS_FILL_SINGLEOWNERS_FIELDS"
-            };
-            
-            dispatch(toggleSnackbar(true, errorMessageS, "warning"));
-            return false
+            if(process.env.REACT_APP_NAME === "Citizen")
+            {
+              let errorMessageS = {
+                labelName: "Please remove multilple ownner data",
+                labelKey: "WS_FILL_SINGLEOWNERS_FIELDS"
+              };
+              
+              dispatch(toggleSnackbar(true, errorMessageS, "warning"));
+              return false
+
+            }
+           
 
           }
 
@@ -724,8 +738,55 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     propertyData.landArea = parseInt(propertyData.landArea);
     propertyData.totalConstructedArea = parseInt(propertyData.landArea);
     propertyData.tenantId = tenantId;
-    propertyData.address.doorNo = propertyData.address.plotNo;
-    set(propertyData, "address.doorNo", propertyData.address.plotNo);
+    //propertyData.address.doorNo = propertyData.address.plotNo;
+    let doorNo =propertyData.address.doorNo
+    if(doorNo.length ===1)
+    {
+      doorNo =`000${doorNo}` 
+    }
+    else if(doorNo.length ===2)
+    {
+      doorNo =`00${doorNo}` 
+    } 
+    else if(doorNo.length ===3)
+    {
+      doorNo =`0${doorNo}` 
+    } 
+    set(propertyData, "address.doorNo", doorNo.toUpperCase());
+    set(propertyData, "landArea", parseInt(propertyData.landArea));
+    set(propertyData, "totalConstructedArea", parseInt(propertyData.landArea));
+    if(propertyData.address.locality !== undefined)
+    {
+      if(propertyData.address.locality.code.value)
+      {
+      // propertyPayload.address.locality.code = propertyPayload.address.locality.code.value;
+      set(propertyData, "address.locality.code", propertyData.address.locality.code.value);
+      }
+      else if(propertyData.address.locality.code)
+      {
+        //propertyData.address.locality.code = propertyData.address.locality.code;
+        set(propertyData, "address.locality.code", propertyData.address.locality.code);
+      }
+      
+    }
+    //set usage category
+    let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
+    let subusageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+    if(usageCategory.split('.').length ===1)
+    {
+      //st
+      set(propertyData, "usageCategory", subusageCategory);
+
+    }
+    if(subusageCategory.split('.').length ===2)
+    {
+      //set 
+      set(propertyData, "usageCategory", subusageCategory);
+    }
+
+    // end set usage category
+    // propertyPayload.landArea = parseInt(propertyPayload.landArea);
+    // propertyPayload.totalConstructedArea = parseInt(propertyPayload.landArea);
     set(propertyData, "creationReason", "UPDATE");
     let response_ = await propertyUpdate(state, dispatch,propertyData)
     if(response_)
@@ -737,6 +798,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       if(localStorage.getItem("WNS_STATUS")){
         window.localStorage.removeItem("WNS_STATUS");
     }
+    return;
     }
      }
    }
@@ -1054,36 +1116,36 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
               }
               value = "mobileNumber";
               let DuplicatItemM = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
-              if(DuplicatItemM && DuplicatItemM[0])
-              {
-                if(DuplicatItemM[0].IsDuplicatItem)
-                {
-                const LocalizationCodeValueM = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_MOBILE_FIELDS")
-                const errorMessageM = {
-                  labelName: "Duplicate mobile number Added",
-                  //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
-                  labelKey:   LocalizationCodeValueM+' '+DuplicatItemM[0].duplicates
-                };
-                dispatch(toggleSnackbar(true, errorMessageM, "warning"));
-                return false;
-              }
-              }
+              // if(DuplicatItemM && DuplicatItemM[0])
+              // {
+              //   if(DuplicatItemM[0].IsDuplicatItem)
+              //   {
+              //   const LocalizationCodeValueM = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_MOBILE_FIELDS")
+              //   const errorMessageM = {
+              //     labelName: "Duplicate mobile number Added",
+              //     //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+              //     labelKey:   LocalizationCodeValueM+' '+DuplicatItemM[0].duplicates
+              //   };
+              //   dispatch(toggleSnackbar(true, errorMessageM, "warning"));
+              //   return false;
+              // }
+              // }
               value = "emailId";
               let DuplicatItemE = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
-              if(DuplicatItemE && DuplicatItemE[0])
-              {
-                if(DuplicatItemE[0].IsDuplicatItem)
-                {
-                const LocalizationCodeValueE = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_EMAIL_FIELDS")
-                const errorMessageE = {
-                  labelName: "Duplicate email id Added",
-                  //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
-                  labelKey:   LocalizationCodeValueE+' '+DuplicatItemE[0].duplicates
-                };
-                dispatch(toggleSnackbar(true, errorMessageE, "warning"));
-                return false;
-              }
-              }
+              // if(DuplicatItemE && DuplicatItemE[0])
+              // {
+              //   if(DuplicatItemE[0].IsDuplicatItem)
+              //   {
+              //   const LocalizationCodeValueE = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_EMAIL_FIELDS")
+              //   const errorMessageE = {
+              //     labelName: "Duplicate email id Added",
+              //     //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+              //     labelKey:   LocalizationCodeValueE+' '+DuplicatItemE[0].duplicates
+              //   };
+              //   dispatch(toggleSnackbar(true, errorMessageE, "warning"));
+              //   return false;
+              // }
+              // }
             }
           }
 
@@ -1111,8 +1173,21 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         propertyPayload.landArea = parseInt(propertyPayload.landArea);
         propertyPayload.totalConstructedArea = parseInt(propertyPayload.landArea);
         propertyPayload.tenantId = tenantId;
-        propertyPayload.address.doorNo = propertyPayload.address.plotNo;
-        set(propertyPayload, "address.doorNo", propertyPayload.address.plotNo);
+       // propertyPayload.address.doorNo = propertyPayload.address.plotNo;
+       let doorNo =propertyPayload.address.doorNo
+      if(doorNo.length ===1)
+      {
+        doorNo =`000${doorNo}` 
+      }
+      else if(doorNo.length ===2)
+      {
+        doorNo =`00${doorNo}` 
+      } 
+      else if(doorNo.length ===3)
+      {
+        doorNo =`0${doorNo}` 
+      } 
+        set(propertyPayload, "address.doorNo", doorNo.toUpperCase());
         if(propertyPayload.address.city !== undefined)
         propertyPayload.address.city = propertyPayload.address.city;
         else
@@ -1567,6 +1642,31 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       "applyScreenMdmsData.ws-services-masters.sectorList",
       []
     );
+
+    let WaterConnection = get(state.screenConfiguration.preparedFinalObject, "WaterConnection");
+      let SewerageConnection = get(state.screenConfiguration.preparedFinalObject, "SewerageConnection");
+      if(SewerageConnection.length ==1)
+      {
+        if(SewerageConnection[0].sewerage === true)
+        {
+          sectorList = get(
+            state.screenConfiguration.preparedFinalObject,
+            "applyScreenMdmsData.ws-services-masters.swSectorList",
+            []
+          );
+        }
+      }
+      if(WaterConnection.length ==1)
+      {
+        if(WaterConnection[0].sewerage === true)
+        {
+          sectorList = get(
+            state.screenConfiguration.preparedFinalObject,
+            "applyScreenMdmsData.ws-services-masters.swSectorList",
+            []
+          );
+        }
+      }
     if(sectorcode.value!== undefined)
     sectorcode = sectorcode.value
     sectorList = sectorList.filter(x=>x.code === sectorcode);
@@ -1607,6 +1707,10 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     dispatch(prepareFinalObject("ledgerlist",ledgerRange));
     }
     else { isFormValid = false; hasFieldToaster = true; }
+
+    //set subusageCategory
+    let usageCategory_ = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.usageCategory");
+    set(state,"screenConfiguration.preparedFinalObject.applyScreen.property.subusageCategory",usageCategory_)
   }
 
   if (activeStep === 2 && process.env.REACT_APP_NAME !== "Citizen") {
@@ -1921,6 +2025,8 @@ export const changeStep = (
         isCheckedSameAsProperty
       )
     )
+    let applyScreen = get(state, "screenConfiguration.preparedFinalObject.applyScreen",{});
+    dispatch(prepareFinalObject("applyScreenOld", applyScreen));
   }
   
   const isPreviousButtonVisible = activeStep > 0 ? true : false;

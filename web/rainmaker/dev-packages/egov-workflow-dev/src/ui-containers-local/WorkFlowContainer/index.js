@@ -382,7 +382,7 @@ class WorkFlowContainer extends React.Component {
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL")
       {
-        validRequest = this.ValidateRequest(data)
+        validRequest = this.ValidateRequest(data,preparedFinalObject)
       }   
 
     try {
@@ -692,12 +692,49 @@ class WorkFlowContainer extends React.Component {
 //
 //validation methos for water Request if submit without filling rewuired field
 //
-ValidateRequest =(payload) =>{
+ValidateRequest =(payload,preparedFinalObject) =>{
   let isvalidRequest = false
 
   //if(payload.applicationStatus ==='PENDING_FOR_SECURITY_DEPOSIT' && payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT')
   //PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT
-  if(payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
+
+  //set document if in case of resubmit
+  // if(payload.action ==='RESUBMIT_APPLICATION')
+  // {
+    if(payload.documents !== null)
+    {
+      for (let index = 0; index < payload.documents.length; index++) {
+        const element = payload.documents[index];
+
+        let doctype =`WS_${element.documentType}`
+        if(preparedFinalObject.WaterConnection[0].reviewDocData !== undefined)
+        {
+          let ids = preparedFinalObject.WaterConnection[0].reviewDocData.filter(x=>x.title === doctype)
+        if(ids && ids[0])
+        {
+          set(payload.documents[index], "id", ids[0].id);
+        }
+
+        }
+        
+        
+        
+      }
+    }
+  //}
+  if(payload.action ==='REJECT')
+  {
+    isvalidRequest = true
+  }
+  else{ 
+  if(preparedFinalObject.applyScreen !==null && preparedFinalObject.applyScreen !== undefined)
+  {
+    if(preparedFinalObject.applyScreen.waterProperty!== undefined)
+    payload.waterProperty.id = preparedFinalObject.applyScreen.waterProperty.id
+
+  }
+    
+  if((payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT' || payload.applicationStatus ==='PENDING_FOR_SUPERINTENDENT_APPROVAL_AFTER_JE' ) && payload.action !=='REJECT'  )
   {
     isvalidRequest = false;
     // logic for null value validation for Connection Details date and Activation Details
@@ -800,36 +837,70 @@ ValidateRequest =(payload) =>{
     if((payload.applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
     && (payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT'|| payload.action==='VERIFY_AND_FORWARD_TO_JE' ))//PENDING_FOR_SDE_APPROVAL,VERIFY_AND_FORWARD_FOR_PAYMENT
     {
-      if((payload.connectionExecutionDate !== 0 ) 
-       && (payload.proposedMeterId !== null)
-       && (payload.proposedMeterInstallationDate !== 0 )
-       && (payload.proposedInitialMeterReading !== null )
-       && (payload.proposedMeterCount !== null )
-       && (payload.proposedMfrCode !== null )
-       && (payload.proposedMeterDigits !== null )
-       && (payload.proposedMeterUnit !== null )
-       && (payload.proposedSanctionedCapacity !== null )
-       && (payload.proposedMeterRentCode !== null )     
-      )
+      isvalidRequest = true
+      if(payload.connectionExecutionDate !== 0)
+      { 
+        if(!Number(payload.connectionExecutionDate))
+        payload.connectionExecutionDate = convertDateToEpoch(payload.connectionExecutionDate)
+        else
+        payload.connectionExecutionDate = payload.connectionExecutionDate
+
+      }
+      if(payload.proposedMeterId !== null)
       {
-        isvalidRequest = true
         payload.meterId = payload.proposedMeterId
+      }
+      if(payload.proposedMeterInstallationDate !== 0)
+      {
+        if(!Number(payload.proposedMeterInstallationDate))
         payload.meterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
-        payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
-        payload.additionalDetails.initialMeterReading = payload.proposedInitialMeterReading
+        else{
+          payload.meterInstallationDate = payload.proposedMeterInstallationDate
+        }
+       // payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+      }
+      if(payload.proposedMeterCount !== null)
+      {
         payload.meterCount = payload.proposedMeterCount
+      }
+      if(payload.proposedMfrCode !== null)
+      {
         payload.mfrCode = payload.proposedMfrCode
+      }
+      if(payload.proposedInitialMeterReading !== null)
+      {
+        payload.additionalDetails.initialMeterReading = payload.proposedInitialMeterReading
+      }
+      if(payload.proposedMeterDigits !== null)
+      {
         payload.meterDigits = payload.proposedMeterDigits
+      }
+      if(payload.proposedMeterUnit !== null)
+      {
         payload.meterUnit = payload.proposedMeterUnit
+      }
+      if(payload.proposedSanctionedCapacity !== null)
+      {
         payload.sanctionedCapacity = payload.proposedSanctionedCapacity
+      }
+      if(payload.proposedMeterRentCode !== null)
+      {
         payload.meterRentCode = payload.proposedMeterRentCode
-        // payload.waterProperty.usageCategory = payload.proposedMeterId
-        // payload.waterProperty.usageCategory = payload.proposedMeterId
       }
-      else{
-        isvalidRequest = false
+      if(payload.proposedLastMeterReading !== null)
+      {
+        payload.additionalDetails.lastMeterReading = payload.proposedLastMeterReading
+      }
+     
+      // else{
+      //   isvalidRequest = true
+      //   if(payload.proposedMeterInstallationDate)
+      //   payload.meterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate) 
+      //   if(payload.proposedMeterInstallationDate)
+      //   payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+
         
-      }
+      // }
   
     }
     else{
@@ -838,6 +909,7 @@ ValidateRequest =(payload) =>{
     }
 
   }
+}
 
   // remove duplicate document
 
@@ -853,7 +925,7 @@ ValidateRequest =(payload) =>{
     }
     //payload.documents = tmp;
 //return  false
-  return isvalidRequest
+ return isvalidRequest
 }
 
 uniqueBycode =(data,key)=>{
@@ -931,7 +1003,7 @@ uniqueBycode =(data,key)=>{
     const businessServiceData = JSON.parse(
       localStorageGet("businessServiceData")
     );
-    const data = find(businessServiceData, { businessService: moduleName });
+    const data = find(businessServiceData, { businessService: moduleName });    
     const state = find(data.states, { applicationStatus: status });
     let actions = [];
     state.actions &&
@@ -1312,6 +1384,7 @@ uniqueBycode =(data,key)=>{
     const {
       ProcessInstances,
       prepareFinalObject,
+      preparedFinalObject,
       dataPath,
       moduleName
     } = this.props;
@@ -1335,6 +1408,34 @@ uniqueBycode =(data,key)=>{
         || moduleName === "WS_TUBEWELL") 
      {
          showFooter=true;
+         // check valid role
+        //  const userRoles = JSON.parse(getUserInfo()).roles;
+        //  let role =''
+         if (ProcessInstances && ProcessInstances[0])
+         {
+           
+         }
+         const {WaterConnection} = preparedFinalObject;
+         if(ProcessInstances && ProcessInstances.length > 0)
+         {
+          //[ProcessInstances.length-1].additionalDetails.role
+          if(ProcessInstances[ProcessInstances.length-1].additionalDetails!== undefined)
+          {
+            let role = ProcessInstances[ProcessInstances.length-1].additionalDetails.role
+           let userInfo = JSON.parse(getUserInfo());
+           const roles = get(userInfo, "roles");
+           const roleCodes = roles ? roles.map(role => role.code) : [];
+           if (roleCodes.indexOf(role) > -1) {
+            showFooter = true;
+           } else
+           {
+            showFooter = false;
+           } 
+
+          }
+           
+         }
+        
       } else if(moduleName==='ROADCUTNOC'||moduleName==='PETNOC'||moduleName==='ADVERTISEMENTNOC'||moduleName==='SELLMEATNOC'){
         showFooter=false;
      }      else{

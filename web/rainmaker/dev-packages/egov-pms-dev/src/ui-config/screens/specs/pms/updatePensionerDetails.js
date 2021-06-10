@@ -139,8 +139,8 @@ function getMax(arr, prop) {
   return max;
 }
 const header = getCommonHeader({
-  labelName: "PENSION_PENSIONER_REVESION",
-  labelKey: "PENSION_PENSIONER_REVESION"
+  labelName: "PENSION_PENSIONER_UPDATE_DETAILS",
+  labelKey: "PENSION_PENSIONER_UPDATE_DETAILS"
 });
 const DOEapplyResult = {
   uiFramework: "material-ui",

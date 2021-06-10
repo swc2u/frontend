@@ -232,9 +232,19 @@ class WorkFlowContainer extends React.Component {
            || status == 'CONNECTION_UPDATED'
            || status ==='CONNECTION_REACTIVATED') && WaterConnection[0].waterApplicationType==='REGULAR')
             {
-              actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
+
+              if((status ==='NA' ||status ==='CLOSE_CONNECTION' ) && WaterConnection[0].activityType==='REACTIVATE_CONNECTION' )
+              {
+                actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+
+              }
+              else{
+                actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
                                               && item.buttonLabel !=='REACTIVATE_CONNECTION'
                                               &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
+
+              }
+              
             }
             //else if(status === "CONNECTION_ACTIVATED" && WaterConnection[0].waterApplicationType ==='TEMPORARY')
             else if((status === "CONNECTION_ACTIVATED" || status == "NA" || status ==='CONNECTION_EXTENDED' ||  status ==='METER_UPDATED')&& WaterConnection[0].waterApplicationType ==='TEMPORARY')
@@ -270,7 +280,7 @@ class WorkFlowContainer extends React.Component {
             //                                     &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
 
             // }
-            else if(((status === "TEMPORARY_CONNECTION_CLOSED" || status ==='TEMPORARY_DISCONNECTED' ||  status ==='METER_UPDATED')  || (status ==='REJECTED')) && (WaterConnection[0].waterApplicationType==='REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY') )//TEMPORARY_CONNECTION_CLOSED
+            else if(((status === "TEMPORARY_CONNECTION_CLOSED" || status ==='TEMPORARY_DISCONNECTED' ||  status ==='METER_UPDATED'|| status ==='CLOSE_CONNECTION')  || (status ==='REJECTED')) && (WaterConnection[0].waterApplicationType==='REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY') )//TEMPORARY_CONNECTION_CLOSED
             {
               if(WaterConnection[0].activityType==='REACTIVATE_CONNECTION' )
               actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');

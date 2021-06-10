@@ -1086,10 +1086,11 @@ export const getSearchResultsForNocCretificateDownload = async queryObject => {
   //alert(JSON.stringify(response));
 };
 
-export const fetchVendorData = async () => {
+export const fetchVendorData = async (covNo) => {
   let data = {
     "RequestBody": {
       tenant_id: getTenantId(),
+      covNo:covNo
     }
   }
   try {
