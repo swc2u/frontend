@@ -14,7 +14,7 @@ import {
 import get from "lodash/get";
 import set from "lodash/set";
 import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import { getQueryArg,setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import { footer } from "./applyResource/footer";
 import { getPropertyIDDetails, propertyID, propertyHeader } from "./applyResource/propertyDetails";
@@ -625,9 +625,9 @@ export const getData = async (action, state, dispatch) => {
                           false
                         ))
 
-                    }
-                  
-                    
+                    }                 
+                    dispatch(prepareFinalObject("applyScreen.waterApplication.isFerruleApplicable",true));
+                    dispatch(prepareFinalObject("WaterConnection[0].waterApplication.isFerruleApplicable",true));
 
                 }
                 else {
@@ -1380,7 +1380,19 @@ const screenConfig = {
     }
     else
     {
-
+      const serviceModuleNameCurrent = localStorage.getItem("wns_workflow")
+      const queryObject = [
+        { key: "tenantId", value: getQueryArg(window.location.href, "tenantId") },
+        { key: "businessServices", value: serviceModuleNameCurrent }
+      ];
+  
+      setBusinessServiceDataToLocalStorage(queryObject, dispatch);
+      if(process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit"&& window.localStorage.getItem("ActivityStatusFlag")=== "true"){
+        window.localStorage.removeItem("ActivityStatusFlag");
+      }
+      if(localStorage.getItem("ActivityStatusFlag")){
+        window.localStorage.removeItem("ActivityStatusFlag");
+      }
     }
 
     if (propertyId) {
