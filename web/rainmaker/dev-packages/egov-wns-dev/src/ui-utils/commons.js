@@ -865,6 +865,7 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             "screenConfiguration.preparedFinalObject.applyScreenMdmsData.ws-services-masters.Documents",
             []
         );
+        documents =[];
         wsDocument = get(
             state,
             "screenConfiguration.preparedFinalObject.applyScreenMdmsData.ws-services-masters.wsDocument",
@@ -1846,15 +1847,22 @@ export const applyForWater = async (state, dispatch) => {
              rolecode = roles[0].role 
              }
              }
-             if(rolecode)
+             if(queryObjectForUpdate.processInstance.action !=='INITIATE')
              {
-                 set(queryObjectForUpdate, "processInstance.additionalDetails.role", rolecode); 
+                if(rolecode)
+                {
+                    set(queryObjectForUpdate, "processInstance.additionalDetails.role", rolecode); 
+                }
+                else
+                {
+                    set(queryObjectForUpdate, "processInstance.additionalDetails", null); 
+   
+                }
              }
-             else
-             {
-                 set(queryObjectForUpdate, "processInstance.additionalDetails", null); 
-
+             else{
+                set(queryObjectForUpdate, "processInstance.additionalDetails", null);
              }
+             
           let responseWater =  await httpRequest("post", "/ws-services/wc/_update", "", [], { WaterConnection: queryObjectForUpdate });
             let searchQueryObject = [{ key: "tenantId", value: queryObjectForUpdate.tenantId }, { key: "applicationNumber", value: queryObjectForUpdate.applicationNo }];
             

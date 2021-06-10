@@ -520,10 +520,26 @@ export const getData = async (action, state, dispatch) => {
     const usageCategory_ = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].property.usageCategory");
     const waterApplicationType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplicationType");
     const activityType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType");
+    const applicationStatus_ = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].applicationStatus");
+// disable Connection Details fiels  in bellow condition
+    if(applicationStatus_ ==='PENDING_FOR_METER_UPDATE')
+    {
+      const textFields = ["division","billGroup","ledgerNo","ccCode","ferruleSize","connectionType"];
+      for (let i = 0; i < textFields.length; i++) {
+        dispatch(handleField(
+          "apply",
+          `components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.connectiondetailscontainer.children.cardContent.children.connectionDetails.children.${textFields[i]}`,
+          "props.disabled",
+          true
+          ));
+      }
+      
+    }
     //set proposed meter inout for new WF UPDATE_METER_INFO
     
     if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE')
     {
+     
       
       IsEdit = true;
       dispatch(
