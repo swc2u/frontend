@@ -711,7 +711,7 @@ ValidateRequest =(payload,preparedFinalObject) =>{
         const element = payload.documents[index];
 
         let doctype =`WS_${element.documentType}`
-        if(preparedFinalObject.WaterConnection[0].reviewDocData !== undefined)
+        if(preparedFinalObject.WaterConnection[0].reviewDocData !== undefined && preparedFinalObject.WaterConnection[0].reviewDocData !== null)
         {
           let ids = preparedFinalObject.WaterConnection[0].reviewDocData.filter(x=>x.title === doctype)
         if(ids && ids[0])

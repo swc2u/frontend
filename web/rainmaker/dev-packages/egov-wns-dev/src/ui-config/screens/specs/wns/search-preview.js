@@ -179,6 +179,13 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
                          securityCharges = pipeSize[0].charges[0].security;
                         set(state.screenConfiguration.preparedFinalObject.WaterConnection[0], 'waterApplication.securityCharge', securityCharges);
                       }
+                      else
+                      {
+                        let securityChargespath ='components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount.props.value';
+                        securityCharges = get(state.screenConfiguration.screenConfig.apply,securityChargespath,0)
+                        
+                        //securityCharges = 0
+                      }
                     }
                     
                   }
@@ -236,8 +243,8 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
      
       
       set(parsedObject, 'waterApplication.isFerruleApplicable', isFerruleApplicable);
-      
-     // set(parsedObject, 'waterApplication.securityCharge', securityCharges);
+      securityCharges = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplication.securityCharge",0);
+      set(parsedObject, 'waterApplication.securityCharge', securityCharges);
       
       
 
@@ -751,6 +758,12 @@ const screenConfig = {
     const status = getQueryArg(window.location.href, "status");
     const tenantId = getQueryArg(window.location.href, "tenantId");
     const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+    if(process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit"&& window.localStorage.getItem("ActivityStatusFlag")=== "true"){
+      window.localStorage.removeItem("ActivityStatusFlag");
+    }
+    if(localStorage.getItem("ActivityStatusFlag")){
+      window.localStorage.removeItem("ActivityStatusFlag");
+    }
     
     getMdmsData( state, dispatch).then(() => { });
     //To set the application no. at the  top

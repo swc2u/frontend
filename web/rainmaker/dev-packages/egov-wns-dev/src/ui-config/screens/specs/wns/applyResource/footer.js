@@ -119,6 +119,7 @@ if(validateDocumentField)
     let ValidNoc = false
     let documentsFormat_ = documentsFormat;
     let documentsContract_ = documentsContract
+    documentsFormat_ = documentsFormat_.filter(x=>x.isDocumentRequired === true)
     documentsContract_ = documentsContract_.filter(x=>x.cards[0].required)
    // documentsFormat_ = documentsFormat_.filter(x=>x.documents === undefined)
     if(documentsContract_.length!=documentsFormat_.length)
