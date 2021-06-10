@@ -179,6 +179,45 @@ const propertyDetails = getCommonContainer({
       if(action.value)
       {
         dispatch(prepareFinalObject("applyScreen.property.usageCategory", action.value));
+        if(action.value==="RESIDENTIAL.GOVERNMENTHOUSING")
+        {
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+                    "props.disabled",
+                    true
+            )
+        );
+        dispatch(
+          handleField(
+                  "apply",
+                  "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+                  "props.value",
+                  "15"
+          )
+      );
+
+        }
+        else{
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+                    "props.disabled",
+                    false
+            )
+        );
+        dispatch(
+          handleField(
+                  "apply",
+                  "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+                  "props.value",
+                  ""
+          )
+      );
+
+        }
       }
     
     }

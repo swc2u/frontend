@@ -586,6 +586,7 @@ export const download  = async ( state, dispatch, mode = "download") => {
    try {
      let keyvalue ='consolidatedreceipt'
      let KeytenantId =receiptQueryString[1].value
+     KeytenantId = receiptQueryString[1].value.split('.')[0]
      if(businessServicewsbillreceipt ==='' || businessServicewsbillreceipt === null)
      {
       businessServicewsbillreceipt =  getQueryArg(window.location.href, "consumerCode")
@@ -950,6 +951,7 @@ try{
    try {
      let keyvalue ='consolidatedreceipt'
      let KeytenantId =receiptQueryString[1].value
+     KeytenantId = receiptQueryString[1].value.split('.')[0]
      if(businessServicewsbillreceipt ==='' || businessServicewsbillreceipt === null)
      {
       businessServicewsbillreceipt =  getQueryArg(window.location.href, "consumerCode")

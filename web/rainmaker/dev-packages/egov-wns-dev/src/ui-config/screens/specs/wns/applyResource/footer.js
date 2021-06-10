@@ -1724,6 +1724,18 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         dispatch,
         "apply"
       );
+      const activeDetails= validateFields(
+        "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children",
+        state,
+        dispatch,
+        "apply"
+      );
+      const PropactiveDetails= validateFields(
+        "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer.children.cardContent.children.PropactiveDetails.children",
+        state,
+        dispatch,
+        "apply"
+      );
 if(isConnectionDetailsValid)
 {
   isFormValid = isConnectionDetailsValid
@@ -1764,7 +1776,39 @@ if(isConnectionDetailsValid)
   }
   }
   if(isFormValid)
-  setReviewPageRoute(state, dispatch);
+  {
+    //console.log('pritam')
+    if(activeDetails)
+    {
+      if(PropactiveDetails)
+      {
+        setReviewPageRoute(state, dispatch);
+      }
+      else{
+        isFormValid = false;
+      errorMessage = {
+        labelName: "Please enter proposed connection execution details",
+        labelKey: "WS_ACTIVATION_DETAILS_PROP_VALIDATION"
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      return;
+
+      }
+       
+    }
+    else{
+      isFormValid = false;
+      errorMessage = {
+        labelName: "Please enter valid data in activation details",
+        labelKey: "WS_ACTIVATION_DETAILS_VALIDATION"
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      return;
+      //
+    }
+   
+  }
+ 
   else{
     dispatch(toggleSnackbar(true, errorMessage, "warning"));
     return;

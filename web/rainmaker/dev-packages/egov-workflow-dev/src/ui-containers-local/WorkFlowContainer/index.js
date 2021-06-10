@@ -364,12 +364,16 @@ class WorkFlowContainer extends React.Component {
       data.waterSource = data.waterSource + "." + data.waterSubSource;
     
     }
-
+    let validRequest = true
     if (moduleName === "SW_SEWERAGE") {
       dataPath = "SewerageConnection";
+      validRequest = this.ValidateRequestSW(data,preparedFinalObject);
+      // set if if application is edit
+     
+
     }
 
-    let validRequest = true
+    
     if (moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
         || moduleName === "WS_TEMP_TEMP" 
@@ -925,7 +929,30 @@ ValidateRequest =(payload,preparedFinalObject) =>{
     }
     //payload.documents = tmp;
 //return  false
- return isvalidRequest
+return isvalidRequest
+}
+ValidateRequestSW =(payload,preparedFinalObject)=>{
+  if(payload.documents !== null)
+  {
+    for (let index = 0; index < payload.documents.length; index++) {
+      const element = payload.documents[index];
+      let doctype =`WS_${element.documentType}`
+      if(preparedFinalObject.WaterConnection[0].reviewDocData !== undefined)
+      {
+        let ids = preparedFinalObject.WaterConnection[0].reviewDocData.filter(x=>x.title === doctype)
+      if(ids && ids[0])
+      {
+        set(payload.documents[index], "id", ids[0].id);
+      }
+      }
+    }
+  }
+  if(payload.documents !== null)
+  {
+  payload.documents =  this.uniqueBycode(payload.documents, x=>x.documentType);//payload.documents.filter((value,index) => payload.documents.indexOf(value) ===index)
+  }
+  return true;
+
 }
 
 uniqueBycode =(data,key)=>{
