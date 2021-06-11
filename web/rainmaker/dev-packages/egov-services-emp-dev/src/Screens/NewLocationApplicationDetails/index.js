@@ -28,6 +28,7 @@ import NewLocationRejected from "../NewLocationRejected";
 import NewLocationPublished from '../NewLocationPublished';
 import {getFileUrlFromAPI} from '../../modules/commonFunction'
 import jp from "jsonpath";
+import axios from "axios";
 // import {
 // 	getFileUrlFromAPI
 // } from "egov-ui-framework/ui-utils/commons";
@@ -458,7 +459,7 @@ class ApplicationDetails extends Component {
 		]; 
 
 
-		downloadApplication({ BookingInfo: appData })
+		downloadApplication({ BookingInfo: appData })  
 	}
 	// Download Application 
 	downloadApplicationButton = async (mode) => {
@@ -496,31 +497,32 @@ class ApplicationDetails extends Component {
 			);
 		 console.log("downloadAppform--",downloadAppform)//filestoreIds
 
-		var documentsPreview = [];
-		let documentsPreviewData;
-		if (downloadAppform && downloadAppform.filestoreIds.length > 0) {
-			documentsPreviewData = downloadAppform.filestoreIds[0];
-			documentsPreview.push({
-				title: "DOC_DOC_PICTURE",
-				fileStoreId: documentsPreviewData,
-				linkText: "View",
-			});
-			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-			let fileUrls =
+		 setTimeout(async()=>{
+			var documentsPreview = [];
+			let documentsPreviewData;
+			if (downloadAppform && downloadAppform.filestoreIds.length > 0) {
+				documentsPreviewData = downloadAppform.filestoreIds[0];
+				documentsPreview.push({
+					title: "DOC_DOC_PICTURE",
+					fileStoreId: documentsPreviewData,
+					linkText: "View",
+				});
+				let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+				let fileUrls =
 				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-
-
+		   
+				
 			documentsPreview = documentsPreview.map(function (doc, index) {
 				doc["link"] =
 					(fileUrls &&
 						fileUrls[doc.fileStoreId] &&
 						fileUrls[doc.fileStoreId].split(",")[0]) ||
 					"";
-				//doc["name"] = doc.fileStoreId;
+				
 				doc["name"] =
 					(fileUrls[doc.fileStoreId] &&
 						decodeURIComponent(
-	 						fileUrls[doc.fileStoreId]
+							fileUrls[doc.fileStoreId]
 								.split(",")[0]
 								.split("?")[0]
 								.split("/")
@@ -530,9 +532,8 @@ class ApplicationDetails extends Component {
 					`Document - ${index + 1}`;
 				return doc;
 			});
-
 			if(mode==='print'){
-
+	
 				var response = await axios.get(documentsPreview[0].link, {
 					//responseType: "blob",
 					responseType: "arraybuffer",
@@ -543,7 +544,7 @@ class ApplicationDetails extends Component {
 						Accept: "application/pdf",
 					},
 				});
-				console.log("responseData---", response);
+			
 				const file = new Blob([response.data], { type: "application/pdf" });
 				const fileURL = URL.createObjectURL(file);
 				var myWindow = window.open(fileURL);
@@ -553,18 +554,21 @@ class ApplicationDetails extends Component {
 						myWindow.print();
 					});
 				}
+	
 			}
-
-
+	
+	
 			else{
-
+	
 				setTimeout(() => {
 				
 					window.open(documentsPreview[0].link);
 				}, 100);
 			}
+			
 			prepareFinalObject('documentsPreview', documentsPreview)
 		}
+	},1500)
 	}
 
 	//*****Download Permission letter for OSBM application*****//

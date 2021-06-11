@@ -7,6 +7,7 @@ import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import EditIcon from '@material-ui/icons/Edit';
 import "./index.css";
+import * as _ from "lodash"
 import Footer from "../../../../modules/footer"
 import PaccFeeEstimate from "../PaccFeeEstimate"
 import SummaryApplicationDetail from "../SummaryApplicationDetail"
@@ -31,7 +32,7 @@ class SummaryDetails extends Component {
 
     componentDidMount = async () => {
 
-        let {createPACCApplication, userInfo, documentMap,fetchPayment,prepareFinalObject,fetchApplications,conJsonSecond,conJsonfirst } = this.props;
+        let {createPACCApplication, userInfo, documentMap,fetchPayment,prepareFinalObject,fetchApplications,conJsonSecond,conJsonfirst,newTimeSlot } = this.props;
         let { uploadeDocType,DiscountReason,firstName, venueType, bokingType, bookingData, email, mobileNo, surcharge, fromDate, toDate,myLocationtwo,ReasonForDiscount,
             utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose,
             BankAccountName,NomineeName,BankAccountNumber,IFSCCode,AccountHolderName,accountType,SecTimeSlotFromTime,SecTimeSlotToTime,
@@ -132,19 +133,29 @@ else if(discountType == "20%"){
         }
         else{
             newDisCount = 0;
-            finalDiscount = Number(newDisCount);
+            finalDiscount = Number(newDisCount);   
             console.log("newDisCount--",newDisCount)
             console.log("finalDiscount--",finalDiscount)
             }
 //             console.log(discountDocs, "Neeraj this pros")
 // let discountDocType = discountDocs && discountDocs[0].documentCode;
 console.log(discountDocs, "Neeraj this pros");
-let discountDocType = discountDocs && discountDocs[0].documentCode;
-let discountDocFid =
-  discountDocs &&
-  discountDocs[0].documents &&
-  isArray(discountDocs[0].documents) &&
-  discountDocs[0].documents[0].fileStoreId;
+let discountDocType = discountDocs && 
+!_.isEmpty(discountDocs)? 
+discountDocs && discountDocs[0].documentCode : "notFound";
+
+let discountDocFid = discountDocs && 
+!_.isEmpty(discountDocs)? 
+discountDocs[0].documents && isArray(discountDocs[0].documents) &&  discountDocs[0].documents[0].fileStoreId : "notFound";
+
+
+
+// let discountDocType = discountDocs && discountDocs[0].documentCode;
+// let discountDocFid =
+//   discountDocs &&  
+//   discountDocs[0].documents &&
+//   isArray(discountDocs[0].documents) &&
+//   discountDocs[0].documents[0].fileStoreId;
 
         let fid = documentMap ? Object.keys(documentMap) : ""
         let Booking = {
@@ -220,13 +231,14 @@ if(SecTimeSlotFromTime != "notFound" && SecTimeSlotToTime != "notFound"){
 }
 else{
     console.log("oneTimeSlot")
-	checkslotArray[0] = {
-	"slot": bookingData.bkFromTime + '-' + firstToTimeSlot
-	}
+	checkslotArray[0] = this.props.first
+	// "slot": bookingData.bkFromTime + '-' + firstToTimeSlot
+    // "slot": this.props.first
 }
 console.log("slotArray_",slotArray)   //checkslotArray
 console.log("checkslotArray",checkslotArray)
-				Booking.timeslots = checkslotArray,
+				// Booking.timeslots = checkslotArray,
+                Booking.timeslots = newTimeSlot,
                 Booking.bkDuration = "HOURLY",
                 Booking.bkFromDate = bookingData.bkFromDate,
                 Booking.bkToDate = bookingData.bkToDate,
@@ -250,43 +262,43 @@ console.log("checkslotArray",checkslotArray)
 
 console.log("createAppData--",createAppData)
 
-/**
- {
-        "slot": "1PM-5PM"
-      },
-      {
-        "slot": "5PM-9PM"
-      }
- * **/
+try{
+    let payloadfund = await httpRequest(
+        "bookings/park/community/_create",
+        "_search",[],
+        createAppData
+        );
 
+console.log("payloadfund--",payloadfund)
 
-let payloadfund = await httpRequest(
-            "bookings/park/community/_create",
-            "_search",[],
-            createAppData
-            );
+prepareFinalObject("createAppData",payloadfund)
 
- console.log("payloadfund--",payloadfund)
+let appNumber = payloadfund.data.bkApplicationNumber
+console.log("appNumber--",appNumber)
+let AAppStatus = payloadfund.data.bkApplicationStatus
+console.log("AAppStatus--",AAppStatus)
 
- prepareFinalObject("createAppData",payloadfund)
+prepareFinalObject("CurrentApplicationNumber",appNumber)
 
- let appNumber = payloadfund.data.bkApplicationNumber
- console.log("appNumber--",appNumber)
- let AAppStatus = payloadfund.data.bkApplicationStatus
- console.log("AAppStatus--",AAppStatus)
-
- prepareFinalObject("CurrentApplicationNumber",appNumber)
-
- this.setState({
-    createPACCApp : payloadfund,
-    CashPaymentApplicationNumber : appNumber,
-    currentAppStatus : AAppStatus
- })
-
-
- fetchPayment(
-    [{ key: "consumerCode", value: appNumber }, { key: "businessService", value: NewfinanceBusinessService }, { key: "tenantId", value: userInfo.tenantId }
-    ])
+this.setState({
+createPACCApp : payloadfund,
+CashPaymentApplicationNumber : appNumber,
+currentAppStatus : AAppStatus
+})
+fetchPayment(
+[{ key: "consumerCode", value: appNumber }, { key: "businessService", value: NewfinanceBusinessService }, { key: "tenantId", value: userInfo.tenantId }
+])
+}
+catch(err){
+    this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "BK_ERR_PACC_SOMTHING_ERR_NOT_FOUND",
+          labelKey: `BK_ERR_PACC_SOMTHING_ERR_NOT_FOUND`
+        },
+        "warning"
+      );
+}
     }
 
     firstStep = e => {
@@ -350,12 +362,24 @@ submit = async (InitiateAppNumber) => {
     console.log("AllPropsOfSubmitPage--",this.props)
 
     console.log(discountDocs, "Neeraj this pros");
-    let discountDocType = discountDocs && discountDocs[0].documentCode;
-    let discountDocFid =
-      discountDocs &&
-      discountDocs[0].documents &&
-      isArray(discountDocs[0].documents) &&
-      discountDocs[0].documents[0].fileStoreId;
+
+    let discountDocType = discountDocs && 
+    !_.isEmpty(discountDocs)? 
+    discountDocs && discountDocs[0].documentCode : "notFound";
+    
+    let discountDocFid = discountDocs && 
+    !_.isEmpty(discountDocs)? 
+    discountDocs[0].documents && isArray(discountDocs[0].documents) &&  discountDocs[0].documents[0].fileStoreId : "notFound";
+    
+
+
+
+    // let discountDocType = discountDocs && discountDocs[0].documentCode;
+    // let discountDocFid =
+    //   discountDocs &&
+    //   discountDocs[0].documents &&
+    //   isArray(discountDocs[0].documents) &&
+    //   discountDocs[0].documents[0].fileStoreId;
 
 let dataOne = get(
     state,
@@ -377,7 +401,13 @@ if(dataOne !== "NotFound"){
     prepareFinalObject("CreatePaccAppData",data);
     let fid = documentMap ? Object.keys(documentMap) : ""
     const { firstName, userInfo, email, mobileNo, surcharge, fromDate, toDate, utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, locality, residenials } = this.props;
-
+let timeSlotDatesAvail;
+    if(data.bkBookingType == "Community Center" && data.bkLocation == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH"){
+        timeSlotDatesAvail  = data.timeslots
+}
+else{
+    timeSlotDatesAvail = []
+}
 
     if (data) {
         console.log("HereIsData--",data)
@@ -387,154 +417,170 @@ if(dataOne !== "NotFound"){
             "bkBookingVenue": data.bkBookingVenue,
             "bkBookingType": data.bkBookingType,
             "bkFromDate": data.bkFromDate,
-            "bkToDate": data.bkToDate
+            "bkToDate": data.bkToDate,
+            "timeslots" : timeSlotDatesAvail
         }
+
+        let UpdatedReqbody = {
+                 Booking:Booking,
+                 "applicationNumber" : data.bkApplicationNumber
+        }
+
         console.log("RequestBodyAvailCheckForSameTime",Booking)
-        let AvailCheckForSameTime = await httpRequest(
-          "bookings/park/community/booked/dates/_search",
-          "_search",
-          [],
-          {Booking:Booking}
-        );
-        console.log("AvailCheckForSameTime",AvailCheckForSameTime)
-        let checkResponseAvailForSameTime = AvailCheckForSameTime !== undefined && AvailCheckForSameTime !== null ?
-        (AvailCheckForSameTime.data && AvailCheckForSameTime.data !== null && AvailCheckForSameTime.data !== null ?AvailCheckForSameTime.data:""): ""
-    console.log("checkResponseAvailForSameTime",checkResponseAvailForSameTime)
-        if(checkResponseAvailForSameTime !== ""){
-            if(AvailCheckForSameTime.data.length == 0){
-                let Booking = {
-                    bkRemarks: data.bkRemarks,
-                    bkResidentialOrCommercial: data.bkResidentialOrCommercial,
-                    bkMaterialStorageArea: data.bkMaterialStorageArea,
-                    discount:data.discount,
-                    bkPlotSketch:data.bkPlotSketch,
-                    bkBookingType: data.bkBookingType,
-                    bkBookingVenue: data.bkBookingVenue,
-                    bkApplicantName: data.bkApplicantName,
-                    bkMobileNumber: data.bkMobileNumber,
-                    bkDimension: data.bkDimension,
-                    bkPaymentStatus: "SUCCESS",
-                    bkLocation: data.bkLocation,
-                    bkFromDate: data.bkFromDate,
-                    bkToDate: data.bkToDate,
-                    bkCleansingCharges: data.bkCleansingCharges,
-                    bkRent: data.bkRent,
-                    bkSurchargeRent: data.bkSurchargeRent,
-                    bkUtgst: data.bkUtgst,
-                    bkCgst: data.bkCgst,
-                    bkSector: data.bkSector,
-                    bkEmail: data.bkEmail,
-                    bkHouseNo: data.bkHouseNo,
-                    bkBookingPurpose: data.bkBookingPurpose,
-                    bkApplicationNumber: data.bkApplicationNumber,
-                    bkCustomerGstNo: data.bkCustomerGstNo ? data.bkCustomerGstNo : 'NA',
-                    // "wfDocuments": [{
-                    //     "documentType" : EmpSideDocType,
-                    //     "fileStoreId": fid[0]
-                    // }],
-                    wfDocuments: [
-                        {
-                          documentType: EmpSideDocType,
-                          fileStoreId: fid[0],
-                        },
-                        {
-                          documentType: discountDocType,
-                          fileStoreId: discountDocFid,
-                        },
-                      ],
-                    "tenantId": userInfo.tenantId,
-                    "bkAction": data.bkApplicationStatus == "OFFLINE_RE_INITIATED" ? "OFFLINE_MODIFY" : "OFFLINE_APPLY",
-                    "businessService": "PACC",
-                    "reInitiateStatus": false,
-                    "financialYear": "2021-2022",
-                    "bkBankAccountNumber":data.bkBankAccountNumber,
-                    "bkBankName":data.bkBankName,
-                    "bkIfscCode":data.bkIfscCode,
-                    "bkAccountType":data.bkAccountType,
-                    "bkBankAccountHolder":data.bkBankAccountHolder,
-                    "bkNomineeName": data.bkNomineeName
-                }
+try{
+    let AvailCheckForSameTime = await httpRequest(
+        "bookings/park/community/booked/dates/_search",
+        "_search",
+        [],
+        UpdatedReqbody
+      );
+      console.log("AvailCheckForSameTime",AvailCheckForSameTime)
+      let checkResponseAvailForSameTime = AvailCheckForSameTime !== undefined && AvailCheckForSameTime !== null ?
+      (AvailCheckForSameTime.data && AvailCheckForSameTime.data !== null && AvailCheckForSameTime.data !== null ?AvailCheckForSameTime.data:""): ""
+  console.log("checkResponseAvailForSameTime",checkResponseAvailForSameTime)
+      if(checkResponseAvailForSameTime !== ""){
+          if(AvailCheckForSameTime.data.length == 0){
+              let Booking = {
+                  bkRemarks: data.bkRemarks,
+                  bkResidentialOrCommercial: data.bkResidentialOrCommercial,
+                  bkMaterialStorageArea: data.bkMaterialStorageArea,
+                  discount:data.discount,
+                  bkPlotSketch:data.bkPlotSketch,
+                  bkBookingType: data.bkBookingType,
+                  bkBookingVenue: data.bkBookingVenue,
+                  bkApplicantName: data.bkApplicantName,
+                  bkMobileNumber: data.bkMobileNumber,
+                  bkDimension: data.bkDimension,
+                  bkPaymentStatus: "SUCCESS",
+                  bkLocation: data.bkLocation,
+                  bkFromDate: data.bkFromDate,
+                  bkToDate: data.bkToDate,
+                  bkCleansingCharges: data.bkCleansingCharges,
+                  bkRent: data.bkRent,
+                  bkSurchargeRent: data.bkSurchargeRent,
+                  bkUtgst: data.bkUtgst,
+                  bkCgst: data.bkCgst,
+                  bkSector: data.bkSector,
+                  bkEmail: data.bkEmail,
+                  bkHouseNo: data.bkHouseNo,
+                  bkBookingPurpose: data.bkBookingPurpose,
+                  bkApplicationNumber: data.bkApplicationNumber,
+                  bkCustomerGstNo: data.bkCustomerGstNo ? data.bkCustomerGstNo : 'NA',
+                  // "wfDocuments": [{
+                  //     "documentType" : EmpSideDocType,
+                  //     "fileStoreId": fid[0]
+                  // }],
+                  wfDocuments: [
+                      {
+                        documentType: EmpSideDocType,
+                        fileStoreId: fid[0],
+                      },
+                      {
+                        documentType: discountDocType,
+                        fileStoreId: discountDocFid,
+                      },
+                    ],
+                  "tenantId": userInfo.tenantId,
+                  "bkAction": data.bkApplicationStatus == "OFFLINE_RE_INITIATED" ? "OFFLINE_MODIFY" : "OFFLINE_APPLY",
+                  "businessService": "PACC",
+                  "reInitiateStatus": false,
+                  "financialYear": "2021-2022",
+                  "bkBankAccountNumber":data.bkBankAccountNumber,
+                  "bkBankName":data.bkBankName,
+                  "bkIfscCode":data.bkIfscCode,
+                  "bkAccountType":data.bkAccountType,
+                  "bkBankAccountHolder":data.bkBankAccountHolder,
+                  "bkNomineeName": data.bkNomineeName
+              }
 
 
-                if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
-                    let slotArray = []
-                    let checkslotArray = []
-                    // if(wholeDaySlot != "notFound" && wholeDaySlot != "notFound"){
-                    // 	console.log("OneDay")
-                    // 	checkslotArray[0] = {"slot":"9AM - 1PM"}
-                    // 	checkslotArray[1] = {"slot": "1PM - 5PM"}
-                    // 	checkslotArray[2] = {"slot": "5PM - 9PM"}
-                    // }
-                    if(SecTimeSlotFromTime != "notFound" && SecTimeSlotToTime != "notFound"){
-                        console.log("secondTimeSlot")
-                        slotArray[0] = conJsonfirst,
-                        slotArray[1] = conJsonSecond //conJsonSecond,conJsonfirst
+              if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
+                  let slotArray = []
+                  let checkslotArray = []
+                  // if(wholeDaySlot != "notFound" && wholeDaySlot != "notFound"){
+                  // 	console.log("OneDay")
+                  // 	checkslotArray[0] = {"slot":"9AM - 1PM"}
+                  // 	checkslotArray[1] = {"slot": "1PM - 5PM"}
+                  // 	checkslotArray[2] = {"slot": "5PM - 9PM"}
+                  // }
+                  if(SecTimeSlotFromTime != "notFound" && SecTimeSlotToTime != "notFound"){
+                      console.log("secondTimeSlot")
+                      slotArray[0] = conJsonfirst,
+                      slotArray[1] = conJsonSecond //conJsonSecond,conJsonfirst
 
-                        checkslotArray[0] = this.props.first,
-                         checkslotArray[1] = this.props.second
-                    }
-                    else{
-                        console.log("oneTimeSlot")
-                        checkslotArray[0] = {
-                        "slot": bookingData.bkFromTime + '-' + firstToTimeSlot
-                        }
-                    }
-                    console.log("slotArray_",slotArray)   //checkslotArray
-                    console.log("checkslotArray",checkslotArray)
-                    Booking.timeslots = checkslotArray,
-                    Booking.bkDuration = "HOURLY",
-                    Booking.bkFromDate = bookingData.bkFromDate,
-                    Booking.bkToDate = bookingData.bkToDate,
-                    Booking.bkFromTime = bookingData.bkFromTime,
-                    Booking.bkToTime = bookingData.bkToTime
-                }
-                else if (venueType == "Community Center" && (!bookingData) && (!bookingData.bkFromTime)) {
-                    Booking.timeslots = [{
-                        "slot": "9:00 AM - 8:59 AM"
-                    }],
-                        Booking.bkDuration = "FULLDAY"
-                }
+                      checkslotArray[0] = this.props.first,
+                       checkslotArray[1] = this.props.second
+                  }
+                  else{
+                      console.log("oneTimeSlot")
+                    //   checkslotArray[0] = {
+                    //   "slot": bookingData.bkFromTime + '-' + firstToTimeSlot
+                    //   }
+                    checkslotArray[0] = this.props.first
+                  }
+                  console.log("slotArray_",slotArray)   //checkslotArray
+                  console.log("checkslotArray",checkslotArray)
+                //   Booking.timeslots = checkslotArray,  
+                  Booking.timeslots = data.timeslots,
+                  Booking.bkDuration = "HOURLY",
+                  Booking.bkFromDate = bookingData.bkFromDate,
+                  Booking.bkToDate = bookingData.bkToDate,
+                  Booking.bkFromTime = bookingData.bkFromTime,
+                  Booking.bkToTime = bookingData.bkToTime
+              }
+              else if (venueType == "Community Center" && (!bookingData) && (!bookingData.bkFromTime)) {
+                  Booking.timeslots = [{
+                      "slot": "9:00 AM - 8:59 AM"
+                  }],
+                      Booking.bkDuration = "FULLDAY"
+              }
 
-        console.log("Booking-requestBody--",Booking)
+      console.log("Booking-requestBody--",Booking)
 
-        await updatePACCApplication(
-                    {
-                        "applicationType": "PACC",
-                        "applicationStatus": "",
-                        "applicationId": data.bkApplicationNumber,
-                        "tenantId": userInfo.tenantId,
-                        "Booking": Booking
-                    });
+      await updatePACCApplication(
+                  {
+                      "applicationType": "PACC",
+                      "applicationStatus": "",
+                      "applicationId": data.bkApplicationNumber,
+                      "tenantId": userInfo.tenantId,
+                      "Booking": Booking
+                  });
 
-                // this.props.history.push(`/egov-services/create-success-pcc`);
-
-
-                console.log("this.state.CashPaymentApplicationNumber--",this.state.CashPaymentApplicationNumber)
-
-                let NumberApp = this.state.CashPaymentApplicationNumber;
-
-                console.log("NumberApp--",NumberApp)
-
-                this.props.history.push(`/egov-services/PaymentReceiptDteail/${this.state.CashPaymentApplicationNumber}`);
+              // this.props.history.push(`/egov-services/create-success-pcc`);
 
 
+              console.log("this.state.CashPaymentApplicationNumber--",this.state.CashPaymentApplicationNumber)
 
-            }
+              let NumberApp = this.state.CashPaymentApplicationNumber;
 
-            else{
-                this.props.toggleSnackbarAndSetText(
-                    true,
-                    {
-                      labelName: "Dates are already booked",
-                      labelKey: `BK_ERR_PACC_DATE_ALREADY_BOOKED`
-                    },
-                    "error"
-                  );
-            }
+              console.log("NumberApp--",NumberApp)
 
-
-            }
-
+              this.props.history.push(`/egov-services/PaymentReceiptDteail/${this.state.CashPaymentApplicationNumber}`);
+          }
+          else{
+              this.props.toggleSnackbarAndSetText(
+                  true,
+                  {
+                    labelName: "Dates are already booked",
+                    labelKey: `BK_ERR_PACC_DATE_ALREADY_BOOKED`
+                  },
+                  "error"
+                );
+          }
+          }
+}
+catch(err){
+console.log("Error0nSubmitButton",err);
+this.props.toggleSnackbarAndSetText(
+    true,
+    {
+      labelName: "Dates are already booked",
+      labelKey: `BK_ERR_PACC_DATE_ALREADY_BOOKED`
+    },
+    "error"
+  );
+}
+        
         }
         else{
             this.props.toggleSnackbarAndSetText(
@@ -868,6 +914,7 @@ console.log("seven--",seven)
    let SecTimeSlotToTime = ""
    let firstToTimeSlot = ""
    let firstTimeSlotValue = ""
+   let newTimeSlot;
    let first  = ""
    let conJsonfirst = ""
    let SecondTimeSlotValue = ""
@@ -875,6 +922,14 @@ console.log("seven--",seven)
    let conJsonSecond = ""
 //HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH
    if(DropDownValue === "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH"){
+
+    newTimeSlot = get(
+        state,
+        "screenConfiguration.preparedFinalObject.Booking.timeslots",
+        "NotFound"
+    );
+
+    console.log("newTimeSlot00000",newTimeSlot)
 
     SecTimeSlotFromTime = state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo || "notFound"
     console.log("SecTimeSlotFromTime--",SecTimeSlotFromTime)//screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo
@@ -941,7 +996,7 @@ console.log("seven--",seven)
         documentMap, bkLocation, facilationChargesSuccess,seven,state,uploadeDocType,
         fCharges,myLocationtwo,totalAmountSuPage,one,two,three,four,five,six,checkAppStatus,checkAppNum,discountDocs,
         discountDocumentsUploadRedux,
-        documentsUploadRedux
+        documentsUploadRedux,newTimeSlot
     }
 
 }

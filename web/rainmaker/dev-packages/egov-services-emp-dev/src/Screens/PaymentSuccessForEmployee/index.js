@@ -371,7 +371,7 @@ downloadPermissionButton = async (e) => {
 		
 		if(this.props.offlinePayementMode == "CARD"){
 			let complaintCountRequest = {
-				applicationNumber: applicationDetails.bkApplicantName,
+				applicationNumber: applicationDetails.bkApplicationNumber,
 				uuid: userInfo.uuid,
 				applicationStatus: "",
 				mobileNumber: "",
