@@ -2310,6 +2310,41 @@ export const checkAvaialbilityAtSubmitCgb = async (bookingVenue, from, to) => {
     }
 };
 export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
+    let requestBody = {};
+    let isAvailable= await checkAvaialbilityAtSubmitFirstStep(bookingData, dispatch)
+    if(isAvailable===false){
+    
+        return isAvailable
+    }else{
+        
+        requestBody = {
+            BookingLock: [
+                {
+                  applicationNumber: bookingData.bkApplicationNumber,
+                  bookingType: bookingData.bkBookingType ? bookingData.bkBookingType:"",
+                  bookingVenue:bookingData.bkBookingVenue?bookingData.bkBookingVenue:"",
+                  sector: bookingData.bkSector?bookingData.bkSector:"",
+                  fromDate: bookingData.bkFromDate,
+                  toDate: bookingData.bkToDate,
+                }
+              ],
+        };
+        try {
+            const bookedDates = await httpRequest(
+                "post",
+                "/bookings/park/community/lock/dates/_save",
+                "",
+                [],
+                requestBody
+            );
+         
+        } catch (exception) {
+            console.log(exception);
+        }
+        return isAvailable
+    }
+}
+export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) => {
     let businessService = bookingData.businessService;
     let requestBody = {};
     let isAvailable = true;
@@ -2343,6 +2378,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 : (isAvailable = true);
         } catch (exception) {
             console.log(exception);
+            isAvailable = false;
         }
     } else if (businessService === "OSUJM") {
         requestBody = {
@@ -2374,9 +2410,9 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 : (isAvailable = true);
         } catch (exception) {
             console.log(exception);
+            isAvailable = false;
         }
     }  else if (businessService === "PACC") {
-
         requestBody = {
             Booking: {
                 
@@ -2386,7 +2422,9 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 bkBookingVenue: bookingData.bkBookingVenue,
                 bkFromDate: bookingData.bkFromDate,
                 bkToDate: bookingData.bkToDate,
+                timeslots :bookingData.bkBookingType=== "Community Center"?bookingData.timeslots:[]
             },
+            applicationNumber: bookingData.bkApplicationNumber
         };
 
         try {
@@ -2396,7 +2434,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 "",
                 [],
                 requestBody
-            );
+            )
             bookedDates.data.length > 0
                 ? bookedDates.data.map((val) => {
                     if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
@@ -2408,6 +2446,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 : (isAvailable = true);
         } catch (exception) {
             console.log(exception);
+            isAvailable = false;
         }
     }else {
         isAvailable = true;
