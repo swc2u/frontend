@@ -33,11 +33,18 @@ class CheckboxLabels extends React.Component {
       this.setState({ checkedG: true })
       this.updateOwnerFileds();
     } */
-    const { classes, content, label, isChecked, approveCheck, onFieldChange, jsonPath } = this.props;
+    const { classes, content, label, isChecked, approveCheck, onFieldChange, jsonPath,section } = this.props;
     if(isChecked === false){
       toggleConnHolderDetails(onFieldChange, true);
       approveCheck(jsonPath, isChecked)
-      approveCheck('WaterConnection[0].waterApplication.isFerruleApplicable', true)
+      // if(section !== undefined)
+      //   {
+          if(label.key === 'WS_ADDN_DETAILS_IS_FERRULEAPPLICABLE')
+            {
+              approveCheck('WaterConnection[0].waterApplication.isFerruleApplicable', true)
+            }
+        //}
+     //
     }else{
       toggleConnHolderDetails(onFieldChange, false);
       approveCheck(jsonPath, isChecked)
@@ -320,7 +327,7 @@ class CheckboxLabels extends React.Component {
 
   render() {
     const { classes, content, label,preparedFinalObject,section ,approveCheck} = this.props;
-    let isChecked = (this.state.checkedG === null)?true:this.state.checkedG;
+    let isChecked = (this.state.checkedG === null)?(label.key !== "WS_ADDN_DETAILS_IS_FERRULEAPPLICABLE"?this.props.isChecked:true):this.state.checkedG;
     let isdisabled = false
     //isFerruleApplicable should be enable to change the value in step  PENDING_FOR_SECURITY_DEPOSIT
     if(preparedFinalObject.WaterConnection.length>0)

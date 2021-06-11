@@ -652,6 +652,17 @@ export const getData = async (action, state, dispatch) => {
       if(combinedArray[0].property.usageCategory !==undefined)
       combinedArray[0].property.usageCategory = combinedArray[0].property.usageCategory.split('.')[0];
       combinedArray[0].property.noOfFloors = String(combinedArray[0].property.noOfFloors);
+      if(combinedArray[0].property.subusageCategory==="RESIDENTIAL.GOVERNMENTHOUSING")
+        {
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+                    "props.disabled",
+                    true
+            )
+        );
+        }
       const {applyScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
       if(applyScreenMdmsData['ws-services-calculation'] !== undefined)
       {
