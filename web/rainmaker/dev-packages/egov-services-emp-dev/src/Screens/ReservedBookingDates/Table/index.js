@@ -153,20 +153,20 @@ class InboxData extends React.Component {
                   }
                 })}
               </TableRow>
-            </TableHead>
+              </TableHead>
 
-            {data.rows.length === 0 ? (
-              <TableBody>{"No Data Found"}</TableBody>
-            ) : (
-              <TableBody className={classes.body}>
-                {console.log(data.rows, 'ooooo')}
-                {filterfun
-                  .fn(data.rows)
-                  .slice(
-                    this.state.page * this.state.rowsPerPage,
-                    this.state.page * this.state.rowsPerPage +
-                      this.state.rowsPerPage
-                  )
+                {data.rows.length === 0 ? (
+                  <TableBody>{"No Records Found"}</TableBody>
+                ) : filterfun.fn(data.rows).length===0? <TableBody>{"No Data Found"}</TableBody> :(
+                  <TableBody className={classes.body}>
+                    {console.log(data.rows, 'ooooo')}
+                    {filterfun
+                      .fn(data.rows)
+                      .slice(
+                        this.state.page * this.state.rowsPerPage,
+                        this.state.page * this.state.rowsPerPage +
+                          this.state.rowsPerPage
+                      )
                   .map((row, i) => {
                     var size = Object.keys(row).length - 1;
 

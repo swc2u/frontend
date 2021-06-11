@@ -13,7 +13,7 @@ import get from "lodash/get";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-
+import {convertDateInYMD} from "../../ui-config/screens/specs/utils/index"
 import {
     prepareFinalObject,
     toggleSnackbar,
@@ -122,12 +122,12 @@ class CustomTimeSlots extends Component {
         // }
         if (this.props.initiatedBookingFromDate) {
 
-
-            var [goYear, goMonth, goDay] = this.props.initiatedBookingFromDate.split("-");
+            let initiatedBookingFromDateYmdFormat= convertDateInYMD(this.props.initiatedBookingFromDate)
+            var [goYear, goMonth, goDay] = initiatedBookingFromDateYmdFormat.split("-");
             let goDate = `${goDay}-${goMonth}-${goYear}`;
             let i = 0;
-
     
+
     for (i; i < this.props.rows.length; i++) {
         if (this.props.rows[i].date == goDate) {
             break;
@@ -732,7 +732,7 @@ const mapStateToProps = (state) => {
     );
 
 
-    const initiatedBookingFromDate = get(
+    let initiatedBookingFromDate = get(
         state,
         "screenConfiguration.preparedFinalObject.availabilityCheckData.bkFromDate",
         ""
@@ -782,6 +782,9 @@ const mapStateToProps = (state) => {
             }
         }
         if (initiatedBookingFromDate) {
+                     
+            initiatedBookingFromDate= convertDateInYMD(initiatedBookingFromDate)
+        
             var [goYear, goMonth, goDay] = initiatedBookingFromDate.split("-");
             let goDate = `${goDay}-${goMonth}-${goYear}`;
             if (timeSlotArray[j].date === goDate && initiatedBookingTimeSlot) {

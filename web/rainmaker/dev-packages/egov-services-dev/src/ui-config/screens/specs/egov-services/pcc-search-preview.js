@@ -141,7 +141,11 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
         showFooter = true;
     }
 
-
+    set(
+        action,
+        "screenConfig.components.div.children.footer.visible",
+         false
+    );
 
     var billAccountDetails = get(
         screenConfiguration,
@@ -203,6 +207,13 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
     console.log(bookingTimeStamp + "=========" + currentTimeStamp + "=====" + refundAmount);
 
     if ((bookingTimeStamp > currentTimeStamp) && (refundAmount > 0)) {
+        console.log('called :>> ');
+        set(
+            action,
+            "screenConfig.components.div.children.footer.visible",
+            showFooter === true ? true : false
+        );
+      
         set(
             action,
             "screenConfig.components.div.children.footer.children.cancelButton.visible",
@@ -212,7 +223,12 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
     }
 
     if ((bookingTimeStamp > currentTimeStamp) && (bookingStatus === "APPLIED" || bookingStatus === "RE_INITIATED")) {
-
+        set(
+            action,
+            "screenConfig.components.div.children.footer.visible",
+             true
+        );
+    
         set(
             action,
             "screenConfig.components.div.children.footer.children.editButton.visible",
@@ -221,7 +237,12 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
     }
 
     if ((bookingTimeStamp < currentTimeStamp) && refundSecAmount > 0) {
-
+        set(
+            action,
+            "screenConfig.components.div.children.footer.visible",
+            showFooter === true ? true : false
+        );
+       
         set(
             action,
             "screenConfig.components.div.children.footer.children.refundSecurityFeeButton.visible",
@@ -276,13 +297,7 @@ const setSearchResponse = async (
                 prepareFinalObject("DisplayTimeSlotData", DisplayPaccObject)
             );
         }
-
-        set(
-            action.screenConfig,
-            "components.div.children.body3.visible",
-            recData[0].roomsModel && recData[0].roomsModel.length > 0 ? true : false
-        );
-
+        
         set(
             action.screenConfig,
             "components.div.children.body.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.FromDate.visible",
@@ -343,6 +358,19 @@ const setSearchResponse = async (
         );
 
         bookingStatus = recData[0].bkApplicationStatus;
+        if ( bookingStatus === "APPLIED" || bookingStatus === "RE_INITIATED") {
+            set(
+                action.screenConfig,
+                "components.div.children.body3.visible",
+                recData[0].roomsModel && recData[0].roomsModel.length > 0 ? true : false
+            );
+            }else{  
+               set(
+                    action.screenConfig,
+                    "components.div.children.body3.visible",
+                    false
+                );
+            }
         console.log(recData[0], "Booking");
         //if (bookingStatus === "APPLIED" || bookingStatus === "MODIFIED") {
         if ((recData[0].bkPaymentStatus == "SUCCESS" || recData[0].bkPaymentStatus == "success") && bookingStatus === "MODIFIED") {
@@ -553,7 +581,13 @@ const setSearchResponse = async (
             "screenConfiguration.preparedFinalObject.Booking.bkBookingType"
         );
    
-        if(appBookingType==="Community Center" ){
+        if(appBookingType==="Community Center" && (bookingStatus === "APPLIED" || bookingStatus === "RE_INITIATED")){
+        
+            set(
+                action,
+                "screenConfig.components.div.children.footer.visible",
+                 true
+            );
             set(
                 action,
                 "screenConfig.components.div.children.footer.children.bookRoomButton.visible",

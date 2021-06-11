@@ -369,8 +369,6 @@ export const availabilityForm = getCommonCard({
     uiFramework: "custom-atoms",
     componentPath: "Container",
     props: {
-
-      className: "checkavailability-footer",
       style: { marginBottom: "10px" },
     },
     children: {
