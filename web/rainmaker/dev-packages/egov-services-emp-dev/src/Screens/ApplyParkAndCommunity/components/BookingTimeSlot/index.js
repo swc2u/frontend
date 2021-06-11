@@ -160,7 +160,8 @@ class CustomTimeSlots extends Component {
     console.log(e, "elon");
     var cbarray = document.getElementsByName("time-slot");
     // console.log("cbarray", cbarray);
-    if (e.target.getAttribute("data-date") == this.props.isSameDate) {
+    var [from, to] = e.target.getAttribute("data-timeslot").split("-");
+    if (e.target.getAttribute("data-date") == this.props.isSameDate && from === this.props.firstToTime) {
       this.props.prepareFinalObject(
         "perDayBookedSlotCount",
         this.props.perDayBookedSlotCount + 1
@@ -227,13 +228,19 @@ this.props.prepareFinalObject("Booking.wholeDay.ToDate",changeToDate + "," +"9PM
       );
       this.props.prepareFinalObject("availabilityCheckData.bkToTimeTwo", to);
       var selectedTimeSlots = [];
+      selectedTimeSlots[0]=this.props.initiatedBookingTimeSlot[0]
       //this.setState({ selectedTimeSlots: { slot: `${from}-${to}` } },
       selectedTimeSlots.push({ slot: `${from}-${to}` });
-      this.props.prepareFinalObject("Booking.timeslotsTwo", selectedTimeSlots);
+      this.props.prepareFinalObject("Booking.timeslotsTwo", selectedTimeSlots[1]);
+      this.props.prepareFinalObject("Booking.timeslots", selectedTimeSlots);
       this.props.prepareFinalObject(
         "availabilityCheckData.timeslotsTwo",
         selectedTimeSlots
       );
+      this.props.prepareFinalObject(
+        "availabilityCheckData.timeslots",
+        selectedTimeSlots
+    );
       // this.props.prepareFinalObject(
       //     "DisplayPacc.bkDisplayFromDateTime",
       //     e.target.getAttribute("data-date") + ", " + from
@@ -662,21 +669,64 @@ const mapStateToProps = (state) => {
   var date = new Date();
   if (reservedTimeSlotsData && reservedTimeSlotsData.length > 0) {
     for (let i = 0; i < reservedTimeSlotsData.length; i++) {
-      const [year, month, day] = reservedTimeSlotsData[i].fromDate.split("-");
-      let date = `${day}-${month}-${year}`;
-      if (
-        reservedTimeSlotsData[i].timeslots &&
-        reservedTimeSlotsData[i].timeslots.length > 0
-      ) {
-        for (let j = 0; j < reservedTimeSlotsData[i].timeslots.length; j++) {
-          bookedSlotArray.push({
-            date: date,
-            timeSlots: [reservedTimeSlotsData[i].timeslots[j].slot],
-          });
+        const [year, month, day] = reservedTimeSlotsData[i].fromDate.split(
+            "-"
+        );
+        let date = `${day}-${month}-${year}`;
+        if (
+            reservedTimeSlotsData[i].timeslots &&
+            reservedTimeSlotsData[i].timeslots.length > 0
+        ) {
+            
+            for (
+                let j = 0;
+                j < reservedTimeSlotsData[i].timeslots.length;
+                j++
+            ) {
+                if(reservedTimeSlotsData[i].timeslots[j].slot=== "9:00 AM - 8:59 AM"){
+
+                    bookedSlotArray.push({
+                        date: date,
+                        timeSlots: ["9AM-1PM"],
+                    });
+                    bookedSlotArray.push({
+                        date: date,
+                        timeSlots: ["1PM-5PM"],
+                    });
+                    bookedSlotArray.push({
+                        date: date,
+                        timeSlots: ["5PM-9PM"],
+                    });
+                    
+                }else{
+                    bookedSlotArray.push({
+                        date: date,
+                        timeSlots: [reservedTimeSlotsData[i].timeslots[j].slot],
+                    });
+                }
+               
+            }
+        }else if(   
+            reservedTimeSlotsData[i].timeslots &&
+            reservedTimeSlotsData[i].timeslots.length === 0 )
+            {
+               
+                    bookedSlotArray.push({
+                        date: date,
+                        timeSlots: ["9AM-1PM"],
+                    });
+                    bookedSlotArray.push({
+                        date: date,
+                        timeSlots: ["1PM-5PM"],
+                    });
+                    bookedSlotArray.push({
+                        date: date,
+                        timeSlots: ["5PM-9PM"],
+                    });
+                
         }
-      }
     }
-  }
+}
 
   //Edit Case Coverd To show Checkbox Checked
   const initiatedBookingTimeSlot = get(
@@ -696,6 +746,11 @@ const mapStateToProps = (state) => {
     "screenConfiguration.preparedFinalObject.availabilityCheckData.bkFromDate",
     ""
   );
+
+  const firstToTime = get(
+    state,
+    "screenConfiguration.preparedFinalObject.Booking.bkToTime"
+)
 
   //******************************** */
 
@@ -740,23 +795,24 @@ const mapStateToProps = (state) => {
     if (initiatedBookingFromDate) {
 console.log("initiatedBookingFromDate-map-stateProps",initiatedBookingFromDate)
       let initiatedBookingFromDateYmdFormat= convertDateInYMD(initiatedBookingFromDate)
-
+  
       var [goYear, goMonth, goDay] = initiatedBookingFromDateYmdFormat.split(
         "-"
       );
+
+      // initiatedBookingFromDate= convertDateInYMD(initiatedBookingFromDate)
+        
+            var [goYear, goMonth, goDay] = initiatedBookingFromDate.split("-");
+
       let goDate = `${goDay}-${goMonth}-${goYear}`;
       if (timeSlotArray[j].date === goDate && initiatedBookingTimeSlot) {
         for (let l = 0; l < timeSlotArray[j].timeSlots.length; l++) {
-        //   console.log(
-        //     timeSlotArray[j].timeSlots[l],
-        //     initiatedBookingTimeSlot[0].slot,
-        //     "fsdfsfsdf"
-        //   );
-
+          console.log(timeSlotArray[j].timeSlots[l], initiatedBookingTimeSlot[0].slot, "fsdfsfsdf");
           if (
             initiatedBookingTimeSlot[0].slot === timeSlotArray[j].timeSlots[l]
           ) {
             console.log("Hello Bulbul");
+            
             timeSlotArray[j].timeSlots.splice(
               l,
               1,
@@ -765,34 +821,30 @@ console.log("initiatedBookingFromDate-map-stateProps",initiatedBookingFromDate)
             console.log("timeSlotArray[j]", timeSlotArray[j]);
           }
 
-          if (perDayBookedSlotCount !== 1) {
-            if (
-              initiatedBookingTimeSlotTwo[0].slot ===
-              timeSlotArray[j].timeSlots[l]
-            ) {
-              console.log("Hello Bulbul");
-              timeSlotArray[j].timeSlots.splice(
-                l,
-                1,
-                `${timeSlotArray[j].timeSlots[l]}:initiated`
-              );
-              console.log("timeSlotArray[j]", timeSlotArray[j]);
+          if(perDayBookedSlotCount !== 1 || initiatedBookingTimeSlot.length > 1 ){
+console.log("initiatedBookingTimeSlot",initiatedBookingTimeSlot)
+            if (initiatedBookingTimeSlot[1].slot === timeSlotArray[j].timeSlots[l]) {
+                console.log("Hello Bulbul");
+                timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:initiated`);
+                console.log('timeSlotArray[j]', timeSlotArray[j])
+                
             }
-          }
         }
       }
     }
-    finalBookedTimeSlots.push(tempObj);
-    // console.log("tempObj", tempObj);
-  }
-
-  return {
-    rows: finalBookedTimeSlots,
-    currentDate: new Date(),
-    initiatedBookingFromDate: initiatedBookingFromDate,
-    isSameDate: isSameDate,
-    perDayBookedSlotCount: perDayBookedSlotCount,
-  };
+}
+finalBookedTimeSlots.push(tempObj);
+console.log('tempObj', tempObj)
 };
+return {
+  rows: finalBookedTimeSlots,
+  currentDate: new Date(),
+  initiatedBookingFromDate: initiatedBookingFromDate,
+  isSameDate: isSameDate,
+  perDayBookedSlotCount: perDayBookedSlotCount,
+  firstToTime: firstToTime, 
+  initiatedBookingTimeSlot:initiatedBookingTimeSlot
+};
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(CustomTimeSlots);

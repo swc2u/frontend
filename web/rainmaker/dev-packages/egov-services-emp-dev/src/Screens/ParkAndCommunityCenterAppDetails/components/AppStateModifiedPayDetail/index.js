@@ -40,7 +40,7 @@ class PayDetails extends Component {
                 </div>
                 <div style={{right: '50px',position: 'absolute'}}>
                   <h5><Label label="BK_TOTAL_AMOUNT" /></h5>
-                  <h3 style={{marginTop: '-8px',fontSize: '28px',color: 'black'}}><b>Rs {paymentDetails ? paymentDetails.totalAmount : 'NA'}</b></h3>
+                  <h3 style={{marginTop: '-8px',fontSize: '28px',color: 'black'}}><b>Rs {this.props.totalAmount}</b></h3>
                 </div>
               </div>
 
@@ -80,7 +80,8 @@ const mapStateToProps = state => {
   let selectedType = selectedComplaint ? selectedComplaint.bkBookingType : ''
 let DateVenueChangeArray;
 let ChangeAmount;
-let taxes;
+let taxes;       
+let totalAmount
   let DateVenueChangeAmount  = get(
     state,
     "screenConfiguration.preparedFinalObject.DateVenueChngeAmount",
@@ -88,35 +89,86 @@ let taxes;
 );
 console.log("DateVenueChangeAmount",DateVenueChangeAmount)
 
-if(DateVenueChangeAmount !== "NotFound"){
-  DateVenueChangeArray = DateVenueChangeAmount.Bill[2].billDetails[0].billAccountDetails
+// if(DateVenueChangeAmount !== "NotFound"){
+//   DateVenueChangeArray = DateVenueChangeAmount.Bill[2].billDetails[0].billAccountDetails
 
-if(selectedType == "Community Center"){
-  for(let i=0; i<DateVenueChangeArray.length ; i++){
-    if(DateVenueChangeArray[i].taxHeadCode == "COMMUNITY_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
-      ChangeAmount = DateVenueChangeArray[i].amount
-    }
-    if(DateVenueChangeArray[i].taxHeadCode == "CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){
-      taxes = DateVenueChangeArray[i].amount
-    }
-      }
-}
+// if(selectedType == "Community Center"){
+//   for(let i=0; i<DateVenueChangeArray.length ; i++){
+//     if(DateVenueChangeArray[i].taxHeadCode == "COMMUNITY_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+//       ChangeAmount = DateVenueChangeArray[i].amount
+//     }
+//     if(DateVenueChangeArray[i].taxHeadCode == "CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){
+//       taxes = DateVenueChangeArray[i].amount
+//     }
+//       }
+// }
  
-if(selectedType == "Parks"){
-  for(let i=0; i<DateVenueChangeArray.length ; i++){
-    if(DateVenueChangeArray[i].taxHeadCode == "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
-      ChangeAmount = DateVenueChangeArray[i].amount
-    }
-    if(DateVenueChangeArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
-      taxes = DateVenueChangeArray[i].amount
-    }
-      }
-}
+// if(selectedType == "Parks"){
+//   for(let i=0; i<DateVenueChangeArray.length ; i++){
+//     if(DateVenueChangeArray[i].taxHeadCode == "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+//       ChangeAmount = DateVenueChangeArray[i].amount
+//     }
+//     if(DateVenueChangeArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
+//       taxes = DateVenueChangeArray[i].amount
+//     }
+//       }
+// }
   
+// }
+// console.log("ChangeAmount,taxes",ChangeAmount,taxes)
+let dateVenueChangeArray;
+let getFetchPayment  = get(
+  state,
+  "bookings.fetchPaymentAfterPayment.Payments",
+  "NotFound"
+);
+console.log("getFetchPayment",getFetchPayment)
+
+if(getFetchPayment !== "NotFound"){
+if(getFetchPayment.length >0){
+  dateVenueChangeArray  = get(
+    state,
+    "bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails",
+    "NotFound"
+  );
+  console.log("dateVenueChangeArray--",dateVenueChangeArray)
+
+  totalAmount  = get(
+    state,
+    "bookings.fetchPaymentAfterPayment.Payments[0].totalAmountPaid",
+    "NotFound"
+  );
+  console.log("totalAmount99999--",totalAmount)
+
+
+if(dateVenueChangeArray !== "NotFound" && dateVenueChangeArray !== null && dateVenueChangeArray !== undefined){
+  if(selectedType == "Community Center"){
+    for(let i=0; i<dateVenueChangeArray.length ; i++){
+      if(dateVenueChangeArray[i].taxHeadCode == "COMMUNITY_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+        ChangeAmount = dateVenueChangeArray[i].amount
+      }
+      if(dateVenueChangeArray[i].taxHeadCode == "CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){
+        taxes = dateVenueChangeArray[i].amount
+      }
+        }
+  }
+   
+  if(selectedType == "Parks"){
+    for(let i=0; i<dateVenueChangeArray.length ; i++){
+      if(dateVenueChangeArray[i].taxHeadCode == "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
+        ChangeAmount = dateVenueChangeArray[i].amount
+      }
+      if(dateVenueChangeArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
+        taxes = dateVenueChangeArray[i].amount
+      }
+        }
+  }
+}
 }
 console.log("ChangeAmount,taxes",ChangeAmount,taxes)
+}
 return {
-  ChangeAmount,taxes,userInfo
+  ChangeAmount,taxes,userInfo,totalAmount
 }
 
 }

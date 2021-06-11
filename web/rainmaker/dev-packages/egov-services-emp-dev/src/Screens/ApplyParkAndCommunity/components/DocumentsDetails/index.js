@@ -11,6 +11,7 @@ import Footer from "../../../../modules/footer";
 import get from "lodash/get";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import DocumentList from "../DocumentList";
+import * as _ from "lodash"
 
 const styles = theme => ({
   button: {
@@ -270,8 +271,7 @@ const mapStateToProps = (state) => {
   const { complaints, common, auth, form } = state;
   let documentMap = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject:"";
   let documentMAP2 = documentMap ? documentMap.documentMap:" "
-  let docVal = state.screenConfiguration.preparedFinalObject.documentsUploadRedux ? state.screenConfiguration.preparedFinalObject.documentsUploadRedux[0].mydocstate : "notFound";
- 
+  let docVal = state.screenConfiguration.preparedFinalObject.documentsUploadRedux && !_.isEmpty(state.screenConfiguration.preparedFinalObject.documentsUploadRedux)? state.screenConfiguration.preparedFinalObject.documentsUploadRedux[0].mydocstate : "notFound";
   return {
     documentMap,
     documentMAP2,
