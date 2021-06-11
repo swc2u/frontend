@@ -28,7 +28,7 @@ class BookingCalendar extends React.Component {
       CheckBothDataExist: false,
     };
   }
-
+//availabilityCheckData.bkFromDate
   componentDidMount() {
     console.log("inComponentDidMount");
     const {

@@ -223,8 +223,10 @@ console.log('this.state.idProffType',this.state.idProffType);
                                         mydocstate: false,
                                         documents: [oldDocuments]
                                     };
-        
-                                    discountDocumentsUploadRedux[index] = { ...newDocumentData };
+                                      if(discountDocumentsUploadRedux){
+                                        discountDocumentsUploadRedux[index] = { ...newDocumentData };
+                                      }
+                                     
                                 }else{
                                     let newDocumentData = {
                                         documentType: docType.code,
@@ -235,8 +237,9 @@ console.log('this.state.idProffType',this.state.idProffType);
                                             : false,
                                         mydocstate: false
                                     };
-        
-                                    discountDocumentsUploadRedux[index] = { ...newDocumentData };
+        if(discountDocumentsUploadRedux){
+            discountDocumentsUploadRedux[index] = { ...newDocumentData };
+        }             
                                 }
                             }
                             index++;
@@ -270,8 +273,10 @@ console.log('this.state.idProffType',this.state.idProffType);
                                     mydocstate: false,
                                     documents: [oldDocuments]
                                 };
-    
-                                discountDocumentsUploadRedux[index] = { ...newDocumentData };
+    if(discountDocumentsUploadRedux){
+        discountDocumentsUploadRedux[index] = { ...newDocumentData };
+    }
+                                
                             }else{
                                 let newDocumentData = {
                                     documentType: docType.code,
@@ -282,8 +287,10 @@ console.log('this.state.idProffType',this.state.idProffType);
                                         : false,
                                     mydocstate: false
                                 };
-    
-                                discountDocumentsUploadRedux[index] = { ...newDocumentData };
+    if(discountDocumentsUploadRedux){
+        discountDocumentsUploadRedux[index] = { ...newDocumentData };
+    }
+                                
                             }
                         }
                         index++;
@@ -369,143 +376,146 @@ console.log('this.state.idProffType',this.state.idProffType);
     getUploadCard = (card, key) => {
 
         let { classes, discountDocumentsUploadRedux } = this.props;
-        discountDocumentsUploadRedux.documents = discountDocumentsUploadRedux;
-        let jsonPath = `discountDocumentsUploadRedux[${key}].dropdown.value`;
-        return (
-            <div>
+        if(discountDocumentsUploadRedux){
+            discountDocumentsUploadRedux.documents = discountDocumentsUploadRedux;
+            let jsonPath = `discountDocumentsUploadRedux[${key}].dropdown.value`;
+            return (
                 <div>
-                    <Label
-                        label="BK_MYBK_REQUIRED_DOC_HEADING"
-                        color="#000000"
-                        fontSize="21px"
-                        alignItems="left"
-                        labelClassName={"myDOC"}
-                    />
-                    <Label label="BK_MYBK_DOCUMENT_VALIDATION_MSG"
-                    />
-                    <Grid container={true}>
-                        <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
-                            {discountDocumentsUploadRedux[key] &&
-                                discountDocumentsUploadRedux[key].documents ? (
-                                    <div className={classes.documentSuccess}>
-                                        <Icon>
-                                            <i class="material-icons">done</i>
-                                        </Icon>
-                                    </div>
-                                ) : (
-                                    <div className={classes.documentIcon}>
-                                        <span>{key + 1}</span>
-                                    </div>
+                    <div>
+                        <Label
+                            label="BK_MYBK_REQUIRED_DOC_HEADING"
+                            color="#000000"
+                            fontSize="21px"
+                            alignItems="left"
+                            labelClassName={"myDOCD"}
+                        />
+                        <Label label="BK_MYBK_DOCUMENT_VALIDATION_MSG"
+                        />
+                        <Grid container={true}>
+                            <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
+                                { discountDocumentsUploadRedux && discountDocumentsUploadRedux[key] &&
+                                    discountDocumentsUploadRedux[key].documents ? (
+                                        <div className={classes.documentSuccess}>
+                                            <Icon>
+                                                <i class="material-icons">done</i>
+                                            </Icon>
+                                        </div>
+                                    ) : (
+                                        <div className={classes.documentIcon}>
+                                            <span>{key + 1}</span>
+                                        </div>
+                                    )}
+                            </Grid>
+                            <Grid
+                                item={true}
+                                xs={10}
+                                sm={5}
+                                md={4}
+                                align="left"
+                                className={classes.descriptionDiv}
+                            >
+                                <LabelContainer
+                                    labelKey={getTransformedLocale(card.name)}
+                                    style={styles.documentName}
+                                />
+                                {card.required && requiredIcon}
+                            </Grid>
+                            <Grid item={true}>
+                                {card.dropdown && (
+                                    <TextFieldContainer
+                                        select={true}
+                                        label={{
+                                            labelKey: getTransformedLocale(
+                                                card.dropdown.label
+                                            ),
+                                        }}
+                                        placeholder={{ labelKey: card.dropdown.label }}
+                                        data={card.dropdown.menu}
+                                        optionValue="code"
+                                        optionLabel="label"
+                                        onChange={(event) => this.handleChange(key, event),
+                                            (event) => this.handleChangeTwo(key, event)
+                                        }
+                                        jsonPath={jsonPath}
+                                    />
                                 )}
+                            </Grid>
+                            <Grid item={true} md={4}>
+    
+                        <FormControl style={{ width: '100%' }}>
+                        <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-proof">Proof Type</InputLabel>
+                        <Select
+                          maxWidth={false}
+                          labelId="demo-controlled-open-select-proof"
+                          id="demo-controlled-open-select-label"
+                          open={this.state.SetOpen}
+                        //   required={true}
+                          displayEmpty
+                          onClose={() => this.handleClose()}
+                          onOpen={() => this.handleOpen()}
+                          value={this.state.idProffType}
+                          onChange={(e, value) => this.onbookingChange(e)}
+                        >
+                        <MenuItem  value="" disabled>Select Document</MenuItem>
+                         <MenuItem value="Discount_Document">Discount Document</MenuItem>
+    
+                        </Select>
+                      </FormControl>
+                                </Grid>
+    
+    
+                            <Grid
+                                item={true}
+                                xs={12}
+                                sm={12}
+                                md={3}
+                                className={classes.fileUploadDiv}
+                            >
+                                <UploadSingleFile
+                                    classes={this.props.classes}
+                                    handleFileUpload={(e) =>
+                                        handleFileUpload(e, this.handleDocument, this.props)
+                                    }
+                                    uploaded={
+                                        discountDocumentsUploadRedux && discountDocumentsUploadRedux[key] &&
+                                            discountDocumentsUploadRedux[key].documents
+                                            ? true
+                                            : false
+                                    }
+                                    removeDocument={() => this.removeDocument(key)}
+                                    documents={
+                                        discountDocumentsUploadRedux && discountDocumentsUploadRedux[key] &&
+                                        discountDocumentsUploadRedux[key].documents
+                                    }
+                                    onButtonClick={() => this.onUploadClick(key)}
+                                    inputProps={this.props.inputProps}
+                                    buttonLabel={this.props.buttonLabel}
+    
+                                />
+                            </Grid>
                         </Grid>
-                        <Grid
+                        <Grid container={true}>
+                    <Grid item={true} xs={2} sm={1} md={1}>
+                    </Grid>
+                    <Grid
                             item={true}
                             xs={10}
                             sm={5}
-                            md={4}
+                            md={5}
                             align="left"
-                            className={classes.descriptionDiv}
+    
                         >
-                            <LabelContainer
-                                labelKey={getTransformedLocale(card.name)}
-                                style={styles.documentName}
-                            />
-                            {card.required && requiredIcon}
-                        </Grid>
-                        <Grid item={true}>
-                            {card.dropdown && (
-                                <TextFieldContainer
-                                    select={true}
-                                    label={{
-                                        labelKey: getTransformedLocale(
-                                            card.dropdown.label
-                                        ),
-                                    }}
-                                    placeholder={{ labelKey: card.dropdown.label }}
-                                    data={card.dropdown.menu}
-                                    optionValue="code"
-                                    optionLabel="label"
-                                    onChange={(event) => this.handleChange(key, event),
-                                        (event) => this.handleChangeTwo(key, event)
-                                    }
-                                    jsonPath={jsonPath}
-                                />
-                            )}
-                        </Grid>
-                        <Grid item={true} md={4}>
-
-                    <FormControl style={{ width: '100%' }}>
-                    <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-proof">Proof Type</InputLabel>
-                    <Select
-                      maxWidth={false}
-                      labelId="demo-controlled-open-select-proof"
-                      id="demo-controlled-open-select-label"
-                      open={this.state.SetOpen}
-                    //   required={true}
-                      displayEmpty
-                      onClose={() => this.handleClose()}
-                      onOpen={() => this.handleOpen()}
-                      value={this.state.idProffType}
-                      onChange={(e, value) => this.onbookingChange(e)}
-                    >
-                    <MenuItem  value="" disabled>Select Document</MenuItem>
-                     <MenuItem value="Discount_Document">Discount Document</MenuItem>
-
-                    </Select>
-                  </FormControl>
-                            </Grid>
-
-
-                        <Grid
-                            item={true}
-                            xs={12}
-                            sm={12}
-                            md={3}
-                            className={classes.fileUploadDiv}
-                        >
-                            <UploadSingleFile
-                                classes={this.props.classes}
-                                handleFileUpload={(e) =>
-                                    handleFileUpload(e, this.handleDocument, this.props)
-                                }
-                                uploaded={
-                                    discountDocumentsUploadRedux[key] &&
-                                        discountDocumentsUploadRedux[key].documents
-                                        ? true
-                                        : false
-                                }
-                                removeDocument={() => this.removeDocument(key)}
-                                documents={
-                                    discountDocumentsUploadRedux[key] &&
-                                    discountDocumentsUploadRedux[key].documents
-                                }
-                                onButtonClick={() => this.onUploadClick(key)}
-                                inputProps={this.props.inputProps}
-                                buttonLabel={this.props.buttonLabel}
-
-                            />
+                        <div><h5>Supported Documents: pdf, jpg, png. Max file size: 5MB</h5></div>
                         </Grid>
                     </Grid>
-                    <Grid container={true}>
-                <Grid item={true} xs={2} sm={1} md={1}>
-                </Grid>
-                <Grid
-                        item={true}
-                        xs={10}
-                        sm={5}
-                        md={5}
-                        align="left"
-
-                    >
-                    <div><h5>Supported Documents: pdf, jpg, png. Max file size: 5MB</h5></div>
-                    </Grid>
-                </Grid>
+                    </div>
+    
+    
+    
                 </div>
-
-
-
-            </div>
-        );
+            );
+        }
+       
     };
 
     render() {

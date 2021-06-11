@@ -572,29 +572,40 @@ console.log("timeSlot54234",timeSlot)
       { key: "tenantId", value: userInfo.tenantId },
     ];
 
-    let BillingServiceData = await httpRequest(
-      "billing-service/bill/v2/_search",
-      "_search",
-      reqParams
-    );
+try{
+  let BillingServiceData = await httpRequest(
+    "billing-service/bill/v2/_search",
+    "_search",
+    reqParams
+  );
 
-    console.log("BillingService--abc", BillingServiceData);
-    prepareFinalObject("DateVenueChngeAmount", BillingServiceData);
-    //Bill[2].billDetails[0].billAccountDetails
-    // let BillArray = BillingServiceData.Bill[2].billDetails[0].billAccountDetails
-    // console.log("BillArray-",BillArray)
+  console.log("BillingService--abc", BillingServiceData);
+  prepareFinalObject("DateVenueChngeAmount", BillingServiceData);
+  //Bill[2].billDetails[0].billAccountDetails
+  // let BillArray = BillingServiceData.Bill[2].billDetails[0].billAccountDetails
+  // console.log("BillArray-",BillArray)
 
-    this.setState({
-      AppName:
-        dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-          ? dataforSectorAndCategory.bookingsModelList[0].bkApplicantName
-          : "NA",
-      fullAmountDetail: BillingServiceData.Bill[0], //BillingServiceData.Bill[2],
-      CheckStatus: AppStatus,
-      modifiedFirstAmount: BillingServiceData.Bill[2], //BillingServiceData.Bill[0]
-    });
+  this.setState({
+    AppName:
+      dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+        ? dataforSectorAndCategory.bookingsModelList[0].bkApplicantName
+        : "NA",
+    fullAmountDetail: BillingServiceData.Bill[0], //BillingServiceData.Bill[2],
+    CheckStatus: AppStatus,
+    modifiedFirstAmount: BillingServiceData.Bill[2], //BillingServiceData.Bill[0]
+  });
 
-    prepareFormData("complaints", transformedComplaint);
+  prepareFormData("complaints", transformedComplaint);
+}catch(err){
+ this.props.toggleSnackbarAndSetText(
+    true,
+    {
+      labelName: "Something went wrong.Try Again",
+      labelKey: `Something went wrong.Try Again`
+    },
+    "error"
+  );
+}
     const { complaint } = transformedComplaint;
     fetchApplications({
       applicationNumber: match.params.applicationId,

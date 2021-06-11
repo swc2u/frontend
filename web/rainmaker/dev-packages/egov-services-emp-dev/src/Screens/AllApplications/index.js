@@ -113,19 +113,114 @@ class AllRequests extends Component {
     });
   }; 
   gotoPArkAndCommunityTanker = () => {
-    let {PreviousBookingData ,oldBookingData,prepareFinalObject,clearAvailable,discountOldDoc,previousResidenceProof} = this.props
+    let {PreviousBookingData ,oldBookingData,prepareFinalObject,clearAvailable,discountOldDoc,UploadedDocType,previousResidenceProof,state} = this.props
     let ApplicationData = this.props.bookings;
     let CheckData = this.props.bookings ? (this.props.bookings.applicationData ?(this.props.bookings.applicationData.bookingsModelList.length > 0 ? (this.props.bookings.applicationData.bookingsModelList): 'NA'): 'NA'): "NA"
 //screenConfiguration.preparedFinalObject.PreviousBookingData    
+// let lastBookingData = state.screenConfiguration.preparedFinalObject.hasOwnProperty('PreviousBookingData')
+// console.log("lastBookingData",lastBookingData)
+
+let clearVenueData = get(
+  state,"screenConfiguration.preparedFinalObject.bkBookingData",
+  "NotFound"
+);
+console.log("clearVenueData--ApplicationPage",clearVenueData)
+if(clearVenueData !== "NotFound"){
+  delete state.screenConfiguration.preparedFinalObject.bkBookingData
+}
+
+let applicationData = get(
+  state,
+  "bookings.applicationData",
+  "NotFound"
+);
+console.log("applicationData--in--allApplicationPage",applicationData)
+
+let findDocument;
+findDocument = state.bookings.hasOwnProperty('applicationData')
+console.log("findDocument",findDocument)
+
+if(applicationData !== "NotFound" || findDocument == true){
+  console.log("ComeIncondition--")
+  this.props.clearBookingData(null,true,true)
+  delete state.bookings.applicationData
+}
+
+let lastBookingData = get(
+  state,
+  "screenConfiguration.preparedFinalObject.PreviousBookingData",
+  "NotFound"
+);
+console.log("lastBookingData",lastBookingData)
+
+let documentMap = get(
+  state,
+  "screenConfiguration.preparedFinalObject.documentMap",
+  "NotFound"
+);
+
+console.log("documentMap--opopop",documentMap)
+
+let lastCreatedPaccAppData = get(
+  state,
+  "screenConfiguration.preparedFinalObject.CreatePaccAppData",
+  "NotFound"
+);
+
+let checkDateVenueChange = get(
+  state,
+  "screenConfiguration.preparedFinalObject.EmployeeDateVenueChange",
+  "NotFound"
+);
+if(checkDateVenueChange !== "NotFound"){
+  prepareFinalObject("EmployeeDateVenueChange","NotFound")
+}
+
+// let lastCreatedPaccAppData =  state.screenConfiguration.prepareFinalObject.hasOwnProperty('CreatePaccAppData')
+console.log("lastCreatedPaccAppData",lastCreatedPaccAppData)
+
+let lastCreateAppData = get(
+  state,
+  "screenConfiguration.preparedFinalObject.createAppData",
+  "NotFound"
+);
+
+// let lastCreateAppData = state.screenConfiguration.prepareFinalObject.hasOwnProperty('createAppData')
+console.log("lastCreateAppData",lastCreateAppData)
+//documentMap
+if(documentMap !== "NotFound"){
+  console.log("DeleteDocument")
+  delete state.screenConfiguration.preparedFinalObject.documentMap
+}
+
+if(lastBookingData !== "NotFound"){
+  console.log("DeleteOne")
+  delete state.screenConfiguration.preparedFinalObject.PreviousBookingData
+}
+
+if(lastCreatedPaccAppData !== "NotFound"){
+  console.log("Deletetwo")
+  delete state.screenConfiguration.preparedFinalObject.CreatePaccAppData
+}
+
+if(lastCreateAppData !== "NotFound"){
+  console.log("DeleteThree")
+  delete state.screenConfiguration.preparedFinalObject.createAppData
+}
+
     if(PreviousBookingData !== "NotFound"){
       prepareFinalObject("PreviousBookingData",null)
     }
     if(discountOldDoc !== "NotFound"){
-      prepareFinalObject("discountDocumentsUploadRedux",null)
+      prepareFinalObject("discountDocumentsUploadRedux",{})
     }
     if(previousResidenceProof !== "NotFound"){
-      prepareFinalObject("documentsUploadRedux",null)
+      prepareFinalObject("documentsUploadRedux",{})
     }
+    if(UploadedDocType !== "NotFound"){
+      prepareFinalObject("UploadedDocType",null)
+    }     
+    
     //screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
     if(oldBookingData !== "NotFound"){
       prepareFinalObject("oldAvailabilityCheckData",null)
@@ -134,11 +229,8 @@ class AllRequests extends Component {
       prepareFinalObject("availabilityCheckData",null)
     }
     if(CheckData !== 'NA'){
-      // let newbooking ={...this.props.bookings,applicationData:null} 
-
     this.props.clearBookingData(null,true,true)
       }
-    
     this.props.history.push(`/egov-services/checkavailability_pcc`);
   };
   gotoMcc = () => {
@@ -1426,6 +1518,12 @@ let previousResidenceProof  = get(
   "screenConfiguration.preparedFinalObject.documentsUploadRedux",
   "NotFound"
 );
+let UploadedDocType  = get(
+  state,
+  "screenConfiguration.preparedFinalObject.UploadedDocType",
+  "NotFound"
+);
+
 console.log("previousResidenceProof-",previousResidenceProof)
 
   
@@ -1465,7 +1563,7 @@ console.log("previousResidenceProof-",previousResidenceProof)
     loading,
     transformedComplaints,
     roles,
-    bookings,userInfo,discountOldDoc,previousResidenceProof
+    bookings,userInfo,discountOldDoc,previousResidenceProof,state
   };
 };
 
