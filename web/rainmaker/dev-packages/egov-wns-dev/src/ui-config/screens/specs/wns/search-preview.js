@@ -517,7 +517,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         if(service_ ==='SEWERAGE')
         {
           ReceitdouloadActive = true
-          totalAmountPaid = parseInt(get(data, "WaterConnection[0].waterApplication.totalAmountPaid",0));
+          totalAmountPaid = parseInt(get(data, "dataCalculation.totalAmountPaid",0));
           if(totalAmountPaid>0)
           {
             ReceitdouloadActive = true
