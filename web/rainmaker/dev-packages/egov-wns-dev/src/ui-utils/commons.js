@@ -2801,34 +2801,338 @@ export const swEstimateCalculation = async (queryObject, dispatch) => {
     }
 
 };
+export const epochToYmdDate = et => {
+    if (!et) return null;
+    if (typeof et === "string") return et;
+    let d = new Date(et),
+      month = "" + (d.getMonth() + 1),
+      day = "" + d.getDate(),
+      year = d.getFullYear();
+  
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+  
+    return [year, month, day].join("-");
+  };
 // to download application 
-export const downloadApp = async (state,wnsConnection, type, mode = "download") => {
-    // let estFileStrID = wnsConnection[0].additionalDetails.estimationFileStoreId
-    // let sanFileStrID = wnsConnection[0].additionalDetails.sanctionFileStoreId
+export const downloadApp = async (state,wnsConnection, type, mode = "download",dispatch) => {
 
-    // if (type === 'estimateNotice' && estFileStrID !== undefined && estFileStrID !== null) {
-    //     downloadReceiptFromFilestoreID(estFileStrID, mode)
-    //     return false;
-    // } else if (type === 'sanctionLetter' && sanFileStrID !== undefined && sanFileStrID !== null) {
-    //     downloadReceiptFromFilestoreID(sanFileStrID, mode)
-    //     return false;
-    // }
-    // else 
-    if(type === 'receiptLetter'){
+    if(type === 'receiptLetter' || type === 'ndcLetter' ){
        // console.log(wnsConnection)
-       if(wnsConnection[0].service ==='"SEWERAGE"')
+       if(wnsConnection[0].service ==='SEWERAGE')
        {
 
        }
-       else[
-           
-       ]
+       else  if(wnsConnection[0].service ==='WATER')
+       {
+        const receiptQueryString = [
+            { key: "consumerCodes", value: getQueryArg(window.location.href, "applicationNumber") },
+            { key: "tenantId", value: getQueryArg(window.location.href, "tenantId") }
+        ]
+            const FETCHRECEIPT = {
+            GET: {
+            URL: "/collection-services/payments/_search",
+            ACTION: "_get",
+            },
+            };
+            const DOWNLOADRECEIPT = {
+            GET: {
+            URL: "/pdf-service/v1/_create",
+            ACTION: "_get",
+            },
+            };
+            try{
+                let keyvalue ='ws-bill-receipt' 
+                let KeytenantId = getQueryArg(window.location.href, "tenantId")
+                if(process.env.REACT_APP_NAME === "Citizen")
+                    {
+                        KeytenantId = KeytenantId.split('.')[0]
+                    }
+                    if(type === 'ndcLetter')
+                    {
+                        keyvalue ='ws-bill-receipt-no-due'
+                    }
+                
+                try{
+                    httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
+                      const queryStr = [
+                        { key: "key", value: keyvalue },
+                        { key: "tenantId", value: KeytenantId  }//KeytenantId = receiptQueryString[1].value.split('.')[0]
+                      ]
+                      if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length==0){
+                        console.log("Could not find any receipts"); 
+                        dispatch(
+                                      toggleSnackbar(
+                                        true,
+                                        { labelName: "Could not find any receipts", labelKey: "Could not find any receipts" },
+                                        "warning"
+                                      )
+                                    );  
+                        return;
+                      }
+
+                      else                     
+                      {
+                        let paymentReceiptDate = 0;
+                        let paidAmount =0;
+                        let dueAmount = 0;
+                        let receiptNumber =9;
+                        if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length>0)
+                        {
+                         paymentReceiptDate = epochToYmdDate(get(payloadReceiptDetails, "Payments[0].paymentDetails[0].receiptDate", ''))
+                         paidAmount = get(payloadReceiptDetails, "Payments[0].paymentDetails[0].totalAmountPaid", '')
+                         dueAmount = get(payloadReceiptDetails, "Payments[0].paymentDetails[0].totalDue", '')
+                         receiptNumber  =get(payloadReceiptDetails, "Payments[0].paymentDetails[0].receiptNumber", '') 
+                        }
+                        // call get api to set  WaterConnection details
+                        let applicationNumber = getQueryArg(window.location.href, "applicationNumber")
+                        let queryObject =  [{ key: "tenantId", value: getQueryArg(window.location.href, "tenantId") }, { key: "applicationNumber", value: applicationNumber }]
+                        let div=''
+                        let subDiv=''
+                        let activityType=''
+                        let applicantName=''
+                        let applicantAddress=''
+                        let houseNo=''
+                        let sector =''
+                        let upto =''
+                        let connectionNumber=''
+                        if(applicationNumber.includes("WS"))
+                        {                      
+                       try{
+                    //    const wc_search = {
+                    //      GET: {
+                    //        URL: "/ws-services/wc/_search",
+                    //        ACTION: "_search",
+                    //      },
+                    //    };
+
+
+                         if(wnsConnection && wnsConnection.length>0){
+                           div =get(wnsConnection[0], "div", '')
+                         subDiv =get(wnsConnection[0], "subdiv", '')
+                         activityType =get(wnsConnection[0], "activityType", '')
+                         applicantName =get(wnsConnection[0], "connectionHolders[0].name", '')
+                         applicantAddress =get(wnsConnection[0], "connectionHolders[0].correspondenceAddress", '')
+                         houseNo =get(wnsConnection[0], "property.address.plotNo", '')
+                         sector = get(wnsConnection[0], "property.address.locality.name", '')
+                         upto = epochToYmdDate(get(wnsConnection[0], "waterApplication.auditDetails.lastModifiedTime", ''))
+                         connectionNumber = get(wnsConnection[0], "connectionNo", '')
+                         // set activityType 
+                         switch (activityType) {
+                           case "APPLY_FOR_TEMPORARY_CONNECTION":
+                             activityType ='Temporary Water Connection'
+                             break;
+                             case "NEW_WS_CONNECTION":
+                             activityType ='Regular Water Connection'
+                             break;
+                             case "REGULARWSCONNECTION":
+                             activityType ='Regular Water Connection'
+                             break;
+                             case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
+                             activityType ='Temporary Regular Water Connection'
+                             break;
+                             case "TEMPORARY_WSCONNECTION":
+                             activityType ='Temporary Disconnection'
+                             break;
+                             case "WS_TUBEWELL":
+                             activityType ='New Tubewell Connection'
+                             break;
+                             case "WS_TEMP_TEMP":
+                             activityType ='Temporary to Temporary Conversion'
+                             break;
+                             case "WS_TEMP_REGULAR":
+                             activityType ='Temporary to Regular Conversion'
+                             break;
+                             case "WS_DISCONNECTION":
+                             activityType ='Permanent Disconnection'
+                             break;
+                             case "WS_TEMP_DISCONNECTION":
+                             activityType ='Temporary Disconnection'
+                             break;
+                             case "WS_RENAME":
+                             activityType ='Update Connection Holder Information'
+                             break;
+                             case "WS_METER_UPDATE":
+                             activityType ='Meter Update'
+                             break;
+                             case "WS_CONVERSION":
+                             activityType ='Tariff Change'
+                             break;
+                             case "WS_REACTIVATE":
+                             activityType ='Reactive Connection'
+                             break;
+                             case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
+                             activityType ='Temporary to Temporary Conversion'
+                             break;
+               
+                         }
+                         let billGeneration_ =[
+                         {
+                           
+                            div: div,
+                            subDiv:subDiv,
+                            applicationNumber:applicationNumber,
+                           receiptNumber:receiptNumber,
+                           activityType: activityType,
+                           applicantName: applicantName,
+                           applicantAddress: applicantAddress,
+                           paymentReceiptDate:paymentReceiptDate,
+                           dueAmount: dueAmount,
+                           paidAmount:paidAmount,
+                           status:'Payment complete',
+                         }
+                       ]
+                       if(type ==='ndcLetter')
+                       {
+
+                         billGeneration_ =[
+                            {
+                              
+                                applicationNo: applicationNumber,
+                                dated:paymentReceiptDate,
+                                applicantName:applicantName,  
+                                houseNo: houseNo,
+                                sector:sector,
+                                rs: paidAmount,
+                                upto:upto,
+                                accountNo:connectionNumber,
+                                receiptNo:receiptNumber,                                
+                                date:paymentReceiptDate,
+                                division:subDiv,
+                            }
+                          ]
+
+                       }
+                   
+                       
+                         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { WSReceiptRequest: billGeneration_ }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+                         .then(res => {
+                           res.filestoreIds[0]
+                           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
+                             res.filestoreIds.map(fileStoreId=>{
+                               downloadReceiptFromFilestoreID(fileStoreId,"download",KeytenantId)
+                             })          
+                           }else{
+                             console.log("Error In Receipt Download");        
+                           }         
+                         });
+                     
+                      
+                                    
+                         }
+                         else{
+                           console.log("Error In Receipt Download");        
+                         }         
+                      
+                       //
+                     }
+                     catch(error)
+                            {
+                              dispatch(
+                                toggleSnackbar(
+                                  true,
+                                  { labelName: error.message, labelKey: error.message },
+                                  "error"
+                                )
+                              );
+                              console.log(error)
+                    
+                            }
+                        }
+                        else if(applicationNumber.includes("SW"))
+                        {
+                       
+                     const wswc_search = {
+                       GET: {
+                         URL: "/sw-services/swc/_search",
+                         ACTION: "_search",
+                       },
+                     };
+                     httpRequest("post", wswc_search.GET.URL, wswc_search.GET.ACTION, queryObject, [], { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+                     .then(res => {
+                       res.SewerageConnections[0]
+                       if(res&&res.SewerageConnections&&res.SewerageConnections.length>0){
+                         div =get(res, "SewerageConnections[0].div", '')
+                       subDiv =get(res, "SewerageConnections[0].subdiv", '')
+                       activityType =get(res, "SewerageConnections[0].activityType", '')
+                       applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
+                       applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+                       if(activityType === null)
+                       {
+                         activityType = "Sewarage Connection"
+                       }
+                       let billGeneration_ =[
+                         {
+                           
+                           div: div,
+                           subDiv:subDiv,
+                           applicationNumber:applicationNumber,
+                           receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
+                           activityType: activityType,
+                           applicantName: applicantName,
+                           applicantAddress: applicantAddress,
+                           paymentReceiptDate:paymentReceiptDate,
+                           dueAmount: dueAmount,
+                           paidAmount:paidAmount,
+                           status:'Payment complete',
+                         }
+                       ]
+                         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { WSReceiptRequest: billGeneration_ }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+                         .then(res => {
+                           res.filestoreIds[0]
+                           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
+                             res.filestoreIds.map(fileStoreId=>{
+                               downloadReceiptFromFilestoreID(fileStoreId,"download",KeytenantId)
+                             })          
+                           }else{
+                             console.log("Error In Receipt Download");        
+                           }         
+                         });
+                                  
+                       }else{
+                         console.log("Error In Receipt Download");        
+                       }         
+                     });
+                        }
+               
+                      }
+
+                      
+                     
+                    })
+                   }
+                   catch(error)
+                   {
+                     
+                     console.log(error)
+                     dispatch(
+                                  toggleSnackbar(
+                                    true,
+                                    { labelName: error.message, labelKey: error.message },
+                                    "error"
+                                  )
+                                );  
+                   }
+
+            }
+            catch (error) {
+                console.log(error)
+                dispatch(
+                              toggleSnackbar(
+                                true,
+                                { labelName: error.message, labelKey: error.message },
+                                "error"
+                              )
+                            );  
+                //alert('Some Error Occured while downloading Receipt!');
+              }
+
+       }
+      
         
 
     }
-    else{
-
-    
+    else{    
 
     let tenantName = wnsConnection[0].property.tenantId;
     tenantName = tenantName.split('.')[1];
@@ -2973,7 +3277,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
                     }
                 }
                 obj = {
-                    WaterConnection: wnsConnection
+                    WaterConnection: WaterConnection
                 }
                // wnsConnection[0].connectionExecutionDate = 
                 set( wnsConnection, `connectionExecutionDate`, convertEpochToDate(wnsConnection[0].connectionExecutionDate));
@@ -2989,12 +3293,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
                 res.filestoreIds[0]
                 if (res && res.filestoreIds && res.filestoreIds.length > 0) {
                     res.filestoreIds.map(fileStoreId => {
-                        if (type === "sanctionLetter") {
-                            store.dispatch(prepareFinalObject("WaterConnection[0].additionalDetails.sanctionFileStoreId", fileStoreId));
-                        } else if (type === "estimateNotice") {
-                            store.dispatch(prepareFinalObject("WaterConnection[0].additionalDetails.estimationFileStoreId", fileStoreId));
-                        }
-                        downloadReceiptFromFilestoreID(fileStoreId, mode,getTenantIdCommon() !== null?getTenantIdCommon():getTenantId())
+                        downloadReceiptFromFilestoreID(fileStoreId, mode,KeytenantId)
                     })
                 } else {
                     console.log("Error In Download");

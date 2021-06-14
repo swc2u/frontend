@@ -93,6 +93,7 @@ import {
   {pensionDataUpdate:pensionDataUpdate},
   {IsCalculate:IsCalculate},
   {Isletter:Isletter},
+  {Isletterdoc:Isletterdoc},
 
  ]
 

@@ -506,46 +506,79 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
 
     setActionItems(action, obj);
     loadReceiptGenerationData(applicationNumber, tenantId);
-    if(processInstanceAppStatus==="CONNECTION_ACTIVATED" || processInstanceAppStatus==="SEWERAGE_CONNECTION_ACTIVATED"){
-      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.visible",true );
-      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",true );
-      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",true );
-      let action = false
-      let service_ = getQueryArg(window.location.href, "service");
-      if(service_ ==='SEWERAGE')
-      {
-        action = true
-      }
-      else if(service_ ==='WATER')
-      {
-        action = false
 
-      }
+
+    //?
+    //set receipt download button
+    let ReceitdouloadActive = false
+    let totalAmountPaid = 0 
+        
+        let service_ = getQueryArg(window.location.href, "service");
+        if(service_ ==='SEWERAGE')
+        {
+          ReceitdouloadActive = true
+          totalAmountPaid = parseInt(get(data, "WaterConnection[0].waterApplication.totalAmountPaid",0));
+          if(totalAmountPaid>0)
+          {
+            ReceitdouloadActive = true
+          }
+          else
+          {
+            ReceitdouloadActive = false;
+
+          }
+        }
+        else if(service_ ==='WATER')
+        {          
+          totalAmountPaid = parseInt(get(data, "WaterConnection[0].waterApplication.totalAmountPaid",0));
+          if(totalAmountPaid>0)
+          {
+            ReceitdouloadActive = true
+          }
+  
+        }
+       // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.visible",ReceitdouloadActive ); 
+          dispatch(
+          handleField(
+          "search-preview",
+          "components.div.children.headerDiv.children.helpSection",
+          "visible",
+          ReceitdouloadActive
+          )
+          );
+    //
+
+    //?
+    // if(processInstanceAppStatus==="CONNECTION_ACTIVATED" || processInstanceAppStatus==="SEWERAGE_CONNECTION_ACTIVATED"){
+    //   // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.visible",true );
+    //   // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",true );
+    //   // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",true );
+
       
-      dispatch(
-        handleField(
-          "search-preview",
-          "components.div.children.headerDiv.children.helpSection",
-          "visible",
-          action
-        )
-      );
+    //   dispatch(
+    //     handleField(
+    //       "search-preview",
+    //       "components.div.children.headerDiv.children.helpSection",
+    //       "visible",
+    //       action
+    //     )
+    //   );
 
-    }
-    else{
-      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.visible",false );
-      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",false );
-      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",false );
-      dispatch(
-        handleField(
-          "search-preview",
-          "components.div.children.headerDiv.children.helpSection",
-          "visible",
-          false
-        )
-      );
+    // }
+    // else{
+    //   // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.visible",false );
+    //   // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",false );
+    //   // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",false );
+    //   dispatch(
+    //     handleField(
+    //       "search-preview",
+    //       "components.div.children.headerDiv.children.helpSection",
+    //       "visible",
+    //       false
+    //     )
+    //   );
 
-    }
+    // }
   }
 
 
@@ -771,9 +804,27 @@ const screenConfig = {
     // if (status !== "pending_payment") {
     //   set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.viewBreakupButton.visible", false);
     // }
+    let businessService = "SW_SEWERAGE"
+    if(applicationNumber)
+    {
+      if(applicationNumber.includes("SW"))
+      {
+        businessService = "SW_SEWERAGE"
+
+      }
+      else if(applicationNumber.includes("WS"))
+      {
+        businessService = "REGULARWSCONNECTION"
+      }
+    }
+    if(localStorage.getItem("wns_workflow")){
+      businessService = localStorage.getItem("wns_workflow")
+
+    }
+    
     const serviceModuleNameCurrent = service === "WATER" ? 
-    (window.localStorage.getItem("wns_workflow")===null ? "REGULARWSCONNECTION":  window.localStorage.getItem("wns_workflow"))
-    :"SW_SEWERAGE";
+    (window.localStorage.getItem("wns_workflow")===null ? businessService:  window.localStorage.getItem("wns_workflow"))
+    :businessService;
     const queryObject = [
       { key: "tenantId", value: tenantId },
       { key: "businessServices", value: serviceModuleNameCurrent }
@@ -957,6 +1008,7 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
       set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
       //set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.visible",false );
     }
+    
 
     // to set documents 
     if (payload.WaterConnection[0].documents !== null && payload.WaterConnection[0].documents !== "NA") {

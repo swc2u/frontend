@@ -295,13 +295,31 @@ class WorkFlowContainer extends React.Component {
               || WaterConnection[0].activityType==='TEMPORARY_DISCONNECTION'
               || WaterConnection[0].activityType==='PERMANENT_DISCONNECTION'
               ){
+                 if(WaterConnection[0].waterApplicationType === 'TEMPORARY' && status ==='REJECTED')
+              {
+                actions = actions.filter(item => item.buttonLabel !== 'PERMANENT_DISCONNECTION' 
+                                                &&  item.buttonLabel !== 'TEMPORARY_DISCONNECTION'
+                                                && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                                                &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
+                                               // && item.buttonLabel !=='UPDATE_METER_INFO'
+                                                &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
+
+              }
+              else if(WaterConnection[0].waterApplicationType === 'REGULAR' && status ==='REJECTED')
+              {
                 actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
                                               && item.buttonLabel !=='REACTIVATE_CONNECTION'
                                              // && item.buttonLabel !=='UPDATE_METER_INFO'
                                               &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
 
               }
-              if(WaterConnection[0].waterApplicationType === 'TEMPORARY' && status ==='REJECTED')
+                // actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
+                //                               && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                //                              // && item.buttonLabel !=='UPDATE_METER_INFO'
+                //                               &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
+
+              }
+              else if(WaterConnection[0].waterApplicationType === 'TEMPORARY' && status ==='REJECTED')
               {
                 actions = actions.filter(item => item.buttonLabel !== 'PERMANENT_DISCONNECTION' 
                                                 &&  item.buttonLabel !== 'TEMPORARY_DISCONNECTION'

@@ -148,7 +148,7 @@ export const otherDetails = (data) => {
         pattern: getPattern("Date"),
         jsonPath: "ProcessInstances[0].employeeOtherDetails.dateOfContingent",
         props: {
-          className:"applicant-details-error",
+      className:"applicant-details-error",
          
         }
       }),
@@ -203,7 +203,7 @@ export const otherDetails = (data) => {
       sm: 4,
       align: "left"
     },
-    visible: data[5].Isletterdoc,
+    visible: data[6].Isletterdoc,
     props: {
       variant: "contained",
       color: "primary",
@@ -238,7 +238,7 @@ export const otherDetails = (data) => {
       sm: 4,
       align: "left"
     },
-    visible: data[5].Isletterdoc,
+    visible: data[6].Isletterdoc,
     props: {
       variant: "contained",
       color: "primary",

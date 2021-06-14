@@ -143,7 +143,7 @@ export const otherDetails = (data) => {
       },
       required: true,
       props: {
-        disabled: data[6].IsClose,       
+        disabled: data[7].IsClose,       
       },
      pattern: getPMSPattern("WFComment"),
       jsonPath: "ProcessInstances[0].comment"
@@ -219,7 +219,7 @@ export const otherDetails = (data) => {
       sm: 4,
       align: "left"
     },
-    visible: data[5].Isletterdoc,
+    visible: data[6].Isletterdoc,
     props: {
       variant: "contained",
       color: "primary",
@@ -254,7 +254,7 @@ export const otherDetails = (data) => {
       sm: 4,
       align: "left"
     },
-    visible: data[5].Isletterdoc,
+    visible: data[6].Isletterdoc,
     props: {
       variant: "contained",
       color: "primary",

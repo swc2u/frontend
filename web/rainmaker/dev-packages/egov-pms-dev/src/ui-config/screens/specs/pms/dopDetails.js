@@ -89,8 +89,9 @@ let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
   {pensionCalculation:pensionCalculation},
   {employeeLeaveUpdate:employeeLeaveUpdate},
   {pensionDataUpdate:pensionDataUpdate},
-  {IsCalculate:IsCalculate},
+  {IsCalculate:IsCalculate},  
   {Isletter:Isletter},
+  {Isletterdoc:Isletterdoc},
 
  ]
 

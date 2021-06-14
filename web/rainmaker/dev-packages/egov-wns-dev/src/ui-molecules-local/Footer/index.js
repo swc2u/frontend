@@ -81,7 +81,8 @@ class Footer extends React.Component {
           // if(btnName.includes(item.buttonLabel))
           //     window.localStorage.setItem("WNS_STATUS",item.buttonLabel);
         }
-      setRoute(url);
+      //setRoute(url);
+      window.location.href =url
       return;
     }
   
