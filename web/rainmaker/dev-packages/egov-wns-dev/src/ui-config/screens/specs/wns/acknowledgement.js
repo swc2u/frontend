@@ -666,15 +666,22 @@ export const downloadPrintContainer = (
     
     case "PENDING_FOR_CONNECTION_ACTIVATION_":
     case "SEWERAGE_CONNECTION_ACTIVATED":
-    case "CONNECTION_ACTIVATED":
+    case "CONNECTION_ACTIVATED_":
       // downloadMenu = [sanctionDownloadObject, wsEstimateDownloadObject, applicationDownloadObject];
       // printMenu = [sanctionPrintObject, wsEstimatePrintObject, applicationPrintObject];
       downloadMenu = [applicationDownloadObject];
       printMenu = [applicationPrintObject];
-      const { WaterConnection, DocumentsData } = state.screenConfiguration.preparedFinalObject;
+      const { WaterConnection, DocumentsData ,dataCalculation} = state.screenConfiguration.preparedFinalObject;
       if(WaterConnection && WaterConnection[0])
       {
-        const totalAmountPaid = parseInt(get(WaterConnection[0], "waterApplication.totalAmountPaid",0));
+        let totalAmountPaid = parseInt(get(WaterConnection[0], "waterApplication.totalAmountPaid",0));
+
+        if(WaterConnection[0].service ==='SEWERAGE')
+        {
+          totalAmountPaid = parseInt(get(dataCalculation, "totalAmountPaid",0));
+
+        }
+
         if(totalAmountPaid>0)
         {
           downloadMenu = [applicationDownloadObject,ReceiptDownloadObject];

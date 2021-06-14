@@ -2819,11 +2819,11 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
 
     if(type === 'receiptLetter' || type === 'ndcLetter' ){
        // console.log(wnsConnection)
-       if(wnsConnection[0].service ==='SEWERAGE')
+       if(wnsConnection[0].service ==='SEWERAGE_')
        {
 
        }
-       else  if(wnsConnection[0].service ==='WATER')
+       else  if(wnsConnection[0].service ==='WATER' || wnsConnection[0].service ==='SEWERAGE')
        {
         const receiptQueryString = [
             { key: "consumerCodes", value: getQueryArg(window.location.href, "applicationNumber") },
@@ -3139,8 +3139,8 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
 
     wnsConnection[0].tenantName = tenantName.toUpperCase();
     const appNo = wnsConnection[0].applicationNo;
-
-    let queryStr = [{ key: "tenantId", value: getTenantIdCommon() !== null?getTenantIdCommon():getTenantId() }];
+let KeytenantId = getTenantIdCommon() !== null?getTenantIdCommon():getTenantId() 
+    let queryStr = [{ key: "tenantId", value:KeytenantId }];
     let apiUrl, appService, estKey, queryObjectForEst
     if (wnsConnection[0].service === "WATER") {
 
@@ -3300,7 +3300,14 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                 }
 
             });
-    } catch (exception) {
+    } catch (error) {
+        dispatch(
+            toggleSnackbar(
+              true,
+              { labelName: error.message, labelKey: error.message },
+              "error"
+            )
+          );
         alert('Some Error Occured while downloading!');
     }
 }
