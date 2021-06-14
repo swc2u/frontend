@@ -219,6 +219,7 @@ class IntegrationReactSelect extends React.Component {
             label: label,
             InputLabelProps: inputLabelProps,
             required: required,
+            disabled:this.props.disabled,
             fullWidth: fullwidth
           }}
           menuProps={{
@@ -228,6 +229,7 @@ class IntegrationReactSelect extends React.Component {
           components={components}
           value={value ? value : this.state.single}
           placeholder={placeholder}
+          disabled={this.props.disabled}
           {...rest}
           onChange={this.handleChange("single")}
         />

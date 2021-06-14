@@ -171,7 +171,60 @@ if(validateDocumentField)
   return validateDocumentField;
 };
 
+const propertyUpdateCitizen = async (state, dispatch) => {
 
+  let applicationStatus =get(
+    state,
+    "screenConfiguration.preparedFinalObject.applyScreen.applicationStatus"
+  );
+    if(applicationStatus ==='PENDING_FOR_CITIZEN_ACTION')
+    {
+
+    let propertyData = get(
+      state,
+      "screenConfiguration.preparedFinalObject.applyScreen.property"
+    );
+    let tenantId = get(
+      state,
+      "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
+    );
+    let doorNo =propertyData.address.doorNo
+    if(doorNo.length ===1)
+    {
+      doorNo =`000${doorNo}` 
+    }
+    else if(doorNo.length ===2)
+    {
+      doorNo =`00${doorNo}` 
+    } 
+    else if(doorNo.length ===3)
+    {
+      doorNo =`0${doorNo}` 
+    } 
+    set(propertyData, "address.doorNo", doorNo.toUpperCase());
+    propertyData.landArea = parseInt(propertyData.landArea);
+    propertyData.totalConstructedArea = parseInt(propertyData.landArea);
+    propertyData.tenantId = tenantId;
+    //set usage category
+    let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
+    let subusageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+    if(usageCategory.split('.').length ===1)
+    {
+    //st
+    set(propertyData, "usageCategory", subusageCategory);
+
+    }
+    if(subusageCategory.split('.').length ===2)
+    {
+    //set 
+    set(propertyData, "usageCategory", subusageCategory);
+    }
+
+    set(propertyData, "creationReason", "UPDATE");
+    let response_ = await propertyUpdate(state, dispatch,propertyData)
+  }
+
+}
 const getMdmsData = async (state, dispatch) => {
   let tenantId = get(
     state.screenConfiguration.preparedFinalObject,
@@ -627,10 +680,137 @@ else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER
     console.log("errrr")
   }
 }
+else if (wnsStatus && wnsStatus === "TEMPORARY_DISCONNECTION")
+{
+  const isPropertyValid = validateFields(
+    "components.div.children.formwizardFirstStep.children.commentTempSectionDetails.children.cardContent.children.propertyTempIDDetails.children.viewTwo.children",
+    state,
+    dispatch,
+    "apply"
+  );
+  const isCommentValid = validateFields(
+    "components.div.children.formwizardFirstStep.children.commentTempSectionDetails.children.cardContent.children.commentDetails.children.CommentDetails.children",
+    state,
+    dispatch,
+    "apply"
+  );
+
+  if(!isPropertyValid || !isCommentValid){
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_REQUIRED_FIELDS",
+        labelName: "Please fill Required details"
+      },
+        "warning"
+      )
+    )
+    return;
+  }
+  else if(1===1){
+    let subusageCategory_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+    if(!subusageCategory_)
+   {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_SUB_USAGE_TYPE_VALIDATION",
+        labelName: "Please select property sub usage type"
+      },
+        "warning"
+      )
+    )
+    return ;  
+
+
+   }
+  
+    
+  }
+
+
+ 
+  removingDocumentsWorkFlow(state, dispatch) ;
+  prepareDocumentsUploadData(state, dispatch);
+  try{
+    // call api property search then property-services/property/_update  
+    let queryObject = [];//[{ key: "tenantId", value: tenantId }];
+    let searchScreenObject = get(state.screenConfiguration.preparedFinalObject, "searchScreen", {});
+    for (var key in searchScreenObject) {
+     if (searchScreenObject.hasOwnProperty(key) && searchScreenObject[key].trim() !== "") {
+       queryObject.push({ key: key, value: searchScreenObject[key].trim() });
+     }
+   }
+    let response = await getPropertyResults(queryObject, dispatch);
+    if (response && response.Properties) {
+     if(response.Properties[0].status === 'INACTIVE'){
+      if(localStorage.getItem("WNS_STATUS")){
+        window.localStorage.removeItem("WNS_STATUS");
+    }
+       dispatch(toggleSnackbar(true, { labelKey: "ERR_WS_PROP_STATUS_INACTIVE", labelName: "Property Status is INACTIVE" }, "warning"));
+     }else{
+       let propertyData = response.Properties[0];
+       // let contractedCorAddress = "";
+        propertyData = get(
+          state,
+          "screenConfiguration.preparedFinalObject.applyScreen.property"
+        );
+        let tenantId = get(
+          state,
+          "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
+        );
+    dispatch(prepareFinalObject("applyScreen.property", propertyData));
+
+    propertyData.tenantId = tenantId;
+
+    //set usage category
+    let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
+    let subusageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+    if(usageCategory.split('.').length ===1)
+    {
+      //st
+      set(propertyData, "usageCategory", subusageCategory);
+
+    }
+    if(subusageCategory.split('.').length ===2)
+    {
+      //set 
+      set(propertyData, "usageCategory", subusageCategory);
+    }
+
+    // end set usage category
+    // propertyPayload.landArea = parseInt(propertyPayload.landArea);
+    // propertyPayload.totalConstructedArea = parseInt(propertyPayload.landArea);
+    set(propertyData, "creationReason", "UPDATE");
+    let response_ = await propertyUpdate(state, dispatch,propertyData)
+    if(response_)
+    {
+    let abc = await applyForWater(state, dispatch);
+    window.localStorage.setItem("ActivityStatusFlag","true");
+    }
+    else{
+      if(localStorage.getItem("WNS_STATUS")){
+        window.localStorage.removeItem("WNS_STATUS");
+    }
+    return;
+    }
+     }
+   }
+
+  }catch (err){
+    console.log("errrr")
+    if(localStorage.getItem("WNS_STATUS")){
+      window.localStorage.removeItem("WNS_STATUS");
+  }
+  dispatch(toggleSnackbar(true, { labelName: err.message }, "error"));
+  return false;
+  }
+
+}
 else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
                       wnsStatus === "WS_REACTIVATE"||                     
                       wnsStatus === "WS_DISCONNECTION"||
-                      wnsStatus === "TEMPORARY_DISCONNECTION"||                     
+                     // wnsStatus === "TEMPORARY_DISCONNECTION"||                     
                       wnsStatus === "WS_TEMP_DISCONNECTION"||
                       wnsStatus === "PERMANENT_DISCONNECTION")){
   const iswaterConnFomValid = validateFields(
@@ -1559,7 +1739,11 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       }
 
     }
-  
+  //?
+  // property update if PENDING_FOR_CITIZEN_ACTION
+  propertyUpdateCitizen(state,dispatch)
+
+  //?
     
     
     prepareDocumentsUploadData(state, dispatch);
@@ -1570,19 +1754,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     if (moveToReview(state, dispatch)) {
       await pushTheDocsUploadedToRedux(state, dispatch);
       isFormValid = true; hasFieldToaster = false;
-      const wnsStatus =  window.localStorage.getItem("WNS_STATUS"); 
-      // if(wnsStatus){
-      //   switch(wnsStatus){
-      //     case "UPDATE_CONNECTION_HOLDER_INFO" :   dispatch(prepareFinalObject("WaterConnection[0].activityType", "UPDATE_CONNECTION_HOLDER_INFO")); break;
-      //     case "REACTIVATE_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "REACTIVATE_CONNECTION")); break;
-      //     case "TEMPORARY_DISCONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "TEMPORARY_DISCONNECTION")); break;
-      //     case "APPLY_FOR_REGULAR_INFO":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_REGULAR_INFO")); break;
-      //     case "PERMANENT_DISCONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "PERMANENT_DISCONNECTION")); break;
-      //     case "CONNECTION_CONVERSION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "CONNECTION_CONVERSION")); break;
-      //   }
-      // }
-
-      //if(RESUBMIT_APPLICATION)
+      const wnsStatus =  window.localStorage.getItem("WNS_STATUS");
       let water = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
       let sewerage = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
       let tubewell = get(state.screenConfiguration.preparedFinalObject, "applyScreen.tubewell", false);

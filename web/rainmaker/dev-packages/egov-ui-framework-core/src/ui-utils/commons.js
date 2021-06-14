@@ -213,9 +213,17 @@ export const replaceStrInPath = (inputString, search, replacement) => {
 };
 
 export const getFileUrlFromAPI = async (fileStoreId,tenantId) => {
+
+  if(process.env.REACT_APP_NAME !== "Citizen")
+  {
+    tenantId = tenantId
+  }
+  else{
+    tenantId = tenantId || commonConfig.tenantId.length > 2 ? commonConfig.tenantId.split('.')[0] : commonConfig.tenantId
+  }
   const queryObject = [
   	//{ key: "tenantId", value: tenantId||commonConfig.tenantId },
-    { key: "tenantId", value: tenantId || commonConfig.tenantId.length > 2 ? commonConfig.tenantId.split('.')[0] : commonConfig.tenantId },
+    { key: "tenantId", value: tenantId },
     { key: "fileStoreIds", value: fileStoreId }
   ];
   try {

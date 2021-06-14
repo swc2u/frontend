@@ -203,7 +203,7 @@ export const otherDetails = (data) => {
       sm: 4,
       align: "left"
     },
-    visible: data[5].Isletterdoc,
+    visible: data[6].Isletterdoc,
     props: {
       variant: "contained",
       color: "primary",
@@ -238,7 +238,7 @@ export const otherDetails = (data) => {
       sm: 4,
       align: "left"
     },
-    visible: data[5].Isletterdoc,
+    visible: data[6].Isletterdoc,
     props: {
       variant: "contained",
       color: "primary",

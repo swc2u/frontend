@@ -182,28 +182,40 @@ export const searchApplications = getCommonCard({
         {
           case"NEW_WS_CONNECTION":
           businessServices = "REGULARWSCONNECTION"
+          break;
           case"REACTIVATE_CONNECTION":
           businessServices = "WS_REACTIVATE"
+          break;
           case"CONNECTION_CONVERSION":
           businessServices = "WS_CONVERSION"
+          break;
           case"APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
           businessServices = "WS_TEMP_REGULAR"
+          break;
           case"TEMPORARY_DISCONNECTION":
           businessServices = "WS_TEMP_DISCONNECTION"
+          break;
           case"PERMANENT_DISCONNECTION":
           businessServices = "WS_DISCONNECTION"
+          break;
           case"UPDATE_CONNECTION_HOLDER_INFO":
           businessServices = "WS_RENAME"
+          break;
           case"APPLY_FOR_TEMPORARY_CONNECTION":
           businessServices = "TEMPORARY_WSCONNECTION"
+          break;
           case"UPDATE_METER_INFO":
           businessServices = "WS_METER_UPDATE"
+          break;
           case"NEW_TUBEWELL_CONNECTION":
           businessServices = "WS_TUBEWELL"
+          break;
           case"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
           businessServices = "WS_TEMP_TEMP"
+          break;
           case"SW_SEWERAGE":
           businessServices = "SW_SEWERAGE"
+          break;
 
         }
         let swSectorList = state.screenConfiguration.preparedFinalObject.applyScreenMdmsData1['ws-services-masters'].swSectorList

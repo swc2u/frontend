@@ -53,6 +53,13 @@ const employeeSearchResults = {
   uiFramework: "material-ui",
   name: "search",
   beforeInitScreen: (action, state, dispatch) => {
+    // let refresh = false
+    // if(!refresh)
+    // {
+    //   refresh = true;
+    //   window.location.href ='search'
+     
+    // }
     getMDMSData(action, dispatch);
     resetFieldsForConnection(state, dispatch);
     resetFieldsForApplication(state, dispatch);

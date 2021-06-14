@@ -10,6 +10,7 @@ import { paymentFailureFooter } from "./acknowledgementResource/paymentFailureFo
 import acknowledgementCard from "./acknowledgementResource/acknowledgementUtils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { loadReceiptGenerationData } from "../utils/receiptTransformer";
+import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
   downloadApp,
   getSearchResultsForSewerage,
@@ -570,7 +571,7 @@ export const downloadPrintContainer = (
     label: { labelKey: "WS_ESTIMATION_NOTICE" },
     link: () => {
       const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
-      downloadApp(state,WaterConnection, 'estimateNotice');
+      downloadApp(state,WaterConnection, 'estimateNotice','download',dispatch);
     },
     leftIcon: "book"
   };
@@ -578,18 +579,41 @@ export const downloadPrintContainer = (
     label: { labelKey: "WS_ESTIMATION_NOTICE" },
     link: () => {
       const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
-      downloadApp(state,WaterConnection, 'estimateNotice', 'print');
+      downloadApp(state,WaterConnection, 'estimateNotice', 'print',dispatch);
     },
     leftIcon: "book"
   };
-  let sanctionDownloadObject = {
+  let ReceiptDownloadObject = {
     label: { labelKey: "WS_RECEIPT_LETTER" },
     link: () => {
       const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
-      const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "To Citizen" : "Department Use";
-      // WaterConnection[0].appUserType = appUserType;
-      // WaterConnection[0].commissionerName = "S.Ravindra Babu";
-      downloadApp(state,WaterConnection, 'receiptLetter');
+      const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "To Citizen" : "Department Use";     
+      downloadApp(state,WaterConnection, 'receiptLetter','download',dispatch);
+    },
+    leftIcon: "receipt"
+  };
+  let ReceiptDownloadPrintObject = {
+    label: { labelKey: "WS_RECEIPT_LETTER" },
+    link: () => {
+      const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
+      const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "To Citizen" : "Department Use";     
+      downloadApp(state,WaterConnection, 'receiptLetter' ,'print',dispatch);
+    },
+    leftIcon: "receipt"
+  };
+  let ndcDownloadObject = {
+    label: { labelKey: "WS_NDC_LETTER" },
+    link: () => {
+      const { WaterConnection } = state.screenConfiguration.preparedFinalObject;  
+      downloadApp(state,WaterConnection, 'ndcLetter','download',dispatch);
+    },
+    leftIcon: "receipt"
+  };
+  let ndcDownloadPrintObject = {
+    label: { labelKey: "WS_NDC_LETTER" },
+    link: () => {
+      const { WaterConnection } = state.screenConfiguration.preparedFinalObject;  
+      downloadApp(state,WaterConnection, 'ndcLetter','print',dispatch);
     },
     leftIcon: "receipt"
   };
@@ -600,7 +624,7 @@ export const downloadPrintContainer = (
       const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "Department Use" : "To Citizen";
       // WaterConnection[0].appUserType = appUserType;
       // WaterConnection[0].commissionerName = "S.Ravindra Babu";
-      downloadApp(state,WaterConnection, 'receiptLetter', 'print');
+      downloadApp(state,WaterConnection, 'receiptLetter', 'print',dispatch);
     },
     leftIcon: "receipt"
   };
@@ -617,7 +641,7 @@ export const downloadPrintContainer = (
         }
       });
       WaterConnection[0].pdfDocuments = filteredDocs;
-      downloadApp(state,WaterConnection, 'application');
+      downloadApp(state,WaterConnection, 'application','download',dispatch);
     },
     leftIcon: "assignment"
   };
@@ -634,38 +658,68 @@ export const downloadPrintContainer = (
         }
       });
       WaterConnection[0].pdfDocuments = filteredDocs;
-      downloadApp(state,WaterConnection, 'application', 'print');
+      downloadApp(state,WaterConnection, 'application', 'print',dispatch);
     },
     leftIcon: "assignment"
   };
   switch (appStatus) {
-    // case "PENDING_FOR_DOCUMENT_VERIFICATION":
-    // case "PENDING_FOR_CITIZEN_ACTION":
-    // case "PENDING_FOR_FIELD_INSPECTION":
-    //   downloadMenu = [applicationDownloadObject];
-    //   printMenu = [applicationPrintObject];
-    //   break;
-    // case "PENDING_APPROVAL_FOR_CONNECTION":
-    // case "PENDING_FOR_PAYMENT":
-    //   downloadMenu = [applicationDownloadObject, wsEstimateDownloadObject];
-    //   printMenu = [applicationPrintObject, wsEstimatePrintObject];
-    //   break;
-    case "PENDING_FOR_CONNECTION_ACTIVATION":
+    
+    case "PENDING_FOR_CONNECTION_ACTIVATION_":
     case "SEWERAGE_CONNECTION_ACTIVATED":
     case "CONNECTION_ACTIVATED":
       // downloadMenu = [sanctionDownloadObject, wsEstimateDownloadObject, applicationDownloadObject];
       // printMenu = [sanctionPrintObject, wsEstimatePrintObject, applicationPrintObject];
       downloadMenu = [applicationDownloadObject];
       printMenu = [applicationPrintObject];
+      const { WaterConnection, DocumentsData } = state.screenConfiguration.preparedFinalObject;
+      if(WaterConnection && WaterConnection[0])
+      {
+        const totalAmountPaid = parseInt(get(WaterConnection[0], "waterApplication.totalAmountPaid",0));
+        if(totalAmountPaid>0)
+        {
+          downloadMenu = [applicationDownloadObject,ReceiptDownloadObject];
+          printMenu = [applicationPrintObject,ReceiptDownloadPrintObject];
+        }
+
+      }
+      let Active_ = false
+      if(downloadMenu.length>0)
+      {
+        Active_ = true
+      }     
+
       // downloadMenu = [applicationDownloadObject, sanctionDownloadObject];
       // printMenu = [applicationPrintObject,sanctionPrintObject];
       break;
-    // case "REJECTED":
-    //   downloadMenu = [applicationDownloadObject];
-    //   printMenu = [applicationPrintObject];
-    //   break;
+    
     default: downloadMenu = [];
       printMenu = [];
+      let NDCDoc = false
+      let WaterConnection_  = state.screenConfiguration.preparedFinalObject.WaterConnection;
+      if(WaterConnection_ && WaterConnection_[0])
+      {
+        const totalAmountPaid = parseInt(get(WaterConnection_[0], "waterApplication.totalAmountPaid",0));
+        if(totalAmountPaid>0)
+        {
+          downloadMenu = [ReceiptDownloadObject];
+          printMenu = [ReceiptDownloadPrintObject];
+
+          if(WaterConnection_[0].activityType ==='TEMPORARY_DISCONNECTION' &&  WaterConnection_[0].property.subusageCategory ==='RESIDENTIAL.GOVERNMENTHOUSING')
+          {
+            NDCDoc = true;
+          }
+
+         if(NDCDoc)
+         {
+          downloadMenu = [ReceiptDownloadObject,ndcDownloadObject];
+          printMenu = [ReceiptDownloadPrintObject,ndcDownloadPrintObject];
+
+         }
+
+        }
+
+      }
+     
       break;
   }
   /** END */

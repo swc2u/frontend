@@ -13,11 +13,14 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
 import set from "lodash/set";
+import {
+  GetMdmsNameBycode
+} from "../utils";
 import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getQueryArg,setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import { footer } from "./applyResource/footer";
-import { getPropertyIDDetails, propertyID, propertyHeader } from "./applyResource/propertyDetails";
+import { getPropertyIDDetails, propertyID, propertyHeader, getTempPropertyIDDetails } from "./applyResource/propertyDetails";
 import { getPropertyDetails } from "./applyResource/property-locationDetails";
 import { getHolderDetails, sameAsOwner, holderHeader ,
    proposedholderHeader, getproposedHolderDetails} from "./applyResource/connectionHolder";
@@ -652,6 +655,18 @@ export const getData = async (action, state, dispatch) => {
       if(combinedArray[0].property.usageCategory !==undefined)
       combinedArray[0].property.usageCategory = combinedArray[0].property.usageCategory.split('.')[0];
       combinedArray[0].property.noOfFloors = String(combinedArray[0].property.noOfFloors);
+      //set locality name
+      let code = combinedArray[0].property.address.locality.code;
+      if(code.length ===1)
+      {
+        code =`0${code}`
+      }
+      combinedArray[0].property.address.locality.code = code
+      if(combinedArray[0].water===true)
+        code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.sectorList",code)   
+        else
+        code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.swSectorList",code)   
+      combinedArray[0].property.address.locality.name = code
       if(combinedArray[0].property.subusageCategory==="RESIDENTIAL.GOVERNMENTHOUSING")
         {
           dispatch(
@@ -662,7 +677,146 @@ export const getData = async (action, state, dispatch) => {
                     true
             )
         );
+        dispatch(
+          handleField(
+                  "apply",
+                  "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+                  "props.value",
+                  "15"
+          )
+      );
+        combinedArray[0].proposedPipeSize = "15";
         }
+        if(combinedArray[0].property.usageCategory !=='NA' )
+        {
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.commentTempSectionDetails.children.cardContent.children.propertyTempIDDetails.children.viewTwo.children.propertyUsageType",
+                    "props.disabled",
+                    true
+            )
+        );
+        }
+        if(combinedArray[0].property.subusageCategory !=='NA' )
+        {
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.commentTempSectionDetails.children.cardContent.children.propertyTempIDDetails.children.viewTwo.children.propertySubUsageType",
+                    "props.disabled",
+                    true
+            )
+        );
+        }
+        
+        //?
+        //disabled field when send back to citizen after initate workflow in bellow condition PENDING_FOR_CITIZEN_ACTION
+        let actionType = getQueryArg(window.location.href, "actionType");
+        let IsEdit = false
+        if(actionType =="APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" || actionType =="APPLY_FOR_TEMPORARY_REGULAR_CONNECTION")
+        {
+          IsEdit =true;
+        }
+        
+        if((combinedArray[0].applicationStatus==="PENDING_FOR_CITIZEN_ACTION") && (combinedArray[0].water===true) || IsEdit=== true)
+        {
+          dispatch(
+          handleField(
+          "apply",
+          "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.waterApplicationType",
+          "props.disabled",
+          true));
+          if(combinedArray[0].proposedPipeSize !=='NA' )
+          {
+            dispatch(
+              handleField(
+              "apply",
+              "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+              "props.disabled",
+              true));
+          }
+          if(combinedArray[0].property.usageCategory !=='NA' )
+          {
+            dispatch(
+              handleField(
+                      "apply",
+                      "components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.propertyUsageType",
+                      "props.disabled",
+                      true
+              )
+          );
+          }
+          if(combinedArray[0].property.subusageCategory !=='NA' )
+          {
+            dispatch(
+              handleField(
+                      "apply",
+                      "components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.propertySubUsageType",
+                      "props.disabled",
+                      true
+              )
+          );
+          }
+          if(combinedArray[0].waterProperty.usageSubCategory !=='NA' && combinedArray[0].waterProperty.usageSubCategory !=='' )
+          {
+            dispatch(
+              handleField(
+                      "apply",
+                      "components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType",
+                      "props.disabled",
+                      true
+              )
+          );
+          }
+          if(combinedArray[0].property.address.locality.name !=='NA' )
+        {
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children.locality",
+                    "props.disabled",
+                    true
+            )
+        );
+        }
+        let IsploatEdit = true
+        if(combinedArray[0].activityType==="APPLY_FOR_TEMPORARY_CONNECTION" || combinedArray[0].activityType==="NEW_WS_CONNECTION")
+        {
+          IsploatEdit = false
+
+        }
+        dispatch(
+        handleField(
+                "apply",
+                "components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children.plotOrHouseOrSurveyNo",
+                "props.disabled",
+                IsploatEdit
+        )
+        );
+        dispatch(
+        handleField(
+              "apply",
+              "components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.propertyFloornumber",
+              "props.disabled",
+              IsploatEdit
+        )
+        );
+
+        }
+
+        
+        
+        
+        // if(combinedArray[0].property.address.locality.name !=='NA' )
+        // {
+        // }
+        // if(combinedArray[0].property.address.locality.name !=='NA' )
+        // {
+        // }
+
+
+        //?
       const {applyScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
       if(applyScreenMdmsData['ws-services-calculation'] !== undefined)
       {
@@ -1079,11 +1233,12 @@ const getApplyScreenChildren = () => {
  if(wnsStatus || ActionType){
   switch(Action){
     case "UPDATE_CONNECTION_HOLDER_INFO" : return {connectionHolderDetails,proposedconnectionHolderDetails }; 
-    case "REACTIVATE_CONNECTION":
-    case "TEMPORARY_DISCONNECTION":
+    case "REACTIVATE_CONNECTION":    
     case "PERMANENT_DISCONNECTION":
     case "UPDATE_METER_INFO" : 
-       return {commentSectionDetails };  
+       return {commentSectionDetails }; 
+    case "TEMPORARY_DISCONNECTION": 
+       return {commentTempSectionDetails }; 
     case "CONNECTION_CONVERSION":
     return {connConversionDetails};
     case "APPLY_FOR_REGULAR_INFO":
@@ -1101,6 +1256,7 @@ const getApplyScreenChildren = () => {
 
 const propertyDetail = getPropertyDetails();
 const propertyIDDetails = getPropertyIDDetails();
+const propertyTempIDDetails = getTempPropertyIDDetails();
 const ownerDetail = getOwnerDetails();
 const MultiownerDetail = getMultipleOwnerDetails();
 //const ownerMulDetail = getMultipleOwnerDetails();
@@ -1302,6 +1458,7 @@ export const connectionHolderDetails = getCommonCard({ holderHeader, sameAsOwner
 export const proposedconnectionHolderDetails = getCommonCard({ proposedholderHeader,  proposedholderDetails })
 export const propertyUsageDetails = getCommonCard({PropertyUsageHeader,propertyUsage});
 export const commentSectionDetails = getCommonCard({commentHeader,commentDetails})
+export const commentTempSectionDetails = getCommonCard({commentHeader,propertyTempIDDetails,commentDetails})
 export const connConversionDetails = getCommonCard({ ConnectionConversionHeader,connectionConversionDetails})
 export const formwizardFirstStep = {
   uiFramework: "custom-atoms",
@@ -1391,7 +1548,16 @@ const screenConfig = {
     }
     else
     {
-      const serviceModuleNameCurrent = localStorage.getItem("wns_workflow")
+      let  serviceModuleNameCurrent = localStorage.getItem("wns_workflow")
+      if(serviceModuleNameCurrent === null)
+      {
+        serviceModuleNameCurrent = getQueryArg(window.location.href, "actionType");
+
+      }
+      if(serviceModuleNameCurrent === null)
+      {
+        serviceModuleNameCurrent ="REGULARWSCONNECTION"
+      }
       const queryObject = [
         { key: "tenantId", value: getQueryArg(window.location.href, "tenantId") },
         { key: "businessServices", value: serviceModuleNameCurrent }

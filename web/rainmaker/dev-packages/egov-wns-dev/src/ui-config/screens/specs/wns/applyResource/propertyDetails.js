@@ -15,6 +15,46 @@ import { propertySearchApiCall } from './functions';
 import { handlePropertySubUsageType, handleNA } from '../../utils';
 
 let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
+const displayTempsubUsageType = (usageType, dispatch, state) => {
+
+  let UsageCategory = get(
+          state.screenConfiguration.preparedFinalObject,
+          "applyScreenMdmsData.PropertyTax.subUsageType"
+        );
+      let  subUsageType=[];
+      UsageCategory.forEach(item=>{
+        if(item.code.split(`${usageType}.`).length==2){
+          subUsageType.push({
+              active:item.active,
+              name:item.name,
+              code:item.code,
+              fromFY:item.fromFY
+            })
+          }
+      });
+      if(subUsageType.length>0)
+      {
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardFirstStep.children.commentTempSectionDetails.children.cardContent.children.propertyTempIDDetails.children.viewTwo.children.propertySubUsageType",
+            "required",
+            true
+          )
+        );
+      }
+      else{
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardFirstStep.children.commentTempSectionDetails.children.cardContent.children.propertyTempIDDetails.children.viewTwo.children.propertySubUsageType",
+            "required",
+            false
+          )
+        );
+      }
+          dispatch(prepareFinalObject("applyScreenMdmsData.subUsageType",subUsageType));
+}
 const displaysubUsageType = (usageType, dispatch, state) => {
 
   let UsageCategory = get(
@@ -117,22 +157,7 @@ export const propertyID = getCommonContainer({
   // }
 })
 
-const propertyDetails = getCommonContainer({
-  // propertyType: getLabelWithValue(
-  //   {
-  //     labelKey: "WS_PROPERTY_TYPE_LABEL"
-  //   },
-  //   {
-  //     jsonPath:
-  //       "applyScreen.property.propertyType",
-  //     callBack: handleNA,
-  //     localePrefix: {
-  //       moduleName: "WS",
-  //       masterName: "PROPTYPE"
-  //     }
-
-  //   }
-  // ),
+const propertyDetails = getCommonContainer({  
 
   propertyUsageType:getSelectField({
       label: { labelKey: "WS_PROPERTY_USAGE_TYPE_LABEL_INPUT" },
@@ -279,63 +304,161 @@ const propertyDetails = getCommonContainer({
     
     }
   },
-  // propertyUsageType: getLabelWithValue(
-  //   {
-  //     labelKey: "WS_PROPERTY_USAGE_TYPE_LABEL"
-  //   },
-  //   {
-  //     jsonPath: "applyScreen.property.usageCategory",
-  //     callBack: handleNA,
-  //     localePrefix: {
-  //       moduleName: "WS",
-  //       masterName: "PROPUSGTYPE"
-  //     }
-  //   }
-  // ),
-  // propertySubUsageType: getLabelWithValue(
-  //   {
-  //     labelKey: "WS_PROPERTY_SUB_USAGE_TYPE_LABEL",
-  //     labelName: "Property Sub Usage Type"
-  //   },
-  //   {
-  //     jsonPath: "applyScreen.property.units[0].usageCategory",
-  //     callBack: handlePropertySubUsageType,
-  //     localePrefix: {
-  //       moduleName: "WS",
-  //       masterName: "PROPSUBUSGTYPE"
-  //     }
-  //   }
-  // ),
-  // plotSize: getLabelWithValue(
-  //   {
-  //     labelKey: "WS_PROP_DETAIL_PLOT_SIZE_LABEL"
-  //   },
-  //   {
-  //     jsonPath: "applyScreen.property.landArea",
-  //     callBack: handleNA
+ 
+})
+const propertyDetailsTemp = getCommonContainer({  
 
+  propertyUsageType:getSelectField({
+      label: { labelKey: "WS_PROPERTY_USAGE_TYPE_LABEL_INPUT" },
+      placeholder: { labelKey: "WS_PROPERTY_USAGE_TYPE_LABEL_INPUT_PLACEHOLDER" },
+      required: true,
+      sourceJsonPath: "applyScreenMdmsData.PropertyTax.UsageType",
+      gridDefination: { xs: 12, sm: 6 },
+     // errorMessage: "ERR_INVALID_BILLING_PERIOD",
+      jsonPath: "applyScreen.property.usageCategory",
+      props: {
+        optionValue: "code",
+        optionLabel: "name",
+        disabled: IsEdit
+      },
+      beforeFieldChange: async (action, state, dispatch) => {
+        displayTempsubUsageType(action.value, dispatch, state);
+      let subUsageType=  get(state.screenConfiguration.preparedFinalObject, "applyScreenMdmsData.subUsageType",[]);
+        if(subUsageType.length===0)
+        {
+        dispatch(prepareFinalObject("applyScreen.property.subusageCategory", action.value));
+        }
+        else
+        {
+          dispatch(prepareFinalObject("applyScreen.property.subusageCategory", null));
+
+        }
+
+       
+   }
+    }),
+    
+
+  propertySubUsageType: {
+    ...getSelectField({
+      label: { labelKey: "WS_PROPERTY_SUB_USAGE_TYPE_LABEL_INPUT" },
+      placeholder: { labelKey: "WS_PROPERTY_SUB_USAGE_TYPE_LABEL_INPUT_PLACEHOLDER" },
+     // required: true,
+      sourceJsonPath: "applyScreenMdmsData.subUsageType",
+      gridDefination: { xs: 12, sm: 6 },
+     // errorMessage: "ERR_INVALID_BILLING_PERIOD",
+      jsonPath: "applyScreen.property.subusageCategory",
+      props: {
+        optionValue: "code",
+        optionLabel: "name",
+        disabled: IsEdit
+      }
+    }),
+    beforeFieldChange: async (action, state, dispatch) => {
+      // if(action.value)
+      // {
+      //   dispatch(prepareFinalObject("applyScreen.property.usageCategory", action.value));
+      //   if(action.value==="RESIDENTIAL.GOVERNMENTHOUSING")
+      //   {
+      //     dispatch(
+      //       handleField(
+      //               "apply",
+      //               "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+      //               "props.disabled",
+      //               true
+      //       )
+      //   );
+      //   dispatch(
+      //     handleField(
+      //             "apply",
+      //             "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+      //             "props.value",
+      //             "15"
+      //     )
+      // );
+
+      //   }
+      //   else{
+      //     dispatch(
+      //       handleField(
+      //               "apply",
+      //               "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+      //               "props.disabled",
+      //               false
+      //       )
+      //   );
+      //   dispatch(
+      //     handleField(
+      //             "apply",
+      //             "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+      //             "props.value",
+      //             ""
+      //     )
+      // );
+
+      //   }
+      // }
+    
+    }
+  },
+  // plotSize: {
+  //   ...getTextField({
+  //     label: { labelKey: "WS_PROP_DETAIL_PLOT_SIZE_LABEL_INPUT" },
+  //     placeholder: { labelKey: "WS_PROP_DETAIL_PLOT_SIZE_LABEL_INPUT_PLACEHOLDER" },
+  //     required: true,
+  //     sourceJsonPath: "applyScreenMdmsData.ws-services-masters.waterSource",
+  //     gridDefination: { xs: 12, sm: 6 },
+  //     pattern: getPattern("numeric-only"),
+  //     props:{
+  //       disabled: IsEdit
+  //     },
+  //    // errorMessage: "ERR_INVALID_BILLING_PERIOD",
+  //     jsonPath: "applyScreen.property.landArea"
+  //   }),
+  //   beforeFieldChange: async (action, state, dispatch) => {
+    
   //   }
-  // ),
-  // numberOfFloors: getLabelWithValue(
-  //   {
-  //     labelKey: "WS_PROPERTY_NO_OF_FLOOR_LABEL",
-  //     labelName: "Number Of Floors"
-  //   },
-  //   {
+  // },
+  // superBuiltUpArea: {
+  //   ...getTextField({
+  //     label: { labelKey: "WS_PROP_DETAIL_BUILD_UP_AREA_LABEL_INPUT" },
+  //     placeholder: { labelKey: "WS_PROP_DETAIL_BUILD_UP_AREA_LABEL_INPUT_PLACEHOLDER" },
+  //     required: true,
+  //     props:{
+  //       disabled: IsEdit
+  //     },
+  //    // sourceJsonPath: "applyScreenMdmsData.ws-services-masters.waterSource",
+  //     gridDefination: { xs: 12, sm: 6 },
+  //     pattern: getPattern("numeric-only"),
+  //    // errorMessage: "ERR_INVALID_BILLING_PERIOD",
+  //     jsonPath: "applyScreen.property.superBuiltUpArea"
+  //   }),
+  //   beforeFieldChange: async (action, state, dispatch) => {
+    
+  //   }
+  // },
+
+  // propertyFloornumber : {
+  //   ...getSelectField({
+  //     label: { labelKey: "WS_PROPERTY_FLOOR_NUMBER_LABEL_INPUT" },
+  //     placeholder: { labelKey: "WS_PROPERTY_FLOOR_NUMBER_LABEL_INPUT_PLACEHOLDER" },
+  //     required: true,
+  //     sourceJsonPath: "applyScreenMdmsData.PropertyTax.Floor",
+  //     gridDefination: { xs: 12, sm: 6 },
+  //    // errorMessage: "ERR_INVALID_BILLING_PERIOD",
   //     jsonPath: "applyScreen.property.noOfFloors",
-  //     callBack: handleNA
+  //     props: {
+  //       optionValue: "code",
+  //       optionLabel: "name",
+  //       disabled: IsEdit
+  //     }
+  //   }),
+  //   beforeFieldChange: async (action, state, dispatch) => {
+  //     dispatch(prepareFinalObject("applyScreen.property.address.floorNo", action.value));
+    
   //   }
-  // ),
-  // rainwaterHarvestingFacility: getLabelWithValue(
-  //   {
-  //     labelKey: "WS_SERV_DETAIL_CONN_RAIN_WATER_HARVESTING_FAC",
-  //     labelName: "Rainwater Harvesting Facility"
-  //   },
-  //   {
-  //     jsonPath: "applyScreen.property.rainWaterHarvesting",
-  //     callBack: handleNA
-  //   }
-  // )
+  // },
+ 
 })
 
 
@@ -358,6 +481,26 @@ export const getPropertyIDDetails = (isEditable = true) => {
       }
     },
     viewTwo: propertyDetails
+  });
+};
+export const getTempPropertyIDDetails = (isEditable = true) => {
+  return getCommonContainer({
+    headerDiv: {
+      uiFramework: "custom-atoms",
+      componentPath: "Container",
+      props: {
+        style: { marginBottom: "10px" }
+      },
+      children: {
+        header: {
+          gridDefination: {
+            xs: 12,
+            sm: 10
+          }
+        }
+      }
+    },
+    viewTwo: propertyDetailsTemp
   });
 };
 
