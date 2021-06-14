@@ -775,8 +775,6 @@ const screenConfig = {
                         componentPath: "RoomCardsContainer",
                         moduleName: "egov-services",
                         props: {
-
-                            name: "sankalp",
                         },
                         visible: true,
                     },
