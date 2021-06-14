@@ -190,7 +190,7 @@ export const bookingDetails = getCommonCard({
                 minValue : 1, 
                 maxValue : 1000, 
                 
-                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                errorMessage: "Please check the missing/invalid fields, area cannot be more than 1000 sq. feet!",
                 // helperText : "new helper outside",
                 required: true,
                 jsonPath: "Booking.areaRequirement",
@@ -228,18 +228,18 @@ export const bookingDetails = getCommonCard({
                             prepareFinalObject("perDayRate", response.data)
                         );
                     } else {
-                        let errorMessage = {
-                            labelName:
-                                "Area cannot be more than 1000 square feet",
-                            labelKey: "", //UPLOAD_FILE_TOAST
-                        };
-                        dispatch(
-                            toggleSnackbar(
-                                true,
-                                errorMessage,
-                                "warning"
-                            )
-                        );
+                        // let errorMessage = {
+                        //     labelName:
+                        //         "Area cannot be more than 1000 square feet",
+                        //     labelKey: "", //UPLOAD_FILE_TOAST
+                        // };
+                        // dispatch(
+                        //     toggleSnackbar(
+                        //         true,
+                        //         errorMessage,
+                        //         "warning"
+                        //     )
+                        // );
                 }
             }
             
