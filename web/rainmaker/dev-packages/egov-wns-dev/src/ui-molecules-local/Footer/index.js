@@ -83,9 +83,13 @@ class Footer extends React.Component {
         }
       //setRoute(url);
       if (process.env.NODE_ENV === "production") {
-      window.location.href = `citizen/${url}`;
+        //citizen//wns/
+     // window.location.href = `citizen/${url}`;
+     let myurl = url.replace('/wns/','')
+     window.location.href = myurl
       }
       else{
+        //let myurl = url.replace('/wns/','')
         window.location.href = url;
       }
       return;
