@@ -82,7 +82,12 @@ class Footer extends React.Component {
           //     window.localStorage.setItem("WNS_STATUS",item.buttonLabel);
         }
       //setRoute(url);
-      window.location.href =url
+      if (process.env.NODE_ENV === "production") {
+      window.location.href = `citizen/${url}`;
+      }
+      else{
+        window.location.href = url;
+      }
       return;
     }
   
