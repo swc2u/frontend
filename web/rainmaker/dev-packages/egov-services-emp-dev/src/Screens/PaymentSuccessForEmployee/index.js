@@ -313,52 +313,6 @@ mcGSTN : pdfDetails[0].mcGSTN
     
       }
 
-downloadPermissionButton = async (e) => {
-	console.log("comInFunction")
-  await this.downloadPermissionLetter();
-	   const {DownloadBWTApplicationDetails,userInfo,EmpPaccPermissionLetter}=this.props;
-   
-	   var documentsPreview = [];
-	   let documentsPreviewData;
-	   if (EmpPaccPermissionLetter && EmpPaccPermissionLetter.filestoreIds.length > 0) {	
-		 documentsPreviewData = EmpPaccPermissionLetter.filestoreIds[0];
-		   documentsPreview.push({
-			 title: "DOC_DOC_PICTURE",
-			 fileStoreId: documentsPreviewData,
-			 linkText: "View",
-		   });
-		   let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-		   let fileUrls =
-			 fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-		   
-	 
-		   documentsPreview = documentsPreview.map(function (doc, index) {
-			 doc["link"] =
-			   (fileUrls &&
-				 fileUrls[doc.fileStoreId] &&
-				 fileUrls[doc.fileStoreId].split(",")[0]) ||
-			   "";
-			 
-			 doc["name"] =
-			   (fileUrls[doc.fileStoreId] &&
-				 decodeURIComponent(
-				   fileUrls[doc.fileStoreId]
-					 .split(",")[0]
-					 .split("?")[0]
-					 .split("/")
-					 .pop()
-					 .slice(13)
-				 )) ||
-			   `Document - ${index + 1}`;
-			 return doc;
-		   });
-	   
-		   setTimeout(() => {
-			 window.open(documentsPreview[0].link);
-		   }, 100);
-		   
-		 }
-	 }
 
  downloadPermissionLetter = async (e) => {
 		console.log("comeInAnotherFunction")
@@ -378,6 +332,8 @@ downloadPermissionButton = async (e) => {
 				bookingType: "",
 				tenantId: userInfo.tenantId,
 			  };
+console.log("RequestBodyForPL",complaintCountRequest)
+			  
 		  
 			  let dataforSectorAndCategory = await httpRequest(
 				"bookings/api/employee/_search",
@@ -386,12 +342,13 @@ downloadPermissionButton = async (e) => {
 				complaintCountRequest
 			  );
 			  
+			  console.log("dataforSectorAndCategoryforPL",dataforSectorAndCategory)
 	
 			  offlineCardNum =
 			  dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 				? dataforSectorAndCategory.bookingsModelList[0].cardNumber
 				: "NA";		  
-	
+	console.log("CardNumInResponse",offlineCardNum)
 				
 		}
        else{
@@ -510,10 +467,60 @@ downloadPermissionButton = async (e) => {
 			  }
 		  }
 	  ]
-	  // downloadEsamparkApp({ BookingInfo: BookingInfo })
-	  downloadPaccPermissionLetter({ BookingInfo: BookingInfo })
-	
+	  console.log("RequestBodyOfPl",BookingInfo)
+
+	  let permissionletterResponse = await httpRequest(
+		"pdf-service/v1/_create?key=bk-pk-booking-pl-emp",
+		"_search",
+		[],
+		{ BookingInfo: BookingInfo }
+	  );
+	  console.log("permissionletterResponse",permissionletterResponse)
+
+	  let EmpPaccPermissionLetter = permissionletterResponse.filestoreIds
+      console.log("EmpPaccPermissionLetter",EmpPaccPermissionLetter)
 	  
+	  var documentsPreview = [];
+	  let documentsPreviewData;
+	  if (EmpPaccPermissionLetter && EmpPaccPermissionLetter.length > 0) {	
+		  console.log("recheckidforPl",EmpPaccPermissionLetter)
+		documentsPreviewData = EmpPaccPermissionLetter[0];
+		  documentsPreview.push({
+			title: "DOC_DOC_PICTURE",
+			fileStoreId: documentsPreviewData,
+			linkText: "View",
+		  });
+		  let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+		  let fileUrls =
+			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+		  
+	
+		  documentsPreview = documentsPreview.map(function (doc, index) {
+			doc["link"] =
+			  (fileUrls &&
+				fileUrls[doc.fileStoreId] &&
+				fileUrls[doc.fileStoreId].split(",")[0]) ||
+			  "";
+			
+			doc["name"] =
+			  (fileUrls[doc.fileStoreId] &&
+				decodeURIComponent(
+				  fileUrls[doc.fileStoreId]
+					.split(",")[0]
+					.split("?")[0]
+					.split("/")
+					.pop()
+					.slice(13)
+				)) ||
+			  `Document - ${index + 1}`;
+			return doc;
+		  });
+	  
+		  setTimeout(() => {
+			window.open(documentsPreview[0].link);
+		  }, 100);
+		  
+		}
 	
 	  }
 
@@ -534,27 +541,25 @@ let offlineCardNum;
 				bookingType: "",
 				tenantId: userInfo.tenantId,
 			  };
-		  
+		  console.log("34567899871",complaintCountRequest)
 			  let dataforSectorAndCategory = await httpRequest(
 				"bookings/api/employee/_search",
 				"_search",
 				[],
 				complaintCountRequest
 			  );
-			  
+			  console.log("ReceiptOfRequestBody",dataforSectorAndCategory)
 	
 			  offlineCardNum =
 			  dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 				? dataforSectorAndCategory.bookingsModelList[0].cardNumber
 				: "NA";		  
-	
+	console.log("CardNumForReceipt",offlineCardNum)
 				
 		}
        else{
 		offlineCardNum = "Not Applicable"
        } 
-		
-
 		let NumAmount = 0;
 		if(amountToDisplay !== "NotFound"){
 			NumAmount = Number(amountToDisplay)
@@ -689,54 +694,61 @@ let offlineCardNum;
 	
 		  }
 	  ]
-	  downloadEsampPaymentReceipt({ BookingInfo: BookingInfo })
-	 };
-	 downloadPaymentReceiptButton = async (e) => {
-	  await this.downloadPaymentReceiptBody();
-	  const {DownloadBWTApplicationDetails,userInfo,Downloadesamparkdetails,PaymentReceiptByESamp}=this.props;
-	  
-		  var documentsPreview = [];
-		  let documentsPreviewData;
-		  if (PaymentReceiptByESamp && PaymentReceiptByESamp.filestoreIds.length > 0) {	
-			documentsPreviewData = PaymentReceiptByESamp.filestoreIds[0];
-			  documentsPreview.push({
-				title: "DOC_DOC_PICTURE",
-				fileStoreId: documentsPreviewData,
-				linkText: "View",
-			  });
-			  let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-			  let fileUrls =
-				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-			  
-		
-			  documentsPreview = documentsPreview.map(function (doc, index) {
-				doc["link"] =
-				  (fileUrls &&
-					fileUrls[doc.fileStoreId] &&
-					fileUrls[doc.fileStoreId].split(",")[0]) ||
-				  "";
-				
-				doc["name"] =
-				  (fileUrls[doc.fileStoreId] &&
-					decodeURIComponent(
-					  fileUrls[doc.fileStoreId]
-						.split(",")[0]
-						.split("?")[0]
-						.split("/")
-						.pop()
-						.slice(13)
-					)) ||
-				  `Document - ${index + 1}`;
-				return doc;
-			  });
-		  
-			  setTimeout(() => {
-				window.open(documentsPreview[0].link);
-			  }, 100);
-			  
-			}}
-		
 
+	  let ReceiptResponse = await httpRequest(
+		"pdf-service/v1/_create?key=pacc-payment-receipt-new-emp",
+		"_search",
+		[],
+		{ BookingInfo: BookingInfo }
+	  );
+	  console.log("ReceiptOfRequestBody",ReceiptResponse)
+
+	  let PaymentReceiptByESamp = ReceiptResponse.filestoreIds
+      console.log("PaymentReceiptByESamp",PaymentReceiptByESamp)
+
+	  var documentsPreview = [];
+	  let documentsPreviewData;
+	  if (PaymentReceiptByESamp && PaymentReceiptByESamp.length > 0) {	
+		  console.log("checkFileStoreId",PaymentReceiptByESamp)
+		documentsPreviewData = PaymentReceiptByESamp[0];
+		  documentsPreview.push({
+			title: "DOC_DOC_PICTURE",
+			fileStoreId: documentsPreviewData,
+			linkText: "View",
+		  });
+		  let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+		  let fileUrls =
+			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+		  
+	
+		  documentsPreview = documentsPreview.map(function (doc, index) {
+			doc["link"] =
+			  (fileUrls &&
+				fileUrls[doc.fileStoreId] &&
+				fileUrls[doc.fileStoreId].split(",")[0]) ||
+			  "";
+			
+			doc["name"] =
+			  (fileUrls[doc.fileStoreId] &&
+				decodeURIComponent(
+				  fileUrls[doc.fileStoreId]
+					.split(",")[0]
+					.split("?")[0]
+					.split("/")
+					.pop()
+					.slice(13)
+				)) ||
+			  `Document - ${index + 1}`;
+			return doc;
+		  });
+	  
+		  setTimeout(() => {
+			window.open(documentsPreview[0].link);
+		  }, 100);
+		  
+		}
+	 };     
+	
   render() {
   const { RecNumber,createWaterTankerApplicationData,myLocationtwo, downloadBWTApplication,loading,createPACCApplicationData, updatePACCApplicationData,AppNum} = this.props;
     return (
@@ -759,14 +771,14 @@ let offlineCardNum;
             primary={true}
             label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PAYMENT_BUTTON" />}
             fullWidth={true}
-            onClick={this.downloadPaymentReceiptButton}
+            onClick={this.downloadPaymentReceiptBody}
 			style={{ marginRight: "1.5%" , minWidth: "fit-content !important" }}
 			/>
 			 <Button 
 				className="responsive-action-button"
 			  primary={true}
 			  label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PERMISSION_LETTER_BUTTON" />}
-			  onClick={this.downloadPermissionButton}
+			  onClick={this.downloadPermissionLetter}
 			  style={{ marginRight: "1.5%", minWidth: "fit-content !important" }} 
 			/>
 			  <Button
@@ -1059,7 +1071,7 @@ let SecTimeSlotFromTime = ""
   conJsonSecond = JSON.stringify(SecondTimeSlotValue);
   }
 } 
-
+ 
   return {first,second,firstToTimeSlot, firstTimeSlotValue,SecondTimeSlotValue,conJsonSecond,conJsonfirst,ReasonForDiscount,
     createWaterTankerApplicationData, DownloadBWTApplicationDetails,loading,fetchSuccess,createPACCApplicationData,selectedComplaint,
     updatePACCApplicationData,Downloadesamparkdetails,userInfo,documentMap,AppNum,DownloadReceiptDetailsforPCC,RecNumber,createAppData

@@ -1,51 +1,42 @@
+
 import React, { Component } from "react";
 import { Button, Icon } from "components";
 import Label from "egov-ui-kit/utils/translationNode";
 import CommonSuccessMessage from "../../modules/CommonSuccessMessage";
-import "./index.css";
 import { connect } from "react-redux";
 
-class NewLocationApproved extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      bkData: {}
-    }
+
+class ApplicationRejected extends Component {
+  handleComplaintReassigned = () => {
+    this.props.history.push(`/egov-services/all-applications`);
   };
 
-  continueComplaintSubmit = () => {
-    
-    this.props.history.push(`/egov-services/all-applications`);
-  
-  };    
- 
   render() {
     let {applicationNumber} = this.props;
     return (
-      <div className="success-message-main-screen resolve-success">
+      <div className="success-message-main-screen">
         <CommonSuccessMessage
-          headermessage="BK_ES_APPLICATION_HEADER_MESSAGE"
-          successmessage="BK_ES_APPLICATION_RESOLVED_SUCCESS_MESSAGE"
-          secondaryLabel= "BK_CS_COMMON_SEND_MESSAGE_APPROVAL"  //"BK_CS_COMMON_SEND_MESSAGE"
-          containerStyle={{ display: "inline-block" }}
-          icon={<Icon action="navigation" name="check" />}
-          backgroundColor={"#22b25f"}
+          headermessage="BK_ES_APPLICATION_HEADER_MESSAGE_REJECT"
+          successmessage="BK_ES_COMPLAINT_REJECT_SUCCESS_MESSAGE"
+          secondaryLabel="BK_CS_COMMON_SEND_MESSAGE_REJECTED"
+          icon={<Icon action="navigation" name="close" />}
+          backgroundColor={"#e74c3c"}
           applicationNumber={applicationNumber && applicationNumber}
         />
+
         <div className="responsive-action-button-cont">
           <Button
-            id="resolve-success-continue"
+            className="responsive-action-button"
             primary={true}
             label={<Label buttonLabel={true} label="BK_CORE_PACC_EMP_COMMON_GOTOHOME" />}
             fullWidth={true}
-            onClick={this.continueComplaintSubmit}
-            className="responsive-action-button"
+            onClick={this.handleComplaintReassigned}
           />
         </div>
       </div>
     );
   }
-}
+}   
 const mapStateToProps = state => {
   const { bookings, common, auth, form } = state;
   const { MccApplicationData } = bookings;
@@ -65,4 +56,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(NewLocationApproved);
+)( ApplicationRejected);

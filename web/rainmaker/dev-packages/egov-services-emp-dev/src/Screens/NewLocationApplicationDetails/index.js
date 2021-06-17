@@ -29,10 +29,10 @@ import NewLocationPublished from '../NewLocationPublished';
 import {getFileUrlFromAPI} from '../../modules/commonFunction'
 import jp from "jsonpath";
 import axios from "axios";
-// import {
+// import {    
 // 	getFileUrlFromAPI
 // } from "egov-ui-framework/ui-utils/commons";
-import {
+import {  
 	getDateFromEpoch,
 	mapCompIDToName,
 	isImage,
