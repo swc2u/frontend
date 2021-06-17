@@ -21,7 +21,7 @@ import {
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
 import orderBy from "lodash/orderBy";
-
+import { WNSConfigName} from "../../ui-utils/commons";
 const tenant = getQueryArg(window.location.href, "tenantId");
 
 class WorkFlowContainer extends React.Component {
@@ -653,7 +653,8 @@ class WorkFlowContainer extends React.Component {
       || moduleName === "WS_REACTIVATE"
     || moduleName === "WS_TUBEWELL")
       {
-        bservice = "WS.ONE_TIME_FEE"
+        let  WNSConfigName_= WNSConfigName()
+        bservice = WNSConfigName_.ONE_TIME_FEE_WS
         if (moduleName === "NewWS1" 
         || moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
@@ -669,7 +670,8 @@ class WorkFlowContainer extends React.Component {
          window.localStorage.setItem("isTubeWell",false);
         if( moduleName === "WS_TUBEWELL") window.localStorage.setItem("isTubeWell",true);
       } else {
-        bservice = "SW.ONE_TIME_FEE"
+        let  WNSConfigName_= WNSConfigName()
+        bservice =WNSConfigName_.ONE_TIME_FEE_SW
       }
     } else if (moduleName === "PT") {
       bservice = "PT"
@@ -802,7 +804,7 @@ ValidateRequest =(payload,preparedFinalObject) =>{
   }
   else{
     isvalidRequest = true
-    payload.waterApplication.isFerruleApplicable = true;
+    payload.waterApplication.isFerruleApplicable = get(payload.waterApplication,'isFerruleApplicable',true);
   }
   // change tarrif type when state is PENDING_FOR_CONNECTION_TARIFF_CHANGE for action CHANGE_TARIFF
 
@@ -937,8 +939,10 @@ ValidateRequestSW =(payload,preparedFinalObject)=>{
     for (let index = 0; index < payload.documents.length; index++) {
       const element = payload.documents[index];
       let doctype =`WS_${element.documentType}`
-      if(preparedFinalObject.WaterConnection[0].reviewDocData !== undefined)
-      {
+      // if(preparedFinalObject.WaterConnection[0].reviewDocData !== undefined)
+      // {
+        if(preparedFinalObject.WaterConnection[0].reviewDocData !== undefined && preparedFinalObject.WaterConnection[0].reviewDocData !== null)
+        {
         let ids = preparedFinalObject.WaterConnection[0].reviewDocData.filter(x=>x.title === doctype)
       if(ids && ids[0])
       {

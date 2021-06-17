@@ -21,7 +21,7 @@ import {
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
 import orderBy from "lodash/orderBy";
-import { getSearchResults} from "../../ui-utils/commons";
+import { getSearchResults,WNSConfigName} from "../../ui-utils/commons";
 let connectionNumber = getQueryArg(window.location.href, "connectionNumber");
 const tenantId = getQueryArg(window.location.href, "tenantId");
 const serviceType = getQueryArg(window.location.href, "service");
@@ -78,9 +78,10 @@ class WorkFlowContainer extends React.Component {
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
       || moduleName === "WS_TUBEWELL") {
-        bservice = "WS.ONE_TIME_FEE"
+        let  WNSConfigName_= WNSConfigName()
+        bservice = WNSConfigName_.ONE_TIME_FEE_WS
       } else {
-        bservice = "SW.ONE_TIME_FEE"
+        bservice = WNSConfigName_.ONE_TIME_FEE_SW
       }
     }
   
@@ -313,10 +314,32 @@ class WorkFlowContainer extends React.Component {
                                               &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
 
               }
-                // actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
-                //                               && item.buttonLabel !=='REACTIVATE_CONNECTION'
-                //                              // && item.buttonLabel !=='UPDATE_METER_INFO'
-                //                               &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
+              else 
+              {
+                if(WaterConnection[0].waterApplicationType === 'TEMPORARY')
+                {
+                  actions = actions.filter(item => item.buttonLabel !== 'PERMANENT_DISCONNECTION' 
+                                                &&  item.buttonLabel !== 'TEMPORARY_DISCONNECTION'
+                                                && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                                                &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
+                                               // && item.buttonLabel !=='UPDATE_METER_INFO'
+                                                &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
+
+                }
+                else if(WaterConnection[0].waterApplicationType === 'REGULAR')
+                {
+                  actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
+                  && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                 // && item.buttonLabel !=='UPDATE_METER_INFO'
+                  &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
+
+                }
+                
+                                              
+
+              }
+             
+                
 
               }
               else if(WaterConnection[0].waterApplicationType === 'TEMPORARY' && status ==='REJECTED')

@@ -8,6 +8,7 @@ import MyConnectionsIcon from "../../../../ui-atoms-local/Icons/MyConnectionsIco
 import { getRequiredDocData } from "egov-ui-framework/ui-utils/commons";
 import { getLocale,getTenantId,getUserInfo,setModule } from "egov-ui-kit/utils/localStorageUtils";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
+import {getRequiredDocuments} from "./citizenSearchResource/homehelp"
 const header = getCommonHeader({
     labelKey: "WS_COMMON_HEADER"
 }, {
@@ -90,6 +91,7 @@ const waterAndSewerageSearchAndResult = {
                         history: {}
                     }
                 },
+                HelpHome: getRequiredDocuments("WNS"),
                 listCard: {
                     uiFramework: "custom-molecules-local",
                     moduleName: "egov-wns",
@@ -107,6 +109,7 @@ const waterAndSewerageSearchAndResult = {
 
                     // }
                 },
+                
                 listCard1: {
                     uiFramework: "custom-molecules-local",
                     moduleName: "egov-wns",

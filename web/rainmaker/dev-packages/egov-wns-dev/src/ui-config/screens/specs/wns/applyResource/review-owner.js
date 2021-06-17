@@ -272,6 +272,26 @@ export const reviewisFerruleApplicable = getLabelWithValue(
     callBack: handleNA
   }
 );
+export const reviewadditionalCharges = getLabelWithValue(
+  {
+    labelName: "Additional Charges",
+    labelKey: "WS_ADDN_DETAILS_ADDITIONAL_CHARGES_LABEL"
+  },
+  {
+    jsonPath: "WaterConnection[0].waterApplication.additionalCharges",
+    callBack: handleNA
+  }
+);
+export const reviewconstructionCharges = getLabelWithValue(
+  {
+    labelName: "Construction Charges",
+    labelKey: "WS_ADDN_DETAILS_CONSTRUCTION_CHARGES_LABEL"
+  },
+  {
+    jsonPath: "WaterConnection[0].waterApplication.constructionCharges",
+    callBack: handleNA
+  }
+);
 export const reviewArea = getLabelWithValue(
   {
     labelName: "Area (in sq ft)",
@@ -558,7 +578,9 @@ const roadCuttingCharges = getCommonContainer({
 
 const otherChargesDetails =  getCommonContainer({
   reviewSecurityCharge,
-  reviewisFerruleApplicable
+  reviewisFerruleApplicable,
+  reviewadditionalCharges,
+  reviewconstructionCharges
 });
 const activationDetails = getCommonContainer({
   reviewConnectionExecutionDate,

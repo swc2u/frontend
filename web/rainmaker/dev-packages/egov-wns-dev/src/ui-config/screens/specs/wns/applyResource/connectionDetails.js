@@ -44,7 +44,7 @@ const displaysubUsageType = (usageType, dispatch, state) => {
           if(subUsage&&subUsage[0])
           {
             dispatch(prepareFinalObject("propsubusagetypeForSelectedusageCategory",subUsage[0].category));
-            dispatch(prepareFinalObject("applyScreen.waterProperty.usageSubCategory",null))
+           // dispatch(prepareFinalObject("applyScreen.waterProperty.usageSubCategory",null))
           }
         }
           

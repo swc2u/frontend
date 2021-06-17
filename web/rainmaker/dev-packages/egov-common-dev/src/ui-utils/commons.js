@@ -560,7 +560,9 @@ export const epochToYmdDate = et => {
 export const download  = async ( state, dispatch, mode = "download") => {
   let businessServiceInfo = get(state.screenConfiguration.preparedFinalObject, "businessServiceInfo", {});
   let businessServicewsbillreceipt = get(state.screenConfiguration.preparedFinalObject, "businessServicewsbillreceipt", '');
-
+  let bservice = '';
+  let WNSConfigName_ = WNSConfigName();
+  bservice = WNSConfigName_.ONE_TIME_FEE_WS;
   if(businessServicewsbillreceipt === null || businessServicewsbillreceipt ==='')
   {
     businessServicewsbillreceipt =  getQueryArg(window.location.href, "businessService")
@@ -593,10 +595,13 @@ export const download  = async ( state, dispatch, mode = "download") => {
      if(businessServicewsbillreceipt ==='' || businessServicewsbillreceipt === null)
      {
       businessServicewsbillreceipt =  getQueryArg(window.location.href, "consumerCode")
+      let  WNSConfigName_= WNSConfigName()
+        bservice = WNSConfigName_.ONE_TIME_FEE_WS
+
      }
      
      //if()
-     if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE' || businessServicewsbillreceipt ==='SW.ONE_TIME_FEE' || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
+     if(businessServicewsbillreceipt ===bservice || businessServicewsbillreceipt ===WNSConfigName_.ONE_TIME_FEE_SW || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
        {
         keyvalue ='ws-bill-receipt' 
        }
@@ -625,7 +630,14 @@ try{
        ]
        if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length==0){
          console.log("Could not find any receipts");   
-         return;
+         dispatch(
+                    toggleSnackbar(
+                      true,
+                      { labelName: "Could not find any receipts", labelKey: "Could not find any receipts" },
+                      "warning"
+                    )
+                  );  
+      return;
        }
        if(businessServicewsbillreceipt ==='WS')
        {
@@ -641,7 +653,7 @@ try{
           }         
         });
        }
-       else if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE'|| businessServicewsbillreceipt ==='SW.ONE_TIME_FEE'  || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
+       else if(businessServicewsbillreceipt === bservice|| businessServicewsbillreceipt ===WNSConfigName_.ONE_TIME_FEE_SW  || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
       
        {
          let paymentReceiptDate = 0;
@@ -928,7 +940,9 @@ try{
  export const downloadprint  = async ( state, dispatch, mode = "download") => {
   let businessServiceInfo = get(state.screenConfiguration.preparedFinalObject, "businessServiceInfo", {});
   let businessServicewsbillreceipt = get(state.screenConfiguration.preparedFinalObject, "businessServicewsbillreceipt", '');
-
+  let bservice = '';
+  let WNSConfigName_ = WNSConfigName();
+  bservice = WNSConfigName_.ONE_TIME_FEE_WS;
   if(businessServicewsbillreceipt === null || businessServicewsbillreceipt ==='')
   {
     businessServicewsbillreceipt =  getQueryArg(window.location.href, "businessService")
@@ -961,10 +975,12 @@ try{
      if(businessServicewsbillreceipt ==='' || businessServicewsbillreceipt === null)
      {
       businessServicewsbillreceipt =  getQueryArg(window.location.href, "consumerCode")
+      let  WNSConfigName_= WNSConfigName()
+        bservice = WNSConfigName_.ONE_TIME_FEE_WS
      }
      
      //if()
-     if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE' || businessServicewsbillreceipt ==='SW.ONE_TIME_FEE' || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
+     if(businessServicewsbillreceipt ===bservice || businessServicewsbillreceipt ===WNSConfigName_.ONE_TIME_FEE_SW || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
        {
         keyvalue ='ws-bill-receipt' 
        }
@@ -993,7 +1009,14 @@ try{
        ]
        if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length==0){
          console.log("Could not find any receipts");   
-         return;
+         dispatch(
+                    toggleSnackbar(
+                      true,
+                      { labelName: "Could not find any receipts", labelKey: "Could not find any receipts" },
+                      "warning"
+                    )
+                  );  
+      return;
        }
        if(businessServicewsbillreceipt ==='WS')
        {
@@ -1009,7 +1032,7 @@ try{
           }         
         });
        }
-       else  if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE' || businessServicewsbillreceipt ==='SW.ONE_TIME_FEE' || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
+       else  if(businessServicewsbillreceipt ===bservice || businessServicewsbillreceipt ===WNSConfigName_.ONE_TIME_FEE_SW || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
        {
          let paymentReceiptDate = 0;
          let paidAmount =0;
@@ -1264,7 +1287,13 @@ try{
 
 
 
-
+export const WNSConfigName =()=>{
+  return {
+      ONE_TIME_FEE_WS: "PUBLIC_HEALTH_SERVICES_DIV2",
+      ONE_TIME_FEE_SW: "PUBLIC_HEALTH_SERVICES_DIV4",
+    
+};
+}
 export const downloadBill = async (consumerCode ,tenantId) => {
   const searchCriteria = {
     consumerCode ,

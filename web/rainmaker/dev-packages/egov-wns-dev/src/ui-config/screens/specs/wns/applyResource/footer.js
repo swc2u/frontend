@@ -1215,28 +1215,33 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
 
      let connectionHolderObj = get(state.screenConfiguration.preparedFinalObject, "connectionHolders");
      let ownershipCategory_T= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", 'INDIVIDUAL.SINGLEOWNER' )
-     if(connectionHolderObj[0].ownerType === null)
-     {
-      connectionHolderObj[0].ownerType= ownershipCategory_T;
-     }
-     else{
+    if(connectionHolderObj.length>0)
+    {
+      if(connectionHolderObj[0].ownerType === null)
+      {
        connectionHolderObj[0].ownerType= ownershipCategory_T;
+      }
+      else{
+        connectionHolderObj[0].ownerType= ownershipCategory_T;
+ 
+      }
+      //connectionHolderObj.ownerType = "INDIVIDUAL.SINGLEOWNER"
+      let holderData = connectionHolderObj[0];
+       if (holderData !== null && holderData !== undefined) {
+         if (holderData.sameAsPropertyAddress === true) {
+           holderData = connectionHolderObj[0]
+         }
+       }
+       if (holderData == null) {
+         applyScreenObject.connectionHolders = holderData;
+      } else {
+         let arrayHolderData = [];
+         arrayHolderData.push(holderData);
+         applyScreenObject.connectionHolders = arrayHolderData;
+       }
 
-     }
-     //connectionHolderObj.ownerType = "INDIVIDUAL.SINGLEOWNER"
-     let holderData = connectionHolderObj[0];
-      if (holderData !== null && holderData !== undefined) {
-        if (holderData.sameAsPropertyAddress === true) {
-          holderData = connectionHolderObj[0]
-        }
-      }
-      if (holderData == null) {
-        applyScreenObject.connectionHolders = holderData;
-     } else {
-        let arrayHolderData = [];
-        arrayHolderData.push(holderData);
-        applyScreenObject.connectionHolders = arrayHolderData;
-      }
+    }
+
       // call if conection is not created
       //validate ownner ship
       let propertyPayload = get(
@@ -1703,8 +1708,16 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         "applyScreen.waterProperty.usageSubCategory",
         null
       );
+      let connectionNo =  get(
+        state.screenConfiguration.preparedFinalObject,
+        "WaterConnection[0].connectionNo",
+        null
+      );
+      if(!connectionNo)
+      {
       if(water)
       {
+        
         if(category_ === null)
       {
         category_ = get(
@@ -1714,6 +1727,8 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         );
       if(category_ === null)
       {
+        
+       
         let errorMessage_ = {
           labelName: "Please select Usage Caregory",
           labelKey: "WS_APPLICATION_TYPE_CHANGGED_VALIDATION"
@@ -1721,6 +1736,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
 
         dispatch(toggleSnackbar(true, errorMessage_, "warning"));
         return false;
+      }
       }
       else
       {
@@ -1731,12 +1747,13 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         );
         dispatch(prepareFinalObject("applyScreen.waterProperty.usageSubCategory", category_));
 
-      }
+      
         
   
       }
   
       }
+    }
 
     }
   //?
@@ -1909,6 +1926,38 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         dispatch,
         "apply"
       );
+      let IvalidadditionalCharges= validateFields(
+        "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.additionalCharges",
+        state,
+        dispatch,
+        "apply"
+      );
+      let IvalidconstructionCharges= validateFields(
+        "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.constructionCharges",
+        state,
+        dispatch,
+        "apply"
+      );
+      IvalidconstructionCharges = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.constructionCharges.isFieldValid",false)
+      IvalidadditionalCharges = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.additionalCharges.isFieldValid",false)
+      let additionalCharges =parseInt(get(state, "screenConfiguration.preparedFinalObject.applyScreen.waterApplication.additionalCharges",0));
+      let constructionCharges =parseInt(get(state, "screenConfiguration.preparedFinalObject.applyScreen.waterApplication.constructionCharges",0));
+      if(additionalCharges === 0 && constructionCharges === 0)
+      {
+        IvalidconstructionCharges = true
+        IvalidadditionalCharges = true
+      }
+      let waterT = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
+      let sewerageT = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
+      let tubewellT = get(state.screenConfiguration.preparedFinalObject, "applyScreen.tubewell", false);
+      if(sewerageT === false || tubewellT === false )
+      {
+        IvalidconstructionCharges = true
+        IvalidadditionalCharges = true
+      }
+      
+ 
+
 if(isConnectionDetailsValid)
 {
   isFormValid = isConnectionDetailsValid
@@ -1955,7 +2004,22 @@ if(isConnectionDetailsValid)
     {
       if(PropactiveDetails)
       {
-        setReviewPageRoute(state, dispatch);
+        if(IvalidadditionalCharges === true && IvalidconstructionCharges === true)
+        {
+          setReviewPageRoute(state, dispatch);
+
+        }
+        else{
+          isFormValid = false;
+          errorMessage = {
+            labelName: "Please enter valid Other Charges Details",
+            labelKey: "WS_ACTIVATION_DETAILS_OTHER_CHARGES_VALIDATION"
+          };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      return;
+
+        }
+        
       }
       else{
         isFormValid = false;
