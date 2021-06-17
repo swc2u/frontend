@@ -33,15 +33,24 @@ class CheckboxLabels extends React.Component {
       this.setState({ checkedG: true })
       this.updateOwnerFileds();
     } */
-    const { classes, content, label, isChecked, approveCheck, onFieldChange, jsonPath,section } = this.props;
+    const { classes, content, label, isChecked, approveCheck, onFieldChange, jsonPath,section ,preparedFinalObject} = this.props;
     if(isChecked === false){
       toggleConnHolderDetails(onFieldChange, true);
-      approveCheck(jsonPath, isChecked)
+      
       // if(section !== undefined)
       //   {
           if(label.key === 'WS_ADDN_DETAILS_IS_FERRULEAPPLICABLE')
             {
-              approveCheck('WaterConnection[0].waterApplication.isFerruleApplicable', true)
+              let Active = true
+              if(preparedFinalObject.applyScreen.waterApplication !== undefined)
+              {              
+              if(preparedFinalObject.applyScreen.waterApplication.isFerruleApplicable !== null)
+              {
+                Active = preparedFinalObject.applyScreen.waterApplication.isFerruleApplicable
+              } 
+            }             
+              approveCheck('WaterConnection[0].waterApplication.isFerruleApplicable', Active)
+              approveCheck(jsonPath, Active)
             }
         //}
      //
@@ -256,6 +265,7 @@ class CheckboxLabels extends React.Component {
       approveCheckcon,
       section,
       jsonPath,
+      label,
       state
     } = this.props;
 
@@ -299,6 +309,8 @@ class CheckboxLabels extends React.Component {
 
     } else {
       toggleConnHolderDetails(onFieldChange, true);
+      if(label.key === 'WS_CONN_HOLDER_SAME_AS_OWNER_DETAILS')
+            {
       approveCheck('connectionHolders[0].mobileNumber', null)
       approveCheck('connectionHolders[0].name', null)
       approveCheck('connectionHolders[0].emailId', null)
@@ -308,6 +320,7 @@ class CheckboxLabels extends React.Component {
       approveCheckcon(`${path}.mobileNumber`, '')
       approveCheckcon(`${path}.email`, '')
       approveCheckcon(`${path}.correspondenceAddress`, '')
+            }
     }
     if(section !== undefined)
     {
@@ -327,7 +340,16 @@ class CheckboxLabels extends React.Component {
 
   render() {
     const { classes, content, label,preparedFinalObject,section ,approveCheck} = this.props;
-    let isChecked = (this.state.checkedG === null)?(label.key !== "WS_ADDN_DETAILS_IS_FERRULEAPPLICABLE"?this.props.isChecked:true):this.state.checkedG;
+    let Active = false
+    if(preparedFinalObject.WaterConnection.length>0)
+    {
+      if(preparedFinalObject.WaterConnection[0].waterApplication)
+      {
+        Active = preparedFinalObject.WaterConnection[0].waterApplication.isFerruleApplicable
+      }
+    }
+
+    let isChecked = (this.state.checkedG === null)?(label.key !== "WS_ADDN_DETAILS_IS_FERRULEAPPLICABLE"?this.props.isChecked:Active):this.state.checkedG;
     let isdisabled = false
     //isFerruleApplicable should be enable to change the value in step  PENDING_FOR_SECURITY_DEPOSIT
     if(preparedFinalObject.WaterConnection.length>0)
@@ -335,8 +357,12 @@ class CheckboxLabels extends React.Component {
       if(preparedFinalObject.WaterConnection[0].waterApplication)
       {
         const {applicationStatus} = preparedFinalObject.WaterConnection[0];
+        
         if(applicationStatus !== undefined)
         {
+          if(label.key === 'WS_ADDN_DETAILS_IS_FERRULEAPPLICABLE')
+            {
+            
           if(applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
           {
             isdisabled = false           
@@ -346,10 +372,11 @@ class CheckboxLabels extends React.Component {
           else
           {
             isdisabled = true
-            isChecked = true//preparedFinalObject.WaterConnection[0].waterApplication.isFerruleApplicable
+            isChecked = Active//preparedFinalObject.WaterConnection[0].waterApplication.isFerruleApplicable
            // approveCheck('WaterConnection[0].waterApplication.isFerruleApplicable', true)
             
           }
+        }
         }
         else
         {

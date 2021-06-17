@@ -41,7 +41,13 @@ else if(data.service ==='SEWERAGE'){
   window.localStorage.setItem("wns_workflow","SW_SEWERAGE");
 
 }
+if (process.env.NODE_ENV === "production") {
     window.location.href = `/citizen/wns/search-preview?applicationNumber=${data.applicationNo}&history=${true}&tenantId=${data.property.tenantId}&service=${data.service}`
+}
+else{
+  window.location.href = `/wns/search-preview?applicationNumber=${data.applicationNo}&history=${true}&tenantId=${data.property.tenantId}&service=${data.service}`
+
+}
   }
 
   titleCasingStatus = (status) => {

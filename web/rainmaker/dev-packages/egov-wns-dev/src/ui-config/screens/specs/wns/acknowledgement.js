@@ -703,9 +703,16 @@ export const downloadPrintContainer = (
       printMenu = [];
       let NDCDoc = false
       let WaterConnection_  = state.screenConfiguration.preparedFinalObject.WaterConnection;
+      let dataCalculation_ = state.screenConfiguration.preparedFinalObject.dataCalculation;
       if(WaterConnection_ && WaterConnection_[0])
       {
-        const totalAmountPaid = parseInt(get(WaterConnection_[0], "waterApplication.totalAmountPaid",0));
+        let totalAmountPaid = parseInt(get(WaterConnection_[0], "waterApplication.totalAmountPaid",0));
+        if(WaterConnection_[0].service ==='SEWERAGE')
+        {
+          if(dataCalculation_)
+          totalAmountPaid = parseInt(get(dataCalculation_, "totalAmountPaid",0));
+
+        }
         if(totalAmountPaid>0)
         {
           downloadMenu = [ReceiptDownloadObject];

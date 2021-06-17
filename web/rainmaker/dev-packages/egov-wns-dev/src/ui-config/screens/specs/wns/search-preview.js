@@ -207,14 +207,14 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
      
       let parsedObject = parserFunction(findAndReplace(applyScreenObject, "NA", null));
       let code = '03';
-      let isFerruleApplicable = false
+      let isFerruleApplicable = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplication.isFerruleApplicable",true);
      // let securityCharges = false
       if (service === "WATER") 
       {
         code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",parsedObject.property.address.locality.code)   
         if(parsedObject.waterApplication.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
         {
-            isFerruleApplicable  =true;
+           // isFerruleApplicable  =true;
   
         }
         else{
@@ -229,7 +229,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
           set(parsedObject, 'property.address.locality.name', code);
               if(parsedObject.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
           {
-              isFerruleApplicable  =true;
+             // isFerruleApplicable  =true;
 
           }
           else{
@@ -249,7 +249,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       
 
       dispatch(prepareFinalObject("WaterConnection[0]", parsedObject));
-      //dispatch(prepareFinalObject("WaterConnection[0].waterApplication.isFerruleApplicable", isFerruleApplicable));
+      
        let estimate;
        if(processInstanceAppStatus==="CONNECTION_ACTIVATED"){
         let connectionNumber= parsedObject.connectionNo;
@@ -259,6 +259,10 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       }
       if(processInstanceAppStatus==="PENDING_FOR_FIELD_INSPECTION"|| processInstanceAppStatus==="PENDING_FOR_METER_INSTALLATION"|| processInstanceAppStatus==="PENDING_FOR_JE_BR_APPROVAL" || 1===1){
         set(parsedObject, 'waterApplication.securityCharge', securityCharges);
+        let  additionalCharges = get(parsedObject, 'waterApplication.additionalCharges',0)
+        let  constructionCharges = get(parsedObject, 'waterApplication.constructionCharges',0)
+        set(parsedObject, 'waterApplication.additionalCharges', parseInt(additionalCharges));
+        set(parsedObject, 'waterApplication.constructionCharges', parseInt(constructionCharges));
         let queryObjectForEst = [{
           applicationNo: applicationNumber,
           tenantId: tenantId,
@@ -979,6 +983,10 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
         }
 
       }
+      let  additionalCharges = get(convPayload.WaterConnection[0], 'waterApplication.additionalCharges',0)
+      let  constructionCharges = get(convPayload.WaterConnection[0], 'waterApplication.constructionCharges',0)
+      set(convPayload.WaterConnection[0], 'waterApplication.additionalCharges', parseInt(additionalCharges));
+      set(convPayload.WaterConnection[0], 'waterApplication.constructionCharges', parseInt(constructionCharges));
 
 
     }
@@ -1115,15 +1123,7 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
 };
 
 const parserFunction = (obj) => {
-  // let isFerruleApplicable = false
-  // if(obj.waterApplication.applicationStatus !== 'PENDING_FOR_SECURITY_DEPOSIT' || obj.waterApplication.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
-  // {
-  //     isFerruleApplicable  =true;
 
-  // }
-  // else{
-  //   isFerruleApplicable = obj.waterApplication.isFerruleApplicable
-  // }
   let usageCategory = null
   let usageSubCategory = null
   if(obj.service==='WATER')
@@ -1159,11 +1159,7 @@ const parserFunction = (obj) => {
       ) ? obj.additionalDetails.detailsProvidedBy : "",
     },
     noOfTaps: parseInt(obj.noOfTaps),
-    // isFerruleApplicable:isFerruleApplicable,
-    // waterApplication:{
-    //   isFerruleApplicable:isFerruleApplicable,
-    // },
-   // proposedTaps: parseInt(obj.proposedTaps),
+   
     waterProperty :{
     usageCategory: usageCategory,
     usageSubCategory: usageSubCategory,    },

@@ -19,6 +19,7 @@ import { ifUserRoleExists } from "../utils";
 import set from "lodash/set";
 import { componentJsonpath, radioButtonJsonPath, paybuttonJsonpath } from "./payResource/constants";
 import "./pay.css";
+import { WNSConfigName} from "../../../../ui-utils/commons";
 
 const header = getCommonContainer({
     header: getCommonHeader({
@@ -63,7 +64,9 @@ const getPaymentCard = (businessService) => {
             }
         }
     } else {
-        if(businessService ==='WS.ONE_TIME_FEE' || businessService ==='SW.ONE_TIME_FEE' || businessService.includes("SW") || businessService.includes("WS"))
+        let  WNSConfigName_= WNSConfigName()
+        let  bservice = WNSConfigName_.ONE_TIME_FEE_WS
+        if(businessService ===bservice || businessService ===WNSConfigName_.ONE_TIME_FEE_SW || businessService.includes("SW") || businessService.includes("WS"))
        {
         return {
             uiFramework: "custom-atoms",

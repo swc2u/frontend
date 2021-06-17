@@ -330,7 +330,7 @@ export const getWorkFlowData = async (queryObject) => {
 };
 
 // api call to get my connection details
-export const getMyConnectionResults = async (queryObject, dispatch) => {
+export const getMyConnectionResults = async (queryObject, dispatch,action) => {
     dispatch(toggleSpinner());
     try {
         const response = await httpRequest(
@@ -341,11 +341,19 @@ export const getMyConnectionResults = async (queryObject, dispatch) => {
         );
 
         if (response.WaterConnection.length > 0) {
-            response.WaterConnection = await getPropertyObj(response.WaterConnection); 
-            
+            response.WaterConnection = await getPropertyObj(response.WaterConnection);             
+            let IsEstimatecall = false
+            if(action)
+            {
+                if(action.screenKey !== "home")
+                {
+                    IsEstimatecall = true
+
+                }
+            }
             for (let i = 0; i < response.WaterConnection.length; i++) {
                 response.WaterConnection[i].service = "Water"
-                if (response.WaterConnection[i].connectionNo !== null && response.WaterConnection[i].connectionNo !== undefined) {
+                if (response.WaterConnection[i].connectionNo !== null && response.WaterConnection[i].connectionNo !== undefined && IsEstimatecall===true) {
                     try {
                         let queryObject = {billGeneration:
                             {            
@@ -421,9 +429,10 @@ export const getMyApplicationResults = async (queryObject, dispatch) => {
                               consumerCode:response.WaterConnection[i].connectionNo,                                        
                             }
                         }
+                        let  WNSConfigName_= WNSConfigName()
                         const data = await httpRequest(
                             "post",
-                            `billing-service/bill/v2/_fetchbill?consumerCode=${response.WaterConnection[i].applicationNo}&tenantId=${response.WaterConnection[i].property.tenantId}&businessService=WS.ONE_TIME_FEE`,
+                            `billing-service/bill/v2/_fetchbill?consumerCode=${response.WaterConnection[i].applicationNo}&tenantId=${response.WaterConnection[i].property.tenantId}&businessService=${WNSConfigName_.ONE_TIME_FEE_WS}`,
                             //'/ws-services/billGeneration/_getBillData',
                             "_search",
                              queryObject
@@ -1047,6 +1056,13 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
                 }
+                else if(activityType === 'REGULARWSCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(function (x) {
+                        return x.applicationType === applicationType && x.occupancycode === occupancycode;
+                    });
+                    
+                } 
             }
             else if(applicationType ==='TEMPORARY'){
                 wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
@@ -1180,16 +1196,16 @@ const parserFunction = (state) => {
     let usageCategory ='SW_TEMP'
     let usageSubCategory =null
     let id = null
-    let isFerruleApplicable = false
-    if(queryObject.waterApplication && queryObject.waterApplication!== undefined)
-    {
-        if (queryObject.waterApplication.applicationStatus !== 'PENDING_FOR_SECURITY_DEPOSIT') {
-            isFerruleApplicable = true;
-        }
-    }
-    else{
-        isFerruleApplicable = true;
-    }
+    let isFerruleApplicable = get(queryObject.waterApplication, "isFerruleApplicable",true);
+    // if(queryObject.waterApplication && queryObject.waterApplication!== undefined)
+    // {
+    //     if (queryObject.waterApplication.applicationStatus !== 'PENDING_FOR_SECURITY_DEPOSIT') {
+    //         isFerruleApplicable = isFerruleApplicable;
+    //     }
+    // }
+    // else{
+    //     isFerruleApplicable = isFerruleApplicable;
+    // }
     if(queryObject.water)
     {
         if(queryObject.waterProperty.id)
@@ -1656,6 +1672,13 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
                 }
+                else if(activityType === 'REGULARWSCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(function (x) {
+                        return x.applicationType === applicationType && x.occupancycode === occupancycode;
+                    });
+                    
+                } 
             }
             else if(applicationType ==='TEMPORARY'){
                 wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
@@ -2553,7 +2576,7 @@ export const wsDownloadConnectionDetails = (receiptQueryString, mode, dispatch) 
 }
 
 
-export const getSWMyConnectionResults = async (queryObject, dispatch) => {
+export const getSWMyConnectionResults = async (queryObject, dispatch,action) => {
     dispatch(toggleSpinner());
     try {
         const response = await httpRequest(
@@ -2564,9 +2587,18 @@ export const getSWMyConnectionResults = async (queryObject, dispatch) => {
         );
         if (response.SewerageConnections.length > 0) {
             response.SewerageConnections = await getPropertyObj(response.SewerageConnections);
+            let IsEstimatecall = false
+            if(action)
+            {
+                if(action.screenKey !== "home")
+                {
+                    IsEstimatecall = true
+
+                }
+            }
             for (let i = 0; i < response.SewerageConnections.length; i++) {
                 response.SewerageConnections[i].service = "Sewerage"
-                if (response.SewerageConnections[i].connectionNo !== undefined && response.SewerageConnections[i].connectionNo !== null) {
+                if (response.SewerageConnections[i].connectionNo !== undefined && response.SewerageConnections[i].connectionNo !== null && IsEstimatecall === true ) {
                     try {
                         let queryObject = {billGeneration:
                             {            
@@ -3067,7 +3099,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                            div: div,
                            subDiv:subDiv,
                            applicationNumber:applicationNumber,
-                           receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
+                           receiptNumber:receiptNumber,
                            activityType: activityType,
                            applicantName: applicantName,
                            applicantAddress: applicantAddress,
@@ -3581,3 +3613,10 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
     }
   
   };
+  export const WNSConfigName =()=>{
+    return {
+        ONE_TIME_FEE_WS: "PUBLIC_HEALTH_SERVICES_DIV2",
+        ONE_TIME_FEE_SW: "PUBLIC_HEALTH_SERVICES_DIV4",
+      
+  };
+  }

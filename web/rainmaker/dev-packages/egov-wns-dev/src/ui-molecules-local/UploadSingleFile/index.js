@@ -16,6 +16,7 @@ const UploadSingleFile = ({
   return (
     <div>
       {!uploaded && (
+     // {!uploaded &&  (pagename !=="wns" ) && (
         <UploadFile
           buttonProps={{
             variant: "outlined",

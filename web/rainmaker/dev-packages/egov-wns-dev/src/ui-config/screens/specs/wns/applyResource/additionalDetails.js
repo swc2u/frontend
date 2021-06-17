@@ -461,6 +461,38 @@ export const additionDetails =(Disabled)=> getCommonCard({
         section:"SECURITY",
         jsonPath: "applyScreen.waterApplication.isFerruleApplicable"
       },
+      additionalCharges: getTextField({
+        label: {
+          labelKey: "WS_ADDN_DETAILS_ADDITIONAL_CHARGES_LABEL"
+        },
+        placeholder: {
+          labelKey: "WS_ADDN_DETAILS_ADDITIONAL_CHARGES_LABEL"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        pattern: getPattern("Amount"),
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.waterApplication.additionalCharges"
+      }),
+      constructionCharges: getTextField({
+        label: {
+          labelKey: "WS_ADDN_DETAILS_CONSTRUCTION_CHARGES_LABEL"
+        },
+        placeholder: {
+          labelKey: "WS_ADDN_DETAILS_CONSTRUCTION_CHARGES_LABEL"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        pattern: getPattern("Amount"),
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.waterApplication.constructionCharges"
+      }),
     }),
   }),
   activationDetailsContainer: getCommonGrayCard({
