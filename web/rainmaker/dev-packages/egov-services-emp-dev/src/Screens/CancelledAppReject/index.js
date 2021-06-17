@@ -84,21 +84,49 @@ class rejectCancelRequest extends Component {
 
     const { handleCommentsChange, handleOptionsChange, onSubmit } = this;
     const { valueSelected, commentValue } = this.state;
-    const { trasformData, businessServiceData,applicationNumber } = this.props;
+    // const { trasformData, businessServiceData,applicationNumber } = this.props;
+    const {
+      trasformData, businessServiceData,applicationNumber,
+    applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,fatherName,bkEmail,bkCompleteAddress,
+    bkCategory,bkBookingPurpose,
+    bkFromDate,bkNomineeName,bkStatusUpdateRequest,timeslots,bkLocationPictures,cardNumber,
+    bkToDate,bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,bkBankAccountHolder,bkBookingVenue
+    } = this.props
   
     return (
         <NewLocationRejectHOC
-          // options={this.options}
+        bkFromDate={bkFromDate}
+        bkNomineeName={bkNomineeName}
+        bkStatusUpdateRequest={bkStatusUpdateRequest}
+        timeslots={timeslots}
+        bkLocationPictures={bkLocationPictures}
+        cardNumber={cardNumber}
+        bkToDate={bkToDate}
+        bkBankAccountNumber={bkBankAccountNumber}
+        bkBankName={bkBankName}
+        bkIfscCode={bkIfscCode}
+        bkAccountType={bkAccountType}
+        bkBankAccountHolder={bkBankAccountHolder}
+        bkBookingVenue={bkBookingVenue}
+        applicationStatus={applicationStatus}
+        ApplicantMobileNum={ApplicantMobileNum}        
+        ApplicantName={ApplicantName}
+        BookingType={BookingType}
+        fatherName={fatherName} 
+        bkEmail={bkEmail}
+        bkCompleteAddress={bkCompleteAddress}
+        bkCategory={bkCategory}
+        bkBookingPurpose={bkBookingPurpose}
           ontextAreaChange={handleCommentsChange}
-          handleOptionChange={handleOptionsChange}
+          handleOptionChange={handleOptionsChange}  
           // optionSelected={valueSelected}
           commentValue={commentValue}
-          applicationNumber={applicationNumber}
-          createdBy={userInfo.name}
+          applicationNumber={applicationNumber}   
+          createdBy={userInfo.name} 
           tenantId={userInfo.tenantId}
           onSubmit={onSubmit}
           // bookingtype={trasformData.bkBookingType}
-          bookingservice={businessServiceData?businessServiceData:''}
+          bookingservice={businessServiceData?businessServiceData:''}  
         />
     );
   }
@@ -110,7 +138,80 @@ const mapStateToProps = state => {
  
   let trasformData = applicationData?applicationData.bookingsModelList[0]:'';
   let businessServiceData = applicationData.businessService;
-  return { trasformData, businessServiceData };
+
+  let applicationStatus  = trasformData !== undefined && trasformData !== null ?  trasformData.bkApplicationStatus : ""
+  
+
+  let ApplicantMobileNum = trasformData !== undefined && trasformData !== null ?  trasformData.bkMobileNumber : ""
+  
+
+  let ApplicantName = trasformData !== undefined && trasformData !== null ?  trasformData.bkApplicantName : ""
+  
+
+  let BookingType = trasformData !== undefined && trasformData !== null ?  trasformData.bkBookingType : ""
+  
+
+  let fatherName = trasformData !== undefined && trasformData !== null ?  trasformData.bkFatherName : ""
+  
+
+  let bkEmail = trasformData !== undefined && trasformData !== null ?  trasformData.bkEmail : ""
+  
+
+  let bkCompleteAddress = trasformData !== undefined && trasformData !== null ?  trasformData.bkCompleteAddress : ""
+  
+
+  let bkCategory = trasformData !== undefined && trasformData !== null ?  trasformData.bkCategory : ""
+  
+  
+
+  let bkBookingPurpose = trasformData !== undefined && trasformData !== null ?  trasformData.bkBookingPurpose : ""
+  
+
+  let bkFromDate = trasformData !== undefined && trasformData !== null ?  trasformData.bkFromDate : ""
+ 
+  // let bkBankAccountHolder = trasformData !== undefined && trasformData !== null ?  trasformData.bkBankAccountHolder : ""
+  
+  let bkToDate = trasformData !== undefined && trasformData !== null ?  trasformData.bkToDate : ""
+
+let bkBankAccountNumber = trasformData !== undefined && trasformData !== null ?  trasformData.bkBankAccountNumber : ""
+  
+
+  let bkBankName = trasformData !== undefined && trasformData !== null ?  trasformData.bkBankName : ""
+  
+
+
+  let bkIfscCode = trasformData !== undefined && trasformData !== null ?  trasformData.bkIfscCode : ""
+  
+
+  let bkAccountType = trasformData !== undefined && trasformData !== null ?  trasformData.bkAccountType : ""
+  
+
+  let bkBankAccountHolder = trasformData !== undefined && trasformData !== null ?  trasformData.bkBankAccountHolder : ""
+
+
+  let bkBookingVenue = trasformData !== undefined && trasformData !== null ?  trasformData.bkBookingVenue : ""
+ 
+
+  let bkNomineeName = trasformData !== undefined && trasformData !== null ?  trasformData.bkNomineeName : ""
+  console.log("bkNomineeName",bkNomineeName)
+
+  let bkStatusUpdateRequest = trasformData !== undefined && trasformData !== null ?  trasformData.bkStatusUpdateRequest : ""
+  console.log("bkStatusUpdateRequest",bkStatusUpdateRequest)
+//applicationDetails.
+ 
+  let timeslots = trasformData !== undefined && trasformData !== null ?  trasformData.timeslots : ""
+console.log("timeSlots-for-citizen",timeslots)
+  let cardNumber = trasformData !== undefined && trasformData !== null ?  trasformData.cardNumber : ""
+
+  let bkLocationPictures = trasformData !== undefined && trasformData !== null ?  trasformData.bkLocationPictures : ""
+  console.log("bkLocationPictures--inAllStep",bkLocationPictures)
+
+
+  return { trasformData, businessServiceData,
+    applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,
+    bkFromDate,bkNomineeName,bkStatusUpdateRequest,timeslots,bkLocationPictures,cardNumber,
+    bkToDate,bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,bkBankAccountHolder,bkBookingVenue
+  };
 }
 
 

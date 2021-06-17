@@ -157,7 +157,7 @@ class ApplicationDetails extends Component {
     let fetchUrl = window.location.pathname;
     let fetchApplicationNumber = fetchUrl.substring(
       fetchUrl.lastIndexOf("/") + 1
-    );
+    ); 
 
     this.setState({
       CurrentAppNumber : fetchApplicationNumber
@@ -902,6 +902,35 @@ try{
       }
     }
   };
+   
+//   getBookingCancelledDate = async (applicationNumber, tenantId) => {
+//     if (applicationNumber && tenantId) {    
+//         let queryObject = [
+//             { key: "tenantId", value: tenantId },
+//             { key: "businessIds", value: applicationNumber },
+//         ];
+//         const payload = await httpRequest(
+//             "/egov-workflow-v2/egov-wf/process/_search",
+//             "_search",
+//             queryObject
+//         );
+
+//         if (payload) {
+
+//             let cancelledTimeStamp = payload.ProcessInstances[0].auditDetails.createdTime;
+// console.log("cancelledTimeStamp",cancelledTimeStamp)
+//             let date2 = new Date(cancelledTimeStamp);
+
+//             let gdate = ('0' + date2.getDate()).slice(-2) + '/'
+//                 + ('0' + (date2.getMonth() + 1)).slice(-2) + '/'
+//                 + date2.getFullYear();
+//                 console.log("gdate",gdate)
+//             return gdate;
+
+
+//         }
+//     }
+// }
 
   componentWillReceiveProps = async (nextProps) => {
     // alert("checkwillreceiveprops")
@@ -1102,6 +1131,39 @@ try{
     return word + "Rupees Only";
   };
 
+
+  dateTimeSlot = (d1,d2) => {
+
+    let dateArr = []
+
+    let fnewDate = new Date(d1)
+    var generatedDateTimef1 = `${fnewDate.getDate()}-${fnewDate.getMonth() + 1}-${fnewDate.getFullYear()}`;
+    console.log("generatedDateTimef1",generatedDateTimef1)
+
+    let slotFromDate = `${generatedDateTimef1}, 9:00AM`
+    console.log("slotFromDate",slotFromDate)
+
+    let tnewDate = new Date(d2)
+console.log("tnewDate",tnewDate)
+    let result = tnewDate.setTime(tnewDate.getTime() + (24 * 60 * 60 * 1000)); 
+    console.log("result",result)
+
+    let newToDate = new Date(result)
+    console.log("newToDate",newToDate)
+
+    var generatedDateTimeT1 = `${newToDate.getDate()}-${newToDate.getMonth() + 1}-${newToDate.getFullYear()}`;
+    console.log("generatedDateTimeT1",generatedDateTimeT1)
+
+    let slotToDate = `${generatedDateTimeT1}, 8:59AM`
+    console.log("slotToDate",slotToDate)
+
+    dateArr.push(slotFromDate)
+    dateArr.push(slotToDate)
+console.log("dateArr",dateArr)
+
+return dateArr
+  }
+
   downloadPaymentReceiptFunction = async (e) => {
     const {
       transformedComplaint,
@@ -1262,12 +1324,108 @@ gateWay = payloadGateWay.Transaction[0].gateway;
 console.log("citizenPaymentRequestBody",BookingInfo)
 PaccCitizenPaymentRecpt({ BookingInfo: BookingInfo });
 }
+
+else if(applicationDetails.bkAction == "CANCEL" && applicationDetails.bkRemarks !== null && applicationDetails.bkRemarks !== undefined){
+  let date2 = new Date();
+  let tmpdate1 = new Date(applicationDetails.bkFromDate)
+  console.log("tmpdate1",tmpdate1)
+  let tmpdate2 = new Date(applicationDetails.bkToDate)
+  console.log("tmpdate2",tmpdate2)
+  console.log("BookingCANCLdate",date2)
+      var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+   
+   let finalResult = this.dateTimeSlot(applicationDetails.bkFromDate,applicationDetails.bkToDate)
+   console.log("finalResult",finalResult)
+
+   let citizenCancelDate = "NA"
+   let NewcitizenCancelDate;
+   let citiCancelDate;
+
+   if(applicationDetails.bkLocationPictures !== undefined && applicationDetails.bkLocationPictures !== null){
+    citizenCancelDate = applicationDetails.bkLocationPictures
+    NewcitizenCancelDate = new Date(citizenCancelDate);
+    citiCancelDate = `${NewcitizenCancelDate.getDate()}-${NewcitizenCancelDate.getMonth() + 1}-${NewcitizenCancelDate.getFullYear()}`;
+console.log("citiCancelDate",citiCancelDate)
+   }
+  
+// let citizenCancelDate = this.getBookingCancelledDate(applicationDetails.bkApplicationNumber,applicationDetails.tenantId)
+// console.log("citizenCancelDate",citizenCancelDate)
+      let  RequestGateWay = [
+        { key: "consumerCode", value: this.state.CurrentAppNumber},
+        { key: "tenantId", value: userInfo.tenantId }
+        ];
+        let payloadGateWay = await httpRequest(
+        "pg-service/transaction/v1/_search",
+        "_search",
+        RequestGateWay
+        );
+        //Transaction[0].gateway
+      let gateWay = "citizenSide"
+       if(payloadGateWay.Transaction.length > 0){
+      gateWay = payloadGateWay.Transaction[0].gateway; 
+      }
+    let BookingInfo = [
+      {
+          "applicantDetail": {
+              "name": applicationDetails.bkApplicantName,
+              "mobileNumber": applicationDetails.bkMobileNumber,
+              "houseNo": applicationDetails.bkHouseNo,
+              "permanentAddress": applicationDetails.bkHouseNo,
+              "permanentCity": "chandigarh",
+              "sector": applicationDetails.bkSector,
+          },
+          "booking": {
+              "bkApplicationNumber": applicationDetails.bkApplicationNumber,
+              "bookingCancellationDate": citiCancelDate,  //cancellationDate
+              "bookingDuration": `${finalResult[0]} to ${finalResult[1]}`,
+              // "bookingDuration": getDurationDate(
+              //   applicationDetails.bkFromDate,
+              //   applicationDetails.bkToDate
+              // ), 
+              "bookingVenue": applicationDetails.bkLocation,
+              "bkCancellationReasoon":applicationDetails.bkRemarks
+          },
+          "paymentInfo": {
+              "totalAmountPaid": amountTodisplay,
+              "amountInWords": this.NumInWords(NumAmount),
+              "receiptNo": this.props.recNumber,
+              "bankName": gateWay == "citizenSide" ? "Not Applicable": gateWay,
+              "refundAmount": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+              applicationDetails.refundableSecurityMoney : amountTodisplay,
+              "refundAmountInWords": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+              this.NumInWords(applicationDetails.refundableSecurityMoney) : this.NumInWords(NumAmount)
+          },
+          "payerInfo": {
+              "payerName": applicationDetails.bkApplicantName,
+              "payerMobile": applicationDetails.bkMobileNumber,
+          },
+          "tenantInfo": {
+              "municipalityName": "Municipal Corporation Chandigarh",
+              "address": "New Deluxe Building, Sector 17, Chandigarh",
+              "contactNumber": "+91-172-2541002, 0172-2541003",
+              "logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
+              "webSite": "http://mcchandigarh.gov.in"
+          },
+          generatedBy: {
+            generatedBy: userInfo.name,
+            generatedDateTime: generatedDateTime,       
+          },
+      }
+  ]
+  cancelBookingPayReceipt({ BookingInfo: BookingInfo})
+  }
 else if(applicationDetails.bkStatusUpdateRequest !== undefined && applicationDetails.bkStatusUpdateRequest !== null){
- 
 let date2 = new Date();
+let tmpdate1 = new Date(applicationDetails.bkFromDate)
+console.log("tmpdate1",tmpdate1)
+let tmpdate2 = new Date(applicationDetails.bkToDate)
+console.log("tmpdate2",tmpdate2)
 console.log("BookingCANCLdate",date2)
 		var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
  
+ let finalResult = this.dateTimeSlot(applicationDetails.bkFromDate,applicationDetails.bkToDate)
+ console.log("finalResult",finalResult)
+
     let  RequestGateWay = [
       { key: "consumerCode", value: this.state.CurrentAppNumber},
       { key: "tenantId", value: userInfo.tenantId }
@@ -1296,10 +1454,11 @@ console.log("BookingCANCLdate",date2)
         "booking": {
             "bkApplicationNumber": applicationDetails.bkApplicationNumber,
             "bookingCancellationDate": applicationDetails.bkLocationPictures,
-            "bookingDuration": getDurationDate(
-              applicationDetails.bkFromDate,
-              applicationDetails.bkToDate
-            ), 
+            "bookingDuration": `${finalResult[0]} to ${finalResult[1]}`,
+            // "bookingDuration": getDurationDate(
+            //   applicationDetails.bkFromDate,
+            //   applicationDetails.bkToDate
+            // ), 
             "bookingVenue": applicationDetails.bkLocation,
             "bkCancellationReasoon":applicationDetails.bkStatusUpdateRequest
         },
@@ -2185,6 +2344,81 @@ else{
       }, 1500);
 
 }
+
+else if(applicationDetails.bkAction == "CANCEL" && applicationDetails.bkRemarks !== null && applicationDetails.bkRemarks !== undefined){
+  setTimeout(async () => {
+    let documentsPreviewData;
+    const { cancelReceiptData, userInfo } = this.props;
+    var documentsPreview = [];
+    if (
+      cancelReceiptData &&
+      cancelReceiptData.filestoreIds.length > 0
+    ) {
+      documentsPreviewData = cancelReceiptData.filestoreIds[0];
+      documentsPreview.push({
+        title: "DOC_DOC_PICTURE",
+        fileStoreId: documentsPreviewData,
+        linkText: "View",
+      });
+      let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+      let fileUrls =
+        fileStoreIds.length > 0
+          ? await getFileUrlFromAPI(fileStoreIds, userInfo.tenantId)
+          : {};
+
+      documentsPreview = documentsPreview.map(function (doc, index) {
+        doc["link"] =
+          (fileUrls &&
+            fileUrls[doc.fileStoreId] &&
+            fileUrls[doc.fileStoreId].split(",")[0]) ||
+          "";
+
+        doc["name"] =
+          (fileUrls[doc.fileStoreId] &&
+            decodeURIComponent(
+              fileUrls[doc.fileStoreId]
+                .split(",")[0]
+                .split("?")[0]
+                .split("/")
+                .pop()
+                .slice(13)
+            )) ||
+          `Document - ${index + 1}`;
+        return doc;
+      });
+
+      if (mode === "print") {
+        var response = await axios.get(documentsPreview[0].link, {
+          //responseType: "blob",
+          responseType: "arraybuffer",
+
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+          },
+        });
+        console.log("responseData---", response);
+        const file = new Blob([response.data], { type: "application/pdf" });
+        const fileURL = URL.createObjectURL(file);
+        var myWindow = window.open(fileURL);
+        if (myWindow != undefined) {
+          myWindow.addEventListener("load", (event) => {
+            myWindow.focus();
+            myWindow.print();
+          });
+        }
+      } else {
+        setTimeout(() => {
+          window.open(documentsPreview[0].link);
+        }, 100);
+      }
+
+      prepareFinalObject("documentsPreview", documentsPreview);
+    }
+  }, 1500);
+
+}
+
 else if(applicationDetails.bkStatusUpdateRequest !== undefined && applicationDetails.bkStatusUpdateRequest !== null){
   setTimeout(async () => {
     let documentsPreviewData;

@@ -232,11 +232,11 @@ if(ApplyForDateVenueChange !== "NotFound"){
             bookingData ? bookingData.bkToDate: ""
         );
         console.log("totalDays--",daysCount ? daysCount :"")
-        let venueType = vanueData ? vanueData.venueType: "";
+        let venueType = vanueData ? (vanueData.venueType && vanueData.venueType !== undefined && vanueData.venueType !== null ? (vanueData.venueType) : ''): "";
         console.log("venueType--",venueType)
-        let bokingType = bookingData ? bookingData.bkBookingVenue : ""
+        let bokingType = bookingData ? (bookingData.bkBookingVenue && bookingData.bkBookingVenue !== undefined && bookingData.bkBookingVenue !== null ? (bookingData.bkBookingVenue) : ''): "";
         console.log("bokingType--",bokingType)
-        console.log("vanueData.rent--",vanueData ? vanueData.rent :"")
+        console.log("vanueData.rent--",vanueData ? (vanueData.rent && vanueData.rent !== undefined && vanueData.rent !== null ? (vanueData.rent) : "") :"")
         console.log("vanueData.cleaningCharges--",vanueData && vanueData.cleaningCharges || "")
 
         let totalAmount1
