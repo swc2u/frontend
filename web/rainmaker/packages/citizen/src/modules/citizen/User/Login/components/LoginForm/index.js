@@ -14,6 +14,14 @@ import { blue } from "@material-ui/core/colors";
 const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,languages,onLanguageChange,languageSelected,hasLocalisation }) => {
   const fields = form.fields || {};
   const submit = form.submit;
+  const callIconStyle = {
+    marginLeft: "17px",
+    height: "17px",
+    width: "17px",
+    borderRadius: "50%",
+    position: "absolute",
+    top: "0px",
+  };
   const style = {
     baseStyle: {
       background: "#ffffff",
@@ -127,7 +135,20 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
               </IconButton>  */}
                 <p>
                 In case of any support or query,<br></br> kindly contact us on                   
-                <b  style={{  color:"blue"}} > 0172-2787200</b>
+                {/* <b  style={{  color:"blue"}} > 0172-2787200</b> */}
+                <a
+              className="citizen-mobileNumber-style"
+              href={`tel:+0172-2787200`}
+              style={{ textDecoration: "none", position: "relative" }}
+            >
+              <Icon action="communication" name="call" style={callIconStyle} color={"#22b25f"} />
+              <span
+                style={{
+                  fontSize:12,// filedBy.includes("@CSR") ? 12 : 14,
+                  marginLeft: "43px",
+                }}
+              >{`0172-2787200`}</span>
+            </a>
                 </p> 
               {/* <Label bold={false} color="black" fontSize= "14px" label="In case of any support or query, kindly contact us on"/> */}
               

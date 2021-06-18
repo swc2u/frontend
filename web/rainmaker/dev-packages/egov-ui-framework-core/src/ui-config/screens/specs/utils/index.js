@@ -672,6 +672,8 @@ export const getPattern = type => {
           return /^[0-9]{10,16}$/i;
           case "IFSCCode":
           return /^[A-Z]{4}0[A-Z0-9]{6}$/i;
+          case "plotArea":
+          return /^[0-9]{1,8}(\.[0-9]{1,2})?$/i;
   }
 };
 

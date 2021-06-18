@@ -237,6 +237,8 @@ import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField
           disabled: IsEdit,
         } ,    
         gridDefination: { xs: 12, sm: 6 },
+       // pattern: /^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,99}$/i,
+       pattern: getPattern("BuildingStreet"),
        // errorMessage: "ERR_INVALID_BILLING_PERIOD",
         jsonPath: "applyScreen.property.address.buildingName"
       }),
@@ -253,7 +255,9 @@ import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField
           disabled: IsEdit,
         } ,    
         gridDefination: { xs: 12, sm: 6 },
-       // errorMessage: "ERR_INVALID_BILLING_PERIOD",
+       // errorMessage: "ERR_INVALID_BILLING_PERIOD",DoorHouseNo
+       pattern: getPattern("DoorHouseNo"),
+      // pattern: /^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,20}$/i,
         jsonPath: "applyScreen.property.address.plotNo"
       }),
       beforeFieldChange: async (action, state, dispatch) => {
@@ -270,6 +274,7 @@ import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField
         disabled: IsEdit,
        },
         gridDefination: { xs: 12, sm: 6 },
+        pattern: /^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,99}$/i,
        // errorMessage: "ERR_INVALID_BILLING_PERIOD",
         jsonPath: "applyScreen.property.address.street"
       }),

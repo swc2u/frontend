@@ -202,8 +202,8 @@ const propertyUpdateCitizen = async (state, dispatch) => {
       doorNo =`0${doorNo}` 
     } 
     set(propertyData, "address.doorNo", doorNo.toUpperCase());
-    propertyData.landArea = parseInt(propertyData.landArea);
-    propertyData.totalConstructedArea = parseInt(propertyData.landArea);
+    propertyData.landArea = (propertyData.landArea);
+    propertyData.totalConstructedArea = (propertyData.landArea);
     propertyData.tenantId = tenantId;
     //set usage category
     let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
@@ -916,8 +916,9 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
           "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
         );
     dispatch(prepareFinalObject("applyScreen.property", propertyData));
-    propertyData.landArea = parseInt(propertyData.landArea);
-    propertyData.totalConstructedArea = parseInt(propertyData.landArea);
+   // propertyData.landArea = parseInt(propertyData.landArea);
+    propertyData.landArea = propertyData.landArea;
+    propertyData.totalConstructedArea = (propertyData.landArea);
     propertyData.tenantId = tenantId;
     //propertyData.address.doorNo = propertyData.address.plotNo;
     let doorNo =propertyData.address.doorNo
@@ -934,8 +935,8 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       doorNo =`0${doorNo}` 
     } 
     set(propertyData, "address.doorNo", doorNo.toUpperCase());
-    set(propertyData, "landArea", parseInt(propertyData.landArea));
-    set(propertyData, "totalConstructedArea", parseInt(propertyData.landArea));
+    set(propertyData, "landArea", (propertyData.landArea));
+    set(propertyData, "totalConstructedArea", (propertyData.landArea));
     if(propertyData.address.locality !== undefined)
     {
       if(propertyData.address.locality.code.value)
@@ -1356,8 +1357,9 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         set(propertyPayload, "source", "MUNICIPAL_RECORDS");
        // set(propertyPayload, "noOfFloors", 1);
         set(propertyPayload, "propertyType", "VACANT");
-        propertyPayload.landArea = parseInt(propertyPayload.landArea);
-        propertyPayload.totalConstructedArea = parseInt(propertyPayload.landArea);
+       // propertyPayload.landArea = parseInt(propertyPayload.landArea);
+        propertyPayload.landArea = propertyPayload.landArea;
+        propertyPayload.totalConstructedArea = (propertyPayload.landArea);
         propertyPayload.tenantId = tenantId;
        // propertyPayload.address.doorNo = propertyPayload.address.plotNo;
        let doorNo =propertyPayload.address.doorNo

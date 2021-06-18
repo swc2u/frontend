@@ -617,13 +617,13 @@ export const propertyOwnerDetail={
 //      callBack: convertEpochToDateAndHandleNA
 //    }
 //  ),
-//  fatherName: getLabelWithValue(
-//    {
-//      labelKey: "WS_OWN_DETAIL_FATHER_OR_HUSBAND_NAME"
-//    },
-//    { jsonPath: "WaterConnection[0].property.owners[0].fatherOrHusbandName",
-//    callBack: handleNA }
-//  ),
+ fatherName: getLabelWithValue(
+   {
+     labelKey: "WS_OWN_DETAIL_FATHER_OR_HUSBAND_NAME"
+   },
+   { jsonPath: "WaterConnection[0].property.owners[0].fatherOrHusbandName",
+   callBack: handleNA }
+ ),
 //  relationship: getLabelWithValue(
 //    {
 //      labelKey: "WS_OWN_DETAIL_RELATION_LABEL"
