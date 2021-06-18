@@ -362,7 +362,8 @@ submit = async (InitiateAppNumber) => {
     console.log("AllPropsOfSubmitPage--",this.props)
 
     console.log(discountDocs, "Neeraj this pros");
-
+    let checkDate
+    let checkDateCondition = false
     let discountDocType = discountDocs && 
     !_.isEmpty(discountDocs)? 
     discountDocs && discountDocs[0].documentCode : "notFound";
@@ -371,16 +372,6 @@ submit = async (InitiateAppNumber) => {
     !_.isEmpty(discountDocs)? 
     discountDocs[0].documents && isArray(discountDocs[0].documents) &&  discountDocs[0].documents[0].fileStoreId : "notFound";
     
-
-
-
-    // let discountDocType = discountDocs && discountDocs[0].documentCode;
-    // let discountDocFid =
-    //   discountDocs &&
-    //   discountDocs[0].documents &&
-    //   isArray(discountDocs[0].documents) &&
-    //   discountDocs[0].documents[0].fileStoreId;
-
 let dataOne = get(
     state,
     "screenConfiguration.preparedFinalObject.createAppData",
@@ -437,9 +428,15 @@ try{
       console.log("AvailCheckForSameTime",AvailCheckForSameTime)
       let checkResponseAvailForSameTime = AvailCheckForSameTime !== undefined && AvailCheckForSameTime !== null ?
       (AvailCheckForSameTime.data && AvailCheckForSameTime.data !== null && AvailCheckForSameTime.data !== null ?AvailCheckForSameTime.data:""): ""
-  console.log("checkResponseAvailForSameTime",checkResponseAvailForSameTime)
+     console.log("checkResponseAvailForSameTime",checkResponseAvailForSameTime)
+     checkDate = checkResponseAvailForSameTime && checkResponseAvailForSameTime.length > 0 ? AvailCheckForSameTime.data[0] : 'emptyArray'
+     console.log("checkDate",checkDate)
+if(checkDate !== "emptyArray " && (checkDate !== data.bkFromDate || checkDate !== data.bkToDate)){
+    checkDateCondition = true
+}
+console.log("checkDateCondition",checkDateCondition)
       if(checkResponseAvailForSameTime !== ""){
-          if(AvailCheckForSameTime.data.length == 0){
+          if(AvailCheckForSameTime.data.length == 0 || checkDateCondition == true){
               let Booking = {
                   bkRemarks: data.bkRemarks,
                   bkResidentialOrCommercial: data.bkResidentialOrCommercial,

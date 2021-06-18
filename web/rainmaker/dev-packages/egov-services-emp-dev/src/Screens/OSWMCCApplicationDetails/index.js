@@ -1161,9 +1161,10 @@ const mapStateToProps = (state, ownProps) => {
 	let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
 	let businessService = applicationData ? applicationData.businessService : "";
 	let bookingDocs;
-	
-	
-	let area = applicationData && applicationData.bookingsModelList ? applicationData.bookingsModelList[0].bkAreaRequired : 'NA'
+	 let area = applicationData && applicationData.bookingsModelList ? 
+	(applicationData.bookingsModelList[0].bkAreaRequired !== undefined && applicationData.bookingsModelList[0].bkAreaRequired !== null) ?
+	 (applicationData.bookingsModelList[0].bkAreaRequired) : 'NA': 'NA'
+
 	let fromDate = applicationData && applicationData.bookingsModelList ? applicationData.bookingsModelList[0].bkFromDate : 'NA'
 	let toDate = applicationData && applicationData.bookingsModelList ? applicationData.bookingsModelList[0].bkToDate : 'NA'
 
@@ -1241,18 +1242,7 @@ console.log("OfflineInitatePayArray-1",OfflineInitatePayArray)
 		historyApiData = historyObject;
 	}
 
-	// const role =
-	// 	roleFromUserInfo(userInfo.roles, "GRO") ||
-	// 		roleFromUserInfo(userInfo.roles, "DGRO")
-	// 		? "ao"
-	// 		: roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-	// 			roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-	// 			? "eo"
-	// 			: roleFromUserInfo(userInfo.roles, "CSR")
-	// 				? "csr"
-	// 				: "employee";
-
-					const role = "employee";
+	const role = "employee";
 
 	let isAssignedToEmployee = true;
 	if (selectedComplaint && businessService) {

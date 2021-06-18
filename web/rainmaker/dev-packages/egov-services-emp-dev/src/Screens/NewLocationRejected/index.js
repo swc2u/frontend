@@ -13,7 +13,7 @@ const NewLocationRejectHOC = formHOC({
   formKey: "rejectNewLocation",
   isCoreConfiguration: 'false',
 })(NewLocationRejectedForm);
-
+  
 
 class RejectNewLocation extends Component {
   state = {

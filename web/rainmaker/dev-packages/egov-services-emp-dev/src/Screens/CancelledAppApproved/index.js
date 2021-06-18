@@ -521,7 +521,7 @@ class CancelRequestApproved extends Component {
     const { trasformData, businessServiceData, applicationNumber, Cancelstatus,editableCommercialGrndRefundAmount,
       applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,bkBookingVenue,
       fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,
-    bkBankAccountHolder,bkNomineeName,bkStatusUpdateRequest,bkLocationPictures
+    bkBankAccountHolder,bkNomineeName,bkStatusUpdateRequest,bkLocationPictures,timeslots,cardNumber
     } = this.props;
     console.log("this.props.editableRefundAmount--",this.props)
     let NumberReturnAmount;
@@ -566,7 +566,7 @@ else{
         bkStatusUpdateRequest = {bkStatusUpdateRequest}
         bkLocationPictures = {bkLocationPictures}
         bkCompleteAddress = {bkCompleteAddress}
-        bkCategory = {bkCategory}
+        bkCategory = {bkCategory} 
         bkBookingPurpose = {bkBookingPurpose}
         bkFromDate = {bkFromDate}
         bkToDate = {bkToDate}
@@ -575,6 +575,8 @@ else{
         bkIfscCode = {bkIfscCode}
         bkNomineeName = {bkNomineeName}
         bkAccountType = {bkAccountType}
+        timeslots = {timeslots}
+        cardNumber = {cardNumber}
         bkBankAccountHolder = {bkBankAccountHolder}
         applicationStatus = {applicationStatus}
         ApplicantMobileNum = {ApplicantMobileNum}
@@ -705,6 +707,10 @@ let bkBankAccountNumber = trasformData !== undefined && trasformData !== null ? 
   let bkStatusUpdateRequest = trasformData !== undefined && trasformData !== null ?  trasformData.bkStatusUpdateRequest : ""
   console.log("bkStatusUpdateRequest",bkStatusUpdateRequest)
 //applicationDetails.
+ 
+  let timeslots = trasformData !== undefined && trasformData !== null ?  trasformData.timeslots : ""
+console.log("timeSlots-for-citizen",timeslots)
+  let cardNumber = trasformData !== undefined && trasformData !== null ?  trasformData.cardNumber : ""
 
   let Cancelstatus = trasformData.bkStatus;
 
@@ -714,7 +720,7 @@ let bkBankAccountNumber = trasformData !== undefined && trasformData !== null ? 
   return {businessServiceData, trasformData, editableRefundAmount,editableCommercialGrndRefundAmount, dataforRefund, payloadone, 
     applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,
     fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,
-    bkBankAccountHolder,bkBookingVenue,bkNomineeName,bkStatusUpdateRequest,bkLocationPictures,
+    bkBankAccountHolder,bkBookingVenue,bkNomineeName,bkStatusUpdateRequest,bkLocationPictures,timeslots,cardNumber,
     ConRefAmt, Cancelstatus, paymentDetailsForReceipt };
 }
 

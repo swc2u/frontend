@@ -136,6 +136,16 @@ const formConfig = {
         value:''
       }
    ,
+   timeslots: {
+    id: "Booking-timeslots", 
+    jsonPath: "Booking.timeslots",
+    value:''
+  },
+  cardNumber: {
+    id: "Booking-cardNumber",
+    jsonPath: "Booking.cardNumber",
+    value:''
+  },
     tenantId: {
       id: "tenantId",
       jsonPath: "Booking.tenantId",
