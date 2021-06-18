@@ -34,8 +34,8 @@ class SelectedTimeSlotInfo extends Component {
                     </span>
 
                 </Grid>
-                <Grid item={true} xs={2} sm={1} lg={1} md={1}>
-         
+                <Grid item={true} xs={10} sm={11} lg={11} md={11}>
+  
                     <span
                         style={{
                             color: "rgba(0, 0, 0, 0.87)",
