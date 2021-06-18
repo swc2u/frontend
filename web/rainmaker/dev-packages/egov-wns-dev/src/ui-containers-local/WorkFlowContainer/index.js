@@ -363,6 +363,25 @@ class WorkFlowContainer extends React.Component {
               
 
             }
+            else if ((status ==='CONNECTION_TARIFF_CHANGED'
+                     || status ==='CONNECTION_UPDATED'
+                     ||status ==='METER_UPDATED' )             
+                     && WaterConnection[0].waterApplicationType === 'REGULAR')
+            {
+              actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
+                                              && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                                             // && item.buttonLabel !=='UPDATE_METER_INFO'
+                                              &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
+
+            }
+            else if ((status ==='CONNECTION_CLOSED'
+                     || status ==='TEMPORARY_CONNECTION_CLOSED'
+                     )             
+                     && WaterConnection[0].waterApplicationType === 'REGULAR')
+            {
+              actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+
+            }
             else if (status ==='CONNECTION_CLOSED' && WaterConnection[0].activityType ==='PERMANENT_DISCONNECTION')
             {
               actions = [];// actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');

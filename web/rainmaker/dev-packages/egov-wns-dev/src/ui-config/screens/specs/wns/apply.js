@@ -827,13 +827,17 @@ export const getData = async (action, state, dispatch) => {
         if((combinedArray[0].applicationStatus==="PENDING_FOR_CITIZEN_ACTION" || combinedArray[0].applicationStatus==="INITIATED") && (combinedArray[0].connectionNo !== null || combinedArray[0].connectionNo !== 'NA') && (combinedArray[0].water===true) )
         {
           Isreadolny = true
+          if(combinedArray[0].connectionNo ==="NA")
+          {
+            Isreadolny = false;
+          }
 
         }
         if(process.env.REACT_APP_NAME !== "Citizen")
         {
           Isreadolny = true
         }
-        // Property Details disabled
+        // 0. Property Details disabled
         if((combinedArray[0].applicationStatus==="PENDING_FOR_CITIZEN_ACTION" || combinedArray[0].applicationStatus==="INITIATED") && (combinedArray[0].connectionNo !== null || combinedArray[0].connectionNo !== 'NA') && (combinedArray[0].water===true) )
         {
         const textFieldsPropertyDetails = ["plotSize","propertyUsageType","propertySubUsageType","superBuiltUpArea","propertyFloornumber"];
@@ -843,6 +847,15 @@ export const getData = async (action, state, dispatch) => {
           `components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.${textFieldsPropertyDetails[i]}`,
           "props.disabled",
           Isreadolny
+          ));
+      }
+      const textFieldsPropertyDetails_ = ["propertyUsageType","propertySubUsageType",];
+      for (let i = 0; i < textFieldsPropertyDetails_.length; i++) {
+        dispatch(handleField(
+          "apply",
+          `components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.${textFieldsPropertyDetails_[i]}`,
+          "props.disabled",
+          true
           ));
       }
             // 1.Connection Details  disabled
@@ -855,6 +868,15 @@ export const getData = async (action, state, dispatch) => {
                 Isreadolny
                 ));
             }
+            const textFieldsConnectionDetails_ = ["pipeSize","waterApplicationType"];
+            for (let i = 0; i < textFieldsConnectionDetails_.length; i++) {
+              dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.${textFieldsConnectionDetails_[i]}`,
+                "props.disabled",
+                true
+                ));
+            }
             // 2.Property Location Details disabled
             const textFieldsPropertyLocationDetails = ["pincode","locality","plotNo","plotOrHouseOrSurveyNo","streetName","buildingOrColonyName"];
             for (let i = 0; i < textFieldsPropertyLocationDetails.length; i++) {
@@ -863,6 +885,15 @@ export const getData = async (action, state, dispatch) => {
                 `components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children.${textFieldsPropertyLocationDetails[i]}`,
                 "props.disabled",
                 Isreadolny
+                ));
+            }
+            const textFieldsPropertyLocationDetails_ = ["locality",];
+            for (let i = 0; i < textFieldsPropertyLocationDetails_.length; i++) {
+              dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children.${textFieldsPropertyLocationDetails_[i]}`,
+                "props.disabled",
+                 true
                 ));
             }
 
@@ -876,6 +907,16 @@ export const getData = async (action, state, dispatch) => {
                  Isreadolny
                  ));
              }
+              // 3.Property Usage Detail disabled
+              const textFieldsPropertyUsageDetail_ = ["propertySubUsageType"];
+              for (let i = 0; i < textFieldsPropertyUsageDetail_.length; i++) {
+                dispatch(handleField(
+                  "apply",
+                  `components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.${textFieldsPropertyUsageDetail_[i]}`,
+                  "props.disabled",
+                  true
+                  ));
+              }
              // 4.Owner Information disabled
              const textFieldsOwnerInformation = ["ownerName","mobileNumber","email","guardianName","correspondenceAddress"];
              for (let i = 0; i < textFieldsOwnerInformation.length; i++) {

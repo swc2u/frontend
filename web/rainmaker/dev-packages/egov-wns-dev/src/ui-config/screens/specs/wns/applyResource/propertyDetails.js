@@ -233,14 +233,30 @@ const propertyDetails = getCommonContainer({
                     false
             )
         );
-        dispatch(
-          handleField(
-                  "apply",
-                  "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
-                  "props.value",
-                  ""
-          )
-      );
+        let proposedPipeSize = get(state.screenConfiguration.preparedFinalObject, "applyScreen.proposedPipeSize", '');
+        if(proposedPipeSize)
+        {
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+                    "props.value",
+                    proposedPipeSize
+            ));
+        }
+        else{
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+                    "props.value",
+                    ""
+            ));
+
+        }
+   
+          
+  
 
         }
       }
@@ -254,7 +270,7 @@ const propertyDetails = getCommonContainer({
       required: true,
       sourceJsonPath: "applyScreenMdmsData.ws-services-masters.waterSource",
       gridDefination: { xs: 12, sm: 6 },
-      pattern: getPattern("numeric-only"),
+      pattern: getPattern("plotArea"),
       props:{
         disabled: IsEdit
       },
@@ -275,7 +291,9 @@ const propertyDetails = getCommonContainer({
       },
      // sourceJsonPath: "applyScreenMdmsData.ws-services-masters.waterSource",
       gridDefination: { xs: 12, sm: 6 },
-      pattern: getPattern("numeric-only"),
+      pattern: getPattern("plotArea"),
+      //pattern: /^[a-z0-9]{0,4}$/i,
+      //pattern: /^[0-9]{1,8}(\.[0-9]{1,2})?$/i,
      // errorMessage: "ERR_INVALID_BILLING_PERIOD",
       jsonPath: "applyScreen.property.superBuiltUpArea"
     }),
