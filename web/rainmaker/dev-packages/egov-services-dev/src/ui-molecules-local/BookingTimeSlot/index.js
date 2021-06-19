@@ -18,7 +18,7 @@ import {
     prepareFinalObject,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-
+import './index.css'
 class CustomTimeSlots extends Component {
     constructor() {
         super();
@@ -326,8 +326,8 @@ class CustomTimeSlots extends Component {
 
         return (
             <div>
-                <Grid container={true} justify="flex-end">
-                    <Grid item={true} xs={2}>
+           <Grid container={true} justify="flex-end" className= "timeSlotResponsive">
+                         <Grid item={true} xs={2}>
                         <TextField
                             id="date"
                             label="Select Date"
