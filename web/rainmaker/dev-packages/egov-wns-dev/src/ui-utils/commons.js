@@ -1012,9 +1012,18 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                     
                     else if(applicationType === 'TEMPORARY')
                     {
-                        wsDocument = wsDocument.filter(function (x) {
-                            return x.applicationType === applicationType && x.category === category;
-                        });
+                        if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                            {
+                                wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                            }
+                            else{
+                                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                                    && x.category === category)
+
+                            }
+                        // wsDocument = wsDocument.filter(function (x) {
+                        //     return x.applicationType === applicationType && x.category === category;
+                        // });
 
                     }
                     else if(applicationType === 'REGULAR')
@@ -1065,8 +1074,16 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 } 
             }
             else if(applicationType ==='TEMPORARY'){
-                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
-                    && x.category === category)
+                if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                else{
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        && x.category === category)
+
+                }
+               
 
             }
 
@@ -1091,8 +1108,15 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             if( sewerage === false && tubewell === false && water === false)
             {
                 if(applicationType ==='TEMPORARY'){
-                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
-                        && x.category === category)
+                    if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                    {
+                        wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                    }
+                    else{
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                            && x.category === category)
+    
+                    }
     
                 }
                 else
@@ -1630,9 +1654,18 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                     } 
                     else if(applicationType === 'TEMPORARY')
                     {
-                        wsDocument = wsDocument.filter(function (x) {
-                            return x.applicationType === applicationType && x.category === category;
-                        });
+                        if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                        {
+                            wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                        }
+                        else{
+                            wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                                && x.category === category)
+
+                        }
+                        // wsDocument = wsDocument.filter(function (x) {
+                        //     return x.applicationType === applicationType && x.category === category;
+                        // });
 
                     }
                     else if(applicationType === 'REGULAR')
@@ -1681,8 +1714,17 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 } 
             }
             else if(applicationType ==='TEMPORARY'){
-                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
-                    && x.category === category)
+                if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                else{
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        && x.category === category)
+
+                }
+                // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                //     && x.category === category)
 
             }
 
