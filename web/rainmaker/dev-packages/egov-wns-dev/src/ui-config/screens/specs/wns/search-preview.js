@@ -113,6 +113,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
     }
     //set proposed holder info if activityType: "UPDATE_CONNECTION_HOLDER_INFO"
     const activityTypeHolder =Response.ProcessInstances[0].businessService;// get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType");
+    ///? set property according to connection
     if(activityTypeHolder ==='UPDATE_CONNECTION_HOLDER_INFO' || activityTypeHolder ==='WS_RENAME' )
     {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewproposedHolderInfo.visible",true);

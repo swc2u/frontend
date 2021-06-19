@@ -208,17 +208,23 @@ const propertyUpdateCitizen = async (state, dispatch) => {
     //set usage category
     let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
     let subusageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+    if(usageCategory!== null)
+    {
     if(usageCategory.split('.').length ===1)
     {
     //st
     set(propertyData, "usageCategory", subusageCategory);
 
     }
+  }
+  if(subusageCategory!== null)
+  {
     if(subusageCategory.split('.').length ===2)
     {
     //set 
     set(propertyData, "usageCategory", subusageCategory);
     }
+  }
 
     set(propertyData, "creationReason", "UPDATE");
     let response_ = await propertyUpdate(state, dispatch,propertyData)
@@ -401,38 +407,38 @@ if(water || sewerage || tubewell)
               return false;
             }
             }
-            value = "mobileNumber";
-            let DuplicatItemM = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
-            if(DuplicatItemM && DuplicatItemM[0])
-            {
-              if(DuplicatItemM[0].IsDuplicatItem)
-              {
-              const LocalizationCodeValueM = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_MOBILE_FIELDS")
-              const errorMessageM = {
-                labelName: "Duplicate mobile number Added",
-                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
-                labelKey:   LocalizationCodeValueM+' '+DuplicatItemM[0].duplicates
-              };
-              dispatch(toggleSnackbar(true, errorMessageM, "warning"));
-              return false;
-            }
-            }
-            value = "emailId";
-            let DuplicatItemE = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
-            if(DuplicatItemE && DuplicatItemE[0])
-            {
-              if(DuplicatItemE[0].IsDuplicatItem)
-              {
-              const LocalizationCodeValueE = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_EMAIL_FIELDS")
-              const errorMessageE = {
-                labelName: "Duplicate email id Added",
-                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
-                labelKey:   LocalizationCodeValueE+' '+DuplicatItemE[0].duplicates
-              };
-              dispatch(toggleSnackbar(true, errorMessageE, "warning"));
-              return false;
-            }
-            }
+            // value = "mobileNumber";
+            // let DuplicatItemM = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
+            // if(DuplicatItemM && DuplicatItemM[0])
+            // {
+            //   if(DuplicatItemM[0].IsDuplicatItem)
+            //   {
+            //   const LocalizationCodeValueM = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_MOBILE_FIELDS")
+            //   const errorMessageM = {
+            //     labelName: "Duplicate mobile number Added",
+            //     //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+            //     labelKey:   LocalizationCodeValueM+' '+DuplicatItemM[0].duplicates
+            //   };
+            //   dispatch(toggleSnackbar(true, errorMessageM, "warning"));
+            //   return false;
+            // }
+            // }
+            // value = "emailId";
+            // let DuplicatItemE = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
+            // if(DuplicatItemE && DuplicatItemE[0])
+            // {
+            //   if(DuplicatItemE[0].IsDuplicatItem)
+            //   {
+            //   const LocalizationCodeValueE = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_EMAIL_FIELDS")
+            //   const errorMessageE = {
+            //     labelName: "Duplicate email id Added",
+            //     //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+            //     labelKey:   LocalizationCodeValueE+' '+DuplicatItemE[0].duplicates
+            //   };
+            //   dispatch(toggleSnackbar(true, errorMessageE, "warning"));
+            //   return false;
+            // }
+            // }
           }
         }
         else if(ownershipCategory_H !== "INDIVIDUAL.MULTIPLEOWNERS")
@@ -766,16 +772,22 @@ else if (wnsStatus && wnsStatus === "TEMPORARY_DISCONNECTION")
     //set usage category
     let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
     let subusageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
-    if(usageCategory.split('.').length ===1)
+    if(usageCategory!== null)
     {
-      //st
-      set(propertyData, "usageCategory", subusageCategory);
+      if(usageCategory.split('.').length ===1)
+      {
+        //st
+        set(propertyData, "usageCategory", subusageCategory);  
+      }
 
     }
-    if(subusageCategory.split('.').length ===2)
+    if(subusageCategory !== null)
     {
-      //set 
-      set(propertyData, "usageCategory", subusageCategory);
+      if(subusageCategory.split('.').length ===2)
+      {
+        //set 
+        set(propertyData, "usageCategory", subusageCategory);
+      }
     }
 
     // end set usage category
@@ -954,16 +966,22 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     //set usage category
     let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
     let subusageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+    if(usageCategory!== null)
+    {
     if(usageCategory.split('.').length ===1)
     {
       //st
       set(propertyData, "usageCategory", subusageCategory);
 
     }
-    if(subusageCategory.split('.').length ===2)
+  }
+    if(subusageCategory!== null)
     {
-      //set 
-      set(propertyData, "usageCategory", subusageCategory);
+      if(subusageCategory.split('.').length ===2)
+      {
+        //set 
+        set(propertyData, "usageCategory", subusageCategory);
+      }
     }
 
     // end set usage category

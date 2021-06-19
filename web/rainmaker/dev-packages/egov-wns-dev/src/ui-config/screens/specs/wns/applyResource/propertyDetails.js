@@ -234,6 +234,7 @@ const propertyDetails = getCommonContainer({
             )
         );
         let proposedPipeSize = get(state.screenConfiguration.preparedFinalObject, "applyScreen.proposedPipeSize", '');
+       
         if(proposedPipeSize)
         {
           dispatch(
@@ -258,6 +259,17 @@ const propertyDetails = getCommonContainer({
           
   
 
+        }
+        let waterApplicationType = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplicationType", '');
+        let applicationNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].applicationNo", '');
+        if(waterApplicationType && applicationNo)
+        {
+          dispatch(handleField(
+            "apply",
+            `components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.waterApplicationType`,
+            "props.disabled",
+            true
+            ));
         }
       }
     
