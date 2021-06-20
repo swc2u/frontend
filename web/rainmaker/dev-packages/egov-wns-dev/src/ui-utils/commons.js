@@ -2951,12 +2951,20 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                         let paidAmount =0;
                         let dueAmount = 0;
                         let receiptNumber =9;
-                        if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length>0)
+                        if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length===1)
                         {
                          paymentReceiptDate = epochToYmdDate(get(payloadReceiptDetails, "Payments[0].paymentDetails[0].receiptDate", ''))
                          paidAmount = get(payloadReceiptDetails, "Payments[0].paymentDetails[0].totalAmountPaid", '')
                          dueAmount = get(payloadReceiptDetails, "Payments[0].paymentDetails[0].totalDue", '')
                          receiptNumber  =get(payloadReceiptDetails, "Payments[0].paymentDetails[0].receiptNumber", '') 
+                        }
+                        else if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length>1)
+                        {
+                            let payment_ = payloadReceiptDetails.Payments.filter(x=>x.totalDue >0)
+                            paymentReceiptDate = epochToYmdDate(get(payment_[0], "transactionDate", ''))
+                            paidAmount = get(payment_[0], "paymentDetails[0].totalAmountPaid", '')
+                            dueAmount = get(payment_[0], "paymentDetails[0].totalDue", '')
+                            receiptNumber  =get(payment_[0], "paymentDetails[0].receiptNumber", '') 
                         }
                         // call get api to set  WaterConnection details
                         let applicationNumber = getQueryArg(window.location.href, "applicationNumber")

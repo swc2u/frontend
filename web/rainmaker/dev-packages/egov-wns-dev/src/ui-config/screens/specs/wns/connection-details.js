@@ -135,7 +135,7 @@ const searchResults = async (action, state, dispatch, connectionNumber) => {
 
       }
       let code = '03';
-      code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.wssectorList",payloadData.WaterConnection[0].property.address.locality.code)   
+      code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.wssectorList",payloadData.SewerageConnections[0].property.address.locality.code)   
       payloadData.SewerageConnections[0].property.address.locality.name = code
       if (payloadData.SewerageConnections[0].noOfToilets === undefined) { payloadData.SewerageConnections[0].noOfToilets = "NA" }
       if (payloadData.SewerageConnections[0].noOfToilets === 0) { payloadData.SewerageConnections[0].noOfToilets = "0" }
