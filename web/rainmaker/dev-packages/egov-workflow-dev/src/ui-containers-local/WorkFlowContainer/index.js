@@ -365,7 +365,7 @@ class WorkFlowContainer extends React.Component {
     
     }
     let validRequest = true
-    if (moduleName === "SW_SEWERAGE") {
+    if (moduleName === "SW_SEWERAGE" && data.service ==='SEWERAGE') {
       dataPath = "SewerageConnection";
       validRequest = this.ValidateRequestSW(data,preparedFinalObject);
       // set if if application is edit
@@ -384,7 +384,9 @@ class WorkFlowContainer extends React.Component {
         || moduleName === 'WS_METER_UPDATE'
         || moduleName === "WS_CONVERSION" 
         || moduleName === "WS_REACTIVATE"
-      || moduleName === "WS_TUBEWELL")
+      || moduleName === "WS_TUBEWELL"
+      || data.service ==='WATER'
+      )
       {
         validRequest = this.ValidateRequest(data,preparedFinalObject)
       }   
