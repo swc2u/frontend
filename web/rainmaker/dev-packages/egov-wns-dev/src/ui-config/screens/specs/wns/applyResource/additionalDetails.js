@@ -126,7 +126,10 @@ export const additionDetails =(Disabled)=> getCommonCard({
               state.screenConfiguration.preparedFinalObject,
               "applyScreen.property.address.locality.code"
             )
-             
+             if(sectotecode.value)
+             {
+              sectotecode = sectotecode.value
+             }
             let ledgerGroup = `${sectotecode}${action.value}`
             dispatch(
               prepareFinalObject(
