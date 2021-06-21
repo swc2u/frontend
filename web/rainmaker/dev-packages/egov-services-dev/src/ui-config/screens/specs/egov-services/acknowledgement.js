@@ -4,7 +4,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import acknowledgementCard from "./acknowledgementResource/acknowledgementUtils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import { getSearchResultsView, getSearchResultsViewForNewLocOswmcc } from "../../../../ui-utils/commons";
+import { getSearchResultsView, getSearchResultsViewForNewLocOswmcc ,getSearchResultsViewForRoomBooking} from "../../../../ui-utils/commons";
 import {
     downloadReceipt,
     downloadCertificate,
@@ -24,7 +24,7 @@ export const header = getCommonContainer({
             getapplicationType() === "OSBM"
                 ? "Open Space to Store Building Material"
                 : getapplicationType() === "NLUJM" ? "New Location" :
-                    getapplicationType() === "GFCP" ? "Commercial Ground" : getapplicationType() === "OSUJM" ? "Open Space within MCC jurisdiction" : getapplicationType() === "PACC" ? "Parks & Community Center/Banquet Halls" : "Water Tanker"
+                    getapplicationType() === "GFCP" ? "Commercial Ground" : getapplicationType() === "OSUJM" ? "Open Space within MCC jurisdiction" : getapplicationType() === "PACC" ? "Parks & Community Center/Banquet Halls" : getapplicationType() === "BKROOM"?"Community Center Room":"Water Tanker"
             } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
         labelKey: "",
     }),
@@ -38,6 +38,45 @@ export const header = getCommonContainer({
         visible: true,
     },
 });
+
+
+export const paymentFailureFooter = (
+    state,
+    applicationNumber,
+    tenantId,
+    businessService
+) => {
+    return getCommonApplyFooter({
+  
+        gotoHome: {
+            componentPath: "Button",
+            props: {
+                variant: "contained",
+                color: "primary",
+                style: {
+                    //    minWidth: "200px",
+                    height: "48px",
+                    marginRight: "16px",
+                },
+            },
+            children: {
+                goToHomeButtonLabel: getLabel({
+                    labelName: "GO TO HOME",
+                    labelKey: "BK_BUTTON_HOME",
+                }),
+            },
+            onClickDefination: {
+                action: "page_change",
+                path:
+                    process.env.REACT_APP_SELF_RUNNING === "true"
+                        ? `/egov-ui-framework/egov-services/search`
+                        : `/`,
+            },
+            visible: true,
+        },
+    });
+};
+
 
 export const paymentSuccessFooter = (
     state,
@@ -100,7 +139,7 @@ export const paymentSuccessFooter = (
                     );
                 },
             },
-            visible: (businessService === "OSBM" || businessService === "GFCP" || businessService === "OSUJM" || businessService === "PACC") ? true : false
+            visible: (businessService === "OSBM" || businessService === "GFCP" || businessService === "OSUJM" || businessService === "PACC" || businessService === "BKROOM") ? true : false
         },
         gotoHome: {
             componentPath: "Button",
@@ -228,7 +267,7 @@ const getAcknowledgementCard = (
                         },
                         body: {
                             labelName:
-                                "A notification regarding Application Submission has been sent to the applicant registered Mobile No.",
+                                "A notification regarding application submission has been sent to the applicant registered mobile no.",
                             labelKey: "BK_APPLICATION_SUCCESS_MESSAGE_SUB",
                         },
 
@@ -266,7 +305,7 @@ const getAcknowledgementCard = (
                         },
                         body: {
                             labelName:
-                                "A notification regarding Payment Collection has been sent to the applicant at registered Mobile No.",
+                                "A notification regarding payment collection has been sent to the applicant at registered mobile no.",
                             labelKey: "BK_PAYMENT_SUCCESS_MESSAGE_SUB",
                         },
                         tailText: {
@@ -336,6 +375,20 @@ const setApplicationData = async (dispatch, applicationNumber, tenantId) => {
     );
 };
 
+const setApplicationDataForRoom = async (dispatch, applicationNumber, tenantId) => {
+
+
+    let response = await getSearchResultsViewForRoomBooking([
+        { key: "applicationNumber", value: applicationNumber },
+      ]);
+  
+    response = get(response, "communityCenterRoomBookingMap", []);
+    let payload = response[Object.keys(response)[0]];
+    dispatch(
+        prepareFinalObject("Booking", payload, [])
+    );
+};
+
 const setApplicationDataForNewLocOSWMCC = async (dispatch, applicationNumber, tenantId) => {
     const queryObject = [
         {
@@ -400,7 +453,9 @@ const screenConfig = {
         );
         if (bookingTypeIdentifier === "applyNewLocationUnderMCC") {
             setApplicationDataForNewLocOSWMCC(dispatch, applicationNumber, tenantId);
-        } else {
+        }else if(businessService==='BKROOM'){
+            setApplicationDataForRoom(dispatch, applicationNumber, tenantId);
+        }else{
             setApplicationData(dispatch, applicationNumber, tenantId);
         }
         set(action, "screenConfig.components.div.children", data);

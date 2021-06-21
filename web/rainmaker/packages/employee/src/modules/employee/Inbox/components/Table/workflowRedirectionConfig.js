@@ -192,10 +192,54 @@ export const getWFConfig = (module, businessService, taskId) => {
       DEFAULT: "/egov-services/bwt-application-details",
     } 
   }
+else if (businessService == "NLUJM")
+  {
+    return {
+      DEFAULT: "/egov-services/newLocation-application-details",
+    } 
+  }
+  else if (businessService == "OSUJM")
+  {
+    return {
+      DEFAULT: "/egov-services/osmcc-application-details",
+    } 
+  }
+  else if (businessService == "PACC")
+  {
+    return { 
+      DEFAULT: "/egov-services/park-and-community-center-appDetails-details",
+    } 
+  }
+  else if (businessService == "GFCP")
+  {
+    return { 
+      DEFAULT: "/egov-services/cg-application-details",
+    } 
+  }
+
+
    else if (businessService == "NewTL") { 
     return {
       INITIATED: "/tradelicence/apply",
       DEFAULT: "/tradelicence/search-preview",
+    };
+
+  }
+  else if (businessService == "REGULARWSCONNECTION"
+          || businessService == "TEMPORARY_WSCONNECTION"
+          || businessService == "WS_TEMP_TEMP"
+          || businessService == "WS_TEMP_REGULAR"
+          || businessService == "WS_DISCONNECTION"
+          || businessService == "WS_TEMP_DISCONNECTION"
+          || businessService == "WS_RENAME"
+          || businessService == "WS_METER_UPDATE"
+          || businessService == "WS_CONVERSION"
+          || businessService == "WS_REACTIVATE"
+          || businessService == "SW_SEWERAGE"   
+          || businessService == "WS_TUBEWELL") { 
+    return {
+      INITIATED: "/wns/search-preview",
+      DEFAULT: "/wns/search-preview",
     };
 
   }
@@ -250,6 +294,7 @@ export const getWFConfig = (module, businessService, taskId) => {
     case "BUILDINGBRANCH":
     case "MANIMAJRA":
     case "ESTATEPROPERTIES":
+      case  "ESTATESERVICES":
       if(businessService === "ES-EB-AllotmentOfSite" || businessService === "ES-EB-PropertyMaster") {
         return {
           INITIATED: 'estate/search-preview',
@@ -280,18 +325,7 @@ export const getWFConfig = (module, businessService, taskId) => {
           DEFAULT: "/estate/preview"
         }
       }
-    case "ESTATESERVICES":
-      if(businessService === "ES-BB-PropertyMaster") {
-        return {
-          INITIATED: "/estate/search-preview-building-branch",
-          DEFAULT: "/estate/search-preview-building-branch"
-        }
-      } else {
-        return {
-          INITIATED: "/estate/preview",
-          DEFAULT: "/estate/preview"
-        }
-      }
+
      case "WS-SERVICES":
       return {
         INITIATED: "/wns/search-preview",

@@ -43,16 +43,15 @@ render() {
               </div>
              
 
-              <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px'}}>
+              {/* <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px'}}>
                 <div className="col-sm-4 col-xs-12">
                   <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BKROOM_ROUND_OFF" />
                 </div>
                 <div className="col-sm-4 col-xs-12">
-                <h5 style={{ textAlign: "right" }}>{this.props.BKROOM_ROUND_OFF}</h5>
-              
+                <h5 style={{ textAlign: "right" }}>{this.props.BKROOM_ROUND_OFF}</h5>        
                 </div>
-              </div>
-              <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px'}}>
+              </div> */}     
+               <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px'}}>
                 <hr class="MuiDividerLine" style={{ marginbottom: "16px" }}></hr>
                 <div className="col-sm-4 col-xs-12">
                   <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_TOTAL_AMOUNT" />

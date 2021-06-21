@@ -3,16 +3,16 @@ import { Image, Card, Icon } from "components";
 import Label from "egov-ui-kit/utils/translationNode";
 import FloatingActionButton from "material-ui/FloatingActionButton";
 import "./index.css";
-
+ 
 class SuccessMessage extends Component {
   render() {
-    const { successmessage, employeeName, secondaryLabel, applicationNumber, tertiaryLabel, icon, backgroundColor, ReceiptNumber } = this.props;
+    const { headermessage,successmessage, employeeName, secondaryLabel, applicationNumber, tertiaryLabel, icon, backgroundColor, ReceiptNumber } = this.props;
     const label1 = `Application No.${applicationNumber}`
     return (
       <div className="wt-app-details">
         <div className="container-fluid">
           <div className="row spl-application-header" style={{ marginTop: '40px', marginBottom: '30px', marginLeft: '-6px' }}>
-            <div className="col-sm-6 spl-app-header-text">  <Label label={"Collection Details"} /></div>
+            <div className="col-sm-6 spl-app-header-text">  <Label label={headermessage} /></div>
             <div className="col-sm-5 spl-app-header-number" > <Label label={label1} /></div>
             {/* <div class="col-sm-5">  </div> */}
           </div>
@@ -27,12 +27,12 @@ class SuccessMessage extends Component {
               paddingBottom: '15px'
             }}>
               <div class="row">
-                <div class="col-sm-1"> <FloatingActionButton className="floating-button" style={{ boxShadow: 0, marginTop: 15 }} backgroundColor={backgroundColor}>
+                <div class="col-sm-1 col-xs-12 iconClass"> <FloatingActionButton className="floating-button" style={{ boxShadow: 0, marginTop: 15 }} backgroundColor={backgroundColor}>
                   {icon}
                 </FloatingActionButton></div>
                 <div class="col-sm-7" >
-                  <Label className="thankyou-text" style={{ fontSize: 30, fontWeight: 'bold'}} label={successmessage} color="#767676" />
-                  <Label className="thankyou-text-message" label={secondaryLabel} color="#767676" /></div>
+                  <Label className="thankyou-text" style={{ fontSize: 30, fontWeight: 'bold'}} label={"BK_PAYMENT_COLLECTION_SUCCESS_MESSAGE_MAIN"} color="#767676" />
+                  <Label className="thankyou-text-message" label={"BK_PAYMENT_SUCCESS_MESSAGE_SUB"} color="#767676" /></div>
                     <div class="col-sm-4 application-number-div">
                     <Label  className="application-text-one"    
                     labelClassName={"myDOC"}
@@ -69,6 +69,29 @@ class SuccessMessage extends Component {
               line-height: 35px;
               font-size: 16px;}
               .wt-app-details .spl-application-header .spl-app-header-number .label-container div{color:white}
+
+              @media screen and (min-width: 320px) and (max-width: 568px){
+                .iconClass{
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin: auto;
+                  margin-bottom: 10px;
+              }
+              
+              }
+              @media only screen and (max-width: 768px)
+                {
+
+                  .label-container .label-text {
+                    display: flex;
+                    justify-content: flex-start !important;
+                    align-items: center;
+                    overflow: visible;
+                    margin-bottom: 0px;
+                    line-height: normal !important
+                }
+                }
             `
         }
         </style>

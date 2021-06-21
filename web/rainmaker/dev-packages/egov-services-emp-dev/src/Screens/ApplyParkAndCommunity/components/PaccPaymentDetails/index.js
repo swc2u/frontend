@@ -13,6 +13,7 @@ import "./index.css";
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import moment from 'moment';
 class ApplicatInfo extends Component {
   state = {
     open: false, setOpen: false
@@ -29,7 +30,7 @@ class ApplicatInfo extends Component {
     let re = /\S+@\S+\.\S+/;
     let mb=/^\d{10}$/;
     e.preventDefault();
-    if(this.props.amount==""||this.props.transactionDate==""){
+    if(this.props.amount==""){
 
 
       this.props.toggleSnackbarAndSetText(
@@ -63,8 +64,9 @@ class ApplicatInfo extends Component {
     this.props.prevStep();
   }
   render() {
-    let { bankName, transactionNumber,finalRent,facilitationCharges,applicationPmode,  discountType,rent, paymentMode, amount,transactionDate,transactionDateChange, handleChange } = this.props;
-
+    let { bankName, transactionNumber,finalRent,facilitationCharges,applicationPmode,  showAmount,discountType,rent, paymentMode, amount,transactionDate,transactionDateChange, handleChange } = this.props;
+console.log("PrpsForRent--",this.props)
+console.log("TypeForRent--",typeof(rent))
     let sectorData=[];
     sectorData.push(applicationPmode);
     let arrayData=[];
@@ -75,9 +77,21 @@ class ApplicatInfo extends Component {
           arrayData.push(event);
       })
     }
-    })
+    }) 
 
-
+    let TodayDate = new Date()
+    console.log("TodayDate--",TodayDate) //YYYY-MM-DD
+    let FormatChange = moment(TodayDate).format("DD-MM-YYYY");
+    console.log("FormatChange--",FormatChange)
+    let strRent
+    let strDate = FormatChange.toString();
+    console.log("strDate--",strDate)
+if(showAmount !== undefined && showAmount !== null){
+  strRent = showAmount.toString();
+  console.log("strDate--strRent",strRent,typeof(strRent))
+}
+    
+    
     const hintTextStyle = {
       letterSpacing: "0.7px",
       textOverflow: "ellipsis",
@@ -151,7 +165,8 @@ class ApplicatInfo extends Component {
           <TextField
             id="amount"
             name="amount"
-            type="number"
+            type="string"
+            // value={strRent == undefined && strRent == null ? rent : strRent}
             value={rent}
             required = {true}   
             hintText={
@@ -175,15 +190,52 @@ class ApplicatInfo extends Component {
             underlineFocusStyle={{ bottom: 7 }}
             hintStyle={{ width: "100%" }}
           />
-        
+         
         </div>    
+      
+      
         <div className="col-sm-6 col-xs-6">
+          <TextField
+            id="transactionDate"
+            name="transactionDate"
+            type="string"
+            value={strDate}
+            required = {true}   
+            hintText={
+              <Label
+                label="BK_MYBK_TRDATE_PLACEHOLDER"
+                color="rgba(0, 0, 0, 0.3799999952316284)"
+                fontSize={16}
+                labelStyle={hintTextStyle}
+              />
+            }
+            floatingLabelText={
+              <Label
+                key={0}
+                label="BK_MYBK_TRDATE_PLACEHOLDER"
+                color="rgba(0,0,0,0.60)"
+                fontSize="12px"
+              />
+            }
+            onChange={handleChange('transactionDate')}
+            underlineStyle={{ bottom: 7 }}
+            underlineFocusStyle={{ bottom: 7 }}
+            hintStyle={{ width: "100%" }}
+          />
+        
+        </div>
+
+
+
+        {/* <div className="col-sm-6 col-xs-6">
         
         <TextField
                     id="transactionDate"
                     name="transactionDate"
-                    value={transactionDate}
-                    required = {true}   
+                    // value={transactionDate}
+                    value={FormatChange}
+                    required = {true}  
+                    type="number" 
                     hintText={
                       <Label
                         color="rgba(0, 0, 0, 0.3799999952316284)"
@@ -211,7 +263,7 @@ class ApplicatInfo extends Component {
                     }}
                     hintStyle={{ width: "100%" }}
 
-                    type="date"
+                    // type="date"
                     defaultValue="2017-05-24"
                     InputLabelProps={{
                       shrink: true,
@@ -219,7 +271,7 @@ class ApplicatInfo extends Component {
                   />
         
         </div>    
-      
+       */}
         <Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
           <div className="col-sm-12 col-xs-12" style={{textAlign: 'right'}}>
           <Button

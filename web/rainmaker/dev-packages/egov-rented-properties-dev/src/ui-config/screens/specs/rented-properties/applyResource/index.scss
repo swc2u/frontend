@@ -52,7 +52,22 @@
       width: 100%;
     }
   }
-  
+  @media only screen and (max-width: 359px) {
+    .tl-download-button {
+      margin: 0 0 1rem !important;
+     margin-bottom: 1rem;
+      width: 300px;
+    }
+    .tl-print-button {
+     margin: 0 !important;
+      width: 300px;
+    }
+    div#custom-atoms-rightdiv {
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
+  }
   @media only screen and (min-width: 768px) {
     .tl-download-button {
       //margin-left: 10px;

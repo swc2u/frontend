@@ -54,15 +54,15 @@ class CGBookingDetails extends Component {
     if (ifscCode) {
       fetch(`https://ifsc.razorpay.com/${ifscCode}`)
         .then(response => {
-          return response.json();
+          return response.json(); 
         })
         .then(payload => {
           if (payload === "Not Found") {
             toggleSnackbarAndSetText(
               true,
               {
-                labelName: "ERR_BANK_DETAILS_NOT_FOUND_FOR_IFSC",
-                labelKey: `ERR_BANK_DETAILS_NOT_FOUND_FOR_IFSC`
+                labelName: "ERR_NOT_FOUND_FOR_IFSC_PACC_EMP",
+                labelKey: `ERR_NOT_FOUND_FOR_IFSC_PACC_EMP`
               },
               "error"  
             );
@@ -191,7 +191,7 @@ return (
               // className="ViewPaymentModeButton"
               onClick={(e)=>this.GOTOCASH(e)}
               >
-              <h5 style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "28px" }}>
+              <h5 className="mobileResponsive" style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "28px" }}>
                   CASH
              
          </h5>
@@ -203,7 +203,7 @@ return (
               // className="ViewPaymentModeButton"
               onClick={(e)=>this.Second(e)}
               >
-              <h5 style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "-107px" }}>
+              <h5 className="mobileResponsive" style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "-107px" }}>
               CHEQUE 
          </h5>
       </button>
@@ -214,7 +214,7 @@ return (
               // className="ViewPaymentModeButton"
               onClick={(e)=>this.Third(e)}
               >
-              <h5 style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "-239px" }}>
+              <h5 className="mobileResponsive" style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "-239px" }}>
               DD
          </h5>
       </button>
@@ -225,7 +225,7 @@ return (
               // className="ViewPaymentModeButton"
               onClick={(e)=>this.Fourth(e)}
               >
-              <h5 style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "-367px" }}>
+              <h5 className="mobileResponsive" style={{ fontSize: "14px", marginTop: "-7px", marginBottom: "15px", marginLeft: "-367px" }}>
               Credit/DebitCard
          </h5>
       </button>
@@ -236,12 +236,13 @@ return (
     <div>
     <div className="col-xs-12" style={{ paddingLeft: 8 }}>
     <div className="col-sm-6 col-xs-12">
-    <FormControl style={{ width: '100%' }}>
+    <FormControl style={{ width: '100%'}}>
       <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label"><Label
         required={true}
         label="Paid By" /*BK_MYBK_PAYMENT_PAID_BY_LABEL*/
       /></InputLabel>
       <Select
+       style={{  marginTop:'24px'}}
         maxWidth={false}
         required={true}
         labelId="demo-controlled-open-select-label"
@@ -1082,6 +1083,20 @@ return (
 </div>  
   }
 />         
+<style>{
+          `
+            
+              @media only screen and (max-width: 768px)
+                {
+
+                  .mobileResponsive {
+                    margin: 0px !important;
+                    margin-bottom: 10px !important;
+                }
+                }
+            `
+        }
+        </style>
 </div>
   );
 }

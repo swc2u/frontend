@@ -298,11 +298,35 @@ export const getOwnerDetails = (isEditable = true) => {
                 labelName: "Enter Correspondence Address",
                 labelKey: "WS_OWN_DETAIL_CROSADD_PLACEHOLDER"
               },
-              pattern: getPattern("Address"),
+              //pattern: getPattern("Address"),
+              pattern: /^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,99}$/i,
               required: true,
               
              // errorMessage: "Invalid Address",
               jsonPath: "applyScreen.property.owners[0].correspondenceAddress",
+              gridDefination: {
+                xs: 12,
+                sm: 6
+              },
+              props: {
+                className: "applicant-details-error",
+                disabled:IsEdit
+              }
+            }),
+            aadharNo: getTextField({
+              label: {
+                labelName: "Aadhar Card number",
+                labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+              },
+              placeholder: {
+                labelName: "Enter Aadhar Card number",
+                labelKey: "WS_OWN_DETAIL_ADDHAR_NO_PLACEHOLDER"
+              },
+              pattern: getPattern("AdharCardNumber"),
+              required: false,
+              visible:false,
+             // errorMessage: "Invalid Address",
+              jsonPath: "applyScreen.aadharNo",
               gridDefination: {
                 xs: 12,
                 sm: 6
@@ -367,7 +391,7 @@ export const getOwnerDetails = (isEditable = true) => {
         items: [],
         hasAddItem: false,
         sourceJsonPath: "applyScreen.property.owners",
-        prefixSourceJsonPath: "children.cardContent.children.viewFive.children",
+        prefixSourceJsonPath: "children.cardContent.children.viewFive.children",//children.cardContent.children.scheama.children
         afterPrefixJsonPath: "children.value.children.key"
       },
       type: "array"
@@ -385,28 +409,7 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
       props: {
         //className: "common-div-css search-preview",
         scheama: getCommonGrayCard({
-          // div1: specialApplicantCategory,
-          //   style: { marginBottom: "10px" }
-          // },
-          // children: {
-          //   header: {
-          //     gridDefination: {
-          //       xs: 12,
-          //       sm: 10
-          //     },
-          //     ...getCommonSubHeader({
-          //     labelKey:"WS_OWN_DETAIL_HEADER_INFO"
-          //     })
-          //   },
-
-          // }
-          // },
-
-          // multiOwner: {
-          //   uiFramework: "custom-containers",
-          //   componentPath: "MultiItem",
-          //   props: {
-          //     scheama: getCommonGrayCard({
+         
           div3: propertyOwnerDetailsHeader,
           viewFive: getCommonContainer({
             ownerName: getTextField({
@@ -495,7 +498,8 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
                 labelName: "Enter Correspondence Address",
                 labelKey: "WS_OWN_DETAIL_CROSADD_PLACEHOLDER"
               },
-              pattern: getPattern("Address"),
+              //pattern: getPattern("Address"),
+              pattern: /^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,99}$/i,
               required: true,
              // errorMessage: "Invalid Address",
               jsonPath: "applyScreen.property.owners[0].correspondenceAddress",
@@ -505,6 +509,30 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
               },
               props: {
                 className: "applicant-details-error"
+              }
+            }),
+            aadharNo: getTextField({
+              label: {
+                labelName: "Aadhar Card number",
+                labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+              },
+              placeholder: {
+                labelName: "Enter Aadhar Card number",
+                labelKey: "WS_OWN_DETAIL_ADDHAR_NO_PLACEHOLDER"
+              },
+              pattern: getPattern("AdharCardNumber"),
+              required: true,
+              visible:false,
+              
+             // errorMessage: "Invalid Address",
+              jsonPath: "applyScreen.aadharNo",
+              gridDefination: {
+                xs: 12,
+                sm: 6
+              },
+              props: {
+                className: "applicant-details-error",
+                disabled:IsEdit
               }
             }),
             // ownerMobileNumber: getLabelWithValue(
@@ -559,6 +587,9 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
             
           }),
         }),
+        onMultiItemAdd: (state, muliItemContent) => {          
+          return muliItemContent;
+        },
         items: [],
         hasAddItem: true,
         sourceJsonPath: "applyScreen.property.owners",

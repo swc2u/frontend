@@ -132,7 +132,7 @@ const { bookingLocation, fromTime, toTime, bkDisplayFromDateTime,  bkDisplayToDa
                             letterSpacing: "0.67px",
                         }}
                     >
-                        {console.log("fromTime--",fromTime)};
+                        {console.log("fromTime--",fromTime)}
                         {console.log("bkDisplayFromDateTime--23",bkDisplayFromDateTime)}
                         {console.log("fromTime && fromTime.length == 0?'--/--/--':bkDisplayFromDateTime",
                         fromTime && fromTime.length == 0?'--/--/--':bkDisplayFromDateTime
@@ -371,25 +371,66 @@ console.log("bkFromTime--bkFromTime",bkFromTime)
   let NewBookToDate = state.screenConfiguration.preparedFinalObject.availabilityCheckData && state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkToDate || "notFound"
   console.log("NewBookToDate--",NewBookToDate)
 
-  let SecTimeSlotFromTime = state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo || "notFound"
-  console.log("SecTimeSlotFromTime--",SecTimeSlotFromTime)
+//   let SecTimeSlotFromTime = state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo || "notFound"
+//   console.log("SecTimeSlotFromTime--",SecTimeSlotFromTime)
+let SecTimeSlotFromTime  = get(
+    state,
+    "screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo",
+    "NotFound"
+);
+console.log("SecTimeSlotFromTime--",SecTimeSlotFromTime)
+let SecTimeSlotToTime = get(
+    state,
+    "screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo",
+    "NotFound"
+);
+console.log("SecTimeSlotToTime--",SecTimeSlotToTime)
 
-  let SecTimeSlotToTime = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo || "notFound"
-  console.log("SecTimeSlotToTime--",SecTimeSlotToTime)
+let firstToTimeSlot = get(
+    state,
+    "screenConfiguration.preparedFinalObject.Booking.bkToTime",
+    "NotFound"
+);
+console.log("firstToTimeSlot--",firstToTimeSlot)
 
-  let firstToTimeSlot = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTime || "notFound"
-  console.log("firstToTimeSlot--",firstToTimeSlot)
+// let SecTimeSlotFromTime = state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo !== undefined && state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo !== null ? state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo : "notFound"
+//   console.log("SecTimeSlotFromTime--",SecTimeSlotFromTime)
+
+//   let SecTimeSlotToTime = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo || "notFound"
+//   console.log("SecTimeSlotToTime--",SecTimeSlotToTime)
+
+// let SecTimeSlotToTime = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo !== undefined && state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo !== null ? state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo :"notFound"
+//   console.log("SecTimeSlotToTime--",SecTimeSlotToTime)
+
+
+//   let firstToTimeSlot = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTime || "notFound"
+//   console.log("firstToTimeSlot--",firstToTimeSlot)
+
+// let firstToTimeSlot = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo !== undefined && state.screenConfiguration.preparedFinalObject.Booking.bkToTime !== null? state.screenConfiguration.preparedFinalObject.Booking.bkToTime: "notFound"
+//   console.log("firstToTimeSlot--",firstToTimeSlot)
 
   let strMid = ","
+  let ConcatFromDateTime = ''
+  let ConcatToDateTime = ''
+  let ConcatFirstToDate = ''
+  
 
-    let ConcatFromDateTime = NewBookFromDate.concat(strMid).concat(SecTimeSlotFromTime);
+
+if( NewBookFromDate !== "notFound"){
+    ConcatFromDateTime = NewBookFromDate.toString().concat(strMid).concat(SecTimeSlotFromTime);
     console.log("ConcatFromDateTime--",ConcatFromDateTime)
+}
     
-    let ConcatToDateTime = NewBookToDate.concat(strMid).concat(SecTimeSlotToTime);
-    console.log("ConcatToDateTime--",ConcatToDateTime)
-    
-    let ConcatFirstToDate = NewBookToDate.concat(strMid).concat(firstToTimeSlot);
+    if(NewBookToDate !== "notFound"){
+        ConcatToDateTime = NewBookToDate.toString().concat(strMid).concat(SecTimeSlotToTime);
+        console.log("ConcatToDateTime--",ConcatToDateTime)
+
+    ConcatFirstToDate = NewBookToDate.toString().concat(strMid).concat(firstToTimeSlot);
     console.log("ConcatFromDateTime--",ConcatFirstToDate)
+    }
+    
+    
+    
 //Booking.wholeDay.FromDate
     // let wholeDayFromDate = state.screenConfiguration.preparedFinalObject.Booking ?
     // state.screenConfiguration.preparedFinalObject.Booking.wholeDay ? state.screenConfiguration.preparedFinalObject.Booking.wholeDay.FromDate : "notFound"

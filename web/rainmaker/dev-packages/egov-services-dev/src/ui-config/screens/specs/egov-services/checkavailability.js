@@ -22,6 +22,7 @@ import {
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import set from "lodash/set";
+import get from "lodash/get";
 import {
     getFileUrlFromAPI,
     getQueryArg,
@@ -219,7 +220,7 @@ const prepareEditFlow = async (
                     toggleSnackbar(
                         true,
                         {
-                            labelName: "Please Try After Sometime!",
+                            labelName: "Please try after sometime!",
                             labelKey: "",
                         },
                         "warning"
@@ -278,6 +279,23 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "checkavailability",
     beforeInitScreen: (action, state, dispatch) => {
+        set(
+            action.screenConfig,
+            "components.div.children.checkAvailabilityCalendar.visible",
+            false
+        );
+        dispatch(
+            prepareFinalObject(
+                "availabilityCheckData.bkToDate",
+                null
+            )
+        );
+        dispatch(
+            prepareFinalObject(
+                "availabilityCheckData.bkFromDate",
+                null
+            )
+        );
         // clearlocalstorageAppDetails(state);
         const applicationNumber = getQueryArg(
             window.location.href,

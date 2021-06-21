@@ -43,11 +43,19 @@ export const fetchData = async (action, state, dispatch) => {
         newData = Object.assign(newData, data);
     }
     const response = await getSearchResults(newData);
-
+console.log(response, "search response")
     try {
         if (response.bookingsModelList.length > 0) {
+            const restrucArray = response.bookingsModelList.map( (item) => {
+                if(item.roomsModel && item.roomsModel.length > 0){
+                    return {neroName: "RituName", ...item}
+                }else{
+                    return {neroName: "NoName", ...item}
+                }
+
+            })
             dispatch(
-                prepareFinalObject("searchResults", response.bookingsModelList)
+                prepareFinalObject("searchResults", restrucArray)
             );
             dispatch(
                 prepareFinalObject(
@@ -56,12 +64,12 @@ export const fetchData = async (action, state, dispatch) => {
                 )
             );
         }
-        // else {
-        //   dispatch(prepareFinalObject("searchResults", response.bookingsModelList));
-        //   dispatch(
-        //     prepareFinalObject("myApplicationsCount", response.bookingsModelList.length)
-        //   );
-        // }
+        else {
+          dispatch(prepareFinalObject("searchResults", response.bookingsModelList));
+          dispatch(
+            prepareFinalObject("myApplicationsCount", response.bookingsModelList.length)
+          );
+        }
     } catch (error) {
         console.log(error);
     }

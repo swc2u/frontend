@@ -61,8 +61,32 @@ export const searchApiCall = async (state, dispatch) => {
 
    let NulmSuhLogRequest = {...searchScreenObject};
    NulmSuhLogRequest.tenantId = tenantId;
-
-  
+   let IsValidDate = true
+   let toDate = get(NulmSuhLogRequest, "toDate")
+   let fromDate = get(NulmSuhLogRequest, "fromDate")
+   if(toDate &&  (fromDate === null  || fromDate === undefined))
+   {
+     IsValidDate = false
+   }
+   else if(fromDate && (toDate === null  || toDate === undefined))
+ {
+   IsValidDate = false
+ 
+ }
+ if(toDate && toDate)
+ {
+   if(fromDate< toDate)
+   {
+     IsValidDate = true
+ 
+   }
+   else
+   {
+     IsValidDate = false
+   }
+ }
+   if(IsValidDate)
+   {
    const requestBody = {NulmSuhLogRequest}
     let response = await getSearchResults([],requestBody, dispatch,"suhLog");
     try {
@@ -104,6 +128,54 @@ export const searchApiCall = async (state, dispatch) => {
         )
       );
     }
+  }
+  else{
+    if(toDate &&  (fromDate === null  || fromDate === undefined))
+  {
+    dispatch(
+      toggleSnackbar(
+        true,
+        {
+          labelName: "Please select from date",
+          labelKey: "ERR_NULM_FROM_DATE_SELECTION_VALIDATION",
+        },
+        "warning"
+      )
+    );
+      }
+      else if(fromDate && (toDate === null  || toDate === undefined))
+      {
+        dispatch(
+          toggleSnackbar(
+            true,
+            {
+              labelName: "Please select to date",
+              labelKey: "ERR_NULM_TO_DATE_SELECTION_VALIDATION",
+            },
+            "warning"
+          )
+        );
+
+      }
+      if(toDate && toDate)
+      {
+        if(fromDate > toDate)
+        {
+          dispatch(
+            toggleSnackbar(
+              true,
+              {
+                labelName: "From date shpuld be less then to date",
+                labelKey: "ERR_NULM_FROM_DATE_TO_DATE_SELECTION_VALIDATION",
+              },
+              "warning"
+            )
+          );
+
+        }
+      }
+
+  }
   }
 };
 

@@ -16,7 +16,7 @@ import {
     prepareFinalObject,
     handleScreenConfigurationFieldChange as handleField,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-
+import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 export const callBackForReset = (state, dispatch, action) => {
     const preparedFinalObject = get(
         state,
@@ -86,8 +86,23 @@ export const callBackForReset = (state, dispatch, action) => {
     }
     fetchData(action, state, dispatch);
 };
-export const callBackForSearch = (state, dispatch, action) => {
-    fetchData(action, state, dispatch);
+export const callBackForSearch = async(state, dispatch, action) => {
+    await fetchData(action, state, dispatch);
+    const myApplicationsCount = get(
+        state,
+        "screenConfiguration.preparedFinalObject.myApplicationsCount"
+    );
+console.log(state.screenConfiguration.preparedFinalObject, "Nero Search form")
+    console.log(myApplicationsCount, "Nero myApplicationsCount")
+    if(myApplicationsCount && myApplicationsCount == 0){
+        dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: "Invalid Application Number!", labelKey: "" },
+                "warning"
+            )
+        );
+    }
 };
 
 export const searchForm = getCommonCard({
@@ -125,7 +140,7 @@ export const searchForm = getCommonCard({
                 },
                 // required: true,
                 pattern: getPattern("MobileNo"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "MyBooking.mobileNumber",
                 gridDefination: {
                     xs: 12,
@@ -144,8 +159,8 @@ export const searchForm = getCommonCard({
                     labelName: "Enter House No",
                     labelKey: "BK_MY_BK_APPLICATION_NUMBER_PLACEHOLDER",
                 },
-                pattern: getPattern("DoorHouseNo"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                pattern: /^CH-BK-\d{4}-\d{2}-\d{2}-\d{6}$/,
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 // required: true,
                 jsonPath: "MyBooking.applicationNumber",
                 gridDefination: {
@@ -167,7 +182,7 @@ export const searchForm = getCommonCard({
                 },
                 optionLabel: "name",
                 // pattern: getPattern("DoorHouseNo"),
-                // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                // errorMessage: "Please check the missing/invalid fields, then proceed!",
                 // required: true,
                 sourceJsonPath: "applyScreenMdmsData.Booking.BookingType",
                 jsonPath: "MyBooking.bookingType",
@@ -212,7 +227,7 @@ export const searchForm = getCommonCard({
                 },
                 optionLabel: "name",
                 // pattern: getPattern("DoorHouseNo"),
-                // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                // errorMessage: "Please check the missing/invalid fields, then proceed!",
                 // required: true,
                 sourceJsonPath: "bookingStatus",
                 jsonPath: "MyBooking.applicationStatus",

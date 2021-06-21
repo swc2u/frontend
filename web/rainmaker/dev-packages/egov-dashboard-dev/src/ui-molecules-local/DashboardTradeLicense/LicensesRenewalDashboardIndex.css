@@ -1,4 +1,35 @@
-/* .ReactTable .-pagination .-previous, .ReactTable .-pagination .-next */
+/* .ReactTable .-pagination .-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  display: revert;
+  width: 20%;
+  height: 100%;
+  border: 0;
+  border-radius: 3px;
+  padding: 6px;
+  font-size: 1em;
+  color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.1);
+  transition: all .1s ease;
+  cursor: pointer;
+  outline-width: 0; } */
+.rt-resizable-header-content {
+  font-weight: bold; }
+
+/* .ReactTable .-pagination .-previous button.-btn {
+      margin-left: 163%; }
+    
+    .ReactTable .-pagination .-next button.-btn {
+      margin-left: -200%; } */
+/* select {
+      margin-left: 63%; }
+    
+    .ReactTable .-pagination .-pageInfo {
+      display: inline-block;
+      margin: 3px 107px;
+      white-space: nowrap;
+      margin-left: 1%; } */
+/* Table css PDF and column visivility code */
 .columnVisibilityCard {
   position: absolute;
   z-index: 1000;
@@ -15,6 +46,8 @@
   border: 1px solid #cccccc;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 4px;
+  /* -webkit-box-shadow: 0 6px 12px rgb(0 0 0 / 18%); */
+  /* box-shadow: 0 6px 12px rgb(0 0 0 / 18%); */
   margin-left: 80%; }
 
 .columnToggleBtn {
@@ -72,7 +105,7 @@
 
 .tableFeature {
   position: relative;
-  margin-left: 60%;
+  margin-left: 70%;
   margin-bottom: 10px;
   margin-top: 10px; }
 
@@ -120,11 +153,11 @@
   margin: 0; }
 
 .tableContainer {
-  position: absolute;
+  /* position: absolute; */
   z-index: 1000;
   /* display: none; */
   /* float: left; */
-  width: 100%;
+  width: 98%;
   padding: 5px 0;
   margin: 0 0 0;
   font-size: 14px;
@@ -139,7 +172,14 @@
   /* box-shadow: 0 6px 12px rgb(0 0 0 / 18%); */
   /* margin-left: 80%; */ }
 
-/* Graph Dashboard Response try */
+/* .rt-tr {
+      font-size: 14px;
+      padding-top: 5px;
+      padding-bottom: 5px; } */
+.rt-table {
+  text-align: center; }
+
+/* Dashboard responsive CSS */
 .graphDashboard {
   display: flex;
   height: 500px; }
@@ -151,16 +191,17 @@
 @media only screen and (max-width: 500px) {
   .graphDashboard {
     display: contents;
-    height: 100px;
+    height: 300px;
     width: 700px;
     padding: 0px 0px 0px 8px; }
   .halfGraph {
     width: 100%;
+    height: 300px;
     border-style: ridge; }
-  .tableContainer {
-    display: contents; }
   .tableFeature {
     position: relative;
     margin-left: 10%;
     margin-bottom: 10px;
-    margin-top: 10px; } }
+    margin-top: 10px; }
+  .columnVisibilityCard {
+    margin-left: 40%; } }

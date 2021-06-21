@@ -17,7 +17,7 @@ import "./index.css";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { withStyles } from "@material-ui/core/styles";
-
+import { getPattern } from "egov-ui-framework/ui-config/screens/specs/utils";
 const styles= theme=>({
 
   cool: {
@@ -36,14 +36,16 @@ class ApplicatInfo extends Component {
   componentDidMount = async () => {
 
 
-  }
+  } 
 
-  continue = e => {
-    e.preventDefault();
+  continue = e => { 
+    // let re = /^(?:[0-9]{11}|[0-9]{2}-[0-9]{3}-[0-9]{6})$/;
+let re = /^\d{9,18}$/
+let ifsc = /^[A-Za-z]{4}[a-zA-Z0-9]{7}$/    
+let nvalid = /^[A-Za-z\s]+$/
+e.preventDefault();
     const { BankAccountName, NomineeName, BankAccountNumber, toggleSnackbarAndSetText,IFSCCode,AccountHolderName, handleChange,accountType,AccountType,classes,prepareFinalObject } = this.props;
-    if (BankAccountName == "" || NomineeName == "" || BankAccountNumber == "" || IFSCCode == "" || AccountHolderName == "") {
-
-
+    if (BankAccountName == "" || NomineeName == "" || BankAccountNumber == "" || IFSCCode == "" || AccountHolderName == "") {    
       toggleSnackbarAndSetText(
         true,
         {
@@ -53,6 +55,36 @@ class ApplicatInfo extends Component {
         "warning"
       );
     } 
+    else if(!re.test(this.props.BankAccountNumber)){
+      this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Please enter valid Account Number",
+          labelKey: `BK_ERROR_MESSAGE_PACC_WRONG_ACCOUNT_NUMBER`
+        },
+        "warning"
+      );
+    }
+    else if(!ifsc.test(this.props.IFSCCode)){
+      this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Please Enter Valid Ifsc Number",
+          labelKey: `BK_ERROR_MESSAGE_PACC_WRONG_IFSC_CODE`
+        },
+        "warning"
+      );
+    }
+    else if(!nvalid.test(this.props.NomineeName || this.props.BankAccountName || this.props.AccountHolderName)){
+      this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Please enter valid Name",
+          labelKey: `BK_ERROR_MESSAGE_PACC_WRONG_NAME`
+        },
+        "warning"
+      );
+    }
     else {
       this.props.nextStep();
     }
@@ -73,7 +105,8 @@ class ApplicatInfo extends Component {
   };
 
   render() {
-    const { BankAccountName, NomineeName, BankAccountNumber, IFSCCode,AccountHolderName, handleChange,accountType,AccountType,classes,prepareFinalObject} = this.props;
+    const { BankAccountName, NomineeName, BankAccountNumber, IFSCCode,AccountHolderName, checkDateVenueChange,
+      handleChange,accountType,AccountType,classes,prepareFinalObject} = this.props;
     const hintTextStyle = {
       letterSpacing: "0.7px",
       textOverflow: "ellipsis",
@@ -85,17 +118,18 @@ class ApplicatInfo extends Component {
       <div style={{float: 'left', width: '100%', padding: '36px 15px' }}>
       <div className="col-xs-12" style={{background:'#fff', padding: '15px 0'}}>
      
-      <div className="col-sm-6 col-xs-6">       
+      <div className="col-sm-6 col-xs-12">       
           <TextField
             id="Bank Account Name"
             name="Bank Account Name"
             type="text"
+            disabled = {checkDateVenueChange == true ? true : false}
             value={BankAccountName}
             pattern="[A-Za-z]"
             required = {true}
             hintText={
               <Label
-                label="Bank Name"// label="BK_MYBK_Bank_Account_Name"
+                label="Bank Account Name"// label="BK_MYBK_Bank_Account_Name" Bank Name(For security refund)
                 color="rgba(0, 0, 0, 0.3799999952316284)"
                 fontSize={16}
                 labelStyle={hintTextStyle}
@@ -104,7 +138,7 @@ class ApplicatInfo extends Component {
             floatingLabelText={
               <Label
                 key={0}
-                label="Bank Name"
+                label="Bank Account Name(For security refund)"
                 color="rgba(0,0,0,0.60)"
                 fontSize="12px"
               />
@@ -116,11 +150,12 @@ class ApplicatInfo extends Component {
           />
         </div>
         
-        <div className="col-sm-6 col-xs-6">
+        <div className="col-sm-6 col-xs-12">
           <TextField
             id="Nominee Name"
             name="Nominee Name"
             type="string"
+            disabled = {checkDateVenueChange == true ? true : false}
             value={NomineeName}
             required = {true}
             hintText={
@@ -147,11 +182,12 @@ class ApplicatInfo extends Component {
         
         </div>
         
-        <div className="col-sm-6 col-xs-6">
+        <div className="col-sm-6 col-xs-12">
           <TextField
             id="Bank Account Number"
             name="Bank Account Number"
             type="text"
+            disabled = {checkDateVenueChange == true ? true : false}
             value={BankAccountNumber}
             required = {true}
             hintText={
@@ -170,6 +206,7 @@ class ApplicatInfo extends Component {
                 fontSize="12px"
               />
             }
+            pattern={getPattern("BankAccountNumber")}
             onChange={handleChange('BankAccountNumber')}
             underlineStyle={{ bottom: 7 }}
             underlineFocusStyle={{ bottom: 7 }}
@@ -178,11 +215,12 @@ class ApplicatInfo extends Component {
         
         </div>    
 
-        <div className="col-sm-6 col-xs-6">
+        <div className="col-sm-6 col-xs-12">
             <TextField
               id="IFSC Code"
               name="IFSC Code"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={IFSCCode}
               required = {true}
               hintText={
@@ -208,11 +246,12 @@ class ApplicatInfo extends Component {
             />
           </div>
 
-          <div className="col-sm-6 col-xs-6">
+          <div className="col-sm-6 col-xs-12">
             <TextField
               id="Account Holder Name"
               name="Account Holder Name"
               type="text"
+              disabled = {checkDateVenueChange == true ? true : false}
               value={AccountHolderName}
               required = {true}
               hintText={
@@ -239,18 +278,18 @@ class ApplicatInfo extends Component {
           </div>
 
           {/*newRequirement*/} 
-          <div className="col-sm-12" style={{marginTop: '19px'}}> 
+          <div className="col-sm-12 clearMob" style={{marginTop: '19px'}}> 
             <FormControl component="fieldset">  {/*label="BK_MYBK_BankAccount_Type"*/}
               <FormLabel component="legend"><Label label="Bank Account Type" /></FormLabel>
               <RadioGroup row aria-label="position" name="gender1"  value={accountType} onChange={AccountType}>
-                <FormControlLabel className={classes.cool} value="Saving" control={<Radio color="primary" />} label="Saving" />
-                <FormControlLabel className={classes.cool} value="Current"  control={<Radio color="primary" />} label="Current" />
+                <FormControlLabel className={classes.cool} value="Saving" disabled = {checkDateVenueChange == true ? true : false} control={<Radio color="primary" />} label="Saving" />
+                <FormControlLabel className={classes.cool} value="Current" disabled = {checkDateVenueChange == true ? true : false}  control={<Radio color="primary" />} label="Current" />
             </RadioGroup>
             </FormControl>         
           </div>
   
           <Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
-            <div className="col-sm-12 col-xs-12" style={{ textAlign: 'right' }}>
+            <div className="col-sm-12 col-xs-12 applyBtnWrapper" style={{ textAlign: 'right' }}>
               <Button
                 className="responsive-action-button"
                 primary={true}

@@ -44,15 +44,15 @@ const getDropDownData = async (action, state, dispatch) => {
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
-    "name" : "Application Type",
-    "code" : "applicationType"
+    "name" : "Pedal Rikshaw/ Loading Rehri",
+    "code" : "CTL.REHRI"
     },
     {
-      "name" : "Application Status",
-      "code" : "status"
+      "name" : "Shop at Old Book Market",
+      "code" : "CTL.OLD_BOOK_MARKET"
     }
   ]
-  var selectedDefaultData = {value: "applicationType", label: "Application Type"};
+  var selectedDefaultData = {value: "CTL.REHRI", label: "Pedal Rikshaw/ Loading Rehri"};
 
   // Date default
   var fromDate = new Date();

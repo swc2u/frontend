@@ -41,6 +41,13 @@ form#datagridsummary .MuiPaper-elevation4-466 {
   letter-spacing: 0.67px;
   word-break: break-all !important; }
 
+.css-16pqwjk-indicatorContainer {
+  color: #130e0e;
+  display: grid;
+  padding: 8px;
+  transition: color 150ms ease 0s;
+  box-sizing: border-box; }
+
 .MuiGrid-container-59 {
   width: 125%;
   display: flex;
@@ -59,42 +66,23 @@ input#custom-containers-toDate {
 input#custom-containers-fromDate {
   height: 10%; }
 
-div#custom-containers-local-moduleDashboardDropdown {
+div#material-ui-FilterConstraintsContainer {
   width: 150%; }
 
 div#custom-containers-local-moduleDashboardDropdown {
   position: absolute;
-  width: 325px }
+  width: 325px; }
 
 button#material-ui-searchButton {
-margin-left: 165px;
-}
+  margin-left: 100px; }
 
-.css-16pqwjk-indicatorContainer {
-  color: #1a1a1a;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  padding: 8px;
-  -webkit-transition: color 150ms;
-  transition: color 150ms;
-  box-sizing: border-box;
-  width: 10%; }
-
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 1100px) {
   div#material-ui-FilterConstraintsContainer {
-  display: block;
-  }
-
+    display: block; }
   button#material-ui-searchButton {
-  margin-left: 0px;
-  margin-top: 94px;
-  width: 150px;
-  }
-
+    margin-left: 0px;
+    margin-top: 94px;
+    width: 150px; }
   div#custom-containers-local-moduleDashboardDropdown {
-  position: absolute;
-  width: 250px;
-  }
-}
+    position: absolute;
+    width: 250px; } }

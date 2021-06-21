@@ -51,6 +51,14 @@ export const getProperty = () => {
                     jsonPath: "WaterConnection[0].property.address.buildingName"
                 }
             ),
+            propertyplotNo: getLabelWithValue(
+                {
+                    labelKey: "WS_PROP_DETAIL_HOUSE_NAME_LABEL_INPUT"
+                },
+                {
+                    jsonPath: "WaterConnection[0].property.address.plotNo"
+                }
+            ),
             propertyStreet: getLabelWithValue(
                 {
                     labelKey: "WS_PROP_DETAIL_STREET_NAME"

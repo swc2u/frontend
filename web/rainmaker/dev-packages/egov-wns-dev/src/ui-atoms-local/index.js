@@ -42,6 +42,10 @@ const MyConnectionsIcon = Loadable({
   loader: () => import("./Icons/MyConnectionsIcon"),
   loading: () => <Loading />
 });
+const LinkConnectionsIcon = Loadable({
+  loader: () => import("./Icons/LinkConnectionsIcon"),
+  loading: () => <Loading />
+});
 
 const PayWnsBillIcon = Loadable({
   loader: () => import("./Icons/PayWnsBillIcon"),
@@ -72,6 +76,7 @@ export {
   Asteric,
   MenuButton,
   MyConnectionsIcon,
+  LinkConnectionsIcon,
   PayWnsBillIcon,
   ConsumerNoContainer,
   BreadCrumbs,

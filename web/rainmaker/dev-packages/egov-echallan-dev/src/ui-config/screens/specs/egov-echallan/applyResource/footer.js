@@ -180,7 +180,7 @@ const callBackForNext = async (state, dispatch) => {
           prepareDocumentsUploadData(state, dispatch, 'apply');
           let statuss = "CHALLAN ISSUED";
 
-          let userResponse = await createCitizenBasedonMobileNumber(state, dispatch);
+          let userResponse = await createCitizenBasedonMobileNumber(state, dispatch,"eChallan");
           console.log("resu : " + userResponse);
 
           let response = await createUpdateGenerateChallanApplication(state, dispatch, statuss);

@@ -15,6 +15,11 @@ const CustomTab = Loadable({
   loading: () => <Loading />
 });
 
+const SingleApplication = Loadable({
+  loader: () => import("./SingleApplication"),
+  loading: () => <Loading />
+});
+
 const UploadSingleFile = Loadable({
   loader: () => import("./UploadSingleFile"),
   loading: () => <Loading />
@@ -66,6 +71,10 @@ const BookingCalendar = Loadable({
   loader: () => import("./BookingCalendar"),
   loading: () => <Loading />
 });
+const RoomDetailsComponents = Loadable({
+  loader: () => import("./RoomDetailsComponents"),
+  loading: () => <Loading />
+});
 const BookingMedia = Loadable({
   loader: () => import("./BookingMedia"),
   loading: () => <Loading />
@@ -84,6 +93,13 @@ const SelectedTimeSlotInfo = Loadable({
   loading: () => <Loading />
 });
 
+
+const MultiDownloadCardWithDocumentType = Loadable({
+  loader: () => import("./MultiDownloadCardWithDocumentType"),
+  loading: () => <Loading />
+});
+
+
 export {
   RadioButtonsGroup,
   CustomTab,
@@ -101,5 +117,8 @@ export {
   BookingMedia,
   ImageList,
   BookingTimeSlot,
-  SelectedTimeSlotInfo
+  SelectedTimeSlotInfo,
+  RoomDetailsComponents,
+  SingleApplication,
+  MultiDownloadCardWithDocumentType
 };

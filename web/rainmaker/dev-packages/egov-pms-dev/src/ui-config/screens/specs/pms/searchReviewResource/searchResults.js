@@ -122,6 +122,25 @@ export const searchResults = {
       getTextToLocalMapping("Designation"),     
       getTextToLocalMapping("Department"),
       getTextToLocalMapping("Retirement Date"),
+      // {
+      //   name: getTextToLocalMapping("Action"),
+      //   options: {
+      //     filter: false,
+      //     customBodyRender: (value, data) => {
+      //       return(
+      //         <div className="linkStyle" onClick={() => getpensionerDetails(data,true)} style={{ color: '#fe7a51', textTransform: 'uppercase' }}>
+      //           <LabelContainer
+      //             labelKey="PENSION_UPDATE"
+      //             style={{
+      //               color: "#fe7a51",
+      //               fontSize: 14,
+      //             }}
+      //           />
+      //         </div>
+      //       )
+      //     }
+      //   }
+      // },
      // getTextToLocalMapping("Designation"),
       {
         name: "tenantId",
@@ -218,6 +237,10 @@ const InitiateNPWorkflow = async (rowData) => {
   }
 };
 
+const getpensionerDetails = (data,Active) => {
+  window.location.href = `revision?pensionerNumber=${data[8]}&tenantId=${data[7]}`
+  
+}
 const onRowClick = rowData => { 
   // InitiateNPWorkflow(rowData).then(response => {
   // });//

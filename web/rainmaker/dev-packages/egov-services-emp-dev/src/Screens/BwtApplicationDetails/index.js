@@ -145,14 +145,13 @@ class BwtApplicationDetails extends Component {
 			"_search",
 			RequestGateWay
 			);
-		 console.log("payloadGateWay--",payloadGateWay)   //Transaction[0].gateway
+		  //Transaction[0].gateway
 		 
 		 if(payloadGateWay.Transaction.length > 0){
-console.log("consoleDataForGateWay--",payloadGateWay.Transaction.length > 0 ? payloadGateWay.Transaction : "abababa") 
 	
 let gateWay = payloadGateWay.Transaction[0].gateway; 
 
-console.log("gateWay--",gateWay ? gateWay : "NotFound")
+
 
 prepareFinalObject('GateWayName', gateWay)
 
@@ -307,7 +306,7 @@ this.setState({
 						Accept: "application/pdf",
 					},
 				});
-				console.log("responseData---", response);
+			
 				const file = new Blob([response.data], { type: "application/pdf" });
 				const fileURL = URL.createObjectURL(file);
 				var myWindow = window.open(fileURL);
@@ -423,10 +422,8 @@ this.setState({
 downloadReceiptFunction = async (e) => {
 	const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceiptforCG,downloadReceiptforCG,downloadWaterTankerReceipt, userInfo, paymentDetails,bkDate,
 		pdfBankName,bkTime } = this.props;
-		console.log("propsofPdfPayment--",this.props)
-		console.log("stateBankName--",this.state.BankName ? this.state.BankName : "NotFound")
 	const { complaint } = transformedComplaint;
-	console.log("complaintPayemnet--",complaint)
+
 
 	var date2 = new Date();
 
@@ -478,7 +475,7 @@ downloadReceiptFunction = async (e) => {
 	}
 	]
 	// downloadReceiptforCG({BookingInfo: BookingInfo})
-	console.log("requestBodyOfPayment--",BookingInfo)
+
 	downloadWaterTankerReceipt({BookingInfo: BookingInfo})
 }
 
@@ -604,7 +601,7 @@ downloadApplicationMCCButton = async (mode) => {
 							Accept: "application/pdf",
 						},
 					});
-					console.log("responseData---", response);
+			
 					const file = new Blob([response.data], { type: "application/pdf" });
 					const fileURL = URL.createObjectURL(file);
 					var myWindow = window.open(fileURL);
@@ -636,7 +633,7 @@ downloadApplicationFunction = async (e) => {
 		bkTime,bookingForDate,
 		bookingForTime } = this.props;
 	const {complaint} = transformedComplaint;
-	console.log("complaint--In-Water-Tanker--",complaint)
+
 	let PdfStatus;
 if(complaint.status){
 	if(complaint.status == "PENDINGASSIGNMENTDRIVER"){
@@ -649,9 +646,6 @@ if(complaint.status){
 		PdfStatus = "Processed"
 	}
 }
-	
-
-
 	const { createWaterTankerApplicationData,downloadBWTApplication } = this.props;
     let applicationDetails = createWaterTankerApplicationData ? createWaterTankerApplicationData.data : '';
 	let paymentData = paymentDetails;
@@ -706,7 +700,7 @@ if(complaint.status){
         }
       }
     ]
-console.log("requestBodyOfApplication--",BookingInfo)
+
     downloadBWTApplication({ BookingInfo: BookingInfo })
     
   };
@@ -872,10 +866,6 @@ console.log("requestBodyOfApplication--",BookingInfo)
 		let { documentMap } = this.props;
 		let { historyApiData, paymentDetails, match, userInfo,
 			bookingForTime,bookingForDate} = this.props;
-		console.log("bookingForTime--props--",bookingForTime)
-		console.log("bookingForDate--props--",bookingForDate)
-		console.log("StateForWaterTanker--",this.state)
-
 		let {
 			role,
 			serviceRequestId,
@@ -888,37 +878,9 @@ console.log("requestBodyOfApplication--",BookingInfo)
 		let action;
 		let complaintLoc = {};
 		if (complaint) {
-			if (role === "ao") {
-				if (complaint.complaintStatus.toLowerCase() === "unassigned") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_COMMON_ASSIGN";
-				} else if (complaint.complaintStatus.toLowerCase() === "reassign") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_COMMON_REASSIGN";
-				} else if (complaint.complaintStatus.toLowerCase() === "assigned") {
-					btnTwoLabel = "ES_COMMON_REASSIGN";
-				}
-				else if (complaint.complaintStatus.toLowerCase() === "escalated") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-			} else if (role == "eo") {
-				if (complaint.status.toLowerCase() === "escalatedlevel1pending" ||
-					complaint.status.toLowerCase() === "escalatedlevel2pending") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-				else if (complaint.status.toLowerCase() === "assigned") {
-					btnOneLabel = "ES_REQUEST_REQUEST_RE_ASSIGN";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-			}
-			else if (role === "employee") {
-				
-				//  if () {
+			if (role === "employee") {
 				btnOneLabel = "BK_MYBK_REJECT_BUTTON";
-				btnTwoLabel = "BK_MYBK_RESOLVE_MARK_RESOLVED";
-				//  }
+				btnTwoLabel = "BK_MYBK_RESOLVE_MARK_RESOLVED";	
 			}
 		}
 		if (timeLine && timeLine[0]) {
@@ -1032,8 +994,7 @@ console.log("requestBodyOfApplication--",BookingInfo)
 									bookingForDate={bookingForDate && bookingForDate}
                                     bookingForTime={bookingForTime && bookingForTime}
 								/>
-								
-								{(complaint.bkStatus).includes("Paid") &&
+								{complaint.bkStatus && (complaint.bkStatus).includes("Paid") &&
 									<BWTPaymentDetails
 										paymentDetails={paymentDetails && paymentDetails}
 									/>
@@ -1177,26 +1138,25 @@ const mapStateToProps = (state, ownProps) => {
 	const { userInfo } = state.auth;
 
 	let pdfBankName = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.GateWayName:"wrongNumber";  
-  console.log("pdfBankName--",pdfBankName)
+
   
 
 	const serviceRequestId = ownProps.match.params.applicationId;
 	let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
-	console.log("selectedComplaint--",selectedComplaint)
 
 	let businessService = applicationData ? applicationData.businessService : '';
 	let bookingDocs;
 
 	let bkTime = selectedComplaint ? selectedComplaint.bkTime : "NoTimeFound"
-	console.log("bkTime--",bkTime)
+
 	
 	let bkDate =  selectedComplaint ? selectedComplaint.bkDate : "NoTimeFound"
-	console.log("bkDate--",bkDate)
+
 
 	let bookingForDate = selectedComplaint.bkDate != null ? selectedComplaint.bkDate : 'NA'
-	console.log("bookingForDate--",bookingForDate)
+
 	let bookingForTime = selectedComplaint.bkTime != null ? selectedComplaint.bkTime : 'NA'
-    console.log("bookingForTime--",bookingForTime)
+ 
 
 	let documentMap = applicationData && applicationData.documentMap ? applicationData.documentMap : '';
 	const { HistoryData } = bookings;
@@ -1209,22 +1169,24 @@ const mapStateToProps = (state, ownProps) => {
 let paymentDetailsForReceipt = fetchPaymentAfterPayment;
 	let paymentDetails;
 	paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
-	console.log("paymentDetails--wt",paymentDetails)
+
 	let historyApiData = {}
 	if (historyObject) {
 		historyApiData = historyObject;
 	}
 
-	const role =
-		roleFromUserInfo(userInfo.roles, "GRO") ||
-			roleFromUserInfo(userInfo.roles, "DGRO")
-			? "ao"
-			: roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-				roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-				? "eo"
-				: roleFromUserInfo(userInfo.roles, "CSR")
-					? "csr"
-					: "employee";
+	// const role =
+	// 	roleFromUserInfo(userInfo.roles, "GRO") ||
+	// 		roleFromUserInfo(userInfo.roles, "DGRO")
+	// 		? "ao"
+	// 		: roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
+	// 			roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
+	// 			? "eo"
+	// 			: roleFromUserInfo(userInfo.roles, "CSR")
+	// 				? "csr"
+	// 				: "employee";
+
+	const role = "employee";
 
 	let isAssignedToEmployee = true;
 	if (selectedComplaint) {

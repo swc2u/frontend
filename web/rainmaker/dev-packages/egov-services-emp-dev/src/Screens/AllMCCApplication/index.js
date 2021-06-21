@@ -43,7 +43,7 @@ class AllRequests extends Component {
     sortPopOpen: false,
     errorText: "",
     currency: '',
-    open: false, setOpen: false,applicationList:[],
+    open: false, setOpen: false,applicationList:[],appStatusArray:[],
   };
   style = {
     iconStyle: {
@@ -161,14 +161,22 @@ class AllRequests extends Component {
   };
 
   onbookingChange = e => {
+    let {applicationType}=this.props;
+    let appStats;
     const inputValue = e.target.value;
     this.setState({ bookingType: inputValue });
+      applicationType&&applicationType.Status.forEach((item)=>{
+    if(e.target.value==item.code){
+        appStats=item.status}
+      })
+    
+      this.setState({ appStatusArray: appStats });
+
   };
   onApplicationStatusChange = e => {
     const inputValue = e.target.value;
     this.setState({ applicationStatus: inputValue });
   };
-
   onSearch = () => {
     const { complaintNo, mobileNo, bookingType, applicationStatus, fromDate, toDate } = this.state;
     const { fetchApplications, fetchMccApplications, searchForm, userInfo, toggleSnackbarAndSetText } = this.props;
@@ -365,7 +373,7 @@ class AllRequests extends Component {
       top: "30px"
 
     };
-    const { loading, history } = this.props;
+    const { loading, history,applicationType } = this.props;
     const {
       mobileNo,
       bookingType,
@@ -375,7 +383,7 @@ class AllRequests extends Component {
       sortPopOpen,
       errorText,
       fromDate,
-      toDate
+      toDate,appStatusArray
     } = this.state;
     const tabStyle = {
       letterSpacing: "0.6px"
@@ -416,140 +424,7 @@ class AllRequests extends Component {
       props: { variant: "outlined", style: { marginLeft: 5, marginRight: 15, backgroundColor: "#FE7A51", color: "#fff", border: "none", height: "60px", width: "250px" } },
       menu: downloadMenu
     }
-    return role === "ao" ? (
-      <div>
-        <div
-          className="sort-button rainmaker-displayInline"
-          style={{ padding: "20px 20px 0px 0px", justifyContent: "flex-end" }}
-        >
-          <div
-            className="rainmaker-displayInline"
-            style={{ cursor: "pointer", marginRight: "20px" }}
-            onClick={onSortClick}
-          >
-            <Label
-              label="ES_SORT_BUTTON"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-              containerStyle={{ marginRight: 5 }}
-              labelStyle={{ fontWeight: 500 }}
-            />
-            <Icon
-              style={style.iconStyle}
-              action="action"
-              name="swap-vert"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-            />
-          </div>
-          <div
-            className="rainmaker-displayInline"
-            style={{ cursor: "pointer" }}
-            onClick={() => history.push("search-complaint")}
-          >
-            <Label
-              label="ES_SEARCH_BUTTON"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-              containerStyle={{ marginRight: 5 }}
-              labelStyle={{ fontWeight: 500 }}
-            />
-            <Icon
-              style={style.iconStyle}
-              action="action"
-              name="search"
-              color="rgba(0, 0, 0, 0.8700000047683716)"
-            />
-          </div>
-          <SortDialog
-            sortPopOpen={sortPopOpen}
-            closeSortDialog={closeSortDialog}
-          />
-        </div>
-        <Tabs
-          className="employee-complaints-tab"
-          onChange={this.onChange}
-          tabs={[
-            {
-              label: (
-                <div className="inline-Localization-text">
-                  <Label
-                    //labelClassName = "unassigned-label-text"
-                    labelClassName={
-                      this.state.value === 0
-                        ? "selected-tab-label-text"
-                        : "unselected-tab-label-text"
-                    }
-
-                    bold={true}
-                    label={`ES_ALL_COMPLAINTS_UNASSIGNED_TAB_LABEL2`}
-                    labelStyle={tabStyle}
-                  />
-                </div>
-              ),
-              children: (
-                <Screen className="gro-screen" loading={loading}>
-                  <div className="tab1-content form-without-button-cont-generic">
-                    <CountDetails
-                      count={unassignedComplaints.length}
-                      total={unassignedTotalComplaints}
-                      status="unassigned"
-                    />
-                    <CustomComplaints
-                      noComplaintMessage={
-                        "ES_MYCOMPLAINTS_NO_COMPLAINTS_TO_ASSIGN1"
-                      }
-                      onComplaintClick={onComplaintClick}
-                      complaints={unassignedComplaints}
-                      complaintLocation={true}
-                      role={role}
-                      heightOffset="116px"
-                    />
-                  </div>
-                </Screen>
-              )
-            },
-            {
-              label: (
-                <div className="inline-Localization-text">
-                  <Label
-                    // labelClassName="assigned-label-text"
-                    labelClassName={
-                      this.state.value === 1
-                        ? "selected-tab-label-text"
-                        : "unselected-tab-label-text"
-                    }
-                    //color={this.state.value === 1 ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.7)"}
-                    bold={true}
-                    label={`ES_ALL_COMPLAINTS_ASSIGNED_TAB_LABEL`}
-                    labelStyle={tabStyle}
-                  />
-
-                </div>
-              ),
-              children: (
-                <Screen className="gro-screen" loading={loading}>
-                  <div className="tab2-content form-without-button-cont-generic">
-                    <CountDetails
-                      count={assignedComplaints.length}
-                      total={assignedTotalComplaints}
-                      status="assigned"
-                    />
-                    <CustomComplaints
-                      noComplaintMessage={
-                        "ES_MYCOMPLAINTS_NO_ASSIGNED_COMPLAINTS"
-                      }
-                      onComplaintClick={onComplaintClick}
-                      complaints={assignedComplaints}
-                      complaintLocation={true}
-                      role={role}
-                      heightOffset="116px"
-                    />
-                  </div>
-                </Screen>
-              )
-            }
-          ]}
-        />
-      </div>
-    ) : role === "employee" ? (
+    return role === "employee" ? (
       <Screen loading={loading}>
 
         {/* <div style={{float: "right"}} className="quick-action-button">
@@ -623,7 +498,7 @@ class AllRequests extends Component {
                         color="rgba(0,0,0,0.60)"
                         fontSize="12px"
                       />
-                    }
+                    } 
                     onChange={(e, value) => this.onComplaintChange(e)}
                     underlineStyle={{
                       bottom: 7,
@@ -636,39 +511,7 @@ class AllRequests extends Component {
                     hintStyle={{ width: "100%" }}
                   />
                 </div>
-
-
-                <div className="col-sm-4 col-xs-12" style={{ minHeight: '72px', marginTop: '10px' }}>
-
-
-
-                  <FormControl style={{ width: '100%' }}>
-                    <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label">Application Status</InputLabel>
-                    <Select
-                      maxWidth={false}
-                      labelId="demo-controlled-open-select-label"
-                      id="demo-controlled-open-select"
-                      open={this.state.SetOpen}
-                      onClose={() => this.handleClose()}
-                      onOpen={() => this.handleOpen()}
-                      value={this.state.applicationStatus}
-                      displayEmpty
-                      onChange={(e, value) => this.onApplicationStatusChange(e)}
-                    >
-                      <MenuItem value="" disabled>Application Status</MenuItem>
-                      <MenuItem value='PENDINGAPPROVAL'>Pending Approval</MenuItem>
-                      <MenuItem value='PENDINGPAYMENT'>Pending Payment</MenuItem>
-                      <MenuItem value='PENDINGUPDATE'>Pending Update</MenuItem>
-                      <MenuItem value='PENDINGASSIGNMENTDRIVER'>Pending Assignment Driver</MenuItem>
-                    </Select>
-                  </FormControl>
-              
-                </div>
                 <div className="col-sm-4 col-xs-12" style={{ minHeight: '72px', paddingTop: "18px", paddingLeft: "8px" }}>
-                
-
-
-
                   <FormControl style={{ width: '100%' }}>
                     <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label">Booking Type</InputLabel>
                     <Select
@@ -682,14 +525,41 @@ class AllRequests extends Component {
                       value={bookingType}
                       onChange={(e, value) => this.onbookingChange(e)}
                     >
-                      <MenuItem value="" disabled>Booking Type</MenuItem>
-                      <MenuItem value='OSBM'>Open Space To Store Building Material</MenuItem>
-                      <MenuItem value='WATER_TANKERS'>Water Tankers</MenuItem>
+                     <MenuItem value=""disabled>Booking Type</MenuItem>
+                      {applicationType && applicationType.Status.map((item, index) => {
+                       return item.code == "NLUJM" ?  <MenuItem value={item.code}>{item.name}</MenuItem> : ""
+                        
+            })}
                     </Select>
                   </FormControl>
+                  </div>
 
-
+                  <div className="col-sm-4 col-xs-12" style={{ minHeight: '72px', paddingTop: "18px", paddingLeft: "8px" }}>
+                <FormControl style={{ width: '100%' }}>
+                    <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label">Application Status</InputLabel>
+                    <Select
+                      maxWidth={false}
+                      labelId="demo-controlled-open-select-label"
+                      id="demo-controlled-open-select"
+                      open={this.state.SetOpen}
+                      onClose={() => this.handleClose()}
+                      onOpen={() => this.handleOpen()}
+                      value={this.state.applicationStatus}
+                      displayEmpty
+                      onChange={(e, value) => this.onApplicationStatusChange(e)}
+                    > 
+                    <MenuItem value="" disabled>Application Status</MenuItem>
+                    {appStatusArray && appStatusArray.map((item, index) => (
+                        <MenuItem value={item.code}>{item.name}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>                           
+               
                 </div>
+    
+
+
+               
                 <div className="col-sm-4 col-xs-12" style={{ minHeight: '72px', paddingTop: "10px" }}>
                   <TextField
                     id="from-Date"
@@ -768,9 +638,6 @@ class AllRequests extends Component {
                     }}
                   />
                 </div>
-
-
-
                 <div
                   className="col-sm-12 col-xs-12"
                   style={{ marginTop: 10, paddingRight: 8, marginLeft: "16%" }}
@@ -966,7 +833,12 @@ class AllRequests extends Component {
                 status="open"
               />
               <CustomComplaints
-                noComplaintMessage={"ES_MYCOMPLAINTS_NO_COMPLAINTS_ASSIGNED"}
+                // noComplaintMessage={"ES_MYCOMPLAINTS_NO_COMPLAINTS_ASSIGNED"}
+                noComplaintMessage={
+                  search
+                    ? "No Search Results Found"
+                    : "BK_MYBK_NO_APPLICATION_ASSIGNED" 
+                }
                 onComplaintClick={onComplaintClick}
                 complaints={
                   search ? searchFilterEmployeeComplaints : employeeComplaints
@@ -1010,7 +882,7 @@ const roleFromUserInfo = (roles = [], role) => {
 const mapStateToProps = state => {
   const { bookings, common, screenConfiguration = {} } = state || {};
   // const { categoriesById, byId, order } = bookings;
-  const { fetchSuccess, MccApplicationData } = bookings;
+  const { fetchSuccess, MccApplicationData,applicationType } = bookings;
   const { preparedFinalObject = {} } = screenConfiguration;
   const { pgrComplaintCount = {} } = preparedFinalObject;
 
@@ -1022,16 +894,19 @@ const mapStateToProps = state => {
   //   : true;
   const { citizenById, employeeById } = common || {};
   const { userInfo } = state.auth;
-  const role =
-    roleFromUserInfo(userInfo.roles, "GRO") ||
-      roleFromUserInfo(userInfo.roles, "DGRO")
-      ? "ao"
-      : roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-        roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-        ? "eo"
-        : roleFromUserInfo(userInfo.roles, "CSR")
-          ? "csr"
-          : "employee";
+  // const role =
+  //   roleFromUserInfo(userInfo.roles, "GRO") ||
+  //     roleFromUserInfo(userInfo.roles, "DGRO")
+  //     ? "ao"
+  //     : roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
+  //       roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
+  //       ? "eo"
+  //       : roleFromUserInfo(userInfo.roles, "CSR")
+  //         ? "csr"
+  //         : "employee";
+
+  const role = "employee";
+
   let assignedComplaints = [],
     unassignedComplaints = [],
     employeeComplaints = [],
@@ -1061,7 +936,8 @@ const mapStateToProps = state => {
     employeeComplaints,
     role,
     loading,
-    transformedComplaints
+    transformedComplaints,
+    applicationType
   };
 };
 

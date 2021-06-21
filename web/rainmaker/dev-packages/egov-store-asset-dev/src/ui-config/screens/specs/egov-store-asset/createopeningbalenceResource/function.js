@@ -142,16 +142,20 @@ export const handleCreateUpdateOpeningBalence = (state, dispatch) => {
     let businessService  = get(state, `screenConfiguration.preparedFinalObject.searchScreenMdmsData.store-asset.businessService`,[]) 
     // filter store based on login user role and assign business service
     let roles = userInfo.roles
-    businessService = businessService.filter(x=>x.role === roles[0].code)
-    if(businessService.length==1)
-    businessServiceName =businessService[0].name;
+    // businessService = businessService.filter(x=>x.role === roles[0].code)
+    // if(businessService.length==1)
+    // businessServiceName =businessService[0].name;
     if(stores &&stores[0])
         {
-          if(stores[0].department.deptCategory !== businessServiceName )
+          businessService = businessService.filter(x=>x.name === stores[0].department.deptCategory) 
+          roles = roles.filter(x=>x.code === businessService[0].role )
+          if(roles &&roles[0].length === 0 )
           {
             const errorMessage = {
+              //labelName: "Select valid store",
+              //labelKey: "STORE_OPENING_BALANCE_STORE_SELECTION_VALIDATION"
               labelName: "Select valid store",
-              labelKey: "STORE_OPENING_BALANCE_STORE_SELECTION_VALIDATION"
+              labelKey: "STORE_OPENING_BALANCE_STORE_SELECTION_VALIDATION_ROLE"
             };
             dispatch(toggleSnackbar(true, errorMessage, "warning"));
           }
@@ -174,14 +178,24 @@ export const handleCreateUpdateOpeningBalence = (state, dispatch) => {
     }
     else  if(stores &&stores[0])
     {
-      if(stores[0].department.deptCategory !== businessServiceName )
-      {
-        const errorMessage = {
-          labelName: "Select valid store",
-          labelKey: "STORE_OPENING_BALANCE_STORE_SELECTION_VALIDATION"
-        };
-        dispatch(toggleSnackbar(true, errorMessage, "warning"));
-      }
+      // if(stores[0].department.deptCategory !== businessServiceName )
+      // {
+      //   const errorMessage = {
+      //     labelName: "Select valid store",
+      //     labelKey: "STORE_OPENING_BALANCE_STORE_SELECTION_VALIDATION"
+      //   };
+      //   dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      // }
+      if(roles &&roles[0].length === 0 )
+          {
+            const errorMessage = {
+              //labelName: "Select valid store",
+              //labelKey: "STORE_OPENING_BALANCE_STORE_SELECTION_VALIDATION"
+              labelName: "Select valid store",
+              labelKey: "STORE_OPENING_BALANCE_STORE_SELECTION_VALIDATION_ROLE"
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "warning"));
+          }
       else  if(DuplicatItem && DuplicatItem[0])
       {
         const LocalizationCodeValue = getLocalizationCodeValue("STORE_MATERIAL_DUPLICATE_VALIDATION")
@@ -314,10 +328,10 @@ export const handleCreateUpdateOpeningBalence = (state, dispatch) => {
        set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].lotNo`, element.lotNo);
        set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].userQuantity`, element.userQuantity);
        set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].oldReceiptNumber`, element.oldReceiptNumber);       
-       set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].receivedDate`, convertDateToEpoch(element.receivedDate, "dayStart"));
-       set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].expiryDate`, convertDateToEpoch(element.expiryDate, "dayStart"));
-       set(materialReceiptObject[0], `receiptDetails[${index}].receivedDate`, convertDateToEpoch(element.receivedDate, "dayStart"));
-       set(materialReceiptObject[0], `receiptDetails[${index}].expiryDate`, convertDateToEpoch(element.expiryDate, "dayStart"));
+       set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].receivedDate`, convertDateToEpoch(element.receivedDate, "daymid"));
+       set(materialReceiptObject[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].expiryDate`, convertDateToEpoch(element.expiryDate, "daymid"));
+       set(materialReceiptObject[0], `receiptDetails[${index}].receivedDate`, convertDateToEpoch(element.receivedDate, "daymid"));
+       set(materialReceiptObject[0], `receiptDetails[${index}].expiryDate`, convertDateToEpoch(element.expiryDate, "daymid"));
        set(materialReceiptObject[0],"receiptDate",element.receivedDate);
   }
 
@@ -337,7 +351,8 @@ export const handleCreateUpdateOpeningBalence = (state, dispatch) => {
         if(response){
           let mrnNumber = response.materialReceipt[0].mrnNumber
 //          dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=OPENINGBALANCE&mode=create&code=${mrnNumber}`));
-            dispatch(setRoute(`/egov-store-asset/view-opening-balence?applicationNumber=${mrnNumber}&tenantId=${response.materialReceipt[0].tenantId}`));
+            //dispatch(setRoute(`/egov-store-asset/view-opening-balence?applicationNumber=${mrnNumber}&tenantId=${response.materialReceipt[0].tenantId}`));
+            window.location.href =`/employee/egov-store-asset/view-opening-balence?applicationNumber=${mrnNumber}&tenantId=${response.materialReceipt[0].tenantId}`
         }
       } catch (error) {
         //furnishmaterialsData(state, dispatch);
@@ -351,7 +366,8 @@ export const handleCreateUpdateOpeningBalence = (state, dispatch) => {
         );
         if(response){
           let mrnNumber = response.materialReceipt[0].mrnNumber
-          dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=OPENINGBALANCE&mode=update&code=${mrnNumber}`));
+         // dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=OPENINGBALANCE&mode=update&code=${mrnNumber}`));
+          window.location.href =`/employee/egov-store-asset/acknowledgement?screen=OPENINGBALANCE&mode=update&code=${mrnNumber}`
          }
       } catch (error) {
         //furnishmaterialsData(state, dispatch);

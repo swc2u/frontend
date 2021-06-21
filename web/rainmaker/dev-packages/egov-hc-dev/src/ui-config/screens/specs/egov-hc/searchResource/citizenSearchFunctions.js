@@ -403,8 +403,6 @@ catch(e)
   );
 
   
- //resetting contact number
-//  var contactnoPlaceholder = get(state, 'screenConfiguration.screenConfig.employeeServiceRequestsFilter.components.div.children.ServiceRequestFilterFormForEmployee.children.cardContent.children.serviceRequestidContactNoAndRequestTypeContainer.children.contactno.props.placeholder', {})
   dispatch(
     handleField(
       "employeeServiceRequestsFilter",
@@ -418,6 +416,148 @@ catch(e)
     handleField(
       "employeeServiceRequestsFilter",
       "components.div.children.ServiceRequestFilterFormForEmployee.children.cardContent.children.serviceRequestidContactNoAndRequestTypeContainer.children.contactno",
+      "props.value",
+       ""
+    )
+  );
+
+  set(state, "screenConfiguration.preparedFinalObject.serviceRequests", {});
+};
+
+export const resetFieldsForEmployeeReport = (state, dispatch) => {
+  try
+  {
+ var  localityPlacehholder = get(state, "screenConfiguration.screenConfig.hcReport.components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.locality.props.placeholder", {})
+  dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.locality",
+      "props.value",
+      localityPlacehholder.labelKey
+    )
+  );
+}
+catch(e){
+  dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.locality",
+      "props.value",
+      undefined
+    )
+  );
+}
+      //resetting servicerequeststatus using below 2 lines  of dispatch
+   try   
+ { var  serviceRequestStatusPlaceholder = get(state, "screenConfiguration.screenConfig.hcReport.components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.ServiceRequestStatus.props.placeholder", {})
+  dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.ServiceRequestStatus",
+      "props.value",
+      serviceRequestStatusPlaceholder.labelKey
+    )
+  );}
+catch(e)
+ { dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.ServiceRequestStatus",
+      "props.value",
+      undefined
+    )
+  );}
+
+    //resetting servicerequesttype using below 2 lines  of dispatch
+    try{
+      var serviceRequestTypePlaceholder = get(state, "screenConfiguration.screenConfig.hcReport.components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.serviceRequestidContactNoAndRequestTypeContainer.children.ServiceRequestType.props.placeholder", {})
+     dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.serviceRequestidContactNoAndRequestTypeContainer.children.ServiceRequestType",
+      "props.value",
+      serviceRequestTypePlaceholder.labelKey
+    )
+  );}
+  catch(e){
+  dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.serviceRequestidContactNoAndRequestTypeContainer.children.ServiceRequestType",
+      "props.value",
+      undefined
+    )
+  );}
+
+try  { var  assignedToPlaceholder = get(state, "screenConfiguration.screenConfig.hcReport.components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.assignedTo.props.placeholder", {})
+  dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.assignedTo",
+      "props.value",
+      assignedToPlaceholder.labelKey
+    )
+  );}
+catch(e)
+ { dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.assignedTo",
+      "props.value",
+      undefined
+    )
+  );}
+
+    //resetting from date
+  dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.fromDate",
+      "props.value",
+      ""
+    )
+  );
+       //resetting to date
+  dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.toDate",
+      "props.value",
+      ""
+    )
+  );
+  //resetting serviceRequestID
+  dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.serviceRequestidContactNoAndRequestTypeContainer.children.ServiceRequestId",
+      "props.value",
+      ""
+    )
+  );
+  dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.serviceRequestidContactNoAndRequestTypeContainer.children.ServiceRequestId",
+      "props.value",
+      ""
+    )
+  );
+
+  
+  dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.serviceRequestidContactNoAndRequestTypeContainer.children.ownerName",
+      "props.value",
+       ""
+    )
+  );
+
+  dispatch(
+    handleField(
+      "hcReport",
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.serviceRequestidContactNoAndRequestTypeContainer.children.ownerName",
       "props.value",
        ""
     )

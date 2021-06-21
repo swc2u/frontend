@@ -26,8 +26,6 @@ convertEpochToDate = (dateEpoch) => {
 
     render(){
         const {complaints, complaintLocation, role, onComplaintClick, noComplaintMessage, heightOffset} = this.props
-       
-     
         return complaints===null || complaints.length === 0 ? (
          
         <div  style={{textAlign: 'center', marginTop: '50px'}}>
@@ -49,30 +47,34 @@ convertEpochToDate = (dateEpoch) => {
                     <div className="complaint-card-wrapper">
 
                       <div className="complaint-number-cont row application-format">
-                        <div className="complaint-number complaint-date">
-                          <Label fontSize="12px" className="col-md-6" label={"BK_MYBK_COMMON_APPLICATION_NO"} />
+                        <div className="complaint-number complaint-date compList">
+                          <Label fontSize="12px" className="col-md-6 listFirst" label={"BK_MYBK_COMMON_APPLICATION_NO"} />
                           {/* <Label fontSize="12px" label={" : "} /> */}
                           <Label fontSize="12px" className="col-md-6" label={complaint.bkApplicationNumber} className="complaint-complaint-number" />
                         </div>
                       </div>
-
-                      <div className="complaint-number-cont row application-format">
-                        {/* <div className="complaint-number complaint-date"> */}
-                          <Label fontSize="12px" className="col-md-6" label={"BK_MYBK_APPLICATION_DETAILS_CURRENT_STATUS"} />
-                          {/* <Label fontSize="12px" label={" : "} /> */}
-                          <Label fontSize="12px" className="col-md-6" label={'BK_'+complaint.bkApplicationStatus} className="complaint-complaint-number" />
-                        {/* </div> */}
+{complaint.bkBookingType == "GROUND_FOR_COMMERCIAL_PURPOSE" && complaint.bkApplicationStatus == "PENDING_FOR_APPROVAL_CLEARK_DEO" ?  
+<div className="complaint-number-cont row application-format compList"> 
+                          <Label fontSize="12px" className="col-md-6 listFirst" label={"BK_MYBK_APPLICATION_DETAILS_CURRENT_STATUS"} />  
+                          <Label fontSize="12px" className="col-md-6" label={'BK_CG_SECURITY_REFUND'+complaint.bkApplicationStatus} className="complaint-complaint-number" />
                       </div>
+ : 
+ <div className="complaint-number-cont row application-format compList"> 
+ <Label fontSize="12px" className="col-md-6 listFirst" label={"BK_MYBK_APPLICATION_DETAILS_CURRENT_STATUS"} />  
+ <Label fontSize="12px" className="col-md-6" label={'BK_'+complaint.bkApplicationStatus} className="complaint-complaint-number" />
+</div>
+}
+                                           
                       <div className="complaint-number-cont row application-format">
-                        <div className="complaint-number complaint-date">
-                          <Label fontSize="12px" className="col-md-6"   label={"BK_MYBK_APPLICATION_BOOKING_TYPE"} />
+                        <div className="complaint-number complaint-date compList">
+                          <Label fontSize="12px" className="col-md-6 listFirst"   label={"BK_MYBK_APPLICATION_BOOKING_TYPE"} />
                           <Label fontSize="12px" className="col-md-6"   label={'BK_'+complaint.bkBookingType} className="complaint-complaint-number" />
                         </div>
                       </div>
                      
                       <div className="complaint-number-cont row application-format">
-                        <div className="complaint-number complaint-date">
-                          <Label fontSize="12px" className="col-md-6"   label={"BK_MYBK_APPLICATION_DETAILS_SUBMISSION_DATE"} />
+                        <div className="complaint-number complaint-date compList">
+                          <Label fontSize="12px" className="col-md-6 listFirst"   label={"BK_MYBK_APPLICATION_DETAILS_SUBMISSION_DATE"} />
                           <Label fontSize="12px" className="col-md-6"   label= {this.convertEpochToDate(
                       complaint.bkDateCreated,"dayend"
                     )} className="complaint-complaint-number" />

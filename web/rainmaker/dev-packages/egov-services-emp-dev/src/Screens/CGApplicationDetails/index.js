@@ -8,10 +8,12 @@ import CommonShare from "egov-ui-kit/components/CommonShare";
 import { Screen } from "modules/common";
 import pinIcon from "egov-ui-kit/assets/Location_pin.svg";
 import { resetFiles } from "egov-ui-kit/redux/form/actions";
-import Button from "@material-ui/core/Button";
+import { Button, TextField } from "components";
 import ShareIcon from "@material-ui/icons/Share";
-import get from "lodash/get";
+import get from "lodash/get"; 
+import Footer from "../../modules/footer"
 import isEqual from "lodash/isEqual";
+import Label from "egov-ui-kit/utils/translationNode"; 
 import { httpRequest } from "egov-ui-kit/utils/api";
 import { prepareFormData } from "egov-ui-kit/redux/common/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
@@ -23,6 +25,12 @@ import DocumentPreview from "../AllApplications/components/DocumentPreview"
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import DownloadFileContainer from "../../modules/DownloadFileContainer";
 import jp from "jsonpath";
+import ApproveCancellation from "../CancelledAppApproved";
+import RejectCancellation from "../CancelledAppReject";
+import RefundCard from "../ParkAndCommunityCenterAppDetails/components/RefundCard"
+import ViewBankDetails  from "../ParkAndCommunityCenterAppDetails/components/ViewBankDetails"
+import axios from "axios";
+
 // import {
 // 	getQueryArg,
 // 	setBusinessServiceDataToLocalStorage,
@@ -41,7 +49,7 @@ import {
 } from "egov-ui-kit/utils/commons";
 import {
 	fetchApplications, fetchPayment, fetchperDayRate,fetchHistory, fetchDataAfterPayment,downloadPaymentReceiptforCG,downloadReceiptforCG,
-	sendMessage,downloadLetterforCG,
+	sendMessage,downloadLetterforCG,cgRefundReceipt,
 	sendMessageMedia,downloadPermissionLetterforCG,downloadApplicationforCG
 } from "egov-ui-kit/redux/bookings/actions";
 import { connect } from "react-redux";
@@ -49,6 +57,7 @@ import { connect } from "react-redux";
 import "./index.css";
 
 import { convertEpochToDate, getDurationDate,getFileUrlFromAPI} from '../../modules/commonFunction'
+import DialogContainer from "../../modules/DialogContainer";
 import ActionButtonDropdown from "../../modules/ActionButtonDropdown"
 class CGApplicationDetails extends Component {
 	constructor(props) {
@@ -58,7 +67,11 @@ class CGApplicationDetails extends Component {
 			docFileData: [],
 			bookingType:'',
 			rSector:'',
-            rCategormy:''
+            rCategormy:'',
+			togglepopup: false,
+			actionTittle: "",
+			actionOnApplication: "",
+			BankName: ''
 		};
 	};
 
@@ -89,11 +102,33 @@ class CGApplicationDetails extends Component {
 				"tenantId":userInfo.tenantId
 			}
 		);
+
+		let  RequestGateWay = [
+			{ key: "consumerCode", value: match.params.applicationId },
+			{ key: "tenantId", value: userInfo.tenantId }
+			];
+		  let payloadGateWay = await httpRequest(
+			"pg-service/transaction/v1/_search",
+			"_search",
+			RequestGateWay
+			);
+		  //Transaction[0].gateway
+		 
+		 if(payloadGateWay.Transaction.length > 0){
+	
+let gateWay = payloadGateWay.Transaction[0].gateway; 
+
+this.setState({
+   BankName: gateWay
+})
+
+}
+
 		fetchHistory([
 			{ key: "businessIds", value: match.params.applicationId }, { key: "history", value: true }, { key: "tenantId", value: userInfo.tenantId }])
 		
 		fetchPayment(
-			[{ key: "consumerCode", value: match.params.applicationId }, { key: "businessService", value: "GFCP" }, { key: "tenantId", value: userInfo.tenantId }
+			[{ key: "consumerCode", value: match.params.applicationId }, { key: "businessService", value: "BOOKING_BRANCH_SERVICES.BOOKING_COMMERCIAL_GROUND" }, { key: "tenantId", value: userInfo.tenantId }
 			])
 		fetchDataAfterPayment(
 			[{ key: "consumerCodes", value: match.params.applicationId }, { key: "tenantId", value: userInfo.tenantId }
@@ -121,6 +156,24 @@ class CGApplicationDetails extends Component {
 	          	category:categoryData
 			});
 	}
+	
+	actionButtonOnClick = async (e, complaintNo, label) => {
+		const { prepareFinalObject } = this.props;
+		let { match, userInfo, selectedComplaint } = this.props;
+		if (label == "APPROVED") {
+		  this.setState({
+			actionTittle: "Approve Application",
+		  });
+		} else {
+		  this.setState({
+			actionTittle: "Reject Application",
+		  });
+		}
+		this.setState({
+		  togglepopup: !this.state.togglepopup,
+		  actionOnApplication: label,
+		});
+	  };
 	
 	
 
@@ -229,6 +282,11 @@ class CGApplicationDetails extends Component {
 		
 		const { transformedComplaint,paymentDetails,downloadPermissionLetterforCG,userInfo } = this.props;
 		
+		var date2 = new Date();
+
+		var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+	
+
 		const {complaint} = transformedComplaint;
 		let receiptData = [
 			{
@@ -254,6 +312,7 @@ class CGApplicationDetails extends Component {
 				},
 				generatedBy: {
 					generatedBy: userInfo.name,
+					"generatedDateTime":generatedDateTime
 				},
 			}]
 	
@@ -336,13 +395,19 @@ let BookingInfo = [{
         "bookingPurpose": complaint.bkBookingPurpose
 	},
 	"feeDetail": {
-		"baseCharge": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-			(el) => !el.taxHeadCode.includes("TAX")
-		)[0].amount,
-		"taxes": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-			(el) => el.taxHeadCode.includes("TAX")
-		)[0].amount,
+		// "baseCharge": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+		// 	(el) => !el.taxHeadCode.includes("TAX")
+		// )[0].amount,
+		// "taxes": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+		// 	(el) => el.taxHeadCode.includes("TAX")
+		// )[0].amount,
+		"baseCharge": this.props.CommercialParkingCharges,
+			// "tax": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+			// 	(el) => el.taxHeadCode.includes("TAX")
+			// )[0].amount,
+			"taxes": this.props.CommercialTaxes,
 		"totalAmount": paymentDetailsForReceipt.Payments[0].totalAmountPaid,
+		"refundableSecurity":this.props.CommercialSecurityCharges	
 	},
 	generatedBy: {
 		generatedBy: userInfo.name,
@@ -353,210 +418,368 @@ downloadApplicationforCG({BookingInfo:BookingInfo})
 }
 
 
-downloadApplicationButton = async (e) => {
+downloadApplicationButton = async (mode) => {
 	await this.downloadApplicationFunction();
-	let documentsPreviewData;
-	const { DownloadApplicationDetailsforCG,userInfo } = this.props;
+	setTimeout(async()=>{
+		let documentsPreviewData;
+		const { DownloadApplicationDetailsforCG,userInfo } = this.props;
+		
+		var documentsPreview = [];
+		if (DownloadApplicationDetailsforCG && DownloadApplicationDetailsforCG.filestoreIds.length > 0) {
 	
-	var documentsPreview = [];
-	if (DownloadApplicationDetailsforCG && DownloadApplicationDetailsforCG.filestoreIds.length > 0) {
-
-		 documentsPreviewData=DownloadApplicationDetailsforCG.filestoreIds[0];
-
-		documentsPreview.push({
-			title: "DOC_DOC_PICTURE",
-			fileStoreId: documentsPreviewData,
-			linkText: "View",
-		});
-		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-		let fileUrls =
-			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+			 documentsPreviewData=DownloadApplicationDetailsforCG.filestoreIds[0];
 	
-
-		documentsPreview = documentsPreview.map(function (doc, index) {
-			doc["link"] =
-				(fileUrls &&
-					fileUrls[doc.fileStoreId] &&
-					fileUrls[doc.fileStoreId].split(",")[0]) ||
-				"";
+			 documentsPreview.push({
+				title: "DOC_DOC_PICTURE",
+				fileStoreId: documentsPreviewData,
+				linkText: "View",
+			});
+			 
+			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
 			
-			doc["name"] =
-				(fileUrls[doc.fileStoreId] &&
-					decodeURIComponent(
-						fileUrls[doc.fileStoreId]
-							.split(",")[0]
-							.split("?")[0]
-							.split("/")
-							.pop()
-							.slice(13)
-					)) ||
-				`Document - ${index + 1}`;
-			return doc;
-		});
-	
-		setTimeout(() => {
-			window.open(documentsPreview[0].link);
-		}, 100);
-		prepareFinalObject('documentsPreview', documentsPreview)
-	}
+			let fileUrls =
+				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+		   
+				
+			documentsPreview = documentsPreview.map(function (doc, index) {
+				doc["link"] =
+					(fileUrls &&
+						fileUrls[doc.fileStoreId] &&
+						fileUrls[doc.fileStoreId].split(",")[0]) ||
+					"";
+				
+				doc["name"] =
+					(fileUrls[doc.fileStoreId] &&
+						decodeURIComponent(
+							fileUrls[doc.fileStoreId]
+								.split(",")[0]
+								.split("?")[0]
+								.split("/")
+								.pop()
+								.slice(13)
+						)) ||
+					`Document - ${index + 1}`;
+				return doc;
+			});
+			if(mode==='print'){
+
+				var response = await axios.get(documentsPreview[0].link, {
+					//responseType: "blob",
+					responseType: "arraybuffer",
+					
+					
+					headers: {
+						"Content-Type": "application/json",
+						Accept: "application/pdf",
+					},
+				});
+			
+				const file = new Blob([response.data], { type: "application/pdf" });
+				const fileURL = URL.createObjectURL(file);
+				var myWindow = window.open(fileURL);
+				if (myWindow != undefined) {
+					myWindow.addEventListener("load", (event) => {
+						myWindow.focus();
+						myWindow.print();
+					});
+				}
+
+			}
+
+
+			else{
+
+				setTimeout(() => {
+				
+					window.open(documentsPreview[0].link);
+				}, 100);
+			}
+			
+			prepareFinalObject('documentsPreview', documentsPreview)
+		}
+	},1500)
 }
 
 
-downloadReceiptButton = async (e) => {
+downloadReceiptButton = async (mode) => {
 	
-	await this.downloadReceiptFunction();
+	await this.downloadReceiptFunction(); 
+	
+	setTimeout(async()=>{
+		const { cgRefundReceiptData,userInfo } = this.props;
+		var documentsPreview = [];
+		let documentsPreviewData;
+		if (cgRefundReceiptData && cgRefundReceiptData.filestoreIds.length > 0) {	
+			documentsPreviewData = cgRefundReceiptData.filestoreIds[0];
+				documentsPreview.push({
+					title: "DOC_DOC_PICTURE",
+					fileStoreId: documentsPreviewData,
+					linkText: "View",
+				});
+				 
+				let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+				
+				let fileUrls =
+					fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+			   
+					
+				documentsPreview = documentsPreview.map(function (doc, index) {
+					doc["link"] =
+						(fileUrls &&
+							fileUrls[doc.fileStoreId] &&
+							fileUrls[doc.fileStoreId].split(",")[0]) ||
+						"";
+					
+					doc["name"] =
+						(fileUrls[doc.fileStoreId] &&
+							decodeURIComponent(
+								fileUrls[doc.fileStoreId]
+									.split(",")[0]
+									.split("?")[0]
+									.split("/")
+									.pop()
+									.slice(13)
+							)) ||
+						`Document - ${index + 1}`;
+					return doc;
+				});
+				if(mode==='print'){
 
-	
-	let documentsPreviewData;
-	const { DownloadReceiptDetailsforCG,userInfo } = this.props;
-	
-	var documentsPreview = [];
-	if (DownloadReceiptDetailsforCG && DownloadReceiptDetailsforCG.filestoreIds.length > 0) {
-		 documentsPreviewData=DownloadReceiptDetailsforCG.filestoreIds[0];
-		
+					var response = await axios.get(documentsPreview[0].link, {
+						//responseType: "blob",
+						responseType: "arraybuffer",
+						
+						
+						headers: {
+							"Content-Type": "application/json",
+							Accept: "application/pdf",
+						},
+					});
+				
+					const file = new Blob([response.data], { type: "application/pdf" });
+					const fileURL = URL.createObjectURL(file);
+					var myWindow = window.open(fileURL);
+					if (myWindow != undefined) {
+						myWindow.addEventListener("load", (event) => {
+							myWindow.focus();
+							myWindow.print();
+						});
+					}
 
-		documentsPreview.push({
-			title: "DOC_DOC_PICTURE",
-			fileStoreId: documentsPreviewData,
-			linkText: "View",
-		});
-		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-		let fileUrls =
-			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-		
+				}
 
-		documentsPreview = documentsPreview.map(function (doc, index) {
-			doc["link"] =
-				(fileUrls &&
-					fileUrls[doc.fileStoreId] &&
-					fileUrls[doc.fileStoreId].split(",")[0]) ||
-				"";
-		
-			doc["name"] =
-				(fileUrls[doc.fileStoreId] &&
-					decodeURIComponent(
-						fileUrls[doc.fileStoreId]
-							.split(",")[0]
-							.split("?")[0]
-							.split("/")
-							.pop()
-							.slice(13)
-					)) ||
-				`Document - ${index + 1}`;
-			return doc;
-		});
-	
-		setTimeout(() => {
-			window.open(documentsPreview[0].link);
-		}, 100);
-		prepareFinalObject('documentsPreview', documentsPreview)
-	}
+
+				else{
+
+					setTimeout(() => {
+					
+						window.open(documentsPreview[0].link);
+					}, 100);
+				}
+				
+				prepareFinalObject('documentsPreview', documentsPreview)
+			}
+		},1500)
 }
 
 downloadReceiptFunction = async (e) => {
-	const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceiptforCG,downloadReceiptforCG, userInfo, paymentDetails } = this.props;
+	const { transformedComplaint, paymentDetailsForReceipt, cgRefundReceipt,downloadPaymentReceiptforCG,downloadReceiptforCG, userInfo, paymentDetails,selectedComplaint } = this.props;
 	const { complaint } = transformedComplaint;
 
-	let BookingInfo = [{
-		"applicantDetail": {
-			"name": complaint && complaint.applicantName ? complaint.applicantName : 'NA',
-			"mobileNumber": complaint && complaint.bkMobileNumber ? complaint.bkMobileNumber : '',
-			"houseNo": complaint && complaint.houseNo ? complaint.houseNo : '',
-			"permanentAddress": complaint && complaint.address ? complaint.address : '',
-			"permanentCity": complaint && complaint.villageCity ? complaint.villageCity : '',
-			"sector": complaint && complaint.sector ? complaint.sector : ''
-		},
-		"booking": {
-			"bkApplicationNumber": complaint && complaint.applicationNo ? complaint.applicationNo : ''
-		},
-		"paymentInfo": {
-			"paymentDate": paymentDetailsForReceipt && convertEpochToDate(paymentDetailsForReceipt.Payments[0].transactionDate, "dayend"),
-			"transactionId": paymentDetailsForReceipt && paymentDetailsForReceipt.Payments[0].transactionNumber,
-			"bookingPeriod": getDurationDate(
-				complaint.bkFromDate,
-				complaint.bkToDate
-			),
-			"bookingItem": "Online Payment Against Booking of Commercial Ground",
-			"amount": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-				(el) => !el.taxHeadCode.includes("TAX")
-			)[0].amount,
-			"tax": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-				(el) => el.taxHeadCode.includes("TAX")
-			)[0].amount,
-			"grandTotal": paymentDetailsForReceipt.Payments[0].totalAmountPaid,
-			"amountInWords": this.NumInWords(
-				paymentDetailsForReceipt.Payments[0].totalAmountPaid
-			),
-			paymentItemExtraColumnLabel: "Booking Period",
-			paymentMode:
-				paymentDetailsForReceipt.Payments[0].paymentMode,
-			receiptNo:
-				paymentDetailsForReceipt.Payments[0].paymentDetails[0]
-					.receiptNumber,
-		},
-		payerInfo: {
-			payerName: paymentDetailsForReceipt.Payments[0].payerName,
-			payerMobile:
-				paymentDetailsForReceipt.Payments[0].mobileNumber,
-		},
-		generatedBy: {
-			generatedBy: userInfo.name,
-		},
+	var date2 = new Date();
+
+	var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+
+	if(complaint.status == ""){
+
+		let BookingInfo = [
+			{
+				"applicantDetail": {
+					"name": complaint && complaint.applicantName ? complaint.applicantName : 'NA',
+					"mobileNumber": complaint && complaint.bkMobileNumber ? complaint.bkMobileNumber : '',
+					"houseNo": complaint && complaint.houseNo ? complaint.houseNo : '',
+					"permanentAddress": complaint && complaint.address ? complaint.address : '',
+					"permanentCity": complaint && complaint.villageCity ? complaint.villageCity : '',
+					"sector": complaint && complaint.sector ? complaint.sector : ''
+				},
+				"booking": {
+					"bkApplicationNumber": complaint && complaint.applicationNo ? complaint.applicationNo : ''
+				},
+			"paymentInfo": {
+				"paymentDate": paymentDetailsForReceipt && convertEpochToDate(paymentDetailsForReceipt.Payments[0].transactionDate, "dayend"),
+				"transactionId": paymentDetailsForReceipt && paymentDetailsForReceipt.Payments[0].transactionNumber,
+				"bookingPeriod": getDurationDate(
+					complaint.bkFromDate,
+					complaint.bkToDate
+				),
+				"bookingItem": "Online Payment Against Booking of Commercial Ground",//
+				"amount": this.props.CommercialParkingCharges,
+				"tax": this.props.CommercialTaxes,
+				"grandTotal": paymentDetailsForReceipt.Payments[0].totalAmountPaid,
+				"amountInWords": this.NumInWords(
+					paymentDetailsForReceipt.Payments[0].totalAmountPaid
+				),
+				paymentItemExtraColumnLabel: "Booking Period",
+				paymentMode:
+					paymentDetailsForReceipt.Payments[0].paymentMode,
+				receiptNo:
+					paymentDetailsForReceipt.Payments[0].paymentDetails[0]
+						.receiptNumber,
+				"bankName": this.state.BankName,
+				"refundableSecurity":selectedComplaint.refundableSecurityMoney
+			},
+			payerInfo: {
+				payerName: paymentDetailsForReceipt.Payments[0].payerName,
+				payerMobile:
+					paymentDetailsForReceipt.Payments[0].mobileNumber,
+			},
+			generatedBy: {
+				generatedBy: userInfo.name,
+				"generatedDateTime":generatedDateTime
+			}
+		}
+		]
+		cgRefundReceipt({BookingInfo: BookingInfo})
+	} 
+
+	else{
+		let BookingInfo = [{
+			"applicantDetail": {
+				"name": complaint && complaint.applicantName ? complaint.applicantName : 'NA',
+				"mobileNumber": complaint && complaint.bkMobileNumber ? complaint.bkMobileNumber : '',
+				"houseNo": complaint && complaint.houseNo ? complaint.houseNo : '',
+				"permanentAddress": complaint && complaint.address ? complaint.address : '',
+				"permanentCity": complaint && complaint.villageCity ? complaint.villageCity : '',
+				"sector": complaint && complaint.sector ? complaint.sector : ''
+			},
+			"booking": {
+				"bkApplicationNumber": complaint && complaint.applicationNo ? complaint.applicationNo : ''
+			},
+			"paymentInfo": {
+				"paymentDate": paymentDetailsForReceipt && convertEpochToDate(paymentDetailsForReceipt.Payments[0].transactionDate, "dayend"),
+				"transactionId": paymentDetailsForReceipt && paymentDetailsForReceipt.Payments[0].transactionNumber,
+				"bookingPeriod": getDurationDate(
+					complaint.bkFromDate,
+					complaint.bkToDate
+				),
+				"bookingItem": "Online Payment Against Booking of Commercial Ground",//
+				// "amount": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+				// 	(el) => !el.taxHeadCode.includes("TAX")
+				// )[0].amount, 
+				"amount": this.props.CommercialParkingCharges,
+				// "tax": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+				// 	(el) => el.taxHeadCode.includes("TAX")
+				// )[0].amount,
+				"tax": this.props.CommercialTaxes,
+				"grandTotal": paymentDetailsForReceipt.Payments[0].totalAmountPaid,
+				"amountInWords": this.NumInWords(
+					paymentDetailsForReceipt.Payments[0].totalAmountPaid
+				),
+				paymentItemExtraColumnLabel: "Booking Period",
+				paymentMode:
+					paymentDetailsForReceipt.Payments[0].paymentMode,
+				receiptNo:
+					paymentDetailsForReceipt.Payments[0].paymentDetails[0]
+						.receiptNumber,
+				"bankName": this.state.BankName,
+				"refundableSecurity":this.props.CommercialSecurityCharges		
+			},
+			payerInfo: {
+				payerName: paymentDetailsForReceipt.Payments[0].payerName,
+				payerMobile:
+					paymentDetailsForReceipt.Payments[0].mobileNumber,
+			},
+			generatedBy: {
+				generatedBy: userInfo.name,
+				"generatedDateTime":generatedDateTime
+			},
+		}
+		]
+		cgRefundReceipt({BookingInfo: BookingInfo})
+	
 	}
-	]
-	downloadReceiptforCG({BookingInfo: BookingInfo})
 }
 
-downloadPaymentReceiptButton = async (e) => {
+downloadPaymentReceiptButton = async (mode) => {	
 	
 	await this.downloadPaymentReceiptFunction();
+	setTimeout(async()=>{
 
-	let documentsPreviewData;
-	const { DownloadPaymentReceiptDetailsforCG,userInfo } = this.props;
+		let documentsPreviewData;
+		const { DownloadPaymentReceiptDetailsforCG,userInfo } = this.props;
+		
+		var documentsPreview = [];
+		if (DownloadPaymentReceiptDetailsforCG && DownloadPaymentReceiptDetailsforCG.filestoreIds.length > 0) {
+			 documentsPreviewData=DownloadPaymentReceiptDetailsforCG.filestoreIds[0];
 	
-	var documentsPreview = [];
-	if (DownloadPaymentReceiptDetailsforCG && DownloadPaymentReceiptDetailsforCG.filestoreIds.length > 0) {
-		 documentsPreviewData=DownloadPaymentReceiptDetailsforCG.filestoreIds[0];
+			 documentsPreview.push({
+				title: "DOC_DOC_PICTURE",
+				fileStoreId: documentsPreviewData,
+				linkText: "View",
+			});
+			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+			let fileUrls =
+				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+		
 
-		documentsPreview.push({
-			title: "DOC_DOC_PICTURE",
-			fileStoreId: documentsPreviewData,
-			linkText: "View",
-		});
-		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-		let fileUrls =
-			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-	
-
-		documentsPreview = documentsPreview.map(function (doc, index) {
-			doc["link"] =
-				(fileUrls &&
-					fileUrls[doc.fileStoreId] &&
-					fileUrls[doc.fileStoreId].split(",")[0]) ||
-				"";
+			documentsPreview = documentsPreview.map(function (doc, index) {
+				doc["link"] =
+					(fileUrls &&
+						fileUrls[doc.fileStoreId] &&
+						fileUrls[doc.fileStoreId].split(",")[0]) ||
+					"";
+				
+				doc["name"] =
+					(fileUrls[doc.fileStoreId] &&
+						decodeURIComponent(
+							fileUrls[doc.fileStoreId]
+								.split(",")[0]
+								.split("?")[0]
+								.split("/")
+								.pop()
+								.slice(13)
+						)) ||
+					`Document - ${index + 1}`;
+				return doc;
+			});
 			
-			doc["name"] =
-				(fileUrls[doc.fileStoreId] &&
-					decodeURIComponent(
-						fileUrls[doc.fileStoreId]
-							.split(",")[0]
-							.split("?")[0]
-							.split("/")
-							.pop()
-							.slice(13)
-					)) ||
-				`Document - ${index + 1}`;
-			return doc;
-		});
-		setTimeout(() => {
-			window.open(documentsPreview[0].link);
-		}, 100);
-		prepareFinalObject('documentsPreview', documentsPreview)
+			if(mode==='print'){
+
+				var response = await axios.get(documentsPreview[0].link, {
+					//responseType: "blob",
+					responseType: "arraybuffer",
+					
+					
+					headers: {
+						"Content-Type": "application/json",
+						Accept: "application/pdf",
+					},
+				});
+			
+				const file = new Blob([response.data], { type: "application/pdf" });
+				const fileURL = URL.createObjectURL(file);
+				var myWindow = window.open(fileURL);
+				if (myWindow != undefined) {
+					myWindow.addEventListener("load", (event) => {
+						myWindow.focus();
+						myWindow.print();
+					}); 
+				}
+
+			}
+			else{
+
+				setTimeout(() => {
+				
+					window.open(documentsPreview[0].link);
+				}, 100);
+			}
+			
+			prepareFinalObject('documentsPreview', documentsPreview)
+		}
+	},1500)
 	}
 
-
-
-}
 
 callApiDorData = async (e) =>  {
 
@@ -615,17 +838,11 @@ const {documentMap,userInfo}=this.props;
 	callApiForDocumentData = async (e) => {
 		const { documentMap,userInfo } = this.props;
 		var documentsPreview = [];
-		console.log("document--",documentMap)
 		if (documentMap && Object.keys(documentMap).length > 0) {
 			let keys = Object.keys(documentMap);
-			console.log("keys--",keys)
-			console.log("Types--keys--",typeof(keys))
 			let values = Object.values(documentMap);
-			console.log("values--values",values)
 			let id = keys[0]
-			console.log("id--cg",id);
 			let	fileName = values[0];
-            console.log("fileName--",fileName)
 			documentsPreview.push({
 				title: "DOC_DOC_PICTURE",
 				fileStoreId: id,
@@ -667,6 +884,121 @@ const {documentMap,userInfo}=this.props;
 
 	}
 
+	OfflineRefundForCG = async () => {
+		let { selectedComplaint } = this.props;
+		let Booking = {
+		  "bkRemarks": selectedComplaint.bkRemarks,
+		  "timeslots": [],
+		  "roomsModel": [],
+		  "reInitiateStatus": false,
+		  "createdDate": selectedComplaint.createdDate,
+		  "lastModifiedDate": selectedComplaint.lastModifiedDate,
+		  "bkNomineeName": selectedComplaint.bkNomineeName,
+		  "refundableSecurityMoney": null,
+		  "bkApplicationNumber": selectedComplaint.bkApplicationNumber,
+		  "bkHouseNo": selectedComplaint.bkHouseNo,
+		  "bkAddress": selectedComplaint.bkAddress,
+		  "bkSector": selectedComplaint.bkSector,
+		  "bkVillCity": selectedComplaint.bkVillCity,
+		  "bkAreaRequired": selectedComplaint.bkVillCity,
+		  "bkDuration": selectedComplaint.bkDuration,
+		  "bkCategory": selectedComplaint.bkCategory,
+		  "bkEmail": selectedComplaint.bkEmail,
+		  "bkContactNo": selectedComplaint.bkContactNo,
+		  "bkDocumentUploadedUrl": selectedComplaint.bkDocumentUploadedUrl,
+		  "bkDateCreated": selectedComplaint.bkDateCreated,
+		  "bkCreatedBy": selectedComplaint.bkCreatedBy,
+		  "bkWfStatus": selectedComplaint.bkWfStatus,
+		  "bkAmount": selectedComplaint.bkAmount,
+		  "bkPaymentStatus": selectedComplaint.bkPaymentStatus,
+		  "bkBookingType": selectedComplaint.bkBookingType,
+		  "bkFromDate": selectedComplaint.bkFromDate,
+		  "bkToDate": selectedComplaint.bkToDate,
+		  "bkApplicantName": selectedComplaint.bkApplicantName,
+		  "bkBookingPurpose": selectedComplaint.bkBookingPurpose,
+		  "bkVillage": selectedComplaint.bkVillage,
+		  "bkDimension": selectedComplaint.bkDimension,
+		  "bkLocation": selectedComplaint.bkLocation,
+		  "bkStartingDate": selectedComplaint.bkStartingDate,
+		  "bkEndingDate": selectedComplaint.bkEndingDate,
+		  "bkType": selectedComplaint.bkType,
+		  "bkResidenceProof": selectedComplaint.bkResidenceProof,
+		  "bkCleansingCharges": selectedComplaint.bkCleansingCharges,
+		  "bkRent": selectedComplaint.bkRent,
+		  "bkSurchargeRent": selectedComplaint.bkSurchargeRent,
+		  "bkFacilitationCharges": selectedComplaint.bkFacilitationCharges,
+		  "bkUtgst": selectedComplaint.bkUtgst,
+		  "bkCgst": selectedComplaint.bkCgst,
+		  "bkMobileNumber": selectedComplaint.bkMobileNumber,
+		  "bkCustomerGstNo": selectedComplaint.bkCustomerGstNo,
+		  "bkCurrentCharges": selectedComplaint.bkCurrentCharges,
+		  "bkLocationChangeAmount": selectedComplaint.bkLocationChangeAmount,
+		  "bkVenue": selectedComplaint.bkVenue,
+		  "bkDate": selectedComplaint.bkDate,
+		  "bkFatherName": selectedComplaint.bkFatherName,
+		  "bkBookingVenue": selectedComplaint.bkBookingVenue,
+		  "bkBookingDuration": selectedComplaint.bkBookingDuration,
+		  "bkIdProof": selectedComplaint.bkIdProof,
+		  "bkApplicantContact": selectedComplaint.bkApplicantContact,
+		  "bkOpenSpaceLocation": selectedComplaint.bkOpenSpaceLocation,   
+		  "bkLandmark": selectedComplaint.bkLandmark,
+		  "bkRequirementArea": selectedComplaint.bkRequirementArea,
+		  "bkLocationPictures": selectedComplaint.bkLocationPictures,
+		  "bkParkOrCommunityCenter": selectedComplaint.bkParkOrCommunityCenter,
+		  "bkRefundAmount": null,
+		  "bkBankAccountNumber": selectedComplaint.bkBankAccountNumber,
+		  "bkBankName": selectedComplaint.bkBankName,
+		  "bkIfscCode": selectedComplaint.bkIfscCode,
+		  "bkAccountType": selectedComplaint.bkAccountType,
+		  "bkBankAccountHolder": selectedComplaint.bkBankAccountHolder,
+		  "bkPropertyOwnerName": selectedComplaint.bkPropertyOwnerName,
+		  "bkCompleteAddress": selectedComplaint.bkCompleteAddress,
+		  "bkResidentialOrCommercial": selectedComplaint.bkResidentialOrCommercial,
+		  "bkMaterialStorageArea": selectedComplaint.bkMaterialStorageArea,
+		  "bkPlotSketch": selectedComplaint.bkPlotSketch,
+		  "bkApplicationStatus": selectedComplaint.bkApplicationStatus,
+		  "bkTime": selectedComplaint.bkTime,
+		  "bkStatusUpdateRequest": selectedComplaint.bkStatusUpdateRequest,
+		  "bkStatus": selectedComplaint.bkStatus,
+		  "bkDriverName": selectedComplaint.bkDriverName,
+		  "bkVehicleNumber": selectedComplaint.bkVehicleNumber,
+		  "bkEstimatedDeliveryTime": selectedComplaint.bkEstimatedDeliveryTime,
+		  "bkActualDeliveryTime": selectedComplaint.bkActualDeliveryTime,  
+		  "bkNormalWaterFailureRequest": selectedComplaint.bkNormalWaterFailureRequest,
+		  "bkUpdateStatusOption": selectedComplaint.bkUpdateStatusOption,
+		  "bkAddSpecialRequestDetails": selectedComplaint.bkAddSpecialRequestDetails,
+		  "bkBookingTime": selectedComplaint.bkBookingTime,
+		  "bkApprovedBy": selectedComplaint.bkApprovedBy,
+		  "bkModuleType": selectedComplaint.bkModuleType,
+		  "uuid": selectedComplaint.uuid,
+		  "tenantId": selectedComplaint.tenantId,
+		  "bkAction": "SECURITY_REFUND",
+		  "bkConstructionType": selectedComplaint.bkConstructionType,
+		  "businessService": selectedComplaint.businessService,
+		  "bkApproverName": selectedComplaint.bkApproverName,
+		  "discount": selectedComplaint.discount,
+		  "assignee": selectedComplaint.assignee,
+		  "wfDocuments": selectedComplaint.wfDocuments,
+		  "financialYear": "2021-2022",
+		  "financeBusinessService": selectedComplaint.financeBusinessService
+		}
+		let createAppData = {
+		  applicationType: "GFCP",
+		  applicationStatus: "",
+		  applicationId: selectedComplaint.bkApplicationNumber,
+		  tenantId: selectedComplaint.tenantId,
+		  Booking: Booking,
+		};
+		let payloadRefundCommercial = await httpRequest(
+		  "bookings/api/_update",  
+		  "_search",
+		  [],
+		  createAppData
+		);
+		this.props.history.push(`/egov-services/apply-refund-success`);
+	  };
+	  
+
 	render() {
 		const dropbordernone = {
 			float: "right",
@@ -690,33 +1022,44 @@ const {documentMap,userInfo}=this.props;
 		let action;
 		let complaintLoc = {};
 		
+let checkDocumentUpload = Object.entries(documentMap).length === 0;
+
+
+const foundTenthLavel =
+userInfo && userInfo.roles.some((el) => el.code === "BK_MCC_USER"); 
+
+const foundFirstLavel =
+userInfo &&
+userInfo.roles.some(
+  (el) => el.code === "BK_CLERK" || el.code === "BK_DEO"
+);
 		if (complaint) {
-			if (role === "ao") {
-				if (complaint.complaintStatus.toLowerCase() === "unassigned") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_COMMON_ASSIGN";
-				} else if (complaint.complaintStatus.toLowerCase() === "reassign") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_COMMON_REASSIGN";
-				} else if (complaint.complaintStatus.toLowerCase() === "assigned") {
-					btnTwoLabel = "ES_COMMON_REASSIGN";
-				}
-				else if (complaint.complaintStatus.toLowerCase() === "escalated") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-			} else if (role == "eo") {
-				if (complaint.status.toLowerCase() === "escalatedlevel1pending" ||
-					complaint.status.toLowerCase() === "escalatedlevel2pending") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-				else if (complaint.status.toLowerCase() === "assigned") {
-					btnOneLabel = "ES_REQUEST_REQUEST_RE_ASSIGN";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-			}
-			else if (role === "employee") {
+			// if (role === "ao") {
+			// 	if (complaint.complaintStatus.toLowerCase() === "unassigned") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_COMMON_ASSIGN";
+			// 	} else if (complaint.complaintStatus.toLowerCase() === "reassign") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_COMMON_REASSIGN";
+			// 	} else if (complaint.complaintStatus.toLowerCase() === "assigned") {
+			// 		btnTwoLabel = "ES_COMMON_REASSIGN";
+			// 	}
+			// 	else if (complaint.complaintStatus.toLowerCase() === "escalated") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
+			// 	}
+			// } else if (role == "eo") {
+			// 	if (complaint.status.toLowerCase() === "escalatedlevel1pending" ||
+			// 		complaint.status.toLowerCase() === "escalatedlevel2pending") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
+			// 	}
+			// 	else if (complaint.status.toLowerCase() === "assigned") {
+			// 		btnOneLabel = "ES_REQUEST_REQUEST_RE_ASSIGN";
+			// 		btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
+			// 	}
+			// }
+			if (role === "employee") {
 				btnOneLabel = "BK_MYBK_REJECT_BUTTON";
 				btnTwoLabel = "BK_MYBK_RESOLVE_MARK_RESOLVED";
 				
@@ -793,7 +1136,7 @@ Application Details
 											labelKey: "BK_MYBK_DOWNLOAD_PERMISSION_LETTER"
 										},
 										leftIcon: "book",
-										link: () => this.downloadPaymentReceiptButton('Receipt')
+										link: () => this.downloadPaymentReceiptButton('print')
 									},
 									{
 										label: {
@@ -802,7 +1145,7 @@ Application Details
 										},
 										leftIcon: "receipt",
 
-										link: () => this.downloadReceiptButton('PermissionLetter')
+										link: () => this.downloadReceiptButton('print')
 									},
 									{
 										label: {
@@ -810,7 +1153,7 @@ Application Details
 											labelKey: "BK_MYBK_DOWNLOAD_APPLICATION"
 										},
 										leftIcon:"assignment",
-										 link: () => this.downloadApplicationButton('Application')
+										 link: () => this.downloadApplicationButton('print')
 									}]
 								}} />
 
@@ -819,22 +1162,44 @@ Application Details
 									</div>
 								</div>
 
+								<CGPaymentDetails  
+	paymentDetails={paymentDetails && paymentDetails}
+	perDayRupees={perDayRupees && perDayRupees}
+	CommercialcleaningCharge={this.props.CommercialcleaningCharge}//1
+	CommercialFaciliCharges={this.props.CommercialFaciliCharges}//2
+	CommercialSecurityCharges={this.props.CommercialSecurityCharges}//3
+	CommercialTaxes={this.props.CommercialTaxes}//4
+	CommercialParkingCharges={this.props.CommercialParkingCharges}//5
+/>
+
+{this.props.selectedComplaint.bkApplicationStatus == "PENDING_FOR_APPROVAL_CLEARK_DEO" || this.props.selectedComplaint.bkApplicationStatus == "REFUND_APPROVED" ? (
+                  <RefundCard
+				  CGRefundAmount = {this.props.CommercialSecurityCharges}
+				  refundableSecurityMoney={
+					this.props.selectedComplaint.refundableSecurityMoney
+	 			  }
+				  selectedComplaint={this.props.selectedComplaint}
+                  />
+                ) : (
+                  " "
+                )}
 
 								<CGAppDetails
 									{...complaint}
 								/>
-
+ 
                               <CGBookingDetails
 									{...complaint}
-								/>
+								/> 
                                  
-							
-
-<CGPaymentDetails
-	paymentDetails={paymentDetails && paymentDetails}
-	perDayRupees={perDayRupees && perDayRupees}
-
-/>
+								< ViewBankDetails 
+							    	{...complaint}
+									bkBankAccountNumber={this.props.selectedComplaint.bkBankAccountNumber}
+									bkBankName={this.props.selectedComplaint.bkBankName}
+									bkIfscCode={this.props.selectedComplaint.bkIfscCode}
+									bkAccountType={this.props.selectedComplaint.bkAccountType}
+									bkBankAccountHolder={this.props.selectedComplaint.bkBankAccountHolder}
+								/>
 
                              <div style={{
 									height: "100px",
@@ -845,9 +1210,131 @@ Application Details
 								}}><b>Documents</b><br></br>
 
 									{documentMap && Object.values(documentMap) ? Object.values(documentMap) : "Not found"}
-									<button className="ViewDetailButton" data-doc={documentMap} onClick={(e) => { this.callApiForDocumentData(e) }}>VIEW</button>
-								</div>
+									{checkDocumentUpload == true ? " ":<button className="ViewDetailButton" data-doc={documentMap} onClick={(e) => { this.callApiForDocumentData(e) }}>VIEW</button>}
+                        		</div>
 							</div>
+
+
+
+							{role === "employee" && this.props.first == true &&complaint.status == "APPLIED" && complaint.businessService == "GFCP" && this.props.RefoundCGAmount > 0 &&
+                  foundTenthLavel && (
+                    <Footer
+                      className="apply-wizard-footer"
+                      style={{ display: "flex", justifyContent: "flex-end" }}
+                      children={
+                        <div
+                          className="col-sm-12 col-xs-12"
+                          style={{ textAlign: "right" }}
+                        >
+                          {/*Security Refund*/}  
+                            <Button
+                              label={
+                                <Label
+                                  buttonLabel={true}
+                                  color="#fe7a51"
+                                  label="SECURITY REFUND"
+                                />
+                              }
+                              labelStyle={{
+                                letterSpacing: 0.7,
+                                padding: 0,
+                                color: "#fe7a51",
+                              }}
+                              buttonStyle={{ border: "1px solid #fe7a51" }}
+                              style={{ width: "15%", marginLeft: "2%" }}
+                              onClick={() => this.OfflineRefundForCG()}
+                            /> 
+                        </div>
+                      }
+                    ></Footer>
+                  )}
+
+
+{role === "employee" &&
+                  complaint.status == "PENDING_FOR_APPROVAL_CLEARK_DEO" &&
+                  foundFirstLavel && (
+                    <Footer
+                      className="apply-wizard-footer"
+                      style={{ display: "flex", justifyContent: "flex-end" }}
+                      children={
+                        <ActionButtonDropdown
+                          data={{
+                            label: {
+                              labelName: "TAKE ACTION ",
+                              labelKey: "BK_COMMON_TAKE_ACTION",
+                            },
+                            rightIcon: "arrow_drop_down",
+                            props: {
+                              variant: "outlined",
+                              style: {
+                                marginLeft: 5,
+                                marginRight: 15,
+                                backgroundColor: "#FE7A51",
+                                color: "#fff",
+                                border: "none",
+                                height: "60px",
+                                width: "250px",
+                              },
+                            },
+                            menu: [
+                              {
+                                label: {
+                                  labelName: "Approve",
+                                  labelKey: "BK_MYBK_APPROVE_ACTION_BUTTON",
+                                },
+
+                                link: () =>
+                                  this.actionButtonOnClick(
+                                    "state",
+                                    "dispatch",
+                                    "APPROVED"
+                                  ),
+                              },
+                              {
+                                label: {
+                                  labelName: "Reject",
+                                  labelKey: "BK_MYBK_REJECT_ACTION_BUTTON",
+                                },
+                                link: () =>
+                                  this.actionButtonOnClick(
+                                    "state",
+                                    "dispatch",
+                                    "REJECT"
+                                  ),
+                              },
+                            ],
+                          }}
+                        />
+                      }
+                    ></Footer>
+                    // 						<button
+                    // onClick={(e)=>this.GOTOPAY(selectedNumber)}
+                    // >PAY </button>
+                  )}
+
+
+<DialogContainer
+                  toggle={this.state.togglepopup}
+                  actionTittle={this.state.actionTittle}
+                  togglepopup={this.actionButtonOnClick}
+                  maxWidth={"md"}
+                  children={
+                    this.state.actionOnApplication == "APPROVED" ? (
+                      <ApproveCancellation
+                        applicationNumber={match.params.applicationId}
+                        matchparams={match.params}
+                        selectedComplaint={this.props.selectedComplaint}
+                         userInfo={userInfo}
+                        payloadTwo={this.props.paymentDetailsForReceipt}
+                      />
+                    ) : (
+                      <RejectCancellation
+                        applicationNumber={match.params.applicationId}
+                        userInfo={userInfo}
+                      />
+                    )
+                  }
+                />
 						</div>
 					)}
 				</Screen>
@@ -872,7 +1359,7 @@ const mapStateToProps = (state, ownProps) => {
 	const { applicationData } = bookings;
 	const {DownloadPaymentReceiptDetailsforCG}=bookings;
 	const {DownloadPermissionLetterDetailsforCG}=bookings;
-	const {DownloadApplicationDetailsforCG,DownloadReceiptDetailsforCG}=bookings;
+	const {DownloadApplicationDetailsforCG,DownloadReceiptDetailsforCG,cgRefundReceiptData}=bookings;
 	const { id } = auth.userInfo;
 	const { citizenById } = common || {};
 	const { employeeById, departmentById, designationsById, cities } =
@@ -883,7 +1370,8 @@ const mapStateToProps = (state, ownProps) => {
 	let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
 	let businessService = applicationData ? applicationData.businessService : "";
 	let bookingDocs;
-	const { documentMap } = applicationData;
+	// const { documentMap } = applicationData;
+	let documentMap = applicationData !== undefined  && applicationData !== null ? (applicationData.documentMap !== undefined && applicationData.documentMap !== null ? (applicationData.documentMap) : '') : ""
 	const { HistoryData } = bookings;
 	let temp;
 	let historyObject = HistoryData ? HistoryData : ''
@@ -891,33 +1379,127 @@ const mapStateToProps = (state, ownProps) => {
 	const { fetchPaymentAfterPayment } = bookings;
 	const { perDayRate } = bookings;
 	let paymentDetailsForReceipt = fetchPaymentAfterPayment;
-	let paymentDetails;
+	let paymentDetails;  //bookings.paymentData.Bill[0].billDetails[0].billAccountDetails
 	let perDayRupees;
-	if (selectedComplaint && selectedComplaint.bkApplicationStatus == "APPLIED") {
-		paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill ;
-		perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
-	} 
-	else {
-		paymentDetails = paymentData ? paymentData.Bill[0] : '';
-		perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
+
+	let bookFDate = selectedComplaint ? selectedComplaint.bkFromDate : "";
+
+
+	let bookTDate = selectedComplaint ? selectedComplaint.bkToDate : "";
+  
+  let dateFromDate = new Date(bookFDate);
+
+  let RoomDate = new Date(bookTDate);
+ 
+  let Todaydate = new Date();
+ 
+
+  let RoomBookingDate = "";
+  if (Todaydate.getTime() < RoomDate.getTime()) {
+    RoomBookingDate = "Valid";
+  }
+  
+  let first = false;
+  if (dateFromDate < Todaydate) {
+    first = true;
+  }
+
+  let RefoundCGAmount = 0;
+  let getChargesArray;
+  let cgSecurityAmount
+  if(selectedComplaint.bkBookingType !== undefined && selectedComplaint.bkBookingType !== null){
+	if(selectedComplaint.bkBookingType == "GROUND_FOR_COMMERCIAL_PURPOSE"){
+		cgSecurityAmount = get(
+		 state,
+		 "bookings.fetchPaymentAfterPayment.Payments",
+		 "NotFound"
+	   );
+	   // bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[2].taxHeadCode
+   
+	   
+	   if(cgSecurityAmount !== "NotFound"){
+   
+		   getChargesArray = bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
+   
+		   let cgSecurityAmount2 = get(
+			   state,
+			   "bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails",
+			   "NotFound"
+			 );
+		   // getChargesArray =  cgSecurityAmount !== null && cgSecurityAmount !== undefined &&  cgSecurityAmount.length > 0 ? 
+		   //      (cgSecurityAmount[0].paymentDetails !== null && cgSecurityAmount[0].paymentDetails !== undefined && cgSecurityAmount[0].paymentDetails.length >0 ?
+		   // 	 (cgSecurityAmount[0].paymentDetails[0].bill !== null && cgSecurityAmount[0].paymentDetails[0].bill !== undefined ? 
+		   // 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails != null && cgSecurityAmount[0].paymentDetails[0].bill.billDetails != undefined && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.length > 0 ?	
+		   // 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails !== null && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails !== undefined && cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails.length > 0 ? 
+		   // 	(cgSecurityAmount[0].paymentDetails[0].bill.billDetails.billAccountDetails): "NotFound"): "NotFound") :"NotFound") : "NotFound" ): "NotFound"
+   
+   for(let i = 0; i < getChargesArray.length; i++){
+	   if(getChargesArray[i].taxHeadCode == "SECURITY_COMMERCIAL_GROUND_BOOKING_BRANCH"){
+		   RefoundCGAmount = getChargesArray[i].amount
+	   }
+   }
+	   }
+   }
+  }
+ 
+
+let OfflineInitatePayArray;
+//Variables to show Amount
+let CommercialcleaningCharge = 0;
+let CommercialFaciliCharges = 0;
+let CommercialSecurityCharges = 0;
+let CommercialTaxes = 0;
+let CommercialParkingCharges = 0;//CommercialcleaningCharge,CommercialFaciliCharges,CommercialSecurityCharges,CommercialTaxes,CommercialParkingCharges
+	if (selectedComplaint && selectedComplaint.bkApplicationStatus == "APPLIED" || selectedComplaint && selectedComplaint.bkApplicationStatus == "PENDING_FOR_APPROVAL_CLEARK_DEO") {
+//bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill
+//bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
+
+paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill ;
+
+
+OfflineInitatePayArray = paymentDetails !== undefined && paymentDetails !== null ? 
+(paymentDetails.billDetails !== undefined && paymentDetails.billDetails !== null ? (paymentDetails.billDetails.length > 0 ? 
+(paymentDetails.billDetails[0].billAccountDetails !== undefined && paymentDetails.billDetails[0].billAccountDetails !== null ?
+(paymentDetails.billDetails[0].billAccountDetails): "NA"): "NA") : "NA"): "NA"		
+perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
+} 
+	else { 
+paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill ;
+
+
+OfflineInitatePayArray = paymentDetails !== undefined && paymentDetails !== null ? 
+(paymentDetails.billDetails !== undefined && paymentDetails.billDetails !== null ? (paymentDetails.billDetails.length > 0 ? 
+(paymentDetails.billDetails[0].billAccountDetails !== undefined && paymentDetails.billDetails[0].billAccountDetails !== null ?
+(paymentDetails.billDetails[0].billAccountDetails): "NA"): "NA") : "NA"): "NA"
+perDayRupees = perDayRate && perDayRate ? perDayRate.data.ratePerDay : '';
 	} 
 
-	
+	if(OfflineInitatePayArray !== "NA"){
+		for(let i = 0; i < OfflineInitatePayArray.length ; i++ ){
+		
+		if(OfflineInitatePayArray[i].taxHeadCode == "CLEANING_CHRGS_COMMERCIAL_GROUND_BOOKING_BRANCH"){
+			CommercialcleaningCharge = OfflineInitatePayArray[i].amount
+		}
+		else if(OfflineInitatePayArray[i].taxHeadCode == "FACILITATION_CHRGS_COMMERCIAL_GROUND_BOOKING_BRANCH"){
+			CommercialFaciliCharges = OfflineInitatePayArray[i].amount
+		}
+		else if(OfflineInitatePayArray[i].taxHeadCode == "SECURITY_COMMERCIAL_GROUND_BOOKING_BRANCH"){
+			CommercialSecurityCharges = OfflineInitatePayArray[i].amount
+		}
+		else if(OfflineInitatePayArray[i].taxHeadCode == "CGST_UTGST_COMMERCIAL_GROUND_BOOKING_BRANCH"){  //tax
+			CommercialTaxes = OfflineInitatePayArray[i].amount
+		}
+		else if(OfflineInitatePayArray[i].taxHeadCode == "PARKING_LOTS_COMMERCIAL_GROUND_BOOKING_BRANCH"){
+			CommercialParkingCharges = OfflineInitatePayArray[i].amount
+		}
+		}
+	}
 	let historyApiData = {}
 	if (historyObject) {
 		historyApiData = historyObject;
 	}
 	
-	const role =
-		roleFromUserInfo(userInfo.roles, "GRO") ||
-			roleFromUserInfo(userInfo.roles, "DGRO")
-			? "ao"
-			: roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-				roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-				? "eo"
-				: roleFromUserInfo(userInfo.roles, "CSR")
-					? "csr"
-					: "employee";
+    const role = "employee";
 
 	let isAssignedToEmployee = true;
 	if (selectedComplaint && businessService) {
@@ -964,6 +1546,7 @@ const mapStateToProps = (state, ownProps) => {
 		);
 		
 		return {
+			CommercialcleaningCharge,CommercialFaciliCharges,CommercialSecurityCharges,CommercialTaxes,CommercialParkingCharges,
 			paymentDetails,
 			historyApiData,
 			DownloadPaymentReceiptDetailsforCG,
@@ -980,10 +1563,11 @@ const mapStateToProps = (state, ownProps) => {
 			serviceRequestId,
 			isAssignedToEmployee,
 			complaintTypeLocalised,
-		
+			first,RefoundCGAmount,selectedComplaint,cgRefundReceiptData
 		};
 	} else {
-		return {
+		return {cgRefundReceiptData,
+			CommercialcleaningCharge,CommercialFaciliCharges,CommercialSecurityCharges,CommercialTaxes,CommercialParkingCharges,selectedComplaint,
 			paymentDetails,
 			historyApiData,
 			DownloadPaymentReceiptDetailsforCG,
@@ -999,7 +1583,7 @@ const mapStateToProps = (state, ownProps) => {
 			role,
 			serviceRequestId,
 			isAssignedToEmployee,
-		
+			first,RefoundCGAmount
 		};
 	}
 };
@@ -1011,8 +1595,9 @@ const mapDispatchToProps = dispatch => {
 		fetchperDayRate: criteria => dispatch(fetchperDayRate(criteria)),
 		fetchDataAfterPayment: criteria => dispatch(fetchDataAfterPayment(criteria)),
 
-		downloadPaymentReceiptforCG: criteria => dispatch(downloadPaymentReceiptforCG(criteria)),
+		downloadPaymentReceiptforCG: criteria => dispatch(downloadPaymentReceiptforCG(criteria)), //
 		downloadReceiptforCG: criteria => dispatch(downloadReceiptforCG(criteria)),
+		cgRefundReceipt: criteria => dispatch(cgRefundReceipt(criteria)),
 		downloadLetterforCG: criteria => dispatch(downloadLetterforCG(criteria)),
 		downloadPermissionLetterforCG: criteria => dispatch(downloadPermissionLetterforCG(criteria)),
 		downloadApplicationforCG: criteria => dispatch(downloadApplicationforCG(criteria)),

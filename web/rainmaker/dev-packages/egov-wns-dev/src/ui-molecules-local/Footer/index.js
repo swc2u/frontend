@@ -78,10 +78,20 @@ class Footer extends React.Component {
         "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION",
         "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION"];
    
-          if(btnName.includes(item.buttonLabel))
-              window.localStorage.setItem("WNS_STATUS",item.buttonLabel);
+          // if(btnName.includes(item.buttonLabel))
+          //     window.localStorage.setItem("WNS_STATUS",item.buttonLabel);
         }
-      setRoute(url);
+      //setRoute(url);
+      if (process.env.NODE_ENV === "production") {
+        //citizen//wns/
+     // window.location.href = `citizen/${url}`;
+     let myurl = url.replace('/wns/','')
+     window.location.href = myurl
+      }
+      else{
+        //let myurl = url.replace('/wns/','')
+        window.location.href = url;
+      }
       return;
     }
   

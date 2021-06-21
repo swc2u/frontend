@@ -153,7 +153,7 @@ export const createUpdatePO = async (state, dispatch, action) => {
   set(
     scraps[0],
     "scrapDate",
-    convertDateToEpoch(get(scraps[0], "scrapDate"), "dayStart")
+    convertDateToEpoch(get(scraps[0], "scrapDate"), "daymid")
   );
  
 

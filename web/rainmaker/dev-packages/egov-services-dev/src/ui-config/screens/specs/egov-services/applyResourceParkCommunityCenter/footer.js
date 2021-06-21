@@ -125,14 +125,11 @@ const callBackForNext = async (state, dispatch) => {
             let applicationNumber = get(state, "screenConfiguration.preparedFinalObject.Booking.bkApplicationNumber", "");
             const reviewUrl = `/egov-services/applyparkcommunitycenter?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
                 dispatch(setRoute(reviewUrl));
-
                 set(
                     state.screenConfiguration.screenConfig["applyparkcommunitycenter"],
                     "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
                     true
                 );
-
-
                 await updateBillDemand(
                     state,
                     dispatch,
@@ -140,7 +137,6 @@ const callBackForNext = async (state, dispatch) => {
                     tenantId,
                     businessService
                 );
-
                 await generateBill(
                     state,
                     dispatch,
@@ -148,7 +144,6 @@ const callBackForNext = async (state, dispatch) => {
                     tenantId,
                     businessService
                 );
-
                 // GET DOCUMENT DATA FOR DOWNLOAD
                 const uploadedDocData = get(
                     state.screenConfiguration.preparedFinalObject,
@@ -166,9 +161,7 @@ const callBackForNext = async (state, dispatch) => {
                             fileStoreId: item.fileStoreId,
                         };
                     });
-
                 dispatch(prepareFinalObject("documentsPreview", documentsPreview));
-
         }else { */
 
             let action = "INITIATE";
@@ -191,8 +184,20 @@ const callBackForNext = async (state, dispatch) => {
                     "data.bkApplicationNumber",
                     ""
                 );
-                let businessService = get(response, "data.businessService", "");
-                const reviewUrl = `/egov-services/applyparkcommunitycenter?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
+                let bookType = get(
+                    response,
+                    "data.bkBookingType",
+                    ""
+                );
+
+                let businessService=""
+                if(bookType==="Community Center"){
+                    businessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
+                }else{
+                    businessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
+                }
+
+                 const reviewUrl = `/egov-services/applyparkcommunitycenter?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
                 dispatch(setRoute(reviewUrl));
 
                 set(
@@ -215,6 +220,11 @@ const callBackForNext = async (state, dispatch) => {
                     "documentsUploadRedux[0].documents",
                     []
                 );
+                const documentType = get(
+                    state.screenConfiguration.preparedFinalObject,
+                    "documentsUploadRedux[0].dropdown.value",
+                    []
+                );
                 const documentsPreview =
                     uploadedDocData &&
                     uploadedDocData.map((item) => {
@@ -224,6 +234,7 @@ const callBackForNext = async (state, dispatch) => {
                             linkText: "View",
                             name: item.fileName,
                             fileStoreId: item.fileStoreId,
+                            documentType: documentType
                         };
                     });
 
@@ -377,14 +388,14 @@ export const renderSteps = (activeStep, dispatch) => {
             );
             break;
         case 3:
-                dispatchMultipleFieldChangeAction(
-                    "applyparkcommunitycenter",
-                    getActionDefinationForStepper(
-                        "components.div.children.formwizardFourthStep"
-                    ),
-                    dispatch
-                );
-                break;   
+            dispatchMultipleFieldChangeAction(
+                "applyparkcommunitycenter",
+                getActionDefinationForStepper(
+                    "components.div.children.formwizardFourthStep"
+                ),
+                dispatch
+            );
+            break;
         default:
             dispatchMultipleFieldChangeAction(
                 "applyparkcommunitycenter",

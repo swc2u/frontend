@@ -18,6 +18,7 @@ import {
   getTransformedLocale,
   setBusinessServiceDataToLocalStorage
 } from "egov-ui-framework/ui-utils/commons";
+import { estimateSummary } from "./summaryResource/estimateSummary";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import jp from "jsonpath";
 import get from "lodash/get";
@@ -47,6 +48,7 @@ import {
 import { getSearchResultsView, getSearchResultsForNocCretificate, getSearchResultsForNocCretificateDownload, setCurrentApplicationProcessInstance, checkVisibility } from "../../../../ui-utils/commons";
 import { preparepopupDocumentsSellMeatUploadData, prepareDocumentsUploadData } from "../../../../ui-utils/commons";
 import { httpRequest } from "../../../../ui-utils";
+import { getTextForSellMeatNoc } from "./searchResource/citizenSearchFunctions";
 
 
 let roles = JSON.parse(getUserInfo()).roles
@@ -186,9 +188,19 @@ const titlebar = getCommonContainer({
       number: getapplicationNumber(), //localStorage.getItem('applicationsellmeatNumber')
     }
   },
+  applicationStatus: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+      status: "NA",
+    }
+  },
   downloadMenu: {
     uiFramework: "custom-atoms",
     componentPath: "MenuButton",
+    // visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
+    visible: false,
     props: {
       data: {
         label: "Download",
@@ -211,6 +223,8 @@ const prepareDocumentsView = async (state, dispatch) => {
   let aggrementdocumnet = JSON.parse(docs.applicationdetail).hasOwnProperty('uploadDocuments') ?
     JSON.parse(docs.applicationdetail).uploadDocuments[0]['fileStoreId'] : '';
 
+  let idProof = JSON.parse(docs.applicationdetail).hasOwnProperty('idProof') ?
+    JSON.parse(docs.applicationdetail).idProof[0]['fileStoreId'] : '';
   // let uploadPetPicture=JSON.parse(doc.applicationdetail).hasOwnProperty('uploadPetPicture')?
   // JSON.parse(doc.applicationdetail).uploadPetPicture[0]['fileStoreId']:'';
   if (aggrementdocumnet !== '') {
@@ -219,6 +233,14 @@ const prepareDocumentsView = async (state, dispatch) => {
       fileStoreId: aggrementdocumnet,
       linkText: "View"
     });
+    if (idProof && idProof != '') { 
+      documentsPreview.push({
+        title: "SELLMEAT.ID_PROOF",
+        fileStoreId: idProof,
+        linkText: "View"
+      });       
+
+    }
     let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
     let fileUrls =
       fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};
@@ -349,9 +371,40 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
   }
   else {
     dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
-
+    let applicationdetail = JSON.parse(get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationdetail", {}));
+    let nocSoughtFromAPI = applicationdetail.nocSought;
+    let mdmsDataForNocSought = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.nocSought", []);
+    let nocSoughtFinalData = "";
+    nocSoughtFromAPI.split(",").map(item => { 
+      
+      if (mdmsDataForNocSought.find(str => str.code == item.trim())) {
+        nocSoughtFinalData = nocSoughtFinalData + " , " +mdmsDataForNocSought.find(str => str.code == item.trim()).name;
+      }
+    });
+    dispatch(prepareFinalObject("nocApplicationDetail[0].nocSoughtFinalData",nocSoughtFinalData.slice(2) ));
+    
     nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
     localStorageSet("app_noc_status", nocStatus);
+    dispatch(
+      handleField(
+        "sellmeatnoc-search-preview",
+        "components.div.children.headerDiv.children.header.children.applicationStatus",
+        "props.status",
+        getTextForSellMeatNoc(nocStatus)
+      )
+    );
+    if (nocStatus != "DRAFT") { 
+      dispatch(
+        handleField(
+          "sellmeatnoc-search-preview",
+          "components.div.children.taskStatus",
+          "visible",
+          true
+        )
+      );
+  
+    }
+
     await setCurrentApplicationProcessInstance(state)
     HideshowEdit(state, action, nocStatus);
 
@@ -386,7 +439,7 @@ const setSearchResponseForNocCretificate = async (
 
   if (nocStatus == "APPROVED") {
     let getCertificateDataForSELLMEAT = { "applicationType": "SELLMEATNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "certificateData" } };
-
+   
     //SELLMEAT
     const response0SELLMEAT = await getSearchResultsForNocCretificate([
       { key: "tenantId", value: tenantId },
@@ -403,7 +456,16 @@ const setSearchResponseForNocCretificate = async (
       dispatch(toggleSnackbar(true, errorMessage, "error"));
     } else {
       let getFileStoreIdForSELLMEAT = { "nocApplicationDetail": [get(response0SELLMEAT, "nocApplicationDetail[0]", "")] }
-
+      let nocSoughtFromAPI=get(response0SELLMEAT, "nocApplicationDetail[0].licenseType", "")
+      let mdmsDataForNocSought = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.nocSought", []);
+      let nocSoughtFinalData = "";
+      
+      nocSoughtFromAPI.split(",").map(item => { 
+        if (mdmsDataForNocSought.find(str => str.code == item.trim())) {
+          nocSoughtFinalData = nocSoughtFinalData + " , " +mdmsDataForNocSought.find(str => str.code == item.trim()).name;
+        }
+      });
+      set(response0SELLMEAT, "nocApplicationDetail[0].licenseType", nocSoughtFinalData.slice(2))
       const response1SELLMEAT = await getSearchResultsForNocCretificate([
         { key: "tenantId", value: tenantId },
         { key: "applicationNumber", value: applicationNumber },
@@ -432,9 +494,16 @@ const setSearchResponseForNocCretificate = async (
     downloadMenu = [
       certificateDownloadObjectSELLMEAT
     ];
+    dispatch(
+      handleField(
+        "sellmeatnoc-search-preview",
+        "components.div.children.headerDiv.children.header.children.downloadMenu",
+        "visible",
+        true
+      )
+    );
+  
   }
-
-
 
   dispatch(
     handleField(
@@ -469,7 +538,7 @@ const screenConfig = {
     }
 
     dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
-
+    searchBill(dispatch, applicationNumber, tenantId);
     setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
 
     const queryObject = [
@@ -513,7 +582,7 @@ const screenConfig = {
           uiFramework: "custom-containers-local",
           componentPath: "WorkFlowContainer",
           moduleName: "egov-workflow",
-          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          visible: false,//process.env.REACT_APP_NAME === "Citizen" ? false : true,
           props: {
             dataPath: "Licenses",
             moduleName: "SELLMEATNOC",
@@ -521,7 +590,7 @@ const screenConfig = {
         },
 
         body: checkForRole(roles, 'CITIZEN') ? getCommonCard({
-
+          estimateSummary: estimateSummary,
           sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary,
           taskStatusSummary: taskStatusSummary,
@@ -529,6 +598,7 @@ const screenConfig = {
           undertakingsellmeatButton
         }) :
           getCommonCard({
+            estimateSummary: estimateSummary,
             sellmeatapplicantSummary: sellmeatapplicantSummary,
             documentsSummary: documentsSummary
           }),

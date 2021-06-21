@@ -3,6 +3,7 @@ import {
     prepareFinalObject,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 import {
     getTenantId,
     getUserInfo,
@@ -57,6 +58,41 @@ export const getPaymentGateways = async () => {
     }
 };
 
+
+
+export const getSearchResultsViewForRoomBooking = async (queryObject) => {
+    try {
+        const response = await httpRequest(
+            "post",
+            "bookings/api/citizen/community/center/room/_search",
+            "",
+            [],
+            {
+                //tenantId: queryObject[0]["value"],
+                applicationNumber: queryObject[0]["value"],
+                applicationStatus: "",
+                mobileNumber: "",
+                fromDate: "",
+                typeOfRoom: "",
+                toDate: "",
+                bookingType: "",
+                uuid: JSON.parse(getUserInfo()).uuid,
+            }
+        );
+        return response;
+    } catch (error) {
+        store.dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: error.message, labelCode: error.message },
+                "error"
+            )
+        );
+    }
+};
+
+
+
 export const getSearchResultsView = async (queryObject) => {
     try {
         const response = await httpRequest(
@@ -87,6 +123,53 @@ export const getSearchResultsView = async (queryObject) => {
     }
 };
 
+
+export const getSearchResultsViewForHall = async (queryObject) => {
+    try {
+        const response = await httpRequest(
+            "post",
+            "bookings/api/community/center/_search",
+            "",
+            [],
+            {
+                applicationNumber: queryObject[0]["value"],
+
+            }
+        );
+        return response;
+    } catch (error) {
+        store.dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: error.message, labelCode: error.message },
+                "error"
+            )
+        );
+    }
+};
+export const getRoomDataForHall = async (queryObject) => {
+    try {
+        const response = await httpRequest(
+            "post",
+            "bookings/community/room/availability/_fetch",
+            "",
+            [],
+            {
+                applicationNumber: queryObject[0]["value"],
+
+            }
+        );
+        return response;
+    } catch (error) {
+        store.dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: error.message, labelCode: error.message },
+                "error"
+            )
+        );
+    }
+};
 export const getSearchResultsViewForNewLocOswmcc = async (queryObject) => {
     try {
         const response = await httpRequest(
@@ -206,7 +289,7 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
                 dropdown.menu = dropdown.menu.map((item) => {
                     return {
                         code: item.code,
-                        label: getTransformedLocale(item.code),
+                        label: item.code,
                     };
                 });
                 card["dropdown"] = dropdown;
@@ -362,6 +445,10 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                         ...bookingDocuments,
                         {
                             fileStoreId: doc.documents[0].fileStoreId,
+                            documentType: doc.dropdown.value,
+                            fileUrl: doc.documents[0].fileUrl,
+                            fileName: doc.documents[0].fileName,
+                            additionalDetails: {uploadedBy: "Citizen", uploadedTime: new Date().getTime()}
                         },
                     ];
                 } else if (!doc.documentSubCode) {
@@ -374,9 +461,17 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                 }
             }
         });
+        let bookType = payload.bkBookingType
 
+
+        let businessService=""
+        if(bookType==="Community Center"){
+            businessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
+        }else{
+            businessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
+        }
        // if (action === "INITIATE") {
-            set(payload, "financeBusinessService", "PACC");
+            set(payload, "financeBusinessService", businessService);
        // }
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "tenantId", tenantId);
@@ -425,17 +520,42 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                     if(response.data.timeslots && response.data.timeslots.length > 1){
                         var [fromTime, toTimeOne] = response.data.timeslots[0].slot.split('-')
                         var [fromTimeTwo, toTime] = response.data.timeslots[1].slot.split('-')
-                   
-                   
+
+
                     }else{
                         var [fromTime, toTime] = response.data.timeslots[0].slot.split('-')
-                   
-                    }
-                    let DisplayPaccObject = {
-                        bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,
-                        bkDisplayToDateTime: response.data.bkToDate + "#" + toTime
-                    }
 
+                    }
+                    let DisplayPaccObject={}
+                    if(response.data.bkApplicationStatus==="RE_INITIATED"){
+                         DisplayPaccObject = {
+                            bkDisplayFromDateTime: response.data.bkStartingDate + "#" + fromTime,
+                            bkDisplayToDateTime: response.data.bkEndingDate + "#" + toTime
+                        }
+                        if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+                  
+                            let d = new Date(new Date(response.data.bkEndingDate).setDate(new Date(response.data.bkEndingDate).getDate() + 1));
+                            DisplayPaccObject = {
+                                bkDisplayFromDateTime: response.data.bkStartingDate + "#" + fromTime,  
+                                bkDisplayToDateTime: d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate() + "#" + toTime,
+                            };  
+                        }
+                    }else{
+                        DisplayPaccObject = {
+                            bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,
+                            bkDisplayToDateTime: response.data.bkToDate + "#" + toTime
+                        }
+                        if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+                  
+                            let d = new Date(new Date(response.data.bkToDate).setDate(new Date(response.data.bkToDate).getDate() + 1));
+                            DisplayPaccObject = {
+                                bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,  
+                                bkDisplayToDateTime: d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate() + "#" + toTime,
+                            };  
+                        }
+                    }
+                   
+                    
                     dispatch(prepareFinalObject("DisplayTimeSlotData", DisplayPaccObject))
                     // dispatch(prepareFinalObject("DisplayPacc", { bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime }));
                     // dispatch(prepareFinalObject("DisplayPacc", { bkDisplayToDateTime: response.data.bkToDate + "#" + toTime }));
@@ -448,7 +568,7 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                 return { status: "fail", data: response.data };
             }
         } else if (method === "UPDATE") {
-
+            delete payload["financeBusinessService"];
 
             response = await httpRequest(
                 "post",
@@ -519,9 +639,8 @@ export const createUpdateOSWMCCApplication = async (
                 }
             }
         });
-
         if (action === "INITIATE") {
-            set(payload, "financeBusinessService", "OSUJM");
+            set(payload, "financeBusinessService", "BOOKING_BRANCH_SERVICES.BOOKING_GROUND_OPEN_SPACES");
         }
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "OSUJM");
@@ -553,6 +672,8 @@ export const createUpdateOSWMCCApplication = async (
                 return { status: "fail", data: response.data };
             }
         } else if (method === "UPDATE") {
+
+          delete payload["financeBusinessService"];
             response = await httpRequest(
                 "post",
                 "/bookings/api/_update",
@@ -714,7 +835,7 @@ export const createUpdateCgbApplication = async (state, dispatch, action) => {
         });
 
         if (action === "INITIATE") {
-            set(payload, "financeBusinessService", "GFCP");
+            set(payload, "financeBusinessService", "BOOKING_BRANCH_SERVICES.BOOKING_COMMERCIAL_GROUND");
         }
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "GROUND_FOR_COMMERCIAL_PURPOSE");
@@ -745,6 +866,7 @@ export const createUpdateCgbApplication = async (state, dispatch, action) => {
                 return { status: "fail", data: response.data };
             }
         } else if (method === "UPDATE") {
+            delete payload["financeBusinessService"];
             response = await httpRequest(
                 "post",
                 "/bookings/api/_update",
@@ -831,6 +953,132 @@ export const createUpdateWtbApplication = async (state, dispatch, action) => {
             return { status: "success", data: response.data };
         }
     } catch (error) {
+        dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+
+        // Revert the changed pfo in case of request failure
+        let BookingData = get(
+            state,
+            "screenConfiguration.preparedFinalObject.Booking",
+            []
+        );
+        dispatch(prepareFinalObject("Booking", BookingData));
+
+        return { status: "failure", message: error };
+    }
+};
+
+
+export const createUpdateRoomApplication = async (state, dispatch, action) => {
+
+    let response = "";
+    let tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
+    // let applicationNumber =
+    //     getapplicationNumber() === "null" ? "" : getapplicationNumber();
+    let method = action === "INITIATE" ? "CREATE" : "UPDATE";
+
+    try {
+        let payload = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking",
+            []
+        );
+        let roomData = get(
+            state.screenConfiguration.preparedFinalObject,
+            "roomData",
+            []
+        );
+
+        let roomType = roomData.typeOfRoom
+        if (action === "INITIATE") {
+            set(payload, "financeBusinessService", "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR");
+        }
+        if (action === "INITIATE") {
+
+            set(payload, "roomBusinessService", "BKROOM");
+        }
+        let roomObject=[]
+        if(roomType==='Both'){
+
+             roomObject= [{
+                'action':action,
+                'remarks':"string",
+                'roomBusinessService':"BKROOM",
+                'totalNoOfRooms':roomData.bkAcRoomToBeBooked,
+                'typeOfRoom':"AC",
+                'fromDate':roomData.fromDate,
+                'toDate': roomData.toDate
+            },
+            {
+                "action": action,
+                "remarks": "string",
+                "roomBusinessService": "BKROOM",
+                "totalNoOfRooms": roomData.bkNonAcRoomToBeBooked,
+                "typeOfRoom": "NON AC",
+                "fromDate":roomData.fromDate,
+                "toDate":roomData.toDate
+            }
+        ]
+            set(payload, "roomsModel", roomObject);
+
+        }else{
+
+
+             roomObject= [{
+                'action':action,
+                'remarks':"string",
+                'roomBusinessService':"BKROOM",
+                'totalNoOfRooms':roomData.totalNoOfRooms,
+                'typeOfRoom':roomData.typeOfRoom,
+                'fromDate':roomData.fromDate,
+                'toDate': roomData.toDate
+            }]
+            set(payload, "roomsModel", roomObject);
+
+
+        }
+
+        set(payload, "financialYear", `${getCurrentFinancialYear()}`);
+
+
+        console.log('payload1234', payload)
+        if (method === "CREATE") {
+            response = await httpRequest(
+                "post",
+                "bookings/community/room/_create",
+                "",
+                [],
+                {
+                    Booking: payload,
+                }
+            );
+            if (
+                response.data.bkApplicationNumber !== "null" ||
+                response.data.bkApplicationNumber !== ""
+            ) {
+                dispatch(prepareFinalObject("Booking", response.data));
+                setapplicationNumber(response.data.bkApplicationNumber);
+                setApplicationNumberBox(state, dispatch);
+                return { status: "success", data: response.data };
+            } else {
+                return { status: "fail", data: response.data };
+            }
+        } else if (method === "UPDATE") {
+            delete payload["financeBusinessService"];
+            response = await httpRequest(
+                "post",
+                "bookings/community/room/_update",
+                "",
+                [],
+                {
+                    Booking: payload,
+                }
+            );
+            setapplicationNumber(response.data.bkApplicationNumber);
+            dispatch(prepareFinalObject("Booking", response.data));
+            return { status: "success", data: response.data };
+        }
+    } catch (error) {
+
         dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
 
         // Revert the changed pfo in case of request failure

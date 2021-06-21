@@ -22,7 +22,7 @@ import { httpRequest } from "egov-ui-kit/utils/api";
 // import {
 // 	getFileUrlFromAPI,
 // } from "egov-ui-framework/ui-utils/commons";
-import {
+import { 
 	getDateFromEpoch,
 	mapCompIDToName,
 	isImage,
@@ -54,7 +54,7 @@ import Typography from '@material-ui/core/Typography';
 
 
 
-const styles = (theme) => ({
+const styles = (theme) => ({   
 
 });
 const dosalogStyle = {
@@ -160,15 +160,10 @@ class ApplicationDetails extends Component {
 				"_search",
 				RequestGateWay
 				);
-			 console.log("payloadGateWay--",payloadGateWay)   //Transaction[0].gateway
+			
 			 
-			 if(payloadGateWay.Transaction.length > 0){
-	console.log("consoleDataForGateWay--",payloadGateWay.Transaction.length > 0 ? payloadGateWay.Transaction : "abababa") 
-		
-	let gateWay = payloadGateWay.Transaction[0].gateway; 
-	
-	console.log("gateWay--",gateWay ? gateWay : "NotFound")
-	
+			 if(payloadGateWay.Transaction.length > 0){		
+	let gateWay = payloadGateWay.Transaction[0].gateway; 	
 	prepareFinalObject('GateWayName', gateWay)
 	
 	this.setState({
@@ -304,8 +299,7 @@ class ApplicationDetails extends Component {
 	downloadPaymentReceiptFunction = async (e) => {
 		const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceipt, userInfo,pdfBankName } = this.props;
 		const { complaint } = transformedComplaint;
-		console.log("stateBankName--",this.state.BankName ? this.state.BankName : "NA")
-		
+				
 		var date2 = new Date();
 
 		var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
@@ -329,10 +323,10 @@ class ApplicationDetails extends Component {
 				"bookingPeriod": getDurationDate(
 					complaint.bkFromDate,
 					complaint.bkToDate
-				),
+				), 
 				"bookingItem": "Online Payment Against Booking of Open Space for Building Material",
 				"amount": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-					(el) => !el.taxHeadCode.includes("PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH")
+					(el) => el.taxHeadCode.includes("PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH")
 				)[0].amount,
 				"tax": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
 					(el) => el.taxHeadCode.includes("CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH")
@@ -370,9 +364,9 @@ class ApplicationDetails extends Component {
 		const { transformedComplaint, paymentDetailsForReceipt, downloadApplication,paymentDetails,userInfo,documentMap } = this.props;
 		let fdocname = Object.entries(documentMap)[0][1]
 		let value1 = xyz[1];
-		console.log("value1--",value1)
+	
 		let value2 = ab[1];
-		console.log("value2--",value2)
+
 
 		var date2 = new Date();
 
@@ -416,7 +410,7 @@ class ApplicationDetails extends Component {
                     baseCharge:
                         paymentDetails === undefined
                             ? null
-                            : paymentDetails.billDetails[0].billAccountDetails.filter(el => !el.taxHeadCode.includes("PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"))[0].amount,
+                            : paymentDetails.billDetails[0].billAccountDetails.filter(el => el.taxHeadCode.includes("PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"))[0].amount,
                     taxes:
                         paymentDetails === undefined
                             ? null
@@ -461,7 +455,7 @@ class ApplicationDetails extends Component {
 					fileStoreId: documentsPreviewData,
 					linkText: "View",
 				});
-				
+				 
 				let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
 				
 				let fileUrls =
@@ -500,7 +494,7 @@ class ApplicationDetails extends Component {
 							Accept: "application/pdf",
 						},
 					});
-					console.log("responseData---", response);
+				
 					const file = new Blob([response.data], { type: "application/pdf" });
 					const fileURL = URL.createObjectURL(file);
 					var myWindow = window.open(fileURL);
@@ -581,7 +575,7 @@ downloadPermissionLetterButton = async (mode) => {
 						Accept: "application/pdf",
 					},
 				});
-				console.log("responseData---", response);
+			
 				const file = new Blob([response.data], { type: "application/pdf" });
 				const fileURL = URL.createObjectURL(file);
 				var myWindow = window.open(fileURL);
@@ -735,7 +729,7 @@ downloadPermissionLetterFunction = async (e) => {
 						Accept: "application/pdf",
 					},
 				});
-				console.log("responseData---", response);
+			
 				const file = new Blob([response.data], { type: "application/pdf" });
 				const fileURL = URL.createObjectURL(file);
 				var myWindow = window.open(fileURL);
@@ -763,19 +757,18 @@ downloadPermissionLetterFunction = async (e) => {
 
 	callApiForDocumentData = async (e) => {
 		const { xyz,userInfo } = this.props;
-		console.log("xyzInPDF--",xyz)
+	
 		var documentsPreview = [];
 		if (xyz && xyz.length > 0) {
-			console.log("xyzGreater--",xyz)
-			console.log("key[0-",xyz[0])
+		
 			let keys = xyz[0]
-			console.log("key---",keys)
+		
 			let values = xyz[1];
-			console.log("valuesInDoc--",values)
+		
 			let id = keys
-			console.log("id--",id)
+		
 			let	fileName = values[0];
-            console.log("fileName--",fileName)
+
 			documentsPreview.push({
 				title: "DOC_DOC_PICTURE",
 				fileStoreId: id,
@@ -822,13 +815,13 @@ downloadPermissionLetterFunction = async (e) => {
 		var documentsPreview = [];
 		if (ab && ab.length > 0) {
 			let keys = ab[0];
-			console.log("keys2--",keys)
+		
 			let values = ab[1];
-			console.log("values2--",values)
+
 			let id = keys
-			console.log("id2--",id)
+
 			let	fileName = values[0];
-            console.log("fileName--",fileName)
+         
 			documentsPreview.push({
 				title: "DOC_DOC_PICTURE",
 				fileStoreId: id,
@@ -896,22 +889,22 @@ downloadPermissionLetterFunction = async (e) => {
 		let complaintLoc = {};
 		
 		if (complaint) {
-			if (role === "ao") {
-				if (complaint.complaintStatus.toLowerCase() === "unassigned") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_COMMON_ASSIGN";
-				} else if (complaint.complaintStatus.toLowerCase() === "reassign") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_COMMON_REASSIGN";
-				} else if (complaint.complaintStatus.toLowerCase() === "assigned") {
-					btnTwoLabel = "ES_COMMON_REASSIGN";
-				}
-				else if (complaint.complaintStatus.toLowerCase() === "escalated") {
-					btnOneLabel = "ES_REJECT_BUTTON";
-					btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
-				}
-			} 
-			else if (role === "employee") {
+			// if (role === "ao") {
+			// 	if (complaint.complaintStatus.toLowerCase() === "unassigned") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_COMMON_ASSIGN";
+			// 	} else if (complaint.complaintStatus.toLowerCase() === "reassign") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_COMMON_REASSIGN";
+			// 	} else if (complaint.complaintStatus.toLowerCase() === "assigned") {
+			// 		btnTwoLabel = "ES_COMMON_REASSIGN";
+			// 	}
+			// 	else if (complaint.complaintStatus.toLowerCase() === "escalated") {
+			// 		btnOneLabel = "ES_REJECT_BUTTON";
+			// 		btnTwoLabel = "ES_RESOLVE_MARK_RESOLVED";
+			// 	}
+			// } 
+			if(role === "employee") {
 		
 				
 				btnOneLabel = "BK_MYBK_REJECT_BUTTON";
@@ -1042,7 +1035,9 @@ downloadPermissionLetterFunction = async (e) => {
 								
 
 								<PaymentDetails
-									paymentDetails={paymentDetails && paymentDetails}
+								taxes={this.props.taxes}
+								baseAmount={this.props.baseAmount}
+								paymentDetails={paymentDetails && paymentDetails}
 								/>
 								
 								<div style={{
@@ -1077,22 +1072,20 @@ downloadPermissionLetterFunction = async (e) => {
 									isAssignedToEmployee={isAssignedToEmployee}
 								/>
 							</div>
-							<div style={{
-								paddingTop: "30px",
-								paddingRight: "30px", float: "right",
-							}}>
-								{(role === "ao" &&
-									complaint.complaintStatus.toLowerCase() !== "closed") ||
-									(role === "eo" &&
-										(complaint.status.toLowerCase() === "escalatedlevel1pending" ||
-											complaint.status.toLowerCase() === "escalatedlevel2pending" ||
-											complaint.status.toLowerCase() === "assigned")) ||
+							<div >
+								{
+								// (role === "ao" &&
+								// 	complaint.complaintStatus.toLowerCase() !== "closed") ||
+								// 	(role === "eo" &&
+								// 		(complaint.status.toLowerCase() === "escalatedlevel1pending" ||
+								// 			complaint.status.toLowerCase() === "escalatedlevel2pending" ||
+								// 			complaint.status.toLowerCase() === "assigned")) ||
 									(role === "employee" &&
 										(
 											(complaint.status == "PENDINGAPPROVAL" &&
 												
 
-												<Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={<ActionButtonDropdown data={{
+												<Footer className="apply-wizard-footer approve-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={<ActionButtonDropdown data={{
 													label: { labelName: "TAKE ACTION ", labelKey: "BK_COMMON_TAKE_ACTION" },
 													rightIcon: "arrow_drop_down",
 													props: {
@@ -1120,7 +1113,7 @@ downloadPermissionLetterFunction = async (e) => {
 										)
 									)}
 
-								<DialogContainer
+	 							<DialogContainer
 									toggle={this.state.togglepopup}
 									actionTittle={this.state.actionTittle}
 									togglepopup={this.actionButtonOnClick}									
@@ -1168,20 +1161,20 @@ const mapStateToProps = (state, ownProps) => {
 	let bookingDocs;
 
 	let pdfBankName = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.GateWayName:"NA";  
-	console.log("pdfBankName--",pdfBankName)
+
 
 	let documentMap = applicationData && applicationData.documentMap ? applicationData.documentMap : '';
-	console.log("documentMap-in-osbm--",documentMap)
+
 	let abc = Object.entries(documentMap)
-	console.log("abc--",abc)
+
 
 	let xyz = abc[0]
-	console.log(xyz)
+
 
 	let ab = abc[1]
-	console.log("ab--",ab)
+
 	let docArray = Object.keys(documentMap).map(function(key){ return documentMap[key] })
-	console.log("docArray--",docArray)
+
 
 	const { HistoryData } = bookings;	
 	let historyObject = HistoryData ? HistoryData : ''
@@ -1189,7 +1182,9 @@ const mapStateToProps = (state, ownProps) => {
 	const { fetchPaymentAfterPayment } = bookings;
 
 	let paymentDetailsForReceipt = fetchPaymentAfterPayment;
-	console.log("paymentDetailsForReceipt--",paymentDetailsForReceipt)
+
+	let taxes = 0
+let baseAmount = 0;
 	let paymentDetails;
 	let findCGSTUGST;
 	let addOfBothCGSTUGST;
@@ -1198,78 +1193,177 @@ const mapStateToProps = (state, ownProps) => {
 	let findNumOrNot;
 	let Newugst;
     let beforePaymentFindArray
-	if (selectedComplaint && selectedComplaint.bkApplicationStatus == "APPROVED") {
-		paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
-	    console.log("paymentDetails--paymentDetails",paymentDetails)
-     if(paymentDetails !== undefined && paymentDetails !== null){
-	findCGSTUGST = paymentDetails.billDetails[0].billAccountDetails
-	console.log("findCGSTUGST--",findCGSTUGST)
-	for(let i = 0; i < findCGSTUGST.length ; i++ ){ //for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
-		if(findCGSTUGST[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
-			addOfBothCGSTUGST = findCGSTUGST[i].amount
+	let getArrayToIterate
+// 	if (selectedComplaint && selectedComplaint.bkApplicationStatus == "APPROVED") {
+// 		paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
+// 	    console.log("paymentDetails--paymentDetails",paymentDetails)
+//     if(paymentDetails !== undefined && paymentDetails !== null){
+// 	findCGSTUGST = paymentDetails.billDetails[0].billAccountDetails
+// 	console.log("findCGSTUGST--",findCGSTUGST)
+// 	for(let i = 0; i < findCGSTUGST.length ; i++ ){ //for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
+// 		if(findCGSTUGST[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
+// 			addOfBothCGSTUGST = findCGSTUGST[i].amount
+// 		}
+// 	}
+// 	find50Per = (perFind/100) * addOfBothCGSTUGST
+// 	console.log("find50Per--",find50Per)		
+// 	findNumOrNot = Number.isInteger(find50Per);
+// console.log("findNumOrNot--",findNumOrNot)
+// 	if(findNumOrNot == true){
+// 		Newugst = find50Per
+// 		console.log("trueCondition")
+// 	}
+// 	else{
+// 		Newugst = find50Per.toFixed(2);
+// 		console.log("second-Newugst-",Newugst)
+// 	}
+// console.log("Newugst-Newugst-Newugst--",Newugst)
+// }
+// //billDetails[0].billAccountDetails
+// 	} else {
+// 		console.log("ComeInElseCondition")
+// 		paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
+// 		// paymentDetails = paymentData ? paymentData.Bill[0] : '';
+// 		paymentDetails = paymentData && paymentData.Bill.length > 0 && paymentData.Bill[0];
+// 		console.log("paymentDetails-in-ElseCondition--",paymentDetails)
+// 		if(paymentDetails !== undefined && paymentDetails !== null){
+// 			beforePaymentFindArray = bookings.paymentData.Bill[0].billDetails[0].billAccountDetails
+// 			console.log("beforePaymentFindArray--",beforePaymentFindArray)
+// 			for(let i = 0; i < beforePaymentFindArray.length ; i++ ){ //for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
+// 				if(beforePaymentFindArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
+// 					addOfBothCGSTUGST = beforePaymentFindArray[i].amount
+// 				}
+// 			}
+// 			find50Per = (perFind/100) * addOfBothCGSTUGST
+// 			console.log("find50Per--",find50Per)		
+// 			findNumOrNot = Number.isInteger(find50Per);
+// 		console.log("findNumOrNot--",findNumOrNot)
+// 			if(findNumOrNot == true){
+// 				Newugst = find50Per
+// 				console.log("trueCondition")
+// 			}
+// 			else{
+// 				Newugst = find50Per.toFixed(2);
+// 				console.log("second-Newugst-",Newugst)
+// 			}
+// 		console.log("Newugst-Newugst-Newugst--",Newugst)
+// 		}
+// 	}
+
+
+
+if(selectedComplaint && selectedComplaint.bkApplicationStatus == "APPROVED"){
+	paymentDetails = get(
+		state,
+		"bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill",
+		"NotFound"
+	  );
+	 
+
+	  if(paymentDetails !== "NotFound"){
+		findCGSTUGST = paymentDetails.billDetails[0].billAccountDetails
+	
+		for(let i = 0; i < findCGSTUGST.length ; i++ ){ //for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
+			if(findCGSTUGST[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
+				addOfBothCGSTUGST = findCGSTUGST[i].amount
+			}
+		}
+		find50Per = (perFind/100) * addOfBothCGSTUGST
+			
+		findNumOrNot = Number.isInteger(find50Per);
+
+		if(findNumOrNot == true){
+			Newugst = find50Per
+		
+		}
+		else{
+			Newugst = find50Per.toFixed(2);
+		
+		}
+
+	}
+	  
+	  getArrayToIterate = get(
+		state,
+		"bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails",
+		"NotFound"
+	  );
+	
+//bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
+//bookings.fetchPaymentAfterPayment.Payments[0].totalAmountPaid
+
+
+//bookings.paymentData.Bill[0].billDetails[0].billAccountDetails
+//bookings.paymentData.Bill[0].totalAmount
+
+
+}
+else{
+	paymentDetails = get(
+		state,
+		"bookings.paymentData.Bill[0]",
+		"NotFound"
+	  );
+
+
+if(paymentDetails !== "NotFound"){
+	beforePaymentFindArray = paymentDetails.billDetails[0].billAccountDetails
+	
+	for(let i = 0; i < beforePaymentFindArray.length ; i++ ){ //for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
+		if(beforePaymentFindArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
+			addOfBothCGSTUGST = beforePaymentFindArray[i].amount
 		}
 	}
 	find50Per = (perFind/100) * addOfBothCGSTUGST
-	console.log("find50Per--",find50Per)		
+	
 	findNumOrNot = Number.isInteger(find50Per);
-console.log("findNumOrNot--",findNumOrNot)
+
 	if(findNumOrNot == true){
 		Newugst = find50Per
-		console.log("trueCondition")
+	
 	}
 	else{
 		Newugst = find50Per.toFixed(2);
-		console.log("second-Newugst-",Newugst)
+		
 	}
-console.log("Newugst-Newugst-Newugst--",Newugst)
+
 }
-//billDetails[0].billAccountDetails
-	} else {
-		console.log("ComeInElseCondition")
-		paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
-		// paymentDetails = paymentData ? paymentData.Bill[0] : '';
-		paymentDetails = paymentData && paymentData.Bill.length > 0 && paymentData.Bill[0];
-		console.log("paymentDetails-in-ElseCondition--",paymentDetails)
-		if(paymentDetails !== undefined && paymentDetails !== null){
-			beforePaymentFindArray = bookings.paymentData.Bill[0].billDetails[0].billAccountDetails
-			console.log("beforePaymentFindArray--",beforePaymentFindArray)
-			for(let i = 0; i < beforePaymentFindArray.length ; i++ ){ //for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
-				if(beforePaymentFindArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
-					addOfBothCGSTUGST = beforePaymentFindArray[i].amount
-				}
-			}
-			find50Per = (perFind/100) * addOfBothCGSTUGST
-			console.log("find50Per--",find50Per)		
-			findNumOrNot = Number.isInteger(find50Per);
-		console.log("findNumOrNot--",findNumOrNot)
-			if(findNumOrNot == true){
-				Newugst = find50Per
-				console.log("trueCondition")
-			}
-			else{
-				Newugst = find50Per.toFixed(2);
-				console.log("second-Newugst-",Newugst)
-			}
-		console.log("Newugst-Newugst-Newugst--",Newugst)
-		}
+
+
+getArrayToIterate = get(
+	state,
+	"bookings.paymentData.Bill[0].billDetails[0].billAccountDetails",
+	"NotFound"
+  );
+
+}
+
+if (getArrayToIterate !== "NotFound" && getArrayToIterate !== undefined) {
+    for (let i = 0; i < getArrayToIterate.length; i++) {
+		if (getArrayToIterate[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+			taxes = getArrayToIterate[i].amount;
+		  } else if (getArrayToIterate[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH") {
+			baseAmount = getArrayToIterate[i].amount;
+		  }
 	}
-
-
+}
 	let historyApiData = {}
 	if (historyObject) {
 		historyApiData = historyObject;
 	}
 	
-	const role =
-		roleFromUserInfo(userInfo.roles, "GRO") ||
-			roleFromUserInfo(userInfo.roles, "DGRO")
-			? "ao"
-			: roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-				roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-				? "eo"
-				: roleFromUserInfo(userInfo.roles, "CSR")
-					? "csr"
-					: "employee";
+	// const role =
+	// 	roleFromUserInfo(userInfo.roles, "GRO") ||
+	// 		roleFromUserInfo(userInfo.roles, "DGRO")
+	// 		? "ao"
+	// 		: roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
+	// 			roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
+	// 			? "eo"
+	// 			: roleFromUserInfo(userInfo.roles, "CSR")
+	// 				? "csr"
+	// 				: "employee";
+
+	const role = "employee";
 
 	let isAssignedToEmployee = true;
 	if (selectedComplaint && businessService) {
@@ -1328,11 +1422,11 @@ console.log("Newugst-Newugst-Newugst--",Newugst)
 			complaintTypeLocalised,
 			userInfo,
 			xyz,ab,
-			pdfBankName,Newugst
+			pdfBankName,Newugst,taxes,baseAmount
 		};
 	} else {
 		return {
-			paymentDetails,
+			paymentDetails,taxes,baseAmount,
 			pdfBankName,
 			historyApiData,
 			DownloadPaymentReceiptDetails,

@@ -33,6 +33,8 @@ export const applicationSuccessFooter = (
   const type = getQueryArg(window.location.href, "type");
   const roleExists = ifUserRoleExists("CITIZEN");
   const redirectionURL = roleExists ? "/" : "/inbox";
+  let { Applications } = state.screenConfiguration.preparedFinalObject || [];
+  let applicationState = Applications && Applications.length > 0 ? Applications[0].state : ''
   if(roleExists){
     return getCommonApplyFooter({
       gotoHome: {
@@ -150,7 +152,7 @@ export const applicationSuccessFooter = (
             }
           }
         },
-        visible: true
+        visible: (applicationState == "ES_MM_PENIDNG_CITIZEN_NOTICE" || applicationState == "ES_EB_PENIDNG_CITIZEN_NOTICE" ||  applicationState == "ES_BB_PENIDNG_CITIZEN_NOTICE") ? false : true
       },
       printFormButton: {
         componentPath: "Button",
@@ -245,7 +247,7 @@ export const applicationSuccessFooter = (
             }
           }
         },
-        visible: true
+        visible: (applicationState == "ES_MM_PENIDNG_CITIZEN_NOTICE" || applicationState == "ES_EB_PENIDNG_CITIZEN_NOTICE" ||  applicationState == "ES_BB_PENIDNG_CITIZEN_NOTICE") ? false : true
       }
     });
   }else{

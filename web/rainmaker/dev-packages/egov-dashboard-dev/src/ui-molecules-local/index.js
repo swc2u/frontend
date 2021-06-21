@@ -116,6 +116,96 @@ const DashboardTradeLicense = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardEaawas = Loadable({
+  loader: () => import("./DashboardEaawas"),
+  loading: () => <Loading />
+});
+
+const DashboardOPMS = Loadable({
+  loader: () => import("./DashboardOPMS"),
+  loading: () => <Loading />
+});
+
+const DashboardOSBM = Loadable({
+  loader: () => import("./DashboardOSBM"),
+  loading: () => <Loading />
+});
+
+const DashboardStoreIndent = Loadable({
+  loader: () => import("./DashboardStoreIndent"),
+  loading: () => <Loading />
+});
+
+const DashboardStoreManagement = Loadable({
+  loader: () => import("./DashboardStoreManagement"),
+  loading: () => <Loading />
+});
+
+const DashboardWNS = Loadable({
+  loader: () => import("./DashboardWNS"),
+  loading: () => <Loading />
+});
+
+const DashboardWork = Loadable({
+  loader: () => import("./DashboardWork"),
+  loading: () => <Loading />
+});
+
+const DashboardEstate = Loadable({
+  loader: () => import("./DashboardEstate"),
+  loading: () => <Loading />
+});
+
+const DashboardRentedProperty = Loadable({
+  loader: () => import("./DashboardRentedProperty"),
+  loading: () => <Loading />
+});
+
+const DashboardPension = Loadable({
+  loader: () => import("./DashboardPension"),
+  loading: () => <Loading />
+});
+
+const DashboardNULM = Loadable({
+  loader: () => import("./DashboardNULM"),
+  loading: () => <Loading />
+});
+
+const DashboardLegal = Loadable({
+  loader: () => import("./DashboardLegal"),
+  loading: () => <Loading />
+});
+
+const DashboardAgenda = Loadable({
+  loader: () => import("./DashboardAgenda"),
+  loading: () => <Loading />
+});
+
+const DashboardSewerage = Loadable({
+  loader: () => import("./DashboardSewerage"),
+  loading: () => <Loading />
+});
+
+const DashboardAudit = Loadable({
+  loader: () => import("./DashboardAudit"),
+  loading: () => <Loading />
+});
+
+const DashboardFinance = Loadable({
+  loader: () => import("./DashboardFinance"),
+  loading: () => <Loading />
+});
+
+const DashboardWater = Loadable({
+  loader: () => import("./DashboardWater"),
+  loading: () => <Loading />
+});
+
+const DashboardApniMandi = Loadable({
+  loader: () => import("./DashboardApniMandi"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -139,5 +229,23 @@ export {
   DashboardEchallan,
   DashboardSportCulture,
   DashboardPublicRelation,
-  DashboardTradeLicense
+  DashboardTradeLicense,
+  DashboardEaawas,
+  DashboardOPMS,
+  DashboardOSBM,
+  DashboardStoreIndent,
+  DashboardStoreManagement,
+  // DashboardWNS,
+  DashboardWork,
+  DashboardEstate,
+  DashboardRentedProperty,
+  DashboardPension,
+  DashboardNULM,
+  DashboardLegal,
+  DashboardAgenda,
+  DashboardSewerage,
+  DashboardAudit,
+  DashboardFinance,
+  DashboardWater,
+  DashboardApniMandi
 };

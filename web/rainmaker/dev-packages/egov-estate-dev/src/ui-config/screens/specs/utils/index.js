@@ -146,17 +146,11 @@ export const getFeesEstimateCard = props => {
   };
 };
 
-export const getButtonVisibility = (status, button, userRole) => {
+export const getButtonVisibility = (status, button, userRole = true) => {
   if ((status === "ES_PENDING_PAYMENT" || status === "ES_MM_PENDING_PAYMENT") && button === "PENDINGPAYMENT") return true;
   if (status === "ES_PENDING_JE_VERIFICATION" && button === "NOCVERIFICATION") return true;
-  
-  if(!!userRole){
-    if (status === "ES_MM_PENDING_BI_VERIFICATION" && button === "SITEREPORT" && userRole !== "ES_MM_BUILDING_INSPECTOR") return false;
-  }
-  else if(status === "ES_MM_PENDING_BI_VERIFICATION" && button === "SITEREPORT"){
-    return true;
-  }
-  if ((status === "ES_PENDING_CITIZEN_TEMPLATE_SUBMISSION" || status === "ES_PENDING_CITIZEN_NOTICE_DOCUMENTS" || status === "ES_MM_PENIDNG_CITIZEN_NOTICE") && button === "UPLOAD_DOCUMENT") return true
+  if (status === "ES_MM_PENDING_BI_VERIFICATION" && button === "SITEREPORT" && userRole) return true;
+  if ((status === "ES_PENDING_CITIZEN_TEMPLATE_SUBMISSION" || status === "ES_PENDING_CITIZEN_NOTICE_DOCUMENTS" || status === "ES_MM_PENIDNG_CITIZEN_NOTICE" || status ==="ES_PENDING_CITIZEN_NOTICE_SUBMISSION") && button === "UPLOAD_DOCUMENT") return true
   return false;
 };
 
@@ -290,6 +284,7 @@ export const getMdmsData = async queryObject => {
 };
 
 export const downloadSummary = (Properties, PropertiesTemp, branch, mode = "download") => {
+ 
   let queryStr = []
   switch(branch){
     case "MANI_MAJRA":
@@ -380,7 +375,7 @@ if(Property.propertyDetails.purchaser.length > 0){
   })
 }
 
-if(isGroundRent){
+if(isGroundRent == 'true' || isGroundRent == true){
   Property.propertyDetails["groundRentDetails"] = {
     "groundRentGenerationType" : Property.propertyDetails.paymentConfig.groundRentGenerationType,
     "groundRentGenerateDemand" : Property.propertyDetails.paymentConfig.groundRentGenerateDemand,
@@ -462,6 +457,7 @@ const modifiedOwner = PropertiesTempOwners.map((owner) => {
        owner.ownerDetails.ownerDocuments = modifiedOwner[index].ownerDetails.ownerDocuments
        owner.ownerDetails.guardianRelation = getLocaleLabels(owner.ownerDetails.guardianRelation, owner.ownerDetails.guardianRelation)
        owner.ownerDetails.possesionDate = moment(new Date(owner.ownerDetails.possesionDate)).format('DD-MMM-YYYY')
+       owner.ownerDetails.isCurrentOwner = owner.ownerDetails.isCurrentOwner ? 'Yes' : 'No'
        return owner
     })
 
@@ -498,6 +494,8 @@ const modifiedOwner = PropertiesTempOwners.map((owner) => {
 
 
 export const downloadAcknowledgementForm = (Applications, applicationType,feeEstimate,state, mode = "download") => {
+  let Application = Applications[0];
+
   let queryStr = []
   switch (applicationType) {
     case 'SaleDeed':
@@ -591,7 +589,19 @@ export const downloadAcknowledgementForm = (Applications, applicationType,feeEst
         ]
       break;
       case 'Mortgage':
-      case 'MortgageIntimation':  
+      case 'MortgageIntimation': 
+      if(applicationType == 'MortgageIntimation') {
+        Application = {
+          ...Application,
+          ["applicationHeader"] : 'Intimation to Mortgage'
+        }
+      }else{
+        Application = {
+          ...Application,
+          ["applicationHeader"] : 'Permission to Mortgage'
+        }
+      }
+      console.log(Application)
           queryStr = [{
             key: "key",
             value: (state == "ES_PENDING_PAYMENT" || state == "ES_PENDING_DA_PREPARE_LETTER" ||
@@ -623,6 +633,22 @@ export const downloadAcknowledgementForm = (Applications, applicationType,feeEst
         }]
         break;
       case 'BB-NOC':
+          Application = {
+            ...Application,
+            applicationDetails:{
+              ...Application.applicationDetails,
+              typeOfNoc: (Application.applicationDetails.typeOfNoc && Application.applicationDetails.typeOfNoc.length == 3 ) ? [
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[0])}` + ',' + 
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[1])}` + ',' + 
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[2],Application.applicationDetails.typeOfNoc[2])}`
+              ] : (Application.applicationDetails.typeOfNoc && Application.applicationDetails.typeOfNoc.length == 1) ? [
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[0])}`
+              ] :(Application.applicationDetails.typeOfNoc && Application.applicationDetails.typeOfNoc.length == 2) ? [
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[0])}` + ',' + 
+                `${getLocaleLabels(Application.applicationDetails.typeOfNoc[0],Application.applicationDetails.typeOfNoc[1])}`
+              ] : 'NA'
+            }
+          }
           queryStr = [{
             key: "key",
             value: (state == "ES_PENDING_PAYMENT" || state == "ES_PENDING_DA_PREPARE_LETTER" ||
@@ -634,6 +660,30 @@ export const downloadAcknowledgementForm = (Applications, applicationType,feeEst
             key:"key",
             value:"bb-IssuanceOfNotice-application"
           }] 
+          Application = {
+            ...Application,
+            applicationDetails:{
+              ...Application.applicationDetails,
+              groundCoverage: Application.applicationDetails.groundCoverage == 'false' ? "No" : 'Yes',
+              groundCoverageSanctionable: Application.applicationDetails.groundCoverageSanctionable == 'false' ? "No" : 'Yes',
+              maximumFloors: Application.applicationDetails.maximumFloors == 'false' ? "No" : 'Yes',
+              maximumFloorsSanctionable: Application.applicationDetails.maximumFloorsSanctionable == 'false' ? "No" : 'Yes',
+              maximumHeight: Application.applicationDetails.maximumHeight == 'false' ? "No" : 'Yes',
+              maximumHeightSanctionable: Application.applicationDetails.maximumHeightSanctionable == 'false' ? "No" : 'Yes',
+              minimumCeilingHeight: Application.applicationDetails.minimumCeilingHeight == 'false' ? "No" : 'Yes',
+              minimumCeilingHeightSanctionable: Application.applicationDetails.minimumCeilingHeightSanctionable == 'false' ? "No" : 'Yes',
+              minimunRoomsSize: Application.applicationDetails.minimunRoomsSize == 'false' ? "No" : 'Yes',
+              minimunRoomsSizeSanctionable: Application.applicationDetails.minimunRoomsSizeSanctionable == 'false' ? "No" : 'Yes',
+              permissible: Application.applicationDetails.permissible == 'false' ? "No" : 'Yes',
+              permissibleSanctionable:Application.applicationDetails.permissibleSanctionable == 'false' ? "No" : 'Yes',
+              plinthLevel: Application.applicationDetails.plinthLevel == 'false' ? "No" : 'Yes',
+              plinthLevelSanctionable: Application.applicationDetails.plinthLevelSanctionable == 'false' ? "No" : 'Yes',
+              setBack: Application.applicationDetails.setBack == 'false' ? "No" : 'Yes',
+              setBackSanctionable: Application.applicationDetails.setBackSanctionable == 'false' ? "No" : 'Yes',
+              staircase: Application.applicationDetails.staircase == 'false' ? "No" : 'Yes',
+              staircaseSanctionable: Application.applicationDetails.staircaseSanctionable == 'false' ? "No" : 'Yes'
+            }
+          }
           break; 
       case 'MM-NDC':
           queryStr = [{
@@ -696,7 +746,28 @@ export const downloadAcknowledgementForm = (Applications, applicationType,feeEst
     key: "tenantId",
     value: `${getTenantId().split('.')[0]}`
   }
-  
+  let {wfDocuments} = Applications[0].additionalDetails;
+  if(wfDocuments && wfDocuments.length){
+      const wflength = wfDocuments.length % 4
+      wfDocuments = !!wflength ? [...wfDocuments, ...new Array(4 - wflength).fill({
+        title: "",
+        name: ""
+      })] : wfDocuments
+      const myWfDocuments = wfDocuments.map((item) => ({
+        ...item,
+        title: getLocaleLabels(item.title, item.title)
+      })).reduce((splits, i) => {
+        const length = splits.length
+        const rest = splits.slice(0, length - 1);
+        const lastArray = splits[length - 1] || [];
+        return lastArray.length < 4 ? [...rest, [...lastArray, i]] : [...splits, [i]]
+      }, []);
+        Application = {
+          ...Application,
+          wfDocuments: myWfDocuments
+        
+        }
+      }
   let {
     documents
   } = Applications[0].additionalDetails;
@@ -714,7 +785,6 @@ export const downloadAcknowledgementForm = (Applications, applicationType,feeEst
     const lastArray = splits[length - 1] || [];
     return lastArray.length < 4 ? [...rest, [...lastArray, i]] : [...splits, [i]]
   }, []);
-  let Application = Applications[0];
   Application = {
     ...Application,
     applicationDocuments: myDocuments
@@ -815,6 +885,13 @@ export const downloadPaymentReceipt = (receiptQueryString, payload, data , gener
       ACTION: "_get",
     },
   };
+
+  payload = [{
+    ...payload[0],
+    year: payload[0].applicationSubmissionDate 
+    ? moment(payload[0].applicationSubmissionDate).format('YYYY') : ''
+  }]
+
   try {
     httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
       let queryStr = [
@@ -829,7 +906,7 @@ export const downloadPaymentReceipt = (receiptQueryString, payload, data , gener
       } = payloadReceiptDetails;
       let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
       if(time){
-        time = moment(new Date(time)).format("h:mm:ss a")
+        time = moment(new Date(time)).format("h:mm:ss A")
       }
       Payments = [{
         ...Payments[0],paymentDetails:[{
@@ -981,7 +1058,9 @@ export const downloadPaymentReceipt = (receiptQueryString, payload, data , gener
             }]
            queryStr = [{
               key: "key",
-              value: "application-payment-receipt"
+              value: payload[0].branchType == 'EstateBranch' ? 'eb-application-payment-receipt' : 
+              payload[0].branchType == 'BuildingBranch' ? 'bb-application-payment-receipt' : 
+              "application-payment-receipt"
             },
             {
               key: "tenantId",
@@ -1019,6 +1098,11 @@ export const downloadPaymentReceipt = (receiptQueryString, payload, data , gener
 
 export const downloadAmountLetter = (Applications, applicationType, mode = 'download') => {
 
+  Applications = [{
+    ...Applications[0],
+    year: Applications[0].applicationSubmissionDate ? 
+    moment(Applications[0].applicationSubmissionDate).format('YYYY') : ' '
+  }]
   let queryStr = []
     switch (applicationType) {
       case 'LeaseholdToFreehold':
@@ -1075,6 +1159,11 @@ export const downloadAmountLetter = (Applications, applicationType, mode = 'down
 
 export const downloadHousingBoardLetter = (Applications, applicationType, mode = 'download') => {
 
+  Applications = [{
+    ...Applications[0],
+    year: Applications[0].applicationSubmissionDate ?
+    moment(Applications[0].applicationSubmissionDate).format('YYYY') : ' '
+  }]
   let queryStr = []
     switch (applicationType) {
       case 'LeaseholdToFreehold':
@@ -1131,7 +1220,11 @@ export const downloadHousingBoardLetter = (Applications, applicationType, mode =
 
 
 export const downloadLetter = (Applications, applicationType, mode = 'download') => {
-
+  Applications = [{
+    ...Applications[0],
+    year: Applications[0].applicationSubmissionDate 
+    ? moment(Applications[0].applicationSubmissionDate).format('YYYY') : ''
+  }]
 let queryStr = []
   switch (applicationType) {
     case 'SaleDeed':
@@ -1342,6 +1435,11 @@ let queryStr = []
   }
 }
 export const downloadEmailNotice = (Applications, applicationType, mode = 'download') => {
+  Applications = [{
+    ...Applications[0],
+    year: Applications[0].applicationSubmissionDate ? 
+    moment(Applications[0].applicationSubmissionDate).format('YYYY') : ' '
+ }]
 
   let queryStr = []
     switch (applicationType) {
@@ -1428,6 +1526,12 @@ export const downloadEmailNotice = (Applications, applicationType, mode = 'downl
 
 
 export const downloadNotice = (Applications, applicationType,noticeType, mode = 'download') => {
+  
+  Applications = [{
+    ...Applications[0],
+    year: Applications[0].applicationSubmissionDate ? 
+    moment(Applications[0].applicationSubmissionDate).format('YYYY') : ' '
+  }]
   let queryStr = []
   switch (applicationType) {
     
@@ -1898,7 +2002,15 @@ export const getTodaysDateInYMD = () => {
   // date = epochToYmdDate(date);
   return date;
 };
-
+export const getYesterdaysDateInYMD = () => {
+  let date = new Date();
+  //date = date.valueOf();
+  let month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+  let day = date.getDate() - 1 < 10 ? `0${date.getDate()-1}` : date.getDate()-1;
+  date = `${date.getFullYear()}-${month}-${day}`;
+  // date = epochToYmdDate(date);
+  return date;
+};
 export const getNextMonthDateInYMD = () => {
   //For getting date of same day but of next month
   let date = getTodaysDateInYMD();
@@ -2279,6 +2391,18 @@ export const getTextToLocalMapping = label => {
         "ES_END_MONTH_LABEL",
         localisationLabels
       );
+      case "Start year":
+      return getLocaleLabels(
+        "Start year",
+        "ES_START_YEAR_LABEL",
+        localisationLabels
+      );
+    case "End year":
+      return getLocaleLabels(
+        "End year",
+        "ES_END_YEAR_LABEL",
+        localisationLabels
+      );
     case "Till":
       return getLocaleLabels(
         "Till",
@@ -2337,11 +2461,11 @@ export const _getPattern = (type) => {
     case "float": 
         return /^[+-]?\d+(\.\d+)?$/i;
     case "share":
-      return /^[+-]?\d{1,5}(\.\d{1,2})?$/i;
+      return /^[1-9][0-9]?$|^100$/i;
     case "areaOfProperty":
       return /^[+-]?\d{2,15}(\.\d{1,2})?$/i;
     case "alphaNumeric":
-      return /^[a-zA-Z0-9]{1,100}$/i;
+      return /^[a-zA-Z0-9 ]{1,100}$/i;
     case "fileNumber":
       return /^[A-Za-z0-9_@./#&+-]{1,50}$/i;
     case "alphabet":  
@@ -2351,25 +2475,39 @@ export const _getPattern = (type) => {
     case "address":
       return /^([\s\S]){1,150}$/i
     case "ownerShare":
-      return /^[+-]?\d{2,5}(\.\d{1,2})?$/i;
+      return /^[1-9][0-9]?$|^100$/i;
     case "courtCase":
       return /^([\s\S]){1,250}$/i;
       case "numeric-with-no-firstdigit-zero":
       return /^[1-9][0-9]{2,24}$/i;
       case "numeric-firstdigit-nonzero":
-          return /^[1-9][0-9]{2,150}$/i;
+          return /^[1-9][0-9]{1,150}$/i;
       case "file-number-only-with-no-firstdigit-zero":
       return /^[1-9a-zA-Z][0-9a-zA-Z]{1,49}$/i;
+      case "file-number-no-firstdigit-zero":
+        return /^[1-9a-zA-Z][0-9a-zA-Z]{0,49}$/i;
       case "NocReason":
         return /^([\s\S]){3,150}$/i;
         case "variationdetail":
             return /^([\s\S]){0,150}$/i;
             case "street":
-              return /^[a-zA-Z0-9]{2,100}$/i;
+              return /^[a-zA-Z0-9 ]{2,100}$/i;
               case "height":
       return /^[1-9][0-9]{0,6}$/i;
       case "numeric":
-        return /^[1-9][0-9]{2,49}$/i;
+        return /^[1-9][0-9]{1,49}$/i;
+        case "width":
+        return /^[1-9][0-9]{0,49}$/i;
+        case "HouseNumber":
+          return /^[1-9a-zA-Z][\s\S]{0,49}$/i;
+          case "transactionid":
+            return /^[1-9a-zA-Z][0-9a-zA-Z ]{1,249}$/i;
+            case "Amount":
+              return /^[1-9][0-9]{1,7}$/i;
+              case "BankName":
+                return /^[a-zA-Z ]{1,250}$/i;
+                case "areaSqFeet":
+                  return /^([1-9][0-9]{1,14})(\.\d{1,2})?$/i;
   }
 }
 

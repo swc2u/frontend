@@ -871,6 +871,11 @@ export const ApplicationConfiguration =()=>{
     DOE_APPLICATION_config:true,
     DOE_PAYMENT_ORDER:"doe_payment_order",
     DOE_PAYMENT_ORDER_config:true,
+    RRP_PAYMENT_ORDER_WITHOUT_DETAILS:"rrp_payment_order_without_details",
+    RRP_PAYMENT_ORDER_DAILY_WAGER_WITHOUT_DETAILS:"rrp_payment_order_daily_wager_without_details",
+    DOE_PAYMENT_ORDER_WITHOUT_DETAILS:"doe_payment_order_without_details",
+    DOP_PAYMENT_ORDER_WITHOUT_DETAILS:"dop_payment_order_without_details",
+    //RRP_PAYMENT_ORDER:"rrp_payment_order",
     tenentId:"ch",
     IsRequiredValiadtion:true    
   }

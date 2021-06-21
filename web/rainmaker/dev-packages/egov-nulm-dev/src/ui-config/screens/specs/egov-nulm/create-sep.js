@@ -13,7 +13,7 @@ import { prepareFinalObject,handleScreenConfigurationFieldChange as handleField 
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { NULMConfiguration } from "../../../../ui-utils/sampleResponses";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-import { prepareDocumentsUploadData } from "../../../../ui-utils/storecommonsapi";
+import { prepareDocumentsUploadData,prefillDocuments } from "../../../../ui-utils/storecommonsapi";
 import commonConfig from "../../../../config/common";
 import { TFCDetails } from './createSEPResource/tfc-details';
 import { bankDetailToProcess } from './createSEPResource/bankDetailToProcess';
@@ -129,6 +129,13 @@ const getMdmsData = async (state, dispatch) => {
 
     // setting documents
     prepareDocumentsUploadData(state, dispatch, 'SEPApplication');
+    await prefillDocuments(
+      state.screenConfiguration.preparedFinalObject,
+      "displayDocs",
+      dispatch,
+      'NULMSEPRequest.applicationDocument',
+      'SEPDocuments', 
+    );
 
     return true;
   } catch (e) {
@@ -157,7 +164,7 @@ const screenConfig = {
           dispatch(prepareFinalObject(`NULMSEPRequest[${value}]`, "No" ));
         }
       })
-
+      if(NULMSEPRequest.dob !== null)
       dispatch(prepareFinalObject(`NULMSEPRequest.dob`, NULMSEPRequest.dob.split(" ")[0] ));
     }
     else{

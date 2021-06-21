@@ -85,7 +85,7 @@ class ApplicatInfo extends Component {
     this.setState(
       { NewbkBookingType: event.target.value }); 
       prepareFinalObject("NewbkBookingTypeApplicant", event.target.value)
-  };
+  }; 
 
   ResonForDiscount = async (event) => {
     let { prepareFinalObject } = this.props;
@@ -96,12 +96,25 @@ class ApplicatInfo extends Component {
 
   render() {
 let {DataForRoomBooking}= this.props
-let documentMap = DataForRoomBooking.documentMap
-let abc = Object.entries(documentMap)
+let documentMap = DataForRoomBooking.documentMap 
+let value1 = "Not Applicable"
+let abc 
+let xyz
 
-let xyz = abc[0]
+if(documentMap !== null && documentMap !== undefined){
 
-    let value1 = xyz[1];
+  let checkDocumentUpload = Object.entries(documentMap).length === 0;
+  console.log("checkDocumentUpload",checkDocumentUpload)
+  if(checkDocumentUpload === false){
+    value1 = "Not Applicable"
+  }
+if(checkDocumentUpload === false){
+    abc = Object.entries(documentMap)
+    xyz = abc[0]
+    value1 = xyz[1];
+  }
+}
+
     const { firstName, email, mobileNo, lastName,houseNo, handleChange,discountType,handleChangeDiscount,classes,prepareFinalObject} = this.props;
     const hintTextStyle = {
       letterSpacing: "0.7px",
@@ -125,7 +138,7 @@ let xyz = abc[0]
             required = {true}
             hintText={
               <Label
-                label="BK_MYBK_CC_ROOM_NAME"
+                label="BK_MYBK_NAME_CITIZEN_PLACEHOLDER"
                 color="rgba(0, 0, 0, 0.3799999952316284)"
                 fontSize={16}
                 labelStyle={hintTextStyle}
@@ -134,7 +147,7 @@ let xyz = abc[0]
             floatingLabelText={
               <Label
                 key={0}
-                label="BK_MYBK_CREATE_CITIZEN_NAME"
+                label="BK_MYBK_NAME_CITIZEN_PLACEHOLDER"
                 color="rgba(0,0,0,0.60)"
                 fontSize="12px"
               />
@@ -155,7 +168,7 @@ let xyz = abc[0]
             required = {true}
             hintText={
               <Label
-                label="BK_MYBK_CC_ROOM_PURPOSE"
+                label="BK_MYBK_NAME_PURPOSE_PLACEHOLDER"
                 color="rgba(0, 0, 0, 0.3799999952316284)"
                 fontSize={16}
                 labelStyle={hintTextStyle}
@@ -164,7 +177,7 @@ let xyz = abc[0]
             floatingLabelText={
               <Label
                 key={0}
-                label="BK_MYBK_CC_ROOM_PURPOSE"
+                label="BK_MYBK_NAME_PURPOSE_PLACEHOLDER"
                 color="rgba(0,0,0,0.60)"
                 fontSize="12px"
               />
@@ -186,7 +199,7 @@ let xyz = abc[0]
             required = {true}
             hintText={
               <Label
-                label="BK_MYBK_CC_ROOM_HOUSENO"
+                label="BK_MYBK_CITIZEN_HOUSE_NUMBER_PLACEHOLDER"
                 color="rgba(0, 0, 0, 0.3799999952316284)"
                 fontSize={16}
                 labelStyle={hintTextStyle}
@@ -195,7 +208,7 @@ let xyz = abc[0]
             floatingLabelText={
               <Label
                 key={0}
-                label="BK_MYBK_CC_ROOM_HOUSENO"
+                label="BK_MYBK_CITIZEN_HOUSE_NUMBER_PLACEHOLDER"
                 color="rgba(0,0,0,0.60)"
                 fontSize="12px"
               />
@@ -216,7 +229,7 @@ let xyz = abc[0]
               required = {true}
               hintText={
                 <Label
-                  label="BK_MYBK_CC_ROOM_MOBILENO"
+                  label="BK_MYBK_CITIZEN_MOBILENO_PLACEHOLDER"
                   color="rgba(0, 0, 0, 0.3799999952316284)"
                   fontSize={16}
                   labelStyle={hintTextStyle}
@@ -225,7 +238,7 @@ let xyz = abc[0]
               floatingLabelText={
                 <Label
                   key={0}
-                  label="BK_MYBK_CC_ROOM_MOBILENO"
+                  label="BK_MYBK_CITIZEN_MOBILENO_PLACEHOLDER"
                   color="rgba(0,0,0,0.60)"
                   fontSize="12px"
                 />
@@ -242,7 +255,7 @@ let xyz = abc[0]
               id="gst"
               name="gst"
               type="text"
-              value={this.props.gstNo}
+              value={this.props.gstNo == "NA" ? "NOT APPLICABLE" : this.props.gstNo}
               required = {true}
               hintText={
                 <Label

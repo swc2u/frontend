@@ -5,9 +5,12 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { footer } from "./applyResourceParkCommunityCenter/footer";
 import {
-    bankAccountDetails, 
+    bankAccountDetails,
+    bankAccountDetailsDisabled,
     personalDetails,
+    personalDetailsDisabled,
     bookingDetails,
+    bookingDetailsDisabled
 } from "./applyResourceParkCommunityCenter/nocDetails";
 import { convertDateInYMD, getBill } from "../utils";
 import { documentDetails } from "./applyResourceParkCommunityCenter/documentDetails";
@@ -41,7 +44,7 @@ import {
 
 export const stepsData = [
     { labelName: "Applicant Details", labelKey: "BK_PCC_APPLICANT_DETAILS" },
-    { labelName: "Booking Details", labelKey: "BK_PCC_BOOKING_DETAILS" },
+    { labelName: "Venue Details", labelKey: "BK_PCC_BOOKING_DETAILS" },
     { labelName: "Bank Account Details", labelKey: "Bank Account Details" },
     { labelName: "Documents", labelKey: "BK_PCC_DOCUMENTS" },
     { labelName: "Summary", labelKey: "BK_PCC_SUMMARY" },
@@ -94,6 +97,7 @@ export const formwizardFirstStep = {
     },
     children: {
         personalDetails,
+        personalDetailsDisabled
     },
 };
 
@@ -105,6 +109,7 @@ export const formwizardSecondStep = {
     },
     children: {
         bookingDetails,
+        bookingDetailsDisabled
     },
     visible: false,
 };
@@ -117,6 +122,7 @@ export const formwizardThirdStep = {
     },
     children: {
         bankAccountDetails ,
+        bankAccountDetailsDisabled
     },
     visible: false,
 };
@@ -188,8 +194,14 @@ const getMdmsData = async (action, state, dispatch) => {
                 code: "PCC_DOCUMENT",
                 description: "PCC_DOCUMENT_DESCRIPTION",
                 documentType: "DOC",
-                dropdownData: [],
-                hasDropdown: false,
+                dropdownData: [
+                    {code:"PCC_DOCUMENT_RATION_CARD", active: true},
+                     {code: "PCC_DOCUMENT_VOTER_ID", active:true},
+                     {code:"PCC_DOCUMENT_DL", active: true},
+                     {code: "PCC_DOCUMENT_ADHAR", active:true},
+                     {code: "PCC_DOCUMENT_OTHERS", active:true}
+                    ],
+                hasDropdown: true,
                 required: true,
             },
         ];
@@ -315,7 +327,7 @@ export const prepareEditFlow = async (
             dispatch(
                 prepareFinalObject(
                     "Booking.bkCleansingCharges",
-                    masterDataItem[0].cleaningCharges * daysCount
+                    masterDataItem[0].cleaningCharges 
                 )
             );
             dispatch(
@@ -493,7 +505,7 @@ const screenConfig = {
                 prepareFinalObject("Booking.bkAccountType", "Saving")
             );
 
-            
+
             dispatch(
                 prepareFinalObject(
                     "Booking.bkFromDate",
@@ -503,6 +515,18 @@ const screenConfig = {
             dispatch(
                 prepareFinalObject(
                     "Booking.bkToDate",
+                    convertDateInYMD(availabilityCheckData.bkToDate)
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "displayBkFromDate",
+                    convertDateInYMD(availabilityCheckData.bkFromDate)
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "displayBkToDate",
                     convertDateInYMD(availabilityCheckData.bkToDate)
                 )
             );
@@ -542,7 +566,7 @@ const screenConfig = {
             dispatch(
                 prepareFinalObject(
                     "Booking.bkCleansingCharges",
-                    masterDataItem[0].cleaningCharges * daysCount
+                    masterDataItem[0].cleaningCharges 
                 )
             );
             dispatch(
@@ -588,7 +612,7 @@ const screenConfig = {
                 )
             );
         } else {
-            // dispatch(setRoute(`/egov-services/checkavailability_pcc`));
+            dispatch(setRoute(`/egov-services/checkavailability_pcc`));
         }
 
         // Code to goto a specific step through URL
@@ -650,6 +674,12 @@ const screenConfig = {
                 formwizardFourthStep,
                 formwizardFifthStep,
                 footer,
+                ParkChangeDateVenueFieldDisabler: {
+                    uiFramework: "custom-containers-local",
+                    moduleName: "egov-services",
+                    componentPath: "ParkChangeDateVenueFieldDisabler",
+
+                },
             },
         },
     },

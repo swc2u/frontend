@@ -8,7 +8,7 @@ import { getTenantId, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 import { getLocaleLabels, getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import store from "../../../../../ui-redux/store";
 import {
-  ESTATE_APPROVED_STATE,
+  ESTATE_APPROVED_STATE,ESTATE_ALOTMENT_APPROVED_STATE,
   ESTATE_DRAFTED_STATE
 } from "../../../../../ui-constants"
 
@@ -185,7 +185,7 @@ const onRowClick = rowData => {
     return window.location.href = `search-preview-manimajra?fileNumber=${rowData[0]}&tenantId=${tenantId}`;
   }
 
-  if (type == "refund" && rowData[2].toUpperCase() == ESTATE_APPROVED_STATE && !!findItem) {
+  if (type == "refund" && rowData[2].toUpperCase() == (ESTATE_APPROVED_STATE || ESTATE_ALOTMENT_APPROVED_STATE) && !!findItem) {
     return window.location.href = `refund?fileNumber=${rowData[0]}&tenantId=${tenantId}`
   }
 

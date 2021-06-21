@@ -319,8 +319,8 @@ console.log("comeInCommercialElseCondition")
         this.props.toggleSnackbarAndSetText(
           true,
           {
-            labelName: "Selected Range Should Not Contain Reserved Date",
-            labelKey: `Selected Range Should Not Contain Reserved Date`,
+            labelName: "Selected range should not contain reserved date",
+            labelKey: `Selected range should not contain reserved date`,
           },
           "warning"
         );
@@ -507,7 +507,7 @@ const mapDispatchToProps = (dispatch) => {
         toggleSnackbar(
           true,
           {
-            labelName: "Selected Range Should Not Contain Reserved Date",
+            labelName: "Selected range should not contain reserved date",
             labelKey: "",
           },
           "warning"

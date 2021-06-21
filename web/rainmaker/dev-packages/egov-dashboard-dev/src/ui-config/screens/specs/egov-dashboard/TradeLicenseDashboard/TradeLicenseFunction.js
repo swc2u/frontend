@@ -47,14 +47,17 @@ export const SearchDashboardData = async (state, dispatch) =>{
     "tenantId" : getTenantId(),
     "fromDate":fromDateNumeric,
     "toDate": toDateNumeric,
-    "reportSortBy": reportSortBy
-    
+    "reportSortBy": reportSortBy,
+    "strFromDate" : def_fromDate,
+    "strToDate" : def_toDate
   }
   let requestBody = {
     "tenantId": getTenantId(),
     "fromDate": fromDateNumeric,
     "toDate": toDateNumeric,
-    "reportSortBy": reportSortBy
+    "reportSortBy": reportSortBy,
+    "strFromDate" : def_fromDate,
+    "strToDate" : def_toDate
   }
     debugger;
     try {

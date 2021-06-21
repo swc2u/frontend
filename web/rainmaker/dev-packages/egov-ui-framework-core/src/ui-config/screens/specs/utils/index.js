@@ -663,11 +663,17 @@ export const getPattern = type => {
      case "aadhar":
       return  /^[0-9]{4}$/i;
      case "aadharAcknowledgementNo":
-      return  /^[0-9]{14}$/i;  
+      return  /^[0-9]{14}$/i;
       case "typeOfRequest":
         return /^[^\$\"'<>?\\\\~`!@$%^+={}\[\]*.:;“”‘’]{1,500}$/i;
         case "areaRequired":
         return /^(0)*[1-9][0-9]{0,2}$/i;
+        case "bankAccountNo":
+          return /^[0-9]{10,16}$/i;
+          case "IFSCCode":
+          return /^[A-Z]{4}0[A-Z0-9]{6}$/i;
+          case "plotArea":
+          return /^[0-9]{1,8}(\.[0-9]{1,2})?$/i;
   }
 };
 

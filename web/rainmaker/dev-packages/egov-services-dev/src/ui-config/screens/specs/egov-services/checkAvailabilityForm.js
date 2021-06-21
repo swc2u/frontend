@@ -7,6 +7,7 @@ import {
     getSelectField,
     getLabel,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import "./checkAvailabilityCss/commercialGroundCheckAvailability.css";
 import {
     getTenantId,
     setapplicationType,
@@ -26,6 +27,7 @@ import { dispatchMultipleFieldChangeAction } from "egov-ui-framework/ui-config/s
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 
+import set from "lodash/set";
 const callBackForReset = (state, dispatch, action) => {
     const availabilityCheckData = get(
         state,
@@ -125,14 +127,14 @@ const callBackForBook = async (state, dispatch) => {
     console.log(availabilityCheckData, "availabilityCheckData");
     if (availabilityCheckData === undefined) {
         let warrningMsg = {
-            labelName: "Please select Date RANGE",
+            labelName: "Please select date range",
             labelKey: "",
         };
         dispatch(toggleSnackbar(true, warrningMsg, "warning"));
     } else {
         if (availabilityCheckData.bkToDate === undefined || availabilityCheckData.bkToDate === "" || availabilityCheckData.bkToDate === null) {
             let warrningMsg = {
-                labelName: "Please select Date RANGE",
+                labelName: "Please select date range",
                 labelKey: "",
             };
             dispatch(toggleSnackbar(true, warrningMsg, "warning"));
@@ -160,7 +162,7 @@ const callBackForBook = async (state, dispatch) => {
     //         );
     //         if (availabilityCheckData.bkToDate === undefined) {
     //             let warrningMsg = {
-    //                 labelName: "Please select Date RANGE",
+    //                 labelName: "Please select date range",
     //                 labelKey: "",
     //             };
     //             dispatch(toggleSnackbar(true, warrningMsg, "warning"));
@@ -198,7 +200,7 @@ const callBackForBook = async (state, dispatch) => {
     //     }
     // } else {
     //     let warrningMsg = {
-    //         labelName: "Please select Date RANGE",
+    //         labelName: "Please select date range",
     //         labelKey: "",
     //     };
     //     dispatch(toggleSnackbar(true, warrningMsg, "warning"));
@@ -215,7 +217,7 @@ const callBackForSearch = async (state, dispatch) => {
         dispatch(
             toggleSnackbar(
                 true,
-                { labelName: "Please Select Booking Venue!", labelKey: "" },
+                { labelName: "Please select booking venue!", labelKey: "" },
                 "warning"
             )
         );
@@ -235,9 +237,16 @@ const callBackForSearch = async (state, dispatch) => {
                     daylist.map((v) => {
                         reservedDates.push(v.toISOString().slice(0, 10));
                     });
-                });
+                });  
+                 set(
+                    state.screenConfiguration.screenConfig["checkavailability"],
+                    "components.div.children.checkAvailabilityCalendar.visible", 
+                       true
+                );
                 dispatch(prepareFinalObject("availabilityCheckData.reservedDays", reservedDates));
-                // const actionDefination = [
+                
+    
+              // const actionDefination = [
                 //     {
                 //         path:
                 //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
@@ -254,7 +263,7 @@ const callBackForSearch = async (state, dispatch) => {
                 dispatch(
                     toggleSnackbar(
                         true,
-                        { labelName: "Please Try After Sometime!", labelKey: "" },
+                        { labelName: "Please try after sometime!", labelKey: "" },
                         "warning"
                     )
                 );
@@ -263,7 +272,7 @@ const callBackForSearch = async (state, dispatch) => {
             dispatch(
                 toggleSnackbar(
                     true,
-                    { labelName: "Please Select Booking Venue!", labelKey: "" },
+                    { labelName: "Please select booking venue!", labelKey: "" },
                     "warning"
                 )
             );
@@ -274,7 +283,7 @@ const callBackForSearch = async (state, dispatch) => {
     //     dispatch(
     //         toggleSnackbar(
     //             true,
-    //             { labelName: "Please Select Booking Venue!", labelKey: "" },
+    //             { labelName: "Please select booking venue!", labelKey: "" },
     //             "warning"
     //         )
     //     );
@@ -310,7 +319,7 @@ const callBackForSearch = async (state, dispatch) => {
     //         dispatch(
     //             toggleSnackbar(
     //                 true,
-    //                 { labelName: "Please Try After Sometime!", labelKey: "" },
+    //                 { labelName: "Please try after sometime!", labelKey: "" },
     //                 "warning"
     //             )
     //         );
@@ -360,15 +369,16 @@ export const checkAvailabilitySearch = getCommonCard({
                 variant: "contained",
                 color: "primary",
                 style: {
-                    minWidth: "200px",
+                    minWidth: "95%",
                     height: "48px",
                     marginRight: "16px",
+                    marginBottom : "10px"
                 },
             },
             gridDefination: {
                 xs: 12,
                 sm: 12,
-                md: 3,
+                md: 2,
             },
 
             children: {
@@ -396,18 +406,19 @@ export const checkAvailabilitySearch = getCommonCard({
                 variant: "outlined",
                 color: "primary",
                 style: {
-                    minWidth: "200px",
+                    minWidth: "95%",
                     height: "48px",
                     marginRight: "16px",
+                    marginBottom : "10px"
                     //marginLeft: "100px"
                 },
             },
             gridDefination: {
                 xs: 12,
                 sm: 12,
-                md: 3,
+                md: 2,
             },
-
+            
             children: {
                 resetButtonLabel: getLabel({
                     labelName: "Reset",
@@ -455,8 +466,10 @@ export const checkAvailabilityCalendar = getCommonCard({
                 xs: 12,
             },
             props: {
+                className: "checkavailability-footer",
                 style: {
-                    justifyContent: "flex-end",
+                  //  justifyContent: window.matchMedia("(max-width: 400px)").matches? "flex-start":  "flex-end",
+                  justifyContent:"flex-end"
                 },
             },
             children : {

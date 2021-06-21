@@ -4,8 +4,8 @@ import {
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
-    prepareDocumentsUploadData
-} from "../../../../../ui-utils/commons";
+  prepareDocumentsUploadData
+} from "../../../../../ui-utils/storecommonsapi";
 import { convertDateToEpoch } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { toggleSnackbar,prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -88,6 +88,47 @@ export const callBackForNext = async (state, dispatch) => {
       }
     }
     //
+    if(NulmSusvRequest ){
+      if(!NulmSusvRequest.category ){
+        const errorMessage = {
+          labelName: "Please select cast of an applicant",
+          labelKey: "ERR_NULM_SELECT_CAST_APPLICANT"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return;
+      }
+    }
+    if(NulmSusvRequest ){
+      if(!NulmSusvRequest.gender ){
+        const errorMessage = {
+          labelName: "Please select gender of an applicant",
+          labelKey: "ERR_NULM_SELECT_GENDER_APPLICANT"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return;
+      }
+    }
+  }
+  if(NulmSusvRequest ){
+    if(NulmSusvRequest.dob ){
+  
+      let Month = (new Date().getMonth()+1)<10?`0${(new Date().getMonth()+1)}`:(new Date().getMonth()+1);
+      let Day = new Date().getDate()<10?`0${new Date().getDate()}`:new Date().getDate();
+      let CurrentDate = `${new Date().getFullYear()}-${Month}-${Day}`;
+          CurrentDate = convertDateToEpoch(CurrentDate, "dayStart");
+      let dob = convertDateToEpoch(NulmSusvRequest.dob,"dayStart");
+      if(CurrentDate === dob)
+      {
+      const errorMessage = {
+        labelName: "Date of birth can not be currrent date",
+        labelKey: "ERR_NULM_CURRENT_DATE_VALIDATION"
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      return;
+    }
+    }
+    // setting documents for conditional doc mandatory
+    prepareDocumentsUploadData(state, dispatch, 'SUSVApplication');
   }
 
   if (activeStep === 1) {

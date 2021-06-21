@@ -48,13 +48,18 @@ const styles = theme => ({
       outline: 0
     }
   }
-});
+}); 
 
-const NewLocationResolvedForm = ({ form, handleChangeAssignee, assignToMe, assignee, foundFifthLavel,foundSixthLavel, foundSecondLavel,foundFourthLavel, foundthirdLavel, foundSevenLavel, foundEightLavel,foundFirstLavels, handleOpen, handleClose, options, setOpen, userInfo, classes, onSubmit, bookingservice, bookingtype, applicationNumber, createdBy, tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue,CancelStatus }) => {
+const NewLocationResolvedForm = ({ form, handleChangeAssignee, editableRefundAmount,assignToMe, assignee, foundFifthLavel,foundSixthLavel, foundSecondLavel,foundFourthLavel, foundthirdLavel, foundSevenLavel, 
+  applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,bkNomineeName,
+  fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,
+      bkBankName,bkIfscCode,bkAccountType,bkStatusUpdateRequest,bkLocationPictures,
+      bkBankAccountHolder, bkBookingVenue,
+  foundEightLavel,foundFirstLavels, handleOpen, handleClose, options, setOpen, userInfo, classes, onSubmit, bookingservice, bookingtype, applicationNumber, createdBy, tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue,CancelStatus }) => {
   if (form && form.fields) {
     let formValue = { ...form.fields };
 
-    // const foundFirstLavels = userInfo && userInfo.roles.some(el => el.code === 'CLERK'||el.code === 'DEO'); 
+    // const foundFirstLavels = userInfo && userInfo.roles.some(el => el.code === 'CLERK'||el.code === 'DEO');
     if (foundFirstLavels) {
       formValue.action.value = 'APPROVE_CLERK_DEO';
     }
@@ -77,7 +82,7 @@ const NewLocationResolvedForm = ({ form, handleChangeAssignee, assignToMe, assig
     }
     if (foundFifthLavel) {
       formValue.action.value = 'PAY';
-    }
+    } 
     if (foundSixthLavel) {
       formValue.action.value = 'OFFLINE_CANCEL';
     }
@@ -88,50 +93,41 @@ const NewLocationResolvedForm = ({ form, handleChangeAssignee, assignToMe, assig
     if (foundEightLavel) {
       formValue.action.value = 'APPROVE_OSD';
     }
+    formValue.applicationStatus.value = applicationStatus;
+    formValue.ApplicantMobileNum.value = ApplicantMobileNum;
+    formValue.ApplicantName.value = ApplicantName;
+    formValue.BookingType.value = BookingType;
     formValue.applicationNumber.value = applicationNumber;
     formValue.tenantId.value = tenantId;
-    // formValue.createdBy.value = createdBy;
     formValue.remarks.value = commentValue;
-    // formValue.createdOn.value = new Date()
     formValue.assignee.value = assignee;
     formValue.businessService.value = bookingservice;
     formValue.CancelStatus.value = CancelStatus;
-
-  }
+    formValue.editableRefundAmount.value = editableRefundAmount;
+formValue.fatherName.value = fatherName;
+formValue.bkEmail.value = bkEmail;
+formValue.bkCompleteAddress.value = bkCompleteAddress;
+formValue.bkCategory.value = bkCategory;
+formValue.bkBookingPurpose.value = bkBookingPurpose;
+formValue.bkFromDate.value = bkFromDate;
+formValue.bkToDate.value = bkToDate;
+formValue.bkBankAccountNumber.value = bkBankAccountNumber;
+formValue.bkBankName.value = bkBankName;
+formValue.bkIfscCode.value = bkIfscCode;
+formValue.bkAccountType.value = bkAccountType;
+formValue.bkBankAccountHolder.value = bkBankAccountHolder;  
+formValue.bkBookingVenue.value = bkBookingVenue;
+formValue.bkNomineeName.value = bkNomineeName;
+formValue.bkStatusUpdateRequest.value = bkStatusUpdateRequest;
+formValue.bkLocationPictures.value = bkLocationPictures;
+ }
   const fields = form.fields || {};
   const submit = form.submit;
-  
+
   return (
     <div>
       <div className="custom-padding-for-screens">
         <div className="complaint-resolved-main-container">
-          {((foundFirstLavels || foundSecondLavel || foundthirdLavel || foundFourthLavel || foundSixthLavel || foundSevenLavel || foundEightLavel) &&
-            <FormControl style={{ width: '100%' }}>
-              <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label">Assignee</InputLabel>
-              <Select
-                maxWidth={false}
-                labelId="demo-controlled-open-select-label-Locality"
-                id="demo-controlled-open-select-locality"
-                open={setOpen}
-                onClose={handleClose}
-                onOpen={handleOpen}
-                value={assignee}
-                displayEmpty
-                onChange={handleChangeAssignee}
-              >
-                {assignToMe.map((child, index) => (
-                  
-                  <MenuItem value={child.uuid}>{child.userName}</MenuItem>
-                ))}
-                {/* <MenuItem value='sumit kumar'>sumit kumar</MenuItem>
-              <MenuItem value='sonu kumar'>sonu kumar</MenuItem>
-              <MenuItem value='rahul kumar'>rahul kumar</MenuItem> */}
-
-              </Select>
-            </FormControl>
-
-
-          )}
 
 
           <TextField

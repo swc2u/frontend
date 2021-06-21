@@ -18,7 +18,7 @@ import {
     epochToYmd,
   } from "../../utils";
 
-  const getMaterialData = async (action, state, dispatch,mrnNumber_) => {   
+  const getMaterialData = async ( state, dispatch,mrnNumber_) => {   
     const tenantId = getTenantId();
     let queryObject = [
       {
@@ -61,7 +61,34 @@ let mrnNumber = get(state,"screenConfiguration.preparedFinalObject.materialIssue
     try {
       let response = await getMaterialBalanceRateResults(queryObject, dispatch);
       let MaterialBalanceRate = response.MaterialBalanceRate.filter(x=>x.mrnNumber === mrnNumber_)
+     // dispatch(prepareFinalObject("NonIndentsmaterial", MaterialBalanceRate));
+
+      if(MaterialBalanceRate.length>0)
+    {
       dispatch(prepareFinalObject("NonIndentsmaterial", MaterialBalanceRate));
+
+    }
+    else{
+      let materialCode = get(state,"screenConfiguration.preparedFinalObject.materialIssues[0].materialIssueDetails[0].material.code",'')
+      let materialIssuedFromReceipts = get(state,"screenConfiguration.preparedFinalObject.materialIssues[0].materialIssueDetails[0].materialIssuedFromReceipts",[]);
+      materialIssuedFromReceipts = materialIssuedFromReceipts.filter(x=>x.status === true)
+      let materialIssueDetails = get(state,"screenConfiguration.preparedFinalObject.materialIssues[0].materialIssueDetails",[]);
+      MaterialBalanceRate.push({
+        balance:0,
+        issueStoreCode:storecode,
+        materialCode:materialIssueDetails[0].material.code,
+        materialName:`${materialIssueDetails[0].material.name} (Qty:${materialIssueDetails[0].quantityIssued}, Rate:${materialIssuedFromReceipts[0].materialReceiptDetail.unitRate})`,
+        mrnNumber:materialIssueDetails[0].mrnNumber,
+        receiptDate:materialIssueDetails[0].receiptDate,
+        receiptDetailId:materialIssuedFromReceipts[0].materialReceiptDetailAddnlinfoId,
+        receiptId:materialIssueDetails[0].receiptId,
+        tenantId:materialIssueDetails[0].tenantId,
+        unitRate:materialIssuedFromReceipts[0].materialReceiptDetail.unitRate,
+        uomCode:materialIssuedFromReceipts[0].materialReceiptDetail.uom.code
+      })
+
+      dispatch(prepareFinalObject("NonIndentsmaterial", MaterialBalanceRate));
+    }
     
 
     } catch (e) {
@@ -124,7 +151,7 @@ let mrnNumber = get(state,"screenConfiguration.preparedFinalObject.materialIssue
                 {
                    dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].receiptDate`,MaterialBalanceRate[0].receiptDate));
                 }
-                getMaterialData(action,state, dispatch,action.value)
+                getMaterialData(state, dispatch,action.value)
               }
             },
             MaterialName: {

@@ -69,6 +69,39 @@ export const getSearchResultsEmployeeRequestFilter = async (data) => {
   }
 };
 
+export const getSearchResultsEmployeeRequestReport = async (data) => {
+  // debugger
+  
+  try {
+    store.dispatch(toggleSpinner());
+    let queryObject = [
+      {
+        key: "tenantId",
+        value: getTenantId()
+      },
+      { key: "offset", value: "0" },
+      { key: "pageSize", value: false }
+    ];
+    const response = await httpRequest(
+      "post",
+      "/report/rainmaker-hc/HorticultureReport/_get",
+      "",
+      queryObject,
+      data
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+};
 export const getSearchResults = async queryObject => {
   let data = {
     "iscitizen" : 1
@@ -508,7 +541,20 @@ export const findItemInArrayOfObject = (arr, conditionCheckerFn) => {
 };
 
 
-
+export const delectDocument = async (payload) => {
+  
+  try {
+    const fileUrl = await httpRequest(
+      "post",
+      "/hc-services/serviceRequest/_delectDocument",
+      "",
+      [], {services: payload }
+    );
+    return fileUrl;
+  } catch (e) {
+    console.log(e);
+  }
+};
 export const EditServiceRequest = async (state, dispatch, status) => {
   let response = '';
   

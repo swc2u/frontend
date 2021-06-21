@@ -43,6 +43,11 @@ import set from "lodash/set";
 
 const getMdmsData = async (action, state, dispatch) => {
     let tenantId = getTenantId().split(".")[0];
+    const booktingVenueType = getQueryArg(
+        window.location.href,
+        "booktingVenueType"
+    );
+
     let mdmsBody = {
         MdmsCriteria: {
             tenantId: tenantId,
@@ -87,20 +92,95 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
+        let ccSectorsRes;
+        let parkSectorsRes
+        if (booktingVenueType) {
+            if (booktingVenueType === "Community Center") {
+                ccSectorsRes = await httpRequest(
+                    "post",
+                    "/bookings/park/community/sector/_fetch?venueType=Community Center",
+                    "_fetch",
+                    []
+
+                );
+            } else if (booktingVenueType === "Parks") {
+                parkSectorsRes = await httpRequest(
+                    "post",
+                    "/bookings/park/community/sector/_fetch?venueType=Parks",
+                    "_fetch",
+                    []
+
+                );
+            }
+        } else {
+            ccSectorsRes = await httpRequest(
+                "post",
+                "/bookings/park/community/sector/_fetch?venueType=Community Center",
+                "_fetch",
+                []
+
+            );
+
+            parkSectorsRes = await httpRequest(
+                "post",
+                "/bookings/park/community/sector/_fetch?venueType=Parks",
+                "_fetch",
+                []
+
+            );
+        }
+
+        let parkSectors;
+        let ccSectors;
+        if (booktingVenueType) {
+            if (booktingVenueType === "Community Center") {
+                ccSectors = ccSectorsRes.data.map((item) => {
+                    return { code: item.sector, active: item.isActive, name: item.sector }
+                })
+            } else if (booktingVenueType === "Parks") {
+                parkSectors = parkSectorsRes.data.map((item) => {
+                    return { code: item.sector, active: item.isActive, name: item.sector }
+                })
+            }
+        } else {
+            if (parkSectorsRes.status === "200") {
+                parkSectors = parkSectorsRes.data.map((item) => {
+                    return { code: item.sector, active: item.isActive, name: item.sector }
+                })
+            }
+            if (ccSectorsRes.status === "200") {
+                ccSectors = ccSectorsRes.data.map((item) => {
+                    return { code: item.sector, active: item.isActive, name: item.sector }
+                })
+            }
+        }
+
+        dispatch(prepareFinalObject("parkSectors", parkSectors));
+        dispatch(prepareFinalObject("ccSectors", ccSectors));
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
         let bookingTypeData = get(
             state,
-            "screenConfiguration.preparedFinalObject.Booking.bkBookingType", 
+            "screenConfiguration.preparedFinalObject.Booking.bkBookingType",
             ""
         );
-        if(bookingTypeData=== "Commercial Ground"){
-            dispatch(prepareFinalObject("sectorJsonPath", payload.MdmsRes.Booking.Booking_Vanue));
-        
-        }else{
-            dispatch(prepareFinalObject("sectorJsonPath", payload.MdmsRes.Booking.Sector));
-        
+
+        if (booktingVenueType) {
+            if (booktingVenueType === "Community Center") {
+                dispatch(prepareFinalObject("sectorJsonPath", ccSectors));
+            } else if (booktingVenueType === "Parks") {
+                dispatch(prepareFinalObject("sectorJsonPath", parkSectors));
+            }
+        } else {
+            if (bookingTypeData === "Commercial Ground") {
+                dispatch(prepareFinalObject("sectorJsonPath", payload.MdmsRes.Booking.Booking_Vanue));
+
+            } else {
+                //dispatch(prepareFinalObject("sectorJsonPath", payload.MdmsRes.Booking.Sector));
+                dispatch(prepareFinalObject("sectorJsonPath", parkSectors));
+
+            }
         }
-        
+
     } catch (e) {
         console.log(e);
     }
@@ -158,6 +238,7 @@ const prepareEditFlow = async (
 
         let bookingsModelList = get(response, "bookingsModelList", []);
         let documentMap = get(response, "documentMap", {});
+        let documentList=get(response, "documentList", {});
         if (bookingsModelList !== null && bookingsModelList.length > 0) {
 
             dispatch(prepareFinalObject("Booking", bookingsModelList[0]));
@@ -192,7 +273,6 @@ const prepareEditFlow = async (
             let response = await getMasterDataPCC(requestBody);
             let responseStatus = get(response, "status", "");
             if (responseStatus == "SUCCESS" || responseStatus == "success") {
-
                 dispatch(prepareFinalObject("masterData", response.data));
                 requestBody = {
                     bookingType: bookingsModelList[0].bkBookingType,
@@ -240,6 +320,33 @@ const prepareEditFlow = async (
                     );
 
                     if (bookingsModelList[0].timeslots.length > 0) {
+                                   
+                    if( bookingsModelList[0].timeslots[0].slot.split("-")[0].trim()=='9:00 AM' &&  bookingsModelList[0].timeslots[0].slot.split("-")[1].trim()=='8:59 AM'){
+                    
+                        let d = new Date(new Date(bookingsModelList[0].bkToDate).setDate(new Date(bookingsModelList[0].bkToDate).getDate() + 1));
+                        let  newToDate= d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+                         
+                        dispatch(
+                            prepareFinalObject(
+                                "DisplayPacc.bkDisplayFromDateTime",
+                                bookingsModelList[0].bkFromDate +
+                                ", " +
+                                bookingsModelList[0].timeslots[0].slot.split(
+                                    "-"
+                                )[0]
+                            )
+                        );
+                        dispatch(
+                            prepareFinalObject(
+                                "DisplayPacc.bkDisplayToDateTime",
+                                newToDate +
+                                ", " +
+                                bookingsModelList[0].timeslots[0].slot.split(
+                                    "-"
+                                )[1]
+                            )
+                        );
+                    }else{
                         dispatch(
                             prepareFinalObject(
                                 "DisplayPacc.bkDisplayFromDateTime",
@@ -262,6 +369,8 @@ const prepareEditFlow = async (
                         );
                     }
 
+                }
+                
                     let data = availabilityData.data;
                     let reservedDates = [];
                     var daylist = [];
@@ -290,7 +399,7 @@ const prepareEditFlow = async (
                         toggleSnackbar(
                             true,
                             {
-                                labelName: "Please Try After Sometime!",
+                                labelName: "Please try after sometime!",
                                 labelKey: "",
                             },
                             "warning"
@@ -312,15 +421,18 @@ const prepareEditFlow = async (
                     fileStoreIds.length > 0
                         ? await getFileUrlFromAPI(fileStoreIds)
                         : {};
-                dispatch(
-                    prepareFinalObject("documentsUploadReduxOld.documents", [
-                        {
-                            fileName: fileStoreIdsValue[0],
-                            fileStoreId: fileStoreIds[0],
-                            fileUrl: fileUrls[fileStoreIds[0]],
-                        },
-                    ])
-                );
+                        dispatch(
+                            prepareFinalObject("documentsUploadReduxOld.documents", [
+                                {
+                                    fileName: fileStoreIdsValue[0],
+                                    fileStoreId: fileStoreIds[0],
+                                    fileUrl: fileUrls[fileStoreIds[0]],
+                                },
+                            ])
+                        );
+                        dispatch(
+                            prepareFinalObject("dropDown.value", documentList[0].documentType)
+                        );
             }
         } else {
             dispatch(
@@ -373,6 +485,7 @@ const availabilityMediaCardWrapper = {
     },
     children: {
         availabilityMediaCard,
+
     },
     visible: false,
 };

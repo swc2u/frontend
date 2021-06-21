@@ -16,7 +16,8 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { UploadSingleFile } from "../../ui-molecules-local";
-
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import './index.css'
 const themeStyles = (theme) => ({
     documentContainer: {
         backgroundColor: "#F2F2F2",
@@ -74,6 +75,7 @@ const themeStyles = (theme) => ({
     iconDiv: {
         display: "flex",
         alignItems: "center",
+        maxWidth :'75px'
     },
     descriptionDiv: {
         display: "flex",
@@ -113,7 +115,7 @@ const styles = {
         color: "rgba(0, 0, 0, 0.54)",
         fontSize: "12px",
     },
-    descStyle : {
+    descStyle: {
         color: "rgba(0, 0, 0, 0.6)",
         fontFamily: "Roboto",
         fontSize: "14px",
@@ -127,12 +129,13 @@ const styles = {
 };
 
 const requiredIcon = (
-    <sup style={{ color: "#E54D42", paddingLeft: "5px" }}>*</sup>
+    <sup style={{ color: "#E54D42", paddingLeft: "5px" , fontSize : "120%"}}>*</sup>
 );
 
 class DocumentList extends Component {
     state = {
         uploadedDocIndex: 0,
+        test: 1
     };
 
     componentDidMount = () => {
@@ -191,6 +194,7 @@ class DocumentList extends Component {
                                 oldDocumentData = {
                                     documents: [documentsUploadReduxOld.documents[index]],
                                 };
+                                this.setState({ test: 0 })
                             }
                             let newDocumentData = {
                                 documentType: docType.code,
@@ -207,13 +211,31 @@ class DocumentList extends Component {
                             //         ...newDocumentData,
                             //     })
                             //     :
-                            (documentsUploadRedux[index] = { ...newDocumentData });
+
+                            Object.keys(documentsUploadReduxOld).length > 0
+                                ? (documentsUploadRedux[index] = {
+                                    ...oldDocumentData,
+
+                                })
+                                :
+                                (documentsUploadRedux[index] = { ...newDocumentData });
                         }
                         index++;
                     }
                 });
         });
         prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
+
+        // const changeDateVenue = getQueryArg(
+        //     window.location.href,
+        //     "changeDateVenue"
+        // );
+        // console.log(changeDateVenue, "Nero Date Change Venue")
+        // if (changeDateVenue && changeDateVenue === "Enabled") {
+        //     this.setState({ changeDateVenue: true });
+        // }
+
+
     };
 
     onUploadClick = (uploadedDocIndex) => {
@@ -242,15 +264,22 @@ class DocumentList extends Component {
 
     removeDocument = (remDocIndex) => {
         const { prepareFinalObject } = this.props;
-        prepareFinalObject(
-            `documentsUploadRedux.${remDocIndex}.documents`,
-            undefined
-        );
-        this.forceUpdate();
+        console.log(this.props, "Nero this Props")
+        if (this.props && this.props.changeDateVenue === 'Enabled') {
+            return false;
+        } else {
+
+            prepareFinalObject(
+                `documentsUploadRedux.${remDocIndex}.documents`,
+                undefined
+            );
+            this.forceUpdate();
+        }
     };
 
     handleChange = (key, event) => {
         const { documentsUploadRedux, prepareFinalObject } = this.props;
+        prepareFinalObject("dropDown.value", event.target.value)
         prepareFinalObject(`documentsUploadRedux`, {
             ...documentsUploadRedux,
             [key]: {
@@ -261,32 +290,45 @@ class DocumentList extends Component {
     };
 
     getUploadCard = (card, key) => {
-console.log(card, "Card He");
+        console.log(card, "Card He");
+        console.log('inputProps :>> ', this.props.inputProps);
         const { classes, documentsUploadRedux } = this.props;
-        let jsonPath = `documentsUploadRedux[${key}].dropdown.value`;
+        console.log(this.props,)
+        let jsonPath = "dropDown.value";
+        let testInputProps ={}
+        
+        if(card.name==="BK_OSWMCC_LOCATION_IMAGE_1" || card.name==="BK_OSWMCC_LOCATION_IMAGE_2" || card.name==="BK_OSWMCC_LOCATION_IMAGE_3"  ){
+            testInputProps ={
+                accept: ".png,.jpg,.jpeg"
+       
+            } 
+        }
+        else {
+            testInputProps= this.props.inputProps
+        }
         return (
             <Grid container={true}>
                 <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
                     {documentsUploadRedux[key] &&
-                        documentsUploadRedux[key].documents ? (
-                            <div className={classes.documentSuccess}>
-                                <Icon>
-                                    <i class="material-icons">done</i>
-                                </Icon>
-                            </div>
-                        ) : (
-                            <div className={classes.documentIcon}>
-                                <span>{key + 1}</span>
-                            </div>
-                        )}
+                        documentsUploadRedux[key].documents && documentsUploadRedux[key].documents[0] != undefined ? (
+                        <div className={classes.documentSuccess}>
+                            <Icon>
+                                <i class="material-icons">done</i>
+                            </Icon>
+                        </div>
+                    ) : (
+                        <div className={classes.documentIcon}>
+                            <span>{key + 1}</span>
+                        </div>
+                    )}
                 </Grid>
                 <Grid
                     item={true}
                     xs={10}
-                    sm={6}
-                    md={6}
+                    sm={5}
+                    md={4}
                     align="left"
-                    className={classes.descriptionDiv}
+                    className={classes.descriptionDiv  }
                 >
                     <LabelContainer
                         labelKey={getTransformedLocale(card.name)}
@@ -294,23 +336,40 @@ console.log(card, "Card He");
                     />
                     {card.required && requiredIcon}
                 </Grid>
-
+                <Grid item={true} xs={12} sm={6} md={4}>
+                    {card.dropdown && (
+                        <TextFieldContainer
+                            select={true}
+                            label={{ labelKey: getTransformedLocale(card.dropdown.label) }}
+                            placeholder={{ labelKey: card.dropdown.label }}
+                            data={card.dropdown.menu}
+                            optionValue="code"
+                            optionLabel="label"
+                            autoSelect={true}
+                            required={card.required}
+                            onChange={event => this.handleChange(key, event)}
+                            jsonPath={jsonPath}
+                            disabled={this.props.changeDateVenue === 'Enabled' ? true : false}
+                        />
+                    )}
+                </Grid>
                 <Grid
                     item={true}
                     xs={12}
-                    sm={4}
+                    sm={12}
                     md={3}
                     align="right"
-                    className={classes.fileUploadDiv}
+                    className={classes.fileUploadDiv,"fileUploadBox"}
                 >
                     <UploadSingleFile
+                        id = {key}
                         classes={this.props.classes}
                         handleFileUpload={(e) =>
                             handleFileUpload(e, this.handleDocument, this.props)
                         }
                         uploaded={
                             documentsUploadRedux[key] &&
-                                documentsUploadRedux[key].documents
+                                documentsUploadRedux[key].documents && documentsUploadRedux[key].documents[0] != undefined
                                 ? true
                                 : false
                         }
@@ -320,7 +379,7 @@ console.log(card, "Card He");
                             documentsUploadRedux[key].documents
                         }
                         onButtonClick={() => this.onUploadClick(key)}
-                        inputProps={this.props.inputProps}
+                        inputProps={testInputProps}
                         buttonLabel={this.props.buttonLabel}
                     />
                 </Grid>
@@ -330,14 +389,14 @@ console.log(card, "Card He");
                     sm={12}
                     md={12}
                     align="left"
-                    className={classes.descriptionDiv}
+                    className={classes.descriptionDiv ,"descriptionBox"}
                 >
                     <LabelContainer
-                        labelKey={(()=>{
-                            if(card.code == "OSWMCC_LOCATION_IMAGE_1" || card.code == "OSWMCC_LOCATION_IMAGE_2" || card.code == "OSWMCC_LOCATION_IMAGE_3"){
-                                return "Supported Documents: jpg, png. Max file size: 1MB";
-                            }else{
-                                return "Supported Documents: pdf, jpg, png. Max file size: 1MB";
+                        labelKey={(() => {
+                            if (card.code == "BK_OSWMCC_LOCATION_IMAGE_1" || card.code == "BK_OSWMCC_LOCATION_IMAGE_2" || card.code == "BK_OSWMCC_LOCATION_IMAGE_3") {
+                                return "Supported Documents: jpg, png. Max file size: 5MB";
+                            } else {
+                                return "Supported Documents: pdf, jpg, png. Max file size: 5MB";
                             }
                         })()}
 
@@ -422,7 +481,12 @@ const mapStateToProps = (state) => {
         "documentsUploadRedux",
         {}
     );
-    return { documentsUploadRedux, moduleName };
+    const changeDateVenue = get(
+        screenConfiguration.preparedFinalObject,
+        "changeDateVenue",
+        ""
+    );
+    return { documentsUploadRedux, moduleName, changeDateVenue };
 };
 
 const mapDispatchToProps = (dispatch) => {

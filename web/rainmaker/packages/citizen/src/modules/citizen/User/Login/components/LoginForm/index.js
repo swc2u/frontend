@@ -2,16 +2,26 @@ import React from "react";
 import Field from "egov-ui-kit/utils/field";
 import { Link } from "react-router-dom";
 import { Button, Card, Image ,Icon , DropDown} from "components";
+import IconButton from "material-ui/IconButton";
 import Label from "egov-ui-kit/utils/translationNode";
 import { startSMSRecevier } from "egov-ui-kit/utils/commons";
 import Hidden from "@material-ui/core/Hidden";
 import logo from "egov-ui-kit/assets/images/logo_black.png";
 import qrlogo from "egov-ui-kit/assets/images/qrImage.png";
 import "./index.css";
+import { blue } from "@material-ui/core/colors";
 
 const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,languages,onLanguageChange,languageSelected,hasLocalisation }) => {
   const fields = form.fields || {};
   const submit = form.submit;
+  const callIconStyle = {
+    marginLeft: "17px",
+    height: "17px",
+    width: "17px",
+    borderRadius: "50%",
+    position: "absolute",
+    top: "0px",
+  };
   const style = {
     baseStyle: {
       background: "#ffffff",
@@ -43,6 +53,12 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
       className={enableWhatsApp?"login-cardwidth user-screens-card":"login-cardwidthmob col-sm-offset-4 col-sm-4 user-screens-card"}
       textChildren={
         <div>
+           <marquee width="100%" direction="left" height="50px">
+        <Label style={{ marginBottom: "2px" }}        
+        color="blue" 
+        bold={true} dark={false} 
+        fontSize={18} label="CORE_COMMON_MESSAGE_MARQEE" />
+        </marquee>
           <div className="rainmaker-displayInline" style={{ justifyContent: "center" }}>
         {/*}    <div style={{ marginBottom: "24px" }}>
               <Image className="mseva-logo" source={`${logo}`} />
@@ -57,6 +73,7 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
           </div>
           <Label style={{ marginBottom: "12px" }} className="text-center" bold={true} dark={true} fontSize={16} label="CORE_COMMON_LOGIN" />
           <Field fieldKey="phone" field={fields.phone} handleFieldChange={handleFieldChange}  />
+          {/* pattern={/^[0-9]{10}$/i} */}
           <div style={{ marginBottom: "0px", position: "relative", zIndex: 10,marginRight:20}} className="text-right">
             <Label id="otp-trigger" className="otp-prompt" label="CORE_LOGIN_NO_ACCOUNT" />
             <Link to="/user/register">
@@ -65,7 +82,7 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
               </div>
             </Link>
             </div>
-            <div>
+            {/* <div>
             
             <div style={{ marginBottom: "10px", position: "relative", zIndex: 10 }} className="text-right">
            
@@ -88,7 +105,7 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
          )}  
           </div>
        </div>
-            </div>
+            </div> */}
            
             
           <Button
@@ -99,14 +116,44 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp,l
               startSMSRecevier();
             }}
           />
-          <div style={{ marginBottom: "0px", position: "relative", zIndex: 10,marginRight:10}} className="text-right">           
+          <div style={{ marginBottom: "0px", position: "relative", zIndex: 10,marginRight:0}} className="text-right">           
           <Link to="/user/privacy"> 
            {/*  */}
               <div style={{ display: "inline-block" }}  >
-                <Label containerStyle={{ cursor: "pointer" }} id="privacy"  className="privacy" label="Privacy Policy" />
+               {/* <u> <Label containerStyle={{ cursor: "pointer" }}
+               style={{ color: "lightsalmon",fontSize:"12px",textDEcoration:"underline"}}
+               id="privacy"  className="privacy" label="Privacy Policy" /></u> */}
+               <p style={{ color: "burlywood",fontSize:"12px",textDecorationLine:"underline"}} >Privacy Policy</p>
               </div>
             </Link>
             </div>
+            
+            <div style={{  position: "relative",paddingTop:"0px"}} className="text-center"> 
+            {/* <IconButton style={{paddingLeft:0,paddingRight:0}}>
+            <Icon action="action" name="help" color="#000" />  
+           
+              </IconButton>  */}
+                <p>
+                In case of any support or query,<br></br> kindly contact us on                   
+                {/* <b  style={{  color:"blue"}} > 0172-2787200</b> */}
+                <a
+              className="citizen-mobileNumber-style"
+              href={`tel:+0172-2787200`}
+              style={{ textDecoration: "none", position: "relative" }}
+            >
+              <Icon action="communication" name="call" style={callIconStyle} color={"#22b25f"} />
+              <span
+                style={{
+                  fontSize:12,// filedBy.includes("@CSR") ? 12 : 14,
+                  marginLeft: "43px",
+                }}
+              >{`0172-2787200`}</span>
+            </a>
+                </p> 
+              {/* <Label bold={false} color="black" fontSize= "14px" label="In case of any support or query, kindly contact us on"/> */}
+              
+               
+              </div>
           {enableWhatsApp&&
            <Hidden mdUp>
           <div>

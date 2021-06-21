@@ -10,9 +10,9 @@ import {
     getCommonGrayCard
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
-import { pccSummary, changedVenueDatepccSummary } from "../summaryResource/pccSummary";
+import { pccSummary, pccParkSummary,changedVenueDatepccSummary } from "../summaryResource/pccSummary";
 import { pccApplicantSummary,pccBankSummary } from "../summaryResource/pccApplicantSummary";
-import { documentsSummary } from "../summaryResource/documentsSummary";
+import { documentsSummaryForPacc } from "../summaryResource/documentsSummary";
 import { estimateSummary } from "../summaryResource/estimateSummary";
 
 export const callBackForPrevious = (state, dispatch) => {
@@ -36,8 +36,8 @@ export const changeStep = (
     }
 
     const isPreviousButtonVisible = activeStep > 0 ? true : false;
-    const isNextButtonVisible = activeStep < 3 ? true : false;
-    const isPayButtonVisible = activeStep === 3 ? true : false;
+    const isNextButtonVisible = activeStep < 4 ? true : false;
+    const isPayButtonVisible = activeStep === 4 ? true : false;
     const actionDefination = [
         {
             path: "components.div.children.stepper.props",
@@ -96,11 +96,20 @@ export const renderSteps = (activeStep, dispatch) => {
                 dispatch
             );
             break;
+            case 3:
+                dispatchMultipleFieldChangeAction(
+                    "applyparkcommunitycenter",
+                    getActionDefinationForStepper(
+                        "components.div.children.formwizardFourthStep"
+                    ),
+                    dispatch
+                );
+                break;
         default:
             dispatchMultipleFieldChangeAction(
                 "applyparkcommunitycenter",
                 getActionDefinationForStepper(
-                    "components.div.children.formwizardFourthStep"
+                    "components.div.children.formwizardFifthStep"
                 ),
                 dispatch
             );
@@ -128,6 +137,11 @@ export const getActionDefinationForStepper = (path) => {
             property: "visible",
             value: false,
         },
+        {
+            path: "components.div.children.formwizardFifthStep",
+            property: "visible",
+            value: false,
+        }
     ];
     for (var i = 0; i < actionDefination.length; i++) {
         actionDefination[i] = {
@@ -211,10 +225,19 @@ export const summaryDetails = getCommonCard({
         },
     },
    // confirmationStatement: confirmationStatement,
-    estimateSummary: estimateSummary,
-    pccApplicantSummary: pccApplicantSummary,
-    pccSummary: pccSummary,
-    pccBankSummary:pccBankSummary,
-  //  changedVenueDatepccSummary: changedVenueDatepccSummary,
-    documentsSummary: documentsSummary
+   estimateSummary: estimateSummary,
+   pccApplicantSummary: pccApplicantSummary,
+   pccSummary: pccSummary,
+   pccParkSummary : pccParkSummary,
+   pccBankSummary:pccBankSummary,
+ //  changedVenueDatepccSummary: changedVenueDatepccSummary,
+   documentsSummary: documentsSummaryForPacc,
+   ParkChangeDateVenueFieldDisabler: {
+       uiFramework: "custom-containers-local",
+       moduleName: "egov-services",
+       componentPath: "ParkChangeDateVenueFieldDisabler",
+       props: {
+          page : "summaryDetails"
+         },
+   },
 });

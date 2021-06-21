@@ -2,8 +2,9 @@ import {
     getCommonCard,
     getCommonContainer,
     getCommonHeader,
-    getBreak,
-    getCommonGrayCard
+    getTextField,
+    getCommonGrayCard,
+    getPattern
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     handleScreenConfigurationFieldChange as handleField,
@@ -29,7 +30,8 @@ import set from "lodash/set";
 import {
     generageBillCollection,
     generateBill,
-    getRefundDetails
+    getRefundDetails,
+    getBookedRoomsPaymentDetails
 } from "../utils";
 import { pccSummary } from "./refundResource/pccSummary";
 
@@ -51,6 +53,26 @@ import { httpRequest } from "../../../../ui-utils";
 let role_name = JSON.parse(getUserInfo()).roles[0].code;
 let bookingStatus = "";
 
+const reasonForCancellation = getCommonCard({
+    reasonForCancellation: getCommonContainer({
+        bkRemarks: {
+            ...getTextField({
+                label: {
+                    labelName: "Booking Cancelation Reason",
+                    labelKey: "BK_PCC_CANCELLATION_REASON",
+                },
+                placeholder: {
+                    labelName: "Enter cancellation reason",
+                    labelKey: "BK_PCC_CANCELLATION_REASON_PLACEHOLDER",
+                },
+                required: true,
+                pattern: getPattern("Name"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkRemarks",
+            }),
+        }
+    })
+});
 const confirmationStatement = getCommonGrayCard({
 
     header: getCommonHeader({
@@ -180,6 +202,8 @@ const setSearchResponse = async (
     dispatch(
         prepareFinalObject("refundData", refundDetailsResp.data[0])
     );
+    const bookedRoomsPaymentDetails = await getBookedRoomsPaymentDetails(recData[0].roomsModel, tenantId, dispatch);
+
 
     localStorageSet("bookingStatus", bookingStatus);
     HideshowFooter(action, bookingStatus);
@@ -315,7 +339,9 @@ const screenConfig = {
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
                     pccSummary: pccSummary,
-                    confirmationStatement: confirmationStatement
+                    reasonForCancellation: reasonForCancellation,
+                    confirmationStatement: confirmationStatement,
+
 
                 }),
                 footer: footerForParkAndCC,

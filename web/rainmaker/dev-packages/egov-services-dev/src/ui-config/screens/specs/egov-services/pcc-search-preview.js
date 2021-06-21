@@ -2,7 +2,8 @@ import {
     getCommonCard,
     getCommonContainer,
     getCommonHeader,
-    getBreak
+    getBreak,
+    getCommonGrayCard
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     handleScreenConfigurationFieldChange as handleField,
@@ -26,9 +27,9 @@ import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
 import { generageBillCollection, generateBill, clearlocalstorageAppDetails, calculateCancelledBookingRefundAmount, getAllbillsOfBooking } from "../utils";
-import { pccSummary, changedVenueDatepccSummary } from "./summaryResource/pccSummary";
-import { pccApplicantSummary,pccBankSummary } from "./summaryResource/pccApplicantSummary";
-import { documentsSummary } from "./summaryResource/documentsSummary";
+import { pccSummary, pccParkSummary, changedVenueDatepccSummary, cityPicker } from "./summaryResource/pccSummary";
+import { pccApplicantSummary, pccBankSummary, roomBookingSummary } from "./summaryResource/pccApplicantSummary";
+import { documentsSummaryForPacc } from "./summaryResource/documentsSummary";
 import { estimateSummary, modifiedBookingPaymentCard } from "./summaryResource/estimateSummary";
 import { remarksSummary } from "./searchResource/remarksSummary";
 import { footerForParkAndCC } from "./searchResource/citizenFooter";
@@ -65,6 +66,13 @@ const prepareDocumentsView = async (state, dispatch) => {
         "screenConfiguration.preparedFinalObject.BookingDocument",
         {}
     );
+    let BookingDocumentType = get(
+        state,
+        "screenConfiguration.preparedFinalObject.BookingDocumentType",
+        {}
+    );
+
+    BookingDocumentType = BookingDocumentType[0].documentType;
 
     if (Object.keys(bookingDocs).length > 0) {
         let keys = Object.keys(bookingDocs);
@@ -76,6 +84,7 @@ const prepareDocumentsView = async (state, dispatch) => {
             title: "BK_PCC_DOCUMENT",
             fileStoreId: id,
             linkText: "View",
+            documentType: BookingDocumentType
         });
         let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
         let fileUrls =
@@ -101,6 +110,8 @@ const prepareDocumentsView = async (state, dispatch) => {
                 `Document - ${index + 1}`;
             return doc;
         });
+
+
         dispatch(prepareFinalObject("documentsPreview", documentsPreview));
     }
 };
@@ -118,19 +129,23 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
     let showFooter = false;
     if (bookingObj.timeslots.length > 0) {
         let [fromTime] = bookingObj.timeslots[0].slot.split("-");
-        if (fromTime == "10AM") {
-            bookingTimeStamp = new Date(`${fromDate}T10:00:00`).getTime();
-        } else if (fromTime == "2PM") {
-            bookingTimeStamp = new Date(`${fromDate}T14:00:00`).getTime();
-        } else if (fromTime == "6PM") {
-            bookingTimeStamp = new Date(`${fromDate}T18:00:00`).getTime();
+        if (fromTime == "9AM") {
+            bookingTimeStamp = new Date(`${fromDate}T09:00:00`).getTime();
+        } else if (fromTime == "1PM") {
+            bookingTimeStamp = new Date(`${fromDate}T13:00:00`).getTime();
+        } else if (fromTime == "5PM") {
+            bookingTimeStamp = new Date(`${fromDate}T17:00:00`).getTime();
         }
     }
     if (bookingStatus === "APPLIED") {
         showFooter = true;
     }
 
-
+    set(
+        action,
+        "screenConfig.components.div.children.footer.visible",
+         false
+    );
 
     var billAccountDetails = get(
         screenConfiguration,
@@ -143,11 +158,11 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
     let refundSecAmount = 0;
     // let refundAmount = 0;
     for (let i = 0; i < billAccountDetails.length; i++) {
-        if (billAccountDetails[i].taxHeadCode == "REFUNDABLE_SECURITY") {
+        if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
             bookingAmount += billAccountDetails[i].amount;
             refundSecAmount += billAccountDetails[i].amount;
         }
-        if (billAccountDetails[i].taxHeadCode == "PACC") {
+        if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
             bookingAmount += billAccountDetails[i].amount;
         }
     }
@@ -192,6 +207,13 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
     console.log(bookingTimeStamp + "=========" + currentTimeStamp + "=====" + refundAmount);
 
     if ((bookingTimeStamp > currentTimeStamp) && (refundAmount > 0)) {
+        console.log('called :>> ');
+        set(
+            action,
+            "screenConfig.components.div.children.footer.visible",
+            showFooter === true ? true : false
+        );
+      
         set(
             action,
             "screenConfig.components.div.children.footer.children.cancelButton.visible",
@@ -201,7 +223,12 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
     }
 
     if ((bookingTimeStamp > currentTimeStamp) && (bookingStatus === "APPLIED" || bookingStatus === "RE_INITIATED")) {
-
+        set(
+            action,
+            "screenConfig.components.div.children.footer.visible",
+             true
+        );
+    
         set(
             action,
             "screenConfig.components.div.children.footer.children.editButton.visible",
@@ -210,13 +237,19 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
     }
 
     if ((bookingTimeStamp < currentTimeStamp) && refundSecAmount > 0) {
-
+        set(
+            action,
+            "screenConfig.components.div.children.footer.visible",
+            showFooter === true ? true : false
+        );
+       
         set(
             action,
             "screenConfig.components.div.children.footer.children.refundSecurityFeeButton.visible",
             showFooter === true ? true : false
         );
     }
+
 
 };
 
@@ -235,25 +268,36 @@ const setSearchResponse = async (
     let recData = get(response, "bookingsModelList", []);
     if (recData.length > 0) {
         if (recData[0].timeslots && recData[0].timeslots.length > 0) {
-            if(recData[0].timeslots && recData[0].timeslots.length > 1){
+            if (recData[0].timeslots && recData[0].timeslots.length > 1) {
                 var [fromTime, toTimeOne] = recData[0].timeslots[0].slot.split("-");
                 var [fromTimeTwo, toTime] = recData[0].timeslots[1].slot.split("-");
 
-            }else{
-                
+            } else {
+
                 var [fromTime, toTime] = recData[0].timeslots[0].slot.split("-");
 
             }
-            
+
             let DisplayPaccObject = {
                 bkDisplayFromDateTime: recData[0].bkFromDate + "#" + fromTime,
                 bkDisplayToDateTime: recData[0].bkToDate + "#" + toTime,
             };
+ 
+            if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+              
+                let d = new Date(new Date(recData[0].bkToDate).setDate(new Date(recData[0].bkToDate).getDate() + 1));
+                DisplayPaccObject = {
+                    bkDisplayFromDateTime: recData[0].bkFromDate + "#" + fromTime,  
+                    bkDisplayToDateTime: d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate() + "#" + toTime,
+                };  
+            }
+            
 
             dispatch(
                 prepareFinalObject("DisplayTimeSlotData", DisplayPaccObject)
             );
         }
+        
         set(
             action.screenConfig,
             "components.div.children.body.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.FromDate.visible",
@@ -286,6 +330,19 @@ const setSearchResponse = async (
         dispatch(
             prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
         );
+        if (recData.length > 0) {
+
+            dispatch(
+                handleField(
+                    "pcc-search-preview",
+                    "components.div.children.body3.children.cardContent.children.roomStatus",
+                    "props.value",
+                    recData[0]
+                )
+            )
+
+        }
+
         dispatch(
             prepareFinalObject(
                 "BookingDocument",
@@ -293,7 +350,27 @@ const setSearchResponse = async (
             )
         );
 
+        dispatch(
+            prepareFinalObject(
+                "BookingDocumentType",
+                get(response, "documentList", {})
+            )
+        );
+
         bookingStatus = recData[0].bkApplicationStatus;
+        if ( bookingStatus === "APPLIED" || bookingStatus === "RE_INITIATED") {
+            set(
+                action.screenConfig,
+                "components.div.children.body3.visible",
+                recData[0].roomsModel && recData[0].roomsModel.length > 0 ? true : false
+            );
+            }else{  
+               set(
+                    action.screenConfig,
+                    "components.div.children.body3.visible",
+                    false
+                );
+            }
         console.log(recData[0], "Booking");
         //if (bookingStatus === "APPLIED" || bookingStatus === "MODIFIED") {
         if ((recData[0].bkPaymentStatus == "SUCCESS" || recData[0].bkPaymentStatus == "success") && bookingStatus === "MODIFIED") {
@@ -330,6 +407,13 @@ const setSearchResponse = async (
                 ])
             );
         } else {
+            let businessService = ""
+            if (recData[0].bkBookingType === "Community Center") {
+                businessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
+            } else {
+                businessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
+            }
+
             await generateBill(
                 state,
                 dispatch,
@@ -426,6 +510,18 @@ const setSearchResponse = async (
                 convertDateInYMD(recData[0].bkToDate)
             )
         );
+        dispatch(
+            prepareFinalObject(
+                "displayBkFromDate",
+                convertDateInYMD(recData[0].bkFromDate)
+            )
+        );
+        dispatch(
+            prepareFinalObject(
+                "displayBkToDate",
+                convertDateInYMD(recData[0].bkToDate)
+            )
+        );
         let rent = Number(masterItemData[0].rent);
         let cleaningCharges = Number(masterItemData[0].cleaningCharges);
         let amount = rent + cleaningCharges;
@@ -434,7 +530,7 @@ const setSearchResponse = async (
         dispatch(
             prepareFinalObject(
                 "paccBooking.bkCleansingCharges",
-                masterItemData[0].cleaningCharges * daysCount
+                masterItemData[0].cleaningCharges 
             )
         );
         dispatch(
@@ -480,7 +576,26 @@ const setSearchResponse = async (
             )
         );
 
-
+        let appBookingType = get(
+            state,
+            "screenConfiguration.preparedFinalObject.Booking.bkBookingType"
+        );
+   
+        if(appBookingType==="Community Center" && (bookingStatus === "APPLIED" || bookingStatus === "RE_INITIATED")){
+        
+            set(
+                action,
+                "screenConfig.components.div.children.footer.visible",
+                 true
+            );
+            set(
+                action,
+                "screenConfig.components.div.children.footer.children.bookRoomButton.visible",
+                true
+            );
+          
+        
+        }
     }
 };
 
@@ -560,6 +675,19 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "pcc-search-preview",
     beforeInitScreen: (action, state, dispatch) => {
+        
+        let test= localStorage.getItem('location') ?localStorage.getItem('location').replace('#loaded', '').trim():''
+        
+        let newTest= window.location.href
+        if(test !== newTest.trim()){
+            localStorage.setItem('location', window.location); 
+        }
+
+        if(!localStorage.getItem('location').includes('#loaded')) {
+            localStorage.setItem('location', window.location + '#loaded');            
+            window.location.reload();
+        }
+        
         clearlocalstorageAppDetails(state);
         const applicationNumber = getQueryArg(
             window.location.href,
@@ -597,6 +725,7 @@ const screenConfig = {
         //     false
         // );
 
+        
         return action;
     },
     components: {
@@ -639,21 +768,64 @@ const screenConfig = {
                     moduleName: "egov-services",
                     visible: true,
                 },
+
+                body3: getCommonCard({
+                    roomStatus: {
+                        uiFramework: "custom-containers-local",
+                        componentPath: "RoomCardsContainer",
+                        moduleName: "egov-services",
+                        props: {
+
+                            name: "sankalp",
+                        },
+                        visible: true,
+                    },
+                }),
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
                     modifiedBookingPaymentCard: modifiedBookingPaymentCard,
                     pccApplicantSummary: pccApplicantSummary,
                     pccSummary: pccSummary,
-                    
+                    pccParkSummaryDetail: pccParkSummary,
                     changedVenueDatepccSummary: changedVenueDatepccSummary,
-                    pccBankSummary: pccBankSummary, 
-                    documentsSummary: documentsSummary,
+                    pccBankSummary: pccBankSummary,
+                    //roomBookingSummary :roomBookingSummary,
+                    documentsSummary: documentsSummaryForPacc,
                     // remarksSummary: remarksSummary,
                 }),
+                ParkChangeDateVenueFieldDisablerNew: {
+                    uiFramework: "custom-containers-local",
+                    moduleName: "egov-services",
+                    componentPath: "ParkChangeDateVenueFieldDisabler",
+                    props: {
+                        page: "previewPage"
+                    },
+                },
                 // break: getBreak(),
                 footer: footerForParkAndCC,
             },
         },
+        cityPickerDialog: {
+            componentPath: "Dialog",
+            props: {
+                open: false,
+                className: "hrmsCityPickerDialog",
+                style: { overflow: "visible" }
+            },
+            children: {
+                dialogContent: {
+                    componentPath: "DialogContent",
+                    props: {
+                        style: {
+                            overflow: "visible"
+                        }
+                    },
+                    children: {
+                        popup: cityPicker
+                    }
+                }
+            }
+        }
     },
 };
 

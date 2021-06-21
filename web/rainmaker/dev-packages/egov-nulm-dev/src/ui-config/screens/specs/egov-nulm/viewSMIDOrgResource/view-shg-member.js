@@ -29,7 +29,7 @@ import {
               labelName: "Member Id",
               labelKey: "NULM_SHG_MEMBER_ID"
             },
-            { jsonPath: "NulmShgRequest.smidShgMemberApplication[0].applicationId" }
+            { jsonPath: "NulmShgRequest.smidShgMemberApplication[0].applicationId"  }
           ),
           name: getLabelWithValue(
             {

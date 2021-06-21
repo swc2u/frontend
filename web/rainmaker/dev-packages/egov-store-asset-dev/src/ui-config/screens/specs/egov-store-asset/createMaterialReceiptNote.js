@@ -3,7 +3,7 @@ import {
     getCommonHeader,
     getCommonContainer
   } from "egov-ui-framework/ui-config/screens/specs/utils";  
-  import { footer } from "./creatematerialReceiptNoteResource/footer";
+  import { footer,getpurchaseOrder } from "./creatematerialReceiptNoteResource/footer";
   import { getstoreTenantId,getStoresSearchResults, } from "../../../../ui-utils/storecommonsapi";
   import { getSearchResults } from "../../../../ui-utils/commons";
   import { materialReceiptDetail } from "./creatematerialReceiptNoteResource/Material-receipt-details"; 
@@ -204,7 +204,7 @@ export const header = getCommonContainer({
       // fetching employee designation
       const userInfo = JSON.parse(getUserInfo());
       if(userInfo){
-        dispatch(prepareFinalObject("materialReceipt[0].createdByName", userInfo.name));
+        dispatch(prepareFinalObject("materialReceipt[0].receivedBy", userInfo.name));
         const queryParams = [{ key: "codes", value: userInfo.userName },{ key: "tenantId", value:  getTenantId() }];
         try { 
           const payload = await httpRequest(
@@ -353,18 +353,58 @@ export const header = getCommonContainer({
         )
       );
      
-      dispatch(
-        prepareFinalObject(
-          "materialReceipt[0].receivedBy",
-          "sanjeev",
-        )
-      );
+      // dispatch(
+      //   prepareFinalObject(
+      //     "materialReceipt[0].receivedBy",
+      //     "sanjeev",
+      //   )
+      // );
       dispatch(
         prepareFinalObject(
           "materialReceipt[0].inspectedBy",
-          "Ramesh",
+          "",
         )
       );
+     }
+     else{
+      getpurchaseOrder(state,dispatch)
+      let purchaseOrder = get(
+        state.screenConfiguration.preparedFinalObject,
+        `purchaseOrder.purchaseOrders`,
+        []
+      ); 
+      purchaseOrder =  purchaseOrder.filter(x=> x.purchaseOrderNumber === action.value)
+      let material=[];
+                let purchaseOrderDetails =get(
+                  purchaseOrder[0],
+                  `purchaseOrderDetails`,
+                  []
+                );
+                for (let index = 0; index < purchaseOrderDetails.length; index++) {
+                  const element = purchaseOrderDetails[index];
+                  const mrnNumber = getQueryArg(window.location.href, "mrnNumber");
+                  if(mrnNumber)
+                  {
+                    material.push( element.material)
+
+                  }
+                  else{
+                    if((element.orderQuantity-element.receivedQuantity)>0)
+                    {
+                      material.push( element.material)
+                    }
+                  }                  
+                }
+                if(purchaseOrderDetails && purchaseOrderDetails[0])
+               {                
+                if(material.length>0)
+                {
+                  dispatch(prepareFinalObject("ReceiptMaterial",[]));
+                  dispatch(prepareFinalObject("ReceiptMaterial",material));
+
+                }
+              }
+
      }
      // SEt Default data
 

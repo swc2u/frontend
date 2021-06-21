@@ -46,7 +46,7 @@ export const personalDetails = getCommonCard({
                 },
                 required: true,
                 pattern: getPattern("Name"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkApplicantName",
             }),
         },
@@ -62,7 +62,7 @@ export const personalDetails = getCommonCard({
                 },
                 required: true,
                 pattern: getPattern("Email"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 requiredMessage: "required Message",
                 jsonPath: "Booking.bkEmail",
                 props: {
@@ -82,7 +82,7 @@ export const personalDetails = getCommonCard({
                 },
                 required: true,
                 pattern: getPattern("MobileNo"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkMobileNumber",
             }),
         },
@@ -97,7 +97,7 @@ export const personalDetails = getCommonCard({
                     labelKey: "BK_PCC_HOUSE_NUMBER_LABEL",
                 },
                 pattern: getPattern("DoorHouseNo"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 // helperText : "new helper outside",
                 required: true,
                 jsonPath: "Booking.bkHouseNo",
@@ -121,6 +121,118 @@ export const personalDetails = getCommonCard({
         },
     }),
 });
+export const personalDetailsDisabled = getCommonCard({
+    // header: getCommonTitle(
+    //   {
+    //     labelName: "Applicant Details",
+    //     labelKey: "BK_PCC_HEADER_STEP_1",
+    //   },
+    //   {
+    //     style: {
+    //       marginBottom: 18,
+    //     },
+    //   }
+    // ),
+    // break: getBreak(),
+    personalDetailsContainerDisabled: getCommonContainer({
+        bkApplicantNameDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Applicant Name",
+                    labelKey: "BK_PCC_NAME_LABEL",
+                },
+                placeholder: {
+                    labelName: "Enter Applicant Name",
+                    labelKey: "BK_PCC_NAME_PLACEHOLDER",
+                },
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                pattern: getPattern("Name"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkApplicantName",
+            }),
+        },
+        bkEmailDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Email Address",
+                    labelKey: "BK_OSB_EMAIL_LABEL",
+                },
+                placeholder: {
+                    labelName: "Enter Email Address",
+                    labelKey: "BK_PCC_EMAIL_PLACEHOLDER",
+                },
+                required: true,
+             
+                pattern: getPattern("Email"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                requiredMessage: "required Message",
+                jsonPath: "Booking.bkEmail",
+                props: {
+                    required: true,
+                    disabled: true,
+                },
+            }),
+        },
+        bkMobileNumberDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Contact Number",
+                    labelKey: "BK_PCC_MOBILE_NO_LABEL",
+                },
+                placeholder: {
+                    labelName: "Enter Contact Number",
+                    labelKey: "BK_PCC_MOBILE_NO_PLACEHOLDER",
+                },
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                pattern: getPattern("MobileNo"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkMobileNumber",
+            }),
+        },
+        bkHouseNoDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "House/Site No.",
+                    labelKey: "BK_PCC_HOUSE_NUMBER_LABEL",
+                },
+                placeholder: {
+                    labelName: "Enter House No",
+                    labelKey: "BK_PCC_HOUSE_NUMBER_LABEL",
+                },
+                pattern: getPattern("DoorHouseNo"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                // helperText : "new helper outside",
+                required: true,
+         
+                jsonPath: "Booking.bkHouseNo",
+                props: {
+                    required: true,
+                    helperText: "custom helper text",
+                    disabled: true,
+                },
+            }),
+        },
+        dummyDiv: {
+            uiFramework: "custom-atoms",
+            componentPath: "Div",
+            gridDefination: {
+                xs: 12,
+                sm: 12,
+                md: 6,
+            },
+            props: {
+                disabled: true,
+            },
+        },
+    }),
+});
+
 
 export const bankAccountDetails = getCommonCard({
     // header: getCommonTitle(
@@ -135,27 +247,27 @@ export const bankAccountDetails = getCommonCard({
     //   }
     // ),
     // break: getBreak(),
-    
+
     personalDetailsContainer: getCommonContainer({
         bkAccountName: {
             ...getTextField({
                 label: {
-                    labelName: "Bank Name",
-                    labelKey:  "Bank Name",
-                    //labelKey: "BK_PCC_BANK_NAME_LABEL",
-                },
+                    labelName: "Bank Account Name(For security refund)",
+                    labelKey:  "Bank Account Name(For security refund)",
+                    
+                   },
                 placeholder: {
-                    labelName: "Bank Name",
-                    labelKey:  "Bank Name",
-                    //labelKey: "BK_PCC_BANK_NAME_LABEL",
+                    labelName: "Bank Account Name",
+                    labelKey:  "Bank Account Name",
+                 
                 },
                 required: true,
                 pattern: getPattern("Name"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkBankName",
             }),
         },
-        
+
         bkAccountNumber: {
             ...getTextField({
                 label: {
@@ -169,8 +281,8 @@ export const bankAccountDetails = getCommonCard({
                     //labelKey: "BK_PCC_ACCOUNT_NUMBER_LABEL",
                  },
                 required: true,
-                pattern: getPattern("Name"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                pattern: getPattern("bankAccountNo"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 requiredMessage: "required Message",
                 jsonPath: "Booking.bkBankAccountNumber",
                 props: {
@@ -191,8 +303,8 @@ export const bankAccountDetails = getCommonCard({
                     //labelKey: "BK_PCC_IFSC_CODE_LABEL",
                 },
                 required: true,
-                pattern: getPattern("Name"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                pattern: getPattern("IFSCCode"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkIfscCode",
             }),
         },
@@ -210,11 +322,11 @@ export const bankAccountDetails = getCommonCard({
                 },
                 required: true,
                 pattern: getPattern("Name"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkBankAccountHolder",
             }),
         },
-      
+
           bankAccountTypeRadioGroup: {
             uiFramework: "custom-containers",
             componentPath: "RadioGroupContainer",
@@ -227,10 +339,9 @@ export const bankAccountDetails = getCommonCard({
             jsonPath: "Booking.bkAccountType",
             props: {
               label: {
-                labelName: "Bank Account Type",
-                labelName: "Bank Account Type",
-                //labelKey: "BK_PCC_BANK_ACCOUNT_TYPE_LABEL",
-              },
+                name: "Bank Account Type",
+                key: "Bank Account Type",
+                },
               buttons: [
                 {
                   labelName: "Saving",
@@ -249,7 +360,26 @@ export const bankAccountDetails = getCommonCard({
             },
             required: true,
             type: "array",
-        },      
+        },
+        bkNomineeName: {
+            ...getTextField({
+                label: {
+                    labelName: "Nominee Name",
+                    labelKey: "Nominee Name",
+                    //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
+                },
+                placeholder: {
+                    labelName: "Nominee Name",
+                    labelKey: "Nominee Name",
+                    //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
+                },
+                required: true,
+                pattern: getPattern("Name"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkNomineeName",
+            }),
+        },
+
         dummyDiv: {
             uiFramework: "custom-atoms",
             componentPath: "Div",
@@ -265,6 +395,187 @@ export const bankAccountDetails = getCommonCard({
     }),
 });
 
+
+export const bankAccountDetailsDisabled = getCommonCard({
+    // header: getCommonTitle(
+    //   {
+    //     labelName: "Applicant Details",
+    //     labelKey: "BK_PCC_HEADER_STEP_1",
+    //   },
+    //   {
+    //     style: {
+    //       marginBottom: 18,
+    //     },
+    //   }
+    // ),
+    // break: getBreak(),
+
+    personalDetailsContainerDisabled: getCommonContainer({
+        bkAccountName: {
+            ...getTextField({
+                label: {
+                    labelName: "Bank Account Name(For security refund)",
+                    labelKey:  "Bank Account Name(For security refund)",
+                    
+                },
+                placeholder: {
+                    labelName: "Bank Account Name",
+                    labelKey:  "Bank Account Name",
+        
+                },
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                pattern: getPattern("Name"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkBankName",
+            }),
+        },
+
+        bkAccountNumberDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Account Number",
+                    labelKey: "Account Number",
+                    //labelKey: "BK_PCC_ACCOUNT_NUMBER_LABEL",
+                },
+                placeholder: {
+                    labelName: "Account Number",
+                    labelKey: "Account Number",
+                    //labelKey: "BK_PCC_ACCOUNT_NUMBER_LABEL",
+                 },
+                required: true,
+                pattern: getPattern("bankAccountNo"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                requiredMessage: "required Message",
+                jsonPath: "Booking.bkBankAccountNumber",
+                props: {
+                    required: true,
+                    
+                    disabled: true,
+                    
+                },
+            }),
+        },
+        bkIFSCCodeDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "IFSC Code",
+                    labelKey:  "IFSC Code",
+                    //labelKey: "BK_PCC_IFSC_CODE_LABEL",
+                },
+                placeholder: {
+                    labelName: "IFSC Code",
+                    labelKey:  "IFSC Code",
+                    //labelKey: "BK_PCC_IFSC_CODE_LABEL",
+                },
+                props: {
+                    disabled: true,
+                },
+                required: true,
+                pattern: getPattern("Name"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkIfscCode",
+            }),
+        },
+        bkAccountHolderNameDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Account Holder Name",
+                    labelKey: "Account Holder Name",
+                    //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
+                },
+                placeholder: {
+                    labelName: "Account Holder Name",
+                    labelKey: "Account Holder Name",
+                    //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
+                },
+                props: {
+                    disabled: true,
+                },
+                required: true,
+                pattern: getPattern("Name"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkBankAccountHolder",
+            }),
+        },
+        bankAccountTypeRadioGroupDisabled: {
+            uiFramework: "custom-containers",
+            componentPath: "RadioGroupContainer",
+            moduleName: "egov-services",
+            gridDefination: {
+              xs: 12,
+              sm: 12,
+              md: 6,
+            },
+            jsonPath: "Booking.bkAccountType",
+            props: {
+                label: {
+                    name: "Bank Account Type",
+                    key: "Bank Account Type",
+                  },
+              buttons: [
+                {
+                  labelName: "Saving",
+                  labelKey: "Saving",
+                  value: "Saving",
+                  disabled: true,
+                },
+                {
+                  label: "Current",
+                  labelKey: "Current",
+                  value: "Current", 
+                  disabled: true,
+                }
+              ],
+              jsonPath: "Booking.bkAccountType",
+              defaultValue: "Saving",
+              required: true,
+             
+            
+            },
+             
+           
+            required: true,
+            type: "array",
+        },
+        bkNomineeNameDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Nominee Name",
+                    labelKey: "Nominee Name",
+                    //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
+                },
+                placeholder: {
+                    labelName: "Nominee Name",
+                    labelKey: "Nominee Name",
+                    //labelKey: "BK_PCC_ACCOUNT_HOLDER_NAME_LABEL",
+                },
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                pattern: getPattern("Name"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkNomineeName",
+            }),
+        },
+     
+        dummyDiv: {
+            uiFramework: "custom-atoms",
+            componentPath: "Div",
+            gridDefination: {
+                xs: 12,
+                sm: 12,
+                md: 6,
+            },
+            props: {
+                disabled: true,
+            },
+        },
+    }),
+});
 
 
 export const bookingDetails = getCommonCard({
@@ -293,7 +604,7 @@ export const bookingDetails = getCommonCard({
                 },
                 required: true,
                 //pattern: getPattern("Name"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkBookingPurpose",
             }),
         },
@@ -312,7 +623,7 @@ export const bookingDetails = getCommonCard({
                     disabled: true,
                 },
                 //pattern: getPattern("Name"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkLocationChangeAmount",
             }),
             visible : false,
@@ -332,7 +643,7 @@ export const bookingDetails = getCommonCard({
                     disabled: true,
                 },
                 //pattern: getPattern("Name"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkSector",
             }),
         },
@@ -378,7 +689,7 @@ export const bookingDetails = getCommonCard({
                     disabled: true,
                 },
                 //pattern: getPattern("NoOfEmp"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkDimension",
             }),
         },
@@ -397,7 +708,7 @@ export const bookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkLocation",
             }),
         },
@@ -415,7 +726,7 @@ export const bookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
 
                 jsonPath: "Booking.bkFromDate",
             }),
@@ -437,7 +748,7 @@ export const bookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkToDate",
             }),
             visible: false,
@@ -446,7 +757,7 @@ export const bookingDetails = getCommonCard({
             ...getTextField({
                 label: {
                     labelName: "From Date/Time",
-                    labelKey: "BK_PCC_FROM_DATE_TIME_LABEL",
+                    labelKey: "From Date/Time",
                 },
                 placeholder: {
                     labelName: "From Date/Time",
@@ -456,7 +767,7 @@ export const bookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
 
                 jsonPath: "DisplayPacc.bkDisplayFromDateTime",
             }),
@@ -466,18 +777,18 @@ export const bookingDetails = getCommonCard({
             ...getTextField({
                 label: {
                     labelName: "To Date/Time",
-                    labelKey: "BK_PCC_TO_DATE_TIME_LABEL",
+                    labelKey: "To Date/Time",
                 },
                 placeholder: {
                     labelName: "To Date/Time",
-                    labelKey: "BK_PCC_TO_DATE_TIME_PLACEHOLDER",
+                    labelKey: "To Date/Time",
                 },
 
                 required: true,
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "DisplayPacc.bkDisplayToDateTime",
             }),
             visible: false,
@@ -531,7 +842,7 @@ export const bookingDetails = getCommonCard({
                     disabled: true,
                 },
 
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkCleansingCharges",
             }),
         },
@@ -550,7 +861,7 @@ export const bookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkRent",
             }),
         },
@@ -570,7 +881,7 @@ export const bookingDetails = getCommonCard({
         //         //     disabled: true,
         //         // },
         //         //pattern: getPattern("NoOfEmp"),
-        //         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        //         errorMessage: "Please check the missing/invalid fields, then proceed!",
         //         jsonPath: "Booking.bkFacilitationCharges",
         //     }),
         // },
@@ -589,7 +900,7 @@ export const bookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkSurchargeRent",
             }),
         },
@@ -608,7 +919,7 @@ export const bookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkUtgst",
             }),
         },
@@ -627,7 +938,7 @@ export const bookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkCgst",
             }),
         },
@@ -646,7 +957,7 @@ export const bookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkRefundAmount",
             }),
         },
@@ -660,7 +971,413 @@ export const bookingDetails = getCommonCard({
                     labelName: "Customer GST",
                     labelKey: "BK_PCC_CUSTOMER_GST_PLACEHOLDER",
                 },
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkCustomerGstNo",
+            }),
+        },
+    }),
+});
+
+export const bookingDetailsDisabled = getCommonCard({
+    // header: getCommonTitle(
+    //   {
+    //     labelName: "Applicant Details",
+    //     labelKey: "BK_PCC_HEADER_STEP_2",
+    //   },
+    //   {
+    //     style: {
+    //       marginBottom: 18,
+    //     },
+    //   }
+    // ),
+
+    applicationDetailsConatinerDisabled: getCommonContainer({
+        bkBookingPurposeDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Booking Purpose",
+                    labelKey: "BK_PCC_PURPOSE_LABEL",
+                },
+                placeholder: {
+                    labelName: "Booking Purpose",
+                    labelKey: "BK_PCC_PURPOSE_PLACEHOLDER",
+                },
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                //pattern: getPattern("Name"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkBookingPurpose",
+            }),
+        },
+        bkLocationChangeAmountDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Locality",
+                    labelKey: "BK_PCC_LOCATION_CHANGE_AMOUNT_LABEL",
+                },
+                placeholder: {
+                    labelName: "Locality",
+                    labelKey: "BK_PCC_LOCATION_CHANGE_AMOUNT_PLACEHOLDER",
+                },
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                //pattern: getPattern("Name"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkLocationChangeAmount",
+            }),
+            visible : false,
+        },
+        bkSectorDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Locality",
+                    labelKey: "BK_PCC_PROPERTY_SECTOR_LABEL",
+                },
+                placeholder: {
+                    labelName: "Locality",
+                    labelKey: "BK_PCC_PROPERTY_SECTOR_PLACEHOLDER",
+                },
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                //pattern: getPattern("Name"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkSector",
+            }),
+        },
+        // bkSector: {
+        //     ...getSelectField({
+        //         label: {
+        //             labelName: "Locality",
+        //             labelKey: "BK_PCC_PROPERTY_SECTOR_LABEL",
+        //         },
+        //         // localePrefix: {
+        //         //   moduleName: "egpm",
+        //         //   masterName: "sector"
+        //         // },
+        //         placeholder: {
+        //             labelName: "Locality",
+        //             labelKey: "BK_PCC_PROPERTY_SECTOR_PLACEHOLDER",
+        //         },
+        //         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+        //         sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
+        //         jsonPath: "Booking.bkSector",
+        //         required: true,
+        //         requiredMessage: "required Message",
+        //         props: {
+        //             className: "applicant-details-error",
+        //             required: true,
+        //             // disabled: true
+        //         },
+        //     }),
+        // },
+        bkDimensionDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Dimension",
+                    labelKey: "BK_PCC_DIMENSION_LABEL",
+                },
+                placeholder: {
+                    labelName: "Dimension",
+                    labelKey: "BK_PCC_DIMENSION_PLACEHOLDER",
+                },
+
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                //pattern: getPattern("NoOfEmp"),
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkDimension",
+            }),
+        },
+        bkLocationDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Location",
+                    labelKey: "BK_PCC_LOCATION_LABEL",
+                },
+                placeholder: {
+                    labelName: "Location",
+                    labelKey: "BK_PCC_LOCATION_PLACEHOLDER",
+                },
+
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkLocation",
+            }),
+        },
+        bkFromDateDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "From Date",
+                    labelKey: "BK_PCC_FROM_DATE_LABEL",
+                },
+                placeholder: {
+                    labelName: "From Date",
+                    labelKey: "BK_PCC_FROM_DATE_PLACEHOLDER",
+                },
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+
+                jsonPath: "Booking.bkFromDate",
+            }),
+            visible: false,
+        },
+
+        bkToDateDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "To Date",
+                    labelKey: "BK_PCC_TO_DATE_LABEL",
+                },
+                placeholder: {
+                    labelName: "To Date",
+                    labelKey: "BK_PCC_TO_DATE_PLACEHOLDER",
+                },
+
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkToDate",
+            }),
+            visible: false,
+        },
+        bkDisplayFromDateTimeDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "From Date/Time",
+                    labelKey: "From Date/Time",
+                },
+                placeholder: {
+                    labelName: "From Date/Time",
+                    labelKey: "BK_PCC_FROM_DATE_TIME_PLACEHOLDER",
+                },
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+
+                jsonPath: "DisplayPacc.bkDisplayFromDateTime",
+            }),
+            visible: false,
+        },
+        bkDisplayToDateTimeDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "To Date/Time",
+                    labelKey: "To Date/Time",
+                },
+                placeholder: {
+                    labelName: "To Date/Time",
+                    labelKey: "To Date/Time",
+                },
+
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "DisplayPacc.bkDisplayToDateTime",
+            }),
+            visible: false,
+        },
+        // bkType: {
+        //     uiFramework: "custom-containers",
+        //     componentPath: "RadioGroupContainer",
+        //     moduleName: "egov-services",
+        //     gridDefination: {
+        //         xs: 12,
+        //         sm: 12,
+        //         md: 6,
+        //     },
+        //     jsonPath: "Booking.bkType",
+        //     props: {
+        //         label: {
+        //             name: "Type",
+        //             key: "BK_PCC_TYPE_LABEL",
+        //         },
+        //         buttons: [
+        //             {
+        //                 labelName: "Community Center",
+        //                 labelKey: "Community Center",
+        //                 value: "Community Center",
+        //             },
+        //             {
+        //                 label: "Parks",
+        //                 labelKey: "Parks",
+        //                 value: "Parks",
+        //             }
+        //         ],
+        //         jsonPath: "Booking.bkType",
+        //         required: true,
+        //     },
+        //     required: true,
+        //     type: "array",
+        // },
+        bkCleansingChargesDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Cleaning Charges",
+                    labelKey: "BK_PCC_CLEANING_CHARGES_LABEL",
+                },
+                placeholder: {
+                    labelName: "Cleaning Charges",
+                    labelKey: "BK_PCC_CLEANING_CHARGES_PLACEHOLDER",
+                },
+
+                required: true,
+                props: {
+                    disabled: true,
+                },
+
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkCleansingCharges",
+            }),
+        },
+        bkRentDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Rent",
+                    labelKey: "BK_PCC_RENT_LABEL",
+                },
+                placeholder: {
+                    labelName: "Rent",
+                    labelKey: "BK_PCC_RENT_PLACEHOLDER",
+                },
+
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkRent",
+            }),
+        },
+        // bkFacilitationCharges : {
+        //     ...getTextField({
+        //         label: {
+        //             labelName: "Facilitation Charges",
+        //             labelKey: "BK_PCC_FACILITATION_CHARGES_LABEL",
+        //         },
+        //         placeholder: {
+        //             labelName: "Facilitation Charges",
+        //             labelKey: "BK_PCC_FACILITATION_CHARGES_PLACEHOLDER",
+        //         },
+
+        //         required: true,
+        //         // props: {
+        //         //     disabled: true,
+        //         // },
+        //         //pattern: getPattern("NoOfEmp"),
+        //         errorMessage: "Please check the missing/invalid fields, then proceed!",
+        //         jsonPath: "Booking.bkFacilitationCharges",
+        //     }),
+        // },
+        bkSurchargeRentDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Facilitation Charges",
+                    labelKey: "BK_PCC_SURCHARGE_RENT_LABEL",
+                },
+                placeholder: {
+                    labelName: "Facilitation Charges",
+                    labelKey: "BK_PCC_SURCHARGE_RENT_PLACEHOLDER",
+                },
+
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkSurchargeRent",
+            }),
+        },
+        bkUtgstDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "UTGST",
+                    labelKey: "BK_PCC_UTGST_LABEL",
+                },
+                placeholder: {
+                    labelName: "UTGST",
+                    labelKey: "BK_PCC_UTGST_PLACEHOLDER",
+                },
+
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkUtgst",
+            }),
+        },
+        bkCgstDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "CGST",
+                    labelKey: "BK_PCC_CGST_LABEL",
+                },
+                placeholder: {
+                    labelName: "CGST",
+                    labelKey: "BK_PCC_CGST_PLACEHOLDER",
+                },
+
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkCgst",
+            }),
+        },
+        bkRefundAmountDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Refundable Amount",
+                    labelKey: "BK_PCC_RefundAmount_LABEL",
+                },
+                placeholder: {
+                    labelName: "Refundable Amount",
+                    labelKey: "BK_PCC_RefundAmount_PLACEHOLDER",
+                },
+
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
+                jsonPath: "Booking.bkRefundAmount",
+            }),
+        },
+        bkCustomerGstNoDisabled: {
+            ...getTextField({
+                label: {
+                    labelName: "Customer GST",
+                    labelKey: "BK_PCC_CUSTOMER_GST_LABEL",
+                },
+                placeholder: {
+                    labelName: "Customer GST",
+                    labelKey: "BK_PCC_CUSTOMER_GST_PLACEHOLDER",
+                },
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkCustomerGstNo",
             }),
         },

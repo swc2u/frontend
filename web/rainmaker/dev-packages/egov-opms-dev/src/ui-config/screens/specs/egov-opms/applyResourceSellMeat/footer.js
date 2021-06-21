@@ -9,6 +9,7 @@ import { getCommonApplyFooter, validateFields } from "../../utils";
 import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { httpRequest } from "../../../../../ui-utils";
+import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 import {
   createUpdateSellMeatNocApplication,
@@ -119,7 +120,7 @@ const moveToReview = (state, dispatch, applnid) => {
     );
 
     let validateDocumentField = false;
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 2; i++) {
       let isDocumentRequired = get(documentsFormat[i], "isDocumentRequired");
       let isDocumentTypeRequired = get(
         documentsFormat[i], "isDocumentTypeRequired");
@@ -227,7 +228,36 @@ const callBackForNext = async (state, dispatch) => {
       dispatch,
       'applysellmeat'
     );
+    let payload = get(state.screenConfiguration.preparedFinalObject, "SELLMEATNOC", []);
+    let nocSought = payload.nocSought;
+    if (nocSought && nocSought.length == 0) { 
+      dispatch(
+        handleField(
+          "applysellmeat",
+          "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.nocDetailsContainer.children.nocSought",
+          "props.error",
+          true
+        )
+      );
+      dispatch(
+        handleField(
+          "applysellmeat",
+          "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.nocDetailsContainer.children.nocSought",
+          "isFieldValid",
+          false
+        )
+      );
+      dispatch(
+        handleField(
+          "applysellmeat",
+          "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.nocDetailsContainer.children.nocSought",
+          "props.helperText",
+          "Please Select Valid Field"
+        )
+      );
 
+      isFormValid = false;
+    }
   }
   if (activeStep === 1) {
 
@@ -247,14 +277,19 @@ const callBackForNext = async (state, dispatch) => {
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
           isFormValid = moveToReview(state, dispatch, applicationId);
           if (isFormValid) {
-            setReviewPageRoute(state, dispatch, applicationId);
-          }
-          let errorMessage = {
-            labelName: 'SUCCESS ',
-            labelKey: "" //UPLOAD_FILE_TOAST
-          };
-          dispatch(toggleSnackbar(true, errorMessage, "success"));
+            setTimeout(function () {
+              setReviewPageRoute(state, dispatch, applicationId);
+              let errorMessage = {
+                labelName: 'SUCCESS ',
+                labelKey: "" //UPLOAD_FILE_TOAST
+              };
+              dispatch(toggleSnackbar(true, errorMessage, "success"));
+    
+            }, 2000);
+            // setReviewPageRoute(state, dispatch, applicationId);
 
+  
+          }
         } else {
 
           let errorMessage = {

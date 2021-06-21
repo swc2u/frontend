@@ -216,7 +216,7 @@ export const loginRequest = async (username = null, password = null, refreshToke
     }
   } catch (error) {
     const { data, status } = error.response;
-    if (status === 400) {
+    if (status === 400 ||status === 500 ) {
       apiError = (data.hasOwnProperty("error_description") && data.error_description) || apiError;
     }
   }

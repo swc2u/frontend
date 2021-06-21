@@ -74,56 +74,134 @@ export const searchApiCall = async (state, dispatch) => {
    let NulmSusvRenewRequest = {...searchScreenObject};
    NulmSusvRenewRequest.tenantId = tenantId;
 
-  if(get(NulmSusvRenewRequest, "toDate")){
-    let toDate = get(NulmSusvRenewRequest, "toDate").split("-").reverse().join("-");
-    set( NulmSusvRenewRequest,"toDate",toDate );
+  // if(get(NulmSusvRenewRequest, "toDate")){
+  //   let toDate = get(NulmSusvRenewRequest, "toDate").split("-").reverse().join("-");
+  //   set( NulmSusvRenewRequest,"toDate",toDate );
+  // }
+  // if(get(NulmSusvRenewRequest, "fromDate")){
+  //   let fromDate = get(NulmSusvRenewRequest, "fromDate").split("-").reverse().join("-");
+  //   set( NulmSusvRenewRequest,"fromDate",fromDate );
+  // }
+  let IsValidDate = true
+  let toDate = get(NulmSusvRenewRequest, "toDate")
+  let fromDate = get(NulmSusvRenewRequest, "fromDate")
+  if(toDate &&  (fromDate === null  || fromDate === undefined))
+  {
+    IsValidDate = false
   }
-  if(get(NulmSusvRenewRequest, "fromDate")){
-    let fromDate = get(NulmSusvRenewRequest, "fromDate").split("-").reverse().join("-");
-    set( NulmSusvRenewRequest,"fromDate",fromDate );
-  }
-  
-   const requestBody = {NulmSusvRenewRequest}
-    let response = await getSearchResults([],requestBody, dispatch,"svru");
-    try {
-      let data = response.ResponseBody.map((item) => {
-  
-        return {
-          [getTextToLocalMapping("Application Id")]: get(item, "applicationId", "-") || "-",
-          [getTextToLocalMapping("Name of StreetVendor")]: get(item, "nameOfStreetVendor", "-") || "-",
-          [getTextToLocalMapping("Application Status")]: get(item, "applicationStatus", "-") || "-",
-          [getTextToLocalMapping("Creation Date")]: get(item, "auditDetails.createdTime", "")? new Date(get(item, "auditDetails.createdTime", "-")).toISOString().substr(0,10) : "-",
-          ["code"]: get(item, "applicationUuid", "-")
-        };
-      });
+  else if(fromDate && (toDate === null  || toDate === undefined))
+{
+  IsValidDate = false
 
-      dispatch(
-        handleField(
-          "search-svru",
-          "components.div.children.searchResults",
-          "props.data",
-          data
-        )
-      );
-      dispatch(
-        handleField(
-          "search-svru",
-          "components.div.children.searchResults",
-          "props.title",
-          `${getTextToLocalMapping("Search Results for svru")} (${
-            response.ResponseBody.length
-          })`
-        )
-      );
-      showHideTable(true, dispatch);
-    } catch (error) {
+}
+if(toDate && toDate)
+{
+  if(fromDate< toDate)
+  {
+    IsValidDate = true
+
+  }
+  else if(fromDate === toDate)
+  {
+    IsValidDate = true
+
+  }
+  else
+  {
+    IsValidDate = false
+  }
+}
+  if(IsValidDate)
+  {
+    const requestBody = {NulmSusvRenewRequest}
+      let response = await getSearchResults([],requestBody, dispatch,"svru");
+      try {
+        let data = response.ResponseBody.map((item) => {
+    
+          return {
+            [getTextToLocalMapping("Application Id")]: get(item, "applicationId", "-") || "-",
+            [getTextToLocalMapping("Name of StreetVendor")]: get(item, "nameOfStreetVendor", "-") || "-",
+            [getTextToLocalMapping("Application Status")]: get(item, "applicationStatus", "-") || "-",
+            [getTextToLocalMapping("Creation Date")]: get(item, "auditDetails.createdTime", "")? new Date(get(item, "auditDetails.createdTime", "-")).toISOString().substr(0,10) : "-",
+            ["code"]: get(item, "applicationUuid", "-")
+          };
+        });
+
+        dispatch(
+          handleField(
+            "search-svru",
+            "components.div.children.searchResults",
+            "props.data",
+            data
+          )
+        );
+        dispatch(
+          handleField(
+            "search-svru",
+            "components.div.children.searchResults",
+            "props.title",
+            `${getTextToLocalMapping("Search Results for svru")} (${
+              response.ResponseBody.length
+            })`
+          )
+        );
+        showHideTable(true, dispatch);
+      } catch (error) {
+        dispatch(
+          toggleSnackbar(
+            true,
+            { labelName: "Unable to parse search results!" },
+            "error"
+          )
+        );
+      }
+    }
+    else{
+      if(toDate &&  (fromDate === null  || fromDate === undefined))
+    {
       dispatch(
         toggleSnackbar(
           true,
-          { labelName: "Unable to parse search results!" },
-          "error"
+          {
+            labelName: "Please select from date",
+            labelKey: "ERR_NULM_FROM_DATE_SELECTION_VALIDATION",
+          },
+          "warning"
         )
       );
+        }
+        else if(fromDate && (toDate === null  || toDate === undefined))
+        {
+          dispatch(
+            toggleSnackbar(
+              true,
+              {
+                labelName: "Please select to date",
+                labelKey: "ERR_NULM_TO_DATE_SELECTION_VALIDATION",
+              },
+              "warning"
+            )
+          );
+  
+        }
+        if(toDate && toDate)
+        {
+          if(fromDate > toDate)
+          {
+            dispatch(
+              toggleSnackbar(
+                true,
+                {
+                  labelName: "From date shpuld be less then to date",
+                  labelKey: "ERR_NULM_FROM_DATE_TO_DATE_SELECTION_VALIDATION",
+                },
+                "warning"
+              )
+            );
+  
+          }
+        }
+  
     }
   }
 };

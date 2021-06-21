@@ -21,16 +21,48 @@ import axios from 'axios';
 import { sampleGetBill, ApplicationConfiguration } from "../../../../../ui-utils/sampleResponses";
 import { httpRequest } from "../../../../../ui-utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-const ActiongetLetter = async (state, dispatch) => {
-  const { PaymentDetails} = state.screenConfiguration.preparedFinalObject;
-  try {
-    
-    downloadAcknowledgementLetter(PaymentDetails,"rrp_payment_order"); 
-  }
-  catch(error)
-  {
-    dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
-  }
+const PaymentOrderWithoutDetails = async (state, dispatch) => {
+   //let response = WFConfig(); 
+   const { PaymentDetails} = state.screenConfiguration.preparedFinalObject;
+ 
+   try {
+     const applicationNumber = getQueryArg(
+       window.location.href,
+       "applicationNumber"
+     );
+     const tenantId = getQueryArg(window.location.href, "tenantId");
+     let queryObject = [
+       {
+         key: "tenantId",
+         value: tenantId
+       }];
+     queryObject.push({
+       key: "businessIds",
+       value: applicationNumber
+     });
+       let url = "/pension-services/v1/_searchWorkflowPaymentDetails";
+     
+       let pdfResponce = await httpRequest(
+         "post",
+         url,
+         "_search",          
+         queryObject
+       );
+     let config = ApplicationConfiguration();
+   let employee_type= get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].employee.employeeType", '' )
+     if(employee_type === config.EMPLOYEE_TYPE)
+     {
+       downloadAcknowledgementLetter(pdfResponce.PaymentDetails,config.RRP_PAYMENT_ORDER_DAILY_WAGER_WITHOUT_DETAILS,config.RRP_PAYMENT_ORDER_DAILY_WAGER_config)
+     }
+   else
+     {
+       downloadAcknowledgementLetter(pdfResponce.PaymentDetails,config.RRP_PAYMENT_ORDER_WITHOUT_DETAILS,config.RRP_PAYMENT_ORDER_config)
+     }
+   }
+   catch(error)
+   {
+     dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+   }
 }
 const ActiongetApplication = async (state, dispatch) => {
   //let response = WFConfig(); 
@@ -111,7 +143,7 @@ export const otherDetails = (data) => {
       },
       required: true,
       props: {
-        disabled: data[6].IsClose,       
+        disabled: data[7].IsClose,       
       },
      pattern: getPMSPattern("WFComment"),
       jsonPath: "ProcessInstances[0].comment"
@@ -178,15 +210,16 @@ export const otherDetails = (data) => {
   //   }
 
   // },
-  
+  button: getCommonContainer({
+    buttonContainer: getCommonContainer({
   POApplication: {
     componentPath: "Button",
     gridDefination: {
       xs: 12,
-      sm: 6,
+      sm: 4,
       align: "left"
     },
-    visible: data[5].Isletter,
+    visible: data[6].Isletterdoc,
     props: {
       variant: "contained",
       color: "primary",
@@ -213,14 +246,15 @@ export const otherDetails = (data) => {
     },
     
   },
+  break: getBreak(),
   pensionLetter: {
     componentPath: "Button",
     gridDefination: {
       xs: 12,
-      sm: 6,
+      sm: 4,
       align: "left"
     },
-    visible: false,//data[5].Isletter,
+    visible: data[6].Isletterdoc,
     props: {
       variant: "contained",
       color: "primary",
@@ -231,21 +265,20 @@ export const otherDetails = (data) => {
         height: "48px"
       }
     },
-
-    children: {
-     
-
+    children: {  
       buttonLabel: getLabel({
         labelName: "NEW APPLICATION",
-        labelKey: "PENSION_LETTER_DOWNLOAD"
+        labelKey: "PENSION_LETTER_DOWNLOAD_DETAILS"
       })
     },
     onClickDefination: {
       action: "condition",
-      callBack: ActiongetLetter
+      callBack: PaymentOrderWithoutDetails
 
     },
     
   },
+  })
+  })
 });
 }

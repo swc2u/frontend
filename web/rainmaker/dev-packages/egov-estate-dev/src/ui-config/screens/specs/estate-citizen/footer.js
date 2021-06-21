@@ -277,6 +277,7 @@ export const previousButton = {
       let cardValues = Object.values(cardItems)
       cardKeys.forEach((cardItem, index) => {
         let isValid = true
+        if(!!cardValues[index].visible) {
         if(!!cardValues[index].children.cardContent && !!cardValues[index].children.cardContent.children.details_container.children.multiContainer) {
           const _componentJsonPath = `components.div.children.formwizardFirstStep.children.${cardItem}.children.cardContent.children.details_container.children.multiContainer.children.multiInfo.props.items`
           const _components = get(
@@ -296,6 +297,7 @@ export const previousButton = {
           isValid = validateFields(`components.div.children.formwizardFirstStep.children.${cardItem}.children.cardContent.children.details_container.children`, state,
           dispatch, "_apply");
         }
+      }
         isFormValid = isFormValid && isValid
       })
     if(!!isFormValid) {

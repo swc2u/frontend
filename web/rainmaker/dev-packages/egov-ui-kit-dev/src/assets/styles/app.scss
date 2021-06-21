@@ -300,10 +300,7 @@ body.employee-user-profile {
 }
 
 @media only screen and (max-width: 768px) {
-  .show-action-menu {
-    display: none;
-  }
-
+  
   .sort-button {
     display: none;
   }
@@ -578,3 +575,9 @@ body.employee-user-profile {
 //     max-height: calc(100% - 150px);
 //   }
 // }
+
+@media only screen and (max-width: 767px) {
+  .show-action-menu {
+    display: none;
+  }
+}

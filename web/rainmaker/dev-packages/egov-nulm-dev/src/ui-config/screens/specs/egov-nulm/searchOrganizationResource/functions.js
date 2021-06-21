@@ -82,7 +82,49 @@ export const searchApiCall = async (state, dispatch) => {
   //   let fromDate = get(OrganizationRequest, "fromDate").split("-").reverse().join("-");
   //   set( OrganizationRequest,"fromDate",fromDate );
   // }
-  
+  let IsValidDate = true
+  let toDate = get(OrganizationRequest, "toDate")
+  let fromDate = get(OrganizationRequest, "fromDate")
+  if(toDate &&  (fromDate === null  || fromDate === undefined))
+  {
+    IsValidDate = false
+  }
+  else if(fromDate && (toDate === null  || toDate === undefined))
+{
+  IsValidDate = false
+
+}
+if(toDate && toDate)
+{
+  if(fromDate< toDate)
+  {
+    IsValidDate = true
+
+  }
+  else if(fromDate === toDate)
+  {
+    IsValidDate = true
+
+  }
+  else
+  {
+    IsValidDate = false
+  }
+}
+// if(toDate && toDate)
+// {
+//   if(fromDate< toDate)
+//   {
+//     IsValidDate = true
+
+//   }
+//   else
+//   {
+//     IsValidDate = false
+//   }
+// }
+if(IsValidDate)
+{
    const requestBody = {OrganizationRequest}
     let response = await getSearchResults([],requestBody, dispatch,"organization");
     try {
@@ -124,6 +166,54 @@ export const searchApiCall = async (state, dispatch) => {
           "error"
         )
       );
+    }
+  }
+    else{
+      if(toDate &&  (fromDate === null  || fromDate === undefined))
+    {
+      dispatch(
+        toggleSnackbar(
+          true,
+          {
+            labelName: "Please select from date",
+            labelKey: "ERR_NULM_FROM_DATE_SELECTION_VALIDATION",
+          },
+          "warning"
+        )
+      );
+        }
+        else if(fromDate && (toDate === null  || toDate === undefined))
+        {
+          dispatch(
+            toggleSnackbar(
+              true,
+              {
+                labelName: "Please select to date",
+                labelKey: "ERR_NULM_TO_DATE_SELECTION_VALIDATION",
+              },
+              "warning"
+            )
+          );
+  
+        }
+        if(toDate && toDate)
+        {
+          if(fromDate > toDate)
+          {
+            dispatch(
+              toggleSnackbar(
+                true,
+                {
+                  labelName: "From date shpuld be less then to date",
+                  labelKey: "ERR_NULM_FROM_DATE_TO_DATE_SELECTION_VALIDATION",
+                },
+                "warning"
+              )
+            );
+  
+          }
+        }
+  
     }
   }
 };

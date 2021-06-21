@@ -42,7 +42,7 @@ class AutoSuggestor extends Component {
     );
     //For multiSelect to be enabled, pass "isMulti: true" in props.
     return (
-      <div>
+      <div style={this.props.disabled ? {pointerEvents: "none", opacity: "1.4"} : {}}>
         <AutoSuggest
           onSelect={this.onSelect}
           suggestions={suggestions}

@@ -17,8 +17,20 @@ class DialogContainer extends React.Component {
 
   render() {
     const { open, maxWidth, children } = this.props;
+     let fullscreen = false;
+  // Fullscreen covering full mobile screen making it impossible to close dialog. Hence commenting out below line
+  if (window.innerWidth <= 768) {
+    fullscreen = true;
+  }
     return (
-      <Dialog open={open} maxWidth={maxWidth} onClose={this.handleClose}>
+      <Dialog open={open} maxWidth={maxWidth} onClose={this.handleClose} style={{zIndex:2000}}>
+    {/* //     <Dialog
+    //   fullScreen={fullscreen}
+    //   open={open}
+    //   onClose={this.handleClose}
+    //   maxWidth={false}
+    //   style={{zIndex:2000}}
+    // > */}
         <DialogContent children={children} />
       </Dialog>
     );

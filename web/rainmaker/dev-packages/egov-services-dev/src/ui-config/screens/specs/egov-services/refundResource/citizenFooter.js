@@ -7,7 +7,8 @@ import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 
 import {
-    createUpdatePCCApplication
+    createUpdatePCCApplication,
+    createUpdateCgbApplication
 } from "../../../../../ui-utils/commons";
 
 import {
@@ -38,6 +39,18 @@ export const callBackForCancelParkAndCC = async (state, dispatch) => {
         "screenConfiguration.preparedFinalObject.Booking.businessService",
         {}
     );
+
+    const cancellationReason = get(
+        state,
+        "screenConfiguration.preparedFinalObject.Booking.bkRemarks",
+        {}
+    );
+    // console.log(typeof(state.screenConfiguration.preparedFinalObject.Booking.bkRemarks));
+    // if(state && state.screenConfiguration.preparedFinalObject.Booking.bkRemarks){
+    //     console.log("Not Null Nero")
+    // }else{
+    //     console.log(" sssssNull Nero",)
+    // }
 /*
     var billAccountDetails = get(
         screenConfiguration,
@@ -120,7 +133,8 @@ export const callBackForCancelParkAndCC = async (state, dispatch) => {
             dispatch(toggleSnackbar(true, errorMessage, "error"));
         }
     }*/
-
+   // console.log(state, "Nero state")
+if(state && state.screenConfiguration.preparedFinalObject.Booking.bkRemarks){
     let response = await createUpdatePCCApplication(
         state,
         dispatch,
@@ -142,6 +156,14 @@ export const callBackForCancelParkAndCC = async (state, dispatch) => {
         };
         dispatch(toggleSnackbar(true, errorMessage, "error"));
     }
+
+} else {
+    let errorMessage = {
+        labelName: "Please enter booking cancellation reason",
+        labelKey: "", //UPLOAD_FILE_TOAST
+    };
+    dispatch(toggleSnackbar(true, errorMessage, "error"));
+}
 
 };
 
@@ -193,31 +215,56 @@ export const callBackForRefundSecFee = async (state, dispatch) => {
     //         }&businessService=${businessService}`
     //     )
     // );
+    if(businessService==="PACC"){
+        let response = await createUpdatePCCApplication(
+            state,
+            dispatch,
+            "SECURITY_REFUND"
+        );
 
-            let response = await createUpdatePCCApplication(
-                state,
-                dispatch,
-                "SECURITY_REFUND"
+        let responseStatus = get(response, "status", "");
+        if (responseStatus == "SUCCESS" || responseStatus == "success" || responseStatus == "200") {
+            dispatch(
+                setRoute(
+                    `/egov-services/acknowledgementsecurityfeerefundparkcc?purpose=confirmed&applicationNumber=${applicationNumber}&tenantId=${getTenantId().split(".")[0]
+                    }&businessService=${businessService}`
+                )
             );
-
-            let responseStatus = get(response, "status", "");
-            if (responseStatus == "SUCCESS" || responseStatus == "success" || responseStatus == "200") {
-                dispatch(
-                    setRoute(
-                        `/egov-services/acknowledgementsecurityfeerefundparkcc?purpose=confirmed&applicationNumber=${applicationNumber}&tenantId=${getTenantId().split(".")[0]
-                        }&businessService=${businessService}`
-                    )
-                );
-            } else {
-                let errorMessage = {
-                    labelName: "Submission Falied, Try Again later!",
-                    labelKey: "", //UPLOAD_FILE_TOAST
-                };
-                dispatch(toggleSnackbar(true, errorMessage, "error"));
-            }
+        } else {
+            let errorMessage = {
+                labelName: "Submission Falied, Try Again later!",
+                labelKey: "", //UPLOAD_FILE_TOAST
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "error"));
+        }
 
 
 
+    }else{
+        let response = await createUpdateCgbApplication(
+            state,
+            dispatch,
+            "SECURITY_REFUND"
+        );
+
+        let responseStatus = get(response, "status", "");
+        if (responseStatus == "SUCCESS" || responseStatus == "success" || responseStatus == "200") {
+            dispatch(
+                setRoute(
+                    `/egov-services/acknowledgementsecurityfeerefundparkcc?purpose=confirmed&applicationNumber=${applicationNumber}&tenantId=${getTenantId().split(".")[0]
+                    }&businessService=${businessService}`
+                )
+            );
+        } else {
+            let errorMessage = {
+                labelName: "Submission Falied, Try Again later!",
+                labelKey: "", //UPLOAD_FILE_TOAST
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "error"));
+        }
+
+    }
+        
 
 };
 

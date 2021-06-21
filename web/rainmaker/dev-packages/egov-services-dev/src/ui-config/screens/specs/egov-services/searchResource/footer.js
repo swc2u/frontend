@@ -33,7 +33,7 @@ export const footerReviewTop = (
             labelKey: "BK_MY_BK_CERTIFICATE_PRINT",
         },
         link: () => {
-            downloadCertificate(state, applicationNumber, tenantId, "print");
+            downloadCertificate(state, applicationNumber, tenantId, "false", "print");
         },
         leftIcon: "book",
     };
@@ -48,7 +48,7 @@ export const footerReviewTop = (
     let receiptPrintObject = {
         label: { labelName: "Receipt", labelKey: "BK_MY_BK_RECEIPT_PRINT" },
         link: () => {
-            downloadReceipt(state, applicationNumber, tenantId, "print");
+            downloadReceipt(state, applicationNumber, tenantId, "false", "print");
         },
         leftIcon: "receipt",
     };
@@ -72,9 +72,19 @@ export const footerReviewTop = (
         },
         leftIcon: "assignment",
     };
-
     if (
-        (status === "APPLIED" || status === "APPROVED"  || status === "MODIFIED" || status === "RE_INITIATED")
+        (status === "APPLIED" &&  applicationNumber.includes('ROOM'))
+        ) {
+            downloadMenu = [
+                receiptDownloadObject,
+                certificateDownloadObject,
+            ];
+            printMenu = [
+                receiptPrintObject,
+                certificatePrintObject,
+            ];
+        }else if (
+            (status === "APPLIED" || status === "APPROVED"  || status === "MODIFIED" || status === "RE_INITIATED" ||  status== "PENDING_FOR_APPROVAL_CLEARK_DEO" || status== "REFUND_APPROVED" )
     ) {
         downloadMenu = [
             applicationDownloadObject,

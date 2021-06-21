@@ -149,21 +149,21 @@ let documentCode = [
   continue = (e) => {
     const { toggleSnackbarAndSetText,docVal,documentMAP2 } = this.props;
     e.preventDefault();
+    this.props.nextStep();
+  //  if(docVal === false || documentMAP2 === "Document Not Found"){
+  //     this.props.toggleSnackbarAndSetText(
+  //           true,
+  //           {
+  //             labelName: "Please upload mandatory documents!",
+  //             labelKey: `Please upload mandatory documents!`,
+  //           },
+  //           "warning"
+  //         );
+  //   }
 
-   if(docVal === false || documentMAP2 === "Document Not Found"){
-      this.props.toggleSnackbarAndSetText(
-            true,
-            {
-              labelName: "Please upload mandatory documents!",
-              labelKey: `Please upload mandatory documents!`,
-            },
-            "warning"
-          );
-    }
-
-    else if(docVal === true){
-      this.props.nextStep();
-    }
+  //   else if(docVal === true){
+  //     this.props.nextStep();
+  //   }
   };
   onCitizenNameChange = (e) => {};
   back = (e) => {
@@ -201,7 +201,7 @@ let documentCode = [
       accept: ".pdf,.png,.jpg,.jpeg",
     };
 
-    let maxFileSize = 1025;
+    let maxFileSize = 5121;
 
     let documentDatatwo = [
       {
@@ -221,6 +221,7 @@ let documentCode = [
         <div>
         <div classsName="container">
          <div className="col-xs-12">
+
         {this.state.documentsContract.length > 0 && (
           <DocumentList
             documentsList={this.state.documentsContract}
@@ -238,7 +239,7 @@ let documentCode = [
 </div>
 </div>
 <Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
-      <div className="col-sm-12 col-xs-12" style={{textAlign: 'right'}}>
+      <div className="col-sm-12 col-xs-12 applyBtnWrapper" style={{textAlign: 'right'}}>
       <Button
               className="responsive-action-button"
               primary={true}

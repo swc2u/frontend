@@ -5,8 +5,8 @@ import { getMyConnectionResults, getSWMyConnectionResults } from '../../../../..
 export const fetchData = async (action, state, dispatch) => {
   let queryObject = [{ key: "mobileNumber", value: JSON.parse(getUserInfo()).mobileNumber }]
   let responseWater = [], responseSewerage = [];
-  try { responseWater = await getMyConnectionResults(queryObject, dispatch); } catch (error) { responseWater = []; console.log(error) }
-  try { responseSewerage = await getSWMyConnectionResults(queryObject, dispatch); } catch (error) { responseSewerage = []; console.log(error) }
+  try { responseWater = await getMyConnectionResults(queryObject, dispatch,action); } catch (error) { responseWater = []; console.log(error) }
+  try { responseSewerage = await getSWMyConnectionResults(queryObject, dispatch,action); } catch (error) { responseSewerage = []; console.log(error) }
   try {
     const water = (responseWater && responseWater.WaterConnection)?responseWater.WaterConnection:[]
     const sewerage = (responseSewerage && responseSewerage.SewerageConnections)?responseSewerage.SewerageConnections:[]

@@ -66,3 +66,10 @@ export const getSearchResults = async (tenantId ,licenseNumber) => {
     );
   }
 };
+export const WNSConfigName =()=>{
+  return {
+      ONE_TIME_FEE_WS: "PUBLIC_HEALTH_SERVICES_DIV2",
+      ONE_TIME_FEE_SW:"PUBLIC_HEALTH_SERVICES_DIV4"
+    
+};
+}

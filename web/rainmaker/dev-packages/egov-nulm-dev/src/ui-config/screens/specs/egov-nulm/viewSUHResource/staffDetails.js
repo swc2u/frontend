@@ -7,7 +7,7 @@ import {
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-  
+  import {  checkValueForNA } from "../../utils";
   const gotoCreatePage = (state, dispatch) => {
      const createUrl = `/egov-nulm/create-suh?step=3`;
     dispatch(setRoute(createUrl));
@@ -76,7 +76,7 @@ import {
             labelName: "Remarks",
             labelKey: "NULM_SUH_REMARKS"
           },
-          { jsonPath: "NulmSuhRequest.suhStaffMaintenance[0].managerRemark" }
+          { jsonPath: "NulmSuhRequest.suhStaffMaintenance[0].managerRemark" ,callBack: checkValueForNA }
         ),
         isSecurityStaff: getLabelWithValue(
             {
@@ -90,7 +90,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhStaffMaintenance[0].securityStaffRemark" }
+            { jsonPath: "NulmSuhRequest.suhStaffMaintenance[0].securityStaffRemark" ,callBack: checkValueForNA }
           ),
           isCleaner: getLabelWithValue(
             {
@@ -104,7 +104,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhStaffMaintenance[0].cleanerRemark" }
+            { jsonPath: "NulmSuhRequest.suhStaffMaintenance[0].cleanerRemark" ,callBack: checkValueForNA }
           ),
       
       }),

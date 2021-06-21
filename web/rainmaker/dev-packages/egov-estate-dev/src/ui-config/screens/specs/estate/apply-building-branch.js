@@ -133,6 +133,9 @@ const getData = async(action, state, dispatch) => {
     },
     {
       name: "sector"
+    },
+    {
+      name: "village"
     }
     ]
   }]

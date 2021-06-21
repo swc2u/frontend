@@ -159,6 +159,9 @@ const mapStateToProps = (state, ownProps) => {
         "screenConfiguration.preparedFinalObject.DisplayPacc.bkDisplayToDateTime",
         []
     );
+    if(timeSlots && timeSlots.length>1){
+        bkDisplayToDateTime= `${bkToDate} ,${timeSlots[1].slot.split('-')[1]}`
+    }
     return {
         bookingLocation: bookingLocation,
         fromDate: bkFromDate,

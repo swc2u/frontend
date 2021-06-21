@@ -252,28 +252,28 @@ export const createUpdatePO = async (state, dispatch, action) => {
   set(
     purchaseOrders[0],
     "purchaseOrderDate",
-    convertDateToEpoch(get(purchaseOrders[0], "purchaseOrderDate"), "dayStart")
+    convertDateToEpoch(get(purchaseOrders[0], "purchaseOrderDate"), "daymid")
   );
   set(
     purchaseOrders[0],
     "expectedDeliveryDate",
-    convertDateToEpoch(get(purchaseOrders[0], "expectedDeliveryDate"), "dayStart")
+    convertDateToEpoch(get(purchaseOrders[0], "expectedDeliveryDate"), "daymid")
   );
 
   set(
     purchaseOrders[0],
     "rateContractDate",
-    convertDateToEpoch(get(purchaseOrders[0], "rateContractDate"), "dayStart")
+    convertDateToEpoch(get(purchaseOrders[0], "rateContractDate"), "daymid")
   );
   set(
     purchaseOrders[0],
     "agreementDate",
-    convertDateToEpoch(get(purchaseOrders[0], "agreementDate"), "dayStart")
+    convertDateToEpoch(get(purchaseOrders[0], "agreementDate"), "daymid")
   );
   set(
     purchaseOrders[0],
     "agreementStartDate",
-    convertDateToEpoch(get(purchaseOrders[0], "agreementStartDate"), "dayStart")
+    convertDateToEpoch(get(purchaseOrders[0], "agreementStartDate"), "daymid")
   );
   set(
     purchaseOrders[0],
@@ -283,17 +283,17 @@ export const createUpdatePO = async (state, dispatch, action) => {
   set(
     purchaseOrders[0],
     "priceList[0].rateContractDate",
-    convertDateToEpoch(get(purchaseOrders[0], "priceList[0].rateContractDate"), "dayStart")
+    convertDateToEpoch(get(purchaseOrders[0], "priceList[0].rateContractDate"), "daymid")
   );
   set(
     purchaseOrders[0],
     "priceList[0].agreementDate",
-    convertDateToEpoch(get(purchaseOrders[0], "priceList[0].agreementDate"), "dayStart")
+    convertDateToEpoch(get(purchaseOrders[0], "priceList[0].agreementDate"), "daymid")
   );
   set(
     purchaseOrders[0],
     "priceList[0].agreementStartDate",
-    convertDateToEpoch(get(purchaseOrders[0], "priceList[0].agreementStartDate"), "dayStart")
+    convertDateToEpoch(get(purchaseOrders[0], "priceList[0].agreementStartDate"), "daymid")
   );
   set(
     purchaseOrders[0],

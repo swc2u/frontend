@@ -208,16 +208,16 @@ export const sellmeatapplicantSummary = getCommonGrayCard({
               labelKey: "NOC_SOUGHT_FOR_LABEL"
             },
             {
-              jsonPath:
-                "nocApplicationDetail[0].applicationdetail",
-              callBack: value => {
-                if (value != undefined) {
-                  let applicantEmail = JSON.parse(value).hasOwnProperty('nocSought') ? JSON.parse(value)['nocSought'] : '';
-                  return applicantEmail;
-                } else {
-                  return '';
-                }
-              }
+              jsonPath:"nocApplicationDetail[0].nocSoughtFinalData",
+              //   "nocApplicationDetail[0].applicationdetail",
+              // callBack: value => {
+              //   if (value != undefined) {
+              //     let applicantEmail = JSON.parse(value).hasOwnProperty('nocSought') ? JSON.parse(value)['nocSought'] : '';
+              //     return applicantEmail;
+              //   } else {
+              //     return '';
+              //   }
+              // }
             }
           )
         }),

@@ -3,12 +3,33 @@ import {
     getCommonContainer,
     getCommonGrayCard,
     getCommonSubHeader,
+    getCommonHeader,
     getLabel,
     getLabelWithValue,
     convertEpochToDate,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { gotoApplyWithStep } from "../../utils/index";
+import { getCommonApplyFooter, showHideAdhocPopup } from "../../utils";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
+import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import "./index.css";
+import get from "lodash/get";
+import {
+    convertDateInDMY
+} from "../../utils";
+import {
+
+    getTenantId,
+    localStorageSet,
+    setapplicationNumber,
+    getapplicationNumber,
+} from "egov-ui-kit/utils/localStorageUtils";
+
+
+export const callBackForBack = (state, dispatch) => {
+    window.history.back();
+};
 
 export const pccApplicantSummary = getCommonGrayCard({
     header: {
@@ -159,8 +180,8 @@ export const pccBankSummary = getCommonGrayCard({
                 applicantContainer: getCommonContainer({
                     bkBankName: getLabelWithValue(
                         {
-                            labelName: "Bank Name",
-                            labelKey:  "Bank Name",
+                            labelName: "Bank Account Name",
+                            labelKey:  "Bank Account Name",
                             //labelKey: "BK_PCC_BANK_NAME_LABEL",
                         },
                         {
@@ -208,7 +229,17 @@ export const pccBankSummary = getCommonGrayCard({
                             jsonPath: "Booking.bkAccountType",
                         }
                     ),
-                    
+                    bkNomineeName: getLabelWithValue(
+                        {
+                            labelName: "Nominee Name",
+                            labelName: "Nominee Name",
+                            //labelKey: "BK_PCC_BANK_ACCOUNT_TYPE_LABEL",
+                        },
+                        {
+                            jsonPath: "Booking.bkNomineeName",
+                        }
+                    ),
+                   
                    
                 }),
             }),
@@ -220,4 +251,350 @@ export const pccBankSummary = getCommonGrayCard({
         type: "array",
     },
 });
+
+export const roomBookingSummary = getCommonGrayCard({
+    header: {
+        uiFramework: "custom-atoms",
+        componentPath: "Container",
+        props: {
+            style: { marginBottom: "10px" },
+        },
+        children: {
+            header: {
+                gridDefination: {
+                    xs: 8,
+                },
+                ...getCommonSubHeader({
+                    labelName: "Room Details",
+                    labelKey: "Room Details",
+                }),
+            },
+            
+        },
+    },
+    cardOne: {
+        uiFramework: "custom-containers",
+        componentPath: "MultiItem",
+        props: {
+            className: "sellmeatapplicant-summary",
+            scheama: getCommonGrayCard({
+                applicantContainer: getCommonContainer({
+                    bkBankName: getLabelWithValue(
+                        {
+                            labelName: "Type Of Booked Room",
+                            labelKey: "Type Of Booked Room",
+                        },
+                        {
+                            jsonPath: "Booking.roomsModel[0].typeOfRoom",
+                        }
+                    ),
+                    bkBankAccountNumber: getLabelWithValue(
+                        {
+                            labelName: "Number of Booked Rooms",
+                            labelKey: "Number of Booked Rooms",
+                        },
+                        {
+                            jsonPath: "Booking.roomsModel[0].totalNoOfRooms",
+                        }
+                    ),
+                    bkIfscCode: getLabelWithValue(
+                        {
+                            labelName: "From Date",
+                            labelKey: "From Date",
+                        },
+                        {
+                            jsonPath: "Booking.roomsModel[0].fromDate",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                    return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            }
+                        }
+                        
+                    ),
+                    bkAccountHolderName: getLabelWithValue(
+                      
+                        {
+                            labelName: "To Date",
+                            labelKey: "To Date",
+                        },
+                        {
+                            jsonPath: "Booking.roomsModel[0].toDate",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                    return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            }
+                        }
+                    ),
+               
+                   
+                }),
+            }),
+            items: [],
+            hasAddItem: false,
+            isReviewPage: true,
+            sourceJsonPath: "Booking",
+
+        }, 
+        type: "array",
+    },
+});
+
     
+
+export const roomBookingSummaryDetailCard = getCommonGrayCard({
+    header1:  getCommonContainer({
+    header: getCommonHeader({
+        labelName: "Task Details",
+        labelKey: "BK_MY_BK_APPLICATION_DETAILS_HEADER",
+    }),
+    applicationNumber: {
+        uiFramework: "custom-atoms-local",
+        moduleName: "egov-services",
+        componentPath: "ApplicationNoContainer",
+        props: {
+            number: getapplicationNumber(), //localStorage.getItem('applicationsellmeatNumber')
+        },
+    },
+}), 
+header: {
+    uiFramework: "custom-atoms",
+    componentPath: "Container",
+    props: {
+        style: { marginBottom: "10px" },
+    },
+    children: {
+        header: {
+            gridDefination: {
+                xs: 8,
+            },
+            ...getCommonSubHeader({
+                labelName: "Room Details",
+                labelKey: "Room Details",
+            }),
+        },
+        
+    },
+},
+cardOne: {
+    uiFramework: "custom-containers",
+    componentPath: "MultiItem",
+    props: {
+        className: "sellmeatapplicant-summary",
+        scheama: getCommonGrayCard({
+            applicantContainer: getCommonContainer({
+                bkBankName: getLabelWithValue(
+                    {
+                        labelName: "Type Of Booked Room",
+                        labelKey: "Type Of Booked Room",
+                    },
+                    {
+                        jsonPath: "roomDetail.typeOfRoom",
+                    }
+                ),
+                bkBankAccountNumber: getLabelWithValue(
+                    {
+                        labelName: "Number of Booked Rooms",
+                        labelKey: "Number of Booked Rooms",
+                    },
+                    {
+                        jsonPath: "roomDetail.totalNoOfRooms",
+                    }
+                ),
+                bkIfscCode: getLabelWithValue(
+                    {
+                        labelName: "From Date",
+                        labelKey: "From Date",
+                    },
+                    {
+                        jsonPath: "roomDetail.fromDate",
+                        callBack: (value) => {
+                            if (value === undefined || value === "" || value === null) {
+                                return "NA"
+                            } else {
+                                return convertDateInDMY(value);
+                            }
+                        }
+                    }
+                    
+                ),
+                bkAccountHolderName: getLabelWithValue(
+                  
+                    {
+                        labelName: "To Date",
+                        labelKey: "To Date",
+                    },
+                    {
+                        jsonPath: "roomDetail.toDate",
+                        callBack: (value) => {
+                            if (value === undefined || value === "" || value === null) {
+                                return "NA"
+                            } else {
+                                return convertDateInDMY(value);
+                            }
+                        }
+                    }
+                ),
+           
+               
+            }),
+        }),
+        items: [],
+        hasAddItem: false,
+        isReviewPage: true,
+        sourceJsonPath: "Booking",
+
+    }, 
+    type: "array",
+},
+});
+
+
+export const roomDetaiPage = getCommonGrayCard({
+header: {
+    uiFramework: "custom-atoms",
+    componentPath: "Container",
+    props: {
+        style: { marginBottom: "10px" },
+    },
+    children: {
+        header: {
+            gridDefination: {
+                xs: 8,
+            },
+            ...getCommonSubHeader({
+                labelName: "Room Details",
+                labelKey: "Room Details",
+            }),
+        },
+        
+    },
+},
+cardOne: {
+    uiFramework: "custom-containers",
+    componentPath: "MultiItem",
+    props: {
+        className: "sellmeatapplicant-summary",
+        scheama: getCommonGrayCard({
+            applicantContainer: getCommonContainer({
+                roomType: getLabelWithValue(
+                    {
+                        labelName: "Type Of Booked Room",
+                        labelKey: "Type Of Booked Room",
+                    },
+                    {
+                        jsonPath: "roomDetailPageData.typeOfRooms",
+                    }
+                ),
+                numberOfAcRooms: getLabelWithValue(
+                    {
+                        labelName: "Number of Booked AC Rooms",
+                        labelKey: "Number of Booked AC Rooms",
+                    },
+                    {
+                        jsonPath: "roomDetailPageData.totalNoOfACRooms",
+                        callBack: (value) => {
+                            if (value === 0) {
+                                return "0"
+                            } else {
+                                return value;
+                            }
+                        }
+                    }
+                ),
+                numberOfNonAcRooms: getLabelWithValue(
+                    {
+                        labelName: "Number of Booked Non AC Rooms",
+                        labelKey: "Number of Booked Non AC Rooms",
+                    },
+                    {
+                        jsonPath: "roomDetailPageData.totalNoOfNonACRooms",
+                        callBack: (value) => {
+                            if (value === 0) {
+                                return "0"
+                            } else {
+                                return value;
+                            }
+                        }
+                    }
+                ),
+                fromDate: getLabelWithValue(
+                    {
+                        labelName: "From Date",
+                        labelKey: "From Date",
+                    },
+                    {
+                        jsonPath: "roomDetailPageData.fromDate",
+                        callBack: (value) => {
+                            if (value === undefined || value === "" || value === null) {
+                                return "NA"
+                            } else {
+                                return convertDateInDMY(value);
+                            }
+                        }
+                    }
+                    
+                ),
+                toDate: getLabelWithValue(
+                  
+                    {
+                        labelName: "To Date",
+                        labelKey: "To Date",
+                    },
+                    {
+                        jsonPath: "roomDetailPageData.toDate",
+                        callBack: (value) => {
+                            if (value === undefined || value === "" || value === null) {
+                                return "NA"
+                            } else {
+                                return convertDateInDMY(value);
+                            }
+                        }
+                    }
+                ),
+           
+               
+            }),
+        }),
+        items: [],
+        hasAddItem: false,
+        isReviewPage: true,
+        sourceJsonPath: "Booking",
+
+    }, 
+    type: "array",
+},
+});
+
+
+export const roomBookingFooter = getCommonApplyFooter({
+    cancelButton: {
+        componentPath: "Button",
+        props: {
+            variant: "outlined",
+            color: "primary",
+            style: {
+                minWidth: "180px",
+                height: "48px",
+                marginRight: "16px",
+                borderRadius: "inherit",
+            },
+        },
+        children: {
+            previousButtonLabel: getLabel({
+                labelName: "Back",
+                labelKey: "BK_PACC_BUTTON_BACK_BOOKING",
+            }),
+        },
+        onClickDefination: {
+            action: "condition",
+            callBack: callBackForBack,
+        },
+        visible: true,
+    },
+});

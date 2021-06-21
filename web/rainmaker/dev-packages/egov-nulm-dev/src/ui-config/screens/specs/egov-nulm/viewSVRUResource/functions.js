@@ -256,7 +256,7 @@ export const createUpdatePO = async (state, dispatch, action,status) => {
       } else if (requestBody.NulmSusvRenewRequest.applicationStatus=="Drafted" && status == "Created") { 
         requestBody.NulmSusvRenewRequest.action = "Created";
       }else if (requestBody.NulmSusvRenewRequest.applicationStatus == "Reassign To Citizen") {
-        requestBody.NulmSusvRenewRequest.action = 'Forwarded To JA';
+        requestBody.NulmSusvRenewRequest.action = 'Forward To JA';
       } 
       const response = await httpRequest(
         "post",

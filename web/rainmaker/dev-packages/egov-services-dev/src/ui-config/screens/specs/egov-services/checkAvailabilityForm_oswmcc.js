@@ -8,6 +8,7 @@ import {
     getSelectField,
     getLabel,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import "./checkAvailabilityCss/openSpaceMccCheckAvailability.css";
 import { showHideAdhocPopup } from "../utils";
 import {
     getTenantId,
@@ -124,7 +125,7 @@ const callBackForReset = (state, dispatch, action) => {
         }
         set(
             state.screenConfiguration.screenConfig["checkavailability_oswmcc"],
-            "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.viewDetailsButton.visible",
+            "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityActions.children.actionButtons.children.viewDetailsButton.visible",
             false
         );
         dispatch(prepareFinalObject("availabilityCheckData", undefined));
@@ -171,7 +172,7 @@ const callBackForBook = async (state, dispatch) => {
         state.screenConfiguration.preparedFinalObject.availabilityCheckData;
     if (availabilityCheckData === undefined) {
         let warrningMsg = {
-            labelName: "Please Select Date Range",
+            labelName: "Please select date range",
             labelKey: "",
         };
         dispatch(toggleSnackbar(true, warrningMsg, "warning"));
@@ -182,7 +183,7 @@ const callBackForBook = async (state, dispatch) => {
             availabilityCheckData.bkToDate === null
         ) {
             let warrningMsg = {
-                labelName: "Please Select Date Range",
+                labelName: "Please select date range",
                 labelKey: "",
             };
             dispatch(toggleSnackbar(true, warrningMsg, "warning"));
@@ -203,7 +204,7 @@ const callBackForBook = async (state, dispatch) => {
         //     availabilityCheckData.bkToDate === ""
         // ) {
         //     let warrningMsg = {
-        //         labelName: "Please select Date RANGE",
+        //         labelName: "Please select date range",
         //         labelKey: "",
         //     };
         //     dispatch(toggleSnackbar(true, warrningMsg, "warning"));
@@ -252,7 +253,7 @@ const callBackForSearch = async (state, dispatch) => {
         //     dispatch(
         //         toggleSnackbar(
         //             true,
-        //             { labelName: "Please Select Booking Venue!", labelKey: "" },
+        //             { labelName: "Please select booking venue!", labelKey: "" },
         //             "warning"
         //         )
         //     );
@@ -407,7 +408,9 @@ export const availabilityForm = getCommonCard({
         uiFramework: "custom-atoms",
         componentPath: "Container",
         props: {
-            style: { marginBottom: "10px" },
+            
+            className: "addLocation-header",
+            style: { marginBottom: "10px"},
         },
         children: {
             header: {
@@ -475,7 +478,7 @@ export const availabilityForm = getCommonCard({
                 sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
                 jsonPath: "availabilityCheckData.bkSector",
                 required: true,
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 props: {
                     className: "applicant-details-error",
                     required: true,
@@ -540,7 +543,7 @@ export const availabilityForm = getCommonCard({
                 },
 
                 placeholder: {
-                    labelName: "Select Booking Location",
+                    labelName: "Select Booking Venue",
                     labelKey: "BK_OSWMCC_BOOKING_VENUE_PLACEHOLDER",
                 },
                 gridDefination: {
@@ -552,7 +555,7 @@ export const availabilityForm = getCommonCard({
                 sourceJsonPath: "venueList",
                 jsonPath: "availabilityCheckData.bkBookingVenue",
                 required: true,
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                errorMessage: "Please check the missing/invalid fields, then proceed!",
                 props: {
                     className: "applicant-details-error",
                     required: true,
@@ -565,7 +568,7 @@ export const availabilityForm = getCommonCard({
                         state.screenConfiguration.screenConfig[
                             "checkavailability_oswmcc"
                         ],
-                        "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityActions.children.viewDetailsButton.visible",
+                        "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityActions.children.actionButtons.children.viewDetailsButton.visible",
                         true
                     );
 
@@ -681,11 +684,23 @@ export const availabilityForm = getCommonCard({
         },
     }),
     availabilityActions: getCommonContainer({
+        actionButtons : {
+            uiFramework: "custom-atoms",
+            componentPath: "Container",
+            gridDefination: {
+                xs: 12,
+            },
+            props: {
+                className: "checkavailability-footer",
+              
+            },
+            children : {
         searchButton: {
             componentPath: "Button",
             props: {
                 variant: "contained",
                 color: "primary",
+                
                 style: {
                     minWidth: "200px",
                     height: "48px",
@@ -730,6 +745,7 @@ export const availabilityForm = getCommonCard({
             },
             visible: true,
         },
+
         viewDetailsButton: {
             componentPath: "Button",
             props: {
@@ -761,6 +777,7 @@ export const availabilityForm = getCommonCard({
             },
             visible: false,
         },
+    }},
     }),
 });
 
@@ -797,6 +814,7 @@ export const availabilityCalendar = getCommonCard({
                 xs: 12,
             },
             props: {
+                className: "checkavailability-footer",
                 style: {
                     justifyContent: "flex-end",
                 },

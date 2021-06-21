@@ -35,7 +35,7 @@ body {
   text-align: right;
 }
 .common-div-css {
-  margin: 80px 16px 88px 16px;
+    margin: 80px 1px 80px;
 }
 .common-header-cont {
   display: none;
@@ -85,9 +85,9 @@ span[class^="MuiFormLabel-asterisk"] {
 .search-preview div[id^="material-ui-item"] div[id^="material-ui-cardContent"] span[class^="MuiIconButton-label"] {
   display: none;
 }
-.search-preview button[aria-label="Remove"] {
-  display: none;
-}
+// .search-preview button[aria-label="Remove"] {
+//   display: none;
+// }
 
 .common-header-cont {
   display: none;
@@ -155,9 +155,9 @@ span[class^="MuiFormLabel-asterisk"] {
 
 }
 @media only screen and (min-width: 768px) {
-  .common-div-css {
-    margin: 30px 16px 88px 16px;
-  }
+	.common-div-css {
+		margin: 80px 0px 80px;
+	}
   .common-header-cont {
     display: inherit;
     padding: 44px 0px 0px 8px;
@@ -170,7 +170,7 @@ span[class^="MuiFormLabel-asterisk"] {
     bottom: 0;
     right: 0;
     z-index: 1;
-    width: 83.33vw;
+    width:100vw;
     text-align: right;
     overflow: inherit !important;
   }

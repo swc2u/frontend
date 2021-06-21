@@ -30,7 +30,7 @@ class PayDetails extends Component {
 
     return (
       <div>
-        <Card
+        <Card 
           textChildren={
             <div>
               <div className="rainmaker-displayInline row">
@@ -58,22 +58,6 @@ class PayDetails extends Component {
                 </div>
                 <div className="col-sm-4 col-xs-12">
                   <h5 style={{ textAlign: "right" }}>{this.props.two}</h5>
-                </div>
-              </div>
-              <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px'}}>
-                <div className="col-sm-4 col-xs-12">
-                  <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_EMP_BKROOM_ROUND_OFF" /> {/*BK_MYBK_TAX_RENT_PACC*/}
-                </div>
-                <div className="col-sm-4 col-xs-12">
-                  <h5 style={{ textAlign: "right" }}>{this.props.three}</h5>
-                </div>
-              </div>
-              <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px'}}>
-                <div className="col-sm-4 col-xs-12">
-                  <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_EMP_ROOM_FACILITATION_CHARGE" /> {/*BK_MYBK_TAX_RENT_PACC*/}
-                </div>
-                <div className="col-sm-4 col-xs-12">
-                  <h5 style={{ textAlign: "right" }}>{this.props.four}</h5>
                 </div>
               </div>
               <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px'}}>

@@ -15,6 +15,7 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import {
     personalDetails,
     bookingDetails,
+    bankAccountDetails
 
 } from "./applyResourceCommercialGround/nocDetails";
 import jp from "jsonpath";
@@ -55,6 +56,7 @@ import {
 export const stepsData = [
     { labelName: "Applicant Details", labelKey: "BK_CGB_APPLICANT_DETAILS" },
     { labelName: "Booking Details", labelKey: "BK_CGB_BOOKING_DETAILS" },
+    { labelName: "Bank Account Details", labelKey: "Bank Account Details" },
     { labelName: "Documents", labelKey: "BK_CGB_DOCUMENTS" },
     { labelName: "Summary", labelKey: "BK_CGB_SUMMARY" },
 ];
@@ -128,7 +130,7 @@ export const formwizardThirdStep = {
         id: "apply_form3",
     },
     children: {
-        documentDetails,
+        bankAccountDetails,
     },
     visible: false,
 };
@@ -138,6 +140,18 @@ export const formwizardFourthStep = {
     componentPath: "Form",
     props: {
         id: "apply_form4",
+    },
+    children: {
+        documentDetails,
+    },
+    visible: false,
+};
+
+export const formwizardFifthStep = {
+    uiFramework: "custom-atoms",
+    componentPath: "Form",
+    props: {
+        id: "apply_form5",
     },
     children: {
         summaryDetails,
@@ -303,6 +317,10 @@ const screenConfig = {
         );
 
         dispatch(
+            prepareFinalObject("Booking.bkAccountType", "Saving")
+        );
+        
+        dispatch(
             prepareFinalObject(
                 "Booking.bkBookingVenue",
                 venue
@@ -397,8 +415,9 @@ const screenConfig = {
                 "formwizardSecondStep",
                 "formwizardThirdStep",
                 "formwizardFourthStep",
+                "formwizardFifthStep"
             ];
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 5; i++) {
                 set(
                     action.screenConfig,
                     `components.div.children.${formWizardNames[i]}.visible`,
@@ -441,6 +460,7 @@ const screenConfig = {
                 formwizardSecondStep,
                 formwizardThirdStep,
                 formwizardFourthStep,
+                formwizardFifthStep,
                 footer,
             },
         },

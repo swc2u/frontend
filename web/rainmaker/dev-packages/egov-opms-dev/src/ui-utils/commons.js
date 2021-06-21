@@ -702,9 +702,17 @@ export const createUpdateNocApplication = async (state, dispatch, status) => {
           fileStoreId: reduxDocuments[1].documents[0].fileStoreId
         }
       ];
+      let ownerIdProof = [
+        ...otherDocuments,
+        {
+          fileStoreId: reduxDocuments[2].documents[0].fileStoreId
+        }
+      ];
+
       set(payload, "uploadVaccinationCertificate", otherDocuments_Vaccine);
       set(payload, "uploadPetPicture", otherDocuments_pet);
-      set(payload, "idName", getIdName(state,"PETNOC",get(payload, null)));
+      set(payload, "ownerIdProof", ownerIdProof);
+      set(payload, "idName", getIdName(state, "PETNOC", get(payload, null)));
       response = await httpRequest("post", "/pm-services/noc/_create", "", [], { dataPayload: payload });
       console.log('pet response : ', response)
 
@@ -720,6 +728,8 @@ export const createUpdateNocApplication = async (state, dispatch, status) => {
     } else if (method === "UPDATE") {
       let otherDocuments_pet = []
       let otherDocuments_Vaccine = []
+      let ownerIdProof = []
+
       jp.query(reduxDocuments, "$.*").forEach(doc => {
         if (doc.documents && doc.documents.length > 0) {
 
@@ -742,7 +752,7 @@ export const createUpdateNocApplication = async (state, dispatch, status) => {
               }
             ];
             set(payload, "uploadPetPicture", otherDocuments);
-          }
+          }         
           else {
             otherDocuments_pet = [
               {
@@ -755,8 +765,14 @@ export const createUpdateNocApplication = async (state, dispatch, status) => {
                 fileStoreId: reduxDocuments[1].documents[0].fileStoreId
               }
             ];
+            ownerIdProof = [
+              {
+                fileStoreId: reduxDocuments[2].documents[0].fileStoreId
+              }
+            ];
             set(payload, "uploadVaccinationCertificate", otherDocuments_Vaccine);
             set(payload, "uploadPetPicture", otherDocuments_pet);
+            set(payload, "ownerIdProof", ownerIdProof);
          
 
           }
@@ -876,7 +892,8 @@ export const furnishNocResponse = response => {
   set(refurnishresponse, "immunizationSector", applicationdetail.immunizationSector);
   set(refurnishresponse, "uploadVaccinationCertificate", applicationdetail.uploadVaccinationCertificate);
   set(refurnishresponse, "uploadPetPicture", applicationdetail.uploadPetPicture);
-
+  set(refurnishresponse, "ownerIdProof", applicationdetail.ownerIdProof);
+  set(refurnishresponse, "uploadPetPicture", applicationdetail.uploadPetPicture);
   set(refurnishresponse, "houseNo", response.nocApplicationDetail[0].housenumber);
   set(refurnishresponse, "applieddate", applicationdetail.applieddate);
   set(refurnishresponse, "remarks", response.nocApplicationDetail[0].remarks);
@@ -885,7 +902,7 @@ export const furnishNocResponse = response => {
   return refurnishresponse;
 };
 
-export const furnishSellMeatNocResponse = response => {
+export const furnishSellMeatNocResponse = (state,response) => {
   // Handle applicant ownership dependent dropdowns
   let refurnishresponse = {};
 
@@ -899,9 +916,22 @@ export const furnishSellMeatNocResponse = response => {
   set(refurnishresponse, "division", applicationdetail.division);
   set(refurnishresponse, "shopNumber", applicationdetail.shopNumber);
   set(refurnishresponse, "ward", applicationdetail.ward);
-  set(refurnishresponse, "nocSought", applicationdetail.nocSought);
+//  set(refurnishresponse, "nocSought", applicationdetail.nocSought);
+  let mdmsDataForNocSought = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.nocSought", []);
+  let nocSoughtFinalData = [];
+  applicationdetail.nocSought.split(",").map(item => { 
+    
+    if (mdmsDataForNocSought.find(str => str.code == item.trim())) {
+      nocSoughtFinalData.push({
+        value: mdmsDataForNocSought.find(str => str.code == item.trim()).code,
+        label:mdmsDataForNocSought.find(str => str.code == item.trim()).name
+      });
+    }
+  });
+  set(refurnishresponse, "nocSought", nocSoughtFinalData);
 
   set(refurnishresponse, "uploadDocuments", applicationdetail.uploadDocuments);
+  set(refurnishresponse, "idProof", applicationdetail.idProof);
   set(refurnishresponse, "remarks", applicationdetail.remarks);
 
   return refurnishresponse;
@@ -1154,6 +1184,29 @@ export const getGridDataRoadcut1 = async () => {
 };
 
 
+export const getBusinessServiceData = async (businessService) => {
+  let queryObject = [
+    {
+      key:"businessServices",value:businessService
+    },
+    {
+      key:"tenantId",value:getOPMSTenantId()
+    }
+  ];
+  try {
+      const payload = await httpRequest(
+        "post",
+        "/egov-workflow-v2/egov-wf/businessservice/_search",
+        "",
+        queryObject,
+        {}
+      );
+    return payload;
+  } catch (error) {
+
+  }
+};
+
 export const getGridDataSellMeat1 = async () => {
   let queryObject = [];
   var requestBody = {
@@ -1221,27 +1274,53 @@ export const createUpdateSellMeatNocApplication = async (state, dispatch, status
   try {
     let payload = get(state.screenConfiguration.preparedFinalObject, "SELLMEATNOC", []);
     let tenantId = get(state.screenConfiguration.preparedFinalObject, "", getOPMSTenantId());
-
+    let nocSought = payload.nocSought;
     let reduxDocuments = get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux", {});
 
 
     // Set owners & other documents
     let ownerDocuments = [];
-    let otherDocuments = [];
+    let idProof = [];
     let Remarks = "";
 
-    jp.query(reduxDocuments, "$.*").forEach(doc => {
-      if (doc.documents && doc.documents.length > 0) {
-        ownerDocuments = [
-          ...ownerDocuments,
-          {
-            fileStoreId: doc.documents[0].fileStoreId
-          }
-        ];
+    // jp.query(reduxDocuments, "$.*").forEach(doc => {
+    //   if (doc.documents && doc.documents.length > 0) {
+    //     ownerDocuments = [
+    //       ...ownerDocuments,
+    //       {
+    //         fileStoreId: doc.documents[0].fileStoreId
+    //       }
+    //     ];
+    //   }
+    // });
+    ownerDocuments = [
+      {
+        fileStoreId: reduxDocuments[0].documents[0].fileStoreId
       }
-    });
+    ];
+
+    idProof = [
+      {
+        fileStoreId: reduxDocuments[1].documents[0].fileStoreId
+      }
+    ];
+
+    payload.hasOwnProperty("division") === false ? set(payload, "division", "") : ''
+    payload.hasOwnProperty("ward") === false ? set(payload, "ward", "") : ''
+
     set(payload, "uploadDocuments", ownerDocuments);
+    set(payload, "idProof", idProof);
+
     set(payload, "remarks", Remarks);
+    let str = "";
+    if (nocSought) { 
+      nocSought.map(item => {
+        str = str + ", "+item.value;
+      })
+    }
+    
+    console.log('nocsought : ', str.slice(2))
+    set(payload, "nocSought", str.slice(2));
     console.log('payload : ', payload)
     let response = '';
     setapplicationMode(status);
@@ -1255,6 +1334,7 @@ export const createUpdateSellMeatNocApplication = async (state, dispatch, status
         dispatch(prepareFinalObject("SELLMEATNOC", response));
         setapplicationNumber(response.applicationId);
         setApplicationNumberBox(state, dispatch);
+        await searchdemand(dispatch, response.applicationId, getOPMSTenantId());
         return { status: "success", message: response };
       } else {
         return { status: "fail", message: response };
@@ -1812,7 +1892,8 @@ const callPMUpdateStatusAPI = async (code,url,dispatch) => {
     );
     if (response.ResponseInfo.status == "success") {
       dispatch(toggleSpinner());
-      dispatch(setRoute('/inbox'))
+      // dispatch(setRoute('/inbox'))
+      dispatch(setRoute(`/egov-opms/acknowledgement-workflow?purpose=${code.applicationStatus}&applicationNumber=${code.applicationId}&tenantId=${code.tenantId}`))
     }
     else {
       dispatch(toggleSpinner());

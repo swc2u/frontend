@@ -6,6 +6,7 @@ const UploadSingleFile = ({
   classes,
   handleFileUpload,
   documents,
+  pagename,
   removeDocument,
   onButtonClick,
   inputProps,
@@ -15,6 +16,7 @@ const UploadSingleFile = ({
   return (
     <div>
       {!uploaded && (
+     // {!uploaded &&  (pagename !=="wns" ) && (
         <UploadFile
           buttonProps={{
             variant: "outlined",
@@ -39,8 +41,10 @@ const UploadSingleFile = ({
                       document={document}
                       removeDocument={removeDocument}
                       moduleName="wns"
+                      pagename={pagename}
                     />
                   )}
+				<p style={{paddingTop: "10px", textAlign: "right"}} > Size : { document.fileSize } Kb. </p>
                 </div>
               );
             })}
