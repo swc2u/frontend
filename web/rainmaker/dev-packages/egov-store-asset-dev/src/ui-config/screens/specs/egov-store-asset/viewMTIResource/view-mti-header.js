@@ -92,6 +92,13 @@ export const getMTIHeaderView = (isReview = true) => {
         },
         { jsonPath: "indents[0].indentDate" }
       ),
+      expectedDeliveryDate: getLabelWithValue(
+        {
+          labelName: "Expected Delivery Date",
+          labelKey: "STORE_MATERIAL_INDENT_EXPECTED_DELIVERY_DATE"
+        },
+        { jsonPath: "indents[0].expectedDeliveryDate" }
+      ),
       indentPurpose: getLabelWithValue(
         { labelName: "Indent Purpose", labelKey: "STORE_MATERIAL_INDENT_INDENT_PURPOSE" },
         { jsonPath: "indents[0].indentPurpose" }
@@ -112,7 +119,7 @@ export const getMTIHeaderView = (isReview = true) => {
       createdBy: getLabelWithValue(
         { labelName: "Created by", labelKey: "STORE_PURCHASE_ORDER_CREATEBY" },
         {
-          jsonPath: "indents[0].indentCreatedBy",
+          jsonPath: "indents[0].receivedBy",
         }
       ),
       designation: getLabelWithValue(

@@ -7,7 +7,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-
+import {  checkValueForNA } from "../../utils";
 const gotoCreatePage = (state, dispatch) => {
    const createUrl = `/egov-nulm/susv-transaction?step=0`;
   dispatch(setRoute(createUrl));
@@ -69,21 +69,21 @@ export const getTransactionDetailsView = (isReview = true) => {
           labelName: "Transaction type",
           labelKey: "NULM_SUSV_TRANSACTION_TYPE",
         },
-        { jsonPath: "NulmTransactionRequest.transactionType" }
+        { jsonPath: "NulmTransactionRequest.transactionType" ,callBack: checkValueForNA }
       ),
       amount: getLabelWithValue(
         {
           labelName: "Amount",
           labelKey: "NULM_SUSV_TRANSACTION_AMOUNT"
         },
-        { jsonPath: "NulmTransactionRequest.amount" }
+        { jsonPath: "NulmTransactionRequest.amount",callBack: checkValueForNA  }
       ),
       modeOfPayment: getLabelWithValue(
         {
           labelName: "Mode of Payment",
           labelKey: "NULM_SUSV_TRANSACTION_MODE_OF_PAYMENT"
         },
-        { jsonPath: "NulmTransactionRequest.modeOfPayment" }
+        { jsonPath: "NulmTransactionRequest.modeOfPayment",callBack: checkValueForNA  }
       ),
       
       paymentDetails: getLabelWithValue(
@@ -91,35 +91,35 @@ export const getTransactionDetailsView = (isReview = true) => {
           labelName: "Payment Details",
           labelKey: "NULM_SUSV_TRANSACTION_PAYMENT_DETAILS"
         },
-        { jsonPath: "NulmTransactionRequest.paymentDetails" }
+        { jsonPath: "NulmTransactionRequest.paymentDetails" ,callBack: checkValueForNA }
       ),
       donationReceivedFrom: getLabelWithValue(
         {
           labelName: "Donation Received From",
           labelKey: "NULM_SUSV_TRANSACTION_DONATION_RECEIVED_FM"
         },
-        { jsonPath: "NulmTransactionRequest.donationReceivedFrom" }
+        { jsonPath: "NulmTransactionRequest.donationReceivedFrom" ,callBack: checkValueForNA  }
       ),
       donorDetails: getLabelWithValue(
         {
           labelName: "Donor Details",
           labelKey: "NULM_SUSV_TRANSACTION_DONOR_DETAILS"
         },
-        { jsonPath: "NulmTransactionRequest.donorDetails" }
+        { jsonPath: "NulmTransactionRequest.donorDetails" ,callBack: checkValueForNA  }
       ),
       expenditureType: getLabelWithValue(
         {
           labelName: "Expenditure Type",
           labelKey: "NULM_SUSV_TRANSACTION_EXPENDITURE_TYPE"
         },
-        { jsonPath: "NulmTransactionRequest.expenditureType" }
+        { jsonPath: "NulmTransactionRequest.expenditureType" ,callBack: checkValueForNA  }
       ),
       expenditureDetails: getLabelWithValue(
         {
           labelName: "Expenditure Details",
           labelKey: "NULM_SUSV_TRANSACTION_EXPENDITURE_DETAILS"
         },
-        { jsonPath: "NulmTransactionRequest.expenditureDetails" }
+        { jsonPath: "NulmTransactionRequest.expenditureDetails",callBack: checkValueForNA  }
       ),
 
       emailId: getLabelWithValue(
@@ -127,14 +127,14 @@ export const getTransactionDetailsView = (isReview = true) => {
           labelName: "Email Id",
           labelKey: "NULM_SMID_EMAIL_ID"
         },
-        { jsonPath: "NulmTransactionRequest.emailId" }
+        { jsonPath: "NulmTransactionRequest.emailId" ,callBack: checkValueForNA  }
       ),
       comments: getLabelWithValue(
         {
           labelName: "Comments",
           labelKey: "NULM_SUSV_TRANSACTION_COMMENTS"
         },
-        { jsonPath: "NulmTransactionRequest.comments" }
+        { jsonPath: "NulmTransactionRequest.comments" ,callBack: checkValueForNA  }
       ),   
     }),
   });

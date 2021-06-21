@@ -173,13 +173,14 @@ class Footer extends React.Component {
           : item.buttonUrl;
         if(item.moduleName === "NewWS1" 
         || item.moduleName === "REGULARWSCONNECTION"  
-        || item.moduleName === 'NewSW1' 
+        || item.moduleName === 'SW_SEWERAGE' 
         || item.moduleName === "TEMPORARY_WSCONNECTION"
         || item.moduleName === "WS_TEMP_TEMP" 
         ||item.moduleName === "WS_TEMP_REGULAR"
         ||item.moduleName === "WS_DISCONNECTION" 
         ||item.moduleName === "WS_TEMP_DISCONNECTION"
         || item.moduleName === "WS_RENAME" 
+        || item.moduleName === "WS_METER_UPDATE" 
         || item.moduleName === "WS_CONVERSION" 
         || item.moduleName === "WS_REACTIVATE"  
         ||  item.moduleName === "WS_TUBEWELL")
@@ -205,7 +206,7 @@ class Footer extends React.Component {
           localStorageGet("businessServiceData")
         );
         let data = get(state.screenConfiguration.preparedFinalObject, dataPath, []);
-        let nextStateid=''
+        let nextStateid=null
         let searchPreviewScreenMdmsData =null
         let roles =[]
         let rolecode ='';
@@ -217,12 +218,23 @@ class Footer extends React.Component {
         if(curstateactions && curstateactions[0])
         {
           nextActions = curstateactions[0].actions.filter(x=>x.action === actions_)
+          if(nextActions !== undefined && nextActions !== null)
+          {
           nextStateid = nextActions[0].nextState
+          if(nextStateid !== undefined && nextStateid !== null)
           businessServiceData = businessServiceData[0].states.filter(x=>x.uuid === nextStateid )
+          }
         } 
          searchPreviewScreenMdmsData  = state.screenConfiguration.preparedFinalObject.searchPreviewScreenMdmsData;
-        searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
-       
+         if(data[0].service ==='WATER')
+         {
+          searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].wsWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
+         }
+        
+        else if(data[0].service ==='SEWERAGE')
+        {
+          searchPreviewScreenMdmsData= searchPreviewScreenMdmsData['ws-services-masters'].swWorkflowRole.filter(x=>x.state === businessServiceData[0].state)
+        }
         if(searchPreviewScreenMdmsData && searchPreviewScreenMdmsData[0])
         {
           roles =  searchPreviewScreenMdmsData = searchPreviewScreenMdmsData[0].roles

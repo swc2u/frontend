@@ -76,6 +76,7 @@ const typeOfAllocationField = {
         xs: 12,
         sm: 6
     },
+    errorMessage:"ES_ERR_TYPE_OF_ALLOCATION",
     beforeFieldChange: (action, state, dispatch) => {
         let screenName = "apply";
         let step = "formwizardSecondStep";
@@ -166,21 +167,10 @@ const areaOfPropertyField = {
         xs: 12,
         sm: 6
     },
-    errorMessage:"ES_ERR_AREA_OF_PROPERTY_FIELD",
-    pattern: _getPattern("numeric-with-no-firstdigit-zero"),
+    errorMessage:"ES_ERR_AREA_OF_PROPERTY_FIELD_TWO_TO_FIVE",
+    pattern: _getPattern("areaSqFeet"),
     required: true,
     jsonPath: "Properties[0].propertyDetails.areaSqft",
-    afterFieldChange: (action, state, dispatch) => {
-        if (action.value.length > 25) {
-            displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AREA_OF_PROPERTY_MAX_25", screenName);
-        }
-        else if(action.value.length < 3){
-            displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AREA_OF_PROPERTY_MIN_3", screenName);
-        }
-        else {
-            displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_AREA_OF_PROPERTY_FIELD",screenName);
-        }
-    }
 }
 
 const rateField = {
@@ -218,6 +208,7 @@ const categoryField = {
         xs: 12,
         sm: 6
     },
+    errorMessage:"ES_ERR_CATEGORY",
     afterFieldChange: (action, state, dispatch) => {
         let screenName = "apply";
         let step = "formwizardFirstStep";
@@ -240,7 +231,7 @@ const categoryField = {
             )
         )
         
-        if (action.value == "CAT.RESIDENTIAL" || action.value == "CAT.COMMERCIAL") {
+        if (action.value == "CAT.RESIDENTIAL" || action.value == "CAT.COMMERCIAL" || action.value == "CAT.RESIDENTIALCUMCOMMERCIAL") {
             dispatch(
                 handleField(
                     screenName,
@@ -308,7 +299,8 @@ const subCategoryField = {
     gridDefination: {
         xs: 12,
         sm: 6
-    }
+    },
+    errorMessage:"ES_ERR_SUB_CATEGORY"
 }
 
 const siteNumberField = {
@@ -356,7 +348,8 @@ const sectorNumberField = {
     gridDefination: {
         xs: 12,
         sm: 6
-    }
+    },
+    errorMessage:"ES_ERR_SECTOR_NUMBER"
 }
 
 export const fileNumberField = {
@@ -373,7 +366,8 @@ export const fileNumberField = {
         sm: 6
     },
     required: true,
-    pattern: _getPattern("fileNumber"),
+    errorMessage:"ES_ERR_FILE_NUMBER",
+    pattern: _getPattern("file-number-no-firstdigit-zero"),
     jsonPath: "Properties[0].fileNumber",
     afterFieldChange: (action, state, dispatch) => {
         dispatch(handleField(
@@ -431,6 +425,7 @@ export const propertyTypeField = {
         xs: 12,
         sm: 6
     },
+    errorMessage:"ES_ERR_PROPERTY_TYPE",
     beforeFieldChange: (action, state, dispatch) => {
         // dispatch(
         //     handleField(
@@ -520,6 +515,7 @@ const entityTypeField = {
         xs: 12,
         sm: 6
     },
+    errorMessage:"Select valid Entity type",
     props: {
         data: [
             { code: "ET.PUBLIC_LIMITED_COMPANY", name: "Public ltd company" },

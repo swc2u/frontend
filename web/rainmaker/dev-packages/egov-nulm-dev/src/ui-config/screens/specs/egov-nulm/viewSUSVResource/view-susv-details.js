@@ -150,7 +150,7 @@ export const getSUSVDetailsView = (isReview = true) => {
           labelName: "Adhar Number",
           labelKey: "NULM_SMID_ADHAR_NUMBER"
         },
-        { jsonPath: "NulmSusvRequest.adharNo" }
+        { jsonPath: "NulmSusvRequest.adharNo", callBack: checkValueForNA }
       ),
       isDisability: getLabelWithValue(
         {
@@ -164,42 +164,42 @@ export const getSUSVDetailsView = (isReview = true) => {
           labelName: "Blood Group",
           labelKey: "NULM_SUSV_BLOOD_GROUP"
         },
-        { jsonPath: "NulmSusvRequest.bloodGroup" }
+        { jsonPath: "NulmSusvRequest.bloodGroup",callBack: checkValueForNA }
       ), 
       categoryOfVending: getLabelWithValue(
         {
           labelName: "Proposed Category of Vending",
           labelKey: "NULM_SUSV_CATEGORY_VENDING"
         },
-        { jsonPath: "NulmSusvRequest.categoryOfVending" }
+        { jsonPath: "NulmSusvRequest.categoryOfVending",callBack: checkValueForNA }
       ), 
       proposedLocationOfVending: getLabelWithValue(
         {
           labelName: "Proposed Zone/ward/Location",
           labelKey: "NULM_SUSV_PROPOSED_LOCATION"
         },
-        { jsonPath: "NulmSusvRequest.proposedLocationOfVending" }
+        { jsonPath: "NulmSusvRequest.proposedLocationOfVending",callBack: checkValueForNA }
       ), 
       proposedTimeOfVending: getLabelWithValue(
         {
           labelName: "Proposed time of Vending",
           labelKey: "NULM_SUSV_PROPOSED_TIME"
         },
-        { jsonPath: "NulmSusvRequest.proposedTimeOfVending" }
+        { jsonPath: "NulmSusvRequest.proposedTimeOfVending",callBack: checkValueForNA }
       ),
       govermentScheme: getLabelWithValue(
         {
           labelName: "Government Scheme(Applicable if Beneficiary/Poor)",
           labelKey: "NULM_SUSV_GOVT_SCHEME"
         },
-        { jsonPath: "NulmSusvRequest.govermentScheme" }
+        { jsonPath: "NulmSusvRequest.govermentScheme",callBack: checkValueForNA }
       ),
       nameOfNominee: getLabelWithValue(
         {
           labelName: "Name of Nominee of street Vendor",
           labelKey: "NULM_SUSV_NAME_OF_NOMINEE"
         },
-        { jsonPath: "NulmSusvRequest.nameOfNominee" }
+        { jsonPath: "NulmSusvRequest.nameOfNominee",callBack: checkValueForNA }
       ),  
     }),
   });

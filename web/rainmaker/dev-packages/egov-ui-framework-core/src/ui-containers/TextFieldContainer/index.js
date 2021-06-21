@@ -43,6 +43,12 @@ class TextFieldContainer extends React.Component {
       error,
       ...rest
     } = this.props;
+    if(dropdownData.length>0)
+    {
+      //console.log('ready for sorting')
+      // sort alphabetically for all dropdown
+      //dropdownData = dropdownData.sort((a, b) => a.label.localeCompare(b.label));
+    }
     if (!isEmpty(iconObj) && iconObj.onClickDefination) {
       iconObj = {
         ...iconObj,

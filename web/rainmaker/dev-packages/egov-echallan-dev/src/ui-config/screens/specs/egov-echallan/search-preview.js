@@ -19,11 +19,11 @@ import { estimateSummary } from "./summaryResource/estimateSummary";
 import { searchResultsSummary, serachResultGridSM, searchResultsSummaryHOD, searchVehicleResultsSummary } from "./summaryResource/summaryGrid";
 import { footer, takeactionfooter } from "./summaryResource/footer";
 import { titlebarfooter } from "./summaryResource/citizenFooter";
-import { getSearchResultsView, getSearchResultsForNocCretificate, getSearchResultsForNocCretificateDownload, fetchStoreItemHODMasterChallanData, fetchMdmsData, setCurrentApplicationProcessInstance, checkVisibility } from "../../../../ui-utils/commons";
+import { getSearchResultsView, getSearchResultsForNocCretificate, getSearchResultsForNocCretificateDownload, fetchStoreItemHODMasterChallanData, fetchMdmsData, setCurrentApplicationProcessInstance, checkVisibility, getSearchResultsPaymentServiceData } from "../../../../ui-utils/commons";
 import { setEncroachmentType, getAccessToken, setapplicationType, getTenantId, getLocale, getUserInfo, localStorageGet, localStorageSet, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import store from "ui-redux/store";
 import "./index.css";
-import { adhocPopupReceivePayment, adhocPopupStockViolationForwardHOD, challanDeletionPopup, returnAndCloseConfirmationPopup } from "./payResource/adhocPopup";
+import { adhocPopupReceivePayment, adhocPopupStockViolationForwardHOD, adhocPopupUpdateContact, challanDeletionPopup, returnAndCloseConfirmationPopup } from "./payResource/adhocPopup";
 
 let roles = JSON.parse(getUserInfo()).roles;
 
@@ -737,12 +737,50 @@ const setSearchResponse = async (
         paystatus
       )
     );
+    if (paystatus === 'UNPAID') { 
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.div.children.employeeFooter.children.sendMessageButton",
+          "visible",
+          true
+        )
+      );
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.div.children.employeeFooter.children.deleteChallanButton",
+          "visible",
+          true
+        )
+      );
 
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.div.children.employeeFooter.children.editChallanButton",
+          "visible",
+          true
+        )
+      );
+      
+      let contactNumber = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].contactNumber", '');
+      dispatch(prepareFinalObject("eChallanUpdateContact[0].contact", contactNumber));
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.updateContact.children.popup.children.updateContactCard.children.updateContactContainer.children.updateContactField",
+          "props.value",
+          contactNumber
+        )
+      );
+ 
+    }
 
     let encroachmentType = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].encroachmentType", '');
     let paymentStatus = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].paymentDetails.paymentStatus", 'PENDING');
-    let receiveVisible = appstatus === "PENDING FOR AUCTION" ? false : paymentStatus === 'PAID' ? false : true;
-
+    let receiveVisible = appstatus === "PENDING FOR AUCTION" || appstatus === "SENT TO STORE" || appstatus === "CHALLAN ISSUED" ? false : paymentStatus === 'PAID' ? false : true;
+    
     setGridVisibleTrueFalse(state, encroachmentType, appstatus, dispatch);
 
     setReceiveButtonVisibleTrueFalse(receiveVisible, dispatch, appstatus);
@@ -763,6 +801,10 @@ const setSearchResponse = async (
     if (checkForRole(roles, 'challanSM') || checkForRole(roles, 'challanSI') || checkForRole(roles, 'CITIZEN')) {
       setSearchResponseForNocCretificate(state, dispatch, applicationNumber, tenantId);
     }
+    if (checkForRole(roles, 'challanSI')) {
+      setPaymentServiceResponse(state, dispatch,paystatus);
+    }
+
 
     let violationDate = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].violationDate", new Date());
     if (getDiffernceBetweenTodayDate(violationDate) > 30 && encroachmentType !== "Seizure of Vehicles") {
@@ -869,6 +911,10 @@ const setSearchResponseForNocCretificate = async (
         data.remark = nullToNa(
           get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].violationItem[0].remark", "NA")
         );
+        break;      
+      case "Without License Rehri":
+        encorachmentvalue = "withoutrehri";
+        pdfCreateKey = "withoutrehri-ec";
         break;
       default:
         break;
@@ -918,8 +964,9 @@ const setSearchResponseForNocCretificate = async (
         get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].violationTime", "NA")
       );
 
+    
     let getFileStoreIdForChallan = { [encorachmentvalue]: [data] };
-
+    
     const response1GenerateChallan = await getSearchResultsForNocCretificate([
       { key: "tenantId", value: tenant },
       { key: "applicationNumber", value: applicationNumber },
@@ -949,7 +996,9 @@ const setSearchResponseForNocCretificate = async (
     };
 
   }
+  
   if (paymentStatus === 'PAID') {
+    
     let violatorDetails = get(state, 'screenConfiguration.preparedFinalObject.eChallanDetail[0]', []);
     let paydetails = get(state, 'screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].billDetails[0].billAccountDetails', []);
     let numbertowords = numWords(violatorDetails.totalChallanAmount) + ' ' + 'only'
@@ -965,6 +1014,7 @@ const setSearchResponseForNocCretificate = async (
       "fineAmount": violatorDetails.challanAmount,//paydetails[0].taxHeadCode === 'EC_ECHALLAN_FEE' ? paydetails[0].amount : paydetails[1].amount,
       "storageAmount": violatorDetails.penaltyAmount, //paydetails[1].taxHeadCode === 'EC_ECHALLAN_PENALTY' ? paydetails[1].amount : paydetails[0].amount,
       //"smName" : nullToNa(JSON.parse(getUserInfo()).name, 'NA')
+      "itemDetails":violatorDetails.violationItem
     }
 
     let getFileStoreIdFor_RECEIPT = { "paymentEchallan": [paymentdata] }
@@ -1031,6 +1081,45 @@ const setSearchResponseForNocCretificate = async (
   );
 
   //setDownloadMenu(state, dispatch);
+};
+
+const setPaymentServiceResponse = async (
+  state,
+  dispatch,
+  paystatus
+) => {
+  
+  let paymentStatus = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].paymentDetails.paymentStatus", {});
+  let challanId = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].challanId");
+  let tenantId = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].tenantId");
+  
+  if (paystatus === 'UNPAID') {
+    const pgResponse = await getSearchResultsPaymentServiceData([
+      { key: "tenantId", value: tenantId },
+      { key: "consumerCode", value: challanId }
+    ]);
+    if (pgResponse &&
+      pgResponse.Transaction.length > 0) {
+      dispatch(
+        prepareFinalObject(
+          "eChallan.paymentServiceData",
+          pgResponse.Transaction
+        )
+      );
+      let txnStatus = get(pgResponse, "Transaction[0].txnStatus");
+      
+      if (paystatus === 'UNPAID' && txnStatus === "SUCCESS") {
+        dispatch(
+          handleField(
+            "search-preview",
+            "components.div.children.employeeFooter.children.markAsPaidButton",
+            "visible",
+            true
+          )
+        );
+      }
+    }
+  }
 };
 
 const createDemandforChallanCertificate = async (state, dispatch, tenantId) => {
@@ -1163,6 +1252,19 @@ const screenConfig = {
         popup: returnAndCloseConfirmationPopup
       },
       visible: true
+    },
+    updateContact: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-echallan",
+      componentPath: "UpdateContactContainer",
+      props: {
+        open: false,
+        maxWidth: "sm",
+        screenKey: "search-preview"
+      },
+      children: {
+        popup: adhocPopupUpdateContact
+      }
     }
   }
 };

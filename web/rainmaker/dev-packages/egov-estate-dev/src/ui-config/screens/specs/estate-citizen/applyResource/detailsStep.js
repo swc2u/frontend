@@ -3,10 +3,10 @@ import { getLocaleLabels, getTodaysDateInYMD } from "egov-ui-framework/ui-utils/
 import {viewFour} from './review'
 import {getOptions} from '../dataSources'
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { convertDateToEpoch } from "../../utils";
+import { convertDateToEpoch,getYesterdaysDateInYMD } from "../../utils";
 import { setFieldProperty } from './afterFieldChange'
 import { get } from "lodash";
-
+import {handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 const _getPattern = (type) => {
   switch(type) {
     case "Percentage": 
@@ -26,7 +26,7 @@ const _getPattern = (type) => {
           case "violationdetails":
               return /^([\s\S]){5,150}$/i;
               case "area":
-                  return /^[1-9][0-9]{2,5}$/i;
+                  return /^[1-9][0-9]{1,5}$/i;
   }
 }
 
@@ -106,7 +106,7 @@ export const updateReadOnlyForAllFields = (action, state, dispatch) => {
           /*
            * removing error message if the field is not changed by the user
            */
-          actionItem = [{path: curr.componentJsonpath, property: currValue.property, value: evaluate(evalParams)}, {path: curr.componentJsonpath, property: "props.error", value: false}]
+          actionItem = [{path: curr.componentJsonpath, property: currValue.property, value: evaluate(evalParams)}, {path: curr.componentJsonpath, property: "props.error", value: !!curr.props.error && !!curr.props.disabled?false:!!curr.props.error?curr.props.error:false}]
         } 
         else if(currValue.value === "disability" && curr.componentPath === "RadioGroupContainer") {
           /*
@@ -147,6 +147,38 @@ export const updateReadOnlyForAllFields = (action, state, dispatch) => {
     pendingFieldChanges = [...pendingFieldChanges, ...actionDefiniton]
     setFieldProperty({dispatch, actionDefiniton})
   }
+  dispatch(
+    handleField(
+      "_apply",
+      "components.div.children.formwizardFirstStep.children.ES_PURCHASER_DETAILS_HEADER.children.cardContent.children.details_container.children.ES_DOB_LABEL",
+      "props.inputProps.max",
+      getYesterdaysDateInYMD()
+    )
+  )
+  dispatch(
+    handleField(
+      "_apply",
+      "components.div.children.formwizardFirstStep.children.ES_LEGAL_BENEFICIARY_DETAILS.children.cardContent.children.details_container.children.ES_DOB_LABEL",
+      "props.inputProps.max",
+      getYesterdaysDateInYMD()
+    )
+  )
+  dispatch(
+    handleField(
+      "_apply",
+      "components.div.children.formwizardFirstStep.children.ES_LEGAL_HEIR_DETAILS_HEADER.children.cardContent.children.details_container.children.ES_LEGAL_HEIR_DOB_LABEL",
+      "props.inputProps.max",
+      getYesterdaysDateInYMD()
+    )
+  )
+  dispatch(
+    handleField(
+      "_apply",
+      "components.div.children.formwizardFirstStep.children.ES_TRANSFEREE_DETAILS_HEADER.children.cardContent.children.details_container.children.ES_DOB_LABEL",
+      "props.inputProps.max",
+      getYesterdaysDateInYMD()
+    )
+  )
 }
 
 const headerObj = value => {
@@ -423,7 +455,7 @@ const tableSection = (section, state) => {
     uiFramework: "custom-containers-local",
     componentPath: "Table",
     moduleName: "egov-estate",
-    visible: true,
+    visible: !!data.length,
     props: {
       columns: fields.map(item => getLocaleLabels(item.label, item.label)),
       options: {
@@ -452,13 +484,19 @@ const tableSection = (section, state) => {
 
 export const setFirstStep = async (state, dispatch, {data_config, format_config}) => {
     const {sections = []} = format_config
+    const propertyData = get(state.screenConfiguration.preparedFinalObject, "property");
+    const owners = get(state, "screenConfiguration.preparedFinalObject.property.propertyDetails.owners") || [];
     const uiConfig = await arrayReduce(sections, async (acc, section) => {
+        const section_header = section.type === "TABLE" ? tableSection(section, state) : section.type === "EXPANSION_DETAIL" ? expansionSection(section) : getCommonCard({
+          header: headerObj(section.header),
+          details_container: section.type === "CARD_DETAIL" ? viewFour(section) : section.subType === "ARRAY" ? await getSubDetailsContainer(section, data_config, state) : await getDetailsContainer(section, data_config, state),
+        })
         return {
         ...acc, 
-        [section.header]: section.type === "TABLE" ? tableSection(section, state) : section.type === "EXPANSION_DETAIL" ? expansionSection(section) : getCommonCard({
-            header: headerObj(section.header),
-            details_container: section.type === "CARD_DETAIL" ? viewFour(section) : section.subType === "ARRAY" ? await getSubDetailsContainer(section, data_config, state) : await getDetailsContainer(section, data_config, state)
-        })
+        [section.header]: {
+          ...section_header,
+          visible: section.visibility ? eval(section.visibility) : true
+        }
     }
     }, {})
 

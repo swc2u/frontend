@@ -10,6 +10,7 @@ import {
  // import { getTodaysDateInYMD } from "../../utils";
  import set from "lodash/set";
  import get from "lodash/get";
+ import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
  import { getSTOREPattern} from "../../../../../ui-utils/commons";
  import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import{getMaterialBalanceRateResults, getStoresSearchResults} from '../../../../../ui-utils/storecommonsapi'
@@ -39,6 +40,76 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
   try {
     let response = await getSearchResults(queryObject, dispatch,"mrnNumber");
     dispatch(prepareFinalObject("mrnNumber", response.MaterialReceipt));
+    // set material if edit
+    let material =[];
+    const step = getQueryArg(window.location.href, "step");
+    const issueNoteNumber = getQueryArg(window.location.href, "issueNoteNumber");
+    let mrnNumber = get(state,"screenConfiguration.preparedFinalObject.materialIssues[0].materialIssueDetails[0].materialIssuedFromReceipts[0].materialReceiptDetail.mrnNumber",'')
+    if(issueNoteNumber){
+    
+      let receiptDetails =response.MaterialReceipt
+      receiptDetails = receiptDetails.filter(x=>x.mrnNumber === mrnNumber)
+      receiptDetails = receiptDetails[0].receiptDetails
+
+  for (let index = 0; index < receiptDetails.length; index++) {
+    const element = receiptDetails[index];
+    material.push( element.material.code)      
+  }
+  let matcodes= material.map(itm => {
+                return `${itm}`;
+              })
+              .join() || "-"
+          let queryObject_ = [
+          {
+            key: "tenantId",
+            value: tenantId
+          }];
+          queryObject_.push({
+          key: "material",
+          value: matcodes
+          });
+          queryObject_.push({
+          key: "issueingStore",
+          value: storecode
+          });
+console.log(matcodes)
+    
+  try {
+    let response = await getMaterialBalanceRateResults(queryObject_, dispatch);
+    let MaterialBalanceRate = response.MaterialBalanceRate.filter(x=>x.mrnNumber === mrnNumber)
+    if(MaterialBalanceRate.length>0)
+    {
+      dispatch(prepareFinalObject("NonIndentsmaterial", MaterialBalanceRate));
+
+    }
+    else{
+      let materialCode = get(state,"screenConfiguration.preparedFinalObject.materialIssues[0].materialIssueDetails[0].material.code",'')
+      let materialIssuedFromReceipts = get(state,"screenConfiguration.preparedFinalObject.materialIssues[0].materialIssueDetails[0].materialIssuedFromReceipts",[]);
+      materialIssuedFromReceipts = materialIssuedFromReceipts.filter(x=>x.status === true)
+      let materialIssueDetails = get(state,"screenConfiguration.preparedFinalObject.materialIssues[0].materialIssueDetails",[]);
+      MaterialBalanceRate.push({
+        balance:0,
+        issueStoreCode:storecode,
+        materialCode:materialIssueDetails[0].material.code,
+        materialName:`${materialIssueDetails[0].material.name} (Qty:${materialIssueDetails[0].quantityIssued}, Rate:${materialIssuedFromReceipts[0].materialReceiptDetail.unitRate})`,
+        mrnNumber:materialIssueDetails[0].mrnNumber,
+        receiptDate:materialIssueDetails[0].receiptDate,
+        receiptDetailId:materialIssuedFromReceipts[0].materialReceiptDetailAddnlinfoId,
+        receiptId:materialIssueDetails[0].receiptId,
+        tenantId:materialIssueDetails[0].tenantId,
+        unitRate:materialIssuedFromReceipts[0].materialReceiptDetail.unitRate,
+        uomCode:materialIssuedFromReceipts[0].materialReceiptDetail.uom.code
+      })
+      dispatch(prepareFinalObject("NonIndentsmaterial", MaterialBalanceRate));
+
+    }
+    
+  
+
+  } catch (e) {
+    console.log(e);
+  }
+    }
   } catch (e) {
     console.log(e);
   }

@@ -60,6 +60,15 @@ const ImageUploadMolecule = Loadable({
   loading: () => <Loading />
 });
 
+const CustomizeTable = Loadable({
+  loader: () => import("./CustomizeTable"),
+  loading: () => <Loading />
+});
+const MultiCardDownloadGrid = Loadable({
+  loader: () => import("./MultiDownloadCard"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -72,5 +81,7 @@ export {
   DividerWithLabel,
   HowItWorks,
   ImageUploadMolecule,
-  MapLocatorEdit
+  MapLocatorEdit,
+  MultiCardDownloadGrid,
+  CustomizeTable
 };

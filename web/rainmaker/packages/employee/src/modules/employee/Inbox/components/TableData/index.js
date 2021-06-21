@@ -484,11 +484,13 @@ return !selectedBusinessServices.includes(businessServices)
     var WaterBusinessServices =
     ["REGULARWSCONNECTION",
     "TEMPORARY_WSCONNECTION",
+    "SW_SEWERAGE",
     "WS_TEMP_TEMP",
     "WS_TEMP_REGULAR",
     "WS_DISCONNECTION",
     "WS_TEMP_DISCONNECTION",
     "WS_RENAME",
+    "WS_METER_UPDATE",
     "WS_CONVERSION",
     "WS_REACTIVATE",
     "WS_TUBEWELL" ,]
@@ -501,10 +503,14 @@ return !selectedBusinessServices.includes(businessServices)
          {
           
           let currentAssignedRole = get(item,'additionalDetails.role')
-          currentAssignedRole = currentAssignedRole.split(",")
-          
-          if(userRolesCodesForWS.some(element => currentAssignedRole.includes(element)) )
+          if(currentAssignedRole!== undefined)
+          {
+              currentAssignedRole = currentAssignedRole.split(",")          
+            if(userRolesCodesForWS.some(element => currentAssignedRole.includes(element)) )
           {return item}
+
+          }
+          
         }
           
         }
@@ -575,12 +581,14 @@ return !selectedBusinessServices.includes(businessServices)
  
        var finalDataAssignedToAll = []
        if(window.localStorage.getItem("wns_workflow") ==='REGULARWSCONNECTION'
+       || window.localStorage.getItem("wns_workflow") ==='SW_SEWERAGE'
         || window.localStorage.getItem("wns_workflow") ==='TEMPORARY_WSCONNECTION'
         || window.localStorage.getItem("wns_workflow") === "WS_TEMP_TEMP" 
         || window.localStorage.getItem("wns_workflow") === "WS_TEMP_REGULAR"
         || window.localStorage.getItem("wns_workflow") === "WS_DISCONNECTION" 
         || window.localStorage.getItem("wns_workflow") === "WS_TEMP_DISCONNECTION"
         || window.localStorage.getItem("wns_workflow") === "WS_RENAME" 
+        || window.localStorage.getItem("wns_workflow") === "WS_METER_UPDATE" 
         || window.localStorage.getItem("wns_workflow") === "WS_CONVERSION" 
         || window.localStorage.getItem("wns_workflow") === "WS_REACTIVATE"  
         || window.localStorage.getItem("wns_workflow") === "WS_TUBEWELL"

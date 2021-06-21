@@ -17,6 +17,7 @@ class SimpleModal extends React.Component {
           onClose={this.props.closeModal}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
+          style={{zIndex:3000}}
         >
           <DialogTitle id="alert-dialog-title"></DialogTitle>
           <DialogContent>

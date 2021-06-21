@@ -8,28 +8,31 @@ import { validateFields, getTextToLocalMapping } from "../../utils";
 import get from "lodash/get";
 import set from "lodash/set";
 import { getPageName } from "./EmployeeSearchForm";
-export const fetchData = async (action, state, dispatch) => {
+export const fetchData = async (action, state, dispatch,applicationType="") => {
   const response = await getSearchResults();
-  //const mdmsRes = await getMdmsData(dispatch);
-  // let tenants =
-  // mdmsRes &&
-  // mdmsRes.MdmsRes &&
-  // mdmsRes.MdmsRes.tenant.citymodule.find(item => {
-  // if (item.code === "TL") return true;
-  // });
-  // dispatch(
-  // prepareFinalObject(
-  // "applyScreenMdmsData.common-masters.citiesByModule.TL",
-  // tenants
-  // )
-  // );
   try {
 
     if (response.nocApplicationDetail.length > 0) {
+      if (applicationType == "SELLMEATNOC") {
+      response.nocApplicationDetail.map(item => {
+          let nocSoughtFromAPI = item.nocSought;
+          let mdmsDataForNocSought = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.nocSought", []);
+          let nocSoughtFinalData = "";
+          nocSoughtFromAPI.split(",").map(item => {
+            
+            if (mdmsDataForNocSought.find(str => str.code == item.trim())) {
+              nocSoughtFinalData = nocSoughtFinalData + " , " + mdmsDataForNocSought.find(str => str.code == item.trim()).name;
+            }
+          });
+          // dispatch(prepareFinalObject("nocApplicationDetail[0].nocSoughtFinalData",nocSoughtFinalData.slice(2) ));
+          item.nocSought = nocSoughtFinalData.slice(2);
+        })
+    }
       dispatch(prepareFinalObject("searchResults", response.nocApplicationDetail));
       dispatch(
         prepareFinalObject("myApplicationsCount", response.nocApplicationDetail.length)
       );
+
     }
   } catch (error) {
     console.log(error);
@@ -680,11 +683,11 @@ export const getTextForPetNoc = label => {
     case "PAID":
       return 'Paid'
     case "REASSIGNTOSI":
-      return 'Application Reassigned To SI'
+      return 'Reassigned To SI'
     case "RESENT":
       return 'Resent'
     case "APPROVED":
-      return 'Apllication Approved'
+      return 'Approved'
     case "REASSIGN":
       return 'Application Reassigned To Citizen'
     case "INITIATED":
@@ -692,7 +695,9 @@ export const getTextForPetNoc = label => {
     case "PENDINGAPPROVAL":
       return 'Pending Approval'
     case "REJECTED":
-      return "Application Rejected"
+      return "Rejected"
+    case "DRAFT":
+      return "Draft"
 
     default:
       return '-'
@@ -712,15 +717,17 @@ export const getTextForSellMeatNoc = label => {
     case "RESENT":
       return 'Resent'
     case "APPROVED":
-      return 'Application Approved'
+      return 'Approved'
     case "REVIEWOFSUPERINTENDENT":
       return 'Review Of Superintendent'
     case "REASSIGNTOSUPERINTENDENT":
       return 'Reassign To Superintendent'
     case "REJECTED":
-      return "Application Rejected"
+      return "Rejected"
     case "REASSIGN":
-      return 'Application Reassigned To Citizen'
+      return 'Reassigned To Citizen'
+    case "DRAFT":
+      return "Draft"
 
     default:
       return '-'
@@ -798,7 +805,8 @@ export const getTextAdvertisement = (label, isWithdrawn) => {
       return 'Withdraw Request';
     case "REVIEWOFSECFORWITHDRAW":
       return 'Withdraw Request';
-
+    case "DRAFT":
+      return 'Draft';
     default:
       return '-'
   }
@@ -903,9 +911,10 @@ export const getTextForRoadCuttNoc = label => {
       return 'Review Of SDEHQ'
     case "REASSIGNTOSDEHQ":
       return 'Reassign To SDEHQ'
-
     case "COMPLETE":
       return 'Completed'
+    case "DRAFT":
+      return 'Draft'
       default:
       return '-'
   }

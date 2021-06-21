@@ -175,21 +175,22 @@ class InboxData extends React.Component {
       queryParams = `transitNumber=${taskId}&tenantId=${tenantId}`
     }
     else if (row[0].subtext === "NewWS1" 
-    || row[0].subtext === "REGULARWSCONNECTION" 
-    || row[0].subtext === 'NewSW1' 
+        || row[0].subtext === "REGULARWSCONNECTION"      
         || row[0].subtext === "TEMPORARY_WSCONNECTION"
         || row[0].subtext === "WS_TEMP_TEMP" 
         ||row[0].subtext === "WS_TEMP_REGULAR"
         ||row[0].subtext === "WS_DISCONNECTION" 
         ||row[0].subtext === "WS_TEMP_DISCONNECTION"
         || row[0].subtext === "WS_RENAME" 
+        || row[0].subtext === "WS_METER_UPDATE" 
         || row[0].subtext === "WS_CONVERSION" 
         || row[0].subtext === "WS_REACTIVATE"  
         ||  row[0].subtext === "WS_TUBEWELL") {
       queryParams += '&history=true&service=WATER';
       window.localStorage.setItem("wns_workflow",row[0].subtext);
     }
-    else if (row[0].subtext === "NewSW1") {
+    else if (row[0].subtext === "SW_SEWERAGE") {
+      window.localStorage.setItem("wns_workflow",row[0].subtext);
       queryParams += '&history=true&service=SEWERAGE';
     }
     else if (row[0].subtext == "Engineering" || row[0].subtext == "IT" || row[0].subtext == "Caretaker" || row[0].subtext == "MOH" || row[0].subtext == "Engineering Issue Note" || row[0].subtext == "IT Issue Note" || row[0].subtext == "Caretaker Issue Note" || row[0].subtext == "MOH Issue Note") {

@@ -126,7 +126,8 @@ var isfileNumberValid = validateFields(
                   [getTextToLocalMapping("Total Due")]: formatAmount(item.dueAmount.toFixed(2)) || "-",
                   [getTextToLocalMapping("Account Balance")]: formatAmount(item.remainingBalance.toFixed(2)) || "-",
                   [getTextToLocalMapping("Receipt No.")]: item.receiptNo || "-",
-                  [getTextToLocalMapping("Consolidated Demand")]: item.isPrevious ? "CF" : "-"
+                  [getTextToLocalMapping("Consolidated Demand")]: item.isPrevious ? "CF" : "-",
+                  [getTextToLocalMapping("comments")]: item.comment || "-"
                   
                 }));
               }
@@ -332,9 +333,15 @@ export const downloadAccountStatementXLS = async (state, dispatch) => {
 }
 
 export const formatAmount = (x) => {
-  
+  if(parseInt(x)<0){
+    let value=x.toString().split('-')
+    let val=value[1]
+     val.toString().split('.')[0].length > 3 ? val.toString().substring(0,val.toString().split('.')[0].length-3).replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + val.toString().substring(val.toString().split('.')[0].length-3): val.toString();
+     return "-"+val
+  }
+  else{
   return x.toString().split('.')[0].length > 3 ? x.toString().substring(0,x.toString().split('.')[0].length-3).replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + x.toString().substring(x.toString().split('.')[0].length-3): x.toString();
-  
+  }
 }
 
 const showHideTable = (booleanHideOrShow, dispatch) => {

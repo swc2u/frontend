@@ -60,7 +60,7 @@ import {getColonyTypes} from "../rented-properties/apply"
                 componentPath: "Button",
                  visible: true,
                 gridDefination: {
-                   xs: 4,
+                   xs: 6,
                    sm: 6,
                   align: "left",
                 },
@@ -91,7 +91,7 @@ import {getColonyTypes} from "../rented-properties/apply"
                 componentPath: "Button",
                  visible: true,
                 gridDefination: {
-                  xs: 4,
+                  xs: 6,
                   sm: 6,
                   align: "right",
                 },

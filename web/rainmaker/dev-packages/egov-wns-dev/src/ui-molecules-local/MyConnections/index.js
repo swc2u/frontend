@@ -19,7 +19,8 @@ const styles = {
 
 class MyConnections extends React.Component {
   getConnectionDetails = data => {
-
+    data.service = data.service.toUpperCase();
+    if(data.service ==='WATER'){
     if(data.activityType){
       switch(data.activityType){
         case "NEW_WS_CONNECTION":  window.localStorage.setItem("wns_workflow","REGULARWSCONNECTION"); break;
@@ -29,20 +30,38 @@ class MyConnections extends React.Component {
         case "PERMANENT_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTION"); break;        
         case "TEMPORARY_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_DISCONNECTION"); break;
         case "UPDATE_CONNECTION_HOLDER_INFO":  window.localStorage.setItem("wns_workflow","WS_RENAME"); break;
+        case "UPDATE_METER_INFO":  window.localStorage.setItem("wns_workflow","WS_METER_UPDATE"); break;
         case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_CONVERSION"); break;
         case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_REACTIVATE"); break;
         case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
       }
 }
+    }
+    else if(data.service ==='SEWERAGE'){
+      window.localStorage.setItem("wns_workflow","SW_SEWERAGE");
+    
+    }
 
 let tenantId = data.tenantId;
 if(data.property)
 tenantId = data.property.tenantId;
+if (process.env.NODE_ENV === "production") {
     window.location.href = `/citizen/wns/connection-details?connectionNumber=${data.connectionNo}&tenantId=${tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
+}
+else{
+  window.location.href = `/wns/connection-details?connectionNumber=${data.connectionNo}&tenantId=${tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
+
+}
   }
 
   getViewBillDetails = data => {
-    window.location.href = `/citizen/wns/viewBill?connectionNumber=${data.connectionNo}&tenantId=${data.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
+    if (process.env.NODE_ENV === "production") {
+    window.location.href = `/citizen/wns/viewBill?connectionNumber=${data.connectionNo}&tenantId=${data.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}&id=${data.id}`
+    }
+    else{
+      window.location.href = `/wns/viewBill?connectionNumber=${data.connectionNo}&tenantId=${data.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}&id=${data.id}`
+
+    }
   }
 
   render() {
@@ -152,9 +171,18 @@ tenantId = data.property.tenantId;
                           />
                         </Grid>
                         <Grid item md={8} xs={6}>
-                        { (item.property && item.property.address && item.property.address.street) ?
+                        {/* { (item.property && item.property.address && item.property.address.street) ?
                             (<Label
                             labelName={item.property.address.street}
+                            fontSize={14}
+                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
+                          />) :
+                          (<div></div>)
+                        } */}
+                        
+                        { (item.connectionHolders && item.connectionHolders[0]) ?
+                            (<Label
+                            labelName={item.connectionHolders[0].correspondenceAddress}
                             fontSize={14}
                             style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                           />) :
@@ -181,7 +209,16 @@ tenantId = data.property.tenantId;
                       </Grid>
                       <div>
                         {item.status === "NA" ?
-                          (<div></div>)
+                          (<div>
+                            <LabelContainer
+                                labelKey={item.error}
+                                labelName ={item.error}
+                                style={{
+                                  color: "#FF6347",
+                                  fontSize: 14,
+                                }}
+                              />
+                          </div>)
                           : item.status !== "INITIATED" ?
                             (<div> <LabelContainer
                               labelKey="WS_COMMON_PAID_LABEL"

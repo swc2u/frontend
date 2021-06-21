@@ -2,7 +2,7 @@ import {
   getCommonGrayCard,
   getCommonSubHeader,
   getCommonContainer,
-  getLabelWithValue,
+  getLabelWithValue as _getLabelWithValue,
   getDivider,
   getLabel,
   getCommonTitle
@@ -23,6 +23,18 @@ import { changeStep as changeStepManimajra} from "../applyResourceManimajra/foot
 import React from "react";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
+export const roundup = value => {
+  if (value) {
+let val=value.toFixed(2)
+return Number(val)
+  }
+};
+function getLabelWithValue(labelName, path, visible) {
+  const label = _getLabelWithValue(labelName, path);
+  label.visible = visible
+  // label.gridDefination.xs = 12;
+  return label;
+}
 
 const allocationTypeLabel = {
   labelName: "Type of Allocation",
@@ -370,7 +382,10 @@ const cpNumberLabel = {
   labelName: "CP No.",
   labelKey: "ES_CP_NUMBER_LABEL"
 }
-
+const npNumberLabel = {
+  labelName: "NP No.",
+  labelKey: "ES_NP_NUMBER_LABEL"
+}
 export const getReviewOwner = (isEditable = true, owner = 0) => {
   return getCommonGrayCard({
     headerDiv: {
@@ -424,6 +439,11 @@ export const getReviewOwner = (isEditable = true, owner = 0) => {
       share: getLabelWithValue(
         shareLabel, {
           jsonPath: `Properties[0].propertyDetails.owners[${owner}].share`
+        }
+      ),
+      npNumber: getLabelWithValue(
+        npNumberLabel, {
+          jsonPath: `Properties[0].propertyDetails.owners[${owner}].npNumber`
         }
       ),
       cpNumber: getLabelWithValue(
@@ -487,6 +507,7 @@ const modeOfTransferLabel = {
 }
 
 export const getReviewPurchaser = (isEditable = true, purchaser = 0, step = 4, screenKey = "apply") => {
+  const visible =!!(window.location.href).includes("apply-manimajra")
   return getCommonGrayCard({
     headerDiv: {
       ...headerDiv,
@@ -554,7 +575,8 @@ export const getReviewPurchaser = (isEditable = true, purchaser = 0, step = 4, s
       percentShare: getLabelWithValue(
         percentShareLabel, {
           jsonPath: `Properties[0].propertyDetails.purchaser[${purchaser}].share`
-        }
+        },
+        visible
       ),
       modeOfTransfer: getLabelWithValue(
         modeOfTransferLabel, {
@@ -1385,6 +1407,50 @@ export const rentDetailsTable =  {
   }
 }
 
+export const rentDetailsTableAnnual =  {
+  uiFramework: "custom-molecules",
+  componentPath: "Table",
+  props: {
+    title: React.createElement('button', {style: editButtonStyle, onClick: () => {
+      const fileNumber = getQueryArg(window.location.href, "fileNumber");
+      window.location.href = `edit-rent-info?fileNumber=${fileNumber}&tenantId=${getTenantId()}`;
+    } }, "EDIT"),
+    columns: [
+      getTextToLocalMapping("Rent amount"),
+      getTextToLocalMapping("Start year"),
+      getTextToLocalMapping("End year"),
+      getTextToLocalMapping("Till"),
+    ],
+    options: {
+      pagination: false,
+      filter: false,
+      download: false,
+      print: false,
+      search:false,
+      viewColumns:false,
+      responsive: "stacked",
+      selectableRows: false,
+      hover: true,
+      rowsPerPageOptions: [10, 15, 20]
+    },
+    customSortColumn: {
+      column: "Application Date",
+      sortingFn: (data, i, sortDateOrder) => {
+        const epochDates = data.reduce((acc, curr) => {
+          acc.push([...curr, getEpochForDate(curr[4], "dayend")]);
+          return acc;
+        }, []);
+        const order = sortDateOrder === "asc" ? true : false;
+        const finalData = sortByEpoch(epochDates, !order).map(item => {
+          item.pop();
+          return item;
+        });
+        return { data: finalData, currentOrder: !order ? "asc" : "desc" };
+      }
+    }
+  }
+}
+
 export const getReviewAuction = (isEditable = true, screenName) => {
   return getCommonGrayCard({
     headerDiv: {
@@ -1410,10 +1476,10 @@ export const getReviewAuction = (isEditable = true, screenName) => {
           labelKey: "ES_AUCTION_ID_LABEL"
         }, 
         {
-          jsonPath: `Properties[0].propertyDetails.bidders[0].auctionId`,
-          callBack: (value) => {
-            return Math.floor(value)
-          }
+          jsonPath: `auctionIdFieldValue`,
+          // callBack: (value) => {
+          //   return Math.floor(value)
+          // }
         }
       ),
       schemeName: getLabelWithValue(
@@ -1467,7 +1533,7 @@ export const getReviewAuction = (isEditable = true, screenName) => {
   })
 }
 
-export const getReviewAllotmentMultipleSectionDetails = (state, dispatch, screenName, screenpath, type, count) => {
+export const getReviewAllotmentMultipleSectionDetails = (state, dispatch, screenName, screenpath, type, count, monthlyYearlyLabel) => {
   var detailsObj = {};
   
   switch(type) {
@@ -1507,25 +1573,67 @@ export const getReviewAllotmentMultipleSectionDetails = (state, dispatch, screen
           }
         );
       
-        detailsObj[`startYear_${i}`] = getLabelWithValue(
-          {
-            labelName: "Start Year",
-            labelKey: "ES_START_YEAR_LABEL"
-          }, 
-          {
-            jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentStartMonth`
-          }
-        )
+        if(monthlyYearlyLabel === "Monthly"){
+          detailsObj[`startYear_${i}`] = getLabelWithValue(
+            {
+              labelName: "Start Month",
+              labelKey: "ES_START_MONTH_LABEL"
+            }, 
+            {
+              jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentStartMonth`
+            }
+          )
+  
+          detailsObj[`endYear_${i}`] = getLabelWithValue(
+            {
+              labelName: "End Month",
+              labelKey: "ES_END_MONTH_LABEL"
+            }, 
+            {
+              jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentEndMonth`
+            }
+          )
+        }
+        else if(monthlyYearlyLabel === "Annually"){
+          detailsObj[`startYear_${i}`] = getLabelWithValue(
+            {
+              labelName: "Start Year",
+              labelKey: "ES_START_YEAR_LABEL"
+            }, 
+            {
+              jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentStartMonth`
+            }
+          )
+  
+          detailsObj[`endYear_${i}`] = getLabelWithValue(
+            {
+              labelName: "End Year",
+              labelKey: "ES_END_YEAR_LABEL"
+            }, 
+            {
+              jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentEndMonth`
+            }
+          )
+        }
+        // detailsObj[`startYear_${i}`] = getLabelWithValue(
+        //   {
+        //     labelName: "Start Year",
+        //     labelKey: "ES_START_YEAR_LABEL"
+        //   }, 
+        //   {
+        //     jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentStartMonth`
+        //   }
+        // )
 
-        detailsObj[`endYear_${i}`] = getLabelWithValue(
-          {
-            labelName: "End Year",
-            labelKey: "ES_END_YEAR_LABEL"
-          }, 
-          {
-            jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentEndMonth`
-          }
-        )
+        // detailsObj[`endYear_${i}`] = getLabelWithValue(
+        //   {
+        //     labelName: "End Year",
+        //     labelKey: "ES_END_YEAR_LABEL"
+        //   }, 
+        //   {
+        //     jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentEndMonth`
+        //   }
+        // )
       }
       break;
 
@@ -1541,28 +1649,102 @@ export const getReviewAllotmentMultipleSectionDetails = (state, dispatch, screen
           }
         );
       
-        detailsObj[`startYear_${i}`] = getLabelWithValue(
-          {
-            labelName: "Start Year",
-            labelKey: "ES_START_YEAR_LABEL"
-          }, 
-          {
-            jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentStartMonth`
-          }
-        )
+        if(monthlyYearlyLabel === "Monthly"){
+          detailsObj[`startYear_${i}`] = getLabelWithValue(
+            {
+              labelName: "Start Month",
+              labelKey: "ES_START_MONTH_LABEL"
+            }, 
+            {
+              jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentStartMonth`
+            }
+          )
+  
+          detailsObj[`endYear_${i}`] = getLabelWithValue(
+            {
+              labelName: "End Month",
+              labelKey: "ES_END_MONTH_LABEL"
+            }, 
+            {
+              jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentEndMonth`
+            }
+          )
+        }
+        else if(monthlyYearlyLabel === "Annually"){
+          detailsObj[`startYear_${i}`] = getLabelWithValue(
+            {
+              labelName: "Start Year",
+              labelKey: "ES_START_YEAR_LABEL"
+            }, 
+            {
+              jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentStartMonth`
+            }
+          )
+  
+          detailsObj[`endYear_${i}`] = getLabelWithValue(
+            {
+              labelName: "End Year",
+              labelKey: "ES_END_YEAR_LABEL"
+            }, 
+            {
+              jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentEndMonth`
+            }
+          )
+        }
+        // detailsObj[`startYear_${i}`] = getLabelWithValue(
+        //   {
+        //     labelName: "Start Year",
+        //     labelKey: "ES_START_YEAR_LABEL"
+        //   }, 
+        //   {
+        //     jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentStartMonth`
+        //   }
+        // )
 
-        detailsObj[`endYear_${i}`] = getLabelWithValue(
-          {
-            labelName: "End Year",
-            labelKey: "ES_END_YEAR_LABEL"
-          }, 
-          {
-            jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentEndMonth`
-          }
-        )
+        // detailsObj[`endYear_${i}`] = getLabelWithValue(
+        //   {
+        //     labelName: "End Year",
+        //     labelKey: "ES_END_YEAR_LABEL"
+        //   }, 
+        //   {
+        //     jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentEndMonth`
+        //   }
+        // )
       }
       break;
   }
+  // switch(monthlyYearlyLabel){
+  //     case "Monthly": 
+  //     for (var i=0; i<count; i++) {
+  //       detailsObj[`rentAmount_${i}`] = getLabelWithValue(
+  //         {
+  //           labelName: "Rent Amount",
+  //           labelKey: "ES_RENT_AMOUNT_LABEL"
+  //         }, 
+  //         {
+  //           jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentAmount`
+  //         }
+  //       );
+      
+        
+  //     }
+  //     break;
+  //   case "Annually":
+  //     for (var i=0; i<count; i++) {
+  //       detailsObj[`rentAmount_${i}`] = getLabelWithValue(
+  //         {
+  //           labelName: "Rent Amount",
+  //           labelKey: "ES_RENT_AMOUNT_LABEL"
+  //         }, 
+  //         {
+  //           jsonPath: `Properties[0].propertyDetails.paymentConfig.paymentConfigItems[${i}].groundRentAmount`
+  //         }
+  //       );
+      
+        
+  //     }
+  //     break;
+  // }
   dispatch(
     handleField(
       screenName,
@@ -1748,6 +1930,15 @@ export const getReviewProprietorshipDetails = (isEditable = true, screenkey = "a
           jsonPath: "Properties[0].propertyDetails.owners[0].ownerDetails.mobileNumber"
         }
       ),
+      npNumber: getLabelWithValue(
+        {
+          labelName: "NP Number",
+          labelKey: "ES_NP_NUMBER_LABEL"
+        },
+        {
+          jsonPath: "Properties[0].propertyDetails.owners[0].npNumber"
+        }
+      ),
       cpNumber: getLabelWithValue(
         {
           labelName: "CP Number",
@@ -1787,6 +1978,7 @@ export const getReviewConsolidatedPaymentDetails = (isEditable = true, screenkey
         }, 
         {
           jsonPath: "Properties[0].propertyDetails.estateDemands[0].rent",
+          callBack:roundup
         }
       ),
       consolidatedGst: getLabelWithValue(
@@ -1795,7 +1987,8 @@ export const getReviewConsolidatedPaymentDetails = (isEditable = true, screenkey
           labelKey: "ES_CONSOLIDATED_GST_LABEL"
         },
         {
-          jsonPath: "Properties[0].propertyDetails.estateDemands[0].gst"
+          jsonPath: "Properties[0].propertyDetails.estateDemands[0].gst",
+          callBack:roundup
         }
       ),
       consolidatedInterestOnRent: getLabelWithValue(
@@ -1804,7 +1997,8 @@ export const getReviewConsolidatedPaymentDetails = (isEditable = true, screenkey
           labelKey: "ES_CONSOLIDATED_INTEREST_ON_RENT_LABEL"
         },
         {
-          jsonPath: "Properties[0].propertyDetails.estateDemands[0].penaltyInterest"
+          jsonPath: "Properties[0].propertyDetails.estateDemands[0].penaltyInterest",
+          callBack:roundup
         }
       ),
       consolidatedInterestOnGst: getLabelWithValue(
@@ -1813,7 +2007,8 @@ export const getReviewConsolidatedPaymentDetails = (isEditable = true, screenkey
           labelKey: "ES_CONSOLIDATED_INTEREST_ON_GST_LABEL"
         },
         {
-          jsonPath: "Properties[0].propertyDetails.estateDemands[0].gstInterest"
+          jsonPath: "Properties[0].propertyDetails.estateDemands[0].gstInterest",
+          callBack:roundup
         }
       ),
       consolidatedTill: getLabelWithValue(

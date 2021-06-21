@@ -90,7 +90,7 @@ export const furnishindentData = (state, dispatch) => {
     "indents",
     []
   );
-   setDateInYmdFormat(indents[0], ["indentDate",]);
+   setDateInYmdFormat(indents[0], ["indentDate","expectedDeliveryDate"]);
   
   dispatch(prepareFinalObject("indents", indents));
 };
@@ -145,8 +145,12 @@ export const handleCreateUpdateIT = (state, dispatch) => {
   );
   let indentDate =
   get(state, "screenConfiguration.preparedFinalObject.indents[0].indentDate",0) 
-  indentDate = convertDateToEpoch(indentDate, "dayStart");
+  indentDate = convertDateToEpoch(indentDate, "daymid");
   set(indents[0],"indentDate", indentDate);
+  let expectedDeliveryDate =
+  get(state, "screenConfiguration.preparedFinalObject.indents[0].expectedDeliveryDate",0) 
+  expectedDeliveryDate = convertDateToEpoch(expectedDeliveryDate, "daymid");
+  set(indents[0],"expectedDeliveryDate", expectedDeliveryDate);
   //furnishindentData(state, dispatch);
   if (uuid) {
     createUpdateIT(state, dispatch, "UPDATE");
@@ -199,6 +203,7 @@ export const createUpdateIT = async (state, dispatch, action) => {
   
     } catch (error) {
       dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error" ) );
+      furnishindentData(state, dispatch);
     }
   } else if (action === "UPDATE") {
     try {
@@ -216,6 +221,7 @@ export const createUpdateIT = async (state, dispatch, action) => {
   
     } catch (error) {
       dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error" ) );
+      furnishindentData(state, dispatch);
     }
   } 
 };

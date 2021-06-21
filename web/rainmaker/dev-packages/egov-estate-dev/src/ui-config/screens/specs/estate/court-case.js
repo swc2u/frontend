@@ -59,7 +59,7 @@ const getData = async (action, state, dispatch, fileNumber) => {
             break;
           case "MANI_MAJRA":
             branchTabs = tabsMM;
-            activeIndex = 6;
+            activeIndex = 5;
             break;
         }
         let approvedflagdata = get(state.screenConfiguration.preparedFinalObject, "Properties[0]")
@@ -111,7 +111,7 @@ const getData = async (action, state, dispatch, fileNumber) => {
                   children: {
                     courtCaseButton: buttonComponent("Create Court Case",`/estate/court-case-apply?fileNumber=${fileNumber}&tenantId=${getTenantId()}`),
                   },
-                  visible: (approvedFlagState === "ES_APPROVED" && !!findItem) ? true : false
+                  visible: (approvedFlagState === ("ES_APPROVED"||"ES_PM_EB_APPROVED") && !!findItem) ? true : false
                 },
                 courtCaseContainer
             }

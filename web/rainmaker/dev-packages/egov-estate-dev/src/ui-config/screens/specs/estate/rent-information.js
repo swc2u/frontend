@@ -6,11 +6,11 @@ import { prepareFinalObject,handleScreenConfigurationFieldChange as handleField,
 import { getSearchResults ,setXLSTableData } from "../../../../ui-utils/commons";
 import {onTabChange, headerrow, tabs, tabsAllotment} from './search-preview'
 import { getBreak } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { getReviewLicenseFee, getReviewInterest, getReviewSecurity, getReviewGroundRent, rentDetailsTable, getReviewPremiumAmount, installmentTable, getReviewAdvanceRent } from "./applyResource/reviewProperty";
+import { getReviewLicenseFee, getReviewInterest, getReviewSecurity, getReviewGroundRent, rentDetailsTable, rentDetailsTableAnnual, getReviewPremiumAmount, installmentTable, getReviewAdvanceRent } from "./applyResource/reviewProperty";
 import { getTextToLocalMapping } from "../utils";
 import get from "lodash/get";
 import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
-import { ESTATE_APPROVED_STATE } from "../../../../ui-constants";
+import { ESTATE_APPROVED_STATE,ESTATE_ALOTMENT_APPROVED_STATE } from "../../../../ui-constants";
 
 let isPropertyMasterOrAllotmentOfSite;
 
@@ -39,6 +39,7 @@ const getData = async (action, state, dispatch, fileNumber) => {
       let properties = response.Properties;
       isPropertyMasterOrAllotmentOfSite = properties[0].propertyMasterOrAllotmentOfSite;
       dispatch(prepareFinalObject("Properties[0]", properties[0]));
+      // Properties[0].propertyDetails.paymentConfig.groundRentGenerationType
 
       return {
         div: {
@@ -77,10 +78,11 @@ const getData = async (action, state, dispatch, fileNumber) => {
                 premiumAmountDetails: getReviewPremiumAmount(false, 0, "apply"),
                 breakAfterSearch1: getBreak(),
                 installmentTable: installmentTable,
-                groundRentDetails: getReviewGroundRent(false, 0, "apply"),
                 breakAfterSearch2: getBreak(),
-                rentTable: rentDetailsTable,
+                groundRentDetails: getReviewGroundRent(false, 0, "apply"),
                 licenseFeeDetails: getReviewLicenseFee(false, 0, "apply"),
+                breakAfterSearch2: getBreak(),
+                rentTable: properties[0].propertyDetails.paymentConfig.groundRentGenerationType === "Annually" ? rentDetailsTableAnnual : rentDetailsTable,
                 advanceRentDetails: getReviewAdvanceRent(false, 0, "apply"),
                 interestDetails: getReviewInterest(false, 0, "apply"),
                 securityDetails: getReviewSecurity(false, 0, "apply")
@@ -94,21 +96,28 @@ const getData = async (action, state, dispatch, fileNumber) => {
   
 }
 
-const getFormattedTill = (startMonth, endMonth) => {
-  let till = (endMonth-startMonth)+1;
-
-  if (till) {
-    const years = (Number(till) / 12 | 0)
-    const months = Number(till) % 12
-    if(years > 0 && months > 0) {
-      return years + " Year(s) " + months +" Month(s)"
-    } else if(years < 1) {
-      return months + " Month(s)"
-    } else if(months < 1) {
-      return years + " Year(s)"
+const getFormattedTill = (startMonth, endMonth, paymentConfigData) => {
+  const value = (Number(endMonth) - Number(startMonth)) + 1
+  const groundRentGenerationType = get(paymentConfigData, "groundRentGenerationType")
+    if(groundRentGenerationType === "Annually") {
+      if(value) {
+        return value + " Year(s)"
+      }
+      return "-"
+    } else if(groundRentGenerationType === "Monthly") {
+      if (value) {
+        const years = (Number(value) / 12 | 0)
+        const months = Number(value) % 12
+        if(years > 0 && months > 0) {
+          return years + " Year(s) " + months +" Month(s)"
+        } else if(years < 1) {
+          return months + " Month(s)"
+        } else if(months < 1) {
+          return years + " Year(s)"
+        }
+      }
     }
-  }
-  return "-"
+    return "-"
 }
 
 const updateAllFields = (action, state, dispatch) => {
@@ -121,13 +130,18 @@ const updateAllFields = (action, state, dispatch) => {
   let installments = properties[0].propertyDetails.paymentConfig.premiumAmountConfigItems ? properties[0].propertyDetails.paymentConfig.premiumAmountConfigItems : []
   let rentInfo = properties[0].propertyDetails.paymentConfig.paymentConfigItems ? properties[0].propertyDetails.paymentConfig.paymentConfigItems : [];
   isPropertyMasterOrAllotmentOfSite = properties[0].propertyMasterOrAllotmentOfSite;
-
-  let rentData = rentInfo.map(item => ({
+  let paymentConfigData = properties[0].propertyDetails.paymentConfig
+  let rentData = properties[0].propertyDetails.paymentConfig.groundRentGenerationType === "Annually" ? rentInfo.map(item => ({
+    [getTextToLocalMapping("Rent amount")]: item.groundRentAmount || 0,
+    [getTextToLocalMapping("Start year")]: item.groundRentStartMonth || 0,
+    [getTextToLocalMapping("End year")]: item.groundRentEndMonth || 0,
+    [getTextToLocalMapping("Till")]: getFormattedTill(item.groundRentStartMonth, item.groundRentEndMonth, paymentConfigData)
+  })) : rentInfo.map(item => ({
     [getTextToLocalMapping("Rent amount")]: item.groundRentAmount || 0,
     [getTextToLocalMapping("Start month")]: item.groundRentStartMonth || 0,
     [getTextToLocalMapping("End month")]: item.groundRentEndMonth || 0,
-    [getTextToLocalMapping("Till")]: getFormattedTill(item.groundRentStartMonth, item.groundRentEndMonth)
-  }));
+    [getTextToLocalMapping("Till")]: getFormattedTill(item.groundRentStartMonth, item.groundRentEndMonth, paymentConfigData)
+  }))
 
   let installmentData = installments.map(item => ({
     [getTextToLocalMapping("Installment")]: item.premiumAmount || 0,
@@ -135,7 +149,14 @@ const updateAllFields = (action, state, dispatch) => {
   }))
 
   let isInterestFixedLabel = properties[0].propertyDetails.paymentConfig.isIntrestApplicable ? "ES_FIXED_INTEREST_LABEL" : "ES_YEARLY_INTEREST_LABEL";
-
+  dispatch(
+    handleField(
+      action.screenKey,
+      "components.div.children.reviewRentInfo.children.cardContent.children.advanceRentDetails",
+      "visible",
+      !!(isPropertyMasterOrAllotmentOfSite == "ALLOTMENT_OF_SITE")
+    )
+  )
   dispatch(
     handleField(
       action.screenKey,
@@ -203,7 +224,7 @@ const updateAllFields = (action, state, dispatch) => {
     )
   )
 
-  if (!!findItem && properties[0].state == ESTATE_APPROVED_STATE) {
+  if (!!findItem && properties[0].state == (ESTATE_APPROVED_STATE || ESTATE_ALOTMENT_APPROVED_STATE)) {
     dispatch(
       handleField(
         action.screenKey,

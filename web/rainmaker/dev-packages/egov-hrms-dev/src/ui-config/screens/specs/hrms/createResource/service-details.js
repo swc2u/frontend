@@ -329,7 +329,7 @@ const serviceDetailsCard = {
         let serviceFromDate = convertDateToEpoch(get(employeeObject[0], "dateOfAppointment"))// convertDateToEpoch(action.value, "dayStart")
        
                
-        set(muliItemContent[key], "props.value", new Date(serviceFromDate).toISOString().slice(0, 10));
+       // set(muliItemContent[key], "props.value", new Date(serviceFromDate).toISOString().slice(0, 10));
         
         }
 

@@ -88,20 +88,22 @@ const createMatrialIndentNoteHandle = async (state, dispatch) => {
   let expectedDeliveryDate = new Date(indents[0].expectedDeliveryDate)
   // if(Number(expectedDeliveryDate))
   //   expectedDeliveryDate = epochToYmd(expectedDeliveryDate)
-  //   const  expectedDeliveryDate_ = new Date(expectedDeliveryDate) 
-    if(CurrentDate> expectedDeliveryDate)
-    {
-      const errorMessage = {
-        labelName: "Can not initiate Issue note against an approved Indent after the ‘Expected Delivery Date’ of the indent ",
-        labelKey: "STORE_MATERIAL_INDENT_NOTE_CREATE_VALIDATION"
-      };
-      dispatch(toggleSnackbar(true, errorMessage, "warning"));
-    }
-    else
-    {
-      dispatch(setRoute(`/egov-store-asset/createMaterialIndentNote?IndentId=${IndentId}`));
+  //   const  expectedDeliveryDate_ = new Date(expectedDeliveryDate)
+  // remove validation 
+    // if(CurrentDate> expectedDeliveryDate)
+    // {
+    //   const errorMessage = {
+    //     labelName: "Can not initiate Issue note against an approved Indent after the ‘Expected Delivery Date’ of the indent ",
+    //     labelKey: "STORE_MATERIAL_INDENT_NOTE_CREATE_VALIDATION"
+    //   };
+    //   dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    // }
+    // else
+    // {
+    //   dispatch(setRoute(`/egov-store-asset/createMaterialIndentNote?IndentId=${IndentId}`));
 
-    }
+    // }
+    dispatch(setRoute(`/egov-store-asset/createMaterialIndentNote?IndentId=${IndentId}`));
   
 };
 const creatPOHandle = async (state, dispatch) => {
@@ -115,19 +117,21 @@ const creatPOHandle = async (state, dispatch) => {
   let expectedDeliveryDate = new Date(indents[0].expectedDeliveryDate)
   // if(Number(expectedDeliveryDate))
   //   expectedDeliveryDate = epochToYmd(expectedDeliveryDate)
-    if(CurrentDate> expectedDeliveryDate)
-    {
-      const errorMessage = {
-        labelName: "Can not initiate Issue note against an approved Indent after the ‘Expected Delivery Date’ of the indent ",
-        labelKey: "STORE_MATERIAL_INDENT_PO_CREATE_VALIDATION"
-      };
-      dispatch(toggleSnackbar(true, errorMessage, "warning"));
-    }
-    else
-    {
-      dispatch(setRoute(`/egov-store-asset/create-purchase-order?indentNumber=${indentNumber}`));
+  //remove validation 
+    // if(CurrentDate> expectedDeliveryDate)
+    // {
+    //   const errorMessage = {
+    //     labelName: "Can not initiate Issue note against an approved Indent after the ‘Expected Delivery Date’ of the indent ",
+    //     labelKey: "STORE_MATERIAL_INDENT_PO_CREATE_VALIDATION"
+    //   };
+    //   dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    // }
+    // else
+    // {
+    //   dispatch(setRoute(`/egov-store-asset/create-purchase-order?indentNumber=${indentNumber}`));
 
-    }
+    // }
+    dispatch(setRoute(`/egov-store-asset/create-purchase-order?indentNumber=${indentNumber}`));
  
 };
 //print function UI start SE0001

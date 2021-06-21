@@ -1,5 +1,6 @@
 import React from "react";
-import { sortByEpoch, getEpochForDate } from "../../utils";
+import { sortByEpoch, getEpochForDate,ifUserRoleExists,getTextToLocalMappingCode } from "../../utils";
+//import { ifUserRoleExists } from "../utils";
 import './index.css'
 import {getTextToLocalMapping} from "./searchApplicationResults"
 import LabelContainer from "egov-ui-framework/ui-containers/LabelContainer";
@@ -11,13 +12,13 @@ const localisationLabels = getTransformedLocalStorgaeLabels();
 
 export const searchResults = {
   uiFramework: "custom-molecules",
-  moduleName: "egov-wns",
+  // moduleName: "egov-wns",
   componentPath: "Table",
   visible: false,
   props: {
     columns: [
       {
-        name: getTextToLocalMapping("service"),
+        name: getTextToLocalMappingCode("service"),
         options: {
           filter: false,
           customBodyRender: value => (
@@ -28,61 +29,174 @@ export const searchResults = {
         }
       },
       {
-        name:getTextToLocalMapping("Consumer No"),
+        name:getTextToLocalMappingCode("Consumer No"),
         labelKey: "WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL",
         options: {
           filter: false,
-          customBodyRender: (value, index) => (
-            <div className="linkStyle" onClick={() => getConnectionDetails(index)}>
+          customBodyRender: (value, index) => {
+            return(
+              <div className="linkStyle" onClick={() => getConnectionDetails(index,false)}>
               <a>{value}</a>
             </div>
-          )
+            )
+
+          }
+           
+            
+          
         }
       },
-      getTextToLocalMapping("Owner Name"),
-      getTextToLocalMapping("Status"),
-      getTextToLocalMapping("Due"),
-      getTextToLocalMapping("Address"),
-      getTextToLocalMapping("Due Date"),
+      getTextToLocalMappingCode("Owner Name"),
+      getTextToLocalMappingCode("Status"),
+      getTextToLocalMappingCode("Due"),
+      getTextToLocalMappingCode("Address"),
+      getTextToLocalMappingCode("Due Date"),
 
       {
-        name: getTextToLocalMapping("Action"),
+        name: getTextToLocalMappingCode("Action"),
         options: {
           filter: false,
           customBodyRender: (value, data) => {
-            if (data.rowData[4] > 0 && data.rowData[4] !== 0) {
-              return (
-                <div className="linkStyle" onClick={() => getViewBillDetails(data)} style={{ color: '#fe7a51', textTransform: 'uppercase' }}>
-                  <LabelContainer
-                    labelKey="WS_COMMON_COLLECT_LABEL"
-                    style={{
-                      color: "#fe7a51",
-                      fontSize: 14,
-                    }}
-                  />
-                </div>
-              )
-            } else if (data.rowData[4] === 0) {
-              return (
-                <div style={{ textTransform: 'uppercase' }}>
-                  Paid
-                </div>
-              )
-            }
-            else {
-              return ("NA")
-            }
+           // if (data.rowData[4] > 0 && data.rowData[4] !== 0) {
+             // check role exists for WS_CEMP
+             const roleExists = ifUserRoleExists("WS_CEMP");
+             let subdiv = '00';
+              const subdiv_ =`WS_SDE_${subdiv}`
+              if(data.rowData[1] !== undefined)
+              {
+                subdiv = data.rowData[1].substring(1,3) //str.substring(1,2)
+              }
+              
+              let sdeRole = false;
+              let jeRole = false;
+              let roleExistsDeavtivate = true
+              sdeRole = ifUserRoleExists(`WS_SDE_${subdiv}`)
+              jeRole = ifUserRoleExists(`WS_JE_${subdiv}`)
+              if(sdeRole || jeRole)
+              {
+                roleExistsDeavtivate = true
+              }
+              else
+              {
+                roleExistsDeavtivate = false
+
+              }  
+             // let idx =index  
+              // if(data.rowData[2] =="") 
+              // {
+              //   //if(data.tableData[data.rowIndex].length>0)
+              //   if(data.tableData.length>0)
+              //   {
+              //     let data_ = data.tableData[data.rowIndex]
+              //     if ((data_[4] > 0 && data[4] !== 0 && roleExists) &&(data_[3] !== undefined? data_[3].toUpperCase() === "INITIATED":'')) {
+              //       return (
+              //         <div className="linkStyle" onClick={() => getViewBillDetails(data_)} style={{ color: '#fe7a51', textTransform: 'uppercase' }}>
+              //           <LabelContainer
+              //             labelKey="WS_COMMON_COLLECT_LABEL"
+              //             style={{
+              //               color: "#fe7a51",
+              //               fontSize: 14,
+              //             }}
+              //           />
+              //         </div>
+              //       )
+              //     }
+              //     else if(roleExistsDeavtivate)//&& subdiv ===subdiv_
+              //     {
+              //       return(
+              //         <div className="linkStyle" onClick={() => getConnectionDetails(data_,true)} style={{ color: '#fe7a51', textTransform: 'uppercase' }}>
+              //           <LabelContainer
+              //             labelKey="WS_COMMON_DEACTIVE_LABEL"
+              //             style={{
+              //               color: "#fe7a51",
+              //               fontSize: 14,
+              //             }}
+              //           />
+              //         </div>
+              //       )
+              //     }
+              //     else if (data_[4] === 0) {
+              //       return (
+              //         <div style={{ textTransform: 'uppercase',color: "#008000", }}>
+              //           Paid
+              //         </div>
+              //       )
+              //     }
+              //     else {
+              //       return ("NA")
+              //     }
+              //   }
+              //   else
+              //   {
+              //     data = data
+              //   }
+                
+              // }  
+              // else{
+                data = data;
+                if ((data.rowData[4] > 0 && data.rowData[4] !== 0 && roleExists) &&(data.rowData[3] !== undefined? data.rowData[3].toUpperCase() === "INITIATED":'')) {
+                  return (
+                    <div className="linkStyle" onClick={() => getViewBillDetails(data)} style={{ color: '#fe7a51', textTransform: 'uppercase' }}>
+                      <LabelContainer
+                        labelKey="WS_COMMON_COLLECT_LABEL"
+                        style={{
+                          color: "#fe7a51",
+                          fontSize: 14,
+                        }}
+                      />
+                    </div>
+                  )
+                }
+                else if(roleExistsDeavtivate)//&& subdiv ===subdiv_
+                {
+                  return(
+                    <div className="linkStyle" onClick={() => getConnectionDetails(data,true)} style={{ color: '#fe7a51', textTransform: 'uppercase' }}>
+                      <LabelContainer
+                        labelKey="WS_COMMON_DEACTIVE_LABEL"
+                        style={{
+                          color: "#fe7a51",
+                          fontSize: 14,
+                        }}
+                      />
+                    </div>
+                  )
+                }
+                else if (data.rowData[4] === 0) {
+                  return (
+                    <div style={{ textTransform: 'uppercase',color: "#008000", }}>
+                      Paid
+                    </div>
+                  )
+                }
+                else {
+                  return ("NA")
+                }
+             // }      
+             
+
           }
         }
       },
       {
-        name:  getTextToLocalMapping("tenantId"),
+        name:  getTextToLocalMappingCode("tenantId"),
         options: {
           display: false
         }
       },
       {
-        name: getTextToLocalMapping("connectionType"),
+        name: getTextToLocalMappingCode("connectionType"),
+        options: {
+          display: false
+        }
+      },
+      {
+        name: getTextToLocalMappingCode("billGenerationId"),
+        options: {
+          display: false
+        }
+      },
+      {
+        name: getTextToLocalMappingCode("ConStatus"),
         options: {
           display: false
         }
@@ -115,10 +229,11 @@ export const searchResults = {
   }
 };
 
-const getConnectionDetails = data => {
-  window.location.href = `connection-details?connectionNumber=${data.rowData[1]}&tenantId=${data.rowData[8]}&service=${data.rowData[0]}&connectionType=${data.rowData[9]}`
+const getConnectionDetails = (data,Active) => {
+  Active = data.rowData[11] ==='Inactive'?false:true
+  window.location.href = `connection-details?connectionNumber=${data.rowData[1]}&tenantId=${data.rowData[8]}&service=${data.rowData[0]}&connectionType=${data.rowData[9]}&Active=${Active}`
 }
 
 const getViewBillDetails = data => {
-  window.location.href = `viewBill?connectionNumber=${data.rowData[1]}&tenantId=${data.rowData[8]}&service=${data.rowData[0]}&connectionType=${data.rowData[9]}`
+  window.location.href = `viewBill?connectionNumber=${data.rowData[1]}&tenantId=${data.rowData[8]}&service=${data.rowData[0]}&connectionType=${data.rowData[9]}&id=${data.rowData[10]}`
 }

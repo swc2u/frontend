@@ -23,12 +23,20 @@ class Footer extends React.Component {
     //responseLength: 0
   };
 
-  findAssigner = (item, processInstances) => {
-    const findIndex = processInstances.map(processInstance => processInstance.action === item).lastIndexOf(true)
+  findAssigner = (item, processInstances,state,role) => {
+    const label = !!role ? `${item}_TO_${role}` : item
+    const findIndex = processInstances.map(processInstance => processInstance.action === label&& processInstance.state.applicationStatus === state).lastIndexOf(true)
     return processInstances[findIndex]
   }
-
   openActionDialog = async item => {
+    let employeeList = []
+    if(!item.roleProps || (!!item.roleProps && item.roleProps.length === 1)) {
+      const data = !!item.roleProps ? {...item, ...item.roleProps[0]} : item
+      employeeList = await this.renderemployeeList(data)
+    }
+    this.setState({ open: true, data: item, employeeList})
+  }
+  renderemployeeList = async item => {
     const { handleFieldChange, setRoute, dataPath, moduleName } = this.props;
     const {preparedFinalObject} = this.props.state.screenConfiguration;
     const {workflow: {ProcessInstances = []}} = preparedFinalObject || {}
@@ -50,14 +58,14 @@ class Footer extends React.Component {
     switch(moduleName) {
       case WF_ALLOTMENT_OF_SITE: {
         if(!!action && data[0].masterDataState !== "PM_PENDING_DA_VERIFICATION") {
-          const {assigner = {}} = this.findAssigner(action, ProcessInstances) || {}
+          const {assigner = {}} = this.findAssigner(action, ProcessInstances,data[0].masterDataState,item.role) || {}
           assignee = !!assigner.uuid ? [assigner.uuid] : []
         }
         break
       }
       default: {
         if(!!action && data[0].state !== "ES_PENDING_DS_VERIFICATION"){
-          const {assigner = {}} = this.findAssigner(action, ProcessInstances) || {}
+          const {assigner = {}} = this.findAssigner(action, ProcessInstances,data[0].state,item.role) || {}
           assignee = !!assigner.uuid ? [assigner.uuid] : []
         }
       }
@@ -105,10 +113,16 @@ class Footer extends React.Component {
           };
         });
     }
-
-    this.setState({ open: true, data: item, employeeList });
+if(employeeList.length===0){
+  assignee=[]
+  handleFieldChange(`${dataPath}[0].assignee`, assignee);
+}
+return employeeList
   };
-
+  onRoleSelect = async item => {
+    const employeeList = await this.renderemployeeList(item)
+    this.setState({ employeeList})
+  };
   onClose = () => {
     this.setState({
       open: false
@@ -122,6 +136,7 @@ class Footer extends React.Component {
       onDialogButtonClick,
       dataPath,
       documentProps,
+      documentsJsonPath,
       screenName,
       validateFn,
       toggleSnackbar,
@@ -133,7 +148,7 @@ class Footer extends React.Component {
       preparedFinalObject,
       dataPath
     );
-    const dialogData = {...data, documentProps}
+    const dialogData = {...data, documentProps, documentsJsonPath}
     const fileNumber = getQueryArg(window.location.href, "fileNumber")
     const tenant = getQueryArg(window.location.href, "tenantId");
     const downloadMenu =
@@ -151,6 +166,10 @@ class Footer extends React.Component {
                 redirectLink = `allotment?fileNumber=${fileNumber}&tenantId=${tenant}&stepNumber=6`;
               }
               break;
+              case "ES-EB-PropertyMaster":
+                if (_data[0].propertyMasterOrAllotmentOfSite === "PROPERTY_MASTER") {
+                  redirectLink = `apply?fileNumber=${fileNumber}&tenantId=${tenant}&stepNumber=9`;
+                }
             case "ES-BB-PropertyMaster":
               redirectLink = `apply-building-branch?fileNumber=${fileNumber}&tenantId=${tenant}&stepNumber=3`;
               break;
@@ -166,7 +185,7 @@ class Footer extends React.Component {
           labelKey: `WF_${moduleName.toUpperCase()}_${buttonLabel}`,
           link: redirectLink ? () => window.location.href = redirectLink : () => {
             if (screenName == "noc-verification") {
-              let isNocFormValid = validateFn(this.props.state);
+              let isNocFormValid = validateFn(this.props.state, handleFieldChange);
               if (isNocFormValid) {
                 this.openActionDialog(item);
               }
@@ -228,6 +247,7 @@ class Footer extends React.Component {
           dialogData={dialogData}
           dropDownData={employeeList}
           handleFieldChange={handleFieldChange}
+          onRoleSelect={this.onRoleSelect}
           onButtonClick={onDialogButtonClick}
           dataPath={dataPath}
           state={this.props.state}

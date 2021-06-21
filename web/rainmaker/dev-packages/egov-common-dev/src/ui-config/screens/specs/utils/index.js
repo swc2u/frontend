@@ -2,6 +2,7 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { validate } from "egov-ui-framework/ui-redux/screen-configuration/utils";
 import { getUserInfo, getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
+import set from "lodash/set";
 import {
   getQueryArg,
   getTransformedLocalStorgaeLabels,
@@ -521,6 +522,28 @@ export const getBill = async (queryObject,dispatch) => {
     console.log(error,'fetxh');
   }
 };
+export const billGeneration = async (queryObject,dispatch) => {
+  try {
+    const response = await httpRequest(
+      "post",
+     "/ws-services/billGeneration/_getBillData",
+     //"/ws-calculator/billing/_getBillingEstimation",
+      "_search",
+      [],
+      queryObject
+    );
+    return response;
+  } catch (error) {
+    dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+    console.log(error,'fetxh');
+  }
+};
 
 export const searchBill = async (dispatch, applicationNumber, tenantId) => {
   try {
@@ -661,6 +684,52 @@ export const generateBill = async (dispatch, consumerCode, tenantId, businessSer
     );
     console.log(e);
   }
+};
+export const getBillingEstimation = async (stste, dispatch, consumerCode, tenantId) => {
+  try {
+    if (consumerCode && tenantId) {
+
+      let queryObjectForWaterFetchBill = {billGeneration:
+        {            
+          consumerCode:consumerCode,
+          // tenantId:tenantId,
+          // paymentMode:'cash',
+          // isGenerateDemand:false,            
+        }
+      }      
+      const payload = await billGeneration(queryObjectForWaterFetchBill,dispatch);
+      // let payload = sampleGetBill();
+      if (payload && payload.billGeneration[0]) {
+        set(payload.billGeneration[0], `createdTime`, epochToYmdDate(payload.billGeneration[0].createdTime));
+        if(payload.billGeneration[0].receiptDate !== null)
+        set(payload.billGeneration[0], `totalQty`, epochToYmdDate(payload.billGeneration[0].receiptDate));
+        dispatch(prepareFinalObject("billGeneration", payload.billGeneration));
+        
+      }
+    }
+  } catch (e) {
+    dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: e.message, labelKey: e.message },
+        "error"
+      )
+    );
+    console.log(e);
+  }
+};
+export const epochToYmdDate = et => {
+  if (!et) return null;
+  if (typeof et === "string") return et;
+  let d = new Date(et),
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [year, month, day].join("-");
 };
 
 export const resetFields = (state, dispatch) => {

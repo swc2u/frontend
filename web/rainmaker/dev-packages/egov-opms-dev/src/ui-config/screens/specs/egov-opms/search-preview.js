@@ -47,6 +47,7 @@ import {
 } from "../../../../ui-utils/commons";
 import { citizenFooter } from "./searchResource/citizenFooter";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
+import { getTextForPetNoc } from "./searchResource/citizenSearchFunctions";
 
 
 let roles = JSON.parse(getUserInfo()).roles
@@ -162,9 +163,19 @@ const titlebar = getCommonContainer({
       number: getapplicationNumber(),
     }
   },
+  applicationStatus: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+      status: "NA",
+    }
+  },
   downloadMenu: {
     uiFramework: "custom-atoms",
     componentPath: "MenuButton",
+    // visible: process.env.REACT_APP_NAME === "Citizen" ? true : false,
+    visible: false,
     props: {
       data: {
         label: "Download",
@@ -259,6 +270,9 @@ const prepareDocumentsView = async (state, dispatch) => {
   let uploadPetPicture = JSON.parse(petnocdetail.applicationdetail).hasOwnProperty('uploadPetPicture') ?
     JSON.parse(petnocdetail.applicationdetail).uploadPetPicture[0]['fileStoreId'] : '';
 
+  let ownerIdProof = JSON.parse(petnocdetail.applicationdetail).hasOwnProperty('ownerIdProof') ?
+    JSON.parse(petnocdetail.applicationdetail).ownerIdProof[0]['fileStoreId'] : '';
+  
   if (uploadVaccinationCertificate !== '' && uploadPetPicture !== '') {
     documentsPreview.push({
       title: "VACCINATION_CERTIFIACTE",
@@ -269,7 +283,18 @@ const prepareDocumentsView = async (state, dispatch) => {
         title: "PET_PICTURE",
         fileStoreId: uploadPetPicture,
         linkText: "View"
-      });
+      }
+    );
+
+    if (ownerIdProof != '') { 
+      documentsPreview.push(
+        {
+          title: "PET_OWNER_ID_PROOF",
+          fileStoreId: ownerIdProof,
+          linkText: "View"
+        }
+      );
+    }
     let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
     let fileUrls =
       fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};
@@ -292,6 +317,7 @@ const prepareDocumentsView = async (state, dispatch) => {
     });
     dispatch(prepareFinalObject("documentsPreview", documentsPreview));
   }
+  
 };
 
 
@@ -312,6 +338,25 @@ const setSearchResponse = async (state, dispatch, action, applicationNumber, ten
 
     let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
     localStorageSet("app_noc_status", nocStatus);
+    dispatch(
+      handleField(
+        "search-preview",
+        "components.div.children.headerDiv.children.header.children.applicationStatus",
+        "props.status",
+        getTextForPetNoc(nocStatus)
+      )
+    );
+    if (nocStatus != "DRAFT") { 
+      dispatch(
+        handleField(
+          "search-preview",
+          "components.div.children.taskStatus",
+          "visible",
+          true
+        )
+      );
+  
+    }
     await setCurrentApplicationProcessInstance(state);
     HideshowEdit(state, action, nocStatus);
 
@@ -519,6 +564,17 @@ const setSearchResponseForNocCretificate = async (state, dispatch, action, appli
       certificateDownloadObjectPET_RECEIPT
     ];
   }
+
+  if (nocStatus == "APPROVED" || nocRemark == "PAID") {
+    dispatch(
+      handleField(
+        "search-preview",
+        "components.div.children.headerDiv.children.header.children.downloadMenu",
+        "visible",
+        true
+      )
+    );  
+  }
   dispatch(
     handleField(
       "search-preview",
@@ -601,12 +657,11 @@ const screenConfig = {
           uiFramework: "custom-containers-local",
           componentPath: "WorkFlowContainer",
           moduleName: "egov-workflow",
-          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+          visible:  false, //process.env.REACT_APP_NAME === "Citizen" ? false : true,
           props: {
             dataPath: "Licenses",
             moduleName: "PETNOC",
           }
-
         },
         body: checkForRole(roles, 'CITIZEN') ? getCommonCard({
           estimateSummary: estimateSummary,
@@ -616,9 +671,7 @@ const screenConfig = {
           documentsSummary: documentsSummary,
           taskStatusSummary: taskStatusSummary,
           undertakingButton1
-        })
-
-          :
+        }):
           getCommonCard({
             estimateSummary: estimateSummary,
             applicantSummary: applicantSummary,

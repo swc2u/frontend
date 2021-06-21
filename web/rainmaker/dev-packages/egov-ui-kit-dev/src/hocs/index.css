@@ -56,7 +56,6 @@
   .rainmaker-header {
     background-color: #ffffff !important;
     position: fixed !important;
-    width: 100vw !important;
     padding-left: 53px !important;
     height: auto !important;
     background-image: none !important;
@@ -94,7 +93,7 @@
 }
 
 .icon-button {
-  display: flex;
+  display: none;
   align-items: center;
 }
 

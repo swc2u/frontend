@@ -380,7 +380,8 @@ export const fetchItemListMasterData = async (action, state, dispatch) => {
       'code': item['itemName'] || "-",
       'name': item['itemName'] || "-"
     }));
-    data.push({ 'id': 'Other', 'code': 'Other', 'name': 'Other' })
+    // data.push({ 'id': 'Other', 'code': 'Other', 'name': 'Other' })
+    data=[{ 'id': 'Other', 'code': 'Other', 'name': 'Other' },...data]
 
     store.dispatch(prepareFinalObject("applyScreenMdmsData.egec.ItemList", data));
     //this is kept purposely if the data does not get at the load then it would be assigned.
@@ -694,10 +695,10 @@ export const createVendorDetails = async (file) => {
   }
 }
 
-export const createCitizenBasedonMobileNumber = async (state, dispatch) => {
+export const createCitizenBasedonMobileNumber = async (state, dispatch,dataPayload) => {
   let response = '';
   try {
-    let payload = get(state.screenConfiguration.preparedFinalObject, "eChallan", []);
+    let payload = get(state.screenConfiguration.preparedFinalObject, dataPayload, []);
     let tenantId = getTenantId().length > 2 ? getTenantId().split('.')[0] : getTenantId()
     let User = {
       name: payload.violatorName,
@@ -1029,6 +1030,22 @@ export const getSearchResultsView = async requestBody => {
   //alert(JSON.stringify(response));
 };
 
+export const getSearchResultsPaymentServiceData = async queryObject => {
+  try {
+    
+    const response = await httpRequest("post", "/pg-service/transaction/v1/_search", "", queryObject, {});
+    return response;
+  } catch (error) {
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
+      )
+    );
+  }
+}
+
 export const getSearchResultsForNocCretificate = async queryObject => {
   try {
     const response = await httpRequest("post", get(queryObject[3], "value"), "", [], get(queryObject[2], "value"));
@@ -1069,10 +1086,11 @@ export const getSearchResultsForNocCretificateDownload = async queryObject => {
   //alert(JSON.stringify(response));
 };
 
-export const fetchVendorData = async () => {
+export const fetchVendorData = async (covNo) => {
   let data = {
     "RequestBody": {
       tenant_id: getTenantId(),
+      covNo:covNo
     }
   }
   try {

@@ -6,9 +6,9 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getQueryArg, setDocuments } from "egov-ui-framework/ui-utils/commons";
 import { getSearchResults } from "../../../../ui-utils/commons";
-import { downloadCertificateForm} from "../utils";
+import { downloadCertificateForm, getReceipt} from "../utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { getReviewOwner, getReviewProperty, getReviewAddress, getReviewRentDetails, getReviewPaymentDetails,getReviewGrantDetails ,getGrantDetails,getGrantDetailsAvailed} from "./applyResource/review-property";
+import { getReviewOwner, getReviewProperty, getReviewAddress, getReviewRentDetails, getReviewPaymentDetails,getReviewGrantDetails ,getGrantDetails,getGrantDetailsAvailed, getPaymentHistory} from "./applyResource/review-property";
 import { getReviewDocuments } from "./applyResource/review-documents";
 import { getUserInfo ,getTenantId} from "egov-ui-kit/utils/localStorageUtils";
 import { prepareFinalObject, toggleSnackbar,handleScreenConfigurationFieldChange as handleField,
@@ -24,7 +24,7 @@ import { setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils
 const userInfo = JSON.parse(getUserInfo());
 const tenantId = getTenantId();
 const {roles = []} = userInfo
-const findItem = roles.find(item => item.code === "RP_CLERK");
+const findItem = roles.find(item => item.code === "RP_CLERK" || item.code === "RP_JA");
 
 let transitNumber = getQueryArg(window.location.href, "transitNumber");
 
@@ -50,18 +50,22 @@ const reviewDocumentDetails = getReviewDocuments(false, "apply")
 const grantDetailAvailed=getGrantDetailsAvailed(false)
 const reviewGrantDetails = getReviewGrantDetails(false)
 const grantDetail=getGrantDetails(false)
-export const propertyReviewDetails = getCommonCard({
+const reviewPaymentHistory = getPaymentHistory()
+export const propertyReviewDetails =  process.env.REACT_APP_NAME != "Citizen"?getCommonCard({
   reviewPropertyDetails,
   reviewAddressDetails,
   reviewOwnerDetails,
   reviewRentDetails,
   reviewPaymentDetails,
   reviewDocumentDetails,
+  reviewPaymentHistory,
   grantDetailAvailed,
   reviewGrantDetails,
   grantDetail
-  
-});
+}):
+getCommonCard({
+  reviewPaymentHistory,
+})
 
 export const searchResults = async (action, state, dispatch, transitNumber) => {
   let queryObject = [
@@ -224,6 +228,41 @@ export const searchResults = async (action, state, dispatch, transitNumber) => {
         );
         
   }
+  const rentPaymentConsumerCode = properties[0].rentPaymentConsumerCode;
+  let paymentQueryObj =[]
+  if(process.env.REACT_APP_NAME === "Citizen")
+  {
+     paymentQueryObj = [
+      {
+        key: "tenantId",
+        value: properties[0].tenantId,
+      },
+      {
+        key: "consumerCodes",
+        value: rentPaymentConsumerCode,
+      },
+      {
+        key: "mobileNumber",
+        value: userInfo.mobileNumber,
+      },
+    ];
+  }
+  else{
+  paymentQueryObj = [
+    {
+      key: "tenantId",
+      value: properties[0].tenantId,
+    },
+    {
+      key: "consumerCodes",
+      value: rentPaymentConsumerCode,
+    },
+  ];
+}
+  const paymentResponse = await getReceipt(paymentQueryObj)
+  const _date = new Date().getTime() - 90 * 24 * 60 * 60 * 1000
+  const payments = paymentResponse.Payments.filter(item => item.transactionDate >= _date);
+  dispatch(prepareFinalObject("paymentHistory", payments))
 }
 }
 
@@ -250,7 +289,7 @@ export const onTabChange = async(tabIndex, dispatch, state) => {
   dispatch(setRoute(path))
 }
 
-export const tabs = [
+export const tabs = process.env.REACT_APP_NAME != "Citizen"?[
   {
     tabButton: { labelName: "Property Details", labelKey: "RP_PROPERTY_DETAILS" },
   },
@@ -262,6 +301,11 @@ export const tabs = [
   },
   {
     tabButton: {labelName: "Rent History", labelKey: "RP_COMMON_RENT_HISTORY"}
+  }
+]:
+[
+  {
+    tabButton: { labelName: "Property Details", labelKey: "RP_PROPERTY_DETAILS" },
   }
 ]
 
@@ -287,6 +331,7 @@ const buttonComponent = (label) => ({
       labelKey: label
     })
   },
+  visible:process.env.REACT_APP_NAME != "Citizen",
   onClickDefination: {
     action: "condition",
     callBack: (state, dispatch) => {

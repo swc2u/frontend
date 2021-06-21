@@ -89,7 +89,7 @@ class ReportPreview extends React.Component {
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
-    doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
+    doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
 
     doc.setFontSize(10);
     doc.text("WorkflowPreview", pageWidth / 2, 40, 'center');
@@ -107,6 +107,12 @@ class ReportPreview extends React.Component {
     });
 
     doc.save("WorkflowPreview.pdf");
+    }
+
+    // Preview
+    pdfPreview = (e) => {
+        debugger;
+        e.view.print();
     }
 
     componentDidMount(){
@@ -1657,7 +1663,7 @@ class ReportPreview extends React.Component {
                 <div className="previewTableDownload">
                     <div className="downloadLabel"> Download As: </div>
                     <button className="downloadBtn" onClick={this.pdfDownload}> PDF </button>
-
+                    {/* <button className="columnToggleBtn" accesskey="h" onClick={this.pdfPreview}> Preview </button> */}
                     {/* <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button> */}
                 </div>
 
@@ -1697,7 +1703,7 @@ class ReportPreview extends React.Component {
                                 i === 0 ?
                                 <tr>
                                 {/* <dd>{ index }</dd>  */}
-                                <td rowspan={applicationState.actions.length }> {applicationState.actions.length} { applicationState.state } </td>
+                                <td rowspan={applicationState.actions.length }> { applicationState.state } </td>
                                 <td  rowspan={applicationState.actions.length }> { applicationState.applicationStatus } </td>
                                 <td> { action.action } </td>
                                 <td> { action.roles[0] } </td>

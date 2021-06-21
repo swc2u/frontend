@@ -213,9 +213,18 @@ export const replaceStrInPath = (inputString, search, replacement) => {
 };
 
 export const getFileUrlFromAPI = async (fileStoreId,tenantId) => {
+
+  if(process.env.REACT_APP_NAME !== "Citizen")
+  {
+    if(tenantId === undefined || tenantId === null)
+    tenantId = tenantId || commonConfig.tenantId.length > 2 ? commonConfig.tenantId.split('.')[0] : commonConfig.tenantId
+  }
+  else{
+    tenantId = tenantId || commonConfig.tenantId.length > 2 ? commonConfig.tenantId.split('.')[0] : commonConfig.tenantId
+  }
   const queryObject = [
   	//{ key: "tenantId", value: tenantId||commonConfig.tenantId },
-    { key: "tenantId", value: tenantId || commonConfig.tenantId.length > 2 ? commonConfig.tenantId.split('.')[0] : commonConfig.tenantId },
+    { key: "tenantId", value: tenantId },
     { key: "fileStoreIds", value: fileStoreId }
   ];
   try {
@@ -355,16 +364,16 @@ export const setBusinessServiceDataToLocalStorage = async (
         JSON.stringify(get(payload, "BusinessServices"))
       );
     } else {
-      dispatch(
-        toggleSnackbar(
-          true,
-          {
-            labelName: "Business Service returned empty object",
-            labelKey: "ERR_NOT_AUTHORISED_BUSINESS_SERVICE"
-          },
-          "error"
-        )
-      );
+      // dispatch(
+      //   toggleSnackbar(
+      //     true,
+      //     {
+      //       labelName: "Business Service returned empty object",
+      //       labelKey: "ERR_NOT_AUTHORISED_BUSINESS_SERVICE"
+      //     },
+      //     "error"
+      //   )
+      // );
     }
     dispatch(toggleSpinner());
   } catch (e) {
@@ -416,6 +425,13 @@ export const handleFileUpload = (event, handleDocument, props) => {
   const input = event.target;
   if (input.files && input.files.length > 0) {
     const files = input.files;
+    // validate double file extension
+    let valid = ((files[0].name.toLowerCase().indexOf(".txt") !== -1)
+                      || (files[0].name.toLowerCase().indexOf(".php") !== -1)
+                      || (files[0].name.toLowerCase().indexOf(".exe") !== -1)
+                      || (files[0].name.toLowerCase().indexOf(".json") !== -1))//extension.includes(file.name);
+            if(!valid)
+            {
     let existingfileSize = 0
     if (moduleName === 'egov-echallan' && maxFiles > 1) {
       documents && documents.forEach(doc => {
@@ -534,6 +550,24 @@ export const handleFileUpload = (event, handleDocument, props) => {
         }
       }
     });
+  }
+  else{
+    // dispatch(
+    //   toggleSnackbar(
+    //     true,
+    //     {
+    //       labelName: "Please select valid file!",
+    //       labelKey: "CORE_COMMON_INVALID_FILE_EXTENSION"
+    //     },
+    //     "warning"
+    //   )
+    // );
+    store.dispatch(toggleSnackbar(true, { labelName: "Please select valid file!",
+    labelKey: "CORE_COMMON_INVALID_FILE_EXTENSION"}, "warning"));
+   // toggleSnackbarAndSetText(true, { labelName: "The file is not a valid image", labelKey: "CORE_COMMON_INVALID_IMAGE_FILE" }, "warning");
+  }
+  
+
   }
 };
 

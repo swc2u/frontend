@@ -132,7 +132,7 @@ class DocumentList extends Component {
       prepareFinalObject
     } = this.props;
     let index = 0;
-    if (_.isEmpty(documentsUploadRedux)) {
+    //if (_.isEmpty(documentsUploadRedux)) {
       documentsList.forEach(docType => {
         docType.cards &&
           docType.cards.forEach(card => {
@@ -166,22 +166,44 @@ class DocumentList extends Component {
                 documentsUploadRedux,
                 `[${index}].documentCode`
               );
+              let documents = get(
+                documentsUploadRedux,
+                `[${index}].documents`
+              );
               if (oldDocType != docType.code || oldDocCode != card.name) {
-                documentsUploadRedux[index] = {
-                  documentType: docType.code,
-                  documentCode: card.name,
-                  isDocumentRequired: card.required,
-                  isDocumentTypeRequired: card.dropdown
-                    ? card.dropdown.required
-                    : false
-                };
+                if(documents)
+                {
+                  documentsUploadRedux[index] = {
+                    documentType: docType.code,
+                    documentCode: card.name,
+                    isDocumentRequired: card.required,
+                    documents:documents,
+                    isDocumentTypeRequired: card.dropdown
+                      ? card.dropdown.required
+                      : false
+                  };
+  
+                }
+                else{
+                  documentsUploadRedux[index] = {
+                    documentType: docType.code,
+                    documentCode: card.name,
+                    isDocumentRequired: card.required,
+                    isDocumentTypeRequired: card.dropdown
+                      ? card.dropdown.required
+                      : false
+                  };
+  
+                }
+                
               }
+            
               index++;
             }
           });
       });
       prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
-    }
+   // }
   };
 
   onUploadClick = uploadedDocIndex => {
@@ -195,7 +217,7 @@ class DocumentList extends Component {
     prepareFinalObject("documentsUploadRedux", {
       ...documentsUploadRedux,
       [uploadedDocIndex]: {
-        ...documentsUploadRedux[uploadedDocIndex], documents: [{ fileName: file.name, fileStoreId, fileUrl: Object.values(fileUrl)[0] }]
+        ...documentsUploadRedux[uploadedDocIndex], documents: [{ fileName: file.name, fileSize : file.size, fileStoreId, fileUrl: Object.values(fileUrl)[0] }]
       }
     });
   };
@@ -295,6 +317,7 @@ class DocumentList extends Component {
             onButtonClick={() => this.onUploadClick(key)}
             inputProps={this.props.inputProps}
             buttonLabel={this.props.buttonLabel}
+            pagename ={this.props.pageName}
           />
         </Grid>
       </Grid>

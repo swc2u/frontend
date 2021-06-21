@@ -1251,10 +1251,43 @@ switch(pagename)
     });
     APIUrl = `/pdf-service/v1/_create`
     break;
+    case "SMID":
+      ApplicationNo = getQueryArg(window.location.href, "applicationNumber");
+    queryObject.push({
+      key: "key",
+      value:"nulm-certificate-smid"
+    });
+    APIUrl = `/pdf-service/v1/_create`
+    break;
+    case "SUSV":
+      ApplicationNo = getQueryArg(window.location.href, "applicationNumber");
+    queryObject.push({
+      key: "key",
+      value:"nulm-certificate-susv"
+    });
+    APIUrl = `/pdf-service/v1/_create`
+    break;
+    case "SUSV_UPDATE":
+      ApplicationNo = getQueryArg(window.location.href, "applicationNumber");
+    queryObject.push({
+      key: "key",
+      value:"nulm-certificate-susvUpdate"
+    });
+    APIUrl = `/pdf-service/v1/_create`
+    break;
+    case "SUH":
+      ApplicationNo = getQueryArg(window.location.href, "applicationNumber");
+    queryObject.push({
+      key: "key",
+      value:"nulm-certificate-suh"
+    });
+    APIUrl = `/pdf-service/v1/_create`
+    break;
+
 }
    
     try {    
-      const response = await getprintpdf(queryObject,APIUrl);
+      const response = await getprintpdf(queryObject,APIUrl,pagename);
       if(response)
       {
         let filestoreId = response.filestoreIds[0]

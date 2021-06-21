@@ -67,7 +67,7 @@ class CitizenDashboard extends Component {
               label="DASHBOARD_CITIZEN_SERVICES_LABEL"
               fontSize={16}
               color="rgba(0, 0, 0, 0.87"
-              containerStyle={{ paddingTop: 16, paddingBottom: 8 }}
+              containerStyle={{ paddingTop: 24, paddingBottom: 8 }}
             />
           )}
           <ServiceList history={history} setRoute={setRoute} />

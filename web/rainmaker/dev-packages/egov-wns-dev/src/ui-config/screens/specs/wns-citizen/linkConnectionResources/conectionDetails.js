@@ -52,7 +52,7 @@ export const conectionDetails = () => {
         labelKey: "WS_COMMON_TABLE_COL_OWN_NAME_LABEL"
       },
       {
-        jsonPath: "combinedSearchResults[0].property.address.service",
+        jsonPath: "combinedSearchResults[0].property.owners[0].name",
       }
     ),
     status: getLabelWithValue(
@@ -63,14 +63,14 @@ export const conectionDetails = () => {
         jsonPath: "combinedSearchResults[0].status",
       }
     ),
-    address: getLabelWithValue(
-      {
-        labelKey: "WS_COMMON_TABLE_COL_ADDRESS"
-      },
-      {
-        jsonPath: "combinedSearchResults[0].property.address.service",
-      }
-    ),
+    // address: getLabelWithValue(
+    //   {
+    //     labelKey: "WS_COMMON_TABLE_COL_ADDRESS"
+    //   },
+    //   {
+    //     jsonPath: "combinedSearchResults[0].property.address.service",
+    //   }
+    // ),
        
        
         

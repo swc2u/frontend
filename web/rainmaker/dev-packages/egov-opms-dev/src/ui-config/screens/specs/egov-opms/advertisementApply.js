@@ -7,7 +7,7 @@ import {
 import { getCurrentFinancialYear, clearlocalstorageAppDetails } from "../utils";
 
 import { footer } from "./advApplyResource/footer";
-import { AdvtDetails, PetParticularDetails } from "./advApplyResource/nocDetails";
+import { AdvtDetails } from "./advApplyResource/nocDetails";
 import { immunizationDetails } from "./advApplyResource/immunization";
 
 import { documentDetails } from "./advApplyResource/documentDetails";
@@ -79,8 +79,7 @@ export const formwizardFirstStep = {
     id: "apply_form1"
   },
   children: {
-    AdvtDetails,
-    // PetParticularDetails
+    AdvtDetails
   }
 };
 
