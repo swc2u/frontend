@@ -10,6 +10,7 @@ import pinIcon from "egov-ui-kit/assets/Location_pin.svg";
 import { resetFiles } from "egov-ui-kit/redux/form/actions";
 import Button from "@material-ui/core/Button"; 
 import ShareIcon from "@material-ui/icons/Share";
+import axios from "axios";
 import get from "lodash/get";
 import isEqual from "lodash/isEqual";
 import { prepareFormData } from "egov-ui-kit/redux/common/actions";
@@ -323,11 +324,12 @@ class ApplicationDetails extends Component {
 	};
 
 	
-	downloadReceiptButton = async (e) => {
+	downloadReceiptButton = async (mode) => {
 	
 		await this.downloadReceiptFunction();
-	
-		let documentsPreviewData;
+
+		setTimeout(async()=>{
+			let documentsPreviewData;
 		const { DownloadReceiptDetailsforCG,userInfo } = this.props;
 	
 		
@@ -342,81 +344,69 @@ class ApplicationDetails extends Component {
 				linkText: "View",
 			});
 			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-		
+
 			let fileUrls =
-				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-		
-	
-			documentsPreview = documentsPreview.map(function (doc, index) {
-				doc["link"] =
-					(fileUrls &&
-						fileUrls[doc.fileStoreId] &&
-						fileUrls[doc.fileStoreId].split(",")[0]) ||
-					"";
+			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+	   
+			
+		documentsPreview = documentsPreview.map(function (doc, index) {
+			doc["link"] =
+				(fileUrls &&
+					fileUrls[doc.fileStoreId] &&
+					fileUrls[doc.fileStoreId].split(",")[0]) ||
+				"";
+			
+			doc["name"] =
+				(fileUrls[doc.fileStoreId] &&
+					decodeURIComponent(
+						fileUrls[doc.fileStoreId]
+							.split(",")[0]
+							.split("?")[0]
+							.split("/")
+							.pop()
+							.slice(13)
+					)) ||
+				`Document - ${index + 1}`;
+			return doc;
+		});
+		if(mode==='print'){
+
+			var response = await axios.get(documentsPreview[0].link, {
+				//responseType: "blob",
+				responseType: "arraybuffer",
 				
-				doc["name"] =
-					(fileUrls[doc.fileStoreId] &&
-						decodeURIComponent(
-							fileUrls[doc.fileStoreId]
-								.split(",")[0]
-								.split("?")[0]
-								.split("/")
-								.pop()
-								.slice(13)
-						)) ||
-					`Document - ${index + 1}`;
-				return doc;
+				
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/pdf",
+				},
 			});
 		
+			const file = new Blob([response.data], { type: "application/pdf" });
+			const fileURL = URL.createObjectURL(file);
+			var myWindow = window.open(fileURL);
+			if (myWindow != undefined) {
+				myWindow.addEventListener("load", (event) => {
+					myWindow.focus();
+					myWindow.print();
+				});
+			}
+
+		}
+
+
+		else{
+
 			setTimeout(() => {
+			
 				window.open(documentsPreview[0].link);
 			}, 100);
-			prepareFinalObject('documentsPreview', documentsPreview)
 		}
-	
-		// let documentsPreviewData;
-		// const { DownloadReceiptDetailsforCG,userInfo} = this.props;
 		
-		// var documentsPreview = [];
-		// if (DownloadReceiptDetailsforCG && DownloadReceiptDetailsforCG.filestoreIds.length > 0) {
-		// 	 documentsPreviewData=DownloadReceiptDetailsforCG.filestoreIds[0];
-		// 	documentsPreview.push({
-		// 		title: "DOC_DOC_PICTURE",
-		// 		fileStoreId: documentsPreviewData,
-		// 		linkText: "View",
-		// 	});
-		// 	let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-		// 	let fileUrls =
-		// 		fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenanId) : {};
-		
-	
-		// 	documentsPreview = documentsPreview.map(function (doc, index) {
-		// 		doc["link"] =
-		// 			(fileUrls &&
-		// 				fileUrls[doc.fileStoreId] &&
-		// 				fileUrls[doc.fileStoreId].split(",")[0]) ||
-		// 			"";
-			
-		// 		doc["name"] =
-		// 			(fileUrls[doc.fileStoreId] &&
-		// 				decodeURIComponent(
-		// 					fileUrls[doc.fileStoreId]
-		// 						.split(",")[0]
-		// 						.split("?")[0]
-		// 						.split("/")
-		// 						.pop()
-		// 						.slice(13)
-		// 				)) ||
-		// 			`Document - ${index + 1}`;
-		// 		return doc;
-		// 	});
-		
-		// 	setTimeout(() => {
-		// 		window.open(documentsPreview[0].link);
-		// 	}, 100);
-		// 	prepareFinalObject('documentsPreview', documentsPreview)
-		// }
+		prepareFinalObject('documentsPreview', documentsPreview)
 	}
+},1500)
+}
 
 	downloadReceiptFunction = async (e) => {
 		const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceiptforCG,downloadReceiptforCG, userInfo, paymentDetails } = this.props;
@@ -482,56 +472,86 @@ class ApplicationDetails extends Component {
 	}
 
 
-	downloadApplicationMCCButton = async (e) => {
+	downloadApplicationMCCButton = async (mode) => {
 	
 		await this.downloadApplicationFunction();
-	
-		let documentsPreviewData;
-		const { DownloadMccAppp, userInfo} = this.props;
-		
-		var documentsPreview = [];
-		if (DownloadMccAppp && DownloadMccAppp.filestoreIds.length > 0) {
-	
-		
-			 documentsPreviewData=DownloadMccAppp.filestoreIds[0];
-			documentsPreview.push({
-				title: "DOC_DOC_PICTURE",
-				fileStoreId: documentsPreviewData,
-				linkText: "View",
-			});
-			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-			let fileUrls =
-				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds, userInfo.tenantId) : {};
-		
-	
-			documentsPreview = documentsPreview.map(function (doc, index) {
-				doc["link"] =
-					(fileUrls &&
-						fileUrls[doc.fileStoreId] &&
-						fileUrls[doc.fileStoreId].split(",")[0]) ||
-					"";
+
+
+		setTimeout(async()=>{
+
+			let documentsPreviewData;
+			const { DownloadMccAppp, userInfo} = this.props;
 			
-				doc["name"] =
-					(fileUrls[doc.fileStoreId] &&
-						decodeURIComponent(
-							fileUrls[doc.fileStoreId]
-								.split(",")[0]
-								.split("?")[0]
-								.split("/")
-								.pop()
-								.slice(13)
-						)) ||
-					`Document - ${index + 1}`;
-				return doc;
-			});
-			setTimeout(() => {
-				window.open(documentsPreview[0].link);
-			}, 100);
-			prepareFinalObject('documentsPreview', documentsPreview)
-		}
+			var documentsPreview = [];
+			if (DownloadMccAppp && DownloadMccAppp.filestoreIds.length > 0) {
+		
+			
+				 documentsPreviewData=DownloadMccAppp.filestoreIds[0];
+				documentsPreview.push({
+					title: "DOC_DOC_PICTURE",
+					fileStoreId: documentsPreviewData,
+					linkText: "View",
+				});
+				let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+				let fileUrls =
+					fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds, userInfo.tenantId) : {};
+					documentsPreview = documentsPreview.map(function (doc, index) {
+						doc["link"] =
+							(fileUrls &&
+								fileUrls[doc.fileStoreId] &&
+								fileUrls[doc.fileStoreId].split(",")[0]) ||
+							"";
+						
+						doc["name"] =
+							(fileUrls[doc.fileStoreId] &&
+								decodeURIComponent(
+									fileUrls[doc.fileStoreId]
+										.split(",")[0]
+										.split("?")[0]
+										.split("/")
+										.pop()
+										.slice(13)
+								)) ||
+							`Document - ${index + 1}`;
+						return doc;
+					});
+					if(mode==='print'){
+	
+						var response = await axios.get(documentsPreview[0].link, {
+							//responseType: "blob",
+							responseType: "arraybuffer",
+							
+							
+							headers: {
+								"Content-Type": "application/json",
+								Accept: "application/pdf",
+							},
+						});
+					
+						const file = new Blob([response.data], { type: "application/pdf" });
+						const fileURL = URL.createObjectURL(file);
+						var myWindow = window.open(fileURL);
+						if (myWindow != undefined) {
+							myWindow.addEventListener("load", (event) => {
+								myWindow.focus();
+								myWindow.print();
+							});
+						}
+	
+					}
 	
 	
+					else{
 	
+						setTimeout(() => {
+						
+							window.open(documentsPreview[0].link);
+						}, 100);
+					}
+					
+					prepareFinalObject('documentsPreview', documentsPreview)
+				}
+			},1500)
 	}
 	downloadApplicationFunction =  (e) => {
 		const { transformedComplaint,paymentDetailsForReceipt,paymentDetails,downloadPermissionLetter, downloadMccApp, userInfo} = this.props;
@@ -607,29 +627,29 @@ class ApplicationDetails extends Component {
 	}
 
 
-	downloadPLButton = async (e) => {
+	downloadPLButton = async (mode) => {
 	
 		await this.downloadPLFunction();
 	
-	
-		let documentsPreviewData;
-		const { DownloadMccPermissionLetter,userInfo } = this.props;
+		setTimeout(async()=>{
+			let documentsPreviewData;
+			const { DownloadMccPermissionLetter,userInfo } = this.props;
+			
+			var documentsPreview = [];
+			if (DownloadMccPermissionLetter && DownloadMccPermissionLetter.filestoreIds.length > 0) {
 		
-		var documentsPreview = [];
-		if (DownloadMccPermissionLetter && DownloadMccPermissionLetter.filestoreIds.length > 0) {
-	
-		
-			 documentsPreviewData=DownloadMccPermissionLetter.filestoreIds[0];
-			documentsPreview.push({
-				title: "DOC_DOC_PICTURE",
-				fileStoreId: documentsPreviewData,
-				linkText: "View",
-			});
-			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-			let fileUrls =
+			
+				 documentsPreviewData=DownloadMccPermissionLetter.filestoreIds[0];
+				documentsPreview.push({
+					title: "DOC_DOC_PICTURE",
+					fileStoreId: documentsPreviewData,
+					linkText: "View",
+				});
+				let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+				let fileUrls =
 				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-		
-	
+		   
+				
 			documentsPreview = documentsPreview.map(function (doc, index) {
 				doc["link"] =
 					(fileUrls &&
@@ -650,13 +670,44 @@ class ApplicationDetails extends Component {
 					`Document - ${index + 1}`;
 				return doc;
 			});
-		
-			setTimeout(() => {
-				window.open(documentsPreview[0].link);
-			}, 100);
+			if(mode==='print'){
+
+				var response = await axios.get(documentsPreview[0].link, {
+					//responseType: "blob",
+					responseType: "arraybuffer",
+					
+					
+					headers: {
+						"Content-Type": "application/json",
+						Accept: "application/pdf",
+					},
+				});
+			
+				const file = new Blob([response.data], { type: "application/pdf" });
+				const fileURL = URL.createObjectURL(file);
+				var myWindow = window.open(fileURL);
+				if (myWindow != undefined) {
+					myWindow.addEventListener("load", (event) => {
+						myWindow.focus();
+						myWindow.print();
+					});
+				}
+
+			}
+
+
+			else{
+
+				setTimeout(() => {
+				
+					window.open(documentsPreview[0].link);
+				}, 100);
+			}
+			
 			prepareFinalObject('documentsPreview', documentsPreview)
 		}
-	}
+	},1500)
+}
 downloadPLFunction = async (e) => {
 		const { transformedComplaint, paymentDetailsForReceipt,downloadMccPL,downloadPaymentReceiptforCG, userInfo, paymentDetails } = this.props;
 		const { complaint } = transformedComplaint;
@@ -896,10 +947,10 @@ downloadPLFunction = async (e) => {
 													menu:  (complaint.status=='APPROVED')?[{
 														label: {
 															labelName: "Receipt",
-															labelKey: "BK_MYBK_PRINT_RECEIPT"
+			  												labelKey: "BK_MYBK_PRINT_RECEIPT"
 														},
 
-														link: () => this.downloadReceiptButton('Receipt'),
+														link: () => this.downloadReceiptButton('print'),
 														leftIcon: "receipt"
 													},
 													{
@@ -907,21 +958,21 @@ downloadPLFunction = async (e) => {
 															labelName: "PermissionLetter",
 															labelKey: "BK_MYBK_DOWNLOAD_PERMISSION_LETTER"
 														},
-														 link: () => this.downloadPLButton('state', "dispatch", 'REJECT'),
+														 link: () => this.downloadPLButton('print'),
 														 leftIcon: "book"
 													},{
 														label: {
 															labelName: "Application",
 															labelKey: "BK_MYBK_PRINT_APPLICATION"
 														},
-														link: () => this.downloadApplicationMCCButton('state', "dispatch", 'REJECT'),
+														link: () => this.downloadApplicationMCCButton('print'),
 														leftIcon: "assignment"
 													}]:[{
 														label: {
 															labelName: "Application",
 															labelKey: "BK_MYBK_PRINT_APPLICATION"
 														},
-														link: () => this.downloadApplicationMCCButton('state', "dispatch", 'REJECT'),
+														link: () => this.downloadApplicationMCCButton('print'),
 														leftIcon: "assignment"
 													}]
 												}} />
@@ -1110,9 +1161,10 @@ const mapStateToProps = (state, ownProps) => {
 	let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
 	let businessService = applicationData ? applicationData.businessService : "";
 	let bookingDocs;
-	
-	
-	let area = applicationData && applicationData.bookingsModelList ? applicationData.bookingsModelList[0].bkAreaRequired : 'NA'
+	 let area = applicationData && applicationData.bookingsModelList ? 
+	(applicationData.bookingsModelList[0].bkAreaRequired !== undefined && applicationData.bookingsModelList[0].bkAreaRequired !== null) ?
+	 (applicationData.bookingsModelList[0].bkAreaRequired) : 'NA': 'NA'
+
 	let fromDate = applicationData && applicationData.bookingsModelList ? applicationData.bookingsModelList[0].bkFromDate : 'NA'
 	let toDate = applicationData && applicationData.bookingsModelList ? applicationData.bookingsModelList[0].bkToDate : 'NA'
 
@@ -1190,18 +1242,7 @@ console.log("OfflineInitatePayArray-1",OfflineInitatePayArray)
 		historyApiData = historyObject;
 	}
 
-	// const role =
-	// 	roleFromUserInfo(userInfo.roles, "GRO") ||
-	// 		roleFromUserInfo(userInfo.roles, "DGRO")
-	// 		? "ao"
-	// 		: roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-	// 			roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-	// 			? "eo"
-	// 			: roleFromUserInfo(userInfo.roles, "CSR")
-	// 				? "csr"
-	// 				: "employee";
-
-					const role = "employee";
+	const role = "employee";
 
 	let isAssignedToEmployee = true;
 	if (selectedComplaint && businessService) {

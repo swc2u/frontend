@@ -222,6 +222,12 @@ const ApplicationRejected = Loadable({
   loader: () => import("../Screens/ApplicationRejected"),
   loading: Loading
 });
+
+const NewLocationApplication = Loadable({
+  loader: () => import("../Screens/NewLocationAppRejectPage"),
+  loading: Loading
+});
+
 // const ComplaintAssigned = Loadable({
 //   loader: () => import("../Screens/ComplaintAssigned"),
 //   loading: Loading
@@ -932,6 +938,19 @@ const routes = [
   {
     path: "egov-services/application-rejected",
     component: ApplicationRejected,
+    needsAuthentication: true,
+    options: {
+      title: "ES_COMPLAINT_REJECTED_HEADER",
+      hideTitle: true,
+      hideFooter: true,
+      customFor: "employee",
+      redirectionUrl,
+      hideBackButton: true
+    }
+  },
+  {
+    path: "egov-services/NewLocationApplication-rejected",
+    component: NewLocationApplication,
     needsAuthentication: true,
     options: {
       title: "ES_COMPLAINT_REJECTED_HEADER",

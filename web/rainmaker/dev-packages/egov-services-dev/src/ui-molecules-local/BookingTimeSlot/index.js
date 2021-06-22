@@ -18,7 +18,7 @@ import {
     prepareFinalObject,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-
+import './index.css'
 class CustomTimeSlots extends Component {
     constructor() {
         super();
@@ -326,8 +326,8 @@ class CustomTimeSlots extends Component {
 
         return (
             <div>
-                <Grid container={true} justify="flex-end">
-                    <Grid item={true} xs={2}>
+           <Grid container={true} justify="flex-end" className= "timeSlotResponsive">
+                         <Grid item={true} xs={2}>
                         <TextField
                             id="date"
                             label="Select Date"
@@ -704,16 +704,53 @@ const mapStateToProps = (state) => {
                 reservedTimeSlotsData[i].timeslots &&
                 reservedTimeSlotsData[i].timeslots.length > 0
             ) {
+                
                 for (
                     let j = 0;
                     j < reservedTimeSlotsData[i].timeslots.length;
                     j++
                 ) {
-                    bookedSlotArray.push({
-                        date: date,
-                        timeSlots: [reservedTimeSlotsData[i].timeslots[j].slot],
-                    });
+                    if(reservedTimeSlotsData[i].timeslots[j].slot=== "9:00 AM - 8:59 AM"){
+
+                        bookedSlotArray.push({
+                            date: date,
+                            timeSlots: ["9AM-1PM"],
+                        });
+                        bookedSlotArray.push({
+                            date: date,
+                            timeSlots: ["1PM-5PM"],
+                        });
+                        bookedSlotArray.push({
+                            date: date,
+                            timeSlots: ["5PM-9PM"],
+                        });
+                        
+                    }else{
+                        bookedSlotArray.push({
+                            date: date,
+                            timeSlots: [reservedTimeSlotsData[i].timeslots[j].slot],
+                        });
+                    }
+                   
                 }
+            }else if(   
+                reservedTimeSlotsData[i].timeslots &&
+                reservedTimeSlotsData[i].timeslots.length === 0 )
+                {
+                   
+                        bookedSlotArray.push({
+                            date: date,
+                            timeSlots: ["9AM-1PM"],
+                        });
+                        bookedSlotArray.push({
+                            date: date,
+                            timeSlots: ["1PM-5PM"],
+                        });
+                        bookedSlotArray.push({
+                            date: date,
+                            timeSlots: ["5PM-9PM"],
+                        });
+                    
             }
         }
     }
@@ -742,7 +779,6 @@ const mapStateToProps = (state) => {
         state,
         "screenConfiguration.preparedFinalObject.Booking.bkToTime"
     )
-
     
 
     //******************************** */

@@ -74,37 +74,37 @@ const moveToReview = (state, dispatch, applnid) => {
             validateDocumentField = true;
         }
 
-        if (documents && documents.length > 0) {
-            if (documentsFormat[i].documentType != "IDPROOF") {
-                let fileExtArray = ['jpeg', 'png', 'jpg', 'JPEG'];
-                let fileExt = documents[0].fileName.split('.').pop();
-                if (!fileExtArray.includes(fileExt)) {
-                    dispatch(
-                        toggleSnackbar(
-                            true,
-                            { labelName: "Please upload correct document for Location Pictures!", labelKey: "" },
-                            "warning"
-                        )
-                    );
-                    validateDocumentField = false;
-                    break;
-                }
-            } else {
-                let fileExtArray = ['jpeg', 'png', 'jpg', 'JPEG', 'pdf'];
-                let fileExt = documents[0].fileName.split('.').pop();
-                if (!fileExtArray.includes(fileExt)) {
-                    dispatch(
-                        toggleSnackbar(
-                            true,
-                            { labelName: "Please upload correct document for Id Proof!", labelKey: "" },
-                            "warning"
-                        )
-                    );
-                    validateDocumentField = false;
-                    break;
-                }
-            }
-        }
+        // if (documents && documents.length > 0) {
+        //     if (documentsFormat[i].documentType != "IDPROOF") {
+        //         let fileExtArray = ['jpeg', 'png', 'jpg', 'JPEG'];
+        //         let fileExt = documents[0].fileName.split('.').pop();
+        //         if (!fileExtArray.includes(fileExt)) {
+        //             dispatch(
+        //                 toggleSnackbar(
+        //                     true,
+        //                     { labelName: "Please upload correct document for Location Pictures!", labelKey: "" },
+        //                     "warning"
+        //                 )
+        //             );
+        //             validateDocumentField = false;
+        //             break;
+        //         }
+        //     } else {
+        //         let fileExtArray = ['jpeg', 'png', 'jpg', 'JPEG', 'pdf'];
+        //         let fileExt = documents[0].fileName.split('.').pop();
+        //         if (!fileExtArray.includes(fileExt)) {
+        //             dispatch(
+        //                 toggleSnackbar(
+        //                     true,
+        //                     { labelName: "Please upload correct document for Id Proof!", labelKey: "" },
+        //                     "warning"
+        //                 )
+        //             );
+        //             validateDocumentField = false;
+        //             break;
+        //         }
+        //     }
+        // }
     }
 
     //validateDocumentField = true;

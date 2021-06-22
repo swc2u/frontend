@@ -14,6 +14,7 @@ import {
 import {
 
     toggleSnackbar,
+    prepareFinalObject
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 
@@ -134,6 +135,7 @@ export const callBackForCancelParkAndCC = async (state, dispatch) => {
         }
     }*/
    // console.log(state, "Nero state")
+   dispatch(prepareFinalObject("Booking.bkLocationPictures",new Date()));
 if(state && state.screenConfiguration.preparedFinalObject.Booking.bkRemarks){
     let response = await createUpdatePCCApplication(
         state,
