@@ -121,8 +121,59 @@ import get from "lodash/get";
       )
     )
     let estimate=get(state.screenConfiguration.preparedFinalObject,"OwnersTemp[0].estimateCardData")
-
     let dupestimate=get(state.screenConfiguration.preparedFinalObject,"DuplicateTemp[0].estimateCardData")
+    let colony=get(state.screenConfiguration.preparedFinalObject,"Owners[0].property.colony")
+    let dupcolony=get(state.screenConfiguration.preparedFinalObject,"DuplicateCopyApplications[0].property.colony")
+    let data=[
+      {
+        label: "RP_PAYMENT_CASH",
+        value: "CASH",
+      },
+      {
+        label: "RP_PAYMENT_DD",
+        value: "DD",
+      },
+      {
+        label: "RP_PAYMENT_CHEQUE",
+        value: "CHEQUE",
+      }
+    ]
+    let vikasColonydData=[
+      {
+        label: "RP_PAYMENT_CASH",
+        value: "CASH",
+      },
+      {
+        label: "RP_PAYMENT_DD",
+        value: "DD",
+      },
+      {
+        label: "RP_PAYMENT_CHEQUE",
+        value: "CHEQUE",
+      },
+      {
+        label: "RP_PAYMENT_DIRECT_PAYMENT",
+        value: "OFFLINE_NEFT",
+      }
+    ]
+    let sectorColonyData=[
+      {
+        label: "RP_PAYMENT_CASH",
+        value: "CASH",
+      },
+      {
+        label: "RP_PAYMENT_DD",
+        value: "DD",
+      },
+      {
+        label: "RP_PAYMENT_CHEQUE",
+        value: "CHEQUE",
+      },
+      {
+        label: "RP_PAYMENT_DIRECT_PAYMENT_SECTOR",
+        value: "OFFLINE_RTGS",
+      }
+    ]
     let value=0
     if(!!estimate){
    for(var i=0;i<estimate.length;i++){
@@ -143,6 +194,56 @@ import get from "lodash/get";
         value.toString()
       )
     )
+    if(!!colony){
+      if(colony==="COLONY_VIKAS_NAGAR"){
+        dispatch(handleField(
+          "pay",
+          "components.div.children.formwizardFirstStep.children.offlinePaymentDetails.children.cardContent.children.detailsContainer.children.mode",
+          "props.data",
+          vikasColonydData
+        ))
+      }else if(colony==="COLONY_SECTOR_52_53"){
+        dispatch(handleField(
+          "pay",
+          "components.div.children.formwizardFirstStep.children.offlinePaymentDetails.children.cardContent.children.detailsContainer.children.mode",
+          "props.data",
+          sectorColonyData
+        ))
+      }
+      else{
+        dispatch(handleField(
+          "pay",
+          "components.div.children.formwizardFirstStep.children.offlinePaymentDetails.children.cardContent.children.detailsContainer.children.mode",
+          "props.data",
+          data
+        ))
+      }
+    }
+    else if(!!dupcolony){
+      if(dupcolony==="COLONY_VIKAS_NAGAR"){
+        dispatch(handleField(
+          "pay",
+          "components.div.children.formwizardFirstStep.children.offlinePaymentDetails.children.cardContent.children.detailsContainer.children.mode",
+          "props.data",
+          vikasColonydData
+        ))
+      }else if(dupcolony==="COLONY_SECTOR_52_53"){
+        dispatch(handleField(
+          "pay",
+          "components.div.children.formwizardFirstStep.children.offlinePaymentDetails.children.cardContent.children.detailsContainer.children.mode",
+          "props.data",
+          sectorColonyData
+        ))
+      }
+      else{
+        dispatch(handleField(
+          "pay",
+          "components.div.children.formwizardFirstStep.children.offlinePaymentDetails.children.cardContent.children.detailsContainer.children.mode",
+          "props.data",
+          data
+        ))
+      }
+    }
   }
   
   const screenConfig = {

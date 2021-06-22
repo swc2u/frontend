@@ -403,10 +403,10 @@ const paymentMode = {
       label: "RP_PAYMENT_CHEQUE",
       value: "CHEQUE",
     },
-    {
-      label: "RP_PAYMENT_DIRECT_PAYMENT",
-      value: "OFFLINE_NEFT",
-    }
+    // {
+    //   label: "RP_PAYMENT_DIRECT_PAYMENT",
+    //   value: "OFFLINE_NEFT",
+    // }
   ],
   gridDefination: {
     xs: 12,
@@ -420,14 +420,14 @@ const paymentMode = {
         screenName,
         `${commonPath}.bankName`,
         "visible",
-        action.value !== "CASH" && action.value !== "OFFLINE_NEFT"
+        action.value !== "CASH" && action.value !== "OFFLINE_NEFT" && action.value !== "OFFLINE_RTGS"
       )
     )
     dispatch(handleField(
       screenName,
       `${commonPath}.transactiondate`,
       "visible",
-      action.value === "OFFLINE_NEFT"
+      action.value === "OFFLINE_NEFT" || action.value == "OFFLINE_RTGS"
     )
   )
     dispatch(handleField(
@@ -446,6 +446,8 @@ const paymentMode = {
             ? "RP_DD_NUMBER_LABEL"
             : action.value === "OFFLINE_NEFT"
             ?"RP_DIRECT_BANK_LABEL"
+            : action.value === "OFFLINE_RTGS"
+            ?"RP_DIRECT_BANK_LABEL"
             :"RP_CHEQUE_NUMBER_LABEL"
         )
       );
@@ -457,6 +459,8 @@ const paymentMode = {
           action.value === "DD"
             ? "RP_DD_NUMBER_PLACEHOLDER"
             : action.value === "OFFLINE_NEFT"
+            ?"RP_DIRECT_BANK_PLACEHOLDER"
+            : action.value === "OFFLINE_RTGS"
             ?"RP_DIRECT_BANK_PLACEHOLDER"
             : "RP_CHEQUE_NUMBER_PLACEHOLDER"
         )
@@ -506,10 +510,10 @@ const paymenttype = {
       label: "RP_PAYMENT_CHEQUE",
       value: "CHEQUE",
     },
-    {
-      label: "RP_PAYMENT_DIRECT_PAYMENT",
-      value: "OFFLINE_NEFT",
-    }
+    // {
+    //   label: "RP_PAYMENT_DIRECT_PAYMENT",
+    //   value: "OFFLINE_NEFT",
+    // }
   ],
   gridDefination: {
     xs: 12,
@@ -523,14 +527,14 @@ const paymenttype = {
         screenName,
         `${commonPath}.bankName`,
         "visible",
-        action.value !== "CASH" && action.value !== "OFFLINE_NEFT"
+        action.value !== "CASH" && action.value !== "OFFLINE_NEFT" && action.value !== "OFFLINE_RTGS"
       )
     )
     dispatch(handleField(
       screenName,
       `${commonPath}.transationdate`,
       "visible",
-      action.value === "OFFLINE_NEFT"
+      action.value === "OFFLINE_NEFT" || action.value == "OFFLINE_RTGS"
     )
   )
     dispatch(handleField(
@@ -549,6 +553,8 @@ const paymenttype = {
             ? "RP_DD_NUMBER_LABEL"
             : action.value === "OFFLINE_NEFT"
             ?"RP_DIRECT_BANK_LABEL"
+            : action.value === "OFFLINE_RTGS"
+            ?"RP_DIRECT_BANK_LABEL"
             : "RP_CHEQUE_NUMBER_LABEL"
         )
       );
@@ -560,6 +566,8 @@ const paymenttype = {
           action.value === "DD"
             ? "RP_DD_NUMBER_PLACEHOLDER"
             : action.value === "OFFLINE_NEFT"
+            ?"RP_DIRECT_BANK_PLACEHOLDER"
+            : action.value === "OFFLINE_RTGS"
             ?"RP_DIRECT_BANK_PLACEHOLDER"
             : "RP_CHEQUE_NUMBER_PLACEHOLDER"
         )

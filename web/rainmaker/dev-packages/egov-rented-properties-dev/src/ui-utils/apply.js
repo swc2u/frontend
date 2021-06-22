@@ -631,6 +631,80 @@ export const getRentPaymentPropertyDetails = async (state, dispatch) => {
           "visible",
           true
         ))
+        let colony=Properties[0].propertyDetails.address.colony
+        let data=[
+          {
+            label: "RP_PAYMENT_CASH",
+            value: "CASH",
+          },
+          {
+            label: "RP_PAYMENT_DD",
+            value: "DD",
+          },
+          {
+            label: "RP_PAYMENT_CHEQUE",
+            value: "CHEQUE",
+          }
+        ]
+        let vikasColonydData=[
+          {
+            label: "RP_PAYMENT_CASH",
+            value: "CASH",
+          },
+          {
+            label: "RP_PAYMENT_DD",
+            value: "DD",
+          },
+          {
+            label: "RP_PAYMENT_CHEQUE",
+            value: "CHEQUE",
+          },
+          {
+            label: "RP_PAYMENT_DIRECT_PAYMENT",
+            value: "OFFLINE_NEFT",
+          }
+        ]
+        let sectorColonyData=[
+          {
+            label: "RP_PAYMENT_CASH",
+            value: "CASH",
+          },
+          {
+            label: "RP_PAYMENT_DD",
+            value: "DD",
+          },
+          {
+            label: "RP_PAYMENT_CHEQUE",
+            value: "CHEQUE",
+          },
+          {
+            label: "RP_PAYMENT_DIRECT_PAYMENT_SECTOR",
+            value: "OFFLINE_RTGS",
+          }
+        ]
+        if(colony==="COLONY_VIKAS_NAGAR"){
+          dispatch(handleField(
+            "payment",
+            "components.div.children.detailsContainer.children.paymentInfo.children.cardContent.children.detailsContainer.children.type",
+            "props.data",
+            vikasColonydData
+          ))
+        }else if(colony==="COLONY_SECTOR_52_53"){
+          dispatch(handleField(
+            "payment",
+            "components.div.children.detailsContainer.children.paymentInfo.children.cardContent.children.detailsContainer.children.type",
+            "props.data",
+            sectorColonyData
+          ))
+        }
+        else{
+          dispatch(handleField(
+            "payment",
+            "components.div.children.detailsContainer.children.paymentInfo.children.cardContent.children.detailsContainer.children.type",
+            "props.data",
+            data
+          ))
+        }
         dispatch(toggleSpinner())
         return payload.Properties[0].propertyDetails.propertyId
       }

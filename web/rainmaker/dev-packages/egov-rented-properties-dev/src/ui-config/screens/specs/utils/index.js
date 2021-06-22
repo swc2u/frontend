@@ -847,7 +847,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
       if(type != 'rent-payment'){
         Payments = payloadReceiptDetails.Payments;
         let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
-        let paymentmode=Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_NEFT" ? "DIRECT BANK" :Payments[0].paymentMode
+        let paymentmode=Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_NEFT" ? "Direct Bank - Vikas Nagar" :Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_RTGS"? "Direct Bank - Sec.52-53" :Payments[0].paymentMode
         let {
           billAccountDetails
         } = Payments[0].paymentDetails[0].bill.billDetails[0];
@@ -927,7 +927,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
         httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, query).then((response) => {
           Payments = response.Payments;
           let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
-          let paymentmode=Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_NEFT" ? "DIRECT BANK" :Payments[0].paymentMode
+          let paymentmode=Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_NEFT" ? "Direct Bank - Vikas Nagar" :Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_RTGS"? "Direct Bank - Sec.52-53" :Payments[0].paymentMode
           let {
             billAccountDetails
           } = Payments[0].paymentDetails[0].bill.billDetails[0];

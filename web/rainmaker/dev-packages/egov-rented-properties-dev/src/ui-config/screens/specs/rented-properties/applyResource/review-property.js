@@ -720,7 +720,7 @@ const downloadReceipt = async (data, preparedObject,properties) => {
         let {
             Payments
           } = payloadReceiptDetails;
-let paymentmode=Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_NEFT" ? "DIRECT BANK" :Payments[0].paymentMode
+let paymentmode=Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_NEFT" ? "Direct Bank - Vikas Nagar" :Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_RTGS"? "Direct Bank - Sec.52-53":Payments[0].paymentMode
         if (oldFileStoreId) {
           downloadReceiptFromFilestoreID(oldFileStoreId, "download")
         }
