@@ -192,7 +192,7 @@ const StatusContent = ({
   } = stepData;
   const currDate = new Date().getTime();
   const resolvedDate = new Date(date).getTime();
-  const isReopenValid = currDate - resolvedDate <= 86400000; //reopenValidChecker;
+  const isReopenValid = currDate - resolvedDate <= 86400000;//reopenValidChecker;
   switch (status) {
     case "open":
       openStatusCount++;
