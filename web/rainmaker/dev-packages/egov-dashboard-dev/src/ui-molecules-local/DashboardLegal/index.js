@@ -10,900 +10,669 @@ import 'jspdf-autotable';
 import './Legalindex.css';
 
 // import LegalData from './Legal_data.json';
-import bgImage from './img/MCC_symbol.jpg';
+// import bgImage from './img/MCC_symbol.jpg';
 
 class DashboardLegal extends React.Component {
-    constructor(props){
-      super(props);
-      this.state = {
-        checkData : [],
-        propsLegalData : [],
-        graphClicked : -1,
-        totalCases : 0,
-        judgmentCases : 0,
-        impCases : 0,
-        hearingCases : 0,
-        graphTitle : "",
-  
-        graphOneLabel : [],
-        graphOneData : [],
-        graphTwoLabel : [],
-        graphTwoData : [],
-        graphThirdLabel : [],
-        graphThirdData : [],
-        graphFourthLabel : [],
-        graphFourthData : [],
-        dataOne : [],
-        dataTwo : [],
-        dataThird : [],
-        dataFourth : [],
-  
+  constructor(props) {
+    super(props);
+    this.state ={
+        toggleTable : true,
+        totalCase : [],
+        next7DaysData :[],
+        next15DaysData : [],
+        impCaseData : [],
+        contemptCaseData : [],
+
+        sortedTest : [],
+
         unchangeColumnData : [],
-        rowData : [],
-        columnData : [],
-      }
+        rowData : []
     }
-  
+  }
+
+
     // PDF function 
     pdfDownload = (e) => {
-  
-      debugger;
-      e.preventDefault();
-      var columnData = this.state.unchangeColumnData
-      // var columnDataCamelize = this.state.columnData
-      var rowData = this.state.rowData
-  
-      var group = columnData.reduce((r, a) => {
-          r[a["show"]] = [...r[a["show"]] || [], a];
-          return r;
-          }, {});
-  
-      columnData = group["true"]
-      var tableColumnData = []
-      var tableColumnDataCamel = []
-      for(var i=0; i<columnData.length; i++){
-          tableColumnData.push(columnData[i]["accessor"]);
-          // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
-      }
-      
-      var colData = [];
-      for(var i=0; i<columnData.length; i++){
-        colData.push(columnData[i]["Header"]);
-      }
-      
-      var tableRowData = [];
-      for(var i=0; i<rowData.length; i++){
-          var rowItem = [];
-          for(var j=0; j<tableColumnData.length; j++){
-              const demo1 = rowData[i]
-              var demo2 = tableColumnData[j].replace(".", ",");
-              demo2 = demo2.split(",")
-              if(typeof(demo2) === "object"){   
-                  if(demo2.length > 1){
-                      rowItem.push(rowData[i][demo2[0]][demo2[1]]);
-                  }
-                  else{
-                      rowItem.push(rowData[i][demo2]);
-                  }
-              }else{
-                  rowItem.push(rowData[i][demo2]);
-              }
-          }
-          tableRowData.push(rowItem);
-      }
-  
-      var tableRowDataFinal = []
-      for(var i=0; i<tableRowData.length; i++){
-          tableRowDataFinal.push(tableRowData[i]);
-      }
-  
-  
-      debugger;
-      // PDF Code 
-      const unit = "pt";
-      const size = "A4"; // Use A1, A2, A3 or A4
-      const orientation = "portrait"; // portrait or landscape
-      const marginLeft = 40;
-      const doc = new jsPDF(orientation, unit, size);
-  
-      var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-      var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-  
-      doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
-  
-      doc.setFontSize(10);
-      const pdfTitle = "Legal Cases Dashboard"
-      doc.text(pdfTitle, pageWidth / 2, 40, 'center');
-  
-      doc.autoTable({ html: '#my-table' });
-      doc.setFontSize(5);
-  
-      doc.autoTable({
-          // head: [tableColumnDataCamel],
-          head: [colData],
-          theme: "striped",
-          styles: {
-              fontSize: 7,
-          },
-          body:tableRowData
-      });
-  
-      doc.save(pdfTitle+".pdf");
-  
-      }
-  
-      // Column Unchange Data
-      columnUnchange=(e)=>{
-          debugger;
-          const coldata = e;
-          var unchangeData = [];
-          for(var i=0;i<coldata.length; i++){
-              if(coldata[i]["show"]){
-                  unchangeData.push(coldata[i])
-              }   
-          }
-          return unchangeData
-  
-      }
-  
-      // CamelCase Column Name 
-      camelize = (str) =>  {
-      // var res = str.substr(0, 1);
-      var res = String(str).substr(0, 1);
-      str = str.replaceAll("_", " ")
-      return str.replace(res, function(res)
-      {
-      return res.toUpperCase();
-      });
-      }
-        
-      // Hide / Show Column
-      showHideColumn = (e) => {
-          e.preventDefault();
-          debugger;
-          var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
-          const removeIndex = parseInt(e.target.value);
-          // sortColumn.splice(removeIndex, 1)
-          sortColumn[removeIndex]["show"] = !(sortColumn[removeIndex]["show"]);
-  
-          var sortColumn2 = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
-          const removeIndex2 = parseInt(e.target.value);
-          // sortColumn.splice(removeIndex, 1)
-          sortColumn2[removeIndex2]["show"] = !(sortColumn2[removeIndex2]["show"])
-  
-          this.setState({
-              columnData: sortColumn,
-              unchangeColumnData: sortColumn2
-          })
-      }
-  
-      // Toggle Column 
-      toggleColumn = (e) => {
-          e.preventDefault();
-          debugger;
-          const data = this.state.columnData
-          this.setState({
-              toggleColumnCheck : !this.state.toggleColumnCheck
-          })
-      }
-  
-    showDashboard = (e) => {
-  
-        debugger;
-        e.preventDefault();
-        var selectedGraph = e;
-        selectedGraph = selectedGraph.target.value;
-      // Column Data
-      const tableData = this.state.propsLegalData[0] ? Object.keys(this.state.propsLegalData[0]) : [];
-      var columnData = []
-      for(var i=0; i<tableData.length; i++){
-          var itemHeader = {}
-          itemHeader["Header"] = this.camelize(tableData[i]);
-          itemHeader["accessor"] = tableData[i];
-          itemHeader["show"] = true;
-          columnData.push(itemHeader);
-      }
-  
-      // Column Unchange Data 
-      const unchangeColumnData = this.columnUnchange(columnData);
-      this.setState({
-        columnData : columnData,
-        unchangeColumnData : columnData
-      })
-  
-      if(selectedGraph === "totalCases"){
-        const data = this.state.dataOne;
-        var group = data.reduce((r, a) => {
-          r[a["courtName"]] = [...r[a["courtName"]] || [], a];
-          return r;
-          }, {});
-        
-        var graphLabel = Object.keys(group);
-        var graphData = [];
-        for(var i=0; i<graphLabel.length; i++){
-          graphData.push(group[graphLabel[i]].length);
-        }
-  
-        this.setState({
-          graphOneLabel : graphLabel,
-          graphOneData : graphData,
-          graphClicked : 0,
-          graphTitle : "Total Cases",
-          rowData : data
-        })
-      }
-      if(selectedGraph === "judgmentCases"){
-        const data = this.state.dataTwo;
-        // var group = data.reduce((r, a) => {
-        //   r[a["judgmentTypeId"]] = [...r[a["judgmentTypeId"]] || [], a];
-        //   return r;
-        //   }, {});
-        
-        var graphLabel = Object.keys(data);
-        var graphData = [];
-        for(var i=0; i<graphLabel.length; i++){
-          graphData.push(data[graphLabel[i]].length);
-        }
-  
-        this.setState({
-          graphTwoLabel : graphLabel,
-          graphTwoData : graphData,
-          graphClicked : 1,
-          graphTitle : "judgment Cases",
-          rowData : data["null"]
-        })
-      }
-      if(selectedGraph === "impCases"){
-        // const data = this.state.dataThird;
-        const data = this.state.dataThird["null"];
-        var group = data.reduce((r, a) => {
-          r[a["concernedBranch"]] = [...r[a["concernedBranch"]] || [], a];
-          return r;
-          }, {});
-        
-        var graphLabel = Object.keys(group);
-        var graphData = [];
-        for(var i=0; i<graphLabel.length; i++){
-          graphData.push(group[graphLabel[i]].length);
-        }
-  
-        this.setState({
-          graphThirdLabel : graphLabel,
-          graphThirdData : graphData,
-          graphClicked : 2,
-          graphTitle : "Important Cases",
-          rowData : data
-        })
-      }
-      if(selectedGraph === "hearingCases"){
-        this.setState({
-          graphClicked : 3,
-          graphTitle : "Hearing of Cases"
-        })
-      }
+    debugger;
+    e.preventDefault();
+    var columnData = this.state.unchangeColumnData
+    // var columnDataCamelize = this.state.columnData
+    var rowData = this.state.rowData
+
+    var group = columnData.reduce((r, a) => {
+        r[a["show"]] = [...r[a["show"]] || [], a];
+        return r;
+        }, {});
+
+    columnData = group["true"]
+    var tableColumnData = []
+    var tableColumnDataCamel = []
+    for(var i=0; i<columnData.length; i++){
+        tableColumnData.push(columnData[i]["accessor"]);
+        // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
     }
-  
+
+    var colData = ["Sr No", "Case No", "Brief Matter", "Petitioner", "Department",
+     "Other Department", "Nodal Officer", "Next Date", "Status", "Reply Filed", "File No."];
+    // for(var i=0; i<columnData.length; i++){
+    //     colData.push(columnData[i]["Header"]);
+    // }
+
+    var tableRowData = [];
+    for(var i=0; i<rowData.length; i++){
+        var rowItem = [];
+        for(var j=0; j<tableColumnData.length; j++){
+            const demo1 = rowData[i]
+            var demo2 = tableColumnData[j].replace(".", ",");
+            demo2 = demo2.split(",")
+            if(typeof(demo2) === "object"){   
+                if(demo2.length > 1){
+                    if(demo2[0] === "connectionHolders[0]"){
+                        rowItem.push(rowData[i]["connectionHolders"][0][demo2[1]]);  
+                    }
+                    if(demo2[0] === "swProperty"){
+                        rowItem.push(rowData[i]["swProperty"][demo2[1]]);  
+                    }
+                    // rowItem.push(rowData[i][demo2[0]][demo2[1]]);
+                }
+                else{
+                    rowItem.push(rowData[i][demo2]);
+                }
+            }else{
+                rowItem.push(rowData[i][demo2]);
+            }
+        }
+        tableRowData.push(rowItem);
+    }
+
+    var tableRowDataFinal = []
+    for(var i=0; i<tableRowData.length; i++){
+        tableRowDataFinal.push(tableRowData[i]);
+    }
+
+
+    debugger;
+    // PDF Code 
+    const unit = "pt";
+    const size = "A4"; // Use A1, A2, A3 or A4
+    const orientation = "portrait"; // portrait or landscape
+    const marginLeft = 40;
+    const doc = new jsPDF(orientation, unit, size);
+
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+    doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
+
+    doc.setFontSize(10);
+    const pdfTitle = "Title"
+    doc.text(pdfTitle, pageWidth / 2, 40, 'center');
+
+    doc.autoTable({ html: '#my-table' });
+    doc.setFontSize(5);
+
+    doc.autoTable({
+        // head: [tableColumnDataCamel],
+        head: [colData],
+        theme: "striped",
+        styles: {
+            fontSize: 7,
+        },
+        body:tableRowData
+    });
+
+    doc.save(pdfTitle+".pdf");
+
+    }
+
+    // Column Unchange Data
+    columnUnchange=(e)=>{
+        debugger;
+        const coldata = e;
+        var unchangeData = [];
+        for(var i=0;i<coldata.length; i++){
+            if(coldata[i]["show"]){
+                unchangeData.push(coldata[i])
+            }   
+        }
+        return unchangeData
+
+    }
+    // Hide / Show Column
+    showHideColumn = (e) => {
+        e.preventDefault();
+        debugger;
+        var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
+        const removeIndex = parseInt(e.target.value);
+        // sortColumn.splice(removeIndex, 1)
+        sortColumn[removeIndex]["show"] = !(sortColumn[removeIndex]["show"]);
+
+        var sortColumn2 = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
+        const removeIndex2 = parseInt(e.target.value);
+        // sortColumn.splice(removeIndex, 1)
+        sortColumn2[removeIndex2]["show"] = !(sortColumn2[removeIndex2]["show"])
+
+        this.setState({
+            columnData: sortColumn,
+            unchangeColumnData: sortColumn2
+        })
+    }
+
+    // Toggle Column 
+    toggleColumn = (e) => {
+        e.preventDefault();
+        debugger;
+        const data = this.state.columnData
+        this.setState({
+            toggleColumnCheck : !this.state.toggleColumnCheck
+        })
+    }
+    
+    graphSorting = (data, sortBy, dropdownSelected, selectedDashboard ) => {
+        var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
+        "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
+        if(selectedDashboard === "Single Program"){
+            debugger;
+            var dateRange = sortBy;
+            var group = data.reduce((r, a) => {
+                r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] =
+                 [...r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] || [], a];
+                return r;
+                }, {});
+            
+            var graphLabel = dateRange;
+            var graphData = [];
+            for(var i=0; i<graphLabel.length; i++){
+                if(group[graphLabel[i]]){
+                    graphData.push(group[graphLabel[i]].length);
+                }else{
+                    graphData.push(0);
+                }
+            }
+
+            debugger;
+            var headerData = [];
+            var keys = Object.keys(data[0]);
+            for(var i=0; i<Object.keys(data[0]).length; i++){
+                var itemHeader = {}
+                if(dropdownSelected === "Sewerage Dashboard"){
+                    if(i === 3 || i === 4 || i === 25 || i === 16 || i=== 38 || i=== 34 || i=== 26 || i === 41){
+                        itemHeader["Header"] = this.camelize(keys[i]);
+                        itemHeader["accessor"] = keys[i];
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+                    }
+                    if(i === 5){
+                        itemHeader["Header"] = "Name";
+                        itemHeader["accessor"] = "connectionHolders[0].name";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+                    }
+                    if(i === 11){
+                        var itemHeader = {}
+                        itemHeader["Header"] = "PlotNo";
+                        itemHeader["accessor"] = "swProperty.plotNo";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+                    }
+                    if(i === 11){
+                        var itemHeader = {}
+                        itemHeader["Header"] = "SectorNo";
+                        itemHeader["accessor"] = "swProperty.sectorNo";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+
+                        var itemHeader = {}
+                        itemHeader["Header"] = "UsageCategory";
+                        itemHeader["accessor"] = "swProperty.usageCategory";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+
+                        var itemHeader = {}
+                        itemHeader["Header"] = "UsageSubCategory";
+                        itemHeader["accessor"] = "swProperty.usageSubCategory";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+                    }
+                }
+            }
+
+            var rowData = data;
+
+            this.setState({
+                graphOneLabel : graphLabel,
+                graphOneData : graphData,
+                dataOne : group,
+                columnData : headerData,
+                unchangeColumnData : headerData,
+                rowData : rowData,
+                graphClicked : 0,
+                dropdownSelected : dropdownSelected
+            })
+                
+        }if(selectedDashboard === "SEP Program Status"){
+            debugger;
+            var group = data.reduce((r, a) => {
+                r[a[sortBy]] = [...r[a[sortBy]] || [], a];
+                return r;
+                }, {});
+
+            var graphLabel = Object.keys(group);
+            var graphData = []
+            for(var i=0; i<Object.keys(group).length ; i++){
+                graphData.push(group[graphLabel[i]].length);
+            } 
+            
+            var rowData = data;
+            var graphLablelDisplay = []
+            for(var i=0; i<graphLabel.length; i++){
+                if(graphLabel[i].length > 15){
+                    var labelSplit = [graphLabel[i].substr(0,10), graphLabel[i].substr(10, 20), graphLabel[i].substr(20, 30)];
+                    graphLablelDisplay.push(labelSplit)
+                }else{
+                    graphLablelDisplay.push(graphLabel[i])
+                }
+            }
+
+            graphLablelDisplay = [];
+            for(var i=0; i<graphLabel.length; i++){
+                var show_label = graphLabel[i] ;
+                show_label = show_label.replaceAll("_", " ");
+                show_label = show_label.charAt(0).toUpperCase() + show_label.substring(1).toLowerCase()
+                
+                graphLablelDisplay.push(show_label);
+            }
+
+            this.setState({
+                graphLabelTwoDisplay : graphLablelDisplay,
+                graphTwoLabel : graphLabel,
+                graphTwoData : graphData,
+                dataTwo : group,
+                rowData : rowData,
+                graphClicked : 0
+            })
+        }
+        if(selectedDashboard === "All Program"){
+            debugger;
+            var SEP = data.SEP.ResponseBody;
+            var SMID = data.SMID.ResponseBody;
+            var SUSV = data.SUSV.ResponseBody;
+            var SUH = data.SUH.ResponseBody;
+            var allData = SEP.concat(SMID).concat(SUSV).concat(SUH)
+
+            var graphLabel = ["SEP", "SMID", "SUSV", "SUH"];
+            var graphData = [SEP.length, SMID.length, SUSV.length, SUH.length];
+            
+            var headerData = []
+            // var keys = allData;
+
+            var keys = Object.keys(allData[0]);
+            for(var i=0; i<5; i++){
+                if(Object.keys(allData[0])[i] === "applicationDocument" || 
+                Object.keys(allData[0])[i] === "auditDetails" ||
+                Object.keys(allData[0])[i] === "applicationDocument" ||
+                Object.keys(allData[0])[i] === "documentAttachemnt" ||
+                Object.keys(allData[0])[i] === "susvApplicationFamilyDetails" ||
+                Object.keys(allData[0])[i] === "suhFacilitiesDetails" ||
+                Object.keys(allData[0])[i] === "addressPicture" ||
+                Object.keys(allData[0])[i] === "programPicture" ||
+                Object.keys(allData[0])[i] === "documentAttachment"){
+                    
+                }else{
+                    var itemHeader = {}
+                    itemHeader["Header"] = keys[i];
+                    itemHeader["accessor"] = keys[i];
+                    itemHeader["show"]= true ;
+                }
+
+                headerData.push(itemHeader);
+            }
+            var rowData = allData;
+
+            this.setState({
+                graphOneLabel : graphLabel,
+                graphOneData : graphData,
+                dataOne : data,
+                columnData : headerData,
+                unchangeColumnData : headerData,
+                rowData : rowData,
+                graphClicked : 0,
+            })
+            var sortBy =sortBy;
+            var dropdownSelected = dropdownSelected;
+            var selectedDashboard = selectedDashboard;
+        }
+        if(selectedDashboard === "AllDataMonthWise"){
+            debugger;
+            var dateRange = sortBy;
+            var group = data.reduce((r, a) => {
+                r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] =
+                 [...r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] || [], a];
+                return r;
+                }, {});
+            
+            var graphLabel = dateRange;
+            var graphData = [];
+            for(var i=0; i<graphLabel.length; i++){
+                if(group[graphLabel[i]]){
+                    graphData.push(group[graphLabel[i]].length);
+                }else{
+                    graphData.push(0);
+                }
+            }
+
+            // var headerData = [];
+            // var keys = Object.keys(data[0]);
+            // for(var i=0; i<Object.keys(data[0]).length; i++){
+            //     var itemHeader = {}
+            //     itemHeader["Header"] = keys[i];
+            //     itemHeader["accessor"] = keys[i];
+            //     if(dropdownSelected === "All Program"){
+            //         if(i === 1 || i === 3 || i === 5 || i === 6 || i === 7 || i === 14){
+            //             itemHeader["show"]= true ;
+            //         }else{
+            //             itemHeader["show"]= false ;
+            //         }                    
+            //     }
+            //     headerData.push(itemHeader);
+            // }
+
+            var rowData = data;
+
+            this.setState({
+                graphTwoLabel : graphLabel,
+                graphTwoData : graphData,
+                dataTwo : group,
+                // columnData : headerData,
+                // unchangeColumnData : headerData,
+                rowData : rowData,
+                graphClicked : 1,
+                dropdownSelected : dropdownSelected
+            })
+        }
+        if(selectedDashboard === "Final Dashboard"){
+            debugger;
+
+            debugger;
+            var group = data.reduce((r, a) => {
+                r[a[sortBy]] = [...r[a[sortBy]] || [], a];
+                return r;
+                }, {});
+
+            var graphLabel = Object.keys(group);
+            var graphData = []
+            for(var i=0; i<Object.keys(group).length ; i++){
+                var amt = 0;
+                for(var j=0; j<group[graphLabel[i]].length; j++){
+                    var connection = group[graphLabel[i]][j];
+                    var amount = group[graphLabel[i]][j].totalAmountPaid;
+                    amt = amt + amount;
+                }
+                // graphData.push(group[graphLabel[i]].length);
+                graphData.push(amt);
+            } 
+            
+            debugger;
+            var rowData = data;
+            var graphLabelSHOW = [];
+            for(var i=0; i<graphLabel.length; i++){
+                if(graphLabel[i] === "null"){
+                    graphLabelSHOW.push("Sub-Division (null)");
+                }else{
+                    graphLabelSHOW.push("Sub-Division "+graphLabel[i]);
+                }
+            }
+
+            this.setState({
+                graphLabelSHOW : graphLabelSHOW,
+                graphThreeLabel : graphLabel,
+                graphThreeData : graphData,
+                dataThird : group,
+                rowData : rowData,
+                graphClicked : 3
+            })
+
+        }
+    }
+
+    // CamelCase Column Name 
+    camelize = (str) =>  {
+    // var res = str.substr(0, 1);
+    var res = String(str).substr(0, 1);
+    str = str.replaceAll("_", " ")
+    return str.replace(res, function(res)
+    {
+    return res.toUpperCase();
+    });
+    }
+
+    dateRange = (startDate, endDate) => {
+        var monthJSON = {"01":"JAN","02":"FEB","03":"MAR","04":"APR","05":"MAY","06":"JUN","07":"JUL",
+        "08":"AUG","09":"SEP","10":"OCT","11":"NOV","12":"DEC"};
+        var start      = startDate.split('-');
+        var end        = endDate.split('-');
+        var startYear  = parseInt(start[0]);
+        var endYear    = parseInt(end[0]);
+        var dates      = [];
+
+        for(var i = startYear; i <= endYear; i++) {
+            var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+            var startMon = i === startYear ? parseInt(start[1])-1 : 0;
+            for(var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j+1) {
+            var month = j+1;
+            var displayMonth = month < 10 ? '0'+month : month;
+            // dates.push([i, displayMonth, '01'].join('-'));
+            dates.push([i, monthJSON[displayMonth]].join('-'));
+            }
+        }
+        return dates;
+    }
+
+    dateTimeToForma = (frommDT, toDT) => {
+        var dt1 = new Date(frommDT); 
+        var dateCnt = dt1.getDate() < 10 ? "0"+dt1.getDate() : dt1.getDate();
+        var month = dt1.getMonth() < 10 ? "0"+(dt1.getMonth()+1) : dt1.getMonth()+1;
+        var year = dt1.getFullYear();
+        dt1 = year+"-"+month+"-"+dateCnt
+        var dt2 = new Date(toDT);
+        dateCnt = dt2.getDate() < 10 ? "0"+dt2.getDate() : dt2.getDate();
+        month = dt2.getMonth() < 10 ? "0"+(dt2.getMonth()+1) : dt2.getMonth()+1;
+        year = dt2.getFullYear();
+        dt2 = year+"-"+month+"-"+dateCnt
+
+
+        return [dt1, dt2]
+    }
+
     componentDidMount(){
-      debugger;
-      // const data = LegalData.ResponseBody;
-      const propsData = this.props.data;
-      this.setState({
-        checkData : this.props.data
-      })  
+        debugger;
+        const data = this.props.data[0].ResponseBody;
+        // const data = LegalData.ResponseBody;
+
+        var totalCase = data.reduce((r, a) => {
+        r[a["courtName"]] = [...r[a["courtName"]] || [], a];
+        return r;
+        }, {});
+
+        const checkTodayDt = new Date().getTime();
+        const checkNext7Days = new Date(checkTodayDt + (86400000 * 7)).getTime();
+        const checkNext15Days = new Date(checkTodayDt + (86400000 * 15)).getTime();
+        var next7DaysData = [];
+        var next15DaysData = [];
+        var contemptCaseData = [];
+        var impCaseData = [];
+        for(var i=0; i<data.length; i++){
+            if( data[i].hearingDate === null ){
+                contemptCaseData.push(data[i])
+            }else if( data[i].hearingDate <= checkNext7Days ){
+                next7DaysData.push(data[i])
+            }else if( data[i].hearingDate <= checkNext15Days ){
+                next15DaysData.push(data[i])
+            }
+            // Code forimp case add here...
+            impCaseData.push(data[i])
+        }
+        
+        next7DaysData = next7DaysData.reduce((r, a) => {
+        r[a["courtName"]] = [...r[a["courtName"]] || [], a];
+        return r;
+        }, {});
+
+        next15DaysData = next15DaysData.reduce((r, a) => {
+        r[a["courtName"]] = [...r[a["courtName"]] || [], a];
+        return r;
+        }, {});
+
+        impCaseData = impCaseData.reduce((r, a) => {
+        r[a["courtName"]] = [...r[a["courtName"]] || [], a];
+        return r;
+        }, {});
+        
+        contemptCaseData = contemptCaseData.reduce((r, a) => {
+        r[a["courtName"]] = [...r[a["courtName"]] || [], a];
+        return r;
+        }, {});
+
+        debugger;
+        var unchangeColumnData = [];
+
+        for(var i=0; i<Object.keys(data[0]).length; i++){
+            var item = {}
+            item["Header"] = "Column Name";
+            item["accessor"] = Object.keys(data[0])[i];
+            if(i===0 || i===12 || i===11 || i===13 || i===9 || i===30 || i===17
+               || i===1){
+                item["show"] = true;
+                unchangeColumnData.push(item);
+            }
+        }
+
+        this.setState({
+            totalCase : totalCase,
+            next7DaysData :next7DaysData,
+            next15DaysData : next15DaysData,
+            impCaseData : impCaseData,
+            contemptCaseData : contemptCaseData,
+            unchangeColumnData : unchangeColumnData
+        })
+
+
     }
 
     componentDidUpdate(){
-
       debugger;
-      const propsData = this.props.data;
-      if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
-        // const data = LegalData.ResponseBody;
-        const data = propsData[0].ResponseBody
-
-        var totalCases = data.length;
-
-        var judgmentCases = data.reduce((r, a) => {
-          r[a["judgmentTypeId"]] = [...r[a["judgmentTypeId"]] || [], a];
-          return r;
-          }, {});
-
-        var impCases = data.reduce((r, a) => {
-          r[a["iscaseImp"]] = [...r[a["iscaseImp"]] || [], a];
-          return r;
-          }, {});
-          
-        var hearingCases = data.reduce((r, a) => {
-          r[a["caseStatus"]] = [...r[a["caseStatus"]] || [], a];
-          return r;
-          }, {});;
-
-        this.setState({
-          dataOne : data,
-          dataTwo: judgmentCases,
-          dataThird : impCases,
-          dataFourth : []
-        })
-        this.setState({
-          totalCases : totalCases,
-          judgmentCases : judgmentCases["null"].length,
-          impCases : impCases["null"].length,
-          hearingCases : hearingCases["HEARING"].length,
-          propsLegalData : data,
-          checkData : propsData
-        })
-      }
+      const data = this.props.data;
     }
-  
-    render(){
-  
-      var graphOneData = {
-        labels: this.state.graphOneLabel,
-        // labels: ["Label1", "Label2"],
-        datasets: [
-            {
-            label: "",
-            fill: false,
-            lineTension: 0.1,
-            hoverBorderWidth : 12,
-            // backgroundColor : this.state.colorRandom,
-            backgroundColor : ["#F77C15", "#385BC8","#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-            borderColor: "rgba(75,192,192,0.4)",
-            borderCapStyle: "butt",
-            barPercentage: 2,
-            borderWidth: 5,
-            barThickness: 25,
-            maxBarThickness: 10,
-            minBarLength: 2,
-            data: this.state.graphOneData
-            // data:[10,20,30]
-            }
-        ]
-      }
-      var graphOneOption = {
-          responsive : true,
-          // aspectRatio : 3,
-          maintainAspectRatio: false,
-          cutoutPercentage : 0,
-          datasets : [
-              {
-              backgroundColor : "rgba(0, 0, 0, 0.1)",
-              weight: 0
-              }
-          ], 
-          legend: {
-              display: false,
-              position: 'bottom',
-              labels: {
-              fontFamily: "Comic Sans MS",
-              boxWidth: 20,
-              boxHeight: 2
-              }
-          },
-          tooltips: {
-              enabled: true
-          },
-          title: {
-              display: true,
-              text: "Total Cases Dashboard"
-          },
-          scales: {
-              xAxes: [{
-                  gridLines: {
-                      display:true
-                  },
-                  scaleLabel: {
-                      display: true,
-                      labelString: "Court Types"
-                      }, 
-              }],
-              yAxes: [{
-                  gridLines: {
-                      display:true
-                  },
-                  ticks: {
-                      suggestedMin: 0,
-                      // suggestedMax: 100,
-                      // stepSize: 5
-                  },
-                  scaleLabel: {
-                      display: true,
-                      labelString: "No of Cases"
-                      }, 
-              }]
-          },
-          plugins: {
-              datalabels: {
-                  display: false
-              //     color: 'white',
-              //     backgroundColor: 'grey',
-              //     labels: {
-              //         title: {
-              //             font: {
-              //                 weight: 'bold'
-              //             }
-              //         }
-              //     }}
-              }
-          },
-          onClick: (e, element) => {
-              if (element.length > 0) {
-                  
-                  var ind = element[0]._index;   
-                  const selectedVal = this.state.graphOneLabel[ind];
-                  // const data = this.state.dataOne[selectedVal];
-                  // var graphSorting = this.graphSorting( "BE&AEComparison", this.state.dataOne[selectedVal] );
-                  
-                  // this.setState({
-                  //     graphTwoLabel: graphSorting[0],
-                  //     graphTwoData: graphSorting[1],
-                  //     dataTwo: graphSorting[2],
-                  //     graphClicked: 1,
-                  //     rowData: this.state.dataOne[selectedVal]
-                  // })
-                  
-              }
-          },
-      }
-  
-      var graphTwoData = {
-        labels: this.state.graphTwoLabel,
-        // labels: ["Label1", "Label2"],
-        datasets: [
-            {
-            label: "",
-            fill: false,
-            lineTension: 0.1,
-            hoverBorderWidth : 12,
-            // backgroundColor : this.state.colorRandom,
-            backgroundColor : ["#F77C15", "#385BC8","#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-            borderColor: "rgba(75,192,192,0.4)",
-            borderCapStyle: "butt",
-            barPercentage: 2,
-            borderWidth: 5,
-            barThickness: 25,
-            maxBarThickness: 10,
-            minBarLength: 2,
-            data: this.state.graphTwoData
-            // data:[10,20,30]
-            }
-        ]
-      }
-      var graphTwoOption = {
-          responsive : true,
-          // aspectRatio : 3,
-          maintainAspectRatio: false,
-          cutoutPercentage : 0,
-          datasets : [
-              {
-              backgroundColor : "rgba(0, 0, 0, 0.1)",
-              weight: 0
-              }
-          ], 
-          legend: {
-              display: false,
-              position: 'bottom',
-              labels: {
-              fontFamily: "Comic Sans MS",
-              boxWidth: 20,
-              boxHeight: 2
-              }
-          },
-          tooltips: {
-              enabled: true
-          },
-          title: {
-              display: true,
-              text: "Judgment Cases Dashboard"
-          },
-          scales: {
-              xAxes: [{
-                  gridLines: {
-                      display:true
-                  },
-                  scaleLabel: {
-                      display: true,
-                      labelString: "Judgement Type (ID)"
-                      }, 
-              }],
-              yAxes: [{
-                  gridLines: {
-                      display:true
-                  },
-                  ticks: {
-                      suggestedMin: 0,
-                      // suggestedMax: 100,
-                      // stepSize: 5
-                  },
-                  scaleLabel: {
-                      display: true,
-                      labelString: "No of Cases"
-                      }, 
-              }]
-          },
-          plugins: {
-              datalabels: {
-                  display: false
-              //     color: 'white',
-              //     backgroundColor: 'grey',
-              //     labels: {
-              //         title: {
-              //             font: {
-              //                 weight: 'bold'
-              //             }
-              //         }
-              //     }}
-              }
-          },
-          onClick: (e, element) => {
-              if (element.length > 0) {
-                  var ind = element[0]._index;
-              }
-          },
-      }
-  
-      var graphThirdData = {
-        labels: this.state.graphThirdLabel,
-        // labels: ["Label1", "Label2"],
-        datasets: [
-            {
-            label: "",
-            fill: false,
-            lineTension: 0.1,
-            hoverBorderWidth : 12,
-            // backgroundColor : this.state.colorRandom,
-            backgroundColor : ["#F77C15", "#385BC8","#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-            borderColor: "rgba(75,192,192,0.4)",
-            borderCapStyle: "butt",
-            barPercentage: 2,
-            borderWidth: 5,
-            barThickness: 25,
-            maxBarThickness: 10,
-            minBarLength: 2,
-            data: this.state.graphThirdData
-            // data:[10,20,30]
-            }
-        ]
-      }
-      var graphThirdOption = {
-          responsive : true,
-          // aspectRatio : 3,
-          maintainAspectRatio: false,
-          cutoutPercentage : 0,
-          datasets : [
-              {
-              backgroundColor : "rgba(0, 0, 0, 0.1)",
-              weight: 0
-              }
-          ], 
-          legend: {
-              display: false,
-              position: 'bottom',
-              labels: {
-              fontFamily: "Comic Sans MS",
-              boxWidth: 20,
-              boxHeight: 2
-              }
-          },
-          tooltips: {
-              enabled: true
-          },
-          title: {
-              display: true,
-              text: "Important Cases Dashboard"
-          },
-          scales: {
-              xAxes: [{
-                  gridLines: {
-                      display:true
-                  },
-                  scaleLabel: {
-                      display: true,
-                      labelString: "Concern Branch"
-                      }, 
-              }],
-              yAxes: [{
-                  gridLines: {
-                      display:true
-                  },
-                  ticks: {
-                      suggestedMin: 0,
-                      // suggestedMax: 100,
-                      // stepSize: 5
-                  },
-                  scaleLabel: {
-                      display: true,
-                      labelString: "No of Cases"
-                      }, 
-              }]
-          },
-          plugins: {
-              datalabels: {
-                  display: false
-              //     color: 'white',
-              //     backgroundColor: 'grey',
-              //     labels: {
-              //         title: {
-              //             font: {
-              //                 weight: 'bold'
-              //             }
-              //         }
-              //     }}
-              }
-          },
-          onClick: (e, element) => {
-              if (element.length > 0) {
-                  var ind = element[0]._index;               
-              }
-          },
-      }
-  
-      var graphFourthData = {
-        labels: this.state.graphFourthLabel,
-        // labels: ["Label1", "Label2"],
-        datasets: [
-            {
-            label: "",
-            fill: false,
-            lineTension: 0.1,
-            hoverBorderWidth : 12,
-            // backgroundColor : this.state.colorRandom,
-            backgroundColor : ["#F77C15", "#385BC8","#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-            borderColor: "rgba(75,192,192,0.4)",
-            borderCapStyle: "butt",
-            barPercentage: 2,
-            borderWidth: 5,
-            barThickness: 25,
-            maxBarThickness: 10,
-            minBarLength: 2,
-            data: this.state.graphFourthData
-            // data:[10,20,30]
-            }
-        ]
-      }
-      var graphFourthOption = {
-          responsive : true,
-          // aspectRatio : 3,
-          maintainAspectRatio: false,
-          cutoutPercentage : 0,
-          datasets : [
-              {
-              backgroundColor : "rgba(0, 0, 0, 0.1)",
-              weight: 0
-              }
-          ], 
-          legend: {
-              display: false,
-              position: 'bottom',
-              labels: {
-              fontFamily: "Comic Sans MS",
-              boxWidth: 20,
-              boxHeight: 2
-              }
-          },
-          tooltips: {
-              enabled: true
-          },
-          title: {
-              display: true,
-              text: "Hearing Cases Dashboard"
-          },
-          scales: {
-              xAxes: [{
-                  gridLines: {
-                      display:true
-                  },
-                  scaleLabel: {
-                      display: true,
-                      labelString: "X label"
-                      }, 
-              }],
-              yAxes: [{
-                  gridLines: {
-                      display:true
-                  },
-                  ticks: {
-                      suggestedMin: 0,
-                      // suggestedMax: 100,
-                      // stepSize: 5
-                  },
-                  scaleLabel: {
-                      display: true,
-                      labelString: "Y label"
-                      }, 
-              }]
-          },
-          plugins: {
-              datalabels: {
-                  display: false
-              //     color: 'white',
-              //     backgroundColor: 'grey',
-              //     labels: {
-              //         title: {
-              //             font: {
-              //                 weight: 'bold'
-              //             }
-              //         }
-              //     }}
-              }
-          },
-          onClick: (e, element) => {
-            if (element.length > 0) {
-                var ind = element[0]._index;               
-            }
-          },
-      }
-  
-      return(
+
+    tableClicked = (data, caseClicked) => {
+
+        debugger;
+        var sortedTest = [];
+        if(caseClicked === "totalCase"){
+            sortedTest = this.state.totalCase[data]
+        }else if(caseClicked === "next7Days"){
+            sortedTest = this.state.next7DaysData[data]
+        }else if(caseClicked === "next15Days"){
+            sortedTest = this.state.next15DaysData[data]
+        }else if(caseClicked === "iscaseImp"){
+            sortedTest = this.state.impCaseData[data]
+        }else if(caseClicked === "contempCase"){
+            sortedTest = this.state.contemptCaseData[data]
+        }
+
+        var unchangeColumnData = [];
+
+        this.setState({
+            toggleTable : !this.state.toggleTable,
+            sortedTest : sortedTest,
+            rowData : sortedTest
+        })
+    }
+
+    rowData = (data) =>{
+        return(
+            <tr>
+                <td className=""> { data } </td>
+                <td className="grab"> <button onClick={ () => this.tableClicked(data, "totalCase")}> { this.state.totalCase[data].length } </button> </td>
+                <td className="grab"> <button onClick={ () => this.tableClicked(data, "next7Days")}> { this.state.next7DaysData[data] ? this.state.next7DaysData[data].length : 0 } </button> </td>
+                <td className="grab"> <button onClick={ () => this.tableClicked(data, "next15Days")}> { this.state.next15DaysData[data] ? this.state.next15DaysData[data].length : 0 } </button> </td>
+                {/* <td className="grab"> Not Updated </td> */}
+                <td className="grab"> <button onClick={ () => this.tableClicked(data, "iscaseImp")}> { this.state.impCaseData[data] ? this.state.impCaseData[data].length : 0 } </button> </td>
+                <td className="grab"> <button onClick={ () => this.tableClicked(data, "contempCase")}> { this.state.contemptCaseData[data] ? this.state.contemptCaseData[data].length : 0 } </button> </td>
+            </tr>
+        );
+    }
+
+    rowData2 = (data, index) =>{
+        debugger;
+        var hearingDate = new Date(data.hearingDate);
+        hearingDate = hearingDate.getDate()+"/"+parseInt(hearingDate.getMonth()+1)+"/"+hearingDate.getFullYear();
+        return(
+            <tr>
+                <td> { index + 1 } </td>
+                <td> { data.caseNumber } </td>
+                <td> { data.caseTitle } </td>
+                <td> { data.petName } </td>
+                <td> { data.govtDept } </td>
+                <td> { "Not in API" } </td>
+                <td> { "---"+data.courtName } </td>
+                <td> { hearingDate } </td>
+                <td> { data.caseStatus } </td>
+                <td> { "----" } </td>
+                <td> { data.lcNumber } </td>
+            </tr>
+        );
+    }
+
+    render() {
+
+    return (
         <div>
-          <div className="graphImageContainer">
-            <div className="imageDiv" style={{ 
-                backgroundImage: `url(${bgImage})` ,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "1500px 400px",
-                // opacity: "0.7"
-              }}
-              >
-                {/* <img src={bgImage} /> */}
-                <div style={{textAlign:"center"}}>
-                  <div className="dashboardTitle">
-                    Legal Cases Dashboard
-                  </div>
-                  <div className="content-container">
-                        <div className="content">
-                          Total No of Cases
-                          <p> {this.state.totalCases} </p>
-                          <p> <button className="dashboardBtn" value="totalCases" onClick={(e) => {this.showDashboard(e)}}> Click here... </button> </p>
-                        </div>
-                        <div className="content">
-                          No of Judgment
-                          <p> {this.state.judgmentCases} </p>
-                          <p> <button className="dashboardBtn" value="judgmentCases" onClick={(e) => {this.showDashboard(e)}}> Click here... </button> </p>
-                        </div>
-                        <div className="content">
-                          Important Cases
-                          <p> {this.state.impCases} </p>
-                          <p> <button className="dashboardBtn" value="impCases" onClick={(e) => {this.showDashboard(e)}}> Click here... </button> </p>
-                        </div>
-                        {/* <div className="content">
-                          Total No of Hearing
-                          <p> {this.state.hearingCases} </p>
-                          <p> <button className="dashboardBtn" onClick={() => {this.showDashboard("hearingCases")}}> Click here... </button> </p>
-                        </div> */}
-                  </div>                
+
+        {
+            this.state.toggleTable ? 
+            <div className="legal-table-container" style={{overflowX:"auto"}}>
+                <table className="legal-table">
+                    <tr>
+                        <th> Court </th>
+                        <th> Total Cases </th>
+                        <th> Next 7 Days </th>
+                        <th> Next 15 Days </th>
+                        <th> Important Cases </th>
+                        <th> Contempt Cases </th>
+                    </tr>
+                    {Object.keys(this.state.totalCase).map((data, index) => this.rowData(data))}
+                </table>
+            </div>
+            :
+            <div>
+                <div style={{margin : "15px"}}>
+                <button onClick={this.pdfDownload}><p class=""><a href="exceldoc.pdf"></a></p> Export PDF </button>
+                <button onClick={ () => this.tableClicked("", "")}> Back </button>
+                </div>
+                <div className="legal-table-container" style={{overflowX:"auto"}}>
+                    <table className="legal-table">
+                        <tr>
+                            <th> Sr No </th>
+                            <th> Case No </th>
+                            <th> Brief Subject </th>
+                            <th> Petitioner </th>
+                            <th> Department </th>
+                            <th> Other Department </th>
+                            <th> Nodal Officer </th>
+                            <th> Next Date </th>
+                            <th> Status </th>
+                            <th> Reply Filed </th>
+                            <th> File No </th>
+                        </tr>
+                        {this.state.sortedTest.map((data, index) => this.rowData2(data, index))}
+                    </table>
                 </div>
             </div>
-          </div>
-  
-          {/* <div className="graphTitle"> {this.state.graphTitle} </div> */}
-          <center>
-          <div>
-            {
-              this.state.graphClicked === 0 ?
-              <div
-                className="graphWidth"
-                style={{
-                  position: "relative",
-                  display: "block",
-                  overflowX: "auto",
-                }}
-                >
-                  <div className="graphData">
-                      <Bar
-                          width="900px"
-                          height="350px"
-                          data={ graphOneData }
-                          options={ graphOneOption }                 
-                      />
-                  </div>
-              </div>
-              :null
-            }
-  
-            {
-              this.state.graphClicked === 1 ?
-              <div
-                className="graphWidth"
-                style={{
-                  position: "relative",
-                  display: "block",
-                  overflowX: "auto",
-                }}
-                >
-                  <div className="graphData">
-                      <Bar
-                          width="900px"
-                          height="350px"
-                          data={ graphTwoData }
-                          options={ graphTwoOption }                 
-                      />
-                  </div>
-              </div>
-              :null
-            }
-  
-            {
-              this.state.graphClicked == 2 ?
-              <div
-                className="graphWidth"
-                style={{
-                  position: "relative",
-                  display: "block",
-                  overflowX: "auto",
-                }}
-                >
-                  <div className="graphData">
-                      <Bar
-                          width="900px"
-                          height="350px"
-                          data={ graphThirdData }
-                          options={ graphThirdOption }                 
-                      />
-                  </div>
-              </div>
-              :null
-            }
-  
-            {
-              this.state.graphClicked === 3 ?
-              <CardContent className="fullGraph" >
-                  <React.Fragment>
-                      <Bar
-                      data={ graphFourthData }
-                      options={ graphFourthOption } 
-                      />
-                  </React.Fragment>
-              </CardContent>
-              :null
-            }
-            
-          </div>
-          
-          {/* Table Feature  */}
-          <div className="tableContainer" style={this.state.graphClicked >= 0 ? null : {display:"none"}}>
-          {
-              this.state.unchangeColumnData.length > 0  ? 
-              <div className="tableFeature">
-                  <div className="columnToggle-Text"> Download As: </div>
-                  <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
-  
-                  <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
-              </div>
-              :null
-          }
-          {
-             this.state.toggleColumnCheck ?
-             <div className="columnVisibilityCard">
-              <dl>
-                  {
-                      this.state.unchangeColumnData.map((data, index)=>{
-                          return(
-                              <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
-                          )
-                      })
-                  }
-              </dl>
-              </div> 
-             : null
-          }
-  
-          {
-              this.state.graphClicked >= 0 ?
-              <ReactTable id="customReactTable"
-              // PaginationComponent={Pagination}
-              data={ this.state.rowData }  
-              columns={ this.state.columnData }  
-              defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
-              pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
-              pageSizeOptions = {[20,40,60]}  
-              /> 
-              :null
-          }
-          </div>
-          
-          </center>
-          
+        }
+
         </div>
-      )
+    );
     }
   }
 
