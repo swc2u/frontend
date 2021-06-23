@@ -47,14 +47,6 @@ div#custom-containers-local-storeDashboardDropdownTwo {
   width: 350px;
   margin-left: 100px; }
 
-div#material-ui-cardContent {
-  width: 100%;
-  display: -ms-flexbox;
-  display: flex; }
-
-div#material-ui-FilterConstraintsContainer {
-  display: flex; }
-
 button#material-ui-storeDashboardSearchButton {
   margin-left: 250px; }
 
@@ -62,8 +54,6 @@ button#material-ui-storeDashboardSearchButton {
   div#material-ui-cardContent {
     width: 100%;
     display: -ms-flexbox;
-    display: block; }
-  div#material-ui-FilterConstraintsContainer {
     display: block; }
   div#custom-containers-local-storeDashboardDropdownOne {
     position: initial;

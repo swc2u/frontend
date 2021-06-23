@@ -9,12 +9,6 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './waterIndex.css'
 
-import ExportExcel from './exportExcel';
-import ReactExport from "react-export-excel";
-
-const ExcelFile = ReactExport.ExcelFile;
-const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
-const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
 const isMobile = window.innerWidth < 500
 const responsiveSizeHack = isMobile ? window.innerWidth + 400 : window.innerWidth
@@ -198,23 +192,7 @@ class WaterDashboard extends React.Component {
     graphSorting = (data, sortBy, dropdownSelected, selectedDashboard ) => {
         var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
         "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
-        if(sortBy === "applicationStatus"){
-            var dateRangeData = data;
-            var sortBy = sortBy;
-            var group = dateRangeData.reduce((r, a) => {
-                r[a["applicationStatus"]] = [...r[a["applicationStatus"]] || [], a];
-                return r;
-                }, {});
-            // _.omit(group, "INITIATED")
-            delete group["INITIATED"]
-            
-            var graphLabel = Object.keys(group);
-            var graphData = [];
-            for(var i=0; i<graphLabel.length; i++){
-                graphData.push(group[graphLabel[i]].length);
-            }
-            return [graphLabel, graphData, group]
-        }
+        
         debugger;
         var dateRangeData = data;
         var sortBy = sortBy;
@@ -308,8 +286,8 @@ class WaterDashboard extends React.Component {
             if(data.WaterConnection.length > 0){
                 
                 if(dropdownSelected === "applicationStatusReport"){
- 
                     data = data.WaterConnection;
+
                     var sortedData = [];
                     for(var i=0; i<data.length; i++){
                         var item = data[i].waterApplicationList;
@@ -335,8 +313,7 @@ class WaterDashboard extends React.Component {
                                 "usageSubCategory" : parentApplication.waterProperty.usageSubCategory,
                                 "usageCategory" : parentApplication.waterProperty.usageCategory,
                                 "connectionOwnerDetails" : parentApplication.connectionHolders ? parentApplication.connectionHolders[0].name : "",
-                                "auditDetails" : dt,
-                                "amountPaid" : dataItem.totalAmountPaid
+                                "auditDetails" : dt
                             };
                             sortedData.push(itemApplication);
                         }
@@ -367,7 +344,7 @@ class WaterDashboard extends React.Component {
                         "CONNECTION_CONVERSION":"Application to convert tariff type",
                         "APPLY_FOR_TEMPORARY_CONNECTION":"Application for temporary Water Connection",
                         "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":"Application for Temporary to temporary Connection",
-                        "TEMPORARY_DISCONNECTION":"Application for temporary Disconnection/ NDC for Government houses",
+                        "TEMPORARY_DISCONNECTION":"pplication for temporary disconnection",
                         "PERMANENT_DISCONNECTION":"Application for permanent disconnection",
                         "UPDATE_CONNECTION_HOLDER_INFO":"Application to update connection holder information",
                         "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":"Application for Temporary to Regular Connection",
@@ -421,7 +398,7 @@ class WaterDashboard extends React.Component {
                                 "usageCategory" : parentApplication.waterProperty.usageCategory,
                                 "connectionOwnerDetails" : parentApplication.connectionHolders ? parentApplication.connectionHolders[0].name : "",
                                 "auditDetails" : dt,
-                                "amountPaid" : dataItem.totalAmountPaid
+                                "totalAmountPaid" : dataItem.totalAmountPaid
                             };
                             sortedData.push(itemApplication);
                         }
@@ -433,8 +410,8 @@ class WaterDashboard extends React.Component {
                     var dataRangeLabel = this.dateRange(datesFormatted[0], datesFormatted[1]);
                     
                     var group = data.reduce((r, a) => {
-                        r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[(new Date(a["auditDetails"]).getMonth()+1)]] = 
-                        [...r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[(new Date(a["auditDetails"]).getMonth()+1)]] || [], a];
+                        r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]).getMonth()]] = 
+                        [...r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]).getMonth()]] || [], a];
                         return r;
                         }, {});
                     
@@ -445,7 +422,7 @@ class WaterDashboard extends React.Component {
                             var item = group[dataRangeLabel[i]];
                             var amt = 0 ;
                             for(var j=0; j<item.length; j++){
-                                var amount = item[j].amountPaid === null ? 0 : item[j].amountPaid;
+                                var amount = item[j].totalAmountPaid === null ? 0 : item[j].totalAmountPaid;
                                 amt = amt + parseInt(amount);
                             }
                             graphFifthData.push(amt/100000)
@@ -495,33 +472,6 @@ class WaterDashboard extends React.Component {
         }
     }
 
-    exportExcel = (e) => {
-        e.preventDefault();
-        var dataSet1 = this.state.rowData
-        return(
-            <ExcelFile filename="Water_connection_application_data" 
-            element={<p>
-                Export Excel Data....</p>}
-            >
-                <ExcelSheet data={dataSet1} name="Employees">
-                    <ExcelColumn label="Application No" value="applicationNo"/>
-                    <ExcelColumn label="Application Status" value="applicationStatus"/>
-                    <ExcelColumn label="Status" value="status"/>
-                    <ExcelColumn label="Activity Type" value="activityType"/>
-                    <ExcelColumn label="Bill Group" value="billGroup"/>
-                    <ExcelColumn label="Leager group" value="leagerGroup"/>
-                    <ExcelColumn label="Pipe Size" value="proposedPipeSize"/>
-                    <ExcelColumn label="Sub Division" value="subDiv"/>
-                    <ExcelColumn label="Plot No" value="plotNo"/>
-                    <ExcelColumn label="Sector No" value="sectorNo"/>
-                    <ExcelColumn label="Usage Sub Category" value="usageSubCategory"/>
-                    <ExcelColumn label="Usage Category" value="usageCategory"/>
-                    <ExcelColumn label="Connection Owner" value="connectionOwnerDetails"/>
-                    <ExcelColumn label="Application Date" value="auditDetails"/>
-                </ExcelSheet>
-            </ExcelFile>
-        );
-    }
     render() {
     
 
@@ -622,25 +572,23 @@ class WaterDashboard extends React.Component {
                 var ind = element[0]._index;
                 var selectedVal = this.state.graphOneLabel[ind];
                 var data = this.state.dataOne[selectedVal];
-                if(data){
-                    var graphData = this.graphSorting(data, "applicationStatus", "dropdown_1_One");
+                var graphData = this.graphSorting(data, "applicationStatus", "dropdown_1_One");
                 
-                    var graphTwoLabelSHOW = [];
-                    for(var i=0; i<graphData[0].length; i++){
-                        var show_label = graphData[0][i] ;
-                        show_label = show_label.replaceAll("_", " ");
-                        show_label = show_label.charAt(0).toUpperCase() + show_label.substring(1).toLowerCase()
-                        graphTwoLabelSHOW.push(show_label);
-                    }
-                    this.setState({
-                        graphTwoLabelSHOW : graphTwoLabelSHOW,
-                        graphTwoLabel : graphData[0],
-                        graphTwoData : graphData[1],
-                        dataTwo : graphData[2],
-                        graphClicked : 1,
-                        rowData : data,
-                    })
+                var graphTwoLabelSHOW = [];
+                for(var i=0; i<graphData[0].length; i++){
+                    var show_label = graphData[0][i] ;
+                    show_label = show_label.replaceAll("_", " ");
+                    show_label = show_label.charAt(0).toUpperCase() + show_label.substring(1).toLowerCase()
+                    graphTwoLabelSHOW.push(show_label);
                 }
+                this.setState({
+                    graphTwoLabelSHOW : graphTwoLabelSHOW,
+                    graphTwoLabel : graphData[0],
+                    graphTwoData : graphData[1],
+                    dataTwo : graphData[2],
+                    graphClicked : 1,
+                    rowData : data,
+                })
             }
         },
     }
@@ -741,41 +689,39 @@ class WaterDashboard extends React.Component {
                 var ind = element[0]._index;
                 var selectedVal = this.state.graphTwoLabel[ind];
                 var data = this.state.dataTwo[selectedVal];
-                if(data){
-                    var graphData = this.graphSorting(data, "subDiv", "dropdown_1_SubDivision");
+                var graphData = this.graphSorting(data, "subDiv", "dropdown_1_SubDivision");
                 
-                    debugger;
-                    var thirdlabel = graphData[0];
-                    var thirdData = [0,0,0,0,0];
-                    for(var i=0; i<thirdlabel.length; i++){
-                        if(thirdlabel[i] === "08"){
-                            thirdData[0] = graphData[1][i];
-                        }
-                        else if(thirdlabel[i] === "09"){
-                            thirdData[1] = graphData[1][i];
-                        }
-                        else if(thirdlabel[i] === "14"){
-                            thirdData[2] = graphData[1][i];
-                        }
-                        else if(thirdlabel[i] === "15"){
-                            thirdData[3] = graphData[1][i];
-                        }
-                        else if(thirdlabel[i] === "20"){
-                            thirdData[4] = graphData[1][i];
-                        }else{
-                            thirdData[5] = graphData[1][i];
-                        }
+                debugger;
+                var thirdlabel = graphData[0];
+                var thirdData = [0,0,0,0,0];
+                for(var i=0; i<thirdlabel.length; i++){
+                    if(thirdlabel[i] === "08"){
+                        thirdData[0] = graphData[1][i];
                     }
-
-                    this.setState({
-                        // graphThirdLabel : graphData[0],
-                        graphThirdLabel : ["Sub-Division 08", "Sub-Division 09", "Sub-Division 14", "Sub-Division 15", "Sub-Division 20"],
-                        graphThirdData : thirdData,
-                        dataThird : graphData[2],
-                        graphClicked : 2,
-                        rowData : data,
-                    })
+                    else if(thirdlabel[i] === "09"){
+                        thirdData[1] = graphData[1][i];
+                    }
+                    else if(thirdlabel[i] === "14"){
+                        thirdData[2] = graphData[1][i];
+                    }
+                    else if(thirdlabel[i] === "15"){
+                        thirdData[3] = graphData[1][i];
+                    }
+                    else if(thirdlabel[i] === "20"){
+                        thirdData[4] = graphData[1][i];
+                    }else{
+                        thirdData[5] = graphData[1][i];
+                    }
                 }
+
+                this.setState({
+                    // graphThirdLabel : graphData[0],
+                    graphThirdLabel : ["Sub-Division 08", "Sub-Division 09", "Sub-Division 14", "Sub-Division 15", "Sub-Division 20"],
+                    graphThirdData : thirdData,
+                    dataThird : graphData[2],
+                    graphClicked : 2,
+                    rowData : data,
+                })
             }
         },
     }
@@ -878,42 +824,40 @@ class WaterDashboard extends React.Component {
                 var selectedVal = this.state.graphThirdLabel[ind];
                 selectedVal = selectedVal.substring(selectedVal.length-2, selectedVal.length)
                 var data = this.state.dataThird[selectedVal];
-                if(data){
-                    var graphData = this.graphSorting(data, "auditDetails", "dropdown_1_One");
+                var graphData = this.graphSorting(data, "auditDetails", "dropdown_1_One");
 
-                    var fourthLabel = graphData[0];
-                    var fourthData = [0,0,0,0,0,0];
-                    for(var i=0; i<fourthLabel.length; i++){
-                        var dt = new Date(fourthLabel[i]).getMonth();
-                        if(dt === 0 || dt === 1){
-                            fourthData[0] = fourthData[0] + graphData[1][i];
-                        }
-                        if(dt === 2 || dt === 3){
-                            fourthData[1] = fourthData[1] + graphData[1][i];
-                        }
-                        if(dt === 4 || dt === 5){
-                            fourthData[2] = fourthData[2] + graphData[1][i];
-                        }
-                        if(dt === 6 || dt === 7){
-                            fourthData[3] = fourthData[3] + graphData[1][i];
-                        }
-                        if(dt === 8 || dt === 9){
-                            fourthData[4] = fourthData[4] + graphData[1][i];
-                        }
-                        if(dt === 10 || dt === 11){
-                            fourthData[5] = fourthData[5] + graphData[1][i];
-                        }
+                var fourthLabel = graphData[0];
+                var fourthData = [0,0,0,0,0,0];
+                for(var i=0; i<fourthLabel.length; i++){
+                    var dt = new Date(fourthLabel[i]).getMonth();
+                    if(dt === 0 || dt === 1){
+                        fourthData[0] = fourthData[0] + graphData[1][i];
                     }
-
-                    this.setState({
-                        // graphFourthLabel : graphData[0],
-                        graphFourthLabel : ["Cycle 1", "Cycle 2", "Cycle 3", "Cycle 4", "Cycle 5", "Cycle 6"],
-                        graphFourthData : fourthData,
-                        dataFourth : graphData[2],
-                        graphClicked : 3,
-                        rowData : data,
-                    })
+                    if(dt === 2 || dt === 3){
+                        fourthData[1] = fourthData[1] + graphData[1][i];
+                    }
+                    if(dt === 4 || dt === 5){
+                        fourthData[2] = fourthData[2] + graphData[1][i];
+                    }
+                    if(dt === 6 || dt === 7){
+                        fourthData[3] = fourthData[3] + graphData[1][i];
+                    }
+                    if(dt === 8 || dt === 9){
+                        fourthData[4] = fourthData[4] + graphData[1][i];
+                    }
+                    if(dt === 10 || dt === 11){
+                        fourthData[5] = fourthData[5] + graphData[1][i];
+                    }
                 }
+
+                this.setState({
+                    // graphFourthLabel : graphData[0],
+                    graphFourthLabel : ["Cycle 1", "Cycle 2", "Cycle 3", "Cycle 4", "Cycle 5", "Cycle 6"],
+                    graphFourthData : fourthData,
+                    dataFourth : graphData[2],
+                    graphClicked : 3,
+                    rowData : data,
+                })
             }
         },
     }
@@ -1017,48 +961,46 @@ class WaterDashboard extends React.Component {
                 // selectedVal = selectedVal.substring(selectedVal.length-1, selectedVal.length)
                 var data = this.state.dataFourth;
                 
-                if(data){
-                    var rowData = [];
-                    for(var i=0; i<Object.keys(data).length; i++){
-                        var dt = new Date(Object.keys(data)[i]).getMonth();
-                        if(selectedVal === "Cycle 1"){
-                            if(dt === 0 || dt === 1){
-                                rowData = rowData.concat(data[Object.keys(data)[i]]);
-                            }
-                        }
-                        if(selectedVal === "Cycle 2"){
-                            if(dt === 2 || dt === 3){
-                                rowData = rowData.concat(data[Object.keys(data)[i]]);
-                            }
-                        }
-                        if(selectedVal === "Cycle 3"){
-                            if(dt === 4 || dt === 5){
-                                rowData = rowData.concat(data[Object.keys(data)[i]]);
-                            }
-                        }
-                        if(selectedVal === "Cycle 4"){
-                            if(dt === 6 || dt === 7){
-                                rowData = rowData.concat(data[Object.keys(data)[i]]);
-                            }
-                        }
-                        if(selectedVal === "Cycle 5"){
-                            if(dt === 8 || dt === 9){
-                                rowData = rowData.concat(data[Object.keys(data)[i]]);
-                            }
-                        }
-                        if(selectedVal === "Cycle 6"){
-                            if(dt === 10 || dt === 11){
-                                rowData = rowData.concat(data[Object.keys(data)[i]]);
-                            }
+                var rowData = [];
+                for(var i=0; i<Object.keys(data).length; i++){
+                    var dt = new Date(Object.keys(data)[i]).getMonth();
+                    if(selectedVal === "Cycle 1"){
+                        if(dt === 0 || dt === 1){
+                            rowData = rowData.concat(data[Object.keys(data)[i]]);
                         }
                     }
-
-                    this.setState({
-                        // graphFourthLabel : graphData[0],
-                        graphClicked : 4,
-                        rowData : rowData,
-                    })
+                    if(selectedVal === "Cycle 2"){
+                        if(dt === 2 || dt === 3){
+                            rowData = rowData.concat(data[Object.keys(data)[i]]);
+                        }
+                    }
+                    if(selectedVal === "Cycle 3"){
+                        if(dt === 4 || dt === 5){
+                            rowData = rowData.concat(data[Object.keys(data)[i]]);
+                        }
+                    }
+                    if(selectedVal === "Cycle 4"){
+                        if(dt === 6 || dt === 7){
+                            rowData = rowData.concat(data[Object.keys(data)[i]]);
+                        }
+                    }
+                    if(selectedVal === "Cycle 5"){
+                        if(dt === 8 || dt === 9){
+                            rowData = rowData.concat(data[Object.keys(data)[i]]);
+                        }
+                    }
+                    if(selectedVal === "Cycle 6"){
+                        if(dt === 10 || dt === 11){
+                            rowData = rowData.concat(data[Object.keys(data)[i]]);
+                        }
+                    }
                 }
+
+                this.setState({
+                    // graphFourthLabel : graphData[0],
+                    graphClicked : 4,
+                    rowData : rowData,
+                })
             }
         },
     }
@@ -1161,11 +1103,9 @@ class WaterDashboard extends React.Component {
                 var selectedVal = this.state.graphFifthLabel[ind];
                 const data = this.state.dataFifth[selectedVal];
 
-                if(data){
-                    this.setState({
-                        rowData : data
-                    })
-                }
+                this.setState({
+                    rowData : data
+                })
             }
         },
     }
@@ -1173,6 +1113,7 @@ class WaterDashboard extends React.Component {
         
     return (
         <div>
+        
         <div>
             { this.state.recordNotFound }
         </div>
@@ -1278,8 +1219,6 @@ class WaterDashboard extends React.Component {
                     <div className="columnToggle-Text"> Download As: </div>
                     <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
 
-                    <button className="columnToggleBtn" onClick={this.exportExcel}> Export Excel </button>
-                    
                     <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
                 </div>
                 :null

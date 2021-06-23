@@ -120,7 +120,7 @@
   margin: 0; }
 
 .tableContainer {
-  position: initial;
+  position: absolute;
   z-index: 1000;
   /* display: none; */
   /* float: left; */
@@ -165,8 +165,7 @@
     height: 500px;
     /* border-style: ridge */ }
   .tableContainer {
-    display: initial;
-    width: 95%; }
+    display: contents; }
   .tableFeature {
     position: relative;
     margin-left: 10%;
