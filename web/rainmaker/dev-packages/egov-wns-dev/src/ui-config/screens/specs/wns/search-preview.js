@@ -122,6 +122,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
     else{
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewproposedHolderInfo.visible",false);
     }
+    /////?
     if(activityTypeHolder ==='SW_SEWERAGE')
     {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewMeterId.visible",false);
@@ -134,8 +135,13 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewsanctionedCapacity.visible",false);
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewmeterRentCode.visible",false);
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewMeterCount.visible",false);
-      
 
+      //
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewEleven.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyUsageDetail.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnection.visible",false);
+        ////reviewConnectionDetails
     }
 
     if(activityTypeHolder ==='UPDATE_METER_INFO' || activityTypeHolder ==='WS_METER_UPDATE' )
