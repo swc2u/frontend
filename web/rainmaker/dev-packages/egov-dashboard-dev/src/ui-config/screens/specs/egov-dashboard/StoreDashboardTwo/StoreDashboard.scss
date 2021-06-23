@@ -38,41 +38,36 @@ form#datagridsummary .MuiPaper-elevation4-466 {
   letter-spacing: 0.67px;
   word-break: break-all !important; }
 
-div#custom-containers-local-storeDashboardDropdownOne {
-  position: absolute;
-  width: 320px; }
-
+  div#custom-containers-local-storeDashboardDropdownOne {
+    position: absolute;
+    width: 320px;
+}
 div#custom-containers-local-storeDashboardDropdownTwo {
-  position: absolute;
-  width: 350px;
-  margin-left: 100px; }
-
-  div#material-ui-cardContent {
-    width: 100%;
-    display: -ms-flexbox;
-    display: flex; }
-  div#material-ui-FilterConstraintsContainer{
-    display: flex;
-  }
-
+    position: absolute;
+    width: 350px;
+    margin-left: 100px;
+}
 button#material-ui-storeDashboardSearchButton {
-  margin-left: 250px; }
+    margin-left: 250px;
+}
 
 @media only screen and (max-width: 900px) {
   div#material-ui-cardContent {
     width: 100%;
     display: -ms-flexbox;
-    display: block; }
-  div#material-ui-FilterConstraintsContainer{
     display: block;
-  }
-  div#custom-containers-local-storeDashboardDropdownOne {
+}
+div#custom-containers-local-storeDashboardDropdownOne {
     position: initial;
-    width: 320px; }
-  div#custom-containers-local-storeDashboardDropdownTwo {
+    width: 320px;
+}
+div#custom-containers-local-storeDashboardDropdownTwo {
     position: absolute;
     width: 350px;
-    margin-left: 0px; }
-  button#material-ui-storeDashboardSearchButton {
+	margin-left: 0px;
+}
+button#material-ui-storeDashboardSearchButton {
     margin-left: 0px;
-    margin-top: 80px; } }
+	margin-top: 80px;
+}
+}
