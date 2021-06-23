@@ -191,7 +191,7 @@ export const reviewWaterClosets = getLabelWithValue(
     labelKey: "WS_ADDN_DETAILS_NO_OF_WATER_CLOSETS"
   },
   {
-    jsonPath: "WaterConnection[0].noOfWaterClosets",
+    jsonPath: "WaterConnection[0].proposedWaterClosets",
     callBack: handleNA
   }
 );
@@ -201,7 +201,7 @@ export const reviewNoOfToilets = getLabelWithValue(
     labelKey: "WS_ADDN_DETAILS_NO_OF_TOILETS"
   },
   {
-    jsonPath: "WaterConnection[0].noOfToilets",
+    jsonPath: "WaterConnection[0].proposedToilets",
     callBack: handleNA
   }
 );

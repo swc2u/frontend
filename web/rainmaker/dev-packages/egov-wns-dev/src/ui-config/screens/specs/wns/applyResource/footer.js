@@ -1163,7 +1163,7 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
     || !isPropertyLocationDetailValid 
     || !isPropertyUsageValid
     || !isConnectionHolderDetailsValid 
-    || !ownershipCategory)
+    || !_ownershipCategory)
   {
     dispatch(
       toggleSnackbar(
