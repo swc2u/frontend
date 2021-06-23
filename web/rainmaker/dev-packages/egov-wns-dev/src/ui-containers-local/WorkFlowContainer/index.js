@@ -268,11 +268,26 @@ class WorkFlowContainer extends React.Component {
             {
               if(WaterConnection[0].waterApplicationType === 'REGULAR' && WaterConnection[0].activityType !=='REACTIVATE_CONNECTION')
               {
-                actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
+                if ((status ==='CONNECTION_CLOSED'
+                     || status ==='TEMPORARY_CONNECTION_CLOSED'
+                     || status ==='CLOSE_CONNECTION'
+                     || WaterConnection[0].status ==='Inactive'
+                     )             
+                     && WaterConnection[0].waterApplicationType === 'REGULAR')
+            {
+              actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+
+            }
+            else{
+              actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
                 && item.buttonLabel !=='REACTIVATE_CONNECTION'
                 &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
 
+            }
+                
+
               }
+              
               else if(WaterConnection[0].waterApplicationType === 'TEMPORARY')
               {
                 actions = actions.filter(item => item.buttonLabel !== 'PERMANENT_DISCONNECTION' 
@@ -282,6 +297,10 @@ class WorkFlowContainer extends React.Component {
                                                // && item.buttonLabel !=='UPDATE_METER_INFO'
                                                 &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
 
+              }
+              else if (WaterConnection[0] && WaterConnection[0].activityType ==='REACTIVATE_CONNECTION' && WaterConnection[0].status ==='Inactive' )
+              {
+                actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
               }
 
             }
@@ -380,16 +399,16 @@ class WorkFlowContainer extends React.Component {
             }
             else if ((status ==='CONNECTION_CLOSED'
                      || status ==='TEMPORARY_CONNECTION_CLOSED'
+                     || status ==='CLOSE_CONNECTION'
                      )             
                      && WaterConnection[0].waterApplicationType === 'REGULAR')
             {
               actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
 
             }
-            else if (status ==='CONNECTION_CLOSED' && WaterConnection[0].activityType ==='PERMANENT_DISCONNECTION')
+            else if (WaterConnection[0] && WaterConnection[0].activityType ==='REACTIVATE_CONNECTION' && WaterConnection[0].status ==='Inactive' )
             {
-              actions = [];// actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
-
+              actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
             }
             else {
               actions = []; 

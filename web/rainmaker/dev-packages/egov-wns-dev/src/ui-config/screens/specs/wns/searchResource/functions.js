@@ -54,36 +54,46 @@ export const deactivateConnection = async (state, dispatch) => {
    set(queryObjectForUpdate, "connectionHolders[0].ownerType", "INDIVIDUAL.SINGLEOWNER");
    set(queryObjectForUpdate, "status", "Inactive");
    // set other propert as workflow service did in backend
-   set(queryObjectForUpdate, "applicationStatus", "CLOSE_CONNECTION");
-   set(queryObjectForUpdate, "activityType", "REACTIVATE_CONNECTION");
-  //  if(queryObjectForUpdate.connectionExecutionDate !== null )
-  //  set(queryObjectForUpdate, "connectionExecutionDate", queryObjectForUpdate.connectionExecutionDate);
-  //  else{
-  //   set(queryObjectForUpdate, "connectionExecutionDate", 0);
-  //  }
-   const payloadbillingPeriod = await httpRequest("post", "/ws-services/wc/_deactivateConnection", "", [], { WaterConnection: queryObjectForUpdate });
-   let errorMessage = {
-    labelName: "Connection deactivate successfully!",
-    labelKey: "WS_DEACTIVATE_SUCCESS"
-  };
-   dispatch(toggleSnackbar(true, errorMessage, "success"));
-      dispatch(
-        handleField(
-          "connection-details",
-          "components.div.children.connectionDetails.children.cardContent.children.button.children.buttonContainer.children.Deactivate",
-          {visible:false}
-        )
-      );
-  set(
-    state.screenConfiguration.screenConfig,
-    "components.div.children.connectionDetails.children.cardContent.children.button.children.buttonContainer.children.Deactivate.visible",
-    false
-  );
-let connectionNumber =getQueryArg(window.location.href, "connectionNumber")
-let tenantId =getQueryArg(window.location.href, "tenantId")
-let service =getQueryArg(window.location.href, "service")
-let connectionType =getQueryArg(window.location.href, "connectionType")
-  window.location.href = `connection-details?connectionNumber=${connectionNumber}&tenantId=${tenantId}&service=${service}&connectionType=${connectionType}&Active=${false}`
+   set(queryObjectForUpdate, "applicationStatus", "TEMPORARY_CONNECTION_CLOSED");
+   //set(queryObjectForUpdate, "activityType", "REACTIVATE_CONNECTION");
+   let inWorkflow = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].inWorkflow",false);
+   //inWorkflow = true;
+   if(inWorkflow === true)
+   {
+    const errorMessageN = {
+      labelName: "Duplicate name Added",
+      labelKey:   `WS_DEACTIVATION_VALIDATIONM_MESSAGE`
+      //labelKey:   LocalizationCodeValueN+' '+DuplicatItem[0].duplicates
+    };
+    dispatch(toggleSnackbar(true, errorMessageN, "warning"));
+   }
+   else{
+    const payloadbillingPeriod = await httpRequest("post", "/ws-services/wc/_deactivateConnection", "", [], { WaterConnection: queryObjectForUpdate });
+    let errorMessage = {
+     labelName: "Connection deactivate successfully!",
+     labelKey: "WS_DEACTIVATE_SUCCESS"
+   };
+    dispatch(toggleSnackbar(true, errorMessage, "success"));
+       dispatch(
+         handleField(
+           "connection-details",
+           "components.div.children.connectionDetails.children.cardContent.children.button.children.buttonContainer.children.Deactivate",
+           {visible:false}
+         )
+       );
+   set(
+     state.screenConfiguration.screenConfig,
+     "components.div.children.connectionDetails.children.cardContent.children.button.children.buttonContainer.children.Deactivate.visible",
+     false
+   );
+ let connectionNumber =getQueryArg(window.location.href, "connectionNumber")
+ let tenantId =getQueryArg(window.location.href, "tenantId")
+ let service =getQueryArg(window.location.href, "service")
+ let connectionType =getQueryArg(window.location.href, "connectionType")
+   window.location.href = `connection-details?connectionNumber=${connectionNumber}&tenantId=${tenantId}&service=${service}&connectionType=${connectionType}&Active=${false}`
+
+   }
+   
   }
   catch(error)
         {
@@ -94,6 +104,7 @@ let connectionType =getQueryArg(window.location.href, "connectionType")
               "error"
             )
           );
+          
         }
 }
 const renderSearchConnectionTable = async (state, dispatch) => {

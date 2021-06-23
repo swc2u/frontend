@@ -367,6 +367,7 @@ class WorkFlowContainer extends React.Component {
     let validRequest = true
     if (moduleName === "SW_SEWERAGE" && data.service ==='SEWERAGE') {
       dataPath = "SewerageConnection";
+      updateUrl = '/sw-services/swc/_update'
       validRequest = this.ValidateRequestSW(data,preparedFinalObject);
       // set if if application is edit
      
@@ -388,6 +389,7 @@ class WorkFlowContainer extends React.Component {
       || data.service ==='WATER'
       )
       {
+        updateUrl = '/ws-services/wc/_update'
         validRequest = this.ValidateRequest(data,preparedFinalObject)
       }   
 
@@ -688,8 +690,8 @@ class WorkFlowContainer extends React.Component {
       case "PAY_FOR_REGULAR_CONNECTION":
       case "PAY": return bservice ? `${payUrl}&businessService=${bservice}` : payUrl;
       case "EDIT": return isAlreadyEdited
-        ? `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit&edited=true`
-        : `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit`;
+        ? `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit&edited=true&service=WATER`
+        : `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit&service=WATER`;
         case "WATERMODIFY":
           return isAlreadyEdited
           ? `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit&edited=true&service=WATER`

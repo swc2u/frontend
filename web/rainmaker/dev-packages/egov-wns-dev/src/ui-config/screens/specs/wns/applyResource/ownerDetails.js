@@ -9,9 +9,16 @@ import {
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { changeStep } from "../viewBillResource/footer";
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { convertEpochToDateAndHandleNA, handleNA } from '../../utils';
 import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
+const applicationNo = getQueryArg(window.location.href, "applicationNumber");
+// if(IsEdit === false)
+// {
+ 
+  
+// }
 const getHeader = label => {
   return {
     uiFramework: "custom-molecules-local",
@@ -221,6 +228,7 @@ export const getOwnerDetails = (isEditable = true) => {
               },
               required: true,
               props:{
+                // disabled:applicationNo?true:IsEdit
                 disabled:IsEdit
               },
               pattern: getPattern("MobileNo"),
