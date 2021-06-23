@@ -9,7 +9,7 @@ import { prepareFinalObject,handleScreenConfigurationFieldChange } from "egov-ui
 import LabelContainer from "egov-ui-framework/ui-containers/LabelContainer";
 import get from "lodash/get";
 import { toggleConnHolderDetails } from "../CheckboxContainer/toggleFeilds"
-
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 const styles = {
   root: {
     color: "#FE7A51",
@@ -348,7 +348,7 @@ class CheckboxLabels extends React.Component {
         Active = preparedFinalObject.WaterConnection[0].waterApplication.isFerruleApplicable
       }
     }
-
+    let applicationNo = getQueryArg(window.location.href, "applicationNumber");
     let isChecked = (this.state.checkedG === null)?(label.key !== "WS_ADDN_DETAILS_IS_FERRULEAPPLICABLE"?this.props.isChecked:Active):this.state.checkedG;
     let isdisabled = false
     //isFerruleApplicable should be enable to change the value in step  PENDING_FOR_SECURITY_DEPOSIT
@@ -357,6 +357,7 @@ class CheckboxLabels extends React.Component {
       if(preparedFinalObject.WaterConnection[0].waterApplication)
       {
         const {applicationStatus} = preparedFinalObject.WaterConnection[0];
+        const {connectionNo} = preparedFinalObject.WaterConnection[0];
         
         if(applicationStatus !== undefined)
         {
@@ -376,6 +377,20 @@ class CheckboxLabels extends React.Component {
            // approveCheck('WaterConnection[0].waterApplication.isFerruleApplicable', true)
             
           }
+        }
+        else if(label.key === 'WS_CONN_HOLDER_SAME_AS_OWNER_DETAILS' && applicationNo)
+        {
+          if(applicationStatus ==='INITIATED' && connectionNo === null)//|| applicationStatus ==='PENDING_FOR_CITIZEN_ACTION')
+          {
+            isdisabled = false
+          }
+          else if (applicationStatus ==='INITIATED' && ( connectionNo && connectionNo!== '' || connectionNo!== 'NA') )
+          {
+            isdisabled = true
+
+          }          
+          else
+          isdisabled = true
         }
         }
         else

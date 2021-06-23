@@ -1927,7 +1927,9 @@ export const applyForWater = async (state, dispatch) => {
              else{
                 set(queryObjectForUpdate, "processInstance.additionalDetails", null);
              }
-             
+             //? update property in case any field change in ui using previous button
+             propertyUpdateCitizen(state,dispatch)
+             ///?
           let responseWater =  await httpRequest("post", "/ws-services/wc/_update", "", [], { WaterConnection: queryObjectForUpdate });
             let searchQueryObject = [{ key: "tenantId", value: queryObjectForUpdate.tenantId }, { key: "applicationNumber", value: queryObjectForUpdate.applicationNo }];
             
@@ -3092,7 +3094,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                            res.filestoreIds[0]
                            if(res&&res.filestoreIds&&res.filestoreIds.length>0){
                              res.filestoreIds.map(fileStoreId=>{
-                               downloadReceiptFromFilestoreID(fileStoreId,"download",KeytenantId)
+                               downloadReceiptFromFilestoreID(fileStoreId,mode,KeytenantId)
                              })          
                            }else{
                              console.log("Error In Receipt Download");        
@@ -3164,7 +3166,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                            res.filestoreIds[0]
                            if(res&&res.filestoreIds&&res.filestoreIds.length>0){
                              res.filestoreIds.map(fileStoreId=>{
-                               downloadReceiptFromFilestoreID(fileStoreId,"download",KeytenantId)
+                               downloadReceiptFromFilestoreID(fileStoreId,mode,KeytenantId)
                              })          
                            }else{
                              console.log("Error In Receipt Download");        
@@ -3669,4 +3671,72 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
         ONE_TIME_FEE_SW: "PUBLIC_HEALTH_SERVICES_DIV4",
       
   };
+  }
+  export const propertyUpdateCitizen = async (state, dispatch) => {
+
+    let applicationStatus =get(
+      state,
+      "screenConfiguration.preparedFinalObject.applyScreen.applicationStatus"
+    );
+      if(1===1)
+      {
+  
+      let propertyData = get(
+        state,
+        "screenConfiguration.preparedFinalObject.applyScreen.property"
+      );
+      let tenantId = get(
+        state,
+        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
+      );
+      let doorNo =propertyData.address.doorNo
+      if(doorNo.length ===1)
+      {
+        doorNo =`000${doorNo}` 
+      }
+      else if(doorNo.length ===2)
+      {
+        doorNo =`00${doorNo}` 
+      } 
+      else if(doorNo.length ===3)
+      {
+        doorNo =`0${doorNo}` 
+      } 
+      set(propertyData, "address.doorNo", doorNo.toUpperCase());
+      propertyData.landArea = (propertyData.landArea);
+      propertyData.totalConstructedArea = (propertyData.landArea);
+      propertyData.tenantId = tenantId;
+      //set usage category
+      let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
+      let subusageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+      if(usageCategory!== null)
+      {
+      if(usageCategory.split('.').length ===1)
+      {
+      //st
+      set(propertyData, "usageCategory", subusageCategory);
+  
+      }
+    }
+    if(subusageCategory!== null)
+    {
+      if(subusageCategory.split('.').length ===2)
+      {
+      //set 
+      set(propertyData, "usageCategory", subusageCategory);
+      }
+    }
+    let code = get(
+        state.screenConfiguration.preparedFinalObject,
+        "applyScreen.property.address.locality.code"
+      )
+       if(code.value)
+       {
+        code = code.value
+       }
+       set(propertyData, "address.locality.code", code);
+      set(propertyData, "creationReason", "UPDATE");
+      let response_ = await propertyUpdate(state, dispatch,propertyData)
+    }
+  
   }

@@ -525,13 +525,32 @@ export const getData = async (action, state, dispatch) => {
     const activityType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType");
     const applicationStatus_ = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].applicationStatus");
 // disable Connection Details fiels  in bellow condition
-    if(applicationStatus_ ==='PENDING_FOR_METER_UPDATE')
+    if(applicationStatus_ ==='PENDING_FOR_METER_UPDATE'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_ACTIVATION'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_EXTENSION'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_EXTENSION_REGULAR'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_CLOSE'
+      || applicationStatus_ ==='PENDING_FOR_TEMPORARY_CONNECTION_CLOSE'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_HOLDER_CHANGE'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_REACTIVATION'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_TARIFF_CHANGE'
+      || applicationStatus_ ==='PENDING_FOR_SEWERAGE_CONNECTION_ACTIVATION')
     {
       const textFields = ["division","billGroup","ledgerNo","ccCode","ferruleSize","connectionType"];
       for (let i = 0; i < textFields.length; i++) {
         dispatch(handleField(
           "apply",
           `components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.connectiondetailscontainer.children.cardContent.children.connectionDetails.children.${textFields[i]}`,
+          "props.disabled",
+          true
+          ));
+      }
+
+      const chargesDetails = ["additionalCharges","constructionCharges",];
+      for (let i = 0; i < chargesDetails.length; i++) {
+        dispatch(handleField(
+          "apply",
+          `components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.${chargesDetails[i]}`,
           "props.disabled",
           true
           ));
@@ -837,27 +856,36 @@ export const getData = async (action, state, dispatch) => {
         {
           Isreadolny = true
         }
-        // 0. Property Details disabled
-        if((combinedArray[0].applicationStatus==="PENDING_FOR_CITIZEN_ACTION" || combinedArray[0].applicationStatus==="INITIATED") && (combinedArray[0].connectionNo !== null || combinedArray[0].connectionNo !== 'NA') && (combinedArray[0].water===true) )
+        else if(combinedArray[0].applicationStatus==="PENDING_ROADCUT_NOC_BY_CITIZEN")
         {
-        const textFieldsPropertyDetails = ["plotSize","propertyUsageType","propertySubUsageType","superBuiltUpArea","propertyFloornumber"];
-      for (let i = 0; i < textFieldsPropertyDetails.length; i++) {
-        dispatch(handleField(
-          "apply",
-          `components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.${textFieldsPropertyDetails[i]}`,
-          "props.disabled",
-          Isreadolny
-          ));
-      }
-      const textFieldsPropertyDetails_ = ["propertyUsageType","propertySubUsageType",];
-      for (let i = 0; i < textFieldsPropertyDetails_.length; i++) {
-        dispatch(handleField(
-          "apply",
-          `components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.${textFieldsPropertyDetails_[i]}`,
-          "props.disabled",
-          true
-          ));
-      }
+          Isreadolny = true
+        }
+        // 0. Property Details disabled
+        // if((combinedArray[0].applicationStatus==="PENDING_FOR_CITIZEN_ACTION"  || combinedArray[0].applicationStatus==="INITIATED") && (combinedArray[0].connectionNo !== null || combinedArray[0].connectionNo !== 'NA') && (combinedArray[0].water===true) )
+        // {
+            const textFieldsPropertyDetails = ["plotSize","propertyUsageType","propertySubUsageType","superBuiltUpArea","propertyFloornumber"];
+            for (let i = 0; i < textFieldsPropertyDetails.length; i++) {
+              dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.${textFieldsPropertyDetails[i]}`,
+                "props.disabled",
+                Isreadolny
+                ));
+            }
+            if(combinedArray[0].applicationStatus==="INITIATED" && (combinedArray[0].connectionNo === null ||combinedArray[0].connectionNo ==='NA') )
+            {
+              const textFieldsPropertyDetails_ = ["propertyUsageType","propertySubUsageType",];
+              for (let i = 0; i < textFieldsPropertyDetails_.length; i++) {
+                dispatch(handleField(
+                  "apply",
+                  `components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.${textFieldsPropertyDetails_[i]}`,
+                  "props.disabled",
+                  false
+                  ));
+              }
+
+            }
+
             // 1.Connection Details  disabled
             const textFieldsConnectionDetails = ["pipeSize","waterApplicationType","contractValue"];
             for (let i = 0; i < textFieldsConnectionDetails.length; i++) {
@@ -931,20 +959,66 @@ export const getData = async (action, state, dispatch) => {
               "apply",
               `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput`,
               "props.disabled",
-              Isreadolny
+              //Isreadolny
+              true
               ));
 
             // 5.Connection owner Details disabled
-             const ConnectionownerDetails = ["aadharNo","applicantName","correspondenceAddress","email","mobileNumber"];
-             for (let i = 0; i < ConnectionownerDetails.length; i++) {
+             const ConnectionHolderDetails = ["aadharNo","applicantName","correspondenceAddress","email","mobileNumber"];
+             for (let i = 0; i < ConnectionHolderDetails.length; i++) {
                dispatch(handleField(
                  "apply",
-                 `components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children.${ConnectionownerDetails[i]}`,
+                 `components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children.${ConnectionHolderDetails[i]}`,
                  "props.disabled",
                  Isreadolny
                  ));
              }
-            }
+             ////?
+             if((combinedArray[0].applicationStatus==="PENDING_FOR_CITIZEN_ACTION" ) && (combinedArray[0].connectionNo !== null || combinedArray[0].connectionNo !== 'NA') && (combinedArray[0].water===true) )
+             {               
+               if(combinedArray[0].connectionNo ==="NA")
+               {
+                // 4.Owner Information disabled
+                const _textFieldsOwnerInformation = ["ownerName","mobileNumber","email","guardianName","correspondenceAddress"];
+                for (let i = 0; i < _textFieldsOwnerInformation.length; i++) {
+                  dispatch(handleField(
+                    "apply",
+                    `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.0.item0.children.cardContent.children.viewFive.children.${_textFieldsOwnerInformation[i]}`,
+                    "props.disabled",
+                    true
+                    ));
+                }
+                dispatch(handleField(
+                  "apply",
+                  `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput`,
+                  "props.disabled",
+                  true
+                  ));
+
+                // 5.Connection owner Details disabled
+                const _ConnectionHolderDetails = ["aadharNo","applicantName","correspondenceAddress","email","mobileNumber"];
+                for (let i = 0; i < _ConnectionHolderDetails.length; i++) {
+                  dispatch(handleField(
+                    "apply",
+                    `components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children.${_ConnectionHolderDetails[i]}`,
+                    "props.disabled",
+                    true
+                    ));
+                }
+                const _textFieldsPropertyDetails = ["propertyUsageType","propertySubUsageType"];
+                for (let i = 0; i < _textFieldsPropertyDetails.length; i++) {
+                  dispatch(handleField(
+                    "apply",
+                    `components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.${_textFieldsPropertyDetails[i]}`,
+                    "props.disabled",
+                    true
+                    ));
+                }
+                }
+             }
+            
+             ////?
+           // }
 
         
         

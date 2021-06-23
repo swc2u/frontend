@@ -35,12 +35,23 @@ import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField
 import { getTenantIdCommon } from "egov-ui-kit/utils/localStorageUtils";
 
 const setReviewPageRoute = (state, dispatch) => {
-  const service = getQueryArg(window.location.href, "service");
+  let service = getQueryArg(window.location.href, "service");
   let tenantId = getTenantIdCommon() === null?commonConfig.tenantId:getTenantIdCommon();
   const applicationNumber = get(state, "screenConfiguration.preparedFinalObject.applyScreen.applicationNo");
   const appendUrl =
     process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+    if(applicationNumber.includes("WS"))
+    {
+      service ='WATER'
+
+    }
+    else if(applicationNumber.includes("SW"))
+    {
+      service ='SEWERAGE'
+
+    }
   const reviewUrl =  service ?
+  
   `${appendUrl}/wns/search-preview?applicationNumber=${applicationNumber}&tenantId=${tenantId}&edited="true"&service=${service}`
   :`${appendUrl}/wns/search-preview?applicationNumber=${applicationNumber}&tenantId=${tenantId}&edited="true"`;
   dispatch(setRoute(reviewUrl));
@@ -177,7 +188,11 @@ const propertyUpdateCitizen = async (state, dispatch) => {
     state,
     "screenConfiguration.preparedFinalObject.applyScreen.applicationStatus"
   );
-    if(applicationStatus ==='PENDING_FOR_CITIZEN_ACTION')
+  let connectionNo =get(
+    state,
+    "screenConfiguration.preparedFinalObject.applyScreen.connectionNo"
+  );
+    if((applicationStatus ==='PENDING_FOR_CITIZEN_ACTION' || applicationStatus ==="INITIATED")&&  (connectionNo ===null))
     {
 
     let propertyData = get(
@@ -228,6 +243,19 @@ const propertyUpdateCitizen = async (state, dispatch) => {
 
     set(propertyData, "creationReason", "UPDATE");
     let response_ = await propertyUpdate(state, dispatch,propertyData)
+    if(response_)
+    {
+      if(subusageCategory!== null)
+      {
+        if(subusageCategory.split('.').length ===2)
+        {
+        //set 
+        set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", subusageCategory.split('.')[0]);
+        set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", subusageCategory);
+        }
+      }
+
+    }
   }
 
 }
@@ -1014,6 +1042,145 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
 
 }
 
+// validate on previous and next click
+let applicationNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].applicationNo", null);
+let connectionNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].connectionNo", null);
+let applicationStatus = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].applicationStatus", null);
+const isPropertyDetailsValid= validateFields(
+  "components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children",
+  state,
+  dispatch,
+  "apply"
+);
+const isPropertyLocationDetailValid= validateFields(
+  "components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children",
+  state,
+  dispatch,
+  "apply"
+); 
+const isPropertyUsageValid= validateFields(
+  "components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children",
+  state,
+  dispatch,
+  "apply"
+);
+const isConnectionHolderDetailsValid= validateFields(
+  "components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children",
+  state,
+  dispatch,
+  "apply"
+);
+const _ownershipCategory= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", '' )
+if(applicationNo && connectionNo === null && applicationStatus ==='INITIATED' )
+{
+  //console.log(`pritam_${isPropertyDetailsValid}_${isPropertyLocationDetailValid}_${isPropertyUsageValid}_${isConnectionHolderDetailsValid}_${ownershipCategory}`)
+  if(!isPropertyDetailsValid 
+    || !isPropertyLocationDetailValid 
+    || !isPropertyUsageValid
+    || !isConnectionHolderDetailsValid 
+    || !_ownershipCategory)
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_REQUIRED_FIELDS",
+        labelName: "Please fill Required details"
+      },
+        "warning"
+      )
+    )
+    return false
+
+  }
+  /////? ownner ship validation in case of draft
+  let ownershipCategory= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", '' )
+  let isOwnershipsingleValid_ = true
+  if(ownershipCategory)
+  {
+    let SingleOwnerDetailsCardPath =''
+    
+    if(ownershipCategory !=='INDIVIDUAL.MULTIPLEOWNERS')
+    {
+      //SingleOwnerDetailsCardPath='components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items'
+      isOwnershipsingleValid_ =  validateFields(
+        "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items[0].item0.children.cardContent.children.viewFive.children",
+        state,
+        dispatch,
+        "apply"
+      ); 
+
+    }
+    else{
+      let SingleOwnerDetailsCardPath =
+      "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items";
+    let SingleOwnerDetailsItems = get(
+      state.screenConfiguration.screenConfig.apply,
+      SingleOwnerDetailsCardPath,
+      []
+    );
+    let isMasterDetailsValid = true;
+    isOwnershipsingleValid_ = true;
+    for (var j = 0; j < SingleOwnerDetailsItems.length; j++) {
+      if (
+        (SingleOwnerDetailsItems[j].isDeleted === undefined ||
+          SingleOwnerDetailsItems[j].isDeleted !== false) &&
+        !validateFields(
+          `${SingleOwnerDetailsCardPath}[${j}].item${j}.children.cardContent.children.viewFive.children`,
+          state,
+          dispatch,
+          "apply"
+        )
+      )
+      {
+        isMasterDetailsValid = false; 
+        isOwnershipsingleValid_ = false;
+
+      }
+
+    }
+  }
+
+  }
+  if(!isOwnershipsingleValid_)
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_REQUIRED_FIELDS",
+        labelName: "Please fill Required details"
+      },
+        "warning"
+      )
+    )
+    return false
+
+  }
+
+}
+if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_CITIZEN_ACTION' )
+{
+  if(!isPropertyDetailsValid 
+    || !isPropertyLocationDetailValid 
+    || !isPropertyUsageValid
+    || !isConnectionHolderDetailsValid 
+    || !ownershipCategory)
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_REQUIRED_FIELDS",
+        labelName: "Please fill Required details"
+      },
+        "warning"
+      )
+    )
+    return false
+
+  }
+}
+///?
+
+
 
     } 
     else {
@@ -1778,6 +1945,22 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     }
   //?
   // property update if PENDING_FOR_CITIZEN_ACTION
+  dispatch(handleField(
+    "apply",
+    `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput`,
+    "props.disabled",
+    //Isreadolny
+    true
+    ));
+    const textFieldsOwnerInformation = ["ownerName","mobileNumber","email","guardianName","correspondenceAddress"];
+    for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
+      dispatch(handleField(
+        "apply",
+        `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.0.item0.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+        "props.disabled",
+        true
+        ));
+    }
   propertyUpdateCitizen(state,dispatch)
 
   //?

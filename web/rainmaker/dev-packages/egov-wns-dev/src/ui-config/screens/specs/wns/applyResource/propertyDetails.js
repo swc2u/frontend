@@ -203,6 +203,8 @@ const propertyDetails = getCommonContainer({
     beforeFieldChange: async (action, state, dispatch) => {
       if(action.value)
       {
+        let applicationNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].applicationNo", '');
+       // if(applicationNo === null)
         dispatch(prepareFinalObject("applyScreen.property.usageCategory", action.value));
         if(action.value==="RESIDENTIAL.GOVERNMENTHOUSING")
         {
@@ -261,7 +263,7 @@ const propertyDetails = getCommonContainer({
 
         }
         let waterApplicationType = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplicationType", '');
-        let applicationNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].applicationNo", '');
+       
         if(waterApplicationType && applicationNo)
         {
           dispatch(handleField(
