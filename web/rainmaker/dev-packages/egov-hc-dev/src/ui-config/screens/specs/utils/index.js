@@ -196,7 +196,7 @@ export const downloadAcknowledgementForm = (serviceRequest,mode) => {
           res.filestoreIds[0]
           if (res && res.filestoreIds && res.filestoreIds.length > 0) {
             res.filestoreIds.map(fileStoreId => {
-              downloadReceiptFromFilestoreID(fileStoreId,mode)
+              downloadReceiptFromFilestoreID(fileStoreId,mode,'ch')
             })
           } else {
             console.log("Error In Acknowledgement form Download");
@@ -374,6 +374,12 @@ export const getTextToLocalMapping = label => {
           return getLocaleLabels(
             "Service Request Locality",
             "HC_COMMON_TABLE_COL_SERVICE_LOCALITY_LABEL",
+            localisationLabels
+          );
+        case "Current Owner":
+          return getLocaleLabels(
+            "Current Owner",
+            "HC_COMMON_TABLE_COL_SERVICE_CURRENT_OWNER_LABEL",
             localisationLabels
           );
 

@@ -10,6 +10,7 @@ import { paymentFailureFooter } from "./acknowledgementResource/paymentFailureFo
 import acknowledgementCard from "./acknowledgementResource/acknowledgementUtils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { loadReceiptGenerationData } from "../utils/receiptTransformer";
+import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
   downloadApp,
   getSearchResultsForSewerage,
@@ -68,7 +69,8 @@ const commonHeader = (state,
               applicationNumber,
               tenant
             ),
-          }
+          },
+          visible:false
 
         }
       }
@@ -111,11 +113,11 @@ const getAcknowledgementCard = (
               labelName: "Thank you for submitting the Application",
               labelKey: "WS_APPLICATION_SUCCESS_MESSAGE_MAIN"
             },
-            body: {
-              labelName:
-                " A notification regarding Application Submission has been sent to trade owner at registered Mobile No. Please note your application No. for future reference ",
-              labelKey: "WS_APPLICATION_SUCCESS_ACKO_MESSAGE_SUB"
-            },
+            // body: {
+            //   labelName:
+            //     " A notification regarding Application Submission has been sent to trade owner at registered Mobile No. Please note your application No. for future reference ",
+            //   labelKey: "WS_APPLICATION_SUCCESS_ACKO_MESSAGE_SUB"
+            // },
             tailText: {
               labelName: "Water Application No.",
               labelKey: "WS_ACKNO_APP_NO_LABEL"
@@ -163,11 +165,11 @@ const getAcknowledgementCard = (
               labelName: "Thank you for submitting the Application",
               labelKey: "WS_APPLICATION_SUCCESS_MESSAGE_MAIN"
             },
-            body: {
-              labelName:
-                " A notification regarding application submission has been sent at registered mobile no. Please note the application no. for future reference. ",
-              labelKey: "WS_APPLICATION_SUCCESS_ACKO_MESSAGE_SUB"
-            },
+            // body: {
+            //   labelName:
+            //     " A notification regarding application submission has been sent at registered mobile no. Please note the application no. for future reference. ",
+            //   labelKey: "WS_APPLICATION_SUCCESS_ACKO_MESSAGE_SUB"
+            // },
             tailText: {
               labelName: "Application Number.",
               labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
@@ -217,11 +219,11 @@ const getAcknowledgementCard = (
                 "Payment is collected successfully, Now you can dowload and issue Trade License Certificate to citizen",
               labelKey: "WS_CONFIRMATION_MESSAGE_MAIN"
             },
-            body: {
-              labelName:
-                "A notification regarding Payment Collection has been sent to trade owner at registered Mobile No.",
-              labelKey: "WS_CONFIRMATION_MESSAGE_SUB"
-            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding Payment Collection has been sent to trade owner at registered Mobile No.",
+            //   labelKey: "WS_CONFIRMATION_MESSAGE_SUB"
+            // },
             tailText: {
               labelName: "Payment Receipt No.",
               labelKey: "WS_PMT_RCPT_NO"
@@ -255,11 +257,11 @@ const getAcknowledgementCard = (
               labelName: "Application is Approved Successfully",
               labelKey: "WS_APPROVAL_CHECKLIST_MESSAGE_HEAD"
             },
-            body: {
-              labelName:
-                "A notification regarding Approval connection has been sent to registered Mobile No.",
-              labelKey: "WS_APPROVAL_CHECKLIST_MESSAGE_SUB"
-            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding Approval connection has been sent to registered Mobile No.",
+            //   labelKey: "WS_APPROVAL_CHECKLIST_MESSAGE_SUB"
+            // },
             tailText: {
               labelName: "Application Number.",
               labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
@@ -307,11 +309,11 @@ const getAcknowledgementCard = (
               labelName: "Application is sent back Successfully",
               labelKey: "WS_SENDBACK_CHECKLIST_MESSAGE_HEAD"
             },
-            body: {
-              labelName:
-                "A notification regarding above application status has been sent to registered Mobile No.",
-              labelKey: "WS_SENDBACK_CHECKLIST_MESSAGE_SUB"
-            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding above application status has been sent to registered Mobile No.",
+            //   labelKey: "WS_SENDBACK_CHECKLIST_MESSAGE_SUB"
+            // },
             tailText: {
               labelName: "Application Number.",
               labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
@@ -344,11 +346,11 @@ const getAcknowledgementCard = (
               labelName: "Application Rejected",
               labelKey: "WS_APPROVAL_REJ_MESSAGE_HEAD"
             },
-            body: {
-              labelName:
-                "A notification regarding Application Rejection has been sent to registered Mobile No.",
-              labelKey: "WS_APPROVAL_REJ_MESSAGE_SUBHEAD"
-            }
+            // body: {
+            //   labelName:
+            //     "A notification regarding Application Rejection has been sent to registered Mobile No.",
+            //   labelKey: "WS_APPROVAL_REJ_MESSAGE_SUBHEAD"
+            // }
           })
         }
       },
@@ -387,11 +389,11 @@ const getAcknowledgementCard = (
               labelName: "Trade License Cancelled",
               labelKey: "WS_WS_CANCELLED_MESSAGE_HEAD"
             },
-            body: {
-              labelName:
-                "A notification regarding Trade License cancellation has been sent to trade owner at registered Mobile No.",
-              labelKey: "TL_TL_CANCELLED_MESSAGE_SUBHEAD"
-            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding Trade License cancellation has been sent to trade owner at registered Mobile No.",
+            //   labelKey: "TL_TL_CANCELLED_MESSAGE_SUBHEAD"
+            // },
             tailText: {
               labelName: "Trade License No.",
               labelKey: "TL_HOME_SEARCH_RESULTS_TL_NO_LABEL"
@@ -429,11 +431,11 @@ const getAcknowledgementCard = (
               labelName: "Payment has failed!",
               labelKey: "TL_PAYMENT_FAILED"
             },
-            body: {
-              labelName:
-                "A notification regarding payment failure has been sent to the trade owner and applicant.",
-              labelKey: "TL_PAYMENT_NOTIFICATION"
-            }
+            // body: {
+            //   labelName:
+            //     "A notification regarding payment failure has been sent to the trade owner and applicant.",
+            //   labelKey: "TL_PAYMENT_NOTIFICATION"
+            // }
           })
         }
       },
@@ -487,11 +489,11 @@ const getAcknowledgementCard = (
               labelName: "Application Forwarded Successfully",
               labelKey: "WS_FORWARD_SUCCESS_MESSAGE_MAIN"
             },
-            body: {
-              labelName:
-                "A notification regarding above application status has been sent to registered Mobile No.",
-              labelKey: "WS_APPLICATION_FORWARD_SUCCESS_SUBHEAD"
-            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding above application status has been sent to registered Mobile No.",
+            //   labelKey: "WS_APPLICATION_FORWARD_SUCCESS_SUBHEAD"
+            // },
             tailText: {
               labelName: "Application No.",
               labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
@@ -526,11 +528,11 @@ const getAcknowledgementCard = (
               labelName: "Connection Activated Successfully ",
               labelKey: "WS_ACTIVATE_SUCCESS_MESSAGE_MAIN"
             },
-            body: {
-              labelName:
-                "A notification regarding above application status has been sent to registered Mobile No.",
-              labelKey: "WS_CONNECTION_ACTIVATE_SUCCESS_SUBHEAD"
-            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding above application status has been sent to registered Mobile No.",
+            //   labelKey: "WS_CONNECTION_ACTIVATE_SUCCESS_SUBHEAD"
+            // },
             tailText: {
               labelName: "Application No.",
               labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
@@ -569,7 +571,7 @@ export const downloadPrintContainer = (
     label: { labelKey: "WS_ESTIMATION_NOTICE" },
     link: () => {
       const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
-      downloadApp(WaterConnection, 'estimateNotice');
+      downloadApp(state,WaterConnection, 'estimateNotice','download',dispatch);
     },
     leftIcon: "book"
   };
@@ -577,34 +579,57 @@ export const downloadPrintContainer = (
     label: { labelKey: "WS_ESTIMATION_NOTICE" },
     link: () => {
       const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
-      downloadApp(WaterConnection, 'estimateNotice', 'print');
+      downloadApp(state,WaterConnection, 'estimateNotice', 'print',dispatch);
     },
     leftIcon: "book"
   };
-  let sanctionDownloadObject = {
-    label: { labelKey: "WS_SANCTION_LETTER" },
+  let ReceiptDownloadObject = {
+    label: { labelKey: "WS_RECEIPT_LETTER" },
     link: () => {
       const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
-      const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "To Citizen" : "Department Use";
-      WaterConnection[0].appUserType = appUserType;
-      WaterConnection[0].commissionerName = "S.Ravindra Babu";
-      downloadApp(WaterConnection, 'sanctionLetter');
+      const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "To Citizen" : "Department Use";     
+      downloadApp(state,WaterConnection, 'receiptLetter','download',dispatch);
+    },
+    leftIcon: "receipt"
+  };
+  let ReceiptDownloadPrintObject = {
+    label: { labelKey: "WS_RECEIPT_LETTER" },
+    link: () => {
+      const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
+      const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "To Citizen" : "Department Use";     
+      downloadApp(state,WaterConnection, 'receiptLetter' ,'print',dispatch);
+    },
+    leftIcon: "receipt"
+  };
+  let ndcDownloadObject = {
+    label: { labelKey: "WS_NDC_LETTER" },
+    link: () => {
+      const { WaterConnection } = state.screenConfiguration.preparedFinalObject;  
+      downloadApp(state,WaterConnection, 'ndcLetter','download',dispatch);
+    },
+    leftIcon: "receipt"
+  };
+  let ndcDownloadPrintObject = {
+    label: { labelKey: "WS_NDC_LETTER" },
+    link: () => {
+      const { WaterConnection } = state.screenConfiguration.preparedFinalObject;  
+      downloadApp(state,WaterConnection, 'ndcLetter','print',dispatch);
     },
     leftIcon: "receipt"
   };
   let sanctionPrintObject = {
-    label: { labelKey: "WS_SANCTION_LETTER" },
+    label: { labelKey: "WS_RECEIPT_LETTER" },
     link: () => {
       const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
       const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "Department Use" : "To Citizen";
-      WaterConnection[0].appUserType = appUserType;
-      WaterConnection[0].commissionerName = "S.Ravindra Babu";
-      downloadApp(WaterConnection, 'sanctionLetter', 'print');
+      // WaterConnection[0].appUserType = appUserType;
+      // WaterConnection[0].commissionerName = "S.Ravindra Babu";
+      downloadApp(state,WaterConnection, 'receiptLetter', 'print',dispatch);
     },
     leftIcon: "receipt"
   };
   let applicationDownloadObject = {
-    label: { labelKey: "WS_APPLICATION" },
+    label: { labelKey: "WS_SANCTION_LETTER" },
     link: () => {
       const { WaterConnection, DocumentsData } = state.screenConfiguration.preparedFinalObject;
       let filteredDocs = DocumentsData;
@@ -616,12 +641,12 @@ export const downloadPrintContainer = (
         }
       });
       WaterConnection[0].pdfDocuments = filteredDocs;
-      downloadApp(WaterConnection, 'application');
+      downloadApp(state,WaterConnection, 'application','download',dispatch);
     },
     leftIcon: "assignment"
   };
   let applicationPrintObject = {
-    label: { labelName: "Application", labelKey: "WS_APPLICATION" },
+    label: { labelName: "Application", labelKey: "WS_SANCTION_LETTER" },
     link: () => {
       const { WaterConnection, DocumentsData } = state.screenConfiguration.preparedFinalObject;
       let filteredDocs = DocumentsData;
@@ -633,36 +658,95 @@ export const downloadPrintContainer = (
         }
       });
       WaterConnection[0].pdfDocuments = filteredDocs;
-      downloadApp(WaterConnection, 'application', 'print');
+      downloadApp(state,WaterConnection, 'application', 'print',dispatch);
     },
     leftIcon: "assignment"
   };
   switch (appStatus) {
-    case "PENDING_FOR_DOCUMENT_VERIFICATION":
-    case "PENDING_FOR_CITIZEN_ACTION":
-    case "PENDING_FOR_FIELD_INSPECTION":
+    
+    case "PENDING_FOR_CONNECTION_ACTIVATION_":
+    case "SEWERAGE_CONNECTION_ACTIVATED":
+    case "CONNECTION_ACTIVATED_":
+      // downloadMenu = [sanctionDownloadObject, wsEstimateDownloadObject, applicationDownloadObject];
+      // printMenu = [sanctionPrintObject, wsEstimatePrintObject, applicationPrintObject];
       downloadMenu = [applicationDownloadObject];
       printMenu = [applicationPrintObject];
+      const { WaterConnection, DocumentsData ,dataCalculation} = state.screenConfiguration.preparedFinalObject;
+      if(WaterConnection && WaterConnection[0])
+      {
+        let totalAmountPaid = parseInt(get(WaterConnection[0], "waterApplication.totalAmountPaid",0));
+
+        if(WaterConnection[0].service ==='SEWERAGE')
+        {
+          totalAmountPaid = parseInt(get(dataCalculation, "totalAmountPaid",0));
+
+        }
+
+        if(totalAmountPaid>0)
+        {
+          downloadMenu = [applicationDownloadObject,ReceiptDownloadObject];
+          printMenu = [applicationPrintObject,ReceiptDownloadPrintObject];
+        }
+
+      }
+      let Active_ = false
+      if(downloadMenu.length>0)
+      {
+        Active_ = true
+      }     
+
+      // downloadMenu = [applicationDownloadObject, sanctionDownloadObject];
+      // printMenu = [applicationPrintObject,sanctionPrintObject];
       break;
-    case "PENDING_APPROVAL_FOR_CONNECTION":
-    case "PENDING_FOR_PAYMENT":
-      downloadMenu = [applicationDownloadObject, wsEstimateDownloadObject];
-      printMenu = [applicationPrintObject, wsEstimatePrintObject];
-      break;
-    case "PENDING_FOR_CONNECTION_ACTIVATION":
-    case "CONNECTION_ACTIVATED":
-      downloadMenu = [sanctionDownloadObject, wsEstimateDownloadObject, applicationDownloadObject];
-      printMenu = [sanctionPrintObject, wsEstimatePrintObject, applicationPrintObject];
-      break;
-    case "REJECTED":
-      downloadMenu = [applicationDownloadObject];
-      printMenu = [applicationPrintObject];
-      break;
-    default: downloadMenu = [applicationDownloadObject];
-      printMenu = [applicationPrintObject];
+    
+    default: downloadMenu = [];
+      printMenu = [];
+      let NDCDoc = false
+      let WaterConnection_  = state.screenConfiguration.preparedFinalObject.WaterConnection;
+      let dataCalculation_ = state.screenConfiguration.preparedFinalObject.dataCalculation;
+      if(WaterConnection_ && WaterConnection_[0])
+      {
+        let totalAmountPaid = parseInt(get(WaterConnection_[0], "waterApplication.totalAmountPaid",0));
+        if(WaterConnection_[0].service ==='SEWERAGE')
+        {
+          if(dataCalculation_)
+          totalAmountPaid = parseInt(get(dataCalculation_, "totalAmountPaid",0));
+
+        }
+        if(totalAmountPaid>0)
+        {
+          downloadMenu = [ReceiptDownloadObject];
+          printMenu = [ReceiptDownloadPrintObject];
+
+          if(WaterConnection_[0].activityType ==='TEMPORARY_DISCONNECTION' &&  WaterConnection_[0].property.subusageCategory ==='RESIDENTIAL.GOVERNMENTHOUSING')
+          {
+            NDCDoc = true;
+          }
+
+         if(NDCDoc)
+         {
+          downloadMenu = [ReceiptDownloadObject,ndcDownloadObject];
+          printMenu = [ReceiptDownloadPrintObject,ndcDownloadPrintObject];
+
+         }
+
+        }
+
+      }
+     
       break;
   }
   /** END */
+  // if(appStatus==="CONNECTION_ACTIVATED" || appStatus==="SEWERAGE_CONNECTION_ACTIVATED"){
+  //   set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",true );
+  //   set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",true );
+
+  // }
+  // else{
+  //   set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",false );
+  //   set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",false );
+
+  // }
 
   return {
     rightdiv: {

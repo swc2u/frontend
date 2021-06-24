@@ -55,7 +55,8 @@ let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
         props: {
             optionValue: "code",
             optionLabel: "name",
-            disabled: IsEdit,
+           disabled: IsEdit,
+            //disabled: false,
         },
       }),
   });

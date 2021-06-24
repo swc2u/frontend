@@ -163,7 +163,7 @@ const callBackForNext = async(state, dispatch) => {
                       linkText: "Download",
                       name: item.fileName
                   };
-              });
+              }).filter(item => !!item.link && !!item.name);
               dispatch(
                 prepareFinalObject("PropertiesTemp[0].reviewDocData", reviewDocData)
             );
@@ -1228,6 +1228,7 @@ export const footer = getCommonApplyFooter({
       case "MG_PENDINGAPPROVAL":
       case "MG_PENDINGGRANTDETAIL": 
       case "MG_PENDINGCLARIFICATION":
+      case "MG_PENDINGCLORJAVERIFICATION":  
       case "MG_REJECTED":
     
           downloadMenu = [
@@ -1242,6 +1243,7 @@ export const footer = getCommonApplyFooter({
       case "DC_PENDINGJAVERIFICATION":
       case "DC_PENDINGSAVERIFICATION":
       case "DC_PENDINGCLARIFICATION":
+      case "DC_PENDINGCLORJAVERIFICATION":  
       case "DC_PENDINGSIVERIFICATION":
       case "DC_PENDINGAPRO":
       case "DC_REJECTED":
@@ -1260,6 +1262,7 @@ export const footer = getCommonApplyFooter({
       break; 
           case "OT_PENDINGCLVERIFICATION":
           case "OT_PENDINGJAVERIFICATION":
+          case "OT_PENDINGCLORJAVERIFICATION":  
           case "OT_PENDINGSAVERIFICATION":
           case "OT_PENDINGCLARIFICATION":
           case "OT_PENDINGSIVERIFICATION":

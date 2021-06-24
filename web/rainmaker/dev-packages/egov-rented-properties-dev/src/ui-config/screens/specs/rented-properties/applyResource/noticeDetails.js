@@ -247,6 +247,8 @@ const getViolationField = {
 
 const transitNumberField = {
     ...transitNumberConfig,
+    maxLength:"",
+    pattern:"",
     placeholder: {
         labelName: "",
         labelKey: ""

@@ -410,8 +410,11 @@ export const header = getCommonContainer({
           //  if(businessService.length==1)
           //  response = response.stores.filter(x=>x.department.deptCategory===businessService[0].deptCategory)
           let deptCategory =
-          get(state, `screenConfiguration.preparedFinalObject.indents[0].indentStore.department.deptCategory`, [])
-               response = response.stores.filter(x=>x.department.deptCategory===deptCategory)
+               get(state, `screenConfiguration.preparedFinalObject.indents[0].indentStore.department.deptCategory`)
+             if (!deptCategory) {
+               deptCategory = get(state, `screenConfiguration.preparedFinalObject.materialIssues[0].indent.indentStore.department.deptCategory`);
+             }
+             response = response.stores.filter(x => x.department.deptCategory === deptCategory)
              break;        
            }
            dispatch(prepareFinalObject("store.stores", response));
@@ -601,13 +604,15 @@ export const header = getCommonContainer({
               .then(response =>{
                 if(response)
                 {
-                  if(response.MaterialBalanceRate.length>0)
+                  const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+                  if(response.MaterialBalanceRate.length>0 && !applicationNumber)
                   {
 
                     dispatch(prepareFinalObject("indentsmaterial", [...response.MaterialBalanceRate]));
                   } 
                   else
                   {
+                    
                     let indentsmaterial =[];
                     const {materialIssues} = state.screenConfiguration.preparedFinalObject
                     const{materialIssueDetails} =materialIssues[0]
@@ -617,18 +622,41 @@ export const header = getCommonContainer({
                       let materialIssuedFromReceipts_ = materialIssuedFromReceipts.filter(x=>x.status === true)
                       if(materialIssuedFromReceipts_&&materialIssuedFromReceipts_[0])
                       {
-                        indentsmaterial.push(
-                          {
-                            receiptId :materialIssuedFromReceipts_[0].materialReceiptId,
-                            receiptDetailId:materialIssuedFromReceipts_[0].materialReceiptDetail.id,
-                            mrnNumber:materialIssuedFromReceipts_[0].materialReceiptDetail.mrnNumber,
-                            materialCode:element.material.code,
-                            materialName:`${element.material.name}(Qty:${element.quantityIssued}, Rate: ${materialIssuedFromReceipts_[0].materialReceiptDetail.unitRate})`,
-                            balance:element.quantityIssued,
-                            uomCode:element.uom.code,
-                            unitRate:materialIssuedFromReceipts_[0].materialReceiptDetail.unitRate,
-                          }
-                        )
+                        let temp = response.MaterialBalanceRate.filter(x=>x.receiptId ===materialIssuedFromReceipts_[0].materialReceiptId )
+                        if(temp && temp[0])
+                        {
+                          indentsmaterial.push(
+                            {
+                              receiptId :materialIssuedFromReceipts_[0].materialReceiptId,
+                              receiptDetailId:materialIssuedFromReceipts_[0].materialReceiptDetail.id,
+                              mrnNumber:materialIssuedFromReceipts_[0].materialReceiptDetail.mrnNumber,
+                              materialCode:element.material.code,
+                              materialName:`${element.material.name}(Qty:${element.quantityIssued}, Rate: ${materialIssuedFromReceipts_[0].materialReceiptDetail.unitRate})`,
+                              balance:temp[0].balance,
+                              uomCode:element.uom.code,
+                              issuedQuantityEdit:materialIssuedFromReceipts_[0].quantity,
+                              unitRate:materialIssuedFromReceipts_[0].materialReceiptDetail.unitRate,
+                            }
+                          )
+
+                        }
+                        else{
+                          indentsmaterial.push(
+                            {
+                              receiptId :materialIssuedFromReceipts_[0].materialReceiptId,
+                              receiptDetailId:materialIssuedFromReceipts_[0].materialReceiptDetail.id,
+                              mrnNumber:materialIssuedFromReceipts_[0].materialReceiptDetail.mrnNumber,
+                              materialCode:element.material.code,
+                              materialName:`${element.material.name}(Qty:${element.quantityIssued}, Rate: ${materialIssuedFromReceipts_[0].materialReceiptDetail.unitRate})`,
+                              balance:0,
+                              uomCode:element.uom.code,
+                              issuedQuantityEdit:materialIssuedFromReceipts_[0].quantity,
+                              unitRate:materialIssuedFromReceipts_[0].materialReceiptDetail.unitRate,
+                            }
+                          )
+
+                        }
+
                       }                      
                     }
                     dispatch(prepareFinalObject("indentsmaterial", indentsmaterial));
@@ -685,6 +713,7 @@ export const header = getCommonContainer({
               //     { max: new Date().toISOString().slice(0, 10)}
               //   )
               // );   
+            
               dispatch(prepareFinalObject("materialIssues[0].issuedToEmployee",null));
               dispatch(prepareFinalObject("materialIssues[0].issuedToDesignation",null));
               const userInfo = JSON.parse(getUserInfo());

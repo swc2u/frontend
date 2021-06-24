@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import DownArrow from "material-ui/svg-icons/navigation/arrow-drop-down";
 import "./index.css";
 
-const ComplaintTypeField = ({ additionalDetails = {}, categories, handleFieldChange, localizationLabels,department=[], complaintType = {}, ...rest }) => {
+const ComplaintTypeField = ({ additionalDetails = {}, categories, handleFieldChange, localizationLabels,department=[], complaintType = {}, mohalla, ...rest }) => {
   const complainTypeMessage =
     (complaintType && complaintType.value && (localizationLabels["SERVICEDEFS." + (complaintType.value || "").toUpperCase()] || {}).message) || "";
 
@@ -24,6 +24,17 @@ const ComplaintTypeField = ({ additionalDetails = {}, categories, handleFieldCha
               //onChange={(e, value, selectedValue) => handleFieldChange("city", selectedValue)}
               {...department}
             />
+            <AutoSuggestDropdown
+              className="fix-for-layout-break"
+              fullWidth={true}
+              dataSource={mohalla && mohalla.dropDownData}
+              onChange={(chosenRequest, index) => {
+                handleFieldChange("mohalla", chosenRequest.value);
+              }}
+              floatingLabelText={mohalla && mohalla.floatingLabelText}
+              {...mohalla}
+            />
+            
 
             {complaintType && complaintType.disabled ?
             <Link to="/complaint-type" onClick={ (event) => event.preventDefault()}>

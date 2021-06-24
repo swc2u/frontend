@@ -609,41 +609,41 @@ export const detailSummary = getCommonGrayCard({
         }
       }
     ),
-    withdrawapprovalamount: getLabelWithValue(
-      {
-        labelName: "withdrawapprovalamount",
-        labelKey: "NOC_ADV_WITHDRAWAPPROVALAMOUNT"
-      },
-      {
-        jsonPath: "nocApplicationDetail[0].applicationdetail",
-        callBack: value => {
-          if (value != undefined) {
-            let withdrawapprovalamount = JSON.parse(value).hasOwnProperty('withdrawapprovalamount') ? JSON.parse(value)['withdrawapprovalamount'] : '';
-            //return withdrawapprovalamount > 0 ? withdrawapprovalamount : '';
-            return withdrawapprovalamount;
-          } else {
-            return '';
-          }
-        }
-      }
-    ),
-    withdrawapprovaltaxamount: getLabelWithValue(
-      {
-        labelName: "withdrawapprovaltaxamount",
-        labelKey: "NOC_ADV_WITHDRAWAPPROVALTAXAMOUNT"
-      },
-      {
-        jsonPath: "nocApplicationDetail[0].applicationdetail",
-        callBack: value => {
-          if (value != undefined) {
-            let withdrawapprovaltaxamount = JSON.parse(value).hasOwnProperty('withdrawapprovaltaxamount') ? JSON.parse(value)['withdrawapprovaltaxamount'] : '';
-            //return withdrawapprovalamount > 0 ? withdrawapprovalamount : '';
-            return withdrawapprovaltaxamount;
-          } else {
-            return '';
-          }
-        }
-      }
-    )
+    // withdrawapprovalamount: getLabelWithValue(
+    //   {
+    //     labelName: "withdrawapprovalamount",
+    //     labelKey: "NOC_ADV_WITHDRAWAPPROVALAMOUNT"
+    //   },
+    //   {
+    //     jsonPath: "nocApplicationDetail[0].applicationdetail",
+    //     callBack: value => {
+    //       if (value != undefined) {
+    //         let withdrawapprovalamount = JSON.parse(value).hasOwnProperty('withdrawapprovalamount') ? JSON.parse(value)['withdrawapprovalamount'] : '';
+    //         //return withdrawapprovalamount > 0 ? withdrawapprovalamount : '';
+    //         return withdrawapprovalamount;
+    //       } else {
+    //         return '';
+    //       }
+    //     }
+    //   }
+    // ),
+    // withdrawapprovaltaxamount: getLabelWithValue(
+    //   {
+    //     labelName: "withdrawapprovaltaxamount",
+    //     labelKey: "NOC_ADV_WITHDRAWAPPROVALTAXAMOUNT"
+    //   },
+    //   {
+    //     jsonPath: "nocApplicationDetail[0].applicationdetail",
+    //     callBack: value => {
+    //       if (value != undefined) {
+    //         let withdrawapprovaltaxamount = JSON.parse(value).hasOwnProperty('withdrawapprovaltaxamount') ? JSON.parse(value)['withdrawapprovaltaxamount'] : '';
+    //         //return withdrawapprovalamount > 0 ? withdrawapprovalamount : '';
+    //         return withdrawapprovaltaxamount;
+    //       } else {
+    //         return '';
+    //       }
+    //     }
+    //   }
+    // )
   })
 });

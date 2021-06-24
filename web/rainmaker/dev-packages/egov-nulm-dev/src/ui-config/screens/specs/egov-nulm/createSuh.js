@@ -106,6 +106,36 @@ import {
     if(NulmSuhCitizenNGORequest && ( !NulmSuhCitizenNGORequest.hasOwnProperty("gender"))){
       isFormValid = false;
     }
+    if(NulmSuhCitizenNGORequest ){
+      if(!NulmSuhCitizenNGORequest.gender ){
+        const errorMessage = {
+          labelName: "Please select gender of an applicant",
+          labelKey: "ERR_NULM_SELECT_GENDER_APPLICANT"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return;
+      }
+    }
+
+    if(NulmSuhCitizenNGORequest ){
+      if(NulmSuhCitizenNGORequest.dob ){
+    
+        let Month = (new Date().getMonth()+1)<10?`0${(new Date().getMonth()+1)}`:(new Date().getMonth()+1);
+        let Day = new Date().getDate()<10?`0${new Date().getDate()}`:new Date().getDate();
+        let CurrentDate = `${new Date().getFullYear()}-${Month}-${Day}`;
+            CurrentDate = convertDateToEpoch(CurrentDate, "dayStart");
+        let dob = convertDateToEpoch(NulmSuhCitizenNGORequest.dob,"dayStart");
+        if(CurrentDate === dob)
+        {
+        const errorMessage = {
+          labelName: "Date of birth can not be currrent date",
+          labelKey: "ERR_NULM_CURRENT_DATE_VALIDATION"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return;
+      }
+      }
+    }
   
     if (!isFormValid) {
       const errorMessage = {
@@ -163,6 +193,16 @@ import {
       }
     }
     //
+    if(NulmSuhCitizenNGORequest ){
+      if(!NulmSuhCitizenNGORequest.gender ){
+        const errorMessage = {
+          labelName: "Please select gender of an applicant",
+          labelKey: "ERR_NULM_SELECT_GENDER_APPLICANT"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return;
+      }
+    }
 
       //trigger api for create store
       const { screenConfiguration } = state;

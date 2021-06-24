@@ -10,8 +10,9 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { getSearchResultsView, updateAppStatus } from "../../../../ui-utils/commons";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-
+import { searchBill, searchdemand } from "../utils/index";
 import { citizenFooter } from "./searchResource/citizenFooter";
+import { estimateSummary } from "./summaryResource/estimateSummary";
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import {
   sellmeatapplicantSummary
@@ -25,8 +26,10 @@ import {
   setapplicationNumber
 } from "egov-ui-kit/utils/localStorageUtils";
 import { toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { httpRequest } from "../../../../ui-utils";
+import { getRequiredDocuments } from "./requiredDocuments/reqDocsSellMeat";
+import { checkForRole,showHideAdhocPopups } from "../utils";
 
-import { checkForRole } from "../utils";
 export const stepsData = [
   { labelName: "Sell Meat NOC Details", labelKey: "SELLMEATNOC_APPLICANT_DETAILS_NOC" },
   { labelName: "Documents", labelKey: "SELLMEATNOC_STEP_DOCUMENTS_NOC" },
@@ -41,6 +44,7 @@ import {
   getCommonApplyFooter,
 
 } from "../utils";
+import { getTextForSellMeatNoc } from "./searchResource/citizenSearchFunctions";
 
 
 const undertakingsellmeatButton = getCommonContainer({
@@ -54,10 +58,95 @@ const undertakingsellmeatButton = getCommonContainer({
   },
 
 });
+const undertakingButton1 = getCommonContainer({
+  addPenaltyRebateButton1: {
+    componentPath: "Checkbox",
+    props: {
+      checked: false,
+      variant: "contained",
+      color: "primary",
+      style: {
+        // minWidth: "20",
+        height: "10px",
+        marginRight: "5px",
+        marginTop: "15px"
+      }
+    },
+    children: {
+      previousButtonLabel: getLabel({
+        labelName: "Undertaking",
+        labelKey: "SELLMEATNOC_UNDERTAKING_HEADING"
+      }),
+    },
+    onClickDefination: {
+      action: "condition",
+      callBack: (state, dispatch) => showHideAdhocPopups(state, dispatch, "sellmeatnoc_summary")
+    },
+    //checked:true,
+    visible: localStorageGet('app_noc_status') === "DRAFT" ? true : false,
+  },
+  addPenaltyRebateButton: {
+    componentPath: "Button",
+    props: {
+      color: "primary",
+      style: {
+        //minWidth: "200px",
+        height: "48px",
+        marginRight: "40px",
+        paddingLeft: "0px",
+        paddingBottom: "14px",
+        textTransform: "capitalize"
+      }
+    },
+    children: {
+      previousButtonLabel: getLabel({
+        labelName: "Undertaking",
+        labelKey: "NOC_UNDERTAKING"
+      })
+    },
+    onClickDefination: {
+      action: "condition",
+      callBack: (state, dispatch) => showHideAdhocPopups(state, dispatch, "sellmeatnoc_summary")
+    },
+    visible: true,
+  }
+});
 
 let roles = JSON.parse(getUserInfo()).roles
 
-//alert('CITIZEN');
+const getMdmsData = async (action, state, dispatch) => {
+  let tenantId = getOPMSTenantId();
+  let mdmsBody = {
+    MdmsCriteria: {
+      tenantId: tenantId,
+      moduleDetails: [
+        {
+          moduleName: "egpm",
+          masterDetails: [
+            {
+              name: "nocSought"
+            },
+            {
+              name: "sector"
+            },
+            {
+              name: "applicationType"
+            }
+          ]
+        }
+      ]
+    }
+  };
+  try {
+    let payload = null;
+    // alert('in payload')
+    payload = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
+
+    dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 const titlebar = getCommonContainer({
   header: getCommonHeader({
@@ -72,14 +161,30 @@ const titlebar = getCommonContainer({
       number: getQueryArg(window.location.href, "applicationNumber")
     }
   },
+  applicationStatus: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationStatusContainer",
+    props: {
+      status: "NA",
+    }
+  }
 });
 
-const routePage = (dispatch) => {
+const routePage = (dispatch,type) => {
+  let tenantId = getOPMSTenantId();
+  const applicationid = getQueryArg(window.location.href, "applicationNumber");
   const appendUrl =
     process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+    if (type === "payment") {
+      const reviewUrl = `${appendUrl}/egov-opms/pay?applicationNumber=${applicationid}&tenantId=${tenantId}`
+      dispatch(toggleSpinner());
+      dispatch(setRoute(reviewUrl));
+    } else if (type === "home") {
   const reviewUrl = `${appendUrl}/egov-opms/sellmeatnoc-my-applications`;
   dispatch(toggleSpinner());
   dispatch(setRoute(reviewUrl));
+    }
 
 }
 
@@ -95,20 +200,11 @@ export const callBackForNexthome = async (state, dispatch) => {
     );
 
     if (applicationStatus === "DRAFT") {
+      if (localStorageGet("undertaking") == "accept") {
       let response = await updateAppStatus(state, dispatch, "INITIATED");
       let responseStatus = get(response, "status", "");
       if (responseStatus == "success") {
-        routePage(dispatch);
-      }
-      else if (responseStatus == "fail" || responseStatus == "Fail") {
-        dispatch(toggleSpinner());
-        dispatch(toggleSnackbar(true, { labelName: "API ERROR" }, "error"));
-      }
-    } else if (applicationStatus === "REASSIGN") {
-      let response = await updateAppStatus(state, dispatch, "RESENT");
-      let responseStatus = get(response, "status", "");
-      if (responseStatus == "success") {
-        routePage(dispatch);
+        routePage(dispatch,"payment");
       }
       else if (responseStatus == "fail" || responseStatus == "Fail") {
         dispatch(toggleSpinner());
@@ -116,7 +212,31 @@ export const callBackForNexthome = async (state, dispatch) => {
       }
     }
     else {
-      routePage(dispatch);
+      dispatch(toggleSpinner());
+      let errorMessage = {
+        labelName:
+          "Please Check Undertaking box!",
+        labelKey: ""
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    }
+    } 
+    else if (applicationStatus === "INITIATED") {
+      routePage(dispatch, "payment")
+    }
+    else if (applicationStatus === "REASSIGN") {
+      let response = await updateAppStatus(state, dispatch, "RESENT");
+      let responseStatus = get(response, "status", "");
+      if (responseStatus == "success") {
+        routePage(dispatch,"home");
+      }
+      else if (responseStatus == "fail" || responseStatus == "Fail") {
+        dispatch(toggleSpinner());
+        dispatch(toggleSnackbar(true, { labelName: "API ERROR" }, "error"));
+      }
+    }
+    else {
+      routePage(dispatch,"home");
     }
   } catch (error) {
     dispatch(toggleSpinner());
@@ -204,6 +324,8 @@ const prepareDocumentsView = async (state, dispatch) => {
 
   let uploadDocuments = SELLMEATNOC.hasOwnProperty('applicationdetail') ? JSON.parse(SELLMEATNOC.applicationdetail).hasOwnProperty('uploadDocuments') ?
     JSON.parse(SELLMEATNOC.applicationdetail).uploadDocuments[0]['fileStoreId'] : '' : '';
+  let idProof = SELLMEATNOC.hasOwnProperty('applicationdetail') ? JSON.parse(SELLMEATNOC.applicationdetail).hasOwnProperty('idProof') ?
+    JSON.parse(SELLMEATNOC.applicationdetail).idProof[0]['fileStoreId'] : '' : '';
 
   let allDocuments = [];
   // allDocuments.push(uploadVaccinationCertificate)
@@ -216,6 +338,16 @@ const prepareDocumentsView = async (state, dispatch) => {
       fileStoreId: uploadDocuments,
       linkText: "View"
     });
+
+    if (idProof && idProof != '') { 
+      documentsPreview.push({
+        title: "SELLMEAT.ID_PROOF",
+        fileStoreId: idProof,
+        linkText: "View"
+      });
+  
+    }
+
     let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
     let fileUrls =
       fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};
@@ -259,6 +391,27 @@ const setSearchResponse = async (
   else {
 
     dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
+    let applicationdetail = JSON.parse(get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationdetail", {}));
+    let nocSoughtFromAPI = applicationdetail.nocSought;
+    let mdmsDataForNocSought = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.nocSought", []);
+    let nocSoughtFinalData = "";
+    nocSoughtFromAPI.split(",").map(item => { 
+      
+      if (mdmsDataForNocSought.find(str => str.code == item.trim())) {
+        nocSoughtFinalData = nocSoughtFinalData + " , " +mdmsDataForNocSought.find(str => str.code == item.trim()).name;
+      }
+    });
+    dispatch(prepareFinalObject("nocApplicationDetail[0].nocSoughtFinalData",nocSoughtFinalData.slice(2) ));
+
+    let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", "-");
+    dispatch(
+      handleField(
+        "sellmeatnoc_summary",
+        "components.div.children.headerDiv.children.header.children.applicationStatus",
+        "props.status",
+        getTextForSellMeatNoc(nocStatus)
+      )
+    );
 
     prepareDocumentsView(state, dispatch);
   }
@@ -279,14 +432,31 @@ const screenConfig = {
     const tenantId = getQueryArg(window.location.href, "tenantId");
     dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
 
+    getMdmsData(action, state, dispatch).then(response => {
+      searchBill(dispatch, applicationNumber, tenantId);
+      setSearchResponse(state, dispatch, applicationNumber, tenantId);
 
-    setSearchResponse(state, dispatch, applicationNumber, tenantId);
+    });
+
 
     const queryObject = [
       { key: "tenantId", value: tenantId },
       { key: "businessServices", value: "SELLMEATNOC" }
     ];
     setBusinessServiceDataToLocalStorage(queryObject, dispatch);
+    set(state, "screenConfiguration.moduleName", "opms");
+    set(
+      action,
+      "screenConfig.components.undertakingdialog.children.popup",
+      getRequiredDocuments("SELLMEATNOC")
+    );
+    set(
+      action, "screenConfig.components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton1.visible",
+      localStorageGet("app_noc_status") !== 'REASSIGN' ? true : false)
+
+    set(
+      action, "screenConfig.components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton.visible",
+      localStorageGet("app_noc_status") !== 'REASSIGN' ? true : false)
 
 
     return action;
@@ -327,12 +497,15 @@ const screenConfig = {
           }
         },
         body: checkForRole(roles, 'CITIZEN') ? getCommonCard({
+          estimateSummary: estimateSummary,
           sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary,
-          undertakingsellmeatButton: undertakingsellmeatButton
+          undertakingsellmeatButton: undertakingsellmeatButton,
+          undertakingButton1
           //taskStatusSummary:taskStatusSummary
 
         }) : getCommonCard({
+          estimateSummary: estimateSummary,
           sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary
         })
@@ -341,6 +514,19 @@ const screenConfig = {
         titlebarfooter,
         // citizenFooter:
         //   process.env.REACT_APP_NAME === "Citizen" ? citizenFooter : citizenFooter
+      }
+    },
+    undertakingdialog: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-opms",
+      componentPath: "UnderTakingContainer",
+      props: {
+        open: false,
+        maxWidth: "md",
+        screenKey: "sellmeatnoc_summary"
+      },
+      children: {
+        popup: {}
       }
     }
   }

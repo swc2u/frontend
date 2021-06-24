@@ -73,6 +73,7 @@ export const getData = async (action, state, dispatch) => {
   await getMdmsData(action, state, dispatch);
 }
 export const prepareEditFlow = async (
+  action,
   state,
   dispatch,
   applicationNumber,
@@ -95,16 +96,83 @@ export const prepareEditFlow = async (
     const response_ = await getSearchPensioner(queryObject);
     const response = await getSearchPensionerForPensionRevision(queryObject);
     
-     dispatch(prepareFinalObject("ProcessInstancesTemp", get(response, "Pensioners", [])));
-
+    dispatch(prepareFinalObject("ProcessInstancesTemp", get(response, "Pensioners", [])));
+if(response)
+{
      let  data_ =[
       {
-        pensionRevision:response.ProcessInstances[0].pensionrevesion,
+        pensionRevision:null,//response.ProcessInstances[0].pensionrevesion,
         pensioner :response.ProcessInstances[0].pensioner,
-        pensionerFinalCalculatedBenefitDetails:response.ProcessInstances[0].pensionerFinalCalculatedBenefitDetails,
+        pensionerFinalCalculatedBenefitDetails: response.ProcessInstances[0].pensionerFinalCalculatedBenefitDetails,
         PensionersBasicData : get(response_, "Pensioners", [])
       } ];
-   // dispatch(prepareFinalObject("ProcessInstances", response.ProcessInstances, []));
+   dispatch(prepareFinalObject("ProcessInstances", response.ProcessInstances, []));
+   if(data_ && data_[0])
+   {
+     let Active = get(data_[0].PensionersBasicData[0], "active", false)
+     set(
+      action.screenConfig,
+      "components.div.children.empDetails.children.cardContent.children.DiscontinuationButton.visible",
+      Active
+    );
+    set(
+      action.screenConfig,
+      "components.div.children.empDetails.children.cardContent.children.ContinuationButton.visible",
+      !Active
+    );
+
+    //  if(Active)
+    //  {
+    //   // dispatch(
+    //   //   handleField(
+    //   //     "revision",
+    //   //     "components.div.children.empDetails.children.cardContent.children.DiscontinuationButton.visible",
+    //   //     Active
+    //   //   )
+    //   // );
+    //   // dispatch(
+    //   //   handleField(
+    //   //     "revision",
+    //   //     "components.div.children.empDetails.children.cardContent.children.ContinuationButton.visible",
+    //   //     !Active
+    //   //   )
+    //   // );
+    
+
+    //  }
+    //  else{
+    //   // dispatch(
+    //   //   handleField(
+    //   //     "revision",
+    //   //     "components.div.children.pensionerverifiedData.visible",
+    //   //     !Active
+    //   //   )
+    //   // );
+    //   // dispatch(
+    //   //   handleField(
+    //   //     "revision",
+    //   //     "components.div.children.pensionerverifiedData.visible",
+    //   //     Active
+    //   //   )
+    //   // );
+    //   set(
+    //     action.screenConfig,
+    //     "components.div.children.empDetails.children.cardContent.children.DiscontinuationButton.visible",
+    //     !Active
+    //   );
+    //   set(
+    //     action.screenConfig,
+    //     "components.div.children.empDetails.children.cardContent.children.ContinuationButton.visible",
+    //     Active
+    //   );
+
+    //  }
+    
+
+   }
+  
+
+   // show _pensionerPensionDiscontinuation and _pensionerPensionContinuation
     dispatch(prepareFinalObject("ProcessInstances", data_, []));
      dispatch(
       handleField(
@@ -122,7 +190,7 @@ export const prepareEditFlow = async (
         { display: "none" }
       )
     );
-    
+      }
 
   }
 };
@@ -142,7 +210,7 @@ const DOEapplyResult = {
     );
     
    //get Eployee details data
-prepareEditFlow(state, dispatch, pensionerNumber, tenantId).then(res=>
+prepareEditFlow(action,state, dispatch, pensionerNumber, tenantId).then(res=>
   {
 
   }

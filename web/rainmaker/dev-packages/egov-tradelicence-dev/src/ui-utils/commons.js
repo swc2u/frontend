@@ -860,6 +860,7 @@ export const download = (receiptQueryString, Licenses, data, generateBy, mode = 
   };
   try {
     httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
+      let tenantId = receiptQueryString[1].value.split('.')[0]
       const queryStr = [
         { key: "key", value: "tl-receipt" },
         { key: "tenantId", value: receiptQueryString[1].value.split('.')[0] }
@@ -880,7 +881,7 @@ export const download = (receiptQueryString, Licenses, data, generateBy, mode = 
           res.filestoreIds[0]
           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
             res.filestoreIds.map(fileStoreId=>{
-              downloadReceiptFromFilestoreID(fileStoreId,mode)
+              downloadReceiptFromFilestoreID(fileStoreId,mode,tenantId)
             })          
           }else{
             console.log("Error In Receipt Download");        

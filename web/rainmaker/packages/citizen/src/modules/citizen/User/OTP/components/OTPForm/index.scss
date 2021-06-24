@@ -8,6 +8,7 @@
 }
 
 .otp-prompt,
+.otp-resendBlock,
 .otp-resend {
   display: inline-block;
   margin-left: 10px;
@@ -16,6 +17,8 @@
 .otp-resend .label-text {
   color: #fe7a51;
 }
+  .otp-resendBlock .label-text {
+    color: #deb887; }
 
 .otp-prompt .label-text {
   color: "rgba(0, 0, 0, 0.6000000238418579)";

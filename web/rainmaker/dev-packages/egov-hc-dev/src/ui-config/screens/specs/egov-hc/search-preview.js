@@ -42,13 +42,72 @@ const titlebar = getCommonContainer({
  
 });
 
+const getProcessInstanceDataForServiceRequest = async (applicationNumber, state, dispatch)=>  {
 
+  var tenantIdCommonConfig
+  
+    if (getTenantId() != commonConfig.tenantId){
+        tenantIdCommonConfig = JSON.parse(getUserInfo()).permanentCity
+    }
+    else{
+      tenantIdCommonConfig = getTenantId()
+    }
+  const queryObj = [
+    {
+      key: "businessIds",
+      value: applicationNumber
+    },
+    {
+      key: "tenantId",
+      value: tenantIdCommonConfig
+    },
+    {
+      key: "history",
+      value: true
+    },
+  ];
+  var payload = await httpRequest(
+    "post",
+    "/egov-workflow-v2/egov-wf/process/_search",
+    "",
+    queryObj
+  );
+    //sorting process instance data by time
+  var SortedProcessInstanceBylastModifiedTimeOfEachObject = []
+  
+  SortedProcessInstanceBylastModifiedTimeOfEachObject=
+    payload &&
+    payload.ProcessInstances.sort(function(a, b) {
+      var valueA, valueB;        
+
+      valueA = a.auditDetails.lastModifiedTime; 
+      valueB = b.auditDetails.lastModifiedTime;
+      if (valueA < valueB) {
+          return -1;
+      }
+      else if (valueA > valueB) {
+          return 1;
+      }
+      return 0;
+  })
+  SortedProcessInstanceBylastModifiedTimeOfEachObject = SortedProcessInstanceBylastModifiedTimeOfEachObject.reverse()
+  dispatch(prepareFinalObject("workflowHC", SortedProcessInstanceBylastModifiedTimeOfEachObject));
+//  return SortedProcessInstanceBylastModifiedTimeOfEachObject
+}
 
 const prepareDocumentsView = async (state, dispatch) => {
+  
   let documentsPreview = [];
   
   let document_list = []
+
+  let hcdocuments = get(
+    state,
+    "screenConfiguration.preparedFinalObject.workflowHC",
+    []
+    );
   
+    
   let hcUploadedDocs = get(
   state,
   "screenConfiguration.preparedFinalObject.myRequestDetails.service_request_document",
@@ -59,28 +118,82 @@ const prepareDocumentsView = async (state, dispatch) => {
 
       hcUploadedDocs = myObj['document'];
 
-      
+     let uuid = JSON.parse(getUserInfo()).uuid
   if (hcUploadedDocs.length > 0) {
     
+    
    let cnt  = 0
+   let createdby=0
+   let hcdocuments_temp = []
+   if(hcdocuments)
+   {
+     for (let index = 0; index < hcdocuments.length; index++) {
+       const element = hcdocuments[index];
+       if(element.action !=='INITIATE')
+       {
+         if( element.documents!= null &&  element.documents.length>0)
+         {
+          for (let index = 0; index < element.documents.length; index++) {
+            const element_ = element.documents[index];
+            hcdocuments_temp.push(
+              {
+                media:element_.fileStoreId
+              }
+            )           
+          }
+         }
+
+       }      
+       
+     }
+    // let x = hcdocuments[0].documents.filter(x=>x.fileStoreId === element.media)    
+   }
    hcUploadedDocs.forEach(element => {
-     if (cnt == 0)
-    {
-    documentsPreview.push({
-    title: "ID Proof",
+
+    let  IsDelete = false;
+
+   let x = hcdocuments_temp.filter(x=>x.media ===element.media)
+   if(x.length>0)
+   {
+    IsDelete = true 
+   }
+   else
+   {
+    IsDelete = false
+   }
+  
+   documentsPreview.push({
+   // title: "ID Proof",
+    title: "Uploaded Document "+cnt,
     fileStoreId: element.media,
-    linkText: "DOWNLOAD"
+    linkText: "DOWNLOAD",
+    IsDelete:IsDelete,
     
     })
     cnt = cnt +1;
-  }
-    else{documentsPreview.push({
-      title: "Uploaded Document "+cnt,
-      fileStoreId: element.media,
-      linkText: "DOWNLOAD"
+  //    if (hcdocuments[0].action !=='INITIATE')
+  //   {
       
-      })
-      cnt = cnt +1;}
+
+  //    // if(element.media === )
+  //   documentsPreview.push({
+  //   title: "ID Proof",
+  //   fileStoreId: element.media,
+  //   linkText: "DOWNLOAD",
+  //   IsDelete:IsDelete,
+    
+  //   })
+  //   cnt = cnt +1;
+  // }
+  //   else{
+  //     documentsPreview.push({
+  //     title: "Uploaded Document "+cnt,
+  //     fileStoreId: element.media,
+  //     linkText: "DOWNLOAD",
+  //     IsDelete: false,
+  //     })
+  //     cnt = cnt +1;
+  //   }
     }
     )
   
@@ -133,6 +246,8 @@ const setSearchResponse = async (state, dispatch, action, serviceRequestId) => {
     { key: "businessServices", value: servicetype}
   ];
   await setBusinessServiceDataToLocalStorage(queryObject, dispatch);
+  const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+  await getProcessInstanceDataForServiceRequest(applicationNumber, state, dispatch)
 }
 
   if(!response.ResponseInfo['ver'] === false)

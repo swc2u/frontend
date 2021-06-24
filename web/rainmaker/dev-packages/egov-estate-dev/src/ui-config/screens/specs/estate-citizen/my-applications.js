@@ -251,6 +251,10 @@ const getData = async (action, state, dispatch) => {
     let applicationsPayload =  response.Applications.map(item => {
       return {...item, state: !!item.state ? item.state : "ES_DRAFTED"}
       })
+
+      if(branchType === "BuildingBranch") {
+        applicationsPayload = applicationsPayload.map(item => ({...item, property: item.property.fileNumber === "BBNOC-1" ? item.applicationDetails.property : item.property}))
+      }
       
     dispatch(prepareFinalObject("actualResults", applicationsPayload));
     dispatch(prepareFinalObject("searchResults", applicationsPayload));
@@ -282,7 +286,12 @@ const getData = async (action, state, dispatch) => {
     )
   )
 }
-
+export const check = value => {
+  if (value) {
+let val="ES_"+value.toUpperCase()
+return val
+  }
+};
 const screenConfig = {
   uiFramework: "material-ui",
   name: "my-applications",
@@ -321,7 +330,8 @@ const screenConfig = {
               },
               {
                 label: "ES_APPLICATION_TYPE_LABEL",
-                jsonPath: "applicationType"
+                jsonPath: "applicationType",
+                callBack:check
               }
             ],
             moduleName: "EST",

@@ -1,0 +1,17 @@
+@media only screen and (max-width: 551px) {
+    .timeSlotResponsive{
+      justify-content: space-between !important;
+    }
+    .booked-time-slot{
+      padding: 4px 56px 4px 2px
+    }
+    .expired-time-slot{
+      padding: 4px 56px 4px 2px
+    }
+    .initiated-time-slot{
+      padding: 4px 56px 4px 2px
+    }
+    .available-time-slot{
+      padding: 4px 56px 4px 2px
+    }
+  }

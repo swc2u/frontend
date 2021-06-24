@@ -108,7 +108,7 @@ const getData = async (action, state, dispatch, fileNumber) => {
                   issuanceOfNoticeButton: buttonComponent("Create Issuance of Notice", `/estate/_apply?propertyId=${propertyIdNotice}&applicationType=EstateBranch_InternalServices_IssuanceOfNotice&fileNumber=${fileNumber}`),
                   
                 },
-                visible: (approvedFlagState === "ES_APPROVED" && !!findItem) ? true : false
+                visible: (approvedFlagState === ("ES_APPROVED"||"ES_PM_EB_APPROVED") && !!findItem) ? true : false
               },
               viewFour: {
                 uiFramework: "custom-containers-local",

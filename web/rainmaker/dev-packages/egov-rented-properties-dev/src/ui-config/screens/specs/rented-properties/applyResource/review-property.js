@@ -6,9 +6,14 @@ import {
     getDivider,
     getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { convertEpochToDate, } from "../../utils";
+import { getFileUrlFromAPI, getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import { httpRequest } from "egov-ui-kit/utils/api";
+import { convertEpochToDate, download, } from "../../utils";
 import { changeStep, changePropertyStep } from "./footer";
-
+import { DOWNLOADRECEIPT, FETCHRECEIPT } from "egov-ui-kit/utils/endPoints";
+import { downloadReceiptFromFilestoreID } from "egov-common/ui-utils/commons";
+import { get } from "lodash";
+import moment from 'moment'
 export const areaLabel = {
     labelName: "Locality",
     labelKey: "RP_LOCALITY_LABEL"
@@ -688,3 +693,110 @@ export const getReviewGrantDetails = () => {
         })
     })
 }
+
+const downloadReceipt = async (data, preparedObject,properties) => {
+    const receiptNumber = data.paymentDetails[0].receiptNumber
+    const receiptQueryString = [{
+        key: "receiptNumbers",
+        value: receiptNumber
+    }, {
+        key: "tenantId",
+        value: getQueryArg(window.location.href, "tenantId")
+    }]
+    let transactionNumber = properties[0].transitNumber.split('-')[1] ? properties[0].transitNumber.split('-')[1] :
+    properties[0].transitNumber.split('-')[0]
+    
+    properties = [{
+      ...properties[0],
+      transitNumber: transactionNumber
+    }]
+    try {
+        const payloadReceiptDetails = await httpRequest(FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString);
+        const queryStr = [
+          { key: "key", value: "rp-payment-history-receipt" },
+          { key: "tenantId", value: receiptQueryString[1].value.split('.')[0] }
+        ]
+        const oldFileStoreId = get(payloadReceiptDetails.Payments[0], "fileStoreId")
+        let {
+            Payments
+          } = payloadReceiptDetails;
+let paymentmode=Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_NEFT" ? "DIRECT BANK" :Payments[0].paymentMode
+        if (oldFileStoreId) {
+          downloadReceiptFromFilestoreID(oldFileStoreId, "download")
+        }
+        else {
+            if(!properties[0].offlinePaymentDetails){
+                properties[0]["offlinePaymentDetails"] = []
+            
+                let transactionNumber = {
+                "transactionNumber" : Payments[0].transactionNumber
+                }
+                properties[0].offlinePaymentDetails.push(transactionNumber)
+            }  
+              let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
+
+              if(time){
+                time = moment(new Date(time)).format("h:mm:ss a")
+              }
+              Payments = [{
+                ...Payments[0],paymentMode:paymentmode,
+                paymentDetails:[{
+                  ...Payments[0].paymentDetails[0],auditDetails:{
+                    ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
+                  }
+                }]
+              }]
+
+          httpRequest(DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Properties:properties, Payments, generatedBy: "" }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+            .then(res => {
+              getFileUrlFromAPI(res.filestoreIds[0]).then((fileRes) => {
+                var win = window.open(fileRes[res.filestoreIds[0]], '_blank');
+                win.focus();
+              });
+            });
+        }
+      } catch (error) {
+          console.log("=====error", error)
+      }
+    // try {
+    //     const response = await httpRequest(
+    //       "post",
+    //       "/collection-services/payments/_search",
+    //       "",
+    //       _queryObject
+    //     );
+    //     console.log("======== response", response)
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    
+}
+
+export const getPaymentHistory = (state) => {
+  return {
+    uiFramework: "custom-containers-local",
+    moduleName: "egov-rented-properties",
+    componentPath: "ExpansionPanelContainer",
+    props: {
+      sourceJsonPath: "paymentHistory",
+      contents: [
+        {
+          label: "RP_PAYMENT_RECEIPT_NO",
+          jsonPath: "paymentDetails[0].receiptNumber",
+        },
+        {
+          label: "RP_AMOUNT_PAID",
+          jsonPath: "paymentDetails[0].totalAmountPaid",
+        },
+        {
+          label: "RP_PAYMENT_DATE",
+          jsonPath: "paymentDetails[0].receiptDate",
+          callBack: convertEpochToDate,
+        },
+      ],
+      header: "RP_PAYMENT_HISTORY",
+      emptyMessage: "RP_NO_PAYMENT_HISTORY",
+      onButtonClick: downloadReceipt
+    },
+  };
+};

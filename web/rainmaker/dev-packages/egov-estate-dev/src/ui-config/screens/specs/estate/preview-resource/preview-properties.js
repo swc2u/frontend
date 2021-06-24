@@ -407,9 +407,9 @@ export const getPropertyDetails = (isEditable = true) => {
         auctionId: getLabelWithValue(
           auctionIdLabel, {
             jsonPath: `Properties[0].propertyDetails.bidders[0].auctionId`,
-            callBack: (value) => {
-              return Math.floor(value)
-            }
+            // callBack: (value) => {
+            //   return Math.floor(value)
+            // }
           }
         ),
         modeOfAuction: getLabelWithValue(

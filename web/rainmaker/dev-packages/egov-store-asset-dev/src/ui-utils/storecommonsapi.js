@@ -970,8 +970,18 @@ export const ValidateCardUserQty = (state,dispatch,cardJsonPath,pagename,jasonpa
         {
           
           let quantityIssued = Number(get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].quantityIssuedE`,0))
+          let indentIssuedQuantity = Number(get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].indentDetail.indentIssuedQuantity`,0))
           console.log(quantityIssued);
-          CompareQtyValue_ = CompareQtyValue_- quantityIssued
+
+          let id_ =  getQueryArg(window.location.href, "id");
+            if(!id_)
+            {
+            CompareQtyValue_ = CompareQtyValue_- quantityIssued
+            }
+            else{
+            CompareQtyValue_ = quantityIssued + indentIssuedQuantity
+            }
+          
         }
         if(InputQtyValue_>CompareQtyValue_ || InputQtyValue_ === 0)       
         {
@@ -1006,22 +1016,15 @@ export const ValidateCardUserQty = (state,dispatch,cardJsonPath,pagename,jasonpa
         let applicationNumber =  getQueryArg(window.location.href, "applicationNumber");
         let IssueQty = Number(get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].indentDetail.issuedQuantity`,0))
         let poOrderedQuantity = Number(get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].indentDetail.poOrderedQuantity`,0))
+        let issuedQuantityEdit = Number(get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].indentDetail.issuedQuantityEdit`,0))
         if(applicationNumber)
         {
-          // if(IssueQty>InputQtyValue_)
-          // {
-          //   IssueQty = IssueQty-InputQtyValue_
-          // }
+          
           if(InputQtyValue_<IssueQty)
           {
             IssueQty = IssueQty-InputQtyValue_
           }
-          // else if(IssueQty<InputQtyValue_)
-          // {
-          //   IssueQty = InputQtyValue_-IssueQty 
-          // }
-          // else
-          // IssueQty = IssueQty-InputQtyValue_
+          
         }
         balanceQuantity_ = balanceQuantity_// - (IssueQty+poOrderedQuantity);
         if(applicationNumber)
@@ -1029,6 +1032,16 @@ export const ValidateCardUserQty = (state,dispatch,cardJsonPath,pagename,jasonpa
          // balanceQuantity_ =balanceQuantity_+IssueQty
           // if(InputQtyValue_<IssueQty)
           // balanceQuantity_ =balanceQuantity_+IssueQty
+          if(InputQtyValue_>=issuedQuantityEdit && balanceQuantity_ !== 0)
+          {
+          InputQtyValue_ = InputQtyValue_ -issuedQuantityEdit
+          }
+          if(balanceQuantity_ === 0)
+          {
+            let IssueQtyE = Number(get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].indentDetail.issuedQuantity`,0))
+            balanceQuantity_ = IssueQtyE;
+          }
+          
         }
        
         if(InputQtyValue_>balanceQuantity_ || InputQtyValue_ === 0)  
@@ -1373,7 +1386,96 @@ export const ValidateCardQty = (state,dispatch,cardJsonPath,pagename,jasonpath,v
 
     }
     else{
-      if(InputQtyValue_>CompareQtyValue_ || InputQtyValue2_ > CompareQtyValue_ ||InputQtyValue_ === 0)       
+      if(pagename ==='createMaterialNonIndentNote')
+      {
+        let applicationNumber =  getQueryArg(window.location.href, "issueNoteNumber");
+        if(!applicationNumber)
+        {
+
+        if(InputQtyValue_>CompareQtyValue_ || InputQtyValue2_ > CompareQtyValue_ ||InputQtyValue_ === 0)       
+      {
+        if(InputQtyValue_ === 0)
+        {
+          matcode.push(
+            {
+              code:code,
+              InputQtyValue:0
+            }
+          )
+        }
+        else
+        {
+          matcode.push(
+            {
+              code:code,
+              InputQtyValue:1
+            }
+          )
+        }
+
+      }
+    }
+    else{
+      if(CompareQtyValue_ ==0)
+      {
+        let quantityIssued = Number(get(state.screenConfiguration.preparedFinalObject,`${jasonpath}[${index}].quantityIssued`,0))
+        if(InputQtyValue_>quantityIssued || InputQtyValue_ ===0)
+        {
+          if(InputQtyValue_ === 0)
+          {
+            matcode.push(
+              {
+                code:code,
+                InputQtyValue:0
+              }
+            )
+          }
+          else
+          {
+            matcode.push(
+              {
+                code:code,
+                InputQtyValue:1
+              }
+            )
+          }
+
+
+        }
+
+      }
+      else{
+        if(InputQtyValue_>CompareQtyValue_ || InputQtyValue_ ===0)
+        {
+          if(InputQtyValue_ === 0)
+          {
+            matcode.push(
+              {
+                code:code,
+                InputQtyValue:0
+              }
+            )
+          }
+          else
+          {
+            matcode.push(
+              {
+                code:code,
+                InputQtyValue:1
+              }
+            )
+          }
+
+
+        }
+      }
+
+    }
+
+      }
+      else
+      {
+        if(InputQtyValue_>CompareQtyValue_ || InputQtyValue2_ > CompareQtyValue_ ||InputQtyValue_ === 0)       
       {
         if(InputQtyValue_ === 0)
         {
@@ -1395,6 +1497,7 @@ export const ValidateCardQty = (state,dispatch,cardJsonPath,pagename,jasonpath,v
         }
 
       } 
+      }
     }
     }
     

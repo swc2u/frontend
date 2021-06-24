@@ -107,6 +107,12 @@ export const validateFields = (
   }
   return isFormValid;
 };
+export const uniqueBycode =(data,key)=>{
+  return [
+    ... new Map(data.map(x=> [key(x),x])).values()
+  ]
+
+}
 
 export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
   //example input format : "2018-10-02"
@@ -116,6 +122,10 @@ export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
     DateObj.setMinutes(DateObj.getMinutes() + DateObj.getTimezoneOffset());
     if (dayStartOrEnd === "dayend") {
       DateObj.setHours(DateObj.getHours() + 24);
+      DateObj.setSeconds(DateObj.getSeconds() - 1);
+    }
+    if (dayStartOrEnd === "daymid") {
+      DateObj.setHours(DateObj.getHours() + 8);
       DateObj.setSeconds(DateObj.getSeconds() - 1);
     }
     return DateObj.getTime();
@@ -1265,6 +1275,8 @@ export const downloadInventoryPdf = async ( searchScreenObject, Reportname,mode=
   Url =`/store-asset-services/openingbalance/_report`
   else if(Reportname ==="CB")
   Url =`/store-asset-services/openingbalance/_closingReport`
+  else if (Reportname === 'Stock')
+  Url =`/store-asset-services/openingbalance/_stockReport`
   else if (Reportname === 'INV')
   Url =`/store-asset-services/receiptnotes/_inventoryreport`
   let queryObject = [

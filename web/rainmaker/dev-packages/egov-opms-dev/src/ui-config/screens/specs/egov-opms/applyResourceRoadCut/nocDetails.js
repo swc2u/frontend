@@ -36,6 +36,7 @@ export const nocDetails = getCommonCard({
         },
         sourceJsonPath: "applyScreenMdmsData.egpm.RoadCutTypeOfApplicant",
         jsonPath: "ROADCUTNOC.typeOfApplicant",
+        errorMessage: "ERR_NOC_ROADCUT_APPLICANT_TYPE",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -61,6 +62,7 @@ export const nocDetails = getCommonCard({
         },
         sourceJsonPath: "applyScreenMdmsData.egpm.purposeOfRoadCutting",
         jsonPath: "ROADCUTNOC.purposeOfRoadCutting",
+        errorMessage: "ERR_NOC_ROADCUT_PURPOSE_OF_ROAD_CUTTING",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -83,6 +85,7 @@ export const nocDetails = getCommonCard({
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         sourceJsonPath: "applyScreenMdmsData.egpm.roadCutType",
         jsonPath: "ROADCUTNOC.roadCutType",
+        errorMessage: "ERR_NOC_ROADCUT_ROAD_CUT_TYPE",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -117,7 +120,7 @@ export const nocDetails = getCommonCard({
           labelKey: "ROADCUT_APPLICANT_NAME_PLACEHOLDER"
         },
         pattern: getOPMSPattern("petnocApplicantName"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ROADCUT_APPLICANT_NAME",
         required: true,
         jsonPath: "ROADCUTNOC.applicantName"
       })
@@ -137,7 +140,7 @@ export const nocDetails = getCommonCard({
         },
         required: false,
         pattern: getPattern("GSTNo"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ROADCUT_GSTIN_NOC",
         jsonPath: "ROADCUTNOC.gstin",
       })
     },
@@ -156,6 +159,7 @@ export const nocDetails = getCommonCard({
         },
         sourceJsonPath: "applyScreenMdmsData.egpm.roadCutDivision",
         jsonPath: "ROADCUTNOC.division",
+        errorMessage: "ERR_NOC_ROADCUT_DIVISION",
         required: true,
         disabled: true,
         props: {
@@ -180,7 +184,7 @@ export const nocDetails = getCommonCard({
         },
         required: false,
         pattern: getOPMSPattern("Division"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ROADCUT_WARD",
         jsonPath: "ROADCUTNOC.ward"
       })
     },
@@ -195,6 +199,7 @@ export const nocDetails = getCommonCard({
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         jsonPath: "ROADCUTNOC.sector",
+        errorMessage: "ERR_NOC_ROADCUT_SECTOR",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -239,8 +244,8 @@ export const nocDetails = getCommonCard({
           labelKey: "ROADCUT_REQUESTED_LOCATION_PLACEHOLDER"
         },
         required: false,
+        errorMessage: "ERR_NOC_ROADCUT_REQUESTED_LOCATION",
          pattern: getOPMSPattern("Address"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "ROADCUTNOC.requestedLocation"
       })
     },
@@ -256,7 +261,7 @@ export const nocDetails = getCommonCard({
         },
         required: true,
         pattern: getOPMSPattern("Address"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ROADCUT_LANDMARK",
         jsonPath: "ROADCUTNOC.landmark"
       })
     },
@@ -279,6 +284,7 @@ export const nocDetails = getCommonCard({
         sourceJsonPath: "applyScreenMdmsData.egpm.length",
         jsonPath: "ROADCUTNOC.length",
         required: true,
+        errorMessage: "ERR_NOC_ROADCUT_LENGTH",
 		    pattern: getOPMSPattern("Length"),
         props: {
           className: "applicant-details-error",

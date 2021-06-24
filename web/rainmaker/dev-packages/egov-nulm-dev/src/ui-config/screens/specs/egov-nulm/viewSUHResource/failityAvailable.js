@@ -7,7 +7,7 @@ import {
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-  
+  import {  checkValueForNA } from "../../utils";
   const gotoCreatePage = (state, dispatch) => {
      const createUrl = `/egov-nulm/create-suh?step=1`;
     dispatch(setRoute(createUrl));
@@ -76,7 +76,7 @@ import {
             labelName: "Remarks",
             labelKey: "NULM_SUH_REMARKS"
           },
-          { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].beddingRemark" }
+          { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].beddingRemark" ,callBack: checkValueForNA }
         ),
         isWashingOfLinen: getLabelWithValue(
             {
@@ -90,7 +90,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].washingOfLinenRemark" }
+            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].washingOfLinenRemark" ,callBack: checkValueForNA }
           ),
           isCleaningOfPremises: getLabelWithValue(
             {
@@ -104,7 +104,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].cleaningOfPremiseRemark" }
+            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].cleaningOfPremiseRemark" ,callBack: checkValueForNA }
           ),
           isRecreationfacilities: getLabelWithValue(
             {
@@ -118,7 +118,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].recreationfacilitiesRemark" }
+            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].recreationfacilitiesRemark" ,callBack: checkValueForNA }
           ),
           isDrinkingWater: getLabelWithValue(
             {
@@ -132,7 +132,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].drinkingWaterRemark" }
+            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].drinkingWaterRemark" ,callBack: checkValueForNA }
           ),
           isMeals: getLabelWithValue(
             {
@@ -146,7 +146,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].mealsRemark" }
+            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].mealsRemark" ,callBack: checkValueForNA }
           ),
           isLockerForInmates: getLabelWithValue(
             {
@@ -160,7 +160,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].lockerForInmatetRemark" }
+            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].lockerForInmatetRemark" ,callBack: checkValueForNA }
           ),
           isFireSafetyMeasure: getLabelWithValue(
             {
@@ -174,7 +174,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].fireSafetyMeasureRemark" }
+            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].fireSafetyMeasureRemark" ,callBack: checkValueForNA }
           ),
           isOfficeSetUp: getLabelWithValue(
             {
@@ -188,7 +188,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].officeSetUpRemark" }
+            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].officeSetUpRemark" ,callBack: checkValueForNA }
           ),
           isFirstAidKitAndTrainingToStaff: getLabelWithValue(
             {
@@ -202,7 +202,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].firstAidKitAndTrainingToStaffRemark" }
+            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].firstAidKitAndTrainingToStaffRemark" ,callBack: checkValueForNA }
           ),
           isDisplayOfEmergencyNumbers: getLabelWithValue(
             {
@@ -216,7 +216,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].displayOfEmergencyNumbersRemark" }
+            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].displayOfEmergencyNumbersRemark" ,callBack: checkValueForNA }
           ),
           isToilet: getLabelWithValue(
             {
@@ -230,7 +230,7 @@ import {
               labelName: "Remarks",
               labelKey: "NULM_SUH_REMARKS"
             },
-            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].toiletRemark" }
+            { jsonPath: "NulmSuhRequest.suhFacilitiesDetails[0].toiletRemark" ,callBack: checkValueForNA }
           ),
     
       }),

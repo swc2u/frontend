@@ -63,7 +63,7 @@ class SearchService extends React.Component {
     const transformedItems =
       menu &&
       menu
-        .filter((item) => item.url === "url")
+        .filter((item) => (item.url === "url" || item.url === "card") && item.navigationURL !=='')
         .map((item, index) => {
           return {
             label: item.displayName,

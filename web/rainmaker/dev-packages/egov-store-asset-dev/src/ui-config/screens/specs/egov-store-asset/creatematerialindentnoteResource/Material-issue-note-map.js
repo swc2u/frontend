@@ -171,6 +171,7 @@ import {
                   dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].material.name`,matname));                
                   dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.uom.code`,indentsmaterial[0].uomCode));                
                   dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.balanceQty`,indentsmaterial[0].balance));
+                  dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.issuedQuantityEdit`,indentsmaterial[0].issuedQuantityEdit));
                   dispatch(prepareFinalObject(`materialIssues[0].materialIssueDetails[${cardIndex}].indentDetail.unitRate`,indentsmaterial[0].unitRate));
                 }
                  // pass only material code as per discussion 
@@ -417,7 +418,9 @@ import {
                 },
                 props:{
                   disabled:true
+
                 },
+                visible:false,
                 required: false,
                 pattern: getPattern("Name") || null,
                 jsonPath: "materialIssues[0].materialIssueDetails[0].indentDetail.BalanceQtyAfterIssue"

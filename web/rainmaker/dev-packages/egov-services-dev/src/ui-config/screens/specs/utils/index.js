@@ -685,6 +685,42 @@ export const getDurationDateWithTime = (fromDate, toDate, fromTime, toTime) => {
     let finalDate = finalStartDate + " to " + finalEndDate;
     return finalDate;
 };
+export const getDurationDateForPark = (fromDate, toDate) => {
+    let monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+    let startDate = new Date(fromDate);
+    let finalStartDate =
+        startDate.getDate() +
+        " " +
+        monthNames[startDate.getMonth()] +
+        " " +
+        startDate.getFullYear();
+    
+    let endDate = new Date(new Date(toDate).setDate(new Date(toDate).getDate() + 1));  
+    endDate.setMonth(endDate.getMonth());
+
+    let finalEndDate =
+        endDate.getDate() +
+        " " +
+        monthNames[endDate.getMonth()] +
+        " " +
+        endDate.getFullYear();
+    let finalDate = `${finalStartDate} 9:00 AM` + " to " + `${finalEndDate} 8:59 AM`;
+ 
+    return finalDate;
+};
 export const getDurationDate = (fromDate, toDate) => {
     let monthNames = [
         "Jan",
@@ -2734,7 +2770,7 @@ export const downloadCancelledBookingReceipt = async (
                                 .bill.consumerCode,
                         bookingCancellationDate: bookingCancelledDate,
                         bookingVenue: applicationData.bkLocation,
-                        bookingDuration: getDurationDate(
+                        bookingDuration: getDurationDateForPark(
                             applicationData.bkFromDate,
                             applicationData.bkToDate
                         ),

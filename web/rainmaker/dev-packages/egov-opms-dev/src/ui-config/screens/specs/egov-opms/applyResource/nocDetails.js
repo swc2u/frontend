@@ -32,7 +32,7 @@ export const nocDetails = getCommonCard({
         },
         required: true,
         pattern: getOPMSPattern("petnocApplicantName"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_APPLICANT_NAME_MSG",
         jsonPath: "PETNOC.applicantName",
       })
     },
@@ -59,7 +59,7 @@ export const nocDetails = getCommonCard({
           labelKey: "NOC_HOUSE_NUMBER_PLACEHOLDER"
         },
         pattern: getPattern("DoorHouseNo"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_HOUSE_NUMBER",
         required: true,
         jsonPath: "PETNOC.houseNo",
       })
@@ -79,6 +79,7 @@ export const nocDetails = getCommonCard({
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         jsonPath: "PETNOC.sector",
+        errorMessage: "ERR_NOC_PROPERTY_SECTOR",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -130,7 +131,7 @@ export const PetParticularDetails = getCommonCard(
           }
         },*/
         pattern: getOPMSPattern("petnocApplicantName"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NAME_OF_PET_DOG",
         required: true,
         jsonPath: "PETNOC.nameOfPetDog"
       }),
@@ -152,6 +153,7 @@ export const PetParticularDetails = getCommonCard(
           //sourceJsonPath: "applyScreenMdmsData.tenant.tenants",
           jsonPath: "PETNOC.age",
           required: true,
+          errorMessage: "ERR_DOG_AGE",
           props: {
             className: "applicant-details-error",
             required: true
@@ -179,6 +181,7 @@ export const PetParticularDetails = getCommonCard(
           //sourceJsonPath: "applyScreenMdmsData.tenant.tenants",
           jsonPath: "PETNOC.sex",
           required: true,
+          errorMessage: "ERR_DOG_SEX",
           props: {
             className: "applicant-details-error",
             required: true
@@ -204,6 +207,7 @@ export const PetParticularDetails = getCommonCard(
           sourceJsonPath: "applyScreenMdmsData.egpm.breed",
           //sourceJsonPath: "applyScreenMdmsData.tenant.tenants",
           jsonPath: "PETNOC.breed",
+          errorMessage: "ERR_DOG_BREED",
           props: {
             className: "applicant-details-error",
             required: true
@@ -231,6 +235,7 @@ export const PetParticularDetails = getCommonCard(
           // sourceJsonPath: "applyScreenMdmsData.tenant.tenants",
           jsonPath: "PETNOC.color",
           required: true,
+          errorMessage: "ERR_DOG_COLOR",
           props: {
             className: "applicant-details-error",
             required: true
@@ -260,7 +265,7 @@ export const PetParticularDetails = getCommonCard(
            }
          },*/
         pattern: getOPMSPattern("petnocIdentificationMark"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_IDENTIFICATION_MARK_LABEL",
         jsonPath: "PETNOC.identificationMark",
 		 props: {
             className: "applicant-details-error",

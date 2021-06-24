@@ -61,7 +61,9 @@ const date = (from, to) => {
 function FeesEstimateOverviewCard(props) {
     const { classes, estimate } = props;
     const totalHeadClassName = "tl-total-amount-value " + classes.bigheader;
-    const isPaid = (estimate.fees.appStatus ==="NAME_CHANGED"|| estimate.fees.appStatus === 'CONNECTION_ACTIVATED' || estimate.fees.appStatus === 'PENDING_FOR_CONNECTION_ACTIVATION')?true:false;
+   // const isPaid = (estimate.fees.appStatus ==="NAME_CHANGED"|| estimate.fees.appStatus === 'CONNECTION_ACTIVATED' || estimate.fees.appStatus === 'PENDING_FOR_CONNECTION_ACTIVATION')?true:false;
+    const isPaid = (estimate.fees.totalAmountPaid === null || estimate.fees.totalAmountPaid === 0 || isNaN(estimate.fees.totalAmountPaid))? false:true
+    
 
     // if (estimate !== null && estimate !== undefined && estimate.fees !== undefined && estimate.fees !== null && estimate.fees.length > 0) {
     //     if (estimate.fees[0].data !== null && estimate.fees[0].data !== undefined && estimate.fees[0].data.length > 0) {

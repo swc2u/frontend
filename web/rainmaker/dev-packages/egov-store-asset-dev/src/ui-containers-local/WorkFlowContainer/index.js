@@ -19,6 +19,7 @@ import set from "lodash/set";
 import find from "lodash/find";
 import {
   localStorageGet,
+  localStorageSet,
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
 import orderBy from "lodash/orderBy";
@@ -200,7 +201,42 @@ if(purchaseOrders)
         let path = "";
         toggleSpinner();
         if (moduleName === "StoreManagement") {
-          setRoute('/inbox')
+          // setRoute('/inbox')
+          // acknowledgement
+          let mode = "";
+          switch (wfUpdatePayload.workFlowDetails.action) { 
+            case "REVIEWOFCE":
+            case "REVIEWOFEE":
+            case "REVIEWOFSE":
+            case "REVIEWOFJC":
+            case "REVIEWOFCAO":              
+            case "REVIEWOFMOH":
+            case "REVIEWOFACMC":
+            case "REVIEWOFSO":
+              mode = "REVIEW_APPROVAL";
+              break;
+            case "REVIEWOFSDO":
+            case "REVIEWOFSA":
+            case "REVIEWOFSP":
+            case "REVIEWOFJE":
+            case "REVIEWOFSO":              
+              mode = "REVIEW";
+              break;
+            case "COMMISSIONERAPPROVAL":
+              mode = "COMMISSIONERAPPROVAL";
+              break;
+            case "SENDTOCREATOR":
+              mode = "SENDTOCREATOR";
+              break;
+            case "APPROVE":
+              mode = "APPROVE";
+            break;
+            case "REJECT":
+              mode = "REJECT";
+            break;
+            
+          }
+          setRoute(`/egov-store-asset/acknowledgement?screen=WF&mode=${mode}&code=${wfUpdatePayload.workFlowDetails.businessId}`);
         }
       }
     } catch (e) {
@@ -355,10 +391,47 @@ if(purchaseOrders)
   };
 
   getEmployeeRoles = (nextAction, currentAction, moduleName) => {
-    const businessServiceData = JSON.parse(
+    let businessServiceData = JSON.parse(
       localStorageGet("businessServiceData")
     );
-    
+    if(businessServiceData === null)
+    {
+      const queryObject = [
+        { key: "tenantId", value: getQueryArg(window.location.href, "tenantId") },
+        { key: "businessServices", value: moduleName }
+      ];
+  
+      // try {
+        
+      //   const payload = await httpRequest(
+      //     "post",
+      //     "egov-workflow-v2/egov-wf/businessservice/_search",
+      //     "_search",
+      //     queryObject
+      //   );
+      //   if (
+      //     payload &&
+      //     payload.BusinessServices &&
+      //     payload.BusinessServices.length > 0
+      //   ) {
+      //     localStorageSet(
+      //       "businessServiceData",
+      //       JSON.stringify(get(payload, "BusinessServices"))
+      //     );
+
+      //     businessServiceData = JSON.stringify(get(payload, "BusinessServices"))
+      //   } else {
+          
+      //   }
+        
+      // } catch (e) {
+        
+      // }
+
+    }
+    businessServiceData = JSON.parse(
+      localStorageGet("businessServiceData")
+    );
     const data = find(businessServiceData, { businessService: moduleName });
     let roles = [];
     if (nextAction === currentAction) {
@@ -370,6 +443,7 @@ if(purchaseOrders)
             });
         });
     } else {
+
       const states = find(data.states, { uuid: nextAction });
       states &&
         states.actions &&
@@ -389,7 +463,7 @@ if(purchaseOrders)
     const data = businessServiceData && businessServiceData.length > 0 ? find(businessServiceData, { businessService: moduleName }) : [];
     // const nextState = data && data.length > 0 find(data.states, { uuid: nextStateUUID });
 
-    const isLastState = data ? find(data.states, { uuid: nextStateUUID }).isTerminateState : false;
+    const isLastState = data ? find(data.states, { uuid: nextStateUUID }) === undefined ? false:find(data.states, { uuid: nextStateUUID }).isTerminateState : false;
     return isLastState;
   };
 
@@ -398,15 +472,61 @@ if(purchaseOrders)
       localStorageGet("businessServiceData")
     );
     const data = find(businessServiceData, { businessService: moduleName });
+    if(data !== undefined)
+    {
     const nextState = find(data.states, { uuid: nextStateUUID });
     return nextState.docUploadRequired;
+    }
+    else
+    {
+      return false;
+    }
   };
 
   getActionIfEditable = (status, businessId, moduleName) => {
-    const businessServiceData = JSON.parse(
+    let businessServiceData = JSON.parse(
       localStorageGet("businessServiceData")
     );
+    if(businessServiceData === null)
+    {
+      const queryObject = [
+        { key: "tenantId", value: getQueryArg(window.location.href, "tenantId") },
+        { key: "businessServices", value: moduleName }
+      ];
+  
+      // try {
+        
+      //   const payload = await httpRequest(
+      //     "post",
+      //     "egov-workflow-v2/egov-wf/businessservice/_search",
+      //     "_search",
+      //     queryObject
+      //   );
+      //   if (
+      //     payload &&
+      //     payload.BusinessServices &&
+      //     payload.BusinessServices.length > 0
+      //   ) {
+      //     localStorageSet(
+      //       "businessServiceData",
+      //       JSON.stringify(get(payload, "BusinessServices"))
+      //     );
+
+      //     businessServiceData = JSON.stringify(get(payload, "BusinessServices"))
+      //   } else {
+          
+      //   }
+        
+      // } catch (e) {
+        
+      // }
+
+    }
+    // businessServiceData = JSON.parse(
+    //   localStorageGet("businessServiceData")
+    // );
     const data = find(businessServiceData, { businessService: moduleName });
+
     const state = find(data.states, { applicationStatus: status });
     let actions = [];
     state.actions &&

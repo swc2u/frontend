@@ -8,8 +8,20 @@ import {
     getLabel,
     getSelectField,
   } from "egov-ui-framework/ui-config/screens/specs/utils";
-
+  import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
   let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
+  let IsEditP = process.env.REACT_APP_NAME === "Citizen"?false:true;
+  const service = getQueryArg(window.location.href, "actionType");
+  if(service === 'UPDATE_CONNECTION_HOLDER_INFO')
+  {
+    IsEdit = true
+
+  }
+  else
+  {
+    IsEdit = false;
+  }
+
   const connHolderDetail = getCommonContainer({
     applicantName: getTextField({
       label: {
@@ -26,7 +38,7 @@ import {
         disabled: IsEdit,
     },
       pattern: getPattern("Name"),
-      errorMessage: "Invalid Name",
+      errorMessage: "WS_CONN_HOLDER_OWN_DETAIL_OWN_NAME_LABEL_VALIDATION",
       jsonPath: "connectionHolders[0].name",
       gridDefination: {
         xs: 12,
@@ -48,7 +60,7 @@ import {
     },
       required: true,
       pattern: getPattern("MobileNo"),
-      errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+      errorMessage: "WS_CONN_HOLDER_OWN_DETAIL_MOBILE_NO_LABEL_VALIDATION",
       jsonPath: "connectionHolders[0].mobileNumber",
       gridDefination: {
         xs: 12,
@@ -67,7 +79,7 @@ import {
       
       pattern: getPattern("Email"),
       required: true,
-     // errorMessage: "Invalid Address",
+     errorMessage: "WS_OWNER_DETAILS_EMAIL_LABEL_VALIDATION",
       jsonPath: "connectionHolders[0].emailId",
       gridDefination: {
         xs: 12,
@@ -163,9 +175,11 @@ import {
         labelName: "Enter Correspondence Address",
         labelKey: "WS_CONN_HOLDER_OWN_DETAIL_CROSADD_PLACEHOLDER"
       },
-      pattern: getPattern("Address"),
+      //pattern: getPattern("Address"),
+      pattern: /^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,500}$/i,
+      
       required: true,
-      errorMessage: "Invalid Address",
+      errorMessage: "WS_CONN_HOLDER_OWN_DETAIL_CROSADD_VALIDATION",
       jsonPath: "connectionHolders[0].correspondenceAddress",
       gridDefination: {
         xs: 12,
@@ -174,6 +188,29 @@ import {
       props: {
         className: "applicant-details-error",
         disabled: IsEdit,
+      }
+    }),
+    aadharNo: getTextField({
+      label: {
+        labelName: "Aadhar Card number",
+        labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+      },
+      placeholder: {
+        labelName: "Enter Aadhar Card number",
+        labelKey: "WS_OWN_DETAIL_ADDHAR_NO_PLACEHOLDER"
+      },
+      pattern: getPattern("AdharCardNumber"),
+      required: false,
+      visible:true,
+     // errorMessage: "Invalid Address",
+      jsonPath: "connectionHolders[0].aadhaarNumber",
+      gridDefination: {
+        xs: 12,
+        sm: 6
+      },
+      props: {
+        className: "applicant-details-error",
+        disabled:IsEdit
       }
     }),
     // specialApplicantCategory: getSelectField({
@@ -199,6 +236,103 @@ import {
     //   }
     // }),
   });
+  const proconnHolderDetail = getCommonContainer({
+    applicantName: getTextField({
+      label: {
+        labelName: "Name",
+        labelKey: "WS_CONN_HOLDER_OWN_DETAIL_OWN_NAME_LABEL"
+      },
+      placeholder: {
+        labelName: "Enter Name",
+        labelKey: "WS_CONN_HOLDER_OWN_DETAIL_OWN_NAME_PLACEHOLDER"
+      },
+      required: true,
+      props: {
+        
+        disabled: IsEditP,
+    },
+      pattern: getPattern("Name"),
+      errorMessage: "WS_CONN_HOLDER_OWN_DETAIL_OWN_NAME_LABEL_VALIDATION",
+      jsonPath: "connectionHolders[0].proposedName",
+      gridDefination: {
+        xs: 12,
+        sm: 6
+      }
+    }),
+    mobileNumber: getTextField({
+      label: {
+        labelName: "Mobile Number",
+        labelKey: "WS_CONN_HOLDER_OWN_DETAIL_MOBILE_NO_LABEL"
+      },
+      placeholder: {
+        labelName: "Enter Mobile No.",
+        labelKey: "WS_CONN_HOLDER_OWN_DETAIL_MOBILE_NO_PLACEHOLDER"
+      },
+      props: {
+        
+        disabled: IsEditP,
+    },
+      required: true,
+      pattern: getPattern("MobileNo"),
+      errorMessage: "WS_CONN_HOLDER_OWN_DETAIL_MOBILE_NO_LABEL_VALIDATION",
+      jsonPath: "connectionHolders[0].proposedMobileNo",
+      gridDefination: {
+        xs: 12,
+        sm: 6
+      },
+    }),
+    email: getTextField({
+      label: {
+        labelName: "email",
+        labelKey: "WS_OWNER_DETAILS_EMAIL_LABEL"
+      },
+      placeholder: {
+        labelName: "Enter email",
+        labelKey: "WS_OWNER_DETAILS_EMAIL_LABEL_PLACEHOLDER"
+      },
+      
+      pattern: getPattern("Email"),
+      required: true,
+      visible:false,
+      errorMessage: "WS_OWNER_DETAILS_EMAIL_LABEL_VALIDATION",
+      jsonPath: "connectionHolders[0].emailId",
+      gridDefination: {
+        xs: 12,
+        sm: 6
+      },
+      props: {
+        className: "applicant-details-error",
+        disabled: IsEditP,
+      }
+    }),
+
+   
+    correspondenceAddress: getTextField({
+      label: {
+        labelName: "Correspondence Address",
+        labelKey: "WS_CONN_HOLDER_OWN_DETAIL_CROSADD"
+      },
+      placeholder: {
+        labelName: "Enter Correspondence Address",
+        labelKey: "WS_CONN_HOLDER_OWN_DETAIL_CROSADD_PLACEHOLDER"
+      },
+      //pattern: getPattern("Address"),
+      pattern: /^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,500}$/i,
+      
+      required: true,
+      errorMessage: "WS_CONN_HOLDER_OWN_DETAIL_CROSADD_VALIDATION",
+      jsonPath: "connectionHolders[0].proposedCorrespondanceAddress",
+      gridDefination: {
+        xs: 12,
+        sm: 6
+      },
+      props: {
+        className: "applicant-details-error",
+        disabled: IsEditP,
+      }
+    }),
+   
+  });
 
   export const sameAsOwner=getCommonContainer({
     sameAsOwnerDetails: {
@@ -220,7 +354,11 @@ import {
     },
     });
 
-    export const holderHeader = getCommonSubHeader({
+    export const proposedholderHeader = getCommonSubHeader({
+        labelKey: "WS_COMMON_CONNECTION_HOLDER_DETAILS_HEADER_PROPOSED",
+        labelName: "proposedConnection Holder Details"
+      })
+      export const holderHeader = getCommonSubHeader({
         labelKey: "WS_COMMON_CONNECTION_HOLDER_DETAILS_HEADER",
         labelName: "Connection Holder Details"
       })
@@ -243,5 +381,25 @@ export const getHolderDetails = (isEditable = true) => {
       }
     },
     holderDetails: connHolderDetail
+  });
+};
+export const getproposedHolderDetails = (isEditable = true) => {
+  return getCommonContainer({
+    headerDiv: {
+      uiFramework: "custom-atoms",
+      componentPath: "Container",
+      props: {
+        style: { marginBottom: "10px" }
+      },
+      children: {
+        header: {
+          gridDefination: {
+            xs: 12,
+            sm: 10
+          }
+        },
+      }
+    },
+    holderDetails: proconnHolderDetail
   });
 };

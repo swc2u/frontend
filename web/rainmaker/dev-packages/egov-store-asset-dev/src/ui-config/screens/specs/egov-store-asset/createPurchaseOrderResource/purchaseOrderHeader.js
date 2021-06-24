@@ -131,8 +131,12 @@ export const purchaseOrderHeader = getCommonCard({
                    materialNames = indentingMaterial.filter(function(ele) {
                         return materialNames.findIndex(mat => mat.code === ele.code) !== -1;
                     })
+                    dispatch(prepareFinalObject("searchMaster.materialNames", materialNames));          
               }
-            dispatch(prepareFinalObject("searchMaster.materialNames", materialNames));          
+              else{
+                dispatch(prepareFinalObject("searchMaster.materialNames", materialNames)); 
+              }
+            
          }
           
         });   

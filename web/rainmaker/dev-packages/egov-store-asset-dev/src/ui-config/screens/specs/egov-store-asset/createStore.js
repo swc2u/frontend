@@ -58,9 +58,14 @@ const callBackForUpdate = async (state, dispatch) => {
    
     stores[0].officeLocation.tenantId = tenantId;
     //set storecode
-
+    if(stores[0].storeInCharge.code.value!== undefined)
     stores[0].storeInCharge.code =stores[0].storeInCharge.code.value;
+    else
+    stores[0].storeInCharge.code =stores[0].storeInCharge.code;
+    if(stores[0].storeInCharge.code.label!== undefined)
     stores[0].storeInCharge.name =stores[0].storeInCharge.code.label;
+    else
+    stores[0].storeInCharge.name =stores[0].storeInCharge.code
     stores[0].storeInCharge.tenantId =tenantId;
     const queryObject = [
       {
@@ -80,7 +85,8 @@ const callBackForUpdate = async (state, dispatch) => {
         requestBody
       );
       if (response) {
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=storeMaster&mode=update&code=${response.stores[0].name}`));
+        //dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=storeMaster&mode=update&code=${response.stores[0].name}`));
+        window.location.href =`/employee/egov-store-asset/acknowledgement?screen=storeMaster&mode=update&code=${response.stores[0].name}`
       }
 
     } catch (error) {
@@ -141,7 +147,8 @@ const callBackForSubmit = async (state, dispatch) => {
         requestBody
       );
       if (response) {
-        dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=storeMaster&mode=create&code=${response.stores[0].name}`));
+        //dispatch(setRoute(`/egov-store-asset/acknowledgement?screen=storeMaster&mode=create&code=${response.stores[0].name}`));
+        window.location.href =`/employee/egov-store-asset/acknowledgement?screen=storeMaster&mode=create&code=${response.stores[0].name}`
       }
 
     } catch (error) {

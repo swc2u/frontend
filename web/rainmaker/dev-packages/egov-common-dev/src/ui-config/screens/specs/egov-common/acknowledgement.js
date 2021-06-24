@@ -49,10 +49,10 @@ const getAcknowledgementCard = (
                             labelName: roleExists ? "Payment has been paid successfully!" : "Payment has been collected successfully!",
                             labelKey: roleExists ? "PAYMENT_MESSAGE_CITIZEN" : "PAYMENT_MESSAGE_EMPLOYEE"
                         },
-                        body: {
-                            labelName: roleExists ? "A notification regarding Payment has been sent to property owner at registered Mobile No." : "A notification regarding Payment Collection has been sent to property owner at registered Mobile No.",
-                            labelKey: roleExists ? "PAYMENT_MESSAGE_DETAIL_CITIZEN" : "PAYMENT_MESSAGE_DETAIL_EMPLOYEE"
-                        },
+                        // body: {
+                        //     labelName: roleExists ? "A notification regarding Payment has been sent to property owner at registered Mobile No." : "A notification regarding Payment Collection has been sent to property owner at registered Mobile No.",
+                        //     labelKey: roleExists ? "PAYMENT_MESSAGE_DETAIL_CITIZEN" : "PAYMENT_MESSAGE_DETAIL_EMPLOYEE"
+                        // },
                         tailText: {
                             labelName: "Payment Receipt No.",
                             labelKey: "PAYMENT_RECEIPT_NO"
@@ -100,10 +100,10 @@ const getAcknowledgementCard = (
                             labelName: "Payment has failed!",
                             labelKey: "PAYMENT_FAILURE_MESSAGE"
                         },
-                        body: {
-                            labelName: "A notification regarding payment failure has been sent to property owner at registered Mobile No.",
-                            labelKey: "PAYMENT_FAILURE_MESSAGE_DETAIL"
-                        }
+                        // body: {
+                        //     labelName: "A notification regarding payment failure has been sent to property owner at registered Mobile No.",
+                        //     labelKey: "PAYMENT_FAILURE_MESSAGE_DETAIL"
+                        // }
                     })
                 }
             },

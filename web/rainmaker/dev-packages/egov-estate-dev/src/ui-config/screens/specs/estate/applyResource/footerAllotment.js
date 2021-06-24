@@ -5,7 +5,8 @@ import {
 import {
   getLabel,
   dispatchMultipleFieldChangeAction,
-  getPattern
+  getPattern,
+  convertDateToEpoch
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
   toggleSnackbar,
@@ -76,6 +77,8 @@ const callBackForNext = async (state, dispatch) => {
   let hasFieldToaster = true;
   let rentYearMismatch = false;
   let isBiddersListValid = true;
+  let isownerDOBValid = true;
+  let iscourtCaseFieldLengthValid = true;
   let licenseFeeYearMismatch = false;
   let isStartAndEndYearValid = true;
   let propertyType = get(
@@ -277,8 +280,31 @@ const callBackForNext = async (state, dispatch) => {
         break;
       default:
         isOwnerOrPartnerDetailsValid = setOwnersOrPartners(state, dispatch, "ownerDetails", entityType);
+        let ownersArr = get(state.screenConfiguration.preparedFinalObject, `Properties[0].propertyDetails.owners`);
+        for (var i = 0; i < ownersArr.length; i++) {
+          let ownerDOBEntered = get(state.screenConfiguration.preparedFinalObject, `Properties[0].propertyDetails.owners[${i}].ownerDetails.dob`);
+          if(!!ownerDOBEntered)
+          {
+            let ownerDOBEnteredEpoch = convertDateToEpoch(ownerDOBEntered)
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+      
+            today = yyyy + '-' + mm + '-' + dd;
+            let currentDateEpoch = convertDateToEpoch(today);
+            if(ownerDOBEnteredEpoch !== undefined){
+              isownerDOBValid = ownerDOBEnteredEpoch - currentDateEpoch >= 0 ? false : true
+              isFormValid = isownerDOBValid == true ? true : false;
+            }
+      
+            if (!isownerDOBValid) {
+              break;
+            }
+          }
+        }
 
-        if (isOwnerOrPartnerDetailsValid) {
+        if (isOwnerOrPartnerDetailsValid && isownerDOBValid) {
           const res = await applyEstates(state, dispatch, activeStep, screenKey);
           if (!res) {
             return
@@ -374,6 +400,19 @@ const callBackForNext = async (state, dispatch) => {
       state.screenConfiguration.screenConfig,
       "allotment.components.div.children.formwizardFifthStepAllotment.children.courtCaseDetails.children.cardContent.children.detailsContainer.children.multipleApplicantContainer.children.multipleApplicantInfo.props.items"
     );
+    if(courtCases && courtCases.length > 0){
+      for (let i = 0; i < courtCases.length; i++) {
+        let advisorToAdminCourt = !!courtCases[i].advisorToAdminCourt ? courtCases[i].advisorToAdminCourt.length : 0
+        let chiefAdministartorsCourt = !!courtCases[i].chiefAdministartorsCourt ? courtCases[i].chiefAdministartorsCourt.length : 0
+        let commissionersCourt = !!courtCases[i].commissionersCourt ? courtCases[i].commissionersCourt.length : 0
+        let estateOfficerCourt = !!courtCases[i].estateOfficerCourt ? courtCases[i].estateOfficerCourt.length : 0
+        let honorableDistrictCourt = !!courtCases[i].honorableDistrictCourt ? courtCases[i].honorableDistrictCourt.length : 0
+        let honorableHighCourt = !!courtCases[i].honorableHighCourt ? courtCases[i].honorableHighCourt.length : 0
+        let honorableSupremeCourt = !!courtCases[i].honorableSupremeCourt ? courtCases[i].honorableSupremeCourt.length : 0
+        if(advisorToAdminCourt > 250 || chiefAdministartorsCourt > 250 || commissionersCourt > 250 || estateOfficerCourt > 250 || honorableDistrictCourt > 250 || honorableHighCourt > 250 || honorableSupremeCourt > 250)
+        iscourtCaseFieldLengthValid = false;
+      }
+    }
 
     if (courtCaseItems && courtCaseItems.length > 0) {
       for (var i = 0; i < courtCaseItems.length; i++) {
@@ -395,7 +434,7 @@ const callBackForNext = async (state, dispatch) => {
       }
     }
 
-    if (isCourtCaseDetailsValid) {
+    if (isCourtCaseDetailsValid && iscourtCaseFieldLengthValid) {
       const res = await applyEstates(state, dispatch, activeStep, screenKey);
       if (!res) {
         return
@@ -406,6 +445,11 @@ const callBackForNext = async (state, dispatch) => {
   }
 
   if (activeStep === PAYMENT_DETAILS_STEP) {
+   let premiumAmount= get(state.screenConfiguration.preparedFinalObject,"Properties[0].propertyDetails.paymentConfig.totalAmount")
+   set(state,
+    'screenConfiguration.preparedFinalObject.Properties[0].propertyDetails.paymentConfig.totalAmount',
+    premiumAmount.toString()
+  )
     if (propertyType == "PROPERTY_TYPE.LEASEHOLD") {
       const isPremiumAmountValid = validateFields(
         "components.div.children.formwizardSixthStepAllotment.children.premiumAmountDetails.children.cardContent.children.detailsContainer.children",
@@ -467,7 +511,8 @@ const callBackForNext = async (state, dispatch) => {
         }
       }
 
-    const isGroundRent = get(state.screenConfiguration.preparedFinalObject, "Properties[0].propertyDetails.paymentConfig.isGroundRent")
+    let isGroundRent = get(state.screenConfiguration.preparedFinalObject, "Properties[0].propertyDetails.paymentConfig.isGroundRent")
+    isGroundRent = isGroundRent == "true" ? true : false; 
     const _componentJsonPath = !!isGroundRent ? 
     "allotment.components.div.children.formwizardSixthStepAllotment.children.groundRentDetails.children.cardContent.children.rentContainer.children.cardContent.children.detailsContainer.children.multipleRentContainer.children.multipleRentInfo.props.items"
     : "allotment.components.div.children.formwizardSixthStepAllotment.children.licenseFeeDetails.children.cardContent.children.licenseFeeForYearContainer.children.cardContent.children.detailsContainer.children.multipleLicenseContainer.children.multipleLicenseInfo.props.items"
@@ -480,6 +525,12 @@ const callBackForNext = async (state, dispatch) => {
       `Properties[0].propertyDetails.paymentConfig.paymentConfigItems`,
       []
     )
+    let rentItemGroundRentType = get(
+      state.screenConfiguration.preparedFinalObject,
+      `Properties[0].propertyDetails.paymentConfig.groundRentGenerationType`
+    )
+    
+    
     const reviewJsonPath = !!isGroundRent ? "components.div.children.formwizardSeventhStepAllotment.children.reviewAllotmentDetails.children.cardContent.children.reviewGroundRent.children.cardContent.children.viewRents" : "components.div.children.formwizardSeventhStepAllotment.children.reviewAllotmentDetails.children.cardContent.children.reviewLicenseFee.children.cardContent.children.viewLicenses";
 
     let securityAmount = rentItems[0].groundRentAmount * noOfMonths;
@@ -487,7 +538,8 @@ const callBackForNext = async (state, dispatch) => {
     dispatch(prepareFinalObject("Properties[0].propertyDetails.paymentConfig.securityAmount", securityAmount))
 
       const _cardName = !!isGroundRent ? "groundRent" : "licenseFee"
-
+      const monthlyYearlyLabel = rentItemGroundRentType === "Monthly" ? "Monthly" : "Annually"
+      
       if (_components && _components.length > 0) {
         for (var i = 0; i < _components.length; i++) {
           if (!_components[i].isDeleted) {
@@ -507,7 +559,7 @@ const callBackForNext = async (state, dispatch) => {
       isStartAndEndYearValid = rentItems.every(item => item.groundRentEndMonth > item.groundRentStartMonth)
       if(!!isRentDetailsValid) {
         dispatch(prepareFinalObject("Properties[0].propertyDetails.paymentConfig.paymentConfigItems", rentItems))
-        getReviewAllotmentMultipleSectionDetails(state, dispatch, screenKey, reviewJsonPath, _cardName, rentItems.length);
+        getReviewAllotmentMultipleSectionDetails(state, dispatch, screenKey, reviewJsonPath, _cardName, rentItems.length, monthlyYearlyLabel);
       }
     }
     const hasValidation = !!isGroundRent ? isPremiumAmountValid && isInstallmentDetailsValid && isGroundRentValid && isSecurityDetailsValid && isRentDetailsValid && isDemandValid && isInterestDetailsValid && isStartAndEndYearValid : isPremiumAmountValid && isInstallmentDetailsValid && isLicenseFeeValid && isSecurityDetailsValid && isRentDetailsValid && isDemandValid && isInterestDetailsValid && isStartAndEndYearValid
@@ -537,6 +589,22 @@ const callBackForNext = async (state, dispatch) => {
     if (isFormValid) {
       changeStep(state, dispatch, screenKey);
     } 
+    else if(isownerDOBValid === false){
+      let errorMessage = {
+        labelName: "Date of birth cannot be current or future date",
+        labelKey: "ES_ERR_DATE_OF_BIRTH_CANNOT_BE_CURRENT_OR_FUTURE"
+    };
+      // scrollTop = false
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    }  
+    // iscourtCaseFieldLengthValid
+    else if(!iscourtCaseFieldLengthValid) {
+      let errorMessage = {
+        labelName: "Shouldn't exceed 250 characters",
+        labelKey: "ERR_COURT_DETAILS_250_CHARACTERS"
+      }
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    }
     else if(!isStartAndEndYearValid) {
       let errorMessage = {
         labelName: "End Month should be greater than Start Month",
