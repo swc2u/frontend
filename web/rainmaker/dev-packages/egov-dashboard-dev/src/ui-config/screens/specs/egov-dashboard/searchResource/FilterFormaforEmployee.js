@@ -123,6 +123,11 @@ export const FilterFormDashboard = getCommonCard({
         labelName: "",
         labelKey: "Select From Date"
       },
+      props: {
+        style: {
+          width: "130px",
+        }
+      },
       gridDefination: {
         xs: 6,
         sm: 2,
@@ -134,8 +139,8 @@ export const FilterFormDashboard = getCommonCard({
       afterFieldChange: (action, state, dispatch) => {
         dispatch(
           handleField(
-            "dashboardSource",
-            "components.div.children.FilterFormforEmployee.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+            "PGRDashboard",
+            "components.div.children.FilterFormDashboard.children.cardContent.children.FilterConstraintsContainer.children.toDate",
             "props.inputProps.min",
             action.value
           )
@@ -149,6 +154,9 @@ export const FilterFormDashboard = getCommonCard({
         labelKey: "Select To Date"
       },
       props: {
+        style: {
+          width: "130px",
+        },
         inputProps: {
           min: ''
         }
@@ -190,7 +198,7 @@ export const FilterFormDashboard = getCommonCard({
       maxLength:5,
       labelsFromLocalisation: false,
       suggestions: [],
-      // fullwidth: true,
+      fullwidth: true,
       // required: true,
       inputLabelProps: {
         shrink: true

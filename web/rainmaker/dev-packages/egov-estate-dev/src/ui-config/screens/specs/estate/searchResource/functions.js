@@ -19,7 +19,12 @@ export const getStatusList = async (state, dispatch, queryObject, screen, path, 
   await setBusinessServiceDataToLocalStorage(queryObject, dispatch);
   const businessServices = JSON.parse(localStorageGet("businessServiceData"));
   if(!!businessServices && !!screen && !!path) {
-    const status = businessServices[0].states.filter(item => !!item.applicationStatus).map(({applicationStatus}) => ({code: applicationStatus,label:applicationStatus}))
+    let status=[]
+    for(let i=0;i<businessServices.length;i++){
+      let newstatus = businessServices[i].states.filter(item => !!item.applicationStatus).map(({applicationStatus}) => ({code: applicationStatus,label:applicationStatus}))
+      status.push(...newstatus)
+    }
+  //  const status = businessServices[0].states.filter(item => !!item.applicationStatus).map(({applicationStatus}) => ({code: applicationStatus,label:applicationStatus}))
     dispatch(
       handleField(
         screen,
@@ -106,7 +111,7 @@ export const searchApiCall = async (state, dispatch, onInit, offset, limit , hid
     try {
       let data = response.Properties.map(item => ({
         [getTextToLocalMapping("File Number")]: item.fileNumber || "-",
-        [getTextToLocalMapping("Sector Number")]: item.sectorNumber || "-",
+        [getTextToLocalMapping("Sector Number")]: getTextToLocalMapping(item.sectorNumber) || "-",
         [getTextToLocalMapping("Status")]: getLocaleLabels(item.state, item.state) || "-",
         [LAST_MODIFIED_ON]: convertEpochToDate(item.auditDetails.lastModifiedTime) || "-",
         ["propertyMasterOrAllotmentOfSite"]: item.propertyMasterOrAllotmentOfSite

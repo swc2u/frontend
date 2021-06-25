@@ -363,6 +363,8 @@ export const downloadAccountStatementPdf = async(state, dispatch) => {
   const {Properties} = state.screenConfiguration.preparedFinalObject;
   let properties = Properties
   properties[0].demands[0].remainingPrincipal = parseInt(properties[0].demands[0].remainingPrincipal).toFixed(2)
+  properties[0].transitNumber = properties[0].transitNumber.split('-')[1] ? properties[0].transitNumber.split('-')[1] :
+  properties[0].transitNumber.split('-')[0]
   const data = RentAccountStatements.map(item =>
     ({
       ...item,
@@ -609,6 +611,98 @@ export const searchDuplicateCopy = async (state, dispatch, onInit, offset, limit
   }
 }
 
+export const searchPropertycall = async (state, dispatch, onInit, relations = "owner", offset, limit , hideTable = true) => {
+  !!hideTable && showHideTable(false, dispatch, "search");
+  let queryObject = [
+    {
+      key: "tenantId",
+      value: getTenantId()
+    },
+    { key: "offset", value: offset },
+    { key: "limit", value: limit },
+    { key: "relations", value: relations},
+    {key: "state",value:"PM_APPROVED"}
+  ];
+  queryObject = queryObject.filter(({value}) => !!value)
+  let searchScreenObject = get(
+    state.screenConfiguration.preparedFinalObject,
+    "searchScreen",
+    {}
+  );
+
+
+
+  const isSearchBoxSecondRowValid = validateFields(
+    "components.div.children.rentedPropertyApplication.children.cardContent.children.transitNumberContainer.children",
+    state,
+    dispatch,
+    "property-search"
+  );
+
+  if (!( isSearchBoxSecondRowValid) && typeof onInit != "boolean") {
+    dispatch(
+      toggleSnackbar(
+        true,
+        {
+          labelName: "Please fill valid fields to start search",
+          labelKey: "RP_ERR_FILL_VALID_FIELDS"
+        },
+        "warning"
+      )
+    );
+  } else if (
+    (Object.keys(searchScreenObject).length == 0 ||
+    Object.values(searchScreenObject).every(x => x === "")) && typeof onInit != "boolean"
+  ) {
+    dispatch(
+      toggleSnackbar(
+        true,
+        {
+          labelName: "Please fill at least one field to start search",
+          labelKey: "RP_ERR_FILL_ONE_FIELDS"
+        },
+        "warning"
+      )
+    );
+  } else {
+      for (var key in searchScreenObject) {
+        if (
+          searchScreenObject.hasOwnProperty(key) &&
+          searchScreenObject[key].trim() !== ""
+        ) {
+            queryObject.push({ key: key, value: searchScreenObject[key].trim() });
+        }
+    }
+    const response = await getSearchResults(queryObject);
+    try {
+      let data = response.Properties.map(item => {
+        const findOwner = item.owners.find(itemdat => itemdat.activeState === true)
+        return {
+        [getTextToLocalMapping("Transit No")]: item.transitNumber || "-",
+        [getTextToLocalMapping("Colony")]: getTextToLocalMapping(item.colony) || "-",
+        [getTextToLocalMapping("Owner")]: !!findOwner ? findOwner.ownerDetails.name : "-",
+        [getTextToLocalMapping("Status")]: getTextToLocalMapping(item.masterDataState) || "-",
+        [LAST_MODIFIED_ON]: convertEpochToDate(item.auditDetails.lastModifiedTime) || "-",
+        ["Tenantid"]:item.tenantId,
+      }
+    });
+      dispatch(
+        handleField(
+          "property-search",
+          "components.div.children.searchResults",
+          "props.data",
+          data
+        )
+      );
+      !!hideTable && showHideTable(true, dispatch, "property-search");
+    } catch (error) {
+      dispatch(toggleSnackbar(true, error.message, "error"));
+      console.log(error);
+    }
+  }
+};
+
+
 export const searchApiCall = async (state, dispatch, onInit, relations = "owner", offset, limit , hideTable = true) => {
   !!hideTable && showHideTable(false, dispatch, "search");
   let queryObject = [
@@ -702,6 +796,13 @@ export const searchApiCall = async (state, dispatch, onInit, relations = "owner"
     }
   }
 };
+
+
+
+
+
+
+
 const showHideTable = (booleanHideOrShow, dispatch, screenKey) => {
   dispatch(
     handleField(

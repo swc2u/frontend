@@ -77,6 +77,46 @@ if(NULMSEPRequest && NULMSEPRequest.isMinority){
   }
 }
 
+if(NULMSEPRequest ){
+  if(!NULMSEPRequest.gender ){
+    const errorMessage = {
+      labelName: "Please select gender of an applicant",
+      labelKey: "ERR_NULM_SELECT_GENDER_APPLICANT"
+    };
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    return;
+  }
+}
+if(NULMSEPRequest ){
+  if(!NULMSEPRequest.category ){
+    const errorMessage = {
+      labelName: "Please select Category of an applicant",
+      labelKey: "ERR_NULM_SELECT_CATEGORY_APPLICANT"
+    };
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    return;
+  }
+}
+
+if(NULMSEPRequest ){
+  if(NULMSEPRequest.dob ){
+
+    let Month = (new Date().getMonth()+1)<10?`0${(new Date().getMonth()+1)}`:(new Date().getMonth()+1);
+    let Day = new Date().getDate()<10?`0${new Date().getDate()}`:new Date().getDate();
+    let CurrentDate = `${new Date().getFullYear()}-${Month}-${Day}`;
+        CurrentDate = convertDateToEpoch(CurrentDate, "dayStart");
+    let dob = convertDateToEpoch(NULMSEPRequest.dob,"dayStart");
+    if(CurrentDate === dob)
+    {
+    const errorMessage = {
+      labelName: "Date of birth can not be currrent date",
+      labelKey: "ERR_NULM_CURRENT_DATE_VALIDATION"
+    };
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    return;
+  }
+  }
+}
 if(NULMSEPRequest && NULMSEPRequest.isUrbanPoor){
   if(NULMSEPRequest.isUrbanPoor =="Yes" && !NULMSEPRequest.bplNo ){
     const errorMessage = {
@@ -257,7 +297,11 @@ else if(activeStep == 1 && isFormValid){
       else
       {
         // setting documents for conditional doc mandatory
-    prepareDocumentsUploadData(state, dispatch, 'SEPApplication');
+        if(NULMSEPRequest && NULMSEPRequest.applicationId === null)
+        {
+          prepareDocumentsUploadData(state, dispatch, 'SEPApplication');
+        }
+   
 
     // show validation mewssage and clear age value from json
     if(NULMSEPRequest && NULMSEPRequest.dob && NULMSEPRequest.age ){

@@ -27,7 +27,7 @@ import { convertEpochToDate, checkValueForNA, checkValueForNotAsigned } from "..
 import {  
   ActionWorkflowAccessibility
   } from "../../../../ui-utils/sampleResponses";
-  import { claimReleaseWorkflowApplication,getWorkflowAccessibility, getSearchResultsEmployeeForDeath} from '../../../../ui-utils/commons'
+  import { claimReleaseWorkflowApplication,getWorkflowAccessibility, getSearchResultsEmployeeForPMSMap} from '../../../../ui-utils/commons'
 //SU0001 fix for set application number
 const tenantId = getQueryArg(window.location.href, "tenantId");
 let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
@@ -202,7 +202,7 @@ console.log(responce)
     key: "tenantId",
     value: tenantId
   });
-  responce = await getSearchResultsEmployeeForDeath(queryObject);
+  responce = await getSearchResultsEmployeeForPMSMap(queryObject);
   dispatch(prepareFinalObject("ProcessInstancestemp", get(responce, "Employees", [])));
 };
 

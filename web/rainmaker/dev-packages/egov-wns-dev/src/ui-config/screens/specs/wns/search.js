@@ -10,21 +10,34 @@ import { resetFieldsForConnection, resetFieldsForApplication } from '../utils';
 import "./index.css";
 import { getRequiredDocData, showHideAdhocPopup } from "egov-ui-framework/ui-utils/commons";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-
-const getMDMSData = (action, dispatch) => {
-  const moduleDetails = [
-    {
-      moduleName: "ws-services-masters",
-      masterDetails: [
-        { name: "Documents" }
+import commonConfig from "config/common.js";
+import { httpRequest } from "../../../../ui-utils";
+const getMDMSData = async (action, dispatch) => {
+  let mdmsBody = {
+    MdmsCriteria: {
+      tenantId: commonConfig.tenantId,
+      moduleDetails: [
+       // { moduleName: "common-masters", masterDetails: [{ name: "OwnerType" }, { name: "OwnerShipCategory" }] },
+        { moduleName: "tenant", masterDetails: [{ name: "tenants" }] },        
+        {
+          moduleName: "ws-services-masters", masterDetails: [            
+            {name:"sectorList"},
+            {name:"swSectorList"},
+            
+          ]
+        }
       ]
     }
-  ]
+  };
   try {
-    getRequiredDocData(action, dispatch, moduleDetails)
-  } catch (e) {
-    console.log(e);
-  }
+    let payload = null;
+    payload = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
+
+    dispatch(prepareFinalObject("applyScreenMdmsData1", payload.MdmsRes));
+    if(payload.MdmsRes['ws-services-masters'].sectorList !== undefined)
+    dispatch(prepareFinalObject("applyScreenMdmsData1.ws-services-masters.wssectorList", payload.MdmsRes['ws-services-masters'].sectorList));
+    //
+  } catch (e) { console.log(e); }
 };
 
 const header = getCommonHeader({
@@ -40,23 +53,59 @@ const employeeSearchResults = {
   uiFramework: "material-ui",
   name: "search",
   beforeInitScreen: (action, state, dispatch) => {
+    // let refresh = false
+    // if(!refresh)
+    // {
+    //   refresh = true;
+    //   window.location.href ='search'
+     
+    // }
     getMDMSData(action, dispatch);
     resetFieldsForConnection(state, dispatch);
     resetFieldsForApplication(state, dispatch);
-    setBusinessServiceDataToLocalStorage(queryObject, dispatch);
-    const businessServiceData = JSON.parse(
-      localStorageGet("businessServiceData")
-    );
-    if (businessServiceData[0].businessService === "REGULARWSCONNECTION" || businessServiceData[0].businessService === "NewSW1" || businessServiceData[0].businessService === "WS_CONVERSION" || businessServiceData[0].businessService === "WS_DISCONNECTION" || businessServiceData[0].businessService === "WS_RENAME" || businessServiceData[0].businessService === "WS_TUBEWELL") {
-      const data = find(businessServiceData, { businessService: businessServiceData[0].businessService });
-      const { states } = data || [];
-      if (states && states.length > 0) {
-        const status = states.map((item) => { return { code: item.state } });
-        const applicationStatus = status.filter(item => item.code != null);
-        dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.applicationStatus", applicationStatus));
-      }
-    }
-    const applicationType = [{ code: "New Water connection", code: "New Water connection" }, { code: "New Sewerage Connection", code: "New Sewerage Connection" }]
+    //setBusinessServiceDataToLocalStorage(queryObject, dispatch);
+  //   const businessServiceData = JSON.parse(
+  //     localStorageGet("businessServiceData")
+  //   );
+  //   if(businessServiceData && businessServiceData[0])
+  //   {
+  //   if (businessServiceData[0].businessService === "REGULARWSCONNECTION" 
+  //     || businessServiceData[0].businessService === "TEMPORARY_WSCONNECTION" 
+  //     || businessServiceData[0].businessService === "WS_TEMP_TEMP" 
+  //     || businessServiceData[0].businessService === "WS_TEMP_REGULAR" 
+  //     || businessServiceData[0].businessService === "WS_DISCONNECTION" 
+  //     || businessServiceData[0].businessService === "WS_TEMP_DISCONNECTION"
+  //     || businessServiceData[0].businessService === "WS_CONVERSION"
+  //     || businessServiceData[0].businessService === "WS_REACTIVATE"
+  //     || businessServiceData[0].businessService === "WS_TUBEWELL") {
+  //     const data = find(businessServiceData, { businessService: businessServiceData[0].businessService });
+  //     const { states } = data || [];
+  //     if (states && states.length > 0) {
+  //       const status = states.map((item) => { return { code: item.state } });
+  //       let applicationStatus = status.filter(item => item.code != null);
+  //       applicationStatus.push(
+  //         {
+  //           code:"INITIATED"
+  //         }
+  //       )  
+  //      const applicationdistStatus = applicationStatus.filter((n, i) => applicationStatus.indexOf(n) === i);
+  //       dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.applicationStatus", applicationdistStatus));
+  //     }
+  //   }
+  // }
+    const applicationType = [{ code: "NEW_WS_CONNECTION", name: "NEW_WS_CONNECTION" }, //REGULARWSCONNECTION
+                              {code:"REACTIVATE_CONNECTION",name:"REACTIVATE_CONNECTION"},//WS_REACTIVATE
+                              {code:"CONNECTION_CONVERSION",name:"CONNECTION_CONVERSION"},//WS_CONVERSION
+                              {code:"APPLY_FOR_TEMPORARY_REGULAR_CONNECTION",name:"APPLY_FOR_TEMPORARY_REGULAR_CONNECTION"},//WS_TEMP_REGULAR
+                              {code:"TEMPORARY_DISCONNECTION",name:"TEMPORARY_DISCONNECTION"},//WS_TEMP_DISCONNECTION
+                              {code:"PERMANENT_DISCONNECTION",name:"PERMANENT_DISCONNECTION"},//WS_DISCONNECTION
+                              {code:"UPDATE_CONNECTION_HOLDER_INFO",name:"UPDATE_CONNECTION_HOLDER_INFO"},//WS_RENAME
+                              {code:"APPLY_FOR_TEMPORARY_CONNECTION",name:"APPLY_FOR_TEMPORARY_CONNECTION"},//TEMPORARY_WSCONNECTION
+                              {code:"UPDATE_METER_INFO",name:"UPDATE_METER_INFO"},//WS_METER_UPDATE
+                              {code:"NEW_TUBEWELL_CONNECTION",name:"NEW_TUBEWELL_CONNECTION"},//WS_TUBEWELL
+                             // {code:"WS_TEMP_TEMP",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},
+                              {code:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},//WS_TEMP_TEMP
+                             { code: "SW_SEWERAGE", name: "New Sewerage Connection" }]//SW_SEWERAGE
     dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.applicationType", applicationType));
 
     return action;
@@ -89,7 +138,7 @@ const employeeSearchResults = {
                 sm: 6,
                 align: "right"
               },
-              visible: true,
+              visible: false,
               props: {
                 variant: "contained",
                 color: "primary",

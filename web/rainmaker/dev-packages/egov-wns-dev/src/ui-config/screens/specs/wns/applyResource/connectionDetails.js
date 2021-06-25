@@ -2,6 +2,16 @@ import { getCommonCard, getPattern, getCommonSubHeader, getTextField, getSelectF
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from 'lodash/get';
 let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
+let ApplicationType = false;
+let wns_workflow = window.localStorage.getItem("wns_workflow");
+if(wns_workflow ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION'
+|| wns_workflow ==='WS_TEMP_TEMP'
+|| wns_workflow ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION'
+|| wns_workflow ==='WS_TEMP_REGULAR')
+{
+  ApplicationType = true;
+
+}
 // export const getGenderRadioButton = {
 //   uiFramework: "custom-containers",
 //   componentPath: "RadioGroupContainer",
@@ -34,6 +44,7 @@ const displaysubUsageType = (usageType, dispatch, state) => {
           if(subUsage&&subUsage[0])
           {
             dispatch(prepareFinalObject("propsubusagetypeForSelectedusageCategory",subUsage[0].category));
+           // dispatch(prepareFinalObject("applyScreen.waterProperty.usageSubCategory",null))
           }
         }
           
@@ -65,19 +76,20 @@ export const OwnerInfoCard = getCommonCard({
   tradeUnitCardContainer: getCommonContainer({
     getCheckboxContainer,
 
-    numberOfTaps: getTextField({
-      label: { labelKey: "WS_CONN_DETAIL_NO_OF_TAPS" },
-      placeholder: { labelKey: "WS_SERV_DETAIL_NO_OF_TAPS_PLACEHOLDER" },
-      gridDefination: { xs: 12, sm: 6 },
-      required: true,
-      props:{
-        disabled:IsEdit
-      },
-      sourceJsonPath: "applyScreen.proposedTaps",
-      jsonPath: "applyScreen.proposedTaps",
-      pattern: /^[0-9]*$/i,
-      errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-    }),
+    // numberOfTaps: getTextField({
+    //   label: { labelKey: "WS_CONN_DETAIL_NO_OF_TAPS" },
+    //   placeholder: { labelKey: "WS_SERV_DETAIL_NO_OF_TAPS_PLACEHOLDER" },
+    //   gridDefination: { xs: 12, sm: 6 },
+    //   required: true,
+    //   visible:false,
+    //   props:{
+    //     disabled:IsEdit
+    //   },
+    //   sourceJsonPath: "applyScreen.proposedTaps",
+    //   jsonPath: "applyScreen.proposedTaps",
+    //   pattern: /^[0-9]*$/i,
+    //   errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+    // }),
 
     // pipeSize: getSelectField({
     //   label: { labelKey: "WS_CONN_DETAIL_PIPE_SIZE" },
@@ -140,7 +152,7 @@ export const OwnerInfoCard = getCommonCard({
       props: {
         optionValue: "code",
         optionLabel: "name",
-        disabled:IsEdit
+        disabled: ApplicationType === false?IsEdit:ApplicationType
       // data:
       // [
       //   {
@@ -170,6 +182,20 @@ export const OwnerInfoCard = getCommonCard({
       },
       jsonPath: "applyScreen.contractValue",
       pattern: /^[0-9]*$/i,
+      
+     // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+    }),
+    ferruleSize: getTextField({
+      label: { labelKey: "WS_ADDN_DETAILS_FERRULE_INPUT" },
+      placeholder: { labelKey: "WS_ADDN_DETAILS_FERRULE_INPUT_PLACEHOLDER" },
+      gridDefination: { xs: 12, sm: 6 },
+      pattern: getPattern("AlphaNumValidation"),
+      visible:false,
+      props:{
+        disabled:IsEdit
+      },
+      jsonPath: "applyScreen.ferruleSize",
+      //pattern: /^[0-9]*$/i,
       
      // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
     }),

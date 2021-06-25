@@ -27,19 +27,40 @@ const cardStyles = {
   backgroundColor: "#e0e0e0",
 };
 
-const ProfileSectionView = ({ onClickAddPic, img }) => {
-  return (
-    <ProfileSection
-      id="profile-photo"
-      className="profileSection"
-      imgStyle={imgStyle}
-      addIconName="add-a-photo"
-      addIconStyle={addIconStyle}
-      cardStyles={cardStyles}
-      imgSrc={img}
-      onClickAddPic={onClickAddPic}
-    />
-  );
+const ProfileSectionView = ({ onClickAddPic, img,addIconName }) => {
+
+  if(addIconName === true)
+  {
+    return (
+      <ProfileSection
+        id="profile-photo"
+        className="profileSection"
+        imgStyle={imgStyle}
+        // addIconName="add-a-photo"
+        // addIconStyle={addIconStyle}
+        cardStyles={cardStyles}
+        imgSrc={img}
+        //onClickAddPic={onClickAddPic}
+      />
+    );
+
+  }
+  else{
+    return (
+      <ProfileSection
+        id="profile-photo"
+        className="profileSection"
+        imgStyle={imgStyle}
+        addIconName="add-a-photo"
+        addIconStyle={addIconStyle}
+        cardStyles={cardStyles}
+        imgSrc={img}
+        onClickAddPic={onClickAddPic}
+      />
+    );
+
+  }
+ 
 };
 
 export default ProfileSectionView;

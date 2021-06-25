@@ -300,7 +300,7 @@ import {
                   {
                     if(businessServiceName!=='')
                     {
-                    if(stores[0].department.deptCategory !== businessServiceName )
+                    if(stores[0].department.deptCategory !== businessServiceName)
                     {
                       const errorMessage = {
                         labelName: "Select valid store",

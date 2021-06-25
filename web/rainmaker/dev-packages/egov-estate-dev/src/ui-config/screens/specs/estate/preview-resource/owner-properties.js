@@ -91,7 +91,10 @@ import {
       labelName: "CP No.",
       labelKey: "ES_CP_NUMBER_LABEL",
   }
-  
+  const npNumberLabel = {
+    labelName: "NP No.",
+    labelKey: "ES_NP_NUMBER_LABEL"
+  }
   const possessionDateField = {
    
       labelName: "Possession Date",
@@ -322,6 +325,11 @@ export const headerDiv = {
               jsonPath: `Properties[0].propertyDetails.owners[${index}].share`
             }
           ),
+          npNumber: getLabelWithValue(
+            npNumberLabel, {
+              jsonPath: `Properties[0].propertyDetails.owners[${index}].npNumber`
+            }
+          ),
         cpNumber: getLabelWithValue(
             cpNumberField, {
               jsonPath:`Properties[0].propertyDetails.owners[${index}].cpNumber`
@@ -398,7 +406,7 @@ export const headerDiv = {
           },
           {
             label: "ES_APPROVAL_DATE",
-            jsonPath: ""
+            jsonPath: "approvalDate"        
           }
         ]
       }

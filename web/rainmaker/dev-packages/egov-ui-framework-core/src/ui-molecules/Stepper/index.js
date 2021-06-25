@@ -10,13 +10,18 @@ import LabelContainer from "../../ui-containers/LabelContainer";
 
 const styles = theme => ({
   root: {
-    width: "100%", 
+    width: "100%",
+    overflowY:window.innerWidth <900 ?"auto !important":"",
     overflowX : "auto"
+  },
+  MuiStepHorizontal:{
+    minWidth:"90px"
   }
 });
 
 class HorizontalLabelPositionBelowStepper extends React.Component {
   render() {
+    
     const { classes, activeStep, steps } = this.props;
     return (
       <div className={classes.root}>
@@ -29,7 +34,7 @@ class HorizontalLabelPositionBelowStepper extends React.Component {
         >
           {steps.map(label => {
             return (
-              <Step key={label}>
+              <Step key={label} className={classes.MuiStepHorizontal}>
                 <StepLabel>
                   <LabelContainer {...label} />
                 </StepLabel>

@@ -69,14 +69,14 @@ export const getSMIDDetailsView = (isReview = true) => {
           labelName: "Caste of Applicant",
           labelKey: "NULM_SMID_CASTE_OF_APPLICANT",
         },
-        { jsonPath: "NULMSMIDRequest.caste" }
+        { jsonPath: "NULMSMIDRequest.caste" ,callBack: checkValueForNA }
       ),
       isUrbanPoor: getLabelWithValue(
         {
           labelName: "Urban Poor",
           labelKey: "NULM_SMID_URBAN_POOR"
         },
-        { jsonPath: "NULMSMIDRequest.isUrbanPoor" }
+        { jsonPath: "NULMSMIDRequest.isUrbanPoor" ,callBack: checkValueForNA }
       ),
       bplNo: getLabelWithValue(
         {
@@ -92,28 +92,28 @@ export const getSMIDDetailsView = (isReview = true) => {
           labelName: "PWD",
           labelKey: "NULM_SMID_PWD"
         },
-        { jsonPath: "NULMSMIDRequest.isPwd" }
+        { jsonPath: "NULMSMIDRequest.isPwd" ,callBack: checkValueForNA }
       ),
       name: getLabelWithValue(
         {
           labelName: "Name of Applicant",
           labelKey: "NULM_SMID_NAME_OF_APPLICANT"
         },
-        { jsonPath: "NULMSMIDRequest.name" }
+        { jsonPath: "NULMSMIDRequest.name" ,callBack: checkValueForNA }
       ),
       fatherOrHusbandName: getLabelWithValue(
         {
           labelName: "Father/Spouse Name",
           labelKey: "NULM_SMID_FATHER/SPOUSE_NAME"
         },
-        { jsonPath: "NULMSMIDRequest.fatherOrHusbandName" }
+        { jsonPath: "NULMSMIDRequest.fatherOrHusbandName" ,callBack: checkValueForNA }
       ),
       qualification: getLabelWithValue(
         {
           labelName: "Qualification",
           labelKey: "NULM_SEP_QUALIFACATION"
         },
-        { jsonPath: "NULMSMIDRequest.qualification" }
+        { jsonPath: "NULMSMIDRequest.qualification" ,callBack: checkValueForNA }
       ),
       dob: getLabelWithValue(
         {
@@ -146,7 +146,7 @@ export const getSMIDDetailsView = (isReview = true) => {
           labelName: "Mobile Number",
           labelKey: "NULM_SMID_MOBILE_NUMBER"
         },
-        { jsonPath: "NULMSMIDRequest.mobileNo" }
+        { jsonPath: "NULMSMIDRequest.mobileNo" ,callBack: checkValueForNA }
       ),
       phoneNo: getLabelWithValue(
         {
@@ -161,56 +161,56 @@ export const getSMIDDetailsView = (isReview = true) => {
           labelName: "Mother Name",
           labelKey: "NULM_SMID_MOTHER_NAME"
         },
-        { jsonPath: "NULMSMIDRequest.motherName" }
+        { jsonPath: "NULMSMIDRequest.motherName" ,callBack: checkValueForNA }
       ),
       address: getLabelWithValue(
         {
           labelName: "Addrss",
           labelKey: "NULM_SMID_ADDRESS"
         },
-        { jsonPath: "NULMSMIDRequest.address" }
+        { jsonPath: "NULMSMIDRequest.address" ,callBack: checkValueForNA }
       ),
       gender: getLabelWithValue(
         {
           labelName: "Gender",
           labelKey: "NULM_SMID_GENDER"
         },
-        { jsonPath: "NULMSMIDRequest.gender" }
+        { jsonPath: "NULMSMIDRequest.gender" ,callBack: checkValueForNA }
       ),
       isMinority: getLabelWithValue(
         {
           labelName: "Minority",
           labelKey: "NULM_SEP_MINORITY"
         },
-        { jsonPath: "NULMSMIDRequest.isMinority" }
+        { jsonPath: "NULMSMIDRequest.isMinority" ,callBack: checkValueForNA }
       ),
       minority: getLabelWithValue(
         {
           labelName: "Minority",
           labelKey: "NULM_SEP_MINORITY_RELIGION"
         },
-        { jsonPath: "NULMSMIDRequest.minority" }
+        { jsonPath: "NULMSMIDRequest.minority" ,callBack: checkValueForNA }
       ),
       wardNo: getLabelWithValue(
         {
           labelName: "Ward No",
           labelKey: "NULM_SMID_WARD_NO"
         },
-        { jsonPath: "NULMSMIDRequest.wardNo" }
+        { jsonPath: "NULMSMIDRequest.wardNo" ,callBack: checkValueForNA }
       ),
       nameAsPerAdhar: getLabelWithValue(
         {
           labelName: "Name as per Adhar",
           labelKey: "NULM_SMID_NAME_AS_PER_ADHAR"
         },
-        { jsonPath: "NULMSMIDRequest.nameAsPerAdhar" } 
+        { jsonPath: "NULMSMIDRequest.nameAsPerAdhar" ,callBack: checkValueForNA } 
       ),
       adharNo: getLabelWithValue(
         {
           labelName: "Adhar Number",
           labelKey: "NULM_SMID_ADHAR_NUMBER"
         },
-        { jsonPath: "NULMSMIDRequest.adharNo" }
+        { jsonPath: "NULMSMIDRequest.adharNo"  ,callBack: checkValueForNA}
       ),
       // adharAcknowledgementNo: getLabelWithValue(
       //   {
@@ -225,7 +225,7 @@ export const getSMIDDetailsView = (isReview = true) => {
           labelName: "Insurance",
           labelKey: "NULM_SMID_INSURANCE"
         },
-        { jsonPath: "NULMSMIDRequest.isInsurance" }
+        { jsonPath: "NULMSMIDRequest.isInsurance" ,callBack: checkValueForNA }
       ),
       insuranceThrough: getLabelWithValue(
         {
@@ -240,14 +240,14 @@ export const getSMIDDetailsView = (isReview = true) => {
           labelName: "Street vendor",
           labelKey: "NULM_SMID_STREET_VENDOR"
         },
-        { jsonPath: "NULMSMIDRequest.isStreetVendor" }
+        { jsonPath: "NULMSMIDRequest.isStreetVendor" ,callBack: checkValueForNA }
       ),
       isHomeless: getLabelWithValue(
         {
           labelName: "Homeless",
           labelKey: "NULM_SMID_HOMELESS"
         },
-        { jsonPath: "NULMSMIDRequest.isHomeless" }
+        { jsonPath: "NULMSMIDRequest.isHomeless" ,callBack: checkValueForNA }
       ),
       RegistredCMC: getLabelWithValue(
         {

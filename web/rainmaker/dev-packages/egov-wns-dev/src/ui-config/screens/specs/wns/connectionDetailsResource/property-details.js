@@ -50,9 +50,22 @@ const propertyDetails = getCommonContainer({
       labelKey: "WS_PROPERTY_USAGE_TYPE_LABEL"
     },
     { jsonPath: "WaterConnection[0].property.usageCategory",
+    callBack: handleNA,
     localePrefix: {
       moduleName: "WS",
       masterName: "PROPUSGTYPE"
+    } 
+ }
+  ),
+  propertysubUsageType: getLabelWithValue(
+    {
+      labelKey: "WS_PROPERTY_SUB_USAGE_TYPE_LABEL"
+    },
+    { jsonPath: "WaterConnection[0].property.subusageCategory",
+    callBack: handleNA,
+    localePrefix: {
+      moduleName: "WS",
+      masterName: "PROPSUBUSGTYPE"
     }
  }
   ),
@@ -72,17 +85,79 @@ const propertyDetails = getCommonContainer({
     { jsonPath: "WaterConnection[0].property.noOfFloors",
     callBack: handleNA }
   ),
+  reviewCoveredArea: getLabelWithValue(
+    {
+      labelName: "Covered Area",
+      labelKey: "WS_PROP_DETAIL_BUILD_UP_AREA_LABEL_INPUT"
+    },
+    { jsonPath: "WaterConnection[0].property.superBuiltUpArea",
+    callBack: handleNA }
+  ),
 })
 
 // const locationOnMap = WaterConnection[0].property.address.locality.code + WaterConnection[0].property.address.locality.code
+// const getPropertyConnectionOtherDetails = {
+//   uiFramework: "custom-containers",
+//   componentPath: "MultiItem",
+//   props: {
+//     className: "common-div-css search-preview",
+//     scheama: getCommonGrayCard({
+//       div2: propertyConnectionDetailsHeader,
+//       getPropertyDetailsContainerdet: getCommonContainer(propertyConnectionDetails)
+//      // getPropertyDetailsContainerdet: renderService()
+//     }),
+//     items: [],
+//     hasAddItem: false,
+//     isReviewPage: true,
+//     sourceJsonPath: "Licenses[0].tradeLicenseDetail.tradeUnits",
+//     prefixSourceJsonPath:
+//       "children.cardContent.children.getPropertyDetailsContainer.children",
+//     afterPrefixJsonPath: "children.value.children.key"
+//   },
+//   type: "array"
+// };
+export const propertyConnectionDetailsHeader = getHeader({
+  labelKey: "WS_COMMON_CONNECTION_DETAILS"
+});
+ const propertyConnectionDetailsCon= getCommonContainer({
+
+  // reviewpipeSizeCon: getLabelWithValue(
+  //   {
+  //     labelName: "proposed Pipe Size",
+  //     labelKey: "WS_CONN_DETAIL_PIPE_SIZE"
+  //   },
+  //   {
+  //     jsonPath: "WaterConnection[0].proposedPipeSize",
+  //     callBack: handleNA,
+              
+  //   }
+  // ),
+
+  reviewwaterApplicationTypeCon: getLabelWithValue(
+    {
+      labelName: "water Application Type",
+      labelKey: "WATER_APPLICATION_TYPE"
+    },
+    { jsonPath: "WaterConnection[0].waterApplicationType",
+      callBack: handleNA,
+      // localePrefix: {
+      //   moduleName: "WS",
+      //   masterName: "PROPSUBUSGTYPE"
+      // }
+    }
+  ),
+ })
+  
+
+
 
 const propertyLocationDetails = getCommonContainer({
-  propertyId: getLabelWithValue(
-    {
-      labelKey: "WS_PROPERTY_ID_LABEL"
-    },
-    { jsonPath: "WaterConnection[0].property.propertyId" }
-  ),
+  // propertyId: getLabelWithValue(
+  //   {
+  //     labelKey: "WS_PROPERTY_ID_LABEL"
+  //   },
+  //   { jsonPath: "WaterConnection[0].property.propertyId" }
+  // ),
   city: getLabelWithValue(
     {
       labelKey: "WS_PROP_DETAIL_CITY"
@@ -195,6 +270,8 @@ export const getPropertyDetails = (isEditable = true) => {
 
     viewOne: properyDetailsHeader,
     viewTwo: propertyDetails,
+    viewConnectionH: propertyConnectionDetailsHeader,
+    viewConnectionDetailsCon:propertyConnectionDetailsCon,
     viewThree: propertyLocationDetailsHeader,
     viewFour: propertyLocationDetails
   });

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Tabs, Card, TextField, Icon, Button } from "components";
 import Label from "egov-ui-kit/utils/translationNode";
+import get from "lodash.get";
 import {
   createPACCApplication,
   updatePACCApplication,
@@ -14,7 +15,7 @@ import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import EditIcon from "@material-ui/icons/Edit";
 import "./index.css";
 import Footer from "../../../modules/footer";
-import PaymentReceiptDetail from "../PaymentReceiptDetail";
+
 import PaymentOptionDetails from "../PaymentOptionDetails";
 import PaymentDetails from "../PaymentDetails";
 // import DateVenueChangePayDetail from "../DateVenueChangePayDetail"
@@ -48,7 +49,12 @@ class SummaryDetails extends Component {
     SubmitDetails: false,
     justTry: "",
   };
-
+  hasWhiteSpace(s) {
+    let check;
+    check = s.indexOf(' ') >= 0;
+    console.log("check---check",check)
+     return check
+  }
   componentDidMount = async () => {
     let fetchUrl = window.location.pathname;
     console.log(fetchUrl);
@@ -172,10 +178,9 @@ class SummaryDetails extends Component {
       NewTrxNo,
       NewddDate,
       pddIFSC,
-      pIFSC,
+      pIFSC,state,
     } = this.props;
     console.log("this.props---", this.props);
-
     let {
       acRoomId,
       nonAcRoomId,
@@ -195,74 +200,22 @@ class SummaryDetails extends Component {
       updateNumOfNonAcRoom,
     } = this.props;
     console.log("typesforDiscount--", typeof discountForRoom);
-
-    let BothRoomSelect = [];
-    if (bothRoom == "Both") {
-      console.log("one");
-      BothRoomSelect = [
-        {
-          id: acRoomId,
-          roomApplicationNumber: AppNum,
-          action: "OFFLINE_APPLY",
-          remarks: "string",
-          roomBusinessService: "BKROOM",
-          discount: discountForRoom,
-          totalNoOfRooms: updateNumOfAcRoom,
-          typeOfRoom: "AC", //updateNumOfAcRoom,updateNumOfNonAcRoom
-          fromDate: roomFromDate,
-          toDate: roomToDate,
-        },
-        {
-          id: nonAcRoomId,
-          roomApplicationNumber: AppNum,
-          action: "OFFLINE_APPLY",
-          remarks: "string",
-          discount: discountForRoom,
-          roomBusinessService: "BKROOM",
-          totalNoOfRooms: updateNumOfNonAcRoom,
-          typeOfRoom: "NON-AC",
-          fromDate: roomFromDate,
-          toDate: roomToDate,
-        },
-      ];
-    } else if (bothRoom == "AC") {
-      console.log("two");
-      BothRoomSelect = [
-        {
-          id: acRoomId,
-          roomApplicationNumber: AppNum,
-          action: "OFFLINE_APPLY",
-          remarks: "string",
-          roomBusinessService: "BKROOM",
-          discount: discountForRoom,
-          totalNoOfRooms: updateNumOfAcRoom,
-          typeOfRoom: typeOfRoom,
-          fromDate: roomFromDate,
-          toDate: roomToDate,
-        },
-      ];
-    } else if (bothRoom == "NON-AC") {
-      console.log("three");
-      BothRoomSelect = [
-        {
-          id: nonAcRoomId,
-          roomApplicationNumber: AppNum,
-          action: "OFFLINE_APPLY",
-          remarks: "string",
-          roomBusinessService: "BKROOM",
-          discount: discountForRoom,
-          totalNoOfRooms: updateNumOfNonAcRoom,
-          typeOfRoom: typeOfRoom,
-          fromDate: roomFromDate,
-          toDate: roomToDate,
-        },
-      ];
-    }
-    console.log("BothRoomSelect--success--", BothRoomSelect);
-
-    let ppMode = paymentMode && paymentMode ? paymentMode : " ";
+let ppMode = paymentMode && paymentMode ? paymentMode : " ";
+ let current_datetime = new Date()
+let formatted_date = current_datetime.getDate() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getFullYear()
+let lastModifiedDate;   
+let paymentDate;
+let paymentCollectionType = ppMode;
+let chequeNumber;
+let ifscCode
+let bankBranch
+let bankName
+let cardNumber
+let transactionNumber
     let PaymentReqBody;
     if (ppMode == "Cash") {
+      lastModifiedDate = formatted_date
+      paymentDate = formatted_date
       PaymentReqBody = {
         Payment: {
           paymentDetails: [
@@ -284,249 +237,482 @@ class SummaryDetails extends Component {
       };
     }
     if (ppMode == "Cheque") {
-      PaymentReqBody = {
-        Payment: {
-          paymentDetails: [
-            {
-              businessService: "BKROOM",
-              billId: billId,
-              totalDue: TotalAmount,
-              totalAmountPaid: TotalAmount,
-            },
-          ],
-          tenantId: userInfo.tenantId,
-          totalDue: TotalAmount,
-          paymentMode: ppMode,
-          paidBy: ppaidBy,
-          mobileNumber: ApplicantMobNum,
-          payerName: ApplicantName,
-          transactionNumber: pChequeNo,
-          instrumentNumber: pChequeNo,
-          instrumentDate: ChnChqDate,
-          totalAmountPaid: TotalAmount,
-        },
-      };
+      if(pChequeNo !== " " && pChequeNo !== null && pChequeNo !== undefined && 
+      ChnChqDate  !== "" && ChnChqDate  !== undefined && ChnChqDate  !== ""  && 
+      this.state.ChequeNo !== "" && this.state.ChequeDate !== "" && this.state.IFSC !== "" && this.props.BranchName !== "NotFound" &&
+      this.props.BankName !== "NotFound"){
+
+if(ChnChqDate <= this.props.longtodayDate){
+  chequeNumber = pChequeNo
+  lastModifiedDate = formatted_date
+  paymentDate = this.props.NewChequeDate
+  bankName = this.props.BankName.name
+  bankBranch = this.props.BranchName.name
+  ifscCode = pIFSC
+        PaymentReqBody = {
+          Payment: {
+            paymentDetails: [
+              {
+                businessService: "BKROOM",
+                billId: billId,
+                totalDue: TotalAmount,
+                totalAmountPaid: TotalAmount,
+              },
+            ],
+            tenantId: userInfo.tenantId,
+            totalDue: TotalAmount,
+            paymentMode: ppMode,
+            paidBy: ppaidBy,
+            mobileNumber: ApplicantMobNum,
+            payerName: ApplicantName,
+            transactionNumber: pChequeNo,
+            instrumentNumber: pChequeNo,
+            instrumentDate: ChnChqDate,
+            totalAmountPaid: TotalAmount,
+          },
+        };
+}
+else{
+  this.props.toggleSnackbarAndSetText(
+    true,
+    {
+      labelName: "Cheque/DD date can not be future Date",
+      labelKey: `BK_CHEQUE_DD_NOT_FUTURE_DATE`
+    },
+    "error"
+  );  
+}  
+}
+else{
+       
+  this.props.toggleSnackbarAndSetText(
+    true,
+    {
+      labelName: "All fields are mandatory",
+      labelKey: `BK_OFFLINE_PAYMENT_MANDATORY`
+    },
+    "error"
+  ); 
+ }     
     }
     if (ppMode == "DD") {
-      PaymentReqBody = {
-        Payment: {
-          paymentDetails: [
-            {
-              businessService: "BKROOM",
-              billId: billId,
+      if(newDDno !== " " && NewddDate !== " " && this.state.DDno !== "" &&   this.state.ddDate !== "" && this.state.ddIFSC !== "" && this.props.BranchName !== "NotFound" &&
+      this.props.BankName !== "NotFound"){
+        if(NewddDate <= this.props.longtodayDate){
+          lastModifiedDate = formatted_date
+          chequeNumber = newDDno
+          paymentDate = this.props.DdDate
+          bankName = this.props.BankName.name
+          bankBranch = this.props.BranchName.name
+          ifscCode = pIFSC
+          PaymentReqBody = {
+            Payment: {
+              paymentDetails: [
+                {
+                  businessService: "BKROOM",
+                  billId: billId,
+                  totalDue: TotalAmount,
+                  totalAmountPaid: TotalAmount,
+                },
+              ],
+              tenantId: userInfo.tenantId,
               totalDue: TotalAmount,
+              paymentMode: ppMode,
+              paidBy: ppaidBy,
+              mobileNumber: ApplicantMobNum,
+              payerName: ApplicantName,
+              transactionNumber: newDDno,
+              instrumentNumber: newDDno,
+              instrumentDate: NewddDate,
               totalAmountPaid: TotalAmount,
             },
-          ],
-          tenantId: userInfo.tenantId,
-          totalDue: TotalAmount,
-          paymentMode: ppMode,
-          paidBy: ppaidBy,
-          mobileNumber: ApplicantMobNum,
-          payerName: ApplicantName,
-          transactionNumber: newDDno,
-          instrumentNumber: newDDno,
-          instrumentDate: NewddDate,
-          totalAmountPaid: TotalAmount,
-        },
-      };
+          };
+        }
+else{
+  this.props.toggleSnackbarAndSetText(
+    true,
+    {
+      labelName: "Cheque/DD date can not be future Date",
+      labelKey: `BK_CHEQUE_DD_NOT_FUTURE_DATE`
+    },
+    "error"
+  );  
+}  
+      }
+      else{
+        this.props.toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "All fields are mandatory",
+            labelKey: `BK_OFFLINE_PAYMENT_MANDATORY`
+          },
+          "error"
+        ); 
+       }
     }
     if (ppMode == "Card") {
-      PaymentReqBody = {
-        Payment: {
-          paymentDetails: [
+      let checkwhiteSpace = this.hasWhiteSpace(this.state.last4Digits)
+      console.log("checkwhiteSpace",checkwhiteSpace)
+      console.log("card--state-number",this.state.last4Digits)
+      console.log("this.state.repeatTrxNo--card",this.state.repeatTrxNo)
+      console.log("this.state.TrxNo--card",this.state.TrxNo)
+      if(NewTrxNo !== " " && this.state.TrxNo !== ""){
+        if(checkwhiteSpace == true || this.state.last4Digits.length > 4 || this.state.last4Digits.length < 4 || this.state.repeatTrxNo !== this.state.TrxNo) {
+          console.log("checkwhiteSpace000000",checkwhiteSpace)
+          console.log("card--state-number---if--condititon",this.state.last4Digits)
+        console.log("this.state.repeatTrxNo--card---0000",this.state.repeatTrxNo)
+        console.log("this.state.TrxNo--card---000",this.state.TrxNo)
+          this.props.toggleSnackbarAndSetText(
+            true,
             {
-              businessService: "BKROOM",
-              billId: billId,
+              labelName: "Please fill all fields properly",
+              labelKey: `Please fill all fields properly`
+            },
+            "error"
+          ); 
+        }
+        else{
+          lastModifiedDate = formatted_date
+          paymentDate = formatted_date
+          cardNumber = this.state.last4Digits
+          transactionNumber = this.state.PaymentReceiptNumber
+          PaymentReqBody = {
+            Payment: {
+              paymentDetails: [
+                {
+                  businessService: "BKROOM",
+                  billId: billId,
+                  totalDue: TotalAmount,
+                  totalAmountPaid: TotalAmount,
+                },
+              ],
+              tenantId: userInfo.tenantId,
               totalDue: TotalAmount,
+              paymentMode: ppMode,
+              paidBy: ppaidBy,
+              mobileNumber: ApplicantMobNum,
+              payerName: ApplicantName,
+              transactionNumber: NewTrxNo,
+              instrumentNumber: NewTrxNo,
               totalAmountPaid: TotalAmount,
             },
-          ],
-          tenantId: userInfo.tenantId,
-          totalDue: TotalAmount,
-          paymentMode: ppMode,
-          paidBy: ppaidBy,
-          mobileNumber: ApplicantMobNum,
-          payerName: ApplicantName,
-          transactionNumber: NewTrxNo,
-          instrumentNumber: NewTrxNo,
-          totalAmountPaid: TotalAmount,
-        },
-      };
+          };
+        }
+      }
+      else if(checkwhiteSpace == true || this.state.last4Digits.length > 4 || this.state.last4Digits < 4 || this.state.repeatTrxNo !== this.state.TrxNo) {
+        console.log("checkwhiteSpace000000",checkwhiteSpace)
+        console.log("card--state-number---if--condititon",this.state.last4Digits)
+      console.log("this.state.repeatTrxNo--card---0000",this.state.repeatTrxNo)
+      console.log("this.state.TrxNo--card---000",this.state.TrxNo)
+        this.props.toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "Please fill all fields properly",
+            labelKey: `Please fill all fields properly`
+          },
+          "error"
+        ); 
+      }
+      else{
+        this.props.toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "All fields are mandatory",
+            labelKey: `BK_OFFLINE_PAYMENT_MANDATORY`
+          },
+          "error"
+        ); 
+       }
     }
 
     console.log("PaymentReqBody--", PaymentReqBody);
 
-    let EmpPayment = await httpRequest(
-      "collection-services/payments/_create?",
-      "_search",
-      [],
-      PaymentReqBody
-    );
+try{
+  let EmpPayment = await httpRequest(
+    "collection-services/payments/_create?",
+    "_search",
+    [],
+    PaymentReqBody
+  );
 
-    console.log("EmpPayment--", EmpPayment);
+  console.log("EmpPayment--", EmpPayment);
+  
+  let BothRoomSelect = [];
+  if (bothRoom == "Both") {
+    console.log("one");
+    BothRoomSelect = [
+      {
+        id: acRoomId,
+        roomApplicationNumber: AppNum,
+        action: "OFFLINE_APPLY",
+        remarks: "string",
+        roomBusinessService: "BKROOM",
+        discount: discountForRoom,
+        totalNoOfRooms: updateNumOfAcRoom,
+        typeOfRoom: "AC", //updateNumOfAcRoom,updateNumOfNonAcRoom
+        fromDate: roomFromDate,
+        toDate: roomToDate,  
+        lastModifiedDate:lastModifiedDate,
+        paymentCollectionType : paymentCollectionType,
+        paidBy:ppaidBy,
+        payerName: ApplicantName,
+        payerMobileNumber:ApplicantMobNum,
+        paymentDate:paymentDate,
+        chequeNumber :chequeNumber,
+        ifscCode:ifscCode,
+        bankName:bankName,
+        bankBranch:bankBranch,
+        cardNumber : cardNumber,
+        transactionNumber:transactionNumber
+      },
+      {
+        id: nonAcRoomId,
+        roomApplicationNumber: AppNum,
+        action: "OFFLINE_APPLY",
+        remarks: "string",
+        discount: discountForRoom,
+        roomBusinessService: "BKROOM",
+        totalNoOfRooms: updateNumOfNonAcRoom,
+        typeOfRoom: "NON-AC",
+        fromDate: roomFromDate,
+        toDate: roomToDate,
+        lastModifiedDate:lastModifiedDate,
+        paymentCollectionType : paymentCollectionType,
+        paidBy:ppaidBy,
+        payerName: ApplicantName,
+        payerMobileNumber:ApplicantMobNum,
+        paymentDate:paymentDate,
+        chequeNumber :chequeNumber,
+        ifscCode:ifscCode,
+        bankName:bankName,
+        bankBranch:bankBranch,
+        cardNumber : cardNumber,
+        transactionNumber:transactionNumber
+      },
+    ];
+  } 
+  else if (bothRoom == "AC") {
+    console.log("two");
+    BothRoomSelect = [
+      {
+        id: acRoomId,
+        roomApplicationNumber: AppNum,
+        action: "OFFLINE_APPLY",
+        remarks: "string",
+        roomBusinessService: "BKROOM",
+        discount: discountForRoom,
+        totalNoOfRooms: updateNumOfAcRoom,
+        typeOfRoom: typeOfRoom,
+        fromDate: roomFromDate,
+        toDate: roomToDate,
+        lastModifiedDate:lastModifiedDate,
+        paymentCollectionType : paymentCollectionType,
+        paidBy:ppaidBy,
+        payerName: ApplicantName,
+        payerMobileNumber:ApplicantMobNum,
+        paymentDate:paymentDate,
+        chequeNumber :chequeNumber,
+        ifscCode:ifscCode,
+        bankName:bankName,
+        bankBranch:bankBranch,
+        cardNumber : cardNumber,
+        transactionNumber:transactionNumber
+      },
+    ];
+  } 
+  else if (bothRoom == "NON-AC") {
+    console.log("three");
+    BothRoomSelect = [
+      {
+        id: nonAcRoomId,
+        roomApplicationNumber: AppNum,
+        action: "OFFLINE_APPLY",
+        remarks: "string",
+        roomBusinessService: "BKROOM",
+        discount: discountForRoom,
+        totalNoOfRooms: updateNumOfNonAcRoom,
+        typeOfRoom: typeOfRoom,
+        fromDate: roomFromDate,
+        toDate: roomToDate,
+        lastModifiedDate:lastModifiedDate,
+        paymentCollectionType : paymentCollectionType,
+        paidBy:ppaidBy,
+        payerName: ApplicantName,
+        payerMobileNumber:ApplicantMobNum,
+        paymentDate:paymentDate,
+        chequeNumber :chequeNumber,
+        ifscCode:ifscCode,
+        bankName:bankName,
+        bankBranch:bankBranch,
+        cardNumber : cardNumber,
+        transactionNumber:transactionNumber
+      },
+    ];
+  }
+  console.log("BothRoomSelect--success--", BothRoomSelect);
 
+  if(EmpPayment && EmpPayment.Payments !== undefined && EmpPayment.Payments !== null && EmpPayment.Payments.length > 0){
+    prepareFinalObject("ResponseOfCashPayment", EmpPayment);
 
-    if(EmpPayment && EmpPayment.Payments !== undefined && EmpPayment.Payments !== null && EmpPayment.Payments.length > 0){
-        prepareFinalObject("ResponseOfCashPayment", EmpPayment);
+    let ReceiptNum =
+      EmpPayment && EmpPayment
+        ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+        : "notFound";
+    console.log("ReceiptNum--", ReceiptNum);
 
-        let ReceiptNum =
-          EmpPayment && EmpPayment
-            ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
-            : "notFound";
-        console.log("ReceiptNum--", ReceiptNum);
-    
-        prepareFinalObject("CollectionReceiptNum", ReceiptNum);
-    
-        let Booking = {
-            bkRemarks: null,
-            reInitiateStatus: false,
-            bkApplicationNumber:
-            DataForRoomBooking.bookingsModelList[0].bkApplicationNumber,
-            bkHouseNo: DataForRoomBooking.bookingsModelList[0].bkHouseNo,
-            bkAddress: null,
-            bkSector: DataForRoomBooking.bookingsModelList[0].bkSector,
-            bkVillCity: null,
-            bkAreaRequired: null,
-            bkDuration: "FULLDAY",
-            bkCategory: null,
-            bkEmail: DataForRoomBooking.bookingsModelList[0].bkEmail,
-            bkContactNo: null,
-            bkDocumentUploadedUrl: null,
-            bkDateCreated: DataForRoomBooking.bookingsModelList[0].bkDateCreated,
-            bkCreatedBy: null,
-            bkWfStatus: null,
-            bkAmount: null,
-            bkPaymentStatus: "SUCCESS",
-            bkBookingType: DataForRoomBooking.bookingsModelList[0].bkBookingType,
-            bkFromDate: DataForRoomBooking.bookingsModelList[0].bkFromDate,
-            bkToDate: DataForRoomBooking.bookingsModelList[0].bkToDate,
-            bkApplicantName: DataForRoomBooking.bookingsModelList[0].bkApplicantName,
-            bkBookingPurpose:
-              DataForRoomBooking.bookingsModelList[0].bkBookingPurpose,
-            bkVillage: null,
-            bkDimension: DataForRoomBooking.bookingsModelList[0].bkDimension,
-            bkLocation: DataForRoomBooking.bookingsModelList[0].bkLocation,
-            bkStartingDate: null,
-            bkEndingDate: null,
-            bkType: null,
-            bkResidenceProof: null, 
-            bkCleansingCharges:
-              DataForRoomBooking.bookingsModelList[0].bkCleansingCharges,
-            bkRent: DataForRoomBooking.bookingsModelList[0].bkRent,
-            bkSurchargeRent: DataForRoomBooking.bookingsModelList[0].bkSurchargeRent,
-            bkFacilitationCharges:
-              DataForRoomBooking.bookingsModelList[0].bkFacilitationCharges,
-            bkUtgst: DataForRoomBooking.bookingsModelList[0].bkUtgst,
-            bkCgst: DataForRoomBooking.bookingsModelList[0].bkCgst,
-            bkMobileNumber: DataForRoomBooking.bookingsModelList[0].bkMobileNumber,
-            bkCustomerGstNo: DataForRoomBooking.bookingsModelList[0].bkCustomerGstNo,
-            bkCurrentCharges: null,
-            bkLocationChangeAmount: null,
-            bkVenue: null,
-            bkDate: null,
-            bkFatherName: null,
-            bkBookingVenue: DataForRoomBooking.bookingsModelList[0].bkBookingVenue,
-            bkBookingDuration: null,
-            bkIdProof: null,
-            bkApplicantContact: null,
-            bkOpenSpaceLocation: null, 
-            bkLandmark: null,
-            bkRequirementArea: null,
-            bkLocationPictures: null,
-            bkParkOrCommunityCenter: null,
-            bkRefundAmount: DataForRoomBooking.bookingsModelList[0].bkRefundAmount,
-            bkBankAccountNumber:
-              DataForRoomBooking.bookingsModelList[0].bkBankAccountNumber,
-              "bkNomineeName":DataForRoomBooking.bookingsModelList[0].bkNomineeName,
-            bkBankName: DataForRoomBooking.bookingsModelList[0].bkBankName,
-            bkIfscCode: DataForRoomBooking.bookingsModelList[0].bkIfscCode,
-            bkAccountType: DataForRoomBooking.bookingsModelList[0].bkAccountType,
-            bkBankAccountHolder:
-              DataForRoomBooking.bookingsModelList[0].bkBankAccountHolder,
-            bkPropertyOwnerName: null,
-            bkCompleteAddress: null,
-            bkResidentialOrCommercial: null,
-            bkMaterialStorageArea: null,
-            bkPlotSketch: null,
-            bkApplicationStatus:
-              DataForRoomBooking.bookingsModelList[0].bkApplicationStatus,
-            bkTime: null,
-            bkStatusUpdateRequest: null,
-            bkStatus: null,
-            bkDriverName: null,
-            bkVehicleNumber: null,
-            bkEstimatedDeliveryTime: null,
-            bkActualDeliveryTime: null,
-            bkNormalWaterFailureRequest: null,
-            bkUpdateStatusOption: null,
-            bkAddSpecialRequestDetails: null,
-            bkBookingTime: null,
-            bkApprovedBy: null,
-            bkModuleType: null,
-            // "uuid": "5f09ffbe-db9f-41e8-a9b2-dda6515d9cc7",
-            tenantId: DataForRoomBooking.bookingsModelList[0].tenantId,
-            bkAction: DataForRoomBooking.bookingsModelList[0].bkAction,
-            bkConstructionType: null,
-            businessService: DataForRoomBooking.bookingsModelList[0].businessService,
-            bkApproverName: null,
-            assignee: null,
-            wfDocuments: null,
-            financialYear: "2020-2021",
-            financeBusinessService:
-              "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR",
-            // "roomBusinessService": "BKROOM",
-            roomsModel: BothRoomSelect,
-          };
+    prepareFinalObject("CollectionReceiptNum", ReceiptNum);
 
-          console.log("BookingOfPayPage",Booking)
+    let Booking = {
+        bkRemarks: null,
+        reInitiateStatus: false,
+        bkApplicationNumber:
+        DataForRoomBooking.bookingsModelList[0].bkApplicationNumber,
+        bkHouseNo: DataForRoomBooking.bookingsModelList[0].bkHouseNo,
+        bkAddress: null,
+        bkSector: DataForRoomBooking.bookingsModelList[0].bkSector,
+        bkVillCity: null,
+        bkAreaRequired: null,
+        bkDuration: "FULLDAY",
+        bkCategory: null,
+        bkEmail: DataForRoomBooking.bookingsModelList[0].bkEmail,
+        bkContactNo: null,
+        bkDocumentUploadedUrl: null,
+        bkDateCreated: DataForRoomBooking.bookingsModelList[0].bkDateCreated,
+        bkCreatedBy: null,
+        bkWfStatus: null,
+        bkAmount: null,
+        bkPaymentStatus: "SUCCESS",
+        bkBookingType: DataForRoomBooking.bookingsModelList[0].bkBookingType,
+        bkFromDate: DataForRoomBooking.bookingsModelList[0].bkFromDate,
+        bkToDate: DataForRoomBooking.bookingsModelList[0].bkToDate,
+        bkApplicantName: DataForRoomBooking.bookingsModelList[0].bkApplicantName,
+        bkBookingPurpose:
+          DataForRoomBooking.bookingsModelList[0].bkBookingPurpose,
+        bkVillage: null,
+        bkDimension: DataForRoomBooking.bookingsModelList[0].bkDimension,
+        bkLocation: DataForRoomBooking.bookingsModelList[0].bkLocation,
+        bkStartingDate: null,
+        bkEndingDate: null,
+        bkType: null,
+        bkResidenceProof: null, 
+        bkCleansingCharges:
+          DataForRoomBooking.bookingsModelList[0].bkCleansingCharges,
+        bkRent: DataForRoomBooking.bookingsModelList[0].bkRent,
+        bkSurchargeRent: DataForRoomBooking.bookingsModelList[0].bkSurchargeRent,
+        bkFacilitationCharges:
+          DataForRoomBooking.bookingsModelList[0].bkFacilitationCharges,
+        bkUtgst: DataForRoomBooking.bookingsModelList[0].bkUtgst,
+        bkCgst: DataForRoomBooking.bookingsModelList[0].bkCgst,
+        bkMobileNumber: DataForRoomBooking.bookingsModelList[0].bkMobileNumber,
+        bkCustomerGstNo: DataForRoomBooking.bookingsModelList[0].bkCustomerGstNo,
+        bkCurrentCharges: null,
+        bkLocationChangeAmount: null,
+        bkVenue: null,
+        bkDate: null,
+        bkFatherName: null,
+        bkBookingVenue: DataForRoomBooking.bookingsModelList[0].bkBookingVenue,
+        bkBookingDuration: null,
+        bkIdProof: null,
+        bkApplicantContact: null,
+        bkOpenSpaceLocation: null, 
+        bkLandmark: null,
+        bkRequirementArea: null,
+        bkLocationPictures: null,
+        bkParkOrCommunityCenter: null,
+        bkRefundAmount: DataForRoomBooking.bookingsModelList[0].bkRefundAmount,
+        bkBankAccountNumber:
+          DataForRoomBooking.bookingsModelList[0].bkBankAccountNumber,
+          "bkNomineeName":DataForRoomBooking.bookingsModelList[0].bkNomineeName,
+        bkBankName: DataForRoomBooking.bookingsModelList[0].bkBankName,
+        bkIfscCode: DataForRoomBooking.bookingsModelList[0].bkIfscCode,
+        bkAccountType: DataForRoomBooking.bookingsModelList[0].bkAccountType,
+        bkBankAccountHolder:
+          DataForRoomBooking.bookingsModelList[0].bkBankAccountHolder,
+        bkPropertyOwnerName: null,
+        bkCompleteAddress: null,
+        bkResidentialOrCommercial: null,
+        bkMaterialStorageArea: null,
+        bkPlotSketch: null,
+        bkApplicationStatus:
+          DataForRoomBooking.bookingsModelList[0].bkApplicationStatus,
+        bkTime: null,
+        bkStatusUpdateRequest: null,
+        bkStatus: null,
+        bkDriverName: null,
+        bkVehicleNumber: null,
+        bkEstimatedDeliveryTime: null,
+        bkActualDeliveryTime: null,
+        bkNormalWaterFailureRequest: null,
+        bkUpdateStatusOption: null,
+        bkAddSpecialRequestDetails: null,
+        bkBookingTime: null,
+        bkApprovedBy: null,
+        bkModuleType: null,
+        // "uuid": "5f09ffbe-db9f-41e8-a9b2-dda6515d9cc7",
+        tenantId: DataForRoomBooking.bookingsModelList[0].tenantId,
+        bkAction: DataForRoomBooking.bookingsModelList[0].bkAction,
+        bkConstructionType: null,
+        businessService: DataForRoomBooking.bookingsModelList[0].businessService,
+        bkApproverName: null,
+        assignee: null,
+        wfDocuments: null,
+        financialYear: "2020-2021",
+        financeBusinessService:
+          "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR",
+        // "roomBusinessService": "BKROOM",
+        roomsModel: BothRoomSelect,
+      };
 
-          let createAppData = {
-            applicationType: "PACC",
-            applicationStatus: null,
-            applicationId:
-              DataForRoomBooking.bookingsModelList[0].bkApplicationNumber,
-            tenantId: userInfo.tenantId,
-            Booking: Booking,
-          };
-      
-          console.log("createAppData--", createAppData);
-      
-          let payloadfund = await httpRequest(
-            "bookings/community/room/_update",
-            "_search",
-            [],
-            createAppData
-          );
-      
-          console.log("payloadfund--", payloadfund); 
-      
-          this.props.prepareFinalObject("ApplicationCreateForRoom", payloadfund);
+      console.log("BookingOfPayPage",Booking)
 
-if(payloadfund && payloadfund.status == "200"){
-    this.props.history.push(`/egov-services/Room-Payment-Success`);
-}
-else{
-    this.props.toggleSnackbarAndSetText(
-        true,
-        {
-          labelName: "Something went wrong.Try Again",
-          labelKey: `BK_CC_ROOM_GETTING_WRONG`
-        },
-        "error"
+      let createAppData = {
+        applicationType: "PACC",
+        applicationStatus: null,
+        applicationId:
+          DataForRoomBooking.bookingsModelList[0].bkApplicationNumber,
+        tenantId: userInfo.tenantId,
+        Booking: Booking,
+      };
+  
+      console.log("createAppData--", createAppData);
+
+      let payloadfund = await httpRequest(
+        "bookings/community/room/_update",
+        "_search",
+        [],
+        createAppData
       );
-}
- }
-     else{
-        this.props.toggleSnackbarAndSetText(
-            true,
-            {
-              labelName: "Something went wrong.Try Again",
-              labelKey: `BK_CC_ROOM_GETTING_WRONG`
-            },
-            "error"
-          );
-     }
+  
+      console.log("payloadfund--", payloadfund); 
+      this.props.prepareFinalObject("ApplicationCreateForRoom", payloadfund);
+
+      if(payloadfund && payloadfund.status == "200"){
+        this.props.history.push(`/egov-services/Room-Payment-Success`);
+    }
+    else{
+      this.props.toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "Something went wrong.Try Again",
+            labelKey: `BK_CC_ROOM_GETTING_WRONG`
+          },
+          "error"
+        );
+  }
+    }
+    else{
+      this.props.toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "Something went wrong.Try Again",
+            labelKey: `BK_CC_ROOM_GETTING_WRONG`
+          },
+          "error"
+        );
+  }
+    }catch(e){
+      console.log(e)
+    }
 };
 
   firstStep = (e) => {
@@ -684,14 +870,6 @@ Status={this.props.ApplicantAppStatus && this.props.ApplicantAppStatus}
                   ApplicantName && ApplicantName ? ApplicantName : "Notfound"
                 }
               />
-
-              <PaymentReceiptDetail
-                PaymentReceiptNumber={PaymentReceiptNumber}
-                handleChange={this.handleChange}
-                transactionDateChange={this.transactionDateChange}
-                transactionDate={transactionDate}
-              />
-
               {this.state.SubmitDetails == true ? (
                 <SubmitPaymentDetails
                   TotalAmount={TotalAmount}
@@ -835,12 +1013,6 @@ const mapStateToProps = (state) => {
     : "notFound";
   console.log("offlinePayment--", offlinePayment);
 
-
-//   let RoomBookingData = state.screenConfiguration.preparedFinalObject
-//   ? state.screenConfiguration.preparedFinalObject.RoomBookingData
-//   : "NA";
-// console.log("-RoomBookingData-", RoomBookingData);
-
   let RoomBookingData = state.screenConfiguration.preparedFinalObject
     ? state.screenConfiguration.preparedFinalObject.RoomBookingData
     : "NA";
@@ -963,7 +1135,78 @@ const mapStateToProps = (state) => {
 
   console.log("paymentMode--", paymentMode);
 
-  return {
+
+  let ChequeNo = state.screenConfiguration.preparedFinalObject.ChequeNo
+  ? state.screenConfiguration.preparedFinalObject.ChequeNo
+  : " ";
+
+let pChequeNo = ChequeNo && ChequeNo ? ChequeNo : " ";
+
+
+let NewChequeDate = state.screenConfiguration.preparedFinalObject.ChequeDate
+  ? state.screenConfiguration.preparedFinalObject.ChequeDate
+  : " ";
+
+let StrNewChequeDate =  NewChequeDate.toString();
+
+
+let changeDateNewChequeDate = Date.parse(StrNewChequeDate);
+
+let ChnChqDate = changeDateNewChequeDate && changeDateNewChequeDate
+
+let DDno = state.screenConfiguration.preparedFinalObject.DDno
+? state.screenConfiguration.preparedFinalObject.DDno
+: " ";
+
+let newDDno = DDno && DDno ? DDno : " ";
+
+
+let DdDate = state.screenConfiguration.preparedFinalObject.ChangeDdDate
+? state.screenConfiguration.preparedFinalObject.ChangeDdDate
+: " ";
+
+let strNewddDate = DdDate.toString();
+
+
+let changeNewddDate = Date.parse(strNewddDate);
+
+
+let NewddDate = changeNewddDate && changeNewddDate ? changeNewddDate : " ";
+
+
+let todayDate = new Date()
+
+
+let todaystrDate = todayDate.toString();
+
+
+let longtodayDate = Date.parse(todaystrDate);
+
+
+let TrxNo = state.screenConfiguration.preparedFinalObject.TrxNo
+? state.screenConfiguration.preparedFinalObject.TrxNo
+: " ";
+
+let NewTrxNo = TrxNo && TrxNo ? TrxNo : " ";
+
+
+let BankName = get(
+    state,
+    "screenConfiguration.preparedFinalObject.OfflineBank",
+    "NotFound"
+  );
+
+
+let BranchName = get(
+state,
+"screenConfiguration.preparedFinalObject.OfflineBranch",
+"NotFound"
+);
+
+
+  return {pChequeNo,NewChequeDate,ChnChqDate,
+    newDDno,DdDate,changeNewddDate,NewddDate,longtodayDate,
+    NewTrxNo,BankName,BranchName,
     typeOfRoom,
     totalRoom,
     GlobalNonAccRoomToBook,

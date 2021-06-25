@@ -128,7 +128,10 @@ PaymentDate : "",
 			transactionNumber : "",
 			stateCode :"" ,
 			placeOfService : "",
-			 mcGSTN : ""
+			 mcGSTN : "",
+			 pdfBankName : "",
+			 pdfCardNum : "",
+			 paymentCollectionType : ""
 		};
 	};
 
@@ -301,7 +304,9 @@ let CreatedDate;
 let ApplicationNumber;
 let discountForRoom;
 let RoomCreateTime;
-
+let pdfBankName;
+let pdfCardNum;
+let paymentCollectionType
 let particularRoomData;
 	
 for(let i = 0; i < AllValues[0].roomsModel.length; i++){
@@ -311,7 +316,9 @@ for(let i = 0; i < AllValues[0].roomsModel.length; i++){
 		CreatedDate = AllValues[0].roomsModel[i].createdDate
 		ApplicationNumber = AllValues[0].roomsModel[i].roomApplicationNumber
 		discountForRoom = AllValues[0].roomsModel[i].discount
-	
+		pdfBankName = AllValues[0].roomsModel[i].bankName
+		pdfCardNum = AllValues[0].roomsModel[i].cardNumber
+		paymentCollectionType = AllValues[0].roomsModel[i].paymentCollectionType
 	if(AllValues[0].roomsModel[i].typeOfRoom == "AC"){
 		totalACRoom = AllValues[0].roomsModel[i].totalNoOfRooms
 		RoomCreateTime = AllValues[0].roomsModel[i].roomCreatedDate
@@ -335,13 +342,17 @@ this.setState({
 	ToDate : ToDate,
 	CreatedDate : CreatedDate,
 	ApplicationNumber : ApplicationNumber,
-	discountForRoom :discountForRoom
+	discountForRoom :discountForRoom,
+	pdfBankName :pdfBankName,
+	pdfCardNum :pdfCardNum,
+	paymentCollectionType :paymentCollectionType
 })
 console.log("totalACRoom--",totalACRoom)
 console.log("totalNonAcRoom--",totalNonAcRoom)
 console.log("FromDate--",FromDate)
 console.log("ToDate--",ToDate)
 console.log("CreatedDate--",CreatedDate)
+console.log("ToclearDoubt",this.state)
 
 
 this.props.prepareFinalObject("DataOfRoomAndCommunity.MainData",AllValues[0])
@@ -576,7 +587,21 @@ else{
 		var date2 = new Date();
 
 		var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
- 	
+		let getCardNum
+		let getBankName
+		let displayBankName
+	if(this.state.paymentCollectionType == "CARD" || this.state.paymentCollectionType == "Card"){
+	displayBankName = `**** **** **** ${this.state.pdfCardNum}`
+	getCardNum = displayBankName
+  }else{
+	getCardNum = "Not Applicable"  
+  }
+  if(this.state.paymentCollectionType == "DD" || this.state.paymentCollectionType == "CHEQUE" || this.state.paymentCollectionType == "Cheque"){
+	getBankName = this.state.pdfBankName   
+  }else{
+	getBankName = "Not Applicable"
+  }
+
 
 		let BookingInfo = [
 			{
@@ -620,13 +645,13 @@ else{
 				"facilitationCharge": this.state.four,
 				"custGSTN": this.state.AllValues[0].bkCustomerGstNo,
 				"mcGSTN": this.state.mcGSTN,
-				"bankName": "",
+				"bankName": getBankName,
 				"transactionId":this.state.transactionNumber,
 				"totalPaymentInWords": this.NumInWords(
 					this.state.TotalPaidAmount
 				),
 				"discType": this.state.AllValues[0].bkPlotSketch,
-				"cardNumberLast4": "Not Applicable",
+				"cardNumberLast4": getCardNum,
                 "dateVenueChangeCharges": "Not Applicable"
 			},
 				"tenantInfo": {
@@ -939,6 +964,21 @@ console.log("numFromDate",numFromDate)
 let numToDate= Number(this.state.ToDate)
 console.log("numToDate",numToDate)
 
+let getCardNum
+let getBankName
+let displayBankName
+if(this.state.paymentCollectionType == "CARD" || this.state.paymentCollectionType == "Card"){
+displayBankName = `**** **** **** ${this.state.pdfCardNum}`
+getCardNum = displayBankName
+}else{
+getCardNum = "Not Applicable"  
+}
+if(this.state.paymentCollectionType == "DD" || this.state.paymentCollectionType == "CHEQUE"  || this.state.paymentCollectionType == "Cheque"){
+getBankName = this.state.pdfBankName
+}else{
+getBankName = "Not Applicable"
+}
+
 
 		let BookingInfo = [
 			{
@@ -995,13 +1035,13 @@ console.log("numToDate",numToDate)
 					"facilitationCharge": this.state.four,
 					"custGSTN": this.state.AllValues[0].bkCustomerGstNo,
 					"mcGSTN": this.state.mcGSTN,
-					"bankName": "",
+					"bankName": getBankName,
 					"transactionId":this.state.transactionNumber,
 					"totalPaymentInWords": this.NumInWords(
 						this.state.TotalPaidAmount
 					), 
 					"discType": this.state.AllValues[0].bkPlotSketch,
-					"cardNumberLast4": "Not Applicable",
+					"cardNumberLast4": getCardNum,
 					"dateVenueChangeCharges": "Not Applicable"
 				},
 				"tenantInfo": {

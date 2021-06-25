@@ -38,6 +38,27 @@ const formConfig = {
       errorStyle: { position: "absolute", bottom: -8, zIndex: 5 },
       errorText: "",
     },
+    mohalla: {
+      id: "mohalla",
+      required: true,
+      jsonPath: "services[0].addressDetail.mohalla",
+      floatingLabelText: "CS_CREATECOMPLAINT_MOHALLA",
+      hintText: "CS_CREATECOMPLAINT_MOHALLA_PLACEHOLDER",
+      errorMessage: "CS_ADDCOMPLAINT_COMPLAINT_TYPE_PLACEHOLDER",
+      boundary: true,
+      dropDownData: [],
+    /*  dataFetchConfig: {
+        url: "egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality",
+        action: "",
+        queryParams: [],
+        requestBody: {},
+        isDependent: true,
+        hierarchyType: "ADMIN",
+      },
+          */
+      errorStyle: { position: "absolute", bottom: -8, zIndex: 5 },
+      errorText: "",
+    },
     complaintType: {
       id: "complaint-type",
       jsonPath: "services[0].serviceCode",
@@ -51,7 +72,8 @@ const formConfig = {
       jsonPath: "services[0].description",
       floatingLabelText: "CS_ADDCOMPLAINT_COMPLAINT_DETAILS",
       hintText: "CS_ADDCOMPLAINT_COMPLAINT_DETAILS_PLACEHOLDER",
-      errorMessage: "Landmark should be less than 300 characters",
+      errorMessage: "CS_ADDCOMPLAINT_COMPLAINT_DETAILS_VALIDATION",
+      pattern:/^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,500}$/i, 
       maxlength: "500"
     },
     latitude: {
@@ -97,40 +119,24 @@ const formConfig = {
         ],
       }, */
     },
-    mohalla: {
-      id: "mohalla",
-      required: true,
-      jsonPath: "services[0].addressDetail.mohalla",
-      floatingLabelText: "CS_CREATECOMPLAINT_MOHALLA",
-      hintText: "CS_CREATECOMPLAINT_MOHALLA_PLACEHOLDER",
-      errorMessage: "CS_ADDCOMPLAINT_COMPLAINT_TYPE_PLACEHOLDER",
-      boundary: true,
-      dropDownData: [],
-    /*  dataFetchConfig: {
-        url: "egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality",
-        action: "",
-        queryParams: [],
-        requestBody: {},
-        isDependent: true,
-        hierarchyType: "ADMIN",
-      },
-          */
-      errorStyle: { position: "absolute", bottom: -8, zIndex: 5 },
-      errorText: "",
-    },
+  
     houseNo: {
       id: "houseNo",
       jsonPath: "services[0].addressDetail.houseNoAndStreetName",
       floatingLabelText: "CS_ADDCOMPLAINT_HOUSE_NO",
       hintText: "CS_ADDCOMPLAINT_HOUSE_NO_PLACEHOLDER",
-      errorMessage: "PT_HOUSE_NO_ERROR_MESSAGE",
+      errorMessage: "CS_HOUSE_NO_ERROR_MESSAGE_VALIDATION",
+      //errorMessage: "CS_ADDCOMPLAINT_COMPLAINT_DETAILS_VALIDATION",
+      pattern:/^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,100}$/i, 
     },
     landmark: {
       id: "landmark",
       jsonPath: "services[0].addressDetail.landmark",
       floatingLabelText: "CS_ADDCOMPLAINT_LANDMARK",
       hintText: "CS_ADDCOMPLAINT_LANDMARK_PLACEHOLDER",
-      errorMessage: "PT_LANDMARK_ERROR_MESSAGE",
+      errorMessage: "CS_ADDCOMPLAINT_LANDMARK_VALIDATION",
+     // errorMessage: "CS_ADDCOMPLAINT_COMPLAINT_DETAILS_VALIDATION",
+      pattern:/^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,100}$/i, 
     },
     tenantId: {
       id: "add-complaint-tenantid",

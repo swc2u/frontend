@@ -18,7 +18,8 @@ import {
   localStorageGet,
 } from "egov-ui-kit/utils/localStorageUtils";
 import React from 'react';
-
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+const type=getQueryArg(window.location.href,"type")
 export const getTextToLocalMapping = memoize((label) => _getTextToLocalMapping(label));
 
 export const searchApiCall = async (state, dispatch, queryObject = [], offset, limit = 100, hideTable = true) => {
@@ -112,6 +113,9 @@ export const searchApiCall = async (state, dispatch, queryObject = [], offset, l
     }
 
     const response = await getSearchResults(queryObject);
+    if(!!response && !!response.Properties &&!!response.Properties.length>0 && response.Properties[0].state !=="ES_PM_EB_APPROVED" && response.Properties[0].propertyMasterOrAllotmentOfSite==="PROPERTY_MASTER"&&response.Properties[0].propertyDetails.branchType==="ESTATE_BRANCH"&&type==="payment"){
+      response.Properties=[]
+    }
     try {
       const length = response.Properties.length
       dispatch(

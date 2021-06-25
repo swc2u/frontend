@@ -44,7 +44,7 @@ console.log(roles);
 let findItem;
 switch(branchType) {
   case "ESTATE_BRANCH":
-    findItem = roles.find(item => item.code === "ES_EB_SECTION_OFFICER");
+    findItem = roles.find(item => item.code === "ES_EB_DISPATCH_OFFICER");
     break;
   case "BUILDING_BRANCH":
     findItem = roles.find(item => item.code === "ES_BB_DISPATCH_OFFICER");
@@ -116,7 +116,7 @@ const estateSearchAndResult = {
     let wkfConstant;
     switch(branchType) {
       case "ESTATE_BRANCH":
-        wkfConstant = WF_ALLOTMENT_OF_SITE;
+        wkfConstant = "ES-EB-AllotmentOfSite,ES-EB-PropertyMaster";
         break;
       case "BUILDING_BRANCH":
         wkfConstant = WF_BB_PROPERTY_MASTER;

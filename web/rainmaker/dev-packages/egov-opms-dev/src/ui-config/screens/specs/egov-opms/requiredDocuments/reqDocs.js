@@ -138,44 +138,68 @@ const generateDocument = item => {
 };
 
 
-const setvalueCancel = async (state, dispatch) => {
+const setvalueCancel = async (state, dispatch,type) => {
+  let pagename = "petnoc_summary";
 
+  if(type ==="SELLMEATNOC")
+  {
+    pagename = "sellmeatnoc_summary"
+  
+  }
+  else if(type ==="PETNOC")
+  {
+    pagename = "petnoc_summary"
+  
+  }
 
   dispatch(
     handleField(
-      "petnoc_summary",
+      //"petnoc_summary",
+      pagename,
       "components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton1",
       "props.checked",
       false
     )
   );
   localStorageSet("undertaking", "")
-  showHideAdhocPopups(state, dispatch, "petnoc_summary")
+  //showHideAdhocPopups(state, dispatch, "petnoc_summary")
+  showHideAdhocPopups(state, dispatch, pagename)
 
 
 
 }
 
 
-const setvalue = async (state, dispatch) => {
+const setvalue = async (state, dispatch,type) => {
+let pagename = "petnoc_summary";
 
+if(type ==="SELLMEATNOC")
+{
+  pagename = "sellmeatnoc_summary"
+
+}
+else if(type ==="PETNOC")
+{
+  pagename = "petnoc_summary"
+
+}
 
   dispatch(
     handleField(
-      "petnoc_summary",
+      pagename,
       "components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton1",
       "props.checked",
       true
     )
   );
   localStorageSet("undertaking", "accept")
-  showHideAdhocPopups(state, dispatch, "petnoc_summary")
+  showHideAdhocPopups(state, dispatch, pagename)
 
 
 
 }
 
-export const getRequiredDocuments = () => {
+export const getRequiredDocuments = (type) => {
   return getCommonContainer(
     {
       div2: {
@@ -311,7 +335,7 @@ export const getRequiredDocuments = () => {
         onClickDefination: {
           action: "condition",
           callBack: (state, dispatch) => {
-            setvalue(state, dispatch);
+            setvalue(state, dispatch,type);
 
           }
         }
@@ -343,7 +367,7 @@ export const getRequiredDocuments = () => {
         onClickDefination: {
           action: "condition",
           callBack: (state, dispatch) => {
-            setvalueCancel(state, dispatch);
+            setvalueCancel(state, dispatch,type);
 
           }
         }

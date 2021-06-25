@@ -31,8 +31,6 @@ stateCode :"" ,
 			 mcGSTN : ""
   }  
   }
-
-
   NumInWords = (number) => {
 		const first = [
 			"",
@@ -99,8 +97,6 @@ stateCode :"" ,
 		}
 		return word + "Rupees Only";
 	};
-
-
   Submit = async () => {
 
 	this.props.history.push(`/egov-services/all-applications`);
@@ -215,11 +211,6 @@ stateCode :"" ,
 //             this.props.history.push(`/egov-services/create-success-pcc`);
 //         }
   };
-//   componentDidMount = async () => {   
-
-
-//   }
-
 componentDidMount = async () => {  
     let {userInfo,fetchDataAfterPayment} = this.props
       let mdmsBody = {
@@ -312,8 +303,6 @@ mcGSTN : pdfDetails[0].mcGSTN
     
     
       }
-
-
  downloadPermissionLetter = async (e) => {
 		console.log("comeInAnotherFunction")
 		const { downloadPaccPermissionLetter, userInfo,createPACCApplicationData,documentMap,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE} = this.props;
@@ -322,8 +311,8 @@ mcGSTN : pdfDetails[0].mcGSTN
 		console.log("applicationDetails--",applicationDetails)
 	
 		let offlineCardNum;
-		
-		if(this.props.offlinePayementMode == "CARD"){
+		let createdCardNum;
+		if(this.props.offlinePayementMode == "CARD" || this.props.offlinePayementMode == "Card"){
 			let complaintCountRequest = {
 				applicationNumber: applicationDetails.bkApplicationNumber,
 				uuid: userInfo.uuid,
@@ -339,15 +328,17 @@ console.log("RequestBodyForPL",complaintCountRequest)
 				"bookings/api/employee/_search",
 				"_search",
 				[],
-				complaintCountRequest
+				complaintCountRequest 
 			  );
 			  
 			  console.log("dataforSectorAndCategoryforPL",dataforSectorAndCategory)
 	
-			  offlineCardNum =
-			  dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-				? dataforSectorAndCategory.bookingsModelList[0].cardNumber
-				: "NA";		  
+			  createdCardNum = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+			  ? dataforSectorAndCategory.bookingsModelList[0].cardNumber
+			  : "NA";		  
+
+			  offlineCardNum = `**** **** **** ${createdCardNum}`
+			  
 	console.log("CardNumInResponse",offlineCardNum)
 				
 		}
@@ -523,14 +514,41 @@ console.log("RequestBodyForPL",complaintCountRequest)
 		}
 	
 	  }
-
-
 	downloadPaymentReceiptBody = async (e) => {
 		const { downloadEsamparkApp, userInfo,createPACCApplicationData,documentMap,downloadEsampPaymentReceipt,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE,amountToDisplay} = this.props;
 		console.log("propsInPaymentSuccess--",this.props)
 let offlineCardNum;
+let createCardNum;
+let pdfBankName;
 		let applicationDetails = createPACCApplicationData ? createPACCApplicationData : 'dataNotFound';
 		console.log("applicationDetails--",applicationDetails)
+
+		if(this.props.offlinePayementMode == "DD" || this.props.offlinePayementMode == "CHEQUE"){
+			let complaintCountRequest = {
+				applicationNumber: applicationDetails.bkApplicationNumber,
+				uuid: userInfo.uuid,
+				applicationStatus: "",
+				mobileNumber: "",
+				bookingType: "",
+				tenantId: userInfo.tenantId,
+			  };
+		  console.log("34567899871DD&&CHEQUE",complaintCountRequest)
+			  let dataforSectorAndCategory = await httpRequest(
+				"bookings/api/employee/_search",
+				"_search",
+				[],
+				complaintCountRequest
+			  );
+			  console.log("ReceiptOfRequestBody",dataforSectorAndCategory)
+			  pdfBankName = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+			  ? dataforSectorAndCategory.bookingsModelList[0].bankName
+			  : "NA";		    
+	console.log("pdfBankName",pdfBankName)
+				
+		}
+       else{
+		pdfBankName = "Not Applicable"
+       } 
 
 		if(this.props.offlinePayementMode == "CARD"){
 			let complaintCountRequest = {
@@ -549,11 +567,11 @@ let offlineCardNum;
 				complaintCountRequest
 			  );
 			  console.log("ReceiptOfRequestBody",dataforSectorAndCategory)
-	
-			  offlineCardNum =
-			  dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-				? dataforSectorAndCategory.bookingsModelList[0].cardNumber
-				: "NA";		  
+			  createCardNum = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+			  ? dataforSectorAndCategory.bookingsModelList[0].cardNumber
+			  : "NA";		  
+			  offlineCardNum = `**** **** **** ${createCardNum}`
+			  
 	console.log("CardNumForReceipt",offlineCardNum)
 				
 		}
@@ -663,7 +681,7 @@ let offlineCardNum;
 				  "totalPaymentInWords": this.NumInWords(
 					NumAmount
 				  ),  //offlineTransactionDate,,
-				  "bankName":"",
+				  "bankName":pdfBankName,
 				  "cardNumberLast4": offlineCardNum,
 				   "dateVenueChangeCharges": this.props.DATEVENUECHARGE == 0 ?"Not Applicable":this.props.DATEVENUECHARGE,
 			  },
@@ -841,40 +859,17 @@ let venueType = vanueData ? vanueData.venueType: "";
 
 let bokingType = bookingData ? bookingData.bkBookingVenue : ""
 
-//createAppData
-
 let createAppData = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.createAppData:""
-
-
-//ResponseOfCashPayment
 
 let offlinePayment = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment:"notFound"
 
+let location = get(
+    state,
+    "state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation",
+    "NotFound"
+);
 
-//transactionNum
-// let offlineTransactionNum = offlinePayment ? offlinePayment.Payments[0].transactionNumber : "NotFound"
-// console.log("offlineTransactionNum--",offlineTransactionNum)  
-
-//transactionDate
-// let offlineTransactionDate = offlinePayment ? offlinePayment.Payments[0].transactionDate : "NotFound"
-// console.log("offlineTransactionDate--",offlineTransactionDate) 
-
-//paymentMode
-// let offlinePayementMode = offlinePayment ? offlinePayment.Payments[0].paymentMode : "NotFound"
-// console.log("offlinePayementMode--",offlinePayementMode)
-
-//screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation
-let location = state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation ? state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation : "notfound"
-
-
-//totalAmountPaid
 let totalAmountPaid = offlinePayment ? offlinePayment.Payments[0].paymentDetails[0].bill.totalAmount : "NotFound"
-
-
-//base charges
-//screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentDetails[0].totalAmountPaid
-
-// let totalAmount =  offlinePayment ? offlinePayment.Payments[0].paymentDetails[0].bill : "NotFound" // till here
 
 let totalAmount = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentDetails[0].totalAmountPaid
   
@@ -989,9 +984,6 @@ if(billAccountDetailsArray !== "NOt found Any Array"){
 }
 	}
 	}
-
-
-//surcharges
 let firstrent = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData: "";
 
 
@@ -1023,19 +1015,8 @@ let SecTimeSlotFromTime = ""
     
   
     SecTimeSlotToTime = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo || "notFound"
-    
-     //OFFLINE_APPLIED
-  
+      
      firstToTimeSlot = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTime || "notFound"
-    
-  
-  
-  //Booking.wholeDay
-  // let wholeDaySlot = state.screenConfiguration.preparedFinalObject.Booking.wholeDay && state.screenConfiguration.preparedFinalObject.Booking.wholeDay || "notFound"
-  // console.log("wholeDaySlot--",wholeDaySlot)
-  
-  // let firstTimeSlotValue = state.screenConfiguration.preparedFinalObject.Booking.timeslots !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] : "notFound"
-  // console.log("firstTimeSlotValue-",firstTimeSlotValue)
   
   firstTimeSlotValue = 
     state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
@@ -1053,9 +1034,6 @@ let SecTimeSlotFromTime = ""
   conJsonfirst= JSON.stringify(firstTimeSlotValue);
   
   }
-  // let SecondTimeSlotValue = state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] : "notFound"
-  // console.log("SecondTimeSlotValue-",SecondTimeSlotValue)
-  
    SecondTimeSlotValue = 
     state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
     (state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo !== undefined ? (state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] : "notFound") : "notFound") :

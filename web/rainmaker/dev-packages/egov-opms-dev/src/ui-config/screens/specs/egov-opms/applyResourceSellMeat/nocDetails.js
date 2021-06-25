@@ -30,7 +30,7 @@ export const nocDetails = getCommonCard({
         labelKey: "SELLMEAT_APPLICANT_NAME_PLACEHOLDER"
       },
       pattern: getOPMSPattern("petnocApplicantName"),
-      errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+      errorMessage: "ERR_NOC_SELLMEAT_APPLICANT_NAME_LABEL",
       required: true,      
       jsonPath:"SELLMEATNOC.applicantName"
     })
@@ -47,7 +47,7 @@ export const nocDetails = getCommonCard({
        },
        required:true,
        pattern:getOPMSPattern("petnocApplicantName"),
-       errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+       errorMessage:"ERR_NOC_SELLMEAT_FATHERHUSBANDNAME",
        jsonPath:"SELLMEATNOC.fatherHusbandName"
     })
   },
@@ -63,9 +63,51 @@ export const nocDetails = getCommonCard({
        },
        required:true,
        pattern:getOPMSPattern("DoorHouseNo"),
-       errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+       errorMessage:"ERR_NOC_SELLMEAT_HOUSENO",
        jsonPath:"SELLMEATNOC.houseNo"
     })
+  },
+  nocSought: {
+    uiFramework: "custom-containers-local",
+    moduleName: "egov-opms",
+    componentPath: "AutosuggestContainer",
+    sourceJsonPath: "applyScreenMdmsData.egpm.nocSought",
+    jsonPath: "SELLMEATNOC.nocSought",
+     required: true,
+    errorMessage:"ERR_NOC_SELLMEAT_NOCSOUGHT_LABEL",
+    gridDefination: {
+      xs: 12,
+      sm: 6,
+      md: 6
+    },
+    props: {
+      style: {
+        width: "100%",
+        cursor: "pointer"
+      },
+      className: "citizen-city-picker",
+      label: {
+        labelName: "nocSought",
+        labelKey: "SELLMEAT_NOCSOUGHT_LABEL_NOC"
+      },  
+      placeholder: {
+        labelName: "Select nocSought",
+        labelKey: "SELLMEAT_NOCSOUGHT_PLACEHOLDER"
+      },
+      sourceJsonPath: "applyScreenMdmsData.egpm.nocSought",
+      jsonPath: "SELLMEATNOC.nocSought",
+      errorMessage:"ERR_NOC_SELLMEAT_NOCSOUGHT_LABEL",
+      labelsFromLocalisation: false,
+      suggestions: [],
+      fullwidth: true,
+      required: true,
+      inputLabelProps: {
+        shrink: true
+      },
+      isMulti: true,
+      labelName: "name",
+      valueName: "name"
+    }
   },
   shopNumber:{
     ...getTextField({
@@ -79,7 +121,7 @@ export const nocDetails = getCommonCard({
        },
        required:true,
        pattern:getPattern("DoorHouseNo"),
-       errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+       errorMessage:"ERR_NOC_SELLMEAT_SHOPNO",
        jsonPath:"SELLMEATNOC.shopNumber"
     })
   },
@@ -93,9 +135,9 @@ export const nocDetails = getCommonCard({
           labelName:"Enter Ward Details",
           labelKey:"SELLMEAT_WARD_PLACEHOLDER"
        },
-       required:true,
+       required:false,
        pattern:getPattern("DoorHouseNo"),
-       errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+       errorMessage:"ERR_NOC_SELLMEAT_WARD",
        jsonPath:"SELLMEATNOC.ward"
     })
   },
@@ -109,9 +151,9 @@ export const nocDetails = getCommonCard({
           labelName:"Enter Division",
           labelKey:"SELLMEAT_DIVISION_PLACEHOLDER"
        },
-       required:true,
+       required:false,
        pattern:getPattern("DoorHouseNo"),
-       errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+       errorMessage:"ERR_SELLMEAT_DIVISION",
        jsonPath:"SELLMEATNOC.division"
     })
   },
@@ -129,7 +171,7 @@ export const nocDetails = getCommonCard({
       sourceJsonPath: "applyScreenMdmsData.egpm.sector",
       jsonPath: "SELLMEATNOC.sector",
       required: true,
-      errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
+      errorMessage:"ERR_SELLMEAT_SECTOR",
 
       props: {
         className: "applicant-details-error",
@@ -138,28 +180,29 @@ export const nocDetails = getCommonCard({
       },
     })
   },
-  nocSought: {
-    ...getSelectField({
-      label: {
-        labelName: "nocSought",
-        labelKey: "SELLMEAT_NOCSOUGHT_LABEL_NOC"
-      },
-      optionLabel: "name",
-      placeholder: {
-        labelName: "Select nocSought",
-        labelKey: "SELLMEAT_NOCSOUGHT_PLACEHOLDER"
-      },
-      sourceJsonPath: "applyScreenMdmsData.egpm.nocSought",
-      jsonPath: "SELLMEATNOC.nocSought",
-      required: true,
-      errorMessage:"ERR_DEFAULT_INPUT_FIELD_MSG",
-      props: {
-        className: "applicant-details-error",
-        // disabled: true,
-		required: true,
-      },
-    })
-  }
+  // nocSought: {
+  //   ...getSelectField({
+  //     label: {
+  //       labelName: "nocSought",
+  //       labelKey: "SELLMEAT_NOCSOUGHT_LABEL_NOC"
+  //     },
+  //     optionLabel: "name",
+  //     placeholder: {
+  //       labelName: "Select nocSought",
+  //       labelKey: "SELLMEAT_NOCSOUGHT_PLACEHOLDER"
+  //     },
+  //     sourceJsonPath: "applyScreenMdmsData.egpm.nocSought",
+  //     jsonPath: "SELLMEATNOC.nocSought",
+  //     required: true,
+  //     errorMessage:"ERR_NOC_SELLMEAT_NOCSOUGHT_LABEL",
+  //     props: {
+  //       className: "applicant-details-error",
+  //       // disabled: true,
+	// 	required: true,
+  //     },
+  //   })
+  //   },
+
   })
 });
 

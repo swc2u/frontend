@@ -14,7 +14,7 @@ const styles = {
 };
 
 function SampleDownload(props) {
-	return <div style={styles}><a href={ConditionsOfNOC} download='ConditionsOfNOC.pdf'style={{textDecoration: "underline", fontWeight: "100"}}> Conditions of NOC</a></div>;
+	return <div style={styles}><a href={ConditionsOfNOC} download='ConditionsOfNOC.pdf'style={{textDecoration: "underline", fontWeight: "100"}}> Conditions to Sell Meat NOC</a></div>;
 }
 
 export default SampleDownload;

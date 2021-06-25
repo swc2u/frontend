@@ -22,7 +22,7 @@ import ptRoutes from "pt-employee/Routes/pt-routes";
 import frameworkScreens from "./frameworkScreens";
 import bookingRoutes from "egov-services-emp/Routes/services-routes";
 import externalRoutes from "./exterenalURL";
-
+import HelpSupport from "modules/employee/HelpSupport";
 // import PTHome from "modules/employee/PropertyTax/PTHome";
 
 //Redirection Url
@@ -70,6 +70,12 @@ const routes = [
     component: Profile,
     needsAuthentication: true,
     options: { hideFooter: true, title: "CS_HOME_HEADER_PROFILE" },
+  },
+  {
+    path: "HelpSupport",
+    component: HelpSupport,
+    needsAuthentication: true,
+    options: { hideFooter: true, title: "CS_HEADER_HELP_SUPPORT" },
   },
   {
     path: "notifications",

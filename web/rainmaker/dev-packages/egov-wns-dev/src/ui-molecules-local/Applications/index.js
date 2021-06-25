@@ -21,7 +21,7 @@ const styles = {
 class Applications extends React.Component {
   getTaskDetails = data => {
     data.service = data.service.toUpperCase();
-    if(data.activityType){
+    if(data.service ==='WATER'){
       switch(data.activityType){
         case "NEW_WS_CONNECTION":  window.localStorage.setItem("wns_workflow","REGULARWSCONNECTION"); break;
         case "APPLY_FOR_TEMPORARY_CONNECTION":  window.localStorage.setItem("wns_workflow","TEMPORARY_WSCONNECTION"); break;
@@ -30,13 +30,24 @@ class Applications extends React.Component {
         case "PERMANENT_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTION"); break;        
         case "TEMPORARY_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_DISCONNECTION"); break;
         case "UPDATE_CONNECTION_HOLDER_INFO":  window.localStorage.setItem("wns_workflow","WS_RENAME"); break;
+        case "UPDATE_METER_INFO":  window.localStorage.setItem("wns_workflow","WS_METER_UPDATE"); break;
         case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_CONVERSION"); break;
         case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_REACTIVATE"); break;
         case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
         //case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
       }
 }
+else if(data.service ==='SEWERAGE'){
+  window.localStorage.setItem("wns_workflow","SW_SEWERAGE");
+
+}
+if (process.env.NODE_ENV === "production") {
     window.location.href = `/citizen/wns/search-preview?applicationNumber=${data.applicationNo}&history=${true}&tenantId=${data.property.tenantId}&service=${data.service}`
+}
+else{
+  window.location.href = `/wns/search-preview?applicationNumber=${data.applicationNo}&history=${true}&tenantId=${data.property.tenantId}&service=${data.service}`
+
+}
   }
 
   titleCasingStatus = (status) => {
@@ -99,9 +110,9 @@ class Applications extends React.Component {
                           />
                         </Grid>
                         <Grid item md={8} xs={6}>
-                          {item.property && item.property.owner&&
+                          {item.property && item.property.owners&&
                           <LabelContainer
-                          labelName={item.property.owners.map(owner =>owner.name).join(",")}
+                          labelName={item.property.owners.map(owner =>owner.name).join(", ")}
                           fontSize={14}
                           style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                         />

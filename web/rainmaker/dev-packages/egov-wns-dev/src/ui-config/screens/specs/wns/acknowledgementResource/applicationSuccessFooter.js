@@ -142,15 +142,15 @@ const handleAppDownloadAndPrint = (state, action) => {
   if (applicationNumberWater && applicationNumberSewerage) {
     WaterConnection[0].pdfDocuments = filteredDocs;
     SewerageConnection[0].pdfDocuments = filteredDocs;
-    downloadApp(WaterConnection, "application", action);
-    downloadApp(SewerageConnection, "application", action);
+    downloadApp(state,WaterConnection, "application", action);
+    downloadApp(state,SewerageConnection, "application", action);
   } else if (applicationNumber) {
     if (applicationNumber.includes("WS")) {
       WaterConnection[0].pdfDocuments = filteredDocs;
-      downloadApp(WaterConnection, "application", action);
+      downloadApp(state,WaterConnection, "application", action);
     } else if (applicationNumber.includes("SW")) {
       SewerageConnection[0].pdfDocuments = filteredDocs;
-      downloadApp(SewerageConnection, "application", action);
+      downloadApp(state,SewerageConnection, "application", action);
     }
   }
 }
@@ -183,7 +183,8 @@ export const DownloadAndPrint = (state,
       onClickDefination: {
         action: "condition",
         callBack: () => { handleAppDownloadAndPrint(state, "download") }
-      }
+      },
+      visible:true
     },
     printFormButton: {
       componentPath: "Button",
@@ -206,7 +207,8 @@ export const DownloadAndPrint = (state,
       onClickDefination: {
         action: "condition",
         callBack: () => { handleAppDownloadAndPrint(state, "print") }
-      }
+      },
+      visible:true
     }
   })
 

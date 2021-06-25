@@ -75,6 +75,7 @@ const commonBuildingData = buildingType => {
         },
         sourceJsonPath: "applyScreenMdmsData.egpm.typeOfAdvertisement",
         jsonPath: "ADVERTISEMENTNOC.typeOfAdvertisement",
+        errorMessage: "ERR_NOC_ADV_TYPE_OF_ADVERTISEMENT",
         required: true,
         setDataInField: true,
         labelsFromLocalisation: true,
@@ -190,6 +191,7 @@ const commonBuildingData = buildingType => {
         },
         sourceJsonPath: "applyScreenMdmsData.egpm.subTypeOfAdvertisement-new",
         jsonPath: "ADVERTISEMENTNOC.subTypeOfAdvertisement",
+        errorMessage: "ERR_NOC_ADV_SUB_TYPE_OF_ADVERTISEMENT",
         required: true,
         props: {
           //className: "applicant-details-error",
@@ -226,7 +228,7 @@ const commonBuildingData = buildingType => {
         sm: 6
       },
       pattern: getPattern("Date"),
-      errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+      errorMessage: "ERR_NOC_ADV_FROM_DATE",
       required: true,
       props: {
         disabled: false,
@@ -257,7 +259,7 @@ const commonBuildingData = buildingType => {
         sm: 6
       },
       pattern: getPattern("Date"),
-      errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+      errorMessage: "ERR_NOC_ADV_TO_DATE",
       required: true,
       props: {
         disabled: false,
@@ -290,7 +292,7 @@ const commonBuildingData = buildingType => {
         //pattern: getPattern("Name"),
         //errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         sourceJsonPath: "applyScreenMdmsData.egpm.duration-new",
-
+        errorMessage: "ERR_NOC_ADV_DURATION",
         jsonPath: "ADVERTISEMENTNOC.duration",
       })
     },
@@ -332,7 +334,7 @@ const commonBuildingData = buildingType => {
         },
         required: true,
         pattern: getOPMSPattern("Address"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_LOCATION_OF_ADVERTISEMENT",
         jsonPath: "ADVERTISEMENTNOC.locationOfAdvertisement",
       })
     },
@@ -348,7 +350,7 @@ const commonBuildingData = buildingType => {
         },
         required: true,
         pattern: getOPMSPattern("Address"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_LANDMARK",
         jsonPath: "ADVERTISEMENTNOC.advertisementLandmark",
       })
     },
@@ -371,6 +373,7 @@ const commonBuildingData = buildingType => {
         sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         jsonPath: "ADVERTISEMENTNOC.advertisementSector",
         required: true,
+        errorMessage: "ERR_NOC_ADV_SECTOR",
         props: {
           className: "applicant-details-error",
           required: true
@@ -391,7 +394,7 @@ const commonBuildingData = buildingType => {
         },
         required: true,
         pattern: getOPMSPattern("Address"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_SUB_SECTOR",
         jsonPath: "ADVERTISEMENTNOC.advertisementVillageSubSector",
       })
     },
@@ -411,7 +414,7 @@ const commonBuildingData = buildingType => {
           disabled: false,
         },
         pattern: getOPMSPattern("Amount"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_SPACE",
         jsonPath: "ADVERTISEMENTNOC.space",
       })
     },
@@ -453,7 +456,7 @@ const commonBuildingData = buildingType => {
           disabled: true,
         },
         //pattern: getPattern("NoOfEmp"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_DATE",
         jsonPath: "ADVERTISEMENTNOC.date",
       })
     },
@@ -480,7 +483,7 @@ const commonBuildingData = buildingType => {
                  
         required: true,
         pattern: getOPMSPattern("TexrearAddress"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "ERR_NOC_ADV_ADVERTISEMENT_MATTER_DESCRIPTION",
         jsonPath: "ADVERTISEMENTNOC.advertisementMatterDescription",
       })
     },

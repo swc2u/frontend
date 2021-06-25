@@ -19,7 +19,7 @@ import { AUTH} from "egov-ui-kit/utils/endPoints";
 const OTPFormHOC = formHoc({ formKey: "otp" })(OTPForm);
 
 class OTP extends Component {
-  state = {otpRedirect : false}
+  state = {otpRedirect : false,disabled:false,pointer:"pointer",otpresend:"otp-resend"}
   componentWillMount() {
     const { previousRoute } = this.props;
    // commented out as it was redirecting
@@ -49,6 +49,8 @@ class OTP extends Component {
 
     redirectToEChallan = async (queryString) => {
       const { phoneNumber, setFieldProperty,toggleSnackbarAndSetText,setRoute,authenticated } = this.props;
+      this.setState({disabled:true})
+      this.setState({pointer:"pointer"})
       try{  
              const response =  await httpRequest(`/user-otp/v1/_send`, "_send", [], {
                             otp: { mobileNumber: queryString.mobileno, type: "login", tenantId: commonConfig.tenantId ,userType: "CITIZEN"},
@@ -135,18 +137,30 @@ class OTP extends Component {
 
   resendOTP = () => {
     const { sendOTP, intent } = this.props;
+    // this.setState({
+    //   disabled: true,
+    // });
+    this.setState({disabled:true})
+    this.setState({pointer:"no-drop"})
+    this.setState({otpresend:"otp-resendBlock"})
     if (intent) sendOTP(intent);
     else if (getQueryArg("", "smsLink")) this.sendOtpForAutoLogin();
   };
 
   render() {
     const { phoneNumber, loading, bannerUrl, logoUrl } = this.props;
+    // this.setState({
+    //   disabled: false,
+    // });
     const { resendOTP } = this;
+   // let disabled = true
+
+    const {disabled,pointer,otpresend} = this.state;
 
     return (
       <Screen loading={loading} className="force-padding-0">
         <Banner bannerUrl={bannerUrl} logoUrl={logoUrl}>
-          <OTPFormHOC resendOTP={resendOTP} phoneNumber={phoneNumber} logoUrl={logoUrl} />
+          <OTPFormHOC resendOTP={resendOTP} phoneNumber={phoneNumber} logoUrl={logoUrl} disabled={disabled} pointer={pointer}  otpresend={otpresend} />
         </Banner>
       </Screen>
     );

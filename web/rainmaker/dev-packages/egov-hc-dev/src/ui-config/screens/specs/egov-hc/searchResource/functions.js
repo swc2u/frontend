@@ -1,7 +1,8 @@
+import { convertEpochToDate } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { handleScreenConfigurationFieldChange as handleField, toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getTenantId,getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
-import { getSearchResultsEmployeeRequestFilter , returnNameFromCodeMdmsorViceVersa} from "../../../../../ui-utils/commons";
+import { getSearchResultsEmployeeRequestFilter , getSearchResultsEmployeeRequestReport, returnNameFromCodeMdmsorViceVersa} from "../../../../../ui-utils/commons";
 import { getTextToLocalMapping, validateFields } from "../../utils";
 
 
@@ -261,4 +262,260 @@ export const searchApiCallForEmployeeFilter = async (state, dispatch) =>{
     }
   }}};
 
+  export const searchApiCallForEmployeeReport = async (state, dispatch) =>{
+    var flag_for_api_call = true
+  
+    showHideTable(false, dispatch);
+   
+    let serviceRequestsObject = get(
+      state.screenConfiguration.preparedFinalObject,
+      "serviceRequests",
+      {}
+    );
+    
+    const isSearchBoxFirstRowValid = validateFields(
+      // components.div.children.ServiceRequestFilterFormForEmployee.children.cardContent.children.StatusLocalityAndFromToDateContainer.children.ServiceRequestStatus
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.serviceRequestidContactNoAndRequestTypeContainer.children",
+      state,
+      dispatch,
+      "search"
+    );
+  
+    const isSearchBoxSecondRowValid = validateFields(
+      "components.div.children.ServiceRequestFilterFormForReport.children.cardContent.children.StatusLocalityAndFromToDateContainer.children",
+      state,
+      dispatch,
+      "search"
+    );
+    var dateFromObject = new Date(serviceRequestsObject["fromDate"]);
+    var dateToObject = new Date(serviceRequestsObject["toDate"]);
+    var fromDateNumeric = dateFromObject.getTime() 
+    var toDateNumeric = dateToObject.getTime()
+    
+    
+    if (!(isSearchBoxFirstRowValid && isSearchBoxSecondRowValid)) {
+      flag_for_api_call = false
+      dispatch(
+        toggleSnackbar(
+          true,
+          {
+            labelName: "Please fill valid fields to start search",
+            labelKey: "ERR_FILL_VALID_FIELDS"
+          },
+          "warning"
+        )
+      );
+    } 
+    else if (
+      
+      Object.keys(serviceRequestsObject).length == 0 ||
+      Object.values(serviceRequestsObject).every(x => x === "")
+    ) {
+      flag_for_api_call = false
+      dispatch(
+        toggleSnackbar(
+          true,
+          {
+            labelName: "Please fill at least one field to start search",
+            labelKey: "ERR_FILL_ONE_FIELDS"
+          },
+          "warning"
+        )
+      );
+    } 
+    else if (
+      (serviceRequestsObject["fromDate"] === undefined ||
+      serviceRequestsObject["fromDate"] == "") ||
+      (serviceRequestsObject["toDate"] === undefined ||
+      serviceRequestsObject["toDate"] == "")
+    ) {
+      flag_for_api_call = false
+      dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: "Please fill From Date", labelKey: "ERR_FILL_DATE" },
+          "warning"
+        )
+      );
+      return;
+    }
+    else if (
+      (parseInt(fromDateNumeric) > parseInt(toDateNumeric)) 
+    ) {
+      flag_for_api_call = false
+      dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: "To date Should be Less than from Date", labelKey: "ERR_FROM_DATE_SHOULD_BE_LESS_THAN_TO_DATE" },
+          "warning"
+        )
+      );
+    } 
+    else if (
+      (serviceRequestsObject["fromDate"] === undefined ||
+      serviceRequestsObject["fromDate"].length === 0) &&
+      serviceRequestsObject["toDate"] !== undefined &&
+      serviceRequestsObject["toDate"].length !== 0
+    ) {
+      flag_for_api_call = false
+      dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: "Please fill From Date", labelKey: "ERR_FILL_FROM_DATE" },
+          "warning"
+        )
+      );
+    } 
+   
+  
+    
+  
+    else if (
+      (serviceRequestsObject["toDate"] === undefined ||
+      serviceRequestsObject["toDate"].length === 0) &&
+      serviceRequestsObject["fromDate"] !== undefined &&
+      serviceRequestsObject["fromDate"].length !== 0
+    ) {
+      flag_for_api_call = false
+      dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: "Please fill To Date", labelKey: "ERR_FILL_TO_DATE" },
+          "warning"
+        )
+      );
+    }
+    
+    else {
+      if(flag_for_api_call = true){
+            
+      let fromDate= get(state.screenConfiguration.preparedFinalObject,"serviceRequests.fromDate")
+      let toDate= get(state.screenConfiguration.preparedFinalObject,"serviceRequests.toDate")
+      let servicerequestid = get(state.screenConfiguration.preparedFinalObject, "serviceRequests.servicerequestid",null)
+      let servicetype = get(state.screenConfiguration.preparedFinalObject, "serviceRequests.servicetype.value",null)
+      // let serviceRequestSubtype = get(state.screenConfiguration.preparedFinalObject, "serviceRequests.serviceRequestSubtype")
+      let servicestatus = get(state.screenConfiguration.preparedFinalObject, "serviceRequests.servicestatus.value",null)
+      let mohalla = get(state.screenConfiguration.preparedFinalObject, "serviceRequests.mohalla.value",null)
+      let ownerName = get(state.screenConfiguration.preparedFinalObject, "serviceRequests.ownerName",null)
+      let assignedTo = get(state.screenConfiguration.preparedFinalObject, "serviceRequests.assignedTo.value",null)
+      var dateFromObject = new Date(fromDate);
+      var dateToObject = new Date(toDate);
+      let fromDateNumeric = dateFromObject.getTime() 
+      let toDateNumeric = dateToObject.getTime()
+      var oneDayDifference = 60 * 60 * 24 * 1000
+      toDateNumeric = toDateNumeric+oneDayDifference
+      // if (fromDateNumeric === toDateNumeric){
+      //   toDateNumeric = toDateNumeric + oneDayDifference
+      // }
+        if (assignedTo && assignedTo=="ASSIGNEDTOME") { 
+          assignedTo = JSON.parse(getUserInfo()).uuid;
+        }
+        let searchParams = [
+              {
+                  "name": "fromDate",
+                  "input": fromDateNumeric
+              },
+              {
+                  "name": "toDate",
+                  "input": toDateNumeric
+              },
+              {
+                  "name": "serviceRequestId",
+                  "input": servicerequestid
+              },
+              {
+                  "name": "serviceType",
+                  "input": servicetype
+              },
+              {
+                  "name": "serviceRequestSubType",
+                  "input": null
+              },
+              {
+                  "name": "serviceRequestStatus",
+                  "input": servicestatus
+              },
+              {
+                  "name": "ownerName",
+                  "input": ownerName
+              },
+              {
+                  "name": "locality",
+                  "input": mohalla
+              },
+              {
+                  "name": "assigner",
+                  "input": assignedTo
+              }
+        ];
+        var data = 
+        {
+          "tenantId": getTenantId(),
+          "reportName": "HorticultureReport",
+          "searchParams":searchParams
+        }
+      
+      const response = await getSearchResultsEmployeeRequestReport(data);
+  
+        try {
+        if (response.reportResponses[0].reportData.length >0 ){
+          var serviceRequestType = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData['eg-horticulture'].ServiceType")
+          let data_response = response.reportResponses[0].reportData.map(item => ({
 
+          [getTextToLocalMapping("Service Request Id")]:
+            item[0] || "-",
+          [getTextToLocalMapping("Service Request Date")]: convertEpochToDate(item[1]) || "-",
+          [getTextToLocalMapping("Type Of Service Request")]: returnNameFromCodeMdmsorViceVersa(serviceRequestType,item[3], 1 ) || "-",
+          [getTextToLocalMapping("Name Of Owner")]:item[2] || "-",
+          [getTextToLocalMapping("Service Request Locality")]: item[5] || "-",
+
+            [getTextToLocalMapping("Service Request Status")]: item[6] || "-",
+          [getTextToLocalMapping("Current Owner")]: item[8] || "-"
+        }));
+      
+        dispatch(
+          handleField(
+            "hcReport",
+            "components.div.children.serachReportGrid",
+            "props.data",
+            data_response
+          )
+        );
+  
+        dispatch(
+          handleField(
+            "hcReport",
+            "components.div.children.serachReportGrid",
+            "visible",
+            true
+          )
+        );
+          }
+          else {
+            var data_empty= []
+            dispatch(
+              handleField(
+                "hcReport",
+                "components.div.children.serachReportGrid",
+                "props.data",
+                data_empty
+              )
+            );
+  
+            dispatch(
+              handleField(
+                "hcReport",
+                "components.div.children.serachReportGrid",
+                "visible",
+                true
+              )
+            );
+        }
+  
+        showHideTable(true, dispatch);
+      } catch (error) {
+  
+        dispatch(toggleSnackbar(true, error.message, "error"));
+        console.log(error);
+      }
+    }}};

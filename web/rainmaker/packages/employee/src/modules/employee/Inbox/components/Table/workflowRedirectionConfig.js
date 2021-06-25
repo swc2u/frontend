@@ -225,6 +225,24 @@ else if (businessService == "NLUJM")
     };
 
   }
+  else if (businessService == "REGULARWSCONNECTION"
+          || businessService == "TEMPORARY_WSCONNECTION"
+          || businessService == "WS_TEMP_TEMP"
+          || businessService == "WS_TEMP_REGULAR"
+          || businessService == "WS_DISCONNECTION"
+          || businessService == "WS_TEMP_DISCONNECTION"
+          || businessService == "WS_RENAME"
+          || businessService == "WS_METER_UPDATE"
+          || businessService == "WS_CONVERSION"
+          || businessService == "WS_REACTIVATE"
+          || businessService == "SW_SEWERAGE"   
+          || businessService == "WS_TUBEWELL") { 
+    return {
+      INITIATED: "/wns/search-preview",
+      DEFAULT: "/wns/search-preview",
+    };
+
+  }
 
   else {
     switch (module.toUpperCase()) {
@@ -276,6 +294,7 @@ else if (businessService == "NLUJM")
     case "BUILDINGBRANCH":
     case "MANIMAJRA":
     case "ESTATEPROPERTIES":
+      case  "ESTATESERVICES":
       if(businessService === "ES-EB-AllotmentOfSite" || businessService === "ES-EB-PropertyMaster") {
         return {
           INITIATED: 'estate/search-preview',
@@ -306,18 +325,7 @@ else if (businessService == "NLUJM")
           DEFAULT: "/estate/preview"
         }
       }
-    case "ESTATESERVICES":
-      if(businessService === "ES-BB-PropertyMaster") {
-        return {
-          INITIATED: "/estate/search-preview-building-branch",
-          DEFAULT: "/estate/search-preview-building-branch"
-        }
-      } else {
-        return {
-          INITIATED: "/estate/preview",
-          DEFAULT: "/estate/preview"
-        }
-      }
+
      case "WS-SERVICES":
       return {
         INITIATED: "/wns/search-preview",

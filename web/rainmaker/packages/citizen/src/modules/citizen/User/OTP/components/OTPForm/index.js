@@ -4,9 +4,11 @@ import Label from "egov-ui-kit/utils/translationNode";
 import logo from "egov-ui-kit/assets/images/logo_black.png";
 import "./index.css";
 
-const OTP = ({ handleFieldChange, form, phoneNumber, resendOTP ,logoUrl}) => {
+const OTP = ({ handleFieldChange, form, phoneNumber, resendOTP ,logoUrl,disabled,pointer,otpresend}) => {
   const fields = form.fields || {};
   const submit = form.submit;
+console.log(otpresend);
+// console.log("pritam");
 
   return (
     <Card
@@ -39,13 +41,14 @@ const OTP = ({ handleFieldChange, form, phoneNumber, resendOTP ,logoUrl}) => {
             fullWidth={true}
             type={"number"}
           />
-          <div style={{ marginBottom: "24px" }} className="text-right">
+          <div style={{ marginBottom: "24px" }} className="text-right"  >
             <Label id="otp-trigger" className="otp-prompt" label="CORE_OTP_NOT_RECEIVE" />
-            <span style={{ cursor: "pointer" }} onClick={() => resendOTP()}>
-              <Label id="otp-resend" className="otp-resend" label="CORE_OTP_RESEND" />
+            <span style={{ cursor: pointer }} onClick={() => !disabled && resendOTP()}  >
+              <Label id="otp-resend" className={otpresend} label="CORE_OTP_RESEND"  />
             </span>
+          
           </div>
-          <Button {...submit} primary={true} fullWidth={true} />
+          <Button {...submit} primary={true} fullWidth={true}  />
         </div>
       }
     />

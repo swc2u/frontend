@@ -171,6 +171,8 @@ export const getReceiptNoteListDetailsView = (isReview = true) => {
         { labelName: "Inspected By",
         labelKey: "STORE_MATERIAL_RECEIPT_INSPECTED_BY" },
         {
+         // jsonPath: "materialReceipt[0].inspectedBy",
+          //inspectedByName
           jsonPath: "materialReceipt[0].inspectedBy",
         }
       ),
@@ -190,7 +192,7 @@ export const getReceiptNoteListDetailsView = (isReview = true) => {
       createdBy: getLabelWithValue(
         { labelName: "Created by", labelKey: "STORE_PURCHASE_ORDER_CREATEBY" },
         {
-          jsonPath: "materialReceipt[0].createdByName",
+          jsonPath: "materialReceipt[0].receivedBy",
         }
       ),
       designation: getLabelWithValue(

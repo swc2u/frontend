@@ -82,7 +82,38 @@ export const searchApiCall = async (state, dispatch) => {
   //   let fromDate = get(NulmSuhCitizenNGORequest, "fromDate").split("-").reverse().join("-");
   //   set( NulmSuhCitizenNGORequest,"fromDate",fromDate );
   // }
-  
+
+  let IsValidDate = true
+  let toDate = get(NulmSuhCitizenNGORequest, "toDate")
+  let fromDate = get(NulmSuhCitizenNGORequest, "fromDate")
+  if(toDate &&  (fromDate === null  || fromDate === undefined))
+  {
+    IsValidDate = false
+  }
+  else if(fromDate && (toDate === null  || toDate === undefined))
+{
+  IsValidDate = false
+
+}
+if(toDate && toDate)
+{
+  if(fromDate< toDate)
+  {
+    IsValidDate = true
+
+  }
+  else if(fromDate === toDate)
+  {
+    IsValidDate = true
+
+  }
+  else
+  {
+    IsValidDate = false
+  }
+}
+if(IsValidDate)
+{
    const requestBody = {NulmSuhCitizenNGORequest}
     let response = await getSearchResults([],requestBody, dispatch,"suhcitizen");
     try {
@@ -129,6 +160,54 @@ export const searchApiCall = async (state, dispatch) => {
         )
       );
     }
+  }
+  else{
+    if(toDate &&  (fromDate === null  || fromDate === undefined))
+  {
+    dispatch(
+      toggleSnackbar(
+        true,
+        {
+          labelName: "Please select from date",
+          labelKey: "ERR_NULM_FROM_DATE_SELECTION_VALIDATION",
+        },
+        "warning"
+      )
+    );
+      }
+      else if(fromDate && (toDate === null  || toDate === undefined))
+      {
+        dispatch(
+          toggleSnackbar(
+            true,
+            {
+              labelName: "Please select to date",
+              labelKey: "ERR_NULM_TO_DATE_SELECTION_VALIDATION",
+            },
+            "warning"
+          )
+        );
+
+      }
+      if(toDate && toDate)
+      {
+        if(fromDate > toDate)
+        {
+          dispatch(
+            toggleSnackbar(
+              true,
+              {
+                labelName: "From date shpuld be less then to date",
+                labelKey: "ERR_NULM_FROM_DATE_TO_DATE_SELECTION_VALIDATION",
+              },
+              "warning"
+            )
+          );
+
+        }
+      }
+
+  }
   }
 };
 

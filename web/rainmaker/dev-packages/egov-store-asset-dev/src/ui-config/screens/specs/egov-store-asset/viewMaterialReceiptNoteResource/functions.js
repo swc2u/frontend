@@ -19,8 +19,10 @@ import {
   convertDateToEpoch,
   epochToYmdDate,
   showHideAdhocPopup,
-  validateFields
+  validateFields,
+  
 } from "../../utils";
+import {httpRequest} from '../../../../../ui-utils'
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {  
@@ -242,19 +244,19 @@ export const createUpdateMR = async (state, dispatch, action) => {
 
   let receiptDate =
   get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].receiptDate",0) 
-  receiptDate = convertDateToEpoch(receiptDate, "dayStart");
+  receiptDate = convertDateToEpoch(receiptDate, "daymid");
   set(materialReceipt[0],"receiptDate", receiptDate);
   let supplierBillDate =
   get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].supplierBillDate",0) 
-  supplierBillDate = convertDateToEpoch(supplierBillDate, "dayStart");
+  supplierBillDate = convertDateToEpoch(supplierBillDate, "daymid");
   set(materialReceipt[0],"supplierBillDate", supplierBillDate);
   let challanDate =
   get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].challanDate",0) 
-  challanDate = convertDateToEpoch(challanDate, "dayStart");
+  challanDate = convertDateToEpoch(challanDate, "daymid");
   set(materialReceipt[0],"challanDate", challanDate);
   let inspectionDate =
   get(state, "screenConfiguration.preparedFinalObject.materialReceipt[0].inspectionDate",0) 
-  inspectionDate = convertDateToEpoch(inspectionDate, "dayStart");
+  inspectionDate = convertDateToEpoch(inspectionDate, "daymid");
   set(materialReceipt[0],"inspectionDate", inspectionDate);
   let fileStoreId =
   get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux[0].documents[0].fileStoreId",0)  
@@ -269,8 +271,8 @@ export const createUpdateMR = async (state, dispatch, action) => {
        set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].lotNo`, element.lotNo);
        set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].serialNo`, element.serialNo);
        set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].batchNo`, element.batchNo);
-       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].manufactureDate`, convertDateToEpoch(element.manufactureDate, "dayStart"));
-       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].expiryDate`, convertDateToEpoch(element.expiryDate, "dayStart"));
+       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].manufactureDate`, convertDateToEpoch(element.manufactureDate, "daymid"));
+       set(materialReceipt[0], `receiptDetails[${index}].receiptDetailsAddnInfo[0].expiryDate`, convertDateToEpoch(element.expiryDate, "daymid"));
         //set supplier
         set(materialReceipt[0],"supplier.code", sup.supplier.code);
         set(materialReceipt[0],"supplier.name", sup.supplier.name);
@@ -290,7 +292,7 @@ export const createUpdateMR = async (state, dispatch, action) => {
       `receiptDetails[${i}].receiptDetailsAddnInfo[0].manufactureDate`,
       convertDateToEpoch(
         get(materialReceipt[0], `receiptDetails[${i}].receiptDetailsAddnInfo[0].manufactureDate`),
-        "dayStart"
+        "daymid"
       )
     );
     set(
@@ -298,7 +300,7 @@ export const createUpdateMR = async (state, dispatch, action) => {
       `receiptDetails[${i}].receiptDetailsAddnInfo[0].expiryDate`,
       convertDateToEpoch(
         get(materialReceipt[0], `receiptDetails[${i}].receiptDetailsAddnInfo[0].expiryDate`),
-        "dayStart"
+        "daymid"
       )
     );
   }
@@ -395,6 +397,56 @@ let TotalQty = 0;
     set(response[0], `receiptDate`, epochToYmdDate(response[0].receiptDate));
     set(response[0], `supplierBillDate`, epochToYmdDate(response[0].supplierBillDate));
     set(response[0], `inspectionDate`, epochToYmdDate(response[0].inspectionDate));
+    // set inspectedByName
+    // get employee list
+    const queryParams = [{ key: "roles", value: "EMPLOYEE" },{ key: "tenantId", value:  getTenantId() }];
+    const payload = await httpRequest(
+      "post",
+      "/egov-hrms/employees/_search",
+      "_search",
+      queryParams,
+    );
+    if(payload){
+      if (payload.Employees) {
+        let empDetails_=[]
+        const empDetails =
+        payload.Employees.map((item, index) => {
+            const deptCode = item.assignments[0] && item.assignments[0].department;
+            const designation =   item.assignments[0] && item.assignments[0].designation;
+            const empCode = item.code;
+            const empName = `${item.user.name}`;
+          return {
+                  code : empCode,
+                  name : empName,
+                  dept : deptCode,
+                  designation:designation,
+          };
+        });
+      
+        if(empDetails){
+          empDetails_ = empDetails.filter(x=>x.name === response[0].inspectedBy )
+          if( empDetails_ && empDetails_[0])
+          {
+            if(empDetails_.length>0)
+            {
+              set(response[0], `inspectedByName`, empDetails_[0].code);
+            }
+            else
+            {
+              set(response[0], `inspectedByName`, response[0].inspectedBy);
+            }            
+          }
+          else{
+            set(response[0], `inspectedByName`, response[0].inspectedBy);
+            
+          }
+        }
+
+        
+        
+      }
+    }
+    
    
   for (let index = 0; index < response[0].receiptDetails.length; index++) {
     const element = response[0].receiptDetails[index];

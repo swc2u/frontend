@@ -4,53 +4,61 @@ import { SearchLegalDashboardData } from "./LegalFunction";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import './index.css';
 
-export const LegalDashboardFilterForm = getCommonCard({
+export const DashboardFilterForm = getCommonCard({
   FilterConstraintsContainer: getCommonContainer({
-    // fromDate: getDateField({
-    //   label: { labelName: "From Date", labelKey: "DASHBOARD_FROM_DATE_LABEL" },
-    //   placeholder: {
-    //     labelName: "",
-    //     labelKey: "Select From Date"
-    //   },
-    //   gridDefination: {
-    //     xs: 6,
-    //     sm: 2,
-    //     md: 2
-    //   },
-    //   pattern: getPattern("Date"),
-    //   jsonPath: "dahsboardHome.defaultFromDate",
-    //   required: true,
-    //   afterFieldChange: (action, state, dispatch) => {
-    //     dispatch(
-    //       handleField(
-    //         "dashboardSource",
-    //         "components.div.children.FilterFormforEmployee.children.cardContent.children.FilterConstraintsContainer.children.toDate",
-    //         "props.inputProps.min",
-    //         action.value
-    //       )
-    //     );
-    //     }
-    // }),
-    // toDate: getDateField({
-    //   label: { labelName: "To Date", labelKey: "DASHBOARD_TO_DATE_LABEL" },
-    //   placeholder: {
-    //     labelName: "To Date",
-    //     labelKey: "Select To Date"
-    //   },
-    //   props: {
-    //     inputProps: {
-    //       min: ''
-    //     }
-    //   },
-    //   gridDefination: {
-    //     xs: 6,
-    //     sm: 2,
-    //     md: 2
-    //   },
-    //   pattern: getPattern("Date"),
-    //   jsonPath: "dahsboardHome.defaulttoDate",
-    //   required: true,
-    // }),
+    fromDate: getDateField({
+      label: { labelName: "From Date", labelKey: "DASHBOARD_FROM_DATE_LABEL" },
+      placeholder: {
+        labelName: "",
+        labelKey: "Select From Date"
+      },
+      props: {
+        style : {
+          width : "130px"
+        }
+      },
+      gridDefination: {
+        xs: 6,
+        sm: 2,
+        md: 2
+      },
+      pattern: getPattern("Date"),
+      jsonPath: "dahsboardHome.defaultFromDate",
+      required: true,
+      afterFieldChange: (action, state, dispatch) => {
+        dispatch(
+          handleField(
+            "LegalDashboard",
+            "components.div.children.DashboardFilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+            "props.inputProps.min",
+            action.value
+          )
+        );
+        }
+    }),
+    toDate: getDateField({
+      label: { labelName: "To Date", labelKey: "DASHBOARD_TO_DATE_LABEL" },
+      placeholder: {
+        labelName: "To Date",
+        labelKey: "Select To Date"
+      },
+      props: {
+        style : {
+          width : "130px"
+        },
+        inputProps: {
+          min: ''
+        }
+      },
+      gridDefination: {
+        xs: 6,
+        sm: 2,
+        md: 2
+      },
+      pattern: getPattern("Date"),
+      jsonPath: "dahsboardHome.defaulttoDate",
+      required: true,
+    }),
     moduleDashboardDropdown: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-dashboard",
@@ -102,9 +110,7 @@ export const LegalDashboardFilterForm = getCommonCard({
         color: "primary",
         style: {
         width: "60%",
-        height: "55px",
-        /* margin-right: 80px; */
-        marginLeft: "180px"
+        height: "55px"
         }
       },
       children: {
@@ -123,10 +129,10 @@ export const LegalDashboardFilterForm = getCommonCard({
   })
 });
 
-export const LegalDashboardResults = {
+export const DashboardResults = {
   uiFramework: "custom-molecules-local",
   moduleName: "egov-dashboard",
-  componentPath: "DashboardEchallan",
+  componentPath: "DashboardLegal",
   props: {
   // className: "dashboard-graph",
   formKey: `newapplication`,

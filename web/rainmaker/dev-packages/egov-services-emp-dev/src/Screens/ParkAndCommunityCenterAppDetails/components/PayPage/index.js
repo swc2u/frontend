@@ -14,7 +14,6 @@ import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import EditIcon from "@material-ui/icons/Edit";
 import "./index.css";
 import Footer from "../../../../modules/footer";
-import PaymentReceiptDetail from "../PaymentReceiptDetail";
 import PaymentOptionDetails from "../PaymentOptionDetails";
 import PaymentDetails from "../PaymentDetails";
 import DateVenueChangePayDetail from "../DateVenueChangePayDetail";
@@ -171,7 +170,7 @@ class SummaryDetails extends Component {
 
   GoToApplyPage = (e) => {
     this.props.history.push(`/egov-services/applyPark-community-center`);
-  };
+  };   
 
   submit = async (e) => {
     const {
@@ -227,8 +226,10 @@ class SummaryDetails extends Component {
   
           let Booking = {
             "bkApplicationNumber": this.state.CurrentApplicationNum,
-            "cardNumber": "0000",
-            "transactionNumber": this.state.PaymentReceiptNumber,
+            "paymentCollectionType": "Cash",
+            "paidBy": ppaidBy,
+            "payerName": ApplicantName,
+            "payerMobileNumber": ApplicantMobNum
         }
           console.log("cash--Booking",Booking)
           let saveCardNum = await httpRequest(
@@ -310,8 +311,15 @@ if(ChnChqDate <= this.props.longtodayDate){
     
             let Booking = {
               "bkApplicationNumber": this.state.CurrentApplicationNum,
-              "cardNumber": "0000",
-              "transactionNumber": this.state.PaymentReceiptNumber,
+              "paymentCollectionType": "Cheque",
+              "paidBy": ppaidBy,
+              "payerName": ApplicantName,
+              "payerMobileNumber": ApplicantMobNum,
+              "chequeNumber": pChequeNo,
+              "paymentDate":this.props.NewChequeDate,
+              "ifscCode":pIFSC,
+              "bankName": this.props.BankName.name,
+              "bankBranch":this.props.BranchName.name
           }
             console.log("cash--Booking",Booking)
             let saveCardNum = await httpRequest(
@@ -402,17 +410,21 @@ else{
               [],
               PaymentReqBody
             );
-        
-           
-        
             if(EmpPayment.ResponseInfo.status == "200" && EmpPayment.Payments.length > 0){
   
               prepareFinalObject("ResponseOfCashPayment", EmpPayment);
       
               let Booking = {
                 "bkApplicationNumber": this.state.CurrentApplicationNum,
-                "cardNumber": "0000",
-                "transactionNumber": this.state.PaymentReceiptNumber,
+                "paymentCollectionType": "DD",
+                "paidBy": ppaidBy,
+                "payerName": ApplicantName,
+                "payerMobileNumber": ApplicantMobNum,
+                "chequeNumber": newDDno,
+                "paymentDate":this.props.DdDate,
+                "ifscCode":pddIFSC,
+                "bankName": this.props.BankName.name,
+                "bankBranch":this.props.BranchName.name
             }
               console.log("cash--Booking",Booking)
               let saveCardNum = await httpRequest(
@@ -524,9 +536,13 @@ else{
             if(EmpPayment.ResponseInfo.status == "200" && EmpPayment.Payments.length > 0){
     
               prepareFinalObject("ResponseOfCashPayment", EmpPayment);
-      
+
               let Booking = {
                 "bkApplicationNumber": this.state.CurrentApplicationNum,
+                "paymentCollectionType": "DD",
+                "paidBy": ppaidBy,
+                "payerName": ApplicantName,
+                "payerMobileNumber": ApplicantMobNum,
                 "cardNumber": this.state.last4Digits,
                 "transactionNumber": this.state.PaymentReceiptNumber,
             }
@@ -765,14 +781,6 @@ else{
                   ApplicantName && ApplicantName ? ApplicantName : "Notfound"
                 }
               />
-
-              <PaymentReceiptDetail
-                PaymentReceiptNumber={PaymentReceiptNumber}
-                handleChange={this.handleChange}
-                transactionDateChange={this.transactionDateChange}
-                transactionDate={transactionDate}
-              />
-
               {this.state.SubmitDetails == true ? (
                 <SubmitPaymentDetails
                   TotalAmount={TotalAmount}
@@ -1383,6 +1391,8 @@ let BranchName = get(
   return {
     state,
     longtodayDate,
+    NewChequeDate,
+    DdDate,
     BranchName,
     BankName,
     one,

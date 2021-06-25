@@ -127,8 +127,25 @@ export const SepDetails = getCommonCard({
         },
         placeholder: {
           labelName: "Enter Adhar Number",
-          labelKey: "NULM_SEP_ADHAR_NUMBER_PLACEHOLDER"
+          labelKey: "NULM_SEP_ADHAR_NUMBER_PLACEHOLDER",
+          props: {
+              //InputLabelProps: {
+                style:{
+                  marginTop: 30
+                }
+                
+              //},
+            },
         },
+        // props: {
+        //   InputLabelProps: {
+        //     style:{
+        //       marginTop: 30
+        //     }
+            
+        //   },
+        // },
+       
         required: true,
         pattern: getPattern("UOMValue") || null,
         errorMessage: "NULM_SEP_ADHAR_NUMBER_INPUT_VALIDATION",
@@ -530,7 +547,7 @@ export const SepDetails = getCommonCard({
           labelName: "Enter Previous experience in the line if any",
           labelKey: "NULM_SEP_PREVIOUS_EXPERIENCE_IN_THE_LINE_IF_ANY_PLACEHOLDER"
         },
-        required: true,
+        required: false,
         props: {
           className: "applicant-details-error",
           multiline: "multiline",

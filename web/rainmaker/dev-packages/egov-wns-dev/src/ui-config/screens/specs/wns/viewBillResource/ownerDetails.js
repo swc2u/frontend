@@ -38,7 +38,7 @@ export const getOwner = () => {
                                 labelName: "Name",
                                 labelKey: "WS_OWN_DETAIL_NAME"
                             },
-                            { jsonPath: "WaterConnection[0].property.owners[0].name" }
+                            { jsonPath: "WaterConnection[0].connectionHolders[0].name" }
                         ),
                         reviewOwnerAddr: getLabelWithValue(
                             {
@@ -46,7 +46,7 @@ export const getOwner = () => {
                                 labelKey: "WS_OWN_DETAIL_CROSADD"
                             },
                             {
-                                jsonPath: "WaterConnection[0].property.owners[0].correspondenceAddress",
+                                jsonPath: "WaterConnection[0].connectionHolders[0].correspondenceAddress",
                             }
                         )
                     })
@@ -54,7 +54,7 @@ export const getOwner = () => {
 
                 items: [],
                 hasAddItem: false,
-                sourceJsonPath: "WaterConnection[0].property.owners",
+                sourceJsonPath: "WaterConnection[0].connectionHolders[0]",
                 prefixSourceJsonPath: "children.cardContent.children.viewFive.children",
                 afterPrefixJsonPath: "children.value.children.key"
             },

@@ -10,8 +10,10 @@ import {
   creatNonIndentMaterialIssue,
   getNonIndentMaterialIssueSearchResults,
   getPriceListSearchResults,
-  updateNonIndentMaterialIssue
+  updateNonIndentMaterialIssue,
+  getStoresSearchResults,
 } from "../../../../../ui-utils/storecommonsapi";
+
 import {
   convertDateToEpoch,
   epochToYmdDate,
@@ -201,7 +203,7 @@ export const createUpdateIndent = async (state, dispatch, action) => {
 
   let issueDate =
   get(state, "screenConfiguration.preparedFinalObject.materialIssues[0].issueDate",0) 
-  issueDate = convertDateToEpoch(issueDate, "dayStart");
+  issueDate = convertDateToEpoch(issueDate, "daymid");
   set(materialIssues[0],"issueDate", issueDate);
 
 
@@ -259,6 +261,56 @@ export const createUpdateIndent = async (state, dispatch, action) => {
   }
 
 };
+export const getMaterialData = async ( state, dispatch) => {   
+  const tenantId = getTenantId();
+  let queryObject = [
+    {
+      key: "tenantId",
+      value: getTenantId(),
+    },
+  ];
+  let storecode = get(state,"screenConfiguration.preparedFinalObject.materialIssues[0].fromStore.code",'')
+  queryObject.push({
+    key: "issueingStore",
+    value: storecode
+  });
+
+  //get Material based on mrnNumber
+let mrnNumber = get(state,"screenConfiguration.preparedFinalObject.materialIssues[0].materialIssueDetails[0].materialIssuedFromReceipts[0].materialReceiptDetail.mrnNumber",'')
+  let material =[]
+  let  receiptDetails =  get(
+    state.screenConfiguration.preparedFinalObject,
+    `mrnNumber`,
+    []
+  );
+  receiptDetails = receiptDetails.filter(x=>x.mrnNumber === mrnNumber)
+  receiptDetails = receiptDetails[0].receiptDetails
+
+  for (let index = 0; index < receiptDetails.length; index++) {
+    const element = receiptDetails[index];
+    material.push( element.material.code)      
+  }
+  let matcodes= material.map(itm => {
+                return `${itm}`;
+              })
+              .join() || "-"
+
+  queryObject.push({
+    key: "material",
+    value: matcodes
+  });
+console.log(matcodes)
+    
+  try {
+    let response = await getMaterialBalanceRateResults(queryObject, dispatch);
+    let MaterialBalanceRate = response.MaterialBalanceRate.filter(x=>x.mrnNumber === mrnNumber_)
+    dispatch(prepareFinalObject("NonIndentsmaterial", MaterialBalanceRate));
+  
+
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 export const getMaterialNonIndentData = async (
   state,
@@ -304,6 +356,15 @@ set(response[0],`issuePurposeText`, "return to supplier");
 set(response[0],`totalQty`, TotalQty);
 set(response[0],`totalvalue`, totalvalue);
 }
+//const tenantId = getTenantId();
+    let queryObject_ = [
+      {
+        key: "tenantId",
+        value: tenantId
+      }];
+    let payload = await getStoresSearchResults(queryObject_, dispatch);
+  dispatch(prepareFinalObject("store", payload));
+  //getMaterialData(state, dispatch)
   dispatch(prepareFinalObject("materialIssues", response));
 
   furnishindentData(state, dispatch);

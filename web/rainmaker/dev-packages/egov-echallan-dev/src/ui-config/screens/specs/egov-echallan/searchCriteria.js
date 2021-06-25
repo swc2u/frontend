@@ -15,7 +15,9 @@ import get from "lodash/get";
 import { searchResultApiResponse } from "./searchResource/searchResultApiResponse";
 import { resetAllFields } from "../utils";
 import "./index.css";
-
+import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { lSRemoveItem, lSRemoveItemlocal } from "egov-ui-kit/utils/localStorageUtils";
+import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 const resetAll = async (state, dispatch) => {
 
   const objectJsonPath = `components.div.children.searchCriteria.children.cardContent.children`;
@@ -24,7 +26,18 @@ const resetAll = async (state, dispatch) => {
     objectJsonPath,
     {}
   );
-  
+  dispatch(prepareFinalObject("searchCriteriaManageChallan",[]));
+  lSRemoveItemlocal('echallanSearchCrieteria');
+  lSRemoveItem('echallanSearchCrieteria');
+  dispatch(
+    handleField(
+      "echallan-landing",
+      "components.div.children.searchCriteria.children.cardContent.children.viewSeizureContainer.children.challanNo",
+      "props.value",
+      ""
+    )
+  );
+
   resetAllFields(children, dispatch, state, 'echallan-landing');
 }
 /*...SearchTextViewSizureReport..*/
@@ -43,6 +56,33 @@ export const searchCriteria = getCommonCard({
   break: getBreak(),
 
   viewSeizureContainer: getCommonContainer({
+    
+    challanNo: {
+      ...getTextField({
+        label: {
+          labelName: "Challan No",
+          labelKey: "EC_REPORT_CHALLAN_NO_LABEL"
+        },
+        placeholder: {
+          labelName: "Enter Remark",
+          labelKey: "EC_REPORT_CHALLAN_NO_LABEL_PLACEHOLDER"
+        },
+        jsonPath: "searchCriteriaManageChallan[0].challanId",
+        required: false,
+        pattern: getPattern("ECItemRemark"),
+        errorMessage: "EC_ERR_SEZIURE_REMARK_DEFAULT_INPUT_FIELD_MSG",
+        gridDefination: {
+          xs: 12,
+          sm: 6,
+          md: 4
+        },
+        // props: {
+        //   className: "textfield-enterable-selection"        },
+        props: {
+          className: "applicant-details-error"
+        }
+      })
+    },
     seizureCriteria: getSelectField({
       label: {
         labelName: "ENCROACHMENT TYPE",

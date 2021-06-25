@@ -2,7 +2,7 @@ import { getLabel, getTodaysDateInYMD, convertEpochToDate } from "egov-ui-framew
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 import { createUpdateNocApplication, UpdateChallanStatus, addToStoreViolationData, addToStoreReturnCloseData } from "../../../../../ui-utils/commons";
-import { getCommonApplyFooter, showHideAdhocPopupReceivePayment, showHideAdhocPopupForwardUploadDocs, callbackforsearchPreviewAction, getDiffernceBetweenTodayDate, getTextToLocalSeizedItemDetailHeader, showHideChallanConfirmation,showHideChallanReturnAndCloseConfirmation } from "../../utils";
+import { getCommonApplyFooter, showHideAdhocPopupReceivePayment, showHideAdhocPopupForwardUploadDocs, callbackforsearchPreviewAction, getDiffernceBetweenTodayDate, getTextToLocalSeizedItemDetailHeader, showHideChallanConfirmation,showHideChallanReturnAndCloseConfirmation, showHideAdhocPopupUpdateContact } from "../../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import {
   toggleSnackbar, prepareFinalObject, handleScreenConfigurationFieldChange as handleField,
@@ -12,6 +12,7 @@ import store from "ui-redux/store";
 import "./index.css";
 import "./customfooter.css";
 import set from "lodash/set";
+import { httpRequest } from "../../../../../ui-utils";
 
 let state = store.getState();
 
@@ -37,6 +38,75 @@ const callbackforAuction = async (state, dispatch) => {
 
 };
 
+const callbackforSendMessage = async (state, dispatch) => {
+  let challandetails = get(state, 'screenConfiguration.preparedFinalObject.eChallanDetail[0]', {});
+  try {
+    let notificationTemplate = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egec.NotificationTemplate[0]", {});
+    let message = notificationTemplate.message.replace('<EnchroachmentType>', challandetails.encroachmentType).replace('<Date and Time>', challandetails.violationDate + " " + challandetails.violationTime);
+    let body = notificationTemplate.body.replace('<EnchroachmentType>', challandetails.encroachmentType).replace('<Date and Time>', challandetails.violationDate + " " + challandetails.violationTime);
+    let modifiedNotificationTemplate = {};
+    modifiedNotificationTemplate.email = challandetails.emailId;
+    modifiedNotificationTemplate.subject = notificationTemplate.subject;
+    modifiedNotificationTemplate.body = body;
+    modifiedNotificationTemplate.attachmentUrls = null;
+    modifiedNotificationTemplate.mobileNumber = challandetails.contactNumber;
+    modifiedNotificationTemplate.message = message;
+    modifiedNotificationTemplate.isHtml = notificationTemplate.isHtml;
+
+    set(challandetails, 'notificationTemplate', modifiedNotificationTemplate)
+
+ let response = await httpRequest("post", "/ec-services/violation/_sendMessage", "", [], { requestBody: challandetails });
+    if (response.ResponseBody.challanId !== 'null' || response.ResponseBody.challanId !== '') {
+    dispatch(toggleSnackbar(true, { labelName: "Notification Sent Successfully",labelKey: "EC_SEND_NOTIFICATION" }, "success"));
+  } else {
+    dispatch(toggleSnackbar(true, { labelName: "ERROR" }, "error"));
+  }
+  } catch (error) {
+  dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+  }
+};
+
+const callbackforMarkAsPaid = async (state, dispatch) => {
+  let challandetails = get(state, 'screenConfiguration.preparedFinalObject.eChallanDetail[0]', {});
+  let paymentData = get(state, 'screenConfiguration.preparedFinalObject.eChallan.paymentServiceData[0]', {});
+  try {
+    
+    let requestBody = {};
+    requestBody.challanId = paymentData.consumerCode;
+    requestBody.paymentGateway = paymentData.gateway;
+    requestBody.transactionId = paymentData.txnId;
+    requestBody.pgStatus = paymentData.gatewayStatusMsg;
+    requestBody.paymentStatus = paymentData.txnStatus == "SUCCESS" ? "PAID": "PENDING";
+    requestBody.paymentMode = "ONLINE";
+    let response = await httpRequest("post", "/ec-services/violation/_updatePayment", "", [], { requestBody: requestBody });
+    if (response.ResponseInfo.status == 'Success') {
+    dispatch(toggleSnackbar(true, { labelName: "Success",labelKey: "EC_MARK_AS_PAID_SUCCESS" }, "success"));
+  } else {
+    dispatch(toggleSnackbar(true, { labelName: "ERROR" }, "error"));
+  }
+  } catch (error) {
+  dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+  }
+};
+
+const callbackforDeleteChallan = async (state, dispatch) => {
+  let challandetails = get(state, 'screenConfiguration.preparedFinalObject.eChallanDetail[0]', {});
+  try {
+    
+    let requestBody = {};
+    requestBody.challanId = challandetails.challanId;
+    let response = await httpRequest("post", "/ec-services/violation/_deleteChallan", "", [], { requestBody: requestBody });
+    if (response.ResponseInfo.status == 'Success') {
+      dispatch(setRoute("/egov-echallan/echallan-landing"));
+      dispatch(toggleSnackbar(true, { labelName: "Success", labelKey: "EC_DELETE_CHALLAN_SUCCESS" }, "success"));
+    
+  } else {
+    dispatch(toggleSnackbar(true, { labelName: "ERROR" }, "error"));
+  }
+  } catch (error) {
+  dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+  }
+};
 const updateonGroundPayment = async (state, dispatch) => {
   let paymentStatus = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].paymentDetails.paymentStatus", 'Not Available');
   if (paymentStatus !== 'PAID') {
@@ -266,7 +336,8 @@ const callBackAddToStore = async (state, dispatch, isVerified) => {
     store.dispatch(toggleSpinner());
     let responseStatus = get(response, "status", "");
     if (responseStatus == "SUCCESS" || responseStatus == "success") {
-      let successMessage = getTextToLocalSeizedItemDetailHeader("challanVerified");
+      let successMessage = getTextToLocalSeizedItemDetailHeader("challanVerified")
+      callbackforSendMessage(state,dispatch);
       dispatch(toggleSnackbar(true,
         {
           labelName: successMessage,
@@ -434,7 +505,8 @@ export const footer = getCommonApplyFooter({
     visible: false,
     roleDefination: {
       rolePath: "user-info.roles",
-      roles: ["challanSI"]
+      // roles: ["challanSI"],
+      roles: []
     }
   },
   sendtoSoreButton: {
@@ -704,6 +776,180 @@ export const footer = getCommonApplyFooter({
     },
     visible: true
   },
+  
+  sendMessageButton: {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "200px",
+        height: "48px",
+        marginRight: "16px",
+        background: "#fff",
+        border: "1px solid #ddd",
+        color: "#000"
+      }
+    },
+    gridDefination: {
+      xs: 12,
+      sm: 12,
+      md: 12,
+    },
+    children: {
+      nextButtonLabel: getLabel({
+        labelName: "Send Message",
+        labelKey: "EC_SEND_MESSAGE_BUTTON"
+      }),
+      nextButtonIcon: {
+        uiFramework: "custom-atoms",
+        componentPath: "Icon",
+        props: {
+          iconName: "keyboard_arrow_right"
+        }
+      }
+    },
+    onClickDefination: {
+      action: "condition",
+      callBack: callbackforSendMessage
+    },
+    visible: false,
+    roleDefination: {
+      rolePath: "user-info.roles",
+      roles: ["challanSI"]
+    }
+  },
+markAsPaidButton: {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "200px",
+        height: "48px",
+        marginRight: "16px",
+        background: "#fff",
+        border: "1px solid #ddd",
+        color: "#000"
+      }
+    },
+    gridDefination: {
+      xs: 12,
+      sm: 12,
+      md: 12,
+    },
+    children: {
+      nextButtonLabel: getLabel({
+        labelName: "Mark As Paid",
+        labelKey: "EC_MARK_AS_PAID_BUTTON"
+      }),
+      nextButtonIcon: {
+        uiFramework: "custom-atoms",
+        componentPath: "Icon",
+        props: {
+          iconName: "keyboard_arrow_right"
+        }
+      }
+    },
+    onClickDefination: {
+      action: "condition",
+      callBack: callbackforMarkAsPaid
+    },
+    visible: false,
+    roleDefination: {
+      rolePath: "user-info.roles",
+      roles: ["challanSI"]
+    }
+  },
+  deleteChallanButton: {
+      componentPath: "Button",
+      props: {
+        variant: "contained",
+        color: "primary",
+        style: {
+          minWidth: "200px",
+          height: "48px",
+          marginRight: "16px",
+          background: "#fff",
+          border: "1px solid #ddd",
+          color: "#000"
+        }
+      },
+      gridDefination: {
+        xs: 12,
+        sm: 12,
+        md: 12,
+      },
+      children: {
+        nextButtonLabel: getLabel({
+          labelName: "Delete Challan",
+          labelKey: "EC_DELETE_CHALLAN_BUTTON"
+        }),
+        nextButtonIcon: {
+          uiFramework: "custom-atoms",
+          componentPath: "Icon",
+          props: {
+            iconName: "keyboard_arrow_right"
+          }
+        }
+      },
+      onClickDefination: {
+        action: "condition",
+        callBack: callbackforDeleteChallan
+      },
+      visible: false,
+      roleDefination: {
+        rolePath: "user-info.roles",
+        roles: ["CHALLAN_DELETE"]
+      }
+  },
+  editChallanButton:  {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "200px",
+        height: "48px",
+        marginRight: "16px",
+        background: "#fff",
+        border: "1px solid #ddd",
+        color: "#000"
+      }
+    },
+    gridDefination: {
+      xs: 12,
+      sm: 12,
+      md: 12,
+    },
+    children: {
+      nextButtonLabel: getLabel({
+        labelName: "Edit Challan",
+        labelKey: "EC_EDIT_CHALLAN_BUTTON"
+      }),
+      nextButtonIcon: {
+        uiFramework: "custom-atoms",
+        componentPath: "Icon",
+        props: {
+          iconName: "keyboard_arrow_right"
+        }
+      }
+    },
+    onClickDefination: {
+      action: "condition",
+      callBack: (state, dispatch) =>{
+        showHideAdhocPopupUpdateContact(state, dispatch, "search-preview")
+        let contactNumber = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].contactNumber", '');
+        dispatch(prepareFinalObject("eChallanUpdateContact[0].contact", contactNumber));
+  
+      }
+    },
+    visible: false,
+    roleDefination: {
+      rolePath: "user-info.roles",
+      roles: ["CHALLAN_EDIT"]
+    }
+}
 });
 
 

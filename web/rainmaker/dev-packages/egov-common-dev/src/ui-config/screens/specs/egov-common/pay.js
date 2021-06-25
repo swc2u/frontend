@@ -6,8 +6,9 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import get from "lodash/get";
-import { getCurrentFinancialYear, generateBill, getBusinessServiceMdmsData } from "../utils";
+import { getCurrentFinancialYear, generateBill, getBillingEstimation,getBusinessServiceMdmsData } from "../utils";
 import capturePaymentDetails from "./payResource/capture-payment-details";
+import capturePaymentDetailswns from "./payResource/capture-payment-detailswns";
 import estimateDetails from "./payResource/estimate-details";
 import { footer } from "./payResource/footer";
 import g8Details from "./payResource/g8-details";
@@ -18,6 +19,7 @@ import { ifUserRoleExists } from "../utils";
 import set from "lodash/set";
 import { componentJsonpath, radioButtonJsonPath, paybuttonJsonpath } from "./payResource/constants";
 import "./pay.css";
+import { WNSConfigName} from "../../../../ui-utils/commons";
 
 const header = getCommonContainer({
     header: getCommonHeader({
@@ -39,7 +41,7 @@ const header = getCommonContainer({
 });
 
 
-const getPaymentCard = () => {
+const getPaymentCard = (businessService) => {
 
     const roleExists = ifUserRoleExists("CITIZEN");
 
@@ -62,6 +64,32 @@ const getPaymentCard = () => {
             }
         }
     } else {
+        let  WNSConfigName_= WNSConfigName()
+        let  bservice = WNSConfigName_.ONE_TIME_FEE_WS
+        if(businessService ===bservice || businessService ===WNSConfigName_.ONE_TIME_FEE_SW || businessService.includes("SW") || businessService.includes("WS"))
+       {
+        return {
+            uiFramework: "custom-atoms",
+            componentPath: "Div",
+            children: {
+                paymentDetails: getCommonCard({
+                    header: getCommonTitle({
+                        labelName: "Payment Collection Details",
+                        labelKey: "NOC_PAYMENT_HEAD"
+                    }),
+                    estimateDetails,
+                    AmountToBePaid: {
+                        ...AmountToBePaid,
+                        visible: false
+                    },
+                    capturePaymentDetailswns,
+                    g8Details
+                    
+                })
+            }
+        }
+       }
+       else{
         return {
             uiFramework: "custom-atoms",
             componentPath: "Div",
@@ -103,6 +131,9 @@ const getPaymentCard = () => {
                 })
             }
         }
+
+       }
+       
     }
 }
 
@@ -154,8 +185,21 @@ const fetchBill = async (state, dispatch, consumerCode, tenantId, billBusinessSe
     }
 
     const consumeCodeComponentPath = 'components.div.children.headerDiv.children.header.children.consumerCode';
-    const consumerCodeFromResponse = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].consumerCode");;
-    dispatch(handleField("pay", consumeCodeComponentPath, "props.number", consumerCodeFromResponse));
+    const consumerCodeFromResponse = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].consumerCode");
+    const businessService_ = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].businessService");
+    if(businessService_ ==='WS')
+    {
+       let  consumerCode =  getQueryArg(window.location.href, "consumerCode");
+        dispatch(handleField("pay", consumeCodeComponentPath, "props.number", consumerCode));
+         //set _getBillingEstimation for gerenerate receipt for WNS
+         getBillingEstimation(state, dispatch, consumerCode, tenantId  );
+
+    }
+    else
+    {
+        dispatch(handleField("pay", consumeCodeComponentPath, "props.number", consumerCodeFromResponse));
+    }
+    
 
     const raidButtonComponentPath = "components.div.children.formwizardFirstStep.children.paymentDetails.children.cardContent.children.AmountToBePaid.children.cardContent.children.amountDetailsCardContainer.children.AmountToPaidButton";
     dispatch(handleField("pay", raidButtonComponentPath, "props.value", "full_amount"));
@@ -194,8 +238,14 @@ const screenConfig = {
         let consumerCode = getQueryArg(window.location.href, "consumerCode");
         let tenantId = getQueryArg(window.location.href, "tenantId");
         let businessService = getQueryArg(window.location.href, "businessService");
-        fetchBill(state, dispatch, consumerCode, tenantId, businessService);
-        const data = getPaymentCard();
+        dispatch(prepareFinalObject("businessServicewsbillreceipt", businessService));
+        if(businessService === "WS")
+        {
+            consumerCode = getQueryArg(window.location.href, "id");  
+        }
+        fetchBill(state, dispatch, consumerCode, tenantId,  );
+       
+        const data = getPaymentCard(businessService);
         set(action, "screenConfig.components.div.children.formwizardFirstStep", data);
         return action;
     },

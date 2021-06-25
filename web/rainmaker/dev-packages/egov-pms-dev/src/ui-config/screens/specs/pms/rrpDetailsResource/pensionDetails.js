@@ -19,6 +19,7 @@ import {
 import get from "lodash/get";
 import set from "lodash/set";
 import "./index.css";
+import store from "ui-redux/store";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {  
@@ -27,6 +28,14 @@ import {
   } from "../../../../../ui-utils/sampleResponses";
   import { httpRequest } from "../../../../../ui-utils";
   import { getPMSPattern } from "../../../../../ui-utils/commons";
+  const ActionView =async(state,dispatch)=>{
+    set(
+      'rrpDetails',
+      "components.adhocDialog.props.open",
+      true
+    );
+    store.dispatch(handleField("rrpDetails", "components.adhocDialog", "props.open", true))
+  }
 const ActionCalculate = async (state, dispatch) => {
  
   set(
@@ -72,6 +81,7 @@ const ActionCalculate = async (state, dispatch) => {
     );
     console.log(response)
     console.log("response")
+    dispatch(prepareFinalObject("pensionArrears", response.ProcessInstances[0])); 
   
 if(response!== undefined)
 {
@@ -1314,3 +1324,100 @@ export const pensionDetails = (data) => {
 });
 }
 
+export const arrealPensionDetails = (data) => {
+  //export const pensionDetails = getCommonCard({
+    return getCommonCard({
+      header: getCommonTitle(
+        {
+          labelName: "Arreal Pension Information",
+          labelKey: "PENSION_EMPLOYEE_ARREAL_PENSION_INFORMATION"
+        },
+        {
+          style: {
+            marginBottom: 18
+          }
+        }
+      ),
+      pensionArealView: {
+        componentPath: "Button",
+        gridDefination: {
+          xs: 12,
+          sm: 6,
+          align: "left"
+        },
+        visible: data[4].IsCalculate,
+        props: {
+          variant: "contained",
+          color: "primary",
+          style: {
+            color: "white",
+            borderRadius: "2px",
+            width: "250px",
+            height: "48px"
+          }
+        },
+    
+        children: {
+         
+    
+          buttonLabel: getLabel({
+            labelName: "NEW APPLICATION",
+            labelKey: "PENSION_ARREAR_VIEW"
+          })
+        },
+        onClickDefination: {
+          action: "condition",
+          callBack: ActionView
+        },
+        
+      },
+      break: getBreak(),
+      pensionDetailsConatiner: getCommonContainer({
+            //1
+      totalArrearSystem: getTextField({
+      label: {
+        labelName: "Total Arrear System Calculated(Rs.)",
+        labelKey: "PENSION_TOTAL_ARREAR_S"
+      },
+      props:{
+        className:"applicant-details-error"
+      }, 
+      placeholder: {
+        labelName: "NQS Year",
+        labelKey: "PENSION_TOTAL_ARREAR_S"
+      },
+      required:false,
+       minValue:0,
+        maxLength:18,
+      props: {
+       disabled:true,       
+      },
+      pattern: getPMSPattern("Amount"),
+      jsonPath: "ProcessInstances[0].pensionCalculationDetails.pensionArrearSystem"
+    }),
+    totalArrear: getTextField({
+      label: {
+        labelName: "Total Arrear Calculated(Rs.)",
+        labelKey: "PENSION_TOTAL_ARREAR_V"
+      },
+      props:{
+        className:"applicant-details-error"
+      }, 
+      placeholder: {
+        labelName: "NQS Year Verify",
+        labelKey: "PENSION_TOTAL_ARREAR_V"
+      },
+       required:false,
+       minValue:0,
+        maxLength:18,
+       props: {
+        disabled:data[3].pensionDataUpdate,
+      },
+      pattern: getPMSPattern("Amount"),
+      jsonPath: "ProcessInstances[0].pensionCalculationUpdateDetails.pensionArrearVerified"
+    }),
+
+      }),
+     
+    })
+  }

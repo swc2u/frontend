@@ -19,8 +19,8 @@ export const fetchData = async (action, state, dispatch) => {
         }        
     ]
 
-    const response = await getMyConnectionResults(queryObject, dispatch);
-    const swResponse = await getSWMyConnectionResults(queryObject, dispatch);
+    const response = await getMyConnectionResults(queryObject, dispatch,action);
+    const swResponse = await getSWMyConnectionResults(queryObject, dispatch,action);
 
     if ((response && response.WaterConnection && response.WaterConnection.length > 0) && (swResponse && swResponse.SewerageConnections && swResponse.SewerageConnections.length > 0)) {
         finalResponse = [...response.WaterConnection, ...swResponse.SewerageConnections];

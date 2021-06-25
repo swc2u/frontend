@@ -10,7 +10,7 @@ import Label from "egov-ui-kit/utils/translationNode";
 import { getQueryArg,getModuleName } from "egov-ui-kit/utils/commons";
 import { logout } from "egov-ui-kit/redux/auth/actions";
 import SortDialog from "../common/common/Header/components/SortDialog";
-import {  setModule, getTenantId, getLocale, getUserInfo} from "../utils/localStorageUtils";
+import {  setModule, getTenantId, getLocale, getUserInfo,localStorageGet,localStorageSet } from "../utils/localStorageUtils";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 const withAuthorization = (options = {}) => (Component) => {
   class Wrapper extends React.Component {
@@ -137,13 +137,47 @@ const withAuthorization = (options = {}) => (Component) => {
         : "";
 
       //For restricting citizen to access employee url
-
+      const lastLoginTime = new Date().getTime();
+      const lastlogintime = localStorageGet("last-login-time");
+      const LoginDifferent = lastLoginTime-lastlogintime
+      console.log(lastLoginTime-lastlogintime)
+      const dateFromApi = new Date(lastLoginTime);
+      let month = dateFromApi.getMonth() + 1;
+      let day = dateFromApi.getDate();
+      let year = dateFromApi.getFullYear();
+      let Hour = dateFromApi.getHours();
+      let Minutes = dateFromApi.getMinutes();
+      let Seconds = dateFromApi.getSeconds();
+      month = (month > 9 ? "" : "0") + month;
+      day = (day > 9 ? "" : "0") + day;
+      const dateFromApi_c = new Date(parseInt(lastlogintime));
+      let month_c = dateFromApi_c.getMonth() + 1;
+      let day_c = dateFromApi_c.getDate();
+      let year_c = dateFromApi_c.getFullYear();
+      let Hour_c = dateFromApi_c.getHours();
+      let Minutes_c = dateFromApi_c.getMinutes();
+      let Seconds_c = dateFromApi_c.getSeconds();
+      month_c = (month_c > 9 ? "" : "0") + month_c;
+      day_c = (day_c > 9 ? "" : "0") + day_c;
+      console.log(`${Seconds}/${Minutes}/${Hour}/${day}/${month}/${year}`)
+      console.log(`${Seconds_c}/${Minutes_c}/${Hour_c}/${day_c}/${month_c}/${year_c}`)
+      console.log(process.env.NODE_ENV)
       if (process.env.NODE_ENV === "production") {
         const _role = role === "citizen" ? "citizen" : "employee";
         if (window.basename.slice(1).toLowerCase() !== _role) {
           this.props.logout();
         }
+        // if(LoginDifferent>=900000)
+        //   {
+        //     localStorageSet("last-login-time", lastLoginTime);
+        //     this.props.logout();
+        //   }
       }
+    //  if(LoginDifferent>=900000)
+    //   {
+    //     localStorageSet("last-login-time", lastLoginTime);
+    //     this.props.logout();
+    //   }
       const getUserRole = () => {
         let { userInfo } = this.props;
         return (userInfo && userInfo.roles && userInfo.roles.length > 0 && userInfo.roles[0].code.toUpperCase()) || null;
@@ -189,7 +223,8 @@ const withAuthorization = (options = {}) => (Component) => {
               </div>
             )}
 
-            <div className={`col-xs-12 col-sm-10 ${screencls}`} style={{ padding: 0 }}>
+            <div className={`col-xs-12 col-sm-10 ${screencls}`} >
+            {/* style={{ padding: 0 }} */}
               {authenticated ? (
                 <div>
                   {!hideTitle && role !== hideFor && (

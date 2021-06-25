@@ -184,7 +184,7 @@ export const createUpdatePO = async (state, dispatch, action ,status) => {
         "post",
         "/nulm-services/v1/susv/_create",
         "",
-        queryObject,
+        [],
         requestBody
       );
        if(response){

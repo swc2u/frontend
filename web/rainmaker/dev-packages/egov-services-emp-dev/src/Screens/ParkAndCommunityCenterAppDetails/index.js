@@ -1192,8 +1192,19 @@ return dateArr
     let applicationDetails = selectedComplaint;
 
     let CardNumber;
+    let createCardNum;
+let pdfBankName;
+
+if(PaymentModeCNumber == "DD" ||PaymentModeCNumber == "CHEQUE"){
+  pdfBankName = applicationDetails.bankName
+}
+else{
+  pdfBankName = "Not Applicable"
+}
+
     if(PaymentModeCNumber == "CARD"){
-      CardNumber = applicationDetails.cardNumber
+      createCardNum = applicationDetails.cardNumber
+      CardNumber = `**** **** **** ${createCardNum}`
     }
     else{
       CardNumber = "Not Applicable"
@@ -1492,6 +1503,8 @@ console.log("BookingCANCLdate",date2)
 cancelBookingPayReceipt({ BookingInfo: BookingInfo})
 }
 else{
+
+
 console.log("employeePaymentReceipt")
     let BookingInfo = [
       {
@@ -1558,7 +1571,7 @@ console.log("employeePaymentReceipt")
           discType: applicationDetails.bkPlotSketch,
           transactionId: this.props.offlineTransactionNum,
           totalPaymentInWords: this.NumInWords(NumAmount), //offlineTransactionDate,,
-          bankName: "",
+          bankName: pdfBankName,
           cardNumberLast4: CardNumber,
           dateVenueChangeCharges:
             this.props.DATEVENUECHARGE == 0
@@ -1985,8 +1998,10 @@ console.log("employeePaymentReceipt")
     let applicationDetails = selectedComplaint;
 
     let CardNumber;
+    let createdCardNum;
     if(PaymentModeCNumber == "CARD"){
-      CardNumber = applicationDetails.cardNumber
+      createdCardNum = applicationDetails.cardNumber
+      CardNumber = `**** **** **** ${createdCardNum}` 
     }
     else{
       CardNumber = "Not Applicable"

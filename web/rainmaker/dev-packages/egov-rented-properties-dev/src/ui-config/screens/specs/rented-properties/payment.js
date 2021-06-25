@@ -1,14 +1,14 @@
-import { getRentSummaryCard, getCommonApplyFooter } from "../utils";
+import { getRentSummaryCard, getCommonApplyFooter ,convertDateToEpoch} from "../utils";
 import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField, toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { get } from "lodash";
-const { getCommonHeader, getCommonCard, getCommonContainer, getTextField, getSelectField,getPattern, getCommonGrayCard, getCommonTitle, getLabel } = require("egov-ui-framework/ui-config/screens/specs/utils");
+const { getCommonHeader, getCommonCard, getCommonContainer, getTextField,getDateField,getSelectField,getPattern, getCommonGrayCard, getCommonTitle, getLabel } = require("egov-ui-framework/ui-config/screens/specs/utils");
 const { transitSiteHeader, transitNumberLookUp, colonyFieldConfig, pincodeField } = require("./applyResource/propertyDetails");
 const { getRentPaymentPropertyDetails } = require("../../../../ui-utils/apply");
 const { ownerNameField } = require("./applyResource/rentHolderDetails");
 import { httpRequest } from "../../../../ui-utils";
 import { BILLING_BUSINESS_SERVICE_RENT, ONLINE, OFFLINE } from "../../../../ui-constants";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { validateFields } from "egov-ui-framework/ui-utils/commons";
+import { validateFields,getTodaysDateInYMD } from "egov-ui-framework/ui-utils/commons";
 import {getColonyTypes} from "../rented-properties/apply"
 const header = process.env.REACT_APP_NAME === "Citizen" ?
 getCommonHeader({
@@ -19,9 +19,23 @@ getCommonHeader({
     labelName: "Offline Rent Payment",
     labelKey: "RP_OFFLINE_RENT_PAYMENT_HEADER"
   });
+  const offlinePaymentDetailsHeader = getCommonTitle(
+    {
+        labelName: "Payment Details",
+        labelKey: "RP_PAYMENT_DETAILS_HEADER"
+    },
+    {
+        style: {
+                marginBottom: 18,
+                marginTop: 18
+        }
+    }
+  )
 
 const transitNumberField = {
   ...transitNumberLookUp,
+  pattern:"",
+  maxLength:"",
   jsonPath: "property.transitNumber",
   iconObj: {
     ...transitNumberLookUp.iconObj,
@@ -201,7 +215,46 @@ const amountField = {
     }
   }
 }
-
+const transactiondate = {
+  label: {
+      labelName: "Date of Payment",
+      labelKey: "RP_DATE_TRANSACTION_LABEL"
+  },
+  placeholder: {
+      labelName: "Enter Date of Payment",
+      labelKey: "RP_DATE_TRANSACTION_PLACEHOLDER"
+  },
+  required: true,
+  visible:false,
+  errorMessage:"RP_ERR_TRANSACTION_DATE",
+  pattern: getPattern("Date"),
+  jsonPath: "paymentInfo.transactiondate",
+  props: {
+      inputProps: {
+          max: getTodaysDateInYMD()
+      }
+  }
+}
+const transactiondatefield = {
+  label: {
+      labelName: "Date of Payment",
+      labelKey: "RP_DATE_TRANSACTION_LABEL"
+  },
+  placeholder: {
+      labelName: "Enter Date of Payment",
+      labelKey: "RP_DATE_TRANSACTION_PLACEHOLDER"
+  },
+  required: true,
+  visible:false,
+  errorMessage:"RP_ERR_TRANSACTION_DATE",
+  pattern: getPattern("Date"),
+  jsonPath: "payment.transactiondate",
+  props: {
+      inputProps: {
+          max: getTodaysDateInYMD()
+      }
+  }
+}
 const bankNameField = {
   label: {
     labelName: "Bank Name",
@@ -220,7 +273,8 @@ const bankNameField = {
   minLength: 1,
   maxLength: 40,
   jsonPath: "paymentInfo.bankName",
-  visible: process.env.REACT_APP_NAME !== "Citizen",
+  visible: false,
+  // visible: process.env.REACT_APP_NAME !== "Citizen",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 40) {
         dispatch(
@@ -280,7 +334,8 @@ const transactionNumberField = {
   minLength: 1,
   maxLength: 40,
   jsonPath: "paymentInfo.transactionNumber",
-  visible: process.env.REACT_APP_NAME !== "Citizen",
+  visible: false,
+  // visible: process.env.REACT_APP_NAME !== "Citizen",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 40) {
         dispatch(
@@ -321,16 +376,349 @@ const transactionNumberField = {
   }
 }
 
+const paymentMode = {
+  label: {
+    labelName: "Payment Mode",
+    labelKey: "RP_PAYMENT_MODE_LABEL",
+  },
+  placeholder: {
+    labelName: "Select Payment Mode",
+    labelKey: "RP_PAYMENT_MODE_PLACEHOLDER",
+  },
+  required: true,
+  visible: process.env.REACT_APP_NAME !== "Citizen",
+  optionValue: "value",
+  optionLabel: "label",
+  jsonPath: "paymentInfo.paymentMode",
+  data: [
+    {
+      label: "RP_PAYMENT_CASH",
+      value: "CASH",
+    },
+    {
+      label: "RP_PAYMENT_DD",
+      value: "DD",
+    },
+    {
+      label: "RP_PAYMENT_CHEQUE",
+      value: "CHEQUE",
+    },
+    {
+      label: "RP_PAYMENT_DIRECT_PAYMENT",
+      value: "OFFLINE_NEFT",
+    }
+  ],
+  gridDefination: {
+    xs: 12,
+    sm: 6,
+  },
+  errorMessage: "RP_ERR_PAYMENT_TYPE_FIELD",
+  afterFieldChange: (action, state, dispatch) => {
+    const screenName = "payment"
+    const commonPath = "components.div.children.detailsContainer.children.paymentInfo.children.cardContent.children.detailsContainer.children"
+    dispatch(handleField(
+        screenName,
+        `${commonPath}.bankName`,
+        "visible",
+        action.value !== "CASH" && action.value !== "OFFLINE_NEFT"
+      )
+    )
+    dispatch(handleField(
+      screenName,
+      `${commonPath}.transactiondate`,
+      "visible",
+      action.value === "OFFLINE_NEFT"
+    )
+  )
+    dispatch(handleField(
+        screenName,
+        `${commonPath}.transactionNumber`,
+        "visible",
+        action.value !== "CASH"
+      )
+    )
+      dispatch(
+        handleField(
+          screenName,
+          `${commonPath}.transactionNumber.props.label`,
+          "labelKey",
+          action.value === "DD"
+            ? "RP_DD_NUMBER_LABEL"
+            : action.value === "OFFLINE_NEFT"
+            ?"RP_DIRECT_BANK_LABEL"
+            :"RP_CHEQUE_NUMBER_LABEL"
+        )
+      );
+      dispatch(
+        handleField(
+          screenName,
+          `${commonPath}.transactionNumber.props.placeholder`,
+          "labelKey",
+          action.value === "DD"
+            ? "RP_DD_NUMBER_PLACEHOLDER"
+            : action.value === "OFFLINE_NEFT"
+            ?"RP_DIRECT_BANK_PLACEHOLDER"
+            : "RP_CHEQUE_NUMBER_PLACEHOLDER"
+        )
+      );
+  }
+};
+
 const paymentInfo = getCommonCard({
   header: paymentInfoHeader,
   detailsContainer: getCommonContainer({
+    type: getSelectField(paymentMode),
     amount: getTextField(amountField),
     bankName: getTextField(bankNameField),
-    transactionNumber: getTextField(transactionNumberField)
+    transactiondate:getDateField(transactiondate),
+    transactionNumber: getTextField(transactionNumberField),
   })
 })
+const paymentInfoOffline = getCommonCard({
+  header: paymentInfoHeader,
+  detailsContainer: getCommonContainer({
+    amount: getTextField(amountField),
+  })
+})
+const paymenttype = {
+  label: {
+    labelName: "Payment Mode",
+    labelKey: "RP_PAYMENT_MODE_LABEL",
+  },
+  placeholder: {
+    labelName: "Select Payment Mode",
+    labelKey: "RP_PAYMENT_MODE_PLACEHOLDER",
+  },
+  required: true,
+  optionValue: "value",
+  optionLabel: "label",
+  jsonPath: "payment.paymentMode",
+  data: [
+    {
+      label: "RP_PAYMENT_CASH",
+      value: "CASH",
+    },
+    {
+      label: "RP_PAYMENT_DD",
+      value: "DD",
+    },
+    {
+      label: "RP_PAYMENT_CHEQUE",
+      value: "CHEQUE",
+    },
+    {
+      label: "RP_PAYMENT_DIRECT_PAYMENT",
+      value: "OFFLINE_NEFT",
+    }
+  ],
+  gridDefination: {
+    xs: 12,
+    sm: 6,
+  },
+  errorMessage: "RP_ERR_PAYMENT_TYPE_FIELD",
+  afterFieldChange: (action, state, dispatch) => {
+    const screenName = "pay"
+    const commonPath = "components.div.children.formwizardFirstStep.children.offlinePaymentDetails.children.cardContent.children.detailsContainer.children"
+    dispatch(handleField(
+        screenName,
+        `${commonPath}.bankName`,
+        "visible",
+        action.value !== "CASH" && action.value !== "OFFLINE_NEFT"
+      )
+    )
+    dispatch(handleField(
+      screenName,
+      `${commonPath}.transationdate`,
+      "visible",
+      action.value === "OFFLINE_NEFT"
+    )
+  )
+    dispatch(handleField(
+        screenName,
+        `${commonPath}.transactionId`,
+        "visible",
+        action.value !== "CASH"
+      )
+    )
+      dispatch(
+        handleField(
+          screenName,
+          `${commonPath}.transactionId.props.label`,
+          "labelKey",
+          action.value === "DD"
+            ? "RP_DD_NUMBER_LABEL"
+            : action.value === "OFFLINE_NEFT"
+            ?"RP_DIRECT_BANK_LABEL"
+            : "RP_CHEQUE_NUMBER_LABEL"
+        )
+      );
+      dispatch(
+        handleField(
+          screenName,
+          `${commonPath}.transactionId.props.placeholder`,
+          "labelKey",
+          action.value === "DD"
+            ? "RP_DD_NUMBER_PLACEHOLDER"
+            : action.value === "OFFLINE_NEFT"
+            ?"RP_DIRECT_BANK_PLACEHOLDER"
+            : "RP_CHEQUE_NUMBER_PLACEHOLDER"
+        )
+      );
+  }
+};
 
+const bankName = {
+  label: {
+    labelName: "Bank Name",
+    labelKey: "RP_BANK_NAME_LABEL"
+  },
+  placeholder: {
+    labelName: "Please Enter Bank Name",
+    labelKey: "RP_ENTER_BANK_NAME_PLACEHOLDER"
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  required: true,
+  errorMessage:"RP_ERR_BANK_NAME_FIELD",
+  minLength: 1,
+  maxLength: 40,
+  jsonPath: "payment.bankName",
+  visible: false,
+  // visible: process.env.REACT_APP_NAME !== "Citizen",
+  afterFieldChange: (action, state, dispatch) => {
+    if (action.value.length > 40) {
+        dispatch(
+            handleField(
+              "pay",
+              action.componentJsonpath,
+              "errorMessage",
+              "RP_ERR_BANK_NAME_MAXLENGTH"
+            )
+        )
+        dispatch(
+            handleField(
+              "pay",
+              action.componentJsonpath,
+              "props.errorMessage",
+              "RP_ERR_BANK_NAME_MAXLENGTH"
+            )
+        )
+     }
+    else {
+        dispatch(
+            handleField(
+              "pay",
+              action.componentJsonpath,
+              "errorMessage",
+              "RP_ERR_BANK_NAME_FIELD"
+            )
+        )
+        dispatch(
+            handleField(
+              "pay",
+              action.componentJsonpath,
+              "props.errorMessage",
+              "RP_ERR_BANK_NAME_FIELD"
+            )
+        )
+    }
+  
+}
+}
 
+const transactionId = {
+  label: {
+    labelName: "Transaction/Cheque/DD No",
+    labelKey: "RP_TRANSACTION_NUMBER_LABEL"
+  },
+  placeholder: {
+    labelName: "Please Enter Transaction/Cheque/DD No",
+    labelKey: "RP_ENTER_TRANSACTION_NUMBER_PLACEHOLDER"
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  required: true,
+  errorMessage:"RP_ERR_TRANSACTION_NUMBER_FIELD",
+  minLength: 1,
+  maxLength: 40,
+  jsonPath: "payment.transactionNumber",
+  visible: false,
+  // visible: process.env.REACT_APP_NAME !== "Citizen",
+  afterFieldChange: (action, state, dispatch) => {
+    if (action.value.length > 40) {
+        dispatch(
+            handleField(
+              "pay",
+              action.componentJsonpath,
+              "errorMessage",
+              "RP_ERR_TRANSACTION_NUMBER_MAXLENGTH"
+            )
+        )
+        dispatch(
+            handleField(
+              "pay",
+              action.componentJsonpath,
+              "props.errorMessage",
+              "RP_ERR_TRANSACTION_NUMBER_MAXLENGTH"
+            )
+        )
+    }
+    else {
+        dispatch(
+            handleField(
+              "pay",
+              action.componentJsonpath,
+              "errorMessage",
+              "RP_ERR_TRANSACTION_NUMBER_FIELD"
+            )
+        )
+        dispatch(
+            handleField(
+              "pay",
+              action.componentJsonpath,
+              "props.errorMessage",
+              "RP_ERR_TRANSACTION_NUMBER_FIELD"
+            )
+        )
+    }
+  }
+}
+const amount = {
+  label: {
+    labelName: "Amount",
+    labelKey: "RP_AMOUNT_LABEL"
+  },
+  placeholder: {
+    labelName: "Please Enter Amount",
+    labelKey: "RP_ENTER_AMOUNT_PLACEHOLDER"
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  //pattern: getPattern("AmountFeild"),
+  required: true,
+  minLength: 1,
+  maxLength: 7,
+  jsonPath: "payment.amount",
+  props:{
+    disabled: true
+  }
+}
+export const applicationOfflinePaymentDetails = getCommonCard({
+  header: offlinePaymentDetailsHeader,
+  detailsContainer: getCommonContainer({
+    mode: getSelectField(paymenttype),
+    amount:getTextField(amount),
+      bankName: getTextField(bankName),
+      transationdate:getDateField(transactiondatefield),
+      transactionId: getTextField(transactionId)
+  })
+})
 const detailsContainer = {
     uiFramework: "custom-atoms",
     componentPath: "Form",
@@ -344,7 +732,19 @@ const detailsContainer = {
     },
     visible: true
   }
-
+const detailsContainerCitizen={
+  uiFramework: "custom-atoms",
+  componentPath: "Form",
+  props: {
+    id: "apply_form1"
+  },
+  children: {
+    propertyDetails,
+    rentSummaryDetails,
+    paymentInfoOffline
+  },
+  visible: true
+}
 const getConsumerCode = async (state, dispatch, payload) => {
   try {
     let response = await httpRequest(
@@ -383,12 +783,19 @@ const goToPayment = async (state, dispatch, type) => {
        id = await getRentPaymentPropertyDetails(state, dispatch)
     }
     if(!!propertyId || !!id) {
-      const payload = {Properties: [{
+      let payload = {Properties: [{
         id: propertyId || id,
         paymentAmount: paymentInfo.amount,
         transactionId: paymentInfo.transactionNumber,
+        transactionDate:convertDateToEpoch(paymentInfo.transactiondate),
         bankName: paymentInfo.bankName
       }]}
+      payload = type === ONLINE ? payload : {
+        Properties: [{
+          ...payload.Properties[0],
+          paymentMode: paymentInfo.paymentMode
+        }]
+      }
       const response = await getConsumerCode(state, dispatch, payload)
       if(!!response && !!response.Properties.length){
         const {rentPaymentConsumerCode, tenantId} = response.Properties[0]
@@ -500,7 +907,7 @@ const payment = {
                 }
               }
             },
-            detailsContainer,
+            detailsContainer: detailsContainer,
             footer: paymentFooter
           }
         }

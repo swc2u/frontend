@@ -87,6 +87,16 @@ export const callBackForNext = async (state, dispatch) => {
       dispatch(toggleSnackbar(true, errorMessage, "warning"));
       return;
     }
+    // if(NulmSuhRequest ){
+    //   if(!NulmSuhRequest.gender ){
+    //     const errorMessage = {
+    //       labelName: "Please select gender of an applicant",
+    //       labelKey: "ERR_NULM_SELECT_GENDER_APPLICANT"
+    //     };
+    //     dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    //     return;
+    //   }
+    // }
   }
   if(activeStep === 2){
     let isRecordValid = true;

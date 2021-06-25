@@ -14,6 +14,7 @@ import {
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
   getTodaysDateInYMD, 
+  getYesterdaysDateInYMD,
   _getPattern,
   displayCustomErr,
   displayDefaultErr
@@ -88,6 +89,7 @@ const newOwnerNameField = {
   },
   // required: true,
   pattern: _getPattern("alphabet"),
+  errorMessage:"ES_ERR_PREVIOUS_OWNER_NAME",
   jsonPath: "Properties[0].propertyDetails.purchaser[0].ownerDetails.ownerName",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value) {
@@ -116,6 +118,7 @@ const newOwnerFatherHusbandNameField = {
   },
   // required: true,
   pattern: _getPattern("alphabet"),
+  errorMessage:"ES_ERR_PREVIOUS_FATHER_HUSBAND_NAME",
   jsonPath: "Properties[0].propertyDetails.purchaser[0].ownerDetails.guardianName",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value) {
@@ -168,11 +171,12 @@ const dateOfBirthField = {
       labelKey: "ES_DOB_PLACEHOLDER"
   },
   // required: true,
+  errorMessage:"ES_ERR_DATE_OF_BIRTH",
   pattern: getPattern("Date"),
   jsonPath: "Properties[0].propertyDetails.purchaser[0].ownerDetails.dob",
   props: {
     inputProps: {
-        max: getTodaysDateInYMD(),
+        max: getYesterdaysDateInYMD(),
         style: {
             lineHeight: "initial"
         }
@@ -199,6 +203,7 @@ const newOwnerAddressField = {
     rows: 2
   },
   pattern: _getPattern("address"),
+  errorMessage:"ES_ERR_ADDRESS_FEILD",
   jsonPath: "Properties[0].propertyDetails.purchaser[0].ownerDetails.address",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value) {
@@ -245,6 +250,7 @@ const sellerNameField = {
   },
   // required: true,
   pattern: _getPattern("alphabet"),
+  errorMessage:"ES_ERR_SELLER_NAME_FEILD",
   jsonPath: "Properties[0].propertyDetails.purchaser[0].ownerDetails.sellerName",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
@@ -271,6 +277,7 @@ const sellerFatherHusbandNameField = {
   },
   // required: true,
   pattern: _getPattern("alphabet"),
+  errorMessage:"ES_ERR_SELLER_FATHER_HUSBAND_NAME",
   jsonPath: "Properties[0].propertyDetails.purchaser[0].ownerDetails.sellerGuardianName",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value) {
@@ -348,7 +355,8 @@ const modeOfTransferField = {
   gridDefination: {
     xs: 12,
     sm: 6
-  }
+  },
+  errorMessage:"ES_ERR_MODE_OF_TRANSFER"
 }
 
 const commonPurchaserInformation = () => {
@@ -405,7 +413,8 @@ export const purchaserDetails = getCommonCard({
             headerJsonPath:
               "children.cardContent.children.header.children.Purchaser Information.props.label",
             sourceJsonPath: "Properties[0].propertyDetails.purchaser",
-            prefixSourceJsonPath: "children.cardContent.children.purchaserCard.children"
+            prefixSourceJsonPath: "children.cardContent.children.purchaserCard.children",
+            disableDeleteIfKeyExists: "id"
           },
           type: "array"
         }

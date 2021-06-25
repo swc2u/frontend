@@ -28,7 +28,7 @@ class BookingCalendar extends React.Component {
       CheckBothDataExist: false,
     };
   }
-//availabilityCheckData.bkFromDate
+//availabilityCheckData.bkFromDate    
   componentDidMount() {
     console.log("inComponentDidMount");
     const {
@@ -236,11 +236,37 @@ class BookingCalendar extends React.Component {
   }
 
   handleDayClick = (day, modifiers = {}) => {
+    console.log("PropsInHandleDayClickFunction",this.props)
     console.log("handleDayClick");
     const { oldAvailabilityCheckData } = this.props;
     const { from, to } = this.state;
     console.log("handleDayClick-of-to-", from, to);
     console.log("day-handleDayClick-", day ? day : "gggggg");
+console.log("PropsInHandleDayClick", this.props)
+    for(let i = 0 ; i< this.props.bookedSlotDateArray.length; i++)
+    {
+        let d= `${new Date(day).getDate()}-${new Date(day).getMonth()}-${new Date(day).getFullYear()}`
+       console.log("dINfunction",d)
+        let ad= `${new Date(this.props.bookedSlotDateArray[i]).getDate()}-${new Date(this.props.bookedSlotDateArray[i]).getMonth()}-${new Date(this.props.bookedSlotDateArray[i]).getFullYear()}`
+console.log("adInfunction",ad)
+        if(d==ad){
+            this.handleResetClick();
+            // this.props.showError4();
+            this.props.toggleSnackbarAndSetText(
+              true,
+              {
+                labelName: "Green dates are only available for three hours slot booking!",
+                labelKey: "Green dates are only available for three hours slot booking!",
+              },
+              "warning"
+            );
+
+
+            return;
+        }
+    }
+
+
     if (from && to && day >= from && day <= to) {
       console.log("one--", from, to, day);
       this.handleResetClick();
@@ -352,7 +378,7 @@ class BookingCalendar extends React.Component {
       from = ChangeFromDate;
       to = ChangeToDate;
     }
-    const modifiers = { start: from, end: enteredTo };
+    const modifiers = { start: from, end: enteredTo,timeSlotBookedDates : this.props.bookedSlotDateArray };
     console.log("modifiers--", modifiers);
     const disabledDays = { before: this.state.from };
     const selectedDays = [from, { from, to: enteredTo }];
@@ -379,7 +405,7 @@ class BookingCalendar extends React.Component {
             "oldFromDate-return-",
             this.state.changeoldfromDate
               ? this.state.changeoldfromDate
-              : "nnnnn"
+              : "nnnnn"  
           )}
           <DayPicker
             className="Selectable"
@@ -529,6 +555,17 @@ const mapDispatchToProps = (dispatch) => {
           "warning"
         )
       ),
+      showError4: () =>
+      dispatch(
+          toggleSnackbar(
+              true,
+              {
+                  labelName: "Green dates are only available for three hours slot booking!",
+                  labelKey: "",
+              },
+              "warning"
+          )
+      ),
   };
 };
 const mapStateToProps = (state, ownProps) => {
@@ -567,6 +604,74 @@ const mapStateToProps = (state, ownProps) => {
     []
   );
 
+  const reservedTimeSlotsData = get(
+    state,
+    "screenConfiguration.preparedFinalObject.availabilityCheckData.reservedTimeSlotsData"
+);
+console.log("reservedTimeSlotsData-mapState",reservedTimeSlotsData)
+let timeSlotArray = [];
+let bookedSlotArray = [];
+var date = new Date();
+if (reservedTimeSlotsData && reservedTimeSlotsData.length > 0) {
+    for (let i = 0; i < reservedTimeSlotsData.length; i++) {
+        const [year, month, day] = reservedTimeSlotsData[i].fromDate.split(
+            "-"
+        );
+        let date = `${year}-${month}-${day}`;
+        console.log("Date--MapStateProps",date)
+        if (
+            reservedTimeSlotsData[i].timeslots &&
+            reservedTimeSlotsData[i].timeslots.length > 0 && reservedTimeSlotsData[i].timeslots.length < 3
+        ) {
+            
+            for (
+                let j = 0;
+                j < reservedTimeSlotsData[i].timeslots.length;
+                j++
+            ) {
+                bookedSlotArray.push({
+                    date: date,
+                    timeSlots: [reservedTimeSlotsData[i].timeslots[j].slot],
+                }
+                );
+               console.log("bookedSlotArray=mapProps",bookedSlotArray)
+            }
+        }
+    }
+}    
+let newBookedSlotArray= []
+let newBookedSlotObject= []
+console.log("newBookedSlotArray-mapStateToProps", newBookedSlotArray)
+console.log("newBookedSlotObject",newBookedSlotObject)
+console.log('bookedSlotDateArray :>> ', bookedSlotArray);
+bookedSlotArray.map(d=>{
+    if(newBookedSlotArray.includes(d.date)){
+        
+        for (let i=0 ; i < newBookedSlotObject.length ; i++) {
+            
+            if(newBookedSlotObject[i].date===d.date){
+                newBookedSlotObject[i].timeSlots.push(d.timeSlots)
+            }
+        }
+    }else{
+        newBookedSlotArray.push(d.date)
+        newBookedSlotObject.push({
+            date  : d.date,
+            timeSlots : d.timeSlots
+        })
+    }
+})
+
+
+let availableSlotDateArray=[]
+for (let i=0 ; i < newBookedSlotObject.length ; i++) {
+    if(newBookedSlotObject[i].timeSlots.length<3 && !newBookedSlotObject[i].timeSlots.includes("9:00 AM - 8:59 AM") ){
+        availableSlotDateArray.push(new Date(newBookedSlotObject[i].date))
+    }
+
+}
+console.log("availableSlotDateArray--mapState",availableSlotDateArray)
+
   if (availabilityCheckData && availabilityCheckData.reservedDays) {
     availabilityCheckData = availabilityCheckData;
   }
@@ -574,6 +679,7 @@ const mapStateToProps = (state, ownProps) => {
   if (availabilityCheckData.reservedDays) {
     return {
       availabilityCheckData,
+      bookedSlotDateArray :availableSlotDateArray,
       resetDate,
       ChangeFromDate,
       ChangeToDate,
@@ -591,6 +697,7 @@ const mapStateToProps = (state, ownProps) => {
       bkVenue,
       oldFromDate,
       oldToDate,
+      bookedSlotDateArray :availableSlotDateArray
     };
   }
 };

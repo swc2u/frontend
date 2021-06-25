@@ -28,7 +28,7 @@ export class StepForm extends Component {
       email : this.props.DataForRoomBooking.bookingsModelList[0].bkEmail,
       purpose : this.props.DataForRoomBooking.bookingsModelList[0].bkBookingPurpose,
       houseNo : this.props.DataForRoomBooking.bookingsModelList[0].bkHouseNo,
-      ReasonForDiscount : this.props.DataForRoomBooking.bookingsModelList[0].bkRemarks,
+      ReasonForDiscount : this.props.DataForRoomBooking.bookingsModelList[0].bkRemarks !== "" ?this.props.DataForRoomBooking.bookingsModelList[0].bkRemarks : "Not Applicable",
       discount: this.props.DataForRoomBooking.bookingsModelList[0].discount,
       Sector : this.props.DataForRoomBooking.bookingsModelList[0].bkSector,
       mobileNo : this.props.DataForRoomBooking.bookingsModelList[0].bkMobileNumber,

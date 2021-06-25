@@ -5,6 +5,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { getLegalDashboardData } from "../../../../../ui-utils/commons";
 
+
 export const SearchLegalDashboardData = async (state, dispatch) =>{
   
     //debugger;
@@ -58,7 +59,7 @@ export const SearchLegalDashboardData = async (state, dispatch) =>{
       try {
         // API call for Description Report
         const response = await getLegalDashboardData( dispatch, requestBody );
-  
+          
       } catch (error) {
   
         dispatch(toggleSnackbar(true, error.message, "error"));
