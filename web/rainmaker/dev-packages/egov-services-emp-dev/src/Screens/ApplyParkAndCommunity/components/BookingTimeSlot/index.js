@@ -795,16 +795,17 @@ const mapStateToProps = (state) => {
     if (initiatedBookingFromDate) {
 console.log("initiatedBookingFromDate-map-stateProps",initiatedBookingFromDate)
       let initiatedBookingFromDateYmdFormat= convertDateInYMD(initiatedBookingFromDate)
-  
+  console.log("shivamSuggestion",initiatedBookingFromDateYmdFormat)
       var [goYear, goMonth, goDay] = initiatedBookingFromDateYmdFormat.split(
         "-"
       );
 
       // initiatedBookingFromDate= convertDateInYMD(initiatedBookingFromDate)
         
-            var [goYear, goMonth, goDay] = initiatedBookingFromDate.split("-");
+            // var [goYear, goMonth, goDay] = initiatedBookingFromDate.split("-");
 
       let goDate = `${goDay}-${goMonth}-${goYear}`;
+      console.log("GoDateSuggestion",goDate)
       if (timeSlotArray[j].date === goDate && initiatedBookingTimeSlot) {
         for (let l = 0; l < timeSlotArray[j].timeSlots.length; l++) {
           console.log(timeSlotArray[j].timeSlots[l], initiatedBookingTimeSlot[0].slot, "fsdfsfsdf");
@@ -812,7 +813,7 @@ console.log("initiatedBookingFromDate-map-stateProps",initiatedBookingFromDate)
             initiatedBookingTimeSlot[0].slot === timeSlotArray[j].timeSlots[l]
           ) {
             console.log("Hello Bulbul");
-            
+                   
             timeSlotArray[j].timeSlots.splice(
               l,
               1,

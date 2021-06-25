@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { createWaterTankerApplication, downloadBWTApplication,downloadReceiptForPCC } from "../../redux/bookings/actions";
 import jp from "jsonpath";
 import "./index.css";
+import get from "lodash.get";
 import { SortDialog, Screen } from "modules/common";
 import isEmpty from "lodash/isEmpty";
 import {
@@ -104,195 +105,6 @@ class CreateWBTApplicationSuccess extends Component {
 		this.props.history.push(`/egov-services/all-applications`);
 		window.location.reload(); 
 	}
-
-//   Submit = async () => {
-
-	
-// 	  let {acRoomId,nonAcRoomId,discountForRoom,GlobalNonAccRoomToBook,GlobalAccRoomToBook,RoomId,AppNum,DataForRoomBooking,roomFromDate,roomToDate,userInfo,bothRoom,typeOfRoom,totalRoom,updateNumOfAcRoom,updateNumOfNonAcRoom} = this.props
-// console.log("typesforDiscount--",typeof(discountForRoom))
-
-// 	  let BothRoomSelect=[];
-// 	  if(bothRoom == "Both"){
-// 		  console.log("one")
-// 		  BothRoomSelect = [
- 
-// 			  { "id": acRoomId,
-// 			  "roomApplicationNumber": AppNum,
-// 				  "action": "OFFLINE_APPLY",
-// 				  "remarks": "string",
-// 				  "roomBusinessService": "BKROOM",
-// 				  "discount": discountForRoom,
-// 				   "totalNoOfRooms": updateNumOfAcRoom,
-// 					"typeOfRoom": "AC",            //updateNumOfAcRoom,updateNumOfNonAcRoom
-// 				  "fromDate": roomFromDate,
-// 				  "toDate": roomToDate
-// 				},
-// 				{
-// 				"id": nonAcRoomId,
-// 				"roomApplicationNumber": AppNum,
-// 				"action": "OFFLINE_APPLY",
-// 				  "remarks": "string",
-// 				  "discount": discountForRoom,
-// 				  "roomBusinessService": "BKROOM",
-// 				  "totalNoOfRooms": updateNumOfNonAcRoom,
-// 				  "typeOfRoom": "NON-AC",
-// 				  "fromDate": roomFromDate,
-// 				  "toDate":roomToDate
-// 				  }]
-
-// 				   }
-
-// 	 else if(bothRoom == "AC"){
-// 		 console.log("two")
-// 	  BothRoomSelect = [
-// 		  {
-// 			"id": acRoomId,
-// 				"roomApplicationNumber": AppNum,
-// 				"action": "OFFLINE_APPLY",
-// 			"remarks": "string",
-// 			"roomBusinessService": "BKROOM",
-// 			"discount": discountForRoom,
-// 			 "totalNoOfRooms": updateNumOfAcRoom,
-// 			  "typeOfRoom": typeOfRoom,
-// 			"fromDate": roomFromDate,
-// 			"toDate": roomToDate
-// 		  }]
-		
-// 				  }
-// 			  else if (bothRoom == "NON-AC"){
-// 				  console.log("three")
-// 				  BothRoomSelect = [
-// 					  {
-// 						"id": nonAcRoomId,
-// 				"roomApplicationNumber": AppNum,
-// 				"action": "OFFLINE_APPLY",
-// 						"remarks": "string",
-// 						"roomBusinessService": "BKROOM",
-// 						"discount": discountForRoom,
-// 						 "totalNoOfRooms": updateNumOfNonAcRoom,
-// 						  "typeOfRoom": typeOfRoom,
-// 						"fromDate": roomFromDate,
-// 						"toDate": roomToDate
-// 					  }]
-// 			  }
-// console.log("BothRoomSelect--success--",BothRoomSelect)
-	  
-// 	let Booking = {
-// 		"bkRemarks": null,
-// 		"reInitiateStatus": false,
-// 		"bkApplicationNumber": DataForRoomBooking.bookingsModelList[0].bkApplicationNumber,
-// 		"bkHouseNo": DataForRoomBooking.bookingsModelList[0].bkHouseNo,
-// 		"bkAddress": null,
-// 		"bkSector": DataForRoomBooking.bookingsModelList[0].bkSector,
-// 		"bkVillCity": null,
-// 		"bkAreaRequired": null,
-// 		"bkDuration": "FULLDAY",
-// 		"bkCategory": null,
-// 		"bkEmail": DataForRoomBooking.bookingsModelList[0].bkEmail,
-// 		"bkContactNo": null,
-// 		"bkDocumentUploadedUrl": null,
-// 		"bkDateCreated":  DataForRoomBooking.bookingsModelList[0].bkDateCreated,
-// 		"bkCreatedBy": null,
-// 		"bkWfStatus": null,
-// 		"bkAmount": null,
-// 		"bkPaymentStatus": "SUCCESS",
-// 		"bkBookingType": DataForRoomBooking.bookingsModelList[0].bkBookingType,
-// 		"bkFromDate": DataForRoomBooking.bookingsModelList[0].bkFromDate,
-// 		"bkToDate": DataForRoomBooking.bookingsModelList[0].bkToDate,
-// 		"bkApplicantName": DataForRoomBooking.bookingsModelList[0].bkApplicantName,
-// 		"bkBookingPurpose": DataForRoomBooking.bookingsModelList[0].bkBookingPurpose,
-// 		"bkVillage": null,
-// 		"bkDimension":DataForRoomBooking.bookingsModelList[0].bkDimension,
-// 		"bkLocation": DataForRoomBooking.bookingsModelList[0].bkLocation,
-// 		"bkStartingDate": null,
-// 		"bkEndingDate": null,
-// 		"bkType": null,
-// 		"bkResidenceProof": null,
-// 		"bkCleansingCharges": DataForRoomBooking.bookingsModelList[0].bkCleansingCharges,
-// 		"bkRent": DataForRoomBooking.bookingsModelList[0].bkRent,
-// 		"bkSurchargeRent": DataForRoomBooking.bookingsModelList[0].bkSurchargeRent,
-// 		"bkFacilitationCharges": DataForRoomBooking.bookingsModelList[0].bkFacilitationCharges,
-// 		"bkUtgst": DataForRoomBooking.bookingsModelList[0].bkUtgst,
-// 		"bkCgst": DataForRoomBooking.bookingsModelList[0].bkCgst,
-// 		"bkMobileNumber": DataForRoomBooking.bookingsModelList[0].bkMobileNumber,
-// 		"bkCustomerGstNo": DataForRoomBooking.bookingsModelList[0].bkCustomerGstNo,
-// 		"bkCurrentCharges": null,
-// 		"bkLocationChangeAmount": null,
-// 		"bkVenue": null,
-// 		"bkDate": null,
-// 		"bkFatherName": null,
-// 		"bkBookingVenue": DataForRoomBooking.bookingsModelList[0].bkBookingVenue,
-// 		"bkBookingDuration": null,
-// 		"bkIdProof": null,
-// 		"bkApplicantContact": null,
-// 		"bkOpenSpaceLocation": null,
-// 		"bkLandmark": null,
-// 		"bkRequirementArea": null,
-// 		"bkLocationPictures": null,
-// 		"bkParkOrCommunityCenter": null,
-// 		"bkRefundAmount": DataForRoomBooking.bookingsModelList[0].bkRefundAmount,
-// 		"bkBankAccountNumber": DataForRoomBooking.bookingsModelList[0].bkBankAccountNumber,
-// 		"bkBankName": DataForRoomBooking.bookingsModelList[0].bkBankName,
-// 		"bkIfscCode": DataForRoomBooking.bookingsModelList[0].bkIfscCode,
-// 		"bkAccountType": DataForRoomBooking.bookingsModelList[0].bkAccountType,
-// 		"bkBankAccountHolder": DataForRoomBooking.bookingsModelList[0].bkBankAccountHolder,
-// 		"bkPropertyOwnerName": null,
-// 		"bkCompleteAddress": null,
-// 		"bkResidentialOrCommercial": null,
-// 		"bkMaterialStorageArea": null,
-// 		"bkPlotSketch": null,
-// 		"bkApplicationStatus": DataForRoomBooking.bookingsModelList[0].bkApplicationStatus,
-// 		"bkTime": null,
-// 		"bkStatusUpdateRequest": null,
-// 		"bkStatus": null,
-// 		"bkDriverName": null,
-// 		"bkVehicleNumber": null,
-// 		"bkEstimatedDeliveryTime": null,
-// 		"bkActualDeliveryTime": null,
-// 		"bkNormalWaterFailureRequest": null,
-// 		"bkUpdateStatusOption": null,
-// 		"bkAddSpecialRequestDetails": null,
-// 		"bkBookingTime": null,
-// 		"bkApprovedBy": null,
-// 		"bkModuleType": null,
-// 		// "uuid": "5f09ffbe-db9f-41e8-a9b2-dda6515d9cc7",
-// 		"tenantId": DataForRoomBooking.bookingsModelList[0].tenantId,
-// 		"bkAction": DataForRoomBooking.bookingsModelList[0].bkAction,
-// 		"bkConstructionType": null,
-// 		"businessService": DataForRoomBooking.bookingsModelList[0].businessService,
-// 		"bkApproverName": null,
-// 		"assignee": null,
-// 		"wfDocuments": null,
-// 		"financialYear": "2020-2021",
-// 		"financeBusinessService": "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR",
-// 		// "roomBusinessService": "BKROOM",
-// 		"roomsModel": BothRoomSelect,
-// 	  }
-
-// let createAppData = {
-// "applicationType": "PACC",
-// "applicationStatus": null,
-// "applicationId": DataForRoomBooking.bookingsModelList[0].bkApplicationNumber,
-// "tenantId": userInfo.tenantId,
-// "Booking": Booking   
-// 		}
-	
-// console.log("createAppData--",createAppData)
-
-// let payloadfund = await httpRequest(
-// 	"bookings/community/room/_update",
-// 	"_search",[],
-// 	createAppData
-// 	);
-
-// console.log("payloadfund--",payloadfund)
-
-// this.props.prepareFinalObject("ApplicationCreateForRoom",payloadfund)
-
-// this.props.history.push(`/egov-services/RoomBooking-Created-Successfully`);
-
-
-//   };
 componentDidMount = async () => {  
 	let {userInfo} = this.props
 		let mdmsBody = {
@@ -380,108 +192,7 @@ componentDidMount = async () => {
 	}) 
   }
 
-// 	downloadPaymentReceiptButton = async (e) => {
-// 		this.downloadPaymentReceiptFunction();
-// 		let documentsPreviewData;
-// 		const { DownloadReceiptDetailsforPCC,userInfo } = this.props;
-// 		var documentsPreview = [];
-// 		if (DownloadReceiptDetailsforPCC && DownloadReceiptDetailsforPCC.filestoreIds.length > 0) {
-// 			documentsPreviewData = DownloadReceiptDetailsforPCC.filestoreIds[0];
-// 			documentsPreview.push({
-// 				title: "DOC_DOC_PICTURE",
-// 				fileStoreId: documentsPreviewData,
-// 				linkText: "View",
-// 			});
-// 			let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-// 			let fileUrls =
-// 				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-
-
-// 			documentsPreview = documentsPreview.map(function (doc, index) {
-// 				doc["link"] =
-// 					(fileUrls &&
-// 						fileUrls[doc.fileStoreId] &&
-// 						fileUrls[doc.fileStoreId].split(",")[0]) ||
-// 					"";
-
-// 				doc["name"] =
-// 					(fileUrls[doc.fileStoreId] &&
-// 						decodeURIComponent(
-// 							fileUrls[doc.fileStoreId]
-// 								.split(",")[0]
-// 								.split("?")[0]
-// 								.split("/")
-// 								.pop()
-// 								.slice(13)
-// 						)) ||
-// 					`Document - ${index + 1}`;
-// 				return doc;
-// 			});
-
-// 			setTimeout(() => {
-// 				window.open(documentsPreview[0].link);
-// 			}, 100);
-// 			prepareFinalObject('documentsPreview', documentsPreview)
-// 		}
-// 	}
-
-//   downloadPaymentReceiptFunction = async (e) => {
-//     const {  paymentDetailsForReceipt, downloadReceiptForPCC, userInfo, selectedComplaint,offlineTransactionNum,
-//       offlineTransactionDate,offlinePayementMode,location,RecNumber,totalAmountPaid,six,one,Summarysurcharge,cleanOne,SummarycGST } = this.props;
-// 	//offlineTransactionNum,offlineTransactionDate,offlinePayementMode	
-// 		let BookingInfo = [{
-// 			"applicantDetail": {
-// 				"name": selectedComplaint.bkApplicantName,
-// 				"mobileNumber": selectedComplaint.bkMobileNumber,
-// 				"houseNo": selectedComplaint.bkHouseNo,
-// 				"permanentAddress": "",
-// 				"permanentCity": "ch.chandigarh",
-// 				"sector": selectedComplaint.bkSector
-// 			},
-// 			"booking": {
-// 				"bkApplicationNumber": selectedComplaint.bkApplicationNumber
-// 			},
-// 			"paymentInfo": {
-// 				"paymentDate": convertEpochToDate(offlineTransactionDate, "dayend"),
-// 				"transactionId": offlineTransactionNum,
-// 				"bookingPeriod": getDurationDate(
-// 					selectedComplaint.bkFromDate,
-// 					selectedComplaint.bkToDate
-//         ),
-// 				"bookingItem": `Online Payment Against Booking of ${location}`,
-// 				"amountInWords": this.NumInWords(
-// 					totalAmountPaid
-// 				),
-//         paymentItemExtraColumnLabel: "Booking Period",
-// 				"paymentMode": offlinePayementMode,
-// 				"receiptNo": RecNumber,
-// 				"baseCharge": one,
-// 				"cleaningCharges": cleanOne,
-// 				"surcharges": Summarysurcharge,
-// 				"facilitationCharge": six,
-// 				"utgst": SummarycGST,
-// 				"cgst": SummarycGST,
-// 				"gst": SummarycGST,
-// 				"totalAmount": totalAmountPaid
-// 			},
-// 			"payerInfo": {
-// 				"payerName":  selectedComplaint.bkApplicantName,
-// 				"payerMobile":  selectedComplaint.bkMobileNumber
-// 			},
-// 			"generatedBy": {
-// 				"generatedBy": userInfo.name,
-// 			},
-// 			"tenantInfo": {
-// 				"municipalityName": "Municipal Corporation Chandigarh",
-// 				"address": "New Deluxe Building, Sector 17, Chandigarh",
-// 				"contactNumber": "+91-172-2541002, 0172-2541003"
-// 			}
-// 		}
-// 		]
-// 		downloadReceiptForPCC({ BookingInfo: BookingInfo })
-// 	}
-
-	downloadPermissionLetter = async (e) => {
+ downloadPermissionLetter = async (e) => {
 		await this.downloadPermissionLetterFunction();
 		const {DownloadBWTApplicationDetails,userInfo,RoomPermissionLetter}=this.props;
 	
@@ -528,38 +239,75 @@ componentDidMount = async () => {
 	  }
 	
 	  downloadPermissionLetterFunction = async (e) => {
-		const { downloadRoomPermissionLetter, userInfo,createPACCApplicationData,documentMap,CreateRoomApplication,BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF,four} = this.props;
+		const { downloadRoomPermissionLetter, state,userInfo,createPACCApplicationData,documentMap,CreateRoomApplication,BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF,four} = this.props;
 	console.log("PropsInPLfunction",this.props,CreateRoomApplication)
 	console.log("CreateRoomApplication.data.roomsModel-In-Pl-fun",CreateRoomApplication.data.roomsModel)
-	
-		let totalACRoom = 0;
-		let totalNonAcRoom = 0;
-		let FromDate;
-		let ToDate;
-		let CreatedDate;
-		let ApplicationNumber;
-		let discountForRoom;
-		let bookedrooms;  
-		let RoomCreateTime;
+		
+		let pdfCardNum = get(
+			state,
+			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].cardNumber",
+			"NotFound"
+		  );
+console.log("pdfCardNum---",pdfCardNum)
+		  let pdfBankName = get(
+			state,
+			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].bankName",
+			"NotFound"
+		  );
+console.log("pdfBankName-pl",pdfBankName)
+		  let paymentCollectionType = get(
+			state,
+			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].paymentCollectionType",
+			"NotFound"
+		  );
+	console.log("paymentCollectionType-pl",paymentCollectionType)
+	let totalACRoom = 0;
+	let totalNonAcRoom = 0;
+	let FromDate;
+	let ToDate;
+	let CreatedDate;
+	let ApplicationNumber;
+	let discountForRoom;
+	let bookedrooms;
+	let RoomCreateTime;
+	let getCardNum
+	let getBankName
+	let displayBankName
 
-		for(let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++){
-			FromDate = CreateRoomApplication.data.roomsModel[i].fromDate
-			console.log("FromDate-In-loop",FromDate)
-			ToDate = CreateRoomApplication.data.roomsModel[i].toDate
-			console.log("ToDate-In-loop",ToDate)
-			CreatedDate = CreateRoomApplication.data.roomsModel[i].createdDate
-			ApplicationNumber = CreateRoomApplication.data.roomsModel[i].roomApplicationNumber
-			discountForRoom = CreateRoomApplication.data.roomsModel[i].discount
-			
+	for(let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++){
 		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "AC"){
-		  totalACRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms
+		  totalACRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms  
+		  FromDate = CreateRoomApplication.data.roomsModel[i].fromDate
+		  ToDate = CreateRoomApplication.data.roomsModel[i].toDate
+		  CreatedDate = CreateRoomApplication.data.roomsModel[i].createdDate
+		  ApplicationNumber = CreateRoomApplication.data.roomsModel[i].roomApplicationNumber
+		  discountForRoom = CreateRoomApplication.data.roomsModel[i].discount
 		  RoomCreateTime = CreateRoomApplication.data.roomsModel[i].roomCreatedDate
 		}
 		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "NON-AC"){
-		  totalNonAcRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms	
+		  totalNonAcRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms	//{"ResponseInfo":{"apiId":"Rainmaker","ver":".01","ts":"","action":"_search","did":"1","key":"","msgId":"20170310130900|en_IN","userInfo":{"id":182,"uuid":"28df855b-d5ff-43ff-bd13-fdf28875106b","userName":"e_sampark","name":"e_sampark Kumar","type":"EMPLOYEE","mobileNumber":"9811658211","emailId":"e_sampark@gmail.com","tenantId":"ch.chandigarh","roles":[{"id":null,"name":"Parks and Community Centre Offline Applier","code":"BK_E-SAMPARK-CENTER","tenantId":"ch.chandigarh"},{"id":null,"name":"Employee","code":"EMPLOYEE","tenantId":"ch.chandigarh"}]},"correlationId":"925ccbbe-b800-44af-a459-d8887ffba86c"},"message":"Success","filestoreIds":["3906bd13-e235-47b8-853e-8fb1cbe4ff60"],"jobid":"bk-room-booking-pl-emp1616087147289","createdtime":1616087147204,"endtime":1616087147715,"tenantid":"ch.chandigarh","totalcount":1}
 		  RoomCreateTime = CreateRoomApplication.data.roomsModel[i].roomCreatedDate
+		  FromDate = CreateRoomApplication.data.roomsModel[i].fromDate
+		  ToDate = CreateRoomApplication.data.roomsModel[i].toDate
+		  CreatedDate = CreateRoomApplication.data.roomsModel[i].createdDate
+		  ApplicationNumber = CreateRoomApplication.data.roomsModel[i].roomApplicationNumber
+		  discountForRoom = CreateRoomApplication.data.roomsModel[i].discount
 		}
 		}
+
+		if(paymentCollectionType == "CARD" || paymentCollectionType == "Card"){
+			displayBankName = `**** **** **** ${pdfCardNum}`
+			getCardNum = displayBankName
+		  }else{
+			getCardNum = "Not Applicable"  
+		  }
+		  if(paymentCollectionType == "DD" || paymentCollectionType == "CHEQUE" || paymentCollectionType == "Cheque"){
+			getBankName = pdfBankName
+		  }else{
+			getBankName = "Not Applicable"
+		  }
+  
+
     let strfromDate = FromDate.toString(); 
 	let numFromDate = Number(strfromDate)
 	let strtoDate = ToDate.toString();
@@ -619,7 +367,7 @@ componentDidMount = async () => {
 		  approverName = userInfo.roles[i].name
 		}
 	  }
-	
+
 	 let BookingInfo = [
 		{
 			"applicantDetails": {
@@ -674,13 +422,13 @@ componentDidMount = async () => {
 			  "facilitationCharge": four,
 			  "custGSTN": applicationDetails.bkCustomerGstNo,
 			  "mcGSTN": "",
-			  "bankName": "",
+			  "bankName": getBankName,
 			  "transactionId": this.props.transactionNumber,
 			  "totalPaymentInWords": this.NumInWords(
 				this.props.totalAmountPaid
 			  ),
 			  "discType": applicationDetails.bkPlotSketch,
-			  "cardNumberLast4": "Not Applicable",
+			  "cardNumberLast4": getCardNum,
 			  "dateVenueChangeCharges": "Not Applicable" 
 		  },
 			"tenantInfo": {
@@ -703,10 +451,64 @@ componentDidMount = async () => {
 		}
 	]
 	
-	downloadRoomPermissionLetter({ BookingInfo: BookingInfo })
-	  };
+	console.log("RequestBodyOfPl",BookingInfo)
+
+	let permissionletterResponse = await httpRequest(
+	  "pdf-service/v1/_create?key=bk-room-booking-pl-emp",
+	  "_search",
+	  [],
+	  { BookingInfo: BookingInfo }
+	);
+	console.log("permissionletterResponse",permissionletterResponse)
+
+	let EmpPaccPermissionLetter = permissionletterResponse.filestoreIds
+	console.log("EmpPaccPermissionLetter",EmpPaccPermissionLetter)
 	
-	  downloadPaymentReceipt = async (e) => {
+	var documentsPreview = [];
+	let documentsPreviewData;
+	if (EmpPaccPermissionLetter && EmpPaccPermissionLetter.length > 0) {	
+		console.log("recheckidforPl",EmpPaccPermissionLetter)
+	  documentsPreviewData = EmpPaccPermissionLetter[0];
+		documentsPreview.push({
+		  title: "DOC_DOC_PICTURE",
+		  fileStoreId: documentsPreviewData,
+		  linkText: "View",
+		});
+		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+		let fileUrls =
+		  fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+		
+  
+		documentsPreview = documentsPreview.map(function (doc, index) {
+		  doc["link"] =
+			(fileUrls &&
+			  fileUrls[doc.fileStoreId] &&
+			  fileUrls[doc.fileStoreId].split(",")[0]) ||
+			"";
+		  
+		  doc["name"] =
+			(fileUrls[doc.fileStoreId] &&
+			  decodeURIComponent(
+				fileUrls[doc.fileStoreId]
+				  .split(",")[0]
+				  .split("?")[0]
+				  .split("/")
+				  .pop()
+				  .slice(13)
+			  )) ||
+			`Document - ${index + 1}`;
+		  return doc;
+		});
+	
+		setTimeout(() => {
+		  window.open(documentsPreview[0].link);
+		}, 100);
+		
+	  }
+  
+	}
+	
+	  downloadPaymentReceipt = async (e) => {  
 		await this.downloadPaymentFunction();
 		 const {DownloadBWTApplicationDetails,userInfo,RoomPaymentReceipt}=this.props;
 	 console.log("downloadPaymentReceipt--props",this.props)
@@ -752,9 +554,27 @@ componentDidMount = async () => {
 		   }
 		   }
 	  downloadPaymentFunction = async (e) => {
-		const { downloadRoomPaymentRecipt, userInfo,createPACCApplicationData,documentMap,CreateRoomApplication,BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF,four} = this.props;
-	 
+		const {state, downloadRoomPaymentRecipt, userInfo,createPACCApplicationData,documentMap,CreateRoomApplication,BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF,four} = this.props;
 	
+		let paymentCollectionType = get(
+			state,
+			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].paymentCollectionType",
+			"NotFound"
+		  );
+	console.log("paymentCollectionType-receipt",paymentCollectionType)
+		
+		let pdfCardNum = get(
+			state,
+			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].cardNumber",
+			"NotFound"
+		  );
+console.log("pdfCardNumreceipt",pdfCardNum)
+		  let pdfBankName = get(
+			state,
+			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].bankName",
+			"NotFound"
+		  );
+	console.log("pdfBankName",pdfBankName)
 		let totalACRoom = 0;
 		let totalNonAcRoom = 0;
 		let FromDate;
@@ -764,10 +584,13 @@ componentDidMount = async () => {
 		let discountForRoom;
 		let bookedrooms;
 		let RoomCreateTime;
-
+		let displayBankName
+	
+		let getCardNum
+		let getBankName
 		for(let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++){
 		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "AC"){
-		  totalACRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms
+		  totalACRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms  
 		  FromDate = CreateRoomApplication.data.roomsModel[i].fromDate
 		  ToDate = CreateRoomApplication.data.roomsModel[i].toDate
 		  CreatedDate = CreateRoomApplication.data.roomsModel[i].createdDate
@@ -778,9 +601,26 @@ componentDidMount = async () => {
 		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "NON-AC"){
 		  totalNonAcRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms	//{"ResponseInfo":{"apiId":"Rainmaker","ver":".01","ts":"","action":"_search","did":"1","key":"","msgId":"20170310130900|en_IN","userInfo":{"id":182,"uuid":"28df855b-d5ff-43ff-bd13-fdf28875106b","userName":"e_sampark","name":"e_sampark Kumar","type":"EMPLOYEE","mobileNumber":"9811658211","emailId":"e_sampark@gmail.com","tenantId":"ch.chandigarh","roles":[{"id":null,"name":"Parks and Community Centre Offline Applier","code":"BK_E-SAMPARK-CENTER","tenantId":"ch.chandigarh"},{"id":null,"name":"Employee","code":"EMPLOYEE","tenantId":"ch.chandigarh"}]},"correlationId":"925ccbbe-b800-44af-a459-d8887ffba86c"},"message":"Success","filestoreIds":["3906bd13-e235-47b8-853e-8fb1cbe4ff60"],"jobid":"bk-room-booking-pl-emp1616087147289","createdtime":1616087147204,"endtime":1616087147715,"tenantid":"ch.chandigarh","totalcount":1}
 		  RoomCreateTime = CreateRoomApplication.data.roomsModel[i].roomCreatedDate
+		  FromDate = CreateRoomApplication.data.roomsModel[i].fromDate
+		  ToDate = CreateRoomApplication.data.roomsModel[i].toDate
+		  CreatedDate = CreateRoomApplication.data.roomsModel[i].createdDate
+		  ApplicationNumber = CreateRoomApplication.data.roomsModel[i].roomApplicationNumber
+		  discountForRoom = CreateRoomApplication.data.roomsModel[i].discount
 		}
 		}
 	
+		if(paymentCollectionType == "CARD" || paymentCollectionType == "Card"){
+		  displayBankName = `**** **** **** ${pdfCardNum}`
+		  getCardNum = displayBankName
+		}else{
+		  getCardNum = "Not Applicable"  
+		}
+		if(paymentCollectionType == "DD" || paymentCollectionType == "CHEQUE" ||paymentCollectionType =="Cheque"){
+		  getBankName = pdfBankName
+		}else{
+		  getBankName = "Not Applicable"
+		}
+
 	
 		if(totalACRoom !== 0 && totalNonAcRoom == 0){ 
 		  bookedrooms = `${totalACRoom} AC` 
@@ -835,7 +675,7 @@ componentDidMount = async () => {
 		  approverName = userInfo.roles[i].name
 		}
 	  } 
-	
+
 	  let BookingInfo = [
 		{
 			"applicantDetails": {
@@ -879,13 +719,13 @@ componentDidMount = async () => {
 				"facilitationCharge": "100",
 				"custGSTN": applicationDetails.bkCustomerGstNo == "NA" ? "Not Applicable": applicationDetails.bkCustomerGstNo,
 				"mcGSTN": this.state.mcGSTN,
-				"bankName": "",
+				"bankName": getBankName,
 				"transactionId": this.props.transactionNumber,
 				"totalPaymentInWords": this.NumInWords(
 					this.props.totalAmountPaid
 				),
 				"discType": applicationDetails.bkPlotSketch,
-				"cardNumberLast4": "Not Applicable",
+				"cardNumberLast4": getCardNum,
 				"dateVenueChangeCharges": "Not Applicable" 
 			},
 			"tenantInfo": {
@@ -907,10 +747,60 @@ componentDidMount = async () => {
 			}
 		}
 	]
-	
-	downloadRoomPaymentRecipt({ BookingInfo: BookingInfo })
-	  };
 
+	let ReceiptResponse = await httpRequest(
+		"pdf-service/v1/_create?key=room-payment-receipt-emp",
+		"_search",
+		[],
+		{ BookingInfo: BookingInfo }
+	  );
+	  console.log("ReceiptOfRequestBody",ReceiptResponse)
+
+	  let PaymentReceiptByESamp = ReceiptResponse.filestoreIds
+      console.log("PaymentReceiptByESamp",PaymentReceiptByESamp)
+
+	  var documentsPreview = [];
+	  let documentsPreviewData;
+	  if (PaymentReceiptByESamp && PaymentReceiptByESamp.length > 0) {	
+		  console.log("checkFileStoreId",PaymentReceiptByESamp)
+		documentsPreviewData = PaymentReceiptByESamp[0];
+		  documentsPreview.push({
+			title: "DOC_DOC_PICTURE",
+			fileStoreId: documentsPreviewData,
+			linkText: "View",
+		  });
+		  let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+		  let fileUrls =
+			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+		  
+	
+		  documentsPreview = documentsPreview.map(function (doc, index) {
+			doc["link"] =
+			  (fileUrls &&
+				fileUrls[doc.fileStoreId] &&
+				fileUrls[doc.fileStoreId].split(",")[0]) ||
+			  "";
+			
+			doc["name"] =
+			  (fileUrls[doc.fileStoreId] &&
+				decodeURIComponent(
+				  fileUrls[doc.fileStoreId]
+					.split(",")[0]
+					.split("?")[0]
+					.split("/")
+					.pop()
+					.slice(13)
+				)) ||
+			  `Document - ${index + 1}`;
+			return doc;
+		  });
+	  
+		  setTimeout(() => {
+			window.open(documentsPreview[0].link);
+		  }, 100);
+		  
+		}
+	 };     
 
   render() {
   const { RecNumber,createWaterTankerApplicationData,myLocationtwo, downloadBWTApplication,loading,createPACCApplicationData, updatePACCApplicationData,AppNum} = this.props;
@@ -943,14 +833,14 @@ componentDidMount = async () => {
             primary={true}
             label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PAYMENT_BUTTON" />}
             fullWidth={true}
-            onClick={this.downloadPaymentReceipt}
+            onClick={this.downloadPaymentFunction}
 			style={{ marginRight: "1.5%" }}
           />
           <Button
             primary={true}
             label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PERMISSION_LETTER_BUTTON" />}
             // fullWidth={true}
-            onClick={this.downloadPermissionLetter}
+            onClick={this.downloadPermissionLetterFunction}
 			style={{ marginRight: "1.5%",width: "19%" }} 
           />
  
@@ -1106,7 +996,7 @@ let transactionNumber = state.screenConfiguration.preparedFinalObject.ResponseOf
 const {RoomPaymentReceipt,RoomPermissionLetter} = bookings
 
 return {typeOfRoom,totalRoom,GlobalNonAccRoomToBook,GlobalAccRoomToBook,discountForRoom,acRoomId,nonAcRoomId,updateNumOfAcRoom,updateNumOfNonAcRoom,
-	RecNumber,offlinePayment,offlineTransactionNum,offlineTransactionDate,AppNum,roomFromDate,roomToDate,
+	RecNumber,offlinePayment,offlineTransactionNum,offlineTransactionDate,AppNum,roomFromDate,roomToDate,state,
 	offlinePayementMode,totalAmountPaid,totalAmount,RoomBookingData,RoomId,DataForRoomBooking,userInfo,bothRoom,CreateRoomApplication,
 	RoomPaymentReceipt,RoomPermissionLetter,
 	ReceiptNumber,CashPaymentInfo,ArrayForPayment,BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF,four,paymentMode,transactionDate,transactionNumber
