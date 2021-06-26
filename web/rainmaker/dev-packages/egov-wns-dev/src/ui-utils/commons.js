@@ -571,6 +571,12 @@ export const getPropertyResults = async (queryObject, dispatch) => {
         );
         dispatch(toggleSpinner());
        // return findAndReplace(response, null, "NA");
+       //set subusageCategory from usageCategory
+       if(response)
+       {
+        set(response.Properties[0], `subusageCategory`, response.Properties[0].usageCategory);
+       }
+      
        return response;
     } catch (error) {
         dispatch(toggleSpinner());
@@ -587,6 +593,10 @@ export const getPropertyResultsWODispatch = async (queryObject) => {
             "_search",
             queryObject
         );
+        if(response)
+        {
+         set(response.Properties[0], `subusageCategory`, response.Properties[0].usageCategory);
+        }
         return findAndReplace(response, null, "NA");
     } catch (error) {        
         console.log(error);
@@ -1230,6 +1240,14 @@ const parserFunction = (state) => {
     // else{
     //     isFerruleApplicable = isFerruleApplicable;
     // }
+    if(queryObject.water === undefined)
+    {
+        if(queryObject.applicationNo.includes("WS"))
+        {
+            set(queryObject,'water', true)
+        }
+
+    }
     if(queryObject.water)
     {
         if(queryObject.waterProperty.id)
@@ -3003,51 +3021,60 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                          connectionNumber = get(wnsConnection[0], "connectionNo", '')
                          // set activityType 
                          switch (activityType) {
-                           case "APPLY_FOR_TEMPORARY_CONNECTION":
-                             activityType ='Temporary Water Connection'
-                             break;
-                             case "NEW_WS_CONNECTION":
-                             activityType ='Regular Water Connection'
-                             break;
-                             case "REGULARWSCONNECTION":
-                             activityType ='Regular Water Connection'
-                             break;
-                             case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
-                             activityType ='Temporary Regular Water Connection'
-                             break;
-                             case "TEMPORARY_WSCONNECTION":
-                             activityType ='Temporary Disconnection'
-                             break;
-                             case "WS_TUBEWELL":
-                             activityType ='New Tubewell Connection'
-                             break;
-                             case "WS_TEMP_TEMP":
-                             activityType ='Temporary to Temporary Conversion'
-                             break;
-                             case "WS_TEMP_REGULAR":
-                             activityType ='Temporary to Regular Conversion'
-                             break;
-                             case "WS_DISCONNECTION":
-                             activityType ='Permanent Disconnection'
-                             break;
-                             case "WS_TEMP_DISCONNECTION":
-                             activityType ='Temporary Disconnection'
-                             break;
-                             case "WS_RENAME":
-                             activityType ='Update Connection Holder Information'
-                             break;
-                             case "WS_METER_UPDATE":
-                             activityType ='Meter Update'
-                             break;
-                             case "WS_CONVERSION":
-                             activityType ='Tariff Change'
-                             break;
-                             case "WS_REACTIVATE":
-                             activityType ='Reactive Connection'
-                             break;
-                             case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
-                             activityType ='Temporary to Temporary Conversion'
-                             break;
+                                case "APPLY_FOR_TEMPORARY_CONNECTION":
+                                activityType ='Temporary Water Connection'
+                                break;
+                                case "NEW_WS_CONNECTION":
+                                activityType ='Regular Water Connection'
+                                break;
+                                case "REGULARWSCONNECTION":
+                                activityType ='Regular Water Connection'
+                                break;
+                                case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
+                                activityType ='Temporary Regular Water Connection'
+                                break;
+                                case "TEMPORARY_WSCONNECTION":
+                                case "APPLY_FOR_TEMPORARY_CONNECTION":
+                                activityType ='Temporary Disconnection'
+                                break;
+                                case "WS_TUBEWELL":
+                                activityType ='New Tubewell Connection'
+                                break;
+                                case "WS_TEMP_TEMP":
+                                case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
+                                activityType ='Temporary to Temporary Conversion'
+                                break;
+                                case "WS_TEMP_REGULAR":
+                                case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
+                                activityType ='Temporary to Regular Conversion'
+                                break;
+                                case "WS_DISCONNECTION":
+                                case "PERMANENT_DISCONNECTION":
+                                activityType ='Permanent Disconnection'
+                                break;
+                                case "WS_TEMP_DISCONNECTION":
+                                case "TEMPORARY_DISCONNECTION":
+                                activityType ='Temporary Disconnection'
+                                break;
+                                case "WS_RENAME":
+                                case "UPDATE_CONNECTION_HOLDER_INFO":
+                                activityType ='Update Connection Holder Information'
+                                break;
+                                case "WS_METER_UPDATE":
+                                case "UPDATE_METER_INFO":
+                                activityType ='Meter Update'
+                                break;
+                                case "WS_CONVERSION":
+                                case "CONNECTION_CONVERSION":
+                                activityType ='Tariff Change'
+                                break;
+                                case "WS_REACTIVATE":
+                                case "REACTIVATE_CONNECTION":
+                                activityType ='Reactive Connection'
+                                break;
+                                case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
+                                activityType ='Temporary to Temporary Conversion'
+                                break;
                
                          }
                          let billGeneration_ =[
@@ -3675,11 +3702,13 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
   export const propertyUpdateCitizen = async (state, dispatch) => {
 
     let applicationStatus =get(
-      state,
-      "screenConfiguration.preparedFinalObject.applyScreen.applicationStatus"
+        state.screenConfiguration.preparedFinalObject,
+      "WaterConnection[0].applicationStatus"
     );
-      if(1===1)
-      {
+    let applicationNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].applicationNo", null);
+    let connectionNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].connectionNo", null);     
+    if(applicationNo && (connectionNo === null && applicationStatus ==='INITIATED') )
+    {
   
       let propertyData = get(
         state,

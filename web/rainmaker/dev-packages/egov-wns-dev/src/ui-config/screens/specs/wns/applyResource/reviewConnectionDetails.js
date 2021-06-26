@@ -112,6 +112,8 @@ export const reviewConnectionDetails = (isEditable = true) => {
     viewOne: getPropertyDetails,
     // add connection details
     viewPropertyConnection:getPropertyConnectionOtherDetails,
+    //
+    viewPropertyConnectionSw:getPropertyConnectionOtherDetailsSW,
     //add property uses details
     viewpropertyLocation :getpropertyLocationDetails,
     viewTwo: propertyLocationDetails ,
@@ -368,6 +370,50 @@ const getPropertyDetails = {
     sourceJsonPath: "Licenses[0].tradeLicenseDetail.tradeUnits",
     prefixSourceJsonPath:
       "children.cardContent.children.getPropertyDetailsContainer.children",
+    afterPrefixJsonPath: "children.value.children.key"
+  },
+  type: "array"
+};
+const getPropertyConnectionOtherDetailsSW = {
+  uiFramework: "custom-containers",
+  componentPath: "MultiItem",
+  props: {
+    className: "common-div-css search-preview",
+    scheama: getCommonGrayCard({
+      div2: propertyConnectionDetailsHeader,
+        getPropertyDetailsContainerC: getCommonContainer({
+         
+          reviewnumberOfTaps: getLabelWithValue(
+            {
+              labelName: "proposed Taps",
+              labelKey: "WS_CONN_DETAIL_NO_OF_WATER_CLOSETS"
+            },
+            {
+              jsonPath: "applyScreen.proposedToilets",
+              callBack: handleNA
+            }
+          ),
+          reviewproposedWaterClosets: getLabelWithValue(
+            {
+              labelName: "proposed Taps",
+              labelKey: "WS_ADDN_DETAILS_NO_OF_TOILETS"
+            },
+            {
+              jsonPath: "applyScreen.proposedWaterClosets",
+              callBack: handleNA
+            }
+          ),
+        
+         
+          
+        })
+    }),
+    items: [],
+    hasAddItem: false,
+    isReviewPage: true,
+    sourceJsonPath: "Licenses[0].tradeLicenseDetail.tradeUnits",
+    prefixSourceJsonPath:
+      "children.cardContent.children.getPropertyDetailsContainerC.children",
     afterPrefixJsonPath: "children.value.children.key"
   },
   type: "array"

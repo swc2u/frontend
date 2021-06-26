@@ -16,7 +16,7 @@ import set from "lodash/set";
 import {
   GetMdmsNameBycode
 } from "../utils";
-import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField ,toggleSpinner} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getQueryArg,setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import { footer } from "./applyResource/footer";
@@ -476,6 +476,7 @@ export const getData = async (action, state, dispatch) => {
          { 
           const swusageCategory_ = payloadSewerage.SewerageConnections[0].property.usageCategory;
          payloadSewerage.SewerageConnections[0].property.usageCategory = payloadSewerage.SewerageConnections[0].property.usageCategory.split('.')[0]; 
+         //payloadSewerage.SewerageConnections[0].property.subusageCategory = payloadSewerage.SewerageConnections[0].property.usageCategory; 
          
         
          displaysubUsageType(swusageCategory_, dispatch, state);
@@ -504,7 +505,7 @@ export const getData = async (action, state, dispatch) => {
        
         if(payloadWater && payloadWater.WaterConnection.length > 0){
           const {usageCategory } = payloadWater.WaterConnection[0].waterProperty;
-          const {applicationStatus,proposedPipeSize} = payloadWater.WaterConnection[0];
+          const {applicationStatus,proposedPipeSize } = payloadWater.WaterConnection[0];
           let subTypeValues = get(
                 state.screenConfiguration.preparedFinalObject,
                 "applyScreenMdmsData.PropertyTax.subUsageType"
@@ -664,6 +665,28 @@ export const getData = async (action, state, dispatch) => {
             true
           )
         );
+      }
+      if(applicationStatus !=='PENDING_FOR_METER_UPDATE' && (activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE') )
+      {
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.isMeterStolen",
+            "visible",
+            true
+          )
+        );
+      }
+      else{
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.isMeterStolen",
+            "visible",
+            false
+          )
+        );
+
       }
       let Isnewfield = true
       dispatch(
@@ -1016,6 +1039,56 @@ export const getData = async (action, state, dispatch) => {
                 }
                 }
              }
+
+             //
+             let _actionType = getQueryArg(window.location.href, "actionType");
+             if(_actionType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || _actionType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION')
+             {
+               if(combinedArray[0].property.address.locality.code ==='' || combinedArray[0].property.address.locality.code ==='NA')
+               {
+                dispatch(handleField(
+                  "apply",
+                  `components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children.locality`,
+                  "props.disabled",
+                  false
+                  ));
+
+               }
+              //  if(combinedArray[0].waterProperty.usageSubCategory ==='NA' || combinedArray[0].waterProperty.usageSubCategory ==='' || combinedArray[0].applicationStatus ==='INITIATED')
+              //  {
+            //const textFieldsPropertyUsageDetail_ = ["propertySubUsageType"];
+                dispatch(handleField(
+                  "apply",
+                  `components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType`,
+                  "props.disabled",
+                  false
+                  ));
+
+               //}
+             }
+             if(_actionType ==='UPDATE_CONNECTION_HOLDER_INFO' )
+             {
+              const _textFieldsOwnerInformation = ["aadharNo","applicantName","correspondenceAddress","email","mobileNumber"];
+              for (let i = 0; i < _textFieldsOwnerInformation.length; i++) {
+                dispatch(handleField(
+                  "apply",
+                  `components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children.${_textFieldsOwnerInformation[i]}`,
+                  "props.disabled",
+                  true
+                  ));
+              }
+              
+               dispatch(
+                handleField(
+                  "apply",
+                  "components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.sameAsOwner.children.sameAsOwnerDetails",
+                  "visible",
+                  false
+                )
+              );
+
+             }
+
             
              ////?
            // }
@@ -1727,6 +1800,7 @@ const screenConfig = {
   name: "apply",
   // hasBeforeInitAsync:true,
   beforeInitScreen: (action, state, dispatch) => {
+    dispatch(toggleSpinner());
     pageReset(dispatch);
     getData(action, state, dispatch).then(() => { });
     dispatch(prepareFinalObject("applyScreen.water", true));
@@ -1907,7 +1981,7 @@ const screenConfig = {
     // const tenantId = getTenantId();
     // dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
 
-      
+    dispatch(toggleSpinner()); 
     return action;
   },
 

@@ -844,8 +844,11 @@ ValidateRequest =(payload,preparedFinalObject) =>{
   }
   if(payload.activityType ==='UPDATE_METER_INFO' || payload.activityType ==='WS_METER_UPDATE')// only for meter update
   {
-    if((payload.applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
-    && (payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT'|| payload.action==='VERIFY_AND_FORWARD_TO_JE' ))//PENDING_FOR_SDE_APPROVAL,VERIFY_AND_FORWARD_FOR_PAYMENT
+    if((payload.applicationStatus ==='PENDING_FOR_SDE_APPROVAL' || payload.applicationStatus ==='PENDING_FOR_METER_UPDATE' )
+    && ((payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT' 
+       // || payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT' 
+        || payload.action==='VERIFY_AND_FORWARD_TO_JE' 
+        || payload.action ==='UPDATE_METER_INFORMATION') ))//PENDING_FOR_SDE_APPROVAL,VERIFY_AND_FORWARD_FOR_PAYMENT
     {
       isvalidRequest = true
       if(payload.connectionExecutionDate !== 0)
@@ -856,48 +859,68 @@ ValidateRequest =(payload,preparedFinalObject) =>{
         payload.connectionExecutionDate = payload.connectionExecutionDate
 
       }
-      if(payload.proposedMeterId !== null)
+      if(payload.proposedMeterId !== null && payload.proposedMeterId !== '')
       {
         payload.meterId = payload.proposedMeterId
       }
       if(payload.proposedMeterInstallationDate !== 0)
       {
         if(!Number(payload.proposedMeterInstallationDate))
-        payload.meterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+        {
+          payload.meterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+          payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+        }
+        
         else{
           payload.meterInstallationDate = payload.proposedMeterInstallationDate
         }
        // payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
       }
-      if(payload.proposedMeterCount !== null)
+      else if(payload.proposedMeterInstallationDate !== null && payload.proposedMeterInstallationDate !== '')
+      {
+        if(!Number(payload.proposedMeterInstallationDate))
+        {
+          payload.proposedMeterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+          payload.meterInstallationDate = convertDateToEpoch(payload.proposedMeterInstallationDate)
+        }
+        
+        else{
+          payload.meterInstallationDate = payload.proposedMeterInstallationDate
+          
+        }
+      }
+      if(payload.proposedMeterCount !== null && payload.proposedMeterCount !== '')
       {
         payload.meterCount = payload.proposedMeterCount
       }
-      if(payload.proposedMfrCode !== null)
+      if(payload.proposedMfrCode !== null && payload.proposedMfrCode !== '')
       {
         payload.mfrCode = payload.proposedMfrCode
       }
-      if(payload.proposedInitialMeterReading !== null)
+      if(payload.proposedInitialMeterReading !== null && payload.proposedInitialMeterReading !== '')
       {
         payload.additionalDetails.initialMeterReading = payload.proposedInitialMeterReading
       }
-      if(payload.proposedMeterDigits !== null)
+      else{
+        payload.additionalDetails.initialMeterReading=0
+      }
+      if(payload.proposedMeterDigits !== null && payload.proposedMeterDigits !== '')
       {
         payload.meterDigits = payload.proposedMeterDigits
       }
-      if(payload.proposedMeterUnit !== null)
+      if(payload.proposedMeterUnit !== null && payload.proposedMeterUnit !== '')
       {
         payload.meterUnit = payload.proposedMeterUnit
       }
-      if(payload.proposedSanctionedCapacity !== null)
+      if(payload.proposedSanctionedCapacity !== null && payload.proposedSanctionedCapacity !== '')
       {
         payload.sanctionedCapacity = payload.proposedSanctionedCapacity
       }
-      if(payload.proposedMeterRentCode !== null)
+      if(payload.proposedMeterRentCode !== null && payload.proposedMeterRentCode !== '')
       {
         payload.meterRentCode = payload.proposedMeterRentCode
       }
-      if(payload.proposedLastMeterReading !== null)
+      if(payload.proposedLastMeterReading !== null && payload.proposedLastMeterReading !== '')
       {
         payload.additionalDetails.lastMeterReading = payload.proposedLastMeterReading
       }
@@ -1165,8 +1188,20 @@ uniqueBycode =(data,key)=>{
     {
       const {WaterConnection} = preparedFinalObject;
       let securityCharge = 0 ;
-      securityCharge = WaterConnection && WaterConnection[0].securityCharge;
-      securityCharge = parseInt(securityCharge);
+      let additionalCharges = 0
+      let constructionCharges = 0
+      securityCharge = WaterConnection && WaterConnection[0].waterApplication.securityCharge;
+      additionalCharges = WaterConnection && WaterConnection[0].waterApplication.additionalCharges;
+      constructionCharges = WaterConnection && WaterConnection[0].waterApplication.constructionCharges;
+      if(additionalCharges !== null && additionalCharges !== NaN)
+      {
+        additionalCharges = parseInt(additionalCharges);
+      }
+      if(constructionCharges !== null && constructionCharges !== NaN)
+      {
+        constructionCharges = parseInt(constructionCharges);
+      }
+      securityCharge = parseInt(securityCharge) + additionalCharges + constructionCharges;
       if(securityCharge ===0)
       {
         //FORWARD_TO_JE_TARIFF_CHANGE
@@ -1202,8 +1237,20 @@ uniqueBycode =(data,key)=>{
     {
       const {WaterConnection} = preparedFinalObject;
       let securityCharge = 0 ;
+      let additionalCharges = 0
+      let constructionCharges = 0
       securityCharge = WaterConnection && WaterConnection[0].waterApplication.securityCharge;
-      securityCharge = parseInt(securityCharge);
+      additionalCharges = WaterConnection && WaterConnection[0].waterApplication.additionalCharges;
+      constructionCharges = WaterConnection && WaterConnection[0].waterApplication.constructionCharges;
+      if(additionalCharges !== null && additionalCharges !== NaN)
+      {
+        additionalCharges = parseInt(additionalCharges);
+      }
+      if(constructionCharges !== null && constructionCharges !== NaN)
+      {
+        constructionCharges = parseInt(constructionCharges);
+      }
+      securityCharge = parseInt(securityCharge) + additionalCharges + constructionCharges;
       if(securityCharge ===0)
       {
         //FORWARD_TO_JE_TARIFF_CHANGE
@@ -1281,8 +1328,8 @@ uniqueBycode =(data,key)=>{
       pipeSize = parseInt(pipeSize);
        if (pipeSize ===15)
       {
-        // required to modify the connection
-        actions = actions.filter(item => item.buttonLabel !== 'PENDING_FOR_SE_REVIEW');
+        // required to modify the connection 
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_SE_REVIEW');//PENDING_FOR_SE_REVIEW
 
       }
       else{
