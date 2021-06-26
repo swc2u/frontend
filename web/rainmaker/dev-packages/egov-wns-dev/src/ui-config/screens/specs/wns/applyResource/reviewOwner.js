@@ -251,6 +251,16 @@ export const reviewisFerruleApplicable = getLabelWithValue(
     callBack: handleNA
   }
 );
+export const reviewisIsMeterStolen = getLabelWithValue(
+  {
+    labelName: "Is this is a case of theft of meter",
+    labelKey: "WS_ADDN_DETAILS_IS_METER_STOLEN"
+  },
+  {
+    jsonPath: "WaterConnection[0].waterApplication.isMeterStolen",
+    callBack: handleNA
+  }
+);
 export const reviewadditionalCharges = getLabelWithValue(
   {
     labelName: "Additional Charges",
@@ -464,7 +474,8 @@ const otherChargesDetails =  getCommonContainer({
   reviewSecurityCharge,
   reviewisFerruleApplicable,
   reviewadditionalCharges,
-  reviewconstructionCharges
+  reviewconstructionCharges,
+  reviewisIsMeterStolen,
 });
 
 const activationDetails = getCommonContainer({

@@ -272,6 +272,16 @@ export const reviewisFerruleApplicable = getLabelWithValue(
     callBack: handleNA
   }
 );
+export const reviewisIsMeterStolen = getLabelWithValue(
+  {
+    labelName: "Is this is a case of theft of meter",
+    labelKey: "WS_ADDN_DETAILS_IS_METER_STOLEN"
+  },
+  {
+    jsonPath: "WaterConnection[0].waterApplication.isMeterStolen",
+    callBack: handleNA
+  }
+);
 export const reviewadditionalCharges = getLabelWithValue(
   {
     labelName: "Additional Charges",
@@ -451,7 +461,7 @@ export const PropreviewMeterCount = getLabelWithValue(
     labelName: "Meter Count",
     labelKey: "WS_PROP_ADDN_DETAILS_INITIAL_METER_COUNT"
   },
-  { jsonPath: "WaterConnection[0].proposedMeterUnit",
+  { jsonPath: "WaterConnection[0].proposedMeterCount",
     callBack: handleNA }
 );
 export const PropreviewmfrCode = getLabelWithValue(
@@ -580,7 +590,8 @@ const otherChargesDetails =  getCommonContainer({
   reviewSecurityCharge,
   reviewisFerruleApplicable,
   reviewadditionalCharges,
-  reviewconstructionCharges
+  reviewconstructionCharges,
+  reviewisIsMeterStolen,
 });
 const activationDetails = getCommonContainer({
   reviewConnectionExecutionDate,

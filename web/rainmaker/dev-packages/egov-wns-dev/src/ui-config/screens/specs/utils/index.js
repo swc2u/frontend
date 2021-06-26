@@ -572,7 +572,12 @@ export const handlePropertySubUsageType = params => {
   params = handleNA(params);
   if (params !== "NA" && params.split(".").length > 1) {
     return params;  
-  } else {
+  } 
+  else if(params !== "NA" && params.split(".").length ===1)
+  {
+    return params; 
+  }
+  else {
     return "NA";
   }
 }

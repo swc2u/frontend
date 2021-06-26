@@ -4,7 +4,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { getCommonApplyFooter,validateFields,getLocalizationCodeValue } from "../../utils";
+import { getCommonApplyFooter,validateFields,getLocalizationCodeValue,GetMdmsNameBycode } from "../../utils";
 import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import commonConfig from "config/common.js";
@@ -12,6 +12,7 @@ import get from "lodash/get";
 import set from 'lodash/set';
 import { propertySearchApiCall } from './functions';
 import { httpRequest } from "../../../../../ui-utils";
+
 import {
   prepareDocumentsUploadData,
   applyForWaterOrSewerage,
@@ -31,7 +32,7 @@ import {
   isModifyMode,
   isModifyModeAction
 } from "../../../../../ui-utils/commons";
-import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField ,toggleSpinner} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getTenantIdCommon } from "egov-ui-kit/utils/localStorageUtils";
 
 const setReviewPageRoute = (state, dispatch) => {
@@ -955,7 +956,8 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
           state,
           "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
         );
-    dispatch(prepareFinalObject("applyScreen.property", propertyData));
+       
+    
    // propertyData.landArea = parseInt(propertyData.landArea);
     propertyData.landArea = propertyData.landArea;
     propertyData.totalConstructedArea = (propertyData.landArea);
@@ -1019,6 +1021,35 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     let response_ = await propertyUpdate(state, dispatch,propertyData)
     if(response_)
     {
+      if(usageCategory!== null)
+    {
+    if(usageCategory.split('.').length ===1)
+    {
+      //st
+      set(propertyData, "usageCategory", subusageCategory);
+
+    }
+  }
+    if(subusageCategory!== null)
+    {
+      if(subusageCategory.split('.').length ===2)
+      {
+        //set 
+        set(propertyData, "usageCategory", subusageCategory);
+      }
+    }
+      dispatch(prepareFinalObject("applyScreen.property", propertyData));
+      let jpath ='components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType.props.value'
+      let category_ = get(state.screenConfiguration.screenConfig.apply,
+        jpath,
+        null
+        )
+        if(category_ ===null || category_ ==='')
+        {
+          category_ = get(state.screenConfiguration.preparedFinalObject,'applyScreen.waterProperty.usageSubCategory','')
+
+        }
+        set(state.screenConfiguration.preparedFinalObject,'applyScreen.waterProperty.usageSubCategory',category_)
     let abc = await applyForWater(state, dispatch);
     window.localStorage.setItem("ActivityStatusFlag","true");
     }
@@ -1895,6 +1926,7 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
         "applyScreen.waterProperty.usageSubCategory",
         null
       );
+      
       let connectionNo =  get(
         state.screenConfiguration.preparedFinalObject,
         "WaterConnection[0].connectionNo",
@@ -1907,11 +1939,10 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
         
         if(category_ === null)
       {
-        category_ = get(
-          state.screenConfiguration.preparedFinalObject,
-          "WaterConnection[0].waterProperty.usageSubCategory",
+        category_ = get(state.screenConfiguration.screenConfig.apply,
+          'components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType.props.value',
           null
-        );
+          )
       if(category_ === null)
       {
         
@@ -1940,6 +1971,31 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
       }
   
       }
+    }
+    if(connectionNo)
+    {
+      // if(water)
+      // {
+        if(category_ === null)
+        {
+          category_ = get(state.screenConfiguration.screenConfig.apply,
+            'components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType.props.value',
+            null
+            )
+            if(category_ ===null || category_ ==='')
+            {
+              category_ = get(state.screenConfiguration.preparedFinalObject,'applyScreen.waterProperty.usageSubCategory','')
+    
+            }
+            set(
+              state.screenConfiguration.preparedFinalObject,
+              "applyScreen.waterProperty.usageSubCategory",
+              category_
+            );
+            dispatch(prepareFinalObject("applyScreen.waterProperty.usageSubCategory", category_));
+          }
+
+      //}
     }
 
     }
@@ -2103,7 +2159,106 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
 
     //set subusageCategory
     let usageCategory_ = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.usageCategory");
-    set(state,"screenConfiguration.preparedFinalObject.applyScreen.property.subusageCategory",usageCategory_)
+    let subusageCategory = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.subusageCategory");
+    console.log(`pritam${usageCategory_}`)
+    set(state,"screenConfiguration.preparedFinalObject.applyScreen.property.subusageCategory",subusageCategory)
+    // visible false based on application created
+    let water = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
+    let sewerage = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
+    let tubewell = get(state.screenConfiguration.preparedFinalObject, "applyScreen.tubewell", false);
+    let activityType = get(state.screenConfiguration.preparedFinalObject, "applyScreen.activityType", '');
+    let service = getQueryArg(window.location.href, "service");
+    let code = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.address.locality.code", '');
+    if(service)
+    {
+      if(service ==='WATER')
+    {
+      water =true
+    }
+    else{
+      sewerage = true
+    }
+    }
+    if(activityType ==='NEW_TUBEWELL_CONNECTION')
+    {
+      tubewell = true
+    }
+    if(sewerage)
+    {
+      //set sector name
+      code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.swSectorList",code)   
+      set(state,"screenConfiguration.preparedFinalObject.applyScreen.property.address.locality.name",code)
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewpropertyLocation",
+          "visible",
+          false
+        )
+      );
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewPropertyConnection",
+          "visible",
+          false
+        )
+      );
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewPropertyConnectionSw",
+          "visible",
+          true
+        )
+      );
+      //viewPropertyConnectionSw
+
+    }
+    if(water)
+    {
+      code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.sectorList",code) 
+      set(state,"screenConfiguration.preparedFinalObject.applyScreen.property.address.locality.name",code)  
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewPropertyConnectionSw",
+          "visible",
+          false
+        )
+      );
+
+    }
+    if(tubewell)
+    {
+      code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",code)   
+      set(state,"screenConfiguration.preparedFinalObject.applyScreen.property.address.locality.name",code)
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewPropertyConnectionSw",
+          "visible",
+          false
+        )
+      );
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewpropertyLocation",
+          "visible",
+          false
+        )
+      );
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewPropertyConnection",
+          "visible",
+          false
+        )
+      );
+
+    }
   }
 
   if (activeStep === 2 && process.env.REACT_APP_NAME !== "Citizen") {
@@ -2402,10 +2557,15 @@ const acknoledgementForWater = async (state, activeStep, isFormValid, dispatch) 
       prepareDocumentsUploadData(state, dispatch);
     }
     if (activeStep === 3) {
-      getMdmsData(state, dispatch);
+     // getMdmsData(state, dispatch);
+     dispatch(toggleSpinner());
       isFormValid = await applyForWaterOrSewerage(state, dispatch);
       let combinedArray = get(state.screenConfiguration.preparedFinalObject, "WaterConnection");
-      if (isFormValid) { moveToSuccess(combinedArray, dispatch) }
+      if (isFormValid) 
+      { 
+        moveToSuccess(combinedArray, dispatch)
+        dispatch(toggleSpinner());
+      }
     }
     return true;
   } else if (hasFieldToaster) {
@@ -2440,10 +2600,15 @@ const acknoledgementForSewerage = async (state, activeStep, isFormValid, dispatc
       prepareDocumentsUploadData(state, dispatch);
     }
     if (activeStep === 3) {
-      getMdmsData(state, dispatch);
+      //getMdmsData(state, dispatch);
+      dispatch(toggleSpinner());
       isFormValid = await applyForWaterOrSewerage(state, dispatch);
       let combinedArray = get(state.screenConfiguration.preparedFinalObject, "SewerageConnection");
-      if (isFormValid) { moveToSuccess(combinedArray, dispatch) }
+      if (isFormValid) 
+      { 
+        moveToSuccess(combinedArray, dispatch) 
+        dispatch(toggleSpinner());
+      }
     }
     return true;
   } else if (hasFieldToaster) {

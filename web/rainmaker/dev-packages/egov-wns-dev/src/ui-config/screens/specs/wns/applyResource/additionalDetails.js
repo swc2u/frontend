@@ -496,6 +496,23 @@ export const additionDetails =(Disabled)=> getCommonCard({
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "applyScreen.waterApplication.constructionCharges"
       }),
+      isMeterStolen: {
+        uiFramework: "custom-containers-local",
+        moduleName: "egov-wns",
+        componentPath: "CheckboxContainerConnHolder",
+        gridDefination: { xs: 12, sm: 6 },
+        props: {
+          label: {
+            name: "Is this is a case of theft of meter",
+            key: "WS_ADDN_DETAILS_IS_METER_STOLEN",
+          },
+          jsonPath: "applyScreen.waterApplication.isMeterStolen",
+          required: false,
+          isChecked: false
+        },
+        type: "array",
+        jsonPath: "applyScreen.waterApplication.isMeterStolen"
+      },
     }),
   }),
   activationDetailsContainer: getCommonGrayCard({

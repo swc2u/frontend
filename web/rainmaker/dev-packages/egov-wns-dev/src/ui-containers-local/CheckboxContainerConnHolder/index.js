@@ -52,6 +52,26 @@ class CheckboxLabels extends React.Component {
               approveCheck('WaterConnection[0].waterApplication.isFerruleApplicable', Active)
               approveCheck(jsonPath, Active)
             }
+            if(label.key === 'WS_ADDN_DETAILS_IS_METER_STOLEN')
+            {
+              let IsActive = false
+              if(preparedFinalObject.applyScreen.waterApplication !== undefined)
+              {              
+              if(preparedFinalObject.applyScreen.waterApplication.isMeterStolen !== null)
+              {
+                if(preparedFinalObject.applyScreen.waterApplication.isMeterStolen === undefined)
+                {
+                  IsActive = false
+                }
+                else{
+                  IsActive = preparedFinalObject.applyScreen.waterApplication.isMeterStolen
+                }                
+              } 
+              }             
+              approveCheck('WaterConnection[0].waterApplication.isMeterStolen', IsActive)
+              approveCheck(jsonPath, IsActive)
+
+            }
         //}
      //
     }else{
@@ -341,11 +361,13 @@ class CheckboxLabels extends React.Component {
   render() {
     const { classes, content, label,preparedFinalObject,section ,approveCheck} = this.props;
     let Active = false
+    let IsActive = false
     if(preparedFinalObject.WaterConnection.length>0)
     {
       if(preparedFinalObject.WaterConnection[0].waterApplication)
       {
         Active = preparedFinalObject.WaterConnection[0].waterApplication.isFerruleApplicable
+        IsActive = preparedFinalObject.WaterConnection[0].waterApplication.isMeterStolen
       }
     }
     let applicationNo = getQueryArg(window.location.href, "applicationNumber");
@@ -391,6 +413,21 @@ class CheckboxLabels extends React.Component {
           }          
           else
           isdisabled = true
+        }
+        else if(label.key === 'WS_ADDN_DETAILS_IS_METER_STOLEN')
+        {
+          if(applicationStatus ==='PENDING_FOR_DOCUMENT_VERIFICATION')
+          {
+            isdisabled = false
+            isChecked = isChecked
+
+          }
+          else{
+            isdisabled = true
+            isChecked = IsActive
+
+          }
+
         }
         }
         else

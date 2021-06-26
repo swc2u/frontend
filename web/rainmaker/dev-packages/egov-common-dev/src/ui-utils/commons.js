@@ -715,33 +715,42 @@ try{
               activityType ='Temporary Regular Water Connection'
               break;
               case "TEMPORARY_WSCONNECTION":
+              case "APPLY_FOR_TEMPORARY_CONNECTION":
               activityType ='Temporary Disconnection'
               break;
               case "WS_TUBEWELL":
               activityType ='New Tubewell Connection'
               break;
               case "WS_TEMP_TEMP":
+              case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
               activityType ='Temporary to Temporary Conversion'
               break;
               case "WS_TEMP_REGULAR":
+              case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
               activityType ='Temporary to Regular Conversion'
               break;
               case "WS_DISCONNECTION":
+              case "PERMANENT_DISCONNECTION":
               activityType ='Permanent Disconnection'
               break;
               case "WS_TEMP_DISCONNECTION":
+              case "TEMPORARY_DISCONNECTION":
               activityType ='Temporary Disconnection'
               break;
               case "WS_RENAME":
+              case "UPDATE_CONNECTION_HOLDER_INFO":
               activityType ='Update Connection Holder Information'
               break;
               case "WS_METER_UPDATE":
+              case "UPDATE_METER_INFO":
               activityType ='Meter Update'
               break;
               case "WS_CONVERSION":
+              case "CONNECTION_CONVERSION":
               activityType ='Tariff Change'
               break;
               case "WS_REACTIVATE":
+              case "REACTIVATE_CONNECTION":
               activityType ='Reactive Connection'
               break;
               case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
@@ -1092,33 +1101,42 @@ try{
               activityType ='Temporary Regular Water Connection'
               break;
               case "TEMPORARY_WSCONNECTION":
+              case "APPLY_FOR_TEMPORARY_CONNECTION":
               activityType ='Temporary Disconnection'
               break;
               case "WS_TUBEWELL":
               activityType ='New Tubewell Connection'
               break;
               case "WS_TEMP_TEMP":
+              case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
               activityType ='Temporary to Temporary Conversion'
               break;
               case "WS_TEMP_REGULAR":
+              case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
               activityType ='Temporary to Regular Conversion'
               break;
               case "WS_DISCONNECTION":
+              case "PERMANENT_DISCONNECTION":
               activityType ='Permanent Disconnection'
               break;
               case "WS_TEMP_DISCONNECTION":
+              case "TEMPORARY_DISCONNECTION":
               activityType ='Temporary Disconnection'
               break;
               case "WS_RENAME":
+              case "UPDATE_CONNECTION_HOLDER_INFO":
               activityType ='Update Connection Holder Information'
               break;
               case "WS_METER_UPDATE":
+              case "UPDATE_METER_INFO":
               activityType ='Meter Update'
               break;
               case "WS_CONVERSION":
+              case "CONNECTION_CONVERSION":
               activityType ='Tariff Change'
               break;
               case "WS_REACTIVATE":
+              case "REACTIVATE_CONNECTION":
               activityType ='Reactive Connection'
               break;
               case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":

@@ -351,6 +351,11 @@ const getAcknowledgementCard = (
             //     "A notification regarding Application Rejection has been sent to registered Mobile No.",
             //   labelKey: "WS_APPROVAL_REJ_MESSAGE_SUBHEAD"
             // }
+            tailText: {
+              labelName: "Application Number.",
+              labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
+            },
+            number: applicationNumber
           })
         }
       },
