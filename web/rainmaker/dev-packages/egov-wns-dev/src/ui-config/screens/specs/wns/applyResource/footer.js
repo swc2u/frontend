@@ -4,7 +4,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { getCommonApplyFooter,validateFields,getLocalizationCodeValue,GetMdmsNameBycode } from "../../utils";
+import { getCommonApplyFooter,validateFields,getLocalizationCodeValue,GetMdmsNameBycode, getEpochForDate,convertDateToEpoch } from "../../utils";
 import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import commonConfig from "config/common.js";
@@ -2326,6 +2326,30 @@ if(isConnectionDetailsValid)
   let proposedMeterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.proposedMeterInstallationDate");
   let connectionExecutionDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.connectionExecutionDate");
   let meterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.meterInstallationDate");
+  if(connectionExecutionDate)
+  {
+    if(!Number(connectionExecutionDate))
+    {
+      connectionExecutionDate = convertDateToEpoch(connectionExecutionDate);
+
+    }
+  }
+  if(proposedMeterInstallationDate)
+  {
+    if(!Number(proposedMeterInstallationDate))
+    {
+      proposedMeterInstallationDate = convertDateToEpoch(proposedMeterInstallationDate);
+
+    }
+  }
+  if(meterInstallationDate)
+  {
+    if(!Number(meterInstallationDate))
+    {
+      meterInstallationDate = convertDateToEpoch(meterInstallationDate);  
+    }
+  }
+
   if(proposedMeterInstallationDate && connectionExecutionDate)
   {
     // proposedMeterInstallationDate =proposedMeterInstallationDate
@@ -2334,7 +2358,7 @@ if(isConnectionDetailsValid)
   {
     isFormValid = false;
     errorMessage = {
-      labelName: "Meter installation date must be greater then connection execution date",
+      labelName: "Proposed meter installation date must be greater then connection execution date",
       labelKey: "WS_PROP_METER_INSTALATION_DATE_VALIDATION"//WS_METER_INSTALATION_DATE_VALIDATION
     };
    // dispatch(toggleSnackbar(true, errorMessage, "warning"));
@@ -2347,7 +2371,7 @@ if(isConnectionDetailsValid)
   {
     isFormValid = false;
      errorMessage = {
-      labelName: "Proposed meter installation date must be greater then connection execution date",
+      labelName: "Meter installation date must be greater then connection execution date",
       labelKey: "WS_METER_INSTALATION_DATE_VALIDATION"
     };
    
@@ -2400,8 +2424,7 @@ if(isConnectionDetailsValid)
       dispatch(toggleSnackbar(true, errorMessage, "warning"));
       return;
       //
-    }
-   
+    }   
   }
  
   else{

@@ -20,7 +20,7 @@ export const searchApiCall = async (state, dispatch) => {
       value: tenantId,
     },
   ];
-  downloadAcknowledgementForm( state,dispatch,"generateBillFile",0,0)  
+  downloadAcknowledgementForm( state,dispatch,"generateBillFile",0,0,'')  
 };
 export const getDataExchangeFile = async (state, dispatch) => {
   let { localisationLabels } = state.app || {};
@@ -41,13 +41,14 @@ if(isdateValid)
   );
   let Fromdate = convertDateToEpoch(searchScreenObject.fromDate);
   let Todate =convertDateToEpoch(searchScreenObject.toDate)
+  let doctype =convertDateToEpoch(searchScreenObject.DataTransferType)
   let queryObject = [
     {
       key: "tenantId",
       value: tenantId,
     },
   ];
-  downloadAcknowledgementForm( state,dispatch,"getDataExchangeFile",Fromdate,Todate)  
+  downloadAcknowledgementForm( state,dispatch,"getDataExchangeFile",Fromdate,Todate,doctype)  
 }
 else
   {
