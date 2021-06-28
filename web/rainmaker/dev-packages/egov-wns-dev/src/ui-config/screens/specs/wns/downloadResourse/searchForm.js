@@ -168,6 +168,24 @@ export const DownloadDataExchangeFile = getCommonCard({
         }
       })
     },
+    DataTransferType:getSelectField({
+      label: { labelKey: "WS_DATA_TRASFER_TYPE_INPUT" },
+      placeholder: { labelKey: "WS_DATA_TRASFER_TYPE_PLACEHOLDER" },
+      required: true,
+      sourceJsonPath: "applyScreenMdmsData.ws-services-masters.DataTransferType",
+      gridDefination: { xs: 12, sm: 6 },
+     // errorMessage: "ERR_INVALID_BILLING_PERIOD",
+      jsonPath: "searchScreen.DataTransferType",
+      props: {
+        optionValue: "code",
+        optionLabel: "name",
+        disabled: false
+      },
+      beforeFieldChange: async (action, state, dispatch) => {
+        
+       
+   }
+    }),
   }),
 
   button: getCommonContainer({

@@ -3640,7 +3640,7 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
     //   throw error;
     // }
   };
-  export const getDataExchangeFile = async (queryObject , api,fromdate,todate) => {
+  export const getDataExchangeFile = async (queryObject , api,fromdate,todate,doctype) => {
 
     try {
       store.dispatch(toggleSpinner());
@@ -3649,7 +3649,7 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
         api,     
         "",
         queryObject,
-        { billGeneration: {fromDate:fromdate,toDate:todate}}
+        { billGeneration: {fromDate:fromdate,toDate:todate,dataExchangeType:doctype}}
       );
       store.dispatch(toggleSpinner());
       return response;

@@ -583,9 +583,14 @@ export const handlePropertySubUsageType = params => {
 }
 
 export const handleNA = params => {
-  if (params !== undefined && params !== null && params !== "" && params!==0) {
+  if (params !== undefined && params !== null && params !== "" ) {//&& params!==0
     return params;
-  } else { return "NA"; }
+  } 
+  else if(params===0)
+  {
+    return params; 
+  }
+  else { return "NA"; }
 }
 
 export const convertEpochToDate = dateEpoch => {
@@ -2560,7 +2565,7 @@ export const downloadReceiptFromFilestoreID=(fileStoreId,mode,tenantId)=>{
   // });
   
 }
-export const downloadAcknowledgementForm = async ( state,dispatch,downloadtype,Fromdate,Todate) => {
+export const downloadAcknowledgementForm = async ( state,dispatch,downloadtype,Fromdate,Todate,doctype) => {
   let tenantId =  getQueryArg(window.location.href, "tenantId");
   let APIUrl =`ws-services/billGeneration/_${downloadtype}`  
 if(downloadtype ==='generateBillFile')
@@ -2585,7 +2590,7 @@ if(downloadtype ==='generateBillFile')
         }
       }
       else if(downloadtype ==='getDataExchangeFile'){
-        const response = await getDataExchangeFile(queryObject,APIUrl,Fromdate, Todate);
+        const response = await getDataExchangeFile(queryObject,APIUrl,Fromdate, Todate,doctype);
         if(response)
         {
           let filestoreId = response.billGenerationFile[0].billFileStoreId

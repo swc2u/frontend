@@ -12,6 +12,7 @@ import {
   import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import { getResults } from "../../../../ui-utils/commons"; 
+  import commonConfig from "config/common.js";
   import { getTextToLocalMapping } from "./downloadResourse/searchResults"; 
   import {
     handleScreenConfigurationFieldChange as handleField,
@@ -110,6 +111,30 @@ import {
   const getData = async (action, state, dispatch) => {
     //await getMDMSData(action, state, dispatch);
     await getdownloadList(action, state, dispatch)
+    await getMdmsData(state, dispatch);
+  };
+  export const getMdmsData = async (state,dispatch) => {
+    let mdmsBody = {
+      MdmsCriteria: {
+        tenantId: commonConfig.tenantId,
+        moduleDetails: [
+         // { moduleName: "common-masters", masterDetails: [{ name: "OwnerType" }, { name: "OwnerShipCategory" }] },
+          
+          {
+            moduleName: "ws-services-masters", masterDetails: [
+              { name: "DataTransferType" },
+              
+            ]
+          }
+        ]
+      }
+    };
+    try {
+      let payload = null;
+      payload = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);      
+      dispatch(prepareFinalObject("applyScreenMdmsData.ws-services-masters.DataTransferType", payload.MdmsRes['ws-services-masters'].DataTransferType));
+      //
+    } catch (e) { console.log(e); }
   };
   
   const downloadSearchAndResult = {

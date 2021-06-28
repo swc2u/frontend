@@ -110,7 +110,7 @@ class ShowField extends Component {
         messageTop: tabLabel,
         text: "PDF",
         orientation: orientation,
-        pageSize: reportHeader.length >15 ? "A0" :pageSize,// "A0",//pageSize,
+        pageSize: pageSize,//reportHeader.length >15 ? "A0" :pageSize,// "A0",//pageSize,
         footer: true,
         customize: function(doc) {
           doc.content[0].text = [];
@@ -118,18 +118,18 @@ class ShowField extends Component {
           doc.content[0].text.push({ text: reportTitle, fontSize: 18 });
           doc.content[1].margin = [ 80, 0, 80, 0 ];
           var rowCount = doc.content[2].table.body.length;
-          for (let i = 1; i < rowCount; i++) {
-            for (let index = 0; index < reportHeader.length; index++) {
-              doc.content[2].table.body[i][index].alignment = 'center'; 
-            }
+          // for (let i = 1; i < rowCount; i++) {
+          //   for (let index = 0; index < reportHeader.length; index++) {
+          //     doc.content[2].table.body[i][index].alignment = 'center'; 
+          //   }
           
-          }
+          // }
           //set width of all column
-          if(reportHeader.length >15)
-          {
-            doc.content[2].table.widths = 
-            Array(doc.content[2].table.body[0].length + 1).join('*').split('');
-          }
+          // if(reportHeader.length >15)
+          // {
+          //   doc.content[2].table.widths = 
+          //   Array(doc.content[2].table.body[0].length + 1).join('*').split('');
+          // }
           
         },
         className: "report-pdf-button",
