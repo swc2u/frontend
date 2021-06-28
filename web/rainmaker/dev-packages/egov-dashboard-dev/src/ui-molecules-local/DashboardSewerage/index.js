@@ -7,7 +7,7 @@ import ReactTable from "react-table-6";
 import "react-table-6/react-table.css" ;
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import './SewerageIndex.css'
+import './SewerageIndex.css';
 
 const isMobile = window.innerWidth < 500
 const responsiveSizeHack = isMobile ? window.innerWidth + 400 : window.innerWidth
@@ -427,7 +427,7 @@ class SewerageDashboard extends React.Component {
                 var amt = 0;
                 for(var j=0; j<group[graphLabel[i]].length; j++){
                     var connection = group[graphLabel[i]][j];
-                    var amount = group[graphLabel[i]][j].totalAmountPaid;
+                    var amount = parseInt(group[graphLabel[i]][j].totalAmountPaid);
                     amt = amt + amount;
                 }
                 // graphData.push(group[graphLabel[i]].length);

@@ -1,1 +1,45 @@
-{}
+{
+    "ResponseInfo": {
+      "apiId": null,
+      "ver": null,
+      "ts": null,
+      "resMsgId": null,
+      "msgId": null,
+      "status": "Success"
+    },
+    "ResponseBody": [
+      {
+        "caseNumber": "CasePerf836/2020",
+        "lcNumber": "FilePerf836",
+        "caseFromDate": null,
+        "caseToDate": null,
+        "standingCouncil": null,
+        "casecategory": null,
+        "petitionType": "APPLICATION/APPEAL",
+        "petitionTypeId": null,
+        "courtType": 1,
+        "courtName": "High court Punjab and Haryana",
+        "courtId": 1,
+        "govtDept": null,
+        "caseTitle": "SubjectPerf1",
+        "petName": "PetitionerPerf",
+        "resName": "RespondentPerf",
+        "isStatusExcluded": null,
+        "caseStatus": "CLOSED",
+        "statusId": null,
+        "assignDept": null,
+        "reportStatusId": null,
+        "caseType": "Administration",
+        "courtTypes": null,
+        "reportStatus": null,
+        "fromDate": null,
+        "toDate": null,
+        "legalViewAccess": false,
+        "concernedBranch": null,
+        "statusDesc": "Closed",
+        "judgmentTypeId": null,
+        "iscaseImp": null,
+        "hearingDate": 1624559400000
+      }
+    ]
+  }
