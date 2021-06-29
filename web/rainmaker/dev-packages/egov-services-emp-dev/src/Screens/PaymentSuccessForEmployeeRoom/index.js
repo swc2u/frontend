@@ -261,6 +261,18 @@ console.log("pdfBankName-pl",pdfBankName)
 			"NotFound"
 		  );
 	console.log("paymentCollectionType-pl",paymentCollectionType)
+
+	       let cheDdNum = get(
+			state,
+			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].chequeNumber",
+			"NotFound"
+		  );
+
+		  let cheDaDate = get(
+			state,
+			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].paymentDate",
+			"NotFound"
+		  );
 	let totalACRoom = 0;
 	let totalNonAcRoom = 0;
 	let FromDate;
@@ -273,6 +285,10 @@ console.log("pdfBankName-pl",pdfBankName)
 	let getCardNum
 	let getBankName
 	let displayBankName
+	let chequeNo = "Not Applicable"
+	let chequeDate = "Not Applicable"
+	let demandDraftNo = "Not Applicable"
+	let demandDraftDate = "Not Applicable"
 
 	for(let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++){
 		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "AC"){
@@ -306,8 +322,20 @@ console.log("pdfBankName-pl",pdfBankName)
 		  }else{
 			getBankName = "Not Applicable"
 		  }
+		if(paymentCollectionType == "DD"){
+			demandDraftNo = cheDdNum
+			console.log("demandDraftNo000",demandDraftNo)
+			demandDraftDate = cheDaDate
+			console.log("demandDraftDate000",demandDraftDate)
+		}
+		if(paymentCollectionType == "CHEQUE" || paymentCollectionType == "Cheque"){
+			chequeNo = cheDdNum
+			console.log("chequeNo--8989",chequeNo)
+			chequeDate = cheDaDate
+			console.log("chequeDate000",chequeDate)
+		}
+  console.log("findNotApplicable",chequeNo,chequeDate,demandDraftNo,demandDraftDate)
   
-
     let strfromDate = FromDate.toString(); 
 	let numFromDate = Number(strfromDate)
 	let strtoDate = ToDate.toString();
@@ -429,7 +457,11 @@ console.log("pdfBankName-pl",pdfBankName)
 			  ),
 			  "discType": applicationDetails.bkPlotSketch,
 			  "cardNumberLast4": getCardNum,
-			  "dateVenueChangeCharges": "Not Applicable" 
+			  "dateVenueChangeCharges": "Not Applicable",
+			  chequeNo:chequeNo,
+	chequeDate : chequeDate,
+	demandDraftNo : demandDraftNo,
+	demandDraftDate : demandDraftDate
 		  },
 			"tenantInfo": {
 				"municipalityName": "Municipal Corporation Chandigarh",
@@ -575,6 +607,18 @@ console.log("pdfCardNumreceipt",pdfCardNum)
 			"NotFound"
 		  );
 	console.log("pdfBankName",pdfBankName)
+
+	let cheDdNum = get(
+		state,
+		"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].chequeNumber",
+		"NotFound"
+	  );
+
+	  let cheDaDate = get(
+		state,
+		"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].paymentDate",
+		"NotFound"
+	  );
 		let totalACRoom = 0;
 		let totalNonAcRoom = 0;
 		let FromDate;
@@ -588,6 +632,12 @@ console.log("pdfCardNumreceipt",pdfCardNum)
 	
 		let getCardNum
 		let getBankName
+		let NumberCDD
+	let CDDdate;
+	let chequeNo = "Not Applicable"
+	let chequeDate = "Not Applicable"
+	let demandDraftNo = "Not Applicable"
+	let demandDraftDate = "Not Applicable"
 		for(let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++){
 		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "AC"){
 		  totalACRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms  
@@ -619,6 +669,15 @@ console.log("pdfCardNumreceipt",pdfCardNum)
 		  getBankName = pdfBankName
 		}else{
 		  getBankName = "Not Applicable"
+		}
+
+		if(paymentCollectionType == "DD"){
+			demandDraftNo = cheDdNum
+			demandDraftDate = cheDaDate
+		}
+		if(paymentCollectionType == "CHEQUE" || paymentCollectionType == "Cheque"){
+			chequeNo = cheDdNum
+			chequeDate = cheDaDate
 		}
 
 	
@@ -726,7 +785,11 @@ console.log("pdfCardNumreceipt",pdfCardNum)
 				),
 				"discType": applicationDetails.bkPlotSketch,
 				"cardNumberLast4": getCardNum,
-				"dateVenueChangeCharges": "Not Applicable" 
+				"dateVenueChangeCharges": "Not Applicable",
+				chequeNo:chequeNo,
+				chequeDate : chequeDate,
+				demandDraftNo : demandDraftNo,
+				demandDraftDate : demandDraftDate 
 			},
 			"tenantInfo": {
 				"municipalityName": "Municipal Corporation Chandigarh",
