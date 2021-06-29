@@ -6,7 +6,10 @@ import cloneDeep from "lodash/cloneDeep";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import "./index.css";
 import { connect } from "react-redux";
-
+import {
+  getLocaleLabels,
+  getTransformedLocalStorgaeLabels,
+} from "egov-ui-framework/ui-utils/commons";
 class Table extends React.Component {
   state = {
     data: [],
@@ -105,7 +108,17 @@ class Table extends React.Component {
 
       if(locMessageObj){
       
-         columnName.push(locMessageObj.message);
+         columnName.push(
+           {
+            labelKey:locMessageObj.code,
+            name:locMessageObj.message,
+            options: column.options
+           }
+
+          
+         );
+         //columnName.push(column);
+
       }
       else{
         columnName.push(column);
@@ -145,8 +158,14 @@ class Table extends React.Component {
   
   
     componentDidUpdate (prevProps, prevState){
-    const {localizationLabels} = this.props;
+    let {localizationLabels} = this.props;
     const { data, columns } = this.props;
+    const { moduleName } = this.props;
+    if(moduleName && moduleName ==='egov-wns' )
+    {
+      localizationLabels = getTransformedLocalStorgaeLabels()
+    }
+    
     this.columnLocalisation(localizationLabels, columns);
   }
 

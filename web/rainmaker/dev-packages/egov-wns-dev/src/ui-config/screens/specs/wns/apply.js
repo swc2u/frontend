@@ -525,7 +525,7 @@ export const getData = async (action, state, dispatch) => {
     const waterApplicationType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplicationType");
     const activityType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType");
     const applicationStatus_ = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].applicationStatus");
-// disable Connection Details fiels  in bellow condition
+/////? disable Connection Details fiels  in bellow condition
     if(applicationStatus_ ==='PENDING_FOR_METER_UPDATE'
       || applicationStatus_ ==='PENDING_FOR_CONNECTION_ACTIVATION'
       || applicationStatus_ ==='PENDING_FOR_CONNECTION_EXTENSION'
@@ -970,6 +970,9 @@ export const getData = async (action, state, dispatch) => {
               }
              // 4.Owner Information disabled
              const textFieldsOwnerInformation = ["ownerName","mobileNumber","email","guardianName","correspondenceAddress"];
+             let ownershipCategory = get(combinedArray[0],"property.ownershipCategory", 'INDIVIDUAL.SINGLEOWNER' )
+             if(ownershipCategory !=='INDIVIDUAL.MULTIPLEOWNERS')
+                {
              for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
                dispatch(handleField(
                  "apply",
@@ -978,6 +981,48 @@ export const getData = async (action, state, dispatch) => {
                  Isreadolny
                  ));
              }
+            }
+            else{
+              let owners = get(combinedArray[0],"property.owners",[])
+                    // for (let index = 0; index < owners.length; index++) {
+                    //     //const element = array[index];
+                    //     for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
+                    //         dispatch(handleField(
+                    //           "apply",
+                    //           `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items.${index}.item${index}.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+                    //           "props.disabled",
+                    //           true
+                    //           ));
+                    //       }
+                    //       for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
+                    //         dispatch(handleField(
+                    //           "apply",
+                    //           `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.${index}.item${index}.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+                    //           "props.disabled",
+                    //           true
+                    //           ));
+                    //       }
+                        
+                    // }
+                    // dispatch(handleField(
+                    //             "apply",
+                    //             `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items.${index}.item${index}.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+                    //             "props.disabled",
+                    //             true
+                    //             ));
+                    dispatch(handleField(
+                      "apply",
+                      `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv`,
+                      "props.hasAddItem",
+                      false
+                      ));
+                      dispatch(handleField(
+                          "apply",
+                          `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv`,
+                          "props.isReviewPage",
+                          true
+                          ));
+            }
              dispatch(handleField(
               "apply",
               `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput`,
@@ -1003,14 +1048,48 @@ export const getData = async (action, state, dispatch) => {
                {
                 // 4.Owner Information disabled
                 const _textFieldsOwnerInformation = ["ownerName","mobileNumber","email","guardianName","correspondenceAddress"];
-                for (let i = 0; i < _textFieldsOwnerInformation.length; i++) {
+                let ownershipCategory_ = get(combinedArray[0],"property.ownershipCategory", 'INDIVIDUAL.SINGLEOWNER' )
+                
+                if(ownershipCategory_ ==='INDIVIDUAL.MULTIPLEOWNERS')
+                {
+                    let owners = get(combinedArray[0],"property.owners",[])
+                  //   for (let index = 0; index < owners.length; index++) {
+                  //     //const element = array[index];
+                  //     for (let i = 0; i < _textFieldsOwnerInformation.length; i++) {
+                  //         dispatch(handleField(
+                  //           "apply",
+                  //           `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items.${index}.item${index}.children.cardContent.children.viewFive.children.${_textFieldsOwnerInformation[i]}`,
+                  //           "props.disabled",
+                  //           true
+                  //           ));
+                  //       }
+                      
+                  // }
                   dispatch(handleField(
-                    "apply",
-                    `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.0.item0.children.cardContent.children.viewFive.children.${_textFieldsOwnerInformation[i]}`,
-                    "props.disabled",
-                    true
-                    ));
+                      "apply",
+                      `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv`,
+                      "props.hasAddItem",
+                      false
+                      ));
+                      dispatch(handleField(
+                          "apply",
+                          `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv`,
+                          "props.isReviewPage",
+                          true
+                          ));
                 }
+                else{
+                  for (let i = 0; i < _textFieldsOwnerInformation.length; i++) {
+                    dispatch(handleField(
+                      "apply",
+                      `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.0.item0.children.cardContent.children.viewFive.children.${_textFieldsOwnerInformation[i]}`,
+                      "props.disabled",
+                      true
+                      ));
+                  }
+
+                }
+
                 dispatch(handleField(
                   "apply",
                   `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput`,

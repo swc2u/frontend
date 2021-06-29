@@ -2001,22 +2001,22 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
     }
   //?
   // property update if PENDING_FOR_CITIZEN_ACTION
-  dispatch(handleField(
-    "apply",
-    `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput`,
-    "props.disabled",
-    //Isreadolny
-    true
-    ));
-    const textFieldsOwnerInformation = ["ownerName","mobileNumber","email","guardianName","correspondenceAddress"];
-    for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
-      dispatch(handleField(
-        "apply",
-        `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.0.item0.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
-        "props.disabled",
-        true
-        ));
-    }
+  // dispatch(handleField(
+  //   "apply",
+  //   `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput`,
+  //   "props.disabled",
+  //   //Isreadolny
+  //   true
+  //   ));
+  //   const textFieldsOwnerInformation = ["ownerName","mobileNumber","email","guardianName","correspondenceAddress"];
+  //   for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
+  //     dispatch(handleField(
+  //       "apply",
+  //       `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.0.item0.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+  //       "props.disabled",
+  //       true
+  //       ));
+  //   }
   propertyUpdateCitizen(state,dispatch)
 
   //?
