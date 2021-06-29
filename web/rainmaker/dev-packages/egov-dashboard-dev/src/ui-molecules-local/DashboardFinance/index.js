@@ -374,7 +374,9 @@ class DashboardFinance extends React.Component {
                     })
     
                     // Column Data
-                    const tableData = data[0] ? Object.keys(data[0]) : [];
+                    var tableData = data[0] ? Object.keys(data[0]) : [];
+                    tableData[8] = "be";
+                    tableData[11] = "ae";
                     var columnData = []
                     for(var i=0; i<tableData.length; i++){
                         var itemHeader = {}
@@ -466,6 +468,9 @@ class DashboardFinance extends React.Component {
                         itemHeader["Header"] = this.camelize(tableData[i]);
                         itemHeader["accessor"] = tableData[i];
                         itemHeader["show"]= true ;
+                        if(tableData[i] === "accountName" ){
+                            itemHeader["width"]= 250 ; 
+                        }
                         columnData.push(itemHeader);
                     }
     
@@ -550,6 +555,9 @@ class DashboardFinance extends React.Component {
                         itemHeader["Header"] = this.camelize(tableData[i]);
                         itemHeader["accessor"] = tableData[i];
                         itemHeader["show"]= true ;
+                        if(tableData[i] === "accountName" ){
+                            itemHeader["width"]= 250 ; 
+                        }
                         columnData.push(itemHeader);
                     }
     
@@ -1503,6 +1511,49 @@ class DashboardFinance extends React.Component {
       return (
           <div>
               <div> { this.state.recordNotFound } </div>
+          {/* Table Feature  */}
+          <div className="tableContainer" style={this.state.graphClicked >= 0 ? null : {display:"none"}}>
+          {
+              this.state.unchangeColumnData.length > 0  ? 
+              <div className="tableFeature">
+                  <div className="columnToggle-Text"> Download As: </div>
+                  <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+
+                  <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+              </div>
+              :null
+          }
+          {
+              this.state.toggleColumnCheck ?
+              <div className="columnVisibilityCard">
+              <dl>
+                  {
+                      this.state.unchangeColumnData.map((data, index)=>{
+                          return(
+                              <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
+                          )
+                      })
+                  }
+              </dl>
+              </div> 
+              : null
+          }
+
+          {
+              this.state.graphClicked >= 0 ?
+              <ReactTable id="customReactTable"
+              // PaginationComponent={Pagination}
+              data={ this.state.rowData }  
+              columns={ this.state.columnData }  
+              defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
+              pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
+              pageSizeOptions = {[20,40,60]}  
+              /> 
+              :null
+          }
+          </div>
+          
+          
           {/* Dropdown 1 */}
           {
             this.state.dropdownSelected === "budgetHeadwise" ?
@@ -1660,47 +1711,6 @@ class DashboardFinance extends React.Component {
             </div>
             :null
           }
-          {/* Table Feature  */}
-          <div className="tableContainer" style={this.state.graphClicked >= 0 ? null : {display:"none"}}>
-          {
-              this.state.unchangeColumnData.length > 0  ? 
-              <div className="tableFeature">
-                  <div className="columnToggle-Text"> Download As: </div>
-                  <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
-
-                  <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
-              </div>
-              :null
-          }
-          {
-              this.state.toggleColumnCheck ?
-              <div className="columnVisibilityCard">
-              <dl>
-                  {
-                      this.state.unchangeColumnData.map((data, index)=>{
-                          return(
-                              <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
-                          )
-                      })
-                  }
-              </dl>
-              </div> 
-              : null
-          }
-
-          {
-              this.state.graphClicked >= 0 ?
-              <ReactTable id="customReactTable"
-              // PaginationComponent={Pagination}
-              data={ this.state.rowData }  
-              columns={ this.state.columnData }  
-              defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
-              pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
-              pageSizeOptions = {[20,40,60]}  
-              /> 
-              :null
-          }
-          </div>
           </div>
       );
       }

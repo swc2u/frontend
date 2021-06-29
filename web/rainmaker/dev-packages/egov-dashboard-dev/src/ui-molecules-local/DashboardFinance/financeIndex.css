@@ -120,7 +120,7 @@
   margin: 0; }
 
 .tableContainer {
-  position: absolute;
+  position: initial;
   z-index: 1000;
   /* display: none; */
   /* float: left; */

@@ -454,7 +454,7 @@ class RetiredStatusDashboard extends React.Component {
           
         }
 
-        componentDidMount(){
+        componentDidUpdate(){
             debugger;
             const propsData = this.props.data;
             if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
