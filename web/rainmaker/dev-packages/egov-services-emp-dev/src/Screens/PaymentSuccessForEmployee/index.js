@@ -310,42 +310,64 @@ mcGSTN : pdfDetails[0].mcGSTN
 		let applicationDetails = createPACCApplicationData ? createPACCApplicationData : 'dataNotFound';
 		console.log("applicationDetails--",applicationDetails)
 	
-		let offlineCardNum;
+		let offlineCardNum = "Not Applicable";
 		let createdCardNum;
-		if(this.props.offlinePayementMode == "CARD" || this.props.offlinePayementMode == "Card"){
-			let complaintCountRequest = {
-				applicationNumber: applicationDetails.bkApplicationNumber,
-				uuid: userInfo.uuid,
-				applicationStatus: "",
-				mobileNumber: "",
-				bookingType: "",
-				tenantId: userInfo.tenantId,
-			  };
+		let chequeNo = "Not Applicable";
+        let chequeDate = "Not Applicable";      
+        let demandDraftNo = "Not Applicable";
+        let demandDraftDate = "Not Applicable";
+
+		let complaintCountRequest = {
+			applicationNumber: applicationDetails.bkApplicationNumber,
+			uuid: userInfo.uuid,
+			applicationStatus: "",
+			mobileNumber: "",
+			bookingType: "",
+			tenantId: userInfo.tenantId,
+		  };
 console.log("RequestBodyForPL",complaintCountRequest)
-			  
 		  
-			  let dataforSectorAndCategory = await httpRequest(
-				"bookings/api/employee/_search",
-				"_search",
-				[],
-				complaintCountRequest 
-			  );
-			  
-			  console.log("dataforSectorAndCategoryforPL",dataforSectorAndCategory)
-	
+	  
+		  let dataforSectorAndCategory = await httpRequest(
+			"bookings/api/employee/_search",
+			"_search",
+			[],
+			complaintCountRequest 
+		  );
+		  
+		  console.log("dataforSectorAndCategoryforPL",dataforSectorAndCategory)
+		if(this.props.offlinePayementMode == "CARD" || this.props.offlinePayementMode == "Card"){
 			  createdCardNum = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 			  ? dataforSectorAndCategory.bookingsModelList[0].cardNumber
 			  : "NA";		  
 
 			  offlineCardNum = `**** **** **** ${createdCardNum}`
 			  
-	console.log("CardNumInResponse",offlineCardNum)
+            	console.log("CardNumInResponse",offlineCardNum)
 				
 		}
        else{
 		offlineCardNum = "Not Applicable"
        } 
 	
+	   if(this.props.offlinePayementMode == "DD"){
+		demandDraftNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+		? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
+		console.log("demandDraftDate--chequeNo",chequeNo)
+		demandDraftDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+		? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
+		console.log("demandDraftDate--chequeNo",chequeNo)
+	}
+	if(this.props.offlinePayementMode == "CHEQUE"){
+		chequeNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+		? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
+		console.log("chequeNo--chequeNo",chequeNo)
+
+		chequeDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+		? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
+		console.log("chequeDate--chequeDate",chequeDate)
+	}
+
 		let Newugst;
 		let perFind = 50;
 		let ugst = PACC_TAX 
@@ -428,6 +450,10 @@ console.log("RequestBodyForPL",complaintCountRequest)
 				  "refundableCharges": this.props.REFUNDABLE_SECURITY,
 			 	  "totalPayment": this.props.totalAmountPaid,        //this.props.totalAmount,
 				//   "paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
+				  chequeNo:chequeNo,
+                  chequeDate:chequeDate,      
+                  demandDraftNo : demandDraftNo,
+                  demandDraftDate :demandDraftDate,
 				  "paymentDate": applicationDetails.createdDate, 
 				  "receiptNo": this.props.recNumber,
 				  "cardNumberLast4": offlineCardNum,
@@ -514,12 +540,17 @@ console.log("RequestBodyForPL",complaintCountRequest)
 		}
 	
 	  }
-	downloadPaymentReceiptBody = async (e) => {
+downloadPaymentReceiptBody = async (e) => {
 		const { downloadEsamparkApp, userInfo,createPACCApplicationData,documentMap,downloadEsampPaymentReceipt,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE,amountToDisplay} = this.props;
 		console.log("propsInPaymentSuccess--",this.props)
 let offlineCardNum;
 let createCardNum;
 let pdfBankName;
+let chequeNo = "Not Applicable"
+let chequeDate = "Not Applicable"
+let demandDraftNo = "Not Applicable"
+let demandDraftDate = "Not Applicable"
+
 		let applicationDetails = createPACCApplicationData ? createPACCApplicationData : 'dataNotFound';
 		console.log("applicationDetails--",applicationDetails)
 
@@ -542,8 +573,47 @@ let pdfBankName;
 			  console.log("ReceiptOfRequestBody",dataforSectorAndCategory)
 			  pdfBankName = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 			  ? dataforSectorAndCategory.bookingsModelList[0].bankName
-			  : "NA";		    
-	console.log("pdfBankName",pdfBankName)
+			  : "NA";		
+	     console.log("pdfBankName",pdfBankName)
+ 
+			if(this.props.offlinePayementMode == "DD"){
+				demandDraftNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+				? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
+				console.log("demandDraftDate--chequeNo",chequeNo)
+				demandDraftDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+				? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
+				console.log("demandDraftDate--chequeNo",chequeNo)
+			}
+			if(this.props.offlinePayementMode == "CHEQUE"){
+				chequeNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+				? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
+				console.log("chequeNo--chequeNo",chequeNo)
+
+				chequeDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+				? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
+				console.log("chequeDate--chequeDate",chequeDate)
+
+			}
+		
+
+		 if(chequeNo !== null && chequeDate !== null){
+			chequeNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+			? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
+			chequeDate =  dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+			? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
+		 }else{
+			chequeNo = "Not Applicable",
+			chequeDate = "Not Applicable"
+		 }
+		 if(chequeNo !== null && chequeDate !== null){
+			chequeNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+			? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
+			chequeDate =  dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+			? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
+		 }else{
+			chequeNo = "Not Applicable",
+			chequeDate = "Not Applicable"
+		 }
 				
 		}
        else{
@@ -681,6 +751,10 @@ let pdfBankName;
 				  "totalPaymentInWords": this.NumInWords(
 					NumAmount
 				  ),  //offlineTransactionDate,,
+				  "chequeNo":chequeNo,
+                  "chequeDate":chequeDate,
+                  "demandDraftNo":demandDraftNo,
+                  "demandDraftDate":demandDraftDate,
 				  "bankName":pdfBankName,
 				  "cardNumberLast4": offlineCardNum,
 				   "dateVenueChangeCharges": this.props.DATEVENUECHARGE == 0 ?"Not Applicable":this.props.DATEVENUECHARGE,
