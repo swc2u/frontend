@@ -22,6 +22,7 @@ class BookingCalendar extends React.Component {
             filtertoDate: "",
             dselectedDays: [],
         };
+        this.handleResetClick()
     }
 
     componentDidMount() {
@@ -148,6 +149,7 @@ class BookingCalendar extends React.Component {
                 return;
             }
             if (this.isSelectingFirstDay(from, to, day)) {
+                
                 if (day >= new Date()) {
                     this.props.prepareFinalObject(
                         "availabilityCheckData.bkFromDate",
