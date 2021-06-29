@@ -13,7 +13,6 @@ import commonConfig from "config/common.js";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 export class StepForm extends Component {
-// this.props.appData &&  this.props.appData.bkApplicantName ||  "" 
 
     state = {
       AccRoomToBook:'',   
@@ -51,8 +50,6 @@ export class StepForm extends Component {
             { labelName: "Community Center Details", labelKey: "Community Center Details" },
             { labelName: "Venue Details", labelKey: "Venue Details" },
             { labelName: "Room Booking Details", labelKey: "Room Booking Details" },
-            // { labelName: "Payments Details", labelKey: "PAYMENT DETAILS" },
-            // { labelName: "Documents", labelKey: "DOCUMENTS" },
             { labelName: "Summary", labelKey: "SUMMARY" },
         ]
 
@@ -79,56 +76,7 @@ export class StepForm extends Component {
       this.setState({
         RoomBookingData :RoomData.data
       })
-
-  //       let requestBody = {
-  //           MdmsCriteria:{
-  //               tenantId: commonConfig.tenantId,
-  //           moduleDetails: [
-  //               {
-  //                   "moduleName": "BillingService",
-  //                   "masterDetails": [
-  //                       {
-  //                           "name": "TaxHeadMaster"
-  //                       }
-  //                   ]
-  //               }
-  //           ]
-  //       }
-  //       }
-
-
-  //       let hereFcCharges = await httpRequest(
-  //           "egov-mdms-service/v1/_search",
-  //           "_search", [],
-  //           requestBody
-  //         );
-  //       console.log("hereFcCharges--",hereFcCharges)  
-
-
-  //       let TaxHeadMaster = hereFcCharges.MdmsRes.BillingService.TaxHeadMaster
-  //       console.log("TaxHeadMaster--",TaxHeadMaster)
-  //       var arrayName = [];
-  //       arrayName.push(hereFcCharges.MdmsRes.BillingService.TaxHeadMaster)
-  //       console.log("arrayName--",arrayName)
-
-  //       let IndexfCharges;
-  //       if (arrayName && arrayName.length > 0) {
-  //         arrayName.forEach((item) => {
-  //           item.forEach((value) => {
-  //             if (value.code == "FACILITATION_CHARGE") { 
-  //               IndexfCharges = value
-  //             }
-  //           })
-  //         })
-  //       }
-  //    console.log("fCharges--inindexPage--",IndexfCharges)
-
-  //  let testFcharges = IndexfCharges && IndexfCharges.facilitationCharge ? IndexfCharges.facilitationCharge : "valueNotsetYet"
-  //  console.log("testFcharges--",testFcharges)
-  //    this.setState({
-  //       NewfCharges : testFcharges
-  //    })    
-      }
+     }
 
      nextStep = () => {
         const { step } = this.state;
@@ -334,64 +282,6 @@ export class StepForm extends Component {
                 roomToDate={roomToDate}
 
             />);
-
-        // if (step === 4)
-        //     return (<DocumentDetails
-        //         nextStep={this.nextStep}
-        //         rent={vrent}
-        //         prevStep={this.prevStep}
-        //         handleChange={this.handleChange}
-        //         firstName={firstName}
-        //         lastName={lastName}
-        //         email={email}
-        //         mobileNo={mobileNo}
-        //     />);
-        // if (step === 5)
-        //     return (<SummaryInfo
-        //         bookingData={bookingData}
-        //         venueType={venueType}
-        //         bokingType={bokingType}
-        //         discountType={discountType}
-        //         accountType={accountType}
-        //         approverName={approverName}
-        //         amount={amount}
-        //         bankName={bankName}
-        //         transactionDate={transactionDate}
-        //         transactionNumber={transactionNumber}
-        //         paymentMode={paymentMode}
-        //         comment={comment} 
-        //         BankAccountName={BankAccountName}  //start for bank details
-        //         NomineeName={NomineeName} 
-        //         BankAccountNumber={BankAccountNumber}
-        //         IFSCCode={IFSCCode}
-        //         AccountHolderName={AccountHolderName}
-        //         firstName={firstName} //start of application details
-        //         purpose={purpose}
-        //         utGST={utGST}
-        //         cGST={cGST}
-        //         lastName={lastName}
-        //         jobTitle={jobTitle}
-        //         jobCompany={jobCompany}
-        //         jobLocation={jobLocation}
-        //         prevStep={this.prevStep}
-        //         mobileNo={mobileNo}
-        //         email={email}
-        //         houseNo={houseNo}
-        //         dimension={dimension}
-        //         location={location}
-        //         cleaningCharges={cleaningCharges}
-        //         type={type}
-        //         rent={vrent}
-        //         fromDate={fromDate}
-        //         toDate={toDate}
-        //         GSTnumber={GSTnumber}
-        //         surcharge={surcharge}
-        //         facilitationCharges={facilitationCharges}
-        //         locality={locality}
-        //         residenials={residenials}
-        //         {...propsData}
-        //         firstStep={this.firstStep}
-        //     />);
     }
 
     render() {

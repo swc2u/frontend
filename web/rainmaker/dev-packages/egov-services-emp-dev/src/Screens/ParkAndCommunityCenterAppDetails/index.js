@@ -903,35 +903,6 @@ try{
     }
   };
    
-//   getBookingCancelledDate = async (applicationNumber, tenantId) => {
-//     if (applicationNumber && tenantId) {    
-//         let queryObject = [
-//             { key: "tenantId", value: tenantId },
-//             { key: "businessIds", value: applicationNumber },
-//         ];
-//         const payload = await httpRequest(
-//             "/egov-workflow-v2/egov-wf/process/_search",
-//             "_search",
-//             queryObject
-//         );
-
-//         if (payload) {
-
-//             let cancelledTimeStamp = payload.ProcessInstances[0].auditDetails.createdTime;
-// console.log("cancelledTimeStamp",cancelledTimeStamp)
-//             let date2 = new Date(cancelledTimeStamp);
-
-//             let gdate = ('0' + date2.getDate()).slice(-2) + '/'
-//                 + ('0' + (date2.getMonth() + 1)).slice(-2) + '/'
-//                 + date2.getFullYear();
-//                 console.log("gdate",gdate)
-//             return gdate;
-
-
-//         }
-//     }
-// }
-
   componentWillReceiveProps = async (nextProps) => {
     // alert("checkwillreceiveprops")
     const { transformedComplaint, prepareFormData } = this.props;
@@ -1190,8 +1161,11 @@ return dateArr
     console.log("pcccpaymentreceipt", this.props);
 
     let applicationDetails = selectedComplaint;
-
-    let CardNumber;
+    let chequeNo = "Not Applicable";
+    let chequeDate = "Not Applicable";
+    let demandDraftNo = "Not Applicable";
+    let demandDraftDate = "Not Applicable";
+    let CardNumber = "Not Applicable";
     let createCardNum;
 let pdfBankName;
 
@@ -1200,6 +1174,15 @@ if(PaymentModeCNumber == "DD" ||PaymentModeCNumber == "CHEQUE"){
 }
 else{
   pdfBankName = "Not Applicable"
+}
+
+if(PaymentModeCNumber == "DD"){
+  demandDraftNo = applicationDetails.chequeNumber
+  demandDraftDate = applicationDetails.paymentDate
+}
+if(PaymentModeCNumber == "CHEQUE"){
+  chequeNo = applicationDetails.chequeNumber
+  chequeDate = applicationDetails.paymentDate
 }
 
     if(PaymentModeCNumber == "CARD"){
@@ -1572,6 +1555,10 @@ console.log("employeePaymentReceipt")
           transactionId: this.props.offlineTransactionNum,
           totalPaymentInWords: this.NumInWords(NumAmount), //offlineTransactionDate,,
           bankName: pdfBankName,
+          "chequeNo":chequeNo,
+                  "chequeDate":chequeDate,
+                  "demandDraftNo":demandDraftNo,
+                  "demandDraftDate":demandDraftDate,
           cardNumberLast4: CardNumber,
           dateVenueChangeCharges:
             this.props.DATEVENUECHARGE == 0
@@ -1997,8 +1984,22 @@ console.log("employeePaymentReceipt")
     console.log("propsInPlLetterOfPACCC--",this.props)
     let applicationDetails = selectedComplaint;
 
-    let CardNumber;
-    let createdCardNum;
+    let CardNumber = "Not Applicable";
+    let createdCardNum = "Not Applicable"
+    let chequeNo = "Not Applicable";
+    let chequeDate = "Not Applicable";
+    let demandDraftNo = "Not Applicable";
+    let demandDraftDate = "Not Applicable";
+
+    if(PaymentModeCNumber == "DD"){
+      demandDraftNo = applicationDetails.chequeNumber
+      demandDraftDate = applicationDetails.paymentDate
+    }
+    if(PaymentModeCNumber == "CHEQUE"){
+      chequeNo = applicationDetails.chequeNumber
+      chequeDate = applicationDetails.paymentDate
+    }
+    
     if(PaymentModeCNumber == "CARD"){
       createdCardNum = applicationDetails.cardNumber
       CardNumber = `**** **** **** ${createdCardNum}` 
@@ -2237,6 +2238,10 @@ else{
         refundableCharges: this.props.REFUNDABLE_SECURITY,
         //totalPayment: this.props.totalAmount,  amountTodisplay
         totalPayment: amountTodisplay,
+        "chequeNo":chequeNo,
+          "chequeDate":chequeDate,
+          "demandDraftNo":demandDraftNo,
+          "demandDraftDate":demandDraftDate,
         // paymentDate: convertEpochToDate(
         //   this.props.offlineTransactionDate,
         //   "dayend"
@@ -2644,53 +2649,7 @@ else{
       prepareFinalObject("documentsPreview", documentsPreview);
     }
   };
-  // callApiForDocumentData = async (e) => {
-  // 	const { documentMap, userInfo } = this.props;
-  // 	var documentsPreview = [];
-  // 	if (documentMap && Object.keys(documentMap).length > 0) {
-  // 		let keys = Object.keys(documentMap);
-  // 		let values = Object.values(documentMap);
-  // 		let id = keys[0],
-  // 			fileName = values[0];
-
-  // 		documentsPreview.push({
-  // 			title: "DOC_DOC_PICTURE",
-  // 			fileStoreId: id,
-  // 			linkText: "View",
-  // 		});
-  // 		let changetenantId = userInfo.tenantId ? userInfo.tenantId.split(".")[0] : "ch";
-  // 		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-  // 		let fileUrls =
-  // 			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds, changetenantId) : {};
-
-  // 		documentsPreview = documentsPreview.map(function (doc, index) {
-  // 			doc["link"] =
-  // 				(fileUrls &&
-  // 					fileUrls[doc.fileStoreId] &&
-  // 					fileUrls[doc.fileStoreId].split(",")[0]) ||
-  // 				"";
-
-  // 			doc["name"] =
-  // 				(fileUrls[doc.fileStoreId] &&
-  // 					decodeURIComponent(
-  // 						fileUrls[doc.fileStoreId]
-  // 							.split(",")[0]
-  // 							.split("?")[0]
-  // 							.split("/")
-  // 							.pop()
-  // 							.slice(13)
-  // 					)) ||
-  // 				`Document - ${index + 1}`;
-  // 			return doc;
-  // 		});
-  // 		setTimeout(() => {
-  // 			window.open(documentsPreview[0].link);
-  // 		}, 100);
-  // 		prepareFinalObject('documentsPreview', documentsPreview)
-  // 	}
-
-  // }
-
+ 
   GOTOPAY = (selectedNumber) => {
     this.props.history.push(
       `/egov-services/PaymentReceiptDteail/${selectedNumber}`
@@ -2717,11 +2676,6 @@ else{
       Difference_In_Time_check / (1000 * 3600 * 24);
     console.log("Difference_In_Days--", Difference_In_Days_check);
     if (Difference_In_Days_check === 1 || Difference_In_Days_check > 1) {
-      // this.setState({
-      // 	dateVenchangePop : true,
-      // 	togglepopup: !this.state.togglepopup
-      // })
-
       this.props.history.push(`/egov-services/checkavailability_pcc`);
     } else {
       toggleSnackbarAndSetText(
@@ -3201,31 +3155,6 @@ OfflineRefundForCG = async () => {
       console.log("ReasonOfCanValue", e.target.value)
     );
   };
-
-  // CheckGreaterDate = () =>{
-  // 	let { selectedComplaint,toggleSnackbarAndSetText } = this.props;
-  // 	let check;
-  // 	let bookingDate = selectedComplaint.bkFromDate
-  // 	console.log("FromDate--yyy-last",bookingDate)
-
-  // 	let dateFromDate = new Date(bookingDate)
-  // 	console.log("dateFromDate--gg",dateFromDate)
-  // 	let CurrentDate = new Date();
-  // 	console.log("CurrentDate--",CurrentDate)
-  // if(dateFromDate > CurrentDate){
-  // 	check == false
-  // }
-  // else{
-  // 	check == true
-  // }
-  // console.log("ValueOfCheckInFunction--",check)
-  // this.setState({
-  // 	checkGreaterDate: check,
-  // })
-
-  // return check
-  // }
-
   render() {
     const hintTextStyle = {
       letterSpacing: "0.7px",
@@ -3308,12 +3237,6 @@ OfflineRefundForCG = async () => {
     }
 
     console.log("valueForDocDropDown", valueForDocDropDown);
-
-    // var ForAllNoDays = this.TotalPACCDays();     `-${uploadeDocType}`
-    // console.log("ForAllNoDays--",ForAllNoDays)    uploadeDocType[0].documentType    uploadeDocType.length > 0 ?
-
-    // var check = this.CheckGreaterDate();
-    // console.log("CheckGreaterDat--",check)
     let btnOneLabel = "";
     let btnTwoLabel = "";
     let action;

@@ -131,7 +131,9 @@ PaymentDate : "",
 			 mcGSTN : "",
 			 pdfBankName : "",
 			 pdfCardNum : "",
-			 paymentCollectionType : ""
+			 paymentCollectionType : "",
+			 chequeNo : "",
+             chequeDate : ""
 		};
 	};
 
@@ -308,9 +310,13 @@ let pdfBankName;
 let pdfCardNum;
 let paymentCollectionType
 let particularRoomData;
+let chequeNo = "Not Applicable"
+let chequeDate = "Not Applicable"
 	
 for(let i = 0; i < AllValues[0].roomsModel.length; i++){
 	if(AllValues[0].roomsModel[i].roomApplicationNumber == fetchApplicationNumber){
+		chequeNo = AllValues[0].roomsModel[i].chequeNumber
+		chequeDate = AllValues[0].roomsModel[i].paymentDate
 		FromDate = AllValues[0].roomsModel[i].fromDate
 		ToDate = AllValues[0].roomsModel[i].toDate
 		CreatedDate = AllValues[0].roomsModel[i].createdDate
@@ -335,6 +341,8 @@ for(let i = 0; i < AllValues[0].roomsModel.length; i++){
 	
 }
 this.setState({
+chequeNo : chequeNo,
+chequeDate : chequeDate,
 	totalACRoom : totalACRoom,
 	totalNonAcRoom : totalNonAcRoom,
 	RoomCreateTime : RoomCreateTime,
@@ -590,6 +598,10 @@ else{
 		let getCardNum
 		let getBankName
 		let displayBankName
+		let chequeNo = "Not Applicable"
+		let chequeDate = "Not Applicable"
+		let demandDraftNo = "Not Applicable"
+		let demandDraftDate = "Not Applicable"
 	if(this.state.paymentCollectionType == "CARD" || this.state.paymentCollectionType == "Card"){
 	displayBankName = `**** **** **** ${this.state.pdfCardNum}`
 	getCardNum = displayBankName
@@ -601,7 +613,14 @@ else{
   }else{
 	getBankName = "Not Applicable"
   }
-
+  if(this.state.paymentCollectionType == "DD"){
+	demandDraftNo = this.state.chequeNo,
+	demandDraftDate = this.state.chequeDate
+  }
+  if(this.state.paymentCollectionType == "CHEQUE" || this.state.paymentCollectionType == "Cheque"){
+	chequeNo = this.state.chequeNo,
+	chequeDate = this.state.chequeDate
+  }
 
 		let BookingInfo = [
 			{
@@ -652,7 +671,11 @@ else{
 				),
 				"discType": this.state.AllValues[0].bkPlotSketch,
 				"cardNumberLast4": getCardNum,
-                "dateVenueChangeCharges": "Not Applicable"
+                "dateVenueChangeCharges": "Not Applicable",
+				"chequeNo":chequeNo,
+                  "chequeDate":chequeDate,
+                  "demandDraftNo":demandDraftNo,
+                  "demandDraftDate":demandDraftDate,
 			},
 				"tenantInfo": {
 					"municipalityName": "Municipal Corporation Chandigarh",
@@ -947,7 +970,18 @@ downloadPermissionLetterFunction = async (e) => {
 	if(this.state.totalACRoom !== 0 && this.state.totalNonAcRoom !== 0){  //"2AC and 3 Non AC"
 		bookedrooms = `${this.state.totalACRoom} AC and ${this.state.totalNonAcRoom} Non AC Room(s)` 
 	} 
-
+	let chequeNo = "Not Applicable"
+	let chequeDate = "Not Applicable"
+	let demandDraftNo = "Not Applicable"
+	let demandDraftDate = "Not Applicable"
+	if(this.state.paymentCollectionType == "DD"){
+		demandDraftNo = this.state.chequeNo,
+		demandDraftDate = this.state.chequeDate
+	  }
+	  if(this.state.paymentCollectionType == "CHEQUE" || this.state.paymentCollectionType == "Cheque"){
+		chequeNo = this.state.chequeNo,
+		chequeDate = this.state.chequeDate
+	  }
 		let approverName;
 		for(let i = 0; i < userInfo.roles.length ; i++ ){
 		  if(userInfo.roles[i].code == "BK_E-SAMPARK-CENTER"){
@@ -1042,7 +1076,11 @@ getBankName = "Not Applicable"
 					), 
 					"discType": this.state.AllValues[0].bkPlotSketch,
 					"cardNumberLast4": getCardNum,
-					"dateVenueChangeCharges": "Not Applicable"
+					"dateVenueChangeCharges": "Not Applicable",
+					"chequeNo":chequeNo,
+                  "chequeDate":chequeDate,
+                  "demandDraftNo":demandDraftNo,
+                  "demandDraftDate":demandDraftDate,
 				},
 				"tenantInfo": {
 					"municipalityName": "Municipal Corporation Chandigarh",

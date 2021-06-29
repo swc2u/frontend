@@ -146,15 +146,15 @@ export class StepForm extends Component {
         let {state} = this.props
         let findDocument;
         findDocument = state.screenConfiguration.preparedFinalObject.hasOwnProperty('discountDocumentsUploadRedux')
-            console.log("findDocument",findDocument)
+           
             let getDocumentRedux = get(
              state,
              "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux",
              "NotFound"
            );
-           console.log("getDocumentRedux",getDocumentRedux)
+           
             if(findDocument == true &&  getDocumentRedux == null){
-      console.log("AlreadyDocumentuploadReduxExist")
+      
       this.props.prepareFinalObject('discountDocumentsUploadRedux', {'0': {
       documentType: 'DOC',
       documentCode: 'BK_PCC_DISCOUNT_DOCUMENT',
@@ -538,30 +538,27 @@ console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
 
 const mapStateToProps = state => {
     const { complaints, common, auth, form, bookings} = state;
-    // const {arrayName} = bookings;
     const { facilationChargesSuccess, arrayName } = bookings;
   let fromDateone = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData : "one"
   let bookingOne = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData:"two"
   let stateData = state;
   let Previousdiscount = "NotFound"
   let appData = "NotFound"
-//   let appData = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0] : ""
-//   console.log("appData--",appData)
 let findApplicationData;
 findApplicationData = state.bookings.hasOwnProperty('applicationData')
-console.log("findApplicationData",findApplicationData)
+
 
 let applicationData = get(
     state,
     "bookings.applicationData",
     "NotFound"
   );
-  console.log("applicationData--in--allApplicationPage",applicationData)
+ 
   
 
 if(findApplicationData == true && applicationData !== "NotFound"){
     appData = state.bookings ? (state.bookings.applicationData !== undefined && state.bookings.applicationData !== null ? state.bookings.applicationData.bookingsModelList.length > 0 ?(state.bookings.applicationData.bookingsModelList[0]) :'NA' : 'NA'): 'NA'
-    console.log("appData--",appData)
+   
   
     if(appData !== undefined && appData !== null && appData !== 'NA'){
        if(appData.discount == 0){
