@@ -2001,6 +2001,57 @@ export const applyForWater = async (state, dispatch) => {
             response = await httpRequest("post", "/ws-services/wc/_create", "", [], { WaterConnection: queryObject });
             dispatch(prepareFinalObject("WaterConnection", response.WaterConnection));
             setApplicationNumberBox(state, dispatch);
+            dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput`,
+                "props.disabled",
+                //Isreadolny
+                true
+                ));
+                const textFieldsOwnerInformation = ["ownerName","mobileNumber","email","guardianName","correspondenceAddress"];
+                let ownershipCategory = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", 'INDIVIDUAL.SINGLEOWNER' )
+                
+                if(ownershipCategory ==='INDIVIDUAL.MULTIPLEOWNERS')
+                {
+                    let owners = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.owners",[])
+                    for (let index = 0; index < owners.length; index++) {
+                        //const element = array[index];
+                        for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
+                            dispatch(handleField(
+                              "apply",
+                              `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items.${index}.item${index}.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+                              "props.disabled",
+                              true
+                              ));
+                          }
+                        
+                    }
+                    dispatch(handleField(
+                        "apply",
+                        `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv`,
+                        "props.hasAddItem",
+                        false
+                        ));
+                        dispatch(handleField(
+                            "apply",
+                            `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv`,
+                            "props.isReviewPage",
+                            true
+                            ));
+                }
+                else{
+                    for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
+                        dispatch(handleField(
+                          "apply",
+                          `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.0.item0.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+                          "props.disabled",
+                          true
+                          ));
+                      }
+
+                }
+
+                
         }
         return true;
     } catch (error) {

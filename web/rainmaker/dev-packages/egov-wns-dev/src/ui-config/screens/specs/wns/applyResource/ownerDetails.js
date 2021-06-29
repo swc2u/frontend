@@ -596,7 +596,8 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
           }),
         }),
         onMultiItemAdd: (state, muliItemContent) => {          
-          return muliItemContent;
+          //return muliItemContent;
+          return setFieldsOnAddItem(state, muliItemContent);
         },
         items: [],
         hasAddItem: true,
@@ -607,6 +608,20 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
       type: "array"
     },
   });
+}
+const setFieldsOnAddItem = (state, multiItemContent) => {
+  const preparedFinalObject = JSON.parse(
+    JSON.stringify(state.screenConfiguration.preparedFinalObject)
+  );
+  let disabled = true
+  if(process.env.REACT_APP_NAME !== "Citizen")
+  {
+    disabled = true;
+  }
+  for (var variable in multiItemContent) {
+    multiItemContent[variable].props.disabled = disabled;
+  }
+  return multiItemContent;
 }
 
 

@@ -16,9 +16,11 @@ export const searchResults = {
   componentPath: "Table",
   visible: false,
   props: {
+    moduleName: "egov-wns",
     columns: [
       {
         name: getTextToLocalMappingCode("service"),
+        labelKey: "WS_COMMON_TABLE_COL_SERVICE_LABEL",
         options: {
           filter: false,
           customBodyRender: value => (
@@ -54,6 +56,7 @@ export const searchResults = {
 
       {
         name: getTextToLocalMappingCode("Action"),
+        labelKey: "WS_COMMON_TABLE_COL_ACTION_LABEL",
         options: {
           filter: false,
           customBodyRender: (value, data) => {
@@ -179,18 +182,21 @@ export const searchResults = {
       },
       {
         name:  getTextToLocalMappingCode("tenantId"),
+        labelKey: "WS_COMMON_TABLE_COL_TENANTID_LABEL",
         options: {
           display: false
         }
       },
       {
         name: getTextToLocalMappingCode("connectionType"),
+        labelKey: "WS_COMMON_TABLE_COL_CONNECTIONTYPE_LABEL",
         options: {
           display: false
         }
       },
       {
         name: getTextToLocalMappingCode("billGenerationId"),
+        labelKey: "WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL",
         options: {
           display: false
         }

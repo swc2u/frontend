@@ -123,7 +123,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewproposedHolderInfo.visible",false);
     }
     /////?
-    if(activityTypeHolder ==='SW_SEWERAGE')
+    if(activityTypeHolder ==='SW_SEWERAGE' || activityTypeHolder ==='WS_TUBEWELL' )
     {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewMeterId.visible",false);
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewMeterInstallationDate.visible",false);

@@ -8,6 +8,10 @@ import { Link } from "react-router-dom";
 import { LabelContainer } from "egov-ui-framework/ui-containers";
 import { connect } from "react-redux";
 import get from "lodash/get";
+import {
+  getLocaleLabels,
+  getTransformedLocalStorgaeLabels
+} from "egov-ui-framework/ui-utils/commons";
 import "./index.css"
 
 const styles = {
@@ -50,12 +54,84 @@ else{
 }
   }
 
-  titleCasingStatus = (status) => {
-    let splitStr = status.toLowerCase().split('_');
+  titleCasingStatus = (status,activityType,applicationNo) => {
+switch(activityType)
+{
+  case'NEW_WATER_CONNECTION':
+  status = `WF_REGULARWSCONNECTION_${status}`
+  break;
+  case "APPLY_FOR_TEMPORARY_CONNECTION":
+  status = `WF_TEMPORARY_WSCONNECTION_${status}`
+  break;   
+  case "WS_TUBEWELL":
+  case "NEW_TUBEWELL_CONNECTION":
+  status = `WF_WS_TUBEWELL_${status}`
+  break;
+  case "WF_SW_SEWERAGE":
+  //case "NEW_TUBEWELL_CONNECTION":
+  status = `WF_SW_SEWERAGE_${status}`
+  break;
+  case "TEMPORARY_WSCONNECTION":
+  case "APPLY_FOR_TEMPORARY_CONNECTION":
+  status = `WF_TEMPORARY_WSCONNECTION_${status}`
+  break;
+  case "WS_TEMP_TEMP":
+  case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
+  status = `WF_WS_TEMP_TEMP_${status}`
+  break;
+  case "WS_TEMP_REGULAR":
+  case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
+  status = `WF_WS_TEMP_REGULAR_${status}`
+  break;
+  case "WS_DISCONNECTION":
+  case "PERMANENT_DISCONNECTION":
+  status = `WF_WS_DISCONNECTION_${status}`
+  break;
+  case "WS_TEMP_DISCONNECTION":
+  case "TEMPORARY_DISCONNECTION":
+  status = `WF_WS_TEMP_DISCONNECTION_${status}`
+  break;
+  case "WS_RENAME":
+  case "UPDATE_CONNECTION_HOLDER_INFO":
+  status = `WF_WS_RENAME_${status}`
+  break;
+  case "WS_METER_UPDATE":
+  case "UPDATE_METER_INFO":
+  status = `WF_WS_METER_UPDATE_${status}`
+  break;
+  case "WS_CONVERSION":
+  case "CONNECTION_CONVERSION":
+  status = `WF_WS_CONVERSION_${status}`
+  break;
+  case "WS_REACTIVATE":
+  case "REACTIVATE_CONNECTION":
+  status = `WF_WS_REACTIVATE_${status}`
+  break;
+  case "NA":
+    if(applicationNo.includes("SW"))
+  {
+    status = `WF_SW_SEWERAGE_${status}`
+  }
+  else
+  status = status
+  break;
+  default:
+  let splitStr = status.toLowerCase().split('_');
     for (let i = 0; i < splitStr.length; i++) {
       splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
     }
-    return splitStr.join(' ');
+    status= splitStr.join(' ');
+    break;
+
+}
+    const localisationLabels = getTransformedLocalStorgaeLabels();
+    return getLocaleLabels(
+      status,
+      status,
+      //"PENSION_COMMON_TABLE_COL_EMMPLOYEE_NAME",
+      localisationLabels
+    );
+    
   }
 
   render() {
@@ -147,7 +223,7 @@ else{
                         </Grid>
                         <Grid item md={8} xs={6}>
                           <Label
-                            labelName={this.titleCasingStatus(item.applicationStatus)}
+                            labelName={this.titleCasingStatus(item.applicationStatus,item.activityType,item.applicationNo)}
                             fontSize={14}
                             style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                           />
