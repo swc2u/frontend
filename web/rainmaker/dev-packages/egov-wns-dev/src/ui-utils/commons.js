@@ -2903,13 +2903,14 @@ export const findAndReplace = (obj, oldValue, newValue) => {
 // api call to calculate water estimate
 export const waterEstimateCalculation = async (queryObject, dispatch) => {
     dispatch(toggleSpinner());
+    set(queryObject[0] ,'waterConnection.proposedMeterInstallationDate',convertDateToEpoch(queryObject[0].waterConnection.proposedMeterInstallationDate))
     try {
         const response = await httpRequest(
             "post",
             "ws-calculator/waterCalculator/_estimate",
             "_estimate",
             [],
-
+            
             {
                 isconnectionCalculation: false,
                 CalculationCriteria: queryObject

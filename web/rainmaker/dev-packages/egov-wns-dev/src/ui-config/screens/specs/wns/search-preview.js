@@ -65,9 +65,17 @@ const getLabelForWnsHeader = () => {
 }
 
 const headerrow = getCommonContainer({
-  header: getCommonHeader({
-    labelKey: getLabelForWnsHeader()
-  }),
+  // header: getCommonHeader({
+  //   labelKey: getLabelForWnsHeader()
+  // }),
+  header: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-wns",
+    componentPath: "ApplicationHeaderContainer",
+    props: {
+      number: applicationNumber
+    }
+  },
   application: getCommonContainer({
     applicationNumber: {
       uiFramework: "custom-atoms-local",
@@ -868,7 +876,12 @@ const screenConfig = {
                 xs: 12,
                 sm: 8
               },
-              ...headerrow
+              ...headerrow,
+              // headerrow_temp:getCommonContainer({
+              //   header: getCommonHeader({
+              //     labelKey: window.localStorage.getItem("wns_workflow") !== null?`${window.localStorage.getItem("wns_workflow")}_DETAIL_HEADER`:'WS_TASK_DETAILS'
+              //   }),
+              // }),
             },
             helpSection: {
               uiFramework: "custom-atoms",
