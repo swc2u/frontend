@@ -674,7 +674,9 @@ try{
          let activityType=''
          let applicantName=''
          let applicantAddress=''
-         
+         let houseNo=''
+         let plotnumber=''
+         let sector =''
          if(applicationNumber.includes("WS"))
          {
         //   const response = await httpRequest(
@@ -700,6 +702,11 @@ try{
           activityType =get(res, "WaterConnection[0].activityType", '')
           applicantName =get(res, "WaterConnection[0].connectionHolders[0].name", '')
           applicantAddress =get(res, "WaterConnection[0].connectionHolders[0].correspondenceAddress", '')
+          plotnumber =get(wnsConnection[0], "property.address.doorNo", '')
+          houseNo =get(wnsConnection[0], "property.address.plotNo", '')
+          sector = get(wnsConnection[0], "property.address.locality.name", '')
+          applicantAddress = `${plotnumber},${houseNo},${sector}`
+          applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
           // set activityType 
           switch (activityType) {
             case "APPLY_FOR_TEMPORARY_CONNECTION":
@@ -827,6 +834,11 @@ try{
         activityType =get(res, "SewerageConnections[0].activityType", '')
         applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
         applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+        plotnumber =get(wnsConnection[0], "property.address.doorNo", '')
+          houseNo =get(wnsConnection[0], "property.address.plotNo", '')
+          sector = get(wnsConnection[0], "property.address.locality.name", '')
+          applicantAddress = `${plotnumber},${houseNo},${sector}`
+          applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
         if(activityType === null)
         {
           activityType = "Sewarage Connection"
@@ -1061,7 +1073,9 @@ try{
          let activityType=''
          let applicantName=''
          let applicantAddress=''
-         
+         let houseNo=''
+         let plotnumber=''
+         let sector =''
          if(applicationNumber.includes("WS"))
          {
         //   const response = await httpRequest(
@@ -1086,6 +1100,11 @@ try{
           activityType =get(res, "WaterConnection[0].activityType", '')
           applicantName =get(res, "WaterConnection[0].connectionHolders[0].name", '')
           applicantAddress =get(res, "WaterConnection[0].connectionHolders[0].correspondenceAddress", '')
+          plotnumber =get(wnsConnection[0], "property.address.doorNo", '')
+          houseNo =get(wnsConnection[0], "property.address.plotNo", '')
+          sector = get(wnsConnection[0], "property.address.locality.name", '')
+          applicantAddress = `${plotnumber},${houseNo},${sector}`
+          applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
           // set activityType 
           switch (activityType) {
             case "APPLY_FOR_TEMPORARY_CONNECTION":
@@ -1195,6 +1214,11 @@ try{
         activityType =get(res, "SewerageConnections[0].activityType", '')
         applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
         applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+        plotnumber =get(wnsConnection[0], "property.address.doorNo", '')
+          houseNo =get(wnsConnection[0], "property.address.plotNo", '')
+          sector = get(wnsConnection[0], "property.address.locality.name", '')
+          applicantAddress = `${plotnumber},${houseNo},${sector}`
+          applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
         if(activityType === null)
         {
           activityType = "Sewarage Connection"

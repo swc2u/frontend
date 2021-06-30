@@ -3047,6 +3047,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                         let applicantName=''
                         let applicantAddress=''
                         let houseNo=''
+                        let plotnumber=''
                         let sector =''
                         let upto =''
                         let connectionNumber=''
@@ -3067,10 +3068,12 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                          activityType =get(wnsConnection[0], "activityType", '')
                          applicantName =get(wnsConnection[0], "connectionHolders[0].name", '')
                          applicantAddress =get(wnsConnection[0], "connectionHolders[0].correspondenceAddress", '')
+                         plotnumber =get(wnsConnection[0], "property.address.doorNo", '')
                          houseNo =get(wnsConnection[0], "property.address.plotNo", '')
                          sector = get(wnsConnection[0], "property.address.locality.name", '')
                          upto = epochToYmdDate(get(wnsConnection[0], "waterApplication.auditDetails.lastModifiedTime", ''))
                          connectionNumber = get(wnsConnection[0], "connectionNo", '')
+                         applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
                          // set activityType 
                          switch (activityType) {
                                 case "APPLY_FOR_TEMPORARY_CONNECTION":
@@ -3220,6 +3223,10 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                        activityType =get(res, "SewerageConnections[0].activityType", '')
                        applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
                        applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+                       plotnumber =get(wnsConnection[0], "property.address.doorNo", '')
+                         houseNo =get(wnsConnection[0], "property.address.plotNo", '')
+                         sector = get(wnsConnection[0], "property.address.locality.name", '')
+                         applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
                        if(activityType === null)
                        {
                          activityType = "Sewarage Connection"
