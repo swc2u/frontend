@@ -59,6 +59,7 @@ export const stepperData = () => {
 }
 let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
 let IsEdit_Additional_Details = false
+const applicationNumber_ = getQueryArg(window.location.href, "applicationNumber");
 const WNS_STATUS =  window.localStorage.getItem("wns_workflow");
 if(WNS_STATUS)
 {
@@ -212,9 +213,17 @@ const getLabelForWnsHeader = () => {
 
 export const header = getCommonContainer({
   headerDiv: getCommonContainer({
-    header: getCommonHeader({
-      labelKey: getLabelForWnsHeader()
-    })
+    // header: getCommonHeader({
+    //   labelKey: getLabelForWnsHeader()
+    // })
+    header: {
+      uiFramework: "custom-atoms-local",
+      moduleName: "egov-wns",
+      componentPath: "ApplicationHeaderContainer",
+      props: {
+        number: applicationNumber_
+      }
+    },
   }),
 
   applicationNumberWater: {
@@ -2073,7 +2082,17 @@ const screenConfig = {
         headerDiv: {
           uiFramework: "custom-atoms",
           componentPath: "Container",
-          children: { header: { gridDefination: { xs: 12, sm: 10 }, ...header } }
+          children: { header: { gridDefination: { xs: 12, sm: 10 }, 
+          ...header 
+        //  header:getCommonContainer({
+        //   headerDiv: getCommonContainer({
+        //     header: getCommonHeader({
+        //       labelKey: getLabelForWnsHeader()
+        //     })
+        //   })
+        // }),
+        
+        } }
         },
         stepper,
         formwizardFirstStep,

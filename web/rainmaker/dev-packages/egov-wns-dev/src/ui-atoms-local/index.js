@@ -12,6 +12,14 @@ const ApplicationNoContainer = Loadable({
   loader: () => import("./ApplicationNo"),
   loading: () => <Loading />
 });
+const ApplicationHeaderContainer = Loadable({
+  loader: () => import("./ApplicationHeader"),
+  loading: () => <Loading />
+});
+const ApplicationHeaderApplyContainer = Loadable({
+  loader: () => import("./ApplicationHeaderApply"),
+  loading: () => <Loading />
+});
 
 const Checkbox = Loadable({
   loader: () => import("./Checkbox"),
@@ -70,6 +78,8 @@ const AddLinkForProperty = Loadable({
 export {
   TestAtoms,
   ApplicationNoContainer,
+  ApplicationHeaderContainer,
+  ApplicationHeaderApplyContainer,
   Checkbox,
   MapLocation,
   AutoSuggest,
