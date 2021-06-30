@@ -273,6 +273,12 @@ console.log("pdfBankName-pl",pdfBankName)
 			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].paymentDate",
 			"NotFound"
 		  );
+
+		  let TransactionCardNumber = get(
+			state,
+			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].transactionNumber",
+			"NotFound"
+		  );
 	let totalACRoom = 0;
 	let totalNonAcRoom = 0;
 	let FromDate;
@@ -289,6 +295,7 @@ console.log("pdfBankName-pl",pdfBankName)
 	let chequeDate = "Not Applicable"
 	let demandDraftNo = "Not Applicable"
 	let demandDraftDate = "Not Applicable"
+	let cardTrasactionNumber = "Not Applicable"
 
 	for(let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++){
 		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "AC"){
@@ -314,6 +321,7 @@ console.log("pdfBankName-pl",pdfBankName)
 		if(paymentCollectionType == "CARD" || paymentCollectionType == "Card"){
 			displayBankName = `**** **** **** ${pdfCardNum}`
 			getCardNum = displayBankName
+			cardTrasactionNumber = TransactionCardNumber
 		  }else{
 			getCardNum = "Not Applicable"  
 		  }
@@ -451,7 +459,7 @@ console.log("pdfBankName-pl",pdfBankName)
 			  "custGSTN": applicationDetails.bkCustomerGstNo,
 			  "mcGSTN": "",
 			  "bankName": getBankName,
-			  "transactionId": this.props.transactionNumber,
+			  "transactionId": cardTrasactionNumber,
 			  "totalPaymentInWords": this.NumInWords(
 				this.props.totalAmountPaid
 			  ),
@@ -614,6 +622,12 @@ console.log("pdfCardNumreceipt",pdfCardNum)
 		"NotFound"
 	  );
 
+	  let TransactionCardNumber = get(
+		state,
+		"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].transactionNumber",
+		"NotFound"
+	  );
+
 	  let cheDaDate = get(
 		state,
 		"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].paymentDate",
@@ -638,6 +652,7 @@ console.log("pdfCardNumreceipt",pdfCardNum)
 	let chequeDate = "Not Applicable"
 	let demandDraftNo = "Not Applicable"
 	let demandDraftDate = "Not Applicable"
+	let cardTrascNum = "Not Applicable"
 		for(let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++){
 		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "AC"){
 		  totalACRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms  
@@ -648,7 +663,7 @@ console.log("pdfCardNumreceipt",pdfCardNum)
 		  discountForRoom = CreateRoomApplication.data.roomsModel[i].discount
 		  RoomCreateTime = CreateRoomApplication.data.roomsModel[i].roomCreatedDate
 		}
-		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "NON-AC"){
+		if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "NON-AC"){ 
 		  totalNonAcRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms	//{"ResponseInfo":{"apiId":"Rainmaker","ver":".01","ts":"","action":"_search","did":"1","key":"","msgId":"20170310130900|en_IN","userInfo":{"id":182,"uuid":"28df855b-d5ff-43ff-bd13-fdf28875106b","userName":"e_sampark","name":"e_sampark Kumar","type":"EMPLOYEE","mobileNumber":"9811658211","emailId":"e_sampark@gmail.com","tenantId":"ch.chandigarh","roles":[{"id":null,"name":"Parks and Community Centre Offline Applier","code":"BK_E-SAMPARK-CENTER","tenantId":"ch.chandigarh"},{"id":null,"name":"Employee","code":"EMPLOYEE","tenantId":"ch.chandigarh"}]},"correlationId":"925ccbbe-b800-44af-a459-d8887ffba86c"},"message":"Success","filestoreIds":["3906bd13-e235-47b8-853e-8fb1cbe4ff60"],"jobid":"bk-room-booking-pl-emp1616087147289","createdtime":1616087147204,"endtime":1616087147715,"tenantid":"ch.chandigarh","totalcount":1}
 		  RoomCreateTime = CreateRoomApplication.data.roomsModel[i].roomCreatedDate
 		  FromDate = CreateRoomApplication.data.roomsModel[i].fromDate
@@ -662,6 +677,8 @@ console.log("pdfCardNumreceipt",pdfCardNum)
 		if(paymentCollectionType == "CARD" || paymentCollectionType == "Card"){
 		  displayBankName = `**** **** **** ${pdfCardNum}`
 		  getCardNum = displayBankName
+		  cardTrascNum = TransactionCardNumber
+
 		}else{
 		  getCardNum = "Not Applicable"  
 		}
@@ -779,7 +796,8 @@ console.log("pdfCardNumreceipt",pdfCardNum)
 				"custGSTN": applicationDetails.bkCustomerGstNo == "NA" ? "Not Applicable": applicationDetails.bkCustomerGstNo,
 				"mcGSTN": this.state.mcGSTN,
 				"bankName": getBankName,
-				"transactionId": this.props.transactionNumber,
+				"transactionId": cardTrascNum
+				,
 				"totalPaymentInWords": this.NumInWords(
 					this.props.totalAmountPaid
 				),

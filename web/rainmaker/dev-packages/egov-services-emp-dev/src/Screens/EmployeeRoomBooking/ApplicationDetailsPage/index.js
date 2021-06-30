@@ -133,7 +133,8 @@ PaymentDate : "",
 			 pdfCardNum : "",
 			 paymentCollectionType : "",
 			 chequeNo : "",
-             chequeDate : ""
+             chequeDate : "",
+			 CardTransactionNum : "" ,
 		};
 	};
 
@@ -312,9 +313,12 @@ let paymentCollectionType
 let particularRoomData;
 let chequeNo = "Not Applicable"
 let chequeDate = "Not Applicable"
+let CardTransactionNum = "Not Applicable"
 	
 for(let i = 0; i < AllValues[0].roomsModel.length; i++){
 	if(AllValues[0].roomsModel[i].roomApplicationNumber == fetchApplicationNumber){
+		console.log("AllValues[0].roomsModel[i]",AllValues[0].roomsModel[i])
+		CardTransactionNum = AllValues[0].roomsModel[i].transactionNumber
 		chequeNo = AllValues[0].roomsModel[i].chequeNumber
 		chequeDate = AllValues[0].roomsModel[i].paymentDate
 		FromDate = AllValues[0].roomsModel[i].fromDate
@@ -353,7 +357,8 @@ chequeDate : chequeDate,
 	discountForRoom :discountForRoom,
 	pdfBankName :pdfBankName,
 	pdfCardNum :pdfCardNum,
-	paymentCollectionType :paymentCollectionType
+	paymentCollectionType :paymentCollectionType,
+	CardTransactionNum : CardTransactionNum
 })
 console.log("totalACRoom--",totalACRoom)
 console.log("totalNonAcRoom--",totalNonAcRoom)
@@ -562,7 +567,7 @@ else{
     let perFind = 50;
     let ugst = this.state.BKROOM_TAX
     let find50Per = (perFind/100) * ugst
-    console.log("find50Per--",find50Per)		
+    console.log("find50Per--",find50Per)		 
     let findNumOrNot = Number.isInteger(find50Per);
     console.log("findNumOrNot--",findNumOrNot)
     if(findNumOrNot == true){
@@ -602,11 +607,14 @@ else{
 		let chequeDate = "Not Applicable"
 		let demandDraftNo = "Not Applicable"
 		let demandDraftDate = "Not Applicable"
+		let CardtransactionNumber = "Not Applicable"  //CardTransactionNum
 	if(this.state.paymentCollectionType == "CARD" || this.state.paymentCollectionType == "Card"){
 	displayBankName = `**** **** **** ${this.state.pdfCardNum}`
 	getCardNum = displayBankName
+	CardtransactionNumber = this.state.CardTransactionNum
   }else{
 	getCardNum = "Not Applicable"  
+
   }
   if(this.state.paymentCollectionType == "DD" || this.state.paymentCollectionType == "CHEQUE" || this.state.paymentCollectionType == "Cheque"){
 	getBankName = this.state.pdfBankName   
@@ -665,7 +673,7 @@ else{
 				"custGSTN": this.state.AllValues[0].bkCustomerGstNo,
 				"mcGSTN": this.state.mcGSTN,
 				"bankName": getBankName,
-				"transactionId":this.state.transactionNumber,
+				"transactionId":CardtransactionNumber,
 				"totalPaymentInWords": this.NumInWords(
 					this.state.TotalPaidAmount
 				),
@@ -974,6 +982,13 @@ downloadPermissionLetterFunction = async (e) => {
 	let chequeDate = "Not Applicable"
 	let demandDraftNo = "Not Applicable"
 	let demandDraftDate = "Not Applicable"
+	let CardtransactionNumber = "Not Applicable"
+
+
+	if(this.state.paymentCollectionType == "CARD" || this.state.paymentCollectionType == "Card"){
+		CardtransactionNumber = this.state.CardTransactionNum
+	}
+
 	if(this.state.paymentCollectionType == "DD"){
 		demandDraftNo = this.state.chequeNo,
 		demandDraftDate = this.state.chequeDate
@@ -1070,7 +1085,7 @@ getBankName = "Not Applicable"
 					"custGSTN": this.state.AllValues[0].bkCustomerGstNo,
 					"mcGSTN": this.state.mcGSTN,
 					"bankName": getBankName,
-					"transactionId":this.state.transactionNumber,
+					"transactionId":CardtransactionNumber,
 					"totalPaymentInWords": this.NumInWords(
 						this.state.TotalPaidAmount
 					), 
