@@ -1167,6 +1167,7 @@ return dateArr
     let demandDraftDate = "Not Applicable";
     let CardNumber = "Not Applicable";
     let createCardNum;
+    let CardtransactionNumber = "Not Applicable"
 let pdfBankName;
 
 if(PaymentModeCNumber == "DD" ||PaymentModeCNumber == "CHEQUE"){
@@ -1185,9 +1186,12 @@ if(PaymentModeCNumber == "CHEQUE"){
   chequeDate = applicationDetails.paymentDate
 }
 
-    if(PaymentModeCNumber == "CARD"){
+    if(PaymentModeCNumber == "CARD" || PaymentModeCNumber == "Card"){
       createCardNum = applicationDetails.cardNumber
       CardNumber = `**** **** **** ${createCardNum}`
+
+      CardtransactionNumber = applicationDetails.transactionNumber
+
     }
     else{
       CardNumber = "Not Applicable"
@@ -1552,7 +1556,7 @@ console.log("employeePaymentReceipt")
           paymentType: this.props.offlinePayementMode,
           facilitationCharge: FACILITATION_CHARGE,
           discType: applicationDetails.bkPlotSketch,
-          transactionId: this.props.offlineTransactionNum,
+          transactionId: CardtransactionNumber,
           totalPaymentInWords: this.NumInWords(NumAmount), //offlineTransactionDate,,
           bankName: pdfBankName,
           "chequeNo":chequeNo,
@@ -1990,7 +1994,7 @@ console.log("employeePaymentReceipt")
     let chequeDate = "Not Applicable";
     let demandDraftNo = "Not Applicable";
     let demandDraftDate = "Not Applicable";
-
+    let CardtransactionNumber = "Not Applicable"
     if(PaymentModeCNumber == "DD"){
       demandDraftNo = applicationDetails.chequeNumber
       demandDraftDate = applicationDetails.paymentDate
@@ -2000,9 +2004,10 @@ console.log("employeePaymentReceipt")
       chequeDate = applicationDetails.paymentDate
     }
     
-    if(PaymentModeCNumber == "CARD"){
+    if(PaymentModeCNumber == "CARD" || PaymentModeCNumber == "Card"){
       createdCardNum = applicationDetails.cardNumber
       CardNumber = `**** **** **** ${createdCardNum}` 
+      CardtransactionNumber = applicationDetails.transactionNumber
     }
     else{
       CardNumber = "Not Applicable"
@@ -2247,6 +2252,7 @@ else{
         //   "dayend"
         // ),
         paymentDate: applicationDetails.createdDate,
+        transactionId: CardtransactionNumber,
         receiptNo: this.props.recNumber,
         cardNumberLast4: CardNumber,
         dateVenueChangeCharges:

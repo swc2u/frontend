@@ -352,10 +352,6 @@ else{
     }
     if (ppMode == "Card") {
       let checkwhiteSpace = this.hasWhiteSpace(this.state.last4Digits)
-      console.log("checkwhiteSpace",checkwhiteSpace)
-      console.log("card--state-number",this.state.last4Digits)
-      console.log("this.state.repeatTrxNo--card",this.state.repeatTrxNo)
-      console.log("this.state.TrxNo--card",this.state.TrxNo)
       if(NewTrxNo !== " " && this.state.TrxNo !== ""){
         if(checkwhiteSpace == true || this.state.last4Digits.length > 4 || this.state.last4Digits.length < 4 || this.state.repeatTrxNo !== this.state.TrxNo) {
           console.log("checkwhiteSpace000000",checkwhiteSpace)
@@ -375,7 +371,7 @@ else{
           lastModifiedDate = formatted_date
           paymentDate = formatted_date
           cardNumber = this.state.last4Digits
-          transactionNumber = this.state.PaymentReceiptNumber
+          transactionNumber = this.props.TrxNo
           PaymentReqBody = {
             Payment: {
               paymentDetails: [
@@ -446,7 +442,7 @@ try{
         roomApplicationNumber: AppNum,
         action: "OFFLINE_APPLY",
         remarks: "string",
-        roomBusinessService: "BKROOM",
+        roomBusinessService: "BKROOM",      
         discount: discountForRoom,
         totalNoOfRooms: updateNumOfAcRoom,
         typeOfRoom: "AC", //updateNumOfAcRoom,updateNumOfNonAcRoom
@@ -774,17 +770,6 @@ try{
   };
 
   render() {
-    // const { firstName, fCharges,result, email, mobileNo, locality, surcharge, fromDate, toDate, facilationChargesSuccess,
-    //     onFromDateChange, onToDateChange, utGST, cGST, GSTnumber, handleChange, bankName, amount, transactionDate, transactionNumber, paymentMode,
-    //     dimension, location, facilitationCharges, cleaningCharges, rent, approverName, comment, houseNo, type, purpose, residenials, documentMap,
-    //     BK_FEE_HEAD_PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,totalAmountSuPage,one,two,three,four,five,six,
-    //     PACPACC_ROUND_OFFC_TAX,FACILITATION_CHARGE
-    //     } = this.props;
-
-    // console.log(",one,two,three,four,five,six--",one,two,three,four,five,six)
-    // console.log("propsInRendersummary--",this.props)
-    // let fc = fCharges?fCharges.facilitationCharge:'100';
-    // console.log("stateofBooking--",this.state.createPACCApp)
     const { paymentDetails, TotalAmount, billId, userInfo } = this.props;
     let ApplicantName = this.props.RoomBookingData.bookingsModelList[0]
       .bkApplicantName;
@@ -818,12 +803,6 @@ try{
         <div className="form-without-button-cont-generic">
           <div classsName="container">
             <div className="col-xs-12">
-              {/* {this.props.ApplicantAppStatus != "OFFLINE_RE_INITIATED" ? 
- <PaymentDetails
- paymentDetails={paymentDetails && paymentDetails}
-  />     
-: ""} */}
-
               <PaymentDetails
                 one={this.props.one}
                 two={this.props.two}
@@ -831,15 +810,6 @@ try{
                 four={this.props.four}
                 paymentDetails={paymentDetails && paymentDetails}
               />
-
-              {/* 
-{this.props.ApplicantAppStatus == "OFFLINE_RE_INITIATED" ? 
-<DateVenueChangePayDetail 
-paymentDetails={paymentDetails && paymentDetails}
-Status={this.props.ApplicantAppStatus && this.props.ApplicantAppStatus}
-/>
-:""} */}
-
               <PaymentOptionDetails
                 PaymentReceiptNumber={PaymentReceiptNumber}
                 PayerName={PayerName}
@@ -906,15 +876,6 @@ Status={this.props.ApplicantAppStatus && this.props.ApplicantAppStatus}
           style={{ display: "flex", justifyContent: "flex-end" }}
           children={
             <div className="responsive-action-button-cont">
-              {/* <Button
-                            className="responsive-action-button"
-                            primary={true}
-                            label={<Label buttonLabel={true} label="BK_CORE_COMMON_GOBACK" />}
-                            fullWidth={true}
-                            onClick={this.back}
-                            style={{ marginRight: 18 }}
-                            startIcon={<ArrowBackIosIcon />}
-                        /> */}
               <Button
                 className="responsive-action-button"
                 primary={true}
@@ -1204,7 +1165,7 @@ state,
 );
 
 
-  return {pChequeNo,NewChequeDate,ChnChqDate,
+  return {pChequeNo,NewChequeDate,ChnChqDate,TrxNo,
     newDDno,DdDate,changeNewddDate,NewddDate,longtodayDate,
     NewTrxNo,BankName,BranchName,
     typeOfRoom,

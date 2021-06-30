@@ -101,115 +101,6 @@ stateCode :"" ,
 
 	this.props.history.push(`/egov-services/all-applications`);
     window.location.reload(); 
-
-//   alert("comesInSubmit Function")
-//    let { conJsonSecond,conJsonfirst,updatePACCApplication, documentMap,createAppData, bookingData, venueType,prepareFinalObject,createPACCApplicationData,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,ReasonForDiscount} = this.props;
-// console.log("AllPropsOfSubmitPage--",this.props)	   
-//    let data = createAppData.data
-// 		console.log("data--",data)
-//         // let data  = dataOne;
-//         // console.log("data--",data),
-//         prepareFinalObject("CreatePaccAppData",data);
-//         let fid = documentMap ? Object.keys(documentMap) : ""
-//         const { firstName, userInfo, email, mobileNo, surcharge, fromDate, toDate, utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, locality, residenials } = this.props;
-     
-//         if (data) {
-// 			console.log("HereIsData--",data)
-//             let Booking = {
-// 				bkRemarks: data.bkRemarks,
-// 				bkResidentialOrCommercial: data.bkResidentialOrCommercial,
-// 				bkMaterialStorageArea: data.bkMaterialStorageArea,
-// 				discount:data.discount,
-// 				bkPlotSketch:data.bkPlotSketch,
-//                 bkBookingType: data.bkBookingType,
-//                 bkBookingVenue: data.bkBookingVenue,
-//                 bkApplicantName: data.bkApplicantName,
-//                 bkMobileNumber: data.bkMobileNumber,
-// 				bkDimension: data.bkDimension,
-// 				bkPaymentStatus: "SUCCESS",
-//                 bkLocation: data.bkLocation,
-//                 bkFromDate: data.bkFromDate,
-//                 bkToDate: data.bkToDate,
-//                 bkCleansingCharges: data.bkCleansingCharges,
-//                 bkRent: data.bkRent,
-//                 bkSurchargeRent: data.bkSurchargeRent,
-//                 bkUtgst: data.bkUtgst,
-//                 bkCgst: data.bkCgst,
-//                 bkSector: data.bkSector,
-//                 bkEmail: data.bkEmail,
-//                 bkHouseNo: data.bkHouseNo,
-//                 bkBookingPurpose: data.bkBookingPurpose,
-//                 bkApplicationNumber: data.bkApplicationNumber,
-//                 bkCustomerGstNo: data.bkCustomerGstNo ? data.bkCustomerGstNo : 'NA',
-//                 "wfDocuments": [{
-//                     "fileStoreId": fid[0]
-//                 }],
-//                 "tenantId": userInfo.tenantId,
-//                 "bkAction": data.bkApplicationStatus == "OFFLINE_RE_INITIATED" ? "OFFLINE_MODIFY" : "OFFLINE_APPLY",
-// 				"businessService": "PACC",
-// 				"reInitiateStatus": false,
-// 				"financialYear": "2020-2021",
-// 				"bkBankAccountNumber":data.bkBankAccountNumber,
-// 				"bkBankName":data.bkBankName,
-// 				"bkIfscCode":data.bkIfscCode,
-// 				"bkAccountType":data.bkAccountType,
-// 				"bkBankAccountHolder":data.bkBankAccountHolder,
-// 				"bkNomineeName": data.bkNomineeName
-//             }
-
-
-//             if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
-// 				let slotArray = []
-// 				let checkslotArray = []
-// 				// if(wholeDaySlot != "notFound" && wholeDaySlot != "notFound"){
-// 				// 	console.log("OneDay")
-// 				// 	checkslotArray[0] = {"slot":"9AM - 1PM"}
-// 				// 	checkslotArray[1] = {"slot": "1PM - 5PM"}
-// 				// 	checkslotArray[2] = {"slot": "5PM - 9PM"}
-// 				// }
-// 				if(SecTimeSlotFromTime != "notFound" && SecTimeSlotToTime != "notFound"){
-// 					console.log("secondTimeSlot")
-// 					slotArray[0] = conJsonfirst,
-// 					slotArray[1] = conJsonSecond //conJsonSecond,conJsonfirst
-				
-// 					checkslotArray[0] = this.props.first,
-//                      checkslotArray[1] = this.props.second
-// 				}
-// 				else{
-// 					console.log("oneTimeSlot")
-// 					checkslotArray[0] = {
-// 					"slot": bookingData.bkFromTime + '-' + firstToTimeSlot
-// 					}
-// 				}
-// 				console.log("slotArray_",slotArray)   //checkslotArray
-// 				console.log("checkslotArray",checkslotArray)
-// 				Booking.timeslots = checkslotArray,
-//                 Booking.bkDuration = "HOURLY",
-//                 Booking.bkFromDate = bookingData.bkFromDate,
-//                 Booking.bkToDate = bookingData.bkToDate,
-//                 Booking.bkFromTime = bookingData.bkFromTime,
-//                 Booking.bkToTime = bookingData.bkToTime
-//             }
-//             else if (venueType == "Community Center" && (!bookingData) && (!bookingData.bkFromTime)) {
-//                 Booking.timeslots = [{
-//                     "slot": "9:00 AM - 8:59 AM"
-//                 }],
-//                     Booking.bkDuration = "FULLDAY"
-//             }
-
-// console.log("Booking-requestBody--",Booking)
-
-//  await updatePACCApplication(
-//                 {
-//                     "applicationType": "PACC",
-//                     "applicationStatus": "",
-//                     "applicationId": data.bkApplicationNumber,
-//                     "tenantId": userInfo.tenantId,
-//                     "Booking": Booking
-// 				});
-				
-//             this.props.history.push(`/egov-services/create-success-pcc`);
-//         }
   };
 componentDidMount = async () => {  
     let {userInfo,fetchDataAfterPayment} = this.props
@@ -314,9 +205,9 @@ mcGSTN : pdfDetails[0].mcGSTN
 		let createdCardNum;
 		let chequeNo = "Not Applicable";
         let chequeDate = "Not Applicable";      
-        let demandDraftNo = "Not Applicable";
+        let demandDraftNo = "Not Applicable";  
         let demandDraftDate = "Not Applicable";
-
+		let CardtransactionNumber = "Not Applicable"
 		let complaintCountRequest = {
 			applicationNumber: applicationDetails.bkApplicationNumber,
 			uuid: userInfo.uuid,
@@ -344,6 +235,9 @@ console.log("RequestBodyForPL",complaintCountRequest)
 			  offlineCardNum = `**** **** **** ${createdCardNum}`
 			  
             	console.log("CardNumInResponse",offlineCardNum)
+				CardtransactionNumber = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+	? dataforSectorAndCategory.bookingsModelList[0].transactionNumber
+	: "NA";	
 				
 		}
        else{
@@ -451,6 +345,7 @@ console.log("RequestBodyForPL",complaintCountRequest)
 			 	  "totalPayment": this.props.totalAmountPaid,        //this.props.totalAmount,
 				//   "paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
 				  chequeNo:chequeNo,
+				  "transactionId": CardtransactionNumber,
                   chequeDate:chequeDate,      
                   demandDraftNo : demandDraftNo,
                   demandDraftDate :demandDraftDate,
@@ -550,6 +445,7 @@ let chequeNo = "Not Applicable"
 let chequeDate = "Not Applicable"
 let demandDraftNo = "Not Applicable"
 let demandDraftDate = "Not Applicable"
+let CardtransactionNumber = "Not Applicable"
 
 		let applicationDetails = createPACCApplicationData ? createPACCApplicationData : 'dataNotFound';
 		console.log("applicationDetails--",applicationDetails)
@@ -593,34 +489,13 @@ let demandDraftDate = "Not Applicable"
 				? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
 				console.log("chequeDate--chequeDate",chequeDate)
 
-			}
-		
-
-		 if(chequeNo !== null && chequeDate !== null){
-			chequeNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-			? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
-			chequeDate =  dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-			? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
-		 }else{
-			chequeNo = "Not Applicable",
-			chequeDate = "Not Applicable"
-		 }
-		 if(chequeNo !== null && chequeDate !== null){
-			chequeNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-			? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
-			chequeDate =  dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-			? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
-		 }else{
-			chequeNo = "Not Applicable",
-			chequeDate = "Not Applicable"
-		 }
-				
+			}		
 		}
        else{
 		pdfBankName = "Not Applicable"
        } 
 
-		if(this.props.offlinePayementMode == "CARD"){
+		if(this.props.offlinePayementMode == "CARD" || this.props.offlinePayementMode == "Card"){
 			let complaintCountRequest = {
 				applicationNumber: applicationDetails.bkApplicationNumber,
 				uuid: userInfo.uuid,
@@ -643,6 +518,11 @@ let demandDraftDate = "Not Applicable"
 			  offlineCardNum = `**** **** **** ${createCardNum}`
 			  
 	console.log("CardNumForReceipt",offlineCardNum)
+
+	CardtransactionNumber = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+	? dataforSectorAndCategory.bookingsModelList[0].transactionNumber
+	: "NA";		  
+
 				
 		}
        else{
@@ -747,10 +627,10 @@ let demandDraftDate = "Not Applicable"
 				  "paymentType": this.props.offlinePayementMode,
 				  "facilitationCharge": FACILITATION_CHARGE,
 				  "discType": applicationDetails.bkPlotSketch,
-				  "transactionId": this.props.offlineTransactionNum,
+				  "transactionId": CardtransactionNumber,
 				  "totalPaymentInWords": this.NumInWords(
 					NumAmount
-				  ),  //offlineTransactionDate,,
+				  ), 
 				  "chequeNo":chequeNo,
                   "chequeDate":chequeDate,
                   "demandDraftNo":demandDraftNo,

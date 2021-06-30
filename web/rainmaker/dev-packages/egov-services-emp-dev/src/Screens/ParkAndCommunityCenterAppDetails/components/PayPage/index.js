@@ -519,8 +519,8 @@ else{
               paidBy: ppaidBy,
               mobileNumber: ApplicantMobNum,
               payerName: ApplicantName,
-              transactionNumber: NewTrxNo,
-              instrumentNumber: NewTrxNo,
+              transactionNumber: this.state.TrxNo,
+              instrumentNumber: this.state.TrxNo,
               totalAmountPaid: TotalAmount,
             },
           };
@@ -539,12 +539,12 @@ else{
 
               let Booking = {
                 "bkApplicationNumber": this.state.CurrentApplicationNum,
-                "paymentCollectionType": "DD",
+                "paymentCollectionType": "CARD",
                 "paidBy": ppaidBy,
                 "payerName": ApplicantName,
                 "payerMobileNumber": ApplicantMobNum,
                 "cardNumber": this.state.last4Digits,
-                "transactionNumber": this.state.PaymentReceiptNumber,
+                "transactionNumber": this.state.TrxNo,
             }
               console.log("cash--Booking",Booking)
               let saveCardNum = await httpRequest(
@@ -1366,7 +1366,7 @@ let todaystrDate = todayDate.toString();
 
 let longtodayDate = Date.parse(todaystrDate);
 
-
+   
   //TrxNo
   let TrxNo = state.screenConfiguration.preparedFinalObject.TrxNo
     ? state.screenConfiguration.preparedFinalObject.TrxNo
@@ -1389,6 +1389,7 @@ let BranchName = get(
 );
 
   return {
+    TrxNo,
     state,
     longtodayDate,
     NewChequeDate,
