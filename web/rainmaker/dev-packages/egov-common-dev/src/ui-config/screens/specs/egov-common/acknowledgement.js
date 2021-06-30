@@ -8,7 +8,37 @@ import acknowledgementCard from "./acknowledgementResource/acknowledgementUtils"
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import set from "lodash/set";
 import { ifUserRoleExists } from "../utils";
-
+import { httpRequest } from "../../../../ui-utils";
+import { prepareFinalObject,  } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import commonConfig from "config/common.js";
+export const getMdmsData = async (state,dispatch,tenantId) => {
+    //let tenantId = getQueryArg(window.location.href, "tenantId");
+    let mdmsBody = {
+      MdmsCriteria: {
+        tenantId: commonConfig.tenantId,
+        moduleDetails: [
+         // { moduleName: "common-masters", masterDetails: [{ name: "OwnerType" }, { name: "OwnerShipCategory" }] },
+         
+          { moduleName: "ws-services-masters", 
+          masterDetails: [           
+            { name: "sectorList" },
+            { name: "swSectorList" },
+            
+          
+          ] },
+          
+          
+        ]
+      }
+    };
+    try {
+      let payload = null;
+      payload = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
+     
+      dispatch(prepareFinalObject("searchPreviewScreenMdmsData", payload.MdmsRes));
+      //
+    } catch (e) { console.log(e); }
+  };
 const getAcknowledgementCard = (
     state,
     dispatch,
@@ -129,6 +159,7 @@ const screenConfig = {
         const consumerCode = getQueryArg(window.location.href, "consumerCode");
         const receiptNumber = getQueryArg(window.location.href, "receiptNumber");
         const tenant = getQueryArg(window.location.href, "tenantId");
+        getMdmsData( state, dispatch,tenant).then(() => { });
         const data = getAcknowledgementCard(
             state,
             dispatch,
