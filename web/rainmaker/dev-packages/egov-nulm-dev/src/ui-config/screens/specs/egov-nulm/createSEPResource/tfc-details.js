@@ -117,12 +117,12 @@ import {
             optionLabel: "name",
             data : [
                 {
-                    code : "Approved by Task force committee",
-                    name : "Approved by Task force committee"
+                    code : "Approved by Task Force Committee",
+                    name : "Approved by Task Force Committee"
                 },
                 {
-                    code : "Rejected by Task force committee",
-                    name : "Rejected by Task force committee"
+                    code : "Rejected by Task Force Committee",
+                    name : "Rejected by Task Force Committee"
                 },
             ]
           },
