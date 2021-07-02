@@ -339,7 +339,14 @@ const getPropertyDetails = {
               labelName: "Number Of Floors",
               labelKey: "WS_PROPERTY_NO_OF_FLOOR_LABEL"
             },
-            { jsonPath: "applyScreen.property.noOfFloors", callBack: handleNA },
+            { 
+              jsonPath: "applyScreen.property.noOfFloors", 
+              callBack: handleNA ,          
+            localePrefix: {
+              moduleName: "WS",
+              masterName: "FLOOR"
+            }
+          },
             {
               labelKey: "WS_OLD_LABEL_NAME"
             },

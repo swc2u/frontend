@@ -55,7 +55,8 @@ export const searchApplications = getCommonCard({
       required: false,
       pattern: /^[a-zA-Z0-9-_/]*$/i,
       errorMessage: "ERR_INVALID_APPLICATION_NO",
-      jsonPath: "searchScreen.applicationNumber"
+      //jsonPath: "searchScreen.applicationNumber"
+      jsonPath: "searchScreen.applicationNumberSearch"
     }),
 
     ownerMobNo: getTextField({

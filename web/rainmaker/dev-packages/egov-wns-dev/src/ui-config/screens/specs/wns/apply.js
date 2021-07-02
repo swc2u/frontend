@@ -219,7 +219,7 @@ export const header = getCommonContainer({
     header: {
       uiFramework: "custom-atoms-local",
       moduleName: "egov-wns",
-      componentPath: "ApplicationHeaderContainer",
+      componentPath: "ApplicationHeaderApplyContainer",
       props: {
         number: applicationNumber_
       }
@@ -880,8 +880,17 @@ export const getData = async (action, state, dispatch) => {
           Isreadolny = true
           if(combinedArray[0].connectionNo ==="NA")
           {
-            Isreadolny = false;
+            Isreadolny = false
+            
           }
+          if(combinedArray[0].connectionNo !== "NA") 
+          {
+            if((combinedArray[0].activityType==="APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" || combinedArray[0].activityType==="APPLY_FOR_TEMPORARY_REGULAR_CONNECTION") && combinedArray[0].applicationStatus==="INITIATED")
+            {
+              Isreadolny = false;
+            }
+          }
+           
 
         }
         if(process.env.REACT_APP_NAME !== "Citizen")
@@ -1087,7 +1096,7 @@ export const getData = async (action, state, dispatch) => {
                           true
                           ));
                 }
-                else{
+                else if(ownershipCategory_ ==='INDIVIDUAL.SINGLEOWNER') {
                   for (let i = 0; i < _textFieldsOwnerInformation.length; i++) {
                     dispatch(handleField(
                       "apply",
@@ -1130,6 +1139,10 @@ export const getData = async (action, state, dispatch) => {
 
              //
              let _actionType = getQueryArg(window.location.href, "actionType");
+             if(_actionType === null)
+             {
+               _actionType = combinedArray[0].activityType
+             }
              if(_actionType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || _actionType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION')
              {
                if(combinedArray[0].property.address.locality.code ==='' || combinedArray[0].property.address.locality.code ==='NA')
@@ -1151,7 +1164,12 @@ export const getData = async (action, state, dispatch) => {
                   "props.disabled",
                   false
                   ));
-
+                  dispatch(handleField(
+                    "apply",
+                    `components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children.plotOrHouseOrSurveyNo`,
+                    "props.disabled",
+                    true
+                    ));
                //}
              }
              if(_actionType ==='UPDATE_CONNECTION_HOLDER_INFO' )

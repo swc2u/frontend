@@ -685,6 +685,7 @@ try{
          let houseNo=''
          let plotnumber=''
          let sector =''
+         let connectionNumber =''
          if(applicationNumber.includes("WS"))
          {
         //   const response = await httpRequest(
@@ -719,7 +720,7 @@ try{
           activityType =get(res, "WaterConnection[0].activityType", '')
           applicantName =get(res, "WaterConnection[0].connectionHolders[0].name", '')
           applicantAddress =get(res, "WaterConnection[0].connectionHolders[0].correspondenceAddress", '')
-          
+          connectionNumber = get(res, "WaterConnection[0].connectionNo", '')
           if(resp&&resp.Properties&&resp.Properties.length>0){
           plotnumber =get(resp.Properties[0], "address.doorNo", '')
           houseNo =get(resp.Properties[0], "address.plotNo", '')
@@ -796,6 +797,7 @@ try{
             div: div,
             subDiv:subDiv,
             applicationNumber:applicationNumber,
+            connectionNumber:connectionNumber,
             receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
             activityType: activityType,
             applicantName: applicantName,
@@ -868,6 +870,7 @@ try{
         activityType =get(res, "SewerageConnections[0].activityType", '')
         applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
         applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+        connectionNumber = get(res, "SewerageConnections[0].connectionNo", '')
         if(resp&&resp.Properties&&resp.Properties.length>0){
           plotnumber =get(resp.Properties[0], "address.doorNo", '')
           houseNo =get(resp.Properties[0], "address.plotNo", '')
@@ -890,6 +893,7 @@ try{
             div: div,
             subDiv:subDiv,
             applicationNumber:applicationNumber,
+            connectionNumber:connectionNumber,
             receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
             activityType: activityType,
             applicantName: applicantName,
@@ -1120,6 +1124,7 @@ try{
          let houseNo=''
          let plotnumber=''
          let sector =''
+         let connectionNumber =''
          if(applicationNumber.includes("WS"))
          {
         //   const response = await httpRequest(
@@ -1162,6 +1167,7 @@ try{
           if(sector === undefined || sector === null)
           {
             sector = get(resp.Properties[0], "address.locality.code", '')
+            sector =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",sector)   
           }
           applicantAddress = `${plotnumber},${houseNo},${sector}`
           applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
@@ -1230,6 +1236,7 @@ try{
             div: div,
             subDiv:subDiv,
             applicationNumber:applicationNumber,
+            connectionNumber:connectionNumber,
             receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
             activityType: activityType,
             applicantName: applicantName,
@@ -1240,6 +1247,7 @@ try{
             status:'Payment complete',
           }
         ]
+        
           httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { WSReceiptRequest: billGeneration_ }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
           .then(res => {
             res.filestoreIds[0]
@@ -1301,6 +1309,7 @@ try{
         activityType =get(res, "SewerageConnections[0].activityType", '')
         applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
         applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+        connectionNumber = get(res, "SewerageConnections[0].connectionNo", '')
         if(resp&&resp.Properties&&resp.Properties.length>0){
           plotnumber =get(resp.Properties[0], "address.doorNo", '')
           houseNo =get(resp.Properties[0], "address.plotNo", '')
@@ -1323,6 +1332,7 @@ try{
             div: div,
             subDiv:subDiv,
             applicationNumber:applicationNumber,
+            connectionNumber:connectionNumber,
             receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
             activityType: activityType,
             applicantName: applicantName,

@@ -10,6 +10,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { changeStep } from "../viewBillResource/footer";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import get from 'lodash/get';
 import { convertEpochToDateAndHandleNA, handleNA } from '../../utils';
 import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
@@ -610,6 +611,9 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
   });
 }
 const setFieldsOnAddItem = (state, multiItemContent) => {
+  const applicationNo_ = getQueryArg(window.location.href, "applicationNumber");
+  const ActionType = getQueryArg(window.location.href, "actionType");
+  const applicationStatus =  get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].applicationStatus", '')
   const preparedFinalObject = JSON.parse(
     JSON.stringify(state.screenConfiguration.preparedFinalObject)
   );
@@ -617,6 +621,20 @@ const setFieldsOnAddItem = (state, multiItemContent) => {
   if(process.env.REACT_APP_NAME !== "Citizen")
   {
     disabled = true;
+  }
+  if(process.env.REACT_APP_NAME === "Citizen" && applicationNo_ === null)
+  {
+    disabled = false
+
+  }
+  else if(applicationNo_ !== null && process.env.REACT_APP_NAME !== "Citizen" )
+  {
+    disabled = true;
+  }
+  else if((ActionType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || ActionType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' ) && applicationStatus ==='INITIATED' )
+  {
+    disabled = false;
+
   }
   for (var variable in multiItemContent) {
     multiItemContent[variable].props.disabled = disabled;
