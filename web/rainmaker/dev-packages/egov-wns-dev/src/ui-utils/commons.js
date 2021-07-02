@@ -3166,7 +3166,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                                 receiptNo:receiptNumber,                                
                                 date:paymentReceiptDate,
                                 division:subDiv,
-                                correspondingAddress:applicantAddress
+                                plotNo:plotnumber
                             }
                           ]
 
