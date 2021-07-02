@@ -175,6 +175,8 @@ const renderSearchConnectionTable = async (state, dispatch) => {
       const waterConnections = searchWaterConnectionResults ? searchWaterConnectionResults.WaterConnection.map(e => { e.service = 'WATER'; return e }) : []
       const sewerageConnections = searcSewerageConnectionResults ? searcSewerageConnectionResults.SewerageConnections.map(e => { e.service = 'SEWERAGE'; return e }) : [];
       let combinedSearchResults = searchWaterConnectionResults || searcSewerageConnectionResults ? sewerageConnections.concat(waterConnections) : []
+      //start loader
+      dispatch(toggleSpinner());
       for (let i = 0; i < combinedSearchResults.length; i++) {
         let element = combinedSearchResults[i];
         if (element.connectionNo !== "NA" && element.connectionNo !== null) {
@@ -318,6 +320,8 @@ const renderSearchConnectionTable = async (state, dispatch) => {
 
       }
       showConnectionResults(finalArray, dispatch)
+      // end loader
+      dispatch(toggleSpinner());
     } catch (err) { console.log(err) }
   }
 }
@@ -380,27 +384,27 @@ const renderSearchApplicationTable = async (state, dispatch) => {
       let combinedSearchResults = searchWaterConnectionResults || searcSewerageConnectionResults ? sewerageConnections.concat(waterConnections) : []
 
       let appNo = "";
-      let combinedWFSearchResults = [];
-      for (let i = 0; i < combinedSearchResults.length; i++) {
-        let element = findAndReplace(combinedSearchResults[i], null, "NA");
-        if (element.applicationNo !== "NA" && element.applicationNo !== undefined) {
-          appNo = appNo + element.applicationNo + ",";
-        }
-        if (i % 50 === 0 || i === (combinedSearchResults.length - 1)) {
-          //We are trying to fetch 50 WF objects at a time
-          appNo = appNo.substring(0, appNo.length - 1);
-          const queryObj = [
-            { key: "businessIds", value: appNo },
-            { key: "history", value: true },
-            { key: "tenantId", value: getTenantIdCommon() }
-          ];
-          let wfResponse = await getWorkFlowData(queryObj);
-          if (wfResponse !== null && wfResponse.ProcessInstances !== null) {
-            combinedWFSearchResults = combinedWFSearchResults.concat(wfResponse.ProcessInstances);
-          }
-          appNo = "";
-        }
-      }
+      // let combinedWFSearchResults = [];
+      // for (let i = 0; i < combinedSearchResults.length; i++) {
+      //   let element = findAndReplace(combinedSearchResults[i], null, "NA");
+      //   if (element.applicationNo !== "NA" && element.applicationNo !== undefined) {
+      //     appNo = appNo + element.applicationNo + ",";
+      //   }
+      //   if (i % 50 === 0 || i === (combinedSearchResults.length - 1)) {
+      //     //We are trying to fetch 50 WF objects at a time
+      //     appNo = appNo.substring(0, appNo.length - 1);
+      //     const queryObj = [
+      //       { key: "businessIds", value: appNo },
+      //       { key: "history", value: true },
+      //       { key: "tenantId", value: getTenantIdCommon() }
+      //     ];
+      //     // let wfResponse = await getWorkFlowData(queryObj);
+      //     // if (wfResponse !== null && wfResponse.ProcessInstances !== null) {
+      //     //   combinedWFSearchResults = combinedWFSearchResults.concat(wfResponse.ProcessInstances);
+      //     // }
+      //     appNo = "";
+      //   }
+      // }
       /*const queryObj = [
         { key: "businessIds", value: appNo },
         { key: "history", value: true },
@@ -411,12 +415,15 @@ const renderSearchApplicationTable = async (state, dispatch) => {
         let element = findAndReplace(combinedSearchResults[i], null, "NA");
         let appStatus;
         if (element.applicationNo !== "NA" && element.applicationNo !== undefined) {
-          appStatus = combinedWFSearchResults.filter(item => item.businessId.includes(element.applicationNo))[0]
-          if (appStatus !== undefined && appStatus.state !== undefined) {
-            appStatus = appStatus.state.applicationStatus;
-          } else {
-            appStatus = "NA";
-          }
+          //appStatus = combinedWFSearchResults.filter(item => item.businessId.includes(element.applicationNo))[0]
+         // appStatus = combinedWFSearchResults.filter(item => item.businessId === element.applicationNo)
+          // appStatus = combinedWFSearchResults.filter(item => item.businessId === element.applicationNo)[0]
+          // if (appStatus !== undefined && appStatus.state !== undefined) {
+          //   appStatus = appStatus.state.applicationStatus;
+          // } else {
+          //   appStatus = "NA";
+          // }
+          appStatus = element.waterApplicationList[0].applicationStatus
           if (element.property && element.property.owners &&
             element.property.owners !== "NA" &&
             element.property.owners !== null &&
