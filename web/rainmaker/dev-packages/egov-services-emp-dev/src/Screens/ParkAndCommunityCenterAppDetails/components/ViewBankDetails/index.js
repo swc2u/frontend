@@ -7,8 +7,6 @@ import "./index.css";
 class AppDetails extends Component {
   render() {
     const { bkBankAccountNumber, bkBankName, bkIfscCode,bkAccountType, bkBankAccountHolder,applicantName,bkMobileNumber} = this.props;
-    console.log("this.props--inviewBankDetails",this.props)
-
     return (
       <div>
         <Card

@@ -10,8 +10,6 @@ class PayDetails extends Component {
 
   render() {
     const { bkPaymentDate, paymentDetails, bkPaymentReceiptNumber, bkPaymentStatus } = this.props;
-    console.log("payemntProps--",this.props)
-
     return (
       <div>
         <Card

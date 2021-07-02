@@ -131,7 +131,7 @@ let {userInfo} = this.props
 		"_search",[],
 		mdmsBody
 	);
-	console.log(payloadRes, "hsncodeAndAll");
+	
  
 	let mdmsBodyTwo = {
     MdmsCriteria: {
@@ -157,17 +157,17 @@ let {userInfo} = this.props
     "_search",[],
     mdmsBodyTwo
   );
-  console.log(payloadResTwo, "MCGSTnumberDetail");
+ 
 
 let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS	
-console.log("pdfDetails-",pdfDetails)   //stateCode  placeOfService  mcGSTN
+
 
 
   this.setState({
     stateCode : pdfDetails[0].stateCode,
     placeOfService : pdfDetails[0].placeOfService,
     mcGSTN : pdfDetails[0].mcGSTN
-  },console.log("thisStatestateCode",this.state.stateCode,this.state.placeOfService,this.state.mcGSTN))
+  })
    
 let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING
 
@@ -206,7 +206,7 @@ this.setState({
   downloadPaymentReceipt = async (e) => {
     await this.downloadPaymentFunction();
      const {DownloadBWTApplicationDetails,userInfo,RoomPaymentReceipt}=this.props;
- console.log("downloadPaymentReceipt--props",this.props)
+ 
      var documentsPreview = [];
      let documentsPreviewData;
      if (RoomPaymentReceipt && RoomPaymentReceipt.filestoreIds.length > 0) {	
@@ -307,16 +307,16 @@ let Newugst;
 let perFind = 50;
 let ugst = this.props.BKROOM_TAX 
 let find50Per = (perFind/100) * ugst
-console.log("find50Per--",find50Per)		
+
 let findNumOrNot = Number.isInteger(find50Per);
-console.log("findNumOrNot--",findNumOrNot)
+
 if(findNumOrNot == true){
   Newugst = find50Per
-  console.log("trueCondition")
+
 }
 else{
   Newugst = find50Per.toFixed(2);
-  console.log("second-Newugst-",Newugst)
+
 }
 
 
@@ -507,16 +507,16 @@ let Newugst;
 let perFind = 50;
 let ugst = this.props.BKROOM_TAX 
 let find50Per = (perFind/100) * ugst
-console.log("find50Per--",find50Per)		
+	
 let findNumOrNot = Number.isInteger(find50Per);
-console.log("findNumOrNot--",findNumOrNot)
+
 if(findNumOrNot == true){
   Newugst = find50Per
-  console.log("trueCondition")
+
 }
 else{
   Newugst = find50Per.toFixed(2);
-  console.log("second-Newugst-",Newugst)
+ 
 }
 
 
@@ -668,20 +668,20 @@ const mapStateToProps = state => {
   const { userInfo } = auth;
 const {RoomPaymentReceipt,RoomPermissionLetter} = bookings
   let CreateRoomApplication = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.CreateRoomApplication : "NA"
-console.log("CreateRoomApplication-",CreateRoomApplication)
+
 let AppNum = CreateRoomApplication.data.roomsModel[0].roomApplicationNumber
-console.log("AppNum--AppNum",AppNum)
+
 
 const { fetchPaymentAfterPayment } = bookings;
-console.log("fetchPaymentAfterPayment--for-roomSuccess--",fetchPaymentAfterPayment)
+
 
 let ReceiptNumber = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentDetails[0].receiptNumber
 
 let CashPaymentInfo = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0]
-console.log("CashPaymentInfo--",CashPaymentInfo)
+
 
 let ArrayForPayment = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
-console.log("ArrayForPayment--",ArrayForPayment)
+
 
 
 let BKROOM_TAX = 0;
@@ -713,26 +713,12 @@ let totalAmount = state.screenConfiguration.preparedFinalObject.ResponseOfCashPa
 let transactionDate = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].transactionDate
 
 let transactionNumber = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].transactionNumber
-// const { updatePACCApplicationData,fetchSuccess, Downloadesamparkdetails} = bookings;
-  // const { createWaterTankerApplicationData, DownloadBWTApplicationDetails,categoriesById } = complaints;
-  // let documentMap = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.documentMap : "";
-  // let createPACCApplicationData = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.CreatePaccAppData : "NotAnyMore";
-  // console.log("createPACCApplicationData--",createPACCApplicationData)
-
-
-  // const loading = !isEmpty(createPACCApplicationData)
-  // ? fetchSuccess
-  //   ? false
-  //   : true
-  // : true;
 
   const loading = false;
 
   
   return {BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF,four,
     RoomPaymentReceipt,RoomPermissionLetter,AppNum,userInfo,CreateRoomApplication,paymentMode,ReceiptNumber,totalAmount,transactionDate,transactionNumber
-    // createWaterTankerApplicationData, DownloadBWTApplicationDetails,loading,fetchSuccess,createPACCApplicationData,
-    // updatePACCApplicationData,Downloadesamparkdetails,userInfo,documentMap
   }
 }
 

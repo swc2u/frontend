@@ -128,7 +128,7 @@ componentDidMount = async () => {
         "_search",[],
         mdmsBody
       );
-      console.log(payloadRes, "hsncodeAndAll");
+     
 
 	  let mdmsBodyTwo = {
 		MdmsCriteria: {
@@ -154,16 +154,16 @@ componentDidMount = async () => {
 		"_search",[],
 		mdmsBodyTwo
 	);
-	console.log(payloadResTwo, "MCGSTnumberDetail");
+	
 
 let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS	
-console.log("pdfDetails-",pdfDetails)   //stateCode  placeOfService  mcGSTN
+
 
 this.setState({
 stateCode : pdfDetails[0].stateCode,
 placeOfService : pdfDetails[0].placeOfService,
 mcGSTN : pdfDetails[0].mcGSTN
-},console.log("thisStatestateCode",this.state.stateCode,this.state.placeOfService,this.state.mcGSTN))
+})
 
     
     let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING
@@ -195,11 +195,11 @@ mcGSTN : pdfDetails[0].mcGSTN
     
       }
  downloadPermissionLetter = async (e) => {
-		console.log("comeInAnotherFunction")
+		
 		const { downloadPaccPermissionLetter, userInfo,createPACCApplicationData,documentMap,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE} = this.props;
 	
 		let applicationDetails = createPACCApplicationData ? createPACCApplicationData : 'dataNotFound';
-		console.log("applicationDetails--",applicationDetails)
+		
 	
 		let offlineCardNum = "Not Applicable";
 		let createdCardNum;
@@ -216,7 +216,7 @@ mcGSTN : pdfDetails[0].mcGSTN
 			bookingType: "",
 			tenantId: userInfo.tenantId,
 		  };
-console.log("RequestBodyForPL",complaintCountRequest)
+
 		  
 	  
 		  let dataforSectorAndCategory = await httpRequest(
@@ -226,7 +226,7 @@ console.log("RequestBodyForPL",complaintCountRequest)
 			complaintCountRequest 
 		  );
 		  
-		  console.log("dataforSectorAndCategoryforPL",dataforSectorAndCategory)
+
 		if(this.props.offlinePayementMode == "CARD" || this.props.offlinePayementMode == "Card"){
 			  createdCardNum = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 			  ? dataforSectorAndCategory.bookingsModelList[0].cardNumber
@@ -234,7 +234,7 @@ console.log("RequestBodyForPL",complaintCountRequest)
 
 			  offlineCardNum = `**** **** **** ${createdCardNum}`
 			  
-            	console.log("CardNumInResponse",offlineCardNum)
+            	
 				CardtransactionNumber = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 	? dataforSectorAndCategory.bookingsModelList[0].transactionNumber
 	: "NA";	
@@ -247,19 +247,19 @@ console.log("RequestBodyForPL",complaintCountRequest)
 	   if(this.props.offlinePayementMode == "DD"){
 		demandDraftNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 		? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
-		console.log("demandDraftDate--chequeNo",chequeNo)
+		
 		demandDraftDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 		? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
-		console.log("demandDraftDate--chequeNo",chequeNo)
+		
 	}
 	if(this.props.offlinePayementMode == "CHEQUE"){
 		chequeNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 		? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
-		console.log("chequeNo--chequeNo",chequeNo)
+		
 
 		chequeDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 		? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
-		console.log("chequeDate--chequeDate",chequeDate)
+		
 	}
 
 		let Newugst;
@@ -379,7 +379,7 @@ console.log("RequestBodyForPL",complaintCountRequest)
 			  }
 		  }
 	  ]
-	  console.log("RequestBodyOfPl",BookingInfo)
+	  
 
 	  let permissionletterResponse = await httpRequest(
 		"pdf-service/v1/_create?key=bk-pk-booking-pl-emp",
@@ -387,15 +387,15 @@ console.log("RequestBodyForPL",complaintCountRequest)
 		[],
 		{ BookingInfo: BookingInfo }
 	  );
-	  console.log("permissionletterResponse",permissionletterResponse)
+	  
 
 	  let EmpPaccPermissionLetter = permissionletterResponse.filestoreIds
-      console.log("EmpPaccPermissionLetter",EmpPaccPermissionLetter)
+      
 	  
 	  var documentsPreview = [];
 	  let documentsPreviewData;
 	  if (EmpPaccPermissionLetter && EmpPaccPermissionLetter.length > 0) {	
-		  console.log("recheckidforPl",EmpPaccPermissionLetter)
+		  
 		documentsPreviewData = EmpPaccPermissionLetter[0];
 		  documentsPreview.push({
 			title: "DOC_DOC_PICTURE",
@@ -437,7 +437,7 @@ console.log("RequestBodyForPL",complaintCountRequest)
 	  }
 downloadPaymentReceiptBody = async (e) => {
 		const { downloadEsamparkApp, userInfo,createPACCApplicationData,documentMap,downloadEsampPaymentReceipt,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE,amountToDisplay} = this.props;
-		console.log("propsInPaymentSuccess--",this.props)
+		
 let offlineCardNum;
 let createCardNum;
 let pdfBankName;
@@ -448,7 +448,7 @@ let demandDraftDate = "Not Applicable"
 let CardtransactionNumber = "Not Applicable"
 
 		let applicationDetails = createPACCApplicationData ? createPACCApplicationData : 'dataNotFound';
-		console.log("applicationDetails--",applicationDetails)
+		
 
 		if(this.props.offlinePayementMode == "DD" || this.props.offlinePayementMode == "CHEQUE"){
 			let complaintCountRequest = {
@@ -459,35 +459,35 @@ let CardtransactionNumber = "Not Applicable"
 				bookingType: "",
 				tenantId: userInfo.tenantId,
 			  };
-		  console.log("34567899871DD&&CHEQUE",complaintCountRequest)
+		  
 			  let dataforSectorAndCategory = await httpRequest(
 				"bookings/api/employee/_search",
 				"_search",
 				[],
 				complaintCountRequest
 			  );
-			  console.log("ReceiptOfRequestBody",dataforSectorAndCategory)
+			  
 			  pdfBankName = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 			  ? dataforSectorAndCategory.bookingsModelList[0].bankName
 			  : "NA";		
-	     console.log("pdfBankName",pdfBankName)
+	     
  
 			if(this.props.offlinePayementMode == "DD"){
 				demandDraftNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 				? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
-				console.log("demandDraftDate--chequeNo",chequeNo)
+				
 				demandDraftDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 				? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
-				console.log("demandDraftDate--chequeNo",chequeNo)
+				
 			}
 			if(this.props.offlinePayementMode == "CHEQUE"){
 				chequeNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 				? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
-				console.log("chequeNo--chequeNo",chequeNo)
+				
 
 				chequeDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 				? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
-				console.log("chequeDate--chequeDate",chequeDate)
+				
 
 			}		
 		}
@@ -504,20 +504,20 @@ let CardtransactionNumber = "Not Applicable"
 				bookingType: "",
 				tenantId: userInfo.tenantId,
 			  };
-		  console.log("34567899871",complaintCountRequest)
+		  
 			  let dataforSectorAndCategory = await httpRequest(
 				"bookings/api/employee/_search",
 				"_search",
 				[],
 				complaintCountRequest
 			  );
-			  console.log("ReceiptOfRequestBody",dataforSectorAndCategory)
+		
 			  createCardNum = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 			  ? dataforSectorAndCategory.bookingsModelList[0].cardNumber
 			  : "NA";		  
 			  offlineCardNum = `**** **** **** ${createCardNum}`
 			  
-	console.log("CardNumForReceipt",offlineCardNum)
+	
 
 	CardtransactionNumber = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
 	? dataforSectorAndCategory.bookingsModelList[0].transactionNumber
@@ -673,15 +673,15 @@ let CardtransactionNumber = "Not Applicable"
 		[],
 		{ BookingInfo: BookingInfo }
 	  );
-	  console.log("ReceiptOfRequestBody",ReceiptResponse)
+	  
 
 	  let PaymentReceiptByESamp = ReceiptResponse.filestoreIds
-      console.log("PaymentReceiptByESamp",PaymentReceiptByESamp)
+      
 
 	  var documentsPreview = [];
 	  let documentsPreviewData;
 	  if (PaymentReceiptByESamp && PaymentReceiptByESamp.length > 0) {	
-		  console.log("checkFileStoreId",PaymentReceiptByESamp)
+		 
 		documentsPreviewData = PaymentReceiptByESamp[0];
 		  documentsPreview.push({
 			title: "DOC_DOC_PICTURE",

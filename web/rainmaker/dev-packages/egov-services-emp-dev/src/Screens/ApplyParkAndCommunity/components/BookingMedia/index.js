@@ -53,7 +53,7 @@ class BookingMedia extends React.Component {
   }
   render() {
     const handleImageLoaded = () => {
-      console.log("image loaded");
+     
     };
     const {
       masterDataPCC,
@@ -64,9 +64,6 @@ class BookingMedia extends React.Component {
       handleCalAfterImage,
       mediaStyle
     } = this.props;
-    console.log("propsOfMediaFile--", this.props);
-
-    // let
     let pacc_image =
       "No data found in selected Locality. Please select other Locality";
     let masterDataExists = 0;

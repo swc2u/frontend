@@ -131,7 +131,7 @@ componentDidMount = async () => {
 			"_search",[],
 			mdmsBody
 		);
-		console.log(payloadRes, "hsncodeAndAll");
+		
 	 
 		let mdmsBodyTwo = {
 		MdmsCriteria: {
@@ -157,17 +157,17 @@ componentDidMount = async () => {
 		"_search",[],
 		mdmsBodyTwo
 	  );
-	  console.log(payloadResTwo, "MCGSTnumberDetail");
+	  
 	
 	let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS	
-	console.log("pdfDetails-",pdfDetails)   //stateCode  placeOfService  mcGSTN
+	
 	
 	
 	  this.setState({
 		stateCode : pdfDetails[0].stateCode,
 		placeOfService : pdfDetails[0].placeOfService,
 		mcGSTN : pdfDetails[0].mcGSTN
-	  },console.log("thisStatestateCode",this.state.stateCode,this.state.placeOfService,this.state.mcGSTN))
+	  })
 	   
 	let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING
 	
@@ -240,27 +240,25 @@ componentDidMount = async () => {
 	
 	  downloadPermissionLetterFunction = async (e) => {
 		const { downloadRoomPermissionLetter, state,userInfo,createPACCApplicationData,documentMap,CreateRoomApplication,BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF,four} = this.props;
-	console.log("PropsInPLfunction",this.props,CreateRoomApplication)
-	console.log("CreateRoomApplication.data.roomsModel-In-Pl-fun",CreateRoomApplication.data.roomsModel)
-		
+	
 		let pdfCardNum = get(
 			state,
 			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].cardNumber",
 			"NotFound"
 		  );
-console.log("pdfCardNum---",pdfCardNum)
+
 		  let pdfBankName = get(
 			state,
 			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].bankName",
 			"NotFound"
 		  );
-console.log("pdfBankName-pl",pdfBankName)
+
 		  let paymentCollectionType = get(
 			state,
 			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].paymentCollectionType",
 			"NotFound"
 		  );
-	console.log("paymentCollectionType-pl",paymentCollectionType)
+
 
 	       let cheDdNum = get(
 			state,
@@ -332,17 +330,17 @@ console.log("pdfBankName-pl",pdfBankName)
 		  }
 		if(paymentCollectionType == "DD"){
 			demandDraftNo = cheDdNum
-			console.log("demandDraftNo000",demandDraftNo)
+			
 			demandDraftDate = cheDaDate
-			console.log("demandDraftDate000",demandDraftDate)
+			
 		}
 		if(paymentCollectionType == "CHEQUE" || paymentCollectionType == "Cheque"){
 			chequeNo = cheDdNum
-			console.log("chequeNo--8989",chequeNo)
+			
 			chequeDate = cheDaDate
-			console.log("chequeDate000",chequeDate)
+			
 		}
-  console.log("findNotApplicable",chequeNo,chequeDate,demandDraftNo,demandDraftDate)
+  
   
     let strfromDate = FromDate.toString(); 
 	let numFromDate = Number(strfromDate)
@@ -382,16 +380,16 @@ console.log("pdfBankName-pl",pdfBankName)
 	let perFind = 50;
 	let ugst = this.props.BKROOM_TAX 
 	let find50Per = (perFind/100) * ugst
-	console.log("find50Per--",find50Per)		
+	
 	let findNumOrNot = Number.isInteger(find50Per);
-	console.log("findNumOrNot--",findNumOrNot)
+	
 	if(findNumOrNot == true){
 	  Newugst = find50Per
-	  console.log("trueCondition")
+	
 	}
 	else{
 	  Newugst = find50Per.toFixed(2);
-	  console.log("second-Newugst-",Newugst)
+	
 	}
 	
 	
@@ -491,7 +489,7 @@ console.log("pdfBankName-pl",pdfBankName)
 		}
 	]
 	
-	console.log("RequestBodyOfPl",BookingInfo)
+	
 
 	let permissionletterResponse = await httpRequest(
 	  "pdf-service/v1/_create?key=bk-room-booking-pl-emp",
@@ -499,15 +497,15 @@ console.log("pdfBankName-pl",pdfBankName)
 	  [],
 	  { BookingInfo: BookingInfo }
 	);
-	console.log("permissionletterResponse",permissionletterResponse)
+	
 
 	let EmpPaccPermissionLetter = permissionletterResponse.filestoreIds
-	console.log("EmpPaccPermissionLetter",EmpPaccPermissionLetter)
+	
 	
 	var documentsPreview = [];
 	let documentsPreviewData;
 	if (EmpPaccPermissionLetter && EmpPaccPermissionLetter.length > 0) {	
-		console.log("recheckidforPl",EmpPaccPermissionLetter)
+		
 	  documentsPreviewData = EmpPaccPermissionLetter[0];
 		documentsPreview.push({
 		  title: "DOC_DOC_PICTURE",
@@ -551,7 +549,7 @@ console.log("pdfBankName-pl",pdfBankName)
 	  downloadPaymentReceipt = async (e) => {  
 		await this.downloadPaymentFunction();
 		 const {DownloadBWTApplicationDetails,userInfo,RoomPaymentReceipt}=this.props;
-	 console.log("downloadPaymentReceipt--props",this.props)
+	 
 		 var documentsPreview = [];
 		 let documentsPreviewData;
 		 if (RoomPaymentReceipt && RoomPaymentReceipt.filestoreIds.length > 0) {	
@@ -601,20 +599,20 @@ console.log("pdfBankName-pl",pdfBankName)
 			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].paymentCollectionType",
 			"NotFound"
 		  );
-	console.log("paymentCollectionType-receipt",paymentCollectionType)
+	
 		
 		let pdfCardNum = get(
 			state,
 			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].cardNumber",
 			"NotFound"
 		  );
-console.log("pdfCardNumreceipt",pdfCardNum)
+
 		  let pdfBankName = get(
 			state,
 			"screenConfiguration.preparedFinalObject.ApplicationCreateForRoom.data.roomsModel[0].bankName",
 			"NotFound"
 		  );
-	console.log("pdfBankName",pdfBankName)
+	
 
 	let cheDdNum = get(
 		state,
@@ -730,16 +728,16 @@ console.log("pdfCardNumreceipt",pdfCardNum)
 	let perFind = 50;
 	let ugst = this.props.BKROOM_TAX 
 	let find50Per = (perFind/100) * ugst
-	console.log("find50Per--",find50Per)		
+	
 	let findNumOrNot = Number.isInteger(find50Per);
-	console.log("findNumOrNot--",findNumOrNot)
+	
 	if(findNumOrNot == true){
 	  Newugst = find50Per
-	  console.log("trueCondition")
+	
 	}
 	else{
 	  Newugst = find50Per.toFixed(2);
-	  console.log("second-Newugst-",Newugst)
+	  
 	}
 	
 	
@@ -835,15 +833,15 @@ console.log("pdfCardNumreceipt",pdfCardNum)
 		[],
 		{ BookingInfo: BookingInfo }
 	  );
-	  console.log("ReceiptOfRequestBody",ReceiptResponse)
+	  
 
 	  let PaymentReceiptByESamp = ReceiptResponse.filestoreIds
-      console.log("PaymentReceiptByESamp",PaymentReceiptByESamp)
+      
 
 	  var documentsPreview = [];
 	  let documentsPreviewData;
 	  if (PaymentReceiptByESamp && PaymentReceiptByESamp.length > 0) {	
-		  console.log("checkFileStoreId",PaymentReceiptByESamp)
+	
 		documentsPreviewData = PaymentReceiptByESamp[0];
 		  documentsPreview.push({
 			title: "DOC_DOC_PICTURE",
@@ -885,16 +883,6 @@ console.log("pdfCardNumreceipt",pdfCardNum)
 
   render() {
   const { RecNumber,createWaterTankerApplicationData,myLocationtwo, downloadBWTApplication,loading,createPACCApplicationData, updatePACCApplicationData,AppNum} = this.props;
-	console.log("this.props-in-paymentSuccessForEmp-",this.props)
-	console.log(RecNumber?RecNumber:"notfound","RecNumber")
-	console.log("AppNum--",AppNum?AppNum:"non")
-   
-    console.log("InSuccessPage--",
-    { labelName: "BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER-Value", labelKey: "BK_MYBK_APPLY_SPECIAL_REQUEST_HEADER" },
-    { labelName: "BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE--", labelKey: "BK_ES_APPLICATION_CREATED_SUCCESS_MESSAGE" },
-    { labelName: "BK_CS_COMMON_SEND_MESSAGE--", labelKey: "BK_CS_COMMON_SEND_MESSAGE" },
-)
-
     return (
       <Screen loading={loading}>
       <div className="success-message-main-screen resolve-success">
@@ -947,23 +935,23 @@ const mapStateToProps = state => {
   const { updatePACCApplicationData,fetchSuccess, Downloadesamparkdetails, applicationData,DownloadReceiptDetailsforPCC} = bookings;
   const { createWaterTankerApplicationData, DownloadBWTApplicationDetails,categoriesById } = complaints;
   let documentMap = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.documentMap : ""; 
-//   let createPACCApplicationData = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.CreatePaccAppData : "NotAnyMore"; 
+
   let RecNumber = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.CollectionReceiptNum : "NotAnyMore";
-  console.log("RecNumber--",RecNumber)
- //RecNumber,offlinePayment,offlineTransactionNum,offlineTransactionDate,
- //offlinePayementMode,offlinePayementMode,totalAmountPaid,totalAmount
+  
+
+
 let offlinePayment = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment:"notFound"
-console.log("offlinePayment--",offlinePayment)
+
 
 let RoomBookingData = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.RoomBookingData : "NA"
-console.log("-RoomBookingData-",RoomBookingData)  
+
 
 let DataForRoomBooking = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.RoomBookingData : "NA"
-console.log("DataForRoomBooking-",DataForRoomBooking)
+
 let CreateRoomApplication = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.CreateRoomApplication : "NA"
-console.log("CreateRoomApplication-",CreateRoomApplication)
+
 let AppNum = CreateRoomApplication.data.roomsModel[0].roomApplicationNumber
-console.log("AppNum--AppNum",AppNum)
+
 
 let acRoomId;  //acRoomId,nonAcRoomId
 let nonAcRoomId;
@@ -972,9 +960,7 @@ let updateNumOfAcRoom; //updateNumOfAcRoom,updateNumOfNonAcRoom
 let updateNumOfNonAcRoom;
 //data.roomsModel
 for(let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++){
-console.log("CreateRoomApplication.data.roomsModel",CreateRoomApplication.data.roomsModel)
 if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "AC"){
-	console.log("CreateRoomApplication.TypeOfAcRoom",CreateRoomApplication.data.roomsModel[i])
 	updateNumOfAcRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms   
 	acRoomId = CreateRoomApplication.data.roomsModel[i].id
 }
@@ -983,68 +969,60 @@ if(CreateRoomApplication.data.roomsModel[i].typeOfRoom == "NON-AC"){
 	updateNumOfNonAcRoom = CreateRoomApplication.data.roomsModel[i].totalNoOfRooms
 }
 }
-console.log("acRoomId--",acRoomId)
-console.log("nonAcRoomId--",nonAcRoomId)
-console.log("updateNumOfAcRoom--",updateNumOfAcRoom)
-console.log("updateNumOfNonAcRoom--",updateNumOfNonAcRoom)
 let totalRoom = CreateRoomApplication.data.roomsModel[0].totalNoOfRooms
-console.log("totalRoom--",totalRoom)
-
 let discountForRoom = CreateRoomApplication.data.roomsModel[0].discount
-console.log("discountForRoom--",discountForRoom)
-//GlobalNonAccRoomToBook,GlobalAccRoomToBook
 let GlobalNonAccRoomToBook = state.screenConfiguration.preparedFinalObject ? 
 (state.screenConfiguration.preparedFinalObject.GlobalNonAccRoomToBook != undefined && state.screenConfiguration.preparedFinalObject.GlobalNonAccRoomToBook != null ? (state.screenConfiguration.preparedFinalObject.GlobalNonAccRoomToBook) : 'NA') : "NA"
-console.log("GlobalNonAccRoomToBook--",GlobalNonAccRoomToBook)
+
 let GlobalAccRoomToBook = state.screenConfiguration.preparedFinalObject ? 
 (state.screenConfiguration.preparedFinalObject.GlobalAccRoomToBook != undefined && state.screenConfiguration.preparedFinalObject.GlobalAccRoomToBook != null ? (state.screenConfiguration.preparedFinalObject.GlobalAccRoomToBook) : 'NA') : "NA"
-console.log("GlobalAccRoomToBook-",GlobalAccRoomToBook)
+
 
 let typeOfRoom = CreateRoomApplication.data.roomsModel[0].typeOfRoom
-console.log("totalRoom--",typeOfRoom)
+
 
 let roomFromDate = CreateRoomApplication.data.roomsModel[0].fromDate
-console.log("roomFromDate--roomFromDate",roomFromDate)
+
 
 let roomToDate = CreateRoomApplication.data.roomsModel[0].toDate
-console.log("roomToDate--roomToDate",roomToDate)   //roomFromDate,roomToDatep  
+
 
 let RoomId = CreateRoomApplication.data.roomsModel[0].id
-console.log("RoomId--",RoomId)
+
 
 let bothRoom = state.screenConfiguration.preparedFinalObject ?
 (state.screenConfiguration.preparedFinalObject.GlobalTypeOfRoom !== undefined && state.screenConfiguration.preparedFinalObject.GlobalTypeOfRoom !== null ?state.screenConfiguration.preparedFinalObject.GlobalTypeOfRoom : 'NA'): "NA"
-console.log("bothRoom--",bothRoom)
+
 
 //transactionNum
 let offlineTransactionNum = offlinePayment ? offlinePayment.Payments[0].transactionNumber : "NotFound"
-console.log("offlineTransactionNum--",offlineTransactionNum)  
+
 
 //transactionDate
 let offlineTransactionDate = offlinePayment ? offlinePayment.Payments[0].transactionDate : "NotFound"
-console.log("offlineTransactionDate--",offlineTransactionDate) 
+
 
 //paymentMode
 let offlinePayementMode = offlinePayment ? offlinePayment.Payments[0].paymentMode : "NotFound"
-console.log("offlinePayementMode--",offlinePayementMode)
+
 
 //totalAmountPaid
 let totalAmountPaid = offlinePayment ? offlinePayment.Payments[0].paymentDetails[0].bill.totalAmount : "NotFound"
-console.log("totalAmountPaid--",totalAmountPaid)
+
 
 //base charges
 let totalAmount =  offlinePayment ? offlinePayment.Payments[0].paymentDetails[0].bill : "NotFound" // till here
 
 const { fetchPaymentAfterPayment } = bookings;
-console.log("fetchPaymentAfterPayment--for-roomSuccess--",fetchPaymentAfterPayment)
+
 
 let ReceiptNumber = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentDetails[0].receiptNumber
-console.log("ReceiptNumber",ReceiptNumber)
+
 let CashPaymentInfo = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0]
-console.log("CashPaymentInfo--",CashPaymentInfo)
+
 
 let ArrayForPayment = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
-console.log("ArrayForPayment--",ArrayForPayment)
+
 
 
 let BKROOM_TAX = 0;
@@ -1082,26 +1060,6 @@ return {typeOfRoom,totalRoom,GlobalNonAccRoomToBook,GlobalAccRoomToBook,discount
 	RoomPaymentReceipt,RoomPermissionLetter,
 	ReceiptNumber,CashPaymentInfo,ArrayForPayment,BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF,four,paymentMode,transactionDate,transactionNumber
 }
-
-//surcharges
-// let firstrent = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData: "";
-// console.log("firstrent--",firstrent)
-
-// let cleanOne =  firstrent?firstrent.cleaningCharges:""; 
-// console.log("cleanOne--",cleanOne)
-
-// let Summarysurcharge = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.Summarysurcharge: "NotFound";
-// console.log("Summarysurcharge-2-",Summarysurcharge)
-
-// let SummarycGST = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.SummarycGST: "NotFound";
-// console.log("SummarycGST-2-",SummarycGST)
-
-//   return {first,second,firstToTimeSlot, firstTimeSlotValue,SecondTimeSlotValue,conJsonSecond,conJsonfirst,
-//     createWaterTankerApplicationData, DownloadBWTApplicationDetails,loading,fetchSuccess,selectedComplaint,
-//     updatePACCApplicationData,Downloadesamparkdetails,userInfo,documentMap,AppNum,DownloadReceiptDetailsforPCC,RecNumber,createAppData
-//  ,venueType,vanueData,bookingData,bookingData,offlinePayment,offlineTransactionNum,offlineTransactionDate,
-//  offlinePayementMode,location,totalAmountPaid,six,one,Summarysurcharge,cleanOne,SummarycGST,SecTimeSlotFromTime,SecTimeSlotToTime,
-// }
 }
 
 const mapDispatchToProps = dispatch => {
