@@ -560,7 +560,7 @@ else{
 	};
  
 	downloadPaymentReceiptFunction = async (e) => {
-		const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceipt, userInfo,pdfBankName,downloadRoomPaymentRecipt } = this.props;
+   const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceipt, userInfo,pdfBankName,downloadRoomPaymentRecipt } = this.props;
 	
 	let bookedrooms;	
 	let Newugst;

@@ -16,7 +16,7 @@ import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 class BookingCalendar extends React.Component {
   constructor(props) {
     super(props);
-    console.log("constructor--", this.state);
+  
     this.state = this.getInitialState();
     this.state = {
       filterfromDate: "",
@@ -30,7 +30,7 @@ class BookingCalendar extends React.Component {
   }
 //availabilityCheckData.bkFromDate    
   componentDidMount() {
-    console.log("inComponentDidMount");
+   
     const {
       availabilityCheckData,
       oldToDate,
@@ -38,8 +38,8 @@ class BookingCalendar extends React.Component {
       oldFromDate,oldBookingData,
       witholDdATA,
     } = this.props;
-    console.log("propsbooking--", this.props);
-    console.log("witholDdATA--", witholDdATA);
+   
+   
     if (
       (oldAvailabilityCheckData &&
         oldAvailabilityCheckData.FromDate != undefined) ||
@@ -47,34 +47,23 @@ class BookingCalendar extends React.Component {
         oldBookingData != "notfound" &&
         oldBookingData.bkFromDate != undefined)
     ) {
-      console.log("nnnnnnnnnnnnnnnn");
-      console.log("checking from--", new Date(oldFromDate))
       this.setState(
         {
           from: new Date(oldFromDate),
           to: new Date(oldToDate),
           enteredTo: new Date(oldToDate),
-        },
-        () =>
-          console.log(
-            "NewFrom:",
-            this.state.from
-              ? this.state.from.toLocaleDateString()
-              : this.state.from,
-            "toNew:",
-            this.state.to.toLocaleDateString()
-          )
+        }
       );
     }
 
     if (availabilityCheckData && availabilityCheckData.reservedDays) {
-      console.log("forNewData");
+      
       let pushReservedDay = [];
       availabilityCheckData.reservedDays.length > 0 &&
         availabilityCheckData.reservedDays.map((el) => {
           pushReservedDay.push(new Date(el));
         });
-      console.log("availabilityCheckData@@", availabilityCheckData);
+      
 
       if (availabilityCheckData.bkFromDate) {
         this.setState(
@@ -84,7 +73,7 @@ class BookingCalendar extends React.Component {
             to: new Date(availabilityCheckData.bkToDate),
             enteredTo: new Date(availabilityCheckData.bkToDate),
           },
-          console.log("testing state--", this.state)
+      
         );
       }
     }
@@ -95,7 +84,7 @@ class BookingCalendar extends React.Component {
       nextProps.availabilityCheckData === undefined ||
       nextProps.availabilityCheckData.length === 0
     ) {
-      console.log("asasasasasasas");
+      
       this.setState({
         dselectedDays: [],
         from: null,
@@ -103,26 +92,12 @@ class BookingCalendar extends React.Component {
         enteredTo: null,
       });
     }
-    //    else if ( nextProps.oldAvailabilityCheckData != undefined) {
-    //      console.log("come in oldAv Condition")
-    //     this.setState({
-
-    //         from: new Date(
-    //             nextProps.oldAvailabilityCheckData.FromDate
-    //         ),
-    //         to: new Date(nextProps.oldAvailabilityCheckData.bkToDate),
-    //         enteredTo: new Date(
-    //             nextProps.oldAvailabilityCheckData.bkToDate
-    //         ),
-    //     });
-    //     console.log("nextprops")
-    //    }
     else {
       if (
         nextProps.availabilityCheckData.bkFromDate === null &&
         nextProps.availabilityCheckData.bkToDate === null
       ) {
-        console.log("wertyuio");
+     
         this.setState({
           from: null,
           to: null,
@@ -139,7 +114,7 @@ class BookingCalendar extends React.Component {
         previousDates.map((val) => {
           pushReservedDay.push(val);
         });
-        console.log("yyyyyyyyyyy");
+     
         this.setState({
           dselectedDays: pushReservedDay,
         });
@@ -150,27 +125,27 @@ class BookingCalendar extends React.Component {
           nextProps.availabilityCheckData.bkFromDate !== null &&
           nextProps.availabilityCheckData.bkToDate !== null
         ) {
-          console.log("iiiiiiiii");
+         
           this.setState(
             {
               from: new Date(nextProps.availabilityCheckData.bkFromDate),
               to: new Date(nextProps.availabilityCheckData.bkToDate),
               enteredTo: new Date(nextProps.availabilityCheckData.bkToDate),
             },
-            console.log("qqqqtext--", this.state)
+           
           );
         } else if (
           nextProps.availabilityCheckData.bkFromDate !== null &&
           nextProps.availabilityCheckData.bkToDate === null
         ) {
-          console.log("ppppppppppp");
+        
           this.setState(
             {
               from: new Date(nextProps.availabilityCheckData.bkFromDate),
               to: null,
               enteredTo: null,
             },
-            console.log("ppppptext--", this.state)
+          
           );
         } else {
           this.setState(this.getInitialState());
@@ -190,43 +165,36 @@ class BookingCalendar extends React.Component {
   isSelectingFirstDay(from, to, day) {
     const { oldAvailabilityCheckData } = this.props;
     if (oldAvailabilityCheckData) {
-      console.log(oldAvailabilityCheckData, "oldAvailabilityCheckDatalast");
-      console.log(from, to, "Lastfromtodate");
+     
       if (from && to) {
-        console.log("GetBothDates");
+     
         return true;
       } else if (from == null && to == null) {
-        console.log("GetBothDatesAsNull");
+     
         return true;
       } else if (to && from == null) {
-        console.log("GetFromDateNUll");
+     
         return true;
       } else {
-        console.log("BothElse");
+     
         return false;
       }
     } else {
-      console.log("isSelectingFirstDay-", from, to, day);
+     
       const isBeforeFirstDay = from && DateUtils.isDayBefore(day, from);
-      console.log("isBeforeFirstDay-", isBeforeFirstDay);
+     
       const isRangeSelected = from && to; //
-      console.log("isRangeSelected-", isRangeSelected);
-      console.log("FromDate-", from);
-      console.log("ToDate-", to);
-      console.log(
-        "!from || isBeforeFirstDay || isRangeSelected--Return",
-        !from || isBeforeFirstDay || isRangeSelected
-      );
+      
       let funRet = !from || isBeforeFirstDay || isRangeSelected;
-      console.log("funRet-", funRet);
+      
       if (funRet) {
-        console.log(" true funRet");
+      
         this.setState({
           CheckFromDateExist: true,
         });
       }
       if (!funRet) {
-        console.log("!funRet");
+      
         this.setState({
           CheckFromDateExist: false,
         });
@@ -236,19 +204,16 @@ class BookingCalendar extends React.Component {
   }
 
   handleDayClick = (day, modifiers = {}) => {
-    console.log("PropsInHandleDayClickFunction",this.props)
-    console.log("handleDayClick");
+    
+    
     const { oldAvailabilityCheckData } = this.props;
     const { from, to } = this.state;
-    console.log("handleDayClick-of-to-", from, to);
-    console.log("day-handleDayClick-", day ? day : "gggggg");
-console.log("PropsInHandleDayClick", this.props)
     for(let i = 0 ; i< this.props.bookedSlotDateArray.length; i++)
     {
         let d= `${new Date(day).getDate()}-${new Date(day).getMonth()}-${new Date(day).getFullYear()}`
-       console.log("dINfunction",d)
+     
         let ad= `${new Date(this.props.bookedSlotDateArray[i]).getDate()}-${new Date(this.props.bookedSlotDateArray[i]).getMonth()}-${new Date(this.props.bookedSlotDateArray[i]).getFullYear()}`
-console.log("adInfunction",ad)
+
         if(d==ad){
             this.handleResetClick();
             // this.props.showError4();
@@ -268,19 +233,19 @@ console.log("adInfunction",ad)
 
 
     if (from && to && day >= from && day <= to) {
-      console.log("one--", from, to, day);
+     
       this.handleResetClick();
       return;
     }
     if (this.isSelectingFirstDay(from, to, day)) {
-      console.log("isSelectingFirstDay-", from, to, day);
+     
       if (day >= new Date()) {
-        //indatevenuechange come in this condition
-        console.log("isSelectingFirstDay-if", day);
+     
+     
         this.props.prepareFinalObject("availabilityCheckData.bkFromDate", day);
         this.props.prepareFinalObject("PreviousBookingData.NewBookingFromDate", day);
         this.props.prepareFinalObject(
-          //screenConfiguration.preparedFinalObject.oldAvailabilityCheckData.bkToDate
+     
           "oldAvailabilityCheckData.bkToDate",
           null
         );
@@ -291,35 +256,29 @@ console.log("adInfunction",ad)
         });
       } else {
         this.handleResetClick();
-        console.log("handleResetClick-");
+       
       }
     } else {
-      console.log("third..");
-      console.log("day-third", day);
       this.setState({
         to: day,
         enteredTo: day,
       });
       this.props.prepareFinalObject("availabilityCheckData.bkToDate", day);
       this.props.prepareFinalObject("PreviousBookingData.NewBookingToDate", day);
-      console.log("third..state--", this.state);
+      
       this.checkRangeValidity();
     }
   };
 
   handleDayMouseEnter = (day) => {
-    console.log("handleDayMouseEnter");
+    
     const { from, to } = this.state;
     const { oldAvailabilityCheckData } = this.props;
-    console.log("Mouse-functionProps-", oldAvailabilityCheckData);
-    console.log("handleDayMouseEnter-from", from, to);
-    console.log("handleDayMouseEnter-", day);
     if (!this.isSelectingFirstDay(from, to, day)) {
-      console.log(this.isSelectingFirstDay(from, to, day));
       this.setState({
         enteredTo: day,
       });
-      console.log("handleDayMouseEnter-entered", this.state.enteredTo);
+      
     }
   };
 
@@ -370,19 +329,19 @@ console.log("adInfunction",ad)
 
   render() {
     const { ChangeFromDate, ChangeToDate, resetDate } = this.props;
-    console.log("renderbookingprops--", this.props);
+ 
 
     let { from, to, enteredTo } = this.state;
-    console.log("stateBooking--", this.state);
+ 
     if (resetDate && ChangeFromDate && ChangeToDate) {
       from = ChangeFromDate;
       to = ChangeToDate;
     }
     const modifiers = { start: from, end: enteredTo,timeSlotBookedDates : this.props.bookedSlotDateArray };
-    console.log("modifiers--", modifiers);
+ 
     const disabledDays = { before: this.state.from };
     const selectedDays = [from, { from, to: enteredTo }];
-    console.log("selectedDays--", selectedDays);
+ 
     const WEEK_DAY_LONG = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const DATAE = this.getPreviousTodayDates();
     const past = {
@@ -392,21 +351,11 @@ console.log("adInfunction",ad)
     };
     let data = new Date();
     let newData = new Date(data.setMonth(data.getMonth() + 5));
-    console.log("newData-", newData);
-    console.log(
-      "this.render.state--",
-      this.state.changeoldfromDate ? this.state.changeoldfromDate : "fghj"
-    );
     return (
       <div>
       <div className="calendar-wrapper">
         <div className="calendar-section">
-          {console.log(
-            "oldFromDate-return-",
-            this.state.changeoldfromDate
-              ? this.state.changeoldfromDate
-              : "nnnnn"  
-          )}
+         
           <DayPicker
             className="Selectable"
             numberOfMonths={2}
@@ -476,10 +425,6 @@ console.log("adInfunction",ad)
                 letterSpacing: "0.67px",
               }}
             >
-              {console.log(
-                "fromBeforeDisplay--",
-                from ? from.toLocaleDateString() : from
-              )}
               {!from ? "--/--/----" : from.toLocaleDateString()}
             </span>
           </div>
@@ -504,7 +449,6 @@ console.log("adInfunction",ad)
                 letterSpacing: "0.67px",
               }}
             >
-              {console.log("tobeforeDisplay--", to)}
               {!to ? "--/--/----" : to.toLocaleDateString()}
             </span>
           </div>
@@ -572,7 +516,7 @@ const mapStateToProps = (state, ownProps) => {
   let resetDate = state.screenConfiguration.preparedFinalObject
     ? state.screenConfiguration.preparedFinalObject.availabilityCheckData
     : "";
-  console.log("ValueofResetDate--", resetDate);
+  
   //oldAvailabilityCheckData.bkBookingVenue
 
   let bkVenue = state.screenConfiguration.preparedFinalObject
@@ -580,21 +524,21 @@ const mapStateToProps = (state, ownProps) => {
     ? state.screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
         .bkBookingVenue
     : "notfound";
-  console.log("bkVenue--", bkVenue);
+  
 
   let oldFromDate = state.screenConfiguration.preparedFinalObject
     .oldAvailabilityCheckData
     ? state.screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
         .FromDate
     : "notfound";
-  console.log("oldFromDate--Redux", new Date(oldFromDate).toLocaleDateString());
+  
 
   let oldToDate = state.screenConfiguration.preparedFinalObject
     .oldAvailabilityCheckData
     ? state.screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
         .bkToDate
     : "notfound";
-  console.log("oldToDate--Redux", oldToDate);
+  
 
   let ChangeFromDate = resetDate ? resetDate.bkFromDate : "";
   let ChangeToDate = resetDate ? resetDate.bkToDate : "";
@@ -608,7 +552,7 @@ const mapStateToProps = (state, ownProps) => {
     state,
     "screenConfiguration.preparedFinalObject.availabilityCheckData.reservedTimeSlotsData"
 );
-console.log("reservedTimeSlotsData-mapState",reservedTimeSlotsData)
+
 let timeSlotArray = [];
 let bookedSlotArray = [];
 var date = new Date();
@@ -618,7 +562,7 @@ if (reservedTimeSlotsData && reservedTimeSlotsData.length > 0) {
             "-"
         );
         let date = `${year}-${month}-${day}`;
-        console.log("Date--MapStateProps",date)
+        
         if (
             reservedTimeSlotsData[i].timeslots &&
             reservedTimeSlotsData[i].timeslots.length > 0 && reservedTimeSlotsData[i].timeslots.length < 3
@@ -634,16 +578,12 @@ if (reservedTimeSlotsData && reservedTimeSlotsData.length > 0) {
                     timeSlots: [reservedTimeSlotsData[i].timeslots[j].slot],
                 }
                 );
-               console.log("bookedSlotArray=mapProps",bookedSlotArray)
             }
         }
     }
 }    
 let newBookedSlotArray= []
 let newBookedSlotObject= []
-console.log("newBookedSlotArray-mapStateToProps", newBookedSlotArray)
-console.log("newBookedSlotObject",newBookedSlotObject)
-console.log('bookedSlotDateArray :>> ', bookedSlotArray);
 bookedSlotArray.map(d=>{
     if(newBookedSlotArray.includes(d.date)){
         
@@ -670,7 +610,6 @@ for (let i=0 ; i < newBookedSlotObject.length ; i++) {
     }
 
 }
-console.log("availableSlotDateArray--mapState",availableSlotDateArray)
 
   if (availabilityCheckData && availabilityCheckData.reservedDays) {
     availabilityCheckData = availabilityCheckData;

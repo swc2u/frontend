@@ -82,15 +82,6 @@ class AllRequests extends Component {
         true,
         true
       );
-
-
-      // let appListFromAPI = await httpRequest(
-      //   "egov-workflow-v2/egov-wf/process/_search?",
-      //   "_search", [],
-      //   []
-      // );
-      // this.setState({applicationList:appListFromAPI&&appListFromAPI.ProcessInstances})
-      // console.log('appListFromAPI',appListFromAPI)
   };
 
   componentWillReceiveProps = nextProps => {

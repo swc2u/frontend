@@ -137,7 +137,7 @@ class SummaryDetails extends Component {
   hasWhiteSpace(s) {
     let check;
     check = s.indexOf(' ') >= 0;
-    console.log("check---check",check)
+    
      return check
   }
 
@@ -231,14 +231,14 @@ class SummaryDetails extends Component {
             "payerName": ApplicantName,
             "payerMobileNumber": ApplicantMobNum
         }
-          console.log("cash--Booking",Booking)
+          
           let saveCardNum = await httpRequest(
             "bookings/api/save/cardDetails",
             "_search",
             [],
             {Booking:Booking}
           );
-          console.log("saveCardNum",saveCardNum)
+          
     
           let ReceiptNum =
             EmpPayment && EmpPayment
@@ -321,14 +321,14 @@ if(ChnChqDate <= this.props.longtodayDate){
               "bankName": this.props.BankName.name,
               "bankBranch":this.props.BranchName.name
           }
-            console.log("cash--Booking",Booking)
+            
             let saveCardNum = await httpRequest(
               "bookings/api/save/cardDetails",
               "_search",
               [],
             {Booking:Booking}
             );
-            console.log("saveCardNum",saveCardNum)
+            
       
             let ReceiptNum =
               EmpPayment && EmpPayment
@@ -426,14 +426,14 @@ else{
                 "bankName": this.props.BankName.name,
                 "bankBranch":this.props.BranchName.name
             }
-              console.log("cash--Booking",Booking)
+              
               let saveCardNum = await httpRequest(
                 "bookings/api/save/cardDetails",
                 "_search",
                 [],
                 {Booking:Booking}
               );
-              console.log("saveCardNum",saveCardNum)
+              
         
               let ReceiptNum =
                 EmpPayment && EmpPayment
@@ -483,16 +483,8 @@ else{
     }
     if (ppMode == "Card") {
       let checkwhiteSpace = this.hasWhiteSpace(this.state.last4Digits)
-      console.log("checkwhiteSpace",checkwhiteSpace)
-      console.log("card--state-number",this.state.last4Digits)
-      console.log("this.state.repeatTrxNo--card",this.state.repeatTrxNo)
-      console.log("this.state.TrxNo--card",this.state.TrxNo)
       if(NewTrxNo !== " " && this.state.TrxNo !== ""){
         if(checkwhiteSpace == true || this.state.last4Digits.length > 4 || this.state.last4Digits.length < 4 || this.state.repeatTrxNo !== this.state.TrxNo) {
-          console.log("checkwhiteSpace000000",checkwhiteSpace)
-          console.log("card--state-number---if--condititon",this.state.last4Digits)
-        console.log("this.state.repeatTrxNo--card---0000",this.state.repeatTrxNo)
-        console.log("this.state.TrxNo--card---000",this.state.TrxNo)
           this.props.toggleSnackbarAndSetText(
             true,
             {
@@ -546,14 +538,14 @@ else{
                 "cardNumber": this.state.last4Digits,
                 "transactionNumber": this.state.TrxNo,
             }
-              console.log("cash--Booking",Booking)
+              
               let saveCardNum = await httpRequest(
                 "bookings/api/save/cardDetails",
                 "_search",
                 [],
                 {Booking:Booking}
               );
-              console.log("saveCardNum",saveCardNum)
+              
         
               let ReceiptNum =
                 EmpPayment && EmpPayment
@@ -581,10 +573,6 @@ else{
         }
       }
       else if(checkwhiteSpace == true || this.state.last4Digits.length > 4 || this.state.last4Digits < 4 || this.state.repeatTrxNo !== this.state.TrxNo) {
-        console.log("checkwhiteSpace000000",checkwhiteSpace)
-        console.log("card--state-number---if--condititon",this.state.last4Digits)
-      console.log("this.state.repeatTrxNo--card---0000",this.state.repeatTrxNo)
-      console.log("this.state.TrxNo--card---000",this.state.TrxNo)
         this.props.toggleSnackbarAndSetText(
           true,
           {
@@ -668,17 +656,6 @@ else{
   };
 
   render() {
-    // const { firstName, fCharges,result, email, mobileNo, locality, surcharge, fromDate, toDate, facilationChargesSuccess,
-    //     onFromDateChange, onToDateChange, utGST, cGST, GSTnumber, handleChange, bankName, amount, transactionDate, transactionNumber, paymentMode,
-    //     dimension, location, facilitationCharges, cleaningCharges, rent, approverName, comment, houseNo, type, purpose, residenials, documentMap,
-    //     BK_FEE_HEAD_PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,totalAmountSuPage,one,two,three,four,five,six,
-    //     PACPACC_ROUND_OFFC_TAX,FACILITATION_CHARGE
-    //     } = this.props;
-
-    // console.log(",one,two,three,four,five,six--",one,two,three,four,five,six)
-    // console.log("propsInRendersummary--",this.props)
-    // let fc = fCharges?fCharges.facilitationCharge:'100';
-    // console.log("stateofBooking--",this.state.createPACCApp)
     const {
       paymentDetails,
       ApplicantMobNum,
@@ -1012,13 +989,6 @@ const mapStateToProps = (state) => {
   let OfflineRenArray;
 
   const { fetchPaymentAfterPayment } = bookings;
-  console.log(
-    "fetchPaymentAfterPayment--",
-    fetchPaymentAfterPayment
-      ? fetchPaymentAfterPayment
-      : "NofetchPaymentAfterPaymentData"
-  );
-
   let abc =
     applicationData !== undefined && applicationData !== null
       ? applicationData.bookingsModelList != undefined &&

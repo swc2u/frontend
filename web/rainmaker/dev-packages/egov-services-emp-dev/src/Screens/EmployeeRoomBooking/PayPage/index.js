@@ -52,17 +52,16 @@ class SummaryDetails extends Component {
   hasWhiteSpace(s) {
     let check;
     check = s.indexOf(' ') >= 0;
-    console.log("check---check",check)
      return check
   }
   componentDidMount = async () => {
     let fetchUrl = window.location.pathname;
-    console.log(fetchUrl);
+    
 
     let fetchApplicationNumber = fetchUrl.substring(
       fetchUrl.lastIndexOf("/") + 1
     );
-    console.log("fetchApplicationNumber--", fetchApplicationNumber);
+    
 
     let {
       createPACCApplication,
@@ -163,7 +162,7 @@ class SummaryDetails extends Component {
       .bkApplicantName;
     let ApplicantMobNum = this.props.RoomBookingData.bookingsModelList[0]
       .bkMobileNumber;
-    console.log("propsInpayPage--", this.props);
+    
 
     // alert("hello generate receipt")
     const {
@@ -180,7 +179,7 @@ class SummaryDetails extends Component {
       pddIFSC,
       pIFSC,state,
     } = this.props;
-    console.log("this.props---", this.props);
+    
     let {
       acRoomId,
       nonAcRoomId,
@@ -199,7 +198,7 @@ class SummaryDetails extends Component {
       updateNumOfAcRoom,
       updateNumOfNonAcRoom,
     } = this.props;
-    console.log("typesforDiscount--", typeof discountForRoom);
+    
 let ppMode = paymentMode && paymentMode ? paymentMode : " ";
  let current_datetime = new Date()
 let formatted_date = current_datetime.getDate() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getFullYear()
@@ -354,10 +353,6 @@ else{
       let checkwhiteSpace = this.hasWhiteSpace(this.state.last4Digits)
       if(NewTrxNo !== " " && this.state.TrxNo !== ""){
         if(checkwhiteSpace == true || this.state.last4Digits.length > 4 || this.state.last4Digits.length < 4 || this.state.repeatTrxNo !== this.state.TrxNo) {
-          console.log("checkwhiteSpace000000",checkwhiteSpace)
-          console.log("card--state-number---if--condititon",this.state.last4Digits)
-        console.log("this.state.repeatTrxNo--card---0000",this.state.repeatTrxNo)
-        console.log("this.state.TrxNo--card---000",this.state.TrxNo)
           this.props.toggleSnackbarAndSetText(
             true,
             {
@@ -396,10 +391,6 @@ else{
         }
       }
       else if(checkwhiteSpace == true || this.state.last4Digits.length > 4 || this.state.last4Digits < 4 || this.state.repeatTrxNo !== this.state.TrxNo) {
-        console.log("checkwhiteSpace000000",checkwhiteSpace)
-        console.log("card--state-number---if--condititon",this.state.last4Digits)
-      console.log("this.state.repeatTrxNo--card---0000",this.state.repeatTrxNo)
-      console.log("this.state.TrxNo--card---000",this.state.TrxNo)
         this.props.toggleSnackbarAndSetText(
           true,
           {
@@ -420,22 +411,15 @@ else{
         ); 
        }
     }
-
-    console.log("PaymentReqBody--", PaymentReqBody);
-
 try{
   let EmpPayment = await httpRequest(
     "collection-services/payments/_create?",
     "_search",
     [],
     PaymentReqBody
-  );
-
-  console.log("EmpPayment--", EmpPayment);
-  
+  ); 
   let BothRoomSelect = [];
   if (bothRoom == "Both") {
-    console.log("one");
     BothRoomSelect = [
       {
         id: acRoomId,
@@ -488,7 +472,6 @@ try{
     ];
   } 
   else if (bothRoom == "AC") {
-    console.log("two");
     BothRoomSelect = [
       {
         id: acRoomId,
@@ -517,7 +500,7 @@ try{
     ];
   } 
   else if (bothRoom == "NON-AC") {
-    console.log("three");
+   
     BothRoomSelect = [
       {
         id: nonAcRoomId,
@@ -545,8 +528,6 @@ try{
       },
     ];
   }
-  console.log("BothRoomSelect--success--", BothRoomSelect);
-
   if(EmpPayment && EmpPayment.Payments !== undefined && EmpPayment.Payments !== null && EmpPayment.Payments.length > 0){
     prepareFinalObject("ResponseOfCashPayment", EmpPayment);
 
@@ -554,7 +535,7 @@ try{
       EmpPayment && EmpPayment
         ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
         : "notFound";
-    console.log("ReceiptNum--", ReceiptNum);
+   
 
     prepareFinalObject("CollectionReceiptNum", ReceiptNum);
 
@@ -659,7 +640,7 @@ try{
         roomsModel: BothRoomSelect,
       };
 
-      console.log("BookingOfPayPage",Booking)
+     
 
       let createAppData = {
         applicationType: "PACC",
@@ -670,7 +651,7 @@ try{
         Booking: Booking,
       };
   
-      console.log("createAppData--", createAppData);
+     
 
       let payloadfund = await httpRequest(
         "bookings/community/room/_update",
@@ -679,7 +660,7 @@ try{
         createAppData
       );
   
-      console.log("payloadfund--", payloadfund); 
+     
       this.props.prepareFinalObject("ApplicationCreateForRoom", payloadfund);
 
       if(payloadfund && payloadfund.status == "200"){
@@ -775,7 +756,7 @@ try{
       .bkApplicantName;
     let ApplicantMobNum = this.props.RoomBookingData.bookingsModelList[0]
       .bkMobileNumber;
-    console.log("propsInpayPage--", this.props);
+   
     let {
       PayerName,
       mobileNo,
@@ -796,8 +777,6 @@ try{
       ddBank,
       ddBranch,
     } = this.state;
-    console.log("this.state--", ChequeNo);
-    console.log("this.state--PaidBy", PaidBy);
     return (
       <div>
         <div className="form-without-button-cont-generic">
@@ -900,7 +879,7 @@ const mapStateToProps = (state) => {
   const { userInfo } = state.auth;
   const { facilationChargesSuccess, arrayName } = bookings;
   const { applicationData } = bookings;
-  console.log("BookingInPayment--", bookings);
+ 
   
   const { paymentData } = bookings;
   let paymentDataOne = paymentData ? paymentData : "wrong";
@@ -908,29 +887,29 @@ const mapStateToProps = (state) => {
     ? state.screenConfiguration.preparedFinalObject.PaidBy
     : " ";
   let ppaidBy = paidBy && paidBy ? paidBy : " ";
-  console.log("ppaidBy--", ppaidBy);
+ 
 
-  console.log("paymentDataOne--", paymentDataOne);
+ 
   let checkBillLength =
     paymentDataOne != "wrong" ? paymentDataOne.Bill.length > 0 : "";
   let totalAmountSuPage = checkBillLength
     ? paymentDataOne.Bill[0].totalAmount
     : "notfound";
-  console.log("totalAmountSuPage-", totalAmountSuPage);
+  
   let paymentDetails;
   paymentDetails = paymentData ? paymentData.Bill[0] : "";
   let TotalAmount = paymentDetails
     ? paymentDetails.totalAmount
     : "NotFoundAnyAmount";
-  console.log("TotalAmount--", TotalAmount);
+  
   let billId = paymentDetails
     ? paymentData.Bill[0].billDetails[0].billId
     : "NotFoundAnyBillId";
-  console.log("billId--", billId);
+  
   let billAccountDetailsArray = checkBillLength
     ? paymentDataOne.Bill[0].billDetails[0].billAccountDetails
     : "NOt found Any Array";
-  console.log("billAccountDetailsArray--", billAccountDetailsArray);
+  
   let one = 0;
   let two = 0;
   let three = 0;
@@ -951,13 +930,6 @@ const mapStateToProps = (state) => {
     }
   }
 
-  console.log("one--", one);
-  console.log("two--", two);
-  console.log("three--", three);
-  console.log("four--", four);
-  console.log("five--", five);
-  console.log("six--", six);
-
   let paymentMode = state.screenConfiguration.preparedFinalObject
     ? state.screenConfiguration.preparedFinalObject.paymentMode
     : "";
@@ -966,29 +938,29 @@ const mapStateToProps = (state) => {
   let RecNumber = state.screenConfiguration.preparedFinalObject
     ? state.screenConfiguration.preparedFinalObject.CollectionReceiptNum
     : "NotAnyMore";
-  console.log("RecNumber--", RecNumber);
+ 
   //RecNumber,offlinePayment,offlineTransactionNum,offlineTransactionDate,
   //offlinePayementMode,offlinePayementMode,totalAmountPaid,totalAmount
   let offlinePayment = state.screenConfiguration.preparedFinalObject
     ? state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment
     : "notFound";
-  console.log("offlinePayment--", offlinePayment);
+ 
 
   let RoomBookingData = state.screenConfiguration.preparedFinalObject
     ? state.screenConfiguration.preparedFinalObject.RoomBookingData
     : "NA";
-  console.log("-RoomBookingData-", RoomBookingData);
+ 
 
   let DataForRoomBooking = state.screenConfiguration.preparedFinalObject
     ? state.screenConfiguration.preparedFinalObject.RoomBookingData
     : "NA";
-  console.log("DataForRoomBooking-", DataForRoomBooking);
+ 
   let CreateRoomApplication = state.screenConfiguration.preparedFinalObject
     ? state.screenConfiguration.preparedFinalObject.CreateRoomApplication
     : "NA";
-  console.log("CreateRoomApplication-", CreateRoomApplication);
+ 
   let AppNum = CreateRoomApplication.data.roomsModel[0].roomApplicationNumber;
-  console.log("AppNum--AppNum", AppNum);
+ 
 
   let acRoomId; //acRoomId,nonAcRoomId
   let nonAcRoomId;
@@ -997,15 +969,7 @@ const mapStateToProps = (state) => {
   let updateNumOfNonAcRoom;
   //data.roomsModel
   for (let i = 0; i < CreateRoomApplication.data.roomsModel.length; i++) {
-    console.log(
-      "CreateRoomApplication.data.roomsModel",
-      CreateRoomApplication.data.roomsModel
-    );
     if (CreateRoomApplication.data.roomsModel[i].typeOfRoom == "AC") {
-      console.log(
-        "CreateRoomApplication.TypeOfAcRoom",
-        CreateRoomApplication.data.roomsModel[i]
-      );
       updateNumOfAcRoom =
         CreateRoomApplication.data.roomsModel[i].totalNoOfRooms;
       acRoomId = CreateRoomApplication.data.roomsModel[i].id;
@@ -1016,15 +980,12 @@ const mapStateToProps = (state) => {
         CreateRoomApplication.data.roomsModel[i].totalNoOfRooms;
     }
   }
-  console.log("acRoomId--", acRoomId);
-  console.log("nonAcRoomId--", nonAcRoomId);
-  console.log("updateNumOfAcRoom--", updateNumOfAcRoom);
-  console.log("updateNumOfNonAcRoom--", updateNumOfNonAcRoom);
+ 
   let totalRoom = CreateRoomApplication.data.roomsModel[0].totalNoOfRooms;
-  console.log("totalRoom--", totalRoom);
+ 
 
   let discountForRoom = CreateRoomApplication.data.roomsModel[0].discount;
-  console.log("discountForRoom--", discountForRoom);
+ 
   //GlobalNonAccRoomToBook,GlobalAccRoomToBook
   let GlobalNonAccRoomToBook = state.screenConfiguration.preparedFinalObject
     ? state.screenConfiguration.preparedFinalObject.GlobalNonAccRoomToBook !=
@@ -1034,7 +995,7 @@ const mapStateToProps = (state) => {
       ? state.screenConfiguration.preparedFinalObject.GlobalNonAccRoomToBook
       : "NA"
     : "NA";
-  console.log("GlobalNonAccRoomToBook--", GlobalNonAccRoomToBook);
+ 
   let GlobalAccRoomToBook = state.screenConfiguration.preparedFinalObject
     ? state.screenConfiguration.preparedFinalObject.GlobalAccRoomToBook !=
         undefined &&
@@ -1042,19 +1003,19 @@ const mapStateToProps = (state) => {
       ? state.screenConfiguration.preparedFinalObject.GlobalAccRoomToBook
       : "NA"
     : "NA";
-  console.log("GlobalAccRoomToBook-", GlobalAccRoomToBook);
+ 
 
   let typeOfRoom = CreateRoomApplication.data.roomsModel[0].typeOfRoom;
-  console.log("totalRoom--", typeOfRoom);
+ 
 
   let roomFromDate = CreateRoomApplication.data.roomsModel[0].fromDate;
-  console.log("roomFromDate--roomFromDate", roomFromDate);
+ 
 
   let roomToDate = CreateRoomApplication.data.roomsModel[0].toDate;
-  console.log("roomToDate--roomToDate", roomToDate); //roomFromDate,roomToDatep
+ 
 
   let RoomId = CreateRoomApplication.data.roomsModel[0].id;
-  console.log("RoomId--", RoomId);
+ 
 
   let bothRoom = state.screenConfiguration.preparedFinalObject
     ? state.screenConfiguration.preparedFinalObject.GlobalTypeOfRoom !==
@@ -1063,38 +1024,38 @@ const mapStateToProps = (state) => {
       ? state.screenConfiguration.preparedFinalObject.GlobalTypeOfRoom
       : "NA"
     : "NA";
-  console.log("bothRoom--", bothRoom);
+ 
 
   //transactionNum
   let offlineTransactionNum = offlinePayment
     ? offlinePayment.Payments[0].transactionNumber
     : "NotFound";
-  console.log("offlineTransactionNum--", offlineTransactionNum);
+  
 
   //transactionDate
   let offlineTransactionDate = offlinePayment
     ? offlinePayment.Payments[0].transactionDate
     : "NotFound";
-  console.log("offlineTransactionDate--", offlineTransactionDate);
+  
 
   //paymentMode
   let offlinePayementMode = offlinePayment
     ? offlinePayment.Payments[0].paymentMode
     : "NotFound";
-  console.log("offlinePayementMode--", offlinePayementMode);
+  
 
   //totalAmountPaid
   let totalAmountPaid = offlinePayment
     ? offlinePayment.Payments[0].paymentDetails[0].bill.totalAmount
     : "NotFound";
-  console.log("totalAmountPaid--", totalAmountPaid);
+  
 
   //base charges
   let totalAmount = offlinePayment
     ? offlinePayment.Payments[0].paymentDetails[0].bill
     : "NotFound"; // till here
 
-  console.log("paymentMode--", paymentMode);
+  
 
 
   let ChequeNo = state.screenConfiguration.preparedFinalObject.ChequeNo

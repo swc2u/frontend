@@ -1189,13 +1189,13 @@ let CommercialParkingCharges = 0;
 	if (selectedComplaint && selectedComplaint.bkApplicationStatus == "APPROVED") {
 	
 paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill ;
-console.log("paymentDetails-1",paymentDetails)
+
 
 OfflineInitatePayArray = paymentDetails !== undefined && paymentDetails !== null ? 
 (paymentDetails.billDetails !== undefined && paymentDetails.billDetails !== null ? (paymentDetails.billDetails.length > 0 ? 
 (paymentDetails.billDetails[0].billAccountDetails !== undefined && paymentDetails.billDetails[0].billAccountDetails !== null ?
 (paymentDetails.billDetails[0].billAccountDetails): "NA"): "NA") : "NA"): "NA"
-console.log("OfflineInitatePayArray-1",OfflineInitatePayArray)		
+
 		
 		
 		
@@ -1204,13 +1204,13 @@ console.log("OfflineInitatePayArray-1",OfflineInitatePayArray)
 		paymentDetails =paymentData && paymentData !== null && paymentData !== undefined ? 
 		(paymentData.Bill && paymentData.Bill !== undefined && paymentData.Bill !== null ? 
 		(paymentData.Bill.length > 0 ?(paymentData.Bill[0]):"NA"):"NA"): "NA";
-        console.log("paymentDetails-2",paymentDetails)
+       
 		if(paymentDetails !== "NA"){
 			OfflineInitatePayArray = paymentData.Bill[0].billDetails !== undefined && paymentData.Bill[0].billDetails !== null ? 
 			(paymentData.Bill[0].billDetails !== undefined && paymentData.Bill[0].billDetails !== null ? (paymentData.Bill[0].billDetails.length > 0 ? (paymentData.Bill[0].billDetails[0].billAccountDetails !== undefined && paymentData.Bill[0].billDetails[0].billAccountDetails !== null ? 
 			(paymentData.Bill[0].billDetails[0].billAccountDetails ? (paymentData.Bill[0].billDetails[0].billAccountDetails.length > 0 ? (paymentData.Bill[0].billDetails[0].billAccountDetails) : "NA"): "NA"): "NA"): "NA"): "NA") : "NA"
 			}
-			console.log("OfflineInitatePayArray-1",OfflineInitatePayArray)		
+		
 		perDayRupees = OSBMperDayRate && OSBMperDayRate ? OSBMperDayRate.data.ratePerSqrFeetPerDay : '';
 	}
 

@@ -369,38 +369,37 @@ let bkLocation = dataforSectorAndCategory && dataforSectorAndCategory.bookingsMo
         let fromfirst = a.split("-")
         
        let fromsecond = b.split("-")
-      console.log("second",fromsecond)
+      
       
       let first = fromfirst[0]
       let second = fromsecond[1]
-      console.log("first",first)
-      console.log("second",second)
+      
+      
 
       let comfirstsecond = first + "-" + second
-      console.log("comfirstsecond",comfirstsecond)
+      
 
       let timeSlot = comfirstsecond
-console.log("timeSlot54234",timeSlot)
       prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
 
 
       let res = timeSlot.split("-");
-      console.log("res--", res);
+      
 
       let fromTime = res[0];
-      console.log("fromTime--", fromTime);
+      
 
       prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
 
       let ToTime = res[1];
-      console.log("ToTime--", ToTime);
+      
 
       prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
 
       let strMid = ",";
 
       let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
-      console.log("ConcatFromDateTime--", ConcatFromDateTime);
+      
 
       prepareFinalObject(
         "oldAvailabilityCheckData.ConcatFromDateTime",
@@ -408,7 +407,7 @@ console.log("timeSlot54234",timeSlot)
       );
 
       let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
-      console.log("ConcatToDateTime--", ConcatToDateTime);
+      
 
       prepareFinalObject(
         "oldAvailabilityCheckData.ConcatToDateTime",
@@ -419,27 +418,27 @@ console.log("timeSlot54234",timeSlot)
 
       let timeSlotId =
         dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id;
-      console.log("timeSlotId--", timeSlotId);
+      
 
       prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
 
       let timeSlotIdTwo =
       dataforSectorAndCategory.bookingsModelList[0].timeslots[1].id;
-    console.log("timeSlotIdTwo--", timeSlotIdTwo);
+    
 
     prepareFinalObject("oldAvailabilityCheckData.timeSlotIdTwo", timeSlotIdTwo);  
        }
     }
 
     allDocumentList.map(async (doc) => {
-			console.log("Doccc---", doc);
+			
 			// doc.docmentType
 			// doc.fileName
 			// doc.fileStoreId
 			let fileLink = await getFileUrlFromAPI(doc.fileStoreId, "ch");
-			console.log("filelink--", fileLink);
+			
 			if (doc.documentType === "BK_PCC_DISCOUNT_DOCUMENT") {
-			  console.log("DIscountDoc==", doc);
+			  
 			  let dicscountDoc = [
 				{
 				  documentCode: doc.documentType,
@@ -460,7 +459,7 @@ console.log("timeSlot54234",timeSlot)
 			 this.props.prepareFinalObject("discountDocumentsUploadRedux", dicscountDoc);
 			  return;
 			} else {
-			  console.log("DocFIle==", doc);
+			  
 			  let Doc = [
 				{
 				  documentCode: doc.documentType,
@@ -897,14 +896,11 @@ else{
     };
 
     const { loading, histor, userInfo, applicationType,roles } = this.props;
-    console.log("propsInMainPage--",this.props)
+    
     let oneRole = roles[0]
     let RoleOneCode = oneRole.code
     let twoRole = roles[1]
     let RoleTwoCode = twoRole.code
-    console.log(typeof(roles),"RolesArray")
-console.log("oneRole--",oneRole)
-console.log("twoRole--",twoRole)
     if(RoleOneCode == "BK_MCC_APPROVER" && RoleTwoCode == "BK_OSBM_APPROVER"){
       console.log("yes roles Found")
     }else{
@@ -1465,8 +1461,6 @@ const mapStateToProps = state => {
   const loading = false;
   const { userInfo } = state.auth;
   const roles = userInfo.roles
-  console.log("roles--Of-mainUser",roles)
-//screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
 let PreviousBookingData  = get(
     state,
     "screenConfiguration.preparedFinalObject.oldAvailabilityCheckData",
@@ -1477,24 +1471,17 @@ let clearAvailable = get(
   "screenConfiguration.preparedFinalObject.availabilityCheckData",
   "NotFound"
 )
-console.log("clearAvailable",clearAvailable)
-// screenConfiguration.preparedFinalObject.PreviousBookingData    screenConfiguration.preparedFinalObject.availabilityCheckData
-console.log("PreviousBookingData-",PreviousBookingData)
 let oldBookingData  = get(
   state,
   "screenConfiguration.preparedFinalObject.PreviousBookingData",
   "NotFound"
 );
-console.log("oldBookingData-",oldBookingData)
-
 
 let discountOldDoc  = get(
   state,
   "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux",
   "NotFound"
 );
-console.log("discountOldDoc-",discountOldDoc)
-
 let previousResidenceProof  = get(
   state,
   "screenConfiguration.preparedFinalObject.documentsUploadRedux",
@@ -1505,21 +1492,7 @@ let UploadedDocType  = get(
   "screenConfiguration.preparedFinalObject.UploadedDocType",
   "NotFound"
 );
-
-console.log("previousResidenceProof-",previousResidenceProof)
-
   
-  // const role =
-  //   roleFromUserInfo(userInfo.roles, "GRO") ||
-  //     roleFromUserInfo(userInfo.roles, "DGRO")
-  //     ? "ao"
-  //     : roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-  //       roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-  //       ? "eo"
-  //       : roleFromUserInfo(userInfo.roles, "CSR")
-  //         ? "csr"
-  //         : "employee";
-
   const role = "employee";
   let assignedComplaints = [],
     unassignedComplaints = [],

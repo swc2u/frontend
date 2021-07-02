@@ -92,7 +92,7 @@ class AppDetails extends Component {
   downloadPermissionLetterBody = async (room) => {
     const {selectedComplaint,userInfo,downloadRoomPermissionLetter} = this.props
 let RoomApplicationNumber = room.roomApplicationNumber
-console.log("RoomApplicationNumber--",RoomApplicationNumber)
+
 
 
 let createAppData = {
@@ -109,24 +109,20 @@ let createAppData = {
     createAppData
     );
 
-console.log("payloadfund--",payloadfund2)		
-// this.props.prepareFinalObject("DataOfRoomAndCommunity",payloadfund)
+
+
 let documentForBothBooking = payloadfund2.communityCenterDocumentMap
-console.log("documentForBothBooking-",documentForBothBooking)
+
 let RoomCommData = payloadfund2.communityCenterRoomBookingMap
-  console.log("RoomCommData--",RoomCommData)
+
 let AllKeysOfRoom = []
 let AllValues
 for (const [key] of Object.entries(RoomCommData)) {
-  console.log("allKeys--",`${key}`);
+
   AllKeysOfRoom.push(`${key}`)
   }
-  console.log("AllKeysOfRoom--",AllKeysOfRoom)
-console.log("RoomApplicationNumber--",AllKeysOfRoom[0].roomApplicationNumber,AllKeysOfRoom[0].typeOfRoom)
-//["RoomsModel(id=8fa9e31d-f71a-4aff-8e55-a2879e124b4e, roomApplicationNumber=CH-BK-ROOM-2021-02-16-004311, typeOfRoom=AC, totalNoOfRooms=25, communityApplicationNumber=CH-BK-2021-02-16-004309, roomApplicationStatus=OFFLINE_APPLIED, roomBusinessService=BKROOM, remarks=string, action=OFFLINE_APPLY, lastModifiedDate=2021-02-16, createdDate=2021-02-16, fromDate=2021-04-22, toDate=2021-04-22, discount=null, facilationCharge=null, roomPaymentStatus=null)"]
+  
 AllValues = Object.values(RoomCommData)
-console.log("AllValues--",AllValues);  //[0]
-
 let RoomModel = selectedComplaint && selectedComplaint.bookingsModelList ? (selectedComplaint.bookingsModelList[0].roomsModel ?(selectedComplaint.bookingsModelList[0].roomsModel.length > 0 ? (selectedComplaint.bookingsModelList[0].roomsModel):'NA') :'NA'): 'NA'
 let AC = "";
 let NonAC = "";
@@ -151,11 +147,8 @@ let RequestData = [
 		// customRequestInfo
 		);
 	  
-		console.log("RequestData--",RequestData)
-		console.log("payloadfund--",payloadfund)
-
 		let paymentData =  payloadfund ? payloadfund.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails : "NOt found Any Array"
-console.log("paymentData--",paymentData)
+
 
 let totalAmountPaid = payloadfund ? payloadfund.Payments[0].totalAmountPaid : ""
 
@@ -194,16 +187,16 @@ let Newugst;
 let perFind = 50;
 let ugst = BKROOM_TAX
 let find50Per = (perFind/100) * ugst
-console.log("find50Per--",find50Per)		
+
 let findNumOrNot = Number.isInteger(find50Per);
-console.log("findNumOrNot--",findNumOrNot)
+
 if(findNumOrNot == true){
   Newugst = find50Per
-  console.log("trueCondition")
+
 }
 else{
   Newugst = find50Per.toFixed(2);
-  console.log("second-Newugst-",Newugst)
+
 }
 
 
@@ -402,10 +395,7 @@ var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getF
     const {selectedComplaint,userInfo,downloadRoomPermissionLetter,downloadRoomPaymentRecipt} = this.props
 
     let RoomApplicationNumber = room.roomApplicationNumber
-    console.log("RoomApplicationNumber--",RoomApplicationNumber)
-    
-    
-    
+ 
     let createAppData = {
       "applicationNumber": RoomApplicationNumber,
     "applicationStatus": "",
@@ -420,24 +410,19 @@ var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getF
         createAppData
         );
     
-    console.log("payloadfund2--",payloadfund2)		
-    // this.props.prepareFinalObject("DataOfRoomAndCommunity",payloadfund)
+    
+    
     let documentForBothBooking = payloadfund2.communityCenterDocumentMap
-    console.log("documentForBothBooking-",documentForBothBooking)
+    
     let RoomCommData = payloadfund2.communityCenterRoomBookingMap
-      console.log("RoomCommData--",RoomCommData)
+    
     let AllKeysOfRoom = []
     let AllValues
     for (const [key] of Object.entries(RoomCommData)) {
-      console.log("allKeys--",`${key}`);
+    
       AllKeysOfRoom.push(`${key}`)
       }
-      console.log("AllKeysOfRoom--",AllKeysOfRoom)
-    console.log("RoomApplicationNumber--",AllKeysOfRoom[0].roomApplicationNumber,AllKeysOfRoom[0].typeOfRoom)
-    //["RoomsModel(id=8fa9e31d-f71a-4aff-8e55-a2879e124b4e, roomApplicationNumber=CH-BK-ROOM-2021-02-16-004311, typeOfRoom=AC, totalNoOfRooms=25, communityApplicationNumber=CH-BK-2021-02-16-004309, roomApplicationStatus=OFFLINE_APPLIED, roomBusinessService=BKROOM, remarks=string, action=OFFLINE_APPLY, lastModifiedDate=2021-02-16, createdDate=2021-02-16, fromDate=2021-04-22, toDate=2021-04-22, discount=null, facilationCharge=null, roomPaymentStatus=null)"]
     AllValues = Object.values(RoomCommData)
-    console.log("AllValues--",AllValues);
-    
     let RoomModel = selectedComplaint && selectedComplaint.bookingsModelList ? (selectedComplaint.bookingsModelList[0].roomsModel ?(selectedComplaint.bookingsModelList[0].roomsModel.length > 0 ? (selectedComplaint.bookingsModelList[0].roomsModel):'NA') :'NA'): 'NA'
     let AC = "";
     let NonAC = "";
@@ -462,11 +447,8 @@ var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getF
         // customRequestInfo
         );
         
-        console.log("RequestData--",RequestData)
-        console.log("payloadfund--",payloadfund)
-    
-        let paymentData =  payloadfund ? payloadfund.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails : "NOt found Any Array"
-    console.log("paymentData--",paymentData)
+    let paymentData =  payloadfund ? payloadfund.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails : "NOt found Any Array"
+   
     
     let totalAmountPaid = payloadfund ? payloadfund.Payments[0].totalAmountPaid : ""
     
@@ -505,16 +487,16 @@ var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getF
     let perFind = 50;
     let ugst = BKROOM_TAX
     let find50Per = (perFind/100) * ugst
-    console.log("find50Per--",find50Per)		
+    
     let findNumOrNot = Number.isInteger(find50Per);
-    console.log("findNumOrNot--",findNumOrNot)
+    
     if(findNumOrNot == true){
       Newugst = find50Per
-      console.log("trueCondition")
+    
     }
     else{
       Newugst = find50Per.toFixed(2);
-      console.log("second-Newugst-",Newugst)
+    
     }
     
     
@@ -717,7 +699,6 @@ var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getF
   render() {
  return(
 <div>
-  {console.log("this.props.roomData-InRoomCard",this.props.roomData)}
  {this.props.roomData.map ((room) =>{
    return (
           <Card key={room.RoomApplicationNumber}

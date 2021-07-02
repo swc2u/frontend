@@ -434,8 +434,6 @@ class ApplicationDetails extends Component {
 
             },
         ];
-		// let tenantId= userInfo&&userInfo.tenantId ? userInfo.tenantId.split(".")[0] : "";
-		// console.log('tenantId==in applicaion details page',tenantId);
 		downloadApplication( { BookingInfo: appData })
 		
 
@@ -1194,63 +1192,6 @@ let baseAmount = 0;
 	let Newugst;
     let beforePaymentFindArray
 	let getArrayToIterate
-// 	if (selectedComplaint && selectedComplaint.bkApplicationStatus == "APPROVED") {
-// 		paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
-// 	    console.log("paymentDetails--paymentDetails",paymentDetails)
-//     if(paymentDetails !== undefined && paymentDetails !== null){
-// 	findCGSTUGST = paymentDetails.billDetails[0].billAccountDetails
-// 	console.log("findCGSTUGST--",findCGSTUGST)
-// 	for(let i = 0; i < findCGSTUGST.length ; i++ ){ //for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
-// 		if(findCGSTUGST[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
-// 			addOfBothCGSTUGST = findCGSTUGST[i].amount
-// 		}
-// 	}
-// 	find50Per = (perFind/100) * addOfBothCGSTUGST
-// 	console.log("find50Per--",find50Per)		
-// 	findNumOrNot = Number.isInteger(find50Per);
-// console.log("findNumOrNot--",findNumOrNot)
-// 	if(findNumOrNot == true){
-// 		Newugst = find50Per
-// 		console.log("trueCondition")
-// 	}
-// 	else{
-// 		Newugst = find50Per.toFixed(2);
-// 		console.log("second-Newugst-",Newugst)
-// 	}
-// console.log("Newugst-Newugst-Newugst--",Newugst)
-// }
-// //billDetails[0].billAccountDetails
-// 	} else {
-// 		console.log("ComeInElseCondition")
-// 		paymentDetails = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
-// 		// paymentDetails = paymentData ? paymentData.Bill[0] : '';
-// 		paymentDetails = paymentData && paymentData.Bill.length > 0 && paymentData.Bill[0];
-// 		console.log("paymentDetails-in-ElseCondition--",paymentDetails)
-// 		if(paymentDetails !== undefined && paymentDetails !== null){
-// 			beforePaymentFindArray = bookings.paymentData.Bill[0].billDetails[0].billAccountDetails
-// 			console.log("beforePaymentFindArray--",beforePaymentFindArray)
-// 			for(let i = 0; i < beforePaymentFindArray.length ; i++ ){ //for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
-// 				if(beforePaymentFindArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
-// 					addOfBothCGSTUGST = beforePaymentFindArray[i].amount
-// 				}
-// 			}
-// 			find50Per = (perFind/100) * addOfBothCGSTUGST
-// 			console.log("find50Per--",find50Per)		
-// 			findNumOrNot = Number.isInteger(find50Per);
-// 		console.log("findNumOrNot--",findNumOrNot)
-// 			if(findNumOrNot == true){
-// 				Newugst = find50Per
-// 				console.log("trueCondition")
-// 			}
-// 			else{
-// 				Newugst = find50Per.toFixed(2);
-// 				console.log("second-Newugst-",Newugst)
-// 			}
-// 		console.log("Newugst-Newugst-Newugst--",Newugst)
-// 		}
-// 	}
-
-
 
 if(selectedComplaint && selectedComplaint.bkApplicationStatus == "APPROVED"){
 	paymentDetails = get(

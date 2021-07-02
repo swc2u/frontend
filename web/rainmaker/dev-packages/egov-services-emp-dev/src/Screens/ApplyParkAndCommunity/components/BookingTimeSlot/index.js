@@ -44,84 +44,9 @@ class CustomTimeSlots extends Component {
       selectedDate: "",
       currentDate: currentDate,
       dateInputProps: dateInputProps,
-    };
-    //     this.state = {
-    //         reservedTimeSlotsDate: '',
-    //     }
-    //     //console.log(this.props, "Hello Construct");
-    //     let timeSlotArray = [];
-    //     let bookedSlotArray = [];
-    //     var date = new Date();
-    //     var date1 = new Date();
-    //     for (let i = 0; i < 10; i++) {
-    //         let month = ('0' + (date1.getMonth() + 1)).slice(-2);
-    //         let day = ('0' + date1.getDate()).slice(-2);
-    //         let year = date1.getFullYear();
-    //         bookedSlotArray.push(
-    //             {
-    //                 date: `${day}-${month}-${year}`,
-    //                 timeSlots: ["2PM-6PM", "6PM-10PM"]
-    //             }
-    //         );
-    //         date1.setDate(date1.getDate() + 1);
-    //     }
-
-    //    // console.log(bookedSlotArray, "booked TimeSlots");
-    //     for (let i = 0; i < 180; i++) {
-    //         let month = ('0' + (date.getMonth() + 1)).slice(-2);
-    //         let day = ('0' + date.getDate()).slice(-2);
-    //         let year = date.getFullYear();
-    //         timeSlotArray.push(
-    //             {
-    //                 date: `${day}-${month}-${year}`,
-    //                 timeSlots: ["10AM-2PM", "2PM-6PM", "6PM-10PM"]
-    //             }
-    //         );
-    //         date.setDate(date.getDate() + 1);
-    //     }
-
-    //     let finalBookedTimeSlots = [];
-    //     for (let j = 0; j < timeSlotArray.length; j++) {
-    //         let tempObj = {}
-    //         tempObj.date = timeSlotArray[j].date;
-    //         tempObj.timeSlots = timeSlotArray[j].timeSlots;
-    //         for (let k = 0; k < bookedSlotArray.length; k++) {
-    //             if (timeSlotArray[j].date === bookedSlotArray[k].date) {
-
-    //                 for (let l = 0; l < timeSlotArray[j].timeSlots.length; l++) {
-    //                     if ((bookedSlotArray[k].timeSlots).includes(timeSlotArray[j].timeSlots[l])) {
-    //                         timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:booked`);
-    //                     }
-    //                 }
-
-    //             }
-    //         }
-
-    //         finalBookedTimeSlots.push(tempObj);
-    //     }
-
-    //     //console.log(finalBookedTimeSlots, "slot jkArray");
-
-    //     this.state = {
-    //         rows: finalBookedTimeSlots,
-    //         currentDate: new Date()
-    //     }
-  }
+    };}
 
   componentDidMount() {
-    // const { currentSelectedTimeSlot, rows } = this.props;
-    // console.log(rows, "rows");
-    // console.log(currentSelectedTimeSlot, "currentSelectedTimeSlot");
-    // if (rows.length > 0) {
-    //     if (
-    //         currentSelectedTimeSlot !== "" ||
-    //         currentSelectedTimeSlot !== null
-    //     ) {
-    //         document.getElementById(currentSelectedTimeSlot).checked = true;
-    //     }
-    // }
-    console.log("CheckValueForThis",this)
-    console.log("PrpsTocheckThis",this.props)
     if (this.props.initiatedBookingFromDate) {
 
       let initiatedBookingFromDateYmdFormat= convertDateInYMD(this.props.initiatedBookingFromDate)
@@ -131,35 +56,25 @@ class CustomTimeSlots extends Component {
       );
       let goDate = `${goDay}-${goMonth}-${goYear}`;
       let i = 0;
-      console.log("this.porps.rows", this.props.rows);
+      
       for (i; i < this.props.rows.length; i++) {
         if (this.props.rows[i].date == goDate) {
           break;
         }
       }
-      console.log(i, "i fffvalue");
+      
       this.setState((state) => ({
         currentSlide: i,
       }));
     }
   }
   componentWillReceiveProps(nextProps) {
-    // const { currentSelectedTimeSlot, rows } = this.props;
-    //console.log(nextProps, "nextProps");
-    // if (rows.length > 0) {
-    //     if (
-    //         currentSelectedTimeSlot !== "" ||
-    //         currentSelectedTimeSlot !== null
-    //     ) {
-    //         document.getElementById(currentSelectedTimeSlot).checked = true;
-    //     }
-    // }
   }
   selectTimeSlot = (e) => {
-    //alert(e.target.getAttribute('data-date')+'---'+e.target.getAttribute('data-timeslot'));
-    console.log(e, "elon");
+   
+   
     var cbarray = document.getElementsByName("time-slot");
-    // console.log("cbarray", cbarray);
+   
     var [from, to] = e.target.getAttribute("data-timeslot").split("-");
     if (e.target.getAttribute("data-date") == this.props.isSameDate && from === this.props.firstToTime) {
       this.props.prepareFinalObject(
@@ -167,19 +82,8 @@ class CustomTimeSlots extends Component {
         this.props.perDayBookedSlotCount + 1
       );
       let perDayBookedSlotCount = this.props.perDayBookedSlotCount;
-
-      // document.getElementById(
-      //     e.target.getAttribute("data-date") +
-      //     ":" +
-      //     e.target.getAttribute("data-timeslot")
-      // ).checked = true;
-      // console.log(
-      //     e.target.getAttribute("data-date") +
-      //     "---" +
-      //     e.target.getAttribute("data-timeslot")
-      // );
       if(e.target.getAttribute("data-timeslot") === "9AM-9PM"){
-         console.log("When click on whole day")
+        
          for (var i = 0; i < cbarray.length; i++) {
             cbarray[i].checked = false;
           }
@@ -196,9 +100,9 @@ class CustomTimeSlots extends Component {
        let apiDate = `${apiYear}-${apiMonth}-${apiDay}`;
 
        let changefromDate = moment(apiDate).format("YYYY-MM-DD");
-       console.log("changefromDate",changefromDate)
+       
        let changeToDate = moment(apiDate).format("YYYY-MM-DD");
-       console.log("changeToDate",changeToDate)
+       
 
 this.props.prepareFinalObject("Booking.wholeDay",apiDate)
 this.props.prepareFinalObject("Booking.wholeDay.slotOne","9AM - 1PM")
@@ -266,11 +170,7 @@ this.props.prepareFinalObject("Booking.wholeDay.ToDate",changeToDate + "," +"9PM
           ":" +
           e.target.getAttribute("data-timeslot")
       ).checked = true;
-    //   console.log(
-    //     e.target.getAttribute("data-date") +
-    //       "---" +
-    //       e.target.getAttribute("data-timeslot")
-    //   );
+   
       var [from, to] = e.target.getAttribute("data-timeslot").split("-");
       var [apiDay, apiMonth, apiYear] = e.target
         .getAttribute("data-date")
@@ -318,7 +218,6 @@ this.props.prepareFinalObject("Booking.wholeDay.ToDate",changeToDate + "," +"9PM
         break;
       }
     }
-    console.log(i, "i value");
     this.setState((state) => ({
       currentSlide: i,
     }));
@@ -336,8 +235,6 @@ this.props.prepareFinalObject("Booking.wholeDay.ToDate",changeToDate + "," +"9PM
     const classes = withStyles();
     let { rows, currentDate, currentSelectedTimeSlot } = this.props;
 
-    // document.getElementById(currentSelectedTimeSlot).checked = true;
-    // console.log(this.props, "this.props booking time slot");
     const arrowStyles = {
       position: "absolute",
       zIndex: 2,
@@ -793,9 +690,9 @@ const mapStateToProps = (state) => {
       }
     }
     if (initiatedBookingFromDate) {
-console.log("initiatedBookingFromDate-map-stateProps",initiatedBookingFromDate)
+
       let initiatedBookingFromDateYmdFormat= convertDateInYMD(initiatedBookingFromDate)
-  console.log("shivamSuggestion",initiatedBookingFromDateYmdFormat)
+
       var [goYear, goMonth, goDay] = initiatedBookingFromDateYmdFormat.split(
         "-"
       );
@@ -805,29 +702,29 @@ console.log("initiatedBookingFromDate-map-stateProps",initiatedBookingFromDate)
             // var [goYear, goMonth, goDay] = initiatedBookingFromDate.split("-");
 
       let goDate = `${goDay}-${goMonth}-${goYear}`;
-      console.log("GoDateSuggestion",goDate)
+ 
       if (timeSlotArray[j].date === goDate && initiatedBookingTimeSlot) {
         for (let l = 0; l < timeSlotArray[j].timeSlots.length; l++) {
-          console.log(timeSlotArray[j].timeSlots[l], initiatedBookingTimeSlot[0].slot, "fsdfsfsdf");
+         
           if (
             initiatedBookingTimeSlot[0].slot === timeSlotArray[j].timeSlots[l]
           ) {
-            console.log("Hello Bulbul");
+         
                    
             timeSlotArray[j].timeSlots.splice(
               l,
               1,
               `${timeSlotArray[j].timeSlots[l]}:initiated`
             );
-            console.log("timeSlotArray[j]", timeSlotArray[j]);
+         
           }
 
           if(perDayBookedSlotCount !== 1 || initiatedBookingTimeSlot.length > 1 ){
-console.log("initiatedBookingTimeSlot",initiatedBookingTimeSlot)
+
             if (initiatedBookingTimeSlot[1].slot === timeSlotArray[j].timeSlots[l]) {
-                console.log("Hello Bulbul");
+
                 timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:initiated`);
-                console.log('timeSlotArray[j]', timeSlotArray[j])
+
                 
             }
         }
@@ -835,7 +732,7 @@ console.log("initiatedBookingTimeSlot",initiatedBookingTimeSlot)
     }
 }
 finalBookedTimeSlots.push(tempObj);
-console.log('tempObj', tempObj)
+
 };
 return {
   rows: finalBookedTimeSlots,
