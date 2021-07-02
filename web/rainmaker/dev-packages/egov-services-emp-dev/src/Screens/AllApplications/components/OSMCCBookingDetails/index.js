@@ -112,14 +112,14 @@ class BookingDetails extends Component {
     var ProcessInstances = [];
     let reverseHistoryData = [];
     let lastElement = []
-console.log("PropsInOSMCCBookingDetail",this.props)
+
     if (historyApiData != undefined && historyApiData.ProcessInstances && historyApiData.ProcessInstances.length > 0) {
       ProcessInstances = [...historyApiData.ProcessInstances];
-      console.log("ProcessInstancesooooooo",ProcessInstances)
+
       reverseHistoryData = ProcessInstances.reverse();
-      console.log("reverseHistoryData==>",reverseHistoryData)
+
       lastElement = reverseHistoryData[reverseHistoryData.length - 1];
-      console.log("lastElementOfHostory",lastElement)
+
     }
 
 
@@ -173,7 +173,6 @@ console.log("PropsInOSMCCBookingDetail",this.props)
                         {reverseHistoryData.map(
                           (item, index) =>
                             item && (
-                              console.log("itemForViewHistory",item),
                               <Step key={index} active={true}>
                                 <StepLabel>
                                   <LabelContainer
