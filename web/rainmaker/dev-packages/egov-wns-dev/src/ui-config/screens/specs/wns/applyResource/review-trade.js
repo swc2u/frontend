@@ -281,7 +281,13 @@ export const propertyDetails={
       labelKey: "WS_PROPERTY_NO_OF_FLOOR_LABEL"
     },
     { jsonPath: "WaterConnection[0].property.noOfFloors",
-    callBack: handleNA }
+    callBack: handleNA,
+    localePrefix: {
+      moduleName: "WS",
+      masterName: "FLOOR"
+    }
+  
+  }
   ),
   // rainwaterHarvestingFacility: getLabelWithValue(
   //   {

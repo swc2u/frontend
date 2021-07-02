@@ -685,6 +685,7 @@ try{
          let houseNo=''
          let plotnumber=''
          let sector =''
+         let connectionNumber =''
          if(applicationNumber.includes("WS"))
          {
         //   const response = await httpRequest(
@@ -719,7 +720,7 @@ try{
           activityType =get(res, "WaterConnection[0].activityType", '')
           applicantName =get(res, "WaterConnection[0].connectionHolders[0].name", '')
           applicantAddress =get(res, "WaterConnection[0].connectionHolders[0].correspondenceAddress", '')
-          
+          connectionNumber = get(res, "WaterConnection[0].connectionNo", '')
           if(resp&&resp.Properties&&resp.Properties.length>0){
           plotnumber =get(resp.Properties[0], "address.doorNo", '')
           houseNo =get(resp.Properties[0], "address.plotNo", '')
@@ -796,6 +797,7 @@ try{
             div: div,
             subDiv:subDiv,
             applicationNumber:applicationNumber,
+            connectionNumber:connectionNumber,
             receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
             activityType: activityType,
             applicantName: applicantName,
@@ -868,6 +870,9 @@ try{
         activityType =get(res, "SewerageConnections[0].activityType", '')
         applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
         applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+
+        connectionNumber = get(res, "SewerageConnections[0].connectionNo", '')
+
         if(resp&&resp.Properties&&resp.Properties.length>0){
           plotnumber =get(resp.Properties[0], "address.doorNo", '')
           houseNo =get(resp.Properties[0], "address.plotNo", '')
@@ -890,6 +895,7 @@ try{
             div: div,
             subDiv:subDiv,
             applicationNumber:applicationNumber,
+            connectionNumber:connectionNumber,
             receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
             activityType: activityType,
             applicantName: applicantName,
@@ -1120,6 +1126,7 @@ try{
          let houseNo=''
          let plotnumber=''
          let sector =''
+         let connectionNumber =''
          if(applicationNumber.includes("WS"))
          {
         //   const response = await httpRequest(
@@ -1231,6 +1238,7 @@ try{
             div: div,
             subDiv:subDiv,
             applicationNumber:applicationNumber,
+            connectionNumber:connectionNumber,
             receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
             activityType: activityType,
             applicantName: applicantName,
@@ -1303,6 +1311,9 @@ try{
         activityType =get(res, "SewerageConnections[0].activityType", '')
         applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
         applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+
+        connectionNumber = get(res, "SewerageConnections[0].connectionNo", '')
+
         if(resp&&resp.Properties&&resp.Properties.length>0){
           plotnumber =get(resp.Properties[0], "address.doorNo", '')
           houseNo =get(resp.Properties[0], "address.plotNo", '')
@@ -1325,6 +1336,7 @@ try{
             div: div,
             subDiv:subDiv,
             applicationNumber:applicationNumber,
+            connectionNumber:connectionNumber,
             receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
             activityType: activityType,
             applicantName: applicantName,

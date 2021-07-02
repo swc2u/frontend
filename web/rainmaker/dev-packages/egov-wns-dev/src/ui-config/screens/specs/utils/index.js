@@ -589,7 +589,16 @@ export const handleNA = params => {
     return (params.toString()); 
     }
     else
-    return params;
+    {
+      if(Number(params))
+      {
+        return (params.toString()); 
+      }
+      else{
+        return params;
+      }
+    }
+    
   } 
    
   else { return "NA"; }

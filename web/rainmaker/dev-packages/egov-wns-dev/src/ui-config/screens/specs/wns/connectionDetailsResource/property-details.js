@@ -77,14 +77,7 @@ const propertyDetails = getCommonContainer({
       jsonPath: "WaterConnection[0].property.landArea"
     }
   ),
-  reviewNumberOfFloors: getLabelWithValue(
-    {
-      labelName: "Number Of Floors",
-      labelKey: "WS_PROPERTY_NO_OF_FLOOR_LABEL"
-    },
-    { jsonPath: "WaterConnection[0].property.noOfFloors",
-    callBack: handleNA }
-  ),
+
   reviewCoveredArea: getLabelWithValue(
     {
       labelName: "Covered Area",
@@ -92,6 +85,19 @@ const propertyDetails = getCommonContainer({
     },
     { jsonPath: "WaterConnection[0].property.superBuiltUpArea",
     callBack: handleNA }
+  ),
+  reviewNumberOfFloors: getLabelWithValue(
+    {
+      labelName: "Number Of Floors",
+      labelKey: "WS_PROPERTY_NO_OF_FLOOR_LABEL"
+    },
+    { jsonPath: "WaterConnection[0].property.noOfFloors",
+    callBack: handleNA,
+    localePrefix: {
+      moduleName: "WS",
+      masterName: "FLOOR"
+    }
+   }
   ),
 })
 
