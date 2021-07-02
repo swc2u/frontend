@@ -227,20 +227,22 @@ else{
                 oldDocCode != card.name ||
                 oldDocSubCode != subCard.name
               ) {
-                if (oldDocuments) {
+                if (oldDocuments) { documentsUploadRedux !== undefined && documentsUploadRedux !== null ? 
                   documentsUploadRedux[index] = {
                     documentType: docType.code,
                     documentCode: card.name,
                     documentSubCode: subCard.name,
                     documents: [oldDocuments],
-                  };
-                } else {
+                }   : ""
+                } else { 
+                  documentsUploadRedux !== undefined && documentsUploadRedux !== null ? 
                   documentsUploadRedux[index] = {
-                    documentType: docType.code,
-                    documentCode: card.name,
-                    documentSubCode: subCard.name
-                  };
+                  documentType: docType.code,
+                  documentCode: card.name,
+                  documentSubCode: subCard.name
                 }
+               : ""
+              }
               }
               index++;
             });
@@ -282,7 +284,7 @@ else{
                     : false,
                   mydocstate: false
                 };
-                documentsUploadRedux[index] = { ...newDocumentData };  
+              documentsUploadRedux[index] = { ...newDocumentData };  
           }
                       }
                       index++;
@@ -371,12 +373,12 @@ else{
             color="#000000"
             fontSize="21px"
             alignItems="left"
-            labelClassName={"myDOC"}
+            labelClassName={"myDOCD"}
           />
           <Label label="BK_MYBK_DOCUMENT_VALIDATION_MSG" />
           <Grid container={true}>
             <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
-            {documentsUploadRedux[key] &&
+            {documentsUploadRedux && documentsUploadRedux[key] &&
               documentsUploadRedux[key].documents ? (
                 <div className={classes.documentSuccess}>
                   <Icon>
@@ -466,14 +468,14 @@ else{
                 handleFileUpload={(e) =>
                   handleFileUpload(e, this.handleDocument, this.props)
                 }
-                uploaded={
+                uploaded={ documentsUploadRedux &&
                   documentsUploadRedux[key] &&
                   documentsUploadRedux[key].documents
                     ? true
                     : false
                 }
                 removeDocument={() => this.removeDocument(key)}
-                documents={
+                documents={documentsUploadRedux &&
                   documentsUploadRedux[key] &&
                   documentsUploadRedux[key].documents
                 }

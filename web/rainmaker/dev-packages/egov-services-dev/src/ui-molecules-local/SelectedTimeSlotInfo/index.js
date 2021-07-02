@@ -20,8 +20,8 @@ class SelectedTimeSlotInfo extends Component {
         console.log(this.props,"kj  nero rops");
         return (
             <Grid container={true}>
-                <Grid item={true} xs={1}>
-                    <span
+             <Grid item={true} xs={2} sm={1} lg={1} md={1}>
+                       <span
                         style={{
                             display: "block",
                             color: "rgba(0, 0, 0, 0.54)",
@@ -34,8 +34,8 @@ class SelectedTimeSlotInfo extends Component {
                     </span>
 
                 </Grid>
-                <Grid item={true} xs={11}>
-
+                <Grid item={true} xs={10} sm={11} lg={11} md={11}>
+  
                     <span
                         style={{
                             color: "rgba(0, 0, 0, 0.87)",
@@ -49,8 +49,8 @@ class SelectedTimeSlotInfo extends Component {
                         {bookingLocation}
                     </span>
                 </Grid>
-                <Grid item={true} xs={1}>
-                    <span
+                <Grid item={true} xs={2} sm={1} lg={1} md={1}>
+                         <span
                         style={{
                             display: "block",
                             color: "rgba(0, 0, 0, 0.54)",
@@ -63,7 +63,7 @@ class SelectedTimeSlotInfo extends Component {
                     </span>
 
                 </Grid>
-                <Grid item={true} xs={11}>
+                <Grid item={true} xs={10} sm={11} lg={11} md={11}>
 
                     <span
                         style={{
@@ -78,8 +78,8 @@ class SelectedTimeSlotInfo extends Component {
                         {timeSlots && timeSlots.length > 0? bkDisplayFromDateTime:'--/--/--'}
                     </span>
                 </Grid>
-                <Grid item={true} xs={1}>
-                    <span
+                <Grid item={true} xs={2} sm={1} lg={1} md={1} >
+                        <span
                         style={{
                             display: "block",
                             color: "rgba(0, 0, 0, 0.54)",
@@ -92,7 +92,7 @@ class SelectedTimeSlotInfo extends Component {
                     </span>
 
                 </Grid>
-                <Grid item={true} xs={11}>
+                <Grid item={true} xs={10} sm={11} lg={11} md={11}>
 
                     <span
                         style={{
@@ -159,6 +159,9 @@ const mapStateToProps = (state, ownProps) => {
         "screenConfiguration.preparedFinalObject.DisplayPacc.bkDisplayToDateTime",
         []
     );
+    if(timeSlots && timeSlots.length>1){
+        bkDisplayToDateTime= `${bkToDate} ,${timeSlots[1].slot.split('-')[1]}`
+    }
     return {
         bookingLocation: bookingLocation,
         fromDate: bkFromDate,

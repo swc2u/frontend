@@ -9,6 +9,20 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './index.css'
 
+
+const onRowClick = (state, rowInfo, column, instance) => {
+    debugger;
+    return {
+        onClick: e => {
+            e.preventDefault();
+            debugger;
+            
+            window.location.href = "egov-hc/search-preview?applicationNumber=CH-HC-2021-05-11-000197&tenantId=ch.chandigarh";
+            debugger;
+        }
+    }
+}
+
 class HCDashboard extends React.Component {
   constructor(props) {
     super(props);
@@ -175,9 +189,13 @@ class HCDashboard extends React.Component {
     return [ graphOneLabel, graphOneData, group ]
     }
 
+
     // CamelCase Column Name 
     camelize = (str) =>  {
         // var res = str.substr(0, 1);
+        if(str === "owner_name"){
+            return "Complainant name"
+        }
         var res = String(str).substr(0, 1);
         str = str.replaceAll("_", " ")
         return str.replace(res, function(res)
@@ -306,7 +324,15 @@ class HCDashboard extends React.Component {
             // const propSortBy = "service_type";
             // const propSortBy = "locality";
             
-            const data = propsData[0].services
+            var data = propsData[0].services;
+            for(var i=0;i<data.length;i++){
+                if(data[i].servicerequestsubtype){
+                    var subType = JSON.parse(data[i].servicerequestsubtype)
+                    data[i]["servicerequestsubtype"] = subType.subservicetype
+                }else{
+                    data[i]["servicerequestsubtype"] = "-"
+                }
+            }
             const propSortBy = propsData[1]
         
             // Graph One Sorting Function 
@@ -382,7 +408,7 @@ class HCDashboard extends React.Component {
                 var itemHeader = {}
                 itemHeader["Header"] = this.camelize(tableData[i]);
                 itemHeader["accessor"] = tableData[i];
-                if(i === 1 || i === 2 || i === 3 || i === 4 || i === 6 || i === 8 ){
+                if(i === 1 || i === 2 || i === 3 || i === 4 || i === 6 || i === 7 || i === 10 || i === 8 ){
                     itemHeader["show"] = true;
                     columnData.push(itemHeader);
                 }
@@ -969,6 +995,7 @@ class HCDashboard extends React.Component {
                 columns={ this.state.columnData }  
                 defaultPageSize = {10}  
                 pageSizeOptions = {[20,40,60]}  
+                getTrProps={onRowClick}
                 /> 
                 :null
             }

@@ -54,7 +54,7 @@ import {
   sendMessage,
   downloadPLForPCC,
   sendMessageMedia,
-  downloadEsampPaymentReceipt,PaccCitizenPaymentRecpt,
+  downloadEsampPaymentReceipt,PaccCitizenPaymentRecpt,cancelBookingPayReceipt,
   downloadPaccPermissionLetter,PaccCitizenPermissionLetter,citizenCommunityPL
 } from "egov-ui-kit/redux/bookings/actions";
 import { connect } from "react-redux";
@@ -72,6 +72,7 @@ class ApplicationDetails extends Component {
     super(props);
     this.state = {
       BKROOM_TAX: "", //operatorCode,Address,hsnCode
+      CurrentAppNumber: "",
       BKROOM: "",
       BKROOM_ROUND_OFF: "",
       four: "",
@@ -152,6 +153,15 @@ class ApplicationDetails extends Component {
     console.log("propsforRefund--", this.props);
     // let AppNo = selectedComplaint.bkApplicationNumber
     // console.log("AppNo--", AppNo)
+
+    let fetchUrl = window.location.pathname;
+    let fetchApplicationNumber = fetchUrl.substring(
+      fetchUrl.lastIndexOf("/") + 1
+    ); 
+
+    this.setState({
+      CurrentAppNumber : fetchApplicationNumber
+    })
 
     let funtenantId = userInfo.tenantId;
     console.log("funtenantId--", funtenantId);
@@ -241,7 +251,7 @@ class ApplicationDetails extends Component {
     this.setState({
       operatorCode: operatorCode,
       Address: Address,
-      hsnCode: hsnCode,
+      hsnCode: hsnCode, 
       name: name,
     });
 
@@ -345,6 +355,15 @@ class ApplicationDetails extends Component {
     }
     console.log("nero proofOfResDocs", proofOfResDocs, "----", allDocumentList);
     if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
+      let arr2 = [];
+      for(let i = 0; i < dataforSectorAndCategory.bookingsModelList[0].timeslots.length; i++){
+        arr2.push(dataforSectorAndCategory.bookingsModelList[0].timeslots[i].slot)
+      }
+      console.log("arr",arr2)
+
+      if(arr2.length == 1){
+      console.log("it contain single element")
+      console.log("your time slot is",arr2[0])
       let timeSlot =
         dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot;
       console.log("timeSlot--", timeSlot);
@@ -389,6 +408,75 @@ class ApplicationDetails extends Component {
       console.log("timeSlotId--", timeSlotId);
 
       prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
+      }
+       else{
+        let a = arr2[0]
+        let b = arr2[1]
+        console.log("a",a)
+        console.log("b",b)
+        let fromfirst = a.split("-")
+        console.log("first",fromfirst)
+       let fromsecond = b.split("-")
+      console.log("second",fromsecond)
+      
+      let first = fromfirst[0]
+      let second = fromsecond[1]
+      console.log("first",first)
+      console.log("second",second)
+
+      let comfirstsecond = first + "-" + second
+      console.log("comfirstsecond",comfirstsecond)
+
+      let timeSlot = comfirstsecond
+console.log("timeSlot54234",timeSlot)
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
+
+
+      let res = timeSlot.split("-");
+      console.log("res--", res);
+
+      let fromTime = res[0];
+      console.log("fromTime--", fromTime);
+
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
+
+      let ToTime = res[1];
+      console.log("ToTime--", ToTime);
+
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
+
+      let strMid = ",";
+
+      let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
+      console.log("ConcatFromDateTime--", ConcatFromDateTime);
+
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatFromDateTime",
+        ConcatFromDateTime
+      );
+
+      let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
+      console.log("ConcatToDateTime--", ConcatToDateTime);
+
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatToDateTime",
+        ConcatToDateTime
+      );
+
+      //let bkDisplayFromDateTime =
+
+      let timeSlotId =
+        dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id;
+      console.log("timeSlotId--", timeSlotId);
+
+      prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
+
+      let timeSlotIdTwo =
+      dataforSectorAndCategory.bookingsModelList[0].timeslots[1].id;
+    console.log("timeSlotIdTwo--", timeSlotIdTwo);
+
+    prepareFinalObject("oldAvailabilityCheckData.timeSlotIdTwo", timeSlotIdTwo);  
+       }
     }
 
     let NewfinanceBusinessService;
@@ -484,29 +572,40 @@ class ApplicationDetails extends Component {
       { key: "tenantId", value: userInfo.tenantId },
     ];
 
-    let BillingServiceData = await httpRequest(
-      "billing-service/bill/v2/_search",
-      "_search",
-      reqParams
-    );
+try{
+  let BillingServiceData = await httpRequest(
+    "billing-service/bill/v2/_search",
+    "_search",
+    reqParams
+  );
 
-    console.log("BillingService--abc", BillingServiceData);
-    prepareFinalObject("DateVenueChngeAmount", BillingServiceData);
-    //Bill[2].billDetails[0].billAccountDetails
-    // let BillArray = BillingServiceData.Bill[2].billDetails[0].billAccountDetails
-    // console.log("BillArray-",BillArray)
+  console.log("BillingService--abc", BillingServiceData);
+  prepareFinalObject("DateVenueChngeAmount", BillingServiceData);
+  //Bill[2].billDetails[0].billAccountDetails
+  // let BillArray = BillingServiceData.Bill[2].billDetails[0].billAccountDetails
+  // console.log("BillArray-",BillArray)
 
-    this.setState({
-      AppName:
-        dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-          ? dataforSectorAndCategory.bookingsModelList[0].bkApplicantName
-          : "NA",
-      fullAmountDetail: BillingServiceData.Bill[0], //BillingServiceData.Bill[2],
-      CheckStatus: AppStatus,
-      modifiedFirstAmount: BillingServiceData.Bill[2], //BillingServiceData.Bill[0]
-    });
+  this.setState({
+    AppName:
+      dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+        ? dataforSectorAndCategory.bookingsModelList[0].bkApplicantName
+        : "NA",
+    fullAmountDetail: BillingServiceData.Bill[0], //BillingServiceData.Bill[2],
+    CheckStatus: AppStatus,
+    modifiedFirstAmount: BillingServiceData.Bill[2], //BillingServiceData.Bill[0]
+  });
 
-    prepareFormData("complaints", transformedComplaint);
+  prepareFormData("complaints", transformedComplaint);
+}catch(err){
+ this.props.toggleSnackbarAndSetText(
+    true,
+    {
+      labelName: "Something went wrong.Try Again",
+      labelKey: `Something went wrong.Try Again`
+    },
+    "error"
+  );
+}
     const { complaint } = transformedComplaint;
     fetchApplications({
       applicationNumber: match.params.applicationId,
@@ -670,6 +769,7 @@ class ApplicationDetails extends Component {
             }
           }
           bookingNosString = bookingNosString.slice(0, -1); //Removing last Character
+          let roomBookingAmount = 0;
           if (bookingNosString && tenantId) {
             let queryObject = [
               { key: "tenantId", value: tenantId },
@@ -681,7 +781,7 @@ class ApplicationDetails extends Component {
               "",
               queryObject
             );
-            let roomBookingAmount = 0;
+            // let roomBookingAmount = 0;
             if (payload) {
               console.log(payload, "Nero Payload");
               // dispatch(
@@ -802,6 +902,35 @@ class ApplicationDetails extends Component {
       }
     }
   };
+   
+//   getBookingCancelledDate = async (applicationNumber, tenantId) => {
+//     if (applicationNumber && tenantId) {    
+//         let queryObject = [
+//             { key: "tenantId", value: tenantId },
+//             { key: "businessIds", value: applicationNumber },
+//         ];
+//         const payload = await httpRequest(
+//             "/egov-workflow-v2/egov-wf/process/_search",
+//             "_search",
+//             queryObject
+//         );
+
+//         if (payload) {
+
+//             let cancelledTimeStamp = payload.ProcessInstances[0].auditDetails.createdTime;
+// console.log("cancelledTimeStamp",cancelledTimeStamp)
+//             let date2 = new Date(cancelledTimeStamp);
+
+//             let gdate = ('0' + date2.getDate()).slice(-2) + '/'
+//                 + ('0' + (date2.getMonth() + 1)).slice(-2) + '/'
+//                 + date2.getFullYear();
+//                 console.log("gdate",gdate)
+//             return gdate;
+
+
+//         }
+//     }
+// }
 
   componentWillReceiveProps = async (nextProps) => {
     // alert("checkwillreceiveprops")
@@ -1002,6 +1131,39 @@ class ApplicationDetails extends Component {
     return word + "Rupees Only";
   };
 
+
+  dateTimeSlot = (d1,d2) => {
+
+    let dateArr = []
+
+    let fnewDate = new Date(d1)
+    var generatedDateTimef1 = `${fnewDate.getDate()}-${fnewDate.getMonth() + 1}-${fnewDate.getFullYear()}`;
+    console.log("generatedDateTimef1",generatedDateTimef1)
+
+    let slotFromDate = `${generatedDateTimef1}, 9:00AM`
+    console.log("slotFromDate",slotFromDate)
+
+    let tnewDate = new Date(d2)
+console.log("tnewDate",tnewDate)
+    let result = tnewDate.setTime(tnewDate.getTime() + (24 * 60 * 60 * 1000)); 
+    console.log("result",result)
+
+    let newToDate = new Date(result)
+    console.log("newToDate",newToDate)
+
+    var generatedDateTimeT1 = `${newToDate.getDate()}-${newToDate.getMonth() + 1}-${newToDate.getFullYear()}`;
+    console.log("generatedDateTimeT1",generatedDateTimeT1)
+
+    let slotToDate = `${generatedDateTimeT1}, 8:59AM`
+    console.log("slotToDate",slotToDate)
+
+    dateArr.push(slotFromDate)
+    dateArr.push(slotToDate)
+console.log("dateArr",dateArr)
+
+return dateArr
+  }
+
   downloadPaymentReceiptFunction = async (e) => {
     const {
       transformedComplaint,
@@ -1016,7 +1178,7 @@ class ApplicationDetails extends Component {
       downloadReceiptForPCC,
       userInfo,
       selectedComplaint,
-      downloadEsampPaymentReceipt,PaccCitizenPaymentRecpt,
+      downloadEsampPaymentReceipt,PaccCitizenPaymentRecpt,cancelBookingPayReceipt,PaymentModeCNumber,
       PACC,
       LUXURY_TAX,
       REFUNDABLE_SECURITY,
@@ -1026,11 +1188,21 @@ class ApplicationDetails extends Component {
       amountTodisplay,
     } = this.props;
     console.log("pcccpaymentreceipt", this.props);
+
+    let applicationDetails = selectedComplaint;
+
+    let CardNumber;
+    if(PaymentModeCNumber == "CARD"){
+      CardNumber = applicationDetails.cardNumber
+    }
+    else{
+      CardNumber = "Not Applicable"
+    }
     let NumAmount = 0;
     NumAmount = Number(amountTodisplay);
     const { complaint } = transformedComplaint; //amountTodisplay
 
-    let applicationDetails = selectedComplaint;
+    
     let Newugst;
     let perFind = 50;
     let ugst = PACC_TAX;
@@ -1054,8 +1226,8 @@ class ApplicationDetails extends Component {
     }
     // let fdocname = Object.entries(documentMap)[0][1]
 
-
-if(applicationDetails.bkAction === "RE_INITIATE" || applicationDetails.bkAction === "APPLY" || applicationDetails.bkAction === "CANCEL" || applicationDetails.bkAction === "MODIFY"){
+//applicationDetails.bkAction === "CANCEL" ||
+if(applicationDetails.bkAction === "RE_INITIATE" || applicationDetails.bkAction === "APPLY" || applicationDetails.bkAction === "MODIFY"){
 console.log("comeInCitizenPaymentReceipt")
 
 let  RequestGateWay = [
@@ -1110,10 +1282,11 @@ gateWay = payloadGateWay.Transaction[0].gateway;
           totalgst: PACC_TAX,
           refundableCharges: this.props.REFUNDABLE_SECURITY,
           totalPayment: amountTodisplay,
-          paymentDate: convertEpochToDate(
-            this.props.offlineTransactionDate,
-            "dayend"
-          ),
+          // paymentDate: convertEpochToDate(
+          //   this.props.offlineTransactionDate,
+          //   "dayend"
+          // ),
+          paymentDate: applicationDetails.createdDate,
           receiptNo: this.props.recNumber,
           paymentType: this.props.offlinePayementMode,
           facilitationCharge: FACILITATION_CHARGE,
@@ -1143,12 +1316,180 @@ gateWay = payloadGateWay.Transaction[0].gateway;
           rBankName: applicationDetails.bkBankName,
           rBankACNo: applicationDetails.bkBankAccountNumber,
           rIFSCCode: applicationDetails.bkIfscCode,
+          nomName: applicationDetails.bkNomineeName,
         },
 
     }
 ]
 console.log("citizenPaymentRequestBody",BookingInfo)
 PaccCitizenPaymentRecpt({ BookingInfo: BookingInfo });
+}
+
+else if(applicationDetails.bkAction == "CANCEL" && applicationDetails.bkRemarks !== null && applicationDetails.bkRemarks !== undefined){
+  let date2 = new Date();
+  let tmpdate1 = new Date(applicationDetails.bkFromDate)
+  console.log("tmpdate1",tmpdate1)
+  let tmpdate2 = new Date(applicationDetails.bkToDate)
+  console.log("tmpdate2",tmpdate2)
+  console.log("BookingCANCLdate",date2)
+      var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+   
+   let finalResult = this.dateTimeSlot(applicationDetails.bkFromDate,applicationDetails.bkToDate)
+   console.log("finalResult",finalResult)
+
+   let citizenCancelDate = "NA"
+   let NewcitizenCancelDate;
+   let citiCancelDate;
+
+   if(applicationDetails.bkLocationPictures !== undefined && applicationDetails.bkLocationPictures !== null){
+    citizenCancelDate = applicationDetails.bkLocationPictures
+    NewcitizenCancelDate = new Date(citizenCancelDate);
+    citiCancelDate = `${NewcitizenCancelDate.getDate()}-${NewcitizenCancelDate.getMonth() + 1}-${NewcitizenCancelDate.getFullYear()}`;
+console.log("citiCancelDate",citiCancelDate)
+   }
+  
+// let citizenCancelDate = this.getBookingCancelledDate(applicationDetails.bkApplicationNumber,applicationDetails.tenantId)
+// console.log("citizenCancelDate",citizenCancelDate)
+      let  RequestGateWay = [
+        { key: "consumerCode", value: this.state.CurrentAppNumber},
+        { key: "tenantId", value: userInfo.tenantId }
+        ];
+        let payloadGateWay = await httpRequest(
+        "pg-service/transaction/v1/_search",
+        "_search",
+        RequestGateWay
+        );
+        //Transaction[0].gateway
+      let gateWay = "citizenSide"
+       if(payloadGateWay.Transaction.length > 0){
+      gateWay = payloadGateWay.Transaction[0].gateway; 
+      }
+    let BookingInfo = [
+      {
+          "applicantDetail": {
+              "name": applicationDetails.bkApplicantName,
+              "mobileNumber": applicationDetails.bkMobileNumber,
+              "houseNo": applicationDetails.bkHouseNo,
+              "permanentAddress": applicationDetails.bkHouseNo,
+              "permanentCity": "chandigarh",
+              "sector": applicationDetails.bkSector,
+          },
+          "booking": {
+              "bkApplicationNumber": applicationDetails.bkApplicationNumber,
+              "bookingCancellationDate": citiCancelDate,  //cancellationDate
+              "bookingDuration": `${finalResult[0]} to ${finalResult[1]}`,
+              // "bookingDuration": getDurationDate(
+              //   applicationDetails.bkFromDate,
+              //   applicationDetails.bkToDate
+              // ), 
+              "bookingVenue": applicationDetails.bkLocation,
+              "bkCancellationReasoon":applicationDetails.bkRemarks
+          },
+          "paymentInfo": {
+              "totalAmountPaid": amountTodisplay,
+              "amountInWords": this.NumInWords(NumAmount),
+              "receiptNo": this.props.recNumber,
+              "bankName": gateWay == "citizenSide" ? "Not Applicable": gateWay,
+              "refundAmount": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+              applicationDetails.refundableSecurityMoney : amountTodisplay,
+              "refundAmountInWords": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+              this.NumInWords(applicationDetails.refundableSecurityMoney) : this.NumInWords(NumAmount)
+          },
+          "payerInfo": {
+              "payerName": applicationDetails.bkApplicantName,
+              "payerMobile": applicationDetails.bkMobileNumber,
+          },
+          "tenantInfo": {
+              "municipalityName": "Municipal Corporation Chandigarh",
+              "address": "New Deluxe Building, Sector 17, Chandigarh",
+              "contactNumber": "+91-172-2541002, 0172-2541003",
+              "logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
+              "webSite": "http://mcchandigarh.gov.in"
+          },
+          generatedBy: {
+            generatedBy: userInfo.name,
+            generatedDateTime: generatedDateTime,       
+          },
+      }
+  ]
+  cancelBookingPayReceipt({ BookingInfo: BookingInfo})
+  }
+else if(applicationDetails.bkStatusUpdateRequest !== undefined && applicationDetails.bkStatusUpdateRequest !== null){
+let date2 = new Date();
+let tmpdate1 = new Date(applicationDetails.bkFromDate)
+console.log("tmpdate1",tmpdate1)
+let tmpdate2 = new Date(applicationDetails.bkToDate)
+console.log("tmpdate2",tmpdate2)
+console.log("BookingCANCLdate",date2)
+		var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+ 
+ let finalResult = this.dateTimeSlot(applicationDetails.bkFromDate,applicationDetails.bkToDate)
+ console.log("finalResult",finalResult)
+
+    let  RequestGateWay = [
+      { key: "consumerCode", value: this.state.CurrentAppNumber},
+      { key: "tenantId", value: userInfo.tenantId }
+      ];
+      let payloadGateWay = await httpRequest(
+      "pg-service/transaction/v1/_search",
+      "_search",
+      RequestGateWay
+      );
+      //Transaction[0].gateway
+    let gateWay = "citizenSide"
+     if(payloadGateWay.Transaction.length > 0){
+    gateWay = payloadGateWay.Transaction[0].gateway; 
+    }
+ 
+  let BookingInfo = [
+    {
+        "applicantDetail": {
+            "name": applicationDetails.bkApplicantName,
+            "mobileNumber": applicationDetails.bkMobileNumber,
+            "houseNo": applicationDetails.bkHouseNo,
+            "permanentAddress": applicationDetails.bkHouseNo,
+            "permanentCity": "chandigarh",
+            "sector": applicationDetails.bkSector,
+        },
+        "booking": {
+            "bkApplicationNumber": applicationDetails.bkApplicationNumber,
+            "bookingCancellationDate": applicationDetails.bkLocationPictures,
+            "bookingDuration": `${finalResult[0]} to ${finalResult[1]}`,
+            // "bookingDuration": getDurationDate(
+            //   applicationDetails.bkFromDate,
+            //   applicationDetails.bkToDate
+            // ), 
+            "bookingVenue": applicationDetails.bkLocation,
+            "bkCancellationReasoon":applicationDetails.bkStatusUpdateRequest
+        },
+        "paymentInfo": {
+            "totalAmountPaid": amountTodisplay,
+            "amountInWords": this.NumInWords(NumAmount),
+            "receiptNo": this.props.recNumber,
+            "bankName": gateWay == "citizenSide" ? "Not Applicable": gateWay,
+            "refundAmount": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+            applicationDetails.refundableSecurityMoney : amountTodisplay,
+            "refundAmountInWords": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+            this.NumInWords(applicationDetails.refundableSecurityMoney) : this.NumInWords(NumAmount)
+        },
+        "payerInfo": {
+            "payerName": applicationDetails.bkApplicantName,
+            "payerMobile": applicationDetails.bkMobileNumber,
+        },
+        "tenantInfo": {
+            "municipalityName": "Municipal Corporation Chandigarh",
+            "address": "New Deluxe Building, Sector 17, Chandigarh",
+            "contactNumber": "+91-172-2541002, 0172-2541003",
+            "logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
+            "webSite": "http://mcchandigarh.gov.in"
+        },
+        generatedBy: {
+          generatedBy: userInfo.name,
+          generatedDateTime: generatedDateTime,       
+        },
+    }
+]
+cancelBookingPayReceipt({ BookingInfo: BookingInfo})
 }
 else{
 console.log("employeePaymentReceipt")
@@ -1206,10 +1547,11 @@ console.log("employeePaymentReceipt")
           totalgst: PACC_TAX,
           refundableCharges: this.props.REFUNDABLE_SECURITY,
           totalPayment: amountTodisplay,
-          paymentDate: convertEpochToDate(
-            this.props.offlineTransactionDate,
-            "dayend"
-          ),
+          // paymentDate: convertEpochToDate(
+          //   this.props.offlineTransactionDate,
+          //   "dayend"
+          // ),
+          paymentDate: applicationDetails.createdDate,
           receiptNo: this.props.recNumber,
           paymentType: this.props.offlinePayementMode,
           facilitationCharge: FACILITATION_CHARGE,
@@ -1217,7 +1559,7 @@ console.log("employeePaymentReceipt")
           transactionId: this.props.offlineTransactionNum,
           totalPaymentInWords: this.NumInWords(NumAmount), //offlineTransactionDate,,
           bankName: "",
-          cardNumberLast4: "Not Applicable",
+          cardNumberLast4: CardNumber,
           dateVenueChangeCharges:
             this.props.DATEVENUECHARGE == 0
               ? "Not Applicable"
@@ -1244,6 +1586,7 @@ console.log("employeePaymentReceipt")
           rBankName: applicationDetails.bkBankName,
           rBankACNo: applicationDetails.bkBankAccountNumber,
           rIFSCCode: applicationDetails.bkIfscCode,
+          nomName: applicationDetails.bkNomineeName,
         },
       },
     ];
@@ -1263,6 +1606,9 @@ console.log("employeePaymentReceipt")
     let fdocname;
     let checkDocumentUpload = Object.entries(documentMap).length === 0;
     console.log("checkDocumentUpload", checkDocumentUpload);
+    var date2 = new Date();
+
+		var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
 
     if (checkDocumentUpload === true) {
       fdocname = "Not Found";
@@ -1294,7 +1640,7 @@ console.log("employeePaymentReceipt")
           bookingPurpose: selectedComplaint.bkBookingPurpose,
           parkDim: selectedComplaint.bkDimension,
         },
-        feeDetail: {
+        feeDetail: { 
           baseCharge: selectedComplaint.bkRent,
           cleaningCharge: selectedComplaint.bkCleansingCharges,
           surcharges: selectedComplaint.bkSurchargeRent,
@@ -1306,7 +1652,7 @@ console.log("employeePaymentReceipt")
         },
         generatedBy: {
           generatedBy: userInfo.name,
-          generatedDateTime: userInfo.createdDate,
+          generatedDateTime: generatedDateTime,
         },
         documentDetail: {
           documentName: fdocname,
@@ -1622,7 +1968,7 @@ console.log("employeePaymentReceipt")
       transformedComplaint,
       paymentDetails,
       downloadPLForPCC,
-      userInfo,
+      userInfo,PaymentModeCNumber,
       createPACCApplicationData,
       downloadEsamparkPL,
       Downloadesamparkdetailspl,
@@ -1630,12 +1976,22 @@ console.log("employeePaymentReceipt")
       PACC,
       LUXURY_TAX,
       REFUNDABLE_SECURITY,
-      PACC_TAX,
+      PACC_TAX,amountTodisplay,
       PACC_ROUND_OFF,
       FACILITATION_CHARGE,
       downloadPaccPermissionLetter,PaccCitizenPermissionLetter,citizenCommunityPL
     } = this.props;
+    console.log("propsInPlLetterOfPACCC--",this.props)
     let applicationDetails = selectedComplaint;
+
+    let CardNumber;
+    if(PaymentModeCNumber == "CARD"){
+      CardNumber = applicationDetails.cardNumber
+    }
+    else{
+      CardNumber = "Not Applicable"
+    }
+
     let Newugst;
     let perFind = 50;
     let ugst = PACC_TAX;
@@ -1704,10 +2060,11 @@ console.log("citizenPaymentReceipt")
           totalgst: PACC_TAX,
           refundableCharges: this.props.REFUNDABLE_SECURITY,
           totalPayment: this.props.totalAmount,
-          paymentDate: convertEpochToDate(
-            this.props.offlineTransactionDate,
-            "dayend"
-          ),
+          // paymentDate: convertEpochToDate(
+          //   this.props.offlineTransactionDate,
+          //   "dayend"
+          // ),
+          paymentDate: applicationDetails.createdDate,
           receiptNo: this.props.recNumber,
           custGSTN: applicationDetails.bkCustomerGstNo,
           mcGSTN: this.state.mcGSTN,
@@ -1731,6 +2088,7 @@ console.log("citizenPaymentReceipt")
           rBankName: applicationDetails.bkBankName,
           rBankACNo: applicationDetails.bkBankAccountNumber,
           rIFSCCode: applicationDetails.bkIfscCode,
+          nomName: applicationDetails.bkNomineeName,
         },
     }
 ]
@@ -1778,10 +2136,11 @@ else{
           totalgst: PACC_TAX,
           refundableCharges: this.props.REFUNDABLE_SECURITY,
           totalPayment: this.props.totalAmount,
-          paymentDate: convertEpochToDate(
-            this.props.offlineTransactionDate,
-            "dayend"
-          ),
+          // paymentDate: convertEpochToDate(
+          //   this.props.offlineTransactionDate,
+          //   "dayend"
+          // ),
+          paymentDate: applicationDetails.createdDate,
           receiptNo: this.props.recNumber,
           custGSTN: applicationDetails.bkCustomerGstNo,
           mcGSTN: this.state.mcGSTN,
@@ -1806,6 +2165,7 @@ else{
           rBankName: applicationDetails.bkBankName,
           rBankACNo: applicationDetails.bkBankAccountNumber,
           rIFSCCode: applicationDetails.bkIfscCode,
+          nomName: applicationDetails.bkNomineeName,
         },
     }
 ]
@@ -1860,13 +2220,15 @@ else{
         utgst: applicationDetails.bkCgst,
         totalgst: PACC_TAX,
         refundableCharges: this.props.REFUNDABLE_SECURITY,
-        totalPayment: this.props.totalAmount,
-        paymentDate: convertEpochToDate(
-          this.props.offlineTransactionDate,
-          "dayend"
-        ),
+        //totalPayment: this.props.totalAmount,  amountTodisplay
+        totalPayment: amountTodisplay,
+        // paymentDate: convertEpochToDate(
+        //   this.props.offlineTransactionDate,
+        //   "dayend"
+        // ),
+        paymentDate: applicationDetails.createdDate,
         receiptNo: this.props.recNumber,
-        cardNumberLast4: "Not Applicable",
+        cardNumberLast4: CardNumber,
         dateVenueChangeCharges:
           this.props.DATEVENUECHARGE == 0
             ? "Not Applicable"
@@ -1892,9 +2254,11 @@ else{
         rBankName: applicationDetails.bkBankName,
         rBankACNo: applicationDetails.bkBankAccountNumber,
         rIFSCCode: applicationDetails.bkIfscCode,
+        nomName: applicationDetails.bkNomineeName,
       },
     },
   ];
+  console.log("RequestBodyForPL--",BookingInfo)
   // downloadEsamparkApp({ BookingInfo: BookingInfo })
   downloadPaccPermissionLetter({ BookingInfo: BookingInfo });
 
@@ -1907,7 +2271,7 @@ else{
     let applicationDetails = selectedComplaint;
     this.downloadPaymentReceiptFunction();
 
-    if(applicationDetails.bkAction === "RE_INITIATE" || applicationDetails.bkAction === "APPLY" || applicationDetails.bkAction === "CANCEL" || applicationDetails.bkAction === "MODIFY"){
+    if(applicationDetails.bkAction === "RE_INITIATE" || applicationDetails.bkAction === "APPLY" || applicationDetails.bkAction === "MODIFY"){
       setTimeout(async () => {
         let documentsPreviewData;
         const { DownloadCitizenPACCReceipt, userInfo } = this.props;
@@ -1979,7 +2343,156 @@ else{
         }
       }, 1500);
 
-}else{
+}
+
+else if(applicationDetails.bkAction == "CANCEL" && applicationDetails.bkRemarks !== null && applicationDetails.bkRemarks !== undefined){
+  setTimeout(async () => {
+    let documentsPreviewData;
+    const { cancelReceiptData, userInfo } = this.props;
+    var documentsPreview = [];
+    if (
+      cancelReceiptData &&
+      cancelReceiptData.filestoreIds.length > 0
+    ) {
+      documentsPreviewData = cancelReceiptData.filestoreIds[0];
+      documentsPreview.push({
+        title: "DOC_DOC_PICTURE",
+        fileStoreId: documentsPreviewData,
+        linkText: "View",
+      });
+      let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+      let fileUrls =
+        fileStoreIds.length > 0
+          ? await getFileUrlFromAPI(fileStoreIds, userInfo.tenantId)
+          : {};
+
+      documentsPreview = documentsPreview.map(function (doc, index) {
+        doc["link"] =
+          (fileUrls &&
+            fileUrls[doc.fileStoreId] &&
+            fileUrls[doc.fileStoreId].split(",")[0]) ||
+          "";
+
+        doc["name"] =
+          (fileUrls[doc.fileStoreId] &&
+            decodeURIComponent(
+              fileUrls[doc.fileStoreId]
+                .split(",")[0]
+                .split("?")[0]
+                .split("/")
+                .pop()
+                .slice(13)
+            )) ||
+          `Document - ${index + 1}`;
+        return doc;
+      });
+
+      if (mode === "print") {
+        var response = await axios.get(documentsPreview[0].link, {
+          //responseType: "blob",
+          responseType: "arraybuffer",
+
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+          },
+        });
+        console.log("responseData---", response);
+        const file = new Blob([response.data], { type: "application/pdf" });
+        const fileURL = URL.createObjectURL(file);
+        var myWindow = window.open(fileURL);
+        if (myWindow != undefined) {
+          myWindow.addEventListener("load", (event) => {
+            myWindow.focus();
+            myWindow.print();
+          });
+        }
+      } else {
+        setTimeout(() => {
+          window.open(documentsPreview[0].link);
+        }, 100);
+      }
+
+      prepareFinalObject("documentsPreview", documentsPreview);
+    }
+  }, 1500);
+
+}
+
+else if(applicationDetails.bkStatusUpdateRequest !== undefined && applicationDetails.bkStatusUpdateRequest !== null){
+  setTimeout(async () => {
+    let documentsPreviewData;
+    const { cancelReceiptData, userInfo } = this.props;
+    var documentsPreview = [];
+    if (
+      cancelReceiptData &&
+      cancelReceiptData.filestoreIds.length > 0
+    ) {
+      documentsPreviewData = cancelReceiptData.filestoreIds[0];
+      documentsPreview.push({
+        title: "DOC_DOC_PICTURE",
+        fileStoreId: documentsPreviewData,
+        linkText: "View",
+      });
+      let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+      let fileUrls =
+        fileStoreIds.length > 0
+          ? await getFileUrlFromAPI(fileStoreIds, userInfo.tenantId)
+          : {};
+
+      documentsPreview = documentsPreview.map(function (doc, index) {
+        doc["link"] =
+          (fileUrls &&
+            fileUrls[doc.fileStoreId] &&
+            fileUrls[doc.fileStoreId].split(",")[0]) ||
+          "";
+
+        doc["name"] =
+          (fileUrls[doc.fileStoreId] &&
+            decodeURIComponent(
+              fileUrls[doc.fileStoreId]
+                .split(",")[0]
+                .split("?")[0]
+                .split("/")
+                .pop()
+                .slice(13)
+            )) ||
+          `Document - ${index + 1}`;
+        return doc;
+      });
+
+      if (mode === "print") {
+        var response = await axios.get(documentsPreview[0].link, {
+          //responseType: "blob",
+          responseType: "arraybuffer",
+
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+          },
+        });
+        console.log("responseData---", response);
+        const file = new Blob([response.data], { type: "application/pdf" });
+        const fileURL = URL.createObjectURL(file);
+        var myWindow = window.open(fileURL);
+        if (myWindow != undefined) {
+          myWindow.addEventListener("load", (event) => {
+            myWindow.focus();
+            myWindow.print();
+          });
+        }
+      } else {
+        setTimeout(() => {
+          window.open(documentsPreview[0].link);
+        }, 100);
+      }
+
+      prepareFinalObject("documentsPreview", documentsPreview);
+    }
+  }, 1500);
+
+}
+else{
   setTimeout(async () => {
     let documentsPreviewData;
     const { PaymentReceiptByESamp, userInfo } = this.props;
@@ -2407,7 +2920,7 @@ OfflineRefundForCG = async () => {
       bkOpenSpaceLocation: null,
       bkLandmark: null,
       bkRequirementArea: null,
-      bkLocationPictures: null,
+      bkLocationPictures: selectedComplaint.bkLocationPictures,
       bkParkOrCommunityCenter: null,
       bkRefundAmount: null,
       bkPropertyOwnerName: null,
@@ -2417,7 +2930,7 @@ OfflineRefundForCG = async () => {
       bkPlotSketch: null,
       bkApplicationStatus: selectedComplaint.bkApplicationStatus,
       bkTime: null,
-      bkStatusUpdateRequest: null,
+      bkStatusUpdateRequest: selectedComplaint.bkStatusUpdateRequest,
       bkStatus: null,
       bkDriverName: null,
       bkVehicleNumber: null,
@@ -2514,6 +3027,10 @@ OfflineRefundForCG = async () => {
 
     console.log("propsInCancelEmpBooking--", selectedComplaint);
 
+    let current_datetime = new Date()
+    let formatted_date = current_datetime.getDate() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getFullYear()
+    console.log("cancelBookDate--RequestBody",formatted_date)
+
     let cancelAction;
     if (selectedComplaint.bkApplicationStatus == "APPLIED") {
       cancelAction = "CANCEL";
@@ -2576,7 +3093,7 @@ OfflineRefundForCG = async () => {
         bkOpenSpaceLocation: null,
         bkLandmark: null,
         bkRequirementArea: null,
-        bkLocationPictures: null,
+        bkLocationPictures: formatted_date,
         bkParkOrCommunityCenter: null,
         bkRefundAmount: null,
         bkPropertyOwnerName: null,
@@ -4058,7 +4575,7 @@ const mapStateToProps = (state, ownProps) => {
     createPACCApplicationData,
     Downloadesamparkdetails,
     Downloadesamparkdetailspl,
-    PaymentReceiptByESamp,DownloadCitizenPACCReceipt
+    PaymentReceiptByESamp,DownloadCitizenPACCReceipt,cancelReceiptData
   } = bookings;
   const {
     DownloadPaymentReceiptDetails,
@@ -4072,6 +4589,7 @@ const mapStateToProps = (state, ownProps) => {
 
   const { userInfo } = state.auth;
   const serviceRequestId = ownProps.match.params.applicationId;
+  let PaymentModeCNumber;
   let selectedComplaint = applicationData
     ? applicationData.bookingsModelList[0]
     : "";
@@ -4291,6 +4809,8 @@ console.log("RefoundCGAmount",RefoundCGAmount)
       console.log("yes--fetchPaymentAfterPaymentData")
       if (fetchPaymentAfterPaymentData.length > 0 && fetchPaymentAfterPaymentData !=="NotFound") {
         console.log("onetwothreefourfive")
+        PaymentModeCNumber = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentMode
+        console.log("PaymentModeCNumber-7079",PaymentModeCNumber)
         paymentDetails =
           fetchPaymentAfterPayment &&
           fetchPaymentAfterPayment.Payments[0] &&
@@ -4456,7 +4976,9 @@ console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
 
     if (fetchPaymentAfterPaymentData.length > 0 && fetchPaymentAfterPaymentData !=="NotFound") {
       console.log("comeInConditionOfIfTest")
-      paymentDetails =
+  PaymentModeCNumber = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentMode
+  console.log("PaymentModeCNumber--9090",PaymentModeCNumber)    
+  paymentDetails =
         fetchPaymentAfterPayment &&
         fetchPaymentAfterPayment.Payments[0] &&
         fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
@@ -4879,6 +5401,7 @@ console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
       bkUtgst: selectedComplaint.bkUtgst,
       bkCgst: selectedComplaint.bkCgst,
       refundableSecurityMoney: selectedComplaint.refundableSecurityMoney,
+      cardNumber: selectedComplaint.cardNumber
     };
 
     let transformedComplaint;
@@ -4946,9 +5469,9 @@ console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
       dataForBothSelection,
       roomsData,
       amountTodisplay,
-      PaymentReceiptByESamp,DownloadCitizenPACCReceipt,
+      PaymentReceiptByESamp,DownloadCitizenPACCReceipt,cancelReceiptData,
       EmpPaccPermissionLetter,DownloadCitizenPACCPermissionLetter,CitizenCCPermissionLetter,
-      uploadeDocType,RefoundCGAmount
+      uploadeDocType,RefoundCGAmount,PaymentModeCNumber
     };
   } else {
     return {
@@ -5005,7 +5528,7 @@ console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
       five,
       six,
       roomData,
-      PaymentReceiptByESamp,DownloadCitizenPACCReceipt,
+      PaymentReceiptByESamp,DownloadCitizenPACCReceipt,cancelReceiptData,PaymentModeCNumber,
       EmpPaccPermissionLetter,DownloadCitizenPACCPermissionLetter,CitizenCCPermissionLetter,RefoundCGAmount
     };
   }
@@ -5023,7 +5546,9 @@ const mapDispatchToProps = (dispatch) => {
     downloadEsampPaymentReceipt: (criteria) =>
       dispatch(downloadEsampPaymentReceipt(criteria)),
       PaccCitizenPaymentRecpt: (criteria) =>
-      dispatch(PaccCitizenPaymentRecpt(criteria)),
+      dispatch(PaccCitizenPaymentRecpt(criteria)),//
+      cancelBookingPayReceipt: (criteria) =>
+      dispatch(cancelBookingPayReceipt(criteria)),
     downloadPaccPermissionLetter: (criteria) =>
       dispatch(downloadPaccPermissionLetter(criteria)),
       PaccCitizenPermissionLetter: (criteria) =>

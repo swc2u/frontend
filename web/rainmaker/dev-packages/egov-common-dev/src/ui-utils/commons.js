@@ -870,7 +870,9 @@ try{
         activityType =get(res, "SewerageConnections[0].activityType", '')
         applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
         applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+
         connectionNumber = get(res, "SewerageConnections[0].connectionNo", '')
+
         if(resp&&resp.Properties&&resp.Properties.length>0){
           plotnumber =get(resp.Properties[0], "address.doorNo", '')
           houseNo =get(resp.Properties[0], "address.plotNo", '')
@@ -1309,7 +1311,9 @@ try{
         activityType =get(res, "SewerageConnections[0].activityType", '')
         applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
         applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+
         connectionNumber = get(res, "SewerageConnections[0].connectionNo", '')
+
         if(resp&&resp.Properties&&resp.Properties.length>0){
           plotnumber =get(resp.Properties[0], "address.doorNo", '')
           houseNo =get(resp.Properties[0], "address.plotNo", '')

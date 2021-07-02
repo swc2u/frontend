@@ -9,35 +9,30 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './Legalindex.css';
 
+// import LegalData from './Legal_data.json';
+// import bgImage from './img/MCC_symbol.jpg';
 
 class DashboardLegal extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state ={
-            checkData:[],
-        allData: [],
-        dataOne: [],
-        dataTwo: [],
-        graphOneLabel: [],
-        graphOneData: [],
-        graphTwoLabel: [],
-        graphTwoData: [],
-        graphClicked: -1,
-        hardJSON: [],
-        graphHardOneData : {},
-        graphHardTwoData : {},
-        rowData: [],
-        columnData: [],
-        // Feature Table
-        toggleColumnCheck: false,
-        unchangeColumnData: []
-        }
+  constructor(props) {
+    super(props);
+    this.state ={
+        toggleTable : true,
+        totalCase : [],
+        next7DaysData :[],
+        next15DaysData : [],
+        impCaseData : [],
+        contemptCaseData : [],
+
+        sortedTest : [],
+
+        unchangeColumnData : [],
+        rowData : []
     }
+  }
 
 
     // PDF function 
     pdfDownload = (e) => {
-
     debugger;
     e.preventDefault();
     var columnData = this.state.unchangeColumnData
@@ -57,6 +52,12 @@ class DashboardLegal extends React.Component {
         // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
     }
 
+    var colData = ["Sr No", "Case No", "Brief Matter", "Petitioner", "Department",
+     "Other Department", "Nodal Officer", "Next Date", "Status", "Reply Filed", "File No."];
+    // for(var i=0; i<columnData.length; i++){
+    //     colData.push(columnData[i]["Header"]);
+    // }
+
     var tableRowData = [];
     for(var i=0; i<rowData.length; i++){
         var rowItem = [];
@@ -66,7 +67,13 @@ class DashboardLegal extends React.Component {
             demo2 = demo2.split(",")
             if(typeof(demo2) === "object"){   
                 if(demo2.length > 1){
-                    rowItem.push(rowData[i][demo2[0]][demo2[1]]);
+                    if(demo2[0] === "connectionHolders[0]"){
+                        rowItem.push(rowData[i]["connectionHolders"][0][demo2[1]]);  
+                    }
+                    if(demo2[0] === "swProperty"){
+                        rowItem.push(rowData[i]["swProperty"][demo2[1]]);  
+                    }
+                    // rowItem.push(rowData[i][demo2[0]][demo2[1]]);
                 }
                 else{
                     rowItem.push(rowData[i][demo2]);
@@ -95,10 +102,10 @@ class DashboardLegal extends React.Component {
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
-    doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
+    doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
 
     doc.setFontSize(10);
-    const pdfTitle = "Legal Dashboard"
+    const pdfTitle = "Title"
     doc.text(pdfTitle, pageWidth / 2, 40, 'center');
 
     doc.autoTable({ html: '#my-table' });
@@ -106,7 +113,7 @@ class DashboardLegal extends React.Component {
 
     doc.autoTable({
         // head: [tableColumnDataCamel],
-        head: [tableColumnData],
+        head: [colData],
         theme: "striped",
         styles: {
             fontSize: 7,
@@ -161,24 +168,271 @@ class DashboardLegal extends React.Component {
         })
     }
     
-    graphSorting = ( sortBy, data, checkGraph ) => {
+    graphSorting = (data, sortBy, dropdownSelected, selectedDashboard ) => {
+        var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
+        "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
+        if(selectedDashboard === "Single Program"){
+            debugger;
+            var dateRange = sortBy;
+            var group = data.reduce((r, a) => {
+                r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] =
+                 [...r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] || [], a];
+                return r;
+                }, {});
+            
+            var graphLabel = dateRange;
+            var graphData = [];
+            for(var i=0; i<graphLabel.length; i++){
+                if(group[graphLabel[i]]){
+                    graphData.push(group[graphLabel[i]].length);
+                }else{
+                    graphData.push(0);
+                }
+            }
 
-    
-    debugger;
-    var sortNo = null;
-    var group = data.reduce((r, a) => {
-        r[a[sortBy]] = [...r[a[sortBy]] || [], a];
-        return r;
-        }, {});
+            debugger;
+            var headerData = [];
+            var keys = Object.keys(data[0]);
+            for(var i=0; i<Object.keys(data[0]).length; i++){
+                var itemHeader = {}
+                if(dropdownSelected === "Sewerage Dashboard"){
+                    if(i === 3 || i === 4 || i === 25 || i === 16 || i=== 38 || i=== 34 || i=== 26 || i === 41){
+                        itemHeader["Header"] = this.camelize(keys[i]);
+                        itemHeader["accessor"] = keys[i];
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+                    }
+                    if(i === 5){
+                        itemHeader["Header"] = "Name";
+                        itemHeader["accessor"] = "connectionHolders[0].name";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+                    }
+                    if(i === 11){
+                        var itemHeader = {}
+                        itemHeader["Header"] = "PlotNo";
+                        itemHeader["accessor"] = "swProperty.plotNo";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+                    }
+                    if(i === 11){
+                        var itemHeader = {}
+                        itemHeader["Header"] = "SectorNo";
+                        itemHeader["accessor"] = "swProperty.sectorNo";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
 
-    var graphOneLabel = Object.keys(group);
-    var graphOneData = []
-    for(var i=0; i<Object.keys(group).length ; i++){
-        graphOneData.push(group[graphOneLabel[i]].length);
-    }
+                        var itemHeader = {}
+                        itemHeader["Header"] = "UsageCategory";
+                        itemHeader["accessor"] = "swProperty.usageCategory";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
 
-    return [ graphOneLabel, graphOneData, group ]
-    
+                        var itemHeader = {}
+                        itemHeader["Header"] = "UsageSubCategory";
+                        itemHeader["accessor"] = "swProperty.usageSubCategory";
+                        itemHeader["show"]= true ;
+                        headerData.push(itemHeader);
+                    }
+                }
+            }
+
+            var rowData = data;
+
+            this.setState({
+                graphOneLabel : graphLabel,
+                graphOneData : graphData,
+                dataOne : group,
+                columnData : headerData,
+                unchangeColumnData : headerData,
+                rowData : rowData,
+                graphClicked : 0,
+                dropdownSelected : dropdownSelected
+            })
+                
+        }if(selectedDashboard === "SEP Program Status"){
+            debugger;
+            var group = data.reduce((r, a) => {
+                r[a[sortBy]] = [...r[a[sortBy]] || [], a];
+                return r;
+                }, {});
+
+            var graphLabel = Object.keys(group);
+            var graphData = []
+            for(var i=0; i<Object.keys(group).length ; i++){
+                graphData.push(group[graphLabel[i]].length);
+            } 
+            
+            var rowData = data;
+            var graphLablelDisplay = []
+            for(var i=0; i<graphLabel.length; i++){
+                if(graphLabel[i].length > 15){
+                    var labelSplit = [graphLabel[i].substr(0,10), graphLabel[i].substr(10, 20), graphLabel[i].substr(20, 30)];
+                    graphLablelDisplay.push(labelSplit)
+                }else{
+                    graphLablelDisplay.push(graphLabel[i])
+                }
+            }
+
+            graphLablelDisplay = [];
+            for(var i=0; i<graphLabel.length; i++){
+                var show_label = graphLabel[i] ;
+                show_label = show_label.replaceAll("_", " ");
+                show_label = show_label.charAt(0).toUpperCase() + show_label.substring(1).toLowerCase()
+                
+                graphLablelDisplay.push(show_label);
+            }
+
+            this.setState({
+                graphLabelTwoDisplay : graphLablelDisplay,
+                graphTwoLabel : graphLabel,
+                graphTwoData : graphData,
+                dataTwo : group,
+                rowData : rowData,
+                graphClicked : 0
+            })
+        }
+        if(selectedDashboard === "All Program"){
+            debugger;
+            var SEP = data.SEP.ResponseBody;
+            var SMID = data.SMID.ResponseBody;
+            var SUSV = data.SUSV.ResponseBody;
+            var SUH = data.SUH.ResponseBody;
+            var allData = SEP.concat(SMID).concat(SUSV).concat(SUH)
+
+            var graphLabel = ["SEP", "SMID", "SUSV", "SUH"];
+            var graphData = [SEP.length, SMID.length, SUSV.length, SUH.length];
+            
+            var headerData = []
+            // var keys = allData;
+
+            var keys = Object.keys(allData[0]);
+            for(var i=0; i<5; i++){
+                if(Object.keys(allData[0])[i] === "applicationDocument" || 
+                Object.keys(allData[0])[i] === "auditDetails" ||
+                Object.keys(allData[0])[i] === "applicationDocument" ||
+                Object.keys(allData[0])[i] === "documentAttachemnt" ||
+                Object.keys(allData[0])[i] === "susvApplicationFamilyDetails" ||
+                Object.keys(allData[0])[i] === "suhFacilitiesDetails" ||
+                Object.keys(allData[0])[i] === "addressPicture" ||
+                Object.keys(allData[0])[i] === "programPicture" ||
+                Object.keys(allData[0])[i] === "documentAttachment"){
+                    
+                }else{
+                    var itemHeader = {}
+                    itemHeader["Header"] = keys[i];
+                    itemHeader["accessor"] = keys[i];
+                    itemHeader["show"]= true ;
+                }
+
+                headerData.push(itemHeader);
+            }
+            var rowData = allData;
+
+            this.setState({
+                graphOneLabel : graphLabel,
+                graphOneData : graphData,
+                dataOne : data,
+                columnData : headerData,
+                unchangeColumnData : headerData,
+                rowData : rowData,
+                graphClicked : 0,
+            })
+            var sortBy =sortBy;
+            var dropdownSelected = dropdownSelected;
+            var selectedDashboard = selectedDashboard;
+        }
+        if(selectedDashboard === "AllDataMonthWise"){
+            debugger;
+            var dateRange = sortBy;
+            var group = data.reduce((r, a) => {
+                r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] =
+                 [...r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] || [], a];
+                return r;
+                }, {});
+            
+            var graphLabel = dateRange;
+            var graphData = [];
+            for(var i=0; i<graphLabel.length; i++){
+                if(group[graphLabel[i]]){
+                    graphData.push(group[graphLabel[i]].length);
+                }else{
+                    graphData.push(0);
+                }
+            }
+
+            // var headerData = [];
+            // var keys = Object.keys(data[0]);
+            // for(var i=0; i<Object.keys(data[0]).length; i++){
+            //     var itemHeader = {}
+            //     itemHeader["Header"] = keys[i];
+            //     itemHeader["accessor"] = keys[i];
+            //     if(dropdownSelected === "All Program"){
+            //         if(i === 1 || i === 3 || i === 5 || i === 6 || i === 7 || i === 14){
+            //             itemHeader["show"]= true ;
+            //         }else{
+            //             itemHeader["show"]= false ;
+            //         }                    
+            //     }
+            //     headerData.push(itemHeader);
+            // }
+
+            var rowData = data;
+
+            this.setState({
+                graphTwoLabel : graphLabel,
+                graphTwoData : graphData,
+                dataTwo : group,
+                // columnData : headerData,
+                // unchangeColumnData : headerData,
+                rowData : rowData,
+                graphClicked : 1,
+                dropdownSelected : dropdownSelected
+            })
+        }
+        if(selectedDashboard === "Final Dashboard"){
+            debugger;
+
+            debugger;
+            var group = data.reduce((r, a) => {
+                r[a[sortBy]] = [...r[a[sortBy]] || [], a];
+                return r;
+                }, {});
+
+            var graphLabel = Object.keys(group);
+            var graphData = []
+            for(var i=0; i<Object.keys(group).length ; i++){
+                var amt = 0;
+                for(var j=0; j<group[graphLabel[i]].length; j++){
+                    var connection = group[graphLabel[i]][j];
+                    var amount = group[graphLabel[i]][j].totalAmountPaid;
+                    amt = amt + amount;
+                }
+                // graphData.push(group[graphLabel[i]].length);
+                graphData.push(amt);
+            } 
+            
+            debugger;
+            var rowData = data;
+            var graphLabelSHOW = [];
+            for(var i=0; i<graphLabel.length; i++){
+                if(graphLabel[i] === "null"){
+                    graphLabelSHOW.push("Sub-Division (null)");
+                }else{
+                    graphLabelSHOW.push("Sub-Division "+graphLabel[i]);
+                }
+            }
+
+            this.setState({
+                graphLabelSHOW : graphLabelSHOW,
+                graphThreeLabel : graphLabel,
+                graphThreeData : graphData,
+                dataThird : group,
+                rowData : rowData,
+                graphClicked : 3
+            })
+
+        }
     }
 
     // CamelCase Column Name 
@@ -192,541 +446,236 @@ class DashboardLegal extends React.Component {
     });
     }
 
+    dateRange = (startDate, endDate) => {
+        var monthJSON = {"01":"JAN","02":"FEB","03":"MAR","04":"APR","05":"MAY","06":"JUN","07":"JUL",
+        "08":"AUG","09":"SEP","10":"OCT","11":"NOV","12":"DEC"};
+        var start      = startDate.split('-');
+        var end        = endDate.split('-');
+        var startYear  = parseInt(start[0]);
+        var endYear    = parseInt(end[0]);
+        var dates      = [];
+
+        for(var i = startYear; i <= endYear; i++) {
+            var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+            var startMon = i === startYear ? parseInt(start[1])-1 : 0;
+            for(var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j+1) {
+            var month = j+1;
+            var displayMonth = month < 10 ? '0'+month : month;
+            // dates.push([i, displayMonth, '01'].join('-'));
+            dates.push([i, monthJSON[displayMonth]].join('-'));
+            }
+        }
+        return dates;
+    }
+
+    dateTimeToForma = (frommDT, toDT) => {
+        var dt1 = new Date(frommDT); 
+        var dateCnt = dt1.getDate() < 10 ? "0"+dt1.getDate() : dt1.getDate();
+        var month = dt1.getMonth() < 10 ? "0"+(dt1.getMonth()+1) : dt1.getMonth()+1;
+        var year = dt1.getFullYear();
+        dt1 = year+"-"+month+"-"+dateCnt
+        var dt2 = new Date(toDT);
+        dateCnt = dt2.getDate() < 10 ? "0"+dt2.getDate() : dt2.getDate();
+        month = dt2.getMonth() < 10 ? "0"+(dt2.getMonth()+1) : dt2.getMonth()+1;
+        year = dt2.getFullYear();
+        dt2 = year+"-"+month+"-"+dateCnt
+
+
+        return [dt1, dt2]
+    }
+
     componentDidMount(){
         debugger;
-        const data = this.props.data;
+        const data = this.props.data[0].ResponseBody;
+        // const data = LegalData.ResponseBody;
+
+        var totalCase = data.reduce((r, a) => {
+        r[a["courtName"]] = [...r[a["courtName"]] || [], a];
+        return r;
+        }, {});
+
+        const checkTodayDt = new Date().getTime();
+        const checkNext7Days = new Date(checkTodayDt + (86400000 * 7)).getTime();
+        const checkNext15Days = new Date(checkTodayDt + (86400000 * 15)).getTime();
+        var next7DaysData = [];
+        var next15DaysData = [];
+        var contemptCaseData = [];
+        var impCaseData = [];
+        for(var i=0; i<data.length; i++){
+            if( data[i].hearingDate === null ){
+                contemptCaseData.push(data[i])
+            }else if( data[i].hearingDate <= checkNext7Days ){
+                next7DaysData.push(data[i])
+            }else if( data[i].hearingDate <= checkNext15Days ){
+                next15DaysData.push(data[i])
+            }
+            // Code forimp case add here...
+            else if( data[i].iscaseImp === true ){
+                impCaseData.push(data[i])
+            }
+        }
+        
+        next7DaysData = next7DaysData.reduce((r, a) => {
+        r[a["courtName"]] = [...r[a["courtName"]] || [], a];
+        return r;
+        }, {});
+
+        next15DaysData = next15DaysData.reduce((r, a) => {
+        r[a["courtName"]] = [...r[a["courtName"]] || [], a];
+        return r;
+        }, {});
+
+        impCaseData = impCaseData.reduce((r, a) => {
+        r[a["courtName"]] = [...r[a["courtName"]] || [], a];
+        return r;
+        }, {});
+        
+        contemptCaseData = contemptCaseData.reduce((r, a) => {
+        r[a["courtName"]] = [...r[a["courtName"]] || [], a];
+        return r;
+        }, {});
+
+        debugger;
+        var unchangeColumnData = [];
+
+        for(var i=0; i<Object.keys(data[0]).length; i++){
+            var item = {}
+            item["Header"] = "Column Name";
+            item["accessor"] = Object.keys(data[0])[i];
+            if(i===0 || i===12 || i===11 || i===13 || i===9 || i===30 || i===17
+               || i===1){
+                item["show"] = true;
+                unchangeColumnData.push(item);
+            }
+        }
+
         this.setState({
-            checkData : data
+            totalCase : totalCase,
+            next7DaysData :next7DaysData,
+            next15DaysData : next15DaysData,
+            impCaseData : impCaseData,
+            contemptCaseData : contemptCaseData,
+            unchangeColumnData : unchangeColumnData
         })
+
+
     }
 
     componentDidUpdate(){
+      debugger;
+      const data = this.props.data;
+    }
+
+    tableClicked = (data, caseClicked) => {
+
         debugger;
-        const propsData = this.props.data;
-        if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
-            const propSortBy = propsData[1].reportSortBy.value;
-            var fromDate = propsData[1].fromDate;
-            var toDate = propsData[1].toDate;
-
-            var data = propsData[0].ResponseBody
-
-            // Remove Unwanted Data
-            var sortedData = [];
-            for(var i=0;i <data.length; i++){
-                if(new Date(data[i]["caseFromDate"]).getTime() < new Date(toDate).getTime() &&
-                new Date(data[i]["caseFromDate"]).getTime() > new Date(fromDate).getTime()){
-                    sortedData.push(data[i]);
-                }
-            }
-    
-            // data = sortedData;
-    
-            const hardJSON = propSortBy === "courtName" ? [{ 
-                "sortBy": "courtName",
-                "msgX": "",
-                "msgY": "",
-                "title": "Courtwise Legal Dashboard"
-                },
-                { 
-                "sortBy": "concernedBranch",
-                "msgX": "",
-                "msgY": "",
-                "title": "Branchwise Court Legal Dashboard"
-                },
-                { 
-                "sortBy": "judgmentTypeId",
-                "msgX": "",
-                "msgY": "",
-                "title": "Judgement wise Court Case Legal Dashboard"
-                }] : propSortBy === "iscaseImp" ? [
-                    { 
-                    "sortBy": "iscaseImp",
-                    "msgX": "",
-                    "msgY": "",
-                    "title": "Imp Casewise Legal Dashboard"
-                    },
-                    { 
-                    "sortBy": "caseStatus",
-                    "msgX": "",
-                    "msgY": "",
-                    "title": "Case statuswise Imp Case Legal Dashboard"
-                    },
-                    { 
-                    "sortBy": "judgmentTypeId",
-                    "msgX": "",
-                    "msgY": "",
-                    "title": "Judgement wise Imp Case Legal Dashboard"
-                    }
-                    ] : []
-    
-    
-            // Graph One Sorting Function 
-            var graphOneData2 = this.graphSorting( propSortBy, data );
-    
-            
-            // Column Data
-            const tableData = data[0] ? Object.keys(data[0]) : [];
-            var columnData = []
-            for(var i=0; i<tableData.length; i++){
-                var itemHeader = {}
-                itemHeader["Header"] = this.camelize(tableData[i]);
-                itemHeader["accessor"] = tableData[i];
-                itemHeader["show"]= (i === 0 || i === 1 || i === 6 || i === 9 
-                    || i === 12 || i === 16 || i === 20 ) ? true : false ;
-                columnData.push(itemHeader);
-            }
-    
-            // Column Unchange Data 
-            const unchangeColumnData = this.columnUnchange(columnData)
-    
-            
-            this.setState({
-                graphOneLabel: graphOneData2[0],
-                graphOneData: graphOneData2[1],
-                graphClicked: 0,
-                dataOne: graphOneData2[2],
-                columnData: columnData,
-                unchangeColumnData: unchangeColumnData,
-                rowData: data,
-                hardJSON: hardJSON
-            })
-
-            this.setState({
-                checkData : propsData
-            })
+        var sortedTest = [];
+        if(caseClicked === "totalCase"){
+            sortedTest = this.state.totalCase[data]
+        }else if(caseClicked === "next7Days"){
+            sortedTest = this.state.next7DaysData[data]
+        }else if(caseClicked === "next15Days"){
+            sortedTest = this.state.next15DaysData[data]
+        }else if(caseClicked === "iscaseImp"){
+            sortedTest = this.state.impCaseData[data]
+        }else if(caseClicked === "contempCase"){
+            sortedTest = this.state.contemptCaseData[data]
         }
-        // const propSortBy = "courtName";
-        // const propSortBy = "iscaseImp";
-        // var fromDate = "2021-04-01";
-        // var toDate ="2021-05-09";
+
+        var unchangeColumnData = [];
+
+        this.setState({
+            toggleTable : !this.state.toggleTable,
+            sortedTest : sortedTest,
+            rowData : sortedTest
+        })
+    }
+
+    rowData = (data) =>{
+        return(
+            <tr>
+                <td className=""> { data } </td>
+                <td className="grab"> <button onClick={ () => this.tableClicked(data, "totalCase")}> { this.state.totalCase[data].length } </button> </td>
+                <td className="grab"> <button onClick={ () => this.tableClicked(data, "next7Days")}> { this.state.next7DaysData[data] ? this.state.next7DaysData[data].length : 0 } </button> </td>
+                <td className="grab"> <button onClick={ () => this.tableClicked(data, "next15Days")}> { this.state.next15DaysData[data] ? this.state.next15DaysData[data].length : 0 } </button> </td>
+                {/* <td className="grab"> Not Updated </td> */}
+                <td className="grab"> <button onClick={ () => this.tableClicked(data, "iscaseImp")}> { this.state.impCaseData[data] ? this.state.impCaseData[data].length : 0 } </button> </td>
+                <td className="grab"> <button onClick={ () => this.tableClicked(data, "contempCase")}> { this.state.contemptCaseData[data] ? this.state.contemptCaseData[data].length : 0 } </button> </td>
+            </tr>
+        );
+    }
+
+    rowData2 = (data, index) =>{
+        debugger;
+        var hearingDate = new Date(data.hearingDate);
+        hearingDate = hearingDate.getDate()+"/"+parseInt(hearingDate.getMonth()+1)+"/"+hearingDate.getFullYear();
+        return(
+            <tr>
+                <td> { index + 1 } </td>
+                <td> { data.caseNumber } </td>
+                <td> { data.caseTitle } </td>
+                <td> { data.petName } </td>
+                <td> { data.govtDept } </td>
+                <td> { "Not in API" } </td>
+                <td> { "---"+data.courtName } </td>
+                <td> { hearingDate } </td>
+                <td> { data.caseStatus } </td>
+                <td> { "----" } </td>
+                <td> { data.lcNumber } </td>
+            </tr>
+        );
     }
 
     render() {
-    
 
-    // First Double Bar Graph Graph
-    var PIEgraphOneSortedData = {
-        labels: this.state.graphOneLabel,
-        // labels: ["Label1", "Label2"],
-        datasets: [
-            {
-            label: "Apani Mandi",
-            fill: false,
-            lineTension: 0.1,
-            hoverBorderWidth : 12,
-            // backgroundColor : this.state.colorRandom,
-            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-            borderColor: "rgba(75,192,192,0.4)",
-            borderCapStyle: "butt",
-            barPercentage: 2,
-            borderWidth: 5,
-            barThickness: 25,
-            maxBarThickness: 10,
-            minBarLength: 2,
-            data: this.state.graphOneData
-            // data:[10,20,30]
-            }
-        ]
-    }
-
-    var PIEgraphOneOption = {
-        responsive : true,
-        // aspectRatio : 3,
-        maintainAspectRatio: false,
-        cutoutPercentage : 0,
-        datasets : [
-            {
-            backgroundColor : "rgba(0, 0, 0, 0.1)",
-            weight: 0
-            }
-        ], 
-        legend: {
-            display: true,
-            position: 'bottom',
-            labels: {
-            fontFamily: "Comic Sans MS",
-            boxWidth: 20,
-            boxHeight: 2
-            }
-        },
-        tooltips: {
-            enabled: true
-        },
-        title: {
-            display: true,
-            text: this.state.hardJSON[0] ? this.state.hardJSON[0].title : ""
-        },
-        // scales: {
-        //     xAxes: [{
-        //         gridLines: {
-        //             display:true
-        //         },
-        //         scaleLabel: {
-        //             display: true,
-        //             labelString:" this.state.graphHardThirdData.msgX"
-        //             }, 
-        //     }],
-        //     yAxes: [{
-        //         gridLines: {
-        //             display:true
-        //         },
-        //         ticks: {
-        //             // suggestedMin: 0,
-        //             // suggestedMax: 100,
-        //             stepSize: 1
-        //         },
-        //         scaleLabel: {
-        //             display: true,
-        //             labelString: "this.state.graphHardThirdData.msgY"
-        //             }, 
-        //     }]
-        // },
-        plugins: {
-            datalabels: {
-                display: false
-            //     color: 'white',
-            //     backgroundColor: 'grey',
-            //     labels: {
-            //         title: {
-            //             font: {
-            //                 weight: 'bold'
-            //             }
-            //         }
-            //     }}
-            }
-        },
-        onClick: (e, element) => {
-            if (element.length > 0) {
-                
-                debugger;
-                var ind = element[0]._index;   
-                const selectedVal = this.state.graphOneLabel[ind];
-                // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
-                const hardval = this.state.hardJSON[1]
-                var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataOne[selectedVal] );
-                
-                this.setState({
-                    graphTwoLabel: graphSorting[0],
-                    graphTwoData: graphSorting[1],
-                    dataTwo: graphSorting[2],
-                    graphClicked: 1,
-                    rowData: this.state.dataOne[selectedVal]
-                })
-                
-            }
-        },
-    }
-    
-
-    // Second Horizontal Graph
-    var graphTwoSortedData = {
-        labels: this.state.graphTwoLabel,
-        datasets: [
-            {
-            // label: this.state.drildownGraphLabel,
-            fill: false,
-            lineTension: 5,
-            hoverBorderWidth : 12,
-            // backgroundColor : this.state.colorRandom,
-            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-            borderColor: "rgba(75,192,192,0.4)",
-            borderCapStyle: "butt",
-            barPercentage: 2,
-            barThickness: 25,
-            maxBarThickness: 25,
-            minBarLength: 2,
-            data: this.state.graphTwoData
-            }
-        ]
-    }
-
-    var graphTwoOption = {
-        responsive : true,
-        // aspectRatio : 3,
-        maintainAspectRatio: false,
-        cutoutPercentage : 0,
-        datasets : [
-            {
-            backgroundColor : "rgba(0, 0, 0, 0.1)",
-            weight: 0
-            }
-        ], 
-        legend: {
-            display: true,
-            position: 'bottom',
-            labels: {
-            fontFamily: "Comic Sans MS",
-            boxWidth: 20,
-            boxHeight: 2
-            }
-        },
-        tooltips: {
-            enabled: true
-        },
-        title: {
-            display: true,
-            text: this.state.hardJSON[0] ? this.state.hardJSON[1].title : ""
-        },
-        onClick: (e, element) => {
-            if (element.length > 0) {
-                debugger;
-                var ind = element[0]._index;   
-                const selectedVal = this.state.graphTwoLabel[ind];
-                // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
-                const hardval = this.state.hardJSON[2]
-                var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataTwo[selectedVal] );
-                
-                this.setState({
-                    graphThirdLabel: graphSorting[0],
-                    graphThirdData: graphSorting[1],
-                    dataThird: graphSorting[2],
-                    graphClicked: 2,
-                    rowData: this.state.dataTwo[selectedVal]
-                })
-            }
-        },
-        // scales: {
-        //     xAxes: [{
-        //         gridLines: {
-        //             display:true
-        //         },
-        //         ticks: {
-        //             suggestedMin: 0,
-        //             // suggestedMax: 100,
-        //             stepSize: 1
-        //         },
-        //         scaleLabel: {
-        //             display: true,
-        //             labelString: this.state.graphHardTwoData.msgX
-        //             }, 
-        //     }],
-        //     yAxes: [{
-        //         gridLines: {
-        //             display: true
-        //         },
-        //         ticks: {
-        //             suggestedMin: 0,
-        //             stepSize: 1
-        //         },
-        //         scaleLabel: {
-        //             display: true,
-        //             labelString: this.state.graphHardTwoData.msgY
-        //             }, 
-        //     }]
-        // },
-        plugins: {
-            datalabels: {
-                display: false
-            //     color: 'white',
-            //     backgroundColor: 'grey',
-            //     labels: {
-            //         title: {
-            //             font: {
-            //                 weight: 'bold'
-            //             }
-            //         }
-            //     }}
-            }
-            }
-    }
-
-    // Third Horizontal Graph
-    var graphThirdSortedData = {
-        labels: this.state.graphThirdLabel,
-        datasets: [
-            {
-            // label: this.state.drildownGraphLabel,
-            fill: false,
-            lineTension: 5,
-            hoverBorderWidth : 12,
-            // backgroundColor : this.state.colorRandom,
-            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
-            borderColor: "rgba(75,192,192,0.4)",
-            borderCapStyle: "butt",
-            barPercentage: 2,
-            barThickness: 25,
-            maxBarThickness: 25,
-            minBarLength: 2,
-            data: this.state.graphThirdData
-            }
-        ]
-    }
-
-    var graphThirdOption = {
-        responsive : true,
-        // aspectRatio : 3,
-        maintainAspectRatio: false,
-        cutoutPercentage : 0,
-        datasets : [
-            {
-            backgroundColor : "rgba(0, 0, 0, 0.1)",
-            weight: 0
-            }
-        ], 
-        legend: {
-            display: true,
-            position: 'bottom',
-            labels: {
-            fontFamily: "Comic Sans MS",
-            boxWidth: 20,
-            boxHeight: 2
-            }
-        },
-        tooltips: {
-            enabled: true
-        },
-        title: {
-            display: true,
-            text: this.state.hardJSON[0] ? this.state.hardJSON[2].title : ""
-        },
-        onClick: (e, element) => {
-            if (element.length > 0) {
-                var ind = element[0]._index;
-                debugger;
-                const selectedVal = this.state.graphTwoLabel[ind];
-                
-                this.setState({
-                    graphClicked: 2,
-                    rowData: this.state.dataTwo[selectedVal]
-                })
-            }
-        },
-        // scales: {
-        //     xAxes: [{
-        //         gridLines: {
-        //             display:true
-        //         },
-        //         ticks: {
-        //             suggestedMin: 0,
-        //             // suggestedMax: 100,
-        //             stepSize: 1
-        //         },
-        //         scaleLabel: {
-        //             display: true,
-        //             labelString: this.state.graphHardTwoData.msgX
-        //             }, 
-        //     }],
-        //     yAxes: [{
-        //         gridLines: {
-        //             display: true
-        //         },
-        //         ticks: {
-        //             suggestedMin: 0,
-        //             stepSize: 1
-        //         },
-        //         scaleLabel: {
-        //             display: true,
-        //             labelString: this.state.graphHardTwoData.msgY
-        //             }, 
-        //     }]
-        // },
-        plugins: {
-            datalabels: {
-                display: false
-            //     color: 'white',
-            //     backgroundColor: 'grey',
-            //     labels: {
-            //         title: {
-            //             font: {
-            //                 weight: 'bold'
-            //             }
-            //         }
-            //     }}
-            }
-            }
-    }
-
-
-        
     return (
-        <div>        
-        <div className="graphDashboard">
-    
-        {
-            this.state.graphClicked >= 0 ?
-            <CardContent className="halfGraph">
-                <React.Fragment>
-                    <Pie
-                    data={ PIEgraphOneSortedData }
-                    options={ PIEgraphOneOption } 
-                    />
-                </React.Fragment>
-            </CardContent>
-            :null
-        }
+        <div>
 
         {
-            this.state.graphClicked > 0 ?
-            <CardContent className="halfGraph">
-                <React.Fragment>
-                    <Pie
-                    data={ graphTwoSortedData } 
-                    options={ graphTwoOption } 
-                    />
-                </React.Fragment>
-            </CardContent> 
-            :null
-        }
-
-        </div>
-
-        {
-            this.state.graphClicked > 1 ?
-            <CardContent className="fullGraph">
-                <React.Fragment>
-                    <Pie
-                    data={ graphThirdSortedData } 
-                    options={ graphThirdOption } 
-                    />
-                </React.Fragment>
-            </CardContent> 
-            :null
-        }
-
-        {/* Table Feature  */}
-        <div className="tableContainer" style={this.state.rowData.length === 0 ? {display : "none"} :null}>
-        {
-            this.state.unchangeColumnData.length > 0  ? 
-            <div className="tableFeature">
-                <div className="columnToggle-Text"> Download As: </div>
-                <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
-
-                <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+            this.state.toggleTable ? 
+            <div className="legal-table-container" style={{overflowX:"auto"}}>
+                <table className="legal-table">
+                    <tr>
+                        <th> Court </th>
+                        <th> Total Cases </th>
+                        <th> Next 7 Days </th>
+                        <th> Next 15 Days </th>
+                        <th> Important Cases </th>
+                        <th> Contempt Cases </th>
+                    </tr>
+                    {Object.keys(this.state.totalCase).map((data, index) => this.rowData(data))}
+                </table>
             </div>
-            :null
-        }
-        {
-           this.state.toggleColumnCheck ?
-           <div className="columnVisibilityCard">
-            <dl>
-                {
-                    this.state.unchangeColumnData.map((data, index)=>{
-                        return(
-                            <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
-                        )
-                    })
-                }
-            </dl>
-            </div> 
-           : null
+            :
+            <div>
+                <div style={{margin : "15px"}}>
+                <button onClick={this.pdfDownload}><p class=""><a href="exceldoc.pdf"></a></p> Export PDF </button>
+                <button onClick={ () => this.tableClicked("", "")}> Back </button>
+                </div>
+                <div className="legal-table-container" style={{overflowX:"auto"}}>
+                    <table className="legal-table">
+                        <tr>
+                            <th> Sr No </th>
+                            <th> Case No </th>
+                            <th> Brief Subject </th>
+                            <th> Petitioner </th>
+                            <th> Department </th>
+                            <th> Other Department </th>
+                            <th> Nodal Officer </th>
+                            <th> Next Date </th>
+                            <th> Status </th>
+                            <th> Reply Filed </th>
+                            <th> File No </th>
+                        </tr>
+                        {this.state.sortedTest.map((data, index) => this.rowData2(data, index))}
+                    </table>
+                </div>
+            </div>
         }
 
-        {
-            this.state.graphClicked >= 0 ?
-            <ReactTable id="customReactTable"
-            // PaginationComponent={Pagination}
-            data={ this.state.rowData }  
-            columns={ this.state.columnData }  
-            defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
-            pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
-            pageSizeOptions = {[20,40,60]}  
-            /> 
-            :null
-        }
-        </div>
         </div>
     );
     }
-}
+  }
 
 export default DashboardLegal;

@@ -39,7 +39,7 @@ class PensionDashbaord extends React.Component {
         if(JSON.stringify(data) !== JSON.stringify(this.state.propData)){
             this.setState({
                 propData: data
-            }) 
+            })
         }
         
     }

@@ -426,6 +426,7 @@ export const downloadAcknowledgementForm = (Owners, feeEstimate, status, pdfkey,
 
 export const downloadAcknowledgementFormForCitizen = (Owners, feeEstimate, type, pdfkey, mode = "download") => {
   let queryStr = []
+  let transactionNumber
   switch (type) {
     case 'PERMISSIONTOMORTGAGE':
       queryStr = [{
@@ -473,20 +474,32 @@ export const downloadAcknowledgementFormForCitizen = (Owners, feeEstimate, type,
 
   switch (type) {
     case 'OWNERSHIPTRANSFERRP':
-      ownerInfo = {
-        ...ownerInfo,
-        ownerDetails: {
-          ...Owners[0].ownerDetails,
-          ownershipTransferDocuments: myDocuments
+        transactionNumber = ownerInfo.property.transitNumber.split('-')[1] ? ownerInfo.property.transitNumber.split('-')[1] :
+        ownerInfo.property.transitNumber.split('-')[0]
+        ownerInfo = {
+          ...ownerInfo,
+          property:{
+            ...ownerInfo.property,
+            transitNumber:transactionNumber
+          },
+          ownerDetails: {
+            ...Owners[0].ownerDetails,
+            ownershipTransferDocuments: myDocuments
+          }
         }
-      }
       break;
     case 'DUPLICATECOPYOFALLOTMENTLETTERRP':
     case 'PERMISSIONTOMORTGAGE':
-      ownerInfo = {
-        ...ownerInfo,
-        applicationDocuments: myDocuments
-      }
+        transactionNumber = ownerInfo.property.transitNumber.split('-')[1] ? ownerInfo.property.transitNumber.split('-')[1] :
+        ownerInfo.property.transitNumber.split('-')[0]
+        ownerInfo = {
+          ...ownerInfo,
+          property:{
+            ...ownerInfo.property,
+            transitNumber:transactionNumber
+          },
+          applicationDocuments: myDocuments
+        }
       break;
     default:
       break;
@@ -834,7 +847,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
       if(type != 'rent-payment'){
         Payments = payloadReceiptDetails.Payments;
         let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
-
+        let paymentmode=Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_NEFT" ? "Direct Bank - Vikas Nagar" :Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_RTGS"? "Direct Bank - Sec.52-53" :Payments[0].paymentMode
         let {
           billAccountDetails
         } = Payments[0].paymentDetails[0].bill.billDetails[0];
@@ -847,6 +860,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
         }))
         Payments = [{
           ...Payments[0],
+          paymentMode:paymentmode,
           paymentDetails: [{
             ...Payments[0].paymentDetails[0],
             bill: {
@@ -913,7 +927,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
         httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, query).then((response) => {
           Payments = response.Payments;
           let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
-
+          let paymentmode=Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_NEFT" ? "Direct Bank - Vikas Nagar" :Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_RTGS"? "Direct Bank - Sec.52-53" :Payments[0].paymentMode
           let {
             billAccountDetails
           } = Payments[0].paymentDetails[0].bill.billDetails[0];
@@ -926,6 +940,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
           }))
           Payments = [{
             ...Payments[0],
+            paymentMode:paymentmode,
             paymentDetails: [{
               ...Payments[0].paymentDetails[0],
               bill: {

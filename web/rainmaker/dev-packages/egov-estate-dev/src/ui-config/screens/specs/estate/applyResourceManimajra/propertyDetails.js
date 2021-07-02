@@ -90,21 +90,10 @@ const areaofPropertyField = {
       xs: 12,
       sm: 6
   },
-  pattern: _getPattern("numeric-with-no-firstdigit-zero"),
+  pattern: _getPattern("areaSqFeet"),
   required: true,
   jsonPath: "Properties[0].propertyDetails.areaSqft",
-  errorMessage:"ES_ERR_AREA_OF_PROPERTY_FIELD",
-  afterFieldChange: (action, state, dispatch) => {
-    if (action.value.length > 25) {
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AREA_OF_PROPERTY_MAX_25", screenName);
-    }
-    else if(action.value.length < 3){
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_AREA_OF_PROPERTY_MIN_3", screenName);
-    }
-    else {
-        displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_AREA_OF_PROPERTY_FIELD",screenName);
-    }
-}
+  errorMessage:"ES_ERR_AREA_OF_PROPERTY_FIELD_TWO_TO_FIVE",
 }
 
 export const propertyTypeField = {
@@ -233,6 +222,30 @@ export const propertyTypeField = {
                true
             )
           )
+          dispatch(
+            handleField(
+              action.screenKey,
+              "components.div.children.formwizardFirstStep.children.annualDetails.children.cardContent.children.detailsContainer.children.annual",
+              "required",
+              true
+            )
+          )
+          dispatch(
+            handleField(
+              action.screenKey,
+              "components.div.children.formwizardFirstStep.children.monthlyDetails.children.cardContent.children.detailsContainer.children.monthly",
+              "required",
+              true
+            )
+          )
+          dispatch(
+            handleField(
+              action.screenKey,
+              "components.div.children.formwizardFirstStep.children.monthlyDetails.children.cardContent.children.detailsContainer.children.yearly",
+              "required",
+              true
+            )
+          )
          break;
       // case 'PROPERTY_TYPE.PUNJAB_AGRO_JUICE':
       //     dispatch(
@@ -255,6 +268,30 @@ export const propertyTypeField = {
           
       //    break;
       case 'PROPERTY_TYPE.OTHERS':
+        dispatch(
+          handleField(
+            action.screenKey,
+            "components.div.children.formwizardFirstStep.children.annualDetails.children.cardContent.children.detailsContainer.children.annual",
+            "required",
+            false
+          )
+        )
+        dispatch(
+          handleField(
+            action.screenKey,
+            "components.div.children.formwizardFirstStep.children.monthlyDetails.children.cardContent.children.detailsContainer.children.monthly",
+            "required",
+            false
+          )
+        )
+        dispatch(
+          handleField(
+            action.screenKey,
+            "components.div.children.formwizardFirstStep.children.monthlyDetails.children.cardContent.children.detailsContainer.children.yearly",
+            "required",
+            false
+          )
+        )
         //do nothing
         break;    
     }

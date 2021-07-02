@@ -9,7 +9,6 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './waterIndex.css'
 
-
 const isMobile = window.innerWidth < 500
 const responsiveSizeHack = isMobile ? window.innerWidth + 400 : window.innerWidth
 
@@ -79,6 +78,12 @@ class WaterDashboard extends React.Component {
         // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
     }
 
+    var colData = [];
+    for(var i=0; i<columnData.length; i++){
+        colData.push(columnData[i]["Header"]);
+        // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
+    }
+
     var tableRowData = [];
     for(var i=0; i<rowData.length; i++){
         var rowItem = [];
@@ -117,7 +122,7 @@ class WaterDashboard extends React.Component {
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
-    doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
+    doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
 
     doc.setFontSize(10);
     const pdfTitle = "Water Dashboard"
@@ -128,7 +133,7 @@ class WaterDashboard extends React.Component {
 
     doc.autoTable({
         // head: [tableColumnDataCamel],
-        head: [tableColumnData],
+        head: [colData],
         theme: "striped",
         styles: {
             fontSize: 7,
@@ -186,7 +191,23 @@ class WaterDashboard extends React.Component {
     graphSorting = (data, sortBy, dropdownSelected, selectedDashboard ) => {
         var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
         "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
-        
+        if(sortBy === "applicationStatus"){
+            var dateRangeData = data;
+            var sortBy = sortBy;
+            var group = dateRangeData.reduce((r, a) => {
+                r[a["applicationStatus"]] = [...r[a["applicationStatus"]] || [], a];
+                return r;
+                }, {});
+            // _.omit(group, "INITIATED")
+            delete group["INITIATED"]
+            
+            var graphLabel = Object.keys(group);
+            var graphData = [];
+            for(var i=0; i<graphLabel.length; i++){
+                graphData.push(group[graphLabel[i]].length);
+            }
+            return [graphLabel, graphData, group]
+        }
         debugger;
         var dateRangeData = data;
         var sortBy = sortBy;
@@ -277,171 +298,183 @@ class WaterDashboard extends React.Component {
             // var dropdownSelected = "collectionReport";
             var dropdownSelected = propsData[1].reportSortBy.value;
             var data = propsData[0];
-
-            if(dropdownSelected === "applicationStatusReport"){
-                data = data.WaterConnection;
-
-                var sortedData = [];
-                for(var i=0; i<data.length; i++){
-                    var item = data[i].waterApplicationList;
-                    for(var j=0; j<item.length; j++){
-                        var parentApplication = data[i];
-                        var dataItem = item[j];
-                        var dt = new Date(dataItem.auditDetails.lastModifiedTime);
-                        var day = dt.getDate() < 10 ? "0"+dt.getDate() : dt.getDate();
-                        var dt_Month = dt.getMonth() < 10 ? "0"+dt.getMonth() : dt.getMonth();
-                        var dt_Year = dt.getFullYear();
-                        dt = dt_Year+"-"+dt_Month+"-"+day;
-                        var itemApplication = {
-                            "applicationNo" : dataItem.applicationNo,
-                            "applicationStatus" : dataItem.applicationStatus,
-                            "status" : parentApplication.status,
-                            "activityType" : dataItem.activityType,
-                            "billGroup" : parentApplication.billGroup,
-                            "leagerGroup" : parentApplication.ledgerGroup,
-                            "proposedPipeSize" : parentApplication.proposedPipeSize,
-                            "subDiv" : parentApplication.subdiv,
-                            "plotNo" : parentApplication.waterProperty.plotNo,
-                            "sectorNo" : parentApplication.waterProperty.sectorNo,
-                            "usageSubCategory" : parentApplication.waterProperty.usageSubCategory,
-                            "usageCategory" : parentApplication.waterProperty.usageCategory,
-                            "connectionOwnerDetails" : parentApplication.connectionHolders ? parentApplication.connectionHolders[0].name : "",
-                            "auditDetails" : dt
-                        };
-                        sortedData.push(itemApplication);
-                    }
-                }
-
-                data = sortedData;
-
-                var graphData = this.graphSorting(data, "activityType", "dropdown_1_One");
-                // Change here for First label change
-                var showOneLabel = [];
-                // for(){
-
-                // }
-
-
-                // Col Data
-                var columnData = [];
-                for(var i=0; i<Object.keys(data[0]).length; i++){
-                    var item = {};
-                    item["Header"] = this.camelize(Object.keys(data[0])[i]);
-                    item["accessor"] = Object.keys(data[0])[i];
-                    item["show"] = true;
-                    columnData.push(item);
-                }
-
-                var labelChangeJSON= {
-                    "NEW_WS_CONNECTION":"Application for Regular Water connection",
-                    "CONNECTION_CONVERSION":"Application to convert tariff type",
-                    "APPLY_FOR_TEMPORARY_CONNECTION":"Application for temporary Water Connection",
-                    "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":"Application for Temporary to temporary Connection",
-                    "TEMPORARY_DISCONNECTION":"pplication for temporary disconnection",
-                    "PERMANENT_DISCONNECTION":"Application for permanent disconnection",
-                    "UPDATE_CONNECTION_HOLDER_INFO":"Application to update connection holder information",
-                    "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":"Application for Temporary to Regular Connection",
-                    "UPDATE_METER_INFO":"Application to change water meter",
-                    "NEW_TUBEWELL_CONNECTION":"Application for tubewell Connection",
-                    "REACTIVATE_CONNECTION":"Application to Reactivate connection"
-                }
-                var graphOneSHOWLabel = [];
-                for(var i=0; i<graphData[0].length; i++){
-                    graphOneSHOWLabel.push(labelChangeJSON[graphData[0][i]]);
-                }
-
-                this.setState({
-                    graphOneSHOWLabel : graphOneSHOWLabel,
-                    graphOneLabel : graphData[0],
-                    graphOneData : graphData[1],
-                    dataOne : graphData[2],
-                    rowData: data,
-                    columnData: columnData,
-                    unchangeColumnData : columnData,
-                    graphClicked : 0
-
-                })
-            }
-            if(dropdownSelected === "collectionReport"){
-                data = data.WaterConnection;
-
-                var sortedData = [];
-                for(var i=0; i<data.length; i++){
-                    var item = data[i].waterApplicationList;
-                    for(var j=0; j<item.length; j++){
-                        var parentApplication = data[i];
-                        var dataItem = item[j];
-                        var dt = new Date(dataItem.auditDetails.lastModifiedTime);
-                        var day = dt.getDate() < 10 ? "0"+dt.getDate() : dt.getDate();
-                        var dt_Month = dt.getMonth() < 10 ? "0"+dt.getMonth() : dt.getMonth();
-                        var dt_Year = dt.getFullYear();
-                        dt = dt_Year+"-"+dt_Month+"-"+day;
-                        var itemApplication = {
-                            "applicationNo" : dataItem.applicationNo,
-                            "applicationStatus" : dataItem.applicationStatus,
-                            "status" : parentApplication.status,
-                            "activityType" : dataItem.activityType,
-                            "billGroup" : parentApplication.billGroup,
-                            "leagerGroup" : parentApplication.ledgerGroup,
-                            "proposedPipeSize" : parentApplication.proposedPipeSize,
-                            "subDiv" : parentApplication.subdiv,
-                            "plotNo" : parentApplication.waterProperty.plotNo,
-                            "sectorNo" : parentApplication.waterProperty.sectorNo,
-                            "usageSubCategory" : parentApplication.waterProperty.usageSubCategory,
-                            "usageCategory" : parentApplication.waterProperty.usageCategory,
-                            "connectionOwnerDetails" : parentApplication.connectionHolders ? parentApplication.connectionHolders[0].name : "",
-                            "auditDetails" : dt,
-                            "totalAmountPaid" : dataItem.totalAmountPaid
-                        };
-                        sortedData.push(itemApplication);
-                    }
-                }
-
-                debugger;
-                data = sortedData;
-                var datesFormatted = this.dateTimeToForma(fromDT, toDT);
-                var dataRangeLabel = this.dateRange(datesFormatted[0], datesFormatted[1]);
+            if(data.WaterConnection.length > 0){
                 
-                var group = data.reduce((r, a) => {
-                    r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]).getMonth()]] = 
-                    [...r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]).getMonth()]] || [], a];
-                    return r;
-                    }, {});
-                
-                debugger;
-                var graphFifthData = [];
-                for(var i=0; i<dataRangeLabel.length; i++){
-                    if(group[dataRangeLabel[i]]){
-                        var item = group[dataRangeLabel[i]];
-                        var amt = 0 ;
+                if(dropdownSelected === "applicationStatusReport"){
+ 
+                    data = data.WaterConnection;
+                    var sortedData = [];
+                    for(var i=0; i<data.length; i++){
+                        var item = data[i].waterApplicationList;
                         for(var j=0; j<item.length; j++){
-                            var amount = item[j].totalAmountPaid === null ? 0 : item[j].totalAmountPaid;
-                            amt = amt + parseInt(amount);
+                            var parentApplication = data[i];
+                            var dataItem = item[j];
+                            var dt = new Date(dataItem.auditDetails.lastModifiedTime);
+                            var day = dt.getDate() < 10 ? "0"+dt.getDate() : dt.getDate();
+                            var dt_Month = dt.getMonth() < 10 ? "0"+dt.getMonth() : dt.getMonth();
+                            var dt_Year = dt.getFullYear();
+                            dt = dt_Year+"-"+dt_Month+"-"+day;
+                            var itemApplication = {
+                                "applicationNo" : dataItem.applicationNo,
+                                "applicationStatus" : dataItem.applicationStatus,
+                                "status" : parentApplication.status,
+                                "activityType" : dataItem.activityType,
+                                "billGroup" : parentApplication.billGroup,
+                                "leagerGroup" : parentApplication.ledgerGroup,
+                                "proposedPipeSize" : parentApplication.proposedPipeSize,
+                                "subDiv" : parentApplication.subdiv,
+                                "plotNo" : parentApplication.waterProperty.plotNo,
+                                "sectorNo" : parentApplication.waterProperty.sectorNo,
+                                "usageSubCategory" : parentApplication.waterProperty.usageSubCategory,
+                                "usageCategory" : parentApplication.waterProperty.usageCategory,
+                                "connectionOwnerDetails" : parentApplication.connectionHolders ? parentApplication.connectionHolders[0].name : "",
+                                "auditDetails" : dt,
+                                "amountPaid" : dataItem.totalAmountPaid
+                            };
+                            sortedData.push(itemApplication);
                         }
-                        graphFifthData.push(amt/100000)
-                    }else{
-                        graphFifthData.push(0)
                     }
-                }
-                // Col Data
-                var columnData = [];
-                for(var i=0; i<Object.keys(data[0]).length; i++){
-                    var item = {};
-                    item["Header"] = this.camelize(Object.keys(data[0])[i]);
-                    item["accessor"] = Object.keys(data[0])[i];
-                    item["show"] = true;
-                    columnData.push(item);
-                }
 
+                    data = sortedData;
+
+                    var graphData = this.graphSorting(data, "activityType", "dropdown_1_One");
+                    // Change here for First label change
+                    var showOneLabel = [];
+                    // for(){
+
+                    // }
+
+
+                    // Col Data
+                    var columnData = [];
+                    for(var i=0; i<Object.keys(data[0]).length; i++){
+                        var item = {};
+                        item["Header"] = this.camelize(Object.keys(data[0])[i]);
+                        item["accessor"] = Object.keys(data[0])[i];
+                        item["show"] = true;
+                        columnData.push(item);
+                    }
+
+                    var labelChangeJSON= {
+                        "NEW_WS_CONNECTION":"Application for Regular Water connection",
+                        "CONNECTION_CONVERSION":"Application to convert tariff type",
+                        "APPLY_FOR_TEMPORARY_CONNECTION":"Application for temporary Water Connection",
+                        "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":"Application for Temporary to temporary Connection",
+                        "TEMPORARY_DISCONNECTION":"Application for temporary Disconnection/ NDC for Government houses",
+                        "PERMANENT_DISCONNECTION":"Application for permanent disconnection",
+                        "UPDATE_CONNECTION_HOLDER_INFO":"Application to update connection holder information",
+                        "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":"Application for Temporary to Regular Connection",
+                        "UPDATE_METER_INFO":"Application to change water meter",
+                        "NEW_TUBEWELL_CONNECTION":"Application for tubewell Connection",
+                        "REACTIVATE_CONNECTION":"Application to Reactivate connection"
+                    }
+                    var graphOneSHOWLabel = [];
+                    for(var i=0; i<graphData[0].length; i++){
+                        graphOneSHOWLabel.push(labelChangeJSON[graphData[0][i]]);
+                    }
+
+                    this.setState({
+                        graphOneSHOWLabel : graphOneSHOWLabel,
+                        graphOneLabel : graphData[0],
+                        graphOneData : graphData[1],
+                        dataOne : graphData[2],
+                        rowData: data,
+                        columnData: columnData,
+                        unchangeColumnData : columnData,
+                        graphClicked : 0
+
+                    })
+                }
+                if(dropdownSelected === "collectionReport"){
+                    data = data.WaterConnection;
+
+                    var sortedData = [];
+                    for(var i=0; i<data.length; i++){
+                        var item = data[i].waterApplicationList;
+                        for(var j=0; j<item.length; j++){
+                            var parentApplication = data[i];
+                            var dataItem = item[j];
+                            var dt = new Date(dataItem.auditDetails.lastModifiedTime);
+                            var day = dt.getDate() < 10 ? "0"+dt.getDate() : dt.getDate();
+                            var dt_Month = dt.getMonth() < 10 ? "0"+dt.getMonth() : dt.getMonth();
+                            var dt_Year = dt.getFullYear();
+                            dt = dt_Year+"-"+dt_Month+"-"+day;
+                            var itemApplication = {
+                                "applicationNo" : dataItem.applicationNo,
+                                "applicationStatus" : dataItem.applicationStatus,
+                                "status" : parentApplication.status,
+                                "activityType" : dataItem.activityType,
+                                "billGroup" : parentApplication.billGroup,
+                                "leagerGroup" : parentApplication.ledgerGroup,
+                                "proposedPipeSize" : parentApplication.proposedPipeSize,
+                                "subDiv" : parentApplication.subdiv,
+                                "plotNo" : parentApplication.waterProperty.plotNo,
+                                "sectorNo" : parentApplication.waterProperty.sectorNo,
+                                "usageSubCategory" : parentApplication.waterProperty.usageSubCategory,
+                                "usageCategory" : parentApplication.waterProperty.usageCategory,
+                                "connectionOwnerDetails" : parentApplication.connectionHolders ? parentApplication.connectionHolders[0].name : "",
+                                "auditDetails" : dt,
+                                "amountPaid" : dataItem.totalAmountPaid
+                            };
+                            sortedData.push(itemApplication);
+                        }
+                    }
+
+                    debugger;
+                    data = sortedData;
+                    var datesFormatted = this.dateTimeToForma(fromDT, toDT);
+                    var dataRangeLabel = this.dateRange(datesFormatted[0], datesFormatted[1]);
+                    
+                    var group = data.reduce((r, a) => {
+                        r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[(new Date(a["auditDetails"]).getMonth()+1)]] = 
+                        [...r[new Date(a["auditDetails"]).getFullYear()+"-"+monthJSON[(new Date(a["auditDetails"]).getMonth()+1)]] || [], a];
+                        return r;
+                        }, {});
+                    
+                    debugger;
+                    var graphFifthData = [];
+                    for(var i=0; i<dataRangeLabel.length; i++){
+                        if(group[dataRangeLabel[i]]){
+                            var item = group[dataRangeLabel[i]];
+                            var amt = 0 ;
+                            for(var j=0; j<item.length; j++){
+                                var amount = item[j].amountPaid === null ? 0 : item[j].amountPaid;
+                                amt = amt + parseInt(amount);
+                            }
+                            graphFifthData.push(amt/100000)
+                        }else{
+                            graphFifthData.push(0)
+                        }
+                    }
+                    // Col Data
+                    var columnData = [];
+                    for(var i=0; i<Object.keys(data[0]).length; i++){
+                        var item = {};
+                        item["Header"] = this.camelize(Object.keys(data[0])[i]);
+                        item["accessor"] = Object.keys(data[0])[i];
+                        item["show"] = true;
+                        columnData.push(item);
+                    }
+
+                    this.setState({
+                        // graphFifthSHOWLabel : graphOneSHOWLabel,
+                        graphFifthLabel : dataRangeLabel,
+                        graphFifthData : graphFifthData,
+                        dataFifth : group,
+                        rowData: data,
+                        columnData: columnData,
+                        unchangeColumnData : columnData,
+                        graphClicked : 0
+                    })
+                }
                 this.setState({
-                    // graphFifthSHOWLabel : graphOneSHOWLabel,
-                    graphFifthLabel : dataRangeLabel,
-                    graphFifthData : graphFifthData,
-                    dataFifth : group,
-                    rowData: data,
-                    columnData: columnData,
-                    unchangeColumnData : columnData,
-                    graphClicked : 0
+                    recordNotFound : "",
+                })
+            }else{
+                this.setState({
+                    recordNotFound : "Record Not Found..!",
+                    rowData : [],
+                    graphClicked : -1
                 })
             }
             this.setState({
@@ -450,7 +483,7 @@ class WaterDashboard extends React.Component {
                 toDT : toDT,
             })
             this.setState({
-                checkData : propsData
+                checkData : propsData,
             })
         }
     }
@@ -555,23 +588,25 @@ class WaterDashboard extends React.Component {
                 var ind = element[0]._index;
                 var selectedVal = this.state.graphOneLabel[ind];
                 var data = this.state.dataOne[selectedVal];
-                var graphData = this.graphSorting(data, "applicationStatus", "dropdown_1_One");
+                if(data){
+                    var graphData = this.graphSorting(data, "applicationStatus", "dropdown_1_One");
                 
-                var graphTwoLabelSHOW = [];
-                for(var i=0; i<graphData[0].length; i++){
-                    var show_label = graphData[0][i] ;
-                    show_label = show_label.replaceAll("_", " ");
-                    show_label = show_label.charAt(0).toUpperCase() + show_label.substring(1).toLowerCase()
-                    graphTwoLabelSHOW.push(show_label);
+                    var graphTwoLabelSHOW = [];
+                    for(var i=0; i<graphData[0].length; i++){
+                        var show_label = graphData[0][i] ;
+                        show_label = show_label.replaceAll("_", " ");
+                        show_label = show_label.charAt(0).toUpperCase() + show_label.substring(1).toLowerCase()
+                        graphTwoLabelSHOW.push(show_label);
+                    }
+                    this.setState({
+                        graphTwoLabelSHOW : graphTwoLabelSHOW,
+                        graphTwoLabel : graphData[0],
+                        graphTwoData : graphData[1],
+                        dataTwo : graphData[2],
+                        graphClicked : 1,
+                        rowData : data,
+                    })
                 }
-                this.setState({
-                    graphTwoLabelSHOW : graphTwoLabelSHOW,
-                    graphTwoLabel : graphData[0],
-                    graphTwoData : graphData[1],
-                    dataTwo : graphData[2],
-                    graphClicked : 1,
-                    rowData : data,
-                })
             }
         },
     }
@@ -672,39 +707,41 @@ class WaterDashboard extends React.Component {
                 var ind = element[0]._index;
                 var selectedVal = this.state.graphTwoLabel[ind];
                 var data = this.state.dataTwo[selectedVal];
-                var graphData = this.graphSorting(data, "subDiv", "dropdown_1_SubDivision");
+                if(data){
+                    var graphData = this.graphSorting(data, "subDiv", "dropdown_1_SubDivision");
                 
-                debugger;
-                var thirdlabel = graphData[0];
-                var thirdData = [0,0,0,0,0];
-                for(var i=0; i<thirdlabel.length; i++){
-                    if(thirdlabel[i] === "08"){
-                        thirdData[0] = graphData[1][i];
+                    debugger;
+                    var thirdlabel = graphData[0];
+                    var thirdData = [0,0,0,0,0];
+                    for(var i=0; i<thirdlabel.length; i++){
+                        if(thirdlabel[i] === "08"){
+                            thirdData[0] = graphData[1][i];
+                        }
+                        else if(thirdlabel[i] === "09"){
+                            thirdData[1] = graphData[1][i];
+                        }
+                        else if(thirdlabel[i] === "14"){
+                            thirdData[2] = graphData[1][i];
+                        }
+                        else if(thirdlabel[i] === "15"){
+                            thirdData[3] = graphData[1][i];
+                        }
+                        else if(thirdlabel[i] === "20"){
+                            thirdData[4] = graphData[1][i];
+                        }else{
+                            thirdData[5] = graphData[1][i];
+                        }
                     }
-                    else if(thirdlabel[i] === "09"){
-                        thirdData[1] = graphData[1][i];
-                    }
-                    else if(thirdlabel[i] === "14"){
-                        thirdData[2] = graphData[1][i];
-                    }
-                    else if(thirdlabel[i] === "15"){
-                        thirdData[3] = graphData[1][i];
-                    }
-                    else if(thirdlabel[i] === "20"){
-                        thirdData[4] = graphData[1][i];
-                    }else{
-                        thirdData[5] = graphData[1][i];
-                    }
-                }
 
-                this.setState({
-                    // graphThirdLabel : graphData[0],
-                    graphThirdLabel : ["Sub-Division 08", "Sub-Division 09", "Sub-Division 14", "Sub-Division 15", "Sub-Division 20"],
-                    graphThirdData : thirdData,
-                    dataThird : graphData[2],
-                    graphClicked : 2,
-                    rowData : data,
-                })
+                    this.setState({
+                        // graphThirdLabel : graphData[0],
+                        graphThirdLabel : ["Sub-Division 08", "Sub-Division 09", "Sub-Division 14", "Sub-Division 15", "Sub-Division 20"],
+                        graphThirdData : thirdData,
+                        dataThird : graphData[2],
+                        graphClicked : 2,
+                        rowData : data,
+                    })
+                }
             }
         },
     }
@@ -807,40 +844,42 @@ class WaterDashboard extends React.Component {
                 var selectedVal = this.state.graphThirdLabel[ind];
                 selectedVal = selectedVal.substring(selectedVal.length-2, selectedVal.length)
                 var data = this.state.dataThird[selectedVal];
-                var graphData = this.graphSorting(data, "auditDetails", "dropdown_1_One");
+                if(data){
+                    var graphData = this.graphSorting(data, "auditDetails", "dropdown_1_One");
 
-                var fourthLabel = graphData[0];
-                var fourthData = [0,0,0,0,0,0];
-                for(var i=0; i<fourthLabel.length; i++){
-                    var dt = new Date(fourthLabel[i]).getMonth();
-                    if(dt === 0 || dt === 1){
-                        fourthData[0] = fourthData[0] + graphData[1][i];
+                    var fourthLabel = graphData[0];
+                    var fourthData = [0,0,0,0,0,0];
+                    for(var i=0; i<fourthLabel.length; i++){
+                        var dt = new Date(fourthLabel[i]).getMonth();
+                        if(dt === 0 || dt === 1){
+                            fourthData[0] = fourthData[0] + graphData[1][i];
+                        }
+                        if(dt === 2 || dt === 3){
+                            fourthData[1] = fourthData[1] + graphData[1][i];
+                        }
+                        if(dt === 4 || dt === 5){
+                            fourthData[2] = fourthData[2] + graphData[1][i];
+                        }
+                        if(dt === 6 || dt === 7){
+                            fourthData[3] = fourthData[3] + graphData[1][i];
+                        }
+                        if(dt === 8 || dt === 9){
+                            fourthData[4] = fourthData[4] + graphData[1][i];
+                        }
+                        if(dt === 10 || dt === 11){
+                            fourthData[5] = fourthData[5] + graphData[1][i];
+                        }
                     }
-                    if(dt === 2 || dt === 3){
-                        fourthData[1] = fourthData[1] + graphData[1][i];
-                    }
-                    if(dt === 4 || dt === 5){
-                        fourthData[2] = fourthData[2] + graphData[1][i];
-                    }
-                    if(dt === 6 || dt === 7){
-                        fourthData[3] = fourthData[3] + graphData[1][i];
-                    }
-                    if(dt === 8 || dt === 9){
-                        fourthData[4] = fourthData[4] + graphData[1][i];
-                    }
-                    if(dt === 10 || dt === 11){
-                        fourthData[5] = fourthData[5] + graphData[1][i];
-                    }
+
+                    this.setState({
+                        // graphFourthLabel : graphData[0],
+                        graphFourthLabel : ["Cycle 1", "Cycle 2", "Cycle 3", "Cycle 4", "Cycle 5", "Cycle 6"],
+                        graphFourthData : fourthData,
+                        dataFourth : graphData[2],
+                        graphClicked : 3,
+                        rowData : data,
+                    })
                 }
-
-                this.setState({
-                    // graphFourthLabel : graphData[0],
-                    graphFourthLabel : ["Cycle 1", "Cycle 2", "Cycle 3", "Cycle 4", "Cycle 5", "Cycle 6"],
-                    graphFourthData : fourthData,
-                    dataFourth : graphData[2],
-                    graphClicked : 3,
-                    rowData : data,
-                })
             }
         },
     }
@@ -851,7 +890,7 @@ class WaterDashboard extends React.Component {
         // labels: ["Label1", "Label2"],
         datasets: [
             {
-            label: "SEP",
+            label: "No of Application",
             fill: false,
             lineTension: 0.1,
             hoverBorderWidth : 12,
@@ -944,46 +983,48 @@ class WaterDashboard extends React.Component {
                 // selectedVal = selectedVal.substring(selectedVal.length-1, selectedVal.length)
                 var data = this.state.dataFourth;
                 
-                var rowData = [];
-                for(var i=0; i<Object.keys(data).length; i++){
-                    var dt = new Date(Object.keys(data)[i]).getMonth();
-                    if(selectedVal === "Cycle 1"){
-                        if(dt === 0 || dt === 1){
-                            rowData = rowData.concat(data[Object.keys(data)[i]]);
+                if(data){
+                    var rowData = [];
+                    for(var i=0; i<Object.keys(data).length; i++){
+                        var dt = new Date(Object.keys(data)[i]).getMonth();
+                        if(selectedVal === "Cycle 1"){
+                            if(dt === 0 || dt === 1){
+                                rowData = rowData.concat(data[Object.keys(data)[i]]);
+                            }
+                        }
+                        if(selectedVal === "Cycle 2"){
+                            if(dt === 2 || dt === 3){
+                                rowData = rowData.concat(data[Object.keys(data)[i]]);
+                            }
+                        }
+                        if(selectedVal === "Cycle 3"){
+                            if(dt === 4 || dt === 5){
+                                rowData = rowData.concat(data[Object.keys(data)[i]]);
+                            }
+                        }
+                        if(selectedVal === "Cycle 4"){
+                            if(dt === 6 || dt === 7){
+                                rowData = rowData.concat(data[Object.keys(data)[i]]);
+                            }
+                        }
+                        if(selectedVal === "Cycle 5"){
+                            if(dt === 8 || dt === 9){
+                                rowData = rowData.concat(data[Object.keys(data)[i]]);
+                            }
+                        }
+                        if(selectedVal === "Cycle 6"){
+                            if(dt === 10 || dt === 11){
+                                rowData = rowData.concat(data[Object.keys(data)[i]]);
+                            }
                         }
                     }
-                    if(selectedVal === "Cycle 2"){
-                        if(dt === 2 || dt === 3){
-                            rowData = rowData.concat(data[Object.keys(data)[i]]);
-                        }
-                    }
-                    if(selectedVal === "Cycle 3"){
-                        if(dt === 4 || dt === 5){
-                            rowData = rowData.concat(data[Object.keys(data)[i]]);
-                        }
-                    }
-                    if(selectedVal === "Cycle 4"){
-                        if(dt === 6 || dt === 7){
-                            rowData = rowData.concat(data[Object.keys(data)[i]]);
-                        }
-                    }
-                    if(selectedVal === "Cycle 5"){
-                        if(dt === 8 || dt === 9){
-                            rowData = rowData.concat(data[Object.keys(data)[i]]);
-                        }
-                    }
-                    if(selectedVal === "Cycle 6"){
-                        if(dt === 10 || dt === 11){
-                            rowData = rowData.concat(data[Object.keys(data)[i]]);
-                        }
-                    }
-                }
 
-                this.setState({
-                    // graphFourthLabel : graphData[0],
-                    graphClicked : 4,
-                    rowData : rowData,
-                })
+                    this.setState({
+                        // graphFourthLabel : graphData[0],
+                        graphClicked : 4,
+                        rowData : rowData,
+                    })
+                }
             }
         },
     }
@@ -1086,9 +1127,11 @@ class WaterDashboard extends React.Component {
                 var selectedVal = this.state.graphFifthLabel[ind];
                 const data = this.state.dataFifth[selectedVal];
 
-                this.setState({
-                    rowData : data
-                })
+                if(data){
+                    this.setState({
+                        rowData : data
+                    })
+                }
             }
         },
     }
@@ -1096,140 +1139,146 @@ class WaterDashboard extends React.Component {
         
     return (
         <div>
-        
-        {/*  Dropdown One Application Status report */}
-        <div className="graphDashboard" style={this.state.dropdownSelected === "collectionReport" ? {display:"none"} :null}>
-        
-
-        {
-            this.state.graphClicked >= 0 ?
-            <CardContent className="halfGraph">
-            <div style={{height:"500px"}}>
-                    <React.Fragment>
-                        <Pie
-                        height={responsiveSizeHack}
-                        width={responsiveSizeHack}
-                        data={ graphOneSortedData }
-                        options={ graphOneOption }                 
-                        />
-                    </React.Fragment>
-                </div>
-            </CardContent>
-            :null
-        }
-        {
-            this.state.graphClicked > 0 ?
-            <CardContent className="halfGraph">
-                <div style={{height:"500px"}}>
-                    <React.Fragment>
-                        <Pie
-                        height={responsiveSizeHack}
-                        width={responsiveSizeHack}
-                        data={ graphTwoSortedData }
-                        options={ graphTwoOption }                 
-                        />
-                    </React.Fragment>
-                </div>
-            </CardContent>
-            :null
-        }
-        </div>
-        
-        <div className="graphDashboard" style={this.state.dropdownSelected === "collectionReport" || 
-        this.state.graphClicked < 2
-        ? {display:"none"} :null}>
-        {
-            this.state.graphClicked > 1 ?
-            <CardContent className="halfGraph">
-                <div style={{height:"500px"}}>
-                    <React.Fragment>
-                        <Bar
-                        height={responsiveSizeHack}
-                        width={responsiveSizeHack}
-                        data={ graphThirdSortedData }
-                        options={ graphThirdOption }                 
-                        />
-                    </React.Fragment>
-                </div>
-            </CardContent>
-            :null
-        }
-        {
-            this.state.graphClicked > 2 ?
-            <CardContent className="halfGraph">
-                <div style={{height:"500px"}}>
-                    <React.Fragment>
-                        <Bar
-                        height={responsiveSizeHack}
-                        width={responsiveSizeHack}
-                        data={ graphFourthSortedData }
-                        options={ graphFourthOption }                 
-                        />
-                    </React.Fragment>
-                </div>
-            </CardContent>
-            :null
-        }
-        </div>
-        
-        {/*  Dropdown 2 Collection Report Grph */}
-        <div className="graphDashboard" style={this.state.dropdownSelected === "applicationStatusReport" ? {display:"none"} :null}>
-        
-        {
-        //     this.state.graphClicked > 0 ?
-            <CardContent className="fullGraph">
-                <React.Fragment>
-                    <Bar
-                    data={ graphFifthSortedData }
-                    options={ graphFifthOption } 
-                    />
-                </React.Fragment>
-            </CardContent>
-        // : null
-        }
+        <div>
+            { this.state.recordNotFound }
         </div>
 
-        {/* Table Feature  */}
-        <div className="tableContainer">
-        {
-            this.state.unchangeColumnData.length > 0  ? 
-            <div className="tableFeature">
-                <div className="columnToggle-Text"> Download As: </div>
-                <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+        <div style={this.state.rowData.length === 0 ? {display:"none"} : null}>
+            {/*  Dropdown One Application Status report */}
+            <div className="graphDashboard" style={this.state.dropdownSelected === "collectionReport" ? {display:"none"} :null}>
+            
 
-                <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+            {
+                this.state.graphClicked >= 0 ?
+                <CardContent className="halfGraph">
+                <div style={{height:"500px"}}>
+                        <React.Fragment>
+                            <Pie
+                            height={responsiveSizeHack}
+                            width={responsiveSizeHack}
+                            data={ graphOneSortedData }
+                            options={ graphOneOption }                 
+                            />
+                        </React.Fragment>
+                    </div>
+                </CardContent>
+                :null
+            }
+            {
+                this.state.graphClicked > 0 ?
+                <CardContent className="halfGraph">
+                    <div style={{height:"500px"}}>
+                        <React.Fragment>
+                            <Pie
+                            height={responsiveSizeHack}
+                            width={responsiveSizeHack}
+                            data={ graphTwoSortedData }
+                            options={ graphTwoOption }                 
+                            />
+                        </React.Fragment>
+                    </div>
+                </CardContent>
+                :null
+            }
             </div>
-            :null
-        }
-        {
-           this.state.toggleColumnCheck ?
-           <div className="columnVisibilityCard">
-            <dl>
-                {
-                    this.state.unchangeColumnData.map((data, index)=>{
-                        return(
-                            <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
-                        )
-                    })
-                }
-            </dl>
-            </div> 
-           : null
-        }
+            
+            <div className="graphDashboard" style={this.state.dropdownSelected === "collectionReport" || 
+            this.state.graphClicked < 2
+            ? {display:"none"} :null}>
+            {
+                this.state.graphClicked > 1 ?
+                <CardContent className="halfGraph">
+                    <div style={{height:"500px"}}>
+                        <React.Fragment>
+                            <Bar
+                            height={responsiveSizeHack}
+                            width={responsiveSizeHack}
+                            data={ graphThirdSortedData }
+                            options={ graphThirdOption }                 
+                            />
+                        </React.Fragment>
+                    </div>
+                </CardContent>
+                :null
+            }
+            {
+                this.state.graphClicked > 2 ?
+                <CardContent className="halfGraph">
+                    <div style={{height:"500px"}}>
+                        <React.Fragment>
+                            <Bar
+                            height={responsiveSizeHack}
+                            width={responsiveSizeHack}
+                            data={ graphFourthSortedData }
+                            options={ graphFourthOption }                 
+                            />
+                        </React.Fragment>
+                    </div>
+                </CardContent>
+                :null
+            }
+            </div>
+            
+            {/*  Dropdown 2 Collection Report Grph */}
+            <div className="graphDashboard" style={this.state.dropdownSelected === "applicationStatusReport" ? {display:"none"} :null}>
+            
+            {
+                this.state.graphClicked >= 0 ?
+                <CardContent className="fullGraph">
+                    <React.Fragment>
+                        <Bar
+                        data={ graphFifthSortedData }
+                        options={ graphFifthOption } 
+                        />
+                    </React.Fragment>
+                </CardContent>
+            : null
+            }
+            </div>
 
-        {
-            // this.state.graphClicked >= 0 ?
-            <ReactTable id="customReactTable"
-            // PaginationComponent={Pagination}
-            data={ this.state.rowData }  
-            columns={ this.state.columnData }  
-            defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
-            pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
-            pageSizeOptions = {[20,40,60]}  
-            /> 
-            // :null
-        }
+            {/* Table Feature  */}
+            <div className="tableContainer" style={this.state.rowData.length === 0 ? {display:"none"} :null}>
+            {
+                this.state.unchangeColumnData.length > 0  ? 
+                <div className="tableFeature">
+                    <div className="columnToggle-Text"> Download As: </div>
+                    <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+                    <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+                </div>
+                :null
+            }
+            {
+            this.state.toggleColumnCheck ?
+            <div className="columnVisibilityCard">
+                <dl>
+                    {
+                        this.state.unchangeColumnData.map((data, index)=>{
+                            return(
+                                <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
+                            )
+                        })
+                    }
+                </dl>
+                </div> 
+            : null
+            }
+
+            {
+                this.state.graphClicked >= 0 ?
+                <ReactTable id="customReactTable"
+                // PaginationComponent={Pagination}
+                data={ this.state.rowData }  
+                columns={ this.state.columnData }  
+                defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
+                pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
+                pageSizeOptions = {[20,40,60]}  
+                /> 
+                :null
+            }
+            </div>
+            
         </div>
+
         </div>
     );
     }

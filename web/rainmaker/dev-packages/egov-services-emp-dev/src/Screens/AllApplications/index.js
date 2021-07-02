@@ -113,19 +113,114 @@ class AllRequests extends Component {
     });
   }; 
   gotoPArkAndCommunityTanker = () => {
-    let {PreviousBookingData ,oldBookingData,prepareFinalObject,clearAvailable,discountOldDoc,previousResidenceProof} = this.props
+    let {PreviousBookingData ,oldBookingData,prepareFinalObject,clearAvailable,discountOldDoc,UploadedDocType,previousResidenceProof,state} = this.props
     let ApplicationData = this.props.bookings;
     let CheckData = this.props.bookings ? (this.props.bookings.applicationData ?(this.props.bookings.applicationData.bookingsModelList.length > 0 ? (this.props.bookings.applicationData.bookingsModelList): 'NA'): 'NA'): "NA"
 //screenConfiguration.preparedFinalObject.PreviousBookingData    
+// let lastBookingData = state.screenConfiguration.preparedFinalObject.hasOwnProperty('PreviousBookingData')
+// console.log("lastBookingData",lastBookingData)
+
+let clearVenueData = get(
+  state,"screenConfiguration.preparedFinalObject.bkBookingData",
+  "NotFound"
+);
+console.log("clearVenueData--ApplicationPage",clearVenueData)
+if(clearVenueData !== "NotFound"){
+  delete state.screenConfiguration.preparedFinalObject.bkBookingData
+}
+
+let applicationData = get(
+  state,
+  "bookings.applicationData",
+  "NotFound"
+);
+console.log("applicationData--in--allApplicationPage",applicationData)
+
+let findDocument;
+findDocument = state.bookings.hasOwnProperty('applicationData')
+console.log("findDocument",findDocument)
+
+if(applicationData !== "NotFound" || findDocument == true){
+  console.log("ComeIncondition--")
+  this.props.clearBookingData(null,true,true)
+  delete state.bookings.applicationData
+}
+
+let lastBookingData = get(
+  state,
+  "screenConfiguration.preparedFinalObject.PreviousBookingData",
+  "NotFound"
+);
+console.log("lastBookingData",lastBookingData)
+
+let documentMap = get(
+  state,
+  "screenConfiguration.preparedFinalObject.documentMap",
+  "NotFound"
+);
+
+console.log("documentMap--opopop",documentMap)
+
+let lastCreatedPaccAppData = get(
+  state,
+  "screenConfiguration.preparedFinalObject.CreatePaccAppData",
+  "NotFound"
+);
+
+let checkDateVenueChange = get(
+  state,
+  "screenConfiguration.preparedFinalObject.EmployeeDateVenueChange",
+  "NotFound"
+);
+if(checkDateVenueChange !== "NotFound"){
+  prepareFinalObject("EmployeeDateVenueChange","NotFound")
+}
+
+// let lastCreatedPaccAppData =  state.screenConfiguration.prepareFinalObject.hasOwnProperty('CreatePaccAppData')
+console.log("lastCreatedPaccAppData",lastCreatedPaccAppData)
+
+let lastCreateAppData = get(
+  state,
+  "screenConfiguration.preparedFinalObject.createAppData",
+  "NotFound"
+);
+
+// let lastCreateAppData = state.screenConfiguration.prepareFinalObject.hasOwnProperty('createAppData')
+console.log("lastCreateAppData",lastCreateAppData)
+//documentMap
+if(documentMap !== "NotFound"){
+  console.log("DeleteDocument")
+  delete state.screenConfiguration.preparedFinalObject.documentMap
+}
+
+if(lastBookingData !== "NotFound"){
+  console.log("DeleteOne")
+  delete state.screenConfiguration.preparedFinalObject.PreviousBookingData
+}
+
+if(lastCreatedPaccAppData !== "NotFound"){
+  console.log("Deletetwo")
+  delete state.screenConfiguration.preparedFinalObject.CreatePaccAppData
+}
+
+if(lastCreateAppData !== "NotFound"){
+  console.log("DeleteThree")
+  delete state.screenConfiguration.preparedFinalObject.createAppData
+}
+
     if(PreviousBookingData !== "NotFound"){
       prepareFinalObject("PreviousBookingData",null)
     }
     if(discountOldDoc !== "NotFound"){
-      prepareFinalObject("discountDocumentsUploadRedux",null)
+      prepareFinalObject("discountDocumentsUploadRedux",{})
     }
     if(previousResidenceProof !== "NotFound"){
-      prepareFinalObject("documentsUploadRedux",null)
+      prepareFinalObject("documentsUploadRedux",{})
     }
+    if(UploadedDocType !== "NotFound"){
+      prepareFinalObject("UploadedDocType",null)
+    }     
+    
     //screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
     if(oldBookingData !== "NotFound"){
       prepareFinalObject("oldAvailabilityCheckData",null)
@@ -134,11 +229,8 @@ class AllRequests extends Component {
       prepareFinalObject("availabilityCheckData",null)
     }
     if(CheckData !== 'NA'){
-      // let newbooking ={...this.props.bookings,applicationData:null} 
-
     this.props.clearBookingData(null,true,true)
       }
-    
     this.props.history.push(`/egov-services/checkavailability_pcc`);
   };
   gotoMcc = () => {
@@ -232,51 +324,130 @@ let bkLocation = dataforSectorAndCategory && dataforSectorAndCategory.bookingsMo
 		}
     console.log("nero proofOfResDocs", proofOfResDocs, "----", allDocumentList)
 		console.log("AppNo--", AppNo)
-		if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
-			let timeSlot = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot
-			console.log("timeSlot--", timeSlot)
+	  if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
+      let arr2 = [];
+      for(let i = 0; i < dataforSectorAndCategory.bookingsModelList[0].timeslots.length; i++){
+        arr2.push(dataforSectorAndCategory.bookingsModelList[0].timeslots[i].slot)
+      }
+      console.log("arr",arr2)
 
-			prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
+      if(arr2.length == 1){
+      console.log("it contain single element")
+      console.log("your time slot is",arr2[0])
+      let timeSlot =
+        dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot;
+      console.log("timeSlot--", timeSlot);
 
-			let res = timeSlot.split("-");
-			console.log("res--", res)
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
 
-			let fromTime = res[0]
-			console.log("fromTime--", fromTime)
+      let res = timeSlot.split("-");
+      console.log("res--", res);
 
-			prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
+      let fromTime = res[0];
+      console.log("fromTime--", fromTime);
+
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
+
+      let ToTime = res[1];
+      console.log("ToTime--", ToTime);
+
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
+
+      let strMid = ",";
+
+      let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
+      console.log("ConcatFromDateTime--", ConcatFromDateTime);
+
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatFromDateTime",
+        ConcatFromDateTime
+      );
+
+      let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
+      console.log("ConcatToDateTime--", ConcatToDateTime);
+
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatToDateTime",
+        ConcatToDateTime
+      );
+
+      //let bkDisplayFromDateTime =
+
+      let timeSlotId =
+        dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id;
+      console.log("timeSlotId--", timeSlotId);
+
+      prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
+      }
+       else{
+        let a = arr2[0]
+        let b = arr2[1]
+        console.log("a",a)
+        console.log("b",b)
+        let fromfirst = a.split("-")
+        console.log("first",fromfirst)
+       let fromsecond = b.split("-")
+      console.log("second",fromsecond)
+      
+      let first = fromfirst[0]
+      let second = fromsecond[1]
+      console.log("first",first)
+      console.log("second",second)
+
+      let comfirstsecond = first + "-" + second
+      console.log("comfirstsecond",comfirstsecond)
+
+      let timeSlot = comfirstsecond
+console.log("timeSlot54234",timeSlot)
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
 
 
-			let ToTime = res[1]
-			console.log("ToTime--", ToTime);
+      let res = timeSlot.split("-");
+      console.log("res--", res);
 
-			prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
+      let fromTime = res[0];
+      console.log("fromTime--", fromTime);
 
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
 
-			let strMid = ","
+      let ToTime = res[1];
+      console.log("ToTime--", ToTime);
 
-			let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
-			console.log("ConcatFromDateTime--", ConcatFromDateTime)
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
 
-			prepareFinalObject("oldAvailabilityCheckData.ConcatFromDateTime", ConcatFromDateTime);
+      let strMid = ",";
 
-			let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
-			console.log("ConcatToDateTime--", ConcatToDateTime)
+      let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
+      console.log("ConcatFromDateTime--", ConcatFromDateTime);
 
-			prepareFinalObject("oldAvailabilityCheckData.ConcatToDateTime", ConcatToDateTime);
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatFromDateTime",
+        ConcatFromDateTime
+      );
 
+      let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
+      console.log("ConcatToDateTime--", ConcatToDateTime);
 
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatToDateTime",
+        ConcatToDateTime
+      );
 
-			//let bkDisplayFromDateTime =
+      //let bkDisplayFromDateTime =
 
-			let timeSlotId = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id
-			console.log("timeSlotId--", timeSlotId)
+      let timeSlotId =
+        dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id;
+      console.log("timeSlotId--", timeSlotId);
 
-			prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
+      prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
 
+      let timeSlotIdTwo =
+      dataforSectorAndCategory.bookingsModelList[0].timeslots[1].id;
+    console.log("timeSlotIdTwo--", timeSlotIdTwo);
 
-
-		}
+    prepareFinalObject("oldAvailabilityCheckData.timeSlotIdTwo", timeSlotIdTwo);  
+       }
+    }
 
     allDocumentList.map(async (doc) => {
 			console.log("Doccc---", doc);
@@ -1347,6 +1518,12 @@ let previousResidenceProof  = get(
   "screenConfiguration.preparedFinalObject.documentsUploadRedux",
   "NotFound"
 );
+let UploadedDocType  = get(
+  state,
+  "screenConfiguration.preparedFinalObject.UploadedDocType",
+  "NotFound"
+);
+
 console.log("previousResidenceProof-",previousResidenceProof)
 
   
@@ -1386,7 +1563,7 @@ console.log("previousResidenceProof-",previousResidenceProof)
     loading,
     transformedComplaints,
     roles,
-    bookings,userInfo,discountOldDoc,previousResidenceProof
+    bookings,userInfo,discountOldDoc,previousResidenceProof,state
   };
 };
 

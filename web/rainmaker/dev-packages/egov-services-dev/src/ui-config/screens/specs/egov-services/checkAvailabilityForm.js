@@ -369,15 +369,16 @@ export const checkAvailabilitySearch = getCommonCard({
                 variant: "contained",
                 color: "primary",
                 style: {
-                    minWidth: "200px",
+                    minWidth: "95%",
                     height: "48px",
                     marginRight: "16px",
+                    marginBottom : "10px"
                 },
             },
             gridDefination: {
                 xs: 12,
                 sm: 12,
-                md: 3,
+                md: 2,
             },
 
             children: {
@@ -405,18 +406,19 @@ export const checkAvailabilitySearch = getCommonCard({
                 variant: "outlined",
                 color: "primary",
                 style: {
-                    minWidth: "200px",
+                    minWidth: "95%",
                     height: "48px",
                     marginRight: "16px",
+                    marginBottom : "10px"
                     //marginLeft: "100px"
                 },
             },
             gridDefination: {
                 xs: 12,
                 sm: 12,
-                md: 3,
+                md: 2,
             },
-
+            
             children: {
                 resetButtonLabel: getLabel({
                     labelName: "Reset",

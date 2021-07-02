@@ -13,47 +13,47 @@ import { httpRequest } from "egov-ui-kit/utils/api";
 import Label from "egov-ui-kit/utils/translationNode";
 import { Box, Button, Card, CardContent, CircularProgress, Grid, Step, StepLabel, Stepper } from '@material-ui/core';
 import commonConfig from "config/common.js";
-
+import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 export class StepForm extends Component {
 // this.props.appData &&  this.props.appData.bkApplicantName ||  "" 
 
-    state = {
-        step: 0,
-        firstName: this.props.appData.bkApplicantName ? this.props.appData.bkApplicantName : '',
+    state = {  
+        step: 0,  
+        firstName: this.props.appData !== "NotFound" ? (this.props.appData.bkApplicantName ? this.props.appData.bkApplicantName : '') : '',
         bookingStepRefundAmount:'',
-        BankAccountName: this.props.appData.bkBankName ? this.props.appData.bkBankName : '',
-        NomineeName:this.props.appData.bkNomineeName ? this.props.appData.bkNomineeName : '',
-        BankAccountNumber:this.props.appData.bkBankAccountNumber ? this.props.appData.bkBankAccountNumber : '',
-        IFSCCode:this.props.appData.bkIfscCode ? this.props.appData.bkIfscCode : '',
-        AccountHolderName:this.props.appData.bkBankAccountHolder ? this.props.appData.bkBankAccountHolder : '',
-        accountType: 'Saving',
-        lastName: '',
-        email: this.props.appData.bkEmail ? this.props.appData.bkEmail : '',
-        mobileNo: this.props.appData.bkMobileNumber ? this.props.appData.bkMobileNumber : '',
+        BankAccountName: this.props.appData !== "NotFound" ? (this.props.appData.bkBankName ? this.props.appData.bkBankName : '') : '',
+        NomineeName: this.props.appData !== "NotFound" ? (this.props.appData.bkNomineeName ? this.props.appData.bkNomineeName : '') : '',
+        BankAccountNumber: this.props.appData !== "NotFound" ? (this.props.appData.bkBankAccountNumber ? this.props.appData.bkBankAccountNumber : '') : '',
+        IFSCCode: this.props.appData !== "NotFound" ? (this.props.appData.bkIfscCode ? this.props.appData.bkIfscCode : ''):'',
+        AccountHolderName: this.props.appData !== "NotFound" ? (this.props.appData.bkBankAccountHolder ? this.props.appData.bkBankAccountHolder : '') : '',
+        accountType:  this.props.appData !== "NotFound" ? (this.props.appData.bkAccountType ? this.props.appData.bkAccountType : 'Saving') : 'Saving',
+        lastName: '', 
+        email:this.props.appData !== "NotFound" ? (this.props.appData.bkEmail ? this.props.appData.bkEmail : '') : '',
+        mobileNo:this.props.appData !== "NotFound" ? (this.props.appData.bkMobileNumber ? this.props.appData.bkMobileNumber : '') : '',
         jobTitle: '', 
         jobCompany: '',
         jobLocation: '',
-        houseNo: this.props.appData.bkHouseNo ? this.props.appData.bkHouseNo : '',
-        purpose: this.props.appData.bkBookingPurpose ? this.props.appData.bkBookingPurpose : '',
-        locality: this.props.appData.bkLocation ? this.props.appData.bkLocation : '',
-        residenials: this.props.appData.bkResidentialOrCommercial !== undefined && this.props.appData.bkResidentialOrCommercial !== null ? this.props.appData.bkResidentialOrCommercial : '',
+        houseNo:this.props.appData !== "NotFound" ? (this.props.appData.bkHouseNo ? this.props.appData.bkHouseNo : '') : '',
+        purpose: this.props.appData !== "NotFound" ?(this.props.appData.bkBookingPurpose ? this.props.appData.bkBookingPurpose : '') : '',
+        locality:this.props.appData !== "NotFound" ? (this.props.appData.bkLocation ? this.props.appData.bkLocation : '') : '',
+        residenials: this.props.appData !== "NotFound" ?(this.props.appData.bkResidentialOrCommercial !== undefined && this.props.appData.bkResidentialOrCommercial !== null ? this.props.appData.bkResidentialOrCommercial : '') : '',
         approverName: '',//bkBookingPurpose
         comment: '',
         dimension: '', 
-        DiscountReason : this.props.appData.bkRemarks ? this.props.appData.bkRemarks : '',//
-        location: this.props.appData.bkLocation ? this.props.appData.bkLocation : '',//bkLocation
+        DiscountReason : this.props.appData !== "NotFound" ?(this.props.appData.bkRemarks ? this.props.appData.bkRemarks : '') : '',//
+        location: this.props.appData !== "NotFound" ?(this.props.appData.bkLocation ? this.props.appData.bkLocation : '') : '',//bkLocation
         cleaningCharges: '', 
         rent: '',
         facilitationCharges: '',
         NewfCharges: '',
         surcharge: '', utGST: '', cGST: '',
-        GSTnumber: this.props.appData &&  this.props.appData.bkCustomerGstNo ||  "", type: '',
+        GSTnumber: this.props.appData !== "NotFound" ?(this.props.appData &&  this.props.appData.bkCustomerGstNo ||  "") : '', type: '',
         fromDate: '', finalRent: '',
         toDate: '', transactionNumber: '', bankName: '', 
-        paymentMode: this.props.appData.bkMaterialStorageArea !== undefined && this.props.appData.bkMaterialStorageArea !== null ? this.props.appData.bkMaterialStorageArea : '',
+        paymentMode: this.props.appData !== "NotFound" ?(this.props.appData.bkMaterialStorageArea !== undefined && this.props.appData.bkMaterialStorageArea !== null ? this.props.appData.bkMaterialStorageArea : '') : '',
          amount: '', transactionDate: '', 
-        discountType: this.props.appData.bkPlotSketch ? this.props.appData.bkPlotSketch : 'General',       //bkPlotSketch 
+        discountType: this.props.appData !== "NotFound" ?(this.props.appData.bkPlotSketch ? this.props.appData.bkPlotSketch : 'General') : 'General',       //bkPlotSketch 
         childrenArray: [
             { labelName: "Applicant Details", labelKey: "APPLICANT DETAILS" },
             { labelName: "Booking Details", labelKey: "BOOKING DETAILS" },
@@ -138,10 +138,32 @@ export class StepForm extends Component {
     onFromDateChange = e => {
         let fromDate = e.target.value;
         this.setState({
-            fromDate
+            fromDate 
         })
     }
+    //screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux
     handleChangeDiscount = (event) => {
+        let {state} = this.props
+        let findDocument;
+        findDocument = state.screenConfiguration.preparedFinalObject.hasOwnProperty('discountDocumentsUploadRedux')
+            console.log("findDocument",findDocument)
+            let getDocumentRedux = get(
+             state,
+             "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux",
+             "NotFound"
+           );
+           console.log("getDocumentRedux",getDocumentRedux)
+            if(findDocument == true &&  getDocumentRedux == null){
+      console.log("AlreadyDocumentuploadReduxExist")
+      this.props.prepareFinalObject('discountDocumentsUploadRedux', {'0': {
+      documentType: 'DOC',
+      documentCode: 'BK_PCC_DISCOUNT_DOCUMENT',
+      isDocumentRequired: true,
+      isDocumentTypeRequired: false,
+      mydocstate: false
+      }})
+      
+      }
         this.setState({ discountType: event.target.value });
     };
     AccountType = (event) => {
@@ -192,7 +214,7 @@ export class StepForm extends Component {
 
       let checkDateVenueChange = false;
 
-       let {ApplyForDateVenueChange} = this.props
+       let {ApplyForDateVenueChange} = this.props   
       
 
 if(ApplyForDateVenueChange !== "NotFound"){
@@ -210,37 +232,41 @@ if(ApplyForDateVenueChange !== "NotFound"){
             bookingData ? bookingData.bkToDate: ""
         );
         console.log("totalDays--",daysCount ? daysCount :"")
-        let venueType = vanueData ? vanueData.venueType: "";
+        let venueType = vanueData ? (vanueData.venueType && vanueData.venueType !== undefined && vanueData.venueType !== null ? (vanueData.venueType) : ''): "";
         console.log("venueType--",venueType)
-        let bokingType = bookingData ? bookingData.bkBookingVenue : ""
+        let bokingType = bookingData ? (bookingData.bkBookingVenue && bookingData.bkBookingVenue !== undefined && bookingData.bkBookingVenue !== null ? (bookingData.bkBookingVenue) : ''): "";
         console.log("bokingType--",bokingType)
-        console.log("vanueData.rent--",vanueData ? vanueData.rent :"")
+        console.log("vanueData.rent--",vanueData ? (vanueData.rent && vanueData.rent !== undefined && vanueData.rent !== null ? (vanueData.rent) : "") :"")
         console.log("vanueData.cleaningCharges--",vanueData && vanueData.cleaningCharges || "")
 
-
+        let totalAmount1
+        let vrent
     //     let tAmount = vanueData ? Number(vanueData.rent) + Number(vanueData.cleaningCharges) : ""
     //    console.log("tAmount--",tAmount)
-let vrent = Number(vanueData.rent);
+if(vanueData && vanueData !== undefined && vanueData !== null && vanueData.rent !== undefined && vanueData.rent !== null){
+        vrent = Number(vanueData.rent);
 
-        let totalAmount1 = vrent * daysCount;
-       console.log("totalAmount--with-Number-of-Days",totalAmount1)
-        if (discountType == '100%' || discountType == "KirayaBhog" || discountType == "ReligiousFunction") {
-            totalAmount1 = 0;
-        } else if (discountType == '50%') {
-            let discount = (50 * Number(totalAmount1)) / 100;
-            console.log("discount--50",discount)
-            totalAmount1 = Number(totalAmount1) - discount;
-            console.log("totalAmount-After-discount--",totalAmount1)
-        } else if (discountType == '20%') {
-            let discount = (20 * Number(totalAmount1)) / 100;
-            console.log("discount--20",discount)
-            totalAmount1 = Number(totalAmount1) - discount;
-            console.log("totalAmount--",totalAmount1)
+totalAmount1 = vrent * daysCount;
+   console.log("totalAmount--with-Number-of-Days",totalAmount1)
+    if (discountType == '100%' || discountType == "KirayaBhog" || discountType == "ReligiousFunction") {
+        totalAmount1 = 0;
+    } else if (discountType == '50%') {
+        let discount = (50 * Number(totalAmount1)) / 100;
+        console.log("discount--50",discount)
+        totalAmount1 = Number(totalAmount1) - discount;
+        console.log("totalAmount-After-discount--",totalAmount1)
+    } else if (discountType == '20%') {
+        let discount = (20 * Number(totalAmount1)) / 100;
+        console.log("discount--20",discount)
+        totalAmount1 = Number(totalAmount1) - discount;
+        console.log("totalAmount--",totalAmount1)
 
-        } else {
-            totalAmount1 = totalAmount1;
-            console.log("totalAmount-in-else--",totalAmount1)
-        }
+    } else {
+        totalAmount1 = totalAmount1;
+        console.log("totalAmount-in-else--",totalAmount1)
+    }
+}
+
         if (paccDate) {
            
             fromDate = paccDate.bkDisplayFromDateTime;
@@ -254,7 +280,10 @@ let vrent = Number(vanueData.rent);
             toDate = moment(bookingData.bkToDate).format("YYYY-MM-DD");
             console.log("toDate--moment",toDate)
         }
+//screenConfiguration.preparedFinalObject.CreatePaccAppData
 
+
+//screenConfiguration.preparedFinalObject.createAppData
         if(location == ''){
             location = bookingData.bkLocation;
             console.log("location--",location)
@@ -391,7 +420,7 @@ console.log("fixedRefundPlusAllRentNum--",fixedRefundPlusAllRentNum)
         //         bankName={bankName}
         //         paymentMode={paymentMode}
         //         amount={VfinalAmount}
-        //         finalRent={finalRent}
+        //         finalRent={finalRent}   
         //         transactionDate={transactionDate}
         //         discountType={discountType}
         //         // rent={VfinalAmount}  
@@ -515,28 +544,40 @@ const mapStateToProps = state => {
   let bookingOne = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData:"two"
   let stateData = state;
   let Previousdiscount = "NotFound"
+  let appData = "NotFound"
 //   let appData = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0] : ""
 //   console.log("appData--",appData)
+let findApplicationData;
+findApplicationData = state.bookings.hasOwnProperty('applicationData')
+console.log("findApplicationData",findApplicationData)
 
-  let appData = state.bookings ? (state.bookings.applicationData !== undefined && state.bookings.applicationData !== null ? state.bookings.applicationData.bookingsModelList.length > 0 ?(state.bookings.applicationData.bookingsModelList[0]) :'NA' : 'NA'): 'NA'
-  console.log("appData--",appData)
+let applicationData = get(
+    state,
+    "bookings.applicationData",
+    "NotFound"
+  );
+  console.log("applicationData--in--allApplicationPage",applicationData)
+  
 
-  if(appData !== undefined && appData !== null && appData !== 'NA'){
-     if(appData.discount == 0){
-        Previousdiscount = "General"
-     } 
-     if(appData.discount == 50){
-        Previousdiscount = "50%"
-     }
-     if(appData.discount == 20){
-        Previousdiscount = "50%"
-     }
-     if(appData.discount == 100){
-        Previousdiscount = "100%"
-     }
-  }
+if(findApplicationData == true && applicationData !== "NotFound"){
+    appData = state.bookings ? (state.bookings.applicationData !== undefined && state.bookings.applicationData !== null ? state.bookings.applicationData.bookingsModelList.length > 0 ?(state.bookings.applicationData.bookingsModelList[0]) :'NA' : 'NA'): 'NA'
+    console.log("appData--",appData)
   
-  
+    if(appData !== undefined && appData !== null && appData !== 'NA'){
+       if(appData.discount == 0){
+          Previousdiscount = "General"
+       } 
+       if(appData.discount == 50){
+          Previousdiscount = "50%"
+       }
+       if(appData.discount == 20){
+          Previousdiscount = "50%"
+       }
+       if(appData.discount == 100){
+          Previousdiscount = "100%"
+       }
+    }
+}
   let fCharges;
   if (arrayName && arrayName.length > 0) {
     arrayName.forEach((item) => {
@@ -561,17 +602,19 @@ const mapStateToProps = state => {
         fCharges,
         appData,
         Previousdiscount,
-        ApplyForDateVenueChange
+        ApplyForDateVenueChange,
+        state
     }
 }
 
-// const mapDispatchToProps = dispatch => {
-//     return {
-//       fetchfacilationCharges: () => dispatch(fetchfacilationCharges()),  
-//     }
-//   }
+const mapDispatchToProps = dispatch => {
+    return {
+        prepareFinalObject: (jsonPath, value) =>
+        dispatch(prepareFinalObject(jsonPath, value))
+    }
+  }
 
 export default connect(
     mapStateToProps,
-    null
+    mapDispatchToProps
 )(StepForm);

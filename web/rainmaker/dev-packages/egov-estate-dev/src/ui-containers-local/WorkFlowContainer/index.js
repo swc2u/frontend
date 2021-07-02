@@ -174,7 +174,7 @@ class WorkFlowContainer extends React.Component {
     }
 
     if(applicationState === "ES_PENDING_DA_PREPARE_LETTER") {
-      let applicationDocuments = data[0].applicationDocuments
+      let applicationDocuments = data[0].applicationDocuments || []
       const finalLetter = data[0].finalLetter;
       if(!!finalLetter && !!finalLetter.length) {
         const finalLetterDocument = finalLetter[0];

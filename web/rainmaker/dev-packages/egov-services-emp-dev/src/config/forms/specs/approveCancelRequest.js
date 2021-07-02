@@ -110,6 +110,16 @@ const formConfig = {
         jsonPath: "Booking.bkAccountType",
         value:''
       },
+      bkStatusUpdateRequest: {
+        id: "Booking-bkStatusUpdateRequest",
+        jsonPath: "Booking.bkStatusUpdateRequest",
+        value:''
+      },
+      bkLocationPictures: {
+        id: "Booking-bkLocationPictures",
+        jsonPath: "Booking.bkLocationPictures",
+        value:''
+      },
       bkBankAccountHolder: {
         id: "Booking-bkBankAccountHolder",
         jsonPath: "Booking.bkBankAccountHolder",
@@ -126,6 +136,16 @@ const formConfig = {
         value:''
       }
    ,
+   timeslots: {
+    id: "Booking-timeslots", 
+    jsonPath: "Booking.timeslots",
+    value:''
+  },
+  cardNumber: {
+    id: "Booking-cardNumber",
+    jsonPath: "Booking.cardNumber",
+    value:''
+  },
     tenantId: {
       id: "tenantId",
       jsonPath: "Booking.tenantId",

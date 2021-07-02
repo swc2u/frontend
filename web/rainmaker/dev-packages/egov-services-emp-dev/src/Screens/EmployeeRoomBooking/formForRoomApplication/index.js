@@ -16,7 +16,7 @@ export class StepForm extends Component {
 // this.props.appData &&  this.props.appData.bkApplicantName ||  "" 
 
     state = {
-      AccRoomToBook:'',  
+      AccRoomToBook:'',   
       NonAccRoomToBook:'',
       RoomBookingData:'',
       TypeOfRoomToBook: '',
@@ -27,7 +27,7 @@ export class StepForm extends Component {
       Name : this.props.DataForRoomBooking.bookingsModelList[0].bkApplicantName,
       email : this.props.DataForRoomBooking.bookingsModelList[0].bkEmail,
       purpose : this.props.DataForRoomBooking.bookingsModelList[0].bkBookingPurpose,
-      houseNo : this.props.DataForRoomBooking.bookingsModelList[0].bkHouseNo,//
+      houseNo : this.props.DataForRoomBooking.bookingsModelList[0].bkHouseNo,
       ReasonForDiscount : this.props.DataForRoomBooking.bookingsModelList[0].bkRemarks,
       discount: this.props.DataForRoomBooking.bookingsModelList[0].discount,
       Sector : this.props.DataForRoomBooking.bookingsModelList[0].bkSector,
@@ -191,7 +191,7 @@ export class StepForm extends Component {
         console.log("e.target.value",e.target.value);
         this.setState({ [input]: e.target.value });
         if(e.target.value === "Both"){
-            this.setState({ "AccRoomToBook": 0 });
+             this.setState({ "AccRoomToBook": 0 });
             this.setState({ "NonAccRoomToBook": 0 });
             this.props.prepareFinalObject("GlobalTypeOfRoom",e.target.value)
         }
