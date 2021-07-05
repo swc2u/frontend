@@ -3114,6 +3114,9 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                                 case "WS_RENAME":
                                 case "UPDATE_CONNECTION_HOLDER_INFO":
                                 activityType ='Update Connection Holder Information'
+                                {
+                                    applicantName =get(wnsConnection[0], "connectionHolders[0].proposedName", '')
+                                  }
                                 break;
                                 case "WS_METER_UPDATE":
                                 case "UPDATE_METER_INFO":

@@ -773,6 +773,9 @@ try{
               case "WS_RENAME":
               case "UPDATE_CONNECTION_HOLDER_INFO":
               activityType ='Update Connection Holder Information'
+              {
+                applicantName =get(res, "WaterConnection[0].connectionHolders[0].proposedName", '')
+              }
               break;
               case "WS_METER_UPDATE":
               case "UPDATE_METER_INFO":
@@ -1214,6 +1217,9 @@ try{
               case "WS_RENAME":
               case "UPDATE_CONNECTION_HOLDER_INFO":
               activityType ='Update Connection Holder Information'
+              {
+                applicantName =get(res, "WaterConnection[0].connectionHolders[0].proposedName", '')
+              }
               break;
               case "WS_METER_UPDATE":
               case "UPDATE_METER_INFO":

@@ -834,7 +834,7 @@ export const renderService = () => {
 
 
 export const connectionHolderDetails={
-  mobileNumber: getLabelWithValueForModifiedLabel(
+  mobileNumber: getLabelWithValue(
     {
       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_MOBILE_NO_LABEL"
     },
@@ -845,7 +845,7 @@ export const connectionHolderDetails={
     // { jsonPath: "applyScreen.property.owners[0].mobileNumber", callBack: handleNA }
     
   ),
-  name: getLabelWithValueForModifiedLabel(
+  name: getLabelWithValue(
     {
       labelName: "Name",
       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_OWN_NAME_LABEL"
@@ -901,7 +901,7 @@ export const connectionHolderDetails={
   //   },
   //   { jsonPath: "applyScreenOld.connectionHolders[0].relationship", callBack: handleNA }
   // ),
-  mailid: getLabelWithValueForModifiedLabel(
+  mailid: getLabelWithValue(
       {
         labelKey: "WS_OWNER_DETAILS_EMAIL_LABEL"
       },
@@ -911,7 +911,7 @@ export const connectionHolderDetails={
       // },
       // { jsonPath: "applyScreenOld.connectionHolders[0].fatherOrHusbandName", callBack: handleNA }
     ),
-  correspondenceAddress: getLabelWithValueForModifiedLabel(
+  correspondenceAddress: getLabelWithValue(
     {
       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_CROSADD"
     },

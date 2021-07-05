@@ -38,6 +38,11 @@ const getHeader = label => {
 export const propertyOwnerDetailsHeader = getHeader({
   labelKey: "WS_OWNER_HEADER_LABEL"
 });
+export const propertyOwnerDetailsSingleHeader = getCommonContainer({
+  header: getCommonHeader({
+    labelKey: "WS_OWNER_HEADER_LABEL"
+  })
+});
 
 export const ownerDetailsHeader = getCommonContainer({
   header: getCommonHeader({
@@ -195,7 +200,7 @@ export const getOwnerDetails = (isEditable = true) => {
           //   componentPath: "MultiItem",
           //   props: {
           //     scheama: getCommonGrayCard({
-          div3: propertyOwnerDetailsHeader,
+          div3: propertyOwnerDetailsSingleHeader,
           viewFive: getCommonContainer({
             ownerName: getTextField({
               label: {
@@ -251,7 +256,7 @@ export const getOwnerDetails = (isEditable = true) => {
                 labelKey: "WS_OWNER_DETAILS_EMAIL_LABEL_PLACEHOLDER"
               },
               pattern: getPattern("Email"),
-              required: true,
+              required: false,
              
              // errorMessage: "Invalid Address",
               jsonPath: "applyScreen.property.owners[0].emailId",
@@ -414,12 +419,13 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
     }),
     headerDiv: {
       uiFramework: "custom-containers",
+      moduleName: "egov-wns",
       componentPath: "MultiItem",
       props: {
         //className: "common-div-css search-preview",
         scheama: getCommonGrayCard({
          
-          div3: propertyOwnerDetailsHeader,
+          //div3: propertyOwnerDetailsHeader,
           viewFive: getCommonContainer({
             ownerName: getTextField({
               label: {
@@ -468,7 +474,7 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
                 labelKey: "WS_OWNER_DETAILS_EMAIL_LABEL_PLACEHOLDER"
               },
               pattern: getPattern("Email"),
-              required: true,
+              required: false,
              // errorMessage: "Invalid Address",
               jsonPath: "applyScreen.property.owners[0].emailId",
               gridDefination: {
