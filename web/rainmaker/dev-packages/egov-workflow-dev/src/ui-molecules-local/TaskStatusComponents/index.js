@@ -380,7 +380,8 @@ if (horticultureBusinessServices.includes(currentObj.businessService)){
         </Typography>
       </Grid>
       {/*  (get(userInfo,'uuid') === get(currentObj,"documents[0].auditDetails.createdBy") || IsEmployee) && */}
-      {get(currentObj, "documents") &&  (
+      {/* {(get(userInfo,'uuid') === get(currentObj,"documents[0].auditDetails.createdBy") || IsEmployee)&&  ( */}
+       {get(currentObj, "documents") && ( IsEmployee) &&(
         <DownloadFileContainer
           data={get(currentObj, "documents")}
           className="review-documents"

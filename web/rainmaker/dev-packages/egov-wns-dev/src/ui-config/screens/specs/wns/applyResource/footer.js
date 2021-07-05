@@ -1623,7 +1623,9 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
           // propertyPayload.address.locality.code = "DB_1";
            set(propertyPayload, "address.locality.code", "DB_1");
            }
-        
+        // remove deleted ownner from the list 
+        let owners_ = propertyPayload.owners.filter(x=> (x.isDeleted === undefined || x.isDeleted !== false ))
+        set(propertyPayload, "owners", owners_);
        // propertyPayload.address.locality.code = propertyPayload.address.locality.code.value;
        // validate water field 
        if (water) {

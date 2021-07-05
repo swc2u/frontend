@@ -1,4 +1,4 @@
-import { handleScreenConfigurationFieldChange as handleField, toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { handleScreenConfigurationFieldChange as handleField, toggleSnackbar,toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getUserInfo, getTenantIdCommon } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 import { fetchBill, findAndReplace, getSearchResults, getSearchResultsForSewerage, getWorkFlowData,getBillingEstimation } from "../../../../../ui-utils/commons";
@@ -9,17 +9,18 @@ import { httpRequest } from "../../../../../ui-utils";
 //import { getTextToLocalMapping } from "./searchApplicationResults";
 //import { validateFields, getTextToLocalMapping } from "../../utils";
 import { set } from "lodash";
+import { dateToEpoch } from "../../../../../../../../packages/employee/src/modules/employee/reports/commons/common";
 export const searchApiCall = async (state, dispatch) => {
 
  
   let getCurrentTab = get(state.screenConfiguration.preparedFinalObject, "currentTab");
   let currentSearchTab = getCurrentTab === undefined ? "SEARCH_CONNECTION" : getCurrentTab;
   if (currentSearchTab === "SEARCH_CONNECTION") {
-    showHideConnectionTable(true, dispatch);
+    showHideConnectionTable(false, dispatch);
     resetFieldsForApplication(state, dispatch);
     await renderSearchConnectionTable(state, dispatch);
   } else {
-    showHideApplicationTable(true, dispatch);
+    showHideApplicationTable(false, dispatch);
     resetFieldsForConnection(state, dispatch);
     await renderSearchApplicationTable(state, dispatch);
   }
@@ -176,7 +177,7 @@ const renderSearchConnectionTable = async (state, dispatch) => {
       const sewerageConnections = searcSewerageConnectionResults ? searcSewerageConnectionResults.SewerageConnections.map(e => { e.service = 'SEWERAGE'; return e }) : [];
       let combinedSearchResults = searchWaterConnectionResults || searcSewerageConnectionResults ? sewerageConnections.concat(waterConnections) : []
       //start loader
-      dispatch(toggleSpinner());
+      //dispatch(toggleSpinner());
       for (let i = 0; i < combinedSearchResults.length; i++) {
         let element = combinedSearchResults[i];
         if (element.connectionNo !== "NA" && element.connectionNo !== null) {
@@ -321,7 +322,7 @@ const renderSearchConnectionTable = async (state, dispatch) => {
       }
       showConnectionResults(finalArray, dispatch)
       // end loader
-      dispatch(toggleSpinner());
+      //dispatch(toggleSpinner());
     } catch (err) { console.log(err) }
   }
 }
@@ -411,6 +412,8 @@ const renderSearchApplicationTable = async (state, dispatch) => {
         { key: "tenantId", value: getTenantIdCommon() }
       ];
       let Response = await getWorkFlowData(queryObj);*/
+      //dispatch(toggleSpinner());
+      //console.log(new Date())
       for (let i = 0; i < combinedSearchResults.length; i++) {
         let element = findAndReplace(combinedSearchResults[i], null, "NA");
         let appStatus;
@@ -458,6 +461,8 @@ const renderSearchApplicationTable = async (state, dispatch) => {
         }
       }
       showApplicationResults(finalArray, dispatch)
+     // console.log(new Date())
+      //dispatch(toggleSpinner());
     } catch (err) { console.log(err) }
   }
 }

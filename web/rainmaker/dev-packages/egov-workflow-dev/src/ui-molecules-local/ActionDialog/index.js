@@ -104,6 +104,7 @@ class ActionDialog extends React.Component {
     } = dialogData;
     const { getButtonLabelName } = this;
     let fullscreen = false;
+    let documentupload = true
     if (window.innerWidth <= 768) {
       fullscreen = true;
     }
@@ -115,6 +116,24 @@ class ActionDialog extends React.Component {
       dataPath = `${dataPath}.workflow`;
     } else {
       dataPath = `${dataPath}[0]`;
+    }
+    if(moduleName)
+    {
+      if((moduleName ==='REGULARWSCONNECTION'
+      ||moduleName ==='TEMPORARY_WSCONNECTION'
+      ||moduleName ==='WS_TEMP_TEMP'
+      ||moduleName ==='WS_TEMP_REGULAR'
+      ||moduleName ==='WS_DISCONNECTION'
+      ||moduleName ==='WS_TEMP_DISCONNECTION'
+      ||moduleName ==='WS_RENAME'
+      ||moduleName ==='WS_CONVERSION'
+      ||moduleName ==='WS_REACTIVATE'
+      ||moduleName ==='WS_METER_UPDATE'
+      ||moduleName ==='WS_TUBEWELL'
+      ||moduleName ==='SW_SEWERAGE') && process.env.REACT_APP_NAME ==='Citizen' )
+      {
+        documentupload = false;
+      }
     }
 
     return (
@@ -201,6 +220,7 @@ class ActionDialog extends React.Component {
                     />
                   </Grid>
                   <Grid item sm="12">
+                  { documentupload &&(
                     <Typography
                       component="h3"
                       variant="subheading"
@@ -222,7 +242,7 @@ class ActionDialog extends React.Component {
                           <span style={{ marginLeft: 5, color: "red" }}>*</span>
                         )}
                       </div>
-                    </Typography>
+                    </Typography>)}
                     <div
                       style={{
                         color: "rgba(0, 0, 0, 0.60)",
@@ -232,12 +252,14 @@ class ActionDialog extends React.Component {
                         lineHeight: "20px"
                       }}
                     >
+                      { documentupload &&(
                       <LabelContainer
                         labelName="Only .jpg and .pdf files. 5MB max file size."
                         labelKey="WF_APPROVAL_UPLOAD_SUBHEAD"
-                      />
+                      />)}
                     </div>
-                    <UploadMultipleFiles
+                    { documentupload &&(
+                      <UploadMultipleFiles
                       maxFiles={4}
                       inputProps={{
                         accept: "image/*, .pdf, .png, .jpeg"
@@ -245,7 +267,17 @@ class ActionDialog extends React.Component {
                       buttonLabel={{ labelName: "UPLOAD FILES",labelKey : "TL_UPLOAD_FILES_BUTTON" }}
                       jsonPath={`${dataPath}.wfDocuments`}
                       maxFileSize={5000}
-                    />
+                    />)
+                    }
+                    {/* <UploadMultipleFiles
+                      maxFiles={4}
+                      inputProps={{
+                        accept: "image/*, .pdf, .png, .jpeg"
+                      }}
+                      buttonLabel={{ labelName: "UPLOAD FILES",labelKey : "TL_UPLOAD_FILES_BUTTON" }}
+                      jsonPath={`${dataPath}.wfDocuments`}
+                      maxFileSize={5000}
+                    /> */}
                     <Grid sm={12} style={{ textAlign: "right" }} className="bottom-button-container">
                       <Button
                         variant={"contained"}
