@@ -1,4 +1,5 @@
 import React from "react";
+import get from "lodash/get";
 import { connect } from "react-redux";
 import { Grid, Typography, Button } from "@material-ui/core";
 import { Container } from "egov-ui-framework/ui-atoms";
@@ -11,6 +12,9 @@ import CloseIcon from "@material-ui/icons/Close";
 import { withStyles } from "@material-ui/core/styles";
 import { UploadMultipleFiles } from "egov-ui-framework/ui-molecules";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import {
+  getUserInfo,
+} from "egov-ui-kit/utils/localStorageUtils";
 import "./index.css";
 
 const styles = theme => ({
@@ -117,6 +121,19 @@ class ActionDialog extends React.Component {
     } else {
       dataPath = `${dataPath}[0]`;
     }
+    let userInfo = JSON.parse(getUserInfo());
+    let IsEmployee = false;
+    // const roleExists = ifUserRoleExists("WS_CEMP");
+     const roles = get(userInfo, "roles");
+     const roleCodes = roles ? roles.map(role => role.code) : [];
+     if (roleCodes.indexOf("EMPLOYEE") > -1) {
+       IsEmployee = true
+       //return true;
+     } else 
+     {
+       //return false;
+       IsEmployee = false
+     }
     if(moduleName)
     {
       if((moduleName ==='REGULARWSCONNECTION'
@@ -130,7 +147,7 @@ class ActionDialog extends React.Component {
       ||moduleName ==='WS_REACTIVATE'
       ||moduleName ==='WS_METER_UPDATE'
       ||moduleName ==='WS_TUBEWELL'
-      ||moduleName ==='SW_SEWERAGE') && process.env.REACT_APP_NAME ==='Citizen' )
+      ||moduleName ==='SW_SEWERAGE') && IsEmployee ===false )
       {
         documentupload = false;
       }
@@ -220,7 +237,7 @@ class ActionDialog extends React.Component {
                     />
                   </Grid>
                   <Grid item sm="12">
-                  { documentupload &&(
+                  
                     <Typography
                       component="h3"
                       variant="subheading"
@@ -234,15 +251,16 @@ class ActionDialog extends React.Component {
                       }}
                     >
                       <div className="rainmaker-displayInline">
+                      { documentupload &&(
                         <LabelContainer
                           labelName="Supporting Documents"
                           labelKey="WF_APPROVAL_UPLOAD_HEAD"
-                        />
+                        />)}
                         {isDocRequired && (
                           <span style={{ marginLeft: 5, color: "red" }}>*</span>
                         )}
                       </div>
-                    </Typography>)}
+                    </Typography>
                     <div
                       style={{
                         color: "rgba(0, 0, 0, 0.60)",
