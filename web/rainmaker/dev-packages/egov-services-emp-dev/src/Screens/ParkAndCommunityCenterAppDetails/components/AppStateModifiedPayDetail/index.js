@@ -26,7 +26,7 @@ import get from "lodash/get";
 class PayDetails extends Component {
   render() {
     const {paymentDetails} = this.props;
-    console.log("PayDetailsInAppStateModified--",this.props)
+    
 
     return (
       <div>
@@ -87,42 +87,13 @@ let totalAmount
     "screenConfiguration.preparedFinalObject.DateVenueChngeAmount",
     "NotFound"
 );
-console.log("DateVenueChangeAmount",DateVenueChangeAmount)
 
-// if(DateVenueChangeAmount !== "NotFound"){
-//   DateVenueChangeArray = DateVenueChangeAmount.Bill[2].billDetails[0].billAccountDetails
-
-// if(selectedType == "Community Center"){
-//   for(let i=0; i<DateVenueChangeArray.length ; i++){
-//     if(DateVenueChangeArray[i].taxHeadCode == "COMMUNITY_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
-//       ChangeAmount = DateVenueChangeArray[i].amount
-//     }
-//     if(DateVenueChangeArray[i].taxHeadCode == "CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){
-//       taxes = DateVenueChangeArray[i].amount
-//     }
-//       }
-// }
- 
-// if(selectedType == "Parks"){
-//   for(let i=0; i<DateVenueChangeArray.length ; i++){
-//     if(DateVenueChangeArray[i].taxHeadCode == "PARK_LOCATION_AND_VENUE_CHANGE_AMOUNT"){
-//       ChangeAmount = DateVenueChangeArray[i].amount
-//     }
-//     if(DateVenueChangeArray[i].taxHeadCode == "CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){
-//       taxes = DateVenueChangeArray[i].amount
-//     }
-//       }
-// }
-  
-// }
-// console.log("ChangeAmount,taxes",ChangeAmount,taxes)
 let dateVenueChangeArray;
 let getFetchPayment  = get(
   state,
   "bookings.fetchPaymentAfterPayment.Payments",
   "NotFound"
 );
-console.log("getFetchPayment",getFetchPayment)
 
 if(getFetchPayment !== "NotFound"){
 if(getFetchPayment.length >0){
@@ -131,14 +102,14 @@ if(getFetchPayment.length >0){
     "bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails",
     "NotFound"
   );
-  console.log("dateVenueChangeArray--",dateVenueChangeArray)
+
 
   totalAmount  = get(
     state,
     "bookings.fetchPaymentAfterPayment.Payments[0].totalAmountPaid",
     "NotFound"
   );
-  console.log("totalAmount99999--",totalAmount)
+
 
 
 if(dateVenueChangeArray !== "NotFound" && dateVenueChangeArray !== null && dateVenueChangeArray !== undefined){
@@ -165,7 +136,7 @@ if(dateVenueChangeArray !== "NotFound" && dateVenueChangeArray !== null && dateV
   }
 }
 }
-console.log("ChangeAmount,taxes",ChangeAmount,taxes)
+
 }
 return {
   ChangeAmount,taxes,userInfo,totalAmount

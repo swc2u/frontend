@@ -171,13 +171,13 @@ class ApplicatInfo extends Component {
       "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux.documents[0].documents[0].fileName",
       "NotFound"
     );
-    console.log("getDocumentDiscountTwo",getDocumentDiscountTwo)
+    
 
     let re = /\S+@\S+\.\S+/;
     let mb = /^\d{10}$/;
     let fname = /^[a-zA-Z'-]+$/;
   
-    console.log("getDocumentDiscount-",getDocumentDiscount)
+    
     e.preventDefault();
     if (this.props.firstName == "" || this.props.mobileNo == "" || this.props.houseNo == "") {
       this.props.toggleSnackbarAndSetText(
@@ -271,7 +271,7 @@ class ApplicatInfo extends Component {
   render() {
     const { firstName, email, mobileNo, DiscountReason, lastName, houseNo, checkDateVenueChange,
     handleChange, discountType, handleChangeDiscount, classes, prepareFinalObject } = this.props;
-    console.log("ApplicationDetailPageState",this.state)
+    
     const hintTextStyle = {
       letterSpacing: "0.7px",
       textOverflow: "ellipsis",
@@ -547,39 +547,30 @@ class ApplicatInfo extends Component {
 const mapStateToProps = state => {
   const { complaints, bookings, common, auth, form } = state;
 
-  // let firstTimeSlotValue = state.screenConfiguration.preparedFinalObject.Booking !== undefined  ?state.screenConfiguration.preparedFinalObject.Booking.timeslots !== undefined ? (state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslots : "notFound") : "notFound") :
-  // "notFound"
+  
   let DropDownValue = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData.name : "";
-  console.log("DropDownValue--", DropDownValue)
-
-//screenConfiguration.preparedFinalObject.documentMap
-
-
-// screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux.documents[0].documents[0].fileName
-
 let getDocumentDiscount = get(
   state,
   "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux.documents[0].documents[0].fileName",
   "NotFound"
 );
-console.log("getDocumentDiscount",getDocumentDiscount)
+
   let venueType = state.screenConfiguration.preparedFinalObject.bkBookingData ? state.screenConfiguration.preparedFinalObject.bkBookingData.venueType : "";
-  console.log("venueType--", venueType)
+
   if (DropDownValue === "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") {
     let firstTimeSlotValue =
       state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
         (state.screenConfiguration.preparedFinalObject.Booking.timeslots !== undefined ? (state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] : "notFound") : "notFound") :
         "notFound"
 
-    console.log("firstTimeSlotValue-", firstTimeSlotValue)
+
 
     if (firstTimeSlotValue !== "notFound") {
       let conJsonfirst = JSON.stringify(firstTimeSlotValue);
-      console.log("conJsconJsonfirston--", conJsonfirst)
+
     }
 
-    // let SecondTimeSlotValue = state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] : "notFound"
-    // console.log("SecondTimeSlotValue-",SecondTimeSlotValue)
+    
 
     let SecondTimeSlotValue =
       state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
@@ -590,7 +581,7 @@ console.log("getDocumentDiscount",getDocumentDiscount)
     if (SecondTimeSlotValue !== "notFound") {
 
       let conJsonSecond = JSON.stringify(SecondTimeSlotValue);
-      console.log("conJsonSecond--", conJsonSecond)
+     
 
     }
   }
