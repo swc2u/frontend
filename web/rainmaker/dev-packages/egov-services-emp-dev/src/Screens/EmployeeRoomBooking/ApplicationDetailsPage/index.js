@@ -128,7 +128,13 @@ PaymentDate : "",
 			transactionNumber : "",
 			stateCode :"" ,
 			placeOfService : "",
-			 mcGSTN : ""
+			 mcGSTN : "",
+			 pdfBankName : "",
+			 pdfCardNum : "",
+			 paymentCollectionType : "",
+			 chequeNo : "",
+             chequeDate : "",
+			 CardTransactionNum : "" ,
 		};
 	};
 
@@ -301,17 +307,28 @@ let CreatedDate;
 let ApplicationNumber;
 let discountForRoom;
 let RoomCreateTime;
-
+let pdfBankName;
+let pdfCardNum;
+let paymentCollectionType
 let particularRoomData;
+let chequeNo = "Not Applicable"
+let chequeDate = "Not Applicable"
+let CardTransactionNum = "Not Applicable"
 	
 for(let i = 0; i < AllValues[0].roomsModel.length; i++){
 	if(AllValues[0].roomsModel[i].roomApplicationNumber == fetchApplicationNumber){
+		console.log("AllValues[0].roomsModel[i]",AllValues[0].roomsModel[i])
+		CardTransactionNum = AllValues[0].roomsModel[i].transactionNumber
+		chequeNo = AllValues[0].roomsModel[i].chequeNumber
+		chequeDate = AllValues[0].roomsModel[i].paymentDate
 		FromDate = AllValues[0].roomsModel[i].fromDate
 		ToDate = AllValues[0].roomsModel[i].toDate
 		CreatedDate = AllValues[0].roomsModel[i].createdDate
 		ApplicationNumber = AllValues[0].roomsModel[i].roomApplicationNumber
 		discountForRoom = AllValues[0].roomsModel[i].discount
-	
+		pdfBankName = AllValues[0].roomsModel[i].bankName
+		pdfCardNum = AllValues[0].roomsModel[i].cardNumber
+		paymentCollectionType = AllValues[0].roomsModel[i].paymentCollectionType
 	if(AllValues[0].roomsModel[i].typeOfRoom == "AC"){
 		totalACRoom = AllValues[0].roomsModel[i].totalNoOfRooms
 		RoomCreateTime = AllValues[0].roomsModel[i].roomCreatedDate
@@ -328,6 +345,8 @@ for(let i = 0; i < AllValues[0].roomsModel.length; i++){
 	
 }
 this.setState({
+chequeNo : chequeNo,
+chequeDate : chequeDate,
 	totalACRoom : totalACRoom,
 	totalNonAcRoom : totalNonAcRoom,
 	RoomCreateTime : RoomCreateTime,
@@ -335,13 +354,18 @@ this.setState({
 	ToDate : ToDate,
 	CreatedDate : CreatedDate,
 	ApplicationNumber : ApplicationNumber,
-	discountForRoom :discountForRoom
+	discountForRoom :discountForRoom,
+	pdfBankName :pdfBankName,
+	pdfCardNum :pdfCardNum,
+	paymentCollectionType :paymentCollectionType,
+	CardTransactionNum : CardTransactionNum
 })
 console.log("totalACRoom--",totalACRoom)
 console.log("totalNonAcRoom--",totalNonAcRoom)
 console.log("FromDate--",FromDate)
 console.log("ToDate--",ToDate)
 console.log("CreatedDate--",CreatedDate)
+console.log("ToclearDoubt",this.state)
 
 
 this.props.prepareFinalObject("DataOfRoomAndCommunity.MainData",AllValues[0])
@@ -536,14 +560,14 @@ else{
 	};
  
 	downloadPaymentReceiptFunction = async (e) => {
-		const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceipt, userInfo,pdfBankName,downloadRoomPaymentRecipt } = this.props;
+   const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceipt, userInfo,pdfBankName,downloadRoomPaymentRecipt } = this.props;
 	
 	let bookedrooms;	
 	let Newugst;
     let perFind = 50;
     let ugst = this.state.BKROOM_TAX
     let find50Per = (perFind/100) * ugst
-    console.log("find50Per--",find50Per)		
+    console.log("find50Per--",find50Per)		 
     let findNumOrNot = Number.isInteger(find50Per);
     console.log("findNumOrNot--",findNumOrNot)
     if(findNumOrNot == true){
@@ -576,7 +600,35 @@ else{
 		var date2 = new Date();
 
 		var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
- 	
+		let getCardNum
+		let getBankName
+		let displayBankName
+		let chequeNo = "Not Applicable"
+		let chequeDate = "Not Applicable"
+		let demandDraftNo = "Not Applicable"
+		let demandDraftDate = "Not Applicable"
+		let CardtransactionNumber = "Not Applicable"  //CardTransactionNum
+	if(this.state.paymentCollectionType == "CARD" || this.state.paymentCollectionType == "Card"){
+	displayBankName = `**** **** **** ${this.state.pdfCardNum}`
+	getCardNum = displayBankName
+	CardtransactionNumber = this.state.CardTransactionNum
+  }else{
+	getCardNum = "Not Applicable"  
+
+  }
+  if(this.state.paymentCollectionType == "DD" || this.state.paymentCollectionType == "CHEQUE" || this.state.paymentCollectionType == "Cheque"){
+	getBankName = this.state.pdfBankName   
+  }else{
+	getBankName = "Not Applicable"
+  }
+  if(this.state.paymentCollectionType == "DD"){
+	demandDraftNo = this.state.chequeNo,
+	demandDraftDate = this.state.chequeDate
+  }
+  if(this.state.paymentCollectionType == "CHEQUE" || this.state.paymentCollectionType == "Cheque"){
+	chequeNo = this.state.chequeNo,
+	chequeDate = this.state.chequeDate
+  }
 
 		let BookingInfo = [
 			{
@@ -620,14 +672,18 @@ else{
 				"facilitationCharge": this.state.four,
 				"custGSTN": this.state.AllValues[0].bkCustomerGstNo,
 				"mcGSTN": this.state.mcGSTN,
-				"bankName": "",
-				"transactionId":this.state.transactionNumber,
+				"bankName": getBankName,
+				"transactionId":CardtransactionNumber,
 				"totalPaymentInWords": this.NumInWords(
 					this.state.TotalPaidAmount
 				),
 				"discType": this.state.AllValues[0].bkPlotSketch,
-				"cardNumberLast4": "Not Applicable",
-                "dateVenueChangeCharges": "Not Applicable"
+				"cardNumberLast4": getCardNum,
+                "dateVenueChangeCharges": "Not Applicable",
+				"chequeNo":chequeNo,
+                  "chequeDate":chequeDate,
+                  "demandDraftNo":demandDraftNo,
+                  "demandDraftDate":demandDraftDate,
 			},
 				"tenantInfo": {
 					"municipalityName": "Municipal Corporation Chandigarh",
@@ -922,7 +978,25 @@ downloadPermissionLetterFunction = async (e) => {
 	if(this.state.totalACRoom !== 0 && this.state.totalNonAcRoom !== 0){  //"2AC and 3 Non AC"
 		bookedrooms = `${this.state.totalACRoom} AC and ${this.state.totalNonAcRoom} Non AC Room(s)` 
 	} 
+	let chequeNo = "Not Applicable"
+	let chequeDate = "Not Applicable"
+	let demandDraftNo = "Not Applicable"
+	let demandDraftDate = "Not Applicable"
+	let CardtransactionNumber = "Not Applicable"
 
+
+	if(this.state.paymentCollectionType == "CARD" || this.state.paymentCollectionType == "Card"){
+		CardtransactionNumber = this.state.CardTransactionNum
+	}
+
+	if(this.state.paymentCollectionType == "DD"){
+		demandDraftNo = this.state.chequeNo,
+		demandDraftDate = this.state.chequeDate
+	  }
+	  if(this.state.paymentCollectionType == "CHEQUE" || this.state.paymentCollectionType == "Cheque"){
+		chequeNo = this.state.chequeNo,
+		chequeDate = this.state.chequeDate
+	  }
 		let approverName;
 		for(let i = 0; i < userInfo.roles.length ; i++ ){
 		  if(userInfo.roles[i].code == "BK_E-SAMPARK-CENTER"){
@@ -938,6 +1012,21 @@ let numFromDate = Number(this.state.FromDate)
 console.log("numFromDate",numFromDate)
 let numToDate= Number(this.state.ToDate)
 console.log("numToDate",numToDate)
+
+let getCardNum
+let getBankName
+let displayBankName
+if(this.state.paymentCollectionType == "CARD" || this.state.paymentCollectionType == "Card"){
+displayBankName = `**** **** **** ${this.state.pdfCardNum}`
+getCardNum = displayBankName
+}else{
+getCardNum = "Not Applicable"  
+}
+if(this.state.paymentCollectionType == "DD" || this.state.paymentCollectionType == "CHEQUE"  || this.state.paymentCollectionType == "Cheque"){
+getBankName = this.state.pdfBankName
+}else{
+getBankName = "Not Applicable"
+}
 
 
 		let BookingInfo = [
@@ -995,14 +1084,18 @@ console.log("numToDate",numToDate)
 					"facilitationCharge": this.state.four,
 					"custGSTN": this.state.AllValues[0].bkCustomerGstNo,
 					"mcGSTN": this.state.mcGSTN,
-					"bankName": "",
-					"transactionId":this.state.transactionNumber,
+					"bankName": getBankName,
+					"transactionId":CardtransactionNumber,
 					"totalPaymentInWords": this.NumInWords(
 						this.state.TotalPaidAmount
 					), 
 					"discType": this.state.AllValues[0].bkPlotSketch,
-					"cardNumberLast4": "Not Applicable",
-					"dateVenueChangeCharges": "Not Applicable"
+					"cardNumberLast4": getCardNum,
+					"dateVenueChangeCharges": "Not Applicable",
+					"chequeNo":chequeNo,
+                  "chequeDate":chequeDate,
+                  "demandDraftNo":demandDraftNo,
+                  "demandDraftDate":demandDraftDate,
 				},
 				"tenantInfo": {
 					"municipalityName": "Municipal Corporation Chandigarh",

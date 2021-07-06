@@ -56,7 +56,6 @@ const ApplicationResolvedForm = ({ form, options, onSubmit, onSubmitClick, booki
     formValue.bookingType.value = bookingtype;
     formValue.businessService.value = bookingservice
   }
-  console.log('commentValue000', commentValue)
   const fields = form.fields || {};
   const submit = form.submit;
   return (

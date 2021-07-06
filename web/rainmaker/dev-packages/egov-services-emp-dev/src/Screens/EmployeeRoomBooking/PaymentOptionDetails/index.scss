@@ -95,7 +95,7 @@ body[class^="complaint-details"] .map-container {
   padding-left: 0px !important;
 }
 
-.MuiDividerLine {
+.MuiDividerLine {  max-width : 100%;
   height: 1px;
   border: none;
   margin-top: 8px;

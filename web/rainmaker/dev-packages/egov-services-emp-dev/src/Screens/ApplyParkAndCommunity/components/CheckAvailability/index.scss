@@ -28,8 +28,8 @@
 }
 
 @media screen and (min-width: 320px) and (max-width: 568px) {
-  .imageMap{overflow: scroll; width: 100%;}
-    .bookingTopSec{margin-top:50px;}
+  .imageMap{overflow: auto; width: 100%;}
+  .bookingTopSec{margin-top:50px;}
     .responsive-action-button{margin-bottom: 10px;}
     .locality, .bookingType{width:100%;}
     .calendar-wrapper{display: block !important;}

@@ -25,7 +25,6 @@ export default class CustomComplaints extends React.Component {
 
   render() {
     const { complaints, complaintLocation, role, onComplaintClick, noComplaintMessage, heightOffset } = this.props
-    console.log('complaints in custom component===', complaints);
     return complaints === null || complaints.length === 0 ? (
 
       <div style={{ textAlign: 'center', marginTop: '50px' }}>
