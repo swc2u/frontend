@@ -6,7 +6,6 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import ReactTable from "react-table-6";  
 import "react-table-6/react-table.css" ;
 import jsPDF from 'jspdf';
-import { CSVLink, CSVDownload } from "react-csv";
 import 'jspdf-autotable';
 import './index.css'
 
@@ -17,6 +16,7 @@ const onRowClick = (state, rowInfo, column, instance) => {
         onClick: e => {
             e.preventDefault();
             debugger;
+            
             window.location.href = "egov-hc/search-preview?applicationNumber=CH-HC-2021-05-11-000197&tenantId=ch.chandigarh";
             debugger;
         }
@@ -404,27 +404,11 @@ class HCDashboard extends React.Component {
             //debugger;
             const tableData = data.length>0 ? Object.keys(data[0]) : [];
             var columnData = []
-
-            debugger;
-            var headerData = [];
-            var keys = Object.keys(data[0]);
-
-            var itemHeader = {}
-            itemHeader["Header"] = this.camelize(keys[3]);
-            itemHeader["accessor"] = keys[3];
-            itemHeader["show"]= true ;
-            itemHeader["Cell"]= row => (
-                <div>
-                    <a href={"https://egov-uat.chandigarhsmartcity.in/employee/egov-hc/search-preview?applicationNumber="+row.value+"&tenantId=ch.chandigarh"}> {row.value} </a>
-                </div>
-            );
-            columnData.push(itemHeader);
-
             for(var i=0; i<tableData.length; i++){
                 var itemHeader = {}
                 itemHeader["Header"] = this.camelize(tableData[i]);
                 itemHeader["accessor"] = tableData[i];
-                if(i === 1 || i === 2 || i === 4 || i === 6 || i === 7 || i === 10 || i === 8 ){
+                if(i === 1 || i === 2 || i === 3 || i === 4 || i === 6 || i === 7 || i === 10 || i === 8 ){
                     itemHeader["show"] = true;
                     columnData.push(itemHeader);
                 }
@@ -451,9 +435,6 @@ class HCDashboard extends React.Component {
     }
 
     render() {
-
-        // Export to excel Data
-        const csvData = this.state.rowData;
 
         // First Bar Graph
         var graphOneSortedData = {
@@ -979,22 +960,15 @@ class HCDashboard extends React.Component {
                 </CardContent>
             :null
             }
-            <div className="tableContainer" style={this.state.unchangeColumnData.length > 0 ? null :{display:"none"}}>
+
+            <div className="tableContainer">
                 {
                     this.state.unchangeColumnData.length > 0  ? 
                     <div className="tableFeature">
                         <div className="columnToggle-Text"> Download As: </div>
-                        
-                        <div className="columnToggleBtn"> 
-                        <CSVLink data={csvData}
-                        filename={"Horticulture_dashboard.csv"}
-                        > Export Excel </CSVLink>
-                        </div>
-
                         <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
         
                         <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
-                        
                     </div>
                     :null
                 }
@@ -1021,7 +995,7 @@ class HCDashboard extends React.Component {
                 columns={ this.state.columnData }  
                 defaultPageSize = {10}  
                 pageSizeOptions = {[20,40,60]}  
-                // getTrProps={onRowClick}
+                getTrProps={onRowClick}
                 /> 
                 :null
             }
