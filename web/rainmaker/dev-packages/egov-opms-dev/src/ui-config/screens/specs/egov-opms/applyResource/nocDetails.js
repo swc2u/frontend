@@ -31,7 +31,7 @@ export const nocDetails = getCommonCard({
           labelKey: "NOC_APPLICANT_NAME_PLACEHOLDER"
         },
         required: true,
-        pattern: getOPMSPattern("petnocApplicantName"),
+        pattern: getOPMSPattern("nocApplicantName"),
         errorMessage: "ERR_NOC_APPLICANT_NAME_MSG",
         jsonPath: "PETNOC.applicantName",
       })
