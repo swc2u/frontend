@@ -106,8 +106,45 @@ export const nocDetails = getCommonCard({
       },
       isMulti: true,
       labelName: "name",
-      valueName: "name"
-    }
+      valueName: "name",
+	  beforeFieldChange: (action, state, dispatch) => {
+      var data = get(state.screenConfiguration.preparedFinalObject, "applyScreenMdmsData.egpm.nocSought", {});
+      if(data.length >= 4){
+        dispatch(prepareFinalObject("applyScreenMdmsData.egpm.dumpNocSought", data));
+      }
+    },
+    afterFieldChange: (action, state, dispatch) => {   
+      var dumpData = get(state.screenConfiguration.preparedFinalObject, "applyScreenMdmsData.egpm.dumpNocSought", []);
+      var data = []; 
+      var selectedDropdown = get(state.screenConfiguration.preparedFinalObject,"SELLMEATNOC.nocSought[0].value","");
+      // if(dumpData.length >= 4){
+      //   dispatch(prepareFinalObject("applyScreenMdmsData.egpm.dumpNocSought", data));
+      // }
+      if(selectedDropdown === ""){
+        dispatch(prepareFinalObject("applyScreenMdmsData.egpm.nocSought", dumpData));
+      }
+      if(selectedDropdown === "JHATKA_MEAT_SHEEP_GOAT_POULTRY"){
+        data = [];
+        data = data.concat(dumpData[0])
+        data = data.concat(dumpData[3])
+        data = data.concat(dumpData[4])
+        dispatch(prepareFinalObject("applyScreenMdmsData.egpm.nocSought", data));
+      }
+      if(selectedDropdown === "HALAL_MEAT_SHEEP_GOAT_POULTRY"){
+        data = [];
+        data = data.concat(dumpData[1])
+        data = data.concat(dumpData[3])
+        data = data.concat(dumpData[4])
+        dispatch(prepareFinalObject("applyScreenMdmsData.egpm.nocSought", data));
+      }
+      if(selectedDropdown === "PIG"){
+        data = [];
+        data = data.concat(dumpData[2])
+        data = data.concat(dumpData[3])
+        data = data.concat(dumpData[4])
+        dispatch(prepareFinalObject("applyScreenMdmsData.egpm.nocSought", data));
+      }
+  }
   },
   shopNumber:{
     ...getTextField({
