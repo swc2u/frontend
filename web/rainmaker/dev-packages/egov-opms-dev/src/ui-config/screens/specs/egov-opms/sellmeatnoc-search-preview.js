@@ -434,17 +434,8 @@ const setSearchResponseForNocCretificate = async (
     return item.applicationstatus == "APPROVED";
   });
 
-  var resApprovedPAID = nocRemarks.filter(function (item) {
-    return item.applicationstatus == "PAID";
-  });
-
-  if (resApproved.length != 0){
+  if (resApproved.length != 0)
     nocStatus = "APPROVED";
-  }
-
-  if (resApprovedPAID.length != 0){
-    nocStatus = "PAID";
-  }
 
   if (nocStatus == "APPROVED") {
     let getCertificateDataForSELLMEAT = { "applicationType": "SELLMEATNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "certificateData" } };
@@ -493,74 +484,6 @@ const setSearchResponseForNocCretificate = async (
     //Object creation for NOC's
     let certificateDownloadObjectSELLMEAT = {
       label: { labelName: "NOC Certificate SELLMEAT", labelKey: "NOC_CERTIFICATE_SELLMEAT" },
-      link: () => {
-        if (httpLinkSELLMEAT != "")
-          window.location.href = httpLinkSELLMEAT;
-      },
-      leftIcon: "book"
-    };
-
-    downloadMenu = [
-      certificateDownloadObjectSELLMEAT
-    ];
-    dispatch(
-      handleField(
-        "sellmeatnoc-search-preview",
-        "components.div.children.headerDiv.children.header.children.downloadMenu",
-        "visible",
-        true
-      )
-    );
-  
-  }
-
-  if (nocStatus == "PAID") {
-    let getCertificateDataForSELLMEAT = { "applicationType": "SELLMEATNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "receiptData" } };
-   
-    //SELLMEAT
-    const response0SELLMEAT = await getSearchResultsForNocCretificate([
-      { key: "tenantId", value: tenantId },
-      { key: "applicationNumber", value: applicationNumber },
-      { key: "getCertificateData", value: getCertificateDataForSELLMEAT },
-      { key: "requestUrl", value: "/pm-services/noc/_getCertificateData" }
-    ]);
-
-    if (get(response0SELLMEAT, "ResposneInfo.status", "") == "") {
-      let errorMessage = {
-        labelName: "No Certificate Information Found",
-        labelKey: "" //UPLOAD_FILE_TOAST
-      };
-      dispatch(toggleSnackbar(true, errorMessage, "error"));
-    } else {
-      let getFileStoreIdForSELLMEAT = { "nocApplicationDetail": [get(response0SELLMEAT, "nocApplicationDetail[0]", "")] }
-      let nocSoughtFromAPI=get(response0SELLMEAT, "nocApplicationDetail[0].licenseType", "")
-      let mdmsDataForNocSought = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.nocSought", []);
-      let nocSoughtFinalData = "";
-      
-      nocSoughtFromAPI.split(",").map(item => { 
-        if (mdmsDataForNocSought.find(str => str.code == item.trim())) {
-          nocSoughtFinalData = nocSoughtFinalData + " , " +mdmsDataForNocSought.find(str => str.code == item.trim()).name;
-        }
-      });
-      set(response0SELLMEAT, "nocApplicationDetail[0].licenseType", nocSoughtFinalData.slice(2))
-      const response1SELLMEAT = await getSearchResultsForNocCretificate([
-        { key: "tenantId", value: tenantId },
-        { key: "applicationNumber", value: applicationNumber },
-        { key: "getCertificateDataFileStoreId", value: getFileStoreIdForSELLMEAT },
-        { key: "requestUrl", value: "/pdf-service/v1/_create?key=pet-receipt&tenantId=" + tenantId }
-      ]);
-
-      const response2SELLMEAT = await getSearchResultsForNocCretificateDownload([
-        { key: "tenantId", value: tenantId },
-        { key: "applicationNumber", value: applicationNumber },
-        { key: "filestoreIds", value: get(response1SELLMEAT, "filestoreIds[0]", "") },
-        { key: "requestUrl", value: "/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds=" }
-      ]);
-      httpLinkSELLMEAT = get(response2SELLMEAT, get(response1SELLMEAT, "filestoreIds[0]", ""), "")
-    }
-    //Object creation for NOC's
-    let certificateDownloadObjectSELLMEAT = {
-      label: { labelName: "Receipt", labelKey: "NOC_RECEIPT_PET" },
       link: () => {
         if (httpLinkSELLMEAT != "")
           window.location.href = httpLinkSELLMEAT;

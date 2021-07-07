@@ -5,8 +5,7 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import ReactTable from "react-table-6";  
 import "react-table-6/react-table.css" ;
-import jsPDF from 'jspdf';
-import { CSVLink, CSVDownload } from "react-csv";
+import jsPDF from 'jspdf'
 import 'jspdf-autotable';
 
 import './WorkDashboard.css'
@@ -438,9 +437,7 @@ class WorkDashboard extends React.Component {
 
     render() {
     
-    // Export to excel Data
-    const csvData = this.state.rowData;
-    
+
     // First Double Bar Graph Graph
     var graphOneSortedData = {
         labels: this.state.graphOneLabel,
@@ -1203,13 +1200,6 @@ class WorkDashboard extends React.Component {
             this.state.unchangeColumnData.length > 0  ? 
             <div className="tableFeature">
                 <div className="columnToggle-Text"> Download As: </div>
-
-                <div className="columnToggleBtn"> 
-                <CSVLink data={csvData}
-                filename={"Work_dashboard.csv"}
-                > Export Excel </CSVLink>
-                </div>
-
                 <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
 
                 <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>

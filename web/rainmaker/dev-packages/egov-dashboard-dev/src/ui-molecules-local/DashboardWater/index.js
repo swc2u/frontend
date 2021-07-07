@@ -6,7 +6,6 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import ReactTable from "react-table-6";  
 import "react-table-6/react-table.css" ;
 import jsPDF from 'jspdf';
-import { CSVLink, CSVDownload } from "react-csv";
 import 'jspdf-autotable';
 import './waterIndex.css'
 
@@ -348,23 +347,7 @@ class WaterDashboard extends React.Component {
 
                     // Col Data
                     var columnData = [];
-
-                    debugger;
-                    var headerData = [];
-                    var keys = Object.keys(data[0]);
-
-                    var itemHeader = {}
-                    itemHeader["Header"] = this.camelize(keys[0]);
-                    itemHeader["accessor"] = keys[0];
-                    itemHeader["show"]= true ;
-                    itemHeader["Cell"]= row => (
-                        <div>
-                            <a href={"https://egov-dev.chandigarhsmartcity.in/employee/wns/search-preview?applicationNumber="+row.value+"&tenantId=ch.chandigarh&history=true&service=WATER"}> {row.value} </a>
-                        </div>
-                    );
-                    columnData.push(itemHeader);
-
-                    for(var i=1; i<Object.keys(data[0]).length; i++){
+                    for(var i=0; i<Object.keys(data[0]).length; i++){
                         var item = {};
                         item["Header"] = this.camelize(Object.keys(data[0])[i]);
                         item["accessor"] = Object.keys(data[0])[i];
@@ -464,25 +447,8 @@ class WaterDashboard extends React.Component {
                         }
                     }
                     // Col Data
-
                     var columnData = [];
-
-                    debugger;
-                    var headerData = [];
-                    var keys = Object.keys(data[0]);
-
-                    var itemHeader = {}
-                    itemHeader["Header"] = this.camelize(keys[0]);
-                    itemHeader["accessor"] = keys[0];
-                    itemHeader["show"]= true ;
-                    itemHeader["Cell"]= row => (
-                        <div>
-                            <a href={"https://egov-dev.chandigarhsmartcity.in/employee/wns/search-preview?applicationNumber="+row.value+"&tenantId=ch.chandigarh&history=true&service=WATER"}> {row.value} </a>
-                        </div>
-                    );
-                    columnData.push(itemHeader);
-
-                    for(var i=1; i<Object.keys(data[0]).length; i++){
+                    for(var i=0; i<Object.keys(data[0]).length; i++){
                         var item = {};
                         item["Header"] = this.camelize(Object.keys(data[0])[i]);
                         item["accessor"] = Object.keys(data[0])[i];
@@ -524,8 +490,6 @@ class WaterDashboard extends React.Component {
 
     render() {
     
-    // Export to excel Data
-    const csvData = this.state.rowData;
 
     // Dropdown_1 Pie Graph
     var graphOneSortedData = {
@@ -1278,11 +1242,6 @@ class WaterDashboard extends React.Component {
                 this.state.unchangeColumnData.length > 0  ? 
                 <div className="tableFeature">
                     <div className="columnToggle-Text"> Download As: </div>
-                    <div className="columnToggleBtn"> 
-                    <CSVLink data={csvData}
-                    filename={"Water_dashboard.csv"}
-                    > Export Excel </CSVLink>
-                    </div>
                     <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
                     <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
                 </div>

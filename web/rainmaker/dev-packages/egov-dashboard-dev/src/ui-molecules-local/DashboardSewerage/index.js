@@ -6,7 +6,6 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import ReactTable from "react-table-6";  
 import "react-table-6/react-table.css" ;
 import jsPDF from 'jspdf';
-import { CSVLink, CSVDownload } from "react-csv";
 import 'jspdf-autotable';
 import './SewerageIndex.css';
 
@@ -214,21 +213,8 @@ class SewerageDashboard extends React.Component {
                     graphData.push(0);
                 }
             }
-            debugger;
-            var headerData = [];
-            var keys = Object.keys(data[0]);
 
-            var itemHeader = {}
-            itemHeader["Header"] = this.camelize(keys[0]);
-            itemHeader["accessor"] = keys[0];
-            itemHeader["show"]= true ;
-            itemHeader["Cell"]= row => (
-                <div>
-                    <a href={"https://egov-dev.chandigarhsmartcity.in/employee/wns/search-preview?applicationNumber="+row.value+"&tenantId=ch.chandigarh&history=true&service=WATER"}> {row.value} </a>
-                </div>
-            );
-            headerData.push(itemHeader);
-            
+            var headerData = [];
             var keys = Object.keys(data[0]);
             for(var i=0; i<Object.keys(data[0]).length; i++){
                 var itemHeader = {}
@@ -564,8 +550,6 @@ class SewerageDashboard extends React.Component {
 
     render() {
     
-    // Export to excel Data
-    const csvData = this.state.rowData;
 
     // First Double Bar Graph Graph
     var PIEgraphOneSortedData = {
@@ -968,13 +952,6 @@ class SewerageDashboard extends React.Component {
             this.state.unchangeColumnData.length > 0  ? 
             <div className="tableFeature">
                 <div className="columnToggle-Text"> Download As: </div>
-                
-                <div className="columnToggleBtn"> 
-                <CSVLink data={csvData}
-                filename={"Sewerage_dashboard.csv"}
-                > Export Excel </CSVLink>
-                </div>
-
                 <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
 
                 <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
