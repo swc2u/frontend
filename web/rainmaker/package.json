@@ -130,6 +130,7 @@
     "yarn":"1.22.10",
 	"chartjs-plugin-datalabels": "^0.7.0",
     "jspdf-autotable": "^3.5.13",
-    "react-collapsible": "^2.8.1"
+    "react-collapsible": "^2.8.1",
+	"react-csv": "^2.0.3"
   }
 }
