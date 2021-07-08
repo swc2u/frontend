@@ -106,8 +106,10 @@ export const nocDetails = getCommonCard({
       },
       isMulti: true,
       labelName: "name",
-      valueName: "name",
-	  beforeFieldChange: (action, state, dispatch) => {
+      valueName: "name"
+    },
+    
+    beforeFieldChange: (action, state, dispatch) => {
       var data = get(state.screenConfiguration.preparedFinalObject, "applyScreenMdmsData.egpm.nocSought", {});
       if(data.length >= 4){
         dispatch(prepareFinalObject("applyScreenMdmsData.egpm.dumpNocSought", data));
@@ -144,7 +146,8 @@ export const nocDetails = getCommonCard({
         data = data.concat(dumpData[4])
         dispatch(prepareFinalObject("applyScreenMdmsData.egpm.nocSought", data));
       }
-  }
+      
+    }
   },
   shopNumber:{
     ...getTextField({

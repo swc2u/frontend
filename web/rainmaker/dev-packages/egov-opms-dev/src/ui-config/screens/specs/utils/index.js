@@ -1111,6 +1111,8 @@ export const showHideAdhocPopupopmsForward = (state, dispatch, screenKey, type) 
 
 export const getOPMSPattern = type => {
   switch (type) {
+    case "nocApplicantName":
+      return /^[a-zA-Z]{1,50}$/i;
     case "cin":
       return /^([L|U]{1})([0-9]{5})([A-Za-z]{2})([0-9]{4})([A-Za-z]{3})([0-9]{6})$/i;
     case "petnocApplicantName":
