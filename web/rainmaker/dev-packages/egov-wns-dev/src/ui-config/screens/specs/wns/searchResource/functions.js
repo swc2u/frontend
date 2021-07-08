@@ -2,14 +2,14 @@ import { handleScreenConfigurationFieldChange as handleField, toggleSnackbar,tog
 import { getUserInfo, getTenantIdCommon } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 import { fetchBill, findAndReplace, getSearchResults, getSearchResultsForSewerage, getWorkFlowData,getBillingEstimation } from "../../../../../ui-utils/commons";
-import { validateFields,getTextToLocalMapping,getTextToLocalMappingCode } from "../../utils";
+import { validateFields,getTextToLocalMapping,getTextToLocalMappingCode,GetMdmsNameBycode } from "../../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { convertDateToEpoch, convertEpochToDate, resetFieldsForApplication, resetFieldsForConnection } from "../../utils/index";
 import { httpRequest } from "../../../../../ui-utils";
+
 //import { getTextToLocalMapping } from "./searchApplicationResults";
 //import { validateFields, getTextToLocalMapping } from "../../utils";
 import { set } from "lodash";
-import { dateToEpoch } from "../../../../../../../../packages/employee/src/modules/employee/reports/commons/common";
 export const searchApiCall = async (state, dispatch) => {
 
  
@@ -413,10 +413,12 @@ const renderSearchApplicationTable = async (state, dispatch) => {
       ];
       let Response = await getWorkFlowData(queryObj);*/
       //dispatch(toggleSpinner());
-      //console.log(new Date())
+      let stime = new Date() 
       for (let i = 0; i < combinedSearchResults.length; i++) {
         let element = findAndReplace(combinedSearchResults[i], null, "NA");
         let appStatus;
+        let paidamount_ = 0;
+        let Locality = (element.property && element.property !== "NA" && element.property.address) ? element.property.address.locality.code : ""
         if (element.applicationNo !== "NA" && element.applicationNo !== undefined) {
           //appStatus = combinedWFSearchResults.filter(item => item.businessId.includes(element.applicationNo))[0]
          // appStatus = combinedWFSearchResults.filter(item => item.businessId === element.applicationNo)
@@ -426,7 +428,21 @@ const renderSearchApplicationTable = async (state, dispatch) => {
           // } else {
           //   appStatus = "NA";
           // }
-          appStatus = element.waterApplicationList[0].applicationStatus
+          if(element.applicationNo.includes("WS"))
+          {
+            appStatus = element.waterApplicationList[0].applicationStatus
+            paidamount_ = (element.waterApplication.totalAmountPaid === null || element.waterApplication.totalAmountPaid ==='NA')?0:element.waterApplication.totalAmountPaid
+            Locality =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData1.ws-services-masters.wssectorList",Locality) 
+           // Locality = Locality;
+          }
+          else
+          {
+            appStatus = element.applicationStatus
+            paidamount_ = (element.totalAmountPaid === null|| element.totalAmountPaid === "NA")?0:element.totalAmountPaid
+           // Locality = Locality;
+            Locality =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData1.ws-services-masters.swSectorList",Locality) 
+          }
+          
           if (element.property && element.property.owners &&
             element.property.owners !== "NA" &&
             element.property.owners !== null &&
@@ -456,12 +472,18 @@ const renderSearchApplicationTable = async (state, dispatch) => {
               connectionType: element.connectionType,
               tenantId: element.tenantId,
               ActionType:element.activityType,
+              Sector: Locality,
+              division:element.div,
+              subdivision:element.subdiv,              
+              plotnumber:(element.property && element.property !== "NA" && element.property.address) ? element.property.address.doorNo : "",
+              paidamount:paidamount_,
             })
           }
         }
       }
       showApplicationResults(finalArray, dispatch)
-     // console.log(new Date())
+     let endtime = new Date()// console.log(new Date())
+     console.log(`${endtime}_${stime}`)
       //dispatch(toggleSpinner());
     } catch (err) { console.log(err) }
   }
@@ -534,6 +556,11 @@ const showApplicationResults = (connections, dispatch) => {
     [getTextToLocalMappingCode("service")]: item.service,
     [getTextToLocalMappingCode("connectionType")]: item.connectionType,
     [getTextToLocalMappingCode("ActionType")]: item.ActionType,
+    [getTextToLocalMappingCode("Sector")]: item.Sector,
+    [getTextToLocalMappingCode("division")]: item.division,
+    [getTextToLocalMappingCode("subdivision")]: item.subdivision,
+    [getTextToLocalMappingCode("plotnumber")]: item.plotnumber,
+    [getTextToLocalMappingCode("paidamount")]: item.paidamount,
 
     }
     // [getTextToLocalMapping("Consumer No")]: item.connectionNo,

@@ -10,16 +10,23 @@ const LocationDetails = ({ formKey, locationDetails, landmark, city, mohalla, ho
         className="location-details-card common-padding-for-new-complaint-card"
         textChildren={
           <div>
-            <Link to={`/map?${formKey}`}>
-              <TextFieldIcon
+            {/* <Link to={`/map?${formKey}`}> */}
+              {/* <TextField
                 id="addComplaint-location-details"
-                iconStyle={{ marginTop: "9px" }}
+                // iconStyle={{ marginTop: "9px" }}
                 {...locationDetails}
-                iconPosition="after"
-                Icon={TrackIcon}
+                onChange={(e, value) => handleFieldChange("location", value)}
+               // iconPosition="after"
+                // Icon={TrackIcon}
                 name="location-details"
-              />
-            </Link>
+              /> */}
+              <TextField
+              id="addComplaint-address-details"
+              {...locationDetails}
+              onChange={(e, value) => handleFieldChange("address", value)}
+              name="address-details"
+            />
+            {/* </Link> */}
             {/* <DropDown
               className="fix-for-layout-break"
               fullWidth={true}

@@ -23,6 +23,8 @@ const getMDMSData = async (action, dispatch) => {
           moduleName: "ws-services-masters", masterDetails: [            
             {name:"sectorList"},
             {name:"swSectorList"},
+            {name:"Division"},
+            {name:"subDivision"},
             
           ]
         }

@@ -9,7 +9,7 @@ const style = {
   bodyBox: {
     marginLeft: 16,
     flex: 2,
-    textAlign:"center"
+    textAlign:"left"
   },
   tailText: {
     color: "rgba(0, 0, 0, 0.6000000238418579)",
