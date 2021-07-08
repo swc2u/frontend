@@ -63,6 +63,10 @@ const SampleDownloadRoadCut = Loadable({
   loader: () => import("./SampleDownloadRoadCut"),
   loading: () => <Loading />
 });
+const SampleDownloadForSellMeatDropdownCombo = Loadable({
+  loader: () => import("./SampleDownloadForSellMeatDropdownCombo"),
+  loading: () => <Loading />
+});
 
 export {
   TestMolecules,
@@ -77,5 +81,6 @@ export {
   HowItWorks,
   SampleDownload,
   SampleDownloadForSellMeat,
-  SampleDownloadRoadCut
+  SampleDownloadRoadCut,
+  SampleDownloadForSellMeatDropdownCombo
   };

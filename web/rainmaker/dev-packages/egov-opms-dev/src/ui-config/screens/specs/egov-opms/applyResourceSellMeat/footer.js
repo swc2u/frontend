@@ -230,7 +230,14 @@ const callBackForNext = async (state, dispatch) => {
     );
     let payload = get(state.screenConfiguration.preparedFinalObject, "SELLMEATNOC", []);
     let nocSought = payload.nocSought;
-    if (nocSought && nocSought.length == 0) { 
+
+    debugger;
+    var checkTerm = localStorageGet("dropdownTermsAccepted");
+    if(checkTerm === "" || checkTerm === null || checkTerm === undefined){
+
+      isFormValid = false;
+      
+    }else if (nocSought && nocSought.length == 0) { 
       dispatch(
         handleField(
           "applysellmeat",
