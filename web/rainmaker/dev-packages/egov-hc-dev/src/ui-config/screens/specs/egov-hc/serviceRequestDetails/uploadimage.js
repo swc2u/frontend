@@ -14,7 +14,8 @@ export const uploadimage = getCommonCard({
   //   },
   imageUpload : {
     uiFramework: "custom-molecules-local",
-    moduleName: "egov-rented-properties",
+    //moduleName: "egov-rented-properties",
+    moduleName: "egov-hc",
     componentPath: "ImageUploadMolecule",
     // componentPath: "ImageUploadMolecule",
     props: {

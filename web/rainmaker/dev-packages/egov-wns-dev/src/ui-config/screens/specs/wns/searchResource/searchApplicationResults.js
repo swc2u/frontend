@@ -215,18 +215,52 @@ export const searchApplicationResults = {
           display: false
         }
       },
+      
       {
-        name:   getTextToLocalMappingCode("ActionType"),
+        name: getTextToLocalMappingCode("division"),
         options: {
           display: false
         }
       },
       {
-        name: getTextToLocalMappingCode("billGenerationId"),
+        name: getTextToLocalMappingCode("subdivision"),
         options: {
           display: false
         }
-      }
+      },
+      {
+        name: getTextToLocalMappingCode("plotnumber"),
+        options: {
+          display: false
+        }
+      },
+      
+      {
+        name: getTextToLocalMappingCode("paidamount"),
+        options: {
+          display: false
+        }
+      },
+      {
+        name: getTextToLocalMappingCode("Sector"),
+        options: {
+          display: false
+        }
+      },
+     
+      // {
+      //   name:   getTextToLocalMappingCode("ActionType"),
+      //   options: {
+      //     display: false
+      //   }
+      // },
+
+      // {
+      //   name: getTextToLocalMappingCode("billGenerationId"),
+      //   options: {
+      //     display: false
+      //   }
+      // }
     ],
     title: getTextToLocalMappingCode("Search Results for Water & Sewerage Application"),
     options: {
