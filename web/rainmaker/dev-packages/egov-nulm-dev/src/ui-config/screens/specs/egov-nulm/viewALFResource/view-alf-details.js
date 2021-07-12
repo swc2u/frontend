@@ -67,20 +67,12 @@ import {
       viewOne: getCommonContainer({
         applicantname: getLabelWithValue(
           {
-            labelName: "Name of Applicant",
-            labelKey: "NULM_ALF_NAME_OF_APPLICANT"
+            labelName: "Name of ALF",
+            labelKey: "NULM_ALF_NAME_OF_ALF"
           },
           { jsonPath: "NULMALFRequest.name" }
         ),
 
-        dateOfRegistration: getLabelWithValue(
-          {
-            labelName: "Date of Registration",
-            labelKey: "NULM_ALF_DATE_OF_REGISTRATION"
-          },
-          { jsonPath: "NULMALFRequest.dor",callBack: checkValueForNA }
-        ),
-        
         dateOfFormation: getLabelWithValue(
           {
             labelName: "Date of Formation",
@@ -121,12 +113,12 @@ import {
           { jsonPath: "NULMALFRequest.branchName",callBack: checkValueForNA }
         ),
 
-        accountName: getLabelWithValue(
+        accountNumber: getLabelWithValue(
           {
-            labelName: "Acount Name",
-            labelKey: "NULM_ALF_AC_NAME"
+            labelName: "Acount Number",
+            labelKey: "NULM_ALF_AC_NO"
           },
-          { jsonPath: "NULMALFRequest.accountName",callBack: checkValueForNA }
+          { jsonPath: "NULMALFRequest.accountNumber",callBack: checkValueForNA }
         ),
 
         registrationNumber: getLabelWithValue(
@@ -135,6 +127,30 @@ import {
             labelKey: "NULM_ALF_REGISTRATION_NUMBER"
           },
           { jsonPath: "NULMALFRequest.registrationNo",callBack: checkValueForNA }
+        ),
+
+        alfFormattedThrough: getLabelWithValue(
+          {
+            labelName: "SMID ALF formatted through",
+            labelKey: "NULM_ALF_FORMATTED_THROUGH"
+          },
+          { jsonPath: "NULMALFRequest.alfFormattedThrough",callBack: checkValueForNA }
+        ),
+
+        adharNumber: getLabelWithValue(
+          {
+            labelName: "Aadhar Number",
+            labelKey: "NULM_ALF_AADHAR_NUMBER"
+          },
+          { jsonPath: "NULMALFRequest.adharNumber",callBack: checkValueForNA }
+        ),
+
+        dateOfOpeningAccount: getLabelWithValue(
+          {
+            labelName: "Date of Account Opening",
+            labelKey: "NULM_ALF_ACC_OPEN_DT"
+          },
+          { jsonPath: "NULMALFRequest.dateOfOpeningAccount",callBack: checkValueForNA }
         )
       }),
     });

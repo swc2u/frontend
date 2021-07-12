@@ -137,11 +137,19 @@ export const setNULMDocuments = async (payload, sourceJsonPath, businessService)
   }
 };
 export const prepareDocumentsUploadData = async (state, dispatch, type) => {
+  debugger;
   let documents = '';
   if (type == "SEPApplication") {
     documents = get(
       state,
       "screenConfiguration.preparedFinalObject.applyScreenMdmsData.NULM.SEPDocuments",
+      []
+    );
+  }
+  else if (type === "ALFApplication"){
+    documents = get(
+      state,
+      "screenConfiguration.preparedFinalObject.applyScreenMdmsData.SMIDDocuments",
       []
     );
   }
@@ -173,6 +181,8 @@ export const prepareDocumentsUploadData = async (state, dispatch, type) => {
       []
     );
   }
+
+  debugger;
 
   documents = documents.filter(item => {
     return item.active;
@@ -233,7 +243,7 @@ export const prepareDocumentsUploadData = async (state, dispatch, type) => {
   Object.keys(tempDoc).forEach(key => {
     documentsContract.push(tempDoc[key]);
   });
-
+  debugger;
   dispatch(prepareFinalObject("documentsContract", documentsContract));
 };
 

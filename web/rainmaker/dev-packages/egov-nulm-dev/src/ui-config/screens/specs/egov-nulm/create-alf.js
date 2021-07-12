@@ -8,7 +8,8 @@ import {
 //   import { SepDetails } from "./createSEPResource/sep-Details";
   import { AlfDetails } from "./createALFResources/alf-Details";
   import { footer } from "./createALFResources/footer";
-  import { documentDetails } from "./createSEPResource/documentDetails";
+  // import { documentDetails } from "./createSEPResource/documentDetails";
+  import { documentDetails } from "./createALFResources/documentDetails";
   import get from "lodash/get";
   import { httpRequest } from "../../../../ui-utils";
   import { prepareFinalObject,handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -27,8 +28,8 @@ import {
     SENT_TO_BANK_FOR_PROCESSING,
   SANCTION_BY_BANK} from '../../../../ui-utils/commons'
   export const stepsData = [
-    { labelName: "SEP Details", labelKey: "NULM_APPLICATION_FOR_SEP_PROGRAM" },
-    { labelName: "Documents", labelKey: "NULM_SEP_DOCUMENT_HEADER" },
+    { labelName: "ALF Details", labelKey: "NULM_APPLICATION_FOR_ALF_PROGRAM" },
+    { labelName: "Bank and ALF Documents Details", labelKey: "NULM_ALF_DOCUMENT_HEADER" },
   ];
   export const stepper = getStepperObject(
     { props: { activeStep: 0 } },
@@ -102,7 +103,7 @@ import {
             moduleName: "NULM",
             masterDetails: [
               {
-                name: "SEPDocuments",
+                name: "SMIDDocuments",
   
               },
               {
@@ -127,18 +128,36 @@ import {
       // document type 
   
       //  let DocumentType_PriceList = NULMConfiguration().DocumentType_SEP;
-      dispatch(prepareFinalObject("applyScreenMdmsData", get(response, "MdmsRes")));
+      var dummyMDMS_Docs = {
+        "tenantId": "ch",
+        "moduleName": "NULM",
+        "SMIDDocuments": [
+          {
+            "code": "NULM_ALF_DOCUMENT",
+            "documentType": "NULM_ALF_DOCUMENT",
+            "required": false,
+            "active": true,
+            "accept": "application/pdf,image/*",
+            "fileType": "PDF_IMAGE",
+            "description": "ALF Certificate"
+          }
+        ]
+      };
+
+      dispatch(prepareFinalObject("applyScreenMdmsData", dummyMDMS_Docs));
   
+      debugger;
       // setting documents
-      prepareDocumentsUploadData(state, dispatch, 'SEPApplication');
+      prepareDocumentsUploadData(state, dispatch, 'ALFApplication');
       await prefillDocuments(
         state.screenConfiguration.preparedFinalObject,
         "displayDocs",
         dispatch,
-        'NULMSEPRequest.applicationDocument',
-        'SEPDocuments', 
+        'NULMALFRequest.documentAttachemnt',
+        'SMIDDocuments', 
       );
   
+      debugger;
       return true;
     } catch (e) {
       console.log(e);
@@ -206,9 +225,9 @@ import {
               }
             }
           },
-        //   stepper,
+          stepper,
           formwizardFirstStep,
-        //   formwizardSecondStep,
+          formwizardSecondStep,
           // formwizardThirdStep,
   
   

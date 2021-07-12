@@ -1,7 +1,7 @@
 import { getCommonCard } from "egov-ui-framework/ui-config/screens/specs/utils";
 // import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getALFDetailsView } from "./view-alf-details";
-// import {reviewDocuments} from "./reviewDocuments"
+import {reviewDocuments} from "./reviewDocuments"
 // import { getApprovalInfoView } from "./view-approvalInfo-details";
 // import{getTFCDetailsView} from './view-tfcdetails';
 // import {getBankToProcessDetailsView} from './view-bankDetails';
@@ -19,7 +19,7 @@ const formAvailabiltyBaseOnStatus = (isReview) => {
 //   let status = getQueryArg(window.location.href, "status");
 
   const viewALFDetails = getALFDetailsView(isReview);
-//   const viewDocuments = reviewDocuments(isReview);
+  const viewDocuments = reviewDocuments(isReview);
 //   const viewApprovalInfo = getApprovalInfoView(isReview);
 //   const viewTFCDetails = getTFCDetailsView(isReview);
 //   const viewBankToProcessDetails = getBankToProcessDetailsView(isReview);
@@ -34,7 +34,7 @@ const formAvailabiltyBaseOnStatus = (isReview) => {
 //     case SANCTION_BY_BANK :   return  {viewSEPDetails,viewTFCDetails,viewBankToProcessDetails,viewSanctionDetails,viewDocuments}
 //     default : return {viewSEPDetails,viewDocuments}
 //   }
-    return { viewALFDetails }
+    return { viewALFDetails, viewDocuments }
  
 }
 
