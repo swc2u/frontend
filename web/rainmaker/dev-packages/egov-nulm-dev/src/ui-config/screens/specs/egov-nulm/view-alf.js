@@ -94,13 +94,15 @@ import {
     //mdms call
     getMdmsData(dispatch, tenantId);
 
-   const fileStoreIds = response.ResponseBody[0].applicationDocument.map(docInfo => docInfo.filestoreId).join();
+    var docsUploaded = JSON.parse(response.ResponseBody[0].document);
+    debugger;
+   const fileStoreIds = docsUploaded.map(docInfo => docInfo.filestoreId).join();
 
 
    const fileUrlPayload =  fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
    let  documentsUploadRedux ={}
-  const documentsPreview = response.ResponseBody[0].applicationDocument 
-                          && response.ResponseBody[0].applicationDocument.map((docInfo,index) => {
+  const documentsPreview = docsUploaded 
+                          && docsUploaded.map((docInfo,index) => {
                             let docObj =  {
                                           title: docInfo.documentType,
                                           linkText: "VIEW", 
@@ -152,9 +154,7 @@ import {
           documentsPreview && dispatch(prepareFinalObject("documentsPreview", documentsPreview));
                           
                             
-          documentsPreview &&  dispatch(prepareFinalObject("documentsUploadRedux", documentsUploadRedux));
-
-                       
+          documentsPreview &&  dispatch(prepareFinalObject("documentsUploadRedux", documentsUploadRedux));            
    
   }
   
@@ -169,19 +169,25 @@ const getALFDetails = async(state, dispatch) =>{
   let response = await getSearchResults([],requestBody, dispatch,"alf");
 
   if(response){ 
-    // getFileUrlDetails(state,dispatch,tenantId,response);
+    debugger;
+    getFileUrlDetails(state,dispatch,tenantId,response);
     var res = response.ResponseBody[0];
     var demo = {
       "name" :res.name,
-      "dor" : res.registeration_date,
+      // "dor" : res.registeration_date,
       "dof" : res.date_of_formation,
       "address" : res.address,
       "contact" : res.contact_number,
       "bankName" : res.bank_name,
       "branchName" : res.branch_name,
-      "accountName" : res.account_number,
       "registrationNo" : res.id,
-      "applicationUuid" : res.uuid
+      "applicationUuid" : res.uuid,
+      "applicationUuid" : res.uuid,
+      "adharNumber" : res.adhaar_number,
+      "alfFormattedThrough" : res.alf_formated_through,
+      "dateOfOpeningAccount" : res.date_of_opening_account,
+      "accountNumber" : res.account_number,
+      "applicationDocument": JSON.parse(res.document)
     }
     dispatch(prepareFinalObject("NULMALFRequest", demo));
 

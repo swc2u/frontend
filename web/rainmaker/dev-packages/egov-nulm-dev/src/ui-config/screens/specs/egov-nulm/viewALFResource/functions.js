@@ -340,13 +340,26 @@ export const createUpdateALF = async (state, dispatch, action,status) => {
     "NulmSmidAlfRequest" :{
       "name": requestBody.NULMALFRequest.name,
       "dateOfFormation": requestBody.NULMALFRequest.dof,
-      "registerationDate": requestBody.NULMALFRequest.dor,
+      // "registerationDate": requestBody.NULMALFRequest.dor,
       "address": requestBody.NULMALFRequest.address,
       "accountNumber": requestBody.NULMALFRequest.accountName,
       "bankName": requestBody.NULMALFRequest.bankName,
       "branchName": requestBody.NULMALFRequest.branchName,
       "contactNumber": requestBody.NULMALFRequest.contact,
+
+      "adhaarNumber": requestBody.NULMALFRequest.adharNumber,
+      "dateOfOpeningAccount": requestBody.NULMALFRequest.dateOfOpeningAccount,
+      "alfFormatedThrough": requestBody.NULMALFRequest.alfFormattedThrough,
+
       "tenantId": requestBody.NULMALFRequest.tenantId,
+
+      "applicationDocument": 
+      [
+          {
+              "documentType": requestBody.NULMALFRequest.applicationDocument[0].documentType,
+              "filestoreId": requestBody.NULMALFRequest.applicationDocument[0].filestoreId
+          }            
+      ]
     }
   }
   requestBody = demo;
@@ -376,13 +389,17 @@ export const createUpdateALF = async (state, dispatch, action,status) => {
           "id" : NULMALFRequest.registrationNo,
           "name": NULMALFRequest.name,
           "dateOfFormation": NULMALFRequest.dof,
-          "registerationDate": NULMALFRequest.dor,
+          // "registerationDate": NULMALFRequest.dor,
           "address": NULMALFRequest.address,
           "accountNumber": NULMALFRequest.accountName,
           "bankName": NULMALFRequest.bankName,
           "branchName": NULMALFRequest.branchName,
           "contactNumber": NULMALFRequest.contact,
           "tenantId": NULMALFRequest.tenantId,
+          "adhaarNumber" : NULMALFRequest.adharNumber,
+          "dateOfOpeningAccount" : NULMALFRequest.dateOfOpeningAccount,
+          "alfFormatedThrough" : NULMALFRequest.alfFormattedThrough,
+          "applicationDocument": NULMALFRequest.applicationDocument
         }
       }
       requestBody = demo;

@@ -1,5 +1,8 @@
 import {
   getCommonContainer,
+  getCommonParagraph,
+  getBreak,
+  getLabel,
   getCommonHeader,
   getStepperObject
 } from "egov-ui-framework/ui-config/screens/specs/utils";
@@ -8,12 +11,13 @@ import { footer } from "./applyResourceSellMeat/footer";
 import { nocDetails } from "./applyResourceSellMeat/nocDetails";
 import { documentDetails } from "./applyResourceSellMeat/documentDetails";
 import { getFileUrlFromAPI, getQueryArg, getTransformedLocale, setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
-
 import {
   prepareFinalObject,
   handleScreenConfigurationFieldChange as handleField
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getOPMSTenantId,getUserInfo, setapplicationType,IsRemoveItem, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { getOPMSTenantId,getUserInfo, setapplicationType,
+  IsRemoveItem, lSRemoveItemlocal, setapplicationNumber,
+  localStorageSet } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
 import jp from "jsonpath";
 import set from "lodash/set";
@@ -25,6 +29,7 @@ import {
   furnishSellMeatNocResponse,
   setApplicationNumberBox
 } from "../../../../ui-utils/commons";
+import { getOPMSPattern, showHideAdhocPopups } from "../utils/index"
 
 
 
@@ -60,7 +65,7 @@ const applicationNumberContainer = () => {
 export const header = getCommonContainer({
   header: getCommonHeader({
     labelName: `Apply New Permission for Sell Meat NOC (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
-    labelKey: "SELLMEAT_APPLY_NOC"
+    labelKey: "DROPDWON_COMBINATION"
   }),
   //applicationNumber: applicationNumberContainer()
   applicationNumber: {
@@ -227,6 +232,211 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
   }
 };
 
+const setvalueCancel = async (state, dispatch,type) => {
+  let pagename = "petnoc_summary";
+
+  if(type ==="SELLMEATNOC")
+  {
+    pagename = "applysellmeat"
+  
+  }
+  else if(type ==="PETNOC")
+  {
+    pagename = "petnoc_summary"
+  
+  }
+
+  dispatch(
+    handleField(
+      //"petnoc_summary",
+      pagename,
+      "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.checkboxBtnContainer.children.addPenaltyRebateButton1",
+      "props.checked",
+      false
+    )
+  );
+  localStorageSet("dropdownTermsAccepted", "")
+  //showHideAdhocPopups(state, dispatch, "petnoc_summary")
+  showHideAdhocPopups(state, dispatch, pagename)
+
+
+
+}
+
+
+const setvalue = async (state, dispatch,type) => {
+let pagename = "petnoc_summary";
+
+if(type ==="SELLMEATNOC")
+{
+  pagename = "applysellmeat"
+
+}
+else if(type ==="PETNOC")
+{
+  pagename = "petnoc_summary"
+
+}
+
+  dispatch(
+    handleField(
+      pagename,
+      "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.checkboxBtnContainer.children.addPenaltyRebateButton1",
+      "props.checked",
+      true
+    )
+  );
+  localStorageSet("dropdownTermsAccepted", "accept")
+  showHideAdhocPopups(state, dispatch, pagename)
+
+
+
+}
+
+export const getRequiredDocuments = (type) => {
+  return getCommonContainer(
+    {
+      div2: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        gridDefination: {
+          xs: 12,
+          sm: 12
+        },
+        props: {
+          style: {
+            width: "100%",
+            float: "right",
+            cursor: "pointer"
+          }
+        },
+        children: {
+
+          // closeButton: {
+          //   componentPath: "Button",
+          //   props: {
+          //     style: {
+          //       float: "right",
+          //       marginRight: "-15",
+          //       paddingRight: "0px",
+          //       color: "rgba(0, 0, 0, 0.60)"
+          //     }
+          //   },
+          //   children: {
+          //     previousButtonIcon: {
+          //       uiFramework: "custom-atoms",
+          //       componentPath: "Icon",
+          //       props: {
+          //         iconName: "close"
+          //       }
+          //     }
+          //   },
+          //   onClickDefination: {
+          //     action: "condition",
+          //     callBack: (state, dispatch) => showHideAdhocPopups(state, dispatch, "petnoc_summary")
+          //   }
+          // },
+
+          header: {
+            uiFramework: "custom-atoms",
+            componentPath: "Container",
+            children: {
+              header
+            },
+            break: getBreak(),
+          },
+          subText1: getCommonParagraph({
+            labelName: "Jhatka(goat/sheep)+Fish+Frozen/Packed/Poultry",
+            labelKey: "DROPDOWN_POINT_1"
+          }),
+          subText2: getCommonParagraph({
+            labelName: "Halal(goat/sheep)+Fish +Frozen/Packed/Poultry",
+            labelKey: "DROPDOWN_POINT_2"
+          }),
+          subText3: getCommonParagraph({
+            labelName: "Pork+Fish+Packed/Frozen/Poultry",
+            labelKey: "DROPDOWN_POINT_3"
+          }),
+          subText4: getCommonParagraph({
+            labelName: "Pork(pig) can't be combined with Jhatka or Halal",
+            labelKey: "DROPDOWN_POINT_4"
+          }),
+        }
+
+      },
+      nextButton: {
+        componentPath: "Button",
+        props: {
+          variant: "contained",
+          color: "primary",
+          style: {
+            minWidth: "180px",
+            height: "48px",
+            marginRight: "45px"
+          }
+        },
+        children: {
+          nextButtonLabel: getLabel({
+            labelName: "OK I Agree",
+            labelKey: "PM_COMMON_OK_I_AGREE_BUTTON"
+          }),
+          nextButtonIcon: {
+            uiFramework: "custom-atoms",
+            componentPath: "Icon",
+            // props: {
+            //   iconName: "keyboard_arrow_right"
+            // }
+          }
+        },
+        onClickDefination: {
+          action: "condition",
+          callBack: (state, dispatch) => {
+            setvalue(state, dispatch,type);
+
+          }
+        }
+      },
+      cancelButton: {
+        componentPath: "Button",
+        props: {
+          variant: "outlined",
+          color: "primary",
+          style: {
+            minWidth: "180px",
+            height: "48px",
+            marginRight: "45px"
+          }
+        },
+        children: {
+          cancelButtonLabel: getLabel({
+            labelName: "Cancel",
+            labelKey: "PM_COMMON_CANCEL"
+          }),
+          cancelButtonIcon: {
+            uiFramework: "custom-atoms",
+            componentPath: "Icon",
+            // props: {
+            //   iconName: "keyboard_arrow_right"
+            // }
+          }
+        },
+        onClickDefination: {
+          action: "condition",
+          callBack: (state, dispatch) => {
+            setvalueCancel(state, dispatch,type);
+
+          }
+        }
+      },
+    },
+    {
+      style: {
+        padding: "0px 10px"
+      }
+    }
+  );
+};
+
 const screenConfig = {
   uiFramework: "material-ui",
   name: "applysellmeat",
@@ -244,6 +454,12 @@ const screenConfig = {
     dispatch(prepareFinalObject("SELLMEATNOC.fatherHusbandName", fatherHusbandName));
     //Set Module Name
     set(state, "screenConfiguration.moduleName", "opms");
+
+    set(
+      action,
+      "screenConfig.components.undertakingdialog.children.popup",
+      getRequiredDocuments("SELLMEATNOC")
+    );
 
     // Set MDMS Data
     getMdmsData(action, state, dispatch).then(response => {
@@ -310,6 +526,19 @@ const screenConfig = {
         formwizardFirstStep,
         formwizardSecondStep,
         footer
+      }
+    },
+    undertakingdialog: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-opms",
+      componentPath: "UnderTakingContainer",
+      props: {
+        open: false,
+        maxWidth: "md",
+        screenKey: "applysellmeat"
+      },
+      children: {
+        popup: {}
       }
     }
   }

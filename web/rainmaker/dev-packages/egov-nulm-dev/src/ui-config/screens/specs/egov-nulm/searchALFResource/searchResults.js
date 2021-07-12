@@ -60,6 +60,12 @@ export const getTextToLocalMapping = (label) => {
         "NULM_ALF_SEARCH_RESULTS_TABLE_HEADING",
         localisationLabels
       );
+    case "Name of ALF":
+      return getLocaleLabels(
+        "Name of ALF",
+        "NULM_NULM_NAME_OF_ALF",
+        localisationLabels
+      );
   }
 };
 
@@ -70,7 +76,7 @@ export const searchResults = {
   props: {
     columns: [
       getTextToLocalMapping("Application Id"),
-      // getTextToLocalMapping("Name of Applicant"),
+      getTextToLocalMapping("Name of ALF"),
       // getTextToLocalMapping("Contact Number"),
       // getTextToLocalMapping("Creation Date"),
       {

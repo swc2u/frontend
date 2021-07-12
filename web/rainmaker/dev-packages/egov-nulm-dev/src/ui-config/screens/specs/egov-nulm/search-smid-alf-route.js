@@ -16,94 +16,11 @@ import {
 let roles = JSON.parse(getUserInfo()).roles
 export const header = getCommonContainer({
     header: getCommonHeader({
-      labelName: "National Urban Livelihood Mission",
-      labelKey: "ACTION_TEST_NULM_TITLE"
+      labelName: "Social Mobilization Institution Development for NGO",
+      labelKey: "NULM_SMIDNGO_CARD_TITLE"
     }),
 });
 
-let SEP = {
-  label: {
-    labelKey: "NULM_SEP_CARD_TITLE",
-    labelName: "Self-Employment Program"
-  },
-  icon: <i
-    viewBox="0 -8 35 42"
-    color="primary"
-    font-size="40px"
-    class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-    picture_in_picture
-  </i>,
-  route: "search-sep"
-}
-let SMID = {
-  label: {
-    labelKey: "NULM_SMID_CARD_TITLE",
-    labelName: "Social Mobilization Institution Development"
-  },
-  icon: <i
-    viewBox="0 -8 35 42"
-    color="primary"
-    class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-    picture_in_picture
-  </i>,
-  route: "search-smid"
-}
-let SUSV = {
-  label: {
-    labelKey: "NULM_SUSV_CARD_TITLE",
-    labelName: "Permission for Advertisement",
-    style:{
-        paddingLeft:"5px",
-
-    },
-  },
-  icon: <i
-    viewBox="0 -8 35 42"
-    color="primary"
-    class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-    picture_in_picture
-  </i>,
-  route: "search-susv"
-}
-let SVRU = {
-  label: {
-    labelKey: "NULM_SVRU_CARD_TITLE",
-    labelName: "Permission for Road Cut"
-  },
-  icon: <i
-    viewBox="0 -8 35 42"
-    color="primary"
-    class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-    picture_in_picture
-  </i>,
-  route: "search-svru"
-}
-let SUHC = {
-    label: {
-      labelKey: "NULM_SUHC_CARD_TITLE",
-      labelName: "Permission for Road Cut"
-    },
-    icon: <i
-      viewBox="0 -8 35 42"
-      color="primary"
-      class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-      picture_in_picture
-    </i>,
-    route: "searchSuh"
-  }
-  let NGOR = {
-    label: {
-      labelKey: "NULM_NGOR_CARD_TITLE",
-      labelName: "Permission for Road Cut"
-    },
-    icon: <i
-      viewBox="0 -8 35 42"
-      color="primary"
-      class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-      picture_in_picture
-    </i>,
-    route: "search-organization"
-  }
   let SMIDNGO = {
     label: {
       labelKey: "NULM_SMIDNGO_CARD_TITLE",
@@ -115,53 +32,12 @@ let SUHC = {
       class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
       picture_in_picture
     </i>,
-    route: "search-smid-alf-route"
+    route: "search-smid-org"
   }
-  let SUHP = {
-    label: {
-      labelKey: "NULM_SUHP_CARD_TITLE",
-      labelName: "Permission for Road Cut"
-    },
-    icon: <i
-      viewBox="0 -8 35 42"
-      color="primary"
-      class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-      picture_in_picture
-    </i>,
-    route: "search-suh"
-  }
-  let SUHLOG = {
-    label: {
-      labelKey: "NULM_SUHLOG_CARD_TITLE",
-      labelName: "Permission for Road Cut"
-    },
-    icon: <i
-      viewBox="0 -8 35 42"
-      color="primary"
-      class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-      picture_in_picture
-    </i>,
-    route: "search-log-maintenance"
-  }
-  
-  let SUSVT = {
-    label: {
-      labelKey: "NULM_SUSVT_CARD_TITLE",
-      labelName: "Permission for Road Cut"
-    },
-    icon: <i
-      viewBox="0 -8 35 42"
-      color="primary"
-      class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-      picture_in_picture
-    </i>,
-    route: "search-susv-transaction"
-  }
-
   let ALF = {
     label: {
       labelKey: "NULM_ALF_CARD_TITLE",
-      labelName: "Permission for Road Cut"
+      labelName: "Permission for SMID ALF"
     },
     icon: <i
       viewBox="0 -8 35 42"
@@ -172,13 +48,8 @@ let SUHC = {
     route: "search-smid-NGO"
   }
   
-let allCardList = [{ "code": "SEP", "value": SEP }, { "code": "SMID", "value": SMID },
-{ "code": "SUSV", "value": SUSV },{ "code": "SVRU", "value": SVRU },{ "code": "SUHC", "value": SUHC },
-{ "code": "NGOR", "value": NGOR },{ "code": "SMIDNGO", "value": SMIDNGO },{ "code": "SUHLOG", "value": SUHLOG },
-{ "code": "SUHP", "value": SUHP },
-{ "code": "SUSVT", "value": SUSVT },
-// { "code": "ALF", "value": ALF }
-]
+let allCardList = [{ "code": "SMIDNGO", "value": SMIDNGO },
+{ "code": "ALF", "value": ALF }]
 
 
 const getMdmsData = async (action, state, dispatch) => {
@@ -219,15 +90,30 @@ const setcardList = (state, dispatch) => {
   let mdmsCardList = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.nulm.cardList",
     []
   );
-  // var demo = {
-  //   "code": "ALF",
-  //   "roles": [
-  //     "CITIZEN",
-  //     "EMPLOYEE"
-  //   ],
-  //   "routeCitizen": "search-smid-NGO"
-  // }
-  // mdmsCardList.push(demo);
+  var demo = {
+    "tenantId": "ch.chandigarh",
+    "moduleName": "nulm",
+    "NGOALFCardList": [
+      {
+        "code": "SMIDNGO",
+        "roles": [
+          "EMPLOYEE"
+        ],
+        "routeCitizen": "search-smid-org"
+      },
+      {
+        "code": "ALF",
+        "roles": [
+          "CITIZEN",
+          "EMPLOYEE"
+        ],
+        "routeCitizen": "search-smid-NGO"
+      }
+    ]
+  }
+
+  mdmsCardList = demo.NGOALFCardList;
+
   let employeeCardList = []
   let roles = JSON.parse(getUserInfo()).roles
   mdmsCardList.map((item, index) => {
@@ -260,16 +146,16 @@ const setcardList = (state, dispatch) => {
 
   dispatch(
     handleField(
-      "home",
+      "search-smid-alf-route",
       "components.div.children.applyCard",
       "props.items",
       cards
     )
   );
 }
-const PermissionManagementSearchAndResult = {
+const screenConfig = {
   uiFramework: "material-ui",
-  name: "home",
+  name: "search-smid-alf-route",
   beforeInitScreen: (action, state, dispatch) => {
     let UsertenantInfo = JSON.parse(getUserInfo()).permanentCity;
     if (JSON.parse(getUserInfo()).type === "CITIZEN")
@@ -335,4 +221,4 @@ const PermissionManagementSearchAndResult = {
   }
 };
 
-export default PermissionManagementSearchAndResult;
+export default screenConfig;
