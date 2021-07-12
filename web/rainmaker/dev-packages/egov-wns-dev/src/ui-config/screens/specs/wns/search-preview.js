@@ -719,6 +719,7 @@ export const getMdmsData = async (state,dispatch) => {
           { name: "swWorkflowRole" },
           { name: "sectorList" },
           { name: "swSectorList" },
+          {name:"tariffType"},
           
         
         ] },
