@@ -16,8 +16,8 @@ import {
   export const AlfDetails = getCommonCard({
     header: getCommonTitle(
       {
-        labelName: "Application for ALF program",
-        labelKey: "NULM_APPLICATION_FOR_ALF_PROGRAM"
+        labelName: "Application for SMID ALF program",
+        labelKey: "NULM_APPLICATION_FOR_SMID_ALF_PROGRAM"
       },
       {
         style: {
@@ -30,12 +30,12 @@ import {
       applicantname: {
         ...getTextField({
           label: {
-            labelName: "Name of Applicant",
-            labelKey: "NULM_ALF_NAME_OF_APPLICANT"
+            labelName: "Name of ALF",
+            labelKey: "NULM_NAME_OF_ALF"
           },
           placeholder: {
-            labelName: "Enter Name of Applicant",
-            labelKey: "NULM_ALF_NAME_OF_APPLICANT_PLACEHOLDER"
+            labelName: "Enter Name of ALF",
+            labelKey: "NULM_ALF_NAME_OF_PLACEHOLDER"
           },
           required: true,
           pattern: getPattern("Name") || null,
@@ -56,52 +56,6 @@ import {
           required: true,
           pattern: getPattern("Date") || null,
           jsonPath: "NULMALFRequest.dof",
-          // props: {
-          //   inputProps: {
-          //     max:  new Date().toISOString().slice(0, 10),
-          //   }
-          // }
-        })
-      },
-
-      // registrationNumber: {
-      //   ...getTextField({
-      //     label: {
-      //       labelName: "Registration Number",
-      //       labelKey: "NULM_ALF_REGISTRATION_NUMBER_INPUT"
-      //     },
-      //     placeholder: {
-      //       labelName: "Enter Registration Number",
-      //       labelKey: "NULM_ALF_REGISTRATION_NUMBER_PLACEHOLDER",
-      //       props: {
-      //           //InputLabelProps: {
-      //             style:{
-      //               marginTop: 30
-      //             }
-                  
-      //           //},
-      //         },
-      //     },         
-      //     required: false,
-      //     pattern: getPattern("UOMValue") || null,
-      //     errorMessage: "NULM_ALF_REGISTRATION_NUMBER_INPUT_VALIDATION",
-      //     jsonPath: "NULMALFRequest.registrationNo"
-      //   })
-      // },
-
-      registrationDate: {
-        ...getDateField({
-          label: {
-            labelName: "Date Of Registration",
-            labelKey: "NULM_ALF_DOR"
-          },
-          placeholder: {
-            labelName: "Enter Date Of Registration",
-            labelKey: "NULM_ALF_DOR_PLACEHOLDER"
-          },
-          required: true,
-          pattern: getPattern("Date") || null,
-          jsonPath: "NULMALFRequest.dor",
           // props: {
           //   inputProps: {
           //     max:  new Date().toISOString().slice(0, 10),
@@ -147,52 +101,70 @@ import {
         })
       },
 
-      accountName: {
+      adharNumber: {
         ...getTextField({
           label: {
-            labelName: "A/C Name",
-            labelKey: "NULM_ALF_AC_NAME"
+            labelName: "Aadhar Number",
+            labelKey: "NULM_ALF_AADHAR_NUMBER"
           },
           placeholder: {
-            labelName: "Enter A/C Name",
-            labelKey: "NULM_ALF_AC_NAME_PLACEHOLDER"
+            labelName: "Enter Aadhar Number",
+            labelKey: "NULM_ALF_AADHAR_NUMBER_PLACEHOLDER"
           },
           required: true,
-          pattern: getPattern("alpha-numeric-with-space") || null,
-          jsonPath: "NULMALFRequest.accountName"
+          pattern: getPattern("AdharCardNumber") || null,
+          jsonPath: "NULMALFRequest.adharNumber"
         })
       },
 
-      bankName: {
-        ...getTextField({
+      // alfFormattedThrough: {
+      //   ...getTextField({
+      //     label: {
+      //       labelName: "ALF Formatted Through",
+      //       labelKey: "NULM_ALF_FORMATTED_THROUGH"
+      //     },
+      //     placeholder: {
+      //       labelName: "Enter ALF Formatted Through",
+      //       labelKey: "NULM_ALF_FORMATTED_THROUGH_PLACEHOLDER"
+      //     },
+      //     required: true,
+      //     pattern: getPattern("alpha-numeric-with-space") || null,
+      //     jsonPath: "NULMALFRequest.alfFormattedThrough"
+      //   })
+      // },
+      alfFormattedThrough : {
+        ... getSelectField({
           label: {
-            labelName: "Bank Name",
-            labelKey: "NULM_ALF_BANK_NAME"
+            labelName: "SMID ALF formatted through",
+            labelKey: "NULM_ALF_FORMATTED_THROUGH",
+          },
+          props: {
+            className: "applicant-details-error",
+            optionLabel: "name",
+            optionValue: "code",
+            data: [
+              {
+                code: "RO",
+                name: "RO"
+              },
+              {
+                code: "CO",
+                name: "CO"
+              },
+              {
+                code: "Others",
+                name: "Others"
+              },
+            ]
           },
           placeholder: {
-            labelName: "Enter Bank Name",
-            labelKey: "NULM_ALF_BANK_NAME_PLACEHOLDER"
+            labelName: "Select SMID ALF formatted through",
+            labelKey: "NULM_ALF_FORMATTED_THROUGH_PLACEHOLDER",
           },
+          jsonPath: "NULMALFRequest.alfFormattedThrough",
+         // sourceJsonPath: "createScreenMdmsData.store-asset.Department",
           required: true,
-          pattern: getPattern("alpha-numeric-with-space") || null,
-          jsonPath: "NULMALFRequest.bankName",
-        })
-        },
-
-      branchName: {
-        ...getTextField({
-          label: {
-            labelName: "Branch Name",
-            labelKey: "NULM_ALF_BRANCH_NAME"
-          },
-          placeholder: {
-            labelName: "Enter Branch Name",
-            labelKey: "NULM_ALF_BRANCH_NAME_PLACEHOLDER"
-          },
-          required: true,
-          pattern: getPattern("alpha-numeric-with-space") || null,
-          jsonPath: "NULMALFRequest.branchName",
-        })
-      }
+        }),
+      },
     })
   });

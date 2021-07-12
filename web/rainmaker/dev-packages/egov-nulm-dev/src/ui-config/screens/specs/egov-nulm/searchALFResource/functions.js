@@ -112,7 +112,7 @@ if(IsValidDate)
   
         return {
           [getTextToLocalMapping("Application Id")]: get(item, "id", "-") || "-",
-          // [getTextToLocalMapping("Name of Applicant")]: get(item, "name", "-") || "-",
+          [getTextToLocalMapping("Name of ALF")]: get(item, "name", "-") || "-",
           // [getTextToLocalMapping("Contact Number")]: get(item, "contact_number", "-") || "-",
           // [getTextToLocalMapping("Creation Date")]: get(item, "created_time", "")? new Date(get(item, "created_time", "-")).toISOString().substr(0,10) : "-",
           ["code"]: get(item, "uuid", "-")
