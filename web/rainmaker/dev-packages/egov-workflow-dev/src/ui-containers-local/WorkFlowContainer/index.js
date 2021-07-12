@@ -842,6 +842,7 @@ ValidateRequest =(payload,preparedFinalObject) =>{
 
     }
   }
+ 
   if(payload.activityType ==='UPDATE_METER_INFO' || payload.activityType ==='WS_METER_UPDATE')// only for meter update
   {
     if((payload.applicationStatus ==='PENDING_FOR_SDE_APPROVAL' || payload.applicationStatus ==='PENDING_FOR_METER_UPDATE' )
@@ -959,6 +960,27 @@ ValidateRequest =(payload,preparedFinalObject) =>{
     //payload.documents = tmp;
 //return  false
 return isvalidRequest
+}
+IsFlatrateconnection =(usageCategory,proposedUsageCategory,preparedFinalObject)=>{
+  let searchPreviewScreenMdmsData  = preparedFinalObject.searchPreviewScreenMdmsData;
+
+  let flatRate = []
+  flatRate = searchPreviewScreenMdmsData['ws-services-masters'].tariffType.filter(x=>x.code === "11" || x.code ==="12" || x.code ==="2" || x.code ==="17" || x.code ==="19")
+  let flatRateOther =searchPreviewScreenMdmsData['ws-services-masters'].tariffType.filter(x=>x.code !== "11" && x.code !=="12" && x.code !=="2" && x.code !=="17" && x.code !=="19")
+  console.log(flatRate)
+  console.log(flatRateOther)
+  flatRate = flatRate.filter(x=>x.code === usageCategory)
+  flatRateOther = flatRateOther.filter(x=>x.code === proposedUsageCategory)
+
+  if((flatRate.length ===1) && (flatRateOther.length ===1) )
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+
 }
 ValidateRequestSW =(payload,preparedFinalObject)=>{
   if(payload.documents !== null)
@@ -1193,6 +1215,9 @@ uniqueBycode =(data,key)=>{
       securityCharge = WaterConnection && WaterConnection[0].waterApplication.securityCharge;
       additionalCharges = WaterConnection && WaterConnection[0].waterApplication.additionalCharges;
       constructionCharges = WaterConnection && WaterConnection[0].waterApplication.constructionCharges;
+      securityCharge = securityCharge === null?0:securityCharge
+      additionalCharges = additionalCharges === null?0:additionalCharges
+      constructionCharges = constructionCharges === null?0:constructionCharges
       if(additionalCharges !== null && additionalCharges !== NaN)
       {
         additionalCharges = parseInt(additionalCharges);
@@ -1202,7 +1227,7 @@ uniqueBycode =(data,key)=>{
         constructionCharges = parseInt(constructionCharges);
       }
       securityCharge = parseInt(securityCharge) + additionalCharges + constructionCharges;
-      if(securityCharge ===0)
+      if(securityCharge ===0 || securityCharge === NaN || Number.isNaN(securityCharge) )
       {
         //FORWARD_TO_JE_TARIFF_CHANGE
         actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_PAYMENT');
@@ -1233,7 +1258,54 @@ uniqueBycode =(data,key)=>{
 
       
     }
-    if((businessService=='WS_CONVERSION') && applicationStatus ==='PENDING_FOR_SDC_APPROVAL')
+     // filter action for Flat Rate to metered connection for tariff change workflow
+  if((businessService ==='CONNECTION_CONVERSION' || businessService ==='WS_CONVERSION'))// only for meter update
+  {
+    const {WaterConnection} = preparedFinalObject;
+      let usageCategory = 0 ;
+      let proposedUsageCategory = 0      
+     // payload.waterProperty.usageCategory = payload.proposedUsageCategory
+      usageCategory = WaterConnection && WaterConnection[0].waterProperty.usageCategory;
+      proposedUsageCategory = WaterConnection && WaterConnection[0].proposedUsageCategory;
+    let IsvalidateFlatRateConversion = this.IsFlatrateconnection(usageCategory,proposedUsageCategory,preparedFinalObject)
+    //actions = actions.filter(item => item.buttonLabel !== 'INITIATE_SITE_INSPECTION'
+                                   // || item.buttonLabel !== 'SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC');
+    actions = actions.filter(item => item.buttonLabel !== 'INITIATE_SITE_INSPECTION');
+    actions = actions.filter(item => item.buttonLabel !== 'SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC');
+
+    if(applicationStatus ==='PENDING_FOR_DOCUMENT_VERIFICATION' && IsvalidateFlatRateConversion === true)
+    {
+      actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_SUPERINTENDENT');
+
+    }
+    else if(applicationStatus ==='PENDING_FOR_DOCUMENT_VERIFICATION' && IsvalidateFlatRateConversion === false)
+    {
+      actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_SDE_FLAT_RATE');
+
+    }
+    // //PENDING_FOR_SDE_APPROVAL
+    // if(applicationStatus ==='PENDING_FOR_SDE_APPROVAL' && IsvalidateFlatRateConversion === true)
+    // {
+    //   actions = actions.filter(item => item.buttonLabel !== 'SEND_BACK_TO_JE');
+
+    // }
+    // else if(applicationStatus ==='PENDING_FOR_SDE_APPROVAL' && IsvalidateFlatRateConversion === false)
+    // {
+    //   actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_DIV_SUPERITENDENT');
+
+    // }
+   if(applicationStatus ==='PENDING_FOR_SDE_APPROVAL_AFTER_DIV_SUPERITENDENT'  && IsvalidateFlatRateConversion === true)
+    {
+      actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_SUPERINTENDENT');
+
+    }
+    else if(applicationStatus ==='PENDING_FOR_SDE_APPROVAL_AFTER_DIV_SUPERITENDENT' && IsvalidateFlatRateConversion === false)
+    {
+      actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_SDE_FLAT_RATE');
+
+    }
+  }
+    if((businessService=='WS_CONVERSION') && (applicationStatus ==='PENDING_FOR_SDC_APPROVAL' || applicationStatus ==='PENDING_FOR_SDE_APPROVAL_AFTER_EE') )
     {
       const {WaterConnection} = preparedFinalObject;
       let securityCharge = 0 ;
@@ -1242,6 +1314,15 @@ uniqueBycode =(data,key)=>{
       securityCharge = WaterConnection && WaterConnection[0].waterApplication.securityCharge;
       additionalCharges = WaterConnection && WaterConnection[0].waterApplication.additionalCharges;
       constructionCharges = WaterConnection && WaterConnection[0].waterApplication.constructionCharges;
+      securityCharge = securityCharge === null?0:securityCharge
+      additionalCharges = additionalCharges === null?0:additionalCharges
+      constructionCharges = constructionCharges === null?0:constructionCharges
+      let usageCategory = 0 ;
+      let proposedUsageCategory = 0      
+     // payload.waterProperty.usageCategory = payload.proposedUsageCategory
+      usageCategory = WaterConnection && WaterConnection[0].waterProperty.usageCategory;
+      proposedUsageCategory = WaterConnection && WaterConnection[0].proposedUsageCategory;
+    let IsvalidateFlatRateConversion = this.IsFlatrateconnection(usageCategory,proposedUsageCategory,preparedFinalObject)
       if(additionalCharges !== null && additionalCharges !== NaN)
       {
         additionalCharges = parseInt(additionalCharges);
@@ -1251,7 +1332,7 @@ uniqueBycode =(data,key)=>{
         constructionCharges = parseInt(constructionCharges);
       }
       securityCharge = parseInt(securityCharge) + additionalCharges + constructionCharges;
-      if(securityCharge ===0)
+      if(securityCharge ===0 || securityCharge === NaN || Number.isNaN(securityCharge))
       {
         //FORWARD_TO_JE_TARIFF_CHANGE
         actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_PAYMENT');//VERIFY_AND_FORWARD_FOR_PAYMENT
@@ -1259,7 +1340,16 @@ uniqueBycode =(data,key)=>{
       }
       else{
         //FORWARD_TO_JE_TARIFF_CHANGE
-        actions = actions.filter(item => item.buttonLabel !== 'FORWARD_TO_JE_TARIFF_CHANGE');//FORWARD_TO_JE_TARIFF_CHANGE  
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_SUPERINTENDENT_FOR_APPROVAL');//FORWARD_TO_JE_TARIFF_CHANGE  
+
+      }
+      if(IsvalidateFlatRateConversion)
+      {
+        actions = actions.filter(item => item.buttonLabel !== 'SEND_BACK_TO_SUPERITENDENT_DIVISION');//FORWARD_TO_JE_TARIFF_CHANGE  
+
+      }
+      else{
+        actions = actions.filter(item => item.buttonLabel !== 'SEND_BACK_TO_JE_FLAT_RATE');//FORWARD_TO_JE_TARIFF_CHANGE  
 
       }
 
