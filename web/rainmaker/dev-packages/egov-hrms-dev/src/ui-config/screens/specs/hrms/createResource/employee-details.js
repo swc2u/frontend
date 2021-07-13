@@ -197,7 +197,7 @@ export const employeeDetails = getCommonCard({
           labelName: "Enter Email",
           labelKey: "HR_EMAIL_PLACEHOLDER"
         },
-        required: true,
+        required: false,
         pattern: getPattern("Email"),
         jsonPath: "Employee[0].user.emailId"
       }),

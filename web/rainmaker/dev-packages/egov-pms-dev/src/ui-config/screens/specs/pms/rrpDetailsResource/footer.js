@@ -400,7 +400,9 @@ set(state,"screenConfiguration.preparedFinalObject.ProcessInstances[0].employeeO
 set(state,"screenConfiguration.preparedFinalObject.ProcessInstances[0].employeeOtherDetails.isTakenGratuityCommutationTerminalBenefit", isTakenGratuityCommutationTerminalBenefit);
 set(state,"screenConfiguration.preparedFinalObject.ProcessInstances[0].employeeOtherDetails.isTakenCompensationPensionAndGratuity", isTakenCompensationPensionAndGratuity);
 
-  
+  //SET ARRREAR 
+  let pensionArrears = get(state,"screenConfiguration.preparedFinalObject.pensionArrears.pensionArrears",[])
+  set(state,"screenConfiguration.preparedFinalObject.ProcessInstances[0].pensionArrears", pensionArrears);
 
   if(activeStep ==1)
   {

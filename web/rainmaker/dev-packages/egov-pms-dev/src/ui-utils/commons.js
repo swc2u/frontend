@@ -477,7 +477,10 @@ export const createUpdateNPApplication = async (state, dispatch, status) => {
       //   value: getQueryArg(window.location.href, "tenantId")
       // });
       // response = await getworkflowData(queryObject);
-       payload = get(state.screenConfiguration.preparedFinalObject, "ProcessInstances", [])
+      //SET ARRREAR 
+      let pensionArrears = get(state,"screenConfiguration.preparedFinalObject.pensionArrears.pensionArrears",[])
+      set(state,"screenConfiguration.preparedFinalObject.ProcessInstances[0].pensionArrears", pensionArrears);
+      payload = get(state.screenConfiguration.preparedFinalObject, "ProcessInstances", [])
     }
     else
     {
