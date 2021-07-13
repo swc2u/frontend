@@ -134,10 +134,35 @@ export const getWFConfig = (module, businessService, taskId) => {
     }
     // new module rediraection for case "RRP_SERVICE ,DOE_SERVICE, DOP_SERVICE" Chnage
     else if (businessService == "RRP_SERVICE" || businessService == "DOE_SERVICE" || businessService == "DOP_SERVICE") {
-      return {
-        INITIATED: "/pms/pmsmap",
-        DEFAULT: "/pms/pmsmap",
-      };
+      // return {
+      //   INITIATED: "/pms/pmsmap",
+      //   DEFAULT: "/pms/pmsmap",
+      // };
+      if(businessService == "DOE_SERVICE")
+      {
+        return {
+          INITIATED: "/pms/doeDetails",
+          DEFAULT: "/pms/doeDetails",
+        };
+
+      }
+      else if(businessService == "DOP_SERVICE")
+      {
+        //doeDetails
+        return {
+          INITIATED: "/pms/dopDetails",
+          DEFAULT: "/pms/dopDetails",
+        };
+      }
+      else if(businessService == "RRP_SERVICE")
+      {
+        //doeDetails
+        return {
+          INITIATED: "/pms/rrpDetails",
+          DEFAULT: "/pms/rrpDetails",
+        };
+      }
+     
     }
   }
   else if (businessService == "PAYMENT WORKFLOW" || businessService == "FINE MASTER APPROVAL" || businessService == "CHALLAN WORKFLOW" || businessService == "AUCTION WORKFLOW") {
@@ -174,10 +199,34 @@ export const getWFConfig = (module, businessService, taskId) => {
   }
   // new module rediraection for case "RRP_SERVICE ,DOE_SERVICE, DOP_SERVICE" Chnage
   else if (businessService == "RRP_SERVICE" || businessService == "DOE_SERVICE" || businessService == "DOP_SERVICE") {
-    return {
-      INITIATED: "/pms/pmsmap",
-      DEFAULT: "/pms/pmsmap",
-    };
+    // return {
+    //   INITIATED: "/pms/pmsmap",
+    //   DEFAULT: "/pms/pmsmap",
+    // };
+    if(businessService == "DOE_SERVICE")
+    {
+      return {
+        INITIATED: "/pms/doeDetails",
+        DEFAULT: "/pms/doeDetails",
+      };
+
+    }
+    else if(businessService == "DOP_SERVICE")
+    {
+      //doeDetails
+      return {
+        INITIATED: "/pms/dopDetails",
+        DEFAULT: "/pms/dopDetails",
+      };
+    }
+    else if(businessService == "RRP_SERVICE")
+    {
+      //doeDetails
+      return {
+        INITIATED: "/pms/rrpDetails",
+        DEFAULT: "/pms/rrpDetails",
+      };
+    }
   }
   else if (businessService == "OSBM")
   {

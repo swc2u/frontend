@@ -98,7 +98,11 @@ class ShowField extends Component {
     const exportOptions = flag ? { rows: ".selected", columns } : { columns };
     let reportTitle = this.getReportTitle();
     let orientation = reportHeader.length > 6 ? "landscape" : "portrait";
-
+    // if(reportName === 'PensionObligation')
+    // {
+    //   orientation = "portrait"
+      
+    // }
     const buttons = [
       {
         text: "<span>Download as : </span>",
