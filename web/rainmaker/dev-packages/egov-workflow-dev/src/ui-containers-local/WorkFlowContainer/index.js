@@ -943,6 +943,22 @@ ValidateRequest =(payload,preparedFinalObject) =>{
     }
 
   }
+  if((payload.activityType ==='WS_TEMP_DISCONNECTION' || payload.activityType ==='TEMPORARY_DISCONNECTION') && payload.applicationStatus ==='PENDING_FOR_TEMPORARY_CONNECTION_CLOSE')// only for meter update
+  {
+    payload.status = 'Inactive';
+
+  }
+  if((payload.activityType ==='WS_DISCONNECTION' || payload.activityType ==='PERMANENT_DISCONNECTION') && payload.applicationStatus ==='PENDING_FOR_CONNECTION_CLOSE')// only for meter update
+  {
+    payload.status = 'Inactive';
+
+  }
+  if((payload.activityType ==='WS_REACTIVATE' || payload.activityType ==='REACTIVATE_CONNECTION') && payload.applicationStatus ==='PENDING_FOR_CONNECTION_REACTIVATION')// only for meter update
+  {
+    payload.status = 'Active';
+
+  }
+
 }
 
   // remove duplicate document
@@ -1239,6 +1255,11 @@ uniqueBycode =(data,key)=>{
 
       }
 
+    }
+    if((businessService=='WS_METER_UPDATE' || businessService ==='UPDATE_METER_INFO') && applicationStatus ==='PENDING_FOR_DOCUMENT_VERIFICATION')
+    {
+      actions = actions.filter(item => item.buttonLabel !== 'INITIATE_SITE_INSPECTION');
+      actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_SDE_ROADS');
     }
     if((businessService=='WS_METER_UPDATE') && applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
     {
