@@ -1198,7 +1198,9 @@ export const getFileUrlFromAPI = async (fileStoreId,tenantId) => {
 };
 
 export const downloadReceiptFromFilestoreID=(fileStoreId,mode,tenantId)=>{
+
   getFileUrlFromAPI(fileStoreId,tenantId).then(async(fileRes) => {
+    
     if (mode === 'download') {
       var win = window.open(fileRes[fileStoreId], '_blank');
       if(win){
@@ -1243,6 +1245,15 @@ export const downloadAcknowledgementForm = async ( pagename,mode="download") => 
   ]
 switch(pagename)
 {
+  // ALF 
+  case "Alf":
+    ApplicationNo = getQueryArg(window.location.href, "applicationNumber");
+    queryObject.push({
+      key: "key",
+      value:"nulm-certificate-alf"
+    });
+    APIUrl = `/pdf-service/v1/_create`
+    break;
   case "Sep":
     ApplicationNo = getQueryArg(window.location.href, "applicationNumber");
     queryObject.push({
@@ -1288,6 +1299,7 @@ switch(pagename)
    
     try {    
       const response = await getprintpdf(queryObject,APIUrl,pagename);
+      
       if(response)
       {
         let filestoreId = response.filestoreIds[0]

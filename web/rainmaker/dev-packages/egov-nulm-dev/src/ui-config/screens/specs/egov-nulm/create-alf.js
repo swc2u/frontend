@@ -146,18 +146,16 @@ import {
 
       dispatch(prepareFinalObject("applyScreenMdmsData", dummyMDMS_Docs));
   
-      debugger;
       // setting documents
       prepareDocumentsUploadData(state, dispatch, 'ALFApplication');
       await prefillDocuments(
         state.screenConfiguration.preparedFinalObject,
         "displayDocs",
         dispatch,
-        'NULMALFRequest.documentAttachemnt',
-        'SMIDDocuments', 
+        'NULMALFRequest.applicationDocument',
+        'ALFDocuments', 
       );
   
-      debugger;
       return true;
     } catch (e) {
       console.log(e);

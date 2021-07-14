@@ -39,7 +39,7 @@ import {
             labelKey: "NULM_ALF_AC_NO_PLACEHOLDER"
           },
           required: false,
-          pattern: getPattern("alpha-numeric-with-space") || null,
+          pattern: getPattern("numeric-only") || null,
           jsonPath: "NULMALFRequest.accountNumber"
         })
       },
@@ -57,11 +57,11 @@ import {
           required: false,
           pattern: getPattern("Date") || null,
           jsonPath: "NULMALFRequest.dateOfOpeningAccount",
-          // props: {
-          //   inputProps: {
-          //     max:  new Date().toISOString().slice(0, 10),
-          //   }
-          // }
+          props: {
+            inputProps: {
+              min:  new Date().toISOString().slice(0, 10),
+            }
+          }
         })
       },
 
@@ -100,7 +100,7 @@ import {
     break: getBreak(),
     documentList: {
       uiFramework: "custom-containers-local",
-      moduleName: "egov-nulm",
+      moduleName: "egov-opms",
       componentPath: "DocumentListContainer",
       required: false,
       props: {      
