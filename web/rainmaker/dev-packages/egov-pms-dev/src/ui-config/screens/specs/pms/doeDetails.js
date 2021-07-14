@@ -417,7 +417,7 @@ export const getData = async (action, state, dispatch) => {
      if(!responce.ProcessInstances[0].isViewEnabled)
      {
        //window.location.href ="/index"
-       dispatch(prepareFinalObject("IsValidApplication", false));
+       dispatch(prepareFinalObject("IsValidApplication", true));
  
      }
      else{
@@ -426,7 +426,7 @@ export const getData = async (action, state, dispatch) => {
    }
    catch(error)
    {
-     dispatch(prepareFinalObject("IsValidApplication", false));
+     dispatch(prepareFinalObject("IsValidApplication", true));
    }
 };
 
