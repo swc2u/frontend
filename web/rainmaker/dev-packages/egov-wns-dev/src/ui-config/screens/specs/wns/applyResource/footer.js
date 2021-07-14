@@ -526,8 +526,15 @@ if(water || sewerage || tubewell)
             jsonPath,
             ''
           );
-          owners = owners.filter(x=>x.name ===name);
-          set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.owners", owners);
+          if(name !== undefined)
+          {
+            owners = owners.filter(x=>x.name ===name);
+          }
+          if(owners.length>0)
+          {
+            set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.owners", owners);
+          }
+          
           }
           
 
@@ -611,7 +618,12 @@ const usageCategory = get(
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   try{
-    let abc = await applyForWater(state, dispatch);
+    let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
+    if(inWorkflow === false)
+    {
+      let abc = await applyForWater(state, dispatch);
+    }
+    
     window.localStorage.setItem("ActivityStatusFlag","true");
   }catch (err){
     if(localStorage.getItem("WNS_STATUS")){
@@ -668,7 +680,11 @@ if(!proconnHolderDetail){
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   try{
-    let abc = await applyForWater(state, dispatch);
+    let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
+    if(inWorkflow === false)
+    {
+      let abc = await applyForWater(state, dispatch);
+    }
     window.localStorage.setItem("ActivityStatusFlag","true");
  
   }catch (err){
@@ -703,7 +719,11 @@ else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   try{
-    let abc = await applyForWater(state, dispatch);
+    let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
+    if(inWorkflow === false)
+    {
+      let abc = await applyForWater(state, dispatch);
+    }
     window.localStorage.setItem("ActivityStatusFlag","true");
  
   }catch (err){
@@ -794,6 +814,8 @@ else if (wnsStatus && wnsStatus === "TEMPORARY_DISCONNECTION")
           state,
           "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
         );
+        let owners_temp = get(response.Properties[0],'owners',[])
+        set(propertyData,'owners',owners_temp)
     dispatch(prepareFinalObject("applyScreen.property", propertyData));
 
     propertyData.tenantId = tenantId;
@@ -826,7 +848,31 @@ else if (wnsStatus && wnsStatus === "TEMPORARY_DISCONNECTION")
     let response_ = await propertyUpdate(state, dispatch,propertyData)
     if(response_)
     {
-    let abc = await applyForWater(state, dispatch);
+      if(usageCategory!== null)
+      {
+      if(usageCategory.split('.').length ===1)
+      {
+      //st
+      set(propertyData, "usageCategory", subusageCategory);
+
+      }
+      }
+      if(subusageCategory!== null)
+      {
+      if(subusageCategory.split('.').length ===2)
+      {
+        //set 
+       // set(propertyData, "usageCategory", subusageCategory);
+        set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", subusageCategory.split('.')[0]);
+        set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", subusageCategory);
+      }
+      }
+      dispatch(prepareFinalObject("applyScreen.property", propertyData));
+      let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
+      if(inWorkflow === false)
+      {
+        let abc = await applyForWater(state, dispatch);
+      }
     window.localStorage.setItem("ActivityStatusFlag","true");
     }
     else{
@@ -877,7 +923,11 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   try{
-    let abc = await applyForWater(state, dispatch);
+    let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
+    if(inWorkflow === false)
+    {
+      let abc = await applyForWater(state, dispatch);
+    }
     window.localStorage.setItem("ActivityStatusFlag","true");
   }catch (err){
     if(localStorage.getItem("WNS_STATUS")){
@@ -1022,22 +1072,24 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     if(response_)
     {
       if(usageCategory!== null)
-    {
-    if(usageCategory.split('.').length ===1)
-    {
+      {
+      if(usageCategory.split('.').length ===1)
+      {
       //st
       set(propertyData, "usageCategory", subusageCategory);
 
-    }
-  }
-    if(subusageCategory!== null)
-    {
+      }
+      }
+      if(subusageCategory!== null)
+      {
       if(subusageCategory.split('.').length ===2)
       {
         //set 
         set(propertyData, "usageCategory", subusageCategory);
+        set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", subusageCategory.split('.')[0]);
+        set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", subusageCategory);
       }
-    }
+      }
       dispatch(prepareFinalObject("applyScreen.property", propertyData));
       let jpath ='components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType.props.value'
       let category_ = get(state.screenConfiguration.screenConfig.apply,
@@ -1050,7 +1102,11 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
 
         }
         set(state.screenConfiguration.preparedFinalObject,'applyScreen.waterProperty.usageSubCategory',category_)
-    let abc = await applyForWater(state, dispatch);
+        let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
+        if(inWorkflow === false)
+        {
+          let abc = await applyForWater(state, dispatch);
+        }
     window.localStorage.setItem("ActivityStatusFlag","true");
     }
     else{

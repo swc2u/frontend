@@ -362,7 +362,8 @@ const propertyDetailsTemp = getCommonContainer({
         }
         else
         {
-          dispatch(prepareFinalObject("applyScreen.property.subusageCategory", null));
+          let subusageCategory=  get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory",'');
+          dispatch(prepareFinalObject("applyScreen.property.subusageCategory", subusageCategory));
 
         }
 
