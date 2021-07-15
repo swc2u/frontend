@@ -87,7 +87,7 @@ export const nocDetails = getCommonCard({
     componentPath: "AutosuggestContainer",
     sourceJsonPath: "applyScreenMdmsData.egpm.nocSought",
     jsonPath: "SELLMEATNOC.nocSought",
-     required: true,
+    required: true,
     errorMessage:"ERR_NOC_SELLMEAT_NOCSOUGHT_LABEL",
     gridDefination: {
       xs: 12,

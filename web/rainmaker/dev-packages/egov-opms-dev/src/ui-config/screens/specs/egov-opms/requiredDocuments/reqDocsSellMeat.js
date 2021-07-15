@@ -161,7 +161,8 @@ const setvalueCancel = async (state, dispatch,type) => {
       false
     )
   );
-  localStorageSet("undertaking", "")
+  // localStorageSet("undertaking", "")
+  dispatch(prepareFinalObject("undertaking", false));
   //showHideAdhocPopups(state, dispatch, "petnoc_summary")
   showHideAdhocPopups(state, dispatch, pagename)
 
@@ -192,7 +193,8 @@ else if(type ==="PETNOC")
       true
     )
   );
-  localStorageSet("undertaking", "accept")
+  // localStorageSet("undertaking", "accept")
+  dispatch(prepareFinalObject("undertaking", true));
   showHideAdhocPopups(state, dispatch, pagename)
 
 

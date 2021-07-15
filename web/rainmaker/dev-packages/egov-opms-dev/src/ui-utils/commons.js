@@ -902,7 +902,7 @@ export const furnishNocResponse = response => {
   return refurnishresponse;
 };
 
-export const furnishSellMeatNocResponse = (state,response) => {
+export const furnishSellMeatNocResponse = (state,response, step) => {
   // Handle applicant ownership dependent dropdowns
   let refurnishresponse = {};
 
@@ -928,8 +928,13 @@ export const furnishSellMeatNocResponse = (state,response) => {
       });
     }
   });
-  set(refurnishresponse, "nocSought", nocSoughtFinalData);
-
+  // set(refurnishresponse, "nocSought", nocSoughtFinalData);
+  if(parseInt(step) === 0){
+    set(refurnishresponse, "nocSought", "");
+  }else{
+    set(refurnishresponse, "nocSought", nocSoughtFinalData);
+  }
+  
   set(refurnishresponse, "uploadDocuments", applicationdetail.uploadDocuments);
   set(refurnishresponse, "idProof", applicationdetail.idProof);
   set(refurnishresponse, "remarks", applicationdetail.remarks);

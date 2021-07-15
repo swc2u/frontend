@@ -42,7 +42,6 @@ export const callBackForNext = async (state, dispatch) => {
     "components.div.children.stepper.props.activeStep",
     0
   );
-  debugger;
 
 //   const {NULMSEPRequest} = state.screenConfiguration.preparedFinalObject;
   const {NULMALFRequest} = state.screenConfiguration.preparedFinalObject;
@@ -152,7 +151,14 @@ export const callBackForNext = async (state, dispatch) => {
       prepareFinalObject("documentsPreview", documentsPreview)
     );
 
-    if(documentsPreview.length > 0){
+    const isAlfDetailsValid = validateFields(
+      // "components.div.children.formwizardFirstStep.children.AlfDetails.children.cardContent.children.AlfDetailsContainer.children",
+      "components.div.children.formwizardSecondStep.children.documentDetails.children.cardContent.children.alfBankDetails.children",
+      state,
+      dispatch,
+      "create-alf"
+    );
+    if(isAlfDetailsValid){
       moveToReview(dispatch);
     }else{
       isFormValid = false;
@@ -160,8 +166,15 @@ export const callBackForNext = async (state, dispatch) => {
         labelName: "Please fill all mandatory fields",
         labelKey: "ERR_NULM_ALF_REQUIRED_VALIDATION"
       };
-      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));       
     }
+    // moveToReview(dispatch);
+    // isFormValid = false;
+    // const errorMessage = {
+    //   labelName: "Please fill all mandatory fields",
+    //   labelKey: "ERR_NULM_ALF_REQUIRED_VALIDATION"
+    // };
+    // dispatch(toggleSnackbar(true, errorMessage, "warning"));    
   }
 
 };

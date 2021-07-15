@@ -61,7 +61,7 @@ export const searchApiCall = async (state, dispatch) => {
   } else {
    let NulmSmidAlfRequest = {...searchScreenObject};
    NulmSmidAlfRequest.tenantId = tenantId;
-
+   NulmSmidAlfRequest.id = NulmSmidAlfRequest.applicationId;
   // if(get(NULMSEPRequest, "toDate")){
   //   let toDate = get(NULMSEPRequest, "toDate").split("-").reverse().join("-");
   //   set( NULMSEPRequest,"toDate",toDate );
@@ -106,7 +106,6 @@ if(IsValidDate)
    const requestBody = {NulmSmidAlfRequest}
     let response = await getSearchResults([],requestBody, dispatch,"alf");
 
-    debugger;
     try {
       let data = response.ResponseBody.map((item) => {
   

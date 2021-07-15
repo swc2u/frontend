@@ -151,13 +151,13 @@ const getMdmsData = async (action, state, dispatch) => {
   }
 };
 
-export const prepareEditFlow = async (state, dispatch, applicationNumber, tenantId) => {
+export const prepareEditFlow = async (state, dispatch, applicationNumber, tenantId, step) => {
   if (applicationNumber) {
     let response = await getSearchResultsView([
       { key: "tenantId", value: tenantId },
       { key: "applicationNumber", value: applicationNumber }
     ]);
-    let Refurbishresponse = furnishSellMeatNocResponse(state,response);
+    let Refurbishresponse = furnishSellMeatNocResponse(state,response, step);
 
     dispatch(prepareFinalObject("SELLMEATNOC", Refurbishresponse));
     if (applicationNumber) {
@@ -255,7 +255,8 @@ const setvalueCancel = async (state, dispatch,type) => {
       false
     )
   );
-  localStorageSet("dropdownTermsAccepted", "")
+  // localStorageSet("dropdownTermsAccepted", "")
+  dispatch(prepareFinalObject("dropdownRead", false));
   //showHideAdhocPopups(state, dispatch, "petnoc_summary")
   showHideAdhocPopups(state, dispatch, pagename)
 
@@ -286,7 +287,8 @@ else if(type ==="PETNOC")
       true
     )
   );
-  localStorageSet("dropdownTermsAccepted", "accept")
+  // localStorageSet("dropdownTermsAccepted", "accept")
+  dispatch(prepareFinalObject("dropdownRead", true));
   showHideAdhocPopups(state, dispatch, pagename)
 
 
@@ -460,6 +462,9 @@ const screenConfig = {
       "screenConfig.components.undertakingdialog.children.popup",
       getRequiredDocuments("SELLMEATNOC")
     );
+    
+    // Clear local Storeage val 
+    // localStorageSet("dropdownTermsAccepted", "")
 
     // Set MDMS Data
     getMdmsData(action, state, dispatch).then(response => {
@@ -467,8 +472,19 @@ const screenConfig = {
       // Set Documents Data (TEMP)
       prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');
     // Search in case of EDIT flow
-    prepareEditFlow(state, dispatch, applicationNumber, tenantId);
+    prepareEditFlow(state, dispatch, applicationNumber, tenantId, step);
 
+    // Clear Undertakking dropdown 
+    // dispatch(prepareFinalObject("SELLMEATNOC.nocSought", ""));
+    dispatch(prepareFinalObject("dropdownRead", false));
+    dispatch(prepareFinalObject("undertaking", false));
+
+    // set(
+    //   state,
+    //   "screenConfiguration.preparedFinalObject.RevenueByApplicationTypeReport[0].ToDate",
+    //   new Date()
+    // );
+    
     });
 
 
