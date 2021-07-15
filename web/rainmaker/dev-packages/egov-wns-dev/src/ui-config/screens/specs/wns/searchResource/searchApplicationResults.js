@@ -163,7 +163,9 @@ export const searchApplicationResults = {
           )
         }
       },
-      getTextToLocalMappingCode("Owner Name"),
+     // getTextToLocalMappingCode("Owner Name"),
+      //plotnumber
+      getTextToLocalMappingCode("plotnumber"),
       getTextToLocalMappingCode("Application Status"),
       getTextToLocalMappingCode("Address"),
       {
@@ -228,12 +230,12 @@ export const searchApplicationResults = {
           display: false
         }
       },
-      {
-        name: getTextToLocalMappingCode("plotnumber"),
-        options: {
-          display: false
-        }
-      },
+      // {
+      //   name: getTextToLocalMappingCode("plotnumber"),
+      //   options: {
+      //     display: false
+      //   }
+      // },
       
       {
         name: getTextToLocalMappingCode("paidamount"),
@@ -248,12 +250,12 @@ export const searchApplicationResults = {
         }
       },
      
-      // {
-      //   name:   getTextToLocalMappingCode("ActionType"),
-      //   options: {
-      //     display: false
-      //   }
-      // },
+      {
+        name:   getTextToLocalMappingCode("ActionType"),
+        options: {
+          display: false
+        }
+      },
 
       // {
       //   name: getTextToLocalMappingCode("billGenerationId"),
@@ -290,7 +292,7 @@ export const searchApplicationResults = {
 };
 
 const getApplicationDetails = data => {
-  const activityType = data.rowData[10]
+  const activityType = data.rowData[14]
   if(data.rowData[8].toUpperCase() ==='SEWERAGE' || data.rowData[7].toUpperCase() ==='SEWERAGE')
   {
     window.localStorage.setItem("wns_workflow","SW_SEWERAGE");

@@ -39,8 +39,8 @@ if(isdateValid)
     "searchScreen",
     {}
   );
-  let Fromdate = convertDateToEpoch(searchScreenObject.fromDate);
-  let Todate =convertDateToEpoch(searchScreenObject.toDate)
+  let Fromdate = convertDateToEpoch(searchScreenObject.fromDate,"dayStart");
+  let Todate =convertDateToEpoch(searchScreenObject.toDate,"dayend")
   let doctype =convertDateToEpoch(searchScreenObject.DataTransferType)
   let queryObject = [
     {

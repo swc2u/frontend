@@ -69,7 +69,58 @@ export const findItemInArrayOfObject = (arr, conditionCheckerFn) => {
     }
   }
 };
-
+export const getuserSearchResults = async (queryObject, dispatch,tenantId,ownerNo) => {
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/user/_search?tenantId="+tenantId,
+      "_search",
+        [],
+        {
+          tenantId: tenantId,
+          userName: `${ownerNo}`
+        }
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+   // throw error;
+  }
+};
+export const userUnlock = async (user, dispatch) => {
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/user/profile/_update",
+      [],
+      {
+        user:user[0]
+      }
+      
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+    throw error;
+  }
+};
 export const getSearchResults = async (queryObject, dispatch) => {
   try {
     store.dispatch(toggleSpinner());

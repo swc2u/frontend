@@ -5,6 +5,7 @@ import {
   LabelContainer,
   TextFieldContainer
 } from "egov-ui-framework/ui-containers";
+
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
   getFileUrlFromAPI,
@@ -17,6 +18,10 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { UploadSingleFile } from "../../ui-molecules-local";
+import {
+  localStorageGet,
+  getUserInfo
+} from "egov-ui-kit/utils/localStorageUtils";
 
 const themeStyles = theme => ({
   documentContainer: {
@@ -248,6 +253,23 @@ class DocumentList extends Component {
     if (!_.isEmpty(documentsUploadRedux) && documentsUploadRedux[key] && documentsUploadRedux[key].dropdown && documentsUploadRedux[key].dropdown.value) {
       jsonPath = `documentsUploadRedux[${key}].dropdown.value`;
     }
+    let UploadRequired = true;
+    if(process.env.REACT_APP_NAME !== "Citizen")
+    {
+      let role = 'WS_BILL_UPLOAD'
+           let userInfo = JSON.parse(getUserInfo());
+           const roles = get(userInfo, "roles");
+           const roleCodes = roles ? roles.map(role => role.code) : [];
+           if (roleCodes.indexOf(role) > -1) {
+            UploadRequired = true
+           } else
+           {
+            UploadRequired = true
+           } 
+
+    
+
+    }
 
     return (
       <Grid container={true}>
@@ -300,25 +322,28 @@ class DocumentList extends Component {
           md={3}
           className={classes.fileUploadDiv}
         >
-          <UploadSingleFile
-            classes={this.props.classes}
-            handleFileUpload={e =>
-              handleFileUpload(e, this.handleDocument, this.props)
-            }
-            uploaded={
-              documentsUploadRedux[key] && documentsUploadRedux[key].documents
-                ? true
-                : false
-            }
-            removeDocument={() => this.removeDocument(key)}
-            documents={
-              documentsUploadRedux[key] && documentsUploadRedux[key].documents
-            }
-            onButtonClick={() => this.onUploadClick(key)}
-            inputProps={this.props.inputProps}
-            buttonLabel={this.props.buttonLabel}
-            pagename ={this.props.pageName}
-          />
+          {
+            UploadRequired &&( <UploadSingleFile
+              classes={this.props.classes}
+              handleFileUpload={e =>
+                handleFileUpload(e, this.handleDocument, this.props)
+              }
+              uploaded={
+                documentsUploadRedux[key] && documentsUploadRedux[key].documents
+                  ? true
+                  : false
+              }
+              removeDocument={() => this.removeDocument(key)}
+              documents={
+                documentsUploadRedux[key] && documentsUploadRedux[key].documents
+              }
+              onButtonClick={() => this.onUploadClick(key)}
+              inputProps={this.props.inputProps}
+              buttonLabel={this.props.buttonLabel}
+              pagename ={this.props.pageName}
+            />)
+          }
+         
         </Grid>
       </Grid>
     );

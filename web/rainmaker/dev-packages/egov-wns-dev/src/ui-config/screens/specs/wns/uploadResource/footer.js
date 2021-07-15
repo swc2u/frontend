@@ -62,7 +62,7 @@ fileUpload = true
       let fromDate = get(state, "screenConfiguration.preparedFinalObject.searchScreen.fromDate");
       let toDate = get(state, "screenConfiguration.preparedFinalObject.searchScreen.toDate");
       fromDate = convertDateToEpoch(fromDate,"dayStart");
-      toDate = convertDateToEpoch(toDate,"dayStart");
+      toDate = convertDateToEpoch(toDate,"dayend");
       if(fromDate < toDate)
       {
       try {
