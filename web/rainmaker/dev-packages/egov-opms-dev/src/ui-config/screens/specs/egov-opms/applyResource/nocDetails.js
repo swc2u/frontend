@@ -130,7 +130,7 @@ export const PetParticularDetails = getCommonCard(
            // }
           }
         },*/
-        pattern: getOPMSPattern("petnocApplicantName"),
+        pattern: getOPMSPattern("nocApplicantName"),
         errorMessage: "ERR_NAME_OF_PET_DOG",
         required: true,
         jsonPath: "PETNOC.nameOfPetDog"

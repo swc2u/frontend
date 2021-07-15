@@ -95,7 +95,6 @@ import {
     getMdmsData(dispatch, tenantId);
 
     var docsUploaded = JSON.parse(response.ResponseBody[0].document);
-    debugger;
    const fileStoreIds = docsUploaded.map(docInfo => docInfo.filestoreId).join();
 
 
@@ -168,8 +167,7 @@ const getALFDetails = async(state, dispatch) =>{
   const requestBody = {NulmSmidAlfRequest}
   let response = await getSearchResults([],requestBody, dispatch,"alf");
 
-  if(response){ 
-    debugger;
+  if(response){
     getFileUrlDetails(state,dispatch,tenantId,response);
     var res = response.ResponseBody[0];
     var demo = {
@@ -232,9 +230,9 @@ const roleBasedValidationForFooter = () => {
 }
 let printMenu = [];
 let receiptPrintObject = {
-  label: { labelName: "Receipt", labelKey: "NULM_PRINT_SEP" },
+  label: { labelName: "Receipt", labelKey: "NULM_PRINT_ALF" },
   link: () => {
-    downloadAcknowledgementForm("Sep");
+    downloadAcknowledgementForm("Alf");
   },
   leftIcon: "receipt"
 };
@@ -278,31 +276,31 @@ printMenu = [receiptPrintObject];
                 },
                 ...header
               },
-              // printMenu: {
-              //   uiFramework: "custom-atoms-local",
-              //   moduleName: "egov-tradelicence",
-              //   componentPath: "MenuButton",
-              //   gridDefination: {
-              //     xs: 12,
-              //     sm: 4,
-              //     md:3,
-              //     lg:3,
-              //     align: "right",
-              //   },  
-              //   visible: true,// enableButton,
-              //   props: {
-              //     data: {
-              //       label: {
-              //         labelName:"PRINT",
-              //         labelKey:"NULM_PRINT"
-              //       },
-              //       leftIcon: "print",
-              //       rightIcon: "arrow_drop_down",
-              //       props: { variant: "outlined", style: { marginLeft: 10 } },
-              //       menu: printMenu
-              //     }
-              //   }
-              // }
+              printMenu: {
+                uiFramework: "custom-atoms-local",
+                moduleName: "egov-tradelicence",
+                componentPath: "MenuButton",
+                gridDefination: {
+                  xs: 12,
+                  sm: 4,
+                  md:3,
+                  lg:3,
+                  align: "right",
+                },  
+                visible: true,// enableButton,
+                props: {
+                  data: {
+                    label: {
+                      labelName:"PRINT",
+                      labelKey:"NULM_PRINT"
+                    },
+                    leftIcon: "print",
+                    rightIcon: "arrow_drop_down",
+                    props: { variant: "outlined", style: { marginLeft: 10 } },
+                    menu: printMenu
+                  }
+                }
+              }
             }
           },
           tradeView,

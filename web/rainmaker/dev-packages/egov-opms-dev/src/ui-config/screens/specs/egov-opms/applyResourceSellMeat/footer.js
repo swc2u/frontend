@@ -231,9 +231,8 @@ const callBackForNext = async (state, dispatch) => {
     let payload = get(state.screenConfiguration.preparedFinalObject, "SELLMEATNOC", []);
     let nocSought = payload.nocSought;
 
-    debugger;
-    var checkTerm = localStorageGet("dropdownTermsAccepted");
-    if(checkTerm === "" || checkTerm === null || checkTerm === undefined){
+    var checkTerm = get(state.screenConfiguration.preparedFinalObject, "dropdownRead", "");
+    if(checkTerm === "" || checkTerm === null|| checkTerm === false || checkTerm === undefined){
 
       isFormValid = false;
       
@@ -323,7 +322,7 @@ export const changeStep = (
   mode = "next",
   defaultActiveStep = -1
 ) => {
-  //alert("Inside step change")
+  //alert("Inside step change");
   let activeStep = get(
     state.screenConfiguration.screenConfig["applysellmeat"],
     "components.div.children.stepper.props.activeStep",

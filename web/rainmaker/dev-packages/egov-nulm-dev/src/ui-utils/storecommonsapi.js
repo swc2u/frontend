@@ -19,6 +19,7 @@ export const getstoreTenantId = () => {
   return gettenantId[0];
 };
 export const prefillDocuments = async (payload, destJsonPath, dispatch, jasonpath,Documents) => {
+  
   let documentsUploadRedux = {};
   // const uploadedDocData = get(payload, sourceJsonPath);
   let uploadedDocs = await setNULMDocuments(payload,jasonpath, "WS");
@@ -29,7 +30,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch, jasonpat
           {
             docUploadRedux[key] = { documents: [{ fileName: item.name, fileUrl: item.link, fileStoreId: payload.NULMSMIDRequest.documentAttachemnt[key].filestoreId }] }; 
           }
-          
+          if(Documents ==='ALFDocuments')
+          {
+            docUploadRedux[key] = { documents: [{ fileName: item.name, fileUrl: item.link, fileStoreId: payload.NULMALFRequest.applicationDocument[key].filestoreId }] }; 
+          }
           else if(Documents ==='SEPDocuments') 
           {
             docUploadRedux[key] = { documents: [{ fileName: item.name, fileUrl: item.link, fileStoreId: payload.NULMSEPRequest.applicationDocument[key].filestoreId }] }; 
@@ -99,6 +103,7 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch, jasonpat
   }
 };
 export const setNULMDocuments = async (payload, sourceJsonPath, businessService) => {
+  
   const uploadedDocData = get(payload, sourceJsonPath);
   const uploadedDocData_ = payload.documentAttachemnt;
   const uploadedDocData__ = get(payload, "NULMSMIDRequest.documentAttachemnt");
@@ -137,7 +142,6 @@ export const setNULMDocuments = async (payload, sourceJsonPath, businessService)
   }
 };
 export const prepareDocumentsUploadData = async (state, dispatch, type) => {
-  debugger;
   let documents = '';
   if (type == "SEPApplication") {
     documents = get(
@@ -182,7 +186,6 @@ export const prepareDocumentsUploadData = async (state, dispatch, type) => {
     );
   }
 
-  debugger;
 
   documents = documents.filter(item => {
     return item.active;
@@ -243,7 +246,6 @@ export const prepareDocumentsUploadData = async (state, dispatch, type) => {
   Object.keys(tempDoc).forEach(key => {
     documentsContract.push(tempDoc[key]);
   });
-  debugger;
   dispatch(prepareFinalObject("documentsContract", documentsContract));
 };
 
@@ -252,6 +254,77 @@ let requestBody ={}
   try {
     store.dispatch(toggleSpinner());
    const state = store.getState();
+   // ALF 
+   if(pagename ==='Alf')
+   {
+      const {NULMALFRequest} = state.screenConfiguration.preparedFinalObject;
+      var FormatPayoad = {
+        "account_number": NULMALFRequest.accountNumber,
+        "address": NULMALFRequest.address,
+        "alf_formated_through": NULMALFRequest.alfFormattedThrough,
+        "registeration_date": NULMALFRequest.dof,
+        "contact_number": NULMALFRequest.contact,
+        "date_of_opening_account": NULMALFRequest.dateOfOpeningAccount,
+        "date_of_formation": NULMALFRequest.dof,
+        "branch_name": NULMALFRequest.branchName,
+        "name": NULMALFRequest.name,
+        "bank_name": NULMALFRequest.bankName,
+        "adhaar_number": NULMALFRequest.adharNumber,
+        "id": NULMALFRequest.registrationNo
+      }
+      const ALFApplication = [FormatPayoad]; 
+
+      const fileStoreIdsObj = NULMALFRequest.applicationDocument.filter(docInfo => {
+        if(docInfo.documentType==="Copy of Voter ID" || docInfo.documentType==="NULM_ALF_DOCUMENT") 
+        return docInfo.filestoreId
+      });
+
+      if(fileStoreIdsObj.length > 0){
+        const fileStoreIds = fileStoreIdsObj[0].filestoreId;
+        const fileUrlPayload =  fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+        if(fileUrlPayload){
+          const photoUrl = getFileUrl(fileUrlPayload[fileStoreIds]);
+          ALFApplication[0].applicantPhoto = photoUrl;
+          // Hard code value is set which is not get from API responce
+          ALFApplication[0].corporationName = "MUNICIPAL CORPORATION CHANDIGARH";
+          ALFApplication[0].corporationAddress = "New Deluxe Building, Sector 17, Chandigarh";
+          ALFApplication[0].corporationContact = "+91-172-2541002, 0172-2541003";
+          ALFApplication[0].corporationWebsite = "http://mcchandigarh.gov.in";
+          ALFApplication[0].corporationEmail = null;
+          requestBody = {ALFApplication}
+        }
+      }else{
+        ALFApplication[0].corporationName = "MUNICIPAL CORPORATION CHANDIGARH";
+        ALFApplication[0].corporationAddress = "New Deluxe Building, Sector 17, Chandigarh";
+        ALFApplication[0].corporationContact = "+91-172-2541002, 0172-2541003";
+        ALFApplication[0].corporationWebsite = "http://mcchandigarh.gov.in";
+        ALFApplication[0].corporationEmail = null;
+        requestBody = {ALFApplication}
+      }
+      //------------------------------------------------------------
+      // var ALFApplication = [
+      //   {
+      //       "corporationName": "MUNICIPAL CORPORATION CHANDIGARH",
+      //       "corporationAddress": "New Deluxe Building, Sector 17, Chandigarh",
+      //       "corporationContact": "+91-172-2541002, 0172-2541003",
+      //       "corporationWebsite": "http://mcchandigarh.gov.in",
+      //       "corporationEmail": null,
+      //       "account_number": "112233445566",
+      //       "address": "address",
+      //       "alf_formated_through": "alfFormatedThrough",
+      //       "registeration_date": "registerationDate",
+      //       "contact_number": "contactNumber",
+      //       "date_of_opening_account": "Date of Opening Account",
+      //       "date_of_formation": "dateOfFormation",
+      //       "branch_name": "branchName",
+      //       "name": "name",
+      //       "bank_name": "bankName",
+      //       "adhaar_number": "adhaarNumber",
+      //       "id": "SHG/2021-22/000074"
+      //   }
+      // ]
+      // requestBody = {ALFApplication}
+    }
    if(pagename ==='Sep')
    {
     const {NULMSEPRequest} = state.screenConfiguration.preparedFinalObject;

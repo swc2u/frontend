@@ -132,7 +132,6 @@ export const handleForwardToTFCSEP = (state, dispatch) =>{
 
 export const handleSubmitSEP = (state, dispatch) =>{
 
-    debugger;
   const status = window.localStorage.getItem("SEP_Status");
 
   if(process.env.REACT_APP_NAME === "Employee"){
@@ -165,7 +164,6 @@ export const handleSubmitSEP = (state, dispatch) =>{
 // Create ALF 
 export const handleSubmitALF = (state, dispatch) =>{
 
-  debugger;
   if(process.env.REACT_APP_NAME === "Employee"){
     handleCreateUpdateALF(state, dispatch,"Created");
   }
@@ -305,7 +303,6 @@ let dob = get(NULMSEPRequest, "dob");
 // handle create ALF
 export const handleCreateUpdateALF = (state, dispatch,status) => {
   
-  debugger;
   let uuid = get(
     state.screenConfiguration.preparedFinalObject,
     "NULMALFRequest.applicationUuid",
@@ -321,7 +318,6 @@ export const handleCreateUpdateALF = (state, dispatch,status) => {
 // Create ALF
 export const createUpdateALF = async (state, dispatch, action,status) => {
 
-  debugger;
   let NULMALFRequest = get(
     state.screenConfiguration.preparedFinalObject,
     "NULMALFRequest",
@@ -335,6 +331,13 @@ export const createUpdateALF = async (state, dispatch, action,status) => {
 
   var requestBody = {NULMALFRequest};
   console.log("requestbody", requestBody);
+  var applicationDOCS = {}
+  // if(requestBody.NULMALFRequest.applicationDocument.length > 0){
+  //   applicationDOCS = {
+  //     "documentType": requestBody.NULMALFRequest.applicationDocument[0].documentType,
+  //     "filestoreId": requestBody.NULMALFRequest.applicationDocument[0].filestoreId
+  //   }
+  // }
 
   var demo = {
     "NulmSmidAlfRequest" :{
@@ -342,7 +345,7 @@ export const createUpdateALF = async (state, dispatch, action,status) => {
       "dateOfFormation": requestBody.NULMALFRequest.dof,
       // "registerationDate": requestBody.NULMALFRequest.dor,
       "address": requestBody.NULMALFRequest.address,
-      "accountNumber": requestBody.NULMALFRequest.accountName,
+      "accountNumber": requestBody.NULMALFRequest.accountNumber,
       "bankName": requestBody.NULMALFRequest.bankName,
       "branchName": requestBody.NULMALFRequest.branchName,
       "contactNumber": requestBody.NULMALFRequest.contact,
@@ -353,13 +356,7 @@ export const createUpdateALF = async (state, dispatch, action,status) => {
 
       "tenantId": requestBody.NULMALFRequest.tenantId,
 
-      "applicationDocument": 
-      [
-          {
-              "documentType": requestBody.NULMALFRequest.applicationDocument[0].documentType,
-              "filestoreId": requestBody.NULMALFRequest.applicationDocument[0].filestoreId
-          }            
-      ]
+      "applicationDocument": NULMALFRequest.applicationDocument
     }
   }
   requestBody = demo;
@@ -391,7 +388,7 @@ export const createUpdateALF = async (state, dispatch, action,status) => {
           "dateOfFormation": NULMALFRequest.dof,
           // "registerationDate": NULMALFRequest.dor,
           "address": NULMALFRequest.address,
-          "accountNumber": NULMALFRequest.accountName,
+          "accountNumber": NULMALFRequest.accountNumber,
           "bankName": NULMALFRequest.bankName,
           "branchName": NULMALFRequest.branchName,
           "contactNumber": NULMALFRequest.contact,

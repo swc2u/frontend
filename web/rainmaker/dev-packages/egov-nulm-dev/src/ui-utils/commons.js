@@ -48,7 +48,6 @@ export const handleCardDelete = (prepareFinalObject , arrayPath , isActive = fal
 
 export const getSearchResults = async (queryObject=[],requestBody={},dispatch,screenName) => {
   
-  debugger;
   let url =""
   switch(screenName){
     case "sep": url =  "/nulm-services/v1/sep/_get";

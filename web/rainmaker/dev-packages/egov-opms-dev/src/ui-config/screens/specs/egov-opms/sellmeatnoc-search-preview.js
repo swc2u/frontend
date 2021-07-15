@@ -3,6 +3,7 @@ import {
   getCommonContainer,
   getCommonHeader,
   getLabelWithValue,
+  getCommonParagraph,
   getLabel,
   getBreak
 } from "egov-ui-framework/ui-config/screens/specs/utils";
@@ -29,7 +30,7 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { footer } from "./applyResource/employeeSellMeatFooter";
 //import { footer ,footerReview} from "./applyResource/footer";
 import { adhocPopup1, adhocPopup2 } from "./payResource/adhocPopup";
-import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
+// import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 
 import {
   sellmeatapplicantSummary
@@ -37,7 +38,7 @@ import {
 } from "./summaryResource/sellmeatapplicantSummary";
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import { taskStatusSummary } from "./summaryResource/taskStatusSummary";
-import { showHideAdhocPopup, checkForRole } from "../utils";
+import { showHideAdhocPopup, checkForRole, showHideAdhocPopups } from "../utils";
 import { SellMeatReassign, SellMeatReject, SellMeatForward, SellMeatApprove } from "./payResource/adhocPopup";
 import {
   getAccessToken,
@@ -54,6 +55,249 @@ import { getTextForSellMeatNoc } from "./searchResource/citizenSearchFunctions";
 let roles = JSON.parse(getUserInfo()).roles
 let nocStatus = '';
 
+
+const setvalueCancel = async (state, dispatch,type) => {
+  let pagename = "petnoc_summary";
+
+  if(type ==="SELLMEATNOC")
+  {
+    pagename = "sellmeatnoc-search-preview"
+  
+  }
+  else if(type ==="PETNOC")
+  {
+    pagename = "petnoc_summary"
+  
+  }
+
+  dispatch(
+    handleField(
+      //"petnoc_summary",
+      pagename,
+      "components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton1",
+      "props.checked",
+      false
+    )
+  );
+  localStorageSet("undertaking", "")
+  //showHideAdhocPopups(state, dispatch, "petnoc_summary")
+  showHideAdhocPopups(state, dispatch, pagename)
+
+
+
+}
+
+
+const setvalue = async (state, dispatch,type) => {
+let pagename = "petnoc_summary";
+
+if(type ==="SELLMEATNOC")
+{
+  pagename = "sellmeatnoc-search-preview"
+
+}
+else if(type ==="PETNOC")
+{
+  pagename = "petnoc_summary"
+
+}
+
+  dispatch(
+    handleField(
+      pagename,
+      "components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton1",
+      "props.checked",
+      true
+    )
+  );
+  localStorageSet("undertaking", "accept")
+  showHideAdhocPopups(state, dispatch, pagename)
+
+
+
+}
+
+const getRequiredDocuments = (type) => {
+  return getCommonContainer(
+    {
+      div2: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        gridDefination: {
+          xs: 12,
+          sm: 12
+        },
+        props: {
+          style: {
+            width: "100%",
+            float: "right",
+            cursor: "pointer"
+          }
+        },
+        children: {
+
+          // closeButton: {
+          //   componentPath: "Button",
+          //   props: {
+          //     style: {
+          //       float: "right",
+          //       marginRight: "-15",
+          //       paddingRight: "0px",
+          //       color: "rgba(0, 0, 0, 0.60)"
+          //     }
+          //   },
+          //   children: {
+          //     previousButtonIcon: {
+          //       uiFramework: "custom-atoms",
+          //       componentPath: "Icon",
+          //       props: {
+          //         iconName: "close"
+          //       }
+          //     }
+          //   },
+          //   onClickDefination: {
+          //     action: "condition",
+          //     callBack: (state, dispatch) => showHideAdhocPopups(state, dispatch, "petnoc_summary")
+          //   }
+          // },
+
+          header: {
+            uiFramework: "custom-atoms",
+            componentPath: "Container",
+            children: {
+              header
+            },
+            break: getBreak(),
+          },
+          subText1: getCommonParagraph({
+            labelName: "UNDERTAKING1",
+            labelKey: "UNDERTAKING_POINT1"
+          }),
+          subText2: getCommonParagraph({
+            labelName: "UNDERTAKING2",
+            labelKey: "UNDERTAKING_POINT2"
+          }),
+          subText3: getCommonParagraph({
+            labelName: "UNDERTAKING3",
+            labelKey: "UNDERTAKING_POINT3"
+          }),
+          subText4: getCommonParagraph({
+            labelName: "UNDERTAKING4",
+            labelKey: "UNDERTAKING_POINT4"
+          }),
+          subText5: getCommonParagraph({
+            labelName: "UNDERTAKING5",
+            labelKey: "UNDERTAKING_POINT5"
+          }),
+          subText6: getCommonParagraph({
+            labelName: "UNDERTAKING6",
+            labelKey: "UNDERTAKING_POINT6"
+          }),
+          subText7: getCommonParagraph({
+            labelName: "UNDERTAKING7",
+            labelKey: "UNDERTAKING_POINT7"
+          }),
+          subText8: getCommonParagraph({
+            labelName: "UNDERTAKING8",
+            labelKey: "UNDERTAKING_POINT8"
+          }),
+          subText9: getCommonParagraph({
+            labelName: "UNDERTAKING9",
+            labelKey: "UNDERTAKING_POINT9"
+          }),
+          subText10: getCommonParagraph({
+            labelName: "UNDERTAKING10",
+            labelKey: "UNDERTAKING_POINT10"
+          }),
+          subText13: getCommonParagraph({
+            labelName: "UNDERTAKING13",
+            labelKey: "UNDERTAKING_POINT13"
+          }),
+
+          subText11: getCommonParagraph({
+            labelName: "UNDERTAKING11",
+            labelKey: "UNDERTAKING_POINT11"
+          }),
+          subText12: getCommonParagraph({
+            labelName: "UNDERTAKING12",
+            labelKey: "UNDERTAKING_POINT12"
+          }),
+
+        }
+
+      },
+      nextButton: {
+        componentPath: "Button",
+        props: {
+          variant: "contained",
+          color: "primary",
+          style: {
+            minWidth: "180px",
+            height: "48px",
+            marginRight: "45px"
+          }
+        },
+        children: {
+          nextButtonLabel: getLabel({
+            labelName: "OK I Agree",
+            labelKey: "PM_COMMON_OK_I_AGREE_BUTTON"
+          }),
+          nextButtonIcon: {
+            uiFramework: "custom-atoms",
+            componentPath: "Icon",
+            // props: {
+            //   iconName: "keyboard_arrow_right"
+            // }
+          }
+        },
+        onClickDefination: {
+          action: "condition",
+          callBack: (state, dispatch) => {
+            setvalue(state, dispatch,type);
+
+          }
+        }
+      },
+      cancelButton: {
+        componentPath: "Button",
+        props: {
+          variant: "outlined",
+          color: "primary",
+          style: {
+            minWidth: "180px",
+            height: "48px",
+            marginRight: "45px"
+          }
+        },
+        children: {
+          cancelButtonLabel: getLabel({
+            labelName: "Cancel",
+            labelKey: "PM_COMMON_CANCEL"
+          }),
+          cancelButtonIcon: {
+            uiFramework: "custom-atoms",
+            componentPath: "Icon",
+            // props: {
+            //   iconName: "keyboard_arrow_right"
+            // }
+          }
+        },
+        onClickDefination: {
+          action: "condition",
+          callBack: (state, dispatch) => {
+            setvalueCancel(state, dispatch,type);
+
+          }
+        }
+      },
+    },
+    {
+      style: {
+        padding: "0px 10px"
+      }
+    }
+  );
+};
 
 const undertakingsellmeatButton = getCommonContainer({
 
@@ -105,15 +349,43 @@ const undertakingButton1 = getCommonContainer({
 });
 
 const undertakingButton = getCommonContainer({
-  addPenaltyRebateButton: {
-    componentPath: "Button",
+  addPenaltyRebateButton1: {
+    componentPath: "Checkbox",
     props: {
+      checked: false,
       variant: "contained",
       color: "primary",
       style: {
-        // minWidth: "200px",
+        // minWidth: "20",
+        height: "10px",
+        marginRight: "5px",
+        marginTop: "15px"
+      }
+    },
+    children: {
+      previousButtonLabel: getLabel({
+        labelName: "Undertaking",
+        labelKey: "SELLMEATNOC_UNDERTAKING_HEADING"
+      }),
+    },
+    onClickDefination: {
+      action: "condition",
+      callBack: (state, dispatch) => showHideAdhocPopups(state, dispatch, "sellmeatnoc-search-preview")
+    },
+    //checked:true,
+    visible: localStorageGet('app_noc_status') === "DRAFT" ? true : false,
+  },
+  addPenaltyRebateButton: {
+    componentPath: "Button",
+    props: {
+      color: "primary",
+      style: {
+        //minWidth: "200px",
         height: "48px",
-        marginRight: "40px"
+        marginRight: "40px",
+        paddingLeft: "0px",
+        paddingBottom: "14px",
+        textTransform: "capitalize"
       }
     },
     children: {
@@ -124,9 +396,10 @@ const undertakingButton = getCommonContainer({
     },
     onClickDefination: {
       action: "condition",
-      callBack: (state, dispatch) => showHideAdhocPopup(state, dispatch, "sellmeatnoc-search-preview")
-    }
-  },
+      callBack: (state, dispatch) => showHideAdhocPopups(state, dispatch, "sellmeatnoc-search-preview")
+    },
+    visible: true,
+  }
 });
 
 
@@ -632,6 +905,14 @@ const screenConfig = {
     preparepopupDocumentsSellMeatUploadData(state, dispatch, 'SELLMEATNOC');
 
     // Set Documents Data (TEMP)
+
+    // set undertaking data
+    set(
+      action,
+      "screenConfig.components.undertakingdialog.children.popup",
+      getRequiredDocuments("SELLMEATNOC")
+    );
+
     return action;
   },
   components: {
@@ -672,7 +953,8 @@ const screenConfig = {
           documentsSummary: documentsSummary,
           taskStatusSummary: taskStatusSummary,
           undertakingButton1,
-          undertakingsellmeatButton
+          undertakingsellmeatButton,
+          // undertakingButton
         }) :
           getCommonCard({
             estimateSummary: estimateSummary,
@@ -689,7 +971,19 @@ const screenConfig = {
 
       }
     },
-
+    // undertakingdialog: {
+    //   uiFramework: "custom-containers-local",
+    //   moduleName: "egov-opms",
+    //   componentPath: "UnderTakingContainer",
+    //   props: {
+    //     open: false,
+    //     maxWidth: "md",
+    //     screenKey: "sellmeatnoc-search-preview"
+    //   },
+    //   children: {
+    //     popup: {}
+    //   }
+    // },
     adhocDialog: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-opms",
