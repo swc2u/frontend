@@ -26,7 +26,10 @@ import {
     APPROVED_BY_TASK_FORCE_COMMITTEE,
     REJECTED_BY_TASK_FORCE_COMMITTEE,
     SENT_TO_BANK_FOR_PROCESSING,
-  SANCTION_BY_BANK} from '../../../../ui-utils/commons'
+  SANCTION_BY_BANK} from '../../../../ui-utils/commons';
+
+  let mode = getQueryArg(window.location.href, "step");
+
   export const stepsData = [
     { labelName: "ALF Details", labelKey: "NULM_APPLICATION_FOR_ALF_PROGRAM" },
     { labelName: "Bank and ALF Documents Details", labelKey: "NULM_ALF_DOCUMENT_HEADER" },
@@ -168,7 +171,10 @@ import {
     name: `create-alf`,
     // hasBeforeInitAsync:true,
     beforeInitScreen: (action, state, dispatch) => {
-      
+      mode = getQueryArg(window.location.href, "step");
+      if(mode === null){
+        dispatch(prepareFinalObject(`NULMALFRequest`, {} ));
+      }
       const mdmsDataStatus = getMdmsData(state, dispatch);
       if(state.screenConfiguration.preparedFinalObject && state.screenConfiguration.preparedFinalObject.NULMSEPRequest){
   
