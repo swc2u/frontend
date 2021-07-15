@@ -466,7 +466,7 @@ const renderSearchApplicationTable = async (state, dispatch) => {
             finalArray.push({
               connectionNo: element.connectionNo,
               applicationNo: element.applicationNo,
-              name: (element.property && element.property !== "NA" && element.property.owners) ? element.property.owners[0].name : "",
+              //name: (element.property && element.property !== "NA" && element.property.owners) ? element.property.owners[0].name : "",
              // name: (element.connectionHolders) ? element.connectionHolders[0].name : '',
               applicationStatus: appStatus,
               address: handleAddress(element),
@@ -551,7 +551,8 @@ const showApplicationResults = (connections, dispatch) => {
       [getTextToLocalMappingCode("Consumer No")]: item.connectionNo,
     [getTextToLocalMappingCode("Application No")]: item.applicationNo,
     [getTextToLocalMappingCode("Application Type")]: item.service === "WATER" ? "New Water Connection" : "New Sewerage Connection",
-    [getTextToLocalMappingCode("Owner Name")]: item.name,
+   // [getTextToLocalMappingCode("Owner Name")]: item.name,
+    [getTextToLocalMappingCode("plotnumber")]: item.plotnumber,
     [getTextToLocalMappingCode("Application Status")]: item.applicationStatus.split("_").join(" "),
     [getTextToLocalMappingCode("Address")]: item.address,
     [getTextToLocalMappingCode("tenantId")]: item.tenantId,
@@ -561,7 +562,7 @@ const showApplicationResults = (connections, dispatch) => {
     [getTextToLocalMappingCode("Sector")]: item.Sector,
     [getTextToLocalMappingCode("division")]: item.division,
     [getTextToLocalMappingCode("subdivision")]: item.subdivision,
-    [getTextToLocalMappingCode("plotnumber")]: item.plotnumber,
+    // [getTextToLocalMappingCode("plotnumber")]: item.plotnumber,
     [getTextToLocalMappingCode("paidamount")]: item.paidamount,
 
     }

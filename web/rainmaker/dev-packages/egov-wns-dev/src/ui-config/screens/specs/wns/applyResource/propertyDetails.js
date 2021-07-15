@@ -273,6 +273,18 @@ const propertyDetails = getCommonContainer({
             true
             ));
         }
+        if(process.env.REACT_APP_NAME !== "Citizen")
+        {
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+                    "props.disabled",
+                    true
+            )
+        );
+
+        }
       }
     
     }

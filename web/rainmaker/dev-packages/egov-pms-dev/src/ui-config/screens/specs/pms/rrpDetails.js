@@ -471,6 +471,7 @@ export const prepareEditFlow = async (
      
      //export const pmsfooter = footer(response) ;
      dispatch(prepareFinalObject("ProcessInstances", get(response, "ProcessInstances", [])));
+     dispatch(prepareFinalObject("pensionArrears.pensionArrears", get(response,'ProcessInstances[0].pensionArrears',[]))); 
      dispatch(prepareFinalObject("CalculateTemp", get(response, "ProcessInstances", [])));
      dispatch(prepareFinalObject("ApplicationDetails", get(response, "ApplicationDetails", [])));
      dispatch(prepareFinalObject("PaymentDetails", get(response, "PaymentDetails", [])));

@@ -883,3 +883,18 @@ export const sampleGetBill = () => {
     }
   };
 };
+
+export const GetCardList = () => {
+  return{
+    helpdesk:{
+      cardList:[
+        {
+          code:"USER_UNLOCK",
+          roles:"EMPLOYEE",
+          routeCitizen: "user-update"
+        }
+      ]
+    }
+  }
+
+};

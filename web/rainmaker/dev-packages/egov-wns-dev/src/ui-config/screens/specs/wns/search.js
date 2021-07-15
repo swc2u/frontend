@@ -107,7 +107,9 @@ const employeeSearchResults = {
                               {code:"NEW_TUBEWELL_CONNECTION",name:"NEW_TUBEWELL_CONNECTION"},//WS_TUBEWELL
                              // {code:"WS_TEMP_TEMP",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},
                               {code:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},//WS_TEMP_TEMP
-                             { code: "SW_SEWERAGE", name: "New Sewerage Connection" }]//SW_SEWERAGE
+                             { code: "SW_SEWERAGE", name: "New Sewerage Connection" }//SW_SEWERAGE
+                            ]
+    //if(1===1)
     dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.applicationType", applicationType));
 
     return action;

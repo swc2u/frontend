@@ -583,7 +583,8 @@ export const handlePropertySubUsageType = params => {
 }
 
 export const handleNA = params => {
-  if (params !== undefined && params !== null && params !== "" ) {//&& params!==0
+  if (params !== undefined && params !== null && params !== "" ) 
+  {//&& params!==0
     if(params===0)
     {
     return (params.toString()); 
@@ -600,6 +601,10 @@ export const handleNA = params => {
     }
     
   } 
+  else if(params !== undefined && params !== null && params == "0")
+  {
+    return params;
+  }
    
   else { return "NA"; }
 }

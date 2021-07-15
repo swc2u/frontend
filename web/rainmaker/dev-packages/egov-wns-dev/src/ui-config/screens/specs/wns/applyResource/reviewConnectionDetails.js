@@ -334,23 +334,20 @@ const getPropertyDetails = {
             },
             { jsonPath: "applyScreenOld.property.landArea", callBack: handleNA },
           ),
-          reviewNumberOfFloors: getLabelWithValueForModifiedLabel(
+          reviewNumberOfFloors: getLabelWithValue(
             {
               labelName: "Number Of Floors",
               labelKey: "WS_PROPERTY_NO_OF_FLOOR_LABEL"
             },
             { 
-              jsonPath: "applyScreen.property.noOfFloors", 
+              jsonPath: "applyScreen.property.address.floorNo", 
               callBack: handleNA ,          
             localePrefix: {
               moduleName: "WS",
               masterName: "FLOOR"
             }
           },
-            {
-              labelKey: "WS_OLD_LABEL_NAME"
-            },
-            { jsonPath: "applyScreenOld.property.noOfFloors", callBack: handleNA },
+            
           ),
           // rainwaterHarvestingFacility: getLabelWithValueForModifiedLabel(
           //   {

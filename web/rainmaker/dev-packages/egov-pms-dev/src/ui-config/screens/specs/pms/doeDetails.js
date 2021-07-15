@@ -618,7 +618,7 @@ export const prepareEditFlow = async (
   dispatch(prepareFinalObject("ProcessInstances", get(response, "ProcessInstances", [])));
   dispatch(prepareFinalObject("ProcessInstancesTemp", get(response, "ProcessInstances", [])));
   dispatch(prepareFinalObject("ApplicationDetails", get(response, "ApplicationDetails", [])));
-
+  dispatch(prepareFinalObject("pensionArrears.pensionArrears", get(response,'ProcessInstances[0].pensionArrears',[]))); 
   let nqsyy = get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].pensionCalculationUpdateDetails.nqsYearVerified", 0 )
   let nqsmm = get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].pensionCalculationUpdateDetails.nqsMonthVerified", 0 )
   let nqsdd = get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].pensionCalculationUpdateDetails.nqsDayVerified", 0 )

@@ -1,6 +1,10 @@
 import React from "react";
+import get from "lodash/get";
 import { UploadFile, UploadedDocument } from "egov-ui-framework/ui-atoms";
-
+import {
+  localStorageGet,
+  getUserInfo
+} from "egov-ui-kit/utils/localStorageUtils";
 const UploadSingleFile = ({
   uploaded,
   classes,
@@ -13,9 +17,26 @@ const UploadSingleFile = ({
   buttonLabel,
   id
 }) => {
+  let UploadRequired = true;
+    if(process.env.REACT_APP_NAME !== "Citizen")
+    {
+      let role = 'WS_BILL_UPLOAD'
+           let userInfo = JSON.parse(getUserInfo());
+           const roles = get(userInfo, "roles");
+           const roleCodes = roles ? roles.map(role => role.code) : [];
+           if (roleCodes.indexOf(role) > -1) {
+            UploadRequired = true
+           } else
+           {
+            UploadRequired = false
+           } 
+
+    
+
+    }
   return (
     <div>
-      {!uploaded && (
+      {!uploaded && UploadRequired && (
      // {!uploaded &&  (pagename !=="wns" ) && (
         <UploadFile
           buttonProps={{
@@ -44,7 +65,10 @@ const UploadSingleFile = ({
                       pagename={pagename}
                     />
                   )}
-				<p style={{paddingTop: "10px", textAlign: "right"}} > Size : { document.fileSize } Kb. </p>
+                  {
+                    UploadRequired &&(<p style={{paddingTop: "10px", textAlign: "right"}} > Size : { document.fileSize } Kb. </p>)
+                  }
+				
                 </div>
               );
             })}

@@ -117,6 +117,13 @@ class PensionArrealContainer extends React.Component {
                   <Label
                     className="report-header-row-label"
                     labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
+                    label="PENSION_EMPLOYEE_PENSION_LTC_R"
+                  />
+                  </th>
+                  <th   style={{ verticalAlign:"middle", textAlign: "center"}} colSpan="0">
+                  <Label
+                    className="report-header-row-label"
+                    labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold", }}
                     label="PENSION_EMPLOYEE_PENSION_FMA"
                   />
                   </th>
@@ -220,6 +227,7 @@ class PensionArrealContainer extends React.Component {
                         <th>{get(pensionArrears_.pensionArrears[i], `commutedPension`, "0") || "0"}</th>
                         <th>{get(pensionArrears_.pensionArrears[i], `additionalPension`, "0") || "0"}</th>
                         <th>{get(pensionArrears_.pensionArrears[i], `interimRelief`, "0") || "0"}</th>
+                        <th>{get(pensionArrears_.pensionArrears[i], `ltc`, "0") || "0"}</th>
                         <th>{get(pensionArrears_.pensionArrears[i], `fma`, "0") || "0"}</th>
                         <th>{get(pensionArrears_.pensionArrears[i], `miscellaneous`, "0") || "0"}</th>
                         <th>{get(pensionArrears_.pensionArrears[i], `woundExtraOrdinaryPension`, "0") || "0"}</th>
