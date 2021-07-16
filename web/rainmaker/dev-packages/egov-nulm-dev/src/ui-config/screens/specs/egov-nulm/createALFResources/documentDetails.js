@@ -59,7 +59,7 @@ import {
           jsonPath: "NULMALFRequest.dateOfOpeningAccount",
           props: {
             inputProps: {
-              min:  new Date().toISOString().slice(0, 10),
+              max:  new Date().toISOString().slice(0, 10),
             }
           }
         })

@@ -32,6 +32,46 @@ import {
 import { getOPMSPattern, showHideAdhocPopups } from "../utils/index"
 
 
+const styles = {
+  header: {
+    fontWeight: 400,
+    lineHeight: 2,
+    fontSize: "20px"
+
+  },
+  subHeader: {
+    color: "gba(0, 0, 0, 0.87)",
+    fontFamily: "Roboto",
+    fontSize: "16px",
+    fontWeight: 400,
+    lineHeight: "19px",
+    display: "block",
+    width: "95%",
+  },
+  docs: {
+    color: "rgba(0, 0, 0, 0.6)",
+    fontFamily: "Roboto",
+    fontSize: "14px",
+    fontWeight: 400,
+    lineHeight: "17px",
+    display: "block",
+    width: "95%",
+    // paddingBottom: "24px"
+  },
+  description: {
+    fontFamily: "Roboto",
+    color: "rgba(0, 0, 0, 0.87)",
+    fontSize: "12px",
+    fontWeight: 400,
+    letterSpacing: "0.6px",
+    lineHeight: "14px",
+    display: "block",
+    width: "95%",
+    padding: "10px",
+    marginBottom: "0px !important"
+  },
+
+};
 
 export const stepsData = [
   { labelName: "Sell Meat NOC Details", labelKey: "SELLMEATNOC_APPLICANT_DETAILS_NOC" },
@@ -65,6 +105,23 @@ const applicationNumberContainer = () => {
 export const header = getCommonContainer({
   header: getCommonHeader({
     labelName: `Apply New Permission for Sell Meat NOC (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
+    labelKey: "SELLMEAT_APPLY_NOC"
+  }),
+  //applicationNumber: applicationNumberContainer()
+  applicationNumber: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationNoContainer",
+    props: {
+      number: "NA"
+    },
+    visible: false
+  }
+});
+
+export const header_DROPDOWN = getCommonContainer({
+  header: getCommonHeader({
+    labelName: `Apply New Permission for Sell Meat NOC (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
     labelKey: "DROPDWON_COMBINATION"
   }),
   //applicationNumber: applicationNumberContainer()
@@ -77,6 +134,23 @@ export const header = getCommonContainer({
     },
     visible: false
   }
+});
+
+export const header_DROPDOWN_Note = getCommonContainer({
+  header: getCommonHeader({
+    labelName: "Note: I here confirm that my shop fall under commercial area",
+    labelKey: "DROPDOWN_POINT_5"
+  }),
+  //applicationNumber: applicationNumberContainer()
+  // applicationNumber: {
+  //   uiFramework: "custom-atoms-local",
+  //   moduleName: "egov-opms",
+  //   componentPath: "ApplicationNoContainer",
+  //   props: {
+  //     number: "NA"
+  //   },
+  //   visible: false
+  // }
 });
 
 export const formwizardFirstStep = {
@@ -343,7 +417,7 @@ export const getRequiredDocuments = (type) => {
             uiFramework: "custom-atoms",
             componentPath: "Container",
             children: {
-              header
+              header_DROPDOWN
             },
             break: getBreak(),
           },
@@ -363,6 +437,22 @@ export const getRequiredDocuments = (type) => {
             labelName: "Pork(pig) can't be combined with Jhatka or Halal",
             labelKey: "DROPDOWN_POINT_4"
           }),
+          // subText5: getCommonParagraph({
+          //   labelName: "Note: I here confirm that my shop fall under commercial area",
+          //   labelKey: "DROPDOWN_POINT_5"
+          // },
+          // {
+          //   style: styles.header
+          // }),
+          subText5 : getCommonHeader(
+            {
+              labelName: "Note: I here confirm that my shop fall under commercial area",
+              labelKey: "DROPDOWN_POINT_5"
+            },
+            {
+              style: styles.header
+            }
+          )
         }
 
       },

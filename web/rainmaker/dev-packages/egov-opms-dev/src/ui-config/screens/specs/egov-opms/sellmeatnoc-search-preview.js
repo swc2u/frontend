@@ -55,6 +55,50 @@ import { getTextForSellMeatNoc } from "./searchResource/citizenSearchFunctions";
 let roles = JSON.parse(getUserInfo()).roles
 let nocStatus = '';
 
+const styles = {
+  header: {
+    color: "gba(0, 0, 0, 0.87)",
+    fontFamily: "Roboto",
+    fontSize: "20px",
+    fontWeight: 500,
+    lineHeight: "28px",
+    padding: "10px 0px"
+    //paddingLeft: "5px"
+
+  },
+  subHeader: {
+    color: "gba(0, 0, 0, 0.87)",
+    fontFamily: "Roboto",
+    fontSize: "16px",
+    fontWeight: 400,
+    lineHeight: "19px",
+    display: "block",
+    width: "95%",
+  },
+  docs: {
+    color: "rgba(0, 0, 0, 0.6)",
+    fontFamily: "Roboto",
+    fontSize: "14px",
+    fontWeight: 400,
+    lineHeight: "17px",
+    display: "block",
+    width: "95%",
+    // paddingBottom: "24px"
+  },
+  description: {
+    fontFamily: "Roboto",
+    color: "rgba(0, 0, 0, 0.87)",
+    fontSize: "12px",
+    fontWeight: 400,
+    letterSpacing: "0.6px",
+    lineHeight: "14px",
+    display: "block",
+    width: "95%",
+    padding: "10px",
+    marginBottom: "0px !important"
+  },
+
+};
 
 const setvalueCancel = async (state, dispatch,type) => {
   let pagename = "petnoc_summary";
@@ -116,6 +160,16 @@ else if(type ==="PETNOC")
 
 
 }
+
+const header = getCommonHeader(
+  {
+    labelName: "Conditions for issue of No Objection Certifcate",
+    labelKey: "NOC_REQ_SELLMEAT_DOCS_HEADER"
+  },
+  {
+    style: styles.header
+  }
+);
 
 const getRequiredDocuments = (type) => {
   return getCommonContainer(
@@ -209,11 +263,6 @@ const getRequiredDocuments = (type) => {
             labelName: "UNDERTAKING10",
             labelKey: "UNDERTAKING_POINT10"
           }),
-          subText13: getCommonParagraph({
-            labelName: "UNDERTAKING13",
-            labelKey: "UNDERTAKING_POINT13"
-          }),
-
           subText11: getCommonParagraph({
             labelName: "UNDERTAKING11",
             labelKey: "UNDERTAKING_POINT11"
@@ -222,7 +271,18 @@ const getRequiredDocuments = (type) => {
             labelName: "UNDERTAKING12",
             labelKey: "UNDERTAKING_POINT12"
           }),
-
+          subText13: getCommonParagraph({
+            labelName: "UNDERTAKING13",
+            labelKey: "UNDERTAKING_POINT13"
+          }),
+          subText14: getCommonParagraph({
+            labelName: "UNDERTAKING14",
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT14"
+          }),
+          subText15: getCommonParagraph({
+            labelName: "UNDERTAKING15",
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT15"
+          }),
         }
 
       },
@@ -702,6 +762,8 @@ const setSearchResponseForNocCretificate = async (
   //nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
   let nocRemarks = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].remarks", {});
   let nocStatus = "";
+  let certificateDownloadObjectSELLMEAT = {};
+  let certificateDownloadObject_RECEIPT_SELLMEAT = {};
 
   var resApproved = nocRemarks.filter(function (item) {
     return item.applicationstatus == "APPROVED";
@@ -716,10 +778,10 @@ const setSearchResponseForNocCretificate = async (
   }
 
   if (resApprovedPAID.length != 0){
-    nocStatus = "PAID";
+    nocRemarks = "PAID";
   }
 
-  if (nocStatus == "APPROVED") {
+  if (nocStatus === "APPROVED") {
     let getCertificateDataForSELLMEAT = { "applicationType": "SELLMEATNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "certificateData" } };
    
     //SELLMEAT
@@ -761,14 +823,15 @@ const setSearchResponseForNocCretificate = async (
         { key: "filestoreIds", value: get(response1SELLMEAT, "filestoreIds[0]", "") },
         { key: "requestUrl", value: "/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds=" }
       ]);
-      httpLinkSELLMEAT = get(response2SELLMEAT, get(response1SELLMEAT, "filestoreIds[0]", ""), "")
+      var httpLinkSELLMEAT_CERT = ""; 
+      httpLinkSELLMEAT_CERT = get(response2SELLMEAT, get(response1SELLMEAT, "filestoreIds[0]", ""), "")
     }
     //Object creation for NOC's
-    let certificateDownloadObjectSELLMEAT = {
+    certificateDownloadObjectSELLMEAT = {
       label: { labelName: "NOC Certificate SELLMEAT", labelKey: "NOC_CERTIFICATE_SELLMEAT" },
       link: () => {
-        if (httpLinkSELLMEAT != "")
-          window.location.href = httpLinkSELLMEAT;
+        if (httpLinkSELLMEAT_CERT != "")
+          window.location.href = httpLinkSELLMEAT_CERT;
       },
       leftIcon: "book"
     };
@@ -787,7 +850,7 @@ const setSearchResponseForNocCretificate = async (
   
   }
 
-  if (nocStatus == "PAID") {
+  if (nocRemarks === "PAID") {
     let getCertificateDataForSELLMEAT = { "applicationType": "SELLMEATNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "receiptData" } };
    
     //SELLMEAT
@@ -820,7 +883,7 @@ const setSearchResponseForNocCretificate = async (
         { key: "tenantId", value: tenantId },
         { key: "applicationNumber", value: applicationNumber },
         { key: "getCertificateDataFileStoreId", value: getFileStoreIdForSELLMEAT },
-        { key: "requestUrl", value: "/pdf-service/v1/_create?key=pet-receipt&tenantId=" + tenantId }
+        { key: "requestUrl", value: "/pdf-service/v1/_create?key=sellMeat-receipt&tenantId=" + tenantId }
       ]);
 
       const response2SELLMEAT = await getSearchResultsForNocCretificateDownload([
@@ -829,20 +892,21 @@ const setSearchResponseForNocCretificate = async (
         { key: "filestoreIds", value: get(response1SELLMEAT, "filestoreIds[0]", "") },
         { key: "requestUrl", value: "/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds=" }
       ]);
-      httpLinkSELLMEAT = get(response2SELLMEAT, get(response1SELLMEAT, "filestoreIds[0]", ""), "")
+      var httpLinkSELLMEAT_RECEIPT = ""; 
+      httpLinkSELLMEAT_RECEIPT = get(response2SELLMEAT, get(response1SELLMEAT, "filestoreIds[0]", ""), "")
     }
     //Object creation for NOC's
-    let certificateDownloadObjectSELLMEAT = {
+    certificateDownloadObject_RECEIPT_SELLMEAT = {
       label: { labelName: "Receipt", labelKey: "NOC_RECEIPT_PET" },
       link: () => {
-        if (httpLinkSELLMEAT != "")
-          window.location.href = httpLinkSELLMEAT;
+        if (httpLinkSELLMEAT_RECEIPT != "")
+          window.location.href = httpLinkSELLMEAT_RECEIPT;
       },
       leftIcon: "book"
     };
 
     downloadMenu = [
-      certificateDownloadObjectSELLMEAT
+      certificateDownloadObject_RECEIPT_SELLMEAT
     ];
     dispatch(
       handleField(
@@ -855,6 +919,12 @@ const setSearchResponseForNocCretificate = async (
   
   }
 
+  if (nocStatus === "APPROVED" && nocRemarks === "PAID") {
+    downloadMenu = [
+      certificateDownloadObjectSELLMEAT,
+      certificateDownloadObject_RECEIPT_SELLMEAT
+    ];
+  }
   dispatch(
     handleField(
       "sellmeatnoc-search-preview",
@@ -889,7 +959,7 @@ const screenConfig = {
 
     dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
     searchBill(dispatch, applicationNumber, tenantId);
-    setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
+    
 
     const queryObject = [
       { key: "tenantId", value: tenantId },
@@ -900,6 +970,7 @@ const screenConfig = {
 
     getMdmsData(action, state, dispatch).then(response => {
       prepareDocumentsUploadData(state, dispatch, 'popup_sellmeat');
+      setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
       // prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');      
     });
     preparepopupDocumentsSellMeatUploadData(state, dispatch, 'SELLMEATNOC');

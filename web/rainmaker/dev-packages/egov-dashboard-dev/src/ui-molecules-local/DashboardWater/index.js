@@ -1161,11 +1161,15 @@ class WaterDashboard extends React.Component {
                 debugger;
                 var ind = element[0]._index;
                 var selectedVal = this.state.graphFifthLabel[ind];
-                const data = this.state.dataFifth[selectedVal];
+                const data = this.state.dataFifth[selectedVal];              
 
-                if(data){
+                let amountData = [];
+                data.forEach(ele => ele.amountPaid !== null ? 
+                    amountData.push(ele) : null );
+
+                if(amountData){
                     this.setState({
-                        rowData : data
+                        rowData : amountData
                     })
                 }
             }
@@ -1175,7 +1179,7 @@ class WaterDashboard extends React.Component {
         
     return (
         <div>
-        <div>
+        <div className="recordNotFound">
             { this.state.recordNotFound }
         </div>
 
@@ -1278,13 +1282,15 @@ class WaterDashboard extends React.Component {
                 this.state.unchangeColumnData.length > 0  ? 
                 <div className="tableFeature">
                     <div className="columnToggle-Text"> Download As: </div>
-                    <div className="columnToggleBtn"> 
-                    <CSVLink data={csvData}
-                    filename={"Water_dashboard.csv"}
-                    > Export Excel </CSVLink>
+                    <div className="tableFeature-btn-container">
+                        <div className="columnToggleBtn"> 
+                        <CSVLink data={csvData}
+                        filename={"Water_dashboard.csv"}
+                        > Export Excel </CSVLink>
+                        </div>
+                        <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+                        <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
                     </div>
-                    <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
-                    <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
                 </div>
                 :null
             }
