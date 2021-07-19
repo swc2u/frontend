@@ -21,8 +21,8 @@ const callBackForNext = async (state, dispatch) => {
   set(UserInfo[0],'accountLocked',false)
   set(UserInfo[0],'accountLockedDate',0)
   //accountLockedDate
- // let response = await userUnlock(UserInfo, dispatch);
- console.log(UserInfo)
+  let response = await userUnlock(UserInfo, dispatch);
+ //console.log(UserInfo)
 
 };
 
