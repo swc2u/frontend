@@ -244,6 +244,10 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         if (service === "SEWERAGE") 
         {
           code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.swSectorList",parsedObject.property.address.locality.code)   
+          if(code.length ===1)
+          {
+            code =`0${code}`
+          }
           set(parsedObject, 'property.address.locality.name', code);
               if(parsedObject.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
           {

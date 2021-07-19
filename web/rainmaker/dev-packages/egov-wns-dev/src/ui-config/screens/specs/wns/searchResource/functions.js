@@ -1,7 +1,7 @@
 import { handleScreenConfigurationFieldChange as handleField, toggleSnackbar,toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getUserInfo, getTenantIdCommon } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
-import { fetchBill, findAndReplace, getSearchResults, getSearchResultsForSewerage, getWorkFlowData,getBillingEstimation } from "../../../../../ui-utils/commons";
+import { fetchBill, findAndReplace, getSearchResultsP, getSearchResultsForSewerage, getWorkFlowData,getBillingEstimation } from "../../../../../ui-utils/commons";
 import { validateFields,getTextToLocalMapping,getTextToLocalMappingCode,GetMdmsNameBycode } from "../../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { convertDateToEpoch, convertEpochToDate, resetFieldsForApplication, resetFieldsForConnection } from "../../utils/index";
@@ -167,7 +167,7 @@ const renderSearchConnectionTable = async (state, dispatch) => {
         payloadbillingPeriod = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
         console.log(payloadbillingPeriod);
       } catch (err) { console.log(err) }
-      let getSearchResult = getSearchResults(queryObject)
+      let getSearchResult = getSearchResultsP(queryObject)
       let getSearchResultForSewerage = getSearchResultsForSewerage(queryObject, dispatch)
       let finalArray = [];
       let searchWaterConnectionResults, searcSewerageConnectionResults;
@@ -262,7 +262,7 @@ const renderSearchConnectionTable = async (state, dispatch) => {
                 service: element.service,
                 connectionNo: element.connectionNo,
                 billGenerationId:bill.billGenerationId,
-                name: (element.property) ? element.property.owners[0].name : '',
+               // name: (element.property) ? element.property.owners[0].name : '',
                 //status: element.status,
                 status: bill.status,                
                 address: handleAddress(element),
@@ -280,7 +280,7 @@ const renderSearchConnectionTable = async (state, dispatch) => {
                 service: element.service,
                 connectionNo: element.connectionNo,
                 billGenerationId:0,
-                name: (element.property) ? element.property.owners[0].name : '',
+               // name: (element.property) ? element.property.owners[0].name : '',
                 status: "NA",//element.status,
                 address: handleAddress(element),
                 connectionType: element.connectionType,
@@ -302,7 +302,7 @@ const renderSearchConnectionTable = async (state, dispatch) => {
               service: element.service,
               connectionNo: element.connectionNo,
               billGenerationId:0,
-              name: (element.property) ? element.property.owners[0].name : '',
+             // name: (element.property) ? element.property.owners[0].name : '',
               status: "NA",              
               address: handleAddress(element),
               connectionType: element.connectionType,
@@ -369,11 +369,11 @@ const renderSearchApplicationTable = async (state, dispatch) => {
     try {
       let getSearchResult, getSearchResultForSewerage;
       if (searchScreenObject.applicationType === "New Water connection") {
-        getSearchResult = getSearchResults(queryObject)
+        getSearchResult = getSearchResultsP(queryObject)
       } else if (searchScreenObject.applicationType === "New Sewerage Connection") {
         getSearchResultForSewerage = getSearchResultsForSewerage(queryObject, dispatch)
       } else {
-        getSearchResult = getSearchResults(queryObject),
+        getSearchResult = getSearchResultsP(queryObject),
           getSearchResultForSewerage = getSearchResultsForSewerage(queryObject, dispatch)
       }
       let finalArray = [];
@@ -418,7 +418,8 @@ const renderSearchApplicationTable = async (state, dispatch) => {
         let element = findAndReplace(combinedSearchResults[i], null, "NA");
         let appStatus;
         let paidamount_ = 0;
-        let Locality = (element.property && element.property !== "NA" && element.property.address) ? element.property.address.locality.code : ""
+        //let Locality = (element.property && element.property !== "NA" && element.property.address) ? element.property.address.locality.code : ""
+        let Locality = element.waterProperty.sectorNo
         if (element.applicationNo !== "NA" && element.applicationNo !== undefined) {
           //appStatus = combinedWFSearchResults.filter(item => item.businessId.includes(element.applicationNo))[0]
          // appStatus = combinedWFSearchResults.filter(item => item.businessId === element.applicationNo)
@@ -443,31 +444,32 @@ const renderSearchApplicationTable = async (state, dispatch) => {
             Locality =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData1.ws-services-masters.swSectorList",Locality) 
           }
           
-          if (element.property && element.property.owners &&
-            element.property.owners !== "NA" &&
-            element.property.owners !== null &&
-            element.property.owners.length > 1) {
-            let ownerName = "";
-            element.property.owners.forEach(ele => { ownerName = ownerName + ", " + ele.name })
+          // if (element.property && element.property.owners &&
+          //   element.property.owners !== "NA" &&
+          //   element.property.owners !== null &&
+          //   element.property.owners.length > 1) {
+          //   let ownerName = "";
+          //   element.property.owners.forEach(ele => { ownerName = ownerName + ", " + ele.name })
 
-            finalArray.push({
-              connectionNo: element.connectionNo,
-              applicationNo: element.applicationNo,
-              name: ownerName.slice(2),
-             //name: (element.connectionHolders) ? element.connectionHolders[0].name : '',
-              applicationStatus: appStatus,
-              address: handleAddress(element),
-              service: element.service,
-              connectionType: element.connectionType,
-              tenantId: element.tenantId,
-              ActionType:element.activityType,
-              Sector: Locality,
-              division:element.div,
-              subdivision:element.subdiv,              
-              plotnumber:(element.property && element.property !== "NA" && element.property.address) ? element.property.address.doorNo : "",
-              paidamount:paidamount_,
-            })
-          } 
+          //   finalArray.push({
+          //     connectionNo: element.connectionNo,
+          //     applicationNo: element.applicationNo,
+          //     name: ownerName.slice(2),
+          //    //name: (element.connectionHolders) ? element.connectionHolders[0].name : '',
+          //     applicationStatus: appStatus,
+          //     address: handleAddress(element),
+          //     service: element.service,
+          //     connectionType: element.connectionType,
+          //     tenantId: element.tenantId,
+          //     ActionType:element.activityType,
+          //     Sector: Locality,
+          //     division:element.div,
+          //     subdivision:element.subdiv,              
+          //     //plotnumber:(element.property && element.property !== "NA" && element.property.address) ? element.property.address.doorNo : "",
+          //     plotnumber: (element.waterProperty && element.waterProperty !== "NA")?element.waterProperty.plotNo:'NA',
+          //     paidamount:paidamount_,
+          //   })
+          // } 
           if(element.applicationNo.includes("WS"))
           {
             //for (let i = 0; i < element.waterApplicationList.length; i++) {
@@ -484,11 +486,12 @@ const renderSearchApplicationTable = async (state, dispatch) => {
                   service: element.service,
                   connectionType: element.connectionType,
                   tenantId: element.tenantId,
-                  ActionType:element.activityType,
+                  ActionType:waterApplicationList[j].activityType,
                   Sector: Locality,
                   division:element.div,
                   subdivision:element.subdiv,              
-                  plotnumber:(element.property && element.property !== "NA" && element.property.address) ? element.property.address.doorNo : "",
+                  //plotnumber:(element.property && element.property !== "NA" && element.property.address) ? element.property.address.doorNo : "",
+                  plotnumber: (element.waterProperty && element.waterProperty !== "NA")?element.waterProperty.plotNo:'NA',
                   paidamount:paidamount_,
                 })
 
@@ -512,7 +515,8 @@ const renderSearchApplicationTable = async (state, dispatch) => {
               Sector: Locality,
               division:element.div,
               subdivision:element.subdiv,              
-              plotnumber:(element.property && element.property !== "NA" && element.property.address) ? element.property.address.doorNo : "",
+             // plotnumber:(element.property && element.property !== "NA" && element.property.address) ? element.property.address.doorNo : "",
+             plotnumber: (element.waterProperty && element.waterProperty !== "NA")?element.waterProperty.plotNo:'NA',
               paidamount:paidamount_,
             })
           }
@@ -561,7 +565,7 @@ const showConnectionResults = (connections, dispatch) => {
     return{
       [getTextToLocalMappingCode("service")]: item.service,
       [getTextToLocalMappingCode("Consumer No")]: item.connectionNo,
-      [getTextToLocalMappingCode("Owner Name")]: item.name,
+      //[getTextToLocalMappingCode("Owner Name")]: item.name,
       [getTextToLocalMappingCode("Status")]: item.status,
       [getTextToLocalMappingCode("Due")]: item.due,
       [getTextToLocalMappingCode("Address")]: item.address,
@@ -585,7 +589,8 @@ const showApplicationResults = (connections, dispatch) => {
     return{
       [getTextToLocalMappingCode("Consumer No")]: item.connectionNo,
     [getTextToLocalMappingCode("Application No")]: item.applicationNo,
-    [getTextToLocalMappingCode("Application Type")]: item.service === "WATER" ? "New Water Connection" : "New Sewerage Connection",
+   // [getTextToLocalMappingCode("Application Type")]: item.service === "WATER" ? "New Water Connection" : "New Sewerage Connection",
+    [getTextToLocalMappingCode("Application Type")]: item.ActionType.split("_").join(" "),
    // [getTextToLocalMappingCode("Owner Name")]: item.name,
     [getTextToLocalMappingCode("plotnumber")]: item.plotnumber,
     [getTextToLocalMappingCode("Application Status")]: item.applicationStatus.split("_").join(" "),
