@@ -16,6 +16,7 @@ class DashboardLegal extends React.Component {
   constructor(props) {
     super(props);
     this.state ={
+        checkData : [],
         toggleTable : true,
         totalCase : [],
         next7DaysData :[],
@@ -486,6 +487,13 @@ class DashboardLegal extends React.Component {
 
     componentDidMount(){
         debugger;
+    }
+
+    componentDidUpdate(){
+      debugger;
+      if(this.props.data.length > 0 && (
+          JSON.stringify(this.props.data) !== JSON.stringify(this.state.checkData)
+      )){
         const data = this.props.data[0].ResponseBody;
         // const data = LegalData.ResponseBody;
 
@@ -555,15 +563,10 @@ class DashboardLegal extends React.Component {
             next15DaysData : next15DaysData,
             impCaseData : impCaseData,
             contemptCaseData : contemptCaseData,
-            unchangeColumnData : unchangeColumnData
+            unchangeColumnData : unchangeColumnData,
+            checkData : this.props.data
         })
-
-
-    }
-
-    componentDidUpdate(){
-      debugger;
-      const data = this.props.data;
+      }
     }
 
     tableClicked = (data, caseClicked) => {
@@ -607,8 +610,11 @@ class DashboardLegal extends React.Component {
 
     rowData2 = (data, index) =>{
         debugger;
-        var hearingDate = new Date(data.hearingDate);
-        hearingDate = hearingDate.getDate()+"/"+parseInt(hearingDate.getMonth()+1)+"/"+hearingDate.getFullYear();
+        var hearingDate = "";
+        if(data.hearingDate !== null && data.hearingDate !== undefined){
+            hearingDate = new Date(data.hearingDate);
+            hearingDate = hearingDate.getDate()+"/"+parseInt(hearingDate.getMonth()+1)+"/"+hearingDate.getFullYear();
+        }
         return(
             <tr>
                 <td> { index + 1 } </td>
@@ -616,8 +622,8 @@ class DashboardLegal extends React.Component {
                 <td> { data.caseTitle } </td>
                 <td> { data.petName } </td>
                 <td> { data.govtDept } </td>
-                <td> { "Not in API" } </td>
-                <td> { "---"+data.courtName } </td>
+                <td> { "" } </td>
+                <td> { data.courtName } </td>
                 <td> { hearingDate } </td>
                 <td> { data.caseStatus } </td>
                 <td> { "----" } </td>

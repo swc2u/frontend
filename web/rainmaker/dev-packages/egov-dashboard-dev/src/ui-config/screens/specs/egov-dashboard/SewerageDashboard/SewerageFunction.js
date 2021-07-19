@@ -43,6 +43,22 @@ export const SearchDashboardData = async (state, dispatch) =>{
   }
   else{ 
 
+    var dateString = def_toDate
+    var parts2 = dateString.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    var DateObj2 = new Date(Date.UTC(parts2[1], parts2[2] - 1, parts2[3]));
+    DateObj2.setMinutes(DateObj2.getMinutes() + DateObj2.getTimezoneOffset());
+    DateObj2.setHours(DateObj2.getHours() + 24);
+    DateObj2.setSeconds(DateObj2.getSeconds() - 1);
+    toDateNumeric = DateObj2.getTime()
+
+    var dateString = def_fromDate
+    var parts2 = dateString.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    var DateObj2 = new Date(Date.UTC(parts2[1], parts2[2] - 1, parts2[3]));
+    DateObj2.setMinutes(DateObj2.getMinutes() + DateObj2.getTimezoneOffset());
+    // DateObj2.setHours(DateObj2.getHours() + 24);
+    // DateObj2.setSeconds(DateObj2.getSeconds() - 1);
+    fromDateNumeric = DateObj2.getTime()
+    
   var data = {
     "tenantId" : getTenantId(),
     "fromDate":fromDateNumeric,
