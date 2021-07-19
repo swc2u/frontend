@@ -104,8 +104,7 @@ const setcardList = (state, dispatch) => {
       {
         "code": "ALF",
         "roles": [
-          "CITIZEN",
-          "EMPLOYEE"
+          "NULM_ADMIN"
         ],
         "routeCitizen": "search-smid-NGO"
       }
