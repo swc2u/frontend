@@ -48,7 +48,7 @@ export const searchResults = {
           
         }
       },
-      getTextToLocalMappingCode("Owner Name"),
+     // getTextToLocalMappingCode("Owner Name"),
       getTextToLocalMappingCode("Status"),
       getTextToLocalMappingCode("Due"),
       getTextToLocalMappingCode("Address"),
@@ -236,8 +236,8 @@ export const searchResults = {
 };
 
 const getConnectionDetails = (data,Active) => {
-  Active = data.rowData[11] ==='Inactive'?false:true
-  window.location.href = `connection-details?connectionNumber=${data.rowData[1]}&tenantId=${data.rowData[8]}&service=${data.rowData[0]}&connectionType=${data.rowData[9]}&Active=${Active}`
+  Active = data.rowData[10] ==='Inactive'?false:true
+  window.location.href = `connection-details?connectionNumber=${data.rowData[1]}&tenantId=${data.rowData[7]}&service=${data.rowData[0]}&connectionType=${data.rowData[8]}&Active=${Active}`
 }
 
 const getViewBillDetails = data => {

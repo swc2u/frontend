@@ -135,7 +135,12 @@ const searchResults = async (action, state, dispatch, connectionNumber) => {
 
       }
       let code = '03';
-      code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.wssectorList",payloadData.SewerageConnections[0].property.address.locality.code)   
+      code = payloadData.SewerageConnections[0].property.address.locality.code
+      if(code.length ===1)
+      {
+        code =`0${code}`
+      }
+      code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.wssectorList",code)   
       payloadData.SewerageConnections[0].property.address.locality.name = code
       if (payloadData.SewerageConnections[0].noOfToilets === undefined) { payloadData.SewerageConnections[0].noOfToilets = "NA" }
       if (payloadData.SewerageConnections[0].noOfToilets === 0) { payloadData.SewerageConnections[0].noOfToilets = "0" }
@@ -175,7 +180,12 @@ const searchResults = async (action, state, dispatch, connectionNumber) => {
 
       }
       let code = '03';
-      code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.sectorList",payloadData.WaterConnection[0].property.address.locality.code)   
+      code = payloadData.WaterConnection[0].property.address.locality.code
+      if(code.length ===1)
+      {
+        code =`0${code}`
+      }
+      code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.sectorList",code)   
       payloadData.WaterConnection[0].property.address.locality.name = code
       if (payloadData.WaterConnection[0].noOfTaps === undefined) { payloadData.WaterConnection[0].noOfTaps = "NA" }
       if (payloadData.WaterConnection[0].noOfTaps === 0) { payloadData.WaterConnection[0].noOfTaps = "0" }

@@ -284,20 +284,7 @@ const getAcknowledgementCard = (
         dispatch,
         applicationNumber,
         tenant),
-      // header: getCommonContainer({
-      //   header: getCommonHeader({
-      //     labelName: `Application for New Water and Sewerage Connection`,
-      //     labelKey: "WS_APPLICATION_NEW_CONNECTION_HEADER"
-      //   }),
-      //   applicationNumber: {
-      //     uiFramework: "custom-atoms-local",
-      //     moduleName: "egov-wns",
-      //     componentPath: "ApplicationNoContainer",
-      //     props: {
-      //       number: applicationNumber
-      //     }
-      //   }
-      // }),
+      
       applicationSuccessCard: {
         uiFramework: "custom-atoms",
         componentPath: "Div",
@@ -366,6 +353,7 @@ const getAcknowledgementCard = (
         tenant
       )
     };
+    
   } else if (purpose === "application" && status === "cancelled") {
     return {
       header: getCommonContainer({
@@ -558,6 +546,45 @@ const getAcknowledgementCard = (
         tenant
       )
     };
+  }
+  else if (purpose === "cancel" && status === "success") {
+    return {
+      commonHeader: commonHeader(state,
+        dispatch,
+        applicationNumber,
+        tenant),
+      applicationSuccessCard: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        children: {
+          card: acknowledgementCard({
+            icon: "close",
+            backgroundColor: "#E54D42",
+            header: {
+              labelName: "Application Rejected",
+              labelKey: "WS_APPROVAL_CALCELLED_MESSAGE_HEAD"
+            },
+            // body: {
+            //   labelName:
+            //     "A notification regarding Application Rejection has been sent to registered Mobile No.",
+            //   labelKey: "WS_APPROVAL_REJ_MESSAGE_SUBHEAD"
+            // }
+            tailText: {
+              labelName: "Application Number.",
+              labelKey: "WS_ACK_COMMON_APP_NO_LABEL"
+            },
+            number: applicationNumber
+          })
+        }
+      },
+      applicationSuccessFooter: applicationSuccessFooter(
+        state,
+        dispatch,
+        applicationNumber,
+        tenant
+      )
+    };
+    
   }
 };
 

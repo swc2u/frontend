@@ -44,10 +44,10 @@ const resetFields = (state, dispatch) => {
 };
 
 export const searchForm = getCommonCard({
-  subHeader: getCommonTitle({
-    labelName: "Search Criteria",
-    labelKey: "STORE_SEARCH_RESULTS_HEADING",
-  }),
+  // subHeader: getCommonTitle({
+  //   labelName: "Search Criteria",
+  //   labelKey: "STORE_SEARCH_RESULTS_HEADING",
+  // }),
   // subParagraph: getCommonParagraph({
   //   labelName: "Provide at least one parameter to search for an application",
   //   labelKey: "STORE_HOME_SEARCH_RESULTS_DESC",

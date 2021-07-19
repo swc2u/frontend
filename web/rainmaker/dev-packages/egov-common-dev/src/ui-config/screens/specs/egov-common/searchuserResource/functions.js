@@ -114,7 +114,7 @@ if(IsValidDate)
             "user-update",
             "components.div.children.footer.children.nextButton",
             "visible",
-            !accountLocked
+            accountLocked
           )
         );
       }
