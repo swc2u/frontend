@@ -101,7 +101,8 @@ export const userUnlock = async (user, dispatch) => {
     store.dispatch(toggleSpinner());
     const response = await httpRequest(
       "post",
-      "/user/profile/_update",
+      "/user/users/_updatenovalidate?tenantId=ch.chandigarh ",
+      "_updatenovalidate",
       [],
       {
         user:user[0]
@@ -111,6 +112,7 @@ export const userUnlock = async (user, dispatch) => {
     store.dispatch(toggleSpinner());
     return response;
   } catch (error) {
+    store.dispatch(toggleSpinner());
     store.dispatch(
       toggleSnackbar(
         true,
@@ -118,7 +120,6 @@ export const userUnlock = async (user, dispatch) => {
         "error"
       )
     );
-    throw error;
   }
 };
 export const getSearchResults = async (queryObject, dispatch) => {

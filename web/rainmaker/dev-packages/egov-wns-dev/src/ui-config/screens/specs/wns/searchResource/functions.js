@@ -461,8 +461,43 @@ const renderSearchApplicationTable = async (state, dispatch) => {
               connectionType: element.connectionType,
               tenantId: element.tenantId,
               ActionType:element.activityType,
+              Sector: Locality,
+              division:element.div,
+              subdivision:element.subdiv,              
+              plotnumber:(element.property && element.property !== "NA" && element.property.address) ? element.property.address.doorNo : "",
+              paidamount:paidamount_,
             })
-          } else {
+          } 
+          if(element.applicationNo.includes("WS"))
+          {
+            //for (let i = 0; i < element.waterApplicationList.length; i++) {
+              let waterApplicationList = get(element,'waterApplicationList',[])
+             // waterApplicationList = waterApplicationList.filter(x=>x.applicationNo !== element.applicationNo)
+              for (let j = 0; j < waterApplicationList.length; j++) {
+                finalArray.push({
+                  connectionNo: element.connectionNo,
+                  applicationNo: waterApplicationList[j].applicationNo,
+                  //name: (element.property && element.property !== "NA" && element.property.owners) ? element.property.owners[0].name : "",
+                 // name: (element.connectionHolders) ? element.connectionHolders[0].name : '',
+                  applicationStatus: waterApplicationList[j].applicationStatus,
+                  address: handleAddress(element),
+                  service: element.service,
+                  connectionType: element.connectionType,
+                  tenantId: element.tenantId,
+                  ActionType:element.activityType,
+                  Sector: Locality,
+                  division:element.div,
+                  subdivision:element.subdiv,              
+                  plotnumber:(element.property && element.property !== "NA" && element.property.address) ? element.property.address.doorNo : "",
+                  paidamount:paidamount_,
+                })
+
+              }
+
+            //}
+          }
+          
+          else {
             finalArray.push({
               connectionNo: element.connectionNo,
               applicationNo: element.applicationNo,

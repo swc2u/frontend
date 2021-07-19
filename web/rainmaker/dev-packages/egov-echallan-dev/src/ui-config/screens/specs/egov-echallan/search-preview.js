@@ -355,7 +355,8 @@ const setAuctionButtonVisibleTrueFalse = (isVisible, dispatch, appstatus) => {
 const setReceiveButtonVisibleTrueFalse = (isVisible, dispatch, appstatus) => {
   switch (appstatus) {
     case "CHALLAN ISSUED":
-    case "SENT TO STORE":
+   // case "SENT TO STORE":
+   case "ADDED TO STORE":
     case "CLOSED":
     case "RELEASED ON GROUND":
     case "RELEASED FROM STORE":
@@ -368,7 +369,8 @@ const setReceiveButtonVisibleTrueFalse = (isVisible, dispatch, appstatus) => {
         )
       );
       break;
-    case "ADDED TO STORE":
+    ///case "ADDED TO STORE":
+    case "SENT TO STORE":
       if (checkForRole(roles, 'challanSM')) {
         dispatch(
           handleField(
@@ -640,7 +642,8 @@ const HideshowEdit = (state, action, dispatch) => {
       processInstanceData.action !== 'CHALLAN ISSUED' ?
         checkVisibility(state, "CLOSED", "StoreManagerReturnandCloseProcess", action, "screenConfig.components.div.children.employeeFooter.children.StoreManagerReturnandCloseProcess.visible", false)
         : "" : "";
-    processInstanceData.action === 'ADDED TO STORE' ? checkVisibility(state, "PAID", "StoreManagerReceivePaymentProcess", action, "screenConfig.components.div.children.employeeFooter.children.StoreManagerReceivePaymentProcess.visible", true) : "";
+   // processInstanceData.action === 'ADDED TO STORE' ? checkVisibility(state, "PAID", "StoreManagerReceivePaymentProcess", action, "screenConfig.components.div.children.employeeFooter.children.StoreManagerReceivePaymentProcess.visible", false) : "";
+    processInstanceData.action === 'SENT TO STORE' ? checkVisibility(state, "PAID", "StoreManagerReceivePaymentProcess", action, "screenConfig.components.div.children.employeeFooter.children.StoreManagerReceivePaymentProcess.visible", true) : "";
     processInstanceData.action === 'CHALLAN ISSUED' ?
       setOnGroundButtonVisibleTrueFalse(true, dispatch) : "";
   }
@@ -779,7 +782,8 @@ const setSearchResponse = async (
 
     let encroachmentType = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].encroachmentType", '');
     let paymentStatus = get(state, "screenConfiguration.preparedFinalObject.eChallanDetail[0].paymentDetails.paymentStatus", 'PENDING');
-    let receiveVisible = appstatus === "PENDING FOR AUCTION" || appstatus === "SENT TO STORE" || appstatus === "CHALLAN ISSUED" ? false : paymentStatus === 'PAID' ? false : true;
+    //let receiveVisible = appstatus === "PENDING FOR AUCTION" || appstatus === "SENT TO STORE" || appstatus === "CHALLAN ISSUED" ? false : paymentStatus === 'PAID' ? false : true;
+    let receiveVisible = appstatus === "PENDING FOR AUCTION" || appstatus === "ADDED TO STORE" || appstatus === "CHALLAN ISSUED" ? false : paymentStatus === 'PAID' ? false : true;
     
     setGridVisibleTrueFalse(state, encroachmentType, appstatus, dispatch);
 
