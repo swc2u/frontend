@@ -134,6 +134,7 @@ if(checkDocumentUpload === false){
             name="name"
             type="text"
             value={this.props.Name}
+            disabled ={true}
             pattern="[A-Za-z]"
             required = {true}
             hintText={
@@ -152,7 +153,6 @@ if(checkDocumentUpload === false){
                 fontSize="12px"
               />
             }
-            onChange={handleChange('firstName')}
             underlineStyle={{ bottom: 7 }}
             underlineFocusStyle={{ bottom: 7 }}
             hintStyle={{ width: "100%" }}
@@ -166,6 +166,7 @@ if(checkDocumentUpload === false){
             type="string"
             value={this.props.purpose}
             required = {true}
+            disabled ={true}
             hintText={
               <Label
                 label="BK_MYBK_NAME_PURPOSE_PLACEHOLDER"
@@ -182,7 +183,6 @@ if(checkDocumentUpload === false){
                 fontSize="12px"
               />
             }
-            onChange={handleChange('email')}
             underlineStyle={{ bottom: 7 }}
             underlineFocusStyle={{ bottom: 7 }}
             hintStyle={{ width: "100%" }}
@@ -196,6 +196,7 @@ if(checkDocumentUpload === false){
             name="houseNo"
             type="text"
             value={this.props.houseNo}
+            disabled ={true}
             required = {true}
             hintText={
               <Label
@@ -213,7 +214,6 @@ if(checkDocumentUpload === false){
                 fontSize="12px"
               />
             }
-            onChange={handleChange('mobileNo')}
             underlineStyle={{ bottom: 7 }}
             underlineFocusStyle={{ bottom: 7 }}
             hintStyle={{ width: "100%" }}
@@ -223,10 +223,11 @@ if(checkDocumentUpload === false){
         <div className="col-sm-6 col-xs-6">
             <TextField
               id="mobileNo"
-              name="mobileNo"
+              name="mobileNo"     
               type="text"
               value={this.props.mobileNo}
               required = {true}
+              disabled ={true}
               hintText={
                 <Label
                   label="BK_MYBK_CITIZEN_MOBILENO_PLACEHOLDER"
@@ -243,7 +244,6 @@ if(checkDocumentUpload === false){
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
@@ -257,6 +257,7 @@ if(checkDocumentUpload === false){
               type="text"
               value={this.props.gstNo == "NA" ? "NOT APPLICABLE" : this.props.gstNo}
               required = {true}
+              disabled ={true}
               hintText={
                 <Label
                   label="BK_MYBK_CC_ROOM_GST_NO"
@@ -273,7 +274,6 @@ if(checkDocumentUpload === false){
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
@@ -285,6 +285,7 @@ if(checkDocumentUpload === false){
               name="doc"
               type="text"
               value={value1}
+              disabled ={true}
               required = {true}
               hintText={
                 <Label
@@ -302,7 +303,6 @@ if(checkDocumentUpload === false){
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}

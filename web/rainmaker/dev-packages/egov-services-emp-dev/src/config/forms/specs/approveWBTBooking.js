@@ -35,7 +35,11 @@ const formConfig = {
         jsonPath: "Booking.bkContactNo",
         value:''
       },
-      
+      quantity: {
+        id: "WTquantity",
+        jsonPath: "Booking.quantity",
+        value:''
+      },
         // createdBy: {
         //   id: "createdby",
         //   jsonPath: "Booking.bookingsRemarks[0].bkCreatedBy",
@@ -60,7 +64,7 @@ const formConfig = {
       textarea: {
         id: "textarea",
         hintText: "CS_COMMON_COMMENTS_PLACEHOLDER",
-      },
+      }, 
       action: {
         id: "action",
         jsonPath: "Booking.bkAction",

@@ -49,7 +49,7 @@ const styles = theme => ( {
 
 
 
-const RejectComplaintForm = ({ form, options,classes, bkStatus, mobileNumber, driverFullName, handleValidation, onDriverNameChange, approverName, onApproverNameChange, onMobileChange, onSubmit, bookingservice, bookingtype, applicationNumber, createdBy, tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue }) => {
+const RejectComplaintForm = ({ form, options,classes, bkStatus, quantity, mobileNumber, driverFullName, handleValidation, onDriverNameChange, approverName, onApproverNameChange, onMobileChange, onSubmit, bookingservice, bookingtype, applicationNumber, createdBy, tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue }) => {
 
 
   if (form && form.fields) {
@@ -63,7 +63,8 @@ const RejectComplaintForm = ({ form, options,classes, bkStatus, mobileNumber, dr
     formValue.driverName.value = driverFullName;
     formValue.mobileNumber.value = mobileNumber;
     formValue.approverName.value = approverName;
-    formValue.businessService.value = bookingservice
+    formValue.businessService.value = bookingservice;    
+    formValue.quantity.value = quantity;
   }
   const fields = form.fields || {};
   const submit = form.submit;

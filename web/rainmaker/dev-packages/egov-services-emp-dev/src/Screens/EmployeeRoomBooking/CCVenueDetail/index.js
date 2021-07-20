@@ -49,36 +49,7 @@ class ApplicatInfo extends Component {
     let mb=/^\d{10}$/;
     let fname = /^[a-zA-Z'-]+$/;
     e.preventDefault();
-    // if(this.props.email==""||this.props.mobileNo==""||this.props.houseNo==""){
-    //   this.props.toggleSnackbarAndSetText(
-    //     true,
-    //     {
-    //       labelName: "Error_Message_For_Water_tanker_Application",
-    //       labelKey: `BK_ERROR_MESSAGE_FOR_WATER_TANKER_APPLICATION`
-    //     },
-    //     "warning"
-    //   );
-    // }
-    // else if(!re.test(this.props.email)){
-    //   this.props.toggleSnackbarAndSetText(
-    //     true,
-    //     {
-    //       labelName: "Please enter valid email address",
-    //       labelKey: `BK_ERROR_MESSAGE_EMAIL_VALIDATION`
-    //     },
-    //     "warning"
-    //   );
-    // }else if(!mb.test(this.props.mobileNo)){
-    //   this.props.toggleSnackbarAndSetText(
-    //     true,
-    //     {
-    //       labelName: "Please enter valid mobile number",
-    //       labelKey: `BK_ERROR_MESSAGE_FOR_MOBILE_VALIDATION`
-    //     },
-    //     "warning"
-    //   );
-
-    // }
+    
     this.props.nextStep();
     
   }
@@ -119,6 +90,7 @@ class ApplicatInfo extends Component {
             id="name"
             name="name"
             type="text"
+            disabled ={true}
             value={this.props.location}
             pattern="[A-Za-z]"
             required = {true}
@@ -138,7 +110,6 @@ class ApplicatInfo extends Component {
                 fontSize="12px"
               />
             }
-            onChange={handleChange('firstName')}
             underlineStyle={{ bottom: 7 }}
             underlineFocusStyle={{ bottom: 7 }}
             hintStyle={{ width: "100%" }}
@@ -151,6 +122,7 @@ class ApplicatInfo extends Component {
             name="email"
             type="string"
             value={email}
+            disabled ={true}
             required = {true}
             hintText={
               <Label
@@ -168,7 +140,6 @@ class ApplicatInfo extends Component {
                 fontSize="12px"
               />
             }
-            onChange={handleChange('email')}
             underlineStyle={{ bottom: 7 }}
             underlineFocusStyle={{ bottom: 7 }}
             hintStyle={{ width: "100%" }}
@@ -182,6 +153,7 @@ class ApplicatInfo extends Component {
             name="mobile-no"
             type="text"
             value={this.props.Sector}
+            disabled ={true}
             required = {true}
             hintText={
               <Label
@@ -199,7 +171,7 @@ class ApplicatInfo extends Component {
                 fontSize="12px"
               />
             }
-            onChange={handleChange('mobileNo')}
+           
             underlineStyle={{ bottom: 7 }}
             underlineFocusStyle={{ bottom: 7 }}
             hintStyle={{ width: "100%" }}
@@ -212,6 +184,7 @@ class ApplicatInfo extends Component {
               name="houseNo"
               type="text"
               value={this.props.fromDate}
+              disabled ={true}
               required = {true}
               hintText={
                 <Label
@@ -229,7 +202,7 @@ class ApplicatInfo extends Component {
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
+             
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
@@ -243,6 +216,7 @@ class ApplicatInfo extends Component {
               type="text"
               value={this.props.toDate}
               required = {true}
+              disabled ={true}
               hintText={
                 <Label
                   label="BK_MY_BK_ROOM_FROM_DATE"
@@ -259,7 +233,7 @@ class ApplicatInfo extends Component {
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
+            
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
@@ -273,6 +247,7 @@ class ApplicatInfo extends Component {
               name="houseNo"
               type="text"
               value={this.props.dimension}
+              disabled ={true}
               required = {true}
               hintText={
                 <Label
@@ -290,7 +265,7 @@ class ApplicatInfo extends Component {
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
+            
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
@@ -305,6 +280,7 @@ class ApplicatInfo extends Component {
               type="text"
               value={this.props.ReasonForDiscount}
               required = {true}
+              disabled ={true}
               hintText={
                 <Label
                   label="BK_MYBK_ROOM_REASON_FOR_DISCOUNT"
@@ -321,7 +297,7 @@ class ApplicatInfo extends Component {
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
+              
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
@@ -335,6 +311,7 @@ class ApplicatInfo extends Component {
               type="text"
               value={this.props.discount}
               required = {true}
+              disabled ={true}
               hintText={
                 <Label
                   label="BK_MYBK_ROOM_DISCOUNT"
@@ -351,7 +328,7 @@ class ApplicatInfo extends Component {
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
+            
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
@@ -397,6 +374,7 @@ class ApplicatInfo extends Component {
               type="text"
               value={this.props.cleaningCharges}
               required = {true}
+              disabled ={true}
               hintText={
                 <Label
                   label="BK_MYBK_CLEANING_CHARGES_PLACEHOLDER"
@@ -413,7 +391,7 @@ class ApplicatInfo extends Component {
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
+             
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
@@ -427,6 +405,7 @@ class ApplicatInfo extends Component {
               name="houseNo"
               type="text"
               value={this.props.Rent}
+              disabled ={true}
               required = {true}
               hintText={
                 <Label
@@ -444,7 +423,7 @@ class ApplicatInfo extends Component {
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
+             
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
@@ -457,6 +436,7 @@ class ApplicatInfo extends Component {
               name="houseNo"
               type="text"
               value={this.props.cgst}
+              disabled ={true}
               required = {true}
               hintText={
                 <Label
@@ -474,7 +454,7 @@ class ApplicatInfo extends Component {
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
+             
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
@@ -487,6 +467,7 @@ class ApplicatInfo extends Component {
               name="houseNo"
               type="text"
               value={this.props.utgst}
+              disabled ={true}
               required = {true}
               hintText={
                 <Label
@@ -504,7 +485,7 @@ class ApplicatInfo extends Component {
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
+             
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
@@ -517,6 +498,7 @@ class ApplicatInfo extends Component {
               name="houseNo"
               type="text"
               value={this.props.surcharge}
+              disabled ={true}
               required = {true}
               hintText={
                 <Label
@@ -534,7 +516,7 @@ class ApplicatInfo extends Component {
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
+             
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
@@ -550,6 +532,7 @@ class ApplicatInfo extends Component {
               // value={this.props.facilitationCharges}
               value={"100"}
               required = {true}
+              disabled ={true}
               hintText={
                 <Label
                   label="BK_MYBK_FACILITATION_CHARGES_PLACEHOLDER"
@@ -566,7 +549,7 @@ class ApplicatInfo extends Component {
                   fontSize="12px"
                 />
               }
-              onChange={handleChange('houseNo')}
+            
               underlineStyle={{ bottom: 7 }}
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
