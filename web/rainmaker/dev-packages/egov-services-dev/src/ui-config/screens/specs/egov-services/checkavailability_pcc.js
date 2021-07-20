@@ -273,8 +273,15 @@ const prepareEditFlow = async (
             let response = await getMasterDataPCC(requestBody);
             let responseStatus = get(response, "status", "");
             if (responseStatus == "SUCCESS" || responseStatus == "success") {
-                dispatch(prepareFinalObject("masterData", response.data));
-                requestBody = {
+                
+                let newResponse = response.data.map((el) => {
+                let bkDuration =
+                    el.bookingAllowedFor === "" ? "FULLDAY" : "HOURLY";
+                let newObj = { ...el, bkDuration };
+                return newObj;
+                });
+            dispatch(prepareFinalObject("masterData", newResponse));
+              requestBody = {
                     bookingType: bookingsModelList[0].bkBookingType,
                     bookingVenue: bookingsModelList[0].bkBookingVenue,
                     sector: bookingsModelList[0].bkSector,
