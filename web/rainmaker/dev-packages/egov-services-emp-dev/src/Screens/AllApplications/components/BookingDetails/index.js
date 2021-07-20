@@ -80,9 +80,11 @@ class BookingDetails extends Component {
 
 
   render() {
-    const { status, historyApiData, applicantName, applicationNo, submittedDate, dateCreated, address, sector, houseNo, bookingType, mapAction, images, action, role,bookingForDate, bookingForTime} = this.props;
+    const { status,quantity,historyApiData, applicantName, applicationNo, submittedDate, dateCreated, address, sector, houseNo, bookingType, mapAction, images, action, role,bookingForDate, bookingForTime} = this.props;
     var ProcessInstances = [];
-
+    let StrQuantity = quantity.toString();
+    console.log("StrQuantity",StrQuantity)
+console.log("ProcessInstancesWaterTanker",this.props)
     if (historyApiData != undefined && historyApiData.ProcessInstances && historyApiData.ProcessInstances.length > 0) {
       ProcessInstances = [...historyApiData.ProcessInstances];
     }
@@ -152,16 +154,6 @@ class BookingDetails extends Component {
                       label={'BK_'+status}
                     />
                   </div>
-                  {/* <div className="col-md-4">
-                    <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_APPLICATION_DETAILS_SUBMISSION_DATE" />
-                    <b><Label
-                      className="col-xs-12  col-sm-12 col-md-12  status-result-color"
-                      label={submittedDate}
-                      id="complaint-details-submission-date"
-                      labelStyle={{ color: "inherit" }}
-                      label={dateCreated}
-                    /></b>
-                  </div> */}
                   <div className="col-md-4">
                     <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_APPLICATION_BOOKING_TYPE" />
                     <Label
@@ -170,6 +162,16 @@ class BookingDetails extends Component {
                       id="complaint-details-submission-date"
                       labelStyle={{ color: "inherit" }}
                       label={'BK_'+bookingType}
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_EMP_WT_QUANTITY" />
+                    <Label
+                      className="col-xs-12  col-sm-12 col-md-12  status-result-color"
+
+                      id="complaint-details-submission-date"
+                      labelStyle={{ color: "inherit" }}
+                      label={quantity == undefined && quantity == null ? "Not Found" : StrQuantity}   
                     />
                   </div>
                   <div className="col-md-4">
