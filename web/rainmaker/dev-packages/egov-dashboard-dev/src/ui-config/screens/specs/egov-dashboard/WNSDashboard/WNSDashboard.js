@@ -14,7 +14,7 @@ export const FilterForm = getCommonCard({
       },
       props: {
         style:{
-          width : "130px"
+          width : "150px"
         }
       },
       gridDefination: {
@@ -47,7 +47,7 @@ export const FilterForm = getCommonCard({
           min: ''
         },
         style:{
-          width : "130px"
+          width : "150px"
         }
       },
       gridDefination: {

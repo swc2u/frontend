@@ -69,8 +69,8 @@ const styles = {
 
 const header = getCommonHeader(
   {
-    labelName: "Undertaking -PET NOC",
-    labelKey: "NOC_REQ_PET_DOCS_HEADER"
+    labelName: "Conditions for issue of No Objection Certifcate",
+    labelKey: "NOC_REQ_SELLMEAT_DOCS_HEADER"
   },
   {
     style: styles.header
@@ -293,11 +293,6 @@ export const getRequiredDocuments = (type) => {
             labelName: "UNDERTAKING10",
             labelKey: "SELLMEATNOC_UNDERTAKINGPOINT10"
           }),
-          subText13: getCommonParagraph({
-            labelName: "UNDERTAKING13",
-            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT13"
-          }),
-
           subText11: getCommonParagraph({
             labelName: "UNDERTAKING11",
             labelKey: "SELLMEATNOC_UNDERTAKINGPOINT11"
@@ -305,6 +300,18 @@ export const getRequiredDocuments = (type) => {
           subText12: getCommonParagraph({
             labelName: "UNDERTAKING12",
             labelKey: "SELLMEATNOC_UNDERTAKINGPOINT12"
+          }),
+          subText13: getCommonParagraph({
+            labelName: "UNDERTAKING13",
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT13"
+          }),
+          subText14: getCommonParagraph({
+            labelName: "UNDERTAKING14",
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT14"
+          }),
+          subText15: getCommonParagraph({
+            labelName: "UNDERTAKING15",
+            labelKey: "SELLMEATNOC_UNDERTAKINGPOINT15"
           }),
 
         }

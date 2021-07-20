@@ -13,6 +13,7 @@ class DashboardAudit extends React.Component {
     constructor(props) {
         super(props);
         this.state ={
+            noRecordFound : "",
             checkData:[],
             allData: [],
             dataOne: [],
@@ -251,6 +252,7 @@ class DashboardAudit extends React.Component {
             })
         }
         componentDidUpdate(){
+            debugger;
             const propsData = this.props.data;
             if(JSON.stringify(this.state.checkData) !== JSON.stringify(propsData)){
                 const dropdownSelected = this.props.data[1].reportSortBy.value;
@@ -275,60 +277,71 @@ class DashboardAudit extends React.Component {
                     return r;
                     }, {});
                 
-                data = group[dropdownSelected];
+                data = group[dropdownSelected] ? group[dropdownSelected] : [];
                 
                 var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
                 "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
                 
-                var group = data.reduce((r, a) => {
-                    r[new Date(a["audit_schedule_date"]).getFullYear()+"-"+monthJSON[new Date(a["audit_schedule_date"]).getMonth()]] 
-                    = [...r[new Date(a["audit_schedule_date"]).getFullYear()+"-"+monthJSON[new Date(a["audit_schedule_date"]).getMonth()]] || [], a];
-                    return r;
-                    }, {});
-        
-                var graphData = [];
-                var graphLabel = dateRange;
-                for(var i=0; i<graphLabel.length; i++){
-                    if(group[graphLabel[i]]){
-                        graphData.push(group[graphLabel[i]].length);
-                    }else{
-                        graphData.push(0);
+                if(data.length > 0){
+                    var group = data.reduce((r, a) => {
+                        r[new Date(a["audit_schedule_date"]).getFullYear()+"-"+monthJSON[new Date(a["audit_schedule_date"]).getMonth()]] 
+                        = [...r[new Date(a["audit_schedule_date"]).getFullYear()+"-"+monthJSON[new Date(a["audit_schedule_date"]).getMonth()]] || [], a];
+                        return r;
+                        }, {});
+            
+                    var graphData = [];
+                    var graphLabel = dateRange;
+                    for(var i=0; i<graphLabel.length; i++){
+                        if(group[graphLabel[i]]){
+                            graphData.push(group[graphLabel[i]].length);
+                        }else{
+                            graphData.push(0);
+                        }
                     }
+                    // Graph One Sorting Function 
+                    // var graphOneData2 = this.graphSorting( "audit_type", data, dropdownSelected );
+            
+                    
+                    // Column Data
+                    const tableData = data[0] ? Object.keys(data[0]) : [];
+                    var columnData = []
+                    for(var i=0; i<tableData.length; i++){
+                        var itemHeader = {}
+                        itemHeader["Header"] = this.camelize(tableData[i]);
+                        itemHeader["accessor"] = tableData[i];
+                        itemHeader["show"]= (i === 0 || i === 1 || i === 2 || i === 3 
+                            || i === 5 || i === 6 || i === 7
+                            || i === 8 || i === 9 || i === 10 || i === 11
+                            || i === 12 ) ? true : false ;
+                        columnData.push(itemHeader);
+                    }
+            
+                    // Column Unchange Data 
+                    const unchangeColumnData = this.columnUnchange(columnData)
+            
+                    
+                    this.setState({
+                        graphOneLabel: graphLabel,
+                        graphOneData: graphData,
+                        graphClicked: 0,
+                        dataOne: group,
+                        columnData: columnData,
+                        unchangeColumnData: unchangeColumnData,
+                        rowData: data,
+                        // hardJSON: hardJSON
+                    })
+                }else{
+                    this.setState({
+                        noRecordFound : "No Record Found..!",
+                        graphOneLabel: [],
+                        graphOneData: [],
+                        graphClicked: -1,
+                        dataOne: [],
+                        columnData: [],
+                        unchangeColumnData: [],
+                        rowData: [],
+                    })
                 }
-        
-                debugger;
-                // Graph One Sorting Function 
-                // var graphOneData2 = this.graphSorting( "audit_type", data, dropdownSelected );
-        
-                
-                // Column Data
-                const tableData = data[0] ? Object.keys(data[0]) : [];
-                var columnData = []
-                for(var i=0; i<tableData.length; i++){
-                    var itemHeader = {}
-                    itemHeader["Header"] = this.camelize(tableData[i]);
-                    itemHeader["accessor"] = tableData[i];
-                    itemHeader["show"]= (i === 0 || i === 1 || i === 2 || i === 3 
-                        || i === 5 || i === 6 || i === 7
-                        || i === 8 || i === 9 || i === 10 || i === 11
-                        || i === 12 ) ? true : false ;
-                    columnData.push(itemHeader);
-                }
-        
-                // Column Unchange Data 
-                const unchangeColumnData = this.columnUnchange(columnData)
-        
-                
-                this.setState({
-                    graphOneLabel: graphLabel,
-                    graphOneData: graphData,
-                    graphClicked: 0,
-                    dataOne: group,
-                    columnData: columnData,
-                    unchangeColumnData: unchangeColumnData,
-                    rowData: data,
-                    // hardJSON: hardJSON
-                })
 
                 this.setState({
                     checkData : propsData
@@ -895,6 +908,11 @@ class DashboardAudit extends React.Component {
     
             
         return (
+            <div>
+            <div className="recordNotFound" 
+            style={this.state.rowData.length ===0 ? null : {display:"none"}} >
+                Record not Found..!
+            </div>
             <div style={this.state.rowData.length ===0 ? {display:"none"} : null}>
             <div className="graphDashboard">
             
@@ -1024,6 +1042,7 @@ class DashboardAudit extends React.Component {
                 /> 
                 :null
             }
+            </div>
             </div>
             </div>
         );

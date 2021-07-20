@@ -60,7 +60,7 @@ class WaterDashboard extends React.Component {
 
     // PDF function 
     pdfDownload = (e) => {
-    debugger;
+     
     e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
@@ -112,7 +112,7 @@ class WaterDashboard extends React.Component {
     }
 
 
-    debugger;
+     
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -148,7 +148,7 @@ class WaterDashboard extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+         
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -162,7 +162,7 @@ class WaterDashboard extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+         
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -182,7 +182,7 @@ class WaterDashboard extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+         
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -209,7 +209,7 @@ class WaterDashboard extends React.Component {
             }
             return [graphLabel, graphData, group]
         }
-        debugger;
+         
         var dateRangeData = data;
         var sortBy = sortBy;
         var group = dateRangeData.reduce((r, a) => {
@@ -276,7 +276,7 @@ class WaterDashboard extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+         
         const propsData = this.props.data;
         this.setState({
             checkData : propsData
@@ -284,7 +284,7 @@ class WaterDashboard extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+         
         const propsData = this.props.data;
         if(JSON.stringify(this.state.checkData) !== JSON.stringify(propsData)){
 
@@ -315,11 +315,27 @@ class WaterDashboard extends React.Component {
                             var dt_Month = dt.getMonth() < 10 ? "0"+dt.getMonth() : dt.getMonth();
                             var dt_Year = dt.getFullYear();
                             dt = dt_Year+"-"+dt_Month+"-"+day;
+
+                            var formatted_ApplicationStatus = dataItem.applicationStatus === null ? "" : dataItem.applicationStatus;
+                            formatted_ApplicationStatus = formatted_ApplicationStatus.replaceAll("_"," ");
+                            formatted_ApplicationStatus = formatted_ApplicationStatus[0]+formatted_ApplicationStatus.substr(1).toLowerCase();
+                            
+                            var formatted_UsageCat = parentApplication.waterProperty.usageCategory === null ? "" : parentApplication.waterProperty.usageCategory;
+                            formatted_UsageCat = formatted_UsageCat.replaceAll("_"," ");
+                            formatted_UsageCat = formatted_UsageCat[0]+formatted_UsageCat.substr(1).toLowerCase();
+                            
+                            var formatted_ActivityType = dataItem.activityType === null ? "" : dataItem.activityType;
+                            formatted_ActivityType = formatted_ActivityType.replaceAll("_"," ");
+                            formatted_ActivityType = formatted_ActivityType[0]+formatted_ActivityType.substr(1).toLowerCase();
+                            
+
                             var itemApplication = {
                                 "applicationNo" : dataItem.applicationNo,
-                                "applicationStatus" : dataItem.applicationStatus,
+                                "connectionNo" : parentApplication.connectionNo,
+                                "applicationStatus" : formatted_ApplicationStatus,
                                 "status" : parentApplication.status,
-                                "activityType" : dataItem.activityType,
+                                // "activityType" : dataItem.activityType,
+                                "activityType" : formatted_ActivityType,
                                 "billGroup" : parentApplication.billGroup,
                                 "leagerGroup" : parentApplication.ledgerGroup,
                                 "proposedPipeSize" : parentApplication.proposedPipeSize,
@@ -327,7 +343,8 @@ class WaterDashboard extends React.Component {
                                 "plotNo" : parentApplication.waterProperty.plotNo,
                                 "sectorNo" : parentApplication.waterProperty.sectorNo,
                                 "usageSubCategory" : parentApplication.waterProperty.usageSubCategory,
-                                "usageCategory" : parentApplication.waterProperty.usageCategory,
+                                // "usageCategory" : parentApplication.waterProperty.usageCategory,
+                                "usageCategory" : formatted_UsageCat,
                                 "connectionOwnerDetails" : parentApplication.connectionHolders ? parentApplication.connectionHolders[0].name : "",
                                 "auditDetails" : dt,
                                 "amountPaid" : dataItem.totalAmountPaid
@@ -349,7 +366,7 @@ class WaterDashboard extends React.Component {
                     // Col Data
                     var columnData = [];
 
-                    debugger;
+                     
                     var headerData = [];
                     var keys = Object.keys(data[0]);
 
@@ -359,7 +376,7 @@ class WaterDashboard extends React.Component {
                     itemHeader["show"]= true ;
                     itemHeader["Cell"]= row => (
                         <div>
-                            <a href={"https://egov-dev.chandigarhsmartcity.in/employee/wns/search-preview?applicationNumber="+row.value+"&tenantId=ch.chandigarh&history=true&service=WATER"}> {row.value} </a>
+                            <a href={"https://egov.chandigarhsmartcity.in/employee/wns/search-preview?applicationNumber="+row.value+"&tenantId=ch.chandigarh&history=true&service=WATER"}> {row.value} </a>
                         </div>
                     );
                     columnData.push(itemHeader);
@@ -368,7 +385,7 @@ class WaterDashboard extends React.Component {
                         var item = {};
                         item["Header"] = this.camelize(Object.keys(data[0])[i]);
                         item["accessor"] = Object.keys(data[0])[i];
-                        item["show"] = true;
+                        item["show"] = i === 3 ? false : true;
                         columnData.push(item);
                     }
 
@@ -387,11 +404,13 @@ class WaterDashboard extends React.Component {
                     }
                     var graphOneSHOWLabel = [];
                     for(var i=0; i<graphData[0].length; i++){
-                        graphOneSHOWLabel.push(labelChangeJSON[graphData[0][i]]);
+                        var lableChange = labelChangeJSON[graphData[0][i]]
+                        graphOneSHOWLabel.push(lableChange);
                     }
 
                     this.setState({
-                        graphOneSHOWLabel : graphOneSHOWLabel,
+                        // graphOneSHOWLabel : graphOneSHOWLabel,
+                        graphOneSHOWLabel : graphData[0],
                         graphOneLabel : graphData[0],
                         graphOneData : graphData[1],
                         dataOne : graphData[2],
@@ -416,11 +435,27 @@ class WaterDashboard extends React.Component {
                             var dt_Month = dt.getMonth() < 10 ? "0"+dt.getMonth() : dt.getMonth();
                             var dt_Year = dt.getFullYear();
                             dt = dt_Year+"-"+dt_Month+"-"+day;
+
+
+                            var formatted_ApplicationStatus = dataItem.applicationStatus === null ? "" : dataItem.applicationStatus;
+                            formatted_ApplicationStatus = formatted_ApplicationStatus.replaceAll("_"," ");
+                            formatted_ApplicationStatus = formatted_ApplicationStatus[0]+formatted_ApplicationStatus.substr(1).toLowerCase();
+                            
+                            var formatted_UsageCat = parentApplication.waterProperty.usageCategory === null ? "" : parentApplication.waterProperty.usageCategory;
+                            formatted_UsageCat = formatted_UsageCat.replaceAll("_"," ");
+                            formatted_UsageCat = formatted_UsageCat[0]+formatted_UsageCat.substr(1).toLowerCase();
+                            
+                            var formatted_ActivityType = dataItem.activityType === null ? "" : dataItem.activityType;
+                            formatted_ActivityType = formatted_ActivityType.replaceAll("_"," ");
+                            formatted_ActivityType = formatted_ActivityType[0]+formatted_ActivityType.substr(1).toLowerCase();
+                            
                             var itemApplication = {
                                 "applicationNo" : dataItem.applicationNo,
-                                "applicationStatus" : dataItem.applicationStatus,
+                                "connectionNo" : parentApplication.connectionNo,
+                                "applicationStatus" : formatted_ApplicationStatus,
                                 "status" : parentApplication.status,
-                                "activityType" : dataItem.activityType,
+                                // "activityType" : dataItem.activityType,
+                                "activityType" : formatted_ActivityType,
                                 "billGroup" : parentApplication.billGroup,
                                 "leagerGroup" : parentApplication.ledgerGroup,
                                 "proposedPipeSize" : parentApplication.proposedPipeSize,
@@ -428,7 +463,8 @@ class WaterDashboard extends React.Component {
                                 "plotNo" : parentApplication.waterProperty.plotNo,
                                 "sectorNo" : parentApplication.waterProperty.sectorNo,
                                 "usageSubCategory" : parentApplication.waterProperty.usageSubCategory,
-                                "usageCategory" : parentApplication.waterProperty.usageCategory,
+                                // "usageCategory" : parentApplication.waterProperty.usageCategory,
+                                "usageCategory" : formatted_UsageCat,
                                 "connectionOwnerDetails" : parentApplication.connectionHolders ? parentApplication.connectionHolders[0].name : "",
                                 "auditDetails" : dt,
                                 "amountPaid" : dataItem.totalAmountPaid
@@ -437,7 +473,7 @@ class WaterDashboard extends React.Component {
                         }
                     }
 
-                    debugger;
+                     
                     data = sortedData;
                     var datesFormatted = this.dateTimeToForma(fromDT, toDT);
                     var dataRangeLabel = this.dateRange(datesFormatted[0], datesFormatted[1]);
@@ -448,7 +484,7 @@ class WaterDashboard extends React.Component {
                         return r;
                         }, {});
                     
-                    debugger;
+                     
                     var graphFifthData = [];
                     for(var i=0; i<dataRangeLabel.length; i++){
                         if(group[dataRangeLabel[i]]){
@@ -467,7 +503,7 @@ class WaterDashboard extends React.Component {
 
                     var columnData = [];
 
-                    debugger;
+                     
                     var headerData = [];
                     var keys = Object.keys(data[0]);
 
@@ -477,7 +513,7 @@ class WaterDashboard extends React.Component {
                     itemHeader["show"]= true ;
                     itemHeader["Cell"]= row => (
                         <div>
-                            <a href={"https://egov-dev.chandigarhsmartcity.in/employee/wns/search-preview?applicationNumber="+row.value+"&tenantId=ch.chandigarh&history=true&service=WATER"}> {row.value} </a>
+                            <a href={"https://egov.chandigarhsmartcity.in/employee/wns/search-preview?applicationNumber="+row.value+"&tenantId=ch.chandigarh&history=true&service=WATER"}> {row.value} </a>
                         </div>
                     );
                     columnData.push(itemHeader);
@@ -486,7 +522,8 @@ class WaterDashboard extends React.Component {
                         var item = {};
                         item["Header"] = this.camelize(Object.keys(data[0])[i]);
                         item["accessor"] = Object.keys(data[0])[i];
-                        item["show"] = true;
+                        item["show"] = i === 3 ? false : true;
+                        // item["show"] = true;
                         columnData.push(item);
                     }
 
@@ -620,7 +657,7 @@ class WaterDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                 
                 var ind = element[0]._index;
                 var selectedVal = this.state.graphOneLabel[ind];
                 var data = this.state.dataOne[selectedVal];
@@ -739,14 +776,14 @@ class WaterDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                 
                 var ind = element[0]._index;
                 var selectedVal = this.state.graphTwoLabel[ind];
                 var data = this.state.dataTwo[selectedVal];
                 if(data){
                     var graphData = this.graphSorting(data, "subDiv", "dropdown_1_SubDivision");
                 
-                    debugger;
+                     
                     var thirdlabel = graphData[0];
                     var thirdData = [0,0,0,0,0];
                     for(var i=0; i<thirdlabel.length; i++){
@@ -875,7 +912,7 @@ class WaterDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                 
                 var ind = element[0]._index;
                 var selectedVal = this.state.graphThirdLabel[ind];
                 selectedVal = selectedVal.substring(selectedVal.length-2, selectedVal.length)
@@ -1013,7 +1050,7 @@ class WaterDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                 
                 var ind = element[0]._index;
                 var selectedVal = this.state.graphFourthLabel[ind];
                 // selectedVal = selectedVal.substring(selectedVal.length-1, selectedVal.length)
@@ -1158,14 +1195,18 @@ class WaterDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                 
                 var ind = element[0]._index;
                 var selectedVal = this.state.graphFifthLabel[ind];
-                const data = this.state.dataFifth[selectedVal];
+                const data = this.state.dataFifth[selectedVal];              
 
-                if(data){
+                let amountData = [];
+                data.forEach(ele => ele.amountPaid !== null ? 
+                    amountData.push(ele) : null );
+
+                if(amountData){
                     this.setState({
-                        rowData : data
+                        rowData : amountData
                     })
                 }
             }
@@ -1175,7 +1216,7 @@ class WaterDashboard extends React.Component {
         
     return (
         <div>
-        <div>
+        <div className="recordNotFound">
             { this.state.recordNotFound }
         </div>
 
@@ -1278,13 +1319,15 @@ class WaterDashboard extends React.Component {
                 this.state.unchangeColumnData.length > 0  ? 
                 <div className="tableFeature">
                     <div className="columnToggle-Text"> Download As: </div>
-                    <div className="columnToggleBtn"> 
-                    <CSVLink data={csvData}
-                    filename={"Water_dashboard.csv"}
-                    > Export Excel </CSVLink>
+                    <div className="tableFeature-btn-container">
+                        <div className="columnToggleBtn"> 
+                        <CSVLink data={csvData}
+                        filename={"Water_dashboard.csv"}
+                        > Export Excel </CSVLink>
+                        </div>
+                        <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+                        <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
                     </div>
-                    <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
-                    <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
                 </div>
                 :null
             }
@@ -1311,7 +1354,7 @@ class WaterDashboard extends React.Component {
                 data={ this.state.rowData }  
                 columns={ this.state.columnData }  
                 defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
-                pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
+                // pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
                 pageSizeOptions = {[20,40,60]}  
                 /> 
                 :null

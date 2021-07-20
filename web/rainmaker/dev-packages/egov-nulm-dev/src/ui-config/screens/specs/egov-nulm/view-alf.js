@@ -168,8 +168,13 @@ const getALFDetails = async(state, dispatch) =>{
   let response = await getSearchResults([],requestBody, dispatch,"alf");
 
   if(response){
-    getFileUrlDetails(state,dispatch,tenantId,response);
     var res = response.ResponseBody[0];
+    var uploaded_Docs = JSON.parse(res.document);
+    
+    if(uploaded_Docs[0].filestoreId !== null){
+      getFileUrlDetails(state,dispatch,tenantId,response);
+    }    
+
     var demo = {
       "name" :res.name,
       // "dor" : res.registeration_date,
@@ -185,7 +190,7 @@ const getALFDetails = async(state, dispatch) =>{
       "alfFormattedThrough" : res.alf_formated_through,
       "dateOfOpeningAccount" : res.date_of_opening_account,
       "accountNumber" : res.account_number,
-      "applicationDocument": JSON.parse(res.document)
+      "applicationDocument": uploaded_Docs
     }
     dispatch(prepareFinalObject("NULMALFRequest", demo));
 

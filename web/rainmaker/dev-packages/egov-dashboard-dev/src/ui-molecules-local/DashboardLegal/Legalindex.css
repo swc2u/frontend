@@ -221,6 +221,7 @@ table th {
 .legal-table td, th {
   border: 1px solid #646060;
   font-size: 9pt;
+  padding: 12px;
   border-collapse: collapse; }
 
 .legal-table tr:nth-child(even) {

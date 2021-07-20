@@ -152,6 +152,14 @@
   width: 100%;
   border-style: ridge; }
 
+.recordNotFound {
+  color: blue;
+  text-align: center;
+  padding: 25px; }
+
+.tableFeature-btn-container {
+  display: flex; }
+
 @media only screen and (max-width: 500px) {
   .graphDashboard {
     display: contents;
@@ -165,10 +173,12 @@
     height: 500px;
     /* border-style: ridge */ }
   .tableContainer {
-    display: initial;
-    width: 95%; }
+    display: inherit;
+    width: 100%; }
   .tableFeature {
     position: relative;
     margin-left: 10%;
     margin-bottom: 10px;
-    margin-top: 10px; } }
+    margin-top: 10px; }
+  .tableFeature-btn-container {
+    display: block; } }
