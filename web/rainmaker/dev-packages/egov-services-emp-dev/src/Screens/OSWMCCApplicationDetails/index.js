@@ -1028,7 +1028,7 @@ downloadPLFunction = async (e) => {
 									isAssignedToEmployee={isAssignedToEmployee}
 								/>
 							</div>
-							<div style={{
+							<div className="apply-wizard-footer-div" style={{
 								paddingTop: "30px",
 								paddingRight: "30px", float: "right",
 							}}>

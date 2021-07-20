@@ -101,6 +101,17 @@ const setSearchResponse = async (
                 recData[0].businessService
             );
         }
+        let amount= get(
+            state.screenConfiguration.preparedFinalObject,
+            "ReceiptTemp[0].Bill[0].billDetails[0].amount"
+        );
+        let quantity= get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking.quantity"
+        );
+        if(amount!==undefined){
+            dispatch(prepareFinalObject("BaseCharge", `@Rs.${amount/parseInt(quantity)}/quantity`));
+        }
     } else {
         dispatch(prepareFinalObject("ReceiptTemp[0].Bill", []));
         set(
