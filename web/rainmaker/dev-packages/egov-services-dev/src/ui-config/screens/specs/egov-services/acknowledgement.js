@@ -17,7 +17,6 @@ import { getCurrentFinancialYear } from "../utils";
 
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getapplicationType, setapplicationType, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
-
 export const header = getCommonContainer({
     header: getCommonHeader({
         labelName: `Application for ${
@@ -253,7 +252,15 @@ const getAcknowledgementCard = (
 ) => {
     if (purpose === "apply" && status === "success") {
         return {
-            header,
+            header : getCommonHeader({
+                labelName: `Application for ${
+                    getapplicationType() === "OSBM"
+                        ? "Open Space to Store Building Material"
+                        : getapplicationType() === "NLUJM" ? "New Location" :
+                            getapplicationType() === "GFCP" ? "Commercial Ground" : getapplicationType() === "OSUJM" ? "Open Space within MCC jurisdiction" : getapplicationType() === "PACC" ? "Parks & Community Center/Banquet Halls" : getapplicationType() === "BKROOM"?"Community Center Room":"Water Tanker"
+                    } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
+                labelKey: "",
+            }),
             applicationSuccessCard: {
                 uiFramework: "custom-atoms",
                 componentPath: "Div",

@@ -110,7 +110,7 @@ const setSearchResponse = async (
             "Booking.quantity"
         );
         if(amount!==undefined){
-            dispatch(prepareFinalObject("BaseCharge", `@Rs.${amount/parseInt(quantity)}/quantity`));
+            dispatch(prepareFinalObject("BaseCharge", `@ Rs.${amount/parseInt(quantity)} X ${parseInt(quantity)} (Qty)`));
         }
     } else {
         dispatch(prepareFinalObject("ReceiptTemp[0].Bill", []));

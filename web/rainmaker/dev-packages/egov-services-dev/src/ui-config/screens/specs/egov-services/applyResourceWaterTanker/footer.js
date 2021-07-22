@@ -162,7 +162,7 @@ const callBackForNext = async (state, dispatch) => {
                 "Booking.quantity"
             );
             if(amount!==undefined){
-                dispatch(prepareFinalObject("BaseCharge", `@Rs.${amount/parseInt(quantity)}/quantity`));
+                dispatch(prepareFinalObject("BaseCharge", `@ Rs.${amount/parseInt(quantity)} X ${parseInt(quantity)} (Qty)`));
             }
     
         } else {

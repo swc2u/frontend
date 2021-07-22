@@ -9,7 +9,7 @@ import {
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import "../../contributed-modules/react-day-picker/lib/style.css";
 import "./index.css";
 import get from "lodash/get";
@@ -22,7 +22,12 @@ class BookingCalendar extends React.Component {
             filtertoDate: "",
             dselectedDays: [],
         };
-        this.handleResetClick()
+        const changeDateVenue = getQueryArg(window.location.href, "changeDateVenue");
+        console.log(`changeDateVenue`, changeDateVenue)
+        if( changeDateVenue !== "Enabled"){
+            this.handleResetClick()
+    
+        }
     }
 
     componentDidMount() {
