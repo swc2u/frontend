@@ -20,6 +20,11 @@ const formConfig = {
         jsonPath: "Booking.businessService",
         value:''
       },
+      quantity: {
+        id: "WTquantity",
+        jsonPath: "Booking.quantity",
+        value:''
+      },
         createdBy: {
           id: "createdby",
           jsonPath: "Booking.bookingsRemarks[0].bkCreatedBy",

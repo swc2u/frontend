@@ -915,6 +915,7 @@ export const createUpdateWtbApplication = async (state, dispatch, action) => {
         set(payload, "bkAction", action);
         set(payload, "businessService", "BWT");
         set(payload, "financialYear", `${getCurrentFinancialYear()}`);
+        set(payload,"quantity" , parseInt(payload.quantity))
         // setapplicationMode(status);
 
         if (method === "CREATE") {
