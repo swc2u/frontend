@@ -11,6 +11,7 @@ import {
 } from "../../ui-config/screens/specs/utils";
 import get from "lodash/get";
 import set from "lodash/set";
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 
 class PlotArea extends React.Component {
     constructor(props) {
@@ -111,6 +112,46 @@ class PlotArea extends React.Component {
                 top: document.body.scrollHeight,
                 behavior: "smooth",
             });
+            const changeDateVenue = getQueryArg(
+                window.location.href,
+                "changeDateVenue"
+              );
+              
+            if(changeDateVenue!= null){
+                
+                if(item.id !== this.props.oldAvailabilityCheckData.bkBookingVenue){
+                    reservedDates.map((d, i) =>{
+                
+                        if(new Date(d).getTime() === new Date(this.props.oldAvailabilityCheckData.bkFromDate).getTime() )   {
+                            
+                            let errorMessage = {
+                                labelName:`${this.props.oldAvailabilityCheckData.bkFromDate} is alreday booked for selected location`,
+                                labelKey:`${this.props.oldAvailabilityCheckData.bkFromDate} is alreday booked for selected location`, //UPLOAD_FILE_TOAST
+                            };
+                            this.props.dispatch(toggleSnackbar(true, errorMessage, "error"))    
+                            set(
+                                this.props.calendarVisiblity.checkavailability_pcc,
+                                "components.div.children.availabilityCalendarWrapper.visible",
+                                false
+                            );
+                        } else if (new Date(d).getTime() === new Date(this.props.oldAvailabilityCheckData.bkToDate).getTime()){
+                            
+                            let errorMessage = {
+                                labelName:`${this.props.oldAvailabilityCheckData.bkToDate} is alreday booked for selected location`,
+                                labelKey:`${this.props.oldAvailabilityCheckData.bkToDate} is alreday booked for selected location`, //UPLOAD_FILE_TOAST
+                            };
+                            this.props.dispatch(toggleSnackbar(true, errorMessage, "error"))  
+                            set(
+                                this.props.calendarVisiblity.checkavailability_pcc,
+                                "components.div.children.availabilityCalendarWrapper.visible",
+                                false
+                            );
+                        } 
+                    }
+                  );
+                
+                }
+            } 
         } else {
             let errorMessage = {
                 labelName: "Something went wrong, Try Again later!",
@@ -118,6 +159,10 @@ class PlotArea extends React.Component {
             };
             this.props.toggleSnackbar(true, errorMessage, "error");
         }
+            // this.props.prepareFinalObject(
+        //     "imageWidth",
+        //     "100%"
+        // );
     };
 
     render() {
@@ -150,20 +195,22 @@ class PlotArea extends React.Component {
     }
 }
 const mapStateToProps = (state) => {
-console.log(state, "Change date  State");
-    return {
-        calendarVisiblity: state.screenConfiguration.screenConfig,
+    console.log(state, "Change date  State");
+        return {
+            calendarVisiblity: state.screenConfiguration.screenConfig,
+            oldAvailabilityCheckData : state.screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
+        };
     };
-};
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        prepareFinalObject: (jsonPath, value) =>
-            dispatch(prepareFinalObject(jsonPath, value)),
-        toggleSnackbar: (jsonPath, value) =>
-            dispatch(toggleSnackbar(jsonPath, value)),
-        changeRoute: (path) => dispatch(setRoute(path)),
+    
+    const mapDispatchToProps = (dispatch) => {
+        return {
+            prepareFinalObject: (jsonPath, value) =>
+                dispatch(prepareFinalObject(jsonPath, value)),
+            toggleSnackbar: (jsonPath, value) =>
+                dispatch(toggleSnackbar(jsonPath, value)),
+            changeRoute: (path) => dispatch(setRoute(path)),
+            dispatch 
+        };
     };
-};
-
+    
 export default connect(mapStateToProps, mapDispatchToProps)(PlotArea);

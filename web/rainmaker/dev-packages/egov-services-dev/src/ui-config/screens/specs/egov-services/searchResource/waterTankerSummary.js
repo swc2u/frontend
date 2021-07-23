@@ -189,9 +189,25 @@ export const waterTankerSummary = getCommonGrayCard({
                                 }
                             },
                         }
-                    )
-                   
-                }),
+                        ),
+                        BookingQuantity: getLabelWithValue(
+                            {
+                                labelName: "Booking Quantity",
+                                labelKey: "Booking Quantity",
+                            },
+                            {
+                                jsonPath: "Booking.quantity",
+                                callBack: (value) => {
+                                    if (value === undefined || value === "" || value === null) {
+                                       return "NA"
+                                    } else {
+                                        return value;
+                                    }
+                                },
+                            }
+                        ),
+                       
+                    }),
             }),
             items: [],
             hasAddItem: false,
