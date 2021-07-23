@@ -12,7 +12,7 @@ import { resetFiles } from "egov-ui-kit/redux/form/actions";
 import Button from "@material-ui/core/Button"; 
 import ShareIcon from "@material-ui/icons/Share";
 import get from "lodash/get";
-import isEqual from "lodash/isEqual";
+import isEqual from "lodash/isEqual";  
 import { prepareFormData } from "egov-ui-kit/redux/common/actions";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import OSMCCBookingDetails from "../AllApplications/components/OSMCCBookingDetails"
@@ -25,7 +25,7 @@ import BWTPaymentDetails from "../AllApplications/components/BWTPaymentDetails"
 import Footer from "../../modules/footer"
 import ActionButtonDropdown from '../../modules/ActionButtonDropdown'
 import BwtApplicationDriverDetailsfrom from "../AllApplications/components/BwtApplicationDriverDetails"
-
+  
 
 import jp from "jsonpath";
 // import {
@@ -424,6 +424,9 @@ downloadReceiptFunction = async (e) => {
 		pdfBankName,bkTime } = this.props;
 	const { complaint } = transformedComplaint;
 
+	let quantityAmount = paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[0].amount;
+
+	let baseAmount = (paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[0].amount/complaint.quantity)
 
 	var date2 = new Date();
 
@@ -447,13 +450,13 @@ downloadReceiptFunction = async (e) => {
 			"transactionId": paymentDetailsForReceipt && paymentDetailsForReceipt.Payments[0].transactionNumber,
 			"bookingPeriod": `${bkDate} , ${bkTime} `,
 			"bookingItem": "Online Payment Against Booking of Water Tanker",
-			"amount": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[0].amount,
-			// "tax": paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-			// 	(el) => el.taxHeadCode.includes("TAX")
-			// )[0].amount,
-			"grandTotal": paymentDetailsForReceipt.Payments[0].totalAmountPaid,
+			"amount": baseAmount,
+			"tax": "0",
+			"grandTotal": quantityAmount,
+			"wtQuantity":complaint && complaint.quantity ? complaint.quantity : '',
+			"wtTotalPayment":quantityAmount,
 			"amountInWords": this.NumInWords(
-				paymentDetailsForReceipt.Payments[0].totalAmountPaid
+				quantityAmount
 			),
 			"paymentItemExtraColumnLabel": "Date & Time",
 			paymentMode:
@@ -650,6 +653,13 @@ if(complaint.status){
     let applicationDetails = createWaterTankerApplicationData ? createWaterTankerApplicationData.data : '';
 	let paymentData = paymentDetails;
 
+	let quantityAmount = paymentDetailsForReceipt.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[0].amount;
+
+	let baseAmount = (paymentData.billDetails[0].billAccountDetails.filter(
+		(el) => el.taxHeadCode.includes("WATER_TANKAR_CHARGES_BOOKING_BRANCH")
+	)[0].amount/complaint.quantity)
+
+
 	var date2 = new Date();
 
 	var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
@@ -682,17 +692,22 @@ if(complaint.status){
           "applicationStatus": PdfStatus,
           "applicationType": complaint.bkStatus
         },
-        feeDetail: {
-			baseCharge:
-				paymentData === undefined
-					? null
-					: paymentData.billDetails[0].billAccountDetails.filter(
-						(el) => el.taxHeadCode.includes("WATER_TANKAR_CHARGES_BOOKING_BRANCH")
-					)[0].amount,
-			totalAmount:
-				paymentData === undefined
-					? null
-					: paymentData.totalAmount,
+        // feeDetail: {
+		// 	baseCharge:
+		// 		paymentData === undefined
+		// 			? null
+		// 			: paymentData.billDetails[0].billAccountDetails.filter(
+		// 				(el) => el.taxHeadCode.includes("WATER_TANKAR_CHARGES_BOOKING_BRANCH")
+		// 			)[0].amount,
+		// 	totalAmount: grandTotal,
+		// 			"wtQuantity":complaint.quantity,
+		// 			"wtTotalPayment":grandTotal			
+		// },
+		feeDetail: {
+			baseCharge: baseAmount,
+			totalAmount: quantityAmount,
+			"wtQuantity":complaint.quantity,
+			"wtTotalPayment":quantityAmount
 		},
         "generatedBy": {
 		  "generatedBy": userInfo.name,
@@ -996,6 +1011,7 @@ if(complaint.status){
 								/>
 								{complaint.bkStatus && (complaint.bkStatus).includes("Paid") &&
 									<BWTPaymentDetails
+									{...complaint}
 										paymentDetails={paymentDetails && paymentDetails}
 									/>
 
@@ -1215,6 +1231,7 @@ let paymentDetailsForReceipt = fetchPaymentAfterPayment;
 			approverName: selectedComplaint ? selectedComplaint.bkApproverName : 'NA',
 			time: selectedComplaint.bkTime,
 			date: selectedComplaint.bkDate,		
+			quantity: selectedComplaint.quantity
 		}
 
 

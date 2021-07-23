@@ -1149,14 +1149,14 @@ export const downloadReceipt = async (
                             "BOOKING_BRANCH_SERVICES.BOOKING_GROUND_OPEN_SPACES"
                             ? "Open Space within MCC jurisdiction"
                             : "Water Tanker"
-                    }`,
-                amount: amount,
-                tax: tax,
-                grandTotal:
-                    payloadReceiptDetails.Payments[0].totalAmountPaid,
-                amountInWords: NumInWords(
-                    payloadReceiptDetails.Payments[0].totalAmountPaid
-                ),
+                        }`,
+                        amount: applicationData.businessService === "BWT"?amount/parseInt(applicationData.quantity):
+                        amount,
+                        tax: tax,
+                        grandTotal:  payloadReceiptDetails.Payments[0].totalAmountPaid,
+                        amountInWords: NumInWords(
+                            payloadReceiptDetails.Payments[0].totalAmountPaid
+                        ),
                 paymentItemExtraColumnLabel:
                     payloadReceiptDetails.Payments[0].paymentDetails[0].bill
                         .businessService === "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE" ||
@@ -1171,7 +1171,9 @@ export const downloadReceipt = async (
                 receiptNo:
                     payloadReceiptDetails.Payments[0].paymentDetails[0]
                         .receiptNumber,
-                        refundableSecurity:   cgSecurityRefund
+                        refundableSecurity:   cgSecurityRefund,
+                        wtQuantity:applicationData.quantity,
+                        wtTotalPayment:amount
             };
         }
         console.log(paymentInfoData, "nero Qry str");
@@ -2180,15 +2182,16 @@ export const downloadApplication = async (
                     //             : paymentData.totalAmount,
                     // },
                     feeDetail: {
-                        baseCharge: baseCharge,
-                        taxes: taxes,
+                        baseCharge:applicationData.businessService === "BWT"?baseCharge/parseInt(applicationData.quantity): baseCharge,
+                        taxes: taxes===null ? 0 : taxes,
                         ugst: ugst,
                         cgst: cgst,
                         totalAmount:
                             paymentData === undefined
                                 ? null
-                                : paymentData.totalAmount,
-                                  refundableSecurity:   cgSecurityRefund  
+                                :paymentData.totalAmount,
+                        wtQuantity:applicationData.quantity,                              
+                        refundableSecurity:   cgSecurityRefund       
                     },
                     generatedBy: {
                         generatedBy: JSON.parse(getUserInfo()).name,

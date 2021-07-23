@@ -68,6 +68,12 @@
   }
 }
 
+@media screen and (max-width: 768px) {
+  .totalAmount {
+    visibility: hidden !important;
+  }
+}
+
 body[class^="complaint-details"] .map-container {
   z-index: 1101;
   height: calc(100vh - 64px);

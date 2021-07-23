@@ -5,7 +5,7 @@ import {
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
-
+import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
     getCommonApplyFooter,
     generateBill,
@@ -153,6 +153,18 @@ const callBackForNext = async (state, dispatch) => {
                     "BOOKING_BRANCH_SERVICES.WATER_TANKAR_CHARGES"
                 );
             }
+            let amount= get(
+                state.screenConfiguration.preparedFinalObject,
+                "ReceiptTemp[0].Bill[0].billDetails[0].amount"
+            );
+            let quantity= get(
+                state.screenConfiguration.preparedFinalObject,
+                "Booking.quantity"
+            );
+            if(amount!==undefined){
+                dispatch(prepareFinalObject("BaseCharge", `@ Rs.${amount/parseInt(quantity)} X ${parseInt(quantity)} (Qty)`));
+            }
+    
         } else {
             isFormValid = false;
             let errorMessage = {
