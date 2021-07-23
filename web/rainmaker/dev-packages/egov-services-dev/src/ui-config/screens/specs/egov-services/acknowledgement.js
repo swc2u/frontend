@@ -458,7 +458,7 @@ const screenConfig = {
             state,
             "screenConfiguration.screenConfig.applyNewLocationUnderMCC.name"
         );
-        if (bookingTypeIdentifier === "applyNewLocationUnderMCC") {
+        if (businessService==='NLUJM') {
             setApplicationDataForNewLocOSWMCC(dispatch, applicationNumber, tenantId);
         }else if(businessService==='BKROOM'){
             setApplicationDataForRoom(dispatch, applicationNumber, tenantId);

@@ -22,9 +22,8 @@ class BookingCalendar extends React.Component {
             filtertoDate: "",
             dselectedDays: [],
         };
-        const changeDateVenue = getQueryArg(window.location.href, "changeDateVenue");
-        console.log(`changeDateVenue`, changeDateVenue)
-        if( changeDateVenue !== "Enabled"){
+        const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+        if( !applicationNumber){
             this.handleResetClick()
     
         }
