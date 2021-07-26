@@ -1014,6 +1014,8 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
+                     || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION_BILLING'
+                     || activityType ==='TEMPORARY_WSCONNECTION_BILLING'
                      || activityType ==='REGULARWSCONNECTION'
                      || activityType ==='TEMPORARY_WSCONNECTION'
                      || activityType === 'WS_TUBEWELL'
@@ -1053,11 +1055,17 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                             && x.occupancycode === occupancycode)
                     }
                     
-                    else if(applicationType === 'TEMPORARY')
+                    else if(applicationType === 'TEMPORARY' || applicationType ==='TEMPORARY_BILLING')
                     {
                         if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                             {
                                 wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                            }
+                            else if(applicationType ==='TEMPORARY_BILLING')
+                            {
+                                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                                   // && x.category === category)
+
                             }
                             else{
                                 wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
@@ -1069,6 +1077,7 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                         // });
 
                     }
+                    
                     else if(applicationType === 'REGULAR')
                     {
                         wsDocument = wsDocument.filter(function (x) {
@@ -1116,10 +1125,14 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                     
                 } 
             }
-            else if(applicationType ==='TEMPORARY'){
+            else if(applicationType ==='TEMPORARY' || applicationType ==='TEMPORARY_BILLING'){
                 if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                else if(applicationType ==='TEMPORARY_BILLING')
+                {
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
                 }
                 else{
                     wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
@@ -1150,11 +1163,15 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             }
             if( sewerage === false && tubewell === false && water === false)
             {
-                if(applicationType ==='TEMPORARY'){
+                if(applicationType ==='TEMPORARY' || applicationType ==='TEMPORARY_BILLING'){
                     if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                     {
                         wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                     }
+                    else if(applicationType ==='TEMPORARY_BILLING')
+                {
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                }
                     else{
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.category === category)
@@ -1665,6 +1682,8 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
+                     || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION_BILLING'
+                     || activityType ==='TEMPORARY_WSCONNECTION_BILLING'
                      || activityType ==='REGULARWSCONNECTION'
                      || activityType ==='TEMPORARY_WSCONNECTION'
                      || activityType === 'WS_TUBEWELL'
@@ -1703,17 +1722,23 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.occupancycode === occupancycode)
                     } 
-                    else if(applicationType === 'TEMPORARY')
+                    else if(applicationType === 'TEMPORARY' || applicationType ==='TEMPORARY_BILLING')
                     {
                         if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
-                        {
-                            wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
-                        }
-                        else{
-                            wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
-                                && x.category === category)
+                            {
+                                wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                            }
+                            else if(applicationType ==='TEMPORARY_BILLING')
+                            {
+                                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                                   // && x.category === category)
 
-                        }
+                            }
+                            else{
+                                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                                    && x.category === category)
+
+                            }
                         // wsDocument = wsDocument.filter(function (x) {
                         //     return x.applicationType === applicationType && x.category === category;
                         // });
@@ -1764,10 +1789,14 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                     
                 } 
             }
-            else if(applicationType ==='TEMPORARY'){
+            else if(applicationType ==='TEMPORARY'|| applicationType ==='TEMPORARY_BILLING' ){
                 if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                else if(applicationType ==='TEMPORARY_BILLING')
+                {
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
                 }
                 else{
                     wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
@@ -2022,6 +2051,11 @@ export const applyForWater = async (state, dispatch) => {
                 if(queryObject.waterApplicationType === 'TEMPORARY')
                 {
                     queryObject.activityType = "APPLY_FOR_TEMPORARY_CONNECTION"
+
+                }
+                if(queryObject.waterApplicationType === 'TEMPORARY_BILLING')
+                {
+                    queryObject.activityType = "APPLY_FOR_TEMPORARY_CONNECTION_BILLING"
 
                 }
                 else{
@@ -3111,6 +3145,9 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                          switch (activityType) {
                                 case "APPLY_FOR_TEMPORARY_CONNECTION":
                                 activityType ='Temporary Water Connection'
+                                break;
+                                case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
+                                activityType ='Temporary Water Connection Billing'
                                 break;
                                 case "NEW_WS_CONNECTION":
                                 activityType ='Regular Water Connection'

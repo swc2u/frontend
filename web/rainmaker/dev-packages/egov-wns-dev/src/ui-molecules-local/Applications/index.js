@@ -38,6 +38,7 @@ class Applications extends React.Component {
         case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_CONVERSION"); break;
         case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_REACTIVATE"); break;
         case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
+        case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":  window.localStorage.setItem("wns_workflow","TEMPORARY_WSCONNECTION_BILLING"); break;
         //case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
       }
 }
@@ -72,6 +73,7 @@ switch(activityType)
   status = `WF_SW_SEWERAGE_${status}`
   break;
   case "TEMPORARY_WSCONNECTION":
+    case "TEMPORARY_WSCONNECTION_BILLING":
   case "APPLY_FOR_TEMPORARY_CONNECTION":
   status = `WF_TEMPORARY_WSCONNECTION_${status}`
   break;

@@ -285,6 +285,22 @@ const propertyDetails = getCommonContainer({
         );
 
         }
+        let applicationStatus = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].applicationStatus", '');
+        if(applicationStatus && applicationNo)
+        {
+        if(process.env.REACT_APP_NAME === "Citizen" &&(applicationStatus !=='INITIATED') && applicationNo )
+        {
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+                    "props.disabled",
+                    true
+            )
+        );
+
+        }
+      }
       }
     
     }

@@ -946,6 +946,15 @@ export const getData = async (action, state, dispatch) => {
                 true
                 ));
             }
+            if(combinedArray[0].applicationStatus==="INITIATED" && (combinedArray[0].connectionNo === null ||combinedArray[0].connectionNo ==='NA') )
+            {
+              dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize`,
+                "props.disabled",
+                false
+                ));
+            }
             // 2.Property Location Details disabled
             const textFieldsPropertyLocationDetails = ["pincode","locality","plotNo","plotOrHouseOrSurveyNo","streetName","buildingOrColonyName"];
             for (let i = 0; i < textFieldsPropertyLocationDetails.length; i++) {

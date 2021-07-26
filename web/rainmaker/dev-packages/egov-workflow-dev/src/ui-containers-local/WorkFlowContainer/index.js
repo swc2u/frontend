@@ -231,6 +231,7 @@ class WorkFlowContainer extends React.Component {
         || moduleName === "REGULARWSCONNECTION" 
         || moduleName === "SW_SEWERAGE"
         || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
@@ -254,6 +255,7 @@ class WorkFlowContainer extends React.Component {
       || moduleName === "REGULARWSCONNECTION"
         || moduleName === "SW_SEWERAGE"
         || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
@@ -377,6 +379,7 @@ class WorkFlowContainer extends React.Component {
     
     if (moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
@@ -467,6 +470,7 @@ class WorkFlowContainer extends React.Component {
         || moduleName ==="SW_SEWERAGE"
         || moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
@@ -499,6 +503,7 @@ class WorkFlowContainer extends React.Component {
       if (moduleName === "SW_SEWERAGE" 
         || moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
@@ -572,6 +577,7 @@ class WorkFlowContainer extends React.Component {
       if (moduleName === "SW_SEWERAGE" 
         || moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
@@ -632,6 +638,7 @@ class WorkFlowContainer extends React.Component {
       || moduleName === "SW_SEWERAGE"
         || moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
@@ -647,6 +654,7 @@ class WorkFlowContainer extends React.Component {
      // || moduleName === "SW_SEWERAGE"
       || moduleName === "REGULARWSCONNECTION"
       || moduleName === "TEMPORARY_WSCONNECTION"
+      || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
       || moduleName === "WS_TEMP_TEMP" 
       ||moduleName === "WS_TEMP_REGULAR"
       ||moduleName === "WS_DISCONNECTION" 
@@ -662,6 +670,7 @@ class WorkFlowContainer extends React.Component {
         if (moduleName === "NewWS1" 
         || moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
@@ -1198,6 +1207,7 @@ uniqueBycode =(data,key)=>{
         showEmployeeList: (businessService === "SW_SEWERAGE" 
                           || businessService === "REGULARWSCONNECTION" 
                           || businessService === "TEMPORARY_WSCONNECTION" 
+                          || businessService === "TEMPORARY_WSCONNECTION_BILLING"
                           || businessService === "WS_TEMP_TEMP" 
                           || businessService === "WS_TEMP_REGULAR" 
                           || businessService === "WS_DISCONNECTION" 
@@ -1213,6 +1223,7 @@ uniqueBycode =(data,key)=>{
                           && item.action !== "SUBMIT_APPLICATION" 
                           && item.action !== "SUBMIT_ROADCUT_NOC" 
                           && item.action !== "SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC"
+                          && item.action !== "VERIFY_AND_FORWARD_TO_CITIZEN_FOR_NOC"
                           && item.action !== "VERIFY_AND_FORWARD_FOR_PAYMENT"// VERIFY_AND_FORWARD_FOR_PAYMENT
                           : !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
                           // new action added SUBMIT_ROADCUT_NOC,SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC
@@ -1451,6 +1462,23 @@ uniqueBycode =(data,key)=>{
     }
     //end pipe size filter
     // VERIFY_AND_FORWARD_TO_JE_FOR_FEE VERIFY_AND_FORWARD_TO_SE, PENDING_FOR_SDE_APPROVAL_FOR_JE TEMPORARY_WSCONNECTION
+    if(businessService === "TEMPORARY_WSCONNECTION_BILLING"  && (applicationStatus == 'PENDING_FOR_SDE_APPROVAL_FOR_JE' || applicationStatus ==='PENDING_FOR_SDE_APPROVAL_AFTER_EE' ) )
+    {
+      const {WaterConnection} = preparedFinalObject;
+      let pipeSize = 0 ;
+      
+      pipeSize = WaterConnection && WaterConnection[0].proposedPipeSize;
+      pipeSize = parseInt(pipeSize);
+       if (pipeSize <= 15)
+      {
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_SE');//"VERIFY_AND_FORWARD_TO_SE"
+
+      }
+      else{
+        actions = actions.filter(item => item.buttonLabel !== "VERIFY_AND_FORWARD_FOR_PAYMENT");
+      }
+
+    }
     if(businessService === "TEMPORARY_WSCONNECTION"  && applicationStatus == 'PENDING_FOR_SDE_APPROVAL_FOR_JE' )
     {
       const {WaterConnection} = preparedFinalObject;
@@ -1472,6 +1500,7 @@ uniqueBycode =(data,key)=>{
       || businessService === "REGULARWSCONNECTION"  
         || businessService === 'SW_SEWERAGE' 
         || businessService === "TEMPORARY_WSCONNECTION"
+        || businessService === "TEMPORARY_WSCONNECTION_BILLING"
         || businessService === "WS_TEMP_TEMP" 
         ||businessService === "WS_TEMP_REGULAR"
         ||businessService === "WS_DISCONNECTION" 
@@ -1495,6 +1524,7 @@ uniqueBycode =(data,key)=>{
     if((businessService=='NewWS1' 
         || businessService === "REGULARWSCONNECTION"  
         || businessService === 'SW_SEWERAGE' 
+        || businessService === "TEMPORARY_WSCONNECTION_BILLING"
         || businessService === "TEMPORARY_WSCONNECTION"
         || businessService === "WS_TEMP_TEMP" 
         || businessService === "WS_TEMP_REGULAR"
@@ -1527,6 +1557,7 @@ uniqueBycode =(data,key)=>{
         || businessService === "REGULARWSCONNECTION"  
         || businessService === 'SW_SEWERAGE' 
         || businessService === "TEMPORARY_WSCONNECTION"
+        || businessService === "TEMPORARY_WSCONNECTION_BILLING"
         || businessService === "WS_TEMP_TEMP" 
         ||businessService === "WS_TEMP_REGULAR"
         ||businessService === "WS_DISCONNECTION" 
@@ -1590,6 +1621,7 @@ uniqueBycode =(data,key)=>{
         || moduleName === "REGULARWSCONNECTION" 
         || moduleName === "SW_SEWERAGE"
         || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 

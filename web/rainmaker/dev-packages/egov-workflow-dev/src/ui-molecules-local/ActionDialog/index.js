@@ -138,6 +138,7 @@ class ActionDialog extends React.Component {
     {
       if((moduleName ==='REGULARWSCONNECTION'
       ||moduleName ==='TEMPORARY_WSCONNECTION'
+      || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
       ||moduleName ==='WS_TEMP_TEMP'
       ||moduleName ==='WS_TEMP_REGULAR'
       ||moduleName ==='WS_DISCONNECTION'
