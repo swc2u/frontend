@@ -201,6 +201,9 @@ export const searchApplications = getCommonCard({
           case"APPLY_FOR_TEMPORARY_CONNECTION":
           businessServices = "TEMPORARY_WSCONNECTION"
           break;
+          case"APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
+          businessServices = "TEMPORARY_WSCONNECTION_BILLING"
+          break;
           case"UPDATE_METER_INFO":
           businessServices = "WS_METER_UPDATE"
           break;
@@ -261,6 +264,7 @@ export const searchApplications = getCommonCard({
           || businessServiceData[0].businessService === "WS_DISCONNECTION"
           || businessServiceData[0].businessService === "WS_RENAME"
           || businessServiceData[0].businessService === "TEMPORARY_WSCONNECTION"
+          || businessServiceData[0].businessService === "TEMPORARY_WSCONNECTION_BILLING"
           || businessServiceData[0].businessService === "WS_METER_UPDATE"
           || businessServiceData[0].businessService === "WS_TEMP_TEMP"
           || businessServiceData[0].businessService === "SW_SEWERAGE"//

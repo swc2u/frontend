@@ -49,7 +49,7 @@ let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
         label: { labelKey: "WS_PROPERTY_SUB_USAGE_CAT_TYPE_LABEL_INPUT" },
         sourceJsonPath: "propsubusagetypeForSelectedusageCategory",
         placeholder: { labelKey: "WS_PROPERTY_SUB_USAGE_CAT_TYPE_LABEL_INPUT_PLACEHOLDER" },
-        required: true,
+        required: false,
         gridDefination: { xs: 12, sm: 6 },
         jsonPath: "applyScreen.waterProperty.usageSubCategory",
         props: {

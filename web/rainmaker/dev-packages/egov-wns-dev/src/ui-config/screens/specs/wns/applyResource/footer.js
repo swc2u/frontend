@@ -38,6 +38,7 @@ import { getTenantIdCommon } from "egov-ui-kit/utils/localStorageUtils";
 const setReviewPageRoute = (state, dispatch) => {
   let service = getQueryArg(window.location.href, "service");
   let tenantId = getTenantIdCommon() === null?commonConfig.tenantId:getTenantIdCommon();
+  tenantId = getQueryArg(window.location.href, "tenantId");
   const applicationNumber = get(state, "screenConfiguration.preparedFinalObject.applyScreen.applicationNo");
   const appendUrl =
     process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
@@ -2009,9 +2010,17 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
           labelName: "Please select Usage Caregory",
           labelKey: "WS_APPLICATION_TYPE_CHANGGED_VALIDATION"
         };
-
-        dispatch(toggleSnackbar(true, errorMessage_, "warning"));
-        return false;
+        let waterApplicationType = get(
+          state.screenConfiguration.preparedFinalObject,
+          "applyScreen.waterApplicationType",
+          null
+        );
+        if(waterApplicationType !=="TEMPORARY_BILLING")
+        {
+          dispatch(toggleSnackbar(true, errorMessage_, "warning"));
+          return false;
+        }
+        
       }
       }
       else

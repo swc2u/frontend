@@ -56,6 +56,7 @@ class WorkFlowContainer extends React.Component {
     if (moduleName === "NewWS1" 
         || moduleName === "REGULARWSCONNECTION"
         || moduleName === "TEMPORARY_WSCONNECTION"
+        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
@@ -69,6 +70,7 @@ class WorkFlowContainer extends React.Component {
       if (moduleName === "NewWS1" 
       || moduleName === "REGULARWSCONNECTION" 
       || moduleName === "TEMPORARY_WSCONNECTION"
+      || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
         || moduleName === "WS_TEMP_TEMP" 
         ||moduleName === "WS_TEMP_REGULAR"
         ||moduleName === "WS_DISCONNECTION" 
@@ -189,11 +191,15 @@ class WorkFlowContainer extends React.Component {
               case'APPLY_FOR_TEMPORARY_CONNECTION':
               case 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION':
               case 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION':
+              case 'APPLY_FOR_TEMPORARY_CONNECTION_BILLING':
               moduleName ='TEMPORARY_WSCONNECTION'
               break;
               case "NEW_WS_CONNECTION":
               moduleName ="REGULARWSCONNECTION"
               break;
+              default:
+              moduleName ='REGULARWSCONNECTION'
+              break
             }
           }
         }
@@ -231,7 +237,7 @@ class WorkFlowContainer extends React.Component {
            || status == "NA" 
            || status =='CONNECTION_TYPE_CHANGED'
            || status == 'CONNECTION_UPDATED'
-           || status ==='CONNECTION_REACTIVATED') && WaterConnection[0].waterApplicationType==='REGULAR')
+           || status ==='CONNECTION_REACTIVATED') && (WaterConnection[0].waterApplicationType==='REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING'))
             {
 
               if((status ==='NA' ||status ==='CLOSE_CONNECTION' ) && WaterConnection[0].activityType==='REACTIVATE_CONNECTION' )
@@ -266,14 +272,14 @@ class WorkFlowContainer extends React.Component {
             }
             else if(status && status!=='')
             {
-              if(WaterConnection[0].waterApplicationType === 'REGULAR' && WaterConnection[0].activityType !=='REACTIVATE_CONNECTION')
+              if((WaterConnection[0].waterApplicationType === 'REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING') && WaterConnection[0].activityType !=='REACTIVATE_CONNECTION')
               {
                 if ((status ==='CONNECTION_CLOSED'
                      || status ==='TEMPORARY_CONNECTION_CLOSED'
                      || status ==='CLOSE_CONNECTION'
                      || WaterConnection[0].status ==='Inactive'
                      )             
-                     && WaterConnection[0].waterApplicationType === 'REGULAR')
+                     && (WaterConnection[0].waterApplicationType === 'REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING'))
             {
               actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
 
@@ -302,13 +308,13 @@ class WorkFlowContainer extends React.Component {
               {
                 actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
               }
-              else if (WaterConnection[0] && WaterConnection[0].activityType ==='REACTIVATE_CONNECTION' && status ==='REJECTED' && WaterConnection[0].waterApplicationType === 'REGULAR' )
+              else if (WaterConnection[0] && WaterConnection[0].activityType ==='REACTIVATE_CONNECTION' && status ==='REJECTED' && (WaterConnection[0].waterApplicationType === 'REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING'))
               {
                 actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
               }
 
             }
-            else if(((status === "TEMPORARY_CONNECTION_CLOSED" || status ==='TEMPORARY_DISCONNECTED' ||  status ==='METER_UPDATED'|| status ==='CLOSE_CONNECTION')  || (status ==='REJECTED')) && (WaterConnection[0].waterApplicationType==='REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY') )//TEMPORARY_CONNECTION_CLOSED
+            else if(((status === "TEMPORARY_CONNECTION_CLOSED" || status ==='TEMPORARY_DISCONNECTED' ||  status ==='METER_UPDATED'|| status ==='CLOSE_CONNECTION')  || (status ==='REJECTED')) && (WaterConnection[0].waterApplicationType==='REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING') )//TEMPORARY_CONNECTION_CLOSED
             {
               if(WaterConnection[0].activityType==='REACTIVATE_CONNECTION' )
               actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
@@ -333,7 +339,7 @@ class WorkFlowContainer extends React.Component {
                                                 &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
 
               }
-              else if(WaterConnection[0].waterApplicationType === 'REGULAR' && status ==='REJECTED')
+              else if((WaterConnection[0].waterApplicationType === 'REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING') && status ==='REJECTED')
               {
                 actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
                                               && item.buttonLabel !=='REACTIVATE_CONNECTION'
@@ -353,7 +359,7 @@ class WorkFlowContainer extends React.Component {
                                                 &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
 
                 }
-                else if(WaterConnection[0].waterApplicationType === 'REGULAR')
+                else if(WaterConnection[0].waterApplicationType === 'REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING')
                 {
                   actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
                   && item.buttonLabel !=='REACTIVATE_CONNECTION'
@@ -379,7 +385,7 @@ class WorkFlowContainer extends React.Component {
                                                 &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
 
               }
-              else if(WaterConnection[0].waterApplicationType === 'REGULAR' && status ==='REJECTED')
+              else if((WaterConnection[0].waterApplicationType === 'REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING') && status ==='REJECTED')
               {
                 actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
                                               && item.buttonLabel !=='REACTIVATE_CONNECTION'
@@ -393,7 +399,7 @@ class WorkFlowContainer extends React.Component {
             else if ((status ==='CONNECTION_TARIFF_CHANGED'
                      || status ==='CONNECTION_UPDATED'
                      ||status ==='METER_UPDATED' )             
-                     && WaterConnection[0].waterApplicationType === 'REGULAR')
+                     && (WaterConnection[0].waterApplicationType === 'REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING'))
             {
               actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
                                               && item.buttonLabel !=='REACTIVATE_CONNECTION'
@@ -405,7 +411,7 @@ class WorkFlowContainer extends React.Component {
                      || status ==='TEMPORARY_CONNECTION_CLOSED'
                      || status ==='CLOSE_CONNECTION'
                      )             
-                     && WaterConnection[0].waterApplicationType === 'REGULAR')
+                     && (WaterConnection[0].waterApplicationType === 'REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING'))
             {
               actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
 
@@ -456,6 +462,7 @@ class WorkFlowContainer extends React.Component {
       || moduleName==='REGULARWSCONNECTION'
       || moduleName==='SW_SEWERAGE'
       || moduleName === 'TEMPORARY_WSCONNECTION'
+      || moduleName ==='TEMPORARY_WSCONNECTION_BILLING'
       || moduleName ==='WS_TEMP_TEMP'
       || moduleName ==='WS_TEMP_REGULAR'
       || moduleName === "WS_CONVERSION" 

@@ -785,9 +785,10 @@ try{
           applicantAddress = `${plotnumber},${houseNo},${sector}`
           applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
           }
-          // set activityType 
+          // set activityType APPLY_FOR_TEMPORARY_CONNECTION_BILLING
           switch (activityType) {
             case "APPLY_FOR_TEMPORARY_CONNECTION":
+              case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
               activityType ='Temporary Water Connection'
               break;
               case "NEW_WS_CONNECTION":
@@ -800,8 +801,9 @@ try{
               activityType ='Temporary Regular Water Connection'
               break;
               case "TEMPORARY_WSCONNECTION":
-              case "APPLY_FOR_TEMPORARY_CONNECTION":
-              activityType ='Temporary Disconnection'
+             case "APPLY_FOR_TEMPORARY_CONNECTION":
+              case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
+              activityType ='Temporary Water Connection'
               break;
               case "WS_TUBEWELL":
               activityType ='New Tubewell Connection'
@@ -1232,6 +1234,7 @@ try{
           // set activityType 
           switch (activityType) {
             case "APPLY_FOR_TEMPORARY_CONNECTION":
+              case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
               activityType ='Temporary Water Connection'
               break;
               case "NEW_WS_CONNECTION":
@@ -1245,7 +1248,8 @@ try{
               break;
               case "TEMPORARY_WSCONNECTION":
               case "APPLY_FOR_TEMPORARY_CONNECTION":
-              activityType ='Temporary Disconnection'
+                case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
+              activityType ='Temporary Water Connection'
               break;
               case "WS_TUBEWELL":
               activityType ='New Tubewell Connection'

@@ -99,7 +99,7 @@ const headerrow = getCommonContainer({
 })
 });
 
-const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
+const beforeInitFn = async (action, state, dispatch, applicationNumber ,tenantId) => {
   const queryObj = [
     { key: "businessIds", value: applicationNumber },
     { key: "history", value: true },
@@ -859,7 +859,7 @@ const screenConfig = {
 
     setBusinessServiceDataToLocalStorage(queryObject, dispatch);
     set(action,"screenConfig.components.adhocDialog.children.popup",adhocPopup);
-    beforeInitFn(action, state, dispatch, applicationNumber);
+    beforeInitFn(action, state, dispatch, applicationNumber,tenantId);
 
     return action;
   },
