@@ -822,7 +822,7 @@ class RetiredStatusDashboard extends React.Component {
             
         return (
             <div style={this.state.rowData.length === 0 ? {display  : "none"} : null}>
-            <div className="graphDashboard">
+            <div className="graphDashboardFlex">
             
             {
                 this.state.graphClicked >= 0 ?
