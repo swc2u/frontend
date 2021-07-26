@@ -231,6 +231,12 @@ table th {
   cursor: -webkit-grab;
   cursor: grab; }
 
+.grab2 {
+  cursor: -webkit-grab;
+  cursor: grab;
+  color: green;
+ }
+
 @media only screen and (max-width: 500px) {
   .content-container {
     margin-left: 50px;
@@ -261,6 +267,22 @@ p:not(.cssonly) a[href$=".pdf"]:before {
   width: 32px;
   height: 32px;
   background: url("http://wwwimages.adobe.com/content/dam/acom/en/legal/images/badges/Adobe_PDF_file_icon_32x32.png");
+  display: inline-block;
+  content: ' '; }
+
+p:not(.cssonly) a[href$=".xlsx"]:before {
+  /* PDF file */
+  width: 32px;
+  height: 32px;
+  background: url("Excel-icon.png");
+  display: inline-block;
+  content: ' '; }
+
+p:not(.cssonly) a[href$=".txt"]:before {
+  /* PDF file */
+  width: 32px;
+  height: 32px;
+  background: url("Back-icon.jpg");
   display: inline-block;
   content: ' '; }
 

@@ -4,10 +4,13 @@ import CardContent from '@material-ui/core/CardContent';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import ReactTable from "react-table-6";  
+// import $ from 'jquery'; 
 import "react-table-6/react-table.css" ;
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './Legalindex.css';
+import { httpRequest } from "../../ui-utils/api";
+// import { getLegalDashboardData } from "../../../../../ui-utils/commons";
 
 // import LegalData from './Legal_data.json';
 // import bgImage from './img/MCC_symbol.jpg';
@@ -124,6 +127,57 @@ class DashboardLegal extends React.Component {
 
     doc.save(pdfTitle+".pdf");
 
+    }
+
+    exportPDF = (e) => {
+        e.preventDefault();
+        var dt = new Date();
+        var doc = new jsPDF();
+        doc.setFontSize(7);
+        doc.text("Case Summary", 10, 10);
+        doc.text(dt.toISOString().substring(0,10), 175, 10);
+        doc.setFontSize(14);
+        doc.text("SUPREME COURT CASES", 100, 15, "center");
+            
+        doc.autoTable({ html: '#tableContent',
+        theme: "grid",
+        margin: { top : 22, right: 2, left : 2 },
+        styles : {
+            overflow : "linebreak",
+            fontSize : 7,
+        },
+        // columnStyles: { 0: { halign: 'center', fillColor: [0, 255, 0] } },
+        })
+        doc.save('legalDashboardReport.pdf');
+    }
+
+    XLExport = (e) => {
+        e.preventDefault();
+        var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+        var textRange;
+        var j = 0;
+        var tab = document.getElementById("tableContent");
+        for (j = 0 ; j < tab.rows.length ; j++) {
+            tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+        }
+        tab_text = tab_text + "</table>";
+        tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+        tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+        tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // remove input params
+        // var sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+        // return (sa);
+
+        var a = document.createElement('a');
+        var data_type = 'data:application/vnd.ms-excel';
+        var table_div = document.getElementById('element-to-print');
+        // var table_html = table_div.outerHTML.replace(/ /g, '%20');
+        a.href = data_type + ', ' + encodeURIComponent(tab_text);
+        //setting the file name
+        a.download = 'legalDashboardReport' + '.xls';
+        //triggering the function
+        a.click();
+        //just in case, prevent default behaviour
+        e.preventDefault();
     }
 
     // Column Unchange Data
@@ -485,8 +539,52 @@ class DashboardLegal extends React.Component {
         return [dt1, dt2]
     }
 
+    getAPIDAta = async () => {
+
+        debugger;
+        const DescriptionReport = await httpRequest(
+            "get",
+            "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/legalcase/getLegalCase",
+            "",
+            [],
+            {}
+            );
+        var response = [DescriptionReport, []]
+        
+        debugger;
+        return response;
+    }
     componentDidMount(){
         debugger;
+
+        var requestBody = {
+            "tenantId": "",
+            "moduleCode": "PR",
+            "eventDetailUuid": "",
+            "eventTitle": "",
+            "eventStatus": "",
+            "status": "",
+            "fromDate": "",
+            "toDate": "",
+            "eventId": "",
+            "defaultGrid": false,
+            "reportSortBy": ""
+            };
+        
+        var res = this.getAPIDAta();
+        debugger;
+
+        this.setState({
+            // totalCase : totalCase,
+            // next7DaysData :next7DaysData,
+            // next15DaysData : next15DaysData,
+            // impCaseData : impCaseData,
+            // contemptCaseData : contemptCaseData,
+            // unchangeColumnData : unchangeColumnData,
+            checkData : res
+        })
+        debugger;
+
     }
 
     componentDidUpdate(){
@@ -602,7 +700,7 @@ class DashboardLegal extends React.Component {
                 <td className="grab"> <button onClick={ () => this.tableClicked(data, "next7Days")}> { this.state.next7DaysData[data] ? this.state.next7DaysData[data].length : 0 } </button> </td>
                 <td className="grab"> <button onClick={ () => this.tableClicked(data, "next15Days")}> { this.state.next15DaysData[data] ? this.state.next15DaysData[data].length : 0 } </button> </td>
                 {/* <td className="grab"> Not Updated </td> */}
-                <td className="grab"> <button onClick={ () => this.tableClicked(data, "iscaseImp")}> { this.state.impCaseData[data] ? this.state.impCaseData[data].length : 0 } </button> </td>
+                <td className={this.state.impCaseData[data] ? this.state.impCaseData[data].length > 0 ? "grab2" : "grab": "grab"}> <button onClick={ () => this.tableClicked(data, "iscaseImp")}> { this.state.impCaseData[data] ? this.state.impCaseData[data].length : 0 } </button> </td>
                 <td className="grab"> <button onClick={ () => this.tableClicked(data, "contempCase")}> { this.state.contemptCaseData[data] ? this.state.contemptCaseData[data].length : 0 } </button> </td>
             </tr>
         );
@@ -611,21 +709,24 @@ class DashboardLegal extends React.Component {
     rowData2 = (data, index) =>{
         debugger;
         var hearingDate = "";
+        var nextDate = <p></p>;
         if(data.hearingDate !== null && data.hearingDate !== undefined){
             hearingDate = new Date(data.hearingDate);
-            hearingDate = hearingDate.getDate()+"/"+parseInt(hearingDate.getMonth()+1)+"/"+hearingDate.getFullYear();
+            hearingDate = parseInt(hearingDate.getMonth()+1)+"/"+hearingDate.getDate()+"/"+hearingDate.getFullYear();
+            var dt = new Date();
+            nextDate = new Date(hearingDate) > dt ? <p>{hearingDate}</p> : <p style={{"color":"red"}}>{hearingDate}</p>;
         }
         return(
             <tr>
                 <td> { index + 1 } </td>
-                <td> { data.caseNumber } </td>
+                <td style={{"color": "Maroon"}}> { data.caseNumber } </td>
                 <td> { data.caseTitle } </td>
                 <td> { data.petName } </td>
-                <td> { data.govtDept } </td>
-                <td> { "" } </td>
-                <td> { data.courtName } </td>
-                <td> { hearingDate } </td>
-                <td> { data.caseStatus } </td>
+                <td style={{"color":"green"}}> { data.concernedBranch } </td>
+                <td> <p style={{"color":"red"}}> "_Blank" </p> </td>
+                <td> "Nodal officer Pending API" </td>
+                <td>  {nextDate}  </td>
+                <td> { data.caseStatus === "CLOSED" ? "No further order of listing." : data.caseStatus } </td>
                 <td> { "----" } </td>
                 <td> { data.lcNumber } </td>
             </tr>
@@ -634,13 +735,23 @@ class DashboardLegal extends React.Component {
 
     render() {
 
+
+
     return (
         <div>
 
         {
             this.state.toggleTable ? 
             <div className="legal-table-container" style={{overflowX:"auto"}}>
-                <table className="legal-table">
+                <table id="tableContent2" className="legal-table">
+                    {/* <tr>
+                        <th>  </th>
+                        <th>  </th>
+                        <th>  </th>
+                        <th>  </th>
+                        <th>  </th>
+                        <th>  </th>
+                    </tr> */}
                     <tr>
                         <th> Court </th>
                         <th> Total Cases </th>
@@ -655,11 +766,21 @@ class DashboardLegal extends React.Component {
             :
             <div>
                 <div style={{margin : "15px"}}>
-                <button onClick={this.pdfDownload}><p class=""><a href="exceldoc.pdf"></a></p> Export PDF </button>
+                <button onClick={this.exportPDF}><p class=""><a href="exceldoc.pdf"></a></p> Export PDF </button>
+                <button onClick={this.XLExport}><p class=""><a href="exceldoc.xlsx"></a></p> Export Excel </button>
+                
+                {/* <button onClick={this.XLExport}><p class=""></p> Export Excel </button> */}
+                
+
                 <button onClick={ () => this.tableClicked("", "")}> Back </button>
                 </div>
                 <div className="legal-table-container" style={{overflowX:"auto"}}>
-                    <table className="legal-table">
+                <div style={{"textAlign":"center"}}>
+                    <p style={{"color": "red"}}>
+                    * Cases Which Are NOT UPDATED Shown in RED Colour
+                    </p>
+                </div>
+                    <table id="tableContent" className="legal-table">
                         <tr>
                             <th> Sr No </th>
                             <th> Case No </th>
