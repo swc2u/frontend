@@ -1168,10 +1168,18 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                     {
                         wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                     }
+                    else if(applicationType ==='TEMPORARY_BILLING' 
+                    && (activityType === 'CONNECTION_CONVERSION'
+                        || activityType ==='PERMANENT_DISCONNECTION'
+                        || activityType ==='TEMPORARY_DISCONNECTION'
+                        || activityType ==='UPDATE_CONNECTION_HOLDER_INFO') )
+                    {
+                        wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType )
+                    }
                     else if(applicationType ==='TEMPORARY_BILLING')
-                {
-                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
-                }
+                    {
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                    }
                     else{
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.category === category)
@@ -1727,6 +1735,14 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                         if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                             {
                                 wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                            }
+                            else if(applicationType ==='TEMPORARY_BILLING' 
+                            && (activityType === 'CONNECTION_CONVERSION'
+                                || activityType ==='PERMANENT_DISCONNECTION'
+                                || activityType ==='TEMPORARY_DISCONNECTION'
+                                || activityType ==='UPDATE_CONNECTION_HOLDER_INFO') )
+                            {
+                                wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType )
                             }
                             else if(applicationType ==='TEMPORARY_BILLING')
                             {

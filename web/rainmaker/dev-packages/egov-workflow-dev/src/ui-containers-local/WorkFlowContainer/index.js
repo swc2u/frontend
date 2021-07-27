@@ -155,6 +155,8 @@ class WorkFlowContainer extends React.Component {
       case "SEND_BACK_FOR_ADDON_PAYMENT":
       case "SEND_BACK":
           return "purpose=sendback&status=success";
+          case "CANCEL_APPLICATION":
+          return "purpose=cancel&status=success";
       default :
         return "purpose=forward&status=success";
     }
