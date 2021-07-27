@@ -629,7 +629,7 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
           
           }
         }
-        httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
+        httpRequest("post", "/rp-services/pdf/_create_dc", DOWNLOADRECEIPT.GET.ACTION, queryStr, {
             DuplicateCopyApplications: [ownersData]
           }, {
             'Accept': 'application/json'
@@ -637,11 +637,9 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
             responseType: 'arraybuffer'
           })
           .then(res => {
-            res.filestoreIds[0]
-            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-              res.filestoreIds.map(fileStoreId => {
-                downloadReceiptFromFilestoreID(fileStoreId, mode)
-              })
+            res[0].fileStoreId
+            if (res && res[0].fileStoreId && res.length > 0) {
+                downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
             } else {
               console.log("Error In Acknowledgement form Download");
             }
@@ -659,7 +657,7 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
             
             }
           }
-        httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
+        httpRequest("post", "/rp-services/pdf/_create_ot", DOWNLOADRECEIPT.GET.ACTION, queryStr, {
             Owners: [ownersData]
           }, {
             'Accept': 'application/json'
@@ -667,11 +665,9 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
             responseType: 'arraybuffer'
           })
           .then(res => {
-            res.filestoreIds[0]
-            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-              res.filestoreIds.map(fileStoreId => {
-                downloadReceiptFromFilestoreID(fileStoreId, mode)
-              })
+            res[0].fileStoreId
+            if (res && res[0].fileStoreId && res.length > 0) {
+                downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
             } else {
               console.log("Error In Acknowledgement form Download");
             }
@@ -691,7 +687,7 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
               }
             }
           }
-        httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
+        httpRequest("post", "/rp-services/pdf/_create_allotment", DOWNLOADRECEIPT.GET.ACTION, queryStr, {
             Properties: [ownersData]
           }, {
             'Accept': 'application/json'
@@ -699,11 +695,9 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
             responseType: 'arraybuffer'
           })
           .then(res => {
-            res.filestoreIds[0]
-            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-              res.filestoreIds.map(fileStoreId => {
-                downloadReceiptFromFilestoreID(fileStoreId, mode)
-              })
+            res[0].fileStoreId
+            if (res && res[0].fileStoreId && res.length > 0) {
+                downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
             } else {
               console.log("Error In Acknowledgement form Download");
             }
@@ -720,7 +714,7 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
            
             }
           }
-          httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
+          httpRequest("post", "/rp-services/pdf/_create_mg", DOWNLOADRECEIPT.GET.ACTION, queryStr, {
             MortgageApplications: [ownersData]
           }, {
             'Accept': 'application/json'
@@ -728,11 +722,11 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
             responseType: 'arraybuffer'
           })
           .then(res => {
-            res.filestoreIds[0]
-            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-              res.filestoreIds.map(fileStoreId => {
-                downloadReceiptFromFilestoreID(fileStoreId, mode)
-              })
+            res[0].fileStoreId
+            if (res && res[0].fileStoreId && res.length > 0) {
+              //res.filestoreIds.map(fileStoreId => {
+                downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
+              //})
             } else {
               console.log("Error In Acknowledgement form Download");
             }
