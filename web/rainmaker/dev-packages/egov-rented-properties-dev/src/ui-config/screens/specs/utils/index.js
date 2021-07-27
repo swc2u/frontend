@@ -768,7 +768,7 @@ export const downloadNoticeForm = (notice , mode="download") => {
   }
 const DOWNLOADRECEIPT = {
   GET: {
-    URL: "/pdf-service/v1/_create",
+    URL: "/rp-services/pdf/_create_notice",
     ACTION: "_get",
   },
 };
@@ -784,18 +784,18 @@ notice = [{
 }]
 try {
       httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
-          notices:notice
+        NoticeApplications:notice
         }, {
           'Accept': 'application/json'
         }, {
           responseType: 'arraybuffer'
         })
         .then(res => {
-          res.filestoreIds[0]
-          if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-            res.filestoreIds.map(fileStoreId => {
-              downloadReceiptFromFilestoreID(fileStoreId, mode)
-            })
+          res[0].fileStoreId
+          if (res && res[0].fileStoreId && res.length > 0) {
+            //res.filestoreIds.map(fileStoreId => {
+              downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
+           // })
           } else {
             console.log("Error In Acknowledgement form Download");
           }
