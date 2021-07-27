@@ -20,7 +20,7 @@ import Notifications from "modules/employee/Notifications";
 import pgrRoutes from "pgr-employee/Routes/pgr-routes";
 import ptRoutes from "pt-employee/Routes/pt-routes";
 import frameworkScreens from "./frameworkScreens";
-//import bookingRoutes from "egov-services-emp/Routes/services-routes";
+import bookingRoutes from "egov-services-emp/Routes/services-routes";
 import externalRoutes from "./exterenalURL";
 import HelpSupport from "modules/employee/HelpSupport";
 // import PTHome from "modules/employee/PropertyTax/PTHome";
@@ -176,7 +176,7 @@ const routes = [
     },
   },
   ...pgrRoutes,
- // ...bookingRoutes,
+ ...bookingRoutes,
   ...ptRoutes,
   ...frameworkScreens,
   ...externalRoutes,
