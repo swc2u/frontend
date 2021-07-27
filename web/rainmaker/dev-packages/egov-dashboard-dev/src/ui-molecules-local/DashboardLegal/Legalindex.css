@@ -234,8 +234,7 @@ table th {
 .grab2 {
   cursor: -webkit-grab;
   cursor: grab;
-  color: green;
- }
+  color: green; }
 
 @media only screen and (max-width: 500px) {
   .content-container {
