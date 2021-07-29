@@ -51,7 +51,13 @@ export const taskPipeSizeProposed = getLabelWithValue(
         {
           labelKey: "WATER_APPLICATION_TYPE"
         },
-        {  jsonPath: "WaterConnection[0].waterApplicationType" },
+        {  jsonPath: "WaterConnection[0].waterApplicationType" ,
+    
+        localePrefix: {
+            moduleName: "WS",
+            masterName: "WATER_APPLICATION"
+          }
+    },
       )
 export const taskNoOfClosets = getLabelWithValue(
     {

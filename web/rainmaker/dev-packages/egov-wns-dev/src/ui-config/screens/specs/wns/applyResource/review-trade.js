@@ -430,10 +430,10 @@ export const propertyConnectionDetails={
     },
     { jsonPath: "WaterConnection[0].waterApplicationType",
       callBack: handleNA,
-      // localePrefix: {
-      //   moduleName: "WS",
-      //   masterName: "PROPSUBUSGTYPE"
-      // }
+      localePrefix: {
+        moduleName: "WS",
+        masterName: "WATER_APPLICATION"
+      }
     }
   ),
   reviewcontractValue: getLabelWithValue(
