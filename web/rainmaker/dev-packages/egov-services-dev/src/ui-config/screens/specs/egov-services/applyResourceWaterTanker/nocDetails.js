@@ -320,7 +320,31 @@ export const bookingDetails = getCommonCard({
             }),
             visible: false,
         },
+        quantity : {
+            ...getTextField({
+                label: {
+                    labelName: "Quantity  ",
+                    labelKey: "Quantity  ",
+                },
+                placeholder: {
+                    labelName: "Enter Quantity  ",
+                    labelKey: "Enter Quantity  ",
+                },
+               
+                minValue : 1, 
+                maxValue : 50, 
+                
+                errorMessage: "Please enter quantity from 1 to 50",
+                // helperText : "new helper outside",
+                required: true,
+                jsonPath: "Booking.quantity",
+                props: {
+                    required: true,
+                    helperText: "custom helper text",
 
+                },
+            }),
+    },
         dummyDiv: {
             uiFramework: "custom-atoms",
             componentPath: "Div",

@@ -42,6 +42,12 @@
 }
 
 @media only screen and (max-width: 768px) {
+  .apply-wizard-footer button{
+    min-width: 100vw !important;
+  }
+  .apply-wizard-footer-div {
+    float: left !important;
+  }
   .share-btn {
     position: fixed;
     top: 14px;
