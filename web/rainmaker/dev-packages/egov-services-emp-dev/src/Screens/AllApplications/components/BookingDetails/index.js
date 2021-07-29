@@ -82,7 +82,11 @@ class BookingDetails extends Component {
   render() {
     const { status,quantity,historyApiData, applicantName, applicationNo, submittedDate, dateCreated, address, sector, houseNo, bookingType, mapAction, images, action, role,bookingForDate, bookingForTime} = this.props;
     var ProcessInstances = [];
-    let StrQuantity = quantity.toString();
+    let StrQuantity = 'NA'
+    if(quantity !== null && quantity !== undefined){
+      StrQuantity = quantity.toString();
+    }
+    
     console.log("StrQuantity",StrQuantity)
 console.log("ProcessInstancesWaterTanker",this.props)
     if (historyApiData != undefined && historyApiData.ProcessInstances && historyApiData.ProcessInstances.length > 0) {

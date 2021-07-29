@@ -99,8 +99,10 @@ class BookingsDetails extends Component {
       }
       else{
         localRent = rent 
-        localUTGST  = utGST 
-        LocalGST = cGST
+        // localUTGST  = utGST.toFixed(2)
+        localUTGST  = Math.round((utGST + Number.EPSILON) * 100) / 100
+        // LocalGST = cGST.toFixed(2)
+        LocalGST = Math.round((cGST + Number.EPSILON) * 100) / 100
       }
       this.props.prepareFinalObject("PaccDiscount.localRent", localRent);
       this.props.prepareFinalObject("PaccDiscount.localUTGST", localUTGST);
