@@ -1430,9 +1430,7 @@ export const downloadCertificate = async (
     tenantId = "ch.chandigarh",
     flag = 'false',
     mode = "download"
-) => {
-    console.log("Arguments",state,applicationNumber)
-    
+) => { 
     let applicationData = {}
     tenantId = "ch.chandigarh"
     //tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
@@ -1469,7 +1467,6 @@ export const downloadCertificate = async (
             state.screenConfiguration.preparedFinalObject,
             "Booking"
         );
-        console.log("ApplicationDataForCitizen",applicationData)
         if (applicationData.roomsModel !== undefined && applicationData.roomsModel.length > 0) {
 console.log("RoomModel",applicationData)
             let communityApplicationNumber = get(
@@ -1496,16 +1493,14 @@ console.log("RoomModel",applicationData)
             applicationData = recData[0];
         }
         else {
-            console.log("ComeInElsePartWithApplicationData",applicationData)
+            
             const response = await getSearchResultsView([
                 { key: "tenantId", value: tenantId },
                 { key: "applicationNumber", value: applicationNumber },
             ]);
             let recData = get(response, "bookingsModelList", []);
-console.log(recData,"RecDataForCitizen")
-
             applicationData = recData[0];
-console.log("applicationData--WithRecordData",applicationData)
+
         } 
 
     }
@@ -1676,7 +1671,6 @@ console.log("applicationData--WithRecordData",applicationData)
  
     }
     var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
-console.log("DirectBookingPeriod",applicationData.bkDuration,applicationData.bkFromDate,applicationData.bkToDate)
  
 let newFromDate;
 let newToDate
@@ -1686,11 +1680,6 @@ if(applicationData.bkFromDate !== null && applicationData.bkToDate !== null){
     newToDate = applicationData.bkToDate
 }
 
-let testing = getDurationDate(
-    applicationData.bkFromDate,
-    applicationData.bkToDate
-)
-console.log("Testing--withFunction", testing)
 let certificateData = [
         {
             applicantDetail: {

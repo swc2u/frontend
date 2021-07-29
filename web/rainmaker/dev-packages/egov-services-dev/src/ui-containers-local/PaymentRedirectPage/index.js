@@ -14,7 +14,6 @@ import {
 
 class PaymentRedirect extends Component {
     updateApiCall = async (apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)=>{
-       console.log("URLFORMAIL",apiUrl,urlPayload)
         const res= await  httpRequest(
               "post",
               apiUrl,
@@ -189,9 +188,9 @@ class PaymentRedirect extends Component {
                
                 if(bookingType !== "BWT"){
                 let paymentReceipt= await downloadReceipt(payload, consumerCode, tenantId, 'true')
-               console.log("ValueOFPAYLOAD",payload,consumerCode)
+
                 let permissionLetter= await downloadCertificate(payload, consumerCode, tenantId, 'true')
-                console.log("permissionLetter--function",permissionLetter)               
+
                 Promise.all(paymentReceipt).then(data=>{
                     let urlPayload={
                         "paymentReceipt" :  data[0]
