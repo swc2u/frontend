@@ -10,11 +10,23 @@ class PayDetails extends Component {
 
   render() {
     const { bkPaymentDate, paymentDetails,quantity,bkPaymentReceiptNumber, bkPaymentStatus } = this.props;
-   let strquantity = quantity.toString();
+ 
+
+
+    let strquantity = 'NA'
+    if(quantity !== null && quantity !== undefined){
+      strquantity = quantity.toString();
+    }
+
+    // let strquantity = quantity.toString();
    let getBaseAmount = 0;
    let strBaseAmount = "0"
    if(paymentDetails && paymentDetails.billDetails[0] && paymentDetails.billDetails[0].billAccountDetails[0].amount){
-    getBaseAmount = (paymentDetails && paymentDetails.billDetails[0] && paymentDetails.billDetails[0].billAccountDetails[0].amount/quantity)
+     if(quantity !== null && quantity !== undefined){
+      getBaseAmount = (paymentDetails && paymentDetails.billDetails[0] && paymentDetails.billDetails[0].billAccountDetails[0].amount/quantity)
+     }else{
+      getBaseAmount = (paymentDetails && paymentDetails.billDetails[0] && paymentDetails.billDetails[0].billAccountDetails[0].amount)
+     }
     console.log("getBaseAmount",getBaseAmount)
     strBaseAmount = getBaseAmount.toString()
     console.log("strBaseAmount",strBaseAmount)

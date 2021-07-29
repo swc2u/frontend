@@ -1434,9 +1434,6 @@ let tmpdate2 = new Date(applicationDetails.bkToDate)
 cancelBookingPayReceipt({ BookingInfo: BookingInfo})
 }
 else{
-
-
-
     let BookingInfo = [
       {
         applicantDetail: {

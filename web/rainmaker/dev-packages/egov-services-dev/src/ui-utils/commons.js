@@ -94,6 +94,7 @@ export const getSearchResultsViewForRoomBooking = async (queryObject) => {
 
 
 export const getSearchResultsView = async (queryObject) => {
+    console.log("queryObjectInCommonFile",queryObject)
     try {
         const response = await httpRequest(
             "post",
@@ -111,6 +112,7 @@ export const getSearchResultsView = async (queryObject) => {
                 uuid: JSON.parse(getUserInfo()).uuid,
             }
         );
+        console.log("ResponseInCommonFile",response)
         return response;
     } catch (error) {
         store.dispatch(

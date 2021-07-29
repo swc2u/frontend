@@ -147,8 +147,18 @@ this.setState({
 		    complaintCountRequest
 		  );
 		
-		let venueData = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue : 'NA'
-        let categoryData = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkCategory : 'NA'
+		//   let venueData =  get(
+		// 	dataforSectorAndCategory,
+		// 	"dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue",
+		// 	"NA"
+		//   );
+
+		let venueData = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList.length > 0? 
+		(dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue && 
+			dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue !== undefined && 
+			dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue !== null ? 
+	     	(dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue) : 'NA') : 'NA'
+        let categoryData = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList.length > 0 ? (dataforSectorAndCategory.bookingsModelList[0].bkCategory && dataforSectorAndCategory.bookingsModelList[0].bkCategory !== undefined && dataforSectorAndCategory.bookingsModelList[0].bkCategory !== null ? (dataforSectorAndCategory.bookingsModelList[0].bkCategory) : 'NA') : 'NA'
 		
 
     fetchperDayRate({	
@@ -1407,7 +1417,7 @@ const mapStateToProps = (state, ownProps) => {
   let RefoundCGAmount = 0;
   let getChargesArray;
   let cgSecurityAmount
-  if(selectedComplaint.bkBookingType !== undefined && selectedComplaint.bkBookingType !== null){
+  if(selectedComplaint && selectedComplaint.bkBookingType && selectedComplaint.bkBookingType !== undefined && selectedComplaint.bkBookingType !== null){
 	if(selectedComplaint.bkBookingType == "GROUND_FOR_COMMERCIAL_PURPOSE"){
 		cgSecurityAmount = get(
 		 state,

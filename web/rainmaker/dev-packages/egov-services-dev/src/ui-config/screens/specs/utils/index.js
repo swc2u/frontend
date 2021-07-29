@@ -721,7 +721,8 @@ export const getDurationDateForPark = (fromDate, toDate) => {
  
     return finalDate;
 };
-export const getDurationDate = (fromDate, toDate) => {
+export const getDurationDate = (fromDate, toDate,duration="0") => {
+    console.log("FindBookingPeriod",fromDate, toDate,duration)
     let monthNames = [
         "Jan",
         "Feb",
@@ -736,7 +737,9 @@ export const getDurationDate = (fromDate, toDate) => {
         "Nov",
         "Dec",
     ];
-    let startDate = new Date(fromDate);
+    
+    if(fromDate && toDate){
+        let startDate = new Date(fromDate);
     let finalStartDate =
         startDate.getDate() +
         " " +
@@ -753,7 +756,37 @@ export const getDurationDate = (fromDate, toDate) => {
         " " +
         endDate.getFullYear();
     let finalDate = finalStartDate + " to " + finalEndDate;
+    console.log("finalDate",finalDate)
     return finalDate;
+    }
+    if(duration != "0" && fromDate == null && toDate == null) {
+        let startDate = new Date()
+        let endDate = new Date()
+        let d = endDate.getDate();
+        endDate.setMonth(endDate.getMonth() + +duration);
+        if (endDate.getDate() != d) {
+          endDate.setDate(0);
+    }
+    let finalStartDate =
+    startDate.getDate() +
+    " " +
+    monthNames[startDate.getMonth()] +
+    " " +
+    startDate.getFullYear();
+
+endDate.setMonth(endDate.getMonth());
+let finalEndDate =
+    endDate.getDate() +
+    " " +
+    monthNames[endDate.getMonth()] +
+    " " +
+    endDate.getFullYear();
+let finalDate = finalStartDate + " to " + finalEndDate;
+console.log("finalDate",finalDate)
+return finalDate;
+
+}
+
 };
 const getMdmsTenantsData = async () => {
     let tenantId = getTenantId().split(".")[0];
@@ -981,7 +1014,7 @@ export const downloadReceipt = async (
         } else {
             bookingDuration = getDurationDate(
                 applicationData.bkFromDate,
-                applicationData.bkToDate
+                applicationData.bkToDate,applicationData.bkDuration
             )
         }
         let paymentInfoData = "";
@@ -1134,7 +1167,7 @@ export const downloadReceipt = async (
                             .businessService === "BOOKING_BRANCH_SERVICES.BOOKING_GROUND_OPEN_SPACES"
                         ? getDurationDate(
                             applicationData.bkFromDate,
-                            applicationData.bkToDate
+                            applicationData.bkToDate,applicationData.bkDuration
                         )
                         : `${applicationData.bkDate} , ${applicationData.bkTime} `,
                 bookingItem: `Online Payment Against Booking of ${payloadReceiptDetails.Payments[0].paymentDetails[0].bill
@@ -1381,6 +1414,14 @@ export const downloadReceipt = async (
 
 };
 
+
+
+
+
+
+
+
+
 export const downloadCertificate = async (
     state,
     applicationNumber,
@@ -1388,6 +1429,8 @@ export const downloadCertificate = async (
     flag = 'false',
     mode = "download"
 ) => {
+    console.log("Arguments",state,applicationNumber)
+    
     let applicationData = {}
     tenantId = "ch.chandigarh"
     //tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
@@ -1424,8 +1467,9 @@ export const downloadCertificate = async (
             state.screenConfiguration.preparedFinalObject,
             "Booking"
         );
+        console.log("ApplicationDataForCitizen",applicationData)
         if (applicationData.roomsModel !== undefined && applicationData.roomsModel.length > 0) {
-
+console.log("RoomModel",applicationData)
             let communityApplicationNumber = get(
                 state.screenConfiguration.preparedFinalObject,
                 "Booking.bkApplicationNumber"
@@ -1450,16 +1494,17 @@ export const downloadCertificate = async (
             applicationData = recData[0];
         }
         else {
+            console.log("ComeInElsePartWithApplicationData",applicationData)
             const response = await getSearchResultsView([
                 { key: "tenantId", value: tenantId },
                 { key: "applicationNumber", value: applicationNumber },
             ]);
             let recData = get(response, "bookingsModelList", []);
-
+console.log(recData,"RecDataForCitizen")
 
             applicationData = recData[0];
-
-        }
+console.log("applicationData--WithRecordData",applicationData)
+        } 
 
     }
     else if (flag === 'true') {
@@ -1626,17 +1671,31 @@ export const downloadCertificate = async (
         bankInfo.nomName = applicationData.bkNomineeName;
        
 
-
+ 
     }
     var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+console.log("DirectBookingPeriod",applicationData.bkDuration,applicationData.bkFromDate,applicationData.bkToDate)
+ 
+let newFromDate;
+let newToDate
 
-    let certificateData = [
+if(applicationData.bkFromDate !== null && applicationData.bkToDate !== null){
+    newFromDate = applicationData.bkFromDate
+    newToDate = applicationData.bkToDate
+}
+
+let testing = getDurationDate(
+    applicationData.bkFromDate,
+    applicationData.bkToDate
+)
+console.log("Testing--withFunction", testing)
+let certificateData = [
         {
             applicantDetail: {
                 name: applicationData.bkApplicantName,
                 mobileNumber: applicationData.bkMobileNumber,
                 houseNo: applicationData.bkHouseNo,
-                permanentAddress:
+                permanentAddress:     
                     applicationData.businessService == "PACC"
                         ? applicationData.bkHouseNo
                         : applicationData.bkCompleteAddress,
@@ -1658,16 +1717,16 @@ export const downloadCertificate = async (
                 typeOfConstruction: applicationData.bkConstructionType,
                 permissionPeriod: getDurationDate(
                     applicationData.bkFromDate,
-                    applicationData.bkToDate
+                    applicationData.bkToDate,applicationData.bkDuration
                 ),
-                bookingPeriod: bookingDuration,
+                bookingPeriod: getDurationDate(
+                    applicationData.bkFromDate,
+                    applicationData.bkToDate,applicationData.bkDuration
+                ),
                 venueName: applicationData.businessService == "OSUJM"? applicationData.bkBookingVenue:applicationData.bkLocation,
                 sector: applicationData.bkSector,
                 groundName: applicationData.bkSector,
-                bookingPurpose: applicationData.bkBookingPurpose,
-                bookingPupose: applicationData.bkBookingPurpose,
-                                
-                
+                bookingPurpose: applicationData.bkBookingPurpose, 
                 duration:
                     applicationData.bkDuration == "1"
                         ? `${applicationData.bkDuration} Month`
@@ -1693,6 +1752,7 @@ export const downloadCertificate = async (
             bankInfo
         },
     ];
+    console.log("RequestBodyForPL",certificateData)
     let paymentInfoData = {}
     if (applicationData.roomsModel !== undefined && applicationData.roomsModel.length > 0 && applicationData.bkApplicationNumber !== applicationNumber) {
 
@@ -1801,14 +1861,15 @@ export const downloadCertificate = async (
 
     let res = await httpRequest(
         "post",
-        DOWNLOADCERTIFICATE.GET.URL,
-        "",
+        DOWNLOADCERTIFICATE.GET.URL, 
+        "", 
         queryStr,
         { BookingInfo: certificateData },
         { Accept: "application/json" },
         { responseType: "arraybuffer" }
     )
 
+    console.log("ResponseForPL",res)
 
     if (res && res.filestoreIds && res.filestoreIds.length > 0) {
 
