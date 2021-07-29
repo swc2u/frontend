@@ -461,10 +461,10 @@ const getPropertyConnectionOtherDetails = {
             },
             { jsonPath: "applyScreen.waterApplicationType",
               callBack: handleNA,
-              // localePrefix: {
-              //   moduleName: "WS",
-              //   masterName: "PROPSUBUSGTYPE"
-              // }
+              localePrefix: {
+                moduleName: "WS",
+                masterName: "WATER_APPLICATION"
+              }
             }
           ),
           reviewcontractValue: getLabelWithValue(
@@ -767,14 +767,22 @@ export const taskWaterApplicationType = getLabelWithValueForModifiedLabel(
   },
   {
     jsonPath: "applyScreen.waterApplicationType",
-    callBack: handleNA
+    callBack: handleNA,
+    localePrefix: {
+      moduleName: "WS",
+      masterName: "WATER_APPLICATION"
+    }
   },
   {
     labelKey: "WS_OLD_LABEL_NAME"
   },
   {
     jsonPath: "applyScreenOld.waterApplicationType",
-    callBack: handleNA
+    callBack: handleNA,
+    localePrefix: {
+      moduleName: "WS",
+      masterName: "WATER_APPLICATION"
+    }
   },
 )
 export const taskPipeSizeProposed = getLabelWithValueForModifiedLabel(

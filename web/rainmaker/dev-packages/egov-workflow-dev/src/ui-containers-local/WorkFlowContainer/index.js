@@ -276,7 +276,7 @@ class WorkFlowContainer extends React.Component {
         let roles =[]
         let rolecode ='';
         let nextActions
-        let curstateactions = businessServiceData[0].states.filter(x=>x.applicationStatus === data.applicationStatus )
+        let curstateactions = businessServiceData[0].states.filter(x=>x.applicationStatus === data.waterApplication.applicationStatus )
        // let actions_ = data.action
         if(curstateactions && curstateactions[0])
         {
@@ -411,23 +411,23 @@ class WorkFlowContainer extends React.Component {
 
       let labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
       let labelName='Please fill the required field in Edit section'
-      if(data.applicationStatus ==='PENDING_FOR_SECURITY_DEPOSIT' && data.action==='VERIFY_AND_FORWARD_FOR_PAYMENT')
+      if(data.waterApplication.applicationStatus ==='PENDING_FOR_SECURITY_DEPOSIT' && data.action==='VERIFY_AND_FORWARD_FOR_PAYMENT')
       {
         labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
         labelName = 'Please fill the required field in Edit section'
       }
-      else if(data.applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN' && data.action ==='SUBMIT_ROADCUT_NOC')
+      else if(data.waterApplication.applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN' && data.action ==='SUBMIT_ROADCUT_NOC')
       {
         labelKey = 'WS_SUBMIT_ROADCUT_NOC_VALIDATION_MESSAGE'
         labelName = 'Please upload road cut NOC document in document section then submit'
       }
-      else  if(data.applicationStatus ==='INITIATED' && data.action==='SUBMIT_APPLICATION')
+      else  if(data.waterApplication.applicationStatus ==='INITIATED' && data.action==='SUBMIT_APPLICATION')
       {
         labelKey = 'WS_RESUBMIT_DOCUMENT_UPLOAD_VALIDATION_MESSAGE'
         labelName = 'Please upload mandatory document in document section then submit'
 
       }
-      else  if((data.applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
+      else  if((data.waterApplication.applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
       && (data.action==='VERIFY_AND_FORWARD_FOR_PAYMENT'|| data.action==='VERIFY_AND_FORWARD_TO_JE' ))//PENDING_FOR_SDE_APPROVAL,VERIFY_AND_FORWARD_FOR_PAYMENT
       {
         labelKey = 'WS_SUBMIT_UPDATE_METER_INFORMATION_VALIDATION_MESSAGE'
@@ -1464,7 +1464,7 @@ uniqueBycode =(data,key)=>{
     }
     //end pipe size filter
     // VERIFY_AND_FORWARD_TO_JE_FOR_FEE VERIFY_AND_FORWARD_TO_SE, PENDING_FOR_SDE_APPROVAL_FOR_JE TEMPORARY_WSCONNECTION
-    if(businessService === "TEMPORARY_WSCONNECTION_BILLING"  && (applicationStatus == 'PENDING_FOR_SDE_APPROVAL_FOR_JE' || applicationStatus ==='PENDING_FOR_SDE_APPROVAL_AFTER_EE' ) )
+    if(businessService === "TEMPORARY_WSCONNECTION_BILLING"  && (applicationStatus == 'PENDING_FOR_SDE_APPROVAL_FOR_JE' || applicationStatus ==='PENDING_FOR_EE_APPROVAL' ) )
     {
       const {WaterConnection} = preparedFinalObject;
       let pipeSize = 0 ;
@@ -1473,11 +1473,11 @@ uniqueBycode =(data,key)=>{
       pipeSize = parseInt(pipeSize);
        if (pipeSize <= 15)
       {
-        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_SE');//"VERIFY_AND_FORWARD_TO_SE"
+        actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_TO_SE');//"VERIFY_AND_FORWARD_TO_SDE"
 
       }
       else{
-        actions = actions.filter(item => item.buttonLabel !== "VERIFY_AND_FORWARD_FOR_PAYMENT");
+        actions = actions.filter(item => item.buttonLabel !== "VERIFY_AND_FORWARD_TO_SDE");//"VERIFY_AND_FORWARD_TO_SE"
       }
 
     }

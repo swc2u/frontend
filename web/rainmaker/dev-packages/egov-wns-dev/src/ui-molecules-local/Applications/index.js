@@ -54,7 +54,17 @@ else{
 
 }
   }
-
+  titleCasingApplicationType = (activityType) => {
+    let status =`CS_COMMON_INBOX_${activityType}`
+        const localisationLabels = getTransformedLocalStorgaeLabels();
+        return getLocaleLabels(
+          status,
+          status,
+          //"PENSION_COMMON_TABLE_COL_EMMPLOYEE_NAME",
+          localisationLabels
+        );
+        
+      }
   titleCasingStatus = (status,activityType,applicationNo) => {
 switch(activityType)
 {
@@ -210,6 +220,22 @@ switch(activityType)
                         <Grid item md={8} xs={6}>
                           <Label
                             labelName={item.due}
+                            fontSize={14}
+                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
+                          />
+                        </Grid>
+                      </Grid>
+                      <Grid container style={{ marginBottom: 12 }}>
+                        <Grid item md={4} xs={6}>
+                          <LabelContainer
+                            labelKey="WS_APPLICATION_TYPE_LABEL"
+                            fontSize={14}
+                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.60" }}
+                          />
+                        </Grid>
+                        <Grid item md={8} xs={6}>
+                          <Label
+                            labelName={this.titleCasingApplicationType(item.activityType)}
                             fontSize={14}
                             style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                           />

@@ -179,6 +179,12 @@ export const OwnerInfoCard = getCommonCard({
             "required",
             false
             ));
+            dispatch(handleField(
+              "apply",
+              `components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType`,
+              "visible",
+              false
+              ));
 
         }
         else{
@@ -189,6 +195,12 @@ export const OwnerInfoCard = getCommonCard({
             "required",
             true
             ));
+            dispatch(handleField(
+              "apply",
+              `components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType`,
+              "visible",
+              true
+              ));
         }
       }
        

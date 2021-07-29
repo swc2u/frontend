@@ -30,7 +30,7 @@ import { ownerDetailsHeader, getOwnerDetails, ownershipType
 import { additionDetails } from "./applyResource/additionalDetails";
 import { OwnerInfoCard } from "./applyResource/connectionDetails";
 import { MultiownerDetailsDetails } from "./applyResource/MultipleownerDetailsDetails"; 
-import {getCommentDetails,commentHeader} from './applyResource/comment';
+import {getCommentDetails,commentHeader,commentSubHeaderTEMP} from './applyResource/comment';
 import {PropertyUsageHeader,getPropertyUsageDetails} from './applyResource/propertyUsageDetails'
 import {getConnectionConversionDetails , ConnectionConversionHeader} from './applyResource/connectionConversionDetails'
 import { httpRequest } from "../../../../ui-utils";
@@ -1869,7 +1869,7 @@ export const connectionHolderDetails = getCommonCard({ holderHeader, sameAsOwner
 export const proposedconnectionHolderDetails = getCommonCard({ proposedholderHeader,  proposedholderDetails })
 export const propertyUsageDetails = getCommonCard({PropertyUsageHeader,propertyUsage});
 export const commentSectionDetails = getCommonCard({commentHeader,commentDetails})
-export const commentTempSectionDetails = getCommonCard({commentHeader,propertyTempIDDetails,commentDetails})
+export const commentTempSectionDetails = getCommonCard({commentHeader,commentSubHeaderTEMP,propertyTempIDDetails,commentDetails})
 export const connConversionDetails = getCommonCard({ ConnectionConversionHeader,connectionConversionDetails})
 export const formwizardFirstStep = {
   uiFramework: "custom-atoms",

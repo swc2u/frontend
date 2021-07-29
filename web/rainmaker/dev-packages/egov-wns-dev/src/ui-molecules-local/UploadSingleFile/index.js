@@ -28,7 +28,19 @@ const UploadSingleFile = ({
             UploadRequired = true
            } else
            {
-            UploadRequired = false
+            role = 'WS_CEMP'
+            let userInfo = JSON.parse(getUserInfo());
+            const roles = get(userInfo, "roles");
+            const roleCodes = roles ? roles.map(role => role.code) : [];
+            if (roleCodes.indexOf(role) > -1){
+              UploadRequired = true
+            }
+            else{
+              UploadRequired = false
+
+            }
+
+            
            } 
 
     
