@@ -214,6 +214,7 @@ export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
 };
 
 export const addYears = (dateString, years) => {
+  if(!!dateString){
   try {
     const date = new Date(Number(dateString))
     const fullYear = date.getFullYear();
@@ -222,6 +223,7 @@ export const addYears = (dateString, years) => {
   } catch (error) {
     return dateString
   }
+}
 }
 
 export const convertDateTimeToEpoch = dateTimeString => {
@@ -817,7 +819,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
   };
   const DOWNLOADRECEIPT= {
     GET: {
-      URL: "/pdf-service/v1/_create",
+      URL: "/rp-services/pdf/_create_payment_receipt",
       ACTION: "_get",
     },
   };
@@ -867,16 +869,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
           }]
         }]
   
-        if(time){
-          time = moment(new Date(time)).format("h:mm:ss a")
-        }
-        Payments = [{
-          ...Payments[0],paymentDetails:[{
-            ...Payments[0].paymentDetails[0],auditDetails:{
-              ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
-            }
-          }]
-        }]
+
         
         const roleExists = ifUserRoleExists("CITIZEN");
          if(roleExists && type==="rent-payment"){
@@ -899,11 +892,11 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
             responseType: 'arraybuffer'
           })
           .then(res => {
-            res.filestoreIds[0]
-            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-              res.filestoreIds.map(fileStoreId => {
-                downloadReceiptFromFilestoreID(fileStoreId, mode)
-              })
+            res[0].fileStoreId
+            if (res && res[0].fileStoreId && res.length > 0) {
+             
+                downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
+            
             } else {
               console.log("Error In Receipt Download");
             }
@@ -947,16 +940,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
             }]
           }]
     
-          if(time){
-            time = moment(new Date(time)).format("h:mm:ss a")
-          }
-          Payments = [{
-            ...Payments[0],paymentDetails:[{
-              ...Payments[0].paymentDetails[0],auditDetails:{
-                ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
-              }
-            }]
-          }]
+        
           
           const roleExists = ifUserRoleExists("CITIZEN");
            if(roleExists && type==="rent-payment"){
@@ -995,11 +979,11 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
               responseType: 'arraybuffer'
             })
             .then(res => {
-              res.filestoreIds[0]
-              if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-                res.filestoreIds.map(fileStoreId => {
-                  downloadReceiptFromFilestoreID(fileStoreId, mode)
-                })
+              res[0].fileStoreId
+              if (res && res[0].fileStoreId && res.length > 0) {
+               
+                  downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
+              
               } else {
                 console.log("Error In Receipt Download");
               }
