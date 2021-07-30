@@ -10,13 +10,16 @@ import Button from "@material-ui/core/Button";
 import { LabelContainer } from "../LabelContainer";
 import { connect } from "react-redux";
 import get from "lodash/get";
-import "./index.scss";
 import {
   
   getQueryArg,
 } from "egov-ui-framework/ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import  {delectDocument} from "../../ui-utils/commons"
+import  {delectDocument} from "../../ui-utils/commons";
+import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css'; // This only needs to be imported once in your app
+import "./index.scss";
+
 const themeStyles = theme => ({
   iconDiv: {
     display: "flex",
@@ -54,6 +57,20 @@ const documentTitle = {
 	// wordBreak: "break-all"
 };
 class DownloadFileContainer extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      photoIndex: 0,
+      isOpen: false,
+    };
+  }
+
+  toggleLightBox = () => {
+    this.setState({ isOpen: !this.state.isOpen })
+  }
+
   deleteDocument = async (remDocIndex) => {
     const { prepareFinalObject, documentsUploadRedux , data} = this.props;
    // alert('i am at delete')
@@ -84,6 +101,7 @@ class DownloadFileContainer extends React.Component {
   render() {
     const { classes,data, documentData, ...rest } = this.props;
   
+    const { photoIndex, isOpen } = this.state;
     // return (
     //   <MultiDownloadCard data={data} documentData={documentData} {...rest} /> 
     // );
@@ -122,7 +140,38 @@ class DownloadFileContainer extends React.Component {
                     <div><Button href={item.link} color="primary">
                   Download
                 </Button></div>
+
+                    {/* Code Change SD */}
+                    
+                    {/* <img 
+                    src={item.link}
+                    alt="new"
+                    /> */}
+                    <div><Button type="button" color="primary" 
+                    onClick={this.toggleLightBox}>
+                      Preview
+                    </Button></div>
+                    {isOpen && (
+                      <Lightbox
+                          // mainSrc={'https://chstage.blob.core.windows.net/fileshare/ch/egov-hc/July/28/1627455070683Screenshot (6).png?sig=zGeiNX8QgWkVZLZF7seEK2tmMg4Sil9Hk5JNQ7Su50o%3D&st=2021-07-28T18%3A54%3A41Z&se=2021-07-29T18%3A54%3A41Z&sv=2016-05-31&sp=r&sr=b'}
+                          mainSrc={item.link}
+                          // nextSrc={images[(photoIndex + 1) % images.length]}
+                          // prevSrc={images[(photoIndex + images.length - 1) % images.length]}
+                          onCloseRequest={() => this.setState({ isOpen: false })}
+                          // onMovePrevRequest={() =>
+                          //   this.setState({
+                          //     photoIndex: (photoIndex + images.length - 1) % images.length,
+                          //   })
+                          // }
+                          // onMoveNextRequest={() =>
+                          //   this.setState({
+                          //     photoIndex: (photoIndex + 1) % images.length,
+                          //   })
+                          // }
+                        />
+                    )}
                     <div> 
+                      
                       {
                       item.IsDelete &&<Button   onClick={() => this.deleteDocument(item)} color="primary">
                       Delte

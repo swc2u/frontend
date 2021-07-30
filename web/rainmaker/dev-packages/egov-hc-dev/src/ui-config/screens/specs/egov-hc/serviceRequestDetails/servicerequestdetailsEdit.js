@@ -89,11 +89,11 @@ const setNumberOfTreesForPruning = (currentSelectedServiceType, state, dispatch)
         "props.value",
         NumberOfTreesInPruning.DefaultTrees
       ))
-      dispatch(handleField("apply",
-      "components.div.children.formwizardFirstStep.children.servicerequestdetailsEdit.children.cardContent.children.servicerequestdetailsContainer.children.nooftrees",
-      "props.disabled",
-      true
-    ))
+    //   dispatch(handleField("apply",
+    //   "components.div.children.formwizardFirstStep.children.servicerequestdetailsEdit.children.cardContent.children.servicerequestdetailsContainer.children.nooftrees",
+    //   "props.disabled",
+    //   true
+    // ))
   }
   else{
     dispatch(handleField("apply",
