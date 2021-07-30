@@ -10,7 +10,7 @@ import axios from "axios";
 import isEqual from "lodash/isEqual";
 import _ from "lodash";
 import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
-import { prepareFormData } from "egov-ui-kit/redux/common/actions";
+import { prepareFormData } from "egov-ui-kit/redux/common/actions";  
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import OSMCCBookingDetails from "../AllApplications/components/OSMCCBookingDetails";
 import AppDetails from "./components/ApplicantDetails";
@@ -5239,7 +5239,8 @@ if(selectedComplaint.bkBookingType == "GROUND_FOR_COMMERCIAL_PURPOSE"){
       bkUtgst: selectedComplaint.bkUtgst,
       bkCgst: selectedComplaint.bkCgst,
       refundableSecurityMoney: selectedComplaint.refundableSecurityMoney,
-      cardNumber: selectedComplaint.cardNumber
+      cardNumber: selectedComplaint.cardNumber,
+      timeslots:selectedComplaint.timeslots,
     };
 
     let transformedComplaint;
