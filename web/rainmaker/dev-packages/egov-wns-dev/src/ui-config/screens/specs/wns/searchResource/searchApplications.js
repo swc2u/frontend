@@ -55,7 +55,8 @@ export const searchApplications = getCommonCard({
       required: false,
       pattern: /^[a-zA-Z0-9-_/]*$/i,
       errorMessage: "ERR_INVALID_APPLICATION_NO",
-      jsonPath: "searchScreen.applicationNumber"
+      //jsonPath: "searchScreen.applicationNumber"
+      jsonPath: "searchScreen.applicationNumberSearch"
     }),
 
     ownerMobNo: getTextField({
@@ -86,28 +87,24 @@ export const searchApplications = getCommonCard({
     //   gridDefination: { xs: 12, sm: 4 },
     //   required: false
     // }),
-    applicationstatus: getSelectField({
+
+    plotNo: getTextField({
       label: {
-        labelKey: "WS_HOME_SEARCH_RESULTS_APP_STATUS_LABEL"
+        labelKey: "WS_PROP_DETAIL_DHNO_INPUT"
       },
       placeholder: {
-        labelKey: "WS_HOME_SEARCH_RESULTS_APP_STATUS_PLACEHOLDER"
+        labelKey: "WS_PROP_DETAIL_DHNO_INPUT_PLACEHOLDER"
       },
-      required: false,
-      sourceJsonPath: "applyScreenMdmsData.searchScreen.applicationStatus",
       gridDefination: {
         xs: 12,
         sm: 4
       },
+      
       required: false,
-      errorMessage: "ERR_INVALID_BILLING_PERIOD",
-      localePrefix: {
-        moduleName: "WF",
-        masterName: "REGULARWSCONNECTION"
-      },
-      jsonPath: "searchScreen.applicationStatus"
+     // pattern: getPattern("MobileNo"),
+      errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+      jsonPath: "searchScreen.plotNo"
     }),
-
     fromDate: getDateField({
       label: { labelName: "From Date", labelKey: "WS_COMMON_FROM_DATE_LABEL" },
       placeholder: {
@@ -182,28 +179,43 @@ export const searchApplications = getCommonCard({
         {
           case"NEW_WS_CONNECTION":
           businessServices = "REGULARWSCONNECTION"
+          break;
           case"REACTIVATE_CONNECTION":
           businessServices = "WS_REACTIVATE"
+          break;
           case"CONNECTION_CONVERSION":
           businessServices = "WS_CONVERSION"
+          break;
           case"APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
           businessServices = "WS_TEMP_REGULAR"
+          break;
           case"TEMPORARY_DISCONNECTION":
           businessServices = "WS_TEMP_DISCONNECTION"
+          break;
           case"PERMANENT_DISCONNECTION":
           businessServices = "WS_DISCONNECTION"
+          break;
           case"UPDATE_CONNECTION_HOLDER_INFO":
           businessServices = "WS_RENAME"
+          break;
           case"APPLY_FOR_TEMPORARY_CONNECTION":
           businessServices = "TEMPORARY_WSCONNECTION"
+          break;
+          case"APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
+          businessServices = "TEMPORARY_WSCONNECTION_BILLING"
+          break;
           case"UPDATE_METER_INFO":
           businessServices = "WS_METER_UPDATE"
+          break;
           case"NEW_TUBEWELL_CONNECTION":
           businessServices = "WS_TUBEWELL"
+          break;
           case"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
           businessServices = "WS_TEMP_TEMP"
+          break;
           case"SW_SEWERAGE":
           businessServices = "SW_SEWERAGE"
+          break;
 
         }
         let swSectorList = state.screenConfiguration.preparedFinalObject.applyScreenMdmsData1['ws-services-masters'].swSectorList
@@ -252,6 +264,7 @@ export const searchApplications = getCommonCard({
           || businessServiceData[0].businessService === "WS_DISCONNECTION"
           || businessServiceData[0].businessService === "WS_RENAME"
           || businessServiceData[0].businessService === "TEMPORARY_WSCONNECTION"
+          || businessServiceData[0].businessService === "TEMPORARY_WSCONNECTION_BILLING"
           || businessServiceData[0].businessService === "WS_METER_UPDATE"
           || businessServiceData[0].businessService === "WS_TEMP_TEMP"
           || businessServiceData[0].businessService === "SW_SEWERAGE"//
@@ -277,7 +290,27 @@ export const searchApplications = getCommonCard({
        
    }
     }),
-
+    applicationstatus: getSelectField({
+      label: {
+        labelKey: "WS_HOME_SEARCH_RESULTS_APP_STATUS_LABEL"
+      },
+      placeholder: {
+        labelKey: "WS_HOME_SEARCH_RESULTS_APP_STATUS_PLACEHOLDER"
+      },
+      required: false,
+      sourceJsonPath: "applyScreenMdmsData.searchScreen.applicationStatus",
+      gridDefination: {
+        xs: 12,
+        sm: 4
+      },
+      required: false,
+      errorMessage: "ERR_INVALID_BILLING_PERIOD",
+      localePrefix: {
+        moduleName: "WF",
+        masterName: "REGULARWSCONNECTION"
+      },
+      jsonPath: "searchScreen.applicationStatus"
+    }),
     sectorNo : getSelectField({
       label: { labelName: "Sector/Locality", labelKey: "WS_PROP_DETAIL_LOCALITY_MOHALLA_LABEL_INPUT" },
       placeholder: {
@@ -320,22 +353,49 @@ export const searchApplications = getCommonCard({
       errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
       jsonPath: "searchScreen.groupNo"
     }),
-    plotNo: getTextField({
-      label: {
-        labelKey: "WS_PROP_DETAIL_DHNO_INPUT"
-      },
-      placeholder: {
-        labelKey: "WS_PROP_DETAIL_DHNO_INPUT_PLACEHOLDER"
-      },
-      gridDefination: {
-        xs: 12,
-        sm: 4
-      },
-      
+
+    division: getSelectField({
+      label: { labelKey: "WS_SERV_DETAIL_DIVISION" },
+      placeholder: { labelKey: "WS_SERV_DETAIL_DIVISION_PLACEHOLDER" },
+      gridDefination: { xs: 12, sm: 4 },
       required: false,
-     // pattern: getPattern("MobileNo"),
-      errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-      jsonPath: "searchScreen.plotNo"
+      sourceJsonPath: "applyScreenMdmsData1.ws-services-masters.Division",
+      jsonPath: "searchScreen.division",
+      props: {
+        optionValue: "code",
+        optionLabel: "name",
+       
+      
+    },
+    beforeFieldChange: async (action, state, dispatch) => {
+     
+
+      if(action.value)
+      {
+        let Division = state.screenConfiguration.preparedFinalObject.applyScreenMdmsData1['ws-services-masters'].subDivision
+        let subDivision = Division.filter(x=>x.Division === action.value)
+        if(subDivision && subDivision[0])
+        dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.subDivision", subDivision[0].subdivision));
+      }
+       
+   }
+     
+      
+    }),
+    subdiv: getSelectField({
+      label: { labelKey: "WS_SERV_DETAIL_SUB_DIVISION" },
+      placeholder: { labelKey: "WS_SERV_DETAIL_SUB_DIVISION_PLACEHOLDER" },
+      gridDefination: { xs: 12, sm: 4 },
+      sourceJsonPath: "applyScreenMdmsData.searchScreen.subDivision",
+      jsonPath: "searchScreen.subDivision",
+      props: {
+        optionValue: "subdivision",
+        optionLabel: "subdivision",
+       
+      
+    },
+     // pattern: /^[0-9]*$/i,
+      //errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
     }),
   }),
 

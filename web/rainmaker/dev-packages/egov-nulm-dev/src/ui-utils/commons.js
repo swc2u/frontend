@@ -47,6 +47,7 @@ export const handleCardDelete = (prepareFinalObject , arrayPath , isActive = fal
 
 
 export const getSearchResults = async (queryObject=[],requestBody={},dispatch,screenName) => {
+  
   let url =""
   switch(screenName){
     case "sep": url =  "/nulm-services/v1/sep/_get";
@@ -72,6 +73,8 @@ export const getSearchResults = async (queryObject=[],requestBody={},dispatch,sc
      case "suhShelterName" : url = "/nulm-services/v1/suh/_getShelterName";
     break;
     case "svru" : url = "/nulm-services/v1/susv/renew/_get";
+    break;
+    case "alf" : url = "/nulm-services/v1/alf/_get";
     break;
   }
   try {

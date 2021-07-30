@@ -89,8 +89,9 @@ let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
   {pensionCalculation:pensionCalculation},
   {employeeLeaveUpdate:employeeLeaveUpdate},
   {pensionDataUpdate:pensionDataUpdate},
-  {IsCalculate:IsCalculate},
+  {IsCalculate:IsCalculate},  
   {Isletter:Isletter},
+  {Isletterdoc:Isletterdoc},
 
  ]
 
@@ -413,7 +414,7 @@ export const getData = async (action, state, dispatch) => {
      if(!responce.ProcessInstances[0].isViewEnabled)
      {
        //window.location.href ="/index"
-       dispatch(prepareFinalObject("IsValidApplication", false));
+       dispatch(prepareFinalObject("IsValidApplication", true));
  
      }
      else{
@@ -422,7 +423,7 @@ export const getData = async (action, state, dispatch) => {
    }
    catch(error)
    {
-     dispatch(prepareFinalObject("IsValidApplication", false));
+     dispatch(prepareFinalObject("IsValidApplication", true));
    }
 };
 
@@ -636,6 +637,7 @@ for (let index = 0; index < dependents.length; index++) {
   dispatch(prepareFinalObject("ProcessInstances", get(response, "ProcessInstances", [])));
    dispatch(prepareFinalObject("ProcessInstancesTemp", get(response, "ProcessInstances", [])));
   dispatch(prepareFinalObject("ApplicationDetails", get(response, "ApplicationDetails", [])));
+  dispatch(prepareFinalObject("pensionArrears.pensionArrears", get(response,'ProcessInstances[0].pensionArrears',[]))); 
   let nqsyy = get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].pensionCalculationUpdateDetails.nqsYearVerified", 0 )
   let nqsmm = get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].pensionCalculationUpdateDetails.nqsMonthVerified", 0 )
   let nqsdd = get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].pensionCalculationUpdateDetails.nqsDayVerified", 0 )

@@ -1,7 +1,11 @@
 import React from "react";
+import get from "lodash/get";
 import Icon from "@material-ui/core/Icon";
 import Button from "@material-ui/core/Button";
-
+import {
+  localStorageGet,
+  getUserInfo
+} from "egov-ui-kit/utils/localStorageUtils";
 const UploadedDocument = props => {
   const { document, removeDocument ,moduleName,pagename} = props;
  
@@ -35,7 +39,19 @@ else{
   let IsEdit = true
   if(moduleName==="wns" && pagename==='wns' && process.env.REACT_APP_NAME !== "Citizen")
   {
-    IsEdit = false
+    let role = 'WS_CEMP'
+           let userInfo = JSON.parse(getUserInfo());
+           const roles = get(userInfo, "roles");
+           const roleCodes = roles ? roles.map(role => role.code) : [];
+           if (roleCodes.indexOf(role) > -1) {
+            IsEdit = true
+           }
+           else{
+            IsEdit = false
+
+           }
+
+    
   }
   // end
   return (

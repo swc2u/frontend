@@ -2203,10 +2203,20 @@ export const getFinanceData = async ( dispatch, data ) => {
       {}
     );
 
+    const res_getAllBudgetWatchReportRestData = await httpRequest(
+      "get",
+      // "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllBudgetVarianceReportRest",
+      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllBudgetWatchReportRestData?fromDate="+fromDate+"&toDate="+toDate,
+      "",
+      [],
+      {}
+    );
+
     var resJSON = {
       "getAllIncomeExpenditureYearly" : resgetAllIncomeExpentiureYearly,
       "getAllIncomeExpentiureSchedules" : resgetAllIncomeExpentiureSchedules,
-      "getAllBudgetVarienceReport" : resgetAllBudgetVarianceReportRest
+      "getAllBudgetVarienceReport" : resgetAllBudgetVarianceReportRest,
+      "getAllWatchBudgetRestReport" : res_getAllBudgetWatchReportRestData
     };
     
     //debugger;

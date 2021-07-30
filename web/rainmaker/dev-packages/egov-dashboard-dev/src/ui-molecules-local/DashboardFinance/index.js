@@ -51,6 +51,12 @@ class DashboardFinance extends React.Component {
             graphSixData: [],
             graphSevenData: [],
             graphEightData: [],
+            graphNineLabel: [],
+            graphNineData: [],
+            dataNine: [],
+            graphTenLabel: [],
+            graphTenData: [],
+            dataTen: [],
             graphClicked: -1,
             hardJSON: [],
             graphHardOneData : {},
@@ -374,7 +380,9 @@ class DashboardFinance extends React.Component {
                     })
     
                     // Column Data
-                    const tableData = data[0] ? Object.keys(data[0]) : [];
+                    var tableData = data[0] ? Object.keys(data[0]) : [];
+                    tableData[8] = "be";
+                    tableData[11] = "ae";
                     var columnData = []
                     for(var i=0; i<tableData.length; i++){
                         var itemHeader = {}
@@ -466,6 +474,9 @@ class DashboardFinance extends React.Component {
                         itemHeader["Header"] = this.camelize(tableData[i]);
                         itemHeader["accessor"] = tableData[i];
                         itemHeader["show"]= true ;
+                        if(tableData[i] === "accountName" ){
+                            itemHeader["width"]= 250 ; 
+                        }
                         columnData.push(itemHeader);
                     }
     
@@ -550,6 +561,76 @@ class DashboardFinance extends React.Component {
                         itemHeader["Header"] = this.camelize(tableData[i]);
                         itemHeader["accessor"] = tableData[i];
                         itemHeader["show"]= true ;
+                        if(tableData[i] === "accountName" ){
+                            itemHeader["width"]= 250 ; 
+                        }
+                        columnData.push(itemHeader);
+                    }
+    
+                    // Column Unchange Data 
+                    const unchangeColumnData = this.columnUnchange(columnData);
+    
+                    this.setState({
+                        graphClicked: 0,
+                        columnData: columnData,
+                        unchangeColumnData: unchangeColumnData,
+                        rowData: data,
+                        fromDT : fromDT,
+                        toDT : toDT,
+                    })
+                }else{
+                    this.setState({
+                        rowData : [],
+                        graphClicked : -1,
+                        columnData: [],
+                        unchangeColumnData: [],
+                    })
+                }
+            }
+            if(propSortBy === "billDate"){
+                debugger;
+                // data = Finance_data.getAllIncomeExpentiureSchedules.ResponseBody.Allschedulelist;
+                data = propsData[0].getAllWatchBudgetRestReport.ResponseBody.budgetwatachtreportlist;
+                if(data.length > 0){
+
+                    // Date is not fixed : createdDate
+
+                    var group = data.reduce((r, a) => {
+                        r[new Date(a["createdDate"]).getFullYear()+"-"+monthJSON[new Date(a["createdDate"]).getMonth()]] 
+                        = [...r[new Date(a["createdDate"]).getFullYear()+"-"+monthJSON[new Date(a["createdDate"]).getMonth()]] || [], a];
+                        return r;
+                        }, {});
+    
+                    
+                    var graphLabel = dateRange;
+                    var graphData = [];
+                    for(var i=0; i<graphLabel.length; i++){
+                        if(group[graphLabel[i]]){
+                            graphData.push(group[graphLabel[i]].length);
+                        }else{
+                            graphData.push(0);
+                        }
+                    }
+    
+                    var colorRandom = this.colorRandom(graphLabel);
+                    this.setState({
+                        graphNineLabel: graphLabel,
+                        graphNineData: graphData,
+                        dataNine: group,
+                        colorRandom : colorRandom
+                    })
+    
+                    // Column Data
+                    const tableData = data[0] ? Object.keys(data[0]) : [];
+                    var columnData = []
+                    for(var i=0; i<tableData.length; i++){
+                        var itemHeader = {}
+                        itemHeader["Header"] = this.camelize(tableData[i]);
+                        itemHeader["accessor"] = tableData[i];
+                        itemHeader["show"]= true ;
+                        if(tableData[i] === "accountName" ){
+                            itemHeader["width"]= 250 ; 
+                        }
                         columnData.push(itemHeader);
                     }
     
@@ -1500,9 +1581,270 @@ class DashboardFinance extends React.Component {
           },
       }
 
+        // Dropdown 4_1
+        var graphNineSortedData = {
+        labels: this.state.graphNineLabel,
+        datasets: [
+        {
+        label: "Application",
+        fill: false,
+        lineTension: 0.1,
+        hoverBorderWidth : 12,
+        backgroundColor : this.state.colorRandom,
+        // backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+        borderColor: "rgba(75,192,192,0.4)",
+        borderCapStyle: "butt",
+        barPercentage: 2,
+        borderWidth: 5,
+        barThickness: 25,
+        maxBarThickness: 10,
+        minBarLength: 2,
+        data: this.state.graphNineData
+        }
+        ]
+        }
+        var graphNineOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+        {
+        backgroundColor : "rgba(0, 0, 0, 0.1)",
+        weight: 0
+        }
+        ], 
+        legend: {
+        display: false,
+        position: 'bottom',
+        labels: {
+        fontFamily: "Comic Sans MS",
+        boxWidth: 20,
+        boxHeight: 2
+        }
+        },
+        tooltips: {
+        enabled: true
+        },
+        title: {
+        display: true,
+        text: "Monthwise Watch Rest Report Dashboard"
+        },
+        scales: {
+        xAxes: [{
+        gridLines: {
+        display:true
+        },
+        scaleLabel: {
+        display: true,
+        labelString: "Months"
+        }, 
+        }],
+        yAxes: [{
+        gridLines: {
+        display:true
+        },
+        ticks: {
+        suggestedMin: 0,
+        // suggestedMax: 100,
+        stepSize: 5
+        },
+        scaleLabel: {
+        display: true,
+        labelString: "No of Application"
+        }, 
+        }]
+        },
+        plugins: {
+        datalabels: {
+        display: false
+        //     color: 'white',
+        //     backgroundColor: 'grey',
+        //     labels: {
+        //         title: {
+        //             font: {
+        //                 weight: 'bold'
+        //             }
+        //         }
+        //     }}
+        }
+        },
+        onClick: (e, element) => {
+        if (element.length > 0) {
+
+        debugger;
+        var ind = element[0]._index;   
+        const selectedVal = this.state.graphNineLabel[ind];
+        // var graphSorting = this.graphSorting( "debitAmount", this.state.dataNine[selectedVal] );
+
+
+
+        this.setState({
+        // graphTenLabel: graphSorting[0],
+        // graphTenData: graphSorting[1],
+        // dataTen: graphSorting[2],
+        // graphClicked: 1,
+        rowData: this.state.dataNine[selectedVal]
+        })
+
+        }
+        },
+        }
+
+        // Dropdown 4_2
+        var graphTenSortedData = {
+        labels: this.state.graphTenLabel,
+        datasets: [
+        {
+        label: "Application",
+        fill: false,
+        lineTension: 0.1,
+        hoverBorderWidth : 12,
+        backgroundColor : this.state.colorRandom,
+        // backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+        borderColor: "rgba(75,192,192,0.4)",
+        borderCapStyle: "butt",
+        barPercentage: 2,
+        borderWidth: 5,
+        barThickness: 25,
+        maxBarThickness: 10,
+        minBarLength: 2,
+        data: this.state.graphTenData
+        }
+        ]
+        }
+        var graphTenOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+        {
+        backgroundColor : "rgba(0, 0, 0, 0.1)",
+        weight: 0
+        }
+        ], 
+        legend: {
+        display: false,
+        position: 'bottom',
+        labels: {
+        fontFamily: "Comic Sans MS",
+        boxWidth: 20,
+        boxHeight: 2
+        }
+        },
+        tooltips: {
+        enabled: true
+        },
+        title: {
+        display: true,
+        text: "Monthwise Watch Rest Report Dashboard"
+        },
+        scales: {
+        xAxes: [{
+        gridLines: {
+        display:true
+        },
+        scaleLabel: {
+        display: true,
+        labelString: "Months"
+        }, 
+        }],
+        yAxes: [{
+        gridLines: {
+        display:true
+        },
+        ticks: {
+        suggestedMin: 0,
+        // suggestedMax: 100,
+        stepSize: 5
+        },
+        scaleLabel: {
+        display: true,
+        labelString: "No of Application"
+        }, 
+        }]
+        },
+        plugins: {
+        datalabels: {
+        display: false
+        //     color: 'white',
+        //     backgroundColor: 'grey',
+        //     labels: {
+        //         title: {
+        //             font: {
+        //                 weight: 'bold'
+        //             }
+        //         }
+        //     }}
+        }
+        },
+        onClick: (e, element) => {
+        if (element.length > 0) {
+
+        debugger;
+        var ind = element[0]._index;   
+        const selectedVal = this.state.graphSixLabel[ind];
+        var graphSorting = this.graphSorting( "department_name", this.state.dataSix[selectedVal] );
+
+        this.setState({
+        graphSevenLabel: graphSorting[0],
+        graphSevenData: graphSorting[1],
+        dataSeven: graphSorting[2],
+        graphClicked: 1,
+        rowData: this.state.dataSix[selectedVal]
+        })
+
+        }
+        },
+        }
+
       return (
           <div>
               <div> { this.state.recordNotFound } </div>
+          {/* Table Feature  */}
+          <div className="tableContainer" style={this.state.graphClicked >= 0 ? null : {display:"none"}}>
+          {
+              this.state.unchangeColumnData.length > 0  ? 
+              <div className="tableFeature">
+                  <div className="columnToggle-Text"> Download As: </div>
+                  <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
+
+                  <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+              </div>
+              :null
+          }
+          {
+              this.state.toggleColumnCheck ?
+              <div className="columnVisibilityCard">
+              <dl>
+                  {
+                      this.state.unchangeColumnData.map((data, index)=>{
+                          return(
+                              <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
+                          )
+                      })
+                  }
+              </dl>
+              </div> 
+              : null
+          }
+
+          {
+              this.state.graphClicked >= 0 ?
+              <ReactTable id="customReactTable"
+              // PaginationComponent={Pagination}
+              data={ this.state.rowData }  
+              columns={ this.state.columnData }  
+              defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
+              pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
+              pageSizeOptions = {[20,40,60]}  
+              /> 
+              :null
+          }
+          </div>
+          
+          
           {/* Dropdown 1 */}
           {
             this.state.dropdownSelected === "budgetHeadwise" ?
@@ -1660,47 +2002,67 @@ class DashboardFinance extends React.Component {
             </div>
             :null
           }
-          {/* Table Feature  */}
-          <div className="tableContainer" style={this.state.graphClicked >= 0 ? null : {display:"none"}}>
-          {
-              this.state.unchangeColumnData.length > 0  ? 
-              <div className="tableFeature">
-                  <div className="columnToggle-Text"> Download As: </div>
-                  <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
 
-                  <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
+          {/* Dropdown 4 */}
+          {
+            this.state.dropdownSelected === "billDate" ?
+            <div className="graphContainer">
+            {
+                this.state.graphClicked >= 0 ?
+                <div
+                style={window.innerWidth < 500 ? containerGraphMobile : containerGraphMobile}
+                >
+                    <div className="graphData" >
+                        <Bar
+                            height="350px"
+                            data={ graphNineSortedData }
+                            options={ graphNineOption }                 
+                        />
+                    </div>
+                </div>
+                :null
+            }
+            
+            {
+                this.state.graphClicked > 0 ?
+                <div
+                    style={window.innerWidth < 500 ? containerGraphMobile : containerGraphMobile}
+                    >
+                        <div className="graphData" >
+                            <Bar
+                                height="350px"
+                                data={ graphTenSortedData }
+                                options={ graphTenOption }                 
+                            />
+                        </div>
+                    </div>
+                    :null
+                }
+                </div>
+                :null    
+          }
+          {/* {
+            this.state.dropdownSelected === "billDate" ?
+            <div className="graphContainer">
+            {
+              this.state.graphClicked >= 2 ?
+              <div
+              style={window.innerWidth < 500 ? containerGraphMobile : containerGraphMobile}
+              >
+                  <div className="graphData" >
+                      <Bar
+                          height="350px"
+                          data={ graphNineSortedData }
+                          options={ graphNineOption }                 
+                      />
+                  </div>
               </div>
               :null
-          }
-          {
-              this.state.toggleColumnCheck ?
-              <div className="columnVisibilityCard">
-              <dl>
-                  {
-                      this.state.unchangeColumnData.map((data, index)=>{
-                          return(
-                              <ul className={ this.state.unchangeColumnData[index]["show"] ? "" : "toggleBtnClicked" }><button value={index} className={ this.state.unchangeColumnData[index]["show"] ? "toggleBtn" : "toggleBtnClicked" } onClick={ this.showHideColumn }> { this.state.unchangeColumnData[index]["Header"] } </button></ul> 
-                          )
-                      })
-                  }
-              </dl>
-              </div> 
-              : null
-          }
+            }
+            </div>
+            :null
+          } */}
 
-          {
-              this.state.graphClicked >= 0 ?
-              <ReactTable id="customReactTable"
-              // PaginationComponent={Pagination}
-              data={ this.state.rowData }  
-              columns={ this.state.columnData }  
-              defaultPageSize = {this.state.rowData.length > 10 ? 10 : this.state.rowData.length}
-              pageSize={this.state.rowData.length > 10 ? 10 : this.state.rowData.length}  
-              pageSizeOptions = {[20,40,60]}  
-              /> 
-              :null
-          }
-          </div>
           </div>
       );
       }

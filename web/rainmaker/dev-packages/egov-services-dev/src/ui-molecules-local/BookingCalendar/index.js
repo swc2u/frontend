@@ -9,10 +9,10 @@ import {
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import "../../contributed-modules/react-day-picker/lib/style.css";
 import "./index.css";
-
+import get from "lodash/get";
 class BookingCalendar extends React.Component {
     constructor(props) {
         super(props);
@@ -22,6 +22,11 @@ class BookingCalendar extends React.Component {
             filtertoDate: "",
             dselectedDays: [],
         };
+        const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+        if( !applicationNumber){
+            this.handleResetClick()
+    
+        }
     }
 
     componentDidMount() {
@@ -130,6 +135,16 @@ class BookingCalendar extends React.Component {
     }
 
     handleDayClick = (day, modifiers = {}) => {
+        for(let i = 0 ; i< this.props.bookedSlotDateArray.length; i++)
+        {
+            let d= `${new Date(day).getDate()}-${new Date(day).getMonth()}-${new Date(day).getFullYear()}`
+            let ad= `${new Date(this.props.bookedSlotDateArray[i]).getDate()}-${new Date(this.props.bookedSlotDateArray[i]).getMonth()}-${new Date(this.props.bookedSlotDateArray[i]).getFullYear()}`
+            if(d==ad){
+                this.handleResetClick();
+                this.props.showError4();
+                return;
+            }
+        }
         const { availabilityCheckData } = this.props;
         if ("reservedDays" in availabilityCheckData) {
             const { from, to } = this.state;
@@ -138,6 +153,7 @@ class BookingCalendar extends React.Component {
                 return;
             }
             if (this.isSelectingFirstDay(from, to, day)) {
+                
                 if (day >= new Date()) {
                     this.props.prepareFinalObject(
                         "availabilityCheckData.bkFromDate",
@@ -225,7 +241,7 @@ class BookingCalendar extends React.Component {
 
     render() {
         const { from, to, enteredTo } = this.state;
-        const modifiers = { start: from, end: enteredTo };
+        const modifiers = { start: from, end: enteredTo , timeSlotBookedDates : this.props.bookedSlotDateArray};
         const disabledDays = { before: this.state.from };
         const selectedDays = [from, { from, to: enteredTo }];
         const WEEK_DAY_LONG = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -263,7 +279,7 @@ class BookingCalendar extends React.Component {
                         toMonth={newData}
                         modifiers={modifiers}
                         weekdaysShort={WEEK_DAY_LONG}
-                        // modifiers={past}
+                        // modifiers={this.props.bookedSlotDateArray}
                         selectedDays={selectedDays}
                         onDayClick={this.handleDayClick}
                         onDayMouseEnter={this.handleDayMouseEnter}
@@ -365,6 +381,80 @@ class BookingCalendar extends React.Component {
 //             state.screenConfiguration.preparedFinalObject.availabilityCheckData,
 //     };
 // };
+const mapStateToProps = (state) => {
+   
+    const reservedTimeSlotsData = get(
+        state,
+        "screenConfiguration.preparedFinalObject.availabilityCheckData.reservedTimeSlotsData"
+    );
+
+    let timeSlotArray = [];
+    let bookedSlotArray = [];
+    var date = new Date();
+    if (reservedTimeSlotsData && reservedTimeSlotsData.length > 0) {
+        for (let i = 0; i < reservedTimeSlotsData.length; i++) {
+            const [year, month, day] = reservedTimeSlotsData[i].fromDate.split(
+                "-"
+            );
+            let date = `${year}-${month}-${day}`;
+            if (
+                reservedTimeSlotsData[i].timeslots &&
+                reservedTimeSlotsData[i].timeslots.length > 0 && reservedTimeSlotsData[i].timeslots.length < 3
+            ) {
+                
+                for (
+                    let j = 0;
+                    j < reservedTimeSlotsData[i].timeslots.length;
+                    j++
+                ) {
+                    bookedSlotArray.push({
+                        date: date,
+                        timeSlots: [reservedTimeSlotsData[i].timeslots[j].slot],
+                    }
+                    );
+                   
+                }
+            }
+        }
+    }
+
+
+    
+    let newBookedSlotArray= []
+    let newBookedSlotObject= []
+    console.log('bookedSlotDateArray :>> ', bookedSlotArray);
+    bookedSlotArray.map(d=>{
+        if(newBookedSlotArray.includes(d.date)){
+            
+            for (let i=0 ; i < newBookedSlotObject.length ; i++) {
+                
+                if(newBookedSlotObject[i].date===d.date){
+                    newBookedSlotObject[i].timeSlots.push(d.timeSlots)
+                }
+            }
+        }else{
+            newBookedSlotArray.push(d.date)
+            newBookedSlotObject.push({
+                date  : d.date,
+                timeSlots : d.timeSlots
+            })
+        }
+    })
+
+
+    let availableSlotDateArray=[]
+    for (let i=0 ; i < newBookedSlotObject.length ; i++) {
+        if(newBookedSlotObject[i].timeSlots.length<3 && !newBookedSlotObject[i].timeSlots.includes("9:00 AM - 8:59 AM") ){
+            availableSlotDateArray.push(new Date(newBookedSlotObject[i].date))
+        }
+
+    }
+
+
+    return {
+        bookedSlotDateArray :availableSlotDateArray
+    };
+};
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -406,9 +496,19 @@ const mapDispatchToProps = (dispatch) => {
                     "warning"
                 )
             ),
-
+            showError4: () =>
+            dispatch(
+                toggleSnackbar(
+                    true,
+                    {
+                        labelName: "Green dates are only available for three hours slot booking!",
+                        labelKey: "",
+                    },
+                    "warning"
+                )
+            ),
         //showBookButton: () => dispatchMultipleFieldChangeAction("checkavailability", actionDefination, dispatch)
     };
 };
 
-export default connect(null, mapDispatchToProps)(BookingCalendar);
+export default connect(mapStateToProps, mapDispatchToProps)(BookingCalendar);

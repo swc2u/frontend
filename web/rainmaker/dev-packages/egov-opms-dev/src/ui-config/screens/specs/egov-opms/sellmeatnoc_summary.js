@@ -23,6 +23,7 @@ import {
   getLocale,
   getUserInfo,
   localStorageGet,
+  localStorageSet,
   setapplicationNumber
 } from "egov-ui-kit/utils/localStorageUtils";
 import { toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -199,8 +200,13 @@ export const callBackForNexthome = async (state, dispatch) => {
       {}
     );
 
+    var checkUndertaking = get(
+      state,
+      "screenConfiguration.preparedFinalObject.undertaking",
+      {}
+    );
     if (applicationStatus === "DRAFT") {
-      if (localStorageGet("undertaking") == "accept") {
+      if (localStorageGet("undertaking") == "accept" || checkUndertaking) {
       let response = await updateAppStatus(state, dispatch, "INITIATED");
       let responseStatus = get(response, "status", "");
       if (responseStatus == "success") {
@@ -445,6 +451,9 @@ const screenConfig = {
     ];
     setBusinessServiceDataToLocalStorage(queryObject, dispatch);
     set(state, "screenConfiguration.moduleName", "opms");
+    
+    // Undertaking 
+    dispatch(prepareFinalObject("undertaking", false));
     set(
       action,
       "screenConfig.components.undertakingdialog.children.popup",
@@ -457,8 +466,7 @@ const screenConfig = {
     set(
       action, "screenConfig.components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton.visible",
       localStorageGet("app_noc_status") !== 'REASSIGN' ? true : false)
-
-
+    
     return action;
   },
   components: {

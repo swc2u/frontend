@@ -43,6 +43,12 @@ case "REGORGANIZATION" :
       labelKey: `NULM_APPLICATION_SUCCESS_${screenName}_${mode}`,
     }
     break;
+    case "ALF":
+    labelValue = {
+      labelName: "ALF Program Submitted Successfully",
+      labelKey: `NULM_APPLICATION_SUCCESS_${screenName}_${mode}`,
+    }
+    break;
     default :  labelValue = {
       labelName: "Submitted Successfully",
       labelKey: "",
@@ -61,6 +67,7 @@ const getApplicationDisplayCode =() => {
     case "SMIDORG":
     case "SUH":
     case "SUSV":
+    case "ALF":
     case "SUSVTRANSACTION":
          labelValue = {
           labelName: "Application Id",

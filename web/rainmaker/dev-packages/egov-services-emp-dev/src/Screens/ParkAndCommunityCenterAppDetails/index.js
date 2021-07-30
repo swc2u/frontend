@@ -150,21 +150,19 @@ class ApplicationDetails extends Component {
       prepareFinalObject,
       selectedComplaint,
     } = this.props;
-    console.log("propsforRefund--", this.props);
-    // let AppNo = selectedComplaint.bkApplicationNumber
-    // console.log("AppNo--", AppNo)
+    
 
     let fetchUrl = window.location.pathname;
     let fetchApplicationNumber = fetchUrl.substring(
       fetchUrl.lastIndexOf("/") + 1
-    );
+    ); 
 
     this.setState({
       CurrentAppNumber : fetchApplicationNumber
     })
 
     let funtenantId = userInfo.tenantId;
-    console.log("funtenantId--", funtenantId);
+   
 
     let mdmsBody = {
       MdmsCriteria: {
@@ -189,7 +187,7 @@ class ApplicationDetails extends Component {
       [],
       mdmsBody
     );
-    console.log(payloadRes, "hsncodeAndAll");
+   
 
     let mdmsBodyTwo = {
       MdmsCriteria: {
@@ -214,10 +212,10 @@ class ApplicationDetails extends Component {
       [],
       mdmsBodyTwo
     );
-    console.log(payloadResTwo, "MCGSTnumberDetail");
+    
 
     let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS;
-    console.log("pdfDetails-", pdfDetails); //stateCode  placeOfService  mcGSTN
+    
 
     this.setState(
       {
@@ -225,12 +223,7 @@ class ApplicationDetails extends Component {
         placeOfService: pdfDetails[0].placeOfService,
         mcGSTN: pdfDetails[0].mcGSTN,
       },
-      console.log(
-        "thisStatestateCode",
-        this.state.stateCode,
-        this.state.placeOfService,
-        this.state.mcGSTN
-      )
+     
     );
 
     let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING;
@@ -256,7 +249,7 @@ class ApplicationDetails extends Component {
     });
 
     let FromDate = selectedComplaint.bkFromDate;
-    console.log("FromDate--", FromDate);
+  
 
     let complaintCountRequest = {
       applicationNumber: match.params.applicationId,
@@ -273,7 +266,7 @@ class ApplicationDetails extends Component {
       [],
       complaintCountRequest
     );
-    console.log("dataforSectorAndCategory--", dataforSectorAndCategory);
+    
     let bkLocation =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
         ? dataforSectorAndCategory.bookingsModelList[0].bkLocation
@@ -307,7 +300,7 @@ class ApplicationDetails extends Component {
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
         ? dataforSectorAndCategory.bookingsModelList[0].bkRent
         : "NA";
-    console.log("AppNo--", AppNo);
+   
     let AppNo =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
         ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber
@@ -353,40 +346,38 @@ class ApplicationDetails extends Component {
       // 	allDocumentList: allDocumentList
       // })
     }
-    console.log("nero proofOfResDocs", proofOfResDocs, "----", allDocumentList);
+   
     if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
       let arr2 = [];
       for(let i = 0; i < dataforSectorAndCategory.bookingsModelList[0].timeslots.length; i++){
         arr2.push(dataforSectorAndCategory.bookingsModelList[0].timeslots[i].slot)
       }
-      console.log("arr",arr2)
+  
 
       if(arr2.length == 1){
-      console.log("it contain single element")
-      console.log("your time slot is",arr2[0])
       let timeSlot =
         dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot;
-      console.log("timeSlot--", timeSlot);
+     
 
       prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
 
       let res = timeSlot.split("-");
-      console.log("res--", res);
+     
 
       let fromTime = res[0];
-      console.log("fromTime--", fromTime);
+     
 
       prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
 
       let ToTime = res[1];
-      console.log("ToTime--", ToTime);
+     
 
       prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
 
       let strMid = ",";
 
       let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
-      console.log("ConcatFromDateTime--", ConcatFromDateTime);
+     
 
       prepareFinalObject(
         "oldAvailabilityCheckData.ConcatFromDateTime",
@@ -394,7 +385,7 @@ class ApplicationDetails extends Component {
       );
 
       let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
-      console.log("ConcatToDateTime--", ConcatToDateTime);
+     
 
       prepareFinalObject(
         "oldAvailabilityCheckData.ConcatToDateTime",
@@ -405,50 +396,47 @@ class ApplicationDetails extends Component {
 
       let timeSlotId =
         dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id;
-      console.log("timeSlotId--", timeSlotId);
+     
 
       prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
       }
        else{
         let a = arr2[0]
         let b = arr2[1]
-        console.log("a",a)
-        console.log("b",b)
+      
         let fromfirst = a.split("-")
-        console.log("first",fromfirst)
+       
        let fromsecond = b.split("-")
-      console.log("second",fromsecond)
+      
       
       let first = fromfirst[0]
       let second = fromsecond[1]
-      console.log("first",first)
-      console.log("second",second)
-
+      
       let comfirstsecond = first + "-" + second
-      console.log("comfirstsecond",comfirstsecond)
+      
 
       let timeSlot = comfirstsecond
-console.log("timeSlot54234",timeSlot)
+
       prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
 
 
       let res = timeSlot.split("-");
-      console.log("res--", res);
+
 
       let fromTime = res[0];
-      console.log("fromTime--", fromTime);
+     
 
       prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
 
       let ToTime = res[1];
-      console.log("ToTime--", ToTime);
+     
 
       prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
 
       let strMid = ",";
 
       let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
-      console.log("ConcatFromDateTime--", ConcatFromDateTime);
+     
 
       prepareFinalObject(
         "oldAvailabilityCheckData.ConcatFromDateTime",
@@ -456,7 +444,7 @@ console.log("timeSlot54234",timeSlot)
       );
 
       let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
-      console.log("ConcatToDateTime--", ConcatToDateTime);
+      
 
       prepareFinalObject(
         "oldAvailabilityCheckData.ConcatToDateTime",
@@ -467,13 +455,13 @@ console.log("timeSlot54234",timeSlot)
 
       let timeSlotId =
         dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id;
-      console.log("timeSlotId--", timeSlotId);
+      
 
       prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
 
       let timeSlotIdTwo =
       dataforSectorAndCategory.bookingsModelList[0].timeslots[1].id;
-    console.log("timeSlotIdTwo--", timeSlotIdTwo);
+    
 
     prepareFinalObject("oldAvailabilityCheckData.timeSlotIdTwo", timeSlotIdTwo);  
        }
@@ -516,14 +504,14 @@ console.log("timeSlot54234",timeSlot)
     prepareFinalObject("PreviousBookingData.ApplicationStatus", AppStatus);
 
     allDocumentList.map(async (doc) => {
-      console.log("Doccc---", doc);
-      // doc.docmentType
-      // doc.fileName
-      // doc.fileStoreId
+     
+     
+     
+     
       let fileLink = await getFileUrlFromAPI(doc.fileStoreId, "ch");
-      console.log("filelink--", fileLink);
+     
       if (doc.documentType === "BK_PCC_DISCOUNT_DOCUMENT") {
-        console.log("DIscountDoc==", doc);
+     
         let dicscountDoc = [
           {
             documentCode: doc.documentType,
@@ -544,7 +532,7 @@ console.log("timeSlot54234",timeSlot)
         prepareFinalObject("discountDocumentsUploadRedux", dicscountDoc);
         return;
       } else {
-        console.log("DocFIle==", doc);
+        
         let Doc = [
           {
             documentCode: doc.documentType,
@@ -572,29 +560,36 @@ console.log("timeSlot54234",timeSlot)
       { key: "tenantId", value: userInfo.tenantId },
     ];
 
-    let BillingServiceData = await httpRequest(
-      "billing-service/bill/v2/_search",
-      "_search",
-      reqParams
-    );
+try{
+  let BillingServiceData = await httpRequest(
+    "billing-service/bill/v2/_search",
+    "_search",
+    reqParams
+  );
 
-    console.log("BillingService--abc", BillingServiceData);
-    prepareFinalObject("DateVenueChngeAmount", BillingServiceData);
-    //Bill[2].billDetails[0].billAccountDetails
-    // let BillArray = BillingServiceData.Bill[2].billDetails[0].billAccountDetails
-    // console.log("BillArray-",BillArray)
+ 
+  prepareFinalObject("DateVenueChngeAmount", BillingServiceData);
+  this.setState({
+    AppName:
+      dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+        ? dataforSectorAndCategory.bookingsModelList[0].bkApplicantName
+        : "NA",
+    fullAmountDetail: BillingServiceData.Bill[0], //BillingServiceData.Bill[2],
+    CheckStatus: AppStatus,
+    modifiedFirstAmount: BillingServiceData.Bill[2], //BillingServiceData.Bill[0]
+  });
 
-    this.setState({
-      AppName:
-        dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-          ? dataforSectorAndCategory.bookingsModelList[0].bkApplicantName
-          : "NA",
-      fullAmountDetail: BillingServiceData.Bill[0], //BillingServiceData.Bill[2],
-      CheckStatus: AppStatus,
-      modifiedFirstAmount: BillingServiceData.Bill[2], //BillingServiceData.Bill[0]
-    });
-
-    prepareFormData("complaints", transformedComplaint);
+  prepareFormData("complaints", transformedComplaint);
+}catch(err){
+ this.props.toggleSnackbarAndSetText(
+    true,
+    {
+      labelName: "Something went wrong.Try Again",
+      labelKey: `Something went wrong.Try Again`
+    },
+    "error"
+  );
+}
     const { complaint } = transformedComplaint;
     fetchApplications({
       applicationNumber: match.params.applicationId,
@@ -641,7 +636,7 @@ console.log("timeSlot54234",timeSlot)
         FromDate,
         dataforSectorAndCategory.bookingsModelList[0].roomsModel
       );
-      console.log("totalRes--inrefundPage", totalRes);
+     
 
       this.setState({
         totalRefundAmount: totalRes,
@@ -669,12 +664,10 @@ console.log("timeSlot54234",timeSlot)
       [],
       complaintCountRequest
     );
-    console.log("dataforSectorAndCategory --", dataforSectorAndCategory);
+   
     if (dataforSectorAndCategory.bookingsModelList.length > 0) {
       prepareFinalObject("RoomBookingData", dataforSectorAndCategory);
       prepareFinalObject("SetPaymentURL", this.props.history.push);
-      console.log("historyPropsToConsole--", this.props.history.push);
-      console.log("historyPropsToConsole--", this.props.history);
       this.props.history.push(`/egov-services/ApplyRoomBooking`);
     } else {
       toggleSnackbarAndSetText(
@@ -702,31 +695,20 @@ console.log("timeSlot54234",timeSlot)
       ConRefAmt,
       refConAmount,
     } = this.props;
-    console.log("propsforcalculateCancelledBookingRefundAmount--", this.props);
-    console.log(bookedRoomArray, "Nero bookedRoomArray");
-    //refConAmount
+  
     if (refConAmount != "NotFound") {
       this.setState({
         payload: refConAmount,
       });
     }
-
-    // let payload = paymentDetailsForReceipt;
-
     var CheckDate = new Date(bookingDate);
 
     var todayDate = new Date();
 
     if (applicationNumber && tenantId) {
-      console.log(
-        "Payment Details",
-        this.state.payload ? this.state.payload : "NOTFOUND"
-      );
       if (this.state.payload) {
-        console.log(CheckDate, todayDate, "Nero checkdate");
-
         if (todayDate > CheckDate) {
-          // alert("refundCondition")
+          
           let billAccountDetails = this.state.payload.Payments[0]
             .paymentDetails[0].bill.billDetails[0].billAccountDetails;
           let bookingAmount = 0;
@@ -744,7 +726,7 @@ console.log("timeSlot54234",timeSlot)
           return bookingAmount;
         }
         if (todayDate < CheckDate) {
-          console.log("Hello Booked");
+         
           /********************************/
           let bookingNos = [];
           let bookingNosString = "";
@@ -770,14 +752,8 @@ console.log("timeSlot54234",timeSlot)
               "",
               queryObject
             );
-            // let roomBookingAmount = 0;
+           
             if (payload) {
-              console.log(payload, "Nero Payload");
-              // dispatch(
-              // 	prepareFinalObject("bookedRoomsPaymentDetails", [
-              // 		payload.Payments,
-              // 	])
-              // );
               let bookedRoomsPaymentDetails = payload.Payments;
 
               if (
@@ -834,7 +810,7 @@ console.log("timeSlot54234",timeSlot)
           if (roomBookingAmount > 0) {
             bookingAmount += roomBookingAmount;
           }
-          console.log(bookingAmount, bookingNosString, "Nero Booking Amount");
+          
           let mdmsBody = {
             MdmsCriteria: {
               tenantId: tenantId,
@@ -891,7 +867,7 @@ console.log("timeSlot54234",timeSlot)
       }
     }
   };
-
+   
   componentWillReceiveProps = async (nextProps) => {
     // alert("checkwillreceiveprops")
     const { transformedComplaint, prepareFormData } = this.props;
@@ -920,7 +896,7 @@ console.log("timeSlot54234",timeSlot)
   };
 
   redirectToAvailPage = () => {
-    console.log("Come in redirectToAvailPage");
+    
     return (
       <div>
         <h5 style={{ marginBottom: "4%" }}>
@@ -955,7 +931,7 @@ console.log("timeSlot54234",timeSlot)
     );
   };
 
-  //actionButtonOnClick = (e, complaintNo, label)
+ 
   actionButtonOnClick = async (e, complaintNo, label) => {
     let AmountCondition = false;
     const { prepareFinalObject } = this.props;
@@ -969,24 +945,8 @@ console.log("timeSlot54234",timeSlot)
         AmountCondition = true;
 
         prepareFinalObject("ConditionForAmount", AmountCondition);
-        console.log("AmountCondition--", AmountCondition);
+        
       }
-
-      // if(selectedComplaint.bkApplicationStatus == "PENDING_FOR_DISBURSEMENT"){
-      // 	let RequestData = [
-      // 		{ key: "consumerCode", value: match.params.applicationId },
-      // 		{ key: "tenantId", value: userInfo.tenantId }
-      // 	  ];
-      // 	let payloadfund = await httpRequest(
-      // 		"pg-service/transaction/v1/_search",
-      // 		"_search",
-      // 		RequestData
-      // 	  );
-
-      // 	console.log("RequestData--",RequestData)
-      // 	console.log("payloadfund--",payloadfund)
-      // 	console.log("payloadfund.Transaction--",payloadfund.Transaction)
-      // }
     } else {
       this.setState({
         actionTittle: "Reject Application",
@@ -1091,6 +1051,39 @@ console.log("timeSlot54234",timeSlot)
     return word + "Rupees Only";
   };
 
+
+  dateTimeSlot = (d1,d2) => {
+
+    let dateArr = []
+
+    let fnewDate = new Date(d1)
+    var generatedDateTimef1 = `${fnewDate.getDate()}-${fnewDate.getMonth() + 1}-${fnewDate.getFullYear()}`;
+  
+
+    let slotFromDate = `${generatedDateTimef1}, 9:00AM`
+  
+
+    let tnewDate = new Date(d2)
+
+    let result = tnewDate.setTime(tnewDate.getTime() + (24 * 60 * 60 * 1000)); 
+
+
+    let newToDate = new Date(result)
+
+
+    var generatedDateTimeT1 = `${newToDate.getDate()}-${newToDate.getMonth() + 1}-${newToDate.getFullYear()}`;
+   
+
+    let slotToDate = `${generatedDateTimeT1}, 8:59AM`
+   
+
+    dateArr.push(slotFromDate)
+    dateArr.push(slotToDate)
+
+
+return dateArr
+  }
+
   downloadPaymentReceiptFunction = async (e) => {
     const {
       transformedComplaint,
@@ -1114,13 +1107,40 @@ console.log("timeSlot54234",timeSlot)
       FACILITATION_CHARGE,
       amountTodisplay,
     } = this.props;
-    console.log("pcccpaymentreceipt", this.props);
+    
 
     let applicationDetails = selectedComplaint;
+    let chequeNo = "Not Applicable";
+    let chequeDate = "Not Applicable";
+    let demandDraftNo = "Not Applicable";
+    let demandDraftDate = "Not Applicable";
+    let CardNumber = "Not Applicable";
+    let createCardNum;
+    let CardtransactionNumber = "Not Applicable"
+let pdfBankName;
 
-    let CardNumber;
-    if(PaymentModeCNumber == "CARD"){
-      CardNumber = applicationDetails.cardNumber
+if(PaymentModeCNumber == "DD" ||PaymentModeCNumber == "CHEQUE"){
+  pdfBankName = applicationDetails.bankName
+}
+else{
+  pdfBankName = "Not Applicable"
+}
+
+if(PaymentModeCNumber == "DD"){
+  demandDraftNo = applicationDetails.chequeNumber
+  demandDraftDate = applicationDetails.paymentDate
+}
+if(PaymentModeCNumber == "CHEQUE"){
+  chequeNo = applicationDetails.chequeNumber
+  chequeDate = applicationDetails.paymentDate
+}
+
+    if(PaymentModeCNumber == "CARD" || PaymentModeCNumber == "Card"){
+      createCardNum = applicationDetails.cardNumber
+      CardNumber = `**** **** **** ${createCardNum}`
+
+      CardtransactionNumber = applicationDetails.transactionNumber
+
     }
     else{
       CardNumber = "Not Applicable"
@@ -1134,15 +1154,15 @@ console.log("timeSlot54234",timeSlot)
     let perFind = 50;
     let ugst = PACC_TAX;
     let find50Per = (perFind / 100) * ugst;
-    console.log("find50Per--", find50Per);
+    
     let findNumOrNot = Number.isInteger(find50Per);
-    console.log("findNumOrNot--", findNumOrNot);
+    
     if (findNumOrNot == true) {
       Newugst = find50Per;
-      console.log("trueCondition");
+    
     } else {
       Newugst = find50Per.toFixed(2);
-      console.log("second-Newugst-", Newugst);
+    
     }
 
     let approverName;
@@ -1155,7 +1175,6 @@ console.log("timeSlot54234",timeSlot)
 
 //applicationDetails.bkAction === "CANCEL" ||
 if(applicationDetails.bkAction === "RE_INITIATE" || applicationDetails.bkAction === "APPLY" || applicationDetails.bkAction === "MODIFY"){
-console.log("comeInCitizenPaymentReceipt")
 
 let  RequestGateWay = [
   { key: "consumerCode", value: match.params.applicationId },
@@ -1248,14 +1267,106 @@ gateWay = payloadGateWay.Transaction[0].gateway;
 
     }
 ]
-console.log("citizenPaymentRequestBody",BookingInfo)
+
 PaccCitizenPaymentRecpt({ BookingInfo: BookingInfo });
 }
+
+else if(applicationDetails.bkAction == "CANCEL" && applicationDetails.bkRemarks !== null && applicationDetails.bkRemarks !== undefined){
+  let date2 = new Date();
+  let tmpdate1 = new Date(applicationDetails.bkFromDate)
+  
+  let tmpdate2 = new Date(applicationDetails.bkToDate)
+  
+  
+      var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+   
+   let finalResult = this.dateTimeSlot(applicationDetails.bkFromDate,applicationDetails.bkToDate)
+   
+
+   let citizenCancelDate = "NA"
+   let NewcitizenCancelDate;
+   let citiCancelDate;
+
+   if(applicationDetails.bkLocationPictures !== undefined && applicationDetails.bkLocationPictures !== null){
+    citizenCancelDate = applicationDetails.bkLocationPictures
+    NewcitizenCancelDate = new Date(citizenCancelDate);
+    citiCancelDate = `${NewcitizenCancelDate.getDate()}-${NewcitizenCancelDate.getMonth() + 1}-${NewcitizenCancelDate.getFullYear()}`;
+
+   }
+  
+
+      let  RequestGateWay = [
+        { key: "consumerCode", value: this.state.CurrentAppNumber},
+        { key: "tenantId", value: userInfo.tenantId }
+        ];
+        let payloadGateWay = await httpRequest(
+        "pg-service/transaction/v1/_search",
+        "_search",
+        RequestGateWay
+        );
+        //Transaction[0].gateway
+      let gateWay = "citizenSide"
+       if(payloadGateWay.Transaction.length > 0){
+      gateWay = payloadGateWay.Transaction[0].gateway; 
+      }
+    let BookingInfo = [
+      {
+          "applicantDetail": {
+              "name": applicationDetails.bkApplicantName,
+              "mobileNumber": applicationDetails.bkMobileNumber,
+              "houseNo": applicationDetails.bkHouseNo,
+              "permanentAddress": applicationDetails.bkHouseNo,
+              "permanentCity": "chandigarh",
+              "sector": applicationDetails.bkSector,
+          },
+          "booking": {
+              "bkApplicationNumber": applicationDetails.bkApplicationNumber,
+              "bookingCancellationDate": citiCancelDate,  //cancellationDate
+              "bookingDuration": `${finalResult[0]} to ${finalResult[1]}`,
+              // "bookingDuration": getDurationDate(
+              //   applicationDetails.bkFromDate,
+              //   applicationDetails.bkToDate
+              // ), 
+              "bookingVenue": applicationDetails.bkLocation,
+              "bkCancellationReasoon":applicationDetails.bkRemarks
+          },
+          "paymentInfo": {
+              "totalAmountPaid": amountTodisplay,
+              "amountInWords": this.NumInWords(NumAmount),
+              "receiptNo": this.props.recNumber,
+              "bankName": gateWay == "citizenSide" ? "Not Applicable": gateWay,
+              "refundAmount": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+              applicationDetails.refundableSecurityMoney : amountTodisplay,
+              "refundAmountInWords": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+              this.NumInWords(applicationDetails.refundableSecurityMoney) : this.NumInWords(NumAmount)
+          },
+          "payerInfo": {
+              "payerName": applicationDetails.bkApplicantName,
+              "payerMobile": applicationDetails.bkMobileNumber,
+          },
+          "tenantInfo": {
+              "municipalityName": "Municipal Corporation Chandigarh",
+              "address": "New Deluxe Building, Sector 17, Chandigarh",
+              "contactNumber": "+91-172-2541002, 0172-2541003",
+              "logoUrl": "https://chstage.blob.core.windows.net/fileshare/logo.png",
+              "webSite": "http://mcchandigarh.gov.in"
+          },
+          generatedBy: {
+            generatedBy: userInfo.name,
+            generatedDateTime: generatedDateTime,       
+          },
+      }
+  ]
+  cancelBookingPayReceipt({ BookingInfo: BookingInfo})
+  }
 else if(applicationDetails.bkStatusUpdateRequest !== undefined && applicationDetails.bkStatusUpdateRequest !== null){
- 
 let date2 = new Date();
-console.log("BookingCANCLdate",date2)
+let tmpdate1 = new Date(applicationDetails.bkFromDate)
+
+let tmpdate2 = new Date(applicationDetails.bkToDate)
 		var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+ 
+ let finalResult = this.dateTimeSlot(applicationDetails.bkFromDate,applicationDetails.bkToDate)
  
     let  RequestGateWay = [
       { key: "consumerCode", value: this.state.CurrentAppNumber},
@@ -1285,10 +1396,11 @@ console.log("BookingCANCLdate",date2)
         "booking": {
             "bkApplicationNumber": applicationDetails.bkApplicationNumber,
             "bookingCancellationDate": applicationDetails.bkLocationPictures,
-            "bookingDuration": getDurationDate(
-              applicationDetails.bkFromDate,
-              applicationDetails.bkToDate
-            ), 
+            "bookingDuration": `${finalResult[0]} to ${finalResult[1]}`,
+            // "bookingDuration": getDurationDate(
+            //   applicationDetails.bkFromDate,
+            //   applicationDetails.bkToDate
+            // ), 
             "bookingVenue": applicationDetails.bkLocation,
             "bkCancellationReasoon":applicationDetails.bkStatusUpdateRequest
         },
@@ -1322,7 +1434,9 @@ console.log("BookingCANCLdate",date2)
 cancelBookingPayReceipt({ BookingInfo: BookingInfo})
 }
 else{
-console.log("employeePaymentReceipt")
+
+
+
     let BookingInfo = [
       {
         applicantDetail: {
@@ -1386,9 +1500,13 @@ console.log("employeePaymentReceipt")
           paymentType: this.props.offlinePayementMode,
           facilitationCharge: FACILITATION_CHARGE,
           discType: applicationDetails.bkPlotSketch,
-          transactionId: this.props.offlineTransactionNum,
+          transactionId: CardtransactionNumber,
           totalPaymentInWords: this.NumInWords(NumAmount), //offlineTransactionDate,,
-          bankName: "",
+          bankName: pdfBankName,
+          "chequeNo":chequeNo,
+                  "chequeDate":chequeDate,
+                  "demandDraftNo":demandDraftNo,
+                  "demandDraftDate":demandDraftDate,
           cardNumberLast4: CardNumber,
           dateVenueChangeCharges:
             this.props.DATEVENUECHARGE == 0
@@ -1435,7 +1553,7 @@ console.log("employeePaymentReceipt")
     } = this.props;
     let fdocname;
     let checkDocumentUpload = Object.entries(documentMap).length === 0;
-    console.log("checkDocumentUpload", checkDocumentUpload);
+    
     var date2 = new Date();
 
 		var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
@@ -1546,7 +1664,7 @@ console.log("employeePaymentReceipt")
               Accept: "application/pdf",
             },
           });
-          console.log("responseData---", response);
+          
           const file = new Blob([response.data], { type: "application/pdf" });
           const fileURL = URL.createObjectURL(file);
           var myWindow = window.open(fileURL);
@@ -1624,7 +1742,7 @@ console.log("employeePaymentReceipt")
                   Accept: "application/pdf",
                 },
               });
-              console.log("responseData---", response);
+              
               const file = new Blob([response.data], { type: "application/pdf" });
               const fileURL = URL.createObjectURL(file);
               var myWindow = window.open(fileURL);
@@ -1697,7 +1815,7 @@ console.log("employeePaymentReceipt")
                 Accept: "application/pdf",
               },
             });
-            console.log("responseData---", response);
+            
             const file = new Blob([response.data], { type: "application/pdf" });
             const fileURL = URL.createObjectURL(file);
             var myWindow = window.open(fileURL);
@@ -1770,7 +1888,7 @@ console.log("employeePaymentReceipt")
                 Accept: "application/pdf",
               },
             });
-            console.log("responseData---", response);
+            
             const file = new Blob([response.data], { type: "application/pdf" });
             const fileURL = URL.createObjectURL(file);
             var myWindow = window.open(fileURL);
@@ -1811,12 +1929,29 @@ console.log("employeePaymentReceipt")
       FACILITATION_CHARGE,
       downloadPaccPermissionLetter,PaccCitizenPermissionLetter,citizenCommunityPL
     } = this.props;
-    console.log("propsInPlLetterOfPACCC--",this.props)
+    
     let applicationDetails = selectedComplaint;
 
-    let CardNumber;
-    if(PaymentModeCNumber == "CARD"){
-      CardNumber = applicationDetails.cardNumber
+    let CardNumber = "Not Applicable";
+    let createdCardNum = "Not Applicable"
+    let chequeNo = "Not Applicable";
+    let chequeDate = "Not Applicable";
+    let demandDraftNo = "Not Applicable";
+    let demandDraftDate = "Not Applicable";
+    let CardtransactionNumber = "Not Applicable"
+    if(PaymentModeCNumber == "DD"){
+      demandDraftNo = applicationDetails.chequeNumber
+      demandDraftDate = applicationDetails.paymentDate
+    }
+    if(PaymentModeCNumber == "CHEQUE"){
+      chequeNo = applicationDetails.chequeNumber
+      chequeDate = applicationDetails.paymentDate
+    }
+    
+    if(PaymentModeCNumber == "CARD" || PaymentModeCNumber == "Card"){
+      createdCardNum = applicationDetails.cardNumber
+      CardNumber = `**** **** **** ${createdCardNum}` 
+      CardtransactionNumber = applicationDetails.transactionNumber
     }
     else{
       CardNumber = "Not Applicable"
@@ -1826,15 +1961,14 @@ console.log("employeePaymentReceipt")
     let perFind = 50;
     let ugst = PACC_TAX;
     let find50Per = (perFind / 100) * ugst;
-    console.log("find50Per--", find50Per);
+    
     let findNumOrNot = Number.isInteger(find50Per);
-    console.log("findNumOrNot--", findNumOrNot);
+
     if (findNumOrNot == true) {
       Newugst = find50Per;
-      console.log("trueCondition");
+
     } else {
       Newugst = find50Per.toFixed(2);
-      console.log("second-Newugst-", Newugst);
     }
 
     let approverName;
@@ -1846,7 +1980,7 @@ console.log("employeePaymentReceipt")
     // let fdocname = Object.entries(documentMap)[0][1]
 
 if(applicationDetails.bkAction === "RE_INITIATE" || applicationDetails.bkAction === "APPLY" || applicationDetails.bkAction === "CANCEL" || applicationDetails.bkAction === "MODIFY"){
-console.log("citizenPaymentReceipt")
+
   if(applicationDetails.bkBookingType == "Parks"){
   let BookingInfo=[
     {
@@ -1922,7 +2056,7 @@ console.log("citizenPaymentReceipt")
         },
     }
 ]
-console.log("BookingRequestBodyInCaseOfPark",BookingInfo)
+
 PaccCitizenPermissionLetter({ BookingInfo: BookingInfo });
 }
 else{
@@ -1999,12 +2133,12 @@ else{
         },
     }
 ]
-console.log("BookingInfoIncCseOfCommunityPl",BookingInfo)
+
 citizenCommunityPL({ BookingInfo: BookingInfo });
 }
 }
 else{
-  console.log("plForemployeeside")
+
   let BookingInfo = [
     {
       applicantDetail: {
@@ -2052,11 +2186,16 @@ else{
         refundableCharges: this.props.REFUNDABLE_SECURITY,
         //totalPayment: this.props.totalAmount,  amountTodisplay
         totalPayment: amountTodisplay,
+        "chequeNo":chequeNo,
+          "chequeDate":chequeDate,
+          "demandDraftNo":demandDraftNo,
+          "demandDraftDate":demandDraftDate,
         // paymentDate: convertEpochToDate(
         //   this.props.offlineTransactionDate,
         //   "dayend"
         // ),
         paymentDate: applicationDetails.createdDate,
+        transactionId: CardtransactionNumber,
         receiptNo: this.props.recNumber,
         cardNumberLast4: CardNumber,
         dateVenueChangeCharges:
@@ -2077,7 +2216,7 @@ else{
         webSite: "http://mcchandigarh.gov.in",
         statecode: this.state.stateCode,
         hsncode: this.state.hsnCode,
-        mcGSTN: this.state.mcGSTN, ////stateCode  placeOfService  mcGSTN
+        mcGSTN: this.state.mcGSTN, 
       },
       bankInfo: {
         accountholderName: applicationDetails.bkBankAccountHolder,
@@ -2088,8 +2227,8 @@ else{
       },
     },
   ];
-  console.log("RequestBodyForPL--",BookingInfo)
-  // downloadEsamparkApp({ BookingInfo: BookingInfo })
+ 
+ 
   downloadPaccPermissionLetter({ BookingInfo: BookingInfo });
 
 
@@ -2153,7 +2292,7 @@ else{
                 Accept: "application/pdf",
               },
             });
-            console.log("responseData---", response);
+           
             const file = new Blob([response.data], { type: "application/pdf" });
             const fileURL = URL.createObjectURL(file);
             var myWindow = window.open(fileURL);
@@ -2174,6 +2313,81 @@ else{
       }, 1500);
 
 }
+
+else if(applicationDetails.bkAction == "CANCEL" && applicationDetails.bkRemarks !== null && applicationDetails.bkRemarks !== undefined){
+  setTimeout(async () => {
+    let documentsPreviewData;
+    const { cancelReceiptData, userInfo } = this.props;
+    var documentsPreview = [];
+    if (
+      cancelReceiptData &&
+      cancelReceiptData.filestoreIds.length > 0
+    ) {
+      documentsPreviewData = cancelReceiptData.filestoreIds[0];
+      documentsPreview.push({
+        title: "DOC_DOC_PICTURE",
+        fileStoreId: documentsPreviewData,
+        linkText: "View",
+      });
+      let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+      let fileUrls =
+        fileStoreIds.length > 0
+          ? await getFileUrlFromAPI(fileStoreIds, userInfo.tenantId)
+          : {};
+
+      documentsPreview = documentsPreview.map(function (doc, index) {
+        doc["link"] =
+          (fileUrls &&
+            fileUrls[doc.fileStoreId] &&
+            fileUrls[doc.fileStoreId].split(",")[0]) ||
+          "";
+
+        doc["name"] =
+          (fileUrls[doc.fileStoreId] &&
+            decodeURIComponent(
+              fileUrls[doc.fileStoreId]
+                .split(",")[0]
+                .split("?")[0]
+                .split("/")
+                .pop()
+                .slice(13)
+            )) ||
+          `Document - ${index + 1}`;
+        return doc;
+      });
+
+      if (mode === "print") {
+        var response = await axios.get(documentsPreview[0].link, {
+          //responseType: "blob",
+          responseType: "arraybuffer",
+
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+          },
+        });
+        
+        const file = new Blob([response.data], { type: "application/pdf" });
+        const fileURL = URL.createObjectURL(file);
+        var myWindow = window.open(fileURL);
+        if (myWindow != undefined) {
+          myWindow.addEventListener("load", (event) => {
+            myWindow.focus();
+            myWindow.print();
+          });
+        }
+      } else {
+        setTimeout(() => {
+          window.open(documentsPreview[0].link);
+        }, 100);
+      }
+
+      prepareFinalObject("documentsPreview", documentsPreview);
+    }
+  }, 1500);
+
+}
+
 else if(applicationDetails.bkStatusUpdateRequest !== undefined && applicationDetails.bkStatusUpdateRequest !== null){
   setTimeout(async () => {
     let documentsPreviewData;
@@ -2226,7 +2440,7 @@ else if(applicationDetails.bkStatusUpdateRequest !== undefined && applicationDet
             Accept: "application/pdf",
           },
         });
-        console.log("responseData---", response);
+       
         const file = new Blob([response.data], { type: "application/pdf" });
         const fileURL = URL.createObjectURL(file);
         var myWindow = window.open(fileURL);
@@ -2299,7 +2513,7 @@ else{
             Accept: "application/pdf",
           },
         });
-        console.log("responseData---", response);
+       
         const file = new Blob([response.data], { type: "application/pdf" });
         const fileURL = URL.createObjectURL(file);
         var myWindow = window.open(fileURL);
@@ -2324,24 +2538,10 @@ else{
   };
 
   callApiForDocumentData = async (fileStoreId, docCode) => {
-    // let {fileStoreId,docCode}=data;
-    console.log("callApiForDocumentData", fileStoreId, docCode);
-    console.log("State----------", this.state);
-    console.log(
-      "Document-----data",
-      this.state.proofOfResDocumentfileStoreId,
-      this.state.proofOfResDocumentType
-    );
+    
 
     const { userInfo } = this.props;
-    // let allDocumentList = this.state && this.state.allDocumentList;
-    // let proofOfResDocs;
-    // 	if(allDocumentList && allDocumentList.length > 0){
-    // 		proofOfResDocs = allDocumentList.filter( (item) => {
-    // 		   return item.documentType != "BK_PCC_DISCOUNT_DOCUMENT";
-    // 	   })
-
-    //    }
+    
     var documentsPreview = [];
     if (fileStoreId && docCode) {
       documentsPreview.push({
@@ -2384,53 +2584,7 @@ else{
       prepareFinalObject("documentsPreview", documentsPreview);
     }
   };
-  // callApiForDocumentData = async (e) => {
-  // 	const { documentMap, userInfo } = this.props;
-  // 	var documentsPreview = [];
-  // 	if (documentMap && Object.keys(documentMap).length > 0) {
-  // 		let keys = Object.keys(documentMap);
-  // 		let values = Object.values(documentMap);
-  // 		let id = keys[0],
-  // 			fileName = values[0];
-
-  // 		documentsPreview.push({
-  // 			title: "DOC_DOC_PICTURE",
-  // 			fileStoreId: id,
-  // 			linkText: "View",
-  // 		});
-  // 		let changetenantId = userInfo.tenantId ? userInfo.tenantId.split(".")[0] : "ch";
-  // 		let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-  // 		let fileUrls =
-  // 			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds, changetenantId) : {};
-
-  // 		documentsPreview = documentsPreview.map(function (doc, index) {
-  // 			doc["link"] =
-  // 				(fileUrls &&
-  // 					fileUrls[doc.fileStoreId] &&
-  // 					fileUrls[doc.fileStoreId].split(",")[0]) ||
-  // 				"";
-
-  // 			doc["name"] =
-  // 				(fileUrls[doc.fileStoreId] &&
-  // 					decodeURIComponent(
-  // 						fileUrls[doc.fileStoreId]
-  // 							.split(",")[0]
-  // 							.split("?")[0]
-  // 							.split("/")
-  // 							.pop()
-  // 							.slice(13)
-  // 					)) ||
-  // 				`Document - ${index + 1}`;
-  // 			return doc;
-  // 		});
-  // 		setTimeout(() => {
-  // 			window.open(documentsPreview[0].link);
-  // 		}, 100);
-  // 		prepareFinalObject('documentsPreview', documentsPreview)
-  // 	}
-
-  // }
-
+ 
   GOTOPAY = (selectedNumber) => {
     this.props.history.push(
       `/egov-services/PaymentReceiptDteail/${selectedNumber}`
@@ -2438,30 +2592,25 @@ else{
   };
 
   continue = () => {
-    console.log("InContinue Function");
+  
     let { selectedComplaint, toggleSnackbarAndSetText } = this.props;
 
     let bookingDate = selectedComplaint.bkFromDate;
-    console.log("FromDate--yyy", bookingDate);
+  
 
     let dateFromDate = new Date(bookingDate);
-    console.log("dateFromDate--", dateFromDate);
+  
     let CurrentDate = new Date();
-    console.log("CurrentDate--", CurrentDate);
+  
 
     let Difference_In_Time_check =
       dateFromDate.getTime() - CurrentDate.getTime();
-    console.log("Difference_In_Time--uuuuu", Difference_In_Time_check);
+  
     // To calculate the no. of days between two dates
     let Difference_In_Days_check =
       Difference_In_Time_check / (1000 * 3600 * 24);
-    console.log("Difference_In_Days--", Difference_In_Days_check);
+  
     if (Difference_In_Days_check === 1 || Difference_In_Days_check > 1) {
-      // this.setState({
-      // 	dateVenchangePop : true,
-      // 	togglepopup: !this.state.togglepopup
-      // })
-
       this.props.history.push(`/egov-services/checkavailability_pcc`);
     } else {
       toggleSnackbarAndSetText(
@@ -2493,8 +2642,6 @@ else{
   };
 OfflineRefundForCG = async () => {
   let { selectedComplaint } = this.props;
-  console.log("propsInCancelEmpBooking--CG", selectedComplaint);
- 
   let Booking = {
     "bkRemarks": selectedComplaint.bkRemarks,
     "timeslots": [],
@@ -2592,7 +2739,7 @@ OfflineRefundForCG = async () => {
     "financeBusinessService": selectedComplaint.financeBusinessService
   }
 
-  console.log("BookingRequestBodyforCommercial", Booking);
+  
   let createAppData = {
     applicationType: "GFCP",
     applicationStatus: "",
@@ -2600,21 +2747,21 @@ OfflineRefundForCG = async () => {
     tenantId: selectedComplaint.tenantId,
     Booking: Booking,
   };
-  console.log("updateForSecurityRefundforCommercial", createAppData);
+  
   let payloadRefundCommercial = await httpRequest(
     "bookings/api/_update",  
     "_search",
     [],
     createAppData
   );
-  console.log("payloadRefundCommercial", payloadRefundCommercial);
+ 
   this.props.history.push(`/egov-services/apply-refund-success`);
 };
 
 
   ApplyOfflineSecurityRefund = async () => {
     let { selectedComplaint } = this.props;
-    console.log("propsInCancelEmpBooking--", selectedComplaint);
+   
 
     let refundAction;
 
@@ -2715,7 +2862,7 @@ OfflineRefundForCG = async () => {
       bkNomineeName: selectedComplaint.bkNomineeName,
       financeBusinessService: null,
     };
-    console.log("CancelEmpBooking-Booking", Booking);
+  
     let createAppData = {
       applicationType: "PACC",
       applicationStatus: "",
@@ -2725,14 +2872,14 @@ OfflineRefundForCG = async () => {
       tenantId: selectedComplaint.tenantId,
       Booking: Booking,
     };
-    console.log("createAppData--createAppData", createAppData);
+   
     let payloadfund = await httpRequest(
       "bookings/park/community/_update",
       "_search",
       [],
       createAppData
     );
-    console.log("payloadfund--cancel--", payloadfund);
+   
     this.props.history.push(`/egov-services/apply-refund-success`);
   };
 
@@ -2744,26 +2891,26 @@ OfflineRefundForCG = async () => {
     let bookingDate = selectedComplaint.bkFromDate;
     let check;
 
-    console.log("FromDate--yyy-jjj", bookingDate);
+   
 
     let dateFromDate = new Date(bookingDate);
-    console.log("dateFromDate--gg", dateFromDate);
+   
     let CurrentDate = new Date();
-    console.log("CurrentDate--", CurrentDate);
+   
 
     if (dateFromDate < CurrentDate) {
       check = true;
     } else {
       check = false;
     }
-    console.log("hjhjhjjhjhj--", check);
+   
     let Difference_In_Time_check =
       dateFromDate.getTime() - CurrentDate.getTime();
-    console.log("Difference_In_Time--uuuuu-fgfgfg", Difference_In_Time_check);
-    // To calculate the no. of days between two dates
+   
+   
     let Difference_In_Days_check =
       Difference_In_Time_check / (1000 * 3600 * 24);
-    console.log("Difference_In_Days--dadada", Difference_In_Days_check);
+   
     this.setState({
       checkGreaterDate: check,
       checkNumDays: Difference_In_Days_check,
@@ -2780,11 +2927,11 @@ OfflineRefundForCG = async () => {
   ConfirmCancelEmpBooking = async () => {
     let { selectedComplaint, toggleSnackbarAndSetText } = this.props;
 
-    console.log("propsInCancelEmpBooking--", selectedComplaint);
+   
 
     let current_datetime = new Date()
     let formatted_date = current_datetime.getDate() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getFullYear()
-    console.log("cancelBookDate--RequestBody",formatted_date)
+   
 
     let cancelAction;
     if (selectedComplaint.bkApplicationStatus == "APPLIED") {
@@ -2887,7 +3034,7 @@ OfflineRefundForCG = async () => {
         bkNomineeName: selectedComplaint.bkNomineeName,
         financeBusinessService: null,
       };
-      console.log("CancelEmpBooking-Booking", Booking);
+     
       let createAppData = {
         applicationType: "PACC",
         applicationStatus: "",
@@ -2897,14 +3044,14 @@ OfflineRefundForCG = async () => {
         tenantId: selectedComplaint.tenantId,
         Booking: Booking,
       };
-      console.log("createAppData--createAppData", createAppData);
+      
       let payloadfund = await httpRequest(
         "bookings/park/community/_update",
         "_search",
         [],
         createAppData
       );
-      console.log("payloadfund--cancel--", payloadfund);
+      
       if(payloadfund.status == "200"){
         this.props.history.push(`/egov-services/application-cancelled-success`);
       }
@@ -2938,34 +3085,9 @@ OfflineRefundForCG = async () => {
       {
         reasonForBookingCancellation: e.target.value,
       },
-      console.log("ReasonOfCanValue", e.target.value)
+      
     );
   };
-
-  // CheckGreaterDate = () =>{
-  // 	let { selectedComplaint,toggleSnackbarAndSetText } = this.props;
-  // 	let check;
-  // 	let bookingDate = selectedComplaint.bkFromDate
-  // 	console.log("FromDate--yyy-last",bookingDate)
-
-  // 	let dateFromDate = new Date(bookingDate)
-  // 	console.log("dateFromDate--gg",dateFromDate)
-  // 	let CurrentDate = new Date();
-  // 	console.log("CurrentDate--",CurrentDate)
-  // if(dateFromDate > CurrentDate){
-  // 	check == false
-  // }
-  // else{
-  // 	check == true
-  // }
-  // console.log("ValueOfCheckInFunction--",check)
-  // this.setState({
-  // 	checkGreaterDate: check,
-  // })
-
-  // return check
-  // }
-
   render() {
     const hintTextStyle = {
       letterSpacing: "0.7px",
@@ -3002,7 +3124,7 @@ OfflineRefundForCG = async () => {
       PaymentMode,
       transactionNumber,
     } = this.state;
-    console.log("CheckstateForRefund--", this.state);
+    
     let { complaint, timeLine } = this.props.transformedComplaint;
     let {
       documentMap,
@@ -3021,8 +3143,6 @@ OfflineRefundForCG = async () => {
       PayMentOne,
       selectedNumber,
     } = this.props;
-    console.log("this.props.match--", this.props);
-    console.log("this.state.totalRefundAmount", this.state.totalRefundAmount);
     let {
       role,
       serviceRequestId,
@@ -3046,14 +3166,6 @@ OfflineRefundForCG = async () => {
     if (checkuploadeDocType !== "NotFound") {
       valueForDocDropDown = `-${checkuploadeDocType}`;
     }
-
-    console.log("valueForDocDropDown", valueForDocDropDown);
-
-    // var ForAllNoDays = this.TotalPACCDays();     `-${uploadeDocType}`
-    // console.log("ForAllNoDays--",ForAllNoDays)    uploadeDocType[0].documentType    uploadeDocType.length > 0 ?
-
-    // var check = this.CheckGreaterDate();
-    // console.log("CheckGreaterDat--",check)
     let btnOneLabel = "";
     let btnTwoLabel = "";
     let action;
@@ -3113,8 +3225,6 @@ OfflineRefundForCG = async () => {
         <Screen>
           {complaint && !openMap && (
             <div>
-              {console.log("matchOne--", match)}
-              {console.log("matchparms--", this.props.match)}
               <div className="form-without-button-cont-generic">
                 <div className="container">
                   <div className="row">
@@ -3122,7 +3232,7 @@ OfflineRefundForCG = async () => {
                       className="col-12 col-md-6"
                       style={{ fontSize: "26px" }}
                     >
-                      {/* <Label style={{ fontSize: '26px',marginTop: '10px' }} label="BK_MYBK_APPLICATION_DETAILS" /> */}
+                      
                       Application Details
                     </div>
                     <div className="col-12 col-md-6 row">
@@ -4047,7 +4157,6 @@ totalAmountPaid = {totalAmountPaid}
                   )}
 
                   {/*Security Refund Button for commercial ground*/}
-{console.log("this.props.RefoundCGAmount",this.props.RefoundCGAmount)}
                   {role === "employee" && complaint.status == "APPLIED" && complaint.businessService == "GFCP" && this.props.RefoundCGAmount > 0 &&
                   foundTenthLavel && (
                     <Footer
@@ -4246,24 +4355,12 @@ totalAmountPaid = {totalAmountPaid}
                                     "APPROVED"
                                   ),
                               },
-                              // {
-                              // 	label: {
-                              // 		labelName: "Reject",
-                              // 		labelKey: "BK_MYBK_REJECT_ACTION_BUTTON"
-                              // 	},
-                              // 	link: () => this.actionButtonOnClick('state', "dispatch", 'REJECT')
-                              // }
                             ],
                           }}
                         />
                       }
                     ></Footer>
                   )}
-                {console.log(
-                  "match.params.applicationId--",
-                  match.params.applicationId
-                )}
-
                 <DialogContainer
                   toggle={this.state.dateVenchangePop} //open
                   actionTittle={"Date/Venue change Terms & Conditions"} //data
@@ -4351,7 +4448,7 @@ const mapStateToProps = (state, ownProps) => {
   let selectedNumber = selectedComplaint
     ? selectedComplaint.bkApplicationNumber
     : "NotFoundAnyApplicationNumber";
-  console.log("selectedNumber--", selectedNumber);
+ 
 
   let OfflineInitatePayArray;
   let PACC = 0;
@@ -4367,7 +4464,7 @@ const mapStateToProps = (state, ownProps) => {
       ? selectedComplaint.roomsModel
       : "NA"
     : "NA";
-  console.log("roomData-----", roomData);
+ 
   let RoomApplicationNumber = "NA";
   let showRoomCard;
   let totalNumber;
@@ -4377,7 +4474,7 @@ const mapStateToProps = (state, ownProps) => {
   let dataForBothSelection;
   if (roomData !== "NA") {
     let roomModels = roomData;
-    console.log("roomModels-roomModels-roomModels", roomModels);
+ 
     let tempArray = [];
     var roomsData = roomModels
       .map((roomData) => {
@@ -4427,9 +4524,6 @@ const mapStateToProps = (state, ownProps) => {
         return;
       })
       .filter(Boolean);
-
-    console.log("DataForRoomsData--", roomsData);
-    console.log("dataForBothSelection--", dataForBothSelection);
     showRoomCard = true;
     RoomApplicationNumber = roomData[0].roomApplicationNumber;
     totalNumber = roomData[0].totalNoOfRooms;
@@ -4440,39 +4534,39 @@ const mapStateToProps = (state, ownProps) => {
 
   let newRoomAppNumber =
     RoomApplicationNumber != "NA" ? RoomApplicationNumber : "";
-  console.log("newRoomAppNumber--", newRoomAppNumber);
+ 
 
   let bookFDate = selectedComplaint ? selectedComplaint.bkFromDate : "";
-  console.log("bookFDate--", bookFDate);
+ 
 
   let bookTDate = selectedComplaint ? selectedComplaint.bkToDate : "";
-  console.log("bookTDate--", bookTDate);
+  
 
   let dateFromDate = new Date(bookFDate);
-  console.log("dateFromDate--gg", dateFromDate);
+  
 
   let RoomDate = new Date(bookTDate);
-  console.log("RoomDate--", RoomDate);
+  
 
   let Todaydate = new Date();
-  console.log("Todaydate--", Todaydate);
+  
 
   let RoomBookingDate = "";
   if (Todaydate.getTime() < RoomDate.getTime()) {
     RoomBookingDate = "Valid";
   }
-  console.log("RoomBookingDate--", RoomBookingDate);
+  
   let first = false;
   if (dateFromDate < Todaydate) {
     first = true;
   }
-  console.log("first--", first);
+  
 
   let Difference_In_Time_check = dateFromDate.getTime() - Todaydate.getTime();
-  console.log("Difference_In_Time--uuuuu-fgfgfg", Difference_In_Time_check);
+  
 
   let Difference_In_Days_check = Difference_In_Time_check / (1000 * 3600 * 24);
-  console.log("Difference_In_Days--dadada", Difference_In_Days_check);
+  
 
   let businessService = applicationData ? applicationData.businessService : "";
   let bookingDocs;
@@ -4487,20 +4581,14 @@ const mapStateToProps = (state, ownProps) => {
     "NotFound"
   );
 
-  console.log("DetailPageDocType", uploadeDocType);
+  
   const { HistoryData } = bookings;
   let historyObject = HistoryData ? HistoryData : "";
   const { paymentData } = bookings;
-  console.log("paymentData--", paymentData ? paymentData : "NopaymentData");
+  
 
   const { fetchPaymentAfterPayment } = bookings;
-  console.log(
-    "fetchPaymentAfterPayment--",
-    fetchPaymentAfterPayment
-      ? fetchPaymentAfterPayment
-      : "NofetchPaymentAfterPaymentData"
-  );
-
+  
   let paymentDetailsForReceipt = fetchPaymentAfterPayment;
   let paymentDetails;
 
@@ -4509,25 +4597,25 @@ const mapStateToProps = (state, ownProps) => {
     fetchPaymentAfterPayment.Payments[0] &&
     fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
   let xyz = PayMentOne && PayMentOne ? PayMentOne : "xyz";
-  console.log("xyz--", xyz);
-  console.log("PayMentOne--", PayMentOne);
+  
+  
   let PayMentTwo = paymentData ? paymentData.Bill[0] : "";
-  console.log("PayMentTwo--", PayMentTwo);
+  
   let abc = PayMentTwo && PayMentTwo ? PayMentTwo : "abc";
-  console.log("abc--", abc);
+  
 
   let RefoundCGAmount = 0;
 
-  //fetch security amount in case of commercial
+  
 if(selectedComplaint.bkBookingType == "GROUND_FOR_COMMERCIAL_PURPOSE"){
   let cgSecurityAmount = get(
     state,
     "bookings.fetchPaymentAfterPayment.Payments",
     "NotFound"
   );
-  // bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[2].taxHeadCode
+  
 
-console.log("cgSecurityAmount",cgSecurityAmount)
+
   if(cgSecurityAmount !== "NotFound"){
     for (let i = 0; i < cgSecurityAmount.length; i++) {
       if (
@@ -4540,12 +4628,12 @@ console.log("cgSecurityAmount",cgSecurityAmount)
 
 }
 }
-console.log("RefoundCGAmount",RefoundCGAmount)
+
   if (
     selectedComplaint &&
     selectedComplaint.bkApplicationStatus == "OFFLINE_APPLIED"
   ) {
-    console.log("offlineApplied--", selectedComplaint.bkApplicationStatus);
+
 
     let fetchPaymentAfterPaymentData = get(
       state,
@@ -4558,32 +4646,32 @@ console.log("RefoundCGAmount",RefoundCGAmount)
       "bookings.paymentData",
       "NotFound"
     );
-    console.log("fetchPaymentAfterPaymentData--000888",fetchPaymentAfterPaymentData)
-    console.log("AfterPaymentDataAfterPaymentData",AfterPaymentData)
+   
+   
     if (selectedComplaint.bkPaymentStatus == "SUCCESS") {
-      console.log("yes--fetchPaymentAfterPaymentData")
+   
       if (fetchPaymentAfterPaymentData.length > 0 && fetchPaymentAfterPaymentData !=="NotFound") {
-        console.log("onetwothreefourfive")
+   
         PaymentModeCNumber = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentMode
-        console.log("PaymentModeCNumber-7079",PaymentModeCNumber)
+   
         paymentDetails =
           fetchPaymentAfterPayment &&
           fetchPaymentAfterPayment.Payments[0] &&
           fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
-          console.log("paymentDetails-One--", paymentDetails);
-console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
+   
+
       } 
       else {
-        console.log("false--fetchPaymentAfterPaymentData")
-        console.log("paymentData-pppp--oooo",paymentData)
+
+
         paymentDetails = paymentData ? paymentData.Bill[0] : "";
-        console.log("paymentDetails-false-false",paymentDetails)
+
       }
     } 
     else {
-      console.log("two");
+      
       paymentDetails = paymentData ? paymentData.Bill[0] : "";
-      console.log("paymentDetails-two--", paymentDetails);
+      
     }
   }
   if (
@@ -4726,23 +4814,21 @@ console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
       "bookings.paymentData",
       "NotFound"
     );
-    console.log("fetchPaymentAfterPaymentData--000888",fetchPaymentAfterPaymentData)
-    console.log("AfterPaymentDataAfterPaymentData",AfterPaymentData)
-
+  
     if (fetchPaymentAfterPaymentData.length > 0 && fetchPaymentAfterPaymentData !=="NotFound") {
-      console.log("comeInConditionOfIfTest")
+  
   PaymentModeCNumber = fetchPaymentAfterPayment && fetchPaymentAfterPayment.Payments[0] && fetchPaymentAfterPayment.Payments[0].paymentMode
-  console.log("PaymentModeCNumber--9090",PaymentModeCNumber)    
+  
   paymentDetails =
         fetchPaymentAfterPayment &&
         fetchPaymentAfterPayment.Payments[0] &&
         fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill;
-        console.log("paymentDetails-One--", paymentDetails);
-console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
+  
+
     } 
     else {
-      console.log("comeInElseConditionOfTestt")
-      console.log("ppagalPagal",paymentData)
+
+
       paymentDetails =
       paymentData && paymentData !== null && paymentData !== undefined
         ? paymentData.Bill &&
@@ -4873,10 +4959,10 @@ console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
   let refConAmount = fetchPaymentAfterPayment
     ? fetchPaymentAfterPayment
     : "NotFound";
-  console.log("refConAmount", refConAmount);
+ 
 
   let ReceiptPaymentDetails = fetchPaymentAfterPayment;
-  console.log("ReceiptPaymentDetails--", ReceiptPaymentDetails); //Payments[0].totalAmountPaid
+ 
 
   let amountTodisplay = 0;
 
@@ -4892,13 +4978,13 @@ console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
       "bookings.paymentData.Bill[0].totalAmount",
       "NotFound"
     );
-    console.log("getAmount", getAmount);
+ 
     if (getAmount === "NotFound") {
       amountTodisplay = getAmount;
     }
   }
 
-  //let offlinePayementMode = ReceiptPaymentDetails ? (ReceiptPaymentDetails.Payments[0].paymentMode ): "NotFound"
+ 
   let offlinePayementMode = ReceiptPaymentDetails
     ? ReceiptPaymentDetails.Payments.length > 0
       ? ReceiptPaymentDetails.Payments[0].paymentMode !== undefined &&
@@ -4907,10 +4993,10 @@ console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
         : "NotFound"
       : "NotFound"
     : "NotFound";
-  console.log("offlinePayementMode--", offlinePayementMode);
+ 
 
-  //transactionDate
-  // let offlineTransactionDate = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].transactionDate : "NotFound"
+ 
+ 
   let offlineTransactionDate =
     ReceiptPaymentDetails !== undefined && ReceiptPaymentDetails !== null
       ? ReceiptPaymentDetails.Payments.length > 0
@@ -4920,9 +5006,9 @@ console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
           : "NotFound"
         : "NotFound"
       : "NotFound";
-  console.log("offlineTransactionDate--", offlineTransactionDate);
+ 
 
-  // let offlineTransactionNum = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].transactionNumber : "NotFound"
+ 
   let offlineTransactionNum =
     ReceiptPaymentDetails !== undefined && ReceiptPaymentDetails !== null
       ? ReceiptPaymentDetails.Payments.length > 0
@@ -4932,10 +5018,10 @@ console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
           : "NotFound"
         : "NotFound"
       : "NotFound";
-  console.log("offlineTransactionNum--", offlineTransactionNum);
-  //receipt Number
+ 
+ 
 
-  // let recNumber = ReceiptPaymentDetails ? ReceiptPaymentDetails.Payments[0].paymentDetails[0].receiptNumber : "NotFound"
+ 
   let recNumber =
     ReceiptPaymentDetails !== undefined && ReceiptPaymentDetails !== null
       ? ReceiptPaymentDetails.Payments.length > 0
@@ -4947,7 +5033,7 @@ console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
           : "NotFound"
         : "NotFound"
       : "NotFound";
-  console.log("recNumber--", recNumber);
+  
 
   //ReceiptPaymentDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails
   let billAccountDetailsArray =
@@ -4957,7 +5043,7 @@ console.log("fetchPaymentAfterPayment",fetchPaymentAfterPayment)
             .billDetails[0].billAccountDetails
         : "NOt found Any Array"
       : "NOt found Any Array";
-  console.log("billAccountDetailsArray--", billAccountDetailsArray);
+  
 
   if (
     billAccountDetailsArray !== "NOt found Any Array" &&

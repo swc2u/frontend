@@ -1,5 +1,6 @@
 import React from "react";
 import { Notifications, Screen } from "modules/common";
+import { Icon} from "components";
 import { Card, CardContent, Grid, Typography, Button,} from "@material-ui/core";
 import {
     LabelContainer,  
@@ -17,7 +18,14 @@ import  ProfileSection from "egov-ui-kit/common/User/components/ProfileSection";
 class HelpSupport extends React.Component {
   componentDidMount = () => {
     const { getNotifications } = this.props;
-
+    const callIconStyle = {
+      marginLeft: "17px",
+      height: "17px",
+      width: "17px",
+      borderRadius: "50%",
+      position: "absolute",
+      top: "0px",
+    };
     let queryObject = [
       {
         key: "tenantId",
@@ -61,13 +69,29 @@ class HelpSupport extends React.Component {
                               </Typography>
 
                             </Grid>
-            <Grid item xs={12} sm={6} md={4}lg={3} style={{ marginTop: 15, paddingRight: 10 ,paddingLeft: 10 }}>
+            <Grid item xs={12} sm={6}  style={{ marginTop: 15, paddingRight: 10 ,paddingLeft: 10 }}>
                               <Typography variant="caption">
                               <LabelContainer labelName="Contact Number" labelKey="CS_HELP_CONTACT_LABLE" />
                               </Typography>
-                              <Typography variant="body2">
-                              <LabelContainer labelName={"0172 2787200"} />
-                              </Typography>
+                              {/* <Typography variant="body2"> */}
+                              {/* <LabelContainer labelName={"0172 2787200"} /> */}
+                              <a
+              className="citizen-mobileNumber-style"
+              href={`tel:+0172-2787200`}
+              style={{ textDecoration: "none", position: "relative" }}
+            >
+              {/* style={callIconStyle} */}
+              <Icon action="communication" name="call" style={{ marginLeft: 0, paddingTop: 12 }}  color={"#22b25f"}/>
+              <LabelContainer labelName={"0172 2787200"} />
+             
+              {/* <span
+                style={{
+                  fontSize:12,// filedBy.includes("@CSR") ? 12 : 14,
+                  marginLeft: "5px",
+                }}
+              >{`0172-2787200`}</span> */}
+            </a>
+                              {/* </Typography> */}
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}lg={3} style={{ marginTop: 10, paddingRight: 10 ,paddingLeft: 10 }}>
                               <Typography variant="caption">

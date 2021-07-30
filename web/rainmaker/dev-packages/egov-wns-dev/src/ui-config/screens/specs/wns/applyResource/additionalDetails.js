@@ -126,7 +126,10 @@ export const additionDetails =(Disabled)=> getCommonCard({
               state.screenConfiguration.preparedFinalObject,
               "applyScreen.property.address.locality.code"
             )
-             
+             if(sectotecode.value)
+             {
+              sectotecode = sectotecode.value
+             }
             let ledgerGroup = `${sectotecode}${action.value}`
             dispatch(
               prepareFinalObject(
@@ -460,6 +463,55 @@ export const additionDetails =(Disabled)=> getCommonCard({
         type: "array",
         section:"SECURITY",
         jsonPath: "applyScreen.waterApplication.isFerruleApplicable"
+      },
+      additionalCharges: getTextField({
+        label: {
+          labelKey: "WS_ADDN_DETAILS_ADDITIONAL_CHARGES_LABEL"
+        },
+        placeholder: {
+          labelKey: "WS_ADDN_DETAILS_ADDITIONAL_CHARGES_LABEL"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        pattern: getPattern("Amount"),
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.waterApplication.additionalCharges"
+      }),
+      constructionCharges: getTextField({
+        label: {
+          labelKey: "WS_ADDN_DETAILS_CONSTRUCTION_CHARGES_LABEL"
+        },
+        placeholder: {
+          labelKey: "WS_ADDN_DETAILS_CONSTRUCTION_CHARGES_LABEL"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        pattern: getPattern("Amount"),
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.waterApplication.constructionCharges"
+      }),
+      isMeterStolen: {
+        uiFramework: "custom-containers-local",
+        moduleName: "egov-wns",
+        componentPath: "CheckboxContainerConnHolder",
+        gridDefination: { xs: 12, sm: 6 },
+        props: {
+          label: {
+            name: "Is this is a case of theft of meter",
+            key: "WS_ADDN_DETAILS_IS_METER_STOLEN",
+          },
+          jsonPath: "applyScreen.waterApplication.isMeterStolen",
+          required: false,
+          isChecked: false
+        },
+        type: "array",
+        jsonPath: "applyScreen.waterApplication.isMeterStolen"
       },
     }),
   }),

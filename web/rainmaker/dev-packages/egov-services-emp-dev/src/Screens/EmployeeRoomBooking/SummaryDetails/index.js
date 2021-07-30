@@ -36,10 +36,10 @@ class SummaryDetails extends Component {
     componentDidMount = async () => {
 
         let {DataForRoomBooking,userInfo,roomToDate,roomFromDate,fetchPayment,prepareFinalObject,bothRoom} = this.props
-        console.log("propsINROOMPAGE--",this.props)
+       
  let BothRoomSelect=[];
         if(bothRoom == "Both"){
-            console.log("first")
+       
             BothRoomSelect = [
                 {
                     "action": "OFFLINE_INITIATE",
@@ -64,7 +64,7 @@ class SummaryDetails extends Component {
                 }
 
        if(bothRoom == "AC"){
-        console.log("second")
+        
         BothRoomSelect = [
             {
               "action": "OFFLINE_INITIATE",
@@ -78,7 +78,7 @@ class SummaryDetails extends Component {
             }]
                     }
                 if (bothRoom == "NON-AC"){
-                    console.log("three")
+                    
                     BothRoomSelect = [
                         {
                           "action": "OFFLINE_INITIATE",
@@ -92,7 +92,7 @@ class SummaryDetails extends Component {
                         }]
                       
                 }
-console.log("BothRoomSelect--",BothRoomSelect)
+
             let Booking = {
             "bkRemarks": null,
             "reInitiateStatus": false,
@@ -192,18 +192,6 @@ console.log("BothRoomSelect--",BothRoomSelect)
   "tenantId": userInfo.tenantId,
   "Booking": Booking   
             }
-        
-console.log("createAppData--",createAppData)
-
-/** 
- {
-        "slot": "1PM-5PM"
-      },
-      {
-        "slot": "5PM-9PM"
-      }
- * **/
-
  
 let payloadfund = await httpRequest(
             "bookings/community/room/_create",
@@ -211,7 +199,7 @@ let payloadfund = await httpRequest(
             createAppData
             );
 
- console.log("payloadfund--",payloadfund)
+ 
 
  this.setState({
   
@@ -220,21 +208,6 @@ let payloadfund = await httpRequest(
  })
 
  prepareFinalObject("CreateRoomApplication",payloadfund)
-
-//  let appNumber = payloadfund.data.bkApplicationNumber
-//  console.log("appNumber--",appNumber)
-//  let AAppStatus = payloadfund.data.bkApplicationStatus
-//  console.log("AAppStatus--",AAppStatus)
-
-//  prepareFinalObject("CurrentApplicationNumber",appNumber)
-
-//  this.setState({
-//     createPACCApp : payloadfund,
-//     CashPaymentApplicationNumber : appNumber,
-//     currentAppStatus : AAppStatus
-//  })
-
-
 
  fetchPayment(
     [{ key: "consumerCode", value: payloadfund.data.roomsModel[0].roomApplicationNumber }, { key: "businessService", value: "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR" }, { key: "tenantId", value: userInfo.tenantId }
@@ -298,33 +271,16 @@ let payloadfund = await httpRequest(
 
 submit = async (InitiateAppNumber) => {
 
-console.log("this.state.CashPaymentApplicationNumber--",this.state.CashPaymentApplicationNumber)    
+
 
 let NumberApp = this.state.CashPaymentApplicationNumber;
 
-console.log("NumberApp--",NumberApp)
+
 this.props.SetPaymentURL(`/egov-services/PaymentReceiptDteail/ForRoomBooking/${this.state.CashPaymentApplicationNumber}`);
-// this.props.history.push(`/egov-services/PaymentReceiptDteail/${this.state.CashPaymentApplicationNumber}`);
-// hashHistory.push(`/egov-services/PaymentReceiptDteail/${this.state.CashPaymentApplicationNumber}`);
-// this.props.history.push(`/egov-services/ApplyRoomBooking`);  
-// hashHistory.push('/egov-services/PaymentReceiptDteail/${this.state.CashPaymentApplicationNumber}`);
+
 }
 
-    render() {
-        // const { firstName, fCharges,result, email, mobileNo, locality, surcharge, fromDate, toDate, facilationChargesSuccess,
-        //     onFromDateChange, onToDateChange, utGST, cGST, GSTnumber, handleChange, bankName, amount, transactionDate, transactionNumber, paymentMode,
-        //     dimension, location, facilitationCharges, cleaningCharges, rent, approverName, comment, houseNo, type, purpose, residenials, documentMap,
-        //     BK_FEE_HEAD_PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,totalAmountSuPage,one,two,three,four,five,six,
-        //     PACPACC_ROUND_OFFC_TAX,FACILITATION_CHARGE,InitiateAppNumber,seven,
-        //     BankAccountName,NomineeName,BankAccountNumber,IFSCCode,AccountHolderName,accountType,
-        //     } = this.props;
-            
-        //     console.log(",one,two,three,four,five,six--",one,two,three,four,five,six)
-        //     console.log("propsInRendersummary--",this.props)
-        //     let fc = fCharges?fCharges.facilitationCharge:'100';
-        //     console.log("stateofBooking--",this.state.createPACCApp)
-
-            
+    render() {    
         return ( 
             <div>
                 <div className="form-without-button-cont-generic">
@@ -370,17 +326,6 @@ ProofOfResidence={this.props.ProofOfResidence}
                                 AccRoomToBook={this.props.AccRoomToBook}
                                 NonAccRoomToBook={this.props.NonAccRoomToBook}
                             />
-                            {/* <SummaryBankDetails   
-                                BankAccountName={BankAccountName}
-                                NomineeName={NomineeName}
-                                BankAccountNumber={BankAccountNumber}
-                                IFSCCode={IFSCCode}
-                                AccountHolderName={AccountHolderName}
-                                accountType={accountType}
-                            /> */}
-                            {/* <SummaryDocumentDetail
-                                documentMap={documentMap}
-                            /> */}
                             <div className="col-xs-12" style={{ marginLeft: '10px' }}>
                                 <div className="col-sm-12 col-xs-12" style={{ marginBottom: '90px' }}>
                                     <div className="complaint-detail-detail-section-status row">
@@ -427,17 +372,17 @@ const mapStateToProps = state => {
     const { userInfo } = state.auth;
 
     let SetPaymentURL = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.SetPaymentURL : "NA"
-console.log("SetPaymentURL-SetPaymentURL",SetPaymentURL)
+
 let DataForRoomBooking = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.RoomBookingData : "NA"
     const { paymentData } = bookings;
     let paymentDataOne = paymentData ? paymentData : "wrong";
-    console.log("paymentDataOne--",paymentDataOne)
+
 
     let bothRoom = state.screenConfiguration.preparedFinalObject ?
      (state.screenConfiguration.preparedFinalObject.GlobalTypeOfRoom !== undefined && state.screenConfiguration.preparedFinalObject.GlobalTypeOfRoom !== null ?state.screenConfiguration.preparedFinalObject.GlobalTypeOfRoom : 'NA'): "NA"
-console.log("bothRoom--",bothRoom)
+
     let billAccountDetailsArray =  paymentDataOne ? paymentDataOne.Bill[0].billDetails[0].billAccountDetails : "NOt found Any Array"
-console.log("billAccountDetailsArray--",billAccountDetailsArray)
+
 let TotalAmount = paymentDataOne.Bill[0].totalAmount
 let BKROOM_TAX = 0;
 let BKROOM = 0;
@@ -458,132 +403,10 @@ for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
     else if(billAccountDetailsArray[i].taxHeadCode == "ROOM_FACILITATION_CHARGE"){
         four = billAccountDetailsArray[i].amount
     }
-}
-console.log("BKROOM_TAX-BKROOM-BKROOM_ROUND_OFF",BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF)
-
-// console.log("one--",one)
-// console.log("two--",two)
-// console.log("three--",three)
-// console.log("four--",four)
-// console.log("five--",five)
-// console.log("six--",six)
-// console.log("seven--",seven ? seven : "sdfg")
-
-//     let myLocation = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData:"";  
-//     let myLocationtwo = myLocation?myLocation.bkLocation:"";  
-
-//     let NewAppNumber =  state.screenConfiguration.preparedFinalObject.CurrentApplicationNumber ? state.screenConfiguration.preparedFinalObject.CurrentApplicationNumber : "NotDetemine";
-//     console.log("NewAppNumber--",NewAppNumber)
-
-//     let tryMyNumber;
-
-//     if(NewAppNumber != "NotDetemine"){
-//         tryMyNumber = NewAppNumber && NewAppNumber;
-//     }
-//     console.log("tryMyNumber--",tryMyNumber)
-
-//     let InitiateAppNumber = NewAppNumber && NewAppNumber ? NewAppNumber : "NotDetemine";
-    
-//     console.log("InitiateAppNumber--",InitiateAppNumber)
-//     let fCharges;
-//     if (arrayName && arrayName.length > 0) {
-//       arrayName.forEach((item) => {
-//         item.forEach((value) => {
-//           if (value.code == "FACILITATION_CHARGE") { 
-//             fCharges = value
-//           }
-//         })
-//       })
-//     }
-
-//     let documentMap = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.documentMap : "";
-//     let bkLocation = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation : "";
-   
-//    let checkAppStatus = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationStatus : "NOTFOUND";
-//    console.log("checkAppStatus--",checkAppStatus)
-
-//    let checkAppNum = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationNumber : "NOTFOUND";
-//    console.log("checkAppStatus--bkApplicationNumber",checkAppNum)
-
-//    let DropDownValue = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData.name : "";
-//    console.log("DropDownValue--",DropDownValue)
-//    let SecTimeSlotFromTime = ""
-//    let SecTimeSlotToTime = ""
-//    let firstToTimeSlot = ""
-//    let firstTimeSlotValue = ""
-//    let first  = ""
-//    let conJsonfirst = ""
-//    let SecondTimeSlotValue = ""
-//    let second = ""
-//    let conJsonSecond = ""
-// //HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH
-//    if(DropDownValue === "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH"){
-
-//     SecTimeSlotFromTime = state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo || "notFound"
-//     console.log("SecTimeSlotFromTime--",SecTimeSlotFromTime)//screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo
-  
-//     SecTimeSlotToTime = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo || "notFound"
-//     console.log("SecTimeSlotToTime--",SecTimeSlotToTime)
-//      //OFFLINE_APPLIED
-  
-//      firstToTimeSlot = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTime || "notFound"
-//     console.log("firstToTimeSlot--",firstToTimeSlot)
-  
-  
-//   //Booking.wholeDay
-//   // let wholeDaySlot = state.screenConfiguration.preparedFinalObject.Booking.wholeDay && state.screenConfiguration.preparedFinalObject.Booking.wholeDay || "notFound"
-//   // console.log("wholeDaySlot--",wholeDaySlot)
-  
-//   // let firstTimeSlotValue = state.screenConfiguration.preparedFinalObject.Booking.timeslots !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] : "notFound"
-//   // console.log("firstTimeSlotValue-",firstTimeSlotValue)
-  
-//   firstTimeSlotValue = 
-//     state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
-//     (state.screenConfiguration.preparedFinalObject.Booking.timeslots !== undefined ? (state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] : "notFound") : "notFound") :
-//     "notFound"
-  
- 
-//   if(firstTimeSlotValue !== "notFound"){
-//       first=firstTimeSlotValue 
-//   console.log("first--",first)
-//   }
-  
- 
-//   if(firstTimeSlotValue !== "notFound"){
-//   conJsonfirst= JSON.stringify(firstTimeSlotValue);
-//   console.log("conJsconJsonfirston--",conJsonfirst)
-//   }
-//   // let SecondTimeSlotValue = state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] : "notFound"
-//   // console.log("SecondTimeSlotValue-",SecondTimeSlotValue)
-  
-//    SecondTimeSlotValue = 
-//     state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
-//     (state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo !== undefined ? (state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] : "notFound") : "notFound") :
-//     "notFound"
-  
- 
-//   if(SecondTimeSlotValue !== "notFound"){
-//       second=SecondTimeSlotValue 
-//   console.log("second--",second)
-//   }
-  
-//   if(SecondTimeSlotValue !== "notFound"){
-//   conJsonSecond = JSON.stringify(SecondTimeSlotValue);
-//   console.log("conJsonSecond--",conJsonSecond)
-//   }
-  
-
-//    }
-
-   
+}     
     return { four,
      state,DataForRoomBooking,userInfo,TotalAmount,BKROOM_TAX,BKROOM,BKROOM_ROUND_OFF,SetPaymentURL,bothRoom
-        //BK_FEE_HEAD_PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,  wholeDay !== undefined ? 
-        //PACPACC_ROUND_OFFC_TAX,FACILITATION_CHARGE,
-        // firstTimeSlotValue,SecondTimeSlotValue,first,second,
-        // createPACCApplicationData,userInfo,InitiateAppNumber,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,conJsonSecond,conJsonfirst,
-        // documentMap, bkLocation, facilationChargesSuccess,seven,
-        // fCharges,myLocationtwo,totalAmountSuPage,one,two,three,four,five,six,checkAppStatus,checkAppNum
+        
     }
  
 }

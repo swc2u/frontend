@@ -102,6 +102,7 @@ class DeliveredBWTBooking extends Component {
           tenantId={userInfo.tenantId}
           onSubmit={onSubmit}
           bookingtype={trasformData.bkBookingType}
+          quantity={trasformData.quantity}
           bookingservice={businessServiceData?businessServiceData:''}
           driverFullName={trasformData.bkDriverName}
           mobileNumber={trasformData.bkContactNo}

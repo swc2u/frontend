@@ -112,6 +112,8 @@ export const reviewConnectionDetails = (isEditable = true) => {
     viewOne: getPropertyDetails,
     // add connection details
     viewPropertyConnection:getPropertyConnectionOtherDetails,
+    //
+    viewPropertyConnectionSw:getPropertyConnectionOtherDetailsSW,
     //add property uses details
     viewpropertyLocation :getpropertyLocationDetails,
     viewTwo: propertyLocationDetails ,
@@ -332,16 +334,20 @@ const getPropertyDetails = {
             },
             { jsonPath: "applyScreenOld.property.landArea", callBack: handleNA },
           ),
-          reviewNumberOfFloors: getLabelWithValueForModifiedLabel(
+          reviewNumberOfFloors: getLabelWithValue(
             {
               labelName: "Number Of Floors",
               labelKey: "WS_PROPERTY_NO_OF_FLOOR_LABEL"
             },
-            { jsonPath: "applyScreen.property.noOfFloors", callBack: handleNA },
-            {
-              labelKey: "WS_OLD_LABEL_NAME"
-            },
-            { jsonPath: "applyScreenOld.property.noOfFloors", callBack: handleNA },
+            { 
+              jsonPath: "applyScreen.property.address.floorNo", 
+              callBack: handleNA ,          
+            localePrefix: {
+              moduleName: "WS",
+              masterName: "FLOOR"
+            }
+          },
+            
           ),
           // rainwaterHarvestingFacility: getLabelWithValueForModifiedLabel(
           //   {
@@ -368,6 +374,50 @@ const getPropertyDetails = {
     sourceJsonPath: "Licenses[0].tradeLicenseDetail.tradeUnits",
     prefixSourceJsonPath:
       "children.cardContent.children.getPropertyDetailsContainer.children",
+    afterPrefixJsonPath: "children.value.children.key"
+  },
+  type: "array"
+};
+const getPropertyConnectionOtherDetailsSW = {
+  uiFramework: "custom-containers",
+  componentPath: "MultiItem",
+  props: {
+    className: "common-div-css search-preview",
+    scheama: getCommonGrayCard({
+      div2: propertyConnectionDetailsHeader,
+        getPropertyDetailsContainerC: getCommonContainer({
+         
+          reviewnumberOfTaps: getLabelWithValue(
+            {
+              labelName: "proposed Taps",
+              labelKey: "WS_CONN_DETAIL_NO_OF_WATER_CLOSETS"
+            },
+            {
+              jsonPath: "applyScreen.proposedToilets",
+              callBack: handleNA
+            }
+          ),
+          reviewproposedWaterClosets: getLabelWithValue(
+            {
+              labelName: "proposed Taps",
+              labelKey: "WS_ADDN_DETAILS_NO_OF_TOILETS"
+            },
+            {
+              jsonPath: "applyScreen.proposedWaterClosets",
+              callBack: handleNA
+            }
+          ),
+        
+         
+          
+        })
+    }),
+    items: [],
+    hasAddItem: false,
+    isReviewPage: true,
+    sourceJsonPath: "Licenses[0].tradeLicenseDetail.tradeUnits",
+    prefixSourceJsonPath:
+      "children.cardContent.children.getPropertyDetailsContainerC.children",
     afterPrefixJsonPath: "children.value.children.key"
   },
   type: "array"
@@ -411,10 +461,10 @@ const getPropertyConnectionOtherDetails = {
             },
             { jsonPath: "applyScreen.waterApplicationType",
               callBack: handleNA,
-              // localePrefix: {
-              //   moduleName: "WS",
-              //   masterName: "PROPSUBUSGTYPE"
-              // }
+              localePrefix: {
+                moduleName: "WS",
+                masterName: "WATER_APPLICATION"
+              }
             }
           ),
           reviewcontractValue: getLabelWithValue(
@@ -717,14 +767,22 @@ export const taskWaterApplicationType = getLabelWithValueForModifiedLabel(
   },
   {
     jsonPath: "applyScreen.waterApplicationType",
-    callBack: handleNA
+    callBack: handleNA,
+    localePrefix: {
+      moduleName: "WS",
+      masterName: "WATER_APPLICATION"
+    }
   },
   {
     labelKey: "WS_OLD_LABEL_NAME"
   },
   {
     jsonPath: "applyScreenOld.waterApplicationType",
-    callBack: handleNA
+    callBack: handleNA,
+    localePrefix: {
+      moduleName: "WS",
+      masterName: "WATER_APPLICATION"
+    }
   },
 )
 export const taskPipeSizeProposed = getLabelWithValueForModifiedLabel(
@@ -781,7 +839,7 @@ export const renderService = () => {
 
 
 export const connectionHolderDetails={
-  mobileNumber: getLabelWithValueForModifiedLabel(
+  mobileNumber: getLabelWithValue(
     {
       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_MOBILE_NO_LABEL"
     },
@@ -792,7 +850,7 @@ export const connectionHolderDetails={
     // { jsonPath: "applyScreen.property.owners[0].mobileNumber", callBack: handleNA }
     
   ),
-  name: getLabelWithValueForModifiedLabel(
+  name: getLabelWithValue(
     {
       labelName: "Name",
       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_OWN_NAME_LABEL"
@@ -848,7 +906,7 @@ export const connectionHolderDetails={
   //   },
   //   { jsonPath: "applyScreenOld.connectionHolders[0].relationship", callBack: handleNA }
   // ),
-  mailid: getLabelWithValueForModifiedLabel(
+  mailid: getLabelWithValue(
       {
         labelKey: "WS_OWNER_DETAILS_EMAIL_LABEL"
       },
@@ -858,7 +916,7 @@ export const connectionHolderDetails={
       // },
       // { jsonPath: "applyScreenOld.connectionHolders[0].fatherOrHusbandName", callBack: handleNA }
     ),
-  correspondenceAddress: getLabelWithValueForModifiedLabel(
+  correspondenceAddress: getLabelWithValue(
     {
       labelKey: "WS_CONN_HOLDER_OWN_DETAIL_CROSADD"
     },
@@ -874,13 +932,13 @@ export const connectionHolderDetails={
     //   callBack: handleNA
     // }
   ),
-  aadhaarNumber : getLabelWithValue(
-    {
-      labelName: "aadhaarNumber",
-      labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
-    },
-    { jsonPath: "applyScreen.property.owners[0].aadhaarNumber", callBack: handleNA }
-  ),
+  // aadhaarNumber : getLabelWithValue(
+  //   {
+  //     labelName: "aadhaarNumber",
+  //     labelKey: "WS_OWN_DETAIL_ADDHAR_NO"
+  //   },
+  //   { jsonPath: "applyScreen.property.owners[0].aadhaarNumber", callBack: handleNA }
+  // ),
   // specialApplicantCategory: getLabelWithValueForModifiedLabel(
   //   {
   //     labelKey: "WS_CONN_HOLDER_OWN_DETAIL_SPECIAL_APPLICANT_LABEL"

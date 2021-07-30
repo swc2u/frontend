@@ -5,7 +5,8 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import ReactTable from "react-table-6";  
 import "react-table-6/react-table.css" ;
-import jsPDF from 'jspdf'
+import jsPDF from 'jspdf';
+import { CSVLink, CSVDownload } from "react-csv";
 import 'jspdf-autotable';
 
 import './WorkDashboard.css'
@@ -44,6 +45,13 @@ class WorkDashboard extends React.Component {
             graphHardTwoData : {},
             rowData: [],
             columnData: [],
+            graphTwo_1_Label : [],
+            // graphTwoLabel : DemoMp_Label,
+            graphTwo_1_Data : [],
+            dataTwo_1 : [],
+            graphTwo_2_Label : [],
+            graphTwo_2_Data :  [],
+            dataTwo_2 : [],
             // Feature Table
             toggleColumnCheck: false,
             unchangeColumnData: []
@@ -340,7 +348,9 @@ class WorkDashboard extends React.Component {
                     })
                 }else{
                     this.setState({
-                        recordNotFound : "Record not found..!"
+                        recordNotFound : "Record not found..!",
+                        rowData : [],
+                        graphClicked : -1
                     })
                 }
             }
@@ -382,7 +392,9 @@ class WorkDashboard extends React.Component {
                     })
                 }else{
                     this.setState({
-                        recordNotFound : "Record not found..!"
+                        recordNotFound : "Record not found..!",
+                        rowData : [],
+                        graphClicked : -1
                     })
                 }
             }
@@ -423,7 +435,9 @@ class WorkDashboard extends React.Component {
                     })
                 }else{
                     this.setState({
-                        recordNotFound : "Record not found..!"
+                        recordNotFound : "Record not found..!",
+                        rowData : [],
+                        graphClicked : -1
                     })
                 }
             }
@@ -437,7 +451,9 @@ class WorkDashboard extends React.Component {
 
     render() {
     
-
+    // Export to excel Data
+    const csvData = this.state.rowData;
+    
     // First Double Bar Graph Graph
     var graphOneSortedData = {
         labels: this.state.graphOneLabel,
@@ -534,8 +550,20 @@ class WorkDashboard extends React.Component {
                 const selectedVal = this.state.graphOneLabel[ind];
                 var data = this.state.dataOne[selectedVal];
                 var graphSortData = this.graphSorting("works_wing", data, "Approval Status of Estimates");
+                
+                var vardemo_MAP = {
+                    "1": "Building & Roads",
+                    "2": "Public Health",
+                    "3": "Horticulture & Electrical"
+                }
+                var DemoMp_Label = [];
+                for(var i=0;i<graphSortData[0].length;i++){
+                    DemoMp_Label.push(vardemo_MAP[graphSortData[0][i]])
+                }
+
                 this.setState({
                     graphTwoLabel : graphSortData[0],
+                    // graphTwoLabel : DemoMp_Label,
                     graphTwoData :  graphSortData[1],
                     dataTwo : graphSortData[2],
                     graphClicked : 1,
@@ -598,9 +626,30 @@ class WorkDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                var ind = element[0]._index;
                 debugger;
+                var ind = element[0]._index;   
                 const selectedVal = this.state.graphTwoLabel[ind];
+                var data = this.state.dataTwo[selectedVal];
+                var graphSortData = this.graphSorting("executing_division", data, "Approval Status of Estimates");
+                
+                var vardemo_MAP = {
+                    "1": "Building & Roads",
+                    "2": "Public Health",
+                    "3": "Horticulture & Electrical"
+                }
+                var DemoMp_Label = [];
+                for(var i=0;i<graphSortData[0].length;i++){
+                    DemoMp_Label.push(vardemo_MAP[graphSortData[0][i]])
+                }
+
+                this.setState({
+                    graphTwo_1_Label : graphSortData[0],
+                    // graphTwoLabel : DemoMp_Label,
+                    graphTwo_1_Data :  graphSortData[1],
+                    dataTwo_1 : graphSortData[2],
+                    graphClicked : 2,
+                    rowData : data
+                })
             }
         },
         scales: {
@@ -616,6 +665,250 @@ class WorkDashboard extends React.Component {
                 scaleLabel: {
                     display: true,
                     labelString: "Work Wing (Department)"
+                    }, 
+            }],
+            yAxes: [{
+                gridLines: {
+                    display: true
+                },
+                ticks: {
+                    suggestedMin: 0,
+                    stepSize: 1
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "No of Estimates"
+                    }, 
+            }]
+        },
+        plugins: {
+            datalabels: {
+                display: false
+            //     color: 'white',
+            //     backgroundColor: 'grey',
+            //     labels: {
+            //         title: {
+            //             font: {
+            //                 weight: 'bold'
+            //             }
+            //         }
+            //     }}
+            }
+            }
+    }
+
+    // Second Division Graph
+    var graphTwoDivisionSortedData = {
+        labels: this.state.graphTwo_1_Label,
+        datasets: [
+            {
+            label: "Lable",
+            fill: false,
+            lineTension: 5,
+            hoverBorderWidth : 12,
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            borderColor: "rgba(75,192,192,0.4)",
+            borderCapStyle: "butt",
+            barPercentage: 2,
+            barThickness: 25,
+            maxBarThickness: 25,
+            minBarLength: 2,
+            data: this.state.graphTwo_1_Data
+            }
+        ]
+    }
+
+    var graphTwoDivisionOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+            {
+            backgroundColor : "rgba(0, 0, 0, 0.1)",
+            weight: 0
+            }
+        ], 
+        legend: {
+            display: false,
+            position: 'bottom',
+            labels: {
+            fontFamily: "Comic Sans MS",
+            boxWidth: 20,
+            boxHeight: 2
+            }
+        },
+        tooltips: {
+            enabled: true
+        },
+        title: {
+            display: true,
+            text: "Approval Status of Estimates Division wise"
+        },
+        onClick: (e, element) => {
+            if (element.length > 0) {
+                debugger;
+                var ind = element[0]._index;   
+                const selectedVal = this.state.graphTwoLabel[ind];
+                var data = this.state.dataTwo[selectedVal];
+                var graphSortData = this.graphSorting("subdivision", data, "Approval Status of Estimates");
+                
+                var vardemo_MAP = {
+                    "1": "Building & Roads",
+                    "2": "Public Health",
+                    "3": "Horticulture & Electrical"
+                }
+                var DemoMp_Label = [];
+                for(var i=0;i<graphSortData[0].length;i++){
+                    DemoMp_Label.push(vardemo_MAP[graphSortData[0][i]])
+                }
+
+                this.setState({
+                    graphTwo_2_Label : graphSortData[0],
+                    // graphTwoLabel : DemoMp_Label,
+                    graphTwo_2_Data :  graphSortData[1],
+                    dataTwo_2 : graphSortData[2],
+                    graphClicked : 3,
+                    rowData : data
+                })
+            }
+        },
+        scales: {
+            xAxes: [{
+                gridLines: {
+                    display:true
+                },
+                ticks: {
+                    suggestedMin: 0,
+                    // suggestedMax: 100,
+                    // stepSize: 1
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "Division"
+                    }, 
+            }],
+            yAxes: [{
+                gridLines: {
+                    display: true
+                },
+                ticks: {
+                    suggestedMin: 0,
+                    stepSize: 1
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "No of Estimates"
+                    }, 
+            }]
+        },
+        plugins: {
+            datalabels: {
+                display: false
+            //     color: 'white',
+            //     backgroundColor: 'grey',
+            //     labels: {
+            //         title: {
+            //             font: {
+            //                 weight: 'bold'
+            //             }
+            //         }
+            //     }}
+            }
+            }
+    }
+
+    // Second Sub - Division Graph
+    var graphTwoSubDivisionSortedData = {
+        labels: this.state.graphTwo_2_Label,
+        datasets: [
+            {
+            label: "Lable",
+            fill: false,
+            lineTension: 5,
+            hoverBorderWidth : 12,
+            // backgroundColor : this.state.colorRandom,
+            backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+            borderColor: "rgba(75,192,192,0.4)",
+            borderCapStyle: "butt",
+            barPercentage: 2,
+            barThickness: 25,
+            maxBarThickness: 25,
+            minBarLength: 2,
+            data: this.state.graphTwo_2_Data
+            }
+        ]
+    }
+
+    var graphTwoSubDivisionOption = {
+        responsive : true,
+        // aspectRatio : 3,
+        maintainAspectRatio: false,
+        cutoutPercentage : 0,
+        datasets : [
+            {
+            backgroundColor : "rgba(0, 0, 0, 0.1)",
+            weight: 0
+            }
+        ], 
+        legend: {
+            display: false,
+            position: 'bottom',
+            labels: {
+            fontFamily: "Comic Sans MS",
+            boxWidth: 20,
+            boxHeight: 2
+            }
+        },
+        tooltips: {
+            enabled: true
+        },
+        title: {
+            display: true,
+            text: "Approval Status of Estimates Sub-Division wise"
+        },
+        onClick: (e, element) => {
+            if (element.length > 0) {
+                debugger;
+                var ind = element[0]._index;   
+                const selectedVal = this.state.graphTwo_2_Label[ind];
+                var data = this.state.dataTwo_2[selectedVal];
+                // var graphSortData = this.graphSorting("executing_division", data, "Approval Status of Estimates");
+                
+                // var vardemo_MAP = {
+                //     "1": "Building & Roads",
+                //     "2": "Public Health",
+                //     "3": "Horticulture & Electrical"
+                // }
+                // var DemoMp_Label = [];
+                // for(var i=0;i<graphSortData[0].length;i++){
+                //     DemoMp_Label.push(vardemo_MAP[graphSortData[0][i]])
+                // }
+
+                this.setState({
+                    // graphTwo_1_Label : graphSortData[0],
+                    // // graphTwoLabel : DemoMp_Label,
+                    // graphTwo_1_Data :  graphSortData[1],
+                    // dataTwo_1 : graphSortData[2],
+                    // graphClicked : 2,
+                    rowData : data
+                })
+            }
+        },
+        scales: {
+            xAxes: [{
+                gridLines: {
+                    display:true
+                },
+                ticks: {
+                    suggestedMin: 0,
+                    // suggestedMax: 100,
+                    // stepSize: 1
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: "Sub-Division"
                     }, 
             }],
             yAxes: [{
@@ -1132,11 +1425,39 @@ class WorkDashboard extends React.Component {
             :null
         }
         </div>
+        {/* Approval Status of Estimates Division and Subdivision */}
+        <div className={this.state.graphClicked > 1 ? "graphDashboard" : ""} style={this.state.dropdownSelected !== "Approval Status of Estimates" ? {display : "none"} : {}}>
+        {
+            this.state.graphClicked > 1 ?
+            <CardContent className="halfGraph">
+                <React.Fragment>
+                    <Bar
+                    data={ graphTwoDivisionSortedData }
+                    options={ graphTwoDivisionOption } 
+                    />
+                </React.Fragment>
+            </CardContent>
+            :null
+        }
+
+        {
+            this.state.graphClicked > 2 ?
+            <CardContent className="halfGraph">
+                <React.Fragment>
+                    <Bar
+                    data={ graphTwoSubDivisionSortedData }
+                    options={ graphTwoSubDivisionOption } 
+                    />
+                </React.Fragment>
+            </CardContent> 
+            :null
+        }
+        </div>
 
         {/* Approval Status of DNIT */}
         <div className="graphDashboard" style={this.state.dropdownSelected !== "Approval Status of DNIT" ? {display : "none"} : {}}>
         {
-            // this.state.graphClicked > 0 ?
+            this.state.graphClicked >= 0 ?
             <CardContent className="fullGraph">
                 <React.Fragment>
                     <Bar
@@ -1145,14 +1466,14 @@ class WorkDashboard extends React.Component {
                     />
                 </React.Fragment>
             </CardContent> 
-            // :null
+            :null
         }
         </div>
 
         {/* Status of Project Dept wise */}
         <div className="graphDashboard" style={this.state.dropdownSelected !== "Status of Project Dept wise" ? {display : "none"} : {}}>
         {
-            // this.state.graphClicked > 0 ?
+            this.state.graphClicked >= 0 ?
             <CardContent className="halfGraph">
                 <React.Fragment>
                     <Bar
@@ -1161,7 +1482,7 @@ class WorkDashboard extends React.Component {
                     />
                 </React.Fragment>
             </CardContent> 
-            // :null
+            :null
         }
         {
             this.state.graphClicked > 4 ?
@@ -1200,6 +1521,13 @@ class WorkDashboard extends React.Component {
             this.state.unchangeColumnData.length > 0  ? 
             <div className="tableFeature">
                 <div className="columnToggle-Text"> Download As: </div>
+
+                <div className="columnToggleBtn"> 
+                <CSVLink data={csvData}
+                filename={"Work_dashboard.csv"}
+                > Export Excel </CSVLink>
+                </div>
+
                 <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
 
                 <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>

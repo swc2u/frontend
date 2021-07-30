@@ -112,7 +112,7 @@ let PACC = 0;
     "screenConfiguration.preparedFinalObject.DateVenueChngeAmount",
     "NotFound"
 );
-console.log("DateVenueChangeAmount",DateVenueChangeAmount)
+
 
 if(DateVenueChangeAmount !== "NotFound"){
   DateVenueChangeArray = DateVenueChangeAmount.Bill[0].billDetails[0].billAccountDetails
@@ -166,7 +166,7 @@ if(DateVenueChangeAmount !== "NotFound"){
           }
   
 }
-console.log("ChangeAmount,taxes",ChangeAmount,taxes)
+
 return {
   ChangeAmount,taxes,userInfo,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE
 }

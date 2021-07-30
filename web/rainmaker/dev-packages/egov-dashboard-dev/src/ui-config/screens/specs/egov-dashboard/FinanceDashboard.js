@@ -53,6 +53,10 @@ const getDropDownData = async (action, state, dispatch) => {
     {
       "name" : "Budget Report",
       "code" : "budgetHeadwise"
+    },
+    {
+      "name" : "Budget Watch Rest Report",
+      "code" : "billDate"
     }
   ];
   

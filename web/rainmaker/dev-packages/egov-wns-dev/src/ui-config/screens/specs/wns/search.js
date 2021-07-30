@@ -23,6 +23,8 @@ const getMDMSData = async (action, dispatch) => {
           moduleName: "ws-services-masters", masterDetails: [            
             {name:"sectorList"},
             {name:"swSectorList"},
+            {name:"Division"},
+            {name:"subDivision"},
             
           ]
         }
@@ -53,6 +55,13 @@ const employeeSearchResults = {
   uiFramework: "material-ui",
   name: "search",
   beforeInitScreen: (action, state, dispatch) => {
+    // let refresh = false
+    // if(!refresh)
+    // {
+    //   refresh = true;
+    //   window.location.href ='search'
+     
+    // }
     getMDMSData(action, dispatch);
     resetFieldsForConnection(state, dispatch);
     resetFieldsForApplication(state, dispatch);
@@ -94,11 +103,14 @@ const employeeSearchResults = {
                               {code:"PERMANENT_DISCONNECTION",name:"PERMANENT_DISCONNECTION"},//WS_DISCONNECTION
                               {code:"UPDATE_CONNECTION_HOLDER_INFO",name:"UPDATE_CONNECTION_HOLDER_INFO"},//WS_RENAME
                               {code:"APPLY_FOR_TEMPORARY_CONNECTION",name:"APPLY_FOR_TEMPORARY_CONNECTION"},//TEMPORARY_WSCONNECTION
+                              {code:"APPLY_FOR_TEMPORARY_CONNECTION_BILLING",name:"APPLY_FOR_TEMPORARY_CONNECTION_BILLING"},//TEMPORARY_WSCONNECTION
                               {code:"UPDATE_METER_INFO",name:"UPDATE_METER_INFO"},//WS_METER_UPDATE
                               {code:"NEW_TUBEWELL_CONNECTION",name:"NEW_TUBEWELL_CONNECTION"},//WS_TUBEWELL
                              // {code:"WS_TEMP_TEMP",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},
                               {code:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},//WS_TEMP_TEMP
-                             { code: "SW_SEWERAGE", name: "New Sewerage Connection" }]//SW_SEWERAGE
+                             { code: "SW_SEWERAGE", name: "New Sewerage Connection" }//SW_SEWERAGE
+                            ]
+    //if(1===1)
     dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.applicationType", applicationType));
 
     return action;

@@ -1,6 +1,8 @@
 import {
     getCommonGrayCard,
     getCommonSubHeader,
+    getCommonHeader,
+    getCommonParagraph,
     getCommonContainer,
     getTextField,
     getPattern,
@@ -37,6 +39,10 @@ export const commentHeader = getCommonSubHeader({
        labelKey: "WS_COMMON_COMMENTS_HEADER",
       labelName: "Comment Section"
  })
+ export const commentSubHeaderTEMP = getCommonParagraph({
+  labelKey: "WS_COMMON_COMMENTS_SUB_HEADER_TEMP",
+ labelName: "Comment Section"
+})
   
 export const getCommentDetails = (isEditable = true) => {
   return getCommonContainer({

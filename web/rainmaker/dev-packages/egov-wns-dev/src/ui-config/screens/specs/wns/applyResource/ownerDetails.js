@@ -9,9 +9,17 @@ import {
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { changeStep } from "../viewBillResource/footer";
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import get from 'lodash/get';
 import { convertEpochToDateAndHandleNA, handleNA } from '../../utils';
 import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
+const applicationNo = getQueryArg(window.location.href, "applicationNumber");
+// if(IsEdit === false)
+// {
+ 
+  
+// }
 const getHeader = label => {
   return {
     uiFramework: "custom-molecules-local",
@@ -29,6 +37,11 @@ const getHeader = label => {
 
 export const propertyOwnerDetailsHeader = getHeader({
   labelKey: "WS_OWNER_HEADER_LABEL"
+});
+export const propertyOwnerDetailsSingleHeader = getCommonContainer({
+  header: getCommonHeader({
+    labelKey: "WS_OWNER_HEADER_LABEL"
+  })
 });
 
 export const ownerDetailsHeader = getCommonContainer({
@@ -187,7 +200,7 @@ export const getOwnerDetails = (isEditable = true) => {
           //   componentPath: "MultiItem",
           //   props: {
           //     scheama: getCommonGrayCard({
-          div3: propertyOwnerDetailsHeader,
+          div3: propertyOwnerDetailsSingleHeader,
           viewFive: getCommonContainer({
             ownerName: getTextField({
               label: {
@@ -221,6 +234,7 @@ export const getOwnerDetails = (isEditable = true) => {
               },
               required: true,
               props:{
+                // disabled:applicationNo?true:IsEdit
                 disabled:IsEdit
               },
               pattern: getPattern("MobileNo"),
@@ -242,7 +256,7 @@ export const getOwnerDetails = (isEditable = true) => {
                 labelKey: "WS_OWNER_DETAILS_EMAIL_LABEL_PLACEHOLDER"
               },
               pattern: getPattern("Email"),
-              required: true,
+              required: false,
              
              // errorMessage: "Invalid Address",
               jsonPath: "applyScreen.property.owners[0].emailId",
@@ -299,7 +313,7 @@ export const getOwnerDetails = (isEditable = true) => {
                 labelKey: "WS_OWN_DETAIL_CROSADD_PLACEHOLDER"
               },
               //pattern: getPattern("Address"),
-              pattern: /^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,500}$/i,
+              pattern: /^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,99}$/i,
               required: true,
               
              // errorMessage: "Invalid Address",
@@ -405,12 +419,13 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
     }),
     headerDiv: {
       uiFramework: "custom-containers",
+      moduleName: "egov-wns",
       componentPath: "MultiItem",
       props: {
         //className: "common-div-css search-preview",
         scheama: getCommonGrayCard({
          
-          div3: propertyOwnerDetailsHeader,
+          //div3: propertyOwnerDetailsHeader,
           viewFive: getCommonContainer({
             ownerName: getTextField({
               label: {
@@ -459,7 +474,7 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
                 labelKey: "WS_OWNER_DETAILS_EMAIL_LABEL_PLACEHOLDER"
               },
               pattern: getPattern("Email"),
-              required: true,
+              required: false,
              // errorMessage: "Invalid Address",
               jsonPath: "applyScreen.property.owners[0].emailId",
               gridDefination: {
@@ -499,7 +514,7 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
                 labelKey: "WS_OWN_DETAIL_CROSADD_PLACEHOLDER"
               },
               //pattern: getPattern("Address"),
-              pattern: /^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,500}$/i,
+              pattern: /^[^\$\"'<>\?~`!&@#$%^+={}\[\]*:;]{1,99}$/i,
               required: true,
              // errorMessage: "Invalid Address",
               jsonPath: "applyScreen.property.owners[0].correspondenceAddress",
@@ -588,7 +603,8 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
           }),
         }),
         onMultiItemAdd: (state, muliItemContent) => {          
-          return muliItemContent;
+          //return muliItemContent;
+          return setFieldsOnAddItem(state, muliItemContent);
         },
         items: [],
         hasAddItem: true,
@@ -599,6 +615,37 @@ export const getMultipleOwnerDetails = (isEditable = true) => {
       type: "array"
     },
   });
+}
+const setFieldsOnAddItem = (state, multiItemContent) => {
+  const applicationNo_ = getQueryArg(window.location.href, "applicationNumber");
+  const ActionType = getQueryArg(window.location.href, "actionType");
+  const applicationStatus =  get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].applicationStatus", '')
+  const preparedFinalObject = JSON.parse(
+    JSON.stringify(state.screenConfiguration.preparedFinalObject)
+  );
+  let disabled = true
+  if(process.env.REACT_APP_NAME !== "Citizen")
+  {
+    disabled = true;
+  }
+  if(process.env.REACT_APP_NAME === "Citizen" && applicationNo_ === null)
+  {
+    disabled = false
+
+  }
+  else if(applicationNo_ !== null && process.env.REACT_APP_NAME !== "Citizen" )
+  {
+    disabled = true;
+  }
+  else if((ActionType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || ActionType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' ) && applicationStatus ==='INITIATED' )
+  {
+    disabled = false;
+
+  }
+  for (var variable in multiItemContent) {
+    multiItemContent[variable].props.disabled = disabled;
+  }
+  return multiItemContent;
 }
 
 

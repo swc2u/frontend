@@ -484,6 +484,7 @@ return !selectedBusinessServices.includes(businessServices)
     var WaterBusinessServices =
     ["REGULARWSCONNECTION",
     "TEMPORARY_WSCONNECTION",
+    "TEMPORARY_WSCONNECTION_BILLING",
     "SW_SEWERAGE",
     "WS_TEMP_TEMP",
     "WS_TEMP_REGULAR",
@@ -583,6 +584,7 @@ return !selectedBusinessServices.includes(businessServices)
        if(window.localStorage.getItem("wns_workflow") ==='REGULARWSCONNECTION'
        || window.localStorage.getItem("wns_workflow") ==='SW_SEWERAGE'
         || window.localStorage.getItem("wns_workflow") ==='TEMPORARY_WSCONNECTION'
+        || window.localStorage.getItem("wns_workflow") ==='TEMPORARY_WSCONNECTION_BILLING'
         || window.localStorage.getItem("wns_workflow") === "WS_TEMP_TEMP" 
         || window.localStorage.getItem("wns_workflow") === "WS_TEMP_REGULAR"
         || window.localStorage.getItem("wns_workflow") === "WS_DISCONNECTION" 

@@ -1,6 +1,5 @@
 import React from "react";
 import Div from "egov-ui-framework/ui-atoms/HtmlElements/Div";
-
 import RenderScreen from "egov-ui-framework/ui-molecules/RenderScreen";
 import Container from "egov-ui-framework/ui-atoms/Layout/Container";
 import Item from "egov-ui-framework/ui-atoms/Layout/Item";
@@ -15,9 +14,6 @@ import { addComponentJsonpath } from "egov-ui-framework/ui-utils/commons";
 import { prepareFinalObject as pFO } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import isEqual from "lodash/isEqual";
 import LabelConatiner from "../LabelContainer";
-//import {GetTotalQtyValue} from '../../ui-utils/storecommonsapi'
-
-//import{GetTotalQtyValue} from '../../../../../ui-utils/storecommonsapi'
 
 const checkActiveItems = items => {
   let count = 0;
@@ -170,9 +166,7 @@ class MultiItem extends React.Component {
       screenConfig,
       updatePreparedFormObject,
       sourceJsonPath,
-      onMultiItemDelete,
-      totalIndentQty,
-      cardtotalpropes
+      preparedFinalObject
     } = this.props;
     const items = get(
       screenConfig,
@@ -181,31 +175,10 @@ class MultiItem extends React.Component {
     updatePreparedFormObject(`${sourceJsonPath}[${index}].isDeleted`, false);
     items[index].isDeleted = false;
     // items.splice(index,1);
-    // if(onMultiItemDelete)
-    // {
-      
-    //  let IndentQty = 90;
-    //  let totalvalue = 90;
-    //   onMultiItemDelete(this.props.state,IndentQty,totalvalue)
-    //   if(sourceJsonPath.includes("."))
-    //   {
-     
-    //     var sourceCJsonPath = sourceJsonPath.split('.');
+    let deldata = get(preparedFinalObject,sourceJsonPath,[])
+    deldata.pop(index)
+    updatePreparedFormObject(`${sourceJsonPath}`, deldata);
     
-    //     sourceCJsonPath = sourceCJsonPath[0];
-    //   }
-     
-    //   console.log(cardtotalpropes)
-    //   let Qty = GetTotalQtyValue(this.props.state,cardtotalpropes.cardJsonPath,cardtotalpropes.pagename,cardtotalpropes.jasonpath,cardtotalpropes.InputQtyValue,cardtotalpropes.TotalValue,cardtotalpropes.TotalQty )
-      
-    //   if(Qty && Qty[0])
-    //   {
-    //   if(cardtotalpropes.totalIndentQty)
-    //   updatePreparedFormObject(`${sourceCJsonPath}.totalIndentQty`, Qty[0].InputQtyValue);
-    //   updatePreparedFormObject(`${sourceCJsonPath}.totalvalue`, Qty[0].TotalValue);
-    //   updatePreparedFormObject(`${sourceCJsonPath}.totalQty`, Qty[0].TotalQty);
-    //   }
-    // }
     removeItem(screenKey, componentJsonpath, `props.items`, items);
   };
 
@@ -278,8 +251,7 @@ class MultiItem extends React.Component {
                           </IconButton>
                         </Item>
                       </Container>
-                    )
-                    }
+                    )}
                   <RenderScreen
                     screenKey={screenKey}
                     components={item}

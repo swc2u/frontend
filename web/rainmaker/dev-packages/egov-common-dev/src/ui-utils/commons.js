@@ -69,7 +69,59 @@ export const findItemInArrayOfObject = (arr, conditionCheckerFn) => {
     }
   }
 };
-
+export const getuserSearchResults = async (queryObject, dispatch,tenantId,ownerNo) => {
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/user/_search?tenantId="+tenantId,
+      "_search",
+        [],
+        {
+          tenantId: tenantId,
+          userName: `${ownerNo}`
+        }
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+   // throw error;
+  }
+};
+export const userUnlock = async (user, dispatch) => {
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/user/users/_updatenovalidate?tenantId=ch.chandigarh ",
+      "_updatenovalidate",
+      [],
+      {
+        user:user[0]
+      }
+      
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+  }
+};
 export const getSearchResults = async (queryObject, dispatch) => {
   try {
     store.dispatch(toggleSpinner());
@@ -510,7 +562,15 @@ export const setApplicationNumberBox = (state, dispatch, applicationNo) => {
     );
   }
 };
-
+export const GetMdmsNameBycode = (state, dispatch,jsonpath, code) => {
+  //Material
+  let Obj  = get(state, `screenConfiguration.preparedFinalObject.${jsonpath}`,[]) 
+  let Name = code
+  Obj = Obj.filter(x=>x.code === code)
+  if(Obj &&Obj[0])
+  Name = Obj[0].name
+  return Name;
+};
 export const downloadReceiptFromFilestoreID=(fileStoreId,mode,tenantId)=>{
  // getFileUrlFromAPIWS(fileStoreId,tenantId).then(async(fileRes) => {
   getFileUrlFromAPI(fileStoreId,tenantId).then(async(fileRes) => {
@@ -560,7 +620,9 @@ export const epochToYmdDate = et => {
 export const download  = async ( state, dispatch, mode = "download") => {
   let businessServiceInfo = get(state.screenConfiguration.preparedFinalObject, "businessServiceInfo", {});
   let businessServicewsbillreceipt = get(state.screenConfiguration.preparedFinalObject, "businessServicewsbillreceipt", '');
-
+  let bservice = '';
+  let WNSConfigName_ = WNSConfigName();
+  bservice = WNSConfigName_.ONE_TIME_FEE_WS;
   if(businessServicewsbillreceipt === null || businessServicewsbillreceipt ==='')
   {
     businessServicewsbillreceipt =  getQueryArg(window.location.href, "businessService")
@@ -586,13 +648,20 @@ export const download  = async ( state, dispatch, mode = "download") => {
    try {
      let keyvalue ='consolidatedreceipt'
      let KeytenantId =receiptQueryString[1].value
+     if(process.env.REACT_APP_NAME === "Citizen")
+            {
+              KeytenantId = receiptQueryString[1].value.split('.')[0]
+            }
      if(businessServicewsbillreceipt ==='' || businessServicewsbillreceipt === null)
      {
       businessServicewsbillreceipt =  getQueryArg(window.location.href, "consumerCode")
+      let  WNSConfigName_= WNSConfigName()
+        bservice = WNSConfigName_.ONE_TIME_FEE_WS
+
      }
      
      //if()
-     if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE' || businessServicewsbillreceipt ==='SW.ONE_TIME_FEE' || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
+     if(businessServicewsbillreceipt ===bservice || businessServicewsbillreceipt ===WNSConfigName_.ONE_TIME_FEE_SW || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
        {
         keyvalue ='ws-bill-receipt' 
        }
@@ -621,7 +690,14 @@ try{
        ]
        if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length==0){
          console.log("Could not find any receipts");   
-         return;
+         dispatch(
+                    toggleSnackbar(
+                      true,
+                      { labelName: "Could not find any receipts", labelKey: "Could not find any receipts" },
+                      "warning"
+                    )
+                  );  
+      return;
        }
        if(businessServicewsbillreceipt ==='WS')
        {
@@ -637,7 +713,7 @@ try{
           }         
         });
        }
-       else if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE'|| businessServicewsbillreceipt ==='SW.ONE_TIME_FEE'  || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
+       else if(businessServicewsbillreceipt === bservice|| businessServicewsbillreceipt ===WNSConfigName_.ONE_TIME_FEE_SW  || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
       
        {
          let paymentReceiptDate = 0;
@@ -658,7 +734,10 @@ try{
          let activityType=''
          let applicantName=''
          let applicantAddress=''
-         
+         let houseNo=''
+         let plotnumber=''
+         let sector =''
+         let connectionNumber =''
          if(applicationNumber.includes("WS"))
          {
         //   const response = await httpRequest(
@@ -679,14 +758,37 @@ try{
         .then(res => {
           res.WaterConnection[0]
           if(res&&res.WaterConnection&&res.WaterConnection.length>0){
+            let queryObjectP = [{ key: "tenantId", value: getQueryArg(window.location.href, "tenantId") }, { key: "uuids", value: res.WaterConnection[0].propertyId }]            
+            const wc_searchPropety = {
+              GET: {
+                URL: "/property-services/property/_search",
+                ACTION: "_search",
+              },
+            };
+            httpRequest("post", wc_searchPropety.GET.URL, wc_searchPropety.GET.ACTION, queryObjectP, [], { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+            .then(resp => {
             div =get(res, "WaterConnection[0].div", '')
           subDiv =get(res, "WaterConnection[0].subdiv", '')
           activityType =get(res, "WaterConnection[0].activityType", '')
           applicantName =get(res, "WaterConnection[0].connectionHolders[0].name", '')
           applicantAddress =get(res, "WaterConnection[0].connectionHolders[0].correspondenceAddress", '')
-          // set activityType 
+          connectionNumber = get(res, "WaterConnection[0].connectionNo", '')
+          if(resp&&resp.Properties&&resp.Properties.length>0){
+          plotnumber =get(resp.Properties[0], "address.doorNo", '')
+          houseNo =get(resp.Properties[0], "address.plotNo", '')
+          sector = get(resp.Properties[0], "address.locality.name", '')
+          if(sector === undefined || sector === null)
+          {
+            sector = get(resp.Properties[0], "address.locality.code", '')
+            sector =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",sector)   
+          }
+          applicantAddress = `${plotnumber},${houseNo},${sector}`
+          applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
+          }
+          // set activityType APPLY_FOR_TEMPORARY_CONNECTION_BILLING
           switch (activityType) {
             case "APPLY_FOR_TEMPORARY_CONNECTION":
+              case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
               activityType ='Temporary Water Connection'
               break;
               case "NEW_WS_CONNECTION":
@@ -699,33 +801,46 @@ try{
               activityType ='Temporary Regular Water Connection'
               break;
               case "TEMPORARY_WSCONNECTION":
-              activityType ='Temporary Disconnection'
+             case "APPLY_FOR_TEMPORARY_CONNECTION":
+              case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
+              activityType ='Temporary Water Connection'
               break;
               case "WS_TUBEWELL":
               activityType ='New Tubewell Connection'
               break;
               case "WS_TEMP_TEMP":
+              case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
               activityType ='Temporary to Temporary Conversion'
               break;
               case "WS_TEMP_REGULAR":
+              case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
               activityType ='Temporary to Regular Conversion'
               break;
               case "WS_DISCONNECTION":
+              case "PERMANENT_DISCONNECTION":
               activityType ='Permanent Disconnection'
               break;
               case "WS_TEMP_DISCONNECTION":
+              case "TEMPORARY_DISCONNECTION":
               activityType ='Temporary Disconnection'
               break;
               case "WS_RENAME":
+              case "UPDATE_CONNECTION_HOLDER_INFO":
               activityType ='Update Connection Holder Information'
+              {
+                applicantName =get(res, "WaterConnection[0].connectionHolders[0].proposedName", '')
+              }
               break;
               case "WS_METER_UPDATE":
+              case "UPDATE_METER_INFO":
               activityType ='Meter Update'
               break;
               case "WS_CONVERSION":
+              case "CONNECTION_CONVERSION":
               activityType ='Tariff Change'
               break;
               case "WS_REACTIVATE":
+              case "REACTIVATE_CONNECTION":
               activityType ='Reactive Connection'
               break;
               case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
@@ -739,6 +854,7 @@ try{
             div: div,
             subDiv:subDiv,
             applicationNumber:applicationNumber,
+            connectionNumber:connectionNumber,
             receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
             activityType: activityType,
             applicantName: applicantName,
@@ -762,7 +878,7 @@ try{
             }         
           });
       
-       
+        });
                      
           }
           else{
@@ -797,11 +913,35 @@ try{
       .then(res => {
         res.SewerageConnections[0]
         if(res&&res.SewerageConnections&&res.SewerageConnections.length>0){
+          let queryObjectP = [{ key: "tenantId", value: getQueryArg(window.location.href, "tenantId") }, { key: "uuids", value: res.SewerageConnections[0].propertyId }]            
+            const wc_searchPropety = {
+              GET: {
+                URL: "/property-services/property/_search",
+                ACTION: "_search",
+              },
+            };
+            httpRequest("post", wc_searchPropety.GET.URL, wc_searchPropety.GET.ACTION, queryObjectP, [], { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+            .then(resp => {
           div =get(res, "SewerageConnections[0].div", '')
         subDiv =get(res, "SewerageConnections[0].subdiv", '')
         activityType =get(res, "SewerageConnections[0].activityType", '')
         applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
         applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+
+        connectionNumber = get(res, "SewerageConnections[0].connectionNo", '')
+
+        if(resp&&resp.Properties&&resp.Properties.length>0){
+          plotnumber =get(resp.Properties[0], "address.doorNo", '')
+          houseNo =get(resp.Properties[0], "address.plotNo", '')
+          sector = get(resp.Properties[0], "address.locality.name", '')
+          if(sector === undefined || sector === null)
+          {
+            sector = get(resp.Properties[0], "address.locality.code", '')
+            sector =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.swSectorList",sector)   
+          }
+          applicantAddress = `${plotnumber},${houseNo},${sector}`
+          applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
+          }
         if(activityType === null)
         {
           activityType = "Sewarage Connection"
@@ -812,6 +952,7 @@ try{
             div: div,
             subDiv:subDiv,
             applicationNumber:applicationNumber,
+            connectionNumber:connectionNumber,
             receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
             activityType: activityType,
             applicantName: applicantName,
@@ -833,6 +974,7 @@ try{
               console.log("Error In Receipt Download");        
             }         
           });
+        });
                    
         }else{
           console.log("Error In Receipt Download");        
@@ -924,7 +1066,9 @@ try{
  export const downloadprint  = async ( state, dispatch, mode = "download") => {
   let businessServiceInfo = get(state.screenConfiguration.preparedFinalObject, "businessServiceInfo", {});
   let businessServicewsbillreceipt = get(state.screenConfiguration.preparedFinalObject, "businessServicewsbillreceipt", '');
-
+  let bservice = '';
+  let WNSConfigName_ = WNSConfigName();
+  bservice = WNSConfigName_.ONE_TIME_FEE_WS;
   if(businessServicewsbillreceipt === null || businessServicewsbillreceipt ==='')
   {
     businessServicewsbillreceipt =  getQueryArg(window.location.href, "businessService")
@@ -950,13 +1094,20 @@ try{
    try {
      let keyvalue ='consolidatedreceipt'
      let KeytenantId =receiptQueryString[1].value
+     if(process.env.REACT_APP_NAME === "Citizen")
+            {
+              KeytenantId = receiptQueryString[1].value.split('.')[0]
+            }
      if(businessServicewsbillreceipt ==='' || businessServicewsbillreceipt === null)
      {
       businessServicewsbillreceipt =  getQueryArg(window.location.href, "consumerCode")
+      let  WNSConfigName_= WNSConfigName()
+        bservice = WNSConfigName_.ONE_TIME_FEE_WS
+
      }
      
      //if()
-     if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE' || businessServicewsbillreceipt ==='SW.ONE_TIME_FEE' || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
+     if(businessServicewsbillreceipt ===bservice || businessServicewsbillreceipt ===WNSConfigName_.ONE_TIME_FEE_SW || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
        {
         keyvalue ='ws-bill-receipt' 
        }
@@ -977,7 +1128,7 @@ try{
         KeytenantId =receiptQueryString[1].value.split('.')[0]
 
        }
-
+try{
      httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
        const queryStr = [
          { key: "key", value: keyvalue },
@@ -985,7 +1136,14 @@ try{
        ]
        if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length==0){
          console.log("Could not find any receipts");   
-         return;
+         dispatch(
+                    toggleSnackbar(
+                      true,
+                      { labelName: "Could not find any receipts", labelKey: "Could not find any receipts" },
+                      "warning"
+                    )
+                  );  
+      return;
        }
        if(businessServicewsbillreceipt ==='WS')
        {
@@ -994,14 +1152,15 @@ try{
           res.filestoreIds[0]
           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
             res.filestoreIds.map(fileStoreId=>{
-              downloadReceiptFromFilestoreID(fileStoreId,"print",KeytenantId)
+              downloadReceiptFromFilestoreID(fileStoreId,"download",KeytenantId)
             })          
           }else{
             console.log("Error In Receipt Download");        
           }         
         });
        }
-       else  if(businessServicewsbillreceipt ==='WS.ONE_TIME_FEE' || businessServicewsbillreceipt ==='SW.ONE_TIME_FEE' || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
+       else if(businessServicewsbillreceipt === bservice|| businessServicewsbillreceipt ===WNSConfigName_.ONE_TIME_FEE_SW  || businessServicewsbillreceipt.includes("SW") || businessServicewsbillreceipt.includes("WS"))
+      
        {
          let paymentReceiptDate = 0;
          let paidAmount =0;
@@ -1021,7 +1180,10 @@ try{
          let activityType=''
          let applicantName=''
          let applicantAddress=''
-         
+         let houseNo=''
+         let plotnumber=''
+         let sector =''
+         let connectionNumber =''
          if(applicationNumber.includes("WS"))
          {
         //   const response = await httpRequest(
@@ -1031,6 +1193,7 @@ try{
         //     queryObject
             
         // );
+        try{
         const wc_search = {
           GET: {
             URL: "/ws-services/wc/_search",
@@ -1041,14 +1204,37 @@ try{
         .then(res => {
           res.WaterConnection[0]
           if(res&&res.WaterConnection&&res.WaterConnection.length>0){
+            let queryObjectP = [{ key: "tenantId", value: getQueryArg(window.location.href, "tenantId") }, { key: "uuids", value: res.WaterConnection[0].propertyId }]            
+            const wc_searchPropety = {
+              GET: {
+                URL: "/property-services/property/_search",
+                ACTION: "_search",
+              },
+            };
+            httpRequest("post", wc_searchPropety.GET.URL, wc_searchPropety.GET.ACTION, queryObjectP, [], { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+            .then(resp => {
             div =get(res, "WaterConnection[0].div", '')
           subDiv =get(res, "WaterConnection[0].subdiv", '')
           activityType =get(res, "WaterConnection[0].activityType", '')
           applicantName =get(res, "WaterConnection[0].connectionHolders[0].name", '')
           applicantAddress =get(res, "WaterConnection[0].connectionHolders[0].correspondenceAddress", '')
+          
+          if(resp&&resp.Properties&&resp.Properties.length>0){
+          plotnumber =get(resp.Properties[0], "address.doorNo", '')
+          houseNo =get(resp.Properties[0], "address.plotNo", '')
+          sector = get(resp.Properties[0], "address.locality.name", '')
+          if(sector === undefined || sector === null)
+          {
+            sector = get(resp.Properties[0], "address.locality.code", '')
+            sector =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",sector)   
+          }
+          applicantAddress = `${plotnumber},${houseNo},${sector}`
+          applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
+          }
           // set activityType 
           switch (activityType) {
             case "APPLY_FOR_TEMPORARY_CONNECTION":
+              case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
               activityType ='Temporary Water Connection'
               break;
               case "NEW_WS_CONNECTION":
@@ -1061,33 +1247,46 @@ try{
               activityType ='Temporary Regular Water Connection'
               break;
               case "TEMPORARY_WSCONNECTION":
-              activityType ='Temporary Disconnection'
+              case "APPLY_FOR_TEMPORARY_CONNECTION":
+                case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
+              activityType ='Temporary Water Connection'
               break;
               case "WS_TUBEWELL":
               activityType ='New Tubewell Connection'
               break;
               case "WS_TEMP_TEMP":
+              case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
               activityType ='Temporary to Temporary Conversion'
               break;
               case "WS_TEMP_REGULAR":
+              case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
               activityType ='Temporary to Regular Conversion'
               break;
               case "WS_DISCONNECTION":
+              case "PERMANENT_DISCONNECTION":
               activityType ='Permanent Disconnection'
               break;
               case "WS_TEMP_DISCONNECTION":
+              case "TEMPORARY_DISCONNECTION":
               activityType ='Temporary Disconnection'
               break;
               case "WS_RENAME":
+              case "UPDATE_CONNECTION_HOLDER_INFO":
               activityType ='Update Connection Holder Information'
+              {
+                applicantName =get(res, "WaterConnection[0].connectionHolders[0].proposedName", '')
+              }
               break;
               case "WS_METER_UPDATE":
+              case "UPDATE_METER_INFO":
               activityType ='Meter Update'
               break;
               case "WS_CONVERSION":
+              case "CONNECTION_CONVERSION":
               activityType ='Tariff Change'
               break;
               case "WS_REACTIVATE":
+              case "REACTIVATE_CONNECTION":
               activityType ='Reactive Connection'
               break;
               case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
@@ -1101,6 +1300,7 @@ try{
             div: div,
             subDiv:subDiv,
             applicationNumber:applicationNumber,
+            connectionNumber:connectionNumber,
             receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
             activityType: activityType,
             applicantName: applicantName,
@@ -1111,6 +1311,7 @@ try{
             status:'Payment complete',
           }
         ]
+        
           httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { WSReceiptRequest: billGeneration_ }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
           .then(res => {
             res.filestoreIds[0]
@@ -1122,18 +1323,35 @@ try{
               console.log("Error In Receipt Download");        
             }         
           });
+      
+        });
                      
-          }else{
+          }
+          else{
             console.log("Error In Receipt Download");        
           }         
         });
+        //
+      }
+      catch(error)
+             {
+               dispatch(
+                 toggleSnackbar(
+                   true,
+                   { labelName: error.message, labelKey: error.message },
+                   "error"
+                 )
+               );
+               console.log(error)
+     
+             }
          }
          else if(applicationNumber.includes("SW"))
          {
         
       const wswc_search = {
         GET: {
-          URL: "/ws-services/wc/_search",
+          URL: "/sw-services/swc/_search",
           ACTION: "_search",
         },
       };
@@ -1141,11 +1359,35 @@ try{
       .then(res => {
         res.SewerageConnections[0]
         if(res&&res.SewerageConnections&&res.SewerageConnections.length>0){
+          let queryObjectP = [{ key: "tenantId", value: getQueryArg(window.location.href, "tenantId") }, { key: "uuids", value: res.SewerageConnections[0].propertyId }]            
+            const wc_searchPropety = {
+              GET: {
+                URL: "/property-services/property/_search",
+                ACTION: "_search",
+              },
+            };
+            httpRequest("post", wc_searchPropety.GET.URL, wc_searchPropety.GET.ACTION, queryObjectP, [], { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+            .then(resp => {
           div =get(res, "SewerageConnections[0].div", '')
         subDiv =get(res, "SewerageConnections[0].subdiv", '')
         activityType =get(res, "SewerageConnections[0].activityType", '')
         applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
         applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+
+        connectionNumber = get(res, "SewerageConnections[0].connectionNo", '')
+
+        if(resp&&resp.Properties&&resp.Properties.length>0){
+          plotnumber =get(resp.Properties[0], "address.doorNo", '')
+          houseNo =get(resp.Properties[0], "address.plotNo", '')
+          sector = get(resp.Properties[0], "address.locality.name", '')
+          if(sector === undefined || sector === null)
+          {
+            sector = get(resp.Properties[0], "address.locality.code", '')
+            sector =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.swSectorList",sector)   
+          }
+          applicantAddress = `${plotnumber},${houseNo},${sector}`
+          applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
+          }
         if(activityType === null)
         {
           activityType = "Sewarage Connection"
@@ -1156,6 +1398,7 @@ try{
             div: div,
             subDiv:subDiv,
             applicationNumber:applicationNumber,
+            connectionNumber:connectionNumber,
             receiptNumber:getQueryArg(window.location.href, "receiptNumber"),
             activityType: activityType,
             applicantName: applicantName,
@@ -1177,6 +1420,7 @@ try{
               console.log("Error In Receipt Download");        
             }         
           });
+        });
                    
         }else{
           console.log("Error In Receipt Download");        
@@ -1248,6 +1492,18 @@ try{
        }
       
      })
+    }
+    catch(error)
+    {
+      dispatch(
+        toggleSnackbar(
+          true,
+          { labelName: error.message, labelKey: error.message },
+          "error"
+        )
+      );
+      console.log(error)
+    }
    } catch (exception) {
      alert('Some Error Occured while downloading Receipt!');
    }
@@ -1256,7 +1512,13 @@ try{
 
 
 
-
+export const WNSConfigName =()=>{
+  return {
+      ONE_TIME_FEE_WS: "PUBLIC_HEALTH_SERVICES_DIV2",
+      ONE_TIME_FEE_SW: "PUBLIC_HEALTH_SERVICES_DIV4",
+    
+};
+}
 export const downloadBill = async (consumerCode ,tenantId) => {
   const searchCriteria = {
     consumerCode ,

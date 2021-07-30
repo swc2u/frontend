@@ -96,6 +96,7 @@ let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
   {pensionDataUpdate:pensionDataUpdate},
   {IsCalculate:IsCalculate},
   {Isletter:Isletter},
+  {Isletterdoc:Isletterdoc},
   {IsClose:IsClose},
 
  ] 
@@ -421,7 +422,7 @@ export const getData = async (action, state, dispatch) => {
     if(!responce.ProcessInstances[0].isViewEnabled)
     {
       //window.location.href ="/index"
-      dispatch(prepareFinalObject("IsValidApplication", false));
+      dispatch(prepareFinalObject("IsValidApplication", true));
 
     }
     else{
@@ -430,7 +431,7 @@ export const getData = async (action, state, dispatch) => {
   }
   catch(error)
   {
-    dispatch(prepareFinalObject("IsValidApplication", false));
+    dispatch(prepareFinalObject("IsValidApplication", true));
   }
     
 };
@@ -470,6 +471,7 @@ export const prepareEditFlow = async (
      
      //export const pmsfooter = footer(response) ;
      dispatch(prepareFinalObject("ProcessInstances", get(response, "ProcessInstances", [])));
+     dispatch(prepareFinalObject("pensionArrears.pensionArrears", get(response,'ProcessInstances[0].pensionArrears',[]))); 
      dispatch(prepareFinalObject("CalculateTemp", get(response, "ProcessInstances", [])));
      dispatch(prepareFinalObject("ApplicationDetails", get(response, "ApplicationDetails", [])));
      dispatch(prepareFinalObject("PaymentDetails", get(response, "PaymentDetails", [])));

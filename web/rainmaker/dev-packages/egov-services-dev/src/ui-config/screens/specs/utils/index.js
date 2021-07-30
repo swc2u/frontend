@@ -685,6 +685,42 @@ export const getDurationDateWithTime = (fromDate, toDate, fromTime, toTime) => {
     let finalDate = finalStartDate + " to " + finalEndDate;
     return finalDate;
 };
+export const getDurationDateForPark = (fromDate, toDate) => {
+    let monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+    let startDate = new Date(fromDate);
+    let finalStartDate =
+        startDate.getDate() +
+        " " +
+        monthNames[startDate.getMonth()] +
+        " " +
+        startDate.getFullYear();
+    
+    let endDate = new Date(new Date(toDate).setDate(new Date(toDate).getDate() + 1));  
+    endDate.setMonth(endDate.getMonth());
+
+    let finalEndDate =
+        endDate.getDate() +
+        " " +
+        monthNames[endDate.getMonth()] +
+        " " +
+        endDate.getFullYear();
+    let finalDate = `${finalStartDate} 9:00 AM` + " to " + `${finalEndDate} 8:59 AM`;
+ 
+    return finalDate;
+};
 export const getDurationDate = (fromDate, toDate) => {
     let monthNames = [
         "Jan",
@@ -1113,14 +1149,14 @@ export const downloadReceipt = async (
                             "BOOKING_BRANCH_SERVICES.BOOKING_GROUND_OPEN_SPACES"
                             ? "Open Space within MCC jurisdiction"
                             : "Water Tanker"
-                    }`,
-                amount: amount,
-                tax: tax,
-                grandTotal:
-                    payloadReceiptDetails.Payments[0].totalAmountPaid,
-                amountInWords: NumInWords(
-                    payloadReceiptDetails.Payments[0].totalAmountPaid
-                ),
+                        }`,
+                        amount: applicationData.businessService === "BWT"?amount/parseInt(applicationData.quantity):
+                        amount,
+                        tax: tax,
+                        grandTotal:  payloadReceiptDetails.Payments[0].totalAmountPaid,
+                        amountInWords: NumInWords(
+                            payloadReceiptDetails.Payments[0].totalAmountPaid
+                        ),
                 paymentItemExtraColumnLabel:
                     payloadReceiptDetails.Payments[0].paymentDetails[0].bill
                         .businessService === "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE" ||
@@ -1135,7 +1171,9 @@ export const downloadReceipt = async (
                 receiptNo:
                     payloadReceiptDetails.Payments[0].paymentDetails[0]
                         .receiptNumber,
-                        refundableSecurity:   cgSecurityRefund
+                        refundableSecurity:   cgSecurityRefund,
+                        wtQuantity:applicationData.quantity,
+                        wtTotalPayment:amount
             };
         }
         console.log(paymentInfoData, "nero Qry str");
@@ -2144,15 +2182,16 @@ export const downloadApplication = async (
                     //             : paymentData.totalAmount,
                     // },
                     feeDetail: {
-                        baseCharge: baseCharge,
-                        taxes: taxes,
+                        baseCharge:applicationData.businessService === "BWT"?baseCharge/parseInt(applicationData.quantity): baseCharge,
+                        taxes: taxes===null ? 0 : taxes,
                         ugst: ugst,
                         cgst: cgst,
                         totalAmount:
                             paymentData === undefined
                                 ? null
-                                : paymentData.totalAmount,
-                                  refundableSecurity:   cgSecurityRefund  
+                                :paymentData.totalAmount,
+                        wtQuantity:applicationData.quantity,                              
+                        refundableSecurity:   cgSecurityRefund       
                     },
                     generatedBy: {
                         generatedBy: JSON.parse(getUserInfo()).name,
@@ -2310,6 +2349,41 @@ export const checkAvaialbilityAtSubmitCgb = async (bookingVenue, from, to) => {
     }
 };
 export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
+    let requestBody = {};
+    let isAvailable= await checkAvaialbilityAtSubmitFirstStep(bookingData, dispatch)
+    if(isAvailable===false){
+    
+        return isAvailable
+    }else{
+        
+        requestBody = {
+            BookingLock: [
+                {
+                  applicationNumber: bookingData.bkApplicationNumber,
+                  bookingType: bookingData.bkBookingType ? bookingData.bkBookingType:"",
+                  bookingVenue:bookingData.bkBookingVenue?bookingData.bkBookingVenue:"",
+                  sector: bookingData.bkSector?bookingData.bkSector:"",
+                  fromDate: bookingData.bkFromDate,
+                  toDate: bookingData.bkToDate,
+                }
+              ],
+        };
+        try {
+            const bookedDates = await httpRequest(
+                "post",
+                "/bookings/park/community/lock/dates/_save",
+                "",
+                [],
+                requestBody
+            );
+         
+        } catch (exception) {
+            console.log(exception);
+        }
+        return isAvailable
+    }
+}
+export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) => {
     let businessService = bookingData.businessService;
     let requestBody = {};
     let isAvailable = true;
@@ -2343,6 +2417,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 : (isAvailable = true);
         } catch (exception) {
             console.log(exception);
+            isAvailable = false;
         }
     } else if (businessService === "OSUJM") {
         requestBody = {
@@ -2374,9 +2449,9 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 : (isAvailable = true);
         } catch (exception) {
             console.log(exception);
+            isAvailable = false;
         }
     }  else if (businessService === "PACC") {
-
         requestBody = {
             Booking: {
                 
@@ -2386,7 +2461,9 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 bkBookingVenue: bookingData.bkBookingVenue,
                 bkFromDate: bookingData.bkFromDate,
                 bkToDate: bookingData.bkToDate,
+                timeslots :bookingData.bkBookingType=== "Community Center"?bookingData.timeslots:[]
             },
+            applicationNumber: bookingData.bkApplicationNumber
         };
 
         try {
@@ -2396,7 +2473,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 "",
                 [],
                 requestBody
-            );
+            )
             bookedDates.data.length > 0
                 ? bookedDates.data.map((val) => {
                     if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
@@ -2408,6 +2485,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 : (isAvailable = true);
         } catch (exception) {
             console.log(exception);
+            isAvailable = false;
         }
     }else {
         isAvailable = true;
@@ -2695,7 +2773,7 @@ export const downloadCancelledBookingReceipt = async (
                                 .bill.consumerCode,
                         bookingCancellationDate: bookingCancelledDate,
                         bookingVenue: applicationData.bkLocation,
-                        bookingDuration: getDurationDate(
+                        bookingDuration: getDurationDateForPark(
                             applicationData.bkFromDate,
                             applicationData.bkToDate
                         ),

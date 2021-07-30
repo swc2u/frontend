@@ -60,6 +60,11 @@ const formConfig = {
         id: "textarea",
         hintText: "CS_COMMON_COMMENTS_PLACEHOLDER",
       },
+      quantity: {
+        id: "WTquantity",
+        jsonPath: "Booking.quantity",
+        value:''
+      },
       action: {
         id: "action",
         jsonPath: "Booking.bkAction",

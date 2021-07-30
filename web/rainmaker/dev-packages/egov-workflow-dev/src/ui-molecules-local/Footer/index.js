@@ -175,6 +175,7 @@ class Footer extends React.Component {
         || item.moduleName === "REGULARWSCONNECTION"  
         || item.moduleName === 'SW_SEWERAGE' 
         || item.moduleName === "TEMPORARY_WSCONNECTION"
+        || item.moduleName === "TEMPORARY_WSCONNECTION_BILLING"
         || item.moduleName === "WS_TEMP_TEMP" 
         ||item.moduleName === "WS_TEMP_REGULAR"
         ||item.moduleName === "WS_DISCONNECTION" 
@@ -213,7 +214,7 @@ class Footer extends React.Component {
         let nextActions
         // let workflow =state.screenConfiguration.preparedFinalObject.workflow.ProcessInstances
         // workflow = workflow.filter(x=>x.action === data[0].processInstance.action)
-        let curstateactions = businessServiceData[0].states.filter(x=>x.applicationStatus === data[0].applicationStatus )
+        let curstateactions = businessServiceData[0].states.filter(x=>x.applicationStatus === data[0].waterApplication.applicationStatus )
         let actions_ = item.buttonLabel
         if(curstateactions && curstateactions[0])
         {

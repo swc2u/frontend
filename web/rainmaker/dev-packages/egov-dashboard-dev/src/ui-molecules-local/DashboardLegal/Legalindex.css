@@ -191,6 +191,51 @@
 .content-container {
   display: flex; }
 
+button {
+  color: blue;
+  text-decoration: underline;
+  border: none;
+  background-color: transparent; }
+
+.legal-table-container {
+  border: 1px solid #646060;
+  margin: 25px;
+  padding: 5px; }
+
+.legal-table {
+  text-align: center;
+  box-sizing: border-box;
+  border-color: grey;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333333;
+  font-size: 9pt;
+  width: 100%;
+  border-collapse: collapse; }
+
+/* // Legal changes new CSS */
+table th {
+  text-align: center;
+  color: #0B0B3B;
+  background-color: #D8D8D8; }
+
+.legal-table td, th {
+  border: 1px solid #646060;
+  font-size: 9pt;
+  padding: 12px;
+  border-collapse: collapse; }
+
+.legal-table tr:nth-child(even) {
+  background-color: #E6E6E6; }
+
+.grab {
+  cursor: -webkit-grab;
+  cursor: grab; }
+
+.grab2 {
+  cursor: -webkit-grab;
+  cursor: grab;
+  color: green; }
+
 @media only screen and (max-width: 500px) {
   .content-container {
     margin-left: 50px;
@@ -214,3 +259,48 @@
     margin-left: 10%;
     margin-bottom: 10px;
     margin-top: 10px; } }
+
+/* // PDF ICON */
+p:not(.cssonly) a[href$=".pdf"]:before {
+  /* PDF file */
+  width: 32px;
+  height: 32px;
+  background: url("http://wwwimages.adobe.com/content/dam/acom/en/legal/images/badges/Adobe_PDF_file_icon_32x32.png");
+  display: inline-block;
+  content: ' '; }
+
+p:not(.cssonly) a[href$=".xlsx"]:before {
+  /* PDF file */
+  width: 32px;
+  height: 32px;
+  background: url("Excel-icon.png");
+  display: inline-block;
+  content: ' '; }
+
+p:not(.cssonly) a[href$=".txt"]:before {
+  /* PDF file */
+  width: 32px;
+  height: 32px;
+  background: url("Back-icon.jpg");
+  display: inline-block;
+  content: ' '; }
+
+.cssonly {
+  /* PDF file */
+  width: 16px;
+  vertical-align: middle;
+  margin: 4px 0 2px 4px;
+  padding: 4px 0 1px 0px;
+  background-color: #fff;
+  color: red;
+  border: 1px solid red;
+  border-top-right-radius: 7px;
+  box-shadow: 1px 1px #ccc;
+  font-size: 7.7px;
+  font-weight: 700;
+  font-family: sans-serif;
+  line-height: 16px;
+  text-decoration: none;
+  display: inline-block;
+  box-sizing: content-box;
+  content: 'PDF'; }
