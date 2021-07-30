@@ -261,7 +261,7 @@ totalAmount1 = vrent * daysCount;
         totalAmount1 = totalAmount1;
   
     }
-}
+}  
 
         if (paccDate) {
            
@@ -304,8 +304,11 @@ let NumberRefundAmount = Number(displayRefundAmount);
 
         let Newsurcharge = Number(utGST) + Number(cGST)
 
+ 
+        surcharge = Math.round((Number(Newsurcharge) + Number.EPSILON) * 100) / 100
+        //Number(Newsurcharge).toFixed(2)
 
-        surcharge = Number(Newsurcharge)
+        
        
        
         dimension = vanueData.dimensionSqrYards;
@@ -397,26 +400,6 @@ let NumberRefundAmount = Number(displayRefundAmount);
                 nextStep={this.nextStep}
                 prevStep={this.prevStep}
             />);
-
-        // if (step === 3)
-        //     return (<ParkPaymentDetails
-        //         nextStep={this.nextStep}
-        //         prevStep={this.prevStep}
-        //         handleChange={this.handleChange}
-        //         showAmount={showAmount}
-        //         transactionNumber={transactionNumber}
-        //         transactionDateChange={this.transactionDateChange}
-        //         bankName={bankName}
-        //         paymentMode={paymentMode}
-        //         amount={VfinalAmount}
-        //         finalRent={finalRent}   
-        //         transactionDate={transactionDate}
-        //         discountType={discountType}
-        //         // rent={VfinalAmount}  
-        //         rent={fixedRefundPlusAllRentNum}
-        //         facilitationCharges={facilitationCharges}
-        //     />);
-
         if (step === 3)
             return (<DocumentDetails
                 checkDateVenueChange={checkDateVenueChange}
