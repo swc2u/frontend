@@ -118,33 +118,33 @@ export const createUpdatePensionerdata = async (state, dispatch) => {
         ));
         return
       } 
-let Isvalid = true //validateFeildsupdatePensioner()
+// let Isvalid = true //validateFeildsupdatePensioner()
 
-      if(Isvalid)
+//       if(Isvalid)
 
-      {
-        const response_ = await updatePensionerDetails(state,dispatch);
-        if(response_)
-        {
-          console.log(response_)
-          let errorMessage = {
-            labelName:
-              "Pensioner details save successfully!",
-            labelKey: "PENSION_SUCCESS_UPDATE_PENSIONER_DETAILS_MESSAGE"
-          };
-          dispatch(toggleSnackbar(true, errorMessage, "success"));
-        }
-      }
-      else
-      {
-        let errorMessage = {
-          labelName:
-            "Please fill all mandatory fields for Pension  Details, then save !",
-          labelKey: "PENSION_ERR_FILL_PENSION_MANDATORY_FIELDS"
-        };
-        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+//       {
+//         const response_ = await updatePensionerDetails(state,dispatch);
+//         if(response_)
+//         {
+//           console.log(response_)
+//           let errorMessage = {
+//             labelName:
+//               "Pensioner details save successfully!",
+//             labelKey: "PENSION_SUCCESS_UPDATE_PENSIONER_DETAILS_MESSAGE"
+//           };
+//           dispatch(toggleSnackbar(true, errorMessage, "success"));
+//         }
+//       }
+//       else
+//       {
+//         let errorMessage = {
+//           labelName:
+//             "Please fill all mandatory fields for Pension  Details, then save !",
+//           labelKey: "PENSION_ERR_FILL_PENSION_MANDATORY_FIELDS"
+//         };
+//         dispatch(toggleSnackbar(true, errorMessage, "warning"));
 
-      }
+//       }
       }
 
       let datavalid = false
