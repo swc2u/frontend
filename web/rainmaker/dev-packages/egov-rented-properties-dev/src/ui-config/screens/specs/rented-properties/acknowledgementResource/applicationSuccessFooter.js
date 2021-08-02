@@ -304,7 +304,10 @@ export const applicationSuccessFooter = (
                 case 'RENTED_PROPERTIES_COLONY_MILK.MORTGAGE':
                 case 'RENTED_PROPERTIES_COLONY_SECTOR_52_53.MORTGAGE':
                 case 'RENTED_PROPERTIES_COLONY_VIKAS_NAGAR.MORTGAGE':
-                case 'RENTED_PROPERTIES_COLONY_KUMHAR.DUPLICATE_ALLOTMENT_LETTER':                   
+                case 'RENTED_PROPERTIES_COLONY_KUMHAR.DUPLICATE_ALLOTMENT_LETTER':
+                case 'RENTED_PROPERTIES_COLONY_MILK.DUPLICATE_ALLOTMENT_LETTER':  
+                case 'RENTED_PROPERTIES_COLONY_SECTOR_52_53.DUPLICATE_ALLOTMENT_LETTER':  
+                case 'RENTED_PROPERTIES_COLONY_VIKAS_NAGAR.DUPLICATE_ALLOTMENT_LETTER':               
               let consumerCodes = getQueryArg(window.location.href, "applicationNumber");
               if(consumerCodes.startsWith('SITE')){
                 var array = consumerCodes.split("-");
@@ -366,7 +369,10 @@ export const applicationSuccessFooter = (
       type == "RENTED_PROPERTIES_COLONY_SECTOR_52_53.MORTGAGE" ||
       type == "RENTED_PROPERTIES_COLONY_VIKAS_NAGAR.MORTGAGE" ||
       type == "RENTED_PROPERTIES_COLONY_KUMHAR.MORTGAGE" ||
-      type == "RENTED_PROPERTIES_COLONY_KUMHAR.DUPLICATE_ALLOTMENT_LETTER"
+      type == "RENTED_PROPERTIES_COLONY_KUMHAR.DUPLICATE_ALLOTMENT_LETTER"||
+      type == "RENTED_PROPERTIES_COLONY_MILK.DUPLICATE_ALLOTMENT_LETTER" ||
+      type == "RENTED_PROPERTIES_COLONY_SECTOR_52_53.DUPLICATE_ALLOTMENT_LETTER"||
+      type == "RENTED_PROPERTIES_COLONY_VIKAS_NAGAR.DUPLICATE_ALLOTMENT_LETTER"
       ) ? true : false
       },
       printFormButton: {
@@ -407,6 +413,9 @@ export const applicationSuccessFooter = (
                 case 'RENTED_PROPERTIES_COLONY_SECTOR_52_53.MORTGAGE':
                 case 'RENTED_PROPERTIES_COLONY_VIKAS_NAGAR.MORTGAGE': 
                 case "RENTED_PROPERTIES_COLONY_KUMHAR.DUPLICATE_ALLOTMENT_LETTER":
+                case "RENTED_PROPERTIES_COLONY_MILK.DUPLICATE_ALLOTMENT_LETTER":
+                case "RENTED_PROPERTIES_COLONY_SECTOR_52_53.DUPLICATE_ALLOTMENT_LETTER":
+                case "RENTED_PROPERTIES_COLONY_VIKAS_NAGAR.DUPLICATE_ALLOTMENT_LETTER":
 
               let consumerCodes = getQueryArg(window.location.href, "applicationNumber");
               if(consumerCodes.startsWith('SITE')){
@@ -470,7 +479,10 @@ export const applicationSuccessFooter = (
         type == "RENTED_PROPERTIES_COLONY_SECTOR_52_53.MORTGAGE" ||
         type == "RENTED_PROPERTIES_COLONY_VIKAS_NAGAR.MORTGAGE" ||
         type == "RENTED_PROPERTIES_COLONY_KUMHAR.MORTGAGE" ||
-        type == "RENTED_PROPERTIES_COLONY_KUMHAR.DUPLICATE_ALLOTMENT_LETTER") ? true : false
+        type == "RENTED_PROPERTIES_COLONY_KUMHAR.DUPLICATE_ALLOTMENT_LETTER"||
+        type == "RENTED_PROPERTIES_COLONY_MILK.DUPLICATE_ALLOTMENT_LETTER"||
+        type == "RENTED_PROPERTIES_COLONY_SECTOR_52_53.DUPLICATE_ALLOTMENT_LETTER"||
+        type == "RENTED_PROPERTIES_COLONY_VIKAS_NAGAR.DUPLICATE_ALLOTMENT_LETTER") ? true : false
       }
     });
   }
