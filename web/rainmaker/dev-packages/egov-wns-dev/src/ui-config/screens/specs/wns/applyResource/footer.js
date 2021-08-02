@@ -1467,7 +1467,14 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
         if(fields.propertySubUsageType!==undefined) 
         {
           if(fields.propertySubUsageType.isFieldValid ===false)
-          isPropertyUsageValid = true
+          {
+            isPropertyUsageValid = true
+
+          }
+          else{
+            isPropertyUsageValid = true
+          }
+          
           
         }
         else

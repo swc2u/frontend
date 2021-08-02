@@ -1464,7 +1464,7 @@ uniqueBycode =(data,key)=>{
     }
     //end pipe size filter
     // VERIFY_AND_FORWARD_TO_JE_FOR_FEE VERIFY_AND_FORWARD_TO_SE, PENDING_FOR_SDE_APPROVAL_FOR_JE TEMPORARY_WSCONNECTION
-    if(businessService === "TEMPORARY_WSCONNECTION_BILLING"  && (applicationStatus == 'PENDING_FOR_SDE_APPROVAL_FOR_JE' || applicationStatus ==='PENDING_FOR_EE_APPROVAL' ) )
+    if((businessService === "TEMPORARY_WSCONNECTION_BILLING" ||"TEMPORARY_WSCONNECTION" ) && (applicationStatus == 'PENDING_FOR_SDE_APPROVAL_FOR_JE' || applicationStatus ==='PENDING_FOR_EE_APPROVAL' ) )
     {
       const {WaterConnection} = preparedFinalObject;
       let pipeSize = 0 ;

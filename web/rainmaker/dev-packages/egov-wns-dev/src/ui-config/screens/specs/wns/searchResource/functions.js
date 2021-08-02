@@ -569,7 +569,7 @@ const showConnectionResults = (connections, dispatch) => {
       [getTextToLocalMappingCode("service")]: item.service,
       [getTextToLocalMappingCode("Consumer No")]: item.connectionNo,
       //[getTextToLocalMappingCode("Owner Name")]: item.name,
-      [getTextToLocalMappingCode("Status")]: item.status,
+      [getTextToLocalMappingCode("Status")]: item.status.split("_").join(" "),
       [getTextToLocalMappingCode("Due")]: item.due,
       [getTextToLocalMappingCode("Address")]: item.address,
       [getTextToLocalMappingCode("Due Date")]: (item.dueDate !== undefined && item.dueDate !== "NA") ? convertEpochToDate(item.dueDate) : item.dueDate,
