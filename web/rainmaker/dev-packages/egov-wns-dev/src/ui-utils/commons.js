@@ -2119,7 +2119,7 @@ export const applyForWater = async (state, dispatch) => {
                     queryObject.activityType = "APPLY_FOR_TEMPORARY_CONNECTION"
 
                 }
-                if(queryObject.waterApplicationType === 'TEMPORARY_BILLING')
+                else if(queryObject.waterApplicationType === 'TEMPORARY_BILLING')
                 {
                     queryObject.activityType = "APPLY_FOR_TEMPORARY_CONNECTION_BILLING"
 
@@ -3210,7 +3210,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                          // set activityType 
                          switch (activityType) {
                                 case "APPLY_FOR_TEMPORARY_CONNECTION":
-                                activityType ='Temporary Water Connection'
+                                activityType ='Temporary Water Connection Construction'
                                 break;
                                 case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
                                 activityType ='Temporary Water Connection Billing'
