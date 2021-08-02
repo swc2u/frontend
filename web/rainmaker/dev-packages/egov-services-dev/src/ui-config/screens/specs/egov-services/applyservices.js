@@ -20,7 +20,7 @@ const header = getCommonHeader(
             root: "common-header-cont",
         },
     }
-);
+); 
 let cardItems = [];
 let cardlist= []
 if (user_mobileNumber=="6265678234" || user_mobileNumber=="7558357883" || user_mobileNumber=="7207303021" || user_mobileNumber =="8961201542") {

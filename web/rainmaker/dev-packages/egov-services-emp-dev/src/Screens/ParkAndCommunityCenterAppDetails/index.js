@@ -4004,7 +4004,7 @@ totalAmountPaid = {totalAmountPaid}
                           className="col-sm-12 col-xs-12"
                           style={{ textAlign: "right" }}
                         >
-                          {Difference_In_Days_check > 15 ||
+                          {/* {Difference_In_Days_check > 15 ||
                           Difference_In_Days_check == 15 ? (
                             <Button
                               label={
@@ -4025,7 +4025,26 @@ totalAmountPaid = {totalAmountPaid}
                             />
                           ) : (
                             ""
-                          )}
+                          )} */}
+                           
+                            <Button
+                              label={
+                                <Label
+                                  buttonLabel={true}
+                                  color="#fe7a51"
+                                  label="CANCEL BOOKING"
+                                />
+                              }
+                              labelStyle={{
+                                letterSpacing: 0.7,
+                                padding: 0,
+                                color: "#fe7a51",
+                              }}
+                              buttonStyle={{ border: "1px solid #fe7a51" }}
+                              style={{ width: "15%", marginLeft: "2%" }}
+                              onClick={() => this.CancelEmpBooking()}
+                            />
+                         
                           {/*Security Refund*/}
                           {/* {first == true ?
 													<Button
@@ -4066,7 +4085,45 @@ totalAmountPaid = {totalAmountPaid}
                           className="col-sm-12 col-xs-12"
                           style={{ textAlign: "right" }}
                         >
-                          {Difference_In_Days_check > 15 ||
+                           
+                            <div>
+                              <Button
+                                label={
+                                  <Label
+                                    buttonLabel={true}
+                                    color="#fe7a51"
+                                    label="BK_PACC_BUTTON_CANCEL_BOOKING_CONFIRM"
+                                  />
+                                }
+                                labelStyle={{
+                                  letterSpacing: 0.7,
+                                  padding: 0,
+                                  color: "#fe7a51",
+                                }}
+                                buttonStyle={{ border: "1px solid #fe7a51" }}
+                                style={{ width: "15%", marginLeft: "2%" }}
+                                onClick={() => this.ConfirmCancelEmpBooking()}
+                              />
+                              <Button
+                                label={
+                                  <Label
+                                    buttonLabel={true}
+                                    color="#fe7a51"
+                                    label="BK_MY_BK_BUTTON_CANCEL"
+                                  />
+                                }
+                                labelStyle={{
+                                  letterSpacing: 0.7,
+                                  padding: 0,
+                                  color: "#fe7a51",
+                                }}
+                                buttonStyle={{ border: "1px solid #fe7a51" }}
+                                style={{ width: "15%", marginLeft: "2%" }}
+                                onClick={() => this.continueComplaintSubmit()}
+                              />
+                            </div>
+                          
+                          {/* {Difference_In_Days_check > 15 ||
                           Difference_In_Days_check == 15 ? (
                             <div>
                               <Button
@@ -4106,7 +4163,7 @@ totalAmountPaid = {totalAmountPaid}
                             </div>
                           ) : (
                             ""
-                          )}
+                          )} */}
                         </div>
                       }
                     ></Footer>
