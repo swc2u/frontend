@@ -46,9 +46,8 @@ export const callBackForNext = async (state, dispatch) => {
       dispatch,
       "create-susv"
     );
-      
-      if(NulmSusvRequest && ( !NulmSusvRequest.hasOwnProperty("gender"))){
-      // if(NulmSusvRequest && ( !NulmSusvRequest.hasOwnProperty("gender") || !NulmSusvRequest.hasOwnProperty("category"))){
+    
+      if(NulmSusvRequest && ( !NulmSusvRequest.hasOwnProperty("gender") || !NulmSusvRequest.hasOwnProperty("category"))){
         isFormValid = false;
       }
 
@@ -90,14 +89,14 @@ export const callBackForNext = async (state, dispatch) => {
     }
     //
     if(NulmSusvRequest ){
-      // if(!NulmSusvRequest.category ){
-      //   const errorMessage = {
-      //     labelName: "Please select cast of an applicant",
-      //     labelKey: "ERR_NULM_SELECT_CAST_APPLICANT"
-      //   };
-      //   dispatch(toggleSnackbar(true, errorMessage, "warning"));
-      //   return;
-      // }
+      if(!NulmSusvRequest.category ){
+        const errorMessage = {
+          labelName: "Please select cast of an applicant",
+          labelKey: "ERR_NULM_SELECT_CAST_APPLICANT"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        return;
+      }
     }
     if(NulmSusvRequest ){
       if(!NulmSusvRequest.gender ){
