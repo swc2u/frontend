@@ -27,7 +27,7 @@ import {
                     labelName: "Enter Name",
                     labelKey: "NULM_SUH_LOG_NAME_PLACEHOLDER",
                   },
-                  required: true,
+                  // required: true,
                   pattern: getPattern("Name") || null,
                   jsonPath: "NulmSusvRequest.susvApplicationFamilyDetails[0].name",       
                 })
@@ -42,7 +42,7 @@ import {
                     labelName: "Enter age",
                     labelKey: "NULM_SEP_AGE_PLACEHOLDER"
                   },
-                  required: true,
+                  // required: true,
                   pattern: getPattern("age") || null,
                   jsonPath: "NulmSusvRequest.susvApplicationFamilyDetails[0].age"
                 })
@@ -57,7 +57,7 @@ import {
                     labelName: "Enter Relation",
                     labelKey: "NULM_SUSV_RELATION_PLACEHOLDER"
                   },
-                  required: true,
+                  // required: true,
                   pattern: getPattern("Name") || null,
                   jsonPath: "NulmSusvRequest.susvApplicationFamilyDetails[0].relation"
                 })
