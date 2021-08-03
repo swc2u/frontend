@@ -1712,6 +1712,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
                 }
+                else if(activityType ==='TEMPORARY_WSCONNECTION_BILLING' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
@@ -1830,6 +1834,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                     });
                     
                 } 
+                else if(activityType ==='TEMPORARY_WSCONNECTION_BILLING' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                }
             }
             else if(applicationType ==='TEMPORARY'|| applicationType ==='TEMPORARY_BILLING' ){
                 if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
