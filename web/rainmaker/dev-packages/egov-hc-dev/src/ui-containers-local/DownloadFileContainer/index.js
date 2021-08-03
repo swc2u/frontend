@@ -17,8 +17,10 @@ import {
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import  {delectDocument} from "../../ui-utils/commons";
 import Lightbox from 'react-image-lightbox';
-import 'react-image-lightbox/style.css'; // This only needs to be imported once in your app
-import "./index.scss";
+// import 'react-image-lightbox/style.css'; // This only needs to be imported once in your app
+import PdfPreviewExample from './previewPDF';
+import { PDFViewer } from 'react-view-pdf';
+import "./index.css";
 
 const themeStyles = theme => ({
   iconDiv: {
@@ -62,13 +64,29 @@ class DownloadFileContainer extends React.Component {
     super(props);
 
     this.state = {
-      photoIndex: 0,
-      isOpen: false,
+      isOpen : false,
+      isPDFOpen : false,
+      mainSRC : ""
     };
   }
 
-  toggleLightBox = () => {
-    this.setState({ isOpen: !this.state.isOpen })
+
+  previewPDF = (docIndex) => {
+    debugger;
+    const demoData = docIndex.link;
+    this.setState({
+      isPDFOpen : !this.state.isPDFOpen,
+      mainSRC : demoData,
+    })
+  }
+
+  previewImage = (docIndex) => {
+    debugger;
+    const demoData = docIndex.link;
+    this.setState({
+      isOpen : true,
+      mainSRC : demoData,
+    })
   }
 
   deleteDocument = async (remDocIndex) => {
@@ -98,10 +116,22 @@ class DownloadFileContainer extends React.Component {
    
 
   }
+
+
   render() {
     const { classes,data, documentData, ...rest } = this.props;
   
-    const { photoIndex, isOpen } = this.state;
+    if(data.length > 0){
+      for(var i=0; i<data.length; i++){
+        var fileName = data[i].name;
+        fileName = fileName.split(".");
+        if(fileName[1] ==="pdf"){
+          data[i]["type"] = fileName[1]
+        }else{
+          data[i]["type"] = fileName[1]
+        }
+      }
+    }
     // return (
     //   <MultiDownloadCard data={data} documentData={documentData} {...rest} /> 
     // );
@@ -137,50 +167,31 @@ class DownloadFileContainer extends React.Component {
                   <Typography style={{wordWrap: "break-word",wordBreak: "break-all", maxWidth: 200,}}>{item.name}</Typography>
                   </div>
                   <div style={{display:"flex"}}>
-                    <div><Button href={item.link} color="primary">
-                  Download
-                </Button></div>
+                    <div>
+                      <Button href={item.link} color="primary">
+                        Download
+                      </Button>
+                    </div>
 
                     {/* Code Change SD */}
-                    
-                    {/* <img 
-                    src={item.link}
-                    alt="new"
-                    /> */}
-                    <div><Button type="button" color="primary" 
-                    onClick={this.toggleLightBox}>
-                      Preview
-                    </Button></div>
-                    {isOpen && (
-                      <Lightbox
-                          // mainSrc={'https://chstage.blob.core.windows.net/fileshare/ch/egov-hc/July/28/1627455070683Screenshot (6).png?sig=zGeiNX8QgWkVZLZF7seEK2tmMg4Sil9Hk5JNQ7Su50o%3D&st=2021-07-28T18%3A54%3A41Z&se=2021-07-29T18%3A54%3A41Z&sv=2016-05-31&sp=r&sr=b'}
-                          mainSrc={item.link}
-                          // nextSrc={images[(photoIndex + 1) % images.length]}
-                          // prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-                          onCloseRequest={() => this.setState({ isOpen: false })}
-                          // onMovePrevRequest={() =>
-                          //   this.setState({
-                          //     photoIndex: (photoIndex + images.length - 1) % images.length,
-                          //   })
-                          // }
-                          // onMoveNextRequest={() =>
-                          //   this.setState({
-                          //     photoIndex: (photoIndex + 1) % images.length,
-                          //   })
-                          // }
-                        />
-                    )}
+                    <div style={item.type !== "pdf" ? null : {display : "none"}}>
+                      <Button   onClick={() => this.previewImage(item)} color="primary">
+                        Preview
+                      </Button>
+                    </div>
+                    <div style={item.type === "pdf" ? null : {display : "none"}}>
+                      <Button   onClick={() => this.previewPDF(item)} color="primary">
+                        Preview
+                      </Button>
+                    </div>
+
                     <div> 
-                      
                       {
                       item.IsDelete &&<Button   onClick={() => this.deleteDocument(item)} color="primary">
                       Delte
                       </Button>
                       }
-                      
-                
-                </div>
-                  
+                    </div>
                   </div>
                  
                   {/* <Grid xs={12}>
@@ -223,6 +234,32 @@ class DownloadFileContainer extends React.Component {
           )
         }
         
+        <div>
+          {/* <div style={documentTitle}>
+            Preview
+          </div> */}
+                 
+          {/* {item.name} */}
+          <div>
+            {this.state.isOpen && (
+              <div>
+                <Lightbox
+                  mainSrc={this.state.mainSRC}
+                  onCloseRequest={() => this.setState({ isOpen: false })}
+                />
+              </div>
+            )}
+
+            {this.state.isPDFOpen ?
+              <div>
+                {/* {this.state.mainSRC}  */}
+                <PDFViewer url={"https://cors-anywhere.herokuapp.com/" + this.state.mainSRC} />
+                {/* <PdfPreviewExample imageURL = {"https://cors-anywhere.herokuapp.com/"+this.state.mainSRC} /> */}
+              </div>
+              :null
+            }
+          </div>
+        </div>
       </div>
     )
   }
