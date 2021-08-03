@@ -569,6 +569,11 @@ if(wnsStatus === null)
   else{
     if(process.env.REACT_APP_NAME === "Citizen" && ActionType)
     wnsStatus =  window.localStorage.getItem("wns_workflow")
+    else if(process.env.REACT_APP_NAME === "Citizen" || ActionType)
+  {
+    wnsStatus =  window.localStorage.getItem("wns_workflow")
+
+    }
   }
 }
 
