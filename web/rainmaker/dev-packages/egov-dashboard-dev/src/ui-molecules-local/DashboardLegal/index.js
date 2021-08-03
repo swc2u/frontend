@@ -723,7 +723,7 @@ class DashboardLegal extends React.Component {
                 <td> { data.caseTitle } </td>
                 <td> { data.petName } </td>
                 <td style={{"color":"green"}}> { data.concernedBranch } </td>
-                <td> <p style={{"color":"red"}}> "_Blank" </p> </td>
+                {/* <td> <p style={{"color":"red"}}> "_Blank" </p> </td> */}
                 <td> "Nodal officer Pending API" </td>
                 <td>  {nextDate}  </td>
                 <td> { data.caseStatus === "CLOSED" ? "No further order of listing." : data.caseStatus } </td>
@@ -787,7 +787,7 @@ class DashboardLegal extends React.Component {
                             <th> Brief Subject </th>
                             <th> Petitioner </th>
                             <th> Department </th>
-                            <th> Other Department </th>
+                            {/* <th> Other Department </th> */}
                             <th> Nodal Officer </th>
                             <th> Next Date </th>
                             <th> Status </th>
