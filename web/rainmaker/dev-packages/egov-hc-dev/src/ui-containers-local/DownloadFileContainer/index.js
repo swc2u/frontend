@@ -18,9 +18,9 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import  {delectDocument} from "../../ui-utils/commons";
 import Lightbox from 'react-image-lightbox';
 // import 'react-image-lightbox/style.css'; // This only needs to be imported once in your app
-import PdfPreviewExample from './previewPDF';
-import { PDFViewer } from 'react-view-pdf';
+
 import "./index.css";
+
 
 const themeStyles = theme => ({
   iconDiv: {
@@ -120,7 +120,8 @@ class DownloadFileContainer extends React.Component {
 
   render() {
     const { classes,data, documentData, ...rest } = this.props;
-  
+
+
     if(data.length > 0){
       for(var i=0; i<data.length; i++){
         var fileName = data[i].name;
@@ -179,7 +180,7 @@ class DownloadFileContainer extends React.Component {
                         Preview
                       </Button>
                     </div>
-                    <div style={item.type === "pdf" ? null : {display : "none"}}>
+                    <div style={item.type === "pdf" ? {display : "none"} : {display : "none"}}>
                       <Button   onClick={() => this.previewPDF(item)} color="primary">
                         Preview
                       </Button>
@@ -252,8 +253,16 @@ class DownloadFileContainer extends React.Component {
 
             {this.state.isPDFOpen ?
               <div>
+                <div className='pdf-container'>
+                  {/* show pdf conditionally (if we have one)  */}
+                  {/* {
+                    <Viewer 
+                    fileUrl={"https://chstage.blob.core.windows.net/fileshare/ch/hc/August/2/1627904036859ConditionsOfNOC.pdf?sig=kUzIB63WwHcpYWzHJGNQDAgEtEZ7yiaZuiowOwPAXmw%3D&st=2021-08-03T12%3A39%3A16Z&se=2021-08-04T12%3A39%3A16Z&sv=2016-05-31&sp=r&sr=b"}
+                    plugins={[defaultLayoutPluginInstance]} />
+                  } */}
+                </div>
                 {/* {this.state.mainSRC}  */}
-                <PDFViewer url={"https://cors-anywhere.herokuapp.com/" + this.state.mainSRC} />
+                {/* <PDFViewer url={"https://cors-anywhere.herokuapp.com/" + this.state.mainSRC} /> */}
                 {/* <PdfPreviewExample imageURL = {"https://cors-anywhere.herokuapp.com/"+this.state.mainSRC} /> */}
               </div>
               :null
