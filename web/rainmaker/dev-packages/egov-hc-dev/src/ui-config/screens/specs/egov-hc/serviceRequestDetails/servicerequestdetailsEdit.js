@@ -265,81 +265,79 @@ export const servicerequestdetailsEdit = getCommonCard({
          jsonPath:"SERVICEREQUEST.description"
       })
     },
-    SILocationDetailsConatiner: getCommonContainer({
-      propertyGisCoordinates:
-      {
-        uiFramework: "custom-atoms",
-        componentPath: "Div",
-        props: {
-          className: "gis-div-css",
-          style: {
-            width: "100%",
-            cursor: "pointer"
-          },
-          jsonPath:
-            "SERVICEREQUEST.address"
-        },
-        jsonPath: "SERVICEREQUEST.address",
-        onClickDefination: {
-          action: "condition",
-          callBack: showHideMapPopupEdit
-        },
-        gridDefination: {
-          xs: 12,
-          sm: 12,
-          md: 12,
-          lg:12
-        },
-        children: {
-          gisTextField: {
-            ...getTextField({
-              label: {
-                labelName: "Locate on Map",
-                labelKey: "HC_VIOLATION_DETAILS_GIS_CORD_LABEL"
-              },
-              placeholder: {
-                labelName: "Select your property location on map",
-                labelKey: "HC_VIOLATION_DETAILS_GIS_CORD_PLACEHOLDER"
-              },
-              jsonPath:
-                "SERVICEREQUEST.address",
-              iconObj: {
-                iconName: "gps_fixed",
-                position: "end"
-              },
-              gridDefination: {
-                xs: 12,
-                sm: 12,
-                md: 12,
-                lg: 12
-              },
-              required: false,
-              props: {
-                disabled: true,
-                cursor: "pointer",
-                jsonPath:
-                  "SERVICEREQUEST.address"
-              }
-            })
-          }
-        }
-      }
-    }),
-    mapsDialog: {
-      componentPath: "Dialog",
-      props: {
-        open: false
-      },
-      children: {
-        dialogContent: {
-          componentPath: "DialogContent",
-          children: {
-            popup: getMapLocatorEdit()
-          }
-        }
-      }
+// SILocationDetailsConatiner: getCommonContainer({
+  //   propertyGisCoordinates:
+  //   {
+  //     uiFramework: "custom-atoms",
+  //     componentPath: "Div",
+  //     props: {
+  //       className: "gis-div-css",
+  //       style: {
+  //         width: "100%",
+  //         cursor: "pointer"
+  //       },
+  //       jsonPath:
+  //         "SERVICEREQUEST.address"
+  //     },
+  //     jsonPath: "SERVICEREQUEST.latitude",
+  //     onClickDefination: {
+  //       action: "condition",
+  //       callBack: showHideMapPopup
+  //     },
+  //     gridDefination: {
+  //       xs: 12,
+  //       sm: 12,
+  //       md: 12,
+  //       lg:12
+  //     },
+  //     children: {
+  //       gisTextField: {
+  //         ...getTextField({
+  //           label: {
+  //             labelName: "Locate on Map",
+  //             labelKey: "HC_VIOLATION_DETAILS_GIS_CORD_LABEL"
+  //           },
+  //           placeholder: {
+  //             labelName: "Select your property location on map",
+  //             labelKey: "HC_VIOLATION_DETAILS_GIS_CORD_PLACEHOLDER"
+  //           },
+  //           jsonPath:
+  //             "SERVICEREQUEST.latitude",
+  //           iconObj: {
+  //             iconName: "gps_fixed",
+  //             position: "end"
+  //           },
+  //           gridDefination: {
+  //             xs: 12,
+  //             sm: 12
+  //           },
+  //           required:false,
+  //           props: {
+  //             disabled: true,
+  //             cursor: "pointer",
+  //             jsonPath:
+  //               "SERVICEREQUEST.latitude"
+  //           }
+  //         })
+  //       }
+  //     }
+  //   }
+  // }),
+  // mapsDialog: {
+  //   componentPath: "Dialog",
+  //   props: {
+  //     open: false
+  //   },
+  //   children: {
+  //     dialogContent: {
+  //       componentPath: "DialogContent",
+  //       children: {
+  //         popup: getMapLocator()
+  //       }
+  //     }
+  //   }
 
-    },
+  // },
     // locality: {
     //   ...getSelectField({
     //     label: {
