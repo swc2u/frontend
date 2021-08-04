@@ -459,10 +459,13 @@ return !selectedBusinessServices.includes(businessServices)
          {
           
           let currentAssignedRole = get(item,'additionalDetails.role')
+          if(currentAssignedRole !== undefined && currentAssignedRole !== null)
+          {
           currentAssignedRole = currentAssignedRole.split(",")
           
           if(userRolesCodesForHC.some(element => currentAssignedRole.includes(element)) )
           {return item}
+          }
         }
           
         }
@@ -655,7 +658,8 @@ return !selectedBusinessServices.includes(businessServices)
       });
       this.hideLoading()
     } catch (e) {
-      toggleSnackbarAndSetText(true, { labelName: "Workflow search error !", labelKey: "ERR_SEARCH_ERROR" }, "error");
+      //toggleSnackbarAndSetText(true, { labelName: "Workflow search error !", labelKey: "ERR_SEARCH_ERROR" }, "error");
+      this.hideLoading();
     }
     prepareFinalObject("InboxData", [...inboxData]);
     this.getMaxSLA();
