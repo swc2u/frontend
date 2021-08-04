@@ -214,7 +214,15 @@ class Footer extends React.Component {
         let nextActions
         // let workflow =state.screenConfiguration.preparedFinalObject.workflow.ProcessInstances
         // workflow = workflow.filter(x=>x.action === data[0].processInstance.action)
-        let curstateactions = businessServiceData[0].states.filter(x=>x.applicationStatus === data[0].waterApplication.applicationStatus )
+        let ApplicationStatus =''
+        if(data[0].service ==='SEWERAGE')
+         {
+          ApplicationStatus = data[0].applicationStatus
+         }
+         else{
+            ApplicationStatus =  data[0].waterApplication.applicationStatus;
+         }
+        let curstateactions = businessServiceData[0].states.filter(x=>x.applicationStatus === ApplicationStatus)// data[0].waterApplication.applicationStatus )
         let actions_ = item.buttonLabel
         if(curstateactions && curstateactions[0])
         {

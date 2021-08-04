@@ -276,7 +276,15 @@ class WorkFlowContainer extends React.Component {
         let roles =[]
         let rolecode ='';
         let nextActions
-        let curstateactions = businessServiceData[0].states.filter(x=>x.applicationStatus === data.waterApplication.applicationStatus )
+        let ApplicationStatus =''
+        if(data.service ==='SEWERAGE')
+         {
+          ApplicationStatus = data.applicationStatus
+         }
+         else{
+ApplicationStatus =  data.waterApplication.applicationStatus;
+         }
+        let curstateactions = businessServiceData[0].states.filter(x=>x.applicationStatus === ApplicationStatus)// data.waterApplication.applicationStatus )
        // let actions_ = data.action
         if(curstateactions && curstateactions[0])
         {
@@ -411,6 +419,26 @@ class WorkFlowContainer extends React.Component {
 
       let labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
       let labelName='Please fill the required field in Edit section'
+      if (moduleName === "SW_SEWERAGE" && data.service ==='SEWERAGE') {
+        if(data.applicationStatus ==='INITIATED' && data.action==='SUBMIT_APPLICATION')
+        {
+          labelKey = 'WS_RESUBMIT_DOCUMENT_UPLOAD_VALIDATION_MESSAGE'
+          labelName = 'Please upload mandatory document in document section then submit'
+  
+        }
+        toggleSnackbar(
+          true,
+          {
+            labelName: labelName,
+            labelKey: labelKey
+          },
+          "error"
+        ); 
+        return false;
+
+      }
+      else
+      {
       if(data.waterApplication.applicationStatus ==='PENDING_FOR_SECURITY_DEPOSIT' && data.action==='VERIFY_AND_FORWARD_FOR_PAYMENT')
       {
         labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
@@ -445,6 +473,7 @@ class WorkFlowContainer extends React.Component {
       return false;
 
     }
+  }
 
       this.setState({
         open: false
@@ -1010,6 +1039,7 @@ IsFlatrateconnection =(usageCategory,proposedUsageCategory,preparedFinalObject)=
 
 }
 ValidateRequestSW =(payload,preparedFinalObject)=>{
+  let isvalidRequest = true
   if(payload.documents !== null)
   {
     for (let index = 0; index < payload.documents.length; index++) {
@@ -1031,7 +1061,15 @@ ValidateRequestSW =(payload,preparedFinalObject)=>{
   {
   payload.documents =  this.uniqueBycode(payload.documents, x=>x.documentType);//payload.documents.filter((value,index) => payload.documents.indexOf(value) ===index)
   }
-  return true;
+  if(payload.applicationStatus ==='INITIATED' && payload.action==='SUBMIT_APPLICATION')
+  {
+    if(payload.documents === null)
+    {
+      isvalidRequest = false
+
+    }
+  }
+  return isvalidRequest;
 
 }
 
