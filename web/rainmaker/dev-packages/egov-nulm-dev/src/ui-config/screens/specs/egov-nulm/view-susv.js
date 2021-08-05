@@ -88,7 +88,7 @@ const getMdmsData = async (dispatch, tenantId) => {
 const getFileUrlDetails = async (state,dispatch,tenantId,response)=>{
   //mdms call
   getMdmsData(dispatch, tenantId);
-
+  if(response.ResponseBody[0].applicationDocument !== null){
  const fileStoreIds = response.ResponseBody[0].applicationDocument.map(docInfo => docInfo.filestoreId).join();
 
 
@@ -150,7 +150,7 @@ const documentsPreview = response.ResponseBody[0].applicationDocument
                         
                           
         documentsPreview &&  dispatch(prepareFinalObject("documentsUploadRedux", documentsUploadRedux));
-
+      }
                      
  
 }
@@ -180,8 +180,11 @@ const getSUSVDetails = async(state, dispatch) =>{
           dispatch(prepareFinalObject(`NulmSusvRequest[${value}]`, "No" ));
         }
       });
-
-      NulmSusvRequest.date = NulmSusvRequest.date.split(" ")[0];
+      if(NulmSusvRequest.date !== null ){
+        NulmSusvRequest.date = NulmSusvRequest.date.split(" ")[0];
+      }else{
+        NulmSusvRequest.date = ""
+      }
 
       dispatch(prepareFinalObject("NulmSusvRequest", NulmSusvRequest));
     }
