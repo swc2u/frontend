@@ -88,69 +88,71 @@ const getMdmsData = async (dispatch, tenantId) => {
 const getFileUrlDetails = async (state,dispatch,tenantId,response)=>{
   //mdms call
   getMdmsData(dispatch, tenantId);
-  if(response.ResponseBody[0].applicationDocument !== null){
-    const fileStoreIds = response.ResponseBody[0].applicationDocument.map(docInfo => docInfo.filestoreId).join();
+
+ const fileStoreIds = response.ResponseBody[0].applicationDocument.map(docInfo => docInfo.filestoreId).join();
 
 
-    const fileUrlPayload =  fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
-    let  documentsUploadRedux ={}
-    const documentsPreview = response.ResponseBody[0].applicationDocument 
-                           && response.ResponseBody[0].applicationDocument.map((docInfo,index) => {
-                             let docObj =  {
-                                           title: docInfo.documentType,
-                                           linkText: "VIEW", 
-                                           link :  (fileUrlPayload &&
-                                                     fileUrlPayload[docInfo.filestoreId] &&
-                                                     getFileUrl(fileUrlPayload[docInfo.filestoreId])) ||
-                                                     "",
-                                            name:   (fileUrlPayload &&
-                                                       fileUrlPayload[docInfo.filestoreId] &&
-                                                       decodeURIComponent(
-                                                         getFileUrl(fileUrlPayload[docInfo.filestoreId])
-                                                           .split("?")[0]
-                                                           .split("/")
-                                                           .pop().slice(13)
-                                                       )) ||
-                                                     `Document - ${index + 1}` 
+ const fileUrlPayload =  fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+ let  documentsUploadRedux ={}
+const documentsPreview = response.ResponseBody[0].applicationDocument 
+                        && response.ResponseBody[0].applicationDocument.map((docInfo,index) => {
+                          let docObj =  {
+                                        title: docInfo.documentType,
+                                        linkText: "VIEW", 
+                                        link :  (fileUrlPayload &&
+                                                  fileUrlPayload[docInfo.filestoreId] &&
+                                                  getFileUrl(fileUrlPayload[docInfo.filestoreId])) ||
+                                                  "",
+                                         name:   (fileUrlPayload &&
+                                                    fileUrlPayload[docInfo.filestoreId] &&
+                                                    decodeURIComponent(
+                                                      getFileUrl(fileUrlPayload[docInfo.filestoreId])
+                                                        .split("?")[0]
+                                                        .split("/")
+                                                        .pop().slice(13)
+                                                    )) ||
+                                                  `Document - ${index + 1}` 
+                                      }
+
+                                      //for populating in update mode
+                                 //     const {viewScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
+                                  //    if(viewScreenMdmsData && viewScreenMdmsData.NULM && viewScreenMdmsData.NULM.SusvDocuments){
+
+                               //         const {SusvDocuments} = viewScreenMdmsData.NULM;
+                                        const documentsDes = ["Identity Proof","Address Proof","Disability Proof"];
+                                     //  const documentsDes = ["NULM_IDENTITY_PROOF","NULM_ADDRESS_PRROF","NULM_DISABILITY_PROOF"];
+                                       
+                                        const indexOfDoc = documentsDes.findIndex(doc =>  doc === docInfo.documentType )
+
+                                          documentsUploadRedux[indexOfDoc] = {                          
+                                          "documents":[
+                                          {
+                                          "fileName":  (fileUrlPayload &&
+                                            fileUrlPayload[docInfo.filestoreId] &&
+                                            decodeURIComponent(
+                                              getFileUrl(fileUrlPayload[docInfo.filestoreId])
+                                                .split("?")[0]
+                                                .split("/")
+                                                .pop().slice(13)
+                                            )) ||
+                                          `Document - ${index + 1}`,
+                                          "fileStoreId": docInfo.filestoreId,
+                                          "fileUrl": fileUrlPayload[docInfo.filestoreId]
                                          }
+                                        ]
+                                       }
+                                   //   }
+
+                            return docObj;
+                        })
+  
+        documentsPreview && dispatch(prepareFinalObject("documentsPreview", documentsPreview));
+                        
+                          
+        documentsPreview &&  dispatch(prepareFinalObject("documentsUploadRedux", documentsUploadRedux));
+
+                     
  
-                                         //for populating in update mode
-                                    //     const {viewScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
-                                     //    if(viewScreenMdmsData && viewScreenMdmsData.NULM && viewScreenMdmsData.NULM.SusvDocuments){
- 
-                                  //         const {SusvDocuments} = viewScreenMdmsData.NULM;
-                                           const documentsDes = ["Identity Proof","Address Proof","Disability Proof"];
-                                        //  const documentsDes = ["NULM_IDENTITY_PROOF","NULM_ADDRESS_PRROF","NULM_DISABILITY_PROOF"];
-                                          
-                                           const indexOfDoc = documentsDes.findIndex(doc =>  doc === docInfo.documentType )
- 
-                                             documentsUploadRedux[indexOfDoc] = {                          
-                                             "documents":[
-                                             {
-                                             "fileName":  (fileUrlPayload &&
-                                               fileUrlPayload[docInfo.filestoreId] &&
-                                               decodeURIComponent(
-                                                 getFileUrl(fileUrlPayload[docInfo.filestoreId])
-                                                   .split("?")[0]
-                                                   .split("/")
-                                                   .pop().slice(13)
-                                               )) ||
-                                             `Document - ${index + 1}`,
-                                             "fileStoreId": docInfo.filestoreId,
-                                             "fileUrl": fileUrlPayload[docInfo.filestoreId]
-                                            }
-                                           ]
-                                          }
-                                      //   }
- 
-                               return docObj;
-                           })
-     
-           documentsPreview && dispatch(prepareFinalObject("documentsPreview", documentsPreview));
-                           
-                             
-           documentsPreview &&  dispatch(prepareFinalObject("documentsUploadRedux", documentsUploadRedux));   
-  }   
 }
 
 const getSUSVDetails = async(state, dispatch) =>{
@@ -179,12 +181,7 @@ const getSUSVDetails = async(state, dispatch) =>{
         }
       });
 
-      if(NulmSusvRequest.date !== null ){
-        NulmSusvRequest.date = NulmSusvRequest.date.split(" ")[0];
-      }else{
-        NulmSusvRequest.date = ""
-      }
-      
+      NulmSusvRequest.date = NulmSusvRequest.date.split(" ")[0];
 
       dispatch(prepareFinalObject("NulmSusvRequest", NulmSusvRequest));
     }
