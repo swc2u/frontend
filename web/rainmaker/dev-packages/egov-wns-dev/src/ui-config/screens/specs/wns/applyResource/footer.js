@@ -576,6 +576,11 @@ if(wnsStatus === null)
     }
   }
 }
+let action = get(
+  state.screenConfiguration.preparedFinalObject,
+  `applyScreen.waterApplication.action`,
+  ''
+);
 
 if(wnsStatus && wnsStatus === "CONNECTION_CONVERSION" || wnsStatus === "WS_CONVERSION"){
   const iswaterConnFomValid = validateFields(
@@ -621,8 +626,11 @@ const usageCategory = get(
 
   } 
 
+  if(action ==='INITIATED'  || action ==='')
+  {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
+  }
   try{
     let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
     if(inWorkflow === false)
@@ -683,15 +691,20 @@ if(!proconnHolderDetail){
   }
  
   
+  
+  if(action ==='INITIATED'  || action ==='')
+  {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
+  }
   try{
     let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
     if(inWorkflow === false)
     {
       let abc = await applyForWater(state, dispatch);
+      window.localStorage.setItem("ActivityStatusFlag","true");
     }
-    window.localStorage.setItem("ActivityStatusFlag","true");
+    
  
   }catch (err){
     if(localStorage.getItem("WNS_STATUS")){
@@ -722,8 +735,11 @@ else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER
     )
     return;
   } 
+  if(action ==='INITIATED'  || action ==='')
+  {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
+  }
   try{
     let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
     if(inWorkflow === false)
@@ -741,7 +757,7 @@ else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER
     console.log("errrr")
   }
 }
-else if (wnsStatus && wnsStatus === "TEMPORARY_DISCONNECTION")
+else if (wnsStatus && wnsStatus === "TEMPORARY_DISCONNECTION" || wnsStatus ==='WS_TEMP_DISCONNECTION')
 {
   const isPropertyValid = validateFields(
     "components.div.children.formwizardFirstStep.children.commentTempSectionDetails.children.cardContent.children.propertyTempIDDetails.children.viewTwo.children",
@@ -790,9 +806,12 @@ else if (wnsStatus && wnsStatus === "TEMPORARY_DISCONNECTION")
   }
 
 
- 
+  //if(action !=='SEND_BACK_TO_CITIZEN' || action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC' )
+  if(action ==='INITIATED'  || action ==='')
+  {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
+  }
   try{
     // call api property search then property-services/property/_update  
     let queryObject = [];//[{ key: "tenantId", value: tenantId }];
@@ -904,7 +923,7 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
                       wnsStatus === "WS_REACTIVATE"||                     
                       wnsStatus === "WS_DISCONNECTION"||
                      // wnsStatus === "TEMPORARY_DISCONNECTION"||                     
-                      wnsStatus === "WS_TEMP_DISCONNECTION"||
+                      //wnsStatus === "WS_TEMP_DISCONNECTION"||
                       wnsStatus === "PERMANENT_DISCONNECTION")){
   const iswaterConnFomValid = validateFields(
     "components.div.children.formwizardFirstStep.children.commentSectionDetails.children.cardContent.children.commentDetails.children.CommentDetails.children",
@@ -926,8 +945,11 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
     return;
   }
  
+  if(action ==='INITIATED'  || action ==='')
+  {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
+  }
   try{
     let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
     if(inWorkflow === false)
@@ -983,8 +1005,11 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     return;
   }
   
+  if(action ==='INITIATED'  || action ==='')
+  {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
+  }
   try{
     // call api property search then property-services/property/_update  
     let queryObject = [];//[{ key: "tenantId", value: tenantId }];
@@ -2125,7 +2150,15 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
           `screenConfiguration.preparedFinalObject.workflow.ProcessInstances[${ProcessInstances.length-1}].action`,
           ''
       );
-      if(action ==='SEND_BACK_TO_CITIZEN')
+      if(action ==='')
+      {
+        action = get(
+          state.screenConfiguration.preparedFinalObject,
+          `applyScreen.waterApplication.action`,
+          ''
+      );
+        }
+      if(action ==='SEND_BACK_TO_CITIZEN' ||action ==='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
       {
         window.localStorage.removeItem("ActivityStatusFlag");
       }
@@ -2143,7 +2176,15 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
           `screenConfiguration.preparedFinalObject.workflow.ProcessInstances[${ProcessInstances.length-1}].action`,
           ''
       );
-      if(action ==='SEND_BACK_TO_CITIZEN')
+      if(action ==='')
+      {
+        action = get(
+          state.screenConfiguration.preparedFinalObject,
+          `applyScreen.waterApplication.action`,
+          ''
+      );
+      }
+      if(action ==='SEND_BACK_TO_CITIZEN' ||action ==='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC' )//"SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC"
       {
         window.localStorage.removeItem("ActivityStatusFlag");
       }
