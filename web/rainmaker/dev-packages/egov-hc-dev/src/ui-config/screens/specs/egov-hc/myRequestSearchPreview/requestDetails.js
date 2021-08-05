@@ -87,17 +87,17 @@ export const requestDetails = getCommonGrayCard({
         required: true
       }
     ),
-    location: getLabelWithValue(
-      {
-        labelName: "Location",
-        labelKey: "HC_LOCATION_LABEL"
-      },
-      {
+    // location: getLabelWithValue(
+    //   {
+    //     labelName: "Location",
+    //     labelKey: "HC_LOCATION_LABEL"
+    //   },
+    //   {
  
-        jsonPath: "myRequestDetails.location",
-        required: true
-      }
-    ),
+    //     jsonPath: "myRequestDetails.location",
+    //     required: true
+    //   }
+    // ),
     locality: getLabelWithValue(
       {
         labelName: "Locality/ Mohalla",

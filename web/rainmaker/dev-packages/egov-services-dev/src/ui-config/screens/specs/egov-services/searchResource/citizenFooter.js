@@ -77,7 +77,7 @@ export const callBackForCancelParkAndCC = (state, dispatch) => {
         state,
         "screenConfiguration.preparedFinalObject.Booking.businessService",
         {}
-    );
+    ); 
     dispatch(
         setRoute(
             `/egov-services/cancelparkccbooking?applicationNumber=${applicationNumber}&tenantId=${

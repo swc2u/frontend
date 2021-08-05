@@ -536,20 +536,22 @@ if(businessServiceData == "GFCP"){
   }
 }
 else{
-  
   if (Cancelstatus == "CANCEL") {
     CheckCancelStatus = Cancelstatus
   }
   else {
     CheckCancelStatus = "null"
   }
-  if(this.props.editableRefundAmount){
+  if(this.props.editableRefundAmount >= 0){
+    console.log("this.props.editableRefundAmount",this.props.editableRefundAmount)
     NumberReturnAmount = Number(this.props.editableRefundAmount)
+    console.log("RefundNumberAmount",NumberReturnAmount)
   }
   else{
     NumberReturnAmount = null
   }
 }
+console.log("NumberReturnAmount=chech-final",NumberReturnAmount)
     const foundFirstLavels = userInfo && userInfo.roles.some(el => el.code === 'BK_CLERK' || el.code === 'BK_DEO');
     const foundSecondLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_SENIOR_ASSISTANT');
     const foundthirdLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_AUDIT_DEPARTMENT');

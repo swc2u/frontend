@@ -399,7 +399,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantName",
         labelKey: "PENSION_EMPLOYEE_PENSION_CN"
       },
-      required:true,
+      required:false,
         minValue:0,
         maxLength:18,
       props: {
@@ -420,7 +420,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantDob",
         labelKey: "PENSION_EMPLOYEE_PENSION_CDOB"
       },
-      required:true,
+      required:false,
       props: {
         inputProps: {
           max: new Date().toISOString().slice(0, 10),
@@ -440,7 +440,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
           labelName: "Select relation Type",
           labelKey: "PENSION_DEPENDENT_TYPEC"
         },
-        required: true,
+        required: false,
        
         jsonPath: "PensionerDetails.claimantRelationship",
         localePrefix: {
@@ -475,11 +475,11 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantMobileNumber",
         labelKey: "PENSION_EMPLOYEE_MOBILE_NUMBER_C"
       },
-      required:true,
+      required:false,
       props: {
         disabled: false,       
       },
-      pattern: getPattern("name"),
+      pattern: getPattern("MobileNo"),
       jsonPath: "PensionerDetails.claimantMobileNumber"
     }),
     
@@ -495,7 +495,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantAddress",
         labelKey: "PENSION_EMPLOYEE_PENSION_CA_LABEL"
       },
-      required: true,
+      required: false,
       minValue:0,
       props: {
         disabled: false,      
@@ -559,7 +559,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantBankIfsc",
         labelKey: "PENSION_BANK_IFSC_C"
       },
-      required:true,
+      required:false,
       props: {
         disabled: false,       
       },
@@ -597,7 +597,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantBankAccountNumber",
         labelKey: "PENSION_EMPLOYEE_PENSION_AN_C"
       },
-      required:true,
+      required:false,
         minValue:0,
         maxLength:18,
       props: {

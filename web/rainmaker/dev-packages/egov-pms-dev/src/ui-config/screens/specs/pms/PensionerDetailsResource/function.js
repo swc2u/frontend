@@ -39,6 +39,7 @@ export const createUpdatePensionerdata = async (state, dispatch) => {
     {
 //updatePensionerDetails
 //validate dob doc and claiment dob
+
       let dob = get(state.screenConfiguration.preparedFinalObject,"PensionerDetails.dob",'')
      // dob = new Date(epochToYmd(dob))
       dob = convertDateToEpoch(dob)
@@ -117,45 +118,106 @@ export const createUpdatePensionerdata = async (state, dispatch) => {
         ));
         return
       } 
-let Isvalid = true //validateFeildsupdatePensioner()
+// let Isvalid = true //validateFeildsupdatePensioner()
 
-      if(Isvalid)
+//       if(Isvalid)
 
+//       {
+//         const response_ = await updatePensionerDetails(state,dispatch);
+//         if(response_)
+//         {
+//           console.log(response_)
+//           let errorMessage = {
+//             labelName:
+//               "Pensioner details save successfully!",
+//             labelKey: "PENSION_SUCCESS_UPDATE_PENSIONER_DETAILS_MESSAGE"
+//           };
+//           dispatch(toggleSnackbar(true, errorMessage, "success"));
+//         }
+//       }
+//       else
+//       {
+//         let errorMessage = {
+//           labelName:
+//             "Please fill all mandatory fields for Pension  Details, then save !",
+//           labelKey: "PENSION_ERR_FILL_PENSION_MANDATORY_FIELDS"
+//         };
+//         dispatch(toggleSnackbar(true, errorMessage, "warning"));
+
+//       }
+      }
+
+      let datavalid = false
+     let claimantName =  get(state.screenConfiguration.preparedFinalObject,"PensionerDetails.claimantName",null)
+     if(claimantName === null || claimantName === "")
+     {
+      datavalid = true
+      const textFields = ["ClaimantName","ClaimantDateofBirth","ClaimantrelationType","ClaimantMobileNumber","ClaimantbankIfsc","claimantbankname","ClaimantAdddress","ClaimantbankAccountNumber"];
+      for (let i = 0; i < textFields.length; i++) {
+      dispatch(handleField(
+        "updatePensionerDetails",
+        `components.div.children.PensionerClaimantDetails.children.cardContent.children.pensionClaimantDetailsConatiner.children.${textFields[i]}`,
+        "required",
+        false
+        ));
+      }
+      let IsValidPensionerClaimantDetails__= validateFields(
+        "components.div.children.PensionerClaimantDetails.children.cardContent.children.pensionClaimantDetailsConatiner.children",
+        state,
+        dispatch,
+        "updatePensionerDetails"
+      );
+     }
+     else
+     {
+      const textFields = ["ClaimantName","ClaimantDateofBirth","ClaimantrelationType","ClaimantMobileNumber","ClaimantbankIfsc","claimantbankname","ClaimantAdddress","ClaimantbankAccountNumber"];
+      for (let i = 0; i < textFields.length; i++) {
+      dispatch(handleField(
+        "updatePensionerDetails",
+        `components.div.children.PensionerClaimantDetails.children.cardContent.children.pensionClaimantDetailsConatiner.children.${textFields[i]}`,
+        "required",
+        true
+        ));
+      }
+     let IsValidPensionerClaimantDetails_= validateFields(
+        "components.div.children.PensionerClaimantDetails.children.cardContent.children.pensionClaimantDetailsConatiner.children",
+        state,
+        dispatch,
+        "updatePensionerDetails"
+      );
+      datavalid = IsValidPensionerClaimantDetails_;
+        // let errorMessage = {
+        //   labelName:
+        //     "Please fill all mandatory fields for Pension  Details, then save !",
+        //   labelKey: "PENSION_ERR_FILL_PENSION_MANDATORY_FIELDS"
+        // };
+        // dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        // return false;
+     }
+      if(datavalid)
       {
-        const response_ = await updatePensionerDetails(state,dispatch);
-        if(response_)
-        {
-          console.log(response_)
-          let errorMessage = {
-            labelName:
-              "Pensioner details save successfully!",
-            labelKey: "PENSION_SUCCESS_UPDATE_PENSIONER_DETAILS_MESSAGE"
-          };
-          dispatch(toggleSnackbar(true, errorMessage, "success"));
-        }
-      }
-      else
-      {
-        let errorMessage = {
-          labelName:
-            "Please fill all mandatory fields for Pension  Details, then save !",
-          labelKey: "PENSION_ERR_FILL_PENSION_MANDATORY_FIELDS"
-        };
-        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+            const response_ = await updatePensionerDetails(state,dispatch);
+            if(response_)
+            {
+              console.log(response_)
+              let errorMessage = {
+                labelName:
+                  "Pensioner details save successfully!",
+                labelKey: "PENSION_SUCCESS_UPDATE_PENSIONER_DETAILS_MESSAGE"
+              };
+              dispatch(toggleSnackbar(true, errorMessage, "success"));
+            }
+          }
+          else
+          {
+            let errorMessage = {
+              labelName:
+                "Please fill all mandatory fields for Pension  Details, then save !",
+              labelKey: "PENSION_ERR_FILL_PENSION_MANDATORY_FIELDS"
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "warning"));
 
-      }
-      }
-      // const response_ = await updatePensionerDetails(state,dispatch);
-      // if(response_)
-      // {
-      //   console.log(response_)
-      //   let errorMessage = {
-      //     labelName:
-      //       "Pensioner details save successfully!",
-      //     labelKey: "PENSION_SUCCESS_UPDATE_PENSIONER_DETAILS_MESSAGE"
-      //   };
-      //   dispatch(toggleSnackbar(true, errorMessage, "success"));
-      // }
+          }
     }
     else{
       let errorMessage = {
