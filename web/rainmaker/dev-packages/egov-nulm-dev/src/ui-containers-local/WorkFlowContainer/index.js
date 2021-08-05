@@ -61,9 +61,9 @@ class WorkFlowContainer extends React.Component {
           true,
           {
             labelName: "Workflow returned empty object !",
-            labelKey: "WRR_WORKFLOW_ERROR"
+            labelKey: "WRR_WORKFLOW_EMPTY_DATA_ERROR"
           },
-          "error"
+          "warning"
         );
       }
     } catch (e) {
