@@ -16,7 +16,7 @@ import {
 import { searchApiCall } from "./functions";
 
 const resetFields = (state, dispatch) => {
-  const textFields = ["applicationId","applicationStatus","fromDate","toDate"];
+  const textFields = ["applicantName","applicationId","applicationStatus","fromDate","toDate"];
   for (let i = 0; i < textFields.length; i++) {
     if (
       `state.screenConfiguration.screenConfig.search-susv.searchForm.children.cardContent.children.searchFormContainer.children.${textFields[i]}.props.value`
@@ -44,6 +44,24 @@ export const searchForm = getCommonCard({
     labelKey: "STORE_HOME_SEARCH_RESULTS_DESC",
   }),
   searchFormContainer: getCommonContainer({ 
+    applicantName: {
+      ...getTextField({
+        label: {
+          labelName: "Name of Applicant",
+          labelKey: "NULM_SEP_APPLICANT_NAME"
+        },
+        placeholder: {
+          labelName: "Enter Name of Applicant",
+          labelKey: "NULM_SEP_APPLICANT_NAME_PLACEHOLDER"
+        },
+      //  pattern: getPattern("Amount"),
+        gridDefination: {
+          xs: 12,
+          sm: 4,
+        },
+        jsonPath: "searchScreen.nameOfApplicant"
+      })
+    },
     applicationId: {
       ...getTextField({
         label: {
