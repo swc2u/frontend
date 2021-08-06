@@ -14,6 +14,11 @@ import get from "lodash/get";
 import set from "lodash/set";
 import store from "redux/store";
 import { getCurrentFinancialYear } from "../ui-config/screens/specs/utils";
+import {
+    localStorageGet,
+    localStorageSet,
+    getapplicationNumber,
+} from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "./api";
 
 const role_name = JSON.parse(getUserInfo()).roles[0].code;
@@ -935,6 +940,10 @@ export const createUpdateWtbApplication = async (state, dispatch, action) => {
                 dispatch(prepareFinalObject("Booking", response.data));
                 setapplicationNumber(response.data.bkApplicationNumber);
                 setApplicationNumberBox(state, dispatch);
+                if(response.data.businessService == "BWT"){
+                    dispatch(prepareFinalObject("WaterTanker.quantity", response.data.quantity));
+                    localStorageSet("WaterTankerQuantity", response.data.quantity);
+                }
                 return { status: "success", data: response.data };
             } else {
                 return { status: "fail", data: response.data };

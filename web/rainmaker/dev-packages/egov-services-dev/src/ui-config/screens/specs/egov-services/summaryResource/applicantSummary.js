@@ -7,10 +7,14 @@ import {
   getLabelWithValue,
   convertEpochToDate,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { gotoApplyWithStep } from "../../utils/index";
+
+import { gotoApplyWithStep,checkValueForNA } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
+import get from "lodash/get";
+
 
 export const applicantSummary = getCommonGrayCard({
+
   header: {
       uiFramework: "custom-atoms",
       componentPath: "Container",
@@ -62,6 +66,7 @@ export const applicantSummary = getCommonGrayCard({
           // },
       },
   },
+  
   cardOne: {
       uiFramework: "custom-containers",
       componentPath: "MultiItem",
@@ -85,7 +90,8 @@ export const applicantSummary = getCommonGrayCard({
                       },
                       {
                           jsonPath: "Booking.bkEmail",
-                      }
+                          callBack: checkValueForNA
+                      },
                   ),
                   applicantMobile: getLabelWithValue(
                       {

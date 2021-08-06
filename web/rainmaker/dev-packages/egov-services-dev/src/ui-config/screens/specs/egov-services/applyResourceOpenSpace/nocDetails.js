@@ -50,7 +50,7 @@ export const personalDetails = getCommonCard({
                 jsonPath: "Booking.bkApplicantName",
             }),
         },
-        bkEmail: {
+        bkEmail: { 
             ...getTextField({
                 label: {
                     labelName: "Email Address",
@@ -60,14 +60,11 @@ export const personalDetails = getCommonCard({
                     labelName: "Enter Email Address",
                     labelKey: "BK_OSB_EMAIL_PLACEHOLDER",
                 },
-                required: true,
+                required: false,
                 pattern: getPattern("Email"),
                 errorMessage: "Please check the missing/invalid fields, then proceed!",
                 requiredMessage: "required Message",
                 jsonPath: "Booking.bkEmail",
-                props: {
-                    required: true,
-                },
             }),
         },
         bkMobileNumber: {

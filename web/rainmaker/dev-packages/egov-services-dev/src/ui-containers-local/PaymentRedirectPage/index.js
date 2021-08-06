@@ -11,9 +11,34 @@ import {
     downloadCertificate,
     
 } from "../../ui-config/screens/specs/utils"; 
+import {
+    localStorageGet,
+    getUserInfo
+  } from "egov-ui-kit/utils/localStorageUtils";
 
 class PaymentRedirect extends Component {
     updateApiCall = async (apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)=>{
+const {state} = this.props
+console.log("stateInupdateApiCall",state)
+        if(bookingType === "BWT") {
+            // let updatedQuantity = get(
+            //     state,
+            //     "state.screenConfiguration.preparedFinalObject.WaterTanker.quantity",
+            //     "NotFound"
+            // );
+
+            let updatedQuantity = JSON.parse(
+                localStorageGet("WaterTankerQuantity")
+              );
+
+        console.log("updatedQuantityInUpdateFunction", updatedQuantity)
+if(updatedQuantity !== null && updatedQuantity !== undefined && updatedQuantity!== "NotFound"){
+set(payload, "quantity", updatedQuantity);
+console.log("SetQuantityForUpdateFunction",updatedQuantity)
+console.log("UpdateFunctionWTPayload--one",payload)
+}
+console.log("UpdateFunctionWTPayload--two",payload)
+        }
         const res= await  httpRequest(
               "post",
               apiUrl,
@@ -30,6 +55,8 @@ class PaymentRedirect extends Component {
       }
     componentDidMount = async () => {
         let { search } = this.props.location;
+        const {state} = this.props
+        console.log("stateInComponentDidMount",state)
         const txnQuery = search
             .split("&")[0]
             .replace("eg_pg_txnid", "transactionId");
@@ -147,7 +174,7 @@ class PaymentRedirect extends Component {
                     set(payload, "roomBusinessService", "BKROOM");
                     apiUrl = "/bookings/community/room/_update";
 
-                }else{
+                }else{ 
                     let response = await getSearchResultsView([
                         { key: "tenantId", value: tenantId },
                         { key: "applicationNumber", value: consumerCode },
@@ -208,6 +235,23 @@ class PaymentRedirect extends Component {
                     })
                 })
                 } else if(bookingType === "BWT"){
+                
+                    // let updatedQuantity = get(
+                    //     state,
+                    //     "state.screenConfiguration.preparedFinalObject.WaterTanker.quantity",
+                    //     null
+                    // );
+                    let updatedQuantity = JSON.parse(
+                        localStorageGet("WaterTankerQuantity")
+                      );
+
+                console.log("updatedQuantityInComponentDidMount", updatedQuantity)
+if(updatedQuantity !== null && updatedQuantity !== undefined){
+    set(payload, "quantity", updatedQuantity);
+    console.log("SetQuantityForComponentdidMount",updatedQuantity)
+}
+                     
+                console.log("UpdtedRequestBodyForWT",payload)
                    
                     let paymentReceipt= await downloadReceipt(payload, consumerCode, tenantId, 'true')
                                     
@@ -235,12 +279,18 @@ class PaymentRedirect extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    const { screenConfiguration } = state;
+    console.log("UseStateOnCitizenSide",screenConfiguration)
+    return { state,screenConfiguration };
+  };
+
 const mapDispatchToProps = (dispatch) => {
     return {
         setRoute: (route) => dispatch(setRoute(route)),
     };
 };
 
-export default connect(null, mapDispatchToProps)(withRouter(PaymentRedirect));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(PaymentRedirect));
 
 
