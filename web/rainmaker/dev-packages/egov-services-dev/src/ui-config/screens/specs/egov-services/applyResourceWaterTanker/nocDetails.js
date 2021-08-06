@@ -42,7 +42,7 @@ export const personalDetails = getCommonCard({
                 errorMessage: "Please check the missing/invalid fields, then proceed!",
                 jsonPath: "Booking.bkApplicantName",
             }),
-        },
+        }, 
         bkEmail: {
             ...getTextField({
                 label: {

@@ -550,6 +550,9 @@ export const getReceiptUrlFromFilestoreID = async (fileStoreId, mode, tenantId) 
 
 }
 
+export const checkValueForNA = value => {
+    return value ? value : "NA";
+  };
 
 export const downloadReceiptFromFilestoreID = (fileStoreId, mode, tenantId) => {
     getFileUrlFromAPI(fileStoreId, tenantId).then(async (fileRes) => {
