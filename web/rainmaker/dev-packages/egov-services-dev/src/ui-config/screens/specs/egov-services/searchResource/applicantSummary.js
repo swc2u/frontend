@@ -7,7 +7,7 @@ import {
   getLabelWithValue,
   convertEpochToDate,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { gotoApplyWithStep } from "../../utils/index";
+import { gotoApplyWithStep,checkValueForNA } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 
 export const applicantSummary = getCommonGrayCard({
@@ -76,7 +76,7 @@ export const applicantSummary = getCommonGrayCard({
                       },
                       {
                           jsonPath: "Booking.bkApplicantName",
-                      }
+                      }  
                   ),
                   applicantEmail: getLabelWithValue(
                       {
@@ -85,6 +85,7 @@ export const applicantSummary = getCommonGrayCard({
                       },
                       {
                           jsonPath: "Booking.bkEmail",
+                          callBack: checkValueForNA
                       }
                   ),
                   applicantMobile: getLabelWithValue(
