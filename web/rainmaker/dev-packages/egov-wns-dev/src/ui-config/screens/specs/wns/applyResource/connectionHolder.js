@@ -251,7 +251,8 @@ import {
         
         disabled: IsEditP,
     },
-      pattern: getPattern("Name"),
+     // pattern: getPattern("Name"),
+      pattern: getPattern("NameWater"),
       errorMessage: "WS_CONN_HOLDER_OWN_DETAIL_OWN_NAME_LABEL_VALIDATION",
       jsonPath: "connectionHolders[0].proposedName",
       gridDefination: {

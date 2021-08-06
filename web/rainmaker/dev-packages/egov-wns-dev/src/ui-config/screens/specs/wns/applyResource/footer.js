@@ -2416,8 +2416,8 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
         dispatch,
         "apply"
       );
-      IvalidconstructionCharges = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.constructionCharges.isFieldValid",false)
-      IvalidadditionalCharges = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.additionalCharges.isFieldValid",false)
+      IvalidconstructionCharges = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.constructionCharges.isFieldValid",true)
+      IvalidadditionalCharges = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.additionalCharges.isFieldValid",true)
       let additionalCharges =parseInt(get(state, "screenConfiguration.preparedFinalObject.applyScreen.waterApplication.additionalCharges",0));
       let constructionCharges =parseInt(get(state, "screenConfiguration.preparedFinalObject.applyScreen.waterApplication.constructionCharges",0));
       if(additionalCharges === 0 && constructionCharges === 0)
@@ -2425,10 +2425,16 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
         IvalidconstructionCharges = true
         IvalidadditionalCharges = true
       }
+      else if(additionalCharges < 0 || constructionCharges < 0)
+      {
+        IvalidconstructionCharges = false
+        IvalidadditionalCharges = false 
+
+      }
       let waterT = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
       let sewerageT = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
       let tubewellT = get(state.screenConfiguration.preparedFinalObject, "applyScreen.tubewell", false);
-      if(sewerageT === false || tubewellT === false )
+      if((sewerageT === false && tubewellT === false) && waterT === false )
       {
         IvalidconstructionCharges = true
         IvalidadditionalCharges = true
