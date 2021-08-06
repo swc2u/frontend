@@ -63,7 +63,7 @@ export const SUSVDetails = getCommonCard({
           labelName: "Enter Mother Name",
           labelKey: "NULM_SEP_MOTHER_NAME_PLACEHOLDER"
         },
-        required: true,
+        // required: true,
         pattern: getPattern("Name") || null,
         jsonPath: "NulmSusvRequest.motherName"
       })
@@ -166,7 +166,7 @@ export const SUSVDetails = getCommonCard({
       jsonPath: "NulmSusvRequest.category",
       type: "array",
       props: {
-        required: true,
+        // required: true,
         jsonPath: "NulmSusvRequest.category",
         label: { name: "Caste of Applicant", key: "NULM_SMID_CASTE_OF_APPLICANT" },
         buttons: [
@@ -223,7 +223,7 @@ export const SUSVDetails = getCommonCard({
           labelName: "Enter Permanent Address of Street Vendor",
           labelKey: "NULM_SUSV_PERMANENT_ADDRESS_PLACEHOLDER"
         },
-        required: true,
+        // required: true,
         pattern: getPattern("Address") || null,
         jsonPath: "NulmSusvRequest.permanentAddress"
       })
@@ -254,7 +254,7 @@ export const SUSVDetails = getCommonCard({
           labelName: "Enter Qualification",
           labelKey: "NULM_SEP_QUALIFACATION_PLACEHOLDER"
         },
-        required: true,
+        // required: true,
         pattern: getPattern("Address") || null,
         //applyScreenMdmsData
         sourceJsonPath:
@@ -425,7 +425,7 @@ export const SUSVDetails = getCommonCard({
           labelName: "Enter Name of Nominee of street Vendorr",
           labelKey: "NULM_SUSV_NAME_OF_NOMINEE_PLACEHOLDER"
         },
-        required: true,
+        // required: true,
         pattern: getPattern("Name") || null,
         jsonPath: "NulmSusvRequest.nameOfNominee"
       })
