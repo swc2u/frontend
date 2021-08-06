@@ -132,6 +132,6 @@
     "jspdf-autotable": "^3.5.13",
     "react-collapsible": "^2.8.1",
 	"react-csv": "^2.0.3",
-	"react-image-lightbox": "^5.1.4",
+	"react-image-lightbox": "^5.1.4"
   }
 }
