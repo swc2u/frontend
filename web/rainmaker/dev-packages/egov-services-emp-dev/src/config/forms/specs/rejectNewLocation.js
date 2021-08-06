@@ -12,7 +12,7 @@ const formConfig = {
       },
     
       businessService: {
-        id: "booking-type",
+        id: "booking-type",   
         jsonPath: "NewLocationDetails.businessService",
         value:''
       },
@@ -48,12 +48,12 @@ const formConfig = {
       },
     },
     submit: {
-      type: "submit",
+      type: "submit",     
       label: "CS_COMMON_SUBMIT",
       id: "reopencomplaint-submit-action",
     },
     action: "_update",
-    redirectionRoute: "/egov-services/application-rejected",
+    redirectionRoute: "/egov-services/NewLocationApplication-rejected",
     saveUrl: "/bookings/newLocation/_update",
   };
   

@@ -9,6 +9,7 @@ import { httpRequest } from "../../../../../ui-utils/api";
 import { convertDateToEpoch, validateFields } from "../../utils";
 import { ifUserRoleExists } from "../../utils";
 import {  getUserInfo} from "egov-ui-kit/utils/localStorageUtils";
+import { WNSConfigName} from "../../../../../ui-utils/commons";
 export const callPGService = async (state, dispatch) => {
   const isAdvancePaymentAllowed =get(state, "screenConfiguration.preparedFinalObject.businessServiceInfo.isAdvanceAllowed");
   const tenantId = getQueryArg(window.location.href, "tenantId");
@@ -50,7 +51,9 @@ export const callPGService = async (state, dispatch) => {
 
 
 const userInfo = JSON.parse(getUserInfo());
-const user =  (businessService ==='WS.ONE_TIME_FEE' || businessService ==="WS" || businessService ==="SW.ONE_TIME_FEE") ?
+let  WNSConfigName_= WNSConfigName()
+    let bservice = WNSConfigName_.ONE_TIME_FEE_WS
+const user =  (businessService ===bservice || businessService ==="WS" || businessService ===WNSConfigName_.ONE_TIME_FEE_SW) ?
 {
 
   name: userInfo.name,
@@ -111,7 +114,9 @@ const user =  (businessService ==='WS.ONE_TIME_FEE' || businessService ==="WS" |
         searchResponse,
         "Payments[0].paymentDetails[0].receiptNumber"
       );
-if(businessService ==='WS.ONE_TIME_FEE' || businessService ==="SW.ONE_TIME_FEE")
+      let  WNSConfigName_= WNSConfigName()
+    let bservice = WNSConfigName_.ONE_TIME_FEE_WS
+if(businessService ===bservice || businessService ===WNSConfigName_.ONE_TIME_FEE_SW)
 {
   dispatch(
     setRoute(
@@ -251,6 +256,14 @@ const updatePayAction = async (
 const callBackForPay = async (state, dispatch) => {
   let isFormValid = true;
   const isAdvancePaymentAllowed =get(state, "screenConfiguration.preparedFinalObject.businessServiceInfo.isAdvanceAllowed");
+  let tabname = 'capturePaymentDetails';
+  let businessService = getQueryArg(window.location.href, "businessService");
+  let  WNSConfigName_= WNSConfigName()
+    let bservice = WNSConfigName_.ONE_TIME_FEE_WS
+  if(businessService ===bservice || businessService ===WNSConfigName_.ONE_TIME_FEE_SW || businessService.includes("SW") || businessService.includes("WS"))
+  {
+    tabname = 'capturePaymentDetailswns'
+  }
   const roleExists = ifUserRoleExists("CITIZEN");
   if (roleExists) {
     alert("You are not Authorized!");
@@ -273,7 +286,7 @@ const callBackForPay = async (state, dispatch) => {
     fieldsToValidate
       .map(curr => {
         return validateFields(
-          `components.div.children.formwizardFirstStep.children.paymentDetails.children.cardContent.children.capturePaymentDetails.children.cardContent.children.tabSection.props.tabs[${selectedTabIndex}].tabContent.${selectedPaymentMode}.children.${curr}.children`,
+          `components.div.children.formwizardFirstStep.children.paymentDetails.children.cardContent.children.${tabname}.children.cardContent.children.tabSection.props.tabs[${selectedTabIndex}].tabContent.${selectedPaymentMode}.children.${curr}.children`,
           state,
           dispatch,
           "pay"

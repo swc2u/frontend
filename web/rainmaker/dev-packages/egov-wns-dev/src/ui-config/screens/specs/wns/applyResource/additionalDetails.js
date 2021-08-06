@@ -126,7 +126,10 @@ export const additionDetails =(Disabled)=> getCommonCard({
               state.screenConfiguration.preparedFinalObject,
               "applyScreen.property.address.locality.code"
             )
-             
+             if(sectotecode.value)
+             {
+              sectotecode = sectotecode.value
+             }
             let ledgerGroup = `${sectotecode}${action.value}`
             dispatch(
               prepareFinalObject(
@@ -461,6 +464,55 @@ export const additionDetails =(Disabled)=> getCommonCard({
         section:"SECURITY",
         jsonPath: "applyScreen.waterApplication.isFerruleApplicable"
       },
+      additionalCharges: getTextField({
+        label: {
+          labelKey: "WS_ADDN_DETAILS_ADDITIONAL_CHARGES_LABEL"
+        },
+        placeholder: {
+          labelKey: "WS_ADDN_DETAILS_ADDITIONAL_CHARGES_LABEL"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        pattern: getPattern("Amount"),
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.waterApplication.additionalCharges"
+      }),
+      constructionCharges: getTextField({
+        label: {
+          labelKey: "WS_ADDN_DETAILS_CONSTRUCTION_CHARGES_LABEL"
+        },
+        placeholder: {
+          labelKey: "WS_ADDN_DETAILS_CONSTRUCTION_CHARGES_LABEL"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        pattern: getPattern("Amount"),
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.waterApplication.constructionCharges"
+      }),
+      isMeterStolen: {
+        uiFramework: "custom-containers-local",
+        moduleName: "egov-wns",
+        componentPath: "CheckboxContainerConnHolder",
+        gridDefination: { xs: 12, sm: 6 },
+        props: {
+          label: {
+            name: "Is this is a case of theft of meter",
+            key: "WS_ADDN_DETAILS_IS_METER_STOLEN",
+          },
+          jsonPath: "applyScreen.waterApplication.isMeterStolen",
+          required: false,
+          isChecked: false
+        },
+        type: "array",
+        jsonPath: "applyScreen.waterApplication.isMeterStolen"
+      },
     }),
   }),
   activationDetailsContainer: getCommonGrayCard({
@@ -548,6 +600,25 @@ export const additionDetails =(Disabled)=> getCommonCard({
         pattern: /^[0-9]\d{0,9}(\.\d{1,3})?%?$/,
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "applyScreen.additionalDetails.initialMeterReading"
+      }),
+      lastMeterReading: getTextField({
+        label: {
+          labelKey: "WS_ADDN_DETAILS_INITIAL_METER_READING_LAST"
+        },
+        placeholder: {
+          labelKey: "WS_ADDN_DETAILS_INITIAL_METER_READING_LAST_PLACEHOLDER"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        props: {         
+          disabled: Disabled
+        },
+        pattern: /^[0-9]\d{0,9}(\.\d{1,3})?%?$/,
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.additionalDetails.lastMeterReading"
       }),
       meterCount: getTextField({
         label: {
@@ -754,6 +825,22 @@ export const additionDetails =(Disabled)=> getCommonCard({
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "applyScreen.proposedInitialMeterReading"
       }),
+      proposedLastMeterReading: getTextField({
+        label: {
+          labelKey: "WS_PROP_ADDN_DETAILS_LAST_METER_READING"
+        },
+        placeholder: {
+          labelKey: "WS_PROP_ADDN_DETAILS_LAST_METER_READING_PLACEHOLDER"
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: false,
+        pattern: /^[0-9]\d{0,9}(\.\d{1,3})?%?$/,
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "applyScreen.proposedLastMeterReading"
+      }),
       PropmeterCount: getTextField({
         label: {
           labelKey: "WS_PROP_ADDN_DETAILS_INITIAL_METER_COUNT"
@@ -886,6 +973,14 @@ const showHideFeilds = (dispatch, value) => {
     handleField(
       "apply",
       "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.initialMeterReading",
+      "visible",
+      value
+    )
+  );
+  dispatch(
+    handleField(
+      "apply",
+      "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.lastMeterReading",
       "visible",
       value
     )

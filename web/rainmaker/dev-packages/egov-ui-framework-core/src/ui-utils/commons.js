@@ -213,9 +213,18 @@ export const replaceStrInPath = (inputString, search, replacement) => {
 };
 
 export const getFileUrlFromAPI = async (fileStoreId,tenantId) => {
+
+  if(process.env.REACT_APP_NAME !== "Citizen")
+  {
+    if(tenantId === undefined || tenantId === null)
+    tenantId = tenantId || commonConfig.tenantId.length > 2 ? commonConfig.tenantId.split('.')[0] : commonConfig.tenantId
+  }
+  else{
+    tenantId = tenantId || commonConfig.tenantId.length > 2 ? commonConfig.tenantId.split('.')[0] : commonConfig.tenantId
+  }
   const queryObject = [
   	//{ key: "tenantId", value: tenantId||commonConfig.tenantId },
-    { key: "tenantId", value: tenantId || commonConfig.tenantId.length > 2 ? commonConfig.tenantId.split('.')[0] : commonConfig.tenantId },
+    { key: "tenantId", value: tenantId },
     { key: "fileStoreIds", value: fileStoreId }
   ];
   try {
@@ -355,16 +364,16 @@ export const setBusinessServiceDataToLocalStorage = async (
         JSON.stringify(get(payload, "BusinessServices"))
       );
     } else {
-      dispatch(
-        toggleSnackbar(
-          true,
-          {
-            labelName: "Business Service returned empty object",
-            labelKey: "ERR_NOT_AUTHORISED_BUSINESS_SERVICE"
-          },
-          "error"
-        )
-      );
+      // dispatch(
+      //   toggleSnackbar(
+      //     true,
+      //     {
+      //       labelName: "Business Service returned empty object",
+      //       labelKey: "ERR_NOT_AUTHORISED_BUSINESS_SERVICE"
+      //     },
+      //     "error"
+      //   )
+      // );
     }
     dispatch(toggleSpinner());
   } catch (e) {

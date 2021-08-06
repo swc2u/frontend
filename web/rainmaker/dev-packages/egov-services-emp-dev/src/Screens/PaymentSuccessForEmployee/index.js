@@ -31,8 +31,6 @@ stateCode :"" ,
 			 mcGSTN : ""
   }  
   }
-
-
   NumInWords = (number) => {
 		const first = [
 			"",
@@ -99,127 +97,11 @@ stateCode :"" ,
 		}
 		return word + "Rupees Only";
 	};
-
-
   Submit = async () => {
 
 	this.props.history.push(`/egov-services/all-applications`);
     window.location.reload(); 
-
-//   alert("comesInSubmit Function")
-//    let { conJsonSecond,conJsonfirst,updatePACCApplication, documentMap,createAppData, bookingData, venueType,prepareFinalObject,createPACCApplicationData,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,ReasonForDiscount} = this.props;
-// console.log("AllPropsOfSubmitPage--",this.props)	   
-//    let data = createAppData.data
-// 		console.log("data--",data)
-//         // let data  = dataOne;
-//         // console.log("data--",data),
-//         prepareFinalObject("CreatePaccAppData",data);
-//         let fid = documentMap ? Object.keys(documentMap) : ""
-//         const { firstName, userInfo, email, mobileNo, surcharge, fromDate, toDate, utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, locality, residenials } = this.props;
-     
-//         if (data) {
-// 			console.log("HereIsData--",data)
-//             let Booking = {
-// 				bkRemarks: data.bkRemarks,
-// 				bkResidentialOrCommercial: data.bkResidentialOrCommercial,
-// 				bkMaterialStorageArea: data.bkMaterialStorageArea,
-// 				discount:data.discount,
-// 				bkPlotSketch:data.bkPlotSketch,
-//                 bkBookingType: data.bkBookingType,
-//                 bkBookingVenue: data.bkBookingVenue,
-//                 bkApplicantName: data.bkApplicantName,
-//                 bkMobileNumber: data.bkMobileNumber,
-// 				bkDimension: data.bkDimension,
-// 				bkPaymentStatus: "SUCCESS",
-//                 bkLocation: data.bkLocation,
-//                 bkFromDate: data.bkFromDate,
-//                 bkToDate: data.bkToDate,
-//                 bkCleansingCharges: data.bkCleansingCharges,
-//                 bkRent: data.bkRent,
-//                 bkSurchargeRent: data.bkSurchargeRent,
-//                 bkUtgst: data.bkUtgst,
-//                 bkCgst: data.bkCgst,
-//                 bkSector: data.bkSector,
-//                 bkEmail: data.bkEmail,
-//                 bkHouseNo: data.bkHouseNo,
-//                 bkBookingPurpose: data.bkBookingPurpose,
-//                 bkApplicationNumber: data.bkApplicationNumber,
-//                 bkCustomerGstNo: data.bkCustomerGstNo ? data.bkCustomerGstNo : 'NA',
-//                 "wfDocuments": [{
-//                     "fileStoreId": fid[0]
-//                 }],
-//                 "tenantId": userInfo.tenantId,
-//                 "bkAction": data.bkApplicationStatus == "OFFLINE_RE_INITIATED" ? "OFFLINE_MODIFY" : "OFFLINE_APPLY",
-// 				"businessService": "PACC",
-// 				"reInitiateStatus": false,
-// 				"financialYear": "2020-2021",
-// 				"bkBankAccountNumber":data.bkBankAccountNumber,
-// 				"bkBankName":data.bkBankName,
-// 				"bkIfscCode":data.bkIfscCode,
-// 				"bkAccountType":data.bkAccountType,
-// 				"bkBankAccountHolder":data.bkBankAccountHolder,
-// 				"bkNomineeName": data.bkNomineeName
-//             }
-
-
-//             if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
-// 				let slotArray = []
-// 				let checkslotArray = []
-// 				// if(wholeDaySlot != "notFound" && wholeDaySlot != "notFound"){
-// 				// 	console.log("OneDay")
-// 				// 	checkslotArray[0] = {"slot":"9AM - 1PM"}
-// 				// 	checkslotArray[1] = {"slot": "1PM - 5PM"}
-// 				// 	checkslotArray[2] = {"slot": "5PM - 9PM"}
-// 				// }
-// 				if(SecTimeSlotFromTime != "notFound" && SecTimeSlotToTime != "notFound"){
-// 					console.log("secondTimeSlot")
-// 					slotArray[0] = conJsonfirst,
-// 					slotArray[1] = conJsonSecond //conJsonSecond,conJsonfirst
-				
-// 					checkslotArray[0] = this.props.first,
-//                      checkslotArray[1] = this.props.second
-// 				}
-// 				else{
-// 					console.log("oneTimeSlot")
-// 					checkslotArray[0] = {
-// 					"slot": bookingData.bkFromTime + '-' + firstToTimeSlot
-// 					}
-// 				}
-// 				console.log("slotArray_",slotArray)   //checkslotArray
-// 				console.log("checkslotArray",checkslotArray)
-// 				Booking.timeslots = checkslotArray,
-//                 Booking.bkDuration = "HOURLY",
-//                 Booking.bkFromDate = bookingData.bkFromDate,
-//                 Booking.bkToDate = bookingData.bkToDate,
-//                 Booking.bkFromTime = bookingData.bkFromTime,
-//                 Booking.bkToTime = bookingData.bkToTime
-//             }
-//             else if (venueType == "Community Center" && (!bookingData) && (!bookingData.bkFromTime)) {
-//                 Booking.timeslots = [{
-//                     "slot": "9:00 AM - 8:59 AM"
-//                 }],
-//                     Booking.bkDuration = "FULLDAY"
-//             }
-
-// console.log("Booking-requestBody--",Booking)
-
-//  await updatePACCApplication(
-//                 {
-//                     "applicationType": "PACC",
-//                     "applicationStatus": "",
-//                     "applicationId": data.bkApplicationNumber,
-//                     "tenantId": userInfo.tenantId,
-//                     "Booking": Booking
-// 				});
-				
-//             this.props.history.push(`/egov-services/create-success-pcc`);
-//         }
   };
-//   componentDidMount = async () => {   
-
-
-//   }
-
 componentDidMount = async () => {  
     let {userInfo,fetchDataAfterPayment} = this.props
       let mdmsBody = {
@@ -246,7 +128,7 @@ componentDidMount = async () => {
         "_search",[],
         mdmsBody
       );
-      console.log(payloadRes, "hsncodeAndAll");
+     
 
 	  let mdmsBodyTwo = {
 		MdmsCriteria: {
@@ -272,16 +154,16 @@ componentDidMount = async () => {
 		"_search",[],
 		mdmsBodyTwo
 	);
-	console.log(payloadResTwo, "MCGSTnumberDetail");
+	
 
 let pdfDetails = payloadResTwo.MdmsRes.Booking.PDF_BOOKING_DETAILS	
-console.log("pdfDetails-",pdfDetails)   //stateCode  placeOfService  mcGSTN
+
 
 this.setState({
 stateCode : pdfDetails[0].stateCode,
 placeOfService : pdfDetails[0].placeOfService,
 mcGSTN : pdfDetails[0].mcGSTN
-},console.log("thisStatestateCode",this.state.stateCode,this.state.placeOfService,this.state.mcGSTN))
+})
 
     
     let samparkDetail = payloadRes.MdmsRes.Booking.E_SAMPARK_BOOKING
@@ -312,76 +194,88 @@ mcGSTN : pdfDetails[0].mcGSTN
     
     
       }
-
-downloadPermissionButton = async (e) => {
-	console.log("comInFunction")
-  await this.downloadPermissionLetter();
-	   const {DownloadBWTApplicationDetails,userInfo,EmpPaccPermissionLetter}=this.props;
-   
-	   var documentsPreview = [];
-	   let documentsPreviewData;
-	   if (EmpPaccPermissionLetter && EmpPaccPermissionLetter.filestoreIds.length > 0) {	
-		 documentsPreviewData = EmpPaccPermissionLetter.filestoreIds[0];
-		   documentsPreview.push({
-			 title: "DOC_DOC_PICTURE",
-			 fileStoreId: documentsPreviewData,
-			 linkText: "View",
-		   });
-		   let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-		   let fileUrls =
-			 fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-		   
-	 
-		   documentsPreview = documentsPreview.map(function (doc, index) {
-			 doc["link"] =
-			   (fileUrls &&
-				 fileUrls[doc.fileStoreId] &&
-				 fileUrls[doc.fileStoreId].split(",")[0]) ||
-			   "";
-			 
-			 doc["name"] =
-			   (fileUrls[doc.fileStoreId] &&
-				 decodeURIComponent(
-				   fileUrls[doc.fileStoreId]
-					 .split(",")[0]
-					 .split("?")[0]
-					 .split("/")
-					 .pop()
-					 .slice(13)
-				 )) ||
-			   `Document - ${index + 1}`;
-			 return doc;
-		   });
-	   
-		   setTimeout(() => {
-			 window.open(documentsPreview[0].link);
-		   }, 100);
-		   
-		 }
-	 }
-
  downloadPermissionLetter = async (e) => {
-		console.log("comeInAnotherFunction")
+		
 		const { downloadPaccPermissionLetter, userInfo,createPACCApplicationData,documentMap,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE} = this.props;
 	
 		let applicationDetails = createPACCApplicationData ? createPACCApplicationData : 'dataNotFound';
-		console.log("applicationDetails--",applicationDetails)
+		
 	
+		let offlineCardNum = "Not Applicable";
+		let createdCardNum;
+		let chequeNo = "Not Applicable";
+        let chequeDate = "Not Applicable";      
+        let demandDraftNo = "Not Applicable";  
+        let demandDraftDate = "Not Applicable";
+		let CardtransactionNumber = "Not Applicable"
+		let complaintCountRequest = {
+			applicationNumber: applicationDetails.bkApplicationNumber,
+			uuid: userInfo.uuid,
+			applicationStatus: "",
+			mobileNumber: "",
+			bookingType: "",
+			tenantId: userInfo.tenantId,
+		  };
+
+		  
+	  
+		  let dataforSectorAndCategory = await httpRequest(
+			"bookings/api/employee/_search",
+			"_search",
+			[],
+			complaintCountRequest 
+		  );
+		  
+
+		if(this.props.offlinePayementMode == "CARD" || this.props.offlinePayementMode == "Card"){
+			  createdCardNum = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+			  ? dataforSectorAndCategory.bookingsModelList[0].cardNumber
+			  : "NA";		  
+
+			  offlineCardNum = `**** **** **** ${createdCardNum}`
+			  
+            	
+				CardtransactionNumber = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+	? dataforSectorAndCategory.bookingsModelList[0].transactionNumber
+	: "NA";	
+				
+		}
+       else{
+		offlineCardNum = "Not Applicable"
+       } 
 	
+	   if(this.props.offlinePayementMode == "DD"){
+		demandDraftNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+		? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
+		
+		demandDraftDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+		? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
+		
+	}
+	if(this.props.offlinePayementMode == "CHEQUE"){
+		chequeNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+		? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
+		
+
+		chequeDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+		? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
+		
+	}
+
 		let Newugst;
 		let perFind = 50;
 		let ugst = PACC_TAX 
 		let find50Per = (perFind/100) * ugst
-		console.log("find50Per--",find50Per)		
+		
 		let findNumOrNot = Number.isInteger(find50Per); 
-		console.log("findNumOrNot--",findNumOrNot)
+		
 		if(findNumOrNot == true){
 		  Newugst = find50Per
-		  console.log("trueCondition")
+		  
 		}
 		else{
 		  Newugst = find50Per.toFixed(2);
-		  console.log("second-Newugst-",Newugst)
+		  
 		}
 	
 		let approverName;
@@ -395,7 +289,7 @@ downloadPermissionButton = async (e) => {
 	if(documentMap !== undefined && documentMap !== null){
 	
 	  checkDocumentUpload = Object.entries(documentMap).length === 0;
-	  console.log("checkDocumentUpload",checkDocumentUpload)
+	  
 	
 	
 	  if(checkDocumentUpload == false){
@@ -449,9 +343,15 @@ downloadPermissionButton = async (e) => {
 				  "totalgst": PACC_TAX,
 				  "refundableCharges": this.props.REFUNDABLE_SECURITY,
 			 	  "totalPayment": this.props.totalAmountPaid,        //this.props.totalAmount,
-				  "paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
+				//   "paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
+				  chequeNo:chequeNo,
+				  "transactionId": CardtransactionNumber,
+                  chequeDate:chequeDate,      
+                  demandDraftNo : demandDraftNo,
+                  demandDraftDate :demandDraftDate,
+				  "paymentDate": applicationDetails.createdDate, 
 				  "receiptNo": this.props.recNumber,
-				  "cardNumberLast4": "Not Applicable",
+				  "cardNumberLast4": offlineCardNum,
 				  "dateVenueChangeCharges": this.props.DATEVENUECHARGE == 0 ?"Not Applicable":this.props.DATEVENUECHARGE,
 
 			  },
@@ -474,41 +374,177 @@ downloadPermissionButton = async (e) => {
 				  "accountholderName": applicationDetails.bkBankAccountHolder,
 				  "rBankName": applicationDetails.bkBankName,
 				  "rBankACNo": applicationDetails.bkBankAccountNumber,
-				  "rIFSCCode": applicationDetails.bkIfscCode
+				  "rIFSCCode": applicationDetails.bkIfscCode,
+				  "nomName": applicationDetails.bkNomineeName
 			  }
 		  }
 	  ]
-	  // downloadEsamparkApp({ BookingInfo: BookingInfo })
-	  downloadPaccPermissionLetter({ BookingInfo: BookingInfo })
-	
 	  
+
+	  let permissionletterResponse = await httpRequest(
+		"pdf-service/v1/_create?key=bk-pk-booking-pl-emp",
+		"_search",
+		[],
+		{ BookingInfo: BookingInfo }
+	  );
+	  
+
+	  let EmpPaccPermissionLetter = permissionletterResponse.filestoreIds
+      
+	  
+	  var documentsPreview = [];
+	  let documentsPreviewData;
+	  if (EmpPaccPermissionLetter && EmpPaccPermissionLetter.length > 0) {	
+		  
+		documentsPreviewData = EmpPaccPermissionLetter[0];
+		  documentsPreview.push({
+			title: "DOC_DOC_PICTURE",
+			fileStoreId: documentsPreviewData,
+			linkText: "View",
+		  });
+		  let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+		  let fileUrls =
+			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+		  
+	
+		  documentsPreview = documentsPreview.map(function (doc, index) {
+			doc["link"] =
+			  (fileUrls &&
+				fileUrls[doc.fileStoreId] &&
+				fileUrls[doc.fileStoreId].split(",")[0]) ||
+			  "";
+			
+			doc["name"] =
+			  (fileUrls[doc.fileStoreId] &&
+				decodeURIComponent(
+				  fileUrls[doc.fileStoreId]
+					.split(",")[0]
+					.split("?")[0]
+					.split("/")
+					.pop()
+					.slice(13)
+				)) ||
+			  `Document - ${index + 1}`;
+			return doc;
+		  });
+	  
+		  setTimeout(() => {
+			window.open(documentsPreview[0].link);
+		  }, 100);
+		  
+		}
 	
 	  }
-
-
-	downloadPaymentReceiptBody = async (e) => {
+downloadPaymentReceiptBody = async (e) => {
 		const { downloadEsamparkApp, userInfo,createPACCApplicationData,documentMap,downloadEsampPaymentReceipt,PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,PACC_ROUND_OFF,FACILITATION_CHARGE,amountToDisplay} = this.props;
-		console.log("propsInPaymentSuccess--",this.props)
+		
+let offlineCardNum;
+let createCardNum;
+let pdfBankName;
+let chequeNo = "Not Applicable"
+let chequeDate = "Not Applicable"
+let demandDraftNo = "Not Applicable"
+let demandDraftDate = "Not Applicable"
+let CardtransactionNumber = "Not Applicable"
+
+		let applicationDetails = createPACCApplicationData ? createPACCApplicationData : 'dataNotFound';
+		
+
+		if(this.props.offlinePayementMode == "DD" || this.props.offlinePayementMode == "CHEQUE"){
+			let complaintCountRequest = {
+				applicationNumber: applicationDetails.bkApplicationNumber,
+				uuid: userInfo.uuid,
+				applicationStatus: "",
+				mobileNumber: "",
+				bookingType: "",
+				tenantId: userInfo.tenantId,
+			  };
+		  
+			  let dataforSectorAndCategory = await httpRequest(
+				"bookings/api/employee/_search",
+				"_search",
+				[],
+				complaintCountRequest
+			  );
+			  
+			  pdfBankName = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+			  ? dataforSectorAndCategory.bookingsModelList[0].bankName
+			  : "NA";		
+	     
+ 
+			if(this.props.offlinePayementMode == "DD"){
+				demandDraftNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+				? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
+				
+				demandDraftDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+				? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
+				
+			}
+			if(this.props.offlinePayementMode == "CHEQUE"){
+				chequeNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+				? dataforSectorAndCategory.bookingsModelList[0].chequeNumber: "NA";	
+				
+
+				chequeDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+				? dataforSectorAndCategory.bookingsModelList[0].paymentDate: "NA";	
+				
+
+			}		
+		}
+       else{
+		pdfBankName = "Not Applicable"
+       } 
+
+		if(this.props.offlinePayementMode == "CARD" || this.props.offlinePayementMode == "Card"){
+			let complaintCountRequest = {
+				applicationNumber: applicationDetails.bkApplicationNumber,
+				uuid: userInfo.uuid,
+				applicationStatus: "",
+				mobileNumber: "",
+				bookingType: "",
+				tenantId: userInfo.tenantId,
+			  };
+		  
+			  let dataforSectorAndCategory = await httpRequest(
+				"bookings/api/employee/_search",
+				"_search",
+				[],
+				complaintCountRequest
+			  );
+		
+			  createCardNum = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+			  ? dataforSectorAndCategory.bookingsModelList[0].cardNumber
+			  : "NA";		  
+			  offlineCardNum = `**** **** **** ${createCardNum}`
+			  
+	
+
+	CardtransactionNumber = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
+	? dataforSectorAndCategory.bookingsModelList[0].transactionNumber
+	: "NA";		  
+
+				
+		}
+       else{
+		offlineCardNum = "Not Applicable"
+       } 
 		let NumAmount = 0;
 		if(amountToDisplay !== "NotFound"){
 			NumAmount = Number(amountToDisplay)
-		}
-		let applicationDetails = createPACCApplicationData ? createPACCApplicationData : 'dataNotFound';
-		console.log("applicationDetails--",applicationDetails)
+		}		
+		
 		let Newugst;
 		let perFind = 50;
 		let ugst = PACC_TAX 
 		let find50Per = (perFind/100) * ugst
-		console.log("find50Per--",find50Per)		
+		
 		let findNumOrNot = Number.isInteger(find50Per);
-		console.log("findNumOrNot--",findNumOrNot)
+		
 		if(findNumOrNot == true){
 		  Newugst = find50Per
-		  console.log("trueCondition")
 		}
 		else{
 		  Newugst = find50Per.toFixed(2);
-		  console.log("second-Newugst-",Newugst)
 		}
 	
 		let approverName;
@@ -522,7 +558,7 @@ downloadPermissionButton = async (e) => {
 	if(documentMap !== undefined && documentMap !== null){
 	
 	  checkDocumentUpload = Object.entries(documentMap).length === 0;
-	  console.log("checkDocumentUpload",checkDocumentUpload)
+	  
 	
 	
 	  if(checkDocumentUpload == false){
@@ -585,17 +621,22 @@ downloadPermissionButton = async (e) => {
 				"totalgst": PACC_TAX,
 				"refundableCharges": this.props.REFUNDABLE_SECURITY,    //applicationDetails.bkRefundAmount,
 				"totalPayment": amountToDisplay,//this.props.totalAmount,   
-				"paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
+				// "paymentDate": convertEpochToDate(this.props.offlineTransactionDate,"dayend"),
+				"paymentDate": applicationDetails.createdDate, 
 				"receiptNo": this.props.recNumber,
 				  "paymentType": this.props.offlinePayementMode,
 				  "facilitationCharge": FACILITATION_CHARGE,
 				  "discType": applicationDetails.bkPlotSketch,
-				  "transactionId": this.props.offlineTransactionNum,
+				  "transactionId": CardtransactionNumber,
 				  "totalPaymentInWords": this.NumInWords(
 					NumAmount
-				  ),  //offlineTransactionDate,,
-				  "bankName":"",
-				  "cardNumberLast4": "Not Applicable",
+				  ), 
+				  "chequeNo":chequeNo,
+                  "chequeDate":chequeDate,
+                  "demandDraftNo":demandDraftNo,
+                  "demandDraftDate":demandDraftDate,
+				  "bankName":pdfBankName,
+				  "cardNumberLast4": offlineCardNum,
 				   "dateVenueChangeCharges": this.props.DATEVENUECHARGE == 0 ?"Not Applicable":this.props.DATEVENUECHARGE,
 			  },
 			  "OtherDetails": {
@@ -618,60 +659,68 @@ downloadPermissionButton = async (e) => {
 				"accountholderName": applicationDetails.bkBankAccountHolder,
 				"rBankName": applicationDetails.bkBankName,
 				"rBankACNo": applicationDetails.bkBankAccountNumber,
-				"rIFSCCode": applicationDetails.bkIfscCode
+				"rIFSCCode": applicationDetails.bkIfscCode,
+				"nomName": applicationDetails.bkNomineeName
 			}
 	
 	
 		  }
 	  ]
-	  downloadEsampPaymentReceipt({ BookingInfo: BookingInfo })
-	 };
-	 downloadPaymentReceiptButton = async (e) => {
-	  await this.downloadPaymentReceiptBody();
-	  const {DownloadBWTApplicationDetails,userInfo,Downloadesamparkdetails,PaymentReceiptByESamp}=this.props;
-	  
-		  var documentsPreview = [];
-		  let documentsPreviewData;
-		  if (PaymentReceiptByESamp && PaymentReceiptByESamp.filestoreIds.length > 0) {	
-			documentsPreviewData = PaymentReceiptByESamp.filestoreIds[0];
-			  documentsPreview.push({
-				title: "DOC_DOC_PICTURE",
-				fileStoreId: documentsPreviewData,
-				linkText: "View",
-			  });
-			  let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-			  let fileUrls =
-				fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
-			  
-		
-			  documentsPreview = documentsPreview.map(function (doc, index) {
-				doc["link"] =
-				  (fileUrls &&
-					fileUrls[doc.fileStoreId] &&
-					fileUrls[doc.fileStoreId].split(",")[0]) ||
-				  "";
-				
-				doc["name"] =
-				  (fileUrls[doc.fileStoreId] &&
-					decodeURIComponent(
-					  fileUrls[doc.fileStoreId]
-						.split(",")[0]
-						.split("?")[0]
-						.split("/")
-						.pop()
-						.slice(13)
-					)) ||
-				  `Document - ${index + 1}`;
-				return doc;
-			  });
-		  
-			  setTimeout(() => {
-				window.open(documentsPreview[0].link);
-			  }, 100);
-			  
-			}}
-		
 
+	  let ReceiptResponse = await httpRequest(
+		"pdf-service/v1/_create?key=pacc-payment-receipt-new-emp",
+		"_search",
+		[],
+		{ BookingInfo: BookingInfo }
+	  );
+	  
+
+	  let PaymentReceiptByESamp = ReceiptResponse.filestoreIds
+      
+
+	  var documentsPreview = [];
+	  let documentsPreviewData;
+	  if (PaymentReceiptByESamp && PaymentReceiptByESamp.length > 0) {	
+		 
+		documentsPreviewData = PaymentReceiptByESamp[0];
+		  documentsPreview.push({
+			title: "DOC_DOC_PICTURE",
+			fileStoreId: documentsPreviewData,
+			linkText: "View",
+		  });
+		  let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+		  let fileUrls =
+			fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds,userInfo.tenantId) : {};
+		  
+	
+		  documentsPreview = documentsPreview.map(function (doc, index) {
+			doc["link"] =
+			  (fileUrls &&
+				fileUrls[doc.fileStoreId] &&
+				fileUrls[doc.fileStoreId].split(",")[0]) ||
+			  "";
+			
+			doc["name"] =
+			  (fileUrls[doc.fileStoreId] &&
+				decodeURIComponent(
+				  fileUrls[doc.fileStoreId]
+					.split(",")[0]
+					.split("?")[0]
+					.split("/")
+					.pop()
+					.slice(13)
+				)) ||
+			  `Document - ${index + 1}`;
+			return doc;
+		  });
+	  
+		  setTimeout(() => {
+			window.open(documentsPreview[0].link);
+		  }, 100);
+		  
+		}
+	 };     
+	
   render() {
   const { RecNumber,createWaterTankerApplicationData,myLocationtwo, downloadBWTApplication,loading,createPACCApplicationData, updatePACCApplicationData,AppNum} = this.props;
     return (
@@ -687,22 +736,22 @@ downloadPermissionButton = async (e) => {
           applicationNumber={AppNum}
           ReceiptNumber={RecNumber} 
         />
-        <div className="responsive-action-button-cont">
-		    <div className="responsive-action-button-cont">
+         <div className="responsive-action-button-cont" >
+		    <div className="responsive-action-button-cont" style={{minWidth : "fit-content"}}>
           <Button
             className="responsive-action-button"
             primary={true}
             label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PAYMENT_BUTTON" />}
             fullWidth={true}
-            onClick={this.downloadPaymentReceiptButton}
+            onClick={this.downloadPaymentReceiptBody}
 			style={{ marginRight: "1.5%" , minWidth: "fit-content !important" }}
 			/>
 			 <Button 
 				className="responsive-action-button"
 			  primary={true}
 			  label={<Label buttonLabel={true} label="BK_CORE_ROOM_DOWNLOAD_PERMISSION_LETTER_BUTTON" />}
-			  onClick={this.downloadPermissionButton}
-			  style={{ marginRight: "1.5%",minWidth: "fit-content !important" }} 
+			  onClick={this.downloadPermissionLetter}
+			  style={{ marginRight: "1.5%", minWidth: "fit-content !important" }} 
 			/>
 			  <Button
             id="resolve-success-continue"
@@ -741,65 +790,40 @@ const mapStateToProps = state => {
   const { createWaterTankerApplicationData, DownloadBWTApplicationDetails,categoriesById } = complaints;
   let documentMap = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.documentMap : ""; 
   let createPACCApplicationData = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.CreatePaccAppData : "NotAnyMore"; 
-  console.log("createPACCApplicationData--",createPACCApplicationData)
+  
   let RecNumber = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.CollectionReceiptNum : "NotAnyMore";
-  console.log("RecNumber--",RecNumber)
+  
   let AppNum =  applicationData ? applicationData.bookingsModelList[0].bkApplicationNumber : "Not Found";
-  console.log("AppNum--",AppNum)
+  
   let selectedComplaint = applicationData ? applicationData.bookingsModelList[0] : ''
-console.log("selectedComplaint--",selectedComplaint)
+
 const loading = false;
 
 let ReasonForDiscount = state.screenConfiguration.preparedFinalObject ? 
 (state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== undefined && state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== null ? (state.screenConfiguration.preparedFinalObject.ReasonForDiscount):'NA') :"NA";  
 
-console.log("ReasonForDiscount--",ReasonForDiscount)
+
 
 let bookingData = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData:""
-console.log("bookingData.bkFromDate--",bookingData.bkFromDate)  
-console.log("bookingData.bkToDate--",bookingData.bkToDate) 
 
 let vanueData = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData:""
-console.log("vanueData--",vanueData)
+
 
 let venueType = vanueData ? vanueData.venueType: "";
-console.log("venueType--",venueType)
+
 let bokingType = bookingData ? bookingData.bkBookingVenue : ""
-console.log("bokingType--",bokingType)
-//createAppData
 
 let createAppData = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.createAppData:""
-console.log("createAppData--",createAppData)
-
-//ResponseOfCashPayment
 
 let offlinePayment = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment:"notFound"
-console.log("offlinePayment--",offlinePayment)
 
-//transactionNum
-// let offlineTransactionNum = offlinePayment ? offlinePayment.Payments[0].transactionNumber : "NotFound"
-// console.log("offlineTransactionNum--",offlineTransactionNum)  
+let location = get(
+    state,
+    "state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation",
+    "NotFound"
+);
 
-//transactionDate
-// let offlineTransactionDate = offlinePayment ? offlinePayment.Payments[0].transactionDate : "NotFound"
-// console.log("offlineTransactionDate--",offlineTransactionDate) 
-
-//paymentMode
-// let offlinePayementMode = offlinePayment ? offlinePayment.Payments[0].paymentMode : "NotFound"
-// console.log("offlinePayementMode--",offlinePayementMode)
-
-//screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation
-let location = state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation ? state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation : "notfound"
-console.log("location--",location)
-
-//totalAmountPaid
 let totalAmountPaid = offlinePayment ? offlinePayment.Payments[0].paymentDetails[0].bill.totalAmount : "NotFound"
-console.log("totalAmountPaid--",totalAmountPaid)
-
-//base charges
-//screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentDetails[0].totalAmountPaid
-
-// let totalAmount =  offlinePayment ? offlinePayment.Payments[0].paymentDetails[0].bill : "NotFound" // till here
 
 let totalAmount = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentDetails[0].totalAmountPaid
   
@@ -811,21 +835,21 @@ let amountToDisplay = get(
 
 
   let offlinePayementMode = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentMode
-  console.log("offlinePayementMode--",offlinePayementMode)
+  
 
   let offlineTransactionDate = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].transactionDate
-  console.log("offlineTransactionDate--",offlineTransactionDate) 
+  
 
   let offlineTransactionNum = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].transactionNumber
-  console.log("offlineTransactionNum--",offlineTransactionNum)
+  
 
   let recNumber = state.screenConfiguration.preparedFinalObject.ResponseOfCashPayment.Payments[0].paymentDetails[0].receiptNumber
 
-console.log("recNumber--",recNumber)
+
 
 
 let billAccountDetailsArray =  offlinePayment ? offlinePayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails : "NOt found Any Array"
-console.log("billAccountDetailsArray--",billAccountDetailsArray)
+
 let one = 0;
 let two = 0;
 let three = 0;
@@ -914,23 +938,20 @@ if(billAccountDetailsArray !== "NOt found Any Array"){
 }
 	}
 	}
-
-
-//surcharges
 let firstrent = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData: "";
-console.log("firstrent--",firstrent)
+
 
 let cleanOne =  firstrent?firstrent.cleaningCharges:""; 
-console.log("cleanOne--",cleanOne)
+
 
 let Summarysurcharge = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.Summarysurcharge: "NotFound";
-console.log("Summarysurcharge-2-",Summarysurcharge)
+
 
 let SummarycGST = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.SummarycGST: "NotFound";
-console.log("SummarycGST-2-",SummarycGST)
+
 
 let DropDownValue = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData.name : "";
-   console.log("DropDownValue--",DropDownValue)
+
 
 let SecTimeSlotFromTime = ""
    let SecTimeSlotToTime = ""
@@ -945,22 +966,11 @@ let SecTimeSlotFromTime = ""
    if(DropDownValue === "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH"){
 
     SecTimeSlotFromTime = state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo || "notFound"
-    console.log("SecTimeSlotFromTime--",SecTimeSlotFromTime)//screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo
+    
   
     SecTimeSlotToTime = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo || "notFound"
-    console.log("SecTimeSlotToTime--",SecTimeSlotToTime)
-     //OFFLINE_APPLIED
-  
+      
      firstToTimeSlot = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTime || "notFound"
-    console.log("firstToTimeSlot--",firstToTimeSlot)
-  
-  
-  //Booking.wholeDay
-  // let wholeDaySlot = state.screenConfiguration.preparedFinalObject.Booking.wholeDay && state.screenConfiguration.preparedFinalObject.Booking.wholeDay || "notFound"
-  // console.log("wholeDaySlot--",wholeDaySlot)
-  
-  // let firstTimeSlotValue = state.screenConfiguration.preparedFinalObject.Booking.timeslots !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] : "notFound"
-  // console.log("firstTimeSlotValue-",firstTimeSlotValue)
   
   firstTimeSlotValue = 
     state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
@@ -970,17 +980,14 @@ let SecTimeSlotFromTime = ""
  
   if(firstTimeSlotValue !== "notFound"){
       first=firstTimeSlotValue 
-  console.log("first--",first)
+  
   }
   
  
   if(firstTimeSlotValue !== "notFound"){
   conJsonfirst= JSON.stringify(firstTimeSlotValue);
-  console.log("conJsconJsonfirston--",conJsonfirst)
-  }
-  // let SecondTimeSlotValue = state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] : "notFound"
-  // console.log("SecondTimeSlotValue-",SecondTimeSlotValue)
   
+  }
    SecondTimeSlotValue = 
     state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
     (state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo !== undefined ? (state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] : "notFound") : "notFound") :
@@ -989,17 +996,14 @@ let SecTimeSlotFromTime = ""
  
   if(SecondTimeSlotValue !== "notFound"){
       second=SecondTimeSlotValue 
-  console.log("second--",second)
+  
   }
   
   if(SecondTimeSlotValue !== "notFound"){
   conJsonSecond = JSON.stringify(SecondTimeSlotValue);
-  console.log("conJsonSecond--",conJsonSecond)
   }
-  
-
-   } 
-
+} 
+ 
   return {first,second,firstToTimeSlot, firstTimeSlotValue,SecondTimeSlotValue,conJsonSecond,conJsonfirst,ReasonForDiscount,
     createWaterTankerApplicationData, DownloadBWTApplicationDetails,loading,fetchSuccess,createPACCApplicationData,selectedComplaint,
     updatePACCApplicationData,Downloadesamparkdetails,userInfo,documentMap,AppNum,DownloadReceiptDetailsforPCC,RecNumber,createAppData

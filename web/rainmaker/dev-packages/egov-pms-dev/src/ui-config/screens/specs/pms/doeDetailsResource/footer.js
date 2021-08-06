@@ -733,6 +733,9 @@ const wfActionSubmit= async (state, dispatch) => {
   get(state, "screenConfiguration.preparedFinalObject.ProcessInstances[0].employeeOtherDetails.wef",0) 
   wef = convertDateToEpoch(wef);
   set(state,"screenConfiguration.preparedFinalObject.ProcessInstances[0].employeeOtherDetails.wef", wef);
+  //SET ARRREAR 
+  let pensionArrears = get(state,"screenConfiguration.preparedFinalObject.pensionArrears.pensionArrears",[])
+  set(state,"screenConfiguration.preparedFinalObject.ProcessInstances[0].pensionArrears", pensionArrears);
   if(activeStep ==1)
   {
     

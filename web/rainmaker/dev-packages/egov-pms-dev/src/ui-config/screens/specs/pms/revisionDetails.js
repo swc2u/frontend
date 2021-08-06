@@ -166,6 +166,7 @@ const index = response.ProcessInstances[0].pensionRevision.length;
 
         pensionDeductions:response.ProcessInstances[0].pensionRevision[index-1].pensionDeductions,
         interimRelief:response.ProcessInstances[0].pensionRevision[index-1].interimRelief,
+        ltc:response.ProcessInstances[0].pensionRevision[index-1].ltc === undefined?0:response.ProcessInstances[0].pensionRevision[index-1].ltc,
 
         remarks:"",
 

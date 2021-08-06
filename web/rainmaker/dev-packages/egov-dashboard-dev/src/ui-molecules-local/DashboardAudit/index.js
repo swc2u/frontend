@@ -13,12 +13,14 @@ class DashboardAudit extends React.Component {
     constructor(props) {
         super(props);
         this.state ={
+            noRecordFound : "",
             checkData:[],
             allData: [],
             dataOne: [],
             dataTwo: [],
             dataThird: [],
             dataFourth: [],
+            dataFifth: [],
             graphOneLabel: [],
             graphOneData: [],
             graphTwoLabel: [],
@@ -27,6 +29,8 @@ class DashboardAudit extends React.Component {
             graphThirdData: [],
             graphFourthLabel: [],
             graphFourthData: [],
+            graphFifthLabel: [],
+            graphFifthData: [],
             graphClicked: -1,
             hardJSON: [],
             graphHardOneData : {},
@@ -60,6 +64,11 @@ class DashboardAudit extends React.Component {
         for(var i=0; i<columnData.length; i++){
             tableColumnData.push(columnData[i]["accessor"]);
             // tableColumnDataCamel.push(columnDataCamelize[i]["accessor"])
+        }            
+        
+        var colData = [];
+        for(var i=0; i<columnData.length; i++){
+            colData.push(columnData[i]["Header"]);
         }
     
         var tableRowData = [];
@@ -100,7 +109,7 @@ class DashboardAudit extends React.Component {
         var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
         var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
     
-        doc.text("mChandigarh Application", pageWidth / 2, 20, 'center');
+        doc.text("Chandigarh Application", pageWidth / 2, 20, 'center');
     
         doc.setFontSize(10);
         const pdfTitle = "Audit Dahboard"
@@ -111,7 +120,7 @@ class DashboardAudit extends React.Component {
     
         doc.autoTable({
             // head: [tableColumnDataCamel],
-            head: [tableColumnData],
+            head: [colData],
             theme: "striped",
             styles: {
                 fontSize: 7,
@@ -243,6 +252,7 @@ class DashboardAudit extends React.Component {
             })
         }
         componentDidUpdate(){
+            debugger;
             const propsData = this.props.data;
             if(JSON.stringify(this.state.checkData) !== JSON.stringify(propsData)){
                 const dropdownSelected = this.props.data[1].reportSortBy.value;
@@ -250,6 +260,15 @@ class DashboardAudit extends React.Component {
                 const fromDT= this.props.data[1].fromDate;
                 const toDT = this.props.data[1].toDate;
                 var data = this.props.data[0].ResponseBody;
+
+                for(var i=0; i<data.length; i++){
+                    var auditSchedule = new Date(data[i].audit_schedule_date);
+                    var auditMonth = auditSchedule.getMonth() < 10 ? parseInt("0"+auditSchedule.getMonth()) 
+                    : parseInt(auditSchedule.getMonth());
+                    var sortdate = auditSchedule.getDate()+"-"+parseInt(auditMonth+1)+"-"
+                    +auditSchedule.getFullYear()
+                    data[i]["audit_schedule_date"] = sortdate;
+                }
                 
                 var dateRange = this.dateRange(fromDT, toDT);
         
@@ -258,59 +277,71 @@ class DashboardAudit extends React.Component {
                     return r;
                     }, {});
                 
-                data = group[dropdownSelected];
+                data = group[dropdownSelected] ? group[dropdownSelected] : [];
                 
                 var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
                 "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
                 
-                var group = data.reduce((r, a) => {
-                    r[new Date(a["audit_schedule_date"]).getFullYear()+"-"+monthJSON[new Date(a["audit_schedule_date"]).getMonth()]] 
-                    = [...r[new Date(a["audit_schedule_date"]).getFullYear()+"-"+monthJSON[new Date(a["audit_schedule_date"]).getMonth()]] || [], a];
-                    return r;
-                    }, {});
-        
-                var graphData = [];
-                var graphLabel = dateRange;
-                for(var i=0; i<graphLabel.length; i++){
-                    if(group[graphLabel[i]]){
-                        graphData.push(group[graphLabel[i]].length);
-                    }else{
-                        graphData.push(0);
+                if(data.length > 0){
+                    var group = data.reduce((r, a) => {
+                        r[new Date(a["audit_schedule_date"]).getFullYear()+"-"+monthJSON[new Date(a["audit_schedule_date"]).getMonth()]] 
+                        = [...r[new Date(a["audit_schedule_date"]).getFullYear()+"-"+monthJSON[new Date(a["audit_schedule_date"]).getMonth()]] || [], a];
+                        return r;
+                        }, {});
+            
+                    var graphData = [];
+                    var graphLabel = dateRange;
+                    for(var i=0; i<graphLabel.length; i++){
+                        if(group[graphLabel[i]]){
+                            graphData.push(group[graphLabel[i]].length);
+                        }else{
+                            graphData.push(0);
+                        }
                     }
+                    // Graph One Sorting Function 
+                    // var graphOneData2 = this.graphSorting( "audit_type", data, dropdownSelected );
+            
+                    
+                    // Column Data
+                    const tableData = data[0] ? Object.keys(data[0]) : [];
+                    var columnData = []
+                    for(var i=0; i<tableData.length; i++){
+                        var itemHeader = {}
+                        itemHeader["Header"] = this.camelize(tableData[i]);
+                        itemHeader["accessor"] = tableData[i];
+                        itemHeader["show"]= (i === 0 || i === 1 || i === 2 || i === 3 
+                            || i === 5 || i === 6 || i === 7
+                            || i === 8 || i === 9 || i === 10 || i === 11
+                            || i === 12 ) ? true : false ;
+                        columnData.push(itemHeader);
+                    }
+            
+                    // Column Unchange Data 
+                    const unchangeColumnData = this.columnUnchange(columnData)
+            
+                    
+                    this.setState({
+                        graphOneLabel: graphLabel,
+                        graphOneData: graphData,
+                        graphClicked: 0,
+                        dataOne: group,
+                        columnData: columnData,
+                        unchangeColumnData: unchangeColumnData,
+                        rowData: data,
+                        // hardJSON: hardJSON
+                    })
+                }else{
+                    this.setState({
+                        noRecordFound : "No Record Found..!",
+                        graphOneLabel: [],
+                        graphOneData: [],
+                        graphClicked: -1,
+                        dataOne: [],
+                        columnData: [],
+                        unchangeColumnData: [],
+                        rowData: [],
+                    })
                 }
-        
-                debugger;
-                // Graph One Sorting Function 
-                // var graphOneData2 = this.graphSorting( "audit_type", data, dropdownSelected );
-        
-                
-                // Column Data
-                const tableData = data[0] ? Object.keys(data[0]) : [];
-                var columnData = []
-                for(var i=0; i<tableData.length; i++){
-                    var itemHeader = {}
-                    itemHeader["Header"] = this.camelize(tableData[i]);
-                    itemHeader["accessor"] = tableData[i];
-                    itemHeader["show"]= (i === 0 || i === 1 || i === 2 || i === 3 
-                        || i === 5 || i === 6 || i === 7
-                        || i === 8 || i === 9 || i === 10 || i === 11 ) ? true : false ;
-                    columnData.push(itemHeader);
-                }
-        
-                // Column Unchange Data 
-                const unchangeColumnData = this.columnUnchange(columnData)
-        
-                
-                this.setState({
-                    graphOneLabel: graphLabel,
-                    graphOneData: graphData,
-                    graphClicked: 0,
-                    dataOne: group,
-                    columnData: columnData,
-                    unchangeColumnData: unchangeColumnData,
-                    rowData: data,
-                    // hardJSON: hardJSON
-                })
 
                 this.setState({
                     checkData : propsData
@@ -598,13 +629,13 @@ class DashboardAudit extends React.Component {
                     debugger;
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphThirdLabel[ind];
-                    // var graphSorting = this.graphSorting( "department", this.state.dataTwo[selectedVal] );
+                    var graphSorting = this.graphSorting( "rsa_name", this.state.dataThird[selectedVal] );
                     
                     this.setState({
-                        // graphThirdLabel: graphSorting[0],
-                        // graphThirdData: graphSorting[1],
-                        // dataThird: graphSorting[2],
-                        // graphClicked: 1,
+                        graphFourthLabel: graphSorting[0],
+                        graphFourthData: graphSorting[1],
+                        dataFourth: graphSorting[2],
+                        graphClicked: 3,
                         rowData: this.state.dataThird[selectedVal]
                     })
                 }
@@ -688,7 +719,7 @@ class DashboardAudit extends React.Component {
                 }
             ], 
             legend: {
-                display: true,
+                display: false,
                 position: 'bottom',
                 labels: {
                 fontFamily: "Comic Sans MS",
@@ -701,21 +732,131 @@ class DashboardAudit extends React.Component {
             },
             title: {
                 display: true,
-                text: this.state.hardJSON[0] ? this.state.hardJSON[1].title : ""
+                text: "RSA wise Audit dashboard"
             },
             onClick: (e, element) => {
                 if (element.length > 0) {
                     debugger;
                     var ind = element[0]._index;   
-                    const selectedVal = this.state.graphTwoLabel[ind];
-                    var graphSorting = this.graphSorting( "department", this.state.dataTwo[selectedVal] );
+                    const selectedVal = this.state.graphFourthLabel[ind];
+                    var graphSorting = this.graphSorting( "auditor_name", this.state.dataFourth[selectedVal] );
                     
                     this.setState({
-                        graphThirdLabel: graphSorting[0],
-                        graphThirdData: graphSorting[1],
-                        dataThird: graphSorting[2],
-                        graphClicked: 1,
-                        rowData: this.state.dataTwo[selectedVal]
+                        graphFifthLabel: graphSorting[0],
+                        graphFifthData: graphSorting[1],
+                        dataFifth: graphSorting[2],
+                        graphClicked: 4,
+                        rowData: this.state.dataFourth[selectedVal]
+                    })
+                }
+            },
+            // scales: {
+            //     xAxes: [{
+            //         gridLines: {
+            //             display:true
+            //         },
+            //         ticks: {
+            //             suggestedMin: 0,
+            //             // suggestedMax: 100,
+            //             stepSize: 1
+            //         },
+            //         scaleLabel: {
+            //             display: true,
+            //             labelString: this.state.graphHardTwoData.msgX
+            //             }, 
+            //     }],
+            //     yAxes: [{
+            //         gridLines: {
+            //             display: true
+            //         },
+            //         ticks: {
+            //             suggestedMin: 0,
+            //             stepSize: 1
+            //         },
+            //         scaleLabel: {
+            //             display: true,
+            //             labelString: this.state.graphHardTwoData.msgY
+            //             }, 
+            //     }]
+            // },
+            plugins: {
+                datalabels: {
+                    display: false
+                //     color: 'white',
+                //     backgroundColor: 'grey',
+                //     labels: {
+                //         title: {
+                //             font: {
+                //                 weight: 'bold'
+                //             }
+                //         }
+                //     }}
+                }
+                }
+        }
+
+        // Fifth Horizontal Graph
+        var graphFifthSortedData = {
+            labels: this.state.graphFifthLabel,
+            datasets: [
+                {
+                // label: this.state.drildownGraphLabel,
+                fill: false,
+                lineTension: 5,
+                hoverBorderWidth : 12,
+                // backgroundColor : this.state.colorRandom,
+                backgroundColor : ["#F77C15", "#385BC8", "", "#FFC300", "#348AE4", "#FF5733", "#9DC4E1", "#3A3B7F", "", "", "", "", "", ""],
+                borderColor: "rgba(75,192,192,0.4)",
+                borderCapStyle: "butt",
+                barPercentage: 2,
+                barThickness: 25,
+                maxBarThickness: 25,
+                minBarLength: 2,
+                data: this.state.graphFifthData
+                }
+            ]
+        }
+    
+        var graphFifthOption = {
+            responsive : true,
+            // aspectRatio : 3,
+            maintainAspectRatio: false,
+            cutoutPercentage : 0,
+            datasets : [
+                {
+                backgroundColor : "rgba(0, 0, 0, 0.1)",
+                weight: 0
+                }
+            ], 
+            legend: {
+                display: false,
+                position: 'bottom',
+                labels: {
+                fontFamily: "Comic Sans MS",
+                boxWidth: 20,
+                boxHeight: 2
+                }
+            },
+            tooltips: {
+                enabled: true
+            },
+            title: {
+                display: true,
+                text: "Auditor wise Dashboard data"
+            },
+            onClick: (e, element) => {
+                if (element.length > 0) {
+                    debugger;
+                    var ind = element[0]._index;   
+                    const selectedVal = this.state.graphFifthLabel[ind];
+                    // var graphSorting = this.graphSorting( "department", this.state.dataFourth[selectedVal] );
+                    
+                    this.setState({
+                        // graphFifthLabel: graphSorting[0],
+                        // graphFifthData: graphSorting[1],
+                        // dataFifth: graphSorting[2],
+                        // graphClicked: 4,
+                        rowData: this.state.dataFifth[selectedVal]
                     })
                 }
             },
@@ -767,7 +908,12 @@ class DashboardAudit extends React.Component {
     
             
         return (
-            <div style={this.state.rowData ===0 ? {display:"none"} : null}>
+            <div>
+            <div className="recordNotFound" 
+            style={this.state.rowData.length ===0 ? null : {display:"none"}} >
+                Record not Found..!
+            </div>
+            <div style={this.state.rowData.length ===0 ? {display:"none"} : null}>
             <div className="graphDashboard">
             
     
@@ -813,7 +959,7 @@ class DashboardAudit extends React.Component {
             }
     
             {
-                // this.state.graphClicked > 0 ?
+                // this.state.graphClicked > 2 ?
                 // <CardContent className="halfGraph">
                 //     <React.Fragment>
                 //         <Bar
@@ -826,9 +972,38 @@ class DashboardAudit extends React.Component {
             }
     
             </div>
+
+            <div className="graphDashboard" style={this.state.graphClicked <= 2 ? {display : "none"} : null}>
+            {
+                this.state.graphClicked > 2 ?
+                <CardContent className="halfGraph">
+                    <React.Fragment>
+                        <Bar
+                        data={ graphFourthSortedData } 
+                        options={ graphFourthOption } 
+                        />
+                    </React.Fragment>
+                </CardContent> 
+                :null
+            }
+    
+            {
+                this.state.graphClicked > 3 ?
+                <CardContent className="halfGraph">
+                    <React.Fragment>
+                        <Bar
+                        data={ graphFifthSortedData } 
+                        options={ graphFifthOption } 
+                        />
+                    </React.Fragment>
+                </CardContent> 
+                :null
+            }
+    
+            </div>
     
             {/* Table Feature  */}
-            <div className="tableContainer">
+            <div className={this.state.rowData.length ===0 ? "" : "tableContainer" }>
             {
                 this.state.unchangeColumnData.length > 0  ? 
                 <div className="tableFeature">
@@ -867,6 +1042,7 @@ class DashboardAudit extends React.Component {
                 /> 
                 :null
             }
+            </div>
             </div>
             </div>
         );

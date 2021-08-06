@@ -115,7 +115,7 @@ let SUHC = {
       class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
       picture_in_picture
     </i>,
-    route: "search-smid-org"
+    route: "search-smid-alf-route"
   }
   let SUHP = {
     label: {
@@ -143,7 +143,7 @@ let SUHC = {
     </i>,
     route: "search-log-maintenance"
   }
-
+  
   let SUSVT = {
     label: {
       labelKey: "NULM_SUSVT_CARD_TITLE",
@@ -157,11 +157,28 @@ let SUHC = {
     </i>,
     route: "search-susv-transaction"
   }
+
+  let ALF = {
+    label: {
+      labelKey: "NULM_ALF_CARD_TITLE",
+      labelName: "Permission for Road Cut"
+    },
+    icon: <i
+      viewBox="0 -8 35 42"
+      color="primary"
+      class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
+      picture_in_picture
+    </i>,
+    route: "search-smid-NGO"
+  }
+  
 let allCardList = [{ "code": "SEP", "value": SEP }, { "code": "SMID", "value": SMID },
 { "code": "SUSV", "value": SUSV },{ "code": "SVRU", "value": SVRU },{ "code": "SUHC", "value": SUHC },
 { "code": "NGOR", "value": NGOR },{ "code": "SMIDNGO", "value": SMIDNGO },{ "code": "SUHLOG", "value": SUHLOG },
 { "code": "SUHP", "value": SUHP },
-{ "code": "SUSVT", "value": SUSVT }]
+{ "code": "SUSVT", "value": SUSVT },
+// { "code": "ALF", "value": ALF }
+]
 
 
 const getMdmsData = async (action, state, dispatch) => {
@@ -202,6 +219,15 @@ const setcardList = (state, dispatch) => {
   let mdmsCardList = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.nulm.cardList",
     []
   );
+  // var demo = {
+  //   "code": "ALF",
+  //   "roles": [
+  //     "CITIZEN",
+  //     "EMPLOYEE"
+  //   ],
+  //   "routeCitizen": "search-smid-NGO"
+  // }
+  // mdmsCardList.push(demo);
   let employeeCardList = []
   let roles = JSON.parse(getUserInfo()).roles
   mdmsCardList.map((item, index) => {

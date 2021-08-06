@@ -164,6 +164,39 @@ export const getResults = async (queryObject,dispatch,screenName) => {
     }
   
   };
+  export const getSearchResultsP = async queryObject => {
+    try {
+        const response = await httpRequest(
+            "post",
+            "/ws-services/wc/_search",
+            "_search",
+            queryObject
+        );
+        if(response.WaterConnection && response.WaterConnection.length == 0){
+            return response;
+        }
+        let result = findAndReplace(response, null, "NA");
+        let waterSource = result.WaterConnection[0].waterSource.includes("null") ? "NA" : result.WaterConnection[0].waterSource.split(".")[0];
+        let waterSubSource = result.WaterConnection[0].waterSource.includes("null") ? "NA" : result.WaterConnection[0].waterSource.split(".")[1];
+        result.WaterConnection[0].waterSource = waterSource;
+        result.WaterConnection[0].waterSubSource = waterSubSource;
+        // if(result.WaterConnection[0].connectionHolders && result.WaterConnection[0].connectionHolders[0] && result.WaterConnection[0].connectionHolders !=='NA')
+        // {
+        //     if(result.WaterConnection[0].activityType='UPDATE_CONNECTION_HOLDER_INFO' &&  result.WaterConnection[0].applicationStatus==='PENDING_FOR_DOCUMENT_VERIFICATION')
+        //     {
+        //         result.WaterConnection[0].connectionHolders[0].proposedName = result.WaterConnection[0].connectionHolders[0].proposedName;
+        //         result.WaterConnection[0].connectionHolders[0].proposedMobileNo = result.WaterConnection[0].connectionHolders[0].proposedMobileNo;
+        //         result.WaterConnection[0].connectionHolders[0].proposedCorrespondanceAddress = result.WaterConnection[0].connectionHolders[0].proposedCorrespondanceAddress;
+
+        //     }
+               
+
+        // }
+        
+       // result.WaterConnection = await getPropertyObj(result.WaterConnection); 
+        return result;
+    } catch (error) { console.log(error) }
+};
 export const getSearchResults = async queryObject => {
     try {
         const response = await httpRequest(
@@ -330,7 +363,7 @@ export const getWorkFlowData = async (queryObject) => {
 };
 
 // api call to get my connection details
-export const getMyConnectionResults = async (queryObject, dispatch) => {
+export const getMyConnectionResults = async (queryObject, dispatch,action) => {
     dispatch(toggleSpinner());
     try {
         const response = await httpRequest(
@@ -341,11 +374,19 @@ export const getMyConnectionResults = async (queryObject, dispatch) => {
         );
 
         if (response.WaterConnection.length > 0) {
-            response.WaterConnection = await getPropertyObj(response.WaterConnection); 
-            
+            response.WaterConnection = await getPropertyObj(response.WaterConnection);             
+            let IsEstimatecall = false
+            if(action)
+            {
+                if(action.screenKey !== "home")
+                {
+                    IsEstimatecall = true
+
+                }
+            }
             for (let i = 0; i < response.WaterConnection.length; i++) {
                 response.WaterConnection[i].service = "Water"
-                if (response.WaterConnection[i].connectionNo !== null && response.WaterConnection[i].connectionNo !== undefined) {
+                if (response.WaterConnection[i].connectionNo !== null && response.WaterConnection[i].connectionNo !== undefined && IsEstimatecall===true) {
                     try {
                         let queryObject = {billGeneration:
                             {            
@@ -421,9 +462,10 @@ export const getMyApplicationResults = async (queryObject, dispatch) => {
                               consumerCode:response.WaterConnection[i].connectionNo,                                        
                             }
                         }
+                        let  WNSConfigName_= WNSConfigName()
                         const data = await httpRequest(
                             "post",
-                            `billing-service/bill/v2/_fetchbill?consumerCode=${response.WaterConnection[i].applicationNo}&tenantId=${response.WaterConnection[i].property.tenantId}&businessService=WS.ONE_TIME_FEE`,
+                            `billing-service/bill/v2/_fetchbill?consumerCode=${response.WaterConnection[i].applicationNo}&tenantId=${response.WaterConnection[i].property.tenantId}&businessService=${WNSConfigName_.ONE_TIME_FEE_WS}`,
                             //'/ws-services/billGeneration/_getBillData',
                             "_search",
                              queryObject
@@ -562,6 +604,12 @@ export const getPropertyResults = async (queryObject, dispatch) => {
         );
         dispatch(toggleSpinner());
        // return findAndReplace(response, null, "NA");
+       //set subusageCategory from usageCategory
+       if(response)
+       {
+        set(response.Properties[0], `subusageCategory`, response.Properties[0].usageCategory);
+       }
+      
        return response;
     } catch (error) {
         dispatch(toggleSpinner());
@@ -578,6 +626,10 @@ export const getPropertyResultsWODispatch = async (queryObject) => {
             "_search",
             queryObject
         );
+        if(response)
+        {
+         set(response.Properties[0], `subusageCategory`, response.Properties[0].usageCategory);
+        }
         return findAndReplace(response, null, "NA");
     } catch (error) {        
         console.log(error);
@@ -865,6 +917,7 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             "screenConfiguration.preparedFinalObject.applyScreenMdmsData.ws-services-masters.Documents",
             []
         );
+        documents =[];
         wsDocument = get(
             state,
             "screenConfiguration.preparedFinalObject.applyScreenMdmsData.ws-services-masters.wsDocument",
@@ -954,9 +1007,15 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
+                }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
+                     || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION_BILLING'
+                     || activityType ==='TEMPORARY_WSCONNECTION_BILLING'
                      || activityType ==='REGULARWSCONNECTION'
                      || activityType ==='TEMPORARY_WSCONNECTION'
                      || activityType === 'WS_TUBEWELL'
@@ -980,7 +1039,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                     {
                         // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                         //     && x.occupancycode === occupancycode)
-                            wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                            // wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                            wsDocument = wsDocument.filter(function (x) {
+                                return x.applicationType === applicationType && x.category === category;
+                            });
                     }
                     else if(applicationType ==='REGULAR' &&( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
                     {
@@ -993,13 +1055,29 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                             && x.occupancycode === occupancycode)
                     }
                     
-                    else if(applicationType === 'TEMPORARY')
+                    else if(applicationType === 'TEMPORARY' || applicationType ==='TEMPORARY_BILLING')
                     {
-                        wsDocument = wsDocument.filter(function (x) {
-                            return x.applicationType === applicationType && x.category === category;
-                        });
+                        if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                            {
+                                wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                            }
+                            else if(applicationType ==='TEMPORARY_BILLING')
+                            {
+                                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                                   // && x.category === category)
+
+                            }
+                            else{
+                                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                                    && x.category === category)
+
+                            }
+                        // wsDocument = wsDocument.filter(function (x) {
+                        //     return x.applicationType === applicationType && x.category === category;
+                        // });
 
                     }
+                    
                     else if(applicationType === 'REGULAR')
                     {
                         wsDocument = wsDocument.filter(function (x) {
@@ -1035,10 +1113,57 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
+                }
+                else if(activityType === 'REGULARWSCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(function (x) {
+                        return x.applicationType === applicationType && x.occupancycode === occupancycode;
+                    });
+                    
+                } 
             }
-            else if(applicationType ==='TEMPORARY'){
-                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
-                    && x.category === category)
+            else if(applicationType ==='TEMPORARY' || applicationType ==='TEMPORARY_BILLING'){
+                if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO' || activityType ==='WS_RENAME')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "UPDATE_CONNECTION_HOLDER_INFO")
+                }
+                else if(activityType ==='TEMPORARY_DISCONNECTION' || activityType ==='WS_TEMP_DISCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "TEMPORARY_DISCONNECTION")
+                }
+                else if(activityType ==='CONNECTION_CONVERSION' || activityType ==='WS_CONVERSION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "CONNECTION_CONVERSION")
+                }
+                else if(activityType ==='PERMANENT_DISCONNECTION' || activityType ==='WS_DISCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
+                }
+                else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
+                }
+                else if(applicationType ==='TEMPORARY_BILLING')
+                {
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                }
+                else{
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        && x.category === category)
+
+                }
+               
 
             }
 
@@ -1062,9 +1187,29 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
             }
             if( sewerage === false && tubewell === false && water === false)
             {
-                if(applicationType ==='TEMPORARY'){
-                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
-                        && x.category === category)
+                if(applicationType ==='TEMPORARY' || applicationType ==='TEMPORARY_BILLING'){
+                    if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                    {
+                        wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                    }
+                    else if(applicationType ==='TEMPORARY_BILLING' 
+                    && (activityType === 'CONNECTION_CONVERSION'
+                        || activityType ==='PERMANENT_DISCONNECTION'
+                        || activityType ==='TEMPORARY_DISCONNECTION'
+                        || activityType ==='REACTIVATE_CONNECTION'
+                        || activityType ==='UPDATE_CONNECTION_HOLDER_INFO') )
+                    {
+                        wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType )
+                    }
+                    else if(applicationType ==='TEMPORARY_BILLING')
+                    {
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                    }
+                    else{
+                        wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                            && x.category === category)
+    
+                    }
     
                 }
                 else
@@ -1167,22 +1312,46 @@ const parserFunction = (state) => {
     let queryObject = JSON.parse(JSON.stringify(get(state.screenConfiguration.preparedFinalObject, "applyScreen", {})));
     let usageCategory ='SW_TEMP'
     let usageSubCategory =null
-    let isFerruleApplicable = false
-    if(queryObject.waterApplication && queryObject.waterApplication!== undefined)
+    let id = null
+    let isFerruleApplicable = get(queryObject.waterApplication, "isFerruleApplicable",true);
+    // if(queryObject.waterApplication && queryObject.waterApplication!== undefined)
+    // {
+    //     if (queryObject.waterApplication.applicationStatus !== 'PENDING_FOR_SECURITY_DEPOSIT') {
+    //         isFerruleApplicable = isFerruleApplicable;
+    //     }
+    // }
+    // else{
+    //     isFerruleApplicable = isFerruleApplicable;
+    // }
+    if(queryObject.water === undefined)
     {
-        if (queryObject.waterApplication.applicationStatus !== 'PENDING_FOR_SECURITY_DEPOSIT') {
-            isFerruleApplicable = true;
+        if(queryObject.applicationNo.includes("WS"))
+        {
+            set(queryObject,'water', true)
         }
-    }
-    else{
-        isFerruleApplicable = true;
+
     }
     if(queryObject.water)
     {
+        if(queryObject.waterProperty.id)
+        {
+            id = queryObject.waterProperty.id
+        }
+        
+        else{
+            id =  get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null)
+        }
         usageCategory =(queryObject.waterProperty.usageCategory === null || queryObject.waterProperty.usageCategory === "NA") ? "" : queryObject.waterProperty.usageCategory
         usageSubCategory = (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
 
     }
+    if(queryObject.sewerage ===undefined && queryObject.water === undefined  && queryObject.tubewell === undefined)
+    {
+        if (queryObject.waterProperty.usageCategory) {
+            usageCategory = queryObject.waterProperty.usageCategory;
+        }
+    }
+
     let parsedObject = {
         roadCuttingArea: parseInt(queryObject.roadCuttingArea),
         meterInstallationDate: convertDateToEpoch(queryObject.meterInstallationDate),
@@ -1197,7 +1366,7 @@ const parserFunction = (state) => {
         waterApplicationType: (queryObject.waterApplicationType === null || queryObject.waterApplicationType === "NA") ? "" : queryObject.waterApplicationType,
         waterProperty :{
         //id : get(state.screenConfiguration.preparedFinalObject, "Properties.id", null),
-        id : get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null),
+        id : id,
 
         usageCategory: usageCategory,// (queryObject.waterProperty.usageCategory === null || queryObject.waterProperty.usageCategory === "NA") ? "" : queryObject.waterProperty.usageCategory,
         usageSubCategory:usageSubCategory// (queryObject.waterProperty.usageSubCategory === null || queryObject.waterProperty.usageSubCategory === "NA") ? "" : queryObject.waterProperty.usageSubCategory
@@ -1205,7 +1374,7 @@ const parserFunction = (state) => {
         swProperty :{
            // id : get(state.screenConfiguration.preparedFinalObject, "Properties.id", null),
            // SW_TEMP
-            id : get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null),
+            id : id,//get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].waterProperty.id", null),
             usageCategory: usageCategory,
             usageSubCategory: usageSubCategory,           
             },
@@ -1539,9 +1708,19 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
+                }
+                else if(activityType ==='TEMPORARY_WSCONNECTION_BILLING' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                }
                 else if(activityType ==='NEW_WS_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' 
                      || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
+                     || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION_BILLING'
+                     || activityType ==='TEMPORARY_WSCONNECTION_BILLING'
                      || activityType ==='REGULARWSCONNECTION'
                      || activityType ==='TEMPORARY_WSCONNECTION'
                      || activityType === 'WS_TUBEWELL'
@@ -1563,9 +1742,12 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                     }
                     else if(applicationType ==='TEMPORARY' && ( activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR'))
                     {
-                        // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
-                        //     && x.occupancycode === occupancycode)
-                        wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                        // // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        // //     && x.occupancycode === occupancycode)
+                        // wsDocument = wsDocument.filter(x=>x.occupancycode === occupancycode)
+                        wsDocument = wsDocument.filter(function (x) {
+                            return x.applicationType === applicationType && x.category === category;
+                        });
                     }
                     else if(applicationType ==='REGULAR' || activityType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION' || activityType ==='WS_TEMP_REGULAR')
                     {
@@ -1577,11 +1759,35 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                         wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
                             && x.occupancycode === occupancycode)
                     } 
-                    else if(applicationType === 'TEMPORARY')
+                    else if(applicationType === 'TEMPORARY' || applicationType ==='TEMPORARY_BILLING')
                     {
-                        wsDocument = wsDocument.filter(function (x) {
-                            return x.applicationType === applicationType && x.category === category;
-                        });
+                        if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                            {
+                                wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                            }
+                            else if(applicationType ==='TEMPORARY_BILLING' 
+                            && (activityType === 'CONNECTION_CONVERSION'
+                                || activityType ==='PERMANENT_DISCONNECTION'
+                                || activityType ==='TEMPORARY_DISCONNECTION'
+                                || activityType ==='REACTIVATE_CONNECTION'
+                                || activityType ==='UPDATE_CONNECTION_HOLDER_INFO') )
+                            {
+                                wsDocument = wsDocument.filter(x=>x.WaterActivity === activityType )
+                            }
+                            else if(applicationType ==='TEMPORARY_BILLING')
+                            {
+                                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                                   // && x.category === category)
+
+                            }
+                            else{
+                                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                                    && x.category === category)
+
+                            }
+                        // wsDocument = wsDocument.filter(function (x) {
+                        //     return x.applicationType === applicationType && x.category === category;
+                        // });
 
                     }
                     else if(applicationType === 'REGULAR')
@@ -1594,7 +1800,7 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 }  
             }
             else{
-                if(applicationType ==='REGULAR')
+                if(applicationType ==='REGULAR' || applicationType ==='TEMPORARY_BILLING')
                 {
                 
                 if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO' || activityType ==='WS_RENAME')
@@ -1617,10 +1823,62 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
+                }
+                else if(activityType === 'REGULARWSCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(function (x) {
+                        return x.applicationType === applicationType && x.occupancycode === occupancycode;
+                    });
+                    
+                } 
+                else if(activityType ==='TEMPORARY_WSCONNECTION_BILLING' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                }
             }
-            else if(applicationType ==='TEMPORARY'){
-                wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
-                    && x.category === category)
+            else if(applicationType ==='TEMPORARY'|| applicationType ==='TEMPORARY_BILLING' ){
+                if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO' || activityType ==='WS_RENAME')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "UPDATE_CONNECTION_HOLDER_INFO")
+                }
+                else if(activityType ==='TEMPORARY_DISCONNECTION' || activityType ==='WS_TEMP_DISCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "TEMPORARY_DISCONNECTION")
+                }
+                else if(activityType ==='CONNECTION_CONVERSION' || activityType ==='WS_CONVERSION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === "CONNECTION_CONVERSION")
+                }
+                else if(activityType ==='PERMANENT_DISCONNECTION' || activityType ==='WS_DISCONNECTION')
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'PERMANENT_DISCONNECTION')
+                }
+                else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
+                }
+                else if(applicationType ==='TEMPORARY_BILLING')
+                {
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
+                }
+                else{
+                    wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                        && x.category === category)
+
+                }
+                // wsDocument = wsDocument.filter(x=>x.applicationType === applicationType 
+                //     && x.category === category)
 
             }
 
@@ -1737,7 +1995,7 @@ export const applyForWaterOrSewerage = async (state, dispatch) => {
 export const applyForWater = async (state, dispatch) => {
     let queryObject = parserFunction(state);
     let waterId = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].id");
-    let plotNo = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.address.plotNo");
+    let doorNo = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.address.doorNo");
     let method = waterId ? "UPDATE" : "CREATE";
     try {
         const tenantId = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].property.tenantId");
@@ -1808,15 +2066,24 @@ export const applyForWater = async (state, dispatch) => {
              rolecode = roles[0].role 
              }
              }
-             if(rolecode)
+             if(queryObjectForUpdate.processInstance.action !=='INITIATE')
              {
-                 set(queryObjectForUpdate, "processInstance.additionalDetails.role", rolecode); 
+                if(rolecode)
+                {
+                    set(queryObjectForUpdate, "processInstance.additionalDetails.role", rolecode); 
+                }
+                else
+                {
+                    set(queryObjectForUpdate, "processInstance.additionalDetails", null); 
+   
+                }
              }
-             else
-             {
-                 set(queryObjectForUpdate, "processInstance.additionalDetails", null); 
-
+             else{
+                set(queryObjectForUpdate, "processInstance.additionalDetails", null);
              }
+             //? update property in case any field change in ui using previous button
+             propertyUpdateCitizen(state,dispatch)
+             ///?
           let responseWater =  await httpRequest("post", "/ws-services/wc/_update", "", [], { WaterConnection: queryObjectForUpdate });
             let searchQueryObject = [{ key: "tenantId", value: queryObjectForUpdate.tenantId }, { key: "applicationNumber", value: queryObjectForUpdate.applicationNo }];
             
@@ -1849,7 +2116,7 @@ export const applyForWater = async (state, dispatch) => {
         } else {
             set(queryObject, "processInstance.action", "INITIATE")
             //set doorNo
-            set(queryObject, "property.address.doorNo", plotNo)
+            set(queryObject, "property.address.doorNo", doorNo.toUpperCase())
             queryObject = findAndReplace(queryObject, "NA", null);
             if(get(state, "screenConfiguration.preparedFinalObject.applyScreen.tubewell")){
                 queryObject.activityType = "NEW_TUBEWELL_CONNECTION";
@@ -1858,6 +2125,11 @@ export const applyForWater = async (state, dispatch) => {
                 if(queryObject.waterApplicationType === 'TEMPORARY')
                 {
                     queryObject.activityType = "APPLY_FOR_TEMPORARY_CONNECTION"
+
+                }
+                else if(queryObject.waterApplicationType === 'TEMPORARY_BILLING')
+                {
+                    queryObject.activityType = "APPLY_FOR_TEMPORARY_CONNECTION_BILLING"
 
                 }
                 else{
@@ -1870,6 +2142,57 @@ export const applyForWater = async (state, dispatch) => {
             response = await httpRequest("post", "/ws-services/wc/_create", "", [], { WaterConnection: queryObject });
             dispatch(prepareFinalObject("WaterConnection", response.WaterConnection));
             setApplicationNumberBox(state, dispatch);
+            dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput`,
+                "props.disabled",
+                //Isreadolny
+                true
+                ));
+                const textFieldsOwnerInformation = ["ownerName","mobileNumber","email","guardianName","correspondenceAddress"];
+                let ownershipCategory = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", 'INDIVIDUAL.SINGLEOWNER' )
+                
+                if(ownershipCategory ==='INDIVIDUAL.MULTIPLEOWNERS')
+                {
+                    let owners = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.owners",[])
+                    for (let index = 0; index < owners.length; index++) {
+                        //const element = array[index];
+                        for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
+                            dispatch(handleField(
+                              "apply",
+                              `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items.${index}.item${index}.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+                              "props.disabled",
+                              true
+                              ));
+                          }
+                        
+                    }
+                    dispatch(handleField(
+                        "apply",
+                        `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv`,
+                        "props.hasAddItem",
+                        false
+                        ));
+                        dispatch(handleField(
+                            "apply",
+                            `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv`,
+                            "props.isReviewPage",
+                            true
+                            ));
+                }
+                else{
+                    for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
+                        dispatch(handleField(
+                          "apply",
+                          `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.0.item0.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+                          "props.disabled",
+                          true
+                          ));
+                      }
+
+                }
+
+                
         }
         return true;
     } catch (error) {
@@ -1897,11 +2220,12 @@ export const propertyUpdate = async (state, dispatch,propertyPayload)=>{
          
         }
         return true;
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        console.log(error);
         if(localStorage.getItem("WNS_STATUS")){
             window.localStorage.removeItem("WNS_STATUS");
         }
+        dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
         return false;
        
       }
@@ -2506,7 +2830,7 @@ export const wsDownloadConnectionDetails = (receiptQueryString, mode, dispatch) 
 }
 
 
-export const getSWMyConnectionResults = async (queryObject, dispatch) => {
+export const getSWMyConnectionResults = async (queryObject, dispatch,action) => {
     dispatch(toggleSpinner());
     try {
         const response = await httpRequest(
@@ -2517,9 +2841,18 @@ export const getSWMyConnectionResults = async (queryObject, dispatch) => {
         );
         if (response.SewerageConnections.length > 0) {
             response.SewerageConnections = await getPropertyObj(response.SewerageConnections);
+            let IsEstimatecall = false
+            if(action)
+            {
+                if(action.screenKey !== "home")
+                {
+                    IsEstimatecall = true
+
+                }
+            }
             for (let i = 0; i < response.SewerageConnections.length; i++) {
                 response.SewerageConnections[i].service = "Sewerage"
-                if (response.SewerageConnections[i].connectionNo !== undefined && response.SewerageConnections[i].connectionNo !== null) {
+                if (response.SewerageConnections[i].connectionNo !== undefined && response.SewerageConnections[i].connectionNo !== null && IsEstimatecall === true ) {
                     try {
                         let queryObject = {billGeneration:
                             {            
@@ -2711,13 +3044,14 @@ export const findAndReplace = (obj, oldValue, newValue) => {
 // api call to calculate water estimate
 export const waterEstimateCalculation = async (queryObject, dispatch) => {
     dispatch(toggleSpinner());
+    set(queryObject[0] ,'waterConnection.proposedMeterInstallationDate',convertDateToEpoch(queryObject[0].waterConnection.proposedMeterInstallationDate))
     try {
         const response = await httpRequest(
             "post",
             "ws-calculator/waterCalculator/_estimate",
             "_estimate",
             [],
-
+            
             {
                 isconnectionCalculation: false,
                 CalculationCriteria: queryObject
@@ -2754,26 +3088,378 @@ export const swEstimateCalculation = async (queryObject, dispatch) => {
     }
 
 };
+export const epochToYmdDate = et => {
+    if (!et) return null;
+    if (typeof et === "string") return et;
+    let d = new Date(et),
+      month = "" + (d.getMonth() + 1),
+      day = "" + d.getDate(),
+      year = d.getFullYear();
+  
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+  
+    return [year, month, day].join("-");
+  };
 // to download application 
-export const downloadApp = async (state,wnsConnection, type, mode = "download") => {
-    let estFileStrID = wnsConnection[0].additionalDetails.estimationFileStoreId
-    let sanFileStrID = wnsConnection[0].additionalDetails.sanctionFileStoreId
+export const downloadApp = async (state,wnsConnection, type, mode = "download",dispatch) => {
 
-    if (type === 'estimateNotice' && estFileStrID !== undefined && estFileStrID !== null) {
-        downloadReceiptFromFilestoreID(estFileStrID, mode)
-        return false;
-    } else if (type === 'sanctionLetter' && sanFileStrID !== undefined && sanFileStrID !== null) {
-        downloadReceiptFromFilestoreID(sanFileStrID, mode)
-        return false;
+    if(type === 'receiptLetter' || type === 'ndcLetter' ){
+       // console.log(wnsConnection)
+       if(wnsConnection[0].service ==='SEWERAGE_')
+       {
+
+       }
+       else  if(wnsConnection[0].service ==='WATER' || wnsConnection[0].service ==='SEWERAGE')
+       {
+        const receiptQueryString = [
+            { key: "consumerCodes", value: getQueryArg(window.location.href, "applicationNumber") },
+            { key: "tenantId", value: getQueryArg(window.location.href, "tenantId") }
+        ]
+            const FETCHRECEIPT = {
+            GET: {
+            URL: "/collection-services/payments/_search",
+            ACTION: "_get",
+            },
+            };
+            const DOWNLOADRECEIPT = {
+            GET: {
+            URL: "/pdf-service/v1/_create",
+            ACTION: "_get",
+            },
+            };
+            try{
+                let keyvalue ='ws-bill-receipt' 
+                let KeytenantId = getQueryArg(window.location.href, "tenantId")
+                if(process.env.REACT_APP_NAME === "Citizen")
+                    {
+                        KeytenantId = KeytenantId.split('.')[0]
+                    }
+                    if(type === 'ndcLetter')
+                    {
+                        keyvalue ='ws-bill-receipt-no-due'
+                    }
+                
+                try{
+                    httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
+                      const queryStr = [
+                        { key: "key", value: keyvalue },
+                        { key: "tenantId", value: KeytenantId  }//KeytenantId = receiptQueryString[1].value.split('.')[0]
+                      ]
+                      if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length==0){
+                        console.log("Could not find any receipts"); 
+                        dispatch(
+                                      toggleSnackbar(
+                                        true,
+                                        { labelName: "Could not find any receipts", labelKey: "Could not find any receipts" },
+                                        "warning"
+                                      )
+                                    );  
+                        return;
+                      }
+
+                      else                     
+                      {
+                        let paymentReceiptDate = 0;
+                        let paidAmount =0;
+                        let dueAmount = 0;
+                        let receiptNumber =9;
+                        if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length===1)
+                        {
+                         paymentReceiptDate = epochToYmdDate(get(payloadReceiptDetails, "Payments[0].paymentDetails[0].receiptDate", ''))
+                         paidAmount = get(payloadReceiptDetails, "Payments[0].paymentDetails[0].totalAmountPaid", '')
+                         dueAmount = get(payloadReceiptDetails, "Payments[0].paymentDetails[0].totalDue", '')
+                         receiptNumber  =get(payloadReceiptDetails, "Payments[0].paymentDetails[0].receiptNumber", '') 
+                        }
+                        else if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length>1)
+                        {
+                            let payment_ = payloadReceiptDetails.Payments.filter(x=>x.totalDue >0)
+                            paymentReceiptDate = epochToYmdDate(get(payment_[0], "transactionDate", ''))
+                            paidAmount = get(payment_[0], "paymentDetails[0].totalAmountPaid", '')
+                            dueAmount = get(payment_[0], "paymentDetails[0].totalDue", '')
+                            receiptNumber  =get(payment_[0], "paymentDetails[0].receiptNumber", '') 
+                        }
+                        // call get api to set  WaterConnection details
+                        let applicationNumber = getQueryArg(window.location.href, "applicationNumber")
+                        let queryObject =  [{ key: "tenantId", value: getQueryArg(window.location.href, "tenantId") }, { key: "applicationNumber", value: applicationNumber }]
+                        let div=''
+                        let subDiv=''
+                        let activityType=''
+                        let applicantName=''
+                        let applicantAddress=''
+                        let houseNo=''
+                        let plotnumber=''
+                        let sector =''
+                        let upto =''
+                        let connectionNumber=''
+                        if(applicationNumber.includes("WS"))
+                        {                      
+                       try{
+                    //    const wc_search = {
+                    //      GET: {
+                    //        URL: "/ws-services/wc/_search",
+                    //        ACTION: "_search",
+                    //      },
+                    //    };
+
+
+                         if(wnsConnection && wnsConnection.length>0){
+                           div =get(wnsConnection[0], "div", '')
+                         subDiv =get(wnsConnection[0], "subdiv", '')
+                         activityType =get(wnsConnection[0], "activityType", '')
+                         applicantName =get(wnsConnection[0], "connectionHolders[0].name", '')
+                         applicantAddress =get(wnsConnection[0], "connectionHolders[0].correspondenceAddress", '')
+                         plotnumber =get(wnsConnection[0], "property.address.doorNo", '')
+                         houseNo =get(wnsConnection[0], "property.address.plotNo", '')
+                         sector = get(wnsConnection[0], "property.address.locality.name", '')
+                         upto = epochToYmdDate(get(wnsConnection[0], "waterApplication.auditDetails.lastModifiedTime", ''))
+                         connectionNumber = get(wnsConnection[0], "connectionNo", '')
+                         applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
+                         // set activityType 
+                         switch (activityType) {
+                                case "APPLY_FOR_TEMPORARY_CONNECTION":
+                                activityType ='Temporary Water Connection Construction'
+                                break;
+                                case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
+                                activityType ='Temporary Water Connection Billing'
+                                break;
+                                case "NEW_WS_CONNECTION":
+                                activityType ='Regular Water Connection'
+                                break;
+                                case "REGULARWSCONNECTION":
+                                activityType ='Regular Water Connection'
+                                break;
+                                case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
+                                activityType ='Temporary Regular Water Connection'
+                                break;
+                                case "TEMPORARY_WSCONNECTION":
+                                case "APPLY_FOR_TEMPORARY_CONNECTION":
+                                activityType ='Temporary Disconnection'
+                                break;
+                                case "WS_TUBEWELL":
+                                activityType ='New Tubewell Connection'
+                                break;
+                                case "WS_TEMP_TEMP":
+                                case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
+                                activityType ='Temporary to Temporary Conversion'
+                                break;
+                                case "WS_TEMP_REGULAR":
+                                case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
+                                activityType ='Temporary to Regular Conversion'
+                                break;
+                                case "WS_DISCONNECTION":
+                                case "PERMANENT_DISCONNECTION":
+                                activityType ='Permanent Disconnection'
+                                break;
+                                case "WS_TEMP_DISCONNECTION":
+                                case "TEMPORARY_DISCONNECTION":
+                                activityType ='Temporary Disconnection'
+                                break;
+                                case "WS_RENAME":
+                                case "UPDATE_CONNECTION_HOLDER_INFO":
+                                activityType ='Update Connection Holder Information'
+                                {
+                                    applicantName =get(wnsConnection[0], "connectionHolders[0].proposedName", '')
+                                  }
+                                break;
+                                case "WS_METER_UPDATE":
+                                case "UPDATE_METER_INFO":
+                                activityType ='Meter Update'
+                                break;
+                                case "WS_CONVERSION":
+                                case "CONNECTION_CONVERSION":
+                                activityType ='Tariff Change'
+                                break;
+                                case "WS_REACTIVATE":
+                                case "REACTIVATE_CONNECTION":
+                                activityType ='Reactive Connection'
+                                break;
+                                case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
+                                activityType ='Temporary to Temporary Conversion'
+                                break;
+               
+                         }
+                         let billGeneration_ =[
+                         {
+                           
+                            div: div,
+                            subDiv:subDiv,
+                            applicationNumber:applicationNumber,
+                           receiptNumber:receiptNumber,
+                           connectionNumber:connectionNumber,
+                           activityType: activityType,
+                           applicantName: applicantName,
+                           applicantAddress: applicantAddress,
+                           paymentReceiptDate:paymentReceiptDate,
+                           dueAmount: dueAmount,
+                           paidAmount:paidAmount,
+                           status:'Payment complete',
+                         }
+                       ]
+                       if(type ==='ndcLetter')
+                       {
+
+                         billGeneration_ =[
+                            {
+                              
+                                applicationNo: applicationNumber,
+                                dated:paymentReceiptDate,
+                                applicantName:applicantName,  
+                                houseNo: houseNo,
+                                sector:sector,
+                                rs: paidAmount,
+                                upto:upto,
+                                accountNo:connectionNumber,
+                                receiptNo:receiptNumber,                                
+                                date:paymentReceiptDate,
+                                division:subDiv,
+                                plotNo:plotnumber
+                            }
+                          ]
+
+                       }
+                   
+                       
+                         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { WSReceiptRequest: billGeneration_ }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+                         .then(res => {
+                           res.filestoreIds[0]
+                           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
+                             res.filestoreIds.map(fileStoreId=>{
+                               downloadReceiptFromFilestoreID(fileStoreId,mode,KeytenantId)
+                             })          
+                           }else{
+                             console.log("Error In Receipt Download");        
+                           }         
+                         });
+                     
+                      
+                                    
+                         }
+                         else{
+                           console.log("Error In Receipt Download");        
+                         }         
+                      
+                       //
+                     }
+                     catch(error)
+                            {
+                              dispatch(
+                                toggleSnackbar(
+                                  true,
+                                  { labelName: error.message, labelKey: error.message },
+                                  "error"
+                                )
+                              );
+                              console.log(error)
+                    
+                            }
+                        }
+                        else if(applicationNumber.includes("SW"))
+                        {
+                       
+                     const wswc_search = {
+                       GET: {
+                         URL: "/sw-services/swc/_search",
+                         ACTION: "_search",
+                       },
+                     };
+                     httpRequest("post", wswc_search.GET.URL, wswc_search.GET.ACTION, queryObject, [], { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+                     .then(res => {
+                       res.SewerageConnections[0]
+                       if(res&&res.SewerageConnections&&res.SewerageConnections.length>0){
+                         div =get(res, "SewerageConnections[0].div", '')
+                       subDiv =get(res, "SewerageConnections[0].subdiv", '')
+                       activityType =get(res, "SewerageConnections[0].activityType", '')
+                       applicantName =get(res, "SewerageConnections[0].connectionHolders[0].name", '')
+                       applicantAddress =get(res, "SewerageConnections[0].connectionHolders[0].correspondenceAddress", '')
+                       plotnumber =get(wnsConnection[0], "property.address.doorNo", '')
+                         houseNo =get(wnsConnection[0], "property.address.plotNo", '')
+                         sector = get(wnsConnection[0], "property.address.locality.name", '')
+                         applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
+                       if(activityType === null)
+                       {
+                         activityType = "Sewarage Connection"
+                       }
+                       let billGeneration_ =[
+                         {
+                           
+                           div: div,
+                           subDiv:subDiv,
+                           applicationNumber:applicationNumber,
+                           receiptNumber:receiptNumber,
+                           activityType: activityType,
+                           applicantName: applicantName,
+                           applicantAddress: applicantAddress,
+                           paymentReceiptDate:paymentReceiptDate,
+                           dueAmount: dueAmount,
+                           paidAmount:paidAmount,
+                           status:'Payment complete',
+                         }
+                       ]
+                         httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { WSReceiptRequest: billGeneration_ }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+                         .then(res => {
+                           res.filestoreIds[0]
+                           if(res&&res.filestoreIds&&res.filestoreIds.length>0){
+                             res.filestoreIds.map(fileStoreId=>{
+                               downloadReceiptFromFilestoreID(fileStoreId,mode,KeytenantId)
+                             })          
+                           }else{
+                             console.log("Error In Receipt Download");        
+                           }         
+                         });
+                                  
+                       }else{
+                         console.log("Error In Receipt Download");        
+                       }         
+                     });
+                        }
+               
+                      }
+
+                      
+                     
+                    })
+                   }
+                   catch(error)
+                   {
+                     
+                     console.log(error)
+                     dispatch(
+                                  toggleSnackbar(
+                                    true,
+                                    { labelName: error.message, labelKey: error.message },
+                                    "error"
+                                  )
+                                );  
+                   }
+
+            }
+            catch (error) {
+                console.log(error)
+                dispatch(
+                              toggleSnackbar(
+                                true,
+                                { labelName: error.message, labelKey: error.message },
+                                "error"
+                              )
+                            );  
+                //alert('Some Error Occured while downloading Receipt!');
+              }
+
+       }
+      
+        
+
     }
+    else{    
 
     let tenantName = wnsConnection[0].property.tenantId;
     tenantName = tenantName.split('.')[1];
 
     wnsConnection[0].tenantName = tenantName.toUpperCase();
     const appNo = wnsConnection[0].applicationNo;
-
-    let queryStr = [{ key: "tenantId", value: getTenantIdCommon() !== null?getTenantIdCommon():getTenantId() }];
+let KeytenantId = getTenantIdCommon() !== null?getTenantIdCommon():getTenantId() 
+    let queryStr = [{ key: "tenantId", value:KeytenantId }];
     let apiUrl, appService, estKey, queryObjectForEst
     if (wnsConnection[0].service === "WATER") {
 
@@ -2826,8 +3512,6 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
             ACTION: "_get",
         },
     };
-
-
     switch (type) {
         case 'application':
             queryStr.push({ key: "key", value: appService })
@@ -2841,7 +3525,6 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
             queryStr.push({ key: "key", value: appService });
             break;
     }
-
     try {
         const estResponse = await httpRequest(
             "post",
@@ -2913,7 +3596,7 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
                     }
                 }
                 obj = {
-                    WaterConnection: wnsConnection
+                    WaterConnection: WaterConnection
                 }
                // wnsConnection[0].connectionExecutionDate = 
                 set( wnsConnection, `connectionExecutionDate`, convertEpochToDate(wnsConnection[0].connectionExecutionDate));
@@ -2929,21 +3612,24 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download") 
                 res.filestoreIds[0]
                 if (res && res.filestoreIds && res.filestoreIds.length > 0) {
                     res.filestoreIds.map(fileStoreId => {
-                        if (type === "sanctionLetter") {
-                            store.dispatch(prepareFinalObject("WaterConnection[0].additionalDetails.sanctionFileStoreId", fileStoreId));
-                        } else if (type === "estimateNotice") {
-                            store.dispatch(prepareFinalObject("WaterConnection[0].additionalDetails.estimationFileStoreId", fileStoreId));
-                        }
-                        downloadReceiptFromFilestoreID(fileStoreId, mode,getTenantIdCommon() !== null?getTenantIdCommon():getTenantId())
+                        downloadReceiptFromFilestoreID(fileStoreId, mode,KeytenantId)
                     })
                 } else {
                     console.log("Error In Download");
                 }
 
             });
-    } catch (exception) {
+    } catch (error) {
+        dispatch(
+            toggleSnackbar(
+              true,
+              { labelName: error.message, labelKey: error.message },
+              "error"
+            )
+          );
         alert('Some Error Occured while downloading!');
     }
+}
 }
 
 export const GetMdmsNameBycode = (state, jsonpath, code) => {
@@ -3162,7 +3848,7 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
     //   throw error;
     // }
   };
-  export const getDataExchangeFile = async (queryObject , api,fromdate,todate) => {
+  export const getDataExchangeFile = async (queryObject , api,fromdate,todate,doctype) => {
 
     try {
       store.dispatch(toggleSpinner());
@@ -3171,7 +3857,7 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
         api,     
         "",
         queryObject,
-        { billGeneration: {fromDate:fromdate,toDate:todate}}
+        { billGeneration: {fromDate:fromdate,toDate:todate,dataExchangeType:doctype}}
       );
       store.dispatch(toggleSpinner());
       return response;
@@ -3214,3 +3900,80 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
     }
   
   };
+  export const WNSConfigName =()=>{
+    return {
+        ONE_TIME_FEE_WS: "PUBLIC_HEALTH_SERVICES_DIV2",
+        ONE_TIME_FEE_SW: "PUBLIC_HEALTH_SERVICES_DIV4",
+      
+  };
+  }
+  export const propertyUpdateCitizen = async (state, dispatch) => {
+
+    let applicationStatus =get(
+        state.screenConfiguration.preparedFinalObject,
+      "WaterConnection[0].applicationStatus"
+    );
+    let applicationNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].applicationNo", null);
+    let connectionNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].connectionNo", null);     
+    if(applicationNo && (connectionNo === null && applicationStatus ==='INITIATED') )
+    {
+  
+      let propertyData = get(
+        state,
+        "screenConfiguration.preparedFinalObject.applyScreen.property"
+      );
+      let tenantId = get(
+        state,
+        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
+      );
+      let doorNo =propertyData.address.doorNo
+      if(doorNo.length ===1)
+      {
+        doorNo =`000${doorNo}` 
+      }
+      else if(doorNo.length ===2)
+      {
+        doorNo =`00${doorNo}` 
+      } 
+      else if(doorNo.length ===3)
+      {
+        doorNo =`0${doorNo}` 
+      } 
+      set(propertyData, "address.doorNo", doorNo.toUpperCase());
+      propertyData.landArea = (propertyData.landArea);
+      propertyData.totalConstructedArea = (propertyData.landArea);
+      propertyData.tenantId = tenantId;
+      //set usage category
+      let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
+      let subusageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+      if(usageCategory!== null)
+      {
+      if(usageCategory.split('.').length ===1)
+      {
+      //st
+      set(propertyData, "usageCategory", subusageCategory);
+  
+      }
+    }
+    if(subusageCategory!== null)
+    {
+      if(subusageCategory.split('.').length ===2)
+      {
+      //set 
+      set(propertyData, "usageCategory", subusageCategory);
+      }
+    }
+    let code = get(
+        state.screenConfiguration.preparedFinalObject,
+        "applyScreen.property.address.locality.code"
+      )
+       if(code.value)
+       {
+        code = code.value
+       }
+       set(propertyData, "address.locality.code", code);
+      set(propertyData, "creationReason", "UPDATE");
+      let response_ = await propertyUpdate(state, dispatch,propertyData)
+    }
+  
+  }

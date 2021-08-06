@@ -113,19 +113,105 @@ class AllRequests extends Component {
     });
   }; 
   gotoPArkAndCommunityTanker = () => {
-    let {PreviousBookingData ,oldBookingData,prepareFinalObject,clearAvailable,discountOldDoc,previousResidenceProof} = this.props
+    let {PreviousBookingData ,oldBookingData,prepareFinalObject,clearAvailable,discountOldDoc,UploadedDocType,previousResidenceProof,state} = this.props
     let ApplicationData = this.props.bookings;
     let CheckData = this.props.bookings ? (this.props.bookings.applicationData ?(this.props.bookings.applicationData.bookingsModelList.length > 0 ? (this.props.bookings.applicationData.bookingsModelList): 'NA'): 'NA'): "NA"
-//screenConfiguration.preparedFinalObject.PreviousBookingData    
+
+let clearVenueData = get(
+  state,"screenConfiguration.preparedFinalObject.bkBookingData",
+  "NotFound"
+);
+
+if(clearVenueData !== "NotFound"){
+  delete state.screenConfiguration.preparedFinalObject.bkBookingData
+}
+
+let applicationData = get(
+  state,
+  "bookings.applicationData",
+  "NotFound"
+);
+
+
+let findDocument;
+findDocument = state.bookings.hasOwnProperty('applicationData')
+
+
+if(applicationData !== "NotFound" || findDocument == true){
+
+  this.props.clearBookingData(null,true,true)
+  delete state.bookings.applicationData
+}
+
+let lastBookingData = get(
+  state,
+  "screenConfiguration.preparedFinalObject.PreviousBookingData",
+  "NotFound"
+);
+
+
+let documentMap = get(
+  state,
+  "screenConfiguration.preparedFinalObject.documentMap",
+  "NotFound"
+);
+
+
+
+let lastCreatedPaccAppData = get(
+  state,
+  "screenConfiguration.preparedFinalObject.CreatePaccAppData",
+  "NotFound"
+);
+
+let checkDateVenueChange = get(
+  state,
+  "screenConfiguration.preparedFinalObject.EmployeeDateVenueChange",
+  "NotFound"
+);
+if(checkDateVenueChange !== "NotFound"){
+  prepareFinalObject("EmployeeDateVenueChange","NotFound")
+}
+
+let lastCreateAppData = get(
+  state,
+  "screenConfiguration.preparedFinalObject.createAppData",
+  "NotFound"
+);
+
+if(documentMap !== "NotFound"){
+
+  delete state.screenConfiguration.preparedFinalObject.documentMap
+}
+
+if(lastBookingData !== "NotFound"){
+ 
+  delete state.screenConfiguration.preparedFinalObject.PreviousBookingData
+}
+
+if(lastCreatedPaccAppData !== "NotFound"){
+ 
+  delete state.screenConfiguration.preparedFinalObject.CreatePaccAppData
+}
+
+if(lastCreateAppData !== "NotFound"){
+  
+  delete state.screenConfiguration.preparedFinalObject.createAppData
+}
+
     if(PreviousBookingData !== "NotFound"){
       prepareFinalObject("PreviousBookingData",null)
     }
     if(discountOldDoc !== "NotFound"){
-      prepareFinalObject("discountDocumentsUploadRedux",null)
+      prepareFinalObject("discountDocumentsUploadRedux",{})
     }
     if(previousResidenceProof !== "NotFound"){
-      prepareFinalObject("documentsUploadRedux",null)
+      prepareFinalObject("documentsUploadRedux",{})
     }
+    if(UploadedDocType !== "NotFound"){
+      prepareFinalObject("UploadedDocType",null)
+    }     
+    
     //screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
     if(oldBookingData !== "NotFound"){
       prepareFinalObject("oldAvailabilityCheckData",null)
@@ -134,11 +220,8 @@ class AllRequests extends Component {
       prepareFinalObject("availabilityCheckData",null)
     }
     if(CheckData !== 'NA'){
-      // let newbooking ={...this.props.bookings,applicationData:null} 
-
     this.props.clearBookingData(null,true,true)
       }
-    
     this.props.history.push(`/egov-services/checkavailability_pcc`);
   };
   gotoMcc = () => {
@@ -147,14 +230,11 @@ class AllRequests extends Component {
 
  
 getApplicationStatus = (applicationNumber) => { 
-  console.log("getApplicationStatus", applicationNumber)
   let applicationsArray = this.props.csrComplaints
-  console.log("applicationsArray", applicationsArray)
+  
   let application = applicationsArray.filter((applicationDetail) => {
     return applicationDetail.bkApplicationNumber == applicationNumber
   })
-  console.log("application", application) //bkApplicationStatus: "OFFLINE_INITIATED"
-  console.log("CheckAppStatus",application[0].bkApplicationStatus == "OFFLINE_INITIATED")
   return application[0].bkApplicationStatus == "OFFLINE_INITIATED"
 }
 
@@ -181,7 +261,7 @@ getApplicationStatus = (applicationNumber) => {
 
     if (bookingType && (bookingType == "Parks" || bookingType == "Community Center")) {
     if(this.getApplicationStatus(complaintNo)){ 
-    console.log("Path change")
+    
 
    this.props.fetchApplications(
 			{
@@ -199,14 +279,14 @@ getApplicationStatus = (applicationNumber) => {
 			"applicationStatus": "",
 			"mobileNumber": "", "bookingType": "", "tenantId": userInfo.tenantId
 		}
-    console.log("RequestBodyForInitiateApplication-",RequestBodyForInitiateApplication)
+    
 
     let dataforSectorAndCategory = await httpRequest(
 			"bookings/api/employee/_search",
 			"_search", [],
 			RequestBodyForInitiateApplication
 		);
-console.log("dataforSectorAndCategory",dataforSectorAndCategory)
+
 
 let bkLocation = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkLocation : 'NA'
 		let bkFromDate = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkFromDate : 'NA'
@@ -230,63 +310,135 @@ let bkLocation = dataforSectorAndCategory && dataforSectorAndCategory.bookingsMo
 				allDocumentList: allDocumentList
 			})
 		}
-    console.log("nero proofOfResDocs", proofOfResDocs, "----", allDocumentList)
-		console.log("AppNo--", AppNo)
-		if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
-			let timeSlot = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot
-			console.log("timeSlot--", timeSlot)
+	  if (dataforSectorAndCategory.bookingsModelList[0].timeslots.length > 0) {
+      let arr2 = [];
+      for(let i = 0; i < dataforSectorAndCategory.bookingsModelList[0].timeslots.length; i++){
+        arr2.push(dataforSectorAndCategory.bookingsModelList[0].timeslots[i].slot)
+      }
+      
 
-			prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
+      if(arr2.length == 1){
+      
+      let timeSlot =
+        dataforSectorAndCategory.bookingsModelList[0].timeslots[0].slot;
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
 
-			let res = timeSlot.split("-");
-			console.log("res--", res)
+      let res = timeSlot.split("-");
+  
+      let fromTime = res[0];
+      
 
-			let fromTime = res[0]
-			console.log("fromTime--", fromTime)
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
 
-			prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
+      let ToTime = res[1];
+      
+
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
+
+      let strMid = ",";
+
+      let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
+      
+
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatFromDateTime",
+        ConcatFromDateTime
+      );
+
+      let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
+      
+
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatToDateTime",
+        ConcatToDateTime
+      );
+
+      //let bkDisplayFromDateTime =
+
+      let timeSlotId =
+        dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id;
+     
+
+      prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
+      }
+       else{
+        let a = arr2[0]
+        let b = arr2[1]
+        
+        
+        let fromfirst = a.split("-")
+        
+       let fromsecond = b.split("-")
+      
+      
+      let first = fromfirst[0]
+      let second = fromsecond[1]
+      
+      
+
+      let comfirstsecond = first + "-" + second
+      
+
+      let timeSlot = comfirstsecond
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlot", timeSlot);
 
 
-			let ToTime = res[1]
-			console.log("ToTime--", ToTime);
+      let res = timeSlot.split("-");
+      
 
-			prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
+      let fromTime = res[0];
+      
 
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotfromTime", fromTime);
 
-			let strMid = ","
+      let ToTime = res[1];
+      
 
-			let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
-			console.log("ConcatFromDateTime--", ConcatFromDateTime)
+      prepareFinalObject("oldAvailabilityCheckData.TimeSlotToTime", ToTime);
 
-			prepareFinalObject("oldAvailabilityCheckData.ConcatFromDateTime", ConcatFromDateTime);
+      let strMid = ",";
 
-			let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
-			console.log("ConcatToDateTime--", ConcatToDateTime)
+      let ConcatFromDateTime = bkFromDate.concat(strMid).concat(fromTime);
+      
 
-			prepareFinalObject("oldAvailabilityCheckData.ConcatToDateTime", ConcatToDateTime);
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatFromDateTime",
+        ConcatFromDateTime
+      );
 
+      let ConcatToDateTime = bkToDate.concat(strMid).concat(ToTime);
+      
 
+      prepareFinalObject(
+        "oldAvailabilityCheckData.ConcatToDateTime",
+        ConcatToDateTime
+      );
 
-			//let bkDisplayFromDateTime =
+      //let bkDisplayFromDateTime =
 
-			let timeSlotId = dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id
-			console.log("timeSlotId--", timeSlotId)
+      let timeSlotId =
+        dataforSectorAndCategory.bookingsModelList[0].timeslots[0].id;
+      
 
-			prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
+      prepareFinalObject("oldAvailabilityCheckData.timeSlotId", timeSlotId);
 
+      let timeSlotIdTwo =
+      dataforSectorAndCategory.bookingsModelList[0].timeslots[1].id;
+    
 
-
-		}
+    prepareFinalObject("oldAvailabilityCheckData.timeSlotIdTwo", timeSlotIdTwo);  
+       }
+    }
 
     allDocumentList.map(async (doc) => {
-			console.log("Doccc---", doc);
+			
 			// doc.docmentType
 			// doc.fileName
 			// doc.fileStoreId
 			let fileLink = await getFileUrlFromAPI(doc.fileStoreId, "ch");
-			console.log("filelink--", fileLink);
+			
 			if (doc.documentType === "BK_PCC_DISCOUNT_DOCUMENT") {
-			  console.log("DIscountDoc==", doc);
+			  
 			  let dicscountDoc = [
 				{
 				  documentCode: doc.documentType,
@@ -307,7 +459,7 @@ let bkLocation = dataforSectorAndCategory && dataforSectorAndCategory.bookingsMo
 			 this.props.prepareFinalObject("discountDocumentsUploadRedux", dicscountDoc);
 			  return;
 			} else {
-			  console.log("DocFIle==", doc);
+			  
 			  let Doc = [
 				{
 				  documentCode: doc.documentType,
@@ -744,14 +896,11 @@ else{
     };
 
     const { loading, histor, userInfo, applicationType,roles } = this.props;
-    console.log("propsInMainPage--",this.props)
+    
     let oneRole = roles[0]
     let RoleOneCode = oneRole.code
     let twoRole = roles[1]
     let RoleTwoCode = twoRole.code
-    console.log(typeof(roles),"RolesArray")
-console.log("oneRole--",oneRole)
-console.log("twoRole--",twoRole)
     if(RoleOneCode == "BK_MCC_APPROVER" && RoleTwoCode == "BK_OSBM_APPROVER"){
       console.log("yes roles Found")
     }else{
@@ -1312,8 +1461,6 @@ const mapStateToProps = state => {
   const loading = false;
   const { userInfo } = state.auth;
   const roles = userInfo.roles
-  console.log("roles--Of-mainUser",roles)
-//screenConfiguration.preparedFinalObject.oldAvailabilityCheckData
 let PreviousBookingData  = get(
     state,
     "screenConfiguration.preparedFinalObject.oldAvailabilityCheckData",
@@ -1324,43 +1471,28 @@ let clearAvailable = get(
   "screenConfiguration.preparedFinalObject.availabilityCheckData",
   "NotFound"
 )
-console.log("clearAvailable",clearAvailable)
-// screenConfiguration.preparedFinalObject.PreviousBookingData    screenConfiguration.preparedFinalObject.availabilityCheckData
-console.log("PreviousBookingData-",PreviousBookingData)
 let oldBookingData  = get(
   state,
   "screenConfiguration.preparedFinalObject.PreviousBookingData",
   "NotFound"
 );
-console.log("oldBookingData-",oldBookingData)
-
 
 let discountOldDoc  = get(
   state,
   "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux",
   "NotFound"
 );
-console.log("discountOldDoc-",discountOldDoc)
-
 let previousResidenceProof  = get(
   state,
   "screenConfiguration.preparedFinalObject.documentsUploadRedux",
   "NotFound"
 );
-console.log("previousResidenceProof-",previousResidenceProof)
-
+let UploadedDocType  = get(
+  state,
+  "screenConfiguration.preparedFinalObject.UploadedDocType",
+  "NotFound"
+);
   
-  // const role =
-  //   roleFromUserInfo(userInfo.roles, "GRO") ||
-  //     roleFromUserInfo(userInfo.roles, "DGRO")
-  //     ? "ao"
-  //     : roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER1") ||
-  //       roleFromUserInfo(userInfo.roles, "ESCALATION_OFFICER2")
-  //       ? "eo"
-  //       : roleFromUserInfo(userInfo.roles, "CSR")
-  //         ? "csr"
-  //         : "employee";
-
   const role = "employee";
   let assignedComplaints = [],
     unassignedComplaints = [],
@@ -1386,7 +1518,7 @@ console.log("previousResidenceProof-",previousResidenceProof)
     loading,
     transformedComplaints,
     roles,
-    bookings,userInfo,discountOldDoc,previousResidenceProof
+    bookings,userInfo,discountOldDoc,previousResidenceProof,state
   };
 };
 

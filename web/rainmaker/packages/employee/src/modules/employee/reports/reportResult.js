@@ -98,7 +98,11 @@ class ShowField extends Component {
     const exportOptions = flag ? { rows: ".selected", columns } : { columns };
     let reportTitle = this.getReportTitle();
     let orientation = reportHeader.length > 6 ? "landscape" : "portrait";
-
+    // if(reportName === 'PensionObligation')
+    // {
+    //   orientation = "portrait"
+      
+    // }
     const buttons = [
       {
         text: "<span>Download as : </span>",
@@ -110,15 +114,30 @@ class ShowField extends Component {
         messageTop: tabLabel,
         text: "PDF",
         orientation: orientation,
-        pageSize: pageSize,
+        pageSize: pageSize,//reportHeader.length >15 ? "A0" :pageSize,// "A0",//pageSize,
         footer: true,
         customize: function(doc) {
           doc.content[0].text = [];
           doc.content[0].text.push({ text: "mChandigarh Application\n\n", bold: true, fontSize: 20 });
           doc.content[0].text.push({ text: reportTitle, fontSize: 18 });
-          doc.content[1].margin = [ 80, 0, 80, 0 ]
+          doc.content[1].margin = [ 80, 0, 80, 0 ];
+          var rowCount = doc.content[2].table.body.length;
+          // for (let i = 1; i < rowCount; i++) {
+          //   for (let index = 0; index < reportHeader.length; index++) {
+          //     doc.content[2].table.body[i][index].alignment = 'center'; 
+          //   }
+          
+          // }
+          //set width of all column
+          // if(reportHeader.length >15)
+          // {
+          //   doc.content[2].table.widths = 
+          //   Array(doc.content[2].table.body[0].length + 1).join('*').split('');
+          // }
+          
         },
         className: "report-pdf-button",
+        
       },
       {
         extend: "excel",
@@ -129,9 +148,33 @@ class ShowField extends Component {
         footer: true,
         className: "report-excel-button",
         exportOptions: {
+         
           format: {
                    body: function (data, row, column, node ) {
-                              return column === 6 ? "\0" + data : data;
+                     if(_this.state.reportName ==='MonthlyPensionDrawn')
+                     {
+                      
+                      return column === 6 ? "\0" + data : data;
+                    }
+                    else{
+                      var str1 = new String(data);  
+                      var index = str1.indexOf( "data-localization" ); 
+                      if(index>0)
+                      {                        
+                        var Text = data;
+                        var template = document.createElement('template');
+                        Text = Text.trim(); 
+                        template.innerHTML = Text;
+                        data = template.content.firstChild.innerText === undefined?Text:template.content.firstChild.innerText;
+                        return column = data
+                      }
+                      else{
+                        data = data;
+                        return column = data
+                      }
+
+                    }
+                              
                               }
             }
          },

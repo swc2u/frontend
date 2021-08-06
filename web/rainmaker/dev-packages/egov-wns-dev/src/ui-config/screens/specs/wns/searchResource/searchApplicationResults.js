@@ -1,5 +1,5 @@
 import React from "react";
-import { sortByEpoch, getEpochForDate } from "../../utils";
+import { sortByEpoch, getEpochForDate,getTextToLocalMappingCode } from "../../utils";
 import './index.css'
 import {
   getLocaleLabels,
@@ -115,7 +115,7 @@ export const searchApplicationResults = {
   props: {
     columns: [
       {
-        name: getTextToLocalMapping("Consumer No"),
+        name: getTextToLocalMappingCode("Consumer No"),
         options: {
           filter: false,
           customBodyRender: (value, data) => {
@@ -134,7 +134,7 @@ export const searchApplicationResults = {
         }
       },
       {
-        name: getTextToLocalMapping("Application No"),
+        name: getTextToLocalMappingCode("Application No"),
         options: {
           filter: false,
           customBodyRender: (value, data) => {
@@ -153,7 +153,7 @@ export const searchApplicationResults = {
         }
       },
       {
-        name: getTextToLocalMapping("Application Type"),
+        name: getTextToLocalMappingCode("Application Type"),
         options: {
           filter: false,
           customBodyRender: value => (
@@ -163,11 +163,13 @@ export const searchApplicationResults = {
           )
         }
       },
-      getTextToLocalMapping("Owner Name"),
-      getTextToLocalMapping("Application Status"),
-      getTextToLocalMapping("Address"),
+     // getTextToLocalMappingCode("Owner Name"),
+      //plotnumber
+      getTextToLocalMappingCode("plotnumber"),
+      getTextToLocalMappingCode("Application Status"),
+      getTextToLocalMappingCode("Address"),
       {
-        name: getTextToLocalMapping("Action"),
+        name: getTextToLocalMappingCode("Action"),
         options: {
           filter: false,
           customBodyRender: (value, data) => {
@@ -198,37 +200,71 @@ export const searchApplicationResults = {
         }
       },
       {
-        name:   getTextToLocalMapping("tenantId"),
+        name:   getTextToLocalMappingCode("tenantId"),
         options: {
           display: false
         }
       },
       {
-        name:  getTextToLocalMapping("service"), 
+        name:  getTextToLocalMappingCode("service"), 
         options: {
           display: false
         }
       },
       {
-        name:   getTextToLocalMapping("connectionType"),
+        name:   getTextToLocalMappingCode("connectionType"),
+        options: {
+          display: false
+        }
+      },
+      
+      {
+        name: getTextToLocalMappingCode("division"),
         options: {
           display: false
         }
       },
       {
-        name:   getTextToLocalMapping("ActionType"),
+        name: getTextToLocalMappingCode("subdivision"),
+        options: {
+          display: false
+        }
+      },
+      // {
+      //   name: getTextToLocalMappingCode("plotnumber"),
+      //   options: {
+      //     display: false
+      //   }
+      // },
+      
+      {
+        name: getTextToLocalMappingCode("paidamount"),
         options: {
           display: false
         }
       },
       {
-        name: getTextToLocalMapping("billGenerationId"),
+        name: getTextToLocalMappingCode("Sector"),
         options: {
           display: false
         }
-      }
+      },
+     
+      {
+        name:   getTextToLocalMappingCode("ActionType"),
+        options: {
+          display: false
+        }
+      },
+
+      // {
+      //   name: getTextToLocalMappingCode("billGenerationId"),
+      //   options: {
+      //     display: false
+      //   }
+      // }
     ],
-    title: getTextToLocalMapping("Search Results for Water & Sewerage Application"),
+    title: getTextToLocalMappingCode("Search Results for Water & Sewerage Application"),
     options: {
       filter: false,
       download: false,
@@ -256,7 +292,7 @@ export const searchApplicationResults = {
 };
 
 const getApplicationDetails = data => {
-  const activityType = data.rowData[10]
+  const activityType = data.rowData[14]
   if(data.rowData[8].toUpperCase() ==='SEWERAGE' || data.rowData[7].toUpperCase() ==='SEWERAGE')
   {
     window.localStorage.setItem("wns_workflow","SW_SEWERAGE");

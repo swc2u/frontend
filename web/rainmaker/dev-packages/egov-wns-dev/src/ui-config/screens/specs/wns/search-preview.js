@@ -65,9 +65,17 @@ const getLabelForWnsHeader = () => {
 }
 
 const headerrow = getCommonContainer({
-  header: getCommonHeader({
-    labelKey: getLabelForWnsHeader()
-  }),
+  // header: getCommonHeader({
+  //   labelKey: getLabelForWnsHeader()
+  // }),
+  header: {
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-wns",
+    componentPath: "ApplicationHeaderContainer",
+    props: {
+      number: applicationNumber
+    }
+  },
   application: getCommonContainer({
     applicationNumber: {
       uiFramework: "custom-atoms-local",
@@ -91,7 +99,7 @@ const headerrow = getCommonContainer({
 })
 });
 
-const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
+const beforeInitFn = async (action, state, dispatch, applicationNumber ,tenantId) => {
   const queryObj = [
     { key: "businessIds", value: applicationNumber },
     { key: "history", value: true },
@@ -99,6 +107,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
   ];
 
   let Response =await getWorkFlowData(queryObj);
+  let securityCharges =0;
   let processInstanceAppStatus=Response.ProcessInstances[0].state.applicationStatus;
   //Search details for given application Number
   if (applicationNumber) {
@@ -112,6 +121,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
     }
     //set proposed holder info if activityType: "UPDATE_CONNECTION_HOLDER_INFO"
     const activityTypeHolder =Response.ProcessInstances[0].businessService;// get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType");
+    ///? set property according to connection
     if(activityTypeHolder ==='UPDATE_CONNECTION_HOLDER_INFO' || activityTypeHolder ==='WS_RENAME' )
     {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewproposedHolderInfo.visible",true);
@@ -120,16 +130,40 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
     else{
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewproposedHolderInfo.visible",false);
     }
+    /////?
+    if(activityTypeHolder ==='SW_SEWERAGE' || activityTypeHolder ==='WS_TUBEWELL' )
+    {
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewMeterId.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewMeterInstallationDate.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewlastMeterReading.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewInitialMeterReading.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewmfrCode.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewmeterDigits.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewmeterUnit.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewsanctionedCapacity.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewmeterRentCode.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFourteen.children.reviewMeterCount.visible",false);
+
+      //
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewEleven.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyUsageDetail.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnection.visible",false);
+        ////reviewConnectionDetails
+    }
 
     if(activityTypeHolder ==='UPDATE_METER_INFO' || activityTypeHolder ==='WS_METER_UPDATE' )
     {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFifteen.visible",true);
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewSixteen.visible",true);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.children.reviewisIsMeterStolen.visible",true);
+      //set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.children.reviewconstructionCharges.visible",false);
 
     }
     else{
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFifteen.visible",false);
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewSixteen.visible",false);
+      set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.children.reviewisIsMeterStolen.visible",false);
     }
 
     if(activityTypeHolder ==='CONNECTION_CONVERSION'|| activityTypeHolder ==='WS_CONVERSION')
@@ -146,6 +180,40 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewConnectionBillDetail.visible",true);
 
       let service_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.service");
+              //set security if bellow consition satisfy
+              const {WaterConnection} = state.screenConfiguration.preparedFinalObject;
+              if(WaterConnection &&WaterConnection[0])
+              {
+                if(WaterConnection[0].service ==='WATER')
+                {
+                  if(WaterConnection[0].applicationStatus === "PENDING_FOR_SECURITY_DEPOSIT" || WaterConnection[0].applicationStatus === "PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT")
+                  {
+                    //regular
+                    if(WaterConnection[0].waterApplicationType ==='REGULAR')
+                    {
+                      if(WaterConnection[0].proposedPipeSize == 15 && WaterConnection[0].activityType ==='NEW_WS_CONNECTION'){
+                        const {searchPreviewScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
+                        const pipeSize = searchPreviewScreenMdmsData['ws-services-calculation'].PipeSize.filter(pipeSize => pipeSize.size == 15);
+                         securityCharges = pipeSize[0].charges[0].security;
+                        set(state.screenConfiguration.preparedFinalObject.WaterConnection[0], 'waterApplication.securityCharge', securityCharges);
+                      }
+                      else
+                      {
+                        let securityChargespath ='components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount.props.value';
+                        securityCharges = get(state.screenConfiguration.screenConfig.apply,securityChargespath,0)
+                        
+                        //securityCharges = 0
+                      }
+                    }
+                    
+                  }
+
+                }
+
+
+              }
+
+              
       if(service_ ==='SEWERAGE')
         set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewConnectionDetails.children.cardContent.children.viewpropertyUsageDetail.visible",false);
     } else {
@@ -157,27 +225,33 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
      
       let parsedObject = parserFunction(findAndReplace(applyScreenObject, "NA", null));
       let code = '03';
-      let isFerruleApplicable = false
+      let isFerruleApplicable = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplication.isFerruleApplicable",true);
+     // let securityCharges = false
       if (service === "WATER") 
       {
         code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",parsedObject.property.address.locality.code)   
         if(parsedObject.waterApplication.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
         {
-            isFerruleApplicable  =true;
+           // isFerruleApplicable  =true;
   
         }
         else{
           isFerruleApplicable = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplication.isFerruleApplicable",false);
         }
+
       }
         
         if (service === "SEWERAGE") 
         {
           code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.swSectorList",parsedObject.property.address.locality.code)   
+          if(code.length ===1)
+          {
+            code =`0${code}`
+          }
           set(parsedObject, 'property.address.locality.name', code);
               if(parsedObject.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
           {
-              isFerruleApplicable  =true;
+             // isFerruleApplicable  =true;
 
           }
           else{
@@ -191,8 +265,13 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
      
       
       set(parsedObject, 'waterApplication.isFerruleApplicable', isFerruleApplicable);
+      securityCharges = get(state.screenConfiguration.preparedFinalObject, "applyScreen.waterApplication.securityCharge",0);
+      set(parsedObject, 'waterApplication.securityCharge', securityCharges);
+      
+      
+
       dispatch(prepareFinalObject("WaterConnection[0]", parsedObject));
-      //dispatch(prepareFinalObject("WaterConnection[0].waterApplication.isFerruleApplicable", isFerruleApplicable));
+      
        let estimate;
        if(processInstanceAppStatus==="CONNECTION_ACTIVATED"){
         let connectionNumber= parsedObject.connectionNo;
@@ -201,6 +280,11 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
       }
       if(processInstanceAppStatus==="PENDING_FOR_FIELD_INSPECTION"|| processInstanceAppStatus==="PENDING_FOR_METER_INSTALLATION"|| processInstanceAppStatus==="PENDING_FOR_JE_BR_APPROVAL" || 1===1){
+        set(parsedObject, 'waterApplication.securityCharge', securityCharges);
+        let  additionalCharges = get(parsedObject, 'waterApplication.additionalCharges',0)
+        let  constructionCharges = get(parsedObject, 'waterApplication.constructionCharges',0)
+        set(parsedObject, 'waterApplication.additionalCharges', parseInt(additionalCharges));
+        set(parsedObject, 'waterApplication.constructionCharges', parseInt(constructionCharges));
         let queryObjectForEst = [{
           applicationNo: applicationNumber,
           tenantId: tenantId,
@@ -335,6 +419,11 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
         "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.children.reviewInitialMeterReading.visible",
         true
       );
+      set(
+        action.screenConfig,
+        "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.children.reviewlastMeterReading.visible",
+        true
+      );
     } else {
       set(
         action.screenConfig,
@@ -344,6 +433,11 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
       set(
         action.screenConfig,
         "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.children.reviewMeterInstallationDate.visible",
+        false
+      );
+      set(
+        action.screenConfig,
+        "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewTwelve.children.reviewlastMeterReading.visible",
         false
       );
       set(
@@ -438,46 +532,79 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber) => {
 
     setActionItems(action, obj);
     loadReceiptGenerationData(applicationNumber, tenantId);
-    if(processInstanceAppStatus==="CONNECTION_ACTIVATED" || processInstanceAppStatus==="SEWERAGE_CONNECTION_ACTIVATED"){
-      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.visible",true );
-      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",true );
-      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",true );
-      let action = false
-      let service_ = getQueryArg(window.location.href, "service");
-      if(service_ ==='SEWERAGE')
-      {
-        action = true
-      }
-      else if(service_ ==='WATER')
-      {
-        action = false
 
-      }
+
+    //?
+    //set receipt download button
+    let ReceitdouloadActive = false
+    let totalAmountPaid = 0 
+        
+        let service_ = getQueryArg(window.location.href, "service");
+        if(service_ ==='SEWERAGE')
+        {
+          ReceitdouloadActive = true
+          totalAmountPaid = parseInt(get(data, "dataCalculation.totalAmountPaid",0));
+          if(totalAmountPaid>0)
+          {
+            ReceitdouloadActive = true
+          }
+          else
+          {
+            ReceitdouloadActive = false;
+
+          }
+        }
+        else if(service_ ==='WATER')
+        {          
+          totalAmountPaid = parseInt(get(data, "WaterConnection[0].waterApplication.totalAmountPaid",0));
+          if(totalAmountPaid>0)
+          {
+            ReceitdouloadActive = true
+          }
+  
+        }
+       // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.visible",ReceitdouloadActive ); 
+          dispatch(
+          handleField(
+          "search-preview",
+          "components.div.children.headerDiv.children.helpSection",
+          "visible",
+          ReceitdouloadActive
+          )
+          );
+    //
+
+    //?
+    // if(processInstanceAppStatus==="CONNECTION_ACTIVATED" || processInstanceAppStatus==="SEWERAGE_CONNECTION_ACTIVATED"){
+    //   // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.visible",true );
+    //   // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",true );
+    //   // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",true );
+
       
-      dispatch(
-        handleField(
-          "search-preview",
-          "components.div.children.headerDiv.children.helpSection",
-          "visible",
-          action
-        )
-      );
+    //   dispatch(
+    //     handleField(
+    //       "search-preview",
+    //       "components.div.children.headerDiv.children.helpSection",
+    //       "visible",
+    //       action
+    //     )
+    //   );
 
-    }
-    else{
-      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.visible",false );
-      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",false );
-      // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",false );
-      dispatch(
-        handleField(
-          "search-preview",
-          "components.div.children.headerDiv.children.helpSection",
-          "visible",
-          false
-        )
-      );
+    // }
+    // else{
+    //   // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.visible",false );
+    //   // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.downloadMenu.visible",false );
+    //   // set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.children.rightdiv.children.printMenu.visible",false );
+    //   dispatch(
+    //     handleField(
+    //       "search-preview",
+    //       "components.div.children.headerDiv.children.helpSection",
+    //       "visible",
+    //       false
+    //     )
+    //   );
 
-    }
+    // }
   }
 
 
@@ -589,13 +716,14 @@ export const getMdmsData = async (state,dispatch) => {
       tenantId: commonConfig.tenantId,
       moduleDetails: [
        // { moduleName: "common-masters", masterDetails: [{ name: "OwnerType" }, { name: "OwnerShipCategory" }] },
-       
+       { moduleName: "ws-services-calculation", masterDetails: [{ name: "PipeSize" }] },
         { moduleName: "ws-services-masters", 
         masterDetails: [
           { name: "wsWorkflowRole" },
           { name: "swWorkflowRole" },
           { name: "sectorList" },
           { name: "swSectorList" },
+          {name:"tariffType"},
           
         
         ] },
@@ -690,6 +818,12 @@ const screenConfig = {
     const status = getQueryArg(window.location.href, "status");
     const tenantId = getQueryArg(window.location.href, "tenantId");
     const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+    if(process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit"&& window.localStorage.getItem("ActivityStatusFlag")=== "true"){
+      window.localStorage.removeItem("ActivityStatusFlag");
+    }
+    if(localStorage.getItem("ActivityStatusFlag")){
+      window.localStorage.removeItem("ActivityStatusFlag");
+    }
     
     getMdmsData( state, dispatch).then(() => { });
     //To set the application no. at the  top
@@ -697,9 +831,27 @@ const screenConfig = {
     // if (status !== "pending_payment") {
     //   set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.viewBreakupButton.visible", false);
     // }
+    let businessService = "SW_SEWERAGE"
+    if(applicationNumber)
+    {
+      if(applicationNumber.includes("SW"))
+      {
+        businessService = "SW_SEWERAGE"
+
+      }
+      else if(applicationNumber.includes("WS"))
+      {
+        businessService = "REGULARWSCONNECTION"
+      }
+    }
+    if(localStorage.getItem("wns_workflow")){
+      businessService = localStorage.getItem("wns_workflow")
+
+    }
+    
     const serviceModuleNameCurrent = service === "WATER" ? 
-    (window.localStorage.getItem("wns_workflow")===null ? "REGULARWSCONNECTION":  window.localStorage.getItem("wns_workflow"))
-    :"SW_SEWERAGE";
+    (window.localStorage.getItem("wns_workflow")===null ? businessService:  window.localStorage.getItem("wns_workflow"))
+    :businessService;
     const queryObject = [
       { key: "tenantId", value: tenantId },
       { key: "businessServices", value: serviceModuleNameCurrent }
@@ -707,7 +859,7 @@ const screenConfig = {
 
     setBusinessServiceDataToLocalStorage(queryObject, dispatch);
     set(action,"screenConfig.components.adhocDialog.children.popup",adhocPopup);
-    beforeInitFn(action, state, dispatch, applicationNumber);
+    beforeInitFn(action, state, dispatch, applicationNumber,tenantId);
 
     return action;
   },
@@ -729,7 +881,12 @@ const screenConfig = {
                 xs: 12,
                 sm: 8
               },
-              ...headerrow
+              ...headerrow,
+              // headerrow_temp:getCommonContainer({
+              //   header: getCommonHeader({
+              //     labelKey: window.localStorage.getItem("wns_workflow") !== null?`${window.localStorage.getItem("wns_workflow")}_DETAIL_HEADER`:'WS_TASK_DETAILS'
+              //   }),
+              // }),
             },
             helpSection: {
               uiFramework: "custom-atoms",
@@ -832,6 +989,36 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
     //payload.WaterConnection[0].service = service;
 
     const convPayload = findAndReplace(payload, "NA", null)
+    // securityCharges before api call _estimate in bellow condition.
+    if(convPayload.WaterConnection && convPayload.WaterConnection[0])
+    {
+      if(convPayload.WaterConnection[0].service ==='WATER')
+      {
+        if(convPayload.WaterConnection[0].applicationStatus === "PENDING_FOR_SECURITY_DEPOSIT" || convPayload.WaterConnection[0].applicationStatus === "PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT")
+        {
+          //regular
+          if(convPayload.WaterConnection[0].waterApplicationType ==='REGULAR')
+          {
+            if(convPayload.WaterConnection[0].proposedPipeSize == 15 && convPayload.WaterConnection[0].activityType ==='NEW_WS_CONNECTION'){
+              const {searchPreviewScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
+              const pipeSize = searchPreviewScreenMdmsData['ws-services-calculation'].PipeSize.filter(pipeSize => pipeSize.size == 15);
+               let securityCharges_ = pipeSize[0].charges[0].security;
+               set(convPayload.WaterConnection[0], 'waterApplication.securityCharge', securityCharges_);
+              
+            }
+          }
+          
+        }
+
+      }
+      let  additionalCharges = get(convPayload.WaterConnection[0], 'waterApplication.additionalCharges',0)
+      let  constructionCharges = get(convPayload.WaterConnection[0], 'waterApplication.constructionCharges',0)
+      set(convPayload.WaterConnection[0], 'waterApplication.additionalCharges', parseInt(additionalCharges));
+      set(convPayload.WaterConnection[0], 'waterApplication.constructionCharges', parseInt(constructionCharges));
+
+
+    }
+    //
     let queryObjectForEst = [{
       applicationNo: applicationNumber,
       tenantId: tenantId,
@@ -857,6 +1044,7 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
       set(action.screenConfig, "components.div.children.headerDiv.children.header1.children.connection.children.connectionNumber.visible",false ); 
       //set(action.screenConfig, "components.div.children.headerDiv.children.helpSection.visible",false );
     }
+    
 
     // to set documents 
     if (payload.WaterConnection[0].documents !== null && payload.WaterConnection[0].documents !== "NA") {
@@ -963,15 +1151,7 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
 };
 
 const parserFunction = (obj) => {
-  // let isFerruleApplicable = false
-  // if(obj.waterApplication.applicationStatus !== 'PENDING_FOR_SECURITY_DEPOSIT' || obj.waterApplication.applicationStatus!=='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
-  // {
-  //     isFerruleApplicable  =true;
 
-  // }
-  // else{
-  //   isFerruleApplicable = obj.waterApplication.isFerruleApplicable
-  // }
   let usageCategory = null
   let usageSubCategory = null
   if(obj.service==='WATER')
@@ -996,6 +1176,10 @@ const parserFunction = (obj) => {
         obj.additionalDetails !== undefined &&
         obj.additionalDetails.initialMeterReading !== undefined
       ) ? parseFloat(obj.additionalDetails.initialMeterReading) : null,
+      lastMeterReading: (
+        obj.additionalDetails !== undefined &&
+        obj.additionalDetails.lastMeterReading !== undefined
+      ) ? parseFloat(obj.additionalDetails.lastMeterReading) : null,
       detailsProvidedBy: (
         obj.additionalDetails !== undefined &&
         obj.additionalDetails.detailsProvidedBy !== undefined &&
@@ -1003,11 +1187,7 @@ const parserFunction = (obj) => {
       ) ? obj.additionalDetails.detailsProvidedBy : "",
     },
     noOfTaps: parseInt(obj.noOfTaps),
-    // isFerruleApplicable:isFerruleApplicable,
-    // waterApplication:{
-    //   isFerruleApplicable:isFerruleApplicable,
-    // },
-   // proposedTaps: parseInt(obj.proposedTaps),
+   
     waterProperty :{
     usageCategory: usageCategory,
     usageSubCategory: usageSubCategory,    },

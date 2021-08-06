@@ -43,16 +43,44 @@ const styles = theme => ( {
     }
   }
 });
-const NewLocationRejectForm = ({ form, options, onSubmit,bookingservice,bookingtype,applicationNumber,createdBy,tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue, classes }) => {
+const NewLocationRejectForm = ({ form, options, onSubmit,bookingservice,bookingtype,applicationNumber,createdBy,tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue, 
+  bkFromDate,bkNomineeName,bkStatusUpdateRequest,timeslots,bkLocationPictures,cardNumber,bkToDate,
+  bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,ApplicantName,BookingType,fatherName,
+  bkBankAccountHolder,bkBookingVenue,applicationStatus,ApplicantMobileNum,bkEmail,bkCompleteAddress,
+  bkCategory,bkBookingPurpose,
+  classes }) => {
   if(form && form.fields){
     let formValue={...form.fields};
 formValue.applicationNumber.value=applicationNumber;
+formValue.BookingType.value=BookingType
+formValue.bkCategory.value=bkCategory
+formValue.fatherName.value=fatherName
+formValue.bkEmail.value=bkEmail
+formValue.bkCompleteAddress.value=bkCompleteAddress
 formValue.tenantId.value=tenantId;
+formValue.bkBookingPurpose.value=bkBookingPurpose
+
 // formValue.createdBy.value=createdBy;
 formValue.remarks.value=commentValue;
 // formValue.createdOn.value=new Date();
 // formValue.bookingType.value=bookingtype;
 formValue.businessService.value=bookingservice
+formValue.ApplicantName.value=ApplicantName
+formValue.bkFromDate.value=bkFromDate
+formValue.bkNomineeName.value=bkNomineeName
+formValue.bkStatusUpdateRequest.value=bkStatusUpdateRequest
+formValue.timeslots.value=timeslots
+formValue.bkLocationPictures.value=bkLocationPictures
+formValue.cardNumber.value=cardNumber
+formValue.bkToDate.value=bkToDate
+formValue.bkBankAccountNumber.value=bkBankAccountNumber
+formValue.bkBankName.value=bkBankName
+formValue.bkIfscCode.value=bkIfscCode
+formValue.bkAccountType.value=bkAccountType
+formValue.bkBankAccountHolder.value=bkBankAccountHolder
+formValue.bkBookingVenue.value=bkBookingVenue
+formValue.applicationStatus.value=applicationStatus
+formValue.ApplicantMobileNum.value=ApplicantMobileNum
   }
 
    const fields = form.fields || {};

@@ -24,9 +24,9 @@ class PlotArea extends React.Component {
     
 
     getAvailabilityData = async (e, item) => {
-        console.log("ComeInplotFunction")
+       
         const { changeCalendar} =this.props;
-        console.log("plotAreaProp--",this.props)
+       
         changeCalendar();
         this.props.prepareFinalObject(
             "bkBookingData",
@@ -53,7 +53,7 @@ class PlotArea extends React.Component {
             bookingVenue:item.id,
             sector: availabilityCheckData.bkSector,
         };
-console.log("PlotRequestBody--",requestBody)
+
         let responseData = await httpRequest(
             "/bookings/park/community/availability/_search",
             "_search", [],

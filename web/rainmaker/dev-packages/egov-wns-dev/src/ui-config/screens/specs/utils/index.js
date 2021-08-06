@@ -572,15 +572,41 @@ export const handlePropertySubUsageType = params => {
   params = handleNA(params);
   if (params !== "NA" && params.split(".").length > 1) {
     return params;  
-  } else {
+  } 
+  else if(params !== "NA" && params.split(".").length ===1)
+  {
+    return params; 
+  }
+  else {
     return "NA";
   }
 }
 
 export const handleNA = params => {
-  if (params !== undefined && params !== null && params !== "" && params!==0) {
+  if (params !== undefined && params !== null && params !== "" ) 
+  {//&& params!==0
+    if(params===0)
+    {
+    return (params.toString()); 
+    }
+    else
+    {
+      if(Number(params))
+      {
+        return (params.toString()); 
+      }
+      else{
+        return params;
+      }
+    }
+    
+  } 
+  else if(params !== undefined && params !== null && params == "0")
+  {
     return params;
-  } else { return "NA"; }
+  }
+   
+  else { return "NA"; }
 }
 
 export const convertEpochToDate = dateEpoch => {
@@ -2200,86 +2226,16 @@ export const fillOldLicenseData = async (state, dispatch) => {
 };
 
 export const resetFieldsForApplication = (state, dispatch) => {
-  dispatch(
-    handleField(
-      "search",
-      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.consumerNo",
-      "props.value",
-      ""
-    )
-  );
-  dispatch(
-    handleField(
-      "search",
-      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.applicationNo",
-      "props.value",
-      ""
-    )
-  );
-  dispatch(
-    handleField(
-      "search",
-      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.ownerMobNo",
-      "props.value",
-      ""
-    )
-  );
-  dispatch(
-    handleField(
-      "search",
-      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.applicationstatus",
-      "props.value",
-      ""
-    )
-  );
-  dispatch(
-    handleField(
-      "search",
-      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.fromDate",
-      "props.value",
-      ""
-    )
-  );
-  dispatch(
-    handleField(
-      "search",
-      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.toDate",
-      "props.value",
-      ""
-    )
-  );
-  dispatch(
-    handleField(
-      "search",
-      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.applicationType",
-      "props.value",
-      ""
-    )
-  );
-  dispatch(
-    handleField(
-      "search",
-      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.sectorNo",
-      "props.value",
-      ""
-    )
-  );
-  dispatch(
-    handleField(
-      "search",
-      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.groupNo",
-      "props.value",
-      ""
-    )
-  );
-  dispatch(
-    handleField(
-      "search",
-      "components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.plotNo",
-      "props.value",
-      ""
-    )
-  );
+  const textFields = ["consumerNo","applicationNo","ownerMobNo","plotNo","fromDate","toDate","applicationType","applicationstatus","sectorNo","groupNo","division","subdiv"];
+  for (let i = 0; i < textFields.length; i++) {
+    dispatch(
+      handleField(
+        "search",
+        `components.div.children.showSearches.children.showSearchScreens.props.tabs[1].tabContent.searchApplications.children.cardContent.children.wnsApplicationSearch.children.${textFields[i]}`,
+        "props.value",
+        ""));
+  }
+
 };
 
 export const resetFieldsForConnection = (state, dispatch) => {
@@ -2555,7 +2511,7 @@ export const downloadReceiptFromFilestoreID=(fileStoreId,mode,tenantId)=>{
   // });
   
 }
-export const downloadAcknowledgementForm = async ( state,dispatch,downloadtype,Fromdate,Todate) => {
+export const downloadAcknowledgementForm = async ( state,dispatch,downloadtype,Fromdate,Todate,doctype) => {
   let tenantId =  getQueryArg(window.location.href, "tenantId");
   let APIUrl =`ws-services/billGeneration/_${downloadtype}`  
 if(downloadtype ==='generateBillFile')
@@ -2580,7 +2536,7 @@ if(downloadtype ==='generateBillFile')
         }
       }
       else if(downloadtype ==='getDataExchangeFile'){
-        const response = await getDataExchangeFile(queryObject,APIUrl,Fromdate, Todate);
+        const response = await getDataExchangeFile(queryObject,APIUrl,Fromdate, Todate,doctype);
         if(response)
         {
           let filestoreId = response.billGenerationFile[0].billFileStoreId
@@ -2602,3 +2558,135 @@ if(downloadtype ==='generateBillFile')
     }
   
   }
+  export const getTextToLocalMappingCode = (label) => {
+    const localisationLabels = getTransformedLocalStorgaeLabels();
+    switch (label) {
+      case "Consumer No":
+        return getLocaleLabels(
+          "Consumer No",
+          "WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL",
+          localisationLabels
+        );
+      case "Application No":
+        return getLocaleLabels(
+          "Application No",
+          "WS_COMMON_TABLE_COL_APP_NO_LABEL",
+          localisationLabels
+        );
+      case "Application Type":
+        return getLocaleLabels(
+          "Application Type",
+          "WS_COMMON_TABLE_COL_APP_TYPE_LABEL",
+          localisationLabels
+        );
+      case "Owner Name":
+        return getLocaleLabels(
+          "Owner Name",
+          "WS_COMMON_TABLE_COL_OWN_NAME_LABEL",
+          localisationLabels
+        );
+      case "Application Status":
+        return getLocaleLabels(
+          "Application Status",
+          "WS_COMMON_TABLE_COL_APPLICATION_STATUS_LABEL",
+          localisationLabels
+        );
+      case "Address":
+        return getLocaleLabels(
+          "Address",
+          "WS_COMMON_TABLE_COL_ADDRESS",
+          localisationLabels
+        );
+      case "tenantId":
+        return getLocaleLabels(
+          "tenantId",
+          "WS_COMMON_TABLE_COL_TENANTID_LABEL",
+          localisationLabels
+        );
+      case "service":
+        return getLocaleLabels(
+          "service",
+          "WS_COMMON_TABLE_COL_SERVICE_LABEL",
+          localisationLabels
+        );
+      case "connectionType":
+        return getLocaleLabels(
+          "connectionType",
+          "WS_COMMON_TABLE_COL_CONNECTIONTYPE_LABEL",
+          localisationLabels
+        );
+        case "Status":
+          return getLocaleLabels(
+            "Status",
+            "WS_COMMON_TABLE_COL_STATUS_LABEL",
+            localisationLabels
+          );
+        case "Due":
+          return getLocaleLabels(
+            "Due",
+            "WS_COMMON_TABLE_COL_DUE_LABEL",
+            localisationLabels
+          );
+          case "Due Date":
+            return getLocaleLabels(
+              "Due Date",
+              "WS_COMMON_TABLE_COL_DUE_DATE_LABEL",
+              localisationLabels
+            );
+          case "Action":
+            return getLocaleLabels(
+              "Action",
+              "WS_COMMON_TABLE_COL_ACTION_LABEL",
+              localisationLabels
+            );
+            case "ActionType":
+              return getLocaleLabels(
+                "ActionType",
+                "Action Type",
+                localisationLabels
+              );
+              case"billGenerationId":
+              return getLocaleLabels(
+                "billGenerationId",
+                "billGenerationId",
+                localisationLabels
+              );
+              case"Sector":
+              return getLocaleLabels(
+                "Sector",
+                "WS_PROP_DETAIL_LOCALITY_LABEL",
+                localisationLabels
+              );
+              case"division":
+              return getLocaleLabels(
+                "division",
+                "WS_SERV_DETAIL_DIVISION",
+                localisationLabels
+              );
+              case"subdivision":
+              return getLocaleLabels(
+                "subdivision",
+                "WS_SERV_DETAIL_SUB_DIVISION",
+                localisationLabels
+              );
+              case"plotnumber":
+              return getLocaleLabels(
+                "plotnumber",
+                "WS_PROP_DETAIL_DHNO_INPUT",
+                localisationLabels
+              );
+              case"paidamount":
+              return getLocaleLabels(
+                "paidamount",
+                "WS_COMMON_TOTAL_AMT",
+                localisationLabels
+              );
+  
+      case "Search Results for Water & Sewerage Application":
+        return getLocaleLabels(
+          "Search Results for Water & Sewerage Application",
+          "WS_HOME_SEARCH_APPLICATION_RESULTS_TABLE_HEADING",
+          localisationLabels
+        );
+    }
+  };

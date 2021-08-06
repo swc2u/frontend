@@ -685,7 +685,7 @@ export const getDurationDateWithTime = (fromDate, toDate, fromTime, toTime) => {
     let finalDate = finalStartDate + " to " + finalEndDate;
     return finalDate;
 };
-export const getDurationDate = (fromDate, toDate) => {
+export const getDurationDateForPark = (fromDate, toDate) => {
     let monthNames = [
         "Jan",
         "Feb",
@@ -707,6 +707,45 @@ export const getDurationDate = (fromDate, toDate) => {
         monthNames[startDate.getMonth()] +
         " " +
         startDate.getFullYear();
+    
+    let endDate = new Date(new Date(toDate).setDate(new Date(toDate).getDate() + 1));  
+    endDate.setMonth(endDate.getMonth());
+
+    let finalEndDate =
+        endDate.getDate() +
+        " " +
+        monthNames[endDate.getMonth()] +
+        " " +
+        endDate.getFullYear();
+    let finalDate = `${finalStartDate} 9:00 AM` + " to " + `${finalEndDate} 8:59 AM`;
+ 
+    return finalDate;
+};
+export const getDurationDate = (fromDate, toDate,duration="0") => {
+    console.log("FindBookingPeriod",fromDate, toDate,duration)
+    let monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+    
+    if(fromDate && toDate){
+        let startDate = new Date(fromDate);
+    let finalStartDate =
+        startDate.getDate() +
+        " " +
+        monthNames[startDate.getMonth()] +
+        " " +
+        startDate.getFullYear();
 
     let endDate = new Date(toDate);
     endDate.setMonth(endDate.getMonth());
@@ -717,7 +756,37 @@ export const getDurationDate = (fromDate, toDate) => {
         " " +
         endDate.getFullYear();
     let finalDate = finalStartDate + " to " + finalEndDate;
+    console.log("finalDate",finalDate)
     return finalDate;
+    }
+    if(duration != "0" && fromDate == null && toDate == null) {
+        let startDate = new Date()
+        let endDate = new Date()
+        let d = endDate.getDate();
+        endDate.setMonth(endDate.getMonth() + +duration);
+        if (endDate.getDate() != d) {
+          endDate.setDate(0);
+    }
+    let finalStartDate =
+    startDate.getDate() +
+    " " +
+    monthNames[startDate.getMonth()] +
+    " " +
+    startDate.getFullYear();
+
+endDate.setMonth(endDate.getMonth());
+let finalEndDate =
+    endDate.getDate() +
+    " " +
+    monthNames[endDate.getMonth()] +
+    " " +
+    endDate.getFullYear();
+let finalDate = finalStartDate + " to " + finalEndDate;
+console.log("finalDate",finalDate)
+return finalDate;
+
+}
+
 };
 const getMdmsTenantsData = async () => {
     let tenantId = getTenantId().split(".")[0];
@@ -921,7 +990,33 @@ export const downloadReceipt = async (
             return;
         }
         let tenantData = await getMdmsTenantsData();
-
+        let bookingDuration = '';
+        if (applicationData.businessService == "PACC" && applicationData.bkBookingType == "Community Center") {
+            if (applicationData.timeslots && applicationData.timeslots.length > 0) {
+    
+                var [fromTime, toTime] = applicationData.timeslots[0].slot.split('-')
+                let newToDate= applicationData.bkToDate
+                if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+                  
+                    let d = new Date(new Date(applicationData.bkToDate).setDate(new Date(applicationData.bkToDate).getDate() + 1));  
+                    newToDate= d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+                  
+                }
+                bookingDuration = getDurationDateWithTime(
+                    applicationData.bkFromDate,
+                    newToDate,
+                    fromTime,
+                    toTime
+                )
+    
+    
+            }
+        } else {
+            bookingDuration = getDurationDate(
+                applicationData.bkFromDate,
+                applicationData.bkToDate,applicationData.bkDuration
+            )
+        }
         let paymentInfoData = "";
         let bankInfo = {};
         let tenantInfo = "";
@@ -932,10 +1027,11 @@ export const downloadReceipt = async (
                 TxnNo = 1;
             }
             paymentInfoData = {
-                paymentDate: convertEpochToDate(
-                    payloadReceiptDetails.Payments[TxnNo].transactionDate,
-                    "dayend"
-                ),
+                // paymentDate: convertEpochToDate(
+                //     payloadReceiptDetails.Payments[TxnNo].transactionDate,
+                //     "dayend"
+                // ),
+                paymentDate:applicationData.createdDate,
                 transactionId:
                     payloadReceiptDetails.Payments[TxnNo].transactionNumber,
                 bookingPeriod: getDurationDate(
@@ -987,10 +1083,7 @@ export const downloadReceipt = async (
                 totalPayment: (
                     parseFloat(payloadReceiptDetails.Payments[TxnNo].totalAmountPaid)
                 ).toFixed(2),
-                paymentDate: convertEpochToDate(
-                    payloadReceiptDetails.Payments[TxnNo].transactionDate,
-                    "dayend"
-                ),
+                paymentDate:applicationData.createdDate,
                 paymentType: payloadReceiptDetails.Payments[TxnNo].paymentMode,
                 facilitationCharge: applicationData.bkFacilitationCharges ? parseFloat(applicationData.bkFacilitationCharges).toFixed(2) : 0,
                 discType: "NotFound",
@@ -1007,6 +1100,8 @@ export const downloadReceipt = async (
             bankInfo.rBankName = applicationData.bkBankName;
             bankInfo.rBankACNo = applicationData.bkBankAccountNumber;
             bankInfo.rIFSCCode = applicationData.bkIfscCode;
+            bankInfo.nomName = applicationData.bkNomineeName;
+            
             tenantInfo = {
                 municipalityName:
                     tenantData.tenants[0].city.municipalityName,
@@ -1060,10 +1155,7 @@ export const downloadReceipt = async (
                 )[0].amount;
             }
             paymentInfoData = {
-                paymentDate: convertEpochToDate(
-                    payloadReceiptDetails.Payments[0].transactionDate,
-                    "dayend"
-                ),
+                paymentDate:applicationData.createdDate,
                 transactionId:
                     payloadReceiptDetails.Payments[0].transactionNumber,
                 bookingPeriod:
@@ -1075,7 +1167,7 @@ export const downloadReceipt = async (
                             .businessService === "BOOKING_BRANCH_SERVICES.BOOKING_GROUND_OPEN_SPACES"
                         ? getDurationDate(
                             applicationData.bkFromDate,
-                            applicationData.bkToDate
+                            applicationData.bkToDate,applicationData.bkDuration
                         )
                         : `${applicationData.bkDate} , ${applicationData.bkTime} `,
                 bookingItem: `Online Payment Against Booking of ${payloadReceiptDetails.Payments[0].paymentDetails[0].bill
@@ -1090,14 +1182,14 @@ export const downloadReceipt = async (
                             "BOOKING_BRANCH_SERVICES.BOOKING_GROUND_OPEN_SPACES"
                             ? "Open Space within MCC jurisdiction"
                             : "Water Tanker"
-                    }`,
-                amount: amount,
-                tax: tax,
-                grandTotal:
-                    payloadReceiptDetails.Payments[0].totalAmountPaid,
-                amountInWords: NumInWords(
-                    payloadReceiptDetails.Payments[0].totalAmountPaid
-                ),
+                        }`,
+                        amount: applicationData.businessService === "BWT"?amount/parseInt(applicationData.quantity):
+                        amount,
+                        tax: tax,
+                        grandTotal:  payloadReceiptDetails.Payments[0].totalAmountPaid,
+                        amountInWords: NumInWords(
+                            payloadReceiptDetails.Payments[0].totalAmountPaid
+                        ),
                 paymentItemExtraColumnLabel:
                     payloadReceiptDetails.Payments[0].paymentDetails[0].bill
                         .businessService === "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE" ||
@@ -1112,7 +1204,9 @@ export const downloadReceipt = async (
                 receiptNo:
                     payloadReceiptDetails.Payments[0].paymentDetails[0]
                         .receiptNumber,
-                        refundableSecurity:   cgSecurityRefund
+                        refundableSecurity:   cgSecurityRefund,
+                        wtQuantity:applicationData.quantity,
+                        wtTotalPayment:amount
             };
         }
         console.log(paymentInfoData, "nero Qry str");
@@ -1140,10 +1234,7 @@ export const downloadReceipt = async (
                     applicationDate: applicationData.bkDateCreated,
                     bkLocation: applicationData.bkLocation,
                     bkDept: applicationData.bkBookingType,
-                    bkFromTo: getDurationDate(
-                        applicationData.bkFromDate,
-                        applicationData.bkToDate
-                    )
+                    bkFromTo:bookingDuration,
 
                 },
                 paymentInfo: paymentInfoData,
@@ -1165,15 +1256,16 @@ export const downloadReceipt = async (
             paymentInfoData = {
                 currentDate: `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}`,
                 cleaningCharges: "0",
-                paymentDate: convertEpochToDate(
-                    payloadReceiptDetails.Payments[0].transactionDate,
-                    "dayend"
-                ),
+                paymentDate:roomDataForGivenApplicationNumber.roomCreatedDate,
                 transactionId:
                     payloadReceiptDetails.Payments[0].transactionNumber,
+                // bookingPeriod: getDurationDate(
+                //     applicationData.roomsModel[0].fromDate,
+                //     applicationData.roomsModel[0].toDate
+                // ),
                 bookingPeriod: getDurationDate(
-                    applicationData.roomsModel[0].fromDate,
-                    applicationData.roomsModel[0].toDate
+                    roomDataForGivenApplicationNumber.fromDate,
+                    roomDataForGivenApplicationNumber.toDate
                 ),
                 cgst: (payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
                     (el) => el.taxHeadCode.includes("CGST_UTGST_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH")
@@ -1236,15 +1328,17 @@ export const downloadReceipt = async (
                                                 ?`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Rooms`
                                                     :`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Room`,
                              
-                      placeOfService: "Chandigarh",
-                        bkDept: applicationData.bkBookingType,
-                        bkStartDate: applicationData.bkFromDate,
-                        bkEndDate: applicationData.bkToDate,
-                        bkLocation: applicationData.bkLocation,
-                        bookingPurpose: applicationData.bkBookingPurpose,
-                        applicationNumber :
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.consumerCode,
+                    placeOfService: "Chandigarh",
+                    bkDept: applicationData.bkBookingType,
+                    bkStartDate: roomDataForGivenApplicationNumber.fromDate,
+                    bkEndDate: roomDataForGivenApplicationNumber.toDate,
+                    bkLocation: applicationData.bkLocation,
+                    bookingPurpose: applicationData.bkBookingPurpose,
+                    bookingPupose: applicationData.bkBookingPurpose,
+                            
+                    applicationNumber :
+                        payloadReceiptDetails.Payments[0].paymentDetails[0]
+                            .bill.consumerCode,
                     },
                     paymentInfo: paymentInfoData,
                     payerInfo: {
@@ -1260,7 +1354,9 @@ export const downloadReceipt = async (
                         accountholderName: applicationData.bkBankAccountHolder,
                         rBankName: applicationData.bkBankName,
                         rBankACNo: applicationData.bkBankAccountNumber,
-                        rIFSCCode: applicationData.bkIfscCode
+                        rIFSCCode: applicationData.bkIfscCode,
+                        nomName: applicationData.bkNomineeName,
+                        
                     },
                     tenantInfo: {
                         municipalityName: "Municipal Corporation Chandigarh",
@@ -1320,13 +1416,21 @@ export const downloadReceipt = async (
 
 };
 
+
+
+
+
+
+
+
+
 export const downloadCertificate = async (
     state,
     applicationNumber,
     tenantId = "ch.chandigarh",
     flag = 'false',
     mode = "download"
-) => {
+) => { 
     let applicationData = {}
     tenantId = "ch.chandigarh"
     //tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
@@ -1364,7 +1468,7 @@ export const downloadCertificate = async (
             "Booking"
         );
         if (applicationData.roomsModel !== undefined && applicationData.roomsModel.length > 0) {
-
+console.log("RoomModel",applicationData)
             let communityApplicationNumber = get(
                 state.screenConfiguration.preparedFinalObject,
                 "Booking.bkApplicationNumber"
@@ -1389,16 +1493,15 @@ export const downloadCertificate = async (
             applicationData = recData[0];
         }
         else {
+            
             const response = await getSearchResultsView([
                 { key: "tenantId", value: tenantId },
                 { key: "applicationNumber", value: applicationNumber },
             ]);
             let recData = get(response, "bookingsModelList", []);
-
-
             applicationData = recData[0];
 
-        }
+        } 
 
     }
     else if (flag === 'true') {
@@ -1551,10 +1654,7 @@ export const downloadCertificate = async (
             parseFloat(applicationData.bkCleansingCharges) +
             parseFloat(applicationData.bkSurchargeRent)
         ).toFixed(2);
-        paymentInfo.paymentDate = convertEpochToDate(
-            payloadReceiptDetails.Payments[0].transactionDate,
-            "dayend"
-        );
+        paymentInfo.paymentDate=applicationData.createdDate,
         paymentInfo.receiptNo = payloadReceiptDetails.Payments[TxnNo].paymentDetails[0]
             .receiptNumber;
         paymentInfo.custGSTN = applicationData.bkCustomerGstNo ? applicationData.bkCustomerGstNo : "NA";
@@ -1565,19 +1665,28 @@ export const downloadCertificate = async (
         bankInfo.rBankName = applicationData.bkBankName;
         bankInfo.rBankACNo = applicationData.bkBankAccountNumber;
         bankInfo.rIFSCCode = applicationData.bkIfscCode;
+        bankInfo.nomName = applicationData.bkNomineeName;
+       
 
-
-
+ 
     }
     var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
+ 
+let newFromDate;
+let newToDate
 
-    let certificateData = [
+if(applicationData.bkFromDate !== null && applicationData.bkToDate !== null){
+    newFromDate = applicationData.bkFromDate
+    newToDate = applicationData.bkToDate
+}
+
+let certificateData = [
         {
             applicantDetail: {
                 name: applicationData.bkApplicantName,
                 mobileNumber: applicationData.bkMobileNumber,
                 houseNo: applicationData.bkHouseNo,
-                permanentAddress:
+                permanentAddress:     
                     applicationData.businessService == "PACC"
                         ? applicationData.bkHouseNo
                         : applicationData.bkCompleteAddress,
@@ -1599,13 +1708,16 @@ export const downloadCertificate = async (
                 typeOfConstruction: applicationData.bkConstructionType,
                 permissionPeriod: getDurationDate(
                     applicationData.bkFromDate,
-                    applicationData.bkToDate
+                    applicationData.bkToDate,applicationData.bkDuration
                 ),
-                bookingPeriod: bookingDuration,
-                venueName: applicationData.bkLocation,
+                bookingPeriod: getDurationDate(
+                    applicationData.bkFromDate,
+                    applicationData.bkToDate,applicationData.bkDuration
+                ),
+                venueName: applicationData.businessService == "OSUJM"? applicationData.bkBookingVenue:applicationData.bkLocation,
                 sector: applicationData.bkSector,
                 groundName: applicationData.bkSector,
-                bookingPurpose: applicationData.bkBookingPurpose,
+                bookingPurpose: applicationData.bkBookingPurpose, 
                 duration:
                     applicationData.bkDuration == "1"
                         ? `${applicationData.bkDuration} Month`
@@ -1631,6 +1743,7 @@ export const downloadCertificate = async (
             bankInfo
         },
     ];
+    console.log("RequestBodyForPL",certificateData)
     let paymentInfoData = {}
     if (applicationData.roomsModel !== undefined && applicationData.roomsModel.length > 0 && applicationData.bkApplicationNumber !== applicationNumber) {
 
@@ -1651,10 +1764,7 @@ export const downloadCertificate = async (
             )[0].amount),
             refundableCharges: "",
             totalPayment: payloadReceiptDetails.Payments[0].totalAmountPaid,
-            paymentDate: convertEpochToDate(
-                payloadReceiptDetails.Payments[0].transactionDate,
-                "dayend"
-            ),
+            paymentDate:roomDataForGivenApplicationNumber.roomCreatedDate,
             receiptNo: payloadReceiptDetails.Payments[0].paymentDetails[0]
                 .receiptNumber,
             currentDate: `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`,
@@ -1690,20 +1800,22 @@ export const downloadCertificate = async (
                                             ?`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Rooms`
                                                 :`${roomDataForGivenApplicationNumber.totalNoOfNonACRooms} Non AC Room`,
                  
-                     bookingPurpose: applicationData.bkBookingPurpose,
-                    bkStartDate: applicationData.bkFromDate,
-                    bkEndDate: applicationData.bkToDate,
-                    placeOfService: "Chandigarh",
-                    venueName: applicationData.bkLocation,
-                    sector: applicationData.bkSector,
-                    bookingType: applicationData.bkBookingType,
-                    applicationDate: convertDateInDMY(
-                        applicationData.bkDateCreated
-                    ),
-                    bookingPeriod: bookingDuration,
-                    applicationNumber :
-                        payloadReceiptDetails.Payments[0].paymentDetails[0]
-                            .bill.consumerCode,
+                bookingPurpose: applicationData.bkBookingPurpose,
+                bookingPupose: applicationData.bkBookingPurpose,
+                            
+                bkStartDate: roomDataForGivenApplicationNumber.fromDate,
+                bkEndDate: roomDataForGivenApplicationNumber.toDate,
+                placeOfService: "Chandigarh",
+                venueName: applicationData.bkLocation,
+                sector: applicationData.bkSector,
+                bookingType: applicationData.bkBookingType,
+                applicationDate: convertDateInDMY(
+                    applicationData.bkDateCreated
+                ),
+                bookingPeriod: `${roomDataForGivenApplicationNumber.fromDate} to ${roomDataForGivenApplicationNumber.toDate}`,
+                applicationNumber :
+                    payloadReceiptDetails.Payments[0].paymentDetails[0]
+                        .bill.consumerCode,
                 },
 
                 payerInfo: {
@@ -1720,7 +1832,9 @@ export const downloadCertificate = async (
                     accountholderName: applicationData.bkBankAccountHolder,
                     rBankName: applicationData.bkBankName,
                     rBankACNo: applicationData.bkBankAccountNumber,
-                    rIFSCCode: applicationData.bkIfscCode
+                    rIFSCCode: applicationData.bkIfscCode,
+                    nomName: applicationData.bkNomineeName,
+                    
                 },
                 tenantInfo: {
                     municipalityName: "Municipal Corporation Chandigarh",
@@ -1738,14 +1852,15 @@ export const downloadCertificate = async (
 
     let res = await httpRequest(
         "post",
-        DOWNLOADCERTIFICATE.GET.URL,
-        "",
+        DOWNLOADCERTIFICATE.GET.URL, 
+        "", 
         queryStr,
         { BookingInfo: certificateData },
         { Accept: "application/json" },
         { responseType: "arraybuffer" }
     )
 
+    console.log("ResponseForPL",res)
 
     if (res && res.filestoreIds && res.filestoreIds.length > 0) {
 
@@ -1888,6 +2003,8 @@ export const downloadApplication = async (
                 applicationData.bkToDate
             ),
             bookingPurpose: applicationData.bkBookingPurpose,
+            bookingPupose: applicationData.bkBookingPurpose,
+          
         };
         let bookingDataOSUJM = {
             applicationNumber: applicationNumber,
@@ -1899,6 +2016,8 @@ export const downloadApplication = async (
                 applicationData.bkToDate
             ),
             bookingPurpose: applicationData.bkBookingPurpose,
+            bookingPupose: applicationData.bkBookingPurpose,
+                                
             status: applicationData.bkApplicationStatus === "PENDINGAPPROVAL" ? "Pending Approval" : applicationData.bkApplicationStatus === "PENDINGPAYMENT" ? "Pending Payment" : applicationData.bkApplicationStatus === "APPROVED" ? "Approved" : applicationData.bkApplicationStatus,
 
         };
@@ -1912,6 +2031,8 @@ export const downloadApplication = async (
                 applicationData.bkToDate
             ),
             bookingPurpose: applicationData.bkBookingPurpose,
+            bookingPupose: applicationData.bkBookingPurpose,
+                                
             parkDim: applicationData.bkDimension,
         };
 
@@ -2111,15 +2232,16 @@ export const downloadApplication = async (
                     //             : paymentData.totalAmount,
                     // },
                     feeDetail: {
-                        baseCharge: baseCharge,
-                        taxes: taxes,
+                        baseCharge:applicationData.businessService === "BWT"?baseCharge/parseInt(applicationData.quantity): baseCharge,
+                        taxes: taxes===null ? 0 : taxes,
                         ugst: ugst,
                         cgst: cgst,
                         totalAmount:
                             paymentData === undefined
                                 ? null
-                                : paymentData.totalAmount,
-                                  refundableSecurity:   cgSecurityRefund  
+                                :paymentData.totalAmount,
+                        wtQuantity:applicationData.quantity,                              
+                        refundableSecurity:   cgSecurityRefund       
                     },
                     generatedBy: {
                         generatedBy: JSON.parse(getUserInfo()).name,
@@ -2277,6 +2399,41 @@ export const checkAvaialbilityAtSubmitCgb = async (bookingVenue, from, to) => {
     }
 };
 export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
+    let requestBody = {};
+    let isAvailable= await checkAvaialbilityAtSubmitFirstStep(bookingData, dispatch)
+    if(isAvailable===false){
+    
+        return isAvailable
+    }else{
+        
+        requestBody = {
+            BookingLock: [
+                {
+                  applicationNumber: bookingData.bkApplicationNumber,
+                  bookingType: bookingData.bkBookingType ? bookingData.bkBookingType:"",
+                  bookingVenue:bookingData.bkBookingVenue?bookingData.bkBookingVenue:"",
+                  sector: bookingData.bkSector?bookingData.bkSector:"",
+                  fromDate: bookingData.bkFromDate,
+                  toDate: bookingData.bkToDate,
+                }
+              ],
+        };
+        try {
+            const bookedDates = await httpRequest(
+                "post",
+                "/bookings/park/community/lock/dates/_save",
+                "",
+                [],
+                requestBody
+            );
+         
+        } catch (exception) {
+            console.log(exception);
+        }
+        return isAvailable
+    }
+}
+export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) => {
     let businessService = bookingData.businessService;
     let requestBody = {};
     let isAvailable = true;
@@ -2301,7 +2458,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
             );
             bookedDates.data.length > 0
                 ? bookedDates.data.map((val) => {
-                    if (val === from || val === to) {
+                    if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
                         isAvailable = false;
                     } else {
                         isAvailable = true
@@ -2310,6 +2467,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 : (isAvailable = true);
         } catch (exception) {
             console.log(exception);
+            isAvailable = false;
         }
     } else if (businessService === "OSUJM") {
         requestBody = {
@@ -2332,7 +2490,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
             );
             bookedDates.data.length > 0
                 ? bookedDates.data.map((val) => {
-                    if (val === from || val === to) {
+                    if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
                         isAvailable = false;
                     } else {
                         isAvailable = true
@@ -2341,9 +2499,9 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 : (isAvailable = true);
         } catch (exception) {
             console.log(exception);
+            isAvailable = false;
         }
     }  else if (businessService === "PACC") {
-
         requestBody = {
             Booking: {
                 
@@ -2353,7 +2511,9 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 bkBookingVenue: bookingData.bkBookingVenue,
                 bkFromDate: bookingData.bkFromDate,
                 bkToDate: bookingData.bkToDate,
+                timeslots :bookingData.bkBookingType=== "Community Center"?bookingData.timeslots:[]
             },
+            applicationNumber: bookingData.bkApplicationNumber
         };
 
         try {
@@ -2363,10 +2523,10 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 "",
                 [],
                 requestBody
-            );
+            )
             bookedDates.data.length > 0
                 ? bookedDates.data.map((val) => {
-                    if (val === from || val === to) {
+                    if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
                         isAvailable = false;
                     } else {
                         isAvailable = true
@@ -2375,6 +2535,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 : (isAvailable = true);
         } catch (exception) {
             console.log(exception);
+            isAvailable = false;
         }
     }else {
         isAvailable = true;
@@ -2650,7 +2811,8 @@ export const downloadCancelledBookingReceipt = async (
                         mobileNumber:
                             payloadReceiptDetails.Payments[0].mobileNumber,
                         houseNo: applicationData.bkHouseNo,
-                        permanentAddress: applicationData.bkCompleteAddress,
+                        //permanentAddress: applicationData.bkCompleteAddress,
+                        permanentAddress:applicationData.bkHouseNo,
                         permanentCity:
                             payloadReceiptDetails.Payments[0].tenantId,
                         sector: applicationData.bkSector,
@@ -2661,7 +2823,7 @@ export const downloadCancelledBookingReceipt = async (
                                 .bill.consumerCode,
                         bookingCancellationDate: bookingCancelledDate,
                         bookingVenue: applicationData.bkLocation,
-                        bookingDuration: getDurationDate(
+                        bookingDuration: getDurationDateForPark(
                             applicationData.bkFromDate,
                             applicationData.bkToDate
                         ),
@@ -2979,7 +3141,8 @@ export const prepareRoomCard = (nonOptimisedRoomData) => {
                         roomApplicationNumber: roomData.roomApplicationNumber,
                         toDate: roomData.toDate,
                         fromDate: roomData.fromDate,
-                        typeOfRooms: "BOTH"
+                        typeOfRooms: "BOTH",
+                        roomCreatedDate:roomData.roomCreatedDate
                     };
                     if (duplicateObject[0].typeOfRoom === "NON-AC") {
                         newObj.totalNoOfACRooms = roomData.totalNoOfRooms;
@@ -2993,7 +3156,8 @@ export const prepareRoomCard = (nonOptimisedRoomData) => {
                     let newObj = {
                         roomApplicationNumber: roomData.roomApplicationNumber,
                         toDate: roomData.toDate,
-                        fromDate: roomData.fromDate
+                        fromDate: roomData.fromDate,
+                        roomCreatedDate:roomData.roomCreatedDate
                     };
                     if (roomData.typeOfRoom === "NON-AC") {
                         newObj.totalNoOfACRooms = 0;

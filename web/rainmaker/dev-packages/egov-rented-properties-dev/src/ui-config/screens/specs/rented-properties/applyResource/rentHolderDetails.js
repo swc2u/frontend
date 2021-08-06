@@ -595,7 +595,7 @@ const allotmentDateField = {
         labelName: "Enter Date of Possession",
         labelKey: "RP_POSSESSION_DATE_PLACEHOLDER"
     },
-    required: true,
+    //required: true,
     pattern: getPattern("Date"),
     jsonPath: "Properties[0].owners[0].ownerDetails.posessionStartdate",
     errorMessage:"RP_ERR_POSSESION_DATE_FIELD",

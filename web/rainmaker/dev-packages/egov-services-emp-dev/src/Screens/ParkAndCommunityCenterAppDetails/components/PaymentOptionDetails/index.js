@@ -50,11 +50,11 @@ class CGBookingDetails extends Component {
   ToFccOne = (ifscCode) => {
 
     const { prepareFinalObject, toggleSnackbarAndSetText } = this.props;
-   console.log("ToFccOne--",ifscCode)
+   
     if (ifscCode) {
       fetch(`https://ifsc.razorpay.com/${ifscCode}`)
         .then(response => {
-          return response.json();
+          return response.json(); 
         })
         .then(payload => {
           if (payload === "Not Found") {
@@ -107,7 +107,7 @@ class CGBookingDetails extends Component {
   }
 
   GOTOCASH = e => {
-    console.log("GOTOCASH--")
+   
     this.setState({
       SecondOption: false,
       fourthOption: false,
@@ -161,11 +161,7 @@ Fourth = e => {
     const {classes}= this.props
 
     const {PayerName, mobileNo,handleChange,PaidBy,PaymentReceiptNumber, ApplicantMobNum, ApplicantName,ChequeNo,ChequeDate,IFSC,BankName,last4Digits,TrxNo,repeatTrxNo,
-      BankBranch,DDno,ddDate,ddIFSC,ddBank,ddBranch,prepareFinalObject,changeChequeDate,changeDdDate} = this.props;
-console.log("propsInpaymentOption--",this.props)
-console.log("stateOfPaymentOption--",this.state.OfflineBranchName ? this.state.OfflineBranchName : "fgh")
-console.log("stateOfPay--",this.state.OfflineBankName ? this.state.OfflineBankName : " sdfg")
-   
+      BankBranch,DDno,ddDate,ddIFSC,ddBank,ddBranch,prepareFinalObject,changeChequeDate,changeDdDate} = this.props;   
 const hintTextStyle = {
       letterSpacing: "0.7px",
       textOverflow: "ellipsis",
@@ -1102,23 +1098,6 @@ return (
 }
 }
 
-// const mapStateToProps = state => {
-
-//   const { bookings, common, auth, form } = state;
-
-//   let PaymentBankName = state.screenConfiguration.preparedFinalObject.OfflineBank.name ? state.screenConfiguration.preparedFinalObject.OfflineBank.name:"";  
-//   console.log("PaymentBankName--",PaymentBankName)
-
-//   let PaymentBranchName = state.screenConfiguration.preparedFinalObject.OfflineBranch.name ? state.screenConfiguration.preparedFinalObject.OfflineBranch.name:"";  
-// console.log("PaymentBranchName--",PaymentBranchName)
-
-// return{
-//   PaymentBranchName,PaymentBankName
-// }
-  
-// }
-
-
 const mapDispatchToProps = dispatch => {
   return {
           prepareFinalObject: (jsonPath, value) =>
@@ -1127,12 +1106,6 @@ const mapDispatchToProps = dispatch => {
           dispatch(toggleSnackbarAndSetText(open, message, error)),
   }
 }
-
-// export default CGBookingDetails;
-// export default connect(
-//   null,
-//   mapDispatchToProps
-// )(CGBookingDetails);
 
 export default withStyles(styles)(connect(
   null,

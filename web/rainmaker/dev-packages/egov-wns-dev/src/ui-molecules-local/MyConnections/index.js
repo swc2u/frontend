@@ -45,11 +45,23 @@ class MyConnections extends React.Component {
 let tenantId = data.tenantId;
 if(data.property)
 tenantId = data.property.tenantId;
+if (process.env.NODE_ENV === "production") {
     window.location.href = `/citizen/wns/connection-details?connectionNumber=${data.connectionNo}&tenantId=${tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
+}
+else{
+  window.location.href = `/wns/connection-details?connectionNumber=${data.connectionNo}&tenantId=${tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
+
+}
   }
 
   getViewBillDetails = data => {
+    if (process.env.NODE_ENV === "production") {
     window.location.href = `/citizen/wns/viewBill?connectionNumber=${data.connectionNo}&tenantId=${data.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}&id=${data.id}`
+    }
+    else{
+      window.location.href = `/wns/viewBill?connectionNumber=${data.connectionNo}&tenantId=${data.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}&id=${data.id}`
+
+    }
   }
 
   render() {

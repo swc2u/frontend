@@ -20,7 +20,7 @@ const header = getCommonHeader(
             root: "common-header-cont",
         },
     }
-);
+); 
 let cardItems = [];
 let cardlist= []
 if (user_mobileNumber=="6265678234" || user_mobileNumber=="7558357883" || user_mobileNumber=="7207303021" || user_mobileNumber =="8961201542") {
@@ -121,8 +121,8 @@ if (user_mobileNumber=="6265678234" || user_mobileNumber=="7558357883" || user_m
                 },
                 {
                     label: {
-                        labelKey: "Room booking at Community Center/Banquet Hall",
-                        labelName: "Room booking at Community Center/Banquet Hall",
+                        labelKey: "Room booking at Community Center",
+                        labelName: "Room booking at Community Center",
                          },
                     icon : <ParkIcon width={40} height={50}/>,
                     icon: (

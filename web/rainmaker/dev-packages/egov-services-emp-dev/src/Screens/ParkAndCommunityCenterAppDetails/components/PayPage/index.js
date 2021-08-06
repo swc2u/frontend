@@ -14,7 +14,6 @@ import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import EditIcon from "@material-ui/icons/Edit";
 import "./index.css";
 import Footer from "../../../../modules/footer";
-import PaymentReceiptDetail from "../PaymentReceiptDetail";
 import PaymentOptionDetails from "../PaymentOptionDetails";
 import PaymentDetails from "../PaymentDetails";
 import DateVenueChangePayDetail from "../DateVenueChangePayDetail";
@@ -50,6 +49,7 @@ class SummaryDetails extends Component {
     repeatTrxNo: "",
     SubmitDetails: false,
     justTry: "",
+    CurrentApplicationNum: ""
   };
 
   componentDidMount = async () => {
@@ -57,6 +57,9 @@ class SummaryDetails extends Component {
     let fetchApplicationNumber = fetchUrl.substring(
       fetchUrl.lastIndexOf("/") + 1
     );
+    this.setState({
+      CurrentApplicationNum : fetchApplicationNumber
+    })
     let {
       createPACCApplication,
       userInfo,
@@ -131,6 +134,13 @@ class SummaryDetails extends Component {
     prepareFinalObject(input, e.target.value);
   };
 
+  hasWhiteSpace(s) {
+    let check;
+    check = s.indexOf(' ') >= 0;
+    
+     return check
+  }
+
   transactionDateChange = (e) => {
     const { prepareFinalObject } = this.props;
     const trDate = e.target.value;
@@ -160,7 +170,7 @@ class SummaryDetails extends Component {
 
   GoToApplyPage = (e) => {
     this.props.history.push(`/egov-services/applyPark-community-center`);
-  };
+  };   
 
   submit = async (e) => {
     const {
@@ -180,8 +190,7 @@ class SummaryDetails extends Component {
       pddIFSC,
       pIFSC,state,selectedComplaint
     } = this.props;
-  
-
+    let cardNumber , TransactionNum
     let ppMode = paymentMode && paymentMode ? paymentMode : " ";
     let PaymentReqBody;
     if (ppMode == "Cash") {
@@ -204,26 +213,56 @@ class SummaryDetails extends Component {
           totalAmountPaid: TotalAmount,
         },
       };
-      let EmpPayment = await httpRequest(
-        "collection-services/payments/_create?",
-        "_search",
-        [],
-        PaymentReqBody
-      );
+      try{
+        let EmpPayment = await httpRequest(
+          "collection-services/payments/_create?",
+          "_search",
+          [],
+          PaymentReqBody
+        );
+        if(EmpPayment.ResponseInfo.status == "200" && EmpPayment.Payments.length > 0){
+
+          prepareFinalObject("ResponseOfCashPayment", EmpPayment);
   
-     
-  
-      prepareFinalObject("ResponseOfCashPayment", EmpPayment);
-  
-      let ReceiptNum =
-        EmpPayment && EmpPayment
-          ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
-          : "notFound";
+          let Booking = {
+            "bkApplicationNumber": this.state.CurrentApplicationNum,
+            "paymentCollectionType": "Cash",
+            "paidBy": ppaidBy,
+            "payerName": ApplicantName,
+            "payerMobileNumber": ApplicantMobNum
+        }
+          
+          let saveCardNum = await httpRequest(
+            "bookings/api/save/cardDetails",
+            "_search",
+            [],
+            {Booking:Booking}
+          );
+          
+    
+          let ReceiptNum =
+            EmpPayment && EmpPayment
+              ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+              : "notFound";
+          
       
+          prepareFinalObject("CollectionReceiptNum", ReceiptNum);
   
-      prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+          // TransactionNum = this.state.PaymentReceiptNumber
+          // cardNumber = this.state.last4Digits
+          this.props.history.push(`/egov-services/success-payment`);
   
-      this.props.history.push(`/egov-services/success-payment`);
+        }
+      }catch (error){
+          this.props.toggleSnackbarAndSetText(
+            true,
+            {
+              labelName: "Payment failed please try again",
+              labelKey: `Payment failed please try again`
+            },
+            "error"
+          );  
+      }  
     }
     if (ppMode == "Cheque") {
       if(pChequeNo !== " " && pChequeNo !== null && pChequeNo !== undefined && 
@@ -255,27 +294,65 @@ if(ChnChqDate <= this.props.longtodayDate){
             totalAmountPaid: TotalAmount,
           },
         };
-        let EmpPayment = await httpRequest(
-          "collection-services/payments/_create?",
-          "_search",
-          [],
-          PaymentReqBody
-        );
-    
-        
-    
-        prepareFinalObject("ResponseOfCashPayment", EmpPayment);
-    
-        let ReceiptNum =
-          EmpPayment && EmpPayment
-            ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
-            : "notFound";
-        
-    
-        prepareFinalObject("CollectionReceiptNum", ReceiptNum);
-    
-        this.props.history.push(`/egov-services/success-payment`);
 
+        try{
+          let EmpPayment = await httpRequest(
+            "collection-services/payments/_create?",
+            "_search",
+            [],
+            PaymentReqBody
+          );
+      
+          
+      
+          if(EmpPayment.ResponseInfo.status == "200" && EmpPayment.Payments.length > 0){
+  
+            prepareFinalObject("ResponseOfCashPayment", EmpPayment);
+    
+            let Booking = {
+              "bkApplicationNumber": this.state.CurrentApplicationNum,
+              "paymentCollectionType": "Cheque",
+              "paidBy": ppaidBy,
+              "payerName": ApplicantName,
+              "payerMobileNumber": ApplicantMobNum,
+              "chequeNumber": pChequeNo,
+              "paymentDate":this.props.NewChequeDate,
+              "ifscCode":pIFSC,
+              "bankName": this.props.BankName.name,
+              "bankBranch":this.props.BranchName.name
+          }
+            
+            let saveCardNum = await httpRequest(
+              "bookings/api/save/cardDetails",
+              "_search",
+              [],
+            {Booking:Booking}
+            );
+            
+      
+            let ReceiptNum =
+              EmpPayment && EmpPayment
+                ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+                : "notFound";
+            
+        
+            prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+    
+            // TransactionNum = this.state.PaymentReceiptNumber
+            // cardNumber = this.state.last4Digits
+            this.props.history.push(`/egov-services/success-payment`);
+    
+          }
+        }catch (error){
+          this.props.toggleSnackbarAndSetText(
+            true,
+            {
+              labelName: "Payment failed please try again",
+              labelKey: `Payment failed please try again`
+            },
+            "error"
+          );  
+        }
 }
 else{
   this.props.toggleSnackbarAndSetText(
@@ -287,7 +364,7 @@ else{
     "error"
   );  
 }  
-      }
+}
      else{
        
       this.props.toggleSnackbarAndSetText(
@@ -326,26 +403,61 @@ else{
               totalAmountPaid: TotalAmount,
             },
           };
-          let EmpPayment = await httpRequest(
-            "collection-services/payments/_create?",
-            "_search",
-            [],
-            PaymentReqBody
-          );
+          try{ 
+            let EmpPayment = await httpRequest(
+              "collection-services/payments/_create?",
+              "_search",
+              [],
+              PaymentReqBody
+            );
+            if(EmpPayment.ResponseInfo.status == "200" && EmpPayment.Payments.length > 0){
+  
+              prepareFinalObject("ResponseOfCashPayment", EmpPayment);
       
-         
-      
-          prepareFinalObject("ResponseOfCashPayment", EmpPayment);
-      
-          let ReceiptNum =
-            EmpPayment && EmpPayment
-              ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
-              : "notFound";
+              let Booking = {
+                "bkApplicationNumber": this.state.CurrentApplicationNum,
+                "paymentCollectionType": "DD",
+                "paidBy": ppaidBy,
+                "payerName": ApplicantName,
+                "payerMobileNumber": ApplicantMobNum,
+                "chequeNumber": newDDno,
+                "paymentDate":this.props.DdDate,
+                "ifscCode":pddIFSC,
+                "bankName": this.props.BankName.name,
+                "bankBranch":this.props.BranchName.name
+            }
+              
+              let saveCardNum = await httpRequest(
+                "bookings/api/save/cardDetails",
+                "_search",
+                [],
+                {Booking:Booking}
+              );
+              
+        
+              let ReceiptNum =
+                EmpPayment && EmpPayment
+                  ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+                  : "notFound";
+              
           
+              prepareFinalObject("CollectionReceiptNum", ReceiptNum);
       
-          prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+              // TransactionNum = this.state.PaymentReceiptNumber
+              // cardNumber = this.state.last4Digits
+              this.props.history.push(`/egov-services/success-payment`);
       
-          this.props.history.push(`/egov-services/success-payment`);
+            }
+          }catch (error) {
+            this.props.toggleSnackbarAndSetText(
+              true,
+              {
+                labelName: "Payment failed please try again",
+                labelKey: `Payment failed please try again`
+              },
+              "error"
+            );  
+          }
         }
 else{
   this.props.toggleSnackbarAndSetText(
@@ -370,46 +482,105 @@ else{
        }
     }
     if (ppMode == "Card") {
+      let checkwhiteSpace = this.hasWhiteSpace(this.state.last4Digits)
       if(NewTrxNo !== " " && this.state.TrxNo !== ""){
-        PaymentReqBody = {
-          Payment: {
-            paymentDetails: [
-              {
-                businessService: "PACC",
-                billId: billId,
-                totalDue: TotalAmount,
-                totalAmountPaid: TotalAmount,
-              },
-            ],
-            tenantId: userInfo.tenantId,
-            totalDue: TotalAmount,
-            paymentMode: ppMode,
-            paidBy: ppaidBy,
-            mobileNumber: ApplicantMobNum,
-            payerName: ApplicantName,
-            transactionNumber: NewTrxNo,
-            instrumentNumber: NewTrxNo,
-            totalAmountPaid: TotalAmount,
-          },
-        };
-        let EmpPayment = await httpRequest(
-          "collection-services/payments/_create?",
-          "_search",
-          [],
-          PaymentReqBody
-        );
-      
-        prepareFinalObject("ResponseOfCashPayment", EmpPayment);
+        if(checkwhiteSpace == true || this.state.last4Digits.length > 4 || this.state.last4Digits.length < 4 || this.state.repeatTrxNo !== this.state.TrxNo) {
+          this.props.toggleSnackbarAndSetText(
+            true,
+            {
+              labelName: "Please fill all fields properly",
+              labelKey: `Please fill all fields properly`
+            },
+            "error"
+          ); 
+        }
+        else{
+          PaymentReqBody = {
+            Payment: {
+              paymentDetails: [
+                {
+                  businessService: "PACC",
+                  billId: billId,
+                  totalDue: TotalAmount,
+                  totalAmountPaid: TotalAmount,
+                },
+              ],
+              tenantId: userInfo.tenantId,
+              totalDue: TotalAmount,
+              paymentMode: ppMode,
+              paidBy: ppaidBy,
+              mobileNumber: ApplicantMobNum,
+              payerName: ApplicantName,
+              transactionNumber: this.state.TrxNo,
+              instrumentNumber: this.state.TrxNo,
+              totalAmountPaid: TotalAmount,
+            },
+          };
+  
+          try{
+            let EmpPayment = await httpRequest(
+              "collection-services/payments/_create?",
+              "_search",
+              [],
+              PaymentReqBody
+            );
+           
+            if(EmpPayment.ResponseInfo.status == "200" && EmpPayment.Payments.length > 0){
     
-        let ReceiptNum =
-          EmpPayment && EmpPayment
-            ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
-            : "notFound";
+              prepareFinalObject("ResponseOfCashPayment", EmpPayment);
 
-    
-        prepareFinalObject("CollectionReceiptNum", ReceiptNum);
-    
-        this.props.history.push(`/egov-services/success-payment`);
+              let Booking = {
+                "bkApplicationNumber": this.state.CurrentApplicationNum,
+                "paymentCollectionType": "CARD",
+                "paidBy": ppaidBy,
+                "payerName": ApplicantName,
+                "payerMobileNumber": ApplicantMobNum,
+                "cardNumber": this.state.last4Digits,
+                "transactionNumber": this.state.TrxNo,
+            }
+              
+              let saveCardNum = await httpRequest(
+                "bookings/api/save/cardDetails",
+                "_search",
+                [],
+                {Booking:Booking}
+              );
+              
+        
+              let ReceiptNum =
+                EmpPayment && EmpPayment
+                  ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
+                  : "notFound";
+              
+          
+              prepareFinalObject("CollectionReceiptNum", ReceiptNum);
+      
+              // TransactionNum = this.state.PaymentReceiptNumber
+              // cardNumber = this.state.last4Digits
+              this.props.history.push(`/egov-services/success-payment`);
+      
+            }
+          }catch (error) {
+            this.props.toggleSnackbarAndSetText(
+              true,
+              {
+                labelName: "Payment failed please try again",
+                labelKey: `Payment failed please try again`
+              },
+              "error"
+            );  
+          }
+        }
+      }
+      else if(checkwhiteSpace == true || this.state.last4Digits.length > 4 || this.state.last4Digits < 4 || this.state.repeatTrxNo !== this.state.TrxNo) {
+        this.props.toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "Please fill all fields properly",
+            labelKey: `Please fill all fields properly`
+          },
+          "error"
+        ); 
       }
       else{
         this.props.toggleSnackbarAndSetText(
@@ -423,38 +594,7 @@ else{
        }
     }
 
-  //   if(PaymentReqBody !== undefined && PaymentReqBody !== null){
-  //     let EmpPayment = await httpRequest(
-  //       "collection-services/payments/_create?",
-  //       "_search",
-  //       [],
-  //       PaymentReqBody
-  //     );
   
-  //     console.log("EmpPayment--", EmpPayment);
-  
-  //     prepareFinalObject("ResponseOfCashPayment", EmpPayment);
-  
-  //     let ReceiptNum =
-  //       EmpPayment && EmpPayment
-  //         ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber
-  //         : "notFound";
-  //     console.log("ReceiptNum--", ReceiptNum);
-  
-  //     prepareFinalObject("CollectionReceiptNum", ReceiptNum);
-  
-  //     this.props.history.push(`/egov-services/success-payment`);
-  //   }
-  //   else{
-  //     this.props.toggleSnackbarAndSetText(
-  //         true,
-  //         {
-  //           labelName: "Something went wrong.Try Again",
-  //           labelKey: `BK_CC_ROOM_GETTING_WRONG`
-  //         },
-  //         "error"
-  //       );
-  // }
 };
 
   firstStep = (e) => {
@@ -516,17 +656,6 @@ else{
   };
 
   render() {
-    // const { firstName, fCharges,result, email, mobileNo, locality, surcharge, fromDate, toDate, facilationChargesSuccess,
-    //     onFromDateChange, onToDateChange, utGST, cGST, GSTnumber, handleChange, bankName, amount, transactionDate, transactionNumber, paymentMode,
-    //     dimension, location, facilitationCharges, cleaningCharges, rent, approverName, comment, houseNo, type, purpose, residenials, documentMap,
-    //     BK_FEE_HEAD_PACC,LUXURY_TAX,REFUNDABLE_SECURITY,PACC_TAX,totalAmountSuPage,one,two,three,four,five,six,
-    //     PACPACC_ROUND_OFFC_TAX,FACILITATION_CHARGE
-    //     } = this.props;
-
-    // console.log(",one,two,three,four,five,six--",one,two,three,four,five,six)
-    // console.log("propsInRendersummary--",this.props)
-    // let fc = fCharges?fCharges.facilitationCharge:'100';
-    // console.log("stateofBooking--",this.state.createPACCApp)
     const {
       paymentDetails,
       ApplicantMobNum,
@@ -629,14 +758,6 @@ else{
                   ApplicantName && ApplicantName ? ApplicantName : "Notfound"
                 }
               />
-
-              <PaymentReceiptDetail
-                PaymentReceiptNumber={PaymentReceiptNumber}
-                handleChange={this.handleChange}
-                transactionDateChange={this.transactionDateChange}
-                transactionDate={transactionDate}
-              />
-
               {this.state.SubmitDetails == true ? (
                 <SubmitPaymentDetails
                   TotalAmount={TotalAmount}
@@ -868,13 +989,6 @@ const mapStateToProps = (state) => {
   let OfflineRenArray;
 
   const { fetchPaymentAfterPayment } = bookings;
-  console.log(
-    "fetchPaymentAfterPayment--",
-    fetchPaymentAfterPayment
-      ? fetchPaymentAfterPayment
-      : "NofetchPaymentAfterPaymentData"
-  );
-
   let abc =
     applicationData !== undefined && applicationData !== null
       ? applicationData.bookingsModelList != undefined &&
@@ -1222,7 +1336,7 @@ let todaystrDate = todayDate.toString();
 
 let longtodayDate = Date.parse(todaystrDate);
 
-
+   
   //TrxNo
   let TrxNo = state.screenConfiguration.preparedFinalObject.TrxNo
     ? state.screenConfiguration.preparedFinalObject.TrxNo
@@ -1245,8 +1359,11 @@ let BranchName = get(
 );
 
   return {
+    TrxNo,
     state,
     longtodayDate,
+    NewChequeDate,
+    DdDate,
     BranchName,
     BankName,
     one,

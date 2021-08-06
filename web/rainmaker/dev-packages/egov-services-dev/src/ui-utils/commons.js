@@ -526,18 +526,35 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                         var [fromTime, toTime] = response.data.timeslots[0].slot.split('-')
 
                     }
-                    let DisplayPaccObject = {
-                        bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,
-                        bkDisplayToDateTime: response.data.bkToDate + "#" + toTime
-                    }
-                    if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
-              
-                        let d = new Date(new Date(response.data.bkToDate).setDate(new Date(response.data.bkToDate).getDate() + 1));
+                    let DisplayPaccObject={}
+                    if(response.data.bkApplicationStatus==="RE_INITIATED"){
+                         DisplayPaccObject = {
+                            bkDisplayFromDateTime: response.data.bkStartingDate + "#" + fromTime,
+                            bkDisplayToDateTime: response.data.bkEndingDate + "#" + toTime
+                        }
+                        if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+                  
+                            let d = new Date(new Date(response.data.bkEndingDate).setDate(new Date(response.data.bkEndingDate).getDate() + 1));
+                            DisplayPaccObject = {
+                                bkDisplayFromDateTime: response.data.bkStartingDate + "#" + fromTime,  
+                                bkDisplayToDateTime: d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate() + "#" + toTime,
+                            };  
+                        }
+                    }else{
                         DisplayPaccObject = {
-                            bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,  
-                            bkDisplayToDateTime: d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate() + "#" + toTime,
-                        };  
+                            bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,
+                            bkDisplayToDateTime: response.data.bkToDate + "#" + toTime
+                        }
+                        if(fromTime.trim()=='9:00 AM' && toTime.trim()=='8:59 AM'){
+                  
+                            let d = new Date(new Date(response.data.bkToDate).setDate(new Date(response.data.bkToDate).getDate() + 1));
+                            DisplayPaccObject = {
+                                bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,  
+                                bkDisplayToDateTime: d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate() + "#" + toTime,
+                            };  
+                        }
                     }
+                   
                     
                     dispatch(prepareFinalObject("DisplayTimeSlotData", DisplayPaccObject))
                     // dispatch(prepareFinalObject("DisplayPacc", { bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime }));
@@ -898,6 +915,7 @@ export const createUpdateWtbApplication = async (state, dispatch, action) => {
         set(payload, "bkAction", action);
         set(payload, "businessService", "BWT");
         set(payload, "financialYear", `${getCurrentFinancialYear()}`);
+        set(payload,"quantity" , parseInt(payload.quantity))
         // setapplicationMode(status);
 
         if (method === "CREATE") {

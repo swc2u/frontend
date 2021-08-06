@@ -89,25 +89,56 @@ dob: getDateField({
   pattern: getPattern("Date"),
   jsonPath: "PensionerDetails.dob"
 }),
-gender: getTextField({
-  label: {
-    labelName: "gender",
-    labelKey: "PENSION_EMPLOYEE_GENDER"
-  },
-  props:{
-    className:"applicant-details-error"
-  },
-  placeholder: {
-    labelName: "gender",
-    labelKey: "PENSION_EMPLOYEE_GENDER"
-  },
-  required:true,
-  props: {
-    disabled: false,       
-  },
-  pattern: getPattern("name"),
-  jsonPath: "PensionerDetails.gender"
-}),
+// gender: getTextField({
+//   label: {
+//     labelName: "gender",
+//     labelKey: "PENSION_EMPLOYEE_GENDER"
+//   },
+//   props:{
+//     className:"applicant-details-error"
+//   },
+//   placeholder: {
+//     labelName: "gender",
+//     labelKey: "PENSION_EMPLOYEE_GENDER"
+//   },
+//   required:true,
+//   props: {
+//     disabled: false,       
+//   },
+//   pattern: getPattern("name"),
+//   jsonPath: "PensionerDetails.gender"
+// }),
+gender: {
+  ...getSelectField({
+    label: { labelName: "Gender", labelKey: "PENSION_EMPLOYEE_GENDER" },
+    placeholder: {
+      labelName: "Select Gender",
+      labelKey: "PENSION_EMPLOYEE_GENDER"
+    },
+    required: true,
+    jsonPath: "PensionerDetails.gender",
+    props: {
+      className: "hr-generic-selectfield",
+      data: [
+        {
+          value: "MALE",
+          label: "COMMON_GENDER_MALE"
+        },
+        {
+          value: "FEMALE",
+          label: "COMMON_GENDER_FEMALE"
+        },
+        {
+          value: "OTHERS",
+         // label: "COMMON_GENDER_OTHERS"
+          label: "OTHERS"
+        }
+      ],
+      optionValue: "value",
+      optionLabel: "label"
+    }
+  })
+},
 mobileNumber: getTextField({
   label: {
     labelName: "mobileNumber",
@@ -124,7 +155,7 @@ mobileNumber: getTextField({
   props: {
     disabled: false,       
   },
-  pattern: getPattern("name"),
+  pattern: getPattern("MobileNo"),
   jsonPath: "PensionerDetails.mobileNumber"
 }),
 email: getTextField({
@@ -230,24 +261,48 @@ pensionBankDetailsConatiner: getCommonContainer({
     pattern: getPMSPattern("Amount"),
     jsonPath: "PensionerDetails.bankAccountNumber"
   }),       
-  bankName: getTextField({
+  // bankName: getTextField({
+  //   label: {
+  //     labelName: "bankName",
+  //     labelKey: "PENSION_EMPLOYEE_PENSION_BN"
+  //   },
+  //   props:{
+  //     className:"applicant-details-error"
+  //   },
+  //   placeholder: {
+  //     labelName: "bank Details",
+  //     labelKey: "PENSION_EMPLOYEE_PENSION_BN"
+  //   },
+  //   required:true,
+  //   props: {
+  //     disabled: false,       
+  //   },
+  //   pattern: getPattern("name"),
+  //   jsonPath: "PensionerDetails.bankDetails"
+  // }),
+  bankName: getSelectField({
     label: {
-      labelName: "bankName",
+      labelName: "Bank address",
       labelKey: "PENSION_EMPLOYEE_PENSION_BN"
     },
     props:{
       className:"applicant-details-error"
-    },
+    }, 
     placeholder: {
-      labelName: "bank Details",
+      labelName: "Bank address",
       labelKey: "PENSION_EMPLOYEE_PENSION_BN"
     },
     required:true,
     props: {
-      disabled: false,       
+      disabled: false,
+      optionValue: "code",
+      optionLabel: "name"      
     },
     pattern: getPattern("name"),
-    jsonPath: "PensionerDetails.bankDetails"
+    jsonPath: "PensionerDetails.bankDetails",
+    //jsonPath: "ProcessInstances[0].employeeOtherDetails.bankAddress",
+    sourceJsonPath:
+   "applyScreenMdmsData.pension.BankDetails",
   }),
   bankIfsc: getTextField({
     label: {
@@ -280,7 +335,7 @@ pensionBankDetailsConatiner: getCommonContainer({
       labelName: "bankCode",
       labelKey: "PENSION_BANK_CODE"
     },
-    required:true,
+    required:false,
     props: {
       disabled: false,       
     },
@@ -300,6 +355,7 @@ pensionBankDetailsConatiner: getCommonContainer({
       labelKey: "PENSION_EMPLOYEE_PENSION_BA"
     },
     required: true,
+    visible:false,
     minValue:0,
     props: {
       disabled: false,      
@@ -343,7 +399,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantName",
         labelKey: "PENSION_EMPLOYEE_PENSION_CN"
       },
-      required:true,
+      required:false,
         minValue:0,
         maxLength:18,
       props: {
@@ -364,7 +420,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantDob",
         labelKey: "PENSION_EMPLOYEE_PENSION_CDOB"
       },
-      required:true,
+      required:false,
       props: {
         inputProps: {
           max: new Date().toISOString().slice(0, 10),
@@ -384,7 +440,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
           labelName: "Select relation Type",
           labelKey: "PENSION_DEPENDENT_TYPEC"
         },
-        required: true,
+        required: false,
        
         jsonPath: "PensionerDetails.claimantRelationship",
         localePrefix: {
@@ -419,27 +475,27 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantMobileNumber",
         labelKey: "PENSION_EMPLOYEE_MOBILE_NUMBER_C"
       },
-      required:true,
+      required:false,
       props: {
         disabled: false,       
       },
-      pattern: getPattern("name"),
+      pattern: getPattern("MobileNo"),
       jsonPath: "PensionerDetails.claimantMobileNumber"
     }),
     
     ClaimantAdddress: getTextField({
       label: {
         labelName: "claimantAddress",
-        labelKey: "PENSION_EMPLOYEE_PENSION_CA"
+        labelKey: "PENSION_EMPLOYEE_PENSION_CA_LABEL"
       },
       props:{
         className:"applicant-details-error"
       }, 
       placeholder: {
         labelName: "claimantAddress",
-        labelKey: "PENSION_EMPLOYEE_PENSION_CA"
+        labelKey: "PENSION_EMPLOYEE_PENSION_CA_LABEL"
       },
-      required: true,
+      required: false,
       minValue:0,
       props: {
         disabled: false,      
@@ -447,24 +503,48 @@ export const PensionerClaimantDetails = (IsEdit) => {
       pattern: getPMSPattern("Address"),
       jsonPath: "PensionerDetails.claimantAddress"
     }),
-    claimantbankname: getTextField({
+    // claimantbankname: getTextField({
+    //   label: {
+    //     labelName: "claimantBankDetails",
+    //     labelKey: "PENSION_EMPLOYEE_PENSION_CBN"
+    //   },
+    //   props:{
+    //     className:"applicant-details-error"
+    //   },
+    //   placeholder: {
+    //     labelName: "claimantBankDetails",
+    //     labelKey: "PENSION_EMPLOYEE_PENSION_CBN"
+    //   },
+    //   required:true,
+    //   props: {
+    //     disabled: false,       
+    //   },
+    //   pattern: getPattern("name"),
+    //   jsonPath: "PensionerDetails.claimantBankDetails"
+    // }),
+    claimantbankname: getSelectField({
       label: {
-        labelName: "claimantBankDetails",
+        labelName: "Bank address",
         labelKey: "PENSION_EMPLOYEE_PENSION_CBN"
       },
       props:{
         className:"applicant-details-error"
-      },
+      }, 
       placeholder: {
-        labelName: "claimantBankDetails",
+        labelName: "Bank address",
         labelKey: "PENSION_EMPLOYEE_PENSION_CBN"
       },
-      required:true,
+      required:false,
       props: {
-        disabled: false,       
+        disabled: false,
+        optionValue: "code",
+        optionLabel: "name"      
       },
       pattern: getPattern("name"),
-      jsonPath: "PensionerDetails.claimantBankDetails"
+      jsonPath: "PensionerDetails.claimantBankDetails",
+      //jsonPath: "ProcessInstances[0].employeeOtherDetails.bankAddress",
+      sourceJsonPath:
+     "applyScreenMdmsData.pension.BankDetails",
     }),
     
     ClaimantbankIfsc: getTextField({
@@ -479,7 +559,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantBankIfsc",
         labelKey: "PENSION_BANK_IFSC_C"
       },
-      required:true,
+      required:false,
       props: {
         disabled: false,       
       },
@@ -498,7 +578,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantBankCode",
         labelKey: "PENSION_BANK_CODE_C"
       },
-      required:true,
+      required:false,
       props: {
         disabled: false,       
       },
@@ -517,7 +597,7 @@ export const PensionerClaimantDetails = (IsEdit) => {
         labelName: "claimantBankAccountNumber",
         labelKey: "PENSION_EMPLOYEE_PENSION_AN_C"
       },
-      required:true,
+      required:false,
         minValue:0,
         maxLength:18,
       props: {

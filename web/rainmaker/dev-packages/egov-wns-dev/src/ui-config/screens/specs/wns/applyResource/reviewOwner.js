@@ -251,6 +251,36 @@ export const reviewisFerruleApplicable = getLabelWithValue(
     callBack: handleNA
   }
 );
+export const reviewisIsMeterStolen = getLabelWithValue(
+  {
+    labelName: "Is this is a case of theft of meter",
+    labelKey: "WS_ADDN_DETAILS_IS_METER_STOLEN"
+  },
+  {
+    jsonPath: "WaterConnection[0].waterApplication.isMeterStolen",
+    callBack: handleNA
+  }
+);
+export const reviewadditionalCharges = getLabelWithValue(
+  {
+    labelName: "Additional Charges",
+    labelKey: "WS_ADDN_DETAILS_ADDITIONAL_CHARGES_LABEL"
+  },
+  {
+    jsonPath: "WaterConnection[0].waterApplication.additionalCharges",
+    callBack: handleNA
+  }
+);
+export const reviewconstructionCharges = getLabelWithValue(
+  {
+    labelName: "Construction Charges",
+    labelKey: "WS_ADDN_DETAILS_CONSTRUCTION_CHARGES_LABEL"
+  },
+  {
+    jsonPath: "WaterConnection[0].waterApplication.constructionCharges",
+    callBack: handleNA
+  }
+);
 export const reviewConnectionExecutionDate = getLabelWithValue(
   {
     labelName: "Connection Execution Date",
@@ -287,6 +317,14 @@ export const reviewInitialMeterReading = getLabelWithValue(
     labelKey: "WS_ADDN_DETAILS_INITIAL_METER_READING"
   },
   { jsonPath: "applyScreen.additionalDetails.initialMeterReading",
+    callBack: handleNA }
+);
+export const reviewlastMeterReading = getLabelWithValue(
+  {
+    labelName: "Initial Meter Reading",
+    labelKey: "WS_ADDN_DETAILS_INITIAL_METER_READING"
+  },
+  { jsonPath: "applyScreen.additionalDetails.lastMeterReading",
     callBack: handleNA }
 );
 export const reviewMeterCount = getLabelWithValue(
@@ -434,7 +472,10 @@ const roadCuttingCharges = getCommonContainer({
 });
 const otherChargesDetails =  getCommonContainer({
   reviewSecurityCharge,
-  reviewisFerruleApplicable
+  reviewisFerruleApplicable,
+  reviewadditionalCharges,
+  reviewconstructionCharges,
+  reviewisIsMeterStolen,
 });
 
 const activationDetails = getCommonContainer({
@@ -442,6 +483,7 @@ const activationDetails = getCommonContainer({
   reviewMeterId,
   reviewMeterInstallationDate,
   reviewInitialMeterReading,
+  reviewlastMeterReading,
   reviewmfrCode,
   reviewmeterDigits,
   reviewmeterUnit,

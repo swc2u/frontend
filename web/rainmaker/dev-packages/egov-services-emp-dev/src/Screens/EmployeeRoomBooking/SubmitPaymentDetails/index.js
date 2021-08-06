@@ -29,8 +29,6 @@ componentDidMount = async () => {
       
  let { TotalAmount,billId, userInfo,ApplicantName,ApplicantMobNum,paymentMode,PaidBy,justTry} = this.props;
 
- console.log("this.props---",this.props)
-
  let PaymentReqBody = {
     "Payment" : {         
         "paymentDetails": [
@@ -51,7 +49,7 @@ componentDidMount = async () => {
         }
     }
 
- console.log("PaymentReqBody--",PaymentReqBody)
+
 
 let EmpPayment = await httpRequest(
             "collection-services/payments/_create?",
@@ -59,10 +57,10 @@ let EmpPayment = await httpRequest(
             PaymentReqBody
             );
 
-console.log("EmpPayment--",EmpPayment)
+
 
 let ReceiptNum = EmpPayment && EmpPayment ? EmpPayment.Payments[0].paymentDetails[0].receiptNumber : "notFound"
-console.log("ReceiptNum--",ReceiptNum)
+
 
 prepareFinalObject("CollectionReceiptNum",ReceiptNum),
 
@@ -74,9 +72,6 @@ justTry
 
   return(
       <div>
-        {console.log("dfgh")}
-        {/* {this.state.sucessPage == true ? 
-        <PaymentSuccessForEmployee/>: ''} */}
       </div>
   )
     }
@@ -94,27 +89,27 @@ const { bookings, common, auth, form } = state;
 
 
     let ApplicantName = RoomBookingData.bookingsModelList[0].bkApplicantName
-    console.log("ApplicantName--",ApplicantName)
+   
     let ApplicantMobNum = this.props.RoomBookingData.bookingsModelList[0].bkMobileNumber
-    console.log("ApplicantMobNum--",ApplicantMobNum)
+   
     // let ApplicantName = selectedComplaint ? selectedComplaint.bkApplicantName : 'notFound'
     
     // let ApplicantMobNum = selectedComplaint ? selectedComplaint.bkMobileNumber : 'notFound'
     
     const { paymentData } = bookings;
     let paymentDataOne = paymentData ? paymentData : "wrong";
-    console.log("paymentDataOne--",paymentDataOne)
+   
     let checkBillLength =  paymentDataOne != "wrong" ? paymentDataOne.Bill.length > 0 : "";
     let totalAmountSuPage = checkBillLength ? paymentDataOne.Bill[0].totalAmount: "notfound";
-    console.log("totalAmountSuPage-",totalAmountSuPage)
+   
     let paymentDetails;
     paymentDetails = paymentData ? paymentData.Bill[0] : '';
     let TotalAmount  = paymentDetails ? paymentDetails.totalAmount : "NotFoundAnyAmount";
-    console.log("TotalAmount--",TotalAmount)
+   
     let billId = paymentDetails ? paymentData.Bill[0].billDetails[0].billId : "NotFoundAnyBillId";
-    console.log("billId--",billId)
+   
     let billAccountDetailsArray =  checkBillLength ? paymentDataOne.Bill[0].billDetails[0].billAccountDetails : "NOt found Any Array"
-    console.log("billAccountDetailsArray--",billAccountDetailsArray)
+   
     let one = 0;
     let two = 0;
     let three = 0;
@@ -142,16 +137,6 @@ for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
         six = billAccountDetailsArray[i].amount
     }
 }
-
-console.log("one--",one)
-console.log("two--",two)
-console.log("three--",three)
-console.log("four--",four)
-console.log("five--",five)
-console.log("six--",six)
-
-    
-
     let myLocation = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData:"";  
     let myLocationtwo = myLocation?myLocation.bkLocation:"";  
 
@@ -173,8 +158,6 @@ console.log("six--",six)
 
 let paymentMode = 
 state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.paymentMode:"";  
-
-console.log("paymentMode--",paymentMode)
 
 return {paymentMode,createPACCApplicationData,userInfo,paymentDataOne,
     documentMap,facilationChargesSuccess,billId,ApplicantName,ApplicantMobNum,

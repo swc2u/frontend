@@ -28,11 +28,11 @@
 }
 
 @media screen and (min-width: 320px) and (max-width: 568px) {
-  .imageMap{overflow: scroll; width: 100%;}
-    .bookingTopSec{margin-top:50px;}
+  .imageMap{overflow: auto; width: 100%;}
+  .bookingTopSec{margin-top:50px;}
     .responsive-action-button{margin-bottom: 10px;}
     .locality, .bookingType{width:100%;}
     .calendar-wrapper{display: block !important;}
     .DayPicker-Month{flex: 0 0 100% !important;}
-    .calendar-section, .calendar-info{width: 100% !important;}
-    }
+    .calendar-section, .calendar-info{width: 90% !important;}
+  }

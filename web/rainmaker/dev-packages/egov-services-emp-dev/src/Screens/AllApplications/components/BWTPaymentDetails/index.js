@@ -4,14 +4,33 @@ import Label from "egov-ui-kit/utils/translationNode";
 import isEmpty from "lodash/isEmpty";
 import "./index.css";
 
-
+  
 class PayDetails extends Component {
  
 
   render() {
-    const { bkPaymentDate, paymentDetails, bkPaymentReceiptNumber, bkPaymentStatus } = this.props;
-    console.log("payemntProps--",this.props)
+    const { bkPaymentDate, paymentDetails,quantity,bkPaymentReceiptNumber, bkPaymentStatus } = this.props;
+ 
 
+
+    let strquantity = 'NA'
+    if(quantity !== null && quantity !== undefined){
+      strquantity = quantity.toString();
+    }
+
+    // let strquantity = quantity.toString();
+   let getBaseAmount = 0;
+   let strBaseAmount = "0"
+   if(paymentDetails && paymentDetails.billDetails[0] && paymentDetails.billDetails[0].billAccountDetails[0].amount){
+     if(quantity !== null && quantity !== undefined){
+      getBaseAmount = (paymentDetails && paymentDetails.billDetails[0] && paymentDetails.billDetails[0].billAccountDetails[0].amount/quantity)
+     }else{
+      getBaseAmount = (paymentDetails && paymentDetails.billDetails[0] && paymentDetails.billDetails[0].billAccountDetails[0].amount)
+     }
+    console.log("getBaseAmount",getBaseAmount)
+    strBaseAmount = getBaseAmount.toString()
+    console.log("strBaseAmount",strBaseAmount)
+   }
     return (
       <div>
         <Card
@@ -32,7 +51,17 @@ class PayDetails extends Component {
                   <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_REGISTRATION_RENT" />
                 </div>
                 <div className="col-sm-4 col-xs-12">
-                  <h5 style={{ textAlign: "right" }}>{paymentDetails && paymentDetails.billDetails[0] && paymentDetails.billDetails[0].billAccountDetails[0].amount}</h5>
+                  {/* <h5 style={{ textAlign: "right" }}>{paymentDetails && paymentDetails.billDetails[0] && paymentDetails.billDetails[0].billAccountDetails[0].amount}</h5> */}
+                  <h5 style={{ textAlign: "right" }}>{strBaseAmount}</h5>
+                </div>
+              </div>
+
+              <div className="complaint-detail-detail-section-status row" style={{marginLeft:'-10px',marginTop:30}}>
+                <div className="col-sm-4 col-xs-12">
+                  <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="Quantity" />
+                </div>
+                <div className="col-sm-4 col-xs-12">
+                  <h5 style={{ textAlign: "right" }}>{strquantity}</h5>
                 </div>
               </div>
 

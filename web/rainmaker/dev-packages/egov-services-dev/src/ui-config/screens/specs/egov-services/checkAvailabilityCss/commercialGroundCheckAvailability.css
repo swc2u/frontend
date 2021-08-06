@@ -9,6 +9,13 @@
     margin: initial;
     border: none;
     margin: 0 !important;
+    border-radius: none !important; }
+  .testClass {
+    width: 100% !important;
+    margin: initial;
+    padding: 0px;
+    border: none;
+    margin: 0 !important;
     border-radius: none !important; } }
 
 .applicant-details-error p {
@@ -17,14 +24,10 @@
 #custom-containers-propertyMohalla div p {
   font-size: 14px; }
 
-#custom-containers-key {
-  word-break: break-all !important; }
-
 .MuiTypography-body2-204 {
   color: rgba(0, 0, 0, 0.87);
   font-size: 16px;
   font-weight: 400;
   font-family: Roboto;
   line-height: 19px;
-  letter-spacing: 0.67px;
-  word-break: break-all !important; }
+  letter-spacing: 0.67px; }

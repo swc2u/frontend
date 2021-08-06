@@ -1,9 +1,23 @@
-import {  getBreak,  getCommonCard,  getCommonContainer,  getCommonTitle,  getTextField,  getSelectField,  getPattern} from "egov-ui-framework/ui-config/screens/specs/utils";
+import {  getBreak, getLabel, getCommonParagraph, getCommonCard,  getCommonContainer,  getCommonTitle,  getTextField,  getSelectField,  getPattern} from "egov-ui-framework/ui-config/screens/specs/utils";
 import {  handleScreenConfigurationFieldChange as handleField,  prepareFinalObject} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {  furnishNocResponse,  getSearchResults} from "../../../../../ui-utils/commons";
-import { getOPMSPattern } from "../../utils/index"
+import { getOPMSPattern, showHideAdhocPopups } from "../../utils/index"
+
+// const showHideAdhocPopups = (state, dispatch, screenKey) => {
+
+//   //alert(JSON.stringify( state.screenConfiguration.screenConfig[screenKey]))
+
+//   let toggle = get(
+//     state.screenConfiguration.screenConfig[screenKey],
+//     "components.undertakingdialog.props.open",
+//     false
+//   );
+//   dispatch(
+//     handleField(screenKey, "components.undertakingdialog", "props.open", !toggle)
+//   );
+// };
 
 export const nocDetails = getCommonCard({
   header: getCommonTitle(
@@ -73,7 +87,7 @@ export const nocDetails = getCommonCard({
     componentPath: "AutosuggestContainer",
     sourceJsonPath: "applyScreenMdmsData.egpm.nocSought",
     jsonPath: "SELLMEATNOC.nocSought",
-     required: true,
+    required: true,
     errorMessage:"ERR_NOC_SELLMEAT_NOCSOUGHT_LABEL",
     gridDefination: {
       xs: 12,
@@ -107,6 +121,46 @@ export const nocDetails = getCommonCard({
       isMulti: true,
       labelName: "name",
       valueName: "name"
+    },
+    
+    beforeFieldChange: (action, state, dispatch) => {
+      var data = get(state.screenConfiguration.preparedFinalObject, "applyScreenMdmsData.egpm.nocSought", {});
+      if(data.length >= 4){
+        dispatch(prepareFinalObject("applyScreenMdmsData.egpm.dumpNocSought", data));
+      }
+    },
+    afterFieldChange: (action, state, dispatch) => {   
+      var dumpData = get(state.screenConfiguration.preparedFinalObject, "applyScreenMdmsData.egpm.dumpNocSought", []);
+      var data = []; 
+      var selectedDropdown = get(state.screenConfiguration.preparedFinalObject,"SELLMEATNOC.nocSought[0].value","");
+      // if(dumpData.length >= 4){
+      //   dispatch(prepareFinalObject("applyScreenMdmsData.egpm.dumpNocSought", data));
+      // }
+      if(selectedDropdown === ""){
+        dispatch(prepareFinalObject("applyScreenMdmsData.egpm.nocSought", dumpData));
+      }
+      if(selectedDropdown === "JHATKA_MEAT_SHEEP_GOAT_POULTRY"){
+        data = [];
+        data = data.concat(dumpData[0])
+        data = data.concat(dumpData[3])
+        data = data.concat(dumpData[4])
+        dispatch(prepareFinalObject("applyScreenMdmsData.egpm.nocSought", data));
+      }
+      if(selectedDropdown === "HALAL_MEAT_SHEEP_GOAT_POULTRY"){
+        data = [];
+        data = data.concat(dumpData[1])
+        data = data.concat(dumpData[3])
+        data = data.concat(dumpData[4])
+        dispatch(prepareFinalObject("applyScreenMdmsData.egpm.nocSought", data));
+      }
+      if(selectedDropdown === "PIG"){
+        data = [];
+        data = data.concat(dumpData[2])
+        data = data.concat(dumpData[3])
+        data = data.concat(dumpData[4])
+        dispatch(prepareFinalObject("applyScreenMdmsData.egpm.nocSought", data));
+      }
+      
     }
   },
   shopNumber:{
@@ -203,6 +257,71 @@ export const nocDetails = getCommonCard({
   //   })
   //   },
 
-  })
+  }),
+  checkboxDropdownContainer :getCommonContainer({
+
+    downloadcard: {
+      uiFramework: "custom-molecules-local",
+      moduleName: "egov-opms",
+      componentPath: "SampleDownloadForSellMeatDropdownCombo",
+  
+      visible: true,
+    },
+  
+  }),
+  checkboxBtnContainer : getCommonContainer({
+    addPenaltyRebateButton1: {
+      componentPath: "Checkbox",
+      props: {
+        checked: false,
+        variant: "contained",
+        color: "primary",
+        style: {
+          // minWidth: "20",
+          height: "10px",
+          marginRight: "5px",
+          marginTop: "15px"
+        }
+      },
+      children: {
+        previousButtonLabel: getLabel({
+          labelName: "Undertaking",
+          labelKey: "SELLMEATNOC_UNDERTAKING_HEADING"
+        }),
+      },
+      onClickDefination: {
+        action: "condition",
+        callBack: (state, dispatch) => showHideAdhocPopups(state, dispatch, "applysellmeat")
+      },
+      //checked:true,
+      // visible: localStorageGet('app_noc_status') === "DRAFT" ? true : false,
+      visible: true,
+    },
+    addPenaltyRebateButton: {
+      componentPath: "Button",
+      props: {
+        color: "primary",
+        style: {
+          //minWidth: "200px",
+          height: "48px",
+          marginRight: "40px",
+          paddingLeft: "0px",
+          paddingBottom: "14px",
+          textTransform: "capitalize"
+        }
+      },
+      children: {
+        previousButtonLabel: getLabel({
+          labelName: "Undertaking",
+          labelKey: "NOC_UNDERTAKING"
+        })
+      },
+      onClickDefination: {
+        action: "condition",
+        callBack: (state, dispatch) => showHideAdhocPopups(state, dispatch, "applysellmeat")
+      },
+      visible: true,
+    }
+    })
 });
 

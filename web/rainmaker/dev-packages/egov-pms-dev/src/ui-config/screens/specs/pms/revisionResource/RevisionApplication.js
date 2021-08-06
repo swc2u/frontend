@@ -429,6 +429,28 @@ effectiveEndMonth:{
         pattern: getPMSPattern("Amount"),
         jsonPath: "ProcessInstances[0].pensionRevision[0].interimRelief"
       }),
+      ltc: getTextField({
+        label: {
+          labelName: "LTC(Rs.)",
+          labelKey: "PENSION_EMPLOYEE_PENSION_LTC_R"
+        },
+        props:{
+          className:"applicant-details-error"
+        }, 
+        placeholder: {
+          labelName: "LTC(Rs.)",
+          labelKey: "PENSION_EMPLOYEE_PENSION_LTC_R"
+        },
+        required:false,
+         minValue:0,
+          maxLength:18,
+          visible:true,
+        props: {
+          disabled:!IsEdit,       
+        },
+        pattern: getPMSPattern("Amount"),
+        jsonPath: "ProcessInstances[0].pensionRevision[0].ltc"
+      }),
       pensionDeductions: getTextField({
         label: {
           labelName: "pensionDeductions",

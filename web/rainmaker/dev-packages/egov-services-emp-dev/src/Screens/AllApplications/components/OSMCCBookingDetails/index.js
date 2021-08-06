@@ -110,9 +110,16 @@ class BookingDetails extends Component {
   render() {
     const { status, historyApiData, bkBookingVenue, bkFromDate, bkToDate, applicantName, applicationNo, submittedDate, dateCreated, address, sector, houseNo, bookingType, mapAction, images, action, role } = this.props;
     var ProcessInstances = [];
+    let reverseHistoryData = [];
+    let lastElement = []
 
     if (historyApiData != undefined && historyApiData.ProcessInstances && historyApiData.ProcessInstances.length > 0) {
       ProcessInstances = [...historyApiData.ProcessInstances];
+
+      reverseHistoryData = ProcessInstances.reverse();
+
+      lastElement = reverseHistoryData[reverseHistoryData.length - 1];
+
     }
 
 
@@ -163,7 +170,7 @@ class BookingDetails extends Component {
                   <DialogContent className="taskStatusBody">
                     <Typography>
                       <Stepper orientation="vertical">
-                        {ProcessInstances.map(
+                        {reverseHistoryData.map(
                           (item, index) =>
                             item && (
                               <Step key={index} active={true}>
@@ -197,9 +204,9 @@ class BookingDetails extends Component {
                     </Typography>
                     <Typography variant="body2">
                       <LabelContainer
-
-                        labelName={ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].auditDetails ?
-                          this.convertEpochToDate(ProcessInstances[0].auditDetails.lastModifiedTime) : ''}
+//auditDetails
+                        labelName={reverseHistoryData && reverseHistoryData.length > 0 && lastElement.auditDetails ?
+                          this.convertEpochToDate(lastElement.auditDetails.lastModifiedTime) : ''}
                       />
 
                     </Typography>
@@ -213,7 +220,7 @@ class BookingDetails extends Component {
                     </Typography>
                     <Typography variant="body2">
 
-                      <LabelContainer labelName={ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].assigner ? ProcessInstances[0].assigner.name : ''} />
+                      <LabelContainer labelName={reverseHistoryData && reverseHistoryData.length > 0 && lastElement.assigner ? lastElement.assigner.name : ''} />
                     </Typography>
                   </div>
                   <div className="col-md-3"  style={{wordBreak: "break-word"}}>
@@ -231,14 +238,14 @@ class BookingDetails extends Component {
                       }}
                     >
                       <LabelContainer
-                        labelName={ProcessInstances && ProcessInstances.length > 0 &&
-                          ProcessInstances[0].state ? this.getCurrentStatus(ProcessInstances[0].state.state) : ''
+                        labelName={reverseHistoryData && reverseHistoryData.length > 0 &&
+                          lastElement.state ? this.getCurrentStatus(lastElement.state.state) : ''
                         }
 
                         labelKey={
-                          ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].businessService
-                            ? `BK_WF_${ProcessInstances[0].businessService.toUpperCase()}_${
-                            ProcessInstances[0].state.state
+                          reverseHistoryData && reverseHistoryData.length > 0 && lastElement.businessService
+                            ? `BK_WF_${lastElement.businessService.toUpperCase()}_${
+                              lastElement.state.state
                             }`
                             : ""
                         }
@@ -260,8 +267,8 @@ class BookingDetails extends Component {
                     >
                       
                       <LabelContainer
-                        labelName={ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].assigner ?
-                          ProcessInstances[0].assigner.name
+                        labelName={reverseHistoryData && reverseHistoryData.length > 0 && lastElement.assigner ?
+                          lastElement.assigner.name
                           : "NA"
                         }
                       />
@@ -282,8 +289,8 @@ class BookingDetails extends Component {
                     >
                       <LabelContainer
                         labelName={
-                          ProcessInstances && ProcessInstances.length > 0 && ProcessInstances[0].comment ?
-                            ProcessInstances[0].comment : ''}
+                          reverseHistoryData && reverseHistoryData.length > 0 && lastElement.comment ?
+                          lastElement.comment : ''}
                       />
                     </Typography>
                   </div>

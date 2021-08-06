@@ -125,6 +125,30 @@ export const getPensionEmployees = async (queryObject, dispatch) => {
     throw error;
   }
 };
+//getSearchResultsEmployeeForPMSMap
+export const getSearchResultsEmployeeForPMSMap = async (queryObject, dispatch) => {
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      //"/pension-services/v1/_searchEmployeeForDeathRegistration",
+       "/pension-services/v1/_searchEmployee",
+      "",
+      queryObject
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+    throw error;
+  }
+};
 export const getSearchResultsEmployeeForDeath = async (queryObject, dispatch) => {
   try {
     store.dispatch(toggleSpinner());
@@ -372,11 +396,12 @@ export const initiateRegularRetirementPension = async (state, dispatch, tenantId
 export const updatePensionerDetails = async (state, dispatch) => {
   try {
     let PensionerDetails = get(state.screenConfiguration.preparedFinalObject,"PensionerDetails",{})
-    set(PensionerDetails,convertDateToEpoch(PensionerDetails.doc))
-    set(PensionerDetails,convertDateToEpoch(PensionerDetails.wef))
-    set(PensionerDetails,convertDateToEpoch(PensionerDetails.claimantDob))
+    set(PensionerDetails,'dob',convertDateToEpoch(PensionerDetails.dob))
+    set(PensionerDetails,'wef',convertDateToEpoch(PensionerDetails.wef))
+    set(PensionerDetails,'claimantDob',convertDateToEpoch(PensionerDetails.claimantDob))
     let response;
-    
+    if(validateFeildsupdatePensioner(PensionerDetails))
+    {
       response = await httpRequest(
         "post",
         "/pension-services/v1/_updatePensionerDetails",
@@ -389,6 +414,15 @@ export const updatePensionerDetails = async (state, dispatch) => {
       setApplicationNumberBox(state, dispatch);
    
     return { status: "success", message: response };
+      }
+      else{
+        let errorMessage = {
+          labelName:
+            "Please fill all mandatory fields for Pension  Details, then save !",
+          labelKey: "PENSION_ERR_FILL_PENSION_MANDATORY_FIELDS"
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      }
   } catch (error) {
     dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
     dispatch(prepareFinalObject("Employees", employeeData.Employees));
@@ -396,6 +430,30 @@ export const updatePensionerDetails = async (state, dispatch) => {
     return { status: "failure", message: error };
   }
 };
+export const findAndReplace = (obj, oldValue, newValue) => {
+  Object.keys(obj).forEach(key => {
+      if ((obj[key] instanceof Object) || (obj[key] instanceof Array)) findAndReplace(obj[key], oldValue, newValue)
+      obj[key] = obj[key] === oldValue ? newValue : obj[key]
+  })
+  return obj
+}
+export const validateFeildsupdatePensioner = (applyScreenObject) => {
+  if (
+      applyScreenObject.hasOwnProperty("gender") &&
+      applyScreenObject['gender'] !== undefined &&
+      applyScreenObject["gender"] !== "" &&
+      applyScreenObject.hasOwnProperty("claimantRelationship") &&
+      applyScreenObject["claimantRelationship"] !== undefined &&
+      applyScreenObject["claimantRelationship"] !== "" &&
+      applyScreenObject.hasOwnProperty("claimantBankDetails") &&
+      applyScreenObject["claimantBankDetails"] !== undefined &&
+      applyScreenObject["claimantBankDetails"] !== "" &&
+      applyScreenObject.hasOwnProperty("bankDetails") &&
+      applyScreenObject["bankDetails"] !== undefined &&
+      applyScreenObject["bankDetails"] !== ""
+
+  ) { return true; } else { return false; }
+}
 export const createUpdateNPApplication = async (state, dispatch, status) => {
   let businessService = get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].businessService", '' )
   let _wfconfig = WFConfig()
@@ -419,7 +477,10 @@ export const createUpdateNPApplication = async (state, dispatch, status) => {
       //   value: getQueryArg(window.location.href, "tenantId")
       // });
       // response = await getworkflowData(queryObject);
-       payload = get(state.screenConfiguration.preparedFinalObject, "ProcessInstances", [])
+      //SET ARRREAR 
+      let pensionArrears = get(state,"screenConfiguration.preparedFinalObject.pensionArrears.pensionArrears",[])
+      set(state,"screenConfiguration.preparedFinalObject.ProcessInstances[0].pensionArrears", pensionArrears);
+      payload = get(state.screenConfiguration.preparedFinalObject, "ProcessInstances", [])
     }
     else
     {

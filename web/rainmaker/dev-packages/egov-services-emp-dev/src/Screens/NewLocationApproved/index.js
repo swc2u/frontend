@@ -17,7 +17,7 @@ class NewLocationApproved extends Component {
     
     this.props.history.push(`/egov-services/all-applications`);
   
-  };
+  };    
  
   render() {
     let {applicationNumber} = this.props;

@@ -201,6 +201,11 @@ const DashboardWater = Loadable({
   loading: () => <Loading />
 });
 
+const DashboardApniMandi = Loadable({
+  loader: () => import("./DashboardApniMandi"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -241,5 +246,6 @@ export {
   DashboardSewerage,
   DashboardAudit,
   DashboardFinance,
-  DashboardWater
+  DashboardWater,
+  DashboardApniMandi
 };

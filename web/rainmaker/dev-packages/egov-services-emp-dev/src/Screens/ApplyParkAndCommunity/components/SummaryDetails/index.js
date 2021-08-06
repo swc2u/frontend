@@ -7,6 +7,7 @@ import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import EditIcon from '@material-ui/icons/Edit';
 import "./index.css";
+import * as _ from "lodash"
 import Footer from "../../../../modules/footer"
 import PaccFeeEstimate from "../PaccFeeEstimate"
 import SummaryApplicationDetail from "../SummaryApplicationDetail"
@@ -31,7 +32,7 @@ class SummaryDetails extends Component {
 
     componentDidMount = async () => {
 
-        let {createPACCApplication, userInfo, documentMap,fetchPayment,prepareFinalObject,fetchApplications,conJsonSecond,conJsonfirst } = this.props;
+        let {createPACCApplication, userInfo, documentMap,fetchPayment,prepareFinalObject,fetchApplications,conJsonSecond,conJsonfirst,newTimeSlot } = this.props;
         let { uploadeDocType,DiscountReason,firstName, venueType, bokingType, bookingData, email, mobileNo, surcharge, fromDate, toDate,myLocationtwo,ReasonForDiscount,
             utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose,
             BankAccountName,NomineeName,BankAccountNumber,IFSCCode,AccountHolderName,accountType,SecTimeSlotFromTime,SecTimeSlotToTime,
@@ -42,7 +43,7 @@ class SummaryDetails extends Component {
             documentsUploadRedux
           } = this.props;
 
-console.log("propsInsummaryCompDidMount",this.props)
+
 
 let documentsData=[]
 
@@ -54,7 +55,7 @@ if(discountDocumentsUploadRedux!=="NotFound" && discountDocumentsUploadRedux.doc
     fileStoreId:discountDocumentsUploadRedux.documents[0].fileStoreId
     
 }
-console.log("newObj1=-----",newObj)
+
 documentsData.push(newObj)
 
 }
@@ -66,16 +67,11 @@ if(documentsUploadRedux!=="NotFound" &&  documentsUploadRedux.documents &&docume
     fileStoreId:documentsUploadRedux.documents[0].fileStoreId
     
 }
-console.log("newObj2=-----",newObj)
 documentsData.push(newObj)
 }
-console.log("DocumentData----",documentsData)
-console.log("State--------",this.state)
 this.setState({
   documentList: documentsData,
 });
-console.log("propsInsummaryCompDidMount", this.props);
-console.log("stateset------", this.state);
 
 this.setState({
     appStatus : checkAppStatus
@@ -115,36 +111,28 @@ let finalDiscount;
 if(discountType == "50%"){
 newDisCount = 50;
 finalDiscount = Number(newDisCount);
-console.log("newDisCount--",newDisCount)
-console.log("finalDiscount--",finalDiscount)
+
 }
 else if(discountType == "20%"){
     newDisCount = 20;
     finalDiscount = Number(newDisCount);
-    console.log("newDisCount--",newDisCount)
-    console.log("finalDiscount--",finalDiscount)
     }
     else if (discountType == '100%' || discountType == "KirayaBhog" || discountType == "ReligiousFunction"){
         newDisCount = 100;
         finalDiscount = Number(newDisCount);
-        console.log("newDisCount--",newDisCount)
-        console.log("finalDiscount--",finalDiscount)
         }
         else{
             newDisCount = 0;
-            finalDiscount = Number(newDisCount);
-            console.log("newDisCount--",newDisCount)
-            console.log("finalDiscount--",finalDiscount)
+            finalDiscount = Number(newDisCount);   
             }
-//             console.log(discountDocs, "Neeraj this pros")
-// let discountDocType = discountDocs && discountDocs[0].documentCode;
-console.log(discountDocs, "Neeraj this pros");
-let discountDocType = discountDocs && discountDocs[0].documentCode;
-let discountDocFid =
-  discountDocs &&
-  discountDocs[0].documents &&
-  isArray(discountDocs[0].documents) &&
-  discountDocs[0].documents[0].fileStoreId;
+let discountDocType = discountDocs && 
+!_.isEmpty(discountDocs)? 
+discountDocs && discountDocs[0].documentCode : "notFound";
+
+let discountDocFid = discountDocs && 
+!_.isEmpty(discountDocs)? 
+discountDocs[0].documents && isArray(discountDocs[0].documents) &&  discountDocs[0].documents[0].fileStoreId : "notFound";
+
 
         let fid = documentMap ? Object.keys(documentMap) : ""
         let Booking = {
@@ -154,13 +142,13 @@ let discountDocFid =
            "bkMaterialStorageArea": paymentMode,
            "bkPlotSketch":discountType,
             "discount": finalDiscount,
-            "bkBookingType": venueType,    //ReqbodybookingVenue,ReqbodybookingVenueID
-            // "bkBookingVenue": bokingType === undefined ? null : bokingType,  //bkBookingType
+            "bkBookingType": venueType,    
+            
             "bkBookingVenue":  ReqbodybookingVenueID,
             "bkApplicantName": firstName,
             "bkMobileNumber": mobileNo,
             "bkDimension": dimension,
-            // "bkLocation": myLocationtwo === undefined ? null : myLocationtwo,
+            
             "bkLocation": ReqbodybookingVenue,
             "bkFromDate": fromDate,
             "bkToDate": toDate,
@@ -173,7 +161,7 @@ let discountDocFid =
             "bkEmail": email,
             "bkHouseNo": houseNo,
             "bkBookingPurpose": purpose,
-            // "bkPaymentStatus": checkAppStatus == "OFFLINE_APPLIED" ? "SUCCESS" : "",
+            
             "bkPaymentStatus": checkAppStatus == "OFFLINE_APPLIED" ? "SUCCESS" : "",
             "bkApplicationNumber": checkAppNum !== "NOTFOUND" ? checkAppNum : null,
             "bkCustomerGstNo": GSTnumber,
@@ -187,7 +175,7 @@ let discountDocFid =
             }
         ],
             "tenantId": userInfo.tenantId,
-            // "bkAction": checkAppStatus == "OFFLINE_APPLIED" ? "OFFLINE_RE_INITIATE" : "OFFLINE_INITIATE", //sendCurrentStatus
+            
             "bkAction": sendCurrentStatus,
             "businessService": "PACC",
             "financeBusinessService": NewfinanceBusinessService,
@@ -204,29 +192,19 @@ let discountDocFid =
 if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
 let slotArray = []
 let checkslotArray = []
-// if(wholeDaySlot != "notFound" && wholeDaySlot != "notFound"){
-//     console.log("OneDay")
-//     checkslotArray[0] = {"slot":"9AM - 1PM"}
-//     checkslotArray[1] = {"slot": "1PM - 5PM"}
-//     checkslotArray[2] = {"slot": "5PM - 9PM"}
-// }
 if(SecTimeSlotFromTime != "notFound" && SecTimeSlotToTime != "notFound"){
-    console.log("secondTimeSlot")
     slotArray[0] = conJsonfirst,
-    slotArray[1] = conJsonSecond //conJsonSecond,conJsonfirst  ,second
+    slotArray[1] = conJsonSecond 
 
     checkslotArray[0] = this.props.first,
     checkslotArray[1] = this.props.second
 }
 else{
-    console.log("oneTimeSlot")
-	checkslotArray[0] = {
-	"slot": bookingData.bkFromTime + '-' + firstToTimeSlot
-	}
+    
+	checkslotArray[0] = this.props.first
+	
 }
-console.log("slotArray_",slotArray)   //checkslotArray
-console.log("checkslotArray",checkslotArray)
-				Booking.timeslots = checkslotArray,
+                Booking.timeslots = newTimeSlot,
                 Booking.bkDuration = "HOURLY",
                 Booking.bkFromDate = bookingData.bkFromDate,
                 Booking.bkToDate = bookingData.bkToDate,
@@ -248,45 +226,45 @@ console.log("checkslotArray",checkslotArray)
                 "Booking": Booking
             }
 
-console.log("createAppData--",createAppData)
-
-/**
- {
-        "slot": "1PM-5PM"
-      },
-      {
-        "slot": "5PM-9PM"
-      }
- * **/
 
 
-let payloadfund = await httpRequest(
-            "bookings/park/community/_create",
-            "_search",[],
-            createAppData
-            );
-
- console.log("payloadfund--",payloadfund)
-
- prepareFinalObject("createAppData",payloadfund)
-
- let appNumber = payloadfund.data.bkApplicationNumber
- console.log("appNumber--",appNumber)
- let AAppStatus = payloadfund.data.bkApplicationStatus
- console.log("AAppStatus--",AAppStatus)
-
- prepareFinalObject("CurrentApplicationNumber",appNumber)
-
- this.setState({
-    createPACCApp : payloadfund,
-    CashPaymentApplicationNumber : appNumber,
-    currentAppStatus : AAppStatus
- })
+try{
+    let payloadfund = await httpRequest(
+        "bookings/park/community/_create",
+        "_search",[],
+        createAppData
+        );
 
 
- fetchPayment(
-    [{ key: "consumerCode", value: appNumber }, { key: "businessService", value: NewfinanceBusinessService }, { key: "tenantId", value: userInfo.tenantId }
-    ])
+
+prepareFinalObject("createAppData",payloadfund)
+
+let appNumber = payloadfund.data.bkApplicationNumber
+
+let AAppStatus = payloadfund.data.bkApplicationStatus
+
+
+prepareFinalObject("CurrentApplicationNumber",appNumber)
+
+this.setState({
+createPACCApp : payloadfund,
+CashPaymentApplicationNumber : appNumber,
+currentAppStatus : AAppStatus
+})
+fetchPayment(
+[{ key: "consumerCode", value: appNumber }, { key: "businessService", value: NewfinanceBusinessService }, { key: "tenantId", value: userInfo.tenantId }
+])
+}
+catch(err){
+    this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "BK_ERR_PACC_SOMTHING_ERR_NOT_FOUND",
+          labelKey: `BK_ERR_PACC_SOMTHING_ERR_NOT_FOUND`
+        },
+        "warning"
+      );
+}
     }
 
     firstStep = e => {
@@ -347,16 +325,17 @@ let payloadfund = await httpRequest(
 submit = async (InitiateAppNumber) => {
 
     let { uploadeDocType,conJsonSecond,conJsonfirst,updatePACCApplication, discountDocs,state,documentMap, bookingData, venueType,prepareFinalObject,createPACCApplicationData,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,ReasonForDiscount} = this.props;
-    console.log("AllPropsOfSubmitPage--",this.props)
-
-    console.log(discountDocs, "Neeraj this pros");
-    let discountDocType = discountDocs && discountDocs[0].documentCode;
-    let discountDocFid =
-      discountDocs &&
-      discountDocs[0].documents &&
-      isArray(discountDocs[0].documents) &&
-      discountDocs[0].documents[0].fileStoreId;
-
+    
+    let checkDate
+    let checkDateCondition = false
+    let discountDocType = discountDocs && 
+    !_.isEmpty(discountDocs)? 
+    discountDocs && discountDocs[0].documentCode : "notFound";
+    
+    let discountDocFid = discountDocs && 
+    !_.isEmpty(discountDocs)? 
+    discountDocs[0].documents && isArray(discountDocs[0].documents) &&  discountDocs[0].documents[0].fileStoreId : "notFound";
+    
 let dataOne = get(
     state,
     "screenConfiguration.preparedFinalObject.createAppData",
@@ -371,170 +350,167 @@ if(uploadeDocType !== "NotFound"){
 
 if(dataOne !== "NotFound"){
     let data = dataOne.data
-    console.log("data--",data)
-    // let data  = dataOne;
-    // console.log("data--",data),
     prepareFinalObject("CreatePaccAppData",data);
     let fid = documentMap ? Object.keys(documentMap) : ""
     const { firstName, userInfo, email, mobileNo, surcharge, fromDate, toDate, utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, locality, residenials } = this.props;
-
+let timeSlotDatesAvail;
+    if(data.bkBookingType == "Community Center" && data.bkLocation == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH"){
+        timeSlotDatesAvail  = data.timeslots
+}
+else{
+    timeSlotDatesAvail = []
+}
 
     if (data) {
-        console.log("HereIsData--",data)
+        
         let Booking = {
             "bkApplicationNumber": data.bkApplicationNumber,
             "bkSector": data.bkSector,
             "bkBookingVenue": data.bkBookingVenue,
             "bkBookingType": data.bkBookingType,
             "bkFromDate": data.bkFromDate,
-            "bkToDate": data.bkToDate
+            "bkToDate": data.bkToDate,
+            "timeslots" : timeSlotDatesAvail
         }
-        console.log("RequestBodyAvailCheckForSameTime",Booking)
-        let AvailCheckForSameTime = await httpRequest(
-          "bookings/park/community/booked/dates/_search",
-          "_search",
-          [],
-          {Booking:Booking}
-        );
-        console.log("AvailCheckForSameTime",AvailCheckForSameTime)
-        let checkResponseAvailForSameTime = AvailCheckForSameTime !== undefined && AvailCheckForSameTime !== null ?
-        (AvailCheckForSameTime.data && AvailCheckForSameTime.data !== null && AvailCheckForSameTime.data !== null ?AvailCheckForSameTime.data:""): ""
-    console.log("checkResponseAvailForSameTime",checkResponseAvailForSameTime)
-        if(checkResponseAvailForSameTime !== ""){
-            if(AvailCheckForSameTime.data.length == 0){
-                let Booking = {
-                    bkRemarks: data.bkRemarks,
-                    bkResidentialOrCommercial: data.bkResidentialOrCommercial,
-                    bkMaterialStorageArea: data.bkMaterialStorageArea,
-                    discount:data.discount,
-                    bkPlotSketch:data.bkPlotSketch,
-                    bkBookingType: data.bkBookingType,
-                    bkBookingVenue: data.bkBookingVenue,
-                    bkApplicantName: data.bkApplicantName,
-                    bkMobileNumber: data.bkMobileNumber,
-                    bkDimension: data.bkDimension,
-                    bkPaymentStatus: "SUCCESS",
-                    bkLocation: data.bkLocation,
-                    bkFromDate: data.bkFromDate,
-                    bkToDate: data.bkToDate,
-                    bkCleansingCharges: data.bkCleansingCharges,
-                    bkRent: data.bkRent,
-                    bkSurchargeRent: data.bkSurchargeRent,
-                    bkUtgst: data.bkUtgst,
-                    bkCgst: data.bkCgst,
-                    bkSector: data.bkSector,
-                    bkEmail: data.bkEmail,
-                    bkHouseNo: data.bkHouseNo,
-                    bkBookingPurpose: data.bkBookingPurpose,
-                    bkApplicationNumber: data.bkApplicationNumber,
-                    bkCustomerGstNo: data.bkCustomerGstNo ? data.bkCustomerGstNo : 'NA',
-                    // "wfDocuments": [{
-                    //     "documentType" : EmpSideDocType,
-                    //     "fileStoreId": fid[0]
-                    // }],
-                    wfDocuments: [
-                        {
-                          documentType: EmpSideDocType,
-                          fileStoreId: fid[0],
-                        },
-                        {
-                          documentType: discountDocType,
-                          fileStoreId: discountDocFid,
-                        },
-                      ],
-                    "tenantId": userInfo.tenantId,
-                    "bkAction": data.bkApplicationStatus == "OFFLINE_RE_INITIATED" ? "OFFLINE_MODIFY" : "OFFLINE_APPLY",
-                    "businessService": "PACC",
-                    "reInitiateStatus": false,
-                    "financialYear": "2021-2022",
-                    "bkBankAccountNumber":data.bkBankAccountNumber,
-                    "bkBankName":data.bkBankName,
-                    "bkIfscCode":data.bkIfscCode,
-                    "bkAccountType":data.bkAccountType,
-                    "bkBankAccountHolder":data.bkBankAccountHolder,
-                    "bkNomineeName": data.bkNomineeName
-                }
+
+        let UpdatedReqbody = {
+                 Booking:Booking,
+                 "applicationNumber" : data.bkApplicationNumber
+        }
+try{
+    let AvailCheckForSameTime = await httpRequest(
+        "bookings/park/community/booked/dates/_search",
+        "_search",
+        [],
+        UpdatedReqbody
+      );
+      
+      let checkResponseAvailForSameTime = AvailCheckForSameTime !== undefined && AvailCheckForSameTime !== null ?
+      (AvailCheckForSameTime.data && AvailCheckForSameTime.data !== null && AvailCheckForSameTime.data !== null ?AvailCheckForSameTime.data:""): ""
+     
+     checkDate = checkResponseAvailForSameTime && checkResponseAvailForSameTime.length > 0 ? AvailCheckForSameTime.data[0] : 'emptyArray'
+     
+if(checkDate !== "emptyArray " && (checkDate !== data.bkFromDate || checkDate !== data.bkToDate)){
+    checkDateCondition = true
+}
+
+      if(checkResponseAvailForSameTime !== ""){
+          if(AvailCheckForSameTime.data.length == 0 || checkDateCondition == true){
+              let Booking = {
+                  bkRemarks: data.bkRemarks,
+                  bkResidentialOrCommercial: data.bkResidentialOrCommercial,
+                  bkMaterialStorageArea: data.bkMaterialStorageArea,
+                  discount:data.discount,
+                  bkPlotSketch:data.bkPlotSketch,
+                  bkBookingType: data.bkBookingType,
+                  bkBookingVenue: data.bkBookingVenue,
+                  bkApplicantName: data.bkApplicantName,
+                  bkMobileNumber: data.bkMobileNumber,
+                  bkDimension: data.bkDimension,
+                  bkPaymentStatus: "SUCCESS",
+                  bkLocation: data.bkLocation,
+                  bkFromDate: data.bkFromDate,
+                  bkToDate: data.bkToDate,
+                  bkCleansingCharges: data.bkCleansingCharges,
+                  bkRent: data.bkRent,
+                  bkSurchargeRent: data.bkSurchargeRent,
+                  bkUtgst: data.bkUtgst,
+                  bkCgst: data.bkCgst,
+                  bkSector: data.bkSector,
+                  bkEmail: data.bkEmail,
+                  bkHouseNo: data.bkHouseNo,
+                  bkBookingPurpose: data.bkBookingPurpose,
+                  bkApplicationNumber: data.bkApplicationNumber,
+                  bkCustomerGstNo: data.bkCustomerGstNo ? data.bkCustomerGstNo : 'NA',
+                  wfDocuments: [
+                      {
+                        documentType: EmpSideDocType,
+                        fileStoreId: fid[0],
+                      },
+                      {
+                        documentType: discountDocType,
+                        fileStoreId: discountDocFid,
+                      },
+                    ],
+                  "tenantId": userInfo.tenantId,
+                  "bkAction": data.bkApplicationStatus == "OFFLINE_RE_INITIATED" ? "OFFLINE_MODIFY" : "OFFLINE_APPLY",
+                  "businessService": "PACC",
+                  "reInitiateStatus": false,
+                  "financialYear": "2021-2022",
+                  "bkBankAccountNumber":data.bkBankAccountNumber,
+                  "bkBankName":data.bkBankName,
+                  "bkIfscCode":data.bkIfscCode,
+                  "bkAccountType":data.bkAccountType,
+                  "bkBankAccountHolder":data.bkBankAccountHolder,
+                  "bkNomineeName": data.bkNomineeName
+              }
 
 
-                if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
-                    let slotArray = []
-                    let checkslotArray = []
-                    // if(wholeDaySlot != "notFound" && wholeDaySlot != "notFound"){
-                    // 	console.log("OneDay")
-                    // 	checkslotArray[0] = {"slot":"9AM - 1PM"}
-                    // 	checkslotArray[1] = {"slot": "1PM - 5PM"}
-                    // 	checkslotArray[2] = {"slot": "5PM - 9PM"}
-                    // }
-                    if(SecTimeSlotFromTime != "notFound" && SecTimeSlotToTime != "notFound"){
-                        console.log("secondTimeSlot")
-                        slotArray[0] = conJsonfirst,
-                        slotArray[1] = conJsonSecond //conJsonSecond,conJsonfirst
+              if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
+                  let slotArray = []
+                  let checkslotArray = []
+                  
+                  if(SecTimeSlotFromTime != "notFound" && SecTimeSlotToTime != "notFound"){
+                      
+                      slotArray[0] = conJsonfirst,
+                      slotArray[1] = conJsonSecond 
 
-                        checkslotArray[0] = this.props.first,
-                         checkslotArray[1] = this.props.second
-                    }
-                    else{
-                        console.log("oneTimeSlot")
-                        checkslotArray[0] = {
-                        "slot": bookingData.bkFromTime + '-' + firstToTimeSlot
-                        }
-                    }
-                    console.log("slotArray_",slotArray)   //checkslotArray
-                    console.log("checkslotArray",checkslotArray)
-                    Booking.timeslots = checkslotArray,
-                    Booking.bkDuration = "HOURLY",
-                    Booking.bkFromDate = bookingData.bkFromDate,
-                    Booking.bkToDate = bookingData.bkToDate,
-                    Booking.bkFromTime = bookingData.bkFromTime,
-                    Booking.bkToTime = bookingData.bkToTime
-                }
-                else if (venueType == "Community Center" && (!bookingData) && (!bookingData.bkFromTime)) {
-                    Booking.timeslots = [{
-                        "slot": "9:00 AM - 8:59 AM"
-                    }],
-                        Booking.bkDuration = "FULLDAY"
-                }
+                      checkslotArray[0] = this.props.first,
+                       checkslotArray[1] = this.props.second
+                  }
+                  else{
+                    checkslotArray[0] = this.props.first
+                  }
+                  Booking.timeslots = data.timeslots,
+                  Booking.bkDuration = "HOURLY",
+                  Booking.bkFromDate = bookingData.bkFromDate,
+                  Booking.bkToDate = bookingData.bkToDate,
+                  Booking.bkFromTime = bookingData.bkFromTime,
+                  Booking.bkToTime = bookingData.bkToTime
+              }
+              else if (venueType == "Community Center" && (!bookingData) && (!bookingData.bkFromTime)) {
+                  Booking.timeslots = [{
+                      "slot": "9:00 AM - 8:59 AM"
+                  }],
+                      Booking.bkDuration = "FULLDAY"
+              }
+      await updatePACCApplication(
+                  {
+                      "applicationType": "PACC",
+                      "applicationStatus": "",
+                      "applicationId": data.bkApplicationNumber,
+                      "tenantId": userInfo.tenantId,
+                      "Booking": Booking
+                  });
 
-        console.log("Booking-requestBody--",Booking)
+              let NumberApp = this.state.CashPaymentApplicationNumber;
 
-        await updatePACCApplication(
-                    {
-                        "applicationType": "PACC",
-                        "applicationStatus": "",
-                        "applicationId": data.bkApplicationNumber,
-                        "tenantId": userInfo.tenantId,
-                        "Booking": Booking
-                    });
+              this.props.history.push(`/egov-services/PaymentReceiptDteail/${this.state.CashPaymentApplicationNumber}`);
+          }
+          else{
+              this.props.toggleSnackbarAndSetText(
+                  true,
+                  {
+                    labelName: "Dates are already booked",
+                    labelKey: `BK_ERR_PACC_DATE_ALREADY_BOOKED`
+                  },
+                  "error"
+                );
+          }
+          }
+}
+catch(err){
 
-                // this.props.history.push(`/egov-services/create-success-pcc`);
-
-
-                console.log("this.state.CashPaymentApplicationNumber--",this.state.CashPaymentApplicationNumber)
-
-                let NumberApp = this.state.CashPaymentApplicationNumber;
-
-                console.log("NumberApp--",NumberApp)
-
-                this.props.history.push(`/egov-services/PaymentReceiptDteail/${this.state.CashPaymentApplicationNumber}`);
-
-
-
-            }
-
-            else{
-                this.props.toggleSnackbarAndSetText(
-                    true,
-                    {
-                      labelName: "Dates are already booked",
-                      labelKey: `BK_ERR_PACC_DATE_ALREADY_BOOKED`
-                    },
-                    "error"
-                  );
-            }
-
-
-            }
-
+this.props.toggleSnackbarAndSetText(
+    true,
+    {
+      labelName: "Dates are already booked",
+      labelKey: `BK_ERR_PACC_DATE_ALREADY_BOOKED`
+    },
+    "error"
+  );
+}
+        
         }
         else{
             this.props.toggleSnackbarAndSetText(
@@ -571,12 +547,7 @@ else {
             BankAccountName,NomineeName,BankAccountNumber,IFSCCode,AccountHolderName,accountType,
             } = this.props;
 
-            console.log(",one,two,three,four,five,six--",one,two,three,four,five,six)
-            console.log("propsInRendersummary--",this.props)
             let fc = fCharges?fCharges.facilitationCharge:'100';
-            console.log("stateofBooking--",this.state.createPACCApp)
-
-
         return (
             <div>
                 <div className="form-without-button-cont-generic">
@@ -694,16 +665,16 @@ const mapStateToProps = state => {
     const { facilationChargesSuccess, arrayName } = bookings;
     const { paymentData } = bookings;
     let paymentDataOne = paymentData ? paymentData : "wrong";
-    console.log("paymentDataOne--",paymentDataOne)
+    
     let checkBillLength =  paymentDataOne != "wrong" ? paymentDataOne.Bill.length > 0 : "";
     let totalAmountSuPage = checkBillLength ? paymentDataOne.Bill[0].totalAmount: "notfound";
-    console.log("totalAmountSuPage-",totalAmountSuPage)
+    
 let  dropDownalue;
 dropDownalue = state.screenConfiguration.preparedFinalObject.DropDownValue
-console.log("dropDownalue",dropDownalue)
+
 let findTypeOfBooking =  state.screenConfiguration.preparedFinalObject.ShowAmountBooking
-console.log("findTypeOfBooking--",findTypeOfBooking)
-console.log("FinalAmount--",state.screenConfiguration.preparedFinalObject)
+
+
 let discountDocs = get(
     state,
     "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux",
@@ -715,7 +686,7 @@ let ReqbodybookingVenue  = get(
     "screenConfiguration.preparedFinalObject.bkBookingData.name",
     "NotFound"
 );
-console.log("ReqbodybookingVenue",ReqbodybookingVenue)
+
 let ReqbodybookingVenueID  = get(
     state,
     "screenConfiguration.preparedFinalObject.bkBookingData.id",
@@ -737,15 +708,15 @@ let documentsUploadRedux = get(
     "screenConfiguration.preparedFinalObject.discountDocumentsUploadRedux[0]",
     "NotFound"
   );
-console.log("summaryuploadeDocType",uploadeDocType)
-console.log("ReqbodybookingVenueID",ReqbodybookingVenueID)
+
+
     let ReasonForDiscount = state.screenConfiguration.preparedFinalObject ?
     (state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== undefined && state.screenConfiguration.preparedFinalObject.ReasonForDiscount !== null ? (state.screenConfiguration.preparedFinalObject.ReasonForDiscount):'NA') :"NA";
 
-    console.log("ReasonForDiscount--",ReasonForDiscount)
+
 
     let billAccountDetailsArray =  checkBillLength ? paymentDataOne.Bill[0].billDetails[0].billAccountDetails : "NOt found Any Array"
-    console.log("billAccountDetailsArray--",billAccountDetailsArray)
+
     let one = 0;
     let two = 0;
     let three = 0;
@@ -755,7 +726,7 @@ console.log("ReqbodybookingVenueID",ReqbodybookingVenueID)
     let seven = 0;
 //
 if(findTypeOfBooking == "Parks"){
-    console.log("park condition")
+    
     for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
         if(billAccountDetailsArray[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH"){//PACC
@@ -782,7 +753,7 @@ if(findTypeOfBooking == "Parks"){
     }
 }
 if(findTypeOfBooking == "Community Center"){
-    console.log("cc condition")
+    
     for(let i = 0; i < billAccountDetailsArray.length ; i++ ){
 
         if(billAccountDetailsArray[i].taxHeadCode == "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"){//PACC
@@ -809,31 +780,22 @@ if(findTypeOfBooking == "Community Center"){
     }
 }
 
-
-console.log("one--",one)
-console.log("two--",two)
-console.log("three--",three)
-console.log("four--",four)
-console.log("five--",five)
-console.log("six--",six)
-console.log("seven--",seven)
-
     let myLocation = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.availabilityCheckData:"";
     let myLocationtwo = myLocation?myLocation.bkLocation:"";
 
     let NewAppNumber =  state.screenConfiguration.preparedFinalObject.CurrentApplicationNumber ? state.screenConfiguration.preparedFinalObject.CurrentApplicationNumber : "NotDetemine";
-    console.log("NewAppNumber--",NewAppNumber)
+    
 
     let tryMyNumber;
 
     if(NewAppNumber != "NotDetemine"){
         tryMyNumber = NewAppNumber && NewAppNumber;
     }
-    console.log("tryMyNumber--",tryMyNumber)
+    
 
     let InitiateAppNumber = NewAppNumber && NewAppNumber ? NewAppNumber : "NotDetemine";
 
-    console.log("InitiateAppNumber--",InitiateAppNumber)
+    
     let fCharges;
     if (arrayName && arrayName.length > 0) {
       arrayName.forEach((item) => {
@@ -850,24 +812,20 @@ console.log("seven--",seven)
    let checkAppStatus = 'NOTFOUND';
    let checkAppNum = 'NOTFOUND';
    let createInitateApp = bookings ? (bookings.applicationData ?(bookings.applicationData.bookingsModelList.length > 0 ? (bookings.applicationData.bookingsModelList): 'NA'): 'NA'): "NA"
-  console.log("createInitateApp--createInitateApp",createInitateApp)
+  
    if(createInitateApp !== "NA"){
-    console.log("comeInFoundCondition")
+  
     checkAppStatus = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationStatus : "NOTFOUND";
-    console.log("checkAppStatus-id",checkAppStatus)
+  
     checkAppNum = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationNumber : "NOTFOUND";
-    console.log("checkAppNum-id",checkAppNum)
+  
 }
-
-   console.log("checkAppStatus--",checkAppStatus)
-   console.log("checkAppNum--",checkAppNum)
-// checkAppStatus = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0].bkApplicationStatus : "NOTFOUND";
    let DropDownValue = state.screenConfiguration.preparedFinalObject ? state.screenConfiguration.preparedFinalObject.bkBookingData.name : "";
-   console.log("DropDownValue--",DropDownValue)
    let SecTimeSlotFromTime = ""
    let SecTimeSlotToTime = ""
    let firstToTimeSlot = ""
    let firstTimeSlotValue = ""
+   let newTimeSlot;
    let first  = ""
    let conJsonfirst = ""
    let SecondTimeSlotValue = ""
@@ -876,24 +834,23 @@ console.log("seven--",seven)
 //HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH
    if(DropDownValue === "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH"){
 
+    newTimeSlot = get(
+        state,
+        "screenConfiguration.preparedFinalObject.Booking.timeslots",
+        "NotFound"
+    );
+
+    
+
     SecTimeSlotFromTime = state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo || "notFound"
-    console.log("SecTimeSlotFromTime--",SecTimeSlotFromTime)//screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo
+    
 
     SecTimeSlotToTime = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo || "notFound"
-    console.log("SecTimeSlotToTime--",SecTimeSlotToTime)
+    
      //OFFLINE_APPLIED
 
      firstToTimeSlot = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTime || "notFound"
-    console.log("firstToTimeSlot--",firstToTimeSlot)
-
-
-  //Booking.wholeDay
-  // let wholeDaySlot = state.screenConfiguration.preparedFinalObject.Booking.wholeDay && state.screenConfiguration.preparedFinalObject.Booking.wholeDay || "notFound"
-  // console.log("wholeDaySlot--",wholeDaySlot)
-
-  // let firstTimeSlotValue = state.screenConfiguration.preparedFinalObject.Booking.timeslots !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] : "notFound"
-  // console.log("firstTimeSlotValue-",firstTimeSlotValue)
-
+    
   firstTimeSlotValue =
     state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
     (state.screenConfiguration.preparedFinalObject.Booking.timeslots !== undefined ? (state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslots[0] : "notFound") : "notFound") :
@@ -902,16 +859,14 @@ console.log("seven--",seven)
 
   if(firstTimeSlotValue !== "notFound"){
       first=firstTimeSlotValue
-  console.log("first--",first)
   }
 
 
   if(firstTimeSlotValue !== "notFound"){
   conJsonfirst= JSON.stringify(firstTimeSlotValue);
-  console.log("conJsconJsonfirston--",conJsonfirst)
+  
   }
-  // let SecondTimeSlotValue = state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.timeslotsTwo[0] : "notFound"
-  // console.log("SecondTimeSlotValue-",SecondTimeSlotValue)
+  
 
    SecondTimeSlotValue =
     state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
@@ -921,12 +876,12 @@ console.log("seven--",seven)
 
   if(SecondTimeSlotValue !== "notFound"){
       second=SecondTimeSlotValue
-  console.log("second--",second)
+  
   }
 
   if(SecondTimeSlotValue !== "notFound"){
   conJsonSecond = JSON.stringify(SecondTimeSlotValue);
-  console.log("conJsonSecond--",conJsonSecond)
+  
   }
 
 
@@ -941,7 +896,7 @@ console.log("seven--",seven)
         documentMap, bkLocation, facilationChargesSuccess,seven,state,uploadeDocType,
         fCharges,myLocationtwo,totalAmountSuPage,one,two,three,four,five,six,checkAppStatus,checkAppNum,discountDocs,
         discountDocumentsUploadRedux,
-        documentsUploadRedux
+        documentsUploadRedux,newTimeSlot
     }
 
 }

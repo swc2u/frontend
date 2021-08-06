@@ -5,6 +5,7 @@ import { getUserInfo, setapplicationType } from "egov-ui-kit/utils/localStorageU
 import { getDashboardDropdownData } from "../../../../ui-utils/commons";
 // import { HCDashboardFilterForm, HCDashboardResults } from "./HCDashboard/HCDashboard";
 import { DashboardFilterForm, DashboardResults } from "./LegalDashboard/LegalDashboard";
+import { SearchLegalDashboardData } from "./LegalDashboard/LegalFunction";
 // import { PGRDashboardResults } from "./searchResource/dashboardTypeSearchResults";
 
 import { getLegalDashboardData } from "../../../../ui-utils/commons"; 
@@ -81,6 +82,7 @@ const LegalDashboard = {
     debugger
     getDropDownData(action, state, dispatch);
 
+    SearchLegalDashboardData(state, dispatch);
     // getDashboardData(state, dispatch);
     return action;
   },
@@ -104,8 +106,8 @@ const LegalDashboard = {
             
           }
         },
-        DashboardFilterForm,
-        breakAfterSearch: getBreak(),
+        // DashboardFilterForm,
+        // breakAfterSearch: getBreak(),
         DashboardResults
       }
     },

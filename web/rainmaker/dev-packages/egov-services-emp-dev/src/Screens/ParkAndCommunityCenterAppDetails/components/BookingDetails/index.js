@@ -102,8 +102,54 @@ class BookingDetails extends Component {
     // this.props.history.push(`/image?source=${source}`);
   };
   render() {
-    const { bkToDate,bkCgst,bkUtgst,bkRent,bkSurchargeRent,bkFromDate,bkBookingPurpose,status, historyApiData, applicantName, applicationNo, submittedDate, dateCreated,bkLocation,bkDimension, address, sector, houseNo, bookingType, mapAction, images, action, role } = this.props;
+    const { bkToDate,bkCgst,bkUtgst,bkRent,bkSurchargeRent,bkFromDate,bkBookingPurpose,status, 
+      historyApiData, applicantName, applicationNo, submittedDate, dateCreated,bkLocation,bkDimension, 
+      address, sector, houseNo, bookingType, mapAction, images, action, role,timeslots } = this.props;
     var ProcessInstances = [];
+    let bookingValue = "Booking For Whole Day"
+
+    let timslotLength = timeslots.length;
+    let slotValue = []
+    let getValueOne
+    let newValueOne
+    let firstTimeSlot
+    let getValueTwo
+    let newValueTwo
+    let secondTimeSlot
+    let finalTimeslot
+    if(timslotLength > 0){
+      bookingValue = "boking for hours";
+for(let i = 0; i < timeslots.length; i++){
+  slotValue.push(timeslots[i].slot)
+
+}
+
+console.log(slotValue)
+
+getValueOne = slotValue[0]
+console.log(getValueOne)
+
+ newValueOne = getValueOne.split("-")
+console.log(newValueOne)
+
+
+firstTimeSlot = newValueOne[0]
+console.log(firstTimeSlot)
+
+getValueTwo = slotValue[slotValue.length - 1]
+console.log(getValueTwo)
+
+ newValueTwo = getValueTwo.split("-")
+console.log(newValueTwo)
+
+
+secondTimeSlot = newValueTwo[newValueTwo.length - 1]
+console.log(secondTimeSlot)
+
+ finalTimeslot = firstTimeSlot + " " +"to" + " "+secondTimeSlot
+console.log(finalTimeslot)
+    }
+
 
     if (historyApiData != undefined && historyApiData.ProcessInstances && historyApiData.ProcessInstances.length > 0) {
       ProcessInstances = [...historyApiData.ProcessInstances];
@@ -237,6 +283,17 @@ class BookingDetails extends Component {
                       label={bkToDate}
                     /></b>
                   </div>
+{bookingValue == "boking for hours" ? 
+                  <div className="col-md-4">
+                    <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="Booked Slot" />
+                    <b><Label
+                      className="col-xs-12  col-sm-12 col-md-12  status-result-color"
+                      // label={submittedDate}
+                      id="complaint-details-submission-date"
+                      labelStyle={{ color: "inherit" }}
+                      label={finalTimeslot}
+                    /></b>
+                  </div> : ''}
                  
                   <div className="col-md-4">
                     <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_PCC_LOCATION_LABEL" />  {/*BK_MYBK_PARK_LOCATIION_BOOKING*/}

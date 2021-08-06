@@ -8,6 +8,9 @@ import {
 import { convertEpochToDate } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
 import "./index.css";
+import {
+  getUserInfo,
+} from "egov-ui-kit/utils/localStorageUtils";
 
 export const getCurrentStatus = status => {
   switch (status) {
@@ -27,6 +30,20 @@ export const getCurrentStatus = status => {
 };
 
 const TaskStatusComponents = ({ currentObj, index }) => {
+
+  let userInfo = JSON.parse(getUserInfo());
+ let IsEmployee = false;
+ // const roleExists = ifUserRoleExists("WS_CEMP");
+  const roles = get(userInfo, "roles");
+  const roleCodes = roles ? roles.map(role => role.code) : [];
+  if (roleCodes.indexOf("EMPLOYEE") > -1) {
+    IsEmployee = true
+    //return true;
+  } else 
+  {
+    //return false;
+    IsEmployee = false
+  }
   
    var docs=currentObj.documents
   if( Array.isArray(docs)){
@@ -362,7 +379,9 @@ if (horticultureBusinessServices.includes(currentObj.businessService)){
           <LabelContainer labelName={get(currentObj, "comment")} />
         </Typography>
       </Grid>
-      {get(currentObj, "documents") && (
+      {/*  (get(userInfo,'uuid') === get(currentObj,"documents[0].auditDetails.createdBy") || IsEmployee) && */}
+      {/* {(get(userInfo,'uuid') === get(currentObj,"documents[0].auditDetails.createdBy") || IsEmployee)&&  ( */}
+       {get(currentObj, "documents") && ( IsEmployee) &&(
         <DownloadFileContainer
           data={get(currentObj, "documents")}
           className="review-documents"

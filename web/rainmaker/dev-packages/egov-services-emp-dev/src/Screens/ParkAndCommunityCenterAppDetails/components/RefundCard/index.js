@@ -28,7 +28,6 @@ class AppDetails extends Component {
 
   async componentDidMount() {
     let { selectedComplaint, CommercialSecurityCharges, state,userInfo } = this.props;
-    console.log("RefundCardSelectedComplaint", this.props);
     const {
       applicationNo,
       bkFromDate,
@@ -43,7 +42,7 @@ class AppDetails extends Component {
       status,
       bookedRoomArray,
     } = this.props;
-    console.log("propsInrefundPage--", this.props);
+    
 
     const foundFirstLavel =
     userInfo &&
@@ -56,7 +55,7 @@ class AppDetails extends Component {
      */
 
     if (selectedComplaint.businessService == "GFCP") {
-      console.log("RefundCrdCG");
+      
 
       let RequestData = [
         { key: "consumerCodes", value: selectedComplaint.bkApplicationNumber },
@@ -68,12 +67,6 @@ class AppDetails extends Component {
         RequestData
       );
 
-      console.log("RequestData--for-Refund-payment", RequestData);
-      console.log("payloadfund--for-Refund-payment", payloadfundAmount);
-      console.log(
-        "payloadfund.payloadfundAmount--",
-        payloadfundAmount.Payments
-      );
       let RefoundCGAmount = 0;
 
       let getPaymentArray =
@@ -104,63 +97,40 @@ class AppDetails extends Component {
               : "NotFound"
             : "NotFound"
           : "NotFound";
-
-      // let getPaymentArray = get(
-      //   state,
-      //   "bookings.fetchPaymentAfterPayment.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails",
-      //   "NotFound"
-      // );
-      console.log("getPaymentArray", getPaymentArray);
+ 
       for (let i = 0; i < getPaymentArray.length; i++) {
         if (
           getPaymentArray[i].taxHeadCode ==
           "SECURITY_COMMERCIAL_GROUND_BOOKING_BRANCH"
         ) {
-          console.log(
-            "getPaymentArray[i].taxHeadCode",
-            getPaymentArray[i].taxHeadCode
-          );
-          console.log("getPaymentArray[i]", getPaymentArray[i]);
           RefoundCGAmount = getPaymentArray[i].amount;
-          console.log("RefoundCGAmount-in-loop", RefoundCGAmount);
         }
       }
-      console.log("RefoundCGAmount", RefoundCGAmount);
+    
 
       if (selectedComplaint.bkApplicationStatus == "REFUND_APPROVED") {
-        console.log(
-          "ComeInRefundCondition",
-          selectedComplaint.bkApplicationStatus
-        );
         this.setState({
           refundableSecurityFieldDisabled: true,
           CommGrndRefundAmount: this.props.refundableSecurityMoney,
         });
       } 
       else {
-        console.log(
-          "ComeInRefundCondition",
-          selectedComplaint.bkApplicationStatus
-        );
+        this.props.prepareFinalObject("editableCommercialGrndRefundAmount", RefoundCGAmount)
         this.setState({
           refundableSecurityFieldDisabled: foundFirstLavel ? false : true,
           CommGrndRefundAmount: RefoundCGAmount,
         });
       }
-    } else {
+    } 
+    else {
     /**
      * Code for pacc refund Amount
      */
-      console.log("hh-com-", hh ? hh : "nnnn");
       if (hh != "NotFound") {
         this.setState({
           one: hh,
         });
       }
-      // fetchDataAfterPayment(
-      // 	[{ key: "consumerCodes", value: applicationNo }, { key: "tenantId", value: tenantId }
-      // 	])
-      //New Approach
       let RequestData = [
         { key: "consumerCodes", value: applicationNo },
         { key: "tenantId", value: tenantId },
@@ -171,17 +141,8 @@ class AppDetails extends Component {
         RequestData
       );
 
-      console.log("RequestData--for-Refund-payment", RequestData);
-      console.log("payloadfund--for-Refund-payment", payloadfundAmount);
-      console.log(
-        "payloadfund.payloadfundAmount--",
-        payloadfundAmount.Payments
-      );
-
       let AmountFromBackEnd = payloadfundAmount.Payments;
-      console.log("AmountFromBackEnd--", AmountFromBackEnd);
-      console.log("typeOfAmountFromBackEnd--", typeof AmountFromBackEnd);
-      let SecondFunRefAmt = 0;
+      let SecondFunRefAmt = 0;  
       //first  function
       if (status === "REFUND_APPROVED") {
         SecondFunRefAmt = refundableSecurityMoney;
@@ -195,10 +156,9 @@ class AppDetails extends Component {
         );
       }
 
-      console.log("totalRes--inrefundPageoneone", SecondFunRefAmt);
-
+      this.props.prepareFinalObject("editableRefundAmount", SecondFunRefAmt)
+    
       const labelLast = `Refund Amount - Rs.${SecondFunRefAmt}`;
-      console.log("labelLast-labelLast", labelLast);
       this.setState({
         lastAmountShow: labelLast,
         ShowRefundAmount: SecondFunRefAmt,
@@ -206,146 +166,27 @@ class AppDetails extends Component {
           status === "REFUND_APPROVED" ? true : false,
       });
     }
-
-    //BookingRefundAmount
-    // let totalRes = await this.calculateCancelledBookingRefundAmount(applicationNo, tenantId, bkFromDate,AmountFromBackEnd);
-    // console.log("totalRes--inrefundPage",totalRes)
-
-    // this.setState({
-    //   totalAmount: totalRes
-    // })
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log("propsInRefundPage--", nextProps);
+    
     if (nextProps.RefAmount) {
-      console.log("comeInrefundIfCondition");
+    
       this.setState(
         {
           NewReFund: nextProps.RefAmount,
-        },
-        console.log("NewStatnextProps.RefAmount--", this.state.NewReFund)
+        }
       );
     }
   }
 
-  /*
-  calculateCancelledBookingRefundAmount = async (applicationNumber, tenantId, bookingDate, AmountFromBackEnd) => {
-    const { payloadone, payload, payloadTwo, ConRefAmt, fetchPaymentAfterPayment } = this.props;
-
-
-    this.setState({
-      payload: AmountFromBackEnd
-    })
-
-    var CheckDate = new Date(bookingDate);
-    console.log("CheckDate--", CheckDate)
-    var todayDate = new Date();
-    console.log("todayDate--", todayDate)
-
-
-    if (applicationNumber && tenantId) {
-
-      console.log("Payment Details", this.state.payload ? this.state.payload : "NOTFOUND");
-      if (this.state.payload) {
-
-        if (todayDate > CheckDate) {
-          // alert("refundCondition")
-          let billAccountDetails = this.state.payload.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails;
-          let bookingAmount = 0;
-          for (let i = 0; i < billAccountDetails.length; i++) {
-            if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
-              bookingAmount += billAccountDetails[i].amount;
-            }
-          }
-
-          return bookingAmount;
-
-        }
-        if (todayDate < CheckDate) {
-          // alert("cancelCondition")
-          let billAccountDetails = this.state.payload.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails;
-          let bookingAmount = 0;
-          for (let i = 0; i < billAccountDetails.length; i++) {
-            if (billAccountDetails[i].taxHeadCode == "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
-              bookingAmount += billAccountDetails[i].amount;
-            }
-            if (billAccountDetails[i].taxHeadCode == "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH" || billAccountDetails[i].taxHeadCode == "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH") {
-              bookingAmount += billAccountDetails[i].amount;
-            }
-          }
-
-
-
-          let mdmsBody = {
-            MdmsCriteria: {
-              tenantId: tenantId,
-              moduleDetails: [
-
-                {
-                  moduleName: "Booking",
-                  masterDetails: [
-                    {
-                      name: "bookingCancellationRefundCalc",
-                    }
-                  ],
-                },
-
-              ],
-            },
-          };
-
-          let refundPercentage = '';
-
-          let payloadRes = null;
-          payloadRes = await httpRequest(
-            "egov-mdms-service/v1/_search",
-            "_search", [],
-            mdmsBody
-          );
-          console.log(payloadRes, "RefundPercentage");
-          refundPercentage = payloadRes.MdmsRes.Booking.bookingCancellationRefundCalc[0];
-          console.log("refundPercentage--2--", refundPercentage)
-
-          var date1 = new Date(bookingDate);
-          console.log("date1--", date1)
-          var date2 = new Date();
-          console.log("date2--", date2)
-          var Difference_In_Time = date1.getTime() - date2.getTime();
-          console.log("Difference_In_Time--", Difference_In_Time)
-          // To calculate the no. of days between two dates
-          var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
-          console.log("Difference_In_Days--", Difference_In_Days)
-          let refundAmount = 0
-          if (Difference_In_Days > 29) {
-            let refundPercent = refundPercentage.MORETHAN30DAYS.refundpercentage;
-            console.log("refundPercent--1", refundPercent)
-
-            refundAmount = (parseFloat(bookingAmount) * refundPercent) / 100
-          } else if (Difference_In_Days > 15 && Difference_In_Days < 30) {
-
-            let refundPercent = refundPercentage.LETTHAN30MORETHAN15DAYS.refundpercentage;
-            refundAmount = (parseFloat(bookingAmount) * refundPercent) / 100
-            console.log("refundPercent--2", refundPercent)
-          }
-
-
-          return refundAmount;
-        }
-
-
-      }
-    }    
-
-
-  }
-  */
 
   ChangeRefundAmount = (e) => {
     this.setState(
       { ...this.state, ShowRefundAmount: e.target.value },
       this.props.prepareFinalObject("editableRefundAmount", e.target.value)
     );
+    console.log("thisState",this.state)
   };
 
   ChangeCGRefundAmount = (e) => {
@@ -372,11 +213,6 @@ class AppDetails extends Component {
       ConRefAmt,
       fetchPaymentAfterPayment,
     } = this.props;
-
-    console.log(bookedRoomArray, "Nero booked Nero");
-    // this.setState({
-    //   payload :AmountFromBackEnd
-    // })
 
     var CheckDate = new Date(bookingDate);
 
@@ -418,19 +254,7 @@ class AppDetails extends Component {
                   bookedRoomArray[i].roomApplicationNumber + ",";
               }
             }
-            bookingNosString = bookingNosString.slice(0, -1); //Removing last Character
-
-            console.log(bookingNosString, "Nero String");
-            // let queryObject = [
-            // 	{ key: "tenantId", value: tenantId },
-            // 	{ key: "consumerCodes", value: bookingNosString },
-            // ];
-            // const payload = await httpRequest(
-            // 	"post",
-            // 	"/collection-services/payments/_search",
-            // 	"",
-            // 	queryObject
-            // );
+            bookingNosString = bookingNosString.slice(0, -1); 
 
             let RequestData = [
               { key: "consumerCodes", value: bookingNosString },
@@ -444,12 +268,6 @@ class AppDetails extends Component {
             );
 
             if (payload) {
-              console.log(payload, "Nero Payload");
-              // dispatch(
-              // 	prepareFinalObject("bookedRoomsPaymentDetails", [
-              // 		payload.Payments,
-              // 	])
-              // );
               let bookedRoomsPaymentDetails = payload.Payments;
 
               if (
@@ -504,19 +322,8 @@ class AppDetails extends Component {
               bookingAmount = billAccountDetails[i].amount;
             }
           }
-          console.log(
-            bookingAmount,
-            "Nero bookingAmount",
-            roomBookingAmount,
-            "Nero RoomBooking Amontsss"
-          );
+         
           if (roomBookingAmount && roomBookingAmount > 0) {
-            console.log(
-              bookingAmount,
-              "Nero bookingAmount fg",
-              roomBookingAmount,
-              "Nero RoomBooking Amontsss insdie"
-            );
             bookingAmount += roomBookingAmount;
           }
 
@@ -545,7 +352,7 @@ class AppDetails extends Component {
             [],
             mdmsBody
           );
-          console.log(bookingAmount, "Nero bookingAmount finalsss");
+         
           refundPercentage =
             payloadRes.MdmsRes.Booking.bookingCancellationRefundCalc[0];
 
@@ -569,8 +376,9 @@ class AppDetails extends Component {
               refundPercentage.LETTHAN30MORETHAN15DAYS.refundpercentage;
             refundAmount = (parseFloat(bookingAmount) * refundPercent) / 100;
           }
-
-          console.log(refundAmount + securityAmount, "Nero Final Amount");
+          else if(Difference_In_Days <= 15){
+            return refundAmount = 0
+          }
           return refundAmount + securityAmount;
         }
       }
@@ -669,8 +477,6 @@ const mapStateToProps = (state) => {
   const { fetchPaymentAfterPayment } = bookings;
   const { userInfo } = auth;
   let hh = fetchPaymentAfterPayment ? fetchPaymentAfterPayment : "NotFound";
-  console.log("hh--", hh);
-  console.log("fetchPaymentAfterPayment-map--", fetchPaymentAfterPayment);
   return {
     fetchPaymentAfterPayment,
     hh,

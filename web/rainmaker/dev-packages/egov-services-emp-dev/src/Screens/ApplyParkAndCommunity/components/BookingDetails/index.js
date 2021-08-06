@@ -88,7 +88,6 @@ class BookingsDetails extends Component {
     const { arrayName, result,fCharges, jobTitle, jobCompany, jobLocation, handleChangeDiscount, checkDateVenueChange,
       discountType, dimension, complaintSector, fromDate, surcharge, toDate, onFromDateChange, onToDateChange, utGST, cGST, GSTnumber, handleChange, location, facilitationCharges, cleaningCharges, rent, approverName, comment, houseNo, type, purpose, locality, residenials, facilationChargesSuccess,firstToTimeSlot,
       refundAbleAmount } = this.props;
-      console.log("propsForApplyBooking--",this.props)
       let localRent;
       let localUTGST;
       let LocalGST;
@@ -100,8 +99,10 @@ class BookingsDetails extends Component {
       }
       else{
         localRent = rent 
-        localUTGST  = utGST 
-        LocalGST = cGST
+        // localUTGST  = utGST.toFixed(2)
+        localUTGST  = Math.round((utGST + Number.EPSILON) * 100) / 100
+        // LocalGST = cGST.toFixed(2)
+        LocalGST = Math.round((cGST + Number.EPSILON) * 100) / 100
       }
       this.props.prepareFinalObject("PaccDiscount.localRent", localRent);
       this.props.prepareFinalObject("PaccDiscount.localUTGST", localUTGST);
@@ -520,79 +521,7 @@ class BookingsDetails extends Component {
               underlineFocusStyle={{ bottom: 7 }}
               hintStyle={{ width: "100%" }}
             />
-          </div>
-{/*conditionForWholeDay*/}
-
-{/* {this.props.conditionForWholeDay === "9AM-9PM" ? :""} */}
-
-          {/*new-requirement*/}
-          {/* {this.props.SecTimeSlotFromTime != "notFound" && this.props.SecTimeSlotToTime != "notFound"? 
-          <div>
-          <div className="col-sm-6 col-xs-12">
-          <TextField
-            id="new-from-date"
-            name="new-from-date"
-            type="text"
-
-            value={this.props.ConcatFromDateTime}//ConcatFromDateTime,ConcatToDateTime
-            required={true}
-            disabled={true}
-            hintText={
-              <Label
-                label="BK_SECOND_FROM_DATE"
-                color="rgba(0, 0, 0, 0.3799999952316284)"
-                fontSize={16}
-                labelStyle={hintTextStyle}
-              />
-            }
-            floatingLabelText={
-              <Label
-                key={0}
-                label="BK_SECOND_FROM_DATE"
-                color="rgba(0,0,0,0.60)"
-                fontSize="12px"
-              />
-            }
-            onChange={handleChange('toDate')}
-            underlineStyle={{ bottom: 7 }}
-            underlineFocusStyle={{ bottom: 7 }}
-            hintStyle={{ width: "100%" }}
-          />
-        </div>
-        <div className="col-sm-6 col-xs-12">
-          <TextField
-            id="new_to-date"
-            name="new_to-date"
-            type="text"
-
-            value={this.props.ConcatToDateTime}//SecTimeSlotFromTime,SecTimeSlotToTime
-            required={true}
-            disabled={true}
-            hintText={
-              <Label
-                label="BK_SECOND_TO_DATE"
-                color="rgba(0, 0, 0, 0.3799999952316284)"
-                fontSize={16}
-                labelStyle={hintTextStyle}
-              />
-            }
-            floatingLabelText={
-              <Label
-                key={0}
-                label="BK_SECOND_TO_DATE"
-                color="rgba(0,0,0,0.60)"
-                fontSize="12px"
-              />
-            }
-            onChange={handleChange('toDate')}
-            underlineStyle={{ bottom: 7 }}
-            underlineFocusStyle={{ bottom: 7 }}
-            hintStyle={{ width: "100%" }}
-          />
-        </div>
-        </div>
-          :""} */}
-          
+          </div>          
           {/*new requirement end*/}
           <div className="col-sm-6 col-xs-12">
             <TextField
@@ -625,29 +554,6 @@ class BookingsDetails extends Component {
             />
           </div>
 
-          {/* <div style={{marginTop:'10px'}}className="col-sm-6 col-xs-12">
-            <FormControl style={{ width: '100%' }}>
-              <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label"><Label label="BK_MYBK_LOCALITY" /></InputLabel>
-              <Select
-                maxWidth={false}
-                labelId="demo-controlled-open-select-label-Locality"
-                id="demo-controlled-open-select-locality"
-                open={this.state.SetOpen}
-                onClose={() => this.handleClose()}
-                onOpen={() => this.handleOpen()}
-                value={locality}
-                displayEmpty
-                onChange={handleChange('locality')}
-              >
-                {arrayData.map((child, index) => (
-                  <MenuItem value={child.name}>{child.name}</MenuItem>
-                ))}
-
-              </Select>
-            </FormControl>
-
-          </div> */}
-
           <div className="col-sm-6 col-xs-12">
             <FormControl style={{ width: '100%' }}>
               <InputLabel shrink style={{ width: '100%' }} id="demo-controlled-open-select-label"><Label
@@ -673,20 +579,6 @@ class BookingsDetails extends Component {
               </Select>
             </FormControl>
           </div>
-          {/* 
-          <div className="col-sm-6 col-xs-12" style={{marginTop: '19px'}}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend"><Label label="BK_MYBK_CATEGORY_TYPE" /></FormLabel>
-              <RadioGroup row aria-label="position" name="gender1" value={discountType} onChange={handleChangeDiscount}>
-                <FormControlLabel value="General" control={<Radio color="primary" />} label="General" />
-                <FormControlLabel value="100%" control={<Radio color="primary" />} label="Discount 100%" />
-                <FormControlLabel value="50%" control={<Radio color="primary" />} label="Discount 50%" />
-                <FormControlLabel value="20%" control={<Radio color="primary" />} label="Discount 20%" />
-                <FormControlLabel value="KirayaBhog" control={<Radio color="primary" />} label="Kiraya/Bhog" />
-                <FormControlLabel value="ReligiousFunction" control={<Radio color="primary" />} label="Religious Function" />
-              </RadioGroup>
-            </FormControl>
-          </div> */}
           <Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
             <div className="col-sm-12 col-xs-12 applyBtnWrapper" style={{ textAlign: 'right' }}>
               <Button
@@ -718,24 +610,9 @@ const mapStateToProps = state => {
   const { complaintSector } = complaints;
   const { facilationChargesSuccess, arrayName } = bookings;
   
-  // let NewBookFromDate = state.screenConfiguration.preparedFinalObject.availabilityCheckData && state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkFromDate || "notFound"
-  // console.log("NewBookFromDate--",NewBookFromDate)
-
-  // let NewBookToDate = state.screenConfiguration.preparedFinalObject.availabilityCheckData && state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkToDate || "notFound"
-  // console.log("NewBookToDate--",NewBookToDate)
-
-
   let SecTimeSlotFromTime = 
   state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
   (state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo: "notFound" ) : "notFound"
-
-
-  // let SecTimeSlotFromTime = state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkFromTimeTwo || "notFound"
-  // console.log("SecTimeSlotFromTime--",SecTimeSlotFromTime)
-
-  // let SecTimeSlotToTime = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo || "notFound"
-  // console.log("SecTimeSlotToTime--",SecTimeSlotToTime)
-
 
   let SecTimeSlotToTime = 
   state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
@@ -747,29 +624,9 @@ const mapStateToProps = state => {
   (state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.bkToTime: "notFound" ) : "notFound"
 
 
-
-  // let firstToTimeSlot = state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo && state.screenConfiguration.preparedFinalObject.Booking.bkToTime || "notFound"
-  // console.log("firstToTimeSlot--",firstToTimeSlot)
-
   let strMid = ","
 
-  // let newtoDate = moment(bookingData.bkToDate).format("YYYY-MM-DD");
-
-		// let ConcatFromDateTime = NewBookFromDate.concat(strMid).concat(SecTimeSlotFromTime);
-    // console.log("ConcatFromDateTime--",ConcatFromDateTime)
-    
-    // let ConcatToDateTime = NewBookToDate.concat(strMid).concat(SecTimeSlotToTime);
-    // console.log("ConcatToDateTime--",ConcatToDateTime)
-    // //.format("YYYY-MM-DD")
-    // let ConcatFirstToDate = NewBookToDate.concat(strMid).concat(firstToTimeSlot);
-    // console.log("ConcatFromDateTime--",ConcatFirstToDate)
   
-  // let conditionForWholeDay = state.screenConfiguration.preparedFinalObject.Booking.timeslots[0].slot ? state.screenConfiguration.preparedFinalObject.Booking.timeslots[0].slot :"notFound"
-  // console.log("conditionForWholeDay--",conditionForWholeDay)
-
-  // let conditionForWholeDay = 
-  // state.screenConfiguration.preparedFinalObject.Booking !== undefined ?
-  // (state.screenConfiguration.preparedFinalObject.Booking.bkToTimeTwo !== undefined ? state.screenConfiguration.preparedFinalObject.Booking.bkToTime: "notFound" ) : "notFound"
 
 
   let fCharges;

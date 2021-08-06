@@ -1,5 +1,5 @@
 import { getCommonCard, getPattern, getCommonSubHeader, getTextField, getSelectField, getCommonContainer } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { prepareFinalObject ,handleScreenConfigurationFieldChange as handleField} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from 'lodash/get';
 let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
 let ApplicationType = false;
@@ -44,7 +44,7 @@ const displaysubUsageType = (usageType, dispatch, state) => {
           if(subUsage&&subUsage[0])
           {
             dispatch(prepareFinalObject("propsubusagetypeForSelectedusageCategory",subUsage[0].category));
-            dispatch(prepareFinalObject("applyScreen.waterProperty.usageSubCategory",null))
+           // dispatch(prepareFinalObject("applyScreen.waterProperty.usageSubCategory",null))
           }
         }
           
@@ -168,7 +168,42 @@ export const OwnerInfoCard = getCommonCard({
       // ]
     },
     beforeFieldChange: async (action, state, dispatch) => {
-       displaysubUsageType(action.value, dispatch, state);
+      if(action.value)
+      {
+        if(action.value ==='TEMPORARY_BILLING')
+        {
+          dispatch(prepareFinalObject("propsubusagetypeForSelectedusageCategory",[]));
+          dispatch(handleField(
+            "apply",
+            `components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType`,
+            "required",
+            false
+            ));
+            dispatch(handleField(
+              "apply",
+              `components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType`,
+              "visible",
+              false
+              ));
+
+        }
+        else{
+          displaysubUsageType(action.value, dispatch, state);
+          dispatch(handleField(
+            "apply",
+            `components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType`,
+            "required",
+            true
+            ));
+            dispatch(handleField(
+              "apply",
+              `components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType`,
+              "visible",
+              true
+              ));
+        }
+      }
+       
    }
     }),
     contractValue: getTextField({

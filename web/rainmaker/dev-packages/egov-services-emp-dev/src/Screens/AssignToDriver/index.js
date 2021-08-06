@@ -113,6 +113,7 @@ class AssignToDiver extends Component {
           handleValidation={handleValidation}
           bookingtype={trasformData.bkBookingType}
           bkStatus={trasformData.bkStatus}
+          quantity={trasformData.quantity}
           bookingservice={businessServiceData ? businessServiceData : ''}
           onMobileChange={onMobileChange}
           onDriverNameChange={onDriverNameChange}

@@ -521,7 +521,7 @@ class CancelRequestApproved extends Component {
     const { trasformData, businessServiceData, applicationNumber, Cancelstatus,editableCommercialGrndRefundAmount,
       applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,bkBookingVenue,
       fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,
-    bkBankAccountHolder,bkNomineeName
+    bkBankAccountHolder,bkNomineeName,bkStatusUpdateRequest,bkLocationPictures,timeslots,cardNumber
     } = this.props;
     console.log("this.props.editableRefundAmount--",this.props)
     let NumberReturnAmount;
@@ -536,20 +536,22 @@ if(businessServiceData == "GFCP"){
   }
 }
 else{
-  
   if (Cancelstatus == "CANCEL") {
     CheckCancelStatus = Cancelstatus
   }
   else {
     CheckCancelStatus = "null"
   }
-  if(this.props.editableRefundAmount){
+  if(this.props.editableRefundAmount >= 0){
+    console.log("this.props.editableRefundAmount",this.props.editableRefundAmount)
     NumberReturnAmount = Number(this.props.editableRefundAmount)
+    console.log("RefundNumberAmount",NumberReturnAmount)
   }
   else{
     NumberReturnAmount = null
   }
 }
+console.log("NumberReturnAmount=chech-final",NumberReturnAmount)
     const foundFirstLavels = userInfo && userInfo.roles.some(el => el.code === 'BK_CLERK' || el.code === 'BK_DEO');
     const foundSecondLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_SENIOR_ASSISTANT');
     const foundthirdLavel = userInfo && userInfo.roles.some(el => el.code === 'BK_AUDIT_DEPARTMENT');
@@ -563,8 +565,10 @@ else{
         fatherName = {fatherName}
         bkBookingVenue = {bkBookingVenue}
         bkEmail = {bkEmail}
+        bkStatusUpdateRequest = {bkStatusUpdateRequest}
+        bkLocationPictures = {bkLocationPictures}
         bkCompleteAddress = {bkCompleteAddress}
-        bkCategory = {bkCategory}
+        bkCategory = {bkCategory} 
         bkBookingPurpose = {bkBookingPurpose}
         bkFromDate = {bkFromDate}
         bkToDate = {bkToDate}
@@ -573,6 +577,8 @@ else{
         bkIfscCode = {bkIfscCode}
         bkNomineeName = {bkNomineeName}
         bkAccountType = {bkAccountType}
+        timeslots = {timeslots}
+        cardNumber = {cardNumber}
         bkBankAccountHolder = {bkBankAccountHolder}
         applicationStatus = {applicationStatus}
         ApplicantMobileNum = {ApplicantMobileNum}
@@ -700,14 +706,23 @@ let bkBankAccountNumber = trasformData !== undefined && trasformData !== null ? 
   let bkNomineeName = trasformData !== undefined && trasformData !== null ?  trasformData.bkNomineeName : ""
   console.log("bkNomineeName",bkNomineeName)
 
+  let bkStatusUpdateRequest = trasformData !== undefined && trasformData !== null ?  trasformData.bkStatusUpdateRequest : ""
+  console.log("bkStatusUpdateRequest",bkStatusUpdateRequest)
+//applicationDetails.
+ 
+  let timeslots = trasformData !== undefined && trasformData !== null ?  trasformData.timeslots : ""
+console.log("timeSlots-for-citizen",timeslots)
+  let cardNumber = trasformData !== undefined && trasformData !== null ?  trasformData.cardNumber : ""
 
   let Cancelstatus = trasformData.bkStatus;
 
+  let bkLocationPictures = trasformData !== undefined && trasformData !== null ?  trasformData.bkLocationPictures : ""
+  console.log("bkLocationPictures--inAllStep",bkLocationPictures)
 
   return {businessServiceData, trasformData, editableRefundAmount,editableCommercialGrndRefundAmount, dataforRefund, payloadone, 
     applicationStatus,ApplicantMobileNum,ApplicantName,BookingType,
     fatherName,bkEmail,bkCompleteAddress,bkCategory,bkBookingPurpose,bkFromDate,bkToDate,bkBankAccountNumber,bkBankName,bkIfscCode,bkAccountType,
-    bkBankAccountHolder,bkBookingVenue,bkNomineeName,
+    bkBankAccountHolder,bkBookingVenue,bkNomineeName,bkStatusUpdateRequest,bkLocationPictures,timeslots,cardNumber,
     ConRefAmt, Cancelstatus, paymentDetailsForReceipt };
 }
 

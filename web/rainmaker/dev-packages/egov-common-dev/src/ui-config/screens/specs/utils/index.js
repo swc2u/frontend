@@ -31,7 +31,32 @@ export const getCommonApplyFooter = children => {
     children
   };
 };
-
+export const handleNA = params => {
+  if (params !== undefined && params !== null && params !== "" ) 
+  {//&& params!==0
+    if(params===0)
+    {
+    return (params.toString()); 
+    }
+    else
+    {
+      if(Number(params))
+      {
+        return (params.toString()); 
+      }
+      else{
+        return params;
+      }
+    }
+    
+  } 
+  else if(params !== undefined && params !== null && params == "0")
+  {
+    return params;
+  }
+   
+  else { return "NA"; }
+}
 export const transformById = (payload, id) => {
   return (
     payload &&

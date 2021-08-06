@@ -1,4 +1,5 @@
 import React from "react";
+import get from "lodash/get";
 import { connect } from "react-redux";
 import { Grid, Typography, Button } from "@material-ui/core";
 import { Container } from "egov-ui-framework/ui-atoms";
@@ -11,6 +12,9 @@ import CloseIcon from "@material-ui/icons/Close";
 import { withStyles } from "@material-ui/core/styles";
 import { UploadMultipleFiles } from "egov-ui-framework/ui-molecules";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import {
+  getUserInfo,
+} from "egov-ui-kit/utils/localStorageUtils";
 import "./index.css";
 
 const styles = theme => ({
@@ -104,6 +108,7 @@ class ActionDialog extends React.Component {
     } = dialogData;
     const { getButtonLabelName } = this;
     let fullscreen = false;
+    let documentupload = true
     if (window.innerWidth <= 768) {
       fullscreen = true;
     }
@@ -116,6 +121,38 @@ class ActionDialog extends React.Component {
     } else {
       dataPath = `${dataPath}[0]`;
     }
+    let userInfo = JSON.parse(getUserInfo());
+    let IsEmployee = false;
+    // const roleExists = ifUserRoleExists("WS_CEMP");
+     const roles = get(userInfo, "roles");
+     const roleCodes = roles ? roles.map(role => role.code) : [];
+     if (roleCodes.indexOf("EMPLOYEE") > -1) {
+       IsEmployee = true
+       //return true;
+     } else 
+     {
+       //return false;
+       IsEmployee = false
+     }
+    if(moduleName)
+    {
+      if((moduleName ==='REGULARWSCONNECTION'
+      ||moduleName ==='TEMPORARY_WSCONNECTION'
+      || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+      ||moduleName ==='WS_TEMP_TEMP'
+      ||moduleName ==='WS_TEMP_REGULAR'
+      ||moduleName ==='WS_DISCONNECTION'
+      ||moduleName ==='WS_TEMP_DISCONNECTION'
+      ||moduleName ==='WS_RENAME'
+      ||moduleName ==='WS_CONVERSION'
+      ||moduleName ==='WS_REACTIVATE'
+      ||moduleName ==='WS_METER_UPDATE'
+      ||moduleName ==='WS_TUBEWELL'
+      ||moduleName ==='SW_SEWERAGE') && IsEmployee ===false )
+      {
+        documentupload = false;
+      }
+    }
 
     return (
       <Dialog
@@ -123,7 +160,7 @@ class ActionDialog extends React.Component {
         open={open}
         onClose={onClose}
         maxWidth={false}
-        style={{zIndex:2000}}
+       // style={{zIndex:2000}}
       >
         <DialogContent
           children={
@@ -201,6 +238,7 @@ class ActionDialog extends React.Component {
                     />
                   </Grid>
                   <Grid item sm="12">
+                  
                     <Typography
                       component="h3"
                       variant="subheading"
@@ -214,10 +252,11 @@ class ActionDialog extends React.Component {
                       }}
                     >
                       <div className="rainmaker-displayInline">
+                      { documentupload &&(
                         <LabelContainer
                           labelName="Supporting Documents"
                           labelKey="WF_APPROVAL_UPLOAD_HEAD"
-                        />
+                        />)}
                         {isDocRequired && (
                           <span style={{ marginLeft: 5, color: "red" }}>*</span>
                         )}
@@ -232,12 +271,14 @@ class ActionDialog extends React.Component {
                         lineHeight: "20px"
                       }}
                     >
+                      { documentupload &&(
                       <LabelContainer
                         labelName="Only .jpg and .pdf files. 5MB max file size."
                         labelKey="WF_APPROVAL_UPLOAD_SUBHEAD"
-                      />
+                      />)}
                     </div>
-                    <UploadMultipleFiles
+                    { documentupload &&(
+                      <UploadMultipleFiles
                       maxFiles={4}
                       inputProps={{
                         accept: "image/*, .pdf, .png, .jpeg"
@@ -245,7 +286,17 @@ class ActionDialog extends React.Component {
                       buttonLabel={{ labelName: "UPLOAD FILES",labelKey : "TL_UPLOAD_FILES_BUTTON" }}
                       jsonPath={`${dataPath}.wfDocuments`}
                       maxFileSize={5000}
-                    />
+                    />)
+                    }
+                    {/* <UploadMultipleFiles
+                      maxFiles={4}
+                      inputProps={{
+                        accept: "image/*, .pdf, .png, .jpeg"
+                      }}
+                      buttonLabel={{ labelName: "UPLOAD FILES",labelKey : "TL_UPLOAD_FILES_BUTTON" }}
+                      jsonPath={`${dataPath}.wfDocuments`}
+                      maxFileSize={5000}
+                    /> */}
                     <Grid sm={12} style={{ textAlign: "right" }} className="bottom-button-container">
                       <Button
                         variant={"contained"}

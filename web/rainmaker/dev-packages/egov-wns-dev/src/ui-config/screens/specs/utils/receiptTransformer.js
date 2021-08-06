@@ -236,7 +236,7 @@ export const loadReceiptData = async (consumerCode, tenant) => {
       value: tenant
     },
     {
-      key: "consumerCode",
+      key: "consumerCodes",
       value: consumerCode
     }
   ];

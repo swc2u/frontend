@@ -120,7 +120,7 @@
   margin: 0; }
 
 .tableContainer {
-  position: absolute;
+  position: initial;
   z-index: 1000;
   /* display: none; */
   /* float: left; */
@@ -154,6 +154,11 @@
 
 .rt-tbody {
   text-align: center; }
+
+.recordNotFound {
+  color: blue;
+  text-align: center;
+  padding: 25px; }
 
 @media only screen and (max-width: 500px) {
   .graphDashboard {

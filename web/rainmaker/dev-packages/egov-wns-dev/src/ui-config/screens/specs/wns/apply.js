@@ -13,11 +13,14 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
 import set from "lodash/set";
-import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import {
+  GetMdmsNameBycode
+} from "../utils";
+import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField ,toggleSpinner} from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { getQueryArg,setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import { footer } from "./applyResource/footer";
-import { getPropertyIDDetails, propertyID, propertyHeader } from "./applyResource/propertyDetails";
+import { getPropertyIDDetails, propertyID, propertyHeader, getTempPropertyIDDetails } from "./applyResource/propertyDetails";
 import { getPropertyDetails } from "./applyResource/property-locationDetails";
 import { getHolderDetails, sameAsOwner, holderHeader ,
    proposedholderHeader, getproposedHolderDetails} from "./applyResource/connectionHolder";
@@ -27,7 +30,7 @@ import { ownerDetailsHeader, getOwnerDetails, ownershipType
 import { additionDetails } from "./applyResource/additionalDetails";
 import { OwnerInfoCard } from "./applyResource/connectionDetails";
 import { MultiownerDetailsDetails } from "./applyResource/MultipleownerDetailsDetails"; 
-import {getCommentDetails,commentHeader} from './applyResource/comment';
+import {getCommentDetails,commentHeader,commentSubHeaderTEMP} from './applyResource/comment';
 import {PropertyUsageHeader,getPropertyUsageDetails} from './applyResource/propertyUsageDetails'
 import {getConnectionConversionDetails , ConnectionConversionHeader} from './applyResource/connectionConversionDetails'
 import { httpRequest } from "../../../../ui-utils";
@@ -56,6 +59,7 @@ export const stepperData = () => {
 }
 let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
 let IsEdit_Additional_Details = false
+const applicationNumber_ = getQueryArg(window.location.href, "applicationNumber");
 const WNS_STATUS =  window.localStorage.getItem("wns_workflow");
 if(WNS_STATUS)
 {
@@ -178,12 +182,20 @@ const getLabelForWnsHeader = () => {
   else if( process.env.REACT_APP_NAME === "Citizen")
   {
     const wnsHeader_ =  window.localStorage.getItem("wns_workflow");
-    if(wnsHeader_)
+    const applicationNo = getQueryArg(window.location.href, "applicationNumber");
+    let tenantId = getQueryArg(window.location.href, "tenantId");
+    if(applicationNo && tenantId)
     {
-      return `${wnsHeader_}_DETAIL_HEADER`;
+      if(wnsHeader_)
+      {
+        return `${wnsHeader_}_DETAIL_HEADER`;
+      }
+      else   
+      return  "WS_APPLY_NEW_CONNECTION_HEADER"
     }
-    else   
+    else
     return  "WS_APPLY_NEW_CONNECTION_HEADER"
+   
 
   }
     
@@ -201,9 +213,17 @@ const getLabelForWnsHeader = () => {
 
 export const header = getCommonContainer({
   headerDiv: getCommonContainer({
-    header: getCommonHeader({
-      labelKey: getLabelForWnsHeader()
-    })
+    // header: getCommonHeader({
+    //   labelKey: getLabelForWnsHeader()
+    // })
+    header: {
+      uiFramework: "custom-atoms-local",
+      moduleName: "egov-wns",
+      componentPath: "ApplicationHeaderApplyContainer",
+      props: {
+        number: applicationNumber_
+      }
+    },
   }),
 
   applicationNumberWater: {
@@ -465,6 +485,7 @@ export const getData = async (action, state, dispatch) => {
          { 
           const swusageCategory_ = payloadSewerage.SewerageConnections[0].property.usageCategory;
          payloadSewerage.SewerageConnections[0].property.usageCategory = payloadSewerage.SewerageConnections[0].property.usageCategory.split('.')[0]; 
+         //payloadSewerage.SewerageConnections[0].property.subusageCategory = payloadSewerage.SewerageConnections[0].property.usageCategory; 
          
         
          displaysubUsageType(swusageCategory_, dispatch, state);
@@ -493,7 +514,7 @@ export const getData = async (action, state, dispatch) => {
        
         if(payloadWater && payloadWater.WaterConnection.length > 0){
           const {usageCategory } = payloadWater.WaterConnection[0].waterProperty;
-          const {applicationStatus,proposedPipeSize} = payloadWater.WaterConnection[0];
+          const {applicationStatus,proposedPipeSize } = payloadWater.WaterConnection[0];
           let subTypeValues = get(
                 state.screenConfiguration.preparedFinalObject,
                 "applyScreenMdmsData.PropertyTax.subUsageType"
@@ -512,16 +533,48 @@ export const getData = async (action, state, dispatch) => {
     const usageCategory_ = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].property.usageCategory");
     const waterApplicationType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplicationType");
     const activityType = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType");
+    const applicationStatus_ = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].applicationStatus");
+/////? disable Connection Details fiels  in bellow condition
+    if(applicationStatus_ ==='PENDING_FOR_METER_UPDATE'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_ACTIVATION'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_EXTENSION'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_EXTENSION_REGULAR'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_CLOSE'
+      || applicationStatus_ ==='PENDING_FOR_TEMPORARY_CONNECTION_CLOSE'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_HOLDER_CHANGE'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_REACTIVATION'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_TARIFF_CHANGE'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_VERIFICATION_BY_JE'
+      || applicationStatus_ ==='PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT'
+      || applicationStatus_ ==='PENDING_FOR_SEWERAGE_CONNECTION_ACTIVATION')
+    {
+      const textFields = ["division","billGroup","ledgerNo","ccCode","ferruleSize","connectionType"];
+      for (let i = 0; i < textFields.length; i++) {
+        dispatch(handleField(
+          "apply",
+          `components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.connectiondetailscontainer.children.cardContent.children.connectionDetails.children.${textFields[i]}`,
+          "props.disabled",
+          true
+          ));
+      }
+
+      const chargesDetails = ["additionalCharges","constructionCharges",];
+      for (let i = 0; i < chargesDetails.length; i++) {
+        dispatch(handleField(
+          "apply",
+          `components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.${chargesDetails[i]}`,
+          "props.disabled",
+          true
+          ));
+      }
+      
+    }
     //set proposed meter inout for new WF UPDATE_METER_INFO
     
     if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE')
     {
-      // set(
-      //   action.screenConfig,
-      //   "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
-      //   "visible",
-      //   true
-      // );
+     
+      
       IsEdit = true;
       dispatch(
         handleField(
@@ -542,13 +595,7 @@ export const getData = async (action, state, dispatch) => {
           "visible",
           false
         )
-      );
-      // set(
-      //   action.screenConfig,
-      //   "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
-      //   "visible",
-      //   false
-      // );
+      ); 
 
     }
     if(usageCategory_!== null && waterApplicationType !== null )
@@ -557,78 +604,118 @@ export const getData = async (action, state, dispatch) => {
 
     displaysubUsageType(usageCategory_, dispatch, state);
     displayUsagecategory(waterApplicationType, dispatch, state);
-                // check for security deposite for PENDING_FOR_SECURITY_DEPOSIT//PENDING_ROADCUT_NOC_BY_CITIZEN
-                if(applicationStatus === "PENDING_FOR_SECURITY_DEPOSIT" || applicationStatus === "PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT"){
-                    //regular
-                    if(waterApplicationType ==='REGULAR')
-                    {
-                      if(proposedPipeSize == 15 && activityType ==='NEW_WS_CONNECTION'){
-                        const {applyScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
-  
-                        const pipeSize = applyScreenMdmsData['ws-services-calculation'].PipeSize.filter(pipeSize => pipeSize.size == 15);
-                        const securityCharges = pipeSize[0].charges[0].security;
-                
-                        dispatch(
-                          handleField(
-                            "apply",
-                            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
-                            "props.value",
-                            securityCharges
-                          )
-                        );                       
-                       // payloadWater.WaterConnection[0].waterApplication.securityCharge  
-                        dispatch(
-                          handleField(
-                            "apply",
-                            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
-                            "props.disabled",
-                            true
-                          )
-                        );
-                        payloadWater.WaterConnection[0].securityCharge = securityCharges;
-                         //set security
-                        dispatch(prepareFinalObject("applyScreen.waterApplication.securityCharge", securityCharges));                        
-                        payloadWater.WaterConnection[0].waterApplication.securityCharge = securityCharges;
-                        dispatch(prepareFinalObject("applyScreen.waterApplication.securityCharge", securityCharges));
-                        //
-                      }else{
-                        dispatch(
-                          handleField(
-                            "apply",
-                            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
-                            "props.disabled",
-                            false
-                          )
-                        );
-                      }
-                    }
-                    else
-                    {
-                      dispatch(
-                        handleField(
-                          "apply",
-                          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
-                          "props.disabled",
-                          false
-                        ))
+    let isFerruleApplicable = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplication.isFerruleApplicable",true);
+      // check for security deposite for PENDING_FOR_SECURITY_DEPOSIT//PENDING_ROADCUT_NOC_BY_CITIZEN
+      if(applicationStatus === "PENDING_FOR_SECURITY_DEPOSIT" || applicationStatus === "PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT"){
+          //regular
+          if(waterApplicationType ==='REGULAR')
+          {
+            if(proposedPipeSize == 15 && activityType ==='NEW_WS_CONNECTION'){
+              const {applyScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
 
-                    }
-                  
-                    
+              const pipeSize = applyScreenMdmsData['ws-services-calculation'].PipeSize.filter(pipeSize => pipeSize.size == 15);
+              const securityCharges = pipeSize[0].charges[0].security;
+      
+              dispatch(
+                handleField(
+                  "apply",
+                  "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
+                  "props.value",
+                  securityCharges
+                )
+              );                       
+              // payloadWater.WaterConnection[0].waterApplication.securityCharge  
+              dispatch(
+                handleField(
+                  "apply",
+                  "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
+                  "props.disabled",
+                  true
+                )
+              );
+              payloadWater.WaterConnection[0].securityCharge = securityCharges;
+                //set security
+              dispatch(prepareFinalObject("applyScreen.waterApplication.securityCharge", securityCharges));                        
+              payloadWater.WaterConnection[0].waterApplication.securityCharge = securityCharges;
+              dispatch(prepareFinalObject("applyScreen.waterApplication.securityCharge", securityCharges));
+              //
+            }else{
+              dispatch(
+                handleField(
+                  "apply",
+                  "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
+                  "props.disabled",
+                  false
+                )
+              );
+            }
+          }
+          else
+          {
+            dispatch(
+              handleField(
+                "apply",
+                "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
+                "props.disabled",
+                false
+              ))
 
-                }
-                else {
-                  dispatch(prepareFinalObject("applyScreen.waterApplication.isFerruleApplicable",true));
-                  dispatch(prepareFinalObject("WaterConnection[0].waterApplication.isFerruleApplicable",true));
-                  dispatch(
-                    handleField(
-                      "apply",
-                      "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
-                      "props.disabled",
-                      true
-                    )
-                  );
-                }
+          }                 
+          dispatch(prepareFinalObject("applyScreen.waterApplication.isFerruleApplicable",isFerruleApplicable));
+          dispatch(prepareFinalObject("WaterConnection[0].waterApplication.isFerruleApplicable",isFerruleApplicable));
+
+      }
+      else {
+        dispatch(prepareFinalObject("applyScreen.waterApplication.isFerruleApplicable",isFerruleApplicable));
+        dispatch(prepareFinalObject("WaterConnection[0].waterApplication.isFerruleApplicable",isFerruleApplicable));
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.enterSecurityAmount",
+            "props.disabled",
+            true
+          )
+        );
+      }
+      if(applicationStatus !=='PENDING_FOR_METER_UPDATE' && (activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE') )
+      {
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.isMeterStolen",
+            "visible",
+            true
+          )
+        );
+      }
+      else{
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.isMeterStolen",
+            "visible",
+            false
+          )
+        );
+
+      }
+      let Isnewfield = true
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.additionalCharges",
+          "visible",
+          Isnewfield
+        )
+      );
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.constructionCharges",
+          "visible",
+          Isnewfield
+        )
+      );
       }
         }
       }
@@ -639,6 +726,502 @@ export const getData = async (action, state, dispatch) => {
       if(combinedArray[0].property.usageCategory !==undefined)
       combinedArray[0].property.usageCategory = combinedArray[0].property.usageCategory.split('.')[0];
       combinedArray[0].property.noOfFloors = String(combinedArray[0].property.noOfFloors);
+      //set locality name
+      let code = combinedArray[0].property.address.locality.code;
+      if(code.length ===1)
+      {
+        code =`0${code}`
+      }
+      combinedArray[0].property.address.locality.code = code
+      if(combinedArray[0].water===true)
+        code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.sectorList",code)   
+        else
+        code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.swSectorList",code)   
+      combinedArray[0].property.address.locality.name = code
+      if(combinedArray[0].property.subusageCategory==="RESIDENTIAL.GOVERNMENTHOUSING")
+        {
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+                    "props.disabled",
+                    true
+            )
+        );
+        dispatch(
+          handleField(
+                  "apply",
+                  "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+                  "props.value",
+                  "15"
+          )
+      );
+        combinedArray[0].proposedPipeSize = "15";
+        }
+        if(combinedArray[0].property.usageCategory !=='NA' )
+        {
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.commentTempSectionDetails.children.cardContent.children.propertyTempIDDetails.children.viewTwo.children.propertyUsageType",
+                    "props.disabled",
+                    true
+            )
+        );
+        }
+        if(combinedArray[0].property.subusageCategory !=='NA' )
+        {
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.commentTempSectionDetails.children.cardContent.children.propertyTempIDDetails.children.viewTwo.children.propertySubUsageType",
+                    "props.disabled",
+                    true
+            )
+        );
+        }
+        
+        //?
+        //disabled field when send back to citizen after initate workflow in bellow condition PENDING_FOR_CITIZEN_ACTION
+        let actionType = getQueryArg(window.location.href, "actionType");
+        let IsEdit = false
+        if(actionType =="APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" || actionType =="APPLY_FOR_TEMPORARY_REGULAR_CONNECTION")
+        {
+          IsEdit =true;
+        }
+        
+        if((combinedArray[0].applicationStatus==="PENDING_FOR_CITIZEN_ACTION") && (combinedArray[0].water===true) || IsEdit=== true)
+        {
+          dispatch(
+          handleField(
+          "apply",
+          "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.waterApplicationType",
+          "props.disabled",
+          true));
+          if(combinedArray[0].proposedPipeSize !=='NA' )
+          {
+            dispatch(
+              handleField(
+              "apply",
+              "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize",
+              "props.disabled",
+              true));
+          }
+          if(combinedArray[0].property.usageCategory !=='NA' )
+          {
+            dispatch(
+              handleField(
+                      "apply",
+                      "components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.propertyUsageType",
+                      "props.disabled",
+                      true
+              )
+          );
+          }
+          if(combinedArray[0].property.subusageCategory !=='NA' )
+          {
+            dispatch(
+              handleField(
+                      "apply",
+                      "components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.propertySubUsageType",
+                      "props.disabled",
+                      true
+              )
+          );
+          }
+          if(combinedArray[0].waterProperty.usageSubCategory !=='NA' && combinedArray[0].waterProperty.usageSubCategory !=='' )
+          {
+            dispatch(
+              handleField(
+                      "apply",
+                      "components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType",
+                      "props.disabled",
+                      true
+              )
+          );
+          }
+          if(combinedArray[0].property.address.locality.name !=='NA' )
+        {
+          dispatch(
+            handleField(
+                    "apply",
+                    "components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children.locality",
+                    "props.disabled",
+                    true
+            )
+        );
+        }
+        let IsploatEdit = true
+        if(combinedArray[0].activityType==="APPLY_FOR_TEMPORARY_CONNECTION" || combinedArray[0].activityType==="NEW_WS_CONNECTION")
+        {
+          IsploatEdit = false
+
+        }
+        dispatch(
+        handleField(
+                "apply",
+                "components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children.plotOrHouseOrSurveyNo",
+                "props.disabled",
+                IsploatEdit
+        )
+        );
+        dispatch(
+        handleField(
+              "apply",
+              "components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.propertyFloornumber",
+              "props.disabled",
+              IsploatEdit
+        )
+        );
+
+        }
+
+        let Isreadolny = false
+        if((combinedArray[0].applicationStatus==="PENDING_FOR_CITIZEN_ACTION" || combinedArray[0].applicationStatus==="INITIATED") && (combinedArray[0].connectionNo !== null || combinedArray[0].connectionNo !== 'NA') && (combinedArray[0].water===true) )
+        {
+          Isreadolny = true
+          if(combinedArray[0].connectionNo ==="NA")
+          {
+            Isreadolny = false
+            
+          }
+          if(combinedArray[0].connectionNo !== "NA") 
+          {
+            if((combinedArray[0].activityType==="APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION" || combinedArray[0].activityType==="APPLY_FOR_TEMPORARY_REGULAR_CONNECTION") && combinedArray[0].applicationStatus==="INITIATED")
+            {
+              Isreadolny = false;
+            }
+          }
+           
+
+        }
+        if(process.env.REACT_APP_NAME !== "Citizen")
+        {
+          Isreadolny = true
+        }
+        else if(combinedArray[0].applicationStatus==="PENDING_ROADCUT_NOC_BY_CITIZEN")
+        {
+          Isreadolny = true
+        }
+        // 0. Property Details disabled
+        // if((combinedArray[0].applicationStatus==="PENDING_FOR_CITIZEN_ACTION"  || combinedArray[0].applicationStatus==="INITIATED") && (combinedArray[0].connectionNo !== null || combinedArray[0].connectionNo !== 'NA') && (combinedArray[0].water===true) )
+        // {
+            const textFieldsPropertyDetails = ["plotSize","propertyUsageType","propertySubUsageType","superBuiltUpArea","propertyFloornumber"];
+            for (let i = 0; i < textFieldsPropertyDetails.length; i++) {
+              dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.${textFieldsPropertyDetails[i]}`,
+                "props.disabled",
+                Isreadolny
+                ));
+            }
+            if(combinedArray[0].applicationStatus==="INITIATED" && (combinedArray[0].connectionNo === null ||combinedArray[0].connectionNo ==='NA') )
+            {
+              const textFieldsPropertyDetails_ = ["propertyUsageType","propertySubUsageType",];
+              for (let i = 0; i < textFieldsPropertyDetails_.length; i++) {
+                dispatch(handleField(
+                  "apply",
+                  `components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.${textFieldsPropertyDetails_[i]}`,
+                  "props.disabled",
+                  false
+                  ));
+              }
+
+            }
+
+            // 1.Connection Details  disabled
+            const textFieldsConnectionDetails = ["pipeSize","waterApplicationType","contractValue"];
+            for (let i = 0; i < textFieldsConnectionDetails.length; i++) {
+              dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.${textFieldsConnectionDetails[i]}`,
+                "props.disabled",
+                Isreadolny
+                ));
+            }
+            const textFieldsConnectionDetails_ = ["pipeSize","waterApplicationType"];
+            for (let i = 0; i < textFieldsConnectionDetails_.length; i++) {
+              dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.${textFieldsConnectionDetails_[i]}`,
+                "props.disabled",
+                true
+                ));
+            }
+            if(combinedArray[0].applicationStatus==="INITIATED" && (combinedArray[0].connectionNo === null ||combinedArray[0].connectionNo ==='NA') )
+            {
+              dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.pipeSize`,
+                "props.disabled",
+                false
+                ));
+            }
+            // 2.Property Location Details disabled
+            const textFieldsPropertyLocationDetails = ["pincode","locality","plotNo","plotOrHouseOrSurveyNo","streetName","buildingOrColonyName"];
+            for (let i = 0; i < textFieldsPropertyLocationDetails.length; i++) {
+              dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children.${textFieldsPropertyLocationDetails[i]}`,
+                "props.disabled",
+                Isreadolny
+                ));
+            }
+            const textFieldsPropertyLocationDetails_ = ["locality",];
+            for (let i = 0; i < textFieldsPropertyLocationDetails_.length; i++) {
+              dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children.${textFieldsPropertyLocationDetails_[i]}`,
+                "props.disabled",
+                 true
+                ));
+            }
+
+             // 3.Property Usage Detail disabled
+             const textFieldsPropertyUsageDetail = ["propertySubUsageType","propertyUsageType",];
+             for (let i = 0; i < textFieldsPropertyUsageDetail.length; i++) {
+               dispatch(handleField(
+                 "apply",
+                 `components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.${textFieldsPropertyUsageDetail[i]}`,
+                 "props.disabled",
+                 Isreadolny
+                 ));
+             }
+              // 3.Property Usage Detail disabled
+              const textFieldsPropertyUsageDetail_ = ["propertySubUsageType"];
+              for (let i = 0; i < textFieldsPropertyUsageDetail_.length; i++) {
+                dispatch(handleField(
+                  "apply",
+                  `components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.${textFieldsPropertyUsageDetail_[i]}`,
+                  "props.disabled",
+                  true
+                  ));
+              }
+             // 4.Owner Information disabled
+             const textFieldsOwnerInformation = ["ownerName","mobileNumber","email","guardianName","correspondenceAddress"];
+             let ownershipCategory = get(combinedArray[0],"property.ownershipCategory", 'INDIVIDUAL.SINGLEOWNER' )
+             if(ownershipCategory !=='INDIVIDUAL.MULTIPLEOWNERS')
+                {
+             for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
+               dispatch(handleField(
+                 "apply",
+                 `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.0.item0.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+                 "props.disabled",
+                 Isreadolny
+                 ));
+             }
+            }
+            else{
+              let owners = get(combinedArray[0],"property.owners",[])
+                    // for (let index = 0; index < owners.length; index++) {
+                    //     //const element = array[index];
+                    //     for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
+                    //         dispatch(handleField(
+                    //           "apply",
+                    //           `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items.${index}.item${index}.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+                    //           "props.disabled",
+                    //           true
+                    //           ));
+                    //       }
+                    //       for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
+                    //         dispatch(handleField(
+                    //           "apply",
+                    //           `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.${index}.item${index}.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+                    //           "props.disabled",
+                    //           true
+                    //           ));
+                    //       }
+                        
+                    // }
+                    // dispatch(handleField(
+                    //             "apply",
+                    //             `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items.${index}.item${index}.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+                    //             "props.disabled",
+                    //             true
+                    //             ));
+                    dispatch(handleField(
+                      "apply",
+                      `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv`,
+                      "props.hasAddItem",
+                      false
+                      ));
+                      dispatch(handleField(
+                          "apply",
+                          `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv`,
+                          "props.isReviewPage",
+                          true
+                          ));
+            }
+             dispatch(handleField(
+              "apply",
+              `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput`,
+              "props.disabled",
+              //Isreadolny
+              true
+              ));
+
+            // 5.Connection owner Details disabled
+             const ConnectionHolderDetails = ["aadharNo","applicantName","correspondenceAddress","email","mobileNumber"];
+             for (let i = 0; i < ConnectionHolderDetails.length; i++) {
+               dispatch(handleField(
+                 "apply",
+                 `components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children.${ConnectionHolderDetails[i]}`,
+                 "props.disabled",
+                 Isreadolny
+                 ));
+             }
+             ////?
+             if((combinedArray[0].applicationStatus==="PENDING_FOR_CITIZEN_ACTION" ) && (combinedArray[0].connectionNo !== null || combinedArray[0].connectionNo !== 'NA') && (combinedArray[0].water===true) )
+             {               
+               if(combinedArray[0].connectionNo ==="NA")
+               {
+                // 4.Owner Information disabled
+                const _textFieldsOwnerInformation = ["ownerName","mobileNumber","email","guardianName","correspondenceAddress"];
+                let ownershipCategory_ = get(combinedArray[0],"property.ownershipCategory", 'INDIVIDUAL.SINGLEOWNER' )
+                
+                if(ownershipCategory_ ==='INDIVIDUAL.MULTIPLEOWNERS')
+                {
+                    let owners = get(combinedArray[0],"property.owners",[])
+                  //   for (let index = 0; index < owners.length; index++) {
+                  //     //const element = array[index];
+                  //     for (let i = 0; i < _textFieldsOwnerInformation.length; i++) {
+                  //         dispatch(handleField(
+                  //           "apply",
+                  //           `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items.${index}.item${index}.children.cardContent.children.viewFive.children.${_textFieldsOwnerInformation[i]}`,
+                  //           "props.disabled",
+                  //           true
+                  //           ));
+                  //       }
+                      
+                  // }
+                  dispatch(handleField(
+                      "apply",
+                      `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv`,
+                      "props.hasAddItem",
+                      false
+                      ));
+                      dispatch(handleField(
+                          "apply",
+                          `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv`,
+                          "props.isReviewPage",
+                          true
+                          ));
+                }
+                else if(ownershipCategory_ ==='INDIVIDUAL.SINGLEOWNER') {
+                  for (let i = 0; i < _textFieldsOwnerInformation.length; i++) {
+                    dispatch(handleField(
+                      "apply",
+                      `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.0.item0.children.cardContent.children.viewFive.children.${_textFieldsOwnerInformation[i]}`,
+                      "props.disabled",
+                      true
+                      ));
+                  }
+
+                }
+
+                dispatch(handleField(
+                  "apply",
+                  `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput`,
+                  "props.disabled",
+                  true
+                  ));
+
+                // 5.Connection owner Details disabled
+                const _ConnectionHolderDetails = ["aadharNo","applicantName","correspondenceAddress","email","mobileNumber"];
+                for (let i = 0; i < _ConnectionHolderDetails.length; i++) {
+                  dispatch(handleField(
+                    "apply",
+                    `components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children.${_ConnectionHolderDetails[i]}`,
+                    "props.disabled",
+                    true
+                    ));
+                }
+                const _textFieldsPropertyDetails = ["propertyUsageType","propertySubUsageType"];
+                for (let i = 0; i < _textFieldsPropertyDetails.length; i++) {
+                  dispatch(handleField(
+                    "apply",
+                    `components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children.${_textFieldsPropertyDetails[i]}`,
+                    "props.disabled",
+                    true
+                    ));
+                }
+                }
+             }
+
+             //
+             let _actionType = getQueryArg(window.location.href, "actionType");
+             if(_actionType === null)
+             {
+               _actionType = combinedArray[0].activityType
+             }
+             if(_actionType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' || _actionType ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION')
+             {
+               if(combinedArray[0].property.address.locality.code ==='' || combinedArray[0].property.address.locality.code ==='NA')
+               {
+                dispatch(handleField(
+                  "apply",
+                  `components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children.locality`,
+                  "props.disabled",
+                  false
+                  ));
+
+               }
+              //  if(combinedArray[0].waterProperty.usageSubCategory ==='NA' || combinedArray[0].waterProperty.usageSubCategory ==='' || combinedArray[0].applicationStatus ==='INITIATED')
+              //  {
+            //const textFieldsPropertyUsageDetail_ = ["propertySubUsageType"];
+                dispatch(handleField(
+                  "apply",
+                  `components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType`,
+                  "props.disabled",
+                  false
+                  ));
+                  dispatch(handleField(
+                    "apply",
+                    `components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children.plotOrHouseOrSurveyNo`,
+                    "props.disabled",
+                    true
+                    ));
+               //}
+             }
+             if(_actionType ==='UPDATE_CONNECTION_HOLDER_INFO' )
+             {
+              const _textFieldsOwnerInformation = ["aadharNo","applicantName","correspondenceAddress","email","mobileNumber"];
+              for (let i = 0; i < _textFieldsOwnerInformation.length; i++) {
+                dispatch(handleField(
+                  "apply",
+                  `components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children.${_textFieldsOwnerInformation[i]}`,
+                  "props.disabled",
+                  true
+                  ));
+              }
+              
+               dispatch(
+                handleField(
+                  "apply",
+                  "components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.sameAsOwner.children.sameAsOwnerDetails",
+                  "visible",
+                  false
+                )
+              );
+
+             }
+
+            
+             ////?
+           // }
+
+        
+        
+        
+        // if(combinedArray[0].property.address.locality.name !=='NA' )
+        // {
+        // }
+        // if(combinedArray[0].property.address.locality.name !=='NA' )
+        // {
+        // }
+
+
+        //?
       const {applyScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
       if(applyScreenMdmsData['ws-services-calculation'] !== undefined)
       {
@@ -760,6 +1343,14 @@ export const getData = async (action, state, dispatch) => {
           );
 
         }
+        // if(activityTypeHolder ==='SW_SEWERAGE' )
+        // {
+        //   set(
+        //     action.screenConfig,
+        //     "components.div.children.formwizardFirstStep.children.connectionHolderDetails.visible",
+        //     false
+        //   );
+        // }
 
 
       }
@@ -769,6 +1360,14 @@ export const getData = async (action, state, dispatch) => {
           handleField(
             "apply",
             "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.initialMeterReading",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.lastMeterReading",
             "visible",
             false
           )
@@ -843,12 +1442,100 @@ export const getData = async (action, state, dispatch) => {
           );
         }
       }
-      if(data.sewerage === true)
+      if(data.sewerage === true || data.tubewell === true)
       {
         dispatch(
           handleField(
             "apply",
             "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.initialMeterReading",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.lastMeterReading",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterCount",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterDigits",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterID",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterInstallationDate",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterRentCode",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterUnit",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.mfrCode",
+            "visible",
+            false
+          )
+        );
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.sanctionedCapacity",
             "visible",
             false
           )
@@ -959,11 +1646,12 @@ const getApplyScreenChildren = () => {
  if(wnsStatus || ActionType){
   switch(Action){
     case "UPDATE_CONNECTION_HOLDER_INFO" : return {connectionHolderDetails,proposedconnectionHolderDetails }; 
-    case "REACTIVATE_CONNECTION":
-    case "TEMPORARY_DISCONNECTION":
+    case "REACTIVATE_CONNECTION":    
     case "PERMANENT_DISCONNECTION":
     case "UPDATE_METER_INFO" : 
-       return {commentSectionDetails };  
+       return {commentSectionDetails }; 
+    case "TEMPORARY_DISCONNECTION": 
+       return {commentTempSectionDetails }; 
     case "CONNECTION_CONVERSION":
     return {connConversionDetails};
     case "APPLY_FOR_REGULAR_INFO":
@@ -981,6 +1669,7 @@ const getApplyScreenChildren = () => {
 
 const propertyDetail = getPropertyDetails();
 const propertyIDDetails = getPropertyIDDetails();
+const propertyTempIDDetails = getTempPropertyIDDetails();
 const ownerDetail = getOwnerDetails();
 const MultiownerDetail = getMultipleOwnerDetails();
 //const ownerMulDetail = getMultipleOwnerDetails();
@@ -1182,6 +1871,7 @@ export const connectionHolderDetails = getCommonCard({ holderHeader, sameAsOwner
 export const proposedconnectionHolderDetails = getCommonCard({ proposedholderHeader,  proposedholderDetails })
 export const propertyUsageDetails = getCommonCard({PropertyUsageHeader,propertyUsage});
 export const commentSectionDetails = getCommonCard({commentHeader,commentDetails})
+export const commentTempSectionDetails = getCommonCard({commentHeader,commentSubHeaderTEMP,propertyTempIDDetails,commentDetails})
 export const connConversionDetails = getCommonCard({ ConnectionConversionHeader,connectionConversionDetails})
 export const formwizardFirstStep = {
   uiFramework: "custom-atoms",
@@ -1227,6 +1917,7 @@ const screenConfig = {
   name: "apply",
   // hasBeforeInitAsync:true,
   beforeInitScreen: (action, state, dispatch) => {
+    dispatch(toggleSpinner());
     pageReset(dispatch);
     getData(action, state, dispatch).then(() => { });
     dispatch(prepareFinalObject("applyScreen.water", true));
@@ -1241,23 +1932,58 @@ const screenConfig = {
       if(localStorage.getItem("wns_workflow")){
         window.localStorage.removeItem("wns_workflow");
       }
-      dispatch(
-        handleField(
-          "apply",
-          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail",
-          "visible",
-          true
-        )
-      )
-      dispatch(
-        handleField(
-          "apply",
-          "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail",
-          "visible",
-          false
-        )
-      )
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.visible",
+        true
+      );
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.visible",
+        false
+      );
+      // dispatch(
+      //   handleField(
+      //     "apply",
+      //     "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail",
+      //     "visible",
+      //     true
+      //   )
+      // )
+      // dispatch(
+      //   handleField(
+      //     "apply",
+      //     "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail",
+      //     "visible",
+      //     false
+      //   )
+      // )
 
+    }
+    else
+    {
+      let  serviceModuleNameCurrent = localStorage.getItem("wns_workflow")
+      if(serviceModuleNameCurrent === null)
+      {
+        serviceModuleNameCurrent = getQueryArg(window.location.href, "actionType");
+
+      }
+      if(serviceModuleNameCurrent === null)
+      {
+        serviceModuleNameCurrent ="REGULARWSCONNECTION"
+      }
+      const queryObject = [
+        { key: "tenantId", value: getQueryArg(window.location.href, "tenantId") },
+        { key: "businessServices", value: serviceModuleNameCurrent }
+      ];
+  
+      setBusinessServiceDataToLocalStorage(queryObject, dispatch);
+      if(process.env.REACT_APP_NAME === "Citizen" && getQueryArg(window.location.href, "action") === "edit"&& window.localStorage.getItem("ActivityStatusFlag")=== "true"){
+        window.localStorage.removeItem("ActivityStatusFlag");
+      }
+      if(localStorage.getItem("ActivityStatusFlag")){
+        window.localStorage.removeItem("ActivityStatusFlag");
+      }
     }
 
     if (propertyId) {
@@ -1372,7 +2098,7 @@ const screenConfig = {
     // const tenantId = getTenantId();
     // dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
 
-      
+    dispatch(toggleSpinner()); 
     return action;
   },
 
@@ -1385,7 +2111,17 @@ const screenConfig = {
         headerDiv: {
           uiFramework: "custom-atoms",
           componentPath: "Container",
-          children: { header: { gridDefination: { xs: 12, sm: 10 }, ...header } }
+          children: { header: { gridDefination: { xs: 12, sm: 10 }, 
+          ...header 
+        //  header:getCommonContainer({
+        //   headerDiv: getCommonContainer({
+        //     header: getCommonHeader({
+        //       labelKey: getLabelForWnsHeader()
+        //     })
+        //   })
+        // }),
+        
+        } }
         },
         stepper,
         formwizardFirstStep,

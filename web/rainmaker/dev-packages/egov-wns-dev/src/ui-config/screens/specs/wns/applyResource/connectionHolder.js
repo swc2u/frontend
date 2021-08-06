@@ -78,7 +78,7 @@ import {
       },
       
       pattern: getPattern("Email"),
-      required: true,
+      required: false,
      errorMessage: "WS_OWNER_DETAILS_EMAIL_LABEL_VALIDATION",
       jsonPath: "connectionHolders[0].emailId",
       gridDefination: {
@@ -292,7 +292,7 @@ import {
       },
       
       pattern: getPattern("Email"),
-      required: true,
+      required: false,
       visible:false,
       errorMessage: "WS_OWNER_DETAILS_EMAIL_LABEL_VALIDATION",
       jsonPath: "connectionHolders[0].emailId",

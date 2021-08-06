@@ -8,6 +8,7 @@ import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import get from "lodash/get";
 import { getCurrentFinancialYear, generateBill, getBillingEstimation,getBusinessServiceMdmsData } from "../utils";
 import capturePaymentDetails from "./payResource/capture-payment-details";
+import capturePaymentDetailswns from "./payResource/capture-payment-detailswns";
 import estimateDetails from "./payResource/estimate-details";
 import { footer } from "./payResource/footer";
 import g8Details from "./payResource/g8-details";
@@ -18,6 +19,7 @@ import { ifUserRoleExists } from "../utils";
 import set from "lodash/set";
 import { componentJsonpath, radioButtonJsonPath, paybuttonJsonpath } from "./payResource/constants";
 import "./pay.css";
+import { WNSConfigName} from "../../../../ui-utils/commons";
 
 const header = getCommonContainer({
     header: getCommonHeader({
@@ -39,7 +41,7 @@ const header = getCommonContainer({
 });
 
 
-const getPaymentCard = () => {
+const getPaymentCard = (businessService) => {
 
     const roleExists = ifUserRoleExists("CITIZEN");
 
@@ -62,6 +64,32 @@ const getPaymentCard = () => {
             }
         }
     } else {
+        let  WNSConfigName_= WNSConfigName()
+        let  bservice = WNSConfigName_.ONE_TIME_FEE_WS
+        if(businessService ===bservice || businessService ===WNSConfigName_.ONE_TIME_FEE_SW || businessService.includes("SW") || businessService.includes("WS"))
+       {
+        return {
+            uiFramework: "custom-atoms",
+            componentPath: "Div",
+            children: {
+                paymentDetails: getCommonCard({
+                    header: getCommonTitle({
+                        labelName: "Payment Collection Details",
+                        labelKey: "NOC_PAYMENT_HEAD"
+                    }),
+                    estimateDetails,
+                    AmountToBePaid: {
+                        ...AmountToBePaid,
+                        visible: false
+                    },
+                    capturePaymentDetailswns,
+                    g8Details
+                    
+                })
+            }
+        }
+       }
+       else{
         return {
             uiFramework: "custom-atoms",
             componentPath: "Div",
@@ -103,6 +131,9 @@ const getPaymentCard = () => {
                 })
             }
         }
+
+       }
+       
     }
 }
 
@@ -214,7 +245,7 @@ const screenConfig = {
         }
         fetchBill(state, dispatch, consumerCode, tenantId,  );
        
-        const data = getPaymentCard();
+        const data = getPaymentCard(businessService);
         set(action, "screenConfig.components.div.children.formwizardFirstStep", data);
         return action;
     },

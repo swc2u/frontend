@@ -6,6 +6,7 @@ import {
   } from "egov-ui-framework/ui-containers";
   import { Container } from "egov-ui-framework/ui-atoms";
 import get from "lodash/get";
+import { Icon} from "components";
 import { connect } from "react-redux";
 //import "../index.css";
 import { getNotifications } from "egov-ui-kit/redux/app/actions";
@@ -65,9 +66,11 @@ class HelpSupport extends React.Component {
                               <Typography variant="caption">
                               <LabelContainer labelName="Contact Number" labelKey="CS_HELP_CONTACT_LABLE" />
                               </Typography>
-                              <Typography variant="body2">
+                              {/* <Typography variant="body2">
                               <LabelContainer labelName={"0172 2787200"} />
-                              </Typography>
+                              </Typography> */}
+                              <Icon action="communication" name="call" style={{ marginLeft: 0, paddingTop: 12 }}  color={"#22b25f"}/>
+              <LabelContainer labelName={"0172 2787200"} />
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}lg={3} style={{ marginTop: 10, paddingRight: 10 ,paddingLeft: 10 }}>
                               <Typography variant="caption">

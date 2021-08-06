@@ -20,12 +20,35 @@ import axios from 'axios';
 import { sampleGetBill, ApplicationConfiguration } from "../../../../../ui-utils/sampleResponses";
 import { httpRequest } from "../../../../../ui-utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-const ActiongetLetter = async (state, dispatch) => {
+const PaymentOrderWithoutDetails = async (state, dispatch) => {
+  //let response = WFConfig(); 
   const { PaymentDetails} = state.screenConfiguration.preparedFinalObject;
+ 
   try {
+    const applicationNumber = getQueryArg(
+      window.location.href,
+      "applicationNumber"
+    );
+    const tenantId = getQueryArg(window.location.href, "tenantId");
+    let queryObject = [
+      {
+        key: "tenantId",
+        value: tenantId
+      }];
+    queryObject.push({
+      key: "businessIds",
+      value: applicationNumber
+    });
+      let url = "/pension-services/v1/_searchWorkflowPaymentDetails";
+    
+      let pdfResponce = await httpRequest(
+        "post",
+        url,
+        "_search",          
+        queryObject
+      );
     let config = ApplicationConfiguration();
-    downloadAcknowledgementLetter(PaymentDetails,config.DOP_PAYMENT_ORDER,config.DOP_PAYMENT_ORDER_config)
-   
+    downloadAcknowledgementLetter(pdfResponce.PaymentDetails,config.DOE_PAYMENT_ORDER_WITHOUT_DETAILS,config.DOP_PAYMENT_ORDER_config)
   }
   catch(error)
   {
@@ -125,7 +148,7 @@ export const otherDetails = (data) => {
         pattern: getPattern("Date"),
         jsonPath: "ProcessInstances[0].employeeOtherDetails.dateOfContingent",
         props: {
-          className:"applicant-details-error",
+      className:"applicant-details-error",
          
         }
       }),
@@ -171,15 +194,16 @@ export const otherDetails = (data) => {
   //   }
 
   // },
-  
+  button: getCommonContainer({
+    buttonContainer: getCommonContainer({
   POApplication: {
     componentPath: "Button",
     gridDefination: {
       xs: 12,
-      sm: 6,
+      sm: 4,
       align: "left"
     },
-    visible: data[5].Isletter,
+    visible: data[6].Isletterdoc,
     props: {
       variant: "contained",
       color: "primary",
@@ -206,14 +230,15 @@ export const otherDetails = (data) => {
     },
     
   },
+  break: getBreak(),
   pensionLetter: {
     componentPath: "Button",
     gridDefination: {
       xs: 12,
-      sm: 6,
+      sm: 4,
       align: "left"
     },
-    visible: false,//data[5].Isletter,
+    visible: data[6].Isletterdoc,
     props: {
       variant: "contained",
       color: "primary",
@@ -230,15 +255,17 @@ export const otherDetails = (data) => {
 
       buttonLabel: getLabel({
         labelName: "NEW APPLICATION",
-        labelKey: "PENSION_LETTER_DOWNLOAD"
+        labelKey: "PENSION_LETTER_DOWNLOAD_DETAILS"
       })
     },
     onClickDefination: {
       action: "condition",
-      callBack: ActiongetLetter
+      callBack: PaymentOrderWithoutDetails
 
     },
     
   },
+})
+})
 });
 }

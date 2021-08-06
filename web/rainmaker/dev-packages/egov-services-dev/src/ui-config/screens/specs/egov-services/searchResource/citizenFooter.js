@@ -1,7 +1,7 @@
 import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getCommonApplyFooter, showHideAdhocPopup } from "../../utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import {prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import {
     getapplicationType,
@@ -10,7 +10,8 @@ import {
 } from "egov-ui-kit/utils/localStorageUtils";
 import "./index.css";
 import get from "lodash/get";
-
+import set from "lodash/set";
+import { callBackForSearch } from "../checkavailabilityForm_room";
 export const callBackForCancel = (state, dispatch) => {
     dispatch(setRoute("/egov-services/my-applications"));
 };
@@ -76,7 +77,7 @@ export const callBackForCancelParkAndCC = (state, dispatch) => {
         state,
         "screenConfiguration.preparedFinalObject.Booking.businessService",
         {}
-    );
+    ); 
     dispatch(
         setRoute(
             `/egov-services/cancelparkccbooking?applicationNumber=${applicationNumber}&tenantId=${
@@ -207,6 +208,41 @@ export const footerForCg = getCommonApplyFooter({
 })
 
 export const footerForParkAndCC = getCommonApplyFooter({
+    bookRoomButton: {
+        componentPath: "Button",
+        props: {
+            variant: "outlined",
+            color: "primary",
+            style: {
+                minWidth: "180px",
+                height: "48px",
+                marginRight: "16px",
+                borderRadius: "inherit",
+            },
+        },
+        children: {
+
+            previousButtonLabel: getLabel({
+                labelName: "BOOK ROOM",
+                labelKey: "BOOK ROOM",
+            }),
+        },
+        onClickDefination: {
+            action: "condition",
+            callBack: (state, dispatch) =>{
+                const applicationNumberForCC = get(
+                    state,
+                    "screenConfiguration.preparedFinalObject.Booking.bkApplicationNumber",
+                    {}
+                );
+             
+                dispatch(prepareFinalObject("ccApplicationNumber", applicationNumberForCC))
+                // callBackForSearch(state, dispatch)
+                dispatch(setRoute("/egov-services/checkavailability_room"));
+            },
+           },
+        visible:false
+    },
     refundSecurityFeeButton: {
         componentPath: "Button",
         props: {

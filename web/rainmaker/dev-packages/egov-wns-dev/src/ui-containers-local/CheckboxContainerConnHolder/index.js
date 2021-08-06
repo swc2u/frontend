@@ -5,11 +5,11 @@ import FormGroup from "@material-ui/core/FormGroup";
 import { connect } from "react-redux";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { prepareFinalObject,handleScreenConfigurationFieldChange } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import LabelContainer from "egov-ui-framework/ui-containers/LabelContainer";
 import get from "lodash/get";
 import { toggleConnHolderDetails } from "../CheckboxContainer/toggleFeilds"
-
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 const styles = {
   root: {
     color: "#FE7A51",
@@ -33,10 +33,47 @@ class CheckboxLabels extends React.Component {
       this.setState({ checkedG: true })
       this.updateOwnerFileds();
     } */
-    const { classes, content, label, isChecked, approveCheck, onFieldChange, jsonPath } = this.props;
+    const { classes, content, label, isChecked, approveCheck, onFieldChange, jsonPath,section ,preparedFinalObject} = this.props;
     if(isChecked === false){
       toggleConnHolderDetails(onFieldChange, true);
-      approveCheck(jsonPath, isChecked)
+      
+      // if(section !== undefined)
+      //   {
+          if(label.key === 'WS_ADDN_DETAILS_IS_FERRULEAPPLICABLE')
+            {
+              let Active = true
+              if(preparedFinalObject.applyScreen.waterApplication !== undefined)
+              {              
+              if(preparedFinalObject.applyScreen.waterApplication.isFerruleApplicable !== null)
+              {
+                Active = preparedFinalObject.applyScreen.waterApplication.isFerruleApplicable
+              } 
+            }             
+              approveCheck('WaterConnection[0].waterApplication.isFerruleApplicable', Active)
+              approveCheck(jsonPath, Active)
+            }
+            if(label.key === 'WS_ADDN_DETAILS_IS_METER_STOLEN')
+            {
+              let IsActive = false
+              if(preparedFinalObject.applyScreen.waterApplication !== undefined)
+              {              
+              if(preparedFinalObject.applyScreen.waterApplication.isMeterStolen !== null)
+              {
+                if(preparedFinalObject.applyScreen.waterApplication.isMeterStolen === undefined)
+                {
+                  IsActive = false
+                }
+                else{
+                  IsActive = preparedFinalObject.applyScreen.waterApplication.isMeterStolen
+                }                
+              } 
+              }             
+              approveCheck('WaterConnection[0].waterApplication.isMeterStolen', IsActive)
+              approveCheck(jsonPath, IsActive)
+
+            }
+        //}
+     //
     }else{
       toggleConnHolderDetails(onFieldChange, false);
       approveCheck(jsonPath, isChecked)
@@ -60,6 +97,182 @@ class CheckboxLabels extends React.Component {
     approveCheck(jsonPath, this.props.isChecked)
 
   }
+  // validateField = field => {
+  //   const {
+  //     required,
+  //     pattern,
+  //     minLength,
+  //     maxLength,
+  //     minValue,
+  //     maxValue,
+  //     visible,
+  //     isDOB
+  //   } = field;
+  
+  //   if (visible !== undefined && !visible) {
+  //     return { isFieldValid: true, errorText: "" };
+  //   }
+  
+  //   const fieldValue = field.value || (field.props && field.props.value);
+  //   const value = fieldValue
+  //     ? typeof fieldValue === "string"
+  //       ? fieldValue.trim()
+  //       : fieldValue
+  //     : null;
+  //   let errorText = "",
+  //     isFieldValid = true,
+  //     fieldLength = 0;
+  
+  //   if (required && !value) {
+  //     isFieldValid = false;
+      
+  //     errorText = field.requiredMessage ||getLocaleLabels("REQUIRED_FIELD","REQUIRED_FIELD");
+  //   }
+  
+  //   if (value) {
+  //     fieldLength = value.length;
+  //   }
+  
+  //   if (
+  //     isFieldValid &&
+  //     fieldLength &&
+  //     pattern &&
+  //     !new RegExp(pattern).test(value)
+  //   ) {
+  //     isFieldValid = false;
+  //   }
+  //   if (
+  //     isFieldValid &&
+  //     minLength &&
+  //     maxLength &&
+  //     !(fieldLength >= minLength && fieldLength <= maxLength)
+  //   ) {
+  //     isFieldValid = false;
+  //   }
+  //   if (
+  //     isFieldValid &&
+  //     minValue &&
+  //     maxValue &&
+  //     !(value >= minValue && value <= maxValue)
+  //   ) {
+  //     isFieldValid = false;
+  //   }
+  
+  //   if (isDOB) {
+  //     if (value) {
+  //       let currentDate = new Date().getTime();
+  //       let ownerDOB = new Date(value).getTime();
+  //       if (ownerDOB > currentDate) {
+  //         isFieldValid = false;
+  //       }
+  //     }
+  //   }
+  
+  //   errorText = !isFieldValid
+  //     ? errorText.length
+  //       ? errorText
+  //       : field.errorMessage || "Invalid field"
+  //     : "";
+  
+  //   return { isFieldValid, errorText };
+  // };
+  // validate = (
+  //   screenKey,
+  //   componentObject,
+  //   approveCheck,
+  //   skipPrepareFormData = false
+  // ) => {
+  //   const validatedObject = this.validateField(componentObject);
+  //   let isFormValid = true;
+  //   if (!skipPrepareFormData) {
+  //     approveCheck(componentObject.jsonPath, componentObject.value);
+  //   }
+  //   if (componentObject.jsonPath && validatedObject.isFieldValid) {
+  //     if (!componentObject.isFieldValid) {
+  //       isFormValid = true;
+  //       approveCheck(
+  //           screenKey,
+  //           `${componentObject.componentJsonpath}.props`,
+  //           "error",
+  //           false
+  //         );
+        
+  //         approveCheck(
+  //           screenKey,
+  //           `${componentObject.componentJsonpath}.props`,
+  //           "helperText",
+  //           validatedObject.errorText
+  //         );
+        
+  //         approveCheck(
+  //           screenKey,
+  //           `${componentObject.componentJsonpath}`,
+  //           "isFieldValid",
+  //           true
+  //         );
+        
+  //     }
+  //   } else {
+  //     isFormValid = false;
+  //     approveCheck(
+  //         screenKey,
+  //         `${componentObject.componentJsonpath}.props`,
+  //         "error",
+  //         true
+  //       );      
+  //       approveCheck(
+  //         screenKey,
+  //         `${componentObject.componentJsonpath}.props`,
+  //         "helperText",
+  //         validatedObject.errorText
+  //       );
+  //       approveCheck(
+  //         screenKey,
+  //         `${componentObject.componentJsonpath}`,
+  //         "isFieldValid",
+  //         false
+  //       );
+  //   }
+  //   return isFormValid;
+  // };
+  //  validateFields = (
+  //   objectJsonPath,
+  //   state,
+  //   approveCheck,
+  //   screen = "apply"
+  // ) => {
+  //   const fields = get(
+  //     state.screenConfiguration.screenConfig[screen],
+  //     objectJsonPath,
+  //     {}
+  //   );
+  //   let isFormValid = true;
+  //   for (var variable in fields) {
+  //     if (fields.hasOwnProperty(variable)) {
+  //       if (
+  //         fields[variable] &&
+  //         fields[variable].props &&
+  //         (fields[variable].props.disabled === undefined ||
+  //           !fields[variable].props.disabled) &&
+  //         !this.validate(
+  //           screen,
+  //           {
+  //             ...fields[variable],
+  //             value: get(
+  //               state.screenConfiguration.preparedFinalObject,
+  //               fields[variable].jsonPath
+  //             )
+  //           },  
+  //           approveCheck,          
+  //           true
+  //         )
+  //       ) {
+  //         isFormValid = false;
+  //       }
+  //     }
+  //   }
+  //   return isFormValid;
+  // };
   handleChange = name => event => {
     const {
       sourceJsonPaths,
@@ -69,8 +282,11 @@ class CheckboxLabels extends React.Component {
       screenKey,
       preparedFinalObject,
       approveCheck,
+      approveCheckcon,
       section,
-      jsonPath
+      jsonPath,
+      label,
+      state
     } = this.props;
 
     const isChecked = event.target.checked;
@@ -89,15 +305,42 @@ class CheckboxLabels extends React.Component {
       approveCheck('connectionHolders[0].emailId', emailId)
       approveCheck('connectionHolders[0].correspondenceAddress', correspondenceAddress)
      approveCheck('connectionHolders[0].ownerType', "INDIVIDUAL.SINGLEOWNER")
+     let path ='components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children'
+    if(name && mobileNumber &&correspondenceAddress &&name)
+    {
+     approveCheckcon(`${path}.applicantName`, name)
+     approveCheckcon(`${path}.mobileNumber`, mobileNumber)
+     approveCheckcon(`${path}.email`, emailId)
+     approveCheckcon(`${path}.correspondenceAddress`, correspondenceAddress)
+    }
+    //  this.validateFields(
+    //   "components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children",
+    //   state,
+    //   approveCheck,
+    //   "apply"
+    // );
+    // const fields = get(
+    //   state.screenConfiguration.screenConfig["apply"],
+    //   "components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children",
+    //   {}
+    // );
       }
 
 
     } else {
       toggleConnHolderDetails(onFieldChange, true);
+      if(label.key === 'WS_CONN_HOLDER_SAME_AS_OWNER_DETAILS')
+            {
       approveCheck('connectionHolders[0].mobileNumber', null)
       approveCheck('connectionHolders[0].name', null)
       approveCheck('connectionHolders[0].emailId', null)
       approveCheck('connectionHolders[0].correspondenceAddress', null)
+      let path ='components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children'
+      approveCheckcon(`${path}.applicantName`, '')
+      approveCheckcon(`${path}.mobileNumber`, '')
+      approveCheckcon(`${path}.email`, '')
+      approveCheckcon(`${path}.correspondenceAddress`, '')
+            }
     }
     if(section !== undefined)
     {
@@ -116,8 +359,19 @@ class CheckboxLabels extends React.Component {
   };
 
   render() {
-    const { classes, content, label,preparedFinalObject,section } = this.props;
-    let isChecked = (this.state.checkedG === null)?this.props.isChecked:this.state.checkedG;
+    const { classes, content, label,preparedFinalObject,section ,approveCheck} = this.props;
+    let Active = false
+    let IsActive = false
+    if(preparedFinalObject.WaterConnection.length>0)
+    {
+      if(preparedFinalObject.WaterConnection[0].waterApplication)
+      {
+        Active = preparedFinalObject.WaterConnection[0].waterApplication.isFerruleApplicable
+        IsActive = preparedFinalObject.WaterConnection[0].waterApplication.isMeterStolen
+      }
+    }
+    let applicationNo = getQueryArg(window.location.href, "applicationNumber");
+    let isChecked = (this.state.checkedG === null)?(label.key !== "WS_ADDN_DETAILS_IS_FERRULEAPPLICABLE"?this.props.isChecked:Active):this.state.checkedG;
     let isdisabled = false
     //isFerruleApplicable should be enable to change the value in step  PENDING_FOR_SECURITY_DEPOSIT
     if(preparedFinalObject.WaterConnection.length>0)
@@ -125,19 +379,56 @@ class CheckboxLabels extends React.Component {
       if(preparedFinalObject.WaterConnection[0].waterApplication)
       {
         const {applicationStatus} = preparedFinalObject.WaterConnection[0];
+        const {connectionNo} = preparedFinalObject.WaterConnection[0];
+        
         if(applicationStatus !== undefined)
         {
+          if(label.key === 'WS_ADDN_DETAILS_IS_FERRULEAPPLICABLE')
+            {
+            
           if(applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT')
           {
-            isdisabled = false
+            isdisabled = false           
+            isChecked = isChecked;
+           // approveCheck("waterApplication.isFerruleApplicable", isChecked)
           }
           else
           {
             isdisabled = true
-            isChecked = true//preparedFinalObject.WaterConnection[0].waterApplication.isFerruleApplicable
+            isChecked = Active//preparedFinalObject.WaterConnection[0].waterApplication.isFerruleApplicable
            // approveCheck('WaterConnection[0].waterApplication.isFerruleApplicable', true)
             
           }
+        }
+        else if(label.key === 'WS_CONN_HOLDER_SAME_AS_OWNER_DETAILS' && applicationNo)
+        {
+          if(applicationStatus ==='INITIATED' && connectionNo === null)//|| applicationStatus ==='PENDING_FOR_CITIZEN_ACTION')
+          {
+            isdisabled = false
+          }
+          else if (applicationStatus ==='INITIATED' && ( connectionNo && connectionNo!== '' || connectionNo!== 'NA') )
+          {
+            isdisabled = true
+
+          }          
+          else
+          isdisabled = true
+        }
+        else if(label.key === 'WS_ADDN_DETAILS_IS_METER_STOLEN')
+        {
+          if(applicationStatus ==='PENDING_FOR_DOCUMENT_VERIFICATION')
+          {
+            isdisabled = false
+            isChecked = isChecked
+
+          }
+          else{
+            isdisabled = true
+            isChecked = IsActive
+
+          }
+
+        }
         }
         else
         {
@@ -196,11 +487,14 @@ const mapStateToProps = (state, ownprops) => {
   const { screenConfiguration } = state;
   const { jsonPath } = ownprops;
   const { preparedFinalObject } = screenConfiguration;
-  return { preparedFinalObject, jsonPath };
+  return { preparedFinalObject, jsonPath ,state};
 };
 
 const mapDispatchToProps = dispatch => {
   return {
+    approveCheckcon:(jsonPath, value) => {
+      dispatch(handleScreenConfigurationFieldChange('apply',jsonPath,'props.value', value));
+    },
     approveCheck: (jsonPath, value) => {
       dispatch(prepareFinalObject(jsonPath, value));
     }

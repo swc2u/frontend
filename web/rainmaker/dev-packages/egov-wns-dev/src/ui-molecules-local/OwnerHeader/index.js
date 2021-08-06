@@ -24,10 +24,18 @@ class OwnerHeader extends Component {
       label.labelKey,
       localizationLabels
     );
-    if(this.props.propertyOwners &&  this.props.propertyOwners.length > 1){
+    if(this.props.propertyOwners &&  this.props.propertyOwners.length > 0){
+      let propertyOwners_ =  this.props.propertyOwners.filter(x=>(x.isDeleted === undefined || x.isDeleted !== false ))
+      let count = this.props.propertyOwners.length - propertyOwners_.length
       let componentJsonpath = this.props.componentJsonpath;
-      translatedLabel = translatedLabel + " - "+ (parseInt(componentJsonpath.split('items[')[1][0])+1)
+      translatedLabel = translatedLabel + " - "+  ((parseInt(componentJsonpath.split('items[')[1][0])+1))
+     // translatedLabel = translatedLabel + " - "+  ((parseInt(count)+1))
     }
+    else
+    {
+      translatedLabel = translatedLabel + " - "+  1
+    }
+
 
     return (
       <div style={dividerStyle}>

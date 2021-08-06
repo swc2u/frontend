@@ -217,7 +217,8 @@ let paths
               transactionId:paymentInfo.transactionNumber,
               bankName:paymentInfo.bankName,
               paymentAmount:paymentInfo.amount,
-              paymentMode:paymentInfo.paymentMode
+              paymentMode:paymentInfo.paymentMode,
+              transactionDate:convertDateToEpoch(paymentInfo.transactiondate)
             }
           }
           ]
@@ -249,8 +250,8 @@ let paths
                transactionId:paymentInfo.transactionNumber,
                bankName:paymentInfo.bankName,
                paymentAmount:paymentInfo.amount,
-               paymentMode:paymentInfo.paymentMode
-            
+               paymentMode:paymentInfo.paymentMode,
+               transactionDate:convertDateToEpoch(paymentInfo.transactiondate)
            }
            ]
            try {

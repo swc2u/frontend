@@ -214,6 +214,7 @@ export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
 };
 
 export const addYears = (dateString, years) => {
+  if(!!dateString){
   try {
     const date = new Date(Number(dateString))
     const fullYear = date.getFullYear();
@@ -222,6 +223,7 @@ export const addYears = (dateString, years) => {
   } catch (error) {
     return dateString
   }
+}
 }
 
 export const convertDateTimeToEpoch = dateTimeString => {
@@ -426,6 +428,7 @@ export const downloadAcknowledgementForm = (Owners, feeEstimate, status, pdfkey,
 
 export const downloadAcknowledgementFormForCitizen = (Owners, feeEstimate, type, pdfkey, mode = "download") => {
   let queryStr = []
+  let transactionNumber
   switch (type) {
     case 'PERMISSIONTOMORTGAGE':
       queryStr = [{
@@ -473,20 +476,32 @@ export const downloadAcknowledgementFormForCitizen = (Owners, feeEstimate, type,
 
   switch (type) {
     case 'OWNERSHIPTRANSFERRP':
-      ownerInfo = {
-        ...ownerInfo,
-        ownerDetails: {
-          ...Owners[0].ownerDetails,
-          ownershipTransferDocuments: myDocuments
+        transactionNumber = ownerInfo.property.transitNumber.split('-')[1] ? ownerInfo.property.transitNumber.split('-')[1] :
+        ownerInfo.property.transitNumber.split('-')[0]
+        ownerInfo = {
+          ...ownerInfo,
+          property:{
+            ...ownerInfo.property,
+            transitNumber:transactionNumber
+          },
+          ownerDetails: {
+            ...Owners[0].ownerDetails,
+            ownershipTransferDocuments: myDocuments
+          }
         }
-      }
       break;
     case 'DUPLICATECOPYOFALLOTMENTLETTERRP':
     case 'PERMISSIONTOMORTGAGE':
-      ownerInfo = {
-        ...ownerInfo,
-        applicationDocuments: myDocuments
-      }
+        transactionNumber = ownerInfo.property.transitNumber.split('-')[1] ? ownerInfo.property.transitNumber.split('-')[1] :
+        ownerInfo.property.transitNumber.split('-')[0]
+        ownerInfo = {
+          ...ownerInfo,
+          property:{
+            ...ownerInfo.property,
+            transitNumber:transactionNumber
+          },
+          applicationDocuments: myDocuments
+        }
       break;
     default:
       break;
@@ -616,7 +631,7 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
           
           }
         }
-        httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
+        httpRequest("post", "/rp-services/pdf/_create_dc", DOWNLOADRECEIPT.GET.ACTION, queryStr, {
             DuplicateCopyApplications: [ownersData]
           }, {
             'Accept': 'application/json'
@@ -624,11 +639,9 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
             responseType: 'arraybuffer'
           })
           .then(res => {
-            res.filestoreIds[0]
-            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-              res.filestoreIds.map(fileStoreId => {
-                downloadReceiptFromFilestoreID(fileStoreId, mode)
-              })
+            res[0].fileStoreId
+            if (res && res[0].fileStoreId && res.length > 0) {
+                downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
             } else {
               console.log("Error In Acknowledgement form Download");
             }
@@ -646,7 +659,7 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
             
             }
           }
-        httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
+        httpRequest("post", "/rp-services/pdf/_create_ot", DOWNLOADRECEIPT.GET.ACTION, queryStr, {
             Owners: [ownersData]
           }, {
             'Accept': 'application/json'
@@ -654,11 +667,9 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
             responseType: 'arraybuffer'
           })
           .then(res => {
-            res.filestoreIds[0]
-            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-              res.filestoreIds.map(fileStoreId => {
-                downloadReceiptFromFilestoreID(fileStoreId, mode)
-              })
+            res[0].fileStoreId
+            if (res && res[0].fileStoreId && res.length > 0) {
+                downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
             } else {
               console.log("Error In Acknowledgement form Download");
             }
@@ -678,7 +689,7 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
               }
             }
           }
-        httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
+        httpRequest("post", "/rp-services/pdf/_create_allotment", DOWNLOADRECEIPT.GET.ACTION, queryStr, {
             Properties: [ownersData]
           }, {
             'Accept': 'application/json'
@@ -686,11 +697,9 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
             responseType: 'arraybuffer'
           })
           .then(res => {
-            res.filestoreIds[0]
-            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-              res.filestoreIds.map(fileStoreId => {
-                downloadReceiptFromFilestoreID(fileStoreId, mode)
-              })
+            res[0].fileStoreId
+            if (res && res[0].fileStoreId && res.length > 0) {
+                downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
             } else {
               console.log("Error In Acknowledgement form Download");
             }
@@ -707,7 +716,7 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
            
             }
           }
-          httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
+          httpRequest("post", "/rp-services/pdf/_create_mg", DOWNLOADRECEIPT.GET.ACTION, queryStr, {
             MortgageApplications: [ownersData]
           }, {
             'Accept': 'application/json'
@@ -715,11 +724,11 @@ export const downloadCertificateForm = (Owners, data, applicationType,tenantId, 
             responseType: 'arraybuffer'
           })
           .then(res => {
-            res.filestoreIds[0]
-            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-              res.filestoreIds.map(fileStoreId => {
-                downloadReceiptFromFilestoreID(fileStoreId, mode)
-              })
+            res[0].fileStoreId
+            if (res && res[0].fileStoreId && res.length > 0) {
+              //res.filestoreIds.map(fileStoreId => {
+                downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
+              //})
             } else {
               console.log("Error In Acknowledgement form Download");
             }
@@ -761,7 +770,7 @@ export const downloadNoticeForm = (notice , mode="download") => {
   }
 const DOWNLOADRECEIPT = {
   GET: {
-    URL: "/pdf-service/v1/_create",
+    URL: "/rp-services/pdf/_create_notice",
     ACTION: "_get",
   },
 };
@@ -777,18 +786,18 @@ notice = [{
 }]
 try {
       httpRequest("post", DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, {
-          notices:notice
+        NoticeApplications:notice
         }, {
           'Accept': 'application/json'
         }, {
           responseType: 'arraybuffer'
         })
         .then(res => {
-          res.filestoreIds[0]
-          if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-            res.filestoreIds.map(fileStoreId => {
-              downloadReceiptFromFilestoreID(fileStoreId, mode)
-            })
+          res[0].fileStoreId
+          if (res && res[0].fileStoreId && res.length > 0) {
+            //res.filestoreIds.map(fileStoreId => {
+              downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
+           // })
           } else {
             console.log("Error In Acknowledgement form Download");
           }
@@ -810,7 +819,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
   };
   const DOWNLOADRECEIPT= {
     GET: {
-      URL: "/pdf-service/v1/_create",
+      URL: "/rp-services/pdf/_create_payment_receipt",
       ACTION: "_get",
     },
   };
@@ -834,7 +843,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
       if(type != 'rent-payment'){
         Payments = payloadReceiptDetails.Payments;
         let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
-
+       
         let {
           billAccountDetails
         } = Payments[0].paymentDetails[0].bill.billDetails[0];
@@ -859,16 +868,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
           }]
         }]
   
-        if(time){
-          time = moment(new Date(time)).format("h:mm:ss a")
-        }
-        Payments = [{
-          ...Payments[0],paymentDetails:[{
-            ...Payments[0].paymentDetails[0],auditDetails:{
-              ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
-            }
-          }]
-        }]
+
         
         const roleExists = ifUserRoleExists("CITIZEN");
          if(roleExists && type==="rent-payment"){
@@ -891,11 +891,11 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
             responseType: 'arraybuffer'
           })
           .then(res => {
-            res.filestoreIds[0]
-            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-              res.filestoreIds.map(fileStoreId => {
-                downloadReceiptFromFilestoreID(fileStoreId, mode)
-              })
+            res[0].fileStoreId
+            if (res && res[0].fileStoreId && res.length > 0) {
+             
+                downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
+            
             } else {
               console.log("Error In Receipt Download");
             }
@@ -913,7 +913,6 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
         httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, query).then((response) => {
           Payments = response.Payments;
           let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
-
           let {
             billAccountDetails
           } = Payments[0].paymentDetails[0].bill.billDetails[0];
@@ -938,16 +937,7 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
             }]
           }]
     
-          if(time){
-            time = moment(new Date(time)).format("h:mm:ss a")
-          }
-          Payments = [{
-            ...Payments[0],paymentDetails:[{
-              ...Payments[0].paymentDetails[0],auditDetails:{
-                ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
-              }
-            }]
-          }]
+        
           
           const roleExists = ifUserRoleExists("CITIZEN");
            if(roleExists && type==="rent-payment"){
@@ -986,11 +976,11 @@ export const download = async (receiptQueryString, Properties, data, generatedBy
               responseType: 'arraybuffer'
             })
             .then(res => {
-              res.filestoreIds[0]
-              if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-                res.filestoreIds.map(fileStoreId => {
-                  downloadReceiptFromFilestoreID(fileStoreId, mode)
-                })
+              res[0].fileStoreId
+              if (res && res[0].fileStoreId && res.length > 0) {
+               
+                  downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
+              
               } else {
                 console.log("Error In Receipt Download");
               }

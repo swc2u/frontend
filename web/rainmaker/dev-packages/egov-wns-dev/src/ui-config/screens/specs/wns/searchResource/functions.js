@@ -1,22 +1,26 @@
-import { handleScreenConfigurationFieldChange as handleField, toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { handleScreenConfigurationFieldChange as handleField, toggleSnackbar,toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getUserInfo, getTenantIdCommon } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
-import { fetchBill, findAndReplace, getSearchResults, getSearchResultsForSewerage, getWorkFlowData,getBillingEstimation } from "../../../../../ui-utils/commons";
-import { validateFields } from "../../utils";
+import { fetchBill, findAndReplace, getSearchResultsP, getSearchResultsForSewerage, getWorkFlowData,getBillingEstimation } from "../../../../../ui-utils/commons";
+import { validateFields,getTextToLocalMapping,getTextToLocalMappingCode,GetMdmsNameBycode } from "../../utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { convertDateToEpoch, convertEpochToDate, resetFieldsForApplication, resetFieldsForConnection } from "../../utils/index";
 import { httpRequest } from "../../../../../ui-utils";
-import { getTextToLocalMapping } from "./searchApplicationResults";
+
+//import { getTextToLocalMapping } from "./searchApplicationResults";
+//import { validateFields, getTextToLocalMapping } from "../../utils";
 import { set } from "lodash";
 export const searchApiCall = async (state, dispatch) => {
-  showHideApplicationTable(false, dispatch);
-  showHideConnectionTable(false, dispatch);
+
+ 
   let getCurrentTab = get(state.screenConfiguration.preparedFinalObject, "currentTab");
   let currentSearchTab = getCurrentTab === undefined ? "SEARCH_CONNECTION" : getCurrentTab;
   if (currentSearchTab === "SEARCH_CONNECTION") {
+    showHideConnectionTable(false, dispatch);
     resetFieldsForApplication(state, dispatch);
     await renderSearchConnectionTable(state, dispatch);
   } else {
+    showHideApplicationTable(false, dispatch);
     resetFieldsForConnection(state, dispatch);
     await renderSearchApplicationTable(state, dispatch);
   }
@@ -50,34 +54,47 @@ export const deactivateConnection = async (state, dispatch) => {
    //INDIVIDUAL.SINGLEOWNER
    set(queryObjectForUpdate, "connectionHolders[0].ownerType", "INDIVIDUAL.SINGLEOWNER");
    set(queryObjectForUpdate, "status", "Inactive");
-  //  if(queryObjectForUpdate.connectionExecutionDate !== null )
-  //  set(queryObjectForUpdate, "connectionExecutionDate", queryObjectForUpdate.connectionExecutionDate);
-  //  else{
-  //   set(queryObjectForUpdate, "connectionExecutionDate", 0);
-  //  }
-   const payloadbillingPeriod = await httpRequest("post", "/ws-services/wc/_deactivateConnection", "", [], { WaterConnection: queryObjectForUpdate });
-   let errorMessage = {
-    labelName: "Connection deactivate successfully!",
-    labelKey: "WS_DEACTIVATE_SUCCESS"
-  };
-   dispatch(toggleSnackbar(true, errorMessage, "success"));
-      dispatch(
-        handleField(
-          "connection-details",
-          "components.div.children.connectionDetails.children.cardContent.children.button.children.buttonContainer.children.Deactivate",
-          {visible:false}
-        )
-      );
-  set(
-    state.screenConfiguration.screenConfig,
-    "components.div.children.connectionDetails.children.cardContent.children.button.children.buttonContainer.children.Deactivate.visible",
-    false
-  );
-let connectionNumber =getQueryArg(window.location.href, "connectionNumber")
-let tenantId =getQueryArg(window.location.href, "tenantId")
-let service =getQueryArg(window.location.href, "service")
-let connectionType =getQueryArg(window.location.href, "connectionType")
-  window.location.href = `connection-details?connectionNumber=${connectionNumber}&tenantId=${tenantId}&service=${service}&connectionType=${connectionType}&Active=${false}`
+   // set other propert as workflow service did in backend
+   set(queryObjectForUpdate, "applicationStatus", "TEMPORARY_CONNECTION_CLOSED");
+   //set(queryObjectForUpdate, "activityType", "REACTIVATE_CONNECTION");
+   let inWorkflow = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].inWorkflow",false);
+   //inWorkflow = true;
+   if(inWorkflow === true)
+   {
+    const errorMessageN = {
+      labelName: "Duplicate name Added",
+      labelKey:   `WS_DEACTIVATION_VALIDATIONM_MESSAGE`
+      //labelKey:   LocalizationCodeValueN+' '+DuplicatItem[0].duplicates
+    };
+    dispatch(toggleSnackbar(true, errorMessageN, "warning"));
+   }
+   else{
+    const payloadbillingPeriod = await httpRequest("post", "/ws-services/wc/_deactivateConnection", "", [], { WaterConnection: queryObjectForUpdate });
+    let errorMessage = {
+     labelName: "Connection deactivate successfully!",
+     labelKey: "WS_DEACTIVATE_SUCCESS"
+   };
+    dispatch(toggleSnackbar(true, errorMessage, "success"));
+       dispatch(
+         handleField(
+           "connection-details",
+           "components.div.children.connectionDetails.children.cardContent.children.button.children.buttonContainer.children.Deactivate",
+           {visible:false}
+         )
+       );
+   set(
+     state.screenConfiguration.screenConfig,
+     "components.div.children.connectionDetails.children.cardContent.children.button.children.buttonContainer.children.Deactivate.visible",
+     false
+   );
+ let connectionNumber =getQueryArg(window.location.href, "connectionNumber")
+ let tenantId =getQueryArg(window.location.href, "tenantId")
+ let service =getQueryArg(window.location.href, "service")
+ let connectionType =getQueryArg(window.location.href, "connectionType")
+   window.location.href = `connection-details?connectionNumber=${connectionNumber}&tenantId=${tenantId}&service=${service}&connectionType=${connectionType}&Active=${false}`
+
+   }
+   
   }
   catch(error)
         {
@@ -88,6 +105,7 @@ let connectionType =getQueryArg(window.location.href, "connectionType")
               "error"
             )
           );
+          
         }
 }
 const renderSearchConnectionTable = async (state, dispatch) => {
@@ -149,7 +167,7 @@ const renderSearchConnectionTable = async (state, dispatch) => {
         payloadbillingPeriod = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
         console.log(payloadbillingPeriod);
       } catch (err) { console.log(err) }
-      let getSearchResult = getSearchResults(queryObject)
+      let getSearchResult = getSearchResultsP(queryObject)
       let getSearchResultForSewerage = getSearchResultsForSewerage(queryObject, dispatch)
       let finalArray = [];
       let searchWaterConnectionResults, searcSewerageConnectionResults;
@@ -158,6 +176,8 @@ const renderSearchConnectionTable = async (state, dispatch) => {
       const waterConnections = searchWaterConnectionResults ? searchWaterConnectionResults.WaterConnection.map(e => { e.service = 'WATER'; return e }) : []
       const sewerageConnections = searcSewerageConnectionResults ? searcSewerageConnectionResults.SewerageConnections.map(e => { e.service = 'SEWERAGE'; return e }) : [];
       let combinedSearchResults = searchWaterConnectionResults || searcSewerageConnectionResults ? sewerageConnections.concat(waterConnections) : []
+      //start loader
+      //dispatch(toggleSpinner());
       for (let i = 0; i < combinedSearchResults.length; i++) {
         let element = combinedSearchResults[i];
         if (element.connectionNo !== "NA" && element.connectionNo !== null) {
@@ -242,9 +262,10 @@ const renderSearchConnectionTable = async (state, dispatch) => {
                 service: element.service,
                 connectionNo: element.connectionNo,
                 billGenerationId:bill.billGenerationId,
-                name: (element.property) ? element.property.owners[0].name : '',
+               // name: (element.property) ? element.property.owners[0].name : '',
                 //status: element.status,
-                status: bill.status,                
+               // status: bill.status, 
+                status: element.waterApplication.applicationStatus,               
                 address: handleAddress(element),
                 connectionType: element.connectionType,
                 tenantId: element.tenantId,
@@ -260,8 +281,9 @@ const renderSearchConnectionTable = async (state, dispatch) => {
                 service: element.service,
                 connectionNo: element.connectionNo,
                 billGenerationId:0,
-                name: (element.property) ? element.property.owners[0].name : '',
-                status: "NA",//element.status,
+               // name: (element.property) ? element.property.owners[0].name : '',
+               // status: "NA",//element.status,
+               status: element.waterApplication.applicationStatus,
                 address: handleAddress(element),
                 connectionType: element.connectionType,
                 tenantId: element.tenantId,
@@ -282,8 +304,9 @@ const renderSearchConnectionTable = async (state, dispatch) => {
               service: element.service,
               connectionNo: element.connectionNo,
               billGenerationId:0,
-              name: (element.property) ? element.property.owners[0].name : '',
-              status: "NA",              
+             // name: (element.property) ? element.property.owners[0].name : '',
+              status: "NA",  
+              status:element.waterApplication.applicationStatus,            
               address: handleAddress(element),
               connectionType: element.connectionType,
               tenantId: element.tenantId,
@@ -301,6 +324,8 @@ const renderSearchConnectionTable = async (state, dispatch) => {
 
       }
       showConnectionResults(finalArray, dispatch)
+      // end loader
+      //dispatch(toggleSpinner());
     } catch (err) { console.log(err) }
   }
 }
@@ -347,11 +372,11 @@ const renderSearchApplicationTable = async (state, dispatch) => {
     try {
       let getSearchResult, getSearchResultForSewerage;
       if (searchScreenObject.applicationType === "New Water connection") {
-        getSearchResult = getSearchResults(queryObject)
+        getSearchResult = getSearchResultsP(queryObject)
       } else if (searchScreenObject.applicationType === "New Sewerage Connection") {
         getSearchResultForSewerage = getSearchResultsForSewerage(queryObject, dispatch)
       } else {
-        getSearchResult = getSearchResults(queryObject),
+        getSearchResult = getSearchResultsP(queryObject),
           getSearchResultForSewerage = getSearchResultsForSewerage(queryObject, dispatch)
       }
       let finalArray = [];
@@ -363,77 +388,147 @@ const renderSearchApplicationTable = async (state, dispatch) => {
       let combinedSearchResults = searchWaterConnectionResults || searcSewerageConnectionResults ? sewerageConnections.concat(waterConnections) : []
 
       let appNo = "";
-      let combinedWFSearchResults = [];
-      for (let i = 0; i < combinedSearchResults.length; i++) {
-        let element = findAndReplace(combinedSearchResults[i], null, "NA");
-        if (element.applicationNo !== "NA" && element.applicationNo !== undefined) {
-          appNo = appNo + element.applicationNo + ",";
-        }
-        if (i % 50 === 0 || i === (combinedSearchResults.length - 1)) {
-          //We are trying to fetch 50 WF objects at a time
-          appNo = appNo.substring(0, appNo.length - 1);
-          const queryObj = [
-            { key: "businessIds", value: appNo },
-            { key: "history", value: true },
-            { key: "tenantId", value: getTenantIdCommon() }
-          ];
-          let wfResponse = await getWorkFlowData(queryObj);
-          if (wfResponse !== null && wfResponse.ProcessInstances !== null) {
-            combinedWFSearchResults = combinedWFSearchResults.concat(wfResponse.ProcessInstances);
-          }
-          appNo = "";
-        }
-      }
+      // let combinedWFSearchResults = [];
+      // for (let i = 0; i < combinedSearchResults.length; i++) {
+      //   let element = findAndReplace(combinedSearchResults[i], null, "NA");
+      //   if (element.applicationNo !== "NA" && element.applicationNo !== undefined) {
+      //     appNo = appNo + element.applicationNo + ",";
+      //   }
+      //   if (i % 50 === 0 || i === (combinedSearchResults.length - 1)) {
+      //     //We are trying to fetch 50 WF objects at a time
+      //     appNo = appNo.substring(0, appNo.length - 1);
+      //     const queryObj = [
+      //       { key: "businessIds", value: appNo },
+      //       { key: "history", value: true },
+      //       { key: "tenantId", value: getTenantIdCommon() }
+      //     ];
+      //     // let wfResponse = await getWorkFlowData(queryObj);
+      //     // if (wfResponse !== null && wfResponse.ProcessInstances !== null) {
+      //     //   combinedWFSearchResults = combinedWFSearchResults.concat(wfResponse.ProcessInstances);
+      //     // }
+      //     appNo = "";
+      //   }
+      // }
       /*const queryObj = [
         { key: "businessIds", value: appNo },
         { key: "history", value: true },
         { key: "tenantId", value: getTenantIdCommon() }
       ];
       let Response = await getWorkFlowData(queryObj);*/
+      //dispatch(toggleSpinner());
+      let stime = new Date() 
       for (let i = 0; i < combinedSearchResults.length; i++) {
         let element = findAndReplace(combinedSearchResults[i], null, "NA");
         let appStatus;
+        let paidamount_ = 0;
+        //let Locality = (element.property && element.property !== "NA" && element.property.address) ? element.property.address.locality.code : ""
+        let Locality = element.waterProperty.sectorNo
         if (element.applicationNo !== "NA" && element.applicationNo !== undefined) {
-          appStatus = combinedWFSearchResults.filter(item => item.businessId.includes(element.applicationNo))[0]
-          if (appStatus !== undefined && appStatus.state !== undefined) {
-            appStatus = appStatus.state.applicationStatus;
-          } else {
-            appStatus = "NA";
+          //appStatus = combinedWFSearchResults.filter(item => item.businessId.includes(element.applicationNo))[0]
+         // appStatus = combinedWFSearchResults.filter(item => item.businessId === element.applicationNo)
+          // appStatus = combinedWFSearchResults.filter(item => item.businessId === element.applicationNo)[0]
+          // if (appStatus !== undefined && appStatus.state !== undefined) {
+          //   appStatus = appStatus.state.applicationStatus;
+          // } else {
+          //   appStatus = "NA";
+          // }
+          if(element.applicationNo.includes("WS"))
+          {
+            appStatus = element.waterApplicationList[0].applicationStatus
+            paidamount_ = (element.waterApplication.totalAmountPaid === null || element.waterApplication.totalAmountPaid ==='NA')?0:element.waterApplication.totalAmountPaid
+            Locality =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData1.ws-services-masters.wssectorList",Locality) 
+           // Locality = Locality;
           }
-          if (element.property && element.property.owners &&
-            element.property.owners !== "NA" &&
-            element.property.owners !== null &&
-            element.property.owners.length > 1) {
-            let ownerName = "";
-            element.property.owners.forEach(ele => { ownerName = ownerName + ", " + ele.name })
+          else
+          {
+            appStatus = element.applicationStatus
+            paidamount_ = (element.totalAmountPaid === null|| element.totalAmountPaid === "NA")?0:element.totalAmountPaid
+           // Locality = Locality;
+            Locality =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData1.ws-services-masters.swSectorList",Locality) 
+          }
+          
+          // if (element.property && element.property.owners &&
+          //   element.property.owners !== "NA" &&
+          //   element.property.owners !== null &&
+          //   element.property.owners.length > 1) {
+          //   let ownerName = "";
+          //   element.property.owners.forEach(ele => { ownerName = ownerName + ", " + ele.name })
 
+          //   finalArray.push({
+          //     connectionNo: element.connectionNo,
+          //     applicationNo: element.applicationNo,
+          //     name: ownerName.slice(2),
+          //    //name: (element.connectionHolders) ? element.connectionHolders[0].name : '',
+          //     applicationStatus: appStatus,
+          //     address: handleAddress(element),
+          //     service: element.service,
+          //     connectionType: element.connectionType,
+          //     tenantId: element.tenantId,
+          //     ActionType:element.activityType,
+          //     Sector: Locality,
+          //     division:element.div,
+          //     subdivision:element.subdiv,              
+          //     //plotnumber:(element.property && element.property !== "NA" && element.property.address) ? element.property.address.doorNo : "",
+          //     plotnumber: (element.waterProperty && element.waterProperty !== "NA")?element.waterProperty.plotNo:'NA',
+          //     paidamount:paidamount_,
+          //   })
+          // } 
+          if(element.applicationNo.includes("WS"))
+          {
+            //for (let i = 0; i < element.waterApplicationList.length; i++) {
+              let waterApplicationList = get(element,'waterApplicationList',[])
+             // waterApplicationList = waterApplicationList.filter(x=>x.applicationNo !== element.applicationNo)
+              for (let j = 0; j < waterApplicationList.length; j++) {
+                finalArray.push({
+                  connectionNo: element.connectionNo,
+                  applicationNo: waterApplicationList[j].applicationNo,
+                  //name: (element.property && element.property !== "NA" && element.property.owners) ? element.property.owners[0].name : "",
+                 // name: (element.connectionHolders) ? element.connectionHolders[0].name : '',
+                  applicationStatus: waterApplicationList[j].applicationStatus,
+                  address: handleAddress(element),
+                  service: element.service,
+                  connectionType: element.connectionType,
+                  tenantId: element.tenantId,
+                  ActionType:waterApplicationList[j].activityType,
+                  Sector: Locality,
+                  division:element.div,
+                  subdivision:element.subdiv,              
+                  //plotnumber:(element.property && element.property !== "NA" && element.property.address) ? element.property.address.doorNo : "",
+                  plotnumber: (element.waterProperty && element.waterProperty !== "NA")?element.waterProperty.plotNo:'NA',
+                  paidamount:paidamount_,
+                })
+
+              }
+
+            //}
+          }
+          
+          else {
             finalArray.push({
               connectionNo: element.connectionNo,
               applicationNo: element.applicationNo,
-              name: ownerName.slice(2),
+              //name: (element.property && element.property !== "NA" && element.property.owners) ? element.property.owners[0].name : "",
+             // name: (element.connectionHolders) ? element.connectionHolders[0].name : '',
               applicationStatus: appStatus,
               address: handleAddress(element),
               service: element.service,
               connectionType: element.connectionType,
               tenantId: element.tenantId,
               ActionType:element.activityType,
-            })
-          } else {
-            finalArray.push({
-              connectionNo: element.connectionNo,
-              applicationNo: element.applicationNo,
-              name: (element.property && element.property !== "NA" && element.property.owners) ? element.property.owners[0].name : "",
-              applicationStatus: appStatus,
-              address: handleAddress(element),
-              service: element.service,
-              connectionType: element.connectionType,
-              tenantId: element.tenantId,
-              ActionType:element.activityType,
+              Sector: Locality,
+              division:element.div,
+              subdivision:element.subdiv,              
+             // plotnumber:(element.property && element.property !== "NA" && element.property.address) ? element.property.address.doorNo : "",
+             plotnumber: (element.waterProperty && element.waterProperty !== "NA")?element.waterProperty.plotNo:'NA',
+              paidamount:paidamount_,
             })
           }
         }
       }
       showApplicationResults(finalArray, dispatch)
+     let endtime = new Date()// console.log(new Date())
+     console.log(`${endtime}_${stime}`)
+      //dispatch(toggleSpinner());
     } catch (err) { console.log(err) }
   }
 }
@@ -469,19 +564,22 @@ const showHideApplicationTable = (booleanHideOrShow, dispatch) => {
 };
 
 const showConnectionResults = (connections, dispatch) => {
-  let data = connections.map(item => ({
-    [getTextToLocalMapping("service")]: item.service,
-    [getTextToLocalMapping("Consumer No")]: item.connectionNo,
-    [getTextToLocalMapping("Owner Name")]: item.name,
-    [getTextToLocalMapping("Status")]: item.status,
-    [getTextToLocalMapping("Due")]: item.due,
-    [getTextToLocalMapping("Address")]: item.address,
-    [getTextToLocalMapping("Due Date")]: (item.dueDate !== undefined && item.dueDate !== "NA") ? convertEpochToDate(item.dueDate) : item.dueDate,
-    [getTextToLocalMapping("tenantId")]: item.tenantId,
-    [getTextToLocalMapping("connectionType")]: item.connectionType,
-    [getTextToLocalMapping("billGenerationId")]: item.billGenerationId,
-    [getTextToLocalMapping("ConStatus")]: item.ConStatus
-  }));
+  let data = connections.map(item => {
+    return{
+      [getTextToLocalMappingCode("service")]: item.service,
+      [getTextToLocalMappingCode("Consumer No")]: item.connectionNo,
+      //[getTextToLocalMappingCode("Owner Name")]: item.name,
+      [getTextToLocalMappingCode("Status")]: item.status.split("_").join(" "),
+      [getTextToLocalMappingCode("Due")]: item.due,
+      [getTextToLocalMappingCode("Address")]: item.address,
+      [getTextToLocalMappingCode("Due Date")]: (item.dueDate !== undefined && item.dueDate !== "NA") ? convertEpochToDate(item.dueDate) : item.dueDate,
+      [getTextToLocalMappingCode("tenantId")]: item.tenantId,
+      [getTextToLocalMappingCode("connectionType")]: item.connectionType,
+      [getTextToLocalMappingCode("billGenerationId")]: item.billGenerationId,
+      [getTextToLocalMappingCode("ConStatus")]: item.ConStatus
+    }
+
+  });
   dispatch(handleField("search", "components.div.children.searchResults", "props.data", data));
   dispatch(handleField("search", "components.div.children.searchResults", "props.rows",
     connections.length
@@ -490,18 +588,38 @@ const showConnectionResults = (connections, dispatch) => {
 }
 
 const showApplicationResults = (connections, dispatch) => {
-  let data = connections.map(item => ({
-    [getTextToLocalMapping("Consumer No")]: item.connectionNo,
-    [getTextToLocalMapping("Application No")]: item.applicationNo,
-    [getTextToLocalMapping("Application Type")]: item.service === "WATER" ? "New Water Connection" : "New Sewerage Connection",
-    [getTextToLocalMapping("Owner Name")]: item.name,
-    [getTextToLocalMapping("Application Status")]: item.applicationStatus.split("_").join(" "),
-    [getTextToLocalMapping("Address")]: item.address,
-    [getTextToLocalMapping("tenantId")]: item.tenantId,
-    [getTextToLocalMapping("service")]: item.service,
-    [getTextToLocalMapping("connectionType")]: item.connectionType,
-    [getTextToLocalMapping("ActionType")]: item.ActionType,
-  }));
+  let data = connections.map(item => {
+    return{
+      [getTextToLocalMappingCode("Consumer No")]: item.connectionNo,
+    [getTextToLocalMappingCode("Application No")]: item.applicationNo,
+   // [getTextToLocalMappingCode("Application Type")]: item.service === "WATER" ? "New Water Connection" : "New Sewerage Connection",
+    [getTextToLocalMappingCode("Application Type")]: item.ActionType.split("_").join(" "),
+   // [getTextToLocalMappingCode("Owner Name")]: item.name,
+    [getTextToLocalMappingCode("plotnumber")]: item.plotnumber,
+    [getTextToLocalMappingCode("Application Status")]: item.applicationStatus.split("_").join(" "),
+    [getTextToLocalMappingCode("Address")]: item.address,
+    [getTextToLocalMappingCode("tenantId")]: item.tenantId,
+    [getTextToLocalMappingCode("service")]: item.service,
+    [getTextToLocalMappingCode("connectionType")]: item.connectionType,
+    [getTextToLocalMappingCode("ActionType")]: item.ActionType,
+    [getTextToLocalMappingCode("Sector")]: item.Sector,
+    [getTextToLocalMappingCode("division")]: item.division,
+    [getTextToLocalMappingCode("subdivision")]: item.subdivision,
+    // [getTextToLocalMappingCode("plotnumber")]: item.plotnumber,
+    [getTextToLocalMappingCode("paidamount")]: item.paidamount,
+
+    }
+    // [getTextToLocalMapping("Consumer No")]: item.connectionNo,
+    // [getTextToLocalMapping("Application No")]: item.applicationNo,
+    // [getTextToLocalMapping("Application Type")]: item.service === "WATER" ? "New Water Connection" : "New Sewerage Connection",
+    // [getTextToLocalMapping("Owner Name")]: item.name,
+    // [getTextToLocalMapping("Application Status")]: item.applicationStatus.split("_").join(" "),
+    // [getTextToLocalMapping("Address")]: item.address,
+    // [getTextToLocalMapping("tenantId")]: item.tenantId,
+    // [getTextToLocalMapping("service")]: item.service,
+    // [getTextToLocalMapping("connectionType")]: item.connectionType,
+    // [getTextToLocalMapping("ActionType")]: item.ActionType,
+  });
   dispatch(handleField("search", "components.div.children.searchApplicationResults", "props.data", data));
   dispatch(handleField("search", "components.div.children.searchApplicationResults", "props.rows",
     connections.length

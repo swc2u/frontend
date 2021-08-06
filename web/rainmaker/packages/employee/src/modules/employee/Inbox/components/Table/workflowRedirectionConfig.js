@@ -134,10 +134,35 @@ export const getWFConfig = (module, businessService, taskId) => {
     }
     // new module rediraection for case "RRP_SERVICE ,DOE_SERVICE, DOP_SERVICE" Chnage
     else if (businessService == "RRP_SERVICE" || businessService == "DOE_SERVICE" || businessService == "DOP_SERVICE") {
-      return {
-        INITIATED: "/pms/pmsmap",
-        DEFAULT: "/pms/pmsmap",
-      };
+      // return {
+      //   INITIATED: "/pms/pmsmap",
+      //   DEFAULT: "/pms/pmsmap",
+      // };
+      if(businessService == "DOE_SERVICE")
+      {
+        return {
+          INITIATED: "/pms/doeDetails",
+          DEFAULT: "/pms/doeDetails",
+        };
+
+      }
+      else if(businessService == "DOP_SERVICE")
+      {
+        //doeDetails
+        return {
+          INITIATED: "/pms/dopDetails",
+          DEFAULT: "/pms/dopDetails",
+        };
+      }
+      else if(businessService == "RRP_SERVICE")
+      {
+        //doeDetails
+        return {
+          INITIATED: "/pms/rrpDetails",
+          DEFAULT: "/pms/rrpDetails",
+        };
+      }
+     
     }
   }
   else if (businessService == "PAYMENT WORKFLOW" || businessService == "FINE MASTER APPROVAL" || businessService == "CHALLAN WORKFLOW" || businessService == "AUCTION WORKFLOW") {
@@ -174,10 +199,34 @@ export const getWFConfig = (module, businessService, taskId) => {
   }
   // new module rediraection for case "RRP_SERVICE ,DOE_SERVICE, DOP_SERVICE" Chnage
   else if (businessService == "RRP_SERVICE" || businessService == "DOE_SERVICE" || businessService == "DOP_SERVICE") {
-    return {
-      INITIATED: "/pms/pmsmap",
-      DEFAULT: "/pms/pmsmap",
-    };
+    // return {
+    //   INITIATED: "/pms/pmsmap",
+    //   DEFAULT: "/pms/pmsmap",
+    // };
+    if(businessService == "DOE_SERVICE")
+    {
+      return {
+        INITIATED: "/pms/doeDetails",
+        DEFAULT: "/pms/doeDetails",
+      };
+
+    }
+    else if(businessService == "DOP_SERVICE")
+    {
+      //doeDetails
+      return {
+        INITIATED: "/pms/dopDetails",
+        DEFAULT: "/pms/dopDetails",
+      };
+    }
+    else if(businessService == "RRP_SERVICE")
+    {
+      //doeDetails
+      return {
+        INITIATED: "/pms/rrpDetails",
+        DEFAULT: "/pms/rrpDetails",
+      };
+    }
   }
   else if (businessService == "OSBM")
   {
@@ -222,6 +271,24 @@ else if (businessService == "NLUJM")
     return {
       INITIATED: "/tradelicence/apply",
       DEFAULT: "/tradelicence/search-preview",
+    };
+
+  }
+  else if (businessService == "REGULARWSCONNECTION"
+          || businessService == "TEMPORARY_WSCONNECTION"
+          || businessService == "WS_TEMP_TEMP"
+          || businessService == "WS_TEMP_REGULAR"
+          || businessService == "WS_DISCONNECTION"
+          || businessService == "WS_TEMP_DISCONNECTION"
+          || businessService == "WS_RENAME"
+          || businessService == "WS_METER_UPDATE"
+          || businessService == "WS_CONVERSION"
+          || businessService == "WS_REACTIVATE"
+          || businessService == "SW_SEWERAGE"   
+          || businessService == "WS_TUBEWELL") { 
+    return {
+      INITIATED: "/wns/search-preview",
+      DEFAULT: "/wns/search-preview",
     };
 
   }

@@ -176,7 +176,7 @@ const routes = [
     },
   },
   ...pgrRoutes,
-  ...bookingRoutes,
+ ...bookingRoutes,
   ...ptRoutes,
   ...frameworkScreens,
   ...externalRoutes,

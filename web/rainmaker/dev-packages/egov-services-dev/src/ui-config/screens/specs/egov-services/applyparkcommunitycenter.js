@@ -394,18 +394,18 @@ const screenConfig = {
         const tenantId = getQueryArg(window.location.href, "tenantId");
         const step = getQueryArg(window.location.href, "step");
 
-        dispatch(
-            prepareFinalObject(
-                "Booking.bkApplicantName",
-                JSON.parse(getUserInfo()).name
-            )
-        ),
-            dispatch(
-                prepareFinalObject(
-                    "Booking.bkMobileNumber",
-                    JSON.parse(getUserInfo()).mobileNumber
-                )
-            );
+        // dispatch(
+        //     prepareFinalObject(
+        //         "Booking.bkApplicantName",
+        //         JSON.parse(getUserInfo()).name
+        //     )
+        // ),
+        //     dispatch(
+        //         prepareFinalObject(
+        //             "Booking.bkMobileNumber",
+        //             JSON.parse(getUserInfo()).mobileNumber
+        //         )
+        //     );
 
         //Set Module Name
         set(state, "screenConfiguration.moduleName", "services");
@@ -515,6 +515,18 @@ const screenConfig = {
             dispatch(
                 prepareFinalObject(
                     "Booking.bkToDate",
+                    convertDateInYMD(availabilityCheckData.bkToDate)
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "displayBkFromDate",
+                    convertDateInYMD(availabilityCheckData.bkFromDate)
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "displayBkToDate",
                     convertDateInYMD(availabilityCheckData.bkToDate)
                 )
             );
@@ -631,7 +643,21 @@ const screenConfig = {
                 );
             }
         }
-
+        window.setTimeout(()=>{
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkApplicantName",
+                    JSON.parse(getUserInfo()).name
+                )
+            ),
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkMobileNumber",
+                    JSON.parse(getUserInfo()).mobileNumber
+                )
+            );
+        },200)
+      
         return action;
     },
     components: {

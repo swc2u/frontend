@@ -4,7 +4,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { getCommonApplyFooter,validateFields,getLocalizationCodeValue } from "../../utils";
+import { getCommonApplyFooter,validateFields,getLocalizationCodeValue,GetMdmsNameBycode, getEpochForDate,convertDateToEpoch } from "../../utils";
 import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import commonConfig from "config/common.js";
@@ -12,6 +12,7 @@ import get from "lodash/get";
 import set from 'lodash/set';
 import { propertySearchApiCall } from './functions';
 import { httpRequest } from "../../../../../ui-utils";
+
 import {
   prepareDocumentsUploadData,
   applyForWaterOrSewerage,
@@ -31,16 +32,28 @@ import {
   isModifyMode,
   isModifyModeAction
 } from "../../../../../ui-utils/commons";
-import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField ,toggleSpinner} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getTenantIdCommon } from "egov-ui-kit/utils/localStorageUtils";
 
 const setReviewPageRoute = (state, dispatch) => {
-  const service = getQueryArg(window.location.href, "service");
+  let service = getQueryArg(window.location.href, "service");
   let tenantId = getTenantIdCommon() === null?commonConfig.tenantId:getTenantIdCommon();
+  tenantId = getQueryArg(window.location.href, "tenantId");
   const applicationNumber = get(state, "screenConfiguration.preparedFinalObject.applyScreen.applicationNo");
   const appendUrl =
     process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+    if(applicationNumber.includes("WS"))
+    {
+      service ='WATER'
+
+    }
+    else if(applicationNumber.includes("SW"))
+    {
+      service ='SEWERAGE'
+
+    }
   const reviewUrl =  service ?
+  
   `${appendUrl}/wns/search-preview?applicationNumber=${applicationNumber}&tenantId=${tenantId}&edited="true"&service=${service}`
   :`${appendUrl}/wns/search-preview?applicationNumber=${applicationNumber}&tenantId=${tenantId}&edited="true"`;
   dispatch(setRoute(reviewUrl));
@@ -119,6 +132,7 @@ if(validateDocumentField)
     let ValidNoc = false
     let documentsFormat_ = documentsFormat;
     let documentsContract_ = documentsContract
+    documentsFormat_ = documentsFormat_.filter(x=>x.isDocumentRequired === true)
     documentsContract_ = documentsContract_.filter(x=>x.cards[0].required)
    // documentsFormat_ = documentsFormat_.filter(x=>x.documents === undefined)
     if(documentsContract_.length!=documentsFormat_.length)
@@ -170,7 +184,83 @@ if(validateDocumentField)
   return validateDocumentField;
 };
 
+const propertyUpdateCitizen = async (state, dispatch) => {
 
+  let applicationStatus =get(
+    state,
+    "screenConfiguration.preparedFinalObject.applyScreen.applicationStatus"
+  );
+  let connectionNo =get(
+    state,
+    "screenConfiguration.preparedFinalObject.applyScreen.connectionNo"
+  );
+    if((applicationStatus ==='PENDING_FOR_CITIZEN_ACTION' || applicationStatus ==="INITIATED")&&  (connectionNo ===null))
+    {
+
+    let propertyData = get(
+      state,
+      "screenConfiguration.preparedFinalObject.applyScreen.property"
+    );
+    let tenantId = get(
+      state,
+      "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
+    );
+    let doorNo =propertyData.address.doorNo
+    if(doorNo.length ===1)
+    {
+      doorNo =`000${doorNo}` 
+    }
+    else if(doorNo.length ===2)
+    {
+      doorNo =`00${doorNo}` 
+    } 
+    else if(doorNo.length ===3)
+    {
+      doorNo =`0${doorNo}` 
+    } 
+    set(propertyData, "address.doorNo", doorNo.toUpperCase());
+    propertyData.landArea = (propertyData.landArea);
+    propertyData.totalConstructedArea = (propertyData.landArea);
+    propertyData.tenantId = tenantId;
+    //set usage category
+    let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
+    let subusageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+    if(usageCategory!== null)
+    {
+    if(usageCategory.split('.').length ===1)
+    {
+    //st
+    set(propertyData, "usageCategory", subusageCategory);
+
+    }
+  }
+  if(subusageCategory!== null)
+  {
+    if(subusageCategory.split('.').length ===2)
+    {
+    //set 
+    set(propertyData, "usageCategory", subusageCategory);
+    }
+  }
+
+    set(propertyData, "creationReason", "UPDATE");
+    let response_ = await propertyUpdate(state, dispatch,propertyData)
+    if(response_)
+    {
+      if(subusageCategory!== null)
+      {
+        if(subusageCategory.split('.').length ===2)
+        {
+        //set 
+        set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", subusageCategory.split('.')[0]);
+        set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", subusageCategory);
+        }
+      }
+
+    }
+  }
+
+}
 const getMdmsData = async (state, dispatch) => {
   let tenantId = get(
     state.screenConfiguration.preparedFinalObject,
@@ -220,6 +310,7 @@ const callBackForNext = async (state, dispatch) => {
     // if (validatePropertyLocationDetails && validatePropertyDetails && validateForm) {
     //   isFormValid = await appl;
     // }
+    
 
 //set for back and previous action
 let water = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
@@ -260,6 +351,7 @@ if(water || sewerage || tubewell)
           title: `WS_${item.documentType}`,
           link: item.fileUrl && item.fileUrl.split(",")[0],
           linkText: "View",
+          id:item.id,
           name: item.fileName
         };
       });
@@ -307,11 +399,18 @@ if(water || sewerage || tubewell)
           let owners = get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.owners",[])
           if(owners.length === 1)
           {
+            if(process.env.REACT_APP_NAME === "Citizen")
+            {
+              let errorMessage_ = {
+                labelName: "Please add multilple ownner data",
+                labelKey: "WS_FILL_MULTIPLEOWNERS_FIELDS"
+              };
             errorMessage_.labelName="Please add multilple ownner data"
             errorMessage_.labelKey="WS_FILL_MULTIPLEOWNERS_FIELDS"
             
             dispatch(toggleSnackbar(true, errorMessage_, "warning"));
             return false
+            }
 
           }
           else if (owners.length>1)
@@ -338,38 +437,38 @@ if(water || sewerage || tubewell)
               return false;
             }
             }
-            value = "mobileNumber";
-            let DuplicatItemM = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
-            if(DuplicatItemM && DuplicatItemM[0])
-            {
-              if(DuplicatItemM[0].IsDuplicatItem)
-              {
-              const LocalizationCodeValueM = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_MOBILE_FIELDS")
-              const errorMessageM = {
-                labelName: "Duplicate mobile number Added",
-                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
-                labelKey:   LocalizationCodeValueM+' '+DuplicatItemM[0].duplicates
-              };
-              dispatch(toggleSnackbar(true, errorMessageM, "warning"));
-              return false;
-            }
-            }
-            value = "emailId";
-            let DuplicatItemE = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
-            if(DuplicatItemE && DuplicatItemE[0])
-            {
-              if(DuplicatItemE[0].IsDuplicatItem)
-              {
-              const LocalizationCodeValueE = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_EMAIL_FIELDS")
-              const errorMessageE = {
-                labelName: "Duplicate email id Added",
-                //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
-                labelKey:   LocalizationCodeValueE+' '+DuplicatItemE[0].duplicates
-              };
-              dispatch(toggleSnackbar(true, errorMessageE, "warning"));
-              return false;
-            }
-            }
+            // value = "mobileNumber";
+            // let DuplicatItemM = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
+            // if(DuplicatItemM && DuplicatItemM[0])
+            // {
+            //   if(DuplicatItemM[0].IsDuplicatItem)
+            //   {
+            //   const LocalizationCodeValueM = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_MOBILE_FIELDS")
+            //   const errorMessageM = {
+            //     labelName: "Duplicate mobile number Added",
+            //     //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+            //     labelKey:   LocalizationCodeValueM+' '+DuplicatItemM[0].duplicates
+            //   };
+            //   dispatch(toggleSnackbar(true, errorMessageM, "warning"));
+            //   return false;
+            // }
+            // }
+            // value = "emailId";
+            // let DuplicatItemE = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
+            // if(DuplicatItemE && DuplicatItemE[0])
+            // {
+            //   if(DuplicatItemE[0].IsDuplicatItem)
+            //   {
+            //   const LocalizationCodeValueE = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_EMAIL_FIELDS")
+            //   const errorMessageE = {
+            //     labelName: "Duplicate email id Added",
+            //     //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+            //     labelKey:   LocalizationCodeValueE+' '+DuplicatItemE[0].duplicates
+            //   };
+            //   dispatch(toggleSnackbar(true, errorMessageE, "warning"));
+            //   return false;
+            // }
+            // }
           }
         }
         else if(ownershipCategory_H !== "INDIVIDUAL.MULTIPLEOWNERS")
@@ -384,13 +483,18 @@ if(water || sewerage || tubewell)
           SingleOwnerDetailsItemsS = SingleOwnerDetailsItemsS.filter( x=>x.isDeleted === undefined || x.isDeleted !== false)
           if (SingleOwnerDetailsItemsS.length>1)
           {
-            let errorMessageS = {
-              labelName: "Please remove multilple ownner data",
-              labelKey: "WS_FILL_SINGLEOWNERS_FIELDS"
-            };
-            
-            dispatch(toggleSnackbar(true, errorMessageS, "warning"));
-            return false
+            if(process.env.REACT_APP_NAME === "Citizen")
+            {
+              let errorMessageS = {
+                labelName: "Please remove multilple ownner data",
+                labelKey: "WS_FILL_SINGLEOWNERS_FIELDS"
+              };
+              
+              dispatch(toggleSnackbar(true, errorMessageS, "warning"));
+              return false
+
+            }
+           
 
           }
 
@@ -423,8 +527,15 @@ if(water || sewerage || tubewell)
             jsonPath,
             ''
           );
-          owners = owners.filter(x=>x.name ===name);
-          set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.owners", owners);
+          if(name !== undefined)
+          {
+            owners = owners.filter(x=>x.name ===name);
+          }
+          if(owners.length>0)
+          {
+            set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.owners", owners);
+          }
+          
           }
           
 
@@ -458,8 +569,18 @@ if(wnsStatus === null)
   else{
     if(process.env.REACT_APP_NAME === "Citizen" && ActionType)
     wnsStatus =  window.localStorage.getItem("wns_workflow")
+    else if(process.env.REACT_APP_NAME === "Citizen" || ActionType)
+  {
+    wnsStatus =  window.localStorage.getItem("wns_workflow")
+
+    }
   }
 }
+let action = get(
+  state.screenConfiguration.preparedFinalObject,
+  `applyScreen.waterApplication.action`,
+  ''
+);
 
 if(wnsStatus && wnsStatus === "CONNECTION_CONVERSION" || wnsStatus === "WS_CONVERSION"){
   const iswaterConnFomValid = validateFields(
@@ -505,10 +626,18 @@ const usageCategory = get(
 
   } 
 
+  if(action ==='INITIATED'  || action ==='')
+  {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
+  }
   try{
-    let abc = await applyForWater(state, dispatch);
+    let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
+    if(inWorkflow === false)
+    {
+      let abc = await applyForWater(state, dispatch);
+    }
+    
     window.localStorage.setItem("ActivityStatusFlag","true");
   }catch (err){
     if(localStorage.getItem("WNS_STATUS")){
@@ -562,11 +691,20 @@ if(!proconnHolderDetail){
   }
  
   
+  
+  if(action ==='INITIATED'  || action ==='')
+  {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
+  }
   try{
-    let abc = await applyForWater(state, dispatch);
-    window.localStorage.setItem("ActivityStatusFlag","true");
+    let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
+    if(inWorkflow === false)
+    {
+      let abc = await applyForWater(state, dispatch);
+      window.localStorage.setItem("ActivityStatusFlag","true");
+    }
+    
  
   }catch (err){
     if(localStorage.getItem("WNS_STATUS")){
@@ -597,10 +735,17 @@ else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER
     )
     return;
   } 
+  if(action ==='INITIATED'  || action ==='')
+  {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
+  }
   try{
-    let abc = await applyForWater(state, dispatch);
+    let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
+    if(inWorkflow === false)
+    {
+      let abc = await applyForWater(state, dispatch);
+    }
     window.localStorage.setItem("ActivityStatusFlag","true");
  
   }catch (err){
@@ -612,11 +757,173 @@ else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER
     console.log("errrr")
   }
 }
+else if (wnsStatus && wnsStatus === "TEMPORARY_DISCONNECTION" || wnsStatus ==='WS_TEMP_DISCONNECTION')
+{
+  const isPropertyValid = validateFields(
+    "components.div.children.formwizardFirstStep.children.commentTempSectionDetails.children.cardContent.children.propertyTempIDDetails.children.viewTwo.children",
+    state,
+    dispatch,
+    "apply"
+  );
+  const isCommentValid = validateFields(
+    "components.div.children.formwizardFirstStep.children.commentTempSectionDetails.children.cardContent.children.commentDetails.children.CommentDetails.children",
+    state,
+    dispatch,
+    "apply"
+  );
+
+  if(!isPropertyValid || !isCommentValid){
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_REQUIRED_FIELDS",
+        labelName: "Please fill Required details"
+      },
+        "warning"
+      )
+    )
+    return;
+  }
+  else if(1===1){
+    let subusageCategory_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+    if(!subusageCategory_)
+   {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_SUB_USAGE_TYPE_VALIDATION",
+        labelName: "Please select property sub usage type"
+      },
+        "warning"
+      )
+    )
+    return ;  
+
+
+   }
+  
+    
+  }
+
+
+  //if(action !=='SEND_BACK_TO_CITIZEN' || action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC' )
+  if(action ==='INITIATED'  || action ==='')
+  {
+  removingDocumentsWorkFlow(state, dispatch) ;
+  prepareDocumentsUploadData(state, dispatch);
+  }
+  try{
+    // call api property search then property-services/property/_update  
+    let queryObject = [];//[{ key: "tenantId", value: tenantId }];
+    let searchScreenObject = get(state.screenConfiguration.preparedFinalObject, "searchScreen", {});
+    for (var key in searchScreenObject) {
+     if (searchScreenObject.hasOwnProperty(key) && searchScreenObject[key].trim() !== "") {
+       queryObject.push({ key: key, value: searchScreenObject[key].trim() });
+     }
+   }
+    let response = await getPropertyResults(queryObject, dispatch);
+    if (response && response.Properties) {
+     if(response.Properties[0].status === 'INACTIVE'){
+      if(localStorage.getItem("WNS_STATUS")){
+        window.localStorage.removeItem("WNS_STATUS");
+    }
+       dispatch(toggleSnackbar(true, { labelKey: "ERR_WS_PROP_STATUS_INACTIVE", labelName: "Property Status is INACTIVE" }, "warning"));
+     }else{
+       let propertyData = response.Properties[0];
+       // let contractedCorAddress = "";
+        propertyData = get(
+          state,
+          "screenConfiguration.preparedFinalObject.applyScreen.property"
+        );
+        let tenantId = get(
+          state,
+          "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
+        );
+        let owners_temp = get(response.Properties[0],'owners',[])
+        set(propertyData,'owners',owners_temp)
+    dispatch(prepareFinalObject("applyScreen.property", propertyData));
+
+    propertyData.tenantId = tenantId;
+
+    //set usage category
+    let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
+    let subusageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+    if(usageCategory!== null)
+    {
+      if(usageCategory.split('.').length ===1)
+      {
+        //st
+        set(propertyData, "usageCategory", subusageCategory);  
+      }
+
+    }
+    if(subusageCategory !== null)
+    {
+      if(subusageCategory.split('.').length ===2)
+      {
+        //set 
+        set(propertyData, "usageCategory", subusageCategory);
+      }
+    }
+
+    // end set usage category
+    // propertyPayload.landArea = parseInt(propertyPayload.landArea);
+    // propertyPayload.totalConstructedArea = parseInt(propertyPayload.landArea);
+    set(propertyData, "creationReason", "UPDATE");
+    let response_ = await propertyUpdate(state, dispatch,propertyData)
+    if(response_)
+    {
+      if(usageCategory!== null)
+      {
+      if(usageCategory.split('.').length ===1)
+      {
+      //st
+      set(propertyData, "usageCategory", subusageCategory);
+
+      }
+      }
+      if(subusageCategory!== null)
+      {
+      if(subusageCategory.split('.').length ===2)
+      {
+        //set 
+       // set(propertyData, "usageCategory", subusageCategory);
+        set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", subusageCategory.split('.')[0]);
+        set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", subusageCategory);
+      }
+      }
+      dispatch(prepareFinalObject("applyScreen.property", propertyData));
+      let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
+      if(inWorkflow === false)
+      {
+        let abc = await applyForWater(state, dispatch);
+      }
+    window.localStorage.setItem("ActivityStatusFlag","true");
+    }
+    else{
+      if(localStorage.getItem("WNS_STATUS")){
+        window.localStorage.removeItem("WNS_STATUS");
+    }
+    return;
+    }
+     }
+   }
+
+  }catch (err){
+    console.log("errrr")
+    if(localStorage.getItem("WNS_STATUS")){
+      window.localStorage.removeItem("WNS_STATUS");
+  }
+  dispatch(toggleSnackbar(true, { labelName: err.message }, "error"));
+  return false;
+  }
+
+}
 else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
                       wnsStatus === "WS_REACTIVATE"||                     
                       wnsStatus === "WS_DISCONNECTION"||
-                      wnsStatus === "TEMPORARY_DISCONNECTION"||                     
-                      wnsStatus === "WS_TEMP_DISCONNECTION"||
+                     // wnsStatus === "TEMPORARY_DISCONNECTION"||                     
+                      //wnsStatus === "WS_TEMP_DISCONNECTION"||
                       wnsStatus === "PERMANENT_DISCONNECTION")){
   const iswaterConnFomValid = validateFields(
     "components.div.children.formwizardFirstStep.children.commentSectionDetails.children.cardContent.children.commentDetails.children.CommentDetails.children",
@@ -638,10 +945,17 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
     return;
   }
  
+  if(action ==='INITIATED'  || action ==='')
+  {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
+  }
   try{
-    let abc = await applyForWater(state, dispatch);
+    let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
+    if(inWorkflow === false)
+    {
+      let abc = await applyForWater(state, dispatch);
+    }
     window.localStorage.setItem("ActivityStatusFlag","true");
   }catch (err){
     if(localStorage.getItem("WNS_STATUS")){
@@ -691,8 +1005,11 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     return;
   }
   
+  if(action ==='INITIATED'  || action ==='')
+  {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
+  }
   try{
     // call api property search then property-services/property/_update  
     let queryObject = [];//[{ key: "tenantId", value: tenantId }];
@@ -720,23 +1037,114 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
           state,
           "screenConfiguration.preparedFinalObject.applyScreenMdmsData.tenant.tenants[0].code"
         );
-    dispatch(prepareFinalObject("applyScreen.property", propertyData));
-    propertyData.landArea = parseInt(propertyData.landArea);
-    propertyData.totalConstructedArea = parseInt(propertyData.landArea);
+       
+    
+   // propertyData.landArea = parseInt(propertyData.landArea);
+    propertyData.landArea = propertyData.landArea;
+    propertyData.totalConstructedArea = (propertyData.landArea);
     propertyData.tenantId = tenantId;
-    propertyData.address.doorNo = propertyData.address.plotNo;
-    set(propertyData, "address.doorNo", propertyData.address.plotNo);
+    //propertyData.address.doorNo = propertyData.address.plotNo;
+    let doorNo =propertyData.address.doorNo
+    if(doorNo.length ===1)
+    {
+      doorNo =`000${doorNo}` 
+    }
+    else if(doorNo.length ===2)
+    {
+      doorNo =`00${doorNo}` 
+    } 
+    else if(doorNo.length ===3)
+    {
+      doorNo =`0${doorNo}` 
+    } 
+    set(propertyData, "address.doorNo", doorNo.toUpperCase());
+    set(propertyData, "landArea", (propertyData.landArea));
+    set(propertyData, "totalConstructedArea", (propertyData.landArea));
+    if(propertyData.address.locality !== undefined)
+    {
+      if(propertyData.address.locality.code.value)
+      {
+      // propertyPayload.address.locality.code = propertyPayload.address.locality.code.value;
+      set(propertyData, "address.locality.code", propertyData.address.locality.code.value);
+      }
+      else if(propertyData.address.locality.code)
+      {
+        //propertyData.address.locality.code = propertyData.address.locality.code;
+        set(propertyData, "address.locality.code", propertyData.address.locality.code);
+      }
+      
+    }
+    //set usage category
+    let usageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", '');
+    let subusageCategory = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", '');
+    if(usageCategory!== null)
+    {
+    if(usageCategory.split('.').length ===1)
+    {
+      //st
+      set(propertyData, "usageCategory", subusageCategory);
+
+    }
+  }
+    if(subusageCategory!== null)
+    {
+      if(subusageCategory.split('.').length ===2)
+      {
+        //set 
+        set(propertyData, "usageCategory", subusageCategory);
+      }
+    }
+
+    // end set usage category
+    // propertyPayload.landArea = parseInt(propertyPayload.landArea);
+    // propertyPayload.totalConstructedArea = parseInt(propertyPayload.landArea);
     set(propertyData, "creationReason", "UPDATE");
     let response_ = await propertyUpdate(state, dispatch,propertyData)
     if(response_)
     {
-    let abc = await applyForWater(state, dispatch);
+      if(usageCategory!== null)
+      {
+      if(usageCategory.split('.').length ===1)
+      {
+      //st
+      set(propertyData, "usageCategory", subusageCategory);
+
+      }
+      }
+      if(subusageCategory!== null)
+      {
+      if(subusageCategory.split('.').length ===2)
+      {
+        //set 
+        set(propertyData, "usageCategory", subusageCategory);
+        set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.usageCategory", subusageCategory.split('.')[0]);
+        set(state.screenConfiguration.preparedFinalObject, "applyScreen.property.subusageCategory", subusageCategory);
+      }
+      }
+      dispatch(prepareFinalObject("applyScreen.property", propertyData));
+      let jpath ='components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType.props.value'
+      let category_ = get(state.screenConfiguration.screenConfig.apply,
+        jpath,
+        null
+        )
+        if(category_ ===null || category_ ==='')
+        {
+          category_ = get(state.screenConfiguration.preparedFinalObject,'applyScreen.waterProperty.usageSubCategory','')
+
+        }
+        set(state.screenConfiguration.preparedFinalObject,'applyScreen.waterProperty.usageSubCategory',category_)
+        let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
+        if(inWorkflow === false)
+        {
+          let abc = await applyForWater(state, dispatch);
+        }
     window.localStorage.setItem("ActivityStatusFlag","true");
     }
     else{
       if(localStorage.getItem("WNS_STATUS")){
         window.localStorage.removeItem("WNS_STATUS");
     }
+    return;
     }
      }
    }
@@ -751,6 +1159,145 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
   }
 
 }
+
+// validate on previous and next click
+let applicationNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].applicationNo", null);
+let connectionNo = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].connectionNo", null);
+let applicationStatus = get(state.screenConfiguration.preparedFinalObject, "WaterConnection[0].applicationStatus", null);
+const isPropertyDetailsValid= validateFields(
+  "components.div.children.formwizardFirstStep.children.IDDetails.children.cardContent.children.propertyIDDetails.children.viewTwo.children",
+  state,
+  dispatch,
+  "apply"
+);
+const isPropertyLocationDetailValid= validateFields(
+  "components.div.children.formwizardFirstStep.children.Details.children.cardContent.children.propertyDetail.children.viewFour.children",
+  state,
+  dispatch,
+  "apply"
+); 
+const isPropertyUsageValid= validateFields(
+  "components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children",
+  state,
+  dispatch,
+  "apply"
+);
+const isConnectionHolderDetailsValid= validateFields(
+  "components.div.children.formwizardFirstStep.children.connectionHolderDetails.children.cardContent.children.holderDetails.children.holderDetails.children",
+  state,
+  dispatch,
+  "apply"
+);
+const _ownershipCategory= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", '' )
+if(applicationNo && connectionNo === null && applicationStatus ==='INITIATED' )
+{
+  //console.log(`pritam_${isPropertyDetailsValid}_${isPropertyLocationDetailValid}_${isPropertyUsageValid}_${isConnectionHolderDetailsValid}_${ownershipCategory}`)
+  if(!isPropertyDetailsValid 
+    || !isPropertyLocationDetailValid 
+    || !isPropertyUsageValid
+    || !isConnectionHolderDetailsValid 
+    || !_ownershipCategory)
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_REQUIRED_FIELDS",
+        labelName: "Please fill Required details"
+      },
+        "warning"
+      )
+    )
+    return false
+
+  }
+  /////? ownner ship validation in case of draft
+  let ownershipCategory= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", '' )
+  let isOwnershipsingleValid_ = true
+  if(ownershipCategory)
+  {
+    let SingleOwnerDetailsCardPath =''
+    
+    if(ownershipCategory !=='INDIVIDUAL.MULTIPLEOWNERS')
+    {
+      //SingleOwnerDetailsCardPath='components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items'
+      isOwnershipsingleValid_ =  validateFields(
+        "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items[0].item0.children.cardContent.children.viewFive.children",
+        state,
+        dispatch,
+        "apply"
+      ); 
+
+    }
+    else{
+      let SingleOwnerDetailsCardPath =
+      "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.MultiownerDetail.children.cardContent.children.headerDiv.props.items";
+    let SingleOwnerDetailsItems = get(
+      state.screenConfiguration.screenConfig.apply,
+      SingleOwnerDetailsCardPath,
+      []
+    );
+    let isMasterDetailsValid = true;
+    isOwnershipsingleValid_ = true;
+    for (var j = 0; j < SingleOwnerDetailsItems.length; j++) {
+      if (
+        (SingleOwnerDetailsItems[j].isDeleted === undefined ||
+          SingleOwnerDetailsItems[j].isDeleted !== false) &&
+        !validateFields(
+          `${SingleOwnerDetailsCardPath}[${j}].item${j}.children.cardContent.children.viewFive.children`,
+          state,
+          dispatch,
+          "apply"
+        )
+      )
+      {
+        isMasterDetailsValid = false; 
+        isOwnershipsingleValid_ = false;
+
+      }
+
+    }
+  }
+
+  }
+  if(!isOwnershipsingleValid_)
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_REQUIRED_FIELDS",
+        labelName: "Please fill Required details"
+      },
+        "warning"
+      )
+    )
+    return false
+
+  }
+
+}
+if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_CITIZEN_ACTION' )
+{
+  if(!isPropertyDetailsValid 
+    || !isPropertyLocationDetailValid 
+    || !isPropertyUsageValid
+    || !isConnectionHolderDetailsValid 
+    || !_ownershipCategory)
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_REQUIRED_FIELDS",
+        labelName: "Please fill Required details"
+      },
+        "warning"
+      )
+    )
+    return false
+
+  }
+}
+///?
+
 
 
     } 
@@ -871,8 +1418,10 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       let ownershipCategory= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", '' )
       if(ownershipCategory)
       {
+        let SingleOwnerDetailsCardPath =''
         if(ownershipCategory !=='INDIVIDUAL.MULTIPLEOWNERS')
         {
+          //SingleOwnerDetailsCardPath='components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items'
            isOwnershipsingleValid =  validateFields(
             "components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items[0].item0.children.cardContent.children.viewFive.children",
             state,
@@ -902,8 +1451,12 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
               "apply"
             )
           )
-          isMasterDetailsValid = false; 
-          isOwnershipsingleValid = false;
+          {
+            isMasterDetailsValid = false; 
+            isOwnershipsingleValid = false;
+
+          }
+
 
         }
       }
@@ -944,7 +1497,14 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         if(fields.propertySubUsageType!==undefined) 
         {
           if(fields.propertySubUsageType.isFieldValid ===false)
-          isPropertyUsageValid = true
+          {
+            isPropertyUsageValid = true
+
+          }
+          else{
+            isPropertyUsageValid = true
+          }
+          
           
         }
         else
@@ -966,28 +1526,33 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
 
      let connectionHolderObj = get(state.screenConfiguration.preparedFinalObject, "connectionHolders");
      let ownershipCategory_T= get(state.screenConfiguration.preparedFinalObject,"applyScreen.property.ownershipCategory", 'INDIVIDUAL.SINGLEOWNER' )
-     if(connectionHolderObj[0].ownerType === null)
-     {
-      connectionHolderObj[0].ownerType= ownershipCategory_T;
-     }
-     else{
+    if(connectionHolderObj.length>0)
+    {
+      if(connectionHolderObj[0].ownerType === null)
+      {
        connectionHolderObj[0].ownerType= ownershipCategory_T;
+      }
+      else{
+        connectionHolderObj[0].ownerType= ownershipCategory_T;
+ 
+      }
+      //connectionHolderObj.ownerType = "INDIVIDUAL.SINGLEOWNER"
+      let holderData = connectionHolderObj[0];
+       if (holderData !== null && holderData !== undefined) {
+         if (holderData.sameAsPropertyAddress === true) {
+           holderData = connectionHolderObj[0]
+         }
+       }
+       if (holderData == null) {
+         applyScreenObject.connectionHolders = holderData;
+      } else {
+         let arrayHolderData = [];
+         arrayHolderData.push(holderData);
+         applyScreenObject.connectionHolders = arrayHolderData;
+       }
 
-     }
-     //connectionHolderObj.ownerType = "INDIVIDUAL.SINGLEOWNER"
-     let holderData = connectionHolderObj[0];
-      if (holderData !== null && holderData !== undefined) {
-        if (holderData.sameAsPropertyAddress === true) {
-          holderData = connectionHolderObj[0]
-        }
-      }
-      if (holderData == null) {
-        applyScreenObject.connectionHolders = holderData;
-     } else {
-        let arrayHolderData = [];
-        arrayHolderData.push(holderData);
-        applyScreenObject.connectionHolders = arrayHolderData;
-      }
+    }
+
       // call if conection is not created
       //validate ownner ship
       let propertyPayload = get(
@@ -1048,36 +1613,36 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
               }
               value = "mobileNumber";
               let DuplicatItemM = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
-              if(DuplicatItemM && DuplicatItemM[0])
-              {
-                if(DuplicatItemM[0].IsDuplicatItem)
-                {
-                const LocalizationCodeValueM = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_MOBILE_FIELDS")
-                const errorMessageM = {
-                  labelName: "Duplicate mobile number Added",
-                  //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
-                  labelKey:   LocalizationCodeValueM+' '+DuplicatItemM[0].duplicates
-                };
-                dispatch(toggleSnackbar(true, errorMessageM, "warning"));
-                return false;
-              }
-              }
+              // if(DuplicatItemM && DuplicatItemM[0])
+              // {
+              //   if(DuplicatItemM[0].IsDuplicatItem)
+              //   {
+              //   const LocalizationCodeValueM = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_MOBILE_FIELDS")
+              //   const errorMessageM = {
+              //     labelName: "Duplicate mobile number Added",
+              //     //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+              //     labelKey:   LocalizationCodeValueM+' '+DuplicatItemM[0].duplicates
+              //   };
+              //   dispatch(toggleSnackbar(true, errorMessageM, "warning"));
+              //   return false;
+              // }
+              // }
               value = "emailId";
               let DuplicatItemE = ValidateCard(state,dispatch,cardJsonPath,pagename,jasonpath,value)             
-              if(DuplicatItemE && DuplicatItemE[0])
-              {
-                if(DuplicatItemE[0].IsDuplicatItem)
-                {
-                const LocalizationCodeValueE = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_EMAIL_FIELDS")
-                const errorMessageE = {
-                  labelName: "Duplicate email id Added",
-                  //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
-                  labelKey:   LocalizationCodeValueE+' '+DuplicatItemE[0].duplicates
-                };
-                dispatch(toggleSnackbar(true, errorMessageE, "warning"));
-                return false;
-              }
-              }
+              // if(DuplicatItemE && DuplicatItemE[0])
+              // {
+              //   if(DuplicatItemE[0].IsDuplicatItem)
+              //   {
+              //   const LocalizationCodeValueE = getLocalizationCodeValue("WS_FILL_MULTIPLEOWNERS_EMAIL_FIELDS")
+              //   const errorMessageE = {
+              //     labelName: "Duplicate email id Added",
+              //     //labelKey:   `STORE_MATERIAL_DUPLICATE_VALIDATION ${DuplicatItem[0].duplicates}`
+              //     labelKey:   LocalizationCodeValueE+' '+DuplicatItemE[0].duplicates
+              //   };
+              //   dispatch(toggleSnackbar(true, errorMessageE, "warning"));
+              //   return false;
+              // }
+              // }
             }
           }
 
@@ -1102,11 +1667,25 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         set(propertyPayload, "source", "MUNICIPAL_RECORDS");
        // set(propertyPayload, "noOfFloors", 1);
         set(propertyPayload, "propertyType", "VACANT");
-        propertyPayload.landArea = parseInt(propertyPayload.landArea);
-        propertyPayload.totalConstructedArea = parseInt(propertyPayload.landArea);
+       // propertyPayload.landArea = parseInt(propertyPayload.landArea);
+        propertyPayload.landArea = propertyPayload.landArea;
+        propertyPayload.totalConstructedArea = (propertyPayload.landArea);
         propertyPayload.tenantId = tenantId;
-        propertyPayload.address.doorNo = propertyPayload.address.plotNo;
-        set(propertyPayload, "address.doorNo", propertyPayload.address.plotNo);
+       // propertyPayload.address.doorNo = propertyPayload.address.plotNo;
+       let doorNo =propertyPayload.address.doorNo
+      if(doorNo.length ===1)
+      {
+        doorNo =`000${doorNo}` 
+      }
+      else if(doorNo.length ===2)
+      {
+        doorNo =`00${doorNo}` 
+      } 
+      else if(doorNo.length ===3)
+      {
+        doorNo =`0${doorNo}` 
+      } 
+        set(propertyPayload, "address.doorNo", doorNo.toUpperCase());
         if(propertyPayload.address.city !== undefined)
         propertyPayload.address.city = propertyPayload.address.city;
         else
@@ -1138,7 +1717,9 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
           // propertyPayload.address.locality.code = "DB_1";
            set(propertyPayload, "address.locality.code", "DB_1");
            }
-        
+        // remove deleted ownner from the list 
+        let owners_ = propertyPayload.owners.filter(x=> (x.isDeleted === undefined || x.isDeleted !== false ))
+        set(propertyPayload, "owners", owners_);
        // propertyPayload.address.locality.code = propertyPayload.address.locality.code.value;
        // validate water field 
        if (water) {
@@ -1441,24 +2022,43 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         "applyScreen.waterProperty.usageSubCategory",
         null
       );
+      
+      let connectionNo =  get(
+        state.screenConfiguration.preparedFinalObject,
+        "WaterConnection[0].connectionNo",
+        null
+      );
+      if(!connectionNo)
+      {
       if(water)
       {
+        
         if(category_ === null)
       {
-        category_ = get(
-          state.screenConfiguration.preparedFinalObject,
-          "WaterConnection[0].waterProperty.usageSubCategory",
+        category_ = get(state.screenConfiguration.screenConfig.apply,
+          'components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType.props.value',
           null
-        );
+          )
       if(category_ === null)
       {
+        
+       
         let errorMessage_ = {
           labelName: "Please select Usage Caregory",
           labelKey: "WS_APPLICATION_TYPE_CHANGGED_VALIDATION"
         };
-
-        dispatch(toggleSnackbar(true, errorMessage_, "warning"));
-        return false;
+        let waterApplicationType = get(
+          state.screenConfiguration.preparedFinalObject,
+          "applyScreen.waterApplicationType",
+          null
+        );
+        if(waterApplicationType !=="TEMPORARY_BILLING")
+        {
+          dispatch(toggleSnackbar(true, errorMessage_, "warning"));
+          return false;
+        }
+        
+      }
       }
       else
       {
@@ -1469,15 +2069,61 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         );
         dispatch(prepareFinalObject("applyScreen.waterProperty.usageSubCategory", category_));
 
-      }
+      
         
   
       }
   
       }
+    }
+    if(connectionNo)
+    {
+      // if(water)
+      // {
+        if(category_ === null)
+        {
+          category_ = get(state.screenConfiguration.screenConfig.apply,
+            'components.div.children.formwizardFirstStep.children.propertyUsageDetails.children.cardContent.children.propertyUsage.children.PropertyUsageDetails.children.propertySubUsageType.props.value',
+            null
+            )
+            if(category_ ===null || category_ ==='')
+            {
+              category_ = get(state.screenConfiguration.preparedFinalObject,'applyScreen.waterProperty.usageSubCategory','')
+    
+            }
+            set(
+              state.screenConfiguration.preparedFinalObject,
+              "applyScreen.waterProperty.usageSubCategory",
+              category_
+            );
+            dispatch(prepareFinalObject("applyScreen.waterProperty.usageSubCategory", category_));
+          }
+
+      //}
+    }
 
     }
-  
+  //?
+  // property update if PENDING_FOR_CITIZEN_ACTION
+  // dispatch(handleField(
+  //   "apply",
+  //   `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownershipTypeInput`,
+  //   "props.disabled",
+  //   //Isreadolny
+  //   true
+  //   ));
+  //   const textFieldsOwnerInformation = ["ownerName","mobileNumber","email","guardianName","correspondenceAddress"];
+  //   for (let i = 0; i < textFieldsOwnerInformation.length; i++) {
+  //     dispatch(handleField(
+  //       "apply",
+  //       `components.div.children.formwizardFirstStep.children.ownerDetails.children.cardContent.children.ownerDetail.children.cardContent.children.headerDiv.props.items.0.item0.children.cardContent.children.viewFive.children.${textFieldsOwnerInformation[i]}`,
+  //       "props.disabled",
+  //       true
+  //       ));
+  //   }
+  propertyUpdateCitizen(state,dispatch)
+
+  //?
     
     
     prepareDocumentsUploadData(state, dispatch);
@@ -1488,19 +2134,7 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     if (moveToReview(state, dispatch)) {
       await pushTheDocsUploadedToRedux(state, dispatch);
       isFormValid = true; hasFieldToaster = false;
-      const wnsStatus =  window.localStorage.getItem("WNS_STATUS"); 
-      // if(wnsStatus){
-      //   switch(wnsStatus){
-      //     case "UPDATE_CONNECTION_HOLDER_INFO" :   dispatch(prepareFinalObject("WaterConnection[0].activityType", "UPDATE_CONNECTION_HOLDER_INFO")); break;
-      //     case "REACTIVATE_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "REACTIVATE_CONNECTION")); break;
-      //     case "TEMPORARY_DISCONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "TEMPORARY_DISCONNECTION")); break;
-      //     case "APPLY_FOR_REGULAR_INFO":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_REGULAR_INFO")); break;
-      //     case "PERMANENT_DISCONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "PERMANENT_DISCONNECTION")); break;
-      //     case "CONNECTION_CONVERSION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "CONNECTION_CONVERSION")); break;
-      //   }
-      // }
-
-      //if(RESUBMIT_APPLICATION)
+      const wnsStatus =  window.localStorage.getItem("WNS_STATUS");
       let water = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
       let sewerage = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
       let tubewell = get(state.screenConfiguration.preparedFinalObject, "applyScreen.tubewell", false);
@@ -1516,7 +2150,15 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
           `screenConfiguration.preparedFinalObject.workflow.ProcessInstances[${ProcessInstances.length-1}].action`,
           ''
       );
-      if(action ==='SEND_BACK_TO_CITIZEN')
+      if(action ==='')
+      {
+        action = get(
+          state.screenConfiguration.preparedFinalObject,
+          `applyScreen.waterApplication.action`,
+          ''
+      );
+        }
+      if(action ==='SEND_BACK_TO_CITIZEN' ||action ==='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
       {
         window.localStorage.removeItem("ActivityStatusFlag");
       }
@@ -1534,7 +2176,15 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
           `screenConfiguration.preparedFinalObject.workflow.ProcessInstances[${ProcessInstances.length-1}].action`,
           ''
       );
-      if(action ==='SEND_BACK_TO_CITIZEN')
+      if(action ==='')
+      {
+        action = get(
+          state.screenConfiguration.preparedFinalObject,
+          `applyScreen.waterApplication.action`,
+          ''
+      );
+      }
+      if(action ==='SEND_BACK_TO_CITIZEN' ||action ==='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC' )//"SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC"
       {
         window.localStorage.removeItem("ActivityStatusFlag");
       }
@@ -1561,6 +2211,31 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
       "applyScreenMdmsData.ws-services-masters.sectorList",
       []
     );
+
+    let WaterConnection = get(state.screenConfiguration.preparedFinalObject, "WaterConnection");
+      let SewerageConnection = get(state.screenConfiguration.preparedFinalObject, "SewerageConnection");
+      if(SewerageConnection.length ==1)
+      {
+        if(SewerageConnection[0].sewerage === true)
+        {
+          sectorList = get(
+            state.screenConfiguration.preparedFinalObject,
+            "applyScreenMdmsData.ws-services-masters.swSectorList",
+            []
+          );
+        }
+      }
+      if(WaterConnection.length ==1)
+      {
+        if(WaterConnection[0].sewerage === true)
+        {
+          sectorList = get(
+            state.screenConfiguration.preparedFinalObject,
+            "applyScreenMdmsData.ws-services-masters.swSectorList",
+            []
+          );
+        }
+      }
     if(sectorcode.value!== undefined)
     sectorcode = sectorcode.value
     sectorList = sectorList.filter(x=>x.code === sectorcode);
@@ -1601,6 +2276,109 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
     dispatch(prepareFinalObject("ledgerlist",ledgerRange));
     }
     else { isFormValid = false; hasFieldToaster = true; }
+
+    //set subusageCategory
+    let usageCategory_ = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.usageCategory");
+    let subusageCategory = get(state, "screenConfiguration.preparedFinalObject.applyScreen.property.subusageCategory");
+    console.log(`pritam${usageCategory_}`)
+    set(state,"screenConfiguration.preparedFinalObject.applyScreen.property.subusageCategory",subusageCategory)
+    // visible false based on application created
+    let water = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
+    let sewerage = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
+    let tubewell = get(state.screenConfiguration.preparedFinalObject, "applyScreen.tubewell", false);
+    let activityType = get(state.screenConfiguration.preparedFinalObject, "applyScreen.activityType", '');
+    let service = getQueryArg(window.location.href, "service");
+    let code = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.address.locality.code", '');
+    if(service)
+    {
+      if(service ==='WATER')
+    {
+      water =true
+    }
+    else{
+      sewerage = true
+    }
+    }
+    if(activityType ==='NEW_TUBEWELL_CONNECTION')
+    {
+      tubewell = true
+    }
+    if(sewerage)
+    {
+      //set sector name
+      code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.swSectorList",code)   
+      set(state,"screenConfiguration.preparedFinalObject.applyScreen.property.address.locality.name",code)
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewpropertyLocation",
+          "visible",
+          false
+        )
+      );
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewPropertyConnection",
+          "visible",
+          false
+        )
+      );
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewPropertyConnectionSw",
+          "visible",
+          true
+        )
+      );
+      //viewPropertyConnectionSw
+
+    }
+    if(water)
+    {
+      code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.sectorList",code) 
+      set(state,"screenConfiguration.preparedFinalObject.applyScreen.property.address.locality.name",code)  
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewPropertyConnectionSw",
+          "visible",
+          false
+        )
+      );
+
+    }
+    if(tubewell)
+    {
+      code =GetMdmsNameBycode(state, dispatch,"searchPreviewScreenMdmsData.ws-services-masters.sectorList",code)   
+      set(state,"screenConfiguration.preparedFinalObject.applyScreen.property.address.locality.name",code)
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewPropertyConnectionSw",
+          "visible",
+          false
+        )
+      );
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewpropertyLocation",
+          "visible",
+          false
+        )
+      );
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardFourthStep.children.summaryScreen.children.cardContent.children.reviewConnDetails.children.cardContent.children.viewPropertyConnection",
+          "visible",
+          false
+        )
+      );
+
+    }
   }
 
   if (activeStep === 2 && process.env.REACT_APP_NAME !== "Citizen") {
@@ -1614,6 +2392,50 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         dispatch,
         "apply"
       );
+      const activeDetails= validateFields(
+        "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children",
+        state,
+        dispatch,
+        "apply"
+      );
+      const PropactiveDetails= validateFields(
+        "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer.children.cardContent.children.PropactiveDetails.children",
+        state,
+        dispatch,
+        "apply"
+      );
+      let IvalidadditionalCharges= validateFields(
+        "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.additionalCharges",
+        state,
+        dispatch,
+        "apply"
+      );
+      let IvalidconstructionCharges= validateFields(
+        "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.constructionCharges",
+        state,
+        dispatch,
+        "apply"
+      );
+      IvalidconstructionCharges = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.constructionCharges.isFieldValid",false)
+      IvalidadditionalCharges = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.OtherChargeContainer.children.cardContent.children.chargesDetails.children.additionalCharges.isFieldValid",false)
+      let additionalCharges =parseInt(get(state, "screenConfiguration.preparedFinalObject.applyScreen.waterApplication.additionalCharges",0));
+      let constructionCharges =parseInt(get(state, "screenConfiguration.preparedFinalObject.applyScreen.waterApplication.constructionCharges",0));
+      if(additionalCharges === 0 && constructionCharges === 0)
+      {
+        IvalidconstructionCharges = true
+        IvalidadditionalCharges = true
+      }
+      let waterT = get(state.screenConfiguration.preparedFinalObject, "applyScreen.water", false);
+      let sewerageT = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
+      let tubewellT = get(state.screenConfiguration.preparedFinalObject, "applyScreen.tubewell", false);
+      if(sewerageT === false || tubewellT === false )
+      {
+        IvalidconstructionCharges = true
+        IvalidadditionalCharges = true
+      }
+      
+ 
+
 if(isConnectionDetailsValid)
 {
   isFormValid = isConnectionDetailsValid
@@ -1624,20 +2446,54 @@ if(isConnectionDetailsValid)
   let proposedMeterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.proposedMeterInstallationDate");
   let connectionExecutionDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.connectionExecutionDate");
   let meterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.meterInstallationDate");
+  let businessService = get(state, "screenConfiguration.preparedFinalObject.workflow.ProcessInstances[0].businessService");
+  let  activityType = get(state, "screenConfiguration.preparedFinalObject.applyScreen.activityType");
+  if(connectionExecutionDate)
+  {
+    if(!Number(connectionExecutionDate))
+    {
+      connectionExecutionDate = convertDateToEpoch(connectionExecutionDate);
+
+    }
+  }
+  if(proposedMeterInstallationDate)
+  {
+    if(!Number(proposedMeterInstallationDate))
+    {
+      proposedMeterInstallationDate = convertDateToEpoch(proposedMeterInstallationDate);
+
+    }
+  }
+  if(meterInstallationDate)
+  {
+    if(!Number(meterInstallationDate))
+    {
+      meterInstallationDate = convertDateToEpoch(meterInstallationDate);  
+    }
+  }
+
   if(proposedMeterInstallationDate && connectionExecutionDate)
   {
     // proposedMeterInstallationDate =proposedMeterInstallationDate
     // proposedMeterInstallationDate =proposedMeterInstallationDate
-  if(connectionExecutionDate> proposedMeterInstallationDate)
-  {
-    isFormValid = false;
-    errorMessage = {
-      labelName: "Meter installation date must be greater then connection execution date",
-      labelKey: "WS_PROP_METER_INSTALATION_DATE_VALIDATION"//WS_METER_INSTALATION_DATE_VALIDATION
-    };
-   // dispatch(toggleSnackbar(true, errorMessage, "warning"));
-    //return 
-  }
+    if(activityType)
+    {
+    if(activityType ==='WS_METER_UPDATE' || activityType === 'UPDATE_METER_INFO')
+    {
+      if(connectionExecutionDate> proposedMeterInstallationDate)
+      {
+        isFormValid = false;
+        errorMessage = {
+          labelName: "Proposed meter installation date must be greater then connection execution date",
+          labelKey: "WS_PROP_METER_INSTALATION_DATE_VALIDATION"//WS_METER_INSTALATION_DATE_VALIDATION
+        };
+        // dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        //return 
+      }
+    }
+    }
+
+
   }
  else  if(connectionExecutionDate && meterInstallationDate)
   {
@@ -1645,7 +2501,7 @@ if(isConnectionDetailsValid)
   {
     isFormValid = false;
      errorMessage = {
-      labelName: "Proposed meter installation date must be greater then connection execution date",
+      labelName: "Meter installation date must be greater then connection execution date",
       labelKey: "WS_METER_INSTALATION_DATE_VALIDATION"
     };
    
@@ -1654,7 +2510,53 @@ if(isConnectionDetailsValid)
   }
   }
   if(isFormValid)
-  setReviewPageRoute(state, dispatch);
+  {
+    //console.log('pritam')
+    if(activeDetails)
+    {
+      if(PropactiveDetails)
+      {
+        if(IvalidadditionalCharges === true && IvalidconstructionCharges === true)
+        {
+          setReviewPageRoute(state, dispatch);
+
+        }
+        else{
+          isFormValid = false;
+          errorMessage = {
+            labelName: "Please enter valid Other Charges Details",
+            labelKey: "WS_ACTIVATION_DETAILS_OTHER_CHARGES_VALIDATION"
+          };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      return;
+
+        }
+        
+      }
+      else{
+        isFormValid = false;
+      errorMessage = {
+        labelName: "Please enter proposed connection execution details",
+        labelKey: "WS_ACTIVATION_DETAILS_PROP_VALIDATION"
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      return;
+
+      }
+       
+    }
+    else{
+      isFormValid = false;
+      errorMessage = {
+        labelName: "Please enter valid data in activation details",
+        labelKey: "WS_ACTIVATION_DETAILS_VALIDATION"
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      return;
+      //
+    }   
+  }
+ 
   else{
     dispatch(toggleSnackbar(true, errorMessage, "warning"));
     return;
@@ -1808,10 +2710,15 @@ const acknoledgementForWater = async (state, activeStep, isFormValid, dispatch) 
       prepareDocumentsUploadData(state, dispatch);
     }
     if (activeStep === 3) {
-      getMdmsData(state, dispatch);
+     // getMdmsData(state, dispatch);
+     dispatch(toggleSpinner());
       isFormValid = await applyForWaterOrSewerage(state, dispatch);
       let combinedArray = get(state.screenConfiguration.preparedFinalObject, "WaterConnection");
-      if (isFormValid) { moveToSuccess(combinedArray, dispatch) }
+      if (isFormValid) 
+      { 
+        moveToSuccess(combinedArray, dispatch)
+        dispatch(toggleSpinner());
+      }
     }
     return true;
   } else if (hasFieldToaster) {
@@ -1846,10 +2753,15 @@ const acknoledgementForSewerage = async (state, activeStep, isFormValid, dispatc
       prepareDocumentsUploadData(state, dispatch);
     }
     if (activeStep === 3) {
-      getMdmsData(state, dispatch);
+      //getMdmsData(state, dispatch);
+      dispatch(toggleSpinner());
       isFormValid = await applyForWaterOrSewerage(state, dispatch);
       let combinedArray = get(state.screenConfiguration.preparedFinalObject, "SewerageConnection");
-      if (isFormValid) { moveToSuccess(combinedArray, dispatch) }
+      if (isFormValid) 
+      { 
+        moveToSuccess(combinedArray, dispatch) 
+        dispatch(toggleSpinner());
+      }
     }
     return true;
   } else if (hasFieldToaster) {
@@ -1915,6 +2827,8 @@ export const changeStep = (
         isCheckedSameAsProperty
       )
     )
+    let applyScreen = get(state, "screenConfiguration.preparedFinalObject.applyScreen",{});
+    dispatch(prepareFinalObject("applyScreenOld", applyScreen));
   }
   
   const isPreviousButtonVisible = activeStep > 0 ? true : false;

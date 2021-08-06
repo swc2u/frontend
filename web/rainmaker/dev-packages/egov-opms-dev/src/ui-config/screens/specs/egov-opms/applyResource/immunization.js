@@ -33,7 +33,7 @@ const immunizationData = buildingType => {
           labelKey: "NOC_PET_DETAILS_NAME_OF_VETERINARY_DOCTOR_PLACEHOLDER"
         },
         required: true,
-        pattern: getOPMSPattern("petnocApplicantName"),
+        pattern: getOPMSPattern("nocApplicantName"),
         errorMessage: "ERR_NOC_PET_DETAILS_NAME_OF_VETERINARY_DOCTOR",
         jsonPath: "PETNOC.immunizationNameVeterinaryDoctor",
         // props: {
