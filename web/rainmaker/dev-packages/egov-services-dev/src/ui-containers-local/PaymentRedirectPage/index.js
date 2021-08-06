@@ -10,7 +10,7 @@ import {
     downloadReceipt,
     downloadCertificate,
     
-} from "../../ui-config/screens/specs/utils";
+} from "../../ui-config/screens/specs/utils"; 
 
 class PaymentRedirect extends Component {
     updateApiCall = async (apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)=>{
@@ -181,16 +181,16 @@ class PaymentRedirect extends Component {
                           payload.bkToDate = payload.bkEndingDate;
                         }
                     }
-                    
+                     
                 }
                
                
                
                 if(bookingType !== "BWT"){
                 let paymentReceipt= await downloadReceipt(payload, consumerCode, tenantId, 'true')
-               
+
                 let permissionLetter= await downloadCertificate(payload, consumerCode, tenantId, 'true')
-                                
+
                 Promise.all(paymentReceipt).then(data=>{
                     let urlPayload={
                         "paymentReceipt" :  data[0]
@@ -202,7 +202,7 @@ class PaymentRedirect extends Component {
                             ...urlPayload, 
                             "permissionLetter": permissionLetterData[0]
                         }
-                        console.log(urlPayload, "payload")
+                        console.log(urlPayload, "Bothpayload")
                         this.updateApiCall(apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)
                 
                     })

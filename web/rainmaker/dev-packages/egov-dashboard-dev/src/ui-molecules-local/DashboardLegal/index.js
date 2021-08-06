@@ -723,11 +723,11 @@ class DashboardLegal extends React.Component {
                 <td> { data.caseTitle } </td>
                 <td> { data.petName } </td>
                 <td style={{"color":"green"}}> { data.concernedBranch } </td>
-                <td> <p style={{"color":"red"}}> "_Blank" </p> </td>
-                <td> "Nodal officer Pending API" </td>
+                {/* <td> <p style={{"color":"red"}}> "_Blank" </p> </td> */}
+                {/* <td> "Nodal officer Pending API" </td> */}
                 <td>  {nextDate}  </td>
                 <td> { data.caseStatus === "CLOSED" ? "No further order of listing." : data.caseStatus } </td>
-                <td> { "----" } </td>
+                {/* <td> { "----" } </td> */}
                 <td> { data.lcNumber } </td>
             </tr>
         );
@@ -786,12 +786,12 @@ class DashboardLegal extends React.Component {
                             <th> Case No </th>
                             <th> Brief Subject </th>
                             <th> Petitioner </th>
-                            <th> Department </th>
-                            <th> Other Department </th>
-                            <th> Nodal Officer </th>
+                            <th> Concern Branch </th>
+                            {/* <th> Other Department </th> */}
+                            {/* <th> Nodal Officer </th> */}
                             <th> Next Date </th>
                             <th> Status </th>
-                            <th> Reply Filed </th>
+                            {/* <th> Reply Filed </th> */}
                             <th> File No </th>
                         </tr>
                         {this.state.sortedTest.map((data, index) => this.rowData2(data, index))}

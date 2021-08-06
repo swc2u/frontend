@@ -10,13 +10,18 @@ import Button from "@material-ui/core/Button";
 import { LabelContainer } from "../LabelContainer";
 import { connect } from "react-redux";
 import get from "lodash/get";
-import "./index.scss";
 import {
   
   getQueryArg,
 } from "egov-ui-framework/ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import  {delectDocument} from "../../ui-utils/commons"
+import  {delectDocument} from "../../ui-utils/commons";
+import Lightbox from 'react-image-lightbox';
+// import 'react-image-lightbox/style.css'; // This only needs to be imported once in your app
+
+import "./index.css";
+
+
 const themeStyles = theme => ({
   iconDiv: {
     display: "flex",
@@ -54,6 +59,36 @@ const documentTitle = {
 	// wordBreak: "break-all"
 };
 class DownloadFileContainer extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isOpen : false,
+      isPDFOpen : false,
+      mainSRC : ""
+    };
+  }
+
+
+  previewPDF = (docIndex) => {
+    debugger;
+    const demoData = docIndex.link;
+    this.setState({
+      isPDFOpen : !this.state.isPDFOpen,
+      mainSRC : demoData,
+    })
+  }
+
+  previewImage = (docIndex) => {
+    debugger;
+    const demoData = docIndex.link;
+    this.setState({
+      isOpen : true,
+      mainSRC : demoData,
+    })
+  }
+
   deleteDocument = async (remDocIndex) => {
     const { prepareFinalObject, documentsUploadRedux , data} = this.props;
    // alert('i am at delete')
@@ -81,9 +116,23 @@ class DownloadFileContainer extends React.Component {
    
 
   }
+
+
   render() {
     const { classes,data, documentData, ...rest } = this.props;
-  
+
+
+    if(data.length > 0){
+      for(var i=0; i<data.length; i++){
+        var fileName = data[i].name;
+        fileName = fileName.split(".");
+        if(fileName[1] ==="pdf"){
+          data[i]["type"] = fileName[1]
+        }else{
+          data[i]["type"] = fileName[1]
+        }
+      }
+    }
     // return (
     //   <MultiDownloadCard data={data} documentData={documentData} {...rest} /> 
     // );
@@ -119,19 +168,31 @@ class DownloadFileContainer extends React.Component {
                   <Typography style={{wordWrap: "break-word",wordBreak: "break-all", maxWidth: 200,}}>{item.name}</Typography>
                   </div>
                   <div style={{display:"flex"}}>
-                    <div><Button href={item.link} color="primary">
-                  Download
-                </Button></div>
+                    <div>
+                      <Button href={item.link} color="primary">
+                        Download
+                      </Button>
+                    </div>
+
+                    {/* Code Change SD */}
+                    <div style={item.type !== "pdf" ? null : {display : "none"}}>
+                      <Button   onClick={() => this.previewImage(item)} color="primary">
+                        Preview
+                      </Button>
+                    </div>
+                    <div style={item.type === "pdf" ? {display : "none"} : {display : "none"}}>
+                      <Button   onClick={() => this.previewPDF(item)} color="primary">
+                        Preview
+                      </Button>
+                    </div>
+
                     <div> 
                       {
                       item.IsDelete &&<Button   onClick={() => this.deleteDocument(item)} color="primary">
                       Delte
                       </Button>
                       }
-                      
-                
-                </div>
-                  
+                    </div>
                   </div>
                  
                   {/* <Grid xs={12}>
@@ -174,6 +235,40 @@ class DownloadFileContainer extends React.Component {
           )
         }
         
+        <div>
+          {/* <div style={documentTitle}>
+            Preview
+          </div> */}
+                 
+          {/* {item.name} */}
+          <div>
+            {this.state.isOpen && (
+              <div>
+                <Lightbox
+                  mainSrc={this.state.mainSRC}
+                  onCloseRequest={() => this.setState({ isOpen: false })}
+                />
+              </div>
+            )}
+
+            {this.state.isPDFOpen ?
+              <div>
+                <div className='pdf-container'>
+                  {/* show pdf conditionally (if we have one)  */}
+                  {/* {
+                    <Viewer 
+                    fileUrl={"https://chstage.blob.core.windows.net/fileshare/ch/hc/August/2/1627904036859ConditionsOfNOC.pdf?sig=kUzIB63WwHcpYWzHJGNQDAgEtEZ7yiaZuiowOwPAXmw%3D&st=2021-08-03T12%3A39%3A16Z&se=2021-08-04T12%3A39%3A16Z&sv=2016-05-31&sp=r&sr=b"}
+                    plugins={[defaultLayoutPluginInstance]} />
+                  } */}
+                </div>
+                {/* {this.state.mainSRC}  */}
+                {/* <PDFViewer url={"https://cors-anywhere.herokuapp.com/" + this.state.mainSRC} /> */}
+                {/* <PdfPreviewExample imageURL = {"https://cors-anywhere.herokuapp.com/"+this.state.mainSRC} /> */}
+              </div>
+              :null
+            }
+          </div>
+        </div>
       </div>
     )
   }

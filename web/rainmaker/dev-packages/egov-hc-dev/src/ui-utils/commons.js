@@ -274,7 +274,7 @@ export const setTreeCountFieldEnableDisable =  (serviceRequestType,  dispatch) =
         dispatch(handleField("apply",
         "components.div.children.formwizardFirstStep.children.servicerequestdetailsEdit.children.cardContent.children.servicerequestdetailsContainer.children.nooftrees",
         "props.disabled",
-        true
+        false
       ))
       }
       else{

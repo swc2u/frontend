@@ -206,8 +206,23 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
     }
     console.log(bookingTimeStamp + "=========" + currentTimeStamp + "=====" + refundAmount);
 
-    if ((bookingTimeStamp > currentTimeStamp) && (refundAmount > 0)) {
-        console.log('called :>> ');
+    // if ((bookingTimeStamp > currentTimeStamp) && (refundAmount > 0)) {
+    //     console.log('called :>> ');
+    //     set(
+    //         action,
+    //         "screenConfig.components.div.children.footer.visible",
+    //         showFooter === true ? true : false
+    //     );
+      
+    //     set(
+    //         action,
+    //         "screenConfig.components.div.children.footer.children.cancelButton.visible",
+    //         showFooter === true ? true : false
+    //     );
+
+    // }
+
+    if ((bookingTimeStamp > currentTimeStamp)){
         set(
             action,
             "screenConfig.components.div.children.footer.visible",
@@ -219,8 +234,10 @@ const HideshowFooter = async (action, bookingStatus, fromDate, bookingObj, state
             "screenConfig.components.div.children.footer.children.cancelButton.visible",
             showFooter === true ? true : false
         );
-
     }
+      
+
+    
 
     if ((bookingTimeStamp > currentTimeStamp) && (bookingStatus === "APPLIED" || bookingStatus === "RE_INITIATED")) {
         set(

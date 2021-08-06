@@ -695,6 +695,12 @@ export const getReviewGrantDetails = () => {
 }
 
 const downloadReceipt = async (data, preparedObject,properties) => {
+     const DOWNLOADRECEIPT_PAYMENT = {
+        GET: {
+          URL: "/rp-services/pdf/_create_payment_receipt",
+          ACTION: "_get",
+        },
+      };
     const receiptNumber = data.paymentDetails[0].receiptNumber
     const receiptQueryString = [{
         key: "receiptNumbers",
@@ -733,24 +739,12 @@ let paymentmode=Payments[0].paymentMode && Payments[0].paymentMode==="OFFLINE_NE
                 }
                 properties[0].offlinePaymentDetails.push(transactionNumber)
             }  
-              let time = Payments[0].paymentDetails[0].auditDetails.lastModifiedTime
+           
 
-              if(time){
-                time = moment(new Date(time)).format("h:mm:ss a")
-              }
-              Payments = [{
-                ...Payments[0],paymentMode:paymentmode,
-                paymentDetails:[{
-                  ...Payments[0].paymentDetails[0],auditDetails:{
-                    ...Payments[0].paymentDetails[0].auditDetails,lastModifiedTime:time
-                  }
-                }]
-              }]
-
-          httpRequest(DOWNLOADRECEIPT.GET.URL, DOWNLOADRECEIPT.GET.ACTION, queryStr, { Properties:properties, Payments, generatedBy: "" }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
+          httpRequest(DOWNLOADRECEIPT_PAYMENT.GET.URL, DOWNLOADRECEIPT_PAYMENT.GET.ACTION, queryStr, { Properties:properties, Payments, generatedBy: "" }, { 'Accept': 'application/json' }, { responseType: 'arraybuffer' })
             .then(res => {
-              getFileUrlFromAPI(res.filestoreIds[0]).then((fileRes) => {
-                var win = window.open(fileRes[res.filestoreIds[0]], '_blank');
+              getFileUrlFromAPI(res[0].fileStoreId).then((fileRes) => {
+                var win = window.open(fileRes[res[0].fileStoreId], '_blank');
                 win.focus();
               });
             });

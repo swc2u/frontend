@@ -398,7 +398,7 @@ export const downloadAccountStatementPdf = async(state, dispatch) => {
 
   const DOWNLOADRECEIPT = {
     GET: {
-      URL: "/pdf-service/v1/_create",
+      URL: "/rp-services/pdf/_create_account_statement",
       ACTION: "_get",
     },
   };
@@ -411,11 +411,9 @@ export const downloadAccountStatementPdf = async(state, dispatch) => {
             responseType: 'arraybuffer'
           })
           .then(res => {
-            res.filestoreIds[0]
-            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-              res.filestoreIds.map(fileStoreId => {
-                downloadReceiptFromFilestoreID(fileStoreId, mode)
-              })
+            res[0].fileStoreId
+            if (res && res[0].fileStoreId && res.length > 0) {
+                downloadReceiptFromFilestoreID(res[0].fileStoreId, mode)
             } else {
               console.log("Error In Acknowledgement form Download");
             }

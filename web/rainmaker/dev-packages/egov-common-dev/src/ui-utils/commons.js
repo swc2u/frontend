@@ -69,6 +69,31 @@ export const findItemInArrayOfObject = (arr, conditionCheckerFn) => {
     }
   }
 };
+export const getConsumerTransactionSearchResults = async (queryObject, dispatch,tenantId,ownerNo) => {
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/pg-service/transaction/v1/_search?consumerCode="+ownerNo,
+      // "/user/_search?tenantId="+tenantId,
+      "",
+      [],
+      {}
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+   // throw error;
+  }
+};
 export const getuserSearchResults = async (queryObject, dispatch,tenantId,ownerNo) => {
   try {
     store.dispatch(toggleSpinner());
@@ -94,6 +119,30 @@ export const getuserSearchResults = async (queryObject, dispatch,tenantId,ownerN
       )
     );
    // throw error;
+  }
+};
+export const transactionUpdate = async (transactionId, dispatch) => {
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      "/pg-service/transaction/v1/_update?transactionId="+transactionId,
+      "",
+      [],
+      {}
+      
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(toggleSpinner());
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
   }
 };
 export const userUnlock = async (user, dispatch) => {

@@ -142,7 +142,7 @@ class AppDetails extends Component {
       );
 
       let AmountFromBackEnd = payloadfundAmount.Payments;
-      let SecondFunRefAmt = 0;
+      let SecondFunRefAmt = 0;  
       //first  function
       if (status === "REFUND_APPROVED") {
         SecondFunRefAmt = refundableSecurityMoney;
@@ -375,6 +375,9 @@ class AppDetails extends Component {
             let refundPercent =
               refundPercentage.LETTHAN30MORETHAN15DAYS.refundpercentage;
             refundAmount = (parseFloat(bookingAmount) * refundPercent) / 100;
+          }
+          else if(Difference_In_Days <= 15){
+            return refundAmount = 0
           }
           return refundAmount + securityAmount;
         }

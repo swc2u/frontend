@@ -10,6 +10,7 @@ import { BILLING_BUSINESS_SERVICE_RENT, ONLINE, OFFLINE } from "../../../../ui-c
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { validateFields,getTodaysDateInYMD } from "egov-ui-framework/ui-utils/commons";
 import {getColonyTypes} from "../rented-properties/apply"
+import moment from 'moment'
 const header = process.env.REACT_APP_NAME === "Citizen" ?
 getCommonHeader({
     labelName: "Online Rent Payment",
@@ -795,7 +796,7 @@ const goToPayment = async (state, dispatch, type) => {
         id: propertyId || id,
         paymentAmount: paymentInfo.amount,
         transactionId: paymentInfo.transactionNumber,
-        transactionDate:convertDateToEpoch(paymentInfo.transactiondate),
+        transactionDate:moment(paymentInfo.transactiondate).unix(),
         bankName: paymentInfo.bankName
       }]}
       payload = type === ONLINE ? payload : {
