@@ -581,6 +581,12 @@ let action = get(
   `applyScreen.waterApplication.action`,
   ''
 );
+let documentClear = true
+if(action ==='SEND_BACK_TO_CITIZEN' || action ==='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
+{
+  documentClear = false
+
+}
 
 if(wnsStatus && wnsStatus === "CONNECTION_CONVERSION" || wnsStatus === "WS_CONVERSION"){
   const iswaterConnFomValid = validateFields(
@@ -631,16 +637,16 @@ const usageCategory = get(
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   }
-  else if(action !=='SEND_BACK_TO_CITIZEN')
+  else if(documentClear=== true)
   {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   }
-  else if(action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
-  {
-  removingDocumentsWorkFlow(state, dispatch) ;
-  prepareDocumentsUploadData(state, dispatch);    
-  }
+  // else if(action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
+  // {
+  // removingDocumentsWorkFlow(state, dispatch) ;
+  // prepareDocumentsUploadData(state, dispatch);    
+  // }
   try{
     let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
     if(inWorkflow === false)
@@ -707,16 +713,16 @@ if(!proconnHolderDetail){
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   }
-  else if(action !=='SEND_BACK_TO_CITIZEN')
+  else if(documentClear=== true)
   {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   }
-  else if(action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
-  {
-  removingDocumentsWorkFlow(state, dispatch) ;
-  prepareDocumentsUploadData(state, dispatch);    
-  }
+  // else if(action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
+  // {
+  // removingDocumentsWorkFlow(state, dispatch) ;
+  // prepareDocumentsUploadData(state, dispatch);    
+  // }
   try{
     let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
     if(inWorkflow === false)
@@ -760,16 +766,16 @@ else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   }
-  else if(action !=='SEND_BACK_TO_CITIZEN')
+  else if(documentClear=== true)
   {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   }
-  else if(action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
-  {
-  removingDocumentsWorkFlow(state, dispatch) ;
-  prepareDocumentsUploadData(state, dispatch);    
-  }
+  // else if(action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
+  // {
+  // removingDocumentsWorkFlow(state, dispatch) ;
+  // prepareDocumentsUploadData(state, dispatch);    
+  // }
   try{
     let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
     if(inWorkflow === false)
@@ -842,16 +848,16 @@ else if (wnsStatus && wnsStatus === "TEMPORARY_DISCONNECTION" || wnsStatus ==='W
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   }
-  else if(action !=='SEND_BACK_TO_CITIZEN')
+  else if(documentClear=== true)
   {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   }
-  else if(action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
-  {
-  removingDocumentsWorkFlow(state, dispatch) ;
-  prepareDocumentsUploadData(state, dispatch);    
-  }
+  // else if(action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
+  // {
+  // removingDocumentsWorkFlow(state, dispatch) ;
+  // prepareDocumentsUploadData(state, dispatch);    
+  // }
   try{
     // call api property search then property-services/property/_update  
     let queryObject = [];//[{ key: "tenantId", value: tenantId }];
@@ -990,16 +996,16 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   }
-  else if(action !=='SEND_BACK_TO_CITIZEN')
+  else if(documentClear=== true)
   {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   }
-  else if(action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
-  {
-  removingDocumentsWorkFlow(state, dispatch) ;
-  prepareDocumentsUploadData(state, dispatch);    
-  }
+  // else if(action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
+  // {
+  // removingDocumentsWorkFlow(state, dispatch) ;
+  // prepareDocumentsUploadData(state, dispatch);    
+  // }
   try{
     let inWorkflow = get(state.screenConfiguration.preparedFinalObject, "applyScreen.inWorkflow", false);
     if(inWorkflow === false)
@@ -1060,16 +1066,16 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   }
-  else if(action !=='SEND_BACK_TO_CITIZEN')
+  else if(documentClear=== true)
   {
   removingDocumentsWorkFlow(state, dispatch) ;
   prepareDocumentsUploadData(state, dispatch);
   }
-  else if(action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
-  {
-  removingDocumentsWorkFlow(state, dispatch) ;
-  prepareDocumentsUploadData(state, dispatch);    
-  }
+  // else if(action !=='SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC')
+  // {
+  // removingDocumentsWorkFlow(state, dispatch) ;
+  // prepareDocumentsUploadData(state, dispatch);    
+  // }
   try{
     // call api property search then property-services/property/_update  
     let queryObject = [];//[{ key: "tenantId", value: tenantId }];
