@@ -423,6 +423,14 @@ const renderSearchApplicationTable = async (state, dispatch) => {
         let paidamount_ = 0;
         //let Locality = (element.property && element.property !== "NA" && element.property.address) ? element.property.address.locality.code : ""
         let Locality = element.waterProperty.sectorNo
+        if(element.waterProperty)
+        {
+          Locality = element.waterProperty.sectorNo
+        }
+        else if(element.swProperty)
+        {
+          Locality = element.swProperty.sectorNo
+        }
         if (element.applicationNo !== "NA" && element.applicationNo !== undefined) {
           //appStatus = combinedWFSearchResults.filter(item => item.businessId.includes(element.applicationNo))[0]
          // appStatus = combinedWFSearchResults.filter(item => item.businessId === element.applicationNo)
