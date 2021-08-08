@@ -422,7 +422,7 @@ const renderSearchApplicationTable = async (state, dispatch) => {
         let appStatus;
         let paidamount_ = 0;
         //let Locality = (element.property && element.property !== "NA" && element.property.address) ? element.property.address.locality.code : ""
-        let Locality = element.waterProperty.sectorNo
+        let Locality = ''
         if(element.waterProperty)
         {
           Locality = element.waterProperty.sectorNo
