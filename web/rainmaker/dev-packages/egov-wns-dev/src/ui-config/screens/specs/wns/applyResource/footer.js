@@ -2076,9 +2076,29 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
     }
     }
     const applicationNo_ = getQueryArg(window.location.href, "applicationNumber");
+    let connectionNo =  get(
+      state.screenConfiguration.preparedFinalObject,
+      "WaterConnection[0].connectionNo",
+      null
+    );
+    let applicationStatus_ =  get(
+      state.screenConfiguration.preparedFinalObject,
+      "WaterConnection[0].applicationStatus",
+      null
+    );
     if(process.env.REACT_APP_NAME === "Citizen" && !applicationNo_)
     {
       removingDocumentsWorkFlow(state, dispatch);
+    }
+    else if(process.env.REACT_APP_NAME === "Citizen" && !connectionNo)
+    {
+      if(water)
+      {
+        //console.log('document clear block')
+        if(applicationStatus_ ==='INITIATED')
+        removingDocumentsWorkFlow(state, dispatch);
+      }
+
     }
     // validate category if Application Type is changged
     if(process.env.REACT_APP_NAME === "Citizen")
@@ -2089,11 +2109,7 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
         null
       );
       
-      let connectionNo =  get(
-        state.screenConfiguration.preparedFinalObject,
-        "WaterConnection[0].connectionNo",
-        null
-      );
+      
       if(!connectionNo)
       {
       if(water)
