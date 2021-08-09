@@ -185,15 +185,25 @@ if(IsValidDate)
 
           // Button display to Update
           // let accountLocked = get(response, "Transaction[0].txnStatusMsg", [])
+          let SuccessTransaction = response.Transaction.filter(transaction => transaction.txnStatus === "SUCCESS");
           let PendingTransaction = response.Transaction.filter(transaction => transaction.txnStatus === "PENDING");
           dispatch(prepareFinalObject("PendingTransaction", PendingTransaction));
-          if(PendingTransaction.length === 1){
+          if(PendingTransaction.length === 1 && SuccessTransaction.length === 0){
             dispatch(
               handleField(
                 "transaction-update",
                 "components.div.children.footer.children.nextButton",
                 "visible",
                 true
+              )
+            );
+          }else{
+            dispatch(
+              handleField(
+                "transaction-update",
+                "components.div.children.footer.children.nextButton",
+                "visible",
+                false
               )
             );
           }

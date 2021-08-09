@@ -51,7 +51,8 @@ class SewerageDashboard extends React.Component {
             columnData: [],
             // Feature Table
             toggleColumnCheck: false,
-            unchangeColumnData: []
+            unchangeColumnData: [],
+            baseUrl : window.location.origin
         }
       }
     
@@ -219,12 +220,12 @@ class SewerageDashboard extends React.Component {
             var keys = Object.keys(data[0]);
 
             var itemHeader = {}
-            itemHeader["Header"] = this.camelize(keys[0]);
-            itemHeader["accessor"] = keys[0];
+            itemHeader["Header"] = this.camelize(keys[3]);
+            itemHeader["accessor"] = keys[3];
             itemHeader["show"]= true ;
             itemHeader["Cell"]= row => (
                 <div>
-                    <a href={"https://egov-dev.chandigarhsmartcity.in/employee/wns/search-preview?applicationNumber="+row.value+"&tenantId=ch.chandigarh&history=true&service=WATER"}> {row.value} </a>
+                    <a href={"https://egov.chandigarhsmartcity.in/employee/wns/search-preview?applicationNumber="+row.value+"&tenantId=ch.chandigarh&history=true&service=SEWERAGE"}> {row.value} </a>
                 </div>
             );
             headerData.push(itemHeader);
@@ -233,7 +234,7 @@ class SewerageDashboard extends React.Component {
             for(var i=0; i<Object.keys(data[0]).length; i++){
                 var itemHeader = {}
                 if(dropdownSelected === "Sewerage Dashboard"){
-                    if(i === 3 || i === 4 || i === 25 || i === 16 || i=== 38 || i=== 34 || i=== 26 || i === 41){
+                    if(i === 4 || i === 25 || i === 16 || i=== 38 || i=== 34 || i=== 26 || i === 41){
                         itemHeader["Header"] = this.camelize(keys[i]);
                         itemHeader["accessor"] = keys[i];
                         itemHeader["show"]= true ;
