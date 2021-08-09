@@ -11,7 +11,7 @@ import {
   getPattern,
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { downloadAcknowledgementLetter , downloadAcknowledgementForm} from "../../utils";;
+import { downloadAcknowledgementLetter , downloadAcknowledgementForm,convertEpochToDate} from "../../utils";;
 import { getPMSPattern } from "../../../../../ui-utils/commons";
 import get from "lodash/get";
 import set from "lodash/set";
@@ -49,7 +49,45 @@ const PaymentOrderWithoutDetails = async (state, dispatch) => {
          queryObject
        );
      let config = ApplicationConfiguration();
+
    let employee_type= get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].employee.employeeType", '' )
+   let date = pdfResponce.PaymentDetails.date
+   let dob = pdfResponce.PaymentDetails.dob
+   let dateOfAppointment = pdfResponce.PaymentDetails.dateOfAppointment
+   let dateOfDeath = pdfResponce.PaymentDetails.dateOfDeath
+   let dateOfRetirement = pdfResponce.PaymentDetails.dateOfRetirement
+   let department = pdfResponce.PaymentDetails.department
+   let designation = pdfResponce.PaymentDetails.designation
+   const {designationsById,departmentById} = state.common;
+   if(designationsById){
+     if(designation !==null)
+     {
+       const desgnName = Object.values(designationsById).filter(item =>  item.code === designation )
+       if(desgnName && desgnName[0])
+       designation =  desgnName[0].name;
+     }    
+     }
+     if(departmentById)
+     {
+       if(department !==null)
+       {
+       const departmentName = Object.values(departmentById).filter(item =>  item.code === department )
+       if(departmentName && departmentName[0])
+       department =  departmentName[0].name;
+       }
+     }
+   date =  date === null?'NA':convertEpochToDate(date,"dob")
+   dob =  date === null?'NA':convertEpochToDate(dob,"dob")
+   dateOfAppointment =  dateOfAppointment === null?'NA':convertEpochToDate(dateOfAppointment,"dob")
+   dateOfDeath =  dateOfDeath === null?'NA':convertEpochToDate(dateOfDeath,"dob")
+   dateOfRetirement =  dateOfRetirement === null?'NA':convertEpochToDate(dateOfRetirement,"dob")
+   set(pdfResponce.PaymentDetails,'date',date)
+   set(pdfResponce.PaymentDetails,'dob',dob)
+   set(pdfResponce.PaymentDetails,'dateOfAppointment',dateOfAppointment)
+   set(pdfResponce.PaymentDetails,'dateOfDeath',dateOfDeath)
+   set(pdfResponce.PaymentDetails,'dateOfRetirement',dateOfRetirement)
+   set(pdfResponce.PaymentDetails,'designation',designation)
+   set(pdfResponce.PaymentDetails,'department',department)
      if(employee_type === config.EMPLOYEE_TYPE)
      {
        downloadAcknowledgementLetter(pdfResponce.PaymentDetails,config.RRP_PAYMENT_ORDER_DAILY_WAGER_WITHOUT_DETAILS,config.RRP_PAYMENT_ORDER_DAILY_WAGER_config)
@@ -93,6 +131,43 @@ const ActiongetApplication = async (state, dispatch) => {
       );
     let config = ApplicationConfiguration();
   let employee_type= get(state.screenConfiguration.preparedFinalObject,"ProcessInstances[0].employee.employeeType", '' )
+  let date = pdfResponce.PaymentDetails.date
+  let dob = pdfResponce.PaymentDetails.dob
+  let dateOfAppointment = pdfResponce.PaymentDetails.dateOfAppointment
+  let dateOfDeath = pdfResponce.PaymentDetails.dateOfDeath
+  let dateOfRetirement = pdfResponce.PaymentDetails.dateOfRetirement
+  let department = pdfResponce.PaymentDetails.department
+  let designation = pdfResponce.PaymentDetails.designation
+  const {designationsById,departmentById} = state.common;
+  if(designationsById){
+    if(designation !==null)
+    {
+      const desgnName = Object.values(designationsById).filter(item =>  item.code === designation )
+      if(desgnName && desgnName[0])
+      designation =  desgnName[0].name;
+    }    
+    }
+    if(departmentById)
+    {
+      if(department !==null)
+      {
+      const departmentName = Object.values(departmentById).filter(item =>  item.code === department )
+      if(departmentName && departmentName[0])
+      department =  departmentName[0].name;
+      }
+    }
+  date =  date === null?'NA':convertEpochToDate(date,"dob")
+  dob =  date === null?'NA':convertEpochToDate(dob,"dob")
+  dateOfAppointment =  dateOfAppointment === null?'NA':convertEpochToDate(dateOfAppointment,"dob")
+  dateOfDeath =  dateOfDeath === null?'NA':convertEpochToDate(dateOfDeath,"dob")
+  dateOfRetirement =  dateOfRetirement === null?'NA':convertEpochToDate(dateOfRetirement,"dob")
+  set(pdfResponce.PaymentDetails,'date',date)
+  set(pdfResponce.PaymentDetails,'dob',dob)
+  set(pdfResponce.PaymentDetails,'dateOfAppointment',dateOfAppointment)
+  set(pdfResponce.PaymentDetails,'dateOfDeath',dateOfDeath)
+  set(pdfResponce.PaymentDetails,'dateOfRetirement',dateOfRetirement)
+  set(pdfResponce.PaymentDetails,'designation',designation)
+  set(pdfResponce.PaymentDetails,'department',department)
     if(employee_type === config.EMPLOYEE_TYPE)
     {
       downloadAcknowledgementLetter(pdfResponce.PaymentDetails,config.RRP_PAYMENT_ORDER_DAILY_WAGER,config.RRP_PAYMENT_ORDER_DAILY_WAGER_config)
