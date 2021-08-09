@@ -11,7 +11,7 @@ import {
   getPattern,
   getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { downloadAcknowledgementLetter , downloadAcknowledgementForm} from "../../utils";;
+import { downloadAcknowledgementLetter , downloadAcknowledgementForm,convertEpochToDate} from "../../utils";;
 import "./index.css";
 import { getPMSPattern } from "../../../../../ui-utils/commons";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -20,6 +20,7 @@ import axios from 'axios';
 import { sampleGetBill, ApplicationConfiguration } from "../../../../../ui-utils/sampleResponses";
 import { httpRequest } from "../../../../../ui-utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import set from "lodash/set";
 const PaymentOrderWithoutDetails = async (state, dispatch) => {
    //let response = WFConfig(); 
    const { PaymentDetails} = state.screenConfiguration.preparedFinalObject;
@@ -48,6 +49,43 @@ const PaymentOrderWithoutDetails = async (state, dispatch) => {
          queryObject
        );
      let config = ApplicationConfiguration();
+     let date = pdfResponce.PaymentDetails.date
+     let dob = pdfResponce.PaymentDetails.dob
+     let dateOfAppointment = pdfResponce.PaymentDetails.dateOfAppointment
+     let dateOfDeath = pdfResponce.PaymentDetails.dateOfDeath
+     let dateOfRetirement = pdfResponce.PaymentDetails.dateOfRetirement
+     let department = pdfResponce.PaymentDetails.department
+     let designation = pdfResponce.PaymentDetails.designation
+     const {designationsById,departmentById} = state.common;
+     if(designationsById){
+       if(designation !==null)
+       {
+         const desgnName = Object.values(designationsById).filter(item =>  item.code === designation )
+         if(desgnName && desgnName[0])
+         designation =  desgnName[0].name;
+       }    
+       }
+       if(departmentById)
+       {
+         if(department !==null)
+         {
+         const departmentName = Object.values(departmentById).filter(item =>  item.code === department )
+         if(departmentName && departmentName[0])
+         department =  departmentName[0].name;
+         }
+       }
+     date =  date === null?'NA':convertEpochToDate(date,"dob")
+     dob =  date === null?'NA':convertEpochToDate(dob,"dob")
+     dateOfAppointment =  dateOfAppointment === null?'NA':convertEpochToDate(dateOfAppointment,"dob")
+     dateOfDeath =  dateOfDeath === null?'NA':convertEpochToDate(dateOfDeath,"dob")
+     dateOfRetirement =  dateOfRetirement === null?'NA':convertEpochToDate(dateOfRetirement,"dob")
+     set(pdfResponce.PaymentDetails,'date',date)
+     set(pdfResponce.PaymentDetails,'dob',dob)
+     set(pdfResponce.PaymentDetails,'dateOfAppointment',dateOfAppointment)
+     set(pdfResponce.PaymentDetails,'dateOfDeath',dateOfDeath)
+     set(pdfResponce.PaymentDetails,'dateOfRetirement',dateOfRetirement)
+     set(pdfResponce.PaymentDetails,'designation',designation)
+     set(pdfResponce.PaymentDetails,'department',department)
      downloadAcknowledgementLetter(pdfResponce.PaymentDetails,config.DOE_PAYMENT_ORDER_WITHOUT_DETAILS,config.DOE_PAYMENT_ORDER_config)
    }
    catch(error)
@@ -83,6 +121,43 @@ const ActiongetApplication = async (state, dispatch) => {
         queryObject
       );
     let config = ApplicationConfiguration();
+    let date = pdfResponce.PaymentDetails.date
+    let dob = pdfResponce.PaymentDetails.dob
+    let dateOfAppointment = pdfResponce.PaymentDetails.dateOfAppointment
+    let dateOfDeath = pdfResponce.PaymentDetails.dateOfDeath
+    let dateOfRetirement = pdfResponce.PaymentDetails.dateOfRetirement
+    let department = pdfResponce.PaymentDetails.department
+    let designation = pdfResponce.PaymentDetails.designation
+    const {designationsById,departmentById} = state.common;
+    if(designationsById){
+      if(designation !==null)
+      {
+        const desgnName = Object.values(designationsById).filter(item =>  item.code === designation )
+        if(desgnName && desgnName[0])
+        designation =  desgnName[0].name;
+      }    
+      }
+      if(departmentById)
+      {
+        if(department !==null)
+        {
+        const departmentName = Object.values(departmentById).filter(item =>  item.code === department )
+        if(departmentName && departmentName[0])
+        department =  departmentName[0].name;
+        }
+      }
+    date =  date === null?'NA':convertEpochToDate(date,"dob")
+    dob =  date === null?'NA':convertEpochToDate(dob,"dob")
+    dateOfAppointment =  dateOfAppointment === null?'NA':convertEpochToDate(dateOfAppointment,"dob")
+    dateOfDeath =  dateOfDeath === null?'NA':convertEpochToDate(dateOfDeath,"dob")
+    dateOfRetirement =  dateOfRetirement === null?'NA':convertEpochToDate(dateOfRetirement,"dob")
+    set(pdfResponce.PaymentDetails,'date',date)
+    set(pdfResponce.PaymentDetails,'dob',dob)
+    set(pdfResponce.PaymentDetails,'dateOfAppointment',dateOfAppointment)
+    set(pdfResponce.PaymentDetails,'dateOfDeath',dateOfDeath)
+    set(pdfResponce.PaymentDetails,'dateOfRetirement',dateOfRetirement)
+    set(pdfResponce.PaymentDetails,'designation',designation)
+    set(pdfResponce.PaymentDetails,'department',department)
     downloadAcknowledgementLetter(pdfResponce.PaymentDetails,config.DOE_PAYMENT_ORDER,config.DOE_PAYMENT_ORDER_config)
   }
   catch(error)
