@@ -147,7 +147,7 @@ class WorkFlowContainer extends React.Component {
       let queryObject = [
         {
           key: "tenantId",
-          value: data.tenantId
+          value: data.tenant ? data.tenant : tenant
         }
       ];
       let wfUpdatePayload = {}
