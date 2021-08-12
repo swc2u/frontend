@@ -7,6 +7,7 @@ import { getUserInfo,localStorageGet } from "egov-ui-kit/utils/localStorageUtils
 import { Container, Item } from "egov-ui-framework/ui-atoms";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import MenuButton from "egov-ui-framework/ui-molecules/MenuButton";
+import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {getNextFinancialYearForRenewal,getSearchResults} from "../../ui-utils/commons"
 import { getDownloadItems } from "./downloadItems";
 import get from "lodash/get";
@@ -274,12 +275,18 @@ class Footer extends React.Component {
           value: tenantId
         }
       ];
-      const payload = await httpRequest(
+      
+let payload = null
+      try
+      {
+       payload = await httpRequest(
         "post",
         "/egov-hrms/employees/_search",
         "",
         queryObj
       );
+     
+      if (payload && payload.Employees.length > 0) {
       employeeList =
         payload &&
         payload.Employees.map((item, index) => {
@@ -289,10 +296,23 @@ class Footer extends React.Component {
             label: name
           };
         });
-    }}
+    }
+        }
+        catch(error)
+        {
+          toggleSnackbar(
+            true,
+            error.message,
+            "error"
+          );
+
+        }
+  }
+  }
     
 
     this.setState({ open: true, data: item, employeeList });
+    
   };
 
   onClose = () => {

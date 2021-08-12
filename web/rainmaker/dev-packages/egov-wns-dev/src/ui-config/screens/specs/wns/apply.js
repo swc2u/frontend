@@ -1871,7 +1871,12 @@ export const connectionHolderDetails = getCommonCard({ holderHeader, sameAsOwner
 export const proposedconnectionHolderDetails = getCommonCard({ proposedholderHeader,  proposedholderDetails })
 export const propertyUsageDetails = getCommonCard({PropertyUsageHeader,propertyUsage});
 export const commentSectionDetails = getCommonCard({commentHeader,commentDetails})
-export const commentTempSectionDetails = getCommonCard({commentHeader,commentSubHeaderTEMP,propertyTempIDDetails,commentDetails})
+export const commentTempSectionDetails = getCommonCard({
+  //commentHeader,
+  commentSubHeaderTEMP,
+  propertyTempIDDetails,
+  commentDetails
+})
 export const connConversionDetails = getCommonCard({ ConnectionConversionHeader,connectionConversionDetails})
 export const formwizardFirstStep = {
   uiFramework: "custom-atoms",
