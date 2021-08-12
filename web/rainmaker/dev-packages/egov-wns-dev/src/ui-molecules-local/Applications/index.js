@@ -54,8 +54,22 @@ else{
 
 }
   }
-  titleCasingApplicationType = (activityType) => {
+  titleCasingApplicationType = (activityType,item) => {
     let status =`CS_COMMON_INBOX_${activityType}`
+    if(item.applicationNo.includes("SW"))
+    {
+      status = 'Sewerage Application'
+    }
+    else
+    {
+      if(status ==='CS_COMMON_INBOX_NA')
+      {
+        status ='Water Application'
+      }
+      
+      
+    }
+    
         const localisationLabels = getTransformedLocalStorgaeLabels();
         return getLocaleLabels(
           status,
@@ -65,77 +79,101 @@ else{
         );
         
       }
-  titleCasingStatus = (status,activityType,applicationNo) => {
-switch(activityType)
-{
-  case'NEW_WATER_CONNECTION':
-  status = `WF_REGULARWSCONNECTION_${status}`
-  break;
-  case "APPLY_FOR_TEMPORARY_CONNECTION":
-  status = `WF_TEMPORARY_WSCONNECTION_${status}`
-  break;   
-  case "WS_TUBEWELL":
-  case "NEW_TUBEWELL_CONNECTION":
-  status = `WF_WS_TUBEWELL_${status}`
-  break;
-  case "WF_SW_SEWERAGE":
-  //case "NEW_TUBEWELL_CONNECTION":
-  status = `WF_SW_SEWERAGE_${status}`
-  break;
-  case "TEMPORARY_WSCONNECTION":
-    case "TEMPORARY_WSCONNECTION_BILLING":
-  case "APPLY_FOR_TEMPORARY_CONNECTION":
-  status = `WF_TEMPORARY_WSCONNECTION_${status}`
-  break;
-  case "WS_TEMP_TEMP":
-  case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
-  status = `WF_WS_TEMP_TEMP_${status}`
-  break;
-  case "WS_TEMP_REGULAR":
-  case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
-  status = `WF_WS_TEMP_REGULAR_${status}`
-  break;
-  case "WS_DISCONNECTION":
-  case "PERMANENT_DISCONNECTION":
-  status = `WF_WS_DISCONNECTION_${status}`
-  break;
-  case "WS_TEMP_DISCONNECTION":
-  case "TEMPORARY_DISCONNECTION":
-  status = `WF_WS_TEMP_DISCONNECTION_${status}`
-  break;
-  case "WS_RENAME":
-  case "UPDATE_CONNECTION_HOLDER_INFO":
-  status = `WF_WS_RENAME_${status}`
-  break;
-  case "WS_METER_UPDATE":
-  case "UPDATE_METER_INFO":
-  status = `WF_WS_METER_UPDATE_${status}`
-  break;
-  case "WS_CONVERSION":
-  case "CONNECTION_CONVERSION":
-  status = `WF_WS_CONVERSION_${status}`
-  break;
-  case "WS_REACTIVATE":
-  case "REACTIVATE_CONNECTION":
-  status = `WF_WS_REACTIVATE_${status}`
-  break;
-  case "NA":
+  titleCasingStatus = (status,activityType,applicationNo,item) => {
+    
     if(applicationNo.includes("SW"))
-  {
-    status = `WF_SW_SEWERAGE_${status}`
-  }
-  else
-  status = status
-  break;
-  default:
-  let splitStr = status.toLowerCase().split('_');
+    {
+      status = status
+    }
+    else
+    {
+      if(item.waterApplication)
+      status= item.waterApplication.applicationStatus
+      
+    }
+// switch(activityType)
+// {
+//   case'NEW_WATER_CONNECTION':
+//   status = `WF_REGULARWSCONNECTION_${status}`
+//   break;
+//   case "APPLY_FOR_TEMPORARY_CONNECTION":
+//   status = `WF_TEMPORARY_WSCONNECTION_${status}`
+//   break;   
+//   case "WS_TUBEWELL":
+//   case "NEW_TUBEWELL_CONNECTION":
+//   status = `WF_WS_TUBEWELL_${status}`
+//   break;
+//   case "WF_SW_SEWERAGE":
+//   //case "NEW_TUBEWELL_CONNECTION":
+//   status = `WF_SW_SEWERAGE_${status}`
+//   break;
+//   case "TEMPORARY_WSCONNECTION":
+//   case "TEMPORARY_WSCONNECTION_BILLING":
+//   case "APPLY_FOR_TEMPORARY_CONNECTION":
+//   case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":
+//   status = `WF_TEMPORARY_WSCONNECTION_${status}`
+//   break;
+//   case "WS_TEMP_TEMP":
+//   case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":
+//   status = `WF_WS_TEMP_TEMP_${status}`
+//   break;
+//   case "WS_TEMP_REGULAR":
+//   case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":
+//   status = `WF_WS_TEMP_REGULAR_${status}`
+//   break;
+//   case "WS_DISCONNECTION":
+//   case "PERMANENT_DISCONNECTION":
+//   status = `WF_WS_DISCONNECTION_${status}`
+//   break;
+//   case "WS_TEMP_DISCONNECTION":
+//   case "TEMPORARY_DISCONNECTION":
+//   status = `WF_WS_TEMP_DISCONNECTION_${status}`
+//   break;
+//   case "WS_RENAME":
+//   case "UPDATE_CONNECTION_HOLDER_INFO":
+//   status = `WF_WS_RENAME_${status}`
+//   break;
+//   case "WS_METER_UPDATE":
+//   case "UPDATE_METER_INFO":
+//   status = `WF_WS_METER_UPDATE_${status}`
+//   break;
+//   case "WS_CONVERSION":
+//   case "CONNECTION_CONVERSION":
+//   status = `WF_WS_CONVERSION_${status}`
+//   break;
+//   case "WS_REACTIVATE":
+//   case "REACTIVATE_CONNECTION":
+//   status = `WF_WS_REACTIVATE_${status}`
+//   break;
+//   case "NA":
+//     if(applicationNo.includes("SW"))
+//   {
+//     status = `WF_SW_SEWERAGE_${status}`
+//   }
+//   else
+//   status = status
+//   break;
+//   default:
+//   let splitStr = status.toLowerCase().split('_');
+//     for (let i = 0; i < splitStr.length; i++) {
+//       splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+//     }
+//     status= splitStr.join(' ');
+//     break;
+
+// }
+    // const localisationLabels = getTransformedLocalStorgaeLabels();
+    // return getLocaleLabels(
+    //   status,
+    //   status,
+    //   //"PENSION_COMMON_TABLE_COL_EMMPLOYEE_NAME",
+    //   localisationLabels
+    // );
+    let splitStr = status.toLowerCase().split('_');
     for (let i = 0; i < splitStr.length; i++) {
       splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
     }
     status= splitStr.join(' ');
-    break;
-
-}
     const localisationLabels = getTransformedLocalStorgaeLabels();
     return getLocaleLabels(
       status,
@@ -143,7 +181,6 @@ switch(activityType)
       //"PENSION_COMMON_TABLE_COL_EMMPLOYEE_NAME",
       localisationLabels
     );
-    
   }
 
   render() {
@@ -235,7 +272,7 @@ switch(activityType)
                         </Grid>
                         <Grid item md={8} xs={6}>
                           <Label
-                            labelName={this.titleCasingApplicationType(item.activityType)}
+                            labelName={this.titleCasingApplicationType(item.activityType,item)}
                             fontSize={14}
                             style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                           />
@@ -251,7 +288,7 @@ switch(activityType)
                         </Grid>
                         <Grid item md={8} xs={6}>
                           <Label
-                            labelName={this.titleCasingStatus(item.applicationStatus,item.activityType,item.applicationNo)}
+                            labelName={this.titleCasingStatus(item.applicationStatus,item.activityType,item.applicationNo,item)}
                             fontSize={14}
                             style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                           />
