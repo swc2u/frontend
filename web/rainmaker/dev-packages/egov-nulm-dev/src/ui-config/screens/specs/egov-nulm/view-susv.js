@@ -271,7 +271,7 @@ const screenConfig = {
             },
             printMenu: {
               uiFramework: "custom-atoms-local",
-              moduleName: "egov-tradelicence",
+              moduleName: "egov-nulm",
               componentPath: "MenuButton",
               gridDefination: {
                 xs: 12,

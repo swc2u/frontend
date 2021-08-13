@@ -401,6 +401,15 @@ let requestBody ={}
          requestBody = {SmidCitizenApplication}
 
   }
+  else{
+    SmidCitizenApplication[0].applicantPhoto = "";
+    SmidCitizenApplication[0].corporationName = "MUNICIPAL CORPORATION CHANDIGARH";
+    SmidCitizenApplication[0].corporationAddress = "New Deluxe Building, Sector 17, Chandigarh";
+    SmidCitizenApplication[0].corporationContact = "+91-172-2541002, 0172-2541003";
+    SmidCitizenApplication[0].corporationWebsite = "http://mcchandigarh.gov.in";
+    SmidCitizenApplication[0].corporationEmail = null;
+    requestBody = {SmidCitizenApplication}
+  }
  }
  else if(pagename ==='SUSV_UPDATE')//svru
  {

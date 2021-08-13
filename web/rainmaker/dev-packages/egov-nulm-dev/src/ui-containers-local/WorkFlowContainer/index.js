@@ -20,7 +20,7 @@ import find from "lodash/find";
 import {
   localStorageGet,
   getUserInfo
-} from "egov-ui-kit/utils/localStorageUtils";
+} from "egov-ui-kit/utils/localStorageUtils/index";
 import orderBy from "lodash/orderBy";
 import { data } from "jquery";
 
@@ -324,9 +324,10 @@ class WorkFlowContainer extends React.Component {
   };
 
   getActionIfEditable = (status, businessId, moduleName) => {
-    const businessServiceData = JSON.parse(
+    var businessServiceData = JSON.parse(
       localStorageGet("businessServiceData")
     );
+    var businessServiceData = JSON.parse(localStorage["businessServiceData"]);
     const data = find(businessServiceData, { businessService: moduleName });
     const state = find(data.states, { applicationStatus: status });
     let actions = [];
