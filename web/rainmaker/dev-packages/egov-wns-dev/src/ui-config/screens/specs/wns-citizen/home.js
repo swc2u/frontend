@@ -17,13 +17,22 @@ const header = getCommonHeader({
     }
 });
 
-const cardItems = [{
+const cardItems = [
+// {
 //     label: {
 //         labelKey: "WS_COMMON_PAY_WS_BILL_HEADER",
 //     },
 //     icon: < PayWnsBillIcon />,
 //     route: "search"
 // },
+{
+    label: {
+        labelKey: "WS_MONTHLY_WATER_BILL_PAYMENT",
+    },
+    icon: < PayWnsBillIcon />,
+    route: ""
+},
+{
     label: {
         labelKey: "WS_COMMON_APPL_LINK_CONNECTION",
     },
