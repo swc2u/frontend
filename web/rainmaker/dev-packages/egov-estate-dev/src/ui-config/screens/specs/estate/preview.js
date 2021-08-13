@@ -13,7 +13,7 @@ const { setThirdStep } = require("../estate-citizen/applyResource/review");
 import {downloadPrintContainer} from './applyResource/footer';
 import { getApplicationConfig } from "../estate-citizen/_apply";
 import { set } from "lodash";
-
+import {getReviewNoc} from '../estate/applyResource/reviewProperty'
 const userInfo = JSON.parse(getUserInfo());
 const {
   roles = []
@@ -70,7 +70,7 @@ const getData = async (action, state, dispatch) => {
     const response = await getSearchApplicationsResults(queryObject)
     try {
        let {Applications = []} = response;
-       let {applicationDocuments, workFlowBusinessService, state: applicationState, billingBusinessService: businessService, property,hardcopyReceivedDate} = Applications[0];
+       let {applicationDocuments, workFlowBusinessService, state: applicationState, billingBusinessService: businessService, property,hardcopyReceivedDate,applicationDetails} = Applications[0];
        const estateRentSummary = property.estateRentSummary
        const dueAmount = !!estateRentSummary ? estateRentSummary.balanceRent + estateRentSummary.balanceRentPenalty + estateRentSummary.balanceGSTPenalty + estateRentSummary.balanceGST : "0"
        property = {...property, propertyDetails: {...property.propertyDetails, dueAmount: dueAmount || "0"}}
@@ -128,8 +128,8 @@ const getData = async (action, state, dispatch) => {
        let {preview} = uiConfig
        let reviewDetails = await setThirdStep({state, dispatch, preview, applicationType: type, data: Applications[0], isEdit: false, showHeader: false});
        const estimateResponse = await createEstimateData(Applications[0], dispatch, window.location.href)
-
-    
+const nocReview=getReviewNoc()
+reviewDetails = {nocReview, ...reviewDetails}
        if((!!estimateResponse && ((estimateResponse.Payments && !!estimateResponse.Payments.length) || (!!estimateResponse.billDetails && !!estimateResponse.billDetails.length)))) {
          const estimate = !!estimateResponse ? getCommonGrayCard({
            estimateSection: getFeesEstimateCard({
@@ -213,6 +213,11 @@ const getData = async (action, state, dispatch) => {
           reviewDetails, 
           "children.cardContent.children.ES_HARD_COPY_DATE.visible",
           (!!hardcopyReceivedDate)
+        )
+        set(
+          reviewDetails, 
+          "children.cardContent.children.nocReview.visible",
+          (!!applicationDetails.streetWidth)
         )
         return {
                 div: {
