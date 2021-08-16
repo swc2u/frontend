@@ -152,6 +152,22 @@ export const searchForm = getCommonCard({
           {
             value: "Drafted",
             label: "Drafted"
+          },
+          {
+            value: "Forward to JE",
+            label: "Forward to JE"
+          },
+          {
+            value: "Forward to SDO",
+            label: "Forward to SDO"
+          },
+          {
+            value: "Forward to ACMC",
+            label: "Forward to ACMC"
+          },
+          {
+            value: "Reassign to Citizen",
+            label: "Reassign to Citizen"
           }
         ],
       },
