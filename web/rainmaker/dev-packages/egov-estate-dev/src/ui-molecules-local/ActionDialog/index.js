@@ -693,7 +693,7 @@ class ActionDialog extends React.Component {
                     {!!payment.isError && (<span style={{color: "red"}}>{getLocaleLabels(payment.errorMessage, payment.errorMessage)}</span>)}
                     </Grid>)
                     )}
-                  {applicationState === "ES_PENDING_DRAFSMAN_CALCULATION" && buttonLabel === "FORWARD" && bb_payment_config.map(payment => (
+                  {applicationState === "ES_PENDING_DRAFSMAN_CALCULATION" && buttonLabel === "FORWARD" && bb_payment_config.map((payment,ind) => (
                     <Grid payment sm="12">
                     <TextFieldContainer
                     InputLabelProps={{ shrink: true }}

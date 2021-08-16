@@ -30,6 +30,10 @@ const styles = theme => ({
         fontSize: 12,
         fontWeight: 400,
         letterSpacing: 0.56
+    },
+    formHelperText:{
+      fontSize: "1.4rem",
+      color: "#f44336"
     }
   });
 
@@ -49,17 +53,20 @@ class MultipleSelect extends React.Component {
     constructor(props){
       super(props)
       this.state = {
-        name: this.props.value || []
+        name: this.props.value || [],
+        error:this.props.errorMessage
       }
     }
   
     handleChange = event => {
       this.setState({ name: event.target.value });
       this.props.prepareFinalObject(this.props.jsonPath, event.target.value)
+      this.setState({ error: "" });
+      console.log(this.state.error)
     };
   
     render() {
-      const { classes, theme, label, options, localizationLabels, localePrefix, required, error, helperText, placeholder } = this.props;
+      const { classes, theme, label, options, localizationLabels, localePrefix, required, error, helperText,errorMessage, placeholder } = this.props;
       return (
         <div className={classes.root}>
           <FormControl className={classes.formControl} required={required}>
@@ -101,7 +108,7 @@ class MultipleSelect extends React.Component {
                 </MenuItem>
               ))}
             </Select>
-            {!!error && (<FormHelperText>{helperText}</FormHelperText>)}
+            {!!error && (<FormHelperText className={classes.formHelperText}>{this.state.error}</FormHelperText>)}
           </FormControl>
         </div>
       );

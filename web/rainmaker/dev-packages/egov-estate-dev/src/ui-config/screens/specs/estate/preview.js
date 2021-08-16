@@ -70,7 +70,7 @@ const getData = async (action, state, dispatch) => {
     const response = await getSearchApplicationsResults(queryObject)
     try {
        let {Applications = []} = response;
-       let {applicationDocuments, workFlowBusinessService, state: applicationState, billingBusinessService: businessService, property,hardcopyReceivedDate,applicationDetails} = Applications[0];
+       let {applicationDocuments, allDocuments,workFlowBusinessService, state: applicationState, billingBusinessService: businessService, property,hardcopyReceivedDate,applicationDetails} = Applications[0];
        const estateRentSummary = property.estateRentSummary
        const dueAmount = !!estateRentSummary ? estateRentSummary.balanceRent + estateRentSummary.balanceRentPenalty + estateRentSummary.balanceGSTPenalty + estateRentSummary.balanceGST : "0"
        property = {...property, propertyDetails: {...property.propertyDetails, dueAmount: dueAmount || "0"}}
@@ -79,6 +79,7 @@ const getData = async (action, state, dispatch) => {
         property = Applications[0].applicationDetails.property;
         }
        applicationDocuments = applicationDocuments || []
+       allDocuments = allDocuments || []
        const statusQueryObject = [{
           key: "tenantId",
           value: getTenantId()
@@ -91,9 +92,17 @@ const getData = async (action, state, dispatch) => {
        getStatusList( state, dispatch, statusQueryObject)
        const removedDocs = applicationDocuments.filter(item => !item.isActive)
        applicationDocuments = applicationDocuments.filter(item => !!item.isActive)
-       const finalLetter = applicationDocuments.find(item => item.documentType === "FINAL_LETTER")
+       let finalLetter
+       if(applicationState==="ES_PENDING_DA_PREPARE_LETTER"){
+        finalLetter=[]
+       }
+       else{
+         finalLetter = applicationDocuments.find(item => item.documentType === "FINAL_LETTER")
+       }
+       //const finalLetter = applicationDocuments.find(item => item.documentType === "FINAL_LETTER")
        applicationDocuments = applicationDocuments.filter(item => item.documentType !== "FINAL_LETTER")
-       Applications = [{...Applications[0], applicationDocuments, property, finalLetter, property_copy}]
+       allDocuments = allDocuments.filter(item => item.documentType !== "FINAL_LETTER")
+       Applications = [{...Applications[0],allDocuments, applicationDocuments, property, finalLetter, property_copy}]
        dispatch(prepareFinalObject("Applications", Applications))
        dispatch(prepareFinalObject("temp[0].removedDocs", removedDocs))
        await setDocuments(
@@ -217,7 +226,7 @@ reviewDetails = {nocReview, ...reviewDetails}
         set(
           reviewDetails, 
           "children.cardContent.children.nocReview.visible",
-          (!!applicationDetails.streetWidth)
+          (!!applicationDetails.khasraNo && branchType == "BuildingBranch" && process.env.REACT_APP_NAME !== "Citizen")
         )
         return {
                 div: {

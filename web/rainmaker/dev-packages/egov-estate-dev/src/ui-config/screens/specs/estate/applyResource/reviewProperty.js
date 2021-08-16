@@ -2381,13 +2381,13 @@ export const getReviewNoc = () => {
     },
     { jsonPath: "Applications[0].applicationDetails.groundFloorcommercialActivity" }
   ),
-  groundFloorcommercialActivityInch: getLabelWithValue(
-    {
-        labelName: "Outstanding",
-        labelKey: "ES_GROUND_FLOOR_COMMERCIAL_INCH"
-    },
-    { jsonPath: "Applications[0].applicationDetails.groundFloorcommercialActivityInch" }
-  ),
+  // groundFloorcommercialActivityInch: getLabelWithValue(
+  //   {
+  //       labelName: "Outstanding",
+  //       labelKey: "ES_GROUND_FLOOR_COMMERCIAL_INCH"
+  //   },
+  //   { jsonPath: "Applications[0].applicationDetails.groundFloorcommercialActivityInch" }
+  // ),
   firstFloorcommercialActivity: getLabelWithValue(
     {
         labelName: "Outstanding",
@@ -2395,13 +2395,13 @@ export const getReviewNoc = () => {
     },
     { jsonPath: "Applications[0].applicationDetails.firstFloorcommercialActivity" }
   ),
-  firstFloorcommercialActivityInch: getLabelWithValue(
-    {
-        labelName: "Outstanding",
-        labelKey: "ES_FIRST_FLOOR_COMMERCIAL_INCH"
-    },
-    { jsonPath: "Applications[0].applicationDetails.firstFloorcommercialActivityInch" }
-  ),
+  // firstFloorcommercialActivityInch: getLabelWithValue(
+  //   {
+  //       labelName: "Outstanding",
+  //       labelKey: "ES_FIRST_FLOOR_COMMERCIAL_INCH"
+  //   },
+  //   { jsonPath: "Applications[0].applicationDetails.firstFloorcommercialActivityInch" }
+  // ),
   secondFloorcommercialActivity: getLabelWithValue(
     {
         labelName: "Outstanding",
@@ -2409,13 +2409,13 @@ export const getReviewNoc = () => {
     },
     { jsonPath: "Applications[0].applicationDetails.secondFloorcommercialActivity" }
   ),
-  secondFloorcommercialActivityInch: getLabelWithValue(
-    {
-        labelName: "Outstanding",
-        labelKey: "ES_SECOND_FLOOR_COMMERCIAL_INCH"
-    },
-    { jsonPath: "Applications[0].applicationDetails.secondFloorcommercialActivityInch" }
-  ),
+  // secondFloorcommercialActivityInch: getLabelWithValue(
+  //   {
+  //       labelName: "Outstanding",
+  //       labelKey: "ES_SECOND_FLOOR_COMMERCIAL_INCH"
+  //   },
+  //   { jsonPath: "Applications[0].applicationDetails.secondFloorcommercialActivityInch" }
+  // ),
   basement: getLabelWithValue(
     {
         labelName: "Outstanding",

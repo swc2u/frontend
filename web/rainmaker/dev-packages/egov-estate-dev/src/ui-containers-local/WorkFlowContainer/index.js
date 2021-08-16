@@ -175,11 +175,15 @@ class WorkFlowContainer extends React.Component {
 
     if(applicationState === "ES_PENDING_DA_PREPARE_LETTER") {
       let applicationDocuments = data[0].applicationDocuments || []
+      let allDocuments = data[0].allDocuments || []
+      applicationDocuments = applicationDocuments.filter(item => item.documentType !== "FINAL_LETTER")
+      allDocuments = allDocuments.filter(item => item.documentType !== "FINAL_LETTER")
       const finalLetter = data[0].finalLetter;
       if(!!finalLetter && !!finalLetter.length) {
         const finalLetterDocument = finalLetter[0];
         applicationDocuments = [...applicationDocuments, {...finalLetterDocument, documentType: "FINAL_LETTER", isActive: true}]
-        data = [{...data[0], applicationDocuments}]
+        allDocuments = [...allDocuments, {...finalLetterDocument, documentType: "FINAL_LETTER", isActive: true}]
+        data = [{...data[0],allDocuments, applicationDocuments}]
       }
     }
 

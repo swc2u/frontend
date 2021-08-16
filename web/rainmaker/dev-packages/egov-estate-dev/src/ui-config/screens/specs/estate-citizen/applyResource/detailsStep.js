@@ -354,8 +354,9 @@ const getField = async (item, fieldData = {}, state) => {
             },
             options,
             jsonPath: rest.jsonPath,
-            required
-          }
+            required,
+          },
+          ...rest
         }
       }
       default: return getTextField({
