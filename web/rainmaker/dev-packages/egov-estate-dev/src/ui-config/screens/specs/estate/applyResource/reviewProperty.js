@@ -2115,7 +2115,7 @@ export const getReviewNoc = () => {
                   },
                   ...getCommonSubHeader({
                       labelName: "Rent Summary",
-                      labelKey: "ES_RENT_SUMMARY_HEADER"
+                      labelKey: "ES_NOC_DETAILS_HEADER"
                   })
               },
               //editSection: masterEntryEditSection(isEditable, step, screenKey)
@@ -2223,14 +2223,14 @@ export const getReviewNoc = () => {
     { jsonPath: "Applications[0].applicationDetails.otherSideStreet",
   callBack:radiobutton }
   ),
-  anotherSideStreet: getLabelWithValue(
-    {
-        labelName: "Outstanding",
-        labelKey: "ES_WHETHER_THERE_IS_STREET_ON__ANOTHER_SIDE_OF_HOUSE_LABEL"
-    },
-    { jsonPath: "Applications[0].applicationDetails.anotherSideStreet",
-  callBack:radiobutton }
-  ),
+  // anotherSideStreet: getLabelWithValue(
+  //   {
+  //       labelName: "Outstanding",
+  //       labelKey: "ES_WHETHER_THERE_IS_STREET_ON__ANOTHER_SIDE_OF_HOUSE_LABEL"
+  //   },
+  //   { jsonPath: "Applications[0].applicationDetails.anotherSideStreet",
+  // callBack:radiobutton }
+  // ),
   sameWidthOfSideStreet: getLabelWithValue(
     {
         labelName: "Outstanding",
@@ -2258,6 +2258,14 @@ export const getReviewNoc = () => {
         labelKey: "ES_HEIGHT_OF_THE_STREET_INCH"
     },
     { jsonPath: "Applications[0].applicationDetails.sameHeightOfSideStreetInch" }
+  ),
+  anotherSideStreet: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_WHETHER_THERE_IS_STREET_ON__ANOTHER_SIDE_OF_HOUSE_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.anotherSideStreet",
+  callBack:radiobutton }
   ),
   sameWidthOfAnotherSideStreet: getLabelWithValue(
     {

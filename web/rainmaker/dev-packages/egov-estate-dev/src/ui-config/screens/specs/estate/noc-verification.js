@@ -69,6 +69,41 @@ const beforeInitFn = async (action, state, dispatch) => {
       state: applicationState,
       billingBusinessService: businessService
     } = Applications[0];
+    let propercheck=Applications[0].property.fileNumber
+    if(propercheck==="BBNOC-1"){
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.propertyDetails.children.cardContent.children.viewFour.children.houseNumber.children.value.children.key",
+        "props.jsonPath",
+        "Applications[0].applicationDetails.property.propertyDetails.houseNumber"
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.propertyDetails.children.cardContent.children.viewFour.children.mohalla.children.value.children.key",
+        "props.jsonPath",
+        "Applications[0].applicationDetails.property.propertyDetails.mohalla"
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.propertyDetails.children.cardContent.children.viewFour.children.village.children.value.children.key",
+        "props.jsonPath",
+        "Applications[0].applicationDetails.property.propertyDetails.village"
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.propertyDetails.children.cardContent.children.viewFour.children.so.children.value.children.key",
+        "props.jsonPath",
+        "Applications[0].applicationDetails.owner.ownerDetails.guardianName"
+      )
+    )
+      }
     applicationDocuments = applicationDocuments || [];
     const statusQueryObject = [{
         key: "tenantId",
@@ -738,7 +773,7 @@ const widthOfAnotherStreetWithLengthOfHouseField = ({jsonPath, label, placeholde
     xs: 12,
     sm: 6
   },
-  // required: true,
+  required: true,
   visible: false,
   jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
   pattern:_getPattern("numeric-firstdigit-zero"),
@@ -770,7 +805,7 @@ const widthOfStreetWithLengthOfHouseField = ({jsonPath, label, placeholder}) => 
     xs: 12,
     sm: 6
   },
-  // required: true,
+  required: true,
   visible: false,
   jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
   pattern:_getPattern("numeric-firstdigit-zero"),
@@ -789,7 +824,7 @@ const widthOfStreetWithLengthOfHouseField = ({jsonPath, label, placeholder}) => 
 }
 })
 
-const commercialActivity = ({jsonPath, label, placeholder,required}) => ({
+const commercialActivity = ({jsonPath, label, placeholder}) => ({
   label: {
     labelName: "Commercial Activity Floor",
     labelKey: label
@@ -802,11 +837,11 @@ const commercialActivity = ({jsonPath, label, placeholder,required}) => ({
     xs: 12,
     sm: 6
   },
-  required: required,
+  required: false,
   visible: false,
   jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
   pattern:_getPattern("numeric-firstdigit-zero"),
-  minLength: 1,
+  //minLength: 1,
   maxLength: 150,
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
@@ -1174,14 +1209,14 @@ const getAnyCommercialActivityGoingOnRadioButton = {
         !!(action.value == "true")
       )
     )
-    dispatch(
-      handleField(
-        "noc-verification",
-        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.groundFloorCommercialActivityInch",
-        "visible",
-        !!(action.value == "true")
-      )
-    )
+    // dispatch(
+    //   handleField(
+    //     "noc-verification",
+    //     "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.groundFloorCommercialActivityInch",
+    //     "visible",
+    //     !!(action.value == "true")
+    //   )
+    // )
     dispatch(
       handleField(
         "noc-verification",
@@ -1190,14 +1225,14 @@ const getAnyCommercialActivityGoingOnRadioButton = {
         !!(action.value == "true")
       )
     )
-    dispatch(
-      handleField(
-        "noc-verification",
-        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.firstFloorCommercialActivityInch",
-        "visible",
-        !!(action.value == "true")
-      )
-    )
+    // dispatch(
+    //   handleField(
+    //     "noc-verification",
+    //     "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.firstFloorCommercialActivityInch",
+    //     "visible",
+    //     !!(action.value == "true")
+    //   )
+    // )
     dispatch(
       handleField(
         "noc-verification",
@@ -1206,14 +1241,14 @@ const getAnyCommercialActivityGoingOnRadioButton = {
         !!(action.value == "true")
       )
     )
-    dispatch(
-      handleField(
-        "noc-verification",
-        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.secondFloorCommercialActivityInch",
-        "visible",
-        !!(action.value == "true")
-      )
-    )
+    // dispatch(
+    //   handleField(
+    //     "noc-verification",
+    //     "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.secondFloorCommercialActivityInch",
+    //     "visible",
+    //     !!(action.value == "true")
+    //   )
+    // )
   }
 };
 
@@ -1503,11 +1538,11 @@ export const nocVerificationDetails = getCommonCard({
     anyCantilever: getAnyCantileverRadioButton,
     cantileverDetails: getTextField(cantileverDetailsField),
     commercialActivityGoingOn: getAnyCommercialActivityGoingOnRadioButton,
-    groundFloorCommercialActivity: getTextField(commercialActivity({jsonPath: "groundFloorcommercialActivity", label: "ES_GROUND_FLOOR_COMMERCIAL", placeholder: "ES_GROUND_FLOOR_COMMERCIAL_PLACEHOLDER",required:true})),
+    groundFloorCommercialActivity: getTextField(commercialActivity({jsonPath: "groundFloorcommercialActivity", label: "ES_GROUND_FLOOR_COMMERCIAL", placeholder: "ES_GROUND_FLOOR_COMMERCIAL_PLACEHOLDER"})),
     //groundFloorCommercialActivityInch: getTextField(commercialActivity({jsonPath: "groundFloorcommercialActivityInch", label: "ES_GROUND_FLOOR_COMMERCIAL_INCH", placeholder: "ES_GROUND_FLOOR_COMMERCIAL_INCH_PLACEHOLDER",required:true})),
-    firstFloorCommercialActivity: getTextField(commercialActivity({jsonPath: "firstFloorcommercialActivity", label: "ES_FIRST_FLOOR_COMMERCIAL", placeholder: "ES_FIRST_FLOOR_COMMERCIAL_PLACEHOLDER",required:false})),
+    firstFloorCommercialActivity: getTextField(commercialActivity({jsonPath: "firstFloorcommercialActivity", label: "ES_FIRST_FLOOR_COMMERCIAL", placeholder: "ES_FIRST_FLOOR_COMMERCIAL_PLACEHOLDER"})),
     //firstFloorCommercialActivityInch: getTextField(commercialActivity({jsonPath: "firstFloorcommercialActivityInch", label: "ES_FIRST_FLOOR_COMMERCIAL_INCH", placeholder: "ES_FIRST_FLOOR_COMMERCIAL_INCH_PLACEHOLDER",required:false})),
-    secondFloorCommercialActivity: getTextField(commercialActivity({jsonPath: "secondFloorcommercialActivity", label: "ES_SECOND_FLOOR_COMMERCIAL", placeholder: "ES_SECOND_FLOOR_COMMERCIAL_PLACEHOLDER",required:false})),
+    secondFloorCommercialActivity: getTextField(commercialActivity({jsonPath: "secondFloorcommercialActivity", label: "ES_SECOND_FLOOR_COMMERCIAL", placeholder: "ES_SECOND_FLOOR_COMMERCIAL_PLACEHOLDER"})),
     //secondFloorCommercialActivityInch: getTextField(commercialActivity({jsonPath: "secondFloorcommercialActivityInch", label: "ES_SECOND_FLOOR_COMMERCIAL_INCH", placeholder: "ES_SECOND_FLOOR_COMMERCIAL_INCH_PLACEHOLDER",required:false})),
     anyBasements: getAnyBasementsOnRadioButton,
     otherViolationDetails: getTextField(otherViolationDetailsField),
@@ -1581,29 +1616,29 @@ const validateNocForm = (state, handleFieldChange) => {
   }
   if(isCommercialActivity === "true" || isCommercialActivity === true) {
     const groundFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivity")
-    const groundFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivityInch")
+    //const groundFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivityInch")
     const firstFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.firstFloorCommercialActivity")
-    const firstFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.firstFloorCommercialActivityInch")
+    //const firstFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.firstFloorCommercialActivityInch")
     const secondFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivity")
-    const secondFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivityInch")
+    //const secondFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivityInch")
     if(!groundFloorCommercialActivity) {
       handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivity", "0")
     }
-    if(!groundFloorCommercialActivityInch) {
-      handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivityInch", "0")
-    }
+    // if(!groundFloorCommercialActivityInch) {
+    //   handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivityInch", "0")
+    // }
     if(!firstFloorCommercialActivity) {
       handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivity", "0")
     }
-    if(!firstFloorCommercialActivityInch) {
-      handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivityInch", "0")
-    }
+    // if(!firstFloorCommercialActivityInch) {
+    //   handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivityInch", "0")
+    // }
     if(!secondFloorCommercialActivity) {
       handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivity", "0")
     }
-    if(!secondFloorCommercialActivityInch) {
-      handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivityInch", "0")
-    }
+    // if(!secondFloorCommercialActivityInch) {
+    //   handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivityInch", "0")
+    // }
   }
 
   return isNocVerificationDetailValid;
