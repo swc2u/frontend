@@ -155,9 +155,9 @@ if(IsValidDate)
               [getTextToLocalMapping("Consumer Transaction Status")]: get(item, "txnStatus", "-") || "-",
               [getTextToLocalMapping("Module Name")]: get(item, "module", "-") || "-",
               // [getTextToLocalMapping("Created Date")]: get(item, "auditDetails.createdTime", "-") || "-",
-              [getTextToLocalMapping("Created Date")]: get(item, "auditDetails.createdTime", "")? new Date(get(item, "auditDetails.createdTime", "-")).toISOString().substr(0,10) : "-",
+              [getTextToLocalMapping("Created Date")]: get(item, "auditDetails.createdTime", "")? new Date(get(item, "auditDetails.createdTime", "-")).toISOString().replaceAll("T"," ").substr(0,16) : "-",
               // [getTextToLocalMapping("Last Modifid Date")]: get(item, "auditDetails.lastModifiedTime", "-") || "-",
-              [getTextToLocalMapping("Last Modifid Date")]: get(item, "auditDetails.lastModifiedTime", "")? new Date(get(item, "auditDetails.lastModifiedTime", "-")).toISOString().substr(0,10) : "-",
+              [getTextToLocalMapping("Last Modifid Date")]: get(item, "auditDetails.lastModifiedTime", "")? new Date(get(item, "auditDetails.lastModifiedTime", "-")).toISOString().replaceAll("T"," ").substr(0,16) : "-",
               // [getTextToLocalMapping("Contact Number")]: get(item, "contact_number", "-") || "-",
               // [getTextToLocalMapping("Creation Date")]: get(item, "created_time", "")? new Date(get(item, "created_time", "-")).toISOString().substr(0,10) : "-",
               ["code"]: get(item, "txnId", "-")
@@ -185,15 +185,25 @@ if(IsValidDate)
 
           // Button display to Update
           // let accountLocked = get(response, "Transaction[0].txnStatusMsg", [])
+          let SuccessTransaction = response.Transaction.filter(transaction => transaction.txnStatus === "SUCCESS");
           let PendingTransaction = response.Transaction.filter(transaction => transaction.txnStatus === "PENDING");
           dispatch(prepareFinalObject("PendingTransaction", PendingTransaction));
-          if(PendingTransaction.length === 1){
+          if(PendingTransaction.length === 1 && SuccessTransaction.length === 0){
             dispatch(
               handleField(
                 "transaction-update",
                 "components.div.children.footer.children.nextButton",
                 "visible",
                 true
+              )
+            );
+          }else{
+            dispatch(
+              handleField(
+                "transaction-update",
+                "components.div.children.footer.children.nextButton",
+                "visible",
+                false
               )
             );
           }

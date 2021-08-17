@@ -379,7 +379,7 @@ let requestBody ={}
    const {NulmSusvRequest} = state.screenConfiguration.preparedFinalObject;
 
    const SmidCitizenApplication = [NulmSusvRequest]; 
-   
+   if(NulmSusvRequest.applicationDocument !== null){
    const fileStoreIdsObj = NulmSusvRequest.applicationDocument.filter(docInfo => {
      if(docInfo.documentType==="Identity Proof") 
      return docInfo.filestoreId
@@ -389,6 +389,9 @@ let requestBody ={}
       if(fileUrlPayload){
       const photoUrl = getFileUrl(fileUrlPayload[fileStoreIds]);
        SmidCitizenApplication[0].applicantPhoto = photoUrl;
+   }else{
+      SmidCitizenApplication[0].applicantPhoto = "";
+   }
        // Hard code value is set which is not get from API responce
        SmidCitizenApplication[0].corporationName = "MUNICIPAL CORPORATION CHANDIGARH";
        SmidCitizenApplication[0].corporationAddress = "New Deluxe Building, Sector 17, Chandigarh";
@@ -397,6 +400,15 @@ let requestBody ={}
        SmidCitizenApplication[0].corporationEmail = null;
          requestBody = {SmidCitizenApplication}
 
+  }
+  else{
+    SmidCitizenApplication[0].applicantPhoto = "";
+    SmidCitizenApplication[0].corporationName = "MUNICIPAL CORPORATION CHANDIGARH";
+    SmidCitizenApplication[0].corporationAddress = "New Deluxe Building, Sector 17, Chandigarh";
+    SmidCitizenApplication[0].corporationContact = "+91-172-2541002, 0172-2541003";
+    SmidCitizenApplication[0].corporationWebsite = "http://mcchandigarh.gov.in";
+    SmidCitizenApplication[0].corporationEmail = null;
+    requestBody = {SmidCitizenApplication}
   }
  }
  else if(pagename ==='SUSV_UPDATE')//svru

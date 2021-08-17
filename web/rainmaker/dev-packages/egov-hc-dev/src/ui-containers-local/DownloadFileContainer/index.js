@@ -16,9 +16,12 @@ import {
 } from "egov-ui-framework/ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import  {delectDocument} from "../../ui-utils/commons";
+
 import Lightbox from 'react-image-lightbox';
 // import 'react-image-lightbox/style.css'; // This only needs to be imported once in your app
-
+// Import the main component
+// Erorr Line
+// import { Viewer } from '@react-pdf-viewer/core'; // install this library
 import "./index.css";
 
 
@@ -137,7 +140,8 @@ class DownloadFileContainer extends React.Component {
     //   <MultiDownloadCard data={data} documentData={documentData} {...rest} /> 
     // );
     return(
-      <div style={{display:"flex"}}>
+      <div className = "review-documents">
+      {/* <div style={{display:"flex"}}> */}
         {
           data&&(
             data.map((item,i)=>{
@@ -145,8 +149,8 @@ class DownloadFileContainer extends React.Component {
                 <Grid
                 item ={true}
                 container
-                xs={12}
-                sm={4}
+                xs={6}
+                sm={3}
                 style={{
                   maxWidth: 250,
                   backgroundColor: "#FFFFFF",
@@ -167,7 +171,7 @@ class DownloadFileContainer extends React.Component {
                   <div>
                   <Typography style={{wordWrap: "break-word",wordBreak: "break-all", maxWidth: 200,}}>{item.name}</Typography>
                   </div>
-                  <div style={{display:"flex"}}>
+                  <div style={{display:"block"}}>
                     <div>
                       <Button href={item.link} color="primary">
                         Download
@@ -254,11 +258,11 @@ class DownloadFileContainer extends React.Component {
             {this.state.isPDFOpen ?
               <div>
                 <div className='pdf-container'>
-                  {/* show pdf conditionally (if we have one)  */}
-                  {/* {
+                  {/* show pdf conditionally (if we have one) 
+                  {
                     <Viewer 
                     fileUrl={"https://chstage.blob.core.windows.net/fileshare/ch/hc/August/2/1627904036859ConditionsOfNOC.pdf?sig=kUzIB63WwHcpYWzHJGNQDAgEtEZ7yiaZuiowOwPAXmw%3D&st=2021-08-03T12%3A39%3A16Z&se=2021-08-04T12%3A39%3A16Z&sv=2016-05-31&sp=r&sr=b"}
-                    plugins={[defaultLayoutPluginInstance]} />
+                    />
                   } */}
                 </div>
                 {/* {this.state.mainSRC}  */}

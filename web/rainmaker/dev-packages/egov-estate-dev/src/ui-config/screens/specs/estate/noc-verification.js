@@ -695,7 +695,7 @@ const commercialActivity = ({jsonPath, label, placeholder}) => ({
     xs: 12,
     sm: 6
   },
-  // required: true,
+  required: true,
   visible: false,
   jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
   pattern:_getPattern("width"),

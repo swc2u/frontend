@@ -269,49 +269,71 @@ class ApplicationDetails extends Component {
     
     let bkLocation =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-        ? dataforSectorAndCategory.bookingsModelList[0].bkLocation
+        ? (dataforSectorAndCategory.bookingsModelList[0].bkLocation !== undefined &&
+          dataforSectorAndCategory.bookingsModel !== null ?
+          (dataforSectorAndCategory.bookingsModelList[0].bkLocation) : "NA")
         : "NA";
     let bkFromDate =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-        ? dataforSectorAndCategory.bookingsModelList[0].bkFromDate
+        ? (dataforSectorAndCategory.bookingsModelList[0].bkFromDate !== undefined &&
+          dataforSectorAndCategory.bookingsModelList !== null ?
+        (dataforSectorAndCategory.bookingsModelList[0].bkLocation) : "NA")
         : "NA";
     let bkToDate =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-        ? dataforSectorAndCategory.bookingsModelList[0].bkToDate
+        ? (dataforSectorAndCategory.bookingsModelList[0].bkToDate !== undefined && 
+        dataforSectorAndCategory.bookingsModelList[0].bkToDate !== null ?(
+          dataforSectorAndCategory.bookingsModelList[0].bkToDate
+        ) : "NA")
         : "NA";
     let AppStatus =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-        ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationStatus
+        ? (dataforSectorAndCategory.bookingsModelList[0].bkApplicationStatus !== undefined && 
+        dataforSectorAndCategory.bookingsModelList[0].bkApplicationStatus !== null ? 
+        (dataforSectorAndCategory.bookingsModelList[0].bkApplicationStatus): "NA")
         : "NA";
     let bkBookingType =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-        ? dataforSectorAndCategory.bookingsModelList[0].bkBookingType
+        ? (dataforSectorAndCategory.bookingsModelList[0].bkBookingType !== undefined && 
+          dataforSectorAndCategory.bookingsModelList[0].bkBookingType !== null ? 
+          dataforSectorAndCategory.bookingsModelList[0].bkBookingType : "NA")
         : "NA";
     let Sector =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-        ? dataforSectorAndCategory.bookingsModelList[0].bkSector
+        ? (dataforSectorAndCategory.bookingsModelList[0].bkSector !== undefined && 
+          dataforSectorAndCategory.bookingsModelList[0].bkSector !== null ? (dataforSectorAndCategory.bookingsModelList[0].bkSector): "NA") 
         : "NA";
     let bkBookingVenue =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-        ? dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue
+        ? (dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue !== undefined && 
+          dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue !== null ? 
+          (dataforSectorAndCategory.bookingsModelList[0].bkBookingVenue): "NA")
         : "NA";
     // let AppNo = dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber : 'NA'
     let bookingRent =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-        ? dataforSectorAndCategory.bookingsModelList[0].bkRent
+        ? (dataforSectorAndCategory.bookingsModelList[0].bkRent !== undefined && 
+        dataforSectorAndCategory.bookingsModelList[0].bkRent !== null ? 
+        (dataforSectorAndCategory.bookingsModelList[0].bkRent) : "NA")
         : "NA";
    
     let AppNo =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-        ? dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber
+        ? (dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber !== undefined && 
+          dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber !== null ? 
+          (dataforSectorAndCategory.bookingsModelList[0].bkApplicationNumber) : "NA")
         : "NA";
     let isDiscount =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-        ? dataforSectorAndCategory.bookingsModelList[0].bkPlotSketch
+        ? (dataforSectorAndCategory.bookingsModelList[0].bkPlotSketch !== undefined && 
+          dataforSectorAndCategory.bookingsModelList[0].bkPlotSketch !== null ? 
+          (dataforSectorAndCategory.bookingsModelList[0].bkPlotSketch) : "NA")
         : "Genral";
     let allDocumentList =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
-        ? dataforSectorAndCategory.documentList
+        ? (dataforSectorAndCategory.documentList !== undefined && 
+          dataforSectorAndCategory.documentList !== null ? 
+          (dataforSectorAndCategory.documentList) : "NA")
         : [];
     //General
     if (isDiscount != "General") {
