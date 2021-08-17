@@ -161,6 +161,8 @@ class WorkFlowContainer extends React.Component {
     } = this.props;
     const tenant = getQueryArg(window.location.href, "tenantId");
     let data = get(preparedFinalObject, dataPath, []);
+    debugger
+    console.log(data)
     const applicationState = data[0].state
 
     if(!!data[0].property_copy) {
@@ -176,13 +178,28 @@ class WorkFlowContainer extends React.Component {
     if(applicationState === "ES_PENDING_DA_PREPARE_LETTER") {
       let applicationDocuments = data[0].applicationDocuments || []
       let allDocuments = data[0].allDocuments || []
+      let lastfinalletter = applicationDocuments.filter(item => item.documentType === "FINAL_LETTER")
+      let previousfinalletter = allDocuments.filter(item => item.documentType === "FINAL_LETTER")
+      if(lastfinalletter.length>0){
+        lastfinalletter.map(item=>{
+          item.isActive=false
+        }        
+        )
+      }
+      if(previousfinalletter.length>0){
+        previousfinalletter.map(item=>{
+          item.isActive=false
+        }        
+        )
+      }
+      
       applicationDocuments = applicationDocuments.filter(item => item.documentType !== "FINAL_LETTER")
       allDocuments = allDocuments.filter(item => item.documentType !== "FINAL_LETTER")
       const finalLetter = data[0].finalLetter;
       if(!!finalLetter && !!finalLetter.length) {
         const finalLetterDocument = finalLetter[0];
-        applicationDocuments = [...applicationDocuments, {...finalLetterDocument, documentType: "FINAL_LETTER", isActive: true}]
-        allDocuments = [...allDocuments, {...finalLetterDocument, documentType: "FINAL_LETTER", isActive: true}]
+        applicationDocuments = [...applicationDocuments,...lastfinalletter, {...finalLetterDocument, documentType: "FINAL_LETTER", isActive: true}]
+        allDocuments = [...allDocuments,...previousfinalletter ,{...finalLetterDocument, documentType: "FINAL_LETTER", isActive: true}]
         data = [{...data[0],allDocuments, applicationDocuments}]
       }
     }
@@ -222,6 +239,7 @@ class WorkFlowContainer extends React.Component {
         open: false
       });
       if (payload) {
+        debugger
         let path = "";
         switch(this.props.moduleName) {
           case WF_ALLOTMENT_OF_SITE: 

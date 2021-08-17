@@ -7,6 +7,7 @@ import { convertDateToEpoch,getYesterdaysDateInYMD } from "../../utils";
 import { setFieldProperty } from './afterFieldChange'
 import { get } from "lodash";
 import {handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import commonConfig from "config/common.js";
 const _getPattern = (type) => {
   switch(type) {
     case "Percentage": 
@@ -29,8 +30,46 @@ const _getPattern = (type) => {
                   return /^[1-9][0-9]{1,5}$/i;
   }
 }
-
-
+let residentialcategory=[
+  
+    {
+        label: "SUBCAT.HOUSE",
+        code: "SUBCAT.HOUSE"
+    },
+    {
+        label: "SUBCAT.DWELLINGS",
+        code: "SUBCAT.DWELLINGS"
+    },
+    {
+        label: "SUBCAT.FLAT",
+        code: "SUBCAT.FLAT"
+    }
+]
+let commercialcategory=[
+  
+  {
+      label: "SCF",
+      code: "SUBCAT.SCF"
+  },
+  {
+      label: "SCO",
+      code: "SUBCAT.SCO"
+  },
+  {
+      label: "Booth",
+      code: "SUBCAT.BOOTH"
+  },
+  {
+    label: "Shop",
+    code: "SUBCAT.SHOP"
+}
+]
+let residentialcategorycumcommercialcategory= [
+  {
+    label: "House cum Shop",
+    code: "SUBCAT.HOUSECUMSHOP"
+  }
+]
 let _conf = {};
 let pendingFieldChanges = [];
 const onFieldChange = (action, state, dispatch) => {
@@ -46,6 +85,86 @@ const evaluate = ({application, property, owners, selectedOwner, selectedPurchas
 }
 
 export const updateReadOnlyForAllFields = (action, state, dispatch) => {
+  let category= get(
+    state.screenConfiguration.preparedFinalObject,
+    "Applications[0].applicationDetails.property.category"
+)
+let branch= get(
+  state.screenConfiguration.preparedFinalObject,
+  "Applications[0].branchType"
+)
+let localisedvalue = residentialcategory.map(datum => ({...datum, label: getLocaleLabels(datum.label, datum.label)}))
+let localisedCommercialvalue = commercialcategory.map(datum => ({...datum, label: getLocaleLabels(datum.label, datum.label)}))
+let localisedBothvalue = residentialcategorycumcommercialcategory.map(datum => ({...datum, label: getLocaleLabels(datum.label, datum.label)}))
+if(branch==="BuildingBranch"){
+  if (category == "CAT.RESIDENTIAL") {
+    dispatch(
+        handleField(
+            "_apply",
+            "components.div.children.formwizardFirstStep.children.ES_PROPERTY_DETAILS_HEADER_NOC.children.cardContent.children.details_container.children.ES_SUB_CATEGORY_LABEL",
+            "visible",
+            true
+        )
+    );
+
+    dispatch(
+        handleField(
+            "_apply",
+            "components.div.children.formwizardFirstStep.children.ES_PROPERTY_DETAILS_HEADER_NOC.children.cardContent.children.details_container.children.ES_SUB_CATEGORY_LABEL",
+            "props.data",
+            localisedvalue
+        )
+    )
+}
+else if (category == "CAT.COMMERCIAL") {
+  dispatch(
+      handleField(
+          "_apply",
+          "components.div.children.formwizardFirstStep.children.ES_PROPERTY_DETAILS_HEADER_NOC.children.cardContent.children.details_container.children.ES_SUB_CATEGORY_LABEL",
+          "visible",
+          true
+      )
+  );
+
+  dispatch(
+      handleField(
+          "_apply",
+          "components.div.children.formwizardFirstStep.children.ES_PROPERTY_DETAILS_HEADER_NOC.children.cardContent.children.details_container.children.ES_SUB_CATEGORY_LABEL",
+          "props.data",
+          localisedCommercialvalue
+      )
+  )
+}
+else if (category == "CAT.RESIDENTIALCUMCOMMERCIAL") {
+  dispatch(
+      handleField(
+          "_apply",
+          "components.div.children.formwizardFirstStep.children.ES_PROPERTY_DETAILS_HEADER_NOC.children.cardContent.children.details_container.children.ES_SUB_CATEGORY_LABEL",
+          "visible",
+          true
+      )
+  );
+
+  dispatch(
+      handleField(
+          "_apply",
+          "components.div.children.formwizardFirstStep.children.ES_PROPERTY_DETAILS_HEADER_NOC.children.cardContent.children.details_container.children.ES_SUB_CATEGORY_LABEL",
+          "props.data",
+          localisedBothvalue
+      )
+  )
+}
+else {
+  dispatch(
+    handleField(
+        "_apply",
+        "components.div.children.formwizardFirstStep.children.ES_PROPERTY_DETAILS_HEADER_NOC.children.cardContent.children.details_container.children.ES_SUB_CATEGORY_LABEL",
+        "visible",
+        false
+    )
+);
+}
+}
   // Update readonly
   // For each field. get the field config, get componentJsonPath, 
   // dispatch new Value

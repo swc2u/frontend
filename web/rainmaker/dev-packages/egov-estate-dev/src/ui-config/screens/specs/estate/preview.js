@@ -100,9 +100,9 @@ const getData = async (action, state, dispatch) => {
          finalLetter = applicationDocuments.find(item => item.documentType === "FINAL_LETTER")
        }
        //const finalLetter = applicationDocuments.find(item => item.documentType === "FINAL_LETTER")
-       applicationDocuments = applicationDocuments.filter(item => item.documentType !== "FINAL_LETTER")
-       allDocuments = allDocuments.filter(item => item.documentType !== "FINAL_LETTER")
-       Applications = [{...Applications[0],allDocuments, applicationDocuments, property, finalLetter, property_copy}]
+      //  applicationDocuments = applicationDocuments.filter(item => item.documentType !== "FINAL_LETTER")
+      //  allDocuments = allDocuments.filter(item => item.documentType !== "FINAL_LETTER")
+       Applications = [{...Applications[0], applicationDocuments, property, finalLetter, property_copy}]
        dispatch(prepareFinalObject("Applications", Applications))
        dispatch(prepareFinalObject("temp[0].removedDocs", removedDocs))
        await setDocuments(
