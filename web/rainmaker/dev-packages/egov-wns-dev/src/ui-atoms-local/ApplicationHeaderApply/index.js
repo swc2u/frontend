@@ -48,6 +48,11 @@ if(wnsHeader ||ActionType)
       header = 'WS_UPDATE_METER_INFO_DETAIL_HEADER'
 
     }
+    if(ActionType==='WS_METER_TESTING' || ActionType==='APPLY_FOR_METER_TESTING' )
+    {
+      header = 'WS_METER_TESTING_DETAIL_HEADER'
+
+    }
     if(ActionType==='REACTIVATE_CONNECTION')
     {
       header = 'WS_REACTIVATE_DETAIL_HEADER'
@@ -113,6 +118,10 @@ if(wnsHeader ||ActionType)
           header = 'WS_UPDATE_METER_INFO_DETAIL_HEADER'
     
         }
+        if(ActionType ==='APPLY_FOR_METER_TESTING' || ActionType ==='WS_METER_TESTING')
+        {
+          header = 'WS_METER_TESTING_DETAIL_HEADER'
+        }
         if(ActionType==='REACTIVATE_CONNECTION')
         {
           header = 'WS_REACTIVATE_DETAIL_HEADER'
@@ -167,6 +176,10 @@ if(wnsHeader ||ActionType)
         {
           header = 'WS_UPDATE_METER_INFO_DETAIL_HEADER'
     
+        }
+        if(ActionType ==='APPLY_FOR_METER_TESTING' || ActionType ==='WS_METER_TESTING')
+        {
+          header = 'WS_METER_TESTING_DETAIL_HEADER'
         }
         if(ActionType==='REACTIVATE_CONNECTION')
         {

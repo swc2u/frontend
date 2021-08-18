@@ -21,7 +21,7 @@ import {
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
 import orderBy from "lodash/orderBy";
-import { WNSConfigName} from "../../ui-utils/commons";
+import { WNSConfigName, WNSBusinessService,WNSWaterBusinessService} from "../../ui-utils/commons";
 const tenant = getQueryArg(window.location.href, "tenantId");
 
 class WorkFlowContainer extends React.Component {
@@ -81,7 +81,18 @@ class WorkFlowContainer extends React.Component {
       open: false
     });
   };
-
+GetBusinessServiceConfig=(ModuleName)=>{
+  let BusinessService = WNSBusinessService().BusinessService;  
+  if (BusinessService.indexOf(ModuleName) > -1) {
+    return true;
+  } else return false;
+}
+GetWaterBusinessServiceConfig=(ModuleName)=>{
+  let BusinessService = WNSWaterBusinessService().BusinessService;  
+  if (BusinessService.indexOf(ModuleName) > -1) {
+    return true;
+  } else return false;
+}
   getPurposeString = action => {
     switch (action) {
       case "APPLY":
@@ -229,20 +240,22 @@ class WorkFlowContainer extends React.Component {
       "applicationNumber"
     );
 
-    if (moduleName === "NewWS1" 
-        || moduleName === "REGULARWSCONNECTION" 
-        || moduleName === "SW_SEWERAGE"
-        || moduleName === "TEMPORARY_WSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
-        || moduleName === "WS_TEMP_TEMP" 
-        ||moduleName === "WS_TEMP_REGULAR"
-        ||moduleName === "WS_DISCONNECTION" 
-        ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME"
-        || moduleName === 'WS_METER_UPDATE' 
-        || moduleName === "WS_CONVERSION" 
-        || moduleName === "WS_REACTIVATE"
-        || moduleName === "WS_TUBEWELL") {
+    // if (moduleName === "NewWS1" 
+    //     || moduleName === "REGULARWSCONNECTION" 
+    //     || moduleName === "SW_SEWERAGE"
+    //     || moduleName === "TEMPORARY_WSCONNECTION"
+    //     || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+    //     || moduleName === "WS_TEMP_TEMP" 
+    //     ||moduleName === "WS_TEMP_REGULAR"
+    //     ||moduleName === "WS_DISCONNECTION" 
+    //     ||moduleName === "WS_TEMP_DISCONNECTION"
+    //     || moduleName === "WS_RENAME"
+    //     || moduleName === 'WS_METER_UPDATE' 
+    //     || moduleName === "WS_CONVERSION" 
+    //     || moduleName === "WS_REACTIVATE"
+    //     || moduleName === "WS_TUBEWELL") 
+        if(this.GetBusinessServiceConfig(moduleName))
+        {
       data = data[0];
       data.assignees = [];
       if (data.assignee) {
@@ -253,20 +266,21 @@ class WorkFlowContainer extends React.Component {
         })
       }
       // set additionalDetails for W&S module
-      if (moduleName === "NewWS1" 
-      || moduleName === "REGULARWSCONNECTION"
-        || moduleName === "SW_SEWERAGE"
-        || moduleName === "TEMPORARY_WSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
-        || moduleName === "WS_TEMP_TEMP" 
-        ||moduleName === "WS_TEMP_REGULAR"
-        ||moduleName === "WS_DISCONNECTION" 
-        ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
-        || moduleName === 'WS_METER_UPDATE'
-        || moduleName === "WS_CONVERSION" 
-        || moduleName === "WS_REACTIVATE"
-      || moduleName === "WS_TUBEWELL")
+      // if (moduleName === "NewWS1" 
+      // || moduleName === "REGULARWSCONNECTION"
+      //   || moduleName === "SW_SEWERAGE"
+      //   || moduleName === "TEMPORARY_WSCONNECTION"
+      //   || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+      //   || moduleName === "WS_TEMP_TEMP" 
+      //   ||moduleName === "WS_TEMP_REGULAR"
+      //   ||moduleName === "WS_DISCONNECTION" 
+      //   ||moduleName === "WS_TEMP_DISCONNECTION"
+      //   || moduleName === "WS_RENAME" 
+      //   || moduleName === 'WS_METER_UPDATE'
+      //   || moduleName === "WS_CONVERSION" 
+      //   || moduleName === "WS_REACTIVATE"
+      // || moduleName === "WS_TUBEWELL")
+      if(this.GetBusinessServiceConfig(moduleName))
       {
         let businessServiceData = JSON.parse(
           localStorageGet("businessServiceData")
@@ -387,20 +401,21 @@ ApplicationStatus =  data.waterApplication.applicationStatus;
     }
 
     
-    if (moduleName === "REGULARWSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
-        || moduleName === "WS_TEMP_TEMP" 
-        ||moduleName === "WS_TEMP_REGULAR"
-        ||moduleName === "WS_DISCONNECTION" 
-        ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
-        || moduleName === 'WS_METER_UPDATE'
-        || moduleName === "WS_CONVERSION" 
-        || moduleName === "WS_REACTIVATE"
-      || moduleName === "WS_TUBEWELL"
-      || data.service ==='WATER'
-      )
+    // if (moduleName === "REGULARWSCONNECTION"
+    //     || moduleName === "TEMPORARY_WSCONNECTION"
+    //     || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+    //     || moduleName === "WS_TEMP_TEMP" 
+    //     ||moduleName === "WS_TEMP_REGULAR"
+    //     ||moduleName === "WS_DISCONNECTION" 
+    //     ||moduleName === "WS_TEMP_DISCONNECTION"
+    //     || moduleName === "WS_RENAME" 
+    //     || moduleName === 'WS_METER_UPDATE'
+    //     || moduleName === "WS_CONVERSION" 
+    //     || moduleName === "WS_REACTIVATE"
+    //   || moduleName === "WS_TUBEWELL"
+    //   || data.service ==='WATER'
+    //   )
+      if(this.GetWaterBusinessServiceConfig(moduleName) && data.service ==='WATER')
       {
         updateUrl = '/ws-services/wc/_update'
         validRequest = this.ValidateRequest(data,preparedFinalObject)
@@ -497,20 +512,21 @@ ApplicationStatus =  data.waterApplication.applicationStatus;
           label
         )}&applicationNumber=${applicationNumber}&tenantId=${tenant}&secondNumber=${licenseNumber}`;
 
-        if (moduleName === "NewWS1" 
-        || moduleName ==="SW_SEWERAGE"
-        || moduleName === "REGULARWSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
-        || moduleName === "WS_TEMP_TEMP" 
-        ||moduleName === "WS_TEMP_REGULAR"
-        ||moduleName === "WS_DISCONNECTION" 
-        ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
-        || moduleName === 'WS_METER_UPDATE'
-        || moduleName === "WS_CONVERSION" 
-        || moduleName === "WS_REACTIVATE"
-      || moduleName === "WS_TUBEWELL")
+      //   if (moduleName === "NewWS1" 
+      //   || moduleName ==="SW_SEWERAGE"
+      //   || moduleName === "REGULARWSCONNECTION"
+      //   || moduleName === "TEMPORARY_WSCONNECTION"
+      //   || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+      //   || moduleName === "WS_TEMP_TEMP" 
+      //   ||moduleName === "WS_TEMP_REGULAR"
+      //   ||moduleName === "WS_DISCONNECTION" 
+      //   ||moduleName === "WS_TEMP_DISCONNECTION"
+      //   || moduleName === "WS_RENAME" 
+      //   || moduleName === 'WS_METER_UPDATE'
+      //   || moduleName === "WS_CONVERSION" 
+      //   || moduleName === "WS_REACTIVATE"
+      // || moduleName === "WS_TUBEWELL")
+      if(this.GetBusinessServiceConfig(moduleName))
          {
            let action = ''
            if(data.action);
@@ -531,19 +547,20 @@ ApplicationStatus =  data.waterApplication.applicationStatus;
           "error"
         );
       }else 
-      if (moduleName === "SW_SEWERAGE" 
-        || moduleName === "REGULARWSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
-        || moduleName === "WS_TEMP_TEMP" 
-        ||moduleName === "WS_TEMP_REGULAR"
-        ||moduleName === "WS_DISCONNECTION" 
-        ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
-        || moduleName === 'WS_METER_UPDATE'
-        || moduleName === "WS_CONVERSION" 
-        || moduleName === "WS_REACTIVATE"
-      || moduleName === "WS_TUBEWELL")
+      // if (moduleName === "SW_SEWERAGE" 
+      //   || moduleName === "REGULARWSCONNECTION"
+      //   || moduleName === "TEMPORARY_WSCONNECTION"
+      //   || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+      //   || moduleName === "WS_TEMP_TEMP" 
+      //   ||moduleName === "WS_TEMP_REGULAR"
+      //   ||moduleName === "WS_DISCONNECTION" 
+      //   ||moduleName === "WS_TEMP_DISCONNECTION"
+      //   || moduleName === "WS_RENAME" 
+      //   || moduleName === 'WS_METER_UPDATE'
+      //   || moduleName === "WS_CONVERSION" 
+      //   || moduleName === "WS_REACTIVATE"
+      // || moduleName === "WS_TUBEWELL")
+      if(this.GetBusinessServiceConfig(moduleName))
       {
         toggleSnackbar(
           true,
@@ -605,19 +622,20 @@ ApplicationStatus =  data.waterApplication.applicationStatus;
     else {
       var validated = true;
       const{WaterConnection} = preparedFinalObject
-      if (moduleName === "SW_SEWERAGE" 
-        || moduleName === "REGULARWSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
-        || moduleName === "WS_TEMP_TEMP" 
-        ||moduleName === "WS_TEMP_REGULAR"
-        ||moduleName === "WS_DISCONNECTION" 
-        ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
-        || moduleName === 'WS_METER_UPDATE'
-        || moduleName === "WS_CONVERSION" 
-        || moduleName === "WS_REACTIVATE"
-      || moduleName === "WS_TUBEWELL")
+      // if (moduleName === "SW_SEWERAGE" 
+      //   || moduleName === "REGULARWSCONNECTION"
+      //   || moduleName === "TEMPORARY_WSCONNECTION"
+      //   || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+      //   || moduleName === "WS_TEMP_TEMP" 
+      //   ||moduleName === "WS_TEMP_REGULAR"
+      //   ||moduleName === "WS_DISCONNECTION" 
+      //   ||moduleName === "WS_TEMP_DISCONNECTION"
+      //   || moduleName === "WS_RENAME" 
+      //   || moduleName === 'WS_METER_UPDATE'
+      //   || moduleName === "WS_CONVERSION" 
+      //   || moduleName === "WS_REACTIVATE"
+      // || moduleName === "WS_TUBEWELL")
+      if(this.GetBusinessServiceConfig(moduleName))
       {
         if (WaterConnection[0].comment.length === 0) {
           validated = false;
@@ -665,52 +683,54 @@ ApplicationStatus =  data.waterApplication.applicationStatus;
       baseUrl = "egov-bpa";
       bservice = ((applicationStatus == "PENDING_APPL_FEE") ? "BPA.NC_APP_FEE" : "BPA.NC_SAN_FEE");
     } else 
-    if (moduleName === "NewWS1" 
-      || moduleName === "SW_SEWERAGE"
-        || moduleName === "REGULARWSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
-        || moduleName === "WS_TEMP_TEMP" 
-        ||moduleName === "WS_TEMP_REGULAR"
-        ||moduleName === "WS_DISCONNECTION" 
-        ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
-        || moduleName === 'WS_METER_UPDATE'
-        || moduleName === "WS_CONVERSION" 
-        || moduleName === "WS_REACTIVATE"
-      || moduleName === "WS_TUBEWELL")
+    // if (moduleName === "NewWS1" 
+    //   || moduleName === "SW_SEWERAGE"
+    //     || moduleName === "REGULARWSCONNECTION"
+    //     || moduleName === "TEMPORARY_WSCONNECTION"
+    //     || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+    //     || moduleName === "WS_TEMP_TEMP" 
+    //     ||moduleName === "WS_TEMP_REGULAR"
+    //     ||moduleName === "WS_DISCONNECTION" 
+    //     ||moduleName === "WS_TEMP_DISCONNECTION"
+    //     || moduleName === "WS_RENAME" 
+    //     || moduleName === 'WS_METER_UPDATE'
+    //     || moduleName === "WS_CONVERSION" 
+    //     || moduleName === "WS_REACTIVATE"
+    //   || moduleName === "WS_TUBEWELL")
+      if(this.GetBusinessServiceConfig(moduleName))
     {
       baseUrl = "wns"
-      if (moduleName === "NewWS1" 
-     // || moduleName === "SW_SEWERAGE"
-      || moduleName === "REGULARWSCONNECTION"
-      || moduleName === "TEMPORARY_WSCONNECTION"
-      || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
-      || moduleName === "WS_TEMP_TEMP" 
-      ||moduleName === "WS_TEMP_REGULAR"
-      ||moduleName === "WS_DISCONNECTION" 
-      ||moduleName === "WS_TEMP_DISCONNECTION"
-      || moduleName === "WS_RENAME"
-      || moduleName === 'WS_METER_UPDATE' 
-      || moduleName === "WS_CONVERSION" 
-      || moduleName === "WS_REACTIVATE"
-    || moduleName === "WS_TUBEWELL")
+    //   if (moduleName === "NewWS1"      
+    //   || moduleName === "REGULARWSCONNECTION"
+    //   || moduleName === "TEMPORARY_WSCONNECTION"
+    //   || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+    //   || moduleName === "WS_TEMP_TEMP" 
+    //   ||moduleName === "WS_TEMP_REGULAR"
+    //   ||moduleName === "WS_DISCONNECTION" 
+    //   ||moduleName === "WS_TEMP_DISCONNECTION"
+    //   || moduleName === "WS_RENAME"
+    //   || moduleName === 'WS_METER_UPDATE' 
+    //   || moduleName === "WS_CONVERSION" 
+    //   || moduleName === "WS_REACTIVATE"
+    // || moduleName === "WS_TUBEWELL")
+    if(this.GetWaterBusinessServiceConfig(moduleName))
       {
         let  WNSConfigName_= WNSConfigName()
         bservice = WNSConfigName_.ONE_TIME_FEE_WS
-        if (moduleName === "NewWS1" 
-        || moduleName === "REGULARWSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
-        || moduleName === "WS_TEMP_TEMP" 
-        ||moduleName === "WS_TEMP_REGULAR"
-        ||moduleName === "WS_DISCONNECTION" 
-        ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME"
-        || moduleName === 'WS_METER_UPDATE' 
-        || moduleName === "WS_CONVERSION" 
-        || moduleName === "WS_REACTIVATE"
-      || moduleName === "WS_TUBEWELL")
+      //   if (moduleName === "NewWS1" 
+      //   || moduleName === "REGULARWSCONNECTION"
+      //   || moduleName === "TEMPORARY_WSCONNECTION"
+      //   || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+      //   || moduleName === "WS_TEMP_TEMP" 
+      //   ||moduleName === "WS_TEMP_REGULAR"
+      //   ||moduleName === "WS_DISCONNECTION" 
+      //   ||moduleName === "WS_TEMP_DISCONNECTION"
+      //   || moduleName === "WS_RENAME"
+      //   || moduleName === 'WS_METER_UPDATE' 
+      //   || moduleName === "WS_CONVERSION" 
+      //   || moduleName === "WS_REACTIVATE"
+      // || moduleName === "WS_TUBEWELL")
+      if(this.GetWaterBusinessServiceConfig(moduleName))
          window.localStorage.setItem("isTubeWell",false);
         if( moduleName === "WS_TUBEWELL") window.localStorage.setItem("isTubeWell",true);
       } else {
@@ -1244,19 +1264,21 @@ uniqueBycode =(data,key)=>{
         isLast: item.action === "PAY"||  item.action ===  "PAY_FOR_TEMPORARY_CONNECTION"||item.action === "PAY_FOR_REGULAR_CONNECTION" ? true : false,
         buttonUrl: getRedirectUrl(item.action, businessId, businessService),
         dialogHeader: getHeaderName(item.action),
-        showEmployeeList: (businessService === "SW_SEWERAGE" 
-                          || businessService === "REGULARWSCONNECTION" 
-                          || businessService === "TEMPORARY_WSCONNECTION" 
-                          || businessService === "TEMPORARY_WSCONNECTION_BILLING"
-                          || businessService === "WS_TEMP_TEMP" 
-                          || businessService === "WS_TEMP_REGULAR" 
-                          || businessService === "WS_DISCONNECTION" 
-                          || businessService === "WS_TEMP_DISCONNECTION" 
-                          ||businessService === "WS_RENAME" 
-                          || businessService === 'WS_METER_UPDATE'
-                          || businessService === "WS_CONVERSION" 
-                          || businessService === "WS_REACTIVATE" 
-                          || businessService === "WS_TUBEWELL") 
+         showEmployeeList: (
+                              //businessService === "SW_SEWERAGE" 
+        //                   || businessService === "REGULARWSCONNECTION" 
+        //                   || businessService === "TEMPORARY_WSCONNECTION" 
+        //                   || businessService === "TEMPORARY_WSCONNECTION_BILLING"
+        //                   || businessService === "WS_TEMP_TEMP" 
+        //                   || businessService === "WS_TEMP_REGULAR" 
+        //                   || businessService === "WS_DISCONNECTION" 
+        //                   || businessService === "WS_TEMP_DISCONNECTION" 
+        //                   ||businessService === "WS_RENAME" 
+        //                   || businessService === 'WS_METER_UPDATE'
+        //                   || businessService === "WS_CONVERSION" 
+        //                   || businessService === "WS_REACTIVATE" 
+        //                   || businessService === "WS_TUBEWELL"
+                          this.GetBusinessServiceConfig(businessService)) 
                           ? !checkIfTerminatedState(item.nextState, businessService) 
                           && item.action !== "SEND_BACK_TO_CITIZEN" 
                           && item.action !== "RESUBMIT_APPLICATION" 
@@ -1502,7 +1524,7 @@ uniqueBycode =(data,key)=>{
     }
     //end pipe size filter
     // VERIFY_AND_FORWARD_TO_JE_FOR_FEE VERIFY_AND_FORWARD_TO_SE, PENDING_FOR_SDE_APPROVAL_FOR_JE TEMPORARY_WSCONNECTION
-    if((businessService === "TEMPORARY_WSCONNECTION_BILLING" || "TEMPORARY_WSCONNECTION" ) && (applicationStatus == 'PENDING_FOR_SDE_APPROVAL_FOR_JE' || applicationStatus ==='PENDING_FOR_EE_APPROVAL' ) )
+    if((businessService === "TEMPORARY_WSCONNECTION_BILLING" || businessService ===  "TEMPORARY_WSCONNECTION" ) && (applicationStatus == 'PENDING_FOR_SDE_APPROVAL_FOR_JE' || applicationStatus ==='PENDING_FOR_EE_APPROVAL' ) )
     {
       const {WaterConnection} = preparedFinalObject;
       let pipeSize = 0 ;
@@ -1536,21 +1558,23 @@ uniqueBycode =(data,key)=>{
       }
 
     }
-    if((businessService=='NewWS1' 
-      || businessService === "REGULARWSCONNECTION"  
-        || businessService === 'SW_SEWERAGE' 
-        || businessService === "TEMPORARY_WSCONNECTION"
-        || businessService === "TEMPORARY_WSCONNECTION_BILLING"
-        || businessService === "WS_TEMP_TEMP" 
-        ||businessService === "WS_TEMP_REGULAR"
-        ||businessService === "WS_DISCONNECTION" 
-        ||businessService === "WS_TEMP_DISCONNECTION"
-        || businessService === "WS_RENAME"
-        || businessService === "WS_METER_UPDATE" 
-        || businessService === "WS_CONVERSION" 
-        || businessService === "WS_REACTIVATE"     
-    || businessService === "WS_TUBEWELL") 
-    && applicationStatus == 'PENDING_FOR_PAYMENT'){
+    // if((businessService=='NewWS1' 
+    //   || businessService === "REGULARWSCONNECTION"  
+    //     || businessService === 'SW_SEWERAGE' 
+    //     || businessService === "TEMPORARY_WSCONNECTION"
+    //     || businessService === "TEMPORARY_WSCONNECTION_BILLING"
+    //     || businessService === "WS_TEMP_TEMP" 
+    //     ||businessService === "WS_TEMP_REGULAR"
+    //     ||businessService === "WS_DISCONNECTION" 
+    //     ||businessService === "WS_TEMP_DISCONNECTION"
+    //     || businessService === "WS_RENAME"
+    //     || businessService === "WS_METER_UPDATE" 
+    //     || businessService === "WS_CONVERSION" 
+    //     || businessService === "WS_REACTIVATE"     
+    // || businessService === "WS_TUBEWELL") 
+    // && applicationStatus == 'PENDING_FOR_PAYMENT')    
+    if((this.GetBusinessServiceConfig(businessService) && applicationStatus == 'PENDING_FOR_PAYMENT'))
+    {
       const {WaterConnection} = preparedFinalObject;
       let connectionType = "" ;
       connectionType = WaterConnection && WaterConnection[0].waterApplicationType;
@@ -1561,21 +1585,23 @@ uniqueBycode =(data,key)=>{
         actions = actions.filter(item => item.buttonLabel !== 'PAY_FOR_REGULAR_CONNECTION');
       }
     }
-    if((businessService=='NewWS1' 
-        || businessService === "REGULARWSCONNECTION"  
-        || businessService === 'SW_SEWERAGE' 
-        || businessService === "TEMPORARY_WSCONNECTION_BILLING"
-        || businessService === "TEMPORARY_WSCONNECTION"
-        || businessService === "WS_TEMP_TEMP" 
-        || businessService === "WS_TEMP_REGULAR"
-        || businessService === "WS_DISCONNECTION" 
-        || businessService === "WS_TEMP_DISCONNECTION"
-        || businessService === "WS_RENAME" 
-        || businessService ==='WS_METER_UPDATE'
-        || businessService === "WS_CONVERSION" 
-        || businessService === "WS_REACTIVATE"     
-        || businessService === "WS_TUBEWELL")
-    && applicationStatus == 'PENDING_FOR_TEMPORARY_TO_REGULAR_CONNECTION_APPROVAL'){
+    // if((businessService=='NewWS1' 
+    //     || businessService === "REGULARWSCONNECTION"  
+    //     || businessService === 'SW_SEWERAGE' 
+    //     || businessService === "TEMPORARY_WSCONNECTION_BILLING"
+    //     || businessService === "TEMPORARY_WSCONNECTION"
+    //     || businessService === "WS_TEMP_TEMP" 
+    //     || businessService === "WS_TEMP_REGULAR"
+    //     || businessService === "WS_DISCONNECTION" 
+    //     || businessService === "WS_TEMP_DISCONNECTION"
+    //     || businessService === "WS_RENAME" 
+    //     || businessService ==='WS_METER_UPDATE'
+    //     || businessService === "WS_CONVERSION" 
+    //     || businessService === "WS_REACTIVATE"     
+    //     || businessService === "WS_TUBEWELL")
+    // && applicationStatus == 'PENDING_FOR_TEMPORARY_TO_REGULAR_CONNECTION_APPROVAL')
+    if((this.GetBusinessServiceConfig(businessService) && applicationStatus == 'PENDING_FOR_TEMPORARY_TO_REGULAR_CONNECTION_APPROVAL'))
+    {
       //    actions.forEach(item => {
       //     if(item.buttonLabel === 'APPROVE_FOR_CONNECTION_CONVERSION')
       //     // prepareFinalObject("WaterConnection[0].waterApplicationType","REGULAR")
@@ -1593,20 +1619,21 @@ uniqueBycode =(data,key)=>{
       // }
     }
 
-    if(businessService === "NewWS1" 
-        || businessService === "REGULARWSCONNECTION"  
-        || businessService === 'SW_SEWERAGE' 
-        || businessService === "TEMPORARY_WSCONNECTION"
-        || businessService === "TEMPORARY_WSCONNECTION_BILLING"
-        || businessService === "WS_TEMP_TEMP" 
-        ||businessService === "WS_TEMP_REGULAR"
-        ||businessService === "WS_DISCONNECTION" 
-        ||businessService === "WS_TEMP_DISCONNECTION"
-        || businessService === "WS_RENAME" 
-        || businessService === 'WS_METER_UPDATE'
-        || businessService === "WS_CONVERSION" 
-        || businessService === "WS_REACTIVATE"  
-        ||  businessService === "WS_TUBEWELL")
+    // if(businessService === "NewWS1" 
+    //     || businessService === "REGULARWSCONNECTION"  
+    //     || businessService === 'SW_SEWERAGE' 
+    //     || businessService === "TEMPORARY_WSCONNECTION"
+    //     || businessService === "TEMPORARY_WSCONNECTION_BILLING"
+    //     || businessService === "WS_TEMP_TEMP" 
+    //     ||businessService === "WS_TEMP_REGULAR"
+    //     ||businessService === "WS_DISCONNECTION" 
+    //     ||businessService === "WS_TEMP_DISCONNECTION"
+    //     || businessService === "WS_RENAME" 
+    //     || businessService === 'WS_METER_UPDATE'
+    //     || businessService === "WS_CONVERSION" 
+    //     || businessService === "WS_REACTIVATE"  
+    //     ||  businessService === "WS_TUBEWELL")
+        if(this.GetBusinessServiceConfig(businessService))
     
     {
       const userRoles = JSON.parse(getUserInfo()).roles;
@@ -1657,20 +1684,21 @@ uniqueBycode =(data,key)=>{
       ProcessInstances.length > 0 &&
       this.prepareWorkflowContract(ProcessInstances, moduleName);
      let showFooter;
-     if (moduleName === "NewWS1" 
-        || moduleName === "REGULARWSCONNECTION" 
-        || moduleName === "SW_SEWERAGE"
-        || moduleName === "TEMPORARY_WSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
-        || moduleName === "WS_TEMP_TEMP" 
-        ||moduleName === "WS_TEMP_REGULAR"
-        ||moduleName === "WS_DISCONNECTION" 
-        ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
-        || moduleName === 'WS_METER_UPDATE'
-        || moduleName === "WS_CONVERSION" 
-        || moduleName === "WS_REACTIVATE"
-        || moduleName === "WS_TUBEWELL") 
+    //  if (moduleName === "NewWS1" 
+    //     || moduleName === "REGULARWSCONNECTION" 
+    //     || moduleName === "SW_SEWERAGE"
+    //     || moduleName === "TEMPORARY_WSCONNECTION"
+    //     || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+    //     || moduleName === "WS_TEMP_TEMP" 
+    //     ||moduleName === "WS_TEMP_REGULAR"
+    //     ||moduleName === "WS_DISCONNECTION" 
+    //     ||moduleName === "WS_TEMP_DISCONNECTION"
+    //     || moduleName === "WS_RENAME" 
+    //     || moduleName === 'WS_METER_UPDATE'
+    //     || moduleName === "WS_CONVERSION" 
+    //     || moduleName === "WS_REACTIVATE"
+    //     || moduleName === "WS_TUBEWELL") 
+        if(this.GetBusinessServiceConfig(moduleName))
      {
          showFooter=true;
          // check valid role

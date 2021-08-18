@@ -497,6 +497,7 @@ return !selectedBusinessServices.includes(businessServices)
     "WS_METER_UPDATE",
     "WS_CONVERSION",
     "WS_REACTIVATE",
+    "WS_METER_TESTING",
     "WS_TUBEWELL" ,]
     
       responseDataWater = orderBy(
@@ -597,6 +598,7 @@ return !selectedBusinessServices.includes(businessServices)
         || window.localStorage.getItem("wns_workflow") === "WS_CONVERSION" 
         || window.localStorage.getItem("wns_workflow") === "WS_REACTIVATE"  
         || window.localStorage.getItem("wns_workflow") === "WS_TUBEWELL"
+        || window.localStorage.getItem("wns_workflow") === "WS_METER_TESTING"
        )
        {
         finalDataAssignedToAll.ProcessInstances = [...WithoutAdditionalDetails, ...AssignedToAlldataForWNS]

@@ -7,6 +7,10 @@ import Grid from "@material-ui/core/Grid";
 import { LabelContainer } from "egov-ui-framework/ui-containers";
 import { connect } from "react-redux";
 import get from "lodash/get";
+import {
+  getLocaleLabels,
+  getTransformedLocalStorgaeLabels
+} from "egov-ui-framework/ui-utils/commons";
 import "./index.css"
 
 const styles = {
@@ -18,6 +22,31 @@ const styles = {
 };
 
 class MyConnections extends React.Component {
+  titleCasingApplicationType = (activityType,item) => {
+    let status =`CS_COMMON_INBOX_${activityType}`
+    if(item.applicationNo.includes("SW"))
+    {
+      status = 'Sewerage Application'
+    }
+    else
+    {
+      if(status ==='CS_COMMON_INBOX_NA')
+      {
+        status ='Water Application'
+      }
+      
+      
+    }
+    
+        const localisationLabels = getTransformedLocalStorgaeLabels();
+        return getLocaleLabels(
+          status,
+          status,
+          //"PENSION_COMMON_TABLE_COL_EMMPLOYEE_NAME",
+          localisationLabels
+        );
+        
+      }
   getConnectionDetails = data => {
     data.service = data.service.toUpperCase();
     if(data.service ==='WATER'){
@@ -189,6 +218,22 @@ else{
                           (<div></div>)
                         }
                           
+                        </Grid>
+                      </Grid>
+                      <Grid container style={{ marginBottom: 12 }}>
+                        <Grid item md={4} xs={6}>
+                          <LabelContainer
+                            labelKey="WS_APPLICATION_TYPE_LABEL"
+                            fontSize={14}
+                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.60" }}
+                          />
+                        </Grid>
+                        <Grid item md={8} xs={6}>
+                          <Label
+                            labelName={this.titleCasingApplicationType(item.activityType,item)}
+                            fontSize={14}
+                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
+                          />
                         </Grid>
                       </Grid>
                       <Grid container style={{ marginBottom: 12 }}>

@@ -152,7 +152,7 @@ const beforeInitFn = async (action, state, dispatch, applicationNumber ,tenantId
         ////reviewConnectionDetails
     }
 
-    if(activityTypeHolder ==='UPDATE_METER_INFO' || activityTypeHolder ==='WS_METER_UPDATE' )
+    if(activityTypeHolder ==='UPDATE_METER_INFO' || activityTypeHolder ==='WS_METER_UPDATE' || activityTypeHolder ==='WS_METER_TESTING' || activityTypeHolder ==='APPLY_FOR_METER_TESTING')
     {
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewFifteen.visible",true);
       set(action.screenConfig, "components.div.children.taskDetails.children.cardContent.children.reviewOwnerDetails.children.cardContent.children.viewSixteen.visible",true);

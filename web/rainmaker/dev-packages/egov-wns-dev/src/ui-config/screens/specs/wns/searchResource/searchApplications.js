@@ -207,6 +207,9 @@ export const searchApplications = getCommonCard({
           case"UPDATE_METER_INFO":
           businessServices = "WS_METER_UPDATE"
           break;
+          case"APPLY_FOR_METER_TESTING":
+          businessServices = "WS_METER_TESTING"
+          break;
           case"NEW_TUBEWELL_CONNECTION":
           businessServices = "WS_TUBEWELL"
           break;
@@ -266,6 +269,7 @@ export const searchApplications = getCommonCard({
           || businessServiceData[0].businessService === "TEMPORARY_WSCONNECTION"
           || businessServiceData[0].businessService === "TEMPORARY_WSCONNECTION_BILLING"
           || businessServiceData[0].businessService === "WS_METER_UPDATE"
+          || businessServiceData[0].businessService === "WS_METER_TESTING"
           || businessServiceData[0].businessService === "WS_TEMP_TEMP"
           || businessServiceData[0].businessService === "SW_SEWERAGE"//
          // || businessServiceData[0].businessService === "WS_METER_UPDATE"
@@ -282,6 +286,10 @@ export const searchApplications = getCommonCard({
             // )  
            const applicationdistStatus = applicationStatus.filter((n, i) => applicationStatus.indexOf(n) === i);
             dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.applicationStatus", applicationdistStatus));
+            dispatch(toggleSpinner());
+          }
+          else
+          {
             dispatch(toggleSpinner());
           }
         }
