@@ -14,7 +14,7 @@ import { get, isEmpty } from "lodash";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormHelperText from '@material-ui/core/FormHelperText';
-
+import {getTextToLocalMapping} from '../../ui-config/screens/specs/utils'
 const styles = theme => ({
     root: {
       display: 'flex',
@@ -108,7 +108,7 @@ class MultipleSelect extends React.Component {
                 </MenuItem>
               ))}
             </Select>
-            {!!error && (<FormHelperText className={classes.formHelperText}>{this.state.error}</FormHelperText>)}
+            {!!error && (<FormHelperText className={classes.formHelperText}>{getTextToLocalMapping(this.state.error)}</FormHelperText>)}
           </FormControl>
         </div>
       );
