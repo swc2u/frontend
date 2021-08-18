@@ -149,7 +149,7 @@ const hardCopyDocumentsReceivedDateField = {
     labelKey: "ES_HARD_COPY_DOCUMENTS_RECEIVED_DATE_PLACEHOLDER"
   },
   pattern: getPattern("Date"),
-  jsonPath: "Applications[0].hardCopyDocumentsReceivedDate",
+  jsonPath: "Applications[0].applicationDetails.hardCopyDocumentsReceivedDate",
   props: {
     inputProps: {
       max: getTodaysDateInYMD()

@@ -161,8 +161,6 @@ class WorkFlowContainer extends React.Component {
     } = this.props;
     const tenant = getQueryArg(window.location.href, "tenantId");
     let data = get(preparedFinalObject, dataPath, []);
-    debugger
-    console.log(data)
     const applicationState = data[0].state
 
     if(!!data[0].property_copy) {
@@ -239,7 +237,6 @@ class WorkFlowContainer extends React.Component {
         open: false
       });
       if (payload) {
-        debugger
         let path = "";
         switch(this.props.moduleName) {
           case WF_ALLOTMENT_OF_SITE: 
