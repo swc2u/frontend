@@ -2115,7 +2115,7 @@ export const getReviewNoc = () => {
                   },
                   ...getCommonSubHeader({
                       labelName: "Rent Summary",
-                      labelKey: "ES_NOC_DETAILS_HEADER"
+                      labelKey: "ES_PREVIEW_NOC_DETAILS_HEADER"
                   })
               },
               //editSection: masterEntryEditSection(isEditable, step, screenKey)
@@ -2127,7 +2127,7 @@ export const getReviewNoc = () => {
                       labelName: "Total Due ",
                       labelKey: "ES_HARD_COPY_DOCUMENTS_RECEIVED_DATE_LABEL"
                   },
-                  { jsonPath: "Applications[0].hardCopyDocumentsReceivedDate" ,
+                  { jsonPath: "Applications[0].applicationDetails.hardCopyDocumentsReceivedDate" ,
                   callBack: convertEpochToDate}
               ),
               wholeHousePurchased: getLabelWithValue(
