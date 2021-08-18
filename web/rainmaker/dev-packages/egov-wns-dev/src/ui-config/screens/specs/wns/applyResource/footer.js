@@ -652,9 +652,10 @@ const usageCategory = get(
     if(inWorkflow === false)
     {
       let abc = await applyForWater(state, dispatch);
+      window.localStorage.setItem("ActivityStatusFlag","true");
     }
     
-    window.localStorage.setItem("ActivityStatusFlag","true");
+    
   }catch (err){
     if(localStorage.getItem("WNS_STATUS")){
       window.localStorage.removeItem("WNS_STATUS");
@@ -741,7 +742,7 @@ if(!proconnHolderDetail){
     console.log("errrr")
   }
 } 
-else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER_UPDATE' ){
+else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER_UPDATE' || wnsStatus ==='APPLY_FOR_METER_TESTING' || wnsStatus ==='WS_METER_TESTING' ){
   const iswaterConnFomValid = validateFields(
     "components.div.children.formwizardFirstStep.children.commentSectionDetails.children.cardContent.children.commentDetails.children.CommentDetails.children",
     state,
@@ -781,8 +782,9 @@ else if(wnsStatus && wnsStatus === "UPDATE_METER_INFO" || wnsStatus ==='WS_METER
     if(inWorkflow === false)
     {
       let abc = await applyForWater(state, dispatch);
+      window.localStorage.setItem("ActivityStatusFlag","true");
     }
-    window.localStorage.setItem("ActivityStatusFlag","true");
+    
  
   }catch (err){
     if(localStorage.getItem("WNS_STATUS")){
@@ -943,8 +945,9 @@ else if (wnsStatus && wnsStatus === "TEMPORARY_DISCONNECTION" || wnsStatus ==='W
       if(inWorkflow === false)
       {
         let abc = await applyForWater(state, dispatch);
+        window.localStorage.setItem("ActivityStatusFlag","true");
       }
-    window.localStorage.setItem("ActivityStatusFlag","true");
+    
     }
     else{
       if(localStorage.getItem("WNS_STATUS")){
@@ -1011,8 +1014,9 @@ else if(wnsStatus && (wnsStatus === "REACTIVATE_CONNECTION"||
     if(inWorkflow === false)
     {
       let abc = await applyForWater(state, dispatch);
+      window.localStorage.setItem("ActivityStatusFlag","true");
     }
-    window.localStorage.setItem("ActivityStatusFlag","true");
+    
   }catch (err){
     if(localStorage.getItem("WNS_STATUS")){
       window.localStorage.removeItem("WNS_STATUS");
@@ -1203,8 +1207,9 @@ else if(wnsStatus && wnsStatus === "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
         if(inWorkflow === false)
         {
           let abc = await applyForWater(state, dispatch);
+          window.localStorage.setItem("ActivityStatusFlag","true");
         }
-    window.localStorage.setItem("ActivityStatusFlag","true");
+    
     }
     else{
       if(localStorage.getItem("WNS_STATUS")){
@@ -2566,7 +2571,7 @@ if(isConnectionDetailsValid)
     // proposedMeterInstallationDate =proposedMeterInstallationDate
     if(activityType)
     {
-    if(activityType ==='WS_METER_UPDATE' || activityType === 'UPDATE_METER_INFO')
+    if(activityType ==='WS_METER_UPDATE' || activityType === 'UPDATE_METER_INFO' || activityType ==='APPLY_FOR_METER_TESTING' || activityType ==='WS_METER_TESTING')
     {
       if(connectionExecutionDate> proposedMeterInstallationDate)
       {

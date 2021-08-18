@@ -39,7 +39,7 @@ class Applications extends React.Component {
         case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_REACTIVATE"); break;
         case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
         case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":  window.localStorage.setItem("wns_workflow","TEMPORARY_WSCONNECTION_BILLING"); break;
-        //case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
+        case "APPLY_FOR_METER_TESTING":  window.localStorage.setItem("wns_workflow","WS_METER_TESTING"); break;
       }
 }
 else if(data.service ==='SEWERAGE'){

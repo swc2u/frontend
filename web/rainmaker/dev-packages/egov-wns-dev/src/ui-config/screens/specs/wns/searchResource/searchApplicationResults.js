@@ -308,9 +308,12 @@ const getApplicationDetails = data => {
       case "TEMPORARY_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_TEMP_DISCONNECTION"); break;
       case "UPDATE_CONNECTION_HOLDER_INFO":  window.localStorage.setItem("wns_workflow","WS_RENAME"); break;
       case "UPDATE_METER_INFO":  window.localStorage.setItem("wns_workflow","WS_METER_UPDATE"); break;
+      case "APPLY_FOR_METER_TESTING":  window.localStorage.setItem("wns_workflow","WS_METER_TESTING"); break;
+     // {code:"APPLY_FOR_METER_TESTING",name:"APPLY_FOR_METER_TESTING"},//WS_METER_TESTING
       case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_CONVERSION"); break;
       case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_REACTIVATE"); break;
       case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
+      case "APPLY_FOR_TEMPORARY_CONNECTION_BILLING":  window.localStorage.setItem("wns_workflow","TEMPORARY_WSCONNECTION_BILLING"); break;
       //case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
     }
 }

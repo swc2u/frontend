@@ -1007,6 +1007,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='APPLY_FOR_METER_TESTING' || activityType ==='WS_METER_TESTING' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'APPLY_FOR_METER_TESTING')
+                }
                 else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
@@ -1061,6 +1065,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                             {
                                 wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                             }
+                            else if(activityType ==='APPLY_FOR_METER_TESTING' || activityType ==='WS_METER_TESTING' )
+                            {
+                                wsDocument = wsDocument.filter(x=>x.WaterActivity === 'APPLY_FOR_METER_TESTING')
+                            }
                             else if(applicationType ==='TEMPORARY_BILLING')
                             {
                                 wsDocument = wsDocument.filter(x=>x.applicationType === applicationType )
@@ -1113,6 +1121,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='APPLY_FOR_METER_TESTING' || activityType ==='WS_METER_TESTING' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'APPLY_FOR_METER_TESTING')
+                }
                 else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
@@ -1129,6 +1141,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                if(activityType ==='APPLY_FOR_METER_TESTING' || activityType ==='WS_METER_TESTING' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'APPLY_FOR_METER_TESTING')
                 }
                 if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO' || activityType ==='WS_RENAME')
                 {
@@ -1149,6 +1165,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                 else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                else if(activityType ==='APPLY_FOR_METER_TESTING' || activityType ==='WS_METER_TESTING' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'APPLY_FOR_METER_TESTING')
                 }
                 else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
                 {
@@ -1191,6 +1211,10 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
                     if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                     {
                         wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                    }
+                    else if(activityType ==='APPLY_FOR_METER_TESTING' || activityType ==='WS_METER_TESTING' )
+                    {
+                        wsDocument = wsDocument.filter(x=>x.WaterActivity === 'APPLY_FOR_METER_TESTING')
                     }
                     else if(applicationType ==='TEMPORARY_BILLING' 
                     && (activityType === 'CONNECTION_CONVERSION'
@@ -1708,6 +1732,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='APPLY_FOR_METER_TESTING' || activityType ==='WS_METER_TESTING' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'APPLY_FOR_METER_TESTING')
+                }
                 else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
@@ -1764,6 +1792,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                         if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                             {
                                 wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                            }
+                            else if(activityType ==='APPLY_FOR_METER_TESTING' || activityType ==='WS_METER_TESTING' )
+                            {
+                                wsDocument = wsDocument.filter(x=>x.WaterActivity === 'APPLY_FOR_METER_TESTING')
                             }
                             else if(applicationType ==='TEMPORARY_BILLING' 
                             && (activityType === 'CONNECTION_CONVERSION'
@@ -1823,6 +1855,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                else if(activityType ==='APPLY_FOR_METER_TESTING' || activityType ==='WS_METER_TESTING' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'APPLY_FOR_METER_TESTING')
+                }
                 else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'REACTIVATE_CONNECTION')
@@ -1844,6 +1880,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
                 }
+                if(activityType ==='APPLY_FOR_METER_TESTING' || activityType ==='WS_METER_TESTING' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'APPLY_FOR_METER_TESTING')
+                }
                 if(activityType ==='UPDATE_CONNECTION_HOLDER_INFO' || activityType ==='WS_RENAME')
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === "UPDATE_CONNECTION_HOLDER_INFO")
@@ -1863,6 +1903,10 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                 else if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' )
                 {
                     wsDocument = wsDocument.filter(x=>x.WaterActivity === 'UPDATE_METER_INFO')
+                }
+                else if(activityType ==='APPLY_FOR_METER_TESTING' || activityType ==='WS_METER_TESTING' )
+                {
+                    wsDocument = wsDocument.filter(x=>x.WaterActivity === 'APPLY_FOR_METER_TESTING')
                 }
                 else if(activityType ==='REACTIVATE_CONNECTION' || activityType ==='WS_REACTIVATE' )
                 {
@@ -2030,6 +2074,7 @@ export const applyForWater = async (state, dispatch) => {
                 case "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION")); break;
                 case "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_TEMPORARY_REGULAR_CONNECTION")); break;
                 case "UPDATE_METER_INFO":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "UPDATE_METER_INFO")); break;
+                case "APPLY_FOR_METER_TESTING":  dispatch(prepareFinalObject("WaterConnection[0].activityType", "APPLY_FOR_METER_TESTING")); break;
               }
               let activeStep = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.stepper.props.activeStep", 0);
               if(activeStep === 0)
@@ -2095,6 +2140,7 @@ export const applyForWater = async (state, dispatch) => {
                             "CONNECTION_CONVERSION",
                             "TEMPORARY_DISCONNECTION",
                             "UPDATE_METER_INFO",
+                            "APPLY_FOR_METER_TESTING",
                             "PERMANENT_DISCONNECTION"];
         if(btnName.includes(wnsStatus)){
             responseWater.WaterConnection[0].property = queryObjectForUpdate.property;
@@ -3266,6 +3312,10 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                                 case "UPDATE_METER_INFO":
                                 activityType ='Meter Update'
                                 break;
+                                case "APPLY_FOR_METER_TESTING":
+                                case "WS_METER_TESTING":
+                                activityType ='Meter Testing'
+                                break;
                                 case "WS_CONVERSION":
                                 case "CONNECTION_CONVERSION":
                                 activityType ='Tariff Change'
@@ -3906,6 +3956,52 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
         ONE_TIME_FEE_SW: "PUBLIC_HEALTH_SERVICES_DIV4",
       
   };
+  }
+  export const WNSBusinessService = () => {
+    return {
+      
+      BusinessService: [
+       "NewWS1",
+       "SW_SEWERAGE",
+       "REGULARWSCONNECTION",
+       "TEMPORARY_WSCONNECTION",
+       "TEMPORARY_WSCONNECTION_BILLING",
+       "WS_TEMP_TEMP",
+       "WS_TEMP_REGULAR",
+       "WS_DISCONNECTION",
+       "WS_TEMP_DISCONNECTION",
+       "WS_RENAME",
+       "WS_METER_UPDATE",
+       "WS_CONVERSION",
+       "WS_REACTIVATE",
+       "WS_TUBEWELL",
+       "WS_METER_TESTING"
+  
+      ]
+    }
+  }
+  
+  export const WNSWaterBusinessService = () => {
+    return {
+      
+      BusinessService: [
+       "NewWS1",
+       "REGULARWSCONNECTION",
+       "TEMPORARY_WSCONNECTION",
+       "TEMPORARY_WSCONNECTION_BILLING",
+       "WS_TEMP_TEMP",
+       "WS_TEMP_REGULAR",
+       "WS_DISCONNECTION",
+       "WS_TEMP_DISCONNECTION",
+       "WS_RENAME",
+       "WS_METER_UPDATE",
+       "WS_CONVERSION",
+       "WS_REACTIVATE",
+       "WS_TUBEWELL",
+       "WS_METER_TESTING"
+  
+      ]
+    }
   }
   export const propertyUpdateCitizen = async (state, dispatch) => {
 
