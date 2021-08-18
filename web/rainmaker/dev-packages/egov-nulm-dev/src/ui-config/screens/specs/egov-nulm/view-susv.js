@@ -1,6 +1,7 @@
 import {
   getCommonHeader,
-  getCommonContainer
+  getCommonContainer,
+  getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import set from "lodash/set";
 import { SUSVReviewDetails } from "./viewSUSVResource/susv-review";
@@ -9,10 +10,12 @@ import { getQueryArg,getFileUrlFromAPI,getFileUrl } from "egov-ui-framework/ui-u
 import { getTenantId,getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
 import { downloadAcknowledgementForm} from '../utils';
-import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { handleScreenConfigurationFieldChange as handleField, toggleSnackbar, prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getSearchResults } from "../../../../ui-utils/commons";
+import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
 let status = getQueryArg(window.location.href, "status");
+const check = process.env.REACT_APP_NAME === "Employee"? false : true
 
 const applicationNumberContainer = () => {
 
@@ -52,6 +55,10 @@ export const header = getCommonContainer({
   applicationNumber: applicationNumberContainer(),
   status: statusContainer()
 });
+
+const updateApprovedSUSV = async (state, dispatch) => {
+  dispatch(setRoute(`/egov-nulm/create-svru`));
+};
 
 const tradeView = SUSVReviewDetails(false);
 
@@ -227,6 +234,20 @@ const screenConfig = {
       "components.div.children.headerDiv.children.header.children.status.props.status",
       status
     );
+
+    set(
+      "view-susv",
+      "components.div.children.headerDiv.children.newApplicationButton.props.visible",
+      false
+    );
+
+    // dispatch(handleField(
+    //     "view-susv",
+    //     "components.div.children.headerDiv.children.newApplicationButton",
+    //     "props.visible",
+    //     false
+    //   )
+    // );
     return action;
   },
   components: {
@@ -250,7 +271,7 @@ const screenConfig = {
             },
             printMenu: {
               uiFramework: "custom-atoms-local",
-              moduleName: "egov-tradelicence",
+              moduleName: "egov-nulm",
               componentPath: "MenuButton",
               gridDefination: {
                 xs: 12,
@@ -272,7 +293,48 @@ const screenConfig = {
                   menu: printMenu
                 }
               }
-            }
+            },
+            newApplicationButton: {
+              componentPath: "Button",
+              gridDefination: {
+                xs: 12,
+                sm: 6,
+                align: "right",
+              },
+              visible:  process.env.REACT_APP_NAME === "Employee"? false : status === "Approved" ? true : false,
+              props: {
+                variant: "contained",
+                color: "primary",
+                style: {
+                  color: "white",
+                  borderRadius: "2px",
+                  width: "250px",
+                  height: "48px",
+                },
+              },
+
+              children: {
+                plusIconInsideButton: {
+                  uiFramework: "custom-atoms",
+                  componentPath: "Icon",
+                  props: {
+                    iconName: "add",
+                    style: {
+                      fontSize: "24px",
+                    },
+                  },
+                },
+
+                buttonLabel: getLabel({
+                  labelName: "Add svru",
+                  labelKey: "NULM_ADD_NEW_SVRU_BUTTON",
+                }),
+              },
+              onClickDefination: {
+                action: "condition",
+                callBack: updateApprovedSUSV,
+              },
+            },
           }
         },
         taskStatus: {
