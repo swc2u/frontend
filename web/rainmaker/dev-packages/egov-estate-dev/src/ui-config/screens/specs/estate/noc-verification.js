@@ -69,6 +69,41 @@ const beforeInitFn = async (action, state, dispatch) => {
       state: applicationState,
       billingBusinessService: businessService
     } = Applications[0];
+    let propercheck=Applications[0].property.fileNumber
+    if(propercheck==="BBNOC-1"){
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.propertyDetails.children.cardContent.children.viewFour.children.houseNumber.children.value.children.key",
+        "props.jsonPath",
+        "Applications[0].applicationDetails.property.propertyDetails.houseNumber"
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.propertyDetails.children.cardContent.children.viewFour.children.mohalla.children.value.children.key",
+        "props.jsonPath",
+        "Applications[0].applicationDetails.property.propertyDetails.mohalla"
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.propertyDetails.children.cardContent.children.viewFour.children.village.children.value.children.key",
+        "props.jsonPath",
+        "Applications[0].applicationDetails.property.propertyDetails.village"
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.propertyDetails.children.cardContent.children.viewFour.children.so.children.value.children.key",
+        "props.jsonPath",
+        "Applications[0].applicationDetails.owner.ownerDetails.guardianName"
+      )
+    )
+      }
     applicationDocuments = applicationDocuments || [];
     const statusQueryObject = [{
         key: "tenantId",
@@ -114,7 +149,7 @@ const hardCopyDocumentsReceivedDateField = {
     labelKey: "ES_HARD_COPY_DOCUMENTS_RECEIVED_DATE_PLACEHOLDER"
   },
   pattern: getPattern("Date"),
-  jsonPath: "Applications[0].hardCopyDocumentsReceivedDate",
+  jsonPath: "Applications[0].applicationDetails.hardCopyDocumentsReceivedDate",
   props: {
     inputProps: {
       max: getTodaysDateInYMD()
@@ -257,8 +292,8 @@ const sizeOfAreaPurchasedField = {
     xs: 12,
     sm: 6
   },
-  pattern: _getPattern("areaOfProperty"),
-  minLength: 2,
+  pattern: _getPattern("areaofpropertywithspecialcharacters"),
+  minLength: 1,
   maxLength: 150,
   props: {
     disabled: true
@@ -268,9 +303,9 @@ const sizeOfAreaPurchasedField = {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_SIZE_OF_PROPERTY_MINLENGTH_2", action.screenKey);
-    }
+    // else if(action.value.length < 1){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_SIZE_OF_PROPERTY_MINLENGTH_2", action.screenKey);
+    // }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_SIZE_OF_PROPERTY_NUMBER",action.screenKey);
     }
@@ -291,17 +326,17 @@ const khasraNoField = {
     sm: 6
   },
   required: true,
-  minLength: 2,
+  minLength: 1,
   maxLength: 150,
-  pattern:_getPattern("numeric-firstdigit-nonzero"),
+  pattern:_getPattern("areaofpropertywithspecialcharacters"),
   jsonPath: "Applications[0].applicationDetails.khasraNo",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_KHARSA_NO_MINLENGTH_2", action.screenKey);
-    }
+    // else if(action.value.length < 1){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_KHARSA_NO_MINLENGTH_2", action.screenKey);
+    // }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_KHARSA_NO_NUMBER",action.screenKey);
     }
@@ -322,17 +357,17 @@ const hadbastNoField = {
     sm: 6
   },
   required: true,
-  minLength: 2,
+  minLength: 1,
   maxLength: 150,
-  pattern:_getPattern("numeric-firstdigit-nonzero"),
+  pattern:_getPattern("areaofpropertywithspecialcharacters"),
   jsonPath: "Applications[0].applicationDetails.hadbastNo",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HADBAST_NO_MINLENGTH_2", action.screenKey);
-    }
+    // else if(action.value.length < 1){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HADBAST_NO_MINLENGTH_2", action.screenKey);
+    // }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_HADBAST_NO_NUMBER",action.screenKey);
     }
@@ -355,15 +390,15 @@ const mutationNoField = {
   required: true,
   minLength: 2,
   maxLength: 150,
-  pattern:_getPattern("numeric-firstdigit-nonzero"),
+  pattern:_getPattern("areaofpropertywithspecialcharacters"),
   jsonPath: "Applications[0].applicationDetails.mutationNo",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MUTATION_NO_MINLENGTH_2", action.screenKey);
-    }
+    // else if(action.value.length < 1){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MUTATION_NO_MINLENGTH_2", action.screenKey);
+    // }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_MUTATION_NO_NUMBER",action.screenKey);
     }
@@ -384,17 +419,17 @@ const khewatNoField = {
     sm: 6
   },
   required: true,
-  minLength: 2,
+  minLength: 1,
   maxLength: 150,
-  pattern:_getPattern("numeric-firstdigit-nonzero"),
+  pattern:_getPattern("areaofpropertywithspecialcharacters"),
   jsonPath: "Applications[0].applicationDetails.khewatNo",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_KHEWAT_NO_MINLENGTH_2", action.screenKey);
-    }
+    // else if(action.value.length < 1){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_KHEWAT_NO_MINLENGTH_2", action.screenKey);
+    // }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_KHEWAT_NO_NUMBER",action.screenKey);
     }
@@ -415,17 +450,17 @@ const housesOfEastField = {
     sm: 6
   },
   required: true,
-  minLength: 2,
+  minLength: 1,
   maxLength: 150,
-  pattern:_getPattern("numeric-firstdigit-nonzero"),
+  pattern:_getPattern("areaofpropertywithspecialcharacters"),
   jsonPath: "Applications[0].applicationDetails.boundedOnEast",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HOUSE_OF_EAST_MINLENGTH_2", action.screenKey);
-    }
+    // else if(action.value.length < 1){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HOUSE_OF_EAST_MINLENGTH_2", action.screenKey);
+    // }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_HOUSE_OF_EAST_NUMBER",action.screenKey);
     }
@@ -446,17 +481,17 @@ const housesOfWestField = {
     sm: 6
   },
   required: true,
-  minLength: 2,
+  minLength: 1,
   maxLength: 150,
-  pattern:_getPattern("numeric-firstdigit-nonzero"),
+  pattern:_getPattern("areaofpropertywithspecialcharacters"),
   jsonPath: "Applications[0].applicationDetails.boundedOnWest",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HOUSE_OF_EAST_MINLENGTH_2", action.screenKey);
-    }
+    // else if(action.value.length < 1){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HOUSE_OF_EAST_MINLENGTH_2", action.screenKey);
+    // }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_HOUSE_OF_EAST_NUMBER",action.screenKey);
     }
@@ -477,15 +512,15 @@ const housesOfNorthField = {
     sm: 6
   },
   required: true,
-  minLength: 2,
+  minLength: 1,
   maxLength: 150,
-  pattern:_getPattern("numeric-firstdigit-nonzero"),
+  pattern:_getPattern("areaofpropertywithspecialcharacters"),
   jsonPath: "Applications[0].applicationDetails.boundedOnNorth",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
+    else if(action.value.length < 1){
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HOUSE_OF_EAST_MINLENGTH_2", action.screenKey);
     }
     else {
@@ -508,15 +543,15 @@ const housesOfSouthField = {
     sm: 6
   },
   required: true,
-  minLength: 2,
+  minLength: 1,
   maxLength: 150,
-  pattern:_getPattern("numeric-firstdigit-nonzero"),
+  pattern:_getPattern("areaofpropertywithspecialcharacters"),
   jsonPath: "Applications[0].applicationDetails.boundedOnSouth",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
+    else if(action.value.length < 1){
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HOUSE_OF_EAST_MINLENGTH_2", action.screenKey);
     }
     else {
@@ -539,17 +574,17 @@ const widthOfFrontElevationOfHouseField = ({jsonPath, label, placeholder}) => ({
     sm: 6
   },
   required: true,
-  minLength: 2,
+  minLength: 1,
   maxLength: 150,
-  pattern:_getPattern("numeric-firstdigit-nonzero"),
+  pattern:_getPattern("numeric-firstdigit-zero"),
   jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_WIDTH_MINLENGTH_2", action.screenKey);
-    }
+    // else if(action.value.length < 1){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_WIDTH_MINLENGTH_2", action.screenKey);
+    // }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_WIDTH_NUMBER",action.screenKey);
     }
@@ -570,22 +605,88 @@ const totalWidthOfPublicStreetField = ({jsonPath, label, placeholder}) =>  ({
     sm: 6
   },
   required: true,
-  minLength: 2,
+  minLength: 1,
   maxLength: 150,
-  pattern:_getPattern("numeric-firstdigit-nonzero"),
+  pattern:_getPattern("numeric-firstdigit-zero"),
   jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_WIDTH_OF_PUBLIC_STREET_MINLENGTH_2", action.screenKey);
-    }
+    // else if(action.value.length < 1){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_WIDTH_OF_PUBLIC_STREET_MINLENGTH_2", action.screenKey);
+    // }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_WIDTH_OF_PUBLIC_STREET_NUMBER",action.screenKey);
     }
 }
 })
+
+const getWhetherThereIsStreetOnAnotherOtherSideOfHouseRadioButton={
+  uiFramework: "custom-containers",
+  componentPath: "RadioGroupContainer",
+  gridDefination: {
+    xs: 12,
+    sm: 6,
+  },
+  jsonPath: "Applications[0].applicationDetails.anotherSideStreet",
+  props: {
+    label: {
+      name: "Whether there is street on the other side of house?",
+      key: "ES_WHETHER_THERE_IS_STREET_ON__ANOTHER_SIDE_OF_HOUSE_LABEL"
+    },
+    buttons: [{
+        labelName: "Yes",
+        labelKey: "ES_COMMON_YES",
+        value: "true",
+      },
+      {
+        label: "No",
+        labelKey: "ES_COMMON_NO",
+        value: "false",
+      }
+    ],
+    jsonPath: "Applications[0].applicationDetails.anotherSideStreet",
+    required: true,
+  },
+  visible:false,
+  required: true,
+  type: "array",
+  afterFieldChange: (action, state, dispatch) => {
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.widthOfAnotherStreetWithLengthOfHouseField",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.widthOfAnotherStreetWithLenghtOfHouseInch",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.heightOfAnotherStreeOtherSide",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.heightOfAnotherStreeOtherSideInch",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
+  }
+}
 
 const getWhetherThereIsStreetOnOtherSideOfHouseRadioButton = {
   uiFramework: "custom-containers",
@@ -649,8 +750,47 @@ const getWhetherThereIsStreetOnOtherSideOfHouseRadioButton = {
         !!(action.value == "true")
       )
     )
+    dispatch(
+      handleField(
+        "noc-verification",
+        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.streetOnAnotherSideofHouse",
+        "visible",
+        !!(action.value == "true")
+      )
+    )
   }
 };
+const widthOfAnotherStreetWithLengthOfHouseField = ({jsonPath, label, placeholder}) => ({
+  label: {
+    labelName: "Width of the same with the length of house adjoining to that side of street",
+    labelKey: label
+  },
+  placeholder: {
+    labelName: "Enter width of the same with the length of house adjoining to that side of street",
+    labelKey: placeholder
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  required: true,
+  visible: false,
+  jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
+  pattern:_getPattern("numeric-firstdigit-zero"),
+  minLength: 1,
+  maxLength: 150,
+  afterFieldChange: (action, state, dispatch) => {
+    if (action.value.length > 150) {
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
+    }
+    // else if(action.value.length < 2){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_WIDTH_MINLENGTH_2", action.screenKey);
+    // }
+    else {
+        displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_WIDTH_NUMBER",action.screenKey);
+    }
+}
+})
 
 const widthOfStreetWithLengthOfHouseField = ({jsonPath, label, placeholder}) => ({
   label: {
@@ -665,13 +805,15 @@ const widthOfStreetWithLengthOfHouseField = ({jsonPath, label, placeholder}) => 
     xs: 12,
     sm: 6
   },
-  // required: true,
+  required: true,
   visible: false,
   jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
-  pattern:_getPattern("width"),
+  pattern:_getPattern("numeric-firstdigit-zero"),
+  minLength: 1,
+  maxLength: 150,
   afterFieldChange: (action, state, dispatch) => {
-    if (action.value.length > 50) {
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_50", action.screenKey);
+    if (action.value.length > 150) {
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
     // else if(action.value.length < 2){
     //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_WIDTH_MINLENGTH_2", action.screenKey);
@@ -695,13 +837,15 @@ const commercialActivity = ({jsonPath, label, placeholder}) => ({
     xs: 12,
     sm: 6
   },
-  required: true,
+  required: false,
   visible: false,
   jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
-  pattern:_getPattern("width"),
+  pattern:_getPattern("numeric-firstdigit-zero"),
+  //minLength: 1,
+  maxLength: 150,
   afterFieldChange: (action, state, dispatch) => {
-    if (action.value.length > 50) {
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_50", action.screenKey);
+    if (action.value.length > 150) {
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_WIDTH_NUMBER",action.screenKey);
@@ -878,17 +1022,17 @@ const heightOfBuildingField = {
     sm: 6
   },
   required: true,
-  minLength: 2,
+  minLength: 1,
   maxLength: 150,
-  pattern:_getPattern("numeric-firstdigit-nonzero"),
+  pattern:_getPattern("numeric-firstdigit-zero"),
   jsonPath: "Applications[0].applicationDetails.heightExcludingMumty",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
-        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HIEGHT_OF_BUILDING_MINLENGTH_2", action.screenKey);
-    }
+    // else if(action.value.length < 1){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HIEGHT_OF_BUILDING_MINLENGTH_2", action.screenKey);
+    // }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_HIEGHT_OF_BUILDING_NUMBER",action.screenKey);
     }
@@ -909,17 +1053,17 @@ const heightOfMumtyField = {
     sm: 6
   },
   required: true,
-  minLength: 2,
+  minLength: 1,
   maxLength: 150,
-  pattern:_getPattern("numeric-firstdigit-nonzero"),
+  pattern:_getPattern("numeric-firstdigit-zero"),
   jsonPath: "Applications[0].applicationDetails.heightofMumty",
   afterFieldChange: (action, state, dispatch) => {
     if (action.value.length > 150) {
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
-    else if(action.value.length < 2){
-      displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HIEGHT_OF_MUNTY_MINLENGTH_2", action.screenKey);
-  }
+  //   else if(action.value.length < 1){
+  //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_HIEGHT_OF_MUNTY_MINLENGTH_2", action.screenKey);
+  // }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_HIEGHT_OF_BUILDING_NUMBER",action.screenKey);
     }
@@ -1065,14 +1209,14 @@ const getAnyCommercialActivityGoingOnRadioButton = {
         !!(action.value == "true")
       )
     )
-    dispatch(
-      handleField(
-        "noc-verification",
-        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.groundFloorCommercialActivityInch",
-        "visible",
-        !!(action.value == "true")
-      )
-    )
+    // dispatch(
+    //   handleField(
+    //     "noc-verification",
+    //     "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.groundFloorCommercialActivityInch",
+    //     "visible",
+    //     !!(action.value == "true")
+    //   )
+    // )
     dispatch(
       handleField(
         "noc-verification",
@@ -1081,14 +1225,14 @@ const getAnyCommercialActivityGoingOnRadioButton = {
         !!(action.value == "true")
       )
     )
-    dispatch(
-      handleField(
-        "noc-verification",
-        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.firstFloorCommercialActivityInch",
-        "visible",
-        !!(action.value == "true")
-      )
-    )
+    // dispatch(
+    //   handleField(
+    //     "noc-verification",
+    //     "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.firstFloorCommercialActivityInch",
+    //     "visible",
+    //     !!(action.value == "true")
+    //   )
+    // )
     dispatch(
       handleField(
         "noc-verification",
@@ -1097,14 +1241,14 @@ const getAnyCommercialActivityGoingOnRadioButton = {
         !!(action.value == "true")
       )
     )
-    dispatch(
-      handleField(
-        "noc-verification",
-        "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.secondFloorCommercialActivityInch",
-        "visible",
-        !!(action.value == "true")
-      )
-    )
+    // dispatch(
+    //   handleField(
+    //     "noc-verification",
+    //     "components.div.children.detailsContainer.children.nocVerificationDetails.children.cardContent.children.detailsContainer.children.secondFloorCommercialActivityInch",
+    //     "visible",
+    //     !!(action.value == "true")
+    //   )
+    // )
   }
 };
 
@@ -1373,10 +1517,16 @@ export const nocVerificationDetails = getCommonCard({
     totalWidthOfPublicStreet: getTextField(totalWidthOfPublicStreetField({jsonPath: "streetWidth", label: "ES_TOTAL_WIDTH_OF_PUBLIC_STREET_LABEL", placeholder: "ES_TOTAL_WIDTH_OF_PUBLIC_STREET_PLACEHOLDER"})),
     totalWidthOfPublicStreetInch: getTextField(totalWidthOfPublicStreetField({jsonPath: "streetWidthInch", label: "ES_TOTAL_WIDTH_OF_PUBLIC_STREET_INCH_LABEL", placeholder: "ES_TOTAL_WIDTH_OF_PUBLIC_STREET_INCH_PLACEHOLDER"})),
     streetOnOtherSideOfHouse: getWhetherThereIsStreetOnOtherSideOfHouseRadioButton,
+    // streetOnAnotherSideofHouse:getWhetherThereIsStreetOnAnotherOtherSideOfHouseRadioButton,
     widthOfStreetWithLengthOfHouse: getTextField(widthOfStreetWithLengthOfHouseField({jsonPath: "sameWidthOfSideStreet", label: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_LABEL", placeholder: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_PLACEHOLDER"})),
     widthOfStreetWithLenghtOfHouseInch: getTextField(widthOfStreetWithLengthOfHouseField({jsonPath: "sameWidthOfSideStreetInch", label: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_INCH_LABEL", placeholder: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_INCH_PLACEHOLDER"})),
     heightOfStreeOtherSide:getTextField(widthOfStreetWithLengthOfHouseField({jsonPath: "sameHeightOfSideStreet", label: "ES_HEIGHT_OF_THE_STREET", placeholder: "ES_HEIGHT_OF_THE_STREET_PLACEHOLDER"})),
     heightOfStreeOtherSideInch:getTextField(widthOfStreetWithLengthOfHouseField({jsonPath: "sameHeightOfSideStreetInch", label: "ES_HEIGHT_OF_THE_STREET_INCH", placeholder: "ES_HEIGHT_OF_THE_STREET_INCH_PLACEHOLDER"})),
+    streetOnAnotherSideofHouse:getWhetherThereIsStreetOnAnotherOtherSideOfHouseRadioButton,
+    widthOfAnotherStreetWithLengthOfHouseField:getTextField(widthOfAnotherStreetWithLengthOfHouseField({jsonPath: "sameWidthOfAnotherSideStreet", label: "ES_WIDTH_OF_THE_ANOTHER_STREET_WITH_LENGTH_OF_HOUSE_LABEL", placeholder: "ES_WIDTH_OF_THE_ANOTHER_STREET_WITH_LENGTH_OF_HOUSE_PLACEHOLDER"})),
+    widthOfAnotherStreetWithLenghtOfHouseInch:getTextField(widthOfAnotherStreetWithLengthOfHouseField({jsonPath: "sameWidthOfAnotherSideStreetInch", label: "ES_WIDTH_OF_THE__ANOTHER_STREET_WITH_LENGTH_OF_HOUSE_INCH_LABEL", placeholder: "ES_WIDTH_OF_THE_ANOTHER_STREET_WITH_LENGTH_OF_HOUSE_INCH_PLACEHOLDER"})),
+    heightOfAnotherStreeOtherSide:getTextField(widthOfAnotherStreetWithLengthOfHouseField({jsonPath: "sameHeightOfAnotherSideStreet", label: "ES_HEIGHT_OF_THE_ANOTHER_STREET", placeholder: "ES_HEIGHT_OF_THE_ANOTHER_STREET_PLACEHOLDER"})),
+    heightOfAnotherStreeOtherSideInch:getTextField(widthOfAnotherStreetWithLengthOfHouseField({jsonPath: "sameHeightOfAnotherSideStreetInch", label: "ES_HEIGHT_OF_THE_ANOTHER_STREET_INCH", placeholder: "ES_HEIGHT_OF_THE_ANOTHER_STREET_INCH_PLACEHOLDER"})),
     areaOfHouseAtSiteIsSame: getWhetherAreaOfHouseAtSiteIsSameRadioButton,
     variationDetail: getTextField(variationDetailField),
     houseWithinLalLakir: getWhetherHouseWithinLalLakirRadioButton,
@@ -1389,11 +1539,11 @@ export const nocVerificationDetails = getCommonCard({
     cantileverDetails: getTextField(cantileverDetailsField),
     commercialActivityGoingOn: getAnyCommercialActivityGoingOnRadioButton,
     groundFloorCommercialActivity: getTextField(commercialActivity({jsonPath: "groundFloorcommercialActivity", label: "ES_GROUND_FLOOR_COMMERCIAL", placeholder: "ES_GROUND_FLOOR_COMMERCIAL_PLACEHOLDER"})),
-    groundFloorCommercialActivityInch: getTextField(commercialActivity({jsonPath: "groundFloorcommercialActivityInch", label: "ES_GROUND_FLOOR_COMMERCIAL_INCH", placeholder: "ES_GROUND_FLOOR_COMMERCIAL_INCH_PLACEHOLDER"})),
+    //groundFloorCommercialActivityInch: getTextField(commercialActivity({jsonPath: "groundFloorcommercialActivityInch", label: "ES_GROUND_FLOOR_COMMERCIAL_INCH", placeholder: "ES_GROUND_FLOOR_COMMERCIAL_INCH_PLACEHOLDER",required:true})),
     firstFloorCommercialActivity: getTextField(commercialActivity({jsonPath: "firstFloorcommercialActivity", label: "ES_FIRST_FLOOR_COMMERCIAL", placeholder: "ES_FIRST_FLOOR_COMMERCIAL_PLACEHOLDER"})),
-    firstFloorCommercialActivityInch: getTextField(commercialActivity({jsonPath: "firstFloorcommercialActivityInch", label: "ES_FIRST_FLOOR_COMMERCIAL_INCH", placeholder: "ES_FIRST_FLOOR_COMMERCIAL_INCH_PLACEHOLDER"})),
+    //firstFloorCommercialActivityInch: getTextField(commercialActivity({jsonPath: "firstFloorcommercialActivityInch", label: "ES_FIRST_FLOOR_COMMERCIAL_INCH", placeholder: "ES_FIRST_FLOOR_COMMERCIAL_INCH_PLACEHOLDER",required:false})),
     secondFloorCommercialActivity: getTextField(commercialActivity({jsonPath: "secondFloorcommercialActivity", label: "ES_SECOND_FLOOR_COMMERCIAL", placeholder: "ES_SECOND_FLOOR_COMMERCIAL_PLACEHOLDER"})),
-    secondFloorCommercialActivityInch: getTextField(commercialActivity({jsonPath: "secondFloorcommercialActivityInch", label: "ES_SECOND_FLOOR_COMMERCIAL_INCH", placeholder: "ES_SECOND_FLOOR_COMMERCIAL_INCH_PLACEHOLDER"})),
+    //secondFloorCommercialActivityInch: getTextField(commercialActivity({jsonPath: "secondFloorcommercialActivityInch", label: "ES_SECOND_FLOOR_COMMERCIAL_INCH", placeholder: "ES_SECOND_FLOOR_COMMERCIAL_INCH_PLACEHOLDER",required:false})),
     anyBasements: getAnyBasementsOnRadioButton,
     otherViolationDetails: getTextField(otherViolationDetailsField),
     recommendedForIssueOfNoc: getRecommendedForIssueOfNocOnRadioButton,
@@ -1466,29 +1616,29 @@ const validateNocForm = (state, handleFieldChange) => {
   }
   if(isCommercialActivity === "true" || isCommercialActivity === true) {
     const groundFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivity")
-    const groundFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivityInch")
+    //const groundFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivityInch")
     const firstFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.firstFloorCommercialActivity")
-    const firstFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.firstFloorCommercialActivityInch")
+    //const firstFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.firstFloorCommercialActivityInch")
     const secondFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivity")
-    const secondFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivityInch")
+    //const secondFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivityInch")
     if(!groundFloorCommercialActivity) {
       handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivity", "0")
     }
-    if(!groundFloorCommercialActivityInch) {
-      handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivityInch", "0")
-    }
+    // if(!groundFloorCommercialActivityInch) {
+    //   handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivityInch", "0")
+    // }
     if(!firstFloorCommercialActivity) {
       handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivity", "0")
     }
-    if(!firstFloorCommercialActivityInch) {
-      handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivityInch", "0")
-    }
+    // if(!firstFloorCommercialActivityInch) {
+    //   handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivityInch", "0")
+    // }
     if(!secondFloorCommercialActivity) {
       handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivity", "0")
     }
-    if(!secondFloorCommercialActivityInch) {
-      handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivityInch", "0")
-    }
+    // if(!secondFloorCommercialActivityInch) {
+    //   handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivityInch", "0")
+    // }
   }
 
   return isNocVerificationDetailValid;

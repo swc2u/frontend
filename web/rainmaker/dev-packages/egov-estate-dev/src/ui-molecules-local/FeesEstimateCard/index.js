@@ -48,6 +48,9 @@ const styles = {
     letterSpacing: 0.67,
     fontFamily: "Roboto",
     marginBottom: 16
+  },
+  isPaidClassName:{
+    color: "#39CB74"
   }
 };
 
@@ -149,6 +152,9 @@ function FeesEstimateCard(props) {
         <Typography className={totalHeadClassName} align="right">
           Rs {total}
         </Typography>
+        {isPaid === true ?(
+                <Typography variant="body2" align="right" style={styles.isPaidClassName}>Paid Successfully</Typography>
+              ):""}
         {estimate.extra && estimate.extra.length !== 0 ? (
           <Card className={classes.whiteCard}>
             {estimate.extra.map((item, key) => {

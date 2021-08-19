@@ -2472,6 +2472,8 @@ export const _getPattern = (type) => {
       return /^[a-zA-Z ]{1,150}$/i;
     case "rateSqFeet":
       return /^[+-]?\d{2,5}(\.\d{1,2})?$/i;
+      case "areaofpropertywithspecialcharacters":
+        return /^([\s\S]){1,150}$/i
     case "address":
       return /^([\s\S]){1,150}$/i
     case "ownerShare":
@@ -2482,6 +2484,8 @@ export const _getPattern = (type) => {
       return /^[1-9][0-9]{2,24}$/i;
       case "numeric-firstdigit-nonzero":
           return /^[1-9][0-9]{1,150}$/i;
+          case "numeric-firstdigit-zero":
+            return /^[0-9]{1,150}$/i;
       case "file-number-only-with-no-firstdigit-zero":
       return /^[1-9a-zA-Z][0-9a-zA-Z]{1,49}$/i;
       case "file-number-no-firstdigit-zero":
