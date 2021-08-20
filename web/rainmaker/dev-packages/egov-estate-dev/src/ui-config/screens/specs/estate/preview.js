@@ -13,7 +13,7 @@ const { setThirdStep } = require("../estate-citizen/applyResource/review");
 import {downloadPrintContainer} from './applyResource/footer';
 import { getApplicationConfig } from "../estate-citizen/_apply";
 import { set } from "lodash";
-
+import {getReviewNoc} from '../estate/applyResource/reviewProperty'
 const userInfo = JSON.parse(getUserInfo());
 const {
   roles = []
@@ -70,7 +70,7 @@ const getData = async (action, state, dispatch) => {
     const response = await getSearchApplicationsResults(queryObject)
     try {
        let {Applications = []} = response;
-       let {applicationDocuments, workFlowBusinessService, state: applicationState, billingBusinessService: businessService, property,hardcopyReceivedDate} = Applications[0];
+       let {applicationDocuments, allDocuments,workFlowBusinessService, state: applicationState, billingBusinessService: businessService, property,hardcopyReceivedDate,applicationDetails} = Applications[0];
        const estateRentSummary = property.estateRentSummary
        const dueAmount = !!estateRentSummary ? estateRentSummary.balanceRent + estateRentSummary.balanceRentPenalty + estateRentSummary.balanceGSTPenalty + estateRentSummary.balanceGST : "0"
        property = {...property, propertyDetails: {...property.propertyDetails, dueAmount: dueAmount || "0"}}
@@ -79,6 +79,7 @@ const getData = async (action, state, dispatch) => {
         property = Applications[0].applicationDetails.property;
         }
        applicationDocuments = applicationDocuments || []
+       allDocuments = allDocuments || []
        const statusQueryObject = [{
           key: "tenantId",
           value: getTenantId()
@@ -91,8 +92,16 @@ const getData = async (action, state, dispatch) => {
        getStatusList( state, dispatch, statusQueryObject)
        const removedDocs = applicationDocuments.filter(item => !item.isActive)
        applicationDocuments = applicationDocuments.filter(item => !!item.isActive)
-       const finalLetter = applicationDocuments.find(item => item.documentType === "FINAL_LETTER")
-       applicationDocuments = applicationDocuments.filter(item => item.documentType !== "FINAL_LETTER")
+       let finalLetter
+       if(applicationState==="ES_PENDING_DA_PREPARE_LETTER"){
+        finalLetter=[]
+       }
+       else{
+         finalLetter = applicationDocuments.find(item => item.documentType === "FINAL_LETTER")
+       }
+       //const finalLetter = applicationDocuments.find(item => item.documentType === "FINAL_LETTER")
+      //  applicationDocuments = applicationDocuments.filter(item => item.documentType !== "FINAL_LETTER")
+      //  allDocuments = allDocuments.filter(item => item.documentType !== "FINAL_LETTER")
        Applications = [{...Applications[0], applicationDocuments, property, finalLetter, property_copy}]
        dispatch(prepareFinalObject("Applications", Applications))
        dispatch(prepareFinalObject("temp[0].removedDocs", removedDocs))
@@ -128,8 +137,8 @@ const getData = async (action, state, dispatch) => {
        let {preview} = uiConfig
        let reviewDetails = await setThirdStep({state, dispatch, preview, applicationType: type, data: Applications[0], isEdit: false, showHeader: false});
        const estimateResponse = await createEstimateData(Applications[0], dispatch, window.location.href)
-
-    
+const nocReview=getReviewNoc()
+reviewDetails = {nocReview, ...reviewDetails}
        if((!!estimateResponse && ((estimateResponse.Payments && !!estimateResponse.Payments.length) || (!!estimateResponse.billDetails && !!estimateResponse.billDetails.length)))) {
          const estimate = !!estimateResponse ? getCommonGrayCard({
            estimateSection: getFeesEstimateCard({
@@ -213,6 +222,11 @@ const getData = async (action, state, dispatch) => {
           reviewDetails, 
           "children.cardContent.children.ES_HARD_COPY_DATE.visible",
           (!!hardcopyReceivedDate)
+        )
+        set(
+          reviewDetails, 
+          "children.cardContent.children.nocReview.visible",
+          (!!applicationDetails.khasraNo && branchType == "BuildingBranch" && process.env.REACT_APP_NAME !== "Citizen")
         )
         return {
                 div: {

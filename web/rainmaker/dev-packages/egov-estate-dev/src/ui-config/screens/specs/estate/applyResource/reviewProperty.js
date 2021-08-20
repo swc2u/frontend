@@ -29,6 +29,18 @@ let val=value.toFixed(2)
 return Number(val)
   }
 };
+export const radiobutton = value => {
+  if (value) {
+    let val="Yes"
+if(value==="true"){
+  return val
+}
+else{
+  val="No"
+  return val
+}
+  }
+};
 function getLabelWithValue(labelName, path, visible) {
   const label = _getLabelWithValue(labelName, path);
   label.visible = visible
@@ -2086,6 +2098,393 @@ export const getReviewRentSummary = (isEditable = true, step = 5, screenKey = "a
                   },
                   { jsonPath: "Properties[0].estateRentSummary.outstanding" }
               )
+      })
+  })
+}
+
+
+export const getReviewNoc = () => {
+  return getCommonGrayCard({
+      headerDiv: {
+          ...headerDiv,
+          children: {
+              header: {
+                  gridDefination: {
+                      xs: 12,
+                      sm: 10
+                  },
+                  ...getCommonSubHeader({
+                      labelName: "Rent Summary",
+                      labelKey: "ES_PREVIEW_NOC_DETAILS_HEADER"
+                  })
+              },
+              //editSection: masterEntryEditSection(isEditable, step, screenKey)
+          }
+      },
+      viewFour: getCommonContainer({
+        hardcopydate: getLabelWithValue(
+                  {
+                      labelName: "Total Due ",
+                      labelKey: "ES_HARD_COPY_DOCUMENTS_RECEIVED_DATE_LABEL"
+                  },
+                  { jsonPath: "Applications[0].applicationDetails.hardCopyDocumentsReceivedDate" ,
+                  callBack: convertEpochToDate}
+              ),
+              wholeHousePurchased: getLabelWithValue(
+                  {
+                      labelName: "Amount Paid",
+                      labelKey: "ES_WHOLE_HOUSE_PURCHASED_LABEL"
+                  },
+                  { jsonPath: "Applications[0].applicationDetails.wholeHousePurchased",
+                callBack:radiobutton }
+              ),
+              khasraNoField: getLabelWithValue(
+                {
+                    labelName: "Balance GST",
+                    labelKey: "ES_KHASRA_NO_LABEL"
+                },
+                { jsonPath: "Applications[0].applicationDetails.khasraNo" }
+            ),
+            hadbastNo: getLabelWithValue(
+                {
+                    labelName: "Balance GST Penalty",
+                    labelKey: "ES_HADBAST_NO_LABEL"
+                },
+                { jsonPath: "Applications[0].applicationDetails.hadbastNo" }
+            ),
+            balanceRentPenalty: getLabelWithValue(
+                {
+                    labelName: "Balance Rent Penalty",
+                    labelKey: "ES_MUTATION_NO_LABEL"
+                },
+                { jsonPath: "Applications[0].applicationDetails.mutationNo" }
+            ),
+            khewatNo: getLabelWithValue(
+                  {
+                      labelName: "Outstanding",
+                      labelKey: "ES_KHEWAT_NO_LABEL"
+                  },
+                  { jsonPath: "Applications[0].applicationDetails.khewatNo" }
+              ),
+              boundedOnEast: getLabelWithValue(
+                {
+                    labelName: "Outstanding",
+                    labelKey: "ES_HOUSES_OF_EAST_LABEL"
+                },
+                { jsonPath: "Applications[0].applicationDetails.boundedOnEast" }
+            ),
+            boundedOnWest: getLabelWithValue(
+              {
+                  labelName: "Outstanding",
+                  labelKey: "ES_HOUSES_OF_WEST_LABEL"
+              },
+              { jsonPath: "Applications[0].applicationDetails.boundedOnWest" }
+          ),
+          boundedOnNorth: getLabelWithValue(
+            {
+                labelName: "Outstanding",
+                labelKey: "ES_HOUSES_OF_NORTH_LABEL"
+            },
+            { jsonPath: "Applications[0].applicationDetails.boundedOnNorth" }
+        ),
+        boundedOnSouth: getLabelWithValue(
+          {
+              labelName: "Outstanding",
+              labelKey: "ES_HOUSES_OF_SOUTH_LABEL"
+          },
+          { jsonPath: "Applications[0].applicationDetails.boundedOnSouth" }
+      ),
+      frontElevationWidth: getLabelWithValue(
+        {
+            labelName: "Outstanding",
+            labelKey: "ES_WIDTH_OF_FRONT_ELEVATION_OF_HOUSE_LABEL"
+        },
+        { jsonPath: "Applications[0].applicationDetails.frontElevationWidth" }
+    ),
+    frontElevationWidthInch: getLabelWithValue(
+      {
+          labelName: "Outstanding",
+          labelKey: "ES_WIDTH_OF_FRONT_ELEVATION_OF_HOUSE_INCH_LABEL"
+      },
+      { jsonPath: "Applications[0].applicationDetails.frontElevationWidthInch" }
+  ),
+  streetWidth: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_TOTAL_WIDTH_OF_PUBLIC_STREET_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.streetWidth" }
+  ),
+  otherSideStreet: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_WHETHER_THERE_IS_STREET_ON_OTHER_SIDE_OF_HOUSE_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.otherSideStreet",
+  callBack:radiobutton }
+  ),
+  // anotherSideStreet: getLabelWithValue(
+  //   {
+  //       labelName: "Outstanding",
+  //       labelKey: "ES_WHETHER_THERE_IS_STREET_ON__ANOTHER_SIDE_OF_HOUSE_LABEL"
+  //   },
+  //   { jsonPath: "Applications[0].applicationDetails.anotherSideStreet",
+  // callBack:radiobutton }
+  // ),
+  sameWidthOfSideStreet: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.sameWidthOfSideStreet" }
+  ),
+  sameWidthOfSideStreetInch: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_INCH_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.sameWidthOfSideStreetInch" }
+  ),
+  sameHeightOfSideStreet: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_HEIGHT_OF_THE_STREET"
+    },
+    { jsonPath: "Applications[0].applicationDetails.sameHeightOfSideStreet" }
+  ),
+  sameHeightOfSideStreetInch: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_HEIGHT_OF_THE_STREET_INCH"
+    },
+    { jsonPath: "Applications[0].applicationDetails.sameHeightOfSideStreetInch" }
+  ),
+  anotherSideStreet: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_WHETHER_THERE_IS_STREET_ON__ANOTHER_SIDE_OF_HOUSE_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.anotherSideStreet",
+  callBack:radiobutton }
+  ),
+  sameWidthOfAnotherSideStreet: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_WIDTH_OF_THE_ANOTHER_STREET_WITH_LENGTH_OF_HOUSE_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.sameWidthOfAnotherSideStreet" }
+  ),
+  sameWidthOfAnotherSideStreetInch: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_WIDTH_OF_THE__ANOTHER_STREET_WITH_LENGTH_OF_HOUSE_INCH_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.sameWidthOfAnotherSideStreetInch" }
+  ),
+  sameHeightOfAnotherSideStreet: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_HEIGHT_OF_THE_ANOTHER_STREET"
+    },
+    { jsonPath: "Applications[0].applicationDetails.sameHeightOfAnotherSideStreet" }
+  ),
+  sameHeightOfAnotherSideStreetInch: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_HEIGHT_OF_THE_ANOTHER_STREET_INCH"
+    },
+    { jsonPath: "Applications[0].applicationDetails.sameHeightOfAnotherSideStreetInch" }
+  ),
+  areaIsSame: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_WHETHER_AREA_OF_HOUSE_AT_SITE_IS_SAME_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.areaIsSame",
+  callBack:radiobutton }
+  ),
+  varations: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_VARIATION_DETAIL_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.varations" }
+  ),
+
+
+
+  lalLakirOrUnacquiredAbadi: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_WHETHER_HOUSE_WITHIN_LAL_LAKIR_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.lalLakirOrUnacquiredAbadi",
+  callBack:radiobutton }
+  ),
+  electricityMeterExists: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_WHETHER_ELECTRICITY_METER_EXIST_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.electricityMeterExists",
+  callBack:radiobutton }
+  ),
+  waterMeterExists: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_WHETHER_WATER_METER_EXIST_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.waterMeterExists",
+  callBack:radiobutton }
+  ),
+  heightExcludingMumty: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_HEIGHT_OF_BUILDING_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.heightExcludingMumty" }
+  ),
+  heightofMumty: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_HEIGHT_OF_MUMTY_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.heightofMumty" }
+  ),
+  milkCattleInPremises: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_CATTLE_KEPT_IN_PREMISES_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.milkCattleInPremises",
+  callBack:radiobutton }
+  ),
+  cantileverOrprojection: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_ANY_CANTILEVER_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.cantileverOrprojection",
+  callBack:radiobutton }
+  ),
+  cantileverOrprojectionDetails: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_CANTILEVER_DETAILS_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.cantileverOrprojectionDetails" }
+  ),
+  commercialActivity: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_ANY_COMMERCIAL_ACTIVITY_GOING_ON_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.commercialActivity",
+  callBack:radiobutton }
+  ),
+  groundFloorcommercialActivity: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_GROUND_FLOOR_COMMERCIAL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.groundFloorcommercialActivity" }
+  ),
+  // groundFloorcommercialActivityInch: getLabelWithValue(
+  //   {
+  //       labelName: "Outstanding",
+  //       labelKey: "ES_GROUND_FLOOR_COMMERCIAL_INCH"
+  //   },
+  //   { jsonPath: "Applications[0].applicationDetails.groundFloorcommercialActivityInch" }
+  // ),
+  firstFloorcommercialActivity: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_FIRST_FLOOR_COMMERCIAL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.firstFloorcommercialActivity" }
+  ),
+  // firstFloorcommercialActivityInch: getLabelWithValue(
+  //   {
+  //       labelName: "Outstanding",
+  //       labelKey: "ES_FIRST_FLOOR_COMMERCIAL_INCH"
+  //   },
+  //   { jsonPath: "Applications[0].applicationDetails.firstFloorcommercialActivityInch" }
+  // ),
+  secondFloorcommercialActivity: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_SECOND_FLOOR_COMMERCIAL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.secondFloorcommercialActivity" }
+  ),
+  // secondFloorcommercialActivityInch: getLabelWithValue(
+  //   {
+  //       labelName: "Outstanding",
+  //       labelKey: "ES_SECOND_FLOOR_COMMERCIAL_INCH"
+  //   },
+  //   { jsonPath: "Applications[0].applicationDetails.secondFloorcommercialActivityInch" }
+  // ),
+  basement: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_ANY_BASEMENTS_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.basement",
+  callBack:radiobutton }
+  ),
+  otherViolations: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_OTHER_VIOLATION_DETAILS_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.otherViolations" }
+  ),
+  issueOfNoc: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_RECOMMENDED_FOR_ISSUE_OF_NOC_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.issueOfNoc",
+  callBack:radiobutton }
+  ),
+  issueOfNocDetails: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_REASON_FOR_NOT_ISSUING_NOC_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.issueOfNocDetails" }
+  ),
+  ArchitectsReport: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_ARCHITECTS_REPORT_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.ArchitectsReport",
+  callBack:radiobutton }
+  ),
+  fireNoc: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_FIRE_NOC_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.fireNoc",
+  callBack:radiobutton }
+  ),
+  dateOfVisit: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_DATE_OF_VISIT_LABEL"
+    },
+    { jsonPath: "Applications[0].applicationDetails.dateOfVisit",
+    callBack: convertEpochToDate }
+  ),
+  comments: getLabelWithValue(
+    {
+        labelName: "Outstanding",
+        labelKey: "ES_COMMENT_LABEL"
+    },
+    { jsonPath: "Applications[0].comments" }
+  )
       })
   })
 }
