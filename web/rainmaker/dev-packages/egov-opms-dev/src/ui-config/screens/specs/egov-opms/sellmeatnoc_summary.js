@@ -327,6 +327,9 @@ const prepareDocumentsView = async (state, dispatch) => {
 
   // Get all documents from response
   let SELLMEATNOC = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0]", {});
+  var mobileNumber = JSON.parse(SELLMEATNOC.applicationdetail).mobileNumber;
+  SELLMEATNOC["mobileNumber"] = mobileNumber;
+  dispatch(prepareFinalObject("nocApplicationDetail[0]", SELLMEATNOC));
 
   let uploadDocuments = SELLMEATNOC.hasOwnProperty('applicationdetail') ? JSON.parse(SELLMEATNOC.applicationdetail).hasOwnProperty('uploadDocuments') ?
     JSON.parse(SELLMEATNOC.applicationdetail).uploadDocuments[0]['fileStoreId'] : '' : '';

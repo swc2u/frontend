@@ -911,6 +911,7 @@ export const furnishSellMeatNocResponse = (state,response, step) => {
   set(refurnishresponse, "applicantName", response.nocApplicationDetail[0].applicantname);
   set(refurnishresponse, "houseNo", response.nocApplicationDetail[0].housenumber);
   set(refurnishresponse, "sector", response.nocApplicationDetail[0].sector);
+  set(refurnishresponse, "mobileNumber", applicationdetail.mobileNumber);
 
   set(refurnishresponse, "fatherHusbandName", applicationdetail.fatherHusbandName);
   set(refurnishresponse, "division", applicationdetail.division);
