@@ -884,6 +884,10 @@ try{
               case "UPDATE_METER_INFO":
               activityType ='Meter Update'
               break;
+              case "APPLY_FOR_METER_TESTING":
+              case "WS_METER_TESTING":
+              activityType ='Meter Testing'
+              break;
               case "WS_CONVERSION":
               case "CONNECTION_CONVERSION":
               activityType ='Tariff Change'
@@ -1329,6 +1333,10 @@ try{
               case "WS_METER_UPDATE":
               case "UPDATE_METER_INFO":
               activityType ='Meter Update'
+              break;
+              case "APPLY_FOR_METER_TESTING":
+              case "WS_METER_TESTING":
+              activityType ='Meter Testing'
               break;
               case "WS_CONVERSION":
               case "CONNECTION_CONVERSION":

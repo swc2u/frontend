@@ -21,7 +21,7 @@ import {
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
 import orderBy from "lodash/orderBy";
-import { getSearchResults,WNSConfigName} from "../../ui-utils/commons";
+import { getSearchResults,WNSConfigName,WNSWaterBusinessService,WNSBusinessService} from "../../ui-utils/commons";
 let connectionNumber = getQueryArg(window.location.href, "connectionNumber");
 const tenantId = getQueryArg(window.location.href, "tenantId");
 const serviceType = getQueryArg(window.location.href, "service");
@@ -45,7 +45,18 @@ class WorkFlowContainer extends React.Component {
       this.setState({applicationId : applicationNo , applicationStatus,WaterConnectionObj:WaterConnection});
     }
   }
-
+  GetBusinessServiceConfig=(ModuleName)=>{
+    let BusinessService = WNSBusinessService().BusinessService;  
+    if (BusinessService.indexOf(ModuleName) > -1) {
+      return true;
+    } else return false;
+  }
+  GetWaterBusinessServiceConfig=(ModuleName)=>{
+    let BusinessService = WNSWaterBusinessService().BusinessService;  
+    if (BusinessService.indexOf(ModuleName) > -1) {
+      return true;
+    } else return false;
+  }
   getRedirectUrl = (action, businessId, moduleName,ActionType) => {
 
     const isAlreadyEdited = getQueryArg(window.location.href, "edited");
@@ -53,33 +64,37 @@ class WorkFlowContainer extends React.Component {
     
     let baseUrl = "";
     let bservice = "";
-    if (moduleName === "NewWS1" 
-        || moduleName === "REGULARWSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION"
-        || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
-        || moduleName === "WS_TEMP_TEMP" 
-        ||moduleName === "WS_TEMP_REGULAR"
-        ||moduleName === "WS_DISCONNECTION" 
-        ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
-        || moduleName === "WS_METER_UPDATE" 
-        || moduleName === "WS_CONVERSION" 
-        || moduleName === "WS_REACTIVATE" 
-        || moduleName === "WS_TUBEWELL") {
+    // if (moduleName === "NewWS1" 
+    //     || moduleName === "REGULARWSCONNECTION"
+    //     || moduleName === "TEMPORARY_WSCONNECTION"
+    //     || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+    //     || moduleName === "WS_TEMP_TEMP" 
+    //     ||moduleName === "WS_TEMP_REGULAR"
+    //     ||moduleName === "WS_DISCONNECTION" 
+    //     ||moduleName === "WS_TEMP_DISCONNECTION"
+    //     || moduleName === "WS_RENAME" 
+    //     || moduleName === "WS_METER_UPDATE" 
+    //     || moduleName === "WS_CONVERSION" 
+    //     || moduleName === "WS_REACTIVATE" 
+    //     || moduleName === "WS_TUBEWELL") 
+        if(this.GetWaterBusinessServiceConfig(moduleName))
+        {
       baseUrl = "wns"
-      if (moduleName === "NewWS1" 
-      || moduleName === "REGULARWSCONNECTION" 
-      || moduleName === "TEMPORARY_WSCONNECTION"
-      || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
-        || moduleName === "WS_TEMP_TEMP" 
-        ||moduleName === "WS_TEMP_REGULAR"
-        ||moduleName === "WS_DISCONNECTION" 
-        ||moduleName === "WS_TEMP_DISCONNECTION"
-        || moduleName === "WS_RENAME" 
-        || moduleName === "WS_METER_UPDATE" 
-        || moduleName === "WS_CONVERSION" 
-        || moduleName === "WS_REACTIVATE"
-      || moduleName === "WS_TUBEWELL") {
+      // if (moduleName === "NewWS1" 
+      // || moduleName === "REGULARWSCONNECTION" 
+      // || moduleName === "TEMPORARY_WSCONNECTION"
+      // || moduleName === "TEMPORARY_WSCONNECTION_BILLING"
+      //   || moduleName === "WS_TEMP_TEMP" 
+      //   ||moduleName === "WS_TEMP_REGULAR"
+      //   ||moduleName === "WS_DISCONNECTION" 
+      //   ||moduleName === "WS_TEMP_DISCONNECTION"
+      //   || moduleName === "WS_RENAME" 
+      //   || moduleName === "WS_METER_UPDATE" 
+      //   || moduleName === "WS_CONVERSION" 
+      //   || moduleName === "WS_REACTIVATE"
+      // || moduleName === "WS_TUBEWELL") 
+      if(this.GetWaterBusinessServiceConfig(moduleName))
+      {
         let  WNSConfigName_= WNSConfigName()
         bservice = WNSConfigName_.ONE_TIME_FEE_WS
       } else {
@@ -172,6 +187,7 @@ class WorkFlowContainer extends React.Component {
       ,"TEMPORARY_DISCONNECTION"
       ,"UPDATE_CONNECTION_HOLDER_INFO"
       ,"CONNECTION_CONVERSION"//R
+      ,"APPLY_FOR_METER_TESTING"//R
       ,"REACTIVATE_CONNECTION" //tep close
       ,"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"//T
       ,"UPDATE_METER_INFO"//T,R
@@ -261,6 +277,7 @@ class WorkFlowContainer extends React.Component {
                                                 && item.buttonLabel !=='REACTIVATE_CONNECTION'
                                                 &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
                                                // && item.buttonLabel !=='UPDATE_METER_INFO'
+                                               && item.buttonLabel !=='APPLY_FOR_METER_TESTING'
                                                 &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
             }
             // else if(status === "PENDING_FOR_REGULAR_CONNECTION"){//remove
@@ -301,6 +318,7 @@ class WorkFlowContainer extends React.Component {
                                                 && item.buttonLabel !=='REACTIVATE_CONNECTION'
                                                 &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
                                                // && item.buttonLabel !=='UPDATE_METER_INFO'
+                                               && item.buttonLabel !=='APPLY_FOR_METER_TESTING'
                                                 &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
 
               }
@@ -324,7 +342,8 @@ class WorkFlowContainer extends React.Component {
 
               }
               else if(WaterConnection[0].activityType==='CONNECTION_CONVERSION'
-              || WaterConnection[0].activityType==='UPDATE_CONNECTION_HOLDER_INFO'
+              || WaterConnection[0].activityType ==='UPDATE_CONNECTION_HOLDER_INFO'
+              || WaterConnection[0].activityType ==='APPLY_FOR_METER_TESTING'
               || WaterConnection[0].activityType==='UPDATE_METER_INFO'
               || WaterConnection[0].activityType==='TEMPORARY_DISCONNECTION'
               || WaterConnection[0].activityType==='PERMANENT_DISCONNECTION'
@@ -336,6 +355,7 @@ class WorkFlowContainer extends React.Component {
                                                 && item.buttonLabel !=='REACTIVATE_CONNECTION'
                                                 &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
                                                // && item.buttonLabel !=='UPDATE_METER_INFO'
+                                               && item.buttonLabel !=='APPLY_FOR_METER_TESTING'
                                                 &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
 
               }
@@ -356,6 +376,7 @@ class WorkFlowContainer extends React.Component {
                                                 && item.buttonLabel !=='REACTIVATE_CONNECTION'
                                                 &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
                                                // && item.buttonLabel !=='UPDATE_METER_INFO'
+                                               && item.buttonLabel !=='APPLY_FOR_METER_TESTING'
                                                 &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
 
                 }
@@ -382,6 +403,7 @@ class WorkFlowContainer extends React.Component {
                                                 && item.buttonLabel !=='REACTIVATE_CONNECTION'
                                                 &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'
                                                // && item.buttonLabel !=='UPDATE_METER_INFO'
+                                               && item.buttonLabel !=='APPLY_FOR_METER_TESTING'
                                                 &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
 
               }
@@ -458,20 +480,22 @@ class WorkFlowContainer extends React.Component {
     } = this.props;
     const workflowContract =  this.prepareWorkflowContract( moduleName);
      let showFooter;
-      if(moduleName==='NewWS1'
-      || moduleName==='REGULARWSCONNECTION'
-      || moduleName==='SW_SEWERAGE'
-      || moduleName === 'TEMPORARY_WSCONNECTION'
-      || moduleName ==='TEMPORARY_WSCONNECTION_BILLING'
-      || moduleName ==='WS_TEMP_TEMP'
-      || moduleName ==='WS_TEMP_REGULAR'
-      || moduleName === "WS_CONVERSION" 
-      || moduleName === "WS_DISCONNECTION" 
-      || moduleName === "WS_TEMP_DISCONNECTION"
-      || moduleName ==="WS_REACTIVATE"
-      || moduleName === "WS_RENAME" 
-      || moduleName === "WS_METER_UPDATE" 
-      || moduleName === "WS_TUBEWELL"){
+      // if(moduleName==='NewWS1'
+      // || moduleName==='REGULARWSCONNECTION'
+      // || moduleName==='SW_SEWERAGE'
+      // || moduleName === 'TEMPORARY_WSCONNECTION'
+      // || moduleName ==='TEMPORARY_WSCONNECTION_BILLING'
+      // || moduleName ==='WS_TEMP_TEMP'
+      // || moduleName ==='WS_TEMP_REGULAR'
+      // || moduleName === "WS_CONVERSION" 
+      // || moduleName === "WS_DISCONNECTION" 
+      // || moduleName === "WS_TEMP_DISCONNECTION"
+      // || moduleName ==="WS_REACTIVATE"
+      // || moduleName === "WS_RENAME" 
+      // || moduleName === "WS_METER_UPDATE" 
+      // || moduleName === "WS_TUBEWELL")
+      if(this.GetBusinessServiceConfig(moduleName))
+      {
          showFooter=true;
       }    else{
          showFooter=process.env.REACT_APP_NAME === "Citizen" ? false : true;

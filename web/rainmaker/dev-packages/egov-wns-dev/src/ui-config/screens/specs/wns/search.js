@@ -105,6 +105,7 @@ const employeeSearchResults = {
                               {code:"APPLY_FOR_TEMPORARY_CONNECTION",name:"APPLY_FOR_TEMPORARY_CONNECTION"},//TEMPORARY_WSCONNECTION
                               {code:"APPLY_FOR_TEMPORARY_CONNECTION_BILLING",name:"APPLY_FOR_TEMPORARY_CONNECTION_BILLING"},//TEMPORARY_WSCONNECTION
                               {code:"UPDATE_METER_INFO",name:"UPDATE_METER_INFO"},//WS_METER_UPDATE
+                              {code:"APPLY_FOR_METER_TESTING",name:"APPLY_FOR_METER_TESTING"},//WS_METER_TESTING
                               {code:"NEW_TUBEWELL_CONNECTION",name:"NEW_TUBEWELL_CONNECTION"},//WS_TUBEWELL
                              // {code:"WS_TEMP_TEMP",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},
                               {code:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION",name:"APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"},//WS_TEMP_TEMP

@@ -63,7 +63,7 @@ const applicationNumber_ = getQueryArg(window.location.href, "applicationNumber"
 const WNS_STATUS =  window.localStorage.getItem("wns_workflow");
 if(WNS_STATUS)
 {
-  if(WNS_STATUS ==='WS_METER_UPDATE')
+  if(WNS_STATUS ==='WS_METER_UPDATE' || WNS_STATUS ==='WS_METER_TESTING' )
   {
     IsEdit_Additional_Details = true
 
@@ -571,7 +571,7 @@ export const getData = async (action, state, dispatch) => {
     }
     //set proposed meter inout for new WF UPDATE_METER_INFO
     
-    if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE')
+    if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' || activityType ==='WS_METER_TESTING' || activityType ==='APPLY_FOR_METER_TESTING')
     {
      
       
@@ -677,7 +677,7 @@ export const getData = async (action, state, dispatch) => {
           )
         );
       }
-      if(applicationStatus !=='PENDING_FOR_METER_UPDATE' && (activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE') )
+      if(applicationStatus !=='PENDING_FOR_METER_UPDATE' && (activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' || activityType ==='WS_METER_TESTING' || activityType ==='APPLY_FOR_METER_TESTING') )
       {
         dispatch(
           handleField(
@@ -1649,6 +1649,7 @@ const getApplyScreenChildren = () => {
     case "REACTIVATE_CONNECTION":    
     case "PERMANENT_DISCONNECTION":
     case "UPDATE_METER_INFO" : 
+    case "APPLY_FOR_METER_TESTING" : 
        return {commentSectionDetails }; 
     case "TEMPORARY_DISCONNECTION": 
        return {commentTempSectionDetails }; 

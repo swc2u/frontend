@@ -186,6 +186,7 @@ class InboxData extends React.Component {
         || row[0].subtext === "WS_CONVERSION" 
         || row[0].subtext === "WS_REACTIVATE" 
         || row[0] .subtext ==="TEMPORARY_WSCONNECTION_BILLING"
+        || row[0] .subtext ==="WS_METER_TESTING"
         ||  row[0].subtext === "WS_TUBEWELL") {
       queryParams += '&history=true&service=WATER';
       window.localStorage.setItem("wns_workflow",row[0].subtext);

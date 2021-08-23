@@ -183,6 +183,7 @@ class Footer extends React.Component {
         ||item.moduleName === "WS_TEMP_DISCONNECTION"
         || item.moduleName === "WS_RENAME" 
         || item.moduleName === "WS_METER_UPDATE" 
+        || item.moduleName === "WS_METER_TESTING" 
         || item.moduleName === "WS_CONVERSION" 
         || item.moduleName === "WS_REACTIVATE"  
         ||  item.moduleName === "WS_TUBEWELL")

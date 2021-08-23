@@ -73,3 +73,51 @@ export const WNSConfigName =()=>{
     
 };
 }
+
+
+export const WNSBusinessService = () => {
+  return {
+    
+    BusinessService: [
+     "NewWS1",
+     "SW_SEWERAGE",
+     "REGULARWSCONNECTION",
+     "TEMPORARY_WSCONNECTION",
+     "TEMPORARY_WSCONNECTION_BILLING",
+     "WS_TEMP_TEMP",
+     "WS_TEMP_REGULAR",
+     "WS_DISCONNECTION",
+     "WS_TEMP_DISCONNECTION",
+     "WS_RENAME",
+     "WS_METER_UPDATE",
+     "WS_CONVERSION",
+     "WS_REACTIVATE",
+     "WS_TUBEWELL",
+     "WS_METER_TESTING"
+
+    ]
+  }
+}
+
+export const WNSWaterBusinessService = () => {
+  return {
+    
+    BusinessService: [
+     "NewWS1",
+     "REGULARWSCONNECTION",
+     "TEMPORARY_WSCONNECTION",
+     "TEMPORARY_WSCONNECTION_BILLING",
+     "WS_TEMP_TEMP",
+     "WS_TEMP_REGULAR",
+     "WS_DISCONNECTION",
+     "WS_TEMP_DISCONNECTION",
+     "WS_RENAME",
+     "WS_METER_UPDATE",
+     "WS_CONVERSION",
+     "WS_REACTIVATE",
+     "WS_TUBEWELL",
+     "WS_METER_TESTING"
+
+    ]
+  }
+}

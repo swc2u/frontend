@@ -552,6 +552,9 @@ const prepareDocumentsView = async (state, dispatch) => {
 
   // Get all documents from response
   let docs = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0]", {});
+  var mobileNumber = JSON.parse(docs.applicationdetail).mobileNumber;
+  docs["mobileNumber"] = mobileNumber;
+  dispatch(prepareFinalObject("nocApplicationDetail[0]", docs));
 
   let aggrementdocumnet = JSON.parse(docs.applicationdetail).hasOwnProperty('uploadDocuments') ?
     JSON.parse(docs.applicationdetail).uploadDocuments[0]['fileStoreId'] : '';
