@@ -222,6 +222,7 @@ class IntegrationReactSelect extends React.Component {
       inputLabelProps = {
         shrink: true
       },
+      disabled,
       ...rest
     } = this.props;
     const selectStyles = {
@@ -236,6 +237,7 @@ class IntegrationReactSelect extends React.Component {
     return (
       <div className={classes.root}>
         <Select
+          isDisabled = {disabled}
           classes={classes}
           styles={selectStyles}
           textFieldProps={{

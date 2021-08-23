@@ -54,6 +54,7 @@ import { getTextForSellMeatNoc } from "./searchResource/citizenSearchFunctions";
 
 let roles = JSON.parse(getUserInfo()).roles
 let nocStatus = '';
+let nocStatusCheck = localStorageGet('app_noc_status');
 
 const styles = {
   header: {
@@ -118,13 +119,15 @@ const setvalueCancel = async (state, dispatch,type) => {
     handleField(
       //"petnoc_summary",
       pagename,
-      "components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton1",
+      "components.div.children.body.children.cardContent.children.undertakingButton.children.addPenaltyRebateButton1",
       "props.checked",
       false
     )
   );
   localStorageSet("undertaking", "")
   //showHideAdhocPopups(state, dispatch, "petnoc_summary")
+  // showHideAdhocPopups(state, dispatch, pagename)
+  dispatch(prepareFinalObject("dropdownRead", false));
   showHideAdhocPopups(state, dispatch, pagename)
 
 
@@ -149,12 +152,15 @@ else if(type ==="PETNOC")
   dispatch(
     handleField(
       pagename,
-      "components.div.children.body.children.cardContent.children.undertakingButton1.children.addPenaltyRebateButton1",
+      "components.div.children.body.children.cardContent.children.undertakingButton.children.addPenaltyRebateButton1",
       "props.checked",
       true
     )
   );
-  localStorageSet("undertaking", "accept")
+  // localStorageSet("undertaking", "accept")
+  // showHideAdhocPopups(state, dispatch, pagename)
+  // localStorageSet("dropdownTermsAccepted", "accept")
+  dispatch(prepareFinalObject("dropdownRead", true));
   showHideAdhocPopups(state, dispatch, pagename)
 
 
@@ -432,8 +438,8 @@ const undertakingButton = getCommonContainer({
       action: "condition",
       callBack: (state, dispatch) => showHideAdhocPopups(state, dispatch, "sellmeatnoc-search-preview")
     },
-    //checked:true,
-    visible: localStorageGet('app_noc_status') === "DRAFT" ? true : false,
+    // checked:true,
+    visible: nocStatusCheck === "DRAFT" ? true : false,
   },
   addPenaltyRebateButton: {
     componentPath: "Button",
@@ -458,7 +464,8 @@ const undertakingButton = getCommonContainer({
       action: "condition",
       callBack: (state, dispatch) => showHideAdhocPopups(state, dispatch, "sellmeatnoc-search-preview")
     },
-    visible: true,
+    // visible: true,
+    visible: nocStatusCheck === "DRAFT" ? true : false,
   }
 });
 
@@ -683,6 +690,25 @@ const HideshowEdit = (state, action, nocStatus) => {
         : false
       : true
   );
+  set(
+    action,
+    "screenConfig.components.div.children.body.children.cardContent.children.undertakingButton.children.addPenaltyRebateButton.visible",
+    checkForRole(roles, 'CITIZEN') ?
+      nocStatus === "DRAFT" ?
+        true
+        : false
+      : true
+  );
+  set(
+    action,
+    "screenConfig.components.div.children.body.children.cardContent.children.undertakingButton.children.addPenaltyRebateButton1.visible",
+    checkForRole(roles, 'CITIZEN') ?
+      nocStatus === "DRAFT" ?
+        true
+        : false
+      : true
+  );
+
   set(
     action,
     "screenConfig.components.adhocDialog.children.popup",
@@ -1027,6 +1053,7 @@ const screenConfig = {
           documentsSummary: documentsSummary,
           taskStatusSummary: taskStatusSummary,
           undertakingButton1,
+          undertakingButton,
           undertakingsellmeatButton,
           // undertakingButton
         }) :
@@ -1045,19 +1072,19 @@ const screenConfig = {
 
       }
     },
-    // undertakingdialog: {
-    //   uiFramework: "custom-containers-local",
-    //   moduleName: "egov-opms",
-    //   componentPath: "UnderTakingContainer",
-    //   props: {
-    //     open: false,
-    //     maxWidth: "md",
-    //     screenKey: "sellmeatnoc-search-preview"
-    //   },
-    //   children: {
-    //     popup: {}
-    //   }
-    // },
+    undertakingdialog: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-opms",
+      componentPath: "UnderTakingContainer",
+      props: {
+        open: false,
+        maxWidth: "md",
+        screenKey: "sellmeatnoc-search-preview"
+      },
+      children: {
+        popup: {}
+      }
+    },
     adhocDialog: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-opms",

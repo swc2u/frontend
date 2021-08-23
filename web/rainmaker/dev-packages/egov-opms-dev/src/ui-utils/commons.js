@@ -917,7 +917,11 @@ export const furnishSellMeatNocResponse = (state,response, step) => {
   set(refurnishresponse, "division", applicationdetail.division);
   set(refurnishresponse, "shopNumber", applicationdetail.shopNumber);
   set(refurnishresponse, "ward", applicationdetail.ward);
-//  set(refurnishresponse, "nocSought", applicationdetail.nocSought);
+
+  var array1 = response.nocApplicationDetail[0].remarks;
+  var found = array1.find(element => element.applicationstatus === "PAID" );
+
+  
   let mdmsDataForNocSought = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.nocSought", []);
   let nocSoughtFinalData = [];
   applicationdetail.nocSought.split(",").map(item => { 
@@ -930,11 +934,19 @@ export const furnishSellMeatNocResponse = (state,response, step) => {
     }
   });
   // set(refurnishresponse, "nocSought", nocSoughtFinalData);
-  if(parseInt(step) === 0){
-    set(refurnishresponse, "nocSought", "");
-  }else{
+  // if(parseInt(step) === 0){
+  //   set(refurnishresponse, "nocSought", "");
+  // }else{
+  //   set(refurnishresponse, "nocSought", nocSoughtFinalData);
+  // }
+
+  if(found){
     set(refurnishresponse, "nocSought", nocSoughtFinalData);
+    set(refurnishresponse, "statusPAID", true);
+  }else{
+    //  set(refurnishresponse, "nocSought", applicationdetail.nocSought);
   }
+
   
   set(refurnishresponse, "uploadDocuments", applicationdetail.uploadDocuments);
   set(refurnishresponse, "idProof", applicationdetail.idProof);
