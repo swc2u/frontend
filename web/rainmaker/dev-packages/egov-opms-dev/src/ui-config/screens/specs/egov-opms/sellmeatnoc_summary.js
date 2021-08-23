@@ -206,7 +206,12 @@ export const callBackForNexthome = async (state, dispatch) => {
       {}
     );
     if (applicationStatus === "DRAFT") {
-      if (localStorageGet("undertaking") == "accept" || checkUndertaking) {
+      var checkTerm = get(state.screenConfiguration.preparedFinalObject, "dropdownRead", "");
+      if(checkTerm === "" || checkTerm === null|| checkTerm === false || checkTerm === undefined){
+        checkTerm = false;
+      }
+      // if (localStorageGet("undertaking") == "accept" || checkUndertaking) {
+      if (checkTerm) {
       let response = await updateAppStatus(state, dispatch, "INITIATED");
       let responseStatus = get(response, "status", "");
       if (responseStatus == "success") {
