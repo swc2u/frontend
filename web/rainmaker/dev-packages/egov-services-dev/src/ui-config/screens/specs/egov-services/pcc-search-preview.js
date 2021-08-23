@@ -598,7 +598,8 @@ const setSearchResponse = async (
             "screenConfiguration.preparedFinalObject.Booking.bkBookingType"
         );
    
-        if(appBookingType==="Community Center" && (bookingStatus === "APPLIED" || bookingStatus === "RE_INITIATED")){
+        // if(appBookingType==="Community Center" && (bookingStatus === "APPLIED" || bookingStatus === "RE_INITIATED")){
+            if(appBookingType==="Community Center" && bookingStatus === "APPLIED"){
         
             set(
                 action,

@@ -3,7 +3,7 @@ import {
     getUserInfo,
     getTenantId,
     lSRemoveItem,
-    lSRemoveItemlocal,
+    lSRemoveItemlocal,getapplicationType
 } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 import set from "lodash/set";
@@ -2357,7 +2357,7 @@ export const getBetweenDays = function (start, end) {
     }
     return arr;
 };
-
+  
 export const getPerDayRateCgb = async (bookingVenue) => {
     let requestBody = {
         bookingVenue: bookingVenue,
@@ -2402,13 +2402,14 @@ export const checkAvaialbilityAtSubmitCgb = async (bookingVenue, from, to) => {
     }
 };
 export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
+    console.log("checkAvaialbilityAtSubmit",bookingData)
     let requestBody = {};
     let isAvailable= await checkAvaialbilityAtSubmitFirstStep(bookingData, dispatch)
+    console.log("ReturnStatement",isAvailable)
     if(isAvailable===false){
     
         return isAvailable
     }else{
-        
         requestBody = {
             BookingLock: [
                 {
@@ -2421,18 +2422,27 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
                 }
               ],
         };
+        console.log("requestBody--mainRB",requestBody)
+
         try {
-            const bookedDates = await httpRequest(
-                "post",
-                "/bookings/park/community/lock/dates/_save",
-                "",
-                [],
-                requestBody
-            );
-         
+            let ApplicationType = getapplicationType()
+            console.log("ApplicationType",ApplicationType)
+            console.log("CheckURLApplicationType",JSON.parse(JSON.stringify(ApplicationType)))
+            if(ApplicationType !== "BKROOM"){
+                console.log("callSaveApi")
+                const bookedDates = await httpRequest(
+                    "post",
+                    "/bookings/park/community/lock/dates/_save",
+                    "",
+                    [],
+                    requestBody
+                ) 
+                console.log("bookedDates--main",bookedDates)
+            }   
         } catch (exception) {
             console.log(exception);
         }
+        console.log("isAvailable--Result",isAvailable)
         return isAvailable
     }
 }
@@ -2505,6 +2515,7 @@ export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) 
             isAvailable = false;
         }
     }  else if (businessService === "PACC") {
+       
         requestBody = {
             Booking: {
                 
@@ -2517,8 +2528,9 @@ export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) 
                 timeslots :bookingData.bkBookingType=== "Community Center"?bookingData.timeslots:[]
             },
             applicationNumber: bookingData.bkApplicationNumber
+            
         };
-
+        console.log("paccRequestBody",requestBody)
         try {
             const bookedDates = await httpRequest(
                 "post",
@@ -2527,6 +2539,7 @@ export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) 
                 [],
                 requestBody
             )
+            console.log("BookedDates", bookedDates)
             bookedDates.data.length > 0
                 ? bookedDates.data.map((val) => {
                     if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
@@ -2537,12 +2550,16 @@ export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) 
                 })
                 : (isAvailable = true);
         } catch (exception) {
-            console.log(exception);
+            console.error(exception);
+            console.log("ExceptionOfAlreadyOnlyLockedDated",{exception})
+            console.log("ExceptionOfAlreadyOnlyLockedDated",exception.message)
+            console.log("ExceptionOfAlreadyOnlyLockedDated",exception.name)
             isAvailable = false;
         }
     }else {
         isAvailable = true;
     }
+    console.log("checkAvaialbilityAtSubmitFirstStep",isAvailable);
     return isAvailable;
 };
 

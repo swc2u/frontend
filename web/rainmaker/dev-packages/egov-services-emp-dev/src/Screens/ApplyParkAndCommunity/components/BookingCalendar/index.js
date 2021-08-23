@@ -28,7 +28,7 @@ class BookingCalendar extends React.Component {
       CheckBothDataExist: false,
     };
   }
-//availabilityCheckData.bkFromDate    
+//availabilityCheckData.bkFromDate      
   componentDidMount() {
    
     const {
@@ -38,7 +38,7 @@ class BookingCalendar extends React.Component {
       oldFromDate,oldBookingData,
       witholDdATA,
     } = this.props;
-   
+   console.log("PropsInBookingCalendar",this.props)
    
     if (
       (oldAvailabilityCheckData &&
@@ -47,6 +47,7 @@ class BookingCalendar extends React.Component {
         oldBookingData != "notfound" &&
         oldBookingData.bkFromDate != undefined)
     ) {
+      console.log("FirstOne",oldFromDate,oldToDate,oldAvailabilityCheckData,oldBookingData)
       this.setState(
         {
           from: new Date(oldFromDate),
@@ -57,7 +58,7 @@ class BookingCalendar extends React.Component {
     }
 
     if (availabilityCheckData && availabilityCheckData.reservedDays) {
-      
+      console.log("availabilityCheckData--second",availabilityCheckData)
       let pushReservedDay = [];
       availabilityCheckData.reservedDays.length > 0 &&
         availabilityCheckData.reservedDays.map((el) => {

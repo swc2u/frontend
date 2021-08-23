@@ -102,7 +102,7 @@ const callBackForNext = async (state, dispatch) => {
     let validatestepformflag = validatestepform(activeStep + 1);
 
     isFormValid = validatestepformflag[0];
-    hasFieldToaster = validatestepformflag[1];
+    hasFieldToaster = validatestepformflag[1]; 
     if (activeStep === 2 && isFormValid != false) {
         isFormValid = moveToReview(state, dispatch);
     }

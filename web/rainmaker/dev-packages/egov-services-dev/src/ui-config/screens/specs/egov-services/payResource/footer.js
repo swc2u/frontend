@@ -17,7 +17,7 @@ import {
   showHideAdhocPopup,
 } from "../../utils";
 import {
-  getTenantId,
+  getTenantId,getapplicationNumber,
   localStorageSet,
   getapplicationType,
   getUserInfo,
@@ -26,8 +26,9 @@ import {
   checkAvaialbilityAtSubmitCgb,
   checkAvaialbilityAtSubmitOsujm,
   checkAvaialbilityAtSubmit,
+  downloadReceipt,
+  downloadCertificate,
 } from "../../utils";
-
 
 export const selectPG = async (state, dispatch) => {
   showHideAdhocPopup(state, dispatch, "pay");
@@ -38,9 +39,11 @@ export const callPGService = async (state, dispatch, item) => {
     state,
     "screenConfiguration.preparedFinalObject.Booking"
   );
+  console.log("bookingData--PGService",bookingData)
   const businessService = getQueryArg(window.location.href, "businessService");
   // const tenantId = getQueryArg(window.location.href, "tenantId");
   const tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
+  console.log("tenantidofcitizen",tenantId)
   const applicationNumber = getQueryArg(
     window.location.href,
     "applicationNumber"
@@ -53,6 +56,73 @@ export const callPGService = async (state, dispatch, item) => {
         ? `${window.origin}/citizen`
         : window.origin
     }/egov-services/paymentRedirectPage`;
+
+    let applicationnumber = getapplicationNumber();
+    console.log("applicationnumberPayPage",applicationnumber)
+    // let tenantId = getTenantId();
+    console.log("tenantIdPayPage",tenantId)
+    let applicationType = getapplicationType()
+    console.log("applicationTypePayPage",applicationType)
+
+    if(applicationType == "OSBM"){
+      const queryObject = [
+        {
+            key: "tenantId",
+            value: tenantId,
+        },
+        {
+            key: "applicationNumber",
+            value: applicationnumber,
+        },
+    ];
+console.log("queryObjectNewBookingSearch",queryObject)
+console.log("queryObjectNewBookingSearch898989",JSON.parse(JSON.stringify(queryObject)))
+
+    const response = await getSearchResultsView(queryObject);
+    console.log("ResonOfCitizenSearchOne",response)
+console.log("ResonOfCitizenSearch",JSON.parse(JSON.stringify(response)))
+       
+let paymentRequest = response.bookingsModelList[0];
+console.log("ResonOfCitizenSearchOneRequestBody",paymentRequest)
+console.log("PaymentRequestCitizenSearch",JSON.parse(JSON.stringify(paymentRequest)))
+
+set(paymentRequest,"bkAction","PAY")
+set(paymentRequest, "bkPaymentStatus", "SUCCESS");
+//SUCCESS
+
+{/**pdf url for mail attatchment**/}
+// let paymentReceipt= await downloadReceipt(paymentRequest, applicationnumber, tenantId, 'true')
+// console.log("dataforReceiptNew",paymentReceipt);
+// let permissionLetter= await downloadCertificate(paymentRequest, applicationnumber, tenantId, 'true')
+// console.log("dataforpermissionLetter",permissionLetter);
+// Promise.all(paymentReceipt).then(data=>{
+//     let urlPayload={
+//         "paymentReceipt" :  data[0]
+//     }
+
+//     Promise.all(permissionLetter).then(permissionLetterData=>{
+
+//         urlPayload= {
+//             ...urlPayload, 
+//             "permissionLetter": permissionLetterData[0]
+//         }
+//         console.log(urlPayload, "BothpayloadforNEWAPICALL")
+//     })
+// })
+
+{/**end**/}
+      const newUpdateApiCall = await httpRequest(
+        "post",
+        "/bookings/api/update/payment",
+        "",
+        [],
+        {
+          Booking: paymentRequest,
+      }
+      );
+console.log("newUpdateApiCall--data",newUpdateApiCall)
+console.log("newUpdateApiCall--data--jsonData",JSON.parse(JSON.stringify(newUpdateApiCall)))
+    }
 
     // console.log(callbackUrl, "callbackUrl");
     try {
@@ -115,7 +185,9 @@ export const callPGService = async (state, dispatch, item) => {
           goToPaymentGateway,
           "Transaction.redirectUrl"
         );
+
         window.location = redirectionUrl;
+
       } catch (e) {
         dispatch(
           toggleSnackbar(
@@ -146,7 +218,7 @@ export const callPGService = async (state, dispatch, item) => {
  
   }
 };
-
+  
 const convertDateFieldToEpoch = (finalObj, jsonPath) => {
   const dateConvertedToEpoch = convertDateToEpoch(
     get(finalObj, jsonPath),
