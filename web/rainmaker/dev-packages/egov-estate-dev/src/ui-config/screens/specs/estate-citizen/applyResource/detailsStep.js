@@ -379,6 +379,46 @@ const getField = async (item, fieldData = {}, state) => {
           optionLabel: "label",
         })
       }
+      case "AUTO_SUGGEST": {
+        let values = !!item.dataSource ? await getOptions(item.dataSource) : []
+        values = values.map(datum => ({...datum, label: getLocaleLabels(datum.label, datum.label)}))
+        console.log(values)
+        // return getSelectField({
+        //   ...fieldProps,
+        //   ...rest,
+        //   data:values,
+        //   optionValue: "code",
+        //   optionLabel: "label",
+        // })
+        return {
+          moduleName: "egov-estate",
+          uiFramework: "custom-containers-local",
+          componentPath: "AutosuggestContainer",
+          gridDefination: {
+            xs: 12,
+            sm: 12,
+            md: 6
+          },
+          props: {
+            label: {
+              labelName: labelItem,
+              labelKey: labelItem
+            },
+            placeholder: {
+              labelName: placeholder,
+              labelKey: placeholder
+            },
+            data:values,
+            jsonPath: rest.jsonPath,
+            required:rest.required,
+            labelsFromLocalisation: true,
+        inputLabelProps: {
+          shrink: true
+        },
+          },
+          ...rest
+        }
+      }
       case "DATE_FIELD": {
         const {minDate, maxDate = true} = item
         const inputProps = !!minDate && !maxDate ? {
