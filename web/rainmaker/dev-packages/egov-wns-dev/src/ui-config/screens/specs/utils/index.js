@@ -593,7 +593,15 @@ export const handleNA = params => {
     {
       if(Number(params))
       {
-        return (params.toString()); 
+        if(params === true || params === false)
+        {
+          return params;
+        }
+        else{
+          return (params.toString()); 
+
+        }
+        
       }
       else{
         return params;

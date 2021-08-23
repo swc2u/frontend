@@ -804,7 +804,7 @@ ValidateRequest =(payload,preparedFinalObject) =>{
 
   }
     
-  if((payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT' || payload.applicationStatus ==='PENDING_FOR_SUPERINTENDENT_APPROVAL_AFTER_JE' ) && payload.action !=='REJECT'  )
+  if((payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT' || payload.applicationStatus ==='PENDING_FOR_SUPERINTENDENT_APPROVAL_AFTER_JE' ) && (payload.action !=='REJECT' && payload.action !=='SEND_BACK_TO_JE')  )
   {
     isvalidRequest = false;
     // logic for null value validation for Connection Details date and Activation Details
