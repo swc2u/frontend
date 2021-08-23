@@ -18,7 +18,7 @@ class AutoSuggestor extends Component {
   onSelect = value => {
     const { onChange } = this.props;
     //Storing multiSelect values not handled yet
-    onChange({ target: { value: value.value } });
+    onChange({ target: { value: value ? value.value: null } });
   };
 
   render() {
@@ -52,6 +52,7 @@ class AutoSuggestor extends Component {
           className={className}
           label={translatedLabel}
           placeholder={translatedPlaceholder}
+          isClearable={true}
           {...rest}
         />
       </div>
@@ -68,7 +69,7 @@ const getLocalisedSuggestions = (suggestions, localePrefix, transfomedKeys) => {
         option.code,
         localePrefix && !isEmpty(localePrefix)
           ? appendModulePrefix(option.code, localePrefix)
-          : option.name,
+          : option.label,
         transfomedKeys
       );
       return option;
