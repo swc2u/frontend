@@ -220,6 +220,29 @@ export const getSearchPensioner = async (queryObject, dispatch) => {
    // throw error;
   }
 };
+export const notifyPensionDisbursement = async (queryObject, tenantId) => {
+  try {
+    store.dispatch(toggleSpinner());
+    const response = await httpRequest(
+      "post",
+      `/pension-services/v1/_notifyPensionDisbursement?tenantId=${tenantId}`,      
+      "",
+      [],
+      queryObject
+    );
+    store.dispatch(toggleSpinner());
+    return response;
+  } catch (error) {
+    store.dispatch(
+      toggleSnackbar(
+        true,
+        { labelName: error.message, labelKey: error.message },
+        "error"
+      )
+    );
+   // throw error;
+  }
+};
 export const getSearchPensionerForPensionRevision = async (queryObject, dispatch) => {
   try {
     store.dispatch(toggleSpinner());
