@@ -131,25 +131,63 @@ export const siteNumberField = {
   }
 }
 
-export const sectorNumberField = {
-  label: {
-    labelName: "Sector Number",
-    labelKey: "ES_SECTOR_NUMBER_LABEL"
-  },
-  placeholder: {
-    labelName: "Select Sector Number",
-    labelKey: "ES_SECTOR_NUMBER_PLACEHOLDER"
-  },
-  required: true,
+// export const sectorNumberField = {
+//   label: {
+//     labelName: "Sector Number",
+//     labelKey: "ES_SECTOR_NUMBER_LABEL"
+//   },
+//   placeholder: {
+//     labelName: "Select Sector Number",
+//     labelKey: "ES_SECTOR_NUMBER_PLACEHOLDER"
+//   },
+//   required: true,
+//   jsonPath: "Properties[0].sectorNumber",
+//   sourceJsonPath: "applyScreenMdmsData.EstateServices.sector",
+//   gridDefination: {
+//     xs: 12,
+//     sm: 6
+//   },
+//   errorMessage:"ES_ERR_SECTOR_NUMBER"
+// }
+export const sectorNumberField= {
+  uiFramework: "custom-containers-local",
+  moduleName: "egov-estate",
+  componentPath: "AutosuggestContainer",
   jsonPath: "Properties[0].sectorNumber",
-  sourceJsonPath: "applyScreenMdmsData.EstateServices.sector",
+  required: true,
   gridDefination: {
     xs: 12,
     sm: 6
   },
+  props: {
+    // style: {
+    //   width: "100%",
+    //   cursor: "pointer"
+    // },
+    // localePrefix: {
+    //   moduleName: "TENANT",
+    //   masterName: "TENANTS"
+    // },
+   // className: "citizen-city-picker",
+    label: {
+          labelName: "Sector Number",
+          labelKey: "ES_SECTOR_NUMBER_LABEL"
+        },
+        placeholder: {
+          labelName: "Select Sector Number",
+          labelKey: "ES_SECTOR_NUMBER_PLACEHOLDER"
+        },
+    jsonPath: "citiesByModule.citizenTenantId",
+    sourceJsonPath: "applyScreenMdmsData.EstateServices.sector",
+    labelsFromLocalisation: true,
+    //fullwidth: true,
+    required: true,
+    inputLabelProps: {
+      shrink: true
+    }
+  },
   errorMessage:"ES_ERR_SECTOR_NUMBER"
 }
-
 const fileNumberField = {
   label: {
     labelName: "File Number",
