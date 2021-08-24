@@ -294,7 +294,30 @@ else if (businessService == "NLUJM")
     };
 
   }
-
+else if(businessService==="MasterRP"){
+  return {
+    INITIATED: "/rented-properties/apply",
+    DEFAULT: "/rented-properties/search-preview",
+  };
+}
+else if(businessService === "OwnershipTransferRP"){
+  return {
+    INITIATED: "/rented-properties/ownership-search-preview",
+    DEFAULT: "/rented-properties/ownership-search-preview",
+  };
+}
+else if(businessService === "DuplicateCopyOfAllotmentLetterRP"){
+  return {
+    INITIATED: "/rented-properties/search-duplicate-copy-preview",
+    DEFAULT: "/rented-properties/search-duplicate-copy-preview",
+  };
+}
+else if(businessService === "PermissionToMortgage"){
+  return {
+    INITIATED: "/rented-properties/mortgage-search-preview",
+    DEFAULT: "/rented-properties/mortgage-search-preview",
+  };
+}
   else {
     switch (module.toUpperCase()) {
       case "TL-SERVICES":
