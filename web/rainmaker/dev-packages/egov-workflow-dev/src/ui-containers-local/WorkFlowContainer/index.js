@@ -804,7 +804,7 @@ ValidateRequest =(payload,preparedFinalObject) =>{
 
   }
     
-  if((payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT' || payload.applicationStatus ==='PENDING_FOR_SUPERINTENDENT_APPROVAL_AFTER_JE' ) && payload.action !=='REJECT'  )
+  if((payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT' || payload.applicationStatus ==='PENDING_FOR_SUPERINTENDENT_APPROVAL_AFTER_JE' ) && (payload.action !=='REJECT' && payload.action !=='SEND_BACK_TO_JE')  )
   {
     isvalidRequest = false;
     // logic for null value validation for Connection Details date and Activation Details
@@ -1245,6 +1245,7 @@ uniqueBycode =(data,key)=>{
     } = this;
     const {preparedFinalObject , prepareFinalObject} = this.props;
     let businessService = moduleName === data[0].businessService ? moduleName : data[0].businessService;
+    //let businessService =  data[0].businessService ?  data[0].businessService:moduleName
     let businessId = get(data[data.length - 1], "businessId");
     let filteredActions = [];
 
@@ -1470,8 +1471,8 @@ uniqueBycode =(data,key)=>{
       pipeSize = parseInt(pipeSize);
       if(  pipeSize === 15){
        // actions = actions.filter(item => item.buttonLabel !== 'FORWARD');
-       if(WaterConnection[0].applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
-       actions = actions.filter(item => item.buttonLabel !== 'FORWARD_TO_EE');
+       if(applicationStatus ==='PENDING_FOR_SDE_APPROVAL')
+       actions = actions.filter(item => item.buttonLabel !== 'FORWARD_TO_HDM');
       //  else
       //  actions = actions.filter(item => item.buttonLabel !== 'FORWARD');
       }

@@ -1,6 +1,7 @@
 import {  getBreak, getLabel, getCommonParagraph, getCommonCard,  getCommonContainer,  getCommonTitle,  getTextField,  getSelectField,  getPattern} from "egov-ui-framework/ui-config/screens/specs/utils";
 import {  handleScreenConfigurationFieldChange as handleField,  prepareFinalObject} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
+import set from "lodash/get";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {  furnishNocResponse,  getSearchResults} from "../../../../../ui-utils/commons";
 import { getOPMSPattern, showHideAdhocPopups } from "../../utils/index"
@@ -131,6 +132,7 @@ export const nocDetails = getCommonCard({
       suggestions: [],
       fullwidth: true,
       required: true,
+      // disabled: false,
       inputLabelProps: {
         shrink: true
       },
