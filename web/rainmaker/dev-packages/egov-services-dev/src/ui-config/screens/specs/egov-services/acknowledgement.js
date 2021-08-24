@@ -361,7 +361,7 @@ const getAcknowledgementCard = (
         };
     }
 };
-
+ 
 const setApplicationData = async (dispatch, applicationNumber, tenantId) => {
     const queryObject = [
         {

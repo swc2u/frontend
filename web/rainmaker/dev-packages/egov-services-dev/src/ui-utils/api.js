@@ -22,7 +22,7 @@ const instance = axios.create({
     // "Authorization" : "Basic ZWdvdi11c2VyLWNsaWVudDplZ292LXVzZXItc2VjcmV0"
   }
 });
-
+ 
 const wrapRequestBody = (requestBody, action, customRequestInfo) => {
   
   let applicationnumber = getapplicationNumber();
@@ -103,6 +103,7 @@ export const httpRequest = async (
       return response.data;
     }
   } catch (error) {
+    console.log("HTTPError",{error})
     const { data, status } = error.response;
     if (status === 400 && data === "") {
       apiError = "INVALID_TOKEN";
