@@ -12,12 +12,18 @@ export const getTextToLocalMapping = (label) => {
         "NULM_SEP_APPLICATION_ID",
         localisationLabels
       );
-      case "Name of StreetVendor":
-        return getLocaleLabels(
-          "Name of StreetVendor",
-          "NULM_SVRU_NANE_OF_STREET_VENDER",
-          localisationLabels
-        );
+    case "Name of StreetVendor":
+      return getLocaleLabels(
+        "Name of StreetVendor",
+        "NULM_SVRU_NANE_OF_STREET_VENDER",
+        localisationLabels
+      );
+    case "COV Number":
+      return getLocaleLabels(
+        "COV Number",
+        "NULM_COV_NUMBER",
+        localisationLabels
+      );
     case "Application Status":
       return getLocaleLabels(
         "Application Status",
@@ -58,6 +64,7 @@ export const searchResults = {
   props: {
     columns: [
       getTextToLocalMapping("Application Id"),
+      getTextToLocalMapping("COV Number"),
       getTextToLocalMapping("Name of StreetVendor"),
       getTextToLocalMapping("Application Status"),
       getTextToLocalMapping("Creation Date"),
@@ -85,7 +92,7 @@ export const searchResults = {
 
 const onRowClick = (rowData) => {
   const tenantId = process.env.REACT_APP_NAME === "Employee" ?  getTenantId() : JSON.parse(getUserInfo()).permanentCity;
-  window.location.href = `view-svru?tenantId=${tenantId}&applicationNumber=${rowData[0]}&status=${rowData[2]}`;
+  window.location.href = `view-svru?tenantId=${tenantId}&applicationNumber=${rowData[0]}&status=${rowData[3]}`;
 };
 
 

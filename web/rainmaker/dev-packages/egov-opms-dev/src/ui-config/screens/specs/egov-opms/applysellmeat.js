@@ -235,7 +235,12 @@ export const prepareEditFlow = async (action, state, dispatch, applicationNumber
 
     dispatch(prepareFinalObject("SELLMEATNOC", Refurbishresponse));
 
-    let statusPAID = Refurbishresponse.statusPAID;
+    let statusPAID = false;
+    var array1 = response.nocApplicationDetail[0].remarks;
+    var found = array1.find(element => element.applicationstatus === "PAID" );
+    if(found){
+      statusPAID = true;
+    }
     if(statusPAID){
       set(
         action.screenConfig,
