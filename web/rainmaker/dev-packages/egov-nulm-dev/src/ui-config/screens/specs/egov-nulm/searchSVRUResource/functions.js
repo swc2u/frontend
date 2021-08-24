@@ -120,6 +120,7 @@ if(toDate && toDate)
     
           return {
             [getTextToLocalMapping("Application Id")]: get(item, "applicationId", "-") || "-",
+            [getTextToLocalMapping("COV Number")]: get(item, "covNo", "-") || "-",
             [getTextToLocalMapping("Name of StreetVendor")]: get(item, "nameOfStreetVendor", "-") || "-",
             [getTextToLocalMapping("Application Status")]: get(item, "applicationStatus", "-") || "-",
             [getTextToLocalMapping("Creation Date")]: get(item, "auditDetails.createdTime", "")? new Date(get(item, "auditDetails.createdTime", "-")).toISOString().substr(0,10) : "-",

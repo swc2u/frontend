@@ -1,8 +1,11 @@
 import {
   getCommonHeader,
-  getCommonContainer
+  getCommonContainer,
+  getLabel,
+  getBreak
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import set from "lodash/set";
+import get from "lodash/set";
 import { SEPReviewDetails } from "./viewSVRUResource/sep-review";
 import { poViewFooter } from "./viewSVRUResource/footer";
 import { getQueryArg,getFileUrlFromAPI,getFileUrl } from "egov-ui-framework/ui-utils/commons";
@@ -10,9 +13,14 @@ import { getTenantId,getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { downloadAcknowledgementForm} from '../utils';
+import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getSearchResults ,SANCTION_BY_BANK,REJECTED_BY_TASK_FORCE_COMMITTEE } from "../../../../ui-utils/commons";
 let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
 let status = getQueryArg(window.location.href, "status");
+
+const createSEPHandle = async (state, dispatch) => {
+  dispatch(setRoute(`/egov-nulm/create-svru`));
+};
 
 const applicationNumberContainer = () => {
 
@@ -92,68 +100,64 @@ const getFileUrlDetails = async (state,dispatch,tenantId,response)=>{
   //mdms call
   getMdmsData(dispatch, tenantId);
 
- const fileStoreIds = response.ResponseBody[0] ? response.ResponseBody[0].applicationDocument.map(docInfo => docInfo.filestoreId).join() : [];
-
-
- const fileUrlPayload =  fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
- let  documentsUploadRedux ={}
-const documentsPreview = response.ResponseBody[0] ? response.ResponseBody[0].applicationDocument 
-                        && response.ResponseBody[0].applicationDocument.map((docInfo,index) => {
-                          let docObj =  {
-                                        title: docInfo.documentType,
-                                        linkText: "VIEW", 
-                                        link :  (fileUrlPayload &&
-                                                  fileUrlPayload[docInfo.filestoreId] &&
-                                                  getFileUrl(fileUrlPayload[docInfo.filestoreId])) ||
-                                                  "",
-                                         name:   (fileUrlPayload &&
+  if(response.ResponseBody[0] && response.ResponseBody[0].applicationDocument !== null){
+    const fileStoreIds = response.ResponseBody[0] ? response.ResponseBody[0].applicationDocument.map(docInfo => docInfo.filestoreId).join() : [];
+    const fileUrlPayload =  fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+    let  documentsUploadRedux ={}
+    const documentsPreview = response.ResponseBody[0] ? response.ResponseBody[0].applicationDocument 
+                          && response.ResponseBody[0].applicationDocument.map((docInfo,index) => {
+                            let docObj =  {
+                                          title: docInfo.documentType,
+                                          linkText: "VIEW", 
+                                          link :  (fileUrlPayload &&
                                                     fileUrlPayload[docInfo.filestoreId] &&
-                                                    decodeURIComponent(
-                                                      getFileUrl(fileUrlPayload[docInfo.filestoreId])
-                                                        .split("?")[0]
-                                                        .split("/")
-                                                        .pop().slice(13)
-                                                    )) ||
-                                                  `Document - ${index + 1}` 
-                                      }
+                                                    getFileUrl(fileUrlPayload[docInfo.filestoreId])) ||
+                                                    "",
+                                          name:   (fileUrlPayload &&
+                                                      fileUrlPayload[docInfo.filestoreId] &&
+                                                      decodeURIComponent(
+                                                        getFileUrl(fileUrlPayload[docInfo.filestoreId])
+                                                          .split("?")[0]
+                                                          .split("/")
+                                                          .pop().slice(13)
+                                                      )) ||
+                                                    `Document - ${index + 1}` 
+                                        }
 
-                                      //for populating in update mode
-                                      const {viewScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
-                                      if(viewScreenMdmsData && viewScreenMdmsData.NULM && viewScreenMdmsData.NULM.SEPDocuments){
+                                        //for populating in update mode
+                                        const {viewScreenMdmsData} = state.screenConfiguration.preparedFinalObject;
+                                        if(viewScreenMdmsData && viewScreenMdmsData.NULM && viewScreenMdmsData.NULM.SEPDocuments){
 
-                                        const {SEPDocuments} = viewScreenMdmsData.NULM;
-                                        const documentsDes = ["Photo Copy of Certificate of Vending","Photo Copy of Govt. ID Proof","Proof of Current Residential Address","NOC From Other Dependent Family Member"]
-                                        const indexOfDoc = documentsDes.findIndex(doc =>  doc === docInfo.documentType )
+                                          const {SEPDocuments} = viewScreenMdmsData.NULM;
+                                          const documentsDes = ["Photo Copy of Certificate of Vending","Photo Copy of Govt. ID Proof","Proof of Current Residential Address","NOC From Other Dependent Family Member"]
+                                          const indexOfDoc = documentsDes.findIndex(doc =>  doc === docInfo.documentType )
 
-                                          documentsUploadRedux[indexOfDoc] = {                          
-                                          "documents":[
-                                          {
-                                          "fileName":  (fileUrlPayload &&
-                                            fileUrlPayload[docInfo.filestoreId] &&
-                                            decodeURIComponent(
-                                              getFileUrl(fileUrlPayload[docInfo.filestoreId])
-                                                .split("?")[0]
-                                                .split("/")
-                                                .pop().slice(13)
-                                            )) ||
-                                          `Document - ${index + 1}`,
-                                          "fileStoreId": docInfo.filestoreId,
-                                          "fileUrl": fileUrlPayload[docInfo.filestoreId]
-                                         }
-                                        ]
-                                       }
-                                      }
+                                            documentsUploadRedux[indexOfDoc] = {                          
+                                            "documents":[
+                                            {
+                                            "fileName":  (fileUrlPayload &&
+                                              fileUrlPayload[docInfo.filestoreId] &&
+                                              decodeURIComponent(
+                                                getFileUrl(fileUrlPayload[docInfo.filestoreId])
+                                                  .split("?")[0]
+                                                  .split("/")
+                                                  .pop().slice(13)
+                                              )) ||
+                                            `Document - ${index + 1}`,
+                                            "fileStoreId": docInfo.filestoreId,
+                                            "fileUrl": fileUrlPayload[docInfo.filestoreId]
+                                          }
+                                          ]
+                                        }
+                                        }
 
-                            return docObj;
-                        }) : []
+                              return docObj;
+                          }) : []
+    
+    documentsPreview && dispatch(prepareFinalObject("documentsPreview", documentsPreview));
+    documentsPreview &&  dispatch(prepareFinalObject("documentsUploadRedux", documentsUploadRedux));
   
-        documentsPreview && dispatch(prepareFinalObject("documentsPreview", documentsPreview));
-                        
-                          
-        documentsPreview &&  dispatch(prepareFinalObject("documentsUploadRedux", documentsUploadRedux));
-
-                     
- 
+  } 
 }
 
 const getSEPDetails = async(state, dispatch) =>{
@@ -251,7 +255,7 @@ const screenConfig = {
             },
             printMenu: {
               uiFramework: "custom-atoms-local",
-              moduleName: "egov-tradelicence",
+              moduleName: "egov-nulm",
               componentPath: "MenuButton",
               gridDefination: {
                 xs: 12,
@@ -273,7 +277,49 @@ const screenConfig = {
                   menu: printMenu
                 }
               }
-            }
+            },
+            newApplicationButton: {
+              componentPath: "Button",
+              gridDefination: {
+                xs: 12,
+                sm: 6,
+                align: "right",
+              },
+              // visible: true,
+              visible: status === "Approved"? true : false,
+              props: {
+                variant: "contained",
+                color: "primary",
+                style: {
+                  color: "white",
+                  borderRadius: "2px",
+                  width: "250px",
+                  height: "48px",
+                },
+              },
+
+              children: {
+                plusIconInsideButton: {
+                  uiFramework: "custom-atoms",
+                  componentPath: "Icon",
+                  props: {
+                    iconName: "add",
+                    style: {
+                      fontSize: "24px",
+                    },
+                  },
+                },
+
+                buttonLabel: getLabel({
+                  labelName: "Add svru",
+                  labelKey: "NULM_ADD_NEW_SVRU_BUTTON",
+                }),
+              },
+              onClickDefination: {
+                action: "condition",
+                callBack: createSEPHandle,
+              },
+            },
           }
         },
         taskStatus: {
