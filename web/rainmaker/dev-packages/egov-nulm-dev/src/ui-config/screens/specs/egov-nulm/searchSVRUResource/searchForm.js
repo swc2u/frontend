@@ -16,7 +16,7 @@ import {
 import { searchApiCall } from "./functions";
 
 const resetFields = (state, dispatch) => {
-  const textFields = ["applicationStatus","applicationId","fromDate","toDate"];
+  const textFields = ["covNo","applicationStatus","applicationId","fromDate","toDate"];
   for (let i = 0; i < textFields.length; i++) {
     if (
       `state.screenConfiguration.screenConfig.search-svru.searchForm.children.cardContent.children.searchFormContainer.children.${textFields[i]}.props.value`
@@ -61,6 +61,24 @@ export const searchForm = getCommonCard({
           sm: 4,
         },
         jsonPath: "searchScreen.applicationId"
+      })
+    },
+    covNo: {
+      ...getTextField({
+        label: {
+          labelName: "COV Number",
+          labelKey: "NULM_COV_NUMBER"
+        },
+        placeholder: {
+          labelName: "Enter COV Number",
+          labelKey: "NULM_COV_NUMBER_PLACEHOLDER"
+        },
+      //  pattern: getPattern("Amount"),
+        gridDefination: {
+          xs: 12,
+          sm: 4,
+        },
+        jsonPath: "searchScreen.covNo"
       })
     },
     fromDate: {

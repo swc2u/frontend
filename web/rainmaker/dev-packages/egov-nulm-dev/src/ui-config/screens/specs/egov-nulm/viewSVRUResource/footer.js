@@ -1,7 +1,8 @@
 import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import { handleSubmitSEP,handleRejectSEP,handlesaveSEP,handleApproveSEP,handleForwardToTFCSEP } from "./functions";
+// import { handleRejectSMID,handleApproveSMID,handleForwardToTFCSEP } from "./functionTwo";
+import { handleSubmitSEP,handleRejectSMID,handlesaveSEP,handleApproveSMID,handleForwardToTFCSEP } from "./functions";
 import {NULM_SEP_CREATED,
   FORWARD_TO_TASK_FORCE_COMMITTEE,
   APPROVED_BY_TASK_FORCE_COMMITTEE,
@@ -29,7 +30,7 @@ export const buttonController = () => {
  // const status = window.localStorage.getItem("SEP_Status");
   if (process.env.REACT_APP_NAME === "Employee")
     return {
-      rejectButton: {
+      saveButton: {
         componentPath: "Button",
         props: {
           variant: "outlined",
@@ -42,39 +43,84 @@ export const buttonController = () => {
         },
         children: {
           resetButtonLabel: getLabel({
-            labelName: "Reject",
-            labelKey: "NULM_COMMON_REJECT_BUTTON",
+            labelName: "Save",
+            labelKey: "NULM_COMMON_SAVE_BUTTON",
           }),
         },
         onClickDefination: {
           action: "condition",
-          callBack: handleRejectSMID,
+          callBack: handlesaveSEP,
         },
-        visible: true,
+        visible: get(store.getState().screenConfiguration.preparedFinalObject, "NulmSusvRenewRequest.applicationStatus", null) == "Reassign To Citizen" ? false : true,
       },
-      approvedButton: {
+      submitButton: {
         componentPath: "Button",
         props: {
           variant: "contained",
           color: "primary",
           style: {
-            // minWidth: "200px",
+            minWidth: "200px",
             height: "48px",
-            marginRight: "16px",
-          },
+            marginRight: "45px"
+          }
         },
         children: {
-          updateButtonLabel: getLabel({
-            labelName: "Approved",
-            labelKey: "NULM_COMMON_APPROVED_BUTTON",
-          }),
+          submitButtonLabel: getLabel({
+            labelName: "SUBMIT",
+            labelKey: "HR_SUBMIT_LABEL"
+          })
         },
         onClickDefination: {
           action: "condition",
-          callBack: handleApproveSMID,
-        },
-        visible: true,
-      },
+          callBack: handleSubmitSEP
+        }
+      }
+      // rejectButton: {
+      //   componentPath: "Button",
+      //   props: {
+      //     variant: "outlined",
+      //     color: "primary",
+      //     style: {
+      //        minWidth: "200px",
+      //       height: "48px",
+      //       marginRight: "16px",
+      //     },
+      //   },
+      //   children: {
+      //     resetButtonLabel: getLabel({
+      //       labelName: "Reject",
+      //       labelKey: "NULM_COMMON_REJECT_BUTTON",
+      //     }),
+      //   },
+      //   onClickDefination: {
+      //     action: "condition",
+      //     callBack: handleRejectSMID,
+      //   },
+      //   visible: true,
+      // },
+      // approvedButton: {
+      //   componentPath: "Button",
+      //   props: {
+      //     variant: "contained",
+      //     color: "primary",
+      //     style: {
+      //       // minWidth: "200px",
+      //       height: "48px",
+      //       marginRight: "16px",
+      //     },
+      //   },
+      //   children: {
+      //     updateButtonLabel: getLabel({
+      //       labelName: "Approved",
+      //       labelKey: "NULM_COMMON_APPROVED_BUTTON",
+      //     }),
+      //   },
+      //   onClickDefination: {
+      //     action: "condition",
+      //     callBack: handleApproveSMID,
+      //   },
+      //   visible: true,
+      // },
     };
   else
     return {
