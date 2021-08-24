@@ -108,7 +108,14 @@ const NOCSearchAndResult = {
     
     });
  //set search param blank
+ //get  current month and year
+ const lastLoginTime = new Date().getTime();
+      const dateFromApi = new Date(lastLoginTime);
+      let curMonth = dateFromApi.getMonth() + 1;      
+      let curYear = dateFromApi.getFullYear();
 dispatch(prepareFinalObject("searchScreen",{}));
+dispatch(prepareFinalObject("searchScreen.Year",curYear));
+dispatch(prepareFinalObject("searchScreen.Month",curMonth));
    
     return action;
   },
