@@ -308,7 +308,7 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
     });
 
     dispatch(prepareFinalObject("documentsContract", documentsContract));
-};
+}; 
 
 export const createUpdateOsbApplication = async (state, dispatch, action) => {
     let response = "";
@@ -393,7 +393,8 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
             } else {
                 return { status: "fail", data: response.data };
             }
-        } else if (method === "UPDATE") {
+        } 
+        else if (method === "UPDATE") {
           delete payload["financeBusinessService"];
             response = await httpRequest(
                 "post",
@@ -407,7 +408,7 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
             setapplicationNumber(response.data.bkApplicationNumber);
             dispatch(prepareFinalObject("Booking", response.data));
             return { status: "success", data: response.data };
-        }
+        }   
     } catch (error) {
         dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
 

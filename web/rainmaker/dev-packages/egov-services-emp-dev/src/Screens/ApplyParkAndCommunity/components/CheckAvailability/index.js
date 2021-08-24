@@ -586,6 +586,7 @@ catch(err){
 
     const daysCount =
         Math.round(Math.abs((firstDate - secondDate) / oneDay)) + 1;
+    console.log("daysCount--Return",daysCount)
     return daysCount;
 };
 
@@ -593,7 +594,7 @@ catch(err){
   continue = (e) => {
     const {NewBookFromDate , AppStatus, NewBookToDate, toggleSnackbarAndSetText,oldToDate,oldFromDate,AgainNewFromDate,AgainNewToDate,PrevFromDate,PrevToDate,
       state,oldBookingData,bookingVenue,prepareFinalObject} = this.props
-      
+      console.log("PropsInContinueFunction",this.props)
     var result;
     let d1,d2,PrevBookdaysCount,newBookdaysCount,d1NewFromDate,d2NewToDate,AgainNewd1,
     AgainNewd2,forOldMasterData,checkType,RepeatSectorData
@@ -672,8 +673,10 @@ PrevBookdaysCount = this.calculateBetweenDaysCount(PrevFromDate,PrevToDate)
     );
   }
 if(NewBookFromDate != "notFound" && NewBookToDate != "notFound"){
+  console.log("firstConsoleForFromDate",NewBookFromDate)
+  console.log("firstConsoleForToDate",NewBookToDate)
   newBookdaysCount =  this.calculateBetweenDaysCount(NewBookFromDate,NewBookToDate)
-  
+  console.log("FirstResult",newBookdaysCount)
   if(newBookdaysCount != PrevBookdaysCount){
    
     toggleSnackbarAndSetText(
@@ -706,7 +709,7 @@ if(NewBookFromDate != "notFound" && NewBookToDate != "notFound"){
 }
 
   if(oldBookingData.bkBookingVenue === bookingVenue){ /**Second condition*** Venue Same but date change in this condition**/
-   
+   console.log("NewBookFromDate--checkPage",oldBookingData,NewBookFromDate,NewBookToDate)
     if((NewBookFromDate === "notFound" && NewBookToDate ==="notFound") || (d1 == AgainNewd1 && d2 == AgainNewd2)){
    
       toggleSnackbarAndSetText(
@@ -719,7 +722,7 @@ if(NewBookFromDate != "notFound" && NewBookToDate != "notFound"){
       );
     }
     else if ((AgainNewd1 != "notFound" && AgainNewd2 != "notFound") || ((d1 != AgainNewd1 && d2 != AgainNewd2))) {
-  
+  console.log("checkFromDateforSecond",NewBookFromDate,NewBookToDate,d1,d2);
   newBookdaysCount =  this.calculateBetweenDaysCount(NewBookFromDate,NewBookToDate)
   
   if(newBookdaysCount != PrevBookdaysCount){
@@ -1482,10 +1485,10 @@ const mapStateToProps = (state) => {
     : "notfound";
 
   let NewBookFromDate = state.screenConfiguration.preparedFinalObject.availabilityCheckData && state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkFromDate || "notFound"
-  
+  console.log("NewBookFromDate--chechPage",NewBookFromDate)
 
   let NewBookToDate = state.screenConfiguration.preparedFinalObject.availabilityCheckData && state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkToDate || "notFound"
-  
+  console.log("NewBookToDate--chechPage",NewBookToDate)
 
 if(NewBookFromDate != "notFound" && NewBookToDate != "notFound"){
   
@@ -1504,10 +1507,11 @@ else{
   
 
   let AgainNewFromDate = state.screenConfiguration.preparedFinalObject.PreviousBookingData && state.screenConfiguration.preparedFinalObject.PreviousBookingData.NewBookingFromDate || "notFound"
-  
+  console.log("AgainNewFromDateInRender",AgainNewFromDate)
 
   let AgainNewToDate = state.screenConfiguration.preparedFinalObject.PreviousBookingData && state.screenConfiguration.preparedFinalObject.PreviousBookingData.NewBookingToDate || "notFound"
-  
+  console.log("AgainNewToDateInRender",AgainNewToDate)
+
 
    let PrevFromDate = state.screenConfiguration.preparedFinalObject.PreviousBookingData && state.screenConfiguration.preparedFinalObject.PreviousBookingData.FromDate || "notFound"
   
@@ -1518,7 +1522,7 @@ else{
 
 
   return {state,
-    userInfo,NewBookFromDate,NewBookToDate,AppStatus,AgainNewFromDate,AgainNewFromDate,PrevFromDate,PrevToDate,
+    userInfo,NewBookFromDate,NewBookToDate,AppStatus,AgainNewFromDate,AgainNewToDate,PrevFromDate,PrevToDate,
     DropDownValue,BothDateSame,
     complaintSector,
     bookingVenue,

@@ -277,7 +277,7 @@ class ApplicationDetails extends Component {
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
         ? (dataforSectorAndCategory.bookingsModelList[0].bkFromDate !== undefined &&
           dataforSectorAndCategory.bookingsModelList !== null ?
-        (dataforSectorAndCategory.bookingsModelList[0].bkLocation) : "NA")
+        (dataforSectorAndCategory.bookingsModelList[0].bkFromDate) : "NA")
         : "NA";
     let bkToDate =
       dataforSectorAndCategory && dataforSectorAndCategory.bookingsModelList
