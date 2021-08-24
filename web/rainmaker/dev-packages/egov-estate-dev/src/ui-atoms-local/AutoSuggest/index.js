@@ -7,7 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
 import "./index.css";
-
+import {getTextToLocalMapping} from "../../ui-config/screens/specs/utils"
 const getSuggestions = suggestions => {
   return (
     suggestions &&
@@ -88,8 +88,9 @@ function Control(props) {
           ...props.innerProps
         }
       }}
+      FormHelperTextProps={{ style: { fontSize: "1.4rem" } }}
       {...props.selectProps.textFieldProps}
-      helperText={props.selectProps.helperText}
+      helperText={(!!props.selectProps.error?getTextToLocalMapping(props.selectProps.errorMessage):"")}
       error={props.selectProps.error}
     />
   );
