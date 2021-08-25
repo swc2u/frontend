@@ -174,7 +174,7 @@ const waterAndSewerageSearchAndResult = {
                 ]
             }
         ]
-        getRequiredDocData(action, dispatch, moduleDetails)
+       // getRequiredDocData(action, dispatch, moduleDetails)
         return action;
     },
     components: {
@@ -197,7 +197,8 @@ const waterAndSewerageSearchAndResult = {
                     props: {
                       items: [],
                       history: {},
-                      module: "PRSCP"
+                      module: "PRSCP",
+                      moduleName:'WNS'
                     }
                   },
                 applyCard: {

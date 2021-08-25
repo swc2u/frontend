@@ -11,39 +11,37 @@ import { WNSConfigName,WNSWaterBusinessService,WNSBusinessService} from "../../.
 //import { getTextToLocalMapping } from "./searchApplicationResults";
 //import { validateFields, getTextToLocalMapping } from "../../utils";
 import { set } from "lodash";
-let PETNOC = {
+let PERMANENT_DISCONNECTION = {
   label: {
-    labelKey: "NOC to Keep Pet",
-    labelName: "NOC to Keep Pet"
+    labelName: "Apply for permanent disconnection",
+    labelKey: "WF_REGULARWSCONNECTION_PERMANENT_DISCONNECTION"
   },
   icon: <i
     viewBox="0 -8 35 42"
     color="primary"
     font-size="40px"
     class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-    pets
+    picture_in_picture
   </i>,
   route: "search"
 }
-
-let SELLMEATNOC = {
+let TEMPORARY_DISCONNECTION = {
   label: {
-    labelKey: "NOC to Sell Meat",
-    labelName: "NOC to Sell Meat"
+    labelName: "Apply for temporary disconnection/ NDC of Government houses",
+    labelKey: "WF_REGULARWSCONNECTION_TEMPORARY_DISCONNECTION"
   },
   icon: <i
     viewBox="0 -8 35 42"
     color="primary"
     class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-    restaurant
+    picture_in_picture
   </i>,
   route: "sellmeat-search"
 }
-
-let ADVERTISEMENTNOC = {
+let UPDATE_CONNECTION_HOLDER_INFO = {
   label: {
-    labelKey: "Permission for Advertisement",
-    labelName: "Permission for Advertisement"
+    labelName: "Apply for change in Consumer Name in Water Bill",
+    labelKey: "WF_REGULARWSCONNECTION_UPDATE_CONNECTION_HOLDER_INFO"
   },
   icon: <i
     viewBox="0 -8 35 42"
@@ -53,22 +51,86 @@ let ADVERTISEMENTNOC = {
   </i>,
   route: "advertisement-search"
 }
-let ROADCUTNOC = {
+let CONNECTION_CONVERSION = {
   label: {
-    labelKey: "Permission for Road Cut",
-    labelName: "Permission for Road Cut"
+    labelName: "Apply for change in Tariff Type",
+    labelKey: "WF_REGULARWSCONNECTION_CONNECTION_CONVERSION"
   },
   icon: <i
     viewBox="0 -8 35 42"
     color="primary"
     class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
-    report_problem
+    picture_in_picture
   </i>,
   route: "roadcut-search"
 }
-let allCardList = [{ "code": "PETNOC", "value": PETNOC }, { "code": "SELLMEATNOC", "value": SELLMEATNOC },
-{ "code": "ADVERTISEMENTNOC", "value": ADVERTISEMENTNOC },
-{ "code": "ROADCUTNOC", "value": ROADCUTNOC }]
+let APPLY_FOR_METER_TESTING = {
+  label: {
+    labelName: "Apply for Meter testing",
+    labelKey: "WF_REGULARWSCONNECTION_APPLY_FOR_METER_TESTING"
+  },
+  icon: <i
+    viewBox="0 -8 35 42"
+    color="primary"
+    class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
+    picture_in_picture
+  </i>,
+  route: "roadcut-search"
+}
+let REACTIVATE_CONNECTION = {
+  label: {
+    labelName: "Apply for reconnection",
+    labelKey: "WF_REGULARWSCONNECTION_REACTIVATE_CONNECTION"
+  },
+  icon: <i
+    viewBox="0 -8 35 42"
+    color="primary"
+    class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
+    picture_in_picture
+  </i>,
+  route: "roadcut-search"
+}
+let APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION = {
+  label: {
+    labelName: "Apply for extension of temporary connection",
+    labelKey: "WF_REGULARWSCONNECTION_APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION"
+  },
+  icon: <i
+    viewBox="0 -8 35 42"
+    color="primary"
+    class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
+    picture_in_picture
+  </i>,
+  route: "roadcut-search"
+}
+let UPDATE_METER_INFO = {
+  label: {
+    labelName: "Apply for change of Defective Meter",
+    labelKey: "WF_REGULARWSCONNECTION_UPDATE_METER_INFO"
+  },
+  icon: <i
+    viewBox="0 -8 35 42"
+    color="primary"
+    class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
+    picture_in_picture
+  </i>,
+  route: "roadcut-search"
+}
+let APPLY_FOR_TEMPORARY_REGULAR_CONNECTION = {
+  label: {
+    labelName: "Apply for change of temporary connection to regular connection",
+    labelKey: "WF_REGULARWSCONNECTION_APPLY_FOR_TEMPORARY_REGULAR_CONNECTION"
+  },
+  icon: <i
+    viewBox="0 -8 35 42"
+    color="primary"
+    class="material-icons module-page-icon" style={{ fontSize: "42px" }}>
+    picture_in_picture
+  </i>,
+  route: "roadcut-search"
+}
+
+
 export const searchApiCall = async (state, dispatch) => {
 
  
@@ -96,10 +158,10 @@ const GetWaterBusinessServiceConfig=(ModuleName)=>{
     return true;
   } else return false;
 }
-const getRedirectUrl = (action, businessId, moduleName,ActionType) => {
+const getRedirectUrl = (action, businessId, moduleName,ActionType,tenant) => {
 
   const isAlreadyEdited = getQueryArg(window.location.href, "edited");
-  const tenant = getQueryArg(window.location.href, "tenantId");
+ // const tenant = getQueryArg(window.location.href, "tenantId");
   
   let baseUrl = "";
   let bservice = "";
@@ -149,21 +211,22 @@ const getWNSButtonForCitizen = (preparedFinalObject, status, businessId, moduleN
          const WaterConnection = preparedFinalObject;
            if(WaterConnection.length>0)
            {
-           switch(WaterConnection[0].activityType)
-           {
-             case'APPLY_FOR_TEMPORARY_CONNECTION':
-             case 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION':
-             case 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION':
-             case 'APPLY_FOR_TEMPORARY_CONNECTION_BILLING':
-             moduleName ='TEMPORARY_WSCONNECTION'
-             break;
-             case "NEW_WS_CONNECTION":
-             moduleName ="REGULARWSCONNECTION"
-             break;
-             default:
-             moduleName ='REGULARWSCONNECTION'
-             break
-           }
+          //  switch(WaterConnection[0].activityType)
+          //  {
+          //    case'APPLY_FOR_TEMPORARY_CONNECTION':
+          //    case 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION':
+          //    case 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION':
+          //    case 'APPLY_FOR_TEMPORARY_CONNECTION_BILLING':
+          //    moduleName ='TEMPORARY_WSCONNECTION'
+          //    break;
+          //    case "NEW_WS_CONNECTION":
+          //    moduleName ="REGULARWSCONNECTION"
+          //    break;
+          //    default:
+          //    
+          //    break
+          //  }
+          moduleName ='REGULARWSCONNECTION'
          }
        }
        // const btnName = ["UPDATE_CONNECTION_HOLDER_INFO",
@@ -180,7 +243,7 @@ const getWNSButtonForCitizen = (preparedFinalObject, status, businessId, moduleN
                moduleName: moduleName,
                tenantId: "ch.chandigarh",
                isLast: true,
-               buttonUrl: getRedirectUrl("WATERMODIFY", businessId, moduleName,btn)
+               buttonUrl: getRedirectUrl("WATERMODIFY", businessId, moduleName,btn,'ch.chandigarh')
              }
 
              return buttonObj;
@@ -398,6 +461,7 @@ const getWNSButtonForCitizen = (preparedFinalObject, status, businessId, moduleN
 export const getActivityCard = async(state,dispatch)=>{
   
  // const {applicationId,applicationStatus:stat,WaterConnectionObj} = state;screenConfiguration
+ dispatch(toggleSpinner());
  const {screenConfiguration} = state;
   const {preparedFinalObject , prepareFinalObject} = screenConfiguration;
   const {myConnectionResults} = preparedFinalObject;
@@ -424,6 +488,7 @@ export const getActivityCard = async(state,dispatch)=>{
             actions = actions.concat(buttonArray);
             if(actions.length>1)
             {
+              let allCardList = [];
               for (let index = 0; index < actions.length; index++) {
                 const element = actions[index];
                 mdmsCardList.push(
@@ -437,6 +502,87 @@ export const getActivityCard = async(state,dispatch)=>{
                     routeCitizen:`${element.buttonUrl}`,
                   }
                 )
+                if(element.buttonLabel ==='PERMANENT_DISCONNECTION')
+                {
+                  allCardList.push(
+                    {
+                      code: element.buttonLabel, 
+                      value: PERMANENT_DISCONNECTION
+                    }
+                  )
+                }
+                else if(element.buttonLabel ==='TEMPORARY_DISCONNECTION')
+                {
+                  allCardList.push(
+                    {
+                      code: element.buttonLabel, 
+                      value: TEMPORARY_DISCONNECTION
+                    }
+                  )
+                }
+                else if(element.buttonLabel ==='UPDATE_CONNECTION_HOLDER_INFO')
+                {
+                  allCardList.push(
+                    {
+                      code: element.buttonLabel, 
+                      value: UPDATE_CONNECTION_HOLDER_INFO
+                    }
+                  )
+                }
+                else if(element.buttonLabel ==='CONNECTION_CONVERSION')
+                {
+                  allCardList.push(
+                    {
+                      code: element.buttonLabel, 
+                      value: CONNECTION_CONVERSION
+                    }
+                  )
+                }
+                else if(element.buttonLabel ==='APPLY_FOR_METER_TESTING')
+                {
+                  allCardList.push(
+                    {
+                      code: element.buttonLabel, 
+                      value: APPLY_FOR_METER_TESTING
+                    }
+                  )
+                }
+                else if(element.buttonLabel ==='REACTIVATE_CONNECTION')
+                {
+                  allCardList.push(
+                    {
+                      code: element.buttonLabel, 
+                      value: REACTIVATE_CONNECTION
+                    }
+                  )
+                }
+                else if(element.buttonLabel ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
+                {
+                  allCardList.push(
+                    {
+                      code: element.buttonLabel, 
+                      value: APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION
+                    }
+                  )
+                }
+                else if(element.buttonLabel ==='UPDATE_METER_INFO')
+                {
+                  allCardList.push(
+                    {
+                      code: element.buttonLabel, 
+                      value: UPDATE_METER_INFO
+                    }
+                  )
+                }
+                else if(element.buttonLabel ==='APPLY_FOR_TEMPORARY_REGULAR_CONNECTION')
+                {
+                  allCardList.push(
+                    {
+                      code: element.buttonLabel, 
+                      value: APPLY_FOR_TEMPORARY_REGULAR_CONNECTION
+                    }
+                  )
+                }
                 
               }
               
@@ -478,7 +624,7 @@ export const getActivityCard = async(state,dispatch)=>{
       cards
     )
   );
-
+  dispatch(toggleSpinner());
             }
             else{
               const errorMessageN = {
@@ -486,6 +632,7 @@ export const getActivityCard = async(state,dispatch)=>{
                 labelKey:   `WS_SUBACTIVITY_VALIDATION_MESSAGE`
                 //labelKey:   LocalizationCodeValueN+' '+DuplicatItem[0].duplicates
               };
+              dispatch(toggleSpinner());
               dispatch(toggleSnackbar(true, errorMessageN, "warning"));
 
             }
@@ -497,6 +644,7 @@ export const getActivityCard = async(state,dispatch)=>{
               labelKey:   `WS_SUBACTIVITY_VALIDATION_MESSAGE`
               //labelKey:   LocalizationCodeValueN+' '+DuplicatItem[0].duplicates
             };
+            dispatch(toggleSpinner());
             dispatch(toggleSnackbar(true, errorMessageN, "warning"));
            }
   
@@ -509,6 +657,7 @@ export const getActivityCard = async(state,dispatch)=>{
         labelKey:   `WS_SELECT_CONNECTION_VALIDATION_MESSAGE`
         //labelKey:   LocalizationCodeValueN+' '+DuplicatItem[0].duplicates
       };
+      dispatch(toggleSpinner());
       dispatch(toggleSnackbar(true, errorMessageN, "warning"));
     }
 

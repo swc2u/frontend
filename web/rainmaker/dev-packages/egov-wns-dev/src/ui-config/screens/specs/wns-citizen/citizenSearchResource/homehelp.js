@@ -110,7 +110,9 @@ import {
       {
         ConnectionSearchContainer: getCommonContainer({
 
-          ConnectionList: getSelectField({
+          ConnectionList:
+          {
+            ...getSelectField({
             label: { labelName: "Department", labelKey: "WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL" },
             placeholder: {
               labelName: "Select Department",
@@ -133,11 +135,17 @@ import {
             //   masterName: "Department"
             // }
           }),
+          beforeFieldChange: (action, state, dispatch) => {
+           // getActivityCard(state,dispatch)
+
+          },
+        },
           searchButton: {
             componentPath: "Button",
             gridDefination: { xs: 12, sm: 4 },
             props: {
               variant: "contained",
+              visible:true,
               style: {
                 color: "white",
                 margin: "8px",
