@@ -645,6 +645,12 @@ const getStatus = (status) => {
         "currentState": "REASSIGN"
       };
       break;
+    case "EDITEDATJE":
+      return {
+        "dataPayload": {},
+        "currentState": "REVIEWOFJE"
+      };
+      break;
   }
 }
 

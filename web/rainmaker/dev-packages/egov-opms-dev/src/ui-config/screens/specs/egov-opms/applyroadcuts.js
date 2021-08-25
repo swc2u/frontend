@@ -184,7 +184,7 @@ const getFirstListFromDotSeparated = list => {
   return list;
 };
 
-export const prepareEditFlow = async (state, dispatch, applicationNumber, tenantId) => {
+export const prepareEditFlow = async (action, state, dispatch, applicationNumber, tenantId, EditAtJE) => {
   if (applicationNumber) {
     let response = await getSearchResultsView([
       { key: "tenantId", value: tenantId },
@@ -200,7 +200,14 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
     let documentsPreview = [];
     // Get all documents from response
     let roadcutnocdetail = get(state, "screenConfiguration.preparedFinalObject.ROADCUTNOC", {});
-
+    // Disable dropdown
+    if(EditAtJE){
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.nocDetailsContainer.children.typeOfApplicant.props.disabled",
+        true
+      );
+    }
     //    let documentsPreview = [];
 
     let doc = roadcutnocdetail.uploadDocuments
@@ -304,6 +311,8 @@ const screenConfig = {
   name: "applyroadcuts",
   beforeInitScreen: (action, state, dispatch) => {
     const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+    const EditAtJE = getQueryArg(window.location.href, "EditAtJE");
+
     !applicationNumber ? clearlocalstorageAppDetails(state) : '';
     setapplicationType('ROADCUTNOC');
 
@@ -323,7 +332,7 @@ const screenConfig = {
     });
 
     // Search in case of EDIT flow
-    prepareEditFlow(state, dispatch, applicationNumber, tenantId);
+    prepareEditFlow(action, state, dispatch, applicationNumber, tenantId, EditAtJE);
 
     // Code to goto a specific step through URL
     if (step && step.match(/^\d+$/)) {

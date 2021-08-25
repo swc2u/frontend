@@ -47,6 +47,16 @@ const callbackforsummaryactionpay = async (dispatch) => {
 
 }
 
+const callbackforEditActionJE = async (dispatch) => {
+  let tenantId = getOPMSTenantId();
+  //alert("enter here")
+  const applicationid = getQueryArg(window.location.href, "applicationNumber");
+  const appendUrl =
+    process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+  const reviewUrl = `${appendUrl}/egov-opms/applyroadcuts?applicationNumber=${applicationid}&tenantId=${tenantId}&EditAtJE=${true}`;
+  dispatch(setRoute(reviewUrl));
+
+}
 
 const certificateDownloadObjectROADCUT = {
   label: { labelName: "NOC Certificate ROADCUT", labelKey: "NOC_CERTIFICATE_ROADCUT" },
@@ -184,6 +194,46 @@ export const footerEmp = getCommonApplyFooter({
   //     }
   //   }
   // },
+  edit: {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "180px",
+        height: "48px",
+        marginRight: "16px",
+        borderRadius: "2px",
+        background: "#fff",
+        color: '#000',
+      }
+    },
+    gridDefination: {
+      xs: 12,
+      sm: 12,
+      md: 12
+    },
+    children: {
+      nextButtonLabel: getLabel({
+        labelName: "EDIT",
+        labelKey: "EDIT"
+      }),
+      nextButtonIcon: {
+        uiFramework: "custom-atoms",
+        componentPath: "Icon",
+        props: {
+          iconName: "keyboard_arrow_right"
+        }
+      }
+    },
+    onClickDefination: {
+      action: "condition",
+      callBack: (state, dispatch) => {
+        callbackforEditActionJE(dispatch);
+      }
+    },
+    visible: false
+  },
   nextButton: {
     componentPath: "Button",
     props: {
