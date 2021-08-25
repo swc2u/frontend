@@ -116,6 +116,15 @@ const routePage = (dispatch) => {
 
 }
 
+const routefromJEPage = (dispatch) => {
+  const appendUrl = process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+  const reviewUrl = `${appendUrl}/egov-opms/roadcut-search`;
+  dispatch(toggleSpinner());
+  dispatch(setRoute(reviewUrl));
+
+
+}
+
 export const callbackforSummaryActionSubmit = async (state, dispatch) => {
   try {
     dispatch(toggleSpinner());
@@ -126,6 +135,17 @@ export const callbackforSummaryActionSubmit = async (state, dispatch) => {
       {}
     );
 
+    if(applicationStatus === "REVIEWOFJE"){
+        let response = await updateAppStatus(state, dispatch, "EDITEDATJE");
+        let responseStatus = get(response, "status", "");
+        if (responseStatus == "success") {
+          routefromJEPage(dispatch)
+        }
+        else if (responseStatus == "fail" || responseStatus == "Fail") {
+          dispatch(toggleSpinner());
+          dispatch(toggleSnackbar(true, { labelName: "API ERROR" }, "error"));
+        }
+    }
     if (applicationStatus === "DRAFT") {
       let response = await updateAppStatus(state, dispatch, "INITIATED");
       let responseStatus = get(response, "status", "");
@@ -147,8 +167,12 @@ export const callbackforSummaryActionSubmit = async (state, dispatch) => {
         dispatch(toggleSnackbar(true, { labelName: "API ERROR" }, "error"));
       }
     }
-    else {
-      routePage(dispatch)
+    else  {
+      if(applicationStatus === "REVIEWOFJE"){
+        routefromJEPage(dispatch);
+      }else{
+        routePage(dispatch);
+      }
     }
   } catch (error) {
     dispatch(toggleSpinner());
@@ -320,6 +344,7 @@ const screenConfig = {
   name: "roadcutnoc_summary",
   beforeInitScreen: (action, state, dispatch) => {
     const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+    const EditAtJE = getQueryArg(window.location.href, "EditAtJE");
     setapplicationNumber(applicationNumber);
 
     const tenantId = getQueryArg(window.location.href, "tenantId");
