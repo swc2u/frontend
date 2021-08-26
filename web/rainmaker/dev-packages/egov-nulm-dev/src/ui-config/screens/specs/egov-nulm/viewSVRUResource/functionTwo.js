@@ -19,13 +19,7 @@ import {
 import { getTenantId,getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {  handleCardDelete } from "../../../../../ui-utils/commons";
-import{httpRequest} from '../../../../../ui-utils/api';
-import {NULM_SEP_CREATED,
-  FORWARD_TO_TASK_FORCE_COMMITTEE,
-  APPROVED_BY_TASK_FORCE_COMMITTEE,
-  REJECTED_BY_TASK_FORCE_COMMITTEE,
-  SENT_TO_BANK_FOR_PROCESSING,
-SANCTION_BY_BANK} from '../../../../../ui-utils/commons'
+import{httpRequest} from '../../../../../ui-utils/api'
 // SET ALL SIMPLE DATES IN YMD FORMAT
 const setDateInYmdFormat = (obj, values) => {
   values.forEach(element => {
@@ -125,60 +119,74 @@ const handleDeletedCards = (jsonObject, jsonPath, key) => {
   set(jsonObject, jsonPath, modifiedArray);
 };
 
-
-export const handleForwardToTFCSEP = (state, dispatch) =>{
-  handleCreateUpdateSEP(state, dispatch,FORWARD_TO_TASK_FORCE_COMMITTEE)
+export const handleSubmitSMID = (state, dispatch) =>{
+  handleCreateUpdateSMID(state, dispatch,"Created")
+};
+export const handlesaveSMID = (state, dispatch) =>{
+  handleCreateUpdateSMID(state, dispatch,"Drafted")
+};
+export const handleRejectSMID = (state, dispatch) =>{
+  handleCreateUpdateSMID(state, dispatch,"Rejected")
+};
+export const handleApproveSMID = (state, dispatch) =>{
+  handleCreateUpdateSMID(state, dispatch,"Approved")
 };
 
-export const handleSubmitSEP = (state, dispatch) =>{
-  handleCreateUpdateSEP(state, dispatch,"Created");
+export const handleDelete =  async(state, dispatch) =>{
+
+   const tenantId = process.env.REACT_APP_NAME === "Employee" ?  getTenantId() : JSON.parse(getUserInfo()).permanentCity;
+   let shgUuid = get(
+    state.screenConfiguration.preparedFinalObject,
+    "NulmShgMemberRequest.shgUuid",
+    null
+  );
+  let applicationUuid = get(
+    state.screenConfiguration.preparedFinalObject,
+    "NulmShgMemberRequest.applicationUuid",
+    null
+  );
+  let appStatus = get(
+    state.screenConfiguration.preparedFinalObject,
+    "NulmShgMemberRequest.applicationStatus",
+    null
+  );
+  let NulmShgMemberRequest ={}
+  NulmShgMemberRequest.shgUuid = shgUuid;
+  NulmShgMemberRequest.applicationUuid = applicationUuid;
+  NulmShgMemberRequest.tenantId = tenantId;
+  NulmShgMemberRequest.status = "Deleted";
   
-};
-export const handlesaveSEP = (state, dispatch) =>{
-  handleCreateUpdateSEP(state, dispatch,"Drafted")
-};
-export const handleRejectSEP = (state, dispatch) =>{
-  handleCreateUpdateSEP(state, dispatch,"Rejected")
-};
-export const handleApproveSEP = async(state, dispatch) =>{
- handleCreateUpdateSEP(state, dispatch,"Approved");
- const tenantId = process.env.REACT_APP_NAME === "Employee" ?  getTenantId() : JSON.parse(getUserInfo()).permanentCity;
- let uuid = get(
-  state.screenConfiguration.preparedFinalObject,
-  "NulmSusvRenewRequest.applicationUuId",
-  null
-);
-let applicationId = get(
-  state.screenConfiguration.preparedFinalObject,
-  "NulmSusvRenewRequest.applicationId",
-  null
-);
-// let NulmSusvRenewRequest ={}
-// NulmSusvRenewRequest.applicationUuId = uuid;
-// NulmSusvRenewRequest.tenantId = tenantId;
-// NulmSusvRenewRequest.applicationStatus = "Approved";
-
-// const requestBody = {NulmSusvRenewRequest}
-// try {
-//   const response = await httpRequest(
-//     "post",
-//     "/nulm-services/v1/svru/_updateAppStatus",
-//     "",
-//     queryObject,
-//     requestBody
-//   );
-//    if(response){
-//     dispatch(setRoute(`/egov-nulm/acknowledgement?screen=svru&mode=update&code=${applicationId}`));
-//    }
-
-// } catch (error) {
-//   dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error" ) );
-// }
+  const requestBody = {NulmShgMemberRequest}
+  if(NulmShgMemberRequest.applicationUuid){
+    if( appStatus !== "DELETIONINPROGRESS"){
+  try {
+    const response = await httpRequest(
+      "post",
+      "/nulm-services/v1/smid/shg/member/_delete",
+      "",
+      [],
+      requestBody
+    );
+     if(response){
+      dispatch(setRoute(`/egov-nulm/view-smid-org?id=${NulmShgMemberRequest.shgUuid}`));
+     }
+  
+  } catch (error) {
+    dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error" ) );
+  }
+}
+else{
+  const errorMessage = {
+    labelName: "Application is already in Deletion Progress",
+    labelKey: "NULM_SHG_MEMBER_MESSAGE_DELETE_STATUS"
+  };
+  dispatch(toggleSnackbar(true, errorMessage, "warning"));
+  return true;
+}
+}
 };
 
-
-
-export const handleCreateUpdateSEP = (state, dispatch,status) => {
+export const handleCreateUpdateSMID = (state, dispatch,status) => {
   let uuid = get(
     state.screenConfiguration.preparedFinalObject,
     "NulmSusvRenewRequest.applicationUuId",
@@ -191,27 +199,31 @@ export const handleCreateUpdateSEP = (state, dispatch,status) => {
   }
 };
 
-export const createUpdatePO = async (state, dispatch, action,status) => {
+
+
+export const createUpdatePO = async (state, dispatch, action ,status) => {
 
   let NulmSusvRenewRequest = get(
     state.screenConfiguration.preparedFinalObject,
     "NulmSusvRenewRequest",
     []
   );
+
   const tenantId = process.env.REACT_APP_NAME === "Employee" ?  getTenantId() : JSON.parse(getUserInfo()).permanentCity;
-  
+ 
   NulmSusvRenewRequest.tenantId = tenantId;
   let queryObject = [{ key: "tenantId", value: tenantId }];
- //setting status
-//  let applicationStatus = get(
-//   state.screenConfiguration.preparedFinalObject,
-//   "NulmSusvRenewRequest.applicationStatus",
-//   null
-// );
+ 
+  NulmSusvRenewRequest.applicationStatus = status;
 
-//   NulmSusvRenewRequest.applicationStatus = applicationStatus;
+//    let dob = get(NulmSusvRenewRequest, "dob");
+  // const formattedDOB = dob.split("-").reverse().join("-");
 
-
+  // set(
+  //   NulmSusvRenewRequest,
+  //   "dob",
+  //   formattedDOB
+  // );
 
   const radioButtonValue = ["changeOfLocation"];
     
@@ -221,20 +233,18 @@ export const createUpdatePO = async (state, dispatch, action,status) => {
     }else{
       set( NulmSusvRenewRequest, value, false );
     }
-  })  
+  })
+//  const shgUuid = localStorage.getItem("shgUuid");
  
+//  NulmSusvRenewRequest.shgUuid = shgUuid;
+//localStorage.removeItem("shgUuid");
   const requestBody = {NulmSusvRenewRequest};
   console.log("requestbody", requestBody);
 
+  requestBody.NulmSusvRenewRequest.action = "Created"
+  
   if (action === "CREATE") {
-    try {      
-      
-      if (status == "Drafted") {
-        requestBody.NulmSusvRenewRequest.action = "Drafted";
-        requestBody.NulmSusvRenewRequest.applicationStatus = "Drafted";
-      } else if (status == "Created") { 
-        requestBody.NulmSusvRenewRequest.action = "Created";
-      }
+    try {
       const response = await httpRequest(
         "post",
         "/nulm-services/v1/susv/renew/_create",
@@ -243,47 +253,25 @@ export const createUpdatePO = async (state, dispatch, action,status) => {
         requestBody
       );
        if(response){
-        dispatch(setRoute(`/egov-nulm/acknowledgement?screen=svru&mode=create&code=${response.ResponseBody.applicationId}`));
-       }
+        const applNumber = localStorage.getItem("shgApplicationNumber");
+        dispatch(setRoute(`/egov-nulm/view-smid-org?applicationNumber=${applNumber}&id=${NulmShgMemberRequest.shgUuid}`));
+      }
   
     } catch (error) {
       dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error" ) );
     }
   } else if (action === "UPDATE") {
     try {
-      if(status == "Created"){
-        if (requestBody.NulmSusvRenewRequest.applicationStatus=="Approved" && status == "Created") { 
-          requestBody.NulmSusvRenewRequest.action = "Created";
-        }
-        const response = await httpRequest(
-          "post",
-          "/nulm-services/v1/susv/renew/_create",
-          "",
-          queryObject,
-          requestBody
-        );
-         if(response){
-          dispatch(setRoute(`/egov-nulm/acknowledgement?screen=svru&mode=update&code=${response.ResponseBody.applicationId}`));
-         }
-      }else{
-        if (status == "Drafted") {
-          requestBody.NulmSusvRenewRequest.action = "Drafted";
-        } else if (requestBody.NulmSusvRenewRequest.applicationStatus=="Drafted" && status == "Created") { 
-          requestBody.NulmSusvRenewRequest.action = "Created";
-        }else if (requestBody.NulmSusvRenewRequest.applicationStatus == "Reassign To Citizen") {
-          requestBody.NulmSusvRenewRequest.action = 'Forward To JA';
-        } 
-        const response = await httpRequest(
-          "post",
-          "/nulm-services/v1/susv/renew/_update",
-          "",
-          queryObject,
-          requestBody
-        );
-         if(response){
-          dispatch(setRoute(`/egov-nulm/acknowledgement?screen=svru&mode=update&code=${response.ResponseBody.applicationId}`));
-         }
-      }
+      const response = await httpRequest(
+        "post",
+        "/nulm-services/v1/susv/renew/_create",
+        "",
+        queryObject,
+        requestBody
+      );
+       if(response){
+        dispatch(setRoute(`/egov-nulm/view-smid-org?id=${NulmShgMemberRequest.shgUuid}`));
+       }
   
     } catch (error) {
       dispatch(toggleSnackbar(true, { labelName: error.message, labelCode: error.message }, "error" ) );

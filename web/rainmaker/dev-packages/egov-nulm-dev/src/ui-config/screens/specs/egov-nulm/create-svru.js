@@ -278,8 +278,14 @@ const screenConfig = {
   }
 
   var dataNulmSusv = get(state.screenConfiguration.preparedFinalObject, "NulmSusvRequest", {});
-  dispatch(prepareFinalObject("NulmSusvRenewRequest.nameOfStreetVendor", dataNulmSusv.nameOfApplicant));
-  dispatch(prepareFinalObject("NulmSusvRenewRequest.susvApplicationId", dataNulmSusv.applicationId));
+  if(dataNulmSusv.nameOfApplicant){
+    dispatch(prepareFinalObject("NulmSusvRenewRequest.nameOfStreetVendor", dataNulmSusv.nameOfApplicant));
+    dispatch(prepareFinalObject("NulmSusvRenewRequest.susvApplicationId", dataNulmSusv.applicationId));
+  }
+  // else{
+  //   dispatch(prepareFinalObject("NulmSusvRenewRequest.nameOfStreetVendor", dataNulmSusv.nameOfApplicant));
+  //   dispatch(prepareFinalObject("NulmSusvRenewRequest.susvApplicationId", dataNulmSusv.applicationId));
+  // }
     return action;
   },
 

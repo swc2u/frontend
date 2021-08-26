@@ -645,6 +645,12 @@ const getStatus = (status) => {
         "currentState": "REASSIGN"
       };
       break;
+    case "EDITEDATJE":
+      return {
+        "dataPayload": {},
+        "currentState": "REVIEWOFJE"
+      };
+      break;
   }
 }
 
@@ -942,11 +948,15 @@ export const furnishSellMeatNocResponse = (state,response, step) => {
 
   if(found){
     set(refurnishresponse, "nocSought", nocSoughtFinalData);
-    set(refurnishresponse, "statusPAID", true);
+    // set(refurnishresponse, "statusPAID", true);
   }else{
     //  set(refurnishresponse, "nocSought", applicationdetail.nocSought);
   }
 
+  var checkStatus = response.nocApplicationDetail[0].applicationstatus;
+  if(checkStatus === "REASSIGN"){
+    // set(refurnishresponse, "statusPAID", false);
+  }
   
   set(refurnishresponse, "uploadDocuments", applicationdetail.uploadDocuments);
   set(refurnishresponse, "idProof", applicationdetail.idProof);
@@ -1331,7 +1341,7 @@ export const createUpdateSellMeatNocApplication = async (state, dispatch, status
 
     set(payload, "remarks", Remarks);
     let str = "";
-    if (nocSought) { 
+    if (typeof(nocSought) !=="string") { 
       nocSought.map(item => {
         str = str + ", "+item.value;
       })

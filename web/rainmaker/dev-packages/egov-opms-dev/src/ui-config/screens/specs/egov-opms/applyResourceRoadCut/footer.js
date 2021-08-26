@@ -20,17 +20,21 @@ import { getAccessToken, getLocale, getUserInfo } from "egov-ui-kit/utils/localS
 
 
 
-const setReviewPageRoute = (state, dispatch, applnid) => {
+const setReviewPageRoute = (state, dispatch, applnid, EditAtJE) => {
   let tenantId = getOPMSTenantId();
   const applicationNumber = getapplicationNumber(); //  get(state, "screenConfiguration.preparedFinalObject.ROADCUTNOC.applicationId");
 
-  if (applicationNumber) {
+  if (EditAtJE) {
+    const appendUrl =
+      process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+    const reviewUrl = `${appendUrl}/egov-opms/roadcutnoc_summary?applicationNumber=${applicationNumber}&tenantId=${tenantId}&EditAtJE=${true}`;
+    dispatch(setRoute(reviewUrl));
+  }else if (applicationNumber) {
     const appendUrl =
       process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
     const reviewUrl = `${appendUrl}/egov-opms/roadcutnoc_summary?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
     dispatch(setRoute(reviewUrl));
-  }
-  else {
+  }else {
     const appendUrl =
       process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
     const reviewUrl = `${appendUrl}/egov-opms/roadcutnoc_summary?applicationNumber=${applnid}&tenantId=${tenantId}`;
@@ -185,7 +189,9 @@ const callBackForNext = async (state, dispatch) => {
       let responseStatus = "success";
       if (activeStep === 1) {
         prepareDocumentsUploadData(state, dispatch, 'apply_roadcut');
-        let statuss = localStorageGet("app_noc_status") == "REASSIGN" ? "REASSIGN" : "DRAFT";
+        // let statuss = localStorageGet("app_noc_status") == "REASSIGN" ? "REASSIGN" : "DRAFT";
+        let statuss = localStorageGet("app_noc_status") == "REASSIGN" ? "REASSIGN" : 
+        localStorageGet("app_noc_status") == "DRAFT" ? "DRAFT" : "REVIEWOFJE";
         let response = await createUpdateRoadCutNocApplication(state, dispatch, statuss);
         responseStatus = get(response, "status", "");
         let applicationId = get(response, "applicationId", "");
@@ -194,7 +200,8 @@ const callBackForNext = async (state, dispatch) => {
           isFormValid = moveToReview(state, dispatch, applicationId);
 
           if (isFormValid) {
-            setReviewPageRoute(state, dispatch, applicationId);
+            const EditAtJE = getQueryArg(window.location.href, "EditAtJE");
+            setReviewPageRoute(state, dispatch, applicationId, EditAtJE);
           }
           let errorMessage = {
             labelName: 'SUCCESS',

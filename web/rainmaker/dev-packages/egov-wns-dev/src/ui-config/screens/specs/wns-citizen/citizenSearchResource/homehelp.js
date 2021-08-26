@@ -1,12 +1,14 @@
 import {
     getCommonHeader,
     getBreak,
+    getCommonCard,
     getCommonTitle,
     getCommonParagraph,
     getCommonContainer,
+    getSelectField,
     getLabel
   } from "egov-ui-framework/ui-config/screens/specs/utils";
- 
+  import { getActivityCard } from "../../wns/searchResource/functions";
   const styles = {
     header: {
       color: "gba(0, 0, 0, 0.87)",
@@ -103,7 +105,72 @@ import {
       style: styles.header
     }
   );
-  
+  export const getConnectionCard = (type) => {
+    return getCommonCard(
+      {
+        ConnectionSearchContainer: getCommonContainer({
+
+          ConnectionList:
+          {
+            ...getSelectField({
+            label: { labelName: "Department", labelKey: "WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL" },
+            placeholder: {
+              labelName: "Select Department",
+              labelKey: "WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL"
+            },
+            required: false,
+            jsonPath: "searchScreen.connectionNo",
+            gridDefination: {
+              xs: 12,
+              sm: 6
+            },
+            sourceJsonPath: "myConnectionResults",
+            props: {
+              optionLabel: "connectionNo",
+              optionValue: "connectionNo"
+              // hasLocalization: false
+            },
+            // localePrefix: {
+            //   moduleName: "common-masters",
+            //   masterName: "Department"
+            // }
+          }),
+          beforeFieldChange: (action, state, dispatch) => {
+           // getActivityCard(state,dispatch)
+
+          },
+        },
+          searchButton: {
+            componentPath: "Button",
+            gridDefination: { xs: 12, sm: 4 },
+            props: {
+              variant: "contained",
+              visible:true,
+              style: {
+                color: "white",
+                margin: "8px",
+                backgroundColor: "rgba(0, 0, 0, 0.6000000238418579)",
+                borderRadius: "2px",
+                width: "220px",
+                height: "48px"
+              }
+            },
+            children: { buttonLabel: getLabel({ labelKey: "WS_SEARCH_CONNECTION_SEARCH_BUTTON" }) },
+            onClickDefination: {
+              action: "condition",
+              callBack: getActivityCard
+            }
+          },
+        }),
+        // button: getCommonContainer({
+        //   buttonContainer: getCommonContainer({            
+            
+        //   })
+        // })
+      }
+      
+    );
+  };
   export const getRequiredDocuments = (type) => {
     return getCommonContainer(
       {

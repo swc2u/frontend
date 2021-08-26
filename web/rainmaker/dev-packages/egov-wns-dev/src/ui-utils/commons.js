@@ -378,7 +378,7 @@ export const getMyConnectionResults = async (queryObject, dispatch,action) => {
             let IsEstimatecall = false
             if(action)
             {
-                if(action.screenKey !== "home")
+                if(action.screenKey !== "home" || action.screenKey !== "home1")
                 {
                     IsEstimatecall = true
 
@@ -2890,7 +2890,7 @@ export const getSWMyConnectionResults = async (queryObject, dispatch,action) => 
             let IsEstimatecall = false
             if(action)
             {
-                if(action.screenKey !== "home")
+                if(action.screenKey !== "home" || action.screenKey !== "home1")
                 {
                     IsEstimatecall = true
 
@@ -3986,19 +3986,19 @@ export const savebillGeneration = async (state, dispatch,billGeneration) => {
       
       BusinessService: [
        "NewWS1",
-       "REGULARWSCONNECTION",
-       "TEMPORARY_WSCONNECTION",
-       "TEMPORARY_WSCONNECTION_BILLING",
-       "WS_TEMP_TEMP",
-       "WS_TEMP_REGULAR",
-       "WS_DISCONNECTION",
-       "WS_TEMP_DISCONNECTION",
-       "WS_RENAME",
-       "WS_METER_UPDATE",
-       "WS_CONVERSION",
-       "WS_REACTIVATE",
-       "WS_TUBEWELL",
-       "WS_METER_TESTING"
+       "REGULARWSCONNECTION",//1
+       "TEMPORARY_WSCONNECTION",//2
+       "TEMPORARY_WSCONNECTION_BILLING",//3
+       "WS_TEMP_TEMP",//4
+       "WS_TEMP_REGULAR",//5
+       "WS_DISCONNECTION",//6
+       "WS_TEMP_DISCONNECTION",//7
+       "WS_RENAME",//8
+       "WS_METER_UPDATE",//9
+       "WS_CONVERSION",//10
+       "WS_REACTIVATE",//11
+       "WS_TUBEWELL",//12
+       "WS_METER_TESTING"//13
   
       ]
     }

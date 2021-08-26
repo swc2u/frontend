@@ -20,6 +20,14 @@ class PaymentRedirect extends Component {
     updateApiCall = async (apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)=>{
 const {state} = this.props
 console.log("stateInupdateApiCall",state)
+
+if(bookingType === "OSBM"){
+    
+    return  this.props.setRoute(
+        `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
+    );
+
+}
         if(bookingType === "BWT") {
             // let updatedQuantity = get(
             //     state,
@@ -191,7 +199,7 @@ console.log("UpdateFunctionWTPayload--two",payload)
                     set(
                         payload,
                         "bkAction",
-                        bookingType === "OSBM" || bookingType === "OSUJM"
+                        bookingType === "OSUJM" // bookingType === "OSBM" || bookingType === "OSUJM"
                             ? "PAY"
                             : bookingType === "GFCP"
                             ? "APPLY"
@@ -200,7 +208,7 @@ console.log("UpdateFunctionWTPayload--two",payload)
                             : "PAIDAPPLY"
                     );
                     set(payload, "bkPaymentStatus", transactionStatus);
-                    apiUrl = "/bookings/api/_update";
+                    apiUrl = "/bookings/api/_update";//paymentIssue changes
                     if(bookingType === "PACC"){
                         apiUrl = 'bookings/park/community/_update';
                         if(payload.bkApplicationStatus == "RE_INITIATED"){

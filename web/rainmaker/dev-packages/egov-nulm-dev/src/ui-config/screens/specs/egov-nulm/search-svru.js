@@ -150,47 +150,47 @@ import {
                 },
                 ...header,
               },
-              newApplicationButton: {
-                componentPath: "Button",
-                gridDefination: {
-                  xs: 12,
-                  sm: 6,
-                  align: "right",
-                },
-                visible: process.env.REACT_APP_NAME === "Employee"? false : true,
-                props: {
-                  variant: "contained",
-                  color: "primary",
-                  style: {
-                    color: "white",
-                    borderRadius: "2px",
-                    width: "250px",
-                    height: "48px",
-                  },
-                },
+              // newApplicationButton: {
+              //   componentPath: "Button",
+              //   gridDefination: {
+              //     xs: 12,
+              //     sm: 6,
+              //     align: "right",
+              //   },
+              //   visible: process.env.REACT_APP_NAME === "Employee"? false : true,
+              //   props: {
+              //     variant: "contained",
+              //     color: "primary",
+              //     style: {
+              //       color: "white",
+              //       borderRadius: "2px",
+              //       width: "250px",
+              //       height: "48px",
+              //     },
+              //   },
   
-                children: {
-                  plusIconInsideButton: {
-                    uiFramework: "custom-atoms",
-                    componentPath: "Icon",
-                    props: {
-                      iconName: "add",
-                      style: {
-                        fontSize: "24px",
-                      },
-                    },
-                  },
+              //   children: {
+              //     plusIconInsideButton: {
+              //       uiFramework: "custom-atoms",
+              //       componentPath: "Icon",
+              //       props: {
+              //         iconName: "add",
+              //         style: {
+              //           fontSize: "24px",
+              //         },
+              //       },
+              //     },
   
-                  buttonLabel: getLabel({
-                    labelName: "Add svru",
-                    labelKey: "NULM_ADD_NEW_SVRU_BUTTON",
-                  }),
-                },
-                onClickDefination: {
-                  action: "condition",
-                  callBack: createSEPHandle,
-                },
-              },
+              //     buttonLabel: getLabel({
+              //       labelName: "Add svru",
+              //       labelKey: "NULM_ADD_NEW_SVRU_BUTTON",
+              //     }),
+              //   },
+              //   onClickDefination: {
+              //     action: "condition",
+              //     callBack: createSEPHandle,
+              //   },
+              // },
             },
           },
           searchForm,

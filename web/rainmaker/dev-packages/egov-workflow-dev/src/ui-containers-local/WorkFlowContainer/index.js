@@ -1463,7 +1463,8 @@ uniqueBycode =(data,key)=>{
         // || businessService === "WS_CONVERSION" 
         // || businessService === "WS_REACTIVATE"     
         // || businessService === "WS_TUBEWELL"
-    ) && applicationStatus == 'PENDING_FOR_SDE_APPROVAL'){
+        //||applicationStatus == 'PENDING_FOR_SDE_APPROVAL_FOR_CITIZEN_'
+    ) && (applicationStatus == 'PENDING_FOR_SDE_APPROVAL' ) ){
       const {WaterConnection} = preparedFinalObject;
       let pipeSize = 0 ;
       //applicationStatus: "PENDING_FOR_SDE_APPROVAL"
@@ -1478,6 +1479,7 @@ uniqueBycode =(data,key)=>{
       }
       else{
         actions = actions.filter(item => item.buttonLabel !== 'VERIFY_AND_FORWARD_FOR_PAYMENT');
+        actions = actions.filter(item => item.buttonLabel !== 'SEND_BACK_TO_CITIZEN_FOR_ROADCUT_NOC');
 
       }
       
