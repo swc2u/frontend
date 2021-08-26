@@ -1614,35 +1614,33 @@ const validateNocForm = (state, handleFieldChange) => {
   if(!sameHeightOfSideStreetInch) {
     handleFieldChange("Applications[0].applicationDetails.sameHeightOfSideStreetInch", "0")
   }
-  // if(isCommercialActivity === "true" || isCommercialActivity === true) {
-  //   const groundFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivity")
-  //   //const groundFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivityInch")
-  //   const firstFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.firstFloorCommercialActivity")
-  //   //const firstFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.firstFloorCommercialActivityInch")
-  //   const secondFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivity")
-  //   //const secondFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivityInch")
-  //   if(!groundFloorCommercialActivity) {
-  //     handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivity", "0")
-  //   }
-  //   else{
-  //     handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivity", groundFloorCommercialActivity)
-  //   }
-  //   // if(!groundFloorCommercialActivityInch) {
-  //   //   handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivityInch", "0")
-  //   // }
-  //   if(!firstFloorCommercialActivity) {
-  //     handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivity", "0")
-  //   }
-  //   // if(!firstFloorCommercialActivityInch) {
-  //   //   handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivityInch", "0")
-  //   // }
-  //   if(!secondFloorCommercialActivity) {
-  //     handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivity", "0")
-  //   }
-  //   // if(!secondFloorCommercialActivityInch) {
-  //   //   handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivityInch", "0")
-  //   // }
-  // }
+  if(isCommercialActivity === "true" || isCommercialActivity === true) {
+    const groundFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorcommercialActivity")
+    //const groundFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorCommercialActivityInch")
+    const firstFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.firstFloorcommercialActivity")
+    //const firstFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.firstFloorCommercialActivityInch")
+    const secondFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorcommercialActivity")
+    //const secondFloorCommercialActivityInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.secondFloorCommercialActivityInch")
+    if(!groundFloorCommercialActivity) {
+      handleFieldChange("Applications[0].applicationDetails.groundFloorcommercialActivity", "0")
+    }
+  
+    // if(!groundFloorCommercialActivityInch) {
+    //   handleFieldChange("Applications[0].applicationDetails.groundFloorCommercialActivityInch", "0")
+    // }
+    if(!firstFloorCommercialActivity) {
+      handleFieldChange("Applications[0].applicationDetails.firstFloorcommercialActivity", "0")
+    }
+    // if(!firstFloorCommercialActivityInch) {
+    //   handleFieldChange("Applications[0].applicationDetails.firstFloorCommercialActivityInch", "0")
+    // }
+    if(!secondFloorCommercialActivity) {
+      handleFieldChange("Applications[0].applicationDetails.secondFloorcommercialActivity", "0")
+    }
+    // if(!secondFloorCommercialActivityInch) {
+    //   handleFieldChange("Applications[0].applicationDetails.secondFloorCommercialActivityInch", "0")
+    // }
+  }
 
   return isNocVerificationDetailValid;
 }
