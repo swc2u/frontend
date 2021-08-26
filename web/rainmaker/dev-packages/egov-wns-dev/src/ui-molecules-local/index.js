@@ -55,6 +55,10 @@ const NewConnection = Loadable({
   loader: () => import("./NewConnection"),
   loading: () => <Loading />
 });
+const NewConnectionActivity = Loadable({
+  loader: () => import("./NewConnectionActivity"),
+  loading: () => <Loading />
+});
 const LinkConnection = Loadable({
   loader: () => import("./LinkConnection"),
   loading: () => <Loading />
@@ -143,6 +147,7 @@ export {
   MeterReading,
   MeterReadingEditable,
   NewConnection,
+  NewConnectionActivity,
   MyApplications,
   Applications,
   WnsHowItWorks,
