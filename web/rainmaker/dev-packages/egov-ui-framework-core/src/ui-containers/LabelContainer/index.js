@@ -67,6 +67,7 @@ class LabelContainer extends React.Component {
         data-localization={
           labelKey ? labelKey : labelName ? labelName : fieldLabel
         }
+        style={{ wordBreak:'break-word' }}
         label={labelValue}
         {...rest}
       />

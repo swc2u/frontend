@@ -214,7 +214,7 @@ const waterAndSewerageSearchAndResult = {
                 listCard: {
                     uiFramework: "custom-molecules-local",
                     moduleName: "egov-wns",
-                    componentPath: "NewConnection",
+                    componentPath: "NewConnectionActivity",// NewConnection
                     props: {
                         
                     },

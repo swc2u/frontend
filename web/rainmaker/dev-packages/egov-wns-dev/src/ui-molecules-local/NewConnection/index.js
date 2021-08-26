@@ -11,6 +11,7 @@ import KeyboardRightIcon from "@material-ui/icons/KeyboardArrowRight";
 import { handleScreenConfigurationFieldChange as handleField, prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
+import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { Link } from "react-router-dom";
 
 
@@ -24,14 +25,16 @@ const styles = theme => ({
 
 class NewConnection extends React.Component {
 
-  clickHandler = () => {
+  clickHandler = (type) => {
     const {
       screenConfig,
+      toggleSnackbar,
       handleField,
       setRoute,
       moduleName,
       jsonPath,
-      value
+      value,
+      preparedFinalObject,
     } = this.props;
 
     // let toggle = get(
@@ -41,10 +44,37 @@ class NewConnection extends React.Component {
     // );
    // handleField(route.screenKey, route.jsonPath, "props.open", !toggle);
   // window.location.href = "wns/apply"
-  const applyUrl = "../wns/apply"
-  //setRoute(applyUrl)
-  window.location.href = applyUrl
-  //dispatch(setRoute(applyUrl));
+  const {searchScreen} = preparedFinalObject
+  if(type ==='ACTIVITY')
+  {
+    if(searchScreen)
+    {
+      if(searchScreen.connectionNo)
+      {
+  
+      }
+    }
+    else{
+      toggleSnackbar(
+        true,
+        {
+          labelName: "Please select Consumer No",
+          labelKey: "WS_SELECT_CONNECTION_VALIDATION_MESSAGE"
+        },
+        "warning"
+      ); 
+
+    }
+   
+
+  }
+  else{
+    const applyUrl = "../wns/apply"
+    //setRoute(applyUrl)
+    window.location.href = applyUrl
+    //dispatch(setRoute(applyUrl));
+  }
+  
 
   };
   render() {
@@ -52,7 +82,7 @@ class NewConnection extends React.Component {
 
     return (
       <div className={classes.root}>
-        <List component="nav" onClick={() => this.clickHandler()}>
+        <List component="nav" onClick={() => this.clickHandler('WATER')}>
           <ListItem button>
             <ListItemText
               primary={
@@ -72,6 +102,8 @@ class NewConnection extends React.Component {
             </ListItemSecondaryAction>
           </ListItem>
         </List>
+       
+     
       </div>
     );
   }
@@ -80,16 +112,21 @@ class NewConnection extends React.Component {
 const mapStateToProps = state => {
   const screenConfig = get(state.screenConfiguration, "screenConfig");
   const moduleName = get(state.screenConfiguration, "moduleName");
-  return { screenConfig, moduleName };
+  const { screenConfiguration } = state;
+  const { preparedFinalObject } = screenConfiguration;
+  return { screenConfig, moduleName ,preparedFinalObject};
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     handleField: (screenKey, jsonPath, fieldKey, value) =>
       dispatch(handleField(screenKey, jsonPath, fieldKey, value)),
+      toggleSnackbar: (open, message, variant) =>
+      dispatch(toggleSnackbar(open, message, variant)),
     setRoute: path => dispatch(setRoute(path)),
     prepareFinalObject: (jsonPath, value) =>
       dispatch(prepareFinalObject(jsonPath, value))
+      
   };
 };
 
