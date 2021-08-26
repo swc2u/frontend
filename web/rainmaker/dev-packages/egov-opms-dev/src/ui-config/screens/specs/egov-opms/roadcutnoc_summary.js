@@ -169,6 +169,7 @@ export const callbackforSummaryActionSubmit = async (state, dispatch) => {
     }
     else  {
       if(applicationStatus === "REVIEWOFJE"){
+        dispatch(toggleSpinner());
         routefromJEPage(dispatch);
       }else{
         routePage(dispatch);

@@ -272,7 +272,8 @@ export const footerEmp = getCommonApplyFooter({
         try {
           set(state, 'screenConfiguration.preparedFinalObject.OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.assignee', undefined);
           set(state, 'screenConfiguration.preparedFinalObject.ROADCUTNOCWF.REASSIGNDO', false);
-          if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
+          if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "EDITEDATJE"
+           || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
             const ROADCUTNOC = get(
               state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0]", {});
             // const typeOfApplicant = JSON.parse(ROADCUTNOC.applicationdetail).hasOwnProperty('typeOfApplicant') ?
