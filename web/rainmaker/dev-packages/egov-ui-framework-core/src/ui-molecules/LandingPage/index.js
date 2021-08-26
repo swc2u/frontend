@@ -46,10 +46,23 @@ class LandingPage extends React.Component {
       if(route === ""){
         window.location.href = "http://sampark.chd.nic.in/Epayment/Services/Paid/ElectricityWater/InstantPay.aspx"
       }
+      if(moduleName !== undefined)
+      {
       if(moduleName ==='WNS' ||screenConfig.home1.moduleName==='egov-wns')
       {
-        window.location.href =route
+        if (process.env.NODE_ENV === "production") {
+          //window.location.href = `citizen${route}`//citizen/
+          let myurl = route.replace('/wns/','')
+          window.location.href = myurl
       }
+      else{
+         //window.location.href = `citizen${route}`//citizen/
+         window.location.href =route
+      
+      }
+        //window.location.href =route
+      }
+    }
       else
       {
       setRoute(route);
