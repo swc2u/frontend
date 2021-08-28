@@ -967,7 +967,7 @@ const updateAdhocSellMeatReassign = (state, dispatch) => {
 const updateAdhocRoadCutForward = (state, dispatch) => {
   let isFormValid = false;
   
-  if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "EDITEDATJE" || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
+  if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
     isFormValid = validateFields(
       "components.adhocDialog.children.popup.children.adhocRebateCardRoadCutForward.children.ForwardContainerRoadCutForward.children",
       state,
@@ -1018,7 +1018,7 @@ const updateAdhocRoadCutForward = (state, dispatch) => {
     );
 
     let data = {}
-    if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE") {
+    if (nocStatus == "REVIEWOFJE" || nocStatus == "REASSIGNTOJE") {
       if (RoadCutForwardAmount > 0) {
         if (file) {
           data = {
