@@ -1121,8 +1121,6 @@ export const getOPMSPattern = type => {
     //   return /^[^\$\"'<>?\\\\~`!@$%^()+={}\[\]*.:;“”‘’0-9]{1,100}$/i;
     case "VeterinaryRegistrationNo":
       return /^[a-zA-Z0-9 \/-]{1,50}$/i;
-    case "NOCMobileNo":
-      return (/^[0-9]{10}$/i);
     case "DoorHouseNo":
       return /^[^\$\"'<>?\\\\~`!@$%^()+={}\[\]*.:;“”‘’]{1,100}$/i;
     case "Address":

@@ -645,12 +645,6 @@ const getStatus = (status) => {
         "currentState": "REASSIGN"
       };
       break;
-    case "EDITEDATJE":
-      return {
-        "dataPayload": {},
-        "currentState": "REVIEWOFJE"
-      };
-      break;
   }
 }
 
@@ -917,17 +911,12 @@ export const furnishSellMeatNocResponse = (state,response, step) => {
   set(refurnishresponse, "applicantName", response.nocApplicationDetail[0].applicantname);
   set(refurnishresponse, "houseNo", response.nocApplicationDetail[0].housenumber);
   set(refurnishresponse, "sector", response.nocApplicationDetail[0].sector);
-  set(refurnishresponse, "mobileNumber", applicationdetail.mobileNumber);
 
   set(refurnishresponse, "fatherHusbandName", applicationdetail.fatherHusbandName);
   set(refurnishresponse, "division", applicationdetail.division);
   set(refurnishresponse, "shopNumber", applicationdetail.shopNumber);
   set(refurnishresponse, "ward", applicationdetail.ward);
-
-  var array1 = response.nocApplicationDetail[0].remarks;
-  var found = array1.find(element => element.applicationstatus === "PAID" );
-
-  
+//  set(refurnishresponse, "nocSought", applicationdetail.nocSought);
   let mdmsDataForNocSought = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.nocSought", []);
   let nocSoughtFinalData = [];
   applicationdetail.nocSought.split(",").map(item => { 
@@ -940,22 +929,10 @@ export const furnishSellMeatNocResponse = (state,response, step) => {
     }
   });
   // set(refurnishresponse, "nocSought", nocSoughtFinalData);
-  // if(parseInt(step) === 0){
-  //   set(refurnishresponse, "nocSought", "");
-  // }else{
-  //   set(refurnishresponse, "nocSought", nocSoughtFinalData);
-  // }
-
-  if(found){
-    set(refurnishresponse, "nocSought", nocSoughtFinalData);
-    // set(refurnishresponse, "statusPAID", true);
+  if(parseInt(step) === 0){
+    set(refurnishresponse, "nocSought", "");
   }else{
-    //  set(refurnishresponse, "nocSought", applicationdetail.nocSought);
-  }
-
-  var checkStatus = response.nocApplicationDetail[0].applicationstatus;
-  if(checkStatus === "REASSIGN"){
-    // set(refurnishresponse, "statusPAID", false);
+    set(refurnishresponse, "nocSought", nocSoughtFinalData);
   }
   
   set(refurnishresponse, "uploadDocuments", applicationdetail.uploadDocuments);
@@ -1341,7 +1318,7 @@ export const createUpdateSellMeatNocApplication = async (state, dispatch, status
 
     set(payload, "remarks", Remarks);
     let str = "";
-    if (typeof(nocSought) !=="string") { 
+    if (nocSought) { 
       nocSought.map(item => {
         str = str + ", "+item.value;
       })

@@ -206,12 +206,7 @@ export const callBackForNexthome = async (state, dispatch) => {
       {}
     );
     if (applicationStatus === "DRAFT") {
-      var checkTerm = get(state.screenConfiguration.preparedFinalObject, "dropdownRead", "");
-      if(checkTerm === "" || checkTerm === null|| checkTerm === false || checkTerm === undefined){
-        checkTerm = false;
-      }
-      // if (localStorageGet("undertaking") == "accept" || checkUndertaking) {
-      if (checkTerm) {
+      if (localStorageGet("undertaking") == "accept" || checkUndertaking) {
       let response = await updateAppStatus(state, dispatch, "INITIATED");
       let responseStatus = get(response, "status", "");
       if (responseStatus == "success") {
@@ -332,9 +327,6 @@ const prepareDocumentsView = async (state, dispatch) => {
 
   // Get all documents from response
   let SELLMEATNOC = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0]", {});
-  var mobileNumber = JSON.parse(SELLMEATNOC.applicationdetail).mobileNumber;
-  SELLMEATNOC["mobileNumber"] = mobileNumber;
-  dispatch(prepareFinalObject("nocApplicationDetail[0]", SELLMEATNOC));
 
   let uploadDocuments = SELLMEATNOC.hasOwnProperty('applicationdetail') ? JSON.parse(SELLMEATNOC.applicationdetail).hasOwnProperty('uploadDocuments') ?
     JSON.parse(SELLMEATNOC.applicationdetail).uploadDocuments[0]['fileStoreId'] : '' : '';
