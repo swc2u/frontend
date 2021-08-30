@@ -95,7 +95,7 @@ import {
     subText: getCommonParagraph({
       labelName:
         "Only one file can be uploaded for one document. If multiple files need to be uploaded then please combine all files in a pdf and then upload",
-      labelKey: "NOC_DOCUMENT_DETAILS_SUBTEXT_POPUP"
+      labelKey: "NULM_DOCUMENT_DETAILS_SUBTEXT_POPUP"
     }),
     break: getBreak(),
     documentList: {
