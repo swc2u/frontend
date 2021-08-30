@@ -225,7 +225,7 @@ const getMdmsData = async (action, state, dispatch) => {
   }
 };
 
-export const prepareEditFlow = async (state, dispatch, applicationNumber, tenantId, step) => {
+export const prepareEditFlow = async (action, state, dispatch, applicationNumber, tenantId, step) => {
   if (applicationNumber) {
     let response = await getSearchResultsView([
       { key: "tenantId", value: tenantId },
@@ -234,6 +234,26 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
     let Refurbishresponse = furnishSellMeatNocResponse(state,response, step);
 
     dispatch(prepareFinalObject("SELLMEATNOC", Refurbishresponse));
+
+    let statusPAID = false;
+    var array1 = response.nocApplicationDetail[0].remarks;
+    var found = array1.find(element => element.applicationstatus === "PAID" );
+    if(found){
+      statusPAID = true;
+    }
+    if(statusPAID){
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.nocDetailsContainer.children.nocSought.props.disabled",
+        true
+      );
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.nocDetailsContainer.children.nocSought.props.disabled",
+        true
+      );
+    }
+
     if (applicationNumber) {
       setapplicationNumber(applicationNumber);
       setApplicationNumberBox(state, dispatch, applicationNumber);
@@ -562,8 +582,21 @@ const screenConfig = {
       // Set Documents Data (TEMP)
       prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');
     // Search in case of EDIT flow
-    prepareEditFlow(state, dispatch, applicationNumber, tenantId, step);
+    prepareEditFlow(action, state, dispatch, applicationNumber, tenantId, step);
 
+    let statusPAID = get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC.statusPAID", false);
+    if(statusPAID){
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.nocDetailsContainer.children.nocSought.props.disabled",
+        true
+      );
+      set(
+        action.screenConfig,
+        "components.div.children.formwizardFirstStep.children.nocDetails.children.cardContent.children.nocDetailsContainer.children.nocSought.props.disabled",
+        true
+      );
+    }
     // Clear Undertakking dropdown 
     // dispatch(prepareFinalObject("SELLMEATNOC.nocSought", ""));
     dispatch(prepareFinalObject("dropdownRead", false));
