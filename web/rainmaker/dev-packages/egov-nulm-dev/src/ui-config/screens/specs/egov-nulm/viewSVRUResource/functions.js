@@ -254,7 +254,7 @@ export const createUpdatePO = async (state, dispatch, action,status) => {
       if(status == "Created"){
         if (requestBody.NulmSusvRenewRequest.applicationStatus=="Approved" && status == "Created") { 
           requestBody.NulmSusvRenewRequest.action = "Created";
-        }
+        
         const response = await httpRequest(
           "post",
           "/nulm-services/v1/susv/renew/_create",
@@ -265,6 +265,20 @@ export const createUpdatePO = async (state, dispatch, action,status) => {
          if(response){
           dispatch(setRoute(`/egov-nulm/acknowledgement?screen=svru&mode=update&code=${response.ResponseBody.applicationId}`));
          }
+        }else if (requestBody.NulmSusvRenewRequest.applicationStatus == "Reassign To Citizen") {
+          requestBody.NulmSusvRenewRequest.action = 'Forward To JA';
+
+          const response = await httpRequest(
+            "post",
+            "/nulm-services/v1/susv/renew/_update",
+            "",
+            queryObject,
+            requestBody
+          );
+           if(response){
+            dispatch(setRoute(`/egov-nulm/acknowledgement?screen=svru&mode=update&code=${response.ResponseBody.applicationId}`));
+           }
+        }
       }else{
         if (status == "Drafted") {
           requestBody.NulmSusvRenewRequest.action = "Drafted";

@@ -1,6 +1,7 @@
 import {  getBreak, getLabel, getCommonParagraph, getCommonCard,  getCommonContainer,  getCommonTitle,  getTextField,  getSelectField,  getPattern} from "egov-ui-framework/ui-config/screens/specs/utils";
 import {  handleScreenConfigurationFieldChange as handleField,  prepareFinalObject} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
+import set from "lodash/get";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {  furnishNocResponse,  getSearchResults} from "../../../../../ui-utils/commons";
 import { getOPMSPattern, showHideAdhocPopups } from "../../utils/index"
@@ -65,6 +66,22 @@ export const nocDetails = getCommonCard({
        jsonPath:"SELLMEATNOC.fatherHusbandName"
     })
   },
+  mobileNo:{
+    ...getTextField({
+       label:{
+          labelName:"mobileNo",
+          labelKey:"SELLMEAT_MONILENO_NOC"
+       },
+       placeholder:{
+          labelName:"Enter Mobile No",
+          labelKey:"SELLMEAT_MOBILENO_PLACEHOLDER"
+       },
+       required:true,
+       pattern:getOPMSPattern("NOCMobileNo"),
+       errorMessage:"ERR_NOC_SELLMEAT_MOBILENO",
+       jsonPath:"SELLMEATNOC.mobileNumber"
+    })
+  },
   houseNo:{
     ...getTextField({
        label:{
@@ -115,6 +132,7 @@ export const nocDetails = getCommonCard({
       suggestions: [],
       fullwidth: true,
       required: true,
+      // disabled: false,
       inputLabelProps: {
         shrink: true
       },

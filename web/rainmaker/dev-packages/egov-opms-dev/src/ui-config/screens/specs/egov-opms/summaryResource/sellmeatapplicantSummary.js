@@ -127,6 +127,16 @@ export const sellmeatapplicantSummary = getCommonGrayCard({
               }
             }
           ),
+          applicantMobileNo: getLabelWithValue(
+            {
+              labelName: "Mobile Number",
+              labelKey: "NOC_MOBILE_NO_LABEL"
+            },
+            {
+              jsonPath:
+                "nocApplicationDetail[0].mobileNumber"
+            }
+          ),
           applicantHouseNo: getLabelWithValue(
             {
               labelName: "House No.",

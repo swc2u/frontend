@@ -443,6 +443,29 @@ const getAcknowledgementCard = (
       },
       gotoHomeFooter
     };
+  } else if (purpose === "submit" && status === "success") {
+    return {
+      header,
+      applicationSuccessCard: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        children: {
+          card: acknowledgementCard({
+            icon: "done",
+            backgroundColor: "#39CB74",
+            header: {
+              labelName: "ROADCUT NOC Application Submitted",
+              labelKey: "NOC_APPLICATION_SUCCESS_MESSAGE_MAIN"
+            },
+            body: {
+              labelName: "A notification regarding Application Submission has been sent to the applicant registered Mobile No.",
+              labelKey: "ROADCUT_NOC_APPLICATION_SUCCESS_MESSAGE_SUB"
+            }
+          })
+        }
+      },
+      gotoHomeFooter
+    };
   }
 };
 
