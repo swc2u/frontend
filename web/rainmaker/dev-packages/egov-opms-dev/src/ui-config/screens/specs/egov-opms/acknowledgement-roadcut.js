@@ -454,13 +454,46 @@ const getAcknowledgementCard = (
             icon: "done",
             backgroundColor: "#39CB74",
             header: {
-              labelName: "ROADCUT NOC Application Submitted",
+              labelName: "Application Submitted Successfully",
               labelKey: "NOC_APPLICATION_SUCCESS_MESSAGE_MAIN"
             },
-            body: {
-              labelName: "A notification regarding Application Submission has been sent to the applicant registered Mobile No.",
-              labelKey: "ROADCUT_NOC_APPLICATION_SUCCESS_MESSAGE_SUB"
-            }
+            // body: {
+            //   labelName: "Application has been marked successfully",
+            //   labelKey: "ROADCUT_NOC_APPLICATION_SUCCESS_MESSAGE_SUB"
+            // },
+            // tailText: {
+            //   labelName: "Application No.",
+            //   labelKey: "PM_APP_NO_LABEL"
+            // },
+            // number: applicationNumber
+          })
+        }
+      },
+      gotoHomeFooter
+    };
+  }else if (purpose === "editAtJE" && status === "success") {
+    return {
+      header,
+      applicationSuccessCard: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        children: {
+          card: acknowledgementCard({
+            icon: "done",
+            backgroundColor: "#39CB74",
+            header: {
+              labelName: "Application Edited Successfully",
+              labelKey: "NOC_EDIT_SUCCESS_MESSAGE_MAIN"
+            },
+            // body: {
+            //   labelName: "Application has been marked successfully",
+            //   labelKey: "ROADCUT_NOC_APPLICATION_SUCCESS_MESSAGE_SUB"
+            // },
+            // tailText: {
+            //   labelName: "Application No.",
+            //   labelKey: "PM_APP_NO_LABEL"
+            // },
+            // number: applicationNumber
           })
         }
       },
