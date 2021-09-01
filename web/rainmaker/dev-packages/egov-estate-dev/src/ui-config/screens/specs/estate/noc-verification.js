@@ -356,8 +356,8 @@ const hadbastNoField = {
     xs: 12,
     sm: 6
   },
-  required: true,
-  minLength: 1,
+  //required: true,
+  //minLength: 1,
   maxLength: 150,
   pattern:_getPattern("areaofpropertywithspecialcharacters"),
   jsonPath: "Applications[0].applicationDetails.hadbastNo",
@@ -387,8 +387,8 @@ const mutationNoField = {
     xs: 12,
     sm: 6
   },
-  required: true,
-  minLength: 2,
+  //required: true,
+  //minLength: 2,
   maxLength: 150,
   pattern:_getPattern("areaofpropertywithspecialcharacters"),
   jsonPath: "Applications[0].applicationDetails.mutationNo",
@@ -418,8 +418,8 @@ const khewatNoField = {
     xs: 12,
     sm: 6
   },
-  required: true,
-  minLength: 1,
+  //required: true,
+  //minLength: 1,
   maxLength: 150,
   pattern:_getPattern("areaofpropertywithspecialcharacters"),
   jsonPath: "Applications[0].applicationDetails.khewatNo",
@@ -848,7 +848,7 @@ const commercialActivity = ({jsonPath, label, placeholder}) => ({
         displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
     }
     else {
-        displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_WIDTH_NUMBER",action.screenKey);
+        displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_AREA_NUMBER",action.screenKey);
     }
 }
 })
@@ -1586,6 +1586,9 @@ const validateNocForm = (state, handleFieldChange) => {
   const sameWidthOfSideStreetInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.sameWidthOfSideStreetInch")
   const sameHeightOfSideStreet = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.sameHeightOfSideStreet")
   const sameHeightOfSideStreetInch = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.sameHeightOfSideStreetInch")
+  const mutation=get(state.screenConfiguration.preparedFinalObject,"Applications[0].applicationDetails.mutationNo")
+  const hadbast=get(state.screenConfiguration.preparedFinalObject,"Applications[0].applicationDetails.hadbastNo")
+  const khewat=get(state.screenConfiguration.preparedFinalObject,"Applications[0].applicationDetails.khewatNo")
 
   if(!frontElevationWidth) {
     handleFieldChange("Applications[0].applicationDetails.frontElevationWidth", "0")
@@ -1613,6 +1616,15 @@ const validateNocForm = (state, handleFieldChange) => {
   }
   if(!sameHeightOfSideStreetInch) {
     handleFieldChange("Applications[0].applicationDetails.sameHeightOfSideStreetInch", "0")
+  }
+  if(!mutation){
+    handleFieldChange("Applications[0].applicationDetails.mutationNo","0")
+  }
+  if(!hadbast){
+    handleFieldChange("Applications[0].applicationDetails.hadbastNo","0")
+  }
+  if(!khewat){
+    handleFieldChange("Applications[0].applicationDetails.khewatNo","0")
   }
   if(isCommercialActivity === "true" || isCommercialActivity === true) {
     const groundFloorCommercialActivity = get(state.screenConfiguration.preparedFinalObject, "Applications[0].applicationDetails.groundFloorcommercialActivity")
