@@ -29,7 +29,7 @@ const styles = theme => ({
 
 class NewConnectionActivity extends React.Component {
 
-  clickHandler = (item) => {
+  clickHandler = (type) => {
     const {
       screenConfig,
       toggleSnackbar,
@@ -49,54 +49,16 @@ class NewConnectionActivity extends React.Component {
    // handleField(route.screenKey, route.jsonPath, "props.open", !toggle);
   // window.location.href = "wns/apply"
   const {searchScreen} = preparedFinalObject
-  const{myConnectionsCount}=preparedFinalObject
-  if(item.activity ==='ACTIVITY')
+  if(type ==='ACTIVITY')
   {
     if(searchScreen)
     {
       if(searchScreen.connectionNo)
       {
-    //alert('pritam')
-    if (process.env.NODE_ENV === "production") {
-    //window.location.href = `citizen${route}`//citizen/
-    let myurl = item.buttonUrl.replace('/wns/','')
-    window.location.href = myurl
-    }
-    else{
-    //window.location.href = `citizen${route}`//citizen/
-    window.location.href =item.buttonUrl
-
-    }
-
-      }
-      window.scrollTo(0, 0);
-      if(myConnectionsCount>0)
-      {
-      
-      toggleSnackbar(
-        true,
-        {
-          labelName: "Please select Consumer No",
-          labelKey: "WS_SELECT_CONNECTION_VALIDATION_MESSAGE"
-        },
-        "warning"
-      );
-      }
-      if(myConnectionsCount ===0)
-      {
-        toggleSnackbar(
-          true,
-          {
-            labelName: "Link your existing water connection with My Connections for further application processes",
-            //labelKey: "WS_LINK_CONNECTION_MESSAGE"
-            lableKey:"WS_COMMON_APPL_LINK_CONNECTION"
-          },
-          "warning"
-        );
+  alert('pritam')
       }
     }
     else{
-      window.scrollTo(0, 0);
       toggleSnackbar(
         true,
         {
@@ -111,20 +73,7 @@ class NewConnectionActivity extends React.Component {
 
   }
   else{
-    let applyUrl = `../wns/apply?type=WATER`
-    if(item.activity ==='WATER')
-    {
-      applyUrl = `../wns/apply`
-    }
-    else if(item.activity ==='SW')
-    {
-      applyUrl = `../wns/apply?type=SW`
-    }
-    else if(item.activity ==='TW')
-    {
-      applyUrl = `../wns/apply?type=TW`
-    }
-    
+    const applyUrl = "../wns/apply"
     //setRoute(applyUrl)
     window.location.href = applyUrl
     //dispatch(setRoute(applyUrl));
@@ -425,9 +374,6 @@ class NewConnectionActivity extends React.Component {
   let WaterConnection = myConnectionResults;
   const {searchScreen} = preparedFinalObject;
   let connectionNo = searchScreen && searchScreen.connectionNo
-  let DefaultMessage = searchScreen && searchScreen.DefaultMessage
-  let actions =[];
-  let Action =[];
   if(connectionNo)
   {
     WaterConnection = WaterConnection.filter(x=>x.connectionNo === connectionNo)
@@ -437,7 +383,7 @@ class NewConnectionActivity extends React.Component {
     const roleIndex = userRoles.some(item => item.code ==="CITIZEN" || item.code=== "WS_CEMP" );
     const isButtonPresent =  window.localStorage.getItem("WNS_STATUS") || false;
     const serviceType = myConnectionResults[0].service;
-    
+    let actions =[];
     if(roleIndex && !isButtonPresent && serviceType !== "SEWERAGE"){
       let inWorkflow = false ;
       inWorkflow = myConnectionResults.length>0 && myConnectionResults[0].inWorkflow;
@@ -447,12 +393,6 @@ class NewConnectionActivity extends React.Component {
             actions = actions.concat(buttonArray);
             if(actions.length>1)
             {
-              Action.push(
-                {
-                  actions:actions,
-                  data:true
-                }
-              )
             }
             else{
               toggleSnackbar(true,
@@ -460,12 +400,6 @@ class NewConnectionActivity extends React.Component {
                   labelName: "Already one activity is in process",
                   labelKey: "WS_SUBACTIVITY_VALIDATION_MESSAGE"
                 }, "warning" );
-                Action.push(
-                  {
-                    actions:actions,
-                    data:false
-                  }
-                )
 
             }
      
@@ -476,37 +410,19 @@ class NewConnectionActivity extends React.Component {
             labelName: "Already one activity is in process",
             labelKey: "WS_SUBACTIVITY_VALIDATION_MESSAGE"
           }, "warning" );
-          Action.push(
-            {
-              actions:actions,
-              data:false
-            }
-          )
       }
 
     }
   }
   else
   {
-    window.scrollTo(0, 0);
-    if(DefaultMessage === true)
-      {
     toggleSnackbar(true,
       {
         labelName: "Please select Consumer No",
         labelKey: "WS_SELECT_CONNECTION_VALIDATION_MESSAGE"
       }, "warning" );
-      
-      }
-      Action.push(
-        {
-          actions:actions,
-          data:true
-        }
-      )
 
   }
-  return Action;
   }
   render() {
     const { classes, items ,preparedFinalObject} = this.props;
@@ -515,36 +431,26 @@ class NewConnectionActivity extends React.Component {
     actions.push(
       {
         activity:'WATER',
-        action:'WS_COMMON_APPL_NEW_CONNECTION_WATER'
+        action:'WATER'
       },
       {
         activity:'SW',
-        action:'WS_COMMON_APPL_NEW_CONNECTION_SW',
+        action:'WATER',
       },
       {
         activity:'TW',
-        action:'WS_COMMON_APPL_NEW_CONNECTION_TW',
+        action:'WATER',
       }
     )
   if(preparedFinalObject)
   {
 
     let actions_Type = this.validateActivityList(preparedFinalObject)
-    if(actions_Type[0].actions.length>0)
+    if(actions_Type>0)
     {
-      for (let index = 0; index < actions_Type[0].actions.length; index++) {
-        const element = actions_Type[0].actions[index];
-        actions.push(
-          {
-            activity:'ACTIVITY',
-          action:`WF_REGULARWSCONNECTION_${element.buttonLabel}`,
-          buttonUrl:element.buttonUrl
-          })
-        
-      }
 
     }
-    else if(actions_Type[0].data === true)
+    else
     {
       actions.push(
         {
@@ -589,7 +495,96 @@ class NewConnectionActivity extends React.Component {
 
   }
 
-    
+    // return (
+    //   <div className={classes.root}>
+    //     <List component="nav" onClick={() => this.clickHandler('WATER')}>
+    //       <ListItem button>
+    //         <ListItemText
+    //           primary={
+    //             <LabelContainer
+    //               labelKey="WS_COMMON_APPL_NEW_CONNECTION"
+    //               style={{
+    //                 fontSize: 14,
+    //                 color: "rgba(0, 0, 0, 0.8700000047683716)"
+    //               }}
+    //             />
+    //           }
+    //         />
+    //         <ListItemSecondaryAction>
+    //           <IconButton edge="end">
+    //             <KeyboardRightIcon />
+    //           </IconButton>
+    //         </ListItemSecondaryAction>
+    //       </ListItem>
+    //     </List>
+    //     <hr style={{marginTop:0,marginBottom:0}}></hr>
+    //     <List component="nav" onClick={() => this.clickHandler('SW')}>
+    //       <ListItem button>
+    //         <ListItemText
+    //           primary={
+    //             <LabelContainer
+    //               labelKey="WS_COMMON_APPL_NEW_CONNECTION_SW"
+    //               style={{
+    //                 fontSize: 14,
+    //                 color: "rgba(0, 0, 0, 0.8700000047683716)"
+    //               }}
+    //             />
+    //           }
+    //         />
+    //         <ListItemSecondaryAction>
+    //           <IconButton edge="end">
+    //             <KeyboardRightIcon />
+    //           </IconButton>
+    //         </ListItemSecondaryAction>
+    //       </ListItem>
+    //     </List>
+    //     <hr style={{marginTop:0,marginBottom:0}}></hr>
+    //     <List component="nav" onClick={() => this.clickHandler('TW')}>
+    //       <ListItem button>
+    //         <ListItemText
+    //           primary={
+    //             <LabelContainer
+    //               labelKey="WS_COMMON_APPL_NEW_CONNECTION_TW"
+    //               style={{
+    //                 fontSize: 14,
+    //                 color: "rgba(0, 0, 0, 0.8700000047683716)"
+    //               }}
+    //             />
+    //           }
+    //         />
+    //         <ListItemSecondaryAction>
+    //           <IconButton edge="end">
+    //             <KeyboardRightIcon />
+    //           </IconButton>
+    //         </ListItemSecondaryAction>
+    //       </ListItem>
+    //     </List>
+    //     <hr style={{marginTop:0,marginBottom:0}}></hr>
+
+    //     <List component="nav" onClick={() => this.clickHandler('ACTIVITY')}>
+    //       <ListItem button>
+    //         <ListItemText
+    //           primary={
+    //             <LabelContainer
+    //               labelKey="WF_REGULARWSCONNECTION_TEMPORARY_DISCONNECTION"
+    //               style={{
+    //                 fontSize: 14,
+    //                 color: "rgba(0, 0, 0, 0.8700000047683716)"
+    //               }}
+    //             />
+    //           }
+    //         />
+    //         <ListItemSecondaryAction>
+    //           <IconButton edge="end">
+    //             <KeyboardRightIcon />
+    //           </IconButton>
+    //         </ListItemSecondaryAction>
+    //       </ListItem>
+    //     </List>
+     
+     
+    //   </div>
+    // );
     if(actions.length>0)
           {
             return  ( <div className={classes.root}>
@@ -597,9 +592,8 @@ class NewConnectionActivity extends React.Component {
                 actions&&(
                   actions.map((item,i)=>{
                     return(
-                      <div>
-
-                <List component="nav" onClick={() => this.clickHandler(item)}>
+                      
+                <List component="nav" onClick={() => this.clickHandler(item.activity)}>
                 <ListItem button>
                 <ListItemText
                 primary={
@@ -619,8 +613,6 @@ class NewConnectionActivity extends React.Component {
                 </ListItemSecondaryAction>
                 </ListItem>
                 </List>
-                <hr style={{marginTop:0,marginBottom:0}}></hr>
-                </div>
                     )
                   }))
 
