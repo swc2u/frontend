@@ -116,11 +116,15 @@ const routePage = (dispatch, nocnumber) => {
 
 }
 
-const routefromJEPage = (dispatch) => {
+const routefromJEPage = (dispatch, nocnumber) => {
   const appendUrl = process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-  const reviewUrl = `${appendUrl}/egov-opms/roadcut-search`;
+  const reviewUrl = `${appendUrl}/egov-opms/acknowledgement-roadcut?purpose=editAtJE&status=success&applicationNumber=`+nocnumber+`&tenantId=ch.chandigarh&secondNumber=`;
   dispatch(toggleSpinner());
   dispatch(setRoute(reviewUrl));
+  // const appendUrl = process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+  // const reviewUrl = `${appendUrl}/egov-opms/roadcut-search`;
+  // dispatch(toggleSpinner());
+  // dispatch(setRoute(reviewUrl));
 
 
 }
@@ -134,12 +138,18 @@ export const callbackforSummaryActionSubmit = async (state, dispatch) => {
       "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus",
       {}
     );
+    let nocnumber = get(
+      state,
+      "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].nocnumber",
+      {}
+    );
 
     if(applicationStatus === "REVIEWOFJE"){
         let response = await updateAppStatus(state, dispatch, "EDITEDATJE");
         let responseStatus = get(response, "status", "");
+        let nocnumber = get(response, "nocnumber", "");
         if (responseStatus == "success") {
-          routefromJEPage(dispatch)
+          routefromJEPage(dispatch, nocnumber)
         }
         else if (responseStatus == "fail" || responseStatus == "Fail") {
           dispatch(toggleSpinner());
@@ -171,7 +181,7 @@ export const callbackforSummaryActionSubmit = async (state, dispatch) => {
     else  {
       if(applicationStatus === "REVIEWOFJE"){
         dispatch(toggleSpinner());
-        routefromJEPage(dispatch);
+        routefromJEPage(dispatch, nocnumber);
       }else{
         routePage(dispatch);
       }
