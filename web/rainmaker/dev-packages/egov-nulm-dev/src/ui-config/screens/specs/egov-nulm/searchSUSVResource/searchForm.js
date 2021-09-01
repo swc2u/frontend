@@ -149,10 +149,10 @@ export const searchForm = getCommonCard({
             value: "Created",
             label: "Created"
           },
-          {
-            value: "Drafted",
-            label: "Drafted"
-          },
+          // {
+          //   value: "Drafted",
+          //   label: "Drafted"
+          // },
           {
             value: "Forward to JE",
             label: "Forward to JE"
