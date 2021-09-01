@@ -151,7 +151,7 @@ class ShowField extends Component {
          
           format: {
                    body: function (data, row, column, node ) {
-                     if(_this.state.reportName ==='MonthlyPensionDrawn' ||_this.state.reportName ==='PNBBankReport'||_this.state.reportName ==='OtherBankReport')
+                     if(_this.state.reportName ==='MonthlyPensionDrawn')
                      {
                       
                       return column === 6 ? "\0" + data : data;
@@ -448,8 +448,6 @@ class ShowField extends Component {
           )}
           {reportResult.hasOwnProperty("reportHeader") &&
             reportResult.reportHeader.map((item, i) => {
-              if(item)
-              {
               if (item.showColumn) {
                 return (
                   <th key={i} className="report-header-cell">
@@ -471,7 +469,6 @@ class ShowField extends Component {
                   </th>
                 );
               }
-            }
             })}
         </tr>
       </thead>
@@ -604,8 +601,6 @@ class ShowField extends Component {
                   var columnObj = {};
                   //array for particular row
                   var respHeader = reportHeaderObj[itemIndex];
-                  if(respHeader)
-                  {
                   if (respHeader.showColumn) {
                     columnObj = {};
                     return (
@@ -632,7 +627,6 @@ class ShowField extends Component {
                       </td>
                     );
                   }
-                }
                 })}
               </tr>
             );
@@ -653,14 +647,11 @@ class ShowField extends Component {
     {
       reportHeaderObj.map((headerObj, index) => {
         let columnObj = {};
-        if(headerObj)
-        {
         if (headerObj.showColumn) {
           columnObj["showColumn"] = headerObj.showColumn;
           columnObj["total"] = null == headerObj.total ? false : headerObj.total;
           sumColumn.push(columnObj);
         }
-      }
       });
       //for 1st column (Sr.No)
       let firstColObj = {};

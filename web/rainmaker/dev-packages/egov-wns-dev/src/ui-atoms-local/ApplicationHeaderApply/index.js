@@ -89,7 +89,6 @@ if(wnsHeader ||ActionType)
     const applicationNo = getQueryArg(window.location.href, "applicationNumber");
     let tenantId = getQueryArg(window.location.href, "tenantId");
     const ActionType = getQueryArg(window.location.href, "actionType");
-    let type_ = getQueryArg(window.location.href, "type");
     if(applicationNo && tenantId)
     {
       if(wnsHeader_ || ActionType)
@@ -140,39 +139,11 @@ if(wnsHeader ||ActionType)
         else
         header= `${wnsHeader_}_DETAIL_HEADER`;
       }
-      else 
-      {
-        if (applicationNo.includes("SW")) {
-          header ="SW_SEWERAGE_DETAIL_HEADER_APPLY"
-        }
-        else
-        {
-          header=  "WS_APPLY_NEW_CONNECTION_HEADER"
-        }
-      }  
-     // header=  "WS_APPLY_NEW_CONNECTION_HEADER"
-
+      else   
+      header=  "WS_APPLY_NEW_CONNECTION_HEADER"
     }
     else
-    {
-      if(type_ ==='SW')
-      {
-        //return  "SW_SEWERAGE_DETAIL_HEADER_APPLY"
-        header=  "SW_SEWERAGE_DETAIL_HEADER_APPLY" 
-      }
-      else if(type_ ==='TW')
-      {
-       // return  "WS_TUBEWELL_DETAIL_HEADER_APPLY"
-        header=  "WS_TUBEWELL_DETAIL_HEADER_APPLY" 
-      }
-      else
-      {
-       // return  "WS_WATER_DETAIL_HEADER_APPLY"
-        header=  "WS_WATER_DETAIL_HEADER_APPLY" 
-      }
-    }
-    //header=  "WS_APPLY_NEW_CONNECTION_HEADER" 
-
+    header=  "WS_APPLY_NEW_CONNECTION_HEADER" 
   }
     
   else

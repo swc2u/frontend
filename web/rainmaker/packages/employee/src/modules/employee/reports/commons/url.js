@@ -19,14 +19,6 @@ export const getResultUrl = (moduleName,reportName) => {
     {
        reportResultUrl = `/pension-services/v1/_searchPensionDisbursement`;
     }
-    else if(reportName==="PNBBankReport")
-    {
-       reportResultUrl = `/pension-services/v1/_pnbBankReport`;
-    }
-    else if(reportName==="OtherBankReport")
-    {
-       reportResultUrl = `/pension-services/v1/_otherBankReport`;
-    }
   }
   return reportResultUrl;
 }
