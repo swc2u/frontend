@@ -1,5 +1,5 @@
 import React from "react";
-import { getCommonHeader,getCommonContainer } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getCommonHeader,getCommonContainer,getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { fetchData } from "./citizenSearchResource/citizenFunctions";
 import "../utils/index.css";
 import PayWnsBillIcon from "../../../../ui-atoms-local/Icons/PayWnsBillIcon/index";
@@ -120,13 +120,13 @@ const cardItems = [
 //     icon: < PayWnsBillIcon />,
 //     route: "search"
 // },
-{
-    label: {
-        labelKey: "WS_MONTHLY_WATER_BILL_PAYMENT",
-    },
-    icon: < PayWnsBillIcon />,
-    route: ""
-},
+// {
+//     label: {
+//         labelKey: "WS_MONTHLY_WATER_BILL_PAYMENT",
+//     },
+//     icon: < PayWnsBillIcon />,
+//     route: ""
+// },
 {
     label: {
         labelKey: "WS_COMMON_APPL_LINK_CONNECTION",
@@ -140,7 +140,14 @@ const cardItems = [
     },
     icon: < MyConnectionsIcon />,
     route: "my-connections"
-}
+},
+{
+    label: {
+        labelKey: "WS_MONTHLY_WATER_BILL_PAYMENT",
+    },
+    icon: < PayWnsBillIcon />,
+    route: ""
+},
 ];
 
 const usermannulalButton = getCommonContainer({
@@ -175,6 +182,7 @@ const waterAndSewerageSearchAndResult = {
             }
         ]
        // getRequiredDocData(action, dispatch, moduleDetails)
+       dispatch(prepareFinalObject("searchScreen.DefaultMessage",false));
         return action;
     },
     components: {
@@ -186,31 +194,90 @@ const waterAndSewerageSearchAndResult = {
                 // className: "common-div-css"
             },
             children: {
-                header: header,
+                header: 
+                {
+                    gridDefination: {
+                        xs: 12,
+                        sm: 6,
+                      },
+                    ...header,
+                },
+               // usermannulal: usermannulalButton,
+                // newApplicationButton: {
+                //     componentPath: "Button",
+                //     gridDefination: {
+                //       xs: 12,
+                //       sm: 6,
+                //       align: "right",
+                //     },
+                //     visible: false,
+                //     props: {
+                //       variant: "contained",
+                //       color: "primary",
+                //       style: {
+                //         color: "white",
+                //         borderRadius: "2px",
+                //         width: "250px",
+                //         height: "48px",
+                //       },
+                //     },
+      
+                //     children: {
+                //       plusIconInsideButton: {
+                //         uiFramework: "custom-atoms",
+                //         componentPath: "Icon",
+                //         props: {
+                //           iconName: "add",
+                //           style: {
+                //             fontSize: "24px",
+                //           },
+                //         },
+                //       },
+      
+                //       buttonLabel: getLabel({
+                //         labelName: "Add Material Indent",
+                //         labelKey: "STORE_MATERIAL_INDENT_NOTE_ADD_MATERIAL_INDENT",//
+                //       }),
+                //     },
+                //     onClickDefination: {
+                //       action: "condition",
+                //      // callBack: createMaterialIndentHandle,
+                //     },
+                //     roleDefination: {
+                //       rolePath: "user-info.roles",
+                //       //roles: roles
+                //     }
+                //   },
                 ConnectionList: getConnectionCard("WNS"),
-                applyActivityCard: {
-                    uiFramework: "custom-molecules",
-                    componentPath: "LandingPage",
-                    style: {
-                      paddingTop: "20px",
-                    },
-                    props: {
-                      items: [],
-                      history: {},
-                      module: "PRSCP",
-                      moduleName:'WNS'
-                    }
-                  },
+                // applyActivityCard: {
+                //     uiFramework: "custom-molecules",
+                //     componentPath: "LandingPage",
+                //     style: {
+                //       paddingTop: "20px",
+                //     },
+                //     props: {
+                //       items: [],
+                //       history: {},
+                //       module: "PRSCP",
+                //       moduleName:'WNS'
+                //     }
+                //   },
                 applyCard: {
                     uiFramework: "custom-molecules",
                     componentPath: "LandingPage",
-                    moduleName: "egov-wns",
                     props: {
                         items: cardItems,
                         history: {}
                     }
                 },
                // HelpHome: getRequiredDocuments("WNS"),
+            //    NestedList: {
+            //     uiFramework: "custom-atoms-local",
+            //     moduleName: "egov-wns",
+            //     componentPath: "NestedList",
+            //     props: { number: "NA" },
+            //     //visible: false
+            //   },
                 listCard: {
                     uiFramework: "custom-molecules-local",
                     moduleName: "egov-wns",
@@ -258,7 +325,7 @@ const waterAndSewerageSearchAndResult = {
                 }
             }
         },
-        usermannulal: usermannulalButton,
+        
         adhocDialog: {
             uiFramework: "custom-containers",
             componentPath: "DialogContainer",

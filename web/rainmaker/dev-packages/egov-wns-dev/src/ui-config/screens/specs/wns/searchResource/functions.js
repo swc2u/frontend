@@ -468,6 +468,7 @@ export const getActivityCard = async(state,dispatch)=>{
   let WaterConnection = myConnectionResults;
   const {searchScreen} = preparedFinalObject;
   let connectionNo = searchScreen && searchScreen.connectionNo
+  let DefaultMessage = searchScreen && searchScreen.DefaultMessage
   if(connectionNo)
   {
   WaterConnection = WaterConnection.filter(x=>x.connectionNo === connectionNo)
@@ -616,14 +617,14 @@ export const getActivityCard = async(state,dispatch)=>{
     return item.value
   });
 
-  dispatch(
-    handleField(
-      "home1",
-      "components.div.children.applyActivityCard",
-      "props.items",
-      cards
-    )
-  );
+  // dispatch(
+  //   handleField(
+  //     "home1",
+  //     "components.div.children.applyActivityCard",
+  //     "props.items",
+  //     cards
+  //   )
+  // );
   dispatch(toggleSpinner());
             }
             else{
@@ -652,6 +653,8 @@ export const getActivityCard = async(state,dispatch)=>{
     }
     else
     {
+      if(DefaultMessage === true)
+      {
       const errorMessageN = {
         labelName: "Please select Consumer No",
         labelKey:   `WS_SELECT_CONNECTION_VALIDATION_MESSAGE`
@@ -659,6 +662,7 @@ export const getActivityCard = async(state,dispatch)=>{
       };
       dispatch(toggleSpinner());
       dispatch(toggleSnackbar(true, errorMessageN, "warning"));
+    }
     }
 
 };
