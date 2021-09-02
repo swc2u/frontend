@@ -151,10 +151,17 @@ class ShowField extends Component {
          
           format: {
                    body: function (data, row, column, node ) {
-                     if(_this.state.reportName ==='MonthlyPensionDrawn' ||_this.state.reportName ==='PNBBankReport'||_this.state.reportName ==='OtherBankReport')
-                     {
-                      
+                     if(_this.state.reportName ==='MonthlyPensionDrawn' )
+                     {                      
                       return column === 6 ? "\0" + data : data;
+                    }
+                    else if(_this.state.reportName ==='PNBBankReport')
+                    {
+                      return column === 1 ? "\0" + data : data;
+                    }
+                    else if(_this.state.reportName ==='OtherBankReport')
+                    {
+                      return column === 5 ? "\0" + data : data;
                     }
                     else{
                       var str1 = new String(data);  
