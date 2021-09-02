@@ -190,11 +190,27 @@ class CheckboxLabels extends React.Component {
 
     }
     const applicationNo_ = getQueryArg(window.location.href, "applicationNumber");
+    const type = getQueryArg(window.location.href, "type");
+    let IsWater = false;
+    let IsSW = false;
+    let IsTW = false;
     if(getQueryArg(window.location.href, "action") === "edit" && applicationNo_ )
     {
       IsEdit = true;
 
     }
+    if(type ==='SW' )
+      {
+        IsSW = true;
+      }
+      else if(type ==='TW' )
+      {
+        IsTW = true
+      }
+      else
+      {
+        IsWater = true
+      }
    
     if (this.state.interChange) {
       checkedWater = this.state.checkedWater;
@@ -217,39 +233,45 @@ class CheckboxLabels extends React.Component {
           <FormGroup row>
             <FormControlLabel
               classes={{ label: "checkbox-button-label" }}
-              control={
-                <Checkbox
-                  checked={checkedWater}
-                  disabled={IsEdit}
-                  onChange={this.handleWater("checkedWater")}
-                  classes={{ root: classes.radioRoot, checked: classes.checked }}
-                  color="primary"
-                />}
-              label={<LabelContainer labelKey="WS_APPLY_WATER" />}
+              // control={
+              //   <Checkbox
+              //     checked={checkedWater}
+              //     disabled={IsEdit}
+              //     onChange={this.handleWater("checkedWater")}
+              //     classes={{ root: classes.radioRoot, checked: classes.checked }}
+              //     color="primary"
+              //     visible={false}
+              //   />}
+              label={<LabelContainer labelKey="WS_APPLY_WATER" visible={IsWater} />}
             />
             <FormControlLabel
               classes={{ label: "checkbox-button-label" }}
-              control={
-                <Checkbox
-                  checked={checkedSewerage}
-                  disabled={IsEdit}
-                  onChange={this.handleSewerage("checkedSewerage")}
-                  classes={{ root: classes.radioRoot, checked: classes.checked }}
-                  color="primary"
-                />}
-              label={<LabelContainer labelKey="WS_APPLY_SEWERAGE" />}
+              // control={
+              //   <Checkbox
+              //     checked={checkedSewerage}
+              //     disabled={IsEdit}
+              //     onChange={this.handleSewerage("checkedSewerage")}
+              //     classes={{ root: classes.radioRoot, checked: classes.checked }}
+              //     color="primary"
+              //     visible={false}
+              //   />}
+              label={<LabelContainer labelKey="WS_APPLY_SEWERAGE" visible={IsSW} />}
             />
               <FormControlLabel
               classes={{ label: "checkbox-button-label" }}
-              control={
-                <Checkbox
-                  checked={checkedTubewell}
-                  disabled={IsEdit}
-                  onChange={this.handleTubewell("checkedTubewell")}
-                  classes={{ root: classes.radioRoot, checked: classes.checked }}
-                  color="primary"
-                />}
-              label={<LabelContainer labelKey="WS_APPLY_TUBEWELL" />}
+              // control={
+              //   <Checkbox
+              //     checked={checkedTubewell}
+              //     disabled={IsEdit}
+              //     onChange={this.handleTubewell("checkedTubewell")}
+              //     classes={{ root: classes.radioRoot, checked: classes.checked }}
+              //     color="primary"
+              //     visible={false}
+              //   />}
+              label={<LabelContainer labelKey="WS_APPLY_TUBEWELL"
+              
+              visible={IsTW}
+              />}
             />
           </FormGroup>
         </FormControl>

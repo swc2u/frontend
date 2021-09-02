@@ -53,6 +53,18 @@ class NewConnection extends React.Component {
       {
   
       }
+      else
+      {
+        toggleSnackbar(
+          true,
+          {
+            labelName: "Please select Consumer No",
+            labelKey: "WS_SELECT_CONNECTION_VALIDATION_MESSAGE"
+          },
+          "warning"
+        ); 
+
+      }
     }
     else{
       toggleSnackbar(

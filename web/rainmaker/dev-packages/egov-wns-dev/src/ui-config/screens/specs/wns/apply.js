@@ -47,7 +47,7 @@ import commonConfig from "config/common.js";
 import { reviewDocuments } from "./applyResource/reviewDocuments";
 import { reviewOwner } from "./applyResource/reviewOwner";
 import { reviewConnectionDetails } from "./applyResource/reviewConnectionDetails";
-import { togglePropertyFeilds, toggleSewerageFeilds, toggleWaterFeilds } from '../../../../ui-containers-local/CheckboxContainer/toggleFeilds';
+import { togglePropertyFeilds, toggleSewerageFeilds, toggleWaterFeilds,toggleTubewellFeilds } from '../../../../ui-containers-local/CheckboxContainer/toggleFeilds';
 import { getLocale,getTenantId,getUserInfo,setModule } from "egov-ui-kit/utils/localStorageUtils";
 import cloneDeep from "lodash/cloneDeep";
 export const stepperData = () => {
@@ -184,6 +184,7 @@ const getLabelForWnsHeader = () => {
     const wnsHeader_ =  window.localStorage.getItem("wns_workflow");
     const applicationNo = getQueryArg(window.location.href, "applicationNumber");
     let tenantId = getQueryArg(window.location.href, "tenantId");
+    let type_ = getQueryArg(window.location.href, "type");
     if(applicationNo && tenantId)
     {
       if(wnsHeader_)
@@ -194,7 +195,21 @@ const getLabelForWnsHeader = () => {
       return  "WS_APPLY_NEW_CONNECTION_HEADER"
     }
     else
-    return  "WS_APPLY_NEW_CONNECTION_HEADER"
+    {
+      if(type_ ==='SW')
+      {
+        return  "SW_SEWERAGE_DETAIL_HEADER_APPLY"
+      }
+      else if(type_ ==='TW')
+      {
+        return  "WS_TUBEWELL_DETAIL_HEADER_APPLY"
+      }
+      else
+      {
+        return  "WS_WATER_DETAIL_HEADER_APPLY"
+      }
+    }
+    
    
 
   }
@@ -454,6 +469,19 @@ export const getMdmsData = async (state,dispatch) => {
     dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     if(payload.MdmsRes['ws-services-masters'].sectorList !== undefined)
     dispatch(prepareFinalObject("applyScreenMdmsData.ws-services-masters.wssectorList", payload.MdmsRes['ws-services-masters'].sectorList));
+    const type = getQueryArg(window.location.href, "type");
+    if(type ==='SW')
+   {
+    if(payload.MdmsRes['ws-services-masters'].swSectorList !== undefined)
+    dispatch(prepareFinalObject("applyScreenMdmsData.ws-services-masters.sectorList", payload.MdmsRes['ws-services-masters'].swSectorList));
+   }
+   else
+   {
+    if(payload.MdmsRes['ws-services-masters'].wssectorList !== undefined)
+    dispatch(prepareFinalObject("applyScreenMdmsData.ws-services-masters.sectorList", payload.MdmsRes['ws-services-masters'].wssectorList));
+   }
+    
+    
     //
   } catch (e) { console.log(e); }
 };
@@ -491,6 +519,23 @@ export const getData = async (action, state, dispatch) => {
          displaysubUsageType(swusageCategory_, dispatch, state);
          }
         dispatch(prepareFinalObject("SewerageConnection", payloadSewerage.SewerageConnections));
+        dispatch(
+          handleField(
+            "apply",
+            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+            "visible",
+            false
+          )
+        );
+        const textFields = ["ledgerNo","ledgerGroup","noOfToilets","noOfWaterClosets","billGroup","ccCode","ferruleSize"];
+      for (let i = 0; i < textFields.length; i++) {
+        dispatch(handleField(
+          "apply",
+          `components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.connectiondetailscontainer.children.cardContent.children.connectionDetails.children.${textFields[i]}`,
+          "visible",
+          false
+          ));
+      }
       } else {
         try { payloadWater = await getSearchResults(queryObject) } catch (error) { console.error(error); };
         payloadWater.WaterConnection[0].water = true;
@@ -1443,15 +1488,8 @@ export const getData = async (action, state, dispatch) => {
         }
       }
       if(data.sewerage === true || data.tubewell === true)
-      {
-        dispatch(
-          handleField(
-            "apply",
-            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
-            "visible",
-            false
-          )
-        );
+      {      
+        
         dispatch(
           handleField(
             "apply",
@@ -1460,86 +1498,99 @@ export const getData = async (action, state, dispatch) => {
             false
           )
         );
+        // set in for loop
+        const textFieldsconnection = ["initialMeterReading","lastMeterReading","meterCount","meterDigits","meterID","meterInstallationDate","meterRentCode","meterUnit","mfrCode","sanctionedCapacity"];
+      for (let i = 0; i < textFieldsconnection.length; i++) {
         dispatch(
           handleField(
             "apply",
-            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.initialMeterReading",
+            `components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.${textFieldsconnection[i]}`,
             "visible",
             false
           )
         );
-        dispatch(
-          handleField(
-            "apply",
-            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.lastMeterReading",
-            "visible",
-            false
-          )
-        );
-        dispatch(
-          handleField(
-            "apply",
-            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterCount",
-            "visible",
-            false
-          )
-        );
-        dispatch(
-          handleField(
-            "apply",
-            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterDigits",
-            "visible",
-            false
-          )
-        );
-        dispatch(
-          handleField(
-            "apply",
-            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterID",
-            "visible",
-            false
-          )
-        );
-        dispatch(
-          handleField(
-            "apply",
-            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterInstallationDate",
-            "visible",
-            false
-          )
-        );
-        dispatch(
-          handleField(
-            "apply",
-            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterRentCode",
-            "visible",
-            false
-          )
-        );
-        dispatch(
-          handleField(
-            "apply",
-            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterUnit",
-            "visible",
-            false
-          )
-        );
-        dispatch(
-          handleField(
-            "apply",
-            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.mfrCode",
-            "visible",
-            false
-          )
-        );
-        dispatch(
-          handleField(
-            "apply",
-            "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.sanctionedCapacity",
-            "visible",
-            false
-          )
-        );
+      }
+        //
+        // dispatch(
+        //   handleField(
+        //     "apply",
+        //     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.initialMeterReading",
+        //     "visible",
+        //     false
+        //   )
+        // );
+        // dispatch(
+        //   handleField(
+        //     "apply",
+        //     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.lastMeterReading",
+        //     "visible",
+        //     false
+        //   )
+        // );
+        // dispatch(
+        //   handleField(
+        //     "apply",
+        //     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterCount",
+        //     "visible",
+        //     false
+        //   )
+        // );
+        // dispatch(
+        //   handleField(
+        //     "apply",
+        //     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterDigits",
+        //     "visible",
+        //     false
+        //   )
+        // );
+        // dispatch(
+        //   handleField(
+        //     "apply",
+        //     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterID",
+        //     "visible",
+        //     false
+        //   )
+        // );
+        // dispatch(
+        //   handleField(
+        //     "apply",
+        //     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterInstallationDate",
+        //     "visible",
+        //     false
+        //   )
+        // );
+        // dispatch(
+        //   handleField(
+        //     "apply",
+        //     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterRentCode",
+        //     "visible",
+        //     false
+        //   )
+        // );
+        // dispatch(
+        //   handleField(
+        //     "apply",
+        //     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.meterUnit",
+        //     "visible",
+        //     false
+        //   )
+        // );
+        // dispatch(
+        //   handleField(
+        //     "apply",
+        //     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.mfrCode",
+        //     "visible",
+        //     false
+        //   )
+        // );
+        // dispatch(
+        //   handleField(
+        //     "apply",
+        //     "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.activationDetailsContainer.children.cardContent.children.activeDetails.children.sanctionedCapacity",
+        //     "visible",
+        //     false
+        //   )
+        // );
 
       }
       let propId = get(state.screenConfiguration.preparedFinalObject, "applyScreen.property.propertyId")
@@ -1926,9 +1977,39 @@ const screenConfig = {
     dispatch(toggleSpinner());
     pageReset(dispatch);
     getData(action, state, dispatch).then(() => { });
-    dispatch(prepareFinalObject("applyScreen.water", true));
-    dispatch(prepareFinalObject("applyScreen.sewerage", false));
-    dispatch(prepareFinalObject("applyScreen.tubewell", false));
+    const type = getQueryArg(window.location.href, "type");
+    if(type ==='WATER')
+    {
+      dispatch(prepareFinalObject("applyScreen.water", true));
+      dispatch(prepareFinalObject("applyScreen.sewerage", false));
+      dispatch(prepareFinalObject("applyScreen.tubewell", false));
+    }
+    else if(type ==='SW')
+    {
+      dispatch(prepareFinalObject("applyScreen.water", false));
+      dispatch(prepareFinalObject("applyScreen.sewerage", true));
+      dispatch(prepareFinalObject("applyScreen.tubewell", false));
+      // const swSectorList = state.screenConfiguration.preparedFinalObject.applyScreenMdmsData['ws-services-masters'].swSectorList
+      // dispatch(prepareFinalObject("applyScreenMdmsData.ws-services-masters.sectorList", swSectorList));
+     // approveCheck('applyScreenMdmsData.ws-services-masters.sectorList', swSectorList);
+
+    }
+    else if(type ==='TW')
+    {
+      dispatch(prepareFinalObject("applyScreen.water", false));
+      dispatch(prepareFinalObject("applyScreen.sewerage", false));
+      dispatch(prepareFinalObject("applyScreen.tubewell", true));
+
+    }
+    else
+    {
+      dispatch(prepareFinalObject("applyScreen.water", true));
+      dispatch(prepareFinalObject("applyScreen.sewerage", false));
+      dispatch(prepareFinalObject("applyScreen.tubewell", false));
+
+    }
+    
+    
     const propertyId = getQueryArg(window.location.href, "propertyId");
 
     const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
@@ -2023,11 +2104,42 @@ const screenConfig = {
         toggleWaterFeilds(action, false);
         toggleSewerageFeilds(action, false);
        }else{
-        dispatch(prepareFinalObject("applyScreen.water", true));
-        dispatch(prepareFinalObject("applyScreen.sewerage", false));
-        dispatch(prepareFinalObject("applyScreen.tubewell", false));
-        toggleWaterFeilds(action, true);
-        toggleSewerageFeilds(action, false);
+        // dispatch(prepareFinalObject("applyScreen.water", true));
+        // dispatch(prepareFinalObject("applyScreen.sewerage", false));
+        // dispatch(prepareFinalObject("applyScreen.tubewell", false));
+        // toggleWaterFeilds(action, true);
+        // toggleSewerageFeilds(action, false);
+        if(type ==='WATER')
+        {
+          dispatch(prepareFinalObject("applyScreen.water", true));
+          dispatch(prepareFinalObject("applyScreen.sewerage", false));
+          dispatch(prepareFinalObject("applyScreen.tubewell", false));
+          toggleWaterFeilds(action, true);
+          toggleSewerageFeilds(action, false);
+        }
+        else if(type ==='SW')
+        {
+          dispatch(prepareFinalObject("applyScreen.water", false));
+          dispatch(prepareFinalObject("applyScreen.sewerage", true));
+          dispatch(prepareFinalObject("applyScreen.tubewell", false));
+          toggleWaterFeilds(action, false);
+          toggleSewerageFeilds(action, true);
+        }
+        else if(type ==='TW')
+        {
+          dispatch(prepareFinalObject("applyScreen.water", false));
+          dispatch(prepareFinalObject("applyScreen.sewerage", false));
+          dispatch(prepareFinalObject("applyScreen.tubewell", true));
+          toggleWaterFeilds(action, false);
+          toggleSewerageFeilds(action, false);
+        }
+        else
+        {
+          dispatch(prepareFinalObject("applyScreen.water", true));
+          dispatch(prepareFinalObject("applyScreen.sewerage", false));
+          dispatch(prepareFinalObject("applyScreen.tubewell", false));
+    
+        }
        }
        
        window.localStorage.removeItem("isTubeWell");
@@ -2046,15 +2158,18 @@ const screenConfig = {
       //   toggleSewerageFeilds(action, false);
       // }
       togglePropertyFeilds(action, true)
-      if (get(state.screenConfiguration.preparedFinalObject, "applyScreen.water") && get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage")) {
+      if (get(state.screenConfiguration.preparedFinalObject, "applyScreen.water") 
+      //&& get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage")
+      ) {
         toggleWaterFeilds(action, true);
-        toggleSewerageFeilds(action, false);
+        //toggleSewerageFeilds(action, false);
       } else if (get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage")) {
         toggleWaterFeilds(action, false);
         toggleSewerageFeilds(action, true);
       } else {
-        toggleWaterFeilds(action, true);
-        toggleSewerageFeilds(action, true);
+        toggleWaterFeilds(action, false);
+        toggleSewerageFeilds(action, false);
+        toggleTubewellFeilds(action, false);
         if (get(state.screenConfiguration.preparedFinalObject, "applyScreen.water"))
         {
         set(
@@ -2088,7 +2203,8 @@ const screenConfig = {
       //   "visible",
       //   false
       // );
-
+      if(type ==='WATER' ||type ==='TW' )
+      {
       set(
         action.screenConfig,
         "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfWaterClosets.visible",
@@ -2099,6 +2215,7 @@ const screenConfig = {
         "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfToilets.visible",
         false
       );
+      }
     }
 
     // const tenantId = getTenantId();
