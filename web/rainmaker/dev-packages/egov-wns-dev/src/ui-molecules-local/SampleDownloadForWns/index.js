@@ -4,10 +4,10 @@ import CSGS_WNS_User_Manual from "./CSGS_WNS_User_Manual.pdf";
 const styles = {
  // backgroundColor: "rgba(0, 0, 0, 0.6000000238418579)",
   color: "rgba(255, 255, 255, 0.8700000047683716)",
-  marginTop: "8px",//-50
-  paddingLeft: "8px",//850
-  paddingRight: "19px",//20
- textAlign: "right",
+  marginTop: "8px",
+  paddingLeft: "8px",
+  paddingRight: "19px",
+ // textAlign: "center",
   verticalAlign: "middle",
   lineHeight: "35px",
   fontSize: "16px"

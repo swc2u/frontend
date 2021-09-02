@@ -20,10 +20,6 @@ const ApplicationHeaderApplyContainer = Loadable({
   loader: () => import("./ApplicationHeaderApply"),
   loading: () => <Loading />
 });
-const NestedList = Loadable({
-  loader: () => import("./NestedList"),
-  loading: () => <Loading />
-});
 
 const Checkbox = Loadable({
   loader: () => import("./Checkbox"),
@@ -94,6 +90,5 @@ export {
   PayWnsBillIcon,
   ConsumerNoContainer,
   BreadCrumbs,
-  AddLinkForProperty,
-  NestedList
+  AddLinkForProperty
 };

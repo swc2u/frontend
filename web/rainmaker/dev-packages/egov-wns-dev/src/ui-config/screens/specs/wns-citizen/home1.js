@@ -8,7 +8,59 @@ import MyConnectionsIcon from "../../../../ui-atoms-local/Icons/MyConnectionsIco
 import { getRequiredDocData } from "egov-ui-framework/ui-utils/commons";
 import { getLocale,getTenantId,getUserInfo,setModule } from "egov-ui-kit/utils/localStorageUtils";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
-import {getRequiredDocuments} from "./citizenSearchResource/homehelp"
+import {getRequiredDocuments,getConnectionCard} from "./citizenSearchResource/homehelp"
+
+import { getMyConnectionResults, getSWMyConnectionResults } from "../../../../ui-utils/commons";
+import {
+    handleScreenConfigurationFieldChange as handleField,
+    prepareFinalObject
+} from "egov-ui-framework/ui-redux/screen-configuration/actions";
+export const fetchCitizenData = async (action, state, dispatch) => {
+    let finalResponse = [];
+    let queryObject = [
+        {
+            key: "mobileNumber",
+            value: JSON.parse(getUserInfo()).mobileNumber
+        },
+        // add new property(login user UUID) in api call /ws-services/wc/_search
+        {
+            key: "connectionUserId",
+            value: JSON.parse(getUserInfo()).uuid
+        }        
+    ]
+
+    const response = await getMyConnectionResults(queryObject, dispatch,action);
+    const swResponse = await getSWMyConnectionResults(queryObject, dispatch,action);
+
+    if ((response && response.WaterConnection && response.WaterConnection.length > 0) && (swResponse && swResponse.SewerageConnections && swResponse.SewerageConnections.length > 0)) {
+        finalResponse = [...response.WaterConnection, ...swResponse.SewerageConnections];
+    } else if (response && response.WaterConnection && response.WaterConnection.length > 0) {
+        finalResponse = response.WaterConnection;
+    } else {
+        if (swResponse && swResponse.SewerageConnections && swResponse.SewerageConnections.length > 0) {
+            finalResponse = swResponse.SewerageConnections;
+        }
+    }
+    try {
+        /*Mseva 2.0 */
+        if (finalResponse && finalResponse.length > 0) {
+            const myConnectionResults=finalResponse.filter(item => item.connectionNo !== "NA" && item.connectionNo !== null);
+            dispatch(prepareFinalObject("myConnectionResults", myConnectionResults));
+            dispatch(prepareFinalObject("myConnectionsCount", myConnectionResults.length));
+            
+            // dispatch(
+            //     handleField(
+            //         "my-connections",
+            //         "components.div.children.header.children.key",
+            //         "props.dynamicArray",
+            //         myConnectionResults.length ? [myConnectionResults.length] : [0]
+            //     )
+            // );
+        }
+    } catch (error) {
+        console.log(error);
+    };
+}
 const header = getCommonHeader({
     labelKey: "WS_COMMON_HEADER"
 }, {
@@ -16,6 +68,49 @@ const header = getCommonHeader({
         root: "common-header-cont"
     }
 });
+const setcardList = (state, dispatch) => {
+    let mdmsCardList = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.cardList",
+      []
+    );
+    let employeeCardList = []
+    let roles = JSON.parse(getUserInfo()).roles
+    mdmsCardList.map((item, index) => {
+      roles.some(r => {
+        if (item.roles.includes(r.code)) {
+          if (employeeCardList.length > 0) {
+            if (!employeeCardList.find((x) => x.code == item.code)) {
+              if (JSON.parse(getUserInfo()).type === "CITIZEN") {
+                allCardList[index].value.route = item.routeCitizen;
+                employeeCardList.push(allCardList[index])
+              } else {
+                employeeCardList.push(allCardList[index])
+              }
+            }
+          } else {
+            if (JSON.parse(getUserInfo()).type === "CITIZEN") {
+              allCardList[index].value.route = item.routeCitizen;
+              employeeCardList.push(allCardList[index])
+            } else {
+              employeeCardList.push(allCardList[index])
+            }
+          }
+        }
+      })
+    });
+  
+    const cards = employeeCardList.map((item, index) => {
+      return item.value
+    });
+  
+    dispatch(
+      handleField(
+        "home",
+        "components.div.children.applyCard",
+        "props.items",
+        cards
+      )
+    );
+  }
 
 const cardItems = [
 // {
@@ -25,6 +120,13 @@ const cardItems = [
 //     icon: < PayWnsBillIcon />,
 //     route: "search"
 // },
+{
+    label: {
+        labelKey: "WS_MONTHLY_WATER_BILL_PAYMENT",
+    },
+    icon: < PayWnsBillIcon />,
+    route: ""
+},
 {
     label: {
         labelKey: "WS_COMMON_APPL_LINK_CONNECTION",
@@ -38,15 +140,7 @@ const cardItems = [
     },
     icon: < MyConnectionsIcon />,
     route: "my-connections"
-},
-{
-    label: {
-        labelKey: "WS_MONTHLY_WATER_BILL_PAYMENT",
-    },
-    icon: < PayWnsBillIcon />,
-    route: ""
-},
-
+}
 ];
 
 const usermannulalButton = getCommonContainer({
@@ -71,6 +165,7 @@ const waterAndSewerageSearchAndResult = {
     // const tenantId = process.env.REACT_APP_NAME === "Citizen" ? (userInfo.permanentCity || userInfo.tenantId): getTenantId();
     //   dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
         fetchData(action, state, dispatch);
+        fetchCitizenData(action, state, dispatch);
         const moduleDetails = [
             {
                 moduleName: "ws-services-masters",
@@ -79,7 +174,7 @@ const waterAndSewerageSearchAndResult = {
                 ]
             }
         ]
-        getRequiredDocData(action, dispatch, moduleDetails)
+       // getRequiredDocData(action, dispatch, moduleDetails)
         return action;
     },
     components: {
@@ -92,6 +187,20 @@ const waterAndSewerageSearchAndResult = {
             },
             children: {
                 header: header,
+                ConnectionList: getConnectionCard("WNS"),
+                applyActivityCard: {
+                    uiFramework: "custom-molecules",
+                    componentPath: "LandingPage",
+                    style: {
+                      paddingTop: "20px",
+                    },
+                    props: {
+                      items: [],
+                      history: {},
+                      module: "PRSCP",
+                      moduleName:'WNS'
+                    }
+                  },
                 applyCard: {
                     uiFramework: "custom-molecules",
                     componentPath: "LandingPage",
@@ -101,11 +210,11 @@ const waterAndSewerageSearchAndResult = {
                         history: {}
                     }
                 },
-                HelpHome: getRequiredDocuments("WNS"),
+               // HelpHome: getRequiredDocuments("WNS"),
                 listCard: {
                     uiFramework: "custom-molecules-local",
                     moduleName: "egov-wns",
-                    componentPath: "NewConnection",
+                    componentPath: "NewConnectionActivity",// NewConnection
                     props: {
                         
                     },

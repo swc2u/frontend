@@ -3509,9 +3509,6 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
     wnsConnection[0].tenantName = tenantName.toUpperCase();
     const appNo = wnsConnection[0].applicationNo;
 let KeytenantId = getTenantIdCommon() !== null?getTenantIdCommon():getTenantId() 
-if (wnsConnection[0].service === "SEWERAGE") {
-    KeytenantId ='ch';
-}
     let queryStr = [{ key: "tenantId", value:KeytenantId }];
     let apiUrl, appService, estKey, queryObjectForEst
     if (wnsConnection[0].service === "WATER") {
@@ -3555,7 +3552,7 @@ if (wnsConnection[0].service === "SEWERAGE") {
         }        
         queryObjectForEst = [{
             applicationNo: appNo,
-            tenantId: 'ch',//getTenantIdCommon() !== null?getTenantIdCommon():getTenantId(),
+            tenantId: getTenantIdCommon() !== null?getTenantIdCommon():getTenantId(),
             sewerageConnection: wnsConnection[0]
         }]
     }
