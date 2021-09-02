@@ -9,6 +9,18 @@ import {
     getLabel
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { getActivityCard } from "../../wns/searchResource/functions";
+  import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+  const usermannulalButton = getCommonContainer({
+
+    downloadcard: {
+      uiFramework: "custom-molecules-local",
+      moduleName: "egov-wns",
+      componentPath: "SampleDownloadForWns",
+  
+      visible: true,
+    },
+  
+  });
   const styles = {
     header: {
       color: "gba(0, 0, 0, 0.87)",
@@ -137,34 +149,50 @@ import {
           }),
           beforeFieldChange: (action, state, dispatch) => {
            // getActivityCard(state,dispatch)
+           if(action.value)
+           {
+            dispatch(prepareFinalObject("searchScreen.DefaultMessage",true));
+           }
+           else{
+            dispatch(prepareFinalObject("searchScreen.DefaultMessage",false));
+           }
 
           },
         },
-          searchButton: {
-            componentPath: "Button",
-            gridDefination: { xs: 12, sm: 4 },
-            props: {
-              variant: "contained",
-              visible:true,
-              style: {
-                color: "white",
-                margin: "8px",
-                backgroundColor: "rgba(0, 0, 0, 0.6000000238418579)",
-                borderRadius: "2px",
-                width: "220px",
-                height: "48px"
-              }
-            },
-            children: { buttonLabel: getLabel({ labelKey: "WS_SEARCH_CONNECTION_SEARCH_BUTTON" }) },
-            onClickDefination: {
-              action: "condition",
-              callBack: getActivityCard
-            }
-          },
+        usermannulalButton:usermannulalButton,
+        // usermannulal: {
+        //   gridDefination: {
+        //     xs: 12,
+        //     sm: 6
+        //   },
+          
+        // }
+          // searchButton: {
+          //   componentPath: "Button",
+          //   gridDefination: { xs: 12, sm: 4 },
+          //   props: {
+          //     variant: "contained",
+          //     visible:false,
+          //     style: {
+          //       color: "white",
+          //       margin: "8px",
+          //       backgroundColor: "rgba(0, 0, 0, 0.6000000238418579)",
+          //       borderRadius: "2px",
+          //       width: "220px",
+          //       height: "48px"
+          //     }
+          //   },
+          //   children: { buttonLabel: getLabel({ labelKey: "WS_SEARCH_CONNECTION_SEARCH_BUTTON" }) },
+          //   onClickDefination: {
+          //     action: "condition",
+          //     callBack: getActivityCard
+          //   }
+          // },
         }),
         // button: getCommonContainer({
-        //   buttonContainer: getCommonContainer({            
-            
+        //   buttonContainer: getCommonContainer({   
+
+             
         //   })
         // })
       }
