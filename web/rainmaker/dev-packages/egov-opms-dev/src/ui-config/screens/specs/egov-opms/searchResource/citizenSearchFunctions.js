@@ -902,7 +902,7 @@ export const getTextForRoadCuttNoc = label => {
     case "VERIFY AFTER APPROVAL L2":
       return 'Verification After Approval L2'
     case "VERIFY AFTER APPROVAL L3":
-      return 'Verification After Approval L3'
+      return 'Pending for Payment'
     case "REASSIGNTODMEE":
       return 'Reassign To DMEE'
     case "REASSIGNTODMSE":

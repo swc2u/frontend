@@ -78,6 +78,13 @@ export const searchResults = {
               if(sdeRole || jeRole)
               {
                 roleExistsDeavtivate = true
+                if(data.rowData[10] !== undefined  && data.rowData[10] ==='Inactive' )
+                {
+                  roleExistsDeavtivate = false
+                }
+                else{
+                  roleExistsDeavtivate = true
+                }
               }
               else
               {

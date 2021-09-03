@@ -535,3 +535,25 @@ export const toggleWaterFeilds = (action, value) => {
   //   value
   // );
 }
+export const toggleTubewellFeilds = (action, value) => {
+  set(
+    action.screenConfig,
+    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfToilets.visible",
+    false
+  );
+  set(
+    action.screenConfig,
+    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.numberOfWaterClosets.visible",
+    false
+  );
+  set(
+    action.screenConfig,
+    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.children.cardContent.children.tradeUnitCardContainer.children.contractValue.visible",    
+    false
+  );
+  set(
+    action.screenConfig,
+    "components.div.children.formwizardFirstStep.children.OwnerInfoCard.visible",
+    false
+  );
+}

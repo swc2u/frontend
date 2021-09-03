@@ -301,11 +301,13 @@ const screenConfig = {
                 sm: 6,
                 align: "right",
               },
-              visible:  process.env.REACT_APP_NAME === "Employee"? false : status === "Approved" ? true : false,
+              // visible:  process.env.REACT_APP_NAME === "Employee"? false : status === "Approved" ? true : false,
+              visible:  status === "Approved" ? true : false,
               props: {
                 variant: "contained",
                 color: "primary",
                 style: {
+                  position: "absolute",
                   color: "white",
                   borderRadius: "2px",
                   width: "250px",

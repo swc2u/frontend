@@ -191,7 +191,9 @@ const callBackForNext = async (state, dispatch) => {
         prepareDocumentsUploadData(state, dispatch, 'apply_roadcut');
         // let statuss = localStorageGet("app_noc_status") == "REASSIGN" ? "REASSIGN" : "DRAFT";
         let statuss = localStorageGet("app_noc_status") == "REASSIGN" ? "REASSIGN" : 
-        localStorageGet("app_noc_status") == "DRAFT" ? "DRAFT" : "REVIEWOFJE";
+        localStorageGet("app_noc_status") == "REVIEWOFJE" ? "REVIEWOFJE" :
+        localStorageGet("app_noc_status") == "EDITEDATJE" ? "REVIEWOFJE" : 
+        localStorageGet("app_noc_status") == "REASSIGNTOJE" ? "REVIEWOFJE" : "DRAFT";
         let response = await createUpdateRoadCutNocApplication(state, dispatch, statuss);
         responseStatus = get(response, "status", "");
         let applicationId = get(response, "applicationId", "");
