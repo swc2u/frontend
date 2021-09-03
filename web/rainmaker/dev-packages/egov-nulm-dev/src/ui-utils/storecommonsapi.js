@@ -45,8 +45,8 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch, jasonpat
           }
           else if(Documents ==='SusvDocuments')
           {
-            docUploadRedux[key] = { documents: [{ fileName: item.name, fileUrl: item.link, fileStoreId: payload.NulmSusvRequest.applicationDocument[key].filestoreId }] };                 
-
+            // docUploadRedux[key] = { documents: [{ fileName: item.name, fileUrl: item.link, fileStoreId: payload.NulmSusvRequest.applicationDocument[key].filestoreId }] };
+            docUploadRedux[key] = { documents: [{ fileName: item.name, fileUrl: item.link, fileStoreId: payload.NulmSusvRequest.applicationDocument[key].filestoreId }] };
           } 
           
          // docUploadRedux[key].documentType = `${payload}.${jasonpath}`[key].documentType;
