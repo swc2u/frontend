@@ -31,6 +31,7 @@ import moment from "moment";
 
 export const getApplicationStatusList = async ({ action, state, dispatch, screenKey, componentJsonPath }) => {
   try {
+    const iscitizen =process.env.REACT_APP_NAME==="Citizen"
     const branchType = getQueryArg(window.location.href, "branchType");
     const queryObject = [
       { key: "tenantId", value: getTenantId() },
@@ -44,6 +45,9 @@ export const getApplicationStatusList = async ({ action, state, dispatch, screen
     );
     const { States } = response
     const data = States.map(item => ({ label: item, code: item }))
+    if(!!iscitizen){
+      data.unshift({ label: "ES_DRAFTED", code: "ES_DRAFTED" })
+    }
     dispatch(handleField(screenKey, componentJsonPath, "props.data", data))
   } catch (error) {
     console.log(error)
