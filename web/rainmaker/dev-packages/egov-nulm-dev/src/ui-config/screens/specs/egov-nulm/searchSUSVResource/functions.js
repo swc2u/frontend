@@ -116,36 +116,39 @@ if(IsValidDate)
    const requestBody = {NulmSusvRequest}
     let response = await getSearchResults([],requestBody, dispatch,"susv");
     try {
-      let data = response.ResponseBody.map((item) => {
+      if(response.ResponseBody.length > 0){
+        let data = response.ResponseBody.map((item) => {
   
-        return {
-          [getTextToLocalMapping("Application Id")]: get(item, "applicationId", "-") || "-",
-          [getTextToLocalMapping("Name of Applicant")]: get(item, "nameOfApplicant", "-") || "-",
-          [getTextToLocalMapping("Application Status")]: get(item, "applicationStatus", "-") || "-",
-          [getTextToLocalMapping("Creation Date")]: get(item, "auditDetails.createdTime", "")? new Date(get(item, "auditDetails.createdTime", "-")).toISOString().substr(0,10) : "-",
-          ["code"]: get(item, "applicationUuid", "-")
-        };
-      });
-
-      dispatch(
-        handleField(
-          "search-susv",
-          "components.div.children.searchResults",
-          "props.data",
-          data
-        )
-      );
-      dispatch(
-        handleField(
-          "search-susv",
-          "components.div.children.searchResults",
-          "props.title",
-          `${getTextToLocalMapping("Search Results for SUSV")} (${
-            response.ResponseBody.length
-          })`
-        )
-      );
-      showHideTable(true, dispatch);
+          return {
+            [getTextToLocalMapping("Application Id")]: get(item, "applicationId", "-") || "-",
+            [getTextToLocalMapping("Name of Applicant")]: get(item, "nameOfApplicant", "-") || "-",
+            [getTextToLocalMapping("Application Status")]: get(item, "applicationStatus", "-") || "-",
+            [getTextToLocalMapping("Creation Date")]: get(item, "auditDetails.createdTime", "")? new Date(get(item, "auditDetails.createdTime", "-")).toISOString().substr(0,10) : "-",
+            ["code"]: get(item, "applicationUuid", "-")
+          };
+        });
+  
+        dispatch(
+          handleField(
+            "search-susv",
+            "components.div.children.searchResults",
+            "props.data",
+            data
+          )
+        );
+        dispatch(
+          handleField(
+            "search-susv",
+            "components.div.children.searchResults",
+            "props.title",
+            `${getTextToLocalMapping("Search Results for SUSV")} (${
+              response.ResponseBody.length
+            })`
+          )
+        );
+        showHideTable(true, dispatch); 
+      }
+      showHideTable(true, dispatch); 
     } catch (error) {
       dispatch(
         toggleSnackbar(

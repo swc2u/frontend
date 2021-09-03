@@ -30,29 +30,29 @@ export const buttonController = () => {
  // const status = window.localStorage.getItem("SEP_Status");
   if (process.env.REACT_APP_NAME === "Employee")
     return {
-      saveButton: {
-        componentPath: "Button",
-        props: {
-          variant: "outlined",
-          color: "primary",
-          style: {
-             minWidth: "200px",
-            height: "48px",
-            marginRight: "16px",
-          },
-        },
-        children: {
-          resetButtonLabel: getLabel({
-            labelName: "Save",
-            labelKey: "NULM_COMMON_SAVE_BUTTON",
-          }),
-        },
-        onClickDefination: {
-          action: "condition",
-          callBack: handlesaveSEP,
-        },
-        visible: get(store.getState().screenConfiguration.preparedFinalObject, "NulmSusvRenewRequest.applicationStatus", null) == "Reassign To Citizen" ? false : true,
-      },
+      // saveButton: {
+      //   componentPath: "Button",
+      //   props: {
+      //     variant: "outlined",
+      //     color: "primary",
+      //     style: {
+      //        minWidth: "200px",
+      //       height: "48px",
+      //       marginRight: "16px",
+      //     },
+      //   },
+      //   children: {
+      //     resetButtonLabel: getLabel({
+      //       labelName: "Save",
+      //       labelKey: "NULM_COMMON_SAVE_BUTTON",
+      //     }),
+      //   },
+      //   onClickDefination: {
+      //     action: "condition",
+      //     callBack: handlesaveSEP,
+      //   },
+      //   visible: get(store.getState().screenConfiguration.preparedFinalObject, "NulmSusvRenewRequest.applicationStatus", null) == "Reassign To Citizen" ? false : true,
+      // },
       submitButton: {
         componentPath: "Button",
         props: {
