@@ -100,7 +100,7 @@ import {
     break: getBreak(),
     documentList: {
       uiFramework: "custom-containers-local",
-      moduleName: "egov-opms",
+      moduleName: "egov-nulm",
       componentPath: "DocumentListContainer",
       required: false,
       props: {      
