@@ -441,6 +441,11 @@ ApplicationStatus =  data.waterApplication.applicationStatus;
           labelName = 'Please upload mandatory document in document section then submit'
   
         }
+        else if(data.applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN' && data.action ==='SUBMIT_ROADCUT_NOC')
+      {
+        labelKey = 'WS_SUBMIT_ROADCUT_NOC_VALIDATION_MESSAGE'
+        labelName = 'Please upload road cut NOC document in document section then submit'
+      }
         toggleSnackbar(
           true,
           {
@@ -459,6 +464,7 @@ ApplicationStatus =  data.waterApplication.applicationStatus;
         labelKey = 'WS_REQUEST_VALIDATION_MESSAGE'
         labelName = 'Please fill the required field in Edit section'
       }
+      
       else if(data.waterApplication.applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN' && data.action ==='SUBMIT_ROADCUT_NOC')
       {
         labelKey = 'WS_SUBMIT_ROADCUT_NOC_VALIDATION_MESSAGE'
@@ -1088,6 +1094,34 @@ ValidateRequestSW =(payload,preparedFinalObject)=>{
       isvalidRequest = false
 
     }
+  }
+  else if(payload.applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN' && payload.action ==='SUBMIT_ROADCUT_NOC')
+  {
+    let activityType_=  "SW_SEWERAGE"
+    let documents=  get(payload, "documents",[]);
+    if(documents !== undefined && documents!== null && documents.length>0)
+    {
+      let duplicatedoc =  documents.filter(x=>x.documentType === `${activityType_}_ROADCUT_NOC`)
+      if(duplicatedoc !== undefined)
+        {
+        if(duplicatedoc && duplicatedoc.length == 0)
+        {
+          isvalidRequest = false
+          
+        }
+        else{
+          isvalidRequest = true
+        }
+      }
+      else{
+        isvalidRequest = true
+      }
+    }
+    else
+   {
+     isvalidRequest = true
+    }
+
   }
   return isvalidRequest;
 

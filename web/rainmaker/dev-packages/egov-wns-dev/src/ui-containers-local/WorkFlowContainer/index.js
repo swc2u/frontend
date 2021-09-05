@@ -298,7 +298,15 @@ class WorkFlowContainer extends React.Component {
                      )             
                      && (WaterConnection[0].waterApplicationType === 'REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING'))
             {
-              actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+              if(WaterConnection[0].activityType ==='TEMPORARY_DISCONNECTION')
+               {
+                actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+               }
+               else{
+                actions =[];
+
+               }
+              // actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
 
             }
             else{
