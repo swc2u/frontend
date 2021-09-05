@@ -15,6 +15,9 @@ import get from "lodash/get";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { WNSConfigName,WNSWaterBusinessService,WNSBusinessService} from "../../ui-utils/commons";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import {  
+  getLocalizationCodeValue
+} from "../../ui-config/screens/specs/utils";
 import { Link } from "react-router-dom";
 import Item from "../../../../../packages/lib/egov-ui-framework/ui-atoms/Layout/Item";
 
@@ -266,7 +269,15 @@ class NewConnectionActivity extends React.Component {
                       )             
                       && (WaterConnection[0].waterApplicationType === 'REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING'))
              {
-               actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+              if(WaterConnection[0].activityType ==='TEMPORARY_DISCONNECTION')
+               {
+                actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+               }
+               else
+               {
+                 actions =[];
+               }
+               
   
              }
              else{
@@ -436,17 +447,17 @@ class NewConnectionActivity extends React.Component {
     const userRoles = JSON.parse(getUserInfo()).roles;
     const roleIndex = userRoles.some(item => item.code ==="CITIZEN" || item.code=== "WS_CEMP" );
     const isButtonPresent =  window.localStorage.getItem("WNS_STATUS") || false;
-    const serviceType = myConnectionResults[0].service;
+    const serviceType = WaterConnection[0].service;
     if(serviceType.toUpperCase() ==='WATER')
     {
     if(roleIndex && !isButtonPresent && serviceType !== "SEWERAGE"){
       let inWorkflow = false ;
-      inWorkflow = myConnectionResults.length>0 && myConnectionResults[0].inWorkflow;
+      inWorkflow = WaterConnection.length>0 && WaterConnection[0].inWorkflow;
       if(inWorkflow === false)
       {
         const buttonArray = this.getWNSButtonForCitizen(WaterConnection, applicationStatus, businessId,"REGULARWSCONNECTION");
             actions = actions.concat(buttonArray);
-            if(actions.length>1)
+            if(actions.length>0)
             {
               Action.push(
                 {
@@ -459,7 +470,7 @@ class NewConnectionActivity extends React.Component {
               toggleSnackbar(true,
                 {
                   labelName: "Already one activity is in process",
-                  labelKey: "WS_SUBACTIVITY_VALIDATION_MESSAGE"
+                  labelKey: "WS_NO_SUBACTIVITY_VALIDATION_MESSAGE"
                 }, "warning" );
                 Action.push(
                   {
@@ -489,10 +500,14 @@ class NewConnectionActivity extends React.Component {
   }
   else
   {
+    const LocalizationCodeValue = getLocalizationCodeValue("WS_CONNECTION_VALIDATION_MESSAGE")
+    const LocalizationCodeValueSuffix = getLocalizationCodeValue("WS_CONNECTION_VALIDATION_MESSAGE_SUFF")
+    const LocalizationCodeserviceValue = getLocalizationCodeValue("WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL")
     toggleSnackbar(true,
       {
-        labelName: "Already one activity is in process",
-        labelKey: "WS_CONNECTION_VALIDATION_MESSAGE"
+        labelName: "No subactivity for sewarage Consumer No.",
+       // labelKey: "WS_CONNECTION_VALIDATION_MESSAGE"
+        labelKey:   `${LocalizationCodeValueSuffix} ${LocalizationCodeserviceValue} ${connectionNo}`//' '${LocalizationCodeValue}`
       }, "warning" );
       Action.push(
         {
