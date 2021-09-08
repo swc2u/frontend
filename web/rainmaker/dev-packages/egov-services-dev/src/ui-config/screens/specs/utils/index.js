@@ -1420,13 +1420,6 @@ export const downloadReceipt = async (
 };
 
 
-
-
-
-
-
-
-
 export const downloadCertificate = async (
     state,
     applicationNumber,
@@ -2405,11 +2398,14 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
     console.log("checkAvaialbilityAtSubmit",bookingData)
     let requestBody = {};
     let isAvailable= await checkAvaialbilityAtSubmitFirstStep(bookingData, dispatch)
+    console.log("checkAvaialbilityAtSubmit",JSON.parse(JSON.stringify(isAvailable)))
     console.log("ReturnStatement",isAvailable)
-    if(isAvailable===false){
     
+    if(isAvailable===false){
+    console.log("inFalseCondition",isAvailable)
         return isAvailable
     }else{
+        console.log("inTrueCondition",isAvailable)
         requestBody = {
             BookingLock: [
                 {
@@ -2450,6 +2446,8 @@ export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) 
     let businessService = bookingData.businessService;
     let requestBody = {};
     let isAvailable = true;
+    let getforAvailCheck = getTodayDate();
+    console.log("getForAvailCheck",getforAvailCheck)
     if (businessService === "GFCP") {
         requestBody = {
             Booking: {
@@ -2531,6 +2529,7 @@ export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) 
             
         };
         console.log("paccRequestBody",requestBody)
+        console.log("paccRequestBody222",JSON.parse(JSON.stringify(requestBody)))
         try {
             const bookedDates = await httpRequest(
                 "post",
@@ -2562,7 +2561,16 @@ export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) 
     console.log("checkAvaialbilityAtSubmitFirstStep",isAvailable);
     return isAvailable;
 };
+//"2021-09-03"
+const getTodayDate = ()=>{
+    var MyDate = new Date()
 
+    var MyDateString = MyDate.getFullYear() + '-'+ ('0' + (MyDate.getMonth()+1)).slice(-2) +'-'+('0' + MyDate.getDate()).slice(-2);
+    console.log(MyDateString)
+    console.log("TodayDateOnCitizenSide",MyDateString)
+
+    return MyDateString
+}
 export const getPerDayRateOSWMCC = async (bookingSector, bookingArea) => {
     let requestBody = {
         Booking: {

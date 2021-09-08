@@ -152,9 +152,23 @@ const prepareDocumentsView = async (state, dispatch) => {
     }
 };
 
-const HideshowFooter = (action, bookingStatus) => {
+const HideshowFooter = (state, action, bookingStatus) => {
+    
     let showFooter = false;
-    if (bookingStatus === "PENDINGPAYMENT") {
+    let getAmount = get(
+        state,
+        "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].totalAmount",
+        {}
+    )
+    console.log("getAmountInPaymentPage", getAmount);
+    
+    if(getAmount == 0){
+    console.log("yes 0 found",getAmount)
+    }else{ 
+    console.log("no total amunt is here",getAmount)
+    }
+    // if (bookingStatus === "PENDINGPAYMENT") {
+    if (bookingStatus === "PENDINGPAYMENT" && getAmount > 0) {
         showFooter = true;
     }
     set(
@@ -194,10 +208,10 @@ const setSearchResponse = async (
       //  await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
       await generateBill(state, dispatch, applicationNumber, tenantId, "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE");
     }
-
+    //[0].totalAmount
     localStorageSet("bookingStatus", bookingStatus);
-    HideshowFooter(action, bookingStatus);
-
+    HideshowFooter(state, action, bookingStatus);
+ 
     prepareDocumentsView(state, dispatch);
 
     const CitizenprintCont = footerReviewTop(
