@@ -120,22 +120,29 @@ import {
   export const getConnectionCard = (type) => {
     return getCommonCard(
       {
+        subHeader: getCommonTitle({
+          labelKey: "WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL_HOME"
+      }),
         ConnectionSearchContainer: getCommonContainer({
 
           ConnectionList:
           {
             ...getSelectField({
-            label: { labelName: "Department", labelKey: "WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL" },
+            label: { labelName: "Water connection consumer number", labelKey: "WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL_HOME" },
             placeholder: {
-              labelName: "Select Department",
-              labelKey: "WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL"
+              labelName: "Please Select Your Water Consumer No. To Avail Below Services",
+              labelKey: "WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL_HOME_SELECT"
             },
             required: false,
             jsonPath: "searchScreen.connectionNo",
             gridDefination: {
               xs: 12,
-              sm: 6
+              sm: 8
             },
+            // style:{
+            //   paddingTop:35
+
+            // },
             sourceJsonPath: "myConnectionResults",
             props: {
               optionLabel: "connectionNo",
