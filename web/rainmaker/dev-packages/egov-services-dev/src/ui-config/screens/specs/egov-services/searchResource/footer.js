@@ -4,7 +4,7 @@ import {
     downloadApplication,
 } from "../../utils";
 import "./index.css";
-
+ 
 export const footerReviewTop = (
     action,
     state,
@@ -184,3 +184,4 @@ export const footerReviewTop = (
         },
     };
 };
+  

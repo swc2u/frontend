@@ -119,7 +119,6 @@ const setSearchResponse = async (
         else if(recData[0].businessService == "PACC" && recData[0].bkBookingType==="Community Center"){
             businesServiceTemp = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
         }
-       
         else{
           businesServiceTemp = recData[0].businessService;
         }
@@ -140,6 +139,9 @@ const setSearchResponse = async (
     //     dispatch
     // );
 };
+
+
+
 
 const setPaymentMethods = async (action, state, dispatch) => {
     const response = await getPaymentGateways();
