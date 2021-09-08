@@ -90,7 +90,7 @@ class WNSDashboardTwo extends React.Component {
     }
 
 
-    debugger;
+    
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -126,7 +126,7 @@ class WNSDashboardTwo extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         e.preventDefault();
         const coldata = e;
         var unchangeData = [];
@@ -141,7 +141,7 @@ class WNSDashboardTwo extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -161,7 +161,7 @@ class WNSDashboardTwo extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -169,9 +169,9 @@ class WNSDashboardTwo extends React.Component {
     }
     
     graphSorting = ( sortBy, data, checkGraph, ind ) => {
-        debugger;
+        
         if(checkGraph === "dashboard 1"){
-            debugger;
+            
             var group = data.reduce((r, a) => {
             r[a[sortBy[0]][sortBy[1]]] = [...r[a[sortBy[0]][sortBy[1]]] || [], a];
             return r;
@@ -185,7 +185,7 @@ class WNSDashboardTwo extends React.Component {
 
             return [ graphLabel, graphData, group ];
         }else if(checkGraph === "dashboard 2"){
-            debugger;
+            
             var group = data.reduce((r, a) => {
             r[a[sortBy[0]][sortBy[1]]] = [...r[a[sortBy[0]][sortBy[1]]] || [], a];
             return r;
@@ -200,7 +200,7 @@ class WNSDashboardTwo extends React.Component {
             return [ graphLabel, graphData, group ];
 
         }else if(checkGraph === "dashboard 3"){
-            debugger;
+            
             var group = data.reduce((r, a) => {
             r[a["subdiv"]] = [...r[a["subdiv"]] || [], a];
             return r;
@@ -288,7 +288,7 @@ class WNSDashboardTwo extends React.Component {
             return [ graphLabel, graphData, group ];
         }else if(checkGraph === "dashboard 4"){
             
-            debugger;
+            
             // graphLabel, graphData, group
             var subdiv = [[], [], [], [], [], []];
 
@@ -346,7 +346,7 @@ class WNSDashboardTwo extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         const propSortBy = "dashboardType1";
         // const propSortBy = "status";
         const dt = this.props.data;
@@ -372,13 +372,13 @@ class WNSDashboardTwo extends React.Component {
             }
         }
 
-        debugger;
+        
         var group = categoryData.reduce((r, a) => {
             r[a["applicationStatus"]] = [...r[a["applicationStatus"]] || [], a];
             return r;
            }, {});
         
-        debugger;
+        
 
         var MonthMap = { 0: "Jan", 1: "Feb", 2: "Mar", 3: "Apr", 4: "May", 5: "Jun", 6: "Jul", 7: "Aug", 8: "Sep", 9: "Oct", 10: "Nov", 11: "Dec"}
         var fromDT = 1604188800000;
@@ -448,7 +448,7 @@ class WNSDashboardTwo extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         const propSortBy = "dashboardType1";
         // const propSortBy = "status";
         const dt = this.props.data;
@@ -475,13 +475,13 @@ class WNSDashboardTwo extends React.Component {
             }
         }
 
-        debugger;
+        
         var group = categoryData.reduce((r, a) => {
             r[a["applicationStatus"]] = [...r[a["applicationStatus"]] || [], a];
             return r;
            }, {});
         
-        debugger;
+        
 
         var MonthMap = { 0: "Jan", 1: "Feb", 2: "Mar", 3: "Apr", 4: "May", 5: "Jun", 6: "Jul", 7: "Aug", 8: "Sep", 9: "Oct", 10: "Nov", 11: "Dec"}
         var fromDT = 1604188800000;
@@ -644,12 +644,12 @@ class WNSDashboardTwo extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;
                 var selectedVal = this.state.graphOneLabel[ind];
                 
                 // const graphSort = this.graphSorting(["waterApplication","applicationStatus"], this.state.dataOne[selectedVal], "dashboard 2");
-                // debugger;
+                // 
 
                 // var graphTwoLabelSHOW = [];
                 // for(var i=0; i<graphSort[0].length; i++){
@@ -778,12 +778,12 @@ class WNSDashboardTwo extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;
                 const selectedVal = this.state.graphOneLabel[ind];
                 
                 // const graphSort = this.graphSorting(["waterApplication","applicationStatus"], this.state.dataOne[selectedVal], "dashboard 2");
-                // debugger;
+                // 
 
                 // var graphTwoLabelSHOW = [];
                 // for(var i=0; i<graphSort[0].length; i++){

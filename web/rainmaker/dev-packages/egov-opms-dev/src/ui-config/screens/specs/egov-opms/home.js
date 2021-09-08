@@ -127,7 +127,8 @@ const getMdmsData = async (action, state, dispatch) => {
 };
 const setcardList = (state, dispatch) => {
   let mdmsCardList = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.cardList",
-    []
+    
+  []
   );
   let employeeCardList = []
   let roles = JSON.parse(getUserInfo()).roles

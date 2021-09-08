@@ -22,7 +22,7 @@ class RentedPropertyDashboard extends React.Component {
   }
 
   componentDidMount(){
-      debugger;
+      
       const propsData = this.props.data;
       if(propsData.length > 0){
         this.setState({
@@ -33,7 +33,7 @@ class RentedPropertyDashboard extends React.Component {
   }
 
   componentDidUpdate(){
-    debugger;
+    
     const propsData = this.props.data;
     if(JSON.stringify(this.state.checkData) !== JSON.stringify(propsData)){
         this.setState({

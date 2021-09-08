@@ -819,6 +819,14 @@ export const getTextForRoadCuttNoc = label => {
   switch (label) {
     case "INITIATED":
       return 'Initiated'
+    case "RESENTTOADM":
+      return 'Resent to ADM'
+    case "INITIATED_TELECOM":
+      return 'Initiated'
+    case "REVIEWOFEE L1":
+      return 'Review of EE L1'
+    case "REASSIGNTOADM":
+      return 'Reassign to ADM'
     case "EDITEDATJE":
       return 'Edited at JE'
     case "REVIEWOFJE":

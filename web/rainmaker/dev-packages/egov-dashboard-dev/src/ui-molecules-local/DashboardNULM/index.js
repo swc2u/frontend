@@ -41,7 +41,7 @@ class NULMDashboard extends React.Component {
 
     // PDF function 
     pdfDownload = (e) => {
-    debugger;
+    
     e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
@@ -87,7 +87,7 @@ class NULMDashboard extends React.Component {
     }
 
 
-    debugger;
+    
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -123,7 +123,7 @@ class NULMDashboard extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -137,7 +137,7 @@ class NULMDashboard extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -157,7 +157,7 @@ class NULMDashboard extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -168,7 +168,7 @@ class NULMDashboard extends React.Component {
         var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
         "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
         if(selectedDashboard === "Single Program"){
-            debugger;
+            
             var dateRange = sortBy;
             var group = data.reduce((r, a) => {
                 r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] =
@@ -234,7 +234,7 @@ class NULMDashboard extends React.Component {
             })
                 
         }if(selectedDashboard === "SEP Program Status"){
-            debugger;
+            
             var group = data.reduce((r, a) => {
                 r[a[sortBy]] = [...r[a[sortBy]] || [], a];
                 return r;
@@ -257,7 +257,7 @@ class NULMDashboard extends React.Component {
             })
         }
         if(selectedDashboard === "All Program"){
-            debugger;
+            
             var SEP = data.SEP.ResponseBody;
             var SMID = data.SMID.ResponseBody;
             var SUSV = data.SUSV.ResponseBody;
@@ -307,7 +307,7 @@ class NULMDashboard extends React.Component {
             var selectedDashboard = selectedDashboard;
         }
         if(selectedDashboard === "AllDataMonthWise"){
-            debugger;
+            
             var dateRange = sortBy;
             var group = data.reduce((r, a) => {
                 r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] =
@@ -355,9 +355,9 @@ class NULMDashboard extends React.Component {
             })
         }
         if(selectedDashboard === "Final Dashboard"){
-            debugger;
+            
 
-            debugger;
+            
             var group = data.reduce((r, a) => {
                 r[a[sortBy]] = [...r[a[sortBy]] || [], a];
                 return r;
@@ -416,7 +416,7 @@ class NULMDashboard extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         const data = this.props.data;
         if(data.length>0 && JSON.stringify(data) !== JSON.stringify(this.state.checkData)){
           const propData = data[0].ResponseBody;
@@ -428,7 +428,7 @@ class NULMDashboard extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         const data = this.props.data;
         if(data.length>0 && JSON.stringify(data) !== JSON.stringify(this.state.checkData)){
           const propData = data[0].ResponseBody;
@@ -445,7 +445,7 @@ class NULMDashboard extends React.Component {
         // var dropdownSelected = "SUSV Program";
         // var dropdownSelected = "SUH Program";
         var dropdownSelected = selectedVAL;
-        debugger;
+        
         var JSONdata;
         if(dropdownSelected === "SEP Program"){
             JSONdata = data[0].ResponseBody; 
@@ -573,7 +573,7 @@ class NULMDashboard extends React.Component {
           onClick: (e, element) => {
               if (element.length > 0) {
                   
-                  debugger;
+                  
                   var ind = element[0]._index;   
                   const selectedVal = this.state.graphOneLabel[ind];
                   var data;
@@ -697,7 +697,7 @@ class NULMDashboard extends React.Component {
           onClick: (e, element) => {
               if (element.length > 0) {
                   
-                  debugger;
+                  
                   var ind = element[0]._index;   
                   const selectedVal = this.state.graphTwoLabel[ind];
                   const data = this.state.dataTwo[selectedVal];              
@@ -808,7 +808,7 @@ class NULMDashboard extends React.Component {
           onClick: (e, element) => {
               if (element.length > 0) {
                   
-                  debugger;
+                  
                   var ind = element[0]._index;   
                   const selectedVal = this.state.graphThreeLabel[ind];
                   const data = this.state.dataThird[selectedVal];              

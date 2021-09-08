@@ -40,7 +40,7 @@ const defaultDate = (date) => {
 
 const getDropDownData = async (action, state, dispatch) => {
 
-  debugger
+  
 //   let data = getDashboardDropdownData(state, dispatch, status)
 //const propSortBy = "getAllAgenda";
 // const propSortBy = "getAllMom";
@@ -76,7 +76,7 @@ const AgendaDashboard = {
   name: "AgendaDashboard",
   beforeInitScreen: (action, state, dispatch) => {
     
-    debugger
+    
     getDropDownData(action, state, dispatch);
     return action;
   },

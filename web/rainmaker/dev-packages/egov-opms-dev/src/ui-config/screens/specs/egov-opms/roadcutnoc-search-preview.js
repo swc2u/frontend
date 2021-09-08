@@ -296,11 +296,11 @@ const HideshowEdit = (state, action, nocStatus, amount, applicationNumber,dispat
 
   checkVisibility(state, "APPROVED BY EE,APPROVED BY SE,APPROVED BY CE,COMPLETE", "approve", action, "screenConfig.components.div.children.footerEmp.children.approve.visible", (amount < 50000 && checkForRole(roles, 'EE') && (nocStatus == "REVIEWOFEE L3" || nocStatus == "REASSIGNTOEE L3")) || (amount < 200000 && checkForRole(roles, 'SE') && (nocStatus == "REVIEWOFSE L2" || nocStatus == "REASSIGNTOSE L2")) || checkForRole(roles, 'CE') || (nocStatus === "VERIFY FOR COMPLETION" && checkForRole(roles, 'EE')))
 
-  checkVisibility(state, "REASSIGN,REASSIGNTOJE,REASSIGNTOSDE L2,REASSIGNTODMEE,REASSIGNTOHDMEE,REASSIGNTOEE L3,REASSIGNTOCHDSE,REASSIGNTODMSE,REASSIGNTOSE L2,REASSIGNTOWD,REASSIGNTOCHDCE,REASSIGNTODMCE,REASSIGNTOSDEHQ", "reassign", action, "screenConfig.components.div.children.footerEmp.children.reassign.visible", null)
+  checkVisibility(state, "REASSIGN,REASSIGNTOADM,REASSIGNTOJE,REASSIGNTOSDE L2,REASSIGNTODMEE,REASSIGNTOHDMEE,REASSIGNTOEE L3,REASSIGNTOCHDSE,REASSIGNTODMSE,REASSIGNTOSE L2,REASSIGNTOWD,REASSIGNTOCHDCE,REASSIGNTODMCE,REASSIGNTOSDEHQ", "reassign", action, "screenConfig.components.div.children.footerEmp.children.reassign.visible", null)
 
   checkVisibility(state, "REASSIGNDOEE,REASSIGNDOSE,REASSIGNDOCE", "reassignToDO", action, "screenConfig.components.div.children.footerEmp.children.reassignToDO.visible", null)
 
-  checkVisibility(state, "INITIATED,REVIEWSDE L1,REVIEWOFJE,REVIEWSDE L2,REVIEWOFEE L2,VERIFYHDMEE L1,VERIFYHDMEE L2,VERIFYDMEE,REVIEWOFEE L3,REVIEWOFSE L1,VERIFYCHDSE L1,VERIFYCHDSE L2,VERIFYDMSE,REVIEWOFSE L2,REVIEWOFCE L1,VERIFYDMCE,VERIFYCHDCE L1,VERIFYCHDCE L2,REVIEWOFSDEHQ,REVIEWOFWD,PENDINGAPPROVAL,VERIFY AFTER APPROVAL L1,VERIFY AFTER APPROVAL L2,VERIFY AFTER APPROVAL L3,VERIFY FOR COMPLETION","nextButton", action, "screenConfig.components.div.children.footerEmp.children.nextButton.visible", null)
+  checkVisibility(state, "INITIATED,REVIEWOFEE L1,REVIEWSDE L1,REVIEWOFJE,REVIEWSDE L2,REVIEWOFEE L2,VERIFYHDMEE L1,VERIFYHDMEE L2,VERIFYDMEE,REVIEWOFEE L3,REVIEWOFSE L1,VERIFYCHDSE L1,VERIFYCHDSE L2,VERIFYDMSE,REVIEWOFSE L2,REVIEWOFCE L1,VERIFYDMCE,VERIFYCHDCE L1,VERIFYCHDCE L2,REVIEWOFSDEHQ,REVIEWOFWD,PENDINGAPPROVAL,VERIFY AFTER APPROVAL L1,VERIFY AFTER APPROVAL L2,VERIFY AFTER APPROVAL L3,VERIFY FOR COMPLETION","nextButton", action, "screenConfig.components.div.children.footerEmp.children.nextButton.visible", null)
 
   checkVisibility(state, "EDITEDATJE","editButton", action, "screenConfig.components.div.children.footerEmp.children.edit.visible", null)
 
@@ -421,6 +421,7 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
     let gstamount = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].gstamount", {});
 
     await setCurrentApplicationProcessInstance(state);
+    const checkType = JSON.parse(response.nocApplicationDetail[0].applicationdetail);
     HideshowEdit(state, action, nocStatus, amount, applicationNumber,dispatch);
     // await getEmployeeList(state);
     if ((nocStatus === 'PAID'|| nocStatus === 'COMPLETE' || nocStatus === 'VERIFY FOR COMPLETION') && checkForRole(roles, 'CITIZEN')) {

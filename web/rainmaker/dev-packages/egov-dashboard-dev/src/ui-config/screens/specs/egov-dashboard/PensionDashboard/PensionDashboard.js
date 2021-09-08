@@ -91,7 +91,7 @@ export const FilterForm = getCommonCard({
       },
       afterFieldChange: (action, state, dispatch) => {
         
-        // debugger;
+        // 
         const selectedVAl = get(state.screenConfiguration.preparedFinalObject,"dahsboardHome.dropDownData2",{});
         if(selectedVAl.value === "amountDisbursed"){
           dispatch(

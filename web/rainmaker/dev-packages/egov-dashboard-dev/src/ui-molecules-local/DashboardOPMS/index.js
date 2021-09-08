@@ -22,7 +22,7 @@ class DashboardOPMS extends React.Component {
     }
   }
     componentDidMount(){
-        debugger;
+        
         var propData = this.props.data
         if(propData.length){
             var statusPayload = propData[2] ? propData[2] : [];
@@ -35,7 +35,7 @@ class DashboardOPMS extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         var propData = this.props.data;
         if(JSON.stringify(this.state.checkdata) !== JSON.stringify(propData)){
             var statusPayload = propData[2] ? propData[2] : [];

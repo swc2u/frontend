@@ -18,7 +18,7 @@ class ReportMolecule extends React.Component {
   }
 
   componentDidMount(){
-    //debugger;
+    //
     // const allRes = AllRes.allResponse;
     const allRes = this.props.data;
     this.setState({
@@ -28,7 +28,7 @@ class ReportMolecule extends React.Component {
   }
 
   componentDidUpdate(){
-    //debugger;
+    //
     // const allRes = AllRes.allResponse;
     const allRes = this.props.data;
     if(JSON.stringify(this.state.AllDataRes) !== JSON.stringify(allRes)){
@@ -40,7 +40,7 @@ class ReportMolecule extends React.Component {
 
   render() {
        
-    debugger
+    
     return (
       <div>
         {/* Doughnut Chart */}

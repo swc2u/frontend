@@ -33,7 +33,7 @@ class DashboardOPMSCollection extends React.Component {
     // PDF function 
     pdfDownload = (e) => {
 
-    debugger;
+    
     e.preventDefault();
     var columnData = this.state.tableHeader
     // var columnDataCamelize = this.state.columnData
@@ -79,7 +79,7 @@ class DashboardOPMSCollection extends React.Component {
     }
 
 
-    debugger;
+    
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -115,7 +115,7 @@ class DashboardOPMSCollection extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -129,7 +129,7 @@ class DashboardOPMSCollection extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.tableHeader));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -150,7 +150,7 @@ class DashboardOPMSCollection extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -170,7 +170,7 @@ class DashboardOPMSCollection extends React.Component {
 
     componentDidMount(){
 
-        debugger;
+        
         var data = this.props.data;
         var sortBy = this.props.sortBy;
         
@@ -196,7 +196,7 @@ class DashboardOPMSCollection extends React.Component {
         item["show"] = true;
         col.push(item)
 
-        debugger;
+        
         var row = [];        
         for(var i=0; i<graphLabel.length; i++){
             var item = {};
@@ -218,7 +218,7 @@ class DashboardOPMSCollection extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         // const propSoryBy = "Status";
         // const propSoryBy = "Collection Report";
         if(JSON.stringify(this.props.data) !== JSON.stringify(this.state.data)){
@@ -247,7 +247,7 @@ class DashboardOPMSCollection extends React.Component {
         item["show"] = true;
         col.push(item)
 
-        debugger;
+        
         var row = [];        
         for(var i=0; i<graphLabel.length; i++){
             var item = {};
@@ -364,7 +364,7 @@ class DashboardOPMSCollection extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     var ind = element[0]._index;
-                    debugger;
+                    
                     var selectedVal = this.state.firstGraphLabel[ind];
                     var data = this.state.data.revenueCollectionSectorWise[0].reportData;
                     
@@ -398,7 +398,7 @@ class DashboardOPMSCollection extends React.Component {
                     item["show"] = true;
                     col.push(item)
 
-                    debugger;
+                    
                     var row = [];        
                     for(var i=0; i<graphLabel.length; i++){
                         var item = {};
@@ -407,7 +407,7 @@ class DashboardOPMSCollection extends React.Component {
                         row.push(item)
                     }
                     
-                    debugger;
+                    
 
                     this.setState({
                         secondGraphLabel: graphLabel,
@@ -515,7 +515,7 @@ class DashboardOPMSCollection extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     var ind = element[0]._index;
-                    debugger;
+                    
                 }
             },
         }

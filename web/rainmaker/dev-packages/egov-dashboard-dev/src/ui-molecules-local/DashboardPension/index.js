@@ -34,7 +34,7 @@ class PensionDashbaord extends React.Component {
 
     componentDidUpdate(){
         
-        debugger;
+        
         const data = this.props.data;
         if(JSON.stringify(data) !== JSON.stringify(this.state.propData)){
             this.setState({

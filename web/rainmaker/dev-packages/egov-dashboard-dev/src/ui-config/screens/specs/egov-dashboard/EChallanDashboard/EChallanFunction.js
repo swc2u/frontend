@@ -7,7 +7,6 @@ import { getEChallanDashboardData } from "../../../../../ui-utils/commons";
 
 export const SearchEChallanDashboardData = async (state, dispatch) =>{
   
-    //debugger;
     var flag_for_api_call = true
     let queryObject = [
       {
@@ -54,7 +53,6 @@ export const SearchEChallanDashboardData = async (state, dispatch) =>{
       "toDate": toDateNumeric,
       "reportSortBy": reportSortBy
     }
-      debugger;
       try {
         // API call for Description Report
         const response = await getEChallanDashboardData( dispatch, requestBody );

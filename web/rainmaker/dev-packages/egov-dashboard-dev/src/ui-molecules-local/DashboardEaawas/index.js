@@ -28,7 +28,7 @@ class DashboardEaawas extends React.Component {
   pdfDownload = (e) => {
 
     
-    debugger;
+    
     e.preventDefault();
     var tableColumnData =[];
     var rowData = [] ;
@@ -79,7 +79,7 @@ class DashboardEaawas extends React.Component {
   }
 
   componentDidMount(){
-    debugger;
+    
     var data = this.props.data
     data = data.ResponseBody;
     if(data){
@@ -129,7 +129,7 @@ class DashboardEaawas extends React.Component {
   }
 
   componentDidUpdate(){
-    debugger;
+    
     var data = this.props.data
     if(JSON.stringify(this.state.checkData) !== JSON.stringify(data)){
       data = data.ResponseBody;
