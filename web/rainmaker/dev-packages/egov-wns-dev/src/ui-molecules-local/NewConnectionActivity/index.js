@@ -13,7 +13,7 @@ import { handleScreenConfigurationFieldChange as handleField, prepareFinalObject
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { WNSConfigName,WNSWaterBusinessService,WNSBusinessService} from "../../ui-utils/commons";
+import { WNSConfigName,WNSWaterBusinessService,WNSBusinessService,getSearchResults} from "../../ui-utils/commons";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import {  
   getLocalizationCodeValue
@@ -62,12 +62,12 @@ class NewConnectionActivity extends React.Component {
     //alert('pritam')
     if (process.env.NODE_ENV === "production") {
     //window.location.href = `citizen${route}`//citizen/
-    let myurl = item.buttonUrl.replace('/wns/','')
-    window.location.href = myurl
+    //let myurl = item.buttonUrl.replace('/wns/','')
+    window.location.href = `..${myurl}&connectionNumber=${searchScreen.connectionNo}`
     }
     else{
     //window.location.href = `citizen${route}`//citizen/
-    window.location.href =item.buttonUrl
+    window.location.href =`${item.buttonUrl}&connectionNumber=${searchScreen.connectionNo}`
 
     }
 
@@ -85,14 +85,14 @@ class NewConnectionActivity extends React.Component {
         "warning"
       );
       }
-      if(myConnectionsCount ===0)
+      if(myConnectionsCount ===0 || myConnectionsCount === undefined)
       {
         toggleSnackbar(
           true,
           {
             labelName: "Link your existing water connection with My Connections for further application processes",
             //labelKey: "WS_LINK_CONNECTION_MESSAGE"
-            lableKey:"WS_COMMON_APPL_LINK_CONNECTION"
+            lableKey:"WS_COMMON_NO_APPL_LINK_CONNECTION"
           },
           "warning"
         );
@@ -187,11 +187,12 @@ class NewConnectionActivity extends React.Component {
          
   
        let actions  = btnName.map(btn => {
-  
+        
          if(preparedFinalObject)
          {
            //set module based on subactivity if new subactivity added the required change
            const WaterConnection = preparedFinalObject;
+           businessId = WaterConnection[0].applicationNo;
              if(WaterConnection.length>0)
              {
             
@@ -216,6 +217,7 @@ class NewConnectionActivity extends React.Component {
              let inWorkflow = false ;
              inWorkflow = WaterConnection.length>0 && WaterConnection[0].inWorkflow;
              const connectionUsagesType = WaterConnection.length>0 && WaterConnection[0].connectionUsagesType;
+             status = WaterConnection[0].applicationStatus;
              if(inWorkflow){
                actions = [];
              }
@@ -427,7 +429,7 @@ class NewConnectionActivity extends React.Component {
   
      return actions;
   }
-  validateActivityList =(preparedFinalObject)=>{
+  validateActivityList = (preparedFinalObject)=>{
     const {
       screenConfig,
       toggleSnackbar,     
@@ -442,8 +444,13 @@ class NewConnectionActivity extends React.Component {
   if(connectionNo)
   {
     WaterConnection = WaterConnection.filter(x=>x.connectionNo === connectionNo)
-    const applicationStatus = myConnectionResults && myConnectionResults[0].applicationStatus;
-    const businessId = myConnectionResults[0].applicationNo;
+    let queryObject = [{ key: "tenantId", value: "ch.chandigarh" }, { key: "connectionNumber", value: connectionNo }];
+    // let payloadData = await getSearchResults(queryObject);
+    // if (payloadData !== null && payloadData !== undefined && payloadData.WaterConnection.length > 0) {
+    //   WaterConnection =payloadData.WaterConnection
+    // }
+    const applicationStatus = WaterConnection && WaterConnection[0].applicationStatus;
+    const businessId = WaterConnection[0].applicationNo;
     const userRoles = JSON.parse(getUserInfo()).roles;
     const roleIndex = userRoles.some(item => item.code ==="CITIZEN" || item.code=== "WS_CEMP" );
     const isButtonPresent =  window.localStorage.getItem("WNS_STATUS") || false;
@@ -469,7 +476,7 @@ class NewConnectionActivity extends React.Component {
             else{
               toggleSnackbar(true,
                 {
-                  labelName: "Already one activity is in process",
+                  labelName: "No subactivity for selected Water connection consumer number",
                   labelKey: "WS_NO_SUBACTIVITY_VALIDATION_MESSAGE"
                 }, "warning" );
                 Action.push(
@@ -502,7 +509,7 @@ class NewConnectionActivity extends React.Component {
   {
     const LocalizationCodeValue = getLocalizationCodeValue("WS_CONNECTION_VALIDATION_MESSAGE")
     const LocalizationCodeValueSuffix = getLocalizationCodeValue("WS_CONNECTION_VALIDATION_MESSAGE_SUFF")
-    const LocalizationCodeserviceValue = getLocalizationCodeValue("WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL")
+    const LocalizationCodeserviceValue = getLocalizationCodeValue("WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL_HOME")
     toggleSnackbar(true,
       {
         labelName: "No subactivity for sewarage Consumer No.",

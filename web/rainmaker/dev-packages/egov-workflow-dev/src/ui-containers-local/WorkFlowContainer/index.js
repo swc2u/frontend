@@ -302,6 +302,8 @@ ApplicationStatus =  data.waterApplication.applicationStatus;
        // let actions_ = data.action
         if(curstateactions && curstateactions[0])
         {
+          if(curstateactions[0].actions)
+          {
           nextActions = curstateactions[0].actions.filter(x=>x.action === data.action)
           if(nextActions !== undefined && nextActions !== null)
           {
@@ -309,6 +311,7 @@ ApplicationStatus =  data.waterApplication.applicationStatus;
           if(nextStateid !== undefined && nextStateid !== null)
           businessServiceData = businessServiceData[0].states.filter(x=>x.uuid === nextStateid )
           }
+        }
         } 
         searchPreviewScreenMdmsData  = preparedFinalObject.searchPreviewScreenMdmsData;
         // for sw swSectorList
@@ -777,6 +780,7 @@ ValidateRequest =(payload,preparedFinalObject) =>{
   //set document if in case of resubmit
   // if(payload.action ==='RESUBMIT_APPLICATION')
   // {
+    let applicationStatus = payload.waterApplication.applicationStatus;
     if(payload.documents !== null)
     {
       for (let index = 0; index < payload.documents.length; index++) {
@@ -810,7 +814,7 @@ ValidateRequest =(payload,preparedFinalObject) =>{
 
   }
     
-  if((payload.applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT' || payload.applicationStatus ==='PENDING_FOR_SUPERINTENDENT_APPROVAL_AFTER_JE' ) && (payload.action !=='REJECT' && payload.action !=='SEND_BACK_TO_JE')  )
+  if((applicationStatus ==='PENDING_FOR_JE_APPROVAL_AFTER_SUPERINTEDENT' || applicationStatus ==='PENDING_FOR_SUPERINTENDENT_APPROVAL_AFTER_JE' ) && (payload.action !=='REJECT' && payload.action !=='SEND_BACK_TO_JE')  )
   {
     isvalidRequest = false;
     // logic for null value validation for Connection Details date and Activation Details
@@ -844,7 +848,7 @@ ValidateRequest =(payload,preparedFinalObject) =>{
 
   }
   // validation to check road cut document uploaded
-  else if(payload.applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN' && payload.action ==='SUBMIT_ROADCUT_NOC')
+  else if(applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN' && payload.action ==='SUBMIT_ROADCUT_NOC')
   {
     let activityType_=  payload.activityType
     let documents=  get(payload, "documents",[]);
@@ -878,13 +882,13 @@ ValidateRequest =(payload,preparedFinalObject) =>{
   }
   // change tarrif type when state is PENDING_FOR_CONNECTION_TARIFF_CHANGE for action CHANGE_TARIFF
 
- if((payload.applicationStatus ==='PENDING_FOR_CONNECTION_TARIFF_CHANGE' && payload.action==='CHANGE_TARIFF'))//PENDING_FOR_CONNECTION_HOLDER_CHANGE may be include for UPDATE_CONNECTION_HOLDER_INFO and CHANGE_CONNECTION_HOLDER
+ if((applicationStatus ==='PENDING_FOR_CONNECTION_TARIFF_CHANGE' && payload.action==='CHANGE_TARIFF'))//PENDING_FOR_CONNECTION_HOLDER_CHANGE may be include for UPDATE_CONNECTION_HOLDER_INFO and CHANGE_CONNECTION_HOLDER
   {
     if(payload.proposedUsageCategory !==null)
     payload.waterProperty.usageCategory = payload.proposedUsageCategory
    
   }
-  if((payload.applicationStatus ==='PENDING_FOR_CONNECTION_HOLDER_CHANGE' && payload.action==='CHANGE_CONNECTION_HOLDER'))//PENDING_FOR_CONNECTION_HOLDER_CHANGE may be include for UPDATE_CONNECTION_HOLDER_INFO and CHANGE_CONNECTION_HOLDER
+  if((applicationStatus ==='PENDING_FOR_CONNECTION_HOLDER_CHANGE' && payload.action==='CHANGE_CONNECTION_HOLDER'))//PENDING_FOR_CONNECTION_HOLDER_CHANGE may be include for UPDATE_CONNECTION_HOLDER_INFO and CHANGE_CONNECTION_HOLDER
 {
   if(payload.connectionHolders !==null)
   {
@@ -896,11 +900,11 @@ ValidateRequest =(payload,preparedFinalObject) =>{
   
  
 }
-  if(payload.applicationStatus ==='PENDING_FOR_CONNECTION_EXTENSION_REGULAR' && payload.action==='CONVERT_INTO_REGULAR_CONNECTION')//
+  if(applicationStatus ==='PENDING_FOR_CONNECTION_EXTENSION_REGULAR' && payload.action==='CONVERT_INTO_REGULAR_CONNECTION')//
   {
     payload.waterApplicationType = "REGULAR";
   }
-  if(payload.applicationStatus ==='INITIATED' && payload.action==='SUBMIT_APPLICATION')
+  if(applicationStatus ==='INITIATED' && payload.action==='SUBMIT_APPLICATION')
   {
     if(payload.documents === null)
     {
@@ -911,7 +915,7 @@ ValidateRequest =(payload,preparedFinalObject) =>{
  
   if(payload.activityType ==='UPDATE_METER_INFO' || payload.activityType ==='WS_METER_UPDATE')// only for meter update
   {
-    if((payload.applicationStatus ==='PENDING_FOR_SDE_APPROVAL' || payload.applicationStatus ==='PENDING_FOR_METER_UPDATE' )
+    if((applicationStatus ==='PENDING_FOR_SDE_APPROVAL' || applicationStatus ==='PENDING_FOR_METER_UPDATE' )
     && ((payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT' 
        // || payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT' 
         || payload.action==='VERIFY_AND_FORWARD_TO_JE' 
@@ -1009,17 +1013,22 @@ ValidateRequest =(payload,preparedFinalObject) =>{
     }
 
   }
-  if((payload.activityType ==='WS_TEMP_DISCONNECTION' || payload.activityType ==='TEMPORARY_DISCONNECTION') && payload.applicationStatus ==='PENDING_FOR_TEMPORARY_CONNECTION_CLOSE')// only for meter update
+  if((payload.activityType ==='WS_TEMP_DISCONNECTION' || payload.activityType ==='TEMPORARY_DISCONNECTION') && applicationStatus ==='PENDING_FOR_TEMPORARY_CONNECTION_CLOSE')// only for meter update
   {
     payload.status = 'Inactive';
 
   }
-  if((payload.activityType ==='WS_DISCONNECTION' || payload.activityType ==='PERMANENT_DISCONNECTION') && payload.applicationStatus ==='PENDING_FOR_CONNECTION_CLOSE')// only for meter update
+  if((payload.activityType ==='WS_DISCONNECTION' || payload.activityType ==='PERMANENT_DISCONNECTION') && applicationStatus ==='PENDING_FOR_CONNECTION_CLOSE')// only for meter update
   {
     payload.status = 'Inactive';
 
   }
-  if((payload.activityType ==='WS_REACTIVATE' || payload.activityType ==='REACTIVATE_CONNECTION') && payload.applicationStatus ==='PENDING_FOR_CONNECTION_REACTIVATION')// only for meter update
+  if((payload.activityType ==='WS_REACTIVATE' || payload.activityType ==='REACTIVATE_CONNECTION') && 
+  (applicationStatus ==='PENDING_FOR_CONNECTION_REACTIVATION'
+  ||applicationStatus ==='PENDING_FOR_SUPERINTENDENT_APPROVAL_AFTER_JE_FOR_REACTIVATION'
+  ||applicationStatus ==='VERIFY_AND_FORWARD_TO_SUPERINTENDENT_AFTER_PAYMENT_FOR_REACTIVATION')
+  
+  )// only for meter update
   {
     payload.status = 'Active';
 

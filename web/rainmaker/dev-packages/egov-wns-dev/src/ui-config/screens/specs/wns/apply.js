@@ -13,8 +13,9 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
 import set from "lodash/set";
-import {
-  GetMdmsNameBycode
+import { 
+  GetMdmsNameBycode,
+  epochToYmd
 } from "../utils";
 import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField ,toggleSpinner} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getQueryArg,setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
@@ -37,6 +38,7 @@ import { httpRequest } from "../../../../ui-utils";
 import {
   prepareDocumentsUploadData,
   getSearchResultsForSewerage,
+  getDescriptionFromMDMS,
   getSearchResults,
   getPropertyResults,
   handleApplicationNumberDisplay,
@@ -60,6 +62,8 @@ export const stepperData = () => {
 let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
 let IsEdit_Additional_Details = false
 const applicationNumber_ = getQueryArg(window.location.href, "applicationNumber");
+const tenantId = getQueryArg(window.location.href, "tenantId")
+const service = getQueryArg(window.location.href, "service");
 const WNS_STATUS =  window.localStorage.getItem("wns_workflow");
 if(WNS_STATUS)
 {
@@ -70,7 +74,109 @@ if(WNS_STATUS)
   }
 
 }
+const searchResults = async (action, state, dispatch, connectionNumber) => {
+  /**
+   * This methods holds the api calls and the responses of fetch bill and search connection for both water and sewerage service
+   */
+  let queryObject = [{ key: "tenantId", value: tenantId }, { key: "connectionNumber", value: connectionNumber }];
+  if (service === "SEWERAGE") {
+    let payloadData = await getSearchResultsForSewerage(queryObject, dispatch);
+    if (payloadData !== null && payloadData !== undefined && payloadData.SewerageConnections.length > 0) {
+      let propTenantId = payloadData.SewerageConnections[0].property.tenantId.split(".")[0];
+      payloadData.SewerageConnections[0].service = service
 
+      if (payloadData.SewerageConnections[0].property.propertyType !== undefined) {
+        const propertyTpe = "[?(@.code  == " + JSON.stringify(payloadData.SewerageConnections[0].property.propertyType) + ")]"
+        let propertyTypeParams = { MdmsCriteria: { tenantId: propTenantId, moduleDetails: [{ moduleName: "PropertyTax", masterDetails: [{ name: "PropertyType", filter: `${propertyTpe}` }] }] } }
+        const mdmsPropertyType = await getDescriptionFromMDMS(propertyTypeParams, dispatch)
+        // if (mdmsPropertyType !== undefined && mdmsPropertyType !== null && mdmsPropertyType.MdmsRes.PropertyTax.PropertyType[0].name !== undefined && mdmsPropertyType.MdmsRes.PropertyTax.PropertyType[0].name !== null) {
+        //   payloadData.SewerageConnections[0].property.propertyTypeData = mdmsPropertyType.MdmsRes.PropertyTax.PropertyType[0].name;//propertyType from Mdms
+        // } else {
+        //   payloadData.SewerageConnections[0].property.propertyTypeData = "NA"
+        // }
+      }
+      //set Property Usage Type and Property Sub Usage Type
+      if(payloadData.SewerageConnections[0].property.usageCategory!== null && payloadData.SewerageConnections[0].property.usageCategory !== undefined)
+      {
+        payloadData.SewerageConnections[0].property.subusageCategory = payloadData.SewerageConnections[0].property.usageCategory
+        payloadData.SewerageConnections[0].property.usageCategory = payloadData.SewerageConnections[0].property.usageCategory.split(".")[0]
+
+      }
+      let code = '03';
+      code = payloadData.SewerageConnections[0].property.address.locality.code
+      if(code.length ===1)
+      {
+        code =`0${code}`
+      }
+      code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.wssectorList",code)   
+      payloadData.SewerageConnections[0].property.address.locality.name = code
+      if (payloadData.SewerageConnections[0].noOfToilets === undefined) { payloadData.SewerageConnections[0].noOfToilets = "NA" }
+      if (payloadData.SewerageConnections[0].noOfToilets === 0) { payloadData.SewerageConnections[0].noOfToilets = "0" }
+      payloadData.SewerageConnections[0].connectionExecutionDate = epochToYmd(payloadData.SewerageConnections[0].connectionExecutionDate)
+      const lat = payloadData.SewerageConnections[0].property.address.locality.latitude ? payloadData.SewerageConnections[0].property.address.locality.latitude : 'NA'
+      const long = payloadData.SewerageConnections[0].property.address.locality.longitude ? payloadData.SewerageConnections[0].property.address.locality.longitude : 'NA'
+      payloadData.SewerageConnections[0].property.address.locality.locationOnMap = `${lat} ${long}`
+
+      
+      //showHideConnectionHolder(dispatch,payloadData.SewerageConnections[0].connectionHolders); 
+      dispatch(prepareFinalObject("WaterConnection[0]", payloadData.SewerageConnections[0]))
+    }
+  } else if (service === "WATER") {
+    let payloadData = await getSearchResults(queryObject);
+    if (payloadData !== null && payloadData !== undefined && payloadData.WaterConnection.length > 0) {
+      payloadData.WaterConnection[0].service = service;
+      let propTenantId = payloadData.WaterConnection[0].property.tenantId.split(".")[0];
+      if (payloadData.WaterConnection[0].connectionExecutionDate !== undefined) {
+        payloadData.WaterConnection[0].connectionExecutionDate = epochToYmd(payloadData.WaterConnection[0].connectionExecutionDate)
+      } else {
+        payloadData.WaterConnection[0].connectionExecutionDate = 'NA'
+      }
+      //set Property Usage Type and Property Sub Usage Type
+      if(payloadData.WaterConnection[0].property.usageCategory!== null && payloadData.WaterConnection[0].property.usageCategory !== undefined)
+      {
+        payloadData.WaterConnection[0].property.subusageCategory = payloadData.WaterConnection[0].property.usageCategory
+        payloadData.WaterConnection[0].property.usageCategory = payloadData.WaterConnection[0].property.usageCategory.split(".")[0]
+
+      }
+      let code = '03';
+      code = payloadData.WaterConnection[0].property.address.locality.code
+      if(code.length ===1)
+      {
+        code =`0${code}`
+      }
+      code =GetMdmsNameBycode(state, dispatch,"applyScreenMdmsData.ws-services-masters.sectorList",code)   
+      payloadData.WaterConnection[0].property.address.locality.name = code
+      if (payloadData.WaterConnection[0].noOfTaps === undefined) { payloadData.WaterConnection[0].noOfTaps = "NA" }
+      if (payloadData.WaterConnection[0].noOfTaps === 0) { payloadData.WaterConnection[0].noOfTaps = "0" }
+      if (payloadData.WaterConnection[0].pipeSize === 0) { payloadData.WaterConnection[0].pipeSize = "0" }
+      if (payloadData.WaterConnection[0].property.propertyType !== undefined) {
+        const propertyTpe = "[?(@.code  == " + JSON.stringify(payloadData.WaterConnection[0].property.propertyType) + ")]"
+        let propertyTypeParams = { MdmsCriteria: { tenantId: propTenantId, moduleDetails: [{ moduleName: "PropertyTax", masterDetails: [{ name: "PropertyType", filter: `${propertyTpe}` }] }] } }
+        const mdmsPropertyType = await getDescriptionFromMDMS(propertyTypeParams, dispatch)
+       // payloadData.WaterConnection[0].property.propertyTypeData = mdmsPropertyType.MdmsRes.PropertyTax.PropertyType[0].name !== undefined ? mdmsPropertyType.MdmsRes.PropertyTax.PropertyType[0].name : "NA";//propertyType from Mdms
+      }
+      const lat = payloadData.WaterConnection[0].property.address.locality.latitude;
+      const long = payloadData.WaterConnection[0].property.address.locality.longitude;
+      payloadData.WaterConnection[0].property.address.locality.locationOnMap = `${lat} ${long}`
+
+      
+      //showHideConnectionHolder(dispatch,payloadData.WaterConnection[0].connectionHolders);     
+      dispatch(prepareFinalObject("WaterConnection[0]", payloadData.WaterConnection[0]));
+    }
+  }
+};
+const beforeInitFn = async (action, state, dispatch, connectionNumber) => {
+  //Search details for given application Number
+  if (connectionNumber) {
+    (await searchResults(action, state, dispatch, connectionNumber));
+    let ConActive = getQueryArg(window.location.href, "Active") === "true"?true:false
+    // set(
+    //   action.screenConfig,
+    //   "components.div.children.connectionDetails.children.cardContent.children.button.children.buttonContainer.children.Deactivate.visible",
+    //   ConActive
+    // );
+  }
+};
 const displaysubUsageType = (usageType, dispatch, state) => {
 
   let UsageCategory = get(
@@ -556,6 +662,11 @@ export const getData = async (action, state, dispatch) => {
 
        // payloadWater.WaterConnection =  findAndReplace(payloadWater.WaterConnection, "NA", null)
         dispatch(prepareFinalObject("WaterConnection", payloadWater.WaterConnection));
+        let connectionNumber = getQueryArg(window.location.href, "connectionNumber");
+        if(connectionNumber)
+        {
+          beforeInitFn(action, state, dispatch, connectionNumber);
+        }
        
         if(payloadWater && payloadWater.WaterConnection.length > 0){
           const {usageCategory } = payloadWater.WaterConnection[0].waterProperty;
@@ -1977,6 +2088,7 @@ const screenConfig = {
     dispatch(toggleSpinner());
     pageReset(dispatch);
     getData(action, state, dispatch).then(() => { });
+   
     const type = getQueryArg(window.location.href, "type");
     if(type ==='WATER')
     {
@@ -2007,8 +2119,7 @@ const screenConfig = {
       dispatch(prepareFinalObject("applyScreen.sewerage", false));
       dispatch(prepareFinalObject("applyScreen.tubewell", false));
 
-    }
-    
+    }  
     
     const propertyId = getQueryArg(window.location.href, "propertyId");
 
@@ -2222,6 +2333,8 @@ const screenConfig = {
     // dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
 
     dispatch(toggleSpinner()); 
+    
+    
     return action;
   },
 
