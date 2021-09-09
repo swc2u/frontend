@@ -38,7 +38,7 @@ class DashboardAgenda extends React.Component {
     // PDF function 
     pdfDownload = (e) => {
 
-    debugger;
+    
     e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
@@ -89,7 +89,7 @@ class DashboardAgenda extends React.Component {
     }
 
 
-    debugger;
+    
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -125,7 +125,7 @@ class DashboardAgenda extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -139,7 +139,7 @@ class DashboardAgenda extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -159,7 +159,7 @@ class DashboardAgenda extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -169,7 +169,7 @@ class DashboardAgenda extends React.Component {
     graphSorting = ( sortBy, data, checkGraph ) => {
 
     
-    debugger;
+    
     var sortNo = null;
     var group = data.reduce((r, a) => {
         r[a[sortBy]] = [...r[a[sortBy]] || [], a];
@@ -220,7 +220,7 @@ class DashboardAgenda extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         const data = this.props.data;
         this.setState({
             checkData : data
@@ -228,7 +228,7 @@ class DashboardAgenda extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         var data = this.props.data;
         if(JSON.stringify(this.state.checkData) !== JSON.stringify(data)){
             
@@ -443,7 +443,7 @@ class DashboardAgenda extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphOneLabel[ind];
                 var graphSorting = this.graphSorting( "agendatype", this.state.dataOne[selectedVal] );
@@ -509,7 +509,7 @@ class DashboardAgenda extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphTwoLabel[ind];
                 var graphSorting = this.graphSorting( "department", this.state.dataTwo[selectedVal] );
@@ -617,7 +617,7 @@ class DashboardAgenda extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphThirdLabel[ind];
                 var graphSorting = this.graphSorting( "meetingType", this.state.dataThird[selectedVal] );
@@ -725,7 +725,7 @@ class DashboardAgenda extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphFourthLabel[ind];
                 var graphSorting = this.graphSorting( "meetingType", this.state.dataFourth[selectedVal] );
@@ -878,7 +878,7 @@ class DashboardAgenda extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphFifthLabel[ind];
                 var graphSorting = this.graphSorting( "meetingType", this.state.dataFifth[selectedVal] );
@@ -987,7 +987,7 @@ class DashboardAgenda extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphSixthLabel[ind];
                 // var graphSorting = this.graphSorting( "agendatype", this.state.dataOne[selectedVal] );
@@ -1098,7 +1098,7 @@ class DashboardAgenda extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphSevenLabel[ind];
                 var graphSorting = this.graphSorting( "meetingType", this.state.dataSeven[selectedVal] );
@@ -1207,7 +1207,7 @@ class DashboardAgenda extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphEightLabel[ind];
                 // var graphSorting = this.graphSorting( "agendatype", this.state.dataOne[selectedVal] );

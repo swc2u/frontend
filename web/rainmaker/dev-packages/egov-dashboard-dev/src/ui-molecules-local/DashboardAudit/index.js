@@ -47,7 +47,7 @@ class DashboardAudit extends React.Component {
         // PDF function 
         pdfDownload = (e) => {
     
-        debugger;
+        
         e.preventDefault();
         var columnData = this.state.unchangeColumnData
         // var columnDataCamelize = this.state.columnData
@@ -98,7 +98,7 @@ class DashboardAudit extends React.Component {
         }
     
     
-        debugger;
+        
         // PDF Code 
         const unit = "pt";
         const size = "A4"; // Use A1, A2, A3 or A4
@@ -134,7 +134,7 @@ class DashboardAudit extends React.Component {
     
         // Column Unchange Data
         columnUnchange=(e)=>{
-            debugger;
+            
             const coldata = e;
             var unchangeData = [];
             for(var i=0;i<coldata.length; i++){
@@ -148,7 +148,7 @@ class DashboardAudit extends React.Component {
         // Hide / Show Column
         showHideColumn = (e) => {
             e.preventDefault();
-            debugger;
+            
             var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
             const removeIndex = parseInt(e.target.value);
             // sortColumn.splice(removeIndex, 1)
@@ -168,7 +168,7 @@ class DashboardAudit extends React.Component {
         // Toggle Column 
         toggleColumn = (e) => {
             e.preventDefault();
-            debugger;
+            
             const data = this.state.columnData
             this.setState({
                 toggleColumnCheck : !this.state.toggleColumnCheck
@@ -178,7 +178,7 @@ class DashboardAudit extends React.Component {
         graphSorting = ( sortBy, data, checkGraph ) => {
     
         
-        debugger;
+        
         var sortNo = null;
         var group = data.reduce((r, a) => {
             r[a[sortBy]] = [...r[a[sortBy]] || [], a];
@@ -245,14 +245,14 @@ class DashboardAudit extends React.Component {
         }
     
         componentDidMount(){
-            debugger;
+            
             const propsData = this.props.data;
             this.setState({
                 checkData : propsData
             })
         }
         componentDidUpdate(){
-            debugger;
+            
             const propsData = this.props.data;
             if(JSON.stringify(this.state.checkData) !== JSON.stringify(propsData)){
                 const dropdownSelected = this.props.data[1].reportSortBy.value;
@@ -446,7 +446,7 @@ class DashboardAudit extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphOneLabel[ind];
                     // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
@@ -516,7 +516,7 @@ class DashboardAudit extends React.Component {
             },
             onClick: (e, element) => {
                 if (element.length > 0) {
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphTwoLabel[ind];
                     var graphSorting = this.graphSorting( "audit_status", this.state.dataTwo[selectedVal] );
@@ -626,7 +626,7 @@ class DashboardAudit extends React.Component {
             },
             onClick: (e, element) => {
                 if (element.length > 0) {
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphThirdLabel[ind];
                     var graphSorting = this.graphSorting( "rsa_name", this.state.dataThird[selectedVal] );
@@ -736,7 +736,7 @@ class DashboardAudit extends React.Component {
             },
             onClick: (e, element) => {
                 if (element.length > 0) {
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphFourthLabel[ind];
                     var graphSorting = this.graphSorting( "auditor_name", this.state.dataFourth[selectedVal] );
@@ -846,7 +846,7 @@ class DashboardAudit extends React.Component {
             },
             onClick: (e, element) => {
                 if (element.length > 0) {
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphFifthLabel[ind];
                     // var graphSorting = this.graphSorting( "department", this.state.dataFourth[selectedVal] );

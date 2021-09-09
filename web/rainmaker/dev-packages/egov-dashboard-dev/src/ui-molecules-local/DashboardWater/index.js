@@ -314,7 +314,8 @@ class WaterDashboard extends React.Component {
                             var day = dt.getDate() < 10 ? "0"+dt.getDate() : dt.getDate();
                             var dt_Month = dt.getMonth() < 10 ? "0"+dt.getMonth() : dt.getMonth();
                             var dt_Year = dt.getFullYear();
-                            dt = dt_Year+"-"+dt_Month+"-"+day;
+                            dt = dt_Year+"-"+parseInt(parseInt(dt_Month)+1)+"-"+day;
+                            dt = new Date(dataItem.auditDetails.createdTime).toISOString().substring(0,10);
 
                             var formatted_ApplicationStatus = dataItem.applicationStatus === null ? "" : dataItem.applicationStatus;
                             formatted_ApplicationStatus = formatted_ApplicationStatus.replaceAll("_"," ");
@@ -344,7 +345,7 @@ class WaterDashboard extends React.Component {
                                 "sectorNo" : parentApplication.waterProperty.sectorNo,
                                 "usageSubCategory" : parentApplication.waterProperty.usageSubCategory,
                                 // "usageCategory" : parentApplication.waterProperty.usageCategory,
-                                "usageCategory" : formatted_UsageCat,
+                                "Tarrif Type" : formatted_UsageCat,
                                 "connectionOwnerDetails" : parentApplication.connectionHolders ? parentApplication.connectionHolders[0].name : "",
                                 "auditDetails" : dt,
                                 "amountPaid" : dataItem.totalAmountPaid
@@ -434,7 +435,8 @@ class WaterDashboard extends React.Component {
                             var day = dt.getDate() < 10 ? "0"+dt.getDate() : dt.getDate();
                             var dt_Month = dt.getMonth() < 10 ? "0"+dt.getMonth() : dt.getMonth();
                             var dt_Year = dt.getFullYear();
-                            dt = dt_Year+"-"+dt_Month+"-"+day;
+                            dt = dt_Year+"-"+parseInt(parseInt(dt_Month)+1)+"-"+day;
+                            dt = new Date(dataItem.auditDetails.createdTime).toISOString().substring(0,10);
 
 
                             var formatted_ApplicationStatus = dataItem.applicationStatus === null ? "" : dataItem.applicationStatus;

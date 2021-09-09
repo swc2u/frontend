@@ -5,11 +5,12 @@ import get from "lodash/get";
 import set from "lodash/set";
 import store from "redux/store";
 import { getTranslatedLabel } from "../ui-config/screens/specs/utils";
-import { httpRequest } from "./api";
+import { httpRequest, BaseUrl } from "./api";
 import { toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 // import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 
 
+const baseUrl = BaseUrl;
 
 export const commonConfig = {
   
@@ -44,7 +45,7 @@ export const getLocaleLabelsforTL = (label, labelKey, localizationLabels) => {
 };
 
 export const getSearchResultsEmployeeRequestFilter = async (data) => {
-  // debugger
+  // 
   
   try {
     store.dispatch(toggleSpinner());
@@ -154,7 +155,7 @@ export const getSearchResultsView = async queryObject => {
 
 
   try {
-    //debugger
+    //
     const response = await httpRequest(
       "post", "hc-services/serviceRequest/_getDetail", "",
       [],
@@ -370,7 +371,7 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
   dispatch(prepareFinalObject("documentsContract", documentsContract));
 };
 export const furnishServiceRequestDetailResponse = (state, response, dispatch) => {
-  debugger
+  
   let refurnishresponse = {};
   var serviceRequestType = []
   var sectorData = []
@@ -427,7 +428,7 @@ export const furnishServiceRequestDetailResponse = (state, response, dispatch) =
   return refurnishresponse;
 };
 export const furnishServiceRequestDetailResponseForEdit = (response, state,dispatch)=> {
-  debugger
+  
   let refurnishresponse = {};
   var serviceRequestType = []
   var sectorData = []
@@ -501,7 +502,7 @@ export const setApplicationNumberBox = (state, dispatch) => {
 };
 
 export const findItemInArrayOfObject = (arr, conditionCheckerFn) => {
-  // debugger
+  // 
   for (let i = 0; i < arr.length; i++) {
     if (conditionCheckerFn(arr[i])) {
       return arr[i];
@@ -648,7 +649,7 @@ export const previewWF = async (state, dispatch, status) => {
 	let method = "CREATE";
 
 	try {
-    debugger
+    
     const serviceName =  get(state.screenConfiguration.preparedFinalObject, "dropDownData2", {});
 	  let payload = "PAYLOAD_DEMO"
 	  console.log("payload",payload)
@@ -712,7 +713,7 @@ export const getData = async (state, dispatch, status) =>  {
 
 	try {
     
-    debugger
+    
     const serviceName =  get(state.screenConfiguration.preparedFinalObject, "dropDownData2", {});
 	  let payload = "PAYLOAD_DEMO"
 	  console.log("payload",payload)
@@ -725,7 +726,7 @@ export const getData = async (state, dispatch, status) =>  {
 		response = await httpRequest("post", "egov-workflow-v2/egov-wf/businessservice/_search?businessServices="+ serviceName.value +"&tenantId=ch", "", [], {services: arraypayload });
     
     // dispatch(prepareFinalObject("WF_PREVIEW", response));
-    debugger
+    
 
     const allData = {
       "modulewiseWF" : [
@@ -768,7 +769,7 @@ export const getData = async (state, dispatch, status) =>  {
         ]
     }
 
-    debugger
+    
     
     const filterData = allData.modulewiseWF.filter(function (el) {
       return el.moduleName == serviceName.value ;
@@ -824,7 +825,7 @@ export const getDashboardDropdownData = async (state, dispatch, status) =>  {
 
 	try {
     
-    debugger
+    
     // const serviceName =  get(state.screenConfiguration.preparedFinalObject, "dropDownData2", {});
 	  let payload = "PAYLOAD_DEMO"
 	  console.log("payload",payload)
@@ -838,7 +839,7 @@ export const getDashboardDropdownData = async (state, dispatch, status) =>  {
 		response = await httpRequest("post", "egov-workflow-v2/egov-wf/businessservice/_search?businessServices=DEMO&tenantId=ch", "", [], {services: arraypayload });
     
     // dispatch(prepareFinalObject("WF_PREVIEW", response));
-    debugger
+    
     var data =  [
       {
           "name" : "PGR",
@@ -944,7 +945,7 @@ export const getDashboardDropdownData = async (state, dispatch, status) =>  {
 };
 
 export const getStoreDropdownData = async (action, state, dispatch) => {
-  debugger;
+  ;
   // STore MDMS Store data
   try {
     store.dispatch(toggleSpinner());
@@ -983,7 +984,7 @@ export const getStoreDropdownData = async (action, state, dispatch) => {
     );
   }
 
-  debugger;
+  ;
   // Store MDMS Financial data
   try {
     store.dispatch(toggleSpinner());
@@ -1048,7 +1049,7 @@ export const getStoreDropdownData = async (action, state, dispatch) => {
 }
 
 export const getDashboardResult = async ( dispatch, data ) => {
-  debugger
+  
 
   const payloadData = data
   try {
@@ -1095,7 +1096,7 @@ export const getDashboardResult = async ( dispatch, data ) => {
 
 // All Complaint Types DAshboard Result
 export const getAllDashboardResult = async ( dispatch, data ) => {
-  debugger
+  
 
   const moduleName = "rainmaker-pgr" 
   const reportName = ["ComplaintTypesReport", "SourceWiseReport", "DepartmentReport"]
@@ -1132,7 +1133,7 @@ export const getAllDashboardResult = async ( dispatch, data ) => {
       payloadData
     );
 
-    debugger
+    
     var response = []
     response.push(ComplaintTypeResponse.reportResponses[0]);
     response.push(SourceWiseResponse.reportResponses[0]);
@@ -1181,7 +1182,7 @@ export const getAllDashboardResult = async ( dispatch, data ) => {
 
 // Get Description Report
 export const getDescriptionReport = async ( dispatch, data ) => {
-  debugger
+  
 
   const moduleName = "rainmaker-pgr" 
   const reportName = "DescriptionReport"
@@ -1200,7 +1201,7 @@ export const getDescriptionReport = async ( dispatch, data ) => {
       payloadData
     );
 
-    debugger
+    
     var response = DescriptionReport
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -1231,7 +1232,7 @@ export const getDescriptionReport = async ( dispatch, data ) => {
 // Get Description Report New Function
 export const getDescriptionReportDashboard = async ( dispatch, data ) => {
   
-  //debugger;
+  //;
   const moduleName = "rainmaker-pgr" 
   const reportName = "DescriptionReport"
   var payloadData = data
@@ -1249,7 +1250,7 @@ export const getDescriptionReportDashboard = async ( dispatch, data ) => {
       payloadData
     );
 
-    debugger
+    
     var response = [ DescriptionReport, payloadData.reportSortBy ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -1280,7 +1281,7 @@ export const getDescriptionReportDashboard = async ( dispatch, data ) => {
 // Get Dashboard Data for Horticulture 
 export const getHCDashboardData = async ( dispatch, data ) => {
   
-  //debugger;
+  //;
   const moduleName = "rainmaker-pgr" 
   const reportName = "DescriptionReport"
   var payloadData = data
@@ -1306,7 +1307,7 @@ export const getHCDashboardData = async ( dispatch, data ) => {
     );
 
     // Working from here is pending
-    //debugger;
+    //;
     var response = [ DescriptionReport, HCPayload.sortBy ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -1336,7 +1337,7 @@ export const getHCDashboardData = async ( dispatch, data ) => {
 // Get Dashboard Data for EChallan 
 export const getEChallanDashboardData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   
   var payloadData = {
     "applicationType": "egov-echallan",
@@ -1366,7 +1367,7 @@ export const getEChallanDashboardData = async ( dispatch, data ) => {
     );
 
     // Working from here is pending
-    //debugger;
+    //;
     var response = [ DescriptionReport, payloadData.reportSortBy ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -1396,7 +1397,7 @@ export const getEChallanDashboardData = async ( dispatch, data ) => {
 // Get Dashboard Data for SportAndCulture
 export const getSportAndCultureDashboardData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   
   var payloadData = {
   "tenantId": data.tenantId,
@@ -1425,7 +1426,7 @@ export const getSportAndCultureDashboardData = async ( dispatch, data ) => {
       payloadData
     );
 
-    //debugger;
+    //;
     var response = [ DescriptionReport, payloadData.reportSortBy ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -1456,7 +1457,7 @@ export const getSportAndCultureDashboardData = async ( dispatch, data ) => {
 // Get Dashboard Data for PublicRelation
 export const getPublicRelationData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   // Same as per Sport and culture but module code is different
   var payloadData = {
   "tenantId": data.tenantId,
@@ -1485,7 +1486,7 @@ export const getPublicRelationData = async ( dispatch, data ) => {
       payloadData
     );
 
-    //debugger;
+    //;
     var response = [ DescriptionReport, payloadData.reportSortBy ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -1516,7 +1517,7 @@ export const getPublicRelationData = async ( dispatch, data ) => {
 // Get Dashboard Data for NULM
 export const getNULMData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   // const data = data;
   // Same as per Sport and culture but module code is different
   const check = data.reportSortBy.value;
@@ -1661,7 +1662,7 @@ export const getNULMData = async ( dispatch, data ) => {
     }
     
 
-    //debugger;
+    //;
     var response = [ resData, data ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -1692,7 +1693,7 @@ export const getNULMData = async ( dispatch, data ) => {
 // Get Dashboard Data for Pension
 export const getPensionData = async ( state, dispatch, data ) => {
   
-  // debugger;
+  // ;
   var payloadData = data;
 
   try {
@@ -1705,7 +1706,7 @@ export const getPensionData = async ( state, dispatch, data ) => {
       payloadData
     );
 
-    // debugger;
+    // ;
 
     var response = [ DescriptionReport, "payloadData.reportSortBy" ];
     
@@ -1732,7 +1733,7 @@ export const getPensionData = async ( state, dispatch, data ) => {
 // Get Pension Data from Three APIS
 export const getEmpToRetirePensionData = async ( state, dispatch, data ) => {
   
-  // debugger;
+  // ;
   var payloadData = data;
 
   try {
@@ -1745,7 +1746,7 @@ export const getEmpToRetirePensionData = async ( state, dispatch, data ) => {
       payloadData
     );
 
-    // debugger;      
+    // ;      
     store.dispatch(toggleSpinner());
     return response;
   } catch (error) {
@@ -1762,7 +1763,7 @@ export const getEmpToRetirePensionData = async ( state, dispatch, data ) => {
 
 export const getNormalPensionData = async ( state, dispatch, data ) => {
   
-  // debugger;
+  // ;
   var payloadData = data;
 
   try {
@@ -1775,7 +1776,7 @@ export const getNormalPensionData = async ( state, dispatch, data ) => {
       payloadData
     );
 
-    // debugger;      
+    // ;      
     store.dispatch(toggleSpinner());
     return response;
   } catch (error) {
@@ -1792,7 +1793,7 @@ export const getNormalPensionData = async ( state, dispatch, data ) => {
 
 export const getDeathOfEmpPensionData = async ( state, dispatch, data ) => {
   
-  // debugger;
+  // ;
   var payloadData = data;
 
   try {
@@ -1805,7 +1806,7 @@ export const getDeathOfEmpPensionData = async ( state, dispatch, data ) => {
       payloadData
     );
 
-    // debugger;
+    // ;
     store.dispatch(toggleSpinner());
     return response;
   } catch (error) {
@@ -1822,7 +1823,7 @@ export const getDeathOfEmpPensionData = async ( state, dispatch, data ) => {
 
 export const getDeathPensionerPensionData = async ( state, dispatch, data ) => {
   
-  // debugger;
+  // ;
   var payloadData = data;
 
   try {
@@ -1835,7 +1836,7 @@ export const getDeathPensionerPensionData = async ( state, dispatch, data ) => {
       payloadData
     );
 
-    // debugger;
+    // ;
 
     store.dispatch(toggleSpinner());
     return response;
@@ -1854,7 +1855,7 @@ export const getDeathPensionerPensionData = async ( state, dispatch, data ) => {
 // Get Dashboard Data for Rented Property CollectionReport
 export const getRentedPropertyData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   var payloadRP = {
     "tenantId": data.tenantId,
     "reportName": "RPRentRegistryReport",
@@ -1942,7 +1943,7 @@ export const getRentedPropertyData = async ( dispatch, data ) => {
       payloadDataDue
     );
 
-    //debugger;
+    //;
     var CollectionData = [resReistryReport, resOwnerReport, resDuplicateReport]
     const DescriptionReport = [CollectionData, DueData];
     var response = [ DescriptionReport, payloadDataDue ];
@@ -1976,7 +1977,7 @@ export const getRentedPropertyData = async ( dispatch, data ) => {
 // Get Dashboard Data for Estate Data
 export const getEStateData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   // Same as per Sport and culture but module code is different
   var payloadData = {
   "tenantId": data.tenantId,
@@ -2138,7 +2139,7 @@ export const getEStateData = async ( dispatch, data ) => {
       "dueReport" : resDuePropertyDueReport
     };
     
-    //debugger;
+    //;
     var response = [resJSON, data];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -2169,7 +2170,7 @@ export const getEStateData = async ( dispatch, data ) => {
 // Get Dashboard Data for Estate Data
 export const getFinanceData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   var fromDate = data.fromDate.split("-");
   fromDate = fromDate[2]+"/"+fromDate[1]+"/"+fromDate[0];
   var toDate = data.toDate.split("-");
@@ -2179,7 +2180,7 @@ export const getFinanceData = async ( dispatch, data ) => {
     store.dispatch(toggleSpinner());
     const resgetAllIncomeExpentiureYearly = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureByFromToDate?fromDate=05/09/2018&toDate=15/09/2020",
+      baseUrl+"/services/EGF/incomeexpend/getAllIncomeExpentiureByFromToDate?fromDate=05/09/2018&toDate=15/09/2020",
       "",
       [],
       {}
@@ -2188,8 +2189,8 @@ export const getFinanceData = async ( dispatch, data ) => {
 
     const resgetAllIncomeExpentiureSchedules = await httpRequest(
       "get",
-      // "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureSchedulesByFromToDate?fromDate=05/09/2018&toDate=15/09/2020",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllIncomeExpentiureSchedulesByFromToDate?fromDate="+fromDate+"&toDate="+toDate,
+      // baseUrl+"/services/EGF/incomeexpend/getAllIncomeExpentiureSchedulesByFromToDate?fromDate=05/09/2018&toDate=15/09/2020",
+      baseUrl+"/services/EGF/incomeexpend/getAllIncomeExpentiureSchedulesByFromToDate?fromDate="+fromDate+"&toDate="+toDate,
       "",
       [],
       {}
@@ -2197,7 +2198,7 @@ export const getFinanceData = async ( dispatch, data ) => {
 
     const resgetAllBudgetVarianceReportRest = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllBudgetVarianceReportRest",
+      baseUrl+"/services/EGF/incomeexpend/getAllBudgetVarianceReportRest",
       "",
       [],
       {}
@@ -2205,8 +2206,8 @@ export const getFinanceData = async ( dispatch, data ) => {
 
     const res_getAllBudgetWatchReportRestData = await httpRequest(
       "get",
-      // "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllBudgetVarianceReportRest",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/incomeexpend/getAllBudgetWatchReportRestData?fromDate="+fromDate+"&toDate="+toDate,
+      // baseUrl+"/services/EGF/incomeexpend/getAllBudgetVarianceReportRest",
+      baseUrl+"/services/EGF/incomeexpend/getAllBudgetWatchReportRestData?fromDate="+fromDate+"&toDate="+toDate,
       "",
       [],
       {}
@@ -2219,7 +2220,7 @@ export const getFinanceData = async ( dispatch, data ) => {
       "getAllWatchBudgetRestReport" : res_getAllBudgetWatchReportRestData
     };
     
-    //debugger;
+    //;
     var response = [resJSON, data];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -2250,7 +2251,7 @@ export const getFinanceData = async ( dispatch, data ) => {
 // Get Dashboard Data for TradeLicense
 export const getTradeLicenseData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   // Same as per Sport and culture but module code is different
   var payloadData = data;
 
@@ -2267,7 +2268,7 @@ export const getTradeLicenseData = async ( dispatch, data ) => {
     );
     
     DescriptionReport = res1;
-    //debugger;
+    //;
     
     var response = [ DescriptionReport, payloadData ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
@@ -2299,7 +2300,7 @@ export const getTradeLicenseData = async ( dispatch, data ) => {
 // Get Dashboard Data for Eaawas
 export const getEaawasData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   // Same as per Sport and culture but module code is different
   var payloadData = {
     "eawasRequest": {
@@ -2317,7 +2318,7 @@ export const getEaawasData = async ( dispatch, data ) => {
       payloadData
     );
 
-    //debugger;
+    //;
     var response = DescriptionReport;
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -2348,7 +2349,7 @@ export const getEaawasData = async ( dispatch, data ) => {
 // Get Legal Dashboard Data
 export const getLegalDashboardData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   // Same as per Sport and culture but module code is different
   var payloadData = {
   "tenantId": data.tenantId,
@@ -2371,13 +2372,13 @@ export const getLegalDashboardData = async ( dispatch, data ) => {
     store.dispatch(toggleSpinner());
     const DescriptionReport = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/legalcase/getLegalCase",
+      baseUrl+"/services/EGF/legalcase/getLegalCase",
       "",
       [],
       {}
     );
 
-    //debugger;
+    //;
     var response = [DescriptionReport, data]
     dispatch(
       handleField(
@@ -2411,7 +2412,7 @@ export const getLegalDashboardData2 = async ( dispatch, data ) => {
 
     const response = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/legalcase/getLegalCase",
+      baseUrl+"/services/EGF/legalcase/getLegalCase",
       "", 
       []);
     return response;
@@ -2431,7 +2432,7 @@ export const getLegalDashboardData2 = async ( dispatch, data ) => {
 // Get Agenda Dashboard Data
 export const getAgendaDashboardData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   // Same as per Sport and culture but module code is different
   var payloadData = {
   "tenantId": data.tenantId,
@@ -2448,7 +2449,7 @@ export const getAgendaDashboardData = async ( dispatch, data ) => {
     store.dispatch(toggleSpinner());
     const getAllAgenda = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/agenda/getAllAgenda",
+      baseUrl+"/services/EGF/agenda/getAllAgenda",
       "",
       [],
       {}
@@ -2456,7 +2457,7 @@ export const getAgendaDashboardData = async ( dispatch, data ) => {
 
     const getAllMeeting = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/agenda/getAllMeeting",
+      baseUrl+"/services/EGF/agenda/getAllMeeting",
       "",
       [],
       {}
@@ -2464,13 +2465,13 @@ export const getAgendaDashboardData = async ( dispatch, data ) => {
 
     const getAllMoM = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/agenda/getAllMom",
+      baseUrl+"/services/EGF/agenda/getAllMom",
       "",
       [],
       {}
     );
 
-    //debugger;
+    //;
     var response = [
       {
         "respData": {
@@ -2520,13 +2521,13 @@ export const getApniMandiData = async ( dispatch, data ) => {
   toDt = toDt.split("-");
   toDt = toDt[2]+"/"+toDt[1]+"/"+toDt[0];
 
-  debugger;
+  ;
   try {
     store.dispatch(toggleSpinner());
     const dayMarketData = await httpRequest(
       "get",
-      // "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/apnimandiapi/getAllApniMandiDayMarketCollection?fromDate=01/01/2020&toDate=01/05/2021",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/apnimandiapi/getAllApniMandiDayMarketCollection?fromDate="+fromDt+"&toDate="+toDt,
+      // baseUrl+"/services/EGF/apnimandiapi/getAllApniMandiDayMarketCollection?fromDate=01/01/2020&toDate=01/05/2021",
+      baseUrl+"/services/EGF/apnimandiapi/getAllApniMandiDayMarketCollection?fromDate="+fromDt+"&toDate="+toDt,
       "",
       [],
       {}
@@ -2534,14 +2535,14 @@ export const getApniMandiData = async ( dispatch, data ) => {
 
     const allMarketData = await httpRequest(
       "get",
-      // "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/apnimandiapi/getAllApniMandiCollection?fromDate=01/01/2020&toDate=01/05/2021",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/apnimandiapi/getAllApniMandiCollection?fromDate="+fromDt+"&toDate="+toDt,
+      // baseUrl+"/services/EGF/apnimandiapi/getAllApniMandiCollection?fromDate=01/01/2020&toDate=01/05/2021",
+      baseUrl+"/services/EGF/apnimandiapi/getAllApniMandiCollection?fromDate="+fromDt+"&toDate="+toDt,
       "",
       [],
       {}
     );
 
-    //debugger;
+    //;
     var response = [{
       "dayMarketCollection": dayMarketData,
       "getAllMarketCollection": allMarketData
@@ -2581,7 +2582,7 @@ export const getAuditData = async ( dispatch, data ) => {
     store.dispatch(toggleSpinner());
     const getAllAudit = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/auditrest/getAllAudit",
+      baseUrl+"/services/EGF/auditrest/getAllAudit",
       "",
       [],
       {}
@@ -2617,7 +2618,7 @@ export const getAuditData = async ( dispatch, data ) => {
 // Get Dashboard Data for OPMS (Status))
 export const getStatusOPMSData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   // Payload for all Status 4 API OPMS report 
   var petnocPayload = {
     "applicationType": "PETNOC",
@@ -2707,7 +2708,7 @@ export const getStatusOPMSData = async ( dispatch, data ) => {
 
     const DescriptionReport2 = [];
 
-    //debugger;
+    //;
     var resJSON = {
       "PETNOC" : petnocStatusRes.nocApplicationDetail,
       "ROADCUTNOC": roadcutStatusRes.nocApplicationDetail,
@@ -2743,7 +2744,7 @@ export const getStatusOPMSData = async ( dispatch, data ) => {
 
 export const getCollectionOPMSData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   
   const typewisePayloadData = {
     "applicationStatus": null,
@@ -2801,7 +2802,7 @@ export const getCollectionOPMSData = async ( dispatch, data ) => {
       sectorwisePayloadData
     );;
 
-    //debugger;
+    //;
     var resJSON = {
       "revenueCollectionTypeWise" : typeWiseData.reportResponses,
       "revenueCollectionSectorWise": sectorWiseData.reportResponses,
@@ -2836,7 +2837,7 @@ export const getCollectionOPMSData = async ( dispatch, data ) => {
 // Get Dashboard Data for OSBM
 export const getOSBMData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   // Same as per Sport and culture but module code is different
   var payloadData = data
 
@@ -2851,7 +2852,7 @@ export const getOSBMData = async ( dispatch, data ) => {
       payloadData.payload
     );
 
-    //debugger;
+    //;
     var response = [ DescriptionReport, payloadData ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -2936,7 +2937,7 @@ export const getStoreMaterialReceiptData = async ( dispatch, data ) => {
       []
     );
 
-    //debugger;
+    //;
     var response = [ DescriptionReport, payloadData ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -2990,7 +2991,7 @@ export const getStorePurchaseOrderData = async ( dispatch, data ) => {
       []
     );
 
-    //debugger;
+    //;
     var DescriptionReport = {
       "OpenBalance" : openBalance,
       "CloseBalance" : closeBalance
@@ -3027,7 +3028,7 @@ export const getStorePurchaseOrderData = async ( dispatch, data ) => {
 // Get Dashboard Data for Store Purchase Order Data
 export const getStorePurchaseOrderData2 = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   // Same as per Sport and culture but module code is different
   // var payloadData = {
   //   "tenantId": data.tenantId,
@@ -3048,7 +3049,7 @@ export const getStorePurchaseOrderData2 = async ( dispatch, data ) => {
       []
     );
 
-    //debugger;
+    //;
     var response = [ DescriptionReport.purchaseOrders, payloadData ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -3080,7 +3081,7 @@ export const getStorePurchaseOrderData2 = async ( dispatch, data ) => {
 // Get Dashboard Data for Store MaterialReceipt Data
 export const getStoreMaterialReceiptData2 = async ( dispatch, data ) => {
 
-debugger;
+;
 // Same as per Sport and culture but module code is different
 // var payloadData = {
 //   "tenantId": data.tenantId,
@@ -3102,7 +3103,7 @@ try {
   []
   );
 
-  //debugger;
+  //;
   var response = [ DescriptionReport.MaterialReceipt, payloadData ];
   dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -3133,7 +3134,7 @@ try {
 // Get Dashboard Data for Store Indent Issue Note
 export const getStoreIndentData2 = async ( dispatch, data ) => {
 
-debugger;
+;
 // Same as per Sport and culture but module code is different
 var payloadData = data;
 
@@ -3149,7 +3150,7 @@ try {
   []
   );
 
-  //debugger;
+  //;
   var response = [ DescriptionReport.materialIssues, payloadData ];
   dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -3180,7 +3181,7 @@ try {
 // Get Dashboard Data for Water n Sewerage
 export const getWNSData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   // Same as per Sport and culture but module code is different
   var payloadData = {
   "tenantId": data.tenantId,
@@ -3210,7 +3211,7 @@ export const getWNSData = async ( dispatch, data ) => {
       payloadData
     );
 
-    // //debugger;
+    // //;
     var response = [ applicationList, payloadData ];
     // dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -3241,7 +3242,7 @@ export const getWNSData = async ( dispatch, data ) => {
 // Get Dashboard Data for Water n Sewerage
 export const getSewerageData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   try {
     store.dispatch(toggleSpinner());
     
@@ -3282,7 +3283,7 @@ export const getSewerageData = async ( dispatch, data ) => {
 // Get Dashboard Data for Work
 export const getWorkData = async ( dispatch, data ) => {
   
-  debugger;
+  ;
   // Same as per Sport and culture but module code is different
   var payloadData = {
   "tenantId": data.tenantId,
@@ -3295,21 +3296,21 @@ export const getWorkData = async ( dispatch, data ) => {
     store.dispatch(toggleSpinner());
     const getAllEstimate = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/dashboard/getAllEstimationPreparation",
+      baseUrl+"/services/EGF/dashboard/getAllEstimationPreparation",
       "",
       [],
       {}
     );
     const getAllDNIT = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/dashboard/getAllDnit",
+      baseUrl+"/services/EGF/dashboard/getAllDnit",
       "",
       [],
       {}
     );
     const getAllWorkAgreement = await httpRequest(
       "get",
-      "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/dashboard/getAllWorkAgreementByMilestone",
+      baseUrl+"/services/EGF/dashboard/getAllWorkAgreementByMilestone",
       "",
       [],
       {}
@@ -3320,7 +3321,7 @@ export const getWorkData = async ( dispatch, data ) => {
       "getAllDnit" : getAllDNIT,
       "getAllWorkAgreementByMilestone" : getAllWorkAgreement
     }
-    //debugger;
+    //;
     response = [ propsData, payloadData ];
     dispatch(prepareFinalObject("allDashboardSearchData", response));
 
@@ -3379,7 +3380,7 @@ export const getWorkflowDropdownData = async (state, dispatch, status) => {
     [], 
     {services: arraypayload });
  
-    //debugger;
+    //;
     const HARDDATA = response
 
 		if (response) {
@@ -3465,7 +3466,7 @@ export const getWorkflowDropdownData = async (state, dispatch, status) => {
 // API call for Search workflowPreview Data
 export const workflowPreview = async (state, dispatch, status) => {
 
-  //debugger;
+  //;
   let response = '';
 	let method = "CREATE";
 
@@ -3487,7 +3488,7 @@ export const workflowPreview = async (state, dispatch, status) => {
     {services: arraypayload });
     // response = await httpRequest("post", "egov-workflow-v2/egov-wf/businessservice/_desc?tenantId=ch.chandigarh", "", [], {services: arraypayload });
     
-    //debugger;
+    //;
     
     workflowDescription = workflowDescription[getModuleNAme.label]
 

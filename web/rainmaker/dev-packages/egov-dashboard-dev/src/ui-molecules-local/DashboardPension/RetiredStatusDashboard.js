@@ -29,7 +29,7 @@ class RetiredStatusDashboard extends React.Component {
         // PDF function 
         pdfDownload = (e) => {
     
-        debugger;
+        
         e.preventDefault();
         var columnData = this.state.unchangeColumnData
         // var columnDataCamelize = this.state.columnData
@@ -75,7 +75,7 @@ class RetiredStatusDashboard extends React.Component {
         }
     
     
-        debugger;
+        
         // PDF Code 
         const unit = "pt";
         const size = "A4"; // Use A1, A2, A3 or A4
@@ -111,7 +111,7 @@ class RetiredStatusDashboard extends React.Component {
     
         // Column Unchange Data
         columnUnchange=(e)=>{
-            debugger;
+            
             const coldata = e;
             var unchangeData = [];
             for(var i=0;i<coldata.length; i++){
@@ -125,7 +125,7 @@ class RetiredStatusDashboard extends React.Component {
         // Hide / Show Column
         showHideColumn = (e) => {
             e.preventDefault();
-            debugger;
+            
             var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
             const removeIndex = parseInt(e.target.value);
             // sortColumn.splice(removeIndex, 1)
@@ -145,7 +145,7 @@ class RetiredStatusDashboard extends React.Component {
         // Toggle Column 
         toggleColumn = (e) => {
             e.preventDefault();
-            debugger;
+            
             const data = this.state.columnData
             this.setState({
                 toggleColumnCheck : !this.state.toggleColumnCheck
@@ -153,7 +153,7 @@ class RetiredStatusDashboard extends React.Component {
         }
         
         graphSorting = ( sortBy, data, checkGraph ) => {
-            debugger;
+            
             var graphOneLabel = []; var graphOneData = []; var group = [];
             var monthJSON = {0:"Jan",1:"Feb",2:"Mar",3:"Apr",4:"May",5:"Jun",6:"Jul",
             7:"Aug",8:"Sep",9:"Oct",10:"Nov",11:"Dec"};
@@ -182,7 +182,7 @@ class RetiredStatusDashboard extends React.Component {
               }
   
   
-              debugger;
+              
               // Code for Y Axis Data
               var bar1 =[];
               var group = data.employeeToBeRetired[0].reportData.reduce((r, a) => {
@@ -195,7 +195,7 @@ class RetiredStatusDashboard extends React.Component {
                   bar1.push(group[graphOneLabel[i]].length);
               }
   
-              debugger;
+              
               var bar2 =[];
               var SecondBarData = [];
               var regularNormalPension = data.regularNormalPension[0].reportData;
@@ -233,7 +233,7 @@ class RetiredStatusDashboard extends React.Component {
               return [ graphOneLabel, graphOneData, groupData ];
             }
             if(checkGraph === "status"){
-              debugger;
+              
               var sortNo = null;
               var group = data.reduce((r, a) => {
                   r[a[3]] = [...r[a[3]] || [], a];
@@ -273,7 +273,7 @@ class RetiredStatusDashboard extends React.Component {
               return [ graphOneLabel, graphOneData, group ];
   
             }else{
-              debugger;
+              
               var sortNo = null;
               var group = data.reduce((r, a) => {
                   r[a[sortBy]] = [...r[a[sortBy]] || [], a];
@@ -339,7 +339,7 @@ class RetiredStatusDashboard extends React.Component {
           }
   
         componentDidMount(){
-            debugger;
+            
             const propsData = this.props.data;
             if(propsData.length>0 && JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
 
@@ -353,7 +353,7 @@ class RetiredStatusDashboard extends React.Component {
                 var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
                 "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
         
-                debugger;
+                
                 var empRetired =[];
                 var groupEmpRetired = this.props.data[0].employeeTobeRetired.reduce((r, a) => {
                     r[new Date(a[3]).getFullYear()+"-"+monthJSON[new Date(a[3]).getMonth()]] 
@@ -383,7 +383,7 @@ class RetiredStatusDashboard extends React.Component {
                     }, {});
         
                 //All Data combination operation
-                debugger;
+                
                 var processApplicationSUM = [];
                 for(var i=0; i<dateRange.length; i++){
                     processApplicationSUM.push(0);
@@ -412,7 +412,7 @@ class RetiredStatusDashboard extends React.Component {
                     }
                 }
         
-                debugger;
+                
                 var graphOneData = [];
                 for(var i=0; i<dateRange.length; i++){
                     if(groupEmpRetired[dateRange[i]]){
@@ -455,7 +455,7 @@ class RetiredStatusDashboard extends React.Component {
         }
 
         componentDidUpdate(){
-            debugger;
+            
             const propsData = this.props.data;
             if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
 
@@ -469,7 +469,7 @@ class RetiredStatusDashboard extends React.Component {
                 var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
                 "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
         
-                debugger;
+                
                 var empRetired =[];
                 var groupEmpRetired = this.props.data[0].employeeTobeRetired.reduce((r, a) => {
                     r[new Date(a[3]).getFullYear()+"-"+monthJSON[new Date(a[3]).getMonth()]] 
@@ -499,7 +499,7 @@ class RetiredStatusDashboard extends React.Component {
                     }, {});
         
                 //All Data combination operation
-                debugger;
+                
                 var processApplicationSUM = [];
                 for(var i=0; i<dateRange.length; i++){
                     processApplicationSUM.push(0);
@@ -528,7 +528,7 @@ class RetiredStatusDashboard extends React.Component {
                     }
                 }
         
-                debugger;
+                
                 var graphOneData = [];
                 for(var i=0; i<dateRange.length; i++){
                     if(groupEmpRetired[dateRange[i]]){
@@ -682,7 +682,7 @@ class RetiredStatusDashboard extends React.Component {
               onClick: (e, element) => {
                   if (element.length > 0) {
                       
-                      debugger;
+                      
                       var ind = element[0]._index;   
                       const selectedVal = this.state.graphOneLabel[ind];
                       const data = this.state.applicationProcessData;
@@ -802,7 +802,7 @@ class RetiredStatusDashboard extends React.Component {
               onClick: (e, element) => {
                   if (element.length > 0) {
                       
-                      debugger;
+                      
                       var ind = element[0]._index;   
                       const selectedVal = this.state.graphOneLabel[ind];
   

@@ -50,7 +50,7 @@ class RPCollectionReport extends React.Component {
     
     // PDF function 
     pdfDownload = (e) => {
-        debugger;
+        
         e.preventDefault();
         var tableDataHeader1 = ["Receipt Number", "Receipt Issue Date", "Colony", "Allotment Number",
              "Allotment Date", "Name", "Mobile Number", "Transaction Number", "Status", "Application Type",
@@ -104,7 +104,7 @@ class RPCollectionReport extends React.Component {
             }
         
         
-            debugger;
+            
             // PDF Code 
             var unit = "pt";
             var size = "A4"; // Use A1, A2, A3 or A4
@@ -181,7 +181,7 @@ class RPCollectionReport extends React.Component {
             }
         
         
-            debugger;
+            
             // PDF Code 
             var unit = "pt";
             var size = "A4"; // Use A1, A2, A3 or A4
@@ -258,7 +258,7 @@ class RPCollectionReport extends React.Component {
             }
         
         
-            debugger;
+            
             // PDF Code 
             var unit = "pt";
             var size = "A4"; // Use A1, A2, A3 or A4
@@ -348,7 +348,7 @@ class RPCollectionReport extends React.Component {
             }
         
         
-            debugger;
+            
             // PDF Code 
             var unit = "pt";
             var size = "A4"; // Use A1, A2, A3 or A4
@@ -385,7 +385,7 @@ class RPCollectionReport extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -399,7 +399,7 @@ class RPCollectionReport extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -419,7 +419,7 @@ class RPCollectionReport extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -428,15 +428,15 @@ class RPCollectionReport extends React.Component {
     
     graphSorting = ( sortBy, data, checkGraph ) => {
 
-    debugger;
+    
     if(checkGraph === "dashboard 1"){
-        debugger;
+        
         var sortNo = null;
         var graphOneData = [];
         var principalDue = [];
         var amt;
 
-        debugger;
+        
         var sortValueNo = sortBy + 4;
 
         var group = data.reduce((r, a) => {
@@ -456,13 +456,13 @@ class RPCollectionReport extends React.Component {
         }
         return [ graphOneLabel, graphOneData, group ]
     }else if(checkGraph === "dashboard 2"){
-        debugger;
+        
         var sortNo = null;
         var graphOneData = [];
         var principalDue = [];
         var amt;
 
-        debugger;
+        
         var sortValueNo = sortBy + 4;
 
         var group = data.reduce((r, a) => {
@@ -507,7 +507,7 @@ class RPCollectionReport extends React.Component {
         return [ graphOneLabel, graphOneData, group ]
     }
     else{
-        debugger;
+        
         var sortNo = null;
         var group = data.reduce((r, a) => {
             r[a[sortBy]] = [...r[a[sortBy]] || [], a];
@@ -575,7 +575,7 @@ class RPCollectionReport extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         const propSortBy = "eventStatus";
         // const propSortBy = "status";
         const data = this.props.data;
@@ -609,7 +609,7 @@ class RPCollectionReport extends React.Component {
         for(var i=0;i<allGraphData.length; i++){
             graphData.push(allGraphData[i].length);
         }
-        debugger;
+        
         var allRowData = OwnershipTransfer;
         allRowData = allRowData.concat(DuplicateCopy);
         allRowData = allRowData.concat(PropertyRent);
@@ -619,7 +619,7 @@ class RPCollectionReport extends React.Component {
         // var graphOneData2 = this.graphSorting( propSortBy, data, "dashboard 1" );
 
         
-        debugger;
+        
         // Column Data 1
         var tableData = data[0] ? Object.keys(data[0]) : [];
         var tableDataHeader = ["Receipt Number", "Receipt Issue Date", "Colony", "Allotment Number",
@@ -699,7 +699,7 @@ class RPCollectionReport extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         if(JSON.stringify(this.state.checkData) !== JSON.stringify(this.props.data)){
             const propSortBy = "eventStatus";
             // const propSortBy = "status";
@@ -731,7 +731,7 @@ class RPCollectionReport extends React.Component {
             for(var i=0;i<allGraphData.length; i++){
                 graphData.push(allGraphData[i].length);
             }
-            debugger;
+            
             var allRowData = OwnershipTransfer;
             allRowData = allRowData.concat(DuplicateCopy);
             allRowData = allRowData.concat(PropertyRent);
@@ -741,7 +741,7 @@ class RPCollectionReport extends React.Component {
             // var graphOneData2 = this.graphSorting( propSortBy, data, "dashboard 1" );
     
             
-            debugger;
+            
         // Column Data 1
         var tableData = data[0] ? Object.keys(data[0]) : [];
         var tableDataHeader = ["Receipt Number", "Receipt Issue Date", "Colony", "Allotment Number",
@@ -917,7 +917,7 @@ class RPCollectionReport extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     var selectedVal = this.state.graphOneLabel[ind];
                     var data = this.state.allGraphData[ind];
@@ -954,7 +954,7 @@ class RPCollectionReport extends React.Component {
                         }
                         unchangeColumnData1 = columnData1
                     }
-                    debugger;
+                    
                     
                     
     
@@ -1026,14 +1026,14 @@ class RPCollectionReport extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     var ind = element[0]._index;
-                    // debugger;
+                    // 
                     // var selectedVal = this.state.graphTwoLabel[ind];
                     
                     // this.setState({
                     //     graphClicked: 2,
                     //     rowData: this.state.dataTwo[selectedVal]
                     // })
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     var selectedVal = this.state.graphTwoLabel[ind];
                     var data = this.state.dataTwo[selectedVal];
@@ -1067,7 +1067,7 @@ class RPCollectionReport extends React.Component {
                         }
                     }
                     
-                    debugger;
+                    
                     
                     
                     this.setState({
@@ -1178,7 +1178,7 @@ class RPCollectionReport extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     var ind = element[0]._index;
-                    debugger;
+                    
                     var selectedVal = this.state.graphThirdLabel[ind];
                     
                     this.setState({

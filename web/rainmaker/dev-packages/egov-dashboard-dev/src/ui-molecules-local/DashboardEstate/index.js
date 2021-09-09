@@ -55,7 +55,7 @@ class DashboardEstate extends React.Component {
 
     // PDF function 
     pdfDownload = (e) => {
-    debugger;
+    
     e.preventDefault();
 
     if(this.state.graphClicked === 0){
@@ -111,7 +111,7 @@ class DashboardEstate extends React.Component {
         }
 
 
-        debugger;
+        
         // PDF Code 
         var unit = "pt";
         var size = "A4"; // Use A1, A2, A3 or A4
@@ -193,7 +193,7 @@ class DashboardEstate extends React.Component {
         }
 
 
-        debugger;
+        
         // PDF Code 
         var unit = "pt";
         var size = "A4"; // Use A1, A2, A3 or A4
@@ -275,7 +275,7 @@ class DashboardEstate extends React.Component {
         }
 
 
-        debugger;
+        
         // PDF Code 
         var unit = "pt";
         var size = "A4"; // Use A1, A2, A3 or A4
@@ -357,7 +357,7 @@ class DashboardEstate extends React.Component {
         }
 
 
-        debugger;
+        
         // PDF Code 
         var unit = "pt";
         var size = "A4"; // Use A1, A2, A3 or A4
@@ -439,7 +439,7 @@ class DashboardEstate extends React.Component {
         }
 
 
-        debugger;
+        
         // PDF Code 
         var unit = "pt";
         var size = "A4"; // Use A1, A2, A3 or A4
@@ -522,7 +522,7 @@ class DashboardEstate extends React.Component {
         }
 
 
-        debugger;
+        
         // PDF Code 
         var unit = "pt";
         var size = "A4"; // Use A1, A2, A3 or A4
@@ -558,7 +558,7 @@ class DashboardEstate extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -572,7 +572,7 @@ class DashboardEstate extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -592,7 +592,7 @@ class DashboardEstate extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -601,7 +601,7 @@ class DashboardEstate extends React.Component {
     
     graphSorting = ( sortBy, data, checkGraph ) => {
 
-        debugger;
+        
         if(checkGraph[0] === "dashboard_1_Two"){
             var sortNo = null;
             var rowData = data.reportResponses[0].reportData;
@@ -724,7 +724,7 @@ class DashboardEstate extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         const propsData = this.props.data;
         this.setState({
         checkData : this.props.data
@@ -732,7 +732,7 @@ class DashboardEstate extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         const propsData = this.props.data;
         if(JSON.stringify(this.state.checkData) !== JSON.stringify(propsData)){
 
@@ -1000,11 +1000,11 @@ class DashboardEstate extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphOneLabel[ind];
                     const data = this.state.dataOne[selectedVal];
-                    debugger;
+                    
                     var graphData;
                     if(selectedVal === "Applications"){
                         graphData = this.graphSorting(0, data, ["dashboard_1_Two",selectedVal]);
@@ -1105,7 +1105,7 @@ class DashboardEstate extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphTwoLabel[ind];
                     const data = this.state.dataTwo[selectedVal];
@@ -1201,11 +1201,11 @@ class DashboardEstate extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphThirdLabel[ind];
                     const data = this.state.dataThird[selectedVal];
-                    debugger;
+                    
                     var graphData;
                     graphData = this.graphSorting(2, data, ["dashboard_2_Two",selectedVal]);
                     
@@ -1301,11 +1301,11 @@ class DashboardEstate extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphThirdLabel[ind];
                     const data = this.state.dataThird[selectedVal];
-                    debugger;
+                    
                     var graphData;
                     graphData = this.graphSorting(3, data, ["dashboard_2_Three",selectedVal]);
                     
@@ -1401,11 +1401,11 @@ class DashboardEstate extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphFifthLabel[ind];
                     const data = this.state.dataFifth[selectedVal];
-                    debugger;
+                    
                     var graphData;                
                     this.setState({
                         // graphTwoLabel : graphData[0],

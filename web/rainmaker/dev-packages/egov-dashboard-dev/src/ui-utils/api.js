@@ -4,6 +4,10 @@ import { addQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getAccessToken, getapplicationNumber, getLocale, getTenantId, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 import store from "../ui-redux/store";
 
+// coexist datsboard API 
+// export const BaseUrl = "https://chandigarh-uat.chandigarhsmartcity.in";
+export const BaseUrl = "https://mcc.chandigarhsmartcity.in";
+
 const instance = axios.create({
   baseURL: window.location.origin,
   // baseURL: "http://49.248.20.174:8096/",

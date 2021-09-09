@@ -9,7 +9,7 @@ import "react-table-6/react-table.css" ;
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './Legalindex.css';
-import { httpRequest } from "../../ui-utils/api";
+import { httpRequest, BaseUrl } from "../../ui-utils/api";
 // import { getLegalDashboardData } from "../../../../../ui-utils/commons";
 
 // import LegalData from './Legal_data.json';
@@ -37,7 +37,6 @@ class DashboardLegal extends React.Component {
 
     // PDF function 
     pdfDownload = (e) => {
-    debugger;
     e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
@@ -95,7 +94,7 @@ class DashboardLegal extends React.Component {
     }
 
 
-    debugger;
+    ;
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -182,7 +181,7 @@ class DashboardLegal extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        ;
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -196,7 +195,7 @@ class DashboardLegal extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        ;
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -216,7 +215,7 @@ class DashboardLegal extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        ;
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -227,7 +226,7 @@ class DashboardLegal extends React.Component {
         var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
         "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
         if(selectedDashboard === "Single Program"){
-            debugger;
+            ;
             var dateRange = sortBy;
             var group = data.reduce((r, a) => {
                 r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] =
@@ -245,7 +244,7 @@ class DashboardLegal extends React.Component {
                 }
             }
 
-            debugger;
+            ;
             var headerData = [];
             var keys = Object.keys(data[0]);
             for(var i=0; i<Object.keys(data[0]).length; i++){
@@ -306,7 +305,7 @@ class DashboardLegal extends React.Component {
             })
                 
         }if(selectedDashboard === "SEP Program Status"){
-            debugger;
+            ;
             var group = data.reduce((r, a) => {
                 r[a[sortBy]] = [...r[a[sortBy]] || [], a];
                 return r;
@@ -348,7 +347,7 @@ class DashboardLegal extends React.Component {
             })
         }
         if(selectedDashboard === "All Program"){
-            debugger;
+            ;
             var SEP = data.SEP.ResponseBody;
             var SMID = data.SMID.ResponseBody;
             var SUSV = data.SUSV.ResponseBody;
@@ -398,7 +397,7 @@ class DashboardLegal extends React.Component {
             var selectedDashboard = selectedDashboard;
         }
         if(selectedDashboard === "AllDataMonthWise"){
-            debugger;
+            ;
             var dateRange = sortBy;
             var group = data.reduce((r, a) => {
                 r[new Date(a["auditDetails"]["lastModifiedTime"]).getFullYear()+"-"+monthJSON[new Date(a["auditDetails"]["lastModifiedTime"]).getMonth()]] =
@@ -446,9 +445,9 @@ class DashboardLegal extends React.Component {
             })
         }
         if(selectedDashboard === "Final Dashboard"){
-            debugger;
+            ;
 
-            debugger;
+            ;
             var group = data.reduce((r, a) => {
                 r[a[sortBy]] = [...r[a[sortBy]] || [], a];
                 return r;
@@ -467,7 +466,7 @@ class DashboardLegal extends React.Component {
                 graphData.push(amt);
             } 
             
-            debugger;
+            ;
             var rowData = data;
             var graphLabelSHOW = [];
             for(var i=0; i<graphLabel.length; i++){
@@ -541,21 +540,21 @@ class DashboardLegal extends React.Component {
 
     getAPIDAta = async () => {
 
-        debugger;
+        const data = BaseUrl;
         const DescriptionReport = await httpRequest(
             "get",
-            "https://chandigarh-uat.chandigarhsmartcity.in/services/EGF/legalcase/getLegalCase",
+            data+"/services/EGF/legalcase/getLegalCase",
             "",
             [],
             {}
             );
         var response = [DescriptionReport, []]
         
-        debugger;
+        
         return response;
     }
     componentDidMount(){
-        debugger;
+        
 
         var requestBody = {
             "tenantId": "",
@@ -572,7 +571,7 @@ class DashboardLegal extends React.Component {
             };
         
         var res = this.getAPIDAta();
-        debugger;
+        
 
         this.setState({
             // totalCase : totalCase,
@@ -583,12 +582,12 @@ class DashboardLegal extends React.Component {
             // unchangeColumnData : unchangeColumnData,
             checkData : res
         })
-        debugger;
+        
 
     }
 
     componentDidUpdate(){
-      debugger;
+      
       if(this.props.data.length > 0 && (
           JSON.stringify(this.props.data) !== JSON.stringify(this.state.checkData)
       )){
@@ -641,7 +640,7 @@ class DashboardLegal extends React.Component {
         return r;
         }, {});
 
-        debugger;
+        ;
         var unchangeColumnData = [];
 
         for(var i=0; i<Object.keys(data[0]).length; i++){
@@ -669,7 +668,7 @@ class DashboardLegal extends React.Component {
 
     tableClicked = (data, caseClicked) => {
 
-        debugger;
+        ;
         var sortedTest = [];
         if(caseClicked === "totalCase"){
             sortedTest = this.state.totalCase[data]
@@ -707,7 +706,7 @@ class DashboardLegal extends React.Component {
     }
 
     rowData2 = (data, index) =>{
-        debugger;
+        ;
         var hearingDate = "";
         var nextDate = <p></p>;
         if(data.hearingDate !== null && data.hearingDate !== undefined){

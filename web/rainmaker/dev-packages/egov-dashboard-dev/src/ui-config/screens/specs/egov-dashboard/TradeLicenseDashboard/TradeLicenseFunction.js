@@ -7,7 +7,7 @@ import { getTradeLicenseData } from "../../../../../ui-utils/commons";
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
-  //debugger;
+  //
   var flag_for_api_call = true
   let queryObject = [
     {
@@ -59,7 +59,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
     "strFromDate" : def_fromDate,
     "strToDate" : def_toDate
   }
-    debugger;
+    
     try {
       // API call for Description Report
       const response = await getTradeLicenseData( dispatch, requestBody );

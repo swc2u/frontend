@@ -21,7 +21,7 @@ class ReportMoleculeBarPie extends React.Component {
   }
 
   componentDidMount(){
-    debugger    
+        
     const propsresData = this.props.data
     const resData = propsresData
 
@@ -80,7 +80,7 @@ class ReportMoleculeBarPie extends React.Component {
   }
 
   componentDidUpdate(){
-    debugger
+    
     const propsresData = this.props.data
     const resData = propsresData
 
@@ -146,7 +146,7 @@ class ReportMoleculeBarPie extends React.Component {
 
   render() {
 
-    debugger
+    
 
     const { formKey } = this.props;
     console.log(this.state.reportHeader)    

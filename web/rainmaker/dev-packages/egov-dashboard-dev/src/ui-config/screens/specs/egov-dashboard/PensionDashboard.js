@@ -40,7 +40,7 @@ const defaultDate = (date) => {
 
 const getDropDownData = async (action, state, dispatch) => {
 
-  debugger
+  
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
@@ -69,7 +69,7 @@ const PensionDashboard = {
   name: "PensionDashboard",
   beforeInitScreen: (action, state, dispatch) => {
     
-    debugger
+    
     getDropDownData(action, state, dispatch);
     return action;
   },

@@ -7,7 +7,7 @@ import { getStatusOPMSData, getCollectionOPMSData } from "../../../../../ui-util
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
-  debugger;
+  
   let dashboardFilterDAta = get(
     state.screenConfiguration.preparedFinalObject,
     "dahsboardHome",
@@ -48,7 +48,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
     "toDate": def_toDate,
     "reportSortBy": reportSortBy
   }
-    debugger;
+    
     try {
       // API call for Description Report
       var response = [];

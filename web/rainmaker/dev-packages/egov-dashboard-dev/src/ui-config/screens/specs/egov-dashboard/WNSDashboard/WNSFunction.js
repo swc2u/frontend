@@ -7,7 +7,7 @@ import { getWNSData } from "../../../../../ui-utils/commons";
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
-  //debugger;
+  //
   var flag_for_api_call = true
   let queryObject = [
     {
@@ -43,7 +43,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
   }
   else{ 
 
-    debugger;
+    
 
     var dateString = def_toDate
     var parts2 = dateString.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
@@ -74,7 +74,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
     "toDate": def_toDate,
     "reportSortBy": reportSortBy
   }
-    debugger;
+    
     try {
       // API call for Description Report
       const response = await getWNSData( dispatch, data );

@@ -18,7 +18,7 @@ let status = getQueryArg(window.location.href, "status");
 const check = process.env.REACT_APP_NAME === "Employee"? false : true
 const userRoles = JSON.parse(localStorage["user-info"]).roles
 const approveVisible = userRoles.filter(function(item){
-  return item.code == "NULMACMC" || item.code == "NULMADMIN";         
+  return item.code == "NULMJA" || item.code == "NULMADMIN" || item.code == "CITIZEN";         
 })
 
 const applicationNumberContainer = () => {

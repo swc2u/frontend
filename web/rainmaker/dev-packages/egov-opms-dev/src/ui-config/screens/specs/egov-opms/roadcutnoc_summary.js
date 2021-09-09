@@ -157,7 +157,15 @@ export const callbackforSummaryActionSubmit = async (state, dispatch) => {
         }
     }
     if (applicationStatus === "DRAFT") {
-      let response = await updateAppStatus(state, dispatch, "INITIATED");
+      //INITIATED_TELECOM 
+      var applicationType = JSON.parse(state.screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationdetail).typeOfApplicant;
+      var applicationState = "";
+      if(applicationType === "TELECOM"){
+        applicationState = "INITIATED_TELECOM";
+      }else{
+        applicationState = "INITIATED";
+      }
+      let response = await updateAppStatus(state, dispatch, applicationState);
       let responseStatus = get(response, "status", "");
       let nocnumber = get(response, "nocnumber", "");
       if (responseStatus == "success") {
@@ -168,7 +176,15 @@ export const callbackforSummaryActionSubmit = async (state, dispatch) => {
         dispatch(toggleSnackbar(true, { labelName: "API ERROR" }, "error"));
       }
     } else if (applicationStatus === "REASSIGN") {
-      let response = await updateAppStatus(state, dispatch, "RESENT");
+      //INITIATED_TELECOM 
+      var applicationType = JSON.parse(state.screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationdetail).typeOfApplicant;
+      var applicationState = "";
+      if(applicationType === "TELECOM"){
+        applicationState = "RESENTTOADM";
+      }else{
+        applicationState = "RESENT";
+      }
+      let response = await updateAppStatus(state, dispatch, applicationState);
       let responseStatus = get(response, "status", "");
       if (responseStatus == "success") {
         routePage(dispatch)

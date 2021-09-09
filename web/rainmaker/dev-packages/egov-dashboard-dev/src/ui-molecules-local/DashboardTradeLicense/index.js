@@ -49,7 +49,7 @@ class LicensesRenewalDashboard extends React.Component {
     // PDF function 
     pdfDownload = (e) => {
 
-        debugger;
+        
         e.preventDefault();
         var columnData = this.state.unchangeColumnData
         // var columnDataCamelize = this.state.columnData
@@ -101,7 +101,7 @@ class LicensesRenewalDashboard extends React.Component {
         }
     
     
-        debugger;
+        
         // PDF Code 
         const unit = "pt";
         const size = "A4"; // Use A1, A2, A3 or A4
@@ -137,7 +137,7 @@ class LicensesRenewalDashboard extends React.Component {
     
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -151,7 +151,7 @@ class LicensesRenewalDashboard extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -171,7 +171,7 @@ class LicensesRenewalDashboard extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -181,7 +181,7 @@ class LicensesRenewalDashboard extends React.Component {
     graphSorting = ( sortBy, data, checkGraph ) => {
 
     if(checkGraph === "MonthWise"){
-        debugger;
+        
         var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
         "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
         var dateRange = this.dateRange(sortBy[0], sortBy[1]);
@@ -216,7 +216,7 @@ class LicensesRenewalDashboard extends React.Component {
         return [ graphLabel, graphData, group ]
     }
     if(checkGraph === "Calculation"){
-        debugger;
+        
         var sortNo = null;
         var group = data.reduce((r, a) => {
             r[a[sortBy]] = [...r[a[sortBy]] || [], a];
@@ -237,7 +237,7 @@ class LicensesRenewalDashboard extends React.Component {
     
         return [ graphOneLabel, graphOneData, group ]
     }
-    debugger;
+    
     var sortNo = null;
     var group = data.reduce((r, a) => {
         r[a[sortBy]] = [...r[a[sortBy]] || [], a];
@@ -288,7 +288,7 @@ class LicensesRenewalDashboard extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
 
         const data = this.props.data
         this.setState({
@@ -299,7 +299,7 @@ class LicensesRenewalDashboard extends React.Component {
     
     componentDidUpdate(){
         
-        debugger;
+        
         const propData = this.props.data
         if(JSON.stringify(this.state.dataCheck) !== JSON.stringify(this.props.data)){
             var data = this.props.data
@@ -331,7 +331,7 @@ class LicensesRenewalDashboard extends React.Component {
                     "CTL.OLD_BOOK_MARKET": type1
                 }
                 data = hardData[dropdownSelected];
-                debugger;
+                
                 var keys = Object.keys(data[0]);
                 var coldata = [];
                 for(var i=0; i<Object.keys(data[0]).length; i++){
@@ -474,7 +474,7 @@ class LicensesRenewalDashboard extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphOneLabel[ind];
                     var graphSorting = this.graphSorting( "businessService", this.state.dataOne[selectedVal] );
@@ -559,7 +559,7 @@ class LicensesRenewalDashboard extends React.Component {
             },
             onClick: (e, element) => {
                 if (element.length > 0) {
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphTwo_1Label[ind];
                     var graphSorting = this.graphSorting( "applicationType", this.state.dataTwo_1[selectedVal] );
@@ -673,7 +673,7 @@ class LicensesRenewalDashboard extends React.Component {
             },
             onClick: (e, element) => {
                 if (element.length > 0) {
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphTwoLabel[ind];
                     var graphSorting = this.graphSorting( "licenseType", this.state.dataTwo[selectedVal], "Calculation" );
@@ -787,7 +787,7 @@ class LicensesRenewalDashboard extends React.Component {
             },
             onClick: (e, element) => {
                 if (element.length > 0) {
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphThirdLabel[ind];
                     var graphSorting = this.graphSorting( "status", this.state.dataThird[selectedVal] );
@@ -902,7 +902,7 @@ class LicensesRenewalDashboard extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     var ind = element[0]._index;
-                    debugger;
+                    
                     const selectedVal = this.state.graphFourthLabel[ind];
                     
                     this.setState({

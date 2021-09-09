@@ -169,7 +169,7 @@ class DashboardStoreIndent extends React.Component {
     // graphSorting Function for all type
     graphSorting = ( propSortBy, sortBy, data, checkGraph ) => {
         
-        debugger;
+        
         if(propSortBy === "indentingStore"){
             if(checkGraph === "ONE"){
 
@@ -187,7 +187,7 @@ class DashboardStoreIndent extends React.Component {
                 return [ graphOneLabel, graphOneData, group ]
             }
             if(checkGraph === "TWO"){
-                debugger;
+                
                 var group = data.reduce((r, a) => {
                     r[a[sortBy]] = [...r[a[sortBy]] || [], a];
                     // r[a["materialIssueStatus"]] = [...r[a["materialIssueStatus"]] || [], a];
@@ -199,7 +199,7 @@ class DashboardStoreIndent extends React.Component {
                 for(var i=0; i<Object.keys(group).length ; i++){
                     graphOneData.push(group[graphOneLabel[i]].length);
                 }
-                debugger;
+                
                 return [ graphOneLabel, graphOneData, group ]
             }
             else{
@@ -220,7 +220,7 @@ class DashboardStoreIndent extends React.Component {
 
         }else if( typeof(sortBy) === "object" && propSortBy === "purchaseOrders" ){
             
-            debugger;
+            
             if(checkGraph === "ONE"){
 
                 var group = data.reduce((r, a) => {
@@ -237,7 +237,7 @@ class DashboardStoreIndent extends React.Component {
                 return [ graphOneLabel, graphOneData, group ]
             }
             if(checkGraph === "TWO"){
-                debugger;
+                
                 var group = data.reduce((r, a) => {
                     r[a[sortBy]] = [...r[a[sortBy]] || [], a];
                     return r;
@@ -248,7 +248,7 @@ class DashboardStoreIndent extends React.Component {
                 for(var i=0; i<Object.keys(group).length ; i++){
                     graphOneData.push(group[graphOneLabel[i]].length);
                 }
-                debugger;
+                
                 return [ graphOneLabel, graphOneData, group ]
             }
             else{
@@ -284,7 +284,7 @@ class DashboardStoreIndent extends React.Component {
                 return [ graphOneLabel, graphOneData, group ]
             }
             if(checkGraph === "TWO"){
-                debugger;
+                
                 var group = data.reduce((r, a) => {
                     r[a[sortBy]] = [...r[a[sortBy]] || [], a];
                     return r;
@@ -295,7 +295,7 @@ class DashboardStoreIndent extends React.Component {
                 for(var i=0; i<Object.keys(group).length ; i++){
                     graphOneData.push(group[graphOneLabel[i]].length);
                 }
-                debugger;
+                
                 return [ graphOneLabel, graphOneData, group ]
             }
             else{
@@ -348,7 +348,7 @@ class DashboardStoreIndent extends React.Component {
     // Stacked Graph config
     stackDataconfig = ( sortBy, graphOneData2 ) => {
         
-        debugger;
+        
         var stackDataSet = [];
         var cnt = 0;
         var stackBgColor = [];
@@ -472,10 +472,10 @@ class DashboardStoreIndent extends React.Component {
     }
 
     componentDidMount(){
-        debugger; 
+         
         const propData = this.props.data
         if(propData.length > 0){
-            debugger;
+            
             const propSortBy = propData[1].reportSortBy.value;
             // const propSortBy = "materialIssueStatus";
     
@@ -624,11 +624,11 @@ class DashboardStoreIndent extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
 
         const propData = this.props.data
         if(JSON.stringify(this.state.checkData) !== JSON.stringify(propData)){
-            debugger;
+            
             const propSortBy = propData[1].reportSortBy.value;
             // const propSortBy = "materialIssueStatus";
     
@@ -1111,7 +1111,7 @@ class DashboardStoreIndent extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphTwoLabel[ind];
                 // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
@@ -1226,7 +1226,7 @@ class DashboardStoreIndent extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 var ind = element[0]._index;
-                debugger;
+                
                 const selectedVal = this.state.graphThirdLabel[ind];
                 
                 this.setState({
