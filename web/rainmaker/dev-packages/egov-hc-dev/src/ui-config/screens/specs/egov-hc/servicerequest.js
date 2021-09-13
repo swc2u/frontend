@@ -183,7 +183,7 @@ const screenConfig = {
         },
         
         formwizardImageStep,
-        formwizardIDProofStep,
+       // formwizardIDProofStep,
         formwizardFirstStep,
         formwizardSecondStep,       
         footer
