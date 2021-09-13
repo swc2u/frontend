@@ -9,7 +9,24 @@ import {
     getLabel
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { getActivityCard } from "../../wns/searchResource/functions";
-  import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+  import { prepareFinalObject,toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+  import { getSearchResults} from "../../../../../ui-utils/commons";
+  import store from "redux/store";
+  const getconnectionResults = async (action, state, dispatch,connectionNumber) => {
+    let queryObject = [{ key: "tenantId", value: "ch.chandigarh" }, { key: "connectionNumber", value: connectionNumber }];
+    try {
+      let payloadData =  await getSearchResults(queryObject);
+            if (payloadData !== null && payloadData !== undefined && payloadData.WaterConnection.length > 0) {
+              WaterConnection =payloadData.WaterConnection
+              dispatch(prepareFinalObject("WaterConnection[0]", payloadData.WaterConnection[0]));
+            }
+            //dispatch(prepareFinalObject("WaterConnection[0]", payloadData.WaterConnection[0]));
+          }
+          catch (e) {
+            console.log(e);
+          }
+    
+  }
   const usermannulalButton = getCommonContainer({
 
     downloadcard: {
@@ -156,13 +173,16 @@ import {
           }),
           beforeFieldChange: (action, state, dispatch) => {
            // getActivityCard(state,dispatch)
+           store.dispatch(toggleSpinner());
            if(action.value)
            {
             dispatch(prepareFinalObject("searchScreen.DefaultMessage",true));
+           // getconnectionResults(action,state,dispatch,action.value)
            }
            else{
             dispatch(prepareFinalObject("searchScreen.DefaultMessage",false));
            }
+           store.dispatch(toggleSpinner());
 
           },
         },

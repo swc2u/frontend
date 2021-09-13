@@ -25,7 +25,7 @@ import {
   import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
   import { getLocale,getTenantId,getUserInfo,setModule } from "egov-ui-kit/utils/localStorageUtils";
   
-  // test push
+  
   // const getData = async (action, state, dispatch, tenantId) => {
   //   await getMdmsData(action, state, dispatch);
   //   await getAllDataFromBillingSlab(tenantId, dispatch);

@@ -62,7 +62,7 @@ class NewConnectionActivity extends React.Component {
     //alert('pritam')
     if (process.env.NODE_ENV === "production") {
     //window.location.href = `citizen${route}`//citizen/
-    //let myurl = item.buttonUrl.replace('/wns/','')
+    let myurl = item.buttonUrl.replace('/wns/','')
     window.location.href = `..${myurl}&connectionNumber=${searchScreen.connectionNo}`
     }
     else{
@@ -429,7 +429,7 @@ class NewConnectionActivity extends React.Component {
   
      return actions;
   }
-  validateActivityList = (preparedFinalObject)=>{
+  validateActivityList =  (preparedFinalObject)=>{
     const {
       screenConfig,
       toggleSnackbar,     
@@ -444,13 +444,19 @@ class NewConnectionActivity extends React.Component {
   if(connectionNo)
   {
     WaterConnection = WaterConnection.filter(x=>x.connectionNo === connectionNo)
+    
     let queryObject = [{ key: "tenantId", value: "ch.chandigarh" }, { key: "connectionNumber", value: connectionNo }];
+    if(DefaultMessage)
+    {
+      alert('ready')
     // let payloadData = await getSearchResults(queryObject);
     // if (payloadData !== null && payloadData !== undefined && payloadData.WaterConnection.length > 0) {
     //   WaterConnection =payloadData.WaterConnection
     // }
+    //WaterConnection
+    //const {WaterConnection} = preparedFinalObject;
     const applicationStatus = WaterConnection && WaterConnection[0].applicationStatus;
-    const businessId = WaterConnection[0].applicationNo;
+    const businessId =WaterConnection && WaterConnection[0].applicationNo;
     const userRoles = JSON.parse(getUserInfo()).roles;
     const roleIndex = userRoles.some(item => item.code ==="CITIZEN" || item.code=== "WS_CEMP" );
     const isButtonPresent =  window.localStorage.getItem("WNS_STATUS") || false;
@@ -524,6 +530,7 @@ class NewConnectionActivity extends React.Component {
       )
 
   }
+}
   }
   else
   {
@@ -547,7 +554,14 @@ class NewConnectionActivity extends React.Component {
   }
   return Action;
   }
-  render() {
+  componentDidMount(){
+    alert('i am in componentDidMount ')
+  }
+  componentDidUpdate(){
+    alert('i am in componentDidUpdate ')
+  }
+   render() {
+   // render = async() => {
     const { classes, items ,preparedFinalObject} = this.props;
     const {searchScreen} = preparedFinalObject
     let actions =[]; 
@@ -568,7 +582,7 @@ class NewConnectionActivity extends React.Component {
   if(preparedFinalObject)
   {
 
-    let actions_Type = this.validateActivityList(preparedFinalObject)
+    let actions_Type =  this.validateActivityList(preparedFinalObject)
     let IsValidWaterConnection = true
     if(IsValidWaterConnection === true)
     {
