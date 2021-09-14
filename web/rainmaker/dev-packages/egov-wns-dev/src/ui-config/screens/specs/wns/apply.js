@@ -702,6 +702,8 @@ export const getData = async (action, state, dispatch) => {
       || applicationStatus_ ==='PENDING_FOR_CONNECTION_TARIFF_CHANGE'
       || applicationStatus_ ==='PENDING_FOR_CONNECTION_VERIFICATION_BY_JE'
       || applicationStatus_ ==='PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT'
+      || applicationStatus_ ==='PENDING_FOR_PAYMENT_VERIFICATION_BY_JE_FOR_REACTIVATION'
+      || applicationStatus_ ==='PENDING_FOR_SUPERINTENDENT_APPROVAL_AFTER_JE_FOR_REACTIVATION'
       || applicationStatus_ ==='PENDING_FOR_SEWERAGE_CONNECTION_ACTIVATION')
     {
       const textFields = ["division","billGroup","ledgerNo","ccCode","ferruleSize","connectionType"];
