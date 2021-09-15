@@ -135,7 +135,8 @@ const getMdmsData = async (state, dispatch) => {
       "displayDocs",
       dispatch,
       'NulmSusvRenewRequest.applicationDocument',
-      'SUSVRDocuments', 
+      // 'SUSVRDocuments', 
+      'SVRUApplication',
     );
     return true;
   } catch (e) {
