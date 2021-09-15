@@ -102,7 +102,120 @@ const getApplicationDisplayCode =() => {
 }
 
 
-const getAcknowledgementCard = (state, dispatch, applicationNumber) => {
+const getAcknowledgementCard = (state, dispatch, applicationNumber, mode) => {
+
+  var modeKey = mode;
+  if(modeKey === "create"){
+    return {
+      applicationSuccessCard: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        children: {
+          card: acknowledgementCard({
+            icon: "done",
+            backgroundColor: "#39CB74",
+            header: getLabelForStoreAsset(),
+            body: {
+              labelName:
+                "A notification regarding Application Submission has been sent to the applicant",
+              labelKey: "NULM_APPLICATION_SUCCESS_MESSAGE_SUB",
+            },
+            tailText: getApplicationDisplayCode(),
+            number: applicationNumber,
+          }),
+        },
+      },
+      gotoHomeFooter,
+    };
+  }else if(modeKey === "forward"){
+    return {
+      applicationSuccessCard: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        children: {
+          card: acknowledgementCard({
+            icon: "done",
+            backgroundColor: "#39CB74",
+            header: getLabelForStoreAsset(),
+            body: {
+              labelName:
+                "A notification regarding Application Submission has been sent to the applicant",
+              labelKey: "NULM_APPLICATION_FORWARD_MESSAGE_SUB",
+            },
+            tailText: getApplicationDisplayCode(),
+            number: applicationNumber,
+          }),
+        },
+      },
+      gotoHomeFooter,
+    };    
+  }else if(modeKey === "reassign"){
+    return {
+      applicationSuccessCard: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        children: {
+          card: acknowledgementCard({
+            icon: "done",
+            backgroundColor: "#39CB74",
+            header: getLabelForStoreAsset(),
+            body: {
+              labelName:
+                "A notification regarding Application Submission has been sent to the applicant",
+              labelKey: "NULM_APPLICATION_REASSIGN_MESSAGE_SUB",
+            },
+            tailText: getApplicationDisplayCode(),
+            number: applicationNumber,
+          }),
+        },
+      },
+      gotoHomeFooter,
+    };
+  }else if(modeKey === "approve"){
+    return {
+      applicationSuccessCard: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        children: {
+          card: acknowledgementCard({
+            icon: "done",
+            backgroundColor: "#39CB74",
+            header: getLabelForStoreAsset(),
+            body: {
+              labelName:
+                "A notification regarding Application Submission has been sent to the applicant",
+              labelKey: "NULM_APPLICATION_APPROVE_MESSAGE_SUB",
+            },
+            tailText: getApplicationDisplayCode(),
+            number: applicationNumber,
+          }),
+        },
+      },
+      gotoHomeFooter,
+    };
+  }else if(modeKey === "reject"){
+    return {
+      applicationSuccessCard: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        children: {
+          card: acknowledgementCard({
+            icon: "close",
+            backgroundColor: "#E54D42",
+            header: getLabelForStoreAsset(),
+            body: {
+              labelName:
+                "A notification regarding Application Submission has been sent to the applicant",
+              labelKey: "NULM_APPLICATION_REJECT_MESSAGE_SUB",
+            },
+            tailText: getApplicationDisplayCode(),
+            number: applicationNumber,
+          }),
+        },
+      },
+      gotoHomeFooter,
+    };
+  }
   return {
     applicationSuccessCard: {
       uiFramework: "custom-atoms",
@@ -139,12 +252,14 @@ const screenConfig = {
     },
   },
   beforeInitScreen: (action, state, dispatch) => {
-    let applicationNumber = getQueryArg(window.location.href, "code");;
+    let applicationNumber = getQueryArg(window.location.href, "code");
+    let mode = getQueryArg(window.location.href, "mode");
 
     const data = getAcknowledgementCard(
       state,
       dispatch,
-      applicationNumber
+      applicationNumber,
+      mode
     );
     set(action, "screenConfig.components.div.children", data);
     return action;

@@ -127,6 +127,39 @@ class WorkFlowContainer extends React.Component {
     }
   };
 
+  getMode = (mode) => {
+
+    var modeValue = "";
+    switch (mode) {
+      case "Forward To SDO":
+        modeValue = "forward";
+        break;
+      case "Forward To ACMC":
+        modeValue = "forward";
+        break;
+      case "Reassign To SDO":
+        modeValue = "reassign";
+        break;
+      case "Reassign To JA":
+        modeValue = "reassign";
+        break;
+      case "Approve":
+        modeValue = "approve";
+        break;
+      case "Reject":
+        modeValue = "reject";
+        break;
+      case "Reassign To Citizen":
+        modeValue = "reassign";
+        break;
+
+      default:
+        modeValue = "create";
+        break;
+    }
+    return modeValue;
+  }
+
   wfUpdate = async label => {
     let {
       toggleSnackbar,
@@ -170,7 +203,12 @@ class WorkFlowContainer extends React.Component {
         let path = "";
         toggleSpinner();
         if (moduleName === "NULM") {
-          setRoute('/inbox')
+          // setRoute('/inbox');
+          debugger;
+          const applicationNo = payload.ResponseBody.applicationId;
+          var mode = this.getMode(payload.ResponseBody.action);
+          // var mode = this.getMode(wfUpdatePayload.NulmSusvRequest.action);
+          setRoute('/egov-nulm/acknowledgement?screen=susv&mode='+mode+'&code='+applicationNo);
         }
       }
     } catch (e) {
