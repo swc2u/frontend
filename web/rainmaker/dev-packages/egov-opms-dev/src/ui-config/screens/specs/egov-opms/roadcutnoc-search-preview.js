@@ -360,13 +360,13 @@ const HideshowEdit = (state, action, nocStatus, amount, applicationNumber,dispat
   set(
     action,
     "components.adhocDialog2.children.popup.children.adhocRebateCardRoadCutReassign.children.ContainerRoadCutReassign.children.assigneeList.visible",
-    checkForRole(roles, 'EE') || checkForRole(roles, 'JE') ? (nocStatus == "INITIATED" || nocStatus == "RESENT" || nocStatus == "REVIEWOFJE" || nocStatus == "REASSIGNTOJE") ? false : true : true);
+    checkForRole(roles, 'EE') || checkForRole(roles, 'JE') || checkForRole(roles, 'ADM') ? (nocStatus == "INITIATED" || nocStatus === "INITIATED_TELECOM" || nocStatus == "RESENT" || nocStatus == "REVIEWOFJE" || nocStatus == "REASSIGNTOJE") ? false : true : true);
 
     dispatch(
       handleField(
         "roadcutnoc-search-preview",
         "components.adhocDialog2.children.popup.children.adhocRebateCardRoadCutReassign.children.ContainerRoadCutReassign.children.assigneeList",
-        "visible", checkForRole(roles, 'EE') || checkForRole(roles, 'JE') ? (nocStatus == "INITIATED" || nocStatus == "RESENT" || nocStatus == "REVIEWOFJE" || nocStatus == "REASSIGNTOJE") ? false : true : true));
+        "visible", checkForRole(roles, 'EE') || checkForRole(roles, 'JE') || checkForRole(roles, 'ADM') ? (nocStatus == "INITIATED" || nocStatus === "INITIATED_TELECOM" || nocStatus == "RESENT" || nocStatus == "REVIEWOFJE" || nocStatus == "REASSIGNTOJE") ? false : true : true));
 
   // if (checkForRole(roles, 'JE') && (nocStatus == "REVIEWOFJE" || nocStatus == "REASSIGNTOJE")) {
   //   if (typeOfApplicant != "TELECOM" && typeOfApplicant != "NATURAL_GAS_PIPELINE_PNG") {
