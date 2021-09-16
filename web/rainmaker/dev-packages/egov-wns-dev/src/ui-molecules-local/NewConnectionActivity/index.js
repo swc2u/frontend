@@ -62,8 +62,9 @@ class NewConnectionActivity extends React.Component {
     //alert('pritam')
     if (process.env.NODE_ENV === "production") {
     //window.location.href = `citizen${route}`//citizen/
-    let myurl = item.buttonUrl.replace('/wns/','')
-    window.location.href = `..${myurl}&connectionNumber=${searchScreen.connectionNo}`
+    let myurl = item.buttonUrl//.replace('/wns/','')
+    // myurl = `https://egov-dev.chandigarhsmartcity.in/citizen/wns/${myurl}&connectionNumber=${searchScreen.connectionNo}`
+    window.location.href =  `..${myurl}&connectionNumber=${searchScreen.connectionNo}`
     }
     else{
     //window.location.href = `citizen${route}`//citizen/
