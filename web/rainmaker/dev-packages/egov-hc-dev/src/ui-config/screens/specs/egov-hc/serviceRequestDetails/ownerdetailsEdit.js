@@ -83,7 +83,7 @@ export const ownerdetailsEdit = getCommonCard({
             md: 12,
             lg:12
           },
-           required:true,
+           required:false,
            pattern:getPattern("HCEmail"),
            errorMessage: "ERR_INVALID_EMAIL_FIELD_MSG",
            jsonPath:"SERVICEREQUEST.email",

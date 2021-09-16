@@ -259,7 +259,7 @@ export const servicerequestdetailsEdit = getCommonCard({
           multiline: true,
           rows: "4"
         },
-         required:true,
+         required:false,
          pattern:getPattern("serviceRequestDescription"),
          errorMessage:"ERR_INVALID_SERVICE_REQUEST_DESCRIPTION_FIELD_MSG",
          jsonPath:"SERVICEREQUEST.description"
