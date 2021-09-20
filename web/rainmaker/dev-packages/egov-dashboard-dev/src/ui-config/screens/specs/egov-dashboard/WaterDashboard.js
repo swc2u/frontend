@@ -40,7 +40,7 @@ const defaultDate = (date) => {
 
 const getDropDownData = async (action, state, dispatch) => {
 
-  debugger
+  
 //   let data = getDashboardDropdownData(state, dispatch, status)
 var data = data =  [
   {
@@ -70,7 +70,7 @@ const WaterDashboard = {
   name: "WaterDashboard",
   beforeInitScreen: (action, state, dispatch) => {
     
-    debugger
+    
     getDropDownData(action, state, dispatch);
     return action;
   },

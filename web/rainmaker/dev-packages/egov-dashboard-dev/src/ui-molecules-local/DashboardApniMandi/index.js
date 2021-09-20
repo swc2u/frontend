@@ -62,7 +62,7 @@ class DashboardApniMandi extends React.Component {
 
     // PDF function 
     pdfDownload = (e) => {
-        debugger;
+        
         e.preventDefault();
         var columnData = this.state.unchangeColumnData
         // var columnDataCamelize = this.state.columnData
@@ -114,7 +114,7 @@ class DashboardApniMandi extends React.Component {
         }
     
     
-        debugger;
+        
         // PDF Code 
         const unit = "pt";
         const size = "A4"; // Use A1, A2, A3 or A4
@@ -150,7 +150,7 @@ class DashboardApniMandi extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -164,7 +164,7 @@ class DashboardApniMandi extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
 
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         
@@ -196,7 +196,7 @@ class DashboardApniMandi extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -207,7 +207,7 @@ class DashboardApniMandi extends React.Component {
         var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
         "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
         
-        debugger;
+        
         var dateRangeData = data;
         var sortBy = sortBy;
         var group = dateRangeData.reduce((r, a) => {
@@ -274,7 +274,7 @@ class DashboardApniMandi extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         const propsData = this.props.data;
         this.setState({
             checkData : this.props.data
@@ -282,10 +282,10 @@ class DashboardApniMandi extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         const propsData = this.props.data;
         if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
-            debugger;
+            
             var graphTitle = "";
             var monthJSON = {"0":"JAN","1":"FEB","2":"MAR","3":"APR","4":"MAY","5":"JUN","6":"JUL",
             "7":"AUG","8":"SEP","9":"OCT","10":"NOV","11":"DEC"};
@@ -308,7 +308,7 @@ class DashboardApniMandi extends React.Component {
                         return r;
                         }, {});
                     
-                    debugger;
+                    
                     
                     var graphLabel = dateRange;
                     var graphData = [];
@@ -362,7 +362,7 @@ class DashboardApniMandi extends React.Component {
                         return r;
                         }, {});
                     
-                    debugger;
+                    
                     
                     var graphLabel = dateRange;
                     var graphData = [];
@@ -519,7 +519,7 @@ class DashboardApniMandi extends React.Component {
             },
             onClick: (e, element) => {
                 if (element.length > 0) {
-                    debugger;
+                    
                     var ind = element[0]._index;
                     var selectedVal = this.state.graphOneLabel[ind];
                     var data = this.state.dataOne[selectedVal];

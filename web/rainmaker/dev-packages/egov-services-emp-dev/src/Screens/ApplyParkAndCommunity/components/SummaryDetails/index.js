@@ -384,17 +384,19 @@ try{
         [],
         UpdatedReqbody
       );
-      
+      console.log("AvailCheckForSameTime--",AvailCheckForSameTime)
       let checkResponseAvailForSameTime = AvailCheckForSameTime !== undefined && AvailCheckForSameTime !== null ?
-      (AvailCheckForSameTime.data && AvailCheckForSameTime.data !== null && AvailCheckForSameTime.data !== null ?AvailCheckForSameTime.data:""): ""
-     
+      (AvailCheckForSameTime.data && AvailCheckForSameTime.data !== null && AvailCheckForSameTime.data !== undefined ?(AvailCheckForSameTime.data):""):""
+     console.log("checkResponseAvailForSameTime--employee",checkResponseAvailForSameTime)
      checkDate = checkResponseAvailForSameTime && checkResponseAvailForSameTime.length > 0 ? AvailCheckForSameTime.data[0] : 'emptyArray'
-     
-if(checkDate !== "emptyArray " && (checkDate !== data.bkFromDate || checkDate !== data.bkToDate)){
+     console.log("valueFotcheckDate",checkDate)
+if(checkDate !== 'emptyArray' && (checkDate !== data.bkFromDate || checkDate !== data.bkToDate)){
     checkDateCondition = true
+    console.log("setcheckDateCondition",checkDateCondition)
 }
 
       if(checkResponseAvailForSameTime !== ""){
+          console.log("comeToMainCondition",checkResponseAvailForSameTime)
           if(AvailCheckForSameTime.data.length == 0 || checkDateCondition == true){
               let Booking = {
                   bkRemarks: data.bkRemarks,
@@ -488,6 +490,7 @@ if(checkDate !== "emptyArray " && (checkDate !== data.bkFromDate || checkDate !=
               this.props.history.push(`/egov-services/PaymentReceiptDteail/${this.state.CashPaymentApplicationNumber}`);
           }
           else{
+              console.log("comeToElseOfMain",checkResponseAvailForSameTime,checkDate,checkDateCondition)
               this.props.toggleSnackbarAndSetText(
                   true,
                   {
@@ -500,7 +503,7 @@ if(checkDate !== "emptyArray " && (checkDate !== data.bkFromDate || checkDate !=
           }
 }
 catch(err){
-
+console.log("comeincatch",err)
 this.props.toggleSnackbarAndSetText(
     true,
     {

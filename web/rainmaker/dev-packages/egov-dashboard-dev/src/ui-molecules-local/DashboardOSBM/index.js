@@ -51,7 +51,7 @@ class DashboardOSBM extends React.Component {
     // PDF function 
     pdfDownload = (e) => {
     e.preventDefault();
-    debugger;
+    
 
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
@@ -97,7 +97,7 @@ class DashboardOSBM extends React.Component {
     }
 
 
-    debugger;
+    
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -132,7 +132,7 @@ class DashboardOSBM extends React.Component {
     }
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -146,7 +146,7 @@ class DashboardOSBM extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -165,7 +165,7 @@ class DashboardOSBM extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -174,9 +174,9 @@ class DashboardOSBM extends React.Component {
     
     graphSorting = ( sortBy, data, checkGraph ) => { 
         
-        debugger;
+        
         if(sortBy === "dashboard1_bookingVenueType"){
-            debugger;
+            
             var sortNo = null;
             var group = data.reduce((r, a) => {
                 r[a[0]] = [...r[a[0]] || [], a];
@@ -192,7 +192,7 @@ class DashboardOSBM extends React.Component {
             return [ graphLabel, graphData, group ]
         }
         if(sortBy === "dashboard1_status"){
-            debugger;
+            
             var sortNo = null;
             var group = data.reduce((r, a) => {
                 r[a[12]] = [...r[a[12]] || [], a];
@@ -207,7 +207,7 @@ class DashboardOSBM extends React.Component {
             return [ graphLabel, graphData, group ]
         }
         if(sortBy === "dashboard2_status"){
-            debugger;
+            
             var sortNo = null;
             var group = data.reduce((r, a) => {
                 r[a[12]] = [...r[a[12]] || [], a];
@@ -222,7 +222,7 @@ class DashboardOSBM extends React.Component {
             return [ graphLabel, graphData, group ]
         }
         if(sortBy === "dashboard2_sector"){
-            debugger;
+            
             var sortNo = null;
             var group = data.reduce((r, a) => {
                 r[a[3]] = [...r[a[3]] || [], a];
@@ -237,7 +237,7 @@ class DashboardOSBM extends React.Component {
             return [ graphLabel, graphData, group ]
         }
         if(sortBy === "dashboard3_collectionReport"){
-            debugger;
+            
             var sortNo = null;
             var group = data.reduce((r, a) => {
                 r[a[3]] = [...r[a[3]] || [], a];
@@ -256,7 +256,7 @@ class DashboardOSBM extends React.Component {
             return [ graphLabel, graphData, group ]
         }
         if(sortBy === "dashboard3_bookingVenueType"){
-            debugger;
+            
             var sortNo = null;
             var group = data.reduce((r, a) => {
                 r[a[0]] = [...r[a[0]] || [], a];
@@ -276,7 +276,7 @@ class DashboardOSBM extends React.Component {
         }
         
         
-        debugger;
+        
         var sortNo = null;
         var group = data.reduce((r, a) => {
             r[a[sortBy]] = [...r[a[sortBy]] || [], a];
@@ -303,7 +303,7 @@ class DashboardOSBM extends React.Component {
 
     hardJSONconfig = (propSortBy) => {
 
-        debugger;
+        
         const hardJSON = propSortBy === "bkApplicationStatus" ? [{ 
             "sortBy": "bkApplicationStatus",
             "msgX": "",
@@ -334,7 +334,7 @@ class DashboardOSBM extends React.Component {
     }
 
     colorRandom = (data) =>{
-        debugger;
+        
         var ict_unit = [];
         var efficiency = [];
         var coloR = [];
@@ -355,7 +355,7 @@ class DashboardOSBM extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         const data = this.props.data;
         this.setState({
           checkData : data
@@ -363,7 +363,7 @@ class DashboardOSBM extends React.Component {
     }
 
     componentDidUpdate(){
-      debugger;
+      
       const propsData = this.props.data;
       if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
 
@@ -543,7 +543,7 @@ class DashboardOSBM extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphOneLabel[ind];
                 var graphSorting = this.graphSorting( "dashboard1_status", this.state.dataOne[selectedVal] );
@@ -611,7 +611,7 @@ class DashboardOSBM extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 var ind = element[0]._index;
-                debugger;
+                
                 const selectedVal = this.state.graphTwoLabel[ind];
                 
                 this.setState({
@@ -759,7 +759,7 @@ class DashboardOSBM extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphThirdLabel[ind];
                 var graphSorting = this.graphSorting( "dashboard2_sector", this.state.dataThird[selectedVal] );
@@ -869,7 +869,7 @@ class DashboardOSBM extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphThirdLabel[ind];
                 // var graphSorting = this.graphSorting( "dashboard1_sector", this.state.dataThird[selectedVal] );
@@ -980,7 +980,7 @@ class DashboardOSBM extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphFifthLabel[ind];
                 var graphSorting = this.graphSorting( "dashboard3_bookingVenueType", this.state.dataFifth[selectedVal] );
@@ -1090,7 +1090,7 @@ class DashboardOSBM extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphFifthLabel[ind];
                 var graphSorting = this.graphSorting( "dashboard1_sector", this.state.dataFifth[selectedVal] );

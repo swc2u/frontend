@@ -27,11 +27,9 @@ export const HCDashboardFilterForm = getCommonCard({
       jsonPath: "HCdahsboardHome.defaultFromDate",
       required: true,
       beforeFieldChange: (action, state, dispatch) => {
-        debugger;
         const data = "data"
       },
       afterFieldChange: (action, state, dispatch) => {
-        debugger;
         dispatch(
           handleField(
             "HCDashboard",

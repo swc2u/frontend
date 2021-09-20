@@ -40,7 +40,7 @@ const defaultDate = (date) => {
 
 const getDropDownData = async (action, state, dispatch) => {
 
-  debugger
+  
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
@@ -69,7 +69,6 @@ const getDropDownData = async (action, state, dispatch) => {
 }
 
 const getStoreDropdown = async (action, state, dispatch) => {
-  debugger;
   const storeName = getStoreDropdownData(action, state, dispatch);
   return;
 }
@@ -79,7 +78,7 @@ const StoreIndentDashboard = {
   name: "StoreIndentDashboard",
   beforeInitScreen: (action, state, dispatch) => {
     
-    debugger
+    
     getDropDownData(action, state, dispatch);
     getStoreDropdown(action, state, dispatch);
     return action;

@@ -49,7 +49,6 @@ const defaultDate = (date) => {
 
 const SearchDashboardData = async (state, dispatch) =>{
 
-    //debugger;
     var flag_for_api_call = true
     let queryObject = [
       {
@@ -98,7 +97,6 @@ const SearchDashboardData = async (state, dispatch) =>{
       "toDate": toDateNumeric,
       "reportSortBy": reportSortBy
     }
-      debugger;
       try {
         // API call for Description Report
         const response = await getEaawasData( dispatch, requestBody );
@@ -113,7 +111,7 @@ const SearchDashboardData = async (state, dispatch) =>{
 
 const getDropDownData = async (action, state, dispatch) => {
 
-  debugger
+  
 //   let data = getDashboardDropdownData(state, dispatch, status)
   var data =  [
     {
@@ -157,7 +155,7 @@ const EaawasDashboard = {
   name: "EaawasDashboard",
   beforeInitScreen: (action, state, dispatch) => {
     
-    debugger
+    
     getDropDownData(action, state, dispatch);
 
     SearchDashboardData(state, dispatch);

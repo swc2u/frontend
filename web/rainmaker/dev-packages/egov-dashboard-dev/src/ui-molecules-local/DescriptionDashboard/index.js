@@ -43,7 +43,7 @@ class DescriptionDashboard extends React.Component {
         // PDF function 
         pdfDownload = (e) => {
 
-            //debugger;
+            //
             e.preventDefault();
             var columnData = this.state.unchangeColumnData
             var columnDataCamelize = this.state.columnData
@@ -79,7 +79,7 @@ class DescriptionDashboard extends React.Component {
             }
 
             
-            //debugger;
+            //
             // PDF Code 
             const unit = "pt";
             const size = "A4"; // Use A1, A2, A3 or A4
@@ -122,7 +122,7 @@ class DescriptionDashboard extends React.Component {
         // Hide / Show Column
         showHideColumn = (e) => {
             e.preventDefault();
-            //debugger;
+            //
             var sortColumn = JSON.parse(JSON.stringify(this.state.columnData));
             const removeIndex = parseInt(e.target.value);
             // sortColumn.splice(removeIndex, 1)
@@ -150,7 +150,7 @@ class DescriptionDashboard extends React.Component {
         // Some Hard Code for graph
         graphSearchDataOption =(sortBy) =>{
 
-        //debugger;
+        //
         const propSortBy = sortBy;
         var JSONgraphOption = {
             "sortBy": "SORT BY",
@@ -228,7 +228,7 @@ class DescriptionDashboard extends React.Component {
     
         // Column Sort for indexing react table
         customColumnSort = (colData, unchangeColData) => {
-            debugger
+            
             const data = colData;
             var indexingData = []
             var indexCol = [2,3,0,4,5,7,11,16,15]
@@ -257,7 +257,7 @@ class DescriptionDashboard extends React.Component {
 
         componentDidMount(){
             
-        //debugger;
+        //
         const dataProps = this.props.data[0] ? this.props.data[0] : [];
         const sortByProp = this.props.data[1] ? this.props.data[1] : "";
         if((JSON.stringify(this.props.data) !== JSON.stringify(this.state.checkData)) &&
@@ -280,7 +280,7 @@ class DescriptionDashboard extends React.Component {
         console.log("Before Group By Status :: ", reportData);
 
         // Dynamic Sorting
-        //debugger;
+        //
         var sortNo = null
         for(var i=0; i<reportHeader.length ; i++){
             if(reportHeader[i].name === graphSearchOption[0].sortBy){
@@ -357,7 +357,7 @@ class DescriptionDashboard extends React.Component {
 
         componentDidUpdate(){
             
-        //debugger;
+        //
         const dataProps = this.props.data[0] ? this.props.data[0] : [];
         const sortByProp = this.props.data[1] ? this.props.data[1] : "";
         if((JSON.stringify(this.props.data) !== JSON.stringify(this.state.checkData)) &&
@@ -380,7 +380,7 @@ class DescriptionDashboard extends React.Component {
         console.log("Before Group By Status :: ", reportData);
 
         // Dynamic Sorting
-        //debugger;
+        //
         var sortNo = null
         for(var i=0; i<reportHeader.length ; i++){
             if(reportHeader[i].name === graphSearchOption[0].sortBy){
@@ -492,7 +492,7 @@ class DescriptionDashboard extends React.Component {
         const drildownData = this.state.filterDataRoot[ind];
 
         // Dynamic Sorting
-        //debugger;
+        //
         var sortNo = null
         for(var i=0; i<this.state.reportHeader.length ; i++){
             if(this.state.reportHeader[i].name === this.state.graphTwoData.sortBy){
@@ -687,7 +687,7 @@ class DescriptionDashboard extends React.Component {
             const drildownData = this.state.filterData[ind];
 
             // Dynamic Sorting
-            //debugger;
+            //
             var sortNo = null
             for(var i=0; i<this.state.reportHeader.length ; i++){
                 if(this.state.reportHeader[i].name === this.state.graphThreeData.sortBy){

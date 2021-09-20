@@ -87,7 +87,7 @@ class WNSDashboardOne extends React.Component {
     }
 
 
-    debugger;
+    
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -139,7 +139,7 @@ class WNSDashboardOne extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -159,7 +159,7 @@ class WNSDashboardOne extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -167,9 +167,9 @@ class WNSDashboardOne extends React.Component {
     }
     
     graphSorting = ( sortBy, data, checkGraph, ind ) => {
-        debugger;
+        
         if(checkGraph === "dashboard 1"){
-            debugger;
+            
             var group = data.reduce((r, a) => {
             r[a[sortBy[0]][sortBy[1]]] = [...r[a[sortBy[0]][sortBy[1]]] || [], a];
             return r;
@@ -183,7 +183,7 @@ class WNSDashboardOne extends React.Component {
 
             return [ graphLabel, graphData, group ];
         }else if(checkGraph === "dashboard 2"){
-            debugger;
+            
             var group = data.reduce((r, a) => {
             r[a[sortBy[0]][sortBy[1]]] = [...r[a[sortBy[0]][sortBy[1]]] || [], a];
             return r;
@@ -198,7 +198,7 @@ class WNSDashboardOne extends React.Component {
             return [ graphLabel, graphData, group ];
 
         }else if(checkGraph === "dashboard 3"){
-            debugger;
+            
             var group = data.reduce((r, a) => {
             r[a["subdiv"]] = [...r[a["subdiv"]] || [], a];
             return r;
@@ -286,7 +286,7 @@ class WNSDashboardOne extends React.Component {
             return [ graphLabel, graphData, group ];
         }else if(checkGraph === "dashboard 4"){
             
-            debugger;
+            
             // graphLabel, graphData, group
             var subdiv = [[], [], [], [], [], []];
 
@@ -344,7 +344,7 @@ class WNSDashboardOne extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         // const dt = this.props.data;
         const dt = this.props.data.length > 0  ? this.props.data[0] : [];
         // const propSortBy = "dashboardType1";
@@ -352,7 +352,7 @@ class WNSDashboardOne extends React.Component {
         const data = dt.WaterConnection;
 
         const graphSort = this.graphSorting(["waterApplication","activityType"], data, "dashboard 1");
-        debugger;
+        
         var graphOneLabelSHOW = [];
         for(var i=0; i<graphSort[0].length; i++){
             var labl = graphSort[0][i].replaceAll("_", " ");
@@ -389,7 +389,7 @@ class WNSDashboardOne extends React.Component {
 
     componentDidUpdate(){
 
-        debugger;
+        
         // const dt = this.props.data;
         var dataCheck = this.props.data;
         const dt = this.props.data.length > 0  ? this.props.data[0] : [];
@@ -399,7 +399,7 @@ class WNSDashboardOne extends React.Component {
 
 		if(JSON.stringify(this.state.checkData) !== JSON.stringify(dataCheck)){
 		const graphSort = this.graphSorting(["waterApplication","activityType"], data, "dashboard 1");
-        debugger;
+        
         var graphOneLabelSHOW = [];
         for(var i=0; i<graphSort[0].length; i++){
             var labl = graphSort[0][i].replaceAll("_", " ");
@@ -528,12 +528,12 @@ class WNSDashboardOne extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;
                 const selectedVal = this.state.graphOneLabel[ind];
                 
                 const graphSort = this.graphSorting(["waterApplication","applicationStatus"], this.state.dataOne[selectedVal], "dashboard 2");
-                debugger;
+                
 
                 var graphTwoLabelSHOW = [];
                 for(var i=0; i<graphSort[0].length; i++){
@@ -644,12 +644,12 @@ class WNSDashboardOne extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;
                 const selectedVal = this.state.graphTwoLabel[ind];
                 
                 const graphSort = this.graphSorting("", this.state.dataTwo[selectedVal], "dashboard 3");
-                debugger;
+                
                 
                 this.setState({
                     dataThird : graphSort[2],
@@ -775,13 +775,13 @@ class WNSDashboardOne extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;
                 var graphThreeLabel = ["8","9","14","15","20"]
                 const selectedVal = graphThreeLabel[ind];
                 if(this.state.dataThird[selectedVal]){
                     const graphSort = this.graphSorting("", this.state.dataThird[selectedVal], "dashboard 4");
-                    debugger;
+                    
                     this.setState({
                         dataFourth : graphSort[2],
                         graphFourthData: graphSort[1],
@@ -893,7 +893,7 @@ class WNSDashboardOne extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;
             }
         },

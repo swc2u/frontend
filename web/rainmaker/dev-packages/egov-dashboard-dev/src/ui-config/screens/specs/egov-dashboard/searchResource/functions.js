@@ -6,7 +6,7 @@ import set from "lodash/set";
 import { getAllDashboardResult, getDescriptionReport, getDescriptionReportDashboard } from "../../../../../ui-utils/commons";
 
 export const searchAPICall = async (state, dispatch) =>{
-  // debugger
+  // 
   var flag_for_api_call = true
 
   let queryObject = [
@@ -51,7 +51,7 @@ export const searchAPICall = async (state, dispatch) =>{
     ]
   }
 
-  // debugger
+  // 
   try {
 
     const response = await getAllDashboardResult( dispatch, payload );
@@ -234,7 +234,7 @@ export const pgrDashboard1ResetFields = (state, dispatch) => {
 };
 
 export const allDashboardSearchAPICall = async (state, dispatch) =>{
-  debugger
+  
   var flag_for_api_call = true
 
   let queryObject = [
@@ -279,7 +279,7 @@ export const allDashboardSearchAPICall = async (state, dispatch) =>{
     ]
   }
 
-  // debugger
+  // 
   try {
 
     const response = await getAllDashboardResult( dispatch, payload );
@@ -293,7 +293,7 @@ export const allDashboardSearchAPICall = async (state, dispatch) =>{
 
 // Search Dashboard Data
 export const SearchDashboardData = async (state, dispatch) =>{
-  // debugger
+  // 
   var flag_for_api_call = true
   let queryObject = [
     {
@@ -337,7 +337,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
     ]
   }
 
-  // debugger
+  // 
   try {
     // API call for Description Report
     const response = await getDescriptionReport( dispatch, payload );
@@ -351,7 +351,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
 
 export const SearchPGRDashboardData = async (state, dispatch) =>{
   
-  debugger
+  
   var flag_for_api_call = true
   let queryObject = [
     {
@@ -407,7 +407,7 @@ export const SearchPGRDashboardData = async (state, dispatch) =>{
     ]
   }
 
-    // debugger
+    // 
     try {
       // API call for Description Report
       const response = await getDescriptionReportDashboard( dispatch, payload );

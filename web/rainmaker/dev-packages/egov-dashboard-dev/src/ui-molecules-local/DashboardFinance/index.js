@@ -74,7 +74,7 @@ class DashboardFinance extends React.Component {
     // PDF function 
     pdfDownload = (e) => {
 
-    debugger;
+    
     e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
@@ -126,7 +126,7 @@ class DashboardFinance extends React.Component {
     }
 
 
-    debugger;
+    
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -166,7 +166,7 @@ class DashboardFinance extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -180,7 +180,7 @@ class DashboardFinance extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -200,7 +200,7 @@ class DashboardFinance extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -209,10 +209,10 @@ class DashboardFinance extends React.Component {
     
     graphSorting = ( sortBy, data, checkGraph ) => {
 
-        debugger;
+        
         if(sortBy ==="BE&AEComparison"){
             
-            debugger;
+            
             var sortNo = null;
             var group = data.reduce((r, a) => {
                 r[a["functionCode"]] = [...r[a["functionCode"]] || [], a];
@@ -239,7 +239,7 @@ class DashboardFinance extends React.Component {
             return [ graphOneLabel, graphOneData, group ]
         }
     
-    debugger;
+    
     var sortNo = null;
     var group = data.reduce((r, a) => {
         r[a[sortBy]] = [...r[a[sortBy]] || [], a];
@@ -290,7 +290,7 @@ class DashboardFinance extends React.Component {
     }
 
     colorRandom = (data) =>{
-        debugger;
+        
         var ict_unit = [];
         var efficiency = [];
         var coloR = [];
@@ -327,7 +327,7 @@ class DashboardFinance extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         const propsData = this.props.data;
         this.setState({
             checkData : this.props.data
@@ -335,7 +335,7 @@ class DashboardFinance extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         const propsData = this.props.data;
         if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
             // const propSortBy = "budgetHeadwise";
@@ -422,7 +422,7 @@ class DashboardFinance extends React.Component {
                         return r;
                         }, {});
                     data = group["Income"];
-                    debugger;
+                    
                     var sortedData = [];
                     for(var i=0; i<data.length; i++){
                         var sotedJSON = {
@@ -509,7 +509,7 @@ class DashboardFinance extends React.Component {
                         return r;
                         }, {});
                     data = group["Expense"];
-                    debugger;
+                    
                     var sortedData = [];
                     for(var i=0; i<data.length; i++){
                         var sotedJSON = {
@@ -588,7 +588,7 @@ class DashboardFinance extends React.Component {
                 }
             }
             if(propSortBy === "billDate"){
-                debugger;
+                
                 // data = Finance_data.getAllIncomeExpentiureSchedules.ResponseBody.Allschedulelist;
                 data = propsData[0].getAllWatchBudgetRestReport.ResponseBody.budgetwatachtreportlist;
                 if(data.length > 0){
@@ -768,7 +768,7 @@ class DashboardFinance extends React.Component {
           onClick: (e, element) => {
               if (element.length > 0) {
                   
-                  debugger;
+                  
                   var ind = element[0]._index;   
                   const selectedVal = this.state.graphOneLabel[ind];
                   const data = this.state.dataOne[selectedVal];
@@ -894,7 +894,7 @@ class DashboardFinance extends React.Component {
           onClick: (e, element) => {
               if (element.length > 0) {
                   
-                  debugger;
+                  
                   var ind = element[0]._index;   
                   const selectedVal = this.state.graphTwoLabel[ind];
                   // var graphSorting = this.graphSorting( "agendatype", this.state.dataOne[selectedVal] );
@@ -1002,7 +1002,7 @@ class DashboardFinance extends React.Component {
           onClick: (e, element) => {
               if (element.length > 0) {
                   
-                  debugger;
+                  
                   var ind = element[0]._index;   
                   const selectedVal = this.state.graphThreeLabel[ind];
                   var graphSorting = this.graphSorting( "department_name", this.state.dataThree[selectedVal] );
@@ -1110,7 +1110,7 @@ class DashboardFinance extends React.Component {
           onClick: (e, element) => {
               if (element.length > 0) {
                   
-                  debugger;
+                  
                   var ind = element[0]._index;   
                   const selectedVal = this.state.graphFourLabel[ind];
                   var graphSorting = this.graphSorting( "accountName", this.state.dataFour[selectedVal] );
@@ -1229,7 +1229,7 @@ class DashboardFinance extends React.Component {
           onClick: (e, element) => {
               if (element.length > 0) {
                   
-                  debugger;
+                  
                   var ind = element[0]._index;   
                   const selectedVal = this.state.graphFiveLabel[ind];
                   // var graphSorting = this.graphSorting( "agendatype", this.state.dataOne[selectedVal] );
@@ -1337,7 +1337,7 @@ class DashboardFinance extends React.Component {
           onClick: (e, element) => {
               if (element.length > 0) {
                   
-                  debugger;
+                  
                   var ind = element[0]._index;   
                   const selectedVal = this.state.graphSixLabel[ind];
                   var graphSorting = this.graphSorting( "department_name", this.state.dataSix[selectedVal] );
@@ -1445,7 +1445,7 @@ class DashboardFinance extends React.Component {
           onClick: (e, element) => {
               if (element.length > 0) {
                   
-                  debugger;
+                  
                   var ind = element[0]._index;   
                   const selectedVal = this.state.graphSevenLabel[ind];
                   var graphSorting = this.graphSorting( "accountName", this.state.dataSeven[selectedVal] );
@@ -1564,7 +1564,7 @@ class DashboardFinance extends React.Component {
           onClick: (e, element) => {
               if (element.length > 0) {
                   
-                  debugger;
+                  
                   var ind = element[0]._index;   
                   const selectedVal = this.state.graphFiveLabel[ind];
                   // var graphSorting = this.graphSorting( "agendatype", this.state.dataOne[selectedVal] );
@@ -1672,7 +1672,7 @@ class DashboardFinance extends React.Component {
         onClick: (e, element) => {
         if (element.length > 0) {
 
-        debugger;
+        
         var ind = element[0]._index;   
         const selectedVal = this.state.graphNineLabel[ind];
         // var graphSorting = this.graphSorting( "debitAmount", this.state.dataNine[selectedVal] );
@@ -1782,7 +1782,7 @@ class DashboardFinance extends React.Component {
         onClick: (e, element) => {
         if (element.length > 0) {
 
-        debugger;
+        
         var ind = element[0]._index;   
         const selectedVal = this.state.graphSixLabel[ind];
         var graphSorting = this.graphSorting( "department_name", this.state.dataSix[selectedVal] );

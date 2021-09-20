@@ -7,7 +7,7 @@ import { getOSBMData } from "../../../../../ui-utils/commons";
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
-  //debugger;
+  //
   var flag_for_api_call = true
   let queryObject = [
     {
@@ -43,7 +43,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
   }
   else{ 
 
-    debugger;
+    
     var userUUID = JSON.parse(getUserInfo()).uuid;
   var data = {
     "payload" : {
@@ -62,7 +62,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
     },
     "reportSortBy": reportSortBy
   }
-    debugger;
+    
     try {
       // API call for Description Report
       const response = await getOSBMData( dispatch, data );

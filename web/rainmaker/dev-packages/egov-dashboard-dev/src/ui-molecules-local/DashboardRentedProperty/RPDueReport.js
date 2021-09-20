@@ -40,7 +40,7 @@ class RPDueReport extends React.Component {
     // PDF function 
     pdfDownload = (e) => {
 
-        debugger;
+        
         e.preventDefault();
         var hardJSON = {
             "0":"Transit Number",
@@ -101,7 +101,7 @@ class RPDueReport extends React.Component {
         }
     
     
-        debugger;
+        
         // PDF Code 
         const unit = "pt";
         const size = "A4"; // Use A1, A2, A3 or A4
@@ -137,7 +137,7 @@ class RPDueReport extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -152,7 +152,7 @@ class RPDueReport extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -172,7 +172,7 @@ class RPDueReport extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -181,9 +181,9 @@ class RPDueReport extends React.Component {
     
     graphSorting = ( sortBy, data, checkGraph ) => {
 
-    debugger;
+    
     if(checkGraph === "dashboard 1"){
-        debugger;
+        
         var sortNo = null;
         var graphOneData = [];
         var principalDue = [];
@@ -204,7 +204,7 @@ class RPDueReport extends React.Component {
         }
         return [ graphOneLabel, graphOneData, group ]
     }else if(checkGraph === "dashboard 2"){
-        debugger;
+        
         var sortNo = null;
         var graphOneData = [];
         var principalDue = [];
@@ -259,7 +259,7 @@ class RPDueReport extends React.Component {
 
         group = data
 
-        debugger;
+        
         
         const collectionData = this.state.collectionData;
         var amtPaid = 0;
@@ -275,7 +275,7 @@ class RPDueReport extends React.Component {
         return [ graphOneLabel, graphOneData, group ]
     }
     else{
-        debugger;
+        
         var sortNo = null;
         var group = data.reduce((r, a) => {
             r[a[sortBy]] = [...r[a[sortBy]] || [], a];
@@ -305,7 +305,7 @@ class RPDueReport extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         const propSortBy = "eventStatus";
         // const propSortBy = "status";
         const data = this.props.data[0][1].reportResponses[0].reportData;
@@ -362,7 +362,7 @@ class RPDueReport extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         const data = this.props.data;
         if(JSON.stringify(data) !== JSON.stringify(this.state.checkData)){
             const data = this.props.data[0][1].reportResponses[0].reportData;
@@ -515,7 +515,7 @@ class RPDueReport extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphOneLabel[ind];
                 // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
@@ -602,7 +602,7 @@ class RPDueReport extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 var ind = element[0]._index;
-                debugger;
+                
                 // const selectedVal = this.state.graphTwoLabel[ind];
                 
                 // this.setState({

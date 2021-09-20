@@ -56,7 +56,7 @@ class DashboardEchallan extends React.Component {
     // PDF function 
     pdfDownload = (e) => {
 
-    debugger;
+    
     e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
@@ -102,7 +102,7 @@ class DashboardEchallan extends React.Component {
     }
 
 
-    debugger;
+    
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -139,7 +139,7 @@ class DashboardEchallan extends React.Component {
     // Column Unchange Data
     columnUnchange=(e)=>{
         // e.preventDefault();
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -153,7 +153,7 @@ class DashboardEchallan extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
           e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -173,7 +173,7 @@ class DashboardEchallan extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -183,7 +183,7 @@ class DashboardEchallan extends React.Component {
     graphSorting = ( sortBy, data, checkGraph ) => {
 
     
-    debugger;
+    
     // passing sortBy, data
     if(typeof(sortBy) === "object" && checkGraph === this.state.graphHardThirdData.sortBy[2]){
         var sortNo = null;
@@ -295,7 +295,7 @@ class DashboardEchallan extends React.Component {
     componentDidMount(){
         
 
-    debugger;
+    
     const propsData = this.props.data;
     const propSortBy = propsData[1] ? propsData[1].value : [];
     // Graph Hard JSON Create :: 
@@ -470,7 +470,7 @@ class DashboardEchallan extends React.Component {
 
     // Graph One Sorting Function 
     var graphOneData = this.graphSorting( propSortBy, data );
-    debugger;
+    
     // Table Data Header 
     const tableData = data[0] ? Object.keys(data[0]) : [];
     var columnData = []
@@ -504,7 +504,7 @@ class DashboardEchallan extends React.Component {
     // Column Unchange Data 
     const unchangeColumnData = this.columnUnchange(columnData)
 
-    debugger;
+    
     this.setState({
         checkData: propsData,
         allData: data,
@@ -520,7 +520,7 @@ class DashboardEchallan extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         const propsData = this.props.data;
         if(JSON.stringify(propsData) !== JSON.stringify(this.state.checkData)){
         // const propSortBy = "status";
@@ -686,7 +686,7 @@ class DashboardEchallan extends React.Component {
             }
         ] : []
 
-        debugger;
+        
         // Table Data Header 
         const tableData = data[0] ? Object.keys(data[0]) : [];
         var columnData = []
@@ -720,7 +720,7 @@ class DashboardEchallan extends React.Component {
         // Column Unchange Data 
         const unchangeColumnData = this.columnUnchange(columnData)
 
-        debugger;
+        
         this.setState({
             checkData: propsData,
             allData: data,
@@ -905,7 +905,7 @@ class DashboardEchallan extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 var ind = element[0]._index;
-                debugger;
+                
                 const selectedVal = this.state.graphTwoLabel[ind];
                 const sortingHard = this.state.graphHardThirdData.sortBy
                 var graphSorting = this.graphSorting( sortingHard, this.state.dataTwo[selectedVal], sortingHard[2] );
@@ -1072,7 +1072,7 @@ class DashboardEchallan extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphThirdLabel[ind];
                 var monthNo = {
@@ -1081,7 +1081,7 @@ class DashboardEchallan extends React.Component {
                 }
                 const sortingHard = this.state.graphHardFourthData.sortBy;
                 var graphSorting = this.graphSorting( sortingHard, this.state.dataThird[monthNo[selectedVal]], sortingHard[2]);
-                debugger;
+                
 
 
                 this.setState({
@@ -1131,7 +1131,7 @@ class DashboardEchallan extends React.Component {
         if (element.length > 0) {
             var ind = element[0]._index;
 
-            debugger;
+            
             const selectedVal = this.state.graphFourthLabel[ind] === Object.values(this.state.graphHardFourthData.sortBy[3])[0] ? Object.keys(this.state.graphHardFourthData.sortBy[3])[0] : this.state.graphFourthLabel[ind];
             
             var graphSorting = this.graphSorting( this.state.graphHardFifthData.sortBy, this.state.dataFourth[selectedVal] );
@@ -1237,7 +1237,7 @@ class DashboardEchallan extends React.Component {
         if (element.length > 0) {
             var ind = element[0]._index;
 
-            debugger;
+            
             const selectedVal = this.state.graphFifthLabel[ind];
             var graphSorting = this.graphSorting( this.state.graphHardSixthData.sortBy, this.state.dataFifth[selectedVal] );
             
@@ -1342,7 +1342,7 @@ class DashboardEchallan extends React.Component {
         if (element.length > 0) {
             var ind = element[0]._index;
 
-            debugger;
+            
             const selectedVal = this.state.graphSixthLabel[ind];
             // var graphSorting = this.graphSorting( "siName", this.state.dataSixth[selectedVal] );
             

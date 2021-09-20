@@ -97,9 +97,7 @@ var data = [
 
 const displayCards = async (action, state, dispatch) => {
 
-  debugger;
   let roles = JSON.parse(getUserInfo()).roles;
-  //debugger;
 
   cardList = [{
     label: {
@@ -173,7 +171,7 @@ const setDatatoCard =(item) => {
 
 const getDropDownData = async (action, state, dispatch) => {
 
-  debugger
+  
   // let data = getDashboardDropdownData(state, dispatch, status)
 
   // Date default
@@ -185,7 +183,6 @@ const getDropDownData = async (action, state, dispatch) => {
 
 const getMdmsData = async (action, state, dispatch) => {
 
-  //debugger;
   
   let tenantId = getTenantId();
   let mdmsBody = {
@@ -226,11 +223,9 @@ const DashboardHome = {
   beforeInitScreen: (action, state, dispatch) => {
   
 
-    //debugger;
     getDropDownData(action, state, dispatch);
 
 
-    debugger;
     getMdmsData(action, state, dispatch).then(response => {
       displayCards(action, state, dispatch);
       // setcardList(state, dispatch);

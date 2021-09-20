@@ -7,7 +7,7 @@ import { getStoreIndentData2, getStoreMaterialReceiptData2, getStorePurchaseOrde
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
-  debugger;
+  
   let dashboardFilterDAta = get(
     state.screenConfiguration.preparedFinalObject,
     "dahsboardHome",
@@ -43,7 +43,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
     "reportSortBy": reportSortBy,
     "storeName" : storeName
   }
-      debugger;
+      
     try {
       // API call for Description Report
       if(reportSortBy.value === "indentingStore"){

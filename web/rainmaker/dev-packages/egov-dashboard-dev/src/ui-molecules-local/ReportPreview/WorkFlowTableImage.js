@@ -15,12 +15,12 @@ class WorkFlowTableImage extends React.Component{
     
       componentDidMount(){
     
-        //debugger;
+        //
         const data = this.state.images
       }
     
       closeImageViewer=()=>{
-          //debugger;
+          //
         this.setState({
             currentImage: 0,
             isViewerOpen: false

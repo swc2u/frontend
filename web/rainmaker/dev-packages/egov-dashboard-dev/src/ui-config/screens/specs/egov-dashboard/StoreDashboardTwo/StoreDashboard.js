@@ -94,7 +94,7 @@ export const FilterForm = getCommonCard({
       },
       afterFieldChange: (action, state, dispatch) => {
         
-        debugger;
+        
         var selectedDropdown = get(state.screenConfiguration.preparedFinalObject, "dahsboardHome.dropDownData2", {});
         // dispatch(
         //   handleField(

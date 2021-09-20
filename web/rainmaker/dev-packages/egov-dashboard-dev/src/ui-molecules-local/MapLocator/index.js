@@ -44,11 +44,11 @@ class MapLocator extends Component {
  
   getMyLocation = () => {
    
-    // debugger
+    // 
     if (navigator.geolocation) {
 
       navigator.geolocation.getCurrentPosition(position => {
-        // debugger
+        // 
         // console.log("po", position)
         this.setState({
             currLoc: {
@@ -83,7 +83,7 @@ class MapLocator extends Component {
   };
 
   onClickPick = async () => {
-    //  debugger  
+    //    
     var current_address
     await axios.get('https://maps.googleapis.com/maps/api/geocode/json?latlng='+add.lat+','+add.lng+'&key='+MAP_API_KEY_FOR_ADDRESS+'').then(response=> {current_address=JSON.stringify(response.data.results[0].formatted_address)}).catch((error) => {
     this.setState({ error: error.message })
@@ -153,7 +153,7 @@ class MapLocator extends Component {
   };
 
   onCLickMapBackBtn = () => {
-    // debugger
+    // 
     this.setPrevPageFlag();
     this.props.history.goBack();
   };
