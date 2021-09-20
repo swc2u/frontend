@@ -480,8 +480,8 @@ class WorkFlowContainer extends React.Component {
                   )
                   }
                   else{
-                    services = services.filter(x=>x.contactNumber === assignee.mobileNumber)
-                    if(services.length ===0)
+                    let servicesassignee = services.filter(x=>x.contactNumber === assignee.mobileNumber)
+                    if(servicesassignee.length ===0)
                     {
                       services.push(
                         {
@@ -518,8 +518,8 @@ class WorkFlowContainer extends React.Component {
                   )
                   }
                   else{
-                    services = services.filter(x=>x.contactNumber === assigner.mobileNumber)
-                    if(services.length ===0)
+                    let assignerservices = services.filter(x=>x.contactNumber === assigner.mobileNumber)
+                    if(assignerservices.length ===0)
                     {
                       services.push(
                         {
