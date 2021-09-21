@@ -508,7 +508,7 @@ export const getPattern = type => {
     case "Name":
       return /^[^\$\"'<>?\\\\~`!@#$%^()+={}\[\]*,.:;“”‘’]{1,50}$/i;
       case "NameWater":
-      return /^[^\$\"'<>?\\\\/-_~`!@#$%^&()+={}\[\]*,.:;“”‘’]{1,50}$/i;
+      return /^[^\$\"'<>?\\\\/~`!@#$%^&()+={}\[\]*,.:;“”‘’]{1,50}$/i;
     case "MobileNo":
       return /^[6789][0-9]{9}$/i;
       case "AdharCardNumber":
