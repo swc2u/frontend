@@ -1130,6 +1130,29 @@ const updateAdhocRoadCutApprove = (state, dispatch) => {
     const remarks = get(
       state.screenConfiguration.preparedFinalObject,
       "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.remarks");
+    let file = get(
+      state.screenConfiguration.preparedFinalObject,
+      "documentsUploadRedux[0].documents[0].fileStoreId"
+    );
+    var data = {};
+    if(file){
+      data = {
+        "uploadDocuments": [{
+          "fileStoreId": get(
+            state.screenConfiguration.preparedFinalObject,
+            "documentsUploadRedux[0].documents[0].fileStoreId"
+          )
+        }],
+        "remarks": remarks
+      }
+    }else{
+      data = {
+        "uploadDocuments": [{
+          "fileStoreId": ""
+        }],
+        "remarks": remarks
+      }
+    }
       let wfstatuslist = get(state, "screenConfiguration.preparedFinalObject.WFStatus", [])
       //    //alert(JSON.stringify(wfstatus))
       let wfstatus = wfstatuslist.find(item => {
@@ -1138,16 +1161,14 @@ const updateAdhocRoadCutApprove = (state, dispatch) => {
 
     UpdateStatus(state, dispatch, '/egov-opms/roadcut-search', [],
 
-      {
+    {
 
-        "applicationType": "ROADCUTNOC",
-        "tenantId": getOPMSTenantId(),
-        "applicationStatus": wfstatus.status,
-        "applicationId": localStorage.getItem('ApplicationNumber'),
-        "dataPayload": {
-          "remarks": remarks,
-        }
-      }
+      "applicationType": "ROADCUTNOC",
+      "tenantId": getOPMSTenantId(),
+      "applicationStatus": wfstatus.status,
+      "applicationId": localStorage.getItem('ApplicationNumber'),
+      "dataPayload": data
+    }
     );
   }
   else {
@@ -5152,7 +5173,7 @@ export const adhocPopupForCeRoadCutApprove = getCommonContainer({
 
   adhocRebateCardCeRoadCutApprove: getCommonContainer(
     {
-
+      documentDetails,
       ContainerCeRoadCutApprove: getCommonContainer({
 
 
