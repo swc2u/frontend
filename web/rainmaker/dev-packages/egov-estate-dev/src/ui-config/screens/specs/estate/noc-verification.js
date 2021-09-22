@@ -792,6 +792,38 @@ const widthOfAnotherStreetWithLengthOfHouseField = ({jsonPath, label, placeholde
 }
 })
 
+const heightOfAnotherStreetWithLengthOfHouseField = ({jsonPath, label, placeholder}) => ({
+  label: {
+    labelName: "Width of the same with the length of house adjoining to that side of street",
+    labelKey: label
+  },
+  placeholder: {
+    labelName: "Enter width of the same with the length of house adjoining to that side of street",
+    labelKey: placeholder
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  required: true,
+  visible: false,
+  jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
+  pattern:_getPattern("numeric-firstdigit-zero"),
+  minLength: 1,
+  maxLength: 150,
+  afterFieldChange: (action, state, dispatch) => {
+    if (action.value.length > 150) {
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
+    }
+    // else if(action.value.length < 2){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_WIDTH_MINLENGTH_2", action.screenKey);
+    // }
+    else {
+        displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_HEIGHT_NUMBER",action.screenKey);
+    }
+}
+})
+
 const widthOfStreetWithLengthOfHouseField = ({jsonPath, label, placeholder}) => ({
   label: {
     labelName: "Width of the same with the length of house adjoining to that side of street",
@@ -820,6 +852,38 @@ const widthOfStreetWithLengthOfHouseField = ({jsonPath, label, placeholder}) => 
     // }
     else {
         displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_WIDTH_NUMBER",action.screenKey);
+    }
+}
+})
+
+const heightOfStreetWithLengthOfHouseField = ({jsonPath, label, placeholder}) => ({
+  label: {
+    labelName: "Width of the same with the length of house adjoining to that side of street",
+    labelKey: label
+  },
+  placeholder: {
+    labelName: "Enter width of the same with the length of house adjoining to that side of street",
+    labelKey: placeholder
+  },
+  gridDefination: {
+    xs: 12,
+    sm: 6
+  },
+  required: true,
+  visible: false,
+  jsonPath: `Applications[0].applicationDetails.${jsonPath}`,
+  pattern:_getPattern("numeric-firstdigit-zero"),
+  minLength: 1,
+  maxLength: 150,
+  afterFieldChange: (action, state, dispatch) => {
+    if (action.value.length > 150) {
+        displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_MAXLENGTH_150", action.screenKey);
+    }
+    // else if(action.value.length < 2){
+    //     displayCustomErr(action.componentJsonpath, dispatch, "ES_ERR_WIDTH_MINLENGTH_2", action.screenKey);
+    // }
+    else {
+        displayCustomErr(action.componentJsonpath, dispatch,"ES_ERR_HEIGHT_NUMBER",action.screenKey);
     }
 }
 })
@@ -1520,13 +1584,13 @@ export const nocVerificationDetails = getCommonCard({
     // streetOnAnotherSideofHouse:getWhetherThereIsStreetOnAnotherOtherSideOfHouseRadioButton,
     widthOfStreetWithLengthOfHouse: getTextField(widthOfStreetWithLengthOfHouseField({jsonPath: "sameWidthOfSideStreet", label: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_LABEL", placeholder: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_PLACEHOLDER"})),
     widthOfStreetWithLenghtOfHouseInch: getTextField(widthOfStreetWithLengthOfHouseField({jsonPath: "sameWidthOfSideStreetInch", label: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_INCH_LABEL", placeholder: "ES_WIDTH_OF_THE_STREET_WITH_LENGTH_OF_HOUSE_INCH_PLACEHOLDER"})),
-    heightOfStreeOtherSide:getTextField(widthOfStreetWithLengthOfHouseField({jsonPath: "sameHeightOfSideStreet", label: "ES_HEIGHT_OF_THE_STREET", placeholder: "ES_HEIGHT_OF_THE_STREET_PLACEHOLDER"})),
-    heightOfStreeOtherSideInch:getTextField(widthOfStreetWithLengthOfHouseField({jsonPath: "sameHeightOfSideStreetInch", label: "ES_HEIGHT_OF_THE_STREET_INCH", placeholder: "ES_HEIGHT_OF_THE_STREET_INCH_PLACEHOLDER"})),
+    heightOfStreeOtherSide:getTextField(heightOfStreetWithLengthOfHouseField({jsonPath: "sameHeightOfSideStreet", label: "ES_HEIGHT_OF_THE_STREET", placeholder: "ES_HEIGHT_OF_THE_STREET_PLACEHOLDER"})),
+    heightOfStreeOtherSideInch:getTextField(heightOfStreetWithLengthOfHouseField({jsonPath: "sameHeightOfSideStreetInch", label: "ES_HEIGHT_OF_THE_STREET_INCH", placeholder: "ES_HEIGHT_OF_THE_STREET_INCH_PLACEHOLDER"})),
     streetOnAnotherSideofHouse:getWhetherThereIsStreetOnAnotherOtherSideOfHouseRadioButton,
     widthOfAnotherStreetWithLengthOfHouseField:getTextField(widthOfAnotherStreetWithLengthOfHouseField({jsonPath: "sameWidthOfAnotherSideStreet", label: "ES_WIDTH_OF_THE_ANOTHER_STREET_WITH_LENGTH_OF_HOUSE_LABEL", placeholder: "ES_WIDTH_OF_THE_ANOTHER_STREET_WITH_LENGTH_OF_HOUSE_PLACEHOLDER"})),
     widthOfAnotherStreetWithLenghtOfHouseInch:getTextField(widthOfAnotherStreetWithLengthOfHouseField({jsonPath: "sameWidthOfAnotherSideStreetInch", label: "ES_WIDTH_OF_THE__ANOTHER_STREET_WITH_LENGTH_OF_HOUSE_INCH_LABEL", placeholder: "ES_WIDTH_OF_THE_ANOTHER_STREET_WITH_LENGTH_OF_HOUSE_INCH_PLACEHOLDER"})),
-    heightOfAnotherStreeOtherSide:getTextField(widthOfAnotherStreetWithLengthOfHouseField({jsonPath: "sameHeightOfAnotherSideStreet", label: "ES_HEIGHT_OF_THE_ANOTHER_STREET", placeholder: "ES_HEIGHT_OF_THE_ANOTHER_STREET_PLACEHOLDER"})),
-    heightOfAnotherStreeOtherSideInch:getTextField(widthOfAnotherStreetWithLengthOfHouseField({jsonPath: "sameHeightOfAnotherSideStreetInch", label: "ES_HEIGHT_OF_THE_ANOTHER_STREET_INCH", placeholder: "ES_HEIGHT_OF_THE_ANOTHER_STREET_INCH_PLACEHOLDER"})),
+    heightOfAnotherStreeOtherSide:getTextField(heightOfAnotherStreetWithLengthOfHouseField({jsonPath: "sameHeightOfAnotherSideStreet", label: "ES_HEIGHT_OF_THE_ANOTHER_STREET", placeholder: "ES_HEIGHT_OF_THE_ANOTHER_STREET_PLACEHOLDER"})),
+    heightOfAnotherStreeOtherSideInch:getTextField(heightOfAnotherStreetWithLengthOfHouseField({jsonPath: "sameHeightOfAnotherSideStreetInch", label: "ES_HEIGHT_OF_THE_ANOTHER_STREET_INCH", placeholder: "ES_HEIGHT_OF_THE_ANOTHER_STREET_INCH_PLACEHOLDER"})),
     areaOfHouseAtSiteIsSame: getWhetherAreaOfHouseAtSiteIsSameRadioButton,
     variationDetail: getTextField(variationDetailField),
     houseWithinLalLakir: getWhetherHouseWithinLalLakirRadioButton,

@@ -84,8 +84,8 @@ class TastStatusContainer extends React.Component {
                     <Grid
                       style={{ alignItems: "center", display: "flex" }}
                       item
-                      sm={6}
-                      xs={6}
+                      sm={12}
+                      xs={12}
                     >
                       <Typography component="h2" variant="subheading">
                         <LabelContainer
@@ -94,7 +94,7 @@ class TastStatusContainer extends React.Component {
                         />
                       </Typography>
                     </Grid>
-                    <Grid item sm={6} xs={6} style={{ textAlign: "right" }}>
+                    <Grid item sm={12} xs={12} style={{ textAlign: "right" }}>
                       <Button
                         className={classes.button}
                         onClick={this.handleViewHistory}

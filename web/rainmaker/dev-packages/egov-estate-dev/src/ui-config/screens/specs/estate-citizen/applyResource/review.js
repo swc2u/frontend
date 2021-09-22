@@ -21,7 +21,7 @@ const headerDiv = (isEditable = true, label, step) => {
     children: {
       header: {
           gridDefination: {
-              xs: 8,
+              xs: 12,
               sm: 10
           },
           ...getCommonSubHeader({
@@ -39,7 +39,7 @@ const headerDiv = (isEditable = true, label, step) => {
             }
         },
         gridDefination: {
-            xs: 4,
+            xs: 12,
             sm: 2,
             align: "right"
         },
