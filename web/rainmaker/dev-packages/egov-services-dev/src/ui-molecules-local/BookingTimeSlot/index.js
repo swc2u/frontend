@@ -19,6 +19,12 @@ import {
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import './index.css'
+import {
+    getFileUrlFromAPI,
+    getQueryArg,
+    getTransformedLocale,
+    setBusinessServiceDataToLocalStorage,
+  } from "egov-ui-framework/ui-utils/commons";
 class CustomTimeSlots extends Component {
     constructor() {
         super();
@@ -162,9 +168,17 @@ class CustomTimeSlots extends Component {
        
       if(e.target.getAttribute("data-date")==this.props.isSameDate && from === this.props.firstToTime)
       {
-       
-        
-    
+        const changeDateVenue = getQueryArg(
+            window.location.href,
+            "changeDateVenue"
+          );
+          if(changeDateVenue!= null){
+            if( !this.props.isMultipleSelectionAllowed){
+                this.props.showError()
+                return
+            }
+          }
+          else{
             this.props.prepareFinalObject('perDayBookedSlotCount',this.props.perDayBookedSlotCount+1 ); 
             let perDayBookedSlotCount= this.props.perDayBookedSlotCount
     
@@ -215,10 +229,12 @@ class CustomTimeSlots extends Component {
                 "DisplayPacc.bkDisplayToDateTime",
                 e.target.getAttribute("data-date") + ", " + to
             );
-    
+           
+        }
         
         
      
+
 
       }
 
@@ -662,8 +678,20 @@ class CustomTimeSlots extends Component {
 const mapDispatchToProps = (dispatch) => {
     return {
         prepareFinalObject: (jsonPath, value) =>
-            dispatch(prepareFinalObject(jsonPath, value)),
-    };
+             dispatch(prepareFinalObject(jsonPath, value)),
+        showError: () =>
+        dispatch(
+            toggleSnackbar(
+                true,
+                {
+                    labelName:
+                        "Please select one slot as original booking was done for one slot only!",
+                    labelKey: "",
+                },
+                "warning"
+            )
+        ),
+        };
 };
 
 const mapStateToProps = (state) => {
@@ -759,7 +787,7 @@ const mapStateToProps = (state) => {
     const initiatedBookingTimeSlot = get(
         state,
         "screenConfiguration.preparedFinalObject.availabilityCheckData.timeslots", 
-        ""
+        []
     );
 
     const initiatedBookingTimeSlotTwo = get(
@@ -782,7 +810,7 @@ const mapStateToProps = (state) => {
     
 
     //******************************** */
-
+    let isMultipleSelectionAllowed= false
 
     for (let i = 0; i < 180; i++) {
         let month = ("0" + (date.getMonth() + 1)).slice(-2);
@@ -836,7 +864,7 @@ const mapStateToProps = (state) => {
                     }
 
                     if(perDayBookedSlotCount !== 1 || initiatedBookingTimeSlot.length > 1 ){
-
+                    isMultipleSelectionAllowed= true
                         if (initiatedBookingTimeSlot[1].slot === timeSlotArray[j].timeSlots[l]) {
                             console.log("Hello Bulbul");
                             timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:initiated`);
@@ -858,7 +886,8 @@ const mapStateToProps = (state) => {
         isSameDate: isSameDate,
         perDayBookedSlotCount : perDayBookedSlotCount,
         firstToTime: firstToTime, 
-        initiatedBookingTimeSlot:initiatedBookingTimeSlot
+        initiatedBookingTimeSlot:initiatedBookingTimeSlot,
+        isMultipleSelectionAllowed
         
     };
 };

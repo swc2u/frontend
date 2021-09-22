@@ -536,13 +536,14 @@ console.log("duration",duration,bookingTypeForSlot)
                 if (response.data.timeslots && response.data.timeslots.length > 0) {
                     console.log(response.data.timeslots, "Hello Nero");
                     if(response.data.timeslots && response.data.timeslots.length > 1){
+                    
                         var [fromTime, toTimeOne] = response.data.timeslots[0].slot.split('-')
                         var [fromTimeTwo, toTime] = response.data.timeslots[1].slot.split('-')
-
+                        localStorage.setItem('changeTimeSlotData', JSON.stringify(response.data.timeslots) )
 
                     }else{
                         var [fromTime, toTime] = response.data.timeslots[0].slot.split('-')
-
+                        localStorage.setItem('changeTimeSlotData', JSON.stringify(response.data.timeslots) )
                     }
                     let DisplayPaccObject={}
                     if(response.data.bkApplicationStatus==="RE_INITIATED"){
@@ -959,12 +960,14 @@ export const createUpdateWtbApplication = async (state, dispatch, action) => {
                 setapplicationNumber(response.data.bkApplicationNumber);
                 setApplicationNumberBox(state, dispatch);
                 if(response.data.businessService == "BWT"){
-                    dispatch(prepareFinalObject("WaterTanker.quantity", response.data.quantity));
-                    localStorageSet("WaterTankerQuantity", response.data.quantity);
-                    localStorageSet("WaterTankerCreateAddress", response.data.bkCompleteAddress);
-                    localStorageSet("WaterTankerbkSector", response.data.bkSector);
-                    localStorageSet("WaterTankerbkType", response.data.bkType);
-                    localStorageSet("WaterTankerbkHouseNo", response.data.bkHouseNo);
+                
+                    let localStorageBookingData= Object.assign({}, response.data)
+                    delete localStorageBookingData.bkAction
+                    delete localStorageBookingData.bkApplicationNumber
+                    delete localStorageBookingData.bkApplicationStatus
+                    delete localStorageBookingData.roomsModel
+                    localStorage.setItem('waterTankerBookingData', JSON.stringify(localStorageBookingData) )
+                    
                 }
                 return { status: "success", data: response.data };
             } else {

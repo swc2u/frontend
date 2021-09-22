@@ -530,6 +530,20 @@ const screenConfig = {
         const tenantId = getQueryArg(window.location.href, "tenantId");
         getMdmsData(action, state, dispatch);
         prepareEditFlow(action, state, dispatch, applicationNumber, tenantId);
+        const changeDateVenue = getQueryArg(
+            window.location.href,
+            "changeDateVenue"
+          );
+
+          if(changeDateVenue=='Enabled')
+            {
+              set(
+                action.screenConfig,
+                "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkSector.props.disabled",
+                true
+            );
+            }
+
 
         return action;
     },

@@ -807,7 +807,7 @@ export const changedVenueDatepccSummary = getCommonGrayCard({
                             labelKey: "BK_PCC_LOCATION_LABEL",
                         },
                         {
-                            jsonPath: "paccBooking.bkLocation",
+                            jsonPath: "Booking.bkLocation",
                         }
                     ),
                     // FromDate: getLabelWithValue(
