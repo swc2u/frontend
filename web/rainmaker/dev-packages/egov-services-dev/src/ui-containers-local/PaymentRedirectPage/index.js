@@ -21,32 +21,36 @@ class PaymentRedirect extends Component {
 const {state} = this.props
 console.log("stateInupdateApiCall",state)
 
-if(bookingType === "OSBM"){
+if(bookingType === "OSBM" || bookingType === "BWT"){
     
     return  this.props.setRoute(
         `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
     );
 
 }
-        if(bookingType === "BWT") {
-            // let updatedQuantity = get(
-            //     state,
-            //     "state.screenConfiguration.preparedFinalObject.WaterTanker.quantity",
-            //     "NotFound"
-            // );
+//         if(bookingType === "BWT") {
+//             // let updatedQuantity = get(
+//             //     state,
+//             //     "state.screenConfiguration.preparedFinalObject.WaterTanker.quantity",
+//             //     "NotFound"
+//             // );
 
-            let updatedQuantity = JSON.parse(
-                localStorageGet("WaterTankerQuantity")
-              );
+//             let updatedQuantity = JSON.parse(
+//                 localStorageGet("WaterTankerQuantity")
+//               );
 
-        console.log("updatedQuantityInUpdateFunction", updatedQuantity)
-if(updatedQuantity !== null && updatedQuantity !== undefined && updatedQuantity!== "NotFound"){
-set(payload, "quantity", updatedQuantity);
-console.log("SetQuantityForUpdateFunction",updatedQuantity)
-console.log("UpdateFunctionWTPayload--one",payload)
-}
-console.log("UpdateFunctionWTPayload--two",payload)
-        }
+//             // let updatedAddress = localStorageGet("WaterTankerCreateAddress")
+            
+
+//         console.log("updatedQuantityInUpdateFunction", updatedQuantity)
+// if(updatedQuantity !== null && updatedQuantity !== undefined && updatedQuantity!== "NotFound"){
+// set(payload, "quantity", updatedQuantity);
+// // set(payload, "bkCompleteAddress", updatedAddress);
+// console.log("SetQuantityForUpdateFunction",updatedQuantity)
+// console.log("UpdateFunctionWTPayload--one",payload)
+// }
+// console.log("UpdateFunctionWTPayload--two",payload)
+//         }
         const res= await  httpRequest(
               "post",
               apiUrl,
@@ -253,12 +257,42 @@ console.log("UpdateFunctionWTPayload--two",payload)
                         localStorageGet("WaterTankerQuantity")
                       );
 
+                      let updatedAddress = 
+                        localStorageGet("WaterTankerCreateAddress")
+                    console.log("updatedAddress--localStorage",updatedAddress)
+
+                    let WaterTankerbkSector = 
+                    localStorageGet("WaterTankerbkSector")
+                console.log("WaterTankerbkSector--localStorage",WaterTankerbkSector)
+
+                let WaterTankerbkType = 
+                        localStorageGet("WaterTankerbkType")
+                    console.log("WaterTankerbkType--localStorage",WaterTankerbkType)
+
+                    let WaterTankerbkHouseNo = 
+                        localStorageGet("WaterTankerbkHouseNo")
+                    console.log("WaterTankerbkHouseNo--localStorage",WaterTankerbkHouseNo)
+   
+
+
                 console.log("updatedQuantityInComponentDidMount", updatedQuantity)
 if(updatedQuantity !== null && updatedQuantity !== undefined){
     set(payload, "quantity", updatedQuantity);
     console.log("SetQuantityForComponentdidMount",updatedQuantity)
 }
-                     
+             
+if(updatedAddress !== null && updatedAddress !== undefined){
+    set(payload, "bkCompleteAddress", updatedAddress);
+    console.log("updatedAddressForComponentdidMount",updatedAddress)
+
+    set(payload, "bkSector", WaterTankerbkSector);
+
+    set(payload, "bkType", WaterTankerbkType);
+
+    set(payload, "bkHouseNo", WaterTankerbkHouseNo);
+
+
+}
                 console.log("UpdtedRequestBodyForWT",payload)
                    
                     let paymentReceipt= await downloadReceipt(payload, consumerCode, tenantId, 'true')
