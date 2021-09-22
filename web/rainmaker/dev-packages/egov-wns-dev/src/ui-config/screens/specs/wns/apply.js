@@ -1392,8 +1392,10 @@ export const getData = async (action, state, dispatch) => {
        {  
          set(combinedArray[0],'sanctionedCapacity',pipeSize[0].SanctionCapacity)          
          set(combinedArray[0],'meterRentCode',pipeSize[0].MeterRentCode)
+         //set(combinedArray[0],'meterRentCode',"13")//4	Meter Rent code to be set to 13 for all new water applications
          set(combinedArray[0],'proposedSanctionedCapacity',pipeSize[0].SanctionCapacity)          
          set(combinedArray[0],'proposedMeterRentCode',pipeSize[0].MeterRentCode)
+         //set(combinedArray[0],'proposedMeterRentCode',"13")
         dispatch(
           prepareFinalObject(
             "applyScreen.sanctionedCapacity",
@@ -1403,6 +1405,7 @@ export const getData = async (action, state, dispatch) => {
         dispatch(
           prepareFinalObject(
             "applyScreen.meterRentCode",
+            //"13"
             pipeSize[0].MeterRentCode
           )
         )
@@ -1415,6 +1418,7 @@ export const getData = async (action, state, dispatch) => {
         dispatch(
           prepareFinalObject(
             "applyScreen.proposedMeterRentCode",
+            //"13"
             pipeSize[0].MeterRentCode
           )
         )
