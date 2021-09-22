@@ -16,8 +16,16 @@ import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 class PlotArea extends React.Component {
     constructor(props) {
         super(props);
+        this.state ={
+       
+            bkLocationBeforeChange: this.props.availabilityCheckData.bkLocation,
+            bkFromDateBeforeChange :this.props.availabilityCheckData.bkFromDate,
+            bkToDateBeforeChange :this.props.availabilityCheckData.bkToDate
+    
+        }
     }
 
+    
     getAvailabilityData = async (e, item) => {
 
         const { availabilityCheckData } = this.props;
@@ -48,7 +56,62 @@ class PlotArea extends React.Component {
                 true
             );
         }
+        const changeDateVenue = getQueryArg(
+            window.location.href,
+            "changeDateVenue"
+          );
 
+          if(changeDateVenue!= null){
+           
+            if(item.name !==this.state.bkLocationBeforeChange){
+                
+                if (
+                    availabilityCheckData.bkBookingType == "Community Center" &&
+                    item.bkDuration !== "HOURLY"
+                ) {
+            
+                    this.props.dispatch(
+                        toggleSnackbar(
+                            true,
+                            {
+                                labelName: "Venue change for full day is not allowed .Please select Hall for 3 hours.",
+                                labelKey: "",
+                            },
+                            "warning"
+                        )
+                    )
+                    set(
+                        this.props.calendarVisiblity.checkavailability_pcc,
+                        "components.div.children.availabilityCalendarWrapper.visible",
+                        false
+                    );
+                }
+                          if(this.props.availabilityCheckData.bkFromDate !== this.state.bkFromDateBeforeChange || this.props.availabilityCheckData.bkToDate !== this.state.bkToDateBeforeChange ){
+                    location.reload();
+                }
+                this.props.prepareFinalObject(
+                    "changeDateVenue.clickDisable",
+                    true
+                );
+                set(
+                    this.props.calendarVisiblity,
+                    `checkavailability_pcc.components.div.children.availabilityCalendarWrapper.children.availabilityCalendar.children.cardContent.children.Calendar.children.actionButtons.children.resetButton.visible`,
+                    false
+                );
+               }else{
+                this.props.prepareFinalObject(
+                    "changeDateVenue.clickDisable",
+                    undefined
+                );
+                set(
+                    this.props.calendarVisiblity,
+                    `checkavailability_pcc.components.div.children.availabilityCalendarWrapper.children.availabilityCalendar.children.cardContent.children.Calendar.children.actionButtons.children.resetButton.visible`,
+                    true
+                );
+            }
+        }
+        
+        
         this.props.prepareFinalObject(
             "availabilityCheckData.bkBookingVenue",
             item.id
@@ -112,46 +175,8 @@ class PlotArea extends React.Component {
                 top: document.body.scrollHeight,
                 behavior: "smooth",
             });
-            const changeDateVenue = getQueryArg(
-                window.location.href,
-                "changeDateVenue"
-              );
+            
               
-            if(changeDateVenue!= null){
-                
-                if(item.id !== this.props.oldAvailabilityCheckData.bkBookingVenue){
-                    reservedDates.map((d, i) =>{
-                
-                        if(new Date(d).getTime() === new Date(this.props.oldAvailabilityCheckData.bkFromDate).getTime() )   {
-                            
-                            let errorMessage = {
-                                labelName:`${this.props.oldAvailabilityCheckData.bkFromDate} is alreday booked for selected location`,
-                                labelKey:`${this.props.oldAvailabilityCheckData.bkFromDate} is alreday booked for selected location`, //UPLOAD_FILE_TOAST
-                            };
-                            this.props.dispatch(toggleSnackbar(true, errorMessage, "error"))    
-                            set(
-                                this.props.calendarVisiblity.checkavailability_pcc,
-                                "components.div.children.availabilityCalendarWrapper.visible",
-                                false
-                            );
-                        } else if (new Date(d).getTime() === new Date(this.props.oldAvailabilityCheckData.bkToDate).getTime()){
-                            
-                            let errorMessage = {
-                                labelName:`${this.props.oldAvailabilityCheckData.bkToDate} is alreday booked for selected location`,
-                                labelKey:`${this.props.oldAvailabilityCheckData.bkToDate} is alreday booked for selected location`, //UPLOAD_FILE_TOAST
-                            };
-                            this.props.dispatch(toggleSnackbar(true, errorMessage, "error"))  
-                            set(
-                                this.props.calendarVisiblity.checkavailability_pcc,
-                                "components.div.children.availabilityCalendarWrapper.visible",
-                                false
-                            );
-                        } 
-                    }
-                  );
-                
-                }
-            } 
         } else {
             let errorMessage = {
                 labelName: "Something went wrong, Try Again later!",
@@ -159,10 +184,6 @@ class PlotArea extends React.Component {
             };
             this.props.toggleSnackbar(true, errorMessage, "error");
         }
-            // this.props.prepareFinalObject(
-        //     "imageWidth",
-        //     "100%"
-        // );
     };
 
     render() {

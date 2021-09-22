@@ -135,6 +135,11 @@ class BookingCalendar extends React.Component {
     }
 
     handleDayClick = (day, modifiers = {}) => {
+
+        if(this.props.changeDateVenueClickDisable===true){
+            this.props.showError5();
+            return
+        }
         for(let i = 0 ; i< this.props.bookedSlotDateArray.length; i++)
         {
             let d= `${new Date(day).getDate()}-${new Date(day).getMonth()}-${new Date(day).getFullYear()}`
@@ -450,9 +455,13 @@ const mapStateToProps = (state) => {
 
     }
 
-
+    let changeDateVenueClickDisable= get(
+        state,
+        "screenConfiguration.preparedFinalObject.changeDateVenue.clickDisable"
+    );
+    
     return {
-        bookedSlotDateArray :availableSlotDateArray
+        bookedSlotDateArray :availableSlotDateArray, changeDateVenueClickDisable
     };
 };
 
@@ -506,8 +515,19 @@ const mapDispatchToProps = (dispatch) => {
                     },
                     "warning"
                 )
-            ),
-        //showBookButton: () => dispatchMultipleFieldChangeAction("checkavailability", actionDefination, dispatch)
+                ),
+                showError5: () =>
+                dispatch(
+                    toggleSnackbar(
+                        true,
+                        {
+                            labelName: "Can not change both date and venue",
+                            labelKey: "",
+                        },
+                        "warning"
+                    )
+                ),
+                 //showBookButton: () => dispatchMultipleFieldChangeAction("checkavailability", actionDefination, dispatch)
     };
 };
 

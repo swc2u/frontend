@@ -524,13 +524,14 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                 if (response.data.timeslots && response.data.timeslots.length > 0) {
                     console.log(response.data.timeslots, "Hello Nero");
                     if(response.data.timeslots && response.data.timeslots.length > 1){
+                    
                         var [fromTime, toTimeOne] = response.data.timeslots[0].slot.split('-')
                         var [fromTimeTwo, toTime] = response.data.timeslots[1].slot.split('-')
-
+                        localStorage.setItem('changeTimeSlotData', JSON.stringify(response.data.timeslots) )
 
                     }else{
                         var [fromTime, toTime] = response.data.timeslots[0].slot.split('-')
-
+                        localStorage.setItem('changeTimeSlotData', JSON.stringify(response.data.timeslots) )
                     }
                     let DisplayPaccObject={}
                     if(response.data.bkApplicationStatus==="RE_INITIATED"){
