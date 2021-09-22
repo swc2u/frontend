@@ -20,7 +20,7 @@ import {
   getTenantId,getapplicationNumber,
   localStorageSet,
   getapplicationType,
-  getUserInfo,
+  getUserInfo,localStorageGet
 } from "egov-ui-kit/utils/localStorageUtils";
 import {
   checkAvaialbilityAtSubmitCgb,
@@ -106,8 +106,7 @@ if(fetchBillAmount){
       console.log("tenantIdPayPage",tenantId)
       let applicationType = getapplicationType()
       console.log("applicationTypePayPage",applicationType)
-  
-      if(applicationType == "OSBM"){
+      if(applicationType == "OSBM" || applicationType == "BWT"){
         const queryObject = [
           {
               key: "tenantId",
@@ -117,7 +116,7 @@ if(fetchBillAmount){
               key: "applicationNumber",
               value: applicationnumber,
           },
-      ];
+      ];  
   console.log("queryObjectNewBookingSearch",queryObject)
   console.log("queryObjectNewBookingSearch898989",JSON.parse(JSON.stringify(queryObject)))
   
@@ -128,31 +127,43 @@ if(fetchBillAmount){
   let paymentRequest = response.bookingsModelList[0];
   console.log("ResonOfCitizenSearchOneRequestBody",paymentRequest)
   console.log("PaymentRequestCitizenSearch",JSON.parse(JSON.stringify(paymentRequest)))
-  
-  set(paymentRequest,"bkAction","PAY")
-  // set(paymentRequest, "bkPaymentStatus", "SUCCESS");
-  //SUCCESS
-  
-  {/**pdf url for mail attatchment**/}
-  // let paymentReceipt= await downloadReceipt(paymentRequest, applicationnumber, tenantId, 'true')
-  // console.log("dataforReceiptNew",paymentReceipt);
-  // let permissionLetter= await downloadCertificate(paymentRequest, applicationnumber, tenantId, 'true')
-  // console.log("dataforpermissionLetter",permissionLetter);
-  // Promise.all(paymentReceipt).then(data=>{
-  //     let urlPayload={
-  //         "paymentReceipt" :  data[0]
-  //     }
-  
-  //     Promise.all(permissionLetter).then(permissionLetterData=>{
-  
-  //         urlPayload= {
-  //             ...urlPayload, 
-  //             "permissionLetter": permissionLetterData[0]
-  //         }
-  //         console.log(urlPayload, "BothpayloadforNEWAPICALL")
-  //     })
-  // })
-  
+  if(applicationType == "OSBM"){
+    set(paymentRequest,"bkAction","PAY")
+    // set(paymentRequest, "bkPaymentStatus", "SUCCESS");
+  }
+  else if(applicationType == "BWT"){
+  let updatedQuantity = JSON.parse(
+    localStorageGet("WaterTankerQuantity")
+  );
+  console.log("updatedQuantity", updatedQuantity);
+
+  let updatedAddress = 
+    localStorageGet("WaterTankerCreateAddress")
+     console.log("updatedAddress--localStorage",updatedAddress)
+
+let WaterTankerbkSector = 
+localStorageGet("WaterTankerbkSector")
+console.log("WaterTankerbkSector--localStorage",WaterTankerbkSector)
+
+let WaterTankerbkType = 
+    localStorageGet("WaterTankerbkType")
+console.log("WaterTankerbkType--localStorage",WaterTankerbkType)
+
+
+let WaterTankerbkHouseNo = 
+    localStorageGet("WaterTankerbkHouseNo")
+console.log("WaterTankerbkHouseNo--localStorage",WaterTankerbkHouseNo)
+
+
+    set(paymentRequest,"bkAction","PAIDAPPLY")
+    set(paymentRequest, "quantity", updatedQuantity);
+    set(paymentRequest, "bkCompleteAddress", updatedAddress);
+    set(paymentRequest, "bkSector", WaterTankerbkSector);
+    set(paymentRequest, "bkType", WaterTankerbkType);
+    set(paymentRequest, "bkHouseNo", WaterTankerbkHouseNo);
+
+  }  
+
   {/**end**/}
         const newUpdateApiCall = await httpRequest(
           "post",
