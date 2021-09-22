@@ -173,6 +173,17 @@ class NewConnectionActivity extends React.Component {
           : `/${baseUrl}/apply?applicationNumber=${businessId}&tenantId=${tenant}&action=edit&service=WATER&actionType=${ActionType}`;
     }
   };
+  sortByEpoch = (data, order) => {
+    if (order) {
+      return data.sort((a, b) => {
+        return a[a.auditDetails.lastModifiedTime.length - 1] - b[b.length - 1];
+      });
+    } else {
+      return data.sort((a, b) => {
+        return b[b.auditDetails.lastModifiedTime.length - 1] - a[a.length - 1];
+      });
+    }
+  };
   getWNSButtonForCitizen = (preparedFinalObject, status, businessId, moduleName) =>{   
     // const btnName = ["Apply for Regular Connection","Reactivate Connection","Connection Conversion","Temporary Disconnection","Permanent Disconnection"]
      const btnName = [
@@ -219,6 +230,24 @@ class NewConnectionActivity extends React.Component {
              inWorkflow = WaterConnection.length>0 && WaterConnection[0].inWorkflow;
              const connectionUsagesType = WaterConnection.length>0 && WaterConnection[0].connectionUsagesType;
              status = WaterConnection[0].applicationStatus;
+             if(WaterConnection && WaterConnection[0])
+             {
+              //  let sortDateOrder ='desc'
+              // const order = sortDateOrder === "asc" ? true : false;
+              // const waterApplicationList = this.sortByEpoch(WaterConnection[0].waterApplicationList, !order).map(item => {
+              //   item.pop();
+              //   return item;
+              // });
+              //var toDT = this.props.data[1].sortby.RequestBody.endDate;
+               let waterApplicationList_ = WaterConnection[0].waterApplicationList
+               waterApplicationList_ = waterApplicationList_.sort((a, b) => (a.auditDetails.lastModifiedTime > b.auditDetails.lastModifiedTime ? -1 : 1));
+               WaterConnection[0].activityType = waterApplicationList_[0].activityType
+              //   waterApplicationList_ = WaterConnection[0].waterApplicationList.sort(function (x, y) {
+              //   return x.auditDetails.lastModifiedTime - y.auditDetails.lastModifiedTime;
+              // });
+             // WaterConnection[0].activityType = 
+             }
+             
              if(inWorkflow){
                actions = [];
              }
@@ -449,7 +478,7 @@ class NewConnectionActivity extends React.Component {
     let queryObject = [{ key: "tenantId", value: "ch.chandigarh" }, { key: "connectionNumber", value: connectionNo }];
     if(DefaultMessage)
     {
-      alert('ready')
+      //alert('ready')
     // let payloadData = await getSearchResults(queryObject);
     // if (payloadData !== null && payloadData !== undefined && payloadData.WaterConnection.length > 0) {
     //   WaterConnection =payloadData.WaterConnection
@@ -555,12 +584,12 @@ class NewConnectionActivity extends React.Component {
   }
   return Action;
   }
-  componentDidMount(){
-    alert('i am in componentDidMount ')
-  }
-  componentDidUpdate(){
-    alert('i am in componentDidUpdate ')
-  }
+  // componentDidMount(){
+  //   alert('i am in componentDidMount ')
+  // }
+  // componentDidUpdate(){
+  //   alert('i am in componentDidUpdate ')
+  // }
    render() {
    // render = async() => {
     const { classes, items ,preparedFinalObject} = this.props;
