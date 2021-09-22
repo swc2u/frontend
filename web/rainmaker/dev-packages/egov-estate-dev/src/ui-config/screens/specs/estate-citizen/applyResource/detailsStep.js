@@ -212,7 +212,6 @@ export const updateReadOnlyForAllFields = (action, state, dispatch) => {
     state.screenConfiguration.preparedFinalObject,
     "Applications[0].applicationDetails.property.category"
 )
-let housenumber="";
 let branch= get(
   state.screenConfiguration.preparedFinalObject,
   "Applications[0].branchType"
