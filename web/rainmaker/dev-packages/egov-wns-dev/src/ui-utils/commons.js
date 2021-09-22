@@ -1256,11 +1256,24 @@ export const prepareDocumentsUploadData = (state, dispatch,type="upload") => {
         "screenConfiguration.preparedFinalObject.WaterConnection[0].applicationStatus",
         ''
     );
+    let sewerage_ = get(state.screenConfiguration.preparedFinalObject, "applyScreen.sewerage", false);
+    if(sewerage_)
+            {
+                applicationStatus=  get(
+                    state,
+                    "screenConfiguration.preparedFinalObject.SewerageConnection[0].applicationStatus",
+                    ''
+                );
+            }
     let activityType=  get(
         state,
         "screenConfiguration.preparedFinalObject.WaterConnection[0].activityType",
         ''
     );
+    if(sewerage_)
+            {
+                activityType= 'SW_SEWERAGE'
+            }
     if(applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN')
     {
 
@@ -1966,6 +1979,13 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch) => {
                         // add document type upload if applicationStatus is  PENDING_ROADCUT_NOC_BY_CITIZEN-- start
     let applicationStatus=  get(payload, "WaterConnection[0].applicationStatus",'');
     let activityType_=  get(payload, "WaterConnection[0].activityType",'');
+   // let sewerage = get(payload, "applyScreen.sewerage", false);
+   if(sewerage)
+   {
+    applicationStatus = get(payload, "SewerageConnection[0].applicationStatus",'');
+    activityType_ = 'SW_SEWERAGE'
+
+   }
     
     if(applicationStatus ==='PENDING_ROADCUT_NOC_BY_CITIZEN')
     {

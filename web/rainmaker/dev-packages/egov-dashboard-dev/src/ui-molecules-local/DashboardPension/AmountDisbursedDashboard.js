@@ -30,7 +30,7 @@ class AmountDisbursedDashboard extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         const data = this.props.data;
         var month = {1:"JAN", 2:"FEB", 3:"MAR", 4:"APR", 5:"MAY", 6:"JUN", 7:"JUL", 8:"AUG", 9:"SEP", 10:"OCT", 11:"NOV", 12:"DEC"}
         var allGraphlabel = Object.keys(data[0]);
@@ -56,7 +56,7 @@ class AmountDisbursedDashboard extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         const data = this.props.data;
         if(true){
              
@@ -159,7 +159,7 @@ class AmountDisbursedDashboard extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphOneLabel[ind];
                 var data = this.state.dataOne[ind];
@@ -316,7 +316,7 @@ class AmountDisbursedDashboard extends React.Component {
         onClick: (e, element) => {
             if (element.length > 0) {
                 
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphOneLabel[ind];
                 // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );

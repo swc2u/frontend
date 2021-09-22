@@ -43,10 +43,15 @@ export const prefillDocuments = async (payload, destJsonPath, dispatch, jasonpat
           {
             docUploadRedux[key] = { documents: [{ fileName: item.name, fileUrl: item.link, fileStoreId: payload.NulmSusvRenewRequest.documentAttachemnt[key].filestoreId }] }; 
           }
+          else if(Documents ==='SVRUApplication') 
+          {
+            // docUploadRedux[key] = { documents: [{ fileName: item.name, fileUrl: item.link, fileStoreId: payload.NulmSusvRenewRequest.documentAttachemnt[key].filestoreId }] }; 
+            docUploadRedux[key] = { documents: [{ fileName: item.name, fileUrl: item.link, fileStoreId: payload.NulmSusvRenewRequest.applicationDocument[key].filestoreId }] }; 
+          }
           else if(Documents ==='SusvDocuments')
           {
-            docUploadRedux[key] = { documents: [{ fileName: item.name, fileUrl: item.link, fileStoreId: payload.NulmSusvRequest.applicationDocument[key].filestoreId }] };                 
-
+            // docUploadRedux[key] = { documents: [{ fileName: item.name, fileUrl: item.link, fileStoreId: payload.NulmSusvRequest.applicationDocument[key].filestoreId }] };
+            docUploadRedux[key] = { documents: [{ fileName: item.name, fileUrl: item.link, fileStoreId: payload.NulmSusvRequest.applicationDocument[key].filestoreId }] };
           } 
           
          // docUploadRedux[key].documentType = `${payload}.${jasonpath}`[key].documentType;

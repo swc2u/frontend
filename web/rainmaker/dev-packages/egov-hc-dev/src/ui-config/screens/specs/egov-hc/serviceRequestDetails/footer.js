@@ -51,15 +51,15 @@ const callBackForNext = async (state, dispatch) => {
       )
     );
   }
-  else if(idProofDocument == undefined){
-    dispatch(
-      toggleSnackbar(
-        true,
-        { labelName: "ERROR", labelKey: "HC_UPLOAD_ID_PROOF_ERROR" },
-        "warning"
-      )
-    );
-  }
+  // else if(idProofDocument == undefined){
+  //   dispatch(
+  //     toggleSnackbar(
+  //       true,
+  //       { labelName: "ERROR", labelKey: "HC_UPLOAD_ID_PROOF_ERROR" },
+  //       "warning"
+  //     )
+  //   );
+  // }
   else if(!typeOfService){
     dispatch(
       toggleSnackbar(
@@ -144,11 +144,11 @@ const callBackForNext = async (state, dispatch) => {
       validationErrorMsg = { labelName: "ERROR", labelKey: "HC_CONTACT_NUMBER_ERROR" };
       flagValidField = false;
     }
-    else if(! /(?=^.{1,256}$)(^\w+([\.]?\w+)*@\w+([\.]?\w+)*(\.\w{2,3})+$)/.test(email))
-    {
-      validationErrorMsg = { labelName: "ERROR", labelKey: "HC_FIELD_EMAIL_ERROR" };
-      flagValidField = false;
-    }
+    // else if(! /(?=^.{1,256}$)(^\w+([\.]?\w+)*@\w+([\.]?\w+)*(\.\w{2,3})+$)/.test(email))
+    // {
+    //   validationErrorMsg = { labelName: "ERROR", labelKey: "HC_FIELD_EMAIL_ERROR" };
+    //   flagValidField = false;
+    // }
     
     
     if(flagValidField === false)
@@ -164,7 +164,7 @@ const callBackForNext = async (state, dispatch) => {
     }
     
   var idProofMedia = []
-  idProofMedia[0] = idProofDocument.toString()
+  idProofMedia[0] = ''//idProofDocument.toString()
   var final_media = idProofMedia.concat(media) 
     
   // API 
@@ -185,6 +185,7 @@ const callBackForNext = async (state, dispatch) => {
       serviceRequest['city']= tenantIdCommonConfig,
       serviceRequest['tenantId']= tenantIdCommonConfig,
       serviceRequest['media'] = final_media,
+      serviceRequest['media'] = media,
       // serviceRequest['address'] = 'hardcoded value',
       serviceRequest['isEditState'] = 0
       serviceRequest['mohalla'] =locality
@@ -335,7 +336,7 @@ export const validatestepform = (state, dispatch, isFormValid, hasFieldToaster) 
   let address = get(state, "screenConfiguration.preparedFinalObject.SERVICEREQUEST.address", "");
   
 
-  if(typeOfService && noOfTrees && description)
+  if(typeOfService && noOfTrees)// && description)
   {
     validationPause = true;
 /*

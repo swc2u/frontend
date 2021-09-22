@@ -233,41 +233,41 @@ class CheckboxLabels extends React.Component {
           <FormGroup row>
             <FormControlLabel
               classes={{ label: "checkbox-button-label" }}
-              // control={
-              //   <Checkbox
-              //     checked={checkedWater}
-              //     disabled={IsEdit}
-              //     onChange={this.handleWater("checkedWater")}
-              //     classes={{ root: classes.radioRoot, checked: classes.checked }}
-              //     color="primary"
-              //     visible={false}
-              //   />}
+              control={
+                <Checkbox
+                  checked={checkedWater}
+                  disabled={IsEdit}
+                  onChange={this.handleWater("checkedWater")}
+                  classes={{ root: classes.radioRoot, checked: classes.checked }}
+                  color="primary"
+                  
+                />}
               label={<LabelContainer labelKey="WS_APPLY_WATER" visible={IsWater} />}
             />
             <FormControlLabel
               classes={{ label: "checkbox-button-label" }}
-              // control={
-              //   <Checkbox
-              //     checked={checkedSewerage}
-              //     disabled={IsEdit}
-              //     onChange={this.handleSewerage("checkedSewerage")}
-              //     classes={{ root: classes.radioRoot, checked: classes.checked }}
-              //     color="primary"
-              //     visible={false}
-              //   />}
+              control={
+                <Checkbox
+                  checked={checkedSewerage}
+                  disabled={IsEdit}
+                  onChange={this.handleSewerage("checkedSewerage")}
+                  classes={{ root: classes.radioRoot, checked: classes.checked }}
+                  color="primary"
+                  
+                />}
               label={<LabelContainer labelKey="WS_APPLY_SEWERAGE" visible={IsSW} />}
             />
               <FormControlLabel
               classes={{ label: "checkbox-button-label" }}
-              // control={
-              //   <Checkbox
-              //     checked={checkedTubewell}
-              //     disabled={IsEdit}
-              //     onChange={this.handleTubewell("checkedTubewell")}
-              //     classes={{ root: classes.radioRoot, checked: classes.checked }}
-              //     color="primary"
-              //     visible={false}
-              //   />}
+              control={
+                <Checkbox
+                  checked={checkedTubewell}
+                  disabled={IsEdit}
+                  onChange={this.handleTubewell("checkedTubewell")}
+                  classes={{ root: classes.radioRoot, checked: classes.checked }}
+                  color="primary"
+                  
+                />}
               label={<LabelContainer labelKey="WS_APPLY_TUBEWELL"
               
               visible={IsTW}

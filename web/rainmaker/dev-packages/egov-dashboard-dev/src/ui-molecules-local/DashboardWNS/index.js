@@ -26,11 +26,11 @@ class WNSDashboard extends React.Component {
   }
 
     componentDidMount(){
-        debugger;       
+               
     }
 
     componentDidUpdate(){
-        debugger;
+        
         const data = this.props.data
           
         if(this.props.data.length > 0 && JSON.stringify(this.state.data) !== JSON.stringify(data)){

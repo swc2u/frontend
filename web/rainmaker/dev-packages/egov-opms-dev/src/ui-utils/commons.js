@@ -627,12 +627,24 @@ const getStatus = (status) => {
         "currentState": "REASSIGN"
       };
       break;
+    case "RESENTTOADM":
+      return {
+        "dataPayload": {},
+        "currentState": "REASSIGN"
+      };
+      break;
     case "INITIATED":
       return {
         "dataPayload": {},
         "currentState": "DRAFT"
       };
       break;
+    case "INITIATED_TELECOM":
+    return {
+      "dataPayload": {},
+      "currentState": "DRAFT"
+    };
+    break;
     case "INITIATEDEXC":
       return {
         "dataPayload": {},

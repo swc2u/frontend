@@ -42,7 +42,7 @@ class WorkFlowContainer extends React.Component {
       window.location.href,
       "applicationNumber"
     );
-    // debugger
+    // 
     let tenantIdForBoth = JSON.parse(getUserInfo()).permanentCity;
     var response = await getSearchResultsView([
       { key: "tenantId", value: tenantIdForBoth },
@@ -293,7 +293,7 @@ class WorkFlowContainer extends React.Component {
   };
 
   createWorkFLow = async (label, isDocRequired) => {
-    // //debugger;
+    // //
     const { toggleSnackbar, dataPath, preparedFinalObject } = this.props;
     let data = {};
 
@@ -317,7 +317,7 @@ class WorkFlowContainer extends React.Component {
 
     if (dataPath === "services")
     {
-      // //debugger;
+      // //
       
       if(data.assignee.length> 0)
       {
@@ -582,7 +582,7 @@ class WorkFlowContainer extends React.Component {
    let businessService = moduleName === data[0].businessService ? moduleName : data[0].businessService; 
     let businessId = get(data[data.length - 1], "businessId");
     let filteredActions = [];
-    // debugger
+    // 
     filteredActions = get(data[data.length - 1], "nextActions", []).filter(
       item => item.action != "ADHOC"
     );
@@ -639,13 +639,13 @@ class WorkFlowContainer extends React.Component {
       dataPath,
       moduleName
     } = this.props;
-    // debugger
+    // 
     const workflowContract =
       ProcessInstances &&
       ProcessInstances.length > 0 &&
       this.prepareWorkflowContract(ProcessInstances, moduleName);
      let showFooter = false;
-        // debugger
+        // 
      if(moduleName=== 'HORTICULTURE')
      {      
       // alert("inside"+moduleName)

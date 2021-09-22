@@ -16,7 +16,7 @@ const styles = {
 
 
 function ServiceRequestIdContainer(props) {
-  debugger
+  
 	return <div style={styles}>Module Name : {getapplicationNumber()}</div>;
 }
 

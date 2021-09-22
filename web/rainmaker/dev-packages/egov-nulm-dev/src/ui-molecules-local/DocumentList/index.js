@@ -16,6 +16,7 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { UploadSingleFile } from "../../ui-molecules-local";
+import {  prepareFinalObject1 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 const themeStyles = theme => ({
   documentContainer: {
@@ -73,7 +74,7 @@ const themeStyles = theme => ({
   },
   iconDiv: {
     display: "flex",
-    alignItems: "center"
+    alignItems: "center",
   },
   descriptionDiv: {
     display: "flex",
@@ -125,13 +126,19 @@ class DocumentList extends Component {
   };
 
   componentDidMount = () => {
+   // alert(JSON.stringify(documentsUploadRedux))
+    
     const {
       documentsList,
       documentsUploadRedux = {},
       prepareFinalObject
     } = this.props;
+    if(documentsUploadRedux)
+    {
+
+    }
+    else{
     let index = 0;
-   
     documentsList.forEach(docType => {
       docType.cards &&
         docType.cards.forEach(card => {
@@ -185,7 +192,17 @@ class DocumentList extends Component {
           }
         });
     });
+// 
+// alert(JSON.stringify(documentsUploadRedux))
+//    let file=get(prepareFinalObject1, "documentsUploadRedux[0].documents");
+//   // prepareFinalObject("documentsUploadRedux[0].documents[0]", documentsUploadRedux);
+//    alert(file)
+//   //  // screenConfiguration.preparedFinalObject.documentsUploadRedux[0].documents[0]
+//    if(file===undefined)
+//    {
     prepareFinalObject("documentsUploadRedux", documentsUploadRedux);
+  // }
+  }
   };
 
   onUploadClick = uploadedDocIndex => {
@@ -237,7 +254,7 @@ class DocumentList extends Component {
     let jsonPath = `documentsUploadRedux[${key}].dropdown.value`;
     return (
       <Grid container={true}>
-        <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
+        <Grid item={true} xs={3} sm={2} md={2} className={classes.iconDiv}>
           {documentsUploadRedux[key] && documentsUploadRedux[key].documents ? (
             <div className={classes.documentSuccess}>
               <Icon>
@@ -252,9 +269,9 @@ class DocumentList extends Component {
         </Grid>
         <Grid
           item={true}
-          xs={10}
-          sm={5}
-          md={4}
+          xs={9}
+          sm={3}
+          md={3}
           align="left"
           className={classes.descriptionDiv}
         >
@@ -264,7 +281,7 @@ class DocumentList extends Component {
           />
           {card.required && requiredIcon}
         </Grid>
-        <Grid item={true} xs={12} sm={6} md={4}>
+        <Grid item={true}>
           {card.dropdown && (
             <TextFieldContainer
               select={true}
@@ -282,8 +299,8 @@ class DocumentList extends Component {
         <Grid
           item={true}
           xs={12}
-          sm={12}
-          md={3}
+          sm={7}
+          md={7}
           className={classes.fileUploadDiv}
         >
           <UploadSingleFile
@@ -302,7 +319,6 @@ class DocumentList extends Component {
             }
             onButtonClick={() => this.onUploadClick(key)}
             inputProps={this.props.inputProps}
-            doctypename ={card.name}
             buttonLabel={this.props.buttonLabel}
           />
         </Grid>

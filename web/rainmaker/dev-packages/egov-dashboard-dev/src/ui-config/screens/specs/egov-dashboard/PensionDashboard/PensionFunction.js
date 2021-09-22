@@ -11,7 +11,7 @@ import { getPensionData,
 
 export const SearchDashboardData = async (state, dispatch) =>{
 
-  // debugger;
+  // 
   var flag_for_api_call = true
   let queryObject = [
     {
@@ -59,13 +59,13 @@ export const SearchDashboardData = async (state, dispatch) =>{
     "tenantId" : getTenantId(),
     "reportSortBy": reportSortBy 
   }
-    // debugger;
+    // 
     try {
       //
       var response = [];
       var requestBody;
       if(reportSortBy.value === "amountDisbursed"){
-        // debugger;
+        // 
       var response = [];
       var requestBody;
       dispatch(prepareFinalObject("allDashboardSearchData", {"sortBy" : data.reportSortBy }));
@@ -100,7 +100,7 @@ export const SearchDashboardData = async (state, dispatch) =>{
       
       }else if(reportSortBy.value === "retireStatus"){
 
-        // debugger;
+        // 
         var requestBody = {};
         requestBody["fromDt"] = dateFromObject.getTime();
         requestBody["toDt"] = dateToObject.getTime();

@@ -16,6 +16,10 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
 let status = getQueryArg(window.location.href, "status");
 const check = process.env.REACT_APP_NAME === "Employee"? false : true
+const userRoles = JSON.parse(localStorage["user-info"]).roles
+const approveVisible = userRoles.filter(function(item){
+  return item.code == "NULMJA" || item.code == "NULM_ADMIN" || item.code == "CITIZEN";         
+})
 
 const applicationNumberContainer = () => {
 
@@ -302,7 +306,7 @@ const screenConfig = {
                 align: "right",
               },
               // visible:  process.env.REACT_APP_NAME === "Employee"? false : status === "Approved" ? true : false,
-              visible:  status === "Approved" ? true : false,
+              visible:  status === "Approved" && approveVisible.length > 0 ? true : false,
               props: {
                 variant: "contained",
                 color: "primary",

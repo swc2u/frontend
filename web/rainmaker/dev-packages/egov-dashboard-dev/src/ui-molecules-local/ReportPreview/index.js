@@ -25,7 +25,7 @@ class ReportPreview extends React.Component {
 
     // PDF function 
     pdfDownload = (e) => {
-    //debugger;
+    //
     e.preventDefault();
     const DATAJSON = this.state.DATAJSON;
     const columnData = ["Application State", "Application Status", "Action", "Actor", "Next"]
@@ -35,7 +35,7 @@ class ReportPreview extends React.Component {
     for(var i=0; i<DATAJSON.length; i++){
         allStateJSON[DATAJSON[i].uuid] = DATAJSON[i].state
     }
-    //debugger;
+    //
     // Logic to combine data into one JSON
     var state = []
     var row = []
@@ -78,7 +78,7 @@ class ReportPreview extends React.Component {
     }
     tableRowData = [...tableRowData, ...rejectedRow]
 
-    //debugger;
+    //
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -111,12 +111,12 @@ class ReportPreview extends React.Component {
 
     // Preview
     pdfPreview = (e) => {
-        debugger;
+        
         e.view.print();
     }
 
     componentDidMount(){
-        //debugger;
+        //
         // const data = this.props.data
         // var DATAJSON = data.demo ? data.demo.BusinessServices[0].states : []
         // const data = {
@@ -1559,7 +1559,7 @@ class ReportPreview extends React.Component {
     }
 
     componentDidUpdate(){
-        //debugger;
+        //
         var data = []
         var desc = []
         if(this.props.data.length > 0){

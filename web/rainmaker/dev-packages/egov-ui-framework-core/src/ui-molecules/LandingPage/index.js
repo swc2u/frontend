@@ -46,9 +46,11 @@ class LandingPage extends React.Component {
       if(route === ""){
         window.location.href = "http://sampark.chd.nic.in/Epayment/Services/Paid/ElectricityWater/InstantPay.aspx"
       }
-      if(moduleName !== undefined)
+      if(moduleName !== undefined )
       {
-      if(moduleName ==='WNS' ||screenConfig.home1.moduleName==='egov-wns')
+        if(moduleName ==='WNS')
+        {
+          if(moduleName ==='WNS' ||screenConfig.home1.moduleName==='egov-wns')
       {
         if (process.env.NODE_ENV === "production") {
           //window.location.href = `citizen${route}`//citizen/
@@ -62,6 +64,12 @@ class LandingPage extends React.Component {
       }
         //window.location.href =route
       }
+        }
+        else
+        {
+          setRoute(route);
+        }
+      
     }
       else
       {

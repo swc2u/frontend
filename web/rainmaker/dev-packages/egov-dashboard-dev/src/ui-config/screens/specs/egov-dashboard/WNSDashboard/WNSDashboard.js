@@ -26,14 +26,42 @@ export const FilterForm = getCommonCard({
       jsonPath: "dahsboardHome.defaultFromDate",
       required: true,
       afterFieldChange: (action, state, dispatch) => {
+        debugger;
+        var maxDay = (60 * 60 * 24 * 1000)  * 15;
+        var toDT = new Date(action.value).getTime() + maxDay;
+        var maxDate = new Date(toDT).toISOString().substring(0,10)
+        
+
         dispatch(
           handleField(
             "WaterDashboard",
             "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
             "props.inputProps.min",
             action.value
+            // toDT
           )
         );
+
+        dispatch(
+          handleField(
+            "WaterDashboard",
+            "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+            "props.inputProps.max",
+            // action.value
+            maxDate
+          )
+        );
+
+        dispatch(
+          handleField(
+            "WaterDashboard",
+            "components.div.children.FilterForm.children.cardContent.children.FilterConstraintsContainer.children.toDate",
+            "props.value",
+            // action.value
+            maxDate
+          )
+        );
+        
         }
     }),
     toDate: getDateField({

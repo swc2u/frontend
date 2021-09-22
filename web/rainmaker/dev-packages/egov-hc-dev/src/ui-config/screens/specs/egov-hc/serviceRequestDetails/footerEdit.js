@@ -112,8 +112,11 @@ export const getRedirectionURL = () => {
     }
     else if(! /^[a-zA-Z0-9#$&?@~_|.,:\s,]{1,256}$(?!.*[<>()'"/\*;={}`%+^!–])/.test(description))
     {
+      if(description !== '')
+      {
       validationErrorMsg = { labelName: "ERROR", labelKey: "HC_FIELD_DESCRIPTION_ERROR" };
       flagValidField = false;
+      }
     }
     else if(! /^[a-zA-Z0-9#$&?@~_|(),/,[\\\],-.,:\s,\n]{1,256}$(?!.*[<>'"*;={}`%+^!])/.test(houseNoAndStreetName))
     {
@@ -137,8 +140,11 @@ export const getRedirectionURL = () => {
     }
     else if(! /(?=^.{1,256}$)(^\w+([\.]?\w+)*@\w+([\.]?\w+)*(\.\w{2,3})+$)/.test(email))
     {
+      if(email!=='')
+      {
       validationErrorMsg = { labelName: "ERROR", labelKey: "HC_FIELD_EMAIL_ERROR" };
       flagValidField = false;
+      }
     }  
 
     
@@ -382,7 +388,7 @@ export const getRedirectionURL = () => {
     let address = get(state, "screenConfiguration.preparedFinalObject.SERVICEREQUEST.address", "");
     
   
-    if(typeOfService && noOfTrees && description)
+    if(typeOfService && noOfTrees)// && description)
     {
       validationPause = true;
       // if(!address)

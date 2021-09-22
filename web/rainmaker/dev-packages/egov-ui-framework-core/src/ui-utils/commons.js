@@ -534,7 +534,7 @@ export const handleFileUpload = (event, handleDocument, props) => {
         if (file.type.match(/^image\//)) {
           const fileStoreId = await uploadFile(
             S3_BUCKET.endPoint,
-            moduleName,
+            moduleName === undefined?(pageName !== undefined?(pageName ==='wns'?"egov-wns":moduleName):moduleName):moduleName,
             file,
             commonConfig.tenantId
           );

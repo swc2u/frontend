@@ -23,7 +23,7 @@ class DashboardPIEGraph extends React.Component {
 
   handleBack = (e) => {
     e.preventDefault();
-    //debugger;
+    //
       this.setState({
           graphclicked: false,
       })
@@ -31,7 +31,7 @@ class DashboardPIEGraph extends React.Component {
 
   componentDidMount(){
       
-    //debugger;
+    //
     const propsData = this.props.data
     if(propsData.reportResponses){
         const reportHeader = propsData.reportResponses[0].reportHeader;
@@ -73,7 +73,7 @@ class DashboardPIEGraph extends React.Component {
 
   componentDidUpdate(){
     
-    //debugger;
+    //
     const propsData = this.props.data
     if(JSON.stringify(propsData) !== JSON.stringify(this.state.prevData) 
      && propsData.reportResponses === undefined ){

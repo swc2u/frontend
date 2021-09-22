@@ -7,7 +7,7 @@ import { getHCDashboardData } from "../../../../../ui-utils/commons";
 
 export const SearchHCDashboardData = async (state, dispatch) =>{
   
-    //debugger;
+    //
     var flag_for_api_call = true
     let queryObject = [
       {
@@ -63,7 +63,7 @@ export const SearchHCDashboardData = async (state, dispatch) =>{
       ]
     }
   
-      // debugger
+      // 
       try {
         // API call for Description Report
         const response = await getHCDashboardData( dispatch, payload );

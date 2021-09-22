@@ -158,8 +158,39 @@ class WorkFlowContainer extends React.Component {
     }
   };
   
+  HCSendSMS = async (services,label) => {
+    try {
+      toggleSpinner()
+      //https://egov-uat.chandigarhsmartcity.in/hc-services/serviceRequest/_sendSMS
+      const payload = await httpRequest("post", "/hc-services/serviceRequest/_sendSMS", "", [], {
+        services: services
+      });
 
-  wfUpdate = async label => {
+      
+
+      if (payload) {
+        let path = "";
+        toggleSpinner()
+        //console.log('updateapi')
+        //this.wfUpdate(label);
+        window.location.reload();
+       
+
+      }
+    } catch (e) {
+      toggleSpinner()
+      window.location.reload();
+      toggleSnackbar(
+        true,
+        {
+          labelName: e.message,
+          labelKey: e.message
+        },
+        "error"
+      );
+    }
+  }
+  wfUpdate = async (label,services) => {
     let { 
       toggleSnackbar,
       preparedFinalObject,
@@ -260,7 +291,16 @@ class WorkFlowContainer extends React.Component {
         else path = "Licenses[0].licenseNumber";
         const licenseNumber = get(payload, path, "");
         if (data[0].action === "INSPECT" || data[0].action === "APPROVE") {
-          window.location.reload();
+          if (data[0].action === "APPROVE") 
+            {
+              this.HCSendSMS(services,label)
+            }
+            else
+            {
+              window.location.reload();
+            }
+          
+          
          } else {
           window.location.href = `acknowledgement?${this.getPurposeString(
             label
@@ -322,6 +362,8 @@ class WorkFlowContainer extends React.Component {
     {
 
       var validated= true;
+      let services =[];
+      let workflowHC = get(preparedFinalObject, "workflowHC", [])
       // data.isRoleSpecific=false;
       if(data.comment.length=== 0)
       {
@@ -405,11 +447,123 @@ class WorkFlowContainer extends React.Component {
               );
             }
           }
+          // check logic for sms notification the call api then update wf
+          // set sms notification property and call sms notification api 
+          //start
+          if (data.action === "APPROVE" && 1===1) 
+          { 
+           if(workflowHC)
+           {
+            validated = true
+            let assignee = null;
+             let assigner =null;
+             
+            workflowHC.forEach(element => {
+              assignee = element.assignee
+              assigner = element.assigner
+              if(assignee)
+              {
+                let assigneeroles = assignee.roles
+                assigneeroles = assigneeroles.filter(x=>x.code ==='HC_JE')
+                if(assigneeroles.length>0)
+                {
+                  if(assignee.mobileNumber)
+                  {
+                    if(services.length===0)
+                    {
+                  services.push(
+                    {
+                      serviceType:element.businessService,
+                      service_request_id:element.businessId,
+                      contactNumber:assignee.mobileNumber
+                    }
+                  )
+                  }
+                  else{
+                    let servicesassignee = services.filter(x=>x.contactNumber === assignee.mobileNumber)
+                    if(servicesassignee.length ===0)
+                    {
+                      services.push(
+                        {
+                          serviceType:element.businessService,
+                          service_request_id:element.businessId,
+                          contactNumber:assignee.mobileNumber
+                        }
+                      )
+
+                    }
+
+                  }
+                }
+
+                }                
+
+              }
+              if(assigner)
+              {
+                let assigneeroles = assigner.roles
+                assigneeroles = assigneeroles.filter(x=>x.code ==='HC_JE')
+                if(assigneeroles.length>0)
+                {
+                  if(assigner.mobileNumber)
+                  {
+                    if(services.length===0)
+                    {
+                  services.push(
+                    {
+                      serviceType:element.businessService,
+                      service_request_id:element.businessId,
+                      contactNumber:assigner.mobileNumber
+                    }
+                  )
+                  }
+                  else{
+                    let assignerservices = services.filter(x=>x.contactNumber === assigner.mobileNumber)
+                    if(assignerservices.length ===0)
+                    {
+                      services.push(
+                        {
+                          serviceType:element.businessService,
+                          service_request_id:element.businessId,
+                          contactNumber:assigner.mobileNumber
+                        }
+                      )
+
+                    }
+
+                  }
+                }
+                  
+                }
+                
+              }
+              
+            });
+             
+            //  if(assignee)
+            //  {
+            //    let assigneeroles = assignee.roles
+
+            //  }
+            //  if(assigner)
+            //  {
+            //   let assigneeroles = assignee.roles
+               
+            //  }
+           }        
+          }
+          //end
 
           if(validated)
           {
-            this.wfUpdate(label);
-
+            // if (data.action === "APPROVE" && 1===1) 
+            // {
+            //   this.HCSendSMS(services,label)
+            // }
+            // else{
+            //   this.wfUpdate(label , data.action,service);
+            // }
+            this.wfUpdate(label,services);
           }
           return;
 

@@ -37,7 +37,7 @@ class SportCultureDashboard extends React.Component {
     // PDF function 
     pdfDownload = (e) => {
 
-    debugger;
+    
     e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
@@ -83,7 +83,7 @@ class SportCultureDashboard extends React.Component {
     }
 
 
-    debugger;
+    
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -119,7 +119,7 @@ class SportCultureDashboard extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -133,7 +133,7 @@ class SportCultureDashboard extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -153,7 +153,7 @@ class SportCultureDashboard extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         // e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -161,7 +161,7 @@ class SportCultureDashboard extends React.Component {
     }
     
     graphSorting = ( sortBy, data, checkGraph ) => {
-        debugger;
+        
         var sortNo = null;
         var group = data.reduce((r, a) => {
             r[a[sortBy]] = [...r[a[sortBy]] || [], a];
@@ -188,7 +188,7 @@ class SportCultureDashboard extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         const data = this.props.data.length > 0 ? this.props.data[0].ResponseBody : [];
         const propSortBy = this.props.data.length > 0 ? this.props.data[1].value : [];
         if(data.length > 0){
@@ -199,7 +199,7 @@ class SportCultureDashboard extends React.Component {
     }
 
     componentDidUpdate(){
-        debugger;
+        
         const data = this.props.data.length > 0 ? this.props.data[0].ResponseBody : [];
         const propSortBy = this.props.data.length > 0 ? this.props.data[1].value : [];
         var recordNotFound = "";
@@ -228,7 +228,7 @@ class SportCultureDashboard extends React.Component {
                     }
                     
                 }
-                debugger;
+                
                 
         
                 // Column Unchange Data 
@@ -353,13 +353,13 @@ class SportCultureDashboard extends React.Component {
             onClick: (e, element) => {
                 if (element.length > 0) {
                     
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphOneLabel[ind];
                     const data = this.state.dataOne[selectedVal];
                     var graphData = this.graphSorting("sector", data, "checkGraph");
             
-                    debugger;
+                    
                     // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
                     // const hardval = this.state.hardJSON[1]
                     // var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataOne[selectedVal] );
@@ -430,13 +430,13 @@ class SportCultureDashboard extends React.Component {
             },
             onClick: (e, element) => {
                 if (element.length > 0) {
-                    debugger;
+                    
                     var ind = element[0]._index;   
                     const selectedVal = this.state.graphTwoLabel[ind];
                     const data = this.state.dataTwo[selectedVal];
                     var graphData = this.graphSorting("area", data, "checkGraph");
             
-                    debugger;
+                    
                     // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
                     // const hardval = this.state.hardJSON[1]
                     // var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataOne[selectedVal] );
@@ -548,13 +548,13 @@ class SportCultureDashboard extends React.Component {
             },
             onClick: (e, element) => {
                 if (element.length > 0) {
-                    debugger;
+                    
                     // var ind = element[0]._index;   
                     // const selectedVal = this.state.graphTwoLabel[ind];
                     // const data = this.state.dataTwo[selectedVal];
                     // var graphData = this.graphSorting("area", data, "checkGraph");
             
-                    // debugger;
+                    // 
                     // // var graphSorting = this.graphSorting( this.state.graphHardTwoData.sortBy, this.state.dataOne[selectedVal] );
                     // // const hardval = this.state.hardJSON[1]
                     // // var graphSorting = this.graphSorting( hardval.sortBy, this.state.dataOne[selectedVal] );

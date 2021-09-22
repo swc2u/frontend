@@ -62,7 +62,7 @@ class WorkDashboard extends React.Component {
     // PDF function 
     pdfDownload = (e) => {
 
-    debugger;
+    
     e.preventDefault();
     var columnData = this.state.unchangeColumnData
     // var columnDataCamelize = this.state.columnData
@@ -114,7 +114,7 @@ class WorkDashboard extends React.Component {
     }
 
 
-    debugger;
+    
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -150,7 +150,7 @@ class WorkDashboard extends React.Component {
 
     // Column Unchange Data
     columnUnchange=(e)=>{
-        debugger;
+        
         const coldata = e;
         var unchangeData = [];
         for(var i=0;i<coldata.length; i++){
@@ -164,7 +164,7 @@ class WorkDashboard extends React.Component {
     // Hide / Show Column
     showHideColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         var sortColumn = JSON.parse(JSON.stringify(this.state.unchangeColumnData));
         const removeIndex = parseInt(e.target.value);
         // sortColumn.splice(removeIndex, 1)
@@ -184,7 +184,7 @@ class WorkDashboard extends React.Component {
     // Toggle Column 
     toggleColumn = (e) => {
         e.preventDefault();
-        debugger;
+        
         const data = this.state.columnData
         this.setState({
             toggleColumnCheck : !this.state.toggleColumnCheck
@@ -194,7 +194,7 @@ class WorkDashboard extends React.Component {
     graphSorting = ( sortBy, data, checkGraph ) => {
 
         if(checkGraph === "workprogress_Vs_expenditure"){
-            debugger;
+            
             var dateRangeData = data;
             var sortBy = sortBy;
             var group = dateRangeData.reduce((r, a) => {
@@ -219,7 +219,7 @@ class WorkDashboard extends React.Component {
             graphData = [data1, data2]
             return [graphLabel, graphData, group]
         }
-        debugger;
+        
         var dateRangeData = data;
         var sortBy = sortBy;
         var group = dateRangeData.reduce((r, a) => {
@@ -263,7 +263,7 @@ class WorkDashboard extends React.Component {
     }
 
     componentDidMount(){
-        debugger;
+        
         // const dropdownSelected = "Approval Status of Estimates";
         // const dropdownSelected = "Approval Status of DNIT";
         // const dropdownSelected = "Status of Project Dept wise";
@@ -297,7 +297,7 @@ class WorkDashboard extends React.Component {
     }
 
     componentDidUpdate() {
-        debugger;
+        
         const repPropsData = this.props.data;
         if(JSON.stringify(repPropsData) !== JSON.stringify(this.state.checkData)){
             const dropdownSelected = this.props.data[1].reportSortBy.value;
@@ -446,7 +446,7 @@ class WorkDashboard extends React.Component {
                 checkData : this.props.data
             })
         }
-        debugger;
+        
     }
 
     render() {
@@ -545,7 +545,7 @@ class WorkDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphOneLabel[ind];
                 var data = this.state.dataOne[selectedVal];
@@ -626,7 +626,7 @@ class WorkDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphTwoLabel[ind];
                 var data = this.state.dataTwo[selectedVal];
@@ -748,7 +748,7 @@ class WorkDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphTwoLabel[ind];
                 var data = this.state.dataTwo[selectedVal];
@@ -870,7 +870,7 @@ class WorkDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphTwo_2_Label[ind];
                 var data = this.state.dataTwo_2[selectedVal];
@@ -992,7 +992,7 @@ class WorkDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphThirdLabel[ind];
                 var data = this.state.dataThird[selectedVal];
@@ -1097,7 +1097,7 @@ class WorkDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphFourthLabel[ind];
                 var data = this.state.dataFourth[selectedVal];
@@ -1210,8 +1210,8 @@ class WorkDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
-                debugger;
+                
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphFifthLabel[ind];
                 var data = this.state.dataFifth[selectedVal];
@@ -1336,7 +1336,7 @@ class WorkDashboard extends React.Component {
         },
         onClick: (e, element) => {
             if (element.length > 0) {
-                debugger;
+                
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphSixthLabel[ind];
                 var data = this.state.dataSixth[selectedVal];
