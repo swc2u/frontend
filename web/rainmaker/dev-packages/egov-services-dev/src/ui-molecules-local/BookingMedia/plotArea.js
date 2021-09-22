@@ -20,8 +20,9 @@ class PlotArea extends React.Component {
        
             bkLocationBeforeChange: this.props.availabilityCheckData.bkLocation,
             bkFromDateBeforeChange :this.props.availabilityCheckData.bkFromDate,
-            bkToDateBeforeChange :this.props.availabilityCheckData.bkToDate
-    
+            bkToDateBeforeChange :this.props.availabilityCheckData.bkToDate,
+            bkDurationBeforeChange :this.props.oldAvailabilityCheckData ?this.props.oldAvailabilityCheckData.bkDuration: null
+          
         }
     }
 
@@ -67,22 +68,40 @@ class PlotArea extends React.Component {
                 
                 if (
                     availabilityCheckData.bkBookingType == "Community Center" &&
-                    item.bkDuration !== "HOURLY"
+                    this.state.bkDurationBeforeChange !== item.bkDuration
                 ) {
-            
-                    this.props.dispatch(
-                        toggleSnackbar(
-                            true,
-                            {
-                                labelName: "Venue change for full day is not allowed .Please select Hall for 3 hours.",
-                                labelKey: "",
-                            },
-                            "warning"
+                    if(this.state.bkDurationBeforeChange==="FULLDAY"){
+                        this.props.dispatch(
+                            toggleSnackbar(
+                                true,
+                                {
+                                    labelName: "Venue change for Hall for 3 hours is not allowed .Please select other venue.",
+                                    labelKey: "",
+                                },
+                                "warning"
+                            )
                         )
-                    )
+                    }else{
+                        this.props.dispatch(
+                            toggleSnackbar(
+                                true,
+                                {
+                                    labelName: "Venue change for full day is not allowed .Please select Hall for 3 hours.",
+                                    labelKey: "",
+                                },
+                                "warning"
+                            )
+                        )
+                    }
+                
                     set(
                         this.props.calendarVisiblity.checkavailability_pcc,
                         "components.div.children.availabilityCalendarWrapper.visible",
+                        false
+                    );
+                    set(
+                        this.props.calendarVisiblity.checkavailability_pcc,
+                        "components.div.children.availabilityTimeSlotWrapper.visible",
                         false
                     );
                 }

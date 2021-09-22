@@ -17,40 +17,20 @@ import {
   } from "egov-ui-kit/utils/localStorageUtils";
 
 class PaymentRedirect extends Component {
+
     updateApiCall = async (apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)=>{
-const {state} = this.props
-console.log("stateInupdateApiCall",state)
+        
+        const {state} = this.props
 
-if(bookingType === "OSBM" || bookingType === "BWT"){
-    
-    return  this.props.setRoute(
-        `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
-    );
 
-}
-//         if(bookingType === "BWT") {
-//             // let updatedQuantity = get(
-//             //     state,
-//             //     "state.screenConfiguration.preparedFinalObject.WaterTanker.quantity",
-//             //     "NotFound"
-//             // );
-
-//             let updatedQuantity = JSON.parse(
-//                 localStorageGet("WaterTankerQuantity")
-//               );
-
-//             // let updatedAddress = localStorageGet("WaterTankerCreateAddress")
+        if(bookingType === "OSBM" || bookingType === "BWT"){
             
+            return  this.props.setRoute(
+                `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
+            );
 
-//         console.log("updatedQuantityInUpdateFunction", updatedQuantity)
-// if(updatedQuantity !== null && updatedQuantity !== undefined && updatedQuantity!== "NotFound"){
-// set(payload, "quantity", updatedQuantity);
-// // set(payload, "bkCompleteAddress", updatedAddress);
-// console.log("SetQuantityForUpdateFunction",updatedQuantity)
-// console.log("UpdateFunctionWTPayload--one",payload)
-// }
-// console.log("UpdateFunctionWTPayload--two",payload)
-//         }
+        }
+
         const res= await  httpRequest(
               "post",
               apiUrl,
@@ -237,101 +217,57 @@ if(bookingType === "OSBM" || bookingType === "BWT"){
                
                
                 if(bookingType !== "BWT"){
-                let paymentReceipt= await downloadReceipt(payload, consumerCode, tenantId, 'true')
-
-                let permissionLetter= await downloadCertificate(payload, consumerCode, tenantId, 'true')
-
-                Promise.all(paymentReceipt).then(data=>{
-                    let urlPayload={
-                        "paymentReceipt" :  data[0]
-                    }
-
-                    Promise.all(permissionLetter).then(permissionLetterData=>{
-
-                        urlPayload= {
-                            ...urlPayload, 
-                            "permissionLetter": permissionLetterData[0]
-                        }
-                        console.log(urlPayload, "Bothpayload")
-                        this.updateApiCall(apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)
-                
-                    })
-                })
-                } else if(bookingType === "BWT"){
-                
-                    // let updatedQuantity = get(
-                    //     state,
-                    //     "state.screenConfiguration.preparedFinalObject.WaterTanker.quantity",
-                    //     null
-                    // );
-                    let updatedQuantity = JSON.parse(
-                        localStorageGet("WaterTankerQuantity")
-                      );
-
-                      let updatedAddress = 
-                        localStorageGet("WaterTankerCreateAddress")
-                    console.log("updatedAddress--localStorage",updatedAddress)
-
-                    let WaterTankerbkSector = 
-                    localStorageGet("WaterTankerbkSector")
-                console.log("WaterTankerbkSector--localStorage",WaterTankerbkSector)
-
-                let WaterTankerbkType = 
-                        localStorageGet("WaterTankerbkType")
-                    console.log("WaterTankerbkType--localStorage",WaterTankerbkType)
-
-                    let WaterTankerbkHouseNo = 
-                        localStorageGet("WaterTankerbkHouseNo")
-                    console.log("WaterTankerbkHouseNo--localStorage",WaterTankerbkHouseNo)
-   
-
-
-                console.log("updatedQuantityInComponentDidMount", updatedQuantity)
-if(updatedQuantity !== null && updatedQuantity !== undefined){
-    set(payload, "quantity", updatedQuantity);
-    console.log("SetQuantityForComponentdidMount",updatedQuantity)
-}
-             
-if(updatedAddress !== null && updatedAddress !== undefined){
-    set(payload, "bkCompleteAddress", updatedAddress);
-    console.log("updatedAddressForComponentdidMount",updatedAddress)
-
-    set(payload, "bkSector", WaterTankerbkSector);
-
-    set(payload, "bkType", WaterTankerbkType);
-
-    set(payload, "bkHouseNo", WaterTankerbkHouseNo);
-
-
-}
-                console.log("UpdtedRequestBodyForWT",payload)
-                   
                     let paymentReceipt= await downloadReceipt(payload, consumerCode, tenantId, 'true')
-                                    
+    
+                    let permissionLetter= await downloadCertificate(payload, consumerCode, tenantId, 'true')
+    
                     Promise.all(paymentReceipt).then(data=>{
                         let urlPayload={
                             "paymentReceipt" :  data[0]
                         }
     
-                       
-                            console.log(urlPayload, "payload")
+                        Promise.all(permissionLetter).then(permissionLetterData=>{
+    
+                            urlPayload= {
+                                ...urlPayload, 
+                                "permissionLetter": permissionLetterData[0]
+                            }
+                            console.log(urlPayload, "Bothpayload")
                             this.updateApiCall(apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)
                     
                         })
-                
-
-                } 
-              
+                    })
+                    } else if(bookingType === "BWT"){
+                       
+                        let updatedPayloadAfterEdit =JSON.parse(localStorage.getItem('waterTankerBookingData'))
+                        payload= Object.assign(payload, updatedPayloadAfterEdit)
+                        
+                        let paymentReceipt= await downloadReceipt(payload, consumerCode, tenantId, 'true')
+                                        
+                        Promise.all(paymentReceipt).then(data=>{
+                            let urlPayload={
+                                "paymentReceipt" :  data[0]
+                            }
+        
+                           
+                                console.log(urlPayload, "payload")
+                                this.updateApiCall(apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)
+                        
+                            })
+                    
+    
+                    } 
+                  
+            }
+            } catch (e) {
+                console.log(e);
+            }
+        };
+        render() {
+            return <div />;
         }
-        } catch (e) {
-            console.log(e);
-        }
-    };
-    render() {
-        return <div />;
     }
-}
-
+    
 const mapStateToProps = state => {
     const { screenConfiguration } = state;
     console.log("UseStateOnCitizenSide",screenConfiguration)

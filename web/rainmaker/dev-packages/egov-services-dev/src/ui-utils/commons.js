@@ -960,12 +960,14 @@ export const createUpdateWtbApplication = async (state, dispatch, action) => {
                 setapplicationNumber(response.data.bkApplicationNumber);
                 setApplicationNumberBox(state, dispatch);
                 if(response.data.businessService == "BWT"){
-                    dispatch(prepareFinalObject("WaterTanker.quantity", response.data.quantity));
-                    localStorageSet("WaterTankerQuantity", response.data.quantity);
-                    localStorageSet("WaterTankerCreateAddress", response.data.bkCompleteAddress);
-                    localStorageSet("WaterTankerbkSector", response.data.bkSector);
-                    localStorageSet("WaterTankerbkType", response.data.bkType);
-                    localStorageSet("WaterTankerbkHouseNo", response.data.bkHouseNo);
+                
+                    let localStorageBookingData= Object.assign({}, response.data)
+                    delete localStorageBookingData.bkAction
+                    delete localStorageBookingData.bkApplicationNumber
+                    delete localStorageBookingData.bkApplicationStatus
+                    delete localStorageBookingData.roomsModel
+                    localStorage.setItem('waterTankerBookingData', JSON.stringify(localStorageBookingData) )
+                    
                 }
                 return { status: "success", data: response.data };
             } else {
