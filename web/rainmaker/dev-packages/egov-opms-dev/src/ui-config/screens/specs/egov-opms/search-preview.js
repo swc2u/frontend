@@ -363,7 +363,7 @@ const setSearchResponse = async (state, dispatch, action, applicationNumber, ten
 
     prepareDocumentsView(state, dispatch);
 
-    if (checkForRole(roles, 'CITIZEN')) {
+    if (checkForRole(roles, 'CITIZEN') || checkForRole(roles, 'MOH')) {
 
       setSearchResponseForNocCretificate(state, dispatch, action, applicationNumber, tenantId);
     }
