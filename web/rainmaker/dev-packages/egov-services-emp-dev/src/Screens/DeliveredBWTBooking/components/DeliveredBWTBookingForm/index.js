@@ -43,7 +43,10 @@ const styles = theme => ( {
     }
   }
 });
-const DeliveredBWTForm = ({ form, options,classes,driverFullName,mobileNumber,approverName, onSubmit,bookingservice,bookingtype,applicationNumber,createdBy,tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue,quantity }) => {
+const DeliveredBWTForm = ({ form, options,classes,driverFullName,mobileNumber,
+  bkSector,bkCompleteAddress, bkType,bkHouseNo,
+  approverName, onSubmit,bookingservice,bookingtype,applicationNumber,createdBy,tenantId, 
+  ontextAreaChange, handleOptionChange, optionSelected, commentValue,quantity }) => {
 
 
 
@@ -60,6 +63,10 @@ formValue.driverName.value = driverFullName;
 formValue.mobileNumber.value = mobileNumber;
 formValue.approverName.value = approverName;   
 formValue.quantity.value = quantity; 
+formValue.bkSector.value = bkSector;
+formValue.bkCompleteAddress.value = bkCompleteAddress;
+formValue.bkType.value = bkType;
+formValue.bkHouseNo.value = bkHouseNo;
   }
 
   

@@ -20,17 +20,12 @@ class PaymentRedirect extends Component {
 
     updateApiCall = async (apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)=>{
         
-        const {state} = this.props
-
-
-        if(bookingType === "OSBM" || bookingType === "BWT"){
-            
+        const {state} = this.props     
+            if(bookingType == "OSBM" || bookingType == "BWT" || bookingType == "OSUJM"){
             return  this.props.setRoute(
                 `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
             );
-
         }
-
         const res= await  httpRequest(
               "post",
               apiUrl,
