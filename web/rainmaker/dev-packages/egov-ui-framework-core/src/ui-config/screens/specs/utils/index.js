@@ -646,6 +646,7 @@ export const getPattern = type => {
       return /^[a-zA-Z.0-9 @#%&-:\n\r]{1,256}$/i;
 
       //validation patterns for HC....don't use
+      // Test code
       case "NoOfTree":
         return /^(0?[1-9]|[1-9][0-9])$/i;
       case "location":
