@@ -742,9 +742,24 @@ if(NewBookFromDate != "notFound" && NewBookToDate != "notFound"){
   }
   }
   }
-  if(bookingVenue != "NotFound" && oldBookingData.bkBookingVenue != bookingVenue){   /**Third Condition**Change Venue but date remain same in this Condition**/
+if(bookingVenue != "NotFound" && oldBookingData.bkBookingVenue != bookingVenue){   /**Third Condition**Change Venue but date remain same in this Condition**/
   
-  if((NewBookFromDate === "notFound" && NewBookToDate ==="notFound") || (d1 == AgainNewd1 && d2 == AgainNewd2)){
+if((NewBookFromDate === "notFound" && NewBookToDate ==="notFound") || (d1 == AgainNewd1 && d2 == AgainNewd2)){
+
+
+  if(oldBookingData.bkBookingVenue == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" 
+  && bookingVenue != "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH"){
+    return (
+      toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Venue change for full day is not allowed .Please select Hall for 3 hours.",
+          labelKey: `Venue change for full day is not allowed .Please select Hall for 3 hours.`
+        },
+        "error"
+      )
+    )
+  }
 
 if("bkBookingData" in this.props.stateData.screenConfiguration.preparedFinalObject){
   let NewVenueAmount = this.props.stateData.screenConfiguration.preparedFinalObject.bkBookingData.rent
@@ -875,7 +890,7 @@ if(checkForDateVenueChange !== "NotFound" && checkForApplicationData !== "NotFou
 };
 
   render() {
-
+  
     const {
       firstName,
       email,
@@ -896,7 +911,7 @@ if(checkForDateVenueChange !== "NotFound" && checkForApplicationData !== "NotFou
       NewBookFromDate,state,
       getSelectedSector
     } = this.props;
-    
+    console.log("AllpropschechAvail",this.props)
 
     let checkForDateVenueChangeCodition = get(
       state,
@@ -905,8 +920,11 @@ if(checkForDateVenueChange !== "NotFound" && checkForApplicationData !== "NotFou
     );
     
 
-    let vanueData;
-if(checkForDateVenueChangeCodition == "UserApplyForDateVenueChange" || checkForDateVenueChangeCodition !== "NotFound"){
+    let vanueData = get(
+      state,"screenConfiguration.preparedFinalObject.bkBookingData",
+      "NotFound"
+    );
+if((checkForDateVenueChangeCodition == "UserApplyForDateVenueChange" && vanueData.name == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH")|| checkForDateVenueChangeCodition !== "NotFound"){
   
   vanueData = undefined
 }
@@ -918,7 +936,7 @@ else{
     );
 }
 
-
+console.log("VenueData",vanueData)
     let sectorData = [];
     let GetSeprateSectorData;  
    
@@ -971,7 +989,7 @@ if(getSelectedSector !== "NotFound"){
     const handleCalAfterImage = () => {
       this.setState({ calendarAfterImg: true });
     };
-
+console.log("checkAvailibiltySTate",this.state)
     return (
       <div>
         <div className="bookingTopSec" style={{ float: "left", width: "100%", padding: "36px 15px" }}>
@@ -1024,42 +1042,6 @@ if(getSelectedSector !== "NotFound"){
                 </FormControl>
               </div>
             </div>
-
-            {/*New Requirement Changes*/}
-            {/* {this.state.vanueType === "Community Center" || this.state.vanueType === "Parks"? (
-            <div>
-              <div className="col-sm-6 col-xs-6">
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">
-                    <Label label="BK_MYBK_TYPES_OF_BOOKING" />
-                  </FormLabel>
-                  <RadioGroup
-                    row
-                    aria-label="position"
-                    name="gender1"
-                    value={this.state.NewbkBookingType}
-                    onChange={this.newBookingType}
-                  >
-                    <FormControlLabel
-                      value="Normal Booking"
-                      control={<Radio color="primary" />}
-                      label="Normal Booking"
-                      classes={classes.label}
-                      labelPlacement="end"
-                    />
-                    <FormControlLabel
-                      value="Commercial Booking"
-                      control={<Radio color="primary" />}
-                      label="Commercial Booking"
-                      classes={classes.label}
-                      labelPlacement="end"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </div>
-            </div>) : ""} */}
-
-            {/*condition rendering for Dropdown according to Booking Type*/}
             {this.props.DropDownValue != "notfound" &&
             this.props.DropDownValue === "Commercial Ground" ? (
               <div>
@@ -1179,14 +1161,21 @@ this.state.oldBookingData.Sector != undefined ?
 
 
             {/*for old availbility check  import timeSlot Selected One*/}
-            {this.state.oldBookingData &&
+            {/* {this.state.oldBookingData &&
             this.state.oldBookingData.bkBookingType == "Community Center" && checkForDateVenueChangeCodition == "UserApplyForDateVenueChange" &&
             this.state.oldBookingData.bkBookingVenue !== "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" && 
             this.state.oldBookingData.bkBookingVenue !== "HALL+ LAWN AT COMMUNITY CENTRE DHANAS CHANDIGARH" &&//
             this.state.oldBookingData.bkBookingVenue !==  "HALL AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" &&
             this.state.oldBookingData.bkBookingVenue !== "LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" &&
+            this.state.availabilityCheckData.bkBookingType == "Community Center" && (this.props.bookingVenue == "NotFound" || this.props.bookingVenue == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH") */}
+            {console.log("allStateBeforeRender",this.state)}
+            {console.log("allpropsBeforeRender",this.props)}
+            {this.state.oldBookingData  && this.props.AppStatus == "OFFLINE_APPLIED" && 
+            this.state.oldBookingData.bkBookingType == "Community Center" && 
+            this.state.oldBookingData.bkBookingVenue == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" && 
             this.state.availabilityCheckData.bkBookingType == "Community Center" &&
-            this.props.bookingVenue == "NotFound" ? (
+            (this.props.bookingVenue == "NotFound" || this.props.bookingVenue == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH")
+            ? (
               <BookingTimeSlot
               tocheck={"withOldData"}
                 masterDataPCC={this.state.masterDataPCC}
@@ -1207,8 +1196,8 @@ this.state.oldBookingData.Sector != undefined ?
             this.state.oldBookingData.bkBookingVenue !== "LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" &&
             this.state.oldBookingData.bkBookingType == "Community Center" &&
             this.state.availabilityCheckData.bkBookingType ==
-              "Community Center" &&
-            this.props.bookingVenue == "NotFound" ? (
+              "Community Center" && (this.props.bookingVenue == "NotFound" || this.props.bookingVenue == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH")
+            ? (
               <SelectedTimeSlotInfo
               tocheck={"withOldData"}
                 masterDataPCC={this.state.masterDataPCC}
@@ -1227,13 +1216,15 @@ this.state.oldBookingData.Sector != undefined ?
             ) : (
               "" 
             )}
-
+ 
             {this.state.oldBookingData &&
               this.state.oldBookingData.bkBookingVenue !=
                 "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" &&
               !vanueData &&
               this.state.showCalendar && checkForDateVenueChangeCodition == "UserApplyForDateVenueChange" &&
-              this.state.calendarAfterImg && (
+              this.state.calendarAfterImg && 
+              (this.props.bookingVenue == "NotFound" || this.props.bookingVenue != "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH")
+              &&(
                 <BookingCalendar
                   witholDdATA={"witholDdATA"}
                   masterDataPCC={this.state.masterDataPCC}
@@ -1250,7 +1241,60 @@ this.state.oldBookingData.Sector != undefined ?
                   oldToDate={oldToDate}
                 />
               )}
+{/**Testing**/}
+{this.state.oldBookingData &&
+              this.state.oldBookingData.bkBookingVenue ==
+                "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" &&  this.props.AppStatus == "OFFLINE_APPLIED" &&
+              this.state.showCalendar && checkForDateVenueChangeCodition == "UserApplyForDateVenueChange" &&
+              this.state.calendarAfterImg && this.props.bookingVenue != "NotFound" && 
+              this.props.bkVenue == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH"
+              &&
+              this.props.bookingVenue != "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" && (
+                <BookingCalendar
+                  witholDdATA={"withNewData"}
+                  masterDataPCC={this.state.masterDataPCC}
+                  availabilityCheckData={this.state.availabilityCheckData}
+                  bookingVenue={this.props && this.props.bookingVenue}
+                  oldBookingData={this.state.oldBookingData}
+                />
+              )}
 
+{this.state.oldBookingData && 
+(this.state.oldBookingData.bkBookingVenue == "HALL AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" || 
+this.state.oldBookingData.bkBookingVenue == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" ||
+this.state.oldBookingData.bkBookingVenue == "LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH"
+) && this.props.AppStatus == "OFFLINE_APPLIED" && this.state.calendarAfterImg &&
+(this.props.bookingVenue != "NotFound" && this.props.bookingVenue == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH")
+            ? (
+              <BookingTimeSlot
+              tocheck={"secOneDateVenueChange"}
+                masterDataPCC={this.state.masterDataPCC}
+                availabilityCheckData={this.state.availabilityCheckData}
+                oldFromDate
+                oldToDate
+              />
+            ) : (
+              ""
+            )}
+
+
+{this.state.oldBookingData && 
+(this.state.oldBookingData.bkBookingVenue == "HALL AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" || 
+this.state.oldBookingData.bkBookingVenue == "HALL+LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH" ||
+this.state.oldBookingData.bkBookingVenue == "LAWN AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH"
+) && this.props.AppStatus == "OFFLINE_APPLIED" && this.state.calendarAfterImg &&
+(this.props.bookingVenue != "NotFound" && this.props.bookingVenue == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH")
+            ? (
+              <SelectedTimeSlotInfo
+              tocheck={"secOneDateVenueChange"}
+                  masterDataPCC={this.state.masterDataPCC}
+                  availabilityCheckData={this.state.availabilityCheckData}
+              />
+            ) : (
+              ""
+            )}
+
+{/**Testing end**/}
             {this.state.availabilityCheckData &&
               this.state.availabilityCheckData.bkBookingType ==
                 "Community Center" && vanueData !== "NotFound" &&
@@ -1263,7 +1307,7 @@ this.state.oldBookingData.Sector != undefined ?
                   oldFromDate
                   oldToDate
                 />
-              )}
+              )}   
             {this.state.availabilityCheckData && vanueData !== "NotFound" &&
               this.state.availabilityCheckData.bkBookingType ==
                 "Community Center" &&
@@ -1275,38 +1319,7 @@ this.state.oldBookingData.Sector != undefined ?
                   availabilityCheckData={this.state.availabilityCheckData}
                 />
               )}
-{/*New testing Start*/}
-{/* {this.state.availabilityCheckData &&
-              this.state.availabilityCheckData.bkBookingType ==
-                "Community Center" &&
-              vanueData &&
-              vanueData.bookingAllowedFor != "" && (
-                <BookingCalendar
-                  witholDdATA={"withNewData"}
-                  masterDataPCC={this.state.masterDataPCC}
-                  availabilityCheckData={this.state.availabilityCheckData}
-                  bookingVenue={this.props && this.props.bookingVenue}
-                  oldBookingData={this.state.oldBookingData}
-                />
-              )}
 
-{this.state.availabilityCheckData.bkBookingType ==
-                "Community Center" && NewBookFromDate != "notFound" && this.props.BothDateSame == "BothDateSame" && (
-                <BookingTimeSlot
-                  masterDataPCC={this.state.masterDataPCC}
-                  availabilityCheckData={this.state.availabilityCheckData}
-                  oldFromDate
-                  oldToDate
-                />
-              )}
-            {this.state.availabilityCheckData.bkBookingType ==
-                "Community Center" && NewBookFromDate != "notFound" && NewBookToDate != "notFound" && this.props.BothDateSame == "BothDateSame" &&(
-                <SelectedTimeSlotInfo
-                  masterDataPCC={this.state.masterDataPCC}
-                  availabilityCheckData={this.state.availabilityCheckData}
-                />
-              )} */}
-{/*NewTesting End*/}
             {this.state.availabilityCheckData &&
               this.state.availabilityCheckData.bkSector &&
               vanueData != undefined &&
@@ -1439,11 +1452,12 @@ const mapStateToProps = (state) => {
   var bookingVenueData =
     state &&
     state.screenConfiguration.preparedFinalObject.availabilityCheckData; 
+    console.log("bookingVenueData--bookingVenue",bookingVenueData) 
   let bookingVenue =
     bookingVenueData && bookingVenueData.bkLocation
       ? bookingVenueData.bkLocation
       : "NotFound";
-  
+  console.log("bookingVenue--bookingVenue",bookingVenue)
   const { userInfo } = state.auth;
   let bkVenue = state.screenConfiguration.preparedFinalObject
     .oldAvailabilityCheckData

@@ -47,26 +47,53 @@ class CustomTimeSlots extends Component {
     };}
 
   componentDidMount() {
+
     if (this.props.initiatedBookingFromDate) {
+    console.log("initiatedBookingFromDate",this.props.initiatedBookingFromDate,this.props.rows)
+    let initiatedBookingFromDateYmdFormat= convertDateInYMD(this.props.initiatedBookingFromDate)
 
-      let initiatedBookingFromDateYmdFormat= convertDateInYMD(this.props.initiatedBookingFromDate)
+  var [goYear, goMonth, goDay] = initiatedBookingFromDateYmdFormat.split(
+    "-"
+  );
+  let goDate = `${goDay}-${goMonth}-${goYear}`;
+  let i = 0;
+  
+  for (i; i < this.props.rows.length; i++) {
+    if (this.props.rows[i].date == goDate) {
+      break;
+    }
+  }
+  
+  this.setState((state) => ({
+    currentSlide: i,
+  }));
 
-      var [goYear, goMonth, goDay] = initiatedBookingFromDateYmdFormat.split(
+   }
+   else if (this.props.oldAvailabilityCheckData){
+      let previousBookedDate = this.props.oldAvailabilityCheckData.FromDate
+      console.log("previousBookedDate",this.props.oldAvailabilityCheckData,previousBookedDate)
+      let previousBookedDateYmdFormat= convertDateInYMD(previousBookedDate)
+       console.log("previousBookedDateYmdFormat",previousBookedDateYmdFormat)
+
+      let [goYear, goMonth, goDay] = previousBookedDateYmdFormat.split(
         "-"
       );
       let goDate = `${goDay}-${goMonth}-${goYear}`;
-      let i = 0;
-      
-      for (i; i < this.props.rows.length; i++) {
-        if (this.props.rows[i].date == goDate) {
-          break;
-        }
-      }
-      
-      this.setState((state) => ({
-        currentSlide: i,
-      }));
-    }
+console.log("previousgoDate",goDate);
+    this.props.rows.map((slot,index) => {
+      console.log("slot-value",slot)
+if(slot.date == goDate){
+  console.log("CheckIfCondition",slot.date,goDate)
+  this.setState((state) => ({
+    currentSlide: index,
+  }));
+
+}
+      })
+   }
+   else{
+    console.log("last condition")
+   }
   }
   componentWillReceiveProps(nextProps) {
   }
@@ -224,7 +251,8 @@ this.props.prepareFinalObject("Booking.wholeDay.ToDate",changeToDate + "," +"9PM
   };
   updateCurrentSlide = (index) => {
     const { currentSlide } = this.state;
-
+console.log("updateCurrentSlideLogs",index)
+console.log("currentSlideLogsInfunction",currentSlide)
     if (currentSlide !== index) {
       this.setState({
         currentSlide: index,
@@ -234,7 +262,8 @@ this.props.prepareFinalObject("Booking.wholeDay.ToDate",changeToDate + "," +"9PM
   render() {
     const classes = withStyles();
     let { rows, currentDate, currentSelectedTimeSlot } = this.props;
-
+console.log("propsInBookingTimeSlot",this.props)
+console.log("BookingTimeSlotIndex",this.state)
     const arrowStyles = {
       position: "absolute",
       zIndex: 2,
@@ -308,10 +337,11 @@ this.props.prepareFinalObject("Booking.wholeDay.ToDate",changeToDate + "," +"9PM
               </button>
             )
           }
-        >
+        >    
           {rows &&
-            rows.map((item) => {
-            //   console.log("itemInTimeSlot--", item);
+            rows.map((item,index) => {
+              console.log("itemInTimeSlot--", item);
+              console.log("itemInTimeSlot--index", index);
               return (
                 <div>
                   <Paper className={classes.root}>

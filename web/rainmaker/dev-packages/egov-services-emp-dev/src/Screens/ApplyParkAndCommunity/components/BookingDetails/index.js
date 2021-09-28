@@ -27,7 +27,7 @@ class BookingsDetails extends Component {
     genderValue: "female"
   }
 
- 
+   
   componentDidMount = async () => {
     let { fetchApplicaionSector } = this.props;
     fetchApplicaionSector();
