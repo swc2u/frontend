@@ -245,6 +245,12 @@ class WorkFlowContainer extends React.Component {
             let inWorkflow = false ;
             inWorkflow = WaterConnection.length>0 && WaterConnection[0].inWorkflow;
             const connectionUsagesType = WaterConnection.length>0 && WaterConnection[0].connectionUsagesType;
+            if(WaterConnection && WaterConnection[0])
+            {             
+              let waterApplicationList_ = WaterConnection[0].waterApplicationList
+              waterApplicationList_ = waterApplicationList_.sort((a, b) => (a.auditDetails.lastModifiedTime > b.auditDetails.lastModifiedTime ? -1 : 1));
+              WaterConnection[0].activityType = waterApplicationList_[0].activityType            
+            }
             if(inWorkflow){
               actions = [];
             }
@@ -291,28 +297,59 @@ class WorkFlowContainer extends React.Component {
             {
               if((WaterConnection[0].waterApplicationType === 'REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING') && WaterConnection[0].activityType !=='REACTIVATE_CONNECTION')
               {
-                if ((status ==='CONNECTION_CLOSED'
+                if (((status ==='CONNECTION_CLOSED_'
                      || status ==='TEMPORARY_CONNECTION_CLOSED'
-                     || status ==='CLOSE_CONNECTION'
-                     || WaterConnection[0].status ==='Inactive'
-                     )             
-                     && (WaterConnection[0].waterApplicationType === 'REGULAR' || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING'))
+                     || status ==='CLOSE_CONNECTION_')
+                     && (WaterConnection[0].status ==='Inactive')
+                     )  
+                     ||
+                      (
+                        ((WaterConnection[0].activityType = 'REACTIVATE_CONNECTION') && (status === "REJECTED" ||status === "CANCELLED" ))
+                      )            
+                     && (WaterConnection[0].waterApplicationType === 'REGULAR'
+                      || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING'))
             {
-              if(WaterConnection[0].activityType ==='TEMPORARY_DISCONNECTION')
-               {
-                actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
-               }
-               else{
-                actions =[];
+              // if(WaterConnection[0].activityType ==='TEMPORARY_DISCONNECTION')
+              //  {
+              //   actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+              //  }
+              //  else{
+              //   actions =[];
 
-               }
-              // actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+              //  }
+              if(WaterConnection[0].status ==='Inactive')
+              {
+                actions = actions.filter(item => item.buttonLabel === 'REACTIVATE_CONNECTION');
+              }
+              else{
+                if((WaterConnection[0].waterApplicationType === 'REGULAR' 
+                || WaterConnection[0].waterApplicationType === 'TEMPORARY_BILLING'))
+                {
+                  actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
+                                            && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                                            && item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
+                }
+                else{
+                  actions = actions.filter(item => item.buttonLabel !== 'PERMANENT_DISCONNECTION' 
+                            &&  item.buttonLabel !== 'TEMPORARY_DISCONNECTION'
+                            && item.buttonLabel !=='REACTIVATE_CONNECTION'
+                            &&  item.buttonLabel !== 'UPDATE_CONNECTION_HOLDER_INFO'                                                      
+                            && item.buttonLabel !=='APPLY_FOR_METER_TESTING'
+                            &&  item.buttonLabel !== 'CONNECTION_CONVERSION');
+
+                }
+
+              }
 
             }
             else{
-              actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
-                && item.buttonLabel !=='REACTIVATE_CONNECTION'
-                &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
+              if(status ==='CONNECTION_CLOSED'  && (WaterConnection[0].status ==='Inactive'))
+               {
+                actions = []
+               }
+              //  actions = actions.filter(item => item.buttonLabel !== 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION' 
+              //    && item.buttonLabel !=='REACTIVATE_CONNECTION'
+              //    &&  item.buttonLabel !== 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION');
 
             }
                 

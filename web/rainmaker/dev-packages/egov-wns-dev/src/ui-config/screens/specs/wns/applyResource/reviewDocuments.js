@@ -31,7 +31,7 @@ export const reviewDocuments = (isEditable = true) => {
             sm: 2,
             align: "right"
           },
-          visible: isEditable,
+          visible: false,
           children: {
             editIcon: {
               uiFramework: "custom-atoms",

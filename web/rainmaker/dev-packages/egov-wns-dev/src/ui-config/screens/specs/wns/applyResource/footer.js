@@ -2359,6 +2359,10 @@ if(applicationNo && connectionNo === null && applicationStatus ==='PENDING_FOR_C
         }
         
       }
+      let DIV_ = get(state, "screenConfiguration.preparedFinalObject.applyScreen.div",'1');
+      let ledgerGroup = get(state, "screenConfiguration.preparedFinalObject.applyScreen.ledgerGroup",'0101');
+      let connectionNoUI = `${DIV_}-${sectorList[0].subdivision}-${ledgerGroup}-XXXX-XX`
+      dispatch(prepareFinalObject("applyScreen.connectionNoUI",connectionNoUI));
     }
     dispatch(prepareFinalObject("ledgerlist",ledgerRange));
     }
@@ -2541,6 +2545,10 @@ if(isConnectionDetailsValid)
   let meterInstallationDate = get(state, "screenConfiguration.preparedFinalObject.applyScreen.meterInstallationDate");
   let businessService = get(state, "screenConfiguration.preparedFinalObject.workflow.ProcessInstances[0].businessService");
   let  activityType = get(state, "screenConfiguration.preparedFinalObject.applyScreen.activityType");
+  let  applicationStatus = get(state, "screenConfiguration.preparedFinalObject.applyScreen.applicationStatus");
+  let fourdigitNumber = get(state, "screenConfiguration.preparedFinalObject.applyScreen.waterApplication.fourdigitNumber");
+  let twodigitNumber = get(state, "screenConfiguration.preparedFinalObject.applyScreen.waterApplication.twodigitNumber");
+  let connectionNoCheck = get(state, "screenConfiguration.preparedFinalObject.applyScreen.connectionNo");
   if(connectionExecutionDate)
   {
     if(!Number(connectionExecutionDate))
@@ -2602,6 +2610,57 @@ if(isConnectionDetailsValid)
    // return 
   }
   }
+  // connection number set validation
+  
+  if(( activityType ==='TEMPORARY_WSCONNECTION'    
+    || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION_BILLING' //TB
+    || activityType ==='TEMPORARY_WSCONNECTION_BILLING'
+    || activityType ==='NEW_WS_CONNECTION'//NR
+    || activityType ==='REGULARWSCONNECTION' )
+  &&  
+  (applicationStatus ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"
+    || applicationStatus ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"
+    ||applicationStatus ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"
+    //|| 1===1
+    ) 
+    )
+  {
+    if(connectionNoCheck === undefined || connectionNoCheck === null)
+      {
+        isFormValid = false;
+            errorMessage = {
+              labelName: "Please set Consumer number/Account number",
+              labelKey: "WS_SET_CONNECTION_NUMBER_VALIDATION"//WS_METER_INSTALATION_DATE_VALIDATION
+            };
+          }
+          
+
+          else if((connectionNoCheck && connectionNoCheck.length != 13) )
+          {
+            isFormValid = false;
+            errorMessage = {
+              labelName: "Please set Consumer number/Account number",
+              labelKey: "WS_SET_CONNECTION_NUMBER_VALIDATION"//WS_METER_INSTALATION_DATE_VALIDATION
+            };
+
+          }
+          else if(connectionNoCheck.length === 13)
+          {
+            isFormValid = false;
+            errorMessage = {
+              labelName: "Please set Consumer number/Account number",
+              labelKey: "WS_SET_CONNECTION_NUMBER_VALIDATION"//WS_METER_INSTALATION_DATE_VALIDATION
+            };
+
+          }
+
+  }
+
+else{
+
+}
+
+  //
   if(isFormValid)
   {
     //console.log('pritam')

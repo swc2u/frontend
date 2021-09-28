@@ -128,6 +128,10 @@ const SampleDownloadForWns = Loadable({
   loader: () => import("./SampleDownloadForWns"),
   loading: () => <Loading />
 });
+const LandingPage = Loadable({
+  loader: () => import("./LandingPage"),
+  loading: () => <Loading />
+});
 
 export {
   TestMolecules,
@@ -155,6 +159,7 @@ export {
   OwnerHeader,
   LinkConnection,
   SampleDownloadForWns,
+  LandingPage,
   Footer
 
   // PropertyTaxDetails
