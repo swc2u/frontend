@@ -302,7 +302,9 @@ const HideshowEdit = (state, action, nocStatus, amount, applicationNumber,dispat
 
   checkVisibility(state, "INITIATED,REVIEWOFEE L1,REVIEWSDE L1,REVIEWOFJE,REVIEWSDE L2,REVIEWOFEE L2,VERIFYHDMEE L1,VERIFYHDMEE L2,VERIFYDMEE,REVIEWOFEE L3,REVIEWOFSE L1,VERIFYCHDSE L1,VERIFYCHDSE L2,VERIFYDMSE,REVIEWOFSE L2,REVIEWOFCE L1,VERIFYDMCE,VERIFYCHDCE L1,VERIFYCHDCE L2,REVIEWOFSDEHQ,REVIEWOFWD,PENDINGAPPROVAL,VERIFY AFTER APPROVAL L1,VERIFY AFTER APPROVAL L2,VERIFY AFTER APPROVAL L3,VERIFY FOR COMPLETION","nextButton", action, "screenConfig.components.div.children.footerEmp.children.nextButton.visible", null)
 
-  checkVisibility(state, "EDITEDATJE","editButton", action, "screenConfig.components.div.children.footerEmp.children.edit.visible", null)
+  checkVisibility(state, "EDITEDATJE","editButton", action, "screenConfig.components.div.children.footerEmp.children.edit.visible", null);
+
+  checkVisibility(state, "EDITEDATDMEE","editChargesButton", action, "screenConfig.components.div.children.footerEmp.children.editCharges.visible", null);
 
   set(
     action,
