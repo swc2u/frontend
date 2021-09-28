@@ -890,7 +890,7 @@ export const getTextForRoadCuttNoc = label => {
     case "REASSIGNTOCHDCE":
       return 'Reassign Of CHDCE'
     case "REVIEWOFEE L3":
-      return 'Review Approval Of EE'
+      return 'Review Of EE'
     case "REVIEWOFSE L2":
       return 'Review Approval Of SE'
     case "REASSIGNTOEE L3":
@@ -925,8 +925,10 @@ export const getTextForRoadCuttNoc = label => {
       return 'Completed'
     case "DRAFT":
       return 'Draft'
-      default:
-      return '-'
+    case "EDITEDATDMEE":
+      return 'Edited at DMEE'
+    default:
+    return '-'
   }
 }
 

@@ -5,7 +5,7 @@ import {getOptions} from '../dataSources'
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { convertDateToEpoch,getYesterdaysDateInYMD } from "../../utils";
 import { setFieldProperty } from './afterFieldChange'
-import { get } from "lodash";
+import { get, set } from "lodash";
 import {handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import commonConfig from "config/common.js";
 const _getPattern = (type) => {
@@ -28,8 +28,131 @@ const _getPattern = (type) => {
               return /^([\s\S]){5,150}$/i;
               case "area":
                   return /^[1-9][0-9]{1,5}$/i;
+                  case "file-number-no-firstdigit-zero":
+                    return /^[1-9a-zA-Z][0-9a-zA-Z]{0,49}$/i;
+                    case "areaSqFeet":
+                  return /^([1-9][0-9]{1,14})(\.\d{1,2})?$/i;
+                  case "houseno":
+                    return /^((\w+)\-(\d+))$/;
   }
 }
+let village=[
+  {
+    name: "Burail",
+    code: "VILLAGE.BURAIL",
+    house:"BUR-"
+  },
+  {
+    name: "Manimajra ",
+    code: "VILLAGE.MANIMAJRA",
+    house:"MAN-"
+  },
+  {
+    name: "Attawa",
+    code: "VILLAGE.ATTAVA",
+    house:"ATT-"
+  },
+  {
+    name: "Buterla ",
+    code: "VILLAGE.BURTELA",
+    house:"BUT-"
+  },
+  {
+    name: "Badheri",
+    code: "VILLAGE.BADHERI",
+    house:"BAD-"
+  },
+  {
+    name: "Maloya ",
+    code: "VILLAGE.MALOYA",
+    house:"MAL-"
+  },
+  {
+    name: "Kajheri",
+    code: "VILLAGE.KAJHERI",
+    house:"KAJ-"
+  },
+  {
+    name: "Hallomajra",
+    code: "VILLAGE.HALLOMAJRA",
+    house:"HAL-"
+  },
+  {
+    name: "Dadumajra",
+    code: "VILLAGE.DADUMAJRA",
+    house:"DAD-"
+  },
+  {
+    name: "Palsora",
+    code: "VILLAGE.PALSORA",
+    house:"PAL-"
+  },
+  {
+    name: "Raipur Kalan ",
+    code: "VILLAGE.RAIPUR_KALAN",
+    house:"RKA-"
+  },
+  {
+    name: "Makhan Majra",
+    code: "VILLAGE.MAKHAN_MAJRA",
+    house:"MAM-"
+  },
+  {
+    name: "Maulijagaran",
+    code: "VILLAGE.MAULIJAGARAN",
+    house:"MAU-"
+  },
+  {
+    name: "Daria",
+    code: "VILLAGE.DARIA",
+  "hous":"DAR"
+  },
+  {
+    name: "Kishangarh",
+    code: "VILLAGE.KISHANGARH",
+    house:"KIS-"
+  },
+  {
+    name: "Srangpur",
+    code: "VILLAGE.SRANGPUR",
+    house:"SAR-"
+  },
+  {
+    name: "Kaimbala",
+    code: "VILLAGE.KAIMBALA",
+    house:"KAI-"
+  },
+  {
+    name: "Khudda Lahora",
+    code: "VILLAGE.KHUDDA_LAHORA",
+    house:"KHL-"
+  },
+  {
+    name: "Khudda Jassu",
+    code: "VILLAGE.KHUDDA_JASSU",
+    house:"KHJ-"
+  },
+  {
+    name: "Khudda Alisher",
+    code: "VILLAGE.KHUDDA_ALISHER",
+    house:"KHA-"
+  },
+  {
+    name: "Dhanas",
+    code: "VILLAGE.DHANNAS",
+    house:"DHA-"
+  },
+  {
+    name: "Behlana",
+    code: "VILLAGE.BEHLANA",
+    house:"BEH-"
+  },
+  {
+    name: "Raipur Khurd",
+    code: "VILLAGE.RAIPUR_KHURD",
+    house:"RKH-"
+  }
+]
 let residentialcategory=[
   
     {
@@ -371,13 +494,38 @@ const getField = async (item, fieldData = {}, state) => {
       case "DROP_DOWN": {
         let values = !!item.dataSource ? await getOptions(item.dataSource) : []
         values = values.map(datum => ({...datum, label: getLocaleLabels(datum.label, datum.label)}))
-        return getSelectField({
+        return {...getSelectField({
           ...fieldProps,
           ...rest,
           data:values,
           optionValue: "code",
           optionLabel: "label",
-        })
+        }), beforeFieldChange: (action, state, dispatch) => {
+          const field = action.componentJsonpath.split(".").pop()
+          switch(field){
+            case "ES_VILLAGE_LABEL":{
+              console.log(village)
+              const findItem = village.find(item => item.code === action.value)
+              let currentvillage=get(state.screenConfiguration.preparedFinalObject,"Applications[0].applicationDetails.property.propertyDetails.village")?
+              get(state.screenConfiguration.preparedFinalObject,"Applications[0].applicationDetails.property.propertyDetails.village"):""
+              if(action.value !== currentvillage){
+                dispatch(
+                        handleField(
+                         "_apply",
+                         "components.div.children.formwizardFirstStep.children.ES_PROPERTY_DETAILS_HEADER_NOC.children.cardContent.children.details_container.children.ES_HOUSE_NO_LABEL",
+                          "props.value",
+                          findItem.house
+                        )
+                      )
+            }
+              break;
+            }
+          }
+          // dispatch(prepareFinalObject(
+          //   rest.jsonPath, convertDateToEpoch(action.value)
+          // ))
+          // onFieldChange(action, state, dispatch)
+        }}
       }
       case "AUTO_SUGGEST": {
         let values = !!item.dataSource ? await getOptions(item.dataSource) : []
@@ -478,7 +626,7 @@ const getField = async (item, fieldData = {}, state) => {
           return {
               ...getRelationshipRadioButton,
               jsonPath: rest.jsonPath,
-              required,
+              required:rest.required,
               props: {
                   label: {
                       name: labelItem,
@@ -486,7 +634,7 @@ const getField = async (item, fieldData = {}, state) => {
                   },
                   buttons,
                   jsonPath: rest.jsonPath,
-                  required
+                  required:rest.required
               },
               ...rest
           }

@@ -967,7 +967,9 @@ const updateAdhocSellMeatReassign = (state, dispatch) => {
 const updateAdhocRoadCutForward = (state, dispatch) => {
   let isFormValid = false;
   
-  if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "EDITEDATJE" || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
+  if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "EDITEDATJE" 
+  // || localStorageGet("applicationStatus") == "REASSIGNTOJE"|| localStorageGet("applicationStatus") == "VERIFYDMEE") {
+    || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
     isFormValid = validateFields(
       "components.adhocDialog.children.popup.children.adhocRebateCardRoadCutForward.children.ForwardContainerRoadCutForward.children",
       state,
@@ -1018,7 +1020,8 @@ const updateAdhocRoadCutForward = (state, dispatch) => {
     );
 
     let data = {}
-    if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE") {
+    // if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE" || nocStatus == "VERIFYDMEE") {
+      if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE") {
       if (RoadCutForwardAmount > 0) {
         if (file) {
           data = {
@@ -1091,9 +1094,9 @@ const updateAdhocRoadCutForward = (state, dispatch) => {
       let wfstatus = wfstatuslist.find(item => {
         return item.buttonName == "nextButton";
       });
-      //  if (localStorageGet("applicationStatus") == "VERIFY FOR COMPLETION") {
-      //     wfstatus=wfstatuslist.find(item => {
-      //     return item.buttonName == "approve";
+      //  if (localStorageGet("applicationStatus") == "VERIFYDMEE") {
+      //     wfstatus = wfstatuslist.find(item => {
+      //     return item.buttonName == "editChargesButton";
       //   });
       // }
       UpdateStatus(state, dispatch, '/egov-opms/roadcut-search', [],
@@ -1130,6 +1133,29 @@ const updateAdhocRoadCutApprove = (state, dispatch) => {
     const remarks = get(
       state.screenConfiguration.preparedFinalObject,
       "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.remarks");
+    let file = get(
+      state.screenConfiguration.preparedFinalObject,
+      "documentsUploadRedux[0].documents[0].fileStoreId"
+    );
+    var data = {};
+    if(file){
+      data = {
+        "uploadDocuments": [{
+          "fileStoreId": get(
+            state.screenConfiguration.preparedFinalObject,
+            "documentsUploadRedux[0].documents[0].fileStoreId"
+          )
+        }],
+        "remarks": remarks
+      }
+    }else{
+      data = {
+        "uploadDocuments": [{
+          "fileStoreId": ""
+        }],
+        "remarks": remarks
+      }
+    }
       let wfstatuslist = get(state, "screenConfiguration.preparedFinalObject.WFStatus", [])
       //    //alert(JSON.stringify(wfstatus))
       let wfstatus = wfstatuslist.find(item => {
@@ -1138,16 +1164,14 @@ const updateAdhocRoadCutApprove = (state, dispatch) => {
 
     UpdateStatus(state, dispatch, '/egov-opms/roadcut-search', [],
 
-      {
+    {
 
-        "applicationType": "ROADCUTNOC",
-        "tenantId": getOPMSTenantId(),
-        "applicationStatus": wfstatus.status,
-        "applicationId": localStorage.getItem('ApplicationNumber'),
-        "dataPayload": {
-          "remarks": remarks,
-        }
-      }
+      "applicationType": "ROADCUTNOC",
+      "tenantId": getOPMSTenantId(),
+      "applicationStatus": wfstatus.status,
+      "applicationId": localStorage.getItem('ApplicationNumber'),
+      "dataPayload": data
+    }
     );
   }
   else {
@@ -5152,7 +5176,7 @@ export const adhocPopupForCeRoadCutApprove = getCommonContainer({
 
   adhocRebateCardCeRoadCutApprove: getCommonContainer(
     {
-
+      documentDetails,
       ContainerCeRoadCutApprove: getCommonContainer({
 
 
