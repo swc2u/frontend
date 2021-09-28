@@ -967,7 +967,9 @@ const updateAdhocSellMeatReassign = (state, dispatch) => {
 const updateAdhocRoadCutForward = (state, dispatch) => {
   let isFormValid = false;
   
-  if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "EDITEDATJE" || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
+  if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "EDITEDATJE" 
+  // || localStorageGet("applicationStatus") == "REASSIGNTOJE"|| localStorageGet("applicationStatus") == "VERIFYDMEE") {
+    || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
     isFormValid = validateFields(
       "components.adhocDialog.children.popup.children.adhocRebateCardRoadCutForward.children.ForwardContainerRoadCutForward.children",
       state,
@@ -1018,7 +1020,8 @@ const updateAdhocRoadCutForward = (state, dispatch) => {
     );
 
     let data = {}
-    if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE") {
+    // if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE" || nocStatus == "VERIFYDMEE") {
+      if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE") {
       if (RoadCutForwardAmount > 0) {
         if (file) {
           data = {
@@ -1091,9 +1094,9 @@ const updateAdhocRoadCutForward = (state, dispatch) => {
       let wfstatus = wfstatuslist.find(item => {
         return item.buttonName == "nextButton";
       });
-      //  if (localStorageGet("applicationStatus") == "VERIFY FOR COMPLETION") {
-      //     wfstatus=wfstatuslist.find(item => {
-      //     return item.buttonName == "approve";
+      //  if (localStorageGet("applicationStatus") == "VERIFYDMEE") {
+      //     wfstatus = wfstatuslist.find(item => {
+      //     return item.buttonName == "editChargesButton";
       //   });
       // }
       UpdateStatus(state, dispatch, '/egov-opms/roadcut-search', [],

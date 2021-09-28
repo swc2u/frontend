@@ -1426,6 +1426,7 @@ export const createUpdateRoadCutNocApplication = async (state, dispatch, status)
     let payload = get(state.screenConfiguration.preparedFinalObject, "ROADCUTNOC", []);
     /// let reduxDocuments = get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux", {});
     let reduxDocuments = get(state, "screenConfiguration.preparedFinalObject.RoadCutDocuments", {});
+    let roadCutType = payload.roadCutType;
 
     // Set owners & other documents
     let ownerDocuments = [];
@@ -1454,6 +1455,17 @@ export const createUpdateRoadCutNocApplication = async (state, dispatch, status)
     payload.hasOwnProperty("gstin") === false ? set(payload, "gstin", "") : ''
     set(payload, "uploadDocuments", roadcutdocuments);
     set(payload, "remarks", Remarks);
+
+    let str = "";
+    if (typeof(roadCutType) !=="string") { 
+      roadCutType.map(item => {
+        str = str + ", "+item.value;
+      })
+    }
+    
+    console.log('roadCutType : ', str.slice(2))
+    set(payload, "roadCutType", str.slice(2));
+    console.log('payload : ', payload)
 
     console.log('Road CUt payload : ', payload)
     setapplicationMode(status);
