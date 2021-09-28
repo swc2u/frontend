@@ -228,7 +228,7 @@ const callUpadateApi = async (state, dispatch, item) =>{
           let applicationType = getapplicationType()
 
           
-          if(applicationType == "OSBM" || applicationType == "BWT"){
+          if(applicationType == "OSBM" || applicationType == "BWT" || applicationType == "OSUJM"){
             const queryObject = [
               {
                   key: "tenantId",
@@ -244,18 +244,45 @@ const callUpadateApi = async (state, dispatch, item) =>{
              
         let paymentRequest = response.bookingsModelList[0];
 
-        if(applicationType == "OSBM"){
+        if(applicationType == "OSBM" || applicationType == "OSUJM"){
 
             set(paymentRequest,"bkAction","PAY")
         }
 
         else if(applicationType == "BWT"){
-    
             set(paymentRequest,"bkAction","PAIDAPPLY")
             let updatedPayloadAfterEdit =JSON.parse(localStorage.getItem('waterTankerBookingData'))
             paymentRequest= Object.assign(paymentRequest, updatedPayloadAfterEdit)
          }  
-    
+    else if(applicationType == "GFCP"){
+        set(paymentRequest,"bkAction","APPLY")
+    }
+    else if(applicationType == "PACC"){
+        let paymentStatus = get(
+            paymentRequest,
+            "bkPaymentStatus",
+            ""
+        );
+
+        let action = paymentStatus === "SUCCESS" || paymentStatus === "succes" ? "MODIFY" : "APPLY"
+        set(paymentRequest,"bkAction",action)
+        if(action == "MODIFY"){
+            paymentRequest.bkFromDate = paymentRequest.bkStartingDate;
+            paymentRequest.bkToDate = paymentRequest.bkEndingDate;
+            let modifiedTimeSlotArray=JSON.parse(localStorage.getItem('changeTimeSlotData'))
+            if(paymentRequest.bkDuration==='HOURLY'){
+              if(modifiedTimeSlotArray.length>1){
+                    paymentRequest.timeslots[0].slot= modifiedTimeSlotArray[0].slot
+                    paymentRequest.timeslots[1].slot= modifiedTimeSlotArray[1].slot        
+                }else{
+                    paymentRequest.timeslots[0].slot= modifiedTimeSlotArray[0].slot
+                }
+              
+            }
+       
+           }
+    }
+   console.log("paymentRequest",paymentRequest)
         const newUpdateApiCall = await httpRequest(
               "post",
               "/bookings/api/update/payment",
@@ -265,6 +292,7 @@ const callUpadateApi = async (state, dispatch, item) =>{
                 Booking: paymentRequest,
             }
         );
+        console.log("newUpdateApiCall",newUpdateApiCall)
         }
         
     }
