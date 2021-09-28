@@ -383,10 +383,10 @@ export const getMyConnectionResults = async (queryObject, dispatch,action) => {
                     IsEstimatecall = true
 
                 }
-                if(action.screenKey !== "home1")
-                {
-                    IsEstimatecall = true
-                }
+                // if(action.screenKey !== "home1")
+                // {
+                //     IsEstimatecall = true
+                // }
             }
             for (let i = 0; i < response.WaterConnection.length; i++) {
                 response.WaterConnection[i].service = "Water"

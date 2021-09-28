@@ -411,7 +411,53 @@ export const documentDetails = getCommonCard({
     type: "array"
   }
 });
+//getsmsnotificationuserList
+export const getsmsnotificationuserList = async (state,dispatch) => {
+  const queryObj = [
+    {
+      key: "roles",
+      value: "WS_JE_15"
+    },
+    {
+      key: "tenantId",
+      value: getQueryArg(window.location.href, "tenantId")
+    }
+  ];
+  let payload = null
+      try
+      {
+       payload = await httpRequest(
+        "post",
+        "/egov-hrms/employees/_search",
+        "",
+        queryObj
+      );
+     
+      if (payload && payload.Employees.length > 0) {
+      let employeeList = payload.Employees;
+        payload &&
+        payload.Employees.map((item, index) => {
+          const name = get(item, "user.name");
+          const mobileNumber = get(item, "user.mobileNumber");
+          return {
+            value: item.uuid,
+            label: name,
+            mobileNumber:mobileNumber
+          };
+        });
+        dispatch(prepareFinalObject("applyScreenMdmsData.siUser", employeeList));
+    }
+        }
+        catch(error)
+        {
+          // toggleSnackbar(
+          //   true,
+          //   error.message,
+          //   "error"
+          // );
 
+        }
+}
 export const getMdmsData = async (state,dispatch) => {
   let mdmsBody = {
     MdmsCriteria: {
@@ -597,6 +643,7 @@ export const getData = async (action, state, dispatch) => {
   let tenantId = getQueryArg(window.location.href, "tenantId");
   const propertyID = getQueryArg(window.location.href, "propertyId");
   await getMdmsData(state, dispatch);
+  await getsmsnotificationuserList(state, dispatch);
   setModule("rainmaker-ws,rainmaker-pt");
  // setModule("rainmaker-pt");
     const userInfo = JSON.parse(getUserInfo());
@@ -728,8 +775,7 @@ export const getData = async (action, state, dispatch) => {
       }
       
     }
-    //set proposed meter inout for new WF UPDATE_METER_INFO
-    
+    //set proposed meter inout for new WF UPDATE_METER_INFO    
     if(activityType ==='UPDATE_METER_INFO' || activityType ==='WS_METER_UPDATE' || activityType ==='WS_METER_TESTING' || activityType ==='APPLY_FOR_METER_TESTING')
     {
      
@@ -751,6 +797,103 @@ export const getData = async (action, state, dispatch) => {
         handleField(
           "apply",
           "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ProposedActivationDetailsContainer",
+          "visible",
+          false
+        )
+      ); 
+
+    }
+    // assign connection mumber from UI for Superintendent user for new connection only in last step of workflow
+    // REGULAR REGULARWSCONNECTION --> PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT
+    // TEMPORARY_WSCONNECTION_BILLING -->
+    // TEMPORARY_WSCONNECTION Construction -->
+    //
+    //
+    if((activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'  //TC
+    || activityType ==='TEMPORARY_WSCONNECTION'    
+    || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION_BILLING' //TB
+    || activityType ==='TEMPORARY_WSCONNECTION_BILLING'
+    || activityType ==='NEW_WS_CONNECTION'//NR
+    || activityType ==='REGULARWSCONNECTION' )
+    &&
+    (applicationStatus_ ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"
+    // || applicationStatus_ ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"
+    // ||applicationStatus_ ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"
+    //|| 1===1
+    ) 
+    &&
+    (
+      1!==1
+    )
+    )
+    {
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ConnectionNumberContainer",
+          "visible",
+          true
+        )
+      );
+
+    }
+    else{
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ConnectionNumberContainer",
+          "visible",
+          false
+        )
+      );
+
+    }
+    // set sms notification details for selected WF bassed on activity type and Application status
+    if((activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'  
+    || activityType ==='TEMPORARY_WSCONNECTION'    
+    || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION_BILLING' 
+    || activityType ==='TEMPORARY_WSCONNECTION_BILLING'
+    || activityType ==='NEW_WS_CONNECTION'//NR
+    || activityType ==='REGULARWSCONNECTION'    
+    || activityType ==='WS_METER_TESTING'//MT
+    || activityType ==='APPLY_FOR_METER_TESTING'
+    || activityType === 'WS_TEMP_TEMP'//TTC
+    || activityType === 'APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION'
+    || activityType === 'WS_TEMP_REGULAR'//TRC
+    || activityType === 'APPLY_FOR_TEMPORARY_REGULAR_CONNECTION'
+    //|| activityType === 'WS_TEMP_DISCONNECTION'
+    //|| activityType === 'WS_RENAME'
+    || activityType ==='WS_METER_UPDATE'//MU
+    || activityType ==='UPDATE_METER_INFO' 
+    || activityType === 'WS_CONVERSION'//C
+    || activityType ==='CONNECTION_CONVERSION'
+    || activityType === 'WS_REACTIVATE'//R
+    || activityType ==='REACTIVATE_CONNECTION')
+   // || activityType ==='APPLY_FOR_TEMPORARY_TEMPORARY_CONNECTION')
+    &&
+    (applicationStatus_ ==="PENDING_FOR_SUPERINTENDENT_APPROVAL_AFTER_JE_FOR_REACTIVATION"
+    //|| 1===1
+    )
+    &&
+    ( 1!==1)    
+    )
+    { 
+      IsEdit = true;
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.Notificationdetailscontainer",
+          "visible",
+          true
+        )
+      );
+    }
+    else{
+      IsEdit = false;
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.Notificationdetailscontainer",
           "visible",
           false
         )

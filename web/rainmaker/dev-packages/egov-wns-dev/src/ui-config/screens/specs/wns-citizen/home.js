@@ -1,7 +1,8 @@
 import React from "react";
-import { getCommonHeader,getCommonContainer,getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getCommonHeader,getCommonContainer,getLabel,getBreak } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { fetchData } from "./citizenSearchResource/citizenFunctions";
 import "../utils/index.css";
+
 import PayWnsBillIcon from "../../../../ui-atoms-local/Icons/PayWnsBillIcon/index";
 import LinkConnectionsIcon from "../../../../ui-atoms-local/Icons/LinkConnectionsIcon/index";
 import MyConnectionsIcon from "../../../../ui-atoms-local/Icons/MyConnectionsIcon/index";
@@ -249,7 +250,7 @@ const waterAndSewerageSearchAndResult = {
                 //       //roles: roles
                 //     }
                 //   },
-                ConnectionList: getConnectionCard("WNS"),
+               
                 // applyActivityCard: {
                 //     uiFramework: "custom-molecules",
                 //     componentPath: "LandingPage",
@@ -265,12 +266,15 @@ const waterAndSewerageSearchAndResult = {
                 //   },
                 applyCard: {
                     uiFramework: "custom-molecules",
+                    //moduleName: "egov-wns",
                     componentPath: "LandingPage",
                     props: {
                         items: cardItems,
                         history: {}
                     }
                 },
+                ConnectionList: getConnectionCard("WNS"),
+                break: getBreak(),
                // HelpHome: getRequiredDocuments("WNS"),
             //    NestedList: {
             //     uiFramework: "custom-atoms-local",
