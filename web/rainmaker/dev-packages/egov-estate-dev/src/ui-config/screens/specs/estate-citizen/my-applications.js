@@ -296,6 +296,42 @@ const screenConfig = {
   uiFramework: "material-ui",
   name: "my-applications",
   beforeInitScreen: (action, state, dispatch) => {
+    let applicaton=get(state,"screenConfiguration.preparedFinalObject.Applications")
+    if(!!applicaton && applicaton.length>0&&applicaton[0].state==="")
+    {
+    dispatch(
+      handleField(
+        "_apply",
+        "components.div.children.stepper",
+        "props.activeStep",
+        0
+      )
+    )
+    dispatch(
+      handleField(
+        "_apply",
+        "components.div.children.formwizardSecondStep",
+        "visible",
+        false
+      )
+    )
+    dispatch(
+      handleField(
+        "_apply",
+        "components.div.children.formwizardFirstStep",
+        "visible",
+        true
+      )
+    )
+    dispatch(
+      handleField(
+        "_apply",
+        "components.div.children.formwizardThirdStep",
+        "visible",
+        false
+      )
+    )
+      }
     dispatch(prepareFinalObject("actualResults", []));
     dispatch(prepareFinalObject("searchResults", []));
     clearSearch(state, dispatch);
