@@ -846,7 +846,7 @@ export const getTextForRoadCuttNoc = label => {
     case "REVIEWOFEE L2":
       return 'Review of EE L2'
     case "REVIEWOFEE L3":
-      return 'Review Approval of EE'
+      return 'Review of EE'
     case "REJECTED":
       return 'Rejected'
     case "REASSIGN":
