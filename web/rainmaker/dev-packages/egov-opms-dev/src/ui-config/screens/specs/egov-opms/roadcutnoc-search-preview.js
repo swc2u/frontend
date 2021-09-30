@@ -370,6 +370,13 @@ const HideshowEdit = (state, action, nocStatus, amount, applicationNumber,dispat
         "components.adhocDialog2.children.popup.children.adhocRebateCardRoadCutReassign.children.ContainerRoadCutReassign.children.assigneeList",
         "visible", checkForRole(roles, 'EE') || checkForRole(roles, 'JE') || checkForRole(roles, 'ADM') ? (nocStatus == "INITIATED" || nocStatus === "INITIATED_TELECOM" || nocStatus == "RESENT" || nocStatus == "REVIEWOFJE" || nocStatus == "REASSIGNTOJE") ? false : true : true));
 
+        if(checkForRole(roles, 'DMEE') || checkForRole(roles, 'DMSE') || checkForRole(roles, 'DMCE')){
+          dispatch(
+            handleField(
+              "roadcutnoc-search-preview",
+              "components.adhocDialog.children.popup.children.adhocRebateCardRoadCutForward.children.ForwardContainerRoadCutForward.children.assigneeList",
+              "visible", false));
+        }
   // if (checkForRole(roles, 'JE') && (nocStatus == "REVIEWOFJE" || nocStatus == "REASSIGNTOJE")) {
   //   if (typeOfApplicant != "TELECOM" && typeOfApplicant != "NATURAL_GAS_PIPELINE_PNG") {
   //     set(
@@ -464,7 +471,7 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
     }
     prepareDocumentsView(state, dispatch);
 
-    if (checkForRole(roles, 'CITIZEN'))
+    if (checkForRole(roles, 'CITIZEN') || (checkForRole(roles, 'SDE') && amount > 0))
       setSearchResponseForNocCretificate(state, dispatch, applicationNumber, tenantId);
   }
 };
