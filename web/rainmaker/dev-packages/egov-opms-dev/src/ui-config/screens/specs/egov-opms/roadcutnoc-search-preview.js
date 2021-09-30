@@ -304,7 +304,7 @@ const HideshowEdit = (state, action, nocStatus, amount, applicationNumber,dispat
 
   checkVisibility(state, "EDITEDATJE","editButton", action, "screenConfig.components.div.children.footerEmp.children.edit.visible", null);
 
-  checkVisibility(state, "EDITEDATDMEE","editChargesButton", action, "screenConfig.components.div.children.footerEmp.children.editCharges.visible", null);
+  checkVisibility(state, "EDITEDATDMEE,EDITEDATDMSE,EDITEDATDMCE","editChargesButton", action, "screenConfig.components.div.children.footerEmp.children.editCharges.visible", null);
 
   set(
     action,

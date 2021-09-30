@@ -977,7 +977,7 @@ export const furnishSellMeatNocResponse = (state,response, step) => {
   return refurnishresponse;
 };
 
-export const furnishRoadcutNocResponse = response => {
+export const furnishRoadcutNocResponse =  (state,response) => {
   // Handle applicant ownership dependent dropdowns
   let refurnishresponse = {};
 
@@ -985,7 +985,7 @@ export const furnishRoadcutNocResponse = response => {
 
   set(refurnishresponse, "applicantName", response.nocApplicationDetail[0].applicantname);
   set(refurnishresponse, "sector", response.nocApplicationDetail[0].sector);
-  set(refurnishresponse, "roadCutType", applicationdetail.roadCutType);
+  // set(refurnishresponse, "roadCutType", applicationdetail.roadCutType);
   set(refurnishresponse, "typeOfApplicant", applicationdetail.typeOfApplicant);
   set(refurnishresponse, "length", applicationdetail.length);
   set(refurnishresponse, "ward", applicationdetail.ward);
@@ -996,6 +996,21 @@ export const furnishRoadcutNocResponse = response => {
   set(refurnishresponse, "uploadDocuments", applicationdetail.uploadDocuments);
   set(refurnishresponse, "remarks", applicationdetail.remarks);
   set(refurnishresponse, "gstin", applicationdetail.gstin);
+
+  let mdmsDataForRoadCutType = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.roadCutType", []);
+  let roadCutTypeFinalData = [];
+  applicationdetail.roadCutType.split(",").map(item => { 
+
+  if (mdmsDataForRoadCutType.find(str => str.code == item.trim())) {
+    roadCutTypeFinalData.push({
+    value: mdmsDataForRoadCutType.find(str => str.code == item.trim()).code,
+    label:mdmsDataForRoadCutType.find(str => str.code == item.trim()).name
+    });
+  }
+  });
+
+
+  set(refurnishresponse, "roadCutType", roadCutTypeFinalData);
   return refurnishresponse;
 };
 

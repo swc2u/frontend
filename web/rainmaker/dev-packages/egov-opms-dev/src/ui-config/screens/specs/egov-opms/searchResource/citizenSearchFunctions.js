@@ -927,6 +927,10 @@ export const getTextForRoadCuttNoc = label => {
       return 'Draft'
     case "EDITEDATDMEE":
       return 'Edited at DMEE'
+    case "EDITEDATDMSE":
+      return 'Edited at DMSE'
+    case "EDITEDATDMCE":
+      return 'Edited at DMCE'
     default:
     return '-'
   }
