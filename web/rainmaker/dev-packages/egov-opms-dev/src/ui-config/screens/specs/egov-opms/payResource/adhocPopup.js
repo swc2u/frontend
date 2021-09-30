@@ -1126,7 +1126,9 @@ const updateAdhocRoadCutForwardJE = (state, dispatch) => {
   
   if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "EDITEDATJE" 
   || localStorageGet("applicationStatus") == "REASSIGNTOJE"|| localStorageGet("applicationStatus") == "VERIFYDMEE" 
-  || localStorageGet("applicationStatus") == "EDITEDATDMEE" || localStorageGet("applicationStatus") == "REASSIGNTODMEE") {
+  || localStorageGet("applicationStatus") == "EDITEDATDMEE" || localStorageGet("applicationStatus") == "REASSIGNTODMEE"
+  || localStorageGet("applicationStatus") == "VERIFYDMSE"|| localStorageGet("applicationStatus") == "EDITEDATDMSE" || localStorageGet("applicationStatus") == "REASSIGNTODMSE"
+  || localStorageGet("applicationStatus") == "VERIFYDMCE"|| localStorageGet("applicationStatus") == "EDITEDATDMCE" || localStorageGet("applicationStatus") == "REASSIGNTODMCE") {
     // || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
     isFormValid = validateFields(
       "components.adhocDialog.children.popup.children.adhocRebateCardRoadCutForward.children.ForwardContainerRoadCutForward.children",
@@ -1179,7 +1181,9 @@ const updateAdhocRoadCutForwardJE = (state, dispatch) => {
 
     let data = {}
     if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE" 
-    || nocStatus == "VERIFYDMEE" || nocStatus == "EDITEDATDMEE" || nocStatus == "REASSIGNTODMEE") {
+    || nocStatus == "VERIFYDMEE" || nocStatus == "EDITEDATDMEE" || nocStatus == "REASSIGNTODMEE"
+    || nocStatus == "EDITEDATDMSE" || nocStatus == "VERIFYDMSE" || nocStatus == "REASSIGNTODMSE"
+    || nocStatus == "EDITEDATDMCE" || nocStatus == "VERIFYDMCE" || nocStatus == "REASSIGNTODMCE") {
       // if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE") {
       if (RoadCutForwardAmount > 0) {
         if (file) {
@@ -1254,7 +1258,10 @@ const updateAdhocRoadCutForwardJE = (state, dispatch) => {
         return item.buttonName == "nextButton";
       });
        if (localStorageGet("applicationStatus") == "VERIFYDMEE" || localStorageGet("applicationStatus") == "EDITEDATDMEE"
-       || localStorageGet("applicationStatus") == "REASSIGNTODMEE") {
+       || localStorageGet("applicationStatus") == "REASSIGNTODMEE" || localStorageGet("applicationStatus") == "REASSIGNTODMSE"
+       || localStorageGet("applicationStatus") == "VERIFYDMSE" || localStorageGet("applicationStatus") == "EDITEDATDMSE"
+       || localStorageGet("applicationStatus") == "VERIFYDMCE" || localStorageGet("applicationStatus") == "EDITEDATDMCE"
+       || localStorageGet("applicationStatus") == "REASSIGNTODMCE") {
           wfstatus = wfstatuslist.find(item => {
           return item.buttonName == "editChargesButton";
         });

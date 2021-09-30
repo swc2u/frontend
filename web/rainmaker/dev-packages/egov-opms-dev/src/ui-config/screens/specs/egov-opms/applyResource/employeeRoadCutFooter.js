@@ -255,8 +255,8 @@ export const footerEmp = getCommonApplyFooter({
     },
     children: {
       nextButtonLabel: getLabel({
-        labelName: "EDITCHARGES",
-        labelKey: "EDITCHARGES"
+        labelName: "EDIT CHARGES",
+        labelKey: "EDIT CHARGES"
       }),
       nextButtonIcon: {
         uiFramework: "custom-atoms",
@@ -274,7 +274,9 @@ export const footerEmp = getCommonApplyFooter({
           set(state, 'screenConfiguration.preparedFinalObject.ROADCUTNOCWF.REASSIGNDO', false);
           if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "EDITEDATJE"
            || localStorageGet("applicationStatus") == "REASSIGNTOJE" || localStorageGet("applicationStatus") == "VERIFYDMEE"
-           || localStorageGet("applicationStatus") == "REASSIGNTODMEE" || localStorageGet("applicationStatus") == "EDITEDATDMEE") {
+           || localStorageGet("applicationStatus") == "REASSIGNTODMEE" || localStorageGet("applicationStatus") == "EDITEDATDMEE"
+           || localStorageGet("applicationStatus") == "VERIFYDMSE" || localStorageGet("applicationStatus") == "EDITEDATDMSE" || localStorageGet("applicationStatus") == "REASSIGNTODMSE"
+           || localStorageGet("applicationStatus") == "VERIFYDMCE" || localStorageGet("applicationStatus") == "EDITEDATDMCE" || localStorageGet("applicationStatus") == "REASSIGNTODMCE") {
             const ROADCUTNOC = get(
               state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0]", {});
             // const typeOfApplicant = JSON.parse(ROADCUTNOC.applicationdetail).hasOwnProperty('typeOfApplicant') ?

@@ -191,7 +191,7 @@ export const prepareEditFlow = async (action, state, dispatch, applicationNumber
       { key: "applicationNumber", value: applicationNumber }
     ]);
 
-    let Refurbishresponse = furnishRoadcutNocResponse(response);
+    let Refurbishresponse = furnishRoadcutNocResponse(state, response);
     dispatch(prepareFinalObject("ROADCUTNOC", Refurbishresponse));
     if (applicationNumber) {
       setapplicationNumber(applicationNumber);

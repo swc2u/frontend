@@ -100,7 +100,7 @@ const getAcknowledgementCard = (
       gotoHomeFooter
     }
   }
-  if (purpose.includes("EDITEDATDMEE")) {
+  if (purpose.includes("EDITEDATDMEE") || purpose.includes("EDITEDATDMSE")|| purpose.includes("EDITEDATDMCE")) {
     return {
       header: getCommonHeader({
         labelName: `Online Permission`,
