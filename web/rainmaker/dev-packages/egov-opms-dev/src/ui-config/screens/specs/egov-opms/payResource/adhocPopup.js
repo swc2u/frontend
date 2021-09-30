@@ -1315,7 +1315,12 @@ const updateAdhocRoadCutApprove = (state, dispatch) => {
         }],
         "remarks": remarks
       }
-    }else{
+    }else if(localStorageGet("applicationStatus") == "VERIFY FOR COMPLETION"){
+      data = {
+        "remarks": remarks
+      }
+    }
+    else{
       data = {
         "uploadDocuments": [{
           "fileStoreId": ""
