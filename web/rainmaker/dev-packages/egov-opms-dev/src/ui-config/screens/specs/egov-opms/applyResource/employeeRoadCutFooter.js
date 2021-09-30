@@ -580,7 +580,14 @@ export const footerEmp = getCommonApplyFooter({
         if (localStorageGet("applicationStatus") == "VERIFYANDFORWARD" ) {
           showHideAdhocPopupopmsForward(state, dispatch, "roadcutnoc-search-preview", "nextButton")
         } else {
-          showHideAdhocPopupopmsApprove(state, dispatch, "roadcutnoc-search-preview", "reject")
+          showHideAdhocPopupopmsApprove(state, dispatch, "roadcutnoc-search-preview", "reject");
+          if(localStorageGet("applicationStatus") == "VERIFY FOR COMPLETION"){
+            dispatch(
+              handleField(
+                "roadcutnoc-search-preview",
+                "components.adhocDialog2.children.popup.children.adhocRebateCardRoadCutReassign.children.documentDetails",
+                "visible", false));
+          }
         }
       }
     },
