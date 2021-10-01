@@ -413,7 +413,6 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
       }
     });
     dispatch(prepareFinalObject("nocApplicationDetail[0].RoadTypeFinalData",RoadTypeFinalData.slice(2) ));
-
     // Set Institution/Applicant info card visibility
     let applicationStatus = get(response, "nocApplicationDetail.[0].applicationstatus");
 
@@ -496,147 +495,134 @@ let httpLinkROADCUT;
 let httpLinkROADCUT_RECEIPT;
 
 
-const setSearchResponseForNocCretificate = async (state, dispatch, action, applicationNumber, tenantId) => {
-
+const setSearchResponseForNocCretificate = async (state, dispatch, applicationNumber, tenantId) => {
   let downloadMenu = [];
-  let certificateDownloadObjectPET_RECEIPT = {};
-  let certificateDownloadObjectPET = {};
+  let certificateDownloadObjectROADCUT_RECEIPT = {};
+  let certificateDownloadObjectROADCUT = {};
+  // let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
   let nocRemarks = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].remarks", {});
-  //let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
-
 
   let nocRemark = "";
   let nocStatus = "";
 
-  var resApproved = nocRemarks.filter(function (item) {
-    return item.applicationstatus == "APPROVED";
-  });
+  //var resApproved = nocRemarks.filter(function (item) {
+  //  return item.applicationstatus == "APPROVED";
+  //});
   var resPaid = nocRemarks.filter(function (item) {
     return item.applicationstatus == "PAID";
   });
 
-  if (resApproved.length != 0)
-    nocStatus = "APPROVED";
+  //if (resApproved.length != 0)
+  //  nocStatus = "APPROVED";
 
   if (resPaid.length != 0)
     nocRemark = "PAID";
 
 
-  if (nocStatus == "APPROVED") {
-    let getCertificateDataForPET = { "applicationType": "PETNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "certificateData" } };
+  if (nocRemark == "PAID") {
+    // let getCertificateDataForROADCUT = { "applicationType": "ROADCUTNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "certificateData" } };
 
-    //PETNOC
-    const response0PET = await getSearchResultsForNocCretificate([
-      { key: "tenantId", value: tenantId },
-      { key: "applicationNumber", value: applicationNumber },
-      { key: "getCertificateData", value: getCertificateDataForPET },
-      { key: "requestUrl", value: "/pm-services/noc/_getCertificateData" }
-    ]);
+    // //ROADCUTNOC
+    // const response0ROADCUT = await getSearchResultsForNocCretificate([
+    //   { key: "tenantId", value: tenantId },
+    //   { key: "applicationNumber", value: applicationNumber },
+    //   { key: "getCertificateData", value: getCertificateDataForROADCUT },
+    //   { key: "requestUrl", value: "/pm-services/noc/_getCertificateData" }
+    // ]);
 
-    let getFileStoreIdForPET = { "nocApplicationDetail": [get(response0PET, "nocApplicationDetail[0]", "")] }
+    // let getFileStoreIdForROADCUT = { "nocApplicationDetail": [get(response0ROADCUT, "nocApplicationDetail[0]", "")] }
     //dispatch(prepareFinalObject("nocApplicationCertificateDetail", get(response, "nocApplicationDetail", [])));
 
-    const response1PET = await getSearchResultsForNocCretificate([
-      { key: "tenantId", value: tenantId },
-      { key: "applicationNumber", value: applicationNumber },
-      { key: "getCertificateDataFileStoreId", value: getFileStoreIdForPET },
-      { key: "requestUrl", value: "/pdf-service/v1/_create?key=pet-noc&tenantId=" + tenantId }
-    ]);
+    // const response1ROADCUT = await getSearchResultsForNocCretificate([
+    //   { key: "tenantId", value: tenantId },
+    //   { key: "applicationNumber", value: applicationNumber },
+    //   { key: "getCertificateDataFileStoreId", value: getFileStoreIdForROADCUT },
+    //   { key: "requestUrl", value: "/pdf-service/v1/_create?key=road-noc&tenantId=" + tenantId }
+    // ]);
 
-    const response2PET = await getSearchResultsForNocCretificateDownload([
-      { key: "tenantId", value: tenantId },
-      { key: "applicationNumber", value: applicationNumber },
-      { key: "filestoreIds", value: get(response1PET, "filestoreIds[0]", "") },
-      { key: "requestUrl", value: "/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds=" }
-    ]);
-    httpLinkPET = get(response2PET, get(response1PET, "filestoreIds[0]", ""), "")
+    // const response2ROADCUT = await getSearchResultsForNocCretificateDownload([
+    //   { key: "tenantId", value: tenantId },
+    //   { key: "applicationNumber", value: applicationNumber },
+    //   { key: "filestoreIds", value: get(response1ROADCUT, "filestoreIds[0]", "") },
+    //   { key: "requestUrl", value: "/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds=" }
+    // ]);
+    // httpLinkROADCUT = get(response2ROADCUT, get(response1ROADCUT, "filestoreIds[0]", ""), "")
 
     //Object creation for NOC's
-    certificateDownloadObjectPET = {
-      label: { labelName: "NOC Certificate PET", labelKey: "NOC_CERTIFICATE_PET" },
-      link: () => {
-        if (httpLinkPET != "")
-          window.location.href = httpLinkPET;
-      },
-      leftIcon: "book"
-    };
+    // certificateDownloadObjectROADCUT = {
+    //   label: { labelName: "NOC Certificate ROADCUT", labelKey: "NOC_CERTIFICATE_ROADCUT" },
+    //   link: () => {
+    //     if (httpLinkROADCUT != "")
+    //       window.location.href = httpLinkROADCUT;
+    //   },
+    //   leftIcon: "book"
+    // };
 
-  }
-  if (nocRemark == "PAID" || nocStatus == "APPROVED") {
     //Receipts
-    let getCertificateDataForPET_RECEIPT = { "applicationType": "PETNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "receiptData" } };
+    let getCertificateDataForROADCUT_RECEIPT = { "applicationType": "ROADCUTNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "receiptData" } };
 
-    //PETNOC_Receipts
-    const response0PET_RECEIPT = await getSearchResultsForNocCretificate([
+    //ROADCUTNOC_Receipts
+    const response0ROADCUT_RECEIPT = await getSearchResultsForNocCretificate([
       { key: "tenantId", value: tenantId },
       { key: "applicationNumber", value: applicationNumber },
-      { key: "getCertificateData", value: getCertificateDataForPET_RECEIPT },
+      { key: "getCertificateData", value: getCertificateDataForROADCUT_RECEIPT },
       { key: "requestUrl", value: "/pm-services/noc/_getCertificateData" }
     ]);
 
-    let getFileStoreIdForPET_RECEIPT = { "nocApplicationDetail": [get(response0PET_RECEIPT, "nocApplicationDetail[0]", "")] }
+    let getFileStoreIdForROADCUT_RECEIPT = { "nocApplicationDetail": [get(response0ROADCUT_RECEIPT, "nocApplicationDetail[0]", "")] }
 
-    const response1PET_RECEIPT = await getSearchResultsForNocCretificate([
+    const response1ROADCUT_RECEIPT = await getSearchResultsForNocCretificate([
       { key: "tenantId", value: tenantId },
       { key: "applicationNumber", value: applicationNumber },
-      { key: "getCertificateDataFileStoreId", value: getFileStoreIdForPET_RECEIPT },
-      { key: "requestUrl", value: "/pdf-service/v1/_create?key=pet-receipt&tenantId=" + tenantId }
+      { key: "getCertificateDataFileStoreId", value: getFileStoreIdForROADCUT_RECEIPT },
+      { key: "requestUrl", value: "/pdf-service/v1/_create?key=roadcut-receipt&tenantId=" + tenantId }
     ]);
 
-    const response2PET_RECEIPT = await getSearchResultsForNocCretificateDownload([
+    const response2ROADCUT_RECEIPT = await getSearchResultsForNocCretificateDownload([
       { key: "tenantId", value: tenantId },
       { key: "applicationNumber", value: applicationNumber },
-      { key: "filestoreIds", value: get(response1PET_RECEIPT, "filestoreIds[0]", "") },
+      { key: "filestoreIds", value: get(response1ROADCUT_RECEIPT, "filestoreIds[0]", "") },
       { key: "requestUrl", value: "/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds=" }
     ]);
-    httpLinkPET_RECEIPT = get(response2PET_RECEIPT, get(response1PET_RECEIPT, "filestoreIds[0]", ""), "")
+    httpLinkROADCUT_RECEIPT = get(response2ROADCUT_RECEIPT, get(response1ROADCUT_RECEIPT, "filestoreIds[0]", ""), "")
 
     //Object creation for Receipt's
-    certificateDownloadObjectPET_RECEIPT = {
-      label: { labelName: "NOC Receipt PET", labelKey: "NOC_RECEIPT_PET" },
+    certificateDownloadObjectROADCUT_RECEIPT = {
+      label: { labelName: "NOC Receipt ROADCUT", labelKey: "NOC_RECEIPT_ROADCUT" },
       link: () => {
-        if (httpLinkPET_RECEIPT != "")
-          window.location.href = httpLinkPET_RECEIPT;
+        if (httpLinkROADCUT_RECEIPT != "")
+          window.location.href = httpLinkROADCUT_RECEIPT;
       },
       leftIcon: "book"
     };
 
   }
 
-  if (nocStatus == "APPROVED" && nocRemark == "PAID") {
-    downloadMenu = [
-      certificateDownloadObjectPET,
-      certificateDownloadObjectPET_RECEIPT
-    ];
-  } else if (nocStatus == "APPROVED") {
-    downloadMenu = [
-      certificateDownloadObjectPET
-    ];
-  } else if (nocRemark == "PAID") {
-    downloadMenu = [
-      certificateDownloadObjectPET_RECEIPT
-    ];
-  }
-
-  if (nocStatus == "APPROVED" || nocRemark == "PAID") {
+  if (nocRemark == "PAID") {
     dispatch(
       handleField(
-        "search-preview",
+        "roadcutnoc-search-preview",
         "components.div.children.headerDiv.children.header.children.downloadMenu",
         "visible",
         true
       )
-    );  
+    );
+  
+    downloadMenu = [
+      //certificateDownloadObjectROADCUT,
+      certificateDownloadObjectROADCUT_RECEIPT
+    ];
   }
   dispatch(
     handleField(
-      "search-preview",
+      "roadcutnoc-search-preview",
       "components.div.children.headerDiv.children.header.children.downloadMenu",
       "props.data.menu",
       downloadMenu
     )
   );
 
+  //setDownloadMenu(state, dispatch);
 };
 
 
