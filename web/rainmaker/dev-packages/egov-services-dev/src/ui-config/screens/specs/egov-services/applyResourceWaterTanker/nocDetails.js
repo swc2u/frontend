@@ -182,7 +182,7 @@ export const bookingDetails = getCommonCard({
                     // disabled: true
                 },
             }),
-        },
+        }, 
         bkStatus: {
             ...getSelectField({
                 label: {
@@ -267,12 +267,12 @@ export const bookingDetails = getCommonCard({
                 //     ));
 
             },
-        },
+        },    
         bkDate: {
             ...getDateField({
                 label: {
                     labelName: "Booking Date",
-                    labelKey: "BK_WTB_DATE_LABEL",
+                    labelKey: "BK_WTB_DATE_LABEL", //BK_WTB_DATE_LABEL
                 },
                 placeholder: {
                     labelName: "Booking Data",

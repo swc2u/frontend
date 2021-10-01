@@ -65,6 +65,26 @@ const formConfig = {
         jsonPath: "Booking.quantity",
         value:''
       },
+      bkSector: {
+        id: "bkSector",
+        jsonPath: "Booking.bkSector",
+        value:''
+      },
+      bkCompleteAddress: {
+        id: "bkCompleteAddress",
+        jsonPath: "Booking.bkCompleteAddress",
+        value:''
+      },
+      bkType: {
+        id: "bkType",
+        jsonPath: "Booking.bkType",
+        value:''
+      },
+      bkHouseNo: {
+        id: "bkHouseNo",
+        jsonPath: "Booking.bkHouseNo",
+        value:''
+      },
       action: {
         id: "action",
         jsonPath: "Booking.bkAction",

@@ -329,8 +329,19 @@ class BookingCalendar extends React.Component {
   }
 
   render() {
-    const { ChangeFromDate, ChangeToDate, resetDate } = this.props;
+    const { ChangeFromDate, ChangeToDate, resetDate,currentSelectedValue,state,availabilityCheckData } = this.props;
+
+
+    const ABCcOMMUNITY = get(
+      state,
+      "screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation",
+      "NoSelectedVenue")
+    console.log("currentSelectedValue123456",ABCcOMMUNITY,availabilityCheckData)
  
+let newVenue = "NotSelected";
+if(currentSelectedValue !== "NoSelectedVenue"){
+  newVenue = currentSelectedValue
+}
 
     let { from, to, enteredTo } = this.state;
  
@@ -377,7 +388,7 @@ class BookingCalendar extends React.Component {
                     </h2> */}
           <div style={{ marginBottom: 12 }}>
             <span
-              style={{
+               style={{
                 display: "block",
                 color: "rgba(0, 0, 0, 0.54)",
                 fontSize: 12,
@@ -399,9 +410,12 @@ class BookingCalendar extends React.Component {
               }}
             >
               {" "}
-              {this.props.bookingVenue === ""
+              {/* {this.props.bookingVenue === ""
                 ? "------------"
-                : this.props.bookingVenue}
+                : this.props.bookingVenue} */}
+                 {this.props.bookingVenue === ""
+                ? "------------"
+                :  newVenue == "NotSelected" ?  (this.props.bookingVenue) : newVenue}
             </span>
           </div>
 
@@ -554,6 +568,12 @@ const mapStateToProps = (state, ownProps) => {
     "screenConfiguration.preparedFinalObject.availabilityCheckData.reservedTimeSlotsData"
 );
 
+
+const currentSelectedValue = get(
+  state,
+  "screenConfiguration.preparedFinalObject.availabilityCheckData.bkLocation",
+  "NoSelectedVenue")
+console.log("currentSelectedValue",currentSelectedValue)
 let timeSlotArray = [];
 let bookedSlotArray = [];
 var date = new Date();
@@ -626,11 +646,12 @@ for (let i=0 ; i < newBookedSlotObject.length ; i++) {
       state,
       bkVenue,
       oldFromDate,
-      oldToDate,
+      oldToDate,currentSelectedValue
     };
   } else {
     return {
-      resetDate,
+      availabilityCheckData,
+      resetDate,currentSelectedValue,
       ChangeFromDate,
       ChangeToDate,
       state,

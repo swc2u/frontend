@@ -656,7 +656,7 @@ const screenConfig = {
                     JSON.parse(getUserInfo()).mobileNumber
                 )
             );
-        },200)
+        },100)
       
         return action;
     },

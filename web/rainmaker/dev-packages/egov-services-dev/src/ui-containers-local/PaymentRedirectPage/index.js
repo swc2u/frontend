@@ -17,35 +17,14 @@ import {
   } from "egov-ui-kit/utils/localStorageUtils";
 
 class PaymentRedirect extends Component {
+
     updateApiCall = async (apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)=>{
-const {state} = this.props
-console.log("stateInupdateApiCall",state)
-
-if(bookingType === "OSBM"){
-    
-    return  this.props.setRoute(
-        `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
-    );
-
-}
-        if(bookingType === "BWT") {
-            // let updatedQuantity = get(
-            //     state,
-            //     "state.screenConfiguration.preparedFinalObject.WaterTanker.quantity",
-            //     "NotFound"
-            // );
-
-            let updatedQuantity = JSON.parse(
-                localStorageGet("WaterTankerQuantity")
-              );
-
-        console.log("updatedQuantityInUpdateFunction", updatedQuantity)
-if(updatedQuantity !== null && updatedQuantity !== undefined && updatedQuantity!== "NotFound"){
-set(payload, "quantity", updatedQuantity);
-console.log("SetQuantityForUpdateFunction",updatedQuantity)
-console.log("UpdateFunctionWTPayload--one",payload)
-}
-console.log("UpdateFunctionWTPayload--two",payload)
+        
+        const {state} = this.props     
+            if(bookingType == "OSBM" || bookingType == "BWT" || bookingType == "OSUJM"){
+            return  this.props.setRoute(
+                `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
+            );
         }
         const res= await  httpRequest(
               "post",
@@ -214,7 +193,18 @@ console.log("UpdateFunctionWTPayload--two",payload)
                         if(payload.bkApplicationStatus == "RE_INITIATED"){
                           payload.bkFromDate = payload.bkStartingDate;
                           payload.bkToDate = payload.bkEndingDate;
-                        }
+                          let modifiedTimeSlotArray=JSON.parse(localStorage.getItem('changeTimeSlotData'))
+                          if(payload.bkDuration==='HOURLY'){
+                            if(modifiedTimeSlotArray.length>1){
+                                payload.timeslots[0].slot= modifiedTimeSlotArray[0].slot
+                                payload.timeslots[1].slot= modifiedTimeSlotArray[1].slot        
+                              }else{
+                                payload.timeslots[0].slot= modifiedTimeSlotArray[0].slot
+                              }
+                            
+                          }
+                     
+                         }
                     }
                      
                 }
@@ -222,71 +212,57 @@ console.log("UpdateFunctionWTPayload--two",payload)
                
                
                 if(bookingType !== "BWT"){
-                let paymentReceipt= await downloadReceipt(payload, consumerCode, tenantId, 'true')
-
-                let permissionLetter= await downloadCertificate(payload, consumerCode, tenantId, 'true')
-
-                Promise.all(paymentReceipt).then(data=>{
-                    let urlPayload={
-                        "paymentReceipt" :  data[0]
-                    }
-
-                    Promise.all(permissionLetter).then(permissionLetterData=>{
-
-                        urlPayload= {
-                            ...urlPayload, 
-                            "permissionLetter": permissionLetterData[0]
-                        }
-                        console.log(urlPayload, "Bothpayload")
-                        this.updateApiCall(apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)
-                
-                    })
-                })
-                } else if(bookingType === "BWT"){
-                
-                    // let updatedQuantity = get(
-                    //     state,
-                    //     "state.screenConfiguration.preparedFinalObject.WaterTanker.quantity",
-                    //     null
-                    // );
-                    let updatedQuantity = JSON.parse(
-                        localStorageGet("WaterTankerQuantity")
-                      );
-
-                console.log("updatedQuantityInComponentDidMount", updatedQuantity)
-if(updatedQuantity !== null && updatedQuantity !== undefined){
-    set(payload, "quantity", updatedQuantity);
-    console.log("SetQuantityForComponentdidMount",updatedQuantity)
-}
-                     
-                console.log("UpdtedRequestBodyForWT",payload)
-                   
                     let paymentReceipt= await downloadReceipt(payload, consumerCode, tenantId, 'true')
-                                    
+    
+                    let permissionLetter= await downloadCertificate(payload, consumerCode, tenantId, 'true')
+    
                     Promise.all(paymentReceipt).then(data=>{
                         let urlPayload={
                             "paymentReceipt" :  data[0]
                         }
     
-                       
-                            console.log(urlPayload, "payload")
+                        Promise.all(permissionLetter).then(permissionLetterData=>{
+    
+                            urlPayload= {
+                                ...urlPayload, 
+                                "permissionLetter": permissionLetterData[0]
+                            }
+                            console.log(urlPayload, "Bothpayload")
                             this.updateApiCall(apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)
                     
                         })
-                
-
-                } 
-              
+                    })
+                    } else if(bookingType === "BWT"){
+                       
+                        let updatedPayloadAfterEdit =JSON.parse(localStorage.getItem('waterTankerBookingData'))
+                        payload= Object.assign(payload, updatedPayloadAfterEdit)
+                        
+                        let paymentReceipt= await downloadReceipt(payload, consumerCode, tenantId, 'true')
+                                        
+                        Promise.all(paymentReceipt).then(data=>{
+                            let urlPayload={
+                                "paymentReceipt" :  data[0]
+                            }
+        
+                           
+                                console.log(urlPayload, "payload")
+                                this.updateApiCall(apiUrl, urlPayload, payload,consumerCode,tenantId,transactionId,bookingType)
+                        
+                            })
+                    
+    
+                    } 
+                  
+            }
+            } catch (e) {
+                console.log(e);
+            }
+        };
+        render() {
+            return <div />;
         }
-        } catch (e) {
-            console.log(e);
-        }
-    };
-    render() {
-        return <div />;
     }
-}
-
+    
 const mapStateToProps = state => {
     const { screenConfiguration } = state;
     console.log("UseStateOnCitizenSide",screenConfiguration)
