@@ -155,16 +155,16 @@ export const roadcutapplicantSummary = getCommonGrayCard({
             labelKey: "ROADCUT_ROAD_CUT_TYPE_LABEL_NOC"
           },
           {
-          jsonPath: "nocApplicationDetail[0].applicationdetail",
-            callBack: value => {
-              if(value!=undefined){
-              let purposeOfRoadCutting = JSON.parse(value).hasOwnProperty('roadCutType')?JSON.parse(value)['roadCutType']:'';
-              return purposeOfRoadCutting;
-              }
-              else{
-                return '';
-              }
-            }
+          jsonPath: "nocApplicationDetail[0].RoadTypeFinalData",
+            // callBack: value => {
+            //   if(value!=undefined){
+            //   let purposeOfRoadCutting = JSON.parse(value).hasOwnProperty('roadCutType')?JSON.parse(value)['roadCutType']:'';
+            //   return purposeOfRoadCutting;
+            //   }
+            //   else{
+            //     return '';
+            //   }
+            // }
           }
         ),
           divsion: getLabelWithValue(

@@ -399,6 +399,20 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
   }
   else {
     dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
+    
+    dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
+
+    let applicationdetail = JSON.parse(get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationdetail", {}));
+    let roadCutTypeFromAPI = applicationdetail.roadCutType;
+    let mdmsDataForRoadType = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.roadCutType", []);
+    let RoadTypeFinalData = "";
+    roadCutTypeFromAPI.split(",").map(item => { 
+      
+      if (mdmsDataForRoadType.find(str => str.code == item.trim())) {
+        RoadTypeFinalData = RoadTypeFinalData + " , " +mdmsDataForRoadType.find(str => str.code == item.trim()).name;
+      }
+    });
+    dispatch(prepareFinalObject("nocApplicationDetail[0].RoadTypeFinalData",RoadTypeFinalData.slice(2) ));
     // Set Institution/Applicant info card visibility
     let applicationStatus = get(response, "nocApplicationDetail.[0].applicationstatus");
 
@@ -637,7 +651,7 @@ const screenConfig = {
     dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
 
     //setSearchResponseForNocCretificate(state, dispatch, applicationNumber, tenantId);
-    setSearchResponse(state, action, dispatch, applicationNumber, tenantId)
+    // setSearchResponse(state, action, dispatch, applicationNumber, tenantId)
 
     const queryObject = [
       { key: "tenantId", value: tenantId },
@@ -645,6 +659,7 @@ const screenConfig = {
     ];
     setBusinessServiceDataToLocalStorage(queryObject, dispatch);
     getMdmsData(action, state, dispatch).then(response => {
+      setSearchResponse(state, action, dispatch, applicationNumber, tenantId)
       prepareDocumentsUploadData(state, dispatch, 'popup_rodcut');
     });
 
