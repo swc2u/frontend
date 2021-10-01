@@ -445,10 +445,10 @@ const HideshowEdit
   }
 const setSearchResponseForNocCretificate = async (state, dispatch, action, applicationNumber, tenantId) => {
 
-  let downloadMenu = [];
-  let certificateDownloadObjectPET_RECEIPT = {};
-  let certificateDownloadObjectPET = {};
-  let nocRemarks = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].remarks", {});
+  var downloadMenu = [];
+  var certificateDownloadObjectPET_RECEIPT = {};
+  var certificateDownloadObjectPET = {};
+  var nocRemarks = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].remarks", {});
   //let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
 
 
@@ -470,6 +470,45 @@ const setSearchResponseForNocCretificate = async (state, dispatch, action, appli
 
 
   if (nocStatus == "APPROVED") {
+
+    // //Receipts
+    // let getCertificateDataForPET_RECEIPT = { "applicationType": "PETNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "receiptData" } };
+
+    // //PETNOC_Receipts
+    // const response0PET_RECEIPT = await getSearchResultsForNocCretificate([
+    //   { key: "tenantId", value: tenantId },
+    //   { key: "applicationNumber", value: applicationNumber },
+    //   { key: "getCertificateData", value: getCertificateDataForPET_RECEIPT },
+    //   { key: "requestUrl", value: "/pm-services/noc/_getCertificateData" }
+    // ]);
+
+    // let getFileStoreIdForPET_RECEIPT = { "nocApplicationDetail": [get(response0PET_RECEIPT, "nocApplicationDetail[0]", "")] }
+
+    // const response1PET_RECEIPT = await getSearchResultsForNocCretificate([
+    //   { key: "tenantId", value: tenantId },
+    //   { key: "applicationNumber", value: applicationNumber },
+    //   { key: "getCertificateDataFileStoreId", value: getFileStoreIdForPET_RECEIPT },
+    //   { key: "requestUrl", value: "/pdf-service/v1/_create?key=pet-receipt&tenantId=" + tenantId }
+    // ]);
+
+    // const response2PET_RECEIPT = await getSearchResultsForNocCretificateDownload([
+    //   { key: "tenantId", value: tenantId },
+    //   { key: "applicationNumber", value: applicationNumber },
+    //   { key: "filestoreIds", value: get(response1PET_RECEIPT, "filestoreIds[0]", "") },
+    //   { key: "requestUrl", value: "/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds=" }
+    // ]);
+    // httpLinkPET_RECEIPT = get(response2PET_RECEIPT, get(response1PET_RECEIPT, "filestoreIds[0]", ""), "")
+
+    // //Object creation for Receipt's
+    // certificateDownloadObjectPET_RECEIPT = {
+    //   label: { labelName: "NOC Receipt PET", labelKey: "NOC_RECEIPT_PET" },
+    //   link: () => {
+    //     if (httpLinkPET_RECEIPT != "")
+    //       window.location.href = httpLinkPET_RECEIPT;
+    //   },
+    //   leftIcon: "book"
+    // };
+
     let getCertificateDataForPET = { "applicationType": "PETNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "certificateData" } };
 
     //PETNOC
@@ -508,6 +547,8 @@ const setSearchResponseForNocCretificate = async (state, dispatch, action, appli
       leftIcon: "book"
     };
 
+    // approved 
+    downloadMenu.push(certificateDownloadObjectPET);
   }
   if (nocRemark == "PAID") {
     //Receipts
@@ -548,33 +589,18 @@ const setSearchResponseForNocCretificate = async (state, dispatch, action, appli
       leftIcon: "book"
     };
 
+    //paid
+    downloadMenu.push(certificateDownloadObjectPET_RECEIPT);
   }
 
-  if (nocStatus == "APPROVED" && nocRemark == "PAID") {
-    downloadMenu = [
-      certificateDownloadObjectPET,
-      certificateDownloadObjectPET_RECEIPT
-    ];
-  } else if (nocStatus == "APPROVED") {
-    downloadMenu = [
-      certificateDownloadObjectPET
-    ];
-  } else if (nocRemark == "PAID") {
-    downloadMenu = [
-      certificateDownloadObjectPET_RECEIPT
-    ];
-  }
-
-  if (nocStatus == "APPROVED" || nocRemark == "PAID") {
-    dispatch(
-      handleField(
-        "search-preview",
-        "components.div.children.headerDiv.children.header.children.downloadMenu",
-        "visible",
-        true
-      )
-    );  
-  }
+  dispatch(
+    handleField(
+      "search-preview",
+      "components.div.children.headerDiv.children.header.children.downloadMenu",
+      "visible",
+      true
+    )
+  ); 
   dispatch(
     handleField(
       "search-preview",
@@ -583,6 +609,7 @@ const setSearchResponseForNocCretificate = async (state, dispatch, action, appli
       downloadMenu
     )
   );
+
 
 };
 
