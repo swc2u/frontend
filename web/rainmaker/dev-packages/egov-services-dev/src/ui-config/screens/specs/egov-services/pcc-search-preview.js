@@ -512,9 +512,7 @@ const setSearchResponse = async (
                 masterItemData[0].locationChangeAmount
             )
         );
-        dispatch(
-            prepareFinalObject("paccBooking.bkLocation", masterItemData[0].name)
-        );
+       
         dispatch(
             prepareFinalObject(
                 "paccBooking.bkFromDate",

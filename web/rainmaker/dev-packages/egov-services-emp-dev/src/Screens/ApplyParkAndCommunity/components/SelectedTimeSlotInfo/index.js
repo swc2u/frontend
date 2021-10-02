@@ -30,7 +30,7 @@ class SelectedTimeSlotInfo extends Component {
         if(oldAvailabilityCheckData){
         console.log("selectedTimeSlotIFcondition")    
        this.setState({
-    bookingLocation :bookingVenue,
+    bookingLocation:bookingVenue || bookingLocation,
     fromTime: oldAvailabilityCheckData.TimeSlotfromTime,
     toTime: oldAvailabilityCheckData.TimeSlotToTime,
     bkDisplayFromDateTime: oldAvailabilityCheckData.ConcatFromDateTime,
@@ -39,7 +39,7 @@ class SelectedTimeSlotInfo extends Component {
         }
         else{
             this.setState({
-                bookingLocation,
+                bookingLocation:bookingVenue || bookingLocation,    //bookingLocation
                 fromTime,
                 toTime,
                 bkDisplayFromDateTime,
@@ -59,7 +59,7 @@ class SelectedTimeSlotInfo extends Component {
         if(nextProps.fromTime.length > 0 && nextProps.toTime.length > 0){
        console.log("1234567")
         this.setState({
-            bookingLocation :bookingLocation,
+            bookingLocation :bookingVenue || bookingLocation,
             fromTime: fromTime,
             toTime: toTime,
             bkDisplayFromDateTime: bkDisplayFromDateTime,
@@ -67,11 +67,11 @@ class SelectedTimeSlotInfo extends Component {
         }) 
      }
     }
-      
+         
 
     render() {
         const { ConcatFromDateTime,ConcatToDateTime,ConcatFirstToDate,wholeDayFromDate,wholeDayToDate} = this.props;
-//    console.log("propsInSelectedTimeSlot--",this.props)
+   console.log("propsInSelectedTimeSlot--",this.props)
 
 const { bookingLocation, fromTime, toTime, bkDisplayFromDateTime,  bkDisplayToDateTime} = this.state;
    console.log("StateInSelectedTimeSlot--",this.state)

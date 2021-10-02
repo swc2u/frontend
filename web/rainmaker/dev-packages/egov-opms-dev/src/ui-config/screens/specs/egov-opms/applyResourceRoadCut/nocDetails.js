@@ -72,27 +72,70 @@ export const nocDetails = getCommonCard({
       })
     },
     roadCutType: {
-      ...getSelectField({
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-opms",
+      componentPath: "AutosuggestContainer",
+      sourceJsonPath: "applyScreenMdmsData.egpm.roadCutType",
+      jsonPath: "ROADCUTNOC.roadCutType",
+      required: true,
+      errorMessage:"ERR_NOC_ROADCUT_ROAD_CUT_TYPE",
+      gridDefination: {
+        xs: 12,
+        sm: 6,
+        md: 6
+      },
+      props: {
+        style: {
+          width: "100%",
+          cursor: "pointer"
+        },
+        className: "citizen-city-picker",
         label: {
           labelName: "Road Cut Type",
           labelKey: "ROADCUT_ROAD_CUT_TYPE_LABEL_NOC"
-        },
-        optionLabel: "name",
+        },  
         placeholder: {
           labelName: "Enter Road Cut Type",
           labelKey: "ROADCUT_ROAD_CUT_TYPE_PLACEHOLDER"
         },
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         sourceJsonPath: "applyScreenMdmsData.egpm.roadCutType",
         jsonPath: "ROADCUTNOC.roadCutType",
-        errorMessage: "ERR_NOC_ROADCUT_ROAD_CUT_TYPE",
+        errorMessage:"ERR_NOC_ROADCUT_ROAD_CUT_TYPE",
+        labelsFromLocalisation: false,
+        suggestions: [],
+        fullwidth: true,
         required: true,
-        props: {
-          className: "applicant-details-error",
-          required: true
-        }
-      })
+        // disabled: false,
+        inputLabelProps: {
+          shrink: true
+        },
+        isMulti: true,
+        labelName: "name",
+        valueName: "name"
+      }
     },
+    // roadCutType: {
+    //   ...getSelectField({
+    //     label: {
+    //       labelName: "Road Cut Type",
+    //       labelKey: "ROADCUT_ROAD_CUT_TYPE_LABEL_NOC"
+    //     },
+    //     optionLabel: "name",
+    //     placeholder: {
+    //       labelName: "Enter Road Cut Type",
+    //       labelKey: "ROADCUT_ROAD_CUT_TYPE_PLACEHOLDER"
+    //     },
+    //     errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+    //     sourceJsonPath: "applyScreenMdmsData.egpm.roadCutType",
+    //     jsonPath: "ROADCUTNOC.roadCutType",
+    //     errorMessage: "ERR_NOC_ROADCUT_ROAD_CUT_TYPE",
+    //     required: true,
+    //     props: {
+    //       className: "applicant-details-error",
+    //       required: true
+    //     }
+    //   })
+    // },
     // roadCutType: {
     //   ...getTextField({
     //     label: {

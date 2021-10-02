@@ -195,7 +195,7 @@ class CancelRequestApproved extends Component {
     } catch (e) {
       console.log(e);
     }
-
+  
     let RequestData = [
       { key: "consumerCodes", value: selectedComplaint.bkApplicationNumber },
       { key: "tenantId", value: userInfo.tenantId }

@@ -4,25 +4,140 @@ import {
   getTextField,
   getSelectField,
   getCommonContainer,
+  getLabelWithValue,
   getCommonParagraph,
   getPattern,
   getDateField,
   getLabel,
+  getBreak,
   getCommonHeader,
   getCommonGrayCard
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 //   import { searchApiCall } from "./functions";
-import commonConfig from "config/common.js";
+import {commonConfig ,}from "config/common.js";
 import {
   handleScreenConfigurationFieldChange as handleField,
   prepareFinalObject
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getHeaderSideText } from "../../utils";
+import { getHeaderSideText,handleNA } from "../../utils";
 import get from 'lodash/get';
 import { httpRequest } from '../../../../../ui-utils/index';
 import set from 'lodash/set';
+//smsconnection
+const Setconnection = async (state, dispatch) => {
+  let fourdigitNumber = get(state, "screenConfiguration.preparedFinalObject.applyScreen.waterApplication.fourdigitNumber");
+  let twodigitNumber = get(state, "screenConfiguration.preparedFinalObject.applyScreen.waterApplication.twodigitNumber");
+  let numberOfMeterNumber = get(state, "screenConfiguration.preparedFinalObject.applyScreen.waterApplication.numberOfMeterNumber");
+  let DIV_ = get(state, "screenConfiguration.preparedFinalObject.applyScreen.div",'1');
+  let subdivision = get(state, "screenConfiguration.preparedFinalObject.applyScreen.subdiv",'1');
+  let ledgerGroup = get(state, "screenConfiguration.preparedFinalObject.applyScreen.ledgerGroup",'0101');
+  let IvalidfourdigitNumber = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ConnectionNumberContainer.children.cardContent.children.connectionAccountDetails.children.fourdigitNumber.isFieldValid",false)
+  let IvalidtwodigitNumber = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ConnectionNumberContainer.children.cardContent.children.connectionAccountDetails.children.twodigitNumber.isFieldValid",false)
+  let IvalidnumberOfMeterNumber = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ConnectionNumberContainer.children.cardContent.children.connectionAccountDetails.children.numberOfMeterNumber.isFieldValid",false)
+  let connectionNoUI = `${DIV_}-${subdivision}-${ledgerGroup}-XXXX-XX`
+  if(fourdigitNumber === undefined || fourdigitNumber ==='')
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_HOUSE_NO_VALIDATION_FIELDS",
+        labelName: "Please fill House No"
+      },
+        "warning"
+      )
+    );
+    //return;
+  }
+  else if(twodigitNumber === undefined || twodigitNumber ==='')
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_NOF_VALIDATION_FIELDS",
+        labelName: "Please fill Floor number"
+      },
+        "warning"
+      )
+    );
+    //return;
+      }
+  else if(numberOfMeterNumber === undefined || numberOfMeterNumber ==='')
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "WS_FILL_NOM_VALIDATION_FIELDS",
+        labelName: "Please fill No. of meters"
+      },
+        "warning"
+      )
+    );
+    //return;
+  }
+  if(IvalidfourdigitNumber=== false)
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "ERR_HOUSE_NO_VALIDATION_FIELDS_MSG",
+        labelName: "Please enter valid house no"
+      },
+        "warning"
+      )
+    );
+    return
+  }
+  else if(IvalidtwodigitNumber===false)
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "ERR_HOUSE_NO_VALIDATION_FIELDS_MSG",
+        labelName: "Please enter valid house no"
+      },
+        "warning"
+      )
+    );
+    return
+  }
+  if(IvalidnumberOfMeterNumber===false)
+  {
+    dispatch(
+      toggleSnackbar(
+        true, {
+        labelKey: "ERR_HOUSE_NO_VALIDATION_FIELDS_MSG",
+        labelName: "Please enter valid house no"
+      },
+        "warning"
+      )
+    );
+    return
+  }
+   if(fourdigitNumber && fourdigitNumber!=='')
+  {
+    connectionNoUI = `${DIV_}-${subdivision}-${ledgerGroup}`
+    dispatch(prepareFinalObject("applyScreen.connectionNoUI",`${connectionNoUI}-${fourdigitNumber.toUpperCase()}-XX`));
+  }
+   if(fourdigitNumber && fourdigitNumber!=='' && twodigitNumber && twodigitNumber!=='' )
+  {
+    connectionNoUI = `${DIV_}-${subdivision}-${ledgerGroup}`
+    dispatch(prepareFinalObject("applyScreen.connectionNoUI",`${connectionNoUI}-${fourdigitNumber.toUpperCase()}-${twodigitNumber.toUpperCase()}X`));
+  }
+   if(numberOfMeterNumber && numberOfMeterNumber!=='' && fourdigitNumber && fourdigitNumber!=='' && twodigitNumber && twodigitNumber!=='' )
+  {
+    connectionNoUI = `${DIV_}-${subdivision}-${ledgerGroup}`
+    dispatch(prepareFinalObject("applyScreen.connectionNoUI",`${connectionNoUI}-${fourdigitNumber.toUpperCase()}-${twodigitNumber.toUpperCase()}${numberOfMeterNumber}`));
+    let connectionNo =`${DIV_}${subdivision}${ledgerGroup}`
+    dispatch(prepareFinalObject("applyScreen.connectionNo",`${connectionNo}${fourdigitNumber.toUpperCase()}${twodigitNumber.toUpperCase()}${numberOfMeterNumber}`));
+  }
 
+  
 
+}
+const smsNotification = async (state, dispatch) => {
+
+}
 const getPlumberRadioButton = {
   uiFramework: "custom-containers-local",
   moduleName: "egov-wns",
@@ -313,22 +428,22 @@ export const additionDetails =(Disabled)=> getCommonCard({
 
 
 
-      noOfWaterClosets: getTextField({
-        label: { labelKey: "WS_ADDN_DETAILS_NO_OF_WATER_CLOSETS" },
-        placeholder: { labelKey: "WS_ADDN_DETAILS_NO_OF_WATER_CLOSETS_PLACEHOLDER" },
-        gridDefination: { xs: 12, sm: 6 },
-        jsonPath: "applyScreen.noOfWaterClosets",
-        pattern: /^[0-9]*$/i,
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
-      }),
-      noOfToilets: getTextField({
-        label: { labelKey: "WS_ADDN_DETAILS_NO_OF_TOILETS" },
-        placeholder: { labelKey: "WS_ADDN_DETAILS_NO_OF_TOILETS_PLACEHOLDER" },
-        gridDefination: { xs: 12, sm: 6 },
-        jsonPath: "applyScreen.noOfToilets",
-        pattern: /^[0-9]*$/i,
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
-      })
+      // noOfWaterClosets: getTextField({
+      //   label: { labelKey: "WS_ADDN_DETAILS_NO_OF_WATER_CLOSETS" },
+      //   placeholder: { labelKey: "WS_ADDN_DETAILS_NO_OF_WATER_CLOSETS_PLACEHOLDER" },
+      //   gridDefination: { xs: 12, sm: 6 },
+      //   jsonPath: "applyScreen.noOfWaterClosets",
+      //   pattern: /^[0-9]*$/i,
+      //   errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+      // }),
+      // noOfToilets: getTextField({
+      //   label: { labelKey: "WS_ADDN_DETAILS_NO_OF_TOILETS" },
+      //   placeholder: { labelKey: "WS_ADDN_DETAILS_NO_OF_TOILETS_PLACEHOLDER" },
+      //   gridDefination: { xs: 12, sm: 6 },
+      //   jsonPath: "applyScreen.noOfToilets",
+      //   pattern: /^[0-9]*$/i,
+      //   errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+      // })
     }),
   }),
   // plumberDetailsContainer: getCommonGrayCard({
@@ -425,6 +540,152 @@ export const additionDetails =(Disabled)=> getCommonCard({
   //     })
   //   }),
   // }),
+  //sms section
+  Notificationdetailscontainer: getCommonGrayCard({
+    // subHeader: getCommonTitle({
+    //   labelKey: "WS_COMMON_CONNECTION_DETAILS"
+    // }),
+
+    NotificationDetails: getCommonContainer({
+      siUser: getSelectField({
+        label: { labelKey: "WS_SI_USER_LABLE" },
+        placeholder: { labelKey: "WS_SI_USER_PLACEHOLDER" },
+        gridDefination: { xs: 12, sm: 6 },
+        required: true,
+        sourceJsonPath: "applyScreenMdmsData.siUser",
+        jsonPath: "siUser.name",
+        props: {         
+          disabled: false
+        },
+       // pattern: /^[0-9]*$/i,
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG"
+      }),
+      
+      nextButton: {
+        componentPath: "Button",
+        props: {
+          variant: "contained",
+          color: "primary",
+          style: {
+            minWidth: "200px",
+            height: "48px",
+            marginRight: "45px"
+          }
+        },
+        children: {
+          nextButtonLabel: getLabel({
+            labelName: "Send Message",
+            labelKey: "WS_SMS_NOTIFICATION"
+          }),
+    
+          
+        },
+        onClickDefination: {
+          action: "condition",
+          callBack: smsNotification
+        },
+        visible: true
+      },
+    }),
+  }),
+  ///end sms section
+  //// set connection number
+  ConnectionNumberContainer: getCommonGrayCard({
+    subHeader: getCommonTitle({
+      labelKey: "WS_CONNECTION_NUMBER_DETAILS"
+    }),
+    connectionAccountDetails: getCommonContainer({
+      
+      fourdigitNumber: getTextField({
+        label: {
+          labelKey: "WS_FOUR_DIGIT_CONNECTION_LABEL"
+        },
+        // placeholder: {
+        //   labelKey: "WS_FOUR_DIGIT_CONNECTION_LABEL"
+        // },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: true,
+       // pattern: getPattern("Amount"),
+       pattern: /^[a-z0-9]{0,4}$/i,
+        errorMessage: "ERR_HOUSE_NO_VALIDATION_FIELDS_MSG",
+        jsonPath: "applyScreen.waterApplication.fourdigitNumber"
+      }),
+      twodigitNumber: getTextField({
+        label: {
+          labelKey: "WS_TWO_DIGIT_CONNECTION_LABEL"
+        },
+        // placeholder: {
+        //   labelKey: "WS_TWO_DIGIT_CONNECTION_LABEL"
+        // },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: true,
+        //pattern: getPattern("Amount"),
+        pattern: /^[a-z0-9]{0,1}$/i,
+        errorMessage: "ERR_NOF_VALIDATION_FIELDS_MSG",
+        jsonPath: "applyScreen.waterApplication.twodigitNumber"
+      }),
+      numberOfMeterNumber: getTextField({
+        label: {
+          labelKey: "WS_NOM_DIGIT_CONNECTION_LABEL"
+        },
+        // placeholder: {
+        //   labelKey: "WS_TWO_DIGIT_CONNECTION_LABEL"
+        // },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: true,
+        //pattern: getPattern("Amount"),
+        pattern: /^[0-9]{0,1}$/i,
+        errorMessage: "ERR_NOM_VALIDATION_FIELDS_MSG",
+        jsonPath: "applyScreen.waterApplication.numberOfMeterNumber"
+      }),
+      reviewDoorOrHouseNumber: getLabelWithValue(
+        {
+          labelName: "Consumer number/Account number",
+          labelKey: "WS_COMMON_CONSUMER_NO_LABEL"
+        },
+        { jsonPath: "applyScreen.connectionNoUI",
+        callBack: handleNA
+         }
+      ), 
+      break:getBreak(),
+      setButton: {
+        componentPath: "Button",
+        props: {
+          variant: "contained",
+          color: "primary",
+          style: {
+            minWidth: "200px",
+            height: "48px",
+            marginRight: "45px"
+          }
+        },
+        children: {
+          nextButtonLabel: getLabel({
+            labelName: "set Connection Number",
+            labelKey: "WS_SET_CONNECTION_NUMBER_BUTTON"
+          }),
+    
+          
+        },
+        onClickDefination: {
+          action: "condition",
+          callBack: Setconnection
+        },
+        visible: true
+      },
+        
+    }),
+  }),
+  ////
   OtherChargeContainer: getCommonGrayCard({
     subHeader: getCommonTitle({
       labelKey: "WS_OTHER_CHARGE_DETAILS"

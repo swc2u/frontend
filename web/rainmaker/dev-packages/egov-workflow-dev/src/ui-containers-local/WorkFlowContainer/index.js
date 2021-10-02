@@ -421,7 +421,7 @@ ApplicationStatus =  data.waterApplication.applicationStatus;
       if(this.GetWaterBusinessServiceConfig(moduleName) && data.service ==='WATER')
       {
         updateUrl = '/ws-services/wc/_update'
-        validRequest = this.ValidateRequest(data,preparedFinalObject)
+        validRequest = this.ValidateRequest(data,preparedFinalObject,moduleName)
       }   
 
     try {
@@ -771,7 +771,7 @@ ApplicationStatus =  data.waterApplication.applicationStatus;
 //
 //validation methos for water Request if submit without filling rewuired field
 //
-ValidateRequest =(payload,preparedFinalObject) =>{
+ValidateRequest =(payload,preparedFinalObject,moduleName) =>{
   let isvalidRequest = false
 
   //if(payload.applicationStatus ==='PENDING_FOR_SECURITY_DEPOSIT' && payload.action==='VERIFY_AND_FORWARD_FOR_PAYMENT')
@@ -1033,6 +1033,19 @@ ValidateRequest =(payload,preparedFinalObject) =>{
     payload.status = 'Active';
 
   }
+  // set application_code bassed on module name set in mdms data
+  // if(applicationStatus ==='PENDING_FOR_DOCUMENT_VERIFICATION' ||  1===1 )
+  // {
+  //   let searchPreviewScreenMdmsData  = preparedFinalObject.searchPreviewScreenMdmsData;
+  //   searchPreviewScreenMdmsData = searchPreviewScreenMdmsData['ws-services-masters'].ApplicationCode.filter(x=>x.name === moduleName)
+  //   let code =''
+  //   if(searchPreviewScreenMdmsData && searchPreviewScreenMdmsData[0])
+  //   {
+  //     code = searchPreviewScreenMdmsData[0].code
+  //     payload.waterApplication.application_code = code
+  //   }
+    
+  // }
 
 }
 

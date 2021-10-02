@@ -252,6 +252,7 @@ const prepareEditFlow = async (
                 bkFromDate: bookingsModelList[0].bkFromDate,
                 bkToDate: bookingsModelList[0].bkToDate,
                 bkBookingVenue: bookingsModelList[0].bkBookingVenue,
+                bkDuration: bookingsModelList[0].bkDuration
             }
             dispatch(
                 prepareFinalObject(
@@ -530,6 +531,20 @@ const screenConfig = {
         const tenantId = getQueryArg(window.location.href, "tenantId");
         getMdmsData(action, state, dispatch);
         prepareEditFlow(action, state, dispatch, applicationNumber, tenantId);
+        const changeDateVenue = getQueryArg(
+            window.location.href,
+            "changeDateVenue"
+          );
+
+          if(changeDateVenue=='Enabled')
+            {
+              set(
+                action.screenConfig,
+                "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkSector.props.disabled",
+                false
+            );
+            }
+
 
         return action;
     },

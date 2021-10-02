@@ -215,6 +215,8 @@ export class StepForm extends Component {
       let checkDateVenueChange = false;
 
        let {ApplyForDateVenueChange} = this.props   
+
+       let bookingStepLocation;
       
 
 if(ApplyForDateVenueChange !== "NotFound"){
@@ -225,7 +227,10 @@ if(ApplyForDateVenueChange !== "NotFound"){
         let vanueData = this.props.stateData.screenConfiguration.preparedFinalObject ? this.props.stateData.screenConfiguration.preparedFinalObject.bkBookingData:""
        
         let { fromDate, toDate, location, amount, finalRent } = this.state;
-       
+        // this.setState({
+        // location :  vanueData.name
+        // })
+        bookingStepLocation = vanueData.name;
         let paccDate = this.props.stateData.screenConfiguration.preparedFinalObject ? this.props.stateData.screenConfiguration.preparedFinalObject.DisplayPacc : '';
         let daysCount = this.calculateBetweenDaysCount(
             bookingData ? bookingData.bkFromDate: "",
@@ -280,10 +285,10 @@ totalAmount1 = vrent * daysCount;
 
 
 
-        if(location == ''){
-            location = bookingData.bkLocation;
+        // if(location == ''){
+        //     location = bookingData.bkLocation;
            
-        }
+        // }
         amount = vanueData.amount;
 let displayRefundAmount =   vanueData!== undefined && vanueData!== null ? (vanueData.refundabelSecurity !== undefined && vanueData.refundabelSecurity !== null ? (vanueData.refundabelSecurity) : "") : ""
 
@@ -363,7 +368,7 @@ let NumberRefundAmount = Number(displayRefundAmount);
                 fromDate={fromDate} 
                 toDate={toDate}
                 dimension={dimension}
-                 location={location}
+                 location={bookingStepLocation}
                 cleaningCharges={cleaningCharges}
                 purpose={purpose}
                 // rent={vrent}

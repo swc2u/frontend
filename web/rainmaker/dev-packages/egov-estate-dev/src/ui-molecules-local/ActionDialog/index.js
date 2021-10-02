@@ -520,7 +520,7 @@ class ActionDialog extends React.Component {
       fullscreen = true;
     }
     dataPath = `${dataPath}[0]`;
-
+const pattern=/^[0-9]+$/i
     const applicationState = (get(state.screenConfiguration.preparedFinalObject, dataPath) || {}).state
     const applicationType = (get(state.screenConfiguration.preparedFinalObject, dataPath) || {}).applicationType
     const branchtype=(get(state.screenConfiguration.preparedFinalObject,dataPath)||{}).branchType
@@ -700,7 +700,8 @@ class ActionDialog extends React.Component {
                     label= {payment.label}
                     onChange={e =>{
                       handleFieldChange(`${dataPath}.applicationDetails.${payment.path}`, e.target.value)
-                      bb_payment_config[ind].isError = false
+                      e.target.value.match(pattern)?bb_payment_config[ind].isError = false:
+                      bb_payment_config[ind].isError = true
                     }}
                     // required = {true}
                     jsonPath={`${dataPath}.applicationDetails.${payment.path}`}

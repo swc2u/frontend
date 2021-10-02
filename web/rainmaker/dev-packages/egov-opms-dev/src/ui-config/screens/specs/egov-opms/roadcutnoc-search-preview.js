@@ -302,7 +302,9 @@ const HideshowEdit = (state, action, nocStatus, amount, applicationNumber,dispat
 
   checkVisibility(state, "INITIATED,REVIEWOFEE L1,REVIEWSDE L1,REVIEWOFJE,REVIEWSDE L2,REVIEWOFEE L2,VERIFYHDMEE L1,VERIFYHDMEE L2,VERIFYDMEE,REVIEWOFEE L3,REVIEWOFSE L1,VERIFYCHDSE L1,VERIFYCHDSE L2,VERIFYDMSE,REVIEWOFSE L2,REVIEWOFCE L1,VERIFYDMCE,VERIFYCHDCE L1,VERIFYCHDCE L2,REVIEWOFSDEHQ,REVIEWOFWD,PENDINGAPPROVAL,VERIFY AFTER APPROVAL L1,VERIFY AFTER APPROVAL L2,VERIFY AFTER APPROVAL L3,VERIFY FOR COMPLETION","nextButton", action, "screenConfig.components.div.children.footerEmp.children.nextButton.visible", null)
 
-  checkVisibility(state, "EDITEDATJE","editButton", action, "screenConfig.components.div.children.footerEmp.children.edit.visible", null)
+  checkVisibility(state, "EDITEDATJE","editButton", action, "screenConfig.components.div.children.footerEmp.children.edit.visible", null);
+
+  checkVisibility(state, "EDITEDATDMEE,EDITEDATDMSE,EDITEDATDMCE","editChargesButton", action, "screenConfig.components.div.children.footerEmp.children.editCharges.visible", null);
 
   set(
     action,
@@ -368,6 +370,13 @@ const HideshowEdit = (state, action, nocStatus, amount, applicationNumber,dispat
         "components.adhocDialog2.children.popup.children.adhocRebateCardRoadCutReassign.children.ContainerRoadCutReassign.children.assigneeList",
         "visible", checkForRole(roles, 'EE') || checkForRole(roles, 'JE') || checkForRole(roles, 'ADM') ? (nocStatus == "INITIATED" || nocStatus === "INITIATED_TELECOM" || nocStatus == "RESENT" || nocStatus == "REVIEWOFJE" || nocStatus == "REASSIGNTOJE") ? false : true : true));
 
+        if(checkForRole(roles, 'DMEE') || checkForRole(roles, 'DMSE') || checkForRole(roles, 'DMCE')){
+          dispatch(
+            handleField(
+              "roadcutnoc-search-preview",
+              "components.adhocDialog.children.popup.children.adhocRebateCardRoadCutForward.children.ForwardContainerRoadCutForward.children.assigneeList",
+              "visible", false));
+        }
   // if (checkForRole(roles, 'JE') && (nocStatus == "REVIEWOFJE" || nocStatus == "REASSIGNTOJE")) {
   //   if (typeOfApplicant != "TELECOM" && typeOfApplicant != "NATURAL_GAS_PIPELINE_PNG") {
   //     set(
@@ -390,6 +399,20 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
   }
   else {
     dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
+    
+    dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
+
+    let applicationdetail = JSON.parse(get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationdetail", {}));
+    let roadCutTypeFromAPI = applicationdetail.roadCutType;
+    let mdmsDataForRoadType = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.roadCutType", []);
+    let RoadTypeFinalData = "";
+    roadCutTypeFromAPI.split(",").map(item => { 
+      
+      if (mdmsDataForRoadType.find(str => str.code == item.trim())) {
+        RoadTypeFinalData = RoadTypeFinalData + " , " +mdmsDataForRoadType.find(str => str.code == item.trim()).name;
+      }
+    });
+    dispatch(prepareFinalObject("nocApplicationDetail[0].RoadTypeFinalData",RoadTypeFinalData.slice(2) ));
     // Set Institution/Applicant info card visibility
     let applicationStatus = get(response, "nocApplicationDetail.[0].applicationstatus");
 
@@ -462,7 +485,7 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
     }
     prepareDocumentsView(state, dispatch);
 
-    if (checkForRole(roles, 'CITIZEN'))
+    if (checkForRole(roles, 'CITIZEN') || (checkForRole(roles, 'SDE') && amount > 0))
       setSearchResponseForNocCretificate(state, dispatch, applicationNumber, tenantId);
   }
 };
@@ -628,7 +651,7 @@ const screenConfig = {
     dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
 
     //setSearchResponseForNocCretificate(state, dispatch, applicationNumber, tenantId);
-    setSearchResponse(state, action, dispatch, applicationNumber, tenantId)
+    // setSearchResponse(state, action, dispatch, applicationNumber, tenantId)
 
     const queryObject = [
       { key: "tenantId", value: tenantId },
@@ -636,6 +659,7 @@ const screenConfig = {
     ];
     setBusinessServiceDataToLocalStorage(queryObject, dispatch);
     getMdmsData(action, state, dispatch).then(response => {
+      setSearchResponse(state, action, dispatch, applicationNumber, tenantId)
       prepareDocumentsUploadData(state, dispatch, 'popup_rodcut');
     });
 

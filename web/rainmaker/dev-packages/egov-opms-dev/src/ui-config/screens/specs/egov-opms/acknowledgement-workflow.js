@@ -100,6 +100,35 @@ const getAcknowledgementCard = (
       gotoHomeFooter
     }
   }
+  if (purpose.includes("EDITEDATDMEE") || purpose.includes("EDITEDATDMSE")|| purpose.includes("EDITEDATDMCE")) {
+    return {
+      header: getCommonHeader({
+        labelName: `Online Permission`,
+        labelKey: "PM_APPLICATION_HEADER",
+        
+      }),
+      applicationSuccessCard: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        children: {
+          card: acknowledgementCard({
+            icon: "done",
+            backgroundColor: "#39CB74",
+            header: {
+              labelName: "Application Charges Edited Successfully",
+              labelKey: "PM_CHARGES_EDITED_MESSAGE_MAIN"
+            },
+            tailText: {
+              labelName: "Application ID",
+              labelKey: "PM_APP_NO_LABEL"
+            },
+            number: applicationNumber
+          })
+        }
+      },
+      gotoHomeFooter
+    }
+  }
   else   if (purpose.includes("REASSIGN")) {
     return {
       header: getCommonHeader({

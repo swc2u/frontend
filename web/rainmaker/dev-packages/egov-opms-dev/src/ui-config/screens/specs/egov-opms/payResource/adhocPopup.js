@@ -964,10 +964,12 @@ const updateAdhocSellMeatReassign = (state, dispatch) => {
 
 
 //RoadCut
-const updateAdhocRoadCutForward = (state, dispatch) => {
+const updateAdhocRoadCutForwardSE = (state, dispatch) => {
   let isFormValid = false;
   
-  if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "EDITEDATJE" || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
+  if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "EDITEDATJE" 
+  || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
+    // || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
     isFormValid = validateFields(
       "components.adhocDialog.children.popup.children.adhocRebateCardRoadCutForward.children.ForwardContainerRoadCutForward.children",
       state,
@@ -1019,6 +1021,7 @@ const updateAdhocRoadCutForward = (state, dispatch) => {
 
     let data = {}
     if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE") {
+      // if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE") {
       if (RoadCutForwardAmount > 0) {
         if (file) {
           data = {
@@ -1091,11 +1094,178 @@ const updateAdhocRoadCutForward = (state, dispatch) => {
       let wfstatus = wfstatuslist.find(item => {
         return item.buttonName == "nextButton";
       });
-      //  if (localStorageGet("applicationStatus") == "VERIFY FOR COMPLETION") {
-      //     wfstatus=wfstatuslist.find(item => {
-      //     return item.buttonName == "approve";
+      //  if (localStorageGet("applicationStatus") == "VERIFYDMEE" || localStorageGet("applicationStatus") == "EDITEDATDMEE") {
+      //     wfstatus = wfstatuslist.find(item => {
+      //     return item.buttonName == "editChargesButton";
       //   });
       // }
+      UpdateStatus(state, dispatch, '/egov-opms/roadcut-search', [],
+        {
+          "applicationType": "ROADCUTNOC",
+          "tenantId": getOPMSTenantId(),
+          "applicationStatus": wfstatus.status,
+          "applicationId": localStorage.getItem('ApplicationNumber'),
+          "dataPayload": data
+        }
+      );
+
+    
+  }
+  else {
+    let errorMessage = {
+      labelName:
+        "Please fill all mandatory fields, then proceed!",
+      labelKey: "ERR_FILL_ALL_MANDATORY_FIELDS_TOAST"
+    };
+    dispatch(toggleSnackbar(true, errorMessage, "warning"));
+  }
+};
+
+const updateAdhocRoadCutForwardJE = (state, dispatch) => {
+  let isFormValid = false;
+  
+  if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "EDITEDATJE" 
+  || localStorageGet("applicationStatus") == "REASSIGNTOJE"|| localStorageGet("applicationStatus") == "VERIFYDMEE" 
+  || localStorageGet("applicationStatus") == "EDITEDATDMEE" || localStorageGet("applicationStatus") == "REASSIGNTODMEE"
+  || localStorageGet("applicationStatus") == "VERIFYDMSE"|| localStorageGet("applicationStatus") == "EDITEDATDMSE" || localStorageGet("applicationStatus") == "REASSIGNTODMSE"
+  || localStorageGet("applicationStatus") == "VERIFYDMCE"|| localStorageGet("applicationStatus") == "EDITEDATDMCE" || localStorageGet("applicationStatus") == "REASSIGNTODMCE") {
+    // || localStorageGet("applicationStatus") == "REASSIGNTOJE") {
+    isFormValid = validateFields(
+      "components.adhocDialog.children.popup.children.adhocRebateCardRoadCutForward.children.ForwardContainerRoadCutForward.children",
+      state,
+      dispatch,
+      "roadcutnoc-search-preview"
+    );
+  }
+  else {
+    isFormValid = validateFields(
+      "components.adhocDialogForward.children.popup.children.adhocRebateCardSeRoadCutForward.children.ContainerSeRoadCutForward.children",
+      state,
+      dispatch,
+      "roadcutnoc-search-preview"
+    );
+  }
+  let file = get(
+    state.screenConfiguration.preparedFinalObject,
+    "documentsUploadRedux[0].documents[0].fileStoreId"
+  )
+  if (isFormValid) {
+    dispatch(toggleSpinner());
+    let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
+
+    const remarks = get(
+      state.screenConfiguration.preparedFinalObject,
+      "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.FieldRoadCutForwardRemarks"
+    );
+    const assignee = get(
+      state.screenConfiguration.preparedFinalObject,
+      "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.assignee.value"
+    )
+
+    const RoadCutForwardAmount = get(
+      state.screenConfiguration.preparedFinalObject,
+      "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.RoadCutForwardAmount"
+    );
+    const RoadCutForwardGstAmount = get(
+      state.screenConfiguration.preparedFinalObject,
+      "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.RoadCutForwardGstAmount"
+    );
+    const RoadCutForwardPerformanceBankGuaranteeCharges = get(
+      state.screenConfiguration.preparedFinalObject,
+      "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.RoadCutForwardPerformanceBankGuaranteeCharges"
+    );
+    const RoadCutForwardIsAnyChangeInRoadCutEstimation = get(
+      state.screenConfiguration.preparedFinalObject,
+      "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.isAnyChangeInRoadCutEstimation"
+    );
+
+    let data = {}
+    if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE" 
+    || nocStatus == "VERIFYDMEE" || nocStatus == "EDITEDATDMEE" || nocStatus == "REASSIGNTODMEE"
+    || nocStatus == "EDITEDATDMSE" || nocStatus == "VERIFYDMSE" || nocStatus == "REASSIGNTODMSE"
+    || nocStatus == "EDITEDATDMCE" || nocStatus == "VERIFYDMCE" || nocStatus == "REASSIGNTODMCE") {
+      // if (nocStatus == "REVIEWOFJE" || nocStatus == "EDITEDATJE" || nocStatus == "REASSIGNTOJE") {
+      if (RoadCutForwardAmount > 0) {
+        if (file) {
+          data = {
+            "uploadDocuments": [{
+              "fileStoreId": get(
+                state.screenConfiguration.preparedFinalObject,
+                "documentsUploadRedux[0].documents[0].fileStoreId"
+              )
+            }],
+            "remarks": remarks,
+            "gstAmount": RoadCutForwardGstAmount,
+            "amount": RoadCutForwardAmount,
+            "performanceBankGuaranteeCharges": RoadCutForwardPerformanceBankGuaranteeCharges,
+            "isAnyChangeInRoadCutEstimation": RoadCutForwardIsAnyChangeInRoadCutEstimation,
+            "assignee": assignee ? assignee : ""
+
+          }
+        } else {
+          data = {
+            "uploadDocuments": [{
+              "fileStoreId": ""
+            }],
+            "remarks": remarks,
+            "gstAmount": RoadCutForwardGstAmount,
+            "amount": RoadCutForwardAmount,
+            "performanceBankGuaranteeCharges": RoadCutForwardPerformanceBankGuaranteeCharges,
+            "isAnyChangeInRoadCutEstimation": RoadCutForwardIsAnyChangeInRoadCutEstimation,
+            "assignee": assignee ? assignee : ""
+          }
+        }
+      } else {
+        dispatch(toggleSpinner());
+  
+        let errorMessage = {
+          labelName:
+            "Amount Should be Greater Than 0 ",
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      }
+      }
+      else {
+        if (file) {
+          data = {
+            "uploadDocuments": [{
+              "fileStoreId": get(
+                state.screenConfiguration.preparedFinalObject,
+                "documentsUploadRedux[0].documents[0].fileStoreId"
+              )
+            }],
+            "remarks": get(
+              state.screenConfiguration.preparedFinalObject,
+              "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.remarks"
+            ),
+            "assignee": assignee ? assignee : ""          }
+        } else {
+          data = {
+            "uploadDocuments": [{
+              "fileStoreId": ""
+            }],
+            "remarks": get(
+              state.screenConfiguration.preparedFinalObject,
+              "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.remarks"
+            ),
+            "assignee": assignee ? assignee : ""
+          }
+        }
+      }
+      let wfstatuslist = get(state, "screenConfiguration.preparedFinalObject.WFStatus", [])
+      //    //alert(JSON.stringify(wfstatus))
+      let wfstatus = wfstatuslist.find(item => {
+        return item.buttonName == "nextButton";
+      });
+       if (localStorageGet("applicationStatus") == "VERIFYDMEE" || localStorageGet("applicationStatus") == "EDITEDATDMEE"
+       || localStorageGet("applicationStatus") == "REASSIGNTODMEE" || localStorageGet("applicationStatus") == "REASSIGNTODMSE"
+       || localStorageGet("applicationStatus") == "VERIFYDMSE" || localStorageGet("applicationStatus") == "EDITEDATDMSE"
+       || localStorageGet("applicationStatus") == "VERIFYDMCE" || localStorageGet("applicationStatus") == "EDITEDATDMCE"
+       || localStorageGet("applicationStatus") == "REASSIGNTODMCE") {
+          wfstatus = wfstatuslist.find(item => {
+          return item.buttonName == "editChargesButton";
+        });
+      }
       UpdateStatus(state, dispatch, '/egov-opms/roadcut-search', [],
         {
           "applicationType": "ROADCUTNOC",
@@ -1130,6 +1300,34 @@ const updateAdhocRoadCutApprove = (state, dispatch) => {
     const remarks = get(
       state.screenConfiguration.preparedFinalObject,
       "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.remarks");
+    let file = get(
+      state.screenConfiguration.preparedFinalObject,
+      "documentsUploadRedux[0].documents[0].fileStoreId"
+    );
+    var data = {};
+    if(file){
+      data = {
+        "uploadDocuments": [{
+          "fileStoreId": get(
+            state.screenConfiguration.preparedFinalObject,
+            "documentsUploadRedux[0].documents[0].fileStoreId"
+          )
+        }],
+        "remarks": remarks
+      }
+    }else if(localStorageGet("applicationStatus") == "VERIFY FOR COMPLETION"){
+      data = {
+        "remarks": remarks
+      }
+    }
+    else{
+      data = {
+        "uploadDocuments": [{
+          "fileStoreId": ""
+        }],
+        "remarks": remarks
+      }
+    }
       let wfstatuslist = get(state, "screenConfiguration.preparedFinalObject.WFStatus", [])
       //    //alert(JSON.stringify(wfstatus))
       let wfstatus = wfstatuslist.find(item => {
@@ -1138,16 +1336,14 @@ const updateAdhocRoadCutApprove = (state, dispatch) => {
 
     UpdateStatus(state, dispatch, '/egov-opms/roadcut-search', [],
 
-      {
+    {
 
-        "applicationType": "ROADCUTNOC",
-        "tenantId": getOPMSTenantId(),
-        "applicationStatus": wfstatus.status,
-        "applicationId": localStorage.getItem('ApplicationNumber'),
-        "dataPayload": {
-          "remarks": remarks,
-        }
-      }
+      "applicationType": "ROADCUTNOC",
+      "tenantId": getOPMSTenantId(),
+      "applicationStatus": wfstatus.status,
+      "applicationId": localStorage.getItem('ApplicationNumber'),
+      "dataPayload": data
+    }
     );
   }
   else {
@@ -4816,7 +5012,7 @@ export const adhocPopupForJeRoadCutForward = getCommonContainer({
         },
         onClickDefination: {
           action: "condition",
-          callBack: updateAdhocRoadCutForward
+          callBack: updateAdhocRoadCutForwardJE
         }
       }
     }
@@ -5152,7 +5348,7 @@ export const adhocPopupForCeRoadCutApprove = getCommonContainer({
 
   adhocRebateCardCeRoadCutApprove: getCommonContainer(
     {
-
+      documentDetails,
       ContainerCeRoadCutApprove: getCommonContainer({
 
 
@@ -5685,7 +5881,7 @@ export const adhocPopupForSeRoadCutForward = getCommonContainer({
         },
         onClickDefination: {
           action: "condition",
-          callBack: updateAdhocRoadCutForward
+          callBack: updateAdhocRoadCutForwardSE
         }
       }
     }
