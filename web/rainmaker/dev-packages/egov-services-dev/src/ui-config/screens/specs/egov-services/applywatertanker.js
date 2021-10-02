@@ -27,7 +27,7 @@ import {
 import { httpRequest } from "../../../../ui-utils";
 import jp from "jsonpath";
 import set from "lodash/set";
-import get from "lodash/get";
+import get from "lodash/get"; 
 import {
     prepareDocumentsUploadDataForSellMeat,
     prepareDocumentsUploadData,

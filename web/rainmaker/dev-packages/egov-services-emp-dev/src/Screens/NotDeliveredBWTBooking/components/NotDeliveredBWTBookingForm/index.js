@@ -3,7 +3,10 @@ import { Button } from "components";
 import { Question } from "modules/common";
 import { TextArea } from "modules/common";
 
-const RejectComplaintForm = ({ form, options, quantity,onSubmit,bookingservice,bookingtype,applicationNumber,createdBy,tenantId, ontextAreaChange, handleOptionChange, optionSelected, commentValue }) => {
+const RejectComplaintForm = ({ form, options, quantity,onSubmit,
+  bookingservice,bookingtype,applicationNumber,createdBy,tenantId, 
+  bkSector,bkCompleteAddress, bkType,bkHouseNo,
+  ontextAreaChange, handleOptionChange, optionSelected, commentValue }) => {
 
   if(form && form.fields){
     let formValue={...form.fields};
@@ -15,6 +18,10 @@ formValue.createdOn.value=new Date();
 formValue.bookingType.value=bookingtype;
 formValue.businessService.value=bookingservice
 formValue.quantity.value=quantity
+formValue.bkSector.value = bkSector;
+formValue.bkCompleteAddress.value = bkCompleteAddress;
+formValue.bkType.value = bkType;
+formValue.bkHouseNo.value = bkHouseNo;
   }
 
   

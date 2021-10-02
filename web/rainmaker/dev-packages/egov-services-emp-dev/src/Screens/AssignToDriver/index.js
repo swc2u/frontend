@@ -114,6 +114,10 @@ class AssignToDiver extends Component {
           bookingtype={trasformData.bkBookingType}
           bkStatus={trasformData.bkStatus}
           quantity={trasformData.quantity}
+          bkSector={trasformData.bkSector}
+          bkCompleteAddress={trasformData.bkCompleteAddress}
+          bkType={trasformData.bkType}
+          bkHouseNo={trasformData.bkHouseNo}
           bookingservice={businessServiceData ? businessServiceData : ''}
           onMobileChange={onMobileChange}
           onDriverNameChange={onDriverNameChange}
@@ -122,7 +126,7 @@ class AssignToDiver extends Component {
         />
     );
   }
-}
+} 
 
 const mapStateToProps = state => {
   const { bookings = {} } = state || {};

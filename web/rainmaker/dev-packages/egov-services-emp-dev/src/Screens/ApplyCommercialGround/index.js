@@ -78,14 +78,14 @@ export class StepForm extends Component {
             "_search", [],
             requestBody
           );
-        console.log("hereFcCharges--",hereFcCharges)  
+        
 
 
         let TaxHeadMaster = hereFcCharges.MdmsRes.BillingService.TaxHeadMaster
-        console.log("TaxHeadMaster--",TaxHeadMaster)
+        
         var arrayName = [];
         arrayName.push(hereFcCharges.MdmsRes.BillingService.TaxHeadMaster)
-        console.log("arrayName--",arrayName)
+        
 
         let IndexfCharges;
         if (arrayName && arrayName.length > 0) {
@@ -97,10 +97,10 @@ export class StepForm extends Component {
             })
           })
         }
-     console.log("fCharges--inindexPage--",IndexfCharges)
+     
 
    let testFcharges = IndexfCharges && IndexfCharges.facilitationCharge ? IndexfCharges.facilitationCharge : "valueNotsetYet"
-   console.log("testFcharges--",testFcharges)
+   
      this.setState({
         NewfCharges : testFcharges
      })    
@@ -134,9 +134,9 @@ export class StepForm extends Component {
         })
     }
     handleChangeDiscount = (event) => {
-        console.log("event--",event)
+        
         this.setState({ discountType: event.target.value });
-        console.log("this.state-of-discountType--",this.state.discountType)
+        
     };
 
     onToDateChange = e => {
@@ -173,7 +173,7 @@ export class StepForm extends Component {
         return daysCount;
     };
     showStep = () => {
-    console.log("fchargesInshowStep--",this.state.NewfCharges)
+    
         let { step, firstName, transactionDate, transactionNumber, bankName, paymentMode,
             completeAddress,FatherName,cgBookingVenue,cgCategoryType,
             lastName, utGST, cGST, GSTnumber, type, jobTitle, facilitationCharges, surcharge,
@@ -268,8 +268,7 @@ const mapStateToProps = state => {
   let stateData = state;
 
   let appData = state.bookings.applicationData ? state.bookings.applicationData.bookingsModelList[0] : ""
-  console.log("appData--",appData)
-
+  
   let fCharges;
   if (arrayName && arrayName.length > 0) {
     arrayName.forEach((item) => {

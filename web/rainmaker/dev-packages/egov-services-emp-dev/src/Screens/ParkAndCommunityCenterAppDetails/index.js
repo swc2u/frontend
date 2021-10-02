@@ -769,12 +769,11 @@ try{
               { key: "consumerCodes", value: bookingNosString },
             ];
             const payload = await httpRequest(
-              "post",
+              // "post",
               "/collection-services/payments/_search",
-              "",
+              "_search",
               queryObject
-            );
-           
+            );  
             if (payload) {
               let bookedRoomsPaymentDetails = payload.Payments;
 
@@ -1360,7 +1359,7 @@ else if(applicationDetails.bkAction == "CANCEL" && applicationDetails.bkRemarks 
               "refundAmount": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
               applicationDetails.refundableSecurityMoney : amountTodisplay,
               "refundAmountInWords": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
-              this.NumInWords(applicationDetails.refundableSecurityMoney) : this.NumInWords(NumAmount)
+              (applicationDetails.refundableSecurityMoney == 0 || applicationDetails.refundableSecurityMoney == "0" ? "Zero Rupees Only" : this.NumInWords(applicationDetails.refundableSecurityMoney)) : this.NumInWords(NumAmount)
           },
           "payerInfo": {
               "payerName": applicationDetails.bkApplicantName,
@@ -1434,7 +1433,7 @@ let tmpdate2 = new Date(applicationDetails.bkToDate)
             "refundAmount": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
             applicationDetails.refundableSecurityMoney : amountTodisplay,
             "refundAmountInWords": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
-            this.NumInWords(applicationDetails.refundableSecurityMoney) : this.NumInWords(NumAmount)
+            (applicationDetails.refundableSecurityMoney == 0 || applicationDetails.refundableSecurityMoney == "0" ? "Zero Rupees Only" : this.NumInWords(applicationDetails.refundableSecurityMoney)) : this.NumInWords(NumAmount)
         },
         "payerInfo": {
             "payerName": applicationDetails.bkApplicantName,

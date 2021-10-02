@@ -422,7 +422,7 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
 
         return { status: "failure", message: error };
     }
-};
+};   
 export const createUpdatePCCApplication = async (state, dispatch, action) => {
     let response = "";
     let tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
@@ -484,6 +484,7 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
         set(payload, "bkAction", action);
         set(payload, "businessService", "PACC");
         let reInitiate = false;
+
         if (action == "RE_INITIATE" && payload.bkApplicationStatus != "RE_INITIATED") {
             reInitiate = true;
         }
@@ -494,14 +495,25 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
         set(payload, "reInitiateStatus", reInitiate);
 
         set(payload, "financialYear", `${getCurrentFinancialYear()}`);
-
+let duration = payload.bkDuration
+let bookingTypeForSlot = payload.bkBookingType
+console.log("duration",duration,bookingTypeForSlot)
         if (action == "CANCEL") {
             // payload.bkFromDate = null;
             // payload.bkToDate = null;
             payload.bkStatus = action;
-        }
+        }  
 
         if (method === "CREATE") {
+
+// if(duration == "FULLDAY" && bookingTypeForSlot !== "Parks"){
+//     set(payload, "timeslots", []);
+//     // delete payload["timeslots"];
+
+// }
+
+            console.log("RequestBodyForCreate", payload)
+
             response = await httpRequest(
                 "post",
                 "/bookings/park/community/_create",
@@ -524,13 +536,14 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                 if (response.data.timeslots && response.data.timeslots.length > 0) {
                     console.log(response.data.timeslots, "Hello Nero");
                     if(response.data.timeslots && response.data.timeslots.length > 1){
+                    
                         var [fromTime, toTimeOne] = response.data.timeslots[0].slot.split('-')
                         var [fromTimeTwo, toTime] = response.data.timeslots[1].slot.split('-')
-
+                        localStorage.setItem('changeTimeSlotData', JSON.stringify(response.data.timeslots) )
 
                     }else{
                         var [fromTime, toTime] = response.data.timeslots[0].slot.split('-')
-
+                        localStorage.setItem('changeTimeSlotData', JSON.stringify(response.data.timeslots) )
                     }
                     let DisplayPaccObject={}
                     if(response.data.bkApplicationStatus==="RE_INITIATED"){
@@ -574,8 +587,13 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                 return { status: "fail", data: response.data };
             }
         } else if (method === "UPDATE") {
-            delete payload["financeBusinessService"];
 
+            let blockduration = payload.bkDuration
+            let blockbookingTypeForSlot = payload.bkBookingType
+
+            delete payload["financeBusinessService"];
+ 
+           console.log("RequestBodyOfUpdate",payload)
             response = await httpRequest(
                 "post",
                 "/bookings/park/community/_update",
@@ -942,8 +960,14 @@ export const createUpdateWtbApplication = async (state, dispatch, action) => {
                 setapplicationNumber(response.data.bkApplicationNumber);
                 setApplicationNumberBox(state, dispatch);
                 if(response.data.businessService == "BWT"){
-                    dispatch(prepareFinalObject("WaterTanker.quantity", response.data.quantity));
-                    localStorageSet("WaterTankerQuantity", response.data.quantity);
+                
+                    let localStorageBookingData= Object.assign({}, response.data)
+                    delete localStorageBookingData.bkAction
+                    delete localStorageBookingData.bkApplicationNumber
+                    delete localStorageBookingData.bkApplicationStatus
+                    delete localStorageBookingData.roomsModel
+                    localStorage.setItem('waterTankerBookingData', JSON.stringify(localStorageBookingData) )
+                    
                 }
                 return { status: "success", data: response.data };
             } else {

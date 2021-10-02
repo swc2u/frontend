@@ -350,6 +350,20 @@ const setSearchResponse = async (
   }
   else {
     dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
+
+    let applicationdetail = JSON.parse(get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationdetail", {}));
+    let roadCutTypeFromAPI = applicationdetail.roadCutType;
+    let mdmsDataForRoadType = get(state, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.egpm.roadCutType", []);
+    let RoadTypeFinalData = "";
+    roadCutTypeFromAPI.split(",").map(item => { 
+      
+      if (mdmsDataForRoadType.find(str => str.code == item.trim())) {
+        RoadTypeFinalData = RoadTypeFinalData + " , " +mdmsDataForRoadType.find(str => str.code == item.trim()).name;
+      }
+    });
+    dispatch(prepareFinalObject("nocApplicationDetail[0].RoadTypeFinalData",RoadTypeFinalData.slice(2) ));
+
+
     let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", "-");
     dispatch(
       handleField(
@@ -365,7 +379,58 @@ const setSearchResponse = async (
 
 };
 
+const getMdmsData = async (action, state, dispatch) => {
 
+  let tenantId = getOPMSTenantId();
+  let mdmsBody = {
+    MdmsCriteria: {
+      tenantId: tenantId,
+      moduleDetails: [
+        {
+          moduleName: "tenant",
+          masterDetails: [
+            {
+              name: "tenants"
+            }
+          ]
+        },
+        {
+          moduleName: "egpm",
+          masterDetails: [
+            {
+              name: "roadCutDivision"
+            },
+            {
+              name: "sector"
+            },
+            {
+              name: "roadCutType"
+            },
+            {
+              name: "applicationType"
+            }
+          ]
+        },
+        { moduleName: "RoadCutNOC", masterDetails: [{ name: "RoadCutNOCRemarksDocuments" }] }
+      ]
+    }
+  };
+  try {
+    let payload = null;
+    payload = await httpRequest(
+      "post",
+      "/egov-mdms-service/v1/_search",
+      "_search",
+      [],
+      mdmsBody
+    );
+
+
+    dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 const screenConfig = {
   uiFramework: "material-ui",
@@ -377,9 +442,11 @@ const screenConfig = {
 
     const tenantId = getQueryArg(window.location.href, "tenantId");
     dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
-    searchBill(dispatch, applicationNumber, tenantId);
 
-    setSearchResponse(state, dispatch, applicationNumber, tenantId);
+    getMdmsData(action, state, dispatch).then(response => {
+      searchBill(dispatch, applicationNumber, tenantId);
+      setSearchResponse(state, dispatch, applicationNumber, tenantId);
+    });
 
     localStorage.setItem("applicationNumber", applicationNumber);
 

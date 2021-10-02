@@ -101,7 +101,7 @@ class BookingDetails extends Component {
     window.open(this.getImageSource(source, "large"), 'Image');
     // this.props.history.push(`/image?source=${source}`);
   };
-  render() {
+  render() { 
     const { bkToDate,bkCgst,bkUtgst,bkRent,bkSurchargeRent,bkFromDate,bkBookingPurpose,status, 
       historyApiData, applicantName, applicationNo, submittedDate, dateCreated,bkLocation,bkDimension, 
       address, sector, houseNo, bookingType, mapAction, images, action, role,timeslots } = this.props;
