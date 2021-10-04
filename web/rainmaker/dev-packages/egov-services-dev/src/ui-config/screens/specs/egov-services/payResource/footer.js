@@ -20,7 +20,7 @@ import {
   getTenantId,getapplicationNumber,
   localStorageSet,
   getapplicationType,
-  getUserInfo,
+  getUserInfo,localStorageGet
 } from "egov-ui-kit/utils/localStorageUtils";
 import {
   checkAvaialbilityAtSubmitCgb,
@@ -34,238 +34,113 @@ export const selectPG = async (state, dispatch) => {
   showHideAdhocPopup(state, dispatch, "pay");
 };
 
-export const callPGService = async (state, dispatch, item) => {
+export const callPGService = async (state, dispatch, item, isAvailable) => {
   const bookingData = get(
     state,
     "screenConfiguration.preparedFinalObject.Booking"
   );
-  console.log("bookingData--PGService",bookingData)
-  let sendNewBusinessService;
-  let findBookingType = bookingData.bkBookingType
-  console.log("findBookingType",findBookingType)
-  let findBusinessService = bookingData.businessService     
-  console.log("findBusinessService",findBusinessService)     
-  const businessService = getQueryArg(window.location.href, "businessService");
-  // const tenantId = getQueryArg(window.location.href, "tenantId");
+  const businessService = getQueryArg(window.location.href, "businessService")
+
   const tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
-  console.log("tenantidofcitizen",tenantId)
   const applicationNumber = getQueryArg(
     window.location.href,
     "applicationNumber"
   );
-  if(findBusinessService == 'OSBM'){
-    sendNewBusinessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
-  }
-else if(findBusinessService == 'BWT'){
-  sendNewBusinessService = "BOOKING_BRANCH_SERVICES.WATER_TANKAR_CHARGES";
-}
-else if(findBusinessService == 'GFCP'){
-    sendNewBusinessService = "BOOKING_BRANCH_SERVICES.BOOKING_COMMERCIAL_GROUND";
-}
-else if(findBusinessService == "OSUJM"){
-    sendNewBusinessService = "BOOKING_BRANCH_SERVICES.BOOKING_GROUND_OPEN_SPACES";
-}
-else if(findBusinessService == "PACC" && findBookingType == "Parks"){
-    sendNewBusinessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
-}
-else if(findBusinessService == "PACC" && findBookingType == "Community Center"){
-    sendNewBusinessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
-}
-else if(findBusinessService == "BKROOM"){
-  sendNewBusinessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
-}
-else{
-  sendNewBusinessService = findBusinessService;
-}
+  //const isAvailable = await checkAvaialbilityAtSubmit(bookingData, dispatch);
 
-  let fetchBillRequestBody = [
-    { key: "tenantId", value: tenantId },
-    { key: "consumerCode", value: applicationNumber },
-    { key: "businessService", value: sendNewBusinessService},
-];
-console.log("RequestBodyOfFechFromMySide",fetchBillRequestBody)
-const fetchBillAmount = await getBill(fetchBillRequestBody);
-console.log("PayloadOfFetchBill",fetchBillAmount)
-if(fetchBillAmount){
-  let recData = get(fetchBillAmount, "Bill[0].totalAmount", []);
-  console.log("recData--recData",recData)
-  if(recData > 0)
-  {
-    const isAvailable = await checkAvaialbilityAtSubmit(bookingData, dispatch);
-    console.log(isAvailable, "isAvailable");
-    if (isAvailable) {
-      let callbackUrl = `${
-        process.env.NODE_ENV === "production"
-          ? `${window.origin}/citizen`
-          : window.origin
-      }/egov-services/paymentRedirectPage`;
-  
-      let applicationnumber = getapplicationNumber();
-      console.log("applicationnumberPayPage",applicationnumber)
-      // let tenantId = getTenantId();
-      console.log("tenantIdPayPage",tenantId)
-      let applicationType = getapplicationType()
-      console.log("applicationTypePayPage",applicationType)
-  
-      if(applicationType == "OSBM"){
-        const queryObject = [
-          {
-              key: "tenantId",
-              value: tenantId,
-          },
-          {
-              key: "applicationNumber",
-              value: applicationnumber,
-          },
+  if (isAvailable) {
+    let callbackUrl = `${
+      process.env.NODE_ENV === "production"
+        ? `${window.origin}/citizen`
+        : window.origin
+    }/egov-services/paymentRedirectPage`;
+
+
+    try {
+      const queryObj = [
+        { key: "tenantId", value: tenantId },
+        { key: "consumerCode", value: applicationNumber },
+        { key: "businessService", value: businessService },
       ];
-  console.log("queryObjectNewBookingSearch",queryObject)
-  console.log("queryObjectNewBookingSearch898989",JSON.parse(JSON.stringify(queryObject)))
-  
-      const response = await getSearchResultsView(queryObject);
-      console.log("ResonOfCitizenSearchOne",response)
-  console.log("ResonOfCitizenSearch",JSON.parse(JSON.stringify(response)))
-         
-  let paymentRequest = response.bookingsModelList[0];
-  console.log("ResonOfCitizenSearchOneRequestBody",paymentRequest)
-  console.log("PaymentRequestCitizenSearch",JSON.parse(JSON.stringify(paymentRequest)))
-  
-  set(paymentRequest,"bkAction","PAY")
-  // set(paymentRequest, "bkPaymentStatus", "SUCCESS");
-  //SUCCESS
-  
-  {/**pdf url for mail attatchment**/}
-  // let paymentReceipt= await downloadReceipt(paymentRequest, applicationnumber, tenantId, 'true')
-  // console.log("dataforReceiptNew",paymentReceipt);
-  // let permissionLetter= await downloadCertificate(paymentRequest, applicationnumber, tenantId, 'true')
-  // console.log("dataforpermissionLetter",permissionLetter);
-  // Promise.all(paymentReceipt).then(data=>{
-  //     let urlPayload={
-  //         "paymentReceipt" :  data[0]
-  //     }
-  
-  //     Promise.all(permissionLetter).then(permissionLetterData=>{
-  
-  //         urlPayload= {
-  //             ...urlPayload, 
-  //             "permissionLetter": permissionLetterData[0]
-  //         }
-  //         console.log(urlPayload, "BothpayloadforNEWAPICALL")
-  //     })
-  // })
-  
-  {/**end**/}
-        const newUpdateApiCall = await httpRequest(
-          "post",
-          "/bookings/api/update/payment",
-          "",
-          [],
-          {
-            Booking: paymentRequest,
-        }
-        );
-  console.log("newUpdateApiCall--data",newUpdateApiCall)
-  console.log("newUpdateApiCall--data--jsonData",JSON.parse(JSON.stringify(newUpdateApiCall)))
-      }
+
+      const taxAmount = get(
+        state,
+        "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].totalAmount"
+      );
+      const billId = get(
+        state,
+        "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].id"
+      );
+      const consumerCode = get(
+        state,
+        "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].consumerCode"
+      );
+      const Accountdetails = get(
+        state,
+        "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].billDetails[0].billAccountDetails"
+      );
+
+      const taxAndPayments = [
+        {
+          amountPaid: taxAmount,
+          billId: billId,
+        },
+      ];
+
       try {
-        const queryObj = [
-          { key: "tenantId", value: tenantId },
-          { key: "consumerCode", value: applicationNumber },
-          { key: "businessService", value: businessService },
-        ];
-  
-        const taxAmount = get(
-          state,
-          "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].totalAmount"
-        );
-        const billId = get(
-          state,
-          "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].id"
-        );
-        const consumerCode = get(
-          state,
-          "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].consumerCode"
-        );
-        const Accountdetails = get(
-          state,
-          "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].billDetails[0].billAccountDetails"
-        );
-  
-        const taxAndPayments = [
-          {
-            amountPaid: taxAmount,
-            billId: billId,
+        const userMobileNumber = get(state, "auth.userInfo.mobileNumber");
+        const userName = get(state, "auth.userInfo.name");
+        const requestBody = {
+          Transaction: {
+            tenantId,
+            billId: billId, // get(billPayload, "Bill[0].id"),
+            txnAmount: taxAmount, //get(billPayload, "Bill[0].totalAmount"),
+            module:businessService, 
+            taxAndPayments,
+            consumerCode: consumerCode, // get(billPayload, "Bill[0].consumerCode"),
+            productInfo: businessService, // "Property Tax Payment",
+            gateway: item,
+            user: get(state, "auth.userInfo"),
+            callbackUrl,
           },
-        ];
-  
-        try {
-          const userMobileNumber = get(state, "auth.userInfo.mobileNumber");
-          const userName = get(state, "auth.userInfo.name");
-          const requestBody = {
-            Transaction: {
-              tenantId,
-              billId: billId, // get(billPayload, "Bill[0].id"),
-              txnAmount: taxAmount, //get(billPayload, "Bill[0].totalAmount"),
-              module:businessService, 
-              taxAndPayments,
-              consumerCode: consumerCode, // get(billPayload, "Bill[0].consumerCode"),
-              productInfo: businessService, // "Property Tax Payment",
-              gateway: item,
-              user: get(state, "auth.userInfo"),
-              callbackUrl,
-            },
-          };
-  
-          const goToPaymentGateway = await httpRequest(
-            "post",
-            "pg-service/transaction/v1/_create",
-            "_create",
-            [],
-            requestBody
-          );
-          const redirectionUrl = get(
-            goToPaymentGateway,
-            "Transaction.redirectUrl"
-          );
-  
-          window.location = redirectionUrl;
-  
-        } catch (e) {
-          dispatch(
-            toggleSnackbar(
-              true,
-              {
-                labelName: `A transaction for ${applicationNumber} has been abruptly discarded, please retry after 30 mins`,
-                labelKey: "",
-              },
-              "error"
-            )
-          );
-          console.log(e);
-        }
+        };
+
+        const goToPaymentGateway = await httpRequest(
+          "post",
+          "pg-service/transaction/v1/_create",
+          "_create",
+          [],
+          requestBody
+        );
+        const redirectionUrl = get(
+          goToPaymentGateway,
+          "Transaction.redirectUrl"
+        );
+
+        window.location = redirectionUrl;
+
       } catch (e) {
+        dispatch(
+          toggleSnackbar(
+            true,
+            {
+              labelName: `A transaction for ${applicationNumber} has been abruptly discarded, please retry after 30 mins`,
+              labelKey: "",
+            },
+            "error"
+          )
+        );
         console.log(e);
       }
-    } else {
-      dispatch(
-        toggleSnackbar(
-          true,
-          {
-            labelName: "Selected Dates are Already Booked. Try Again!",
-            labelKey: "",
-          },
-          "warning"
-        )
-      );
-   
+    } catch (e) {
+      console.log(e);
     }
-
-  }
-  else {
+  } else {
     dispatch(
       toggleSnackbar(
         true,
         {
-          labelName: "Your payment is already received !",
+          labelName: "Selected Dates are Already Booked. Try Again!",
           labelKey: "",
         },
         "warning"
@@ -273,9 +148,10 @@ if(fetchBillAmount){
     );
  
   }
+
 }
-};
-  
+
+
 const convertDateFieldToEpoch = (finalObj, jsonPath) => {
   const dateConvertedToEpoch = convertDateToEpoch(
     get(finalObj, jsonPath),

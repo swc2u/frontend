@@ -17,13 +17,26 @@ import {
     getSearchResultsView,
     getSearchResultsViewForRoomBooking
 } from "../../../../ui-utils/commons";
-
+import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
     getapplicationType,
     setapplicationType,
     setapplicationNumber,
+    getUserInfo,
+    localStorageGet,
+    localStorageSet,
+    getTenantId,
+    getapplicationNumber
 } from "egov-ui-kit/utils/localStorageUtils";
-
+import {
+    convertDateToEpoch,
+    getBill,
+    validateFields,
+    showHideAdhocPopup,
+    checkAvaialbilityAtSubmit
+  } from "../utils";
+import { httpRequest } from "../../../../ui-utils/api";
 const header = getCommonContainer({
     header: getCommonHeader({
         labelName: `Application for ${
@@ -133,15 +146,171 @@ const setSearchResponse = async (
         
         }
         
-    // await handleCheckAvailability(
+     // await handleCheckAvailability(
     //     recData.length > 0 ? recData[0] : {},
     //     action,
     //     dispatch
     // );
 };
 
+const callUpadateApi = async (state, dispatch, item) =>{
 
+    const bookingData = get(
+        state,
+        "screenConfiguration.preparedFinalObject.Booking"
+      );
+      
+      let sendNewBusinessService="";
 
+      let findBookingType = bookingData.bkBookingType
+      
+      let findBusinessService = bookingData.businessService     
+         
+      const tenantId = process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
+
+      const applicationNumber = getQueryArg(
+        window.location.href,
+        "applicationNumber"
+      );
+
+        if(findBusinessService == 'OSBM'){
+            sendNewBusinessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
+        }
+        else if(findBusinessService == 'BWT'){
+            sendNewBusinessService = "BOOKING_BRANCH_SERVICES.WATER_TANKAR_CHARGES";
+        }
+        else if(findBusinessService == 'GFCP'){
+            sendNewBusinessService = "BOOKING_BRANCH_SERVICES.BOOKING_COMMERCIAL_GROUND";
+        }
+        else if(findBusinessService == "OSUJM"){
+            sendNewBusinessService = "BOOKING_BRANCH_SERVICES.BOOKING_GROUND_OPEN_SPACES";
+        }
+        else if(findBusinessService == "PACC" && findBookingType == "Parks"){
+            sendNewBusinessService = "BOOKING_BRANCH_SERVICES.MANUAL_OPEN_SPACE";
+        }
+        else if(findBusinessService == "PACC" && findBookingType == "Community Center"){
+            sendNewBusinessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
+        }
+        else if(findBusinessService == "BKROOM"){
+            sendNewBusinessService = "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR";
+        }
+        else{
+            sendNewBusinessService = findBusinessService;
+        }
+    
+      let fetchBillRequestBody = [
+        { key: "tenantId", value: tenantId },
+        { key: "consumerCode", value: applicationNumber },
+        { key: "businessService", value: sendNewBusinessService},
+       ];
+    
+      const fetchBillAmount = await getBill(fetchBillRequestBody);
+    
+      if(fetchBillAmount){
+      let recData = get(fetchBillAmount, "Bill[0].totalAmount", []);
+      
+      if(recData > 0)
+      {
+        const isAvailable = await checkAvaialbilityAtSubmit(bookingData, dispatch);
+        
+        callPGService(state, dispatch, item, isAvailable)
+        
+        if (isAvailable) {
+          let callbackUrl = `${
+            process.env.NODE_ENV === "production"
+              ? `${window.origin}/citizen`
+              : window.origin
+          }/egov-services/paymentRedirectPage`;
+      
+          let applicationnumber = getapplicationNumber();
+          
+         
+          let applicationType = getapplicationType()
+
+          
+          if(applicationType == "OSBM" || applicationType == "BWT" || applicationType == "OSUJM"){
+            const queryObject = [
+              {
+                  key: "tenantId",
+                  value: tenantId,
+              },
+              {
+                  key: "applicationNumber",
+                  value: applicationnumber,
+              },
+          ];  
+      
+          const response = await getSearchResultsView(queryObject);
+             
+        let paymentRequest = response.bookingsModelList[0];
+
+        if(applicationType == "OSBM" || applicationType == "OSUJM"){
+
+            set(paymentRequest,"bkAction","PAY")
+        }
+
+        else if(applicationType == "BWT"){
+            set(paymentRequest,"bkAction","PAIDAPPLY")
+            let updatedPayloadAfterEdit =JSON.parse(localStorage.getItem('waterTankerBookingData'))
+            paymentRequest= Object.assign(paymentRequest, updatedPayloadAfterEdit)
+         }  
+    else if(applicationType == "GFCP"){
+        set(paymentRequest,"bkAction","APPLY")
+    }
+    else if(applicationType == "PACC"){
+        let paymentStatus = get(
+            paymentRequest,
+            "bkPaymentStatus",
+            ""
+        );
+
+        let action = paymentStatus === "SUCCESS" || paymentStatus === "succes" ? "MODIFY" : "APPLY"
+        set(paymentRequest,"bkAction",action)
+        if(action == "MODIFY"){
+            paymentRequest.bkFromDate = paymentRequest.bkStartingDate;
+            paymentRequest.bkToDate = paymentRequest.bkEndingDate;
+            let modifiedTimeSlotArray=JSON.parse(localStorage.getItem('changeTimeSlotData'))
+            if(paymentRequest.bkDuration==='HOURLY'){
+              if(modifiedTimeSlotArray.length>1){
+                    paymentRequest.timeslots[0].slot= modifiedTimeSlotArray[0].slot
+                    paymentRequest.timeslots[1].slot= modifiedTimeSlotArray[1].slot        
+                }else{
+                    paymentRequest.timeslots[0].slot= modifiedTimeSlotArray[0].slot
+                }
+              
+            }
+       
+           }
+    }
+   console.log("paymentRequest",paymentRequest)
+        const newUpdateApiCall = await httpRequest(
+              "post",
+              "/bookings/api/update/payment",
+              "",
+              [],
+              {
+                Booking: paymentRequest,
+            }
+        );
+        console.log("newUpdateApiCall",newUpdateApiCall)
+        }
+        
+    }
+    } else {
+        dispatch(
+          toggleSnackbar(
+            true,
+            {
+              labelName: "Your payment is already received !",
+              labelKey: "",
+            },
+            "warning"
+          )
+        );
+     
+    }
+  }
+}
 
 const setPaymentMethods = async (action, state, dispatch) => {
     const response = await getPaymentGateways();
@@ -151,7 +320,7 @@ const setPaymentMethods = async (action, state, dispatch) => {
                 labelName: item,
                 labelKey: item,
             },
-            link: () => callPGService(state, dispatch, item),
+            link: () => callUpadateApi(state, dispatch, item),
         }));
         set(
             action,

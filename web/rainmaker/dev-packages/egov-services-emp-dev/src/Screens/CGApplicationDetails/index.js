@@ -332,6 +332,17 @@ this.setState({
 	}
 
 
+findDaysDiff = (fromDate,toDate) => {
+	const date1 = new Date(fromDate);
+	const date2 = new Date(toDate);
+	const diffTime = Math.abs(date2 - date1);
+	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+	console.log(diffDays + " days");
+	let daysDiff = diffDays+1
+	console.log(daysDiff,"daysDiff")
+	return daysDiff;
+}
+
 downloadPaymentReceiptFunction = async (e) => {
 	const { transformedComplaint, paymentDetailsForReceipt, downloadPaymentReceiptforCG, userInfo, paymentDetails } = this.props;
 	const { complaint } = transformedComplaint;
@@ -356,11 +367,16 @@ downloadPaymentReceiptFunction = async (e) => {
 					complaint.bkFromDate,
 					complaint.bkToDate
 				),
-				groundName:complaint.sector
+				groundName:complaint.sector,
+				sector: complaint && complaint.sector ? complaint.sector : '',
+				"bookingDays": this.findDaysDiff(complaint.bkFromDate,
+					complaint.bkToDate),
+				"bookingPurpose": complaint.bkBookingPurpose,
+				"depositAmount": paymentDetailsForReceipt.Payments[0].totalAmountPaid,
 			},
 			generatedBy: {
 				generatedBy: userInfo.name,
-			},
+			},  //bkFromDate   bkToDate
 			approvedBy: {
 				approvedBy: "Renil Commissioner",
 				role: "Additional Commissioner"

@@ -772,7 +772,7 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
 
     prepareDocumentsView(state, dispatch);
 
-    if (checkForRole(roles, 'CITIZEN'))
+    if (checkForRole(roles, 'CITIZEN') || checkForRole(roles, 'MOH'))
       setSearchResponseForNocCretificate(state, dispatch, applicationNumber, tenantId);
     //setDownloadMenu(state, dispatch);
   }

@@ -155,8 +155,14 @@ export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
 const callBackForBookTimeSlot = async (state, dispatch) => {
   // dispatch(setRoute(`/egov-services/applyparkcommunitycenter`));
   let availabilityCheckData =
-    state.screenConfiguration.preparedFinalObject.availabilityCheckData;
-  if (availabilityCheckData === undefined) {
+  state.screenConfiguration.preparedFinalObject.availabilityCheckData;
+  
+let routeUrl
+const changeDateVenue = getQueryArg(
+  window.location.href,
+  "changeDateVenue"
+);
+if (availabilityCheckData === undefined) {
     let warrningMsg = {
       labelName: "Please Select Time Slot you want to Book",
       labelKey: "",
@@ -176,11 +182,23 @@ const callBackForBookTimeSlot = async (state, dispatch) => {
       dispatch(toggleSnackbar(true, warrningMsg, "warning"));
     } else {
       if ("bkApplicationNumber" in availabilityCheckData) {
-        dispatch(
+        if(changeDateVenue!= null){
+            
+          dispatch(prepareFinalObject("changeDateVenue",'Enabled'));
+          routeUrl= `/egov-services/applyparkcommunitycenter?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&changeDateVenue=Enabled`
+
+        }else{
+          
+          dispatch(prepareFinalObject("changeDateVenue",'Disabled'));
+          routeUrl= `/egov-services/applyparkcommunitycenter?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
+
+        }
+            dispatch(
           setRoute(
-            `/egov-services/applyparkcommunitycenter?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
-          )
+            routeUrl
+            )
         );
+ 
       } else {
         dispatch(setRoute(`/egov-services/applyparkcommunitycenter`));
       }
@@ -516,7 +534,7 @@ export const availabilityForm = getCommonCard({
         props: {
           className: "applicant-details-error",
           required: true,
-          // disabled: true
+          disabled: false
         },
       }),
       beforeFieldChange: async (action, state, dispatch) => {
@@ -527,7 +545,6 @@ export const availabilityForm = getCommonCard({
             state,
             "screenConfiguration.preparedFinalObject.availabilityCheckData"
           );
-
 
           let bkBookingType =
             availabilityCheckData !== undefined

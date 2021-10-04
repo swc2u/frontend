@@ -234,6 +234,95 @@ export const footerEmp = getCommonApplyFooter({
     },
     visible: false
   },
+  editCharges: {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "180px",
+        height: "48px",
+        marginRight: "16px",
+        borderRadius: "2px",
+        background: "#fff",
+        color: '#000',
+      }
+    },
+    gridDefination: {
+      xs: 12,
+      sm: 12,
+      md: 12
+    },
+    children: {
+      nextButtonLabel: getLabel({
+        labelName: "EDIT CHARGES",
+        labelKey: "EDIT CHARGES"
+      }),
+      nextButtonIcon: {
+        uiFramework: "custom-atoms",
+        componentPath: "Icon",
+        props: {
+          iconName: "keyboard_arrow_right"
+        }
+      }
+    },
+    onClickDefination: {
+      action: "condition",
+      callBack: (state, dispatch) => {
+        try {
+          set(state, 'screenConfiguration.preparedFinalObject.OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.assignee', undefined);
+          set(state, 'screenConfiguration.preparedFinalObject.ROADCUTNOCWF.REASSIGNDO', false);
+          if (localStorageGet("applicationStatus") == "REVIEWOFJE" || localStorageGet("applicationStatus") == "EDITEDATJE"
+           || localStorageGet("applicationStatus") == "REASSIGNTOJE" || localStorageGet("applicationStatus") == "VERIFYDMEE"
+           || localStorageGet("applicationStatus") == "REASSIGNTODMEE" || localStorageGet("applicationStatus") == "EDITEDATDMEE"
+           || localStorageGet("applicationStatus") == "VERIFYDMSE" || localStorageGet("applicationStatus") == "EDITEDATDMSE" || localStorageGet("applicationStatus") == "REASSIGNTODMSE"
+           || localStorageGet("applicationStatus") == "VERIFYDMCE" || localStorageGet("applicationStatus") == "EDITEDATDMCE" || localStorageGet("applicationStatus") == "REASSIGNTODMCE") {
+            const ROADCUTNOC = get(
+              state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0]", {});
+            // const typeOfApplicant = JSON.parse(ROADCUTNOC.applicationdetail).hasOwnProperty('typeOfApplicant') ?
+            //   JSON.parse(ROADCUTNOC.applicationdetail).typeOfApplicant : undefined;
+            // if (typeOfApplicant && (typeOfApplicant === "TELECOM" || typeOfApplicant === "NATURAL_GAS_PIPELINE_PNG")) {
+              set(state.screenConfiguration.preparedFinalObject, "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.isAnyChangeInRoadCutEstimation", "No");
+              dispatch(
+                handleField(
+                  "roadcutnoc-search-preview",
+                  "components.adhocDialog.children.popup.children.adhocRebateCardRoadCutForward.children.ForwardContainerRoadCutForward.children.isAnyChangeInRoadCutEstimation",
+                  "props.value", "No"));
+            // } else {
+              // const isAnyChangeInRoadCutEstimation = JSON.parse(ROADCUTNOC.applicationdetail).hasOwnProperty('isAnyChangeInRoadCutEstimation') ?
+              //   JSON.parse(ROADCUTNOC.applicationdetail).isAnyChangeInRoadCutEstimation : undefined;
+              // if (isAnyChangeInRoadCutEstimation) {
+              //   set(state.screenConfiguration.preparedFinalObject, "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.isAnyChangeInRoadCutEstimation", isAnyChangeInRoadCutEstimation);
+              //   dispatch(
+              //     handleField(
+              //       "roadcutnoc-search-preview",
+              //       "components.adhocDialog.children.popup.children.adhocRebateCardRoadCutForward.children.ForwardContainerRoadCutForward.children.isAnyChangeInRoadCutEstimation",
+              //       "props.value", isAnyChangeInRoadCutEstimation));
+
+              // } else { 
+              //   dispatch(
+              //     handleField(
+              //       "roadcutnoc-search-preview",
+              //       "components.adhocDialog.children.popup.children.adhocRebateCardRoadCutForward.children.ForwardContainerRoadCutForward.children.isAnyChangeInRoadCutEstimation",
+              //       "props.value", "No"));
+              //       set(state.screenConfiguration.preparedFinalObject, "OPMS[0].RoadCutUpdateStautsDetails.additionalDetail.isAnyChangeInRoadCutEstimation", "No");
+              // }
+            // }
+            getEmployeeList(state,dispatch, "nextButton");
+            showHideAdhocPopup(state, dispatch, "roadcutnoc-search-preview")
+          } else {
+            getEmployeeList(state,dispatch, "nextButton");
+            showHideAdhocPopupopmsForward(state, dispatch, "roadcutnoc-search-preview", "nextButton")
+          }
+        } catch (e) { 
+          
+          console.error(e)
+        }
+        }
+    },
+    //    visible: checkForRole(roles, 'JE') || checkForRole(roles, 'SDO') || checkForRole(roles, 'EE') || checkForRole(roles, 'SE') ? true : false
+    visible: false//checkVisibility("REVIEWSDO,REVIEWOFSE,REVIEWOFEE")
+  },
   nextButton: {
     componentPath: "Button",
     props: {
@@ -491,7 +580,14 @@ export const footerEmp = getCommonApplyFooter({
         if (localStorageGet("applicationStatus") == "VERIFYANDFORWARD" ) {
           showHideAdhocPopupopmsForward(state, dispatch, "roadcutnoc-search-preview", "nextButton")
         } else {
-          showHideAdhocPopupopmsApprove(state, dispatch, "roadcutnoc-search-preview", "reject")
+          showHideAdhocPopupopmsApprove(state, dispatch, "roadcutnoc-search-preview", "reject");
+          if(localStorageGet("applicationStatus") == "VERIFY FOR COMPLETION"){
+            dispatch(
+              handleField(
+                "roadcutnoc-search-preview",
+                "components.adhocDialog2.children.popup.children.adhocRebateCardRoadCutReassign.children.documentDetails",
+                "visible", false));
+          }
         }
       }
     },

@@ -724,6 +724,7 @@ export const getMdmsData = async (state,dispatch) => {
           { name: "sectorList" },
           { name: "swSectorList" },
           {name:"tariffType"},
+          {name:"ApplicationCode"}
           
         
         ] },

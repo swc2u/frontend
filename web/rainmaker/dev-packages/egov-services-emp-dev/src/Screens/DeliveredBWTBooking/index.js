@@ -90,7 +90,7 @@ class DeliveredBWTBooking extends Component {
     const { trasformData, businessServiceData,applicationNumber } = this.props;
     
     return (
-      
+       
         <DeliveredBWTBookingHOC
           
           ontextAreaChange={handleCommentsChange}
@@ -103,6 +103,10 @@ class DeliveredBWTBooking extends Component {
           onSubmit={onSubmit}
           bookingtype={trasformData.bkBookingType}
           quantity={trasformData.quantity}
+          bkSector={trasformData.bkSector}
+          bkCompleteAddress={trasformData.bkCompleteAddress}
+          bkType={trasformData.bkType}
+          bkHouseNo={trasformData.bkHouseNo}
           bookingservice={businessServiceData?businessServiceData:''}
           driverFullName={trasformData.bkDriverName}
           mobileNumber={trasformData.bkContactNo}
