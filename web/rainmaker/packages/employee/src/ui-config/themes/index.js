@@ -98,6 +98,8 @@ const themeObject = {
       animated: {
         fontSize: "16px",
         fontWeight: 500,
+        position: "relative",    
+        marginBottom: "-20px",
       },
     },
     MuiButton: {
