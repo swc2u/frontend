@@ -1068,6 +1068,27 @@ ValidateRequest =(payload,preparedFinalObject,moduleName) =>{
   //   }
     
   // }
+  if(( payload.activityType ==='TEMPORARY_WSCONNECTION' // TC  
+  || payload.activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'
+    || payload.activityType ==='APPLY_FOR_TEMPORARY_CONNECTION_BILLING' //TB
+    || payload.activityType ==='TEMPORARY_WSCONNECTION_BILLING'
+    || payload.activityType ==='NEW_WS_CONNECTION'//NR
+    || payload.activityType ==='REGULARWSCONNECTION' )
+  &&  
+  (applicationStatus ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"
+    //|| applicationStatus ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"
+    //||applicationStatus ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"
+    //|| 1===1
+    ) 
+    )
+  {
+    if(payload.connectionNo === null)
+    {
+      isvalidRequest = false
+    }
+    
+
+  }
 
 }
 
@@ -1083,7 +1104,28 @@ ValidateRequest =(payload,preparedFinalObject,moduleName) =>{
     {
     payload.documents =  this.uniqueBycode(payload.documents, x=>x.documentType);//payload.documents.filter((value,index) => payload.documents.indexOf(value) ===index)
     }
-    //payload.documents = tmp;
+    ////
+    // set wsid
+    let waterId = payload.waterApplication.id
+    if(payload.waterApplicationList)
+      {                        
+          // waterApplicationList = waterApplicationList.filter(x=>x.applicationNo === applicationNo)
+          waterId = payload.waterApplicationList[0].id
+         let waterApplicationList = payload.waterApplicationList.sort((a, b) => (a.auditDetails.lastModifiedTime > b.auditDetails.lastModifiedTime ? -1 : 1));
+          waterId = waterApplicationList[0].id
+          //WaterConnection[0].activityType = waterApplicationList_[0].activityType
+      }
+                    
+      for (let index = 0; index < payload.connectionHolders.length; index++) {
+          const element = payload.connectionHolders[index];
+          if(element.status==='ACTIVE')
+          {
+              //set(payload, `connectionHolders[${index}].ws_application_id`, waterId);
+              payload.connectionHolders[index].ws_application_id = waterId
+
+          }          
+      }
+    ////
 //return  false
 return isvalidRequest
 }
