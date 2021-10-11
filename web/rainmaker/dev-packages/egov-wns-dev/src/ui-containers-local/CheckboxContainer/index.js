@@ -179,7 +179,7 @@ class CheckboxLabels extends React.Component {
   render() {
     const { classes, required, preparedFinalObject } = this.props;
     let checkedWater, checkedSewerage,checkedTubewell;
-    let IsEdit = process.env.REACT_APP_NAME === "Citizen"?false:true;
+    let IsEdit = process.env.REACT_APP_NAME === "Citizen"?true:true;
     if(preparedFinalObject.WaterConnection.length>0)
     {
       let applicationNumber = (preparedFinalObject && preparedFinalObject.WaterConnection[0].applicationNo) ? true : false;

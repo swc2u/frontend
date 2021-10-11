@@ -7,8 +7,12 @@ import {
   import { conectionDetails} from "./linkConnectionResources/conectionDetails"  
   import {  getSearchResults,getSearchResultsForSewerage } from "../../../../ui-utils/commons";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+  import {    
+    getLocalizationCodeValue
+  } from "../utils";
   import {
-    getTenantId
+    getTenantId,
+    getUserInfo
   } from "egov-ui-kit/utils/localStorageUtils";
   import find from "lodash/find";
   import set from "lodash/set";
@@ -41,22 +45,127 @@ import {
         //let queryObject = [];
         //queryObject.push({ key: "connectionNumber", value: connectionNumber });
         let getSearchResult = getSearchResults(queryObject)
-        let getSearchResultForSewerage = getSearchResultsForSewerage(queryObject, dispatch)
+       // let getSearchResultForSewerage = getSearchResultsForSewerage(queryObject, dispatch)
         let finalArray = [];
         let searchWaterConnectionResults, searcSewerageConnectionResults;
     
      try { searchWaterConnectionResults = await getSearchResult } catch (error) { finalArray = []; console.log(error) }
-     try { searcSewerageConnectionResults = await getSearchResultForSewerage } catch (error) { finalArray = []; console.log(error) }
+     //try { searcSewerageConnectionResults = await getSearchResultForSewerage } catch (error) { finalArray = []; console.log(error) }
      const waterConnections = searchWaterConnectionResults ? searchWaterConnectionResults.WaterConnection.map(e => { e.service = 'WATER'; return e }) : []
-     const sewerageConnections = searcSewerageConnectionResults ? searcSewerageConnectionResults.SewerageConnections.map(e => { e.service = 'SEWERAGE'; return e }) : [];
+     //const sewerageConnections = searcSewerageConnectionResults ? searcSewerageConnectionResults.SewerageConnections.map(e => { e.service = 'SEWERAGE'; return e }) : [];
      
-     let combinedSearchResults = searchWaterConnectionResults || searcSewerageConnectionResults ? sewerageConnections.concat(waterConnections) : []
+     //let combinedSearchResults = searchWaterConnectionResults || searcSewerageConnectionResults ? sewerageConnections.concat(waterConnections) : []
+     let combinedSearchResults = waterConnections//searchWaterConnectionResults || searcSewerageConnectionResults ? sewerageConnections.concat(waterConnections) : []
      combinedSearchResults = combinedSearchResults.filter(x=>x.id === id)
      dispatch(prepareFinalObject("combinedSearchResults", combinedSearchResults));
-
+    if(combinedSearchResults && combinedSearchResults[0].inWorkflow === false)
+    {
      if(combinedSearchResults && combinedSearchResults[0].connectionHolders && combinedSearchResults[0].connectionHolders !=="NA" )
      {
-      dispatch(
+      let ActiveHolder = combinedSearchResults[0].connectionHolders.filter(x=>x.status.toUpperCase() ==='ACTIVE')
+      let InActiveHolder = combinedSearchResults[0].connectionHolders.filter(x=>x.status.toUpperCase() ==='INACTIVE')
+      let mobileNumber = ActiveHolder[0].mobileNumber
+      if(ActiveHolder.length ===0)
+      {
+       dispatch(
+         handleField(
+           "link-connection-details",
+           "components.div.children.footer.children.SubmitButton",
+           "visible",
+           true
+         )
+       );
+
+      }
+      else if(InActiveHolder.length>0)
+      {
+        let loginusermobileNumber_ = JSON.parse(getUserInfo()).mobileNumber;
+        InActiveHolder = InActiveHolder.filter(x=>x.mobileNumber === loginusermobileNumber_)
+        if(InActiveHolder .length>0)
+        {
+          dispatch(
+            handleField(
+              "link-connection-details",
+              "components.div.children.footer.children.SubmitButton",
+              "visible",
+              false
+            )
+          );
+          dispatch(
+            toggleSnackbar(
+              true, {
+             labelKey: "WS_LINK_CONNECTION_VALLIDATION_MAPPED_INACTIVE", 
+             //labelKey:   LocalizationCodeValue_+' '+mobileNumber,           
+              labelName: "This connection is already assign to your mobile number"
+            },
+              "warning"
+            ))
+
+        }
+
+      }
+      else{
+        const LocalizationCodeValue = getLocalizationCodeValue("WS_LINK_CONNECTION_VALLIDATION")
+       dispatch(
+         handleField(
+           "link-connection-details",
+           "components.div.children.footer.children.SubmitButton",
+           "visible",
+           false
+         )
+       );
+       let loginusermobileNumber = JSON.parse(getUserInfo()).mobileNumber;
+       if(loginusermobileNumber !== mobileNumber)
+       {
+        dispatch(
+          toggleSnackbar(
+            true, {
+           // labelKey: "WS_LINK_CONNECTION_VALLIDATION",
+            labelKey:   LocalizationCodeValue+' '+mobileNumber,
+            labelName: "This connection is already assign to other user"
+          },
+            "warning"
+          ))
+        
+       }
+       else{
+        const LocalizationCodeValue_ = getLocalizationCodeValue("WS_LINK_CONNECTION_VALLIDATION_MAPPED")
+        dispatch(
+          toggleSnackbar(
+            true, {
+          // labelKey: "WS_LINK_CONNECTION_VALLIDATION_MAPPED", 
+           labelKey:   LocalizationCodeValue_+' '+mobileNumber,           
+            labelName: "This connection is already assign to your mobile number"
+          },
+            "warning"
+          ))
+        
+       }
+      
+
+      }
+      // dispatch(
+      //   handleField(
+      //     "link-connection-details",
+      //     "components.div.children.footer.children.SubmitButton",
+      //     "visible",
+      //     false
+      //   )
+      // );
+      // dispatch(
+      //   toggleSnackbar(
+      //     true, {
+      //     labelKey: "WS_LINK_CONNECTION_VALLIDATION",
+      //     labelName: "This connection is already assign to other user"
+      //   },
+      //     "warning"
+      //   )
+      // )
+     }
+     else
+     {
+       
+       dispatch(
         handleField(
           "link-connection-details",
           "components.div.children.footer.children.SubmitButton",
@@ -71,21 +180,30 @@ import {
           labelName: "This connection is already assign to other user"
         },
           "warning"
-        )
-      )
+        ))
+
      }
-     else
-     {
+    }
+    else{
       dispatch(
         handleField(
           "link-connection-details",
           "components.div.children.footer.children.SubmitButton",
           "visible",
-          true
+          false
         )
       );
+      dispatch(
+        toggleSnackbar(
+          true, {
+          labelKey: "WS_SUBACTIVITY_CONNECTION_VALIDATION_MESSAGE",
+          labelName: "There is an application under approval on this water connection, kindly connect with helpdesk or Public Health Div 2 department in order to get the status"
+        },
+          "warning"
+        )
+      )
 
-     }
+    }
     } catch (err) { console.log(err) }
   
      

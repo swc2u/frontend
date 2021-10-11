@@ -10,7 +10,7 @@ import get from "lodash/get";
 //import LabelContainer from "../../ui-containers/LabelContainer";
 import LabelContainer from "egov-ui-framework/ui-containers/LabelContainer";
 import { handleScreenConfigurationFieldChange as handleField, prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import "./index.css";
+//import "./index.css";
 
 const styles = theme => ({
   root: {

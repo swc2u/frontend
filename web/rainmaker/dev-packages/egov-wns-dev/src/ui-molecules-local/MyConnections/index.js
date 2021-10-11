@@ -252,7 +252,7 @@ else{
                           />
                         </Grid>
                       </Grid>
-                      <div>
+                      {/* <div>
                         {item.status === "NA" ?
                           (<div>
                             <LabelContainer
@@ -279,7 +279,7 @@ else{
                               />
                             </div>)
                         }
-                      </div>
+                      </div> */}
                     </div>
                   </CardContent>
                 </Card>
