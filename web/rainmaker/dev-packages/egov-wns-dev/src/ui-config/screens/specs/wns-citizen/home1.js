@@ -66,7 +66,7 @@ const waterAndSewerageSearchAndResult = {
     name: "home",
     moduleName: "egov-wns",
     beforeInitScreen: (action, state, dispatch) => {
-        //test code
+        //test code 123
     //     setModule("rainmaker-wns");
     // const userInfo = JSON.parse(getUserInfo());
     // const tenantId = process.env.REACT_APP_NAME === "Citizen" ? (userInfo.permanentCity || userInfo.tenantId): getTenantId();
