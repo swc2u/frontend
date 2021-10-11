@@ -15,6 +15,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { 
   GetMdmsNameBycode,
+  setInactiveConnectionHolder,
   epochToYmd
 } from "../utils";
 import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField ,toggleSpinner} from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -52,6 +53,7 @@ import { reviewConnectionDetails } from "./applyResource/reviewConnectionDetails
 import { togglePropertyFeilds, toggleSewerageFeilds, toggleWaterFeilds,toggleTubewellFeilds } from '../../../../ui-containers-local/CheckboxContainer/toggleFeilds';
 import { getLocale,getTenantId,getUserInfo,setModule } from "egov-ui-kit/utils/localStorageUtils";
 import cloneDeep from "lodash/cloneDeep";
+
 export const stepperData = () => {
   if (process.env.REACT_APP_NAME === "Citizen") {
     return [{ labelKey: "WS_COMMON_CONNECTION_DETAILS" }, { labelKey: "WS_COMMON_DOCS" }, { labelKey: "WS_COMMON_SUMMARY" }];
@@ -131,6 +133,33 @@ const searchResults = async (action, state, dispatch, connectionNumber) => {
       } else {
         payloadData.WaterConnection[0].connectionExecutionDate = 'NA'
       }
+     // payloadData = setInactiveConnectionHolder(payloadData)
+     /////? set inactive connection holder
+    //  payloadWater.WaterConnection[0].connectionHolders =[]
+    //  for (let index = 0; index < 4; index++) {
+    //   // const element = array[index];
+    //    let ststus = 'ACTIVE'
+    //    if(index%2 ===0)
+    //    {
+    //      ststus = 'ACTIVE'
+    //    }
+    //    else{
+    //      ststus = 'INACTIVE'
+    //    }
+    //    payloadWater.WaterConnection[0].connectionHolders.push(
+    //      {
+    //        mobileNumber:`XXXXXXXXXX${index}`,
+    //        name:`INACTIVE-XXXX${index}`,
+    //        correspondenceAddress:`correspondenceAddressxxx${index}`,
+    //        aadhaarNumber:`aadhaarNumber-x${index}`,
+    //        status:status
+   
+    //      }
+    //    )
+       
+    //  }
+     
+   /////
       //set Property Usage Type and Property Sub Usage Type
       if(payloadData.WaterConnection[0].property.usageCategory!== null && payloadData.WaterConnection[0].property.usageCategory !== undefined)
       {
@@ -708,6 +737,33 @@ export const getData = async (action, state, dispatch) => {
         payloadWater.WaterConnection[0].property.noOfFloors = String(payloadWater.WaterConnection[0].property.noOfFloors);
 
        // payloadWater.WaterConnection =  findAndReplace(payloadWater.WaterConnection, "NA", null)
+        /////? set inactive connection holder
+       // payloadWater = setInactiveConnectionHolder(payloadWater)
+      //   payloadWater.WaterConnection[0].connectionHolders =[]
+      // for (let index = 0; index < 4; index++) {
+      //  // const element = array[index];
+      //   let ststus = 'ACTIVE'
+      //   if(index%2 ===0)
+      //   {
+      //     ststus = 'ACTIVE'
+      //   }
+      //   else{
+      //     ststus = 'INACTIVE'
+      //   }
+      //   payloadWater.WaterConnection[0].connectionHolders.push(
+      //     {
+      //       mobileNumber:`XXXXXXXXXX${index}`,
+      //       name:`INACTIVE-XXXX${index}`,
+      //       correspondenceAddress:`correspondenceAddressxxx${index}`,
+      //       aadhaarNumber:`aadhaarNumber-x${index}`,
+      //       status:status
+    
+      //     }
+      //   )
+        
+      // }
+      
+    /////
         dispatch(prepareFinalObject("WaterConnection", payloadWater.WaterConnection));
         let connectionNumber = getQueryArg(window.location.href, "connectionNumber");
         if(connectionNumber)
@@ -808,22 +864,54 @@ export const getData = async (action, state, dispatch) => {
     // TEMPORARY_WSCONNECTION_BILLING -->
     // TEMPORARY_WSCONNECTION Construction -->
     //
-    //
-    if((activityType ==='APPLY_FOR_TEMPORARY_CONNECTION'  //TC
-    || activityType ==='TEMPORARY_WSCONNECTION'    
+    //**** 14 digit //
+    if((activityType ==='APPLY_FOR_TEMPORARY_CONNECTION_BILLING' //TB
+    || activityType ==='TEMPORARY_WSCONNECTION_BILLING'
+    || activityType ==='NEW_WS_CONNECTION'//NR
+    || activityType ==='REGULARWSCONNECTION' )
+    &&
+    (applicationStatus_ ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"    
+    //|| 1===1
+    ) 
+    &&
+    (
+      1===1
+    )
+    )
+    {
+      const textFieldsconnectionAccountDetails = ["numberOfMeterNumber","twodigitNumber","fourdigitNumber",];
+            for (let i = 0; i < textFieldsconnectionAccountDetails.length; i++) {
+              dispatch(handleField(
+                "apply",
+                `components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ConnectionNumberContainer.children.cardContent.children.connectionAccountDetails.children.${textFieldsconnectionAccountDetails[i]}`,
+                "props.disabled",
+                true
+                ));
+            }
+      dispatch(
+        handleField(
+          "apply",
+          "components.div.children.formwizardThirdStep.children.additionDetails.children.cardContent.children.ConnectionNumberContainer.children.cardContent.children.connectionAccountDetails.children.lastDigitNumber",
+          "props.disabled",
+          false
+        )
+      );
+    }
+    //****/
+
+    if((activityType ==='APPLY_FOR_TEMPORARY_CONNECTION_'  //TC
+    || activityType ==='TEMPORARY_WSCONNECTION_'    
     || activityType ==='APPLY_FOR_TEMPORARY_CONNECTION_BILLING' //TB
     || activityType ==='TEMPORARY_WSCONNECTION_BILLING'
     || activityType ==='NEW_WS_CONNECTION'//NR
     || activityType ==='REGULARWSCONNECTION' )
     &&
-    (applicationStatus_ ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"
-    // || applicationStatus_ ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"
-    // ||applicationStatus_ ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"
+    (applicationStatus_ ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"    
     //|| 1===1
     ) 
     &&
     (
-      1!==1
+      1===1
     )
     )
     {
@@ -875,7 +963,7 @@ export const getData = async (action, state, dispatch) => {
     //|| 1===1
     )
     &&
-    ( 1!==1)    
+    ( 1===1)    
     )
     { 
       IsEdit = true;

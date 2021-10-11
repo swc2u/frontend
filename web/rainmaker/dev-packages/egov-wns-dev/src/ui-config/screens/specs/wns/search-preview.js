@@ -29,6 +29,7 @@ import {
   getDialogButton,
   convertDateToEpoch,
   showHideAdhocPopup,
+  setInactiveConnectionHolder,
   GetMdmsNameBycode
 } from "../utils";
 
@@ -980,6 +981,19 @@ const searchResults = async (action, state, dispatch, applicationNumber,processI
     payload.WaterConnection[0].service = service;
     payload.WaterConnection[0].property.subusageCategory = payload.WaterConnection[0].property.usageCategory;
     payload.WaterConnection[0].property.usageCategory = payload.WaterConnection[0].property.usageCategory.split('.')[0];
+    /////? set inactive connection holder
+   // payload = setInactiveConnectionHolder(payload)
+    // payload.WaterConnection[0].connectionHolders.push(
+    //   {
+    //     mobileNumber:'XXXXXXXXXX',
+    //     name:'INACTIVE-XXXX',
+    //     correspondenceAddress:'correspondenceAddressxxx',
+    //     aadhaarNumber:'aadhaarNumber-x',
+    //     status:'INACTIVE'
+
+    //   }
+    // )
+    /////
     //
     
       let code = '';

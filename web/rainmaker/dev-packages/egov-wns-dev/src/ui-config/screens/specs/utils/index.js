@@ -616,7 +616,30 @@ export const handleNA = params => {
    
   else { return "NA"; }
 }
+export const setInactiveConnectionHolder = (payloadWater) => {
+  for (let index = 0; index < 4; index++) {
+    let status = 'ACTIVE'
+    if((index/2) ===0)
+    {
+      status = 'ACTIVE'
+    }
+    else{
+      status = 'INACTIVE'
+    }
+    payloadWater.WaterConnection[0].connectionHolders.push(
+      {
+        mobileNumber:`XXXXXXXXXX${index}`,
+        name:`INACTIVE-XXXX${index}`,
+        correspondenceAddress:`correspondenceAddressxxx${index}`,
+        aadhaarNumber:`aadhaarNumber-x${index}`,
+        status:status
 
+      }
+    )
+  }
+  return payloadWater;
+
+}
 export const convertEpochToDate = dateEpoch => {
   const dateFromApi = new Date(dateEpoch);
   let month = dateFromApi.getMonth() + 1;

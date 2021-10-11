@@ -75,7 +75,7 @@ const Setconnection = async (state, dispatch) => {
     );
     //return;
   }
-  if(IvalidfourdigitNumber=== false)
+  if(IvalidfourdigitNumber=== false || fourdigitNumber ==='')
   {
     dispatch(
       toggleSnackbar(
@@ -88,26 +88,26 @@ const Setconnection = async (state, dispatch) => {
     );
     return
   }
-  else if(IvalidtwodigitNumber===false)
+   if(IvalidtwodigitNumber===false || twodigitNumber ==='')
   {
     dispatch(
       toggleSnackbar(
         true, {
-        labelKey: "ERR_HOUSE_NO_VALIDATION_FIELDS_MSG",
-        labelName: "Please enter valid house no"
+        labelKey: "ERR_NOF_VALIDATION_FIELDS_MSG",
+        labelName: "Please enter valid floor number"
       },
         "warning"
       )
     );
     return
   }
-  if(IvalidnumberOfMeterNumber===false)
+  if(IvalidnumberOfMeterNumber===false || numberOfMeterNumber ==='')
   {
     dispatch(
       toggleSnackbar(
         true, {
-        labelKey: "ERR_HOUSE_NO_VALIDATION_FIELDS_MSG",
-        labelName: "Please enter valid house no"
+        labelKey: "ERR_NOM_VALIDATION_FIELDS_MSG",
+        labelName: "Please enter valid no. of meters"
       },
         "warning"
       )
@@ -657,6 +657,27 @@ export const additionDetails =(Disabled)=> getCommonCard({
          }
       ), 
       break:getBreak(),
+      lastDigitNumber: getTextField({
+        label: {
+          labelKey: "WS_LAST_DIGIT_CONNECTION_LABEL"
+        },
+        // placeholder: {
+        //   labelKey: "WS_TWO_DIGIT_CONNECTION_LABEL"
+        // },
+        props:{
+          disabled:true
+
+        },
+        gridDefination: {
+          xs: 12,
+          sm: 6
+        },
+        required: true,
+        //pattern: getPattern("Amount"),
+        pattern: /^[a-zA-Z]{0,1}$/i,
+        errorMessage: "ERR_NOM_VALIDATION_FIELDS_MSG",
+        jsonPath: "applyScreen.waterApplication.lastDigitNumber"
+      }),
       setButton: {
         componentPath: "Button",
         props: {

@@ -486,6 +486,28 @@ ApplicationStatus =  data.waterApplication.applicationStatus;
         labelName = 'Proposed connection execution details can not be blank'
 
       }
+      else if(( data.activityType ==='TEMPORARY_WSCONNECTION' 
+      || data.activityType ==='APPLY_FOR_TEMPORARY_CONNECTION' //TB   
+    || data.activityType ==='APPLY_FOR_TEMPORARY_CONNECTION_BILLING' //TB
+    || data.activityType ==='TEMPORARY_WSCONNECTION_BILLING'
+    || data.activityType ==='NEW_WS_CONNECTION'//NR
+    || data.activityType ==='REGULARWSCONNECTION' )
+  &&  
+  (data.waterApplication.applicationStatus ==="PENDING_FOR_CONNECTION_ACTIVATION_BY_SUPERINTENDENT"    
+    ) 
+    &&
+    (
+      data.action==='ACTIVATE_REGULAR_CONNECTION' 
+      || data.action==='ACTIVATE_TEMPORARY_CONNECTION'
+      || data.action==='ACTIVATE_REGULAR_CONNECTION'
+      || 1===1
+    )
+    
+    )
+  {
+    labelKey = 'WS_SET_CONNECTION_NUMBER_VALIDATION'
+    labelName ="Please set Consumer number/Account number"
+  }
       toggleSnackbar(
         true,
         {
