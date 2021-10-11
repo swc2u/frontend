@@ -438,6 +438,9 @@ export const handleFileUpload = (event, handleDocument, props) => {
         existingfileSize += parseFloat(doc.fileSize);
       });
     }
+    setTimeout(() => {
+      
+    
     Object.keys(files).forEach(async (key, index) => {
       const file = files[key];
       let fileValid = isFileValid(file, acceptedFiles(inputProps.accept));
@@ -509,8 +512,13 @@ export const handleFileUpload = (event, handleDocument, props) => {
     
       } 
         else {
+          if(file.type !==inputProps.accept){
+            var msg=`File type not supported`
+       store.dispatch(toggleSnackbar(true, { labelName:msg}, "warning"));
+        uploadDocument = false;
+          }
+          else{
           if (file.type.match(/^image\//) || file.type.match(/^pdf\//)) {
-       
         var msg=`Only image or pdf files can be uploaded`
         store.dispatch(toggleSnackbar(true, { labelName:msg}, "warning"));
         uploadDocument = false;
@@ -521,7 +529,7 @@ export const handleFileUpload = (event, handleDocument, props) => {
        store.dispatch(toggleSnackbar(true, { labelName:msg}, "warning"));
         uploadDocument = false;
       } 
-  
+    }
       }  
     }
      
@@ -550,6 +558,7 @@ export const handleFileUpload = (event, handleDocument, props) => {
         }
       }
     });
+  }, 1000);
   }
   else{
     // dispatch(
