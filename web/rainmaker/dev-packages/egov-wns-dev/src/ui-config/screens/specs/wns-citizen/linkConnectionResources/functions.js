@@ -33,6 +33,13 @@ export const addConnectionMappingApiCall = async (state, dispatch) => {
     "combinedSearchResults[0].propertyId",
     ''
   );
+  let waterApplicationList = get(
+    state.screenConfiguration.preparedFinalObject,
+    "combinedSearchResults[0].waterApplicationList",
+    ''
+  );
+   waterApplicationList = payload.waterApplicationList.sort((a, b) => (a.auditDetails.lastModifiedTime > b.auditDetails.lastModifiedTime ? -1 : 1));   
+  let applicationNo = waterApplicationList[0].id
   
   let WFBody = {
     WaterConnection:
@@ -40,6 +47,7 @@ export const addConnectionMappingApiCall = async (state, dispatch) => {
         id: id,
         tenantId: getTenantId(),
         propertyId: propertyId,
+        applicationNo:applicationNo,
           
       } 
   };

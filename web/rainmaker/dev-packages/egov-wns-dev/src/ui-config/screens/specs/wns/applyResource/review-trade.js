@@ -756,15 +756,15 @@ export const connectionHolderDetails={
     },
     { jsonPath: "WaterConnection[0].connectionHolders[0].aadhaarNumber", callBack: handleNA }
   ),
-    // specialApplicantCategory : getLabelWithValue(
-    //  {
-    //    labelKey: "WS_CONN_HOLDER_OWN_DETAIL_SPECIAL_APPLICANT_LABEL"
-    //  },
-    //  {
-    //    jsonPath: "WaterConnection[0].connectionHolders[0].ownerType",
-    //    callBack: handleNA
-    //  }
-   //)
+    holderStatus : getLabelWithValue(
+     {
+       labelKey: "STATUS"
+     },
+     {
+       jsonPath: "WaterConnection[0].connectionHolders[0].status",
+       callBack: handleNA
+     }
+   )
  };
  export const proposedconnectionHolderDetails={
   proposedMobileNo : getLabelWithValue(
@@ -824,6 +824,7 @@ export const connectionHolderDetails={
 const taskConnHolderDetailsSummary = () => {
   return ({
     uiFramework: "custom-containers",
+    moduleName: "egov-wns",
     componentPath: "MultiItem",
     props: {
       className: "common-div-css search-preview",
@@ -833,6 +834,7 @@ const taskConnHolderDetailsSummary = () => {
       }),
       items: [],
       hasAddItem: false,
+      isReviewPage:true,
       sourceJsonPath: "WaterConnection[0].connectionHolders",
       prefixSourceJsonPath: "children.cardContent.children.connHoldDetail.children",
       afterPrefixJsonPath: "children.value.children.key"

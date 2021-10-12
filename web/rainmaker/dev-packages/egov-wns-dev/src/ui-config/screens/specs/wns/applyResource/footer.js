@@ -2644,15 +2644,15 @@ if(isConnectionDetailsValid)
             };
 
           }
-          else if(connectionNoCheck.length === 13)
-          {
-            isFormValid = false;
-            errorMessage = {
-              labelName: "Please set Consumer number/Account number",
-              labelKey: "WS_SET_CONNECTION_NUMBER_VALIDATION"//WS_METER_INSTALATION_DATE_VALIDATION
-            };
+          // else if(connectionNoCheck.length === 13)
+          // {
+          //   isFormValid = false;
+          //   errorMessage = {
+          //     labelName: "Please set Consumer number/Account number",
+          //     labelKey: "WS_SET_CONNECTION_NUMBER_VALIDATION"//WS_METER_INSTALATION_DATE_VALIDATION
+          //   };
 
-          }
+          // }
 
   }
 

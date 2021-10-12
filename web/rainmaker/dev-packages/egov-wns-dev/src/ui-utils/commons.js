@@ -2108,6 +2108,41 @@ export const applyForWater = async (state, dispatch) => {
               }
               else{
                 set(queryObjectForUpdate, "processInstance.action", "SUBMIT_APPLICATION");
+                //set workflow_id in connection holder 
+                if(wnsStatus)
+                {
+                    let connectionHolders = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].connectionHolders",[]);
+                    let waterApplicationList = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplicationList",[]);
+                    if(waterApplicationList)
+                    {                        
+                       // waterApplicationList = waterApplicationList.filter(x=>x.applicationNo === applicationNo)
+                        waterId = waterApplicationList[0].id
+                        waterApplicationList = waterApplicationList.sort((a, b) => (a.auditDetails.lastModifiedTime > b.auditDetails.lastModifiedTime ? -1 : 1));
+                        waterId = waterApplicationList[0].id
+                        //WaterConnection[0].activityType = waterApplicationList_[0].activityType
+                    }
+                    
+                    for (let index = 0; index < connectionHolders.length; index++) {
+                        const element = connectionHolders[index];
+                        if(element.status==='ACTIVE')
+                        {
+                            set(queryObjectForUpdate, `connectionHolders[${index}].ws_application_id`, waterId);
+                        }
+                        
+                    }
+                    
+
+                }
+                else
+                {
+                    let waterApplication = get(state, "screenConfiguration.preparedFinalObject.WaterConnection[0].waterApplication");
+                    if(waterApplication)
+                    {
+                        set(queryObjectForUpdate, "connectionHolders[0].ws_application_id", waterApplication.id);
+                    }
+                    
+
+                }
               }             
               
               set(queryObjectForUpdate, "activityType", wnsStatus);
@@ -3284,6 +3319,25 @@ export const downloadApp = async (state,wnsConnection, type, mode = "download",d
                          sector = get(wnsConnection[0], "property.address.locality.name", '')
                          upto = epochToYmdDate(get(wnsConnection[0], "waterApplication.auditDetails.lastModifiedTime", ''))
                          connectionNumber = get(wnsConnection[0], "connectionNo", '')
+                         let connectionHolders = get(wnsConnection[0], "connectionHolders", [])
+                         let waterApplicationList = get(wnsConnection[0], "waterApplicationList", [])
+
+                         if(connectionNumber.length < 14)
+                         {
+                            connectionNumber = 'Account Number Generation Under Process'
+                         }
+                         if(connectionHolders.length>1)
+                         {
+                            waterApplicationList = waterApplicationList.filter(x=>x.applicationNo === applicationNumber )
+                            connectionHolders = connectionHolders.filter(x=>x.ws_application_id ===waterApplicationList[0].id)
+                            if(connectionHolders && connectionHolders[0])
+                            {
+                                applicantName = connectionHolders[0].name
+                               // applicantName = connectionHolders[0].name
+                            }
+                            
+
+                         }
                          applicantAddress = `Plot number-${plotnumber},House number-${houseNo},Locality-${sector}`
                          // set activityType 
                          switch (activityType) {

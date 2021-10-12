@@ -84,8 +84,12 @@ import { prepareFinalObject, handleScreenConfigurationFieldChange as handleField
         props: {
           // optionValue: "code",
           // optionLabel: "name",
-          disabled: true
+          disabled: true,
+          InputProps:{
+            readOnly:true
+          }
         },
+        
       }),
       beforeFieldChange: async (action, state, dispatch) => {
       

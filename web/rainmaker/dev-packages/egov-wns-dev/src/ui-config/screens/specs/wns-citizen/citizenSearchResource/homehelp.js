@@ -146,10 +146,10 @@ import {
           {
             ...getSelectField({
            // label: { labelName: "Water connection consumer number", labelKey: "WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL_HOME" },
-            placeholder: {
-              labelName: "Please Select Your Water Consumer No. To Avail Below Services",
-              labelKey: "WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL_HOME_SELECT"
-            },
+            // placeholder: {
+            //   labelName: "Please Select Your Water Consumer No. To Avail Below Services",
+            //   labelKey: "WS_HOME_SEARCH_RESULTS_CONSUMER_NO_LABEL_HOME_SELECT"
+            // },
             required: false,
             jsonPath: "searchScreen.connectionNo",
             // gridDefination: {
