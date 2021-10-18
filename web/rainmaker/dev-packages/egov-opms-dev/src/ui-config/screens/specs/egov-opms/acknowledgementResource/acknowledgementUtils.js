@@ -8,7 +8,7 @@ import {
 
 const style = {
   bodyBox: {
-    marginLeft: 16,
+    marginLeft: 14,
     flex: 2
   },
   tailText: {
@@ -108,7 +108,7 @@ const acknowledgementCard = ({
         tail: tail
       },
       {
-        style: style.container
+        // style: style.container
       }
     )
   });

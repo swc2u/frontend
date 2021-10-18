@@ -335,6 +335,22 @@ export const nocDetails = getCommonCard({
           // disabled: true
         },
       })
-    }
+    },
+    mobileNo:{
+      ...getTextField({
+         label:{
+            labelName:"mobileNo",
+            labelKey:"SELLMEAT_MONILENO_NOC"
+         },
+         placeholder:{
+            labelName:"Enter Mobile No",
+            labelKey:"SELLMEAT_MOBILENO_PLACEHOLDER"
+         },
+         required:true,
+         pattern:getOPMSPattern("NOCMobileNo"),
+         errorMessage:"ERR_NOC_SELLMEAT_MOBILENO",
+         jsonPath:"ROADCUTNOC.mobileNumber"
+      })
+    },
   })
 });
