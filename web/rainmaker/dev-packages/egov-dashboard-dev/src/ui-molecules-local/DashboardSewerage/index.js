@@ -116,8 +116,9 @@ class SewerageDashboard extends React.Component {
         tableRowDataFinal.push(tableRowData[i]);
     }
 
+    tableRowDataFinal = JSON.stringify(tableRowDataFinal).replaceAll("_"," ");
+    tableRowDataFinal = JSON.parse(tableRowDataFinal);
 
-    
     // PDF Code 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -138,17 +139,40 @@ class SewerageDashboard extends React.Component {
     doc.setFontSize(5);
 
     doc.autoTable({
-        // head: [tableColumnDataCamel],
+        theme: "grid",
+        margin: { top : 22, right: 2, left : 2 },
         head: [colData],
-        theme: "striped",
         styles: {
-            fontSize: 7,
+            // overflow : "linebreak",
+            fontSize : 7,
         },
-        body:tableRowData
+        body: tableRowDataFinal
     });
 
     doc.save(pdfTitle+".pdf");
 
+    }
+
+    exportPDF = (e) => {
+        e.preventDefault();
+        var dt = new Date();
+        var doc = new jsPDF();
+        doc.setFontSize(7);
+        // doc.text("Case Summary", 10, 10);
+        // doc.text(dt.toISOString().substring(0,10), 175, 10);
+        doc.setFontSize(14);
+        // doc.text("SUPREME COURT CASES", 100, 15, "center");
+            
+        doc.autoTable({ html: '#tableContent',
+        theme: "grid",
+        margin: { top : 22, right: 2, left : 2 },
+        styles : {
+            overflow : "linebreak",
+            fontSize : 7,
+        },
+        // columnStyles: { 0: { halign: 'center', fillColor: [0, 255, 0] } },
+        })
+        doc.save('SewerageDashboardReport.pdf');
     }
 
     // Column Unchange Data
@@ -557,8 +581,28 @@ class SewerageDashboard extends React.Component {
                 recordNotFound : "Record not Found..!"
             })
 
+            var csvData = [];
+            for(var i=0; i<data.length; i++){
+                var row = {
+                    "Application No" : data[i].applicationNo,
+                    "Application Status" : data[i].applicationStatus.replaceAll("_"," "),
+                    "Name" : data[i].connectionHolders[0].name,
+                    "Plot No" : data[i].swProperty.plotNo,
+                    "Sector No" : data[i].swProperty.sectorNo,
+                    "Usage Category" : data[i].swProperty.usageCategory,
+                    "Sub Usage Category" : data[i].swProperty.usageSubCategory,
+                    "Connection Type" : data[i].connectionType,
+                    "Sub Division" : data[i].subdiv,
+                    "Leger No" : data[i].ledgerNo,
+                    "Leger Group" : data[i].ledgerGroup,
+                    "Bill group" : data[i].billGroup,
+                    "Amount" : data[i].totalAmountPaid
+                };
+                csvData.push(row);
+            }
             this.setState({
-                checkData : this.props.data
+                checkData : this.props.data,
+                csvData : csvData
             })
         }
     }
@@ -566,7 +610,7 @@ class SewerageDashboard extends React.Component {
     render() {
     
     // Export to excel Data
-    const csvData = this.state.rowData;
+    // const csvData = this.state.rowData;
 
     // First Double Bar Graph Graph
     var PIEgraphOneSortedData = {
@@ -669,6 +713,28 @@ class SewerageDashboard extends React.Component {
                 data = this.state.dataOne[selectedVal];
                     if(data){
                         var graphSorting = this.graphSorting(data, "applicationStatus", this.state.dropdownSelected, "SEP Program Status");
+                        var csvData = [];
+                        for(var i=0; i<data.length; i++){
+                            var row = {
+                                "Application No" : data[i].applicationNo,
+                                "Application Status" : data[i].applicationStatus.replaceAll("_"," "),
+                                "Name" : data[i].connectionHolders[0].name,
+                                "Plot No" : data[i].swProperty.plotNo,
+                                "Sector No" : data[i].swProperty.sectorNo,
+                                "Usage Category" : data[i].swProperty.usageCategory,
+                                "Sub Usage Category" : data[i].swProperty.usageSubCategory,
+                                "Connection Type" : data[i].connectionType,
+                                "Sub Division" : data[i].subdiv,
+                                "Leger No" : data[i].ledgerNo,
+                                "Leger Group" : data[i].ledgerGroup,
+                                "Bill group" : data[i].billGroup,
+                                "Amount" : data[i].totalAmountPaid
+                            };
+                            csvData.push(row);
+                        }
+                        this.setState({
+                            csvData : csvData
+                        })
                     }else{return 0}
                 
                 this.setState({
@@ -788,7 +854,28 @@ class SewerageDashboard extends React.Component {
                 const data = this.state.dataTwo[selectedVal];              
                 var graphSorting = this.graphSorting(data, "subdiv", this.state.dropdownSelected, "Final Dashboard");
                 
+                var csvData = [];
+                        for(var i=0; i<data.length; i++){
+                            var row = {
+                                "Application No" : data[i].applicationNo,
+                                "Application Status" : data[i].applicationStatus.replaceAll("_"," "),
+                                "Name" : data[i].connectionHolders[0].name,
+                                "Plot No" : data[i].swProperty.plotNo,
+                                "Sector No" : data[i].swProperty.sectorNo,
+                                "Usage Category" : data[i].swProperty.usageCategory,
+                                "Sub Usage Category" : data[i].swProperty.usageSubCategory,
+                                "Connection Type" : data[i].connectionType,
+                                "Sub Division" : data[i].subdiv,
+                                "Leger No" : data[i].ledgerNo,
+                                "Leger Group" : data[i].ledgerGroup,
+                                "Bill group" : data[i].billGroup,
+                                "Amount" : data[i].totalAmountPaid
+                            };
+                            csvData.push(row);
+                        }
+
                 this.setState({
+                    csvData : csvData,
                     rowData: data,
                     graphClicked : 2
                 })
@@ -893,10 +980,31 @@ class SewerageDashboard extends React.Component {
                 
                 var ind = element[0]._index;   
                 const selectedVal = this.state.graphThreeLabel[ind];
-                const data = this.state.dataThird[selectedVal];              
+                const data = this.state.dataThird[selectedVal]; 
+                var csvData = [];
+                        for(var i=0; i<data.length; i++){
+                            var row = {
+                                "Application No" : data[i].applicationNo,
+                                "Application Status" : data[i].applicationStatus.replaceAll("_"," "),
+                                "Name" : data[i].connectionHolders[0].name,
+                                "Plot No" : data[i].swProperty.plotNo,
+                                "Sector No" : data[i].swProperty.sectorNo,
+                                "Usage Category" : data[i].swProperty.usageCategory,
+                                "Sub Usage Category" : data[i].swProperty.usageSubCategory,
+                                "Connection Type" : data[i].connectionType,
+                                "Sub Division" : data[i].subdiv,
+                                "Leger No" : data[i].ledgerNo,
+                                "Leger Group" : data[i].ledgerGroup,
+                                "Bill group" : data[i].billGroup,
+                                "Amount" : data[i].totalAmountPaid
+                            };
+                            csvData.push(row);
+                        }
+
                 this.setState({
-                    rowData: data
-                })
+                    rowData: data,
+                    csvData : csvData
+                })             
                 
             }
         },
@@ -971,11 +1079,12 @@ class SewerageDashboard extends React.Component {
                 <div className="columnToggle-Text"> Download As: </div>
                 
                 <div className="columnToggleBtn"> 
-                <CSVLink data={csvData}
+                <CSVLink data={this.state.csvData}
                 filename={"Sewerage_dashboard.csv"}
                 > Export Excel </CSVLink>
                 </div>
 
+                {/* <button className="columnToggleBtn" onClick={this.exportPDF}> PDF </button> */}
                 <button className="columnToggleBtn" onClick={this.pdfDownload}> PDF </button>
 
                 <button className="columnToggleBtn" onClick={this.toggleColumn}> Column Visibility </button>
@@ -1000,7 +1109,9 @@ class SewerageDashboard extends React.Component {
 
         {
             this.state.graphClicked >= 0 ?
-            <ReactTable id="customReactTable"
+            <ReactTable 
+            id="customReactTable"
+            // id="tableContent"
             // PaginationComponent={Pagination}
             data={ this.state.rowData }  
             columns={ this.state.columnData }  
