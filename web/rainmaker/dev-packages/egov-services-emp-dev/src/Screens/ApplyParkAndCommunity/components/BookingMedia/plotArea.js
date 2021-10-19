@@ -45,7 +45,7 @@ class PlotArea extends React.Component {
         }
        
         const { changeCalendar} =this.props;
-       
+              
         changeCalendar();
         this.props.prepareFinalObject(
             "bkBookingData",

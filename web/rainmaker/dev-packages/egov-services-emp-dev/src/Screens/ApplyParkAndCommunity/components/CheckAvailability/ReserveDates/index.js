@@ -618,7 +618,7 @@ class CheckAvailability extends Component {
         "warning"
       );
       return false;
-    }
+   }
     let isAvailable= true
     if (holdingDatesArray && holdingDatesArray.length > 0) {
       let bookingData= {}
@@ -641,29 +641,28 @@ class CheckAvailability extends Component {
       }
     }
     if(isAvailable){
-      let requestBody = { commercialGrndAvailabilityLock: holdingDatesArray }
+    let requestBody = { commercialGrndAvailabilityLock: holdingDatesArray }
 
-      let apiResponse = await httpRequest(
-        "bookings/commercial/ground/availability/_lock?",
-        "_search",
-        [],
-        requestBody
-      );
-      if (apiResponse && apiResponse.status == "200") {
-        if(apiResponse && apiResponse.message === "Already Booked"){
-          this.props.toggleSnackbarAndSetText(
-            true,
-            {
-              labelName: "Selected dates already booked",
-              labelKey: `BK_ERR_VALUE_HOLDING_DATES_ALREADY_BOOKED`
-            },
-            "error"
-          );
-          return false;
-        }else{
-        //window.location.href = "/egov-services/reservedbookingdates";
-        this.props.history.push(`/egov-services/reservedbookingdates`);
-        }
+    let apiResponse = await httpRequest(
+      "bookings/commercial/ground/availability/_lock?",
+      "_search",
+      [],
+      requestBody
+    );
+    if (apiResponse && apiResponse.status == "200") {
+      if(apiResponse && apiResponse.message === "Already Booked"){
+        this.props.toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "Selected dates already booked",
+            labelKey: `BK_ERR_VALUE_HOLDING_DATES_ALREADY_BOOKED`
+          },
+          "error"
+        );
+        return false;
+      }else{
+      //window.location.href = "/egov-services/reservedbookingdates";
+      this.props.history.push(`/egov-services/reservedbookingdates`);
       }
     }else{
       this.props.toggleSnackbarAndSetText(
@@ -676,7 +675,18 @@ class CheckAvailability extends Component {
       );
       return false
     }
-    
+  }else{
+    this.props.toggleSnackbarAndSetText(
+      true,
+      {
+        labelName: "Selected dates are locked by user.Please try after 30 minutes",
+        labelKey: "Selected dates are locked by user.Please try after 30 minutes"
+      },
+      "error"
+    );
+    return false
+  }
+
 
   }
   calculateBetweenDaysCount = (startDate, endDate) => {
@@ -900,8 +910,8 @@ class CheckAvailability extends Component {
 
 
             {/*Import Booking Media for Commercial*/}
-            {this.state.setAllForCG && this.state.vanueType === "Commercial Ground" && !this.props.timeSlotMessageForAdmin &&
-              this.state.locality ? (
+       {this.state.setAllForCG && this.state.vanueType === "Commercial Ground" && !this.props.timeSlotMessageForAdmin &&
+                   this.state.locality ? (
 
               <div
                 className="col-sm-12 col-xs-12"
@@ -947,7 +957,7 @@ class CheckAvailability extends Component {
               vanueData.bookingAllowedFor == "" &&
               this.state.showCalendar &&
               this.state.calendarAfterImg && !this.props.timeSlotMessageForAdmin && (
-                
+            
                 <div
                   className="col-sm-12 col-xs-12"
 
@@ -982,11 +992,11 @@ class CheckAvailability extends Component {
             }
             {/*start of book button for commercil*/}
             {this.state.setAllForCG && this.state.vanueType === "Commercial Ground" &&
-              this.state.locality && !this.props.timeSlotMessageForAdmin &&(
-                <div
-                  className="col-sm-12 col-xs-12 adminReserve"
-                  style={{ textAlign: "right" }}
-                >
+            this.state.locality && !this.props.timeSlotMessageForAdmin &&(
+              <div
+                className="col-sm-12 col-xs-12 adminReserve"
+                style={{ textAlign: "right" }}
+              >
                   <Button
                     className="responsive-action-button"
                     primary={true}
@@ -1022,7 +1032,7 @@ class CheckAvailability extends Component {
                   className="col-sm-12 col-xs-12 adminReserve"
                   style={{ textAlign: "right" }}
                 >
-                  <Button
+              <Button
                     className="responsive-action-button"
                     primary={true}
                     label={

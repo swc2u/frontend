@@ -6,6 +6,8 @@ import cloneDeep from "lodash/cloneDeep";
 import get from "lodash/get";
 import set from "lodash/set";
 import { httpRequest } from "../../../../../ui-utils/api";
+import { prepareFinalObject , handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+
 import {
   getSearchResults,
   getSearchResultsView,
@@ -34,7 +36,7 @@ export const selectPG = async (state, dispatch) => {
   showHideAdhocPopup(state, dispatch, "pay");
 };
 
-export const callPGService = async (state, dispatch, item, isAvailable) => {
+export const callPGService = async (state, dispatch, item, isAvailable, apiSuccess) => {
   const bookingData = get(
     state,
     "screenConfiguration.preparedFinalObject.Booking"
@@ -136,19 +138,35 @@ export const callPGService = async (state, dispatch, item, isAvailable) => {
       console.log(e);
     }
   } else {
+
+    dispatch(
+      handleField("pay", "components.div.children.cityPickerDialog", "props.open", false)
+      );
+      if(apiSuccess){
+        dispatch(
+          toggleSnackbar(
+            true,
+            {
+              labelName: "The Booking for the Selected Date and Selected Venue is not available.Please book for different date and venue.",
+              labelKey: "",
+            },
+            "warning"
+          )
+        );
+      }else{  
     dispatch(
       toggleSnackbar(
         true,
         {
-          labelName: "Selected Dates are Already Booked. Try Again!",
+          labelName: "The Booking for the Selected Date and Selected Venue is in Process. Please check again after 30 mins for Venue availability.",
           labelKey: "",
         },
         "warning"
       )
     );
- 
   }
-
+  }
+  
 }
 
 

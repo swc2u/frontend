@@ -253,6 +253,12 @@ const screenConfig = {
         const step = getQueryArg(window.location.href, "step");
         dispatch(
             prepareFinalObject(
+                "userAggrement",
+                false
+            )
+        ),
+        dispatch(
+            prepareFinalObject(
                 "Booking.bkApplicantName",
                 JSON.parse(getUserInfo()).name
             )

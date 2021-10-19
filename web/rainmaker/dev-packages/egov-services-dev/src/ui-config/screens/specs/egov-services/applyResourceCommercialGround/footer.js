@@ -226,8 +226,18 @@ const callBackForNext = async (state, dispatch) => {
         //         dispatch(setRoute(`/egov-services/checkavailability?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`));
 
         //     }
-        // })
-
+      // })
+      let userAggrementChecked =   get(
+        state.screenConfiguration.preparedFinalObject,
+        "userAggrement"
+    );
+    if(userAggrementChecked === false){
+        let errorMessage = {
+            labelName: "Please accept booking agreement by clicking checkbox.",
+            labelKey: "", //UPLOAD_FILE_TOAST
+        };
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+    }else{
 
         let applicationData = get(
             state.screenConfiguration.preparedFinalObject,
@@ -242,7 +252,7 @@ const callBackForNext = async (state, dispatch) => {
                 : "";
         const reviewUrl = `/egov-services/pay?applicationNumber=${applicationData.bkApplicationNumber}&tenantId=${applicationData.tenantId}&businessService=${applicationData.businessService}`;
         dispatch(setRoute(reviewUrl));
-
+        }
 
     }
     if (activeStep !== 4) {

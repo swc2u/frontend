@@ -6,7 +6,7 @@ import {
 import get from "lodash/get";
 import { openSpaceSummary } from "../summaryResource/openSpaceSummary";
 import { applicantSummary } from "../summaryResource/applicantSummary";
-import { documentsSummary, documentsSummary1 } from "../summaryResource/documentsSummary";
+import { documentsSummary, documentsSummary1,userAggrement } from "../summaryResource/documentsSummary";
 
 import { estimateSummary } from "../summaryResource/estimateSummary";
 
@@ -197,4 +197,5 @@ export const summaryDetails = getCommonCard({
     openSpaceSummary: openSpaceSummary,
     documentsSummary: documentsSummary,
     documentsSummary1: documentsSummary1,
+    userAggrement : userAggrement
 });

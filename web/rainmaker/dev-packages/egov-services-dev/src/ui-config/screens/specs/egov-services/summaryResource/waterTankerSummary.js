@@ -7,7 +7,7 @@ import {
     getLabelWithValue,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { convertDateInDMY } from "../../utils";
+import { convertDateInDMY, getCheckbox } from "../../utils";
 
 export const waterTankerSummary = getCommonGrayCard({
     header: {
@@ -156,6 +156,7 @@ export const waterTankerSummary = getCommonGrayCard({
                                 },
                             }
                         ),
+
                     }),
             }),
             items: [],
@@ -170,11 +171,30 @@ export const waterTankerSummary = getCommonGrayCard({
     },
 });
 
-// dispatch(
-//   handleField(
-//       "apply",
-//       "components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.detailsContainer.children.applicationType",
-//       "visible",
-//       applicationType
-//   )
-// );
+export const userAggrement = getCommonGrayCard({
+    header: {
+        uiFramework: "custom-atoms",
+        componentPath: "Container",
+        props: {
+            style: { marginBottom: "10px" },
+        },
+        children: {
+            header: {
+                gridDefination: {
+                    xs: 8,
+                },
+                ...getCommonSubHeader({
+                    labelName: "Booking Agreement",
+                    labelKey: "Booking Agreement",
+                }),
+            },
+        },
+    },
+    
+       
+    checkBoxContainer: getCheckbox(
+        "I understand that I will be liable for prosecution if any incorrect information is shared by me in this application.",
+        "userAggrement"
+      )
+    
+});

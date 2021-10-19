@@ -264,6 +264,17 @@ const callBackForNext = async (state, dispatch) => {
         //     labelKey: "", //UPLOAD_FILE_TOAST
         // };
         // dispatch(toggleSnackbar(true, successMessage, "success"));
+        let userAggrementChecked =   get(
+            state.screenConfiguration.preparedFinalObject,
+            "userAggrement"
+        );
+        if(userAggrementChecked === false){
+            let errorMessage = {
+                labelName: "Please accept booking agreement by clicking checkbox.",
+                labelKey: "", //UPLOAD_FILE_TOAST
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        }else{
         let applicationData = get(
             state.screenConfiguration.preparedFinalObject,
             "Booking"
@@ -278,7 +289,7 @@ const callBackForNext = async (state, dispatch) => {
         //     };
         //     dispatch(toggleSnackbar(true, errorMessage, "error"));
         // }
-    }
+    }}
     if (activeStep !== 4) {
         if (isFormValid) {
             changeStep(state, dispatch);

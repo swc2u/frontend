@@ -9,7 +9,7 @@ import {
     dispatchMultipleFieldChangeAction,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
-import { commercialGroundSummary } from "../summaryResource/commercialGroundSummary";
+import { commercialGroundSummary , userAggrement} from "../summaryResource/commercialGroundSummary";
 import { applicantSummary ,cgbBankSummary} from "../summaryResource/applicantSummaryCgb";
 import { documentsSummary } from "../summaryResource/documentsSummary";
 import { estimateSummary } from "../summaryResource/estimateSummary";
@@ -209,5 +209,6 @@ export const summaryDetails = getCommonCard({
     applicantSummary: applicantSummary,
     commercialGroundSummary: commercialGroundSummary,
     cgbBankSummary:cgbBankSummary,
-    documentsSummary: documentsSummary
+    documentsSummary: documentsSummary,
+    userAggrement:userAggrement
 });
