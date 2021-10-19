@@ -38,14 +38,14 @@ class CGAppDetails extends Component {
                       labelStyle={{ color: "inherit" }}
                       label={bkFatherName}
                     />
-                  </div>
+                  </div> 
                   <div className="col-md-4">
                     <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_APPLICANT_DETAILS_EMAIL" />
                     <Label
                       className="col-xs-6  col-sm-8 col-md-10  status-result-color"
                       id="complaint-details-current-status"
                       labelStyle={{ color: "inherit" }}
-                      label={bkEmail}
+                      label={bkEmail !== null && bkEmail !== undefined && bkEmail !== "" ? bkEmail : "NA" }
                     />
                   </div>
                   <div className="col-md-4">

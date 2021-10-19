@@ -226,7 +226,7 @@ class ApplicatInfo extends Component {
       return;
     }
 
-    else if (!re.test(this.props.email)) {
+    else if (this.props.email != '' && !re.test(this.props.email)) {
       this.props.toggleSnackbarAndSetText(
         true,
         {
@@ -336,7 +336,7 @@ class ApplicatInfo extends Component {
               type="string"
               disabled = {checkDateVenueChange == true ? true : false}
               value={email}
-              required={true}
+              // required={true}
               hintText={
                 <Label
                   label="BK_MYBK_CITIZEN_EMAIL_PLACEHOLDER"

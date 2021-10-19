@@ -29,7 +29,7 @@ class BwtApplicantDetails extends Component {
                       labelStyle={{ color: "inherit" }}
                     />
                   </div>
-                  
+                    
                     <div className="col-md-4">
                     <Label className="col-xs-12  col-sm-12 col-md-12 status-color" label="BK_MYBK_APPLICANT_DETAILS_EMAIL" />
                     <Label

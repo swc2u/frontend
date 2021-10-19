@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import "./index.css";
 import EditIcon from '@material-ui/icons/Edit';
 class CGBookingDetails extends Component {
-
+    
   render() {
     const { firstName, email, mobileNo,firstStep } = this.props;
 return (
@@ -48,7 +48,7 @@ return (
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
                                     labelStyle={{ color: "inherit" }}
-                                    label={email}
+                                    label={email != '' ? email : "NA"}
                                 />
                             </div>
                             <div className="col-md-4">

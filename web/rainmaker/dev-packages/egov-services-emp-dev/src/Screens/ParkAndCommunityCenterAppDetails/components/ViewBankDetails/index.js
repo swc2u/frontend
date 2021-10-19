@@ -6,7 +6,7 @@ import "./index.css";
  
 class AppDetails extends Component {
   render() {
-    const { bkBankAccountNumber, bkBankName, bkIfscCode,bkAccountType, bkBankAccountHolder,applicantName,bkMobileNumber} = this.props;
+    const { bkBankAccountNumber, bkNomineeName,bkBankName, bkIfscCode,bkAccountType, bkBankAccountHolder,applicantName,bkMobileNumber} = this.props;
     return (
       <div>
         <Card
@@ -64,6 +64,16 @@ class AppDetails extends Component {
                       id="complaint-details-submission-date"
                       labelStyle={{ color: "inherit" }}
                       label={bkBankAccountHolder}
+                    />
+                   </div>
+                  <div className="col-md-4">
+                    <Label className="col-xs-112  col-sm-12 col-md-12 status-color" label="Nominee Name" />
+                    <Label
+                      className="col-xs-12 col-sm-12 col-md-12  status-result-color"
+                    
+                      id="complaint-details-submission-date"
+                      labelStyle={{ color: "inherit" }}
+                      label={bkNomineeName !== null && bkNomineeName !== undefined && bkNomineeName !== "" ? bkNomineeName : "NA" }
                     />
                   </div>
                
