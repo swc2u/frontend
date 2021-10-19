@@ -119,6 +119,7 @@ class ApplicationDetails extends Component {
       allDocumentList: [],
       reasonForBookingCancellation: "",
       enterReasonForBookingCancellation: false,
+      childRefundAmount: ""
     };
   }
 
@@ -133,6 +134,10 @@ class ApplicationDetails extends Component {
       actionOpen: true,
     });
   };
+
+//   handleCallback = (childData) =>{
+//     this.setState({childRefundAmount: childData})
+// }
 
   componentDidMount = async () => {
     let {
@@ -651,6 +656,28 @@ try{
           el.code === "BK_OSD"
       );
 
+      let paymentRequestData = [
+        { key: "consumerCodes", value: match.params.applicationId },
+        { key: "tenantId", value: userInfo.tenantId },
+      ];
+      let payloadfundAmount = await httpRequest(
+        "collection-services/payments/_search?",
+        "_search",
+        paymentRequestData
+      );
+      let AmountFromBackEnd = payloadfundAmount.Payments;
+      console.log("AmountFromBackEnd--",AmountFromBackEnd)
+   let RefAmountLocalComp = await this.BookingRefundAmount(
+    match.params.applicationId,
+    userInfo.tenantId,
+    this.props.selectedComplaint.bkFromDate,
+    AmountFromBackEnd,
+    this.props.selectedComplaint.roomsModel
+   )
+console.log("RefAmountLocalComp",RefAmountLocalComp)
+this.setState({childRefundAmount: RefAmountLocalComp})
+
+
     if (cancelBookingWfUsersRoles) {
       let totalRes = await this.calculateCancelledBookingRefundAmount(
         AppNo,
@@ -703,6 +730,189 @@ try{
     }
     // this.props.history.push(`/egov-services/ApplyForRoomBooking`);
   };
+  
+  BookingRefundAmount = async (
+    applicationNumber,
+    tenantId,
+    bookingDate,
+    AmountFromBackEnd,
+    bookedRoomArray
+  ) => {
+    console.log("abcTestAllParms",applicationNumber, tenantId,
+    bookingDate,
+    AmountFromBackEnd,
+    bookedRoomArray)
+    var CheckDate = new Date(bookingDate);
+
+    var todayDate = new Date();
+
+    if (applicationNumber && tenantId) {
+      if (AmountFromBackEnd && AmountFromBackEnd) {
+        if (todayDate > CheckDate) {
+          // alert("refundCondition")   [0].paymentDetails
+          let billAccountDetails =
+            AmountFromBackEnd[0].paymentDetails[0].bill.billDetails[0]
+              .billAccountDetails;
+          let bookingAmount = 0;
+          for (let i = 0; i < billAccountDetails.length; i++) {
+            if (
+              billAccountDetails[i].taxHeadCode ==
+                "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" ||
+              billAccountDetails[i].taxHeadCode ==
+                "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"
+            ) {
+              bookingAmount += billAccountDetails[i].amount;
+            }
+          }
+
+          return bookingAmount;
+        }
+        if (todayDate < CheckDate) {
+          /********************************/
+          let bookingNos = [];
+          let bookingNosString = "";
+          let roomBookingAmount = 0;
+          if (bookedRoomArray && bookedRoomArray.length > 0) {
+            for (let i = 0; i < bookedRoomArray.length; i++) {
+              if (
+                !bookingNos.includes(bookedRoomArray[i].roomApplicationNumber)
+              ) {
+                bookingNos.push(bookedRoomArray[i].roomApplicationNumber);
+                bookingNosString +=
+                  bookedRoomArray[i].roomApplicationNumber + ",";
+              }
+            }
+            bookingNosString = bookingNosString.slice(0, -1); 
+
+            let RequestData = [
+              { key: "consumerCodes", value: bookingNosString },
+              { key: "tenantId", value: tenantId },
+            ];
+
+            let payload = await httpRequest(
+              "collection-services/payments/_search",
+              "_search",
+              RequestData
+            );
+
+            if (payload) {
+              let bookedRoomsPaymentDetails = payload.Payments;
+
+              if (
+                bookedRoomsPaymentDetails &&
+                bookedRoomsPaymentDetails.length > 0
+              ) {
+                for (let j = 0; j < bookedRoomsPaymentDetails.length; j++) {
+                  for (
+                    let k = 0;
+                    k <
+                    bookedRoomsPaymentDetails[j].paymentDetails[0].bill
+                      .billDetails[0].billAccountDetails.length;
+                    k++
+                  ) {
+                    if (
+                      bookedRoomsPaymentDetails[j].paymentDetails[0].bill
+                        .billDetails[0].billAccountDetails[k].taxHeadCode ===
+                      "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"
+                    ) {
+                      roomBookingAmount +=
+                        bookedRoomsPaymentDetails[j].paymentDetails[0].bill
+                          .billDetails[0].billAccountDetails[k].amount;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          /********************************/
+          // alert("cancelCondition")
+          let billAccountDetails =
+            AmountFromBackEnd[0].paymentDetails[0].bill.billDetails[0]
+              .billAccountDetails;
+          let bookingAmount = 0;
+          let securityAmount = 0;
+          for (let i = 0; i < billAccountDetails.length; i++) {
+            if (
+              billAccountDetails[i].taxHeadCode ==
+                "SECURITY_MANUAL_OPEN_SPACE_BOOKING_BRANCH" ||
+              billAccountDetails[i].taxHeadCode ==
+                "SECURITY_CHRGS_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"
+            ) {
+              securityAmount = billAccountDetails[i].amount;
+            }
+            if (
+              billAccountDetails[i].taxHeadCode ==
+                "PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH" ||
+              billAccountDetails[i].taxHeadCode ===
+                "RENT_COMMUNITY_CENTRES_JHANJ_GHAR_BOOKING_BRANCH"
+            ) {
+              bookingAmount = billAccountDetails[i].amount;
+            }
+          }
+         
+          if (roomBookingAmount && roomBookingAmount > 0) {
+            bookingAmount += roomBookingAmount;
+          }
+
+          let mdmsBody = {
+            MdmsCriteria: {
+              tenantId: tenantId,
+              moduleDetails: [
+                {
+                  moduleName: "Booking",
+                  masterDetails: [
+                    {
+                      name: "bookingCancellationRefundCalc",
+                    },
+                  ],
+                },
+              ],
+            },
+          };
+
+          let refundPercentage = "";
+
+          let payloadRes = null;
+          payloadRes = await httpRequest(
+            "egov-mdms-service/v1/_search",
+            "_search",
+            [],
+            mdmsBody
+          );
+         
+          refundPercentage =
+            payloadRes.MdmsRes.Booking.bookingCancellationRefundCalc[0];
+
+          var date1 = new Date(bookingDate);
+
+          var date2 = new Date();
+
+          var Difference_In_Time = date1.getTime() - date2.getTime();
+
+          // To calculate the no. of days between two dates
+          var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+
+          let refundAmount = 0;
+          if (Difference_In_Days > 29) {
+            let refundPercent =
+              refundPercentage.MORETHAN30DAYS.refundpercentage;
+
+            refundAmount = (parseFloat(bookingAmount) * refundPercent) / 100;
+          } else if (Difference_In_Days > 15 && Difference_In_Days < 30) {
+            let refundPercent =
+              refundPercentage.LETTHAN30MORETHAN15DAYS.refundpercentage;
+            refundAmount = (parseFloat(bookingAmount) * refundPercent) / 100;
+          }
+          else if(Difference_In_Days <= 15){
+            return refundAmount = 0
+          }
+          return refundAmount + securityAmount;
+        }
+      }
+    }
+  };
+
 
   calculateCancelledBookingRefundAmount = async (
     applicationNumber,
@@ -880,6 +1090,9 @@ try{
             let refundPercent =
               refundPercentage.LETTHAN30MORETHAN15DAYS.refundpercentage;
             refundAmount = (parseFloat(bookingAmount) * refundPercent) / 100;
+          }
+          else if(Difference_In_Days <= 15){
+            return refundAmount = 0
           }
           refundAmount = refundAmount + securityAmount;
 
@@ -1356,10 +1569,20 @@ else if(applicationDetails.bkAction == "CANCEL" && applicationDetails.bkRemarks 
               "amountInWords": this.NumInWords(NumAmount),
               "receiptNo": this.props.recNumber,
               "bankName": gateWay == "citizenSide" ? "Not Applicable": gateWay,
+              // "refundAmount": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+              // applicationDetails.refundableSecurityMoney : (applicationDetails.bkRefundAmount !== null && applicationDetails.bkRefundAmount !== undefined ? applicationDetails.bkRefundAmount : amountTodisplay),
+              // "refundAmountInWords": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+              // (applicationDetails.refundableSecurityMoney == 0 || applicationDetails.refundableSecurityMoney == "0" ? "Zero Rupees Only" : this.NumInWords(applicationDetails.refundableSecurityMoney)) : (
+              //   applicationDetails.bkRefundAmount !== null && applicationDetails.bkRefundAmount !== undefined ? applicationDetails.bkRefundAmount == 0 || applicationDetails.bkRefundAmount == "0" ? "Zero Rupees Only" : 
+              //   (this.NumInWords(applicationDetails.bkRefundAmount)) :
+              //   this.NumInWords(NumAmount))
               "refundAmount": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
-              applicationDetails.refundableSecurityMoney : amountTodisplay,
+              applicationDetails.refundableSecurityMoney : (this.state.childRefundAmount !== null && this.state.childRefundAmount !== undefined ? this.state.childRefundAmount : amountTodisplay),
               "refundAmountInWords": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
-              (applicationDetails.refundableSecurityMoney == 0 || applicationDetails.refundableSecurityMoney == "0" ? "Zero Rupees Only" : this.NumInWords(applicationDetails.refundableSecurityMoney)) : this.NumInWords(NumAmount)
+              (applicationDetails.refundableSecurityMoney == 0 || applicationDetails.refundableSecurityMoney == "0" ? "Zero Rupees Only" : this.NumInWords(applicationDetails.refundableSecurityMoney)) : (
+                this.state.childRefundAmount !== null && this.state.childRefundAmount !== undefined ? this.state.childRefundAmount == 0 || this.state.childRefundAmount == "0" ? "Zero Rupees Only" : 
+                (this.NumInWords(this.state.childRefundAmount)) :
+                this.NumInWords(NumAmount))
           },
           "payerInfo": {
               "payerName": applicationDetails.bkApplicantName,
@@ -1430,11 +1653,21 @@ let tmpdate2 = new Date(applicationDetails.bkToDate)
             "amountInWords": this.NumInWords(NumAmount),
             "receiptNo": this.props.recNumber,
             "bankName": gateWay == "citizenSide" ? "Not Applicable": gateWay,
+            // "refundAmount": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+            //   applicationDetails.refundableSecurityMoney : (applicationDetails.bkRefundAmount !== null && applicationDetails.bkRefundAmount !== undefined ? applicationDetails.bkRefundAmount : amountTodisplay),
+            //   "refundAmountInWords": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+            //   (applicationDetails.refundableSecurityMoney == 0 || applicationDetails.refundableSecurityMoney == "0" ? "Zero Rupees Only" : this.NumInWords(applicationDetails.refundableSecurityMoney)) : (
+            //     applicationDetails.bkRefundAmount !== null && applicationDetails.bkRefundAmount !== undefined ? applicationDetails.bkRefundAmount == 0 || applicationDetails.bkRefundAmount == "0" ? "Zero Rupees Only" : 
+            //     (this.NumInWords(applicationDetails.bkRefundAmount)) :
+            //     this.NumInWords(NumAmount))        
             "refundAmount": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
-            applicationDetails.refundableSecurityMoney : amountTodisplay,
-            "refundAmountInWords": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
-            (applicationDetails.refundableSecurityMoney == 0 || applicationDetails.refundableSecurityMoney == "0" ? "Zero Rupees Only" : this.NumInWords(applicationDetails.refundableSecurityMoney)) : this.NumInWords(NumAmount)
-        },
+              applicationDetails.refundableSecurityMoney : (this.state.childRefundAmount !== null && this.state.childRefundAmount !== undefined ? this.state.childRefundAmount : amountTodisplay),
+              "refundAmountInWords": applicationDetails.refundableSecurityMoney !== null && applicationDetails.refundableSecurityMoney !== undefined ? 
+              (applicationDetails.refundableSecurityMoney == 0 || applicationDetails.refundableSecurityMoney == "0" ? "Zero Rupees Only" : this.NumInWords(applicationDetails.refundableSecurityMoney)) : (
+                this.state.childRefundAmount !== null && this.state.childRefundAmount !== undefined ? this.state.childRefundAmount == 0 || this.state.childRefundAmount == "0" ? "Zero Rupees Only" : 
+                (this.NumInWords(this.state.childRefundAmount)) :
+                this.NumInWords(NumAmount))
+              },
         "payerInfo": {
             "payerName": applicationDetails.bkApplicantName,
             "payerMobile": applicationDetails.bkMobileNumber,
@@ -3142,7 +3375,7 @@ OfflineRefundForCG = async () => {
       PaymentMode,
       transactionNumber,
     } = this.state;
-    
+    console.log("StateInParkDetailPage",this.state)
     let { complaint, timeLine } = this.props.transformedComplaint;
     let {
       documentMap,
@@ -3418,6 +3651,7 @@ OfflineRefundForCG = async () => {
                       this.state.newPaymentDetails != "NotFound" &&
                       this.state.newPaymentDetails
                     }
+                    // parentCallback = {this.handleCallback}
                     selectedComplaint = {this.props.selectedComplaint}
                     RefAmount={
                       this.state.totalRefundAmount &&
@@ -5319,6 +5553,7 @@ if(selectedComplaint.bkBookingType == "GROUND_FOR_COMMERCIAL_PURPOSE"){
       refundableSecurityMoney: selectedComplaint.refundableSecurityMoney,
       cardNumber: selectedComplaint.cardNumber,
       timeslots:selectedComplaint.timeslots,
+      bkRefundAmount:selectedComplaint.bkRefundAmount,
     };
 
     let transformedComplaint;
@@ -5388,7 +5623,7 @@ if(selectedComplaint.bkBookingType == "GROUND_FOR_COMMERCIAL_PURPOSE"){
       amountTodisplay,
       PaymentReceiptByESamp,DownloadCitizenPACCReceipt,cancelReceiptData,
       EmpPaccPermissionLetter,DownloadCitizenPACCPermissionLetter,CitizenCCPermissionLetter,
-      uploadeDocType,RefoundCGAmount,PaymentModeCNumber
+      uploadeDocType,RefoundCGAmount,PaymentModeCNumber,fetchPaymentAfterPayment
     };
   } else {
     return {
@@ -5444,7 +5679,7 @@ if(selectedComplaint.bkBookingType == "GROUND_FOR_COMMERCIAL_PURPOSE"){
       four,
       five,
       six,
-      roomData,
+      roomData,fetchPaymentAfterPayment,
       PaymentReceiptByESamp,DownloadCitizenPACCReceipt,cancelReceiptData,PaymentModeCNumber,
       EmpPaccPermissionLetter,DownloadCitizenPACCPermissionLetter,CitizenCCPermissionLetter,RefoundCGAmount
     };

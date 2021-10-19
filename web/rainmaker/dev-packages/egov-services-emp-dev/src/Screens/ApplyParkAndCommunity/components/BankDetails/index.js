@@ -45,7 +45,7 @@ let ifsc = /^[A-Za-z]{4}[a-zA-Z0-9]{7}$/
 let nvalid = /^[A-Za-z\s]+$/
 e.preventDefault();
     const { BankAccountName, NomineeName, BankAccountNumber, toggleSnackbarAndSetText,IFSCCode,AccountHolderName, handleChange,accountType,AccountType,classes,prepareFinalObject } = this.props;
-    if (BankAccountName == "" || NomineeName == "" || BankAccountNumber == "" || IFSCCode == "" || AccountHolderName == "") {    
+    if (BankAccountName == "" || BankAccountNumber == "" || IFSCCode == "" || AccountHolderName == "") {    
       toggleSnackbarAndSetText(
         true,
         {
@@ -76,6 +76,16 @@ e.preventDefault();
       );
     }
     else if(!nvalid.test(this.props.NomineeName || this.props.BankAccountName || this.props.AccountHolderName)){
+      this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Please enter valid Name",
+          labelKey: `BK_ERROR_MESSAGE_PACC_WRONG_NAME`
+        },
+        "warning"
+      );
+    }
+    else if(this.props.NomineeName != '' && !nvalid.test(this.props.NomineeName)){
       this.props.toggleSnackbarAndSetText(
         true,
         {
@@ -157,7 +167,7 @@ e.preventDefault();
             type="string"
             disabled = {checkDateVenueChange == true ? true : false}
             value={NomineeName}
-            required = {true}
+            // required = {true}
             hintText={
               <Label
               label="Nominee Name"    // label="BK_MYBK_Nominee_Name"

@@ -465,6 +465,91 @@ class CheckAvailability extends Component {
     this.props.history.push("/egov-services/reservedbookingdates");
   };
 
+  checkAvaialbilityAtSubmitFirstStep = async (bookingData) => {
+   
+    let requestBody = {};
+    let isAvailable = true;
+    
+    if (bookingData.bkBookingType === "Commercial Ground") {
+        requestBody = {
+            Booking: {
+                bkApplicationNumber:"CH-BK-2021-10-11-008332",
+                bkBookingType: "GROUND_FOR_COMMERCIAL_PURPOSE",
+                bkBookingVenue: bookingData.bkBookingVenue,
+                bkFromDate: bookingData.bkFromDate,
+                bkToDate: bookingData.bkToDate,
+                bkSector:bookingData.bkBookingVenue
+            },
+        };
+        try {
+            const bookedDates = await httpRequest(
+                "bookings/commercial/ground/booked/dates/_search",
+                "post",
+                [],
+                requestBody
+            );
+            bookedDates.data.length > 0
+                ? bookedDates.data.map((val) => {
+                    if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
+                        isAvailable = false;
+                    } else {
+                        isAvailable = true
+                    }
+                })
+                : (isAvailable = true);
+        } catch (exception) {
+            console.log(exception);
+            isAvailable = false;
+        }
+    }  else if (bookingData.bkBookingType  === "Parks" || bookingData.bkBookingType ==="Community Center") {
+       
+        requestBody = {
+            Booking: {
+                
+                bkApplicationNumber:"CH-BK-2021-10-11-008332",
+                bkSector: bookingData.bkSector,
+                bkBookingType: bookingData.bkBookingType,
+                bkBookingVenue: bookingData.bkBookingVenue,
+                bkFromDate: bookingData.bkFromDate,
+                bkToDate: bookingData.bkToDate,
+                timeslots :[]
+            },
+            applicationNumber: ""
+            
+        };
+        console.log("paccRequestBody",requestBody)
+        console.log("paccRequestBody222",JSON.parse(JSON.stringify(requestBody)))
+        try {
+            const bookedDates = await httpRequest(
+                
+                "bookings/park/community/booked/dates/_search",
+                "post",
+                [],
+                requestBody
+            )
+            console.log("BookedDates", bookedDates)
+            bookedDates.data.length > 0
+                ? bookedDates.data.map((val) => {
+                    if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
+                        isAvailable = false;
+                    } else {
+                        isAvailable = true
+                    }
+                })
+                : (isAvailable = true);
+        } catch (exception) {
+            console.error(exception);
+            console.log("ExceptionOfAlreadyOnlyLockedDated",{exception})
+            console.log("ExceptionOfAlreadyOnlyLockedDated",exception.message)
+            console.log("ExceptionOfAlreadyOnlyLockedDated",exception.name)
+            isAvailable = false;
+        }
+    }else {
+        isAvailable = true;
+    }
+    console.log("checkAvaialbilityAtSubmitFirstStep",isAvailable);
+    return isAvailable;
+};
   convertEpochToDate = (dateEpoch) => {
     const dateFromApi = new Date(dateEpoch);
     let month = dateFromApi.getMonth() + 1;
@@ -534,31 +619,64 @@ class CheckAvailability extends Component {
       );
       return false;
     }
+    let isAvailable= true
+    if (holdingDatesArray && holdingDatesArray.length > 0) {
+      let bookingData= {}
+      for(let i=0 ; i<holdingDatesArray.length ;i++){
 
-    let requestBody = { commercialGrndAvailabilityLock: holdingDatesArray }
-
-    let apiResponse = await httpRequest(
-      "bookings/commercial/ground/availability/_lock?",
-      "_search",
-      [],
-      requestBody
-    );
-    if (apiResponse && apiResponse.status == "200") {
-      if(apiResponse && apiResponse.message === "Already Booked"){
-        this.props.toggleSnackbarAndSetText(
-          true,
-          {
-            labelName: "Selected dates already booked",
-            labelKey: `BK_ERR_VALUE_HOLDING_DATES_ALREADY_BOOKED`
-          },
-          "error"
-        );
-        return false;
-      }else{
-      //window.location.href = "/egov-services/reservedbookingdates";
-      this.props.history.push(`/egov-services/reservedbookingdates`);
+      
+      
+        let d = holdingDatesArray[i]
+        bookingData.bkSector=sector ,
+        bookingData.bkBookingType= bookingPropertyType,
+        bookingData.bkBookingVenue= venueName,
+        bookingData.bkFromDate= d.fromDate,
+        bookingData.bkToDate= d.toDate,
+      
+        isAvailable =await this.checkAvaialbilityAtSubmitFirstStep(bookingData)
+        if(isAvailable==false){
+          break
+        }
+    
       }
     }
+    if(isAvailable){
+      let requestBody = { commercialGrndAvailabilityLock: holdingDatesArray }
+
+      let apiResponse = await httpRequest(
+        "bookings/commercial/ground/availability/_lock?",
+        "_search",
+        [],
+        requestBody
+      );
+      if (apiResponse && apiResponse.status == "200") {
+        if(apiResponse && apiResponse.message === "Already Booked"){
+          this.props.toggleSnackbarAndSetText(
+            true,
+            {
+              labelName: "Selected dates already booked",
+              labelKey: `BK_ERR_VALUE_HOLDING_DATES_ALREADY_BOOKED`
+            },
+            "error"
+          );
+          return false;
+        }else{
+        //window.location.href = "/egov-services/reservedbookingdates";
+        this.props.history.push(`/egov-services/reservedbookingdates`);
+        }
+      }
+    }else{
+      this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Selected dates are locked by user.Please try after 30 minutes",
+          labelKey: "Selected dates are locked by user.Please try after 30 minutes"
+        },
+        "error"
+      );
+      return false
+    }
+    
 
   }
   calculateBetweenDaysCount = (startDate, endDate) => {
@@ -782,7 +900,7 @@ class CheckAvailability extends Component {
 
 
             {/*Import Booking Media for Commercial*/}
-            {this.state.setAllForCG && this.state.vanueType === "Commercial Ground" &&
+            {this.state.setAllForCG && this.state.vanueType === "Commercial Ground" && !this.props.timeSlotMessageForAdmin &&
               this.state.locality ? (
 
               <div
@@ -828,7 +946,7 @@ class CheckAvailability extends Component {
               vanueData != undefined &&
               vanueData.bookingAllowedFor == "" &&
               this.state.showCalendar &&
-              this.state.calendarAfterImg && (
+              this.state.calendarAfterImg && !this.props.timeSlotMessageForAdmin && (
                 
                 <div
                   className="col-sm-12 col-xs-12"
@@ -864,9 +982,9 @@ class CheckAvailability extends Component {
             }
             {/*start of book button for commercil*/}
             {this.state.setAllForCG && this.state.vanueType === "Commercial Ground" &&
-              this.state.locality && (
+              this.state.locality && !this.props.timeSlotMessageForAdmin &&(
                 <div
-                  className="col-sm-12 col-xs-12"
+                  className="col-sm-12 col-xs-12 adminReserve"
                   style={{ textAlign: "right" }}
                 >
                   <Button
@@ -899,9 +1017,9 @@ class CheckAvailability extends Component {
 
             {this.state.setAllForCG === false && this.state.availabilityCheckData &&
               this.state.availabilityCheckData.bkSector &&
-              vanueData != undefined && (
+              vanueData != undefined && !this.props.timeSlotMessageForAdmin && (
                 <div
-                  className="col-sm-12 col-xs-12"
+                  className="col-sm-12 col-xs-12 adminReserve"
                   style={{ textAlign: "right" }}
                 >
                   <Button
@@ -989,6 +1107,7 @@ const mapStateToProps = (state) => {
   let NewBookFromDate = state.screenConfiguration.preparedFinalObject.availabilityCheckData && state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkFromDate || "notFound"
 
 
+  let timeSlotMessageForAdmin = state.screenConfiguration.preparedFinalObject.timeSlotMessageForAdmin && state.screenConfiguration.preparedFinalObject.timeSlotMessageForAdmin || false
   let NewBookToDate = state.screenConfiguration.preparedFinalObject.availabilityCheckData && state.screenConfiguration.preparedFinalObject.availabilityCheckData.bkToDate || "notFound"
 
 
@@ -1034,6 +1153,7 @@ const mapStateToProps = (state) => {
     oldFromDate,
     oldToDate,
     oldBookingData,
+    timeSlotMessageForAdmin
   };
 };
 const mapDispatchToProps = (dispatch) => {
