@@ -213,6 +213,8 @@ const callUpadateApi = async (state, dispatch, item) =>{
       {
         const isAvailable = await checkAvaialbilityAtSubmit(bookingData, dispatch);
         
+        callPGService(state, dispatch, item, isAvailable)
+        
         if (isAvailable) {
           let callbackUrl = `${
             process.env.NODE_ENV === "production"
@@ -293,7 +295,6 @@ const callUpadateApi = async (state, dispatch, item) =>{
         console.log("newUpdateApiCall",newUpdateApiCall)
         }
         
-        callPGService(state, dispatch, item, isAvailable)
     }
     } else {
         dispatch(

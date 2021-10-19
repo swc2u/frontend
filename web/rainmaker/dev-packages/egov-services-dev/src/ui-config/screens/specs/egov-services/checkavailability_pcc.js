@@ -252,6 +252,7 @@ const prepareEditFlow = async (
                 bkFromDate: bookingsModelList[0].bkFromDate,
                 bkToDate: bookingsModelList[0].bkToDate,
                 bkBookingVenue: bookingsModelList[0].bkBookingVenue,
+                bkDuration: bookingsModelList[0].bkDuration
             }
             dispatch(
                 prepareFinalObject(
@@ -540,7 +541,7 @@ const screenConfig = {
               set(
                 action.screenConfig,
                 "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkSector.props.disabled",
-                true
+                false
             );
             }
 

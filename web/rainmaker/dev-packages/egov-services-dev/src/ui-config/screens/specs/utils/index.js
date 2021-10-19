@@ -586,6 +586,7 @@ export const downloadReceiptFromFilestoreID = (fileStoreId, mode, tenantId) => {
 };
 
 const NumInWords = (number) => {
+    
     const first = [
         "",
         "One ",
@@ -622,33 +623,37 @@ const NumInWords = (number) => {
     ];
     const mad = ["", "Thousand", "Million", "Billion", "Trillion"];
     let word = "";
+    if(number===0){
+        word= "Zero "
+    }else{
 
-    for (let i = 0; i < mad.length; i++) {
-        let tempNumber = number % (100 * Math.pow(1000, i));
-        if (Math.floor(tempNumber / Math.pow(1000, i)) !== 0) {
-            if (Math.floor(tempNumber / Math.pow(1000, i)) < 20) {
-                word =
-                    first[Math.floor(tempNumber / Math.pow(1000, i))] +
-                    mad[i] +
-                    " " +
-                    word;
-            } else {
-                word =
-                    tens[Math.floor(tempNumber / (10 * Math.pow(1000, i)))] +
-                    " " +
-                    first[Math.floor(tempNumber / Math.pow(1000, i)) % 10] +
-                    mad[i] +
-                    " " +
-                    word;
+        for (let i = 0; i < mad.length; i++) {
+            let tempNumber = number % (100 * Math.pow(1000, i));
+            if (Math.floor(tempNumber / Math.pow(1000, i)) !== 0) {
+                if (Math.floor(tempNumber / Math.pow(1000, i)) < 20) {
+                    word =
+                        first[Math.floor(tempNumber / Math.pow(1000, i))] +
+                        mad[i] +
+                        " " +
+                        word;
+                } else {
+                    word =
+                        tens[Math.floor(tempNumber / (10 * Math.pow(1000, i)))] +
+                        " " +
+                        first[Math.floor(tempNumber / Math.pow(1000, i)) % 10] +
+                        mad[i] +
+                        " " +
+                        word;
+                }
             }
+    
+            tempNumber = number % Math.pow(1000, i + 1);
+            if (Math.floor(tempNumber / (100 * Math.pow(1000, i))) !== 0)
+                word =
+                    first[Math.floor(tempNumber / (100 * Math.pow(1000, i)))] +
+                    "Hunderd " +
+                    word;
         }
-
-        tempNumber = number % Math.pow(1000, i + 1);
-        if (Math.floor(tempNumber / (100 * Math.pow(1000, i))) !== 0)
-            word =
-                first[Math.floor(tempNumber / (100 * Math.pow(1000, i)))] +
-                "Hunderd " +
-                word;
     }
     return word + "Rupees Only";
 };
@@ -1419,6 +1424,15 @@ export const downloadReceipt = async (
 
 };
 
+export const daysBetweenDates= (from, to )=>{
+    let date1= new Date(from)
+    let date2= new Date(to)
+    let Difference_In_Time = date2.getTime() - date1.getTime();
+    // To calculate the no. of days between two dates
+    let Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+
+    return Difference_In_Days+1
+}
 
 export const downloadCertificate = async (
     state,
@@ -1542,8 +1556,14 @@ console.log("RoomModel",applicationData)
             // ACTION: "_get",
         },
     };
-    let payloadReceiptDetails = {}
-    if (applicationData.roomsModel !== undefined && applicationData.roomsModel.length > 0 && applicationData.bkApplicationNumber !== applicationNumber) {
+    let payloadReceiptDetails = await httpRequest(
+        "post",
+        FETCHRECEIPT.GET.URL,
+        FETCHRECEIPT.GET.ACTION,
+        receiptQueryString
+    )
+
+       if (applicationData.roomsModel !== undefined && applicationData.roomsModel.length > 0 && applicationData.bkApplicationNumber !== applicationNumber) {
         payloadReceiptDetails = await httpRequest(
             "post",
             FETCHRECEIPT.GET.URL,
@@ -1600,9 +1620,11 @@ console.log("RoomModel",applicationData)
         )
     }
     var date2 = new Date();
-
     let paymentInfo = {};
     let bankInfo = {};
+    let amount = 0;
+    let tax= 0;
+    let cgSecurityRefund=0;
     if (applicationData.businessService === "PACC") {
         //console.log(applicationData, "nero AvvapplicationDatassssss")
         const receiptQueryString = [
@@ -1665,6 +1687,47 @@ console.log("RoomModel",applicationData)
        
 
  
+    }else {
+        tax = 0;
+        amount = 0;
+        cgSecurityRefund= 0
+        if (applicationData.businessService === "OSBM") {
+            tax = payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                (el) => el.taxHeadCode.includes("CGST_UTGST_MANUAL_OPEN_SPACE_BOOKING_BRANCH")
+            )[0].amount;
+            amount = payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                (el) => el.taxHeadCode.includes("PARKING_LOTS_MANUAL_OPEN_SPACE_BOOKING_BRANCH")
+            )[0].amount;
+        } else if (applicationData.businessService === "BWT") {
+            amount = payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                (el) => el.taxHeadCode.includes("WATER_TANKAR_CHARGES_BOOKING_BRANCH")
+            )[0].amount;
+        } else if (applicationData.businessService === "GFCP") {
+            amount = payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                (el) => el.taxHeadCode.includes("PARKING_LOTS_COMMERCIAL_GROUND_BOOKING_BRANCH")
+            )[0].amount;
+            tax = payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                (el) => el.taxHeadCode.includes("CGST_UTGST_COMMERCIAL_GROUND_BOOKING_BRANCH")
+            )[0].amount;
+            cgSecurityRefund=payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                (el) => el.taxHeadCode.includes("SECURITY_COMMERCIAL_GROUND_BOOKING_BRANCH")
+            )[0].amount;
+        } else if (applicationData.businessService === "OSUJM") {
+            amount = payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                (el) => el.taxHeadCode.includes("PARKING_LOTS_GROUND_OPEN_SPACES_BOOKING_BRANCH")
+            )[0].amount;
+            tax = payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                (el) => el.taxHeadCode.includes("CGST_UTGST_GROUND_OPEN_SPACES_BOOKING_BRANCH")
+            )[0].amount;
+        } else {
+            amount = payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                (el) => !el.taxHeadCode.includes("TAX")
+            )[0].amount;
+            tax = payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                (el) => el.taxHeadCode.includes("TAX")
+            )[0].amount;
+        }
+        
     }
     var generatedDateTime = `${date2.getDate()}-${date2.getMonth() + 1}-${date2.getFullYear()}, ${date2.getHours()}:${date2.getMinutes() < 10 ? "0" : ""}${date2.getMinutes()}`;
  
@@ -1722,6 +1785,8 @@ let certificateData = [
                 categoryImage: "",
                 statecode: applicationData.businessService == "PACC" ? "04" : "",
                 hsncode: applicationData.businessService == "PACC" ? "9963" : "NA",
+                depositAmount:  amount +tax+ cgSecurityRefund ,
+                bookingDays:  daysBetweenDates(applicationData.bkFromDate,applicationData.bkToDate)     ,
             },
             approvedBy: apporvedByDetail,
             tenantInfo: {
