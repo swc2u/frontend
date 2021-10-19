@@ -11,7 +11,7 @@ import set from "lodash/set";
 import { getCurrentFinancialYear, generateBill } from "../utils";
 import estimateDetails from "./payResource/estimate-details";
 import { footer, callPGService } from "./payResource/footer";
-import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { prepareFinalObject , handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
     getPaymentGateways,
     getSearchResultsView,
@@ -153,7 +153,7 @@ const setSearchResponse = async (
     // );
 };
 
-const callUpadateApi = async (state, dispatch, item) =>{
+const callUpadateApi = async (state, dispatch, item, isAvailable, apiSuccess) =>{
 
     const bookingData = get(
         state,
@@ -211,11 +211,15 @@ const callUpadateApi = async (state, dispatch, item) =>{
       
       if(recData > 0)
       {
-        const isAvailable = await checkAvaialbilityAtSubmit(bookingData, dispatch);
-        
-        callPGService(state, dispatch, item, isAvailable)
+       //const isAvailable = await checkAvaialbilityAtSubmit(bookingData, dispatch);
+      
+    
+       callPGService(state, dispatch, item, isAvailable, apiSuccess)
+    
         
         if (isAvailable) {
+
+
           let callbackUrl = `${
             process.env.NODE_ENV === "production"
               ? `${window.origin}/citizen`
@@ -250,6 +254,7 @@ const callUpadateApi = async (state, dispatch, item) =>{
         }
 
         else if(applicationType == "BWT"){
+      
             set(paymentRequest,"bkAction","PAIDAPPLY")
             let updatedPayloadAfterEdit =JSON.parse(localStorage.getItem('waterTankerBookingData'))
             paymentRequest= Object.assign(paymentRequest, updatedPayloadAfterEdit)
@@ -295,6 +300,8 @@ const callUpadateApi = async (state, dispatch, item) =>{
         console.log("newUpdateApiCall",newUpdateApiCall)
         }
         
+
+
     }
     } else {
         dispatch(
@@ -320,8 +327,36 @@ const setPaymentMethods = async (action, state, dispatch) => {
                 labelName: item,
                 labelKey: item,
             },
-            link: () => callUpadateApi(state, dispatch, item),
-        }));
+            link:async () => {
+                
+                let sleepTime =""   
+                const bookingData = get(
+                    state,
+                    "screenConfiguration.preparedFinalObject.Booking"
+                ); 
+                const {isAvailable, apiSuccess} = await checkAvaialbilityAtSubmit(bookingData, dispatch);
+                if(isAvailable)   {
+                    sleepTime= 25000
+                    dispatch(
+                        handleField("pay", "components.div.children.cityPickerDialog", "props.open", true)
+                    );
+                } else{
+                    sleepTime= 0
+                    dispatch(
+                        handleField("pay", "components.div.children.cityPickerDialog", "props.open", false)
+                    );
+                }
+               
+                let sleep = (ms) => {
+                    return new Promise((resolve) => setTimeout(resolve, ms));
+                    };
+               
+                sleep(sleepTime).then(() => {
+                    callUpadateApi(state, dispatch, item, isAvailable, apiSuccess)
+                });
+    
+                }
+            }));
         set(
             action,
             "screenConfig.components.div.children.footer.children.makePayment.props.data.menu",
@@ -329,6 +364,7 @@ const setPaymentMethods = async (action, state, dispatch) => {
         );
     }
 };
+
 
 // const handleCheckAvailability = async (Booking, action, dispatch) => {
 //     if (getapplicationType() === "GFCP") {
@@ -380,7 +416,69 @@ const setPaymentMethods = async (action, state, dispatch) => {
 //         });
 //     }
 // };
+const cityPicker = getCommonContainer({
+    div1: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        gridDefination: {
+            xs: 10,
+            sm: 10
+        },
+        props: {
+            style: {
+                width: "100%",
+                float: "right"
+            }
+        },
+        children: {
+            div: getCommonHeader(
+                {
+                    labelName: "Payment Terms & Conditions",
+                    labelKey: "Payment Terms & Conditions"
+                },
+                {
+                    style: {
+                        fontSize: "20px"
+                    }
+                }
+            )
+        }
+    },
+   
 
+    div3: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        gridDefination: {
+            xs: 10,
+            sm: 10
+        },
+        props: {
+            style: {
+                width: "100%",
+                float: "right",
+                marginBottom: "20px"
+            }
+        },
+        children: {
+            div: getCommonHeader(
+                {
+                    labelName: "After getting redirected to payment gateway page please make payment with in the duration of 10 minutes, failing to do so will cause booking to be cancelled.",
+                    labelKey: "After getting redirected to payment gateway page please make payment with in the duration of 10 minutes, failing to do so will cause booking to be cancelled."
+                },
+                {
+                    style: {
+                        fontSize: "15px"
+                    }
+                }
+            )
+        }
+    },
+    cityPicker:{uiFramework: "custom-atoms-local",
+    componentPath: "CountDown",
+    moduleName: "egov-services",
+    visible: true,}
+});
 const screenConfig = {
     uiFramework: "material-ui",
     name: "pay",
@@ -437,9 +535,31 @@ const screenConfig = {
                     },
                 },
                 footer,
+                cityPickerDialog: {
+                    componentPath: "Dialog",
+                    props: {
+                        open: false,
+                        className: "hrmsCityPickerDialog",
+                        style: { overflow: "visible" }
+                    },
+                    children: {
+                        dialogContent: {
+                            componentPath: "DialogContent",
+                            props: {
+                                style: {
+                                    overflow: "visible"
+                                }
+                            },
+                            children: {
+                                popup: cityPicker
+                            }
+                        }
+                    }
+                }
             },
         },
     },
 };
 
 export default screenConfig;
+

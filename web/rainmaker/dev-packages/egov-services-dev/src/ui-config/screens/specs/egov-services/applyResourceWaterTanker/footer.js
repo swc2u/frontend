@@ -175,11 +175,22 @@ const callBackForNext = async (state, dispatch) => {
         }
     }
     if (activeStep === 2) {
-        if (bookingData.bkStatus.includes("Paid")) {
-            let applicationData = get(
-                state.screenConfiguration.preparedFinalObject,
-                "Booking"
-            );
+        let userAggrementChecked =   get(
+            state.screenConfiguration.preparedFinalObject,
+            "userAggrement"
+        );
+        if(userAggrementChecked === false){
+            let errorMessage = {
+                labelName: "Please accept booking agreement by clicking checkbox.",
+                labelKey: "", //UPLOAD_FILE_TOAST
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        }else{
+            if (bookingData.bkStatus.includes("Paid")) {
+                let applicationData = get(
+                    state.screenConfiguration.preparedFinalObject,
+                    "Booking"
+                );
             setapplicationNumber(applicationData.bkApplicationNumber);
             // setTimeout(() => {
             const appendUrl =
@@ -220,6 +231,8 @@ const callBackForNext = async (state, dispatch) => {
             }
         }
     }
+
+}
     if (activeStep !== 2) {
         if (isFormValid) {
             changeStep(state, dispatch);

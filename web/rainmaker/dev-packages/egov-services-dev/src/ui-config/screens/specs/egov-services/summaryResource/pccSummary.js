@@ -11,7 +11,8 @@ import {
 import { gotoApplyWithStep } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 import {
-    convertDateInDMY
+    convertDateInDMY,
+    getCheckbox
 } from "../../utils";
 import { goAfterConfirmation, callBackForEdit } from "../searchResource/citizenFooter";
 
@@ -425,6 +426,35 @@ export const pccSummary = getCommonGrayCard({
         type: "array",
     },
 });
+
+export const userAggrement = getCommonGrayCard({
+    header: {
+        uiFramework: "custom-atoms",
+        componentPath: "Container",
+        props: {
+            style: { marginBottom: "10px" },
+        },
+        children: {
+            header: {
+                gridDefination: {
+                    xs: 8,
+                },
+                ...getCommonSubHeader({
+                    labelName: "Booking Agreement",
+                    labelKey: "Booking Agreement",
+                }),
+            },
+        },
+    },
+    
+       
+    checkBoxContainer: getCheckbox(
+        "I understand that I will be liable for prosecution if any incorrect information is shared by me in this application.",
+        "userAggrement"
+      )
+    
+});
+
 export const pccParkSummary = getCommonGrayCard({
     header: {
         uiFramework: "custom-atoms",

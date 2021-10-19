@@ -6,6 +6,7 @@ import {
     prepareFinalObject,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { toggleSnackbarAndSetText } from "egov-ui-kit/redux/app/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -15,18 +16,36 @@ import {
 } from "egov-ui-kit/redux/bookings/actions";
 import get from "lodash/get";
 import set from "lodash/set";
+import { FlashAuto } from "@material-ui/icons";
 
 class PlotArea extends React.Component {
     constructor(props) {
         super(props);
     }
-
     
+    state={
+        refreshScreen : false
+    }
 
     getAvailabilityData = async (e, item) => {
+        if (window.location.href.includes("reservedates")){
+        
+            if(item.bookingAllowedFor == 4){
+                let errorMessageForTimeSlot = {
+                    labelName: "Admin cannot block venue on hourly basis.",
+                    labelKey: "Admin cannot block venue on hourly basis.", 
+                };
+                this.props.toggleSnackbarAndSetText(true, errorMessageForTimeSlot, "error");
+                this.props.prepareFinalObject('timeSlotMessageForAdmin' , true)
+                return
+            }else{
+                this.props.prepareFinalObject('timeSlotMessageForAdmin' , false)
+
+            }
+        }
        
         const { changeCalendar} =this.props;
-       
+              
         changeCalendar();
         this.props.prepareFinalObject(
             "bkBookingData",
@@ -138,6 +157,8 @@ const mapDispatchToProps = (dispatch) => {
         toggleSnackbar: (jsonPath, value) =>
             dispatch(toggleSnackbar(jsonPath, value)),
         changeRoute: (path) => dispatch(setRoute(path)),
+        toggleSnackbarAndSetText: (open, message, error) =>
+        dispatch(toggleSnackbarAndSetText(open, message, error)),
     };
 };
 

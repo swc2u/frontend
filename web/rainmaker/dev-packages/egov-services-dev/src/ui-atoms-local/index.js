@@ -15,6 +15,11 @@ const Checkbox = Loadable({
   loading: () => <Loading />
 });
 
+const CountDown = Loadable({
+  loader: () => import("./CountDown"),
+  loading: () => <Loading />
+});
+
 const AutoSuggest = Loadable({
   loader: () => import("./AutoSuggest"),
   loading: () => <Loading />
@@ -41,5 +46,6 @@ export {
   AutoSuggest,
   Asteric,
   MenuButton,
-  MyApplicationIcon
+  MyApplicationIcon,
+  CountDown
 };

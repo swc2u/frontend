@@ -198,6 +198,17 @@ const callBackForNext = async (state, dispatch) => {
         }
     }
     if (activeStep === 3) {
+        let userAggrementChecked =   get(
+            state.screenConfiguration.preparedFinalObject,
+            "userAggrement"
+        );
+        if(userAggrementChecked === false){
+            let errorMessage = {
+                labelName: "Please accept booking agreement by clicking checkbox.",
+                labelKey: "", //UPLOAD_FILE_TOAST
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        }else{
         // prepareDocumentsUploadData(state, dispatch);
         let response = await createUpdateOsbApplication(
             state,
@@ -228,7 +239,7 @@ const callBackForNext = async (state, dispatch) => {
                 labelKey: "", //UPLOAD_FILE_TOAST
             };
             dispatch(toggleSnackbar(true, errorMessage, "error"));
-        }
+        }}
     }
     if (activeStep !== 3) {
         if (isFormValid) {

@@ -386,6 +386,12 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "applyparkcommunitycenter",
     beforeInitScreen: (action, state, dispatch) => {
+        dispatch(
+            prepareFinalObject(
+                "userAggrement",
+                false
+            )
+        ),
         setapplicationType("PACC");
         const applicationNumber = getQueryArg(
             window.location.href,

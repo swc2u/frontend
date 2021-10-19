@@ -271,7 +271,12 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "applycommercialground",
     beforeInitScreen: (action, state, dispatch) => {
-
+        dispatch(
+            prepareFinalObject(
+                "userAggrement",
+                false
+            )
+        ),
         setapplicationType("GFCP");
         const applicationNumber = getQueryArg(
             window.location.href,

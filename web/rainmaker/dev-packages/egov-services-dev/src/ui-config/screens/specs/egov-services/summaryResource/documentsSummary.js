@@ -4,10 +4,39 @@ import {
   getCommonGrayCard,
   getCommonSubHeader,
   getLabel,
-  getLabelWithValue
+  getLabelWithValue,
+
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { gotoApplyWithStep } from "../../utils/index";
+import { gotoApplyWithStep ,getCheckbox} from "../../utils/index";
 import { getapplicationType } from "egov-ui-kit/utils/localStorageUtils";
+
+export const userAggrement = getCommonGrayCard({
+  header: {
+      uiFramework: "custom-atoms",
+      componentPath: "Container",
+      props: {
+          style: { marginBottom: "10px" },
+      },
+      children: {
+          header: {
+              gridDefination: {
+                  xs: 8,
+              },
+              ...getCommonSubHeader({
+                  labelName: "Booking Agreement",
+                  labelKey: "Booking Agreement",
+              }),
+          },
+      },
+  },
+  
+     
+  checkBoxContainer: getCheckbox(
+      "I understand that I will be liable for prosecution if any incorrect information is shared by me in this application.",
+      "userAggrement"
+    )
+  
+});
 
 export const documentsSummary = getCommonGrayCard({
   header: {

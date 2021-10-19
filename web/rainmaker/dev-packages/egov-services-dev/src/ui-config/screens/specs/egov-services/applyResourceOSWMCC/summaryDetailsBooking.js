@@ -9,7 +9,7 @@ import {
     dispatchMultipleFieldChangeAction,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
-import { openSpaceSummaryOSWMCC } from "../summaryResource/openSpaceSummaryOSWMCC";
+import { openSpaceSummaryOSWMCC ,userAggrement} from "../summaryResource/openSpaceSummaryOSWMCC";
 import { applicantSummary } from "../summaryResource/applicantSummaryBookingOSWMCC";
 import { estimateSummary } from "../summaryResource/estimateSummary";
 import { documentsSummary } from "../summaryResource/documentsSummary";
@@ -201,5 +201,6 @@ export const summaryDetails = getCommonCard({
     estimateSummary : estimateSummary,
     applicantSummary: applicantSummary,
     openSpaceSummaryOSWMCC: openSpaceSummaryOSWMCC,
-    documentsSummary: documentsSummary
+    documentsSummary: documentsSummary,
+    userAggrement : userAggrement,
 });

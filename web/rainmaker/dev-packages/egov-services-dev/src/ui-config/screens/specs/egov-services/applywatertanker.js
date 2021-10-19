@@ -222,7 +222,12 @@ const screenConfig = {
         // Set MDMS Data
         getMdmsData(action, state, dispatch);
 
-
+        dispatch(
+            prepareFinalObject(
+                "userAggrement",
+                false
+            )
+        ),
         dispatch(
             prepareFinalObject(
                 "Booking.bkApplicantName",

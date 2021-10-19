@@ -7,9 +7,35 @@ import {
     getLabelWithValue,
     convertEpochToDate,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { convertDateInDMY } from "../../utils";
+import { convertDateInDMY, getCheckbox } from "../../utils";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
-
+export const userAggrement = getCommonGrayCard({
+    header: {
+        uiFramework: "custom-atoms",
+        componentPath: "Container",
+        props: {
+            style: { marginBottom: "10px" },
+        },
+        children: {
+            header: {
+                gridDefination: {
+                    xs: 8,
+                },
+                ...getCommonSubHeader({
+                    labelName: "Booking Agreement",
+                    labelKey: "Booking Agreement",
+                }),
+            },
+        },
+    },
+    
+       
+    checkBoxContainer: getCheckbox(
+        "I understand that I will be liable for prosecution if any incorrect information is shared by me in this application.",
+        "userAggrement"
+      )
+    
+});
 export const openSpaceSummaryOSWMCC = getCommonGrayCard({
     header: {
         uiFramework: "custom-atoms",

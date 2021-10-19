@@ -355,7 +355,12 @@ const screenConfig = {
             "businessService"
         );
         const step = getQueryArg(window.location.href, "step");
-
+        dispatch(
+            prepareFinalObject(
+                "userAggrement",
+                false
+            )
+        ),
         dispatch(
             prepareFinalObject(
                 "Booking.bkApplicantName",
