@@ -154,6 +154,7 @@ class AppDetails extends Component {
           AmountFromBackEnd,
           bookedRoomArray
         );
+        // this.props.parentCallback(SecondFunRefAmt);
       }
 
       this.props.prepareFinalObject("editableRefundAmount", SecondFunRefAmt)
@@ -394,7 +395,8 @@ class AppDetails extends Component {
       width: "90%",
       overflow: "hidden",
     };
-
+console.log("StateInRefundCard",this.state)
+console.log("PropsInRefundCard",this.props)
     return (
       <div>
         <Card

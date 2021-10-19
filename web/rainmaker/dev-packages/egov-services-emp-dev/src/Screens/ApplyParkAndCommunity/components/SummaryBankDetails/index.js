@@ -46,7 +46,7 @@ return (
                                     className="col-xs-12  col-sm-12 col-md-12  status-result-color"
                                     id="complaint-details-current-status"
                                     labelStyle={{ color: "inherit" }}
-                                    label={NomineeName}
+                                    label={NomineeName != '' ? NomineeName : "NA"}
                                 />
                             </div>
                             <div className="col-md-4">

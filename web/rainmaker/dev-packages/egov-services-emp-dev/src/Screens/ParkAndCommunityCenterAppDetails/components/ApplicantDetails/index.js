@@ -34,7 +34,7 @@ class AppDetails extends Component {
                       className="col-xs-6  col-sm-8 col-md-10  status-result-color"
                       id="complaint-details-current-status"
                       labelStyle={{ color: "inherit" }}
-                      label={bkEmail}
+                      label={bkEmail !== null && bkEmail !== undefined && bkEmail !== "" ? bkEmail : "NA" }
                     />
                   </div>
                   <div className="col-md-4">

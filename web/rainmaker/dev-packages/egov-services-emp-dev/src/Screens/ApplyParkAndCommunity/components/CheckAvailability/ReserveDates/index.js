@@ -664,6 +664,16 @@ class CheckAvailability extends Component {
       //window.location.href = "/egov-services/reservedbookingdates";
       this.props.history.push(`/egov-services/reservedbookingdates`);
       }
+    }else{
+      this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Selected dates are locked by user.Please try after 30 minutes",
+          labelKey: "Selected dates are locked by user.Please try after 30 minutes"
+        },
+        "error"
+      );
+      return false
     }
   }else{
     this.props.toggleSnackbarAndSetText(

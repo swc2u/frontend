@@ -200,8 +200,8 @@ class SummaryDetails extends Component {
     } = this.props;
     
 let ppMode = paymentMode && paymentMode ? paymentMode : " ";
- let current_datetime = new Date()
-let formatted_date = current_datetime.getDate() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getFullYear()
+let current_datetime = new Date()
+let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getDate()
 let lastModifiedDate;   
 let paymentDate;
 let paymentCollectionType = ppMode;
@@ -426,9 +426,12 @@ try{
         roomApplicationNumber: AppNum,
         action: "OFFLINE_APPLY",
         remarks: "string",
-        roomBusinessService: "BKROOM",      
+        roomBusinessService: "BKROOM",     
+        roomPaymentStatus: "SUCCESS", 
         discount: discountForRoom,
+        communityApplicationNumber:DataForRoomBooking.bookingsModelList[0].bkApplicationNumber,
         totalNoOfRooms: updateNumOfAcRoom,
+        roomApplicationStatus:"OFFLINE_INITIATED",
         typeOfRoom: "AC", //updateNumOfAcRoom,updateNumOfNonAcRoom
         fromDate: roomFromDate,
         toDate: roomToDate,  
@@ -452,7 +455,9 @@ try{
         remarks: "string",
         discount: discountForRoom,
         roomBusinessService: "BKROOM",
+        roomPaymentStatus: "SUCCESS",
         totalNoOfRooms: updateNumOfNonAcRoom,
+        roomApplicationStatus:"OFFLINE_INITIATED",
         typeOfRoom: "NON-AC",
         fromDate: roomFromDate,
         toDate: roomToDate,
@@ -479,7 +484,10 @@ try{
         action: "OFFLINE_APPLY",
         remarks: "string",
         roomBusinessService: "BKROOM",
+        roomPaymentStatus: "SUCCESS",
         discount: discountForRoom,
+        roomApplicationStatus:"OFFLINE_INITIATED",
+        communityApplicationNumber:DataForRoomBooking.bookingsModelList[0].bkApplicationNumber,
         totalNoOfRooms: updateNumOfAcRoom,
         typeOfRoom: typeOfRoom,
         fromDate: roomFromDate,
@@ -508,7 +516,10 @@ try{
         action: "OFFLINE_APPLY",
         remarks: "string",
         roomBusinessService: "BKROOM",
+        roomApplicationStatus:"OFFLINE_INITIATED",
+        roomPaymentStatus: "SUCCESS",
         discount: discountForRoom,
+        communityApplicationNumber:DataForRoomBooking.bookingsModelList[0].bkApplicationNumber,
         totalNoOfRooms: updateNumOfNonAcRoom,
         typeOfRoom: typeOfRoom,
         fromDate: roomFromDate,
@@ -636,17 +647,17 @@ try{
         financialYear: "2020-2021",
         financeBusinessService:
           "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR",
-        // "roomBusinessService": "BKROOM",
+        "roomBusinessService": "BKROOM",
         roomsModel: BothRoomSelect,
       };
 
      
 
       let createAppData = {
-        applicationType: "PACC",
+        applicationType: "BKROOM",
         applicationStatus: null,
         applicationId:
-          DataForRoomBooking.bookingsModelList[0].bkApplicationNumber,
+        AppNum,
         tenantId: userInfo.tenantId,
         Booking: Booking,
       };

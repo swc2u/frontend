@@ -182,11 +182,11 @@ class SummaryDetails extends Component {
             "wfDocuments": null,
             "financialYear": "2021-2022",
             "financeBusinessService": "BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR",//"BKROOM",//BOOKING_BRANCH_SERVICES.COMMUNITY_CENTRES_JHANJ_GHAR
-            // "roomBusinessService": "BKROOM",
+            "roomBusinessService": "BKROOM",
             "roomsModel": BothRoomSelect,
           }
         let createAppData = {
-  "applicationType": "PACC",
+  "applicationType": "BKROOM",
   "applicationStatus": null,
   "applicationId": DataForRoomBooking.bookingsModelList[0].bkApplicationNumber,
   "tenantId": userInfo.tenantId,
