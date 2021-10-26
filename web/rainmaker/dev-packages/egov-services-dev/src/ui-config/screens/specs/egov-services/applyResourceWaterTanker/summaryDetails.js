@@ -8,7 +8,7 @@ import {
     getLabel,
     dispatchMultipleFieldChangeAction,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { waterTankerSummary } from "../summaryResource/waterTankerSummary";
+import { userAggrement, waterTankerSummary } from "../summaryResource/waterTankerSummary";
 import { estimateSummary } from "../summaryResource/estimateSummary";
 import get from "lodash/get";
 import { applicantSummary } from "../summaryResource/applicantSummary";
@@ -204,6 +204,7 @@ export const summaryDetails = getCommonCard({
             },
            // applicantSummary: applicantSummary,
             waterTankerSummary: waterTankerSummary,
+            userAggrement : userAggrement
         },
     },
 });

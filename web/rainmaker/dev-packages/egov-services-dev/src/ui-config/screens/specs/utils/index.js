@@ -1777,6 +1777,7 @@ let certificateData = [
                 sector: applicationData.bkSector,
                 groundName: applicationData.bkSector,
                 bookingPurpose: applicationData.bkBookingPurpose, 
+                bookingPupose: applicationData.bkBookingPurpose,
                 duration:
                     applicationData.bkDuration == "1"
                         ? `${applicationData.bkDuration} Month`
@@ -2462,13 +2463,13 @@ export const checkAvaialbilityAtSubmitCgb = async (bookingVenue, from, to) => {
 export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
     console.log("checkAvaialbilityAtSubmit",bookingData)
     let requestBody = {};
-    let isAvailable= await checkAvaialbilityAtSubmitFirstStep(bookingData, dispatch)
+    let {isAvailable, apiSuccess}= await checkAvaialbilityAtSubmitFirstStep(bookingData, dispatch)
     console.log("checkAvaialbilityAtSubmit",JSON.parse(JSON.stringify(isAvailable)))
     console.log("ReturnStatement",isAvailable)
     
     if(isAvailable===false){
     console.log("inFalseCondition",isAvailable)
-        return isAvailable
+    return {isAvailable, apiSuccess}
     }else{
         console.log("inTrueCondition",isAvailable)
         requestBody = {
@@ -2504,7 +2505,7 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
             console.log(exception);
         }
         console.log("isAvailable--Result",isAvailable)
-        return isAvailable
+        return {isAvailable,apiSuccess}
     }
 }
 export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) => {
@@ -2512,6 +2513,7 @@ export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) 
     let requestBody = {};
     let isAvailable = true;
     let getforAvailCheck = getTodayDate();
+    let apiSuccess= false
     console.log("getForAvailCheck",getforAvailCheck)
     if (businessService === "GFCP") {
         requestBody = {
@@ -2536,6 +2538,7 @@ export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) 
                 ? bookedDates.data.map((val) => {
                     if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
                         isAvailable = false;
+                        apiSuccess= true
                     } else {
                         isAvailable = true
                     }
@@ -2568,6 +2571,7 @@ export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) 
                 ? bookedDates.data.map((val) => {
                     if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
                         isAvailable = false;
+                        apiSuccess= true
                     } else {
                         isAvailable = true
                     }
@@ -2608,6 +2612,7 @@ export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) 
                 ? bookedDates.data.map((val) => {
                     if (val === bookingData.bkFromDate || val === bookingData.bkToDate) {
                         isAvailable = false;
+                        apiSuccess= true
                     } else {
                         isAvailable = true
                     }
@@ -2624,7 +2629,7 @@ export const checkAvaialbilityAtSubmitFirstStep = async (bookingData, dispatch) 
         isAvailable = true;
     }
     console.log("checkAvaialbilityAtSubmitFirstStep",isAvailable);
-    return isAvailable;
+    return {isAvailable, apiSuccess };
 };
 //"2021-09-03"
 const getTodayDate = ()=>{
@@ -3307,3 +3312,16 @@ export const getBookedRoomsPaymentDetails = async (bookedRoomArray, tenantId, di
         console.log(error);
     }
 };
+
+export const getCheckbox = (content, jsonPath, props = {}) => {
+    return {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-services",
+      componentPath: "CheckboxContainer",
+      props: {
+        content,
+        jsonPath,
+        ...props
+      }
+    };
+  };

@@ -10,7 +10,7 @@ import {
     getCommonGrayCard
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
-import { pccSummary, pccParkSummary,changedVenueDatepccSummary } from "../summaryResource/pccSummary";
+import { pccSummary, pccParkSummary,changedVenueDatepccSummary ,userAggrement} from "../summaryResource/pccSummary";
 import { pccApplicantSummary,pccBankSummary } from "../summaryResource/pccApplicantSummary";
 import { documentsSummaryForPacc } from "../summaryResource/documentsSummary";
 import { estimateSummary } from "../summaryResource/estimateSummary";
@@ -232,6 +232,7 @@ export const summaryDetails = getCommonCard({
    pccBankSummary:pccBankSummary,
  //  changedVenueDatepccSummary: changedVenueDatepccSummary,
    documentsSummary: documentsSummaryForPacc,
+   userAggrement : userAggrement,
    ParkChangeDateVenueFieldDisabler: {
        uiFramework: "custom-containers-local",
        moduleName: "egov-services",

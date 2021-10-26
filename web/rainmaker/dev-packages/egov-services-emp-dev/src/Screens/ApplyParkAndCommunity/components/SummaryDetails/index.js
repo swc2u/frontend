@@ -18,6 +18,7 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import SummaryDocumentDetail from "../SummaryDocumentDetail"
 import { httpRequest } from "egov-ui-kit/utils/api";
 import SummaryBankDetails from "../SummaryBankDetails"
+import TermsConditions from "../TermsConditions"
 import get from "lodash/get";
 import { isArray } from "lodash";
 class SummaryDetails extends Component {
@@ -28,6 +29,7 @@ class SummaryDetails extends Component {
         appStatus: '',
         currentAppStatus: '',
         documentList:[],
+        checkBoxState:false
     }
 
     componentDidMount = async () => {
@@ -324,221 +326,246 @@ catch(err){
 
 submit = async (InitiateAppNumber) => {
 
-    let { uploadeDocType,conJsonSecond,conJsonfirst,updatePACCApplication, discountDocs,state,documentMap, bookingData, venueType,prepareFinalObject,createPACCApplicationData,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,ReasonForDiscount} = this.props;
+    if(this.state.checkBoxState == true) {
+        let { uploadeDocType,conJsonSecond,conJsonfirst,updatePACCApplication, discountDocs,state,documentMap, bookingData, venueType,prepareFinalObject,createPACCApplicationData,SecTimeSlotFromTime,SecTimeSlotToTime,firstToTimeSlot,ReasonForDiscount} = this.props;
     
-    let checkDate
-    let checkDateCondition = false
-    let discountDocType = discountDocs && 
-    !_.isEmpty(discountDocs)? 
-    discountDocs && discountDocs[0].documentCode : "notFound";
+        let checkDate
+        let checkDateCondition = false
+        let discountDocType = discountDocs && 
+        !_.isEmpty(discountDocs)? 
+        discountDocs && discountDocs[0].documentCode : "notFound";
+        
+        let discountDocFid = discountDocs && 
+        !_.isEmpty(discountDocs)? 
+        discountDocs[0].documents && isArray(discountDocs[0].documents) &&  discountDocs[0].documents[0].fileStoreId : "notFound";
+        
+    let dataOne = get(
+        state,
+        "screenConfiguration.preparedFinalObject.createAppData",
+        "NotFound"
+    );
     
-    let discountDocFid = discountDocs && 
-    !_.isEmpty(discountDocs)? 
-    discountDocs[0].documents && isArray(discountDocs[0].documents) &&  discountDocs[0].documents[0].fileStoreId : "notFound";
+    let EmpSideDocType = null
     
-let dataOne = get(
-    state,
-    "screenConfiguration.preparedFinalObject.createAppData",
-    "NotFound"
-);
-
-let EmpSideDocType = null
-
-if(uploadeDocType !== "NotFound"){
-    EmpSideDocType = uploadeDocType
+    if(uploadeDocType !== "NotFound"){
+        EmpSideDocType = uploadeDocType
+    }
+    
+    if(dataOne !== "NotFound"){
+        let data = dataOne.data
+        prepareFinalObject("CreatePaccAppData",data);
+        let fid = documentMap ? Object.keys(documentMap) : ""
+        const { firstName, userInfo, email, mobileNo, surcharge, fromDate, toDate, utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, locality, residenials } = this.props;
+    let timeSlotDatesAvail;
+        if(data.bkBookingType == "Community Center" && data.bkLocation == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH"){
+            timeSlotDatesAvail  = data.timeslots
+    }
+    else{
+        timeSlotDatesAvail = []
+    }
+    
+        if (data) {
+            
+            let Booking = {
+                "bkApplicationNumber": data.bkApplicationNumber,
+                "bkSector": data.bkSector,
+                "bkBookingVenue": data.bkBookingVenue,
+                "bkBookingType": data.bkBookingType,
+                "bkFromDate": data.bkFromDate,
+                "bkToDate": data.bkToDate,
+                "timeslots" : timeSlotDatesAvail
+            }
+    
+            let UpdatedReqbody = {
+                     Booking:Booking,
+                     "applicationNumber" : data.bkApplicationNumber
+            }
+    try{
+        let AvailCheckForSameTime = await httpRequest(
+            "bookings/park/community/booked/dates/_search",
+            "_search",
+            [],
+            UpdatedReqbody
+          );
+          console.log("AvailCheckForSameTime--",AvailCheckForSameTime)
+          let checkResponseAvailForSameTime = AvailCheckForSameTime !== undefined && AvailCheckForSameTime !== null ?
+          (AvailCheckForSameTime.data && AvailCheckForSameTime.data !== null && AvailCheckForSameTime.data !== undefined ?(AvailCheckForSameTime.data):""):""
+         console.log("checkResponseAvailForSameTime--employee",checkResponseAvailForSameTime)
+         checkDate = checkResponseAvailForSameTime && checkResponseAvailForSameTime.length > 0 ? AvailCheckForSameTime.data[0] : 'emptyArray'
+         console.log("valueFotcheckDate",checkDate)
+    if(checkDate !== 'emptyArray' && (checkDate !== data.bkFromDate || checkDate !== data.bkToDate)){
+        checkDateCondition = true
+        console.log("setcheckDateCondition",checkDateCondition)
+    }
+    
+          if(checkResponseAvailForSameTime !== ""){
+              console.log("comeToMainCondition",checkResponseAvailForSameTime)
+              if(AvailCheckForSameTime.data.length == 0 || checkDateCondition == true){
+                  let Booking = {
+                      bkRemarks: data.bkRemarks,
+                      bkResidentialOrCommercial: data.bkResidentialOrCommercial,
+                      bkMaterialStorageArea: data.bkMaterialStorageArea,
+                      discount:data.discount,
+                      bkPlotSketch:data.bkPlotSketch,
+                      bkBookingType: data.bkBookingType,
+                      bkBookingVenue: data.bkBookingVenue,
+                      bkApplicantName: data.bkApplicantName,
+                      bkMobileNumber: data.bkMobileNumber,
+                      bkDimension: data.bkDimension,
+                      bkPaymentStatus: "SUCCESS",
+                      bkLocation: data.bkLocation,
+                      bkFromDate: data.bkFromDate,
+                      bkToDate: data.bkToDate,
+                      bkCleansingCharges: data.bkCleansingCharges,
+                      bkRent: data.bkRent,
+                      bkSurchargeRent: data.bkSurchargeRent,
+                      bkUtgst: data.bkUtgst,
+                      bkCgst: data.bkCgst,
+                      bkSector: data.bkSector,
+                      bkEmail: data.bkEmail,
+                      bkHouseNo: data.bkHouseNo,
+                      bkBookingPurpose: data.bkBookingPurpose,
+                      bkApplicationNumber: data.bkApplicationNumber,
+                      bkCustomerGstNo: data.bkCustomerGstNo ? data.bkCustomerGstNo : 'NA',
+                      wfDocuments: [
+                          {
+                            documentType: EmpSideDocType,
+                            fileStoreId: fid[0],
+                          },
+                          {
+                            documentType: discountDocType,
+                            fileStoreId: discountDocFid,
+                          },
+                        ],
+                      "tenantId": userInfo.tenantId,
+                      "bkAction": data.bkApplicationStatus == "OFFLINE_RE_INITIATED" ? "OFFLINE_MODIFY" : "OFFLINE_APPLY",
+                      "businessService": "PACC",
+                      "reInitiateStatus": false,
+                      "financialYear": "2021-2022",
+                      "bkBankAccountNumber":data.bkBankAccountNumber,
+                      "bkBankName":data.bkBankName,
+                      "bkIfscCode":data.bkIfscCode,
+                      "bkAccountType":data.bkAccountType,
+                      "bkBankAccountHolder":data.bkBankAccountHolder,
+                      "bkNomineeName": data.bkNomineeName
+                  }
+    
+    
+                  if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
+                      let slotArray = []
+                      let checkslotArray = []
+                      
+                      if(SecTimeSlotFromTime != "notFound" && SecTimeSlotToTime != "notFound"){
+                          
+                          slotArray[0] = conJsonfirst,
+                          slotArray[1] = conJsonSecond 
+    
+                          checkslotArray[0] = this.props.first,
+                           checkslotArray[1] = this.props.second
+                      }
+                      else{
+                        checkslotArray[0] = this.props.first
+                      }
+                      Booking.timeslots = data.timeslots,
+                      Booking.bkDuration = "HOURLY",
+                      Booking.bkFromDate = bookingData.bkFromDate,
+                      Booking.bkToDate = bookingData.bkToDate,
+                      Booking.bkFromTime = bookingData.bkFromTime,
+                      Booking.bkToTime = bookingData.bkToTime
+                  }
+                  else if (venueType == "Community Center" && (!bookingData) && (!bookingData.bkFromTime)) {
+                      Booking.timeslots = [{
+                          "slot": "9:00 AM - 8:59 AM"
+                      }],
+                          Booking.bkDuration = "FULLDAY"
+                  }
+          await updatePACCApplication(
+                      {
+                          "applicationType": "PACC",
+                          "applicationStatus": "",
+                          "applicationId": data.bkApplicationNumber,
+                          "tenantId": userInfo.tenantId,
+                          "Booking": Booking
+                      });
+    
+                  let NumberApp = this.state.CashPaymentApplicationNumber;
+    
+                  this.props.history.push(`/egov-services/PaymentReceiptDteail/${this.state.CashPaymentApplicationNumber}`);
+              }
+              else{
+                  console.log("comeToElseOfMain",checkResponseAvailForSameTime,checkDate,checkDateCondition)
+                  this.props.toggleSnackbarAndSetText(
+                      true,
+                      {
+                        labelName: "Dates are already booked",
+                        labelKey: `BK_ERR_PACC_DATE_ALREADY_BOOKED`
+                      },
+                      "error"
+                    );
+              }
+              }
+    }
+    catch(err){
+    console.log("comeincatch",err)
+    this.props.toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "The Booking for the Selected Date and Selected Venue is in Process. Please check again after 30 mins for Venue availability.",
+          labelKey: `The Booking for the Selected Date and Selected Venue is in Process. Please check again after 30 mins for Venue availability.`
+        },
+        "error"
+      );
+    }
+            
+            }
+            else{
+                this.props.toggleSnackbarAndSetText(
+                    true,
+                    {
+                      labelName: "Somthing went wrong",
+                      labelKey: `BK_ERR_PACC_SOMTHING_ERR_NOT_FOUND`
+                    },
+                    "error"
+                  );
+                }
+    
+    }
+    
+    else {
+      this.props.toggleSnackbarAndSetText(
+          true,
+          {
+            labelName: "API ERROR",
+            labelKey: `API ERROR`
+          },
+          "error"
+        );
+      }
+    }
+    else {
+        this.props.toggleSnackbarAndSetText(
+            true,
+            {
+              labelName: "Please accept booking agreement by clicking checkbox.",
+              labelKey: `Please accept booking agreement by clicking checkbox.`
+            },
+            "warning"
+          );
+        }
 }
 
-if(dataOne !== "NotFound"){
-    let data = dataOne.data
-    prepareFinalObject("CreatePaccAppData",data);
-    let fid = documentMap ? Object.keys(documentMap) : ""
-    const { firstName, userInfo, email, mobileNo, surcharge, fromDate, toDate, utGST, cGST, GSTnumber, dimension, location, facilitationCharges, cleaningCharges, rent, houseNo, type, purpose, locality, residenials } = this.props;
-let timeSlotDatesAvail;
-    if(data.bkBookingType == "Community Center" && data.bkLocation == "HALL FOR 4 HOURS AT COMMUNITY CENTRE SECTOR 39 CHANDIGARH"){
-        timeSlotDatesAvail  = data.timeslots
+
+handleCheckBox=(e)=>{
+if(this.state.checkBoxState == false){
+    this.setState({
+        checkBoxState:true,
+    })
 }
 else{
-    timeSlotDatesAvail = []
+    this.setState({
+        checkBoxState:false,
+    })
 }
-
-    if (data) {
-        
-        let Booking = {
-            "bkApplicationNumber": data.bkApplicationNumber,
-            "bkSector": data.bkSector,
-            "bkBookingVenue": data.bkBookingVenue,
-            "bkBookingType": data.bkBookingType,
-            "bkFromDate": data.bkFromDate,
-            "bkToDate": data.bkToDate,
-            "timeslots" : timeSlotDatesAvail
-        }
-
-        let UpdatedReqbody = {
-                 Booking:Booking,
-                 "applicationNumber" : data.bkApplicationNumber
-        }
-try{
-    let AvailCheckForSameTime = await httpRequest(
-        "bookings/park/community/booked/dates/_search",
-        "_search",
-        [],
-        UpdatedReqbody
-      );
-      console.log("AvailCheckForSameTime--",AvailCheckForSameTime)
-      let checkResponseAvailForSameTime = AvailCheckForSameTime !== undefined && AvailCheckForSameTime !== null ?
-      (AvailCheckForSameTime.data && AvailCheckForSameTime.data !== null && AvailCheckForSameTime.data !== undefined ?(AvailCheckForSameTime.data):""):""
-     console.log("checkResponseAvailForSameTime--employee",checkResponseAvailForSameTime)
-     checkDate = checkResponseAvailForSameTime && checkResponseAvailForSameTime.length > 0 ? AvailCheckForSameTime.data[0] : 'emptyArray'
-     console.log("valueFotcheckDate",checkDate)
-if(checkDate !== 'emptyArray' && (checkDate !== data.bkFromDate || checkDate !== data.bkToDate)){
-    checkDateCondition = true
-    console.log("setcheckDateCondition",checkDateCondition)
-}
-
-      if(checkResponseAvailForSameTime !== ""){
-          console.log("comeToMainCondition",checkResponseAvailForSameTime)
-          if(AvailCheckForSameTime.data.length == 0 || checkDateCondition == true){
-              let Booking = {
-                  bkRemarks: data.bkRemarks,
-                  bkResidentialOrCommercial: data.bkResidentialOrCommercial,
-                  bkMaterialStorageArea: data.bkMaterialStorageArea,
-                  discount:data.discount,
-                  bkPlotSketch:data.bkPlotSketch,
-                  bkBookingType: data.bkBookingType,
-                  bkBookingVenue: data.bkBookingVenue,
-                  bkApplicantName: data.bkApplicantName,
-                  bkMobileNumber: data.bkMobileNumber,
-                  bkDimension: data.bkDimension,
-                  bkPaymentStatus: "SUCCESS",
-                  bkLocation: data.bkLocation,
-                  bkFromDate: data.bkFromDate,
-                  bkToDate: data.bkToDate,
-                  bkCleansingCharges: data.bkCleansingCharges,
-                  bkRent: data.bkRent,
-                  bkSurchargeRent: data.bkSurchargeRent,
-                  bkUtgst: data.bkUtgst,
-                  bkCgst: data.bkCgst,
-                  bkSector: data.bkSector,
-                  bkEmail: data.bkEmail,
-                  bkHouseNo: data.bkHouseNo,
-                  bkBookingPurpose: data.bkBookingPurpose,
-                  bkApplicationNumber: data.bkApplicationNumber,
-                  bkCustomerGstNo: data.bkCustomerGstNo ? data.bkCustomerGstNo : 'NA',
-                  wfDocuments: [
-                      {
-                        documentType: EmpSideDocType,
-                        fileStoreId: fid[0],
-                      },
-                      {
-                        documentType: discountDocType,
-                        fileStoreId: discountDocFid,
-                      },
-                    ],
-                  "tenantId": userInfo.tenantId,
-                  "bkAction": data.bkApplicationStatus == "OFFLINE_RE_INITIATED" ? "OFFLINE_MODIFY" : "OFFLINE_APPLY",
-                  "businessService": "PACC",
-                  "reInitiateStatus": false,
-                  "financialYear": "2021-2022",
-                  "bkBankAccountNumber":data.bkBankAccountNumber,
-                  "bkBankName":data.bkBankName,
-                  "bkIfscCode":data.bkIfscCode,
-                  "bkAccountType":data.bkAccountType,
-                  "bkBankAccountHolder":data.bkBankAccountHolder,
-                  "bkNomineeName": data.bkNomineeName
-              }
-
-
-              if (venueType == "Community Center" && bookingData && bookingData.bkFromTime) {
-                  let slotArray = []
-                  let checkslotArray = []
-                  
-                  if(SecTimeSlotFromTime != "notFound" && SecTimeSlotToTime != "notFound"){
-                      
-                      slotArray[0] = conJsonfirst,
-                      slotArray[1] = conJsonSecond 
-
-                      checkslotArray[0] = this.props.first,
-                       checkslotArray[1] = this.props.second
-                  }
-                  else{
-                    checkslotArray[0] = this.props.first
-                  }
-                  Booking.timeslots = data.timeslots,
-                  Booking.bkDuration = "HOURLY",
-                  Booking.bkFromDate = bookingData.bkFromDate,
-                  Booking.bkToDate = bookingData.bkToDate,
-                  Booking.bkFromTime = bookingData.bkFromTime,
-                  Booking.bkToTime = bookingData.bkToTime
-              }
-              else if (venueType == "Community Center" && (!bookingData) && (!bookingData.bkFromTime)) {
-                  Booking.timeslots = [{
-                      "slot": "9:00 AM - 8:59 AM"
-                  }],
-                      Booking.bkDuration = "FULLDAY"
-              }
-      await updatePACCApplication(
-                  {
-                      "applicationType": "PACC",
-                      "applicationStatus": "",
-                      "applicationId": data.bkApplicationNumber,
-                      "tenantId": userInfo.tenantId,
-                      "Booking": Booking
-                  });
-
-              let NumberApp = this.state.CashPaymentApplicationNumber;
-
-              this.props.history.push(`/egov-services/PaymentReceiptDteail/${this.state.CashPaymentApplicationNumber}`);
-          }
-          else{
-              console.log("comeToElseOfMain",checkResponseAvailForSameTime,checkDate,checkDateCondition)
-              this.props.toggleSnackbarAndSetText(
-                  true,
-                  {
-                    labelName: "Dates are already booked",
-                    labelKey: `BK_ERR_PACC_DATE_ALREADY_BOOKED`
-                  },
-                  "error"
-                );
-          }
-          }
-}
-catch(err){
-console.log("comeincatch",err)
-this.props.toggleSnackbarAndSetText(
-    true,
-    {
-      labelName: "Dates are already booked",
-      labelKey: `BK_ERR_PACC_DATE_ALREADY_BOOKED`
-    },
-    "error"
-  );
-}
-        
-        }
-        else{
-            this.props.toggleSnackbarAndSetText(
-                true,
-                {
-                  labelName: "Somthing went wrong",
-                  labelKey: `BK_ERR_PACC_SOMTHING_ERR_NOT_FOUND`
-                },
-                "error"
-              );
-            }
-
-}
-
-else {
-  this.props.toggleSnackbarAndSetText(
-      true,
-      {
-        labelName: "API ERROR",
-        labelKey: `API ERROR`
-      },
-      "error"
-    );
-  }
-
 }
 
     render() {
@@ -608,6 +635,7 @@ totalAmountSuPage={totalAmountSuPage}
                                 AccountHolderName={AccountHolderName}
                                 accountType={accountType}
                             />
+                           
                             {/* <SummaryDocumentDetail
                             uploadeDocType={this.props.uploadeDocType}
                                 documentMap={documentMap}
@@ -620,6 +648,11 @@ totalAmountSuPage={totalAmountSuPage}
                 documentMap={doc}
               />
               )}
+
+                     <TermsConditions
+                 handleCheckBox={this.handleCheckBox} 
+                            />
+
               <div className="col-xs-12" style={{ marginLeft: "10px" }}>
                 <div
                   className="col-sm-12 col-xs-12"
@@ -630,7 +663,8 @@ totalAmountSuPage={totalAmountSuPage}
                   </div>
                 </div>
               </div>
-            </div>
+            
+            </div> 
           </div>
         </div>
                 <Footer className="apply-wizard-footer" style={{ display: 'flex', justifyContent: 'flex-end' }} children={
