@@ -31,8 +31,7 @@ export const documentsSummary = getCommonGrayCard({
         props: {
           color: "primary",
           style: {
-            marginTop: "-10px",
-            marginRight: "-18px"
+            padding: "0px",
           }
         },
         gridDefination: {

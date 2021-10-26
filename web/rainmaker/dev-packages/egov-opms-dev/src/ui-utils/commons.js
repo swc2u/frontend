@@ -986,6 +986,7 @@ export const furnishRoadcutNocResponse =  (state,response) => {
   set(refurnishresponse, "applicantName", response.nocApplicationDetail[0].applicantname);
   set(refurnishresponse, "sector", response.nocApplicationDetail[0].sector);
   // set(refurnishresponse, "roadCutType", applicationdetail.roadCutType);
+  set(refurnishresponse, "mobileNumber", applicationdetail.mobileNumber);
   set(refurnishresponse, "typeOfApplicant", applicationdetail.typeOfApplicant);
   set(refurnishresponse, "length", applicationdetail.length);
   set(refurnishresponse, "ward", applicationdetail.ward);

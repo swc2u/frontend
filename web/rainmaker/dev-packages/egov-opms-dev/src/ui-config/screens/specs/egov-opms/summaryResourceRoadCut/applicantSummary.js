@@ -113,6 +113,25 @@ export const applicantSummary = getCommonGrayCard({
               }
             }
           ),
+          mobileNumber: getLabelWithValue(
+            {
+              labelName: "Mobile Number",
+              labelKey: "ROADCUT_MOBILE_NUMBER_LABEL_NOC"
+            },
+            {
+              jsonPath:
+                "nocApplicationDetail[0].applicationdetail",
+                callBack: value => {
+                  if(value!=undefined){
+                  let mobileNumber = JSON.parse(value).hasOwnProperty('mobileNumber')?JSON.parse(value)['mobileNumber']:'';
+                  return mobileNumber;
+                  }
+                  else{
+                    return '';
+                  }
+                }
+            }
+          ),
           typeOfApplicant: getLabelWithValue(
             {
               labelName: "Type of Applicant",

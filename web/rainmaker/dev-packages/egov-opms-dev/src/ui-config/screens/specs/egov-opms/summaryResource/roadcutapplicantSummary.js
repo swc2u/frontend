@@ -33,8 +33,9 @@ export const roadcutapplicantSummary = getCommonGrayCard({
         props: {
           color: "primary",
           style: {
-            marginTop: "-10px",
-            marginRight: "-18px"
+            // marginTop: "-10px",
+            // marginRight: "-18px"
+            padding: "0px"
           }
         },
         gridDefination: {
@@ -91,6 +92,24 @@ export const roadcutapplicantSummary = getCommonGrayCard({
               jsonPath:
                 "nocApplicationDetail[0].applicantname"
 
+            }
+          ),
+          mobileNumber: getLabelWithValue(
+            {
+              labelName: "Mobile Number",
+              labelKey: "ROADCUT_MOBILE_NUMBER_LABEL_NOC"
+            },
+            {
+              jsonPath:
+                "nocApplicationDetail[0].applicationdetail",
+              callBack: value => {
+                if (value != undefined) {
+                  let mobileNumber = JSON.parse(value).hasOwnProperty('mobileNumber') ? JSON.parse(value)['mobileNumber'] : '';
+                  return mobileNumber;
+                } else {
+                  return '';
+                }
+              }
             }
           ),
           gstNumber: getLabelWithValue(

@@ -24,7 +24,7 @@ import { getCurrentFinancialYear } from "../utils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getSearchResultsForNocCretificate, getSearchResultsForNocCretificateDownload } from "../../../../ui-utils/commons";
 import { getapplicationType } from "egov-ui-kit/utils/localStorageUtils";
-
+import './successMsg.css';
 
 export const header = getCommonContainer({
   header: getCommonHeader({

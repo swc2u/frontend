@@ -34,6 +34,7 @@ const formConfig = {
       errorMessage: "CORE_COMMON_PHONENO_INVALIDMSG",
       hintText: "CORE_COMMON_PHONE_NUMBER_PLACEHOLDER",
      // pattern: "[1-9]{1}[0-9]{9}",
+      pattern: /^[0-9]{10}$/i,
       maxLength:"10",
     
     },
