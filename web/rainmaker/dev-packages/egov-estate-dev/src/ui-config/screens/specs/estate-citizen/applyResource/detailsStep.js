@@ -105,7 +105,7 @@ let village=[
   {
     name: "Daria",
     code: "VILLAGE.DARIA",
-  "hous":"DAR"
+    house:"DAR-"
   },
   {
     name: "Kishangarh",

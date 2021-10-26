@@ -57,7 +57,11 @@ class MultipleSelect extends React.Component {
         error:this.props.errorMessage
       }
     }
-  
+    componentDidUpdate(prevProps) {
+      if(this.props.value!==prevProps.value){
+      this.setState({ name: this.props.value});
+      }
+    }
     handleChange = event => {
       this.setState({ name: event.target.value });
       this.props.prepareFinalObject(this.props.jsonPath, event.target.value)
